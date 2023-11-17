@@ -44,7 +44,7 @@ export class StartApplicationAssessmentProcessor {
         );
         const endProcessMessage =
           "Workflow process not executed due to the assessment not being in the correct status.";
-        processSummary.info(endProcessMessage);
+        processSummary.warn(endProcessMessage);
         return endProcessMessage;
       }
 

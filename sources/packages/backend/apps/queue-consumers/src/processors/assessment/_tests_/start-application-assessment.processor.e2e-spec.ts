@@ -92,7 +92,7 @@ describe(
       expect(hasExpectedLogErrorMessage).toBeTruthy();
     });
 
-    it("Should log a warn message when the assessment status is different than 'queued'.", async () => {
+    it(`Should log a warn message when the assessment status is different than ${StudentAssessmentStatus.Queued}.`, async () => {
       // Arrange
       const application = await saveFakeApplication(db.dataSource);
       const job = createMock<Job<StartAssessmentQueueInDTO>>({

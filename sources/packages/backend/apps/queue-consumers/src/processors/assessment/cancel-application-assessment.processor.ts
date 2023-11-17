@@ -64,7 +64,6 @@ export class CancelApplicationAssessmentProcessor {
     ) {
       await job.discard();
       const warnMessage = `Assessment id ${job.data.assessmentId} is not in ${StudentAssessmentStatus.CancellationQueued} status.`;
-      this.logger.warn(warnMessage);
       summary.warn(warnMessage);
       summary.info(
         "Workflow cancellation process not executed due to the assessment cancellation not being in the correct status.",
