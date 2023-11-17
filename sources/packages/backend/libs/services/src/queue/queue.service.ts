@@ -36,7 +36,7 @@ export class QueueService {
    * @param queueName queue name
    * @returns queue configuration.
    */
-  async queueConfigurationDetails(
+  private async queueConfigurationDetails(
     queueName: QueueNames,
   ): Promise<QueueConfiguration> {
     const queues = await this.getAllQueueConfigurations();
@@ -98,5 +98,17 @@ export class QueueService {
   ): Promise<number | undefined> {
     const queueConfig = await this.queueConfigurationDetails(queueName);
     return queueConfig.queueConfiguration.pollingRecordLimit;
+  }
+
+  /**
+   * Gets the amount of hours for the assessment retry.
+   * @param queueName queue name
+   * @returns amount of hours for the assessment retry.
+   */
+  async getAmountHoursAssessmentRetry(
+    queueName: QueueNames,
+  ): Promise<number | undefined> {
+    const queueConfig = await this.queueConfigurationDetails(queueName);
+    return queueConfig.queueConfiguration.amountHoursAssessmentRetry;
   }
 }

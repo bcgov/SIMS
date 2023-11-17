@@ -87,13 +87,11 @@ export class WorkflowQueueRetryScheduler extends BaseScheduler<void> {
       const serviceProcessSummary = new ProcessSummary();
       parentProcessSummary.children(serviceProcessSummary);
 
-      const queueConfig: QueueConfiguration =
-        await this.queueService.queueConfigurationDetails(
+      const amountHoursAssessmentRetry =
+        await this.queueService.getAmountHoursAssessmentRetry(
           this.schedulerQueue.name as QueueNames,
         );
-      const retryMaxDate = addHours(
-        -queueConfig.queueConfiguration.amountHoursAssessmentRetry,
-      );
+      const retryMaxDate = addHours(-amountHoursAssessmentRetry);
       await enqueueProcess(serviceProcessSummary, retryMaxDate);
     } catch (error: unknown) {
       const errorMessage =

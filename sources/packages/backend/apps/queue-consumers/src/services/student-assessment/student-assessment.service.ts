@@ -69,7 +69,9 @@ export class StudentAssessmentService {
    */
   async getAssessmentToBeRetried(
     retryMaxDate: Date,
-    studentAssessmentStatus: StudentAssessmentStatus,
+    studentAssessmentStatus:
+      | StudentAssessmentStatus.Queued
+      | StudentAssessmentStatus.CancellationQueued,
   ): Promise<StudentAssessment[]> {
     return this.studentAssessmentRepo.find({
       select: {
