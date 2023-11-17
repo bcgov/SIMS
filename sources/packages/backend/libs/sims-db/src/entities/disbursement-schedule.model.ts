@@ -165,6 +165,16 @@ export class DisbursementSchedule extends RecordDataModel {
   })
   disbursementScheduleStatus: DisbursementScheduleStatus;
   /**
+   * Audit column to identify the date-time at which the disbursement
+   * calculations are done and ready to be added to an e-Cert.
+   */
+  @Column({
+    name: "ready_to_send_date",
+    type: "timestamptz",
+    nullable: true,
+  })
+  readyToSendDate?: Date;
+  /**
    * Tuition remittance effective amount of a disbursement.
    */
   @Column({
