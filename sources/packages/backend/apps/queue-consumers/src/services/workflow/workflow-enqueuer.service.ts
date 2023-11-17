@@ -116,7 +116,7 @@ export class WorkflowEnqueuerService {
         `Checking database for assessments waiting to be retried up to ${retryMaxDate}.`,
       );
       const assessments =
-        await this.studentAssessmentService.getAssessmentToBeRetried(
+        await this.studentAssessmentService.getAssessmentsToBeRetried(
           retryMaxDate,
           StudentAssessmentStatus.Queued,
         );
@@ -153,7 +153,7 @@ export class WorkflowEnqueuerService {
         `Checking database for assessment cancellations requested to be retried up to ${retryMaxDate}.`,
       );
       const assessments =
-        await this.studentAssessmentService.getAssessmentToBeRetried(
+        await this.studentAssessmentService.getAssessmentsToBeRetried(
           retryMaxDate,
           StudentAssessmentStatus.CancellationQueued,
         );

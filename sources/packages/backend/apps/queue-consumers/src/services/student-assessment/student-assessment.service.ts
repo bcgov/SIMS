@@ -67,7 +67,7 @@ export class StudentAssessmentService {
    * @param studentAssessmentStatus student assessment status to be queried.
    * @returns student assessment to be retried.
    */
-  async getAssessmentToBeRetried(
+  async getAssessmentsToBeRetried(
     retryMaxDate: Date,
     studentAssessmentStatus:
       | StudentAssessmentStatus.Queued
