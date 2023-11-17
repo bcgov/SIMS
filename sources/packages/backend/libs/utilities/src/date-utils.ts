@@ -184,8 +184,8 @@ export const addDays = (daysToAdd: number, date?: Date | string): Date => {
 
 /**
  * Add hours to a given date.
- * @param date date to be added hours.
  * @param hoursToAdd number of hours to be added.
+ * @param date date to be added hours.
  * @returns a new date with hours added.
  */
 export const addHours = (hoursToAdd: number, date?: Date | string): Date => {

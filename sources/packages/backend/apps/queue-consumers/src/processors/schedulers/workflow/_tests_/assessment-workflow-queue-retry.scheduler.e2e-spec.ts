@@ -88,7 +88,7 @@ describe(
       // Assert item was added to the queue.
       const queueData = {
         assessmentId: updatedApplication.currentAssessment.id,
-      } as StartAssessmentQueueInDTO;
+      };
       expect(startApplicationAssessmentQueueMock.add).toBeCalledWith(queueData);
     });
 
@@ -148,7 +148,7 @@ describe(
       // Assert item was added to the queue.
       const queueData = {
         assessmentId: updatedApplication.currentAssessment.id,
-      } as StartAssessmentQueueInDTO;
+      };
       expect(startApplicationAssessmentQueueMock.add).not.toBeCalledWith(
         queueData,
       );
@@ -159,7 +159,7 @@ describe(
       const application = await saveFakeApplication(db.dataSource);
       const currentAssessment = application.currentAssessment;
       currentAssessment.studentAssessmentStatus =
-        StudentAssessmentStatus.Queued;
+        StudentAssessmentStatus.CancellationQueued;
 
       // Gets one hour less than the needed time for the assessment retry.
       currentAssessment.updatedAt =
@@ -180,7 +180,7 @@ describe(
       // Assert item was added to the queue.
       const queueData = {
         assessmentId: updatedApplication.currentAssessment.id,
-      } as StartAssessmentQueueInDTO;
+      };
       expect(startApplicationAssessmentQueueMock.add).not.toBeCalledWith(
         queueData,
       );
