@@ -70,7 +70,7 @@ describe(
       currentAssessment.studentAssessmentStatus =
         StudentAssessmentStatus.Queued;
       // Gets one hour more than the needed time for the assessment retry.
-      currentAssessment.studentAssessmentStatusUpdatedOn = await addHours(
+      currentAssessment.studentAssessmentStatusUpdatedOn = addHours(
         -(queueConfig.queueConfiguration.amountHoursAssessmentRetry + 1),
       );
       await db.studentAssessment.save(currentAssessment);
@@ -96,7 +96,7 @@ describe(
       currentAssessment.studentAssessmentStatus =
         StudentAssessmentStatus.CancellationQueued;
       // Gets one hour more than the needed time for the assessment retry.
-      currentAssessment.studentAssessmentStatusUpdatedOn = await addHours(
+      currentAssessment.studentAssessmentStatusUpdatedOn = addHours(
         -(queueConfig.queueConfiguration.amountHoursAssessmentRetry + 1),
       );
       await db.studentAssessment.save(currentAssessment);
@@ -124,7 +124,7 @@ describe(
         StudentAssessmentStatus.Queued;
 
       // Gets one hour less than the needed time for the assessment retry.
-      currentAssessment.studentAssessmentStatusUpdatedOn = await addHours(
+      currentAssessment.studentAssessmentStatusUpdatedOn = addHours(
         -(queueConfig.queueConfiguration.amountHoursAssessmentRetry - 1),
       );
       await db.studentAssessment.save(currentAssessment);
@@ -153,7 +153,7 @@ describe(
         StudentAssessmentStatus.CancellationQueued;
 
       // Gets one hour less than the needed time for the assessment retry.
-      currentAssessment.studentAssessmentStatusUpdatedOn = await addHours(
+      currentAssessment.studentAssessmentStatusUpdatedOn = addHours(
         -(queueConfig.queueConfiguration.amountHoursAssessmentRetry - 1),
       );
       await db.studentAssessment.save(currentAssessment);
