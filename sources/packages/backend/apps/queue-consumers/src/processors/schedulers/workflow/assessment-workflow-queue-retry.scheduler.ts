@@ -30,8 +30,6 @@ export class AssessmentWorkflowQueueRetryScheduler extends BaseScheduler<void> {
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly workflowEnqueuerService: WorkflowEnqueuerService,
-    private readonly studentAssessmentService: StudentAssessmentService,
-    private readonly systemUsersService: SystemUsersService,
   ) {
     super(schedulerQueue, queueService);
   }
