@@ -3,6 +3,7 @@
 -- allow the creation of the enum as it was before.
 CREATE TYPE sims.disbursement_schedule_status_rollback AS ENUM ('Pending', 'Sent', 'Cancelled');
 
+-- Needs to drop the default constraint to allow the ALTER column rollback.
 ALTER TABLE
     sims.disbursement_schedules
 ALTER COLUMN
@@ -26,6 +27,7 @@ DROP TYPE sims.disbursement_schedule_status;
 -- Rename the enum to what it was in the beginning.
 ALTER TYPE sims.disbursement_schedule_status_rollback RENAME TO disbursement_schedule_status;
 
+-- Add the previously removed default constraint.
 ALTER TABLE
     sims.disbursement_schedules
 ALTER COLUMN
