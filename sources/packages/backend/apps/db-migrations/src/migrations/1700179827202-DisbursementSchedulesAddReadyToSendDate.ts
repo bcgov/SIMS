@@ -6,14 +6,14 @@ export class DisbursementSchedulesAddReadToSendDate1700179827202
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Add-read-to-send-date-col.sql", "DisbursementSchedules"),
+      getSQLFileData("Add-ready-to-send-date-col.sql", "DisbursementSchedules"),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Rollback-read-to-send-date-col.sql",
+        "Rollback-ready-to-send-date-col.sql",
         "DisbursementSchedules",
       ),
     );
