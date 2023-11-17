@@ -252,8 +252,8 @@ objects:
             resource:
               name: cpu
               target:
-                type: AverageValue
-                averageValue: "0.18"
+                type: Utilization
+                averageUtilization: 80
           - type: Resource
             resource:
               name: memory
