@@ -20,6 +20,7 @@ import {
   StartAssessmentQueueInDTO,
 } from "@sims/services/queue";
 import { WorkflowQueueRetryScheduler } from "../assessment-workflow-queue-retry.scheduler";
+import { AssessmentWorkflowQueueRetryInDTO } from "../models/assessment-workflow-queue-retry.dto";
 
 describe(
   describeProcessorRootTest(QueueNames.AssessmentWorkflowQueueRetry),
@@ -77,7 +78,8 @@ describe(
       await db.studentAssessment.save(currentAssessment);
 
       // Retry job.
-      const job = createMock<Job<void>>();
+      const job = createMock<Job<AssessmentWorkflowQueueRetryInDTO>>();
+      job.data.amountHoursAssessmentRetry = 6;
 
       // Act
       await retryProcessor.enqueueAssessmentRetryOperations(job);
@@ -102,7 +104,8 @@ describe(
       );
       await db.studentAssessment.save(currentAssessment);
       // Retry job.
-      const job = createMock<Job<void>>();
+      const job = createMock<Job<AssessmentWorkflowQueueRetryInDTO>>();
+      job.data.amountHoursAssessmentRetry = 6;
 
       // Act
       await retryProcessor.enqueueAssessmentRetryOperations(job);
@@ -130,7 +133,8 @@ describe(
       await db.studentAssessment.save(currentAssessment);
 
       // Retry job.
-      const job = createMock<Job<void>>();
+      const job = createMock<Job<AssessmentWorkflowQueueRetryInDTO>>();
+      job.data.amountHoursAssessmentRetry = 6;
 
       // Act
       await retryProcessor.enqueueAssessmentRetryOperations(job);
@@ -158,7 +162,8 @@ describe(
       await db.studentAssessment.save(currentAssessment);
 
       // Retry job.
-      const job = createMock<Job<void>>();
+      const job = createMock<Job<AssessmentWorkflowQueueRetryInDTO>>();
+      job.data.amountHoursAssessmentRetry = 6;
 
       // Act
       await retryProcessor.enqueueAssessmentRetryOperations(job);

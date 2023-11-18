@@ -14,15 +14,16 @@ import {
   getSuccessMessageWithAttentionCheck,
   logProcessSummaryToJobLogger,
 } from "../../../utilities";
+import { AssessmentWorkflowQueueRetryInDTO } from "./models/assessment-workflow-queue-retry.dto";
 
 /**
  * Retry assessments.
  */
 @Processor(QueueNames.AssessmentWorkflowQueueRetry)
-export class WorkflowQueueRetryScheduler extends BaseScheduler<void> {
+export class WorkflowQueueRetryScheduler extends BaseScheduler<AssessmentWorkflowQueueRetryInDTO> {
   constructor(
     @InjectQueue(QueueNames.AssessmentWorkflowQueueRetry)
-    schedulerQueue: Queue<void>,
+    schedulerQueue: Queue<AssessmentWorkflowQueueRetryInDTO>,
     queueService: QueueService,
     private readonly workflowEnqueuerService: WorkflowEnqueuerService,
   ) {
@@ -35,12 +36,15 @@ export class WorkflowQueueRetryScheduler extends BaseScheduler<void> {
    * @returns processing result.
    */
   @Process()
-  async enqueueAssessmentRetryOperations(job: Job<void>): Promise<string[]> {
+  async enqueueAssessmentRetryOperations(
+    job: Job<AssessmentWorkflowQueueRetryInDTO>,
+  ): Promise<string[]> {
     const processSummary = new ProcessSummary();
     try {
       processSummary.info("Checking assessments to be queued for retry.");
       // Check for assessments cancellations to be retried.
       await this.executeEnqueueProcess(
+        job.data.amountHoursAssessmentRetry,
         processSummary,
         this.workflowEnqueuerService.enqueueCancelAssessmentRetryWorkflows.bind(
           this.workflowEnqueuerService,
@@ -48,6 +52,7 @@ export class WorkflowQueueRetryScheduler extends BaseScheduler<void> {
       );
       // Check for assessments to be started.
       await this.executeEnqueueProcess(
+        job.data.amountHoursAssessmentRetry,
         processSummary,
         this.workflowEnqueuerService.enqueueStartAssessmentRetryWorkflows.bind(
           this.workflowEnqueuerService,
@@ -69,10 +74,12 @@ export class WorkflowQueueRetryScheduler extends BaseScheduler<void> {
 
   /**
    * Enqueues the process and creates a new process summary for the queue process.
+   * @param amountHoursAssessmentRetry amount of hours for the assessment to be retried.
    * @param parentProcessSummary parent process summary.
    * @param enqueueProcess enqueue process function to be called.
    */
   private async executeEnqueueProcess(
+    amountHoursAssessmentRetry: number,
     parentProcessSummary: ProcessSummary,
     enqueueProcess: (
       summary: ProcessSummary,
@@ -85,11 +92,6 @@ export class WorkflowQueueRetryScheduler extends BaseScheduler<void> {
       // output the partial information captured by the processSummary.
       const serviceProcessSummary = new ProcessSummary();
       parentProcessSummary.children(serviceProcessSummary);
-
-      const amountHoursAssessmentRetry =
-        await this.queueService.getAmountHoursAssessmentRetry(
-          this.schedulerQueue.name as QueueNames,
-        );
       const retryMaxDate = addHours(-amountHoursAssessmentRetry);
       await enqueueProcess(serviceProcessSummary, retryMaxDate);
     } catch (error: unknown) {
@@ -97,6 +99,18 @@ export class WorkflowQueueRetryScheduler extends BaseScheduler<void> {
         "Unexpected error while enqueueing assessment workflows.";
       parentProcessSummary.error(errorMessage, error);
     }
+  }
+
+  /**
+   * Builds the payload for the job.
+   * @returns payload.
+   */
+  protected async payload(): Promise<AssessmentWorkflowQueueRetryInDTO> {
+    const amountHoursAssessmentRetry =
+      await this.queueService.getAmountHoursAssessmentRetry(
+        this.schedulerQueue.name as QueueNames,
+      );
+    return { amountHoursAssessmentRetry };
   }
 
   @InjectLogger()
