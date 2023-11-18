@@ -14,7 +14,6 @@ import {
   getSuccessMessageWithAttentionCheck,
   logProcessSummaryToJobLogger,
 } from "../../../utilities";
-import { QueueConfiguration } from "@sims/sims-db";
 
 /**
  * Retry assessments.

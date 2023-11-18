@@ -13,7 +13,7 @@ import {
   saveFakeApplication,
 } from "@sims/test-utils";
 import { Not } from "typeorm";
-import { QueueConfiguration, StudentAssessmentStatus } from "@sims/sims-db";
+import { StudentAssessmentStatus } from "@sims/sims-db";
 import {
   CancelAssessmentQueueInDTO,
   QueueService,
