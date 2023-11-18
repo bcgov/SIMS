@@ -19,12 +19,12 @@
           </h2>
         </slot>
       </v-card-title>
-      <v-divider class="border-opacity-100 my-1" :thickness="2" inset />
+      <v-divider-inset-opaque class="my-1" />
       <v-card-text class="pt-0">
         <div class="pb-2" v-if="subTitle">{{ subTitle }}</div>
         <slot name="content">Please add the modal content here!</slot>
       </v-card-text>
-      <v-divider class="border-opacity-100 my-1" :thickness="2" inset />
+      <v-divider-inset-opaque />
 
       <v-card-actions>
         <v-spacer></v-spacer>

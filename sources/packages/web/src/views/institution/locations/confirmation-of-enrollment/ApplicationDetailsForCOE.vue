@@ -35,13 +35,10 @@
                     <span class="label-bold">{{ item.label }}</span>
                   </v-list-item-title>
                 </v-list-item>
-                <v-divider
-                  class="border-opacity-100"
-                  :thickness="2"
+                <v-divider-inset-opaque
                   v-if="index < items.length - 1"
                   :key="index"
-                  inset
-                ></v-divider>
+                ></v-divider-inset-opaque>
               </template>
             </v-list>
           </v-menu>

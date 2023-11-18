@@ -8,6 +8,7 @@ import { VDataTableServer, VDataTable } from "vuetify/labs/VDataTable";
 import * as directives from "vuetify/lib/directives";
 import { aliases, fa } from "vuetify/iconsets/fa";
 import { mdi } from "vuetify/iconsets/mdi";
+import { VDivider } from "vuetify/lib/components";
 
 export default createVuetify({
   components: {
@@ -15,8 +16,32 @@ export default createVuetify({
     VDataTableServer,
     VDataTable,
   },
+  aliases: {
+    VDividerOpaque: VDivider,
+    VDividerInsetOpaque: VDivider,
+    VDividerVerticalOpaque: VDivider,
+  },
   directives,
   default: {},
+  defaults: {
+    VDividerOpaque: {
+      class: "border-opacity-100",
+      thickness: 2,
+      color: "secondary",
+    },
+    VDividerInsetOpaque: {
+      class: "border-opacity-100",
+      thickness: 2,
+      color: "secondary",
+      inset: true,
+    },
+    VDividerVerticalOpaque: {
+      class: "border-opacity-100",
+      thickness: 2,
+      color: "secondary",
+      vertical: true,
+    },
+  },
   theme: {
     themes: {
       light: {
