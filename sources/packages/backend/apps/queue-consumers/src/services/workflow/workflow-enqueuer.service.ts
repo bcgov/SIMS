@@ -294,15 +294,15 @@ export class WorkflowEnqueuerService {
     const summary = new ProcessSummary();
     try {
       summary.info(
-        `Queueing assessment cancellation retry for assessment id ${assessment.id}.`,
+        `Queueing assessment retry for assessment id ${assessment.id}.`,
       );
       await this.startAssessmentQueue.add({
         assessmentId: assessment.id,
       });
-      summary.info("Assessment queued for cancellation retry.");
+      summary.info("Assessment queued retry processed.");
     } catch (error: unknown) {
       summary.error(
-        `Error while enqueueing assessment cancellation retry for assessment id ${assessment.id}.`,
+        `Error while enqueueing assessment retry for assessment id ${assessment.id}.`,
         error,
       );
     }
@@ -325,7 +325,7 @@ export class WorkflowEnqueuerService {
       await this.cancelAssessmentQueue.add({
         assessmentId: assessment.id,
       });
-      summary.info("Assessment queued for cancellation retry.");
+      summary.info("Assessment cancellation retry processed.");
     } catch (error: unknown) {
       summary.error(
         `Error while enqueueing assessment cancellation retry for assessment id ${assessment.id}.`,
