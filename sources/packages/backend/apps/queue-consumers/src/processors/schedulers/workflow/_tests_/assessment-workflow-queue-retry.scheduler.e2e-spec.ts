@@ -69,7 +69,7 @@ describe(
         await queueService.getAmountHoursAssessmentRetry(
           QueueNames.AssessmentWorkflowQueueRetry,
         );
-      // Gets one hour more than the needed time for the assessment retry.
+      // Gets one hour more than the needed time for the assessments retry.
       currentAssessment.studentAssessmentStatusUpdatedOn = addHours(
         -(amountHoursAssessmentRetry + 1),
       );
@@ -99,7 +99,7 @@ describe(
         await queueService.getAmountHoursAssessmentRetry(
           QueueNames.AssessmentWorkflowQueueRetry,
         );
-      // Gets one hour more than the needed time for the assessment retry.
+      // Gets one hour more than the needed time for the assessments retry.
       currentAssessment.studentAssessmentStatusUpdatedOn = addHours(
         -(amountHoursAssessmentRetry + 1),
       );
@@ -130,7 +130,7 @@ describe(
         await queueService.getAmountHoursAssessmentRetry(
           QueueNames.AssessmentWorkflowQueueRetry,
         );
-      // Gets one hour less than the needed time for the assessment retry.
+      // Gets one hour less than the needed time for the assessments retry.
       currentAssessment.studentAssessmentStatusUpdatedOn = addHours(
         -(amountHoursAssessmentRetry - 1),
       );
@@ -162,7 +162,7 @@ describe(
         await queueService.getAmountHoursAssessmentRetry(
           QueueNames.AssessmentWorkflowQueueRetry,
         );
-      // Gets one hour less than the needed time for the assessment retry.
+      // Gets one hour less than the needed time for the assessments retry.
       currentAssessment.studentAssessmentStatusUpdatedOn = addHours(
         -(amountHoursAssessmentRetry - 1),
       );

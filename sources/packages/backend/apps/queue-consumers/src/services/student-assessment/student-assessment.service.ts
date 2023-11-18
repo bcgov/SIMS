@@ -65,7 +65,7 @@ export class StudentAssessmentService {
    * Retrieve assessment to be retried up to a date.
    * @param retryMaxDate max date to retrieve assessment to be retried.
    * @param studentAssessmentStatus student assessment status to be queried.
-   * @returns student assessment to be retried.
+   * @returns student assessments to be retried.
    */
   async getAssessmentsToBeRetried(
     retryMaxDate: Date,
