@@ -30,6 +30,7 @@ describe(
     let startApplicationAssessmentQueueMock: Queue<StartAssessmentQueueInDTO>;
     let cancelApplicationAssessmentQueueMock: Queue<CancelAssessmentQueueInDTO>;
     let queueService: QueueService;
+    let amountHoursAssessmentRetry: number;
 
     beforeAll(async () => {
       const { nestApplication, dataSource } = await createTestingAppModule();
@@ -46,6 +47,10 @@ describe(
       // Processor under test.
       retryProcessor = app.get(WorkflowQueueRetryScheduler);
       queueService = app.get(QueueService);
+      amountHoursAssessmentRetry =
+        await queueService.getAmountHoursAssessmentRetry(
+          QueueNames.AssessmentWorkflowQueueRetry,
+        );
     });
 
     beforeEach(async () => {
@@ -65,10 +70,6 @@ describe(
       const currentAssessment = application.currentAssessment;
       currentAssessment.studentAssessmentStatus =
         StudentAssessmentStatus.Queued;
-      const amountHoursAssessmentRetry =
-        await queueService.getAmountHoursAssessmentRetry(
-          QueueNames.AssessmentWorkflowQueueRetry,
-        );
       // Gets one hour more than the needed time for the assessments retry.
       currentAssessment.studentAssessmentStatusUpdatedOn = addHours(
         -(amountHoursAssessmentRetry + 1),
@@ -95,10 +96,6 @@ describe(
       const currentAssessment = application.currentAssessment;
       currentAssessment.studentAssessmentStatus =
         StudentAssessmentStatus.CancellationQueued;
-      const amountHoursAssessmentRetry =
-        await queueService.getAmountHoursAssessmentRetry(
-          QueueNames.AssessmentWorkflowQueueRetry,
-        );
       // Gets one hour more than the needed time for the assessments retry.
       currentAssessment.studentAssessmentStatusUpdatedOn = addHours(
         -(amountHoursAssessmentRetry + 1),
@@ -126,10 +123,6 @@ describe(
       const currentAssessment = application.currentAssessment;
       currentAssessment.studentAssessmentStatus =
         StudentAssessmentStatus.Queued;
-      const amountHoursAssessmentRetry =
-        await queueService.getAmountHoursAssessmentRetry(
-          QueueNames.AssessmentWorkflowQueueRetry,
-        );
       // Gets one hour less than the needed time for the assessments retry.
       currentAssessment.studentAssessmentStatusUpdatedOn = addHours(
         -(amountHoursAssessmentRetry - 1),
@@ -158,10 +151,6 @@ describe(
       const currentAssessment = application.currentAssessment;
       currentAssessment.studentAssessmentStatus =
         StudentAssessmentStatus.CancellationQueued;
-      const amountHoursAssessmentRetry =
-        await queueService.getAmountHoursAssessmentRetry(
-          QueueNames.AssessmentWorkflowQueueRetry,
-        );
       // Gets one hour less than the needed time for the assessments retry.
       currentAssessment.studentAssessmentStatusUpdatedOn = addHours(
         -(amountHoursAssessmentRetry - 1),
