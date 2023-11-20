@@ -11,7 +11,10 @@ import {
 import { CancelApplicationAssessmentProcessor } from "../cancel-application-assessment.processor";
 import { DataSource, Repository } from "typeorm";
 import {
+  createE2EDataSources,
   createFakeDisbursementOveraward,
+  E2EDataSources,
+  saveFakeApplication,
   saveFakeApplicationDisbursements,
 } from "@sims/test-utils";
 import {
@@ -20,6 +23,7 @@ import {
   DisbursementSchedule,
   DisbursementScheduleStatus,
   StudentAssessment,
+  StudentAssessmentStatus,
 } from "@sims/sims-db";
 import * as faker from "faker";
 
@@ -27,6 +31,7 @@ describe(
   describeProcessorRootTest(QueueNames.CancelApplicationAssessment),
   () => {
     let app: INestApplication;
+    let db: E2EDataSources;
     let processor: CancelApplicationAssessmentProcessor;
     let zbClientMock: ZBClient;
     let appDataSource: DataSource;
@@ -47,6 +52,7 @@ describe(
       disbursementScheduleRepo = dataSource.getRepository(DisbursementSchedule);
       // Processor under test.
       processor = app.get(CancelApplicationAssessmentProcessor);
+      db = createE2EDataSources(dataSource);
     });
 
     beforeEach(() => {
@@ -73,6 +79,8 @@ describe(
       // Adjust assessment.
       const studentAssessment = application.currentAssessment;
       studentAssessment.assessmentWorkflowId = workflowInstanceId;
+      studentAssessment.studentAssessmentStatus =
+        StudentAssessmentStatus.CancellationQueued;
       await studentAssessmentRepo.save(application.currentAssessment);
       // Adjust disbursements.
       const [firstDisbursement, secondDisbursement] =
@@ -138,6 +146,9 @@ describe(
         { applicationStatus: ApplicationStatus.Overwritten },
       );
       const studentAssessment = application.currentAssessment;
+      studentAssessment.studentAssessmentStatus =
+        StudentAssessmentStatus.CancellationQueued;
+      await db.studentAssessment.save(studentAssessment);
       // Queued job.
       const job = createMock<Job<CancelAssessmentQueueInDTO>>({
         data: { assessmentId: studentAssessment.id },
@@ -154,6 +165,30 @@ describe(
       expect(result.summary).toContain("Assessment cancelled with success.");
     });
 
+    it(`Should log a warning message when the assessment has status different than ${StudentAssessmentStatus.CancellationQueued}.`, async () => {
+      // Arrange
+      const application = await saveFakeApplication(appDataSource);
+      const studentAssessment = application.currentAssessment;
+
+      // Queued job.
+      const job = createMock<Job<CancelAssessmentQueueInDTO>>({
+        data: { assessmentId: studentAssessment.id },
+      });
+
+      // Act
+      const result = await processor.cancelAssessment(job);
+
+      // Assert
+      expect(zbClientMock.cancelProcessInstance).not.toHaveBeenCalled();
+      expect(result.warnings).toContain(
+        `Assessment id ${job.data.assessmentId} is not in ${StudentAssessmentStatus.CancellationQueued} status.`,
+      );
+      expect(result.summary).toContain(
+        "Workflow cancellation process not executed due to the assessment cancellation not being in the correct status.",
+      );
+      expect(job.discard).toBeCalled();
+    });
+
     it("Should throw an error and call job.discard when the application is not in the expected status.", async () => {
       // Arrange
       const errorMessage = `Application must be in the ${ApplicationStatus.Cancelled} or ${ApplicationStatus.Overwritten} state to have the assessment cancelled.`;
@@ -164,6 +199,9 @@ describe(
         { applicationStatus: ApplicationStatus.Completed },
       );
       const studentAssessment = application.currentAssessment;
+      studentAssessment.studentAssessmentStatus =
+        StudentAssessmentStatus.CancellationQueued;
+      await db.studentAssessment.save(studentAssessment);
       // Queued job.
       const job = createMock<Job<CancelAssessmentQueueInDTO>>({
         data: { assessmentId: studentAssessment.id },

@@ -26,4 +26,8 @@ export interface QueueConfigurationDetails {
    * Cleans all jobs that completed over given period in milliseconds.
    */
   cleanUpPeriod?: number;
+  /**
+   * Amount of hours the assessment should be retried in case of getting stuck without processing.
+   */
+  amountHoursAssessmentRetry?: number;
 }

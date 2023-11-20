@@ -10,6 +10,7 @@ import {
   ProcessSummary,
 } from "@sims/utilities/logger";
 import { logProcessSummaryToJobLogger } from "../../utilities";
+import { StudentAssessmentStatus } from "@sims/sims-db";
 
 /**
  * Process messages sent to start assessment queue.
@@ -31,6 +32,22 @@ export class StartApplicationAssessmentProcessor {
     const processSummary = new ProcessSummary();
     try {
       processSummary.info("Processing the start assessment job.");
+      const assessment = await this.studentAssessmentService.getAssessmentById(
+        job.data.assessmentId,
+      );
+      if (
+        assessment.studentAssessmentStatus !== StudentAssessmentStatus.Queued
+      ) {
+        await job.discard();
+        processSummary.warn(
+          `Assessment id ${job.data.assessmentId} is not in ${StudentAssessmentStatus.Queued} status.`,
+        );
+        const endProcessMessage =
+          "Workflow process not executed due to the assessment not being in the correct status.";
+        processSummary.warn(endProcessMessage);
+        return endProcessMessage;
+      }
+
       let workflowName = job.data.workflowName;
       if (!workflowName) {
         const applicationData =

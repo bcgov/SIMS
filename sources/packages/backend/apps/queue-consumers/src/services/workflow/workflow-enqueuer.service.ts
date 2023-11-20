@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { ApplicationService } from "..";
+import { ApplicationService, StudentAssessmentService } from "..";
 import { Queue } from "bull";
 import {
   CancelAssessmentQueueInDTO,
@@ -26,6 +26,7 @@ export class WorkflowEnqueuerService {
   constructor(
     private readonly dataSource: DataSource,
     private readonly applicationService: ApplicationService,
+    private readonly studentAssessmentService: StudentAssessmentService,
     private readonly systemUsersService: SystemUsersService,
     @InjectQueue(QueueNames.StartApplicationAssessment)
     private readonly startAssessmentQueue: Queue<StartAssessmentQueueInDTO>,
@@ -98,6 +99,77 @@ export class WorkflowEnqueuerService {
         "Error while enqueueing assessments to be cancelled.",
         error,
       );
+    }
+  }
+
+  /**
+   * Search applications with assessments queued to be retried.
+   * @param summary process summary to group all the logs.
+   * @param retryMaxDate max date for the assessment to have cancelled queued status.
+   */
+  async enqueueStartAssessmentRetryWorkflows(
+    summary: ProcessSummary,
+    retryMaxDate: Date,
+  ): Promise<void> {
+    try {
+      summary.info(
+        `Checking database for assessments waiting to be retried up to ${retryMaxDate}.`,
+      );
+      const assessments =
+        await this.studentAssessmentService.getAssessmentsToBeRetried(
+          retryMaxDate,
+          StudentAssessmentStatus.Queued,
+        );
+      summary.info(`Found ${assessments.length} assessments.`);
+      if (!assessments.length) {
+        return;
+      }
+      const children = await processInParallel(
+        (assessment: StudentAssessment) =>
+          this.queueAssessmentQueuedRetry(assessment),
+        assessments,
+      );
+      summary.children(...children);
+      summary.info("All assessment retries were processed.");
+    } catch (error: unknown) {
+      summary.error(
+        "Error while retrying assessment workflows to be processed.",
+        error,
+      );
+    }
+  }
+
+  /**
+   * Search applications with assessments cancellations to be retried.
+   * @param summary process summary to group all the logs.
+   * @param retryMaxDate max date for the assessment to have cancelled queued status.
+   */
+  async enqueueCancelAssessmentRetryWorkflows(
+    summary: ProcessSummary,
+    retryMaxDate: Date,
+  ): Promise<void> {
+    try {
+      summary.info(
+        `Checking database for assessment cancellations requested to be retried up to ${retryMaxDate}.`,
+      );
+      const assessments =
+        await this.studentAssessmentService.getAssessmentsToBeRetried(
+          retryMaxDate,
+          StudentAssessmentStatus.CancellationQueued,
+        );
+      summary.info(`Found ${assessments.length} assessments.`);
+      if (!assessments.length) {
+        return;
+      }
+      const children = await processInParallel(
+        (assessment: StudentAssessment) =>
+          this.queueAssessmentCancellationRetry(assessment),
+        assessments,
+      );
+      summary.children(...children);
+      summary.info("All assessments cancellation retries were processed.");
+    } catch (error: unknown) {
+      summary.error("Error while retrying assessments cancellations.", error);
     }
   }
 
@@ -205,6 +277,58 @@ export class WorkflowEnqueuerService {
     } catch (error: unknown) {
       summary.error(
         `Error while enqueueing assessment workflow to be cancelled for application id ${application.id}.`,
+        error,
+      );
+    }
+    return summary;
+  }
+
+  /**
+   * Queue the assessment to be retried.
+   * @param assessment assessment to be retried.
+   * @returns process summary.
+   */
+  async queueAssessmentQueuedRetry(
+    assessment: StudentAssessment,
+  ): Promise<ProcessSummary> {
+    const summary = new ProcessSummary();
+    try {
+      summary.info(
+        `Queueing assessment retry for assessment id ${assessment.id}.`,
+      );
+      await this.startAssessmentQueue.add({
+        assessmentId: assessment.id,
+      });
+      summary.info("Assessment queued retry processed.");
+    } catch (error: unknown) {
+      summary.error(
+        `Error while enqueueing assessment retry for assessment id ${assessment.id}.`,
+        error,
+      );
+    }
+    return summary;
+  }
+
+  /**
+   * Queue the assessment cancellation retry.
+   * @param assessment assessment cancellation to be retried.
+   * @returns process summary.
+   */
+  private async queueAssessmentCancellationRetry(
+    assessment: StudentAssessment,
+  ): Promise<ProcessSummary> {
+    const summary = new ProcessSummary();
+    try {
+      summary.info(
+        `Queueing assessment cancellation retry for assessment id ${assessment.id}.`,
+      );
+      await this.cancelAssessmentQueue.add({
+        assessmentId: assessment.id,
+      });
+      summary.info("Assessment cancellation retry processed.");
+    } catch (error: unknown) {
+      summary.error(
+        `Error while enqueueing assessment cancellation retry for assessment id ${assessment.id}.`,
         error,
       );
     }
