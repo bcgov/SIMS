@@ -114,7 +114,7 @@ describe(
       // Assert item was added to the queue.
       const queueData = {
         assessmentId: application.currentAssessment.id,
-      } as CancelAssessmentQueueInDTO;
+      };
       expect(cancelApplicationAssessmentQueueMock.add).toBeCalledWith(
         queueData,
       );

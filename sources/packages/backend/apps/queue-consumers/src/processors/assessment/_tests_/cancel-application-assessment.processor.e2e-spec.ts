@@ -165,7 +165,7 @@ describe(
       expect(result.summary).toContain("Assessment cancelled with success.");
     });
 
-    it("Should log a warning message when the assessment has status different than 'cancelation queued'.", async () => {
+    it(`Should log a warning message when the assessment has status different than ${StudentAssessmentStatus.CancellationQueued}.`, async () => {
       // Arrange
       const application = await saveFakeApplication(appDataSource);
       const studentAssessment = application.currentAssessment;
