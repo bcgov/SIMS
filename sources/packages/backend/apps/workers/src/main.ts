@@ -15,6 +15,7 @@ import { ZeebeTransportStrategy } from "./zeebe/zeebe-transport-strategy";
   workers.connectMicroservice({
     strategy: workers.get(ZeebeTransportStrategy),
   });
+  await workers.listen(8000);
   await workers.startAllMicroservices();
 
   logger.log("Workers initialized!");

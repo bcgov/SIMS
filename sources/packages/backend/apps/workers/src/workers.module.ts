@@ -7,6 +7,7 @@ import {
   SupportingUserController,
   CRAIntegrationController,
   DisbursementController,
+  HealthController,
 } from "./controllers";
 import {
   StudentAssessmentService,
@@ -33,7 +34,7 @@ import {
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
 import { SystemUserModule } from "@sims/services/system-users";
-
+import { HealthModule } from "@sims/services/health-check/health.module";
 @Module({
   imports: [
     GlobalHttpModule,
@@ -43,6 +44,7 @@ import { SystemUserModule } from "@sims/services/system-users";
     ZeebeModule.forRoot(),
     SystemUserModule,
     NotificationsModule,
+    HealthModule,
   ],
   controllers: [
     AssessmentController,
@@ -51,6 +53,7 @@ import { SystemUserModule } from "@sims/services/system-users";
     SupportingUserController,
     CRAIntegrationController,
     DisbursementController,
+    HealthController,
   ],
   providers: [
     ZeebeTransportStrategy,
