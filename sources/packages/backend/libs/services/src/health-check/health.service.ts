@@ -25,6 +25,6 @@ export class HealthService extends HealthIndicator {
     if (isHealthy) {
       return result;
     }
-    throw new HealthCheckError("Workers health check failed", result);
+    throw new HealthCheckError("Health check failed", result);
   }
 }

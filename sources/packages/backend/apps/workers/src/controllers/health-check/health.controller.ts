@@ -26,7 +26,7 @@ export class HealthController {
           options: {
             host: "localhost",
             port: 6379,
-            password: "admin",
+            password: "",
           },
         }),
     ]);

@@ -74,6 +74,7 @@ jobs:
       REDIS_PORT: 6379
       REDIS_PASSWORD: redis
       REDIS_STANDALONE_MODE: "true"
+      WORKERS_PORT: 3002
       QUEUE_PREFIX: "{sims-local}"
       DB_SCHEMA: sims
       DISABLE_ORM_CACHE: "true"

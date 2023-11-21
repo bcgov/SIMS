@@ -199,6 +199,16 @@ export class ConfigService {
   }
 
   /**
+   * Workers port.
+   */
+  get workersPort(): number {
+    return this.getCachedConfig(
+      "workersPortConfig",
+      +process.env.WORKERS_PORT || 3020,
+    );
+  }
+
+  /**
    * Queue dashboard configuration.
    */
   get queueDashboardCredential(): UserPasswordCredential {
