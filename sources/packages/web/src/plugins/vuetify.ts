@@ -3,12 +3,10 @@ import "@fortawesome/fontawesome-free/css/all.css";
 import "vuetify/lib/styles/main.sass";
 import { createVuetify } from "vuetify";
 import * as components from "vuetify/lib/components";
-// Todo: remove import from vuetify/labs/ and its corresponding logics when the components are available in vetify/lib/components.
-import { VDataTableServer, VDataTable } from "vuetify/labs/VDataTable";
 import * as directives from "vuetify/lib/directives";
 import { aliases, fa } from "vuetify/iconsets/fa";
 import { mdi } from "vuetify/iconsets/mdi";
-import { VDivider } from "vuetify/lib/components";
+import { VDivider, VDataTableServer, VDataTable } from "vuetify/lib/components";
 
 export default createVuetify({
   components: {
