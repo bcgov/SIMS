@@ -117,38 +117,32 @@
             :items-per-page="DEFAULT_PAGE_LIMIT"
           >
             <template #[`item.recordLineNumber`]="{ item }">
-              {{ numberEmptyFiller(item.raw.recordLineNumber) }}
+              {{ numberEmptyFiller(item.recordLineNumber) }}
             </template>
             <template #[`item.applicationNumber`]="{ item }">
-              {{ item.raw.applicationNumber }}
+              {{ item.applicationNumber }}
             </template>
             <template #[`item.withdrawalDate`]="{ item }">
-              {{ dateOnlyLongString(item.raw.withdrawalDate) }}
+              {{ dateOnlyLongString(item.withdrawalDate) }}
             </template>
             <template #[`item.validations`]="{ item }">
-              <div
-                class="alert alert-danger mt-4"
-                v-if="item.raw.errors.length"
-              >
+              <div class="alert alert-danger mt-4" v-if="item.errors.length">
                 <ul>
-                  <li v-for="error in item.raw.errors" :key="error">
+                  <li v-for="error in item.errors" :key="error">
                     {{ error }}
                   </li>
                 </ul>
               </div>
-              <div
-                class="alert alert-warning mt-4"
-                v-if="item.raw.warnings.length"
-              >
+              <div class="alert alert-warning mt-4" v-if="item.warnings.length">
                 <ul>
-                  <li v-for="warning in item.raw.warnings" :key="warning">
+                  <li v-for="warning in item.warnings" :key="warning">
                     {{ warning.message }}
                   </li>
                 </ul>
               </div>
-              <div class="alert alert-info mt-4" v-if="item.raw.infos.length">
+              <div class="alert alert-info mt-4" v-if="item.infos.length">
                 <ul>
-                  <li v-for="info in item.raw.infos" :key="info">
+                  <li v-for="info in item.infos" :key="info">
                     {{ info.message }}
                   </li>
                 </ul>
