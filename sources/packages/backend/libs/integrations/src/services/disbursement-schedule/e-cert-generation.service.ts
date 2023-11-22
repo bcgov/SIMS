@@ -62,7 +62,6 @@ export class ECertGenerationService {
 
   /**
    * Get the information needed for the e-Cert generation, execute all
-   * Todo: E-cert implementation
    * calculations needed and return the records ready to generate the e-Cert file.
    * @param offeringIntensity disbursement offering intensity.
    * @param entityManager used to execute the commands in the same transaction.
@@ -521,7 +520,6 @@ export class ECertGenerationService {
 
   /**
    * Determine when a BC Full-time/Part-time funding should not be disbursed.
-   * Todo: Part-time implementation is yet to be done.
    * In this case the e-Cert can still be generated with th federal funding.
    * @param schedule disbursement to be checked.
    * @param disbursementValue award to be checked.
