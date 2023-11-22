@@ -17,6 +17,9 @@ import { shouldStopFunding } from "./e-cert-steps-utils";
 import { ECertProcessStep } from "./e-cert-steps-models";
 import { ProcessSummary } from "@sims/utilities/logger";
 
+/**
+ * Check overaward balances and apply award deductions if needed.
+ */
 @Injectable()
 export class ApplyOverawardsDeductionsStep implements ECertProcessStep {
   constructor(
@@ -25,10 +28,11 @@ export class ApplyOverawardsDeductionsStep implements ECertProcessStep {
   ) {}
 
   /**
-   * Get the overawards balance consolidated per student and per loan award to
-   * apply, if needed, the overawards deductions.
-   * @param disbursements all disbursements that are part of one e-Cert.
+   * Get the overawards balance consolidated for the disbursement student and per
+   * loan award to apply, if needed, the overawards deductions.
+   * @param disbursement disbursement that will be added to an e-Cert.
    * @param entityManager used to execute the commands in the same transaction.
+   * @param log cumulative log summary.
    */
   async executeStep(
     disbursement: DisbursementSchedule,
@@ -53,7 +57,6 @@ export class ApplyOverawardsDeductionsStep implements ECertProcessStep {
     if (overawardsBalance[studentId]) {
       log.info("Found overaward deductions.");
       await this.applyOverawardsDeductions(
-        studentId,
         disbursement,
         overawardsBalance[studentId],
         entityManager,
@@ -62,16 +65,14 @@ export class ApplyOverawardsDeductionsStep implements ECertProcessStep {
   }
 
   /**
-   * For a single student, check if there is an overaward balance, updates the awards
-   * with the deductions, if needed, and adjust the student overaward balance if a
-   * deduction happen.
-   * @param studentId student to be verified.
-   * @param studentSchedule student disbursement that is part of one e-Cert.
+   * For a single student disbursement, check if there is an overaward balance,
+   * updates the awards with the deductions (if needed), and adjust the student
+   * overaward balance if a deduction happen.
+   * @param disbursement student disbursement that is part of one e-Cert.
    * @param studentsOverawardBalance overaward balance for the student.
    * @param entityManager used to execute the commands in the same transaction.
    */
   private async applyOverawardsDeductions(
-    studentId: number,
     disbursement: DisbursementSchedule,
     studentOverawardBalance: AwardOverawardBalance,
     entityManager: EntityManager,
@@ -105,7 +106,7 @@ export class ApplyOverawardsDeductionsStep implements ECertProcessStep {
         // An overaward was subtracted from an award and the same must be
         // deducted from the student balance.
         await disbursementOverawardRepo.insert({
-          student: { id: studentId } as Student,
+          student: disbursement.studentAssessment.application.student,
           studentAssessment: disbursement.studentAssessment,
           disbursementSchedule: disbursement as DisbursementSchedule,
           disbursementValueCode: loan.valueCode,
@@ -118,25 +119,19 @@ export class ApplyOverawardsDeductionsStep implements ECertProcessStep {
   }
 
   /**
-   * Try to deduct an overaward balance owed by the student due to some previous overaward in some
-   * previous application.
-   * @param awards specific loan award being adjusted (e.g CSLF, BCSL). This will contain one or
-   * two entries, always from the same award, from where the student debit will be deducted.
-   * The debit will try to be settle as much as possible with the first award. If it is not enough
-   * if will check for the second award (second disbursement), when present.
-   * The awards lists will be always from the same loan award code. For instance, the list list
-   * will contain one or two awards of type CSLF.
+   * Try to deduct an overaward balance owed by the student due to some previous
+   * overaward from some previous application.
+   * @param award specific loan award being adjusted (e.g CSLF, BCSL).
    * @param overawardBalance total overaward balance be deducted.
    */
   private subtractOverawardBalance(
     award: DisbursementValue,
     overawardBalance: number,
   ): void {
-    let currentBalance = overawardBalance;
     // Award amount that is available to be taken for the overaward balance adjustment.
     const availableAwardValueAmount =
       award.valueAmount - (award.disbursedAmountSubtracted ?? 0);
-    if (availableAwardValueAmount >= currentBalance) {
+    if (availableAwardValueAmount >= overawardBalance) {
       // Current disbursement value is enough to pay the debit.
       // For instance:
       // - Award: $1000
@@ -144,25 +139,19 @@ export class ApplyOverawardsDeductionsStep implements ECertProcessStep {
       // Then
       // - Award: $1000
       // - overawardAmountSubtracted: $750
-      // - currentBalance: $0
-      award.overawardAmountSubtracted = currentBalance;
-      // Cancel because there is nothing else to be deducted.
+      // - current balance: $0
+      award.overawardAmountSubtracted = overawardBalance;
       return;
-    } else {
-      // Current disbursement is not enough to pay the debit.
-      // Updates total overawardBalance.
-      // For instance:
-      // - Award: $500
-      // - Overaward balance: $750
-      // Then
-      // - Award: $500
-      // - overawardAmountSubtracted: $500
-      // - currentBalance: $250
-      // If there is one more disbursement with the same award, the $250
-      // overaward balance will be taken from there, if possible executing the
-      // second iteration of this for loop.
-      currentBalance -= availableAwardValueAmount;
-      award.overawardAmountSubtracted = availableAwardValueAmount;
     }
+    // Current disbursement is not enough to pay the debit.
+    // Updates total overawardBalance.
+    // For instance:
+    // - Award: $500
+    // - Overaward balance: $750
+    // Then
+    // - Award: $500
+    // - overawardAmountSubtracted: $500
+    // - current balance: $250
+    award.overawardAmountSubtracted = availableAwardValueAmount;
   }
 }
