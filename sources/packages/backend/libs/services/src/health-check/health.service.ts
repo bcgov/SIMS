@@ -1,30 +1,58 @@
 import { Injectable } from "@nestjs/common";
+import { RedisOptions, Transport } from "@nestjs/microservices";
 import {
   HealthIndicator,
   HealthIndicatorResult,
   HealthCheckError,
+  MicroserviceHealthIndicator,
 } from "@nestjs/terminus";
-
-export interface Ping {
-  tries: number;
-  status: string;
-}
+import { ConfigService } from "@sims/utilities/config";
+import axios from "axios";
 
 @Injectable()
 export class HealthService extends HealthIndicator {
-  private pings: Ping[] = [
-    { tries: 1, status: "up" },
-    { tries: 2, status: "up" },
-  ];
-
+  constructor(
+    private microservice: MicroserviceHealthIndicator,
+    private readonly configService: ConfigService,
+  ) {
+    super();
+  }
   async isHealthy(key: string): Promise<HealthIndicatorResult> {
-    const healthy = this.pings.filter((ping) => ping.status === "up");
-    const isHealthy = healthy.length > 0;
-    const result = this.getStatus(key, isHealthy, { ping: healthy.length });
+    let isHealthy;
+    let healthCheckResult;
+
+    if (key === "queues") {
+      const healthCheckResult = await this.checkRedisHealth();
+      isHealthy = healthCheckResult.redis.status === "up" ? true : false;
+    } else if (key === "workers") {
+      const healthCheckResult = await this.checkZeebeHealth();
+      isHealthy = healthCheckResult.status === 204 ? true : false;
+    }
+
+    const result: HealthIndicatorResult = this.getStatus(key, isHealthy, {
+      healthCheckResult,
+    });
 
     if (isHealthy) {
       return result;
     }
-    throw new HealthCheckError(key + " check failed", result);
+
+    throw new HealthCheckError(`${key} check failed`, result);
+  }
+
+  private async checkRedisHealth(): Promise<HealthIndicatorResult> {
+    return this.microservice.pingCheck<RedisOptions>("redis", {
+      transport: Transport.REDIS,
+      options: {
+        host: this.configService.redis.redisHost,
+        port: this.configService.redis.redisPort,
+        password: this.configService.redis.redisPassword,
+      },
+    });
+  }
+
+  private async checkZeebeHealth(): Promise<any> {
+    const response = await axios.get("/health");
+    return response;
   }
 }
