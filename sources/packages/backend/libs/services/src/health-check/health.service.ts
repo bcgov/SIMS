@@ -14,7 +14,7 @@ export interface Ping {
 export class HealthService extends HealthIndicator {
   private pings: Ping[] = [
     { tries: 1, status: "up" },
-    { tries: 1, status: "up" },
+    { tries: 2, status: "up" },
   ];
 
   async isHealthy(key: string): Promise<HealthIndicatorResult> {
@@ -25,6 +25,6 @@ export class HealthService extends HealthIndicator {
     if (isHealthy) {
       return result;
     }
-    throw new HealthCheckError("Health check failed", result);
+    throw new HealthCheckError(key + " check failed", result);
   }
 }

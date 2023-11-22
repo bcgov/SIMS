@@ -63,6 +63,8 @@ import {
 import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
 import { ECEIntegrationModule } from "@sims/integrations/institution-integration/ece-integration";
+import { HealthModule } from "@sims/services/health-check";
+import { HealthController } from "./controllers";
 
 @Module({
   imports: [
@@ -82,6 +84,7 @@ import { ECEIntegrationModule } from "@sims/integrations/institution-integration
     FedRestrictionIntegrationModule,
     MSFAAIntegrationModule,
     SINValidationModule,
+    HealthModule,
   ],
   providers: [
     StartApplicationAssessmentProcessor,
@@ -126,5 +129,6 @@ import { ECEIntegrationModule } from "@sims/integrations/institution-integration
     WorkflowEnqueuerService,
     WorkflowQueueRetryScheduler,
   ],
+  controllers: [HealthController],
 })
 export class QueueConsumersModule {}

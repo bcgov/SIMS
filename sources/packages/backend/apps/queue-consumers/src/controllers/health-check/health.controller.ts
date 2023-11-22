@@ -19,7 +19,7 @@ export class HealthController {
   @HealthCheck()
   check() {
     return this.health.check([
-      () => this.healthIndicator.isHealthy("Workers"),
+      () => this.healthIndicator.isHealthy("Queue-consumers"),
       () =>
         this.microservice.pingCheck<RedisOptions>("redis", {
           transport: Transport.REDIS,
