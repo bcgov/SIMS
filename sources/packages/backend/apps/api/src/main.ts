@@ -10,6 +10,7 @@ import { setGlobalPipes } from "./utilities/auth-utils";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { Request, Response } from "express";
 import { KeycloakConfig } from "@sims/auth/config";
+import helmet from "helmet";
 
 async function bootstrap() {
   await KeycloakConfig.load();
@@ -23,6 +24,22 @@ async function bootstrap() {
 
   // Setting global prefix
   app.setGlobalPrefix("api");
+
+  app.use(
+    helmet({
+      noSniff: true, // X-Content-Type-Options
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+        },
+      },
+      strictTransportSecurity: {
+        maxAge: 31536000,
+        includeSubDomains: true,
+        preload: true,
+      },
+    }),
+  );
 
   // Exception filter
   const { httpAdapter } = app.get(HttpAdapterHost);
