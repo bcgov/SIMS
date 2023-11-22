@@ -4,7 +4,7 @@
       active-class="active-list-item"
       density="compact"
       bg-color="default"
-      active-color="primary"
+      color="primary"
       class="no-wrap"
       :items="items"
       data-cy="institutionSideBar"

@@ -66,7 +66,7 @@
             active-class="active-list-item"
             density="compact"
             bg-color="default"
-            active-color="primary"
+            color="primary"
           >
             <template v-for="(item, index) in menuItems" :key="index">
               <v-list-item
@@ -78,13 +78,10 @@
                   <span class="label-bold">{{ item.title }}</span>
                 </v-list-item-title>
               </v-list-item>
-              <v-divider
-                class="border-opacity-100"
-                :thickness="2"
+              <v-divider-inset-opaque
                 v-if="index < menuItems.length - 1"
                 :key="index"
-                inset
-              ></v-divider>
+              ></v-divider-inset-opaque>
             </template>
           </v-list>
         </v-menu>
