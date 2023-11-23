@@ -71,7 +71,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
     expect(expectedAssessment.studentAssessmentStatusUpdatedOn).toBeInstanceOf(
       Date,
     );
-    const auditUser = await systemUsersService.systemUser();
+    const auditUser = systemUsersService.systemUser;
     expect(expectedAssessment.modifier).toEqual(auditUser);
     expect(expectedAssessment.updatedAt).toBeInstanceOf(Date);
   });
