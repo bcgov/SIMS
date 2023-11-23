@@ -88,7 +88,7 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
 
     return await this.dataSource.transaction(
       async (transactionalEntityManager) => {
-        const auditUser = await this.systemUsersService.systemUser();
+        const auditUser = this.systemUsersService.systemUser;
         let operationDescription: string;
         // If the list of the selected columns must be changed please keep in mind that
         // these fields are also the ones used later to "clone" the record if needed,

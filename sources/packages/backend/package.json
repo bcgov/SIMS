@@ -80,7 +80,7 @@
     "soap": "^1.0.0",
     "ssh2-sftp-client": "^9.1.0",
     "swagger-ui-express": "^4.3.0",
-    "typeorm": "^0.3.14",
+    "typeorm": "^0.3.17",
     "zeebe-node": "^8.2.3"
   },
   "devDependencies": {

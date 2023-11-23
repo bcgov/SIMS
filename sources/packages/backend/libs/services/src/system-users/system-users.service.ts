@@ -10,7 +10,8 @@ import {
 
 @Injectable()
 export class SystemUsersService {
-  private systemUserDetails: User = undefined;
+  /** System user */
+  systemUser: User = undefined;
 
   constructor(
     @InjectRepository(User)
@@ -45,17 +46,9 @@ export class SystemUsersService {
   }
 
   /**
-   * Get system user details from the cache.
-   * If not found will create a new system user
-   * and return the user details.
-   * @return system user details.
+   * Load system user.
    */
-  async systemUser(): Promise<User> {
-    if (this.systemUserDetails) {
-      return this.systemUserDetails;
-    }
-
-    this.systemUserDetails = await this.getSystemUser();
-    return this.systemUserDetails;
+  async loadSystemUser(): Promise<void> {
+    this.systemUser = await this.getSystemUser();
   }
 }

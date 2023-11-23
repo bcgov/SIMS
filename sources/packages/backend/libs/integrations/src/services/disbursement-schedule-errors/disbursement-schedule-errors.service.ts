@@ -32,7 +32,7 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
     errorCodes: string[],
     dateReceived: Date,
   ): Promise<InsertResult> {
-    const auditUser = await this.systemUsersService.systemUser();
+    const auditUser = this.systemUsersService.systemUser;
     const errorCodesObject = errorCodes.map((errorCode) => {
       const newDisbursementsFeedbackErrors = new DisbursementFeedbackErrors();
       newDisbursementsFeedbackErrors.disbursementSchedule =

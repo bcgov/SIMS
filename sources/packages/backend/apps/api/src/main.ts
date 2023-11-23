@@ -10,6 +10,7 @@ import { setGlobalPipes } from "./utilities/auth-utils";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { Request, Response } from "express";
 import { KeycloakConfig } from "@sims/auth/config";
+import { SystemUsersService } from "@sims/services";
 
 async function bootstrap() {
   await KeycloakConfig.load();
@@ -20,6 +21,10 @@ async function bootstrap() {
   // Get the injected logger.
   const logger = await app.resolve(LoggerService);
   app.useLogger(logger);
+
+  logger.log("Loading system user...");
+  const systemUsersService = app.get(SystemUsersService);
+  await systemUsersService.loadSystemUser();
 
   // Setting global prefix
   app.setGlobalPrefix("api");

@@ -364,7 +364,7 @@ export class ECertGenerationService {
       const student = application.student;
       const maxLifetimeBCLoanAmount =
         application.programYear.maxLifetimeBCLoanAmount;
-      const auditUser = await this.systemUsersService.systemUser();
+      const auditUser = this.systemUsersService.systemUser;
 
       const totalLifeTimeAmount =
         (await this.sfasApplicationService.totalLegacyBCSLAmount(student.id)) +
@@ -414,7 +414,7 @@ export class ECertGenerationService {
   private async createBCTotalGrants(
     disbursementSchedules: ECertDisbursementSchedule[],
   ): Promise<void> {
-    const auditUser = await this.systemUsersService.systemUser();
+    const auditUser = this.systemUsersService.systemUser;
     for (const disbursementSchedule of disbursementSchedules) {
       // For each schedule calculate the total BC grants.
       let bcTotalGrant = disbursementSchedule.disbursementValues.find(
@@ -500,7 +500,7 @@ export class ECertGenerationService {
       const disbursementOverawardRepo = entityManager.getRepository(
         DisbursementOveraward,
       );
-      const auditUser = await this.systemUsersService.systemUser();
+      const auditUser = this.systemUsersService.systemUser;
       for (const loan of loans) {
         if (loan.awardValue.overawardAmountSubtracted) {
           // An overaward was subtracted from an award and the same must be
