@@ -25,14 +25,9 @@ async function bootstrap() {
   // Setting global prefix
   app.setGlobalPrefix("api");
 
+  // Using helmet
   app.use(
     helmet({
-      noSniff: true, // X-Content-Type-Options
-      contentSecurityPolicy: {
-        directives: {
-          defaultSrc: ["'self'"],
-        },
-      },
       strictTransportSecurity: {
         maxAge: 31536000,
         includeSubDomains: true,
@@ -40,6 +35,13 @@ async function bootstrap() {
       },
     }),
   );
+
+  // Adding headers not covered by helmet
+  app.use((_, res, next) => {
+    res.setHeader("Cache-Control", "no-store");
+    res.setHeader("Pragma", "no-cache");
+    next();
+  });
 
   // Exception filter
   const { httpAdapter } = app.get(HttpAdapterHost);
