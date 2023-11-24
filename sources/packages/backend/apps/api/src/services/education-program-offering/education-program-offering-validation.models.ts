@@ -12,6 +12,7 @@ import {
   Max,
   MaxLength,
   Min,
+  Validate,
   ValidateIf,
   ValidateNested,
 } from "class-validator";
@@ -42,6 +43,7 @@ import { ProgramAllowsOfferingWIL } from "./custom-validators/program-allows-off
 import { StudyBreaksCombinedMustNotExceedsThreshold } from "./custom-validators/study-break-has-valid-consecutive-threshold";
 import { HasValidOfferingPeriodForFundedDays } from "./custom-validators/has-valid-offering-period-for-funded-days";
 import {
+  MAX_ALLOWED_OFFERING_AMOUNT,
   MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
   OFFERING_COURSE_LOAD_MAX_VALUE,
   OFFERING_COURSE_LOAD_MIN_VALUE,
@@ -54,6 +56,7 @@ import {
   OFFERING_YEAR_OF_STUDY_MIN_VALUE,
 } from "../../utilities";
 import { DATE_ONLY_ISO_FORMAT } from "@sims/utilities";
+import { CustomMaxLength } from "./custom-validators/custom-max-length";
 
 const userFriendlyNames = {
   offeringName: "Name",
@@ -189,6 +192,7 @@ export enum OfferingValidationWarnings {
   ProgramOfferingDeliveryMismatch = "programOfferingDeliveryMismatch",
   ProgramOfferingWILMismatch = "programOfferingWILMismatch",
   InvalidStudyDatesPeriodLength = "invalidStudyDatesPeriodLength",
+  OfferingCostExceedMaximum = "offeringCostExceedMaximum",
 }
 
 /**
@@ -336,14 +340,19 @@ export class OfferingValidationModel {
   @Min(0, {
     message: getMinFormatMessage(userFriendlyNames.actualTuitionCosts),
   })
-  @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE, {
+  @IsNumber(currencyNumberOptions, {
+    message: getCurrencyFormatMessage(userFriendlyNames.actualTuitionCosts),
+  })
+  @Max(MAX_ALLOWED_OFFERING_AMOUNT, {
+    context: ValidationContext.CreateWarning(
+      OfferingValidationWarnings.OfferingCostExceedMaximum,
+    ),
+  })
+  @Validate(CustomMaxLength, {
     message: getMaxFormatMessage(
       userFriendlyNames.actualTuitionCosts,
       MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
     ),
-  })
-  @IsNumber(currencyNumberOptions, {
-    message: getCurrencyFormatMessage(userFriendlyNames.actualTuitionCosts),
   })
   actualTuitionCosts: number;
   /**
@@ -352,7 +361,12 @@ export class OfferingValidationModel {
   @Min(0, {
     message: getMinFormatMessage(userFriendlyNames.programRelatedCosts),
   })
-  @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE, {
+  @Max(MAX_ALLOWED_OFFERING_AMOUNT, {
+    context: ValidationContext.CreateWarning(
+      OfferingValidationWarnings.OfferingCostExceedMaximum,
+    ),
+  })
+  @Validate(CustomMaxLength, {
     message: getMaxFormatMessage(
       userFriendlyNames.programRelatedCosts,
       MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
@@ -368,7 +382,12 @@ export class OfferingValidationModel {
   @Min(0, {
     message: getMinFormatMessage(userFriendlyNames.mandatoryFees),
   })
-  @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE, {
+  @Max(MAX_ALLOWED_OFFERING_AMOUNT, {
+    context: ValidationContext.CreateWarning(
+      OfferingValidationWarnings.OfferingCostExceedMaximum,
+    ),
+  })
+  @Validate(CustomMaxLength, {
     message: getMaxFormatMessage(
       userFriendlyNames.mandatoryFees,
       MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
@@ -384,7 +403,12 @@ export class OfferingValidationModel {
   @Min(0, {
     message: getMinFormatMessage(userFriendlyNames.exceptionalExpenses),
   })
-  @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE, {
+  @Max(MAX_ALLOWED_OFFERING_AMOUNT, {
+    context: ValidationContext.CreateWarning(
+      OfferingValidationWarnings.OfferingCostExceedMaximum,
+    ),
+  })
+  @Validate(CustomMaxLength, {
     message: getMaxFormatMessage(
       userFriendlyNames.exceptionalExpenses,
       MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
