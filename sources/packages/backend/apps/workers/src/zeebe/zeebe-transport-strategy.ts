@@ -14,6 +14,7 @@ import {
   ZBWorkerOptions,
   ZeebeJob,
 } from "zeebe-node";
+import { ZeebeHealthIndicator } from "./zeebe-health-indicator";
 
 /**
  * Zeebe strategy to stablish the connectivity and create all workers.
@@ -24,7 +25,10 @@ export class ZeebeTransportStrategy
   extends Server
   implements CustomTransportStrategy
 {
-  constructor(private readonly zeebeClient: ZBClient) {
+  constructor(
+    private readonly zeebeClient: ZBClient,
+    private readonly zeebeHealthyIndicator: ZeebeHealthIndicator,
+  ) {
     super();
   }
 
@@ -44,6 +48,17 @@ export class ZeebeTransportStrategy
         fetchVariable: workerOptions?.fetchVariable ?? [],
         taskType,
         taskHandler: async (job) => this.workerHandlerWrapper(handler, job),
+        onReady: () => {
+          this.zeebeHealthyIndicator.reportConnectionWorkerStatus(
+            taskType,
+            true,
+          );
+        },
+        onConnectionError: () =>
+          this.zeebeHealthyIndicator.reportConnectionWorkerStatus(
+            taskType,
+            false,
+          ),
       });
     });
     callback();

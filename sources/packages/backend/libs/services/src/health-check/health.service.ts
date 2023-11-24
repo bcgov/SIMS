@@ -7,13 +7,14 @@ import {
   MicroserviceHealthIndicator,
 } from "@nestjs/terminus";
 import { ConfigService } from "@sims/utilities/config";
-import axios from "axios";
+import { ZeebeHealthIndicator } from "apps/workers/src/zeebe";
 
 @Injectable()
 export class HealthService extends HealthIndicator {
   constructor(
     private microservice: MicroserviceHealthIndicator,
     private readonly configService: ConfigService,
+    private readonly zeebe: ZeebeHealthIndicator,
   ) {
     super();
   }
@@ -26,7 +27,7 @@ export class HealthService extends HealthIndicator {
       isHealthy = healthCheckResult.redis.status === "up" ? true : false;
     } else if (key === "workers") {
       const healthCheckResult = await this.checkZeebeHealth();
-      isHealthy = healthCheckResult.status === 204 ? true : false;
+      isHealthy = healthCheckResult;
     }
 
     const result: HealthIndicatorResult = this.getStatus(key, isHealthy, {
@@ -51,8 +52,7 @@ export class HealthService extends HealthIndicator {
     });
   }
 
-  private async checkZeebeHealth(): Promise<any> {
-    const response = await axios.get("/health");
-    return response;
+  private async checkZeebeHealth(): Promise<boolean> {
+    return this.zeebe.allConnected();
   }
 }
