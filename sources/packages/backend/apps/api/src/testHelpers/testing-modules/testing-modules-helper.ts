@@ -9,7 +9,7 @@ import {
   overrideImportsMetadata,
 } from "@sims/test-utils";
 import { QueueModule } from "@sims/services/queue";
-import { ZeebeModule } from "@sims/services";
+import { SystemUsersService, ZeebeModule } from "@sims/services";
 import { DiscoveryModule } from "@golevelup/nestjs-discovery";
 import { KeycloakConfig } from "@sims/auth/config";
 
@@ -44,6 +44,11 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
   }).compile();
   const nestApplication = module.createNestApplication();
   setGlobalPipes(nestApplication);
+
+  // Load system user.
+  const systemUsersService = nestApplication.get(SystemUsersService);
+  await systemUsersService.loadSystemUser();
+
   await nestApplication.init();
   const dataSource = module.get(DataSource);
   return {

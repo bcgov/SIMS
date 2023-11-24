@@ -6,7 +6,7 @@ import {
   createZeebeModuleMock,
   overrideImportsMetadata,
 } from "@sims/test-utils";
-import { ZeebeModule } from "@sims/services";
+import { SystemUsersService, ZeebeModule } from "@sims/services";
 
 /**
  * Result from a createTestingModule to support E2E tests creation.
@@ -31,6 +31,11 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
   }).compile();
 
   const nestApplication = module.createNestApplication();
+
+  // Load system user.
+  const systemUsersService = nestApplication.get(SystemUsersService);
+  await systemUsersService.loadSystemUser();
+
   await nestApplication.init();
   const dataSource = module.get(DataSource);
   return {
