@@ -30,8 +30,7 @@ async function bootstrap() {
 
   // Adding headers not covered by helmet.
   app.use((_, res, next) => {
-    res.setHeader("Cache-Control", "no-store");
-    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Cache-Control", "no-cache");
     next();
   });
 
