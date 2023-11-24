@@ -25,18 +25,10 @@ async function bootstrap() {
   // Setting global prefix
   app.setGlobalPrefix("api");
 
-  // Using helmet
-  app.use(
-    helmet({
-      strictTransportSecurity: {
-        maxAge: 31536000,
-        includeSubDomains: true,
-        preload: true,
-      },
-    }),
-  );
+  // Using helmet.
+  app.use(helmet());
 
-  // Adding headers not covered by helmet
+  // Adding headers not covered by helmet.
   app.use((_, res, next) => {
     res.setHeader("Cache-Control", "no-store");
     res.setHeader("Pragma", "no-cache");
