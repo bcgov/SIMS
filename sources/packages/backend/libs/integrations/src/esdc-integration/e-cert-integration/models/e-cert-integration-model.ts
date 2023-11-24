@@ -45,7 +45,6 @@ export interface ECertRecord {
   maritalStatus: RelationshipStatus;
   studentNumber: string;
   awards: Award[];
-  stopFullTimeBCFunding: boolean;
   courseLoad?: number;
   /**
    * Persistent or prolonged disability flag.

@@ -11,7 +11,7 @@ export function getStudentRestrictionByActionType(
   studentRestrictions: StudentRestriction[],
   actionType: RestrictionActionType,
 ) {
-  return studentRestrictions.find((studentRestriction) =>
+  return studentRestrictions?.find((studentRestriction) =>
     studentRestriction.restriction.actionType.includes(actionType),
   );
 }

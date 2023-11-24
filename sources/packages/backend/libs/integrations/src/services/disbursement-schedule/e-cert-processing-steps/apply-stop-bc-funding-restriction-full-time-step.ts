@@ -17,18 +17,19 @@ export class ApplyStopBCFundingRestrictionFullTimeStep
    * will be the value used to generate the e-Cert.
    * @param disbursements all disbursements that are part of one e-Cert.
    * @param entityManager used to execute the commands in the same transaction.
+   * @param log cumulative log summary.
    */
   executeStep(
     disbursement: DisbursementSchedule,
     _entityManager: EntityManager,
     log: ProcessSummary,
-  ): void {
+  ): boolean {
     log.info(
       `Checking '${RestrictionActionType.StopFullTimeBCFunding}' restriction.`,
     );
     for (const disbursementValue of disbursement.disbursementValues) {
       if (shouldStopFunding(disbursement, disbursementValue)) {
-        log.info(`Applying restriction for ${disbursementValue.valueCode}`);
+        log.info(`Applying restriction for ${disbursementValue.valueCode}.`);
         const studentRestriction = getStudentRestrictionByActionType(
           disbursement.studentAssessment.application.student
             .studentRestrictions,
@@ -43,5 +44,6 @@ export class ApplyStopBCFundingRestrictionFullTimeStep
           studentRestriction.restriction;
       }
     }
+    return true;
   }
 }

@@ -18,6 +18,9 @@ import {
 import { ECertProcessStep } from "./e-cert-steps-models";
 import { ProcessSummary } from "@sims/utilities/logger";
 
+/**
+ * Check if the student is reaching the full-time BCSL maximum.
+ */
 @Injectable()
 export class AssertLifeTimeMaximumFullTimeStep implements ECertProcessStep {
   constructor(
@@ -28,16 +31,17 @@ export class AssertLifeTimeMaximumFullTimeStep implements ECertProcessStep {
   ) {}
 
   /**
-   * Calculate the effective value for every award. The result of this calculation
-   * will be the value used to generate the e-Cert.
-   * @param disbursements all disbursements that are part of one e-Cert.
+   * Check if BCSL is part of the disbursement and ensure that, if BCSL maximum is reached,
+   * the award will be adjusted and a restriction will be created.
+   * @param disbursement disbursement to have the BCSL award checked.
    * @param entityManager used to execute the commands in the same transaction.
+   * @param log cumulative log summary.
    */
   async executeStep(
     disbursement: DisbursementSchedule,
     entityManager: EntityManager,
     log: ProcessSummary,
-  ): Promise<void> {
+  ): Promise<boolean> {
     log.info("Checking life time maximums for BC loans.");
     const application = disbursement.studentAssessment.application;
     for (const disbursementValue of disbursement.disbursementValues) {
@@ -52,6 +56,7 @@ export class AssertLifeTimeMaximumFullTimeStep implements ECertProcessStep {
         );
       }
     }
+    return true;
   }
 
   /**
@@ -71,14 +76,21 @@ export class AssertLifeTimeMaximumFullTimeStep implements ECertProcessStep {
     const student = application.student;
     const maxLifetimeBCLoanAmount =
       application.programYear.maxLifetimeBCLoanAmount;
-    const auditUser = await this.systemUsersService.systemUser();
+    // Get totals including legacy system.
+    const [totalLegacyBCSLAmount, totalDisbursedBCSLAmount] = await Promise.all(
+      [
+        this.sfasApplicationService.totalLegacyBCSLAmount(student.id),
+        this.disbursementScheduleSharedService.totalDisbursedBCSLAmount(
+          student.id,
+        ),
+      ],
+    );
     const totalLifeTimeAmount =
-      (await this.sfasApplicationService.totalLegacyBCSLAmount(student.id)) +
-      (await this.disbursementScheduleSharedService.totalDisbursedBCSLAmount(
-        student.id,
-      )) +
+      totalLegacyBCSLAmount +
+      totalDisbursedBCSLAmount +
       disbursementValue.effectiveAmount;
     if (totalLifeTimeAmount >= maxLifetimeBCLoanAmount) {
+      const auditUser = await this.systemUsersService.systemUser();
       // Amount subtracted when lifetime maximum is reached.
       const amountSubtracted = totalLifeTimeAmount - maxLifetimeBCLoanAmount;
       // Ideally disbursementValue.effectiveAmount should be greater or equal to amountSubtracted.

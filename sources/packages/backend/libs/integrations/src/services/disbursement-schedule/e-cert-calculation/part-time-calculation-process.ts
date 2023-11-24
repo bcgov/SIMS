@@ -1,39 +1,47 @@
 import { DisbursementSchedule, OfferingIntensity } from "@sims/sims-db";
-import { ApplyOverawardsDeductionsStep } from "../e-cert-processing-steps/apply-overawards-deductions-step";
-import { CalculateTuitionRemittanceEffectiveAmountStep } from "../e-cert-processing-steps/calculate-tuition-remittance-effective-amount";
-import { CreateBCTotalGrantsStep } from "../e-cert-processing-steps/create-bc-total-grants-step";
-import { ECertGenerationService } from "../e-cert-processing-steps/e-cert-generation-service";
 import { ECertProcessStep } from "../e-cert-processing-steps/e-cert-steps-models";
 import { ECertCalculationProcess } from "./e-cert-calculation-process";
-import { CalculateEffectiveValuePartTimeStep } from "../calculate-effective-value-parttime-step";
 import { DataSource } from "typeorm";
+import {
+  ApplyOverawardsDeductionsStep,
+  CalculateEffectiveValueStep,
+  CalculateTuitionRemittanceEffectiveAmountStep,
+  CreateBCTotalGrantsStep,
+  PersistCalculationsStep,
+  ValidateDisbursementPartTimeStep,
+} from "../e-cert-processing-steps";
+import { ECertGenerationService } from "../e-cert-generation.service";
+import { Injectable } from "@nestjs/common";
 
+@Injectable()
 export class PartTimeCalculationProcess extends ECertCalculationProcess {
   constructor(
     dataSource: DataSource,
     private readonly eCertGenerationService: ECertGenerationService,
+    private readonly validateDisbursementPartTimeStep: ValidateDisbursementPartTimeStep,
     private readonly applyOverawardsDeductionsStep: ApplyOverawardsDeductionsStep,
-    private readonly calculateEffectiveValuePartTimeStep: CalculateEffectiveValuePartTimeStep,
+    private readonly calculateEffectiveValueStep: CalculateEffectiveValueStep,
     private readonly calculateTuitionRemittanceEffectiveAmountStep: CalculateTuitionRemittanceEffectiveAmountStep,
     private readonly createBCTotalGrantsStep: CreateBCTotalGrantsStep,
+    private readonly persistCalculationsStep: PersistCalculationsStep,
   ) {
     super(dataSource);
   }
 
-  protected getDisbursements(
-    studentId: number,
-  ): Promise<DisbursementSchedule[]> {
+  protected getDisbursements(): Promise<DisbursementSchedule[]> {
     return this.eCertGenerationService.getEligibleRecords(
-      OfferingIntensity.fullTime,
+      OfferingIntensity.partTime,
     );
   }
 
   protected calculationSteps(): ECertProcessStep[] {
     return [
+      this.validateDisbursementPartTimeStep,
       this.applyOverawardsDeductionsStep,
-      this.calculateEffectiveValuePartTimeStep,
+      this.calculateEffectiveValueStep,
       this.calculateTuitionRemittanceEffectiveAmountStep,
       this.createBCTotalGrantsStep,
+      this.persistCalculationsStep,
     ];
   }
 }

@@ -7,5 +7,5 @@ export interface ECertProcessStep {
     disbursement: DisbursementSchedule,
     entityManager: EntityManager,
     log: ProcessSummary,
-  ): Promise<void> | void;
+  ): Promise<boolean> | boolean;
 }

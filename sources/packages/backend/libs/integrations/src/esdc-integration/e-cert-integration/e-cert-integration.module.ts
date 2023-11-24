@@ -24,6 +24,21 @@ import {
 } from "../../services";
 import { SystemUsersService } from "@sims/services/system-users";
 import { SFASApplicationService } from "@sims/services/sfas";
+import {
+  ApplyOverawardsDeductionsStep,
+  ApplyStopBCFundingRestrictionFullTimeStep,
+  AssertLifeTimeMaximumFullTimeStep,
+  CalculateEffectiveValueStep,
+  CalculateTuitionRemittanceEffectiveAmountStep,
+  CreateBCTotalGrantsStep,
+  PersistCalculationsStep,
+  ValidateDisbursementFullTimeStep,
+  ValidateDisbursementPartTimeStep,
+} from "@sims/integrations/services/disbursement-schedule/e-cert-processing-steps";
+import {
+  FullTimeCalculationProcess,
+  PartTimeCalculationProcess,
+} from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
 
 @Module({
   imports: [ConfigModule],
@@ -48,7 +63,23 @@ import { SFASApplicationService } from "@sims/services/sfas";
     ConfirmationOfEnrollmentService,
     SFASApplicationService,
     DisbursementScheduleSharedService,
+    // e-Cert calculation steps.
+    ValidateDisbursementFullTimeStep,
+    ValidateDisbursementPartTimeStep,
+    ApplyOverawardsDeductionsStep,
+    CalculateEffectiveValueStep,
+    ApplyStopBCFundingRestrictionFullTimeStep,
+    AssertLifeTimeMaximumFullTimeStep,
+    CalculateTuitionRemittanceEffectiveAmountStep,
+    CreateBCTotalGrantsStep,
+    PersistCalculationsStep,
+    FullTimeCalculationProcess,
+    PartTimeCalculationProcess,
   ],
-  exports: [ECertFileHandler],
+  exports: [
+    ECertFileHandler,
+    FullTimeCalculationProcess,
+    PartTimeCalculationProcess,
+  ],
 })
 export class ECertIntegrationModule {}

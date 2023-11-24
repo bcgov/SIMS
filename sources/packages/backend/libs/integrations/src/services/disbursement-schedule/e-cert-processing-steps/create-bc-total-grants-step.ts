@@ -10,12 +10,6 @@ import { ECertProcessStep } from "./e-cert-steps-models";
 import { EntityManager } from "typeorm";
 import { ProcessSummary } from "@sims/utilities/logger";
 
-/**
- * Manages all the preparation of the disbursements data needed to
- * generate the e-Cert. Check and execute possible overawards deductions
- * and calculate the awards effective values to be used to generate the e-Cert.
- * All methods are prepared to be executed on a single transaction.
- */
 @Injectable()
 export class CreateBCTotalGrantsStep implements ECertProcessStep {
   constructor(private readonly systemUsersService: SystemUsersService) {}
@@ -23,15 +17,20 @@ export class CreateBCTotalGrantsStep implements ECertProcessStep {
   /**
    * Calculate the total BC grants for each disbursement since they
    * can be affected by the calculations for the values already paid for the student
-   * or by overaward deductions. And calculate and record BC total grants that was used to
-   * subtracted due to a {@link RestrictionActionType.StopFullTimeBCFunding} restriction.
-   * @param disbursementSchedules disbursements to have the BC grants calculated.
+   * or by overaward deductions or {@link RestrictionActionType.StopFullTimeBCFunding}
+   * restriction.
+   * @param disbursement disbursement with the BC grants to be calculated.
+   * @param _entityManager not used.
+   * @param log cumulative log summary.
    */
   async executeStep(
     disbursement: DisbursementSchedule,
-    entityManager: EntityManager,
+    _entityManager: EntityManager,
     log: ProcessSummary,
-  ): Promise<void> {
+  ): Promise<boolean> {
+    log.info(
+      `Create ${DisbursementValueType.BCTotalGrant} (sum of the other BC Grants)`,
+    );
     const auditUser = await this.systemUsersService.systemUser();
     // For each schedule calculate the total BC grants.
     let bcTotalGrant = disbursement.disbursementValues.find(
@@ -58,5 +57,6 @@ export class CreateBCTotalGrantsStep implements ECertProcessStep {
       }, 0);
     bcTotalGrant.valueAmount = bcTotalGrantValueAmount;
     bcTotalGrant.effectiveAmount = bcTotalGrantValueAmount;
+    return true;
   }
 }

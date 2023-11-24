@@ -12,12 +12,13 @@ export class CalculateEffectiveValueStep implements ECertProcessStep {
    * will be the value used to generate the e-Cert.
    * @param disbursements all disbursements that are part of one e-Cert.
    * @param entityManager used to execute the commands in the same transaction.
+   * @param log cumulative log summary.
    */
   executeStep(
     disbursement: DisbursementSchedule,
     _entityManager: EntityManager,
     log: ProcessSummary,
-  ): void {
+  ): boolean {
     log.info("Calculating effective value.");
     for (const disbursementValue of disbursement.disbursementValues) {
       const effectiveValue =
@@ -26,5 +27,6 @@ export class CalculateEffectiveValueStep implements ECertProcessStep {
         (disbursementValue.overawardAmountSubtracted ?? 0);
       disbursementValue.effectiveAmount = round(effectiveValue);
     }
+    return true;
   }
 }

@@ -101,6 +101,7 @@ export async function saveFakeApplicationDisbursements(
     applicationStatus?: ApplicationStatus;
     offeringIntensity?: OfferingIntensity;
     createSecondDisbursement?: boolean;
+    currentAssessmentInitialValues?: Partial<StudentAssessment>;
     firstDisbursementInitialValues?: Partial<DisbursementSchedule>;
     secondDisbursementInitialValues?: Partial<DisbursementSchedule>;
   },
@@ -156,6 +157,9 @@ export async function saveFakeApplicationDisbursements(
   }
   savedApplication.currentAssessment.disbursementSchedules =
     disbursementSchedules;
+  savedApplication.currentAssessment.assessmentData =
+    options?.currentAssessmentInitialValues?.assessmentData ??
+    savedApplication.currentAssessment.assessmentData;
   savedApplication.currentAssessment = await studentAssessmentRepo.save(
     savedApplication.currentAssessment,
   );

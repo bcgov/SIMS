@@ -15,8 +15,7 @@ export abstract class ECertCalculationProcess {
 
   protected abstract calculationSteps(): ECertProcessStep[];
 
-  async executeCalculations(): Promise<ProcessSummary> {
-    const log = new ProcessSummary();
+  async executeCalculations(log: ProcessSummary): Promise<void> {
     log.info(`Processing disbursement(s).`);
     const disbursements = await this.getDisbursements();
     const disbursementsPerStudent =
@@ -26,7 +25,7 @@ export abstract class ECertCalculationProcess {
         Object.keys(disbursementsPerStudent).length
       } student(s).`,
     );
-
+    // Identify the distinct students to be processed in parallel.
     const uniqueStudentIds = Object.keys(disbursementsPerStudent);
     await processInParallel(
       (uniqueStudentId: string) =>
@@ -36,8 +35,6 @@ export abstract class ECertCalculationProcess {
         ),
       uniqueStudentIds,
     );
-
-    return log;
   }
 
   private getGroupedDisbursementsPerStudent(
@@ -64,18 +61,35 @@ export abstract class ECertCalculationProcess {
     parentLog: ProcessSummary,
   ): Promise<void> {
     const steps = this.calculationSteps();
+    // Ensure that disbursements for the same student will be processed
+    // sequentialy since one disbursement may affect student account data like
+    // overawards balance and maximums, where a second disbursement should take
+    // those updated data into consideration.
     for (const disbursement of groupedDisbursement) {
       const disbursementLog = new ProcessSummary();
       parentLog.children(disbursementLog);
       disbursementLog.info(
-        `Processing disbursement id ${disbursement} scheduled for ${disbursement.disbursementDate}.`,
+        `Processing disbursement id ${disbursement.id} scheduled for ${disbursement.disbursementDate}.`,
       );
       await this.dataSource.transaction(async (entityManager) => {
-        for (let i = 0; i < steps.length; i++) {
+        let stepNumber = 1;
+        // Execute all steps sequentially. The order of execution is important since the
+        // disbursement data is potentially changed along the steps till it is persisted.
+        for (const step of steps) {
           disbursementLog.info(
-            `Executing step ${i + 1} out of ${steps.length}.`,
+            `Executing step ${stepNumber++} out of ${steps.length}.`,
           );
-          steps[i].executeStep(disbursement, entityManager, disbursementLog);
+          const shouldProceed = await step.executeStep(
+            disbursement,
+            entityManager,
+            disbursementLog,
+          );
+          if (!shouldProceed) {
+            disbursementLog.info(
+              "The step determined that the calculation should be interrupted. This disbursement will not be part of the next e-Cert generation.",
+            );
+            break;
+          }
         }
       });
     }

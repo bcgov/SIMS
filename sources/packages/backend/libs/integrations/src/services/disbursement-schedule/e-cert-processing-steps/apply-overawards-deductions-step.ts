@@ -8,7 +8,6 @@ import {
   DisbursementSchedule,
   DisbursementValue,
   DisbursementOveraward,
-  Student,
   DisbursementOverawardOriginType,
 } from "@sims/sims-db";
 import { AwardOverawardBalance } from "@sims/services/disbursement-overaward/disbursement-overaward.models";
@@ -38,7 +37,7 @@ export class ApplyOverawardsDeductionsStep implements ECertProcessStep {
     disbursement: DisbursementSchedule,
     entityManager: EntityManager,
     log: ProcessSummary,
-  ): Promise<void> {
+  ): Promise<boolean> {
     log.info("Checking if overaward deductions are needed.");
     const studentId = disbursement.studentAssessment.application.student.id;
     // Get all the overawards balances for the student.
@@ -62,6 +61,7 @@ export class ApplyOverawardsDeductionsStep implements ECertProcessStep {
         entityManager,
       );
     }
+    return true;
   }
 
   /**

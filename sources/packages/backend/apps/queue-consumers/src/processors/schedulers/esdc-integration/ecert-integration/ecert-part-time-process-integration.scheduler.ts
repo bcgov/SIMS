@@ -3,9 +3,17 @@ import { ECertFileHandler } from "@sims/integrations/esdc-integration";
 import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
-import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
-import { ESDCFileResult } from "../models/esdc.models";
+import { PartTimeCalculationProcess } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
+import {
+  InjectLogger,
+  LoggerService,
+  ProcessSummary,
+} from "@sims/utilities/logger";
+import {
+  getSuccessMessageWithAttentionCheck,
+  logProcessSummaryToJobLogger,
+} from "../../../../utilities";
 
 @Processor(QueueNames.PartTimeECertIntegration)
 export class PartTimeECertProcessIntegrationScheduler extends BaseScheduler<void> {
@@ -13,38 +21,49 @@ export class PartTimeECertProcessIntegrationScheduler extends BaseScheduler<void
     @InjectQueue(QueueNames.PartTimeECertIntegration)
     schedulerQueue: Queue<void>,
     queueService: QueueService,
+    private readonly partTimeCalculationProcess: PartTimeCalculationProcess,
     private readonly eCertFileHandler: ECertFileHandler,
   ) {
     super(schedulerQueue, queueService);
   }
 
   /**
-   * Process Part-Time disbursements available to be sent to ESDC.
+   * Process part-Time disbursements available to be sent to ESDC.
    * Consider any record that is scheduled in upcoming days or in the past.
    * @params job job details.
    * @returns result of the file upload with the file generated and the
    * amount of records added to the file.
    */
   @Process()
-  async processPartTimeECert(job: Job<void>): Promise<ESDCFileResult> {
-    const summary = new QueueProcessSummary({
-      appLogger: this.logger,
-      jobLogger: job,
-    });
-    await summary.info(
-      `Processing E-Cert Part-time integration job ${job.id} of type ${job.name}.`,
-    );
-    await summary.info("Sending Part-time E-Cert File...");
-    const uploadPartTimeResult =
-      await this.eCertFileHandler.generatePartTimeECert();
-    await summary.info("E-Cert Part-time file sent.");
-    await this.cleanSchedulerQueueHistory();
-    await summary.info(
-      `Completed E-Cert Part-time integration job ${job.id} of type ${job.name}.`,
-    );
-    return {
-      generatedFile: uploadPartTimeResult.generatedFile,
-      uploadedRecords: uploadPartTimeResult.uploadedRecords,
-    };
+  async processPartTimeECert(job: Job<void>): Promise<string[]> {
+    const processSummary = new ProcessSummary();
+    try {
+      processSummary.info("Processing part-time e-Cert.");
+      processSummary.info(
+        "Executing e-Cert calculations for all eligible disbursements.",
+      );
+      // e-Cert calculations.
+      await this.partTimeCalculationProcess.executeCalculations(processSummary);
+      // e-Cert file generation.
+      processSummary.info("Sending part-time e-Cert file.");
+      const uploadResult = await this.eCertFileHandler.generatePartTimeECert();
+      processSummary.info(`Generated file: ${uploadResult.generatedFile}`);
+      processSummary.info(`Uploaded records: ${uploadResult.uploadedRecords}`);
+      return getSuccessMessageWithAttentionCheck(
+        "Process finalized with success.",
+        processSummary,
+      );
+    } catch (error: unknown) {
+      const errorMessage = "Unexpected error while executing the job.";
+      processSummary.error(errorMessage, error);
+      return [errorMessage];
+    } finally {
+      this.logger.logProcessSummary(processSummary);
+      await logProcessSummaryToJobLogger(processSummary, job);
+      await this.cleanSchedulerQueueHistory();
+    }
   }
+
+  @InjectLogger()
+  logger: LoggerService;
 }
