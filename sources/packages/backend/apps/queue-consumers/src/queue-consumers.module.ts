@@ -42,10 +42,7 @@ import {
 import { DatabaseModule } from "@sims/sims-db";
 import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier12-integration";
 import { NotificationsModule } from "@sims/services/notifications";
-import {
-  SystemUserModule,
-  SystemUsersService,
-} from "@sims/services/system-users";
+import { SystemUserModule } from "@sims/services/system-users";
 import { MSFAANumberService, SshService } from "@sims/integrations/services";
 import {
   DisbursementReceiptIntegrationModule,
@@ -118,7 +115,6 @@ import { ECEIntegrationModule } from "@sims/integrations/institution-integration
     PartTimeMSFAAProcessResponseIntegrationScheduler,
     ProcessArchiveApplicationsScheduler,
     ECEResponseIntegrationScheduler,
-    SystemUsersService,
     ApplicationService,
     ConfirmationOfEnrollmentService,
     MSFAANumberSharedService,

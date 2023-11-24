@@ -51,14 +51,15 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
     .compile();
 
   const nestApplication = module.createNestApplication();
+  await nestApplication.init();
+
+  const dataSource = module.get(DataSource);
+  const zbClient = nestApplication.get(ZBClient);
 
   // Load system user.
   const systemUsersService = nestApplication.get(SystemUsersService);
   await systemUsersService.loadSystemUser();
 
-  await nestApplication.init();
-  const dataSource = module.get(DataSource);
-  const zbClient = nestApplication.get(ZBClient);
   return {
     nestApplication,
     module,

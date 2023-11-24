@@ -23,15 +23,8 @@ export class SystemUsersService {
    * system user and return the user.
    * @return system user.
    */
-  private async getSystemUser(): Promise<User> {
-    const existingUser = await this.userRepo.findOne({
-      select: {
-        id: true,
-      },
-      where: {
-        userName: SYSTEM_USER_USER_NAME,
-      },
-    });
+  private async getOrCreateSystemUser(): Promise<User> {
+    const existingUser = await this.getSystemUser();
 
     if (existingUser) {
       return existingUser;
@@ -42,13 +35,32 @@ export class SystemUsersService {
     user.userName = SYSTEM_USER_USER_NAME;
     user.lastName = SYSTEM_USER_LAST_NAME;
     user.email = SERVICE_ACCOUNT_DEFAULT_USER_EMAIL;
-    return this.userRepo.save(user);
+    await this.userRepo
+      .createQueryBuilder()
+      .insert()
+      .into(User)
+      .values(user)
+      .orIgnore("ON CONSTRAINT users_user_name_key DO NOTHING")
+      .execute();
+
+    return this.getSystemUser();
   }
 
   /**
    * Load system user.
    */
   async loadSystemUser(): Promise<void> {
-    this.systemUser = await this.getSystemUser();
+    this.systemUser = await this.getOrCreateSystemUser();
+  }
+
+  private async getSystemUser(): Promise<User> {
+    return this.userRepo.findOne({
+      select: {
+        id: true,
+      },
+      where: {
+        userName: SYSTEM_USER_USER_NAME,
+      },
+    });
   }
 }

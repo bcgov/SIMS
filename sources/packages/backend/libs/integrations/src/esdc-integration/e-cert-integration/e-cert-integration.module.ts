@@ -22,11 +22,11 @@ import {
   ECertGenerationService,
   SshService,
 } from "../../services";
-import { SystemUsersService } from "@sims/services/system-users";
+import { SystemUserModule } from "@sims/services/system-users";
 import { SFASApplicationService } from "@sims/services/sfas";
 
 @Module({
-  imports: [ConfigModule],
+  imports: [ConfigModule, SystemUserModule],
   providers: [
     SshService,
     ECertFullTimeIntegrationService,
@@ -39,7 +39,6 @@ import { SFASApplicationService } from "@sims/services/sfas";
     ECertFullTimeFileHeader,
     ECertFullTimeFileFooter,
     DisbursementScheduleErrorsService,
-    SystemUsersService,
     RestrictionSharedService,
     StudentRestrictionSharedService,
     ECertGenerationService,

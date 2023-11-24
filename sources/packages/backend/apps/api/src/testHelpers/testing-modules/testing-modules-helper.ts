@@ -44,12 +44,12 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
   }).compile();
   const nestApplication = module.createNestApplication();
   setGlobalPipes(nestApplication);
+  await nestApplication.init();
 
   // Load system user.
   const systemUsersService = nestApplication.get(SystemUsersService);
   await systemUsersService.loadSystemUser();
 
-  await nestApplication.init();
   const dataSource = module.get(DataSource);
   return {
     nestApplication,

@@ -32,12 +32,13 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
 
   const nestApplication = module.createNestApplication();
 
+  await nestApplication.init();
+  const dataSource = module.get(DataSource);
+
   // Load system user.
   const systemUsersService = nestApplication.get(SystemUsersService);
   await systemUsersService.loadSystemUser();
 
-  await nestApplication.init();
-  const dataSource = module.get(DataSource);
   return {
     nestApplication,
     module,
