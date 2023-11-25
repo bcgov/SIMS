@@ -10,8 +10,10 @@ import {
 
 @Injectable()
 export class SystemUsersService {
-  /** System user */
-  systemUser: User = undefined;
+  /**
+   * User which indicates the system for audit purpose.
+   */
+  private systemUserInternal: User = undefined;
 
   constructor(
     @InjectRepository(User)
@@ -19,15 +21,15 @@ export class SystemUsersService {
   ) {}
 
   /**
-   * Get system user. If not found create a new
-   * system user and return the user.
-   * @return system user.
+   * Load system user.
    */
-  private async getOrCreateSystemUser(): Promise<User> {
-    const existingUser = await this.getSystemUser();
+  async loadSystemUser(): Promise<void> {
+    const existingSystemUser = await this.getSystemUser();
 
-    if (existingUser) {
-      return existingUser;
+    //If the system user already exist, assign to cached variable.
+    if (existingSystemUser) {
+      this.systemUserInternal = existingSystemUser;
+      return;
     }
 
     // Create new system user if not exists.
@@ -43,16 +45,13 @@ export class SystemUsersService {
       .orIgnore("ON CONSTRAINT users_user_name_key DO NOTHING")
       .execute();
 
-    return this.getSystemUser();
+    this.systemUserInternal = await this.getSystemUser();
   }
 
   /**
-   * Load system user.
+   * Get system user by system user name.
+   * @returns system user.
    */
-  async loadSystemUser(): Promise<void> {
-    this.systemUser = await this.getOrCreateSystemUser();
-  }
-
   private async getSystemUser(): Promise<User> {
     return this.userRepo.findOne({
       select: {
@@ -62,5 +61,12 @@ export class SystemUsersService {
         userName: SYSTEM_USER_USER_NAME,
       },
     });
+  }
+
+  /**
+   * Get system user.
+   */
+  get systemUser() {
+    return this.systemUserInternal;
   }
 }
