@@ -46,11 +46,11 @@ export class CalculateTuitionRemittanceEffectiveAmountStep
       log.info(
         `The tuition remittance was adjusted because exceeded the maximum allowed of ${maxTuitionRemittance}.`,
       );
-      return true;
+    } else {
+      disbursement.tuitionRemittanceEffectiveAmount =
+        disbursement.tuitionRemittanceRequestedAmount;
+      log.info("No tuition remittance adjustment was needed.");
     }
-    disbursement.tuitionRemittanceEffectiveAmount =
-      disbursement.tuitionRemittanceRequestedAmount;
-    log.info("No tuition remittance adjustment was needed.");
     return true;
   }
 }

@@ -48,18 +48,16 @@ export class ApplyOverawardsDeductionsStep implements ECertProcessStep {
       );
     const studentBalance = overawardsBalance[studentId];
     // Check is some deduction is needed.
-    if (!studentBalance) {
-      log.info("No overaward deductions are needed.");
-      return true;
-    }
-    // Apply the overawards for every student that has some balance.
-    if (overawardsBalance[studentId]) {
+    if (studentBalance) {
+      // Apply the overawards for every student that has some balance.
       log.info("Found overaward deductions.");
       await this.applyOverawardsDeductions(
         disbursement,
-        overawardsBalance[studentId],
+        studentBalance,
         entityManager,
       );
+    } else {
+      log.info("No overaward deductions are needed.");
     }
     return true;
   }
@@ -108,7 +106,7 @@ export class ApplyOverawardsDeductionsStep implements ECertProcessStep {
         await disbursementOverawardRepo.insert({
           student: disbursement.studentAssessment.application.student,
           studentAssessment: disbursement.studentAssessment,
-          disbursementSchedule: disbursement as DisbursementSchedule,
+          disbursementSchedule: disbursement,
           disbursementValueCode: loan.valueCode,
           overawardValue: loan.overawardAmountSubtracted * -1,
           originType: DisbursementOverawardOriginType.AwardDeducted,
