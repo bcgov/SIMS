@@ -27,27 +27,26 @@
     <content-group>
       <toggle-content :toggled="!applications?.count">
         <v-data-table-server
+          v-if="applications?.count"
           :headers="AllInProgressOfferingChangeSummaryHeaders"
           :items="applications?.results"
-          :items-length="applications?.count"
+          :items-length="applications.count"
           :loading="loading"
           item-value="applicationId"
           v-model:items-per-page="DEFAULT_PAGE_LIMIT"
           @update:options="paginationAndSortEvent"
         >
           <template #[`item.dateSubmitted`]="{ item }">
-            {{ dateOnlyLongString(item.raw.createdAt) }}
+            {{ dateOnlyLongString(item.createdAt) }}
           </template>
           <template #[`item.fullName`]="{ item }">
-            {{ item.raw.fullName }}
+            {{ item.fullName }}
           </template>
           <template #[`item.applicationNumber`]="{ item }">
-            {{ item.raw.applicationNumber }}
+            {{ item.applicationNumber }}
           </template>
           <template #[`item.status`]="{ item }">
-            <status-chip-application-offering-change
-              :status="item.raw.status"
-            />
+            <status-chip-application-offering-change :status="item.status" />
           </template>
           <template #[`item.id`]="{ item }">
             <v-btn color="primary" @click="viewAssessment(item)">View</v-btn>
@@ -69,7 +68,7 @@ import {
 } from "@/types";
 import { useFormatters } from "@/composables";
 import StatusChipApplicationOfferingChange from "@/components/generic/StatusChipApplicationOfferingChange.vue";
-import { ApplicationOfferingChangeSummaryAPIOutDTO } from "@/services/http/dto";
+import { AllInProgressApplicationOfferingChangesAPIOutDTO } from "@/services/http/dto";
 import { ApplicationOfferingChangeRequestService } from "@/services/ApplicationOfferingChangeRequestService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
@@ -83,7 +82,7 @@ export default defineComponent({
     const { dateOnlyLongString } = useFormatters();
     const applications = ref(
       {} as
-        | PaginatedResults<ApplicationOfferingChangeSummaryAPIOutDTO>
+        | PaginatedResults<AllInProgressApplicationOfferingChangesAPIOutDTO>
         | undefined,
     );
     let currentPage = DEFAULT_DATATABLE_PAGE_NUMBER;
@@ -149,8 +148,8 @@ export default defineComponent({
       router.push({
         name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
         params: {
-          applicationId: item.raw.applicationId,
-          studentId: item.raw.studentId,
+          applicationId: item.applicationId,
+          studentId: item.studentId,
         },
       });
     };

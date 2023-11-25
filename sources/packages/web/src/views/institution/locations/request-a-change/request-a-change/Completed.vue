@@ -21,6 +21,7 @@
       <content-group>
         <toggle-content :toggled="!applications?.count">
           <v-data-table-server
+            v-if="applications?.count"
             :headers="CompletedOfferingChangeSummaryHeaders"
             :items="applications?.results"
             :items-length="applications?.count"
@@ -30,25 +31,23 @@
             @update:options="paginationAndSortEvent"
           >
             <template #[`item.dateCompleted`]="{ item }">
-              {{ dateOnlyLongString(item.columns.dateCompleted) }}
+              {{ dateOnlyLongString(item.dateCompleted) }}
             </template>
             <template #[`item.fullName`]="{ item }">
-              {{ item.raw.fullName }}
+              {{ item.fullName }}
             </template>
             <template #[`item.studyStartDate`]="{ item }">
-              {{ dateOnlyLongString(item.raw.studyStartDate) }}
+              {{ dateOnlyLongString(item.studyStartDate) }}
               -
-              {{ dateOnlyLongString(item.raw.studyEndDate) }}
+              {{ dateOnlyLongString(item.studyEndDate) }}
             </template>
             <template #[`item.applicationNumber`]="{ item }">
-              {{ item.columns.applicationNumber }} </template
+              {{ item.applicationNumber }} </template
             ><template #[`item.status`]="{ item }">
-              <status-chip-application-offering-change
-                :status="item.raw.status"
-              />
+              <status-chip-application-offering-change :status="item.status" />
             </template>
             <template #[`item.id`]="{ item }">
-              <v-btn color="primary" @click="viewRequestAChange(item.value)"
+              <v-btn color="primary" @click="viewRequestAChange(item.id)"
                 >View</v-btn
               >
             </template>

@@ -40,6 +40,21 @@ export interface InProgressApplicationOfferingChangesAPIOutDTO {
 }
 
 /**
+ * All in progress application offering change details.
+ */
+export class AllInProgressApplicationOfferingChangesAPIOutDTO {
+  id: number;
+  applicationNumber: string;
+  applicationId: number;
+  studyStartDate: string;
+  studyEndDate: string;
+  fullName: string;
+  status: ApplicationOfferingChangeRequestStatus;
+  createdAt: string;
+  studentId: number;
+}
+
+/**
  * Completed application offering change details.
  */
 export interface CompletedApplicationOfferingChangesAPIOutDTO {

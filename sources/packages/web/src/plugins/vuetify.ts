@@ -3,11 +3,10 @@ import "@fortawesome/fontawesome-free/css/all.css";
 import "vuetify/lib/styles/main.sass";
 import { createVuetify } from "vuetify";
 import * as components from "vuetify/lib/components";
-// Todo: remove import from vuetify/labs/ and its corresponding logics when the components are available in vetify/lib/components.
-import { VDataTableServer, VDataTable } from "vuetify/labs/VDataTable";
 import * as directives from "vuetify/lib/directives";
 import { aliases, fa } from "vuetify/iconsets/fa";
 import { mdi } from "vuetify/iconsets/mdi";
+import { VDivider, VDataTableServer, VDataTable } from "vuetify/lib/components";
 
 export default createVuetify({
   components: {
@@ -15,8 +14,32 @@ export default createVuetify({
     VDataTableServer,
     VDataTable,
   },
+  aliases: {
+    VDividerOpaque: VDivider,
+    VDividerInsetOpaque: VDivider,
+    VDividerVerticalOpaque: VDivider,
+  },
   directives,
   default: {},
+  defaults: {
+    VDividerOpaque: {
+      class: "border-opacity-100",
+      thickness: 2,
+      color: "secondary",
+    },
+    VDividerInsetOpaque: {
+      class: "border-opacity-100",
+      thickness: 2,
+      color: "secondary",
+      inset: true,
+    },
+    VDividerVerticalOpaque: {
+      class: "border-opacity-100",
+      thickness: 2,
+      color: "secondary",
+      vertical: true,
+    },
+  },
   theme: {
     themes: {
       light: {

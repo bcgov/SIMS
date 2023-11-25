@@ -56,7 +56,7 @@
             active-class="active-list-item"
             density="compact"
             bg-color="default"
-            active-color="primary"
+            color="primary"
           >
             <template v-for="(item, index) in menuItems" :key="index">
               <v-list-item :value="index" @click="item.command">
