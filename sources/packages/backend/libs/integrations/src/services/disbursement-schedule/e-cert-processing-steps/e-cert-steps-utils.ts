@@ -7,6 +7,13 @@ import {
   StudentRestriction,
 } from "@sims/sims-db";
 
+/**
+ * Check student restrictions by its action type.
+ * @param studentRestrictions student restrictions.
+ * @param actionType action type.
+ * @returns the first restriction of the requested
+ * action type.
+ */
 export function getStudentRestrictionByActionType(
   studentRestrictions: StudentRestriction[],
   actionType: RestrictionActionType,
@@ -19,21 +26,21 @@ export function getStudentRestrictionByActionType(
 /**
  * Determine when a BC Full-time/Part-time funding should not be disbursed.
  * In this case the e-Cert can still be generated with th federal funding.
- * @param schedule disbursement to be checked.
+ * @param disbursement disbursement to be checked.
  * @param disbursementValue award to be checked.
  * @returns true if the funding should not be disbursed, otherwise, false.
  */
 export function shouldStopFunding(
-  schedule: DisbursementSchedule,
+  disbursement: DisbursementSchedule,
   disbursementValue: DisbursementValue,
 ): boolean {
   const stopFunding = getStudentRestrictionByActionType(
-    schedule.studentAssessment.application.student.studentRestrictions,
+    disbursement.studentAssessment.application.student.studentRestrictions,
     RestrictionActionType.StopFullTimeBCFunding,
   );
   return (
     stopFunding &&
-    schedule.studentAssessment.application.currentAssessment.offering
+    disbursement.studentAssessment.application.currentAssessment.offering
       .offeringIntensity === OfferingIntensity.fullTime &&
     BC_FUNDING_TYPES.includes(disbursementValue.valueType)
   );

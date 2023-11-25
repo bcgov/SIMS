@@ -8,15 +8,19 @@ import {
 import { ECertProcessStep } from "./e-cert-steps-models";
 import { ProcessSummary } from "@sims/utilities/logger";
 
+/**
+ * Check active student restriction that should stop
+ * any BC funding from being disbursed.
+ */
 @Injectable()
 export class ApplyStopBCFundingRestrictionFullTimeStep
   implements ECertProcessStep
 {
   /**
-   * Calculate the effective value for every award. The result of this calculation
-   * will be the value used to generate the e-Cert.
-   * @param disbursements all disbursements that are part of one e-Cert.
-   * @param entityManager used to execute the commands in the same transaction.
+   * Check active student restriction that should stop any BC funding from being disbursed.
+   * In case some is present, BC awards will be updated to not be disbursed.
+   * @param disbursement eligible disbursement to be potentially added to an e-Cert.
+   * @param _entityManager not used for this step.
    * @param log cumulative log summary.
    */
   executeStep(

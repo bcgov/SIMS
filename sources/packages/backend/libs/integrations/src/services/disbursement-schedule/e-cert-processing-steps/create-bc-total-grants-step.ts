@@ -10,6 +10,10 @@ import { ECertProcessStep } from "./e-cert-steps-models";
 import { EntityManager } from "typeorm";
 import { ProcessSummary } from "@sims/utilities/logger";
 
+/**
+ * Calculate the BCSG that represents the sum of all BC grants
+ * as they should be added to the e-Cert.
+ */
 @Injectable()
 export class CreateBCTotalGrantsStep implements ECertProcessStep {
   constructor(private readonly systemUsersService: SystemUsersService) {}
@@ -17,10 +21,10 @@ export class CreateBCTotalGrantsStep implements ECertProcessStep {
   /**
    * Calculate the total BC grants for each disbursement since they
    * can be affected by the calculations for the values already paid for the student
-   * or by overaward deductions or {@link RestrictionActionType.StopFullTimeBCFunding}
-   * restriction.
-   * @param disbursement disbursement with the BC grants to be calculated.
-   * @param _entityManager not used.
+   * or by overaward deductions or "stop full time BC funding" restrictions.
+   * @param disbursement eligible disbursement to be potentially added to an e-Cert.
+   * If no BC grants are present the total will still be add as zero.
+   * @param _entityManager not used for this step.
    * @param log cumulative log summary.
    */
   async executeStep(

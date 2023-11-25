@@ -27,9 +27,9 @@ export class ApplyOverawardsDeductionsStep implements ECertProcessStep {
   ) {}
 
   /**
-   * Get the overawards balance consolidated for the disbursement student and per
-   * loan award to apply, if needed, the overawards deductions.
-   * @param disbursement disbursement that will be added to an e-Cert.
+   * Get the overawards balance consolidated for the disbursement student and
+   * per loan award to apply, if needed, the overawards deductions.
+   * @param disbursement eligible disbursement to be potentially added to an e-Cert.
    * @param entityManager used to execute the commands in the same transaction.
    * @param log cumulative log summary.
    */
@@ -50,7 +50,7 @@ export class ApplyOverawardsDeductionsStep implements ECertProcessStep {
     // Check is some deduction is needed.
     if (!studentBalance) {
       log.info("No overaward deductions are needed.");
-      return;
+      return true;
     }
     // Apply the overawards for every student that has some balance.
     if (overawardsBalance[studentId]) {

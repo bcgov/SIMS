@@ -8,6 +8,13 @@ import { ECertProcessStep } from "./e-cert-steps-models";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { EntityManager } from "typeorm";
 
+/**
+ * Ensures that tuition remittance requested by the institution
+ * will not be greater then what the student would be receiving.
+ * From the time that tuition remittance was requested by the institution
+ * the student may have get some restriction or overaward that would impact
+ * the total amount that he would be entitled to receive.
+ */
 @Injectable()
 export class CalculateTuitionRemittanceEffectiveAmountStep
   implements ECertProcessStep
@@ -18,8 +25,8 @@ export class CalculateTuitionRemittanceEffectiveAmountStep
 
   /**
    * Calculate tuition remittance effective amount.
-   * @param disbursement all disbursements that are part of one e-Cert.
-   * @param _entityManager not used.
+   * @param disbursement eligible disbursement to be potentially added to an e-Cert.
+   * @param _entityManager not used for this step.
    * @param log cumulative log summary.
    */
   async executeStep(
@@ -39,7 +46,7 @@ export class CalculateTuitionRemittanceEffectiveAmountStep
       log.info(
         `The tuition remittance was adjusted because exceeded the maximum allowed of ${maxTuitionRemittance}.`,
       );
-      return;
+      return true;
     }
     disbursement.tuitionRemittanceEffectiveAmount =
       disbursement.tuitionRemittanceRequestedAmount;

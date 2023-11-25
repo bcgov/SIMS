@@ -15,6 +15,9 @@ import {
 import { ECertGenerationService } from "../e-cert-generation.service";
 import { Injectable } from "@nestjs/common";
 
+/**
+ * Executes the full-time calculations for the e-Cert generation.
+ */
 @Injectable()
 export class FullTimeCalculationProcess extends ECertCalculationProcess {
   constructor(
@@ -32,12 +35,22 @@ export class FullTimeCalculationProcess extends ECertCalculationProcess {
     super(dataSource);
   }
 
+  /**
+   * Get all full-time disbursements currently eligible to be part of
+   * an e-Cert to have its calculations executed.
+   * The returned array of {@link DisbursementSchedule} will be shared across all
+   * steps being modified till the {@link DisbursementSchedule} entity model
+   * modifications will be saved.
+   */
   protected getDisbursements(): Promise<DisbursementSchedule[]> {
     return this.eCertGenerationService.getEligibleRecords(
       OfferingIntensity.fullTime,
     );
   }
 
+  /**
+   * Define the steps to be executed and the execution order.
+   */
   protected calculationSteps(): ECertProcessStep[] {
     return [
       this.validateDisbursementFullTimeStep,

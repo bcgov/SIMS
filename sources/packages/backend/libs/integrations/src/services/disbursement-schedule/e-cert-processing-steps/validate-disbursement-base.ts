@@ -1,10 +1,13 @@
 import { COEStatus, DisbursementSchedule } from "@sims/sims-db";
 import { ProcessSummary } from "@sims/utilities/logger";
 
+/**
+ * Common e-Cert validations for full-time and part-time.
+ */
 export abstract class ValidateDisbursementBase {
   /**
    * Validate common requirements independently of the offering intensity.
-   * @param disbursement disbursement with the BC grants to be calculated.
+   * @param disbursement eligible disbursement to be potentially added to an e-Cert.
    * @param log cumulative log summary.
    */
   protected validate(

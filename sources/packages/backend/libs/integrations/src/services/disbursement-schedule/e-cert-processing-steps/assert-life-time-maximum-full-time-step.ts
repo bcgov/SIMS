@@ -33,7 +33,7 @@ export class AssertLifeTimeMaximumFullTimeStep implements ECertProcessStep {
   /**
    * Check if BCSL is part of the disbursement and ensure that, if BCSL maximum is reached,
    * the award will be adjusted and a restriction will be created.
-   * @param disbursement disbursement to have the BCSL award checked.
+   * @param disbursement eligible disbursement to be potentially added to an e-Cert.
    * @param entityManager used to execute the commands in the same transaction.
    * @param log cumulative log summary.
    */

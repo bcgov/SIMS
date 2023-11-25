@@ -5,6 +5,9 @@ import { getStudentRestrictionByActionType } from "./e-cert-steps-utils";
 import { ECertProcessStep, ValidateDisbursementBase } from ".";
 import { Injectable } from "@nestjs/common";
 
+/**
+ * Specific e-Cert validations for full-time.
+ */
 @Injectable()
 export class ValidateDisbursementFullTimeStep
   extends ValidateDisbursementBase
@@ -12,7 +15,7 @@ export class ValidateDisbursementFullTimeStep
 {
   /**
    * Validate full-time disbursements.
-   * @param disbursement disbursement object with all modifications to be saved.
+   * @param disbursement eligible disbursement to be potentially added to an e-Cert.
    * @param _entityManager not used for this step.
    * @param log cumulative log summary.
    */

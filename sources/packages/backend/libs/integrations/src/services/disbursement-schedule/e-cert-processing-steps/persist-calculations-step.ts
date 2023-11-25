@@ -8,6 +8,11 @@ import { ECertProcessStep } from "./e-cert-steps-models";
 import { EntityManager } from "typeorm";
 import { ProcessSummary } from "@sims/utilities/logger";
 
+/**
+ * Wraps up a series of e-Cert calculations steps, marking the disbursement as
+ * ready to be sent and persisting all modifications related to the disbursement
+ * and its cascading configured updates.
+ */
 @Injectable()
 export class PersistCalculationsStep implements ECertProcessStep {
   constructor(private readonly systemUsersService: SystemUsersService) {}
@@ -15,7 +20,7 @@ export class PersistCalculationsStep implements ECertProcessStep {
   /**
    * Persis all calculations executed for the disbursement also changing
    * its status to {@link DisbursementScheduleStatus.ReadToSend}.
-   * @param disbursement disbursement object with all modifications to be saved.
+   * @param disbursement eligible disbursement to be potentially added to an e-Cert.
    * @param entityManager used to execute the commands in the same transaction.
    * @param log cumulative log summary.
    */
@@ -33,7 +38,7 @@ export class PersistCalculationsStep implements ECertProcessStep {
     disbursement.updatedAt = now;
     await entityManager.getRepository(DisbursementSchedule).save(disbursement);
     log.info(
-      `All calculations were saved and disbursement set to '${DisbursementScheduleStatus.ReadToSend}'.`,
+      `All calculations were saved and disbursement was set to '${DisbursementScheduleStatus.ReadToSend}'.`,
     );
     return true;
   }
