@@ -7,7 +7,7 @@ import {
 
 @ValidatorConstraint({ name: "customMaxLength", async: false })
 export class CustomMaxLength implements ValidatorConstraintInterface {
-  validate(value: number, _args: ValidationArguments) {
+  validate(value: number) {
     return value <= MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE;
   }
 
