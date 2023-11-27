@@ -5,8 +5,8 @@ import {
   ValidationArguments,
 } from "class-validator";
 
-@ValidatorConstraint({ name: "customMaxLength", async: false })
-export class CustomMaxLength implements ValidatorConstraintInterface {
+@ValidatorConstraint({ name: "CustomMaxValue", async: false })
+export class CustomMaxValue implements ValidatorConstraintInterface {
   validate(value: number) {
     return value <= MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE;
   }

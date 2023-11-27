@@ -4733,7 +4733,7 @@
                     }
                   ],
                   "className": "alert alert-warning fa fa-exclamation-triangle w-100",
-                  "content": "<strong class=\"ml-2\">The cost amounts reported for this offering may exceed eligible amounts</strong>\n<br>\n<span>The cost amounts reported for this offering may exceed eligible amounts. This offering can be submitted but will require StudentAid BC approval..</span>",
+                  "content": "<strong class=\"ml-2\">The cost amounts reported for this offering may exceed eligible amounts</strong>\n<br>\n<span>The cost amounts reported for this offering may exceed eligible amounts. This offering can be submitted but will require StudentAid BC approval.</span>",
                   "type": "htmlelement",
                   "hideLabel": false,
                   "tags": [],

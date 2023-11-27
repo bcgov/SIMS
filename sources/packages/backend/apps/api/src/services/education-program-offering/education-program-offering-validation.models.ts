@@ -56,7 +56,7 @@ import {
   OFFERING_YEAR_OF_STUDY_MIN_VALUE,
 } from "../../utilities";
 import { DATE_ONLY_ISO_FORMAT } from "@sims/utilities";
-import { CustomMaxLength } from "./custom-validators/custom-max-length";
+import { CustomMaxValue } from "./custom-validators/custom-max-value";
 
 const userFriendlyNames = {
   offeringName: "Name",
@@ -348,7 +348,7 @@ export class OfferingValidationModel {
       OfferingValidationWarnings.OfferingCostExceedMaximum,
     ),
   })
-  @Validate(CustomMaxLength, {
+  @Validate(CustomMaxValue, {
     message: getMaxFormatMessage(
       userFriendlyNames.actualTuitionCosts,
       MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
@@ -366,7 +366,7 @@ export class OfferingValidationModel {
       OfferingValidationWarnings.OfferingCostExceedMaximum,
     ),
   })
-  @Validate(CustomMaxLength, {
+  @Validate(CustomMaxValue, {
     message: getMaxFormatMessage(
       userFriendlyNames.programRelatedCosts,
       MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
@@ -387,7 +387,7 @@ export class OfferingValidationModel {
       OfferingValidationWarnings.OfferingCostExceedMaximum,
     ),
   })
-  @Validate(CustomMaxLength, {
+  @Validate(CustomMaxValue, {
     message: getMaxFormatMessage(
       userFriendlyNames.mandatoryFees,
       MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
@@ -408,7 +408,7 @@ export class OfferingValidationModel {
       OfferingValidationWarnings.OfferingCostExceedMaximum,
     ),
   })
-  @Validate(CustomMaxLength, {
+  @Validate(CustomMaxValue, {
     message: getMaxFormatMessage(
       userFriendlyNames.exceptionalExpenses,
       MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,

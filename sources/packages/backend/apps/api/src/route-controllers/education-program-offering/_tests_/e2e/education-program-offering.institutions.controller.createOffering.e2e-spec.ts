@@ -223,49 +223,51 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         await db.educationProgramOffering.findOne({
           where: { id: educationProgramOfferingId },
         });
-      expect(createdEducationProgramOffering).toEqual(
-        expect.objectContaining({
-          name: payload.offeringName,
-          studyStartDate: payload.studyStartDate,
-          studyEndDate: payload.studyEndDate,
-          actualTuitionCosts: payload.actualTuitionCosts,
-          programRelatedCosts: payload.programRelatedCosts,
-          mandatoryFees: payload.mandatoryFees,
-          exceptionalExpenses: payload.exceptionalExpenses,
-          offeringDelivered: payload.offeringDelivered,
-          lacksStudyBreaks: payload.lacksStudyBreaks,
-          offeringType: payload.offeringType,
-          offeringIntensity: payload.offeringIntensity,
-          yearOfStudy: payload.yearOfStudy,
-          showYearOfStudy: payload.showYearOfStudy,
-          hasOfferingWILComponent: payload.hasOfferingWILComponent,
-          offeringWILType: null,
-          studyBreaks: {
-            totalDays: studyPeriodBreakdown.totalDays,
-            studyBreaks: [
-              {
-                breakStartDate: studyBreak.breakStartDate,
-                breakEndDate: studyBreak.breakEndDate,
-                breakDays: 32,
-                eligibleBreakDays: 21,
-                ineligibleBreakDays: 11,
-              },
-            ],
-            totalFundedWeeks: studyPeriodBreakdown.totalFundedWeeks,
-            fundedStudyPeriodDays: studyPeriodBreakdown.fundedStudyPeriodDays,
-            unfundedStudyPeriodDays:
-              studyPeriodBreakdown.unfundedStudyPeriodDays,
-          },
-          offeringDeclaration: payload.offeringDeclaration,
-          assessedDate: null,
-          offeringStatus: OfferingStatus.CreationPending,
-          courseLoad: null,
-        }),
-      );
+
+      expect(createdEducationProgramOffering).toEqual({
+        createdAt: expect.any(Date),
+        updatedAt: expect.any(Date),
+        id: expect.any(Number),
+        name: payload.offeringName,
+        studyStartDate: payload.studyStartDate,
+        studyEndDate: payload.studyEndDate,
+        actualTuitionCosts: payload.actualTuitionCosts,
+        programRelatedCosts: payload.programRelatedCosts,
+        mandatoryFees: payload.mandatoryFees,
+        exceptionalExpenses: payload.exceptionalExpenses,
+        offeringDelivered: payload.offeringDelivered,
+        lacksStudyBreaks: payload.lacksStudyBreaks,
+        offeringType: payload.offeringType,
+        offeringIntensity: payload.offeringIntensity,
+        yearOfStudy: payload.yearOfStudy,
+        showYearOfStudy: payload.showYearOfStudy,
+        hasOfferingWILComponent: payload.hasOfferingWILComponent,
+        offeringWILType: null,
+        studyBreaks: {
+          totalDays: studyPeriodBreakdown.totalDays,
+          studyBreaks: [
+            {
+              breakStartDate: studyBreak.breakStartDate,
+              breakEndDate: studyBreak.breakEndDate,
+              breakDays: 32,
+              eligibleBreakDays: 21,
+              ineligibleBreakDays: 11,
+            },
+          ],
+          totalFundedWeeks: studyPeriodBreakdown.totalFundedWeeks,
+          fundedStudyPeriodDays: studyPeriodBreakdown.fundedStudyPeriodDays,
+          unfundedStudyPeriodDays: studyPeriodBreakdown.unfundedStudyPeriodDays,
+        },
+        offeringDeclaration: payload.offeringDeclaration,
+        assessedDate: null,
+        offeringStatus: OfferingStatus.CreationPending,
+        submittedDate: expect.any(Date),
+        courseLoad: null,
+      });
     },
   );
 
-  it(`Should return error when trying to create a new offering when data with mandatoryFees greater than ${MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE} is passed.`, async () => {
+  it(`Should return error when trying to create a new offering with mandatoryFees greater than ${MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE} is passed.`, async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
