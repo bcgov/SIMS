@@ -18,6 +18,14 @@ export class HealthService extends HealthIndicator {
   ) {
     super();
   }
+
+  /**
+   * Check the health of the application.
+   * @param key specifies if the health check is done for workers/queues.
+   * @returns status of the health check.
+   * In case of queues, we check if the redis is up and running.
+   * In case of workers, we check if the zeebe is ready to accept the connections.
+   */
   async isHealthy(key: string): Promise<HealthIndicatorResult> {
     let isHealthy;
     let healthCheckResult;
@@ -41,6 +49,10 @@ export class HealthService extends HealthIndicator {
     throw new HealthCheckError(`${key} check failed`, result);
   }
 
+  /**
+   * Check the redis connection is up and running.
+   * @returns status of the redis connection.
+   */
   private async checkRedisHealth(): Promise<HealthIndicatorResult> {
     return this.microservice.pingCheck<RedisOptions>("redis", {
       transport: Transport.REDIS,
@@ -52,6 +64,10 @@ export class HealthService extends HealthIndicator {
     });
   }
 
+  /**
+   * Check zeebe is ready to accept conenction.
+   * @returns status of the zeebe connection.
+   */
   private async checkZeebeHealth(): Promise<boolean> {
     return this.zeebe.allConnected();
   }

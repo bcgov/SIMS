@@ -1,5 +1,9 @@
 import { Controller, Get } from "@nestjs/common";
-import { HealthCheckService, HealthCheck } from "@nestjs/terminus";
+import {
+  HealthCheckService,
+  HealthCheck,
+  HealthCheckResult,
+} from "@nestjs/terminus";
 import { HealthService } from "../../../../../libs/services/src/health-check/health.service";
 
 @Controller("health")
@@ -9,9 +13,13 @@ export class HealthController {
     private healthIndicator: HealthService,
   ) {}
 
+  /**
+   * Check the health of the workers.
+   * @returns the status of the health for workers, with info or error and details.
+   */
   @Get()
   @HealthCheck()
-  check() {
+  check(): Promise<HealthCheckResult> {
     return this.health.check([() => this.healthIndicator.isHealthy("workers")]);
   }
 }

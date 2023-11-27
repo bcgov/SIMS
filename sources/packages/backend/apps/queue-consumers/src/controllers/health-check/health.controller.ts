@@ -9,6 +9,10 @@ export class HealthController {
     private healthIndicator: HealthService,
   ) {}
 
+  /**
+   * Check the health of the Queues.
+   * @returns the status of the health for Queues, with info or error and details.
+   */
   @Get()
   @HealthCheck()
   check() {
