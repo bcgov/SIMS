@@ -65,7 +65,7 @@ export class HealthService extends HealthIndicator {
   }
 
   /**
-   * Check zeebe is ready to accept conenction.
+   * Check zeebe is ready to accept connection.
    * @returns status of the zeebe connection.
    */
   private async checkZeebeHealth(): Promise<boolean> {
