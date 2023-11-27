@@ -1,6 +1,5 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { DataSource } from "typeorm";
 import {
   AESTGroups,
   BEARER_AUTH_TYPE,
