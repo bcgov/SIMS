@@ -10,6 +10,8 @@ import { setGlobalPipes } from "./utilities/auth-utils";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { Request, Response } from "express";
 import { KeycloakConfig } from "@sims/auth/config";
+import helmet from "helmet";
+import { SystemUsersService } from "@sims/services";
 
 async function bootstrap() {
   await KeycloakConfig.load();
@@ -21,8 +23,21 @@ async function bootstrap() {
   const logger = await app.resolve(LoggerService);
   app.useLogger(logger);
 
+  logger.log("Loading system user...");
+  const systemUsersService = app.get(SystemUsersService);
+  await systemUsersService.loadSystemUser();
+
   // Setting global prefix
   app.setGlobalPrefix("api");
+
+  // Using helmet.
+  app.use(helmet());
+
+  // Adding headers not covered by helmet.
+  app.use((_, res, next) => {
+    res.setHeader("Cache-Control", "no-cache");
+    next();
+  });
 
   // Exception filter
   const { httpAdapter } = app.get(HttpAdapterHost);

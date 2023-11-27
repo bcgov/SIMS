@@ -42,7 +42,7 @@ export class SINValidationProcessingService {
    * @returns result of the upload operation.
    */
   async uploadSINValidationRequests(): Promise<SINValidationUploadResult> {
-    const auditUser = await this.systemUsersService.systemUser();
+    const auditUser = this.systemUsersService.systemUser;
     this.logger.log("Retrieving students with pending SIN validation...");
     const students =
       await this.studentService.getStudentsPendingSinValidation();

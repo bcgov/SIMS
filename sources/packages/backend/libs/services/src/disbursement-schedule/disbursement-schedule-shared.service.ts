@@ -83,7 +83,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
     assessmentId: number,
     disbursements: DisbursementSaveModel[],
   ): Promise<DisbursementSchedule[]> {
-    const auditUser = await this.systemUsersService.systemUser();
+    const auditUser = this.systemUsersService.systemUser;
     return this.dataSource.transaction(async (transactionEntityManager) => {
       await configureIdleTransactionSessionTimeout(
         transactionEntityManager.queryRunner,
@@ -383,7 +383,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
       return;
     }
     const deletedAt = new Date();
-    const auditUser = await this.systemUsersService.systemUser();
+    const auditUser = this.systemUsersService.systemUser;
     overawardsToDelete.forEach((overaward) => {
       overaward.modifier = auditUser;
       overaward.deletedAt = deletedAt;
@@ -404,7 +404,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
     applicationNumber: string,
     entityManager: EntityManager,
   ) {
-    const auditUser = await this.systemUsersService.systemUser();
+    const auditUser = this.systemUsersService.systemUser;
     // Get all pending awards that must be cancelled.
     const pendingDisbursements = await this.getDisbursementsForOverawards(
       studentId,
@@ -532,7 +532,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
     totalAlreadyDisbursedValues: Record<string, number>,
     entityManager: EntityManager,
   ): Promise<void> {
-    const auditUser = await this.systemUsersService.systemUser();
+    const auditUser = this.systemUsersService.systemUser;
     const disbursementOverawardRepo = entityManager.getRepository(
       DisbursementOveraward,
     );

@@ -38,6 +38,7 @@
         message="You don't have programs yet"
       >
         <v-data-table-server
+          v-if="programAndCount?.count"
           :headers="ProgramSummaryHeaders"
           :items="programAndCount?.results"
           :items-length="programAndCount?.count"
@@ -47,23 +48,23 @@
         >
           <template #item="{ item }">
             <tr>
-              <td data-cy="programCIP">{{ item.columns.cipCode }}</td>
-              <td data-cy="programName">{{ item.columns.programName }}</td>
+              <td data-cy="programCIP">{{ item.cipCode }}</td>
+              <td data-cy="programName">{{ item.programName }}</td>
               <td data-cy="programCredential">
-                {{ item.columns.credentialType }}
+                {{ item.credentialType }}
               </td>
               <td data-cy="programStudyPeriods">
-                {{ item.columns.totalOfferings }}
+                {{ item.totalOfferings }}
               </td>
               <td data-cy="programStatus">
                 <status-chip-program
-                  :status="item.columns.programStatus"
+                  :status="item.programStatus"
                 ></status-chip-program>
               </td>
               <td>
                 <v-btn
                   color="primary"
-                  @click="goToViewProgram(item.columns.programId)"
+                  @click="goToViewProgram(item.programId)"
                   data-cy="viewProgram"
                   >View</v-btn
                 >

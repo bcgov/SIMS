@@ -38,7 +38,7 @@
           ></v-row>
         </content-group>
         <template v-if="showResolution">
-          <v-divider class="border-opacity-100" :thickness="2" />
+          <v-divider-opaque />
           <h3 class="category-header-medium mb-5">Resolution</h3>
           <v-textarea
             v-if="allowUserToEdit"

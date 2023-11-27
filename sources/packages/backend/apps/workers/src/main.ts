@@ -4,6 +4,7 @@ import { LoggerService } from "@sims/utilities/logger";
 import { WorkersModule } from "./workers.module";
 import { ZeebeTransportStrategy } from "./zeebe/zeebe-transport-strategy";
 import { ConfigService } from "@sims/utilities/config";
+import { SystemUsersService } from "@sims/services";
 
 (async () => {
   const workers = await NestFactory.create(WorkersModule, { bufferLogs: true });
@@ -11,6 +12,10 @@ import { ConfigService } from "@sims/utilities/config";
   // Get the injected logger.
   const logger = await workers.resolve(LoggerService);
   workers.useLogger(logger);
+
+  logger.log("Loading system user...");
+  const systemUsersService = workers.get(SystemUsersService);
+  await systemUsersService.loadSystemUser();
 
   logger.log("Initializing workers...");
 

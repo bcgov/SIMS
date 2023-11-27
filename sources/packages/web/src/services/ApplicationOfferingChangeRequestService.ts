@@ -13,6 +13,7 @@ import {
   ApplicationOfferingChangeRequestStatusAPIOutDTO,
   ApplicationOfferingChangeDetailsAPIOutDTO,
   ApplicationOfferingChangeAssessmentAPIInDTO,
+  AllInProgressApplicationOfferingChangesAPIOutDTO,
 } from "@/services/http/dto";
 
 export class ApplicationOfferingChangeRequestService {
@@ -86,7 +87,7 @@ export class ApplicationOfferingChangeRequestService {
   async getAllInProgressApplications(
     paginationOptions: PaginationOptions,
   ): Promise<
-    PaginatedResultsAPIOutDTO<InProgressApplicationOfferingChangesAPIOutDTO>
+    PaginatedResultsAPIOutDTO<AllInProgressApplicationOfferingChangesAPIOutDTO>
   > {
     return ApiClient.ApplicationOfferingChangeRequestApi.getAllInProgressApplications(
       paginationOptions,

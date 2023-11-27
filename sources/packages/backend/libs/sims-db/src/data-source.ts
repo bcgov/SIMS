@@ -55,12 +55,18 @@ import {
 } from "./entities";
 import { ClusterNode, ClusterOptions, RedisOptions } from "ioredis";
 import {
+  CONNECTION_POOL_MAX_CONNECTIONS,
+  CONNECTION_REQUEST_TIMEOUT,
   ORM_CACHE_LIFETIME,
   ORM_CACHE_REDIS_COMMAND_TIMEOUT,
   ORM_CACHE_REDIS_RETRY_INTERVAL,
 } from "@sims/utilities";
 import { ConfigService } from "@sims/utilities/config";
+import { PoolConfig } from "pg";
 
+interface ConnectionOptions extends PostgresConnectionOptions {
+  extra: PoolConfig;
+}
 interface ORMCacheConfig {
   type: "database" | "ioredis" | "ioredis/cluster";
   options?:
@@ -74,7 +80,7 @@ interface ORMCacheConfig {
   ignoreErrors?: boolean;
 }
 
-export const ormConfig: PostgresConnectionOptions = {
+export const ormConfig: ConnectionOptions = {
   type: "postgres",
   host: process.env.POSTGRES_HOST || "localhost",
   port: parseInt(process.env.POSTGRES_PORT, 10) || 5432,
@@ -84,6 +90,10 @@ export const ormConfig: PostgresConnectionOptions = {
   schema: process.env.DB_SCHEMA || "sims",
   cache: getORMCacheConfig(),
   synchronize: false,
+  extra: {
+    max: CONNECTION_POOL_MAX_CONNECTIONS,
+    connectionTimeoutMillis: CONNECTION_REQUEST_TIMEOUT,
+  },
 };
 
 /**

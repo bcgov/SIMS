@@ -167,7 +167,7 @@ export class MSFAANumberSharedService {
     },
   ): Promise<MSFAANumber> {
     return this.dataSource.transaction(async (entityManager) => {
-      const auditUser = await this.systemUsersService.systemUser();
+      const auditUser = this.systemUsersService.systemUser;
       const now = new Date();
       const nowISODate = getISODateOnlyString(now);
       // Cancel any pending MSFAA record that was never reported as signed or cancelled.
@@ -204,7 +204,7 @@ export class MSFAANumberSharedService {
         await entityManager.getRepository(MSFAANumber).save(newActiveMSFAA);
       } else {
         // Reactivate this msfaa record.
-        const systemUser = await this.systemUsersService.systemUser();
+        const systemUser = this.systemUsersService.systemUser;
         const updateResult = await this.dataSource
           .getRepository(MSFAANumber)
           .update(options.existingMSFAA.id, {

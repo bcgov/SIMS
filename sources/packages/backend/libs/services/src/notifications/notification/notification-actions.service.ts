@@ -470,6 +470,7 @@ export class NotificationActionsService {
   ): Promise<void> {
     const templateId = await this.notificationMessageService.getTemplateId(
       NotificationMessageType.AssessmentReadyForConfirmation,
+      { entityManager },
     );
     const assessmentReadyNotification = {
       userId: notification.userId,
@@ -535,7 +536,7 @@ export class NotificationActionsService {
   async saveECEResponseFileProcessingNotification(
     notification: ECEResponseFileProcessingNotification,
   ): Promise<void> {
-    const auditUser = await this.systemUsersService.systemUser();
+    const auditUser = this.systemUsersService.systemUser;
     const templateId = await this.notificationMessageService.getTemplateId(
       NotificationMessageType.ECEResponseFileProcessing,
     );

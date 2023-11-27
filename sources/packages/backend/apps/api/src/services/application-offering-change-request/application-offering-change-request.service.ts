@@ -504,7 +504,7 @@ export class ApplicationOfferingChangeRequestService {
       const applicationOfferingChangeRequest = await transactionEntityManager
         .getRepository(ApplicationOfferingChangeRequest)
         .save(newRequest);
-      const systemUser = await this.systemUsersService.systemUser();
+      const systemUser = this.systemUsersService.systemUser;
       await this.notificationActionsService.saveApplicationOfferingChangeRequestInProgressWithStudentNotification(
         {
           givenNames: application.student.user.firstName,
@@ -607,7 +607,7 @@ export class ApplicationOfferingChangeRequestService {
         .getRepository(ApplicationOfferingChangeRequest)
         .save(applicationOfferingChangeRequest);
       // Send the application offering change request completed notification.
-      const systemUser = await this.systemUsersService.systemUser();
+      const systemUser = this.systemUsersService.systemUser;
       const user = applicationOfferingChangeRequest.application.student.user;
       await this.notificationActionsService.saveApplicationOfferingChangeRequestCompleteNotification(
         {

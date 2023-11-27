@@ -3,7 +3,7 @@
     <v-list
       density="compact"
       bg-color="default"
-      active-color="primary"
+      color="primary"
       class="sidebar-item no-wrap"
       active-class="active-list-item"
       :items="items"
@@ -17,7 +17,7 @@
         class="sidebar-item no-wrap"
         active-class="active-list-item"
         bg-color="default"
-        active-color="primary"
+        color="primary"
         :items="sidebarBottomItems"
         data-cy="sidebarBottomMenu"
       >
