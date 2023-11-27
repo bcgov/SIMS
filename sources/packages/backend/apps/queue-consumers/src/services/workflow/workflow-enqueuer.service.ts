@@ -252,7 +252,7 @@ export class WorkflowEnqueuerService {
         `Updating assessment status to ${StudentAssessmentStatus.CancellationQueued}.`,
       );
       const now = new Date();
-      const systemUser = await this.systemUsersService.systemUser();
+      const systemUser = this.systemUsersService.systemUser;
       const assessmentUpdateResults = await this.studentAssessmentRepo.update(
         nextAssessment.id,
         {

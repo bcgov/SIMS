@@ -31,6 +31,17 @@ export const ORM_CACHE_LIFETIME = 10 * 60 * 1000;
 export const ORM_CACHE_REDIS_COMMAND_TIMEOUT = 5 * 1000;
 
 /**
+ * Maximum number of open connections that
+ * are allowed for connection pool.
+ */
+export const CONNECTION_POOL_MAX_CONNECTIONS = 20;
+/**
+ * Maximum time that a connection request can wait
+ * to get the database connection.
+ */
+export const CONNECTION_REQUEST_TIMEOUT = 120000;
+
+/**
  * Redis retry interval to retry connection
  * when a connection cannot be established to redis.
  *

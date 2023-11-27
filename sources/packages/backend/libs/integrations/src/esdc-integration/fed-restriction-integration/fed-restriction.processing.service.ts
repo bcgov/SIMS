@@ -48,7 +48,7 @@ export class FedRestrictionProcessingService {
    * @returns process response.
    */
   async process(): Promise<ProcessSFTPResponseResult> {
-    const auditUser = await this.systemUsersService.systemUser();
+    const auditUser = this.systemUsersService.systemUser;
     // Get the list of all files from SFTP ordered by file name.
     const fileSearch = new RegExp(
       `^${this.esdcConfig.environmentCode}CSLS\\.PBC\\.RESTR\\.LIST\\.D[\\w]*\\.[\\d]*$`,

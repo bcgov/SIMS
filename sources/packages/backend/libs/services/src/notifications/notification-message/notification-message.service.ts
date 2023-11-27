@@ -4,7 +4,7 @@ import {
   NotificationMessage,
   NotificationMessageType,
 } from "@sims/sims-db";
-import { DataSource } from "typeorm";
+import { DataSource, EntityManager } from "typeorm";
 
 @Injectable()
 export class NotificationMessageService extends RecordDataModelService<NotificationMessage> {
@@ -15,12 +15,17 @@ export class NotificationMessageService extends RecordDataModelService<Notificat
   /**
    * Retrieves the template id of a notification message.
    * @param notificationMessageTypeId id of the user who will receive the message.
+   * @param options options.
+   * - `entityManager` external entity manager to run in a transaction.
    * @returns template Id of the notification message.
    */
   async getTemplateId(
     notificationMessageTypeId: NotificationMessageType,
+    options?: { entityManager?: EntityManager },
   ): Promise<string> {
-    const notificationMessage = await this.repo.findOne({
+    const notificationMessageRepo =
+      options?.entityManager?.getRepository(NotificationMessage) ?? this.repo;
+    const notificationMessage = await notificationMessageRepo.findOne({
       select: {
         templateId: true,
       },

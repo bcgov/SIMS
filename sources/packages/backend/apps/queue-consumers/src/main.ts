@@ -8,10 +8,21 @@ import { NestFactory } from "@nestjs/core";
 import { Queue } from "bull";
 import { QueueConsumersModule } from "./queue-consumers.module";
 import * as basicAuth from "express-basic-auth";
+import { LoggerService } from "@sims/utilities/logger";
+import { SystemUsersService } from "@sims/services";
 
 (async () => {
   const app = await NestFactory.create(QueueConsumersModule);
   const config = app.get<ConfigService>(ConfigService);
+
+  // Get the injected logger.
+  const logger = await app.resolve(LoggerService);
+  app.useLogger(logger);
+
+  logger.log("Loading system user...");
+  const systemUsersService = app.get(SystemUsersService);
+  await systemUsersService.loadSystemUser();
+
   // Queue service.
   const queueService = app.get<QueueService>(QueueService);
   const queues = await queueService.queueConfigurationModel();

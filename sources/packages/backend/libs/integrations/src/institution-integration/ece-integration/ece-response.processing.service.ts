@@ -142,7 +142,7 @@ export class ECEResponseProcessingService {
       // Transform ece response detail records to disbursements which could be individually processed.
       const disbursementsToProcess =
         this.transformDetailRecordsToDisbursements(eceFileDetailRecords);
-      const auditUser = await this.systemUsersService.systemUser();
+      const auditUser = this.systemUsersService.systemUser;
       await this.validateAndUpdateEnrolmentStatus(
         disbursementsToProcess,
         auditUser.id,

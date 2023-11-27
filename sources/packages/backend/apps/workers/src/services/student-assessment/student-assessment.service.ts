@@ -41,9 +41,14 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     assessmentWorkflowId: string,
   ): Promise<void> {
     return this.dataSource.transaction(async (entityManager) => {
-      const auditUser = await this.systemUsersService.systemUser();
+      const auditUser = this.systemUsersService.systemUser;
       const assessmentRepo = entityManager.getRepository(StudentAssessment);
       const assessment = await assessmentRepo.findOne({
+        select: {
+          id: true,
+          studentAssessmentStatus: true,
+          assessmentWorkflowId: true,
+        },
         where: { id: assessmentId },
         lock: { mode: "pessimistic_write" },
       });
@@ -208,7 +213,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     assessmentId: number,
     status: AssessmentStatus,
   ): Promise<UpdateResult> {
-    const auditUser = await this.systemUsersService.systemUser();
+    const auditUser = this.systemUsersService.systemUser;
     return this.dataSource.transaction(async (transactionalEntityManager) => {
       const updateResult = await transactionalEntityManager
         .getRepository(StudentAssessment)
@@ -287,7 +292,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     assessmentId: number,
     workflowData: WorkflowData,
   ): Promise<void> {
-    const auditUser = await this.systemUsersService.systemUser();
+    const auditUser = this.systemUsersService.systemUser;
     const now = new Date();
     const studentAssessment = await this.repo.findOne({
       select: { studentAssessmentStatus: true },
