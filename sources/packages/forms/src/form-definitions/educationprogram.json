@@ -2964,8 +2964,7 @@
                     },
                     "id": "e7o9328",
                     "defaultValue": "",
-                    "hideLabel": true,
-                    "isNew": false
+                    "hideLabel": true
                 },
                 {
                     "autofocus": false,
@@ -3229,12 +3228,12 @@
                             "shortcut": ""
                         },
                         {
-                            "label": "This program has entrance requirements established by the institution that enable completion of the program study.",
+                            "label": "For post-secondary level academic credit-based programs: This program has entrance requirements established by the institution that enable completion of the program of study.",
                             "value": "requirementsByInstitution",
                             "shortcut": ""
                         },
                         {
-                            "label": "This program is approved by the B.C. Inudstry Training Authority and students must meet the entrance requirements set by the B.C. ITA.",
+                            "label": "This program is approved by the SkilledTradesBC and students must meet the entrance requirements set by the B.C. ITA.",
                             "value": "requirementsByBCITA",
                             "shortcut": ""
                         },
@@ -3275,7 +3274,7 @@
                     "tags": [],
                     "properties": {},
                     "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": "",
                         "json": ""
