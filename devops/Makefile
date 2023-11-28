@@ -407,7 +407,7 @@ deploy-workers:
 	test -n "$(DB_SERVICE_NAME)"
 	test -n "$(WORKERS_SECRET_NAME)"
 	test -n "$(WORKERS)"
-		test -n "$(WORKERS_PORT)"
+	test -n "$(WORKERS_PORT)"
 	test -n "$(BYPASS_CRA_INCOME_VERIFICATION)"
 	@echo "+\n++ Deploying Workers with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/workers-deploy.yml \

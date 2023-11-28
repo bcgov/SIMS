@@ -180,3 +180,5 @@ parameters:
     value: redis-creds
   - name: REDIS_PASSWORD_KEY
     value: password
+  - name: PORT
+    required: true
