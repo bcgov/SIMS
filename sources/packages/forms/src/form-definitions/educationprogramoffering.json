@@ -2156,7 +2156,8 @@
                   "showWordCount": false,
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "ebhbfou"
+                  "id": "ebhbfou",
+                  "isNew": false
                 }
               ],
               "placeholder": "",
@@ -4185,8 +4186,7 @@
               "id": "e6zws5q",
               "className": "",
               "tags": [],
-              "hideLabel": true,
-              "isNew": false
+              "hideLabel": true
             },
             {
               "collapsible": false,
@@ -4263,7 +4263,7 @@
                           },
                           "validateOn": "change",
                           "conditional": {
-                            "show": null,
+                            "show": "",
                             "when": null,
                             "eq": ""
                           },
@@ -4282,7 +4282,10 @@
                           "allowMultipleMasks": false,
                           "addons": [],
                           "id": "ey5wqhj",
-                          "inputType": "number"
+                          "inputType": "number",
+                          "tags": [
+                            "execute-validation"
+                          ]
                         }
                       ],
                       "width": 6,
@@ -4375,7 +4378,9 @@
                           "addons": [],
                           "id": "ezezla",
                           "inputType": "number",
-                          "tags": []
+                          "tags": [
+                            "execute-validation"
+                          ]
                         }
                       ],
                       "width": 6,
@@ -4522,7 +4527,7 @@
                           },
                           "validateOn": "change",
                           "conditional": {
-                            "show": null,
+                            "show": "",
                             "when": null,
                             "eq": ""
                           },
@@ -4541,7 +4546,10 @@
                           "allowMultipleMasks": false,
                           "addons": [],
                           "id": "eont0uf",
-                          "inputType": "number"
+                          "inputType": "number",
+                          "tags": [
+                            "execute-validation"
+                          ]
                         }
                       ],
                       "width": 6,
@@ -4634,7 +4642,9 @@
                           "addons": [],
                           "id": "esc41a",
                           "inputType": "number",
-                          "tags": []
+                          "tags": [
+                            "execute-validation"
+                          ]
                         }
                       ],
                       "width": 6,
@@ -4706,6 +4716,32 @@
                   "lazyLoad": false,
                   "autoAdjust": false,
                   "id": "esplx8u"
+                },
+                {
+                  "key": "offeringCostExceedMaximum",
+                  "label": "HTML",
+                  "input": false,
+                  "tag": "p",
+                  "attrs": [
+                    {
+                      "value": "",
+                      "attr": ""
+                    }
+                  ],
+                  "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+                  "content": "<strong class=\"ml-2\">The cost amounts reported for this offering may exceed eligible amounts</strong>\n<br>\n<span>The cost amounts reported for this offering may exceed eligible amounts. This offering can be submitted but will require StudentAid BC approval.</span>",
+                  "type": "htmlelement",
+                  "hideLabel": false,
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "customClass": "banner-warning",
+                  "lockKey": true,
+                  "customConditional": "show = data.validationWarnings.indexOf(component.key) !== -1;"
                 }
               ],
               "placeholder": "",

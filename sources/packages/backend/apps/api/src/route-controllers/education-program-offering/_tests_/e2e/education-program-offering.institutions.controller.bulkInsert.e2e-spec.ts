@@ -25,6 +25,10 @@ import * as path from "path";
 import { In } from "typeorm";
 import { OFFERING_VALIDATION_CRITICAL_ERROR } from "../../../../constants";
 import { OfferingValidationWarnings } from "../../../../services";
+import {
+  MAX_ALLOWED_OFFERING_AMOUNT,
+  MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
+} from "../../../../utilities";
 
 describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () => {
   let app: INestApplication;
@@ -36,6 +40,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
   let csvLocationCodeYESK: string;
   let collegeFLocationYESK: InstitutionLocation;
   let csvProgramSABCCodeSBC1: string;
+  let csvProgramSABCCodeSBC9: string;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -52,6 +57,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
     csvLocationCodeYESK = "YESK";
     // SABC code in the single and multiple CSV files.
     csvProgramSABCCodeSBC1 = "SBC1";
+    // SABC code in the single CSV files, where offering cost exceeds maximum.
+    csvProgramSABCCodeSBC9 = "SBC9";
 
     institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -68,6 +75,18 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       },
     );
     await db.educationProgram.save(educationProgramSBC1);
+    // Create a program for the institution with the same SABC code as that of the
+    // CSV file where offering cost exceeds maximum.
+    const educationProgramSBC9 = createFakeEducationProgram(
+      { institution: collegeF, user: collegeFUser },
+      {
+        initialValue: {
+          sabcCode: csvProgramSABCCodeSBC9,
+          deliveredOnSite: true,
+        } as Partial<EducationProgram>,
+      },
+    );
+    await db.educationProgram.save(educationProgramSBC9);
 
     endpoint = "/institutions/education-program-offering/bulk-insert";
 
@@ -309,6 +328,90 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
                     OfferingValidationWarnings.ProgramOfferingDeliveryMismatch,
                   message:
                     "Delivery type has an offering delivery that is not allowed by its program.",
+                },
+              ],
+            },
+          ],
+        });
+    },
+  );
+
+  it(
+    "Should return validation warnings when bulk offering CSV file with existing location code and SABC " +
+      `code with program related costs greater than ${MAX_ALLOWED_OFFERING_AMOUNT} less than ${MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE} ` +
+      "is uploaded.",
+    async () => {
+      // Arrange
+      const singleOfferingWithMaxExceedingOfferingCost = path.join(
+        __dirname,
+        "bulk-insert/single-upload-warning-when-max-exceeding-offering-cost.csv",
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(`${endpoint}?validation-only=true`)
+        .attach("file", singleOfferingWithMaxExceedingOfferingCost)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+        .expect({
+          message: "An offering has invalid data.",
+          errorType: OFFERING_VALIDATION_CRITICAL_ERROR,
+          objectInfo: [
+            {
+              recordIndex: 0,
+              locationCode: csvLocationCodeYESK,
+              sabcProgramCode: csvProgramSABCCodeSBC9,
+              startDate: "2023-09-02",
+              endDate: "2024-08-12",
+              offeringStatus: OfferingStatus.CreationPending,
+              errors: [],
+              infos: [],
+              warnings: [
+                {
+                  typeCode:
+                    OfferingValidationWarnings.OfferingCostExceedMaximum,
+                  message:
+                    "Program related costs must be not greater than 100000.",
+                },
+              ],
+            },
+          ],
+        });
+    },
+  );
+
+  it(
+    "Should return validation error when bulk offering CSV file with existing location code and SABC " +
+      `code with mandatory fees greater than ${MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE} is uploaded.`,
+    async () => {
+      // Arrange
+      const singleOfferingErrorWhenOfferingCostExceedMax = path.join(
+        __dirname,
+        "bulk-insert/single-upload-error-when-offering-cost-exceed-max.csv",
+      );
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(`${endpoint}?validation-only=true`)
+        .attach("file", singleOfferingErrorWhenOfferingCostExceedMax)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+        .expect({
+          message: "An offering has invalid data.",
+          errorType: OFFERING_VALIDATION_CRITICAL_ERROR,
+          objectInfo: [
+            {
+              recordIndex: 0,
+              locationCode: csvLocationCodeYESK,
+              sabcProgramCode: csvProgramSABCCodeSBC9,
+              startDate: "2023-09-02",
+              endDate: "2024-08-12",
+              errors: ["Mandatory fees must be not greater than 999999."],
+              infos: [],
+              warnings: [
+                {
+                  typeCode:
+                    OfferingValidationWarnings.OfferingCostExceedMaximum,
+                  message: "Mandatory fees must be not greater than 100000.",
                 },
               ],
             },

@@ -24,7 +24,10 @@ export const MINISTRY_FILE_UPLOAD_GROUP_NAME = "Ministry communications";
  * High estimated value to defined a max money amount for inputs that does not have a constrain defined.
  */
 export const MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE = 999999;
-
+/**
+ * Maximum allowable amount for offering tuition, books and supplies, mandatory fees and exceptional expenses.
+ */
+export const MAX_ALLOWED_OFFERING_AMOUNT = 100000;
 /**
  * Allowed percentage of days of an offering that represents the maximum study breaks days allowed,
  * - 0.1 indicates 10%

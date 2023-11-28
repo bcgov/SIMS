@@ -8,3 +8,4 @@ export * from "./custom-validators/period-max-length";
 export * from "./validation-utils";
 export * from "./custom-validators/is-date-after";
 export * from "./custom-validators/json-max-size";
+export * from "./custom-validators/is-max-cost-value";
