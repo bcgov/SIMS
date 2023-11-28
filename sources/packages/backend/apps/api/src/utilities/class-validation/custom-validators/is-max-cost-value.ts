@@ -29,7 +29,7 @@ export class IsMaxCostValueConstraint implements ValidatorConstraintInterface {
  * @param propertyDisplayName user-friendly property name to be added to the
  * validation message.
  * @param validationOptions validations options.
- * @returns true if the date property decorated is less or equalto the money value for unknown max value.
+ * @returns true if the date property decorated is less or equal to the money value for unknown max value.
  */
 export function IsMaxCostValue(
   propertyDisplayName?: string,
