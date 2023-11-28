@@ -174,6 +174,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
           STUDENT_APPLICATION_EXCEPTION_INVALID_STATE,
         );
       }
+
       const auditUser = { id: auditUserId } as User;
       const now = new Date();
       // Create the note to be associated with the update.

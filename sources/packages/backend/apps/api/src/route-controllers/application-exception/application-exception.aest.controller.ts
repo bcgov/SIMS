@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Query,
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import { ApplicationExceptionService } from "../../services";
 import {
@@ -31,7 +32,10 @@ import {
 import { IUserToken } from "../../auth/userToken.interface";
 import { getUserFullName } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
-import { STUDENT_APPLICATION_EXCEPTION_NOT_FOUND } from "../../constants";
+import {
+  STUDENT_APPLICATION_EXCEPTION_INVALID_STATE,
+  STUDENT_APPLICATION_EXCEPTION_NOT_FOUND,
+} from "../../constants";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { ApplicationExceptionStatus } from "@sims/sims-db";
 import {
@@ -105,11 +109,13 @@ export class ApplicationExceptionAESTController extends BaseController {
         updatedException.exceptionStatus,
       );
     } catch (error: unknown) {
-      if (
-        error instanceof CustomNamedError &&
-        error.name === STUDENT_APPLICATION_EXCEPTION_NOT_FOUND
-      ) {
-        throw new NotFoundException(error.message);
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case STUDENT_APPLICATION_EXCEPTION_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case STUDENT_APPLICATION_EXCEPTION_INVALID_STATE:
+            throw new UnprocessableEntityException(error.message);
+        }
       }
       throw error;
     }
