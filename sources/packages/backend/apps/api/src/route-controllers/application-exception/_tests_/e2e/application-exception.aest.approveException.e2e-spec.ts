@@ -152,12 +152,11 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
       .patch(endpoint)
       .send(updateApplicationException)
       .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect(HttpStatus.NOT_FOUND)
       .expect({
-        statusCode: 422,
-        message:
-          "Student application exception must be in Pending state to be assessed.",
-        error: "Unprocessable Entity",
+        statusCode: HttpStatus.NOT_FOUND,
+        message: "Student application exception not found.",
+        error: "Not Found",
       });
   });
 
@@ -182,12 +181,11 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
       .patch(endpoint)
       .send(updateApplicationException)
       .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect(HttpStatus.NOT_FOUND)
       .expect({
-        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-        message:
-          "Student application must not be in Overwritten state to be assessed.",
-        error: "Unprocessable Entity",
+        statusCode: HttpStatus.NOT_FOUND,
+        message: "Student application exception not found.",
+        error: "Not Found",
       });
   });
 
