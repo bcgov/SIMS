@@ -11,14 +11,13 @@ export class ZeebeHealthIndicator {
 
   allConnected(): boolean {
     const statuses = Object.values(this.workersConnectionStatus);
-    if (statuses.length !== Object.keys(Workers).length) {
+    const totalWorkersCount = Object.keys(Workers).length;
+    if (statuses.length !== totalWorkersCount) {
       // Check if the amount of reported statuses matches
       // with the amount of expected workers.
       return false;
     }
     // Check if all status are reported as successful.
-    return Object.values(this.workersConnectionStatus).every(
-      (status) => status === true,
-    );
+    return statuses.every((status) => status === true);
   }
 }
