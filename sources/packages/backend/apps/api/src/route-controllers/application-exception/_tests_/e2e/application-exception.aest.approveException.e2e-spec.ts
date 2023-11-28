@@ -161,7 +161,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
       });
   });
 
-  it(`Should not be able to approve application exception when the application has ${ApplicationStatus.Overwritten} is not in pending status.`, async () => {
+  it(`Should not be able to approve application exception when the application has ${ApplicationStatus.Overwritten} and exception is in ${ApplicationExceptionStatus.Pending} status.`, async () => {
     // Arrange
     const application = await saveFakeApplicationWithApplicationException(
       appDataSource,
@@ -184,7 +184,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
-        statusCode: 422,
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         message:
           "Student application must not be in Overwritten state to be assessed.",
         error: "Unprocessable Entity",

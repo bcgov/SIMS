@@ -17,11 +17,7 @@ import {
   PaginationOptions,
 } from "../../utilities";
 import { CustomNamedError, FieldSortOrder } from "@sims/utilities";
-import {
-  STUDENT_APPLICATION_EXCEPTION_INVALID_STATE,
-  STUDENT_APPLICATION_EXCEPTION_NOT_FOUND,
-  STUDENT_APPLICATION_INVALID_STATE,
-} from "../../constants";
+import { STUDENT_APPLICATION_EXCEPTION_NOT_FOUND } from "../../constants";
 import { NotificationActionsService } from "@sims/services/notifications";
 
 /**
@@ -156,30 +152,18 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
         .innerJoin("application.student", "student")
         .innerJoin("student.user", "user")
         .where("exception.id = :exceptionId", { exceptionId })
+        .andWhere("exception.exceptionStatus = :exceptionStatus", {
+          exceptionStatus: ApplicationExceptionStatus.Pending,
+        })
+        .andWhere("application.applicationStatus != :applicationStatus", {
+          applicationStatus: ApplicationStatus.Overwritten,
+        })
         .getOne();
 
       if (!exceptionToUpdate) {
         throw new CustomNamedError(
           "Student application exception not found.",
           STUDENT_APPLICATION_EXCEPTION_NOT_FOUND,
-        );
-      }
-
-      if (
-        exceptionToUpdate.exceptionStatus !== ApplicationExceptionStatus.Pending
-      ) {
-        throw new CustomNamedError(
-          `Student application exception must be in ${ApplicationExceptionStatus.Pending} state to be assessed.`,
-          STUDENT_APPLICATION_EXCEPTION_INVALID_STATE,
-        );
-      }
-      if (
-        exceptionToUpdate.application.applicationStatus ==
-        ApplicationStatus.Overwritten
-      ) {
-        throw new CustomNamedError(
-          `Student application must not be in ${ApplicationStatus.Overwritten} state to be assessed.`,
-          STUDENT_APPLICATION_INVALID_STATE,
         );
       }
 
