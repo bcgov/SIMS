@@ -32,7 +32,7 @@ export class HealthService extends HealthIndicator {
 
     if (key === "queues") {
       const healthCheckResult = await this.checkRedisHealth();
-      isHealthy = healthCheckResult.redis.status === "up" ? true : false;
+      isHealthy = healthCheckResult.redis.status === "up";
     } else if (key === "workers") {
       const healthCheckResult = await this.checkZeebeHealth();
       isHealthy = healthCheckResult;
