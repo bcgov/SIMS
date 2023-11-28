@@ -4,7 +4,7 @@ import {
   HealthCheck,
   HealthCheckResult,
 } from "@nestjs/terminus";
-import { HealthService } from "../../../../../libs/services/src/health-check/health.service";
+import { HealthService } from "@sims/services";
 
 @Controller("health")
 export class HealthController {
