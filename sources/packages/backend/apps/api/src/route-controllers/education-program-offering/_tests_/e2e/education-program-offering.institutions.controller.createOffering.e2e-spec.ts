@@ -28,6 +28,12 @@ import {
   MAX_ALLOWED_OFFERING_AMOUNT,
   MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
 } from "../../../../utilities";
+import {
+  EducationProgramOfferingAPIInDTO,
+  StudyBreakAPIOutDTO,
+  StudyBreaksAndWeeksOutDTO,
+} from "../../models/education-program-offering.dto";
+import { WILComponentOptions } from "../../../../services";
 
 describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", () => {
   let app: INestApplication;
@@ -35,6 +41,9 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
   let collegeF: Institution;
   let collegeFLocation: InstitutionLocation;
   let collegeFUser: User;
+  let studyPeriodBreakdown: Omit<StudyBreaksAndWeeksOutDTO, "studyBreaks">;
+  let payload: Partial<EducationProgramOfferingAPIInDTO>;
+  let studyBreak: StudyBreakAPIOutDTO;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -52,6 +61,39 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
     );
+    studyBreak = {
+      breakStartDate: "2023-12-01",
+      breakEndDate: "2024-01-01",
+    };
+    studyPeriodBreakdown = {
+      totalDays: 304,
+      totalFundedWeeks: 42,
+      fundedStudyPeriodDays: 293,
+      unfundedStudyPeriodDays: 11,
+    };
+    payload = {
+      offeringName: "Offering",
+      yearOfStudy: 1,
+      showYearOfStudy: true,
+      offeringIntensity: OfferingIntensity.fullTime,
+      offeringDelivered: OfferingDeliveryOptions.Onsite,
+      hasOfferingWILComponent: WILComponentOptions.No,
+      studyStartDate: "2023-09-01",
+      studyEndDate: "2024-06-30",
+      lacksStudyBreaks: false,
+      studyBreaks: [
+        {
+          breakStartDate: studyBreak.breakStartDate,
+          breakEndDate: studyBreak.breakEndDate,
+        },
+      ],
+      offeringType: OfferingTypes.Public,
+      offeringDeclaration: true,
+      actualTuitionCosts: 100001,
+      programRelatedCosts: 3211,
+      mandatoryFees: 456,
+      exceptionalExpenses: 555,
+    };
   });
 
   it("Should create a new offering when passed valid data.", async () => {
@@ -174,39 +216,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         fakeEducationProgram,
       );
       const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}`;
-      const studyBreak = {
-        breakStartDate: "2023-12-01",
-        breakEndDate: "2024-01-01",
-      };
-      const studyPeriodBreakdown = {
-        totalDays: 304,
-        totalFundedWeeks: 42,
-        fundedStudyPeriodDays: 293,
-        unfundedStudyPeriodDays: 11,
-      };
-      const payload = {
-        offeringName: "Offering 2",
-        yearOfStudy: 1,
-        showYearOfStudy: true,
-        offeringIntensity: OfferingIntensity.fullTime,
-        offeringDelivered: OfferingDeliveryOptions.Onsite,
-        hasOfferingWILComponent: "no",
-        studyStartDate: "2023-09-01",
-        studyEndDate: "2024-06-30",
-        lacksStudyBreaks: false,
-        studyBreaks: [
-          {
-            breakStartDate: studyBreak.breakStartDate,
-            breakEndDate: studyBreak.breakEndDate,
-          },
-        ],
-        offeringType: OfferingTypes.Public,
-        offeringDeclaration: true,
-        actualTuitionCosts: 100001,
-        programRelatedCosts: 3211,
-        mandatoryFees: 456,
-        exceptionalExpenses: 555,
-      };
+      payload.offeringName = "Offering 2";
+      payload.actualTuitionCosts = 100001;
 
       // Act/Assert
       let educationProgramOfferingId: number;
@@ -281,33 +292,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       fakeEducationProgram,
     );
     const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}`;
-    const studyBreak = {
-      breakStartDate: "2023-12-01",
-      breakEndDate: "2024-01-01",
-    };
-    const payload = {
-      offeringName: "Offering 3",
-      yearOfStudy: 1,
-      showYearOfStudy: true,
-      offeringIntensity: OfferingIntensity.fullTime,
-      offeringDelivered: OfferingDeliveryOptions.Onsite,
-      hasOfferingWILComponent: "no",
-      studyStartDate: "2023-09-01",
-      studyEndDate: "2024-06-30",
-      lacksStudyBreaks: false,
-      studyBreaks: [
-        {
-          breakStartDate: studyBreak.breakStartDate,
-          breakEndDate: studyBreak.breakEndDate,
-        },
-      ],
-      offeringType: OfferingTypes.Public,
-      offeringDeclaration: true,
-      actualTuitionCosts: 1234,
-      programRelatedCosts: 3211,
-      mandatoryFees: 1000000,
-      exceptionalExpenses: 555,
-    };
+    payload.offeringName = "Offering 3";
+    payload.mandatoryFees = 1000000;
 
     // Act/Assert
     await request(app.getHttpServer())

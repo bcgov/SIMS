@@ -4284,8 +4284,7 @@
                           "id": "ey5wqhj",
                           "inputType": "number",
                           "tags": [
-                            "execute-validation",
-                            "execute-calculation"
+                            "execute-validation"
                           ]
                         }
                       ],
@@ -4380,7 +4379,6 @@
                           "id": "ezezla",
                           "inputType": "number",
                           "tags": [
-                            "execute-calculation",
                             "execute-validation"
                           ]
                         }
@@ -4550,8 +4548,7 @@
                           "id": "eont0uf",
                           "inputType": "number",
                           "tags": [
-                            "execute-validation",
-                            "execute-calculation"
+                            "execute-validation"
                           ]
                         }
                       ],
@@ -4646,7 +4643,6 @@
                           "id": "esc41a",
                           "inputType": "number",
                           "tags": [
-                            "execute-calculation",
                             "execute-validation"
                           ]
                         }

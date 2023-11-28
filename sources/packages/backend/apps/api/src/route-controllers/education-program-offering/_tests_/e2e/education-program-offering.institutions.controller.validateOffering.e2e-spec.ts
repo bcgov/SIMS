@@ -164,7 +164,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
           warnings: [
             {
               typeCode: OfferingValidationWarnings.OfferingCostExceedMaximum,
-              message: "actualTuitionCosts must not be greater than 100000",
+              message: "Tuition must be not greater than 100000.",
             },
           ],
           studyPeriodBreakdown: {
@@ -220,7 +220,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
         warnings: [
           {
             typeCode: OfferingValidationWarnings.OfferingCostExceedMaximum,
-            message: "programRelatedCosts must not be greater than 100000",
+            message: "Program related costs must be not greater than 100000.",
           },
         ],
         studyPeriodBreakdown: {

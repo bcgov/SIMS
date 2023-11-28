@@ -35,6 +35,7 @@ import {
   IsDateAfter,
   ValidationResult,
   ValidationContext,
+  IsMaxCostValue,
 } from "../../utilities/class-validation";
 import { Type } from "class-transformer";
 import { ProgramAllowsOfferingIntensity } from "./custom-validators/program-allows-offering-intensity";
@@ -56,7 +57,6 @@ import {
   OFFERING_YEAR_OF_STUDY_MIN_VALUE,
 } from "../../utilities";
 import { DATE_ONLY_ISO_FORMAT } from "@sims/utilities";
-import { CustomMaxValue } from "./custom-validators/custom-max-value";
 
 const userFriendlyNames = {
   offeringName: "Name",
@@ -347,8 +347,12 @@ export class OfferingValidationModel {
     context: ValidationContext.CreateWarning(
       OfferingValidationWarnings.OfferingCostExceedMaximum,
     ),
+    message: getMaxFormatMessage(
+      userFriendlyNames.actualTuitionCosts,
+      MAX_ALLOWED_OFFERING_AMOUNT,
+    ),
   })
-  @Validate(CustomMaxValue, {
+  @IsMaxCostValue(userFriendlyNames.actualTuitionCosts, {
     message: getMaxFormatMessage(
       userFriendlyNames.actualTuitionCosts,
       MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
@@ -365,8 +369,12 @@ export class OfferingValidationModel {
     context: ValidationContext.CreateWarning(
       OfferingValidationWarnings.OfferingCostExceedMaximum,
     ),
+    message: getMaxFormatMessage(
+      userFriendlyNames.programRelatedCosts,
+      MAX_ALLOWED_OFFERING_AMOUNT,
+    ),
   })
-  @Validate(CustomMaxValue, {
+  @IsMaxCostValue(userFriendlyNames.programRelatedCosts, {
     message: getMaxFormatMessage(
       userFriendlyNames.programRelatedCosts,
       MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
@@ -386,8 +394,12 @@ export class OfferingValidationModel {
     context: ValidationContext.CreateWarning(
       OfferingValidationWarnings.OfferingCostExceedMaximum,
     ),
+    message: getMaxFormatMessage(
+      userFriendlyNames.mandatoryFees,
+      MAX_ALLOWED_OFFERING_AMOUNT,
+    ),
   })
-  @Validate(CustomMaxValue, {
+  @IsMaxCostValue(userFriendlyNames.mandatoryFees, {
     message: getMaxFormatMessage(
       userFriendlyNames.mandatoryFees,
       MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
@@ -407,8 +419,12 @@ export class OfferingValidationModel {
     context: ValidationContext.CreateWarning(
       OfferingValidationWarnings.OfferingCostExceedMaximum,
     ),
+    message: getMaxFormatMessage(
+      userFriendlyNames.exceptionalExpenses,
+      MAX_ALLOWED_OFFERING_AMOUNT,
+    ),
   })
-  @Validate(CustomMaxValue, {
+  @IsMaxCostValue(userFriendlyNames.exceptionalExpenses, {
     message: getMaxFormatMessage(
       userFriendlyNames.exceptionalExpenses,
       MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
