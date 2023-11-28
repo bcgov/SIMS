@@ -17,7 +17,10 @@ import {
   PaginationOptions,
 } from "../../utilities";
 import { CustomNamedError, FieldSortOrder } from "@sims/utilities";
-import { STUDENT_APPLICATION_EXCEPTION_NOT_FOUND } from "../../constants";
+import {
+  STUDENT_APPLICATION_EXCEPTION_INVALID_STATE,
+  STUDENT_APPLICATION_EXCEPTION_NOT_FOUND,
+} from "../../constants";
 import { NotificationActionsService } from "@sims/services/notifications";
 
 /**
@@ -141,7 +144,6 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
           "exception.id",
           "exception.exceptionStatus",
           "application.id",
-          "application.applicationStatus",
           "student.id",
           "user.id",
           "user.firstName",
@@ -152,9 +154,6 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
         .innerJoin("application.student", "student")
         .innerJoin("student.user", "user")
         .where("exception.id = :exceptionId", { exceptionId })
-        .andWhere("exception.exceptionStatus = :exceptionStatus", {
-          exceptionStatus: ApplicationExceptionStatus.Pending,
-        })
         .andWhere("application.applicationStatus != :applicationStatus", {
           applicationStatus: ApplicationStatus.Overwritten,
         })
@@ -167,6 +166,14 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
         );
       }
 
+      if (
+        exceptionToUpdate.exceptionStatus !== ApplicationExceptionStatus.Pending
+      ) {
+        throw new CustomNamedError(
+          `Student application exception must be in ${ApplicationExceptionStatus.Pending} state to be assessed.`,
+          STUDENT_APPLICATION_EXCEPTION_INVALID_STATE,
+        );
+      }
       const auditUser = { id: auditUserId } as User;
       const now = new Date();
       // Create the note to be associated with the update.

@@ -152,11 +152,12 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
       .patch(endpoint)
       .send(updateApplicationException)
       .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.NOT_FOUND)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: "Student application exception not found.",
-        error: "Not Found",
+        statusCode: 422,
+        message:
+          "Student application exception must be in Pending state to be assessed.",
+        error: "Unprocessable Entity",
       });
   });
 
