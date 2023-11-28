@@ -36,6 +36,8 @@ describe(
     let db: E2EDataSources;
 
     beforeAll(async () => {
+      // Env variable required for querying the eligible e-Cert records.
+      process.env.APPLICATION_ARCHIVE_DAYS = "42";
       const { nestApplication, dataSource } = await createTestingAppModule();
       app = nestApplication;
       // Processor under test.

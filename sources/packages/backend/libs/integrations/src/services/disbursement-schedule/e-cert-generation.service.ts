@@ -1,7 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS } from "../../constants";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
-import { EntityManager, IsNull, LessThanOrEqual, Repository } from "typeorm";
+import {
+  EntityManager,
+  IsNull,
+  LessThanOrEqual,
+  Raw,
+  Repository,
+} from "typeorm";
 import {
   ApplicationStatus,
   DisbursementSchedule,
@@ -11,6 +17,7 @@ import {
 } from "@sims/sims-db";
 import { InjectRepository } from "@nestjs/typeorm";
 import { EligibleECertDisbursement } from "./disbursement-schedule.models";
+import { ConfigService } from "@sims/utilities/config";
 
 /**
  * Manages all the preparation of the disbursements data needed to
@@ -23,6 +30,7 @@ export class ECertGenerationService {
   constructor(
     @InjectRepository(Application)
     private readonly applicationRepo: Repository<Application>,
+    private readonly configService: ConfigService,
   ) {}
 
   /**
@@ -112,6 +120,10 @@ export class ECertGenerationService {
           },
           offering: {
             offeringIntensity,
+            studyEndDate: Raw(
+              (endDate) =>
+                `(${endDate} + ${this.configService.applicationArchiveDays}) >= CURRENT_DATE`,
+            ),
           },
         },
         student: {

@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, EntityManager, IsNull } from "typeorm";
+import { DataSource, EntityManager, In, IsNull } from "typeorm";
 import {
   RecordDataModelService,
   DisbursementSchedule,
@@ -297,7 +297,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
   private async getDisbursementsForOverawards(
     studentId: number,
     applicationNumber: string,
-    status: DisbursementScheduleStatus,
+    status: DisbursementScheduleStatus[],
     entityManager: EntityManager,
   ): Promise<DisbursementSchedule[]> {
     const disbursementScheduleRepo =
@@ -342,7 +342,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
             applicationNumber,
           },
         },
-        disbursementScheduleStatus: status,
+        disbursementScheduleStatus: In(status),
       },
     });
   }
@@ -409,7 +409,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
     const pendingDisbursements = await this.getDisbursementsForOverawards(
       studentId,
       applicationNumber,
-      DisbursementScheduleStatus.Pending,
+      [DisbursementScheduleStatus.Pending],
       entityManager,
     );
     for (const pendingDisbursement of pendingDisbursements) {
@@ -444,11 +444,11 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
     applicationNumber: string,
     entityManager: EntityManager,
   ): Promise<Record<string, number>> {
-    // Get already sent (disbursed) values to know the amount that the student already received.
+    // Get already ready to send or sent (disbursed) values to know the amount that the student already received.
     const disbursementSchedules = await this.getDisbursementsForOverawards(
       studentId,
       applicationNumber,
-      DisbursementScheduleStatus.Sent,
+      [DisbursementScheduleStatus.ReadToSend, DisbursementScheduleStatus.Sent],
       entityManager,
     );
 
@@ -686,9 +686,12 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
       .innerJoin("studentAssessment.application", "application")
       .innerJoin("application.student", "student")
       .where(
-        "disbursement.disbursementScheduleStatus = :disbursementScheduleStatus",
+        "disbursement.disbursementScheduleStatus IN (:...disbursementScheduleStatus)",
         {
-          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          disbursementScheduleStatus: [
+            DisbursementScheduleStatus.ReadToSend,
+            DisbursementScheduleStatus.Sent,
+          ],
         },
       )
       .andWhere("student.id = :studentId", { studentId: studentId })

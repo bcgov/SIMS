@@ -36,6 +36,8 @@ describe(
     let sftpClientMock: DeepMocked<Client>;
 
     beforeAll(async () => {
+      // Env variable required for querying the eligible e-Cert records.
+      process.env.APPLICATION_ARCHIVE_DAYS = "42";
       const { nestApplication, dataSource, sshClientMock } =
         await createTestingAppModule();
       app = nestApplication;
