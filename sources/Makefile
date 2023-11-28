@@ -9,7 +9,7 @@ export API_PORT := $(or $(API_PORT), 3000)
 export QUEUE_CONSUMERS_PORT := $(or $(QUEUE_CONSUMERS_PORT), 3001)
 export LOAD_TEST_API_PORT := $(or $(LOAD_TEST_API_PORT), 3005)
 export APP_PORT := $(or $(APP_PORT), 8080)
-export WORKERS_PORT := $(or $(WORKERS_PORT), 3002)
+export WORKERS_PORT := $(or $(WORKERS_PORT), 3020)
 # Database
 export POSTGRES_PORT := $(or $(POSTGRES_PORT), 5432)
 export POSTGRES_USER := $(or $(POSTGRES_USER), admin)
