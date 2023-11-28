@@ -27,7 +27,7 @@ export class ZeebeTransportStrategy
 {
   constructor(
     private readonly zeebeClient: ZBClient,
-    private readonly zeebeHealthyIndicator: ZeebeHealthIndicator,
+    private readonly zeebeHealthIndicator: ZeebeHealthIndicator,
   ) {
     super();
   }
@@ -49,13 +49,13 @@ export class ZeebeTransportStrategy
         taskType,
         taskHandler: async (job) => this.workerHandlerWrapper(handler, job),
         onReady: () => {
-          this.zeebeHealthyIndicator.reportConnectionWorkerStatus(
+          this.zeebeHealthIndicator.reportConnectionWorkerStatus(
             taskType,
             true,
           );
         },
         onConnectionError: () =>
-          this.zeebeHealthyIndicator.reportConnectionWorkerStatus(
+          this.zeebeHealthIndicator.reportConnectionWorkerStatus(
             taskType,
             false,
           ),

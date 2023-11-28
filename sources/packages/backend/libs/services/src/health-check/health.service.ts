@@ -14,7 +14,7 @@ export class HealthService extends HealthIndicator {
   constructor(
     private microservice: MicroserviceHealthIndicator,
     private readonly configService: ConfigService,
-    private readonly zeebe: ZeebeHealthIndicator,
+    private readonly zeebeHealthIndicator: ZeebeHealthIndicator,
   ) {
     super();
   }
@@ -69,6 +69,6 @@ export class HealthService extends HealthIndicator {
    * @returns status of the zeebe connection.
    */
   private async checkZeebeHealth(): Promise<boolean> {
-    return this.zeebe.allConnected();
+    return this.zeebeHealthIndicator.allConnected();
   }
 }
