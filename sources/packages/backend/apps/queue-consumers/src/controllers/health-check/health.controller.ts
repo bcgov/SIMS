@@ -5,7 +5,7 @@ import { HealthService } from "../../../../../libs/services/src/health-check/hea
 @Controller("health")
 export class HealthController {
   constructor(
-    private health: HealthCheckService,
+    private healthCheckService: HealthCheckService,
     private healthIndicator: HealthService,
   ) {}
 
@@ -16,6 +16,8 @@ export class HealthController {
   @Get()
   @HealthCheck()
   check() {
-    return this.health.check([() => this.healthIndicator.isHealthy("queues")]);
+    return this.healthCheckService.check([
+      () => this.healthIndicator.isHealthy("queues"),
+    ]);
   }
 }
