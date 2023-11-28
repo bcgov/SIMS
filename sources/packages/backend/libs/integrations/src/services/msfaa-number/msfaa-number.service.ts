@@ -143,7 +143,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
         `MSFAA number ${msfaaNumber} not found for offering intensity ${offeringIntensity}.`,
       );
     }
-    const systemUser = await this.systemUsersService.systemUser();
+    const systemUser = this.systemUsersService.systemUser;
     // If there is a retrievedMSFAARecord, check if the msfaa number was cancelled earlier. If yes, reactivate it.
     if (retrievedMSFAARecord.cancelledDate) {
       // Re-associate all disbursements pending e-cert generation for the same offering intensity with this msfaa number.
@@ -241,7 +241,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
           msfaaNumber,
         },
       });
-      const systemUser = await this.systemUsersService.systemUser();
+      const systemUser = this.systemUsersService.systemUser;
       await this.notificationActionsService.saveMSFAACancellationNotification(
         {
           givenNames: msfaaRecord.student.user.firstName,

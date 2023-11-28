@@ -77,7 +77,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     const offeringIntensity =
       firstDisbursement.studentAssessment.offering.offeringIntensity;
     const applicationId = firstDisbursement.studentAssessment.application.id;
-    const systemUser = await this.systemUsersService.systemUser();
+    const systemUser = this.systemUsersService.systemUser;
 
     // Checks if there is an MSFAA that could be considered valid.
     const existingValidMSFAANumber =

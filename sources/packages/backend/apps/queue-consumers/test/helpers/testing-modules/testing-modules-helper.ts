@@ -13,7 +13,7 @@ import {
 import * as Client from "ssh2-sftp-client";
 import { DeepMocked, createMock } from "@golevelup/ts-jest";
 import { QueueModule } from "@sims/services/queue";
-import { ZeebeModule } from "@sims/services";
+import { SystemUsersService, ZeebeModule } from "@sims/services";
 
 /**
  * Result from a createTestingModule to support E2E tests creation.
@@ -52,8 +52,14 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
 
   const nestApplication = module.createNestApplication();
   await nestApplication.init();
+
   const dataSource = module.get(DataSource);
   const zbClient = nestApplication.get(ZBClient);
+
+  // Load system user.
+  const systemUsersService = nestApplication.get(SystemUsersService);
+  await systemUsersService.loadSystemUser();
+
   return {
     nestApplication,
     module,

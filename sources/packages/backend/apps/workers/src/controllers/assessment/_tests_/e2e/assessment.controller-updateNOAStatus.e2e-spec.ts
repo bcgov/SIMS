@@ -54,7 +54,7 @@ describe("AssessmentController(e2e)-updateNOAStatus", () => {
     expect(expectedAssessment.noaApprovalStatus).toBe(
       AssessmentStatus.completed,
     );
-    const auditUser = await systemUsersService.systemUser();
+    const auditUser = systemUsersService.systemUser;
     expect(expectedAssessment.modifier).toEqual(auditUser);
   });
 });

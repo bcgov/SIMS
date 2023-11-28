@@ -99,4 +99,16 @@ export class QueueService {
     const queueConfig = await this.queueConfigurationDetails(queueName);
     return queueConfig.queueConfiguration.pollingRecordLimit;
   }
+
+  /**
+   * Gets the amount of hours for the assessment retry.
+   * @param queueName queue name
+   * @returns amount of hours for the assessment retry.
+   */
+  async getAmountHoursAssessmentRetry(
+    queueName: QueueNames,
+  ): Promise<number | undefined> {
+    const queueConfig = await this.queueConfigurationDetails(queueName);
+    return queueConfig.queueConfiguration.amountHoursAssessmentRetry;
+  }
 }

@@ -50,7 +50,7 @@ export class ATBCIntegrationProcessingService {
     // on how the response codes could be.
     // The response code must be used to validate bad request as well.
     if (response) {
-      const auditUser = await this.systemUsersService.systemUser();
+      const auditUser = this.systemUsersService.systemUser;
       // Update PD sent date.
       await this.studentService.updateDisabilityRequested(
         student.id,

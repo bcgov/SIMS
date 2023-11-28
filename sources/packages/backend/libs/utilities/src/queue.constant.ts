@@ -27,4 +27,5 @@ export enum QueueNames {
   ProcessNotifications = "process-notifications",
   ProcessArchiveApplications = "archive-applications",
   AssessmentWorkflowEnqueuer = "assessment-workflow-enqueuer",
+  AssessmentWorkflowQueueRetry = "assessment-workflow-queue-retry",
 }

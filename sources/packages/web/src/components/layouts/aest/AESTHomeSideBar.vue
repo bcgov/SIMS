@@ -4,7 +4,7 @@
       active-class="active-list-item"
       density="compact"
       bg-color="default"
-      active-color="primary"
+      color="primary"
       class="no-wrap"
       :items="menuItems"
     />
@@ -14,7 +14,7 @@
         active-class="active-list-item"
         bg-color="default"
         class="no-wrap"
-        active-color="primary"
+        color="primary"
         nav
       >
         <check-permission-role :role="Role.AESTReports">

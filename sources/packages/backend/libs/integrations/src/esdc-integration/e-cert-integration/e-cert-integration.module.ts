@@ -22,7 +22,7 @@ import {
   ECertGenerationService,
   SshService,
 } from "../../services";
-import { SystemUsersService } from "@sims/services/system-users";
+import { SystemUserModule } from "@sims/services/system-users";
 import { SFASApplicationService } from "@sims/services/sfas";
 import {
   ApplyOverawardsDeductionsStep,
@@ -41,7 +41,7 @@ import {
 } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
 
 @Module({
-  imports: [ConfigModule],
+  imports: [ConfigModule, SystemUserModule],
   providers: [
     SshService,
     ECertFullTimeIntegrationService,
@@ -54,7 +54,6 @@ import {
     ECertFullTimeFileHeader,
     ECertFullTimeFileFooter,
     DisbursementScheduleErrorsService,
-    SystemUsersService,
     RestrictionSharedService,
     StudentRestrictionSharedService,
     ECertGenerationService,

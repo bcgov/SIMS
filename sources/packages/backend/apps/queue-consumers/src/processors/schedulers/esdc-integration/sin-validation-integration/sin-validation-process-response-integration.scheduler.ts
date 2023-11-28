@@ -37,7 +37,7 @@ export class SINValidationRequestIntegrationScheduler extends BaseScheduler<void
       `Processing SIN validation integration job ${job.id} of type ${job.name}.`,
     );
     await summary.info("Processing ESDC SIN validation response files.");
-    const auditUser = await this.systemUsersService.systemUser();
+    const auditUser = this.systemUsersService.systemUser;
     const results = await this.sinValidationProcessingService.processResponses(
       auditUser.id,
     );

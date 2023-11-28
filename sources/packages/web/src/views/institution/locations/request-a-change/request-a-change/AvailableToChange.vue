@@ -27,6 +27,7 @@
       <content-group>
         <toggle-content :toggled="!applications?.count">
           <v-data-table-server
+            v-if="applications?.count"
             :headers="AvailableToChangeOfferingChangeSummaryHeaders"
             :items="applications?.results"
             :items-length="applications?.count"
@@ -36,18 +37,18 @@
             @update:options="paginationAndSortEvent"
           >
             <template #[`item.fullName`]="{ item }">
-              {{ item.raw.fullName }}
+              {{ item.fullName }}
             </template>
             <template #[`item.studyStartDate`]="{ item }">
-              {{ dateOnlyLongString(item.raw.studyStartDate) }}
+              {{ dateOnlyLongString(item.studyStartDate) }}
               -
-              {{ dateOnlyLongString(item.raw.studyEndDate) }}
+              {{ dateOnlyLongString(item.studyEndDate) }}
             </template>
             <template #[`item.applicationNumber`]="{ item }">
-              {{ item.raw.applicationNumber }}
+              {{ item.applicationNumber }}
             </template>
             <template #[`item.applicationId`]="{ item }">
-              <v-btn color="primary" @click="requestAChange(item.value)"
+              <v-btn color="primary" @click="requestAChange(item.applicationId)"
                 >Request a change</v-btn
               >
             </template>
