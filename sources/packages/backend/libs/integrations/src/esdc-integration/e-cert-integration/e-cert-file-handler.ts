@@ -255,8 +255,8 @@ export class ECertFileHandler extends ESDCFileHandler {
     const now = new Date();
     const application = disbursement.studentAssessment.application;
     const student = application.student;
-    const addressInfo = application.student.contactInfo.address;
-    const offering = application.currentAssessment.offering;
+    const addressInfo = student.contactInfo.address;
+    const offering = disbursement.studentAssessment.offering;
 
     const awards = disbursement.disbursementValues.map(
       (disbursementValue) =>
@@ -280,7 +280,7 @@ export class ECertFileHandler extends ESDCFileHandler {
       educationalStartDate: new Date(offering.studyStartDate),
       educationalEndDate: new Date(offering.studyEndDate),
       federalInstitutionCode: offering.institutionLocation.institutionCode,
-      weeksOfStudy: application.currentAssessment.assessmentData.weeks,
+      weeksOfStudy: disbursement.studentAssessment.assessmentData.weeks,
       fieldOfStudy: offering.educationProgram.fieldOfStudyCode,
       yearOfStudy: offering.yearOfStudy,
       completionYears: offering.educationProgram.completionYears,

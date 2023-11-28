@@ -25,6 +25,14 @@ export class ECertGenerationService {
     private readonly applicationRepo: Repository<Application>,
   ) {}
 
+  /**
+   * Get eligible disbursements that must have calculations executed prior
+   * to be part of an e-Cert. The data returned will contain the disbursement
+   * entity model to be updated and all supporting information needed to
+   * execute all calculations steps.
+   * @param offeringIntensity offering intensity to retrieve the disbursements.
+   * @returns eligible disbursements to be potentially added to an e-Cert.
+   */
   async getEligibleDisbursements(
     offeringIntensity: OfferingIntensity,
   ): Promise<EligibleECertDisbursement[]> {
@@ -119,7 +127,6 @@ export class ECertGenerationService {
         },
       },
     });
-
     // Convert the application records to be returned as disbursements to allow
     // easier processing along the calculation steps.
     const eligibleDisbursements =
@@ -161,73 +168,90 @@ export class ECertGenerationService {
     offeringIntensity: OfferingIntensity,
     entityManager: EntityManager,
   ): Promise<DisbursementSchedule[]> {
-    return entityManager
-      .getRepository(DisbursementSchedule)
-      .createQueryBuilder("disbursement")
-      .select([
-        "disbursement.id",
-        "disbursement.documentNumber",
-        "disbursement.negotiatedExpiryDate",
-        "disbursement.disbursementDate",
-        "disbursement.tuitionRemittanceRequestedAmount",
-        "disbursement.coeUpdatedAt",
-        "application.id",
-        "application.applicationNumber",
-        "application.data",
-        "application.relationshipStatus",
-        "application.studentNumber",
-        "currentAssessment.id",
-        "currentAssessment.assessmentData",
-        "offering.id",
-        "offering.courseLoad",
-        "offering.studyStartDate",
-        "offering.studyEndDate",
-        "offering.yearOfStudy",
-        "offering.offeringIntensity",
-        "offering.actualTuitionCosts",
-        "offering.programRelatedCosts",
-        "educationProgram.id",
-        "educationProgram.fieldOfStudyCode",
-        "educationProgram.completionYears",
-        "user.firstName",
-        "user.lastName",
-        "user.email",
-        "sinValidation.id",
-        "sinValidation.sin",
-        "student.id",
-        "student.birthDate",
-        "student.gender",
-        "student.contactInfo",
-        "student.studentPDVerified",
-        "institutionLocation.id",
-        "institutionLocation.institutionCode",
-        "disbursementValue.id",
-        "disbursementValue.valueType",
-        "disbursementValue.valueCode",
-        "disbursementValue.valueAmount",
-        "studentAssessment.id",
-      ])
-      .innerJoin("disbursement.studentAssessment", "studentAssessment")
-      .innerJoin("studentAssessment.application", "application")
-      .innerJoin("application.currentAssessment", "currentAssessment")
-      .innerJoin("currentAssessment.offering", "offering")
-      .innerJoin("offering.institutionLocation", "institutionLocation")
-      .innerJoin("offering.educationProgram", "educationProgram")
-      .innerJoin("application.student", "student")
-      .innerJoin("student.user", "user")
-      .innerJoin("student.sinValidation", "sinValidation")
-      .innerJoin("disbursement.disbursementValues", "disbursementValue")
-      .where("offering.offeringIntensity = :offeringIntensity", {
-        offeringIntensity,
-      })
-      .andWhere(
-        "disbursement.disbursementScheduleStatus = :disbursementScheduleStatus",
-        {
-          disbursementScheduleStatus: DisbursementScheduleStatus.ReadToSend,
+    return entityManager.getRepository(DisbursementSchedule).find({
+      select: {
+        id: true,
+        documentNumber: true,
+        negotiatedExpiryDate: true,
+        disbursementDate: true,
+        coeUpdatedAt: true,
+        tuitionRemittanceEffectiveAmount: true,
+        studentAssessment: {
+          id: true,
+          assessmentData: true as unknown,
+          application: {
+            id: true,
+            applicationNumber: true,
+            data: true as unknown,
+            relationshipStatus: true,
+            studentNumber: true,
+            student: {
+              id: true,
+              birthDate: true,
+              gender: true,
+              contactInfo: true as unknown,
+              studentPDVerified: true,
+              user: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+              sinValidation: {
+                id: true,
+                sin: true,
+              },
+            },
+          },
+          offering: {
+            id: true,
+            courseLoad: true,
+            studyStartDate: true,
+            studyEndDate: true,
+            yearOfStudy: true,
+            educationProgram: {
+              id: true,
+              fieldOfStudyCode: true,
+              completionYears: true,
+            },
+            institutionLocation: {
+              id: true,
+              institutionCode: true,
+            },
+          },
         },
-      )
-      .orderBy("disbursement.disbursementDate")
-      .addOrderBy("disbursement.createdAt")
-      .getMany();
+        disbursementValues: {
+          id: true,
+          valueType: true,
+          valueCode: true,
+          valueAmount: true,
+          effectiveAmount: true,
+        },
+      },
+      relations: {
+        studentAssessment: {
+          application: {
+            student: { user: true, sinValidation: true },
+          },
+          offering: {
+            educationProgram: true,
+            institutionLocation: true,
+          },
+        },
+        disbursementValues: true,
+      },
+      where: {
+        disbursementScheduleStatus: DisbursementScheduleStatus.ReadToSend,
+        studentAssessment: {
+          offering: {
+            offeringIntensity,
+          },
+        },
+      },
+      order: {
+        disbursementDate: "ASC",
+        createdAt: "ASC",
+      },
+    });
   }
 }
