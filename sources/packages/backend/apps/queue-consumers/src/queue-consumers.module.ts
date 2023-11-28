@@ -60,6 +60,7 @@ import {
 import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
 import { ECEIntegrationModule } from "@sims/integrations/institution-integration/ece-integration";
+import { HealthModule } from "@sims/services/health-check";
 import { HealthController } from "./controllers";
 
 @Module({
@@ -80,6 +81,7 @@ import { HealthController } from "./controllers";
     FedRestrictionIntegrationModule,
     MSFAAIntegrationModule,
     SINValidationModule,
+    HealthModule,
   ],
   providers: [
     StartApplicationAssessmentProcessor,
