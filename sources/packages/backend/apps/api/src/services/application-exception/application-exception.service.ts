@@ -20,6 +20,7 @@ import { CustomNamedError, FieldSortOrder } from "@sims/utilities";
 import {
   STUDENT_APPLICATION_EXCEPTION_INVALID_STATE,
   STUDENT_APPLICATION_EXCEPTION_NOT_FOUND,
+  STUDENT_APPLICATION_INVALID_STATE,
 } from "../../constants";
 import { NotificationActionsService } from "@sims/services/notifications";
 
@@ -144,6 +145,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
           "exception.id",
           "exception.exceptionStatus",
           "application.id",
+          "application.applicationStatus",
           "student.id",
           "user.id",
           "user.firstName",
@@ -169,6 +171,15 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
         throw new CustomNamedError(
           `Student application exception must be in ${ApplicationExceptionStatus.Pending} state to be assessed.`,
           STUDENT_APPLICATION_EXCEPTION_INVALID_STATE,
+        );
+      }
+      if (
+        exceptionToUpdate.application.applicationStatus ==
+        ApplicationStatus.Overwritten
+      ) {
+        throw new CustomNamedError(
+          `Student application must not be in ${ApplicationStatus.Overwritten} state to be assessed.`,
+          STUDENT_APPLICATION_INVALID_STATE,
         );
       }
 

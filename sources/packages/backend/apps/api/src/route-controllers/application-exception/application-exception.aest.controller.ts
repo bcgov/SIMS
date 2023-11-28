@@ -35,6 +35,7 @@ import { CustomNamedError } from "@sims/utilities";
 import {
   STUDENT_APPLICATION_EXCEPTION_INVALID_STATE,
   STUDENT_APPLICATION_EXCEPTION_NOT_FOUND,
+  STUDENT_APPLICATION_INVALID_STATE,
 } from "../../constants";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { ApplicationExceptionStatus } from "@sims/sims-db";
@@ -114,6 +115,8 @@ export class ApplicationExceptionAESTController extends BaseController {
           case STUDENT_APPLICATION_EXCEPTION_NOT_FOUND:
             throw new NotFoundException(error.message);
           case STUDENT_APPLICATION_EXCEPTION_INVALID_STATE:
+            throw new UnprocessableEntityException(error.message);
+          case STUDENT_APPLICATION_INVALID_STATE:
             throw new UnprocessableEntityException(error.message);
         }
       }
