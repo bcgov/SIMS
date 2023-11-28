@@ -216,13 +216,12 @@ export class ECertFileHandler extends ESDCFileHandler {
       );
       // Mark all disbursements as sent.
       const dateSent = new Date();
-      const systemUser = await this.systemUserService.systemUser();
       disbursements.forEach((disbursement) => {
         disbursement.dateSent = dateSent;
         disbursement.disbursementScheduleStatus =
           DisbursementScheduleStatus.Sent;
         disbursement.updatedAt = dateSent;
-        disbursement.modifier = systemUser;
+        disbursement.modifier = this.systemUserService.systemUser;
       });
       await entityManager
         .getRepository(DisbursementSchedule)

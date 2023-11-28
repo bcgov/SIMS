@@ -98,7 +98,6 @@ export class ApplyOverawardsDeductionsStep implements ECertProcessStep {
       const disbursementOverawardRepo = entityManager.getRepository(
         DisbursementOveraward,
       );
-      const auditUser = await this.systemUsersService.systemUser();
       if (loan.overawardAmountSubtracted) {
         // An overaward was subtracted from an award and the same must be
         // deducted from the student balance.
@@ -109,7 +108,7 @@ export class ApplyOverawardsDeductionsStep implements ECertProcessStep {
           disbursementValueCode: loan.valueCode,
           overawardValue: loan.overawardAmountSubtracted * -1,
           originType: DisbursementOverawardOriginType.AwardDeducted,
-          creator: auditUser,
+          creator: this.systemUsersService.systemUser,
         } as DisbursementOveraward);
       }
     }

@@ -36,7 +36,7 @@ export class PersistCalculationsStep implements ECertProcessStep {
     disbursement.disbursementScheduleStatus =
       DisbursementScheduleStatus.ReadToSend;
     disbursement.readyToSendDate = now;
-    disbursement.modifier = await this.systemUsersService.systemUser();
+    disbursement.modifier = this.systemUsersService.systemUser;
     disbursement.updatedAt = now;
     await entityManager.getRepository(DisbursementSchedule).save(disbursement);
     log.info(

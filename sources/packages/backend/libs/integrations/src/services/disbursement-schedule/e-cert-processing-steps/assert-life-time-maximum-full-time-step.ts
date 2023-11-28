@@ -88,7 +88,6 @@ export class AssertLifeTimeMaximumFullTimeStep implements ECertProcessStep {
       totalDisbursedBCSLAmount +
       disbursementValue.effectiveAmount;
     if (totalLifeTimeAmount >= eCertDisbursement.maxLifetimeBCLoanAmount) {
-      const auditUser = await this.systemUsersService.systemUser();
       // Amount subtracted when lifetime maximum is reached.
       const amountSubtracted =
         totalLifeTimeAmount - eCertDisbursement.maxLifetimeBCLoanAmount;
@@ -102,7 +101,7 @@ export class AssertLifeTimeMaximumFullTimeStep implements ECertProcessStep {
         await this.studentRestrictionSharedService.createRestrictionToSave(
           eCertDisbursement.studentId,
           RestrictionCode.BCLM,
-          auditUser.id,
+          this.systemUsersService.systemUser.id,
           eCertDisbursement.applicationId,
         );
       if (bclmRestriction) {
