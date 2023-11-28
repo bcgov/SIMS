@@ -1,4 +1,4 @@
-import { DisbursementSchedule, OfferingIntensity } from "@sims/sims-db";
+import { OfferingIntensity } from "@sims/sims-db";
 import { ECertProcessStep } from "../e-cert-processing-steps/e-cert-steps-models";
 import { ECertCalculationProcess } from "./e-cert-calculation-process";
 import { DataSource } from "typeorm";
@@ -12,6 +12,7 @@ import {
 } from "../e-cert-processing-steps";
 import { ECertGenerationService } from "../e-cert-generation.service";
 import { Injectable } from "@nestjs/common";
+import { EligibleECertDisbursement } from "../disbursement-schedule.models";
 
 /**
  * Executes the part-time calculations for the e-Cert generation.
@@ -34,12 +35,12 @@ export class PartTimeCalculationProcess extends ECertCalculationProcess {
   /**
    * Get all part-time disbursements currently eligible to be part of
    * an e-Cert to have its calculations executed.
-   * The returned array of {@link DisbursementSchedule} will be shared across all
-   * steps being modified till the {@link DisbursementSchedule} entity model
+   * The returned array of {@link EligibleECertDisbursement} will be shared across all
+   * steps being modified till the disbursement entity model
    * modifications will be saved.
    */
-  protected getDisbursements(): Promise<DisbursementSchedule[]> {
-    return this.eCertGenerationService.getEligibleRecords(
+  protected getDisbursements(): Promise<EligibleECertDisbursement[]> {
+    return this.eCertGenerationService.getEligibleDisbursements(
       OfferingIntensity.partTime,
     );
   }

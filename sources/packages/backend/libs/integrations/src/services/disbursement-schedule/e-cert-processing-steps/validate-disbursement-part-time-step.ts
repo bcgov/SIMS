@@ -1,9 +1,10 @@
-import { DisbursementSchedule, RestrictionActionType } from "@sims/sims-db";
+import { RestrictionActionType } from "@sims/sims-db";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { EntityManager } from "typeorm";
-import { getStudentRestrictionByActionType } from "./e-cert-steps-utils";
 import { ECertProcessStep, ValidateDisbursementBase } from ".";
 import { Injectable } from "@nestjs/common";
+import { EligibleECertDisbursement } from "../disbursement-schedule.models";
+import { getRestrictionByActionType } from "./e-cert-steps-utils";
 
 /**
  * Specific e-Cert validations for part-time.
@@ -15,20 +16,20 @@ export class ValidateDisbursementPartTimeStep
 {
   /**
    * Validate part-time disbursements.
-   * @param disbursement eligible disbursement to be potentially added to an e-Cert.
+   * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
    * @param _entityManager not used for this step.
    * @param log cumulative log summary.
    */
   executeStep(
-    disbursement: DisbursementSchedule,
+    eCertDisbursement: EligibleECertDisbursement,
     _entityManager: EntityManager,
     log: ProcessSummary,
   ): boolean {
     log.info("Executing part-time disbursement validations.");
-    let shouldContinue = super.validate(disbursement, log);
+    let shouldContinue = super.validate(eCertDisbursement, log);
     // Validate stop part-time disbursement restrictions.
-    const stopPartTimeDisbursement = getStudentRestrictionByActionType(
-      disbursement.studentAssessment.application.student.studentRestrictions,
+    const stopPartTimeDisbursement = getRestrictionByActionType(
+      eCertDisbursement,
       RestrictionActionType.StopPartTimeDisbursement,
     );
     if (stopPartTimeDisbursement) {

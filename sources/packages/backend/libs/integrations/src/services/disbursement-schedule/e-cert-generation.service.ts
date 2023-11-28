@@ -1,14 +1,16 @@
 import { Injectable } from "@nestjs/common";
 import { DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS } from "../../constants";
-import { addDays } from "@sims/utilities";
-import { EntityManager, Repository } from "typeorm";
+import { addDays, getISODateOnlyString } from "@sims/utilities";
+import { EntityManager, IsNull, LessThanOrEqual, Repository } from "typeorm";
 import {
   ApplicationStatus,
   DisbursementSchedule,
   OfferingIntensity,
   DisbursementScheduleStatus,
+  Application,
 } from "@sims/sims-db";
 import { InjectRepository } from "@nestjs/typeorm";
+import { EligibleECertDisbursement } from "./disbursement-schedule.models";
 
 /**
  * Manages all the preparation of the disbursements data needed to
@@ -19,84 +21,134 @@ import { InjectRepository } from "@nestjs/typeorm";
 @Injectable()
 export class ECertGenerationService {
   constructor(
-    @InjectRepository(DisbursementSchedule)
-    private readonly disbursementScheduleRepo: Repository<DisbursementSchedule>,
+    @InjectRepository(Application)
+    private readonly applicationRepo: Repository<Application>,
   ) {}
 
-  async getEligibleRecords(
+  async getEligibleDisbursements(
     offeringIntensity: OfferingIntensity,
-  ): Promise<DisbursementSchedule[]> {
+  ): Promise<EligibleECertDisbursement[]> {
     // Define the minimum date to send a disbursement.
-    const disbursementMinDate = addDays(
-      DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS,
+    const disbursementMinDate = getISODateOnlyString(
+      addDays(DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS),
     );
-
-    const result = this.disbursementScheduleRepo
-      .createQueryBuilder("disbursement")
-      .select([
-        "disbursement.id",
-        "disbursement.disbursementDate",
-        "disbursement.tuitionRemittanceRequestedAmount",
-        "disbursement.coeStatus",
-        "application.id",
-        "currentAssessment.id",
-        "offering.id",
-        "offering.offeringIntensity",
-        "offering.actualTuitionCosts",
-        "offering.programRelatedCosts",
-        "educationProgram.id",
-        "sinValidation.id",
-        "sinValidation.isValidSIN",
-        "student.id",
-        "disbursementValue.id",
-        "disbursementValue.valueType",
-        "disbursementValue.valueCode",
-        "disbursementValue.valueAmount",
-        "disbursementValue.disbursedAmountSubtracted",
-        "studentAssessment.id",
-        "programYear.maxLifetimeBCLoanAmount",
-        "studentRestriction.id",
-        "restriction.id",
-        "restriction.actionType",
-        "msfaaNumber.id",
-        "msfaaNumber.dateSigned",
-        "msfaaNumber.cancelledDate",
-      ])
-      .innerJoin("disbursement.studentAssessment", "studentAssessment")
-      .leftJoin("disbursement.msfaaNumber", "msfaaNumber")
-      .innerJoin("studentAssessment.application", "application")
-      .innerJoin("application.programYear", "programYear")
-      .innerJoin("application.currentAssessment", "currentAssessment") // This is to fetch the current assessment of the application, even though we have multiple reassessments
-      .innerJoin("currentAssessment.offering", "offering")
-      .innerJoin("offering.educationProgram", "educationProgram")
-      .innerJoin("application.student", "student")
-      .innerJoin("student.user", "user")
-      .innerJoin("student.sinValidation", "sinValidation")
-      .leftJoin(
-        "student.studentRestrictions",
-        "studentRestriction",
-        "studentRestriction.isActive = true",
-      )
-      .leftJoin("studentRestriction.restriction", "restriction")
-      .innerJoin("disbursement.disbursementValues", "disbursementValue")
-      .where("disbursement.disbursementDate <= :disbursementMinDate", {
-        disbursementMinDate,
-      })
-      .andWhere("application.applicationStatus = :applicationStatus", {
-        applicationStatus: ApplicationStatus.Completed,
-      })
-      .andWhere("offering.offeringIntensity = :offeringIntensity", {
-        offeringIntensity,
-      })
-      .andWhere(
-        "disbursement.disbursementScheduleStatus = :disbursementScheduleStatus",
-        {
-          disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+    const eligibleApplications = await this.applicationRepo.find({
+      select: {
+        id: true,
+        currentAssessment: {
+          id: true,
+          disbursementSchedules: {
+            id: true,
+            disbursementDate: true,
+            tuitionRemittanceRequestedAmount: true,
+            coeStatus: true,
+            disbursementValues: {
+              id: true,
+              valueType: true,
+              valueCode: true,
+              valueAmount: true,
+              disbursedAmountSubtracted: true,
+            },
+            msfaaNumber: {
+              id: true,
+              dateSigned: true,
+              cancelledDate: true,
+            },
+          },
+          offering: {
+            id: true,
+            offeringIntensity: true,
+            actualTuitionCosts: true,
+            programRelatedCosts: true,
+          },
         },
-      )
-      .orderBy("disbursement.disbursementDate")
-      .getMany();
-    return result;
+        student: {
+          id: true,
+          sinValidation: {
+            id: true,
+            isValidSIN: true,
+          },
+          studentRestrictions: {
+            id: true,
+            restriction: {
+              id: true,
+              actionType: true,
+            },
+          },
+        },
+        programYear: {
+          id: true,
+          maxLifetimeBCLoanAmount: true,
+        },
+      },
+      relations: {
+        currentAssessment: {
+          disbursementSchedules: {
+            disbursementValues: true,
+            msfaaNumber: true,
+          },
+          offering: true,
+        },
+        student: {
+          sinValidation: true,
+          studentRestrictions: { restriction: true },
+        },
+        programYear: true,
+      },
+      where: {
+        applicationStatus: ApplicationStatus.Completed,
+        currentAssessment: {
+          disbursementSchedules: {
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+            disbursementDate: LessThanOrEqual(disbursementMinDate),
+          },
+          offering: {
+            offeringIntensity,
+          },
+        },
+        student: {
+          studentRestrictions: [{ isActive: IsNull() }, { isActive: true }],
+        },
+      },
+      order: {
+        currentAssessment: {
+          disbursementSchedules: {
+            disbursementDate: "ASC",
+            createdAt: "ASC",
+          },
+        },
+      },
+    });
+
+    // Convert the application records to be returned as disbursements to allow
+    // easier processing along the calculation steps.
+    const eligibleDisbursements =
+      eligibleApplications.flatMap<EligibleECertDisbursement>((application) => {
+        return application.currentAssessment.disbursementSchedules.map(
+          (disbursement) => {
+            return {
+              studentId: application.student.id,
+              assessmentId: application.currentAssessment.id,
+              applicationId: application.id,
+              // Convert the nested restriction in StudentRestriction to a simple object.
+              activeRestrictions: application.student.studentRestrictions.map(
+                (studentRestriction) => {
+                  return {
+                    id: studentRestriction.restriction.id,
+                    actions: studentRestriction.restriction.actionType,
+                  };
+                },
+              ),
+              hasValidSIN: application.student.sinValidation.isValidSIN,
+              disbursement,
+              offering: application.currentAssessment.offering,
+              maxLifetimeBCLoanAmount:
+                application.programYear.maxLifetimeBCLoanAmount,
+            };
+          },
+        );
+      });
+    return eligibleDisbursements;
   }
 
   /**

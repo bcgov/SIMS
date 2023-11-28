@@ -3,10 +3,10 @@ import {
   ConfirmationOfEnrollmentService,
   MaxTuitionRemittanceTypes,
 } from "@sims/services";
-import { DisbursementSchedule } from "@sims/sims-db";
 import { ECertProcessStep } from "./e-cert-steps-models";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { EntityManager } from "typeorm";
+import { EligibleECertDisbursement } from "../disbursement-schedule.models";
 
 /**
  * Ensures that tuition remittance requested by the institution
@@ -25,30 +25,34 @@ export class CalculateTuitionRemittanceEffectiveAmountStep
 
   /**
    * Calculate tuition remittance effective amount.
-   * @param disbursement eligible disbursement to be potentially added to an e-Cert.
+   * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
    * @param _entityManager not used for this step.
    * @param log cumulative log summary.
    */
   async executeStep(
-    disbursement: DisbursementSchedule,
+    eCertDisbursement: EligibleECertDisbursement,
     _entityManager: EntityManager,
     log: ProcessSummary,
   ): Promise<boolean> {
     log.info("Checking the limit for the tuition remittance.");
     const maxTuitionRemittance =
       this.confirmationOfEnrollmentService.getMaxTuitionRemittance(
-        disbursement.disbursementValues,
-        disbursement.studentAssessment.application.currentAssessment.offering,
+        eCertDisbursement.disbursement.disbursementValues,
+        eCertDisbursement.offering,
         MaxTuitionRemittanceTypes.Effective,
       );
-    if (disbursement.tuitionRemittanceRequestedAmount > maxTuitionRemittance) {
-      disbursement.tuitionRemittanceEffectiveAmount = maxTuitionRemittance;
+    if (
+      eCertDisbursement.disbursement.tuitionRemittanceRequestedAmount >
+      maxTuitionRemittance
+    ) {
+      eCertDisbursement.disbursement.tuitionRemittanceEffectiveAmount =
+        maxTuitionRemittance;
       log.info(
         `The tuition remittance was adjusted because exceeded the maximum allowed of ${maxTuitionRemittance}.`,
       );
     } else {
-      disbursement.tuitionRemittanceEffectiveAmount =
-        disbursement.tuitionRemittanceRequestedAmount;
+      eCertDisbursement.disbursement.tuitionRemittanceEffectiveAmount =
+        eCertDisbursement.disbursement.tuitionRemittanceRequestedAmount;
       log.info("No tuition remittance adjustment was needed.");
     }
     return true;

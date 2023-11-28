@@ -1,15 +1,15 @@
 import { ECertProcessStep } from "../e-cert-processing-steps/e-cert-steps-models";
 import { DataSource } from "typeorm";
 import { ProcessSummary } from "@sims/utilities/logger";
-import { DisbursementSchedule } from "@sims/sims-db";
 import { processInParallel } from "@sims/utilities";
+import { EligibleECertDisbursement } from "../disbursement-schedule.models";
 
 /**
  * Disbursements grouped by student to allow parallel processing of students
  * and sequential processing of disbursements for the same student.
  */
 interface GroupedDisbursementPerStudent {
-  [studentId: number]: DisbursementSchedule[];
+  [studentId: number]: EligibleECertDisbursement[];
 }
 
 /**
@@ -22,11 +22,10 @@ export abstract class ECertCalculationProcess {
   /**
    * Get all disbursements currently eligible to be part of
    * an e-Cert to have its calculations executed.
-   * The returned array of {@link DisbursementSchedule} will be shared across all
-   * steps being modified till the {@link DisbursementSchedule} entity model
-   * modifications will be saved.
-   */
-  protected abstract getDisbursements(): Promise<DisbursementSchedule[]>;
+   * The returned array of {@link ECertProcessStep} will be shared across all steps being
+   * modified till the disbursement entity model modifications will be saved.
+   * */
+  protected abstract getDisbursements(): Promise<EligibleECertDisbursement[]>;
 
   /**
    * Define the steps to be executed and the execution order.
@@ -68,14 +67,14 @@ export abstract class ECertCalculationProcess {
    * @returns grouped disbursements.
    */
   private getGroupedDisbursementsPerStudent(
-    disbursements: DisbursementSchedule[],
+    eCertDisbursements: EligibleECertDisbursement[],
   ): GroupedDisbursementPerStudent {
-    return disbursements.reduce(
+    return eCertDisbursements.reduce(
       (
-        group: { [studentId: number]: DisbursementSchedule[] },
+        group: { [studentId: number]: EligibleECertDisbursement[] },
         disbursement,
       ) => {
-        const studentId = disbursement.studentAssessment.application.student.id;
+        const studentId = disbursement.studentId;
         if (!group[studentId]) {
           group[studentId] = [];
         }
@@ -92,7 +91,7 @@ export abstract class ECertCalculationProcess {
    * @param parentLog cumulative process log.
    */
   private async calculateDisbursementsForStudent(
-    groupedDisbursements: DisbursementSchedule[],
+    eCertDisbursements: EligibleECertDisbursement[],
     parentLog: ProcessSummary,
   ): Promise<void> {
     const steps = this.calculationSteps();
@@ -100,11 +99,11 @@ export abstract class ECertCalculationProcess {
     // sequentialy since one disbursement may affect student account data like
     // overawards balance and maximums where a second disbursement should take
     // those updated data into consideration.
-    for (const disbursement of groupedDisbursements) {
+    for (const eCertDisbursement of eCertDisbursements) {
       const disbursementLog = new ProcessSummary();
       parentLog.children(disbursementLog);
       disbursementLog.info(
-        `Processing disbursement id ${disbursement.id} scheduled for ${disbursement.disbursementDate}.`,
+        `Processing disbursement id ${eCertDisbursement.disbursement.id} scheduled for ${eCertDisbursement.disbursement.disbursementDate}.`,
       );
       await this.dataSource.transaction(async (entityManager) => {
         let stepNumber = 1;
@@ -115,7 +114,7 @@ export abstract class ECertCalculationProcess {
             `Executing step ${stepNumber++} out of ${steps.length}.`,
           );
           const shouldProceed = await step.executeStep(
-            disbursement,
+            eCertDisbursement,
             entityManager,
             disbursementLog,
           );

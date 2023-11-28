@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { round } from "@sims/utilities";
 import { EntityManager } from "typeorm";
-import { DisbursementSchedule } from "@sims/sims-db";
 import { ECertProcessStep } from "./e-cert-steps-models";
 import { ProcessSummary } from "@sims/utilities/logger";
+import { EligibleECertDisbursement } from "../disbursement-schedule.models";
 
 /**
  * Calculate the effective value that represents the amount that
@@ -15,17 +15,18 @@ export class CalculateEffectiveValueStep implements ECertProcessStep {
   /**
    * Calculate the effective value for every award. The result of this calculation
    * will be the value used to generate the e-Cert.
-   * @param disbursement eligible disbursement to be potentially added to an e-Cert.
+   * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
    * @param _entityManager not used for this step.
    * @param log cumulative log summary.
    */
   executeStep(
-    disbursement: DisbursementSchedule,
+    eCertDisbursement: EligibleECertDisbursement,
     _entityManager: EntityManager,
     log: ProcessSummary,
   ): boolean {
     log.info("Calculating effective values.");
-    for (const disbursementValue of disbursement.disbursementValues) {
+    for (const disbursementValue of eCertDisbursement.disbursement
+      .disbursementValues) {
       const effectiveValue =
         disbursementValue.valueAmount -
         (disbursementValue.disbursedAmountSubtracted ?? 0) -

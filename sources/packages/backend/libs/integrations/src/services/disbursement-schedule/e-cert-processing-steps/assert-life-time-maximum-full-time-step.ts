@@ -11,12 +11,11 @@ import {
 import {
   DisbursementValue,
   DisbursementValueType,
-  Application,
   StudentRestriction,
-  DisbursementSchedule,
 } from "@sims/sims-db";
 import { ECertProcessStep } from "./e-cert-steps-models";
 import { ProcessSummary } from "@sims/utilities/logger";
+import { EligibleECertDisbursement } from "../disbursement-schedule.models";
 
 /**
  * Check if the student is reaching the full-time BCSL maximum.
@@ -33,25 +32,25 @@ export class AssertLifeTimeMaximumFullTimeStep implements ECertProcessStep {
   /**
    * Check if BCSL is part of the disbursement and ensure that, if BCSL maximum is reached,
    * the award will be adjusted and a restriction will be created.
-   * @param disbursement eligible disbursement to be potentially added to an e-Cert.
+   * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
    * @param entityManager used to execute the commands in the same transaction.
    * @param log cumulative log summary.
    */
   async executeStep(
-    disbursement: DisbursementSchedule,
+    eCertDisbursement: EligibleECertDisbursement,
     entityManager: EntityManager,
     log: ProcessSummary,
   ): Promise<boolean> {
     log.info("Checking life time maximums for BC loans.");
-    const application = disbursement.studentAssessment.application;
-    for (const disbursementValue of disbursement.disbursementValues) {
+    for (const disbursementValue of eCertDisbursement.disbursement
+      .disbursementValues) {
       if (
         disbursementValue.valueAmount &&
         disbursementValue.valueType === DisbursementValueType.BCLoan
       ) {
         await this.checkLifeTimeMaximumAndAddStudentRestriction(
+          eCertDisbursement,
           disbursementValue,
-          application,
           entityManager,
         );
       }
@@ -64,24 +63,23 @@ export class AssertLifeTimeMaximumFullTimeStep implements ECertProcessStep {
    * If they hits/exceeds the life time maximum, then the award is reduced so the
    * student hits the exact maximum value and the student restriction
    * {@link  RestrictionCode.BCLM} is placed for the student.
-   * @param disbursementValue disbursement value.
+   * @param eCertDisbursement student disbursement that is part of one e-Cert.
    * @param application application related to the disbursement.
    * @param entityManager used to execute the commands in the same transaction.
    */
   private async checkLifeTimeMaximumAndAddStudentRestriction(
+    eCertDisbursement: EligibleECertDisbursement,
     disbursementValue: DisbursementValue,
-    application: Application,
     entityManager: EntityManager,
   ): Promise<void> {
-    const student = application.student;
-    const maxLifetimeBCLoanAmount =
-      application.programYear.maxLifetimeBCLoanAmount;
     // Get totals including legacy system.
     const [totalLegacyBCSLAmount, totalDisbursedBCSLAmount] = await Promise.all(
       [
-        this.sfasApplicationService.totalLegacyBCSLAmount(student.id),
+        this.sfasApplicationService.totalLegacyBCSLAmount(
+          eCertDisbursement.studentId,
+        ),
         this.disbursementScheduleSharedService.totalDisbursedBCSLAmount(
-          student.id,
+          eCertDisbursement.studentId,
         ),
       ],
     );
@@ -89,10 +87,11 @@ export class AssertLifeTimeMaximumFullTimeStep implements ECertProcessStep {
       totalLegacyBCSLAmount +
       totalDisbursedBCSLAmount +
       disbursementValue.effectiveAmount;
-    if (totalLifeTimeAmount >= maxLifetimeBCLoanAmount) {
+    if (totalLifeTimeAmount >= eCertDisbursement.maxLifetimeBCLoanAmount) {
       const auditUser = await this.systemUsersService.systemUser();
       // Amount subtracted when lifetime maximum is reached.
-      const amountSubtracted = totalLifeTimeAmount - maxLifetimeBCLoanAmount;
+      const amountSubtracted =
+        totalLifeTimeAmount - eCertDisbursement.maxLifetimeBCLoanAmount;
       // Ideally disbursementValue.effectiveAmount should be greater or equal to amountSubtracted.
       // The flow will not reach here if the ministry ignore the restriction for the previous
       // disbursement/application and money went out to the student, even though they reach the maximum.
@@ -101,10 +100,10 @@ export class AssertLifeTimeMaximumFullTimeStep implements ECertProcessStep {
       // Create RestrictionCode.BCLM restriction when lifetime maximum is reached/exceeded.
       const bclmRestriction =
         await this.studentRestrictionSharedService.createRestrictionToSave(
-          student.id,
+          eCertDisbursement.studentId,
           RestrictionCode.BCLM,
           auditUser.id,
-          application.id,
+          eCertDisbursement.applicationId,
         );
       if (bclmRestriction) {
         await entityManager

@@ -7,6 +7,7 @@ import {
 import { ECertProcessStep } from "./e-cert-steps-models";
 import { EntityManager } from "typeorm";
 import { ProcessSummary } from "@sims/utilities/logger";
+import { EligibleECertDisbursement } from "../disbursement-schedule.models";
 
 /**
  * Wraps up a series of e-Cert calculations steps, marking the disbursement as
@@ -18,19 +19,20 @@ export class PersistCalculationsStep implements ECertProcessStep {
   constructor(private readonly systemUsersService: SystemUsersService) {}
 
   /**
-   * Persis all calculations executed for the disbursement also changing
+   * Persists all calculations executed for the disbursement also changing
    * its status to {@link DisbursementScheduleStatus.ReadToSend}.
-   * @param disbursement eligible disbursement to be potentially added to an e-Cert.
+   * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
    * @param entityManager used to execute the commands in the same transaction.
    * @param log cumulative log summary.
    */
   async executeStep(
-    disbursement: DisbursementSchedule,
+    eCertDisbursement: EligibleECertDisbursement,
     entityManager: EntityManager,
     log: ProcessSummary,
   ): Promise<boolean> {
     log.info(`Saving all e-Cert calculations.`);
     const now = new Date();
+    const disbursement = eCertDisbursement.disbursement;
     disbursement.disbursementScheduleStatus =
       DisbursementScheduleStatus.ReadToSend;
     disbursement.readyToSendDate = now;

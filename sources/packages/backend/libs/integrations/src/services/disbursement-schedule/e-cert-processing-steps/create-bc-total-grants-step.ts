@@ -1,14 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { SystemUsersService } from "@sims/services";
-import {
-  DisbursementSchedule,
-  DisbursementValue,
-  DisbursementValueType,
-} from "@sims/sims-db";
+import { DisbursementValue, DisbursementValueType } from "@sims/sims-db";
 import { BC_TOTAL_GRANT_AWARD_CODE } from "@sims/services/constants";
 import { ECertProcessStep } from "./e-cert-steps-models";
 import { EntityManager } from "typeorm";
 import { ProcessSummary } from "@sims/utilities/logger";
+import { EligibleECertDisbursement } from "../disbursement-schedule.models";
 
 /**
  * Calculate the BCSG that represents the sum of all BC grants
@@ -22,13 +19,13 @@ export class CreateBCTotalGrantsStep implements ECertProcessStep {
    * Calculate the total BC grants for each disbursement since they
    * can be affected by the calculations for the values already paid for the student
    * or by overaward deductions or "stop full time BC funding" restrictions.
-   * @param disbursement eligible disbursement to be potentially added to an e-Cert.
+   * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
    * If no BC grants are present the total will still be add as zero.
    * @param _entityManager not used for this step.
    * @param log cumulative log summary.
    */
   async executeStep(
-    disbursement: DisbursementSchedule,
+    eCertDisbursement: EligibleECertDisbursement,
     _entityManager: EntityManager,
     log: ProcessSummary,
   ): Promise<boolean> {
@@ -37,7 +34,7 @@ export class CreateBCTotalGrantsStep implements ECertProcessStep {
     );
     const auditUser = await this.systemUsersService.systemUser();
     // For each schedule calculate the total BC grants.
-    let bcTotalGrant = disbursement.disbursementValues.find(
+    let bcTotalGrant = eCertDisbursement.disbursement.disbursementValues.find(
       (disbursementValue) =>
         disbursementValue.valueType === DisbursementValueType.BCTotalGrant,
     );
@@ -47,18 +44,19 @@ export class CreateBCTotalGrantsStep implements ECertProcessStep {
       bcTotalGrant.creator = auditUser;
       bcTotalGrant.valueCode = BC_TOTAL_GRANT_AWARD_CODE;
       bcTotalGrant.valueType = DisbursementValueType.BCTotalGrant;
-      disbursement.disbursementValues.push(bcTotalGrant);
+      eCertDisbursement.disbursement.disbursementValues.push(bcTotalGrant);
     }
-    const bcTotalGrantValueAmount = disbursement.disbursementValues
-      // Filter all BC grants.
-      .filter(
-        (disbursementValue) =>
-          disbursementValue.valueType === DisbursementValueType.BCGrant,
-      )
-      // Sum all BC grants.
-      .reduce((previousValue, currentValue) => {
-        return previousValue + currentValue.effectiveAmount;
-      }, 0);
+    const bcTotalGrantValueAmount =
+      eCertDisbursement.disbursement.disbursementValues
+        // Filter all BC grants.
+        .filter(
+          (disbursementValue) =>
+            disbursementValue.valueType === DisbursementValueType.BCGrant,
+        )
+        // Sum all BC grants.
+        .reduce((previousValue, currentValue) => {
+          return previousValue + currentValue.effectiveAmount;
+        }, 0);
     bcTotalGrant.valueAmount = bcTotalGrantValueAmount;
     bcTotalGrant.effectiveAmount = bcTotalGrantValueAmount;
     return true;

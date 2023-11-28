@@ -1,12 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { EntityManager } from "typeorm";
-import { DisbursementSchedule, RestrictionActionType } from "@sims/sims-db";
+import { Restriction, RestrictionActionType } from "@sims/sims-db";
 import {
-  getStudentRestrictionByActionType,
-  shouldStopFunding,
+  getRestrictionByActionType,
+  shouldStopBCFunding,
 } from "./e-cert-steps-utils";
 import { ECertProcessStep } from "./e-cert-steps-models";
 import { ProcessSummary } from "@sims/utilities/logger";
+import { EligibleECertDisbursement } from "../disbursement-schedule.models";
 
 /**
  * Check active student restriction that should stop
@@ -19,24 +20,24 @@ export class ApplyStopBCFundingRestrictionFullTimeStep
   /**
    * Check active student restriction that should stop any BC funding from being disbursed.
    * In case some is present, BC awards will be updated to not be disbursed.
-   * @param disbursement eligible disbursement to be potentially added to an e-Cert.
+   * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
    * @param _entityManager not used for this step.
    * @param log cumulative log summary.
    */
   executeStep(
-    disbursement: DisbursementSchedule,
+    eCertDisbursement: EligibleECertDisbursement,
     _entityManager: EntityManager,
     log: ProcessSummary,
   ): boolean {
     log.info(
       `Checking '${RestrictionActionType.StopFullTimeBCFunding}' restriction.`,
     );
-    for (const disbursementValue of disbursement.disbursementValues) {
-      if (shouldStopFunding(disbursement, disbursementValue)) {
+    for (const disbursementValue of eCertDisbursement.disbursement
+      .disbursementValues) {
+      if (shouldStopBCFunding(eCertDisbursement, disbursementValue)) {
         log.info(`Applying restriction for ${disbursementValue.valueCode}.`);
-        const studentRestriction = getStudentRestrictionByActionType(
-          disbursement.studentAssessment.application.student
-            .studentRestrictions,
+        const restriction = getRestrictionByActionType(
+          eCertDisbursement,
           RestrictionActionType.StopFullTimeBCFunding,
         );
         disbursementValue.restrictionAmountSubtracted =
@@ -44,8 +45,9 @@ export class ApplyStopBCFundingRestrictionFullTimeStep
           (disbursementValue.disbursedAmountSubtracted ?? 0) -
           (disbursementValue.overawardAmountSubtracted ?? 0);
         disbursementValue.effectiveAmount = 0;
-        disbursementValue.restrictionSubtracted =
-          studentRestriction.restriction;
+        disbursementValue.restrictionSubtracted = {
+          id: restriction.id,
+        } as Restriction;
       }
     }
     return true;

@@ -5,16 +5,16 @@ import {
   SystemUsersService,
 } from "@sims/services";
 import {
-  DisbursementSchedule,
   DisbursementValue,
   DisbursementOveraward,
   DisbursementOverawardOriginType,
 } from "@sims/sims-db";
 import { AwardOverawardBalance } from "@sims/services/disbursement-overaward/disbursement-overaward.models";
 import { LOAN_TYPES } from "@sims/services/constants";
-import { shouldStopFunding } from "./e-cert-steps-utils";
 import { ECertProcessStep } from "./e-cert-steps-models";
 import { ProcessSummary } from "@sims/utilities/logger";
+import { EligibleECertDisbursement } from "../disbursement-schedule.models";
+import { shouldStopBCFunding } from "./e-cert-steps-utils";
 
 /**
  * Check overaward balances and apply award deductions if needed.
@@ -29,30 +29,29 @@ export class ApplyOverawardsDeductionsStep implements ECertProcessStep {
   /**
    * Get the overawards balance consolidated for the disbursement student and
    * per loan award to apply, if needed, the overawards deductions.
-   * @param disbursement eligible disbursement to be potentially added to an e-Cert.
+   * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
    * @param entityManager used to execute the commands in the same transaction.
    * @param log cumulative log summary.
    */
   async executeStep(
-    disbursement: DisbursementSchedule,
+    eCertDisbursement: EligibleECertDisbursement,
     entityManager: EntityManager,
     log: ProcessSummary,
   ): Promise<boolean> {
     log.info("Checking if overaward deductions are needed.");
-    const studentId = disbursement.studentAssessment.application.student.id;
     // Get all the overawards balances for the student.
     const overawardsBalance =
       await this.disbursementOverawardService.getOverawardBalance(
-        [studentId],
+        [eCertDisbursement.studentId],
         entityManager,
       );
-    const studentBalance = overawardsBalance[studentId];
+    const studentBalance = overawardsBalance[eCertDisbursement.studentId];
     // Check is some deduction is needed.
     if (studentBalance) {
       // Apply the overawards for every student that has some balance.
       log.info("Found overaward deductions.");
       await this.applyOverawardsDeductions(
-        disbursement,
+        eCertDisbursement,
         studentBalance,
         entityManager,
       );
@@ -66,12 +65,12 @@ export class ApplyOverawardsDeductionsStep implements ECertProcessStep {
    * For a single student disbursement, check if there is an overaward balance,
    * updates the awards with the deductions (if needed), and adjust the student
    * overaward balance if a deduction happen.
-   * @param disbursement student disbursement that is part of one e-Cert.
+   * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
    * @param studentsOverawardBalance overaward balance for the student.
    * @param entityManager used to execute the commands in the same transaction.
    */
   private async applyOverawardsDeductions(
-    disbursement: DisbursementSchedule,
+    eCertDisbursement: EligibleECertDisbursement,
     studentOverawardBalance: AwardOverawardBalance,
     entityManager: EntityManager,
   ): Promise<void> {
@@ -80,10 +79,10 @@ export class ApplyOverawardsDeductionsStep implements ECertProcessStep {
     // If the award will not be disbursed the overaward should not be deducted
     // because the student will not be receiving any money for the award, in this
     // case the BC Loan (BCSL).
-    const loanAwards = disbursement.disbursementValues.filter(
+    const loanAwards = eCertDisbursement.disbursement.disbursementValues.filter(
       (award) =>
         LOAN_TYPES.includes(award.valueType) &&
-        !shouldStopFunding(disbursement, award),
+        !shouldStopBCFunding(eCertDisbursement, award),
     );
     for (const loan of loanAwards) {
       // Total overaward balance for the student for this particular award.
@@ -104,9 +103,9 @@ export class ApplyOverawardsDeductionsStep implements ECertProcessStep {
         // An overaward was subtracted from an award and the same must be
         // deducted from the student balance.
         await disbursementOverawardRepo.insert({
-          student: disbursement.studentAssessment.application.student,
-          studentAssessment: disbursement.studentAssessment,
-          disbursementSchedule: disbursement,
+          student: { id: eCertDisbursement.studentId },
+          studentAssessment: { id: eCertDisbursement.assessmentId },
+          disbursementSchedule: eCertDisbursement.disbursement,
           disbursementValueCode: loan.valueCode,
           overawardValue: loan.overawardAmountSubtracted * -1,
           originType: DisbursementOverawardOriginType.AwardDeducted,
