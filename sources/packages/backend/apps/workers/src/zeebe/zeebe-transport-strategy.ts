@@ -4,6 +4,7 @@ import {
   Server,
   MessageHandler,
 } from "@nestjs/microservices";
+import { ZeebeHealthIndicator } from "@sims/services";
 import { isObservable, lastValueFrom } from "rxjs";
 import {
   ICustomHeaders,
@@ -14,7 +15,6 @@ import {
   ZBWorkerOptions,
   ZeebeJob,
 } from "zeebe-node";
-import { ZeebeHealthIndicator } from "./zeebe-health-indicator";
 
 /**
  * Zeebe strategy to stablish the connectivity and create all workers.

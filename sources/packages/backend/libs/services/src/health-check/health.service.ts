@@ -7,7 +7,7 @@ import {
   MicroserviceHealthIndicator,
 } from "@nestjs/terminus";
 import { ConfigService } from "@sims/utilities/config";
-import { ZeebeHealthIndicator } from "apps/workers/src/zeebe";
+import { ZeebeHealthIndicator } from "./zeebe-health-indicator";
 
 @Injectable()
 export class HealthService extends HealthIndicator {
