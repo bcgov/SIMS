@@ -88,6 +88,14 @@ export class AssessmentController {
           case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
           case ASSESSMENT_ALREADY_ASSOCIATED_WITH_DIFFERENT_WORKFLOW:
             logger.warn(error.getSummaryMessage());
+            // The below method also returns JOB_ACTION_ACKNOWLEDGEMENT ideally
+            // considered sufficient to acknowledge that the job is completed.
+            // But during the load test it has been identified that calling `job.cancelWorkflow()`
+            // was not acknowledging that job is complete after the instance was cancelled.
+            // At this moment, it proves to be bug in the framework and hence the approach of calling `job.complete()`
+            // was followed.
+            // TODO: Raise the issue regarding the bug to zeebe-node community and modify
+            // the code if required based on their response or solution.
             await job.cancelWorkflow();
             return job.complete();
         }
