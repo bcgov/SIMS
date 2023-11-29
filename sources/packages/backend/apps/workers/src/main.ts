@@ -8,7 +8,7 @@ import { SystemUsersService } from "@sims/services";
 
 (async () => {
   const workers = await NestFactory.create(WorkersModule, { bufferLogs: true });
-  const config = workers.get<ConfigService>(ConfigService);
+  const config = workers.get(ConfigService);
   // Get the injected logger.
   const logger = await workers.resolve(LoggerService);
   workers.useLogger(logger);
