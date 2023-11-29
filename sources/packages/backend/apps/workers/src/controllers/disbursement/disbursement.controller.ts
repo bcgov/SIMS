@@ -46,7 +46,7 @@ export class DisbursementController {
    */
   @ZeebeWorker(Workers.SaveDisbursementSchedules, {
     fetchVariable: [ASSESSMENT_ID, DISBURSEMENT_SCHEDULES],
-    maxJobsToActivate: MaxJobsToActivate.Normal,
+    maxJobsToActivate: MaxJobsToActivate.Medium,
   })
   async saveDisbursementSchedules(
     job: Readonly<

@@ -42,7 +42,7 @@ export class ApplicationController {
    */
   @ZeebeWorker(Workers.UpdateApplicationStatus, {
     fetchVariable: [APPLICATION_ID],
-    maxJobsToActivate: MaxJobsToActivate.Maximum,
+    maxJobsToActivate: MaxJobsToActivate.High,
   })
   async updateApplicationStatus(
     job: Readonly<
