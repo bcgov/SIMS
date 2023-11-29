@@ -9,6 +9,7 @@ import {
   Student,
   User,
   getUserFullNameLikeSearch,
+  ApplicationStatus,
 } from "@sims/sims-db";
 import {
   OrderByCondition,
@@ -153,6 +154,9 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
         .innerJoin("application.student", "student")
         .innerJoin("student.user", "user")
         .where("exception.id = :exceptionId", { exceptionId })
+        .andWhere("application.applicationStatus != :applicationStatus", {
+          applicationStatus: ApplicationStatus.Overwritten,
+        })
         .getOne();
 
       if (!exceptionToUpdate) {
@@ -239,6 +243,9 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
       .innerJoin("student.user", "user")
       .where("exception.exceptionStatus = :exceptionStatus", {
         exceptionStatus: ApplicationExceptionStatus.Pending,
+      })
+      .andWhere("application.applicationStatus != :applicationStatus", {
+        applicationStatus: ApplicationStatus.Overwritten,
       });
 
     if (paginationOptions.searchCriteria) {

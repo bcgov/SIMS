@@ -10,16 +10,19 @@ import {
 import {
   ApplicationException,
   ApplicationExceptionStatus,
+  ApplicationStatus,
 } from "@sims/sims-db";
 import * as faker from "faker";
 import { saveFakeApplicationWithApplicationException } from "../application-exception-helper";
 import { ZBClient } from "zeebe-node";
+import { createE2EDataSources, E2EDataSources } from "@sims/test-utils";
 
 describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
   let app: INestApplication;
   let appDataSource: DataSource;
   let zbClient: ZBClient;
   let applicationExceptionRepo: Repository<ApplicationException>;
+  let db: E2EDataSources;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -27,6 +30,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
     appDataSource = dataSource;
     zbClient = app.get(ZBClient);
     applicationExceptionRepo = dataSource.getRepository(ApplicationException);
+    db = createE2EDataSources(dataSource);
   });
 
   it("Should be able to approve application exception when its status is pending.", async () => {
@@ -154,6 +158,35 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
         message:
           "Student application exception must be in Pending state to be assessed.",
         error: "Unprocessable Entity",
+      });
+  });
+
+  it(`Should not be able to approve application exception when the application has ${ApplicationStatus.Overwritten} and exception is in ${ApplicationExceptionStatus.Pending} status.`, async () => {
+    // Arrange
+    const application = await saveFakeApplicationWithApplicationException(
+      appDataSource,
+      undefined,
+      { applicationExceptionStatus: ApplicationExceptionStatus.Pending },
+    );
+    application.applicationStatus = ApplicationStatus.Overwritten;
+    await db.application.save(application);
+    const updateApplicationException = {
+      exceptionStatus: ApplicationExceptionStatus.Approved,
+      noteDescription: faker.lorem.text(10),
+    };
+    const endpoint = `/aest/application-exception/${application.applicationException.id}`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(updateApplicationException)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: "Student application exception not found.",
+        error: "Not Found",
       });
   });
 

@@ -1,55 +1,70 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { DataSource } from "typeorm";
 import {
   AESTGroups,
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   getAESTToken,
 } from "../../../../testHelpers";
-import { ApplicationExceptionStatus } from "@sims/sims-db";
+import { ApplicationExceptionStatus, ApplicationStatus } from "@sims/sims-db";
 import { getUserFullName } from "../../../../utilities";
 import { saveFakeApplicationWithApplicationException } from "../application-exception-helper";
+import { createE2EDataSources, E2EDataSources } from "@sims/test-utils";
 
 describe("ApplicationExceptionAESTController(e2e)-getPendingApplicationExceptions", () => {
   let app: INestApplication;
-  let appDataSource: DataSource;
+  let db: E2EDataSources;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
-    appDataSource = dataSource;
+    db = createE2EDataSources(dataSource);
   });
 
   it("Should get pending application exceptions when available.", async () => {
     // Arrange
     const application1Promise = saveFakeApplicationWithApplicationException(
-      appDataSource,
+      db.dataSource,
       undefined,
       { applicationExceptionStatus: ApplicationExceptionStatus.Pending },
     );
     const application2Promise = saveFakeApplicationWithApplicationException(
-      appDataSource,
+      db.dataSource,
       undefined,
       { applicationExceptionStatus: ApplicationExceptionStatus.Pending },
     );
     const application3Promise = saveFakeApplicationWithApplicationException(
-      appDataSource,
+      db.dataSource,
       undefined,
       { applicationExceptionStatus: ApplicationExceptionStatus.Approved },
     );
     const application4Promise = saveFakeApplicationWithApplicationException(
-      appDataSource,
+      db.dataSource,
       undefined,
       { applicationExceptionStatus: ApplicationExceptionStatus.Declined },
     );
-    const [application1, application2, application3, application4] =
-      await Promise.all([
-        application1Promise,
-        application2Promise,
-        application3Promise,
-        application4Promise,
-      ]);
+    const application5Promise = saveFakeApplicationWithApplicationException(
+      db.dataSource,
+      undefined,
+      { applicationExceptionStatus: ApplicationExceptionStatus.Pending },
+    );
+    const [
+      application1,
+      application2,
+      application3,
+      application4,
+      application5,
+    ] = await Promise.all([
+      application1Promise,
+      application2Promise,
+      application3Promise,
+      application4Promise,
+      application5Promise,
+    ]);
+
+    application5.applicationStatus = ApplicationStatus.Overwritten;
+    await db.application.save(application5);
+
     const endpoint =
       "/aest/application-exception?page=0&pageLimit=100&sortField=submittedDate&sortOrder=DESC";
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
@@ -99,6 +114,16 @@ describe("ApplicationExceptionAESTController(e2e)-getPendingApplicationException
             submittedDate:
               application4.applicationException.createdAt.toISOString(),
             fullName: getUserFullName(application4.student.user),
+          }),
+        );
+        expect(applicationExceptionList).not.toContainEqual(
+          expect.objectContaining({
+            applicationId: application5.id,
+            studentId: application5.student.id,
+            applicationNumber: application5.applicationNumber,
+            submittedDate:
+              application5.applicationException.createdAt.toISOString(),
+            fullName: getUserFullName(application5.student.user),
           }),
         );
       });
