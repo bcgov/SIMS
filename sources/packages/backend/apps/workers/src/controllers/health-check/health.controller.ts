@@ -9,8 +9,6 @@ import { HealthService } from "@sims/services";
 /**
  * HTTP Controller for handling health-related endpoint used for
  * liveliness and readiness probes.
- * @class
- * @name HealthController
  */
 @Controller("health")
 export class HealthController {
