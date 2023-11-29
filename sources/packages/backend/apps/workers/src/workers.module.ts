@@ -18,7 +18,7 @@ import {
   MSFAANumberService,
   DisbursementScheduleService,
 } from "./services";
-import { ZeebeHealthIndicator, ZeebeTransportStrategy } from "./zeebe";
+import { ZeebeTransportStrategy } from "./zeebe";
 import {
   DisbursementScheduleSharedService,
   SequenceControlService,
