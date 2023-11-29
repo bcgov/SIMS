@@ -1,23 +1,20 @@
 import { Injectable } from "@nestjs/common";
 import { RedisOptions, Transport } from "@nestjs/microservices";
 import {
-  HealthIndicator,
   HealthIndicatorResult,
   HealthCheckError,
   MicroserviceHealthIndicator,
 } from "@nestjs/terminus";
 import { ConfigService } from "@sims/utilities/config";
-import { ZeebeHealthIndicator } from "./zeebe-health-indicator";
+import { ZeebeHealthIndicator } from "apps/workers/src/zeebe";
 
 @Injectable()
-export class HealthService extends HealthIndicator {
+export class HealthService {
   constructor(
     private microservice: MicroserviceHealthIndicator,
     private readonly configService: ConfigService,
     private readonly zeebeHealthIndicator: ZeebeHealthIndicator,
-  ) {
-    super();
-  }
+  ) {}
 
   /**
    * Check the health of the application.
@@ -28,25 +25,21 @@ export class HealthService extends HealthIndicator {
    */
   async isHealthy(key: string): Promise<HealthIndicatorResult> {
     let isHealthy: boolean;
-    let healthCheckResult: HealthIndicatorResult | boolean;
+    let healthCheckResult: HealthIndicatorResult;
 
     if (key === "queues") {
       healthCheckResult = await this.checkRedisHealth();
       isHealthy = healthCheckResult.redis.status === "up";
     } else if (key === "workers") {
       healthCheckResult = await this.checkZeebeHealth();
-      isHealthy = healthCheckResult;
+      isHealthy = healthCheckResult.zeebe.status === "up";
     }
-
-    const result: HealthIndicatorResult = this.getStatus(key, isHealthy, {
-      healthCheckResult,
-    });
 
     if (isHealthy) {
-      return result;
+      return healthCheckResult;
     }
 
-    throw new HealthCheckError(`${key} check failed`, result);
+    throw new HealthCheckError(`${key} check failed`, healthCheckResult);
   }
 
   /**
@@ -68,7 +61,7 @@ export class HealthService extends HealthIndicator {
    * Check zeebe is ready to accept connection.
    * @returns status of the zeebe connection.
    */
-  private async checkZeebeHealth(): Promise<boolean> {
-    return this.zeebeHealthIndicator.allConnected();
+  private async checkZeebeHealth(): Promise<HealthIndicatorResult> {
+    return this.zeebeHealthIndicator.check("zeebe");
   }
 }
