@@ -27,14 +27,14 @@ export class HealthService extends HealthIndicator {
    * In case of workers, we check if the zeebe is ready to accept the connections.
    */
   async isHealthy(key: string): Promise<HealthIndicatorResult> {
-    let isHealthy;
-    let healthCheckResult;
+    let isHealthy: boolean;
+    let healthCheckResult: HealthIndicatorResult | boolean;
 
     if (key === "queues") {
-      const healthCheckResult = await this.checkRedisHealth();
+      healthCheckResult = await this.checkRedisHealth();
       isHealthy = healthCheckResult.redis.status === "up";
     } else if (key === "workers") {
-      const healthCheckResult = await this.checkZeebeHealth();
+      healthCheckResult = await this.checkZeebeHealth();
       isHealthy = healthCheckResult;
     }
 
