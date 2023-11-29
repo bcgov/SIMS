@@ -82,7 +82,7 @@ export class CRAIntegrationController {
    */
   @ZeebeWorker(Workers.CheckIncomeRequest, {
     fetchVariable: [INCOME_VERIFICATION_ID],
-    maxJobsToActivate: MaxJobsToActivate.Maximum,
+    maxJobsToActivate: MaxJobsToActivate.High,
   })
   async checkIncomeRequest(
     job: Readonly<

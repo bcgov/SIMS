@@ -55,7 +55,7 @@ export class AssessmentController {
    */
   @ZeebeWorker(Workers.AssociateWorkflowInstance, {
     fetchVariable: [ASSESSMENT_ID],
-    maxJobsToActivate: MaxJobsToActivate.Normal,
+    maxJobsToActivate: MaxJobsToActivate.Medium,
   })
   async associateWorkflowInstance(
     job: Readonly<
@@ -87,8 +87,9 @@ export class AssessmentController {
             return job.error(error.name, error.message);
           case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
           case ASSESSMENT_ALREADY_ASSOCIATED_WITH_DIFFERENT_WORKFLOW:
-            logger.error(error.getSummaryMessage());
-            return job.cancelWorkflow();
+            logger.warn(error.getSummaryMessage());
+            await job.cancelWorkflow();
+            return job.complete();
         }
       }
       return createUnexpectedJobFail(error, job, { logger });
@@ -170,7 +171,7 @@ export class AssessmentController {
    */
   @ZeebeWorker(Workers.UpdateNOAStatus, {
     fetchVariable: [ASSESSMENT_ID],
-    maxJobsToActivate: MaxJobsToActivate.Maximum,
+    maxJobsToActivate: MaxJobsToActivate.High,
   })
   async updateNOAStatus(
     job: Readonly<
