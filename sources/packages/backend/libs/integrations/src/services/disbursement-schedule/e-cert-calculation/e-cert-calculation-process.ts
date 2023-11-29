@@ -1,7 +1,7 @@
 import { ECertProcessStep } from "../e-cert-processing-steps/e-cert-steps-models";
 import { DataSource } from "typeorm";
 import { ProcessSummary } from "@sims/utilities/logger";
-import { processInParallel } from "@sims/utilities";
+import { parseJSONError, processInParallel } from "@sims/utilities";
 import { EligibleECertDisbursement } from "../disbursement-schedule.models";
 
 /**
@@ -105,27 +105,36 @@ export abstract class ECertCalculationProcess {
       disbursementLog.info(
         `Processing disbursement id ${eCertDisbursement.disbursement.id} scheduled for ${eCertDisbursement.disbursement.disbursementDate}.`,
       );
-      await this.dataSource.transaction(async (entityManager) => {
-        let stepNumber = 1;
-        // Execute all steps sequentially. The order of execution is important since the
-        // disbursement data is potentially changed along the steps till it is persisted.
-        for (const step of steps) {
-          disbursementLog.info(
-            `Executing step ${stepNumber++} out of ${steps.length}.`,
-          );
-          const shouldProceed = await step.executeStep(
-            eCertDisbursement,
-            entityManager,
-            disbursementLog,
-          );
-          if (!shouldProceed) {
+      try {
+        await this.dataSource.transaction(async (entityManager) => {
+          let stepNumber = 1;
+          // Execute all steps sequentially. The order of execution is important since the
+          // disbursement data is potentially changed along the steps till it is persisted.
+          for (const step of steps) {
             disbursementLog.info(
-              "The step determined that the calculation should be interrupted. This disbursement will not be part of the next e-Cert generation.",
+              `Executing step ${stepNumber++} out of ${steps.length}.`,
             );
-            break;
+            const shouldProceed = await step.executeStep(
+              eCertDisbursement,
+              entityManager,
+              disbursementLog,
+            );
+            if (!shouldProceed) {
+              disbursementLog.info(
+                "The step determined that the calculation should be interrupted. This disbursement will not be part of the next e-Cert generation.",
+              );
+              break;
+            }
           }
-        }
-      });
+        });
+      } catch (error: unknown) {
+        disbursementLog.error(
+          "Unexpected error while processing disbursement. Student disbursements for this student will no longer be calculated.",
+          parseJSONError(error),
+        );
+        // Stops further disbursements calculations for the same student.
+        break;
+      }
     }
   }
 }
