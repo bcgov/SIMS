@@ -127,7 +127,10 @@ describe(
       });
 
       // Act
-      await processor.processFullTimeECert(job);
+      const result = await processor.processFullTimeECert(job);
+
+      // Assert
+      expect(result).toStrictEqual(["Process finalized with success."]);
 
       // Assert
 

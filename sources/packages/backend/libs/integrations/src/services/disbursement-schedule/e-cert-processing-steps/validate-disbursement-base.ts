@@ -25,7 +25,7 @@ export abstract class ValidateDisbursementBase {
     }
     // SIN
     if (!eCertDisbursement.hasValidSIN) {
-      log.info(`Student SIN is invalid or the validation is pending.`);
+      log.info("Student SIN is invalid or the validation is pending.");
       shouldContinue = false;
     }
     // MSFAA cancelation.

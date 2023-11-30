@@ -66,7 +66,7 @@ export class ApplyOverawardsDeductionsStep implements ECertProcessStep {
    * updates the awards with the deductions (if needed), and adjust the student
    * overaward balance if a deduction happen.
    * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
-   * @param studentsOverawardBalance overaward balance for the student.
+   * @param studentOverawardBalance overaward balance for the student.
    * @param entityManager used to execute the commands in the same transaction.
    */
   private async applyOverawardsDeductions(

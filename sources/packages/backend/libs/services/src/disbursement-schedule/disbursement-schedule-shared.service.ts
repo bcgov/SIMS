@@ -30,6 +30,16 @@ import { SystemUsersService } from "@sims/services/system-users";
 const TRANSACTION_IDLE_TIMEOUT_SECONDS = 60;
 
 /**
+ * Disbursement statuses that should be considered final, which means tha
+ * there is no further calculations executed and the money should be considered
+ * as disbursed to the student.
+ */
+const DISBURSED_STATUSES = [
+  DisbursementScheduleStatus.ReadToSend,
+  DisbursementScheduleStatus.Sent,
+];
+
+/**
  * Service layer for the student application assessment calculations for the disbursement schedules.
  * Assumptions and concepts:
  * - sims.disbursement_overawards can also be referred as overaward balance table or overaward history table.
@@ -448,7 +458,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
     const disbursementSchedules = await this.getDisbursementsForOverawards(
       studentId,
       applicationNumber,
-      [DisbursementScheduleStatus.ReadToSend, DisbursementScheduleStatus.Sent],
+      DISBURSED_STATUSES,
       entityManager,
     );
 
@@ -458,10 +468,10 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
     // The overawardAmountSubtracted is money that the student is being paid but before e-Cert generation
     // it is used to deduct student debt, and the deduction is made with "student money".
     disbursementSchedules
-      .filter(
-        (disbursementSchedule) =>
-          disbursementSchedule.disbursementScheduleStatus ===
-          DisbursementScheduleStatus.Sent,
+      .filter((disbursementSchedule) =>
+        DISBURSED_STATUSES.includes(
+          disbursementSchedule.disbursementScheduleStatus,
+        ),
       )
       .flatMap(
         (disbursementSchedule) => disbursementSchedule.disbursementValues,
@@ -688,10 +698,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
       .where(
         "disbursement.disbursementScheduleStatus IN (:...disbursementScheduleStatus)",
         {
-          disbursementScheduleStatus: [
-            DisbursementScheduleStatus.ReadToSend,
-            DisbursementScheduleStatus.Sent,
-          ],
+          disbursementScheduleStatus: DISBURSED_STATUSES,
         },
       )
       .andWhere("student.id = :studentId", { studentId: studentId })

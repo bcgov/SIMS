@@ -37,7 +37,7 @@ export abstract class ECertCalculationProcess {
    * @param log cumulative process log.
    */
   async executeCalculations(log: ProcessSummary): Promise<void> {
-    log.info(`Retrieving eligible disbursements(s).`);
+    log.info("Retrieving eligible disbursements(s).");
     const disbursements = await this.getDisbursements();
     // Group retrieved disbursements per students since a student can
     // potentially have more then one disbursement in the same e-Cert.
@@ -63,7 +63,7 @@ export abstract class ECertCalculationProcess {
 
   /**
    * Group all disbursements per student id.
-   * @param disbursements disbursements to be grouped.
+   * @param eCertDisbursements disbursements to be grouped.
    * @returns grouped disbursements.
    */
   private getGroupedDisbursementsPerStudent(
@@ -87,7 +87,7 @@ export abstract class ECertCalculationProcess {
 
   /**
    * Execute all the disbursements for a single student sequentially.
-   * @param groupedDisbursements all disbursements for a single student.
+   * @param eCertDisbursements all disbursements for a single student.
    * @param parentLog cumulative process log.
    */
   private async calculateDisbursementsForStudent(
@@ -96,7 +96,7 @@ export abstract class ECertCalculationProcess {
   ): Promise<void> {
     const steps = this.calculationSteps();
     // Ensures that disbursements for the same student will be processed
-    // sequentialy since one disbursement may affect student account data like
+    // sequentially since one disbursement may affect student account data like
     // overawards balance and maximums where a second disbursement should take
     // those updated data into consideration.
     for (const eCertDisbursement of eCertDisbursements) {

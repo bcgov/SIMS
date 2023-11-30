@@ -28,7 +28,7 @@ export class PartTimeECertProcessIntegrationScheduler extends BaseScheduler<void
   }
 
   /**
-   * Process part-Time disbursements available to be sent to ESDC.
+   * Process part-time disbursements available to be sent to ESDC.
    * Consider any record that is scheduled in upcoming days or in the past.
    * @params job job details.
    * @returns result of the file upload with the file generated and the
