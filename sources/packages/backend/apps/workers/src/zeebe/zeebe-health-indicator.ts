@@ -8,9 +8,6 @@ import { Workers } from "@sims/services/constants";
 
 @Injectable()
 export class ZeebeHealthIndicator extends HealthIndicator {
-  constructor() {
-    super();
-  }
   private readonly workersConnectionStatus: Record<string, boolean> = {};
 
   /**
