@@ -29,7 +29,7 @@ export class HealthController {
   async check() {
     return this.healthCheckService.check([
       () =>
-        this.typeOrmHealthIndicator.pingCheck("Postgres", {
+        this.typeOrmHealthIndicator.pingCheck("sims-db", {
           connection: this.dataSource,
         }),
       () => this.zeebeHealthIndicator.check("zeebe"),
