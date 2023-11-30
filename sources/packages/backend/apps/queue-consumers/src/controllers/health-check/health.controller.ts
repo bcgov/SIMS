@@ -13,10 +13,10 @@ import { DataSource } from "typeorm";
 export class HealthController {
   constructor(
     private readonly configService: ConfigService,
-    private healthCheckService: HealthCheckService,
-    private typeOrmHealthIndicator: TypeOrmHealthIndicator,
-    private microservice: MicroserviceHealthIndicator,
-    private dataSource: DataSource,
+    private readonly healthCheckService: HealthCheckService,
+    private readonly typeOrmHealthIndicator: TypeOrmHealthIndicator,
+    private readonly microservice: MicroserviceHealthIndicator,
+    private readonly dataSource: DataSource,
   ) {}
 
   /**

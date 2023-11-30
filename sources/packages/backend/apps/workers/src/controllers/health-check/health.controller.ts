@@ -14,9 +14,9 @@ import { DataSource } from "typeorm";
 @Controller("health")
 export class HealthController {
   constructor(
-    private healthCheckService: HealthCheckService,
+    private readonly healthCheckService: HealthCheckService,
     private readonly zeebeHealthIndicator: ZeebeHealthIndicator,
-    private typeOrmHealthIndicator: TypeOrmHealthIndicator,
+    private readonly typeOrmHealthIndicator: TypeOrmHealthIndicator,
     private dataSource: DataSource,
   ) {}
 
