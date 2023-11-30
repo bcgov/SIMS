@@ -59,7 +59,7 @@
     "@nestjs/terminus": "^10.1.1",
     "@nestjs/typeorm": "^9.0.0",
     "@types/ssh2-sftp-client": "^5.3.1",
-    "axios": "^0.27.2",
+    "axios": "^1.6.0",
     "bull": "^4.10.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
