@@ -1,12 +1,15 @@
 import { Injectable } from "@nestjs/common";
-import { HealthCheckError, HealthIndicator } from "@nestjs/terminus";
+import {
+  HealthCheckError,
+  HealthIndicator,
+  HealthIndicatorResult,
+} from "@nestjs/terminus";
 import { Workers } from "@sims/services/constants";
 
 @Injectable()
 export class ZeebeHealthIndicator extends HealthIndicator {
   constructor() {
     super();
-    console.log("test");
   }
   private readonly workersConnectionStatus: Record<string, boolean> = {};
 
@@ -41,7 +44,7 @@ export class ZeebeHealthIndicator extends HealthIndicator {
    * @throws HealthCheckError if the Zeebe connection check fails.
    * @returns The result of the Zeebe health check.
    */
-  public check(key: string) {
+  public async check(key: string): Promise<HealthIndicatorResult> {
     // Check if the Zeebe connection is healthy.
     const isHealthy = this.allConnected();
     if (isHealthy) {

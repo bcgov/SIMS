@@ -1,10 +1,10 @@
 import { Controller, Get } from "@nestjs/common";
 import {
-  HealthCheckService,
   HealthCheck,
-  HealthCheckResult,
+  HealthCheckError,
+  HealthIndicatorResult,
 } from "@nestjs/terminus";
-import { HealthService } from "@sims/services";
+import { ZeebeHealthIndicator } from "../../zeebe";
 
 /**
  * HTTP Controller for handling health-related endpoint used for
@@ -12,10 +12,7 @@ import { HealthService } from "@sims/services";
  */
 @Controller("health")
 export class HealthController {
-  constructor(
-    private healthCheckService: HealthCheckService,
-    private healthIndicator: HealthService,
-  ) {}
+  constructor(private readonly zeebeHealthIndicator: ZeebeHealthIndicator) {}
 
   /**
    * Check the health of the workers.
@@ -23,9 +20,13 @@ export class HealthController {
    */
   @Get()
   @HealthCheck()
-  check(): Promise<HealthCheckResult> {
-    return this.healthCheckService.check([
-      () => this.healthIndicator.isHealthy("workers"),
-    ]);
+  async check(): Promise<HealthIndicatorResult> {
+    const healthCheckResult = await this.zeebeHealthIndicator.check("zeebe");
+    const isHealthy = healthCheckResult.zeebe.status === "up";
+    if (isHealthy) {
+      return healthCheckResult;
+    }
+
+    throw new HealthCheckError("Queues check failed", healthCheckResult);
   }
 }

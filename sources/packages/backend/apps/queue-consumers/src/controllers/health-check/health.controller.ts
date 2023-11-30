@@ -1,12 +1,18 @@
 import { Controller, Get } from "@nestjs/common";
-import { HealthCheckService, HealthCheck } from "@nestjs/terminus";
-import { HealthService } from "@sims/services";
+import { RedisOptions, Transport } from "@nestjs/microservices";
+import {
+  HealthCheck,
+  MicroserviceHealthIndicator,
+  HealthCheckError,
+  HealthIndicatorResult,
+} from "@nestjs/terminus";
+import { ConfigService } from "@sims/utilities/config";
 
 @Controller("health")
 export class HealthController {
   constructor(
-    private healthCheckService: HealthCheckService,
-    private healthIndicator: HealthService,
+    private readonly configService: ConfigService,
+    private microservice: MicroserviceHealthIndicator,
   ) {}
 
   /**
@@ -15,9 +21,23 @@ export class HealthController {
    */
   @Get()
   @HealthCheck()
-  check() {
-    return this.healthCheckService.check([
-      () => this.healthIndicator.isHealthy("queues"),
-    ]);
+  async check(): Promise<HealthIndicatorResult> {
+    const healthCheckResult = await this.microservice.pingCheck<RedisOptions>(
+      "redis",
+      {
+        transport: Transport.REDIS,
+        options: {
+          host: this.configService.redis.redisHost,
+          port: this.configService.redis.redisPort,
+          password: this.configService.redis.redisPassword,
+        },
+      },
+    );
+    const isHealthy = healthCheckResult.redis.status === "up";
+    if (isHealthy) {
+      return healthCheckResult;
+    }
+
+    throw new HealthCheckError("Queues check failed", healthCheckResult);
   }
 }

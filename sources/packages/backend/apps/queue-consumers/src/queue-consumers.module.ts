@@ -62,6 +62,7 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
 import { ECEIntegrationModule } from "@sims/integrations/institution-integration/ece-integration";
 import { HealthModule } from "@sims/services/health-check";
 import { HealthController } from "./controllers";
+import { MicroserviceHealthIndicator } from "@nestjs/terminus";
 
 @Module({
   imports: [
@@ -124,6 +125,7 @@ import { HealthController } from "./controllers";
     AssessmentWorkflowEnqueuerScheduler,
     WorkflowEnqueuerService,
     WorkflowQueueRetryScheduler,
+    MicroserviceHealthIndicator,
   ],
   controllers: [HealthController],
 })
