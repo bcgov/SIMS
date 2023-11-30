@@ -7,6 +7,7 @@ import {
   SupportingUserController,
   CRAIntegrationController,
   DisbursementController,
+  HealthController,
 } from "./controllers";
 import {
   StudentAssessmentService,
@@ -17,7 +18,7 @@ import {
   MSFAANumberService,
   DisbursementScheduleService,
 } from "./services";
-import { ZeebeTransportStrategy } from "./zeebe";
+import { ZeebeHealthIndicator, ZeebeTransportStrategy } from "./zeebe";
 import {
   DisbursementScheduleSharedService,
   SequenceControlService,
@@ -33,6 +34,7 @@ import {
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
 import { SystemUserModule } from "@sims/services/system-users";
+import { TerminusModule } from "@nestjs/terminus";
 
 @Module({
   imports: [
@@ -43,6 +45,7 @@ import { SystemUserModule } from "@sims/services/system-users";
     ZeebeModule.forRoot(),
     SystemUserModule,
     NotificationsModule,
+    TerminusModule,
   ],
   controllers: [
     AssessmentController,
@@ -51,6 +54,7 @@ import { SystemUserModule } from "@sims/services/system-users";
     SupportingUserController,
     CRAIntegrationController,
     DisbursementController,
+    HealthController,
   ],
   providers: [
     ZeebeTransportStrategy,
@@ -68,6 +72,7 @@ import { SystemUserModule } from "@sims/services/system-users";
     DisbursementOverawardService,
     NoteSharedService,
     ConfirmationOfEnrollmentService,
+    ZeebeHealthIndicator,
   ],
 })
 export class WorkersModule {}

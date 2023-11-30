@@ -134,5 +134,8 @@ QUEUE_DASHBOARD_PASSWORD=
 QUEUE_DASHBOARD_USER=
 QUEUE_PREFIX={sims-local}
 
+#Workers properties
+WORKERS_PORT=
+
 #Load test gateway
 LOAD_TEST_API_PORT=

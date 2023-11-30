@@ -25,6 +25,7 @@ export APPLICATION_ARCHIVE_DAYS := $(or ${APPLICATION_ARCHIVE_DAYS}, 43)
 export REDIS_PORT := $(or ${REDIS_PORT}, 6379)
 export API_PORT := $(or ${API_PORT}, 7070)
 export QUEUE_CONSUMERS_PORT := $(or ${QUEUE_CONSUMERS_PORT}, 7000)
+export WORKERS_PORT := $(or ${WORKERS_PORT}, 8000)
 export LOAD_TEST_GATEWAY_PORT := $(or ${LOAD_TEST_GATEWAY_PORT}, 3005)
 export WEB_PORT := $(or ${WEB_PORT}, 3030)
 export DB_NAME := $(or ${DB_NAME}, SIMSDB)
@@ -406,6 +407,7 @@ deploy-workers:
 	test -n "$(DB_SERVICE_NAME)"
 	test -n "$(WORKERS_SECRET_NAME)"
 	test -n "$(WORKERS)"
+	test -n "$(WORKERS_PORT)"
 	test -n "$(BYPASS_CRA_INCOME_VERIFICATION)"
 	@echo "+\n++ Deploying Workers with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/workers-deploy.yml \
@@ -413,6 +415,7 @@ deploy-workers:
 		-p WORKERS_SECRET_NAME=$(WORKERS_SECRET_NAME) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
 		-p DB_SERVICE=$(DB_SERVICE_NAME) \
+		-p PORT=$(WORKERS_PORT) \
 		-p IMAGE_STREAM_TAG="$(WORKERS_BUILD_REF):$(BUILD_REF)" \
 		-p BUILD_TAG=$(BUILD_REF) \
 		-p BYPASS_CRA_INCOME_VERIFICATION=$(BYPASS_CRA_INCOME_VERIFICATION) \

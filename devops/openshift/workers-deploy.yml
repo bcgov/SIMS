@@ -32,6 +32,8 @@ objects:
                   value: "${DB_SERVICE}"
                 - name: REDIS_HOST
                   value: "${REDIS_SERVICE}"
+                - name: WORKERS_PORT
+                  value: "${PORT}"
                 - name: REDIS_PASSWORD
                   valueFrom:
                     secretKeyRef:
@@ -178,3 +180,5 @@ parameters:
     value: redis-creds
   - name: REDIS_PASSWORD_KEY
     value: password
+  - name: PORT
+    required: true
