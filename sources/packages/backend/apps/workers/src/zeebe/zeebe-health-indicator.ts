@@ -13,7 +13,7 @@ export class ZeebeHealthIndicator extends HealthIndicator {
   /**
    * Reports the connection status of a worker.
    * @param workerName worker whose connection status is being reported.
-   * @param status - The connection status of the worker (true if connected, false otherwise).
+   * @param status connection status of the worker (true if connected, false otherwise).
    */
   reportConnectionWorkerStatus(workerName: string, status: boolean) {
     this.workersConnectionStatus[workerName] = status;
