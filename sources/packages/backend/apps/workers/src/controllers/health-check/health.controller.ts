@@ -1,10 +1,11 @@
 import { Controller, Get } from "@nestjs/common";
 import {
   HealthCheck,
-  HealthCheckError,
-  HealthIndicatorResult,
+  HealthCheckService,
+  TypeOrmHealthIndicator,
 } from "@nestjs/terminus";
 import { ZeebeHealthIndicator } from "../../zeebe";
+import { DataSource } from "typeorm";
 
 /**
  * HTTP Controller for handling health-related endpoint used for
@@ -12,7 +13,12 @@ import { ZeebeHealthIndicator } from "../../zeebe";
  */
 @Controller("health")
 export class HealthController {
-  constructor(private readonly zeebeHealthIndicator: ZeebeHealthIndicator) {}
+  constructor(
+    private healthCheckService: HealthCheckService,
+    private readonly zeebeHealthIndicator: ZeebeHealthIndicator,
+    private typeOrmHealthIndicator: TypeOrmHealthIndicator,
+    private dataSource: DataSource,
+  ) {}
 
   /**
    * Check the health of the workers.
@@ -20,13 +26,13 @@ export class HealthController {
    */
   @Get()
   @HealthCheck()
-  async check(): Promise<HealthIndicatorResult> {
-    const healthCheckResult = await this.zeebeHealthIndicator.check("zeebe");
-    const isHealthy = healthCheckResult.zeebe.status === "up";
-    if (isHealthy) {
-      return healthCheckResult;
-    }
-
-    throw new HealthCheckError("Queues check failed", healthCheckResult);
+  async check() {
+    return this.healthCheckService.check([
+      () =>
+        this.typeOrmHealthIndicator.pingCheck("Postgres", {
+          connection: this.dataSource,
+        }),
+      () => this.zeebeHealthIndicator.check("zeebe"),
+    ]);
   }
 }

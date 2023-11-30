@@ -3,16 +3,20 @@ import { RedisOptions, Transport } from "@nestjs/microservices";
 import {
   HealthCheck,
   MicroserviceHealthIndicator,
-  HealthCheckError,
-  HealthIndicatorResult,
+  HealthCheckService,
+  TypeOrmHealthIndicator,
 } from "@nestjs/terminus";
 import { ConfigService } from "@sims/utilities/config";
+import { DataSource } from "typeorm";
 
 @Controller("health")
 export class HealthController {
   constructor(
     private readonly configService: ConfigService,
+    private healthCheckService: HealthCheckService,
+    private typeOrmHealthIndicator: TypeOrmHealthIndicator,
     private microservice: MicroserviceHealthIndicator,
+    private dataSource: DataSource,
   ) {}
 
   /**
@@ -21,23 +25,21 @@ export class HealthController {
    */
   @Get()
   @HealthCheck()
-  async check(): Promise<HealthIndicatorResult> {
-    const healthCheckResult = await this.microservice.pingCheck<RedisOptions>(
-      "redis",
-      {
-        transport: Transport.REDIS,
-        options: {
-          host: this.configService.redis.redisHost,
-          port: this.configService.redis.redisPort,
-          password: this.configService.redis.redisPassword,
-        },
-      },
-    );
-    const isHealthy = healthCheckResult.redis.status === "up";
-    if (isHealthy) {
-      return healthCheckResult;
-    }
-
-    throw new HealthCheckError("Queues check failed", healthCheckResult);
+  async check() {
+    return this.healthCheckService.check([
+      () =>
+        this.typeOrmHealthIndicator.pingCheck("Postgres", {
+          connection: this.dataSource,
+        }),
+      () =>
+        this.microservice.pingCheck<RedisOptions>("redis", {
+          transport: Transport.REDIS,
+          options: {
+            host: this.configService.redis.redisHost,
+            port: this.configService.redis.redisPort,
+            password: this.configService.redis.redisPassword,
+          },
+        }),
+    ]);
   }
 }

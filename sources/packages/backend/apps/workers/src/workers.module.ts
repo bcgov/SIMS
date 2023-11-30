@@ -34,7 +34,7 @@ import {
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
 import { SystemUserModule } from "@sims/services/system-users";
-import { HealthModule } from "@sims/services/health-check/health.module";
+import { TerminusModule } from "@nestjs/terminus";
 
 @Module({
   imports: [
@@ -45,7 +45,7 @@ import { HealthModule } from "@sims/services/health-check/health.module";
     ZeebeModule.forRoot(),
     SystemUserModule,
     NotificationsModule,
-    HealthModule,
+    TerminusModule,
   ],
   controllers: [
     AssessmentController,

@@ -41,7 +41,7 @@ export class ZeebeHealthIndicator extends HealthIndicator {
    * @throws HealthCheckError if the Zeebe connection check fails.
    * @returns The result of the Zeebe health check.
    */
-  public async check(key: string): Promise<HealthIndicatorResult> {
+  async check(key: string): Promise<HealthIndicatorResult> {
     // Check if the Zeebe connection is healthy.
     const isHealthy = this.allConnected();
     if (isHealthy) {

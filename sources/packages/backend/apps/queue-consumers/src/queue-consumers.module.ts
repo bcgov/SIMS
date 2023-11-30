@@ -60,9 +60,8 @@ import {
 import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
 import { ECEIntegrationModule } from "@sims/integrations/institution-integration/ece-integration";
-import { HealthModule } from "@sims/services/health-check";
 import { HealthController } from "./controllers";
-import { MicroserviceHealthIndicator } from "@nestjs/terminus";
+import { MicroserviceHealthIndicator, TerminusModule } from "@nestjs/terminus";
 
 @Module({
   imports: [
@@ -82,7 +81,7 @@ import { MicroserviceHealthIndicator } from "@nestjs/terminus";
     FedRestrictionIntegrationModule,
     MSFAAIntegrationModule,
     SINValidationModule,
-    HealthModule,
+    TerminusModule,
   ],
   providers: [
     StartApplicationAssessmentProcessor,
