@@ -64,7 +64,7 @@ export class AssertLifeTimeMaximumFullTimeStep implements ECertProcessStep {
    * student hits the exact maximum value and the student restriction
    * {@link  RestrictionCode.BCLM} is placed for the student.
    * @param eCertDisbursement student disbursement that is part of one e-Cert.
-   * @param application application related to the disbursement.
+   * @param disbursementValue award value to be verified.
    * @param entityManager used to execute the commands in the same transaction.
    */
   private async checkLifeTimeMaximumAndAddStudentRestriction(

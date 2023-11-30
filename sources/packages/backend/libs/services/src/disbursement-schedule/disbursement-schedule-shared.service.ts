@@ -454,7 +454,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
     applicationNumber: string,
     entityManager: EntityManager,
   ): Promise<Record<string, number>> {
-    // Get already ready to send or sent (disbursed) values to know the amount that the student already received.
+    // Get ready to send or sent (disbursed) values to know the amount that the student already received.
     const disbursementSchedules = await this.getDisbursementsForOverawards(
       studentId,
       applicationNumber,

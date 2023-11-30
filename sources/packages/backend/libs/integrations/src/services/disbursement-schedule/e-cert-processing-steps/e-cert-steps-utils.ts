@@ -4,7 +4,10 @@ import {
   OfferingIntensity,
   RestrictionActionType,
 } from "@sims/sims-db";
-import { EligibleECertDisbursement } from "../disbursement-schedule.models";
+import {
+  EligibleECertDisbursement,
+  StudentActiveRestriction,
+} from "../disbursement-schedule.models";
 
 /**
  * Check active student restrictions by its action type
@@ -17,7 +20,7 @@ import { EligibleECertDisbursement } from "../disbursement-schedule.models";
 export function getRestrictionByActionType(
   eCertDisbursement: EligibleECertDisbursement,
   actionType: RestrictionActionType,
-) {
+): StudentActiveRestriction {
   return eCertDisbursement.activeRestrictions?.find((restriction) =>
     restriction.actions.includes(actionType),
   );

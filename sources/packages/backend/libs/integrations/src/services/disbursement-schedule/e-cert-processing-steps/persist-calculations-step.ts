@@ -30,7 +30,7 @@ export class PersistCalculationsStep implements ECertProcessStep {
     entityManager: EntityManager,
     log: ProcessSummary,
   ): Promise<boolean> {
-    log.info(`Saving all e-Cert calculations.`);
+    log.info("Saving all e-Cert calculations.");
     const now = new Date();
     const disbursement = eCertDisbursement.disbursement;
     disbursement.disbursementScheduleStatus =

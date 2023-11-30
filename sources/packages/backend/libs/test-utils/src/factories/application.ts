@@ -81,6 +81,7 @@ export function createFakeApplication(
  * - `applicationStatus` if provided sets the application status of the application or else defaults to Assessment status.
  * - `offeringIntensity` if provided sets the offering intensity for the created fakeApplication.
  * - `createSecondDisbursement` if provided and true creates a second disbursement,
+ * - `currentAssessmentInitialValues` if provided set the current application initial values.
  * otherwise only one disbursement will be created.
  * - `firstDisbursementInitialValues` if provided sets the disbursement schedule status for the first disbursement otherwise sets to pending status by default.
  * - `secondDisbursementInitialValues` if provided sets the disbursement schedule status for the second disbursement otherwise sets to pending status by default.
