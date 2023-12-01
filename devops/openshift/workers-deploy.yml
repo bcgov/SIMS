@@ -86,6 +86,25 @@ objects:
                 requests:
                   cpu: ${CPU_REQUEST}
                   memory: ${MEMORY_REQUEST}
+              readinessProbe:
+                failureThreshold: 3
+                successThreshold: 1
+                httpGet:
+                  path: /health/
+                  port: "${{PORT}}"
+                initialDelaySeconds: 10
+                periodSeconds: 10
+                timeoutSeconds: 1
+              livenessProbe:
+                failureThreshold: 3
+                successThreshold: 1
+                httpGet:
+                  path: /health/
+                  port: "${{PORT}}"
+                  scheme: HTTP
+                initialDelaySeconds: 30
+                periodSeconds: 30
+                timeoutSeconds: 1
   - apiVersion: autoscaling/v2
     kind: HorizontalPodAutoscaler
     metadata:

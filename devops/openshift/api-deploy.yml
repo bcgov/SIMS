@@ -169,7 +169,8 @@ objects:
                   cpu: ${CPU_REQUEST}
                   memory: ${MEMORY_REQUEST}
               readinessProbe:
-                failureThreshold: 10
+                failureThreshold: 3
+                successThreshold: 1
                 httpGet:
                   path: /api/
                   port: "${{PORT}}"
@@ -177,7 +178,8 @@ objects:
                 periodSeconds: 30
                 timeoutSeconds: 30
               livenessProbe:
-                failureThreshold: 10
+                failureThreshold: 3
+                successThreshold: 1
                 httpGet:
                   path: /api/
                   port: "${{PORT}}"
