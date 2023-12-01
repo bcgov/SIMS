@@ -70,10 +70,7 @@ export abstract class ECertCalculationProcess {
     eCertDisbursements: EligibleECertDisbursement[],
   ): GroupedDisbursementPerStudent {
     return eCertDisbursements.reduce(
-      (
-        group: { [studentId: number]: EligibleECertDisbursement[] },
-        disbursement,
-      ) => {
+      (group: GroupedDisbursementPerStudent, disbursement) => {
         const studentId = disbursement.studentId;
         if (!group[studentId]) {
           group[studentId] = [];
