@@ -189,6 +189,7 @@ export class ECertFileHandler extends ESDCFileHandler {
           entityManager,
         );
       if (!disbursements.length) {
+        // Throws an exception to cancel the transaction and DB lock started by `consumeNextSequence`.
         throw new CustomNamedError(
           `There are no records available to generate an e-Cert file for ${offeringIntensity}`,
           ECERT_GENERATION_NO_RECORDS_AVAILABLE,

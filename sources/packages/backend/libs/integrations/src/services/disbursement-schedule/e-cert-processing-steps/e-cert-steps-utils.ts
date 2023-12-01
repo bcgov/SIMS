@@ -12,10 +12,9 @@ import {
 /**
  * Check active student restrictions by its action type
  * in an eligible disbursement.
- * @param studentRestrictions student restrictions.
+ * @param eCertDisbursement student disbursement to check student restrictions.
  * @param actionType action type.
- * @returns the first restriction of the requested
- * action type.
+ * @returns the first restriction of the requested action type.
  */
 export function getRestrictionByActionType(
   eCertDisbursement: EligibleECertDisbursement,
