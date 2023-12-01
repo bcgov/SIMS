@@ -112,4 +112,14 @@ export class Student extends RecordDataModel {
     enumName: "DisabilityStatus",
   })
   disabilityStatus: DisabilityStatus;
+
+  /**
+   * Disability status effective date.
+   */
+  @Column({
+    name: "disability_status_effective_date",
+    type: "timestamptz",
+    nullable: true,
+  })
+  disabilityStatusEffectiveDate?: Date;
 }
