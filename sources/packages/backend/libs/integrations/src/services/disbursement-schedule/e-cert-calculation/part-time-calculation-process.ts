@@ -38,6 +38,7 @@ export class PartTimeCalculationProcess extends ECertCalculationProcess {
    * The returned array of {@link EligibleECertDisbursement} will be shared across all
    * steps being modified till the disbursement entity model
    * modifications will be saved.
+   * @returns eligible disbursements to be validated and calculated.
    */
   protected getDisbursements(): Promise<EligibleECertDisbursement[]> {
     return this.eCertGenerationService.getEligibleDisbursements(
@@ -47,6 +48,7 @@ export class PartTimeCalculationProcess extends ECertCalculationProcess {
 
   /**
    * Define the steps to be executed and the execution order.
+   * @returns list of calculation steps to be execute sequentially.
    */
   protected calculationSteps(): ECertProcessStep[] {
     return [

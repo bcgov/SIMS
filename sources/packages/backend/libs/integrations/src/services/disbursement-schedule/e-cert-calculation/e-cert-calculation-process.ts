@@ -24,11 +24,13 @@ export abstract class ECertCalculationProcess {
    * an e-Cert to have its calculations executed.
    * The returned array of {@link ECertProcessStep} will be shared across all steps being
    * modified till the disbursement entity model modifications will be saved.
+   * @returns eligible disbursements to be validated and calculated.
    * */
   protected abstract getDisbursements(): Promise<EligibleECertDisbursement[]>;
 
   /**
    * Define the steps to be executed and the execution order.
+   * @returns list of calculation steps to be execute sequentially.
    */
   protected abstract calculationSteps(): ECertProcessStep[];
 
