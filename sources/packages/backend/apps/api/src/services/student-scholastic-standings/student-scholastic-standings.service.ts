@@ -13,8 +13,14 @@ import {
   StudentRestriction,
   User,
   StudentScholasticStandingChangeType,
+  StudyBreak,
 } from "@sims/sims-db";
-import { CustomNamedError } from "@sims/utilities";
+import {
+  CustomNamedError,
+  dateDifference,
+  isBeforeDate,
+  isBetweenPeriod,
+} from "@sims/utilities";
 import {
   APPLICATION_NOT_FOUND,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
@@ -22,12 +28,16 @@ import {
 import { ScholasticStanding } from "./student-scholastic-standings.model";
 import { StudentRestrictionService } from "../restriction/student-restriction.service";
 import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../constants";
-import { SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS } from "../../utilities";
+import {
+  OFFERING_STUDY_BREAK_MAX_DAYS,
+  SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS,
+} from "../../utilities";
 import {
   NotificationActionsService,
   RestrictionCode,
   StudentRestrictionSharedService,
 } from "@sims/services";
+import { EducationProgramOfferingService } from "../education-program-offering/education-program-offering.service";
 
 /**
  * Manages the student scholastic standings related operations.
@@ -207,7 +217,38 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
           existingOffering.exceptionalExpenses;
 
         offering.offeringType = OfferingTypes.ScholasticStanding;
-
+        // Study Breaks calculation.
+        const adjustedStudyBreak = this.adjustStudyBreaks(
+          offering.studyBreaks.studyBreaks,
+          offering.studyEndDate,
+        );
+        // Assigning newly adjusted study breaks to the offering.
+        offering.studyBreaks = {
+          ...offering.studyBreaks,
+          studyBreaks: adjustedStudyBreak,
+        };
+        const calculatedBreaks =
+          EducationProgramOfferingService.getCalculatedStudyBreaksAndWeeks({
+            studyEndDate: offering.studyEndDate,
+            studyStartDate: offering.studyStartDate,
+            studyBreaks: offering.studyBreaks.studyBreaks,
+          });
+        // Ensures that no additional properties will be assigned to studyBreaks
+        // since calculatedStudyBreaks could received extra properties that are
+        // not required to be saved to the database.
+        offering.studyBreaks = {
+          fundedStudyPeriodDays: calculatedBreaks.fundedStudyPeriodDays,
+          totalDays: calculatedBreaks.totalDays,
+          totalFundedWeeks: calculatedBreaks.totalFundedWeeks,
+          unfundedStudyPeriodDays: calculatedBreaks.unfundedStudyPeriodDays,
+          studyBreaks: calculatedBreaks.studyBreaks?.map((studyBreak) => ({
+            breakStartDate: studyBreak.breakStartDate,
+            breakEndDate: studyBreak.breakEndDate,
+            breakDays: studyBreak.breakDays,
+            eligibleBreakDays: studyBreak.eligibleBreakDays,
+            ineligibleBreakDays: studyBreak.ineligibleBreakDays,
+          })),
+        };
         // Save new offering.
         const savedOffering = await transactionalEntityManager
           .getRepository(EducationProgramOffering)
@@ -274,6 +315,52 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
 
       return studentScholasticStanding;
     });
+  }
+
+  /**
+   * Adjust the study breaks when there is a change in study end date
+   * during scholastic standing.
+   * @param studyBreaks current offering study break.
+   * @param newStudyEndDate newly changed/updated study end date.
+   * @returns adjusted study breaks.
+   */
+  adjustStudyBreaks(
+    studyBreaks: StudyBreak[],
+    newStudyEndDate: string,
+  ): StudyBreak[] {
+    return studyBreaks
+      ?.map((studyBreak) => {
+        if (isBeforeDate(newStudyEndDate, studyBreak.breakStartDate)) {
+          // Ignore the study break.
+          return;
+        }
+        if (
+          isBetweenPeriod(newStudyEndDate, {
+            startDate: studyBreak.breakStartDate,
+            endDate: studyBreak.breakEndDate,
+          })
+        ) {
+          // Adjust the study break.
+          const breakDays = dateDifference(
+            newStudyEndDate,
+            studyBreak.breakStartDate,
+          );
+          const eligibleBreakDays =
+            breakDays > OFFERING_STUDY_BREAK_MAX_DAYS
+              ? OFFERING_STUDY_BREAK_MAX_DAYS
+              : breakDays;
+          return {
+            breakStartDate: studyBreak.breakStartDate,
+            breakEndDate: newStudyEndDate,
+            breakDays: breakDays,
+            eligibleBreakDays: eligibleBreakDays,
+            ineligibleBreakDays: breakDays - eligibleBreakDays,
+          };
+        }
+        // Consider the study break as it is.
+        return studyBreak;
+      })
+      ?.filter((studyBreak) => !!studyBreak);
   }
 
   /**
