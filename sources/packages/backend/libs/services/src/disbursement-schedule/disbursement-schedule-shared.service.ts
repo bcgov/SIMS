@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, EntityManager, IsNull } from "typeorm";
+import { DataSource, EntityManager, In, IsNull } from "typeorm";
 import {
   RecordDataModelService,
   DisbursementSchedule,
@@ -28,6 +28,16 @@ import { SystemUsersService } from "@sims/services/system-users";
 // Timeout to handle the worst-case scenario where the commit/rollback
 // was not executed due to a possible catastrophic failure.
 const TRANSACTION_IDLE_TIMEOUT_SECONDS = 60;
+
+/**
+ * Disbursement statuses that should be considered final, which means tha
+ * there is no further calculations executed and the money should be considered
+ * as disbursed to the student.
+ */
+const DISBURSED_STATUSES = [
+  DisbursementScheduleStatus.ReadToSend,
+  DisbursementScheduleStatus.Sent,
+];
 
 /**
  * Service layer for the student application assessment calculations for the disbursement schedules.
@@ -297,7 +307,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
   private async getDisbursementsForOverawards(
     studentId: number,
     applicationNumber: string,
-    status: DisbursementScheduleStatus,
+    status: DisbursementScheduleStatus[],
     entityManager: EntityManager,
   ): Promise<DisbursementSchedule[]> {
     const disbursementScheduleRepo =
@@ -342,7 +352,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
             applicationNumber,
           },
         },
-        disbursementScheduleStatus: status,
+        disbursementScheduleStatus: In(status),
       },
     });
   }
@@ -409,7 +419,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
     const pendingDisbursements = await this.getDisbursementsForOverawards(
       studentId,
       applicationNumber,
-      DisbursementScheduleStatus.Pending,
+      [DisbursementScheduleStatus.Pending],
       entityManager,
     );
     for (const pendingDisbursement of pendingDisbursements) {
@@ -444,11 +454,11 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
     applicationNumber: string,
     entityManager: EntityManager,
   ): Promise<Record<string, number>> {
-    // Get already sent (disbursed) values to know the amount that the student already received.
+    // Get ready to send or sent (disbursed) values to know the amount that the student already received.
     const disbursementSchedules = await this.getDisbursementsForOverawards(
       studentId,
       applicationNumber,
-      DisbursementScheduleStatus.Sent,
+      DISBURSED_STATUSES,
       entityManager,
     );
 
@@ -458,10 +468,10 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
     // The overawardAmountSubtracted is money that the student is being paid but before e-Cert generation
     // it is used to deduct student debt, and the deduction is made with "student money".
     disbursementSchedules
-      .filter(
-        (disbursementSchedule) =>
-          disbursementSchedule.disbursementScheduleStatus ===
-          DisbursementScheduleStatus.Sent,
+      .filter((disbursementSchedule) =>
+        DISBURSED_STATUSES.includes(
+          disbursementSchedule.disbursementScheduleStatus,
+        ),
       )
       .flatMap(
         (disbursementSchedule) => disbursementSchedule.disbursementValues,
@@ -686,9 +696,9 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
       .innerJoin("studentAssessment.application", "application")
       .innerJoin("application.student", "student")
       .where(
-        "disbursement.disbursementScheduleStatus = :disbursementScheduleStatus",
+        "disbursement.disbursementScheduleStatus IN (:...disbursementScheduleStatus)",
         {
-          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          disbursementScheduleStatus: DISBURSED_STATUSES,
         },
       )
       .andWhere("student.id = :studentId", { studentId: studentId })

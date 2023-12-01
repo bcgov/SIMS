@@ -7,7 +7,7 @@ import {
   RecordDataModelService,
 } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
-import { DataSource, IsNull, Not } from "typeorm";
+import { DataSource, In, IsNull, Not } from "typeorm";
 import { MSFAANumberService } from "..";
 import {
   DISBURSEMENT_MSFAA_ALREADY_ASSOCIATED,
@@ -164,7 +164,10 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       where: {
         // Consider only the disbursements which are sent, to identify a previously
         // signed disbursement as pending ones are subject to cancellation any time.
-        disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        disbursementScheduleStatus: In([
+          DisbursementScheduleStatus.ReadToSend,
+          DisbursementScheduleStatus.Sent,
+        ]),
         studentAssessment: {
           offering: { offeringIntensity },
           application: {

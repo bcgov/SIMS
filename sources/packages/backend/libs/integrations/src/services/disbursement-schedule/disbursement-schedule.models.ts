@@ -1,4 +1,9 @@
-import { DisbursementSchedule, DisbursementValueType } from "@sims/sims-db";
+import {
+  DisbursementSchedule,
+  DisbursementValueType,
+  EducationProgramOffering,
+  RestrictionActionType,
+} from "@sims/sims-db";
 
 export interface DisbursementValue {
   valueCode: string;
@@ -119,3 +124,61 @@ export const FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS = [
   "EDU-00111",
   "EDU-00112",
 ];
+
+/**
+ * Represents an active student restriction.
+ */
+export interface StudentActiveRestriction {
+  /**
+   * Restriction id.
+   */
+  id: number;
+  /**
+   * Actions associated with the restriction.
+   */
+  actions: RestrictionActionType[];
+}
+
+/**
+ * Disbursement eligible to be part of an e-Cert.
+ * The disbursement is the focus of calculations and data changes
+ * while the other properties are supporting information.
+ */
+export interface EligibleECertDisbursement {
+  /**
+   * Student id.
+   */
+  studentId: number;
+  /**
+   * Indicates if the student has a validated SIN.
+   */
+  hasValidSIN?: boolean;
+  /**
+   * All active student restrictions actions.
+   * These action can impact the e-Cert calculations.
+   */
+  activeRestrictions: StudentActiveRestriction[];
+  /**
+   * Assessment id.
+   */
+  assessmentId: number;
+  /**
+   * Application id.
+   */
+  applicationId: number;
+  /**
+   * Eligible schedule that must have the values updated calculated for an e-Cert.
+   * This database entity model will receive all modifications across
+   * multiple calculations steps. If all calculations are successful
+   * this will be used to persist the data to the database.
+   */
+  disbursement: DisbursementSchedule;
+  offering: Pick<
+    EducationProgramOffering,
+    "id" | "offeringIntensity" | "actualTuitionCosts" | "programRelatedCosts"
+  >;
+  /**
+   * Maximum BC loan configured to the assessment's program year.
+   */
+  maxLifetimeBCLoanAmount: number;
+}

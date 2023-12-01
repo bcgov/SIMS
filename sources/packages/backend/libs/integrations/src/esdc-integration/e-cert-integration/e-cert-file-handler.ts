@@ -1,11 +1,14 @@
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
-import { OfferingIntensity } from "@sims/sims-db";
+import {
+  DisbursementSchedule,
+  DisbursementScheduleStatus,
+  OfferingIntensity,
+} from "@sims/sims-db";
 import {
   DisbursementScheduleErrorsService,
   DisbursementScheduleService,
-  ECertDisbursementSchedule,
 } from "../../services";
-import { SequenceControlService } from "@sims/services";
+import { SequenceControlService, SystemUsersService } from "@sims/services";
 import {
   ECERT_FULL_TIME_FILE_CODE,
   ECERT_PART_TIME_FILE_CODE,
@@ -51,6 +54,7 @@ export class ECertFileHandler extends ESDCFileHandler {
     private readonly disbursementScheduleErrorsService: DisbursementScheduleErrorsService,
     private readonly eCertFullTimeIntegrationService: ECertFullTimeIntegrationService,
     private readonly eCertPartTimeIntegrationService: ECertPartTimeIntegrationService,
+    private readonly systemUserService: SystemUsersService,
   ) {
     super(configService);
   }
@@ -180,11 +184,12 @@ export class ECertFileHandler extends ESDCFileHandler {
   ): Promise<ECertUploadResult> {
     try {
       const disbursements =
-        await this.eCertGenerationService.prepareDisbursementsForECertGeneration(
+        await this.eCertGenerationService.getReadyToSendDisbursements(
           offeringIntensity,
           entityManager,
         );
       if (!disbursements.length) {
+        // Throws an exception to cancel the transaction and DB lock started by `consumeNextSequence`.
         throw new CustomNamedError(
           `There are no records available to generate an e-Cert file for ${offeringIntensity}`,
           ECERT_GENERATION_NO_RECORDS_AVAILABLE,
@@ -210,6 +215,18 @@ export class ECertFileHandler extends ESDCFileHandler {
         fileContent,
         fileInfo.filePath,
       );
+      // Mark all disbursements as sent.
+      const dateSent = new Date();
+      disbursements.forEach((disbursement) => {
+        disbursement.dateSent = dateSent;
+        disbursement.disbursementScheduleStatus =
+          DisbursementScheduleStatus.Sent;
+        disbursement.updatedAt = dateSent;
+        disbursement.modifier = this.systemUserService.systemUser;
+      });
+      await entityManager
+        .getRepository(DisbursementSchedule)
+        .save(disbursements);
       return {
         generatedFile: fileInfo.filePath,
         uploadedRecords: disbursementRecords.length,
@@ -234,12 +251,12 @@ export class ECertFileHandler extends ESDCFileHandler {
    * generate the record.
    * @returns e-Cert record.
    */
-  createECertRecord(disbursement: ECertDisbursementSchedule): ECertRecord {
+  createECertRecord(disbursement: DisbursementSchedule): ECertRecord {
     const now = new Date();
     const application = disbursement.studentAssessment.application;
     const student = application.student;
-    const addressInfo = application.student.contactInfo.address;
-    const offering = application.currentAssessment.offering;
+    const addressInfo = student.contactInfo.address;
+    const offering = disbursement.studentAssessment.offering;
 
     const awards = disbursement.disbursementValues.map(
       (disbursementValue) =>
@@ -253,7 +270,6 @@ export class ECertFileHandler extends ESDCFileHandler {
 
     return {
       sin: student.sinValidation.sin,
-      stopFullTimeBCFunding: disbursement.stopFullTimeBCFunding,
       courseLoad: offering.courseLoad,
       applicationNumber: application.applicationNumber,
       documentNumber: disbursement.documentNumber,
@@ -264,7 +280,7 @@ export class ECertFileHandler extends ESDCFileHandler {
       educationalStartDate: new Date(offering.studyStartDate),
       educationalEndDate: new Date(offering.studyEndDate),
       federalInstitutionCode: offering.institutionLocation.institutionCode,
-      weeksOfStudy: application.currentAssessment.assessmentData.weeks,
+      weeksOfStudy: disbursement.studentAssessment.assessmentData.weeks,
       fieldOfStudy: offering.educationProgram.fieldOfStudyCode,
       yearOfStudy: offering.yearOfStudy,
       completionYears: offering.educationProgram.completionYears,
