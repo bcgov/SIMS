@@ -42,6 +42,10 @@ export class ECertGenerationService {
     const disbursementMinDate = getISODateOnlyString(
       addDays(DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS),
     );
+    // Applications with offerings end dates beyond the archive limit will no longer be disbursed.
+    const offeringEndDateMinDate = addDays(
+      -this.configService.applicationArchiveDays,
+    );
     const eligibleApplications = await this.applicationRepo
       .createQueryBuilder("application")
       .select([
@@ -102,9 +106,9 @@ export class ECertGenerationService {
       .andWhere("offering.offeringIntensity = :offeringIntensity", {
         offeringIntensity,
       })
-      .andWhere(
-        `(offering.studyEndDate + ${this.configService.applicationArchiveDays}) >= CURRENT_DATE`,
-      )
+      .andWhere("offering.studyEndDate >= :offeringEndDateMinDate", {
+        offeringEndDateMinDate,
+      })
       .orderBy("disbursementSchedule.disbursementDate", "ASC")
       .addOrderBy("disbursementSchedule.createdAt", "ASC")
       .getMany();
