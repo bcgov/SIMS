@@ -88,6 +88,7 @@ objects:
                   memory: ${MEMORY_REQUEST}
               readinessProbe:
                 failureThreshold: 3
+                successThreshold: 1
                 httpGet:
                   path: /health/
                   port: "${{PORT}}"
@@ -96,6 +97,7 @@ objects:
                 timeoutSeconds: 1
               livenessProbe:
                 failureThreshold: 3
+                successThreshold: 1
                 httpGet:
                   path: /health/
                   port: "${{PORT}}"
