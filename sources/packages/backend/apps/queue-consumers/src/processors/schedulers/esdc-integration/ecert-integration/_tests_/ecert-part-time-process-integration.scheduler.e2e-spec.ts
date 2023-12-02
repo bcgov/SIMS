@@ -2,6 +2,7 @@ import {
   ApplicationStatus,
   Assessment,
   COEStatus,
+  DisbursementSchedule,
   DisbursementScheduleStatus,
   OfferingIntensity,
 } from "@sims/sims-db";
@@ -27,6 +28,7 @@ import { PartTimeECertProcessIntegrationScheduler } from "../ecert-part-time-pro
 import * as Client from "ssh2-sftp-client";
 import * as dayjs from "dayjs";
 import { DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS } from "@sims/services/constants";
+import { PartTimeCertRecordParser } from "./part-time-e-cert-record-parser";
 
 describe(
   describeQueueProcessorRootTest(QueueNames.PartTimeECertIntegration),
@@ -49,6 +51,7 @@ describe(
     });
 
     beforeEach(async () => {
+      jest.clearAllMocks();
       // Ensures that every disbursement on database is cancelled allowing the e-Certs to
       // be generated with the data created for every specific scenario.
       await db.disbursementSchedule.update(
@@ -131,7 +134,7 @@ describe(
       expect(scheduleIsSent).toBe(true);
     });
 
-    it.only("Should create an e-Cert with three disbursements for two different students with two disbursements each where three records are eligible.", async () => {
+    it("Should create an e-Cert with three disbursements for two different students with two disbursements each where three records are eligible.", async () => {
       // Arrange
 
       const coeUpdatedAt = new Date();
@@ -157,7 +160,7 @@ describe(
       );
 
       // Student A application eligible for e-Cert with 2 disbursements.
-      const application1StudentA = await saveFakeApplicationDisbursements(
+      const applicationStudentA = await saveFakeApplicationDisbursements(
         db.dataSource,
         { student: studentA, msfaaNumber: msfaaNumberA },
         {
@@ -182,7 +185,7 @@ describe(
       );
 
       // Student B application eligible for e-Cert with 1 disbursements.
-      const application1StudentB = await saveFakeApplicationDisbursements(
+      const applicationStudentB = await saveFakeApplicationDisbursements(
         db.dataSource,
         { student: studentB, msfaaNumber: msfaaNumberB },
         {
@@ -196,6 +199,7 @@ describe(
           firstDisbursementInitialValues: {
             coeStatus: COEStatus.completed,
             coeUpdatedAt,
+            disbursementDate: getISODateOnlyString(new Date()),
           },
           // Force the second disbursement to not be eligible due to the disbursement date.
           secondDisbursementInitialValues: {
@@ -216,9 +220,7 @@ describe(
       });
 
       // Act
-      console.time("processPartTimeECert");
       const result = await processor.processPartTimeECert(job);
-      console.timeEnd("processPartTimeECert");
 
       // Assert
       expect(result).toStrictEqual(["Process finalized with success."]);
@@ -229,27 +231,69 @@ describe(
       expect(uploadedFile.remoteFilePath).toBe(
         `MSFT-Request\\DPBC.EDU.PTCERTS.D${fileDate}.001`,
       );
-      // expect(uploadedFile.fileLines).toHaveLength(3);
-      // const [header, record, footer] = uploadedFile.fileLines;
-      // // Validate header.
-      // expect(header).toContain("01BC  NEW PT ENTITLEMENT");
-      // // Validate record.
-      // expect(record.substring(0, 2)).toBe("02");
-      // // Validate footer.
-      // expect(footer.substring(0, 2)).toBe("99");
-
-      // // Assert Canada Loan overawards were deducted.
-      // const [firstSchedule] =
-      //   application.currentAssessment.disbursementSchedules;
-      // // Assert schedule is updated to 'sent' with the dateSent defined.
-      // const scheduleIsSent = await db.disbursementSchedule.exist({
-      //   where: {
-      //     id: firstSchedule.id,
-      //     dateSent: Not(IsNull()),
-      //     disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
-      //   },
-      // });
-      // expect(scheduleIsSent).toBe(true);
+      expect(uploadedFile.fileLines).toHaveLength(5);
+      const [header, record1, record2, record3, footer] =
+        uploadedFile.fileLines;
+      // Validate header.
+      expect(header).toContain("01BC  NEW PT ENTITLEMENT");
+      // Validate footer.
+      expect(footer.substring(0, 2)).toBe("99");
+      // Student A
+      const [studentAFirstSchedule, studentASecondSchedule] =
+        await loadDisbursementSchedules(
+          applicationStudentA.currentAssessment.id,
+        );
+      // Disbursement 1.
+      const studentADisbursement1 = new PartTimeCertRecordParser(record1);
+      expect(studentADisbursement1.recordType).toBe("02");
+      expect(studentADisbursement1.containsStudent(studentA)).toBe(true);
+      expect(studentAFirstSchedule.disbursementScheduleStatus).toBe(
+        DisbursementScheduleStatus.Sent,
+      );
+      // Disbursement 2.
+      const studentADisbursement2 = new PartTimeCertRecordParser(record2);
+      expect(studentADisbursement2.recordType).toBe("02");
+      expect(studentADisbursement2.containsStudent(studentA)).toBe(true);
+      expect(studentASecondSchedule.disbursementScheduleStatus).toBe(
+        DisbursementScheduleStatus.Sent,
+      );
+      // Student B
+      const [studentBFirstSchedule, studentBSecondSchedule] =
+        await loadDisbursementSchedules(
+          applicationStudentB.currentAssessment.id,
+        );
+      // Disbursement 1.
+      const studentBDisbursement1 = new PartTimeCertRecordParser(record3);
+      expect(studentBDisbursement1.recordType).toBe("02");
+      expect(studentBDisbursement1.containsStudent(studentB)).toBe(true);
+      expect(studentBFirstSchedule.disbursementScheduleStatus).toBe(
+        DisbursementScheduleStatus.Sent,
+      );
+      // Disbursement 2.
+      expect(studentBSecondSchedule.disbursementScheduleStatus).toBe(
+        DisbursementScheduleStatus.Pending,
+      );
     });
+
+    /**
+     * Load the disbursement schedules for the assessment.
+     * @param studentAssessmentId assessment id.
+     * @returns disbursement schedules for the assessment.
+     */
+    async function loadDisbursementSchedules(
+      studentAssessmentId: number,
+    ): Promise<DisbursementSchedule[]> {
+      return db.disbursementSchedule.find({
+        select: {
+          id: true,
+          disbursementScheduleStatus: true,
+        },
+        where: {
+          studentAssessment: {
+            id: studentAssessmentId,
+          },
+        },
+      });
+    }
   },
 );
