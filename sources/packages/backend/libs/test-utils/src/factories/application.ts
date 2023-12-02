@@ -121,37 +121,40 @@ export async function saveFakeApplicationDisbursements(
   await applicationRepo.save(savedApplication);
   const disbursementSchedules: DisbursementSchedule[] = [];
   // Original assessment - first disbursement.
-  const firstSchedule = createFakeDisbursementSchedule({
-    auditUser: savedApplication.student.user,
-    disbursementValues: relations?.disbursementValues ?? [
-      createFakeDisbursementValue(DisbursementValueType.CanadaLoan, "CSLF", 1),
-    ],
-  });
+  const firstSchedule = createFakeDisbursementSchedule(
+    {
+      disbursementValues: relations?.disbursementValues ?? [
+        createFakeDisbursementValue(
+          DisbursementValueType.CanadaLoan,
+          "CSLF",
+          1,
+        ),
+      ],
+    },
+    { initialValues: options?.firstDisbursementInitialValues },
+  );
   firstSchedule.coeStatus =
     savedApplication.applicationStatus === ApplicationStatus.Completed
       ? COEStatus.completed
       : COEStatus.required;
-  firstSchedule.disbursementScheduleStatus =
-    options?.firstDisbursementInitialValues?.disbursementScheduleStatus ??
-    DisbursementScheduleStatus.Pending;
   firstSchedule.msfaaNumber = relations?.msfaaNumber;
   firstSchedule.studentAssessment = savedApplication.currentAssessment;
   disbursementSchedules.push(firstSchedule);
   if (options?.createSecondDisbursement) {
     // Original assessment - second disbursement.
-    const secondSchedule = createFakeDisbursementSchedule({
-      auditUser: savedApplication.student.user,
-      disbursementValues: relations?.disbursementValues ?? [
-        createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 1),
-      ],
-    });
-    secondSchedule.coeStatus = COEStatus.required;
-    secondSchedule.disbursementScheduleStatus =
-      options?.secondDisbursementInitialValues?.disbursementScheduleStatus ??
-      DisbursementScheduleStatus.Pending;
+    const secondSchedule = createFakeDisbursementSchedule(
+      {
+        disbursementValues: relations?.disbursementValues ?? [
+          createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 1),
+        ],
+      },
+      { initialValues: options?.secondDisbursementInitialValues },
+    );
     // First schedule is created with the current date as default.
     // Adding 60 days to create some time between the first and second schedules.
-    secondSchedule.disbursementDate = getISODateOnlyString(addDays(60));
+    secondSchedule.disbursementDate =
+      options?.secondDisbursementInitialValues?.disbursementDate ??
+      getISODateOnlyString(addDays(60));
     secondSchedule.msfaaNumber = relations?.msfaaNumber;
     secondSchedule.studentAssessment = savedApplication.currentAssessment;
     disbursementSchedules.push(secondSchedule);

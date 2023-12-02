@@ -15,7 +15,11 @@ import {
   ECERT_FULL_TIME_FEEDBACK_FILE_CODE,
   ECERT_PART_TIME_FEEDBACK_FILE_CODE,
 } from "@sims/services/constants";
-import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
+import {
+  CustomNamedError,
+  getISODateOnlyString,
+  processInParallel,
+} from "@sims/utilities";
 import { EntityManager } from "typeorm";
 import { ESDCFileHandler } from "../esdc-file-handler";
 import {
@@ -217,16 +221,19 @@ export class ECertFileHandler extends ESDCFileHandler {
       );
       // Mark all disbursements as sent.
       const dateSent = new Date();
-      disbursements.forEach((disbursement) => {
-        disbursement.dateSent = dateSent;
-        disbursement.disbursementScheduleStatus =
-          DisbursementScheduleStatus.Sent;
-        disbursement.updatedAt = dateSent;
-        disbursement.modifier = this.systemUserService.systemUser;
-      });
-      await entityManager
-        .getRepository(DisbursementSchedule)
-        .save(disbursements);
+      const disbursementScheduleRepo =
+        entityManager.getRepository(DisbursementSchedule);
+      await processInParallel((disbursement) => {
+        return disbursementScheduleRepo.update(
+          { id: disbursement.id },
+          {
+            dateSent,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+            updatedAt: dateSent,
+            modifier: this.systemUserService.systemUser,
+          },
+        );
+      }, disbursements);
       return {
         generatedFile: fileInfo.filePath,
         uploadedRecords: disbursementRecords.length,

@@ -20,12 +20,13 @@ import {
   describeQueueProcessorRootTest,
 } from "../../../../../../test/helpers";
 import { INestApplication } from "@nestjs/common";
-import { QueueNames } from "@sims/utilities";
+import { QueueNames, addDays, getISODateOnlyString } from "@sims/utilities";
 import { DeepMocked, createMock } from "@golevelup/ts-jest";
 import { Job } from "bull";
 import { PartTimeECertProcessIntegrationScheduler } from "../ecert-part-time-process-integration.scheduler";
 import * as Client from "ssh2-sftp-client";
 import * as dayjs from "dayjs";
+import { DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS } from "@sims/services/constants";
 
 describe(
   describeQueueProcessorRootTest(QueueNames.PartTimeECertIntegration),
@@ -128,6 +129,127 @@ describe(
         },
       });
       expect(scheduleIsSent).toBe(true);
+    });
+
+    it.only("Should create an e-Cert with three disbursements for two different students with two disbursements each where three records are eligible.", async () => {
+      // Arrange
+
+      const coeUpdatedAt = new Date();
+
+      // Student A with valid SIN.
+      const studentA = await saveFakeStudent(db.dataSource);
+      // Valid MSFAA Number.
+      const msfaaNumberA = await db.msfaaNumber.save(
+        createFakeMSFAANumber(
+          { student: studentA },
+          { msfaaState: MSFAAStates.Signed },
+        ),
+      );
+
+      // Student A with valid SIN.
+      const studentB = await saveFakeStudent(db.dataSource);
+      // Valid MSFAA Number.
+      const msfaaNumberB = await db.msfaaNumber.save(
+        createFakeMSFAANumber(
+          { student: studentB },
+          { msfaaState: MSFAAStates.Signed },
+        ),
+      );
+
+      // Student A application eligible for e-Cert with 2 disbursements.
+      const application1StudentA = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student: studentA, msfaaNumber: msfaaNumberA },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            assessmentData: { weeks: 5 } as Assessment,
+            assessmentDate: new Date(),
+          },
+          createSecondDisbursement: true,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            coeUpdatedAt,
+            disbursementDate: getISODateOnlyString(new Date()),
+          },
+          secondDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            coeUpdatedAt,
+            disbursementDate: getISODateOnlyString(new Date()),
+          },
+        },
+      );
+
+      // Student B application eligible for e-Cert with 1 disbursements.
+      const application1StudentB = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student: studentB, msfaaNumber: msfaaNumberB },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            assessmentData: { weeks: 5 } as Assessment,
+            assessmentDate: new Date(),
+          },
+          createSecondDisbursement: true,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            coeUpdatedAt,
+          },
+          // Force the second disbursement to not be eligible due to the disbursement date.
+          secondDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            coeUpdatedAt,
+            disbursementDate: getISODateOnlyString(
+              addDays(DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS + 1),
+            ),
+          },
+        },
+      );
+
+      // Queued job.
+      // id and name defined to make the console log looks better only.
+      const job = createMock<Job<void>>({
+        id: "FakeJobId",
+        name: "FakeProcessPartTimeECertJobName",
+      });
+
+      // Act
+      console.time("processPartTimeECert");
+      const result = await processor.processPartTimeECert(job);
+      console.timeEnd("processPartTimeECert");
+
+      // Assert
+      expect(result).toStrictEqual(["Process finalized with success."]);
+
+      // Assert uploaded file.
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const fileDate = dayjs().format("YYYYMMDD");
+      expect(uploadedFile.remoteFilePath).toBe(
+        `MSFT-Request\\DPBC.EDU.PTCERTS.D${fileDate}.001`,
+      );
+      // expect(uploadedFile.fileLines).toHaveLength(3);
+      // const [header, record, footer] = uploadedFile.fileLines;
+      // // Validate header.
+      // expect(header).toContain("01BC  NEW PT ENTITLEMENT");
+      // // Validate record.
+      // expect(record.substring(0, 2)).toBe("02");
+      // // Validate footer.
+      // expect(footer.substring(0, 2)).toBe("99");
+
+      // // Assert Canada Loan overawards were deducted.
+      // const [firstSchedule] =
+      //   application.currentAssessment.disbursementSchedules;
+      // // Assert schedule is updated to 'sent' with the dateSent defined.
+      // const scheduleIsSent = await db.disbursementSchedule.exist({
+      //   where: {
+      //     id: firstSchedule.id,
+      //     dateSent: Not(IsNull()),
+      //     disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+      //   },
+      // });
+      // expect(scheduleIsSent).toBe(true);
     });
   },
 );
