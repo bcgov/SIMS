@@ -81,10 +81,10 @@ describe("StudentScholasticStandingsService-adjustStudyBreaks", () => {
       newStudyEndDate,
       studyBreak.breakStartDate,
     );
-    const eligibleBreakDays =
-      breakDays > OFFERING_STUDY_BREAK_MAX_DAYS
-        ? OFFERING_STUDY_BREAK_MAX_DAYS
-        : breakDays;
+    const eligibleBreakDays = Math.min(
+      breakDays,
+      OFFERING_STUDY_BREAK_MAX_DAYS,
+    );
 
     expect(adjustedStudyBreaks).toStrictEqual([
       {

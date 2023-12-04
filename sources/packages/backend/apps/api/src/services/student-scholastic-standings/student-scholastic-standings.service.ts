@@ -217,16 +217,18 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
           existingOffering.exceptionalExpenses;
 
         offering.offeringType = OfferingTypes.ScholasticStanding;
-        // Study Breaks calculation.
-        const adjustedStudyBreak = this.adjustStudyBreaks(
-          offering.studyBreaks.studyBreaks,
-          offering.studyEndDate,
-        );
-        // Assigning newly adjusted study breaks to the offering.
-        offering.studyBreaks = {
-          ...offering.studyBreaks,
-          studyBreaks: adjustedStudyBreak,
-        };
+        if (offering.studyBreaks?.studyBreaks) {
+          // Study Breaks calculation.
+          const adjustedStudyBreak = this.adjustStudyBreaks(
+            offering.studyBreaks.studyBreaks,
+            offering.studyEndDate,
+          );
+          // Assigning newly adjusted study breaks to the offering.
+          offering.studyBreaks = {
+            ...offering.studyBreaks,
+            studyBreaks: adjustedStudyBreak,
+          };
+        }
         const calculatedBreaks =
           EducationProgramOfferingService.getCalculatedStudyBreaksAndWeeks({
             studyEndDate: offering.studyEndDate,
@@ -345,10 +347,10 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
             newStudyEndDate,
             studyBreak.breakStartDate,
           );
-          const eligibleBreakDays =
-            breakDays > OFFERING_STUDY_BREAK_MAX_DAYS
-              ? OFFERING_STUDY_BREAK_MAX_DAYS
-              : breakDays;
+          const eligibleBreakDays = Math.min(
+            breakDays,
+            OFFERING_STUDY_BREAK_MAX_DAYS,
+          );
           return {
             breakStartDate: studyBreak.breakStartDate,
             breakEndDate: newStudyEndDate,
