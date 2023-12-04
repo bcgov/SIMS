@@ -64,7 +64,7 @@ describe("StudentScholasticStandingsService-adjustStudyBreaks", () => {
     expect(adjustedStudyBreaks).toStrictEqual([]);
   });
 
-  it("Should adjust the study break as when new study end date is in between the study break(inclusive).", () => {
+  it("Should adjust the study break when new study end date is in between the study break(inclusive).", () => {
     // Arrange
     const newStudyEndDate = "2023-12-05";
 
