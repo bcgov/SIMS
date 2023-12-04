@@ -235,22 +235,8 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
             studyStartDate: offering.studyStartDate,
             studyBreaks: offering.studyBreaks.studyBreaks,
           });
-        // Ensures that no additional properties will be assigned to studyBreaks
-        // since calculatedStudyBreaks could received extra properties that are
-        // not required to be saved to the database.
-        offering.studyBreaks = {
-          fundedStudyPeriodDays: calculatedBreaks.fundedStudyPeriodDays,
-          totalDays: calculatedBreaks.totalDays,
-          totalFundedWeeks: calculatedBreaks.totalFundedWeeks,
-          unfundedStudyPeriodDays: calculatedBreaks.unfundedStudyPeriodDays,
-          studyBreaks: calculatedBreaks.studyBreaks?.map((studyBreak) => ({
-            breakStartDate: studyBreak.breakStartDate,
-            breakEndDate: studyBreak.breakEndDate,
-            breakDays: studyBreak.breakDays,
-            eligibleBreakDays: studyBreak.eligibleBreakDays,
-            ineligibleBreakDays: studyBreak.ineligibleBreakDays,
-          })),
-        };
+        offering.studyBreaks =
+          EducationProgramOfferingService.assignStudyBreaks(calculatedBreaks);
         // Save new offering.
         const savedOffering = await transactionalEntityManager
           .getRepository(EducationProgramOffering)
@@ -326,7 +312,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
    * @param newStudyEndDate newly changed/updated study end date.
    * @returns adjusted study breaks.
    */
-  adjustStudyBreaks(
+  protected adjustStudyBreaks(
     studyBreaks: StudyBreak[],
     newStudyEndDate: string,
   ): StudyBreak[] {

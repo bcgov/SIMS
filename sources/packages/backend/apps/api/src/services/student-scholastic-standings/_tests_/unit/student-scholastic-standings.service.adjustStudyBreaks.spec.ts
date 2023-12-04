@@ -12,12 +12,21 @@ import { createMock } from "@golevelup/ts-jest";
 import { dateDifference } from "@sims/utilities";
 import { OFFERING_STUDY_BREAK_MAX_DAYS } from "../../../../utilities";
 
+class PublicClassToTestAdjustStudyBreak extends StudentScholasticStandingsService {
+  public adjustStudyBreaks(
+    studyBreaks: StudyBreak[],
+    newStudyEndDate: string,
+  ): StudyBreak[] {
+    return super.adjustStudyBreaks(studyBreaks, newStudyEndDate);
+  }
+}
+
 describe("StudentScholasticStandingsService-adjustStudyBreaks", () => {
   let studyBreaks: StudyBreak[];
-  let studentScholasticStandingsService: StudentScholasticStandingsService;
+  let publicClassToTestAdjustStudyBreak: PublicClassToTestAdjustStudyBreak;
 
   beforeAll(() => {
-    studentScholasticStandingsService = new StudentScholasticStandingsService(
+    publicClassToTestAdjustStudyBreak = new PublicClassToTestAdjustStudyBreak(
       createMock<DataSource>(),
       createMock<StudentRestrictionService>(),
       createMock<NotificationActionsService>(),
@@ -40,7 +49,7 @@ describe("StudentScholasticStandingsService-adjustStudyBreaks", () => {
 
     // Act
     const adjustedStudyBreaks =
-      studentScholasticStandingsService.adjustStudyBreaks(
+      publicClassToTestAdjustStudyBreak.adjustStudyBreaks(
         studyBreaks,
         newStudyEndDate,
       );
@@ -55,7 +64,7 @@ describe("StudentScholasticStandingsService-adjustStudyBreaks", () => {
 
     // Act
     const adjustedStudyBreaks =
-      studentScholasticStandingsService.adjustStudyBreaks(
+      publicClassToTestAdjustStudyBreak.adjustStudyBreaks(
         studyBreaks,
         newStudyEndDate,
       );
@@ -70,7 +79,7 @@ describe("StudentScholasticStandingsService-adjustStudyBreaks", () => {
 
     // Act
     const adjustedStudyBreaks =
-      studentScholasticStandingsService.adjustStudyBreaks(
+      publicClassToTestAdjustStudyBreak.adjustStudyBreaks(
         studyBreaks,
         newStudyEndDate,
       );

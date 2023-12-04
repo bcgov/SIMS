@@ -21,6 +21,7 @@ import {
   PostgresDriverError,
   mapFromRawAndEntities,
   StudentAssessmentStatus,
+  StudyBreaksAndWeeks,
 } from "@sims/sims-db";
 import {
   DataSource,
@@ -427,22 +428,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       EducationProgramOfferingService.getCalculatedStudyBreaksAndWeeks(
         educationProgramOffering,
       );
-    // Ensures that no additional properties will be assigned to studyBreaks
-    // since calculatedStudyBreaks could received extra properties that are
-    // not required to be saved to the database.
-    programOffering.studyBreaks = {
-      fundedStudyPeriodDays: calculatedBreaks.fundedStudyPeriodDays,
-      totalDays: calculatedBreaks.totalDays,
-      totalFundedWeeks: calculatedBreaks.totalFundedWeeks,
-      unfundedStudyPeriodDays: calculatedBreaks.unfundedStudyPeriodDays,
-      studyBreaks: calculatedBreaks.studyBreaks?.map((studyBreak) => ({
-        breakStartDate: studyBreak.breakStartDate,
-        breakEndDate: studyBreak.breakEndDate,
-        breakDays: studyBreak.breakDays,
-        eligibleBreakDays: studyBreak.eligibleBreakDays,
-        ineligibleBreakDays: studyBreak.ineligibleBreakDays,
-      })),
-    };
+    programOffering.studyBreaks =
+      EducationProgramOfferingService.assignStudyBreaks(calculatedBreaks);
 
     return programOffering;
   }
@@ -1193,7 +1180,33 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   }
 
   /**
-   * study break calculations needed for validations and definitions
+   * Calculate and assign study breaks.
+   * @param calculatedBreaks newly calculated breaks.
+   * @returns adjusted study break as per the calculatedBreaks.
+   */
+  static assignStudyBreaks(
+    calculatedBreaks: CalculatedStudyBreaksAndWeeks,
+  ): StudyBreaksAndWeeks {
+    // Ensures that no additional properties will be assigned to studyBreaks
+    // since calculatedStudyBreaks could received extra properties that are
+    // not required to be saved to the database.
+    return {
+      fundedStudyPeriodDays: calculatedBreaks.fundedStudyPeriodDays,
+      totalDays: calculatedBreaks.totalDays,
+      totalFundedWeeks: calculatedBreaks.totalFundedWeeks,
+      unfundedStudyPeriodDays: calculatedBreaks.unfundedStudyPeriodDays,
+      studyBreaks: calculatedBreaks.studyBreaks?.map((studyBreak) => ({
+        breakStartDate: studyBreak.breakStartDate,
+        breakEndDate: studyBreak.breakEndDate,
+        breakDays: studyBreak.breakDays,
+        eligibleBreakDays: studyBreak.eligibleBreakDays,
+        ineligibleBreakDays: studyBreak.ineligibleBreakDays,
+      })),
+    };
+  }
+
+  /**
+   * Study break calculations needed for validations and definitions
    * like the total weeks of study for an offering.
    * @param offering offering to have the calculation executed.
    * @returns calculated offering information.
