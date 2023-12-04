@@ -331,7 +331,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     newStudyEndDate: string,
   ): StudyBreak[] {
     return studyBreaks
-      ?.map((studyBreak) => {
+      .map((studyBreak) => {
         if (isBeforeDate(newStudyEndDate, studyBreak.breakStartDate)) {
           // Ignore the study break.
           return;
@@ -362,7 +362,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         // Consider the study break as it is.
         return studyBreak;
       })
-      ?.filter((studyBreak) => !!studyBreak);
+      .filter((studyBreak) => !!studyBreak);
   }
 
   /**
