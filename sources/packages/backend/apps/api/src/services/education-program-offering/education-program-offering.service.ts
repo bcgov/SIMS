@@ -1286,7 +1286,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * Adjust the study breaks when there is a change in study end date
    * during scholastic standing.
    * * This method is used when there is a change in study end date, which,
-   * * will effect the study break period, which will not respect the basic
+   * * will affect the study break period, which will not respect the basic
    * * offering validations like min study break period etc.
    * @param studyBreaks current offering study break.
    * @param newStudyEndDate newly changed/updated study end date.
