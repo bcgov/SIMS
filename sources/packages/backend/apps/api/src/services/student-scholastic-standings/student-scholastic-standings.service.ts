@@ -13,14 +13,8 @@ import {
   StudentRestriction,
   User,
   StudentScholasticStandingChangeType,
-  StudyBreak,
 } from "@sims/sims-db";
-import {
-  CustomNamedError,
-  dateDifference,
-  isBeforeDate,
-  isBetweenPeriod,
-} from "@sims/utilities";
+import { CustomNamedError } from "@sims/utilities";
 import {
   APPLICATION_NOT_FOUND,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
@@ -28,10 +22,7 @@ import {
 import { ScholasticStanding } from "./student-scholastic-standings.model";
 import { StudentRestrictionService } from "../restriction/student-restriction.service";
 import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../constants";
-import {
-  OFFERING_STUDY_BREAK_MAX_DAYS,
-  SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS,
-} from "../../utilities";
+import { SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS } from "../../utilities";
 import {
   NotificationActionsService,
   RestrictionCode,
@@ -219,10 +210,11 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         offering.offeringType = OfferingTypes.ScholasticStanding;
         if (offering.studyBreaks?.studyBreaks) {
           // Study Breaks calculation.
-          const adjustedStudyBreak = this.adjustStudyBreaks(
-            offering.studyBreaks.studyBreaks,
-            offering.studyEndDate,
-          );
+          const adjustedStudyBreak =
+            EducationProgramOfferingService.adjustStudyBreaks(
+              offering.studyBreaks.studyBreaks,
+              offering.studyEndDate,
+            );
           // Assigning newly adjusted study breaks to the offering.
           offering.studyBreaks = {
             ...offering.studyBreaks,
@@ -303,52 +295,6 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
 
       return studentScholasticStanding;
     });
-  }
-
-  /**
-   * Adjust the study breaks when there is a change in study end date
-   * during scholastic standing.
-   * @param studyBreaks current offering study break.
-   * @param newStudyEndDate newly changed/updated study end date.
-   * @returns adjusted study breaks.
-   */
-  protected adjustStudyBreaks(
-    studyBreaks: StudyBreak[],
-    newStudyEndDate: string,
-  ): StudyBreak[] {
-    return studyBreaks
-      .map((studyBreak) => {
-        if (isBeforeDate(newStudyEndDate, studyBreak.breakStartDate)) {
-          // Ignore the study break.
-          return;
-        }
-        if (
-          isBetweenPeriod(newStudyEndDate, {
-            startDate: studyBreak.breakStartDate,
-            endDate: studyBreak.breakEndDate,
-          })
-        ) {
-          // Adjust the study break.
-          const breakDays = dateDifference(
-            newStudyEndDate,
-            studyBreak.breakStartDate,
-          );
-          const eligibleBreakDays = Math.min(
-            breakDays,
-            OFFERING_STUDY_BREAK_MAX_DAYS,
-          );
-          return {
-            breakStartDate: studyBreak.breakStartDate,
-            breakEndDate: newStudyEndDate,
-            breakDays: breakDays,
-            eligibleBreakDays: eligibleBreakDays,
-            ineligibleBreakDays: breakDays - eligibleBreakDays,
-          };
-        }
-        // Consider the study break as it is.
-        return studyBreak;
-      })
-      .filter((studyBreak) => !!studyBreak);
   }
 
   /**

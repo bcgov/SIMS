@@ -47,6 +47,8 @@ import {
   dateDifference,
   decimalRound,
   FieldSortOrder,
+  isBeforeDate,
+  isBetweenPeriod,
 } from "@sims/utilities";
 import {
   OFFERING_INVALID_OPERATION_IN_THE_CURRENT_STATE,
@@ -1278,6 +1280,55 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     };
 
     return studyBreaksAndWeeks;
+  }
+
+  /**
+   * Adjust the study breaks when there is a change in study end date
+   * during scholastic standing.
+   * * This method is used when there is a change in study end date, which,
+   * * will effect the study break period, which will not respect the basic
+   * * offering validations like min study break period etc.
+   * @param studyBreaks current offering study break.
+   * @param newStudyEndDate newly changed/updated study end date.
+   * @returns adjusted study breaks.
+   */
+  static adjustStudyBreaks(
+    studyBreaks: StudyBreak[],
+    newStudyEndDate: string,
+  ): StudyBreak[] {
+    return studyBreaks
+      .map((studyBreak) => {
+        if (isBeforeDate(newStudyEndDate, studyBreak.breakStartDate)) {
+          // Ignore the study break.
+          return;
+        }
+        if (
+          isBetweenPeriod(newStudyEndDate, {
+            startDate: studyBreak.breakStartDate,
+            endDate: studyBreak.breakEndDate,
+          })
+        ) {
+          // Adjust the study break.
+          const breakDays = dateDifference(
+            newStudyEndDate,
+            studyBreak.breakStartDate,
+          );
+          const eligibleBreakDays = Math.min(
+            breakDays,
+            OFFERING_STUDY_BREAK_MAX_DAYS,
+          );
+          return {
+            breakStartDate: studyBreak.breakStartDate,
+            breakEndDate: newStudyEndDate,
+            breakDays: breakDays,
+            eligibleBreakDays: eligibleBreakDays,
+            ineligibleBreakDays: breakDays - eligibleBreakDays,
+          };
+        }
+        // Consider the study break as it is.
+        return studyBreak;
+      })
+      .filter((studyBreak) => !!studyBreak);
   }
 
   @InjectLogger()

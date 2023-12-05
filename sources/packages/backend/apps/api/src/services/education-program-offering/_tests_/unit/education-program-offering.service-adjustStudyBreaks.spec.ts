@@ -1,37 +1,11 @@
 import { StudyBreak } from "@sims/sims-db";
-import {
-  StudentRestrictionService,
-  StudentScholasticStandingsService,
-} from "../../..";
-import {
-  NotificationActionsService,
-  StudentRestrictionSharedService,
-} from "@sims/services";
-import { DataSource } from "typeorm";
-import { createMock } from "@golevelup/ts-jest";
+import { EducationProgramOfferingService } from "../../..";
 import { dateDifference } from "@sims/utilities";
 import { OFFERING_STUDY_BREAK_MAX_DAYS } from "../../../../utilities";
 
-class PublicClassToTestAdjustStudyBreak extends StudentScholasticStandingsService {
-  public adjustStudyBreaks(
-    studyBreaks: StudyBreak[],
-    newStudyEndDate: string,
-  ): StudyBreak[] {
-    return super.adjustStudyBreaks(studyBreaks, newStudyEndDate);
-  }
-}
-
-describe("StudentScholasticStandingsService-adjustStudyBreaks", () => {
+describe("EducationProgramOfferingService-adjustStudyBreaks", () => {
   let studyBreaks: StudyBreak[];
-  let publicClassToTestAdjustStudyBreak: PublicClassToTestAdjustStudyBreak;
-
   beforeAll(() => {
-    publicClassToTestAdjustStudyBreak = new PublicClassToTestAdjustStudyBreak(
-      createMock<DataSource>(),
-      createMock<StudentRestrictionService>(),
-      createMock<NotificationActionsService>(),
-      createMock<StudentRestrictionSharedService>(),
-    );
     studyBreaks = [
       {
         breakDays: 16,
@@ -49,7 +23,7 @@ describe("StudentScholasticStandingsService-adjustStudyBreaks", () => {
 
     // Act
     const adjustedStudyBreaks =
-      publicClassToTestAdjustStudyBreak.adjustStudyBreaks(
+      EducationProgramOfferingService.adjustStudyBreaks(
         studyBreaks,
         newStudyEndDate,
       );
@@ -58,13 +32,13 @@ describe("StudentScholasticStandingsService-adjustStudyBreaks", () => {
     expect(adjustedStudyBreaks).toStrictEqual(studyBreaks);
   });
 
-  it("Should ignore the study break return empty array when new study end date is less than the break start date.", () => {
+  it("Should ignore the study break and return empty array when new study end date is less than the break start date.", () => {
     // Arrange
     const newStudyEndDate = "2023-11-01";
 
     // Act
     const adjustedStudyBreaks =
-      publicClassToTestAdjustStudyBreak.adjustStudyBreaks(
+      EducationProgramOfferingService.adjustStudyBreaks(
         studyBreaks,
         newStudyEndDate,
       );
@@ -79,7 +53,7 @@ describe("StudentScholasticStandingsService-adjustStudyBreaks", () => {
 
     // Act
     const adjustedStudyBreaks =
-      publicClassToTestAdjustStudyBreak.adjustStudyBreaks(
+      EducationProgramOfferingService.adjustStudyBreaks(
         studyBreaks,
         newStudyEndDate,
       );
