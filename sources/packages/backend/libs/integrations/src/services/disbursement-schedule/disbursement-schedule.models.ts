@@ -1,8 +1,10 @@
+import { RestrictionCode } from "@sims/services";
 import {
   DisbursementSchedule,
   DisbursementValueType,
   EducationProgramOffering,
   RestrictionActionType,
+  StudentRestriction,
 } from "@sims/sims-db";
 
 export interface DisbursementValue {
@@ -134,51 +136,93 @@ export interface StudentActiveRestriction {
    */
   id: number;
   /**
+   * Restriction code.
+   */
+  code: RestrictionCode;
+  /**
    * Actions associated with the restriction.
    */
   actions: RestrictionActionType[];
 }
 
 /**
+ * Offering details needed for an e-Cert calculations.
+ */
+export type EligibleECertOffering = Pick<
+  EducationProgramOffering,
+  "id" | "offeringIntensity" | "actualTuitionCosts" | "programRelatedCosts"
+>;
+
+/**
  * Disbursement eligible to be part of an e-Cert.
  * The disbursement is the focus of calculations and data changes
  * while the other properties are supporting information.
  */
-export interface EligibleECertDisbursement {
+export class EligibleECertDisbursement {
   /**
-   * Student id.
+   * Creates a new instance of a eligible e-Cert to be calculated.
+   * @param studentId student id.
+   * @param hasValidSIN indicates if the student has a validated SIN.
+   * @param assessmentId assessment id.
+   * @param applicationId application id.
+   * @param disbursement Eligible schedule that must have the values updated
+   * calculated for an e-Cert. This database entity model will receive all
+   * modifications across multiple calculations steps. If all calculations
+   * are successful this will be used to persist the data to the database.
+   * @param offering education program offering.
+   * @param maxLifetimeBCLoanAmount maximum BC loan configured to the assessment's
+   * program year.
+   * @param restrictions All active student restrictions actions. These actions can
+   * impact the e-Cert calculations.
+   * This is a shared array reference between all the disbursements of a single student.
+   * Changes to this array should be available for all disbursements of the student.
+   * If a particular step generates or resolves an active restriction this array should
+   * be updated using the method {@link refreshActiveStudentRestrictions} to allow all
+   * steps to have access to the most updated data.
    */
-  studentId: number;
+  constructor(
+    public readonly studentId: number,
+    public readonly hasValidSIN: boolean,
+    public readonly assessmentId: number,
+    public readonly applicationId: number,
+    public readonly disbursement: DisbursementSchedule,
+    public readonly offering: EligibleECertOffering,
+    public readonly maxLifetimeBCLoanAmount: number,
+    readonly restrictions: StudentActiveRestriction[],
+  ) {}
+
   /**
-   * Indicates if the student has a validated SIN.
+   * Refresh the complete list of student restrictions.
+   * @param activeRestrictions represents the most updated
+   * snapshot of all student active restrictions.
    */
-  hasValidSIN?: boolean;
+  refreshActiveStudentRestrictions(
+    activeRestrictions: StudentActiveRestriction[],
+  ) {
+    this.restrictions.length = 0;
+    this.restrictions.push(...activeRestrictions);
+  }
+
   /**
-   * All active student restrictions actions.
-   * These action can impact the e-Cert calculations.
+   * All student active restrictions.
    */
-  activeRestrictions: StudentActiveRestriction[];
-  /**
-   * Assessment id.
-   */
-  assessmentId: number;
-  /**
-   * Application id.
-   */
-  applicationId: number;
-  /**
-   * Eligible schedule that must have the values updated calculated for an e-Cert.
-   * This database entity model will receive all modifications across
-   * multiple calculations steps. If all calculations are successful
-   * this will be used to persist the data to the database.
-   */
-  disbursement: DisbursementSchedule;
-  offering: Pick<
-    EducationProgramOffering,
-    "id" | "offeringIntensity" | "actualTuitionCosts" | "programRelatedCosts"
-  >;
-  /**
-   * Maximum BC loan configured to the assessment's program year.
-   */
-  maxLifetimeBCLoanAmount: number;
+  get activeRestrictions(): ReadonlyArray<StudentActiveRestriction> {
+    return this.restrictions;
+  }
+}
+
+/**
+ * Map student restrictions to the representation of active
+ * restrictions used along e-Cert calculations.
+ * @param studentRestrictions student active restrictions to be mapped.
+ * @returns simplified student active restrictions.
+ */
+export function mapStudentActiveRestrictions(
+  ...studentRestrictions: StudentRestriction[]
+): StudentActiveRestriction[] {
+  return studentRestrictions.map((studentRestriction) => ({
+    id: studentRestriction.restriction.id,
+    code: studentRestriction.restriction.restrictionCode as RestrictionCode,
+    actions: studentRestriction.restriction.actionType,
+  }));
 }

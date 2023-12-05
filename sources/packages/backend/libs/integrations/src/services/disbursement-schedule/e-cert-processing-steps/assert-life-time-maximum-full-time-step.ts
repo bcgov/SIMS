@@ -16,6 +16,8 @@ import {
 import { ECertProcessStep } from "./e-cert-steps-models";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { EligibleECertDisbursement } from "../disbursement-schedule.models";
+import { ECertGenerationService } from "../e-cert-generation.service";
+import { getRestrictionByCode } from "./e-cert-steps-utils";
 
 /**
  * Check if the student is reaching the full-time BCSL maximum.
@@ -27,6 +29,7 @@ export class AssertLifeTimeMaximumFullTimeStep implements ECertProcessStep {
     private readonly systemUsersService: SystemUsersService,
     private readonly sfasApplicationService: SFASApplicationService,
     private readonly disbursementScheduleSharedService: DisbursementScheduleSharedService,
+    private readonly eCertGenerationService: ECertGenerationService,
   ) {}
 
   /**
@@ -42,18 +45,44 @@ export class AssertLifeTimeMaximumFullTimeStep implements ECertProcessStep {
     log: ProcessSummary,
   ): Promise<boolean> {
     log.info("Checking life time maximums for BC loans.");
-    for (const disbursementValue of eCertDisbursement.disbursement
-      .disbursementValues) {
-      if (
-        disbursementValue.valueAmount &&
-        disbursementValue.valueType === DisbursementValueType.BCLoan
-      ) {
-        await this.checkLifeTimeMaximumAndAddStudentRestriction(
-          eCertDisbursement,
-          disbursementValue,
+    if (getRestrictionByCode(eCertDisbursement, RestrictionCode.BCLM)) {
+      log.info(
+        `Student already has a ${RestrictionCode.BCLM} restriction, hence skipping the check.`,
+      );
+      return true;
+    }
+    // Check if the BC Loan is present in the awards to be disbursed.
+    const bcLoan = eCertDisbursement.disbursement.disbursementValues.find(
+      (award) => award.valueType === DisbursementValueType.BCLoan,
+    );
+    if (!bcLoan?.valueAmount) {
+      log.info(
+        `${bcLoan.valueCode} award not found or there is no amount to be disbursed, hence skipping the check.`,
+      );
+      return true;
+    }
+    // Check if a new restriction should be created and award adjusted.
+    const newRestrictionCreated =
+      await this.checkLifeTimeMaximumAndAddStudentRestriction(
+        eCertDisbursement,
+        bcLoan,
+        entityManager,
+      );
+    if (newRestrictionCreated) {
+      // If a new restriction was created refresh the active restrictions list.
+      const activeRestrictions =
+        await this.eCertGenerationService.getStudentActiveRestrictions(
+          eCertDisbursement.studentId,
           entityManager,
         );
-      }
+      eCertDisbursement.refreshActiveStudentRestrictions(activeRestrictions);
+      log.info(
+        `New ${RestrictionCode.BCLM} restriction was added to the student account.`,
+      );
+    } else {
+      log.info(
+        `No ${RestrictionCode.BCLM} restriction was created at this time.`,
+      );
     }
     return true;
   }
@@ -66,12 +95,13 @@ export class AssertLifeTimeMaximumFullTimeStep implements ECertProcessStep {
    * @param eCertDisbursement student disbursement that is part of one e-Cert.
    * @param disbursementValue award value to be verified.
    * @param entityManager used to execute the commands in the same transaction.
+   * @returns true if a new restriction was created, otherwise false.
    */
   private async checkLifeTimeMaximumAndAddStudentRestriction(
     eCertDisbursement: EligibleECertDisbursement,
     disbursementValue: DisbursementValue,
     entityManager: EntityManager,
-  ): Promise<void> {
+  ): Promise<boolean> {
     // Get totals including legacy system.
     const [totalLegacyBCSLAmount, totalDisbursedBCSLAmount] = await Promise.all(
       [
@@ -108,10 +138,12 @@ export class AssertLifeTimeMaximumFullTimeStep implements ECertProcessStep {
         await entityManager
           .getRepository(StudentRestriction)
           .save(bclmRestriction);
+        return true;
       }
       disbursementValue.effectiveAmount = round(newEffectiveAmount);
       disbursementValue.restrictionAmountSubtracted = amountSubtracted;
       disbursementValue.restrictionSubtracted = bclmRestriction.restriction;
     }
+    return false;
   }
 }

@@ -8,6 +8,7 @@ import {
   EligibleECertDisbursement,
   StudentActiveRestriction,
 } from "../disbursement-schedule.models";
+import { RestrictionCode } from "@sims/services";
 
 /**
  * Check active student restrictions by its action type
@@ -22,6 +23,22 @@ export function getRestrictionByActionType(
 ): StudentActiveRestriction {
   return eCertDisbursement.activeRestrictions?.find((restriction) =>
     restriction.actions.includes(actionType),
+  );
+}
+
+/**
+ * Check active student restrictions by its
+ * restriction code in an eligible disbursement.
+ * @param eCertDisbursement student disbursement to check student restrictions.
+ * @param code restriction code.
+ * @returns the first restriction of the requested code.
+ */
+export function getRestrictionByCode(
+  eCertDisbursement: EligibleECertDisbursement,
+  code: RestrictionCode,
+): StudentActiveRestriction {
+  return eCertDisbursement.activeRestrictions?.find(
+    (restriction) => restriction.code === code,
   );
 }
 

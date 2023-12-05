@@ -73,7 +73,9 @@ export function createFakeApplication(
  * @param relations dependencies.
  * - `institution` related institution.
  * - `institutionLocation` related location.
- * - `disbursementValues` related disbursement schedules.
+ * - `disbursementValues` shared disbursement values used for first and/or second disbursements.
+ * - `firstDisbursementValues` first disbursement values. This will take precedence over the disbursementValues parameter.
+ * - `secondDisbursementValues` second disbursement values. This will take precedence over the disbursementValues parameter.
  * - `student` related student.
  * - `msfaaNumber` related MSFAA number.
  * - `program` related education program.
@@ -94,6 +96,8 @@ export async function saveFakeApplicationDisbursements(
     institution?: Institution;
     institutionLocation?: InstitutionLocation;
     disbursementValues?: DisbursementValue[];
+    firstDisbursementValues?: DisbursementValue[];
+    secondDisbursementValues?: DisbursementValue[];
     student?: Student;
     msfaaNumber?: MSFAANumber;
     program?: EducationProgram;
@@ -123,13 +127,14 @@ export async function saveFakeApplicationDisbursements(
   // Original assessment - first disbursement.
   const firstSchedule = createFakeDisbursementSchedule(
     {
-      disbursementValues: relations?.disbursementValues ?? [
-        createFakeDisbursementValue(
-          DisbursementValueType.CanadaLoan,
-          "CSLF",
-          1,
-        ),
-      ],
+      disbursementValues: relations?.firstDisbursementValues ??
+        relations?.disbursementValues ?? [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLF",
+            1,
+          ),
+        ],
     },
     { initialValues: options?.firstDisbursementInitialValues },
   );
@@ -144,9 +149,14 @@ export async function saveFakeApplicationDisbursements(
     // Original assessment - second disbursement.
     const secondSchedule = createFakeDisbursementSchedule(
       {
-        disbursementValues: relations?.disbursementValues ?? [
-          createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 1),
-        ],
+        disbursementValues: relations?.secondDisbursementValues ??
+          relations?.disbursementValues ?? [
+            createFakeDisbursementValue(
+              DisbursementValueType.BCLoan,
+              "BCSL",
+              1,
+            ),
+          ],
       },
       { initialValues: options?.secondDisbursementInitialValues },
     );

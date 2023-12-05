@@ -1,7 +1,6 @@
 /**
- * Restriction codes that are used in API.
- * * The Restriction table will have more restriction
- * * codes, other than below mentioned codes.
+ * Restriction codes that are used in applications (API, Workers, Queue-Consumers).
+ * * The Restriction table will have more restriction codes other than below mentioned codes.
  */
 export enum RestrictionCode {
   /**

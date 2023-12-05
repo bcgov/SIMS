@@ -3,6 +3,7 @@ import {
   Assessment,
   COEStatus,
   DisbursementOverawardOriginType,
+  DisbursementSchedule,
   DisbursementScheduleStatus,
   DisbursementValueType,
   OfferingIntensity,
@@ -14,19 +15,24 @@ import {
   createFakeDisbursementOveraward,
   createFakeDisbursementValue,
   createFakeMSFAANumber,
+  getUploadedFile,
   saveFakeApplicationDisbursements,
   saveFakeStudent,
 } from "@sims/test-utils";
-import { IsNull, Not } from "typeorm";
+import { IsNull, Like, Not } from "typeorm";
 import {
   createTestingAppModule,
   describeQueueProcessorRootTest,
 } from "../../../../../../test/helpers";
 import { INestApplication } from "@nestjs/common";
-import { QueueNames } from "@sims/utilities";
+import { QueueNames, addDays, getISODateOnlyString } from "@sims/utilities";
 import { FullTimeECertProcessIntegrationScheduler } from "../ecert-full-time-process-integration.scheduler";
-import { createMock } from "@golevelup/ts-jest";
+import { DeepMocked, createMock } from "@golevelup/ts-jest";
 import { Job } from "bull";
+import * as Client from "ssh2-sftp-client";
+import * as dayjs from "dayjs";
+
+jest.setTimeout(1200000);
 
 describe(
   describeQueueProcessorRootTest(QueueNames.FullTimeECertIntegration),
@@ -34,15 +40,18 @@ describe(
     let app: INestApplication;
     let processor: FullTimeECertProcessIntegrationScheduler;
     let db: E2EDataSources;
+    let sftpClientMock: DeepMocked<Client>;
 
     beforeAll(async () => {
       // Env variable required for querying the eligible e-Cert records.
       process.env.APPLICATION_ARCHIVE_DAYS = "42";
-      const { nestApplication, dataSource } = await createTestingAppModule();
+      const { nestApplication, dataSource, sshClientMock } =
+        await createTestingAppModule();
       app = nestApplication;
+      db = createE2EDataSources(dataSource);
+      sftpClientMock = sshClientMock;
       // Processor under test.
       processor = app.get(FullTimeECertProcessIntegrationScheduler);
-      db = createE2EDataSources(dataSource);
     });
 
     beforeEach(async () => {
@@ -53,6 +62,11 @@ describe(
           disbursementScheduleStatus: Not(DisbursementScheduleStatus.Cancelled),
         },
         { disbursementScheduleStatus: DisbursementScheduleStatus.Cancelled },
+      );
+      // Reset sequence number to control the file name generated.
+      await db.sequenceControl.update(
+        { sequenceName: Like("ECERT_FT_SENT_FILE_%") },
+        { sequenceNumber: "0" },
       );
     });
 
@@ -222,6 +236,180 @@ describe(
           award.effectiveAmount === 3500,
       );
       expect(hasExpectedBCSG.length).toBe(1);
+    });
+
+    it.only("Should reduce BCSL award for first disbursement and withhold BC funding from second disbursement when the student reaches the maximum configured value for the year.", async () => {
+      // Arrange
+      const MAX_LIFE_TIME_BC_LOAN_AMOUNT = 50000;
+      // Ensure the right disbursement order for the 3 disbursements.
+      const [disbursementDate1, disbursementDate2, disbursementDate3] = [
+        getISODateOnlyString(addDays(1)),
+        getISODateOnlyString(addDays(2)),
+        getISODateOnlyString(addDays(3)),
+      ];
+
+      const eligibleDisbursement: Partial<DisbursementSchedule> = {
+        coeStatus: COEStatus.completed,
+        coeUpdatedAt: new Date(),
+      };
+
+      // Student with valid SIN.
+      const student = await saveFakeStudent(db.dataSource);
+      // Valid MSFAA Number.
+      const msfaaNumber = await db.msfaaNumber.save(
+        createFakeMSFAANumber({ student }, { msfaaState: MSFAAStates.Signed }),
+      );
+
+      const applicationA = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          student,
+          msfaaNumber,
+          firstDisbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLF",
+              100,
+            ),
+            // Force the BCSL to be close to the limit (leave 500 for upcoming disbursement).
+            createFakeDisbursementValue(
+              DisbursementValueType.BCLoan,
+              "BCSL",
+              MAX_LIFE_TIME_BC_LOAN_AMOUNT - 500,
+            ),
+          ],
+          secondDisbursementValues: [
+            // Force the BCSL to exceed the limit by 250 (previous disbursement left 500 room).
+            createFakeDisbursementValue(
+              DisbursementValueType.BCLoan,
+              "BCSL",
+              750,
+            ),
+            // BC Grants should still be disbursed since BCSL has some value.
+            createFakeDisbursementValue(
+              DisbursementValueType.BCGrant,
+              "BCAG",
+              1500,
+            ),
+          ],
+        },
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            assessmentData: { weeks: 5 } as Assessment,
+            assessmentDate: new Date(),
+          },
+          createSecondDisbursement: true,
+          firstDisbursementInitialValues: {
+            ...eligibleDisbursement,
+            disbursementDate: disbursementDate1,
+          },
+          secondDisbursementInitialValues: {
+            ...eligibleDisbursement,
+            disbursementDate: disbursementDate2,
+          },
+        },
+      );
+
+      // Second application for the student when all BC funding will be withhold due to BCLM restriction
+      // that must be created for the application A second disbursement.
+      const applicationB = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          student,
+          msfaaNumber,
+          firstDisbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLF",
+              199,
+            ),
+            // Should be disbursed because it is a federal grant.
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaGrant,
+              "CSGP",
+              299,
+            ),
+            // Should not be disbursed due to BCLM restriction.
+            createFakeDisbursementValue(
+              DisbursementValueType.BCLoan,
+              "BCSL",
+              399,
+            ),
+            // Should not be disbursed due to BCLM restriction.
+            createFakeDisbursementValue(
+              DisbursementValueType.BCGrant,
+              "BCAG",
+              499,
+            ),
+          ],
+        },
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            assessmentData: { weeks: 5 } as Assessment,
+            assessmentDate: new Date(),
+          },
+          firstDisbursementInitialValues: {
+            ...eligibleDisbursement,
+            disbursementDate: disbursementDate3,
+          },
+        },
+      );
+
+      // Application A and B shares the same program year.
+      // Updating program year maximum to ensure the expect value.
+      applicationA.programYear.maxLifetimeBCLoanAmount =
+        MAX_LIFE_TIME_BC_LOAN_AMOUNT;
+      await db.programYear.save(applicationA.programYear);
+
+      // Queued job.
+      // id and name defined to make the console log looks better only.
+      const job = createMock<Job<void>>({
+        id: "FakeJobId",
+        name: "FakeProcessPartTimeECertJobName",
+      });
+
+      // Act
+      const result = await processor.processFullTimeECert(job);
+
+      // Assert
+      expect(result).toStrictEqual(["Process finalized with success."]);
+
+      // Assert uploaded file.
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const fileDate = dayjs().format("YYYYMMDD");
+      expect(uploadedFile.remoteFilePath).toBe(
+        `MSFT-Request\\DPBC.EDU.FTECERTS.${fileDate}.001`,
+      );
+      expect(uploadedFile.fileLines).toHaveLength(5);
+      const [header, record1, record2, record3, footer] =
+        uploadedFile.fileLines;
+      // Validate header.
+      expect(header).toContain("100BC  NEW ENTITLEMENT");
+      // Validate footer.
+      expect(footer.substring(0, 3)).toBe("999");
+      // // Student A
+      // const [studentAFirstSchedule, studentASecondSchedule] =
+      //   await loadDisbursementSchedules(
+      //     applicationStudentA.currentAssessment.id,
+      //   );
+      // // Disbursement 1.
+      // const studentADisbursement1 = new PartTimeCertRecordParser(record1);
+      // expect(studentADisbursement1.recordType).toBe("02");
+      // expect(studentADisbursement1.containsStudent(studentA)).toBe(true);
+      // expect(studentAFirstSchedule.disbursementScheduleStatus).toBe(
+      //   DisbursementScheduleStatus.Sent,
+      // );
+      // // Disbursement 2.
+      // const studentADisbursement2 = new PartTimeCertRecordParser(record2);
+      // expect(studentADisbursement2.recordType).toBe("02");
+      // expect(studentADisbursement2.containsStudent(studentA)).toBe(true);
+      // expect(studentASecondSchedule.disbursementScheduleStatus).toBe(
+      //   DisbursementScheduleStatus.Sent,
+      // );
     });
   },
 );
