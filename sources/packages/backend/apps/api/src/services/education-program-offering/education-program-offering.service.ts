@@ -21,6 +21,7 @@ import {
   PostgresDriverError,
   mapFromRawAndEntities,
   StudentAssessmentStatus,
+  StudyBreaksAndWeeks,
 } from "@sims/sims-db";
 import {
   DataSource,
@@ -46,6 +47,8 @@ import {
   dateDifference,
   decimalRound,
   FieldSortOrder,
+  isBeforeDate,
+  isBetweenPeriod,
 } from "@sims/utilities";
 import {
   OFFERING_INVALID_OPERATION_IN_THE_CURRENT_STATE,
@@ -427,22 +430,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       EducationProgramOfferingService.getCalculatedStudyBreaksAndWeeks(
         educationProgramOffering,
       );
-    // Ensures that no additional properties will be assigned to studyBreaks
-    // since calculatedStudyBreaks could received extra properties that are
-    // not required to be saved to the database.
-    programOffering.studyBreaks = {
-      fundedStudyPeriodDays: calculatedBreaks.fundedStudyPeriodDays,
-      totalDays: calculatedBreaks.totalDays,
-      totalFundedWeeks: calculatedBreaks.totalFundedWeeks,
-      unfundedStudyPeriodDays: calculatedBreaks.unfundedStudyPeriodDays,
-      studyBreaks: calculatedBreaks.studyBreaks?.map((studyBreak) => ({
-        breakStartDate: studyBreak.breakStartDate,
-        breakEndDate: studyBreak.breakEndDate,
-        breakDays: studyBreak.breakDays,
-        eligibleBreakDays: studyBreak.eligibleBreakDays,
-        ineligibleBreakDays: studyBreak.ineligibleBreakDays,
-      })),
-    };
+    programOffering.studyBreaks =
+      EducationProgramOfferingService.assignStudyBreaks(calculatedBreaks);
 
     return programOffering;
   }
@@ -1193,7 +1182,33 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   }
 
   /**
-   * study break calculations needed for validations and definitions
+   * Calculate and assign study breaks.
+   * @param calculatedBreaks newly calculated breaks.
+   * @returns adjusted study break as per the calculatedBreaks.
+   */
+  static assignStudyBreaks(
+    calculatedBreaks: CalculatedStudyBreaksAndWeeks,
+  ): StudyBreaksAndWeeks {
+    // Ensures that no additional properties will be assigned to studyBreaks
+    // since calculatedStudyBreaks could received extra properties that are
+    // not required to be saved to the database.
+    return {
+      fundedStudyPeriodDays: calculatedBreaks.fundedStudyPeriodDays,
+      totalDays: calculatedBreaks.totalDays,
+      totalFundedWeeks: calculatedBreaks.totalFundedWeeks,
+      unfundedStudyPeriodDays: calculatedBreaks.unfundedStudyPeriodDays,
+      studyBreaks: calculatedBreaks.studyBreaks?.map((studyBreak) => ({
+        breakStartDate: studyBreak.breakStartDate,
+        breakEndDate: studyBreak.breakEndDate,
+        breakDays: studyBreak.breakDays,
+        eligibleBreakDays: studyBreak.eligibleBreakDays,
+        ineligibleBreakDays: studyBreak.ineligibleBreakDays,
+      })),
+    };
+  }
+
+  /**
+   * Study break calculations needed for validations and definitions
    * like the total weeks of study for an offering.
    * @param offering offering to have the calculation executed.
    * @returns calculated offering information.
@@ -1265,6 +1280,55 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     };
 
     return studyBreaksAndWeeks;
+  }
+
+  /**
+   * Adjust the study breaks when there is a change in study end date
+   * during scholastic standing.
+   * * This method is used when there is a change in study end date, which,
+   * * will affect the study break period, which will not respect the basic
+   * * offering validations like min study break period etc.
+   * @param studyBreaks current offering study break.
+   * @param newStudyEndDate newly changed/updated study end date.
+   * @returns adjusted study breaks.
+   */
+  static adjustStudyBreaks(
+    studyBreaks: StudyBreak[],
+    newStudyEndDate: string,
+  ): StudyBreak[] {
+    return studyBreaks
+      .map((studyBreak) => {
+        if (isBeforeDate(newStudyEndDate, studyBreak.breakStartDate)) {
+          // Ignore the study break.
+          return;
+        }
+        if (
+          isBetweenPeriod(newStudyEndDate, {
+            startDate: studyBreak.breakStartDate,
+            endDate: studyBreak.breakEndDate,
+          })
+        ) {
+          // Adjust the study break.
+          const breakDays = dateDifference(
+            newStudyEndDate,
+            studyBreak.breakStartDate,
+          );
+          const eligibleBreakDays = Math.min(
+            breakDays,
+            OFFERING_STUDY_BREAK_MAX_DAYS,
+          );
+          return {
+            breakStartDate: studyBreak.breakStartDate,
+            breakEndDate: newStudyEndDate,
+            breakDays: breakDays,
+            eligibleBreakDays: eligibleBreakDays,
+            ineligibleBreakDays: breakDays - eligibleBreakDays,
+          };
+        }
+        // Consider the study break as it is.
+        return studyBreak;
+      })
+      .filter((studyBreak) => !!studyBreak);
   }
 
   @InjectLogger()

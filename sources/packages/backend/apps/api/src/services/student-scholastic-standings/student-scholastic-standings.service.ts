@@ -28,7 +28,8 @@ import {
   RestrictionCode,
   StudentRestrictionSharedService,
 } from "@sims/services";
-// todo: ann test the pt and ft with with differnt weeks and same offering costs
+import { EducationProgramOfferingService } from "../education-program-offering/education-program-offering.service";
+
 /**
  * Manages the student scholastic standings related operations.
  */
@@ -207,7 +208,27 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
           existingOffering.exceptionalExpenses;
 
         offering.offeringType = OfferingTypes.ScholasticStanding;
-
+        if (offering.studyBreaks?.studyBreaks) {
+          // Study Breaks calculation.
+          const adjustedStudyBreak =
+            EducationProgramOfferingService.adjustStudyBreaks(
+              offering.studyBreaks.studyBreaks,
+              offering.studyEndDate,
+            );
+          // Assigning newly adjusted study breaks to the offering.
+          offering.studyBreaks = {
+            ...offering.studyBreaks,
+            studyBreaks: adjustedStudyBreak,
+          };
+        }
+        const calculatedBreaks =
+          EducationProgramOfferingService.getCalculatedStudyBreaksAndWeeks({
+            studyEndDate: offering.studyEndDate,
+            studyStartDate: offering.studyStartDate,
+            studyBreaks: offering.studyBreaks.studyBreaks,
+          });
+        offering.studyBreaks =
+          EducationProgramOfferingService.assignStudyBreaks(calculatedBreaks);
         // Save new offering.
         const savedOffering = await transactionalEntityManager
           .getRepository(EducationProgramOffering)
