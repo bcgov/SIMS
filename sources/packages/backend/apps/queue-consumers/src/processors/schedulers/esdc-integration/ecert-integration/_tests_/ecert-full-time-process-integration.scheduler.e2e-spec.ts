@@ -23,18 +23,16 @@ import { IsNull, Like, Not } from "typeorm";
 import {
   createTestingAppModule,
   describeQueueProcessorRootTest,
+  mockBullJob,
 } from "../../../../../../test/helpers";
 import { INestApplication } from "@nestjs/common";
 import { QueueNames, addDays, getISODateOnlyString } from "@sims/utilities";
 import { FullTimeECertProcessIntegrationScheduler } from "../ecert-full-time-process-integration.scheduler";
-import { DeepMocked, createMock } from "@golevelup/ts-jest";
-import { Job } from "bull";
+import { DeepMocked } from "@golevelup/ts-jest";
 import * as Client from "ssh2-sftp-client";
 import * as dayjs from "dayjs";
 import { FullTimeCertRecordParser } from "./parsers/full-time-e-cert-record-parser";
 import { awardAssert, loadAwardValues } from "./e-cert-utils";
-
-jest.setTimeout(1200000);
 
 describe(
   describeQueueProcessorRootTest(QueueNames.FullTimeECertIntegration),
@@ -136,12 +134,9 @@ describe(
       fakeCanadaLoanOverawardBalance.disbursementValueCode = "CSLF";
       fakeCanadaLoanOverawardBalance.overawardValue = 4500;
       await db.disbursementOveraward.save(fakeCanadaLoanOverawardBalance);
+
       // Queued job.
-      // id and name defined to make the console log looks better only.
-      const job = createMock<Job<void>>({
-        id: "FakeJobId",
-        name: "FakeJobName",
-      });
+      const { job } = mockBullJob<void>();
 
       // Act
       const result = await processor.processFullTimeECert(job);
@@ -369,17 +364,20 @@ describe(
       await db.programYear.save(applicationA.programYear);
 
       // Queued job.
-      // id and name defined to make the console log looks better only.
-      const job = createMock<Job<void>>({
-        id: "FakeJobId",
-        name: "FakeProcessPartTimeECertJobName",
-      });
+      const mockedJob = mockBullJob<void>();
 
       // Act
-      const result = await processor.processFullTimeECert(job);
+      const result = await processor.processFullTimeECert(mockedJob.job);
 
       // Assert
       expect(result).toStrictEqual(["Process finalized with success."]);
+      expect(
+        mockedJob.containLogMessages([
+          "New BCLM restriction was added to the student account.",
+          "Applying restriction for BCAG.",
+          "Applying restriction for BCSL.",
+        ]),
+      ).toBe(true);
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);

@@ -18,11 +18,11 @@ import { IsNull, Like, Not } from "typeorm";
 import {
   createTestingAppModule,
   describeQueueProcessorRootTest,
+  mockBullJob,
 } from "../../../../../../test/helpers";
 import { INestApplication } from "@nestjs/common";
 import { QueueNames, addDays, getISODateOnlyString } from "@sims/utilities";
-import { DeepMocked, createMock } from "@golevelup/ts-jest";
-import { Job } from "bull";
+import { DeepMocked } from "@golevelup/ts-jest";
 import { PartTimeECertProcessIntegrationScheduler } from "../ecert-part-time-process-integration.scheduler";
 import * as Client from "ssh2-sftp-client";
 import * as dayjs from "dayjs";
@@ -93,11 +93,7 @@ describe(
         },
       );
       // Queued job.
-      // id and name defined to make the console log looks better only.
-      const job = createMock<Job<void>>({
-        id: "FakeJobId",
-        name: "FakeProcessPartTimeECertJobName",
-      });
+      const { job } = mockBullJob<void>();
 
       // Act
       const result = await processor.processPartTimeECert(job);
@@ -213,11 +209,7 @@ describe(
       );
 
       // Queued job.
-      // id and name defined to make the console log looks better only.
-      const job = createMock<Job<void>>({
-        id: "FakeJobId",
-        name: "FakeProcessPartTimeECertJobName",
-      });
+      const { job } = mockBullJob<void>();
 
       // Act
       const result = await processor.processPartTimeECert(job);
