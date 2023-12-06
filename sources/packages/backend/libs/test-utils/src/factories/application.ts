@@ -5,7 +5,6 @@ import {
   ApplicationStatus,
   COEStatus,
   DisbursementSchedule,
-  DisbursementScheduleStatus,
   DisbursementValue,
   DisbursementValueType,
   EducationProgram,

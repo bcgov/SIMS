@@ -2,7 +2,6 @@ import {
   ApplicationStatus,
   Assessment,
   COEStatus,
-  DisbursementSchedule,
   DisbursementScheduleStatus,
   OfferingIntensity,
 } from "@sims/sims-db";
