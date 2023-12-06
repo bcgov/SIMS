@@ -64,6 +64,8 @@ export class PersistCalculationsStep implements ECertProcessStep {
               disbursementValue.restrictionAmountSubtracted,
             restrictionSubtracted: disbursementValue.restrictionSubtracted,
             effectiveAmount: disbursementValue.effectiveAmount,
+            modifier: this.systemUsersService.systemUser,
+            updatedAt: now,
           },
         );
       });

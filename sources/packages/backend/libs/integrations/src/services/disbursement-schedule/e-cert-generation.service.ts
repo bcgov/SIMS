@@ -203,6 +203,7 @@ export class ECertGenerationService {
         },
         where: {
           student: { id: studentId },
+          isActive: true,
         },
       });
     return mapStudentActiveRestrictions(...studentRestrictions);

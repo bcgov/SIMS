@@ -32,6 +32,7 @@ export class CreateBCTotalGrantsStep implements ECertProcessStep {
     log.info(
       `Create ${DisbursementValueType.BCTotalGrant} (sum of the other BC Grants)`,
     );
+    // Calculate the total BC grants.
     const bcTotalGrantValueAmount =
       eCertDisbursement.disbursement.disbursementValues
         // Filter all BC grants.
@@ -43,8 +44,6 @@ export class CreateBCTotalGrantsStep implements ECertProcessStep {
         .reduce((previousValue, currentValue) => {
           return previousValue + currentValue.effectiveAmount;
         }, 0);
-    // Calculate the total BC grants.
-    // If the 'BC Total Grant' is not present, add it.
     const bcTotalGrant = new DisbursementValue();
     bcTotalGrant.disbursementSchedule = eCertDisbursement.disbursement;
     bcTotalGrant.creator = this.systemUsersService.systemUser;

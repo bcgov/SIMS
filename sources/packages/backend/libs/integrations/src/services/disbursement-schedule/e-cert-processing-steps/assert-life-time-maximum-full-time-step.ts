@@ -137,11 +137,7 @@ export class AssertLifeTimeMaximumFullTimeStep implements ECertProcessStep {
         this.systemUsersService.systemUser.id,
         eCertDisbursement.applicationId,
       );
-    if (bclmRestriction) {
-      await entityManager
-        .getRepository(StudentRestriction)
-        .save(bclmRestriction);
-    }
+    await entityManager.getRepository(StudentRestriction).save(bclmRestriction);
     disbursementValue.effectiveAmount = round(newEffectiveAmount);
     disbursementValue.restrictionAmountSubtracted = amountSubtracted;
     disbursementValue.restrictionSubtracted = bclmRestriction.restriction;
