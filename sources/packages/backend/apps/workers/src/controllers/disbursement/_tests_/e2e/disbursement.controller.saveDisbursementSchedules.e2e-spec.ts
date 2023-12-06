@@ -51,7 +51,6 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     fakeOriginalAssessment.application = savedApplication;
     // Original assessment - first disbursement (Sent).
     const firstSchedule = createFakeDisbursementSchedule({
-      auditUser: savedUser,
       disbursementValues: [
         createFakeDisbursementValue(
           DisbursementValueType.CanadaLoan,
@@ -74,7 +73,6 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     firstSchedule.disbursementScheduleStatus = DisbursementScheduleStatus.Sent;
     // Original assessment - second disbursement (Pending).
     const secondSchedule = createFakeDisbursementSchedule({
-      auditUser: savedUser,
       disbursementValues: [
         createFakeDisbursementValue(
           DisbursementValueType.CanadaGrant,
