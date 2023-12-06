@@ -291,7 +291,7 @@ export class ECertGenerationService {
         disbursementValues: true,
       },
       where: {
-        disbursementScheduleStatus: DisbursementScheduleStatus.ReadToSend,
+        disbursementScheduleStatus: DisbursementScheduleStatus.ReadyToSend,
         studentAssessment: {
           offering: {
             offeringIntensity,

@@ -21,30 +21,17 @@ export class CreateBCTotalGrantsStep implements ECertProcessStep {
    * or by overaward deductions or "stop full time BC funding" restrictions.
    * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
    * If no BC grants are present the total will still be add as zero.
-   * @param _entityManager not used for this step.
+   * @param entityManager used to execute the commands in the same transaction.
    * @param log cumulative log summary.
    */
   async executeStep(
     eCertDisbursement: EligibleECertDisbursement,
-    _entityManager: EntityManager,
+    entityManager: EntityManager,
     log: ProcessSummary,
   ): Promise<boolean> {
     log.info(
       `Create ${DisbursementValueType.BCTotalGrant} (sum of the other BC Grants)`,
     );
-    // For each schedule calculate the total BC grants.
-    let bcTotalGrant = eCertDisbursement.disbursement.disbursementValues.find(
-      (disbursementValue) =>
-        disbursementValue.valueType === DisbursementValueType.BCTotalGrant,
-    );
-    if (!bcTotalGrant) {
-      // If the 'BC Total Grant' is not present, add it.
-      bcTotalGrant = new DisbursementValue();
-      bcTotalGrant.creator = this.systemUsersService.systemUser;
-      bcTotalGrant.valueCode = BC_TOTAL_GRANT_AWARD_CODE;
-      bcTotalGrant.valueType = DisbursementValueType.BCTotalGrant;
-      eCertDisbursement.disbursement.disbursementValues.push(bcTotalGrant);
-    }
     const bcTotalGrantValueAmount =
       eCertDisbursement.disbursement.disbursementValues
         // Filter all BC grants.
@@ -56,8 +43,16 @@ export class CreateBCTotalGrantsStep implements ECertProcessStep {
         .reduce((previousValue, currentValue) => {
           return previousValue + currentValue.effectiveAmount;
         }, 0);
+    // Calculate the total BC grants.
+    // If the 'BC Total Grant' is not present, add it.
+    const bcTotalGrant = new DisbursementValue();
+    bcTotalGrant.disbursementSchedule = eCertDisbursement.disbursement;
+    bcTotalGrant.creator = this.systemUsersService.systemUser;
+    bcTotalGrant.valueCode = BC_TOTAL_GRANT_AWARD_CODE;
+    bcTotalGrant.valueType = DisbursementValueType.BCTotalGrant;
     bcTotalGrant.valueAmount = bcTotalGrantValueAmount;
     bcTotalGrant.effectiveAmount = bcTotalGrantValueAmount;
+    await entityManager.getRepository(DisbursementValue).insert(bcTotalGrant);
     return true;
   }
 }

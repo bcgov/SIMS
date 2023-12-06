@@ -31,6 +31,8 @@ import { DeepMocked, createMock } from "@golevelup/ts-jest";
 import { Job } from "bull";
 import * as Client from "ssh2-sftp-client";
 import * as dayjs from "dayjs";
+import { FullTimeCertRecordParser } from "./parsers/full-time-e-cert-record-parser";
+import { awardAssert, loadAwardValues } from "./e-cert-utils";
 
 jest.setTimeout(1200000);
 
@@ -55,6 +57,7 @@ describe(
     });
 
     beforeEach(async () => {
+      jest.clearAllMocks();
       // Ensures that every disbursement on database is cancelled allowing the e-Certs to
       // be generated with the data created for every specific scenario.
       await db.disbursementSchedule.update(
@@ -238,7 +241,7 @@ describe(
       expect(hasExpectedBCSG.length).toBe(1);
     });
 
-    it.only("Should reduce BCSL award for first disbursement and withhold BC funding from second disbursement when the student reaches the maximum configured value for the year.", async () => {
+    it("Should disburse BC funding for a close-to-maximum disbursement, reduce BC funding when passing the maximum, and withhold BC Funding when a restriction was applied due to the maximum configured value for the year was reached.", async () => {
       // Arrange
       const MAX_LIFE_TIME_BC_LOAN_AMOUNT = 50000;
       // Ensure the right disbursement order for the 3 disbursements.
@@ -247,19 +250,20 @@ describe(
         getISODateOnlyString(addDays(2)),
         getISODateOnlyString(addDays(3)),
       ];
-
+      // Eligible COE basic properties.
       const eligibleDisbursement: Partial<DisbursementSchedule> = {
         coeStatus: COEStatus.completed,
         coeUpdatedAt: new Date(),
       };
-
       // Student with valid SIN.
       const student = await saveFakeStudent(db.dataSource);
       // Valid MSFAA Number.
       const msfaaNumber = await db.msfaaNumber.save(
         createFakeMSFAANumber({ student }, { msfaaState: MSFAAStates.Signed }),
       );
-
+      // Creates an application with two eligible disbursements.
+      // First disbursement will be close to the maximum allowed.
+      // Second disbursement will exceed the maximum and should create a restriction.
       const applicationA = await saveFakeApplicationDisbursements(
         db.dataSource,
         {
@@ -311,7 +315,6 @@ describe(
           },
         },
       );
-
       // Second application for the student when all BC funding will be withhold due to BCLM restriction
       // that must be created for the application A second disbursement.
       const applicationB = await saveFakeApplicationDisbursements(
@@ -391,25 +394,63 @@ describe(
       expect(header).toContain("100BC  NEW ENTITLEMENT");
       // Validate footer.
       expect(footer.substring(0, 3)).toBe("999");
-      // // Student A
-      // const [studentAFirstSchedule, studentASecondSchedule] =
-      //   await loadDisbursementSchedules(
-      //     applicationStudentA.currentAssessment.id,
-      //   );
-      // // Disbursement 1.
-      // const studentADisbursement1 = new PartTimeCertRecordParser(record1);
-      // expect(studentADisbursement1.recordType).toBe("02");
-      // expect(studentADisbursement1.containsStudent(studentA)).toBe(true);
-      // expect(studentAFirstSchedule.disbursementScheduleStatus).toBe(
-      //   DisbursementScheduleStatus.Sent,
-      // );
-      // // Disbursement 2.
-      // const studentADisbursement2 = new PartTimeCertRecordParser(record2);
-      // expect(studentADisbursement2.recordType).toBe("02");
-      // expect(studentADisbursement2.containsStudent(studentA)).toBe(true);
-      // expect(studentASecondSchedule.disbursementScheduleStatus).toBe(
-      //   DisbursementScheduleStatus.Sent,
-      // );
+      // Check record 1 when the maximum is about to be reached but not yet.
+      const record1Parsed = new FullTimeCertRecordParser(record1);
+      expect(record1Parsed.hasUser(student.user)).toBe(true);
+      expect(record1Parsed.cslfAmount).toBe(100);
+      expect(record1Parsed.bcslAmount).toBe(49500);
+      // Check record 2 when maximum was exceeded and the BC Stop Funding restriction will be added.
+      const record2Parsed = new FullTimeCertRecordParser(record2);
+      expect(record2Parsed.hasUser(student.user)).toBe(true);
+      expect(record2Parsed.cslfAmount).toBe(0);
+      expect(record2Parsed.bcslAmount).toBe(500);
+      expect(record2Parsed.grantAmount("BCSG")).toBe(1500); // Check for the total BC grants value.
+      const [, applicationADisbursement2] =
+        applicationA.currentAssessment.disbursementSchedules;
+      // Select the BCSL to validate the values impacted by the restriction.
+      const record2Awards = await loadAwardValues(
+        db,
+        applicationADisbursement2.id,
+        { valueCode: ["BCSL"] },
+      );
+      expect(
+        awardAssert(record2Awards, "BCSL", {
+          valueAmount: 750,
+          restrictionAmountSubtracted: 250,
+          effectiveAmount: 500,
+        }),
+      ).toBe(true);
+      // Check record 3 processing when BC Stop Funding restriction is in place.
+      const record3Parsed = new FullTimeCertRecordParser(record3);
+      expect(record3Parsed.hasUser(student.user)).toBe(true);
+      // Keep federal funding.
+      expect(record3Parsed.cslfAmount).toBe(199);
+      expect(record3Parsed.grantAmount("CSGP")).toBe(299);
+      // Withhold provincial funding.
+      expect(record3Parsed.bcslAmount).toBe(0);
+      expect(record3Parsed.grantAmount("BCSG")).toBeUndefined();
+      // Select the BCSL/BCAG to validate the values impacted by the restriction.
+      const [applicationBDisbursement1] =
+        applicationB.currentAssessment.disbursementSchedules;
+      const record3Awards = await loadAwardValues(
+        db,
+        applicationBDisbursement1.id,
+        { valueCode: ["BCSL", "BCAG"] },
+      );
+      expect(
+        awardAssert(record3Awards, "BCSL", {
+          valueAmount: 399,
+          restrictionAmountSubtracted: 399,
+          effectiveAmount: 0,
+        }),
+      ).toBe(true);
+      expect(
+        awardAssert(record3Awards, "BCAG", {
+          valueAmount: 499,
+          restrictionAmountSubtracted: 499,
+          effectiveAmount: 0,
+        }),
+      ).toBe(true);
     });
   },
 );

@@ -117,33 +117,34 @@ export class AssertLifeTimeMaximumFullTimeStep implements ECertProcessStep {
       totalLegacyBCSLAmount +
       totalDisbursedBCSLAmount +
       disbursementValue.effectiveAmount;
-    if (totalLifeTimeAmount >= eCertDisbursement.maxLifetimeBCLoanAmount) {
-      // Amount subtracted when lifetime maximum is reached.
-      const amountSubtracted =
-        totalLifeTimeAmount - eCertDisbursement.maxLifetimeBCLoanAmount;
-      // Ideally disbursementValue.effectiveAmount should be greater or equal to amountSubtracted.
-      // The flow will not reach here if the ministry ignore the restriction for the previous
-      // disbursement/application and money went out to the student, even though they reach the maximum.
-      const newEffectiveAmount =
-        disbursementValue.effectiveAmount - amountSubtracted;
-      // Create RestrictionCode.BCLM restriction when lifetime maximum is reached/exceeded.
-      const bclmRestriction =
-        await this.studentRestrictionSharedService.createRestrictionToSave(
-          eCertDisbursement.studentId,
-          RestrictionCode.BCLM,
-          this.systemUsersService.systemUser.id,
-          eCertDisbursement.applicationId,
-        );
-      if (bclmRestriction) {
-        await entityManager
-          .getRepository(StudentRestriction)
-          .save(bclmRestriction);
-        return true;
-      }
-      disbursementValue.effectiveAmount = round(newEffectiveAmount);
-      disbursementValue.restrictionAmountSubtracted = amountSubtracted;
-      disbursementValue.restrictionSubtracted = bclmRestriction.restriction;
+    if (totalLifeTimeAmount < eCertDisbursement.maxLifetimeBCLoanAmount) {
+      // The limit was not reached.
+      return false;
     }
-    return false;
+    // Amount subtracted when lifetime maximum is reached.
+    const amountSubtracted =
+      totalLifeTimeAmount - eCertDisbursement.maxLifetimeBCLoanAmount;
+    // Ideally disbursementValue.effectiveAmount should be greater or equal to amountSubtracted.
+    // The flow will not reach here if the ministry ignore the restriction for the previous
+    // disbursement/application and money went out to the student, even though they reach the maximum.
+    const newEffectiveAmount =
+      disbursementValue.effectiveAmount - amountSubtracted;
+    // Create RestrictionCode.BCLM restriction when lifetime maximum is reached/exceeded.
+    const bclmRestriction =
+      await this.studentRestrictionSharedService.createRestrictionToSave(
+        eCertDisbursement.studentId,
+        RestrictionCode.BCLM,
+        this.systemUsersService.systemUser.id,
+        eCertDisbursement.applicationId,
+      );
+    if (bclmRestriction) {
+      await entityManager
+        .getRepository(StudentRestriction)
+        .save(bclmRestriction);
+    }
+    disbursementValue.effectiveAmount = round(newEffectiveAmount);
+    disbursementValue.restrictionAmountSubtracted = amountSubtracted;
+    disbursementValue.restrictionSubtracted = bclmRestriction.restriction;
+    return true;
   }
 }

@@ -28,7 +28,8 @@ import { PartTimeECertProcessIntegrationScheduler } from "../ecert-part-time-pro
 import * as Client from "ssh2-sftp-client";
 import * as dayjs from "dayjs";
 import { DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS } from "@sims/services/constants";
-import { PartTimeCertRecordParser } from "./part-time-e-cert-record-parser";
+import { PartTimeCertRecordParser } from "./parsers/part-time-e-cert-record-parser";
+import { loadDisbursementSchedules } from "./e-cert-utils";
 
 describe(
   describeQueueProcessorRootTest(QueueNames.PartTimeECertIntegration),
@@ -241,31 +242,33 @@ describe(
       // Student A
       const [studentAFirstSchedule, studentASecondSchedule] =
         await loadDisbursementSchedules(
+          db,
           applicationStudentA.currentAssessment.id,
         );
       // Disbursement 1.
       const studentADisbursement1 = new PartTimeCertRecordParser(record1);
       expect(studentADisbursement1.recordType).toBe("02");
-      expect(studentADisbursement1.containsStudent(studentA)).toBe(true);
+      expect(studentADisbursement1.hasUser(studentA.user)).toBe(true);
       expect(studentAFirstSchedule.disbursementScheduleStatus).toBe(
         DisbursementScheduleStatus.Sent,
       );
       // Disbursement 2.
       const studentADisbursement2 = new PartTimeCertRecordParser(record2);
       expect(studentADisbursement2.recordType).toBe("02");
-      expect(studentADisbursement2.containsStudent(studentA)).toBe(true);
+      expect(studentADisbursement2.hasUser(studentA.user)).toBe(true);
       expect(studentASecondSchedule.disbursementScheduleStatus).toBe(
         DisbursementScheduleStatus.Sent,
       );
       // Student B
       const [studentBFirstSchedule, studentBSecondSchedule] =
         await loadDisbursementSchedules(
+          db,
           applicationStudentB.currentAssessment.id,
         );
       // Disbursement 1.
       const studentBDisbursement1 = new PartTimeCertRecordParser(record3);
       expect(studentBDisbursement1.recordType).toBe("02");
-      expect(studentBDisbursement1.containsStudent(studentB)).toBe(true);
+      expect(studentBDisbursement1.hasUser(studentB.user)).toBe(true);
       expect(studentBFirstSchedule.disbursementScheduleStatus).toBe(
         DisbursementScheduleStatus.Sent,
       );
@@ -274,26 +277,5 @@ describe(
         DisbursementScheduleStatus.Pending,
       );
     });
-
-    /**
-     * Load the disbursement schedules for the assessment.
-     * @param studentAssessmentId assessment id.
-     * @returns disbursement schedules for the assessment.
-     */
-    async function loadDisbursementSchedules(
-      studentAssessmentId: number,
-    ): Promise<DisbursementSchedule[]> {
-      return db.disbursementSchedule.find({
-        select: {
-          id: true,
-          disbursementScheduleStatus: true,
-        },
-        where: {
-          studentAssessment: {
-            id: studentAssessmentId,
-          },
-        },
-      });
-    }
   },
 );

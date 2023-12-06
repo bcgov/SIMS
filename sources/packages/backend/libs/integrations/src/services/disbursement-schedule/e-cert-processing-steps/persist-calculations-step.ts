@@ -21,7 +21,7 @@ export class PersistCalculationsStep implements ECertProcessStep {
 
   /**
    * Persists all calculations executed for the disbursement also changing
-   * its status to {@link DisbursementScheduleStatus.ReadToSend}.
+   * its status to {@link DisbursementScheduleStatus.ReadyToSend}.
    * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
    * @param entityManager used to execute the commands in the same transaction.
    * @param log cumulative log summary.
@@ -41,7 +41,7 @@ export class PersistCalculationsStep implements ECertProcessStep {
     disbursementScheduleRepo.update(
       { id: disbursement.id },
       {
-        disbursementScheduleStatus: DisbursementScheduleStatus.ReadToSend,
+        disbursementScheduleStatus: DisbursementScheduleStatus.ReadyToSend,
         readyToSendDate: now,
         tuitionRemittanceEffectiveAmount:
           disbursement.tuitionRemittanceEffectiveAmount,
@@ -69,7 +69,7 @@ export class PersistCalculationsStep implements ECertProcessStep {
       });
     await Promise.all(disbursementValuesUpdatesPromises);
     log.info(
-      `All calculations were saved and disbursement was set to '${DisbursementScheduleStatus.ReadToSend}'.`,
+      `All calculations were saved and disbursement was set to '${DisbursementScheduleStatus.ReadyToSend}'.`,
     );
     return true;
   }
