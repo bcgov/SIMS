@@ -218,7 +218,7 @@ export class EligibleECertDisbursement {
  * @returns simplified student active restrictions.
  */
 export function mapStudentActiveRestrictions(
-  ...studentRestrictions: StudentRestriction[]
+  studentRestrictions: StudentRestriction[],
 ): StudentActiveRestriction[] {
   return studentRestrictions.map((studentRestriction) => ({
     id: studentRestriction.restriction.id,

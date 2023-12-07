@@ -166,7 +166,7 @@ export class ECertGenerationService {
         if (!group[studentId]) {
           // Populates a new student only once.
           group[studentId] = mapStudentActiveRestrictions(
-            ...application.student.studentRestrictions,
+            application.student.studentRestrictions,
           );
         }
         return group;
@@ -206,7 +206,7 @@ export class ECertGenerationService {
           isActive: true,
         },
       });
-    return mapStudentActiveRestrictions(...studentRestrictions);
+    return mapStudentActiveRestrictions(studentRestrictions);
   }
 
   /**
