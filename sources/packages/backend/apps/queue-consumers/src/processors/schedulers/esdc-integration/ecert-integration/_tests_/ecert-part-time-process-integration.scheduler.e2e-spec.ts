@@ -74,7 +74,15 @@ describe(
       const student = await saveFakeStudent(db.dataSource);
       // Valid MSFAA Number.
       const msfaaNumber = await db.msfaaNumber.save(
-        createFakeMSFAANumber({ student }, { msfaaState: MSFAAStates.Signed }),
+        createFakeMSFAANumber(
+          { student },
+          {
+            msfaaState: MSFAAStates.Signed,
+            msfaaInitialValues: {
+              offeringIntensity: OfferingIntensity.partTime,
+            },
+          },
+        ),
       );
       // Student application eligible for e-Cert.
       const application = await saveFakeApplicationDisbursements(
@@ -141,7 +149,12 @@ describe(
       const msfaaNumberA = await db.msfaaNumber.save(
         createFakeMSFAANumber(
           { student: studentA },
-          { msfaaState: MSFAAStates.Signed },
+          {
+            msfaaState: MSFAAStates.Signed,
+            msfaaInitialValues: {
+              offeringIntensity: OfferingIntensity.partTime,
+            },
+          },
         ),
       );
 
@@ -151,7 +164,12 @@ describe(
       const msfaaNumberB = await db.msfaaNumber.save(
         createFakeMSFAANumber(
           { student: studentB },
-          { msfaaState: MSFAAStates.Signed },
+          {
+            msfaaState: MSFAAStates.Signed,
+            msfaaInitialValues: {
+              offeringIntensity: OfferingIntensity.partTime,
+            },
+          },
         ),
       );
 
