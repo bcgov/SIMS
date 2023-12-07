@@ -57,7 +57,7 @@ export function awardAssert(
     effectiveAmount?: number;
     restrictionAmountSubtracted?: number;
   },
-) {
+): boolean {
   const award = awards.find((award) => award.valueCode === valueCode);
   if (!award) {
     return false;
