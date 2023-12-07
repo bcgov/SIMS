@@ -2,6 +2,8 @@ import { ECertRecordParser } from ".";
 
 /**
  * Parses a full-time e-Cert record information.
+ * The hard-coded numbers along the class represents the position index
+ * as per the e-Cert documentation.
  */
 export class FullTimeCertRecordParser extends ECertRecordParser {
   /**

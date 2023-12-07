@@ -37,7 +37,7 @@ export class MockBullJobResult<T> {
 /**
  * Creates a mocked Bull Job.
  * @param data optional data to start the job.
- * @returns nock creation result.
+ * @returns mock creation result.
  */
 export function mockBullJob<T>(data?: T): MockBullJobResult<T> {
   const job = createMock<Job<T>>({
