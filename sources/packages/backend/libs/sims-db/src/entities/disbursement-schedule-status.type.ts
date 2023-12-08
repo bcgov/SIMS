@@ -13,7 +13,7 @@ export enum DisbursementScheduleStatus {
    * when the system should consider that no further modifications will
    * be executed to the e-Cert related data.
    */
-  ReadToSend = "Ready to send",
+  ReadyToSend = "Ready to send",
   /**
    * The money values associated with the disbursement schedule
    * were included in an e-Cert file to be disbursed to the student.

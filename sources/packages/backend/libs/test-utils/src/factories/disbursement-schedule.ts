@@ -4,33 +4,48 @@ import {
   DisbursementScheduleStatus,
   DisbursementValue,
   StudentAssessment,
-  User,
 } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
 import * as faker from "faker";
 
-export function createFakeDisbursementSchedule(relations?: {
-  studentAssessment?: StudentAssessment;
-  auditUser?: User;
-  disbursementValues?: DisbursementValue[];
-}): DisbursementSchedule {
+/**
+ * Creates a disbursement schedule.
+ * @param relations dependencies.
+ * - `studentAssessment` student assessment.
+ * - `disbursementValues` disbursement values to be inserted.
+ * @param options additional options.
+ * - `initialValues` initial values.
+ * @returns
+ */
+export function createFakeDisbursementSchedule(
+  relations?: {
+    studentAssessment?: StudentAssessment;
+    disbursementValues?: DisbursementValue[];
+  },
+  options?: {
+    initialValues?: Partial<DisbursementSchedule>;
+  },
+): DisbursementSchedule {
   const now = new Date();
   const nowString = getISODateOnlyString(now);
   const schedule = new DisbursementSchedule();
   // Fake number generated based on the max value that a document number can have as
   // per e-Cert documentation. Numbers under 1000000 can still be used for E2E tests.
   schedule.documentNumber = faker.random.number({ min: 1000000, max: 9999999 });
-  schedule.disbursementDate = nowString;
+  schedule.disbursementDate =
+    options?.initialValues?.disbursementDate ?? nowString;
   schedule.negotiatedExpiryDate = nowString;
   schedule.dateSent = null;
   schedule.disbursementValues = relations?.disbursementValues;
-  schedule.coeStatus = COEStatus.required;
+  schedule.coeStatus = options?.initialValues?.coeStatus ?? COEStatus.required;
   schedule.coeUpdatedBy = null;
-  schedule.coeUpdatedAt = null;
+  schedule.coeUpdatedAt = options?.initialValues?.coeUpdatedAt;
   schedule.coeDeniedReason = null;
   schedule.coeDeniedOtherDesc = null;
   schedule.studentAssessment = relations?.studentAssessment;
   schedule.tuitionRemittanceRequestedAmount = 0;
-  schedule.disbursementScheduleStatus = DisbursementScheduleStatus.Pending;
+  schedule.disbursementScheduleStatus =
+    options?.initialValues?.disbursementScheduleStatus ??
+    DisbursementScheduleStatus.Pending;
   return schedule;
 }

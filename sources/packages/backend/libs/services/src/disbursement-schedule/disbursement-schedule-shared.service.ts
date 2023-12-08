@@ -35,7 +35,7 @@ const TRANSACTION_IDLE_TIMEOUT_SECONDS = 60;
  * as disbursed to the student.
  */
 const DISBURSED_STATUSES = [
-  DisbursementScheduleStatus.ReadToSend,
+  DisbursementScheduleStatus.ReadyToSend,
   DisbursementScheduleStatus.Sent,
 ];
 

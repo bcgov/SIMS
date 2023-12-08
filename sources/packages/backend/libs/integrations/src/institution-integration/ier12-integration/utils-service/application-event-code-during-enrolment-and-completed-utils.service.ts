@@ -56,7 +56,7 @@ export class ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService {
           currentDisbursementSchedule,
           activeRestrictionsActionTypes,
         );
-      case DisbursementScheduleStatus.ReadToSend:
+      case DisbursementScheduleStatus.ReadyToSend:
       case DisbursementScheduleStatus.Sent:
         return this.eventCodeForCompletedApplicationWithSentDisbursement(
           currentDisbursementSchedule.disbursementValues,
