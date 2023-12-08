@@ -10,12 +10,6 @@ import {
 } from "../../services";
 import { SequenceControlService, SystemUsersService } from "@sims/services";
 import {
-  ECERT_FULL_TIME_FILE_CODE,
-  ECERT_PART_TIME_FILE_CODE,
-  ECERT_FULL_TIME_FEEDBACK_FILE_CODE,
-  ECERT_PART_TIME_FEEDBACK_FILE_CODE,
-} from "@sims/services/constants";
-import {
   CustomNamedError,
   getISODateOnlyString,
   processInParallel,
@@ -28,17 +22,12 @@ import {
   ECertUploadResult,
   ESDCFileResponse,
 } from "./models/e-cert-integration-model";
-import { Injectable } from "@nestjs/common";
 import { ECertIntegrationService } from "./e-cert.integration.service";
-import { ECertFullTimeIntegrationService } from "./e-cert-full-time-integration/e-cert-full-time.integration.service";
-import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration/e-cert-part-time.integration.service";
 import { ECertFullTimeResponseRecord } from "./e-cert-full-time-integration/e-cert-files/e-cert-response-record";
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { ECertGenerationService } from "@sims/integrations/services";
 
-const ECERT_FULL_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_FT_SENT_FILE";
-const ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_PT_SENT_FILE";
 /**
  * Used to abort the e-Cert generation process, cancel the current transaction,
  * and let the consumer method know that it was aborted because no records are
@@ -47,8 +36,7 @@ const ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_PT_SENT_FILE";
 const ECERT_GENERATION_NO_RECORDS_AVAILABLE =
   "ECERT_GENERATION_NO_RECORDS_AVAILABLE";
 
-@Injectable()
-export class ECertFileHandler extends ESDCFileHandler {
+export abstract class ECertFileHandler extends ESDCFileHandler {
   esdcConfig: ESDCIntegrationConfig;
   constructor(
     configService: ConfigService,
@@ -56,64 +44,24 @@ export class ECertFileHandler extends ESDCFileHandler {
     private readonly disbursementScheduleService: DisbursementScheduleService,
     private readonly eCertGenerationService: ECertGenerationService,
     private readonly disbursementScheduleErrorsService: DisbursementScheduleErrorsService,
-    private readonly eCertFullTimeIntegrationService: ECertFullTimeIntegrationService,
-    private readonly eCertPartTimeIntegrationService: ECertPartTimeIntegrationService,
     private readonly systemUserService: SystemUsersService,
   ) {
     super(configService);
   }
 
   /**
-   * Method to call the Full-time disbursements available to be sent to ESDC.
+   * Method to send the e-Cert disbursements available to ESDC.
    * @returns result of the file upload with the file generated and the
    * amount of records added to the file.
    */
-  async generateFullTimeECert(): Promise<ECertUploadResult> {
-    return this.generateECert(
-      this.eCertFullTimeIntegrationService,
-      OfferingIntensity.fullTime,
-      ECERT_FULL_TIME_FILE_CODE,
-      ECERT_FULL_TIME_SENT_FILE_SEQUENCE_GROUP,
-    );
-  }
+  abstract generateECert(): Promise<ECertUploadResult>;
 
   /**
-   * Method to call the Part-time disbursements available to be sent to ESDC.
+   * Method to call the e-cert feedback file processing and the list of all errors, if any.
    * @returns result of the file upload with the file generated and the
    * amount of records added to the file.
    */
-  async generatePartTimeECert(): Promise<ECertUploadResult> {
-    return this.generateECert(
-      this.eCertPartTimeIntegrationService,
-      OfferingIntensity.partTime,
-      ECERT_PART_TIME_FILE_CODE,
-      ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP,
-    );
-  }
-
-  /**
-   * Method to call the Full-time feedback file processing and the list of all errors, if any.
-   * @returns result of the file upload with the file generated and the
-   * amount of records added to the file.
-   */
-  async processFullTimeResponses(): Promise<ESDCFileResponse[]> {
-    return this.processResponses(
-      this.eCertFullTimeIntegrationService,
-      ECERT_FULL_TIME_FEEDBACK_FILE_CODE,
-    );
-  }
-
-  /**
-   * Method to call the Part-time feedback file processing and the list of all errors, if any.
-   * @returns result of the file upload with the file generated and the
-   * amount of records added to the file.
-   */
-  async processPartTimeResponses(): Promise<ESDCFileResponse[]> {
-    return this.processResponses(
-      this.eCertPartTimeIntegrationService,
-      ECERT_PART_TIME_FEEDBACK_FILE_CODE,
-    );
-  }
+  abstract processECertResponses(): Promise<ESDCFileResponse[]>;
 
   /**
    * Generate the e-Cert file for Full-Time/Part-Time disbursements available to be sent to ESDC.
@@ -127,7 +75,7 @@ export class ECertFileHandler extends ESDCFileHandler {
    * @returns result of the file upload with the file generated and the
    * amount of records added to the file.
    */
-  private async generateECert(
+  protected async eCertGeneration(
     eCertIntegrationService: ECertIntegrationService,
     offeringIntensity: OfferingIntensity,
     fileCode: string,
@@ -258,7 +206,7 @@ export class ECertFileHandler extends ESDCFileHandler {
    * generate the record.
    * @returns e-Cert record.
    */
-  createECertRecord(disbursement: DisbursementSchedule): ECertRecord {
+  private createECertRecord(disbursement: DisbursementSchedule): ECertRecord {
     const now = new Date();
     const application = disbursement.studentAssessment.application;
     const student = application.student;

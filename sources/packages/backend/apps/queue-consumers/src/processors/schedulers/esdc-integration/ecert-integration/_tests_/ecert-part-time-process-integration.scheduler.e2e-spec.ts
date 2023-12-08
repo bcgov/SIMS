@@ -104,7 +104,7 @@ describe(
       const { job } = mockBullJob<void>();
 
       // Act
-      const result = await processor.processPartTimeECert(job);
+      const result = await processor.processECert(job);
 
       // Assert
       expect(result).toStrictEqual(["Process finalized with success."]);
@@ -230,7 +230,7 @@ describe(
       const { job } = mockBullJob<void>();
 
       // Act
-      const result = await processor.processPartTimeECert(job);
+      const result = await processor.processECert(job);
 
       // Assert
       expect(result).toStrictEqual(["Process finalized with success."]);

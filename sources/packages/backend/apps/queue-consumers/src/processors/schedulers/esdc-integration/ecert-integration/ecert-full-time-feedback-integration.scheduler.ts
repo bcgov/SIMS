@@ -1,5 +1,5 @@
 import { InjectQueue, Process, Processor } from "@nestjs/bull";
-import { ECertFileHandler } from "@sims/integrations/esdc-integration";
+import { FullTimeECertFileHandler } from "@sims/integrations/esdc-integration";
 import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
@@ -13,7 +13,7 @@ export class FullTimeECertFeedbackIntegrationScheduler extends BaseScheduler<voi
     @InjectQueue(QueueNames.FullTimeFeedbackIntegration)
     schedulerQueue: Queue<void>,
     queueService: QueueService,
-    private readonly eCertFileHandler: ECertFileHandler,
+    private readonly eCertFileHandler: FullTimeECertFileHandler,
   ) {
     super(schedulerQueue, queueService);
   }
@@ -32,8 +32,7 @@ export class FullTimeECertFeedbackIntegrationScheduler extends BaseScheduler<voi
     await summary.info(
       `Processing E-Cert Full-time integration job ${job.id} of type ${job.name}.`,
     );
-    const fullTimeResults =
-      await this.eCertFileHandler.processFullTimeResponses();
+    const fullTimeResults = await this.eCertFileHandler.processECertResponses();
     await this.cleanSchedulerQueueHistory();
     await summary.info(
       `Completed E-Cert Full-time integration job ${job.id} of type ${job.name}.`,
