@@ -16,7 +16,7 @@ objects:
     kind: ImageStreamTag
     lookupPolicy:
       local: false
-    metadata:	
+    metadata:
       name: ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
     tag:
       annotations: null
