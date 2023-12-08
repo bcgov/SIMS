@@ -13,7 +13,7 @@ export class PartTimeECertFeedbackIntegrationScheduler extends BaseScheduler<voi
     @InjectQueue(QueueNames.PartTimeFeedbackIntegration)
     schedulerQueue: Queue<void>,
     queueService: QueueService,
-    private readonly eCertFileHandler: PartTimeECertFileHandler,
+    private readonly partTimeECertFileHandler: PartTimeECertFileHandler,
   ) {
     super(schedulerQueue, queueService);
   }
@@ -32,7 +32,8 @@ export class PartTimeECertFeedbackIntegrationScheduler extends BaseScheduler<voi
     await summary.info(
       `Processing e-Cert part-time feedback integration job ${job.id} of type ${job.name}.`,
     );
-    const partTimeResults = await this.eCertFileHandler.processECertResponses();
+    const partTimeResults =
+      await this.partTimeECertFileHandler.processECertResponses();
     await this.cleanSchedulerQueueHistory();
     await summary.info(
       `Completed e-Cert part-time feedback integration job ${job.id} of type ${job.name}.`,

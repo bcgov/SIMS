@@ -142,9 +142,17 @@ describe(
       const result = await processor.processECert(job);
 
       // Assert
-      expect(result).toStrictEqual(["Process finalized with success."]);
 
-      // Assert
+      // Assert uploaded file.
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const fileDate = dayjs().format("YYYYMMDD");
+      const uploadedFileName = `MSFT-Request\\DPBC.EDU.FTECERTS.${fileDate}.001`;
+      expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+      expect(result).toStrictEqual([
+        "Process finalized with success.",
+        `Generated file: ${uploadedFileName}`,
+        "Uploaded records: 1",
+      ]);
 
       // Assert Canada Loan overawards were deducted.
       const hasCanadaLoanOverawardDeduction =
@@ -370,7 +378,6 @@ describe(
       const result = await processor.processECert(mockedJob.job);
 
       // Assert
-      expect(result).toStrictEqual(["Process finalized with success."]);
       expect(
         mockedJob.containLogMessages([
           "New BCLM restriction was added to the student account.",
@@ -386,6 +393,14 @@ describe(
         `MSFT-Request\\DPBC.EDU.FTECERTS.${fileDate}.001`,
       );
       expect(uploadedFile.fileLines).toHaveLength(5);
+      const uploadedFileName = `MSFT-Request\\DPBC.EDU.FTECERTS.${fileDate}.001`;
+      expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+      expect(result).toStrictEqual([
+        "Process finalized with success.",
+        `Generated file: ${uploadedFileName}`,
+        "Uploaded records: 3",
+      ]);
+
       const [header, record1, record2, record3, footer] =
         uploadedFile.fileLines;
       // Validate header.

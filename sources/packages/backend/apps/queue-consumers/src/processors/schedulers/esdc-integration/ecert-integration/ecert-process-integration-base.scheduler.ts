@@ -43,11 +43,19 @@ export abstract class ECertProcessIntegrationBaseScheduler extends BaseScheduler
       await this.eCertCalculationProcess.executeCalculations(processSummary);
       // e-Cert file generation.
       processSummary.info("Sending e-Cert file.");
-      const uploadResult = await this.eCertFileHandler.generateECert();
-      processSummary.info(`Generated file: ${uploadResult.generatedFile}`);
-      processSummary.info(`Uploaded records: ${uploadResult.uploadedRecords}`);
+      const uploadResult = await this.eCertFileHandler.generateECert(
+        processSummary,
+      );
+      const generatedFileMessage = `Generated file: ${uploadResult.generatedFile}`;
+      const uploadedRecordsMessage = `Uploaded records: ${uploadResult.uploadedRecords}`;
+      processSummary.info(generatedFileMessage);
+      processSummary.info(uploadedRecordsMessage);
       return getSuccessMessageWithAttentionCheck(
-        "Process finalized with success.",
+        [
+          "Process finalized with success.",
+          generatedFileMessage,
+          uploadedRecordsMessage,
+        ],
         processSummary,
       );
     } catch (error: unknown) {

@@ -56,7 +56,7 @@ export class AssessmentWorkflowEnqueuerScheduler extends BaseScheduler<void> {
         ),
       );
       return getSuccessMessageWithAttentionCheck(
-        "Process finalized with success.",
+        ["Process finalized with success."],
         processSummary,
       );
     } catch (error: unknown) {

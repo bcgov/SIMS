@@ -17,6 +17,7 @@ import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { ECertGenerationService } from "@sims/integrations/services";
 import { ECertFileHandler } from "./e-cert-file-handler";
 import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration/e-cert-part-time.integration.service";
+import { ProcessSummary } from "@sims/utilities/logger";
 
 const ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_PT_SENT_FILE";
 
@@ -44,15 +45,17 @@ export class PartTimeECertFileHandler extends ECertFileHandler {
 
   /**
    * Method to call the Part-time disbursements available to be sent to ESDC.
+   * @param log cumulative process log.
    * @returns result of the file upload with the file generated and the
    * amount of records added to the file.
    */
-  async generateECert(): Promise<ECertUploadResult> {
+  async generateECert(log: ProcessSummary): Promise<ECertUploadResult> {
     return this.eCertGeneration(
       this.eCertIntegrationService,
       OfferingIntensity.partTime,
       ECERT_PART_TIME_FILE_CODE,
       ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP,
+      log,
     );
   }
 
