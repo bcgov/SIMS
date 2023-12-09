@@ -3,7 +3,13 @@ import {
   PENDING_SIN_MESSAGE,
 } from "@/constants/message-constants";
 import { SINValidStatus } from "@/store/modules/student/student";
-import { Address, InstitutionUserRoles, SINStatusEnum } from "@/types";
+import {
+  Address,
+  DisabilityStatus,
+  DisabilityStatusViewType,
+  InstitutionUserRoles,
+  SINStatusEnum,
+} from "@/types";
 import dayjs, { QUnitType, OpUnitType } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import utc from "dayjs/plugin/utc";
@@ -338,6 +344,25 @@ export function useFormatters() {
     return !value || Number.isNaN(value) ? defaultValue : value;
   };
 
+  /**
+   * Convert the disability status to be displayed
+   * in an equivalent user friendly description.
+   * @param disabilityStatus disability status.
+   * @returns user friendly disability status.
+   */
+  const disabilityStatusToDisplay = (
+    disabilityStatus: DisabilityStatus,
+  ): string => {
+    switch (disabilityStatus) {
+      case DisabilityStatus.PD:
+        return DisabilityStatusViewType.PD;
+      case DisabilityStatus.PPD:
+        return DisabilityStatusViewType.PPD;
+      default:
+        return disabilityStatus;
+    }
+  };
+
   return {
     dateOnlyLongString,
     dateOnlyLongPeriodString,
@@ -357,5 +382,6 @@ export function useFormatters() {
     conditionalEmptyStringFiller,
     formatCurrency,
     isBeforeDateOnly,
+    disabilityStatusToDisplay,
   };
 }

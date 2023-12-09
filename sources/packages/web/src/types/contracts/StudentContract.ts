@@ -79,7 +79,7 @@ export enum StudentProfileFormModes {
 
 export type StudentProfileFormModel = Pick<
   StudentProfileAPIOutDTO,
-  "firstName" | "lastName" | "gender" | "email" | "disabilityStatus"
+  "firstName" | "lastName" | "gender" | "email"
 > &
   AddressDetailsFormAPIDTO & {
     phone: string;
@@ -87,4 +87,19 @@ export type StudentProfileFormModel = Pick<
     mode: StudentProfileFormModes;
     identityProvider?: IdentityProviders;
     sinConsent: boolean;
+    disabilityStatus: string;
   };
+
+/**
+ * Disability status of student
+ * which is displayed in front end.
+ * Equivalent to {@link DisabilityStatus}
+ *
+ */
+export enum DisabilityStatusViewType {
+  NotRequested = "Not requested",
+  Requested = "Requested",
+  PD = "Approved for Permanent Disability",
+  PPD = "Approved for Persistent or Prolonged Disability",
+  Declined = "Declined",
+}

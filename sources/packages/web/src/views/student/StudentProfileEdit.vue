@@ -16,7 +16,12 @@
 <script lang="ts">
 import { ref, onMounted, defineComponent } from "vue";
 import { useRouter } from "vue-router";
-import { ModalDialog, useFormioUtils, useSnackBar } from "@/composables";
+import {
+  ModalDialog,
+  useFormioUtils,
+  useSnackBar,
+  useFormatters,
+} from "@/composables";
 import {
   StudentProfileFormModel,
   StudentProfileFormModes,
@@ -39,6 +44,7 @@ export default defineComponent({
     const router = useRouter();
     const snackBar = useSnackBar();
     const { excludeExtraneousValues } = useFormioUtils();
+    const { disabilityStatusToDisplay } = useFormatters();
     const initialData = ref({} as StudentProfileFormModel);
     const pdStatusApplicationModal = ref({} as ModalDialog<boolean>);
     const processing = ref(false);
@@ -53,6 +59,9 @@ export default defineComponent({
         dateOfBirth: studentInfo.birthDateFormatted,
         mode: StudentProfileFormModes.StudentEdit,
         identityProvider: AuthService.shared.userToken?.identityProvider,
+        disabilityStatus: disabilityStatusToDisplay(
+          studentInfo.disabilityStatus,
+        ),
       };
       initialData.value = data;
     };

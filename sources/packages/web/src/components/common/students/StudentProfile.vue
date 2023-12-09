@@ -40,7 +40,9 @@
         <v-col>
           <title-value
             propertyTitle="Disability status"
-            :propertyValue="studentDetail.disabilityStatus"
+            :propertyValue="
+              disabilityStatusToDisplay(studentDetail.disabilityStatus)
+            "
         /></v-col>
       </v-row>
       <v-row>
@@ -118,7 +120,8 @@ export default defineComponent({
   setup(props) {
     const studentDetail = ref({} as SharedStudentProfile);
     const address = ref({} as AddressAPIOutDTO);
-    const { sinDisplayFormat, emptyStringFiller } = useFormatters();
+    const { sinDisplayFormat, emptyStringFiller, disabilityStatusToDisplay } =
+      useFormatters();
     onMounted(async () => {
       studentDetail.value = (await StudentService.shared.getStudentProfile(
         props.studentId,
@@ -130,6 +133,7 @@ export default defineComponent({
       address,
       sinDisplayFormat,
       emptyStringFiller,
+      disabilityStatusToDisplay,
     };
   },
 });

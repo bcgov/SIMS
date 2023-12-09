@@ -1,6 +1,6 @@
 <template>
   <modal-dialog-base
-    title="Apply for a permanent disability status"
+    title="Apply for a Disability Status"
     :showDialog="showDialog"
   >
     <template v-slot:content>
@@ -11,10 +11,9 @@
     </template>
     <template v-slot:footer>
       <footer-buttons
-        primaryLabel="Apply now"
-        secondaryLabel="Cancel"
-        @primaryClick="requestPD(true)"
-        @secondaryClick="requestPD(false)"
+        primaryLabel="Close"
+        @primaryClick="resolvePromise(false)"
+        :showSecondaryButton="false"
       />
     </template>
   </modal-dialog-base>
@@ -31,13 +30,9 @@ export default defineComponent({
   },
   setup() {
     const { showDialog, showModal, resolvePromise } = useModalDialog<boolean>();
-    const requestPD = (payload: boolean) => {
-      showDialog.value = false;
-      resolvePromise(payload);
-    };
 
     return {
-      requestPD,
+      resolvePromise,
       showDialog,
       showModal,
     };
