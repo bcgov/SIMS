@@ -17,7 +17,7 @@ VALUES
             students.contact_info -> ''address'' ->> ''provinceState'' as "Province",
             students.contact_info -> ''address'' ->> ''postalCode'' as "Contact Postal/Zip Code",
             students.contact_info -> ''address'' ->> ''country'' as "Country",
-            students.contact_info -> ''phone'' as "Contact Phone Number",
+            students.contact_info ->> ''phone'' as "Contact Phone Number",
             -- Account Info
             (
                 select
