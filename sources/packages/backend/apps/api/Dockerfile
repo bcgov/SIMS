@@ -23,6 +23,8 @@ RUN npm run build api
 # Exposing application port
 EXPOSE ${PORT}
 
+RUN mkdir /.npm
+
 RUN chgrp -R 0 /.npm && \
     chmod -R g-u /.npm
 
