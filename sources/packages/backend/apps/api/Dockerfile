@@ -23,8 +23,8 @@ RUN npm run build api
 # Exposing application port
 EXPOSE ${PORT}
 
-# Executing the image with a non-root user.
-USER 1001
+RUN chgrp -R 0 /.npm && \
+    chmod -R g-u /.npm
 
 # Entry point
 CMD [ "npm", "run", "start:prod:api" ]
