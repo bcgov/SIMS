@@ -5,11 +5,6 @@ LABEL maintainer="BC GOV"
 
 # Application Port
 ENV PORT 3000
-WORKDIR /opt/app-root/src
-
-RUN whoami
-RUN pwd
-RUN ls -la
 
 # Copying sources.
 COPY ./apps/api ./apps/api
@@ -28,8 +23,6 @@ RUN npm run build api
 
 # Exposing application port
 EXPOSE ${PORT}
-
-RUN mkdir /.npm
 
 RUN chgrp -R 0 /.npm && \
     chmod -R g-u /.npm
