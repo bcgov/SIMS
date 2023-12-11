@@ -24,8 +24,8 @@ RUN npm run build api
 # Exposing application port
 EXPOSE ${PORT}
 
-RUN chgrp -R 0 /.npm && \
-    chmod -R g-u /.npm
+RUN chgrp -R 0 ./.npm && \
+    chmod -R g-u ./.npm
 
 # Entry point
 CMD [ "npm", "run", "start:prod:api" ]
