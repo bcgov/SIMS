@@ -7,6 +7,11 @@ LABEL maintainer="BC GOV"
 ENV PORT 3000
 WORKDIR /opt/app-root/src/apps
 
+RUN mkdir /.npm
+
+RUN chgrp -R 0 /.npm && \
+    chmod -R g-u /.npm
+
 # Copying root files to image workdir.
 COPY /*.json /*.js ./
 
@@ -23,11 +28,6 @@ RUN npm run build api
 
 # Exposing application port
 EXPOSE ${PORT}
-
-RUN mkdir /.npm
-
-RUN chgrp -R 0 /.npm && \
-    chmod -R g-u /.npm
 
 # Entry point
 CMD [ "npm", "run", "start:prod:api" ]
