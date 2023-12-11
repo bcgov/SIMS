@@ -7,6 +7,10 @@ LABEL maintainer="BC GOV"
 ENV PORT 3000
 WORKDIR /opt/app-root/src
 
+RUN whoami
+
+RUN ls -la
+
 # Copying sources.
 COPY ./apps/api ./apps/api
 COPY ./libs ./libs
