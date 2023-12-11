@@ -8,7 +8,7 @@ VALUES
             users.first_name as "First Name",
             users.last_name as "Last Name",
             students.birth_date as "Date of Birth",
-            students.gender "Gender",
+            students.gender as "Gender",
             sin_validations.sin as "SIN",
             users.email as "Email address",
             students.contact_info -> ''address'' ->> ''addressLine1'' as "Address Line 1",
