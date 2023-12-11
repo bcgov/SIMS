@@ -5,6 +5,7 @@ LABEL maintainer="BC GOV"
 
 # Application Port
 ENV PORT 3000
+WORKDIR /opt/app-root/src
 
 # Copying root files to image workdir.
 COPY /*.json /*.js ./
