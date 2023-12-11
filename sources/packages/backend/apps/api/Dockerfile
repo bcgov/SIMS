@@ -8,7 +8,7 @@ ENV PORT 3000
 WORKDIR /opt/app-root/src
 
 RUN whoami
-
+RUN pwd
 RUN ls -la
 
 # Copying sources.
@@ -18,7 +18,8 @@ COPY ./apps/db-migrations ./apps/db-migrations
 
 # Copying root files to image workdir.
 COPY /*.json /*.js ./
-
+RUN pwd
+RUN ls -la
 # Installing dependencies
 RUN npm ci
 
