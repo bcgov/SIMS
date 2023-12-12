@@ -13,39 +13,41 @@ VALUES
             users.email as "Email address",
             students.contact_info -> ''address'' ->> ''addressLine1'' as "Address Line 1",
             students.contact_info -> ''address'' ->> ''addressLine2'' as "Address Line 2",
-            students.contact_info -> ''address'' ->> ''city'' as "City",
-            students.contact_info -> ''address'' ->> ''provinceState'' as "Province",
+            students.contact_info -> ''address'' ->> ''city'' as "Contact City",
+            students.contact_info -> ''address'' ->> ''provinceState'' as "Contact Province",
             students.contact_info -> ''address'' ->> ''postalCode'' as "Contact Postal/Zip Code",
-            students.contact_info -> ''address'' ->> ''country'' as "Country",
+            students.contact_info -> ''address'' ->> ''country'' as "Contact Country",
             students.contact_info ->> ''phone'' as "Contact Phone Number",
             -- Account Info
             (
                 select
-                    ''Y''
-                where
-                    exists (
-                        select
-                            1
-                        from
-                            sims.student_restrictions active_student_restrictions
-                        where
-                            active_student_restrictions.student_id = students.id
-                            and active_student_restrictions.is_active = true
-                    )
+                    case
+                        when exists (
+                            select
+                                1
+                            from
+                                sims.student_restrictions active_student_restrictions
+                            where
+                                active_student_restrictions.student_id = students.id
+                                and active_student_restrictions.is_active = true
+                        ) then ''Y''
+                        else ''N''
+                    end
             ) as "Active Restrictions Flag",
             (
                 select
-                    ''Y''
-                where
-                    exists (
-                        select
-                            1
-                        from
-                            sims.student_restrictions inactive_student_restrictions
-                        where
-                            inactive_student_restrictions.student_id = students.id
-                            and inactive_student_restrictions.is_active <> true
-                    )
+                    case
+                        when exists (
+                            select
+                                1
+                            from
+                                sims.student_restrictions active_student_restrictions
+                            where
+                                active_student_restrictions.student_id = students.id
+                                and active_student_restrictions.is_active <> true
+                        ) then ''Y''
+                        else ''N''
+                    end
             ) as "Previous (inactive) Restrictions Flag",
             (
                 select
