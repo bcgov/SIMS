@@ -8,7 +8,6 @@ import {
   StudentAssessment,
   User,
   mapFromRawAndEntities,
-  StudentAssessmentStatus,
 } from "@sims/sims-db";
 import { Brackets, DataSource } from "typeorm";
 import { CustomNamedError } from "@sims/utilities";
@@ -179,16 +178,6 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   /**
    * Get all assessments history summary but avoid returning it if
    * there is a declined or pending exception.
-   * Here we have added different when statement
-   * in CASE to fetch the status of the assessment.
-   * * WHEN 1: if assessmentWorkflowId is null,
-   * * then status is Submitted.
-   * * WHEN 2: if assessmentWorkflowId is not null
-   * * and assessmentData is null, then status is
-   * * InProgress.
-   * * WHEN 3:if assessmentWorkflowId is not null
-   * * and assessmentData is not null, then status
-   * * is Completed.
    * @param applicationId application id.
    * @param studentId applicant student.
    * @returns AssessmentHistory list
@@ -211,28 +200,8 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "studentScholasticStanding.id",
         "application.id",
         "applicationException.id",
+        "assessment.studentAssessmentStatus as status",
       ])
-      .addSelect(
-        `CASE
-          WHEN 
-            assessment.assessmentWorkflowId IS NULL 
-            THEN 
-              '${StudentAssessmentStatus.Submitted}'
-          WHEN 
-            assessment.assessmentWorkflowId IS NOT NULL 
-            AND 
-            assessment.assessmentData IS NULL 
-            THEN 
-              '${StudentAssessmentStatus.InProgress}'
-          WHEN 
-            assessment.assessmentWorkflowId IS NOT NULL 
-            AND 
-            assessment.assessmentData IS NOT NULL 
-            THEN 
-              '${StudentAssessmentStatus.Completed}'
-        END`,
-        "status",
-      )
       .innerJoin("assessment.offering", "offering")
       .innerJoin("offering.educationProgram", "educationProgram")
       .innerJoin("assessment.application", "application")
@@ -268,7 +237,6 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .orderBy("status", "DESC")
       .addOrderBy("assessment.submittedDate", "DESC")
       .getRawAndEntities();
-
     return mapFromRawAndEntities<AssessmentHistory>(queryResult, "status");
   }
 }

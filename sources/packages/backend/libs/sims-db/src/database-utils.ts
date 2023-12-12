@@ -75,7 +75,6 @@ export function mapFromRawAndEntities<TResult>(
     propertyNames.forEach((property: string) => {
       resultObject[property] = rawAndEntities.raw[index][property];
     });
-
     return resultObject;
   });
 }

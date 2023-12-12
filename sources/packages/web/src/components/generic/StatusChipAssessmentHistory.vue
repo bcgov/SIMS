@@ -1,5 +1,5 @@
 <template>
-  <chip-status :status="chipStatus" :label="status" />
+  <chip-status :status="chipStatus" :label="chipLabel" />
 </template>
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
@@ -15,11 +15,15 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { mapAssessmentHistoryChipStatus } = useAssessment();
+    const { mapAssessmentHistoryChipStatus, mapAssessmentHistoryChipLabel } =
+      useAssessment();
     const chipStatus = computed(() =>
       mapAssessmentHistoryChipStatus(props.status),
     );
-    return { chipStatus };
+    const chipLabel = computed(() =>
+      mapAssessmentHistoryChipLabel(props.status),
+    );
+    return { chipStatus, chipLabel };
   },
 });
 </script>
