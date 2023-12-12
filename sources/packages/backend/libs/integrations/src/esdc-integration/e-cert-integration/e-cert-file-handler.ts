@@ -64,7 +64,6 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
 
   /**
    * Method to call the e-cert feedback file processing and the list of all errors, if any.
-
    * @returns result of the file upload with the file generated and the
    * amount of records added to the file.
    */
