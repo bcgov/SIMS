@@ -14,6 +14,7 @@ import {
   SearchStudentAPIInDTO,
   InstitutionStudentProfileAPIOutDTO,
   AESTStudentProfileAPIOutDTO,
+  UpdateDisabilityStatusAPIInDTO,
 } from "@/services/http/dto";
 
 export class StudentApi extends HttpBaseClient {
@@ -187,6 +188,21 @@ export class StudentApi extends HttpBaseClient {
       this.addClientRoot(
         `student/${studentId}/sin-validations/${sinValidationId}`,
       ),
+      payload,
+    );
+  }
+
+  /**
+   * Update student disability status with note.
+   * @param studentId student id.
+   * @param payload update disability status payload.
+   */
+  async updateDisabilityStatus(
+    studentId: number,
+    payload: UpdateDisabilityStatusAPIInDTO,
+  ): Promise<void> {
+    await this.patchCall(
+      this.addClientRoot(`student/${studentId}/disability-status`),
       payload,
     );
   }

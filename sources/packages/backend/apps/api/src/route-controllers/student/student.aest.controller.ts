@@ -48,6 +48,7 @@ import {
   SINValidationsAPIOutDTO,
   UniqueFileNameParamAPIInDTO,
   UpdateSINValidationAPIInDTO,
+  UpdateDisabilityStatusAPIInDTO,
 } from "./models/student.dto";
 import { Response } from "express";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -388,5 +389,30 @@ export class StudentAESTController extends BaseController {
       }
       throw error;
     }
+  }
+
+  /**
+   * Update student disability status with note.
+   * @param studentId student id.
+   * @param payload update disability status payload.
+   */
+  @Roles(Role.StudentUpdateDisabilityStatus)
+  @Patch(":studentId/disability-status")
+  @ApiNotFoundResponse({ description: "Student does not exists." })
+  async updateDisabilityStatus(
+    @Param("studentId", ParseIntPipe) studentId: number,
+    @Body() payload: UpdateDisabilityStatusAPIInDTO,
+    @UserToken() userToken: IUserToken,
+  ): Promise<void> {
+    const studentExists = await this.studentService.studentExists(studentId);
+    if (!studentExists) {
+      throw new NotFoundException("Student does not exists.");
+    }
+    await this.studentService.updateDisabilityStatus(
+      studentId,
+      payload.disabilityStatus,
+      payload.noteDescription,
+      userToken.userId,
+    );
   }
 }

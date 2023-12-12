@@ -38,12 +38,12 @@
           />
         </v-col>
         <v-col>
-          <title-value
-            propertyTitle="Disability status"
-            :propertyValue="
-              disabilityStatusToDisplay(studentDetail.disabilityStatus)
-            "
-        /></v-col>
+          <disability-status-update-tile-value
+            :studentId="studentId"
+            :allowDisabilityStatusUpdate="allowDisabilityStatusUpdate"
+            :disabilityStatus="studentDetail.disabilityStatus"
+          />
+        </v-col>
       </v-row>
       <v-row>
         <v-col
@@ -102,6 +102,7 @@ import { StudentService } from "@/services/StudentService";
 import { useFormatters } from "@/composables";
 import { AddressAPIOutDTO } from "@/services/http/dto";
 import { StudentProfile } from "@/types";
+import DisabilityStatusUpdateTileValue from "@/components/aest/students/DisabilityStatusUpdateTileValue.vue";
 
 /**
  *  Used to combine institution and ministry DTOs and make SIN explicitly mandatory.
@@ -111,10 +112,16 @@ interface SharedStudentProfile extends Omit<StudentProfile, "sin"> {
 }
 
 export default defineComponent({
+  components: { DisabilityStatusUpdateTileValue },
   props: {
     studentId: {
       type: Number,
       required: true,
+    },
+    allowDisabilityStatusUpdate: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   setup(props) {

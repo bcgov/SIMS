@@ -1,6 +1,9 @@
 <template>
   <tab-container>
-    <student-profile :studentId="studentId" />
+    <student-profile
+      :studentId="studentId"
+      :allowDisabilityStatusUpdate="true"
+    />
   </tab-container>
 </template>
 

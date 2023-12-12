@@ -167,3 +167,10 @@ export interface UpdateSINValidationAPIInDTO {
   expiryDate: string;
   noteDescription: string;
 }
+/**
+ * Details to update disability status with notes.
+ */
+export class UpdateDisabilityStatusAPIInDTO {
+  disabilityStatus: DisabilityStatus;
+  noteDescription: string;
+}
