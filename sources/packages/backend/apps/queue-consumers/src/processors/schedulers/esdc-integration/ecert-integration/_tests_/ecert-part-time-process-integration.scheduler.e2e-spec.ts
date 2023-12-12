@@ -104,17 +104,21 @@ describe(
       const { job } = mockBullJob<void>();
 
       // Act
-      const result = await processor.processPartTimeECert(job);
+      const result = await processor.processECert(job);
 
       // Assert
-      expect(result).toStrictEqual(["Process finalized with success."]);
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
       const fileDate = dayjs().format("YYYYMMDD");
-      expect(uploadedFile.remoteFilePath).toBe(
-        `MSFT-Request\\DPBC.EDU.PTCERTS.D${fileDate}.001`,
-      );
+      const uploadedFileName = `MSFT-Request\\DPBC.EDU.PTCERTS.D${fileDate}.001`;
+      expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+      expect(result).toStrictEqual([
+        "Process finalized with success.",
+        `Generated file: ${uploadedFileName}`,
+        "Uploaded records: 1",
+      ]);
+
       expect(uploadedFile.fileLines).toHaveLength(3);
       const [header, record, footer] = uploadedFile.fileLines;
       // Validate header.
@@ -230,17 +234,21 @@ describe(
       const { job } = mockBullJob<void>();
 
       // Act
-      const result = await processor.processPartTimeECert(job);
+      const result = await processor.processECert(job);
 
       // Assert
-      expect(result).toStrictEqual(["Process finalized with success."]);
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
       const fileDate = dayjs().format("YYYYMMDD");
-      expect(uploadedFile.remoteFilePath).toBe(
-        `MSFT-Request\\DPBC.EDU.PTCERTS.D${fileDate}.001`,
-      );
+      const uploadedFileName = `MSFT-Request\\DPBC.EDU.PTCERTS.D${fileDate}.001`;
+      expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+      expect(result).toStrictEqual([
+        "Process finalized with success.",
+        `Generated file: ${uploadedFileName}`,
+        "Uploaded records: 3",
+      ]);
+
       expect(uploadedFile.fileLines).toHaveLength(5);
       const [header, record1, record2, record3, footer] =
         uploadedFile.fileLines;

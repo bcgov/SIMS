@@ -8,6 +8,8 @@ export * from "./disbursement-receipt-integration/disbursement-receipt.processin
 export * from "./disbursement-receipt-integration/daily-disbursement-receipt.processing.service";
 export * from "./disbursement-receipt-integration/models/disbursement-receipt-integration.model";
 export * from "./e-cert-integration/e-cert-file-handler";
+export * from "./e-cert-integration/full-time-e-cert-file-handler";
+export * from "./e-cert-integration/part-time-e-cert-file-handler";
 export * from "./e-cert-integration/e-cert-files/e-cert-file-footer";
 export * from "./e-cert-integration/e-cert-files/e-cert-file-header";
 export * from "./e-cert-integration/e-cert-files/e-cert-file-record";

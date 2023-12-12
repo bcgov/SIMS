@@ -1,5 +1,5 @@
 import { InjectQueue, Process, Processor } from "@nestjs/bull";
-import { ECertFileHandler } from "@sims/integrations/esdc-integration";
+import { PartTimeECertFileHandler } from "@sims/integrations/esdc-integration";
 import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
@@ -13,7 +13,7 @@ export class PartTimeECertFeedbackIntegrationScheduler extends BaseScheduler<voi
     @InjectQueue(QueueNames.PartTimeFeedbackIntegration)
     schedulerQueue: Queue<void>,
     queueService: QueueService,
-    private readonly eCertFileHandler: ECertFileHandler,
+    private readonly partTimeECertFileHandler: PartTimeECertFileHandler,
   ) {
     super(schedulerQueue, queueService);
   }
@@ -33,7 +33,7 @@ export class PartTimeECertFeedbackIntegrationScheduler extends BaseScheduler<voi
       `Processing e-Cert part-time feedback integration job ${job.id} of type ${job.name}.`,
     );
     const partTimeResults =
-      await this.eCertFileHandler.processPartTimeResponses();
+      await this.partTimeECertFileHandler.processECertResponses();
     await this.cleanSchedulerQueueHistory();
     await summary.info(
       `Completed e-Cert part-time feedback integration job ${job.id} of type ${job.name}.`,

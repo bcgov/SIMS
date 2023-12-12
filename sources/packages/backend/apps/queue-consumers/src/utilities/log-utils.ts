@@ -38,18 +38,18 @@ export async function logProcessSummaryToJobLogger(
 /**
  * Takes a regular success messages and append possible
  * attention messages if there are errors or warnings.
- * @param successMessage generic success message.
+ * @param successMessages generic success message.
  * @param processSummary processSummary to check if an
  * attention message is required.
  * @returns generic success message or success message with
  * attention messages appended.
  */
 export function getSuccessMessageWithAttentionCheck(
-  successMessage: string,
+  successMessages: string[],
   processSummary: ProcessSummary,
 ): string[] {
   const message: string[] = [];
-  message.push(successMessage);
+  message.push(...successMessages);
   const logsSum = processSummary.getLogLevelSum();
   if (logsSum.error || logsSum.warn) {
     message.push(

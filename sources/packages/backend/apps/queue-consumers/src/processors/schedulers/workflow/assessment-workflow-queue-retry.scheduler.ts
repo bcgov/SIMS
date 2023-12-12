@@ -59,7 +59,7 @@ export class WorkflowQueueRetryScheduler extends BaseScheduler<AssessmentWorkflo
         ),
       );
       return getSuccessMessageWithAttentionCheck(
-        "Process finalized with success.",
+        ["Process finalized with success."],
         processSummary,
       );
     } catch (error: unknown) {
