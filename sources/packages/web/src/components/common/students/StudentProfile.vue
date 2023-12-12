@@ -42,6 +42,7 @@
             :studentId="studentId"
             :allowDisabilityStatusUpdate="allowDisabilityStatusUpdate"
             :disabilityStatus="studentDetail.disabilityStatus"
+            @disabilityStatusUpdated="loadStudentProfile"
           />
         </v-col>
       </v-row>
@@ -129,18 +130,22 @@ export default defineComponent({
     const address = ref({} as AddressAPIOutDTO);
     const { sinDisplayFormat, emptyStringFiller, disabilityStatusToDisplay } =
       useFormatters();
-    onMounted(async () => {
+
+    const loadStudentProfile = async () => {
       studentDetail.value = (await StudentService.shared.getStudentProfile(
         props.studentId,
       )) as SharedStudentProfile;
       address.value = studentDetail.value.contact.address;
-    });
+    };
+
+    onMounted(loadStudentProfile);
     return {
       studentDetail,
       address,
       sinDisplayFormat,
       emptyStringFiller,
       disabilityStatusToDisplay,
+      loadStudentProfile,
     };
   },
 });

@@ -2,22 +2,38 @@
   <title-value propertyTitle="Disability status">
     <template #value
       >{{ disabilityStatusToDisplay(disabilityStatus) }}
-      <v-btn v-if="allowDisabilityStatusUpdate" variant="text" color="primary"
+      <v-btn
+        v-if="allowDisabilityStatusUpdate"
+        variant="text"
+        color="primary"
+        @click="showDisabilityStatusModal"
         ><span class="text-decoration-underline font-bold"
           >Update disability status</span
         ></v-btn
       ></template
     >
   </title-value>
+  <update-disability-status-modal
+    ref="updateDisabilityStatusModal"
+    :allowedRole="Role.StudentUpdateDisabilityStatus"
+  />
 </template>
 
 <script lang="ts">
-import { onMounted, ref, defineComponent, PropType } from "vue";
+import { ref, defineComponent, PropType } from "vue";
 import { StudentService } from "@/services/StudentService";
-import { useFormatters } from "@/composables";
-import { DisabilityStatus } from "@/types";
+import { useFormatters, ModalDialog, useSnackBar } from "@/composables";
+import { DisabilityStatus, Role } from "@/types";
+import UpdateDisabilityStatusModal from "@/components/aest/students/modals/UpdateDisabilityStatusModal.vue";
+import { UpdateDisabilityStatusAPIInDTO } from "@/services/http/dto";
 
 export default defineComponent({
+  components: { UpdateDisabilityStatusModal },
+  emits: {
+    disabilityStatusUpdated: (data: UpdateDisabilityStatusAPIInDTO) => {
+      return !!data;
+    },
+  },
   props: {
     studentId: {
       type: Number,
@@ -33,11 +49,35 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(props) {
+  setup(props, context) {
     const { disabilityStatusToDisplay } = useFormatters();
+    const updateDisabilityStatusModal = ref(
+      {} as ModalDialog<UpdateDisabilityStatusAPIInDTO | false>,
+    );
+    const snackBar = useSnackBar();
+
+    const showDisabilityStatusModal = async () => {
+      const updatedDisabilityStatus =
+        await updateDisabilityStatusModal.value.showModal();
+      if (updatedDisabilityStatus) {
+        try {
+          await StudentService.shared.updateDisabilityStatus(
+            props.studentId,
+            updatedDisabilityStatus,
+          );
+          snackBar.success("Disability status updated successfully.");
+          context.emit("disabilityStatusUpdated", updatedDisabilityStatus);
+        } catch {
+          snackBar.error("An error happened while updating disability status.");
+        }
+      }
+    };
 
     return {
       disabilityStatusToDisplay,
+      Role,
+      updateDisabilityStatusModal,
+      showDisabilityStatusModal,
     };
   },
 });

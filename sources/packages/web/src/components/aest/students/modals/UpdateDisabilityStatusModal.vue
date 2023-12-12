@@ -12,7 +12,7 @@
         <v-select
           label="Disability Status"
           density="compact"
-          :items="getDisabilityStatusSelectItems"
+          :items="disabilityStatusSelectItems"
           v-model="formModel.disabilityStatus"
           variant="outlined"
           :rules="[(v) => checkNullOrEmptyRule(v, 'Disability Status')]"
@@ -47,7 +47,6 @@ import { PropType, ref, reactive, defineComponent } from "vue";
 import { useModalDialog, useRules, useFormatters } from "@/composables";
 import { Role, VForm, SelectItemType, DisabilityStatus } from "@/types";
 import { UpdateDisabilityStatusAPIInDTO } from "@/services/http/dto";
-import { BannerTypes } from "@/types/contracts/Banner";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -61,14 +60,19 @@ export default defineComponent({
     },
   },
   setup() {
-    const { numberRangeRule, checkNullOrEmptyRule, checkNotesLengthRule } =
-      useRules();
+    const { checkNullOrEmptyRule, checkNotesLengthRule } = useRules();
     const { disabilityStatusToDisplay } = useFormatters();
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       UpdateDisabilityStatusAPIInDTO | boolean
     >();
     const updateDisabilityStatusForm = ref({} as VForm);
     const formModel = reactive({} as UpdateDisabilityStatusAPIInDTO);
+    const disabilityStatusSelectItems = Object.keys(
+      DisabilityStatus,
+    ).map<SelectItemType>((key) => ({
+      title: disabilityStatusToDisplay(DisabilityStatus[key]),
+      value: DisabilityStatus[key],
+    }));
 
     const submit = async () => {
       const validationResult =
@@ -88,18 +92,6 @@ export default defineComponent({
       resolvePromise(false);
     };
 
-    const getDisabilityStatusSelectItems = (): SelectItemType[] => {
-      const selectItemsArray: SelectItemType[] = [];
-      for (const item in DisabilityStatus) {
-        const disabilityStatus = DisabilityStatus[item];
-        selectItemsArray.push({
-          title: disabilityStatusToDisplay(disabilityStatus),
-          value: DisabilityStatus[item],
-        });
-      }
-      return selectItemsArray;
-    };
-
     return {
       showDialog,
       showModal,
@@ -107,11 +99,9 @@ export default defineComponent({
       submit,
       updateDisabilityStatusForm,
       formModel,
-      BannerTypes,
-      numberRangeRule,
       checkNullOrEmptyRule,
       checkNotesLengthRule,
-      getDisabilityStatusSelectItems,
+      disabilityStatusSelectItems,
     };
   },
 });

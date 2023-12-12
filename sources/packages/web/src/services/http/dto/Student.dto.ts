@@ -170,7 +170,7 @@ export interface UpdateSINValidationAPIInDTO {
 /**
  * Details to update disability status with notes.
  */
-export class UpdateDisabilityStatusAPIInDTO {
+export interface UpdateDisabilityStatusAPIInDTO {
   disabilityStatus: DisabilityStatus;
   noteDescription: string;
 }
