@@ -165,7 +165,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         // Consider only the disbursements which are sent, to identify a previously
         // signed disbursement as pending ones are subject to cancellation any time.
         disbursementScheduleStatus: In([
-          DisbursementScheduleStatus.ReadToSend,
+          DisbursementScheduleStatus.ReadyToSend,
           DisbursementScheduleStatus.Sent,
         ]),
         studentAssessment: {

@@ -8,7 +8,6 @@ import {
   DisbursementScheduleSharedService,
   RestrictionSharedService,
 } from "@sims/services";
-import { ECertFileHandler } from "./e-cert-file-handler";
 import { ECertFullTimeFileFooter } from "./e-cert-full-time-integration/e-cert-files/e-cert-file-footer";
 import { ECertFullTimeFileHeader } from "./e-cert-full-time-integration/e-cert-files/e-cert-file-header";
 import { ECertFullTimeIntegrationService } from "./e-cert-full-time-integration/e-cert-full-time.integration.service";
@@ -39,6 +38,8 @@ import {
   FullTimeCalculationProcess,
   PartTimeCalculationProcess,
 } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
+import { FullTimeECertFileHandler } from "./full-time-e-cert-file-handler";
+import { PartTimeECertFileHandler } from "./part-time-e-cert-file-handler";
 
 @Module({
   imports: [ConfigModule, SystemUserModule],
@@ -48,7 +49,8 @@ import {
     ECertPartTimeIntegrationService,
     SequenceControlService,
     DisbursementScheduleService,
-    ECertFileHandler,
+    FullTimeECertFileHandler,
+    PartTimeECertFileHandler,
     ECertPartTimeFileHeader,
     ECertPartTimeFileFooter,
     ECertFullTimeFileHeader,
@@ -76,7 +78,8 @@ import {
     PartTimeCalculationProcess,
   ],
   exports: [
-    ECertFileHandler,
+    FullTimeECertFileHandler,
+    PartTimeECertFileHandler,
     FullTimeCalculationProcess,
     PartTimeCalculationProcess,
   ],

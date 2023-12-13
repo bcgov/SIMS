@@ -5,28 +5,6 @@ kind: Template
 metadata:
   name: ${NAME}
 objects:
-  - apiVersion: image.openshift.io/v1
-    kind: ImageStream
-    metadata:
-      name: ${BASE_IMAGE_NAME}
-    spec:
-      lookupPolicy:
-        local: false
-  - apiVersion: v1
-    kind: ImageStreamTag
-    lookupPolicy:
-      local: false
-    metadata:
-      name: ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
-    tag:
-      annotations: null
-      from:
-        kind: DockerImage
-        name: ${BASE_IMAGE_REPO}${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
-      importPolicy:
-        scheduled: true
-      referencePolicy:
-        type: Source
   - kind: ImageStream
     apiVersion: v1
     metadata:
@@ -88,11 +66,6 @@ parameters:
     value: Dockerfile
   - name: TAG
     value: "latest"
-  - name: BASE_IMAGE_REPO
-  - name: BASE_IMAGE_NAME
-    required: true
-  - name: BASE_IMAGE_TAG
-    required: true
   - name: CPU_LIMIT
     value: "2"
   - name: MEMORY_LIMIT

@@ -8,10 +8,19 @@ import {
   OfferingIntensity,
   DisbursementScheduleStatus,
   Application,
+  StudentRestriction,
 } from "@sims/sims-db";
 import { InjectRepository } from "@nestjs/typeorm";
-import { EligibleECertDisbursement } from "./disbursement-schedule.models";
+import {
+  EligibleECertDisbursement,
+  StudentActiveRestriction,
+  mapStudentActiveRestrictions,
+} from "./disbursement-schedule.models";
 import { ConfigService } from "@sims/utilities/config";
+
+interface GroupedStudentActiveRestrictions {
+  [studentId: number]: StudentActiveRestriction[];
+}
 
 /**
  * Manages all the preparation of the disbursements data needed to
@@ -70,8 +79,12 @@ export class ECertGenerationService {
         "student.id",
         "sinValidation.id",
         "sinValidation.isValidSIN",
+        // The student active restrictions are initially loaded along side all the student data but they can
+        // be potentially refreshed along the e-Cert calculations using the method getStudentActiveRestrictions.
+        // In case the amount of data returned need to be changed please ensure that the method also get updated.
         "studentRestriction.id",
         "restriction.id",
+        "restriction.restrictionCode",
         "restriction.actionType",
         "programYear.id",
         "programYear.maxLifetimeBCLoanAmount",
@@ -112,35 +125,88 @@ export class ECertGenerationService {
       .orderBy("disbursementSchedule.disbursementDate", "ASC")
       .addOrderBy("disbursementSchedule.createdAt", "ASC")
       .getMany();
+
+    // Creates a unique array of active restrictions per student to be shared
+    // across all disbursements.
+    const groupedStudentRestrictions =
+      this.getGroupedStudentRestrictions(eligibleApplications);
     // Convert the application records to be returned as disbursements to allow
     // easier processing along the calculation steps.
     const eligibleDisbursements =
       eligibleApplications.flatMap<EligibleECertDisbursement>((application) => {
         return application.currentAssessment.disbursementSchedules.map(
           (disbursement) => {
-            return {
-              studentId: application.student.id,
-              assessmentId: application.currentAssessment.id,
-              applicationId: application.id,
-              // Convert the nested restriction in StudentRestriction to a simple object.
-              activeRestrictions: application.student.studentRestrictions.map(
-                (studentRestriction) => {
-                  return {
-                    id: studentRestriction.restriction.id,
-                    actions: studentRestriction.restriction.actionType,
-                  };
-                },
-              ),
-              hasValidSIN: application.student.sinValidation.isValidSIN,
+            return new EligibleECertDisbursement(
+              application.student.id,
+              !!application.student.sinValidation.isValidSIN,
+              application.currentAssessment.id,
+              application.id,
               disbursement,
-              offering: application.currentAssessment.offering,
-              maxLifetimeBCLoanAmount:
-                application.programYear.maxLifetimeBCLoanAmount,
-            };
+              application.currentAssessment.offering,
+              application.programYear.maxLifetimeBCLoanAmount,
+              groupedStudentRestrictions[application.student.id],
+            );
           },
         );
       });
     return eligibleDisbursements;
+  }
+
+  /**
+   * Group student restriction for each student.
+   * @param eligibleApplications applications with student restrictions.
+   * @returns grouped student restrictions.
+   */
+  private getGroupedStudentRestrictions(
+    eligibleApplications: Application[],
+  ): GroupedStudentActiveRestrictions {
+    return eligibleApplications.reduce(
+      (group: GroupedStudentActiveRestrictions, application) => {
+        const studentId = application.student.id;
+        if (!group[studentId]) {
+          // Populates a new student only once.
+          group[studentId] = mapStudentActiveRestrictions(
+            application.student.studentRestrictions,
+          );
+        }
+        return group;
+      },
+      {},
+    );
+  }
+
+  /**
+   * Get active student restrictions to support the e-Cert calculations.
+   * These data is also loaded in bulk by the method {@link getEligibleDisbursements}.
+   * Case new data is retrieve here please ensure that the method will also be updated.
+   * @param studentId student to have the active restrictions updated.
+   * @param entityManager: EntityManager,
+   * @returns student active restrictions.
+   */
+  async getStudentActiveRestrictions(
+    studentId: number,
+    entityManager: EntityManager,
+  ): Promise<StudentActiveRestriction[]> {
+    const studentRestrictions = await entityManager
+      .getRepository(StudentRestriction)
+      .find({
+        select: {
+          id: true,
+          restriction: {
+            id: true,
+            restrictionCode: true,
+            actionType: true,
+          },
+        },
+        relations: {
+          restriction: true,
+        },
+        where: {
+          student: { id: studentId },
+          isActive: true,
+        },
+      });
+    return mapStudentActiveRestrictions(studentRestrictions);
   }
 
   /**
@@ -226,7 +292,7 @@ export class ECertGenerationService {
         disbursementValues: true,
       },
       where: {
-        disbursementScheduleStatus: DisbursementScheduleStatus.ReadToSend,
+        disbursementScheduleStatus: DisbursementScheduleStatus.ReadyToSend,
         studentAssessment: {
           offering: {
             offeringIntensity,

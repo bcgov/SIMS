@@ -1,4 +1,8 @@
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import {
+  LoggerService,
+  InjectLogger,
+  ProcessSummary,
+} from "@sims/utilities/logger";
 import {
   DisbursementSchedule,
   DisbursementScheduleStatus,
@@ -10,12 +14,11 @@ import {
 } from "../../services";
 import { SequenceControlService, SystemUsersService } from "@sims/services";
 import {
-  ECERT_FULL_TIME_FILE_CODE,
-  ECERT_PART_TIME_FILE_CODE,
-  ECERT_FULL_TIME_FEEDBACK_FILE_CODE,
-  ECERT_PART_TIME_FEEDBACK_FILE_CODE,
-} from "@sims/services/constants";
-import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
+  CustomNamedError,
+  getISODateOnlyString,
+  parseJSONError,
+  processInParallel,
+} from "@sims/utilities";
 import { EntityManager } from "typeorm";
 import { ESDCFileHandler } from "../esdc-file-handler";
 import {
@@ -24,17 +27,12 @@ import {
   ECertUploadResult,
   ESDCFileResponse,
 } from "./models/e-cert-integration-model";
-import { Injectable } from "@nestjs/common";
 import { ECertIntegrationService } from "./e-cert.integration.service";
-import { ECertFullTimeIntegrationService } from "./e-cert-full-time-integration/e-cert-full-time.integration.service";
-import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration/e-cert-part-time.integration.service";
 import { ECertFullTimeResponseRecord } from "./e-cert-full-time-integration/e-cert-files/e-cert-response-record";
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { ECertGenerationService } from "@sims/integrations/services";
 
-const ECERT_FULL_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_FT_SENT_FILE";
-const ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_PT_SENT_FILE";
 /**
  * Used to abort the e-Cert generation process, cancel the current transaction,
  * and let the consumer method know that it was aborted because no records are
@@ -43,8 +41,7 @@ const ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_PT_SENT_FILE";
 const ECERT_GENERATION_NO_RECORDS_AVAILABLE =
   "ECERT_GENERATION_NO_RECORDS_AVAILABLE";
 
-@Injectable()
-export class ECertFileHandler extends ESDCFileHandler {
+export abstract class ECertFileHandler extends ESDCFileHandler {
   esdcConfig: ESDCIntegrationConfig;
   constructor(
     configService: ConfigService,
@@ -52,64 +49,25 @@ export class ECertFileHandler extends ESDCFileHandler {
     private readonly disbursementScheduleService: DisbursementScheduleService,
     private readonly eCertGenerationService: ECertGenerationService,
     private readonly disbursementScheduleErrorsService: DisbursementScheduleErrorsService,
-    private readonly eCertFullTimeIntegrationService: ECertFullTimeIntegrationService,
-    private readonly eCertPartTimeIntegrationService: ECertPartTimeIntegrationService,
     private readonly systemUserService: SystemUsersService,
   ) {
     super(configService);
   }
 
   /**
-   * Method to call the Full-time disbursements available to be sent to ESDC.
+   * Method to send the e-Cert disbursements available to ESDC.
+   * @param log cumulative process log.
    * @returns result of the file upload with the file generated and the
    * amount of records added to the file.
    */
-  async generateFullTimeECert(): Promise<ECertUploadResult> {
-    return this.generateECert(
-      this.eCertFullTimeIntegrationService,
-      OfferingIntensity.fullTime,
-      ECERT_FULL_TIME_FILE_CODE,
-      ECERT_FULL_TIME_SENT_FILE_SEQUENCE_GROUP,
-    );
-  }
+  abstract generateECert(log: ProcessSummary): Promise<ECertUploadResult>;
 
   /**
-   * Method to call the Part-time disbursements available to be sent to ESDC.
+   * Method to call the e-cert feedback file processing and the list of all errors, if any.
    * @returns result of the file upload with the file generated and the
    * amount of records added to the file.
    */
-  async generatePartTimeECert(): Promise<ECertUploadResult> {
-    return this.generateECert(
-      this.eCertPartTimeIntegrationService,
-      OfferingIntensity.partTime,
-      ECERT_PART_TIME_FILE_CODE,
-      ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP,
-    );
-  }
-
-  /**
-   * Method to call the Full-time feedback file processing and the list of all errors, if any.
-   * @returns result of the file upload with the file generated and the
-   * amount of records added to the file.
-   */
-  async processFullTimeResponses(): Promise<ESDCFileResponse[]> {
-    return this.processResponses(
-      this.eCertFullTimeIntegrationService,
-      ECERT_FULL_TIME_FEEDBACK_FILE_CODE,
-    );
-  }
-
-  /**
-   * Method to call the Part-time feedback file processing and the list of all errors, if any.
-   * @returns result of the file upload with the file generated and the
-   * amount of records added to the file.
-   */
-  async processPartTimeResponses(): Promise<ESDCFileResponse[]> {
-    return this.processResponses(
-      this.eCertPartTimeIntegrationService,
-      ECERT_PART_TIME_FEEDBACK_FILE_CODE,
-    );
-  }
+  abstract processECertResponses(): Promise<ESDCFileResponse[]>;
 
   /**
    * Generate the e-Cert file for Full-Time/Part-Time disbursements available to be sent to ESDC.
@@ -120,16 +78,18 @@ export class ECertFileHandler extends ESDCFileHandler {
    * @param fileCode file code applicable for Part-Time or Full-Time.
    * @param sequenceGroupPrefix sequence group prefix for Part-Time or Full-Time
    * file sequence generation.
+   * @param log cumulative process log.
    * @returns result of the file upload with the file generated and the
    * amount of records added to the file.
    */
-  private async generateECert(
+  protected async eCertGeneration(
     eCertIntegrationService: ECertIntegrationService,
     offeringIntensity: OfferingIntensity,
     fileCode: string,
     sequenceGroupPrefix: string,
+    log: ProcessSummary,
   ): Promise<ECertUploadResult> {
-    this.logger.log(
+    log.info(
       `Retrieving ${offeringIntensity} disbursements to generate the e-Cert file...`,
     );
     try {
@@ -146,6 +106,7 @@ export class ECertFileHandler extends ESDCFileHandler {
             eCertIntegrationService,
             offeringIntensity,
             fileCode,
+            log,
           );
         },
       );
@@ -172,6 +133,7 @@ export class ECertFileHandler extends ESDCFileHandler {
    * for the respective integration.
    * @param offeringIntensity disbursement offering intensity.
    * @param fileCode file code applicable for Part-Time or Full-Time.
+   * @param log cumulative process log.
    * @returns information of the uploaded e-Cert file.
    * @throws CustomNamedError ECERT_GENERATION_NO_RECORDS_AVAILABLE
    */
@@ -181,6 +143,7 @@ export class ECertFileHandler extends ESDCFileHandler {
     eCertIntegrationService: ECertIntegrationService,
     offeringIntensity: OfferingIntensity,
     fileCode: string,
+    log: ProcessSummary,
   ): Promise<ECertUploadResult> {
     try {
       const disbursements =
@@ -195,14 +158,14 @@ export class ECertFileHandler extends ESDCFileHandler {
           ECERT_GENERATION_NO_RECORDS_AVAILABLE,
         );
       }
-      this.logger.log(
+      log.info(
         `Found ${disbursements.length} ${offeringIntensity} disbursements schedules.`,
       );
       const disbursementRecords = disbursements.map((disbursement) =>
         this.createECertRecord(disbursement),
       );
 
-      this.logger.log(`Creating ${offeringIntensity} e-Cert file content...`);
+      log.info(`Creating ${offeringIntensity} e-Cert file content...`);
       const fileContent = eCertIntegrationService.createRequestContent(
         disbursementRecords,
         sequenceNumber,
@@ -210,23 +173,26 @@ export class ECertFileHandler extends ESDCFileHandler {
 
       // Create the request filename with the file path for the e-Cert File.
       const fileInfo = this.createRequestFileName(fileCode, sequenceNumber);
-      this.logger.log(`Uploading ${offeringIntensity} content...`);
+      log.info(`Uploading ${offeringIntensity} content...`);
       await eCertIntegrationService.uploadContent(
         fileContent,
         fileInfo.filePath,
       );
       // Mark all disbursements as sent.
       const dateSent = new Date();
-      disbursements.forEach((disbursement) => {
-        disbursement.dateSent = dateSent;
-        disbursement.disbursementScheduleStatus =
-          DisbursementScheduleStatus.Sent;
-        disbursement.updatedAt = dateSent;
-        disbursement.modifier = this.systemUserService.systemUser;
-      });
-      await entityManager
-        .getRepository(DisbursementSchedule)
-        .save(disbursements);
+      const disbursementScheduleRepo =
+        entityManager.getRepository(DisbursementSchedule);
+      await processInParallel((disbursement) => {
+        return disbursementScheduleRepo.update(
+          { id: disbursement.id },
+          {
+            dateSent,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+            updatedAt: dateSent,
+            modifier: this.systemUserService.systemUser,
+          },
+        );
+      }, disbursements);
       return {
         generatedFile: fileInfo.filePath,
         uploadedRecords: disbursementRecords.length,
@@ -236,8 +202,10 @@ export class ECertFileHandler extends ESDCFileHandler {
         error instanceof CustomNamedError &&
         error.name !== ECERT_GENERATION_NO_RECORDS_AVAILABLE
       ) {
-        this.logger.error(
-          `Error while uploading content for ${offeringIntensity} e-Cert file: ${error}`,
+        log.error(
+          `Error while uploading content for ${offeringIntensity} e-Cert file: ${parseJSONError(
+            error,
+          )}`,
         );
       }
       throw error;
@@ -251,7 +219,7 @@ export class ECertFileHandler extends ESDCFileHandler {
    * generate the record.
    * @returns e-Cert record.
    */
-  createECertRecord(disbursement: DisbursementSchedule): ECertRecord {
+  private createECertRecord(disbursement: DisbursementSchedule): ECertRecord {
     const now = new Date();
     const application = disbursement.studentAssessment.application;
     const student = application.student;
