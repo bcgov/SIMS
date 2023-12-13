@@ -121,6 +121,10 @@
                       {
                         "label": "Disbursements",
                         "value": "Disbursement_Report"
+                      },
+                      {
+                        "value": "Data_Inventory_Report",
+                        "label": "Data Inventory"
                       }
                     ],
                     "resource": "",
