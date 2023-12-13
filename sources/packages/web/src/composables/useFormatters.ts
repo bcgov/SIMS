@@ -352,7 +352,7 @@ export function useFormatters() {
    */
   const disabilityStatusToDisplay = (
     disabilityStatus: DisabilityStatus,
-  ): string => {
+  ): DisabilityStatusViewType | DisabilityStatus => {
     switch (disabilityStatus) {
       case DisabilityStatus.PD:
         return DisabilityStatusViewType.PD;

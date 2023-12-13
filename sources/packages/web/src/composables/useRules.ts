@@ -12,7 +12,7 @@ export function useRules() {
   };
 
   const checkNotesLengthRule = (notes: string) => {
-    return checkLengthRule(notes, NOTES_MAX_CHARACTERS);
+    return checkLengthRule(notes, NOTES_MAX_CHARACTERS, "Note");
   };
 
   const checkLengthRule = (

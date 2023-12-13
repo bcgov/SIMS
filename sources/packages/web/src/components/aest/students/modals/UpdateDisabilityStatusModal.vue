@@ -49,12 +49,10 @@ import { PropType, ref, reactive, defineComponent } from "vue";
 import { useModalDialog, useRules, useFormatters } from "@/composables";
 import { Role, VForm, SelectItemType, DisabilityStatus } from "@/types";
 import { UpdateDisabilityStatusAPIInDTO } from "@/services/http/dto";
-import ErrorSummary from "@/components/generic/ErrorSummary.vue";
-import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default defineComponent({
-  components: { ModalDialogBase, CheckPermissionRole, ErrorSummary },
+  components: { CheckPermissionRole },
   props: {
     allowedRole: {
       type: String as PropType<Role>,
