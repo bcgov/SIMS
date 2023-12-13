@@ -32,7 +32,8 @@
         <check-permission-role :role="allowedRole">
           <template #="{ notAllowed }">
             <footer-buttons
-              primaryLabel="Add record now"
+              primaryLabel="Update"
+              :processing="loading"
               @secondaryClick="cancel"
               @primaryClick="submit"
               :disablePrimaryButton="notAllowed"
@@ -63,9 +64,8 @@ export default defineComponent({
   setup() {
     const { checkNullOrEmptyRule, checkNotesLengthRule } = useRules();
     const { disabilityStatusToDisplay } = useFormatters();
-    const { showDialog, showModal, resolvePromise } = useModalDialog<
-      UpdateDisabilityStatusAPIInDTO | boolean
-    >();
+    const { showDialog, showModal, resolvePromise, hideModal, loading } =
+      useModalDialog<UpdateDisabilityStatusAPIInDTO | boolean>();
     const updateDisabilityStatusForm = ref({} as VForm);
     const formModel = reactive({} as UpdateDisabilityStatusAPIInDTO);
     const disabilityStatusSelectItems = Object.keys(
@@ -83,7 +83,7 @@ export default defineComponent({
       }
       // Copying the payload, as reset is making the formModel properties null.
       const payload = { ...formModel };
-      resolvePromise(payload);
+      resolvePromise(payload, { keepModalOpen: true });
       updateDisabilityStatusForm.value.reset();
     };
 
@@ -96,6 +96,8 @@ export default defineComponent({
     return {
       showDialog,
       showModal,
+      hideModal,
+      loading,
       cancel,
       submit,
       updateDisabilityStatusForm,

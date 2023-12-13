@@ -59,14 +59,17 @@ export default defineComponent({
         await updateDisabilityStatusModal.value.showModal();
       if (updatedDisabilityStatus) {
         try {
+          updateDisabilityStatusModal.value.loading = true;
           await StudentService.shared.updateDisabilityStatus(
             props.studentId,
             updatedDisabilityStatus,
           );
           snackBar.success("Disability status updated successfully.");
           context.emit("disabilityStatusUpdated");
+          updateDisabilityStatusModal.value.hideModal();
         } catch {
           snackBar.error("An error happened while updating disability status.");
+          updateDisabilityStatusModal.value.loading = false;
         }
       }
     };
