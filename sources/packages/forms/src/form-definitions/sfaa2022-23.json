@@ -10636,7 +10636,9 @@
               },
               "properties": {},
               "lockKey": true,
-              "hideLabel": false
+              "hideLabel": false,
+              "errorLabel": "Disability Information is required",
+              "isNew": false
             },
             {
               "key": "disabilityInformationPanelContent",
