@@ -128,8 +128,7 @@ export default defineComponent({
   setup(props) {
     const studentDetail = ref({} as SharedStudentProfile);
     const address = ref({} as AddressAPIOutDTO);
-    const { sinDisplayFormat, emptyStringFiller, disabilityStatusToDisplay } =
-      useFormatters();
+    const { sinDisplayFormat, emptyStringFiller } = useFormatters();
 
     const loadStudentProfile = async () => {
       studentDetail.value = (await StudentService.shared.getStudentProfile(
@@ -144,7 +143,6 @@ export default defineComponent({
       address,
       sinDisplayFormat,
       emptyStringFiller,
-      disabilityStatusToDisplay,
       loadStudentProfile,
     };
   },

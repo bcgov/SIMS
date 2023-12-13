@@ -10,6 +10,7 @@
           Update the disability status of student and add note.
         </p>
         <v-select
+          hide-details="auto"
           label="Disability Status"
           density="compact"
           :items="disabilityStatusSelectItems"

@@ -30,9 +30,7 @@ import { UpdateDisabilityStatusAPIInDTO } from "@/services/http/dto";
 export default defineComponent({
   components: { UpdateDisabilityStatusModal },
   emits: {
-    disabilityStatusUpdated: (data: UpdateDisabilityStatusAPIInDTO) => {
-      return !!data;
-    },
+    disabilityStatusUpdated: null,
   },
   props: {
     studentId: {
@@ -66,7 +64,7 @@ export default defineComponent({
             updatedDisabilityStatus,
           );
           snackBar.success("Disability status updated successfully.");
-          context.emit("disabilityStatusUpdated", updatedDisabilityStatus);
+          context.emit("disabilityStatusUpdated");
         } catch {
           snackBar.error("An error happened while updating disability status.");
         }

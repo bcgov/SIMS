@@ -94,7 +94,6 @@ export type StudentProfileFormModel = Pick<
  * Disability status of student
  * which is displayed in front end.
  * Equivalent to {@link DisabilityStatus}
- *
  */
 export enum DisabilityStatusViewType {
   NotRequested = "Not requested",
