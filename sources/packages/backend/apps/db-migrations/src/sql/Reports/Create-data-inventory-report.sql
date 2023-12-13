@@ -87,7 +87,7 @@ VALUES
             ) as "BCSL Overawards Balance",
             students.disability_status as "Permanent Disability status",
             -- Application Personal Info (does not include Institution or Program info)
-            ''"'' || program_years.program_year_desc || ''"'' as "Program Year",
+            ''"'' || program_years.program_year || ''"'' as "Program Year",
             applications.data ->> ''studentNumber'' as "Student Number",
             applications.data ->> ''citizenship'' as "Citizenship status",
             applications.data ->> ''bcResident'' as "BC Residency Status",
