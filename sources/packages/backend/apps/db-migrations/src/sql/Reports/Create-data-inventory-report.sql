@@ -492,7 +492,7 @@ VALUES
             left join sims.supporting_users partner on partner.supporting_user_type = ''Partner''
             and applications.id = partner.application_id
             left join sims.users partner_users on partner.user_id = partner_users.id
-            left join sims.student_assessments student_assessments on applications.id = student_assessments.id --
+            left join sims.student_assessments student_assessments on applications.id = student_assessments.id
             left join sims.institution_locations institution_locations on institution_locations.id = applications.location_id
             left join sims.education_programs education_programs on education_programs.id = applications.pir_education_program_id
             left join sims.education_programs_offerings education_programs_offerings on student_assessments.offering_id = education_programs_offerings.id
