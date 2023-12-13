@@ -7,7 +7,6 @@ import {
   AssessmentTriggerType,
   StudentAssessment,
   User,
-  mapFromRawAndEntities,
 } from "@sims/sims-db";
 import { Brackets, DataSource } from "typeorm";
 import { CustomNamedError } from "@sims/utilities";
@@ -15,7 +14,6 @@ import {
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
 } from "./student-assessment.constants";
-import { AssessmentHistory } from "./student-assessment.models";
 
 /**
  * Manages the student assessment related operations.
@@ -185,7 +183,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   async assessmentHistorySummary(
     applicationId: number,
     studentId?: number,
-  ): Promise<AssessmentHistory[]> {
+  ): Promise<StudentAssessment[]> {
     const assessmentHistoryQuery = this.repo
       .createQueryBuilder("assessment")
       .select([
@@ -200,7 +198,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "studentScholasticStanding.id",
         "application.id",
         "applicationException.id",
-        "assessment.studentAssessmentStatus as status",
+        "assessment.studentAssessmentStatus",
       ])
       .innerJoin("assessment.offering", "offering")
       .innerJoin("offering.educationProgram", "educationProgram")
@@ -233,10 +231,9 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         studentId,
       });
     }
-    const queryResult = await assessmentHistoryQuery
-      .orderBy("status", "DESC")
+    return assessmentHistoryQuery
+      .orderBy("assessment.studentAssessmentStatus", "DESC")
       .addOrderBy("assessment.submittedDate", "DESC")
-      .getRawAndEntities();
-    return mapFromRawAndEntities<AssessmentHistory>(queryResult, "status");
+      .getMany();
   }
 }
