@@ -183,7 +183,7 @@ export class IER12FileDetail implements IER12FileLine {
     record.appendStringWithFiller(this.addressInfo.addressLine1, 25);
     record.appendOptionalStringWithFiller(this.addressInfo.addressLine2, 25);
     record.appendStringWithFiller(this.addressInfo.city, 25);
-    record.appendStringWithFiller(this.addressInfo.provinceState, 4);
+    record.appendOptionalStringWithFiller(this.addressInfo.provinceState, 4);
     record.appendStringWithFiller(this.addressInfo.postalCode, 16);
     record.appendStringWithFiller(this.programName, 25);
     record.appendStringWithFiller(this.programDescription, 50);
