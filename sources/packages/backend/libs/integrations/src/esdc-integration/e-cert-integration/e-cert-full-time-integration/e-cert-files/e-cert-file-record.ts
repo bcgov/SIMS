@@ -240,7 +240,8 @@ export class ECertFullTimeFileRecord extends ECertFileRecord {
       return record.toString();
     } catch (error: unknown) {
       throw new Error(
-        `Error while creating record with document number: ${this.documentNumber}. Error ${error}`,
+        `Error while creating record with document number: ${this.documentNumber}`,
+        { cause: error },
       );
     }
   }

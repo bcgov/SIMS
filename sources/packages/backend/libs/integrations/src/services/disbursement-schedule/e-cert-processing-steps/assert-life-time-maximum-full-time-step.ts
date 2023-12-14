@@ -57,7 +57,7 @@ export class AssertLifeTimeMaximumFullTimeStep implements ECertProcessStep {
     );
     if (!bcLoan?.valueAmount) {
       log.info(
-        `${bcLoan.valueCode} award not found or there is no amount to be disbursed, hence skipping the check.`,
+        `${DisbursementValueType.BCLoan} award not found or there is no amount to be disbursed, hence skipping the check.`,
       );
       return true;
     }
