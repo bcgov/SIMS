@@ -47,29 +47,18 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
       ierFileDetail.assessmentId = ierRecord.assessmentId;
       ierFileDetail.disbursementId = ierRecord.disbursementId;
       ierFileDetail.applicationNumber = ierRecord.applicationNumber;
-      ierFileDetail.institutionStudentNumber = replaceLineBreaks(
-        ierRecord.institutionStudentNumber,
-      );
+      ierFileDetail.institutionStudentNumber =
+        ierRecord.institutionStudentNumber;
       ierFileDetail.sin = ierRecord.sin;
-      ierFileDetail.studentLastName = replaceLineBreaks(
-        ierRecord.studentLastName,
-      );
-      ierFileDetail.studentGivenName = replaceLineBreaks(
-        ierRecord.studentGivenName,
-      );
+      ierFileDetail.studentLastName = ierRecord.studentLastName;
+      ierFileDetail.studentGivenName = ierRecord.studentGivenName;
       ierFileDetail.studentBirthDate = ierRecord.studentBirthDate;
       ierFileDetail.studentGroupCode =
         ierRecord.studentDependantStatus === "dependant" ? "A" : "B";
       ierFileDetail.studentMaritalStatusCode =
         ierRecord.studentMaritalStatusCode;
-      ierFileDetail.addressInfo = {
-        provinceState: ierRecord.addressInfo.provinceState,
-        addressLine1: replaceLineBreaks(ierRecord.addressInfo.addressLine1),
-        addressLine2: replaceLineBreaks(ierRecord.addressInfo.addressLine2),
-        city: replaceLineBreaks(ierRecord.addressInfo.city),
-        postalCode: replaceLineBreaks(ierRecord.addressInfo.postalCode),
-      };
-      ierFileDetail.programName = replaceLineBreaks(ierRecord.programName);
+      ierFileDetail.addressInfo = ierRecord.addressInfo;
+      ierFileDetail.programName = ierRecord.programName;
       ierFileDetail.programDescription = replaceLineBreaks(
         ierRecord.programDescription,
       );
@@ -83,9 +72,7 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
       ierFileDetail.cipCode = ierRecord.cipCode.replace(".", "");
       ierFileDetail.nocCode = ierRecord.nocCode;
       ierFileDetail.sabcCode = ierRecord.sabcCode;
-      ierFileDetail.institutionProgramCode = replaceLineBreaks(
-        ierRecord.institutionProgramCode,
-      );
+      ierFileDetail.institutionProgramCode = ierRecord.institutionProgramCode;
       ierFileDetail.programLength = getTotalYearsOfStudy(
         ierRecord.programCompletionYears,
       );
