@@ -67,12 +67,37 @@ export function useAssessment() {
     switch (status) {
       case StudentAssessmentStatus.Submitted:
         return StatusChipTypes.Default;
+      case StudentAssessmentStatus.Queued:
       case StudentAssessmentStatus.InProgress:
         return StatusChipTypes.Warning;
       case StudentAssessmentStatus.Completed:
         return StatusChipTypes.Success;
+      case StudentAssessmentStatus.CancellationRequested:
+      case StudentAssessmentStatus.CancellationQueued:
+      case StudentAssessmentStatus.Cancelled:
+        return StatusChipTypes.Error;
       default:
         return StatusChipTypes.Inactive;
+    }
+  };
+
+  const mapAssessmentHistoryChipLabel = (
+    status: StudentAssessmentStatus,
+  ): StudentAssessmentStatus => {
+    switch (status) {
+      case StudentAssessmentStatus.Submitted:
+        return StudentAssessmentStatus.Submitted;
+      case StudentAssessmentStatus.InProgress:
+      case StudentAssessmentStatus.Queued:
+        return StudentAssessmentStatus.InProgress;
+      case StudentAssessmentStatus.Completed:
+        return StudentAssessmentStatus.Completed;
+      case StudentAssessmentStatus.CancellationRequested:
+      case StudentAssessmentStatus.CancellationQueued:
+      case StudentAssessmentStatus.Cancelled:
+        return StudentAssessmentStatus.Cancelled;
+      default:
+        return status;
     }
   };
 
@@ -92,5 +117,6 @@ export function useAssessment() {
     mapRequestAssessmentChipStatusLabel,
     mapAssessmentHistoryChipStatus,
     mapAssessmentDetailHeader,
+    mapAssessmentHistoryChipLabel,
   };
 }

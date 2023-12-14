@@ -325,7 +325,7 @@ export class AssessmentControllerService {
         submittedDate: assessment.submittedDate,
         triggerType: assessment.triggerType,
         assessmentDate: assessment.assessmentDate,
-        status: assessment.status,
+        status: assessment.studentAssessmentStatus,
         offeringId: assessment.offering.id,
         programId: assessment.offering.educationProgram.id,
         studentAppealId: assessment.studentAppeal?.id,
