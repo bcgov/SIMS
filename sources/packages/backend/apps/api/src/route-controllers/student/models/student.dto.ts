@@ -5,6 +5,7 @@ import {
   IsBoolean,
   IsDateString,
   IsDefined,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   Length,
@@ -259,4 +260,15 @@ export class UniqueFileNameParamAPIInDTO {
   @IsNotEmpty()
   @MaxLength(FILE_NAME_MAX_LENGTH)
   uniqueFileName: string;
+}
+
+/**
+ * Details to update disability status with notes.
+ */
+export class UpdateDisabilityStatusAPIInDTO {
+  @IsEnum(DisabilityStatus)
+  disabilityStatus: DisabilityStatus;
+  @IsNotEmpty()
+  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
+  noteDescription: string;
 }

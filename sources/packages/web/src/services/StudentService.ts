@@ -12,6 +12,7 @@ import {
   CreateSINValidationAPIInDTO,
   UpdateSINValidationAPIInDTO,
   SearchStudentAPIInDTO,
+  UpdateDisabilityStatusAPIInDTO,
 } from "@/services/http/dto";
 import { AxiosResponse } from "axios";
 
@@ -215,5 +216,17 @@ export class StudentService {
       sinValidationId,
       payload,
     );
+  }
+
+  /**
+   * Update student disability status with note.
+   * @param studentId student id.
+   * @param payload update disability status payload.
+   */
+  async updateDisabilityStatus(
+    studentId: number,
+    payload: UpdateDisabilityStatusAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.Students.updateDisabilityStatus(studentId, payload);
   }
 }

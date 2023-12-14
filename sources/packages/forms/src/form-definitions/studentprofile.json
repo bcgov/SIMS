@@ -1619,7 +1619,7 @@
           "labelMargin": "",
           "placeholder": "",
           "description": "",
-          "tooltip": "If you have a disability, you may apply for a status here, that we will use to help you apply for eligible grants or bursaries in your applications. Please go to <a href='https://studentaidbc.ca/' target='_blank'>studentaidbc.ca</a> for more information.",
+          "tooltip": "If you wish to identify as a student with a disability and receive disability-related financial assistance as part of your Student Loan award, you will need to have your disability verified by StudentAid BC.",
           "prefix": "",
           "suffix": "",
           "widget": {
@@ -1706,7 +1706,7 @@
           "lockKey": true
         },
         {
-          "label": "Apply for PD status",
+          "label": "Apply for Disability Status",
           "labelWidth": "",
           "labelMargin": "",
           "action": "event",

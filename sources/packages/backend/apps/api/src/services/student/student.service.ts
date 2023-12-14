@@ -16,7 +16,7 @@ import {
   StudentRestriction,
   DisabilityStatus,
 } from "@sims/sims-db";
-import { DataSource, EntityManager } from "typeorm";
+import { DataSource, EntityManager, UpdateResult } from "typeorm";
 import { StudentUserToken } from "../../auth/userToken.interface";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { removeWhiteSpaces, transformAddressDetails } from "../../utilities";
@@ -691,5 +691,41 @@ export class StudentService extends RecordDataModelService<Student> {
       return DisabilityStatus.Declined;
     }
     return DisabilityStatus.NotRequested;
+  }
+
+  /**
+   * Update student disability status with note.
+   * @param studentId student id.
+   * @param disabilityStatus disability status.
+   * @param noteDescription note created for disability status update.
+   * @param auditUserId user who modifies the disability status.
+   * @returns update result.
+   */
+  async updateDisabilityStatus(
+    studentId: number,
+    disabilityStatus: DisabilityStatus,
+    noteDescription: string,
+    auditUserId: number,
+  ): Promise<UpdateResult> {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
+      await this.noteSharedService.createStudentNote(
+        studentId,
+        NoteType.General,
+        noteDescription,
+        auditUserId,
+        transactionalEntityManager,
+      );
+      const auditUser = { id: auditUserId } as User;
+      const now = new Date();
+      return transactionalEntityManager.getRepository(Student).update(
+        { id: studentId },
+        {
+          disabilityStatus,
+          disabilityStatusEffectiveDate: now,
+          modifier: auditUser,
+          updatedAt: now,
+        },
+      );
+    });
   }
 }
