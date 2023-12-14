@@ -54,15 +54,25 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
       ierFileDetail.studentLastName = replaceLineBreaks(
         ierRecord.studentLastName,
       );
-      ierFileDetail.studentGivenName = ierRecord.studentGivenName;
+      ierFileDetail.studentGivenName = replaceLineBreaks(
+        ierRecord.studentGivenName,
+      );
       ierFileDetail.studentBirthDate = ierRecord.studentBirthDate;
       ierFileDetail.studentGroupCode =
         ierRecord.studentDependantStatus === "dependant" ? "A" : "B";
       ierFileDetail.studentMaritalStatusCode =
         ierRecord.studentMaritalStatusCode;
-      ierFileDetail.addressInfo = ierRecord.addressInfo;
-      ierFileDetail.programName = ierRecord.programName;
-      ierFileDetail.programDescription = ierRecord.programDescription;
+      ierFileDetail.addressInfo = {
+        provinceState: ierRecord.addressInfo.provinceState,
+        addressLine1: replaceLineBreaks(ierRecord.addressInfo.addressLine1),
+        addressLine2: replaceLineBreaks(ierRecord.addressInfo.addressLine2),
+        city: replaceLineBreaks(ierRecord.addressInfo.city),
+        postalCode: replaceLineBreaks(ierRecord.addressInfo.postalCode),
+      };
+      ierFileDetail.programName = replaceLineBreaks(ierRecord.programName);
+      ierFileDetail.programDescription = replaceLineBreaks(
+        ierRecord.programDescription,
+      );
       ierFileDetail.credentialType = ierRecord.credentialType;
       ierFileDetail.fieldOfStudyCode = ierRecord.fieldOfStudyCode;
       ierFileDetail.levelOfStudyCode = this.getLevelOfStudyCode(
@@ -73,7 +83,9 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
       ierFileDetail.cipCode = ierRecord.cipCode.replace(".", "");
       ierFileDetail.nocCode = ierRecord.nocCode;
       ierFileDetail.sabcCode = ierRecord.sabcCode;
-      ierFileDetail.institutionProgramCode = ierRecord.institutionProgramCode;
+      ierFileDetail.institutionProgramCode = replaceLineBreaks(
+        ierRecord.institutionProgramCode,
+      );
       ierFileDetail.programLength = getTotalYearsOfStudy(
         ierRecord.programCompletionYears,
       );
