@@ -20,10 +20,11 @@ export const JANE_MONONYMOUS_FROM_OTHER_COUNTRY: IER12Student = {
   birthDate: new Date("1998-01-13"),
   sin: "242963189",
   addressInfo: {
-    addressLine1: "Some Foreign Street Address Line 1",
+    // Added new line character expecting to be replaced during
+    // file processing.
+    addressLine1: "Some Foreign Street\n Address Line 1",
     addressLine2: undefined,
-    // TODO: set to undefined once the bug is fixed (#2452).
-    provinceState: "",
+    provinceState: undefined,
     city: "New York",
     postalCode: "SOME POSTAL CODE",
   },
