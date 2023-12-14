@@ -165,6 +165,8 @@ export class EligibleECertDisbursement {
    * @param hasValidSIN indicates if the student has a validated SIN.
    * @param assessmentId assessment id.
    * @param applicationId application id.
+   * @param applicationNumber application number. Intended to be used
+   * primarily for logging purposes.
    * @param disbursement Eligible schedule that must have the values updated
    * calculated for an e-Cert. This database entity model will receive all
    * modifications across multiple calculations steps. If all calculations
@@ -185,6 +187,7 @@ export class EligibleECertDisbursement {
     public readonly hasValidSIN: boolean,
     public readonly assessmentId: number,
     public readonly applicationId: number,
+    public readonly applicationNumber: string,
     public readonly disbursement: DisbursementSchedule,
     public readonly offering: EligibleECertOffering,
     public readonly maxLifetimeBCLoanAmount: number,

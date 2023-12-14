@@ -59,6 +59,7 @@ export class ECertGenerationService {
       .createQueryBuilder("application")
       .select([
         "application.id",
+        "application.applicationNumber",
         "currentAssessment.id",
         "disbursementSchedule.id",
         "disbursementSchedule.disbursementDate",
@@ -141,6 +142,7 @@ export class ECertGenerationService {
               !!application.student.sinValidation.isValidSIN,
               application.currentAssessment.id,
               application.id,
+              application.applicationNumber,
               disbursement,
               application.currentAssessment.offering,
               application.programYear.maxLifetimeBCLoanAmount,

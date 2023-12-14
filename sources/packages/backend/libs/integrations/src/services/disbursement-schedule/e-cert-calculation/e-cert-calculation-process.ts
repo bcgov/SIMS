@@ -102,7 +102,7 @@ export abstract class ECertCalculationProcess {
       const disbursementLog = new ProcessSummary();
       parentLog.children(disbursementLog);
       disbursementLog.info(
-        `Processing disbursement id ${eCertDisbursement.disbursement.id} scheduled for ${eCertDisbursement.disbursement.disbursementDate}.`,
+        `Processing application number ${eCertDisbursement.applicationNumber}, disbursement id ${eCertDisbursement.disbursement.id} scheduled for ${eCertDisbursement.disbursement.disbursementDate}.`,
       );
       try {
         await this.dataSource.transaction(async (entityManager) => {
