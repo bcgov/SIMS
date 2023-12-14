@@ -6,6 +6,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
+    "lib": ["ES2020", "es2022.error"],
     "target": "ES2020",
     "sourceMap": true,
     "outDir": "./dist",
@@ -13,42 +14,18 @@
     "incremental": true,
     "allowJs": true,
     "paths": {
-      "@sims/sims-db": [
-        "libs/sims-db/src"
-      ],
-      "@sims/sims-db/*": [
-        "libs/sims-db/src/*"
-      ],
-      "@sims/services": [
-        "libs/services/src"
-      ],
-      "@sims/services/*": [
-        "libs/services/src/*"
-      ],
-      "@sims/utilities": [
-        "libs/utilities/src"
-      ],
-      "@sims/utilities/*": [
-        "libs/utilities/src/*"
-      ],
-      "@sims/test-utils": [
-        "libs/test-utils/src"
-      ],
-      "@sims/test-utils/*": [
-        "libs/test-utils/src/*"
-      ],
-      "@sims/integrations": [
-        "libs/integrations/src"
-      ],
-      "@sims/integrations/*": [
-        "libs/integrations/src/*"
-      ],
-      "@sims/auth": [
-        "libs/auth/src"
-      ],
-      "@sims/auth/*": [
-        "libs/auth/src/*"
-      ]
+      "@sims/sims-db": ["libs/sims-db/src"],
+      "@sims/sims-db/*": ["libs/sims-db/src/*"],
+      "@sims/services": ["libs/services/src"],
+      "@sims/services/*": ["libs/services/src/*"],
+      "@sims/utilities": ["libs/utilities/src"],
+      "@sims/utilities/*": ["libs/utilities/src/*"],
+      "@sims/test-utils": ["libs/test-utils/src"],
+      "@sims/test-utils/*": ["libs/test-utils/src/*"],
+      "@sims/integrations": ["libs/integrations/src"],
+      "@sims/integrations/*": ["libs/integrations/src/*"],
+      "@sims/auth": ["libs/auth/src"],
+      "@sims/auth/*": ["libs/auth/src/*"]
     }
   }
 }
