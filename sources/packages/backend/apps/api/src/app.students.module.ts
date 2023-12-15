@@ -76,7 +76,7 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     StudentAccountApplicationStudentsController,
     EducationProgramOfferingStudentsController,
     RestrictionStudentsController,
-    ATBCStudentController,
+    //ATBCStudentController, // TODO: This is commented as part of #2539 - Suspend any ATBC integration.
     ProgramYearStudentsController,
     OverawardStudentsController,
     ApplicationOfferingChangeRequestStudentsController,
