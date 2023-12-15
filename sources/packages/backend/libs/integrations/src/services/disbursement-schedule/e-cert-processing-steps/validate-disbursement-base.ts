@@ -18,9 +18,7 @@ export abstract class ValidateDisbursementBase {
     let shouldContinue = true;
     // COE
     if (eCertDisbursement.disbursement.coeStatus !== COEStatus.completed) {
-      log.info(
-        `Confirmation of Enrollment is not in the correct status. Current '${eCertDisbursement.disbursement.coeStatus}', expected '${COEStatus.completed}'.`,
-      );
+      log.info("Waiting for confirmation of enrolment to be completed.");
       shouldContinue = false;
     }
     // SIN

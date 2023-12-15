@@ -9,6 +9,7 @@ import {
   DisbursementScheduleStatus,
   Application,
   StudentRestriction,
+  COEStatus,
 } from "@sims/sims-db";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
@@ -114,6 +115,9 @@ export class ECertGenerationService {
         "disbursementSchedule.disbursementScheduleStatus = :disbursementScheduleStatus",
         { disbursementScheduleStatus: DisbursementScheduleStatus.Pending },
       )
+      .andWhere("disbursementSchedule.coeStatus != :coeStatus", {
+        coeStatus: COEStatus.declined,
+      })
       .andWhere("disbursementSchedule.disbursementDate <= :disbursementDate", {
         disbursementDate: disbursementMinDate,
       })
