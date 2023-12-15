@@ -17,7 +17,11 @@ import {
   DisbursementValueType,
   StudentScholasticStandingChangeType,
 } from "@sims/sims-db";
-import { combineDecimalPlaces, getTotalYearsOfStudy } from "@sims/utilities";
+import {
+  combineDecimalPlaces,
+  getTotalYearsOfStudy,
+  replaceLineBreaks,
+} from "@sims/utilities";
 
 /**
  * Manages the creation of the content files that needs to be sent
@@ -55,7 +59,9 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
         ierRecord.studentMaritalStatusCode;
       ierFileDetail.addressInfo = ierRecord.addressInfo;
       ierFileDetail.programName = ierRecord.programName;
-      ierFileDetail.programDescription = ierRecord.programDescription;
+      ierFileDetail.programDescription = replaceLineBreaks(
+        ierRecord.programDescription,
+      );
       ierFileDetail.credentialType = ierRecord.credentialType;
       ierFileDetail.fieldOfStudyCode = ierRecord.fieldOfStudyCode;
       ierFileDetail.levelOfStudyCode = this.getLevelOfStudyCode(

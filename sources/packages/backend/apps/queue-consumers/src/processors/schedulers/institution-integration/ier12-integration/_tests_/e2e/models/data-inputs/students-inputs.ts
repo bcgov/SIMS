@@ -22,8 +22,7 @@ export const JANE_MONONYMOUS_FROM_OTHER_COUNTRY: IER12Student = {
   addressInfo: {
     addressLine1: "Some Foreign Street Address Line 1",
     addressLine2: undefined,
-    // TODO: set to undefined once the bug is fixed (#2452).
-    provinceState: "",
+    provinceState: undefined,
     city: "New York",
     postalCode: "SOME POSTAL CODE",
   },

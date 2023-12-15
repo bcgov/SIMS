@@ -21,7 +21,7 @@
     "docker:start:queue-consumers": "node dist/apps/queue-consumers/main.js",
     "start:prod:load-test-gateway": "node dist/apps/load-test-gateway/main.js",
     "docker:start:load-test-gateway": "node dist/apps/load-test-gateway/main.js",
-    "test": "cross-env ENVIRONMENT=test jest --forceExit",
+    "test": "cross-env ENVIRONMENT=test jest --verbose --forceExit",
     "test:watch": "jest --watch ",
     "test:cov": "cross-env ENVIRONMENT=test jest --coverage --forceExit",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
