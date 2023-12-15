@@ -13,7 +13,7 @@
     "typescript": "^4.3.5"
   },
   "dependencies": {
-    "axios": "^0.21.2",
+    "axios": "^1.6.2",
     "dotenv": "^10.0.0"
   }
 }

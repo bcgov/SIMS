@@ -16,9 +16,8 @@ import {
   EducationProgramOfferingBasicDataAPIInDTO,
   EducationProgramOfferingSummaryViewAPIOutDTO,
 } from "@/services/http/dto";
-import { AxiosRequestConfig } from "axios";
+import { AxiosProgressEvent, AxiosRequestConfig } from "axios";
 import ApiClient from "./ApiClient";
-import { FileUploadProgressEventArgs } from "@/services/http/common/FileUploadProgressEvent";
 import { OfferingSummaryPurpose } from "@/types/contracts/OfferingSummaryPurpose";
 
 export class EducationProgramOfferingApi extends HttpBaseClient {
@@ -285,7 +284,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
   async offeringBulkInsert(
     file: Blob,
     validationOnly: boolean,
-    onUploadProgress: (progressEvent: FileUploadProgressEventArgs) => void,
+    onUploadProgress: (progressEvent: AxiosProgressEvent) => void,
   ): Promise<void> {
     const formData = new FormData();
     formData.append("file", file);

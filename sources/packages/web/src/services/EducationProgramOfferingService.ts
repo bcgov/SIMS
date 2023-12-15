@@ -27,8 +27,8 @@ import {
   OFFERING_VALIDATION_CSV_CONTENT_FORMAT_ERROR,
 } from "@/constants";
 import { DATE_ONLY_ISO_FORMAT, useFormatters } from "@/composables";
-import { FileUploadProgressEventArgs } from "@/services/http/common/FileUploadProgressEvent";
 import { OfferingSummaryPurpose } from "@/types/contracts/OfferingSummaryPurpose";
+import { AxiosProgressEvent } from "axios";
 
 export class EducationProgramOfferingService {
   // Share Instance
@@ -297,7 +297,7 @@ export class EducationProgramOfferingService {
   async offeringBulkInsert(
     file: Blob,
     validationOnly: boolean,
-    onUploadProgress: (progressEvent: FileUploadProgressEventArgs) => void,
+    onUploadProgress: (progressEvent: AxiosProgressEvent) => void,
   ): Promise<OfferingsUploadBulkInsert[]> {
     try {
       await ApiClient.EducationProgramOffering.offeringBulkInsert(

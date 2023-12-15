@@ -6,13 +6,13 @@ import {
   ScholasticStandingSubmittedDetailsAPIOutDTO,
 } from "@/services/http/dto";
 import { ApplicationBulkWithdrawal } from "@/types/contracts/institution/ScholasticStanding";
-import { FileUploadProgressEventArgs } from "./http/common/FileUploadProgressEvent";
 import {
   APPLICATION_WITHDRAWAL_VALIDATION_ERROR,
   APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR,
   APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR,
 } from "@/constants";
 import { ApiProcessError } from "@/types";
+import { AxiosProgressEvent } from "axios";
 
 /**
  * Client service layer for Scholastic standing.
@@ -86,7 +86,7 @@ export class ScholasticStandingService {
   async applicationBulkWithdrawal(
     file: Blob,
     validationOnly: boolean,
-    onUploadProgress: (progressEvent: FileUploadProgressEventArgs) => void,
+    onUploadProgress: (progressEvent: AxiosProgressEvent) => void,
   ): Promise<ApplicationBulkWithdrawal[]> {
     try {
       await ApiClient.ScholasticStandingApi.applicationBulkWithdrawal(

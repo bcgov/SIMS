@@ -211,8 +211,8 @@ import {
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import StatusChipOffering from "@/components/generic/StatusChipOffering.vue";
 import { useSnackBar } from "@/composables";
-import { FileUploadProgressEventArgs } from "@/services/http/common/FileUploadProgressEvent";
 import { OFFERING_VALIDATION_CSV_PARSE_ERROR } from "@/constants";
+import { AxiosProgressEvent } from "axios";
 
 const ACCEPTED_FILE_TYPE = "text/csv";
 const MAX_OFFERING_UPLOAD_SIZE = 4194304;
@@ -230,7 +230,7 @@ export default defineComponent({
     // Possible errors and warnings received upon file upload.
     const validationResults = ref([] as OfferingsUploadBulkInsert[]);
     const uploadForm = ref({} as VForm);
-    const uploadProgress = ref({} as FileUploadProgressEventArgs);
+    const uploadProgress = ref({} as AxiosProgressEvent);
     // Workaround to reset the file upload component to its original state.
     // It is apparently a vuetify beta issue. It can be removed once there is a
     // better way to force the component to reset its state.
@@ -257,7 +257,7 @@ export default defineComponent({
           await EducationProgramOfferingService.shared.offeringBulkInsert(
             fileToUpload,
             validationOnly,
-            (progressEvent: FileUploadProgressEventArgs) => {
+            (progressEvent: AxiosProgressEvent) => {
               uploadProgress.value = progressEvent;
             },
           );
