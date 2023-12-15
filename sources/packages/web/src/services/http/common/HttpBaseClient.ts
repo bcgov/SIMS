@@ -147,7 +147,7 @@ export default abstract class HttpBaseClient {
    * @param error error to be inspect.
    */
   protected handleAPICustomError(error: unknown): never {
-    const axiosError = error as AxiosError;
+    const axiosError = error as AxiosError<ApiProcessError>;
     if (axiosError.isAxiosError && axiosError.response?.data) {
       throw new ApiProcessError(
         axiosError.response.data.message,

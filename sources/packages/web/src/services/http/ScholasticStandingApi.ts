@@ -3,8 +3,7 @@ import {
   ScholasticStandingDataAPIInDTO,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
 } from "@/services/http/dto";
-import { FileUploadProgressEventArgs } from "./common/FileUploadProgressEvent";
-import { AxiosRequestConfig } from "axios";
+import { AxiosProgressEvent, AxiosRequestConfig } from "axios";
 import ApiClient from "./ApiClient";
 
 /**
@@ -56,7 +55,7 @@ export class ScholasticStandingApi extends HttpBaseClient {
   async applicationBulkWithdrawal(
     file: Blob,
     validationOnly: boolean,
-    onUploadProgress: (progressEvent: FileUploadProgressEventArgs) => void,
+    onUploadProgress: (progressEvent: AxiosProgressEvent) => void,
   ): Promise<void> {
     const formData = new FormData();
     formData.append("file", file);

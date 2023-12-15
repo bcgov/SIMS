@@ -166,9 +166,9 @@ import {
   ApplicationWithdrawalUploadHeaders,
 } from "@/types";
 import { useFormatters, useSnackBar } from "@/composables";
-import { FileUploadProgressEventArgs } from "@/services/http/common/FileUploadProgressEvent";
 import { ApplicationBulkWithdrawal } from "@/types/contracts/institution/ScholasticStanding";
 import { ScholasticStandingService } from "@/services/ScholasticStandingService";
+import { AxiosProgressEvent } from "axios";
 
 const ACCEPTED_FILE_TYPE = "text/plain";
 const MAX_APPLICATION_WITHDRAWAL_UPLOAD_SIZE = 4194304;
@@ -184,7 +184,7 @@ export default defineComponent({
     // Possible errors and warnings received upon file upload.
     const validationResults = ref([] as ApplicationBulkWithdrawal[]);
     const uploadForm = ref({} as VForm);
-    const uploadProgress = ref({} as FileUploadProgressEventArgs);
+    const uploadProgress = ref({} as AxiosProgressEvent);
     // TODO need to be removed after confirmation of Vuetify 3 update
     // Workaround to reset the file upload component to its original state.
     // It is apparently a vuetify beta issue. It can be removed once there is a
@@ -213,7 +213,7 @@ export default defineComponent({
           await ScholasticStandingService.shared.applicationBulkWithdrawal(
             fileToUpload,
             validationOnly,
-            (progressEvent: FileUploadProgressEventArgs) => {
+            (progressEvent: AxiosProgressEvent) => {
               uploadProgress.value = progressEvent;
             },
           );
