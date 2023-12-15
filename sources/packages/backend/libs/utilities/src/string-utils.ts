@@ -10,7 +10,7 @@ const REPLACE_LINE_BREAK_REGEX = /\r?\n|\r/g;
 export function replaceLineBreaks(
   data?: string,
   options?: { replaceText?: string },
-) {
+): string {
   if (!data) {
     return data;
   }
