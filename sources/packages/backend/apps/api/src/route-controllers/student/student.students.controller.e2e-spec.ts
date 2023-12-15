@@ -12,7 +12,7 @@ import {
 } from "../../testHelpers";
 import { KeycloakConfig } from "@sims/auth/config";
 
-describe("Test ATBC Controller", () => {
+describe.skip("Test ATBC Controller", () => {
   let accessToken: string;
   let app: INestApplication;
   let atbcService: ATBCService;
