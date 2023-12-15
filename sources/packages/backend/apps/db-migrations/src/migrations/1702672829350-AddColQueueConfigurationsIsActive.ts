@@ -6,13 +6,13 @@ export class AddColQueueConfigurationsIsActive1702672829350
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Add-col-queue-configurations-isActive.sql", "Queue"),
+      getSQLFileData("Add-col-queue-configurations-is-active.sql", "Queue"),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Drop-col-queue-configurations-isActive.sql", "Queue"),
+      getSQLFileData("Drop-col-queue-configurations-is-active.sql", "Queue"),
     );
   }
 }
