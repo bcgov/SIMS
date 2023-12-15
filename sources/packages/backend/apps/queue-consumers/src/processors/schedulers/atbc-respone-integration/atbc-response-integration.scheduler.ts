@@ -12,10 +12,10 @@ import {
 /**
  * Process all the applied PD requests to verify the status with ATBC.
  */
-@Processor(QueueNames.ATBCResponseIntegration)
+// @Processor(QueueNames.ATBCResponseIntegration) // TODO: This is commented as part of #2539 - Suspend any ATBC integration.
 export class ATBCResponseIntegrationScheduler extends BaseScheduler<void> {
   constructor(
-    @InjectQueue(QueueNames.ATBCResponseIntegration)
+    // @InjectQueue(QueueNames.ATBCResponseIntegration) // TODO: This is commented as part of #2539 - Suspend any ATBC integration.
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly atbcIntegrationProcessingService: ATBCIntegrationProcessingService,

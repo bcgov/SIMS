@@ -30,4 +30,13 @@ export class QueueConfiguration extends RecordDataModel {
     type: "jsonb",
   })
   queueConfiguration: QueueConfigurationDetails;
+
+  /**
+   * Active flag which decides if the Queue is active
+   */
+  @Column({
+    name: "is_active",
+    nullable: false,
+  })
+  isActive: boolean;
 }

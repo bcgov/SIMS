@@ -27,6 +27,9 @@ export class QueueService {
         queueName: true,
         queueConfiguration: true as unknown,
       },
+      where: {
+        isActive: true,
+      },
     });
     return this.queueConfiguration;
   }
@@ -62,6 +65,7 @@ export class QueueService {
    */
   async getQueueConfiguration(queueName: QueueNames): Promise<Bull.JobOptions> {
     const queueConfig = await this.queueConfigurationDetails(queueName);
+    console.log(queueConfig);
     const config = {} as Bull.JobOptions;
     const queueConfiguration = queueConfig.queueConfiguration;
     if (queueConfiguration.retry && queueConfiguration.retryInterval) {

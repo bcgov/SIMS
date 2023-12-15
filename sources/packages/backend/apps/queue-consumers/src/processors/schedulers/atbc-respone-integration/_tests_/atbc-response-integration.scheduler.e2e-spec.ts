@@ -20,7 +20,8 @@ import {
 } from "@sims/integrations/services";
 import { DisabilityStatus, Student } from "@sims/sims-db";
 
-describe(describeProcessorRootTest(QueueNames.ATBCResponseIntegration), () => {
+// TODO: This is skipped as part of #2539 - Suspend any ATBC integration.
+describe.skip("describeProcessorRootTest(QueueNames.ATBCResponseIntegration)", () => {
   let app: INestApplication;
   let processor: ATBCResponseIntegrationScheduler;
   let db: E2EDataSources;

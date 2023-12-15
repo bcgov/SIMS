@@ -21,7 +21,6 @@ import {
   FullTimeMSFAAProcessResponseIntegrationScheduler,
   PartTimeMSFAAProcessResponseIntegrationScheduler,
   SFASIntegrationScheduler,
-  ATBCResponseIntegrationScheduler,
   ProcessArchiveApplicationsScheduler,
   ECEProcessIntegrationScheduler,
   ECEResponseIntegrationScheduler,
@@ -91,7 +90,7 @@ import { MicroserviceHealthIndicator, TerminusModule } from "@nestjs/terminus";
     ECEProcessIntegrationScheduler,
     ProcessNotificationScheduler,
     SFASIntegrationScheduler,
-    ATBCResponseIntegrationScheduler,
+    // ATBCResponseIntegrationScheduler, // TODO: This is commented as part of #2539 - Suspend any ATBC integration.
     StudentAssessmentService,
     SshService,
     QueueService,
