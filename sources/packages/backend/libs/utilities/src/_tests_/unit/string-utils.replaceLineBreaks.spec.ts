@@ -2,7 +2,7 @@ import { replaceLineBreaks } from "@sims/utilities/string-utils";
 
 describe("StringUtils-replaceLineBreaks", () => {
   it("Should replace the line break with empty string value in given text when one or more line break character is present.", () => {
-    //Arrange
+    // Arrange
     const textWithLineBreaks = "Some program with\n description\r\n too long";
 
     // Act
@@ -14,7 +14,7 @@ describe("StringUtils-replaceLineBreaks", () => {
   });
 
   it("Should replace the line break with given value in given text when one or more line break character is present.", () => {
-    //Arrange
+    // Arrange
     const textWithLineBreaks = "Some program with\ndescription\r\ntoo long";
 
     // Act
