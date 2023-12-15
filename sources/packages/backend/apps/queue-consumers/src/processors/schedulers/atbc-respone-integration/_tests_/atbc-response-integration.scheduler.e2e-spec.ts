@@ -1,10 +1,7 @@
 import { createMock } from "@golevelup/ts-jest";
 import { INestApplication } from "@nestjs/common";
-import { QueueNames, addDays, formatDate } from "@sims/utilities";
-import {
-  createTestingAppModule,
-  describeProcessorRootTest,
-} from "../../../../../test/helpers";
+import { addDays, formatDate } from "@sims/utilities";
+import { createTestingAppModule } from "../../../../../test/helpers";
 import { ATBCResponseIntegrationScheduler } from "../atbc-response-integration.scheduler";
 import {
   E2EDataSources,

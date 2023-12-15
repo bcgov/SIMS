@@ -1,7 +1,6 @@
-import { InjectQueue, Process, Processor } from "@nestjs/bull";
+import { Process } from "@nestjs/bull";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
-import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
 import { ATBCIntegrationProcessingService } from "@sims/integrations/atbc-integration";
 import {
