@@ -1,4 +1,8 @@
-import { Patch, UnprocessableEntityException } from "@nestjs/common";
+import {
+  Controller,
+  Patch,
+  UnprocessableEntityException,
+} from "@nestjs/common";
 import { ApiTags, ApiUnprocessableEntityResponse } from "@nestjs/swagger";
 import { StudentService } from "../../services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -16,7 +20,7 @@ import { DISABILITY_REQUEST_NOT_ALLOWED } from "../../constants";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
-//@Controller("atbc") // TODO: This is commented as part of #2539 - Suspend any ATBC integration.
+@Controller("atbc")
 @ApiTags(`${ClientTypeBaseRoute.Student}-atbc`)
 export class ATBCStudentController extends BaseController {
   constructor(
