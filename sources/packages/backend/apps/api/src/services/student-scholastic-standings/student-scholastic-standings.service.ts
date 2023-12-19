@@ -147,7 +147,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         })
         .innerJoin("offering.educationProgram", "educationProgram")
         .innerJoin("offering.institutionLocation", "institutionLocation")
-        .leftJoin("offering.parentOffering", "parentOffering")
+        .innerJoin("offering.parentOffering", "parentOffering")
         .getOne();
 
       // Check for restrictions and apply if any.

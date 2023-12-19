@@ -137,7 +137,7 @@ export interface EducationProgramOfferingAPIOutDTO {
   institutionName: string;
   validationWarnings: string[];
   validationInfos: string[];
-  parentOfferingId?: number;
+  parentOfferingId: number;
 }
 
 export interface StudyBreakAPIOutDTO {
