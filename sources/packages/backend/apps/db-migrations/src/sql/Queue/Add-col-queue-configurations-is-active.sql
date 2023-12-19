@@ -1,5 +1,5 @@
 ALTER TABLE
-  "queue_configurations"
+  sims.queue_configurations
 ADD
   COLUMN "is_active" BOOLEAN NOT NULL DEFAULT TRUE;
 
