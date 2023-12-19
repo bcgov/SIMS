@@ -156,8 +156,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
 
   /**
    * Update offering parent ids for given offerings.
-   * * When creating a new offering, parent id and
-   * * the primary id are the same.
+   * When creating a new offering, parent id and
+   * the primary id are the same.
    * @param newOfferings list of newly created offerings.
    * @param offeringRepo offering repo
    * @returns update result.
