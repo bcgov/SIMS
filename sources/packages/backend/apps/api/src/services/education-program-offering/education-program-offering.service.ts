@@ -160,6 +160,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * * the primary id are the same.
    * @param newOfferings list of newly created offerings.
    * @param offeringRepo offering repo
+   * @returns update result.
    */
   private async saveBulkOfferingParentId(
     newOfferings: number[],
