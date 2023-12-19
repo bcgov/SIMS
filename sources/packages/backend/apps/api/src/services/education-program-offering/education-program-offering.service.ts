@@ -324,6 +324,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offerings.lacksStudyBreaks",
         "offerings.offeringIntensity",
         "offerings.yearOfStudy",
+        "parentOffering.id",
         "offerings.showYearOfStudy",
         "offerings.hasOfferingWILComponent",
         "offerings.offeringWILType",
@@ -340,7 +341,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "institutionLocation.name",
         "institution.legalOperatingName",
         "institution.operatingName",
-        "parentOffering.id",
       ])
       .innerJoin("offerings.educationProgram", "educationProgram")
       .innerJoin("offerings.institutionLocation", "institutionLocation")
@@ -705,7 +705,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offering.studyBreaks",
         "offering.offeringDeclaration",
         "offering.offeringType",
-        "parentOffering.id",
         "offering.assessedDate",
         "offering.submittedDate",
         "offering.courseLoad",
@@ -723,6 +722,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "educationProgram.credentialType",
         "educationProgram.deliveredOnline",
         "educationProgram.deliveredOnSite",
+        "parentOffering.id",
       ])
       .innerJoin("offering.educationProgram", "educationProgram")
       .innerJoin("offering.institutionLocation", "institutionLocation")
