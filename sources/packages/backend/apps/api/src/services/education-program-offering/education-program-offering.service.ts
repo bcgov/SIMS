@@ -25,6 +25,7 @@ import {
 } from "@sims/sims-db";
 import {
   DataSource,
+  In,
   QueryFailedError,
   Repository,
   UpdateResult,
@@ -95,6 +96,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     );
     programOffering.offeringStatus = offeringValidation.offeringStatus;
     programOffering.creator = { id: userId } as User;
+    // When creating a new offering, parent id and the primary id are the same.
+    programOffering.parentOffering = programOffering;
     return this.repo.save(programOffering);
   }
 
@@ -132,15 +135,46 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         if (promises.length >= maxPromisesAllowed) {
           // Waits for all be processed.
           const insertResults = await Promise.all(promises);
+          await this.saveBulkOfferingParentId(
+            insertResults.map((result) => result.createdOfferingId),
+            offeringRepo,
+          );
           allResults.push(...insertResults);
           // Clear the array.
           promises.length = 0;
         }
       }
       const finalResults = await Promise.all(promises);
+      await this.saveBulkOfferingParentId(
+        finalResults.map((result) => result.createdOfferingId),
+        offeringRepo,
+      );
       allResults.push(...finalResults);
       return allResults;
     });
+  }
+
+  /**
+   * Update offering parent ids for given offerings.
+   * * When creating a new offering, parent id and
+   * * the primary id are the same.
+   * @param newOfferings list of newly created offerings.
+   * @param offeringRepo offering repo
+   */
+  private async saveBulkOfferingParentId(
+    newOfferings: number[],
+    offeringRepo: Repository<EducationProgramOffering>,
+  ): Promise<UpdateResult> {
+    return offeringRepo.update(
+      {
+        id: In(newOfferings),
+      },
+      {
+        parentOffering: {
+          id: () => "id",
+        },
+      },
+    );
   }
 
   /**
@@ -306,11 +340,13 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "institutionLocation.name",
         "institution.legalOperatingName",
         "institution.operatingName",
+        "parentOffering.id",
       ])
       .innerJoin("offerings.educationProgram", "educationProgram")
       .innerJoin("offerings.institutionLocation", "institutionLocation")
       .innerJoin("institutionLocation.institution", "institution")
       .leftJoin("offerings.assessedBy", "assessedBy")
+      .leftJoin("offerings.parentOffering", "parentOffering")
       .andWhere("offerings.id= :offeringId", {
         offeringId: offeringId,
       })
@@ -686,12 +722,14 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "educationProgram.credentialType",
         "educationProgram.deliveredOnline",
         "educationProgram.deliveredOnSite",
+        "parentOffering.id",
       ])
       .innerJoin("offering.educationProgram", "educationProgram")
       .innerJoin("offering.institutionLocation", "institutionLocation")
       .innerJoin("institutionLocation.institution", "institution")
       .leftJoin("offering.assessedBy", "assessedBy")
       .leftJoin("offering.precedingOffering", "precedingOffering")
+      .leftJoin("offering.parentOffering", "parentOffering")
       .where("offering.id = :offeringId", {
         offeringId,
       });

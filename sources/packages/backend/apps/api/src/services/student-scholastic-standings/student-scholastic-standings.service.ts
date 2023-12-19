@@ -136,12 +136,18 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       // Get existing offering.
       const existingOffering = await this.offeringRepo
         .createQueryBuilder("offering")
-        .select(["offering", "educationProgram.id", "institutionLocation.id"])
+        .select([
+          "offering",
+          "educationProgram.id",
+          "institutionLocation.id",
+          "parentOffering.id",
+        ])
         .where("offering.id = :offeringId", {
           offeringId: application.currentAssessment.offering.id,
         })
         .innerJoin("offering.educationProgram", "educationProgram")
         .innerJoin("offering.institutionLocation", "institutionLocation")
+        .leftJoin("offering.parentOffering", "parentOffering")
         .getOne();
 
       // Check for restrictions and apply if any.
