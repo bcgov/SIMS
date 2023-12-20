@@ -58,6 +58,7 @@ export interface ProgramOfferingHeader {
   assessedDate?: Date;
   effectiveEndDate?: Date; // This field is only for programs.
   locationName: string; // This field is offering specific.
+  parentOfferingId: number;
 }
 
 export interface ProgramOfferingApprovalLabels {

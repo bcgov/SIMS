@@ -68,13 +68,14 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
     const savedFakeEducationProgram = await db.educationProgram.save(
       fakeEducationProgram,
     );
+    const newOffering = createFakeEducationProgramOffering(
+      savedFakeEducationProgram,
+      collegeFLocation,
+    );
+    newOffering.parentOffering = newOffering;
     const savedEducationProgramOffering =
-      await db.educationProgramOffering.save(
-        createFakeEducationProgramOffering(
-          savedFakeEducationProgram,
-          collegeFLocation,
-        ),
-      );
+      await db.educationProgramOffering.save(newOffering);
+
     const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}/offering/${savedEducationProgramOffering.id}`;
     const studyBreak = {
       breakStartDate: "2023-12-01",
@@ -176,13 +177,14 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       const savedFakeEducationProgram = await db.educationProgram.save(
         fakeEducationProgram,
       );
+      const newOffering = createFakeEducationProgramOffering(
+        savedFakeEducationProgram,
+        collegeFLocation,
+      );
+
+      newOffering.parentOffering = newOffering;
       const savedEducationProgramOffering =
-        await db.educationProgramOffering.save(
-          createFakeEducationProgramOffering(
-            savedFakeEducationProgram,
-            collegeFLocation,
-          ),
-        );
+        await db.educationProgramOffering.save(newOffering);
       const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}/offering/${savedEducationProgramOffering.id}`;
       const studyBreak = {
         breakStartDate: "2023-12-01",
@@ -285,13 +287,14 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
     const savedFakeEducationProgram = await db.educationProgram.save(
       fakeEducationProgram,
     );
+    const newOffering = createFakeEducationProgramOffering(
+      savedFakeEducationProgram,
+      collegeFLocation,
+    );
+
+    newOffering.parentOffering = newOffering;
     const savedEducationProgramOffering =
-      await db.educationProgramOffering.save(
-        createFakeEducationProgramOffering(
-          savedFakeEducationProgram,
-          collegeFLocation,
-        ),
-      );
+      await db.educationProgramOffering.save(newOffering);
     const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}/offering/${savedEducationProgramOffering.id}`;
     const studyBreak = {
       breakStartDate: "2023-12-01",
