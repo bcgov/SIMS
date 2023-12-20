@@ -215,8 +215,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     const parentOfferingId = numberToText(
       application.currentAssessment.offering.parentOffering.id,
     );
-    application.currentAssessment.offering.parentOffering.id;
-    // Line 1 validations.
+    // Line 1 validations
     const firstDisbursementId = numberToText(firstDisbursement.id);
     expect(line1).toBe(
       `${assessmentId}${firstDisbursementId}${defaultApplicationNumber}A1B2C3D4    242963189Doe                      John           19980113B   SI       Address Line 1           Address Line 2           Victoria                 BC  Z1Z1Z1          Program                  Program description                               undergraduateCertificate 0001    8   0512123401234ADR1                         6${currentOfferingId}${parentOfferingId}                              2000081620001205000033330000004444000000555500000066660050100F2000060120002001COMP20000601000010000000015161000008040500N NNN            20000602        000166429600000000000001664296000000000000000000001NNN000000000000000000000000000000000000000000000000000000000000NN0000000000000144430000000000000000000000000000000000007777000000336667000009874600000000000000000000000000000000000000000000002200000120000100023789650009656600 0000000000000000000000000000000000000000000000000000000000000000000000DISS2000081520000815Completed Sent      20000816                        CSLF0000100000BCSL0000000000CSGP0000200000CSGD0000300000CSGF0000400000CSGT0000500000BCAG0000700000SBSD0000900000BGPD0000800000    0000000000`,
