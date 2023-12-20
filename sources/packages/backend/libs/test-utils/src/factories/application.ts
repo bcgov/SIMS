@@ -238,6 +238,7 @@ export async function saveFakeApplication(
   });
   fakeOffering.offeringIntensity =
     options?.offeringIntensity ?? OfferingIntensity.fullTime;
+  fakeOffering.parentOffering = fakeOffering;
   const savedOffering = await offeringRepo.save(fakeOffering);
 
   if (savedApplication.applicationStatus !== ApplicationStatus.Draft) {
