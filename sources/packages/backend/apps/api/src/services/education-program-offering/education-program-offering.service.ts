@@ -135,20 +135,20 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         if (promises.length >= maxPromisesAllowed) {
           // Waits for all be processed.
           const insertResults = await Promise.all(promises);
-          await this.saveBulkOfferingParentId(
-            insertResults.map((result) => result.createdOfferingId),
-            offeringRepo,
+          const newOfferings = insertResults.map(
+            (result) => result.createdOfferingId,
           );
+          await this.saveBulkOfferingParentId(newOfferings, offeringRepo);
           allResults.push(...insertResults);
           // Clear the array.
           promises.length = 0;
         }
       }
       const finalResults = await Promise.all(promises);
-      await this.saveBulkOfferingParentId(
-        finalResults.map((result) => result.createdOfferingId),
-        offeringRepo,
+      const newOfferings = finalResults.map(
+        (result) => result.createdOfferingId,
       );
+      await this.saveBulkOfferingParentId(newOfferings, offeringRepo);
       allResults.push(...finalResults);
       return allResults;
     });
