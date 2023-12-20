@@ -47,7 +47,6 @@ import {
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { ConfigModule } from "@sims/utilities/config";
-import { ATBCStudentController } from "./route-controllers/atbc/atbc.students.controller";
 import {
   DisbursementOverawardService,
   SequenceControlService,
@@ -76,7 +75,6 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     StudentAccountApplicationStudentsController,
     EducationProgramOfferingStudentsController,
     RestrictionStudentsController,
-    ATBCStudentController,
     ProgramYearStudentsController,
     OverawardStudentsController,
     ApplicationOfferingChangeRequestStudentsController,

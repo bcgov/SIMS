@@ -1,7 +1,6 @@
-import { InjectQueue, Process, Processor } from "@nestjs/bull";
+import { Process } from "@nestjs/bull";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
-import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
 import { ATBCIntegrationProcessingService } from "@sims/integrations/atbc-integration";
 import {
@@ -12,10 +11,8 @@ import {
 /**
  * Process all the applied PD requests to verify the status with ATBC.
  */
-@Processor(QueueNames.ATBCResponseIntegration)
 export class ATBCResponseIntegrationScheduler extends BaseScheduler<void> {
   constructor(
-    @InjectQueue(QueueNames.ATBCResponseIntegration)
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly atbcIntegrationProcessingService: ATBCIntegrationProcessingService,

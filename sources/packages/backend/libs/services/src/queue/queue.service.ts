@@ -27,6 +27,9 @@ export class QueueService {
         queueName: true,
         queueConfiguration: true as unknown,
       },
+      where: {
+        isActive: true,
+      },
     });
     return this.queueConfiguration;
   }

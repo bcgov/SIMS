@@ -12,7 +12,8 @@ import {
 } from "../../testHelpers";
 import { KeycloakConfig } from "@sims/auth/config";
 
-describe("Test ATBC Controller", () => {
+// TODO: This is skipped as part of #2539 - Suspend any ATBC integration.
+describe.skip("Test ATBC Controller", () => {
   let accessToken: string;
   let app: INestApplication;
   let atbcService: ATBCService;

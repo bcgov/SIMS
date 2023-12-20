@@ -1,10 +1,7 @@
 import { createMock } from "@golevelup/ts-jest";
 import { INestApplication } from "@nestjs/common";
-import { QueueNames, addDays, formatDate } from "@sims/utilities";
-import {
-  createTestingAppModule,
-  describeProcessorRootTest,
-} from "../../../../../test/helpers";
+import { addDays, formatDate } from "@sims/utilities";
+import { createTestingAppModule } from "../../../../../test/helpers";
 import { ATBCResponseIntegrationScheduler } from "../atbc-response-integration.scheduler";
 import {
   E2EDataSources,
@@ -20,7 +17,8 @@ import {
 } from "@sims/integrations/services";
 import { DisabilityStatus, Student } from "@sims/sims-db";
 
-describe(describeProcessorRootTest(QueueNames.ATBCResponseIntegration), () => {
+// TODO: This is skipped as part of #2539 - Suspend any ATBC integration.
+describe.skip("describeProcessorRootTest(QueueNames.ATBCResponseIntegration)", () => {
   let app: INestApplication;
   let processor: ATBCResponseIntegrationScheduler;
   let db: E2EDataSources;

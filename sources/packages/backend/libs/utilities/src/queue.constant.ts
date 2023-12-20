@@ -23,7 +23,6 @@ export enum QueueNames {
   PartTimeMSFAAProcessResponseIntegration = "part-time-msfaa-process-response-integration",
   FullTimeMSFAAProcessResponseIntegration = "full-time-msfaa-process-response-integration",
   SFASIntegration = "sfas-integration",
-  ATBCResponseIntegration = "atbc-response-integration",
   ProcessNotifications = "process-notifications",
   ProcessArchiveApplications = "archive-applications",
   AssessmentWorkflowEnqueuer = "assessment-workflow-enqueuer",

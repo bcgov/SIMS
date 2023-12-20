@@ -687,9 +687,6 @@ export class StudentService extends RecordDataModelService<Student> {
     if (pdVerified) {
       return DisabilityStatus.PD;
     }
-    if (pdVerified === false) {
-      return DisabilityStatus.Declined;
-    }
     return DisabilityStatus.NotRequested;
   }
 
