@@ -198,7 +198,8 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "inputType": "hidden",
-                    "id": "eq2rzu6"
+                    "id": "eq2rzu6",
+                    "isNew": false
                 },
                 {
                     "label": "Field Of Study Codes",
@@ -271,7 +272,8 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "inputType": "hidden",
-                    "id": "e3k12bd"
+                    "id": "e3k12bd",
+                    "isNew": false
                 },
                 {
                     "label": "SABC Codes",
@@ -286,7 +288,7 @@
                     "encrypted": false,
                     "redrawOn": "",
                     "customDefaultValue": "",
-                    "calculateValue": "value =\r\n{\r\n    11: \"Z\",\r\n    \"09\": \"Z\",\r\n    52: \"Z\",\r\n    \"01\": \"Z\",\r\n    \"03\": \"Z\",\r\n    \"05\": \"X\",\r\n    16: \"X\",\r\n    23: \"X\",\r\n    24: \"X\",\r\n    25: \"X\",\r\n    42: \"X\",\r\n    27: \"X\",\r\n    30: \"X\",\r\n    38: \"X\",\r\n    40: \"X\",\r\n    45: \"X\",\r\n    50: \"X\",\r\n    54: \"X\",\r\n    55: \"X\",\r\n    13: \"W\",\r\n    19: \"W\",\r\n    28: \"W\",\r\n    31: \"W\",\r\n    44: \"W\",\r\n    60: \"V\",\r\n    \"04\": \"U\",\r\n    10: \"U\",\r\n    14: \"U\",\r\n    15: \"U\",\r\n    29: \"U\",\r\n    41: \"U\",\r\n    26: \"U\",\r\n    22: \"S\",\r\n    43: \"S\",\r\n    51: \"R\",\r\n    39: \"Q\",\r\n    12: \"P\",\r\n    21: \"P\",\r\n    46: \"P\",\r\n    47: \"P\",\r\n    48: \"P\",\r\n    49: \"P\"\r\n};",
+                    "calculateValue": "value =\r\n{\r\n    11: \"Z\",\r\n    \"09\": \"Z\",\r\n    52: \"Z\",\r\n    \"01\": \"Z\",\r\n    \"03\": \"Z\",\r\n    \"05\": \"X\",\r\n    16: \"X\",\r\n    23: \"X\",\r\n    24: \"X\",\r\n    25: \"X\",\r\n    42: \"X\",\r\n    27: \"X\",\r\n    30: \"X\",\r\n    38: \"X\",\r\n    40: \"X\",\r\n    45: \"X\",\r\n    50: \"X\",\r\n    53: \"X\",\r\n    54: \"X\",\r\n    55: \"X\",\r\n    13: \"W\",\r\n    19: \"W\",\r\n    28: \"W\",\r\n    31: \"W\",\r\n    44: \"W\",\r\n    60: \"V\",\r\n    \"04\": \"U\",\r\n    10: \"U\",\r\n    14: \"U\",\r\n    15: \"U\",\r\n    29: \"U\",\r\n    41: \"U\",\r\n    26: \"U\",\r\n    22: \"S\",\r\n    43: \"S\",\r\n    51: \"R\",\r\n    61: \"R\",\r\n    39: \"Q\",\r\n    12: \"P\",\r\n    21: \"P\",\r\n    32: \"P\",\r\n    33: \"P\",\r\n    34: \"P\",\r\n    35: \"P\",\r\n    36: \"P\",\r\n    37: \"P\",\r\n    46: \"P\",\r\n    47: \"P\",\r\n    48: \"P\",\r\n    49: \"P\"\r\n};",
                     "calculateServer": true,
                     "key": "sabcCodes",
                     "tags": [],
@@ -334,7 +336,7 @@
                         "unique": false
                     },
                     "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": ""
                     },
@@ -755,7 +757,7 @@
                         "maxLength": "",
                         "minWords": "",
                         "maxWords": "",
-                        "pattern": "^(11|09|52|01|03|05|16|23|24|25|42|27|30|38|40|45|50|54|55|13|28|31|44|60|04|10|14|15|29|41|26|22|43|51|39|12|21|46|47|48){1}\\.[0-9]{4}$",
+                        "pattern": "^[0-9]{2}\\.[0-9]{4}$",
                         "customMessage": "Invalid format",
                         "custom": "",
                         "customPrivate": false,
@@ -771,7 +773,7 @@
                     "tags": [],
                     "properties": {},
                     "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": "",
                         "json": ""
@@ -858,7 +860,7 @@
                     "redrawOn": "",
                     "clearOnHide": true,
                     "customDefaultValue": "",
-                    "calculateValue": "value = data.fieldOfStudyCodes[data.sabcCodes[data.cipCode.substring(0, 2)] + data.levelOfStudyCodes[data.credentialType]];",
+                    "calculateValue": "const sabcCode = data.sabcCodes[data.cipCode.substring(0, 2)];\r\nconst levelOfStudyCode =  data.levelOfStudyCodes[data.credentialType];\r\nvalue = (sabcCode && levelOfStudyCode) ? data.fieldOfStudyCodes[sabcCode + levelOfStudyCode] : 20;",
                     "calculateServer": true,
                     "allowCalculateOverride": false,
                     "validateOn": "change",
