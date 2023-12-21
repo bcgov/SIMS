@@ -31,7 +31,6 @@
       </bpmn:lane>
       <bpmn:lane id="Lane_0ejpwa7" name="Primary Assessed Need and Award Configuration">
         <bpmn:flowNodeRef>Event_1sg75ph</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_1w2ifvb</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_15d88qb</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1j6ep9h</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0re3zsg</bpmn:flowNodeRef>
@@ -81,7 +80,6 @@
           </bpmn:lane>
           <bpmn:lane id="Lane_0pbg2l1" name="Primary Assessed Need and Award Eligibility">
             <bpmn:flowNodeRef>Event_1sg75ph</bpmn:flowNodeRef>
-            <bpmn:flowNodeRef>Event_1w2ifvb</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_15d88qb</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_1j6ep9h</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_0re3zsg</bpmn:flowNodeRef>
@@ -172,29 +170,19 @@
     <bpmn:sequenceFlow id="Flow_0s0yqph" sourceRef="Event_0zn13zd" targetRef="Gateway_03c2fh6" />
     <bpmn:sequenceFlow id="Flow_191hsl9" sourceRef="Event_105ptqe" targetRef="Gateway_03c2fh6" />
     <bpmn:sequenceFlow id="Flow_1p7fyev" sourceRef="Gateway_03c2fh6" targetRef="Activity_0pvobml" />
-    <bpmn:intermediateThrowEvent id="Event_1w2ifvb" name="calculatedDataCourseLoadPercentage">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=if offeringCourseLoad &#60;= 40&#10;then 40 / 100&#10;else offeringCourseLoad / 100" target="calculatedDataCourseLoadPercentage" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_08xi7o2</bpmn:incoming>
-      <bpmn:outgoing>Flow_1dzk3qk</bpmn:outgoing>
-    </bpmn:intermediateThrowEvent>
-    <bpmn:sequenceFlow id="Flow_1dzk3qk" sourceRef="Event_1w2ifvb" targetRef="Event_1sg75ph" />
     <bpmn:sequenceFlow id="Flow_06kuega" sourceRef="Event_1sg75ph" targetRef="Event_15d88qb" />
     <bpmn:intermediateThrowEvent id="Event_1sg75ph" name="Calculate Course Load Tuition Totals">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=offeringActualTuitionCosts * calculatedDataCourseLoadPercentage" target="calculatedDataActualTuitionCosts" />
-          <zeebe:output source="=offeringMandatoryFees * calculatedDataCourseLoadPercentage" target="calculatedDataMandatoryFees" />
-          <zeebe:output source="=offeringProgramRelatedCosts * calculatedDataCourseLoadPercentage" target="calculatedDataProgramRelatedCosts" />
+          <zeebe:output source="=offeringActualTuitionCosts" target="calculatedDataActualTuitionCosts" />
+          <zeebe:output source="=offeringMandatoryFees" target="calculatedDataMandatoryFees" />
+          <zeebe:output source="=offeringProgramRelatedCosts" target="calculatedDataProgramRelatedCosts" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1dzk3qk</bpmn:incoming>
+      <bpmn:incoming>Flow_08xi7o2</bpmn:incoming>
       <bpmn:outgoing>Flow_06kuega</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:sequenceFlow id="Flow_08xi7o2" sourceRef="Activity_0pvobml" targetRef="Event_1w2ifvb" />
+    <bpmn:sequenceFlow id="Flow_08xi7o2" sourceRef="Activity_0pvobml" targetRef="Event_1sg75ph" />
     <bpmn:businessRuleTask id="Activity_0pvobml" name="dmnPartTimeProgramYearMaximums">
       <bpmn:extensionElements>
         <zeebe:calledDecision decisionId="dmnPartTimeProgramYearMaximums" resultVariable="dmnPartTimeProgramYearMaximums" />
@@ -745,12 +733,6 @@ dmnX (comes from dmn)</bpmn:text>
       <bpmndi:BPMNShape id="Gateway_03c2fh6_di" bpmnElement="Gateway_03c2fh6" isMarkerVisible="true">
         <dc:Bounds x="2385" y="595" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1w2ifvb_di" bpmnElement="Event_1w2ifvb">
-        <dc:Bounds x="2652" y="1122" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="2627" y="1165" width="87" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1sg75ph_di" bpmnElement="Event_1sg75ph">
         <dc:Bounds x="2762" y="1122" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -1078,19 +1060,15 @@ dmnX (comes from dmn)</bpmn:text>
         <di:waypoint x="2435" y="620" />
         <di:waypoint x="2480" y="620" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1dzk3qk_di" bpmnElement="Flow_1dzk3qk">
-        <di:waypoint x="2688" y="1140" />
-        <di:waypoint x="2762" y="1140" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_06kuega_di" bpmnElement="Flow_06kuega">
         <di:waypoint x="2798" y="1140" />
         <di:waypoint x="2862" y="1140" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_08xi7o2_di" bpmnElement="Flow_08xi7o2">
         <di:waypoint x="2580" y="620" />
-        <di:waypoint x="2610" y="620" />
-        <di:waypoint x="2610" y="1140" />
-        <di:waypoint x="2652" y="1140" />
+        <di:waypoint x="2671" y="620" />
+        <di:waypoint x="2671" y="1140" />
+        <di:waypoint x="2762" y="1140" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_11ejw2w_di" bpmnElement="Flow_11ejw2w">
         <di:waypoint x="2898" y="1140" />
