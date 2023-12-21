@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="dmnPartTimeAssessmentDecisions" name="dmnPartTimeAssessmentDecisions" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.14.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0" camunda:diagramRelationId="1a575ead-1e6d-468c-901a-766a35569b38">
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="dmnPartTimeAssessmentDecisions" name="dmnPartTimeAssessmentDecisions" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.18.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0" camunda:diagramRelationId="1a575ead-1e6d-468c-901a-766a35569b38">
   <decision id="dmnPartTimeProgramYearMaximums" name="dmnPartTimeProgramYearMaximums">
     <decisionTable id="DecisionTable_1oyvbif" hitPolicy="FIRST">
       <input id="InputClause_02zjhj9" label="programYear">
@@ -159,19 +159,19 @@
           <text>"2023-2024"</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_19bzpvn">
-          <text>4000</text>
+          <text>2800</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_14fu22m">
-          <text>3600</text>
+          <text>2520</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0cx4qe8">
-          <text>3840</text>
+          <text>2688</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_18eyxuc">
-          <text>80</text>
+          <text>56</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0hf360h">
-          <text>120</text>
+          <text>84</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1o64ycq">
           <text>1000</text>
@@ -750,13 +750,13 @@
           <text>1</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_146nrts">
-          <text>32102</text>
+          <text>35429</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0oc9gil">
-          <text>0.114240</text>
+          <text>0.079968</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_010wzk6">
-          <text>63615</text>
+          <text>66942</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1vc6les">
           <text>0</text>
@@ -771,13 +771,13 @@
           <text>0</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0g8al6o">
-          <text>32102</text>
+          <text>35429</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0m9yef3">
-          <text>0.05712</text>
+          <text>0.057119284</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1kcw7uu">
-          <text>49609</text>
+          <text>52936</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_1poq4vj">
@@ -788,34 +788,34 @@
           <text>2</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0mpa451">
-          <text>45399</text>
+          <text>50104</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1hr31g0">
-          <text>0.082560</text>
+          <text>0.057792</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_17ujtav">
-          <text>89004</text>
+          <text>93709</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0e08efb">
-          <text>45399</text>
+          <text>50104</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_16t0sl4">
-          <text>0.00183466</text>
+          <text>0.001284262</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1h0dred">
           <text>0</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0mqxc0u">
-          <text>89004</text>
+          <text>93709</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1twitak">
-          <text>45399</text>
+          <text>50104</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_10l09c2">
-          <text>0.04128</text>
+          <text>0.04127967</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1rv8wdg">
-          <text>69624</text>
+          <text>74329</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_1o38dz5">
@@ -826,34 +826,34 @@
           <text>3</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_1b38whb">
-          <text>55602</text>
+          <text>61365</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0l9qnzu">
-          <text>0.071040</text>
+          <text>0.049728</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0n5txx7">
-          <text>106278</text>
+          <text>112041</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1njzeyi">
-          <text>55602</text>
+          <text>61365</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1fw6lkp">
-          <text>0.00157866</text>
+          <text>0.001105062</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0br2ulh">
           <text>0</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0w4zxli">
-          <text>106278</text>
+          <text>112041</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1jgpdic">
-          <text>55602</text>
+          <text>61365</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1q0cjkw">
-          <text>0.03552</text>
+          <text>0.035519773</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1s84zrm">
-          <text>83755</text>
+          <text>89518</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_02evq4z">
@@ -864,34 +864,34 @@
           <text>4</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_1lirax8">
-          <text>64204</text>
+          <text>70859</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1tue1px">
-          <text>0.068160</text>
+          <text>0.047712</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1y7zzi7">
-          <text>117021</text>
+          <text>123676</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_132wkau">
-          <text>64204</text>
+          <text>70859</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1ss5azf">
-          <text>0.00151466</text>
+          <text>0.001060262</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1t2eqs6">
-          <text>0.00227200</text>
+          <text>0.0015904</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0ki47s0">
-          <text>117021</text>
+          <text>123676</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1lfjeh5">
-          <text>64204</text>
+          <text>70859</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1xpa9t5">
-          <text>0.03408</text>
+          <text>0.034079936</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1jzz4zi">
-          <text>93547</text>
+          <text>100202</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_0yn0oi4">
@@ -902,34 +902,34 @@
           <text>5</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0mvj89h">
-          <text>71782</text>
+          <text>79222</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0aux7j0">
-          <text>0.065280</text>
+          <text>0.045696</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_06sa2rx">
-          <text>126929</text>
+          <text>134369</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0zllnbs">
-          <text>71782</text>
+          <text>79222</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0rv7ikh">
-          <text>0.00145066</text>
+          <text>0.001015462</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1fhqv4y">
-          <text>0.00217600</text>
+          <text>0.0015232</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1vi9rmu">
-          <text>126929</text>
+          <text>134369</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1egdfy8">
-          <text>71782</text>
+          <text>79222</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1xu76ss">
-          <text>0.03264</text>
+          <text>0.032640035</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_04ylsx9">
-          <text>102419</text>
+          <text>109859</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_08alp1j">
@@ -940,34 +940,34 @@
           <text>6</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_1h90dwg">
-          <text>78634</text>
+          <text>86784</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0lfggsr">
-          <text>0.062400</text>
+          <text>0.04368</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1n8tl65">
-          <text>136326</text>
+          <text>144476</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1ek5v0k">
-          <text>78634</text>
+          <text>86784</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_16hs8da">
-          <text>0.00138668</text>
+          <text>0.000970676</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1bsn5ga">
-          <text>0.00208002</text>
+          <text>0.001456014</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1nfwq6j">
-          <text>136326</text>
+          <text>144476</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0c7tm74">
-          <text>78634</text>
+          <text>86784</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_053nmcm">
-          <text>0.03120</text>
+          <text>0.031200166</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0012gnh">
-          <text>110685</text>
+          <text>118835</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_0ca5d8i">
@@ -978,34 +978,34 @@
           <text>&gt; 7</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_1mhcmbi">
-          <text>84933</text>
+          <text>93737</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1j45rpo">
-          <text>0.060480</text>
+          <text>0.042336</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0pw5n8d">
-          <text>144457</text>
+          <text>153261</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_06qu2lc">
-          <text>84933</text>
+          <text>93737</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_04uliw4">
-          <text>0.00134400</text>
+          <text>0.0009408</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_18gg2hi">
-          <text>0.00201600</text>
+          <text>0.0014112</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_13icz9h">
-          <text>144457</text>
+          <text>153261</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0pcmjsa">
-          <text>84933</text>
+          <text>93737</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0bzrdbq">
-          <text>0.03024</text>
+          <text>0.030239903</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1xhhqre">
-          <text>118002</text>
+          <text>126806</text>
         </outputEntry>
       </rule>
     </decisionTable>
