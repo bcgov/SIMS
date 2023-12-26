@@ -344,6 +344,7 @@ export class EducationProgramOfferingControllerService {
       validationWarnings: validatedOffering.warnings.map(
         (warning) => warning.typeCode,
       ),
+      parentOfferingId: offering.parentOffering.id,
     };
   }
 

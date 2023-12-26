@@ -128,6 +128,7 @@ export class EducationProgramOfferingAPIOutDTO {
   institutionName: string;
   validationWarnings: string[];
   validationInfos: string[];
+  parentOfferingId: number;
 }
 
 export class EducationProgramOfferingSummaryViewAPIOutDTO {

@@ -26,6 +26,14 @@
         v-if="headerDetails.locationName"
         title="Location"
         :value="headerDetails.locationName"
+      /><v-divider-vertical-opaque
+        v-if="headerDetails.parentOfferingId"
+        class="mx-2 my-0"
+      />
+      <header-title-value
+        v-if="headerDetails.parentOfferingId"
+        title="Parent offering ID"
+        :value="headerDetails.parentOfferingId"
       />
     </div>
     <!-- Assessment details if assessed by ministry -->

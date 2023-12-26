@@ -23934,7 +23934,7 @@
                 }
               ],
               "className": "alert alert-info fa fa-info-circle",
-              "content": "<strong> Info!</strong><br /> I understand that if I qualify for student loan funding, I am required to start making payments on the first day of the seventh month after leaving studies; my payments are made up of interest and principal; and interest will not be charged during the six month non-repayment period and that interest will start accruing on the 1st day of the seventh month after leaving studies.",
+              "content": "<strong> Info!</strong><br /> I am required to start making payments on the first day of the seventh month after leaving studies; my payments are made up of principal and any accrued interest, if applicable.",
               "type": "htmlelement",
               "hideLabel": false,
               "tags": [],
