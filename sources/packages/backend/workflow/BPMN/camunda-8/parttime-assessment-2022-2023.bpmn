@@ -205,17 +205,16 @@
     <bpmn:intermediateThrowEvent id="Event_1j6ep9h" name="calculatedDataTotalAssessedNeed">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=sum([&#10;  calculatedDataActualTuitionCosts,&#10;  calculatedDataMandatoryFees,&#10;  calculatedDataProgramRelatedCosts,&#10;  calculatedDataTransportationAllownace,&#10;  calculatedDataMiscellaneousAllowance,&#10;  calculatedDataTotalChildCareCost&#10;][item != null])" target="calculatedDataTotalAssessedNeed" />
+          <zeebe:output source="=sum([&#10;  calculatedDataActualTuitionCosts,&#10;  calculatedDataMandatoryFees,&#10;  calculatedDataProgramRelatedCosts,&#10;  calculatedDataTransportationAllownace,&#10;  calculatedDataMiscellaneousAllowance,&#10;  calculatedDataChildCareCost&#10;][item != null])" target="calculatedDataTotalAssessedNeed" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0temot0</bpmn:incoming>
       <bpmn:outgoing>Flow_0jntyac</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateThrowEvent id="Event_0re3zsg" name="Calculate calculatedDataTotalChildCareCost">
+    <bpmn:intermediateThrowEvent id="Event_0re3zsg" name="Calculate calculatedDataChildCareCost">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=if &#10;  dmnPartTimeProgramYearMaximums.limitWeeklyChildCare * offeringWeeks &#60; studentDataDaycareCosts11YearsOrUnder + studentDataDaycareCosts12YearsOrOver&#10;then&#10;  dmnPartTimeProgramYearMaximums.limitWeeklyChildCare * offeringWeeks&#10;else&#10;  studentDataDaycareCosts11YearsOrUnder + studentDataDaycareCosts12YearsOrOver" target="calculatedDataChildCareCost" />
-          <zeebe:output source="=if &#10;  studentDataRelationshipStatus = &#34;married&#34; &#10;  and&#10;  calculatedDataPartnerStudentStudyWeeks &#62;=12 &#10;then&#10;  calculatedDataChildCareCost / 2 &#10;else&#10;  calculatedDataChildCareCost" target="calculatedDataTotalChildCareCost" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0lp9mvw</bpmn:incoming>
@@ -758,7 +757,7 @@ dmnX (comes from dmn)</bpmn:text>
       <bpmndi:BPMNShape id="Event_0re3zsg_di" bpmnElement="Event_0re3zsg">
         <dc:Bounds x="3312" y="1122" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="3289" y="1165" width="85" height="40" />
+          <dc:Bounds x="3289" y="1165" width="87" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1pcjqq6" bpmnElement="Event_10tndoy">
