@@ -451,6 +451,10 @@
               {
                 "label": "Partners Income",
                 "value": "partnerincomeappeal"
+              },
+              {
+                "value": "studentdisabilityappeal",
+                "label": "Disability Information"
               }
             ],
             "resource": "",
