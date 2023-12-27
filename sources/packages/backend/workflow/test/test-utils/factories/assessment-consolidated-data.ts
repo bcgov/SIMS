@@ -99,6 +99,7 @@ function getDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
   return {
     appealsStudentIncomeAppealData: null,
     appealsPartnerIncomeAppealData: null,
+    appealsStudentDisabilityAppealData: null,
     studentDataIsYourSpouseACanadianCitizen: null,
     studentDataParentValidSinNumber: null,
     studentDataNumberOfParents: null,
