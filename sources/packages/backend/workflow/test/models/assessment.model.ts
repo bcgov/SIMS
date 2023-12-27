@@ -73,6 +73,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   assessmentTriggerType?: AssessmentTriggerType;
   appealsStudentIncomeAppealData?: JSONDoc;
   appealsPartnerIncomeAppealData?: JSONDoc;
+  appealsStudentDisabilityAppealData?: JSONDoc;
   studentDataIsYourSpouseACanadianCitizen?: YesNoOptions;
   studentDataParentValidSinNumber?: YesNoOptions;
   studentDataNumberOfParents?: 1 | 2;
