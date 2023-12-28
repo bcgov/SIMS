@@ -66,6 +66,7 @@ export class UpdateSupportingUserAPIInDTO {
 export class ApplicationAPIOutDTO {
   programYearStartDate: string;
   formName: string;
+  offeringIntensity: string
 }
 
 export class ApplicationSupportingUsersAPIOutDTO {

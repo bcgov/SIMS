@@ -43,6 +43,7 @@ export class UpdateSupportingUserAPIInDTO extends ApplicationIdentifierAPIInDTO 
 export interface ApplicationAPIOutDTO {
   programYearStartDate: string;
   formName: string;
+  offeringIntensity: string;
 }
 
 export interface ApplicationSupportingUsersAPIOutDTO {

@@ -4167,7 +4167,7 @@
                         "unique": false
                       },
                       "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": ""
                       },
@@ -4185,7 +4185,9 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "eeydu6s"
+                      "id": "eeydu6s",
+                      "tags": [],
+                      "customConditional": "show = localStorage.getItem('offeringIntensity') === 'Part Time'"
                     },
                     {
                       "label": "Collection and use of information",

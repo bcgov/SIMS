@@ -210,6 +210,7 @@ export default defineComponent({
             props.supportingUserType,
             getIdentifiedApplication(),
           );
+        localStorage.setItem("offeringIntensity", searchResult.offeringIntensity);
         setInitialData(searchResult.programYearStartDate);
         formName.value = searchResult.formName;
       } catch (error: unknown) {
