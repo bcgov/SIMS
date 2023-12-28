@@ -179,6 +179,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataFamilySize: number;
   totalFederalContribution: number;
   totalProvincialContribution: number;
+  calculatedDataPDPPDStatus: boolean;
 
   // Common variables used in both full-time and part-time.
   // CSGP
