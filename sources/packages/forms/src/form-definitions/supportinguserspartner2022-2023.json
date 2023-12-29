@@ -4198,7 +4198,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "<strong>Collection and use of information</strong>. The information included in this form and authorized above is collected under Sections 26c and 26e of the Freedom of Information and Protection of Privacy Act and under the authority of the Canada Student Financial Assistance Act, R.S.C. 1994, Chapter C-28 and StudentAid BC. The information provided will be used to determine eligibility for a benefit through StudentAid BC and for statistical and evaluation purposes. If you have any questions about the collection and use of this information, contact the Director, StudentAid BC, Ministry of Advanced Education and Skills Training, PO Box 9173, Stn Prov Govt, Victoria, BC V8W 9H7, call 1-800-561-1818 (toll-free in Canada/U.S.) or +1-778-309-4621 from outside North America.",
+                      "content": "<strong>Collection and use of information</strong>",
                       "refreshOnChange": false,
                       "key": "collectionAndUseOfInformation",
                       "type": "htmlelement",
@@ -4264,7 +4264,6 @@
                       "tag": "p",
                       "id": "eadyau",
                       "className": "",
-                      "isNew": false,
                       "tags": []
                     }
                   ],
