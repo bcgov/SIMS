@@ -137,7 +137,7 @@
           "tableView": true,
           "inputType": "radio",
           "label": "Are you a student with disabilities and wish to be assessed for disability funding?",
-          "key": "disabilityInformation",
+          "key": "studentNewPDPPDStatus",
           "values": [
             {
               "value": "yes",

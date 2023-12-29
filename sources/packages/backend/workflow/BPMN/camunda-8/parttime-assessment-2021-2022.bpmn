@@ -587,7 +587,7 @@
     <bpmn:intermediateThrowEvent id="Event_1mkiqso" name="Define PD/PPD Status">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if (is defined(appealsStudentDisabilityAppealData) and appealsStudentDisabilityAppealData != null)&#10;  then&#10;    if appealsStudentDisabilityAppealData.disabilityInformation = &#34;yes&#34;&#10;      then true&#10;    else&#10;      false&#10;else&#10;  if studentDataApplicationPDPPDStatus = &#34;yes&#34;&#10;    then true&#10;  else&#10;    false" target="calculatedDataPDPPDStatus" />
+          <zeebe:output source="=if (is defined(appealsStudentDisabilityAppealData) and appealsStudentDisabilityAppealData != null)&#10;  then&#10;    if appealsStudentDisabilityAppealData.studentNewPDPPDStatus = &#34;yes&#34;&#10;      then true&#10;    else&#10;      false&#10;else&#10;  if studentDataApplicationPDPPDStatus = &#34;yes&#34;&#10;    then true&#10;  else&#10;    false" target="calculatedDataPDPPDStatus" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_15xhu93</bpmn:incoming>
