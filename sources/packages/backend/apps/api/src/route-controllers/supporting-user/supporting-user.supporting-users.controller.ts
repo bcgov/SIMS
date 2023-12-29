@@ -12,7 +12,6 @@ import {
 } from "@nestjs/common";
 import {
   ApplicationService,
-  EducationProgramOfferingService,
   FormService,
   SupportingUserService,
   UserService,
@@ -57,7 +56,6 @@ export class SupportingUserSupportingUsersController extends BaseController {
     private readonly userService: UserService,
     private readonly formService: FormService,
     private readonly workflowClientService: WorkflowClientService,
-    private readonly educationProgramOfferingService: EducationProgramOfferingService
   ) {
     super();
   }
@@ -113,13 +111,8 @@ export class SupportingUserSupportingUsersController extends BaseController {
         ),
       );
     }
-
-    const educationProgramOffering = 
-      await this.educationProgramOfferingService.getProgramOffering(
-        application.data.selectedLocation,
-        application.data.selectedProgram,
-        application.data.selectedOffering,
-      )
+    
+    const offering = application.currentAssessment.offering;
 
     return {
       programYearStartDate: application.programYear.startDate,
@@ -127,7 +120,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
         supportingUserType,
         application.programYear,
       ),
-      offeringIntensity: educationProgramOffering.offeringIntensity
+      offeringIntensity: offering.offeringIntensity,
     };
   }
 

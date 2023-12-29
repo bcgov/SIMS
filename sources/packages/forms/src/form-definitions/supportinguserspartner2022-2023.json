@@ -4187,21 +4187,8 @@
                       "addons": [],
                       "id": "eeydu6s",
                       "tags": [],
-                      "customConditional": "show = localStorage.getItem('offeringIntensity') === 'Full Time';"
-                    },
-                    {
-                      "key": "declarationContent",
-                      "input": false,
-                      "html": "<p><strong>I. I understand that:</strong></p>\n\n<ol>\n\t<li>It is my responsibility to make sure the information on this application and/or all the documents related to it, are accurate.</li>\n\t<li>I will be asked to re-provide this information if the student edits and re-submits an incomplete application.</li>\n\t<li>I am responsible for alerting the student if any of this information changes. The student will be responsible for reporting those changes to my information once the application is complete.</li>\n\t<li>The student&rsquo;s post-secondary institution will have access to information provided on this application form.</li>\n\t<li>It is against the law to make false or misleading statements on this application or all documents related to it.</li>\n\t<li><strong>All information is subject to audit and verification.</strong></li>\n</ol>\n\n<p><strong>II. I understand that by signing my name on this application form means:</strong></p>\n\n<ol>\n\t<li>I certify that the information I have given is correct and complete.</li>\n\t<li>I have authorized the student to immediately notify StudentAid BC of any increase in my income.</li>\n\t<li>I consent to the exchange of information between StudentAid BC and the post-secondary institution about my marital status and financial status. This consent takes effect when I sign this declaration.</li>\n\t<li>I consent to the verification of my Social Insurance Number, name, date of birth and gender, with information contained in Employment and Social Development Canada Social Insurance Registry. This information will be disclosed to Employment and Social Development Canada for the purpose of confirming the accuracy of my identification in the context of my spouse&rsquo;s financial aid application. This consent takes effect when I sign this declaration.</li>\n\t<li>For the purpose of verifying and/or investigating information pertaining to this application, I consent to the collection, use and disclosure of my personal information between the Ministry Post-Secondary Education and Future Skills(or its agent) and the following agencies: financial institutions, Canadian Imperial Bank of Commerce, Royal Bank, Bank of Nova Scotia, post- secondary institutions, credit agencies, WorkSafe BC, other financial aid offices, Land Title and Survey Authority of BC, BC Registry Services, BC Ministry of Social Development and Poverty Reduction/ employment program for persons with disabilities (or a contracted agent of that Ministry), BC Ministry of Children and Family Development, BC Ministry of Attorney General, BC Ministry of Finance, National Student Loans Service Centre, Immigration, Refugees and Citizenship Canada, RoadSafe BC, Employment and Social Development Canada, Crown corporations, Aboriginal Organizations, federal, provincial, municipal ministries/departments/agencies. This consent takes effect when I sign this declaration.</li>\n\t<li>The terms and conditions of this part-time application Declaration apply to all associated documents, including the part-time reassessment form and appendix 8 of the StudentAid BC program.</li>\n</ol>\n",
-                      "type": "content",
-                      "tags": [],
-                      "conditional": {
-                        "show": "true",
-                        "when": null,
-                        "eq": ""
-                      },
-                      "properties": {},
-                      "customConditional": "show = localStorage.getItem('offeringIntensity') === 'Part Time';"
+                      "customConditional": "",
+                      "isNew": false
                     },
                     {
                       "label": "Collection and use of information",
@@ -4275,7 +4262,10 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "eadyau"
+                      "id": "eadyau",
+                      "className": "",
+                      "isNew": false,
+                      "tags": []
                     }
                   ],
                   "placeholder": "",
@@ -4316,9 +4306,9 @@
                     "unique": false
                   },
                   "conditional": {
-                    "show": null,
-                    "when": null,
-                    "eq": ""
+                    "show": "true",
+                    "when": "offeringIntensity",
+                    "eq": "Full Time"
                   },
                   "overlay": {
                     "style": "",
@@ -4338,7 +4328,264 @@
                   "lazyLoad": false,
                   "theme": "default",
                   "breadcrumb": "default",
-                  "id": "e69jwa"
+                  "id": "e69jwa",
+                  "tags": [],
+                  "isNew": false
+                },
+                {
+                  "title": "SABC Declaration",
+                  "breadcrumbClickable": true,
+                  "buttonSettings": {
+                    "previous": true,
+                    "cancel": true,
+                    "next": true
+                  },
+                  "scrollToTop": false,
+                  "collapsible": false,
+                  "hideLabel": true,
+                  "key": "declaration2",
+                  "type": "panel",
+                  "label": "Declaration",
+                  "input": false,
+                  "tableView": false,
+                  "components": [
+                    {
+                      "label": "SABC Declaration",
+                      "labelWidth": "",
+                      "labelMargin": "",
+                      "tag": "p",
+                      "className": "",
+                      "attrs": [
+                        {
+                          "attr": "",
+                          "value": ""
+                        }
+                      ],
+                      "content": "<strong>StudentAid BC Declaration</strong>",
+                      "refreshOnChange": false,
+                      "customClass": "primary-color",
+                      "hidden": false,
+                      "modalEdit": false,
+                      "key": "sabcDeclaration2",
+                      "tags": [],
+                      "properties": {},
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": "",
+                        "json": ""
+                      },
+                      "customConditional": "",
+                      "logic": [],
+                      "attributes": {},
+                      "overlay": {
+                        "style": "",
+                        "page": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
+                      "type": "htmlelement",
+                      "input": false,
+                      "tableView": false,
+                      "placeholder": "",
+                      "prefix": "",
+                      "suffix": "",
+                      "multiple": false,
+                      "defaultValue": null,
+                      "protected": false,
+                      "unique": false,
+                      "persistent": false,
+                      "clearOnHide": true,
+                      "refreshOn": "",
+                      "redrawOn": "",
+                      "dataGridLabel": false,
+                      "labelPosition": "top",
+                      "description": "",
+                      "errorLabel": "",
+                      "tooltip": "",
+                      "hideLabel": false,
+                      "tabindex": "",
+                      "disabled": false,
+                      "autofocus": false,
+                      "dbIndex": false,
+                      "customDefaultValue": "",
+                      "calculateValue": "",
+                      "calculateServer": false,
+                      "widget": null,
+                      "validateOn": "change",
+                      "validate": {
+                        "required": false,
+                        "custom": "",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false
+                      },
+                      "allowCalculateOverride": false,
+                      "encrypted": false,
+                      "showCharCount": false,
+                      "showWordCount": false,
+                      "allowMultipleMasks": false,
+                      "addons": [],
+                      "id": "elh7yc6"
+                    },
+                    {
+                      "key": "declarationContent2",
+                      "input": false,
+                      "html": "<p><strong>I. I understand that:</strong></p>\n\n<ol>\n\t<li>It is my responsibility to make sure the information on this application and/or all the documents related to it, are accurate.</li>\n\t<li>I will be asked to re-provide this information if the student edits and re-submits an incomplete application.</li>\n\t<li>I am responsible for alerting the student if any of this information changes. The student will be responsible for reporting those changes to my information once the application is complete.</li>\n\t<li>The student&rsquo;s post-secondary institution will have access to information provided on this application form.</li>\n\t<li>It is against the law to make false or misleading statements on this application or all documents related to it.</li>\n\t<li><strong>All information is subject to audit and verification.</strong></li>\n</ol>\n\n<p><strong>II. I understand that by signing my name on this application form means:</strong></p>\n\n<ol>\n\t<li>I certify that the information I have given is correct and complete.</li>\n\t<li>I have authorized the student to immediately notify StudentAid BC of any increase in my income.</li>\n\t<li>I consent to the exchange of information between StudentAid BC and the post-secondary institution about my marital status and financial status. This consent takes effect when I sign this declaration.</li>\n\t<li>I consent to the verification of my Social Insurance Number, name, date of birth and gender, with information contained in Employment and Social Development Canada Social Insurance Registry. This information will be disclosed to Employment and Social Development Canada for the purpose of confirming the accuracy of my identification in the context of my spouse&rsquo;s financial aid application. This consent takes effect when I sign this declaration.</li>\n\t<li>For the purpose of verifying and/or investigating information pertaining to this application, I consent to the collection, use and disclosure of my personal information between the Ministry Post-Secondary Education and Future Skills(or its agent) and the following agencies: financial institutions, Canadian Imperial Bank of Commerce, Royal Bank, Bank of Nova Scotia, post- secondary institutions, credit agencies, WorkSafe BC, other financial aid offices, Land Title and Survey Authority of BC, BC Registry Services, BC Ministry of Social Development and Poverty Reduction/ employment program for persons with disabilities (or a contracted agent of that Ministry), BC Ministry of Children and Family Development, BC Ministry of Attorney General, BC Ministry of Finance, National Student Loans Service Centre, Immigration, Refugees and Citizenship Canada, RoadSafe BC, Employment and Social Development Canada, Crown corporations, Aboriginal Organizations, federal, provincial, municipal ministries/departments/agencies. This consent takes effect when I sign this declaration.</li>\n\t<li>The terms and conditions of this part-time application Declaration apply to all associated documents, including the part-time reassessment form and appendix 8 of the StudentAid BC program.</li>\n</ol>\n",
+                      "type": "content",
+                      "tags": [],
+                      "conditional": {
+                        "show": "",
+                        "when": "",
+                        "eq": ""
+                      },
+                      "properties": {},
+                      "customConditional": ""
+                    },
+                    {
+                      "label": "Collection and use of information",
+                      "attrs": [
+                        {
+                          "attr": "",
+                          "value": ""
+                        }
+                      ],
+                      "content": "<strong>Collection and use of information</strong>. The information included in this form and authorized above is collected under Sections 26c and 26e of the Freedom of Information and Protection of Privacy Act and under the authority of the Canada Student Financial Assistance Act, R.S.C. 1994, Chapter C-28 and StudentAid BC. The information provided will be used to determine eligibility for a benefit through StudentAid BC and for statistical and evaluation purposes. If you have any questions about the collection and use of this information, contact the Director, StudentAid BC, Ministry of Advanced Education and Skills Training, PO Box 9173, Stn Prov Govt, Victoria, BC V8W 9H7, call 1-800-561-1818 (toll-free in Canada/U.S.) or +1-778-309-4621 from outside North America.",
+                      "refreshOnChange": false,
+                      "key": "collectionAndUseOfInformation2",
+                      "type": "htmlelement",
+                      "input": false,
+                      "tableView": false,
+                      "placeholder": "",
+                      "prefix": "",
+                      "customClass": "",
+                      "suffix": "",
+                      "multiple": false,
+                      "defaultValue": null,
+                      "protected": false,
+                      "unique": false,
+                      "persistent": false,
+                      "hidden": false,
+                      "clearOnHide": true,
+                      "refreshOn": "",
+                      "redrawOn": "",
+                      "modalEdit": false,
+                      "dataGridLabel": false,
+                      "labelPosition": "top",
+                      "description": "",
+                      "errorLabel": "",
+                      "tooltip": "",
+                      "hideLabel": false,
+                      "tabindex": "",
+                      "disabled": false,
+                      "autofocus": false,
+                      "dbIndex": false,
+                      "customDefaultValue": "",
+                      "calculateValue": "",
+                      "calculateServer": false,
+                      "widget": null,
+                      "attributes": {},
+                      "validateOn": "change",
+                      "validate": {
+                        "required": false,
+                        "custom": "",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false
+                      },
+                      "conditional": {
+                        "show": "",
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
+                      "allowCalculateOverride": false,
+                      "encrypted": false,
+                      "showCharCount": false,
+                      "showWordCount": false,
+                      "properties": {},
+                      "allowMultipleMasks": false,
+                      "addons": [],
+                      "tag": "p",
+                      "id": "eadyau",
+                      "className": "",
+                      "isNew": false,
+                      "tags": []
+                    }
+                  ],
+                  "placeholder": "",
+                  "prefix": "",
+                  "customClass": "",
+                  "suffix": "",
+                  "multiple": false,
+                  "defaultValue": null,
+                  "protected": false,
+                  "unique": false,
+                  "persistent": false,
+                  "hidden": false,
+                  "clearOnHide": false,
+                  "refreshOn": "",
+                  "redrawOn": "",
+                  "modalEdit": false,
+                  "dataGridLabel": false,
+                  "labelPosition": "top",
+                  "description": "",
+                  "errorLabel": "",
+                  "tooltip": "",
+                  "tabindex": "",
+                  "disabled": false,
+                  "autofocus": false,
+                  "dbIndex": false,
+                  "customDefaultValue": "",
+                  "calculateValue": "",
+                  "calculateServer": false,
+                  "widget": null,
+                  "attributes": {},
+                  "validateOn": "change",
+                  "validate": {
+                    "required": false,
+                    "custom": "",
+                    "customPrivate": false,
+                    "strictDateValidation": false,
+                    "multiple": false,
+                    "unique": false
+                  },
+                  "conditional": {
+                    "show": "true",
+                    "when": "offeringIntensity",
+                    "eq": "Part Time"
+                  },
+                  "overlay": {
+                    "style": "",
+                    "left": "",
+                    "top": "",
+                    "width": "",
+                    "height": ""
+                  },
+                  "allowCalculateOverride": false,
+                  "encrypted": false,
+                  "showCharCount": false,
+                  "showWordCount": false,
+                  "properties": {},
+                  "allowMultipleMasks": false,
+                  "addons": [],
+                  "tree": false,
+                  "lazyLoad": false,
+                  "theme": "default",
+                  "breadcrumb": "default",
+                  "id": "e69jwa",
+                  "tags": [],
+                  "isNew": false
                 },
                 {
                   "label": "I Agree to the terms and conditions of the StudentAid BC Declaration form.",
@@ -4497,7 +4744,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "en3ovsv"
+                      "id": "en3ovsv",
+                      "className": ""
                     },
                     {
                       "html": "<p>I hereby consent to the disclosure of information from my income tax records, by the Canada Revenue Agency to an official of the Ministry of Post Secondary and Future Skills, that pertains to information provided on any Student Aid BC application. The information disclosed will be relevant to, and used solely for the purpose of, determining and verifying eligibility for student aid under the Canada Student Financial Assistance Act. The information disclosed by the Canada Revenue Agency to the Ministry of Post Secondary and Future Skills will be protected from unauthorized use or disclosure and will not be disclosed to any other person or organization without my approval. This authorization is valid for the two taxation years prior to the year of signature of this consent, and the year of signature.</p>",
@@ -5031,7 +5279,28 @@
           "allowMultipleMasks": false,
           "addons": [],
           "inputType": "hidden",
-          "id": "ekllt2"
+          "id": "ekllt2",
+          "tags": []
+        },
+        {
+          "input": true,
+          "tableView": true,
+          "key": "offeringIntensity",
+          "label": "Offering Intensity",
+          "protected": false,
+          "unique": false,
+          "persistent": true,
+          "type": "hidden",
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "lockKey": true,
+          "calculateValue": "value = data.offeringIntensity;",
+          "calculateServer": false
         }
       ],
       "placeholder": "",

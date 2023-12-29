@@ -1204,11 +1204,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "programYear.startDate",
         "user.userName",
         "student.id",
-        "application.data",
+        "assessment.id",
+        "offering.offeringIntensity",
       ])
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
       .innerJoin("application.programYear", "programYear")
+      .innerJoin("application.currentAssessment", "assessment")
+      .innerJoin("assessment.offering", "offering")
       .where("application.applicationNumber = :applicationNumber", {
         applicationNumber,
       })
