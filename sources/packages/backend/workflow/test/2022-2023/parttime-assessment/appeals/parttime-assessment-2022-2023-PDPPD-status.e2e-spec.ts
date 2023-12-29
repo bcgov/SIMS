@@ -22,8 +22,35 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-PDPPD-status.`, 
   });
 
   it(
-    "Should be true when student did not select PD/PPD status from the application but requested a change " +
-      "selecting 'Yes, I have disability and want this application to be assessed for disability funding.'",
+    "Should calculate the PD/PPD status to true when student did not choose to apply with disability funding " +
+      "while waits for a decision in student application and then requested a change later with disability funding.",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataApplicationPDPPDStatus =
+        "noIWantToAccessOtherFundingTypes";
+      assessmentConsolidatedData.appealsStudentDisabilityAppealData = {
+        studentNewPDPPDStatus: "yes",
+      };
+
+      // Act
+      const calculatedAssessment =
+        await executePartTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+
+      // Assert
+      expect(calculatedAssessment.variables.calculatedDataPDPPDStatus).toBe(
+        true,
+      );
+    },
+  );
+
+  it(
+    "Should calculate the PD/PPD status to true when student did not choose to apply " +
+      "with disability funding in student application and then requested a change later with disability funding.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
@@ -49,8 +76,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-PDPPD-status.`, 
   );
 
   it(
-    "Should be false when student selected PD/PPD status from the application but requested a change " +
-      "selecting 'No, I want to access other funding types while I wait for a verification decision.'",
+    "Should calculate the PD/PPD status to false when student chose to apply with disability funding " +
+      "in student application and then requested a change later with no disability funding while wait for a decision.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
@@ -75,8 +102,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-PDPPD-status.`, 
   );
 
   it(
-    "Should be false when student selected PD/PPD status from the application but requested a change " +
-      "selecting 'No, I do not have a disability.'",
+    "Should calculate the PD/PPD status to false when student chose to apply with disability funding " +
+      "in student application and then requested a change later with no disability funding.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
