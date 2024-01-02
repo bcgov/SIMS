@@ -11,7 +11,7 @@
     <v-container :fluid="fullWidth">
       <template v-if="layoutTemplate === LayoutTemplates.CenteredCard">
         <v-row justify="center">
-          <v-card class="mt-4 p-4 w-100" :class="widthClass">
+          <v-card class="mt-4 p-4 w-100 overflow-visible" :class="widthClass">
             <slot></slot>
           </v-card>
         </v-row>
