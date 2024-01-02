@@ -10,6 +10,7 @@ import {
   SupportingUserType,
   APPLICATION_NUMBER_LENGTH,
   USER_LAST_NAME_MAX_LENGTH,
+  OfferingIntensity,
 } from "@sims/sims-db";
 import { JsonMaxSize } from "../../../utilities/class-validation";
 import { JSON_10KB } from "../../../constants";
@@ -66,7 +67,7 @@ export class UpdateSupportingUserAPIInDTO {
 export class ApplicationAPIOutDTO {
   programYearStartDate: string;
   formName: string;
-  offeringIntensity: string
+  offeringIntensity: OfferingIntensity
 }
 
 export class ApplicationSupportingUsersAPIOutDTO {
