@@ -176,3 +176,7 @@
     background-color: $read-only-background;
   }
 }
+
+.overflow-visible .v-card {
+  overflow: visible;
+}
