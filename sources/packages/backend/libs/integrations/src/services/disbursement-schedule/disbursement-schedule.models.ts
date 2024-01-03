@@ -150,7 +150,11 @@ export interface StudentActiveRestriction {
  */
 export type EligibleECertOffering = Pick<
   EducationProgramOffering,
-  "id" | "offeringIntensity" | "actualTuitionCosts" | "programRelatedCosts"
+  | "id"
+  | "offeringIntensity"
+  | "actualTuitionCosts"
+  | "programRelatedCosts"
+  | "mandatoryFees"
 >;
 
 /**
