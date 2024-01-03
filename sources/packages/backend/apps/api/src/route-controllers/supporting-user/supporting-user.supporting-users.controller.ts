@@ -111,7 +111,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
         ),
       );
     }
-    
+
     const offering = application.currentAssessment.offering;
 
     return {
