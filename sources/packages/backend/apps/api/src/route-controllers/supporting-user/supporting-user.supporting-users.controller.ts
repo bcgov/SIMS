@@ -112,15 +112,13 @@ export class SupportingUserSupportingUsersController extends BaseController {
       );
     }
 
-    const offering = application.currentAssessment.offering;
-
     return {
       programYearStartDate: application.programYear.startDate,
       formName: getSupportingUserForm(
         supportingUserType,
         application.programYear,
       ),
-      offeringIntensity: offering.offeringIntensity,
+      offeringIntensity: application.data.howWillYouBeAttendingTheProgram,
     };
   }
 
