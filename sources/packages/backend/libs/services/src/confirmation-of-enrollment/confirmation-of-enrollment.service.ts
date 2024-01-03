@@ -138,7 +138,9 @@ export class ConfirmationOfEnrollmentService {
       );
     }
     const offeringTotalCosts =
-      offeringCosts.actualTuitionCosts + offeringCosts.programRelatedCosts;
+      offeringCosts.actualTuitionCosts +
+      offeringCosts.programRelatedCosts +
+      offeringCosts.mandatoryFees;
     return Math.min(offeringTotalCosts, totalAwards);
   }
 

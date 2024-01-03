@@ -53,6 +53,7 @@ describe("ConfirmationOfEnrollmentService-getMaxTuitionRemittance", () => {
     const offeringCosts = {
       actualTuitionCosts: Number.MAX_SAFE_INTEGER,
       programRelatedCosts: Number.MAX_SAFE_INTEGER,
+      mandatoryFees: Number.MAX_SAFE_INTEGER,
     };
     // Act
     const total = service.getMaxTuitionRemittance(
@@ -75,6 +76,7 @@ describe("ConfirmationOfEnrollmentService-getMaxTuitionRemittance", () => {
     const offeringCosts = {
       actualTuitionCosts: 100,
       programRelatedCosts: 300,
+      mandatoryFees: 50,
     };
     // Act
     const total = service.getMaxTuitionRemittance(
@@ -83,7 +85,7 @@ describe("ConfirmationOfEnrollmentService-getMaxTuitionRemittance", () => {
       MaxTuitionRemittanceTypes.Estimated,
     );
     // Assert
-    expect(total).toBe(400);
+    expect(total).toBe(450);
   });
 
   it("Should calculate total effective value from awards when awards are lesser than offering costs", () => {
@@ -108,6 +110,7 @@ describe("ConfirmationOfEnrollmentService-getMaxTuitionRemittance", () => {
     const offeringCosts = {
       actualTuitionCosts: Number.MAX_SAFE_INTEGER,
       programRelatedCosts: Number.MAX_SAFE_INTEGER,
+      mandatoryFees: Number.MAX_SAFE_INTEGER,
     };
     // Act
     const total = service.getMaxTuitionRemittance(
@@ -131,6 +134,7 @@ describe("ConfirmationOfEnrollmentService-getMaxTuitionRemittance", () => {
     const offeringCosts = {
       actualTuitionCosts: 25,
       programRelatedCosts: 75,
+      mandatoryFees: 15,
     };
     // Act
     const total = service.getMaxTuitionRemittance(
@@ -139,6 +143,6 @@ describe("ConfirmationOfEnrollmentService-getMaxTuitionRemittance", () => {
       MaxTuitionRemittanceTypes.Effective,
     );
     // Assert
-    expect(total).toBe(100);
+    expect(total).toBe(115);
   });
 });
