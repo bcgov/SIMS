@@ -295,6 +295,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
     // Adjust offering values for maxTuitionRemittanceAllowed.
     application.currentAssessment.offering.actualTuitionCosts = 500;
     application.currentAssessment.offering.programRelatedCosts = 500;
+    application.currentAssessment.offering.mandatoryFees = 100;
     await offeringRepo.save(application.currentAssessment.offering);
     const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}/confirm`;
     // Act/Assert
@@ -308,7 +309,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
         message:
-          "Tuition amount provided should be lesser than both (Actual tuition + Program related costs) and (Canada grants + Canada Loan + BC Loan).",
+          "Tuition amount provided should be lesser than both (Actual tuition + Program related costs + Mandatory fees) and (Canada grants + Canada Loan + BC Loan).",
         errorType: "INVALID_TUITION_REMITTANCE_AMOUNT",
       });
   });

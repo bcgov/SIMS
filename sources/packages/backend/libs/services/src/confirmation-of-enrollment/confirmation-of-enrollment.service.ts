@@ -78,6 +78,7 @@ export class ConfirmationOfEnrollmentService {
               id: true,
               actualTuitionCosts: true,
               programRelatedCosts: true,
+              mandatoryFees: true,
             },
           },
         },
@@ -138,7 +139,9 @@ export class ConfirmationOfEnrollmentService {
       );
     }
     const offeringTotalCosts =
-      offeringCosts.actualTuitionCosts + offeringCosts.programRelatedCosts;
+      offeringCosts.actualTuitionCosts +
+      offeringCosts.programRelatedCosts +
+      offeringCosts.mandatoryFees;
     return Math.min(offeringTotalCosts, totalAwards);
   }
 
@@ -652,7 +655,7 @@ export class ConfirmationOfEnrollmentService {
 
     if (tuitionRemittanceAmount > maxTuitionAllowed) {
       throw new CustomNamedError(
-        "Tuition amount provided should be lesser than both (Actual tuition + Program related costs) and (Canada grants + Canada Loan + BC Loan).",
+        "Tuition amount provided should be lesser than both (Actual tuition + Program related costs + Mandatory fees) and (Canada grants + Canada Loan + BC Loan).",
         INVALID_TUITION_REMITTANCE_AMOUNT,
       );
     }

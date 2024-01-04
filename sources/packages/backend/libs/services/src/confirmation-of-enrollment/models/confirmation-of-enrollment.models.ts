@@ -13,7 +13,7 @@ export type Award = Pick<
  */
 export type OfferingCosts = Pick<
   EducationProgramOffering,
-  "actualTuitionCosts" | "programRelatedCosts"
+  "actualTuitionCosts" | "programRelatedCosts" | "mandatoryFees"
 >;
 
 /**
