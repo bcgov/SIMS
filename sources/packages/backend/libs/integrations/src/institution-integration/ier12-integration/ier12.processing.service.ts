@@ -291,6 +291,7 @@ export class IER12ProcessingService {
           workflowData.calculatedData.dependantDeclaredOnTaxesQuantity,
         dependantPostSecondaryQuantity:
           workflowData.calculatedData.dependantPostSecondaryQuantity,
+        pdppdStatus: workflowData.calculatedData.pdppdStatus,
         parentExpectedContribution: assessmentData.parentAssessedContribution,
         totalEligibleDependents:
           workflowData.calculatedData.totalEligibleDependents,

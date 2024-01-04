@@ -341,6 +341,7 @@ export interface WorkflowData {
     dependantInfantQuantity?: number;
     dependantDeclaredOnTaxesQuantity?: number;
     dependantPostSecondaryQuantity?: number;
+    pdppdStatus?: boolean;
     partnerStudentStudyWeeks?: number;
   };
 }

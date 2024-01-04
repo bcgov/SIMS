@@ -162,6 +162,7 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
         ierRecord.dependantDeclaredOnTaxesQuantity;
       ierFileDetail.dependantPostSecondaryQuantity =
         ierRecord.dependantPostSecondaryQuantity;
+      ierFileDetail.pdppdStatus = ierRecord.pdppdStatus;
       ierFileDetail.totalDependantQuantity = ierRecord.totalEligibleDependents;
       ierFileDetail.familyMembersQuantity = ierRecord.familySize;
       ierFileDetail.parent1Flag = this.convertToYNFlag(

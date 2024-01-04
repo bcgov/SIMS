@@ -89,6 +89,7 @@ export class IER12FileDetail implements IER12FileLine {
   dependantInfantQuantity?: number;
   dependantOtherQuantity?: number;
   dependantPostSecondaryQuantity?: number;
+  pdppdStatus?: boolean;
   totalDependantQuantity?: number;
   familyMembersQuantity: number;
   parent1Flag?: YNFlag;
