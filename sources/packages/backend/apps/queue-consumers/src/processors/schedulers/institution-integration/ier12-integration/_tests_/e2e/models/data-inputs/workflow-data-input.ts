@@ -10,6 +10,7 @@ export const WORKFLOW_DATA_SINGLE_INDEPENDENT_WITH_NO_DEPENDENTS: IER12WorkflowD
       numberOfParents: undefined,
     },
     calculatedData: {
+      pdppdStatus: false,
       parentalAssets: undefined,
       studentMaritalStatusCode: "SI",
       totalEligibleDependents: undefined,
@@ -38,6 +39,7 @@ export const WORKFLOW_DATA_MARRIED_WITH_DEPENDENTS: IER12WorkflowData = {
     numberOfParents: undefined,
   },
   calculatedData: {
+    pdppdStatus: false,
     parentalAssets: undefined,
     studentMaritalStatusCode: "MA",
     totalEligibleDependents: 3,
@@ -67,6 +69,7 @@ export const WORKFLOW_DATA_DEPENDANT_RELATIONSHIP_OTHER_LIVING_WITH_PARENTS: IER
       numberOfParents: 2,
     },
     calculatedData: {
+      pdppdStatus: false,
       parentalAssets: 142.97,
       studentMaritalStatusCode: "SI",
       totalEligibleDependents: undefined,

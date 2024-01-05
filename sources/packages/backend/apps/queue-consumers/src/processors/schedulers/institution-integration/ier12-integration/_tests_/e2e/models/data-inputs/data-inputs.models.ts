@@ -82,6 +82,7 @@ export interface IER12WorkflowData {
     numberOfParents?: number;
   };
   calculatedData: {
+    pdppdStatus: boolean;
     parentalAssets?: number;
     studentMaritalStatusCode: StudentMaritalStatusCode;
     totalEligibleDependents?: number;

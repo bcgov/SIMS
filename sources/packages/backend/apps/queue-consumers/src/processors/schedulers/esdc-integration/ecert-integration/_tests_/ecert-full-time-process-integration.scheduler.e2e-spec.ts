@@ -2,11 +2,14 @@ import {
   ApplicationStatus,
   Assessment,
   COEStatus,
+  DisabilityStatus,
   DisbursementOverawardOriginType,
   DisbursementSchedule,
   DisbursementScheduleStatus,
   DisbursementValueType,
+  FormYesNoOptions,
   OfferingIntensity,
+  RelationshipStatus,
 } from "@sims/sims-db";
 import {
   E2EDataSources,
@@ -464,6 +467,218 @@ describe(
           effectiveAmount: 0,
         }),
       ).toBe(true);
+    });
+
+    it("Should not generate disbursement if the Student assessment contains PD/PPD application flag is yes and Student profile PD/PPD missing approval", async () => {
+      // Arrange
+
+      // Student with valid SIN and PD/PPD Not Requested.
+      const student = await saveFakeStudent(db.dataSource);
+      // Valid MSFAA Number.
+      const msfaaNumber = await db.msfaaNumber.save(
+        createFakeMSFAANumber({ student }, { msfaaState: MSFAAStates.Signed }),
+      );
+
+      // Student application eligible for e-Cert.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student, msfaaNumber },
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            assessmentData: { weeks: 5 } as Assessment,
+            assessmentDate: new Date(),
+            workflowData: {
+              studentData: {
+                dependantStatus: "dependant",
+                relationshipStatus: RelationshipStatus.Single,
+                livingWithParents: FormYesNoOptions.Yes,
+                numberOfParents: 2,
+              },
+              calculatedData: {
+                familySize: 2,
+                studentMSOLAllowance: 7777,
+                totalNonEducationalCost: 22,
+                studentMaritalStatusCode: "SI",
+                pdppdStatus: true,
+              },
+            },
+          },
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+          },
+        },
+      );
+
+      // Queued job.
+      const { job } = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processECert(job);
+
+      // Assert 0 uploaded records.
+      expect(result).toStrictEqual([
+        "Process finalized with success.",
+        "Generated file: none",
+        "Uploaded records: 0",
+      ]);
+      const [disbursement] =
+        application.currentAssessment.disbursementSchedules;
+      const isScheduleNotSent = await db.disbursementSchedule.exist({
+        where: {
+          id: disbursement.id,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+        },
+      });
+      expect(isScheduleNotSent).toBe(true);
+    });
+
+    it("Should generate disbursement if the Student assessment contains PD/PPD application flag is yes and Student profile PD approved or confirmed", async () => {
+      // Arrange
+
+      // Student with valid SIN and PD/PPD approved or confirmed.
+      const student = await saveFakeStudent(
+        db.dataSource,
+        {},
+        {
+          initialValue: {
+            disabilityStatus: DisabilityStatus.PD,
+          },
+        },
+      );
+      // Valid MSFAA Number.
+      const msfaaNumber = await db.msfaaNumber.save(
+        createFakeMSFAANumber({ student }, { msfaaState: MSFAAStates.Signed }),
+      );
+      // Student application eligible for e-Cert.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student, msfaaNumber },
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            assessmentData: { weeks: 5 } as Assessment,
+            assessmentDate: new Date(),
+            workflowData: {
+              studentData: {
+                dependantStatus: "dependant",
+                relationshipStatus: RelationshipStatus.Single,
+                livingWithParents: FormYesNoOptions.Yes,
+                numberOfParents: 2,
+              },
+              calculatedData: {
+                familySize: 2,
+                studentMSOLAllowance: 7777,
+                totalNonEducationalCost: 22,
+                studentMaritalStatusCode: "SI",
+                pdppdStatus: true,
+              },
+            },
+          },
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+          },
+        },
+      );
+
+      // Queued job.
+      const { job } = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processECert(job);
+
+      // Assert uploaded file.
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const fileDate = dayjs().format("YYYYMMDD");
+      const uploadedFileName = `MSFT-Request\\DPBC.EDU.FTECERTS.${fileDate}.001`;
+      expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+      expect(result).toStrictEqual([
+        "Process finalized with success.",
+        `Generated file: ${uploadedFileName}`,
+        "Uploaded records: 1",
+      ]);
+      const [disbursement] =
+        application.currentAssessment.disbursementSchedules;
+      const isScheduleSent = await db.disbursementSchedule.exist({
+        where: {
+          id: disbursement.id,
+          dateSent: Not(IsNull()),
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        },
+      });
+      expect(isScheduleSent).toBe(true);
+    });
+
+    it("Should generate disbursement if the Student assessment contains PD/PPD application flag is no", async () => {
+      // Arrange
+
+      // Student with valid SIN and PD/PPD Not Requested.
+      const student = await saveFakeStudent(db.dataSource);
+      // Valid MSFAA Number.
+      const msfaaNumber = await db.msfaaNumber.save(
+        createFakeMSFAANumber({ student }, { msfaaState: MSFAAStates.Signed }),
+      );
+
+      // Student application eligible for e-Cert.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student, msfaaNumber },
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            assessmentData: { weeks: 5 } as Assessment,
+            assessmentDate: new Date(),
+            workflowData: {
+              studentData: {
+                dependantStatus: "dependant",
+                relationshipStatus: RelationshipStatus.Single,
+                livingWithParents: FormYesNoOptions.Yes,
+                numberOfParents: 2,
+              },
+              calculatedData: {
+                familySize: 2,
+                studentMSOLAllowance: 7777,
+                totalNonEducationalCost: 22,
+                studentMaritalStatusCode: "SI",
+                pdppdStatus: false,
+              },
+            },
+          },
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+          },
+        },
+      );
+
+      // Queued job.
+      const { job } = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processECert(job);
+
+      // Assert uploaded file.
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const fileDate = dayjs().format("YYYYMMDD");
+      const uploadedFileName = `MSFT-Request\\DPBC.EDU.FTECERTS.${fileDate}.001`;
+      expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+      expect(result).toStrictEqual([
+        "Process finalized with success.",
+        `Generated file: ${uploadedFileName}`,
+        "Uploaded records: 1",
+      ]);
+      const [disbursement] =
+        application.currentAssessment.disbursementSchedules;
+      const isScheduleSent = await db.disbursementSchedule.exist({
+        where: {
+          id: disbursement.id,
+          dateSent: Not(IsNull()),
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        },
+      });
+      expect(isScheduleSent).toBe(true);
     });
   },
 );
