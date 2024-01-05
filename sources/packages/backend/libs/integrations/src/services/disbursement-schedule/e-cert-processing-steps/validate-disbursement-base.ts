@@ -39,9 +39,10 @@ export abstract class ValidateDisbursementBase {
     // Disability Status PD/PPD Verified.
     if (
       eCertDisbursement.disabilityDetails.workflowData.calculatedData
-        ? !eCertDisbursement.disabilityDetails.studentDisabilityStatus.includes[
-            (DisabilityStatus.PD, DisabilityStatus.PPD)
-          ]
+        .pdppdStatus
+        ? ![DisabilityStatus.PD, DisabilityStatus.PPD].includes(
+            eCertDisbursement.disabilityDetails.studentDisabilityStatus,
+          )
         : null
     ) {
       log.info(`Student disability Status PD/PPD is not Verified.`);
