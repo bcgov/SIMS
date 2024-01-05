@@ -1,4 +1,4 @@
-import { COEStatus } from "@sims/sims-db";
+import { COEStatus, DisabilityStatus } from "@sims/sims-db";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { EligibleECertDisbursement } from "../disbursement-schedule.models";
 
@@ -34,6 +34,17 @@ export abstract class ValidateDisbursementBase {
     // MSFAA signed.
     if (!eCertDisbursement.disbursement.msfaaNumber.dateSigned) {
       log.info(`Student MSFAA associated with the disbursement is not signed.`);
+      shouldContinue = false;
+    }
+    // Disability Status PD/PPD Verified.
+    if (
+      eCertDisbursement.disabilityDetails.workflowData.calculatedData
+        ? !eCertDisbursement.disabilityDetails.studentDisabilityStatus.includes[
+            (DisabilityStatus.PD, DisabilityStatus.PPD)
+          ]
+        : null
+    ) {
+      log.info(`Student disability Status PD/PPD is not Verified.`);
       shouldContinue = false;
     }
     return shouldContinue;
