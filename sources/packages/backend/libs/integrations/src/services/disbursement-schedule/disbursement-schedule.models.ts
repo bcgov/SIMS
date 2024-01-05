@@ -129,8 +129,18 @@ export const FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS = [
   "EDU-00112",
 ];
 
+/**
+ * Represents students Disability status both from application submitted
+ * and the student profile disability status verification.
+ */
 export interface DisabilityDetails {
+  /**
+   * WorkflowData from the assessment.
+   */
   workflowData: WorkflowData;
+  /**
+   * Student profile disability status.
+   */
   studentDisabilityStatus: DisabilityStatus;
 }
 
