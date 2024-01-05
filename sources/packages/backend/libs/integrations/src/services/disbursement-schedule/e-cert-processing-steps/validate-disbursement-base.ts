@@ -37,7 +37,6 @@ export abstract class ValidateDisbursementBase {
       shouldContinue = false;
     }
     // Disability Status PD/PPD Verified.
-
     const disabilityStatusValidation = eCertDisbursement.disabilityDetails
       .calculatedPDPPDStatus
       ? [DisabilityStatus.PD, DisabilityStatus.PPD].includes(
@@ -45,7 +44,7 @@ export abstract class ValidateDisbursementBase {
         )
       : true;
     if (!disabilityStatusValidation) {
-      log.info(`Student disability Status PD/PPD is not Verified.`);
+      log.info(`Student disability Status PD/PPD is not verified.`);
       shouldContinue = false;
     }
     return shouldContinue;
