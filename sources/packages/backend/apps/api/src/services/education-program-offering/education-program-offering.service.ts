@@ -326,7 +326,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offerings.offeringIntensity",
         "offerings.yearOfStudy",
         "parentOffering.id",
-        "offerings.showYearOfStudy",
         "offerings.hasOfferingWILComponent",
         "offerings.offeringWILType",
         "offerings.studyBreaks",
@@ -453,7 +452,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programOffering.offeringIntensity =
       educationProgramOffering.offeringIntensity;
     programOffering.yearOfStudy = educationProgramOffering.yearOfStudy;
-    programOffering.showYearOfStudy = educationProgramOffering.showYearOfStudy;
     programOffering.hasOfferingWILComponent =
       educationProgramOffering.hasOfferingWILComponent;
     programOffering.offeringWILType =
@@ -520,7 +518,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     offeringValidationModel.locationId = offering.institutionLocation.id;
     offeringValidationModel.offeringIntensity = offering.offeringIntensity;
     offeringValidationModel.yearOfStudy = offering.yearOfStudy;
-    offeringValidationModel.showYearOfStudy = offering.showYearOfStudy;
     offeringValidationModel.hasOfferingWILComponent =
       offering.hasOfferingWILComponent as WILComponentOptions;
     offeringValidationModel.offeringWILComponentType = offering.offeringWILType;
@@ -565,7 +562,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         },
         offeringIntensity: true,
         yearOfStudy: true,
-        showYearOfStudy: true,
         hasOfferingWILComponent: true,
         offeringWILType: true,
         offeringDeclaration: true,
@@ -617,7 +613,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .addSelect("offerings.studyStartDate")
       .addSelect("offerings.studyEndDate")
       .addSelect("offerings.yearOfStudy")
-      .addSelect("offerings.showYearOfStudy")
       .where("offerings.educationProgram.id = :programId", { programId })
       .andWhere("programs.programStatus = :programStatus", {
         programStatus: ProgramStatus.Approved,
@@ -700,7 +695,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offering.lacksStudyBreaks",
         "offering.offeringIntensity",
         "offering.yearOfStudy",
-        "offering.showYearOfStudy",
         "offering.hasOfferingWILComponent",
         "offering.offeringWILType",
         "offering.studyBreaks",

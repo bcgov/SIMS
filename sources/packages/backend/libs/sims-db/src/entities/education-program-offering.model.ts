@@ -149,16 +149,8 @@ export class EducationProgramOffering extends RecordDataModel {
   yearOfStudy: number;
 
   /**
-   * Show year of study to student based on this value.
-   */
-  @Column({
-    name: "show_year_of_study",
-  })
-  showYearOfStudy?: boolean;
-
-  /**
    * Determines if the offering has WIL component.
-   */
+   * */
   @Column({
     name: "has_offering_wil_component",
   })

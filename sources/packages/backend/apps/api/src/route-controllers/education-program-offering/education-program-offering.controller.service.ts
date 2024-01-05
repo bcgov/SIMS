@@ -44,6 +44,7 @@ import {
   EducationProgramOfferingSummaryViewAPIOutDTO,
   OfferingBulkInsertValidationResultAPIOutDTO,
 } from "./models/education-program-offering.dto";
+import { YesNoOptions } from "@sims/test-utils";
 
 @Injectable()
 export class EducationProgramOfferingControllerService {
@@ -318,7 +319,6 @@ export class EducationProgramOfferingControllerService {
       lacksStudyBreaks: offering.lacksStudyBreaks,
       offeringIntensity: offering.offeringIntensity,
       yearOfStudy: offering.yearOfStudy,
-      showYearOfStudy: offering.showYearOfStudy,
       hasOfferingWILComponent: offering.hasOfferingWILComponent,
       offeringWILComponentType: offering.offeringWILType,
       studyBreaks: offering.studyBreaks?.studyBreaks,

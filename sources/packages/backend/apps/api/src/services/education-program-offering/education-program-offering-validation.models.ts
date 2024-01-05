@@ -477,13 +477,6 @@ export class OfferingValidationModel {
   })
   yearOfStudy: number;
   /**
-   * Show year of study.
-   */
-  @IsBoolean({
-    message: `${userFriendlyNames.showYearOfStudy} must be a valid boolean value.`,
-  })
-  showYearOfStudy: boolean;
-  /**
    * Indicates if the offering has a WIL(work-integrated learning).
    */
   @IsEnum(WILComponentOptions, {

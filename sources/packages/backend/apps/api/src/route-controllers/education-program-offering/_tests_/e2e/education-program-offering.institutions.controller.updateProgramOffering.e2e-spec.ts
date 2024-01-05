@@ -90,7 +90,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
     const payload = {
       offeringName: "Updated offering name",
       yearOfStudy: 1,
-      showYearOfStudy: true,
       offeringIntensity: OfferingIntensity.fullTime,
       offeringDelivered: OfferingDeliveryOptions.Onsite,
       hasOfferingWILComponent: "no",
@@ -136,7 +135,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
         offeringType: payload.offeringType,
         offeringIntensity: payload.offeringIntensity,
         yearOfStudy: payload.yearOfStudy,
-        showYearOfStudy: payload.showYearOfStudy,
         hasOfferingWILComponent: payload.hasOfferingWILComponent,
         offeringWILType: null,
         studyBreaks: {
@@ -199,7 +197,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       const payload = {
         offeringName: "Updated offering name test 1",
         yearOfStudy: 1,
-        showYearOfStudy: true,
         offeringIntensity: OfferingIntensity.fullTime,
         offeringDelivered: OfferingDeliveryOptions.Onsite,
         hasOfferingWILComponent: "no",
@@ -247,7 +244,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
         offeringType: payload.offeringType,
         offeringIntensity: payload.offeringIntensity,
         yearOfStudy: payload.yearOfStudy,
-        showYearOfStudy: payload.showYearOfStudy,
         hasOfferingWILComponent: payload.hasOfferingWILComponent,
         offeringWILType: null,
         studyBreaks: {
@@ -304,7 +300,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
     const payload = {
       offeringName: "Updated offering name test 2",
       yearOfStudy: 1,
-      showYearOfStudy: true,
       offeringIntensity: OfferingIntensity.fullTime,
       offeringDelivered: OfferingDeliveryOptions.Onsite,
       hasOfferingWILComponent: "no",

@@ -21,8 +21,6 @@ export function getOfferingNameAndPeriod(
   return `${offering.name} (${getDateOnlyFormat(
     offering.studyStartDate,
   )} - ${getDateOnlyFormat(offering.studyEndDate)})${
-    offering.showYearOfStudy
-      ? " - " + getYearOfStudyLabel(offering.yearOfStudy)
-      : ""
+    " - " + getYearOfStudyLabel(offering.yearOfStudy)
   }`;
 }

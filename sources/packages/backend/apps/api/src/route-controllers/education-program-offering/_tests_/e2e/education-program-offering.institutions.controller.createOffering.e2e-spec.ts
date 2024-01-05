@@ -74,7 +74,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     payload = {
       offeringName: "Offering",
       yearOfStudy: 1,
-      showYearOfStudy: true,
       offeringIntensity: OfferingIntensity.fullTime,
       offeringDelivered: OfferingDeliveryOptions.Onsite,
       hasOfferingWILComponent: WILComponentOptions.No,
@@ -123,7 +122,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     const payload = {
       offeringName: "Offering 1",
       yearOfStudy: 1,
-      showYearOfStudy: true,
       offeringIntensity: OfferingIntensity.fullTime,
       offeringDelivered: OfferingDeliveryOptions.Onsite,
       hasOfferingWILComponent: "no",
@@ -173,7 +171,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         offeringType: payload.offeringType,
         offeringIntensity: payload.offeringIntensity,
         yearOfStudy: payload.yearOfStudy,
-        showYearOfStudy: payload.showYearOfStudy,
         hasOfferingWILComponent: payload.hasOfferingWILComponent,
         offeringWILType: null,
         studyBreaks: {
@@ -251,7 +248,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         offeringType: payload.offeringType,
         offeringIntensity: payload.offeringIntensity,
         yearOfStudy: payload.yearOfStudy,
-        showYearOfStudy: payload.showYearOfStudy,
+
         hasOfferingWILComponent: payload.hasOfferingWILComponent,
         offeringWILType: null,
         studyBreaks: {

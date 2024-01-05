@@ -55,7 +55,7 @@ export class EducationProgramOfferingImportCSVService {
     return csvModels.map((csvModel) => ({
       offeringName: csvModel.offeringName,
       yearOfStudy: csvModel.yearOfStudy,
-      showYearOfStudy: csvModel.showYearOfStudy === YesNoOptions.Yes,
+      showYearOfStudy: true,
       offeringIntensity: csvModel.offeringIntensity,
       offeringDelivered: csvModel.offeringDelivered,
       hasOfferingWILComponent:
