@@ -41,7 +41,7 @@ export abstract class ValidateDisbursementBase {
     const disabilityStatusValidation = eCertDisbursement.disabilityDetails
       .calculatedPDPPDStatus
       ? [DisabilityStatus.PD, DisabilityStatus.PPD].includes(
-          eCertDisbursement.disabilityDetails.studentDisabilityStatus,
+          eCertDisbursement.disabilityDetails.studentProfileDisabilityStatus,
         )
       : true;
     if (!disabilityStatusValidation) {

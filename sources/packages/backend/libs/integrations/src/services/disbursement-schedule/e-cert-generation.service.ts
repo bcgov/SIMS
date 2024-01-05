@@ -149,7 +149,7 @@ export class ECertGenerationService {
               calculatedPDPPDStatus:
                 application.currentAssessment.workflowData.calculatedData
                   .pdppdStatus,
-              studentDisabilityStatus: student.disabilityStatus,
+              studentProfileDisabilityStatus: student.disabilityStatus,
             };
             return new EligibleECertDisbursement(
               student.id,

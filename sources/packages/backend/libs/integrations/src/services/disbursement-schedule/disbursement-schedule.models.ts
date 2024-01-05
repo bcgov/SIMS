@@ -140,7 +140,7 @@ export interface DisabilityDetails {
   /**
    * Student profile disability status.
    */
-  studentDisabilityStatus: DisabilityStatus;
+  studentProfileDisabilityStatus: DisabilityStatus;
 }
 
 /**
