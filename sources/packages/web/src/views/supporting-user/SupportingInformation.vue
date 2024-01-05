@@ -120,6 +120,7 @@ import {
   FormIOForm,
   VForm,
   ApiProcessError,
+  OfferingIntensity,
 } from "@/types";
 import { UpdateSupportingUserAPIInDTO } from "@/services/http/dto";
 
@@ -176,7 +177,10 @@ export default defineComponent({
       formInstance.on("nextPage", prevNextNavigation);
     };
 
-    const setInitialData = (programYearStartDate: string) => {
+    const setInitialData = (
+      programYearStartDate: string,
+      offeringIntensity: OfferingIntensity,
+    ) => {
       initialData.value = {
         givenNames: bcscParsedToken.givenNames,
         lastName: bcscParsedToken.lastName,
@@ -184,6 +188,7 @@ export default defineComponent({
         gender: bcscParsedToken.gender,
         dateOfBirth: dateOnlyLongString(bcscParsedToken.birthdate),
         programYearStartDate,
+        offeringIntensity,
       };
     };
 
@@ -210,7 +215,10 @@ export default defineComponent({
             props.supportingUserType,
             getIdentifiedApplication(),
           );
-        setInitialData(searchResult.programYearStartDate);
+        setInitialData(
+          searchResult.programYearStartDate,
+          searchResult.offeringIntensity,
+        );
         formName.value = searchResult.formName;
       } catch (error: unknown) {
         formName.value = null;

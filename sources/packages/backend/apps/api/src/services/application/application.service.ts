@@ -1204,6 +1204,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "programYear.startDate",
         "user.userName",
         "student.id",
+        "application.data",
       ])
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
