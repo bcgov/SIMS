@@ -55,6 +55,7 @@ export class EducationProgramOfferingImportCSVService {
     return csvModels.map((csvModel) => ({
       offeringName: csvModel.offeringName,
       yearOfStudy: csvModel.yearOfStudy,
+      // showYearOfStudy will not be used anymore
       showYearOfStudy: true,
       offeringIntensity: csvModel.offeringIntensity,
       offeringDelivered: csvModel.offeringDelivered,
