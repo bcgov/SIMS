@@ -44,7 +44,6 @@ import {
   EducationProgramOfferingSummaryViewAPIOutDTO,
   OfferingBulkInsertValidationResultAPIOutDTO,
 } from "./models/education-program-offering.dto";
-import { YesNoOptions } from "@sims/test-utils";
 
 @Injectable()
 export class EducationProgramOfferingControllerService {
