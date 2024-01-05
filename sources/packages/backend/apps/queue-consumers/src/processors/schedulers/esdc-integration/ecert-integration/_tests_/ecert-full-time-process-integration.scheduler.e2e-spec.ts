@@ -468,7 +468,8 @@ describe(
         }),
       ).toBe(true);
     });
-    it("Should not generate disbursement if the Student assessment contains PD/PPD application flag=yes and Student profile PD/PPD missing approval", async () => {
+
+    it("Should not generate disbursement if the Student assessment contains PD/PPD application flag is yes and Student profile PD/PPD missing approval", async () => {
       // Arrange
 
       // Student with valid SIN.
@@ -531,7 +532,8 @@ describe(
         "Uploaded records: 0",
       ]);
     });
-    it("Should generate disbursement if the Student assessment contains PD/PPD application flag=yes and Student profile PD approved", async () => {
+
+    it("Should generate disbursement if the Student assessment contains PD/PPD application flag is yes and Student profile PD approved/confirmed", async () => {
       // Arrange
 
       // Student with valid SIN.
@@ -549,7 +551,7 @@ describe(
         createFakeMSFAANumber({ student }, { msfaaState: MSFAAStates.Signed }),
       );
       // Student application eligible for e-Cert.
-      await saveFakeApplicationDisbursements(
+      const application = await saveFakeApplicationDisbursements(
         db.dataSource,
         { student, msfaaNumber },
         {
@@ -596,8 +598,13 @@ describe(
         `Generated file: ${uploadedFileName}`,
         "Uploaded records: 1",
       ]);
+      expect(
+        application.currentAssessment.disbursementSchedules[0]
+          .disbursementScheduleStatus,
+      ).toBe(DisbursementScheduleStatus.Pending);
     });
-    it("Should generate disbursement if the Student assessment contains PD/PPD application flag=no", async () => {
+
+    it("Should generate disbursement if the Student assessment contains PD/PPD application flag is no", async () => {
       // Arrange
 
       // Student with valid SIN.
@@ -608,7 +615,7 @@ describe(
       );
 
       // Student application eligible for e-Cert.
-      await saveFakeApplicationDisbursements(
+      const application = await saveFakeApplicationDisbursements(
         db.dataSource,
         { student, msfaaNumber },
         {
@@ -655,6 +662,10 @@ describe(
         `Generated file: ${uploadedFileName}`,
         "Uploaded records: 1",
       ]);
+      expect(
+        application.currentAssessment.disbursementSchedules[0]
+          .disbursementScheduleStatus,
+      ).toBe(DisbursementScheduleStatus.Pending);
     });
   },
 );
