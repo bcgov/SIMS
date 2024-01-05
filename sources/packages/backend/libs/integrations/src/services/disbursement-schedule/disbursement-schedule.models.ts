@@ -135,9 +135,9 @@ export const FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS = [
  */
 export interface DisabilityDetails {
   /**
-   * WorkflowData from the assessment.
+   * Calculated PD/PPD status applied in the application by the student.
    */
-  workflowData: WorkflowData;
+  calculatedPDPPDStatus: boolean;
   /**
    * Student profile disability status.
    */
@@ -195,8 +195,8 @@ export class EligibleECertDisbursement {
    * @param offering education program offering.
    * @param maxLifetimeBCLoanAmount maximum BC loan configured to the assessment's
    * program year.
-   * @param pdppdVerifiedStatus PD/PPD verified status for a student, who have applied
-   * for PD verified status in the application.
+   * @param disabilityDetails students Disability status both from application submitted
+   * and the student profile disability status verification.
    * @param restrictions All active student restrictions actions. These actions can
    * impact the e-Cert calculations.
    * This is a shared array reference between all the disbursements of a single student.

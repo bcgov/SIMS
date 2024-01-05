@@ -146,7 +146,9 @@ export class ECertGenerationService {
           (disbursement) => {
             const student = application.student;
             const disabilityDetails: DisabilityDetails = {
-              workflowData: application.currentAssessment.workflowData,
+              calculatedPDPPDStatus:
+                application.currentAssessment.workflowData.calculatedData
+                  .pdppdStatus,
               studentDisabilityStatus: student.disabilityStatus,
             };
             return new EligibleECertDisbursement(

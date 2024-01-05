@@ -38,8 +38,7 @@ export abstract class ValidateDisbursementBase {
     }
     // Disability Status PD/PPD Verified.
     if (
-      eCertDisbursement.disabilityDetails.workflowData.calculatedData
-        .pdppdStatus
+      eCertDisbursement.disabilityDetails.calculatedPDPPDStatus
         ? ![DisabilityStatus.PD, DisabilityStatus.PPD].includes(
             eCertDisbursement.disabilityDetails.studentDisabilityStatus,
           )
