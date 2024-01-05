@@ -6,7 +6,6 @@ import {
   EducationProgramOffering,
   RestrictionActionType,
   StudentRestriction,
-  WorkflowData,
 } from "@sims/sims-db";
 
 export interface DisbursementValue {
