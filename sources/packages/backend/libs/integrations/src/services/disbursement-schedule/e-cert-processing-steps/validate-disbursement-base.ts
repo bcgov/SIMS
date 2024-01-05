@@ -37,13 +37,14 @@ export abstract class ValidateDisbursementBase {
       shouldContinue = false;
     }
     // Disability Status PD/PPD Verified.
-    if (
-      eCertDisbursement.disabilityDetails.calculatedPDPPDStatus
-        ? ![DisabilityStatus.PD, DisabilityStatus.PPD].includes(
-            eCertDisbursement.disabilityDetails.studentDisabilityStatus,
-          )
-        : null
-    ) {
+
+    const disabilityStatusValidation = eCertDisbursement.disabilityDetails
+      .calculatedPDPPDStatus
+      ? [DisabilityStatus.PD, DisabilityStatus.PPD].includes(
+          eCertDisbursement.disabilityDetails.studentDisabilityStatus,
+        )
+      : true;
+    if (!disabilityStatusValidation) {
       log.info(`Student disability Status PD/PPD is not Verified.`);
       shouldContinue = false;
     }

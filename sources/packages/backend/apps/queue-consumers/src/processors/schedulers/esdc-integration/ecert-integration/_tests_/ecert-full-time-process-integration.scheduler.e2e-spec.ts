@@ -472,23 +472,15 @@ describe(
     it("Should not generate disbursement if the Student assessment contains PD/PPD application flag is yes and Student profile PD/PPD missing approval", async () => {
       // Arrange
 
-      // Student with valid SIN.
-      const student = await saveFakeStudent(
-        db.dataSource,
-        {},
-        {
-          initialValue: {
-            disabilityStatus: DisabilityStatus.NotRequested,
-          },
-        },
-      );
+      // Student with valid SIN and PD/PPD Not Requested.
+      const student = await saveFakeStudent(db.dataSource);
       // Valid MSFAA Number.
       const msfaaNumber = await db.msfaaNumber.save(
         createFakeMSFAANumber({ student }, { msfaaState: MSFAAStates.Signed }),
       );
 
       // Student application eligible for e-Cert.
-      await saveFakeApplicationDisbursements(
+      const application = await saveFakeApplicationDisbursements(
         db.dataSource,
         { student, msfaaNumber },
         {
@@ -531,12 +523,21 @@ describe(
         "Generated file: none",
         "Uploaded records: 0",
       ]);
+      const [disbursement] =
+        application.currentAssessment.disbursementSchedules;
+      const isScheduleNotSent = await db.disbursementSchedule.exist({
+        where: {
+          id: disbursement.id,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+        },
+      });
+      expect(isScheduleNotSent).toBe(true);
     });
 
-    it("Should generate disbursement if the Student assessment contains PD/PPD application flag is yes and Student profile PD approved/confirmed", async () => {
+    it("Should generate disbursement if the Student assessment contains PD/PPD application flag is yes and Student profile PD approved or confirmed", async () => {
       // Arrange
 
-      // Student with valid SIN.
+      // Student with valid SIN and PD/PPD approved or confirmed.
       const student = await saveFakeStudent(
         db.dataSource,
         {},
@@ -598,16 +599,22 @@ describe(
         `Generated file: ${uploadedFileName}`,
         "Uploaded records: 1",
       ]);
-      expect(
-        application.currentAssessment.disbursementSchedules[0]
-          .disbursementScheduleStatus,
-      ).toBe(DisbursementScheduleStatus.Pending);
+      const [disbursement] =
+        application.currentAssessment.disbursementSchedules;
+      const isScheduleSent = await db.disbursementSchedule.exist({
+        where: {
+          id: disbursement.id,
+          dateSent: Not(IsNull()),
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        },
+      });
+      expect(isScheduleSent).toBe(true);
     });
 
     it("Should generate disbursement if the Student assessment contains PD/PPD application flag is no", async () => {
       // Arrange
 
-      // Student with valid SIN.
+      // Student with valid SIN and PD/PPD Not Requested.
       const student = await saveFakeStudent(db.dataSource);
       // Valid MSFAA Number.
       const msfaaNumber = await db.msfaaNumber.save(
@@ -662,10 +669,16 @@ describe(
         `Generated file: ${uploadedFileName}`,
         "Uploaded records: 1",
       ]);
-      expect(
-        application.currentAssessment.disbursementSchedules[0]
-          .disbursementScheduleStatus,
-      ).toBe(DisbursementScheduleStatus.Pending);
+      const [disbursement] =
+        application.currentAssessment.disbursementSchedules;
+      const isScheduleSent = await db.disbursementSchedule.exist({
+        where: {
+          id: disbursement.id,
+          dateSent: Not(IsNull()),
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        },
+      });
+      expect(isScheduleSent).toBe(true);
     });
   },
 );
