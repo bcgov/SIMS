@@ -225,7 +225,7 @@ parameters:
     The OpenShift Namespace where the patroni and postgresql
     ImageStream resides.
   displayName: ImageStream Namespace
-  value: bcgov
+  value: bcgov-docker-local
 - name: IMAGE_NAME
   description: |
     The Patroni image stream name
@@ -233,7 +233,7 @@ parameters:
 - name: IMAGE_TAG
   description: |
     The image tag used to specify which image you would like deployed.
-  value: "12.4-latest"
+  value: "2.0.1-12.4-latest"
 - name: PVC_SIZE
   description: 
     The size of the persistent volume to create.
@@ -242,4 +242,4 @@ parameters:
 - name: STORAGE_CLASS
   value: netapp-file-standard
 - name: IMAGE_REGISTRY
-  value: image-registry.openshift-image-registry.svc:5000
+  value: artifacts.developer.gov.bc.ca
