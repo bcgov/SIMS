@@ -44,6 +44,7 @@ import {
   OverawardStudentsController,
   OverawardControllerService,
   StudentAppealControllerService,
+  ScholasticStandingControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { ConfigModule } from "@sims/utilities/config";
@@ -62,6 +63,7 @@ import {
   SFASPartTimeApplicationsService,
 } from "@sims/services/sfas";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
+import { ScholasticStandingStudentsController } from "./route-controllers/student-scholastic-standings/student-scholastic-standings.students.controller";
 
 @Module({
   imports: [AuthModule, ConfigModule, ATBCIntegrationModule],
@@ -78,6 +80,7 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     ProgramYearStudentsController,
     OverawardStudentsController,
     ApplicationOfferingChangeRequestStudentsController,
+    ScholasticStandingStudentsController,
   ],
   providers: [
     WorkflowClientService,
@@ -120,6 +123,7 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     ConfirmationOfEnrollmentService,
     ApplicationOfferingChangeRequestControllerService,
     ApplicationOfferingChangeRequestService,
+    ScholasticStandingControllerService,
   ],
 })
 export class AppStudentsModule {}

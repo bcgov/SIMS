@@ -19,7 +19,10 @@ import {
   APPLICATION_NOT_FOUND,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "../application/application.service";
-import { ScholasticStanding } from "./student-scholastic-standings.model";
+import {
+  ScholasticStanding,
+  ScholasticStandingSummary,
+} from "./student-scholastic-standings.model";
 import { StudentRestrictionService } from "../restriction/student-restriction.service";
 import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../constants";
 import { SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS } from "../../utilities";
@@ -560,5 +563,28 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       );
     }
     return studentScholasticStanding.getOne();
+  }
+
+  /**
+   * Get scholastic standing summary details.
+   * @param studentId student id to retrieve the scholastic standing summary details.
+   * @return student scholastic standing summary details.
+   */
+  async getScholasticStandingSummary(
+    studentId?: number,
+  ): Promise<ScholasticStandingSummary> {
+    const studentScholasticStandingSummary = this.repo
+      .createQueryBuilder("studentScholasticStanding")
+      .select(
+        "SUM(studentScholasticStanding.unsuccessfulWeeks)",
+        "totalUnsuccessfulWeeks",
+      )
+      .innerJoin("studentScholasticStanding.application", "application")
+      .innerJoin("application.student", "student")
+      .where("student.id = :studentId", {
+        studentId,
+      })
+      .groupBy("student.id");
+    return studentScholasticStandingSummary.getRawOne<ScholasticStandingSummary>();
   }
 }

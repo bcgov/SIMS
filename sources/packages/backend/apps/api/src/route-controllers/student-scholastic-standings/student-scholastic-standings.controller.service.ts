@@ -7,9 +7,11 @@ import {
   ApplicationWithdrawalTextValidationResult,
   StudentScholasticStandingsService,
 } from "../../services";
+import { SFASIndividualService } from "@sims/services";
 import {
   ApplicationBulkWithdrawalValidationResultAPIOutDTO,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
+  ScholasticStandingSummaryDetailsAPIOutDTO,
 } from "./models/student-scholastic-standings.dto";
 import { transformToActiveApplicationDataAPIOutDTO } from "../institution-locations/models/application.dto";
 import { ApplicationWithdrawalValidationResult } from "../../services/application-bulk-withdrawal/application-bulk-withdrawal-validation.models";
@@ -26,6 +28,7 @@ import {
 export class ScholasticStandingControllerService {
   constructor(
     private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
+    private readonly sfasIndividualService: SFASIndividualService,
   ) {}
 
   /**
@@ -54,6 +57,29 @@ export class ScholasticStandingControllerService {
     return {
       ...scholasticStanding.submittedData,
       ...transformToActiveApplicationDataAPIOutDTO(application, offering),
+    };
+  }
+
+  /**
+   * Get Scholastic Standing summary details.
+   * @param studentId student id to retrieve the scholastic standing summary.
+   * @returns Scholastic Standing summary details.
+   */
+  async getScholasticStandingSummary(options?: {
+    studentId: number;
+  }): Promise<ScholasticStandingSummaryDetailsAPIOutDTO> {
+    const scholasticStandingSummary =
+      await this.studentScholasticStandingsService.getScholasticStandingSummary(
+        options?.studentId,
+      );
+    const SFASUnsuccessfulCompletionWeeks =
+      await this.sfasIndividualService.getSFASTotalUnsuccessfulCompletionWeeks(
+        options?.studentId,
+      );
+    return {
+      lifetimeUnsuccessfulCompletionWeeks:
+        +scholasticStandingSummary?.totalUnsuccessfulWeeks +
+        +SFASUnsuccessfulCompletionWeeks,
     };
   }
 

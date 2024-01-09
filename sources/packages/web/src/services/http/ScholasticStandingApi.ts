@@ -2,6 +2,7 @@ import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
   ScholasticStandingDataAPIInDTO,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
+  ScholasticStandingSummaryDetailsAPIOutDTO,
 } from "@/services/http/dto";
 import { AxiosProgressEvent, AxiosRequestConfig } from "axios";
 import ApiClient from "./ApiClient";
@@ -20,6 +21,21 @@ export class ScholasticStandingApi extends HttpBaseClient {
   ): Promise<ScholasticStandingSubmittedDetailsAPIOutDTO> {
     return this.getCall<ScholasticStandingSubmittedDetailsAPIOutDTO>(
       this.addClientRoot(`scholastic-standing/${scholasticStandingId}`),
+    );
+  }
+
+  /**
+   * Get Scholastic Standing Summary details.
+   * @param studentId student id to retrieve the scholastic standing.
+   * @returns Scholastic Standing Summary.
+   */
+  public async getScholasticStandingSummary(options?: {
+    studentId?: number;
+  }): Promise<ScholasticStandingSummaryDetailsAPIOutDTO> {
+    let url = "scholastic-standing/summary";
+    options?.studentId ? (url += `/student/${options?.studentId}`) : url;
+    return this.getCall<ScholasticStandingSummaryDetailsAPIOutDTO>(
+      this.addClientRoot(url),
     );
   }
 
