@@ -33,7 +33,9 @@ export class ScholasticStandingApi extends HttpBaseClient {
     studentId?: number;
   }): Promise<ScholasticStandingSummaryDetailsAPIOutDTO> {
     let url = "scholastic-standing/summary";
-    options?.studentId ? (url += `/student/${options?.studentId}`) : url;
+    if (options?.studentId) {
+      url += `/student/${options?.studentId}`;
+    }
     return this.getCall<ScholasticStandingSummaryDetailsAPIOutDTO>(
       this.addClientRoot(url),
     );
