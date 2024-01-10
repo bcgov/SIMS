@@ -228,6 +228,7 @@ export interface CalculatedAssessmentModel {
   // CSGD
   finalFederalAwardNetCSGDAmount: number;
   // BCAG
+  federalAwardBCAGAmount: number;
   finalProvincialAwardNetBCAGAmount: number;
   // SBSD
   finalProvincialAwardNetSBSDAmount: number;

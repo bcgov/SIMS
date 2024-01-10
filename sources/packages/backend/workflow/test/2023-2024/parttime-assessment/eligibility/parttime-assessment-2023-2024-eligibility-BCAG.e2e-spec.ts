@@ -4,6 +4,11 @@ import {
   executePartTimeAssessmentForProgramYear,
 } from "../../../test-utils";
 import { CredentialType, InstitutionTypes } from "../../../models";
+import {
+  DependentEligibility,
+  createFakeStudentDependentEligible,
+} from "../../../test-utils/factories";
+import { YesNoOptions } from "@sims/test-utils";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-BCAG.`, () => {
   // Expected and not expected credentials types.
@@ -102,5 +107,42 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
         ).toBe(0);
       });
     }
+  });
+
+  it("Should determine provincialAwardNetBCAGAmount when awardEligibilityBCAG is true and federalAwardBCAGAmount >= 100", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.studentDataTaxReturnIncome = 32999;
+    assessmentConsolidatedData.studentDataIsYourSpouseACanadianCitizen =
+      YesNoOptions.Yes;
+    assessmentConsolidatedData.partner1CRAReportedIncome = 32999;
+    // Creates 1 eligible dependent.
+    assessmentConsolidatedData.studentDataDependants = [
+      createFakeStudentDependentEligible(
+        DependentEligibility.Eligible0To18YearsOld,
+      ),
+    ];
+    // Act
+    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+    // Assert
+    // calculatedDataTotalFamilyIncome = studentDataCRAReportedIncome + studentDataEstimatedSpouseIncome
+    // awardEligibilityBCAG is true
+    // federalAwardBCAGAmount is greater than or equal to 100
+    expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(
+      assessmentConsolidatedData.studentDataCRAReportedIncome +
+        assessmentConsolidatedData.studentDataEstimatedSpouseIncome,
+    );
+    expect(calculatedAssessment.variables.calculatedDataFamilySize).toBe(2);
+    expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(true);
+    expect(
+      calculatedAssessment.variables.federalAwardBCAGAmount,
+    ).toBeGreaterThan(100);
+    expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(
+      1000,
+    );
   });
 });
