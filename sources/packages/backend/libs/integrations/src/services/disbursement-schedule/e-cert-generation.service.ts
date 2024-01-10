@@ -13,6 +13,7 @@ import {
 } from "@sims/sims-db";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
+  DisabilityDetails,
   EligibleECertDisbursement,
   StudentActiveRestriction,
   mapStudentActiveRestrictions,
@@ -62,6 +63,7 @@ export class ECertGenerationService {
         "application.id",
         "application.applicationNumber",
         "currentAssessment.id",
+        "currentAssessment.workflowData",
         "disbursementSchedule.id",
         "disbursementSchedule.disbursementDate",
         "disbursementSchedule.tuitionRemittanceRequestedAmount",
@@ -79,6 +81,7 @@ export class ECertGenerationService {
         "offering.actualTuitionCosts",
         "offering.programRelatedCosts",
         "student.id",
+        "student.disabilityStatus",
         "sinValidation.id",
         "sinValidation.isValidSIN",
         // The student active restrictions are initially loaded along side all the student data but they can
@@ -141,16 +144,24 @@ export class ECertGenerationService {
       eligibleApplications.flatMap<EligibleECertDisbursement>((application) => {
         return application.currentAssessment.disbursementSchedules.map(
           (disbursement) => {
+            const student = application.student;
+            const disabilityDetails: DisabilityDetails = {
+              calculatedPDPPDStatus:
+                application.currentAssessment.workflowData.calculatedData
+                  .pdppdStatus,
+              studentProfileDisabilityStatus: student.disabilityStatus,
+            };
             return new EligibleECertDisbursement(
-              application.student.id,
-              !!application.student.sinValidation.isValidSIN,
+              student.id,
+              !!student.sinValidation.isValidSIN,
               application.currentAssessment.id,
               application.id,
               application.applicationNumber,
               disbursement,
               application.currentAssessment.offering,
               application.programYear.maxLifetimeBCLoanAmount,
-              groupedStudentRestrictions[application.student.id],
+              disabilityDetails,
+              groupedStudentRestrictions[student.id],
             );
           },
         );

@@ -1,5 +1,6 @@
 import { RestrictionCode } from "@sims/services";
 import {
+  DisabilityStatus,
   DisbursementSchedule,
   DisbursementValueType,
   EducationProgramOffering,
@@ -128,6 +129,21 @@ export const FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS = [
 ];
 
 /**
+ * Represents students Disability status both from application submitted
+ * and the student profile disability status verification.
+ */
+export interface DisabilityDetails {
+  /**
+   * Calculated PD/PPD status applied in the application by the student.
+   */
+  calculatedPDPPDStatus: boolean;
+  /**
+   * Student profile disability status.
+   */
+  studentProfileDisabilityStatus: DisabilityStatus;
+}
+
+/**
  * Represents an active student restriction.
  */
 export interface StudentActiveRestriction {
@@ -178,6 +194,8 @@ export class EligibleECertDisbursement {
    * @param offering education program offering.
    * @param maxLifetimeBCLoanAmount maximum BC loan configured to the assessment's
    * program year.
+   * @param disabilityDetails students Disability status both from application submitted
+   * and the student profile disability status verification.
    * @param restrictions All active student restrictions actions. These actions can
    * impact the e-Cert calculations.
    * This is a shared array reference between all the disbursements of a single student.
@@ -195,6 +213,7 @@ export class EligibleECertDisbursement {
     public readonly disbursement: DisbursementSchedule,
     public readonly offering: EligibleECertOffering,
     public readonly maxLifetimeBCLoanAmount: number,
+    public readonly disabilityDetails: DisabilityDetails,
     readonly restrictions: StudentActiveRestriction[],
   ) {}
 
