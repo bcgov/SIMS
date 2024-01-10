@@ -109,11 +109,11 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataTaxReturnIncome = 32999;
+    assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
     assessmentConsolidatedData.studentDataIsYourSpouseACanadianCitizen =
       YesNoOptions.Yes;
-    assessmentConsolidatedData.partner1CRAReportedIncome = 32999;
+    assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
     // Public institution
     assessmentConsolidatedData.institutionType = InstitutionTypes.BCPublic;
     // Act
@@ -122,7 +122,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
       assessmentConsolidatedData,
     );
     // Assert
-    // calculatedDataTotalFamilyIncome = 10001 + 32999
+    // calculatedDataTotalFamilyIncome = 20001 + 22999
     // awardEligibilityBCAG is true
     // federalAwardBCAGAmount is greater than or equal to 100
     expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(
@@ -142,7 +142,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataTaxReturnIncome = 32999;
+    assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
     // Private institution
     assessmentConsolidatedData.institutionType = InstitutionTypes.BCPrivate;
     // Act
@@ -154,7 +154,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
     // awardEligibilityBCAG is false
     // provincialAwardNetBCAGAmount is 0
     expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(
-      10001,
+      20001,
     );
     expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(false);
     expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(0);
