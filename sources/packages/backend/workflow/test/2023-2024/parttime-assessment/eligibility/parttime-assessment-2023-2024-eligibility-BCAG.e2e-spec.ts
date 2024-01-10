@@ -4,10 +4,6 @@ import {
   executePartTimeAssessmentForProgramYear,
 } from "../../../test-utils";
 import { CredentialType, InstitutionTypes } from "../../../models";
-import {
-  DependentEligibility,
-  createFakeStudentDependentEligible,
-} from "../../../test-utils/factories";
 import { YesNoOptions } from "@sims/test-utils";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-BCAG.`, () => {
