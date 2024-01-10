@@ -161,6 +161,7 @@ export class ScholasticStandingInstitutionsController extends BaseController {
    * @param studentId student id to retrieve the scholastic standing summary details.
    * @returns Scholastic Standing Summary details.
    */
+  @IsBCPublicInstitution()
   @Get("summary/student/:studentId")
   async getScholasticStandingSummary(
     @Param("studentId", ParseIntPipe) studentId: number,

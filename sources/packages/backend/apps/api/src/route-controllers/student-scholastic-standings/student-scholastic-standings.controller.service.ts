@@ -78,8 +78,8 @@ export class ScholasticStandingControllerService {
       );
     return {
       lifetimeUnsuccessfulCompletionWeeks:
-        +scholasticStandingSummary?.totalUnsuccessfulWeeks +
-        +SFASUnsuccessfulCompletionWeeks,
+        +(scholasticStandingSummary?.totalUnsuccessfulWeeks ?? 0) +
+        +(SFASUnsuccessfulCompletionWeeks ?? 0),
     };
   }
 
