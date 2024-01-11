@@ -183,16 +183,31 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     newOfferings: number[],
     offeringRepo: Repository<EducationProgramOffering>,
   ): Promise<UpdateResult> {
-    return offeringRepo.update(
-      {
-        id: In(newOfferings),
-      },
-      {
-        parentOffering: {
-          id: () => "id",
+    try {
+      return offeringRepo.update(
+        {
+          id: In(newOfferings),
         },
-      },
-    );
+        {
+          parentOffering: {
+            id: () => "id",
+          },
+        },
+      );
+    } catch (error: unknown) {
+      if (error instanceof QueryFailedError) {
+        const postgresError = error as PostgresDriverError;
+        if (
+          postgresError.constraint ===
+          DatabaseConstraintNames.LocationIDProgramIDOfferingNameStudyDatesYearOfStudyIndex
+        ) {
+          throw new CustomNamedError(
+            "Duplication error. An offering with the same name, year of study, start date and end date was found.",
+            OFFERING_SAVE_UNIQUE_ERROR,
+          );
+        }
+      }
+    }
   }
 
   /**

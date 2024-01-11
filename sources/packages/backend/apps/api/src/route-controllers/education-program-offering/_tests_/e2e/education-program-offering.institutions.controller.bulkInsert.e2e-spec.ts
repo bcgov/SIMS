@@ -253,77 +253,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
     },
   );
 
-  it("Should validate duplication error when there are 2 records with the same name, year of study, start date and end date.", async () => {
-    // Arrange
-    // Location code for both rows of the CSV.
-    const csvLocationCodeKSEY = "KSEY";
-    // SABC code for both rows of the CSV.
-    const csvProgramSABCCodeSBC2 = "SBC2";
-
-    // Creating an institution location with same location code for both
-    // rows in the CSV file.
-    const collegeFLocationKSEY = createFakeInstitutionLocation(
-      {
-        institution: collegeF,
-      },
-      {
-        initialValue: {
-          institutionCode: csvLocationCodeKSEY,
-        } as Partial<InstitutionLocation>,
-      },
-    );
-    // Create a program for the institution with the same SABC code for both rows of the CSV file.
-    // Setting deliveredOnSite as true, as that of the CSV, so that it will create an approved offering.
-    const educationProgramSBC2 = createFakeEducationProgram(
-      { institution: collegeF, user: collegeFUser },
-      {
-        initialValue: {
-          sabcCode: csvProgramSABCCodeSBC2,
-          deliveredOnSite: true,
-        } as Partial<EducationProgram>,
-      },
-    );
-
-    await db.educationProgram.save(educationProgramSBC2);
-
-    await authorizeUserTokenForLocation(
-      db.dataSource,
-      InstitutionTokenTypes.CollegeFUser,
-      collegeFLocationKSEY,
-    );
-
-    const singleOfferingWithDuplicateValidationErrorsFilePath = path.join(
-      __dirname,
-      "bulk-insert/single-upload-with-duplicate-offering-validation-errors.csv",
-    );
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .post(endpoint)
-      .attach("file", singleOfferingWithDuplicateValidationErrorsFilePath)
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
-      .expect({
-        message:
-          "Some error happen with one or more offerings being created and the entire process was aborted. No offering was added and the upload can be executed again once the error is fixed.",
-        errorType: "OFFERING_CREATION_CRITICAL_ERROR",
-        objectInfo: [
-          {
-            recordIndex: 1,
-            locationCode: "YESK",
-            sabcProgramCode: "SBC1",
-            startDate: "2023-09-06",
-            endDate: "2024-08-15",
-            errors: [
-              "Duplication error. An offering with the same name, year of study, start date and end date was found. Please remove the duplicate offering and try again.",
-            ],
-            infos: [],
-            warnings: [],
-          },
-        ],
-      });
-  });
-
   it("Should return program related validation error when bulk offering CSV file with a non existing program SABC code is uploaded. ", async () => {
     // Arrange
 
@@ -490,6 +419,46 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
         });
     },
   );
+
+  it("Should validate duplication error when there are 2 records with the same name, year of study, start date and end date.", async () => {
+    // Arrange
+    await authorizeUserTokenForLocation(
+      db.dataSource,
+      InstitutionTokenTypes.CollegeFUser,
+      collegeFLocationYESK,
+    );
+
+    const multipleOfferingWithDuplicateValidationErrorsFilePath = path.join(
+      __dirname,
+      "bulk-insert/multiple-upload-with-duplicate-offering-validation-errors.csv",
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .attach("file", multipleOfferingWithDuplicateValidationErrorsFilePath)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message:
+          "Some error happen with one or more offerings being created and the entire process was aborted. No offering was added and the upload can be executed again once the error is fixed.",
+        errorType: "OFFERING_CREATION_CRITICAL_ERROR",
+        objectInfo: [
+          {
+            recordIndex: 1,
+            locationCode: "YESK",
+            sabcProgramCode: "SBC1",
+            startDate: "2023-09-06",
+            endDate: "2024-08-15",
+            errors: [
+              "Duplication error. An offering with the same name, year of study, start date and end date was found. Please remove the duplicate offering and try again.",
+            ],
+            infos: [],
+            warnings: [],
+          },
+        ],
+      });
+  });
 
   afterAll(async () => {
     await app?.close();
