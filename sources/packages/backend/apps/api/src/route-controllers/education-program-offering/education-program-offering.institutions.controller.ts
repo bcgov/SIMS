@@ -157,16 +157,12 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   @HasLocationAccess("locationId")
   @ApiNotFoundResponse({
     description:
-      "Program to create the offering not found for the institution.",
-  })
-  @ApiNotFoundResponse({
-    description: "Not able to find the program in the provided location.",
-  })
-  @ApiUnprocessableEntityResponse({
-    description: "Not able to a create an offering due to an invalid request.",
+      "Program to create the offering not found for the institution or " +
+      "Not able to find the program in the provided location.",
   })
   @ApiUnprocessableEntityResponse({
     description:
+      "Not able to a create an offering due to an invalid request or " +
       "Duplication error. An offering with the same name, year of study, start date and end date was found.",
   })
   @Post("location/:locationId/education-program/:programId")
