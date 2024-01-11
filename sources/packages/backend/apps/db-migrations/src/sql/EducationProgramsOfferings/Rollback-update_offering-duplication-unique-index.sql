@@ -1,7 +1,46 @@
-DROP INDEX sims.location_id_program_id_offering_name_study_dates_offering_type_year_of_study_index;
+DROP INDEX sims.loc_id_prog_id_offer_name_study_dts_year_study_index;
+
+-- Ensures currently duplicated offerings will be renamed to avoid issues
+-- while creating the unique constraint.
+UPDATE
+    sims.education_programs_offerings
+SET
+    offering_name = offering_name || ' - updated to be unique - ' || id :: text
+WHERE
+    id IN (
+        SELECT
+            offerings.id
+        FROM
+            sims.education_programs_offerings offerings
+            INNER JOIN (
+                SELECT
+                    location_id,
+                    program_id,
+                    offering_name,
+                    study_start_date,
+                    study_end_date
+                FROM
+                    sims.education_programs_offerings
+                WHERE
+                    offering_status IN ('Approved', 'Creation pending')
+                GROUP BY
+                    location_id,
+                    program_id,
+                    offering_name,
+                    study_start_date,
+                    study_end_date
+                HAVING
+                    count(*) > 1
+            ) AS duplicated_offerings ON offerings.location_id = duplicated_offerings.location_id
+            AND offerings.program_id = duplicated_offerings.program_id
+            AND offerings.offering_name = duplicated_offerings.offering_name
+            AND offerings.study_start_date = duplicated_offerings.study_start_date
+            AND offerings.study_end_date = duplicated_offerings.study_end_date
+            AND offerings.offering_status IN ('Approved', 'Creation pending')
+    );
 
 -- Create the unique index for the offering name, start, and end dates on the same program and location.
--- The unique index is valid only for the offerings in "Approved" or "Creationg pending",
+-- The unique index is valid only for the offerings in "Approved" or "Creation pending",
 -- the others statuses can allow the duplication, for instance, during an "offering request a changed" process the offering can be "cloned".
 -- An unique index was used instead of a constraint to allow the creation of the unique "constraint" including the 
 -- where IN ('Approved', 'Creation pending').

@@ -52,6 +52,7 @@ import {
   isBetweenPeriod,
 } from "@sims/utilities";
 import {
+  OFFERING_SAVE_UNIQUE_ERROR,
   OFFERING_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   OFFERING_NOT_VALID,
 } from "../../constants";
@@ -98,7 +99,23 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programOffering.creator = { id: userId } as User;
     // When creating a new offering, parent id and the primary id are the same.
     programOffering.parentOffering = programOffering;
-    return this.repo.save(programOffering);
+
+    try {
+      return await this.repo.save(programOffering);
+    } catch (error: unknown) {
+      if (error instanceof QueryFailedError) {
+        const postgresError = error as PostgresDriverError;
+        if (
+          postgresError.constraint ===
+          DatabaseConstraintNames.LocationIDProgramIDOfferingNameStudyDatesYearOfStudyIndex
+        ) {
+          throw new CustomNamedError(
+            "Duplication error. An offering with the same name, year of study, start date and end date was found.",
+            OFFERING_SAVE_UNIQUE_ERROR,
+          );
+        }
+      }
+    }
   }
 
   /**
@@ -207,11 +224,11 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         const postgresError = error as PostgresDriverError;
         if (
           postgresError.constraint ===
-          DatabaseConstraintNames.LocationIDProgramIDOfferingNameStudyDatesIndex
+          DatabaseConstraintNames.LocationIDProgramIDOfferingNameStudyDatesYearOfStudyIndex
         ) {
           throw new CreateFromValidatedOfferingError(
             validatedOffering,
-            "Duplication error. An offering with the same name, start date, and end date was found. Please remove the duplicated offering and try again.",
+            "Duplication error. An offering with the same name, year of study, start date and end date was found. Please remove the duplicate offering and try again.",
           );
         }
       }
@@ -420,7 +437,22 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     );
     programOffering.offeringStatus = offeringValidation.offeringStatus;
     programOffering.modifier = { id: userId } as User;
-    return this.repo.update(offeringId, programOffering);
+    try {
+      return await this.repo.update(offeringId, programOffering);
+    } catch (error: unknown) {
+      if (error instanceof QueryFailedError) {
+        const postgresError = error as PostgresDriverError;
+        if (
+          postgresError.constraint ===
+          DatabaseConstraintNames.LocationIDProgramIDOfferingNameStudyDatesYearOfStudyIndex
+        ) {
+          throw new CustomNamedError(
+            "Duplication error. An offering with the same name, year of study, start date and end date was found.",
+            OFFERING_SAVE_UNIQUE_ERROR,
+          );
+        }
+      }
+    }
   }
 
   private populateProgramOffering(

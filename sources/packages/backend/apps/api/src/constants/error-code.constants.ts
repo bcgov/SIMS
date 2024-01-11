@@ -100,6 +100,10 @@ export const OFFERING_VALIDATION_CSV_CONTENT_FORMAT_ERROR =
 export const OFFERING_CREATION_CRITICAL_ERROR =
   "OFFERING_CREATION_CRITICAL_ERROR";
 /**
+ * Duplication error. An offering with the same name, year of study, start date and end date was found.
+ */
+export const OFFERING_SAVE_UNIQUE_ERROR = "OFFERING_SAVE_UNIQUE_ERROR";
+/**
  * Offering is trying to be updated but it is not in the correct state, either
  * due to an expected status or any other condition. For instance, an offering
  * cannot have certain data update if it is associated with an assessment.

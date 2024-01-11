@@ -67,6 +67,7 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { EducationProgramOfferingImportCSVService } from "../../services/education-program-offering/education-program-offering-import-csv.service";
 import { EducationProgramOfferingValidationService } from "../../services/education-program-offering/education-program-offering-validation.service";
 import {
+  OFFERING_SAVE_UNIQUE_ERROR,
   OFFERING_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   OFFERING_VALIDATION_CRITICAL_ERROR,
   OFFERING_VALIDATION_CSV_PARSE_ERROR,
@@ -158,11 +159,15 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     description:
       "Program to create the offering not found for the institution.",
   })
+  @ApiNotFoundResponse({
+    description: "Not able to find the program in the provided location.",
+  })
   @ApiUnprocessableEntityResponse({
     description: "Not able to a create an offering due to an invalid request.",
   })
-  @ApiNotFoundResponse({
-    description: "Not able to find the program in the provided location.",
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Duplication error. An offering with the same name, year of study, start date and end date was found.",
   })
   @Post("location/:locationId/education-program/:programId")
   async createOffering(
@@ -186,11 +191,13 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
         );
       return { id: createdProgramOffering.id };
     } catch (error: unknown) {
-      if (
-        error instanceof CustomNamedError &&
-        error.name === OFFERING_VALIDATION_CRITICAL_ERROR
-      ) {
-        throw new BadRequestException(error.objectInfo, error.message);
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case OFFERING_VALIDATION_CRITICAL_ERROR:
+            throw new BadRequestException(error.objectInfo, error.message);
+          case OFFERING_SAVE_UNIQUE_ERROR:
+            throw new UnprocessableEntityException(error.message);
+        }
       }
       throw error;
     }
@@ -252,6 +259,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
       if (error instanceof CustomNamedError) {
         switch (error.name) {
           case OFFERING_INVALID_OPERATION_IN_THE_CURRENT_STATE:
+          case OFFERING_SAVE_UNIQUE_ERROR:
             throw new UnprocessableEntityException(error.message);
           case OFFERING_VALIDATION_CRITICAL_ERROR:
             throw new BadRequestException(error.objectInfo, error.message);

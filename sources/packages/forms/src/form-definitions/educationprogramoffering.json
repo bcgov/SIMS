@@ -347,7 +347,7 @@
           "modalEdit": false,
           "dataGridLabel": false,
           "labelPosition": "top",
-          "description": "Please include the institution location, year of study, and cohort details directly into the name of the offering so that students can differentiate it from other similar offerings.",
+          "description": "Please include the institution location and cohort details directly into the name of the offering so that students can differentiate it from other similar offerings.",
           "errorLabel": "",
           "tooltip": "",
           "hideLabel": false,
@@ -602,7 +602,7 @@
                   "value": ""
                 }
               ],
-              "content": "<strong class=\"ml-2\"> Here’s an example of what students will see.</strong>\n<br>e.g. 2022 Winter co-op (Jan 15 2022 - Mar 20 2022) - Year 1",
+              "content": "<strong class=\"ml-2\"> The Year of Study will be displayed as part of the offering name. Here's an example of what students will see.</strong>\n<br>e.g. 2022 Winter co-op (Jan 15 2022 - Mar 20 2022) - Year 1",
               "refreshOnChange": false,
               "customClass": "banner-info",
               "hidden": false,

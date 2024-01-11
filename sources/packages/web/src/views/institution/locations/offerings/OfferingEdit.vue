@@ -75,7 +75,12 @@
 import { useRouter } from "vue-router";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { onMounted, ref, computed, defineComponent } from "vue";
-import { OfferingFormModel, OfferingFormModes, OfferingStatus } from "@/types";
+import {
+  ApiProcessError,
+  OfferingFormModel,
+  OfferingFormModes,
+  OfferingStatus,
+} from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ModalDialog, useFormioUtils, useSnackBar } from "@/composables";
 import {
@@ -214,10 +219,14 @@ export default defineComponent({
         }
         snackBar.success("Offering updated.");
         goBack();
-      } catch {
-        snackBar.error(
-          "Unexpected error happened while creating the offering.",
-        );
+      } catch (error: unknown) {
+        if (error instanceof ApiProcessError) {
+          snackBar.error(error.message);
+        } else {
+          snackBar.error(
+            "Unexpected error happened while creating the offering.",
+          );
+        }
       } finally {
         processing.value = false;
       }

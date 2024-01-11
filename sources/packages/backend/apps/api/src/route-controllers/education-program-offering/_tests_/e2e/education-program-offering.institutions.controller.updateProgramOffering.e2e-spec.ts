@@ -159,6 +159,77 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
     );
   });
 
+  it("Should validate an offering when it is duplicate.", async () => {
+    // Arrange
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    const fakeEducationProgram = createFakeEducationProgram({
+      institution: collegeF,
+      user: collegeFUser,
+    });
+    fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
+    const savedFakeEducationProgram = await db.educationProgram.save(
+      fakeEducationProgram,
+    );
+    const newOffering = createFakeEducationProgramOffering(
+      savedFakeEducationProgram,
+      collegeFLocation,
+    );
+    newOffering.parentOffering = newOffering;
+    newOffering.studyStartDate = "2023-11-01";
+    newOffering.studyEndDate = "2024-06-01";
+    newOffering.offeringStatus = OfferingStatus.CreationPending;
+
+    const savedEducationProgramOffering =
+      await db.educationProgramOffering.save(newOffering);
+
+    const savedEducationProgramOffering2 =
+      await db.educationProgramOffering.save({
+        ...newOffering,
+        id: null,
+        name: newOffering.name + 2,
+      });
+
+    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}/offering/${savedEducationProgramOffering2.id}`;
+
+    const payload = {
+      offeringName: savedEducationProgramOffering.name,
+      yearOfStudy: savedEducationProgramOffering.yearOfStudy,
+      offeringIntensity: OfferingIntensity.fullTime,
+      offeringDelivered: OfferingDeliveryOptions.Onsite,
+      hasOfferingWILComponent: "no",
+      studyStartDate: savedEducationProgramOffering.studyStartDate,
+      studyEndDate: savedEducationProgramOffering.studyEndDate,
+      lacksStudyBreaks: false,
+      studyBreaks: [
+        {
+          breakStartDate: "2023-12-01",
+          breakEndDate: "2024-01-01",
+        },
+      ],
+      offeringType: OfferingTypes.Public,
+      offeringDeclaration: true,
+      actualTuitionCosts: 1234,
+      programRelatedCosts: 3211,
+      mandatoryFees: 456,
+      exceptionalExpenses: 555,
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        message:
+          "Duplication error. An offering with the same name, year of study, start date and end date was found.",
+        error: "Unprocessable Entity",
+      });
+  });
+
   it(
     `Should update a new offering with offering status ${OfferingStatus.CreationPending} and warning when data with mandatoryFees ` +
       `greater than ${MAX_ALLOWED_OFFERING_AMOUNT} less than ${MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE} is passed.`,
