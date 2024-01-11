@@ -48,11 +48,12 @@ export class ScholasticStandingAESTController extends BaseController {
    * @returns Scholastic Standing Summary details.
    */
   @Get("summary/student/:studentId")
+  @ApiNotFoundResponse({ description: "Student does not exists." })
   async getScholasticStandingSummary(
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<ScholasticStandingSummaryDetailsAPIOutDTO> {
     return this.scholasticStandingControllerService.getScholasticStandingSummary(
-      { studentId },
+      studentId,
     );
   }
 }

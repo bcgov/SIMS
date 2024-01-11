@@ -31,13 +31,17 @@ export class ScholasticStandingAPIInDTO {
   data: ScholasticStandingData;
 }
 
-/** Represents the scholastic standing submitted details. */
+/**
+ * Represents the scholastic standing submitted details.
+ */
 export class ScholasticStandingSubmittedDetailsAPIOutDTO extends IntersectionType(
   ScholasticStandingData,
   ActiveApplicationDataAPIOutDTO,
 ) {}
 
-/** Represents the scholastic standing unsuccessful completion weeks. */
+/**
+ * Represents the scholastic standing unsuccessful completion weeks.
+ */
 export class ScholasticStandingSummaryDetailsAPIOutDTO {
   lifetimeUnsuccessfulCompletionWeeks: number;
 }

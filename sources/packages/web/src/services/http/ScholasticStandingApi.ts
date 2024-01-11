@@ -29,7 +29,7 @@ export class ScholasticStandingApi extends HttpBaseClient {
    * @param studentId student id to retrieve the scholastic standing.
    * @returns Scholastic Standing Summary.
    */
-  public async getScholasticStandingSummary(options?: {
+  async getScholasticStandingSummary(options?: {
     studentId?: number;
   }): Promise<ScholasticStandingSummaryDetailsAPIOutDTO> {
     let url = "scholastic-standing/summary";

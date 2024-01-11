@@ -22,7 +22,7 @@ import {
 import {
   ScholasticStanding,
   ScholasticStandingSummary,
-} from "./student-scholastic-standings.model";
+} from "./student-scholastic-standings.models";
 import { StudentRestrictionService } from "../restriction/student-restriction.service";
 import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../constants";
 import { SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS } from "../../utilities";

@@ -1,17 +1,21 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, Raw, Repository } from "typeorm";
+import { Raw, Repository } from "typeorm";
 import { DataModelService, SFASIndividual, Student } from "@sims/sims-db";
 import { SFASIndividualDataSummary } from "./sfas-individual.model";
+import { InjectRepository } from "@nestjs/typeorm";
 
 /**
  * Manages the data related to an individual/student in SFAS.
  */
 @Injectable()
 export class SFASIndividualService extends DataModelService<SFASIndividual> {
-  private readonly studentRepo: Repository<Student>;
-  constructor(dataSource: DataSource) {
-    super(dataSource.getRepository(SFASIndividual));
-    this.studentRepo = dataSource.getRepository(Student);
+  constructor(
+    @InjectRepository(SFASIndividual)
+    sfasIndividualRepo: Repository<SFASIndividual>,
+    @InjectRepository(Student)
+    private readonly studentRepo: Repository<Student>,
+  ) {
+    super(sfasIndividualRepo);
   }
 
   /**
@@ -103,6 +107,6 @@ export class SFASIndividualService extends DataModelService<SFASIndividual> {
       .andWhere("birth_date = :birthDate", { birthDate })
       .andWhere("LOWER(last_name) = LOWER(:lastName)", { lastName })
       .getRawOne<SFASIndividualDataSummary>();
-    return sfasIndividualData.totalUnsuccessfulWeeks;
+    return sfasIndividualData?.totalUnsuccessfulWeeks ?? 0;
   }
 }

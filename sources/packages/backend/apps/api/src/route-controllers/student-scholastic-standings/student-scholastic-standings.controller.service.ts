@@ -6,6 +6,7 @@ import {
 import {
   ApplicationWithdrawalTextValidationResult,
   StudentScholasticStandingsService,
+  StudentService,
 } from "../../services";
 import { SFASIndividualService } from "@sims/services";
 import {
@@ -27,6 +28,7 @@ import {
 @Injectable()
 export class ScholasticStandingControllerService {
   constructor(
+    private readonly studentService: StudentService,
     private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
     private readonly sfasIndividualService: SFASIndividualService,
   ) {}
@@ -65,21 +67,31 @@ export class ScholasticStandingControllerService {
    * @param studentId student id to retrieve the scholastic standing summary.
    * @returns Scholastic Standing summary details.
    */
-  async getScholasticStandingSummary(options?: {
-    studentId: number;
-  }): Promise<ScholasticStandingSummaryDetailsAPIOutDTO> {
-    const scholasticStandingSummary =
-      await this.studentScholasticStandingsService.getScholasticStandingSummary(
-        options?.studentId,
+  async getScholasticStandingSummary(
+    studentId: number,
+  ): Promise<ScholasticStandingSummaryDetailsAPIOutDTO> {
+    const studentExists = await this.studentService.studentExists(studentId);
+    if (!studentExists) {
+      throw new NotFoundException("Student does not exists.");
+    }
+    const scholasticStandingSummaryPromise =
+      this.studentScholasticStandingsService.getScholasticStandingSummary(
+        studentId,
       );
-    const SFASUnsuccessfulCompletionWeeks =
-      await this.sfasIndividualService.getSFASTotalUnsuccessfulCompletionWeeks(
-        options?.studentId,
+    const sfasUnsuccessfulCompletionWeeksPromise =
+      this.sfasIndividualService.getSFASTotalUnsuccessfulCompletionWeeks(
+        studentId,
       );
+    const [scholasticStandingSummary, sfasUnsuccessfulCompletionWeeks] =
+      await Promise.all([
+        scholasticStandingSummaryPromise,
+        sfasUnsuccessfulCompletionWeeksPromise,
+      ]);
+    const totalUnsuccessfulCompletionWeeks =
+      +(scholasticStandingSummary?.totalUnsuccessfulWeeks ?? 0) +
+      +sfasUnsuccessfulCompletionWeeks;
     return {
-      lifetimeUnsuccessfulCompletionWeeks:
-        +(scholasticStandingSummary?.totalUnsuccessfulWeeks ?? 0) +
-        +(SFASUnsuccessfulCompletionWeeks ?? 0),
+      lifetimeUnsuccessfulCompletionWeeks: totalUnsuccessfulCompletionWeeks,
     };
   }
 
