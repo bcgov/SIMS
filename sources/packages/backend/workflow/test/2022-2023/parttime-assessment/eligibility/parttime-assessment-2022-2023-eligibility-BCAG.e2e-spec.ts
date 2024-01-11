@@ -134,6 +134,16 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
       calculatedAssessment.variables.federalAwardBCAGAmount,
     ).toBeGreaterThan(100);
     expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(
+      Math.min(
+        calculatedAssessment.variables.calculatedDataTotalRemainingNeed3,
+        Math.min(
+          calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
+            .limitAwardBCAGAmount,
+          calculatedAssessment.variables.federalAwardBCAGAmount,
+        ),
+      ),
+    );
+    expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(
       1000,
     );
   });

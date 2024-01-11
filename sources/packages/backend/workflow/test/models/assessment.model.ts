@@ -232,4 +232,10 @@ export interface CalculatedAssessmentModel {
   finalProvincialAwardNetBCAGAmount: number;
   // SBSD
   finalProvincialAwardNetSBSDAmount: number;
+  // Calculated Data
+  calculatedDataTotalRemainingNeed3: number;
+  // DMN Part Time Award Allowable Limits
+  dmnPartTimeAwardAllowableLimits?: {
+    limitAwardBCAGAmount: number;
+  };
 }
