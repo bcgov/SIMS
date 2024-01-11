@@ -16,7 +16,7 @@ export class UpdateOfferingUniqueIndex1704494480880
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Rollback-update_offering-duplication-unique-index.sql",
+        "Rollback-update-offering-duplication-unique-index.sql",
         "EducationProgramsOfferings",
       ),
     );

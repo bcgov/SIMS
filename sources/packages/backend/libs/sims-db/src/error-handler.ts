@@ -18,6 +18,6 @@ export enum DatabaseConstraintNames {
  * Common query failed errors with additional Postgres
  * specific properties.
  */
-export interface PostgresDriverError extends QueryFailedError {
+export class PostgresDriverError extends QueryFailedError {
   constraint: DatabaseConstraintNames;
 }
