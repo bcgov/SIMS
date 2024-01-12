@@ -31,7 +31,6 @@ export function isDatabaseConstraintError(
     if (postgresError.constraint === constraint) {
       return true;
     }
-    return false;
   }
   return false;
 }
