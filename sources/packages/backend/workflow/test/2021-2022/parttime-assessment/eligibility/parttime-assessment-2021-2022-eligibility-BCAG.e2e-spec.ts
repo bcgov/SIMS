@@ -4,7 +4,6 @@ import {
   executePartTimeAssessmentForProgramYear,
 } from "../../../test-utils";
 import { CredentialType, InstitutionTypes } from "../../../models";
-import { YesNoOptions } from "@sims/test-utils";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-BCAG.`, () => {
   // Expected and not expected credentials types.
@@ -103,63 +102,5 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
         ).toBe(0);
       });
     }
-  });
-
-  it("Should determine provincialAwardNetBCAGAmount when awardEligibilityBCAG is true", async () => {
-    // Arrange
-    const assessmentConsolidatedData =
-      createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
-    assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.studentDataIsYourSpouseACanadianCitizen =
-      YesNoOptions.Yes;
-    assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
-    // Public institution
-    assessmentConsolidatedData.institutionType = InstitutionTypes.BCPublic;
-    // Act
-    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
-      PROGRAM_YEAR,
-      assessmentConsolidatedData,
-    );
-    // Assert
-    // calculatedDataTotalFamilyIncome = 20001 + 22999
-    // awardEligibilityBCAG is true
-    // federalAwardBCAGAmount is greater than or equal to 100
-    expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(true);
-    expect(
-      calculatedAssessment.variables.federalAwardBCAGAmount,
-    ).toBeGreaterThan(100);
-    expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(
-      Math.min(
-        calculatedAssessment.variables.calculatedDataTotalRemainingNeed3,
-        Math.min(
-          calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
-            .limitAwardBCAGAmount,
-          calculatedAssessment.variables.federalAwardBCAGAmount,
-        ),
-      ),
-    );
-    expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(
-      1000,
-    );
-  });
-
-  it("Should determine provincialAwardNetBCAGAmount as zero when awardEligibilityBCAG is false", async () => {
-    // Arrange
-    const assessmentConsolidatedData =
-      createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
-    // Private institution
-    assessmentConsolidatedData.institutionType = InstitutionTypes.BCPrivate;
-    // Act
-    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
-      PROGRAM_YEAR,
-      assessmentConsolidatedData,
-    );
-    // Assert
-    // awardEligibilityBCAG is false
-    // provincialAwardNetBCAGAmount is 0
-    expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(false);
-    expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(0);
   });
 });

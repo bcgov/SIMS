@@ -238,4 +238,9 @@ export interface CalculatedAssessmentModel {
   dmnPartTimeAwardAllowableLimits?: {
     limitAwardBCAGAmount: number;
   };
+  // DMN Part Time Award Family Size Variables
+  dmnPartTimeAwardFamilySizeVariables?: {
+    limitAwardBCAGIncomeCap: number;
+    limitAwardBCAGSlope: number;
+  };
 }
