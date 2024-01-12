@@ -1,6 +1,6 @@
 <template>
-  <tab-container><student-restrictions :studentId="studentId" /></tab-container>
-  <tab-container>
+  <tab-container :enableCardView="false"
+    ><student-restrictions :studentId="studentId" />
     <student-scholastic-standing-limited-history :studentId="studentId"
   /></tab-container>
 </template>

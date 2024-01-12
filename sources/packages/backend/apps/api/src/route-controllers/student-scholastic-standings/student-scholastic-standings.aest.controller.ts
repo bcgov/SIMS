@@ -9,7 +9,7 @@ import {
   ScholasticStandingSubmittedDetailsAPIOutDTO,
   ScholasticStandingSummaryDetailsAPIOutDTO,
 } from "./models/student-scholastic-standings.dto";
-import { ScholasticStandingControllerService } from "./student-scholastic-standings.controller.service";
+import { ScholasticStandingControllerService } from "..";
 
 /**
  * Scholastic standing controller for AEST Client.

@@ -78,7 +78,7 @@ export class SFASIndividualService extends DataModelService<SFASIndividual> {
    */
   async getSFASTotalUnsuccessfulCompletionWeeks(
     studentId: number,
-  ): Promise<number> {
+  ): Promise<number | null> {
     const studentData = await this.studentRepo.findOne({
       select: {
         id: true,
@@ -107,6 +107,6 @@ export class SFASIndividualService extends DataModelService<SFASIndividual> {
       .andWhere("birth_date = :birthDate", { birthDate })
       .andWhere("LOWER(last_name) = LOWER(:lastName)", { lastName })
       .getRawOne<SFASIndividualDataSummary>();
-    return sfasIndividualData?.totalUnsuccessfulWeeks ?? 0;
+    return sfasIndividualData?.totalUnsuccessfulWeeks;
   }
 }

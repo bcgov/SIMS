@@ -37,9 +37,10 @@ export * from "./education-program-offering/education-program-offering.aest.cont
 export * from "./report/report.aest.controller";
 export * from "./education-program/education-program.students.controller";
 export * from "./application-exception/application-exception.aest.controller";
+export * from "./student-scholastic-standings/student-scholastic-standings.controller.service";
 export * from "./student-scholastic-standings/student-scholastic-standings.institutions.controller";
 export * from "./student-scholastic-standings/student-scholastic-standings.aest.controller";
-export * from "./student-scholastic-standings/student-scholastic-standings.controller.service";
+export * from "./student-scholastic-standings/student-scholastic-standings.students.controller";
 export * from "./institution-user/institution-user.aest.controller";
 export * from "./institution-user/institution-user.institutions.controller";
 export * from "./institution-user/institution-user.controller.service";
@@ -71,4 +72,3 @@ export * from "./application-offering-change-request/application-offering-change
 export * from "./application-offering-change-request/application-offering-change-request.students.controller";
 export * from "./application-offering-change-request/application-offering-change-request.controller.service";
 export * from "./application-offering-change-request/application-offering-change-request.aest.controller";
-export * from "./student-scholastic-standings/student-scholastic-standings.students.controller";

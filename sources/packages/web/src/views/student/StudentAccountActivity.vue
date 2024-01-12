@@ -10,7 +10,7 @@
         :routeLocation="{ name: StudentRoutesConst.STUDENT_DASHBOARD }"
       />
     </template>
-    <tab-container class="mb-6">
+    <tab-container :enableCardView="false" class="mb-6">
       <student-scholastic-standing-limited-history
     /></tab-container>
     <formio-container

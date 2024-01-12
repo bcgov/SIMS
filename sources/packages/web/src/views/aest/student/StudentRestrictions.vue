@@ -1,12 +1,10 @@
 <template>
-  <tab-container
+  <tab-container :enableCardView="false"
     ><student-restrictions
       :studentId="studentId"
       :canAddRestrictions="true"
       :canResolveRestriction="true"
-    ></student-restrictions
-  ></tab-container>
-  <tab-container>
+    ></student-restrictions>
     <student-scholastic-standing-limited-history :studentId="studentId"
   /></tab-container>
 </template>

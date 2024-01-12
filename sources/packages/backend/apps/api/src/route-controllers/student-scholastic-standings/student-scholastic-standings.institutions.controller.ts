@@ -53,7 +53,7 @@ import {
   ScholasticStandingSubmittedDetailsAPIOutDTO,
   ScholasticStandingSummaryDetailsAPIOutDTO,
 } from "./models/student-scholastic-standings.dto";
-import { ScholasticStandingControllerService } from "./student-scholastic-standings.controller.service";
+import { ScholasticStandingControllerService } from "..";
 import { ScholasticStanding } from "../../services/student-scholastic-standings/student-scholastic-standings.models";
 import { FileInterceptor } from "@nestjs/platform-express";
 import {

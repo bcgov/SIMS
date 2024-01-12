@@ -89,7 +89,7 @@ export class ScholasticStandingControllerService {
       ]);
     const totalUnsuccessfulCompletionWeeks =
       +(scholasticStandingSummary?.totalUnsuccessfulWeeks ?? 0) +
-      +sfasUnsuccessfulCompletionWeeks;
+      +(sfasUnsuccessfulCompletionWeeks ?? 0);
     return {
       lifetimeUnsuccessfulCompletionWeeks: totalUnsuccessfulCompletionWeeks,
     };

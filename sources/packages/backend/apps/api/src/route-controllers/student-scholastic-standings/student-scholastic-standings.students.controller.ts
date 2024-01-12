@@ -9,7 +9,7 @@ import {
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
 import { ScholasticStandingSummaryDetailsAPIOutDTO } from "./models/student-scholastic-standings.dto";
-import { ScholasticStandingControllerService } from "./student-scholastic-standings.controller.service";
+import { ScholasticStandingControllerService } from "..";
 import { StudentUserToken } from "../../auth";
 
 /**
