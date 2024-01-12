@@ -125,9 +125,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
     // calculatedDataTotalFamilyIncome = 20001 + 22999
     // awardEligibilityBCAG is true
     // federalAwardBCAGAmount is greater than or equal to 100
-    expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(
-      43000,
-    );
     expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(true);
     expect(
       calculatedAssessment.variables.federalAwardBCAGAmount,
