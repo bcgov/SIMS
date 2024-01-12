@@ -103,15 +103,17 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     try {
       return await this.repo.save(programOffering);
     } catch (error: unknown) {
-      if (
-        error instanceof PostgresDriverError &&
-        error.constraint ===
+      if (error instanceof QueryFailedError) {
+        const postgresError = error as PostgresDriverError;
+        if (
+          postgresError.constraint ===
           DatabaseConstraintNames.LocationIDProgramIDOfferingNameStudyDatesYearOfStudyIndex
-      ) {
-        throw new CustomNamedError(
-          "Duplication error. An offering with the same name, year of study, start date and end date was found.",
-          OFFERING_SAVE_UNIQUE_ERROR,
-        );
+        ) {
+          throw new CustomNamedError(
+            "Duplication error. An offering with the same name, year of study, start date and end date was found.",
+            OFFERING_SAVE_UNIQUE_ERROR,
+          );
+        }
       }
     }
   }
@@ -193,15 +195,17 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         },
       );
     } catch (error: unknown) {
-      if (
-        error instanceof PostgresDriverError &&
-        error.constraint ===
+      if (error instanceof QueryFailedError) {
+        const postgresError = error as PostgresDriverError;
+        if (
+          postgresError.constraint ===
           DatabaseConstraintNames.LocationIDProgramIDOfferingNameStudyDatesYearOfStudyIndex
-      ) {
-        throw new CustomNamedError(
-          "Duplication error. An offering with the same name, year of study, start date and end date was found.",
-          OFFERING_SAVE_UNIQUE_ERROR,
-        );
+        ) {
+          throw new CustomNamedError(
+            "Duplication error. An offering with the same name, year of study, start date and end date was found.",
+            OFFERING_SAVE_UNIQUE_ERROR,
+          );
+        }
       }
     }
   }
@@ -231,17 +235,18 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       const createdOfferingId = +createdIdentifier.id;
       return { validatedOffering, createdOfferingId };
     } catch (error: unknown) {
-      if (
-        error instanceof PostgresDriverError &&
-        error.constraint ===
+      if (error instanceof QueryFailedError) {
+        const postgresError = error as PostgresDriverError;
+        if (
+          postgresError.constraint ===
           DatabaseConstraintNames.LocationIDProgramIDOfferingNameStudyDatesYearOfStudyIndex
-      ) {
-        throw new CreateFromValidatedOfferingError(
-          validatedOffering,
-          "Duplication error. An offering with the same name, year of study, start date and end date was found. Please remove the duplicate offering and try again.",
-        );
+        ) {
+          throw new CreateFromValidatedOfferingError(
+            validatedOffering,
+            "Duplication error. An offering with the same name, year of study, start date and end date was found. Please remove the duplicate offering and try again.",
+          );
+        }
       }
-
       this.logger.error(
         `Unexpected error while creating offering from bulk insert. Offering data: ${JSON.stringify(
           validatedOffering.offeringModel,
@@ -450,15 +455,17 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     try {
       return await this.repo.update(offeringId, programOffering);
     } catch (error: unknown) {
-      if (
-        error instanceof PostgresDriverError &&
-        error.constraint ===
+      if (error instanceof QueryFailedError) {
+        const postgresError = error as PostgresDriverError;
+        if (
+          postgresError.constraint ===
           DatabaseConstraintNames.LocationIDProgramIDOfferingNameStudyDatesYearOfStudyIndex
-      ) {
-        throw new CustomNamedError(
-          "Duplication error. An offering with the same name, year of study, start date and end date was found.",
-          OFFERING_SAVE_UNIQUE_ERROR,
-        );
+        ) {
+          throw new CustomNamedError(
+            "Duplication error. An offering with the same name, year of study, start date and end date was found.",
+            OFFERING_SAVE_UNIQUE_ERROR,
+          );
+        }
       }
     }
   }
