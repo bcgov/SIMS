@@ -78,8 +78,6 @@ export class EducationProgramOfferingAPIInDTO {
   @Allow()
   offeringWILComponentType?: string;
   @Allow()
-  showYearOfStudy: boolean;
-  @Allow()
   @Type(() => StudyBreakInDTO)
   studyBreaks: StudyBreakInDTO[];
   @Allow()
@@ -115,7 +113,6 @@ export class EducationProgramOfferingAPIOutDTO {
   precedingOfferingId?: number;
   offeringType: OfferingTypes;
   offeringWILComponentType?: string;
-  showYearOfStudy?: boolean;
   studyBreaks: StudyBreakAPIOutDTO[];
   studyPeriodBreakdown: StudyPeriodBreakdownAPIOutDTO;
   assessedBy?: string;

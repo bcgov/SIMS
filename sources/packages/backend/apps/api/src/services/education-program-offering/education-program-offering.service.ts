@@ -18,18 +18,12 @@ import {
   StudyBreak,
   ProgramYear,
   DatabaseConstraintNames,
-  PostgresDriverError,
   mapFromRawAndEntities,
   StudentAssessmentStatus,
   StudyBreaksAndWeeks,
+  isDatabaseConstraintError,
 } from "@sims/sims-db";
-import {
-  DataSource,
-  In,
-  QueryFailedError,
-  Repository,
-  UpdateResult,
-} from "typeorm";
+import { DataSource, In, Repository, UpdateResult } from "typeorm";
 import {
   OfferingsFilter,
   PrecedingOfferingSummaryModel,
@@ -52,6 +46,7 @@ import {
   isBetweenPeriod,
 } from "@sims/utilities";
 import {
+  OFFERING_SAVE_UNIQUE_ERROR,
   OFFERING_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   OFFERING_NOT_VALID,
 } from "../../constants";
@@ -98,7 +93,22 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programOffering.creator = { id: userId } as User;
     // When creating a new offering, parent id and the primary id are the same.
     programOffering.parentOffering = programOffering;
-    return this.repo.save(programOffering);
+
+    try {
+      return await this.repo.save(programOffering);
+    } catch (error: unknown) {
+      if (
+        isDatabaseConstraintError(
+          error,
+          DatabaseConstraintNames.LocationIDProgramIDOfferingNameStudyDatesYearOfStudyIndex,
+        )
+      ) {
+        throw new CustomNamedError(
+          "Duplication error. An offering with the same name, year of study, start date and end date was found.",
+          OFFERING_SAVE_UNIQUE_ERROR,
+        );
+      }
+    }
   }
 
   /**
@@ -166,16 +176,30 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     newOfferings: number[],
     offeringRepo: Repository<EducationProgramOffering>,
   ): Promise<UpdateResult> {
-    return offeringRepo.update(
-      {
-        id: In(newOfferings),
-      },
-      {
-        parentOffering: {
-          id: () => "id",
+    try {
+      return await offeringRepo.update(
+        {
+          id: In(newOfferings),
         },
-      },
-    );
+        {
+          parentOffering: {
+            id: () => "id",
+          },
+        },
+      );
+    } catch (error: unknown) {
+      if (
+        isDatabaseConstraintError(
+          error,
+          DatabaseConstraintNames.LocationIDProgramIDOfferingNameStudyDatesYearOfStudyIndex,
+        )
+      ) {
+        throw new CustomNamedError(
+          "Duplication error. An offering with the same name, year of study, start date and end date was found.",
+          OFFERING_SAVE_UNIQUE_ERROR,
+        );
+      }
+    }
   }
 
   /**
@@ -203,18 +227,18 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       const createdOfferingId = +createdIdentifier.id;
       return { validatedOffering, createdOfferingId };
     } catch (error: unknown) {
-      if (error instanceof QueryFailedError) {
-        const postgresError = error as PostgresDriverError;
-        if (
-          postgresError.constraint ===
-          DatabaseConstraintNames.LocationIDProgramIDOfferingNameStudyDatesIndex
-        ) {
-          throw new CreateFromValidatedOfferingError(
-            validatedOffering,
-            "Duplication error. An offering with the same name, start date, and end date was found. Please remove the duplicated offering and try again.",
-          );
-        }
+      if (
+        isDatabaseConstraintError(
+          error,
+          DatabaseConstraintNames.LocationIDProgramIDOfferingNameStudyDatesYearOfStudyIndex,
+        )
+      ) {
+        throw new CreateFromValidatedOfferingError(
+          validatedOffering,
+          "Duplication error. An offering with the same name, year of study, start date and end date was found. Please remove the duplicate offering and try again.",
+        );
       }
+
       this.logger.error(
         `Unexpected error while creating offering from bulk insert. Offering data: ${JSON.stringify(
           validatedOffering.offeringModel,
@@ -326,7 +350,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offerings.offeringIntensity",
         "offerings.yearOfStudy",
         "parentOffering.id",
-        "offerings.showYearOfStudy",
         "offerings.hasOfferingWILComponent",
         "offerings.offeringWILType",
         "offerings.studyBreaks",
@@ -421,7 +444,21 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     );
     programOffering.offeringStatus = offeringValidation.offeringStatus;
     programOffering.modifier = { id: userId } as User;
-    return this.repo.update(offeringId, programOffering);
+    try {
+      return await this.repo.update(offeringId, programOffering);
+    } catch (error: unknown) {
+      if (
+        isDatabaseConstraintError(
+          error,
+          DatabaseConstraintNames.LocationIDProgramIDOfferingNameStudyDatesYearOfStudyIndex,
+        )
+      ) {
+        throw new CustomNamedError(
+          "Duplication error. An offering with the same name, year of study, start date and end date was found.",
+          OFFERING_SAVE_UNIQUE_ERROR,
+        );
+      }
+    }
   }
 
   private populateProgramOffering(
@@ -453,7 +490,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programOffering.offeringIntensity =
       educationProgramOffering.offeringIntensity;
     programOffering.yearOfStudy = educationProgramOffering.yearOfStudy;
-    programOffering.showYearOfStudy = educationProgramOffering.showYearOfStudy;
     programOffering.hasOfferingWILComponent =
       educationProgramOffering.hasOfferingWILComponent;
     programOffering.offeringWILType =
@@ -520,7 +556,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     offeringValidationModel.locationId = offering.institutionLocation.id;
     offeringValidationModel.offeringIntensity = offering.offeringIntensity;
     offeringValidationModel.yearOfStudy = offering.yearOfStudy;
-    offeringValidationModel.showYearOfStudy = offering.showYearOfStudy;
     offeringValidationModel.hasOfferingWILComponent =
       offering.hasOfferingWILComponent as WILComponentOptions;
     offeringValidationModel.offeringWILComponentType = offering.offeringWILType;
@@ -565,7 +600,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         },
         offeringIntensity: true,
         yearOfStudy: true,
-        showYearOfStudy: true,
         hasOfferingWILComponent: true,
         offeringWILType: true,
         offeringDeclaration: true,
@@ -617,7 +651,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .addSelect("offerings.studyStartDate")
       .addSelect("offerings.studyEndDate")
       .addSelect("offerings.yearOfStudy")
-      .addSelect("offerings.showYearOfStudy")
       .where("offerings.educationProgram.id = :programId", { programId })
       .andWhere("programs.programStatus = :programStatus", {
         programStatus: ProgramStatus.Approved,
@@ -700,7 +733,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offering.lacksStudyBreaks",
         "offering.offeringIntensity",
         "offering.yearOfStudy",
-        "offering.showYearOfStudy",
         "offering.hasOfferingWILComponent",
         "offering.offeringWILType",
         "offering.studyBreaks",

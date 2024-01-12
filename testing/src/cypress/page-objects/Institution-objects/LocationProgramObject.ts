@@ -219,10 +219,6 @@ export default class LocationProgramObject extends BaseMethods {
     return cy.get("[placeholder='Type to search']");
   }
 
-  displayThisToStudentCheckbox() {
-    return cy.get("[name='data[showYearOfStudy]']");
-  }
-
   howWillThisBeOfferedRadioButton() {
     return cy.get("[type='radio']").eq(0);
   }

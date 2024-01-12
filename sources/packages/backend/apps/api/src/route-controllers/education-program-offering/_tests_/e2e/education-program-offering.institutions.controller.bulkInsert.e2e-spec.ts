@@ -420,6 +420,46 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
     },
   );
 
+  it("Should validate duplication error when there are 2 records with the same name, year of study, start date and end date.", async () => {
+    // Arrange
+    await authorizeUserTokenForLocation(
+      db.dataSource,
+      InstitutionTokenTypes.CollegeFUser,
+      collegeFLocationYESK,
+    );
+
+    const multipleOfferingWithDuplicateValidationErrorsFilePath = path.join(
+      __dirname,
+      "bulk-insert/multiple-upload-with-duplicate-offering-validation-errors.csv",
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .attach("file", multipleOfferingWithDuplicateValidationErrorsFilePath)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message:
+          "Some error happen with one or more offerings being created and the entire process was aborted. No offering was added and the upload can be executed again once the error is fixed.",
+        errorType: "OFFERING_CREATION_CRITICAL_ERROR",
+        objectInfo: [
+          {
+            recordIndex: 1,
+            locationCode: "YESK",
+            sabcProgramCode: "SBC1",
+            startDate: "2023-09-06",
+            endDate: "2024-08-15",
+            errors: [
+              "Duplication error. An offering with the same name, year of study, start date and end date was found. Please remove the duplicate offering and try again.",
+            ],
+            infos: [],
+            warnings: [],
+          },
+        ],
+      });
+  });
+
   afterAll(async () => {
     await app?.close();
   });

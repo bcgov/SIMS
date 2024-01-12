@@ -21,7 +21,12 @@
 <script lang="ts">
 import { useRouter } from "vue-router";
 import { computed, defineComponent, ref } from "vue";
-import { OfferingFormModel, OfferingFormModes, OfferingStatus } from "@/types";
+import {
+  ApiProcessError,
+  OfferingFormModel,
+  OfferingFormModes,
+  OfferingStatus,
+} from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import OfferingFormSubmit from "@/components/common/OfferingFormSubmit.vue";
 import { BannerTypes } from "@/types/contracts/Banner";
@@ -75,10 +80,14 @@ export default defineComponent({
         );
         snackBar.success("Offering created.");
         goBack();
-      } catch {
-        snackBar.error(
-          "Unexpected error happened while creating the offering.",
-        );
+      } catch (error: unknown) {
+        if (error instanceof ApiProcessError) {
+          snackBar.error(error.message);
+        } else {
+          snackBar.error(
+            "Unexpected error happened while creating the offering.",
+          );
+        }
       } finally {
         processing.value = false;
       }

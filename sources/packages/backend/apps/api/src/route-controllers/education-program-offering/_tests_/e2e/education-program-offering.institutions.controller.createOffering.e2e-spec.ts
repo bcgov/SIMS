@@ -21,6 +21,7 @@ import {
   authorizeUserTokenForLocation,
   getAuthRelatedEntities,
   createFakeEducationProgram,
+  createFakeEducationProgramOffering,
 } from "../../../../testHelpers";
 import * as request from "supertest";
 import * as faker from "faker";
@@ -74,7 +75,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     payload = {
       offeringName: "Offering",
       yearOfStudy: 1,
-      showYearOfStudy: true,
       offeringIntensity: OfferingIntensity.fullTime,
       offeringDelivered: OfferingDeliveryOptions.Onsite,
       hasOfferingWILComponent: WILComponentOptions.No,
@@ -123,7 +123,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     const payload = {
       offeringName: "Offering 1",
       yearOfStudy: 1,
-      showYearOfStudy: true,
       offeringIntensity: OfferingIntensity.fullTime,
       offeringDelivered: OfferingDeliveryOptions.Onsite,
       hasOfferingWILComponent: "no",
@@ -173,7 +172,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         offeringType: payload.offeringType,
         offeringIntensity: payload.offeringIntensity,
         yearOfStudy: payload.yearOfStudy,
-        showYearOfStudy: payload.showYearOfStudy,
         hasOfferingWILComponent: payload.hasOfferingWILComponent,
         offeringWILType: null,
         studyBreaks: {
@@ -198,6 +196,74 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       }),
     );
   });
+
+  it(
+    "Should validate the new offering as duplicate when offering with the same " +
+      "name, year of study, study dates and status already exists in the database.",
+    async () => {
+      // Arrange
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+      const fakeEducationProgram = createFakeEducationProgram({
+        institution: collegeF,
+        user: collegeFUser,
+      });
+      fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
+      const savedFakeEducationProgram = await db.educationProgram.save(
+        fakeEducationProgram,
+      );
+      const existingOffering = createFakeEducationProgramOffering(
+        savedFakeEducationProgram,
+        collegeFLocation,
+      );
+      existingOffering.parentOffering = existingOffering;
+      existingOffering.studyStartDate = "2023-11-01";
+      existingOffering.studyEndDate = "2024-06-01";
+      existingOffering.offeringStatus = OfferingStatus.CreationPending;
+
+      const savedEducationProgramOffering =
+        await db.educationProgramOffering.save(existingOffering);
+
+      const payload = {
+        offeringName: savedEducationProgramOffering.name,
+        yearOfStudy: savedEducationProgramOffering.yearOfStudy,
+        offeringIntensity: OfferingIntensity.fullTime,
+        offeringDelivered: OfferingDeliveryOptions.Onsite,
+        hasOfferingWILComponent: "no",
+        studyStartDate: savedEducationProgramOffering.studyStartDate,
+        studyEndDate: savedEducationProgramOffering.studyEndDate,
+        lacksStudyBreaks: false,
+        studyBreaks: [
+          {
+            breakStartDate: "2023-12-01",
+            breakEndDate: "2024-01-01",
+          },
+        ],
+        offeringType: OfferingTypes.Public,
+        offeringDeclaration: true,
+        actualTuitionCosts: 1234,
+        programRelatedCosts: 3211,
+        mandatoryFees: 456,
+        exceptionalExpenses: 555,
+      };
+      const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}`;
+
+      // Act/Assert
+      // Should throw unprocessable entity
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+        .expect({
+          statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+          message:
+            "Duplication error. An offering with the same name, year of study, start date and end date was found.",
+          error: "Unprocessable Entity",
+        });
+    },
+  );
 
   it(
     `Should create a new offering with offering status ${OfferingStatus.CreationPending} and warning when data with actualTuitionCosts ` +
@@ -251,7 +317,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         offeringType: payload.offeringType,
         offeringIntensity: payload.offeringIntensity,
         yearOfStudy: payload.yearOfStudy,
-        showYearOfStudy: payload.showYearOfStudy,
+
         hasOfferingWILComponent: payload.hasOfferingWILComponent,
         offeringWILType: null,
         studyBreaks: {

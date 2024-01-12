@@ -6,11 +6,12 @@ import { QueryFailedError } from "typeorm";
 export enum DatabaseConstraintNames {
   /**
    * Ensures offerings in "Approved" or "Creation pending" statuses
-   * does not have the same name, study start, and study end dates for
+   * and is not a "Scholastic standing" offering type,
+   * does not have the same name, study start, study end dates and year of study for
    * a specific location and program.
    * Applied on table sims.education_programs_offerings.
    */
-  LocationIDProgramIDOfferingNameStudyDatesIndex = "location_id_program_id_offering_name_study_dates_index",
+  LocationIDProgramIDOfferingNameStudyDatesYearOfStudyIndex = "loc_id_prog_id_offer_name_study_dts_year_study_index",
 }
 
 /**
@@ -19,4 +20,22 @@ export enum DatabaseConstraintNames {
  */
 export interface PostgresDriverError extends QueryFailedError {
   constraint: DatabaseConstraintNames;
+}
+
+/**
+ * @param error error thrown to be checked.
+ * @param constraint contraint name from database to checked.
+ * @returns true if error is an instance of {@link QueryFailedError} and constraint name is equal to the passed one.
+ */
+export function isDatabaseConstraintError(
+  error: unknown,
+  constraint: DatabaseConstraintNames,
+): boolean {
+  if (error instanceof QueryFailedError) {
+    const postgresError = error as PostgresDriverError;
+    if (postgresError.constraint === constraint) {
+      return true;
+    }
+  }
+  return false;
 }

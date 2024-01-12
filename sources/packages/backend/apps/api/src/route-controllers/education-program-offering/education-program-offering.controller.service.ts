@@ -318,7 +318,6 @@ export class EducationProgramOfferingControllerService {
       lacksStudyBreaks: offering.lacksStudyBreaks,
       offeringIntensity: offering.offeringIntensity,
       yearOfStudy: offering.yearOfStudy,
-      showYearOfStudy: offering.showYearOfStudy,
       hasOfferingWILComponent: offering.hasOfferingWILComponent,
       offeringWILComponentType: offering.offeringWILType,
       studyBreaks: offering.studyBreaks?.studyBreaks,

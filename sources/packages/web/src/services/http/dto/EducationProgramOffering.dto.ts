@@ -80,8 +80,6 @@ export class EducationProgramOfferingAPIInDTO {
   @Expose()
   offeringWILComponentType?: string;
   @Expose()
-  showYearOfStudy: boolean;
-  @Expose()
   @Type(() => StudyBreakInDTO)
   studyBreaks: StudyBreakInDTO[];
   @Expose()
@@ -124,7 +122,6 @@ export interface EducationProgramOfferingAPIOutDTO {
   precedingOfferingId?: number;
   offeringType: OfferingTypes;
   offeringWILComponentType?: string;
-  showYearOfStudy?: boolean;
   studyBreaks: StudyBreakAPIOutDTO[];
   studyPeriodBreakdown: StudyPeriodBreakdownAPIOutDTO;
   assessedBy?: string;
