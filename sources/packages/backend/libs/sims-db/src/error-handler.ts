@@ -22,6 +22,11 @@ export interface PostgresDriverError extends QueryFailedError {
   constraint: DatabaseConstraintNames;
 }
 
+/**
+ * @param error error thrown to be checked.
+ * @param constraint contraint name from database to checked.
+ * @returns true if error is an instance of {@link QueryFailedError} and constraint name is equal to the passed one.
+ */
 export function isDatabaseConstraintError(
   error: unknown,
   constraint: DatabaseConstraintNames,

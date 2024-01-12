@@ -20,4 +20,4 @@ WHERE
   )
   AND offering_type IN ('Public', 'Private');
 
-COMMENT ON INDEX sims.loc_id_prog_id_offer_name_study_dts_year_study_index IS 'Ensures offering in "Approved" or "Creation pending" statuses does not have the same name, study start/end dates and year of study.'
+COMMENT ON INDEX sims.loc_id_prog_id_offer_name_study_dts_year_study_index IS 'Ensures offering in "Approved" or "Creation pending" statuses does not have the same name, study start/end dates and year of study.Applied only to "Public" and "Private" offering types.'
