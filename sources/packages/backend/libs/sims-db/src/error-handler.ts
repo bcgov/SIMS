@@ -21,3 +21,17 @@ export enum DatabaseConstraintNames {
 export interface PostgresDriverError extends QueryFailedError {
   constraint: DatabaseConstraintNames;
 }
+
+export function isDatabaseConstraintError(
+  error: unknown,
+  constraint: DatabaseConstraintNames,
+): boolean {
+  if (error instanceof QueryFailedError) {
+    const postgresError = error as PostgresDriverError;
+    if (postgresError.constraint === constraint) {
+      return true;
+    }
+    return false;
+  }
+  return false;
+}

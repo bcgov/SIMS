@@ -150,7 +150,7 @@ export class EducationProgramOffering extends RecordDataModel {
 
   /**
    * Determines if the offering has WIL component.
-   **/
+   */
   @Column({
     name: "has_offering_wil_component",
   })
