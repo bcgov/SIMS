@@ -177,7 +177,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     offeringRepo: Repository<EducationProgramOffering>,
   ): Promise<UpdateResult> {
     try {
-      return offeringRepo.update(
+      return await offeringRepo.update(
         {
           id: In(newOfferings),
         },
