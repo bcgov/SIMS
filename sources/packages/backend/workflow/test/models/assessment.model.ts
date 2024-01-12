@@ -228,7 +228,19 @@ export interface CalculatedAssessmentModel {
   // CSGD
   finalFederalAwardNetCSGDAmount: number;
   // BCAG
+  federalAwardBCAGAmount: number;
   finalProvincialAwardNetBCAGAmount: number;
   // SBSD
   finalProvincialAwardNetSBSDAmount: number;
+  // Calculated Data
+  calculatedDataTotalRemainingNeed3: number;
+  // DMN Part Time Award Allowable Limits
+  dmnPartTimeAwardAllowableLimits?: {
+    limitAwardBCAGAmount: number;
+  };
+  // DMN Part Time Award Family Size Variables
+  dmnPartTimeAwardFamilySizeVariables?: {
+    limitAwardBCAGIncomeCap: number;
+    limitAwardBCAGSlope: number;
+  };
 }
