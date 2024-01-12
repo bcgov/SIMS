@@ -1,6 +1,3 @@
--- Commits the addition of the new offering_type 'Scholastic standing'
-commit;
-
 -- Create the unique index for the offering name, start, and end dates on the same program and location.
 DROP INDEX sims.location_id_program_id_offering_name_study_dates_index;
 
@@ -21,6 +18,6 @@ WHERE
   (
     offering_status IN ('Approved', 'Creation pending')
   )
-  AND offering_type <> 'Scholastic standing';
+  AND offering_type IN ('Public', 'Private');
 
 COMMENT ON INDEX sims.loc_id_prog_id_offer_name_study_dts_year_study_index IS 'Ensures offering in "Approved" or "Creation pending" statuses does not have the same name, study start/end dates and year of study.'
