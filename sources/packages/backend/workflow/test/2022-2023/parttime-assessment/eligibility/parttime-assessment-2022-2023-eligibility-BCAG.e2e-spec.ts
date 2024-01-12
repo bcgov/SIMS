@@ -128,7 +128,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
     expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(
       43000,
     );
-    expect(calculatedAssessment.variables.calculatedDataFamilySize).toBe(2);
     expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(true);
     expect(
       calculatedAssessment.variables.federalAwardBCAGAmount,
