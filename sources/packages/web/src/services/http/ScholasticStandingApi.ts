@@ -26,7 +26,8 @@ export class ScholasticStandingApi extends HttpBaseClient {
 
   /**
    * Get Scholastic Standing Summary details.
-   * @param studentId student id to retrieve the scholastic standing.
+   * @param options options for the scholastic standing summary.
+   * - `studentId` student id to retrieve the scholastic standing summary.
    * @returns Scholastic Standing Summary.
    */
   async getScholasticStandingSummary(options?: {

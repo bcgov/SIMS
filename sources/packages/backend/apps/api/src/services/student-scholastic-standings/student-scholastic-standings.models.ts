@@ -12,7 +12,9 @@ export interface ScholasticStanding {
   scholasticStandingChangeType: StudentScholasticStandingChangeType;
 }
 
-/** Represents the scholastic standing summary details. */
+/**
+ * Represents the scholastic standing summary details.
+ */
 export interface ScholasticStandingSummary {
   totalUnsuccessfulWeeks: number;
 }
