@@ -148,7 +148,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
     );
   });
 
-  it("Should determine provincialAwardNetBCAGAmount when awardEligibilityBCAG is false", async () => {
+  it("Should determine provincialAwardNetBCAGAmount as zero when awardEligibilityBCAG is false", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
