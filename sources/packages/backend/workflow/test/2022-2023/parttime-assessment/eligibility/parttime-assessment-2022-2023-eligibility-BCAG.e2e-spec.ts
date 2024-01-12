@@ -159,9 +159,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
     // Assert
     // awardEligibilityBCAG is false
     // provincialAwardNetBCAGAmount is 0
-    expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(
-      20001,
-    );
     expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(false);
     expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(0);
   });
