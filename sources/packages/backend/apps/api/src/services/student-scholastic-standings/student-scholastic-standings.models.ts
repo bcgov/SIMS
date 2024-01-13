@@ -11,3 +11,10 @@ export interface ScholasticStanding {
   dateOfWithdrawal?: string;
   scholasticStandingChangeType: StudentScholasticStandingChangeType;
 }
+
+/**
+ * Represents the scholastic standing summary details.
+ */
+export interface ScholasticStandingSummary {
+  totalUnsuccessfulWeeks: number;
+}

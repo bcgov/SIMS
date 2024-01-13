@@ -1,5 +1,5 @@
 <template>
-  <body-header-container>
+  <body-header-container :enableCardView="true">
     <template #header>
       <body-header title="All restrictions">
         <template #actions v-if="canAddRestrictions">

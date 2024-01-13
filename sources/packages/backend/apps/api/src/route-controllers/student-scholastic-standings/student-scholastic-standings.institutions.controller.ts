@@ -24,6 +24,7 @@ import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import {
   AllowAuthorizedParty,
   HasLocationAccess,
+  HasStudentDataAccess,
   IsBCPublicInstitution,
   IsInstitutionAdmin,
   UserToken,
@@ -50,9 +51,10 @@ import {
   ApplicationBulkWithdrawalValidationResultAPIOutDTO,
   ScholasticStandingAPIInDTO,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
+  ScholasticStandingSummaryDetailsAPIOutDTO,
 } from "./models/student-scholastic-standings.dto";
-import { ScholasticStandingControllerService } from "./student-scholastic-standings.controller.service";
-import { ScholasticStanding } from "../../services/student-scholastic-standings/student-scholastic-standings.model";
+import { ScholasticStandingControllerService } from "..";
+import { ScholasticStanding } from "../../services/student-scholastic-standings/student-scholastic-standings.models";
 import { FileInterceptor } from "@nestjs/platform-express";
 import {
   APPLICATION_BULK_WITHDRAWAL_MAX_UPLOAD_PARTS,
@@ -152,6 +154,23 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     return this.scholasticStandingControllerService.getScholasticStanding(
       scholasticStandingId,
       userToken.authorizations.getLocationsIds(),
+    );
+  }
+
+  /**
+   * Get Scholastic Standing summary details.
+   * @param studentId student id to retrieve the scholastic standing summary details.
+   * @returns Scholastic Standing Summary details.
+   */
+  @IsBCPublicInstitution()
+  @HasStudentDataAccess("studentId")
+  @Get("summary/student/:studentId")
+  @ApiNotFoundResponse({ description: "Student does not exists." })
+  async getScholasticStandingSummary(
+    @Param("studentId", ParseIntPipe) studentId: number,
+  ): Promise<ScholasticStandingSummaryDetailsAPIOutDTO> {
+    return this.scholasticStandingControllerService.getScholasticStandingSummary(
+      studentId,
     );
   }
 

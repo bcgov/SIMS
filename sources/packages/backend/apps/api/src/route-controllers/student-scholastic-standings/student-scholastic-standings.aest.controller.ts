@@ -5,8 +5,11 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
-import { ScholasticStandingSubmittedDetailsAPIOutDTO } from "./models/student-scholastic-standings.dto";
-import { ScholasticStandingControllerService } from "./student-scholastic-standings.controller.service";
+import {
+  ScholasticStandingSubmittedDetailsAPIOutDTO,
+  ScholasticStandingSummaryDetailsAPIOutDTO,
+} from "./models/student-scholastic-standings.dto";
+import { ScholasticStandingControllerService } from "..";
 
 /**
  * Scholastic standing controller for AEST Client.
@@ -36,6 +39,21 @@ export class ScholasticStandingAESTController extends BaseController {
   ): Promise<ScholasticStandingSubmittedDetailsAPIOutDTO> {
     return this.scholasticStandingControllerService.getScholasticStanding(
       scholasticStandingId,
+    );
+  }
+
+  /**
+   * Get Scholastic Standing summary details.
+   * @param studentId student id to retrieve the scholastic standing summary details.
+   * @returns Scholastic Standing Summary details.
+   */
+  @Get("summary/student/:studentId")
+  @ApiNotFoundResponse({ description: "Student does not exists." })
+  async getScholasticStandingSummary(
+    @Param("studentId", ParseIntPipe) studentId: number,
+  ): Promise<ScholasticStandingSummaryDetailsAPIOutDTO> {
+    return this.scholasticStandingControllerService.getScholasticStandingSummary(
+      studentId,
     );
   }
 }

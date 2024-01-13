@@ -6,10 +6,13 @@ import {
 import {
   ApplicationWithdrawalTextValidationResult,
   StudentScholasticStandingsService,
+  StudentService,
 } from "../../services";
+import { SFASIndividualService } from "@sims/services";
 import {
   ApplicationBulkWithdrawalValidationResultAPIOutDTO,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
+  ScholasticStandingSummaryDetailsAPIOutDTO,
 } from "./models/student-scholastic-standings.dto";
 import { transformToActiveApplicationDataAPIOutDTO } from "../institution-locations/models/application.dto";
 import { ApplicationWithdrawalValidationResult } from "../../services/application-bulk-withdrawal/application-bulk-withdrawal-validation.models";
@@ -25,7 +28,9 @@ import {
 @Injectable()
 export class ScholasticStandingControllerService {
   constructor(
+    private readonly studentService: StudentService,
     private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
+    private readonly sfasIndividualService: SFASIndividualService,
   ) {}
 
   /**
@@ -54,6 +59,39 @@ export class ScholasticStandingControllerService {
     return {
       ...scholasticStanding.submittedData,
       ...transformToActiveApplicationDataAPIOutDTO(application, offering),
+    };
+  }
+
+  /**
+   * Get Scholastic Standing summary details.
+   * @param studentId student id to retrieve the scholastic standing summary.
+   * @returns Scholastic Standing summary details.
+   */
+  async getScholasticStandingSummary(
+    studentId: number,
+  ): Promise<ScholasticStandingSummaryDetailsAPIOutDTO> {
+    const studentExists = await this.studentService.studentExists(studentId);
+    if (!studentExists) {
+      throw new NotFoundException("Student does not exists.");
+    }
+    const scholasticStandingSummaryPromise =
+      this.studentScholasticStandingsService.getScholasticStandingSummary(
+        studentId,
+      );
+    const sfasUnsuccessfulCompletionWeeksPromise =
+      this.sfasIndividualService.getSFASTotalUnsuccessfulCompletionWeeks(
+        studentId,
+      );
+    const [scholasticStandingSummary, sfasUnsuccessfulCompletionWeeks] =
+      await Promise.all([
+        scholasticStandingSummaryPromise,
+        sfasUnsuccessfulCompletionWeeksPromise,
+      ]);
+    const totalUnsuccessfulCompletionWeeks =
+      (scholasticStandingSummary?.totalUnsuccessfulWeeks ?? 0) +
+      (sfasUnsuccessfulCompletionWeeks ?? 0);
+    return {
+      lifetimeUnsuccessfulCompletionWeeks: totalUnsuccessfulCompletionWeeks,
     };
   }
 

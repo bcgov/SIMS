@@ -24,9 +24,19 @@ export interface ScholasticStandingDataAPIInDTO {
   dateOfWithdrawal?: string;
 }
 
+/**
+ * Represents the scholastic standing submitted details.
+ */
 export interface ScholasticStandingSubmittedDetailsAPIOutDTO
   extends ScholasticStandingDataAPIInDTO,
     ActiveApplicationDataAPIOutDTO {}
+
+/**
+ * Represents the scholastic standing summary details.
+ */
+export interface ScholasticStandingSummaryDetailsAPIOutDTO {
+  lifetimeUnsuccessfulCompletionWeeks: number;
+}
 
 /**
  * Represents the possible errors that can happen during the

@@ -1,14 +1,21 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, Raw } from "typeorm";
-import { DataModelService, SFASIndividual } from "@sims/sims-db";
+import { Raw, Repository } from "typeorm";
+import { DataModelService, SFASIndividual, Student } from "@sims/sims-db";
+import { SFASIndividualDataSummary } from "./sfas-individual.model";
+import { InjectRepository } from "@nestjs/typeorm";
 
 /**
  * Manages the data related to an individual/student in SFAS.
  */
 @Injectable()
 export class SFASIndividualService extends DataModelService<SFASIndividual> {
-  constructor(dataSource: DataSource) {
-    super(dataSource.getRepository(SFASIndividual));
+  constructor(
+    @InjectRepository(SFASIndividual)
+    sfasIndividualRepo: Repository<SFASIndividual>,
+    @InjectRepository(Student)
+    private readonly studentRepo: Repository<Student>,
+  ) {
+    super(sfasIndividualRepo);
   }
 
   /**
@@ -62,5 +69,44 @@ export class SFASIndividualService extends DataModelService<SFASIndividual> {
         birthDate: birthDate,
       },
     });
+  }
+
+  /**
+   * Gets the total number of unsuccessful completion weeks for a student in SFAS.
+   * @param studentId student id to retrieve the unsuccessful weeks.
+   * @returns total number of unsuccessful completion weeks for a student in SFAS.
+   */
+  async getSFASTotalUnsuccessfulCompletionWeeks(
+    studentId: number,
+  ): Promise<number | null> {
+    const studentData = await this.studentRepo.findOne({
+      select: {
+        id: true,
+        birthDate: true,
+        sinValidation: { sin: true },
+        user: { lastName: true },
+      },
+      relations: {
+        sinValidation: true,
+        user: true,
+      },
+      where: {
+        id: studentId,
+      },
+    });
+    const sin = studentData.sinValidation.sin;
+    const birthDate = studentData.birthDate;
+    const lastName = studentData.user.lastName;
+    const sfasIndividualData = await this.repo
+      .createQueryBuilder("sfasIndividual")
+      .select(
+        "SUM(sfasIndividual.unsuccessfulCompletion)::int",
+        "totalUnsuccessfulWeeks",
+      )
+      .where("sin = :sin", { sin })
+      .andWhere("birth_date = :birthDate", { birthDate })
+      .andWhere("LOWER(last_name) = LOWER(:lastName)", { lastName })
+      .getRawOne<SFASIndividualDataSummary>();
+    return sfasIndividualData?.totalUnsuccessfulWeeks;
   }
 }

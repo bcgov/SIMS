@@ -4,6 +4,7 @@ import {
   ApplicationBulkWithdrawalValidationResultAPIOutDTO,
   ScholasticStandingDataAPIInDTO,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
+  ScholasticStandingSummaryDetailsAPIOutDTO,
 } from "@/services/http/dto";
 import { ApplicationBulkWithdrawal } from "@/types/contracts/institution/ScholasticStanding";
 import {
@@ -56,6 +57,20 @@ export class ScholasticStandingService {
   }
 
   /**
+   * Get Scholastic Standing Summary details.
+   * @param options options for the scholastic standing summary.
+   * - `studentId` student id to retrieve the scholastic standing summary.
+   * @returns Scholastic Standing Summary.
+   */
+  async getScholasticStandingSummary(options?: {
+    studentId?: number;
+  }): Promise<ScholasticStandingSummaryDetailsAPIOutDTO> {
+    return ApiClient.ScholasticStandingApi.getScholasticStandingSummary({
+      studentId: options?.studentId,
+    });
+  }
+
+  /**
    * Save scholastic standing and create new assessment.
    * @param applicationId application id.
    * @param locationId location id.
@@ -72,6 +87,7 @@ export class ScholasticStandingService {
       payload,
     );
   }
+
   /**
    * Process the given text file with application withdrawal.
    * @param file file content with all information needed to withdraw application.

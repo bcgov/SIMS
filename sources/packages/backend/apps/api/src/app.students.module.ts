@@ -44,6 +44,8 @@ import {
   OverawardStudentsController,
   OverawardControllerService,
   StudentAppealControllerService,
+  ScholasticStandingControllerService,
+  ScholasticStandingStudentsController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { ConfigModule } from "@sims/utilities/config";
@@ -78,6 +80,7 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     ProgramYearStudentsController,
     OverawardStudentsController,
     ApplicationOfferingChangeRequestStudentsController,
+    ScholasticStandingStudentsController,
   ],
   providers: [
     WorkflowClientService,
@@ -120,6 +123,7 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     ConfirmationOfEnrollmentService,
     ApplicationOfferingChangeRequestControllerService,
     ApplicationOfferingChangeRequestService,
+    ScholasticStandingControllerService,
   ],
 })
 export class AppStudentsModule {}

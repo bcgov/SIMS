@@ -10,6 +10,9 @@
         :routeLocation="{ name: StudentRoutesConst.STUDENT_DASHBOARD }"
       />
     </template>
+    <tab-container :enableCardView="false" class="mb-6">
+      <student-scholastic-standing-limited-history
+    /></tab-container>
     <formio-container
       formName="studentAccountActivity"
       :formData="initialData"
@@ -21,12 +24,14 @@ import { computed, onMounted, defineComponent } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { StudentRestriction } from "@/store/modules/student/student";
 import { useStudentStore } from "@/composables";
+import StudentScholasticStandingLimitedHistory from "@/components/common/students/StudentScholasticStandingLimitedHistory.vue";
 
 interface StudentAccountActivityFormModel {
   restrictions: StudentRestriction[];
 }
 
 export default defineComponent({
+  components: { StudentScholasticStandingLimitedHistory },
   setup() {
     const { activeRestrictions, updateRestrictions } = useStudentStore();
 
