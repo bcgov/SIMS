@@ -100,7 +100,7 @@ export class SFASIndividualService extends DataModelService<SFASIndividual> {
     const sfasIndividualData = await this.repo
       .createQueryBuilder("sfasIndividual")
       .select(
-        "SUM(sfasIndividual.unsuccessfulCompletion)",
+        "SUM(sfasIndividual.unsuccessfulCompletion)::int",
         "totalUnsuccessfulWeeks",
       )
       .where("sin = :sin", { sin })

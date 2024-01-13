@@ -576,7 +576,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     const studentScholasticStandingSummary = this.repo
       .createQueryBuilder("studentScholasticStanding")
       .select(
-        "SUM(studentScholasticStanding.unsuccessfulWeeks)",
+        "SUM(studentScholasticStanding.unsuccessfulWeeks)::int",
         "totalUnsuccessfulWeeks",
       )
       .innerJoin("studentScholasticStanding.application", "application")
