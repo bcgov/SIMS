@@ -40,7 +40,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandingSum
     const scholasticStanding = createFakeStudentScholasticStanding(
       { submittedBy: student.user, application },
       {
-        initialValue: { numberOfUnsuccessfulWeeks: 15 },
+        initialValue: { unsuccessfulWeeks: 15 },
       },
     );
     await scholasticStandingRepo.save(scholasticStanding);
@@ -71,7 +71,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandingSum
     const scholasticStanding = createFakeStudentScholasticStanding(
       { submittedBy: student.user, application },
       {
-        initialValue: { numberOfUnsuccessfulWeeks: 15 },
+        initialValue: { unsuccessfulWeeks: 15 },
       },
     );
     await scholasticStandingRepo.save(scholasticStanding);

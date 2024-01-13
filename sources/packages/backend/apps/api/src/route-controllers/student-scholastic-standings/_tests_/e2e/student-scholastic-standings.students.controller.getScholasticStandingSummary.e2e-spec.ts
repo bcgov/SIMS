@@ -50,7 +50,7 @@ describe("StudentScholasticStandingsStudentsController(e2e)-getScholasticStandin
     const scholasticStanding = createFakeStudentScholasticStanding(
       { submittedBy: student.user, application },
       {
-        initialValue: { numberOfUnsuccessfulWeeks: 5 },
+        initialValue: { unsuccessfulWeeks: 5 },
       },
     );
     const sinValidation = await sinValidationRepo.findOne({

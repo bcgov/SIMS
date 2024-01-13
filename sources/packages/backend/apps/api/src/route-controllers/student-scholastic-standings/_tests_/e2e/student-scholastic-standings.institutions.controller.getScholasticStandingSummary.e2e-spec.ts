@@ -109,13 +109,13 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticSta
     const firstAppScholasticStanding = createFakeStudentScholasticStanding(
       { submittedBy: student.user, application: firstApplication },
       {
-        initialValue: { numberOfUnsuccessfulWeeks: 15 },
+        initialValue: { unsuccessfulWeeks: 15 },
       },
     );
     const secondAppScholasticStanding = createFakeStudentScholasticStanding(
       { submittedBy: student.user, application: secondApplication },
       {
-        initialValue: { numberOfUnsuccessfulWeeks: 3 },
+        initialValue: { unsuccessfulWeeks: 3 },
       },
     );
     await scholasticStandingRepo.save([
