@@ -36,7 +36,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
         .limitAwardCSPTAmount,
     );
-    expect(calculatedAssessment.variables.federalAwardCSPTAmount).toBe(3600);
+    expect(calculatedAssessment.variables.federalAwardCSPTAmount).toBe(2520);
   });
 
   it("Should determine awardEligibilityCSPT when calculatedDataTotalFamilyIncome > limitAwardCSPTIncomeCap", async () => {
@@ -114,7 +114,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
         ),
       ),
     );
-    expect(calculatedAssessment.variables.federalAwardNetCSPTAmount).toBe(3600);
+    expect(calculatedAssessment.variables.federalAwardNetCSPTAmount).toBe(2520);
   });
 
   it("Should determine federalAwardNetCSPTAmount as zero when awardEligibilityCSPT is false", async () => {
