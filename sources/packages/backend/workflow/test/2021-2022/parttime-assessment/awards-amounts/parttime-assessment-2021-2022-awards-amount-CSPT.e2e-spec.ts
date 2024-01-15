@@ -32,11 +32,12 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(
       43000,
     );
-    expect(calculatedAssessment.variables.awardEligibilityCSPT).toBe(
+    console.log(calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits);
+    expect(calculatedAssessment.variables.federalAwardCSPTAmount).toBe(
       calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
         .limitAwardCSPTAmount,
     );
-    expect(calculatedAssessment.variables.awardEligibilityCSPT).toBe(1000);
+    expect(calculatedAssessment.variables.federalAwardCSPTAmount).toBe(3600);
   });
 
   it("Should determine awardEligibilityCSPT when calculatedDataTotalFamilyIncome > limitAwardCSPTIncomeCap", async () => {
@@ -65,7 +66,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(
       53000,
     );
-    expect(calculatedAssessment.variables.awardEligibilityCSPT).toBe(
+    expect(calculatedAssessment.variables.federalAwardCSPTAmount).toBe(
       Math.max(
         calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
           .limitAwardCSPTAmount -
@@ -77,8 +78,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
         100,
       ),
     );
-    expect(calculatedAssessment.variables.awardEligibilityCSPT).toBeLessThan(
-      1000,
+    expect(calculatedAssessment.variables.federalAwardCSPTAmount).toBeLessThan(
+      3000,
     );
   });
 
@@ -102,9 +103,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     // awardEligibilityCSPT is true
     // federalAwardNetCSPTAmount is greater than 0
     expect(calculatedAssessment.variables.awardEligibilityCSPT).toBe(true);
-    expect(calculatedAssessment.variables.awardEligibilityCSPT).toBeGreaterThan(
-      100,
-    );
+    expect(
+      calculatedAssessment.variables.federalAwardCSPTAmount,
+    ).toBeGreaterThan(100);
     expect(calculatedAssessment.variables.federalAwardNetCSPTAmount).toBe(
       Math.min(
         calculatedAssessment.variables.calculatedDataTotalRemainingNeed1,
@@ -115,16 +116,15 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
         ),
       ),
     );
-    expect(calculatedAssessment.variables.federalAwardNetCSPTAmount).toBe(1000);
+    expect(calculatedAssessment.variables.federalAwardNetCSPTAmount).toBe(3600);
   });
 
   it("Should determine federalAwardNetCSPTAmount as zero when awardEligibilityCSPT is false", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
-    // Private institution
-    assessmentConsolidatedData.institutionType = InstitutionTypes.BCPrivate;
+
+    assessmentConsolidatedData.studentDataCRAReportedIncome = 70001;
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
