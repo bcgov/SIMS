@@ -13,29 +13,18 @@ import {
   getStudentToken,
 } from "../../../../testHelpers";
 import * as request from "supertest";
-import {
-  SINValidation,
-  Student,
-  StudentScholasticStanding,
-} from "@sims/sims-db";
+import { Student } from "@sims/sims-db";
 import { saveFakeSFASIndividual } from "@sims/test-utils/factories/sfas-individuals";
-import { Repository } from "typeorm";
 
 describe("StudentScholasticStandingsStudentsController(e2e)-getScholasticStandingSummary.", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let student: Student;
-  let sinValidationRepo: Repository<SINValidation>;
-  let scholasticStandingRepo: Repository<StudentScholasticStanding>;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
-    sinValidationRepo = db.dataSource.getRepository(SINValidation);
-    scholasticStandingRepo = db.dataSource.getRepository(
-      StudentScholasticStanding,
-    );
     student = await getStudentByFakeStudentUserType(
       FakeStudentUsersTypes.FakeStudentUserType1,
       dataSource,
@@ -53,11 +42,11 @@ describe("StudentScholasticStandingsStudentsController(e2e)-getScholasticStandin
         initialValue: { unsuccessfulWeeks: 5 },
       },
     );
-    const sinValidation = await sinValidationRepo.findOne({
+    const sinValidation = await db.sinValidation.findOne({
       select: { id: true, sin: true },
       where: { student: { id: student.id } },
     });
-    await scholasticStandingRepo.save(scholasticStanding);
+    await db.studentScholasticStanding.save(scholasticStanding);
     await saveFakeSFASIndividual(db.dataSource, {
       initialValues: {
         lastName: student.user.lastName,
@@ -66,7 +55,7 @@ describe("StudentScholasticStandingsStudentsController(e2e)-getScholasticStandin
         unsuccessfulCompletion: 12,
       },
     });
-    const endpoint = `/students/scholastic-standing/summary`;
+    const endpoint = "/students/scholastic-standing/summary";
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );

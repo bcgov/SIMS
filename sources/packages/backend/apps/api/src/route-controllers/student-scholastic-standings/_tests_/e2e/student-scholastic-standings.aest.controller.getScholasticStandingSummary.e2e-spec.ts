@@ -5,6 +5,7 @@ import {
   createFakeStudentScholasticStanding,
   saveFakeApplication,
   saveFakeStudent,
+  saveFakeSFASIndividual,
 } from "@sims/test-utils";
 import {
   AESTGroups,
@@ -13,22 +14,15 @@ import {
   getAESTToken,
 } from "../../../../testHelpers";
 import * as request from "supertest";
-import { StudentScholasticStanding } from "@sims/sims-db";
-import { saveFakeSFASIndividual } from "@sims/test-utils/factories/sfas-individuals";
-import { Repository } from "typeorm";
 
 describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandingSummary.", () => {
   let app: INestApplication;
   let db: E2EDataSources;
-  let scholasticStandingRepo: Repository<StudentScholasticStanding>;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
-    scholasticStandingRepo = db.dataSource.getRepository(
-      StudentScholasticStanding,
-    );
   });
 
   it("Should get the scholastic standing summary for the provided student including the data retrieved from the sfas system when a ministry user requests it.", async () => {
@@ -43,7 +37,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandingSum
         initialValue: { unsuccessfulWeeks: 15 },
       },
     );
-    await scholasticStandingRepo.save(scholasticStanding);
+    await db.studentScholasticStanding.save(scholasticStanding);
     await saveFakeSFASIndividual(db.dataSource, {
       initialValues: {
         lastName: student.user.lastName,
@@ -74,7 +68,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandingSum
         initialValue: { unsuccessfulWeeks: 15 },
       },
     );
-    await scholasticStandingRepo.save(scholasticStanding);
+    await db.studentScholasticStanding.save(scholasticStanding);
     await saveFakeSFASIndividual(db.dataSource, {
       initialValues: {
         lastName: student.user.lastName,

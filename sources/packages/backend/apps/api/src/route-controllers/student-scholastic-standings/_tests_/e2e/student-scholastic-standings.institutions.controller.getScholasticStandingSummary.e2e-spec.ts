@@ -18,12 +18,7 @@ import {
   getInstitutionToken,
 } from "../../../../testHelpers";
 import * as request from "supertest";
-import {
-  Application,
-  InstitutionLocation,
-  StudentScholasticStanding,
-} from "@sims/sims-db";
-import { Repository } from "typeorm";
+import { InstitutionLocation } from "@sims/sims-db";
 import { saveFakeSFASIndividual } from "@sims/test-utils/factories/sfas-individuals";
 
 describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticStandingSummary.", () => {
@@ -31,17 +26,11 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticSta
   let db: E2EDataSources;
   let collegeFLocation: InstitutionLocation,
     collegeCLocation: InstitutionLocation;
-  let applicationRepo: Repository<Application>;
-  let scholasticStandingRepo: Repository<StudentScholasticStanding>;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
-    applicationRepo = db.dataSource.getRepository(Application);
-    scholasticStandingRepo = db.dataSource.getRepository(
-      StudentScholasticStanding,
-    );
     const { institution } = await getAuthRelatedEntities(
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
@@ -54,7 +43,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticSta
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeCUser,
     );
-    const endpoint = `/institutions/scholastic-standing/summary/student/9999`;
+    const endpoint = "/institutions/scholastic-standing/summary/student/9999";
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
@@ -105,7 +94,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticSta
       location: collegeCLocation,
       student,
     });
-    await applicationRepo.save([firstApplication, secondApplication]);
+    await db.application.save([firstApplication, secondApplication]);
     const firstAppScholasticStanding = createFakeStudentScholasticStanding(
       { submittedBy: student.user, application: firstApplication },
       {
@@ -118,7 +107,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticSta
         initialValue: { unsuccessfulWeeks: 3 },
       },
     );
-    await scholasticStandingRepo.save([
+    await db.studentScholasticStanding.save([
       firstAppScholasticStanding,
       secondAppScholasticStanding,
     ]);

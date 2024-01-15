@@ -22,7 +22,7 @@ export function createFakeStudentScholasticStanding(
     application?: Application;
     studentAssessment?: StudentAssessment;
   },
-  options?: { initialValue?: Partial<StudentScholasticStanding> },
+  options?: { initialValues?: Partial<StudentScholasticStanding> },
 ): StudentScholasticStanding {
   const scholasticStanding = new StudentScholasticStanding();
   scholasticStanding.application = relations?.application;
@@ -33,7 +33,7 @@ export function createFakeStudentScholasticStanding(
   scholasticStanding.studentAssessment = relations?.studentAssessment;
   scholasticStanding.referenceOffering = null;
   scholasticStanding.unsuccessfulWeeks =
-    options?.initialValue?.unsuccessfulWeeks ?? null;
+    options?.initialValues?.unsuccessfulWeeks ?? null;
   scholasticStanding.changeType =
     StudentScholasticStandingChangeType.StudentDidNotCompleteProgram;
   return scholasticStanding;
