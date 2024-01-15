@@ -10,7 +10,7 @@ import * as faker from "faker";
  * @returns created sfas individual.
  */
 function createFakeSFASIndividual(options?: {
-  initialValues: Partial<SFASIndividual>;
+  initialValues?: Partial<SFASIndividual>;
 }) {
   const sfasIndividual = new SFASIndividual();
   sfasIndividual.id = faker.random.number({ min: 100000000, max: 999999999 });
