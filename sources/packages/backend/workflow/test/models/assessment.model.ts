@@ -235,8 +235,8 @@ export interface CalculatedAssessmentModel {
   // SBSD
   finalProvincialAwardNetSBSDAmount: number;
   // Calculated Data
-  calculatedDataTotalRemainingNeed3: number;
   calculatedDataTotalRemainingNeed1: number;
+  calculatedDataTotalRemainingNeed3: number;
   // DMN Part Time Award Allowable Limits
   dmnPartTimeAwardAllowableLimits?: {
     limitAwardBCAGAmount: number;
