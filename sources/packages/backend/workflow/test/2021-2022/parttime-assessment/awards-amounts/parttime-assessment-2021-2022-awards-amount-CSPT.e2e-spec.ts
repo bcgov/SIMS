@@ -32,7 +32,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(
       43000,
     );
-    console.log(calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits);
     expect(calculatedAssessment.variables.federalAwardCSPTAmount).toBe(
       calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
         .limitAwardCSPTAmount,
@@ -56,7 +55,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     );
     // Assert
     // awardEligibilityCSPT is less than 1000
-    console.log(calculatedAssessment.variables);
     expect(
       calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
     ).toBeGreaterThan(
