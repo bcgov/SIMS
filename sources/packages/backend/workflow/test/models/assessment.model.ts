@@ -222,6 +222,8 @@ export interface CalculatedAssessmentModel {
   // Part time.
   // CSPT
   awardEligibilityCSPT: boolean;
+  federalAwardCSPTAmount: number;
+  federalAwardNetCSPTAmount: number;
   finalFederalAwardNetCSPTAmount: number;
   // CSGP
   finalFederalAwardNetCSGPAmount: number;
@@ -234,13 +236,18 @@ export interface CalculatedAssessmentModel {
   finalProvincialAwardNetSBSDAmount: number;
   // Calculated Data
   calculatedDataTotalRemainingNeed3: number;
+  // Calculated Data
+  calculatedDataTotalRemainingNeed1: number;
   // DMN Part Time Award Allowable Limits
   dmnPartTimeAwardAllowableLimits?: {
     limitAwardBCAGAmount: number;
+    limitAwardCSPTAmount: number;
   };
   // DMN Part Time Award Family Size Variables
   dmnPartTimeAwardFamilySizeVariables?: {
     limitAwardBCAGIncomeCap: number;
     limitAwardBCAGSlope: number;
+    limitAwardCSPTIncomeCap: number;
+    limitAwardCSPTSlope: number;
   };
 }
