@@ -6,7 +6,7 @@ import {
 import { YesNoOptions } from "@sims/test-utils";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CSPT.`, () => {
-  it("Should determine awardEligibilityCSPT when calculatedDataTotalFamilyIncome <= limitAwardCSPTIncomeCap", async () => {
+  it("Should determine federalAwardCSPTAmount when awardEligibilityCSPT is true when calculatedDataTotalFamilyIncome <= limitAwardCSPTIncomeCap", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -37,7 +37,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     expect(calculatedAssessment.variables.federalAwardCSPTAmount).toBe(3600);
   });
 
-  it("Should determine awardEligibilityCSPT when calculatedDataTotalFamilyIncome > limitAwardCSPTIncomeCap", async () => {
+  it("Should determine federalAwardCSPTAmount when awardEligibilityCSPT is true when calculatedDataTotalFamilyIncome > limitAwardCSPTIncomeCap", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
