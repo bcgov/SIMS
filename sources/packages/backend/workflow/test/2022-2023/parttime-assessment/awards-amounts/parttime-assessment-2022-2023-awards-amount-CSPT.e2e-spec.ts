@@ -3,7 +3,6 @@ import {
   createFakeConsolidatedPartTimeData,
   executePartTimeAssessmentForProgramYear,
 } from "../../../test-utils";
-import { InstitutionTypes } from "../../../models";
 import { YesNoOptions } from "@sims/test-utils";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CSPT.`, () => {
@@ -22,7 +21,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       assessmentConsolidatedData,
     );
     // Assert
-    // awardEligibilityCSPT is 1000 (limitAwardCSPTAmount)
     expect(
       calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
     ).toBeLessThan(
@@ -54,7 +52,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       assessmentConsolidatedData,
     );
     // Assert
-    // awardEligibilityCSPT is less than 1000
     expect(
       calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
     ).toBeGreaterThan(
@@ -90,16 +87,12 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.studentDataIsYourSpouseACanadianCitizen =
       YesNoOptions.Yes;
     assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
-    // Public institution
-    assessmentConsolidatedData.institutionType = InstitutionTypes.BCPublic;
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
       assessmentConsolidatedData,
     );
     // Assert
-    // awardEligibilityCSPT is true
-    // federalAwardNetCSPTAmount is greater than 0
     expect(calculatedAssessment.variables.awardEligibilityCSPT).toBe(true);
     expect(
       calculatedAssessment.variables.federalAwardCSPTAmount,
@@ -129,8 +122,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       assessmentConsolidatedData,
     );
     // Assert
-    // awardEligibilityCSPT is false
-    // federalAwardNetCSPTAmount is 0
     expect(calculatedAssessment.variables.awardEligibilityCSPT).toBe(false);
     expect(calculatedAssessment.variables.federalAwardNetCSPTAmount).toBe(0);
   });
