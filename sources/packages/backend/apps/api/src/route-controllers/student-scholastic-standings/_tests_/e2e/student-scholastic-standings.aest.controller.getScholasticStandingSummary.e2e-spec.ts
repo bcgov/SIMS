@@ -34,7 +34,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandingSum
     const scholasticStanding = createFakeStudentScholasticStanding(
       { submittedBy: student.user, application },
       {
-        initialValue: { unsuccessfulWeeks: 15 },
+        initialValues: { unsuccessfulWeeks: 15 },
       },
     );
     await db.studentScholasticStanding.save(scholasticStanding);
@@ -65,7 +65,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandingSum
     const scholasticStanding = createFakeStudentScholasticStanding(
       { submittedBy: student.user, application },
       {
-        initialValue: { unsuccessfulWeeks: 15 },
+        initialValues: { unsuccessfulWeeks: 15 },
       },
     );
     await db.studentScholasticStanding.save(scholasticStanding);

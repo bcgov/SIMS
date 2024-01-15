@@ -39,7 +39,7 @@ describe("StudentScholasticStandingsStudentsController(e2e)-getScholasticStandin
     const scholasticStanding = createFakeStudentScholasticStanding(
       { submittedBy: student.user, application },
       {
-        initialValue: { unsuccessfulWeeks: 5 },
+        initialValues: { unsuccessfulWeeks: 5 },
       },
     );
     const sinValidation = await db.sinValidation.findOne({

@@ -98,13 +98,13 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticSta
     const firstAppScholasticStanding = createFakeStudentScholasticStanding(
       { submittedBy: student.user, application: firstApplication },
       {
-        initialValue: { unsuccessfulWeeks: 15 },
+        initialValues: { unsuccessfulWeeks: 15 },
       },
     );
     const secondAppScholasticStanding = createFakeStudentScholasticStanding(
       { submittedBy: student.user, application: secondApplication },
       {
-        initialValue: { unsuccessfulWeeks: 3 },
+        initialValues: { unsuccessfulWeeks: 3 },
       },
     );
     await db.studentScholasticStanding.save([
