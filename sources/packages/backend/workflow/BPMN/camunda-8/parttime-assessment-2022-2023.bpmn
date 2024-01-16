@@ -481,7 +481,7 @@
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=if (calculatedDataTotalFamilyIncome &#60;= dmnPartTimeAwardFamilySizeVariables.limitAwardCSPTIncomeCap)&#10;then dmnPartTimeAwardAllowableLimits.limitAwardCSPTAmount&#10;else&#10;  max(dmnPartTimeAwardAllowableLimits.limitAwardCSPTAmount - ((calculatedDataTotalFamilyIncome - dmnPartTimeAwardFamilySizeVariables.limitAwardCSPTIncomeCap) * dmnPartTimeAwardFamilySizeVariables.limitAwardCSPTSlope),&#10;     100&#10;  )" target="federalAwardCSPTAmount" />
-          <zeebe:output source="=if (awardEligibilityCSPT = true)&#10;then&#10;  if (calculatedDataTotalRemainingNeed1 &#62; federalAwardCSPTAmount)&#10;  then federalAwardCSPTAmount&#10;  else calculatedDataTotalRemainingNeed1&#10;else&#10;0" target="federalAwardNetCSPTAmount" />
+          <zeebe:output source="=if (awardEligibilityCSPT = true and calculatedDataTotalRemainingNeed1 &#62;= 100)&#10;then&#10;  min(&#10;     calculatedDataTotalRemainingNeed1,&#10;     min(dmnPartTimeAwardAllowableLimits.limitAwardCSPTAmount, federalAwardCSPTAmount)&#10;  )&#10;else&#10;0" target="federalAwardNetCSPTAmount" />
           <zeebe:output source="=max(0,(calculatedDataTotalRemainingNeed1 - federalAwardNetCSPTAmount))" target="calculatedDataTotalRemainingNeed2" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
