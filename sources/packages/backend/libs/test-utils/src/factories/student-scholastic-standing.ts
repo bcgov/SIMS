@@ -33,7 +33,7 @@ export function createFakeStudentScholasticStanding(
   scholasticStanding.studentAssessment = relations?.studentAssessment;
   scholasticStanding.referenceOffering = null;
   scholasticStanding.unsuccessfulWeeks =
-    options?.initialValues?.unsuccessfulWeeks ?? null;
+    options?.initialValues?.unsuccessfulWeeks;
   scholasticStanding.changeType =
     StudentScholasticStandingChangeType.StudentDidNotCompleteProgram;
   return scholasticStanding;

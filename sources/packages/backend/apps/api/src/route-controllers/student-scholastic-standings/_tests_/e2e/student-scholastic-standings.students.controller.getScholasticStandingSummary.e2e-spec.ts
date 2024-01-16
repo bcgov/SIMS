@@ -4,35 +4,37 @@ import {
   createE2EDataSources,
   createFakeStudentScholasticStanding,
   saveFakeApplication,
+  saveFakeStudent,
 } from "@sims/test-utils";
 import {
   BEARER_AUTH_TYPE,
   FakeStudentUsersTypes,
   createTestingAppModule,
-  getStudentByFakeStudentUserType,
   getStudentToken,
+  mockUserLoginInfo,
 } from "../../../../testHelpers";
 import * as request from "supertest";
-import { Student } from "@sims/sims-db";
 import { saveFakeSFASIndividual } from "@sims/test-utils/factories/sfas-individuals";
+import { TestingModule } from "@nestjs/testing";
 
 describe("StudentScholasticStandingsStudentsController(e2e)-getScholasticStandingSummary.", () => {
   let app: INestApplication;
   let db: E2EDataSources;
-  let student: Student;
+  let appModule: TestingModule;
 
   beforeAll(async () => {
-    const { nestApplication, dataSource } = await createTestingAppModule();
+    const { nestApplication, module, dataSource } =
+      await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
-    student = await getStudentByFakeStudentUserType(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-      dataSource,
-    );
+    appModule = module;
   });
 
   it("Should get the scholastic standing summary for the provided student including the data retrieved from the sfas system when a student user requests it.", async () => {
     // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+    // Mock user service to return the saved student.
+    await mockUserLoginInfo(appModule, student);
     const application = await saveFakeApplication(db.dataSource, {
       student,
     });
@@ -42,16 +44,12 @@ describe("StudentScholasticStandingsStudentsController(e2e)-getScholasticStandin
         initialValues: { unsuccessfulWeeks: 5 },
       },
     );
-    const sinValidation = await db.sinValidation.findOne({
-      select: { id: true, sin: true },
-      where: { student: { id: student.id } },
-    });
     await db.studentScholasticStanding.save(scholasticStanding);
     await saveFakeSFASIndividual(db.dataSource, {
       initialValues: {
         lastName: student.user.lastName,
         birthDate: student.birthDate,
-        sin: sinValidation.sin,
+        sin: student.sinValidation.sin,
         unsuccessfulCompletion: 12,
       },
     });

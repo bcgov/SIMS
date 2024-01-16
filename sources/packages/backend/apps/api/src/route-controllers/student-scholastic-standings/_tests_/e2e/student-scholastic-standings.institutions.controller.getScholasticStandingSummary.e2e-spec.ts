@@ -50,7 +50,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticSta
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
       .expect({
-        statusCode: 403,
+        statusCode: HttpStatus.FORBIDDEN,
         message: INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
         error: "Forbidden",
       });
@@ -72,7 +72,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticSta
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
       .expect({
-        statusCode: 403,
+        statusCode: HttpStatus.FORBIDDEN,
         message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
         error: "Forbidden",
       });

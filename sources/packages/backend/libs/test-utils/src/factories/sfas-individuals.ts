@@ -24,15 +24,15 @@ function createFakeSFASIndividual(options?: {
     faker.random.number({ min: 100000000, max: 899999999 }).toString();
   sfasIndividual.unsuccessfulCompletion =
     options?.initialValues.unsuccessfulCompletion ?? 0;
-  sfasIndividual.neb = 0;
-  sfasIndividual.bcgg = 0;
-  sfasIndividual.lfp = 0;
-  sfasIndividual.pal = 0;
-  sfasIndividual.cmsOveraward = 0;
-  sfasIndividual.cslOveraward = 0;
-  sfasIndividual.bcslOveraward = 0;
-  sfasIndividual.grantOveraward = 0;
-  sfasIndividual.withdrawals = 0;
+  sfasIndividual.neb = options?.initialValues.neb ?? 0;
+  sfasIndividual.bcgg = options?.initialValues.bcgg ?? 0;
+  sfasIndividual.lfp = options?.initialValues.lfp ?? 0;
+  sfasIndividual.pal = options?.initialValues.pal ?? 0;
+  sfasIndividual.cmsOveraward = options?.initialValues.cmsOveraward ?? 0;
+  sfasIndividual.cslOveraward = options?.initialValues.cslOveraward ?? 0;
+  sfasIndividual.bcslOveraward = options?.initialValues.bcslOveraward ?? 0;
+  sfasIndividual.grantOveraward = options?.initialValues.grantOveraward ?? 0;
+  sfasIndividual.withdrawals = options?.initialValues.withdrawals ?? 0;
   sfasIndividual.extractedAt = new Date();
   return sfasIndividual;
 }
