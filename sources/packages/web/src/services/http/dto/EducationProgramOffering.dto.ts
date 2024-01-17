@@ -145,6 +145,7 @@ export interface StudyBreakAPIOutDTO {
 export interface EducationProgramOfferingSummaryAPIOutDTO {
   id: number;
   name: string;
+  yearOfStudy: number;
   studyStartDate: string;
   studyEndDate: string;
   offeringDelivered: string;

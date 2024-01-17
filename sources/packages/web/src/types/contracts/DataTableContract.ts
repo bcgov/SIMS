@@ -48,6 +48,7 @@ export const PAGINATION_LIST = [10, 20, 50];
  */
 export enum OfferingSummaryFields {
   OfferingName = "name",
+  YearOfStudy = "yearOfStudy",
   StudyDates = "studyDates",
   OfferingIntensity = "offeringIntensity",
   OfferingDelivered = "offeringDelivered",

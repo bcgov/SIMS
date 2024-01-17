@@ -272,6 +272,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .select([
         "offerings.id",
         "offerings.name",
+        "offerings.yearOfStudy",
         "offerings.studyStartDate",
         "offerings.studyEndDate",
         "offerings.offeringDelivered",

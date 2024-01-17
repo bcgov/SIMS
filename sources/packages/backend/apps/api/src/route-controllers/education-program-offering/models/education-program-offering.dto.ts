@@ -152,6 +152,7 @@ export class EducationProgramOfferingSummaryViewAPIOutDTO {
 export class EducationProgramOfferingSummaryAPIOutDTO {
   id: number;
   name: string;
+  yearOfStudy: number;
   studyStartDate: string;
   studyEndDate: string;
   offeringDelivered: string;
