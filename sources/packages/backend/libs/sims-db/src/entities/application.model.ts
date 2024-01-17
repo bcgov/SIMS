@@ -11,6 +11,7 @@ import {
 import {
   ApplicationOfferingChangeRequest,
   CRAIncomeVerification,
+  DisabilityStatus,
   EducationProgram,
   InstitutionLocation,
   OfferingIntensity,
@@ -426,6 +427,10 @@ export interface ApplicationData {
    * Course Details is present only for Part Time course intensity.
    */
   courseDetails?: CourseDetails[];
+  /**
+   * Application PD/PPD Status.
+   */
+  applicationPDPPDStatus?: string;
 }
 
 /**

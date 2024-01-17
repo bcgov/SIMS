@@ -67,7 +67,6 @@ export class StudentService extends RecordDataModelService<Student> {
         "student.birthDate",
         "student.gender",
         "student.contactInfo",
-        "student.studentPDVerified",
         "student.studentPDSentAt",
         "student.studentPDUpdateAt",
         "student.disabilityStatus",
@@ -176,7 +175,6 @@ export class StudentService extends RecordDataModelService<Student> {
         );
       // If SFAS individual exist with matching details, read the pd status.
       if (sfasIndividual) {
-        student.studentPDVerified = sfasIndividual.pdStatus;
         student.disabilityStatus = this.getDisabilityStatus(
           sfasIndividual.pdStatus,
         );

@@ -2,6 +2,7 @@ import { StatusChipTypes } from "@/types/contracts/StatusChip";
 import {
   COEApprovalPeriodStatus,
   COEStatus,
+  DisabilityStatus,
   ProgramInfoStatus,
   StudyBreakCOE,
 } from "@/types";
@@ -53,6 +54,8 @@ export interface ApplicationDetailsForCOEAPIOutDTO {
   coeStatusClass: StatusChipTypes;
   maxTuitionRemittanceAllowed: number;
   hasOverawardBalance: boolean;
+  disabilityProfileStatus: DisabilityStatus;
+  disabilityApplicationStatus: DisabilityStatus;
 }
 
 export interface COEDeniedReasonAPIOutDTO {
