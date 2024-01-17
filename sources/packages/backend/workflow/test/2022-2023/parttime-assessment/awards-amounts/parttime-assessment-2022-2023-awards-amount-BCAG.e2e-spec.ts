@@ -55,7 +55,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
     );
     // Assert
     // federalAwardBCAGAmount is less than 1000
-    console.log(calculatedAssessment.variables);
     expect(
       calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
     ).toBeGreaterThan(
