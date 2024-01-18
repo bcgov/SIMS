@@ -8,10 +8,9 @@ import { CredentialType, InstitutionTypes } from "../../../models";
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-BCAG.`, () => {
   // Expected and not expected credentials types.
   const EXPECTED_PROGRAM_CREDENTIAL_TYPES = [
+    CredentialType.UnderGraduateCertificate,
+    CredentialType.UnderGraduateDiploma,
     CredentialType.UnderGraduateDegree,
-    CredentialType.GraduateCertificate,
-    CredentialType.GraduateDiploma,
-    CredentialType.QualifyingStudies,
   ];
   const NOT_EXPECTED_PROGRAM_CREDENTIAL_TYPES = Object.values(
     CredentialType,
