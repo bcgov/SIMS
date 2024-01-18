@@ -46,6 +46,10 @@
           header="Name"
           :sortable="true"
         ></Column>
+        <Column
+          :field="OfferingSummaryFields.YearOfStudy"
+          header="Year of Study"
+        ></Column>
         <Column :field="OfferingSummaryFields.StudyDates" header="Study Dates">
           <template #body="slotProps">
             {{ dateOnlyLongString(slotProps.data.studyStartDate) }} -
