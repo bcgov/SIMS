@@ -11,7 +11,6 @@ import {
 import {
   ApplicationOfferingChangeRequest,
   CRAIncomeVerification,
-  DisabilityStatus,
   EducationProgram,
   InstitutionLocation,
   OfferingIntensity,
@@ -360,6 +359,7 @@ export class Application extends RecordDataModel {
     },
   )
   applicationOfferingChangeRequest?: ApplicationOfferingChangeRequest[];
+  application: { applicationPDPPDStatus: string };
 }
 
 /**

@@ -1,6 +1,6 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { DataSource, Repository } from "typeorm";
+import { DataSource } from "typeorm";
 import {
   authorizeUserTokenForLocation,
   BEARER_AUTH_TYPE,
@@ -10,9 +10,11 @@ import {
   InstitutionTokenTypes,
 } from "../../../../testHelpers";
 import {
+  createE2EDataSources,
   createFakeDisbursementOveraward,
   createFakeDisbursementValue,
   createFakeInstitutionLocation,
+  E2EDataSources,
   saveFakeApplicationDisbursements,
 } from "@sims/test-utils";
 import { getDateOnlyFormat } from "@sims/utilities";
@@ -21,9 +23,7 @@ import { COEApprovalPeriodStatus } from "../../../../services";
 import {
   ApplicationStatus,
   COEStatus,
-  DisbursementOveraward,
   DisbursementValueType,
-  EducationProgramOffering,
   Institution,
   InstitutionLocation,
 } from "@sims/sims-db";
@@ -31,17 +31,15 @@ import {
 describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForCOE", () => {
   let app: INestApplication;
   let appDataSource: DataSource;
-  let disbursementOverawardRepo: Repository<DisbursementOveraward>;
-  let offeringRepo: Repository<EducationProgramOffering>;
   let collegeC: Institution;
   let collegeCLocation: InstitutionLocation;
+  let db: E2EDataSources;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     appDataSource = dataSource;
-    disbursementOverawardRepo = dataSource.getRepository(DisbursementOveraward);
-    offeringRepo = dataSource.getRepository(EducationProgramOffering);
+    db = createE2EDataSources(dataSource);
 
     const { institution } = await getAuthRelatedEntities(
       appDataSource,
@@ -94,10 +92,17 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
       },
       { applicationStatus: ApplicationStatus.Enrolment },
     );
+    application.data = {
+      workflowName: "test",
+      applicationPDPPDStatus: "noIDoNotHaveADisability",
+    };
+    await db.application.save(application);
     // Adjust offering values for maxTuitionRemittanceAllowed.
     application.currentAssessment.offering.actualTuitionCosts = 500;
     application.currentAssessment.offering.programRelatedCosts = 500;
-    await offeringRepo.save(application.currentAssessment.offering);
+    await db.educationProgramOffering.save(
+      application.currentAssessment.offering,
+    );
     const [firstDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
     const offering = application.currentAssessment.offering;
@@ -144,6 +149,9 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
         ),
         maxTuitionRemittanceAllowed: 900,
         hasOverawardBalance: false,
+        disabilityProfileStatus: "Not requested",
+        disabilityApplicationStatus:
+          "No, I will not verify my Disability Status with StudentAid BC. I want this application to be assessed for other funding types only (no disability type funding).",
       });
   });
 
@@ -165,7 +173,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
       disbursementSchedule: firstDisbursementSchedule,
       studentAssessment: application.currentAssessment,
     });
-    await disbursementOverawardRepo.save(overaward);
+    await db.disbursementOveraward.save(overaward);
     const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}`;
     // Act/Assert
     return request(app.getHttpServer())
