@@ -33,8 +33,7 @@ export class ApplicationDetailsForCOEAPIOutDTO {
   applicationProgramDelivery: string;
   maxTuitionRemittanceAllowed: number;
   hasOverawardBalance: boolean;
-  disabilityProfileStatus: DisabilityStatus;
-  // TODO: create an Enum
+  disabilityProfileStatus: string;
   disabilityApplicationStatus: string;
 }
 
