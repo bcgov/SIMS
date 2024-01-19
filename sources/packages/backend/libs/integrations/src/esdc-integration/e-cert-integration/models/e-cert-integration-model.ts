@@ -49,7 +49,7 @@ export interface ECertRecord {
   /**
    * Persistent or prolonged disability flag.
    */
-  ppdFlag?: boolean;
+  ppdFlag?: string;
 }
 
 export type Award = Pick<
