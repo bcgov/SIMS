@@ -190,6 +190,15 @@ export async function saveFakeApplicationDisbursements(
   savedApplication.currentAssessment.assessmentData =
     options?.currentAssessmentInitialValues?.assessmentData ??
     savedApplication.currentAssessment.assessmentData;
+  savedApplication.currentAssessment.assessmentDate =
+    options?.currentAssessmentInitialValues?.assessmentDate ??
+    savedApplication.currentAssessment.assessmentDate;
+  savedApplication.currentAssessment.assessmentWorkflowId =
+    options?.currentAssessmentInitialValues?.assessmentWorkflowId ??
+    savedApplication.currentAssessment.assessmentWorkflowId;
+  savedApplication.currentAssessment.studentAssessmentStatus =
+    options?.currentAssessmentInitialValues?.studentAssessmentStatus ??
+    savedApplication.currentAssessment.studentAssessmentStatus;
   savedApplication.currentAssessment = await studentAssessmentRepo.save(
     savedApplication.currentAssessment,
   );

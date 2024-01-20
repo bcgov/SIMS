@@ -42,4 +42,6 @@ export enum AssessmentTriggerType {
    * recalculated due to a possible impact on the money that the student is receiving.
    */
   ApplicationOfferingChange = "Application offering change",
+  // TODO: Add description and created DB migrations.
+  RelatedApplicationChanged = "Related application changed",
 }

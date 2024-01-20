@@ -2,6 +2,7 @@ import { Process, Processor } from "@nestjs/bull";
 import { Job } from "bull";
 import { CancelAssessmentQueueInDTO } from "@sims/services/queue";
 import {
+  AssessmentSequentialProcessingService,
   DisbursementScheduleSharedService,
   WorkflowClientService,
 } from "@sims/services";
@@ -30,6 +31,7 @@ export class CancelApplicationAssessmentProcessor {
     private readonly workflowClientService: WorkflowClientService,
     private readonly studentAssessmentService: StudentAssessmentService,
     private readonly disbursementScheduleSharedService: DisbursementScheduleSharedService,
+    private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
   ) {}
 
   /**
@@ -108,6 +110,21 @@ export class CancelApplicationAssessmentProcessor {
             "This can happen if the workflow was already completed or if it was cancelled, for instance, manually using the workflow UI. " +
             "This is not considered an error and the cancellation can proceed.",
         );
+      } finally {
+        await summary.info(
+          "Assessing if there is an impacted application that need to be reassessed.",
+        );
+        const impactedApplication =
+          await this.assessmentSequentialProcessingService.assessImpactedApplicationReassessmentNeeded(
+            job.data.assessmentId,
+          );
+        if (impactedApplication) {
+          await summary.info(
+            `Application ${impactedApplication.applicationNumber} detected as impacted and will be reassessed.`,
+          );
+        } else {
+          await summary.info("No impacts detected.");
+        }
       }
     } else {
       // Unless there is some data integrity issue this scenario can happen only if the student application was submitted

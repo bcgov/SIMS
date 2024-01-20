@@ -37,6 +37,7 @@ import {
   ConfirmationOfEnrollmentService,
   MSFAANumberSharedService,
   GlobalHttpModule,
+  AssessmentSequentialProcessingService,
 } from "@sims/services";
 import { DatabaseModule } from "@sims/sims-db";
 import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier12-integration";
@@ -123,6 +124,7 @@ import { MicroserviceHealthIndicator, TerminusModule } from "@nestjs/terminus";
     WorkflowEnqueuerService,
     WorkflowQueueRetryScheduler,
     MicroserviceHealthIndicator,
+    AssessmentSequentialProcessingService,
   ],
   controllers: [HealthController],
 })
