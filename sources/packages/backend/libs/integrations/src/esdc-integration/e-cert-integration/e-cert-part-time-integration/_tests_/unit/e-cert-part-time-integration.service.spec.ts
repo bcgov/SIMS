@@ -66,7 +66,7 @@ describe("ECertPartTimeIntegrationService-createRequestContent", () => {
         postalCode: "V1V1V1",
         email: "simsthree@test.ca",
         gender: "male",
-        ppdFlag: null,
+        ppdFlag: "yes",
         maritalStatus: RelationshipStatus.Other,
         studentNumber: "",
         awards: [
