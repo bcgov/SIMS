@@ -5,7 +5,10 @@ import { EducationProgramOfferingService } from "@/services/EducationProgramOffe
 import { ProgramYearService } from "@/services/ProgramYearService";
 import { OfferingIntensity } from "../types";
 import { useFormioUtils } from ".";
-import { OptionItemAPIOutDTO } from "@/services/http/dto";
+import {
+  OptionItemAPIOutDTO,
+  ProgramIntensityAPIOutDTO,
+} from "@/services/http/dto";
 /**
  * Common methods to load dropdowns(selects) data on Form.IO that could
  * be reusable or at least simplify the form data load logic.
@@ -16,15 +19,17 @@ export function useFormioDropdownLoader() {
   const loadDropdown = async (
     form: any,
     dropdownName: string,
-    loadMethod: Promise<OptionItemAPIOutDTO[]>,
+    loadMethod: Promise<OptionItemAPIOutDTO[]> | ProgramIntensityAPIOutDTO[],
   ) => {
     // Find the dropdown to be populated with the locations.
     const dropdown = formioUtils.getComponent(form, dropdownName);
     const optionsItems = await loadMethod;
-    dropdown.component.data.values = optionsItems.map((item) => ({
-      value: item.id,
-      label: item.description,
-    }));
+    dropdown.component.data.values = optionsItems.map(
+      (item: OptionItemAPIOutDTO | ProgramIntensityAPIOutDTO) => ({
+        value: item.id,
+        label: item.description,
+      }),
+    );
     dropdown.redraw();
   };
 
@@ -36,6 +41,44 @@ export function useFormioDropdownLoader() {
       dropdownName,
       InstitutionService.shared.getLocationsOptionsList(),
     );
+  };
+
+  /**
+   * Populate program intensity dropdown.
+   * @param
+   */
+  const loadProgramIntensityDetails = async (
+    form: any,
+    isFulltimeAllowed: boolean,
+    dropdownName: string,
+  ) => {
+    return loadDropdown(
+      form,
+      dropdownName,
+      getProgramIntensityDetails(isFulltimeAllowed),
+    );
+  };
+
+  const getProgramIntensityDetails = (isFulltimeAllowed: boolean) => {
+    if (isFulltimeAllowed) {
+      return [
+        {
+          id: "Full Time",
+          description: "Full Time",
+        },
+        {
+          id: "Part Time",
+          description: "Part Time",
+        },
+      ];
+    } else {
+      return [
+        {
+          id: "Part Time",
+          description: "Part Time",
+        },
+      ];
+    }
   };
 
   // Retrieve the list of programs that have some
@@ -150,5 +193,6 @@ export function useFormioDropdownLoader() {
     loadInstitutionTypes,
     loadPIRDeniedReasonList,
     loadProgramYear,
+    loadProgramIntensityDetails,
   };
 }

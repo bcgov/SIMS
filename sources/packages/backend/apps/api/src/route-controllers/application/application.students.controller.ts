@@ -72,6 +72,7 @@ import { ApplicationData } from "@sims/sims-db/entities/application.model";
 import {
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
+  OfferingIntensity,
   StudentAppealStatus,
 } from "@sims/sims-db";
 import { ConfirmationOfEnrollmentService } from "@sims/services";
@@ -159,7 +160,8 @@ export class ApplicationStudentsController extends BaseController {
       "Selected offering id is invalid or " +
       "invalid study dates or selected study start date is not within the program year" +
       "or APPLICATION_NOT_VALID or INVALID_OPERATION_IN_THE_CURRENT_STATUS or ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE " +
-      "or INSTITUTION_LOCATION_NOT_VALID or OFFERING_NOT_VALID.",
+      "or INSTITUTION_LOCATION_NOT_VALID or OFFERING_NOT_VALID." +
+      "or Invalid program or offering intensity.",
   })
   @ApiBadRequestResponse({ description: "Form validation failed." })
   @ApiNotFoundResponse({ description: "Application not found." })
@@ -171,6 +173,7 @@ export class ApplicationStudentsController extends BaseController {
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<void> {
+    const isFulltimeAllowed = process.env.IS_FULLTIME_ALLOWED === "true";
     const programYear = await this.programYearService.getActiveProgramYear(
       payload.programYearId,
     );
@@ -187,6 +190,15 @@ export class ApplicationStudentsController extends BaseController {
       const offering = await this.offeringService.getOfferingById(
         payload.data.selectedOffering,
       );
+      if (
+        !isFulltimeAllowed &&
+        (payload.data.howWillYouBeAttendingTheProgram === "Full Time" ||
+          offering.offeringIntensity === OfferingIntensity.fullTime)
+      ) {
+        throw new UnprocessableEntityException(
+          "Invalid program or offering intensity.",
+        );
+      }
       if (!offering) {
         throw new UnprocessableEntityException(
           "Selected offering id is invalid.",
@@ -325,12 +337,23 @@ export class ApplicationStudentsController extends BaseController {
    */
   @CheckSinValidation()
   @Patch(":applicationId/draft")
+  @ApiUnprocessableEntityResponse({
+    description: "Invalid program intensity.",
+  })
   @ApiNotFoundResponse({ description: "APPLICATION_DRAFT_NOT_FOUND." })
   async updateDraftApplication(
     @Body() payload: SaveApplicationAPIInDTO,
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<void> {
+    const isFulltimeAllowed = process.env.IS_FULLTIME_ALLOWED === "true";
+    if (
+      !isFulltimeAllowed &&
+      payload.data.howWillYouBeAttendingTheProgram &&
+      payload.data.howWillYouBeAttendingTheProgram === "Full Time"
+    ) {
+      throw new UnprocessableEntityException("Invalid program intensity.");
+    }
     try {
       await this.applicationService.saveDraftApplication(
         studentToken.studentId,

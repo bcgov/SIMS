@@ -143,6 +143,17 @@ export class ConfigService {
   }
 
   /**
+   * Fulltime allowed Configuration.
+   * @returns fulltime allowed true if fulltime is allowed, otherwise false.
+   */
+  get isFulltimeAllowed(): boolean {
+    return this.getCachedConfig(
+      "isFulltimeAllowedConfig",
+      process.env.IS_FULLTIME_ALLOWED === "true",
+    );
+  }
+
+  /**
    * When defined as true, allows the simulation of a complete cycle of the
    * CRA send/response process that allows the workflow to proceed without
    * the need for the actual CRA verification happens. By default, it should be

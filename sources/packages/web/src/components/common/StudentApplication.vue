@@ -70,6 +70,7 @@ export default defineComponent({
     const LOCATIONS_DROPDOWN_KEY = "selectedLocation";
     const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
     const OFFERINGS_DROPDOWN_KEY = "selectedOffering";
+    const PROGRAM_INTENSITY_DROPDOWN_KEY = "howWillYouBeAttendingTheProgram";
     const SELECTED_OFFERING_START_DATE_KEY = "selectedOfferingDate";
     const SELECTED_OFFERING_END_DATE_KEY = "selectedOfferingEndDate";
     const SELECTED_PROGRAM_DESC_KEY = "selectedProgramDesc";
@@ -256,14 +257,24 @@ export default defineComponent({
           SELECTED_OFFERING_END_DATE_KEY,
         );
       }
-      // If the user after selecting a study period finds that
-      // they need to check my study period not listed, then
-      // the details of previously selected
-      // study period must be cleared.
+      if (
+        event.changed?.component.key === LOCATIONS_DROPDOWN_KEY &&
+        +event.changed.value > 0
+      ) {
+        await formioDataLoader.loadProgramIntensityDetails(
+          form,
+          props.initialData.isFulltimeAllowed,
+          PROGRAM_INTENSITY_DROPDOWN_KEY,
+        );
+      }
       if (
         event.changed?.component.key === OFFERING_NOT_LISTED &&
         event.changed.value?.offeringnotListed
       ) {
+        // If the user after selecting a study period finds that
+        // they need to check my study period not listed, then
+        // the details of previously selected
+        // study period must be cleared.
         resetSelectedOfferingDetails(form);
       }
 

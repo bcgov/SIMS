@@ -5,6 +5,11 @@ export interface OptionItemAPIOutDTO {
   description: string;
 }
 
+export interface ProgramIntensityAPIOutDTO {
+  id: string;
+  description: string;
+}
+
 export interface InstitutionPrimaryContactAPIOutDTO {
   primaryContactEmail: string;
   primaryContactFirstName: string;

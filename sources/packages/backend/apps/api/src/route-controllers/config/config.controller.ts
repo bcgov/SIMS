@@ -28,6 +28,7 @@ export class ConfigController extends BaseController {
         externalSiteMinderLogoutUrl: authConfig.externalSiteMinderLogoutUrl,
       },
       version: this.configService.apiVersion,
+      isFulltimeAllowed: this.configService.isFulltimeAllowed,
     };
   }
 }

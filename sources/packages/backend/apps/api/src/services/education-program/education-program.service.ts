@@ -12,6 +12,7 @@ import {
   ProgramYear,
   InstitutionLocation,
   getRawCount,
+  ProgramIntensity,
 } from "@sims/sims-db";
 import { DataSource, In, Repository, Not, Equal } from "typeorm";
 import {
@@ -383,6 +384,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     programYearId: number,
     includeInActivePY?: boolean,
   ): Promise<Partial<EducationProgram>[]> {
+    const isFulltimeAllowed = process.env.IS_FULLTIME_ALLOWED === "true";
     const offeringExistsQuery = this.offeringsRepo
       .createQueryBuilder("offerings")
       .innerJoin(ProgramYear, "programYear", "programYear.id = :programYearId")
@@ -395,11 +397,17 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       offeringExistsQuery.andWhere("programYear.active = true");
     }
     offeringExistsQuery.select("1");
-    return this.repo
+    const programsQuery = this.repo
       .createQueryBuilder("programs")
       .where("programs.programStatus = :programStatus", {
         programStatus: ProgramStatus.Approved,
-      })
+      });
+    if (!isFulltimeAllowed) {
+      programsQuery.where("programs.programIntensity = :programIntensity", {
+        programIntensity: ProgramIntensity.fullTimePartTime,
+      });
+    }
+    return programsQuery
       .andWhere(`exists(${offeringExistsQuery.getQuery()})`)
       .select("programs.id")
       .addSelect("programs.name")

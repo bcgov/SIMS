@@ -73,6 +73,13 @@ export class EducationProgramOfferingStudentsController extends BaseController {
     @Query("offeringIntensity", new ParseEnumQueryPipe(OfferingIntensity))
     offeringIntensity?: OfferingIntensity,
   ): Promise<OptionItemAPIOutDTO[]> {
+    const isFulltimeAllowed = process.env.IS_FULLTIME_ALLOWED === "true";
+    if (
+      !isFulltimeAllowed &&
+      offeringIntensity === OfferingIntensity.fullTime
+    ) {
+      throw new UnprocessableEntityException("Invalid offering intensity.");
+    }
     return this.educationProgramOfferingControllerService.getProgramOfferingsOptionsList(
       locationId,
       programId,
