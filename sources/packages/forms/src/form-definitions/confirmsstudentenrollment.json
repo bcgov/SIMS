@@ -505,7 +505,7 @@
               "hidden": false,
               "disabled": false,
               "modalEdit": false,
-              "key": "programDetailsPanel",
+              "key": "disabilityInfoDetailsPanel",
               "tags": [],
               "properties": {},
               "customConditional": "",
@@ -526,7 +526,7 @@
                 "height": ""
               },
               "type": "panel",
-              "label": "Program Details Panel",
+              "label": "Disability Details Panel",
               "breadcrumb": "default",
               "tabindex": "",
               "input": false,
