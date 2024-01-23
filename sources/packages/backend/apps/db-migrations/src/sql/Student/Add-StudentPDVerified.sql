@@ -2,6 +2,6 @@
 ALTER TABLE
     sims.students
 ADD
-    COLUMN IF NOT EXISTS pd_verified BOOLEAN;
+    COLUMN pd_verified BOOLEAN;
 
 COMMENT ON COLUMN sims.students.pd_verified IS 'Permanent Disability Verification status of the Student';
