@@ -2,7 +2,6 @@ import { StatusChipTypes } from "@/types/contracts/StatusChip";
 import {
   COEApprovalPeriodStatus,
   COEStatus,
-  DisabilityStatus,
   ProgramInfoStatus,
   StudyBreakCOE,
 } from "@/types";
