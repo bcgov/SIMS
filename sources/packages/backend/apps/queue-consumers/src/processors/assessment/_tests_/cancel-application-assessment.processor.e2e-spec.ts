@@ -236,7 +236,7 @@ describe(
     });
 
     it.only("Should find an impacted application and create a reassessment when the impacted application original assessment calculation date is after the cancelled assessment date original assessment.", async () => {
-      // TODO: Create application A, B, C, and cancel the B to have a new reassessment added to C.
+      // TODO: add the asserts for the impactedApplication.
       // TODO: Create multiple original overwritten assessment in A with first assessment date before B and a later original assessment after C to ensure that the first original assessment from A will be considered.
       // Arrange
 
@@ -244,26 +244,8 @@ describe(
       const student = await saveFakeStudent(db.dataSource);
       // Valid MSFAA Number.
 
-      // Student application eligible for e-Cert.
-      const applicationA = await saveFakeApplicationDisbursements(
-        db.dataSource,
-        { student },
-        {
-          offeringIntensity: OfferingIntensity.partTime,
-          applicationStatus: ApplicationStatus.Cancelled,
-          currentAssessmentInitialValues: {
-            assessmentWorkflowId: "some fake id",
-            assessmentData: { weeks: 5 } as Assessment,
-            assessmentDate: new Date(),
-            studentAssessmentStatus: StudentAssessmentStatus.CancellationQueued,
-          },
-          firstDisbursementInitialValues: {
-            coeStatus: COEStatus.completed,
-          },
-        },
-      );
-
-      const applicationB = await saveFakeApplicationDisbursements(
+      // Application in the past that must be ignored.
+      const pastApplication = await saveFakeApplicationDisbursements(
         db.dataSource,
         { student },
         {
@@ -272,7 +254,45 @@ describe(
           currentAssessmentInitialValues: {
             assessmentWorkflowId: "some fake id",
             assessmentData: { weeks: 5 } as Assessment,
+            assessmentDate: new Date(),
+            studentAssessmentStatus: StudentAssessmentStatus.Completed,
+          },
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+          },
+        },
+      );
+
+      // Application to have the cancellation requested.
+      const currentApplicationToCancel = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Cancelled,
+          currentAssessmentInitialValues: {
+            assessmentWorkflowId: "some fake id",
+            assessmentData: { weeks: 5 } as Assessment,
             assessmentDate: addDays(1, new Date()),
+            studentAssessmentStatus: StudentAssessmentStatus.CancellationQueued,
+          },
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+          },
+        },
+      );
+
+      // Application in the future of the currentApplicationToCancel.
+      const impactedApplication = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            assessmentWorkflowId: "some fake id",
+            assessmentData: { weeks: 5 } as Assessment,
+            assessmentDate: addDays(2, new Date()),
             studentAssessmentStatus: StudentAssessmentStatus.Submitted,
           },
           firstDisbursementInitialValues: {
@@ -283,7 +303,7 @@ describe(
 
       // Queued job.
       const job = createMock<Job<CancelAssessmentQueueInDTO>>({
-        data: { assessmentId: applicationA.currentAssessment.id },
+        data: { assessmentId: currentApplicationToCancel.currentAssessment.id },
       });
 
       // Act

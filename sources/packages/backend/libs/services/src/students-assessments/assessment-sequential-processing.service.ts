@@ -5,6 +5,7 @@ import {
   ApplicationStatus,
   AssessmentTriggerType,
   StudentAssessment,
+  User,
 } from "@sims/sims-db";
 import { InjectRepository } from "@nestjs/typeorm";
 import { SequencedApplications, SequentialApplication } from "..";
@@ -21,6 +22,7 @@ export class AssessmentSequentialProcessingService {
 
   async assessImpactedApplicationReassessmentNeeded(
     assessmentId: number,
+    auditUserId: number,
   ): Promise<Application | null> {
     const assessmentBeingChecked = await this.studentAssessmentRepo.findOne({
       select: {
@@ -52,13 +54,13 @@ export class AssessmentSequentialProcessingService {
       // There are no future applications impacted.
       return null;
     }
-    // Create the reassessment for the next impacted application, if needed.
+    // Create the reassessment for the next impacted application.
     const [futureSequencedApplication] = sequencedApplications.future;
     const impactedApplication = new Application();
     impactedApplication.id = futureSequencedApplication.applicationCurrentId;
     const now = new Date();
     // Create the new assessment to be processed.
-    // TODO: Adjust saving part.
+    const auditUser = { id: auditUserId } as User;
     impactedApplication.currentAssessment = {
       application: {
         id: impactedApplication.id,
@@ -67,12 +69,13 @@ export class AssessmentSequentialProcessingService {
         id: futureSequencedApplication.currentAssessmentOfferingId,
       },
       triggerType: AssessmentTriggerType.RelatedApplicationChanged,
-      //creator: auditUser,
+      relatedApplicationAssessment: { id: assessmentId } as StudentAssessment,
+      creator: auditUser,
       createdAt: now,
-      //submittedBy: auditUser,
+      submittedBy: auditUser,
       submittedDate: now,
     } as StudentAssessment;
-    await this.applicationRepo.save(impactedApplication);
+    return this.applicationRepo.save(impactedApplication);
   }
 
   private async getSequencedApplications(

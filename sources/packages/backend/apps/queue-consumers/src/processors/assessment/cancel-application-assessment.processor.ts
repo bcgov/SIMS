@@ -4,6 +4,7 @@ import { CancelAssessmentQueueInDTO } from "@sims/services/queue";
 import {
   AssessmentSequentialProcessingService,
   DisbursementScheduleSharedService,
+  SystemUsersService,
   WorkflowClientService,
 } from "@sims/services";
 import { QueueNames } from "@sims/utilities";
@@ -32,6 +33,7 @@ export class CancelApplicationAssessmentProcessor {
     private readonly studentAssessmentService: StudentAssessmentService,
     private readonly disbursementScheduleSharedService: DisbursementScheduleSharedService,
     private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
+    private readonly systemUserService: SystemUsersService,
   ) {}
 
   /**
@@ -117,6 +119,7 @@ export class CancelApplicationAssessmentProcessor {
         const impactedApplication =
           await this.assessmentSequentialProcessingService.assessImpactedApplicationReassessmentNeeded(
             job.data.assessmentId,
+            this.systemUserService.systemUser.id,
           );
         if (impactedApplication) {
           await summary.info(
