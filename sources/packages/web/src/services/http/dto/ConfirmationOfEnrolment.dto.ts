@@ -54,8 +54,8 @@ export interface ApplicationDetailsForCOEAPIOutDTO {
   coeStatusClass: StatusChipTypes;
   maxTuitionRemittanceAllowed: number;
   hasOverawardBalance: boolean;
-  disabilityProfileStatus: DisabilityStatus;
-  disabilityApplicationStatus: DisabilityStatus;
+  disabilityProfileStatus: string;
+  disabilityApplicationStatus: string;
 }
 
 export interface COEDeniedReasonAPIOutDTO {
