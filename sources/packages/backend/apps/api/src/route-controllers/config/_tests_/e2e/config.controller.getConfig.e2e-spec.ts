@@ -51,6 +51,7 @@ describe("ConfigController(e2e)-getConfig", () => {
           },
           externalSiteMinderLogoutUrl: fakeEnvVariables.SITE_MINDER_LOGOUT_URL,
         },
+        isFulltimeAllowed: process.env.IS_FULLTIME_ALLOWED === "true",
       });
   });
 
