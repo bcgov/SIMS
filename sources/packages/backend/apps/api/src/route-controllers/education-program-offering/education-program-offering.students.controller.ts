@@ -32,17 +32,17 @@ import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { EducationProgramOfferingControllerService } from "./education-program-offering.controller.service";
 import { ParseEnumQueryPipe } from "../utils/custom-validation-pipe";
 import { StudentUserToken } from "../../auth";
-import { DataSource } from "typeorm";
+import { ConfigService } from "@sims/utilities/config";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("education-program-offering")
 @ApiTags(`${ClientTypeBaseRoute.Student}-education-program-offering`)
 export class EducationProgramOfferingStudentsController extends BaseController {
   constructor(
-    private readonly dataSource: DataSource,
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
     private readonly educationProgramOfferingControllerService: EducationProgramOfferingControllerService,
     private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
+    private readonly configService: ConfigService,
   ) {
     super();
   }
@@ -73,7 +73,7 @@ export class EducationProgramOfferingStudentsController extends BaseController {
     @Query("offeringIntensity", new ParseEnumQueryPipe(OfferingIntensity))
     offeringIntensity?: OfferingIntensity,
   ): Promise<OptionItemAPIOutDTO[]> {
-    const isFulltimeAllowed = process.env.IS_FULLTIME_ALLOWED === "true";
+    const isFulltimeAllowed = this.configService.isFulltimeAllowed;
     if (
       !isFulltimeAllowed &&
       offeringIntensity === OfferingIntensity.fullTime

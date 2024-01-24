@@ -76,6 +76,7 @@ import {
   StudentAppealStatus,
 } from "@sims/sims-db";
 import { ConfirmationOfEnrollmentService } from "@sims/services";
+import { ConfigService } from "@sims/utilities/config";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -94,6 +95,7 @@ export class ApplicationStudentsController extends BaseController {
     private readonly supportingUserService: SupportingUserService,
     private readonly studentAppealService: StudentAppealService,
     private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
+    private readonly configService: ConfigService,
   ) {
     super();
   }
@@ -346,7 +348,7 @@ export class ApplicationStudentsController extends BaseController {
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<void> {
-    const isFulltimeAllowed = process.env.IS_FULLTIME_ALLOWED === "true";
+    const isFulltimeAllowed = this.configService.isFulltimeAllowed;
     if (
       !isFulltimeAllowed &&
       payload.data.howWillYouBeAttendingTheProgram &&
