@@ -77,6 +77,7 @@ import {
   ApproveConfirmEnrollmentModel,
   BannerTypes,
   COEApprovalPeriodStatus,
+  ApplicationDisabilityStatusDescription,
 } from "@/types";
 import { useSnackBar, ModalDialog, useCOE, useFormatters } from "@/composables";
 import {
@@ -111,7 +112,7 @@ export default defineComponent({
   },
   setup(props) {
     const { mapCOEChipStatus } = useCOE();
-    const { dateOnlyLongString } = useFormatters();
+    const { dateOnlyLongString, disabilityStatusToDisplay } = useFormatters();
     const router = useRouter();
     const snackBar = useSnackBar();
     const initialData = ref({} as ApplicationDetailsForCOEAPIOutDTO);
@@ -135,6 +136,12 @@ export default defineComponent({
       initialData.value.disbursementDate = dateOnlyLongString(
         initialData.value.disbursementDate,
       );
+      initialData.value.disabilityProfileStatusDescription =
+        disabilityStatusToDisplay(initialData.value.disabilityProfileStatus);
+      initialData.value.disabilityApplicationStatusDescription =
+        ApplicationDisabilityStatusDescription[
+          initialData.value.disabilityApplicationStatus
+        ];
     };
 
     const showHideConfirmCOE = async () => {

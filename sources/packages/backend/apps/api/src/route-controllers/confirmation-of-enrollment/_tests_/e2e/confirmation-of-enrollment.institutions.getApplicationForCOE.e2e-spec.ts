@@ -24,6 +24,7 @@ import {
   ApplicationDisabilityStatus,
   ApplicationStatus,
   COEStatus,
+  DisabilityStatus,
   DisbursementValueType,
   Institution,
   InstitutionLocation,
@@ -151,9 +152,9 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
         ),
         maxTuitionRemittanceAllowed: 900,
         hasOverawardBalance: false,
-        disabilityProfileStatus: "Not requested",
+        disabilityProfileStatus: DisabilityStatus.NotRequested,
         disabilityApplicationStatus:
-          "No, I will not verify my Disability Status with StudentAid BC. I want this application to be assessed for other funding types only (no disability type funding).",
+          ApplicationDisabilityStatus.noIWantToAccessOtherFundingTypes,
       });
   });
 

@@ -633,7 +633,7 @@
                               "value": ""
                             }
                           ],
-                          "content": "{{ data.disabilityProfileStatus}}",
+                          "content": "{{ data.disabilityProfileStatusDescription }}",
                           "refreshOnChange": true,
                           "customClass": "",
                           "hidden": false,
@@ -808,7 +808,7 @@
                               "value": ""
                             }
                           ],
-                          "content": "{{ data.disabilityApplicationStatus }}",
+                          "content": "{{ data.disabilityApplicationStatusDescription }}",
                           "refreshOnChange": true,
                           "customClass": "",
                           "hidden": false,

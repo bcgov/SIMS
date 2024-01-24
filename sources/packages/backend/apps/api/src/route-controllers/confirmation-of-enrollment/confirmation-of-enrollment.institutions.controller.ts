@@ -21,11 +21,7 @@ import {
   COEDeniedReasonService,
   DisbursementScheduleService,
 } from "../../services";
-import {
-  ApplicationDisabilityStatusDescription,
-  DisabilityStatusDescription,
-  DisbursementSchedule,
-} from "@sims/sims-db";
+import { DisbursementSchedule } from "@sims/sims-db";
 import { getUserFullName } from "../../utilities/auth-utils";
 import {
   getCOEDeniedReason,
@@ -231,15 +227,11 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
       maxTuitionRemittanceAllowed,
       hasOverawardBalance,
       disabilityApplicationStatus:
-        ApplicationDisabilityStatusDescription[
-          disbursementSchedule.studentAssessment.application.data
-            .applicationPDPPDStatus
-        ],
+        disbursementSchedule.studentAssessment.application.data
+          .applicationPDPPDStatus,
       disabilityProfileStatus:
-        DisabilityStatusDescription[
-          disbursementSchedule.studentAssessment.application.student
-            .disabilityStatus
-        ],
+        disbursementSchedule.studentAssessment.application.student
+          .disabilityStatus,
     };
   }
 
