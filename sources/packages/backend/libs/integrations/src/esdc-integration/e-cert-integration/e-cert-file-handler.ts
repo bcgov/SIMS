@@ -267,7 +267,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
       maritalStatus: application.relationshipStatus,
       studentNumber: application.studentNumber,
       awards,
-      ppdFlag: application.data.applicationPDPPDStatus,
+      applicationPDPPDStatus: application.data.applicationPDPPDStatus,
     } as ECertRecord;
   }
 

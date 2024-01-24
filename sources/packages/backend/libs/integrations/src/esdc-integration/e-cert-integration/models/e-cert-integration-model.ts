@@ -1,4 +1,8 @@
-import { DisbursementValue, RelationshipStatus } from "@sims/sims-db";
+import {
+  ApplicationDisabilityStatus,
+  DisbursementValue,
+  RelationshipStatus,
+} from "@sims/sims-db";
 
 export const ECERT_SENT_TITLE = "NEW ENTITLEMENT";
 export const ECERT_PT_SENT_TITLE = "NEW PT ENTITLEMENT";
@@ -49,7 +53,7 @@ export interface ECertRecord {
   /**
    * Persistent or prolonged disability flag.
    */
-  ppdFlag?: string;
+  applicationPDPPDStatus?: ApplicationDisabilityStatus;
 }
 
 export type Award = Pick<

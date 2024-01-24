@@ -1,4 +1,8 @@
-import { RelationshipStatus, OfferingIntensity } from "@sims/sims-db";
+import {
+  RelationshipStatus,
+  OfferingIntensity,
+  ApplicationDisabilityStatus,
+} from "@sims/sims-db";
 
 /**
  * Gets the offering intensity code conversion for the MSFAA request file
@@ -46,8 +50,8 @@ export function getPartTimeMaritalStatusCode(
  * @param hasPPD indicates if a borrower has a persistent or prolonged disability.
  * @returns "Y" or "N" flag.
  */
-export function getPPDFlag(hasPPD?: string): string {
-  return hasPPD === "yes" ? "Y" : "N";
+export function getPPDFlag(hasPPD?: ApplicationDisabilityStatus): string {
+  return hasPPD === ApplicationDisabilityStatus.yes ? "Y" : "N";
 }
 
 /**

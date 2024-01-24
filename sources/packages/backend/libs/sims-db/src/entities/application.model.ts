@@ -9,6 +9,7 @@ import {
   RelationId,
 } from "typeorm";
 import {
+  ApplicationDisabilityStatus,
   ApplicationOfferingChangeRequest,
   CRAIncomeVerification,
   EducationProgram,
@@ -430,7 +431,7 @@ export interface ApplicationData {
   /**
    * Application PD/PPD Status.
    */
-  applicationPDPPDStatus?: string;
+  applicationPDPPDStatus?: ApplicationDisabilityStatus;
 }
 
 /**

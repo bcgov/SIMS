@@ -120,7 +120,7 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
         ecertRecord.maritalStatus,
       );
       record.studentNumber = ecertRecord.studentNumber;
-      record.ppdFlag = getPPDFlag(ecertRecord.ppdFlag);
+      record.ppdFlag = getPPDFlag(ecertRecord.applicationPDPPDStatus);
       record.totalCanadaAndProvincialGrantsAmount =
         totalCanadaAndProvincialGrantsAmount;
       record.totalBCGrantAmount = totalBCGrantAmount;
