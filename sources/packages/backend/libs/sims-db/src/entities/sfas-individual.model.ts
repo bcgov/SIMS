@@ -69,7 +69,7 @@ export class SFASIndividual extends BaseModel {
     type: "date",
     nullable: true,
   })
-  ppdStatusDate: string;
+  ppdStatusDate?: string;
   /**
    * The most recent, active Master Student Loan Agreement Number (loan_agreement_request.msfaa_agreement_number).
    */

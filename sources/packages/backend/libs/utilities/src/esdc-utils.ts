@@ -50,8 +50,12 @@ export function getPartTimeMaritalStatusCode(
  * @param hasPPD indicates if a borrower has a persistent or prolonged disability.
  * @returns "Y" or "N" flag.
  */
-export function getPPDFlag(hasPPD?: ApplicationDisabilityStatus): string {
-  return hasPPD === ApplicationDisabilityStatus.yes ? "Y" : "N";
+export function getPPDFlag(
+  applicationDisabilityStatus: ApplicationDisabilityStatus,
+): string {
+  return applicationDisabilityStatus === ApplicationDisabilityStatus.yes
+    ? "Y"
+    : "N";
 }
 
 /**

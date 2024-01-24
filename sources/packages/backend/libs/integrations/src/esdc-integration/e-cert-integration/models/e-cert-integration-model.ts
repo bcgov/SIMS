@@ -51,7 +51,7 @@ export interface ECertRecord {
   awards: Award[];
   courseLoad?: number;
   /**
-   * Persistent or prolonged disability flag.
+   * Application disability status.
    */
   applicationPDPPDStatus?: ApplicationDisabilityStatus;
 }
