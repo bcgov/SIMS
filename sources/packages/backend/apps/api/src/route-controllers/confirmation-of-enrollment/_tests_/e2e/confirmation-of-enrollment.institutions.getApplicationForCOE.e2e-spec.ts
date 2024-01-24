@@ -154,7 +154,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
         hasOverawardBalance: false,
         disabilityProfileStatus: DisabilityStatus.NotRequested,
         disabilityApplicationStatus:
-          ApplicationDisabilityStatus.noIWantToAccessOtherFundingTypes,
+          ApplicationDisabilityStatus.noIDoNotHaveADisability,
       });
   });
 
