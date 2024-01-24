@@ -425,7 +425,7 @@
                 }
               ],
               "content": "Disability Information",
-              "refreshOnChange": false,
+              "refreshOnChange": true,
               "customClass": "",
               "hidden": false,
               "modalEdit": false,
@@ -552,7 +552,7 @@
                             }
                           ],
                           "content": "Disability Profile Status",
-                          "refreshOnChange": false,
+                          "refreshOnChange": true,
                           "customClass": "label-bold",
                           "hidden": false,
                           "modalEdit": false,
@@ -726,7 +726,7 @@
                             }
                           ],
                           "content": "Disability Application Status",
-                          "refreshOnChange": false,
+                          "refreshOnChange": true,
                           "customClass": "label-bold",
                           "hidden": false,
                           "modalEdit": false,
