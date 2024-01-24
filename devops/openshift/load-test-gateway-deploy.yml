@@ -132,9 +132,9 @@ parameters:
   - name: DB_SECRET_NAME
     value: patroni-creds
   - name: DB_USERNAME_KEY
-    value: superuser-username
+    value: database-user
   - name: DB_PASSWORD_KEY
-    value: superuser-password
+    value: database-password
   - name: SIMS_DB_NAME
     value: sims-db-name
   - name: DISABLE_ORM_CACHE
