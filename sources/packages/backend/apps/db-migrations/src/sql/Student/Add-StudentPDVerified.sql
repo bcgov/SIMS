@@ -5,3 +5,4 @@ ALTER TABLE students
    
 COMMENT ON COLUMN students.pd_verified
     IS 'Permanent Disability Verification status of the Student';
+
