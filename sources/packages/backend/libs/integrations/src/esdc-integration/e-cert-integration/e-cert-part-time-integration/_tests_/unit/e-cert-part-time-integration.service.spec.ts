@@ -1,6 +1,10 @@
 import { createMock } from "@golevelup/ts-jest";
 import { SshService } from "@sims/integrations/services";
-import { DisbursementValueType, RelationshipStatus } from "@sims/sims-db";
+import {
+  ApplicationDisabilityStatus,
+  DisbursementValueType,
+  RelationshipStatus,
+} from "@sims/sims-db";
 import { ConfigService } from "@sims/utilities/config";
 import {
   getCountryCode,
@@ -66,7 +70,7 @@ describe("ECertPartTimeIntegrationService-createRequestContent", () => {
         postalCode: "V1V1V1",
         email: "simsthree@test.ca",
         gender: "male",
-        ppdFlag: "yes",
+        applicationPDPPDStatus: ApplicationDisabilityStatus.yes,
         maritalStatus: RelationshipStatus.Other,
         studentNumber: "",
         awards: [
@@ -146,7 +150,7 @@ describe("ECertPartTimeIntegrationService-createRequestContent", () => {
         gender: getGenderCode(ecertRecord.gender),
         maritalStatus: getPartTimeMaritalStatusCode(ecertRecord.maritalStatus),
         studentNumber: ecertRecord.studentNumber,
-        ppdFlag: getPPDFlag(ecertRecord.ppdFlag),
+        ppdFlag: getPPDFlag(ecertRecord.applicationPDPPDStatus),
         totalCanadaAndProvincialGrantsAmount: 3909,
         totalBCGrantAmount: 333,
         csgpPTAmount: 1800,

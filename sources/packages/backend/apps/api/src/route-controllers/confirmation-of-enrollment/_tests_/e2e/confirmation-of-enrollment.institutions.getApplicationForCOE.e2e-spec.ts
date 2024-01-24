@@ -21,6 +21,7 @@ import { getDateOnlyFormat } from "@sims/utilities";
 import { deliveryMethod, getUserFullName } from "../../../../utilities";
 import { COEApprovalPeriodStatus } from "../../../../services";
 import {
+  ApplicationDisabilityStatus,
   ApplicationStatus,
   COEStatus,
   DisbursementValueType,
@@ -94,7 +95,8 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
     );
     application.data = {
       workflowName: "test",
-      applicationPDPPDStatus: "noIDoNotHaveADisability",
+      applicationPDPPDStatus:
+        ApplicationDisabilityStatus.noIDoNotHaveADisability,
     };
     await db.application.save(application);
     // Adjust offering values for maxTuitionRemittanceAllowed.
