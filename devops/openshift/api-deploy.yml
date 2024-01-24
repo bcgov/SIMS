@@ -353,7 +353,7 @@ parameters:
   - name: SITE_MINDER_LOGOUT_URL
     require: true
   - name: IS_FULLTIME_ALLOWED
-    require: true
+    required: true
   - name: FILE_UPLOAD_MAX_FILE_SIZE
     value: "4194304"
   - name: FILE_UPLOAD_ALLOWED_EXTENSIONS
