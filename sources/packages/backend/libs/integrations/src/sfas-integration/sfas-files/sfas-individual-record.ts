@@ -94,7 +94,7 @@ export class SFASIndividualRecord extends SFASRecordIdentification {
   /**
    * The date when a PPD status is effective (individual.ppd_status_dte).
    */
-  get ppdStatusDate(): Date {
+  get ppdStatusDate(): Date | null {
     return parseDate(this.line.substring(87, 95));
   }
   /**
