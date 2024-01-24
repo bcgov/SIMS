@@ -683,8 +683,8 @@ export class StudentService extends RecordDataModelService<Student> {
 
   /**
    * Get student disability status.
-   * @param pdStatus sfas pd status.
-   * @param ppdStatus sfas ppd status.
+   * @param pdStatus SFAS PD status.
+   * @param ppdStatus SFAS PPD status.
    * @returns disability status.
    */
   private getDisabilityStatus(
@@ -703,15 +703,15 @@ export class StudentService extends RecordDataModelService<Student> {
    * Gets the disability effective date based on the disability status.
    * If the disability status is a pd status, the disability effective date
    * should be the current date.
-   * If the disability status is a ppd status, the disability effective date should the
+   * If the disability status is a ppd status, the disability effective date should be the
    * ppd status date.
    * @param ppdStatusDate ppd status date.
    * @param disabilityStatus student disability status.
    */
-  getDisabilityEffectiveDate(
+  private getDisabilityEffectiveDate(
     ppdStatusDate: string,
     disabilityStatus: DisabilityStatus,
-  ): Date {
+  ): Date | null {
     if (disabilityStatus === DisabilityStatus.PD) {
       return new Date();
     } else if (disabilityStatus === DisabilityStatus.PPD) {
