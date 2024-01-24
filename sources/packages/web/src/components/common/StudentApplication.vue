@@ -95,6 +95,11 @@ export default defineComponent({
           formInstance,
           LOCATIONS_DROPDOWN_KEY,
         );
+        await formioDataLoader.loadProgramIntensityDetails(
+          formInstance,
+          props.initialData.isFulltimeAllowed,
+          PROGRAM_INTENSITY_DROPDOWN_KEY,
+        );
         const selectedLocationId = getSelectedId(formInstance);
 
         if (selectedLocationId) {
