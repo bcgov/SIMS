@@ -16,6 +16,7 @@ describe("ConfigController(e2e)-getConfig", () => {
     KEYCLOAK_CLIENT_AEST: "aest",
     KEYCLOAK_CLIENT_SUPPORTING_USERS: "supporting-users",
     SITE_MINDER_LOGOUT_URL: "https://fake-siteminder-logout-url",
+    IS_FULLTIME_ALLOWED: "false",
   };
 
   beforeAll(async () => {
@@ -51,7 +52,7 @@ describe("ConfigController(e2e)-getConfig", () => {
           },
           externalSiteMinderLogoutUrl: fakeEnvVariables.SITE_MINDER_LOGOUT_URL,
         },
-        isFulltimeAllowed: process.env.IS_FULLTIME_ALLOWED === "true",
+        isFulltimeAllowed: fakeEnvVariables.IS_FULLTIME_ALLOWED === "true",
       });
   });
 
