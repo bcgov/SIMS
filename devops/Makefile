@@ -375,6 +375,7 @@ deploy-api:
 	test -n "$(SWAGGER_NAME)"
 	test -n "$(QUEUE_PREFIX)"
 	test -n "$(API_PORT)"
+	test -n "$(IS_FULLTIME_ALLOWED)"
 	@echo "+\n++ Deploying API with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml \
 		-p NAME=$(API) \
@@ -393,6 +394,7 @@ deploy-api:
 		-p ATBC_LOGIN_ENDPOINT=$(ATBC_LOGIN_ENDPOINT) \
 		-p ATBC_ENDPOINT=$(ATBC_ENDPOINT) \
 		-p BYPASS_APPLICATION_SUBMIT_VALIDATIONS=$(BYPASS_APPLICATION_SUBMIT_VALIDATIONS) \
+		-p IS_FULLTIME_ALLOWED=${IS_FULLTIME_ALLOWED}
 		-p SWAGGER_ENABLED=$(SWAGGER_ENABLED) \
 		-p SWAGGER_NAME=$(SWAGGER_NAME) \
 		-p QUEUE_PREFIX=$(QUEUE_PREFIX) \

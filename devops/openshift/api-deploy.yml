@@ -46,6 +46,8 @@ objects:
                   value: ${NODE_ENV}
                 - name: PORT
                   value: "${PORT}"
+                - name: IS_FULLTIME_ALLOWED
+                  value: ${IS_FULLTIME_ALLOWED}
                 - name: POSTGRES_HOST
                   value: "${DB_SERVICE}"
                 - name: POSTGRES_USER
@@ -236,21 +238,21 @@ objects:
         apiVersion: apps.openshift.io/v1
         kind: DeploymentConfig
         name: ${NAME}
-      minReplicas:  "${{REPLICAS}}"
+      minReplicas: "${{REPLICAS}}"
       maxReplicas: 10
       metrics:
-          - type: Resource
-            resource:
-              name: cpu
-              target:
-                type: Utilization
-                averageUtilization: 80
-          - type: Resource
-            resource:
-              name: memory
-              target:
-                type: AverageValue
-                averageValue: "230M"
+        - type: Resource
+          resource:
+            name: cpu
+            target:
+              type: Utilization
+              averageUtilization: 80
+        - type: Resource
+          resource:
+            name: memory
+            target:
+              type: AverageValue
+              averageValue: "230M"
   - apiVersion: policy/v1
     kind: PodDisruptionBudget
     metadata:
@@ -349,6 +351,8 @@ parameters:
   - name: FORMS_URL_NAME_KEY
     value: FORMS_URL
   - name: SITE_MINDER_LOGOUT_URL
+    require: true
+  - name: IS_FULLTIME_ALLOWED
     require: true
   - name: FILE_UPLOAD_MAX_FILE_SIZE
     value: "4194304"
