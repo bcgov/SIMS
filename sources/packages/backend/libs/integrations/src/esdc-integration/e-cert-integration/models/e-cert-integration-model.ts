@@ -51,9 +51,9 @@ export interface ECertRecord {
   awards: Award[];
   courseLoad?: number;
   /**
-   * Application disability status.
+   * Calculated disability status from the student assessment.
    */
-  applicationPDPPDStatus?: ApplicationDisabilityStatus;
+  calculatedPDPPDStatus?: boolean;
 }
 
 export type Award = Pick<

@@ -286,6 +286,7 @@ export class ECertGenerationService {
               institutionCode: true,
             },
           },
+          workflowData: true as unknown,
         },
         disbursementValues: {
           id: true,
