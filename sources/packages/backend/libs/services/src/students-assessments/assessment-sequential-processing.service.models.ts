@@ -34,7 +34,7 @@ export class SequencedApplications {
     }
   }
   get previous(): ReadonlyArray<SequentialApplication> {
-    return this.previous;
+    return this._previous;
   }
   get current(): SequentialApplication {
     return this._current;
