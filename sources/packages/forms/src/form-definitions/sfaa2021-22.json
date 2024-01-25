@@ -1534,16 +1534,7 @@
               "multiple": false,
               "dataSrc": "values",
               "data": {
-                "values": [
-                  {
-                    "label": "Part Time",
-                    "value": "Part Time"
-                  },
-                  {
-                    "label": "Full Time",
-                    "value": "Full Time"
-                  }
-                ],
+                "values": [],
                 "resource": "",
                 "json": "",
                 "url": "",
@@ -1590,7 +1581,7 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": "",
                 "json": ""

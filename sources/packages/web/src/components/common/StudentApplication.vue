@@ -262,14 +262,14 @@ export default defineComponent({
           SELECTED_OFFERING_END_DATE_KEY,
         );
       }
+      // If the user after selecting a study period finds that
+      // they need to check my study period not listed, then
+      // the details of previously selected
+      // study period must be cleared.
       if (
         event.changed?.component.key === OFFERING_NOT_LISTED &&
         event.changed.value?.offeringnotListed
       ) {
-        // If the user after selecting a study period finds that
-        // they need to check my study period not listed, then
-        // the details of previously selected
-        // study period must be cleared.
         resetSelectedOfferingDetails(form);
       }
 

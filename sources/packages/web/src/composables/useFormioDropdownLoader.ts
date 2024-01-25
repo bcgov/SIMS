@@ -45,7 +45,9 @@ export function useFormioDropdownLoader() {
 
   /**
    * Populate program intensity dropdown.
-   * @param
+   * @param form form.
+   * @param isFulltimeAllowed is fulltime allowed.
+   * @param dropdownName dropdown name.
    */
   const loadProgramIntensityDetails = async (
     form: any,

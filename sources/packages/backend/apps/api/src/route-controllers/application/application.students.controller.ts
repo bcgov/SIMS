@@ -351,7 +351,6 @@ export class ApplicationStudentsController extends BaseController {
     const isFulltimeAllowed = this.configService.isFulltimeAllowed;
     if (
       !isFulltimeAllowed &&
-      payload.data.howWillYouBeAttendingTheProgram &&
       payload.data.howWillYouBeAttendingTheProgram === "Full Time"
     ) {
       throw new UnprocessableEntityException("Invalid program intensity.");
