@@ -367,8 +367,8 @@ export function useFormatters() {
   /**
    * Convert the application disability status to be displayed
    * in an equivalent user friendly description.
-   * @param disabilityStatus disability status.
-   * @returns user friendly disability status.
+   * @param applicationDisabilityStatus application disability status.
+   * @returns user friendly application disability status.
    */
   const applicationDisabilityStatusToDisplay = (
     applicationDisabilityStatus: ApplicationDisabilityStatus,
