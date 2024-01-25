@@ -263,16 +263,6 @@ export default defineComponent({
         );
       }
       if (
-        event.changed?.component.key === LOCATIONS_DROPDOWN_KEY &&
-        +event.changed.value > 0
-      ) {
-        await formioDataLoader.loadProgramIntensityDetails(
-          form,
-          props.initialData.isFulltimeAllowed,
-          PROGRAM_INTENSITY_DROPDOWN_KEY,
-        );
-      }
-      if (
         event.changed?.component.key === OFFERING_NOT_LISTED &&
         event.changed.value?.offeringnotListed
       ) {
