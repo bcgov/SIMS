@@ -1,10 +1,6 @@
 import { createMock } from "@golevelup/ts-jest";
 import { SshService } from "@sims/integrations/services";
-import {
-  ApplicationDisabilityStatus,
-  DisbursementValueType,
-  RelationshipStatus,
-} from "@sims/sims-db";
+import { DisbursementValueType, RelationshipStatus } from "@sims/sims-db";
 import { ConfigService } from "@sims/utilities/config";
 import {
   getCountryCode,

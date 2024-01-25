@@ -1,8 +1,4 @@
-import {
-  ApplicationDisabilityStatus,
-  DisbursementValue,
-  RelationshipStatus,
-} from "@sims/sims-db";
+import { DisbursementValue, RelationshipStatus } from "@sims/sims-db";
 
 export const ECERT_SENT_TITLE = "NEW ENTITLEMENT";
 export const ECERT_PT_SENT_TITLE = "NEW PT ENTITLEMENT";

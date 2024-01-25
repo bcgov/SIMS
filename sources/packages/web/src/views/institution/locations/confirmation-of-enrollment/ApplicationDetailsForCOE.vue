@@ -77,7 +77,6 @@ import {
   ApproveConfirmEnrollmentModel,
   BannerTypes,
   COEApprovalPeriodStatus,
-  ApplicationDisabilityStatusDescription,
 } from "@/types";
 import { useSnackBar, ModalDialog, useCOE, useFormatters } from "@/composables";
 import {
