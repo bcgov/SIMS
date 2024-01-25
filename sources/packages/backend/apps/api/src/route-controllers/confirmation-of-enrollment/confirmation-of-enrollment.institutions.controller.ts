@@ -226,6 +226,12 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
       ),
       maxTuitionRemittanceAllowed,
       hasOverawardBalance,
+      disabilityApplicationStatus:
+        disbursementSchedule.studentAssessment.application.data
+          .applicationPDPPDStatus,
+      disabilityProfileStatus:
+        disbursementSchedule.studentAssessment.application.student
+          .disabilityStatus,
     };
   }
 

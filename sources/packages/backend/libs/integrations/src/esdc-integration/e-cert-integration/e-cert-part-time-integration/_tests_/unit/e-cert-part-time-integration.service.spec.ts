@@ -66,7 +66,7 @@ describe("ECertPartTimeIntegrationService-createRequestContent", () => {
         postalCode: "V1V1V1",
         email: "simsthree@test.ca",
         gender: "male",
-        ppdFlag: null,
+        calculatedPDPPDStatus: true,
         maritalStatus: RelationshipStatus.Other,
         studentNumber: "",
         awards: [
@@ -146,7 +146,7 @@ describe("ECertPartTimeIntegrationService-createRequestContent", () => {
         gender: getGenderCode(ecertRecord.gender),
         maritalStatus: getPartTimeMaritalStatusCode(ecertRecord.maritalStatus),
         studentNumber: ecertRecord.studentNumber,
-        ppdFlag: getPPDFlag(ecertRecord.ppdFlag),
+        ppdFlag: getPPDFlag(ecertRecord.calculatedPDPPDStatus),
         totalCanadaAndProvincialGrantsAmount: 3909,
         totalBCGrantAmount: 333,
         csgpPTAmount: 1800,

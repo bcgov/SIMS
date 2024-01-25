@@ -111,7 +111,11 @@ export default defineComponent({
   },
   setup(props) {
     const { mapCOEChipStatus } = useCOE();
-    const { dateOnlyLongString } = useFormatters();
+    const {
+      dateOnlyLongString,
+      disabilityStatusToDisplay,
+      applicationDisabilityStatusToDisplay,
+    } = useFormatters();
     const router = useRouter();
     const snackBar = useSnackBar();
     const initialData = ref({} as ApplicationDetailsForCOEAPIOutDTO);
@@ -135,6 +139,12 @@ export default defineComponent({
       initialData.value.disbursementDate = dateOnlyLongString(
         initialData.value.disbursementDate,
       );
+      initialData.value.disabilityProfileStatusDescription =
+        disabilityStatusToDisplay(initialData.value.disabilityProfileStatus);
+      initialData.value.disabilityApplicationStatusDescription =
+        applicationDisabilityStatusToDisplay(
+          initialData.value.disabilityApplicationStatus,
+        );
     };
 
     const showHideConfirmCOE = async () => {

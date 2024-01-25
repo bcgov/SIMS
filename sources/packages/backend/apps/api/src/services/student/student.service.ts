@@ -67,7 +67,6 @@ export class StudentService extends RecordDataModelService<Student> {
         "student.birthDate",
         "student.gender",
         "student.contactInfo",
-        "student.studentPDVerified",
         "student.studentPDSentAt",
         "student.studentPDUpdateAt",
         "student.disabilityStatus",
@@ -174,11 +173,15 @@ export class StudentService extends RecordDataModelService<Student> {
           student.birthDate,
           studentSIN,
         );
-      // If SFAS individual exist with matching details, read the pd status.
+      // If SFAS individual exist with matching details, read the disability status and effective date.
       if (sfasIndividual) {
-        student.studentPDVerified = sfasIndividual.pdStatus;
         student.disabilityStatus = this.getDisabilityStatus(
           sfasIndividual.pdStatus,
+          sfasIndividual.ppdStatus,
+        );
+        student.disabilityStatusEffectiveDate = this.getDisabilityEffectiveDate(
+          sfasIndividual.ppdStatusDate,
+          student.disabilityStatus,
         );
       }
     } catch (error) {
@@ -680,14 +683,39 @@ export class StudentService extends RecordDataModelService<Student> {
 
   /**
    * Get student disability status.
-   * @param pdVerified sfas pdVerified flag.
+   * @param pdStatus SFAS PD status.
+   * @param ppdStatus SFAS PPD status.
    * @returns disability status.
    */
-  private getDisabilityStatus(pdVerified: boolean): DisabilityStatus {
-    if (pdVerified) {
+  private getDisabilityStatus(
+    pdStatus: boolean,
+    ppdStatus: boolean,
+  ): DisabilityStatus {
+    if (pdStatus) {
       return DisabilityStatus.PD;
+    } else if (ppdStatus) {
+      return DisabilityStatus.PPD;
     }
     return DisabilityStatus.NotRequested;
+  }
+
+  /**
+   * Gets the disability effective date based on the disability status.
+   * If the disability status is a PD status, the disability effective date should be the current date.
+   * If the disability status is a PPD status, the disability effective date should be the ppd status date.
+   * @param ppdStatusDate PPD status date.
+   * @param disabilityStatus student disability status.
+   */
+  private getDisabilityEffectiveDate(
+    ppdStatusDate: string,
+    disabilityStatus: DisabilityStatus,
+  ): Date | null {
+    if (disabilityStatus === DisabilityStatus.PD) {
+      return new Date();
+    } else if (disabilityStatus === DisabilityStatus.PPD) {
+      return new Date(ppdStatusDate);
+    }
+    return null;
   }
 
   /**

@@ -54,6 +54,23 @@ export class SFASIndividual extends BaseModel {
   })
   pdStatus?: boolean;
   /**
+   * Persistent or Prolonged Disability Flag (individual.ppd_flg).
+   */
+  @Column({
+    name: "ppd_status",
+    nullable: true,
+  })
+  ppdStatus?: boolean;
+  /**
+   * The date when a PPD status is effective (individual.ppd_status_dte).
+   */
+  @Column({
+    name: "ppd_status_date",
+    type: "date",
+    nullable: true,
+  })
+  ppdStatusDate?: string;
+  /**
    * The most recent, active Master Student Loan Agreement Number (loan_agreement_request.msfaa_agreement_number).
    */
   @Column({
