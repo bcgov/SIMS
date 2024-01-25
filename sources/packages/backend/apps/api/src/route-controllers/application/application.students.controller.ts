@@ -73,6 +73,7 @@ import {
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
   OfferingIntensity,
+  ProgramIntensity,
   StudentAppealStatus,
 } from "@sims/sims-db";
 import { ConfirmationOfEnrollmentService } from "@sims/services";
@@ -162,8 +163,8 @@ export class ApplicationStudentsController extends BaseController {
       "Selected offering id is invalid or " +
       "invalid study dates or selected study start date is not within the program year" +
       "or APPLICATION_NOT_VALID or INVALID_OPERATION_IN_THE_CURRENT_STATUS or ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE " +
-      "or INSTITUTION_LOCATION_NOT_VALID or OFFERING_NOT_VALID." +
-      "or Invalid program or offering intensity.",
+      "or INSTITUTION_LOCATION_NOT_VALID or OFFERING_NOT_VALID" +
+      "or Invalid program or offering intensity",
   })
   @ApiBadRequestResponse({ description: "Form validation failed." })
   @ApiNotFoundResponse({ description: "Application not found." })
@@ -184,7 +185,12 @@ export class ApplicationStudentsController extends BaseController {
         "Program Year is not active. Not able to create an application invalid request.",
       );
     }
-
+    if (
+      !isFulltimeAllowed &&
+      payload.data.howWillYouBeAttendingTheProgram === ProgramIntensity.fullTime
+    ) {
+      throw new UnprocessableEntityException("Invalid program intensity.");
+    }
     // studyStartDate from payload is set as studyStartDate
     let studyStartDate = payload.data.studystartDate;
     let studyEndDate = payload.data.studyendDate;
@@ -194,12 +200,9 @@ export class ApplicationStudentsController extends BaseController {
       );
       if (
         !isFulltimeAllowed &&
-        (payload.data.howWillYouBeAttendingTheProgram === "Full Time" ||
-          offering.offeringIntensity === OfferingIntensity.fullTime)
+        offering.offeringIntensity === OfferingIntensity.fullTime
       ) {
-        throw new UnprocessableEntityException(
-          "Invalid program or offering intensity.",
-        );
+        throw new UnprocessableEntityException("Invalid offering intensity.");
       }
       if (!offering) {
         throw new UnprocessableEntityException(
@@ -292,23 +295,29 @@ export class ApplicationStudentsController extends BaseController {
   @CheckSinValidation()
   @ApiUnprocessableEntityResponse({
     description:
-      "Program Year is not active or MORE_THAN_ONE_APPLICATION_DRAFT_ERROR.",
+      "Program Year is not active or MORE_THAN_ONE_APPLICATION_DRAFT_ERROR " +
+      "or Invalid program intensity",
   })
   @Post("draft")
   async createDraftApplication(
     @Body() payload: SaveApplicationAPIInDTO,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
+    const isFulltimeAllowed = this.configService.isFulltimeAllowed;
     const programYear = await this.programYearService.getActiveProgramYear(
       payload.programYearId,
     );
-
     if (!programYear) {
       throw new UnprocessableEntityException(
         "Program Year is not active, not able to create a draft application.",
       );
     }
-
+    if (
+      !isFulltimeAllowed &&
+      payload.data.howWillYouBeAttendingTheProgram === ProgramIntensity.fullTime
+    ) {
+      throw new UnprocessableEntityException("Invalid program intensity.");
+    }
     try {
       const draftApplication =
         await this.applicationService.saveDraftApplication(

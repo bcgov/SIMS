@@ -1,12 +1,7 @@
 import { Expose } from "class-transformer";
 
 export interface OptionItemAPIOutDTO {
-  id: number;
-  description: string;
-}
-
-export interface ProgramIntensityAPIOutDTO {
-  id: string;
+  id: number | string;
   description: string;
 }
 

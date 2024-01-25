@@ -31,7 +31,6 @@ import {
   EDUCATION_PROGRAM_NOT_FOUND,
   DUPLICATE_SABC_CODE,
 } from "../../constants";
-import { ConfigService } from "@sims/utilities/config";
 
 const OTHER_REGULATORY_BODY = "other";
 @Injectable()
@@ -40,7 +39,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   constructor(
     private readonly dataSource: DataSource,
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
-    private readonly configService: ConfigService,
   ) {
     super(dataSource.getRepository(EducationProgram));
     this.offeringsRepo = dataSource.getRepository(EducationProgramOffering);
@@ -376,7 +374,8 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * for a particular location.
    * @param locationId id of the location that should have the
    * offering associated with.
-   * @param programYearId program year id
+   * @param programYearId program year id.
+   * @param isFulltimeAllowed is fulltime allowed.
    * @param includeInActivePY includeInActivePY, if includeInActivePY, then both active
    * and not active program year is considered.
    * @returns programs with offerings under the specified location.
@@ -384,9 +383,9 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   async getProgramsForLocation(
     locationId: number,
     programYearId: number,
+    isFulltimeAllowed: boolean,
     includeInActivePY?: boolean,
   ): Promise<Partial<EducationProgram>[]> {
-    const isFulltimeAllowed = this.configService.isFulltimeAllowed;
     const offeringExistsQuery = this.offeringsRepo
       .createQueryBuilder("offerings")
       .innerJoin(ProgramYear, "programYear", "programYear.id = :programYearId")

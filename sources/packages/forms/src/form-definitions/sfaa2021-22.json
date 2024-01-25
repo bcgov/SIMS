@@ -5132,7 +5132,7 @@
         },
         {
           "input": true,
-          "tableView": true,
+          "tableView": false,
           "key": "isFullTimeAllowed",
           "label": "Toggle switch for Full time and Part Time",
           "protected": false,

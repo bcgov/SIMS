@@ -5,10 +5,7 @@ import { EducationProgramOfferingService } from "@/services/EducationProgramOffe
 import { ProgramYearService } from "@/services/ProgramYearService";
 import { OfferingIntensity } from "../types";
 import { useFormioUtils } from ".";
-import {
-  OptionItemAPIOutDTO,
-  ProgramIntensityAPIOutDTO,
-} from "@/services/http/dto";
+import { OptionItemAPIOutDTO } from "@/services/http/dto";
 /**
  * Common methods to load dropdowns(selects) data on Form.IO that could
  * be reusable or at least simplify the form data load logic.
@@ -19,13 +16,13 @@ export function useFormioDropdownLoader() {
   const loadDropdown = async (
     form: any,
     dropdownName: string,
-    loadMethod: Promise<OptionItemAPIOutDTO[]> | ProgramIntensityAPIOutDTO[],
+    loadMethod: Promise<OptionItemAPIOutDTO[]> | OptionItemAPIOutDTO[],
   ) => {
     // Find the dropdown to be populated with the locations.
     const dropdown = formioUtils.getComponent(form, dropdownName);
     const optionsItems = await loadMethod;
     dropdown.component.data.values = optionsItems.map(
-      (item: OptionItemAPIOutDTO | ProgramIntensityAPIOutDTO) => ({
+      (item: OptionItemAPIOutDTO) => ({
         value: item.id,
         label: item.description,
       }),
@@ -61,7 +58,14 @@ export function useFormioDropdownLoader() {
     );
   };
 
-  const getProgramIntensityDetails = (isFulltimeAllowed: boolean) => {
+  /**
+   * Gets the program intensity details.
+   * @param isFulltimeAllowed is fulltime allowed.
+   * @returns the program intensity details.
+   */
+  const getProgramIntensityDetails = (
+    isFulltimeAllowed: boolean,
+  ): OptionItemAPIOutDTO[] => {
     if (isFulltimeAllowed) {
       return [
         {
@@ -73,14 +77,13 @@ export function useFormioDropdownLoader() {
           description: "Part Time",
         },
       ];
-    } else {
-      return [
-        {
-          id: "Part Time",
-          description: "Part Time",
-        },
-      ];
     }
+    return [
+      {
+        id: "Part Time",
+        description: "Part Time",
+      },
+    ];
   };
 
   // Retrieve the list of programs that have some

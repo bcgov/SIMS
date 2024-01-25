@@ -19,13 +19,17 @@ import { credentialTypeToDisplay, deliveryMethod } from "../../utilities";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
+import { ConfigService } from "@sims/utilities/config";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
 @Controller("education-program")
 @ApiTags(`${ClientTypeBaseRoute.Student}-education-program`)
 export class EducationProgramStudentsController extends BaseController {
-  constructor(private readonly programService: EducationProgramService) {
+  constructor(
+    private readonly programService: EducationProgramService,
+    private readonly configService: ConfigService,
+  ) {
     super();
   }
 
@@ -75,9 +79,11 @@ export class EducationProgramStudentsController extends BaseController {
     )
     isIncludeInActiveProgramYear: boolean,
   ): Promise<OptionItemAPIOutDTO[]> {
+    const isFulltimeAllowed = this.configService.isFulltimeAllowed;
     const programs = await this.programService.getProgramsForLocation(
       locationId,
       programYearId,
+      isFulltimeAllowed,
       isIncludeInActiveProgramYear,
     );
 
