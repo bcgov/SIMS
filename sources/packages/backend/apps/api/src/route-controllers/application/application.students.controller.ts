@@ -176,7 +176,7 @@ export class ApplicationStudentsController extends BaseController {
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<void> {
-    const isFulltimeAllowed = process.env.IS_FULLTIME_ALLOWED === "true";
+    const isFulltimeAllowed = this.configService.isFulltimeAllowed;
     const programYear = await this.programYearService.getActiveProgramYear(
       payload.programYearId,
     );
