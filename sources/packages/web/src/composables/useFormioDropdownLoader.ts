@@ -50,7 +50,7 @@ export function useFormioDropdownLoader() {
     form: any,
     isFulltimeAllowed: boolean,
     dropdownName: string,
-  ) => {
+  ): void => {
     return loadDropdown(
       form,
       dropdownName,
