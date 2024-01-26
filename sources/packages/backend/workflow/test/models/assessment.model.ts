@@ -196,6 +196,7 @@ export interface CalculatedAssessmentModel {
   federalAwardNetCSGPAmount: number;
   provincialAwardNetCSGPAmount: number;
   // CSGD
+  federalAwardCSGDAmount: number;
   federalAwardNetCSGDAmount: number;
   provincialAwardNetCSGDAmount: number;
   // CSGF
@@ -241,6 +242,7 @@ export interface CalculatedAssessmentModel {
   dmnPartTimeAwardAllowableLimits?: {
     limitAwardBCAGAmount: number;
     limitAwardCSPTAmount: number;
+    limitAwardCSGDAmount: number;
     limitAwardCSGD3OrMoreChildAmount: number;
     limitAwardCSGD2OrLessChildAmount: number;
   };
