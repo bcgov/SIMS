@@ -18,4 +18,5 @@ export interface AppConfig {
   authConfig: AuthConfigAPIOutDTO;
   updateTime: Date;
   version: string;
+  isFulltimeAllowed: boolean;
 }

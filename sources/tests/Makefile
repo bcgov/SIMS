@@ -5,6 +5,9 @@ export $(shell sed 's/=.*//' ../../.env)
 # Override values from the global .env file.
 export $(shell sed 's/=.*//' .env-e2e-tests)
 
+# Fulltime Allowed
+export IS_FULLTIME_ALLOWED := $(or $(IS_FULLTIME_ALLOWED), true)
+
 backend-unit-tests:
 	@cd ../packages/backend && npm i && npm run test:cov
 

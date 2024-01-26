@@ -10,4 +10,5 @@ export interface AuthConfigAPIOutDTO {
 export interface ConfigAPIOutDTO {
   auth: AuthConfigAPIOutDTO;
   version: string;
+  isFulltimeAllowed: boolean;
 }

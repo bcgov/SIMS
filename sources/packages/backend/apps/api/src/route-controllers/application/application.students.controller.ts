@@ -72,9 +72,11 @@ import { ApplicationData } from "@sims/sims-db/entities/application.model";
 import {
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
+  OfferingIntensity,
   StudentAppealStatus,
 } from "@sims/sims-db";
 import { ConfirmationOfEnrollmentService } from "@sims/services";
+import { ConfigService } from "@sims/utilities/config";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -93,6 +95,7 @@ export class ApplicationStudentsController extends BaseController {
     private readonly supportingUserService: SupportingUserService,
     private readonly studentAppealService: StudentAppealService,
     private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
+    private readonly configService: ConfigService,
   ) {
     super();
   }
@@ -157,11 +160,14 @@ export class ApplicationStudentsController extends BaseController {
     description:
       "Program Year is not active or " +
       "Selected offering id is invalid or " +
-      "invalid study dates or selected study start date is not within the program year" +
+      "invalid study dates or selected study start date is not within the program year " +
       "or APPLICATION_NOT_VALID or INVALID_OPERATION_IN_THE_CURRENT_STATUS or ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE " +
-      "or INSTITUTION_LOCATION_NOT_VALID or OFFERING_NOT_VALID.",
+      "or INSTITUTION_LOCATION_NOT_VALID or OFFERING_NOT_VALID " +
+      "or Invalid offering intensity",
   })
-  @ApiBadRequestResponse({ description: "Form validation failed." })
+  @ApiBadRequestResponse({
+    description: "Form validation failed or Offering intensity type is invalid",
+  })
   @ApiNotFoundResponse({ description: "Application not found." })
   @ApiForbiddenResponse({
     description: "You have a restriction on your account.",
@@ -171,15 +177,31 @@ export class ApplicationStudentsController extends BaseController {
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<void> {
+    const isFulltimeAllowed = this.configService.isFulltimeAllowed;
     const programYear = await this.programYearService.getActiveProgramYear(
       payload.programYearId,
     );
+    // The check to validate the values for howWillYouBeAttendingTheProgram can be removed once the toggle for IS_FULL_TIME_ALLOWED is no longer needed
+    // and the types are hard-coded again in the form.io definition using the onlyAvailableItems as true.
+    if (
+      ![OfferingIntensity.fullTime, OfferingIntensity.partTime].includes(
+        payload.data.howWillYouBeAttendingTheProgram,
+      )
+    ) {
+      throw new BadRequestException("Offering intensity type is invalid.");
+    }
     if (!programYear) {
       throw new UnprocessableEntityException(
         "Program Year is not active. Not able to create an application invalid request.",
       );
     }
-
+    if (
+      !isFulltimeAllowed &&
+      payload.data.howWillYouBeAttendingTheProgram ===
+        OfferingIntensity.fullTime
+    ) {
+      throw new UnprocessableEntityException("Invalid offering intensity.");
+    }
     // studyStartDate from payload is set as studyStartDate
     let studyStartDate = payload.data.studystartDate;
     let studyEndDate = payload.data.studyendDate;
@@ -187,6 +209,12 @@ export class ApplicationStudentsController extends BaseController {
       const offering = await this.offeringService.getOfferingById(
         payload.data.selectedOffering,
       );
+      if (
+        !isFulltimeAllowed &&
+        offering.offeringIntensity === OfferingIntensity.fullTime
+      ) {
+        throw new UnprocessableEntityException("Invalid offering intensity.");
+      }
       if (!offering) {
         throw new UnprocessableEntityException(
           "Selected offering id is invalid.",
@@ -278,23 +306,43 @@ export class ApplicationStudentsController extends BaseController {
   @CheckSinValidation()
   @ApiUnprocessableEntityResponse({
     description:
-      "Program Year is not active or MORE_THAN_ONE_APPLICATION_DRAFT_ERROR.",
+      "Program Year is not active or MORE_THAN_ONE_APPLICATION_DRAFT_ERROR " +
+      "or Invalid offering intensity",
+  })
+  @ApiBadRequestResponse({
+    description: "Offering intensity type is invalid",
   })
   @Post("draft")
   async createDraftApplication(
     @Body() payload: SaveApplicationAPIInDTO,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
+    const isFulltimeAllowed = this.configService.isFulltimeAllowed;
     const programYear = await this.programYearService.getActiveProgramYear(
       payload.programYearId,
     );
-
+    // The check to validate the values for howWillYouBeAttendingTheProgram can be removed once the toggle for IS_FULL_TIME_ALLOWED is no longer needed
+    // and the types are hard-coded again in the form.io definition using the onlyAvailableItems as true.
+    if (
+      payload.data.howWillYouBeAttendingTheProgram &&
+      ![OfferingIntensity.fullTime, OfferingIntensity.partTime].includes(
+        payload.data.howWillYouBeAttendingTheProgram,
+      )
+    ) {
+      throw new BadRequestException("Offering intensity type is invalid.");
+    }
     if (!programYear) {
       throw new UnprocessableEntityException(
         "Program Year is not active, not able to create a draft application.",
       );
     }
-
+    if (
+      !isFulltimeAllowed &&
+      payload.data.howWillYouBeAttendingTheProgram ===
+        OfferingIntensity.fullTime
+    ) {
+      throw new UnprocessableEntityException("Invalid offering intensity.");
+    }
     try {
       const draftApplication =
         await this.applicationService.saveDraftApplication(
@@ -325,12 +373,36 @@ export class ApplicationStudentsController extends BaseController {
    */
   @CheckSinValidation()
   @Patch(":applicationId/draft")
+  @ApiUnprocessableEntityResponse({
+    description: "Invalid offering intensity",
+  })
+  @ApiBadRequestResponse({
+    description: "Offering intensity type is invalid",
+  })
   @ApiNotFoundResponse({ description: "APPLICATION_DRAFT_NOT_FOUND." })
   async updateDraftApplication(
     @Body() payload: SaveApplicationAPIInDTO,
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<void> {
+    const isFulltimeAllowed = this.configService.isFulltimeAllowed;
+    // The check to validate the values for howWillYouBeAttendingTheProgram can be removed once the toggle for IS_FULL_TIME_ALLOWED is no longer needed
+    // and the types are hard-coded again in the form.io definition using the onlyAvailableItems as true.
+    if (
+      payload.data.howWillYouBeAttendingTheProgram &&
+      ![OfferingIntensity.fullTime, OfferingIntensity.partTime].includes(
+        payload.data.howWillYouBeAttendingTheProgram,
+      )
+    ) {
+      throw new BadRequestException("Offering intensity type is invalid.");
+    }
+    if (
+      !isFulltimeAllowed &&
+      payload.data.howWillYouBeAttendingTheProgram ===
+        OfferingIntensity.fullTime
+    ) {
+      throw new UnprocessableEntityException("Invalid offering intensity.");
+    }
     try {
       await this.applicationService.saveDraftApplication(
         studentToken.studentId,
