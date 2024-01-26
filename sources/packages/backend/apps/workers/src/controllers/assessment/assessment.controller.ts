@@ -16,6 +16,7 @@ import {
   SupportingUserJobOutDTO,
   UpdateNOAStatusHeaderDTO,
   UpdateNOAStatusJobInDTO,
+  VerifyAssessmentCalculationOrderJobOutDTO,
 } from "..";
 import { StudentAssessmentService } from "../../services";
 import {
@@ -225,6 +226,43 @@ export class AssessmentController {
       );
       jobLogger.log("Updated assessment status and saved the workflow data.");
       return job.complete();
+    } catch (error: unknown) {
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
+    }
+  }
+
+  /**
+   * Verify as per the order of original assessment study start date validate if this assessment
+   * is the first in the sequence to be calculated
+   * for the given student inside the given program year.
+   */
+  @ZeebeWorker(Workers.VerifyAssessmentCalculationOrder, {
+    fetchVariable: [ASSESSMENT_ID],
+    maxJobsToActivate: MaxJobsToActivate.Normal,
+  })
+  async verifyAssessmentCalculationOrder(
+    job: Readonly<
+      ZeebeJob<
+        AssessmentDataJobInDTO,
+        ICustomHeaders,
+        VerifyAssessmentCalculationOrderJobOutDTO
+      >
+    >,
+  ): Promise<MustReturnJobActionAcknowledgement> {
+    const jobLogger = new Logger(job.type);
+    try {
+      const assessment = await this.studentAssessmentService.getById(
+        job.variables.assessmentId,
+      );
+      if (!assessment) {
+        const message = "Assessment not found.";
+        jobLogger.error(message);
+        return job.error(ASSESSMENT_NOT_FOUND, message);
+      }
+      jobLogger.log("Assessment calculation sequence has been verified.");
+      return job.complete({ isReadyForCalculation: true });
     } catch (error: unknown) {
       return createUnexpectedJobFail(error, job, {
         logger: jobLogger,
