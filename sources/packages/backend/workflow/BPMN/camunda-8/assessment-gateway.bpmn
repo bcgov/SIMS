@@ -247,9 +247,6 @@
     <bpmn:serviceTask id="verify-assessment-calculation-order-task" name="Verify assessment calculation order">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="verify-assessment-calculation-order" />
-        <zeebe:ioMapping>
-          <zeebe:output target="isFirstInCalculationSequence" />
-        </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0ozt4pg</bpmn:incoming>
       <bpmn:incoming>Flow_1btetiq</bpmn:incoming>

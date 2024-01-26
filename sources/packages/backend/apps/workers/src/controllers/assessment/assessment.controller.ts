@@ -262,7 +262,7 @@ export class AssessmentController {
         return job.error(ASSESSMENT_NOT_FOUND, message);
       }
       jobLogger.log("Assessment calculation sequence has been verified.");
-      return job.complete({ isReadyForCalculation: true });
+      return job.complete({ applicationExceptionStatus: true });
     } catch (error: unknown) {
       return createUnexpectedJobFail(error, job, {
         logger: jobLogger,

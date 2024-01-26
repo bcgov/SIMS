@@ -147,5 +147,5 @@ export interface WorkflowWrapUpJobInDTO {
 }
 
 export interface VerifyAssessmentCalculationOrderJobOutDTO {
-  isReadyForCalculation: boolean;
+  applicationExceptionStatus: boolean;
 }

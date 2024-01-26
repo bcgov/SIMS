@@ -8,13 +8,13 @@ import { WorkflowServiceTasks } from "../..";
  * true will be returned to allow the workflow to proceed.
  * @returns mock for 'Verify assessment calculation order' completed task.
  */
-export function createVerifyApplicationExceptionsTaskMock(options?: {
+export function createVerifyAssessmentCalculationOrderTaskMock(options?: {
   isFirstInCalculationSequence?: boolean;
 }): WorkerMockedData {
   const isFirstInCalculationSequence =
     options?.isFirstInCalculationSequence ?? true;
   return {
-    serviceTaskId: WorkflowServiceTasks.VerifyApplicationExceptions,
+    serviceTaskId: WorkflowServiceTasks.VerifyAssessmentCalculationOrderTask,
     options: {
       jobCompleteMock: { isFirstInCalculationSequence },
     },
