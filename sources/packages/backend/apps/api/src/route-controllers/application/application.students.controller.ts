@@ -163,10 +163,11 @@ export class ApplicationStudentsController extends BaseController {
       "invalid study dates or selected study start date is not within the program year " +
       "or APPLICATION_NOT_VALID or INVALID_OPERATION_IN_THE_CURRENT_STATUS or ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE " +
       "or INSTITUTION_LOCATION_NOT_VALID or OFFERING_NOT_VALID " +
-      "or Invalid offering intensity " +
-      "or Offering intensity type is invalid",
+      "or Invalid offering intensity",
   })
-  @ApiBadRequestResponse({ description: "Form validation failed." })
+  @ApiBadRequestResponse({
+    description: "Form validation failed or Offering intensity type is invalid",
+  })
   @ApiNotFoundResponse({ description: "Application not found." })
   @ApiForbiddenResponse({
     description: "You have a restriction on your account.",
@@ -180,14 +181,14 @@ export class ApplicationStudentsController extends BaseController {
     const programYear = await this.programYearService.getActiveProgramYear(
       payload.programYearId,
     );
+    // The check to validate the values for howWillYouBeAttendingTheProgram can be removed once the toggle for IS_FULL_TIME_ALLOWED is no longer needed
+    // and the types are hard-coded again in the form.io definition using the onlyAvailableItems as true.
     if (
       ![OfferingIntensity.fullTime, OfferingIntensity.partTime].includes(
         payload.data.howWillYouBeAttendingTheProgram,
       )
     ) {
-      throw new UnprocessableEntityException(
-        "Offering intensity type is invalid.",
-      );
+      throw new BadRequestException("Offering intensity type is invalid.");
     }
     if (!programYear) {
       throw new UnprocessableEntityException(
@@ -306,8 +307,10 @@ export class ApplicationStudentsController extends BaseController {
   @ApiUnprocessableEntityResponse({
     description:
       "Program Year is not active or MORE_THAN_ONE_APPLICATION_DRAFT_ERROR " +
-      "or Invalid offering intensity " +
-      "or Offering intensity type is invalid",
+      "or Invalid offering intensity",
+  })
+  @ApiBadRequestResponse({
+    description: "Offering intensity type is invalid",
   })
   @Post("draft")
   async createDraftApplication(
@@ -318,15 +321,15 @@ export class ApplicationStudentsController extends BaseController {
     const programYear = await this.programYearService.getActiveProgramYear(
       payload.programYearId,
     );
+    // The check to validate the values for howWillYouBeAttendingTheProgram can be removed once the toggle for IS_FULL_TIME_ALLOWED is no longer needed
+    // and the types are hard-coded again in the form.io definition using the onlyAvailableItems as true.
     if (
       payload.data.howWillYouBeAttendingTheProgram &&
       ![OfferingIntensity.fullTime, OfferingIntensity.partTime].includes(
         payload.data.howWillYouBeAttendingTheProgram,
       )
     ) {
-      throw new UnprocessableEntityException(
-        "Offering intensity type is invalid.",
-      );
+      throw new BadRequestException("Offering intensity type is invalid.");
     }
     if (!programYear) {
       throw new UnprocessableEntityException(
@@ -371,8 +374,10 @@ export class ApplicationStudentsController extends BaseController {
   @CheckSinValidation()
   @Patch(":applicationId/draft")
   @ApiUnprocessableEntityResponse({
-    description:
-      "Invalid offering intensity or Offering intensity type is invalid",
+    description: "Invalid offering intensity",
+  })
+  @ApiBadRequestResponse({
+    description: "Offering intensity type is invalid",
   })
   @ApiNotFoundResponse({ description: "APPLICATION_DRAFT_NOT_FOUND." })
   async updateDraftApplication(
@@ -381,15 +386,15 @@ export class ApplicationStudentsController extends BaseController {
     @UserToken() studentToken: StudentUserToken,
   ): Promise<void> {
     const isFulltimeAllowed = this.configService.isFulltimeAllowed;
+    // The check to validate the values for howWillYouBeAttendingTheProgram can be removed once the toggle for IS_FULL_TIME_ALLOWED is no longer needed
+    // and the types are hard-coded again in the form.io definition using the onlyAvailableItems as true.
     if (
       payload.data.howWillYouBeAttendingTheProgram &&
       ![OfferingIntensity.fullTime, OfferingIntensity.partTime].includes(
         payload.data.howWillYouBeAttendingTheProgram,
       )
     ) {
-      throw new UnprocessableEntityException(
-        "Offering intensity type is invalid.",
-      );
+      throw new BadRequestException("Offering intensity type is invalid.");
     }
     if (
       !isFulltimeAllowed &&
