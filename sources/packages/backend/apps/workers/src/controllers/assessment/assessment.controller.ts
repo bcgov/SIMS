@@ -261,8 +261,14 @@ export class AssessmentController {
         jobLogger.error(message);
         return job.error(ASSESSMENT_NOT_FOUND, message);
       }
+      const isFirstInCalculationSequence =
+        await this.studentAssessmentService.verifyAssessmentCalculationOrder(
+          job.variables.assessmentId,
+          assessment.application.student.id,
+          assessment.application.programYear.id,
+        );
       jobLogger.log("Assessment calculation sequence has been verified.");
-      return job.complete({ applicationExceptionStatus: true });
+      return job.complete({ isFirstInCalculationSequence });
     } catch (error: unknown) {
       return createUnexpectedJobFail(error, job, {
         logger: jobLogger,

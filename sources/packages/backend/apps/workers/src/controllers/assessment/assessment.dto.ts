@@ -147,5 +147,5 @@ export interface WorkflowWrapUpJobInDTO {
 }
 
 export interface VerifyAssessmentCalculationOrderJobOutDTO {
-  applicationExceptionStatus: boolean;
+  isFirstInCalculationSequence: boolean;
 }

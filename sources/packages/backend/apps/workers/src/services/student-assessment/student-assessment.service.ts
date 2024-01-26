@@ -1,11 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import {
   AssessmentStatus,
+  AssessmentTriggerType,
   RecordDataModelService,
   StudentAppealStatus,
   StudentAssessment,
   StudentAssessmentStatus,
   WorkflowData,
+  mapFromRawAndEntities,
 } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 import { DataSource, EntityManager, IsNull, UpdateResult } from "typeorm";
@@ -16,6 +18,7 @@ import {
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "@sims/services/constants";
 import { NotificationActionsService, SystemUsersService } from "@sims/services";
+import { StudentAssessmentDetail } from "./student-assessment.model";
 
 /**
  * Manages the student assessment related operations.
@@ -321,5 +324,78 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         studentAssessmentStatusUpdatedOn: now,
       });
     }
+  }
+
+  /**
+   *
+   * @param studentId
+   * @param programYearId
+   */
+  async verifyAssessmentCalculationOrder(
+    assessmentId: number,
+    studentId: number,
+    programYearId: number,
+  ): Promise<boolean> {
+    const result = await this.getOutstandingAssessmentsForStudentInSequence(
+      studentId,
+      programYearId,
+    );
+    console.log(result);
+    const [firstOutstandingStudentAssessment] = result;
+    return firstOutstandingStudentAssessment.id === assessmentId;
+  }
+
+  /**
+   * Get all outstanding student assessments to be calculated
+   * in the order of original assessment study start date.
+   * @param studentId student id.
+   * @param programYearId program year id.
+   * @returns student assessment to be calculated.
+   */
+  private async getOutstandingAssessmentsForStudentInSequence(
+    studentId: number,
+    programYearId: number,
+  ): Promise<StudentAssessmentDetail[]> {
+    const originalAssessmentStudyStartDateAlias =
+      "originalAssessmentStudyStartDate";
+    // Sub query to get the original assessment study start date of a given assessment's application.
+    const originalAssessmentDateSubQuery = this.repo
+      .createQueryBuilder("studentAssessment")
+      .select("offering.studyStartDate")
+      .innerJoin("studentAssessment.offering", "offering")
+      .where("studentAssessment.application.id = assessment.application.id")
+      .andWhere("studentAssessment.triggerType = :triggerType")
+      .getSql();
+
+    const studentAssessmentsResult = await this.repo
+      .createQueryBuilder("assessment")
+      .select("assessment.id")
+      .addSelect(
+        `(${originalAssessmentDateSubQuery})`,
+        originalAssessmentStudyStartDateAlias,
+      )
+      .innerJoin("assessment.application", "application")
+      .where(
+        "assessment.studentAssessmentStatus NOT IN (:...studentAssessmentStatus)",
+      )
+      .andWhere("assessment.offering IS NOT NULL")
+      .andWhere("application.student.id = :studentId")
+      .andWhere("application.programYear.id = :programYearId")
+      .setParameter("triggerType", AssessmentTriggerType.OriginalAssessment)
+      .setParameter("studentAssessmentStatus", [
+        StudentAssessmentStatus.Completed,
+        StudentAssessmentStatus.CancellationRequested,
+        StudentAssessmentStatus.CancellationQueued,
+        StudentAssessmentStatus.Cancelled,
+      ])
+      .setParameter("studentId", studentId)
+      .setParameter("programYearId", programYearId)
+      .orderBy(`"${originalAssessmentStudyStartDateAlias}"`)
+      .addOrderBy("assessment.createdAt")
+      .getRawAndEntities();
+    return mapFromRawAndEntities<StudentAssessmentDetail>(
+      studentAssessmentsResult,
+      originalAssessmentStudyStartDateAlias,
+    );
   }
 }
