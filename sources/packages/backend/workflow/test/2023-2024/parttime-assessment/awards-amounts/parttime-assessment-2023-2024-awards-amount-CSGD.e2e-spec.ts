@@ -133,6 +133,11 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.studentDataIsYourSpouseACanadianCitizen =
       YesNoOptions.Yes;
     assessmentConsolidatedData.partner1CRAReportedIncome = 20000;
+    assessmentConsolidatedData.studentDataDependants = [
+      createFakeStudentDependentEligible(
+        DependentEligibility.Eligible0To18YearsOld,
+      ),
+    ];
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
@@ -161,11 +166,16 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataCRAReportedIncome = 30000;
+    assessmentConsolidatedData.studentDataCRAReportedIncome = 35000;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
     assessmentConsolidatedData.studentDataIsYourSpouseACanadianCitizen =
       YesNoOptions.Yes;
-    assessmentConsolidatedData.partner1CRAReportedIncome = 30000;
+    assessmentConsolidatedData.partner1CRAReportedIncome = 35000;
+    assessmentConsolidatedData.studentDataDependants = [
+      createFakeStudentDependentEligible(
+        DependentEligibility.Eligible0To18YearsOld,
+      ),
+    ];
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
