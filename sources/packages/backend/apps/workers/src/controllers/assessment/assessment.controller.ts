@@ -40,15 +40,19 @@ import {
 import {
   ASSESSMENT_DATA,
   ASSESSMENT_ID,
+  PROGRAM_YEAR_ID,
+  STUDENT_ID,
   WORKFLOW_DATA,
 } from "@sims/services/workflow/variables/assessment-gateway";
 import { CustomNamedError } from "@sims/utilities";
 import { MaxJobsToActivate } from "../../types";
+import { WorkflowClientService } from "@sims/services";
 
 @Controller()
 export class AssessmentController {
   constructor(
     private readonly studentAssessmentService: StudentAssessmentService,
+    private readonly workflowClientService: WorkflowClientService,
   ) {}
 
   /**
@@ -210,7 +214,7 @@ export class AssessmentController {
    * Worker to be executed at very end of the workflow responsible for latest tasks before the `end event`.
    */
   @ZeebeWorker(Workers.WorkflowWrapUp, {
-    fetchVariable: [ASSESSMENT_ID, WORKFLOW_DATA],
+    fetchVariable: [ASSESSMENT_ID, STUDENT_ID, PROGRAM_YEAR_ID, WORKFLOW_DATA],
     maxJobsToActivate: MaxJobsToActivate.Normal,
   })
   async workflowWrapUp(
@@ -224,6 +228,11 @@ export class AssessmentController {
         job.variables.assessmentId,
         job.variables.workflowData,
       );
+      // Send message to unblock the assessments which are waiting for this assessment if any.
+      await this.workflowClientService.sendAssessmentCalculationCompleteMessage(
+        job.variables.studentId,
+        job.variables.programYearId,
+      );
       jobLogger.log("Updated assessment status and saved the workflow data.");
       return job.complete();
     } catch (error: unknown) {
@@ -234,7 +243,7 @@ export class AssessmentController {
   }
 
   /**
-   * Verify as per the order of original assessment study start date validate if this assessment
+   * Verify as per the order of original assessment study start date if this assessment
    * is the first in the sequence to be calculated
    * for the given student inside the given program year.
    */
@@ -297,6 +306,7 @@ export class AssessmentController {
       triggerType: assessment.triggerType,
       data: application.data,
       programYear: {
+        programYearId: application.programYear.id,
         programYear: application.programYear.programYear,
         startDate: application.programYear.startDate,
         endDate: application.programYear.endDate,
@@ -326,6 +336,7 @@ export class AssessmentController {
           institutionLocation?.data.address?.provinceState,
       },
       student: {
+        studentId: application.student.id,
         craReportedIncome: studentCRAIncome?.craReportedIncome,
         taxYear: studentCRAIncome?.taxYear,
       },
