@@ -256,6 +256,16 @@ export class StudentAssessment extends RecordDataModel {
     nullable: false,
   })
   studentAssessmentStatusUpdatedOn: Date;
+
+  /**
+   * Assessment calculation start date.
+   */
+  @Column({
+    name: "calculation_start_date",
+    type: "timestamptz",
+    nullable: true,
+  })
+  calculationStartDate?: Date;
 }
 
 /**

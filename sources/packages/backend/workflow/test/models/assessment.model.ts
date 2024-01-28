@@ -128,6 +128,8 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   assessmentId?: number;
   studentDataSelectedOffering: number;
   studentDataApplicationPDPPDStatus: string;
+  studentId: number;
+  programYearId: number;
 }
 
 export interface AssessmentModel {

@@ -10,7 +10,14 @@ import {
   mapFromRawAndEntities,
 } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
-import { DataSource, EntityManager, IsNull, UpdateResult } from "typeorm";
+import {
+  DataSource,
+  EntityManager,
+  In,
+  IsNull,
+  Not,
+  UpdateResult,
+} from "typeorm";
 import {
   ASSESSMENT_NOT_FOUND,
   ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW,
@@ -327,20 +334,28 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   }
 
   /**
-   *
-   * @param studentId
-   * @param programYearId
+   * Verify the order of assessment calculation order.
+   * @param studentId student id.
+   * @param programYearId program year id.
    */
   async verifyAssessmentCalculationOrder(
     assessmentId: number,
     studentId: number,
     programYearId: number,
   ): Promise<boolean> {
+    // Check for any assessment with ongoing calculation.
+    const assessmentInCalculationStepExist =
+      await this.hasAnyAssessmentInCalculationProcess(studentId, programYearId);
+
+    // If an ongoing calculation is happening all other assessments for given student in program year
+    // must wait until the calculation is complete and saved to the system.
+    if (assessmentInCalculationStepExist) {
+      return false;
+    }
     const result = await this.getOutstandingAssessmentsForStudentInSequence(
       studentId,
       programYearId,
     );
-    console.log(result);
     const [firstOutstandingStudentAssessment] = result;
     return firstOutstandingStudentAssessment.id === assessmentId;
   }
@@ -397,5 +412,37 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       studentAssessmentsResult,
       originalAssessmentStudyStartDateAlias,
     );
+  }
+
+  /**
+   * Check if there is any assessment in calculation process currently
+   * during this time for the given student in given program year.
+   * Calculation process includes from calculating the assessment numbers
+   * to persisting calculated data in the system.
+   * @param studentId student id.
+   * @param programYearId program year id.
+   * @returns flag which indicates if there is any assessment in calculation.
+   */
+  private async hasAnyAssessmentInCalculationProcess(
+    studentId: number,
+    programYearId: number,
+  ): Promise<boolean> {
+    return this.repo.exist({
+      where: {
+        calculationStartDate: Not(IsNull()),
+        studentAssessmentStatus: Not(
+          In([
+            StudentAssessmentStatus.Completed,
+            StudentAssessmentStatus.CancellationRequested,
+            StudentAssessmentStatus.CancellationQueued,
+            StudentAssessmentStatus.Cancelled,
+          ]),
+        ),
+        application: {
+          student: { id: studentId },
+          programYear: { id: programYearId },
+        },
+      },
+    });
   }
 }
