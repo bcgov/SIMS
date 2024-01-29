@@ -334,7 +334,12 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   }
 
   /**
-   * Verify the order of assessment calculation order.
+   * Verify as per the order of original assessment study start date if this assessment
+   * is the first in the sequence to be calculated
+   * for the given student inside the given program year.
+   * If an assessment is identified to be the first in sequence to be calculated
+   * then set calculation start date to hold other assessments until the calculation
+   * is complete for this assessment.
    * @param studentId student id.
    * @param programYearId program year id.
    */
@@ -344,12 +349,20 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     programYearId: number,
   ): Promise<boolean> {
     // Check for any assessment with ongoing calculation.
-    const assessmentInCalculationStepExist =
-      await this.hasAnyAssessmentInCalculationProcess(studentId, programYearId);
+    const assessmentInCalculationStep =
+      await this.getAssessmentInCalculationStepForStudent(
+        studentId,
+        programYearId,
+      );
 
     // If an ongoing calculation is happening all other assessments for given student in program year
     // must wait until the calculation is complete and saved to the system.
-    if (assessmentInCalculationStepExist) {
+    // Also if a worker job is terminated after updating the calculation start date
+    // for an assessment, then the assessment must proceed for the calculation.
+    if (
+      assessmentInCalculationStep &&
+      assessmentInCalculationStep.id !== assessmentId
+    ) {
       return false;
     }
     const result = await this.getOutstandingAssessmentsForStudentInSequence(
@@ -415,19 +428,20 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   }
 
   /**
-   * Check if there is any assessment in calculation process currently
+   * Check if there is any assessment in calculation step currently
    * during this time for the given student in given program year.
-   * Calculation process includes from calculating the assessment numbers
+   * Calculation step includes from calculating the assessment numbers
    * to persisting calculated data in the system.
    * @param studentId student id.
    * @param programYearId program year id.
-   * @returns flag which indicates if there is any assessment in calculation.
+   * @returns assessment in calculation process.
    */
-  private async hasAnyAssessmentInCalculationProcess(
+  private async getAssessmentInCalculationStepForStudent(
     studentId: number,
     programYearId: number,
-  ): Promise<boolean> {
-    return this.repo.exist({
+  ): Promise<StudentAssessment> {
+    return this.repo.findOne({
+      select: { id: true },
       where: {
         calculationStartDate: Not(IsNull()),
         studentAssessmentStatus: Not(

@@ -87,7 +87,7 @@
     <bpmn:sequenceFlow id="Flow_1eip27h" sourceRef="verify-assessment-calculation-order-gateway" targetRef="assessment-calculation-completed-message" />
     <bpmn:sequenceFlow id="Flow_0bza37i" sourceRef="verify-assessment-calculation-order-gateway" targetRef="Event_05itxic" />
     <bpmn:sequenceFlow id="Flow_16zz7zb" name="Waiting for another assessment to complete" sourceRef="Gateway_16whgqa" targetRef="verify-assessment-calculation-order-gateway">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=isFirstInCalculationSequence = false</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=isReadyForCalculation = false</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0wp1s62" sourceRef="verify-assessment-calculation-order-task" targetRef="Gateway_16whgqa" />
     <bpmn:sequenceFlow id="Flow_0358dxp" sourceRef="assessment-calculation-completed-message" targetRef="verify-assessment-calculation-order-task" />
@@ -101,7 +101,7 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=offeringIntensity = "Full Time"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0mpuqex" name="Yes" sourceRef="Gateway_16whgqa" targetRef="Gateway_11qgy63">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=isFirstInCalculationSequence = true</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=isReadyForCalculation = true</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0e3pl88" name="Part Time" sourceRef="Gateway_11qgy63" targetRef="Activity_09v8xl0">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=offeringIntensity = "Part Time"</bpmn:conditionExpression>
@@ -1096,7 +1096,7 @@
         <di:waypoint x="2300" y="1740" />
         <di:waypoint x="2245" y="1740" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2304" y="1690" width="71" height="53" />
+          <dc:Bounds x="2304" y="1690" width="72" height="53" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0wp1s62_di" bpmnElement="Flow_0wp1s62">

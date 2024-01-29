@@ -4,19 +4,18 @@ import { WorkflowServiceTasks } from "../..";
 /**
  * Creates the mock for 'Verify assessment calculation order' completed task.
  * @param options mock options.
- * - `isFirstInCalculationSequence` calculation sequence order expected to be returned. By default
+ * - `isReadyForCalculation` calculation sequence order expected to be returned. By default
  * true will be returned to allow the workflow to proceed.
  * @returns mock for 'Verify assessment calculation order' completed task.
  */
 export function createVerifyAssessmentCalculationOrderTaskMock(options?: {
-  isFirstInCalculationSequence?: boolean;
+  isReadyForCalculation?: boolean;
 }): WorkerMockedData {
-  const isFirstInCalculationSequence =
-    options?.isFirstInCalculationSequence ?? true;
+  const isReadyForCalculation = options?.isReadyForCalculation ?? true;
   return {
     serviceTaskId: WorkflowServiceTasks.VerifyAssessmentCalculationOrderTask,
     options: {
-      jobCompleteMock: { isFirstInCalculationSequence },
+      jobCompleteMock: { isReadyForCalculation },
     },
   };
 }

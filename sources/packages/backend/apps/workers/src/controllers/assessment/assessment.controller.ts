@@ -246,6 +246,9 @@ export class AssessmentController {
    * Verify as per the order of original assessment study start date if this assessment
    * is the first in the sequence to be calculated
    * for the given student inside the given program year.
+   * If an assessment is identified to be the first in sequence to be calculated
+   * then set calculation start date to hold other assessments until the calculation
+   * is complete.
    */
   @ZeebeWorker(Workers.VerifyAssessmentCalculationOrder, {
     fetchVariable: [ASSESSMENT_ID],
@@ -270,14 +273,14 @@ export class AssessmentController {
         jobLogger.error(message);
         return job.error(ASSESSMENT_NOT_FOUND, message);
       }
-      const isFirstInCalculationSequence =
+      const isReadyForCalculation =
         await this.studentAssessmentService.verifyAssessmentCalculationOrder(
           job.variables.assessmentId,
           assessment.application.student.id,
           assessment.application.programYear.id,
         );
       jobLogger.log("Assessment calculation sequence has been verified.");
-      return job.complete({ isFirstInCalculationSequence });
+      return job.complete({ isReadyForCalculation });
     } catch (error: unknown) {
       return createUnexpectedJobFail(error, job, {
         logger: jobLogger,
