@@ -277,7 +277,8 @@ export class AssessmentController {
       const studentId = assessment.application.student.id;
       const programYearId = assessment.application.programYear.id;
       jobLogger.log(
-        `Verifying the assessment calculation order for assessment: ${assessmentId} student:${studentId} program year: ${programYearId}.`,
+        `Verifying the assessment calculation order for processing assessment id ${assessmentId} student id ${studentId} ` +
+          `program year id ${programYearId}.`,
       );
       // Check for any assessment with ongoing calculation.
       const assessmentInCalculationStep =
@@ -295,13 +296,13 @@ export class AssessmentController {
         assessmentInCalculationStep.id !== assessmentId
       ) {
         jobLogger.log(
-          `There is ongoing calculation happening for assessment: ${assessmentInCalculationStep.id} ` +
-            `and hence assessment : ${assessmentId} is waiting for that calculation to complete.`,
+          `There is ongoing calculation happening for assessment id ${assessmentInCalculationStep.id} ` +
+            `and hence the processing assessment id ${assessmentId} is waiting for that calculation to complete.`,
         );
         return job.complete({ isReadyForCalculation: false });
       }
       jobLogger.log(
-        `There is no ongoing calculation happening while verifying the order for assessment: ${assessment}.`,
+        `There is no ongoing calculation happening while verifying the order for processing assessment id ${assessmentId}.`,
       );
       // Get the first outstanding assessment waiting for calculation as per the sequence.
       const [firstOutstandingStudentAssessment] =
@@ -310,9 +311,9 @@ export class AssessmentController {
           programYearId,
         );
       jobLogger.log(
-        `The first outstanding assessment is identified to be assessment: ${firstOutstandingStudentAssessment.id} ` +
+        `The first outstanding assessment is identified to be assessment id ${firstOutstandingStudentAssessment.id} ` +
           `with original assessment start date: ${firstOutstandingStudentAssessment.originalAssessmentStudyStartDate} ` +
-          `while verifying the order for assessment: ${assessmentId}.`,
+          `while verifying the order for processing assessment id ${assessmentId}.`,
       );
       // If the processing assessment is same as first outstanding assessment
       // then proceed for calculation.
@@ -325,7 +326,7 @@ export class AssessmentController {
       }
       jobLogger.log(
         `The assessment calculation order has been verified and ready for calculation status is ${isReadyForCalculation} ` +
-          `for assessment: ${assessmentId}.`,
+          `for processing assessment id ${assessmentId}.`,
       );
       return job.complete({ isReadyForCalculation });
     } catch (error: unknown) {

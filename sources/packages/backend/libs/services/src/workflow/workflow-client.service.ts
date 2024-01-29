@@ -191,7 +191,7 @@ export class WorkflowClientService {
       });
     } catch (error: unknown) {
       this.logger.error(
-        `Error while sending assessment calculation completed message for student: ${studentId} and program year: ${programYearId}`,
+        `Error while sending assessment calculation completed message for student id ${studentId} and program year id ${programYearId}`,
       );
       this.logger.error(error);
       // The error is not thrown here, as we are failing silently.

@@ -19,13 +19,13 @@ export enum WorkflowServiceTasks {
   SaveDisbursementSchedules = "save-disbursement-task",
   SaveDisbursementSchedulesPartTime = "save-disbursement-part-time-task",
   AssociateMSFAA = "associate-msfaa-task",
+  VerifyAssessmentCalculationOrderTask = "verify-assessment-calculation-order-task",
   // Workflow - CRA Integration Income Verification
   CreateIncomeRequest = "create-income-request-task",
   CheckIncomeRequest = "check-income-request-task",
   // Workflow - Supporting User Information Request
   CheckSupportingUserResponseTask = "check-supporting-user-response-task",
   WorkflowWrapUpTask = "workflow-wrap-up-task",
-  VerifyAssessmentCalculationOrderTask = "verify-assessment-calculation-order-task",
 }
 
 /**

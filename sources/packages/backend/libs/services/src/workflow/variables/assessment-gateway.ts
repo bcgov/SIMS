@@ -41,7 +41,6 @@ export const DISBURSEMENT_SCHEDULES = "disbursementSchedules";
  * is executed for easy application consumption.
  */
 export const WORKFLOW_DATA = "workflowData";
-
 /**
  * Student who submitted the application.
  */

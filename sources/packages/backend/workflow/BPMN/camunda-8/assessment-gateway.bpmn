@@ -78,20 +78,20 @@
         <bpmn:flowNodeRef>Event_0w0bgro</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_0t108ac</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>verify-assessment-calculation-order-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_16whgqa</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ready-for-calculation-gateway</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>verify-assessment-calculation-order-gateway</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_05itxic</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>verify-assessment-calculation-timer</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>assessment-calculation-completed-message</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:sequenceFlow id="Flow_1eip27h" sourceRef="verify-assessment-calculation-order-gateway" targetRef="assessment-calculation-completed-message" />
-    <bpmn:sequenceFlow id="Flow_0bza37i" sourceRef="verify-assessment-calculation-order-gateway" targetRef="Event_05itxic" />
-    <bpmn:sequenceFlow id="Flow_16zz7zb" name="Waiting for another assessment to complete" sourceRef="Gateway_16whgqa" targetRef="verify-assessment-calculation-order-gateway">
+    <bpmn:sequenceFlow id="Flow_0bza37i" sourceRef="verify-assessment-calculation-order-gateway" targetRef="verify-assessment-calculation-timer" />
+    <bpmn:sequenceFlow id="Flow_16zz7zb" name="Waiting for another assessment to complete" sourceRef="ready-for-calculation-gateway" targetRef="verify-assessment-calculation-order-gateway">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=isReadyForCalculation = false</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0wp1s62" sourceRef="verify-assessment-calculation-order-task" targetRef="Gateway_16whgqa" />
+    <bpmn:sequenceFlow id="Flow_0wp1s62" sourceRef="verify-assessment-calculation-order-task" targetRef="ready-for-calculation-gateway" />
     <bpmn:sequenceFlow id="Flow_0358dxp" sourceRef="assessment-calculation-completed-message" targetRef="verify-assessment-calculation-order-task" />
-    <bpmn:sequenceFlow id="Flow_0umbeot" sourceRef="Event_05itxic" targetRef="verify-assessment-calculation-order-task" />
+    <bpmn:sequenceFlow id="Flow_0umbeot" sourceRef="verify-assessment-calculation-timer" targetRef="verify-assessment-calculation-order-task" />
     <bpmn:sequenceFlow id="Flow_0z518wc" sourceRef="Gateway_04wql0w" targetRef="Event_0w0bgro" />
     <bpmn:sequenceFlow id="Flow_0hmh3m7" sourceRef="update-noa-status-to-not-required-task" targetRef="Gateway_04wql0w" />
     <bpmn:sequenceFlow id="Flow_0p1lgm7" sourceRef="update-noa-status-to-required-task" targetRef="Gateway_04wql0w" />
@@ -100,7 +100,7 @@
     <bpmn:sequenceFlow id="Flow_0hfjqs0" name="Full Time" sourceRef="Gateway_11qgy63" targetRef="Activity_0t108ac">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=offeringIntensity = "Full Time"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0mpuqex" name="Yes" sourceRef="Gateway_16whgqa" targetRef="Gateway_11qgy63">
+    <bpmn:sequenceFlow id="Flow_0mpuqex" name="Yes" sourceRef="ready-for-calculation-gateway" targetRef="Gateway_11qgy63">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=isReadyForCalculation = true</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0e3pl88" name="Part Time" sourceRef="Gateway_11qgy63" targetRef="Activity_09v8xl0">
@@ -227,11 +227,11 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=assessmentTriggerType = "Original assessment"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0rxxozm" sourceRef="load-assessment-data-submit-or-reassessment-subprocess" targetRef="first-assessment-gateway" />
-    <bpmn:intermediateCatchEvent id="Event_05itxic">
+    <bpmn:intermediateCatchEvent id="verify-assessment-calculation-timer">
       <bpmn:incoming>Flow_0bza37i</bpmn:incoming>
       <bpmn:outgoing>Flow_0umbeot</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_0h74s3m">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT30S</bpmn:timeDuration>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT5M</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:intermediateCatchEvent>
     <bpmn:eventBasedGateway id="verify-assessment-calculation-order-gateway">
@@ -239,7 +239,7 @@
       <bpmn:outgoing>Flow_0bza37i</bpmn:outgoing>
       <bpmn:outgoing>Flow_1eip27h</bpmn:outgoing>
     </bpmn:eventBasedGateway>
-    <bpmn:exclusiveGateway id="Gateway_16whgqa" name="Is the assessment first in sequence to be calculated">
+    <bpmn:exclusiveGateway id="ready-for-calculation-gateway" name="Is the assessment first in sequence to be calculated?">
       <bpmn:incoming>Flow_0wp1s62</bpmn:incoming>
       <bpmn:outgoing>Flow_0mpuqex</bpmn:outgoing>
       <bpmn:outgoing>Flow_16zz7zb</bpmn:outgoing>
@@ -822,13 +822,13 @@
         <dc:Bounds x="190" y="120" width="4010" height="1370" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1b54j4j_di" bpmnElement="Event_05itxic">
+      <bpmndi:BPMNShape id="Event_1b54j4j_di" bpmnElement="verify-assessment-calculation-timer">
         <dc:Bounds x="2102" y="1722" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1q0d1tl_di" bpmnElement="verify-assessment-calculation-order-gateway">
         <dc:Bounds x="2195" y="1715" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_16whgqa_di" bpmnElement="Gateway_16whgqa" isMarkerVisible="true">
+      <bpmndi:BPMNShape id="Gateway_16whgqa_di" bpmnElement="ready-for-calculation-gateway" isMarkerVisible="true">
         <dc:Bounds x="2275" y="1595" width="50" height="50" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="2319" y="1540" width="90" height="40" />

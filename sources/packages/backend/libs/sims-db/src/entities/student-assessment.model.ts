@@ -256,7 +256,6 @@ export class StudentAssessment extends RecordDataModel {
     nullable: false,
   })
   studentAssessmentStatusUpdatedOn: Date;
-
   /**
    * Assessment calculation start date.
    */
