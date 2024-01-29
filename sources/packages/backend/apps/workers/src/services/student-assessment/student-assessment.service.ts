@@ -334,53 +334,13 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   }
 
   /**
-   * Verify as per the order of original assessment study start date if this assessment
-   * is the first in the sequence to be calculated
-   * for the given student inside the given program year.
-   * If an assessment is identified to be the first in sequence to be calculated
-   * then set calculation start date to hold other assessments until the calculation
-   * is complete for this assessment.
-   * @param studentId student id.
-   * @param programYearId program year id.
-   */
-  async verifyAssessmentCalculationOrder(
-    assessmentId: number,
-    studentId: number,
-    programYearId: number,
-  ): Promise<boolean> {
-    // Check for any assessment with ongoing calculation.
-    const assessmentInCalculationStep =
-      await this.getAssessmentInCalculationStepForStudent(
-        studentId,
-        programYearId,
-      );
-
-    // If an ongoing calculation is happening all other assessments for given student in program year
-    // must wait until the calculation is complete and saved to the system.
-    // Also if a worker job is terminated after updating the calculation start date
-    // for an assessment, then the assessment must proceed for the calculation.
-    if (
-      assessmentInCalculationStep &&
-      assessmentInCalculationStep.id !== assessmentId
-    ) {
-      return false;
-    }
-    const result = await this.getOutstandingAssessmentsForStudentInSequence(
-      studentId,
-      programYearId,
-    );
-    const [firstOutstandingStudentAssessment] = result;
-    return firstOutstandingStudentAssessment.id === assessmentId;
-  }
-
-  /**
    * Get all outstanding student assessments to be calculated
    * in the order of original assessment study start date.
    * @param studentId student id.
    * @param programYearId program year id.
    * @returns student assessment to be calculated.
    */
-  private async getOutstandingAssessmentsForStudentInSequence(
+  async getOutstandingAssessmentsForStudentInSequence(
     studentId: number,
     programYearId: number,
   ): Promise<StudentAssessmentDetail[]> {
@@ -436,7 +396,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * @param programYearId program year id.
    * @returns assessment in calculation process.
    */
-  private async getAssessmentInCalculationStepForStudent(
+  async getAssessmentInCalculationStepForStudent(
     studentId: number,
     programYearId: number,
   ): Promise<StudentAssessment> {
@@ -458,5 +418,22 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         },
       },
     });
+  }
+
+  /**
+   * Set assessment calculation start date.
+   * @param assessmentId assessment id.
+   * @returns update result.
+   */
+  async saveAssessmentCalculationStartDate(assessmentId: number) {
+    const now = new Date();
+    return this.repo.update(
+      { id: assessmentId, calculationStartDate: IsNull() },
+      {
+        calculationStartDate: now,
+        modifier: this.systemUsersService.systemUser,
+        updatedAt: now,
+      },
+    );
   }
 }

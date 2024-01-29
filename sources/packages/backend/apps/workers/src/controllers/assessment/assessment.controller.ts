@@ -273,13 +273,60 @@ export class AssessmentController {
         jobLogger.error(message);
         return job.error(ASSESSMENT_NOT_FOUND, message);
       }
-      const isReadyForCalculation =
-        await this.studentAssessmentService.verifyAssessmentCalculationOrder(
-          job.variables.assessmentId,
-          assessment.application.student.id,
-          assessment.application.programYear.id,
+      const assessmentId = job.variables.assessmentId;
+      const studentId = assessment.application.student.id;
+      const programYearId = assessment.application.programYear.id;
+      jobLogger.log(
+        `Verifying the assessment calculation order for assessment: ${assessmentId} student:${studentId} program year: ${programYearId}.`,
+      );
+      // Check for any assessment with ongoing calculation.
+      const assessmentInCalculationStep =
+        await this.studentAssessmentService.getAssessmentInCalculationStepForStudent(
+          studentId,
+          programYearId,
         );
-      jobLogger.log("Assessment calculation sequence has been verified.");
+
+      // If an ongoing calculation is happening all other assessments for given student in program year
+      // must wait until the calculation is complete and saved to the system.
+      // Also if a worker job is terminated by any chance after updating the calculation start date
+      // for an assessment, then the assessment must proceed for the calculation.
+      if (
+        assessmentInCalculationStep &&
+        assessmentInCalculationStep.id !== assessmentId
+      ) {
+        jobLogger.log(
+          `There is ongoing calculation happening for assessment: ${assessmentInCalculationStep.id} ` +
+            `and hence assessment : ${assessmentId} is waiting for that calculation to complete.`,
+        );
+        return job.complete({ isReadyForCalculation: false });
+      }
+      jobLogger.log(
+        `There is no ongoing calculation happening while verifying the order for assessment: ${assessment}.`,
+      );
+      // Get the first outstanding assessment waiting for calculation as per the sequence.
+      const [firstOutstandingStudentAssessment] =
+        await this.studentAssessmentService.getOutstandingAssessmentsForStudentInSequence(
+          studentId,
+          programYearId,
+        );
+      jobLogger.log(
+        `The first outstanding assessment is identified to be assessment: ${firstOutstandingStudentAssessment.id} ` +
+          `with original assessment start date: ${firstOutstandingStudentAssessment.originalAssessmentStudyStartDate} ` +
+          `while verifying the order for assessment: ${assessmentId}.`,
+      );
+      // If the processing assessment is same as first outstanding assessment
+      // then proceed for calculation.
+      const isReadyForCalculation =
+        firstOutstandingStudentAssessment.id === job.variables.assessmentId;
+      if (isReadyForCalculation) {
+        await this.studentAssessmentService.saveAssessmentCalculationStartDate(
+          assessmentId,
+        );
+      }
+      jobLogger.log(
+        `The assessment calculation order has been verified and ready for calculation status is ${isReadyForCalculation} ` +
+          `for assessment: ${assessmentId}.`,
+      );
       return job.complete({ isReadyForCalculation });
     } catch (error: unknown) {
       return createUnexpectedJobFail(error, job, {
