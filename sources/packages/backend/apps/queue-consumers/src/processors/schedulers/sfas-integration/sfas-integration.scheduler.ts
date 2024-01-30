@@ -6,6 +6,7 @@ import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
 import { SFASIntegrationProcessingService } from "@sims/integrations/sfas-integration";
 import { QueueProcessSummary } from "../../models/processors.models";
+import { ConfigService } from "@sims/utilities/config";
 
 /**
  * Process all SFAS integration files from the SFTP location.
@@ -17,8 +18,9 @@ export class SFASIntegrationScheduler extends BaseScheduler<void> {
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly sfasIntegrationProcessingService: SFASIntegrationProcessingService,
+    protected readonly configService: ConfigService,
   ) {
-    super(schedulerQueue, queueService);
+    super(schedulerQueue, queueService, configService);
   }
 
   /**

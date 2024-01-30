@@ -6,6 +6,7 @@ import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
 import { CRAValidationResult } from "./models/cra-validation-result.dto";
+import { ConfigService } from "@sims/utilities/config";
 
 @Processor(QueueNames.CRAProcessIntegration)
 export class CRAProcessIntegrationScheduler extends BaseScheduler<void> {
@@ -14,8 +15,9 @@ export class CRAProcessIntegrationScheduler extends BaseScheduler<void> {
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly cra: CRAIncomeVerificationProcessingService,
+    protected readonly configService: ConfigService,
   ) {
-    super(schedulerQueue, queueService);
+    super(schedulerQueue, queueService, configService);
   }
 
   /**

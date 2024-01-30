@@ -15,6 +15,7 @@ import {
   logProcessSummaryToJobLogger,
 } from "../../../utilities";
 import { AssessmentWorkflowQueueRetryInDTO } from "./models/assessment-workflow-queue-retry.dto";
+import { ConfigService } from "@sims/utilities/config";
 
 /**
  * Retry assessments.
@@ -26,8 +27,9 @@ export class WorkflowQueueRetryScheduler extends BaseScheduler<AssessmentWorkflo
     schedulerQueue: Queue<AssessmentWorkflowQueueRetryInDTO>,
     queueService: QueueService,
     private readonly workflowEnqueuerService: WorkflowEnqueuerService,
+    protected readonly configService: ConfigService,
   ) {
-    super(schedulerQueue, queueService);
+    super(schedulerQueue, queueService, configService);
   }
 
   /**

@@ -8,6 +8,7 @@ import { Job, Queue } from "bull";
 import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
 import { MSFAARequestResult } from "../models/msfaa-file-result.models";
+import { ConfigService } from "@sims/utilities/config";
 
 @Processor(QueueNames.FullTimeMSFAAIntegration)
 export class FullTimeMSFAAProcessIntegrationScheduler extends BaseScheduler<void> {
@@ -16,8 +17,9 @@ export class FullTimeMSFAAProcessIntegrationScheduler extends BaseScheduler<void
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly msfaaRequestService: MSFAARequestProcessingService,
+    protected readonly configService: ConfigService,
   ) {
-    super(schedulerQueue, queueService);
+    super(schedulerQueue, queueService, configService);
   }
 
   /**

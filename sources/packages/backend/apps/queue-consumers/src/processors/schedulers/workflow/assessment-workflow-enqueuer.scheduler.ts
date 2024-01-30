@@ -13,6 +13,7 @@ import {
   getSuccessMessageWithAttentionCheck,
   logProcessSummaryToJobLogger,
 } from "../../../utilities";
+import { ConfigService } from "@sims/utilities/config";
 
 /**
  * Search for assessments that have some pending operation, for instance,
@@ -25,8 +26,9 @@ export class AssessmentWorkflowEnqueuerScheduler extends BaseScheduler<void> {
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly workflowEnqueuerService: WorkflowEnqueuerService,
+    protected readonly configService: ConfigService,
   ) {
-    super(schedulerQueue, queueService);
+    super(schedulerQueue, queueService, configService);
   }
 
   /**

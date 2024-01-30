@@ -6,6 +6,7 @@ import { Job, Queue } from "bull";
 import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
 import { ESDCFileResponse } from "../models/esdc.models";
+import { ConfigService } from "@sims/utilities/config";
 
 @Processor(QueueNames.FullTimeFeedbackIntegration)
 export class FullTimeECertFeedbackIntegrationScheduler extends BaseScheduler<void> {
@@ -14,8 +15,9 @@ export class FullTimeECertFeedbackIntegrationScheduler extends BaseScheduler<voi
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly fullTimeECertFileHandler: FullTimeECertFileHandler,
+    protected readonly configService: ConfigService,
   ) {
-    super(schedulerQueue, queueService);
+    super(schedulerQueue, queueService, configService);
   }
 
   /**

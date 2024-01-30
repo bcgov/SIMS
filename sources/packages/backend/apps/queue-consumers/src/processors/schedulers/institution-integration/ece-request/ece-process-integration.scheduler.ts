@@ -6,6 +6,7 @@ import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
 import { QueueProcessSummaryResult } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
+import { ConfigService } from "@sims/utilities/config";
 
 @Processor(QueueNames.ECEProcessIntegration)
 export class ECEProcessIntegrationScheduler extends BaseScheduler<void> {
@@ -14,8 +15,9 @@ export class ECEProcessIntegrationScheduler extends BaseScheduler<void> {
     schedulerQueue: Queue<void>,
     private readonly eceFileService: ECEProcessingService,
     queueService: QueueService,
+    protected readonly configService: ConfigService,
   ) {
-    super(schedulerQueue, queueService);
+    super(schedulerQueue, queueService, configService);
   }
 
   /**

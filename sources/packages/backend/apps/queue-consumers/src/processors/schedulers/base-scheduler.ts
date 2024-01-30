@@ -1,6 +1,7 @@
 import { LoggerService, OnApplicationBootstrap } from "@nestjs/common";
 import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
+import { ConfigService } from "@sims/utilities/config";
 import { InjectLogger } from "@sims/utilities/logger";
 import { CronRepeatOptions, Queue } from "bull";
 
@@ -8,6 +9,7 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
   constructor(
     protected schedulerQueue: Queue<T>,
     protected queueService: QueueService,
+    protected configService: ConfigService,
   ) {}
 
   /**
@@ -47,9 +49,16 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
    * any old cron job delete it and add the new job to the queue.
    */
   async onApplicationBootstrap(): Promise<void> {
+    const isFulltimeAllowed = this.configService.isFulltimeAllowed;
     await this.deleteOldRepeatableJobs();
     // Add the cron to the queue.
-    await this.schedulerQueue.add(await this.payload());
+    if (
+      isFulltimeAllowed ||
+      (!isFulltimeAllowed &&
+        !this.schedulerQueue.name.startsWith("full-time", 0))
+    ) {
+      await this.schedulerQueue.add(await this.payload());
+    }
   }
 
   /**

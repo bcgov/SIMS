@@ -7,6 +7,7 @@ import {
   QueueProcessSummary,
   QueueProcessSummaryResult,
 } from "../../models/processors.models";
+import { ConfigService } from "@sims/utilities/config";
 
 /**
  * Process all the applied PD requests to verify the status with ATBC.
@@ -16,8 +17,9 @@ export class ATBCResponseIntegrationScheduler extends BaseScheduler<void> {
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly atbcIntegrationProcessingService: ATBCIntegrationProcessingService,
+    protected readonly configService: ConfigService,
   ) {
-    super(schedulerQueue, queueService);
+    super(schedulerQueue, queueService, configService);
   }
 
   /**

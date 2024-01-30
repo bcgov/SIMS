@@ -7,6 +7,7 @@ import { Job, Queue } from "bull";
 import { QueueProcessSummaryResult } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
 import { GeneratedDateQueueInDTO } from "./models/ier.model";
+import { ConfigService } from "@sims/utilities/config";
 
 @Processor(QueueNames.IER12Integration)
 export class IER12IntegrationScheduler extends BaseScheduler<GeneratedDateQueueInDTO> {
@@ -15,8 +16,9 @@ export class IER12IntegrationScheduler extends BaseScheduler<GeneratedDateQueueI
     schedulerQueue: Queue<GeneratedDateQueueInDTO>,
     private readonly ierRequest: IER12ProcessingService,
     queueService: QueueService,
+    protected readonly configService: ConfigService,
   ) {
-    super(schedulerQueue, queueService);
+    super(schedulerQueue, queueService, configService);
   }
 
   /**
