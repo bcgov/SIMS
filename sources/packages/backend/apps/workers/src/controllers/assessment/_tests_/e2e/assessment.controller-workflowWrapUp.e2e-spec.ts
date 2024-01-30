@@ -41,8 +41,6 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
     const result = await assessmentController.workflowWrapUp(
       createFakeWorkflowWrapUpPayload(
         savedApplication.currentAssessment.id,
-        savedApplication.student.id,
-        savedApplication.programYear.id,
         workflowData,
       ),
     );

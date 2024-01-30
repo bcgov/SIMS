@@ -1,5 +1,3 @@
-import { StudentAssessment } from "@sims/sims-db";
-
 /**
  * Student assessment detail consisting of original assessment study start date
  * of the application to which the assessment belongs to.
@@ -8,6 +6,7 @@ import { StudentAssessment } from "@sims/sims-db";
  ** the study start date of only the original assessment is considered to determine the order and hence
  ** it is required in the result of sequentially ordered assessment details for a student.
  */
-export class StudentAssessmentDetail extends StudentAssessment {
+export interface StudentAssessmentDetail {
+  id: number;
   originalAssessmentStudyStartDate: Date;
 }

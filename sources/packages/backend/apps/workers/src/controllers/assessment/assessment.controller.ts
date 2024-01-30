@@ -40,8 +40,6 @@ import {
 import {
   ASSESSMENT_DATA,
   ASSESSMENT_ID,
-  PROGRAM_YEAR_ID,
-  STUDENT_ID,
   WORKFLOW_DATA,
 } from "@sims/services/workflow/variables/assessment-gateway";
 import { CustomNamedError } from "@sims/utilities";
@@ -214,7 +212,7 @@ export class AssessmentController {
    * Worker to be executed at very end of the workflow responsible for latest tasks before the `end event`.
    */
   @ZeebeWorker(Workers.WorkflowWrapUp, {
-    fetchVariable: [ASSESSMENT_ID, STUDENT_ID, PROGRAM_YEAR_ID, WORKFLOW_DATA],
+    fetchVariable: [ASSESSMENT_ID, WORKFLOW_DATA],
     maxJobsToActivate: MaxJobsToActivate.Normal,
   })
   async workflowWrapUp(
@@ -224,14 +222,25 @@ export class AssessmentController {
   ): Promise<MustReturnJobActionAcknowledgement> {
     const jobLogger = new Logger(job.type);
     try {
+      const assessment =
+        await this.studentAssessmentService.getAssessmentSummary(
+          job.variables.assessmentId,
+        );
+      if (!assessment) {
+        const message = "Assessment not found.";
+        jobLogger.error(message);
+        return job.error(ASSESSMENT_NOT_FOUND, message);
+      }
       await this.studentAssessmentService.updateAssessmentStatusAndSaveWorkflowData(
         job.variables.assessmentId,
         job.variables.workflowData,
       );
+      const studentId = assessment.application.student.id;
+      const programYearId = assessment.application.programYear.id;
       // Send message to unblock the assessments which are waiting for this assessment if any.
       await this.workflowClientService.sendAssessmentCalculationCompleteMessage(
-        job.variables.studentId,
-        job.variables.programYearId,
+        studentId,
+        programYearId,
       );
       jobLogger.log("Updated assessment status and saved the workflow data.");
       return job.complete();
@@ -265,9 +274,10 @@ export class AssessmentController {
   ): Promise<MustReturnJobActionAcknowledgement> {
     const jobLogger = new Logger(job.type);
     try {
-      const assessment = await this.studentAssessmentService.getById(
-        job.variables.assessmentId,
-      );
+      const assessment =
+        await this.studentAssessmentService.getAssessmentSummary(
+          job.variables.assessmentId,
+        );
       if (!assessment) {
         const message = "Assessment not found.";
         jobLogger.error(message);
@@ -305,14 +315,14 @@ export class AssessmentController {
         `There is no ongoing calculation happening while verifying the order for processing assessment id ${assessmentId}.`,
       );
       // Get the first outstanding assessment waiting for calculation as per the sequence.
-      const [firstOutstandingStudentAssessment] =
+      const firstOutstandingStudentAssessment =
         await this.studentAssessmentService.getOutstandingAssessmentsForStudentInSequence(
           studentId,
           programYearId,
         );
       jobLogger.log(
         `The first outstanding assessment is identified to be assessment id ${firstOutstandingStudentAssessment.id} ` +
-          `with original assessment start date: ${firstOutstandingStudentAssessment.originalAssessmentStudyStartDate} ` +
+          `with original assessment start date  ${firstOutstandingStudentAssessment.originalAssessmentStudyStartDate} ` +
           `while verifying the order for processing assessment id ${assessmentId}.`,
       );
       // If the processing assessment is same as first outstanding assessment

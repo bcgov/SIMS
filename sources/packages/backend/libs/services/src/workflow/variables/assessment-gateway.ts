@@ -41,11 +41,3 @@ export const DISBURSEMENT_SCHEDULES = "disbursementSchedules";
  * is executed for easy application consumption.
  */
 export const WORKFLOW_DATA = "workflowData";
-/**
- * Student who submitted the application.
- */
-export const STUDENT_ID = "studentId";
-/**
- * Program year of the processing assessment.
- */
-export const PROGRAM_YEAR_ID = "programYearId";

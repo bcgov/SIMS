@@ -7,17 +7,9 @@ import {
   StudentAssessment,
   StudentAssessmentStatus,
   WorkflowData,
-  mapFromRawAndEntities,
 } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
-import {
-  DataSource,
-  EntityManager,
-  In,
-  IsNull,
-  Not,
-  UpdateResult,
-} from "typeorm";
+import { DataSource, EntityManager, IsNull, Not, UpdateResult } from "typeorm";
 import {
   ASSESSMENT_NOT_FOUND,
   ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW,
@@ -334,7 +326,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   }
 
   /**
-   * Get all outstanding student assessments to be calculated
+   * Get first outstanding student assessment to be calculated
    * in the order of original assessment study start date.
    * @param studentId student id.
    * @param programYearId program year id.
@@ -343,7 +335,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   async getOutstandingAssessmentsForStudentInSequence(
     studentId: number,
     programYearId: number,
-  ): Promise<StudentAssessmentDetail[]> {
+  ): Promise<StudentAssessmentDetail> {
     const originalAssessmentStudyStartDateAlias =
       "originalAssessmentStudyStartDate";
     // Sub query to get the original assessment study start date of a given assessment's application.
@@ -353,37 +345,39 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .innerJoin("studentAssessment.offering", "offering")
       .where("studentAssessment.application.id = assessment.application.id")
       .andWhere("studentAssessment.triggerType = :triggerType")
+      .limit(1)
       .getSql();
 
-    const studentAssessmentsResult = await this.repo
-      .createQueryBuilder("assessment")
-      .select("assessment.id")
-      .addSelect(
-        `(${originalAssessmentDateSubQuery})`,
-        originalAssessmentStudyStartDateAlias,
-      )
-      .innerJoin("assessment.application", "application")
-      .where(
-        "assessment.studentAssessmentStatus NOT IN (:...studentAssessmentStatus)",
-      )
-      .andWhere("assessment.offering IS NOT NULL")
-      .andWhere("application.student.id = :studentId")
-      .andWhere("application.programYear.id = :programYearId")
-      .setParameter("triggerType", AssessmentTriggerType.OriginalAssessment)
-      .setParameter("studentAssessmentStatus", [
-        StudentAssessmentStatus.Completed,
-        StudentAssessmentStatus.CancellationRequested,
-        StudentAssessmentStatus.CancellationQueued,
-        StudentAssessmentStatus.Cancelled,
-      ])
-      .setParameter("studentId", studentId)
-      .setParameter("programYearId", programYearId)
-      .orderBy(`"${originalAssessmentStudyStartDateAlias}"`)
-      .addOrderBy("assessment.createdAt")
-      .getRawAndEntities();
-    return mapFromRawAndEntities<StudentAssessmentDetail>(
-      studentAssessmentsResult,
-      originalAssessmentStudyStartDateAlias,
+    return (
+      this.repo
+        .createQueryBuilder("assessment")
+        .select("assessment.id", "id")
+        .addSelect(
+          `(${originalAssessmentDateSubQuery})`,
+          originalAssessmentStudyStartDateAlias,
+        )
+        .innerJoin("assessment.application", "application")
+        .where(
+          "assessment.studentAssessmentStatus NOT IN (:...studentAssessmentStatus)",
+        )
+        // Exclude the assessments which are waiting for PIR confirmation
+        // as they do not have a confirmed study start date.
+        .andWhere("assessment.offering IS NOT NULL")
+        .andWhere("application.student.id = :studentId")
+        .andWhere("application.programYear.id = :programYearId")
+        .setParameter("triggerType", AssessmentTriggerType.OriginalAssessment)
+        .setParameter("studentAssessmentStatus", [
+          StudentAssessmentStatus.Completed,
+          StudentAssessmentStatus.CancellationRequested,
+          StudentAssessmentStatus.CancellationQueued,
+          StudentAssessmentStatus.Cancelled,
+        ])
+        .setParameter("studentId", studentId)
+        .setParameter("programYearId", programYearId)
+        .orderBy(`"${originalAssessmentStudyStartDateAlias}"`)
+        .addOrderBy("assessment.createdAt")
+        .limit(1)
+        .getRawOne<StudentAssessmentDetail>()
     );
   }
 
@@ -404,14 +398,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       select: { id: true },
       where: {
         calculationStartDate: Not(IsNull()),
-        studentAssessmentStatus: Not(
-          In([
-            StudentAssessmentStatus.Completed,
-            StudentAssessmentStatus.CancellationRequested,
-            StudentAssessmentStatus.CancellationQueued,
-            StudentAssessmentStatus.Cancelled,
-          ]),
-        ),
+        studentAssessmentStatus: StudentAssessmentStatus.InProgress,
         application: {
           student: { id: studentId },
           programYear: { id: programYearId },
@@ -422,6 +409,8 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
 
   /**
    * Set assessment calculation start date.
+   ** Save only when the calculation start date is not present
+   ** considering the need of workers to be idempotent.
    * @param assessmentId assessment id.
    * @returns update result.
    */
@@ -435,5 +424,25 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         updatedAt: now,
       },
     );
+  }
+
+  /**
+   * Get assessment summary details.
+   * @param assessmentId assessment id.
+   * @returns assessment summary details.
+   */
+  async getAssessmentSummary(assessmentId: number): Promise<StudentAssessment> {
+    return this.repo.findOne({
+      select: {
+        id: true,
+        application: {
+          id: true,
+          student: { id: true },
+          programYear: { id: true },
+        },
+      },
+      relations: { application: { student: true, programYear: true } },
+      where: { id: assessmentId },
+    });
   }
 }

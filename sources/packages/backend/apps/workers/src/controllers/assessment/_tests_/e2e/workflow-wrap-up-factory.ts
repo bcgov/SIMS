@@ -11,8 +11,6 @@ import { WorkflowWrapUpJobInDTO } from "../../assessment.dto";
  */
 export function createFakeWorkflowWrapUpPayload(
   assessmentId: number,
-  studentId: number,
-  programYearId: number,
   workflowData: WorkflowData,
 ): Readonly<
   ZeebeJob<WorkflowWrapUpJobInDTO, ICustomHeaders, IOutputVariables>
@@ -22,6 +20,6 @@ export function createFakeWorkflowWrapUpPayload(
     ICustomHeaders,
     IOutputVariables
   >({
-    variables: { assessmentId, studentId, programYearId, workflowData },
+    variables: { assessmentId, workflowData },
   });
 }
