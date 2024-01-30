@@ -143,21 +143,28 @@ export class CancelApplicationAssessmentProcessor {
         transactionEntityManager,
       );
       await summary.info("Overawards rollback check executed.");
-      await summary.info(
-        "Assessing if there is a future impacted application that need to be reassessed.",
-      );
-      const impactedApplication =
-        await this.assessmentSequentialProcessingService.assessImpactedApplicationReassessmentNeeded(
-          job.data.assessmentId,
-          this.systemUserService.systemUser.id,
-          transactionEntityManager,
-        );
-      if (impactedApplication) {
+      if (
+        assessment.application.applicationStatus !==
+        ApplicationStatus.Overwritten
+      ) {
         await summary.info(
-          `Application id ${impactedApplication.id} was detected as impacted and will be reassessed.`,
+          "Assessing if there is a future impacted application that need to be reassessed.",
         );
-      } else {
-        await summary.info("No impacts were detected on future applications.");
+        const impactedApplication =
+          await this.assessmentSequentialProcessingService.assessImpactedApplicationReassessmentNeeded(
+            job.data.assessmentId,
+            this.systemUserService.systemUser.id,
+            transactionEntityManager,
+          );
+        if (impactedApplication) {
+          await summary.info(
+            `Application id ${impactedApplication.id} was detected as impacted and will be reassessed.`,
+          );
+        } else {
+          await summary.info(
+            "No impacts were detected on future applications.",
+          );
+        }
       }
       await summary.info("Assessment cancelled with success.");
       return summary.getSummary();

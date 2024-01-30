@@ -117,7 +117,11 @@ describe(
         `Found workflow id ${workflowInstanceId}.`,
         "Workflow instance successfully cancelled.",
         "Changing student assessment status to Cancelled.",
+        "Assessment status updated to Cancelled.",
         "Rolling back overawards, if any.",
+        "Overawards rollback check executed.",
+        "Assessing if there is a future impacted application that need to be reassessed.",
+        "No impacts were detected on future applications.",
         "Assessment cancelled with success.",
       ]);
 
