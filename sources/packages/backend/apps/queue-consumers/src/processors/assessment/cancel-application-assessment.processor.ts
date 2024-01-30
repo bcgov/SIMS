@@ -112,22 +112,6 @@ export class CancelApplicationAssessmentProcessor {
             "This can happen if the workflow was already completed or if it was cancelled, for instance, manually using the workflow UI. " +
             "This is not considered an error and the cancellation can proceed.",
         );
-      } finally {
-        await summary.info(
-          "Assessing if there is an impacted application that need to be reassessed.",
-        );
-        const impactedApplication =
-          await this.assessmentSequentialProcessingService.assessImpactedApplicationReassessmentNeeded(
-            job.data.assessmentId,
-            this.systemUserService.systemUser.id,
-          );
-        if (impactedApplication) {
-          await summary.info(
-            `Application ${impactedApplication.applicationNumber} detected as impacted and will be reassessed.`,
-          );
-        } else {
-          await summary.info("No impacts detected.");
-        }
       }
     } else {
       // Unless there is some data integrity issue this scenario can happen only if the student application was submitted
@@ -145,6 +129,9 @@ export class CancelApplicationAssessmentProcessor {
         .update(assessment.id, {
           studentAssessmentStatus: StudentAssessmentStatus.Cancelled,
         });
+      await summary.info(
+        `Assessment status updated to ${StudentAssessmentStatus.Cancelled}.`,
+      );
       // Overawards rollback.
       // This method is safe to be called independently of the workflow state but it makes sense only after the
       // application moves from the 'In progress' status when the disbursements are generated.
@@ -155,6 +142,23 @@ export class CancelApplicationAssessmentProcessor {
         assessment.id,
         transactionEntityManager,
       );
+      await summary.info("Overawards rollback check executed.");
+      await summary.info(
+        "Assessing if there is a future impacted application that need to be reassessed.",
+      );
+      const impactedApplication =
+        await this.assessmentSequentialProcessingService.assessImpactedApplicationReassessmentNeeded(
+          job.data.assessmentId,
+          this.systemUserService.systemUser.id,
+          transactionEntityManager,
+        );
+      if (impactedApplication) {
+        await summary.info(
+          `Application id ${impactedApplication.id} was detected as impacted and will be reassessed.`,
+        );
+      } else {
+        await summary.info("No impacts were detected on future applications.");
+      }
       await summary.info("Assessment cancelled with success.");
       return summary.getSummary();
     });
