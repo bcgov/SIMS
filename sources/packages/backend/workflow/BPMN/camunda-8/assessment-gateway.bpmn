@@ -81,16 +81,16 @@
         <bpmn:flowNodeRef>ready-for-calculation-gateway</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>verify-assessment-calculation-order-gateway</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>verify-assessment-calculation-timer</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>assessment-calculation-completed-message</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>release-assessment-calculation-message</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
-    <bpmn:sequenceFlow id="Flow_1eip27h" sourceRef="verify-assessment-calculation-order-gateway" targetRef="assessment-calculation-completed-message" />
+    <bpmn:sequenceFlow id="Flow_1eip27h" sourceRef="verify-assessment-calculation-order-gateway" targetRef="release-assessment-calculation-message" />
     <bpmn:sequenceFlow id="Flow_0bza37i" sourceRef="verify-assessment-calculation-order-gateway" targetRef="verify-assessment-calculation-timer" />
     <bpmn:sequenceFlow id="Flow_16zz7zb" name="Waiting for another assessment to complete" sourceRef="ready-for-calculation-gateway" targetRef="verify-assessment-calculation-order-gateway">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=isReadyForCalculation = false</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0wp1s62" sourceRef="verify-assessment-calculation-order-task" targetRef="ready-for-calculation-gateway" />
-    <bpmn:sequenceFlow id="Flow_0358dxp" sourceRef="assessment-calculation-completed-message" targetRef="verify-assessment-calculation-order-task" />
+    <bpmn:sequenceFlow id="Flow_0358dxp" sourceRef="release-assessment-calculation-message" targetRef="verify-assessment-calculation-order-task" />
     <bpmn:sequenceFlow id="Flow_0umbeot" sourceRef="verify-assessment-calculation-timer" targetRef="verify-assessment-calculation-order-task" />
     <bpmn:sequenceFlow id="Flow_0z518wc" sourceRef="Gateway_04wql0w" targetRef="Event_0w0bgro" />
     <bpmn:sequenceFlow id="Flow_0hmh3m7" sourceRef="update-noa-status-to-not-required-task" targetRef="Gateway_04wql0w" />
@@ -764,7 +764,7 @@
       <bpmn:outgoing>assessment-flow</bpmn:outgoing>
       <bpmn:outgoing>Flow_0ozt4pg</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:intermediateCatchEvent id="assessment-calculation-completed-message">
+    <bpmn:intermediateCatchEvent id="release-assessment-calculation-message">
       <bpmn:incoming>Flow_1eip27h</bpmn:incoming>
       <bpmn:outgoing>Flow_0358dxp</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_1tq976n" messageRef="Message_16elhuc" />
@@ -798,7 +798,7 @@
     <bpmn:categoryValue id="CategoryValue_1mp96t6" value="Parents Income Verification" />
   </bpmn:category>
   <bpmn:message id="Message_39mgqc7" name="Message_39mgqc7" />
-  <bpmn:message id="Message_16elhuc" name="assessment-calculation-completed">
+  <bpmn:message id="Message_16elhuc" name="release-assessment-calculation">
     <bpmn:extensionElements>
       <zeebe:subscription correlationKey="=assessmentId" />
     </bpmn:extensionElements>
@@ -1073,7 +1073,7 @@
           <dc:Bounds x="577" y="557" width="90" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0teq2x0_di" bpmnElement="assessment-calculation-completed-message">
+      <bpmndi:BPMNShape id="Event_0teq2x0_di" bpmnElement="release-assessment-calculation-message">
         <dc:Bounds x="2102" y="1632" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0g9dtl6_di" bpmnElement="TextAnnotation_0g9dtl6">

@@ -413,7 +413,9 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * @param assessmentId assessment id.
    * @returns update result.
    */
-  async saveAssessmentCalculationStartDate(assessmentId: number) {
+  async saveAssessmentCalculationStartDate(
+    assessmentId: number,
+  ): Promise<UpdateResult> {
     const now = new Date();
     return this.repo.update(
       { id: assessmentId, calculationStartDate: IsNull() },

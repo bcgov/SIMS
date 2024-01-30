@@ -178,12 +178,12 @@ export class WorkflowClientService {
    * in the sequence to be calculated.
    * @param assessmentId assessment waiting for calculation.
    */
-  async sendAssessmentCalculationCompleteMessage(
+  async sendReleaseAssessmentCalculationMessage(
     assessmentId: number,
   ): Promise<void> {
     try {
       await this.zeebeClient.publishMessage({
-        name: "assessment-calculation-completed",
+        name: "release-assessment-calculation",
         correlationKey: `${assessmentId}`,
         timeToLive: ZEEBE_PUBLISH_MESSAGE_DEFAULT_TIME_TO_LEAVE,
       });

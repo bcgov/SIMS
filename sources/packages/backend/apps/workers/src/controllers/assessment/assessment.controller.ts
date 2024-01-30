@@ -249,7 +249,7 @@ export class AssessmentController {
             "waiting to be calculated next.",
         );
         // Send message to unblock the assessment which is waiting for calculation.
-        await this.workflowClientService.sendAssessmentCalculationCompleteMessage(
+        await this.workflowClientService.sendReleaseAssessmentCalculationMessage(
           nextOutstandingAssessmentInSequence.id,
         );
       }
