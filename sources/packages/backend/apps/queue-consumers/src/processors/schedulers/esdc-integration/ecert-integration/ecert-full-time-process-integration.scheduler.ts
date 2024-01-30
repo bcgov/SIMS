@@ -6,6 +6,7 @@ import { Queue } from "bull";
 import { FullTimeCalculationProcess } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { ECertProcessIntegrationBaseScheduler } from "./ecert-process-integration-base.scheduler";
+import { ConfigService } from "@sims/utilities/config";
 
 @Processor(QueueNames.FullTimeECertIntegration)
 export class FullTimeECertProcessIntegrationScheduler extends ECertProcessIntegrationBaseScheduler {
@@ -15,12 +16,14 @@ export class FullTimeECertProcessIntegrationScheduler extends ECertProcessIntegr
     queueService: QueueService,
     fullTimeCalculationProcess: FullTimeCalculationProcess,
     fullTimeECertFileHandler: FullTimeECertFileHandler,
+    protected readonly configService: ConfigService,
   ) {
     super(
       schedulerQueue,
       queueService,
       fullTimeCalculationProcess,
       fullTimeECertFileHandler,
+      configService,
     );
   }
 
