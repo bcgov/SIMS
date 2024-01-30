@@ -21,7 +21,6 @@ export interface AssessmentDataJobInDTO {
 }
 
 export interface ProgramYearJobOutDTO {
-  programYearId: number;
   programYear: string;
   startDate: string;
   endDate: string;
@@ -55,7 +54,6 @@ export interface ApplicationLocationJobOutDTO {
 }
 
 export interface ApplicationStudentJobOutDTO {
-  studentId: number;
   craReportedIncome?: number;
   taxYear?: number;
 }

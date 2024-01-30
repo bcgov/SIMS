@@ -237,11 +237,22 @@ export class AssessmentController {
       );
       const studentId = assessment.application.student.id;
       const programYearId = assessment.application.programYear.id;
-      // Send message to unblock the assessments which are waiting for this assessment if any.
-      await this.workflowClientService.sendAssessmentCalculationCompleteMessage(
-        studentId,
-        programYearId,
-      );
+      // Check for any assessment which is waiting for calculation.
+      const nextOutstandingAssessmentInSequence =
+        await this.studentAssessmentService.getOutstandingAssessmentsForStudentInSequence(
+          studentId,
+          programYearId,
+        );
+      if (nextOutstandingAssessmentInSequence) {
+        jobLogger.log(
+          `Assessment with assessment id ${nextOutstandingAssessmentInSequence.id} is ` +
+            "waiting to be calculated next.",
+        );
+        // Send message to unblock the assessment which is waiting for calculation.
+        await this.workflowClientService.sendAssessmentCalculationCompleteMessage(
+          nextOutstandingAssessmentInSequence.id,
+        );
+      }
       jobLogger.log("Updated assessment status and saved the workflow data.");
       return job.complete();
     } catch (error: unknown) {
@@ -367,7 +378,6 @@ export class AssessmentController {
       triggerType: assessment.triggerType,
       data: application.data,
       programYear: {
-        programYearId: application.programYear.id,
         programYear: application.programYear.programYear,
         startDate: application.programYear.startDate,
         endDate: application.programYear.endDate,
@@ -397,7 +407,6 @@ export class AssessmentController {
           institutionLocation?.data.address?.provinceState,
       },
       student: {
-        studentId: application.student.id,
         craReportedIncome: studentCRAIncome?.craReportedIncome,
         taxYear: studentCRAIncome?.taxYear,
       },

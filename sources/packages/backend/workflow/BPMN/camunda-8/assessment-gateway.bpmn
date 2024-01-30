@@ -436,8 +436,6 @@
           <zeebe:output source="=null" target="partner1TotalIncome" />
           <zeebe:output source="=null" target="studentDataTaxReturnIncome" />
           <zeebe:output source="=[]" target="parentSubprocesses" />
-          <zeebe:output source="=null" target="studentId" />
-          <zeebe:output source="=null" target="programYearId" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_1ef3map</bpmn:outgoing>
@@ -802,7 +800,7 @@
   <bpmn:message id="Message_39mgqc7" name="Message_39mgqc7" />
   <bpmn:message id="Message_16elhuc" name="assessment-calculation-completed">
     <bpmn:extensionElements>
-      <zeebe:subscription correlationKey="=string(studentId) + &#34;-&#34; + string(programYearId) " />
+      <zeebe:subscription correlationKey="=assessmentId" />
     </bpmn:extensionElements>
   </bpmn:message>
   <bpmn:category id="Category_0e4jiqi">

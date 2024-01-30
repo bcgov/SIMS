@@ -47,8 +47,6 @@ export function createFakeAssessmentConsolidatedData(
     offeringExceptionalExpenses: 500,
     offeringWeeks: 16,
     studentDataApplicationPDPPDStatus: "noIDoNotHaveADisability",
-    studentId: 1,
-    programYearId: 1,
   };
 }
 

@@ -38,7 +38,6 @@
           <zeebe:header key="studentDataYouthInCare" value="$.data.youthInCare" />
           <zeebe:header key="studentDataApplicationPDPPDStatus" value="$.data.applicationPDPPDStatus" />
           <zeebe:header key="programYear" value="$.programYear.programYear" />
-          <zeebe:header key="programYearId" value="$.programYear.programYearId" />
           <zeebe:header key="programLocation" value="BC" />
           <zeebe:header key="institutionLocationProvince" value="$.location.institutionLocationProvince" />
           <zeebe:header key="institutionType" value="$.institution.institutionType" />
@@ -82,7 +81,6 @@
           <zeebe:header key="partner1StudentStudyWeeks" value="$.supportingUsers.Partner1.supportingData.partnerStudentStudyWeeks" />
           <zeebe:header key="studentDataCRAReportedIncome" value="$.student.craReportedIncome" />
           <zeebe:header key="studentTaxYear" value="$.student.taxYear" />
-          <zeebe:header key="studentId" value="$.student.studentId" />
           <zeebe:header key="parent1CRAReportedIncome" value="$.supportingUsers.Parent1.craReportedIncome" />
           <zeebe:header key="parent2CRAReportedIncome" value="$.supportingUsers.Parent2.craReportedIncome" />
           <zeebe:header key="partner1CRAReportedIncome" value="$.supportingUsers.Partner1.craReportedIncome" />
