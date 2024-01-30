@@ -23,6 +23,7 @@ export class PartTimeECertProcessIntegrationScheduler extends ECertProcessIntegr
       queueService,
       partTimeCalculationProcess,
       partTimeECertFileHandler,
+      configService,
     );
   }
 
