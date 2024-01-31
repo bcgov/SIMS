@@ -52,20 +52,19 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
     const isFulltimeAllowed = this.configService.isFulltimeAllowed;
     await this.deleteOldRepeatableJobs();
     // Add the cron to the queue.
+    await this.schedulerQueue.add(await this.payload());
+    // Allow Fulltime Schedulers only if isFulltimeAllowed is true
     if (
-      isFulltimeAllowed ||
-      (!isFulltimeAllowed &&
-        ![
-          QueueNames.FullTimeMSFAAIntegration,
-          QueueNames.FullTimeECertIntegration,
-          QueueNames.FullTimeFeedbackIntegration,
-          QueueNames.FullTimeDisbursementReceiptsFileIntegration,
-          QueueNames.FullTimeMSFAAProcessResponseIntegration,
-        ].includes(this.schedulerQueue.name as QueueNames))
+      !isFulltimeAllowed &&
+      [
+        QueueNames.FullTimeMSFAAIntegration,
+        QueueNames.FullTimeECertIntegration,
+        QueueNames.FullTimeFeedbackIntegration,
+        QueueNames.FullTimeDisbursementReceiptsFileIntegration,
+        QueueNames.FullTimeMSFAAProcessResponseIntegration,
+      ].includes(this.schedulerQueue.name as QueueNames)
     ) {
-      const payload = await this.payload();
-      console.log(this.schedulerQueue.name, " Payload: ", payload);
-      await this.schedulerQueue.add(payload);
+      await this.schedulerQueue.obliterate({ force: true });
     }
   }
 
