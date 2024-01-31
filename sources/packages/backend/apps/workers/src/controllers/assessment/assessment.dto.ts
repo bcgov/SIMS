@@ -145,3 +145,7 @@ export interface WorkflowWrapUpJobInDTO {
   [ASSESSMENT_ID]: number;
   [WORKFLOW_DATA]: WorkflowData;
 }
+
+export interface VerifyAssessmentCalculationOrderJobOutDTO {
+  isReadyForCalculation: boolean;
+}

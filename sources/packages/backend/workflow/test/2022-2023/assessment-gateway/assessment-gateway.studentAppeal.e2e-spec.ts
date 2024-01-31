@@ -15,6 +15,7 @@ import { PROGRAM_YEAR } from "../constants/program-year.constants";
 import {
   createWorkersMockedData,
   createLoadAssessmentDataTaskMock,
+  createVerifyAssessmentCalculationOrderTaskMock,
 } from "../../test-utils/mock";
 
 describe(`E2E Test Workflow assessment gateway on student appeal for ${PROGRAM_YEAR}`, () => {
@@ -35,6 +36,7 @@ describe(`E2E Test Workflow assessment gateway on student appeal for ${PROGRAM_Y
       createLoadAssessmentDataTaskMock({
         assessmentConsolidatedData: assessmentConsolidatedData,
       }),
+      createVerifyAssessmentCalculationOrderTaskMock(),
     ]);
 
     // Act/Assert
@@ -54,6 +56,7 @@ describe(`E2E Test Workflow assessment gateway on student appeal for ${PROGRAM_Y
       WorkflowServiceTasks.AssociateMSFAA,
       WorkflowServiceTasks.UpdateNOAStatusToNotRequired,
       WorkflowServiceTasks.WorkflowWrapUpTask,
+      WorkflowServiceTasks.VerifyAssessmentCalculationOrderTask,
     );
     expectNotToPassThroughServiceTasks(
       assessmentGatewayResponse.variables,
