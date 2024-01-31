@@ -55,9 +55,17 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
     if (
       isFulltimeAllowed ||
       (!isFulltimeAllowed &&
-        !this.schedulerQueue.name.startsWith("full-time", 0))
+        ![
+          QueueNames.FullTimeMSFAAIntegration,
+          QueueNames.FullTimeECertIntegration,
+          QueueNames.FullTimeFeedbackIntegration,
+          QueueNames.FullTimeDisbursementReceiptsFileIntegration,
+          QueueNames.FullTimeMSFAAProcessResponseIntegration,
+        ].includes(this.schedulerQueue.name as QueueNames))
     ) {
-      await this.schedulerQueue.add(await this.payload());
+      const payload = await this.payload();
+      console.log(this.schedulerQueue.name, " Payload: ", payload);
+      await this.schedulerQueue.add(payload);
     }
   }
 
