@@ -9,7 +9,6 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
   constructor(
     protected schedulerQueue: Queue<T>,
     protected queueService: QueueService,
-    protected configService: ConfigService,
   ) {}
 
   /**
@@ -49,10 +48,8 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
    * any old cron job delete it and add the new job to the queue.
    */
   async onApplicationBootstrap(): Promise<void> {
-    const isFulltimeAllowed = this.configService.isFulltimeAllowed;
-    await this.deleteOldRepeatableJobs();
-    // Add the cron to the queue.
-    await this.schedulerQueue.add(await this.payload());
+    // TODO: ConfigService below is not injected since it will be removed when the Fulltime is released.
+    const isFulltimeAllowed = new ConfigService().isFulltimeAllowed;
     // Allow Fulltime Schedulers only if isFulltimeAllowed is true
     if (
       !isFulltimeAllowed &&
@@ -62,10 +59,17 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
         QueueNames.FullTimeFeedbackIntegration,
         QueueNames.FullTimeDisbursementReceiptsFileIntegration,
         QueueNames.FullTimeMSFAAProcessResponseIntegration,
+        QueueNames.IER12Integration,
+        QueueNames.ECEProcessIntegration,
+        QueueNames.ECEProcessResponseIntegration,
       ].includes(this.schedulerQueue.name as QueueNames)
     ) {
       await this.schedulerQueue.obliterate({ force: true });
+      return;
     }
+    await this.deleteOldRepeatableJobs();
+    // Add the cron to the queue.
+    await this.schedulerQueue.add(await this.payload());
   }
 
   /**

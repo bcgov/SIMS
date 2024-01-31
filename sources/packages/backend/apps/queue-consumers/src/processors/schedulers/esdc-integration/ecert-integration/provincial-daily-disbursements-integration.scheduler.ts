@@ -9,7 +9,6 @@ import {
 } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
 import { DailyDisbursementReport } from "../models/esdc.models";
-import { ConfigService } from "@sims/utilities/config";
 
 @Processor(QueueNames.FINProcessProvincialDailyDisbursementsIntegration)
 export class FINProcessProvincialDailyDisbursementsIntegrationScheduler extends BaseScheduler<DailyDisbursementReport> {
@@ -18,9 +17,8 @@ export class FINProcessProvincialDailyDisbursementsIntegrationScheduler extends 
     schedulerQueue: Queue<DailyDisbursementReport>,
     queueService: QueueService,
     private readonly disbursementReceiptRequestService: DailyDisbursementReceiptProcessingService,
-    protected readonly configService: ConfigService,
   ) {
-    super(schedulerQueue, queueService, configService);
+    super(schedulerQueue, queueService);
   }
 
   /**

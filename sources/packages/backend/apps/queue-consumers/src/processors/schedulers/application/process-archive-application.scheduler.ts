@@ -9,7 +9,6 @@ import {
   QueueProcessSummaryResult,
 } from "../../models/processors.models";
 import { SystemUsersService } from "@sims/services/system-users";
-import { ConfigService } from "@sims/utilities/config";
 
 /**
  * Process applications archiving.
@@ -22,9 +21,8 @@ export class ProcessArchiveApplicationsScheduler extends BaseScheduler<void> {
     queueService: QueueService,
     private readonly applicationService: ApplicationService,
     private readonly systemUsersService: SystemUsersService,
-    protected readonly configService: ConfigService,
   ) {
-    super(schedulerQueue, queueService, configService);
+    super(schedulerQueue, queueService);
   }
 
   /**

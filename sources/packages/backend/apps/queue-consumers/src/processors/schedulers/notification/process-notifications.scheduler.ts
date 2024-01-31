@@ -6,7 +6,6 @@ import { BaseScheduler } from "../base-scheduler";
 import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
 import { QueueProcessSummaryResult } from "../../models/processors.models";
-import { ConfigService } from "@sims/utilities/config";
 
 /**
  * Process notifications which are unsent.
@@ -18,9 +17,8 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
     schedulerQueue: Queue<ProcessNotificationsQueueInDTO>,
     private readonly notificationService: NotificationService,
     queueService: QueueService,
-    protected readonly configService: ConfigService,
   ) {
-    super(schedulerQueue, queueService, configService);
+    super(schedulerQueue, queueService);
   }
 
   protected async payload(): Promise<ProcessNotificationsQueueInDTO> {

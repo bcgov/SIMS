@@ -7,7 +7,6 @@ import { Job, Queue } from "bull";
 import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
 import { ProcessResponseQueue } from "../models/esdc.models";
-import { ConfigService } from "@sims/utilities/config";
 
 @Processor(QueueNames.SINValidationRequestIntegration)
 export class SINValidationRequestIntegrationScheduler extends BaseScheduler<void> {
@@ -17,9 +16,8 @@ export class SINValidationRequestIntegrationScheduler extends BaseScheduler<void
     queueService: QueueService,
     private readonly sinValidationProcessingService: SINValidationProcessingService,
     private readonly systemUsersService: SystemUsersService,
-    protected readonly configService: ConfigService,
   ) {
-    super(schedulerQueue, queueService, configService);
+    super(schedulerQueue, queueService);
   }
 
   /**

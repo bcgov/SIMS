@@ -13,7 +13,6 @@ import {
   getSuccessMessageWithAttentionCheck,
   logProcessSummaryToJobLogger,
 } from "../../../../utilities";
-import { ConfigService } from "@sims/utilities/config";
 
 export abstract class ECertProcessIntegrationBaseScheduler extends BaseScheduler<void> {
   constructor(
@@ -21,9 +20,8 @@ export abstract class ECertProcessIntegrationBaseScheduler extends BaseScheduler
     queueService: QueueService,
     private readonly eCertCalculationProcess: ECertCalculationProcess,
     private readonly eCertFileHandler: ECertFileHandler,
-    protected readonly configService: ConfigService,
   ) {
-    super(schedulerQueue, queueService, configService);
+    super(schedulerQueue, queueService);
   }
 
   /**

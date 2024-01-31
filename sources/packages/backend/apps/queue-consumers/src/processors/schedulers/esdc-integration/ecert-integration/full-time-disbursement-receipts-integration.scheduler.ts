@@ -7,7 +7,6 @@ import { Job, Queue } from "bull";
 import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
 import { ESDCFileResponse } from "../models/esdc.models";
-import { ConfigService } from "@sims/utilities/config";
 
 @Processor(QueueNames.FullTimeDisbursementReceiptsFileIntegration)
 export class FullTimeDisbursementReceiptsFileIntegrationScheduler extends BaseScheduler<void> {
@@ -17,9 +16,8 @@ export class FullTimeDisbursementReceiptsFileIntegrationScheduler extends BaseSc
     queueService: QueueService,
     private readonly disbursementReceiptProcessingService: DisbursementReceiptProcessingService,
     private readonly systemUsersService: SystemUsersService,
-    protected readonly configService: ConfigService,
   ) {
-    super(schedulerQueue, queueService, configService);
+    super(schedulerQueue, queueService);
   }
 
   /**

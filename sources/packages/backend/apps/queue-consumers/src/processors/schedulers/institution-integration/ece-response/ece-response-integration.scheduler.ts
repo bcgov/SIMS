@@ -6,7 +6,6 @@ import { Job, Queue } from "bull";
 import { QueueProcessSummaryResult } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
 import { ECEResponseProcessingService } from "@sims/integrations/institution-integration/ece-integration";
-import { ConfigService } from "@sims/utilities/config";
 
 @Processor(QueueNames.ECEProcessResponseIntegration)
 export class ECEResponseIntegrationScheduler extends BaseScheduler<void> {
@@ -15,9 +14,8 @@ export class ECEResponseIntegrationScheduler extends BaseScheduler<void> {
     schedulerQueue: Queue<void>,
     private readonly eceResponseProcessingService: ECEResponseProcessingService,
     queueService: QueueService,
-    protected readonly configService: ConfigService,
   ) {
-    super(schedulerQueue, queueService, configService);
+    super(schedulerQueue, queueService);
   }
 
   /**

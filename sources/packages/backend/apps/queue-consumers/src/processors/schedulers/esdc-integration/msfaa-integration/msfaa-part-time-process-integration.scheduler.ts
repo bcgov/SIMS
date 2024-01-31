@@ -8,7 +8,6 @@ import { Job, Queue } from "bull";
 import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
 import { MSFAARequestResult } from "../models/msfaa-file-result.models";
-import { ConfigService } from "@sims/utilities/config";
 
 @Processor(QueueNames.PartTimeMSFAAProcessIntegration)
 export class PartTimeMSFAAProcessIntegrationScheduler extends BaseScheduler<void> {
@@ -16,10 +15,9 @@ export class PartTimeMSFAAProcessIntegrationScheduler extends BaseScheduler<void
     @InjectQueue(QueueNames.PartTimeMSFAAProcessIntegration)
     schedulerQueue: Queue<void>,
     queueService: QueueService,
-    private readonly partTimeMSFAARequestService: MSFAARequestProcessingService,
-    protected readonly partTimeConfigService: ConfigService,
+    private readonly msfaaRequestService: MSFAARequestProcessingService,
   ) {
-    super(schedulerQueue, queueService, partTimeConfigService);
+    super(schedulerQueue, queueService);
   }
 
   /**
@@ -40,11 +38,10 @@ export class PartTimeMSFAAProcessIntegrationScheduler extends BaseScheduler<void
       `Processing MSFAA Part-time integration job ${job.id} of type ${job.name}.`,
     );
     await summary.info("Sending MSFAA request File...");
-    const partTimeResponse =
-      await this.partTimeMSFAARequestService.processMSFAARequest(
-        MSFAA_PART_TIME_FILE_CODE,
-        OfferingIntensity.partTime,
-      );
+    const partTimeResponse = await this.msfaaRequestService.processMSFAARequest(
+      MSFAA_PART_TIME_FILE_CODE,
+      OfferingIntensity.partTime,
+    );
     await summary.info("MSFAA request file sent.");
     await this.cleanSchedulerQueueHistory();
     await summary.info(
