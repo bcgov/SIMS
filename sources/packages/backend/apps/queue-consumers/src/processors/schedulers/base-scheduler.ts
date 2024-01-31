@@ -48,7 +48,8 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
    * any old cron job delete it and add the new job to the queue.
    */
   async onApplicationBootstrap(): Promise<void> {
-    // TODO: ConfigService below is not injected since it will be removed when the Fulltime is released.
+    // TODO: Partime logic to be removed when the fulltime is released. ConfigService below is not injected
+    // TODO: since adding it here (base class) causes it to be added in all the multiple subclasses extending from it.
     const isFulltimeAllowed = new ConfigService().isFulltimeAllowed;
     // Allow Fulltime Schedulers only if isFulltimeAllowed is true
     if (
