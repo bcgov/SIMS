@@ -1,9 +1,11 @@
 import { Injectable } from "@nestjs/common";
-import { EntityManager, Repository } from "typeorm";
+import { Brackets, EntityManager, Repository } from "typeorm";
 import {
   Application,
   ApplicationStatus,
   AssessmentTriggerType,
+  COEStatus,
+  DisbursementSchedule,
   StudentAssessment,
   User,
 } from "@sims/sims-db";
@@ -103,6 +105,10 @@ export class AssessmentSequentialProcessingService {
     programYearId: number,
     entityManager: EntityManager,
   ): Promise<SequencedApplications> {
+    // Sub query to get the first assessment calculation date for an application to be used for ordering.
+    // All applications versions should be considered, which means 'Overwritten' also.
+    // This will ensure that once the application is calculated for the first time its
+    // order in the sequence will never change.
     const assessmentDateSubQuery = entityManager
       .getRepository(StudentAssessment)
       .createQueryBuilder("assessment")
@@ -114,6 +120,18 @@ export class AssessmentSequentialProcessingService {
       .orderBy("assessment.assessmentDate")
       .limit(1)
       .getQuery();
+    // Sub query to determined if the assessment has at least one non-declined COE (Required or Completed).
+    // If all the COEs from the assessment are declined some user action will be needed in the application
+    // and this application will not be considered for sequential processing.
+    const existsValidCOE = entityManager
+      .getRepository(DisbursementSchedule)
+      .createQueryBuilder("disbursementSchedule")
+      .select("1")
+      .where("disbursementSchedule.studentAssessment.id = currentAssessment.id")
+      .andWhere("disbursementSchedule.coeStatus != :declinedCOEStatus")
+      .limit(1)
+      .getSql();
+    // Returns past, current, and future applications ordered by the first ever executed assessment calculation.
     const sequentialApplications = await entityManager
       .getRepository(Application)
       .createQueryBuilder("application")
@@ -124,114 +142,38 @@ export class AssessmentSequentialProcessingService {
       .addSelect(`(${assessmentDateSubQuery})`, "referenceAssessmentDate")
       .innerJoin("application.student", "student")
       .innerJoin("application.programYear", "programYear")
-      .innerJoin(
-        "application.currentAssessment",
-        "currentAssessment",
-        "application.applicationStatus != :overwrittenStatus",
-        { overwrittenStatus: ApplicationStatus.Overwritten },
-      )
+      .innerJoin("application.currentAssessment", "currentAssessment")
       .innerJoin("currentAssessment.offering", "currentAssessmentOffering")
       .where("student.id = :studentId", { studentId })
       .andWhere("programYear.id = :programYearId", { programYearId })
-      .andWhere("currentAssessment.assessmentDate IS NOT NULL")
-      .andWhere(
-        "application.applicationStatus NOT IN (:...applicationsStatuses)",
-        {
-          applicationsStatuses: [ApplicationStatus.Cancelled],
-        },
-      )
-      .orWhere("application.applicationNumber = :applicationNumber", {
-        applicationNumber,
+      .andWhere("application.applicationStatus != :overwrittenStatus", {
+        overwrittenStatus: ApplicationStatus.Overwritten,
       })
-      .setParameters({ studentId, programYearId, applicationNumber })
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where(
+            // Conditions to find applications considered before the current application and after.
+            // 1. Application should not be cancelled;
+            // 2. Current assessment must have a date would indicates that it was calculated.
+            // 3. At least one COE must be valid.
+            new Brackets((pastOrFutureBracket) =>
+              pastOrFutureBracket
+                .where("application.applicationStatus != :cancelledStatus", {
+                  cancelledStatus: ApplicationStatus.Cancelled,
+                })
+                .andWhere("currentAssessment.assessmentDate IS NOT NULL")
+                .andWhere(`EXISTS (${existsValidCOE})`),
+            ),
+            // The 'or' condition forces the current application to be returned since its data matters for decisions,
+            // for instance, if the current application has no calculation date no future application should be impacted.
+          ).orWhere("application.applicationNumber = :applicationNumber", {
+            applicationNumber,
+          });
+        }),
+      )
+      .setParameters({ declinedCOEStatus: COEStatus.declined })
       .orderBy(`"referenceAssessmentDate"`)
       .getRawMany<SequentialApplication>();
     return new SequencedApplications(applicationNumber, sequentialApplications);
   }
-
-  // /**
-  //  *
-  //  * @param applicationNumber reference application to be used to determined past and future
-  //  * applications and the one to be considered as current for the {@link SequencedApplications}.
-  //  * @param studentId student id.
-  //  * @param programYearId program id to be considered.
-  //  * @param entityManager used to execute the commands in the same transaction.
-  //  * @returns sequenced applications.
-  //  */
-  // private async getSequencedApplications(
-  //   applicationNumber: string,
-  //   studentId: number,
-  //   programYearId: number,
-  //   entityManager: EntityManager,
-  // ): Promise<SequencedApplications> {
-  //   const sequentialApplicationsSubQuery = entityManager
-  //     .createQueryBuilder()
-  //     // Selects the most updated index for the same application number.
-  //     .select(
-  //       "LAST_VALUE(application.id) OVER (PARTITION BY application.application_number ORDER BY application.id RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)",
-  //       "application_current_id",
-  //     )
-  //     // Selects the most updated application status for the same application number.
-  //     .addSelect(
-  //       "LAST_VALUE(application.application_status) OVER (PARTITION BY application.application_number ORDER BY application.id RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)",
-  //       "application_current_status",
-  //     )
-  //     .addSelect("application.application_number", "application_number")
-  //     .addSelect("application.student_id", "student_id")
-  //     .addSelect(
-  //       "studentAssessment.assessment_date",
-  //       "reference_assessment_date",
-  //     )
-  //     // Selects the most updated offering id for the same application number.
-  //     .addSelect(
-  //       "LAST_VALUE(studentAssessment.offering_id) OVER (PARTITION BY application.application_number ORDER BY studentAssessment.id RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)",
-  //       "current_assessment_offering_id",
-  //     )
-  //     // Adds a order number to each record where the first one will be the record with the oldest assessment.
-  //     .addSelect(
-  //       "ROW_NUMBER() OVER (PARTITION BY application.application_number ORDER BY studentAssessment.assessment_date)",
-  //       "assessment_calculation_order",
-  //     )
-  //     .from(Application, "application")
-  //     .innerJoin("application.studentAssessments", "studentAssessment")
-  //     .where("application.student_id = :studentId")
-  //     .andWhere("application.program_year_id = :programYearId")
-  //     .getQuery();
-  //   const sequentialApplications = await this.dataSource
-  //     .createQueryBuilder()
-  //     .select("application_number", "applicationNumber")
-  //     .addSelect("application_current_id", "applicationCurrentId")
-  //     .addSelect("application_current_status", "applicationCurrentStatus")
-  //     .addSelect("reference_assessment_date", "referenceAssessmentDate")
-  //     .addSelect(
-  //       "current_assessment_offering_id",
-  //       "currentAssessmentOfferingId",
-  //     )
-  //     .from(`(${sequentialApplicationsSubQuery})`, "sequential_applications")
-  //     .where("sequential_applications.assessment_calculation_order = 1")
-  //     // Ensures that the application had some assessment date produced some point in time.
-  //     // Considering an application edited multiple times, if one overwritten application ever had an
-  //     // assessment calculation, this date may be used as the reference. If an application never ever had
-  //     // an assessment calculation executed then it should not be part of the results.
-  //     // TODO: do we need it
-  //     .andWhere("sequential_applications.reference_assessment_date IS NOT NULL")
-  //     .andWhere(
-  //       new Brackets((qb) =>
-  //         qb
-  //           .where(
-  //             "sequential_applications.application_current_status != :applicationStatus",
-  //             { applicationStatus: ApplicationStatus.Cancelled },
-  //           )
-  //           // Ensure that the reference application will always be present in the result.
-  //           .orWhere(
-  //             "sequential_applications.application_number = :applicationNumber",
-  //             { applicationNumber },
-  //           ),
-  //       ),
-  //     )
-  //     .orderBy("sequential_applications.reference_assessment_date")
-  //     .setParameters({ studentId, programYearId })
-  //     .getRawMany<SequentialApplication>();
-  //   return new SequencedApplications(applicationNumber, sequentialApplications);
-  // }
 }
