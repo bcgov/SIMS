@@ -108,6 +108,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
           OFFERING_SAVE_UNIQUE_ERROR,
         );
       }
+      throw error;
     }
   }
 
@@ -199,6 +200,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
           OFFERING_SAVE_UNIQUE_ERROR,
         );
       }
+      throw error;
     }
   }
 
@@ -459,6 +461,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
           OFFERING_SAVE_UNIQUE_ERROR,
         );
       }
+      throw error;
     }
   }
 
