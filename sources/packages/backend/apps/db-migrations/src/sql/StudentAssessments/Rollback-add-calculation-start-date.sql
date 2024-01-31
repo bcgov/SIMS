@@ -1,2 +1,2 @@
 ALTER TABLE
-    sims.students DROP COLUMN calculation_start_date;
+    sims.student_assessments DROP COLUMN calculation_start_date;
