@@ -138,10 +138,13 @@ export async function saveFakeApplicationDisbursements(
     },
     { initialValues: options?.firstDisbursementInitialValues },
   );
-  firstSchedule.coeStatus =
-    savedApplication.applicationStatus === ApplicationStatus.Completed
-      ? COEStatus.completed
-      : COEStatus.required;
+  if (!options?.firstDisbursementInitialValues?.coeStatus) {
+    // Only sets the COE status if not already set.
+    firstSchedule.coeStatus =
+      savedApplication.applicationStatus === ApplicationStatus.Completed
+        ? COEStatus.completed
+        : COEStatus.required;
+  }
   firstSchedule.msfaaNumber = relations?.msfaaNumber;
   firstSchedule.studentAssessment = savedApplication.currentAssessment;
   disbursementSchedules.push(firstSchedule);

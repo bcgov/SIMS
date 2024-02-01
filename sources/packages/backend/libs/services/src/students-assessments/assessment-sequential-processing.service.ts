@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Brackets, EntityManager, Repository } from "typeorm";
+import { Brackets, EntityManager, Not } from "typeorm";
 import {
   Application,
   ApplicationStatus,
@@ -10,15 +10,9 @@ import {
   User,
 } from "@sims/sims-db";
 import { SequencedApplications, SequentialApplication } from "..";
-import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()
 export class AssessmentSequentialProcessingService {
-  constructor(
-    @InjectRepository(Application)
-    private readonly applicationRepo: Repository<Application>,
-  ) {}
-
   /**
    * Checks if changes in an assessment can potentially causes changes in another application
    * which would demand an reassessment of the same.
@@ -32,34 +26,40 @@ export class AssessmentSequentialProcessingService {
     auditUserId: number,
     entityManager: EntityManager,
   ): Promise<Application | null> {
-    const studentAssessmentRepo =
-      entityManager.getRepository(StudentAssessment);
-    const assessmentBeingChecked = await studentAssessmentRepo.findOne({
+    const applicationRepo = entityManager.getRepository(Application);
+    // Application which current assessment is the assessmentId to be checked.
+    // If the assessment id is not associated with the current application's assessment
+    // no need to check for impacts on future applications.
+    const application = await applicationRepo.findOne({
       select: {
         id: true,
-        application: {
+        applicationNumber: true,
+        programYear: {
           id: true,
-          applicationNumber: true,
-          programYear: {
-            id: true,
-          },
-          student: {
-            id: true,
-          },
+        },
+        student: {
+          id: true,
         },
       },
       relations: {
-        application: { student: true, programYear: true },
+        student: true,
+        programYear: true,
       },
       where: {
-        id: assessmentId,
+        applicationStatus: Not(ApplicationStatus.Overwritten),
+        currentAssessment: {
+          id: assessmentId,
+        },
       },
     });
-    // If not there is no point checking for impacted apps since no py room was consumed.
+    if (!application) {
+      // Assessment is not current one or the application is overwritten.
+      return null;
+    }
     const sequencedApplications = await this.getSequencedApplications(
-      assessmentBeingChecked.application.applicationNumber,
-      assessmentBeingChecked.application.student.id,
-      assessmentBeingChecked.application.programYear.id,
+      application.applicationNumber,
+      application.student.id,
+      application.programYear.id,
       entityManager,
     );
     if (!sequencedApplications.future.length) {
@@ -87,11 +87,14 @@ export class AssessmentSequentialProcessingService {
       submittedBy: auditUser,
       submittedDate: now,
     } as StudentAssessment;
-    return this.applicationRepo.save(impactedApplication);
+    return applicationRepo.save(impactedApplication);
   }
 
   /**
-   *
+   * Get the application correspondent to the {@link applicationNumber} as the current to them search
+   * for application in the past and in the future for the same student and the same program year.
+   * If a reference date is not possible to be determined for the current application so no future
+   * or past applications will be returned.
    * @param applicationNumber reference application to be used to determined past and future
    * applications and the one to be considered as current for the {@link SequencedApplications}.
    * @param studentId student id.

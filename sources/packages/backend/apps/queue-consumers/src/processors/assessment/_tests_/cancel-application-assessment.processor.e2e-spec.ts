@@ -19,9 +19,11 @@ import {
   saveFakeStudent,
 } from "@sims/test-utils";
 import {
+  Application,
   ApplicationStatus,
   Assessment,
   AssessmentTriggerType,
+  COEStatus,
   DisbursementOveraward,
   DisbursementSchedule,
   DisbursementScheduleStatus,
@@ -241,7 +243,7 @@ describe(
       expect(job.discard).toBeCalled();
     });
 
-    it("Should find an impacted application and create a reassessment when canceling an application with an assessment date set in the current assessment.", async () => {
+    it("Should find an impacted application and create a reassessment when canceling an application with a assessment date set in the current assessment.", async () => {
       // Arrange
 
       // Create the student to be shared across all these applications.
@@ -303,21 +305,9 @@ describe(
         `Application id ${impactedApplication.id} was detected as impacted and will be reassessed.`,
       );
       // Assert that an reassessment of type 'Related application changed' was created in the future impacted application.
-      const updatedImpactedApplication = await db.application.findOne({
-        select: {
-          id: true,
-          currentAssessment: {
-            id: true,
-            triggerType: true,
-          },
-        },
-        relations: {
-          currentAssessment: true,
-        },
-        where: {
-          id: impactedApplication.id,
-        },
-      });
+      const updatedImpactedApplication = await findImpactedApplication(
+        impactedApplication.id,
+      );
       expect(updatedImpactedApplication.currentAssessment.triggerType).toBe(
         AssessmentTriggerType.RelatedApplicationChanged,
       );
@@ -440,7 +430,75 @@ describe(
         `Application id ${impactedApplication.id} was detected as impacted and will be reassessed.`,
       );
       // Assert that an reassessment of type 'Related application changed' was created in the future impacted application.
-      const updatedImpactedApplication = await db.application.findOne({
+      const updatedImpactedApplication = await findImpactedApplication(
+        impactedApplication.id,
+      );
+      expect(updatedImpactedApplication.currentAssessment.triggerType).toBe(
+        AssessmentTriggerType.RelatedApplicationChanged,
+      );
+    });
+
+    it("Should not find an impacted application when the application in the future has only a declined COE.", async () => {
+      // Arrange
+
+      // Create the student to be shared across all these applications.
+      const student = await saveFakeStudent(db.dataSource);
+      // Application to have the cancellation requested.
+      // Because the assessment date was never set no future applications should be found.
+      const currentApplicationToCancel = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Cancelled,
+          currentAssessmentInitialValues: {
+            assessmentWorkflowId: "some fake id",
+            assessmentDate: new Date(),
+            studentAssessmentStatus: StudentAssessmentStatus.CancellationQueued,
+          },
+        },
+      );
+      // Application in the future of the currentApplicationToCancel.
+      await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            assessmentWorkflowId: "some fake id",
+            assessmentDate: addDays(1, new Date()),
+            studentAssessmentStatus: StudentAssessmentStatus.Submitted,
+          },
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.declined,
+          },
+        },
+      );
+
+      // Queued job.
+      const job = createMock<Job<CancelAssessmentQueueInDTO>>({
+        data: { assessmentId: currentApplicationToCancel.currentAssessment.id },
+      });
+
+      // Act
+      const result = await processor.cancelAssessment(job);
+
+      // Asserts
+      expect(result.summary).toContain(
+        "No impacts were detected on future applications.",
+      );
+    });
+
+    /**
+     * Find a future impacted application to be asserted.
+     * @param applicationId application to be find.
+     * @returns future impacted application to be asserted.
+     */
+    async function findImpactedApplication(
+      applicationId: number,
+    ): Promise<Application> {
+      return db.application.findOne({
         select: {
           id: true,
           currentAssessment: {
@@ -452,12 +510,9 @@ describe(
           currentAssessment: true,
         },
         where: {
-          id: impactedApplication.id,
+          id: applicationId,
         },
       });
-      expect(updatedImpactedApplication.currentAssessment.triggerType).toBe(
-        AssessmentTriggerType.RelatedApplicationChanged,
-      );
-    });
+    }
   },
 );
