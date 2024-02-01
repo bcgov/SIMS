@@ -54,7 +54,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
     const client = await this.getClient();
     try {
       this.logger.log(`Uploading ${remoteFilePath}`);
-      return await client.put(Buffer.from(rawContent), remoteFilePath);
+      return await client.put(Buffer.from(rawContent, "ascii"), remoteFilePath);
     } finally {
       this.logger.log("Finalizing SFTP client...");
       await SshService.closeQuietly(client);
