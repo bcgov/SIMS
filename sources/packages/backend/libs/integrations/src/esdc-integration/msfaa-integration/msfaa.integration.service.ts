@@ -125,7 +125,7 @@ export class MSFAAIntegrationService extends SFTPIntegrationBase<MSFAASFTPRespon
             );
       filesToProcess = await client.list(
         `${this.esdcConfig.ftpResponseFolder}`,
-        pattern,
+        (item: Client.FileInfo) => pattern.test(item.name),
       );
     } finally {
       await SshService.closeQuietly(client);

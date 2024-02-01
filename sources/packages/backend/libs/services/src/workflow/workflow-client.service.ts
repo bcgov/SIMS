@@ -171,4 +171,28 @@ export class WorkflowClientService {
       // The error is not thrown here, as we are failing silently.
     }
   }
+
+  /**
+   * After the assessment calculations are completed and persisted
+   * send message to unblock the next assessment which is waiting for this assessment
+   * in the sequence to be calculated.
+   * @param assessmentId assessment waiting for calculation.
+   */
+  async sendReleaseAssessmentCalculationMessage(
+    assessmentId: number,
+  ): Promise<void> {
+    try {
+      await this.zeebeClient.publishMessage({
+        name: "release-assessment-calculation",
+        correlationKey: `${assessmentId}`,
+        timeToLive: ZEEBE_PUBLISH_MESSAGE_DEFAULT_TIME_TO_LEAVE,
+      });
+    } catch (error: unknown) {
+      this.logger.error(
+        `Error while sending assessment calculation completed message for waiting assessment id ${assessmentId}`,
+      );
+      this.logger.error(error);
+      // The error is not thrown here, as we are failing silently.
+    }
+  }
 }

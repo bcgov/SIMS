@@ -21,6 +21,7 @@ import {
   createCheckIncomeRequestTaskMock,
   createWorkersMockedData,
   createLoadAssessmentDataTaskMock,
+  createVerifyAssessmentCalculationOrderTaskMock,
 } from "../../test-utils/mock";
 import {
   PROGRAM_YEAR,
@@ -57,6 +58,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
         incomeVerificationId: incomeVerificationId++,
         subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
       }),
+      createVerifyAssessmentCalculationOrderTaskMock(),
     ]);
 
     const currentAssessmentId = assessmentId++;
@@ -81,6 +83,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
       WorkflowServiceTasks.SaveDisbursementSchedules,
       WorkflowServiceTasks.AssociateMSFAA,
       WorkflowServiceTasks.UpdateNOAStatusToRequired,
+      WorkflowServiceTasks.VerifyAssessmentCalculationOrderTask,
     );
   });
 
@@ -149,6 +152,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
       createCheckIncomeRequestTaskMock({
         subprocesses: WorkflowSubprocesses.Parent2IncomeVerification,
       }),
+      createVerifyAssessmentCalculationOrderTaskMock(),
     ]);
 
     // Act
@@ -178,6 +182,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
       WorkflowServiceTasks.SaveDisbursementSchedules,
       WorkflowServiceTasks.AssociateMSFAA,
       WorkflowServiceTasks.UpdateNOAStatusToRequired,
+      WorkflowServiceTasks.VerifyAssessmentCalculationOrderTask,
     );
     expectNotToPassThroughServiceTasks(
       assessmentGatewayResponse.variables,
@@ -238,6 +243,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
       createCheckIncomeRequestTaskMock({
         subprocesses: WorkflowSubprocesses.Parent1IncomeVerification,
       }),
+      createVerifyAssessmentCalculationOrderTaskMock(),
     ]);
 
     // Act
@@ -265,6 +271,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
       WorkflowServiceTasks.SaveDisbursementSchedules,
       WorkflowServiceTasks.AssociateMSFAA,
       WorkflowServiceTasks.UpdateNOAStatusToRequired,
+      WorkflowServiceTasks.VerifyAssessmentCalculationOrderTask,
     );
     expectNotToPassThroughServiceTasks(
       assessmentGatewayResponse.variables,
@@ -312,6 +319,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
       createCheckIncomeRequestTaskMock({
         subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
       }),
+      createVerifyAssessmentCalculationOrderTaskMock(),
     ]);
 
     // Act
@@ -337,6 +345,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
       WorkflowServiceTasks.SaveDisbursementSchedules,
       WorkflowServiceTasks.AssociateMSFAA,
       WorkflowServiceTasks.UpdateNOAStatusToRequired,
+      WorkflowServiceTasks.VerifyAssessmentCalculationOrderTask,
     );
     expectNotToPassThroughServiceTasks(
       assessmentGatewayResponse.variables,

@@ -42,12 +42,12 @@ export function getPartTimeMaritalStatusCode(
 }
 
 /**
- * Get the e-Cert flag for the borrower's persistent or prolonged disability status.
- * @param hasPDorPPD indicates if a borrower has a persistent or prolonged disability.
+ * Get the e-Cert flag for the borrower's calculated disability status.
+ * @param calculatedPPDStatus indicates if a borrower has a disability.
  * @returns "Y" or "N" flag.
  */
-export function getPPDFlag(hasPPD?: boolean): string {
-  return hasPPD === true ? "Y" : "N";
+export function getPPDFlag(calculatedPPDStatus: boolean): string {
+  return calculatedPPDStatus ? "Y" : "N";
 }
 
 /**

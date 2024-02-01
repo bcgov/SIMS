@@ -257,6 +257,15 @@ export class StudentAssessment extends RecordDataModel {
   })
   studentAssessmentStatusUpdatedOn: Date;
   /**
+   * Assessment calculation start date.
+   */
+  @Column({
+    name: "calculation_start_date",
+    type: "timestamptz",
+    nullable: true,
+  })
+  calculationStartDate?: Date;
+  /**
    * Assessment id of another application's assessment in which the
    * changes impacted this application causing it to be reassessed.
    */

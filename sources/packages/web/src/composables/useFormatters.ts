@@ -5,6 +5,7 @@ import {
 import { SINValidStatus } from "@/store/modules/student/student";
 import {
   Address,
+  ApplicationDisabilityStatus,
   DisabilityStatus,
   DisabilityStatusViewType,
   InstitutionUserRoles,
@@ -363,6 +364,21 @@ export function useFormatters() {
     }
   };
 
+  /**
+   * Convert the application disability status to be displayed
+   * in an equivalent user friendly description.
+   * @param applicationDisabilityStatus application disability status.
+   * @returns user friendly application disability status.
+   */
+  const applicationDisabilityStatusToDisplay = (
+    applicationDisabilityStatus: ApplicationDisabilityStatus,
+  ): string => {
+    if (applicationDisabilityStatus === ApplicationDisabilityStatus.yes) {
+      return "Assessment includes disability funding types.";
+    }
+    return "No disability funding types included on assessment.";
+  };
+
   return {
     dateOnlyLongString,
     dateOnlyLongPeriodString,
@@ -383,5 +399,6 @@ export function useFormatters() {
     formatCurrency,
     isBeforeDateOnly,
     disabilityStatusToDisplay,
+    applicationDisabilityStatusToDisplay,
   };
 }

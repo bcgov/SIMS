@@ -16,6 +16,7 @@ import {
   SupportingUserJobOutDTO,
   UpdateNOAStatusHeaderDTO,
   UpdateNOAStatusJobInDTO,
+  VerifyAssessmentCalculationOrderJobOutDTO,
 } from "..";
 import { StudentAssessmentService } from "../../services";
 import {
@@ -43,11 +44,13 @@ import {
 } from "@sims/services/workflow/variables/assessment-gateway";
 import { CustomNamedError } from "@sims/utilities";
 import { MaxJobsToActivate } from "../../types";
+import { WorkflowClientService } from "@sims/services";
 
 @Controller()
 export class AssessmentController {
   constructor(
     private readonly studentAssessmentService: StudentAssessmentService,
+    private readonly workflowClientService: WorkflowClientService,
   ) {}
 
   /**
@@ -219,12 +222,134 @@ export class AssessmentController {
   ): Promise<MustReturnJobActionAcknowledgement> {
     const jobLogger = new Logger(job.type);
     try {
+      const assessment =
+        await this.studentAssessmentService.getAssessmentSummary(
+          job.variables.assessmentId,
+        );
+      if (!assessment) {
+        const message = "Assessment not found.";
+        jobLogger.error(message);
+        return job.error(ASSESSMENT_NOT_FOUND, message);
+      }
       await this.studentAssessmentService.updateAssessmentStatusAndSaveWorkflowData(
         job.variables.assessmentId,
         job.variables.workflowData,
       );
+      const studentId = assessment.application.student.id;
+      const programYearId = assessment.application.programYear.id;
+      // Check for any assessment which is waiting for calculation.
+      const nextOutstandingAssessmentInSequence =
+        await this.studentAssessmentService.getOutstandingAssessmentsForStudentInSequence(
+          studentId,
+          programYearId,
+        );
+      if (nextOutstandingAssessmentInSequence) {
+        jobLogger.log(
+          `Assessment with assessment id ${nextOutstandingAssessmentInSequence.id} is ` +
+            "waiting to be calculated next.",
+        );
+        // Send message to unblock the assessment which is waiting for calculation.
+        await this.workflowClientService.sendReleaseAssessmentCalculationMessage(
+          nextOutstandingAssessmentInSequence.id,
+        );
+      }
       jobLogger.log("Updated assessment status and saved the workflow data.");
       return job.complete();
+    } catch (error: unknown) {
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
+    }
+  }
+
+  /**
+   * Verify as per the order of original assessment study start date if this assessment
+   * is the first in the sequence to be calculated
+   * for the given student inside the given program year.
+   * If an assessment is identified to be the first in sequence to be calculated
+   * then set calculation start date to hold other assessments until the calculation
+   * is complete.
+   */
+  @ZeebeWorker(Workers.VerifyAssessmentCalculationOrder, {
+    fetchVariable: [ASSESSMENT_ID],
+    maxJobsToActivate: MaxJobsToActivate.Normal,
+  })
+  async verifyAssessmentCalculationOrder(
+    job: Readonly<
+      ZeebeJob<
+        AssessmentDataJobInDTO,
+        ICustomHeaders,
+        VerifyAssessmentCalculationOrderJobOutDTO
+      >
+    >,
+  ): Promise<MustReturnJobActionAcknowledgement> {
+    const jobLogger = new Logger(job.type);
+    try {
+      const assessment =
+        await this.studentAssessmentService.getAssessmentSummary(
+          job.variables.assessmentId,
+        );
+      if (!assessment) {
+        const message = "Assessment not found.";
+        jobLogger.error(message);
+        return job.error(ASSESSMENT_NOT_FOUND, message);
+      }
+      const assessmentId = job.variables.assessmentId;
+      const studentId = assessment.application.student.id;
+      const programYearId = assessment.application.programYear.id;
+      jobLogger.log(
+        `Verifying the assessment calculation order for processing assessment id ${assessmentId} student id ${studentId} ` +
+          `program year id ${programYearId}.`,
+      );
+      // Check for any assessment with ongoing calculation.
+      const assessmentInCalculationStep =
+        await this.studentAssessmentService.getAssessmentInCalculationStepForStudent(
+          studentId,
+          programYearId,
+        );
+
+      // If an ongoing calculation is happening all other assessments for given student in program year
+      // must wait until the calculation is complete and saved to the system.
+      // Also if a worker job is terminated by any chance after updating the calculation start date
+      // for an assessment, then the assessment must proceed for the calculation.
+      if (
+        assessmentInCalculationStep &&
+        assessmentInCalculationStep.id !== assessmentId
+      ) {
+        jobLogger.log(
+          `There is ongoing calculation happening for assessment id ${assessmentInCalculationStep.id} ` +
+            `and hence the processing assessment id ${assessmentId} is waiting for that calculation to complete.`,
+        );
+        return job.complete({ isReadyForCalculation: false });
+      }
+      jobLogger.log(
+        `There is no ongoing calculation happening while verifying the order for processing assessment id ${assessmentId}.`,
+      );
+      // Get the first outstanding assessment waiting for calculation as per the sequence.
+      const firstOutstandingStudentAssessment =
+        await this.studentAssessmentService.getOutstandingAssessmentsForStudentInSequence(
+          studentId,
+          programYearId,
+        );
+      jobLogger.log(
+        `The first outstanding assessment is identified to be assessment id ${firstOutstandingStudentAssessment.id} ` +
+          `with original assessment start date  ${firstOutstandingStudentAssessment.originalAssessmentStudyStartDate} ` +
+          `while verifying the order for processing assessment id ${assessmentId}.`,
+      );
+      // If the processing assessment is same as first outstanding assessment
+      // then proceed for calculation.
+      const isReadyForCalculation =
+        firstOutstandingStudentAssessment.id === job.variables.assessmentId;
+      if (isReadyForCalculation) {
+        await this.studentAssessmentService.saveAssessmentCalculationStartDate(
+          assessmentId,
+        );
+      }
+      jobLogger.log(
+        `The assessment calculation order has been verified and ready for calculation status is ${isReadyForCalculation} ` +
+          `for processing assessment id ${assessmentId}.`,
+      );
+      return job.complete({ isReadyForCalculation });
     } catch (error: unknown) {
       return createUnexpectedJobFail(error, job, {
         logger: jobLogger,

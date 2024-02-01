@@ -1,6 +1,7 @@
 import { LoggerService, OnApplicationBootstrap } from "@nestjs/common";
 import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
+import { ConfigService } from "@sims/utilities/config";
 import { InjectLogger } from "@sims/utilities/logger";
 import { CronRepeatOptions, Queue } from "bull";
 
@@ -47,6 +48,29 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
    * any old cron job delete it and add the new job to the queue.
    */
   async onApplicationBootstrap(): Promise<void> {
+    // TODO: Allow only part time schedulers based on config is temporary
+    // and will be removed during fulltime release.
+    // As the logic is temporary solution and must be easily reverted,
+    // config service is not injected as extending it here (base class)
+    // will cause it to be added in all the multiple subclasses extending from it.
+    const isFulltimeAllowed = new ConfigService().isFulltimeAllowed;
+    // Allow Fulltime Schedulers only if isFulltimeAllowed is true
+    if (
+      !isFulltimeAllowed &&
+      [
+        QueueNames.FullTimeMSFAAIntegration,
+        QueueNames.FullTimeECertIntegration,
+        QueueNames.FullTimeFeedbackIntegration,
+        QueueNames.FullTimeDisbursementReceiptsFileIntegration,
+        QueueNames.FullTimeMSFAAProcessResponseIntegration,
+        QueueNames.IER12Integration,
+        QueueNames.ECEProcessIntegration,
+        QueueNames.ECEProcessResponseIntegration,
+      ].includes(this.schedulerQueue.name as QueueNames)
+    ) {
+      await this.schedulerQueue.obliterate({ force: true });
+      return;
+    }
     await this.deleteOldRepeatableJobs();
     // Add the cron to the queue.
     //await this.schedulerQueue.add(await this.payload());

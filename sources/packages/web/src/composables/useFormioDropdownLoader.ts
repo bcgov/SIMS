@@ -16,15 +16,17 @@ export function useFormioDropdownLoader() {
   const loadDropdown = async (
     form: any,
     dropdownName: string,
-    loadMethod: Promise<OptionItemAPIOutDTO[]>,
+    loadMethod: Promise<OptionItemAPIOutDTO[]> | OptionItemAPIOutDTO[],
   ) => {
     // Find the dropdown to be populated with the locations.
     const dropdown = formioUtils.getComponent(form, dropdownName);
     const optionsItems = await loadMethod;
-    dropdown.component.data.values = optionsItems.map((item) => ({
-      value: item.id,
-      label: item.description,
-    }));
+    dropdown.component.data.values = optionsItems.map(
+      (item: OptionItemAPIOutDTO) => ({
+        value: item.id,
+        label: item.description,
+      }),
+    );
     dropdown.redraw();
   };
 
@@ -36,6 +38,52 @@ export function useFormioDropdownLoader() {
       dropdownName,
       InstitutionService.shared.getLocationsOptionsList(),
     );
+  };
+
+  /**
+   * Populate program intensity dropdown.
+   * @param form form.
+   * @param isFulltimeAllowed is fulltime allowed.
+   * @param dropdownName dropdown name.
+   */
+  const loadProgramIntensityDetails = async (
+    form: any,
+    isFulltimeAllowed: boolean,
+    dropdownName: string,
+  ): Promise<void> => {
+    return loadDropdown(
+      form,
+      dropdownName,
+      getProgramIntensityDetails(isFulltimeAllowed),
+    );
+  };
+
+  /**
+   * Gets the program intensity details.
+   * @param isFulltimeAllowed is fulltime allowed.
+   * @returns the program intensity details.
+   */
+  const getProgramIntensityDetails = (
+    isFulltimeAllowed: boolean,
+  ): OptionItemAPIOutDTO[] => {
+    if (isFulltimeAllowed) {
+      return [
+        {
+          id: "Full Time",
+          description: "Full Time",
+        },
+        {
+          id: "Part Time",
+          description: "Part Time",
+        },
+      ];
+    }
+    return [
+      {
+        id: "Part Time",
+        description: "Part Time",
+      },
+    ];
   };
 
   // Retrieve the list of programs that have some
@@ -150,5 +198,6 @@ export function useFormioDropdownLoader() {
     loadInstitutionTypes,
     loadPIRDeniedReasonList,
     loadProgramYear,
+    loadProgramIntensityDetails,
   };
 }

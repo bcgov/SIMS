@@ -47,9 +47,9 @@ export interface ECertRecord {
   awards: Award[];
   courseLoad?: number;
   /**
-   * Persistent or prolonged disability flag.
+   * Calculated disability status from the student assessment.
    */
-  ppdFlag?: boolean;
+  calculatedPDPPDStatus?: boolean;
 }
 
 export type Award = Pick<

@@ -60,6 +60,7 @@ export class AppConfigService {
       authConfig: config.auth,
       updateTime: new Date(),
       version: config.version,
+      isFulltimeAllowed: config.isFulltimeAllowed,
     };
     return appConfig;
   }

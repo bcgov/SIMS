@@ -258,7 +258,6 @@ export class ECertGenerationService {
               birthDate: true,
               gender: true,
               contactInfo: true as unknown,
-              studentPDVerified: true,
               user: {
                 id: true,
                 firstName: true,
@@ -287,6 +286,7 @@ export class ECertGenerationService {
               institutionCode: true,
             },
           },
+          workflowData: true as unknown,
         },
         disbursementValues: {
           id: true,

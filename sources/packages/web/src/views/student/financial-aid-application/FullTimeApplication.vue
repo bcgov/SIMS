@@ -71,6 +71,7 @@ import {
   ACTIVE_STUDENT_RESTRICTION,
 } from "@/constants";
 import StudentApplication from "@/components/common/StudentApplication.vue";
+import { AppConfigService } from "@/services/AppConfigService";
 
 export default defineComponent({
   components: {
@@ -124,6 +125,7 @@ export default defineComponent({
     };
 
     onMounted(async () => {
+      const { isFulltimeAllowed } = await AppConfigService.shared.config();
       await checkProgramYear();
       //Get the student information, application information and student restriction.
       const [studentInfo, applicationData] = await Promise.all([
@@ -167,6 +169,7 @@ export default defineComponent({
         ...studentFormData,
         ...programYear,
         isReadOnly: isReadOnly.value,
+        isFulltimeAllowed,
       };
       existingApplication.value = applicationData;
     });

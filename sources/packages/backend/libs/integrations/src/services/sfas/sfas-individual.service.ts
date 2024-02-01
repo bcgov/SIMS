@@ -68,6 +68,10 @@ export class SFASIndividualService
     individual.birthDate = getISODateOnlyString(sfasIndividual.birthDate);
     individual.sin = sfasIndividual.sin;
     individual.pdStatus = sfasIndividual.pdStatus;
+    individual.ppdStatus = sfasIndividual.ppdStatus;
+    individual.ppdStatusDate = getISODateOnlyString(
+      sfasIndividual.ppdStatusDate,
+    );
     individual.msfaaNumber = sfasIndividual.msfaaNumber;
     individual.msfaaSignedDate = getISODateOnlyString(
       sfasIndividual.msfaaSignedDate,

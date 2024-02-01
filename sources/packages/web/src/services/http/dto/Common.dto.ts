@@ -1,7 +1,7 @@
 import { Expose } from "class-transformer";
 
 export interface OptionItemAPIOutDTO {
-  id: number;
+  id: number | string;
   description: string;
 }
 

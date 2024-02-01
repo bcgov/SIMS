@@ -13,4 +13,5 @@ export enum Workers {
   CreateSupportingUsers = "create-supporting-users",
   LoadSupportingUserData = "load-supporting-user-data",
   WorkflowWrapUp = "workflow-wrap-up",
+  VerifyAssessmentCalculationOrder = "verify-assessment-calculation-order",
 }

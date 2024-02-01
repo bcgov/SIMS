@@ -9,6 +9,7 @@ import {
   RelationId,
 } from "typeorm";
 import {
+  ApplicationDisabilityStatus,
   ApplicationOfferingChangeRequest,
   CRAIncomeVerification,
   EducationProgram,
@@ -426,6 +427,10 @@ export interface ApplicationData {
    * Course Details is present only for Part Time course intensity.
    */
   courseDetails?: CourseDetails[];
+  /**
+   * Application PD/PPD Status.
+   */
+  applicationPDPPDStatus?: ApplicationDisabilityStatus;
 }
 
 /**

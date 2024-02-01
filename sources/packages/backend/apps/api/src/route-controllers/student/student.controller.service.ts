@@ -65,7 +65,7 @@ export class StudentControllerService {
     return {
       fileName: createdFile.fileName,
       uniqueFileName: createdFile.uniqueFileName,
-      url: `students/files/${createdFile.uniqueFileName}`,
+      url: `student/files/${createdFile.uniqueFileName}`,
       size: createdFile.fileContent.length,
       mimetype: createdFile.mimeType,
     };

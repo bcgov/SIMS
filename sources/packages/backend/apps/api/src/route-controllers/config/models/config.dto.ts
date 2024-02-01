@@ -1,6 +1,7 @@
 export class ConfigAPIOutDTO {
   auth: AuthConfigAPIOutDTO;
   version: string;
+  isFulltimeAllowed: boolean;
 }
 
 export class AuthConfigAPIOutDTO {

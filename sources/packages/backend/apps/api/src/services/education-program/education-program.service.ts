@@ -12,6 +12,7 @@ import {
   ProgramYear,
   InstitutionLocation,
   getRawCount,
+  ProgramIntensity,
 } from "@sims/sims-db";
 import { DataSource, In, Repository, Not, Equal } from "typeorm";
 import {
@@ -373,7 +374,8 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * for a particular location.
    * @param locationId id of the location that should have the
    * offering associated with.
-   * @param programYearId program year id
+   * @param programYearId program year id.
+   * @param isFulltimeAllowed is fulltime allowed.
    * @param includeInActivePY includeInActivePY, if includeInActivePY, then both active
    * and not active program year is considered.
    * @returns programs with offerings under the specified location.
@@ -381,6 +383,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   async getProgramsForLocation(
     locationId: number,
     programYearId: number,
+    isFulltimeAllowed: boolean,
     includeInActivePY?: boolean,
   ): Promise<Partial<EducationProgram>[]> {
     const offeringExistsQuery = this.offeringsRepo
@@ -395,11 +398,17 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       offeringExistsQuery.andWhere("programYear.active = true");
     }
     offeringExistsQuery.select("1");
-    return this.repo
+    const programsQuery = this.repo
       .createQueryBuilder("programs")
       .where("programs.programStatus = :programStatus", {
         programStatus: ProgramStatus.Approved,
-      })
+      });
+    if (!isFulltimeAllowed) {
+      programsQuery.where("programs.programIntensity = :programIntensity", {
+        programIntensity: ProgramIntensity.fullTimePartTime,
+      });
+    }
+    return programsQuery
       .andWhere(`exists(${offeringExistsQuery.getQuery()})`)
       .select("programs.id")
       .addSelect("programs.name")

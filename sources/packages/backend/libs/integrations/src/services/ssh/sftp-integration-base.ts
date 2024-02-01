@@ -74,7 +74,10 @@ export abstract class SFTPIntegrationBase<DownloadType> {
     let filesToProcess: Client.FileInfo[];
     const client = await this.getClient();
     try {
-      filesToProcess = await client.list(remoteDownloadFolder, fileRegexSearch);
+      filesToProcess = await client.list(
+        remoteDownloadFolder,
+        (item: Client.FileInfo) => fileRegexSearch.test(item.name),
+      );
     } finally {
       await SshService.closeQuietly(client);
     }
