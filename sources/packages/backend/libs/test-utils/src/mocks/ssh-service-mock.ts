@@ -105,7 +105,7 @@ export function mockDownloadFiles(
   );
   sshClientMock.list.mockResolvedValue(fileInfos);
   sshClientMock.get.mockImplementation((filePath: string) => {
-    let fileContent = readFileSync(filePath).toString();
+    let fileContent = readFileSync(filePath, { encoding: "ascii" }).toString();
     if (fileTransformation) {
       fileContent = fileTransformation(fileContent);
     }
