@@ -16,7 +16,6 @@ import { plainToClass } from "class-transformer";
 import { validateSync } from "class-validator";
 import { flattenErrorMessages } from "../../utilities/class-validation";
 import { parse } from "papaparse";
-import { removeUTF8BOM } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import { OFFERING_VALIDATION_CSV_PARSE_ERROR } from "../../constants";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
@@ -140,8 +139,6 @@ export class EducationProgramOfferingImportCSVService {
    */
   readCSV(csvContent: string): OfferingCSVModel[] {
     const offeringModels: OfferingCSVModel[] = [];
-    // Remove BOM(Byte order mark), if present.
-    csvContent = removeUTF8BOM(csvContent);
     const parsedResult = parse(csvContent, {
       header: true,
       skipEmptyLines: "greedy",

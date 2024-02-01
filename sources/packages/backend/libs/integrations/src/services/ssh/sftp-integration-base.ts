@@ -2,6 +2,7 @@ import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { SshService } from "./ssh.service";
 import * as Client from "ssh2-sftp-client";
 import * as path from "path";
+import * as fs from "fs";
 import { SFTPConfig } from "@sims/utilities/config";
 import { FixedFormatFileLine } from "./sftp-integration-base.models";
 import { END_OF_LINE } from "@sims/utilities";
@@ -130,8 +131,8 @@ export abstract class SFTPIntegrationBase<DownloadType> {
           return false;
         }
       }
-      // Read all the file content and create a buffer.
-      const fileContent = await client.get(remoteFilePath);
+      // Read all the file content with 'ascii' encoding.
+      const fileContent = fs.readFileSync(remoteFilePath, "ascii");
       // Convert the file content to an array of text lines and remove possible blank lines.
       return fileContent
         .toString()

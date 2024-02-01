@@ -511,8 +511,8 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     @Query("validation-only", new DefaultValuePipe(false), ParseBoolPipe)
     validationOnly: boolean,
   ): Promise<PrimaryIdentifierAPIOutDTO[]> {
-    // Read the entire file content.
-    const fileContent = file.buffer.toString();
+    // Read the entire file content in ASCII encoding.
+    const fileContent = file.buffer.toString("ascii");
     // Convert the file raw content into CSV models.
     let csvModels: OfferingCSVModel[];
     try {

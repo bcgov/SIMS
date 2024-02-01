@@ -7,10 +7,7 @@ import {
   InstitutionIntegrationConfig,
 } from "@sims/utilities/config";
 import { ProcessSummaryResult } from "@sims/integrations/models";
-import {
-  ECE_RESPONSE_COE_DECLINED_REASON,
-  ECE_RESPONSE_FILE_NAME,
-} from "@sims/integrations/constants";
+import { ECE_RESPONSE_COE_DECLINED_REASON } from "@sims/integrations/constants";
 import { InstitutionLocationService } from "@sims/integrations/services";
 import {
   COE_DENIED_REASON_OTHER_ID,
@@ -76,12 +73,18 @@ export class ECEResponseProcessingService {
     // Get all the institution codes who are enabled for integration.
     const integrationEnabledInstitutions =
       await this.institutionLocationService.getAllIntegrationEnabledInstitutionCodes();
+    const eceResponseFileNameRegexPattern =
+      "CONR-008-\\d{8}-\\d{6}\\.\\d{3}\\.TXT";
+    const eceResponseFileNameRegex = new RegExp(
+      eceResponseFileNameRegexPattern,
+      "i",
+    );
     const filePathDetails: InstitutionFileDetail[] =
       integrationEnabledInstitutions.map((institutionCode) => ({
         path: path.join(
           this.institutionIntegrationConfig.ftpResponseFolder,
           institutionCode,
-          ECE_RESPONSE_FILE_NAME,
+          eceResponseFileNameRegex.source,
         ),
         institutionCode,
       }));

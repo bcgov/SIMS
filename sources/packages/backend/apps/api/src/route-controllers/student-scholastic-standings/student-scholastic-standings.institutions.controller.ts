@@ -215,8 +215,8 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     validationOnly: boolean,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO[]> {
-    // Read the entire file content.
-    const fileContent = file.buffer.toString();
+    // Read the entire file content in ASCII encoding.
+    const fileContent = file.buffer.toString("ascii");
     let withdrawalFileData: BulkWithdrawalFileData;
     try {
       withdrawalFileData =

@@ -22,6 +22,7 @@ export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
 export const DATE_ONLY_FORMAT = "MMM DD YYYY";
 export const DATE_TIME_FORMAT = "YYYY-MM-DD HH:mm:ss";
 export const TIMESTAMP_CONTINUOUS_FORMAT = "YYYY-MM-DD_HH.mm.ss";
+export const CUSTOMIZED_TIMESTAMP_CONTINUOUS_FORMAT = "YYYYMMDD-HHmmssSSS";
 export const PST_TIMEZONE = "America/Vancouver";
 
 /**
@@ -232,6 +233,17 @@ export function dateEqualTo(date: Date): FindOperator<Date> {
  */
 export function getFileNameAsCurrentTimestamp(): string {
   return dayjs(new Date()).tz(PST_TIMEZONE).format(TIMESTAMP_CONTINUOUS_FORMAT);
+}
+
+/**
+ * Return a PST timestamp with date and time in customized continuous format
+ * mainly used to append in filename.
+ * @returns timestamp.
+ */
+export function getFileNameAsCustomizedCurrentTimestamp(): string {
+  return dayjs(new Date())
+    .tz(PST_TIMEZONE)
+    .format(CUSTOMIZED_TIMESTAMP_CONTINUOUS_FORMAT);
 }
 
 /**
