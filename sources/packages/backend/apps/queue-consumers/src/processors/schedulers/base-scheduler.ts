@@ -73,7 +73,7 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
     }
     await this.deleteOldRepeatableJobs();
     // Add the cron to the queue.
-    //await this.schedulerQueue.add(await this.payload());
+    await this.schedulerQueue.add(await this.payload());
   }
 
   /**

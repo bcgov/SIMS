@@ -98,7 +98,12 @@ export class ApplicationService {
           }),
         )
         .andWhere("application.applicationStatus IN (:...status)", {
-          status: [ApplicationStatus.Submitted, ApplicationStatus.Completed],
+          status: [
+            ApplicationStatus.Submitted,
+            ApplicationStatus.InProgress,
+            ApplicationStatus.Enrolment,
+            ApplicationStatus.Completed,
+          ],
         })
         .andWhere(
           "studentAssessment.studentAssessmentStatus = :submittedStatus",
