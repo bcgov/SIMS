@@ -7,7 +7,7 @@ export class RemoveConstraintStudentAssessmentsOnlyOneAssessmentDataNullIndex170
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Drop-index-only-one-assessment-data-null.sql",
+        "Drop-student-assessments-index-only-one-assessment-data-null.sql",
         "StudentAssessments",
       ),
     );
@@ -16,7 +16,7 @@ export class RemoveConstraintStudentAssessmentsOnlyOneAssessmentDataNullIndex170
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Rollback-drop-index-only-one-assessment-data-null.sql",
+        "Rollback-drop-student-assessments-index-only-one-assessment-data-null.sql",
         "StudentAssessments",
       ),
     );
