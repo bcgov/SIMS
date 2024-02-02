@@ -15,7 +15,7 @@ import { SequencedApplications, SequentialApplication } from "..";
 export class AssessmentSequentialProcessingService {
   /**
    * Checks if changes in an assessment can potentially causes changes in another application
-   * which would demand an reassessment of the same.
+   * which would demand a reassessment of the same.
    * @param assessmentId assessment currently changing (e.g. updated or cancelled).
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @param entityManager used to execute the commands in the same transaction.
@@ -91,8 +91,8 @@ export class AssessmentSequentialProcessingService {
   }
 
   /**
-   * Get the application correspondent to the {@link applicationNumber} as the current to them search
-   * for application in the past and in the future for the same student and the same program year.
+   * Get the application correspondent to the {@link applicationNumber} as the current to then search
+   * for applications in the past and in the future for the same student and the same program year.
    * If a reference date is not possible to be determined for the current application so no future
    * or past applications will be returned.
    * @param applicationNumber reference application to be used to determined past and future

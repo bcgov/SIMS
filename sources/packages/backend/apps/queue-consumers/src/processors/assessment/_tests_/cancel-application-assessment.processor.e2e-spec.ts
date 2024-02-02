@@ -272,7 +272,7 @@ describe(
           applicationStatus: ApplicationStatus.Cancelled,
           currentAssessmentInitialValues: {
             assessmentWorkflowId: "some fake id",
-            assessmentDate: addDays(1, new Date()),
+            assessmentDate: new Date(),
             studentAssessmentStatus: StudentAssessmentStatus.CancellationQueued,
           },
         },
@@ -286,7 +286,7 @@ describe(
           applicationStatus: ApplicationStatus.Completed,
           currentAssessmentInitialValues: {
             assessmentWorkflowId: "some fake id",
-            assessmentDate: addDays(2, new Date()),
+            assessmentDate: addDays(1, new Date()),
             studentAssessmentStatus: StudentAssessmentStatus.Submitted,
           },
         },
