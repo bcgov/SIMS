@@ -16,7 +16,7 @@ export class AddRelatedApplicationAssessmentIdCol1705971944966
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Drop-related-application-assessment-id-col.sql",
+        "Rollback-add-related-application-assessment-id-col.sql",
         "StudentAssessments",
       ),
     );
