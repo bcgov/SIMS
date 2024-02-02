@@ -25,7 +25,10 @@ import {
   EDUCATION_PROGRAM_NOT_FOUND,
   DUPLICATE_SABC_CODE,
 } from "../../constants";
-import { INSTITUTION_TYPE_BC_PRIVATE } from "@sims/sims-db/constant";
+import {
+  INSTITUTION_TYPE_BC_PUBLIC,
+  INSTITUTION_TYPE_BC_PRIVATE,
+} from "@sims/sims-db/constant";
 import { ApiProcessError } from "../../types";
 import { ApiUnprocessableEntityResponse } from "@nestjs/swagger";
 import { SaveEducationProgram } from "../../services/education-program/education-program.service.models";
@@ -213,6 +216,8 @@ export class EducationProgramControllerService {
       effectiveEndDate: getISODateOnlyString(program.effectiveEndDate),
       assessedDate: program.assessedDate,
       assessedBy: getUserFullName(program.assessedBy),
+      isBCPublic:
+        program.institution.institutionType.id === INSTITUTION_TYPE_BC_PUBLIC,
       isBCPrivate:
         program.institution.institutionType.id === INSTITUTION_TYPE_BC_PRIVATE,
       hasOfferings,

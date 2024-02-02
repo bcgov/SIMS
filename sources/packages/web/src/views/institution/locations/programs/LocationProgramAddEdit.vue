@@ -57,6 +57,7 @@ import {
   EducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
 } from "@/services/http/dto";
+import { InstitutionService } from "@/services/InstitutionService";
 
 export default defineComponent({
   props: {
@@ -93,7 +94,12 @@ export default defineComponent({
             props.programId,
           );
       } else {
-        initNewFormData();
+        const institutionProfile = await InstitutionService.shared.getDetail();
+        programData.value = {
+          isBCPrivate: institutionProfile.isBCPrivate,
+          isBCPublic: institutionProfile.isBCPublic,
+          hasOfferings: false,
+        } as EducationProgramAPIOutDTO;
       }
     };
 
@@ -209,21 +215,12 @@ export default defineComponent({
     };
 
     const createNewProgram = () => {
-      programData.value = {} as EducationProgramAPIOutDTO;
-      initNewFormData();
       router.push({
         name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
         params: {
           locationId: props.locationId,
         },
       });
-    };
-
-    const initNewFormData = () => {
-      programData.value = {
-        isBCPrivate: programData.value.isBCPrivate,
-        hasOfferings: false,
-      } as EducationProgramAPIOutDTO;
     };
 
     return {
