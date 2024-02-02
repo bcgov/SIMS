@@ -16,6 +16,7 @@ import {
 import * as Client from "ssh2-sftp-client";
 import { Job } from "bull";
 import * as path from "path";
+import { ECE_RESPONSE_FILE_NAME } from "@sims/integrations/constants";
 import { ProcessSummaryResult } from "@sims/integrations/models";
 import {
   ApplicationStatus,
@@ -45,11 +46,7 @@ describe(
     let locationFAIL: InstitutionLocation;
     // Institution location to test disbursement with multiple detail records.
     let locationMULT: InstitutionLocation;
-    const eceResponseFileNameRegexPattern = "CONR-008-\\d{8}-\\d{8}\\.TXT";
-    const eceResponseFileNameRegex = new RegExp(
-      eceResponseFileNameRegexPattern,
-      "i",
-    );
+
     beforeAll(async () => {
       eceResponseMockDownloadFolder = path.join(
         __dirname,
@@ -102,7 +99,7 @@ describe(
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         locationCONF.institutionCode,
-        eceResponseFileNameRegex.source,
+        ECE_RESPONSE_FILE_NAME,
       );
 
       // Create disbursement to confirm enrolment.
@@ -124,7 +121,7 @@ describe(
       // disbursement and application number.
       mockDownloadFiles(
         sftpClientMock,
-        [eceResponseFileNameRegex.source],
+        [ECE_RESPONSE_FILE_NAME],
         (fileContent: string) => {
           return fileContent
             .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
@@ -180,7 +177,7 @@ describe(
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         locationMULT.institutionCode,
-        eceResponseFileNameRegex.source,
+        ECE_RESPONSE_FILE_NAME,
       );
 
       // Create disbursement to confirm enrolment.
@@ -215,7 +212,7 @@ describe(
       // disbursement and application number.
       mockDownloadFiles(
         sftpClientMock,
-        [eceResponseFileNameRegex.source],
+        [ECE_RESPONSE_FILE_NAME],
         (fileContent: string) => {
           return (
             fileContent
@@ -287,7 +284,7 @@ describe(
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         locationDECL.institutionCode,
-        eceResponseFileNameRegex.source,
+        ECE_RESPONSE_FILE_NAME,
       );
 
       // Create disbursement to confirm enrolment.
@@ -309,7 +306,7 @@ describe(
       // disbursement and application number.
       mockDownloadFiles(
         sftpClientMock,
-        [eceResponseFileNameRegex.source],
+        [ECE_RESPONSE_FILE_NAME],
         (fileContent: string) => {
           return fileContent
             .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
@@ -361,7 +358,7 @@ describe(
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         locationSKIP.institutionCode,
-        eceResponseFileNameRegex.source,
+        ECE_RESPONSE_FILE_NAME,
       );
 
       // Create disbursement to confirm enrolment.
@@ -383,7 +380,7 @@ describe(
       // disbursement and application number.
       mockDownloadFiles(
         sftpClientMock,
-        [eceResponseFileNameRegex.source],
+        [ECE_RESPONSE_FILE_NAME],
         (fileContent: string) => {
           return fileContent
             .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
@@ -430,7 +427,7 @@ describe(
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         locationSKIP.institutionCode,
-        eceResponseFileNameRegex.source,
+        ECE_RESPONSE_FILE_NAME,
       );
 
       const fakeDisbursementId = "1111111111";
@@ -442,7 +439,7 @@ describe(
       // Modify the data in mock file to have fake disbursement id.
       mockDownloadFiles(
         sftpClientMock,
-        [eceResponseFileNameRegex.source],
+        [ECE_RESPONSE_FILE_NAME],
         (fileContent: string) => {
           return fileContent
             .replace("DISBNUMBER", fakeDisbursementId)
@@ -488,7 +485,7 @@ describe(
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         locationSKIP.institutionCode,
-        eceResponseFileNameRegex.source,
+        ECE_RESPONSE_FILE_NAME,
       );
 
       // Create disbursement to confirm enrolment.
@@ -512,7 +509,7 @@ describe(
       // and fake application number.
       mockDownloadFiles(
         sftpClientMock,
-        [eceResponseFileNameRegex.source],
+        [ECE_RESPONSE_FILE_NAME],
         (fileContent: string) => {
           return fileContent
             .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
@@ -558,7 +555,7 @@ describe(
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         locationFAIL.institutionCode,
-        eceResponseFileNameRegex.source,
+        ECE_RESPONSE_FILE_NAME,
       );
 
       // Queued job.
@@ -567,7 +564,7 @@ describe(
       // Modify the data in mock file to have invalid header.
       mockDownloadFiles(
         sftpClientMock,
-        [eceResponseFileNameRegex.source],
+        [ECE_RESPONSE_FILE_NAME],
         (fileContent: string) => {
           return fileContent.replace("1AJAA", "2AJAA");
         },
@@ -612,7 +609,7 @@ describe(
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         locationFAIL.institutionCode,
-        eceResponseFileNameRegex.source,
+        ECE_RESPONSE_FILE_NAME,
       );
 
       // Queued job.
@@ -621,7 +618,7 @@ describe(
       // Modify the data in mock file to have invalid detail.
       mockDownloadFiles(
         sftpClientMock,
-        [eceResponseFileNameRegex.source],
+        [ECE_RESPONSE_FILE_NAME],
         (fileContent: string) => {
           return fileContent.replace("2AJBH", "3AJBH");
         },
@@ -667,7 +664,7 @@ describe(
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         locationFAIL.institutionCode,
-        eceResponseFileNameRegex.source,
+        ECE_RESPONSE_FILE_NAME,
       );
 
       // Queued job.
@@ -676,7 +673,7 @@ describe(
       // Modify the data in mock file to have invalid footer.
       mockDownloadFiles(
         sftpClientMock,
-        [eceResponseFileNameRegex.source],
+        [ECE_RESPONSE_FILE_NAME],
         (fileContent: string) => {
           return fileContent.replace("3000001", "4000001");
         },
@@ -721,7 +718,7 @@ describe(
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         locationFAIL.institutionCode,
-        eceResponseFileNameRegex.source,
+        ECE_RESPONSE_FILE_NAME,
       );
 
       // Queued job.
@@ -730,7 +727,7 @@ describe(
       // Modify the data in mock file to have invalid footer.
       mockDownloadFiles(
         sftpClientMock,
-        [eceResponseFileNameRegex.source],
+        [ECE_RESPONSE_FILE_NAME],
         (fileContent: string) => {
           return fileContent.replace("3000001", "3000002");
         },
@@ -775,7 +772,7 @@ describe(
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         locationSKIP.institutionCode,
-        eceResponseFileNameRegex.source,
+        ECE_RESPONSE_FILE_NAME,
       );
 
       // Queued job.
@@ -786,7 +783,7 @@ describe(
       // due to the placeholder DISBNUMBER.
       mockDownloadFiles(
         sftpClientMock,
-        [eceResponseFileNameRegex.source],
+        [ECE_RESPONSE_FILE_NAME],
         (fileContent: string) => {
           return fileContent.replace("APPLNUMBER", "          ");
         },
@@ -835,7 +832,7 @@ describe(
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         locationCONF.institutionCode,
-        eceResponseFileNameRegex.source,
+        ECE_RESPONSE_FILE_NAME,
       );
 
       // Create disbursement to confirm enrolment.
@@ -857,7 +854,7 @@ describe(
       // disbursement and application number.
       mockDownloadFiles(
         sftpClientMock,
-        [eceResponseFileNameRegex.source],
+        [ECE_RESPONSE_FILE_NAME],
         (fileContent: string) => {
           return (
             fileContent
@@ -915,7 +912,7 @@ describe(
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         locationCONF.institutionCode,
-        eceResponseFileNameRegex.source,
+        ECE_RESPONSE_FILE_NAME,
       );
 
       // Create disbursement to confirm enrolment.
@@ -937,7 +934,7 @@ describe(
       // disbursement and application number.
       mockDownloadFiles(
         sftpClientMock,
-        [eceResponseFileNameRegex.source],
+        [ECE_RESPONSE_FILE_NAME],
         (fileContent: string) => {
           return (
             fileContent
@@ -992,7 +989,7 @@ describe(
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         locationCONF.institutionCode,
-        eceResponseFileNameRegex.source,
+        ECE_RESPONSE_FILE_NAME,
       );
 
       // Create disbursement to confirm enrolment.
@@ -1016,7 +1013,7 @@ describe(
       // disbursement and application number.
       mockDownloadFiles(
         sftpClientMock,
-        [eceResponseFileNameRegex.source],
+        [ECE_RESPONSE_FILE_NAME],
         (fileContent: string) => {
           return fileContent
             .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
@@ -1072,7 +1069,7 @@ describe(
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         locationCONF.institutionCode,
-        eceResponseFileNameRegex.source,
+        ECE_RESPONSE_FILE_NAME,
       );
 
       // Create disbursement to confirm enrolment.
@@ -1097,7 +1094,7 @@ describe(
       // disbursement and application number.
       mockDownloadFiles(
         sftpClientMock,
-        [eceResponseFileNameRegex.source],
+        [ECE_RESPONSE_FILE_NAME],
         (fileContent: string) => {
           return fileContent
             .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
