@@ -1698,7 +1698,7 @@
                         "eq": "",
                         "json": ""
                     },
-                    "customConditional": "const isBCInstitution = data.isBCPublic || data.isBCPrivate;\nshow = (!isBCInstitution && data.programDeliveryTypes.deliveredOnSite);",
+                    "customConditional": "const isBCInstitution = data.isBCPublic || data.isBCPrivate;\nshow = (!isBCInstitution && data.programDeliveryTypes.deliveredOnline);",
                     "logic": [],
                     "attributes": {
                         "data-cy": "deliveredOnlineAlsoOnsite"
@@ -6334,7 +6334,7 @@
             "properties": {},
             "lockKey": true,
             "customDefaultValue": "",
-            "customConditional": "console.log('data: ', data);"
+            "customConditional": ""
         },
         {
             "label": "Program Status",

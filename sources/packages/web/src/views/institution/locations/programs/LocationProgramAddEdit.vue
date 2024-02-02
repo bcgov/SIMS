@@ -94,6 +94,7 @@ export default defineComponent({
             props.programId,
           );
       } else {
+        // Initialize programData with institution profile data
         const institutionProfile = await InstitutionService.shared.getDetail();
         programData.value = {
           isBCPrivate: institutionProfile.isBCPrivate,
