@@ -73,8 +73,7 @@ export class ECEResponseProcessingService {
     // Get all the institution codes who are enabled for integration.
     const integrationEnabledInstitutions =
       await this.institutionLocationService.getAllIntegrationEnabledInstitutionCodes();
-    const eceResponseFileNameRegexPattern =
-      "CONR-008-\\d{8}-\\d{6}\\.\\d{3}\\.TXT";
+    const eceResponseFileNameRegexPattern = "CONR-008-\\d{8}-\\d{8}\\.TXT";
     const eceResponseFileNameRegex = new RegExp(
       eceResponseFileNameRegexPattern,
       "i",
