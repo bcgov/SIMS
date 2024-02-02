@@ -22,8 +22,10 @@ export interface SequentialApplication {
   referenceAssessmentDate?: Date;
   /**
    * Current offering id associated to the current assessment of the active application.
+   * Potentially null when the current application is cancelled and a PIR (Program information Request)
+   * is still in progress.
    */
-  currentAssessmentOfferingId: number;
+  currentAssessmentOfferingId?: number;
 }
 
 /**

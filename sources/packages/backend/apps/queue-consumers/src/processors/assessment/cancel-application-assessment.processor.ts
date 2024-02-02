@@ -128,6 +128,8 @@ export class CancelApplicationAssessmentProcessor {
         .getRepository(StudentAssessment)
         .update(assessment.id, {
           studentAssessmentStatus: StudentAssessmentStatus.Cancelled,
+          modifier: this.systemUserService.systemUser,
+          updatedAt: new Date(),
         });
       await summary.info(
         `Assessment status updated to ${StudentAssessmentStatus.Cancelled}.`,
@@ -147,6 +149,7 @@ export class CancelApplicationAssessmentProcessor {
         assessment.application.applicationStatus !==
         ApplicationStatus.Overwritten
       ) {
+        // Overwritten applications do not cause impacts in future application and the checks can be completely skipped.
         await summary.info(
           "Assessing if there is a future impacted application that need to be reassessed.",
         );

@@ -135,6 +135,7 @@ export class AssessmentSequentialProcessingService {
       .limit(1)
       .getSql();
     // Returns past, current, and future applications ordered by the first ever executed assessment calculation.
+    const referenceAssessmentDateColumn = "referenceAssessmentDate";
     const sequentialApplications = await entityManager
       .getRepository(Application)
       .createQueryBuilder("application")
@@ -142,11 +143,11 @@ export class AssessmentSequentialProcessingService {
       .addSelect("application.applicationNumber", "applicationNumber")
       .addSelect("application.applicationStatus", "applicationStatus")
       .addSelect("currentAssessmentOffering.id", "currentAssessmentOfferingId")
-      .addSelect(`(${assessmentDateSubQuery})`, "referenceAssessmentDate")
+      .addSelect(`(${assessmentDateSubQuery})`, referenceAssessmentDateColumn)
       .innerJoin("application.student", "student")
       .innerJoin("application.programYear", "programYear")
       .innerJoin("application.currentAssessment", "currentAssessment")
-      .innerJoin("currentAssessment.offering", "currentAssessmentOffering")
+      .leftJoin("currentAssessment.offering", "currentAssessmentOffering")
       .where("student.id = :studentId", { studentId })
       .andWhere("programYear.id = :programYearId", { programYearId })
       .andWhere("application.applicationStatus != :overwrittenStatus", {
@@ -175,7 +176,7 @@ export class AssessmentSequentialProcessingService {
         }),
       )
       .setParameters({ declinedCOEStatus: COEStatus.declined })
-      .orderBy(`"referenceAssessmentDate"`)
+      .orderBy(`"${referenceAssessmentDateColumn}"`)
       .getRawMany<SequentialApplication>();
     return new SequencedApplications(applicationNumber, sequentialApplications);
   }
