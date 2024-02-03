@@ -410,7 +410,6 @@ describe(
           applicationStatus: ApplicationStatus.Assessment,
           currentAssessmentInitialValues: {
             assessmentWorkflowId: "some fake id",
-            assessmentData: { weeks: 5 } as Assessment,
             assessmentDate: new Date(),
             studentAssessmentStatus: StudentAssessmentStatus.Completed,
           },
