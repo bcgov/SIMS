@@ -73,6 +73,8 @@ export class AssessmentSequentialProcessingService {
     const now = new Date();
     // Create the new assessment to be processed.
     const auditUser = { id: auditUserId } as User;
+    impactedApplication.modifier = auditUser;
+    impactedApplication.updatedAt = now;
     impactedApplication.currentAssessment = {
       application: {
         id: impactedApplication.id,
