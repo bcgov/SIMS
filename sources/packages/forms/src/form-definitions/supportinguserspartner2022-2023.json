@@ -2167,9 +2167,9 @@
                   "attributes": {},
                   "validateOn": "change",
                   "conditional": {
-                    "show": null,
-                    "when": null,
-                    "eq": ""
+                    "show": "false",
+                    "when": "offeringIntensity",
+                    "eq": "Part Time"
                   },
                   "overlay": {
                     "style": "",
@@ -2187,7 +2187,9 @@
                   "addons": [],
                   "inputType": "radio",
                   "fieldSet": false,
-                  "id": "e2j82bp"
+                  "id": "e2j82bp",
+                  "tags": [],
+                  "isNew": false
                 },
                 {
                   "label": "<strong>Will you be at home caring for eligible dependant children on a full-time basis during your Partner's entire study period? </strong>",
@@ -2246,9 +2248,9 @@
                   "tags": [],
                   "properties": {},
                   "conditional": {
-                    "show": null,
-                    "when": null,
-                    "eq": "",
+                    "show": "false",
+                    "when": "offeringIntensity",
+                    "eq": "Part Time",
                     "json": ""
                   },
                   "customConditional": "",
@@ -2280,7 +2282,8 @@
                   "inputType": "radio",
                   "fieldSet": false,
                   "id": "em0e9jr",
-                  "defaultValue": ""
+                  "defaultValue": "",
+                  "isNew": false
                 },
                 {
                   "label": "<strong>Will you be living with your Partner during your Partner's study period?</strong>",
@@ -2342,9 +2345,9 @@
                   "attributes": {},
                   "validateOn": "change",
                   "conditional": {
-                    "show": null,
-                    "when": null,
-                    "eq": ""
+                    "show": "false",
+                    "when": "offeringIntensity",
+                    "eq": "Part Time"
                   },
                   "overlay": {
                     "style": "",
@@ -2362,7 +2365,9 @@
                   "addons": [],
                   "inputType": "radio",
                   "fieldSet": false,
-                  "id": "edsljuf"
+                  "id": "edsljuf",
+                  "tags": [],
+                  "isNew": false
                 },
                 {
                   "label": "<strong>Will you be a full-time post-secondary student for some or all of your Partner's study period?</strong>",
@@ -2424,9 +2429,9 @@
                   "attributes": {},
                   "validateOn": "change",
                   "conditional": {
-                    "show": null,
-                    "when": null,
-                    "eq": ""
+                    "show": "false",
+                    "when": "offeringIntensity",
+                    "eq": "Part Time"
                   },
                   "overlay": {
                     "style": "",
@@ -2444,7 +2449,9 @@
                   "addons": [],
                   "inputType": "radio",
                   "fieldSet": false,
-                  "id": "ex27r4o"
+                  "id": "ex27r4o",
+                  "tags": [],
+                  "isNew": false
                 },
                 {
                   "title": "If your partner will be a full-time student, how many weeks of your study period will they also be in studies Panel",
@@ -2452,8 +2459,8 @@
                   "hideLabel": true,
                   "key": "ifYourPartnerWillBeAFullTimeStudentHowManyWeeksOfYourStudyPeriodWillTheyAlsoBeInStudiesPanel",
                   "conditional": {
-                    "show": true,
-                    "when": "supportingData.partnerFulltimeStudent",
+                    "show": "true",
+                    "when": "partnerFulltimeStudent",
                     "eq": "yes"
                   },
                   "type": "panel",
@@ -2524,8 +2531,8 @@
                       "attributes": {},
                       "validateOn": "change",
                       "conditional": {
-                        "show": null,
-                        "when": null,
+                        "show": "",
+                        "when": "",
                         "eq": ""
                       },
                       "overlay": {
@@ -2543,7 +2550,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "id": "euxu2ql",
-                      "inputType": "number"
+                      "inputType": "number",
+                      "tags": []
                     }
                   ],
                   "placeholder": "",
@@ -2601,7 +2609,8 @@
                   "lazyLoad": false,
                   "theme": "default",
                   "breadcrumb": "default",
-                  "id": "eryyqjh"
+                  "id": "eryyqjh",
+                  "tags": []
                 },
                 {
                   "label": "<strong>Will you receive income assistance/social assistance (welfare) and/or BC income assistance for persons with disabilities during your Partner's study period?</strong>",
@@ -2861,7 +2870,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "e308bl"
+                  "id": "e308bl",
+                  "isNew": false
                 },
                 {
                   "label": "<strong>Will you be in receipt of Employment Insurance benefits during your Partner's study period?</strong>",
@@ -3426,9 +3436,9 @@
                   "tags": [],
                   "properties": {},
                   "conditional": {
-                    "show": null,
-                    "when": null,
-                    "eq": "",
+                    "show": "false",
+                    "when": "offeringIntensity",
+                    "eq": "Part Time",
                     "json": ""
                   },
                   "customConditional": "",
@@ -3480,8 +3490,8 @@
                   "customConditional": "",
                   "conditional": {
                     "json": "",
-                    "show": true,
-                    "when": "supportingData.partnerPayStudentLoan",
+                    "show": "true",
+                    "when": "partnerPayStudentLoan",
                     "eq": "yes"
                   },
                   "logic": [],
@@ -3624,7 +3634,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "e1cacbl"
+                  "id": "e1cacbl",
+                  "isNew": false
                 },
                 {
                   "label": "<strong>Will you be paying for child support and/or spousal support during your Partner's study period?</strong>",
@@ -3686,9 +3697,9 @@
                   "attributes": {},
                   "validateOn": "change",
                   "conditional": {
-                    "show": null,
-                    "when": null,
-                    "eq": ""
+                    "show": "false",
+                    "when": "offeringIntensity",
+                    "eq": "Part Time"
                   },
                   "overlay": {
                     "style": "",
@@ -3706,7 +3717,8 @@
                   "addons": [],
                   "inputType": "radio",
                   "fieldSet": false,
-                  "id": "efbnjl"
+                  "id": "efbnjl",
+                  "tags": []
                 },
                 {
                   "title": "Will your partner be paying for child support and/or spousal support during your study period Panel",
@@ -3726,8 +3738,8 @@
                   "customConditional": "",
                   "conditional": {
                     "json": "",
-                    "show": true,
-                    "when": "supportingData.partnerPaySupport",
+                    "show": "true",
+                    "when": "partnerPaySupport",
                     "eq": "yes"
                   },
                   "logic": [],
@@ -3932,9 +3944,9 @@
                   "attributes": {},
                   "validateOn": "change",
                   "conditional": {
-                    "show": null,
-                    "when": null,
-                    "eq": ""
+                    "show": "false",
+                    "when": "offeringIntensity",
+                    "eq": "Part Time"
                   },
                   "overlay": {
                     "style": "",
@@ -3952,7 +3964,8 @@
                   "addons": [],
                   "inputType": "radio",
                   "fieldSet": false,
-                  "id": "emhjo7h"
+                  "id": "emhjo7h",
+                  "tags": []
                 },
                 {
                   "label": "HTML",
@@ -4133,7 +4146,8 @@
                       "showWordCount": false,
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "elh7yc6"
+                      "id": "elh7yc6",
+                      "isNew": false
                     },
                     {
                       "html": "<p><strong>I. I understand that:</strong></p>\n\n<ol>\n\t<li>The student will have access to information provided in this appendix;</li>\n\t<li>The student&rsquo;s school will have access to information provided in this appendix;</li>\n\t<li>The information in this appendix is subject to verification and investigation, as defined in the current program year&rsquo;s StudentAid BC Policy Manual.</li>\n</ol>\n\n<p><strong>II. I understand that signing the Declaration means:</strong></p>\n\n<ol>\n\t<li>I declare that the information I have given is correct and complete and that I have not altered or added to any of the preprinted application and/or appendix questions;</li>\n\t<li>I authorize the student to notify StudentAid BC as soon as practical of any change in my total income as reported on line 15000 of my previous year&rsquo;s T1 General Income Tax and Benefit Return and/or other&ldquo;assessed resources&rdquo;, as defined in the current program year&rsquo;s StudentAid BC Policy Manual;</li>\n\t<li>For the purposes of verifying the accuracy of the personal information provided by me in this appendix, <strong>I consent to the collection, use and disclosure of my personal information</strong> between the BC Ministry of Post Secondary and Future Skills, the BC Ministry of Finance, the National Student Loans Service Centre, and any of their contractors, subcontractors or agents, each with each other, and with the following: financial institutions, lenders, educational institutions, financial aid offices, employers, credit bureaus, credit reporting agencies, Aboriginal Organizations, Federal and provincial Crown corporations, and federal, provincial, municipal ministries/departments/agencies, including but not limited to: BC Ministry of Social Development and Poverty Reduction, BC Ministry of Children and Family Development, BC Ministry of Health, BC Ministry of Attorney General, BC Ministry of Education, BC Public Service Agency, RoadSafe BC, Insurance Corporation of BC (and Service BC acting in the role of ICBC), BC Assessment Authority, Land Title and Survey Authority of BC, BC Registry Services, WorkSafe BC, BC Vital Statistics Agency, the Office of the Superintendent of Bankruptcy Canada, Employment and Social Development Canada , Canada Revenue Agency, and Immigration, Refugees and Citizenship Canada. This consent takes effect on the date that I make the first submission of this Appendix to StudentAid BC, regardless of whether this Appendix is in electronic or written format.</li>\n</ol>\n",
@@ -4519,7 +4533,8 @@
                   "theme": "default",
                   "breadcrumb": "default",
                   "id": "e69jwa",
-                  "tags": []
+                  "tags": [],
+                  "isNew": false
                 },
                 {
                   "label": "I Agree to the terms and conditions of the StudentAid BC Declaration form.",
