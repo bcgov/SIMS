@@ -32,6 +32,7 @@ import {
 import { ApiProcessError } from "../../types";
 import { ApiUnprocessableEntityResponse } from "@nestjs/swagger";
 import { SaveEducationProgram } from "../../services/education-program/education-program.service.models";
+import { InstitutionService } from "../../services/institution/institution.service";
 
 @Injectable()
 export class EducationProgramControllerService {
@@ -39,6 +40,7 @@ export class EducationProgramControllerService {
     private readonly programService: EducationProgramService,
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
     private readonly formService: FormService,
+    private readonly institutionService: InstitutionService,
   ) {}
 
   /**
@@ -99,6 +101,12 @@ export class EducationProgramControllerService {
     auditUserId: number,
     programId?: number,
   ): Promise<EducationProgram> {
+    // Check if institution is private/public and append it to the payload.
+    const { institutionType } =
+      await this.institutionService.getInstitutionTypeById(institutionId);
+    payload.isBCPrivate = institutionType.isBCPrivate;
+    payload.isBCPublic = institutionType.isBCPublic;
+
     const submissionResult =
       await this.formService.dryRunSubmission<SaveEducationProgram>(
         FormNames.EducationProgram,

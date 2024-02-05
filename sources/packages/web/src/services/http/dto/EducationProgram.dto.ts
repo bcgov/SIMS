@@ -144,6 +144,8 @@ export class EducationProgramAPIInDTO {
   programDeclaration: boolean;
   @Expose()
   fieldOfStudyCode: number;
+  isBCPrivate: boolean;
+  isBCPublic: boolean;
 }
 
 export interface StudentEducationProgramAPIOutDTO {

@@ -1698,7 +1698,7 @@
                         "eq": "",
                         "json": ""
                     },
-                    "customConditional": "const isBCInstitution = data.isBCPublic || data.isBCPrivate;\nshow = (isBCInstitution === false && data.programDeliveryTypes.deliveredOnline);",
+                    "customConditional": "const isBCInstitution = data.isBCPublic || data.isBCPrivate;\nshow = (!isBCInstitution && data.programDeliveryTypes.deliveredOnline);",
                     "logic": [],
                     "attributes": {
                         "data-cy": "deliveredOnlineAlsoOnsite"
@@ -1794,7 +1794,7 @@
                         "eq": "",
                         "json": ""
                     },
-                    "customConditional": "const isBCInstitution = data.isBCPublic || data.isBCPrivate;\nshow = (isBCInstitution === false && data.deliveredOnlineAlsoOnsite === \"no\");",
+                    "customConditional": "const isBCInstitution = data.isBCPublic || data.isBCPrivate;\nshow = (!isBCInstitution && data.deliveredOnlineAlsoOnsite === \"no\");",
                     "logic": [],
                     "attributes": {
                         "data-cy": "sameOnlineCreditsEarned"
@@ -1890,7 +1890,7 @@
                         "eq": "",
                         "json": ""
                     },
-                    "customConditional": "const isBCInstitution = data.isBCPublic || data.isBCPrivate;\nshow = (isBCInstitution === false && data.deliveredOnlineAlsoOnsite === \"no\" && data.sameOnlineCreditsEarned ===\"no\");",
+                    "customConditional": "const isBCInstitution = data.isBCPublic || data.isBCPrivate;\nshow = (!isBCInstitution && data.deliveredOnlineAlsoOnsite === \"no\" && data.sameOnlineCreditsEarned ===\"no\");",
                     "logic": [],
                     "attributes": {
                         "data-cy": "earnAcademicCreditsOtherInstitution"
@@ -1937,7 +1937,7 @@
                     "refreshOnChange": false,
                     "customClass": "banner-warning",
                     "key": "html4",
-                    "customConditional": "const isBCInstitution = data.isBCPublic || data.isBCPrivate;\nshow = (isBCInstitution === false && data.deliveredOnlineAlsoOnsite === \"no\" && data.sameOnlineCreditsEarned === \"no\" && data.earnAcademicCreditsOtherInstitution === \"no\");",
+                    "customConditional": "const isBCInstitution = data.isBCPublic || data.isBCPrivate;\nshow = (!isBCInstitution && data.deliveredOnlineAlsoOnsite === \"no\" && data.sameOnlineCreditsEarned === \"no\" && data.earnAcademicCreditsOtherInstitution === \"no\");",
                     "type": "htmlelement",
                     "input": false,
                     "tableView": false,

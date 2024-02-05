@@ -152,6 +152,14 @@ export class EducationProgramAPIInDTO {
   programDeclaration: boolean;
   @Allow()
   fieldOfStudyCode: number;
+  /**
+   * isBCPrivate/isBCPublic are part of the form and defines if the dynamic area of the form.io definition will be visible or not.
+   * It will impact the validation using the dryrun. Since the values have the source of truth on the institution, they must be
+   * populated by the API prior to the dryrun validation and they are part of DTO to make explicit its place in the form payload
+   * submitted. They will also be ignored by Nestjs because they don't have decorators.
+   */
+  isBCPrivate: boolean;
+  isBCPublic: boolean;
 }
 
 export class ApproveProgramAPIInDTO {
