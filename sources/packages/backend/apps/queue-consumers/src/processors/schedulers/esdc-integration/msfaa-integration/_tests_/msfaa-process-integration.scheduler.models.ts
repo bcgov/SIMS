@@ -30,7 +30,7 @@ export interface MSFAATestInputData {
 }
 
 export const MSFAA_PART_TIME_MARRIED: MSFAATestInputData = {
-  msfaaNumber: "0000001000",
+  msfaaNumber: "1000",
   sin: "900000000",
   institutionCode: "ABCD",
   birthDate: "1995-06-30",
@@ -50,7 +50,7 @@ export const MSFAA_PART_TIME_MARRIED: MSFAATestInputData = {
 };
 
 export const MSFAA_PART_TIME_OTHER_COUNTRY: MSFAATestInputData = {
-  msfaaNumber: "0000001001",
+  msfaaNumber: "1001",
   sin: "900000001",
   institutionCode: "EFDG",
   birthDate: "2000-01-01",
@@ -70,7 +70,7 @@ export const MSFAA_PART_TIME_OTHER_COUNTRY: MSFAATestInputData = {
 };
 
 export const MSFAA_PART_TIME_RELATIONSHIP_OTHER: MSFAATestInputData = {
-  msfaaNumber: "0000001002",
+  msfaaNumber: "1002",
   sin: "900000002",
   institutionCode: "IHKL",
   birthDate: "2001-12-31",
