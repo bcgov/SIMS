@@ -2213,7 +2213,7 @@
                   "inputFormat": "plain",
                   "validate": {
                     "required": true,
-                    "custom": "valid = (input >= 0 && input < 100000000) ? true : 'The number you have entered is not an acceptable value.'",
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';",
                     "customPrivate": false,
                     "strictDateValidation": false,
                     "multiple": false,
@@ -4393,6 +4393,25 @@
           "tree": true,
           "lazyLoad": false,
           "id": "engp8qe"
+        },
+        {
+          "input": true,
+          "tableView": false,
+          "key": "maxIncome",
+          "label": "Max Income",
+          "protected": false,
+          "unique": false,
+          "persistent": true,
+          "type": "hidden",
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "defaultValue": "100000000",
+          "lockKey": true
         },
         {
           "label": "calculatedTaxYear",

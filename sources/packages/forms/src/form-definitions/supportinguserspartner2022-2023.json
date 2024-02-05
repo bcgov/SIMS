@@ -2038,13 +2038,13 @@
                   "inputFormat": "plain",
                   "validate": {
                     "required": true,
-                    "custom": "valid = (input >= 0 && input < 100000000) ? true : 'The number you have entered is not an acceptable value.'",
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';",
                     "customPrivate": false,
                     "strictDateValidation": false,
                     "multiple": false,
                     "unique": false,
-                    "min": null,
-                    "max": null,
+                    "min": "",
+                    "max": "",
                     "step": "any",
                     "integer": ""
                   },
@@ -2752,7 +2752,7 @@
                       "inputFormat": "plain",
                       "validate": {
                         "required": true,
-                        "custom": "valid = (input >= 0 && input < 100000000) ? true : 'The number you have entered is not an acceptable value.'",
+                        "custom": "",
                         "customPrivate": false,
                         "strictDateValidation": false,
                         "multiple": false,
@@ -2798,7 +2798,7 @@
                       "attributes": {},
                       "validateOn": "change",
                       "conditional": {
-                        "show": "",
+                        "show": null,
                         "when": null,
                         "eq": ""
                       },
@@ -2819,9 +2819,8 @@
                       "id": "ew72bho",
                       "inputType": "text",
                       "inputMask": "",
-                      "decimalLimit": 0,
-                      "requireDecimal": false,
-                      "tags": []
+                      "decimalLimit": 2,
+                      "requireDecimal": true
                     }
                   ],
                   "placeholder": "",
@@ -5080,6 +5079,25 @@
           "tree": true,
           "lazyLoad": false,
           "id": "erp1v1j"
+        },
+        {
+          "input": true,
+          "tableView": false,
+          "key": "maxIncome",
+          "label": "Max Income",
+          "protected": false,
+          "unique": false,
+          "persistent": true,
+          "type": "hidden",
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "defaultValue": "100000000",
+          "lockKey": true
         },
         {
           "label": "calculatedTaxYear",
