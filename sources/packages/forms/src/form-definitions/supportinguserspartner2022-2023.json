@@ -2038,7 +2038,7 @@
                   "inputFormat": "plain",
                   "validate": {
                     "required": true,
-                    "custom": "",
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';",
                     "customPrivate": false,
                     "strictDateValidation": false,
                     "multiple": false,
@@ -2085,7 +2085,7 @@
                   "attributes": {},
                   "validateOn": "change",
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": ""
                   },
@@ -2104,7 +2104,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "id": "eazbh7",
-                  "inputType": "number"
+                  "inputType": "number",
+                  "tags": []
                 },
                 {
                   "label": "<strong>Will you be employed full-time or part-time during your Partner's study period</strong>",
@@ -2189,7 +2190,7 @@
                   "id": "e2j82bp"
                 },
                 {
-                  "label": "<strong>Will you be at home caring for eligible dependant children on a full-time basis during your Partner's entire study period? </strong>",
+                  "label": "<strong>Will you be at home caring for eligible dependant children on a full-time basis during your Partner's entire study period? </strong>",
                   "labelPosition": "top",
                   "labelWidth": "",
                   "labelMargin": "",
@@ -2364,7 +2365,7 @@
                   "id": "edsljuf"
                 },
                 {
-                  "label": "<strong>Will you be a full-time post-secondary student for some or all of your Partner's study period?</strong>",
+                  "label": "<strong>Will you be a full-time post-secondary student for some or all of your Partner's study period?</strong>",
                   "optionsLabelPosition": "right",
                   "inline": false,
                   "tableView": false,
@@ -2603,7 +2604,7 @@
                   "id": "eryyqjh"
                 },
                 {
-                  "label": "<strong>Will you receive income assistance/social assistance (welfare) and/or BC income assistance for persons with disabilities during your Partner's study period?</strong>",
+                  "label": "<strong>Will you receive income assistance/social assistance (welfare) and/or BC income assistance for persons with disabilities during your Partner's study period?</strong>",
                   "labelPosition": "top",
                   "labelWidth": "",
                   "labelMargin": "",
@@ -2696,7 +2697,7 @@
                   "defaultValue": ""
                 },
                 {
-                  "title": "<strong>Will you receive income assistance/social assistance (welfare) and/or BC income assistance for persons with disabilities during your Partner's study period?</strong>",
+                  "title": "<strong>Will you receive income assistance/social assistance (welfare) and/or BC income assistance for persons with disabilities during your Partner's study period?</strong>",
                   "labelWidth": "",
                   "labelMargin": "",
                   "theme": "default",
@@ -2728,7 +2729,7 @@
                     "height": ""
                   },
                   "type": "panel",
-                  "label": "<strong>Will you receive income assistance/social assistance (welfare) and/or BC income assistance for persons with disabilities during the your Partner's study period?</strong>",
+                  "label": "<strong>Will you receive income assistance/social assistance (welfare) and/or BC income assistance for persons with disabilities during the your Partner's study period?</strong>",
                   "breadcrumb": "default",
                   "buttonSettings": {
                     "previous": true,
@@ -2863,7 +2864,7 @@
                   "id": "e308bl"
                 },
                 {
-                  "label": "<strong>Will you be in receipt of Employment Insurance benefits during your Partner's study period?</strong>",
+                  "label": "<strong>Will you be in receipt of Employment Insurance benefits during your Partner's study period?</strong>",
                   "labelPosition": "top",
                   "labelWidth": "",
                   "labelMargin": "",
@@ -2956,7 +2957,7 @@
                   "defaultValue": ""
                 },
                 {
-                  "title": "<strong>Will you be in receipt of Employment Insurance benefits during your Partner's study period?</strong>",
+                  "title": "<strong>Will you be in receipt of Employment Insurance benefits during your Partner's study period?</strong>",
                   "labelWidth": "",
                   "labelMargin": "",
                   "theme": "default",
@@ -2988,7 +2989,7 @@
                     "height": ""
                   },
                   "type": "panel",
-                  "label": "<strong>Will you be in receipt of Employment Insurance benefits during the your Partner's study period?</strong>",
+                  "label": "<strong>Will you be in receipt of Employment Insurance benefits during the your Partner's study period?</strong>",
                   "breadcrumb": "default",
                   "buttonSettings": {
                     "previous": true,
@@ -3120,7 +3121,7 @@
                   "id": "euq0vth"
                 },
                 {
-                  "label": "<strong>Will you be in receipt of federal or provincial permanent disability benefits during your Partner's study period?</strong>",
+                  "label": "<strong>Will you be in receipt of federal or provincial permanent disability benefits during your Partner's study period?</strong>",
                   "optionsLabelPosition": "right",
                   "inline": false,
                   "tableView": false,
@@ -3202,7 +3203,7 @@
                   "id": "egj7jpm"
                 },
                 {
-                  "title": "Will your partner be in receipt of federal or provincial permanent disability benefits during your study period Panel",
+                  "title": "Will your partner be in receipt of federal or provincial permanent disability benefits during your study period Panel",
                   "labelWidth": "",
                   "labelMargin": "",
                   "theme": "default",
@@ -3234,7 +3235,7 @@
                     "height": ""
                   },
                   "type": "panel",
-                  "label": "Will your partner be in receipt of federal or provincial permanent disability benefits during the your study period Panel",
+                  "label": "Will your partner be in receipt of federal or provincial permanent disability benefits during the your study period Panel",
                   "breadcrumb": "default",
                   "buttonSettings": {
                     "previous": true,
@@ -3369,7 +3370,7 @@
                   "id": "ednv0e"
                 },
                 {
-                  "label": "<strong>Will you be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during your Partner's study period?</strong>",
+                  "label": "<strong>Will you be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during your Partner's study period?</strong>",
                   "labelPosition": "top",
                   "labelWidth": "",
                   "labelMargin": "",
@@ -3462,7 +3463,7 @@
                   "defaultValue": ""
                 },
                 {
-                  "title": "<strong>Will you be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during your Partner's study period?</strong>",
+                  "title": "<strong>Will you be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during your Partner's study period?</strong>",
                   "labelWidth": "",
                   "labelMargin": "",
                   "theme": "default",
@@ -3494,7 +3495,7 @@
                     "height": ""
                   },
                   "type": "panel",
-                  "label": "<strong>Will you be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during the your Partner's study period?</strong>",
+                  "label": "<strong>Will you be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during the your Partner's study period?</strong>",
                   "breadcrumb": "default",
                   "buttonSettings": {
                     "previous": true,
@@ -3626,7 +3627,7 @@
                   "id": "e1cacbl"
                 },
                 {
-                  "label": "<strong>Will you be paying for child support and/or spousal support during your Partner's study period?</strong>",
+                  "label": "<strong>Will you be paying for child support and/or spousal support during your Partner's study period?</strong>",
                   "optionsLabelPosition": "right",
                   "inline": false,
                   "tableView": false,
@@ -3708,7 +3709,7 @@
                   "id": "efbnjl"
                 },
                 {
-                  "title": "Will your partner be paying for child support and/or spousal support during your study period Panel",
+                  "title": "Will your partner be paying for child support and/or spousal support during your study period Panel",
                   "labelWidth": "",
                   "labelMargin": "",
                   "theme": "default",
@@ -3740,7 +3741,7 @@
                     "height": ""
                   },
                   "type": "panel",
-                  "label": "Will your partner be paying for child support and/or spousal support during the your study period Panel",
+                  "label": "Will your partner be paying for child support and/or spousal support during the your study period Panel",
                   "breadcrumb": "default",
                   "buttonSettings": {
                     "previous": true,
@@ -4341,8 +4342,7 @@
                   "theme": "default",
                   "breadcrumb": "default",
                   "id": "e69jwa",
-                  "tags": [],
-                  "isNew": false
+                  "tags": []
                 },
                 {
                   "title": "SABC Declaration for Part Time",
@@ -4682,7 +4682,7 @@
                       "className": ""
                     },
                     {
-                      "html": "<p>I hereby consent to the disclosure of information from my income tax records, by the Canada Revenue Agency to an official of the Ministry of Post Secondary and Future Skills, that pertains to information provided on any Student Aid BC application. The information disclosed will be relevant to, and used solely for the purpose of, determining and verifying eligibility for student aid under the Canada Student Financial Assistance Act. The information disclosed by the Canada Revenue Agency to the Ministry of Post Secondary and Future Skills will be protected from unauthorized use or disclosure and will not be disclosed to any other person or organization without my approval. This authorization is valid for the two taxation years prior to the year of signature of this consent, and the year of signature.</p>",
+                      "html": "<p>I hereby consent to the disclosure of information from my income tax records, by the Canada Revenue Agency to an official of the Ministry of Post Secondary and Future Skills, that pertains to information provided on any Student Aid BC application. The information disclosed will be relevant to, and used solely for the purpose of, determining and verifying eligibility for student aid under the Canada Student Financial Assistance Act. The information disclosed by the Canada Revenue Agency to the Ministry of Post Secondary and Future Skills will be protected from unauthorized use or disclosure and will not be disclosed to any other person or organization without my approval. This authorization is valid for the two taxation years prior to the year of signature of this consent, and the year of signature.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content",
@@ -5079,6 +5079,25 @@
           "tree": true,
           "lazyLoad": false,
           "id": "erp1v1j"
+        },
+        {
+          "input": true,
+          "tableView": false,
+          "key": "maxIncome",
+          "label": "Max Income",
+          "protected": false,
+          "unique": false,
+          "persistent": true,
+          "type": "hidden",
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "defaultValue": "100000000",
+          "lockKey": true
         },
         {
           "label": "calculatedTaxYear",
