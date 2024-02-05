@@ -101,6 +101,7 @@ export class ApplicationService {
           status: [
             ApplicationStatus.Submitted,
             ApplicationStatus.InProgress,
+            ApplicationStatus.Assessment,
             ApplicationStatus.Enrolment,
             ApplicationStatus.Completed,
           ],
