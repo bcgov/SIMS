@@ -30,3 +30,5 @@ export * from "./restriction/student-restriction-shared.service";
 export * from "./msfaa-number/msfaa-number-shared.service";
 export * from "./global-http/global-http.module";
 export * from "./application/application-shared.service";
+export * from "./students-assessments/assessment-sequential-processing.service.models";
+export * from "./students-assessments/assessment-sequential-processing.service";

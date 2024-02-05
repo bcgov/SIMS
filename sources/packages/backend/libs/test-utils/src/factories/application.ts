@@ -138,10 +138,13 @@ export async function saveFakeApplicationDisbursements(
     },
     { initialValues: options?.firstDisbursementInitialValues },
   );
-  firstSchedule.coeStatus =
-    savedApplication.applicationStatus === ApplicationStatus.Completed
-      ? COEStatus.completed
-      : COEStatus.required;
+  if (!options?.firstDisbursementInitialValues?.coeStatus) {
+    // Only sets the COE status if not already set.
+    firstSchedule.coeStatus =
+      savedApplication.applicationStatus === ApplicationStatus.Completed
+        ? COEStatus.completed
+        : COEStatus.required;
+  }
   firstSchedule.msfaaNumber = relations?.msfaaNumber;
   firstSchedule.studentAssessment = savedApplication.currentAssessment;
   disbursementSchedules.push(firstSchedule);
@@ -190,6 +193,15 @@ export async function saveFakeApplicationDisbursements(
   savedApplication.currentAssessment.assessmentData =
     options?.currentAssessmentInitialValues?.assessmentData ??
     savedApplication.currentAssessment.assessmentData;
+  savedApplication.currentAssessment.assessmentDate =
+    options?.currentAssessmentInitialValues?.assessmentDate ??
+    savedApplication.currentAssessment.assessmentDate;
+  savedApplication.currentAssessment.assessmentWorkflowId =
+    options?.currentAssessmentInitialValues?.assessmentWorkflowId ??
+    savedApplication.currentAssessment.assessmentWorkflowId;
+  savedApplication.currentAssessment.studentAssessmentStatus =
+    options?.currentAssessmentInitialValues?.studentAssessmentStatus ??
+    savedApplication.currentAssessment.studentAssessmentStatus;
   savedApplication.currentAssessment = await studentAssessmentRepo.save(
     savedApplication.currentAssessment,
   );

@@ -2,7 +2,9 @@ import { Process, Processor } from "@nestjs/bull";
 import { Job } from "bull";
 import { CancelAssessmentQueueInDTO } from "@sims/services/queue";
 import {
+  AssessmentSequentialProcessingService,
   DisbursementScheduleSharedService,
+  SystemUsersService,
   WorkflowClientService,
 } from "@sims/services";
 import { QueueNames } from "@sims/utilities";
@@ -30,6 +32,8 @@ export class CancelApplicationAssessmentProcessor {
     private readonly workflowClientService: WorkflowClientService,
     private readonly studentAssessmentService: StudentAssessmentService,
     private readonly disbursementScheduleSharedService: DisbursementScheduleSharedService,
+    private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
+    private readonly systemUserService: SystemUsersService,
   ) {}
 
   /**
@@ -124,7 +128,12 @@ export class CancelApplicationAssessmentProcessor {
         .getRepository(StudentAssessment)
         .update(assessment.id, {
           studentAssessmentStatus: StudentAssessmentStatus.Cancelled,
+          modifier: this.systemUserService.systemUser,
+          updatedAt: new Date(),
         });
+      await summary.info(
+        `Assessment status updated to ${StudentAssessmentStatus.Cancelled}.`,
+      );
       // Overawards rollback.
       // This method is safe to be called independently of the workflow state but it makes sense only after the
       // application moves from the 'In progress' status when the disbursements are generated.
@@ -135,6 +144,31 @@ export class CancelApplicationAssessmentProcessor {
         assessment.id,
         transactionEntityManager,
       );
+      await summary.info("Overawards rollback check executed.");
+      if (
+        assessment.application.applicationStatus !==
+        ApplicationStatus.Overwritten
+      ) {
+        // Overwritten applications do not cause impacts in future application and the checks can be completely skipped.
+        await summary.info(
+          "Assessing if there is a future impacted application that need to be reassessed.",
+        );
+        const impactedApplication =
+          await this.assessmentSequentialProcessingService.assessImpactedApplicationReassessmentNeeded(
+            job.data.assessmentId,
+            this.systemUserService.systemUser.id,
+            transactionEntityManager,
+          );
+        if (impactedApplication) {
+          await summary.info(
+            `Application id ${impactedApplication.id} was detected as impacted and will be reassessed.`,
+          );
+        } else {
+          await summary.info(
+            "No impacts were detected on future applications.",
+          );
+        }
+      }
       await summary.info("Assessment cancelled with success.");
       return summary.getSummary();
     });

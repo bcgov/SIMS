@@ -265,6 +265,16 @@ export class StudentAssessment extends RecordDataModel {
     nullable: true,
   })
   calculationStartDate?: Date;
+  /**
+   * Assessment id of another application's assessment in which the
+   * changes impacted this application causing it to be reassessed.
+   */
+  @ManyToOne(() => StudentAssessment, { nullable: true })
+  @JoinColumn({
+    name: "related_application_assessment_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  relatedApplicationAssessment?: StudentAssessment;
 }
 
 /**

@@ -42,4 +42,13 @@ export enum AssessmentTriggerType {
    * recalculated due to a possible impact on the money that the student is receiving.
    */
   ApplicationOfferingChange = "Application offering change",
+  /**
+   * Triggered when a change in one application will cause an impact in a second application
+   * which would lead to a need for a reassessment. For instance, when an application for
+   * the same student and same program year is changed or cancelled, it may affect future
+   * applications assessments due to adjustments in the program year maximums.
+   * This trigger type will be created in any impacted application that would need the numbers
+   * to be adjusted.
+   */
+  RelatedApplicationChanged = "Related application changed",
 }

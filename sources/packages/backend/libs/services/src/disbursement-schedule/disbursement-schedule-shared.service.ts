@@ -235,15 +235,6 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
       );
     }
 
-    if (
-      assessment.triggerType !== AssessmentTriggerType.OriginalAssessment &&
-      assessment.application.applicationStatus !== ApplicationStatus.Completed
-    ) {
-      throw new CustomNamedError(
-        `Student Assessment and Student Application are not in the expected status. Expecting application status '${ApplicationStatus.Completed}' when the assessment status is not '${AssessmentTriggerType.OriginalAssessment}'.`,
-        ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
-      );
-    }
     return assessment;
   }
 

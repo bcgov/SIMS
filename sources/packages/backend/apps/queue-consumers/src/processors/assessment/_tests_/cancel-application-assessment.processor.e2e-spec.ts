@@ -3,7 +3,7 @@ import { Job } from "bull";
 import { createMock } from "@golevelup/ts-jest";
 import { INestApplication } from "@nestjs/common";
 import { CancelAssessmentQueueInDTO } from "@sims/services/queue";
-import { QueueNames } from "@sims/utilities";
+import { QueueNames, addDays } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
@@ -16,16 +16,24 @@ import {
   E2EDataSources,
   saveFakeApplication,
   saveFakeApplicationDisbursements,
+  saveFakeStudent,
 } from "@sims/test-utils";
 import {
+  Application,
   ApplicationStatus,
+  Assessment,
+  AssessmentTriggerType,
+  COEStatus,
   DisbursementOveraward,
   DisbursementSchedule,
   DisbursementScheduleStatus,
+  OfferingIntensity,
   StudentAssessment,
   StudentAssessmentStatus,
 } from "@sims/sims-db";
 import * as faker from "faker";
+
+jest.setTimeout(1200000);
 
 describe(
   describeProcessorRootTest(QueueNames.CancelApplicationAssessment),
@@ -111,7 +119,11 @@ describe(
         `Found workflow id ${workflowInstanceId}.`,
         "Workflow instance successfully cancelled.",
         "Changing student assessment status to Cancelled.",
+        "Assessment status updated to Cancelled.",
         "Rolling back overawards, if any.",
+        "Overawards rollback check executed.",
+        "Assessing if there is a future impacted application that need to be reassessed.",
+        "No impacts were detected on future applications.",
         "Assessment cancelled with success.",
       ]);
 
@@ -230,5 +242,276 @@ describe(
       );
       expect(job.discard).toBeCalled();
     });
+
+    it("Should find an impacted application and create a reassessment when canceling an application with a assessment date set in the current assessment.", async () => {
+      // Arrange
+
+      // Create the student to be shared across all these applications.
+      const student = await saveFakeStudent(db.dataSource);
+      // Application in the past that must be ignored.
+      await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            assessmentWorkflowId: "some fake id",
+            assessmentDate: addDays(-1, new Date()),
+            studentAssessmentStatus: StudentAssessmentStatus.Completed,
+          },
+        },
+      );
+      // Application to have the cancellation requested.
+      // Because the assessment date is set, this application must find the future impacted application.
+      const currentApplicationToCancel = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Cancelled,
+          currentAssessmentInitialValues: {
+            assessmentWorkflowId: "some fake id",
+            assessmentDate: new Date(),
+            studentAssessmentStatus: StudentAssessmentStatus.CancellationQueued,
+          },
+        },
+      );
+      // Application in the future of the currentApplicationToCancel.
+      const impactedApplication = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            assessmentWorkflowId: "some fake id",
+            assessmentDate: addDays(1, new Date()),
+            studentAssessmentStatus: StudentAssessmentStatus.Submitted,
+          },
+        },
+      );
+
+      // Queued job.
+      const job = createMock<Job<CancelAssessmentQueueInDTO>>({
+        data: { assessmentId: currentApplicationToCancel.currentAssessment.id },
+      });
+
+      // Act
+      const result = await processor.cancelAssessment(job);
+
+      // Asserts
+      expect(result.summary).toContain(
+        `Application id ${impactedApplication.id} was detected as impacted and will be reassessed.`,
+      );
+      // Assert that an reassessment of type 'Related application changed' was created in the future impacted application.
+      const updatedImpactedApplication = await findImpactedApplication(
+        impactedApplication.id,
+      );
+      expect(updatedImpactedApplication.currentAssessment.triggerType).toBe(
+        AssessmentTriggerType.RelatedApplicationChanged,
+      );
+    });
+
+    it("Should not find an impacted application when the application being cancelled never had an assessment date.", async () => {
+      // Arrange
+
+      // Create the student to be shared across all these applications.
+      const student = await saveFakeStudent(db.dataSource);
+      // Application to have the cancellation requested.
+      // Because the assessment date was never set no future applications should be found.
+      const currentApplicationToCancel = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Cancelled,
+          currentAssessmentInitialValues: {
+            assessmentWorkflowId: "some fake id",
+            assessmentDate: undefined,
+            studentAssessmentStatus: StudentAssessmentStatus.CancellationQueued,
+          },
+        },
+      );
+      // Application in the future of the currentApplicationToCancel.
+      await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            assessmentWorkflowId: "some fake id",
+            assessmentDate: addDays(1, new Date()),
+            studentAssessmentStatus: StudentAssessmentStatus.Submitted,
+          },
+        },
+      );
+
+      // Queued job.
+      const job = createMock<Job<CancelAssessmentQueueInDTO>>({
+        data: { assessmentId: currentApplicationToCancel.currentAssessment.id },
+      });
+
+      // Act
+      const result = await processor.cancelAssessment(job);
+
+      // Asserts
+      expect(result.summary).toContain(
+        "No impacts were detected on future applications.",
+      );
+    });
+
+    it("Should find an impacted application and create a reassessment when the impacted application original assessment calculation date is after the cancelled assessment date original assessment, including 'Overwritten' records.", async () => {
+      // Arrange
+
+      // Create the student to be shared across all these applications.
+      const student = await saveFakeStudent(db.dataSource);
+      // Current application to be cancelled in Overwritten status because was edited.
+      const currentApplicationToCancelOverwritten =
+        await saveFakeApplicationDisbursements(
+          db.dataSource,
+          { student },
+          {
+            offeringIntensity: OfferingIntensity.partTime,
+            applicationStatus: ApplicationStatus.Overwritten,
+            currentAssessmentInitialValues: {
+              assessmentWorkflowId: "some fake id",
+              assessmentDate: addDays(-1, new Date()),
+              studentAssessmentStatus: StudentAssessmentStatus.Completed,
+            },
+          },
+        );
+      // Current application to be cancelled.
+      const currentApplicationToCancel = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Cancelled,
+          currentAssessmentInitialValues: {
+            assessmentWorkflowId: "some fake id",
+            assessmentDate: addDays(1, new Date()),
+            studentAssessmentStatus: StudentAssessmentStatus.CancellationQueued,
+          },
+        },
+      );
+      // Force pastOverwrittenApplication and pastApplication to share the same application number.
+      currentApplicationToCancel.applicationNumber =
+        currentApplicationToCancelOverwritten.applicationNumber;
+      await db.application.save(currentApplicationToCancel);
+      // Application in the future of the currentApplicationToCancelOverwritten but before
+      // the last assessment date from currentApplicationToCancel.
+      const impactedApplication = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Assessment,
+          currentAssessmentInitialValues: {
+            assessmentWorkflowId: "some fake id",
+            assessmentDate: new Date(),
+            studentAssessmentStatus: StudentAssessmentStatus.Completed,
+          },
+        },
+      );
+
+      // Queued job.
+      const job = createMock<Job<CancelAssessmentQueueInDTO>>({
+        data: { assessmentId: currentApplicationToCancel.currentAssessment.id },
+      });
+
+      // Act
+      const result = await processor.cancelAssessment(job);
+
+      // Asserts
+      expect(result.summary).toContain(
+        `Application id ${impactedApplication.id} was detected as impacted and will be reassessed.`,
+      );
+      // Assert that an reassessment of type 'Related application changed' was created in the future impacted application.
+      const updatedImpactedApplication = await findImpactedApplication(
+        impactedApplication.id,
+      );
+      expect(updatedImpactedApplication.currentAssessment.triggerType).toBe(
+        AssessmentTriggerType.RelatedApplicationChanged,
+      );
+    });
+
+    it("Should not find an impacted application when the application in the future has only a declined COE.", async () => {
+      // Arrange
+
+      // Create the student to be shared across all these applications.
+      const student = await saveFakeStudent(db.dataSource);
+      // Application to have the cancellation requested.
+      // Because the assessment date was never set no future applications should be found.
+      const currentApplicationToCancel = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Cancelled,
+          currentAssessmentInitialValues: {
+            assessmentWorkflowId: "some fake id",
+            assessmentDate: new Date(),
+            studentAssessmentStatus: StudentAssessmentStatus.CancellationQueued,
+          },
+        },
+      );
+      // Application in the future of the currentApplicationToCancel.
+      await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            assessmentWorkflowId: "some fake id",
+            assessmentDate: addDays(1, new Date()),
+            studentAssessmentStatus: StudentAssessmentStatus.Submitted,
+          },
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.declined,
+          },
+        },
+      );
+
+      // Queued job.
+      const job = createMock<Job<CancelAssessmentQueueInDTO>>({
+        data: { assessmentId: currentApplicationToCancel.currentAssessment.id },
+      });
+
+      // Act
+      const result = await processor.cancelAssessment(job);
+
+      // Asserts
+      expect(result.summary).toContain(
+        "No impacts were detected on future applications.",
+      );
+    });
+
+    /**
+     * Find a future impacted application to be asserted.
+     * @param applicationId application to be find.
+     * @returns future impacted application to be asserted.
+     */
+    async function findImpactedApplication(
+      applicationId: number,
+    ): Promise<Application> {
+      return db.application.findOne({
+        select: {
+          id: true,
+          currentAssessment: {
+            id: true,
+            triggerType: true,
+          },
+        },
+        relations: {
+          currentAssessment: true,
+        },
+        where: {
+          id: applicationId,
+        },
+      });
+    }
   },
 );
