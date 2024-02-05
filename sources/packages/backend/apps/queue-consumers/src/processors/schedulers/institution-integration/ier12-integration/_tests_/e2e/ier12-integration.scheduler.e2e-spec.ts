@@ -98,7 +98,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     // Intercept file timestamp.
     getFileNameAsCurrentTimestampMock = jest.spyOn(
       dateUtils,
-      "getFileNameAsCurrentTimestamp",
+      "getFileNameAsCustomizedCurrentTimestamp",
     );
     // Create and save institutions A and B.
     const [institutionA, institutionB] = await db.institution.save([

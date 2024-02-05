@@ -41,7 +41,7 @@ export function getSuccessSummaryMessages(
 ): QueueProcessSummaryResult {
   return {
     summary: [
-      `The uploaded file: ${process.env.INSTITUTION_REQUEST_FOLDER}\\${options?.institutionCode}\\IER_012_${timestamp}.txt`,
+      `The uploaded file: ${process.env.INSTITUTION_REQUEST_FOLDER}\\${options?.institutionCode}\\${options?.institutionCode}-IER12-${timestamp}.txt`,
       `The number of records: ${options?.expectedRecords ?? 1}`,
     ],
   } as QueueProcessSummaryResult;
