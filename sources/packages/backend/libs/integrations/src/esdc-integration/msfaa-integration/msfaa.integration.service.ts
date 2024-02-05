@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import * as Client from "ssh2-sftp-client";
-import * as fs from "fs";
 import {
   MSFAASFTPResponseFile,
   ReceivedStatusCode,
@@ -144,8 +143,10 @@ export class MSFAAIntegrationService extends SFTPIntegrationBase<MSFAASFTPRespon
     const client = await this.getClient();
     try {
       const filePath = `${this.esdcConfig.ftpResponseFolder}/${fileName}`;
-      // Read all the file content with 'ascii' encoding.
-      const fileContent = fs.readFileSync(filePath, "ascii");
+      // Read all the file content and create a buffer with 'ascii' encoding.
+      const fileContent = await client.get(filePath, undefined, {
+        readStreamOptions: { encoding: "ascii" },
+      });
       // Convert the file content to an array of text lines and remove possible blank lines.
       const fileLines = fileContent
         .toString()
