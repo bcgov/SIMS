@@ -22,7 +22,7 @@ export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
 export const DATE_ONLY_FORMAT = "MMM DD YYYY";
 export const DATE_TIME_FORMAT = "YYYY-MM-DD HH:mm:ss";
 export const TIMESTAMP_CONTINUOUS_FORMAT = "YYYY-MM-DD_HH.mm.ss";
-export const CUSTOMIZED_TIMESTAMP_CONTINUOUS_FORMAT = "YYYYMMDD-HHmmssSSS";
+export const TIMESTAMP_CONTINUOUS_EXTENDED_FORMAT = "YYYYMMDD-HHmmssSSS";
 export const PST_TIMEZONE = "America/Vancouver";
 
 /**
@@ -243,7 +243,7 @@ export function getFileNameAsCurrentTimestamp(): string {
 export function getFileNameAsCustomizedCurrentTimestamp(): string {
   return dayjs(new Date())
     .tz(PST_TIMEZONE)
-    .format(CUSTOMIZED_TIMESTAMP_CONTINUOUS_FORMAT);
+    .format(TIMESTAMP_CONTINUOUS_EXTENDED_FORMAT);
 }
 
 /**

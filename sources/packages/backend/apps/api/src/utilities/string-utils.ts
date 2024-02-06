@@ -8,16 +8,6 @@ export const removeWhiteSpaces = (stringValue: string): string => {
 };
 
 /**
- * Some UTF-8 files can have an additional byte (BOM) in the beginning of
- * the file content. This method will remove it, if present.
- * @param stringValue string content to be checked.
- * @returns content with BOM.
- */
-export const removeUTF8BOM = (stringValue: string): string => {
-  return stringValue.replace(/^\uFEFF/, "");
-};
-
-/**
  * Remove double white spaces from the entire string.
  * @param stringValue string to have the double spaces removed.
  * @returns string without double spaces.
