@@ -59,3 +59,17 @@ export async function executePartTimeAssessmentForProgramYear(
     assessmentConsolidatedData,
   );
 }
+
+/**
+ * Executes the parttime-configure-disbursement BPMN workflow.
+ * @param assessmentConsolidatedData assessment data.
+ * @returns result of the workflow execution.
+ */
+export async function executePartTimeConfigureDisbursement(
+  assessmentConsolidatedData: AssessmentConsolidatedData,
+): Promise<CreateProcessInstanceWithResultResponse<CalculatedAssessmentModel>> {
+  return executeAssessment(
+    `parttime-configure-disbursement`,
+    assessmentConsolidatedData,
+  );
+}

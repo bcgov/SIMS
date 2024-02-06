@@ -256,4 +256,6 @@ export interface CalculatedAssessmentModel {
     limitAwardCSGD3OrMoreChildSlope: number;
     limitAwardCSGD2OrLessChildSlope: number;
   };
+  // Disbursement schedules
+  disbursementSchedules: Array<unknown>;
 }
