@@ -25,27 +25,30 @@ export enum DependentEligibility {
 /**
  * Creates a student dependent that will be eligible.
  * @param eligibility eligibility rule.
+ * @param options
  * @returns an eligible dependent.
  */
 export function createFakeStudentDependentEligible(
   eligibility: DependentEligibility,
+  options?: { studyStartDate?: string },
 ): StudentDependent {
+  const date = options?.studyStartDate ?? new Date();
   switch (eligibility) {
     case DependentEligibility.Eligible0To18YearsOld:
       return {
-        dateOfBirth: addToDateOnlyString(new Date(), -17.9, "years"),
+        dateOfBirth: addToDateOnlyString(date, -17.9, "years"),
         attendingPostSecondarySchool: YesNoOptions.No,
         declaredOnTaxes: YesNoOptions.No,
       };
     case DependentEligibility.Eligible18To22YearsOldAttendingHighSchool:
       return {
-        dateOfBirth: addToDateOnlyString(new Date(), -18.1, "years"),
+        dateOfBirth: addToDateOnlyString(date, -18.1, "years"),
         attendingPostSecondarySchool: YesNoOptions.Yes,
         declaredOnTaxes: YesNoOptions.No,
       };
     case DependentEligibility.Eligible18To22YearsOldDeclaredOnTaxes:
       return {
-        dateOfBirth: addToDateOnlyString(new Date(), -22, "years"),
+        dateOfBirth: addToDateOnlyString(date, -22, "years"),
         attendingPostSecondarySchool: YesNoOptions.No,
         declaredOnTaxes: YesNoOptions.Yes,
       };
