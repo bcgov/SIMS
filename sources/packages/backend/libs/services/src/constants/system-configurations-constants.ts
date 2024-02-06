@@ -77,6 +77,6 @@ export const SFAS_IMPORT_RECORDS_PROGRESS_REPORT_PACE = 1000;
 export const HTTP_SERVICE_TIMEOUT = 30000;
 
 /**
- * ASCII encoding for files.
+ * ASCII default encoding for files.
  */
 export const FILE_DEFAULT_ENCODING = "ascii";
