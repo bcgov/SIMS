@@ -31170,7 +31170,7 @@
                   "validate": {
                     "required": true,
                     "multiple": "",
-                    "custom": ""
+                    "custom": "valid = (input >= 0 && input <= 9999) ? true : 'The number you have entered is outside the expected range.';"
                   },
                   "conditional": {
                     "show": "true",
