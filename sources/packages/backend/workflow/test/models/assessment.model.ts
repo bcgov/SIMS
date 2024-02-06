@@ -130,6 +130,26 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataApplicationPDPPDStatus: string;
 }
 
+/**
+ * Data required to configure the disbursements.
+ */
+export interface ConfigureDisbursementData extends JSONDoc {
+  offeringStudyStartDate: string;
+  offeringStudyEndDate: string;
+  offeringWeeks: number;
+  awardEligibilityCSGP: boolean;
+  awardEligibilityCSGD: boolean;
+  awardEligibilityCSPT: boolean;
+  awardEligibilityBCAG: boolean;
+  awardEligibilitySBSD: boolean;
+  finalFederalAwardNetCSLPAmount: number;
+  finalFederalAwardNetCSGPAmount: number;
+  finalFederalAwardNetCSGDAmount: number;
+  finalFederalAwardNetCSPTAmount: number;
+  finalProvincialAwardNetBCAGAmount: number;
+  finalProvincialAwardNetSBSDAmount: number;
+}
+
 export interface AssessmentModel {
   weeks: number;
   tuitionCost: number;

@@ -1,41 +1,23 @@
 import { PROGRAM_YEAR } from "../../constants/program-year.constants";
-import {
-  createFakeConsolidatedPartTimeData,
-  executePartTimeConfigureDisbursement,
-} from "../../../test-utils";
+import { executePartTimeConfigureDisbursement } from "../../../test-utils";
 import { addDays, getISODateOnlyString, getUTCNow } from "@sims/utilities";
+import { createFakeConfigureDisbursementPartTimeData } from "../../../test-utils/factories";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-disbursements`, () => {
-  const partTimeDisbursementData = {
-    awardEligibilityCSGP: true,
-    awardEligibilityCSGD: true,
-    awardEligibilityCSPT: true,
-    awardEligibilityBCAG: true,
-    awardEligibilitySBSD: true,
-    finalFederalAwardNetCSLPAmount: 1000,
-    finalFederalAwardNetCSGPAmount: 2000,
-    finalFederalAwardNetCSGDAmount: 3000,
-    finalFederalAwardNetCSPTAmount: 4000,
-    finalProvincialAwardNetBCAGAmount: 5000,
-    finalProvincialAwardNetSBSDAmount: 6000,
-  };
-
   it("Should generate 1 disbursement when offering weeks is equal to 17 weeks or less.", async () => {
     // Arrange
-    const assessmentConsolidatedData =
-      createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.offeringWeeks = 17;
-    assessmentConsolidatedData.offeringStudyStartDate = getISODateOnlyString(
+    const configureDisbursementData =
+      createFakeConfigureDisbursementPartTimeData(PROGRAM_YEAR);
+    configureDisbursementData.offeringStudyStartDate = getISODateOnlyString(
       addDays(30),
     );
-    assessmentConsolidatedData.offeringStudyEndDate = getISODateOnlyString(
+    configureDisbursementData.offeringStudyEndDate = getISODateOnlyString(
       addDays(240),
     );
     // Act
-    const calculatedAssessment = await executePartTimeConfigureDisbursement({
-      ...assessmentConsolidatedData,
-      ...partTimeDisbursementData,
-    });
+    const calculatedAssessment = await executePartTimeConfigureDisbursement(
+      configureDisbursementData,
+    );
     // Assert
     expect(calculatedAssessment.variables.disbursementSchedules).toStrictEqual([
       {
@@ -88,20 +70,19 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-disbursements`, 
       "but potential disbursement schedule date 2 is no greater than today.",
     async () => {
       // Arrange
-      const assessmentConsolidatedData =
-        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.offeringWeeks = 18;
-      assessmentConsolidatedData.offeringStudyStartDate = getISODateOnlyString(
+      const configureDisbursementData =
+        createFakeConfigureDisbursementPartTimeData(PROGRAM_YEAR);
+      configureDisbursementData.offeringWeeks = 18;
+      configureDisbursementData.offeringStudyStartDate = getISODateOnlyString(
         addDays(-30),
       );
-      assessmentConsolidatedData.offeringStudyEndDate = getISODateOnlyString(
+      configureDisbursementData.offeringStudyEndDate = getISODateOnlyString(
         addDays(30),
       );
       // Act
-      const calculatedAssessment = await executePartTimeConfigureDisbursement({
-        ...assessmentConsolidatedData,
-        ...partTimeDisbursementData,
-      });
+      const calculatedAssessment = await executePartTimeConfigureDisbursement(
+        configureDisbursementData,
+      );
       // Assert
       expect(
         calculatedAssessment.variables.disbursementSchedules,
@@ -157,20 +138,19 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-disbursements`, 
       " and potential disbursement schedule date 2 is greater than today.",
     async () => {
       // Arrange
-      const assessmentConsolidatedData =
-        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.offeringWeeks = 18;
-      assessmentConsolidatedData.offeringStudyStartDate = getISODateOnlyString(
+      const configureDisbursementData =
+        createFakeConfigureDisbursementPartTimeData(PROGRAM_YEAR);
+      configureDisbursementData.offeringWeeks = 18;
+      configureDisbursementData.offeringStudyStartDate = getISODateOnlyString(
         addDays(30),
       );
-      assessmentConsolidatedData.offeringStudyEndDate = getISODateOnlyString(
+      configureDisbursementData.offeringStudyEndDate = getISODateOnlyString(
         addDays(240),
       );
       // Act
-      const calculatedAssessment = await executePartTimeConfigureDisbursement({
-        ...assessmentConsolidatedData,
-        ...partTimeDisbursementData,
-      });
+      const calculatedAssessment = await executePartTimeConfigureDisbursement(
+        configureDisbursementData,
+      );
       // Assert
       expect(
         calculatedAssessment.variables.disbursementSchedules,
