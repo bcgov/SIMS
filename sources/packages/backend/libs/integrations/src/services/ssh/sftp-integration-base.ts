@@ -5,6 +5,7 @@ import * as path from "path";
 import { SFTPConfig } from "@sims/utilities/config";
 import { FixedFormatFileLine } from "./sftp-integration-base.models";
 import { END_OF_LINE } from "@sims/utilities";
+import { ASCII_ENCODING } from "@sims/services/constants";
 
 /**
  * Provides the basic features to enable the SFTP integration.
@@ -53,7 +54,10 @@ export abstract class SFTPIntegrationBase<DownloadType> {
     const client = await this.getClient();
     try {
       this.logger.log(`Uploading ${remoteFilePath}`);
-      return await client.put(Buffer.from(rawContent, "ascii"), remoteFilePath);
+      return await client.put(
+        Buffer.from(rawContent, ASCII_ENCODING),
+        remoteFilePath,
+      );
     } finally {
       this.logger.log("Finalizing SFTP client...");
       await SshService.closeQuietly(client);
@@ -132,7 +136,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
       }
       // Read all the file content and create a buffer with 'ascii' encoding.
       const fileContent = await client.get(remoteFilePath, undefined, {
-        readStreamOptions: { encoding: "ascii" },
+        readStreamOptions: { encoding: ASCII_ENCODING },
       });
       // Convert the file content to an array of text lines and remove possible blank lines.
       return fileContent

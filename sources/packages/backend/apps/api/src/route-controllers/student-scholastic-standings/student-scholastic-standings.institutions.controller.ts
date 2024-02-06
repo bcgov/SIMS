@@ -64,6 +64,7 @@ import {
   uploadLimits,
 } from "../../utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
+import { ASCII_ENCODING } from "@sims/services/constants";
 
 /**
  * Scholastic standing controller for institutions Client.
@@ -216,7 +217,7 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO[]> {
     // Read the entire file content in ASCII encoding.
-    const fileContent = file.buffer.toString("ascii");
+    const fileContent = file.buffer.toString(ASCII_ENCODING);
     let withdrawalFileData: BulkWithdrawalFileData;
     try {
       withdrawalFileData =
