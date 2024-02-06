@@ -52,7 +52,7 @@ jobs:
           do
             # Trim spaces
             trimmed_app=$(echo "$app" | xargs)
-            ./fetchOldTags.sh \
+            devops/scripts/fetchOldTags.sh \
               --license_plate=${{ inputs.licensePlate }} \
               --env=${{ inputs.environment }} \
               --app_name=$app \
