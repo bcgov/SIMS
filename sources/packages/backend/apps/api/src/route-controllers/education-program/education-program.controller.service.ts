@@ -224,10 +224,8 @@ export class EducationProgramControllerService {
       effectiveEndDate: getISODateOnlyString(program.effectiveEndDate),
       assessedDate: program.assessedDate,
       assessedBy: getUserFullName(program.assessedBy),
-      isBCPublic:
-        program.institution.institutionType.id === INSTITUTION_TYPE_BC_PUBLIC,
-      isBCPrivate:
-        program.institution.institutionType.id === INSTITUTION_TYPE_BC_PRIVATE,
+      isBCPublic: program.institution.institutionType.isBCPrivate,
+      isBCPrivate: program.institution.institutionType.isBCPrivate,
       hasOfferings,
     };
   }
