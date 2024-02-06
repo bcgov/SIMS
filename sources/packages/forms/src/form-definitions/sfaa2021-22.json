@@ -30907,7 +30907,7 @@
               },
               "errorLabel": "",
               "errors": "",
-              "key": "strongYouMayBeEligibleForAnAdditionalTransportationAllowanceIfThereIsNoLimitedLocalPublicTransitWhereYouLiveOrIfYouAreRequiredDueToSpecialCircumstancesDoYouWantToBeAssessedForAdditionalTransportationCostsStrong",
+              "key": "eligibleForAnAdditionalTransportationAllowance",
               "tags": [],
               "properties": {},
               "conditional": {
@@ -30919,7 +30919,7 @@
               "customConditional": "",
               "logic": [],
               "attributes": {
-                "data-cy": "strongYouMayBeEligibleForAnAdditionalTransportationAllowanceIfThereIsNoLimitedLocalPublicTransitWhereYouLiveOrIfYouAreRequiredDueToSpecialCircumstancesDoYouWantToBeAssessedForAdditionalTransportationCostsStrong"
+                "data-cy": "eligibleForAnAdditionalTransportationAllowance"
               },
               "overlay": {
                 "style": "",
@@ -30968,7 +30968,7 @@
               "conditional": {
                 "json": "",
                 "show": true,
-                "when": "strongYouMayBeEligibleForAnAdditionalTransportationAllowanceIfThereIsNoLimitedLocalPublicTransitWhereYouLiveOrIfYouAreRequiredDueToSpecialCircumstancesDoYouWantToBeAssessedForAdditionalTransportationCostsStrong",
+                "when": "eligibleForAnAdditionalTransportationAllowance",
                 "eq": "yes"
               },
               "logic": [],
@@ -31086,7 +31086,7 @@
                   "key": "transportationcostsituation",
                   "conditional": {
                     "show": true,
-                    "when": "strongYouMayBeEligibleForAnAdditionalTransportationAllowanceIfThereIsNoLimitedLocalPublicTransitWhereYouLiveOrIfYouAreRequiredDueToSpecialCircumstancesDoYouWantToBeAssessedForAdditionalTransportationCostsStrong",
+                    "when": "eligibleForAnAdditionalTransportationAllowance",
                     "eq": "yes"
                   },
                   "type": "radio",
@@ -31155,7 +31155,7 @@
                   "inputType": "text",
                   "inputMask": "",
                   "label": "Please estimate your weekly transportation costs.",
-                  "key": "studentDataAdditionalTransportCost",
+                  "key": "additionalTransportCost",
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -31174,7 +31174,7 @@
                   },
                   "conditional": {
                     "show": "true",
-                    "when": "strongYouMayBeEligibleForAnAdditionalTransportationAllowanceIfThereIsNoLimitedLocalPublicTransitWhereYouLiveOrIfYouAreRequiredDueToSpecialCircumstancesDoYouWantToBeAssessedForAdditionalTransportationCostsStrong",
+                    "when": "eligibleForAnAdditionalTransportationAllowance",
                     "eq": "yes"
                   },
                   "type": "currency",
@@ -31189,7 +31189,7 @@
                   "tableView": false,
                   "inputType": "number",
                   "label": "Please estimate your weekly travel distance in kilometers:",
-                  "key": "studentDataAdditionalTransportKm",
+                  "key": "additionalTransportKm",
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -31212,7 +31212,7 @@
                   "tags": [],
                   "conditional": {
                     "show": "true",
-                    "when": "strongYouMayBeEligibleForAnAdditionalTransportationAllowanceIfThereIsNoLimitedLocalPublicTransitWhereYouLiveOrIfYouAreRequiredDueToSpecialCircumstancesDoYouWantToBeAssessedForAdditionalTransportationCostsStrong",
+                    "when": "eligibleForAnAdditionalTransportationAllowance",
                     "eq": "yes"
                   },
                   "properties": {},
@@ -31224,7 +31224,7 @@
                   "tableView": false,
                   "inputType": "number",
                   "label": "How many weeks during your study period will you require additional transportation costs?",
-                  "key": "studentDataAdditionalTransportWeeks",
+                  "key": "additionalTransportWeeks",
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -31247,7 +31247,7 @@
                   "tags": [],
                   "conditional": {
                     "show": "true",
-                    "when": "strongYouMayBeEligibleForAnAdditionalTransportationAllowanceIfThereIsNoLimitedLocalPublicTransitWhereYouLiveOrIfYouAreRequiredDueToSpecialCircumstancesDoYouWantToBeAssessedForAdditionalTransportationCostsStrong",
+                    "when": "eligibleForAnAdditionalTransportationAllowance",
                     "eq": "yes"
                   },
                   "properties": {},
@@ -31260,7 +31260,7 @@
                   "tableView": false,
                   "inputType": "radio",
                   "label": "Are you receiving a weekly transportation allowance from your institution for a clinical or practicum placement?",
-                  "key": "studentDataAdditionalTransportPlacement",
+                  "key": "additionalTransportPlacement",
                   "values": [
                     {
                       "value": "yes",
@@ -31290,7 +31290,7 @@
                   "tags": [],
                   "conditional": {
                     "show": "true",
-                    "when": "strongYouMayBeEligibleForAnAdditionalTransportationAllowanceIfThereIsNoLimitedLocalPublicTransitWhereYouLiveOrIfYouAreRequiredDueToSpecialCircumstancesDoYouWantToBeAssessedForAdditionalTransportationCostsStrong",
+                    "when": "eligibleForAnAdditionalTransportationAllowance",
                     "eq": "yes"
                   },
                   "properties": {},
