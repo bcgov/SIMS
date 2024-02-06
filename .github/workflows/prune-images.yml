@@ -1,5 +1,5 @@
 name: Prune Images
-description: Prune old images from OpenShift
+run-name: Prune old images from OpenShift
 
 on:
   workflow_dispatch:
