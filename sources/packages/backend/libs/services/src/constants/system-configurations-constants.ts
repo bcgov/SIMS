@@ -79,4 +79,4 @@ export const HTTP_SERVICE_TIMEOUT = 30000;
 /**
  * ASCII encoding for files.
  */
-export const ASCII_ENCODING = "ascii";
+export const FILE_DEFAULT_ENCODING = "ascii";

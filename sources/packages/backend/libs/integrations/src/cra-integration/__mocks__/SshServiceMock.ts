@@ -2,7 +2,7 @@ import * as Client from "ssh2-sftp-client";
 import * as fs from "fs";
 import * as path from "path";
 import { SshService } from "@sims/integrations/services";
-import { ASCII_ENCODING } from "@sims/services/constants";
+import { FILE_DEFAULT_ENCODING } from "@sims/services/constants";
 
 const MOCKED_RESPONSE_FILES = [
   "CCRA_RESPONSE_ABCSL00001.TXT",
@@ -27,7 +27,9 @@ jest.spyOn(sshClientMock, "list").mockImplementation(() => {
 // the content of the mocked file on folder __mocks__/response-folder.
 jest.spyOn(sshClientMock, "get").mockImplementation((filePath: string) => {
   const mockedFilePath = path.resolve(__dirname, filePath);
-  return Promise.resolve(fs.readFileSync(mockedFilePath, ASCII_ENCODING));
+  return Promise.resolve(
+    fs.readFileSync(mockedFilePath, FILE_DEFAULT_ENCODING),
+  );
 });
 // // Mock createClient method.
 jest.spyOn(SshServiceMock, "createClient").mockImplementation(() => {

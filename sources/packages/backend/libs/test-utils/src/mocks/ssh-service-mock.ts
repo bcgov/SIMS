@@ -3,7 +3,7 @@ import { SshService } from "@sims/integrations/services";
 import { DeepMocked } from "@golevelup/ts-jest";
 import { END_OF_LINE } from "@sims/utilities";
 import { readFileSync } from "fs";
-import { ASCII_ENCODING } from "@sims/services/constants";
+import { FILE_DEFAULT_ENCODING } from "@sims/services/constants";
 
 // MSFAA received files mocks.
 export const MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD =
@@ -107,7 +107,7 @@ export function mockDownloadFiles(
   sshClientMock.list.mockResolvedValue(fileInfos);
   sshClientMock.get.mockImplementation((filePath: string) => {
     let fileContent = readFileSync(filePath, {
-      encoding: ASCII_ENCODING,
+      encoding: FILE_DEFAULT_ENCODING,
     }).toString();
     if (fileTransformation) {
       fileContent = fileTransformation(fileContent);
