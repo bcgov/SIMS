@@ -55,7 +55,7 @@
     <bpmn:intermediateThrowEvent id="Event_1koar33" name="Configure Payload for 17 weeks">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=[&#10;  {&#10;    disbursementDate: disbursmenentScheduleDate1,&#10;    negotiatedExpiryDate: disbursmenentScheduleDate1,&#10;    disbursements: [&#10;      {&#10;        valueCode: &#34;CSLP&#34;,&#10;        valueType: &#34;Canada Loan&#34;,&#10;        valueAmount: ceiling(finalFederalAwardNetCSLPAmount,0),&#10;        awardEligibility: true&#10;      },&#10;      {&#10;        valueCode: &#34;CSGP&#34;,&#10;        valueType: &#34;Canada Grant&#34;,&#10;        valueAmount: ceiling(finalFederalAwardNetCSGPAmount, 0),&#10;        awardEligibility: awardEligibilityCSGP&#10;      },&#10;      {&#10;        valueCode: &#34;CSGD&#34;,&#10;        valueType: &#34;Canada Grant&#34;,&#10;        valueAmount: ceiling(finalFederalAwardNetCSGDAmount, 0),&#10;        awardEligibility: awardEligibilityCSGD&#10;      },&#10;      {&#10;        valueCode: &#34;CSPT&#34;,&#10;        valueType: &#34;Canada Grant&#34;,&#10;        valueAmount: ceiling(finalFederalAwardNetCSPTAmount, 0),&#10;        awardEligibility: awardEligibilityCSPT&#10;      },&#10;      {&#10;        valueCode: &#34;BCAG&#34;,&#10;        valueType: &#34;BC Grant&#34;,&#10;        valueAmount: ceiling(finalProvincialAwardNetBCAGAmount, 0),&#10;        awardEligibility: awardEligibilityBCAG&#10;      },&#10;      {&#10;        valueCode: &#34;SBSD&#34;,&#10;        valueType: &#34;BC Grant&#34;,&#10;        valueAmount: ceiling(finalProvincialAwardNetSBSDAmount, 0),&#10;        awardEligibility: awardEligibilitySBSD&#10;      }&#10;    ]&#10;    [item.awardEligibility != false]&#10;  }&#10;]" target="disbursementSchedules" />
+          <zeebe:output source="=[&#10;  {&#10;    disbursementDate: disbursmenentScheduleDate1,&#10;    negotiatedExpiryDate: disbursmenentScheduleDate1,&#10;    disbursements: [&#10;      {&#10;        valueCode: &#34;CSLP&#34;,&#10;        valueType: &#34;Canada Loan&#34;,&#10;        valueAmount: ceiling(finalFederalAwardNetCSLPAmount),&#10;        awardEligibility: true&#10;      },&#10;      {&#10;        valueCode: &#34;CSGP&#34;,&#10;        valueType: &#34;Canada Grant&#34;,&#10;        valueAmount: ceiling(finalFederalAwardNetCSGPAmount),&#10;        awardEligibility: awardEligibilityCSGP&#10;      },&#10;      {&#10;        valueCode: &#34;CSGD&#34;,&#10;        valueType: &#34;Canada Grant&#34;,&#10;        valueAmount: ceiling(finalFederalAwardNetCSGDAmount),&#10;        awardEligibility: awardEligibilityCSGD&#10;      },&#10;      {&#10;        valueCode: &#34;CSPT&#34;,&#10;        valueType: &#34;Canada Grant&#34;,&#10;        valueAmount: ceiling(finalFederalAwardNetCSPTAmount),&#10;        awardEligibility: awardEligibilityCSPT&#10;      },&#10;      {&#10;        valueCode: &#34;BCAG&#34;,&#10;        valueType: &#34;BC Grant&#34;,&#10;        valueAmount: ceiling(finalProvincialAwardNetBCAGAmount),&#10;        awardEligibility: awardEligibilityBCAG&#10;      },&#10;      {&#10;        valueCode: &#34;SBSD&#34;,&#10;        valueType: &#34;BC Grant&#34;,&#10;        valueAmount: ceiling(finalProvincialAwardNetSBSDAmount),&#10;        awardEligibility: awardEligibilitySBSD&#10;      }&#10;    ]&#10;    [item.awardEligibility != false]&#10;  }&#10;]" target="disbursementSchedules" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_12dnfdw</bpmn:incoming>
@@ -140,6 +140,12 @@
           <dc:Bounds x="745.5" y="196" width="77" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1khr1nv_di" bpmnElement="Event_1khr1nv">
+        <dc:Bounds x="1340" y="122" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1315" y="165" width="86" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_14qii8a_di" bpmnElement="Event_14qii8a">
         <dc:Bounds x="912" y="122" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -174,12 +180,6 @@
         <dc:Bounds x="1532" y="122" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1515" y="165" width="72" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1khr1nv_di" bpmnElement="Event_1khr1nv">
-        <dc:Bounds x="1340" y="122" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1315" y="165" width="86" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0pl9xpo_di" bpmnElement="Flow_0pl9xpo">
@@ -260,14 +260,14 @@
         <di:waypoint x="1775" y="210" />
         <di:waypoint x="1852" y="210" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_055fzyo_di" bpmnElement="Flow_055fzyo">
-        <di:waypoint x="1376" y="140" />
-        <di:waypoint x="1532" y="140" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_04pxdnk_di" bpmnElement="Flow_04pxdnk">
         <di:waypoint x="1568" y="140" />
         <di:waypoint x="1750" y="140" />
         <di:waypoint x="1750" y="185" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_055fzyo_di" bpmnElement="Flow_055fzyo">
+        <di:waypoint x="1376" y="140" />
+        <di:waypoint x="1532" y="140" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
