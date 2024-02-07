@@ -16589,7 +16589,7 @@
               "inputFormat": "plain",
               "validate": {
                 "required": true,
-                "custom": "",
+                "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';",
                 "customPrivate": false,
                 "strictDateValidation": false,
                 "multiple": false,
@@ -16601,7 +16601,7 @@
               },
               "key": "estimatedSpouseIncome",
               "conditional": {
-                "show": true,
+                "show": "true",
                 "when": "isYourSpouseACanadianCitizen",
                 "eq": "no"
               },
@@ -16655,8 +16655,9 @@
               "id": "e9yrlbn",
               "inputType": "text",
               "inputMask": "",
-              "decimalLimit": 2,
-              "requireDecimal": true
+              "decimalLimit": 0,
+              "requireDecimal": false,
+              "tags": []
             },
             {
               "label": "<strong>Will your partner be employed full-time or part-time during your study period</strong>",
@@ -19642,7 +19643,7 @@
                   "truncateMultipleSpaces": false,
                   "validate": {
                     "required": true,
-                    "custom": "",
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';",
                     "customPrivate": false,
                     "strictDateValidation": false,
                     "multiple": false,
@@ -19688,7 +19689,7 @@
                   "attributes": {},
                   "validateOn": "change",
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": ""
                   },
@@ -19709,8 +19710,9 @@
                   "id": "et8xql",
                   "inputType": "text",
                   "inputMask": "",
-                  "decimalLimit": 2,
-                  "requireDecimal": true
+                  "decimalLimit": 0,
+                  "requireDecimal": false,
+                  "tags": []
                 },
                 {
                   "label": "Enter the total net value of all your parents Canadian and foreign assets (do not include RRSPs, principal residence or business). Enter ‘0’ if none.",
@@ -31157,7 +31159,7 @@
                   "label": "Please estimate your weekly transportation costs.",
                   "key": "additionalTransportCost",
                   "placeholder": "",
-                  "prefix": "",
+                  "prefix": "$",
                   "suffix": "",
                   "defaultValue": "",
                   "protected": false,
