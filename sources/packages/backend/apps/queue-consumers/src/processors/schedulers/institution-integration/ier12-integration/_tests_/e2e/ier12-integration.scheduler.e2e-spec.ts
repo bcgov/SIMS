@@ -87,7 +87,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
   let locationB: InstitutionLocation;
 
   beforeAll(async () => {
-    process.env.INSTITUTION_REQUEST_FOLDER = "SIMS\\OUT";
+    process.env.INSTITUTION_REQUEST_FOLDER = "OUT";
     const { nestApplication, dataSource, sshClientMock } =
       await createTestingAppModule();
     app = nestApplication;
