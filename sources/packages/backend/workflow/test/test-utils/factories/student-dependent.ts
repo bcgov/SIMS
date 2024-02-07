@@ -20,6 +20,14 @@ export enum DependentEligibility {
    * Dependent is over 22 and is declared on taxes.
    */
   EligibleOver22YearsOld = "EligibleOver22YearsOld",
+  /**
+   * Dependent of age between 0 and 11 years.
+   */
+  Eligible0To11YearsOld = "Eligible0To11YearsOld",
+  /**
+   * Dependent of age above 12 years and declared on taxes for disability.
+   */
+  Eligible12YearsAndOverAndDeclaredOnTaxes = "Eligible12YearsAndOverAndDeclaredOnTaxes",
 }
 
 /**
@@ -55,6 +63,18 @@ export function createFakeStudentDependentEligible(
     case DependentEligibility.EligibleOver22YearsOld:
       return {
         dateOfBirth: addToDateOnlyString(new Date(), -22.1, "years"),
+        attendingPostSecondarySchool: YesNoOptions.No,
+        declaredOnTaxes: YesNoOptions.Yes,
+      };
+    case DependentEligibility.Eligible0To11YearsOld:
+      return {
+        dateOfBirth: addToDateOnlyString(new Date(), -11, "years"),
+        attendingPostSecondarySchool: YesNoOptions.No,
+        declaredOnTaxes: YesNoOptions.No,
+      };
+    case DependentEligibility.Eligible12YearsAndOverAndDeclaredOnTaxes:
+      return {
+        dateOfBirth: addToDateOnlyString(new Date(), -12.1, "years"),
         attendingPostSecondarySchool: YesNoOptions.No,
         declaredOnTaxes: YesNoOptions.Yes,
       };

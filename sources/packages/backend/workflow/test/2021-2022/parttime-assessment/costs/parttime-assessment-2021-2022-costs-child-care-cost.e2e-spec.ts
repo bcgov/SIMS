@@ -1,105 +1,74 @@
 import {
-  createFakeConsolidatedFulltimeData,
-  executeFullTimeAssessmentForProgramYear,
+  createFakeConsolidatedPartTimeData,
+  executePartTimeAssessmentForProgramYear,
 } from "../../../test-utils";
 import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 import {
   DependentEligibility,
   createFakeStudentDependentEligible,
-  createFakeStudentDependentNotEligible,
 } from "../../../test-utils/factories";
 
 describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-child-care-costs.`, () => {
-  it("Should calculate child care costs when student has a dependent under 11 years of age.", async () => {
+  it(
+    "Should calculate child care costs when student has one dependent under 11 years of age and " +
+      "another dependent above 12 years and declared on taxes for disability",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataDaycareCosts11YearsOrUnder = 300;
+      assessmentConsolidatedData.studentDataDaycareCosts12YearsOrOver = 300;
+      assessmentConsolidatedData.offeringWeeks = 8;
+      // Creates 4 eligible and 4 not eligible dependents.
+      assessmentConsolidatedData.studentDataDependants = [
+        createFakeStudentDependentEligible(
+          DependentEligibility.Eligible0To11YearsOld,
+          { studyStartDate: assessmentConsolidatedData.offeringStudyStartDate },
+        ),
+        createFakeStudentDependentEligible(
+          DependentEligibility.Eligible12YearsAndOverAndDeclaredOnTaxes,
+          { studyStartDate: assessmentConsolidatedData.offeringStudyStartDate },
+        ),
+      ];
+      // Act
+      const calculatedAssessment =
+        await executePartTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+      // Assert
+      // Child care cost expected to be studentDataDaycareCosts11YearsOrUnder + studentDataDaycareCosts12YearsOrOver.
+
+      expect(calculatedAssessment.variables.calculatedDataChildCareCost).toBe(
+        600,
+      );
+    },
+  );
+
+  it("Should calculate child care costs as 0 when student has one or more dependents on both categories(11 years and under and over12 years)", async () => {
     // Arrange
     const assessmentConsolidatedData =
-      createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataTaxReturnIncome = 32999;
+      createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.offeringWeeks = 8;
     // Creates 4 eligible and 4 not eligible dependents.
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
-        DependentEligibility.Eligible0To18YearsOld,
+        DependentEligibility.Eligible0To11YearsOld,
+        { studyStartDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
       createFakeStudentDependentEligible(
-        DependentEligibility.Eligible18To22YearsOldAttendingHighSchool,
-      ),
-      createFakeStudentDependentEligible(
-        DependentEligibility.Eligible18To22YearsOldDeclaredOnTaxes,
-      ),
-      createFakeStudentDependentEligible(
-        DependentEligibility.EligibleOver22YearsOld,
-      ),
-      createFakeStudentDependentNotEligible(
-        DependentEligibility.Eligible0To18YearsOld,
-      ),
-      createFakeStudentDependentNotEligible(
-        DependentEligibility.Eligible18To22YearsOldAttendingHighSchool,
-      ),
-      createFakeStudentDependentNotEligible(
-        DependentEligibility.Eligible18To22YearsOldDeclaredOnTaxes,
-      ),
-      createFakeStudentDependentNotEligible(
-        DependentEligibility.EligibleOver22YearsOld,
+        DependentEligibility.Eligible12YearsAndOverAndDeclaredOnTaxes,
+        { studyStartDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
     ];
     // Act
-    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
+    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
       assessmentConsolidatedData,
     );
     // Assert
-    // calculatedDataTotalFamilyIncome must be below the threshold for
-    // dmnFullTimeAwardFamilySizeVariables.limitAwardCSGDThresholdIncome.
-    expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(
-      assessmentConsolidatedData.studentDataTaxReturnIncome,
-    );
-    expect(calculatedAssessment.variables.calculatedDataFamilySize).toBe(5);
-    expect(calculatedAssessment.variables.awardEligibilityCSGD).toBe(true);
-    expect(
-      calculatedAssessment.variables.federalAwardNetCSGDAmount,
-    ).toBeGreaterThan(0);
-    expect(
-      calculatedAssessment.variables.provincialAwardNetCSGDAmount,
-    ).toBeGreaterThan(0);
-  });
+    // Child care cost expected to be studentDataDaycareCosts11YearsOrUnder + studentDataDaycareCosts12YearsOrOver.
 
-  it("Should determine CSGD as not eligible when financial need is at least $1 and total family income is above the threshold and there is at least 1 eligible dependent.", async () => {
-    // Arrange
-    const assessmentConsolidatedData =
-      createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-    // Ensures that the income is above the threshold to force it to fail.
-    assessmentConsolidatedData.studentDataTaxReturnIncome = 100000;
-    assessmentConsolidatedData.studentDataDependants = [
-      createFakeStudentDependentEligible(
-        DependentEligibility.EligibleOver22YearsOld,
-      ),
-    ];
-    // Act
-    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
-      PROGRAM_YEAR,
-      assessmentConsolidatedData,
-    );
-    // Assert
-    expect(calculatedAssessment.variables.awardEligibilityCSGD).toBe(false);
-  });
-
-  it("Should determine CSGD as not eligible when financial need is at least $1 and total family income is below the threshold and eligible dependents is 0.", async () => {
-    // Arrange
-    const assessmentConsolidatedData =
-      createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-    // Ensures that the income is below any threshold to force enforce the "at least one eligible dependants" rule to fail.
-    assessmentConsolidatedData.studentDataTaxReturnIncome = 1000;
-    assessmentConsolidatedData.studentDataDependants = [
-      createFakeStudentDependentNotEligible(
-        DependentEligibility.Eligible0To18YearsOld,
-      ),
-    ];
-    // Act
-    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
-      PROGRAM_YEAR,
-      assessmentConsolidatedData,
-    );
-    // Assert
-    expect(calculatedAssessment.variables.awardEligibilityCSGD).toBe(false);
+    expect(calculatedAssessment.variables.calculatedDataChildCareCost).toBe(0);
   });
 });
