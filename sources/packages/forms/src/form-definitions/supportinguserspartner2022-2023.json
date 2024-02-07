@@ -2167,9 +2167,9 @@
                   "attributes": {},
                   "validateOn": "change",
                   "conditional": {
-                    "show": "false",
+                    "show": "true",
                     "when": "offeringIntensity",
-                    "eq": "Part Time"
+                    "eq": "Full Time"
                   },
                   "overlay": {
                     "style": "",
@@ -2248,9 +2248,9 @@
                   "tags": [],
                   "properties": {},
                   "conditional": {
-                    "show": "false",
+                    "show": "true",
                     "when": "offeringIntensity",
-                    "eq": "Part Time",
+                    "eq": "Full Time",
                     "json": ""
                   },
                   "customConditional": "",
@@ -2345,9 +2345,9 @@
                   "attributes": {},
                   "validateOn": "change",
                   "conditional": {
-                    "show": "false",
+                    "show": "true",
                     "when": "offeringIntensity",
-                    "eq": "Part Time"
+                    "eq": "Full Time"
                   },
                   "overlay": {
                     "style": "",
@@ -2429,9 +2429,9 @@
                   "attributes": {},
                   "validateOn": "change",
                   "conditional": {
-                    "show": "false",
+                    "show": "true",
                     "when": "offeringIntensity",
-                    "eq": "Part Time"
+                    "eq": "Full Time"
                   },
                   "overlay": {
                     "style": "",
@@ -2610,7 +2610,8 @@
                   "theme": "default",
                   "breadcrumb": "default",
                   "id": "eryyqjh",
-                  "tags": []
+                  "tags": [],
+                  "isNew": false
                 },
                 {
                   "label": "<strong>Will you receive income assistance/social assistance (welfare) and/or BC income assistance for persons with disabilities during your Partner's study period?</strong>",
@@ -3436,9 +3437,9 @@
                   "tags": [],
                   "properties": {},
                   "conditional": {
-                    "show": "false",
+                    "show": "true",
                     "when": "offeringIntensity",
-                    "eq": "Part Time",
+                    "eq": "Full Time",
                     "json": ""
                   },
                   "customConditional": "",
@@ -3697,9 +3698,9 @@
                   "attributes": {},
                   "validateOn": "change",
                   "conditional": {
-                    "show": "false",
+                    "show": "true",
                     "when": "offeringIntensity",
-                    "eq": "Part Time"
+                    "eq": "Full Time"
                   },
                   "overlay": {
                     "style": "",
@@ -3885,7 +3886,7 @@
                   "id": "e86cscg"
                 },
                 {
-                  "label": "<strong>Will your be taking care of eligible dependants during your Partner's Study Period? </strong>",
+                  "label": "<strong>Will you be taking care of eligible dependants during your Partner's Study Period? </strong>",
                   "optionsLabelPosition": "right",
                   "inline": false,
                   "tableView": false,
@@ -3944,9 +3945,9 @@
                   "attributes": {},
                   "validateOn": "change",
                   "conditional": {
-                    "show": "false",
+                    "show": "true",
                     "when": "offeringIntensity",
-                    "eq": "Part Time"
+                    "eq": "Full Time"
                   },
                   "overlay": {
                     "style": "",
