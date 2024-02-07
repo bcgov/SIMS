@@ -22,6 +22,7 @@ import {
   getOfferingIntensityCode,
 } from "@sims/utilities";
 import { OfferingIntensity } from "@sims/sims-db";
+import { FILE_DEFAULT_ENCODING } from "@sims/services/constants";
 
 /**
  * Manages the creation of the content files that needs to be sent
@@ -143,8 +144,10 @@ export class MSFAAIntegrationService extends SFTPIntegrationBase<MSFAASFTPRespon
     const client = await this.getClient();
     try {
       const filePath = `${this.esdcConfig.ftpResponseFolder}/${fileName}`;
-      // Read all the file content and create a buffer.
-      const fileContent = await client.get(filePath);
+      // Read all the file content and create a buffer with 'ascii' encoding.
+      const fileContent = await client.get(filePath, undefined, {
+        readStreamOptions: { encoding: FILE_DEFAULT_ENCODING },
+      });
       // Convert the file content to an array of text lines and remove possible blank lines.
       const fileLines = fileContent
         .toString()

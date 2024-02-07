@@ -3,6 +3,7 @@ import { ZeebeMockedClient } from "./mock";
 import {
   AssessmentConsolidatedData,
   CalculatedAssessmentModel,
+  ConfigureDisbursementData,
 } from "../models";
 import { PROCESS_INSTANCE_CREATE_TIMEOUT } from "./constants/system-configurations-constants";
 
@@ -58,4 +59,24 @@ export async function executePartTimeAssessmentForProgramYear(
     `parttime-assessment-${programYear}`,
     assessmentConsolidatedData,
   );
+}
+
+/**
+ * Executes the parttime-configure-disbursement BPMN workflow.
+ * @param assessmentConsolidatedData assessment data.
+ * @returns result of the workflow execution.
+ */
+export async function executePartTimeConfigureDisbursement(
+  configureDisbursementData: ConfigureDisbursementData,
+): Promise<CreateProcessInstanceWithResultResponse<CalculatedAssessmentModel>> {
+  return ZeebeMockedClient.getMockedZeebeInstance().createProcessInstanceWithResult<
+    ConfigureDisbursementData,
+    CalculatedAssessmentModel
+  >({
+    bpmnProcessId: "parttime-configure-disbursement",
+    variables: {
+      ...configureDisbursementData,
+    },
+    requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
+  });
 }

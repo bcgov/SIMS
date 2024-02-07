@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 import { plainToClass } from "class-transformer";
 import { validateSync } from "class-validator";
 import { flattenErrorMessages } from "../../utilities/class-validation";
-import { removeUTF8BOM } from "../../utilities";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   ApplicationBulkWithdrawalData,
@@ -46,8 +45,6 @@ export class ApplicationWithdrawalImportTextService {
   readText(textContent: string): BulkWithdrawalFileData {
     const applicationWithdrawalModels: ApplicationWithdrawalImportTextModel[] =
       [];
-    // Remove BOM(Byte order mark), if present.
-    textContent = removeUTF8BOM(textContent);
     const fileLines = textContent.split("\n");
     // Read the first line to check if the header code is the expected one.
     const header = ApplicationBulkWithdrawalHeader.createFromLine(

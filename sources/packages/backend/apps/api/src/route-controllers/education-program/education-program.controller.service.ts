@@ -25,10 +25,14 @@ import {
   EDUCATION_PROGRAM_NOT_FOUND,
   DUPLICATE_SABC_CODE,
 } from "../../constants";
-import { INSTITUTION_TYPE_BC_PRIVATE } from "@sims/sims-db/constant";
+import {
+  INSTITUTION_TYPE_BC_PUBLIC,
+  INSTITUTION_TYPE_BC_PRIVATE,
+} from "@sims/sims-db/constant";
 import { ApiProcessError } from "../../types";
 import { ApiUnprocessableEntityResponse } from "@nestjs/swagger";
 import { SaveEducationProgram } from "../../services/education-program/education-program.service.models";
+import { InstitutionService } from "../../services/institution/institution.service";
 
 @Injectable()
 export class EducationProgramControllerService {
@@ -36,6 +40,7 @@ export class EducationProgramControllerService {
     private readonly programService: EducationProgramService,
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
     private readonly formService: FormService,
+    private readonly institutionService: InstitutionService,
   ) {}
 
   /**
@@ -96,6 +101,12 @@ export class EducationProgramControllerService {
     auditUserId: number,
     programId?: number,
   ): Promise<EducationProgram> {
+    // Check if institution is private/public and append it to the payload.
+    const { institutionType } =
+      await this.institutionService.getInstitutionTypeById(institutionId);
+    payload.isBCPrivate = institutionType.isBCPrivate;
+    payload.isBCPublic = institutionType.isBCPublic;
+
     const submissionResult =
       await this.formService.dryRunSubmission<SaveEducationProgram>(
         FormNames.EducationProgram,
@@ -213,8 +224,8 @@ export class EducationProgramControllerService {
       effectiveEndDate: getISODateOnlyString(program.effectiveEndDate),
       assessedDate: program.assessedDate,
       assessedBy: getUserFullName(program.assessedBy),
-      isBCPrivate:
-        program.institution.institutionType.id === INSTITUTION_TYPE_BC_PRIVATE,
+      isBCPublic: program.institution.institutionType.isBCPublic,
+      isBCPrivate: program.institution.institutionType.isBCPrivate,
       hasOfferings,
     };
   }

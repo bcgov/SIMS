@@ -48,6 +48,7 @@ export interface EducationProgramAPIOutDTO {
   hasOfferings: boolean;
   institutionId: number;
   institutionName: string;
+  isBCPublic: boolean;
   isBCPrivate: boolean;
   submittedDate: Date;
   submittedBy: string;
@@ -143,6 +144,8 @@ export class EducationProgramAPIInDTO {
   programDeclaration: boolean;
   @Expose()
   fieldOfStudyCode: number;
+  isBCPrivate: boolean;
+  isBCPublic: boolean;
 }
 
 export interface StudentEducationProgramAPIOutDTO {

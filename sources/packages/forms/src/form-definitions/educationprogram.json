@@ -1632,7 +1632,9 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "fieldSet": false,
-                    "id": "e3tglfe"
+                    "id": "e3tglfe",
+                    "isNew": false,
+                    "lockKey": true
                 },
                 {
                     "label": "Will the program also be offered and delivered at 100% course load on site?",
@@ -1691,12 +1693,12 @@
                     "tags": [],
                     "properties": {},
                     "conditional": {
-                        "show": true,
-                        "when": "programDeliveryTypes",
-                        "eq": "deliveredOnline",
+                        "show": "",
+                        "when": null,
+                        "eq": "",
                         "json": ""
                     },
-                    "customConditional": "",
+                    "customConditional": "const isBCInstitution = data.isBCPublic || data.isBCPrivate;\nshow = (!isBCInstitution && data.programDeliveryTypes.deliveredOnline);",
                     "logic": [],
                     "attributes": {
                         "data-cy": "deliveredOnlineAlsoOnsite"
@@ -1727,7 +1729,8 @@
                     "inputType": "radio",
                     "fieldSet": false,
                     "id": "el1u4p",
-                    "defaultValue": ""
+                    "defaultValue": "",
+                    "isNew": false
                 },
                 {
                     "label": "Will the students earn the same number of credits in the same time period as students in other StudentAid BC eligible programs delivered on site?",
@@ -1786,12 +1789,12 @@
                     "tags": [],
                     "properties": {},
                     "conditional": {
-                        "show": true,
-                        "when": "deliveredOnlineAlsoOnsite",
-                        "eq": "no",
+                        "show": "",
+                        "when": null,
+                        "eq": "",
                         "json": ""
                     },
-                    "customConditional": "",
+                    "customConditional": "const isBCInstitution = data.isBCPublic || data.isBCPrivate;\nshow = (!isBCInstitution && data.deliveredOnlineAlsoOnsite === \"no\");",
                     "logic": [],
                     "attributes": {
                         "data-cy": "sameOnlineCreditsEarned"
@@ -1822,7 +1825,8 @@
                     "inputType": "radio",
                     "fieldSet": false,
                     "id": "e6vyjtc",
-                    "defaultValue": ""
+                    "defaultValue": "",
+                    "isNew": false
                 },
                 {
                     "label": "Will they earn academic credits that are recognized at another designated institution listed in the BC Transfer Guide or other acceptable articulation agreements from other jurisdictions?",
@@ -1881,12 +1885,12 @@
                     "tags": [],
                     "properties": {},
                     "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": "",
                         "json": ""
                     },
-                    "customConditional": "show = (data.deliveredOnlineAlsoOnsite === \"no\" && data.sameOnlineCreditsEarned ===\"no\");",
+                    "customConditional": "const isBCInstitution = data.isBCPublic || data.isBCPrivate;\nshow = (!isBCInstitution && data.deliveredOnlineAlsoOnsite === \"no\" && data.sameOnlineCreditsEarned ===\"no\");",
                     "logic": [],
                     "attributes": {
                         "data-cy": "earnAcademicCreditsOtherInstitution"
@@ -1917,7 +1921,8 @@
                     "inputType": "radio",
                     "fieldSet": false,
                     "id": "e3s18a",
-                    "defaultValue": ""
+                    "defaultValue": "",
+                    "isNew": false
                 },
                 {
                     "label": "HTML",
@@ -1932,7 +1937,7 @@
                     "refreshOnChange": false,
                     "customClass": "banner-warning",
                     "key": "html4",
-                    "customConditional": "show = (data.deliveredOnlineAlsoOnsite === \"no\" && data.sameOnlineCreditsEarned === \"no\" && data.earnAcademicCreditsOtherInstitution === \"no\");",
+                    "customConditional": "const isBCInstitution = data.isBCPublic || data.isBCPrivate;\nshow = (!isBCInstitution && data.deliveredOnlineAlsoOnsite === \"no\" && data.sameOnlineCreditsEarned === \"no\" && data.earnAcademicCreditsOtherInstitution === \"no\");",
                     "type": "htmlelement",
                     "input": false,
                     "tableView": false,
@@ -1974,7 +1979,7 @@
                         "unique": false
                     },
                     "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": ""
                     },
@@ -1993,7 +1998,8 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "tag": "p",
-                    "id": "elz5y9j"
+                    "id": "elz5y9j",
+                    "tags": []
                 },
                 {
                     "label": "HTML",
@@ -6307,7 +6313,28 @@
             "allowMultipleMasks": false,
             "inputType": "hidden",
             "id": "egqexmm",
-            "addons": []
+            "addons": [],
+            "isNew": false
+        },
+        {
+            "input": true,
+            "tableView": false,
+            "key": "isBCPublic",
+            "label": "isBCPublic",
+            "protected": false,
+            "unique": false,
+            "persistent": true,
+            "type": "hidden",
+            "tags": [],
+            "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+            },
+            "properties": {},
+            "lockKey": true,
+            "customDefaultValue": "",
+            "customConditional": ""
         },
         {
             "label": "Program Status",

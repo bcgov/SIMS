@@ -364,7 +364,7 @@
     <bpmn:serviceTask id="save-assessment-data-part-time-task" name="Save assessment output">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:input source="={&#10;  weeks: offeringWeeks,&#10;  tuitionCost: offeringActualTuitionCosts,&#10;  childcareCost: calculatedDataChildCareCost,&#10;  totalFamilyIncome: calculatedDataTotalFamilyIncome,&#10;  transportationCost: calculatedDataTransportationAllownace,&#10;  booksAndSuppliesCost: offeringProgramRelatedCosts,&#10;  miscellaneousAllowance: calculatedDataMiscellaneousAllowance,&#10;  exceptionalEducationCost: offeringExceptionalExpenses,&#10;  assessedNeed: calculatedDataTotalAssessedNeed&#10;}" target="assessmentData" />
+          <zeebe:input source="={&#10;  weeks: offeringWeeks,&#10;  tuitionCost: offeringActualTuitionCosts,&#10;  childcareCost: calculatedDataTotalChildCareCost,&#10;  totalFamilyIncome: calculatedDataTotalFamilyIncome,&#10;  transportationCost: calculatedDataTransportationAllownace,&#10;  booksAndSuppliesCost: offeringProgramRelatedCosts,&#10;  miscellaneousAllowance: calculatedDataMiscellaneousAllowance,&#10;  exceptionalEducationCost: offeringExceptionalExpenses,&#10;  assessedNeed: calculatedDataTotalAssessedNeed&#10;}" target="assessmentData" />
         </zeebe:ioMapping>
         <zeebe:taskDefinition type="save-assessment-data" />
       </bpmn:extensionElements>
@@ -820,10 +820,6 @@
         <dc:Bounds x="190" y="120" width="4010" height="1320" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0g9dtl6_di" bpmnElement="TextAnnotation_0g9dtl6">
-        <dc:Bounds x="1740" y="1630" width="188" height="110" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1b54j4j_di" bpmnElement="verify-assessment-calculation-timer">
         <dc:Bounds x="2102" y="1722" width="36" height="36" />
       </bpmndi:BPMNShape>
@@ -1080,10 +1076,10 @@
       <bpmndi:BPMNShape id="Event_0teq2x0_di" bpmnElement="release-assessment-calculation-message">
         <dc:Bounds x="2102" y="1632" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_1ek1rle_di" bpmnElement="Association_1ek1rle">
-        <di:waypoint x="1960" y="1634" />
-        <di:waypoint x="1928" y="1643" />
-      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_0g9dtl6_di" bpmnElement="TextAnnotation_0g9dtl6">
+        <dc:Bounds x="1740" y="1630" width="188" height="110" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1eip27h_di" bpmnElement="Flow_1eip27h">
         <di:waypoint x="2220" y="1715" />
         <di:waypoint x="2220" y="1650" />
@@ -1571,6 +1567,10 @@
       <bpmndi:BPMNEdge id="Flow_0rxxozm_di" bpmnElement="Flow_0rxxozm">
         <di:waypoint x="561" y="601" />
         <di:waypoint x="595" y="601" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1ek1rle_di" bpmnElement="Association_1ek1rle">
+        <di:waypoint x="1960" y="1634" />
+        <di:waypoint x="1928" y="1643" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_1k2osho_di" bpmnElement="Group_1k2osho">
         <dc:Bounds x="1430" y="150" width="750" height="340" />

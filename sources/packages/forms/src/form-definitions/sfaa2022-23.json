@@ -16589,7 +16589,7 @@
               "inputFormat": "plain",
               "validate": {
                 "required": true,
-                "custom": "",
+                "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';",
                 "customPrivate": false,
                 "strictDateValidation": false,
                 "multiple": false,
@@ -16601,7 +16601,7 @@
               },
               "key": "estimatedSpouseIncome",
               "conditional": {
-                "show": true,
+                "show": "true",
                 "when": "isYourSpouseACanadianCitizen",
                 "eq": "no"
               },
@@ -16655,8 +16655,9 @@
               "id": "e9yrlbn",
               "inputType": "text",
               "inputMask": "",
-              "decimalLimit": 2,
-              "requireDecimal": true
+              "decimalLimit": 0,
+              "requireDecimal": false,
+              "tags": []
             },
             {
               "label": "<strong>Will your partner be employed full-time or part-time during your study period</strong>",
@@ -19642,7 +19643,7 @@
                   "truncateMultipleSpaces": false,
                   "validate": {
                     "required": true,
-                    "custom": "",
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';",
                     "customPrivate": false,
                     "strictDateValidation": false,
                     "multiple": false,
@@ -19688,7 +19689,7 @@
                   "attributes": {},
                   "validateOn": "change",
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": ""
                   },
@@ -19709,8 +19710,9 @@
                   "id": "et8xql",
                   "inputType": "text",
                   "inputMask": "",
-                  "decimalLimit": 2,
-                  "requireDecimal": true
+                  "decimalLimit": 0,
+                  "requireDecimal": false,
+                  "tags": []
                 },
                 {
                   "label": "Enter the total net value of all your parents Canadian and foreign assets (do not include RRSPs, principal residence or business). Enter ‘0’ if none.",
@@ -30907,7 +30909,7 @@
               },
               "errorLabel": "",
               "errors": "",
-              "key": "strongYouMayBeEligibleForAnAdditionalTransportationAllowanceIfThereIsNoLimitedLocalPublicTransitWhereYouLiveOrIfYouAreRequiredDueToSpecialCircumstancesDoYouWantToBeAssessedForAdditionalTransportationCostsStrong",
+              "key": "eligibleForAnAdditionalTransportationAllowance",
               "tags": [],
               "properties": {},
               "conditional": {
@@ -30919,7 +30921,7 @@
               "customConditional": "",
               "logic": [],
               "attributes": {
-                "data-cy": "strongYouMayBeEligibleForAnAdditionalTransportationAllowanceIfThereIsNoLimitedLocalPublicTransitWhereYouLiveOrIfYouAreRequiredDueToSpecialCircumstancesDoYouWantToBeAssessedForAdditionalTransportationCostsStrong"
+                "data-cy": "eligibleForAnAdditionalTransportationAllowance"
               },
               "overlay": {
                 "style": "",
@@ -30968,7 +30970,7 @@
               "conditional": {
                 "json": "",
                 "show": true,
-                "when": "strongYouMayBeEligibleForAnAdditionalTransportationAllowanceIfThereIsNoLimitedLocalPublicTransitWhereYouLiveOrIfYouAreRequiredDueToSpecialCircumstancesDoYouWantToBeAssessedForAdditionalTransportationCostsStrong",
+                "when": "eligibleForAnAdditionalTransportationAllowance",
                 "eq": "yes"
               },
               "logic": [],
@@ -31086,7 +31088,7 @@
                   "key": "transportationcostsituation",
                   "conditional": {
                     "show": true,
-                    "when": "strongYouMayBeEligibleForAnAdditionalTransportationAllowanceIfThereIsNoLimitedLocalPublicTransitWhereYouLiveOrIfYouAreRequiredDueToSpecialCircumstancesDoYouWantToBeAssessedForAdditionalTransportationCostsStrong",
+                    "when": "eligibleForAnAdditionalTransportationAllowance",
                     "eq": "yes"
                   },
                   "type": "radio",
@@ -31147,6 +31149,155 @@
                   "inputType": "radio",
                   "fieldSet": false,
                   "id": "efqfe2q"
+                },
+                {
+                  "autofocus": false,
+                  "input": true,
+                  "tableView": false,
+                  "inputType": "text",
+                  "inputMask": "",
+                  "label": "Please estimate your weekly transportation costs.",
+                  "key": "additionalTransportCost",
+                  "placeholder": "",
+                  "prefix": "$",
+                  "suffix": "",
+                  "defaultValue": "",
+                  "protected": false,
+                  "persistent": true,
+                  "hidden": false,
+                  "clearOnHide": true,
+                  "delimiter": true,
+                  "decimalLimit": 2,
+                  "requireDecimal": true,
+                  "validate": {
+                    "required": true,
+                    "multiple": "",
+                    "custom": "valid = (input >= 0 && input <= 9999) ? true : 'The number you have entered is outside the expected range.';"
+                  },
+                  "conditional": {
+                    "show": "true",
+                    "when": "eligibleForAnAdditionalTransportationAllowance",
+                    "eq": "yes"
+                  },
+                  "type": "currency",
+                  "labelPosition": "top",
+                  "tags": [],
+                  "properties": {},
+                  "lockKey": true
+                },
+                {
+                  "autofocus": false,
+                  "input": true,
+                  "tableView": false,
+                  "inputType": "number",
+                  "label": "Please estimate your weekly travel distance in kilometers:",
+                  "key": "additionalTransportKm",
+                  "placeholder": "",
+                  "prefix": "",
+                  "suffix": "km",
+                  "defaultValue": "",
+                  "protected": false,
+                  "persistent": true,
+                  "hidden": false,
+                  "clearOnHide": true,
+                  "validate": {
+                    "required": true,
+                    "min": 0,
+                    "max": 999,
+                    "step": "any",
+                    "integer": "",
+                    "multiple": "",
+                    "custom": ""
+                  },
+                  "type": "number",
+                  "labelPosition": "top",
+                  "tags": [],
+                  "conditional": {
+                    "show": "true",
+                    "when": "eligibleForAnAdditionalTransportationAllowance",
+                    "eq": "yes"
+                  },
+                  "properties": {},
+                  "decimalLimit": 0,
+                  "lockKey": true
+                },
+                {
+                  "autofocus": false,
+                  "input": true,
+                  "tableView": false,
+                  "inputType": "number",
+                  "label": "How many weeks during your study period will you require additional transportation costs?",
+                  "key": "additionalTransportWeeks",
+                  "placeholder": "",
+                  "prefix": "",
+                  "suffix": "",
+                  "defaultValue": "",
+                  "protected": false,
+                  "persistent": true,
+                  "hidden": false,
+                  "clearOnHide": true,
+                  "validate": {
+                    "required": false,
+                    "min": 0,
+                    "max": 52,
+                    "step": "any",
+                    "integer": "",
+                    "multiple": "",
+                    "custom": ""
+                  },
+                  "type": "number",
+                  "labelPosition": "top",
+                  "tags": [],
+                  "conditional": {
+                    "show": "true",
+                    "when": "eligibleForAnAdditionalTransportationAllowance",
+                    "eq": "yes"
+                  },
+                  "properties": {},
+                  "decimalLimit": 0,
+                  "lockKey": true
+                },
+                {
+                  "autofocus": false,
+                  "input": true,
+                  "tableView": false,
+                  "inputType": "radio",
+                  "label": "Are you receiving a weekly transportation allowance from your institution for a clinical or practicum placement?",
+                  "key": "additionalTransportPlacement",
+                  "values": [
+                    {
+                      "value": "yes",
+                      "label": "Yes",
+                      "shortcut": ""
+                    },
+                    {
+                      "value": "no",
+                      "label": "No",
+                      "shortcut": ""
+                    }
+                  ],
+                  "defaultValue": "",
+                  "protected": false,
+                  "fieldSet": false,
+                  "persistent": true,
+                  "hidden": false,
+                  "clearOnHide": true,
+                  "validate": {
+                    "required": true,
+                    "custom": "",
+                    "customPrivate": false
+                  },
+                  "type": "radio",
+                  "labelPosition": "top",
+                  "optionsLabelPosition": "right",
+                  "tags": [],
+                  "conditional": {
+                    "show": "true",
+                    "when": "eligibleForAnAdditionalTransportationAllowance",
+                    "eq": "yes"
+                  },
+                  "properties": {},
+                  "lockKey": true
                 },
                 {
                   "title": "Addition Transportation Panel",
