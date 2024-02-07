@@ -240,7 +240,7 @@ export function getFileNameAsCurrentTimestamp(): string {
  * mainly used to append in filename.
  * @returns timestamp.
  */
-export function getFileNameAsCustomizedCurrentTimestamp(): string {
+export function getFileNameAsExtendedCurrentTimestamp(): string {
   return dayjs(new Date())
     .tz(PST_TIMEZONE)
     .format(TIMESTAMP_CONTINUOUS_EXTENDED_FORMAT);

@@ -14,7 +14,7 @@ import {
   ConfigService,
   InstitutionIntegrationConfig,
 } from "@sims/utilities/config";
-import { getFileNameAsCustomizedCurrentTimestamp } from "@sims/utilities";
+import { getFileNameAsExtendedCurrentTimestamp } from "@sims/utilities";
 import { IER12IntegrationService } from "./ier12.integration.service";
 import {
   IER12Record,
@@ -144,7 +144,7 @@ export class IER12ProcessingService {
     fileName: string;
     filePath: string;
   } {
-    const timestamp = getFileNameAsCustomizedCurrentTimestamp();
+    const timestamp = getFileNameAsExtendedCurrentTimestamp();
     const fileName = `${institutionCode}-IER12-${timestamp}.txt`;
     const filePath = `${this.institutionIntegrationConfig.ftpRequestFolder}\\${institutionCode}\\${fileName}`;
     return {
