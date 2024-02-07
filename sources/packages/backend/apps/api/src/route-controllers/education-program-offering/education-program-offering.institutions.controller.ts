@@ -74,6 +74,7 @@ import {
 } from "../../constants";
 import { OfferingCSVModel } from "../../services/education-program-offering/education-program-offering-import-csv.models";
 import { Request } from "express";
+import { FILE_DEFAULT_ENCODING } from "@sims/services/constants";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("education-program-offering")
@@ -511,8 +512,8 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     @Query("validation-only", new DefaultValuePipe(false), ParseBoolPipe)
     validationOnly: boolean,
   ): Promise<PrimaryIdentifierAPIOutDTO[]> {
-    // Read the entire file content.
-    const fileContent = file.buffer.toString();
+    // Read the entire file content in ASCII encoding.
+    const fileContent = file.buffer.toString(FILE_DEFAULT_ENCODING);
     // Convert the file raw content into CSV models.
     let csvModels: OfferingCSVModel[];
     try {

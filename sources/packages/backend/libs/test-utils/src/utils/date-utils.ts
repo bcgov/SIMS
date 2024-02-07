@@ -6,5 +6,5 @@ import * as dayjs from "dayjs";
  * @returns true if the format is the expected.
  */
 export function isValidFileTimestamp(timestamp: string): boolean {
-  return dayjs(timestamp, "YYYY-MM-DD_HH.mm.ss").isValid();
+  return dayjs(timestamp, "YYYYMMDD-HHmmssSSS").isValid();
 }

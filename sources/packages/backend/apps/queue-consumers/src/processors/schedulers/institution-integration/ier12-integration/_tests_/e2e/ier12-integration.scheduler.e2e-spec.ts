@@ -87,7 +87,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
   let locationB: InstitutionLocation;
 
   beforeAll(async () => {
-    process.env.INSTITUTION_REQUEST_FOLDER = "Institution-Request";
+    process.env.INSTITUTION_REQUEST_FOLDER = "SIMS\\OUT";
     const { nestApplication, dataSource, sshClientMock } =
       await createTestingAppModule();
     app = nestApplication;
@@ -98,7 +98,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     // Intercept file timestamp.
     getFileNameAsCurrentTimestampMock = jest.spyOn(
       dateUtils,
-      "getFileNameAsCurrentTimestamp",
+      "getFileNameAsExtendedCurrentTimestamp",
     );
     // Create and save institutions A and B.
     const [institutionA, institutionB] = await db.institution.save([

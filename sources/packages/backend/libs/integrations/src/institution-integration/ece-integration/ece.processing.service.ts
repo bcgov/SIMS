@@ -5,7 +5,7 @@ import {
   ConfigService,
   InstitutionIntegrationConfig,
 } from "@sims/utilities/config";
-import { getFileNameAsCurrentTimestamp } from "@sims/utilities";
+import { getFileNameAsExtendedCurrentTimestamp } from "@sims/utilities";
 import { DisbursementScheduleService } from "@sims/integrations/services";
 import { ECERecord, ECEUploadResult } from "./models/ece-integration.model";
 import { ECEIntegrationService } from "./ece.integration.service";
@@ -120,8 +120,8 @@ export class ECEProcessingService {
     fileName: string;
     filePath: string;
   } {
-    const timestamp = getFileNameAsCurrentTimestamp();
-    const fileName = `ECE_${timestamp}.txt`;
+    const timestamp = getFileNameAsExtendedCurrentTimestamp();
+    const fileName = `ECE-${timestamp}.txt`;
     const filePath = `${this.institutionIntegrationConfig.ftpRequestFolder}\\${institutionCode}\\${fileName}`;
     return {
       fileName,
