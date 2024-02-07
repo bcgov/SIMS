@@ -3396,7 +3396,7 @@
                     "hideLabel": true,
                     "tags": [],
                     "lockKey": true,
-                    "customConditional": "show =  data.entranceRequirements.noneOfTheAboveEntranceRequirements;"
+                    "customConditional": "show = !!data.entranceRequirements.noneOfTheAboveEntranceRequirements;"
                 }
             ],
             "placeholder": "",
