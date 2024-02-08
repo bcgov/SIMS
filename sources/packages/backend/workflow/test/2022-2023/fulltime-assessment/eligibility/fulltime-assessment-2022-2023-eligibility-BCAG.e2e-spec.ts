@@ -98,7 +98,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
         assessmentConsolidatedData.programCredentialType =
           CredentialType.GraduateDiploma;
         assessmentConsolidatedData.programLength =
-          ProgramLengthOptions.SixtyWeeksToTwoYears;
+          ProgramLengthOptions.FiftyTwoWeeksToFiftyNineWeeks;
         // Act
         const calculatedAssessment =
           await executeFullTimeAssessmentForProgramYear(
