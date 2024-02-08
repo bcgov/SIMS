@@ -30,6 +30,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
   ).filter((type) => !EXPECTED_PROGRAM_CREDENTIAL_TYPES.includes(type));
   // Expected and not expected program length options.
   const EXPECTED_PROGRAM_LENGTH = [
+    ProgramLengthOptions.SixtyWeeksToTwoYears,
     ProgramLengthOptions.TwoToThreeYears,
     ProgramLengthOptions.ThreeToFourYears,
     ProgramLengthOptions.FourToFiveYears,
