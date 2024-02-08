@@ -131,6 +131,9 @@ describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-child-car
       expect(calculatedAssessment.variables.calculatedDataChildCareCost).toBe(
         0,
       );
+      expect(
+        calculatedAssessment.variables.calculatedDataTotalChildCareCost,
+      ).toBe(0);
     },
   );
 
@@ -162,6 +165,9 @@ describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-child-car
       expect(calculatedAssessment.variables.calculatedDataChildCareCost).toBe(
         0,
       );
+      expect(
+        calculatedAssessment.variables.calculatedDataTotalChildCareCost,
+      ).toBe(0);
     },
   );
 });

@@ -20,7 +20,6 @@
         <bpmn:flowNodeRef>Event_1mkiqso</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0hxxmu9</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_0um3yvb</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_18l6de5</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0bdny14</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1k4n9fq</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0zn13zd</bpmn:flowNodeRef>
@@ -28,6 +27,7 @@
         <bpmn:flowNodeRef>Gateway_03c2fh6</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_0pvobml</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1i1k5zk</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_18l6de5</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_0ejpwa7" name="Primary Assessed Need and Award Configuration">
         <bpmn:flowNodeRef>Event_1h2w0hl</bpmn:flowNodeRef>
@@ -407,15 +407,6 @@
       <bpmn:outgoing>Flow_142ei9l</bpmn:outgoing>
       <bpmn:outgoing>Flow_1ekiozl</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:intermediateThrowEvent id="Event_18l6de5" name="Calculate Total Eligible Dependents">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=if studentDataDependants = null then 0 else&#10;  count(&#10;studentDataDependants[&#10;// 0-18 years of age: eligible.&#10;date(item.dateOfBirth) &#62;= (date(offeringStudyStartDate) - duration(&#34;P18Y&#34;))&#10;// 19-22 years of age: post-sec must be Yes or Tax is Yes.&#10;or (&#10;  date(item.dateOfBirth) &#60; (date(offeringStudyStartDate) - duration(&#34;P18Y&#34;))&#10;  and date(item.dateOfBirth) &#62;= (date(offeringStudyStartDate) - duration(&#34;P22Y&#34;))&#10;  and (item.attendingPostSecondarySchool = &#34;yes&#34; or item.declaredOnTaxes = &#34;yes&#34;)&#10;)&#10;// &#62; 22 years: eligible if Tax is Yes.&#10;or (&#10;  date(item.dateOfBirth) &#60; (date(offeringStudyStartDate) - duration(&#34;P22Y&#34;))&#10;  and item.declaredOnTaxes = &#34;yes&#34;&#10;)&#10;]&#10;  )" target="calculatedDataTotalEligibleDependants" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0dqxcli</bpmn:incoming>
-      <bpmn:outgoing>Flow_0kv24s2</bpmn:outgoing>
-    </bpmn:intermediateThrowEvent>
     <bpmn:sequenceFlow id="Flow_1i1n8vc" sourceRef="Event_1i1k5zk" targetRef="Gateway_0um3yvb" />
     <bpmn:parallelGateway id="Gateway_0u6r40r">
       <bpmn:incoming>Flow_16zqfik</bpmn:incoming>
@@ -658,6 +649,15 @@
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0kv24s2</bpmn:incoming>
       <bpmn:outgoing>Flow_1i1n8vc</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:intermediateThrowEvent id="Event_18l6de5" name="Calculate Total Eligible Dependents">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=if studentDataDependants = null then 0 else&#10;  count(&#10;studentDataDependants[&#10;// 0-18 years of age: eligible.&#10;date(item.dateOfBirth) &#62;= (date(offeringStudyStartDate) - duration(&#34;P18Y&#34;))&#10;// 19-22 years of age: post-sec must be Yes or Tax is Yes.&#10;or (&#10;  date(item.dateOfBirth) &#60; (date(offeringStudyStartDate) - duration(&#34;P18Y&#34;))&#10;  and date(item.dateOfBirth) &#62;= (date(offeringStudyStartDate) - duration(&#34;P22Y&#34;))&#10;  and (item.attendingPostSecondarySchool = &#34;yes&#34; or item.declaredOnTaxes = &#34;yes&#34;)&#10;)&#10;// &#62; 22 years: eligible if Tax is Yes.&#10;or (&#10;  date(item.dateOfBirth) &#60; (date(offeringStudyStartDate) - duration(&#34;P22Y&#34;))&#10;  and item.declaredOnTaxes = &#34;yes&#34;&#10;)&#10;]&#10;  )" target="calculatedDataTotalEligibleDependants" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0dqxcli</bpmn:incoming>
+      <bpmn:outgoing>Flow_0kv24s2</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
     <bpmn:textAnnotation id="TextAnnotation_0o432k6">
       <bpmn:text>Naming Conventions
@@ -1004,12 +1004,6 @@ studentCalculatedTotalIncome</bpmn:text>
       <bpmndi:BPMNShape id="Gateway_0um3yvb_di" bpmnElement="Gateway_0um3yvb" isMarkerVisible="true">
         <dc:Bounds x="1365" y="595" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_18l6de5_di" bpmnElement="Event_18l6de5">
-        <dc:Bounds x="1152" y="602" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1137" y="645" width="73" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1a716s1" bpmnElement="Event_0bdny14">
         <dc:Bounds x="1912" y="602" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -1107,6 +1101,12 @@ studentCalculatedTotalIncome</bpmn:text>
           <dc:Bounds x="1235" y="645" width="85" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_18l6de5_di" bpmnElement="Event_18l6de5">
+        <dc:Bounds x="1162" y="602" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1147" y="645" width="73" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_0yc2t6b_di" bpmnElement="Association_0yc2t6b">
         <di:waypoint x="1090" y="602" />
         <di:waypoint x="1090" y="505" />
@@ -1191,7 +1191,7 @@ studentCalculatedTotalIncome</bpmn:text>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0dqxcli_di" bpmnElement="Flow_0dqxcli">
         <di:waypoint x="1108" y="620" />
-        <di:waypoint x="1152" y="620" />
+        <di:waypoint x="1162" y="620" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1ekiozl_di" bpmnElement="Flow_1ekiozl">
         <di:waypoint x="1390" y="645" />
@@ -1458,7 +1458,7 @@ studentCalculatedTotalIncome</bpmn:text>
         <di:waypoint x="1059" y="711" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0kv24s2_di" bpmnElement="Flow_0kv24s2">
-        <di:waypoint x="1188" y="620" />
+        <di:waypoint x="1198" y="620" />
         <di:waypoint x="1252" y="620" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1i1n8vc_di" bpmnElement="Flow_1i1n8vc">
