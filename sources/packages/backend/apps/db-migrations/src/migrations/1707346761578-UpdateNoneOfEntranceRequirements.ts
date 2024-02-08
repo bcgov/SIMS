@@ -16,7 +16,7 @@ export class UpdateNoneOfEntranceRequirements1707346761578
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Rollback-col-none-of-entrance-requirements.sql",
+        "Rollback-update-col-none-of-entrance-requirements.sql",
         "EducationPrograms",
       ),
     );
