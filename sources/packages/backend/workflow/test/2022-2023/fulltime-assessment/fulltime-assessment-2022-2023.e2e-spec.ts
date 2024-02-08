@@ -35,7 +35,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}.`, () => {
       livingAllowance: 1672,
       totalAssessedCost: 27672,
       totalFamilyIncome: 40000,
-      totalFederalAward: 5600,
+      totalFederalAward: 7654.615630769231,
       otherAllowableCost: 0,
       transportationCost: 0,
       secondResidenceCost: 0,
