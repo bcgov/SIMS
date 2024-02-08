@@ -259,9 +259,9 @@ export class EducationProgram extends RecordDataModel {
    */
   @Column({
     name: "none_of_entrance_requirements",
-    nullable: false,
+    nullable: true,
   })
-  noneOfTheAboveEntranceRequirements: boolean;
+  noneOfTheAboveEntranceRequirements?: boolean;
 
   /**
    * Identifier for Work Integrated(WIL) Learning component.

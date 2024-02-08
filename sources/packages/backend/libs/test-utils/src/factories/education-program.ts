@@ -35,6 +35,5 @@ export function createFakeEducationProgram(relations?: {
   program.institution = relations?.institution ?? createFakeInstitution();
   program.programIntensity = ProgramIntensity.fullTime;
   program.submittedBy = relations?.auditUser;
-  program.noneOfTheAboveEntranceRequirements = false;
   return program;
 }
