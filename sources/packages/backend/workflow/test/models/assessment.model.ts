@@ -178,6 +178,7 @@ export interface CalculatedAssessmentModel {
   offeringWeeks: number;
   calculatedDataTotalTutionCost: number;
   calculatedDataChildCareCost: number;
+  calculatedDataTotalChildCareCost: number;
   calculatedDataTotalMSOLAllowance: number;
   calculatedDataTotalCosts: number;
   calculatedDataTotalFamilyIncome: number;

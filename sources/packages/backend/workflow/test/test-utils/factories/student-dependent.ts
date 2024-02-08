@@ -20,6 +20,9 @@ export enum DependentEligibility {
    * Dependent is over 22 and is declared on taxes.
    */
   EligibleOver22YearsOld = "EligibleOver22YearsOld",
+}
+
+export enum DependentChildCareEligibility {
   /**
    * Dependent of age between 0 and 11 years.
    */
@@ -27,54 +30,39 @@ export enum DependentEligibility {
   /**
    * Dependent of age above 12 years and declared on taxes for disability.
    */
-  Eligible12YearsAndOverAndDeclaredOnTaxes = "Eligible12YearsAndOverAndDeclaredOnTaxes",
+  Eligible12YearsAndOver = "Eligible12YearsAndOver",
 }
 
 /**
  * Creates a student dependent that will be eligible.
  * @param eligibility eligibility rule.
- * @param options
  * @returns an eligible dependent.
  */
 export function createFakeStudentDependentEligible(
   eligibility: DependentEligibility,
-  options?: { studyStartDate?: string },
 ): StudentDependent {
-  const date = options?.studyStartDate ?? new Date();
   switch (eligibility) {
     case DependentEligibility.Eligible0To18YearsOld:
       return {
-        dateOfBirth: addToDateOnlyString(date, -17.9, "years"),
+        dateOfBirth: addToDateOnlyString(new Date(), -17.9, "years"),
         attendingPostSecondarySchool: YesNoOptions.No,
         declaredOnTaxes: YesNoOptions.No,
       };
     case DependentEligibility.Eligible18To22YearsOldAttendingHighSchool:
       return {
-        dateOfBirth: addToDateOnlyString(date, -18.1, "years"),
+        dateOfBirth: addToDateOnlyString(new Date(), -18.1, "years"),
         attendingPostSecondarySchool: YesNoOptions.Yes,
         declaredOnTaxes: YesNoOptions.No,
       };
     case DependentEligibility.Eligible18To22YearsOldDeclaredOnTaxes:
       return {
-        dateOfBirth: addToDateOnlyString(date, -22, "years"),
+        dateOfBirth: addToDateOnlyString(new Date(), -22, "years"),
         attendingPostSecondarySchool: YesNoOptions.No,
         declaredOnTaxes: YesNoOptions.Yes,
       };
     case DependentEligibility.EligibleOver22YearsOld:
       return {
         dateOfBirth: addToDateOnlyString(new Date(), -22.1, "years"),
-        attendingPostSecondarySchool: YesNoOptions.No,
-        declaredOnTaxes: YesNoOptions.Yes,
-      };
-    case DependentEligibility.Eligible0To11YearsOld:
-      return {
-        dateOfBirth: addToDateOnlyString(new Date(), -11, "years"),
-        attendingPostSecondarySchool: YesNoOptions.No,
-        declaredOnTaxes: YesNoOptions.No,
-      };
-    case DependentEligibility.Eligible12YearsAndOverAndDeclaredOnTaxes:
-      return {
-        dateOfBirth: addToDateOnlyString(new Date(), -12.1, "years"),
         attendingPostSecondarySchool: YesNoOptions.No,
         declaredOnTaxes: YesNoOptions.Yes,
       };
@@ -115,4 +103,45 @@ export function createFakeStudentDependentNotEligible(
         declaredOnTaxes: YesNoOptions.No,
       };
   }
+}
+
+/**
+ * Create a student dependant who is eligible for child care costs.
+ * @param eligibility eligibility rule.
+ * @param studyStartDate study start date of the offering.
+ * @returns eligible dependant.
+ */
+export function createFakeStudentDependentEligibleForChildcareCost(
+  eligibility: DependentChildCareEligibility,
+  studyStartDate: Date | string,
+): StudentDependent {
+  switch (eligibility) {
+    case DependentChildCareEligibility.Eligible0To11YearsOld:
+      return {
+        dateOfBirth: addToDateOnlyString(studyStartDate, -11, "years"),
+        attendingPostSecondarySchool: YesNoOptions.No,
+        declaredOnTaxes: YesNoOptions.No,
+      };
+    case DependentChildCareEligibility.Eligible12YearsAndOver:
+      return {
+        dateOfBirth: addToDateOnlyString(studyStartDate, -12.1, "years"),
+        attendingPostSecondarySchool: YesNoOptions.No,
+        declaredOnTaxes: YesNoOptions.Yes,
+      };
+  }
+}
+
+/**
+ * Create a student dependant who is not eligible for child care costs.
+ * @param studyStartDate study start date of the offering.
+ * @returns dependant who is not eligible.
+ */
+export function createFakeStudentDependentNotEligibleForChildcareCost(
+  studyStartDate: Date | string,
+): StudentDependent {
+  return {
+    dateOfBirth: addToDateOnlyString(studyStartDate, -12.1, "years"),
+    attendingPostSecondarySchool: YesNoOptions.No,
+    declaredOnTaxes: YesNoOptions.No,
+  };
 }
