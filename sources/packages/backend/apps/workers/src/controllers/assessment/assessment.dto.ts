@@ -146,6 +146,6 @@ export interface WorkflowWrapUpJobInDTO {
   [WORKFLOW_DATA]: WorkflowData;
 }
 
-export interface VerifyAssessmentCalculationOrderJobOutDTO {
+export type VerifyAssessmentCalculationOrderJobOutDTO = {
   isReadyForCalculation: boolean;
-}
+} & Record<string, number>;

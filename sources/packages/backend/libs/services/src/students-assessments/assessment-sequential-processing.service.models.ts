@@ -104,3 +104,8 @@ export class SequencedApplications {
     return this._future;
   }
 }
+
+export interface AwardTotal {
+  valueCode: string;
+  total: number;
+}

@@ -1,18 +1,29 @@
 import { Injectable } from "@nestjs/common";
-import { Brackets, EntityManager, Not } from "typeorm";
+import { Brackets, DataSource, EntityManager, Not, Repository } from "typeorm";
 import {
   Application,
   ApplicationStatus,
   AssessmentTriggerType,
   COEStatus,
   DisbursementSchedule,
+  DisbursementScheduleStatus,
   StudentAssessment,
+  StudentAssessmentStatus,
   User,
 } from "@sims/sims-db";
-import { SequencedApplications, SequentialApplication } from "..";
+import { AwardTotal, SequencedApplications, SequentialApplication } from "..";
+import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()
 export class AssessmentSequentialProcessingService {
+  constructor(
+    private readonly dataSource: DataSource,
+    @InjectRepository(Application)
+    private readonly applicationRepo: Repository<Application>,
+    @InjectRepository(StudentAssessment)
+    private readonly studentAssessmentRepo: Repository<StudentAssessment>,
+  ) {}
+
   /**
    * Checks if changes in an assessment can potentially causes changes in another application
    * which would demand a reassessment of the same.
@@ -60,7 +71,7 @@ export class AssessmentSequentialProcessingService {
       application.applicationNumber,
       application.student.id,
       application.programYear.id,
-      entityManager,
+      { entityManager },
     );
     if (!sequencedApplications.future.length) {
       // There are no future applications impacted.
@@ -93,6 +104,95 @@ export class AssessmentSequentialProcessingService {
   }
 
   /**
+   * Finds all applications before the one related to the {@link assessmentId} provided
+   * and returns the sum of all awards associated with non-overwritten applications.
+   * Only pending awards or already sent awards will be considered.
+   * The chronology of the applications is defined by the method {@link getSequencedApplications}.
+   * @param assessmentId assessment id to be used as a reference to find the past applications.
+   * @returns list of existing awards and their totals, if any, otherwise it returns an empty array,
+   * for instance, if the application is the first application or the only application for the
+   * program year.
+   */
+  async getProgramYearPreviousAwardsTotal(
+    assessmentId: number,
+  ): Promise<AwardTotal[]> {
+    // TODO: when getting the total the calculation of the current application was not executed yet.
+    const assessment = await this.studentAssessmentRepo.findOne({
+      select: {
+        id: true,
+        application: {
+          id: true,
+          applicationNumber: true,
+          student: {
+            id: true,
+          },
+          programYear: {
+            id: true,
+          },
+        },
+      },
+      relations: {
+        application: { student: true, programYear: true },
+      },
+      where: {
+        id: assessmentId,
+      },
+    });
+    const sequencedApplications = await this.getSequencedApplications(
+      assessment.application.applicationNumber,
+      assessment.application.student.id,
+      assessment.application.programYear.id,
+    );
+    if (!sequencedApplications.previous.length) {
+      // There are no past applications.
+      return [];
+    }
+    const applicationNumbers = sequencedApplications.previous.map(
+      (application) => application.applicationNumber,
+    );
+    const totals = await this.studentAssessmentRepo
+      .createQueryBuilder("studentAssessment")
+      .select("disbursementValue.valueCode", "valueCode")
+      .addSelect("SUM(disbursementValue.valueAmount)", "total")
+      .innerJoin("studentAssessment.application", "application")
+      .innerJoin(
+        "studentAssessment.disbursementSchedules",
+        "disbursementSchedule",
+      )
+      .innerJoin("disbursementSchedule.disbursementValues", "disbursementValue")
+      .where("application.applicationNumber IN (:...applicationNumbers)", {
+        applicationNumbers,
+      })
+      .andWhere("application.applicationStatus != :overwrittenStatus", {
+        overwrittenStatus: ApplicationStatus.Overwritten,
+      })
+      .andWhere(
+        "studentAssessment.studentAssessmentStatus = :completedStudentAssessmentStatus",
+        {
+          completedStudentAssessmentStatus: StudentAssessmentStatus.Completed,
+        },
+      )
+      .andWhere(
+        "disbursementSchedule.disbursementScheduleStatus != :cancelledDisbursementScheduleStatus",
+        {
+          cancelledDisbursementScheduleStatus:
+            DisbursementScheduleStatus.Cancelled,
+        },
+      )
+      .andWhere("disbursementSchedule.coeStatus != :declinedCOEStatus", {
+        declinedCOEStatus: COEStatus.declined,
+      })
+      .groupBy("disbursementValue.valueCode")
+      .getRawMany<{ valueCode: string; total: string }>();
+    // Parses the values from DB ensuring that the total will be properly converted to a number.
+    // The valueAmount from awards are mapped to string by Typeorm Postgres driver.
+    return totals.map((total) => ({
+      valueCode: total.valueCode,
+      total: +total.total,
+    }));
+  }
+
+  /**
    * Get the application correspondent to the {@link applicationNumber} as the current to then search
    * for applications in the past and in the future for the same student and the same program year.
    * If a reference date is not possible to be determined for the current application so no future
@@ -101,15 +201,17 @@ export class AssessmentSequentialProcessingService {
    * applications and the one to be considered as current for the {@link SequencedApplications}.
    * @param studentId student id.
    * @param programYearId program id to be considered.
-   * @param entityManager used to execute the commands in the same transaction.
+   * @param options method options.
+   * - `entityManager` used to execute the commands in the same transaction.
    * @returns sequenced applications.
    */
   private async getSequencedApplications(
     applicationNumber: string,
     studentId: number,
     programYearId: number,
-    entityManager: EntityManager,
+    options?: { entityManager?: EntityManager },
   ): Promise<SequencedApplications> {
+    const entityManager = options?.entityManager ?? this.dataSource.manager;
     // Sub query to get the first assessment calculation date for an application to be used for ordering.
     // All applications versions should be considered, which means 'Overwritten' also.
     // This will ensure that once the application is calculated for the first time its

@@ -44,13 +44,17 @@ import {
 } from "@sims/services/workflow/variables/assessment-gateway";
 import { CustomNamedError } from "@sims/utilities";
 import { MaxJobsToActivate } from "../../types";
-import { WorkflowClientService } from "@sims/services";
+import {
+  AssessmentSequentialProcessingService,
+  WorkflowClientService,
+} from "@sims/services";
 
 @Controller()
 export class AssessmentController {
   constructor(
     private readonly studentAssessmentService: StudentAssessmentService,
     private readonly workflowClientService: WorkflowClientService,
+    private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
   ) {}
 
   /**
@@ -284,6 +288,9 @@ export class AssessmentController {
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
     const jobLogger = new Logger(job.type);
+    const result = {
+      isReadyForCalculation: false,
+    } as VerifyAssessmentCalculationOrderJobOutDTO;
     try {
       const assessment =
         await this.studentAssessmentService.getAssessmentSummary(
@@ -320,7 +327,7 @@ export class AssessmentController {
           `There is ongoing calculation happening for assessment id ${assessmentInCalculationStep.id} ` +
             `and hence the processing assessment id ${assessmentId} is waiting for that calculation to complete.`,
         );
-        return job.complete({ isReadyForCalculation: false });
+        return job.complete(result);
       }
       jobLogger.log(
         `There is no ongoing calculation happening while verifying the order for processing assessment id ${assessmentId}.`,
@@ -341,15 +348,32 @@ export class AssessmentController {
       const isReadyForCalculation =
         firstOutstandingStudentAssessment.id === job.variables.assessmentId;
       if (isReadyForCalculation) {
-        await this.studentAssessmentService.saveAssessmentCalculationStartDate(
-          assessmentId,
+        const saveAssessmentCalculationStartDate =
+          this.studentAssessmentService.saveAssessmentCalculationStartDate(
+            assessmentId,
+          );
+        const getProgramYearTotalAwards =
+          this.assessmentSequentialProcessingService.getProgramYearPreviousAwardsTotal(
+            assessmentId,
+          );
+        const [, programYearTotalAwards] = await Promise.all([
+          saveAssessmentCalculationStartDate,
+          getProgramYearTotalAwards,
+        ]);
+        jobLogger.log(
+          `The assessment calculation order has been verified and the assessment id ${assessmentId} is ready to be processed.`,
         );
+        programYearTotalAwards.forEach(
+          (award) =>
+            (result[`programYearTotal${award.valueCode}`] = award.total),
+        );
+        result.isReadyForCalculation = true;
+        return job.complete(result);
       }
       jobLogger.log(
-        `The assessment calculation order has been verified and ready for calculation status is ${isReadyForCalculation} ` +
-          `for processing assessment id ${assessmentId}.`,
+        `The assessment calculation order has been verified and the assessment id ${assessmentId} is not ready to be processed.`,
       );
-      return job.complete({ isReadyForCalculation });
+      return job.complete(result);
     } catch (error: unknown) {
       return createUnexpectedJobFail(error, job, {
         logger: jobLogger,
