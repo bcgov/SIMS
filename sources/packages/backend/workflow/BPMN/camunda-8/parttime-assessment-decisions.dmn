@@ -12,6 +12,9 @@
       <output id="OutputClause_0o0ynbc" label="limitWeeklyLessThan35CourseLoadMiscellaneousAllowance" name="limitWeeklyLessThan35CourseLoadMiscellaneousAllowance" typeRef="string" />
       <output id="OutputClause_0mgznwf" label="limitWeekly35AndMoreCourseLoadMiscellaneousAllowance" name="limitWeekly35AndMoreCourseLoadMiscellaneousAllowance" typeRef="string" />
       <output id="OutputClause_0zht304" label="limitWeeklyChildCare" name="limitWeeklyChildCare" typeRef="string" />
+      <output id="OutputClause_1o17873" label="limitAdditionalTransportationAllowance" name="limitAdditionalTransportationAllowance" typeRef="string" />
+      <output id="OutputClause_13hw5pm" label="limitAdditionalTransportationPlacement" name="limitAdditionalTransportationPlacement" typeRef="string" />
+      <output id="OutputClause_063ippa" label="limitAdditionalTransportationKMReduction" name="limitAdditionalTransportationKMReduction" typeRef="string" />
       <rule id="DecisionRule_1c7aszw">
         <inputEntry id="UnaryTests_15184g1">
           <text>"2021-2022"</text>
@@ -30,6 +33,15 @@
         </outputEntry>
         <outputEntry id="LiteralExpression_0dsbs0e">
           <text>268</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0stabab">
+          <text>94</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_11bkn7i">
+          <text>25</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1kmjg1e">
+          <text>0.34</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_0bfepni">
@@ -51,6 +63,15 @@
         <outputEntry id="LiteralExpression_1wnoxiy">
           <text>268</text>
         </outputEntry>
+        <outputEntry id="LiteralExpression_1bt4n0g">
+          <text>94</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1f84gpe">
+          <text>25</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_04739bf">
+          <text>0.34</text>
+        </outputEntry>
       </rule>
       <rule id="DecisionRule_1176l6s">
         <inputEntry id="UnaryTests_037ti6g">
@@ -70,6 +91,15 @@
         </outputEntry>
         <outputEntry id="LiteralExpression_139mtog">
           <text>268</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0lb2a03">
+          <text>94</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0pxmgyg">
+          <text>25</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0tjqma9">
+          <text>0.34</text>
         </outputEntry>
       </rule>
     </decisionTable>
