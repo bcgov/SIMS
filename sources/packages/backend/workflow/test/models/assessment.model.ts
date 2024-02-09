@@ -177,6 +177,8 @@ export interface AssessmentModel {
 export interface CalculatedAssessmentModel {
   offeringWeeks: number;
   calculatedDataTotalTutionCost: number;
+  calculatedDataDaycareCosts11YearsOrUnder: number;
+  calculatedDataDaycareCosts12YearsOrOver: number;
   calculatedDataChildCareCost: number;
   calculatedDataTotalChildCareCost: number;
   calculatedDataTotalMSOLAllowance: number;
