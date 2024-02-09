@@ -7,6 +7,7 @@ import {
   COEStatus,
   DisbursementSchedule,
   DisbursementScheduleStatus,
+  DisbursementValueType,
   StudentAssessment,
   StudentAssessmentStatus,
   User,
@@ -29,14 +30,16 @@ export class AssessmentSequentialProcessingService {
    * which would demand a reassessment of the same.
    * @param assessmentId assessment currently changing (e.g. updated or cancelled).
    * @param auditUserId user that should be considered the one that is causing the changes.
-   * @param entityManager used to execute the commands in the same transaction.
+   * @param options method options.
+   * - `entityManager` used to execute the commands in the same transaction.
    * @returns impacted application if any, otherwise null.
    */
   async assessImpactedApplicationReassessmentNeeded(
     assessmentId: number,
     auditUserId: number,
-    entityManager: EntityManager,
+    options?: { entityManager?: EntityManager },
   ): Promise<Application | null> {
+    const entityManager = options?.entityManager ?? this.dataSource.manager;
     const applicationRepo = entityManager.getRepository(Application);
     // Application which current assessment is the assessmentId to be checked.
     // If the assessment id is not associated with the current application's assessment
@@ -51,10 +54,20 @@ export class AssessmentSequentialProcessingService {
         student: {
           id: true,
         },
+        currentAssessment: {
+          id: true,
+          triggerType: true,
+          relatedApplicationAssessment: {
+            id: true,
+          },
+        },
       },
       relations: {
         student: true,
         programYear: true,
+        currentAssessment: {
+          relatedApplicationAssessment: true,
+        },
       },
       where: {
         applicationStatus: Not(ApplicationStatus.Overwritten),
@@ -65,6 +78,16 @@ export class AssessmentSequentialProcessingService {
     });
     if (!application) {
       // Assessment is not current one or the application is overwritten.
+      return null;
+    }
+    if (
+      application.currentAssessment.triggerType ===
+        AssessmentTriggerType.RelatedApplicationChanged &&
+      application.currentAssessment.relatedApplicationAssessment.id ===
+        assessmentId
+    ) {
+      // A 'RelatedApplicationChanged' reassessment is already associated with the current application
+      // and a second for should not be created unless it is caused by a different relatedApplicationAssessmentId.
       return null;
     }
     const sequencedApplications = await this.getSequencedApplications(
@@ -107,16 +130,20 @@ export class AssessmentSequentialProcessingService {
    * Finds all applications before the one related to the {@link assessmentId} provided
    * and returns the sum of all awards associated with non-overwritten applications.
    * Only pending awards or already sent awards will be considered.
+   * Only federal and provincial grants are considered.
    * The chronology of the applications is defined by the method {@link getSequencedApplications}.
    * @param assessmentId assessment id to be used as a reference to find the past applications.
+   * @param options method options.
+   * - `alternativeReferenceDate` date that should be used to determine the order when the
+   * {@link assessmentId} used as reference does not have a calculated date yet.
    * @returns list of existing awards and their totals, if any, otherwise it returns an empty array,
    * for instance, if the application is the first application or the only application for the
    * program year.
    */
   async getProgramYearPreviousAwardsTotal(
     assessmentId: number,
+    options?: { alternativeReferenceDate?: Date },
   ): Promise<AwardTotal[]> {
-    // TODO: when getting the total the calculation of the current application was not executed yet.
     const assessment = await this.studentAssessmentRepo.findOne({
       select: {
         id: true,
@@ -142,6 +169,7 @@ export class AssessmentSequentialProcessingService {
       assessment.application.applicationNumber,
       assessment.application.student.id,
       assessment.application.programYear.id,
+      { alternativeReferenceDate: options?.alternativeReferenceDate },
     );
     if (!sequencedApplications.previous.length) {
       // There are no past applications.
@@ -182,6 +210,12 @@ export class AssessmentSequentialProcessingService {
       .andWhere("disbursementSchedule.coeStatus != :declinedCOEStatus", {
         declinedCOEStatus: COEStatus.declined,
       })
+      .andWhere("disbursementValue.valueType IN (:...grantsValueTypes)", {
+        grantsValueTypes: [
+          DisbursementValueType.CanadaGrant,
+          DisbursementValueType.BCGrant,
+        ],
+      })
       .groupBy("disbursementValue.valueCode")
       .getRawMany<{ valueCode: string; total: string }>();
     // Parses the values from DB ensuring that the total will be properly converted to a number.
@@ -203,13 +237,18 @@ export class AssessmentSequentialProcessingService {
    * @param programYearId program id to be considered.
    * @param options method options.
    * - `entityManager` used to execute the commands in the same transaction.
+   * - `alternativeReferenceDate` date that should be used to determine the order when the
+   * {@link applicationNumber} used as reference does not have a calculated date yet.
    * @returns sequenced applications.
    */
   private async getSequencedApplications(
     applicationNumber: string,
     studentId: number,
     programYearId: number,
-    options?: { entityManager?: EntityManager },
+    options?: {
+      entityManager?: EntityManager;
+      alternativeReferenceDate?: Date;
+    },
   ): Promise<SequencedApplications> {
     const entityManager = options?.entityManager ?? this.dataSource.manager;
     // Sub query to get the first assessment calculation date for an application to be used for ordering.
@@ -282,6 +321,10 @@ export class AssessmentSequentialProcessingService {
       .setParameters({ declinedCOEStatus: COEStatus.declined })
       .orderBy(`"${referenceAssessmentDateColumn}"`)
       .getRawMany<SequentialApplication>();
-    return new SequencedApplications(applicationNumber, sequentialApplications);
+    return new SequencedApplications(
+      applicationNumber,
+      sequentialApplications,
+      options?.alternativeReferenceDate,
+    );
   }
 }

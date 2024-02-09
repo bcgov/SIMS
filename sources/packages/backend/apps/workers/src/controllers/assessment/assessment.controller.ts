@@ -46,6 +46,7 @@ import { CustomNamedError } from "@sims/utilities";
 import { MaxJobsToActivate } from "../../types";
 import {
   AssessmentSequentialProcessingService,
+  SystemUsersService,
   WorkflowClientService,
 } from "@sims/services";
 
@@ -55,6 +56,7 @@ export class AssessmentController {
     private readonly studentAssessmentService: StudentAssessmentService,
     private readonly workflowClientService: WorkflowClientService,
     private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
+    private readonly systemUsersService: SystemUsersService,
   ) {}
 
   /**
@@ -239,6 +241,10 @@ export class AssessmentController {
         job.variables.assessmentId,
         job.variables.workflowData,
       );
+      await this.assessmentSequentialProcessingService.assessImpactedApplicationReassessmentNeeded(
+        job.variables.assessmentId,
+        this.systemUsersService.systemUser.id,
+      );
       const studentId = assessment.application.student.id;
       const programYearId = assessment.application.programYear.id;
       // Check for any assessment which is waiting for calculation.
@@ -355,6 +361,7 @@ export class AssessmentController {
         const getProgramYearTotalAwards =
           this.assessmentSequentialProcessingService.getProgramYearPreviousAwardsTotal(
             assessmentId,
+            { alternativeReferenceDate: new Date() },
           );
         const [, programYearTotalAwards] = await Promise.all([
           saveAssessmentCalculationStartDate,

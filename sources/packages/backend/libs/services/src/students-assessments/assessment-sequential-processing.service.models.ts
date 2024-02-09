@@ -44,10 +44,13 @@ export class SequencedApplications {
    * determine which applications are in the past or in the future.
    * @param applications list of ordered applications to be segregated into
    * future or previous applications in relation to the {@link referenceApplicationNumber}.
+   * @param alternativeReferenceDate date that should be used to determine the order when the
+   * {@link referenceApplicationNumber} does not have a calculated date yet.
    */
   constructor(
     referenceApplicationNumber: string,
     applications: SequentialApplication[],
+    alternativeReferenceDate?: Date,
   ) {
     const referenceIndex = applications.findIndex(
       (application) =>
@@ -60,7 +63,7 @@ export class SequencedApplications {
       );
     }
     this._current = applications[referenceIndex];
-    if (!this.current.referenceAssessmentDate) {
+    if (!this.current.referenceAssessmentDate ?? alternativeReferenceDate) {
       // If an assessment was never calculated, previous and future applications
       // should never be calculated because an order cannot be defined and
       // no impacts should be detected.
