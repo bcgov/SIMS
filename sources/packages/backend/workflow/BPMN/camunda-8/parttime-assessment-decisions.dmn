@@ -7,7 +7,7 @@
           <text>programYear</text>
         </inputExpression>
       </input>
-      <output id="OutputClause_01j97oq" label="limitTransportationAllownace" name="limitTransportationAllownace" typeRef="string" />
+      <output id="OutputClause_01j97oq" label="limitTransportationAllowance" name="limitTransportationAllowance" typeRef="string" />
       <output id="OutputClause_05wibwn" label="limitWeeklyMiscellaneousAllowance" name="limitWeeklyMiscellaneousAllowance" typeRef="string" />
       <output id="OutputClause_0o0ynbc" label="limitWeeklyLessThan35CourseLoadMiscellaneousAllowance" name="limitWeeklyLessThan35CourseLoadMiscellaneousAllowance" typeRef="string" />
       <output id="OutputClause_0mgznwf" label="limitWeekly35AndMoreCourseLoadMiscellaneousAllowance" name="limitWeekly35AndMoreCourseLoadMiscellaneousAllowance" typeRef="string" />

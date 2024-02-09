@@ -657,7 +657,7 @@
     <bpmn:intermediateThrowEvent id="Event_1j6ep9h" name="calculatedDataTotalAssessedNeed">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=sum([&#10;  calculatedDataActualTuitionCosts,&#10;  calculatedDataMandatoryFees,&#10;  calculatedDataProgramRelatedCosts,&#10;  calculatedDataTransportationAllownace,&#10;  calculatedDataMiscellaneousAllowance,&#10;  calculatedDataTotalChildCareCost&#10;][item != null])" target="calculatedDataTotalAssessedNeed" />
+          <zeebe:output source="=sum([&#10;  calculatedDataActualTuitionCosts,&#10;  calculatedDataMandatoryFees,&#10;  calculatedDataProgramRelatedCosts,&#10;  calculatedDataTransportationAllowance,&#10;  calculatedDataMiscellaneousAllowance,&#10;  calculatedDataTotalChildCareCost&#10;][item != null])" target="calculatedDataTotalAssessedNeed" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_114jf7v</bpmn:incoming>

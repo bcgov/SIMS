@@ -2141,7 +2141,7 @@ OUT
 limitWeeklyChildCare
 limitWeeklyAlimonyChildSupport
 limitWeeklySecondResidence
-limitWeeklytransportationAllownace
+limitWeeklyTransportationAllowance
 limitWeeklyCPPperParent
 limitWeeklyEIPerParent</bpmn:text>
     </bpmn:textAnnotation>
