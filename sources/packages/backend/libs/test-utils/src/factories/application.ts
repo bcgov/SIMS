@@ -9,6 +9,7 @@ import {
   DisbursementValueType,
   EducationProgram,
   EducationProgramOffering,
+  FormYesNoOptions,
   Institution,
   InstitutionLocation,
   MSFAANumber,
@@ -171,6 +172,22 @@ export async function saveFakeApplicationDisbursements(
     secondSchedule.studentAssessment = savedApplication.currentAssessment;
     disbursementSchedules.push(secondSchedule);
   }
+  savedApplication.currentAssessment.workflowData = options
+    ?.currentAssessmentInitialValues?.workflowData ?? {
+    studentData: {
+      dependantStatus: "dependant",
+      relationshipStatus: RelationshipStatus.Single,
+      livingWithParents: FormYesNoOptions.Yes,
+      numberOfParents: 2,
+    },
+    calculatedData: {
+      familySize: 2,
+      studentMSOLAllowance: 7777,
+      totalNonEducationalCost: 22,
+      studentMaritalStatusCode: "SI",
+      pdppdStatus: false,
+    },
+  };
   savedApplication.currentAssessment.disbursementSchedules =
     disbursementSchedules;
   savedApplication.currentAssessment.assessmentData =
