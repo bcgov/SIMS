@@ -80,16 +80,6 @@ export class AssessmentSequentialProcessingService {
       // Assessment is not current one or the application is overwritten.
       return null;
     }
-    if (
-      application.currentAssessment.triggerType ===
-        AssessmentTriggerType.RelatedApplicationChanged &&
-      application.currentAssessment.relatedApplicationAssessment.id ===
-        assessmentId
-    ) {
-      // A 'RelatedApplicationChanged' reassessment is already associated with the current application
-      // and a second for should not be created unless it is caused by a different relatedApplicationAssessmentId.
-      return null;
-    }
     const sequencedApplications = await this.getSequencedApplications(
       application.applicationNumber,
       application.student.id,

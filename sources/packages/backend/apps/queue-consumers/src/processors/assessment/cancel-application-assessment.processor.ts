@@ -157,7 +157,7 @@ export class CancelApplicationAssessmentProcessor {
           await this.assessmentSequentialProcessingService.assessImpactedApplicationReassessmentNeeded(
             job.data.assessmentId,
             this.systemUserService.systemUser.id,
-            transactionEntityManager,
+            { entityManager: transactionEntityManager },
           );
         if (impactedApplication) {
           await summary.info(

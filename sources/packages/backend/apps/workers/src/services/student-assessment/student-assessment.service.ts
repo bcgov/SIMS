@@ -9,7 +9,14 @@ import {
   WorkflowData,
 } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
-import { DataSource, EntityManager, IsNull, Not, UpdateResult } from "typeorm";
+import {
+  DataSource,
+  EntityManager,
+  FindOptionsWhere,
+  IsNull,
+  Not,
+  UpdateResult,
+} from "typeorm";
 import {
   ASSESSMENT_NOT_FOUND,
   ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW,
@@ -286,20 +293,29 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   }
 
   /**
-   * Updates assessment status and save workflow data.
+   * Updates assessment status and save workflow data ensuring
+   * that the data will be updated only once.
    * @param assessmentId updated assessment.
    * @param workflowData workflow data to be saved.
+   * @param entityManager used to execute the commands in the same transaction.
    */
   async updateAssessmentStatusAndSaveWorkflowData(
     assessmentId: number,
     workflowData: WorkflowData,
-  ): Promise<void> {
+    entityManager: EntityManager,
+  ): Promise<boolean> {
+    const studentAssessmentRepo =
+      entityManager.getRepository(StudentAssessment);
     const auditUser = this.systemUsersService.systemUser;
     const now = new Date();
-    const studentAssessment = await this.repo.findOne({
-      select: { studentAssessmentStatus: true },
+    const studentAssessment = await studentAssessmentRepo.findOne({
+      select: { studentAssessmentStatus: true, workflowData: true as unknown },
       where: { id: assessmentId },
     });
+    if (studentAssessment.workflowData) {
+      // If the workflow data was already updated no further updates are needed.
+      return false;
+    }
     const assessmentUpdate: Partial<StudentAssessment> = {
       workflowData,
       modifier: auditUser,
@@ -314,14 +330,14 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         StudentAssessmentStatus.Cancelled,
       ].includes(studentAssessment.studentAssessmentStatus)
     ) {
-      await this.repo.update(assessmentId, assessmentUpdate);
-    } else {
-      await this.repo.update(assessmentId, {
-        ...assessmentUpdate,
-        studentAssessmentStatus: StudentAssessmentStatus.Completed,
-        studentAssessmentStatusUpdatedOn: now,
-      });
+      await studentAssessmentRepo.update(assessmentId, assessmentUpdate);
     }
+    await studentAssessmentRepo.update(assessmentId, {
+      ...assessmentUpdate,
+      studentAssessmentStatus: StudentAssessmentStatus.Completed,
+      studentAssessmentStatusUpdatedOn: now,
+    });
+    return true;
   }
 
   /**

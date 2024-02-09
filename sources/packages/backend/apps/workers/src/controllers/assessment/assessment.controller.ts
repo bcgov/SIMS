@@ -1,3 +1,13 @@
+/**
+ * Workers must be implemented as idempotent methods and also with the ability to allow a retry operation.
+ * The idempotency would ensure the worker can be potentially be called multiple time to process the same job
+ * and it will produce the same impact and same result. To know more about it please check the link
+ * https://docs.camunda.io/docs/components/best-practices/development/dealing-with-problems-and-exceptions/#writing-idempotent-workers.
+ * The retry ability means that, in case of fail, the worker must ensure the data would still be consistent
+ * and a new retry operation would be successfully executed.
+ * Please see the below link also for some best practices for workers.
+ * https://docs.camunda.io/docs/components/best-practices/development/dealing-with-problems-and-exceptions/
+ */
 import { Controller, Logger } from "@nestjs/common";
 import { ZeebeWorker } from "../../zeebe";
 import {
@@ -49,10 +59,12 @@ import {
   SystemUsersService,
   WorkflowClientService,
 } from "@sims/services";
+import { DataSource } from "typeorm";
 
 @Controller()
 export class AssessmentController {
   constructor(
+    private readonly dataSource: DataSource,
     private readonly studentAssessmentService: StudentAssessmentService,
     private readonly workflowClientService: WorkflowClientService,
     private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
@@ -237,14 +249,30 @@ export class AssessmentController {
         jobLogger.error(message);
         return job.error(ASSESSMENT_NOT_FOUND, message);
       }
-      await this.studentAssessmentService.updateAssessmentStatusAndSaveWorkflowData(
-        job.variables.assessmentId,
-        job.variables.workflowData,
-      );
-      await this.assessmentSequentialProcessingService.assessImpactedApplicationReassessmentNeeded(
-        job.variables.assessmentId,
-        this.systemUsersService.systemUser.id,
-      );
+      // The updateAssessmentStatusAndSaveWorkflowData and assessImpactedApplicationReassessmentNeeded are executed in the same transaction
+      // to force then to be successfully executed together or to fail together. In this way the worker can be safely retried from Camunda.
+      await this.dataSource.transaction(async (entityManager) => {
+        // Update status and workflow data ensuring that it will be updated only for the first time to ensure the worker idempotency.
+        const updated =
+          await this.studentAssessmentService.updateAssessmentStatusAndSaveWorkflowData(
+            job.variables.assessmentId,
+            job.variables.workflowData,
+            entityManager,
+          );
+        if (!updated) {
+          // If no rows were update it means that the data is already updated and the worker was already executed before.
+          jobLogger.log(
+            "Assessment status and workflow data were already updated. This indicates that the worker " +
+              "was invoked multiple times and it was already executed with success.",
+          );
+          return job.complete();
+        }
+        await this.assessmentSequentialProcessingService.assessImpactedApplicationReassessmentNeeded(
+          job.variables.assessmentId,
+          this.systemUsersService.systemUser.id,
+          { entityManager },
+        );
+      });
       const studentId = assessment.application.student.id;
       const programYearId = assessment.application.programYear.id;
       // Check for any assessment which is waiting for calculation.
