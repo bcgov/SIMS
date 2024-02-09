@@ -16756,7 +16756,8 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "enyf4g",
-              "defaultValue": ""
+              "defaultValue": "",
+              "isNew": false
             },
             {
               "label": "<strong>Will  your partner be at home caring for eligible dependent children on a full-time basis during the your entire study period? </strong>",
@@ -16815,9 +16816,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time",
                 "json": ""
               },
               "customConditional": "",
@@ -16910,9 +16911,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time",
                 "json": ""
               },
               "customConditional": "",
@@ -16946,7 +16947,8 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "eoxnrvc",
-              "defaultValue": ""
+              "defaultValue": "",
+              "isNew": false
             },
             {
               "label": "<strong>Will your partner be a full-time post-secondary student for some or all of your study period?</strong>",
@@ -17005,9 +17007,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time",
                 "json": ""
               },
               "customConditional": "",
@@ -18038,9 +18040,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time",
                 "json": ""
               },
               "customConditional": "",
@@ -18329,7 +18331,8 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "e1ja09r",
-              "defaultValue": ""
+              "defaultValue": "",
+              "isNew": false
             },
             {
               "title": "Will your partner be paying for child support and/or spousal support during the your study period Panel",
@@ -18548,9 +18551,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time",
                 "json": ""
               },
               "customConditional": "",

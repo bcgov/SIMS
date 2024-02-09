@@ -23,7 +23,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
   // Expected and not expected program length options.
   const EXPECTED_PROGRAM_LENGTH = [
     ProgramLengthOptions.WeeksToLessThanYear,
-    ProgramLengthOptions.OneToTwoYears,
+    ProgramLengthOptions.FiftyTwoWeeksToFiftyNineWeeks,
   ];
   const NOT_EXPECTED_PROGRAM_LENGTH = Object.values(
     ProgramLengthOptions,
@@ -98,7 +98,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
         assessmentConsolidatedData.programCredentialType =
           CredentialType.GraduateDiploma;
         assessmentConsolidatedData.programLength =
-          ProgramLengthOptions.OneToTwoYears;
+          ProgramLengthOptions.FiftyTwoWeeksToFiftyNineWeeks;
         // Act
         const calculatedAssessment =
           await executeFullTimeAssessmentForProgramYear(

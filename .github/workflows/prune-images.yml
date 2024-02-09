@@ -1,0 +1,63 @@
+name: Prune Images
+run-name: Prune old images from OpenShift
+
+on:
+  workflow_dispatch:
+    inputs:
+      applications:
+        description: 'Applications to prune'
+        required: true
+        default: 'web-sims, api-sims'
+      licensePlate:
+        description: 'License Plate'
+        required: true
+        default: '0c27fb'
+      environment:
+        description: 'Environment (dev, test, prod)'
+        required: true
+        default: 'dev'
+      prefix:
+        description: 'Prefix'
+        required: false
+        default: 'main'
+      minTags:
+        description: 'Minimum number of Tags to keep'
+        required: false
+        default: '10'
+  schedule:
+    - cron: '0 6 * * *' # Runs at 6 AM every day
+
+jobs:
+  prune-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print env
+        run: |
+          echo "License Plate: ${{ inputs.licensePlate }}"
+          echo "Environment: ${{ inputs.environment }}"
+          echo "Prefix: ${{ inputs.prefix }}"
+          echo "Minimum Tags: ${{ inputs.minTags }}"
+      
+      - name: Checkout source code
+        uses: actions/checkout@v3
+      
+      - name: Login to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
+      
+      - name: Prune Images
+        run: |
+          IFS=',' read -r -a apps <<< ${{ inputs.applications }}
+          for app in "${apps[@]}"
+          do
+            # Trim spaces
+            trimmed_app=$(echo "$app" | xargs)
+            devops/scripts/fetchOldTags.sh \
+              --license_plate=${{ inputs.licensePlate }} \
+              --env=${{ inputs.environment }} \
+              --app_name=$app \
+              --prefix=${{ inputs.prefix }} | \
+              xargs -I {} echo "oc tag ${{ inputs.licensePlate }}-tools/$app:{}' --delete"
+          done
+    
+          
