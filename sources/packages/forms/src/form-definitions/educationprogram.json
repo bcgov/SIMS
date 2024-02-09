@@ -198,8 +198,7 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "inputType": "hidden",
-                    "id": "eq2rzu6",
-                    "isNew": false
+                    "id": "eq2rzu6"
                 },
                 {
                     "label": "Field Of Study Codes",
@@ -272,8 +271,7 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "inputType": "hidden",
-                    "id": "e3k12bd",
-                    "isNew": false
+                    "id": "e3k12bd"
                 },
                 {
                     "label": "SABC Codes",
@@ -1633,7 +1631,6 @@
                     "addons": [],
                     "fieldSet": false,
                     "id": "e3tglfe",
-                    "isNew": false,
                     "lockKey": true
                 },
                 {
@@ -1729,8 +1726,7 @@
                     "inputType": "radio",
                     "fieldSet": false,
                     "id": "el1u4p",
-                    "defaultValue": "",
-                    "isNew": false
+                    "defaultValue": ""
                 },
                 {
                     "label": "Will the students earn the same number of credits in the same time period as students in other StudentAid BC eligible programs delivered on site?",
@@ -1825,8 +1821,7 @@
                     "inputType": "radio",
                     "fieldSet": false,
                     "id": "e6vyjtc",
-                    "defaultValue": "",
-                    "isNew": false
+                    "defaultValue": ""
                 },
                 {
                     "label": "Will they earn academic credits that are recognized at another designated institution listed in the BC Transfer Guide or other acceptable articulation agreements from other jurisdictions?",
@@ -1921,8 +1916,7 @@
                     "inputType": "radio",
                     "fieldSet": false,
                     "id": "e3s18a",
-                    "defaultValue": "",
-                    "isNew": false
+                    "defaultValue": ""
                 },
                 {
                     "label": "HTML",
@@ -2103,8 +2097,12 @@
                                 "value": "12WeeksToLessThan1Year"
                             },
                             {
-                                "label": "1 Year to less than 2years",
-                                "value": "1YearToLessThan2Years"
+                                "label": "52 weeks to 59 weeks",
+                                "value": "52WeeksTo59Weeks"
+                            },
+                            {
+                                "label": "60 weeks to less than 2 years",
+                                "value": "60WeeksToLessThan2Years"
                             },
                             {
                                 "label": "2 Years to less than 3Years",
@@ -2119,8 +2117,8 @@
                                 "value": "4YearsToLessThan5Years"
                             },
                             {
-                                "label": "5 Years or More",
-                                "value": "5YearsOrMore"
+                                "value": "5YearsOrMore",
+                                "label": "5 Years or More"
                             }
                         ],
                         "resource": "",
@@ -2153,7 +2151,7 @@
                     "validateOn": "change",
                     "validate": {
                         "required": true,
-                        "onlyAvailableItems": false,
+                        "onlyAvailableItems": true,
                         "customMessage": "",
                         "custom": "",
                         "customPrivate": false,
@@ -2169,7 +2167,7 @@
                     "tags": [],
                     "properties": {},
                     "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": "",
                         "json": ""
@@ -6313,8 +6311,7 @@
             "allowMultipleMasks": false,
             "inputType": "hidden",
             "id": "egqexmm",
-            "addons": [],
-            "isNew": false
+            "addons": []
         },
         {
             "input": true,
