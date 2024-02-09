@@ -1097,7 +1097,8 @@
               },
               "customOptions": {},
               "useExactSearch": false,
-              "id": "eu1n2m9"
+              "id": "eu1n2m9",
+              "tags": []
             },
             {
               "label": "The institution I will be attending is:",
@@ -1586,7 +1587,7 @@
                 "eq": "",
                 "json": ""
               },
-              "customConditional": "show =\r\n  (!!data.selectedLocation &&\r\n  !!!data.mySchoolIsNotListed) ||\r\n  !!data.isReadOnly;",
+              "customConditional": "show =\r\n  (!!data.selectedLocation &&\r\n  !!!data.mySchoolIsNotListed) || !!data.isReadOnly;",
               "logic": [],
               "attributes": {},
               "overlay": {
@@ -1624,7 +1625,8 @@
                 "threshold": 0.3
               },
               "id": "enuaazl",
-              "defaultValue": ""
+              "defaultValue": "",
+              "lockKey": true
             },
             {
               "title": "Program",
@@ -5215,7 +5217,8 @@
           "allowMultipleMasks": false,
           "addons": [],
           "inputType": "hidden",
-          "id": "eu8tkf"
+          "id": "eu8tkf",
+          "tags": []
         },
         {
           "label": "programYearEndDate",
@@ -5284,7 +5287,8 @@
           "allowMultipleMasks": false,
           "addons": [],
           "inputType": "hidden",
-          "id": "enpifd"
+          "id": "enpifd",
+          "tags": []
         },
         {
           "label": "selectedProgramDesc",
@@ -12914,7 +12918,8 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "e2utfe",
-              "tags": []
+              "tags": [],
+              "isNew": false
             },
             {
               "title": "Add Dependants Panel",
@@ -16752,8 +16757,7 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "enyf4g",
-              "defaultValue": "",
-              "isNew": false
+              "defaultValue": ""
             },
             {
               "label": "<strong>Will  your partner be at home caring for eligible dependent children on a full-time basis during the your entire study period? </strong>",
@@ -16848,8 +16852,7 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "ebw9ux",
-              "defaultValue": "",
-              "isNew": false
+              "defaultValue": ""
             },
             {
               "label": "<strong>Will your partner be living with you during the your study period?</strong>",
@@ -16944,8 +16947,7 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "eoxnrvc",
-              "defaultValue": "",
-              "isNew": false
+              "defaultValue": ""
             },
             {
               "label": "<strong>Will your partner be a full-time post-secondary student for some or all of your study period?</strong>",
@@ -17040,8 +17042,7 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "elp6tn6",
-              "defaultValue": null,
-              "isNew": false
+              "defaultValue": null
             },
             {
               "title": "If your partner will be a full-time student, how many weeks of your study period will they also be in studies Panel",
@@ -18074,8 +18075,7 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "eor4a75",
-              "defaultValue": "",
-              "isNew": false
+              "defaultValue": ""
             },
             {
               "title": "Will your partner be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during the your study period Panel",
@@ -18330,8 +18330,7 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "e1ja09r",
-              "defaultValue": "",
-              "isNew": false
+              "defaultValue": ""
             },
             {
               "title": "Will your partner be paying for child support and/or spousal support during the your study period Panel",
@@ -18645,9 +18644,7 @@
           "lazyLoad": false,
           "theme": "default",
           "breadcrumb": "default",
-          "id": "erae6ji",
-          "isNew": false,
-          "tags": []
+          "id": "erae6ji"
         }
       ],
       "placeholder": "",
@@ -26391,10 +26388,10 @@
           "key": "dependantCareCostsPanel",
           "tags": [],
           "properties": {},
-          "customConditional": "",
+          "customConditional": "show = (data.howWillYouBeAttendingTheProgram === \"Full Time\" \n            || data.hasDependents === \"yes\");",
           "conditional": {
             "json": "",
-            "show": null,
+            "show": "",
             "when": null,
             "eq": ""
           },
@@ -26474,7 +26471,7 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": "",
                 "json": ""
@@ -26533,7 +26530,8 @@
               "showWordCount": false,
               "allowMultipleMasks": false,
               "addons": [],
-              "id": "elcakd"
+              "id": "elcakd",
+              "isNew": false
             },
             {
               "label": "<strong>Will you have a child age 11 years or under in daycare? </strong>",
@@ -26592,9 +26590,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
+                "show": "true",
+                "when": "hasDependents",
+                "eq": "yes",
                 "json": ""
               },
               "customConditional": "",
@@ -26628,7 +26626,8 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "evwiagm",
-              "defaultValue": ""
+              "defaultValue": "",
+              "isNew": false
             },
             {
               "title": "Daycare costs that you incur for your child(ren) age 11 years or under Panel",
@@ -26868,9 +26867,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
+                "show": "true",
+                "when": "hasDependents",
+                "eq": "yes",
                 "json": ""
               },
               "customConditional": "",
@@ -26904,7 +26903,8 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "epsy0r",
-              "defaultValue": ""
+              "defaultValue": "",
+              "isNew": false
             },
             {
               "title": "Total unsubsidized day-care costs during class hours for the proposed study period for disabled/infirmed dependents 12 years of age and older Panel",
@@ -30561,7 +30561,8 @@
                   "inputType": "text",
                   "inputMask": "",
                   "decimalLimit": 2,
-                  "requireDecimal": true
+                  "requireDecimal": true,
+                  "tags": []
                 }
               ],
               "allowPrevious": false,
@@ -31156,7 +31157,8 @@
                   "addons": [],
                   "inputType": "radio",
                   "fieldSet": false,
-                  "id": "efqfe2q"
+                  "id": "efqfe2q",
+                  "tags": []
                 },
                 {
                   "autofocus": false,
@@ -31226,6 +31228,7 @@
                     "eq": "yes"
                   },
                   "properties": {},
+                  "decimalLimit": 0,
                   "lockKey": true
                 },
                 {
@@ -32828,8 +32831,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "e342tgn",
-              "tags": []
+              "id": "e342tgn"
             },
             {
               "label": "HTML",
@@ -32904,8 +32906,7 @@
               "addons": [],
               "tag": "p",
               "id": "ebh8ug",
-              "className": "",
-              "tags": []
+              "className": ""
             },
             {
               "key": "declarationsPanelContentPartTime2",
