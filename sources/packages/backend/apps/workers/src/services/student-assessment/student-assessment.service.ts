@@ -324,12 +324,13 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       ].includes(studentAssessment.studentAssessmentStatus)
     ) {
       await studentAssessmentRepo.update(assessmentId, assessmentUpdate);
+    } else {
+      await studentAssessmentRepo.update(assessmentId, {
+        ...assessmentUpdate,
+        studentAssessmentStatus: StudentAssessmentStatus.Completed,
+        studentAssessmentStatusUpdatedOn: now,
+      });
     }
-    await studentAssessmentRepo.update(assessmentId, {
-      ...assessmentUpdate,
-      studentAssessmentStatus: StudentAssessmentStatus.Completed,
-      studentAssessmentStatusUpdatedOn: now,
-    });
     return true;
   }
 

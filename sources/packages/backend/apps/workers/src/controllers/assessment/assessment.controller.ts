@@ -267,11 +267,17 @@ export class AssessmentController {
           );
           return job.complete();
         }
-        await this.assessmentSequentialProcessingService.assessImpactedApplicationReassessmentNeeded(
-          job.variables.assessmentId,
-          this.systemUsersService.systemUser.id,
-          { entityManager },
-        );
+        const impactedApplication =
+          await this.assessmentSequentialProcessingService.assessImpactedApplicationReassessmentNeeded(
+            job.variables.assessmentId,
+            this.systemUsersService.systemUser.id,
+            { entityManager },
+          );
+        if (impactedApplication) {
+          jobLogger.log(
+            `Application id ${impactedApplication.id} was detected as impacted and will be reassessed.`,
+          );
+        }
       });
       const studentId = assessment.application.student.id;
       const programYearId = assessment.application.programYear.id;
@@ -387,7 +393,7 @@ export class AssessmentController {
             assessmentId,
           );
         const getProgramYearTotalAwards =
-          this.assessmentSequentialProcessingService.getProgramYearPreviousAwardsTotal(
+          this.assessmentSequentialProcessingService.getProgramYearPreviousAwardsTotals(
             assessmentId,
             { alternativeReferenceDate: new Date() },
           );

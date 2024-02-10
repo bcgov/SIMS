@@ -121,6 +121,9 @@ export class AssessmentSequentialProcessingService {
    * and returns the sum of all awards associated with non-overwritten applications.
    * Only pending awards or already sent awards will be considered.
    * Only federal and provincial grants are considered.
+   * Grants that are common between part-time and full-time (e.g. CSGP, SBSD) applications will have
+   * their totals calculated independently of the intensity, which means that if the student has a part-time
+   * and a full-time application in the same year and both have a CSGP grant, its total should be combined.
    * The chronology of the applications is defined by the method {@link getSequencedApplications}.
    * @param assessmentId assessment id to be used as a reference to find the past applications.
    * @param options method options.
@@ -130,7 +133,7 @@ export class AssessmentSequentialProcessingService {
    * for instance, if the application is the first application or the only application for the
    * program year.
    */
-  async getProgramYearPreviousAwardsTotal(
+  async getProgramYearPreviousAwardsTotals(
     assessmentId: number,
     options?: { alternativeReferenceDate?: Date },
   ): Promise<AwardTotal[]> {

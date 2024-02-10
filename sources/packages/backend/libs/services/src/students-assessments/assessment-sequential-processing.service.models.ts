@@ -110,6 +110,9 @@ export class SequencedApplications {
   }
 }
 
+/**
+ * Award code (e.g. CSPT, CSGD, CSGP, SBSD, BCAG) and its totals.
+ */
 export interface AwardTotal {
   valueCode: string;
   total: number;
