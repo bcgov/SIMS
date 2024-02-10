@@ -30,16 +30,14 @@ export class AssessmentSequentialProcessingService {
    * which would demand a reassessment of the same.
    * @param assessmentId assessment currently changing (e.g. updated or cancelled).
    * @param auditUserId user that should be considered the one that is causing the changes.
-   * @param options method options.
-   * - `entityManager` used to execute the commands in the same transaction.
+    @param entityManager used to execute the commands in the same transaction.
    * @returns impacted application if any, otherwise null.
    */
   async assessImpactedApplicationReassessmentNeeded(
     assessmentId: number,
     auditUserId: number,
-    options?: { entityManager?: EntityManager },
+    entityManager: EntityManager,
   ): Promise<Application | null> {
-    const entityManager = options?.entityManager ?? this.dataSource.manager;
     const applicationRepo = entityManager.getRepository(Application);
     // Application which current assessment is the assessmentId to be checked.
     // If the assessment id is not associated with the current application's assessment

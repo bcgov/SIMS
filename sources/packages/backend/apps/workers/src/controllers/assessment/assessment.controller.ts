@@ -271,7 +271,7 @@ export class AssessmentController {
           await this.assessmentSequentialProcessingService.assessImpactedApplicationReassessmentNeeded(
             job.variables.assessmentId,
             this.systemUsersService.systemUser.id,
-            { entityManager },
+            entityManager,
           );
         if (impactedApplication) {
           jobLogger.log(
