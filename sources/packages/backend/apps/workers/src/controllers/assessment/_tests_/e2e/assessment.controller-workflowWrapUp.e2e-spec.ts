@@ -85,7 +85,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
     expect(expectedAssessment.updatedAt).toBeInstanceOf(Date);
   });
 
-  it.only("Should find the next impacted assessment and create a reassessment when there is an application for the same student and program year in the future.", async () => {
+  it("Should find the next impacted assessment and create a reassessment when there is an application for the same student and program year in the future.", async () => {
     // Arrange
 
     // Create the student to be shared across the applications.
@@ -104,6 +104,11 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
         },
       },
     );
+    // Resets the workflow data to allow the wrap up worker to be executed.
+    await db.studentAssessment.update(
+      currentApplicationToWrapUp.currentAssessment.id,
+      { workflowData: null },
+    );
     // Application in the future of the currentApplicationToWrapUp.
     const impactedApplication = await saveFakeApplicationDisbursements(
       db.dataSource,
@@ -118,10 +123,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
         },
       },
     );
-    impactedApplication.applicationNumber =
-      currentApplicationToWrapUp.applicationNumber;
-    await db.application.save(impactedApplication);
-
+    // Dummy workflowData to be saved during workflow wrap up.
     const workflowData = {
       studentData: {
         dependantStatus: "independant",
@@ -141,7 +143,6 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
       FAKE_WORKER_JOB_RESULT_PROPERTY,
       MockedZeebeJobResult.Complete,
     );
-
     // Asserts that the student assessment status has changed to completed.
     const expectedAssessment = await db.application.findOne({
       select: {

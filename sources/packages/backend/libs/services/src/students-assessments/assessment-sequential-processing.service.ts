@@ -206,7 +206,6 @@ export class AssessmentSequentialProcessingService {
           DisbursementValueType.BCGrant,
         ],
       })
-      .groupBy("disbursementValue.valueCode")
       .getRawMany<{ valueCode: string; total: string }>();
     // Parses the values from DB ensuring that the total will be properly converted to a number.
     // The valueAmount from awards are mapped to string by Typeorm Postgres driver.

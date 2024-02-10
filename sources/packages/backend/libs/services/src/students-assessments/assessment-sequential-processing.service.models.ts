@@ -63,21 +63,24 @@ export class SequencedApplications {
       );
     }
     this._current = applications[referenceIndex];
-    if (!this.current.referenceAssessmentDate ?? alternativeReferenceDate) {
+    const referenceAssessmentDate =
+      this._current.referenceAssessmentDate ?? alternativeReferenceDate;
+    if (!referenceAssessmentDate) {
       // If an assessment was never calculated, previous and future applications
       // should never be calculated because an order cannot be defined and
       // no impacts should be detected.
       return;
     }
-    // Separates the applications into previous or future based on its
-    // index since they are expected to be ordered.
+    // Separates the applications into previous or future based on its reference date.
     // The current application is still in the array and will be ignored
     // due based on the two if conditions present.
     for (let i = 0; i < applications.length; i++) {
       const application = applications[i];
-      if (i < referenceIndex) {
+      if (application.referenceAssessmentDate < referenceAssessmentDate) {
         this._previous.push(application);
-      } else if (i > referenceIndex) {
+      } else if (
+        application.referenceAssessmentDate > referenceAssessmentDate
+      ) {
         this._future.push(application);
       }
     }
