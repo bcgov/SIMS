@@ -74,8 +74,7 @@ export class SequencedApplications {
     // Separates the applications into previous or future based on its reference date.
     // The current application is still in the array and will be ignored
     // due based on the two if conditions present.
-    for (let i = 0; i < applications.length; i++) {
-      const application = applications[i];
+    for (const application of applications) {
       if (application.referenceAssessmentDate < referenceAssessmentDate) {
         this._previous.push(application);
       } else if (

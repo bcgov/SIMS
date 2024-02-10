@@ -9,14 +9,7 @@ import {
   WorkflowData,
 } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
-import {
-  DataSource,
-  EntityManager,
-  FindOptionsWhere,
-  IsNull,
-  Not,
-  UpdateResult,
-} from "typeorm";
+import { DataSource, EntityManager, IsNull, Not, UpdateResult } from "typeorm";
 import {
   ASSESSMENT_NOT_FOUND,
   ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW,
