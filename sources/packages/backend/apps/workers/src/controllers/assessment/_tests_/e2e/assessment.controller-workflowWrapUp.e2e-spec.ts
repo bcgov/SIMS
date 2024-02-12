@@ -181,13 +181,11 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
   it("Should return job completed when the workflow data is already set.", async () => {
     // Arrange
 
-    // Create the student to be shared across the applications.
-    const student = await saveFakeStudent(db.dataSource);
     // Current application to have the workflow wrapped up.
     // The workflowData is automatically set by the factory.
     const currentApplicationToWrapUp = await saveFakeApplicationDisbursements(
       db.dataSource,
-      { student },
+      undefined,
       {
         offeringIntensity: OfferingIntensity.partTime,
         applicationStatus: ApplicationStatus.Assessment,

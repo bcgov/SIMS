@@ -52,20 +52,10 @@ export class AssessmentSequentialProcessingService {
         student: {
           id: true,
         },
-        currentAssessment: {
-          id: true,
-          triggerType: true,
-          relatedApplicationAssessment: {
-            id: true,
-          },
-        },
       },
       relations: {
         student: true,
         programYear: true,
-        currentAssessment: {
-          relatedApplicationAssessment: true,
-        },
       },
       where: {
         applicationStatus: Not(ApplicationStatus.Overwritten),
@@ -121,7 +111,7 @@ export class AssessmentSequentialProcessingService {
    * Only federal and provincial grants are considered.
    * Grants that are common between part-time and full-time (e.g. CSGP, SBSD) applications will have
    * their totals calculated independently of the intensity, which means that if the student has a part-time
-   * and a full-time application in the same year and both have a CSGP grant, its total should be combined.
+   * and a full-time application in the same year and both have a CSGP grant, its totals should be combined.
    * The chronology of the applications is defined by the method {@link getSequencedApplications}.
    * @param assessmentId assessment id to be used as a reference to find the past applications.
    * @param options method options.
@@ -182,15 +172,18 @@ export class AssessmentSequentialProcessingService {
       .where("application.applicationNumber IN (:...applicationNumbers)", {
         applicationNumbers,
       })
+      // Overwritten application can have awards associated with and they should not be considered.
       .andWhere("application.applicationStatus != :overwrittenStatus", {
         overwrittenStatus: ApplicationStatus.Overwritten,
       })
+      // Check for assessment completed status to avoid retrieving any cancelation status.
       .andWhere(
         "studentAssessment.studentAssessmentStatus = :completedStudentAssessmentStatus",
         {
           completedStudentAssessmentStatus: StudentAssessmentStatus.Completed,
         },
       )
+      // Only consider disbursements in Pending, ReadyToSend, or Sent.
       .andWhere(
         "disbursementSchedule.disbursementScheduleStatus != :cancelledDisbursementScheduleStatus",
         {
@@ -198,9 +191,12 @@ export class AssessmentSequentialProcessingService {
             DisbursementScheduleStatus.Cancelled,
         },
       )
+      // Sequenced applications need at least one valid COE, which means that one can be cancelled
+      // and the other still valid. This ensures that only the valid one will be considered.
       .andWhere("disbursementSchedule.coeStatus != :declinedCOEStatus", {
         declinedCOEStatus: COEStatus.declined,
       })
+      // Ensures that only grants will be returned since loans and not needed.
       .andWhere("disbursementValue.valueType IN (:...grantsValueTypes)", {
         grantsValueTypes: [
           DisbursementValueType.CanadaGrant,

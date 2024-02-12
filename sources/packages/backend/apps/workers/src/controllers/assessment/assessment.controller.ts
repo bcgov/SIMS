@@ -397,6 +397,7 @@ export class AssessmentController {
             assessmentId,
             { alternativeReferenceDate: new Date() },
           );
+        // Updates the calculation start date and get the program year totals in parallel.
         const [, programYearTotalAwards] = await Promise.all([
           saveAssessmentCalculationStartDate,
           getProgramYearTotalAwards,
