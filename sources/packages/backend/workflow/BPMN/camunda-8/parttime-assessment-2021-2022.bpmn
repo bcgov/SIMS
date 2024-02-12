@@ -653,8 +653,8 @@
     <bpmn:intermediateThrowEvent id="Event_1i1k5zk" name="Calculate Eligible Depenents for Child Care Cost">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if studentDataDependants = null then 0 else&#10;  count(studentDataDependants[&#10;      // Dependant who is between 0 and 11 years until they become 12 years old.&#10;      // i.e. until the day(study start date) before their 12th birthday the dependant &#10;      // is considered to be in this category.&#10;      date(item.dateOfBirth) &#62; (date(offeringStudyStartDate) - duration(&#34;P12Y&#34;))]&#10;  )" target="calculatedDataDependants11YearsOrUnder" />
-          <zeebe:output source="=if studentDataDependants = null then 0 else&#10;  count(studentDataDependants[&#10;      // Dependant who is 12 years or older.&#10;      // i.e. from the day(study start date) starting their 12th birthday the dependant &#10;      // is considered to be in this category.&#10;      date(item.dateOfBirth) &#60;= (date(offeringStudyStartDate) - duration(&#34;P12Y&#34;))&#10;      and item.declaredOnTaxes = &#34;yes&#34;]&#10;  )" target="calculatedDataDependants12YearsOverOnTaxes" />
+          <zeebe:output source="=if studentDataDependants = null then 0 else&#10;  count(studentDataDependants[&#10;      // Dependant who is between 0 and 11 years until they become 12 years old as per study start date.&#10;      // i.e. until the day(study start date) before their 12th birthday the dependant &#10;      // is considered to be in this category.&#10;      date(item.dateOfBirth) &#62; (date(offeringStudyStartDate) - duration(&#34;P12Y&#34;))]&#10;  )" target="calculatedDataDependants11YearsOrUnder" />
+          <zeebe:output source="=if studentDataDependants = null then 0 else&#10;  count(studentDataDependants[&#10;      // Dependant who is 12 years or older as per study start date.&#10;      // i.e. from the day(study start date) starting their 12th birthday the dependant &#10;      // is considered to be in this category.&#10;      date(item.dateOfBirth) &#60;= (date(offeringStudyStartDate) - duration(&#34;P12Y&#34;))&#10;      and item.declaredOnTaxes = &#34;yes&#34;]&#10;  )" target="calculatedDataDependants12YearsOverOnTaxes" />
           <zeebe:output source="=calculatedDataDependants11YearsOrUnder + calculatedDataDependants12YearsOverOnTaxes" target="calculatedDataTotalEligibleDependentsForChildCare" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
@@ -757,10 +757,6 @@ studentCalculatedTotalIncome</bpmn:text>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_1gxyyjh_di" bpmnElement="Lane_1gxyyjh" isHorizontal="true">
         <dc:Bounds x="190" y="80" width="6510" height="817" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1myp6tg_di" bpmnElement="TextAnnotation_1myp6tg">
-        <dc:Bounds x="1028" y="450" width="200" height="55" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0aijiec_di" bpmnElement="Gateway_0zmvhsj" isMarkerVisible="true">
@@ -1027,6 +1023,24 @@ studentCalculatedTotalIncome</bpmn:text>
       <bpmndi:BPMNShape id="Gateway_0r706cf_di" bpmnElement="Gateway_0r706cf" isMarkerVisible="true">
         <dc:Bounds x="3385" y="1115" width="50" height="50" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0hxxmu9_di" bpmnElement="Event_0hxxmu9">
+        <dc:Bounds x="1062" y="602" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1051" y="645" width="59" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_18l6de5_di" bpmnElement="Event_18l6de5">
+        <dc:Bounds x="1152" y="602" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1144" y="645" width="60" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1i1k5zk_di" bpmnElement="Event_1i1k5zk">
+        <dc:Bounds x="1242" y="602" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1225" y="645" width="85" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0o432k6_di" bpmnElement="TextAnnotation_0o432k6">
         <dc:Bounds x="790" y="238" width="362" height="113" />
         <bpmndi:BPMNLabel />
@@ -1091,28 +1105,10 @@ studentCalculatedTotalIncome</bpmn:text>
         <dc:Bounds x="760" y="482" width="254" height="42" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0hxxmu9_di" bpmnElement="Event_0hxxmu9">
-        <dc:Bounds x="1062" y="602" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1051" y="645" width="59" height="27" />
-        </bpmndi:BPMNLabel>
+      <bpmndi:BPMNShape id="TextAnnotation_1myp6tg_di" bpmnElement="TextAnnotation_1myp6tg">
+        <dc:Bounds x="1028" y="450" width="200" height="55" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_18l6de5_di" bpmnElement="Event_18l6de5">
-        <dc:Bounds x="1152" y="602" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1144" y="645" width="60" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1i1k5zk_di" bpmnElement="Event_1i1k5zk">
-        <dc:Bounds x="1242" y="602" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1225" y="645" width="85" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_0yc2t6b_di" bpmnElement="Association_0yc2t6b">
-        <di:waypoint x="1080" y="602" />
-        <di:waypoint x="1080" y="505" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_189jv8b_di" bpmnElement="Flow_189jv8b">
         <di:waypoint x="1948" y="703" />
         <di:waypoint x="2052" y="703" />
@@ -1507,6 +1503,10 @@ studentCalculatedTotalIncome</bpmn:text>
       <bpmndi:BPMNEdge id="Association_1i7iirc_di" bpmnElement="Association_1i7iirc">
         <di:waypoint x="815" y="602" />
         <di:waypoint x="815" y="524" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0yc2t6b_di" bpmnElement="Association_0yc2t6b">
+        <di:waypoint x="1080" y="602" />
+        <di:waypoint x="1080" y="505" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_1a4vdzr_di" bpmnElement="Group_1a4vdzr">
         <dc:Bounds x="1535" y="660" width="90" height="230" />
