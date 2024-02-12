@@ -14,6 +14,7 @@ export interface StudentDependent extends JSONDoc {
 
 export enum CredentialType {
   UnderGraduateCertificate = "undergraduateCertificate",
+  UnderGraduateCitation = "undergraduateCitation",
   UnderGraduateDiploma = "undergraduateDiploma",
   UnderGraduateDegree = "undergraduateDegree",
   GraduateCertificate = "graduateCertificate",

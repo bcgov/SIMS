@@ -564,6 +564,10 @@
                                 "value": "undergraduateCertificate"
                             },
                             {
+                                "label": "Undergraduate Citation",
+                                "value": "undergraduateCitation"
+                            },
+                            {
                                 "label": "Undergraduate Diploma",
                                 "value": "undergraduateDiploma"
                             },

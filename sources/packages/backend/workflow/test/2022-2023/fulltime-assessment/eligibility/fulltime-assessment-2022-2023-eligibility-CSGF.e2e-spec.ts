@@ -13,6 +13,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGF
   // Expected and not expected credentials types.
   const EXPECTED_PROGRAM_CREDENTIAL_TYPES = [
     CredentialType.UnderGraduateCertificate,
+    CredentialType.UnderGraduateCitation,
     CredentialType.GraduateCertificate,
     CredentialType.UnderGraduateDiploma,
     CredentialType.GraduateDiploma,
