@@ -12,7 +12,7 @@ import {
 describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-child-care-costs.`, () => {
   it(
     "Should calculate total child care cost as sum of values in student application when student has one or more dependents " +
-      " on both categories (11 years or under and over 12 years or over and declared on taxes for disability) and " +
+      " on both categories (11 years or under and 12 years or over and declared on taxes for disability) and " +
       "child care costs entered does not reach maximum allowable limit for the " +
       "given number of dependents, course load and offering weeks.",
     async () => {
@@ -69,7 +69,7 @@ describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-child-car
 
   it(
     "Should calculate child care costs as maximum allowed limit when student has one or more dependents on both categories " +
-      "(11 years or under and over 12 years or over and declared on taxes for disability) and " +
+      "(11 years or under and 12 years or over and declared on taxes for disability) and " +
       "child care costs entered is beyond maximum allowable limit for the " +
       "given number of dependents, course load and offering weeks.",
     async () => {
@@ -129,7 +129,7 @@ describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-child-car
   );
 
   it(
-    "Should calculate child care costs as 0 when student has one or more dependents on both categories(11 years or under and over 12 years " +
+    "Should calculate child care costs as 0 when student has one or more dependents on both categories(11 years or under and 12 years " +
       " or over and declared on taxes for disability) but child care costs not provided in student application.",
     async () => {
       // Arrange

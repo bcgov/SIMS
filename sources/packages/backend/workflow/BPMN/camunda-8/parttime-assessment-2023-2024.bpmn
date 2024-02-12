@@ -367,7 +367,7 @@
       <bpmn:incoming>Flow_0dqxcli</bpmn:incoming>
       <bpmn:outgoing>Flow_0exl4fg</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateThrowEvent id="Event_12o98iq" name="Calculate Eligible Depenents for Child Care Cost">
+    <bpmn:intermediateThrowEvent id="Event_12o98iq" name="Calculate Eligible Dependents for Child Care Cost">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=if studentDataDependants = null then 0 else&#10;  count(studentDataDependants[&#10;      // Dependant who is between 0 and 11 years until they become 12 years old as per study start date.&#10;      // i.e. until the day(study start date) before their 12th birthday the dependant &#10;      // is considered to be in this category.&#10;      date(item.dateOfBirth) &#62; (date(offeringStudyStartDate) - duration(&#34;P12Y&#34;))]&#10;  )" target="calculatedDataDependants11YearsOrUnder" />
@@ -935,7 +935,7 @@ dmnX (comes from dmn)</bpmn:text>
       <bpmndi:BPMNShape id="Event_12o98iq_di" bpmnElement="Event_12o98iq">
         <dc:Bounds x="1242" y="602" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1218" y="645" width="85" height="40" />
+          <dc:Bounds x="1219" y="645" width="85" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1du7pjb_di" bpmnElement="Event_1du7pjb">
