@@ -6,13 +6,14 @@ import {
   saveFakeStudent,
 } from "@sims/test-utils";
 import {
-  FAKE_WORKER_JOB_RESULT_PROPERTY,
+  FakeWorkerJobResult,
   MockedZeebeJobResult,
 } from "../../../../../test/utils/worker-job-mock";
 import { createTestingAppModule } from "../../../../../test/helpers";
 import { AssessmentController } from "../../assessment.controller";
 import {
   ApplicationStatus,
+  COEStatus,
   DisbursementValueType,
   OfferingIntensity,
   StudentAssessmentStatus,
@@ -30,7 +31,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     assessmentController = nestApplication.get(AssessmentController);
   });
 
-  it("Should sum the grants from two past applications with different offering intensities the applications are for the same student and program year in the future.", async () => {
+  it("Should sum the grants from two past applications with different offering intensities when the applications are for the same student and program year in the past.", async () => {
     // Arrange
 
     // Create the student to be shared across the applications.
@@ -70,7 +71,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
           ),
           createFakeDisbursementValue(
             DisbursementValueType.BCGrant,
-            "SBSD ",
+            "SBSD",
             1011,
           ),
           // Should not be disbursed due to BCLM restriction.
@@ -120,7 +121,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
           ),
           createFakeDisbursementValue(
             DisbursementValueType.BCGrant,
-            "SBSD ",
+            "SBSD",
             1011,
           ),
           createFakeDisbursementValue(
@@ -162,16 +163,120 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     );
 
     // Asserts
-    expect(result).toHaveProperty(
-      FAKE_WORKER_JOB_RESULT_PROPERTY,
+    expect(FakeWorkerJobResult.getResultType(result)).toBe(
       MockedZeebeJobResult.Complete,
     );
-    // TODO: assert below output.
-    // isReadyForCalculation: true
-    // programYearTotalBCAG: 2828
-    // programYearTotalCSGD: 912
-    // programYearTotalCSGP: 1578
-    // programYearTotalCSPT: 123
-    // programYearTotalSBSD: 2022
+    expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
+      isReadyForCalculation: true,
+      programYearTotalBCAG: 2828, // Present for both applications.
+      programYearTotalCSGD: 912, // Present for both applications.
+      programYearTotalCSGP: 1578, // Present for both applications.
+      programYearTotalCSPT: 123, // Present only for the part-time application.
+      programYearTotalSBSD: 2022, // Present for both applications.
+    });
+  });
+
+  it("Should consider the grant from only one disbursement from a valid past application when the past application has two disbursements and the second one is declined.", async () => {
+    // Arrange
+
+    // Create the student to be shared across the applications.
+    const student = await saveFakeStudent(db.dataSource);
+    // Past part-time application with two disbursements where the second COE was declined.
+    await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        student,
+        firstDisbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaGrant,
+            "CSGP",
+            1000,
+          ),
+        ],
+        secondDisbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaGrant,
+            "CSGP",
+            1000,
+          ),
+        ],
+      },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.Completed,
+        currentAssessmentInitialValues: {
+          assessmentWorkflowId: "some fake id",
+          assessmentDate: addDays(-1),
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+        },
+        secondDisbursementInitialValues: {
+          coeStatus: COEStatus.declined,
+        },
+      },
+    );
+    // Application currently being processed.
+    const currentApplication = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      { student },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.InProgress,
+        currentAssessmentInitialValues: {
+          assessmentWorkflowId: "some fake id",
+          studentAssessmentStatus: StudentAssessmentStatus.InProgress,
+        },
+      },
+    );
+
+    // Act
+    const result = await assessmentController.verifyAssessmentCalculationOrder(
+      createFakeVerifyAssessmentCalculationOrderPayload(
+        currentApplication.currentAssessment.id,
+      ),
+    );
+
+    // Asserts
+    expect(FakeWorkerJobResult.getResultType(result)).toBe(
+      MockedZeebeJobResult.Complete,
+    );
+    // Expect to consider only the CSGP from the first disbursement
+    // and ignore the second disbursement with the declined COE.
+    expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
+      isReadyForCalculation: true,
+      programYearTotalCSGP: 1000,
+    });
+  });
+
+  it("Should not return any program year total awards when there is no applications in the past for the same student and program year.", async () => {
+    // Arrange
+
+    // Application currently being processed.
+    const currentApplication = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      undefined,
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.InProgress,
+        currentAssessmentInitialValues: {
+          assessmentWorkflowId: "some fake id",
+          studentAssessmentStatus: StudentAssessmentStatus.InProgress,
+        },
+      },
+    );
+
+    // Act
+    const result = await assessmentController.verifyAssessmentCalculationOrder(
+      createFakeVerifyAssessmentCalculationOrderPayload(
+        currentApplication.currentAssessment.id,
+      ),
+    );
+
+    // Asserts
+    expect(FakeWorkerJobResult.getResultType(result)).toBe(
+      MockedZeebeJobResult.Complete,
+    );
+    expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
+      isReadyForCalculation: true,
+    });
   });
 });
