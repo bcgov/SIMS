@@ -41,8 +41,13 @@ export class WorkflowQueueRetryScheduler extends BaseScheduler<AssessmentWorkflo
   ): Promise<string[]> {
     const processSummary = new ProcessSummary();
     try {
+      const logger = new LoggerService();
+      logger.debug("start");
       processSummary.info("Checking assessments to be queued for retry.");
       // Check for assessments cancellations to be retried.
+      logger.debug(
+        "before executeEnqueueProcess -> enqueueCancelAssessmentRetryWorkflows",
+      );
       await this.executeEnqueueProcess(
         job.data.amountHoursAssessmentRetry,
         processSummary,
@@ -50,7 +55,13 @@ export class WorkflowQueueRetryScheduler extends BaseScheduler<AssessmentWorkflo
           this.workflowEnqueuerService,
         ),
       );
+      logger.debug(
+        "after executeEnqueueProcess -> enqueueCancelAssessmentRetryWorkflows",
+      );
       // Check for assessments to be started.
+      logger.debug(
+        "before executeProcess -> enqueueStartAssessmentRetryWorkflows",
+      );
       await this.executeEnqueueProcess(
         job.data.amountHoursAssessmentRetry,
         processSummary,
@@ -58,16 +69,24 @@ export class WorkflowQueueRetryScheduler extends BaseScheduler<AssessmentWorkflo
           this.workflowEnqueuerService,
         ),
       );
+      logger.debug(
+        "after executeProcess -> enqueueStartAssessmentRetryWorkflows",
+      );
+      logger.debug("getSuccessMessageWithAttentionCheck");
       return getSuccessMessageWithAttentionCheck(
         ["Process finalized with success."],
         processSummary,
       );
     } catch (error: unknown) {
+      this.logger.debug("In catch");
       const errorMessage = "Unexpected error while executing the job.";
       processSummary.error(errorMessage, error);
     } finally {
+      this.logger.debug("In finally -> before logProcessSummary");
       this.logger.logProcessSummary(processSummary);
+      this.logger.debug("In finally -> before logProcessSummaryToJobLogger");
       await logProcessSummaryToJobLogger(processSummary, job);
+      this.logger.debug("In finally -> before cleanSchedulerQueueHistory");
       await this.cleanSchedulerQueueHistory();
     }
   }
