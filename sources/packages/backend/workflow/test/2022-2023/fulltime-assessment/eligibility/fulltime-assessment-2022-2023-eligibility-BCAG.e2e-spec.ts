@@ -12,6 +12,7 @@ import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG.`, () => {
   // Expected and not expected credentials types.
   const EXPECTED_PROGRAM_CREDENTIAL_TYPES = [
+    CredentialType.UnderGraduateCitation,
     CredentialType.UnderGraduateDegree,
     CredentialType.GraduateCertificate,
     CredentialType.GraduateDiploma,

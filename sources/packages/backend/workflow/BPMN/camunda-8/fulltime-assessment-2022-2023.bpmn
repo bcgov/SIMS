@@ -1460,7 +1460,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
     <bpmn:intermediateThrowEvent id="Event_0ff3d52" name="awardEligibilityBCAG">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if institutionType = &#34;BC Public&#34; then (&#10;if ((calculatedDataFederalAssessedNeed + calculatedDataProvincialAssessedNeed) &#62;= 1)&#10;  and (programCredentialType = &#34;undergraduateDegree&#34;&#10;       or programCredentialType = &#34;graduateCertificate&#34;&#10;       or programCredentialType = &#34;graduateDiploma&#34;&#10;       or programCredentialType = &#34;qualifyingStudies&#34;)&#10;  and (programLength = &#34;12WeeksToLessThan1Year&#34;&#10;       or programLength = &#34;52WeeksTo59Weeks&#34;)&#10;then true &#10;else false&#10;)&#10;else false" target="awardEligibilityBCAG" />
+          <zeebe:output source="=if institutionType = &#34;BC Public&#34; then (&#10;if ((calculatedDataFederalAssessedNeed + calculatedDataProvincialAssessedNeed) &#62;= 1)&#10;  and (programCredentialType = &#34;undergraduateCitation&#34;&#10;       or programCredentialType = &#34;undergraduateDegree&#34;&#10;       or programCredentialType = &#34;graduateCertificate&#34;&#10;       or programCredentialType = &#34;graduateDiploma&#34;&#10;       or programCredentialType = &#34;qualifyingStudies&#34;)&#10;  and (programLength = &#34;12WeeksToLessThan1Year&#34;&#10;       or programLength = &#34;52WeeksTo59Weeks&#34;)&#10;then true &#10;else false&#10;)&#10;else false" target="awardEligibilityBCAG" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0ao0mi8</bpmn:incoming>
