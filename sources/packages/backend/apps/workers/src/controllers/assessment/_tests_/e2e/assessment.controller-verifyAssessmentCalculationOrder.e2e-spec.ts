@@ -166,7 +166,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     });
   });
 
-  it("Should consider the grant from only one disbursement from a valid past application when the past application has two disbursements and the second one is declined.", async () => {
+  it("Should consider the grant from only one disbursement from a valid past application when the past application has two disbursements and the second COE is declined.", async () => {
     // Arrange
 
     // Create the student to be shared across the applications.

@@ -131,7 +131,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
         applicationStatus: ApplicationStatus.Completed,
         currentAssessmentInitialValues: {
           assessmentWorkflowId: "some fake id",
-          assessmentDate: addDays(1, new Date()),
+          assessmentDate: addDays(1),
           studentAssessmentStatus: StudentAssessmentStatus.Completed,
         },
       },
