@@ -22,6 +22,17 @@ export enum DependentEligibility {
   EligibleOver22YearsOld = "EligibleOver22YearsOld",
 }
 
+export enum DependentChildCareEligibility {
+  /**
+   * Dependent of age between 0 and 11 years.
+   */
+  Eligible0To11YearsOld = "Eligible0To11YearsOld",
+  /**
+   * Dependent of age above 12 years and declared on taxes for disability.
+   */
+  Eligible12YearsAndOver = "Eligible12YearsAndOver",
+}
+
 /**
  * Creates a student dependent that will be eligible.
  * @param eligibility eligibility rule.
@@ -92,4 +103,45 @@ export function createFakeStudentDependentNotEligible(
         declaredOnTaxes: YesNoOptions.No,
       };
   }
+}
+
+/**
+ * Create a student dependant who is eligible for child care costs.
+ * @param eligibility eligibility rule.
+ * @param studyStartDate study start date of the offering.
+ * @returns eligible dependant.
+ */
+export function createFakeStudentDependentEligibleForChildcareCost(
+  eligibility: DependentChildCareEligibility,
+  studyStartDate: Date | string,
+): StudentDependent {
+  switch (eligibility) {
+    case DependentChildCareEligibility.Eligible0To11YearsOld:
+      return {
+        dateOfBirth: addToDateOnlyString(studyStartDate, -11, "years"),
+        attendingPostSecondarySchool: YesNoOptions.No,
+        declaredOnTaxes: YesNoOptions.No,
+      };
+    case DependentChildCareEligibility.Eligible12YearsAndOver:
+      return {
+        dateOfBirth: addToDateOnlyString(studyStartDate, -12, "years"),
+        attendingPostSecondarySchool: YesNoOptions.No,
+        declaredOnTaxes: YesNoOptions.Yes,
+      };
+  }
+}
+
+/**
+ * Create a student dependant who is not eligible for child care costs.
+ * @param studyStartDate study start date of the offering.
+ * @returns dependant who is not eligible.
+ */
+export function createFakeStudentDependentNotEligibleForChildcareCost(
+  studyStartDate: Date | string,
+): StudentDependent {
+  return {
+    dateOfBirth: addToDateOnlyString(studyStartDate, -12, "years"),
+    attendingPostSecondarySchool: YesNoOptions.No,
+    declaredOnTaxes: YesNoOptions.No,
+  };
 }
