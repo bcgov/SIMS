@@ -267,6 +267,7 @@ export interface CalculatedAssessmentModel {
   // Calculated Data
   calculatedDataTotalRemainingNeed1: number;
   calculatedDataTotalRemainingNeed3: number;
+  calculatedDataTotalTransportationAllowance: number;
   // DMN Part Time Award Allowable Limits
   dmnPartTimeAwardAllowableLimits?: {
     limitAwardBCAGAmount: number;
@@ -284,6 +285,10 @@ export interface CalculatedAssessmentModel {
     limitAwardCSGDIncomeCap: number;
     limitAwardCSGD3OrMoreChildSlope: number;
     limitAwardCSGD2OrLessChildSlope: number;
+  };
+  // DMN Part Time Program Year Maximums
+  dmnPartTimeProgramYearMaximums?: {
+    limitTransportationAllowance: number;
   };
   // Disbursement schedules
   disbursementSchedules: Array<unknown>;
