@@ -28,8 +28,8 @@ while [ $# -gt 0 ]; do
       MIN_TAGS="${1#*=}"
       ;;
     *)
-      echo "Invalid argument: $1"
       echo "Usage: $0 --license_plate=VALUE --env=VALUE --apps=VALUE [--prefix=VALUE] [--min_tags=VALUE]"
+      echo "Invalid argument: $1"
       exit 1
       ;;
   esac
@@ -38,16 +38,17 @@ done
 
 # Validation for required parameters
 if [ -z "$LICENSE_PLATE" ] || [ -z "$ENV" ] || [ -z "$APPLICATIONS" ] ; then
+    echo "Usage: $0 --license_plate=VALUE --env=VALUE --apps=VALUE [--prefix=VALUE] [--min_tags=VALUE]"
     echo "License plate, environment, and apps are required."
     echo "Multiple applications can be provided as a comma-separated list."
-    echo "Usage: $0 --license_plate=VALUE --env=VALUE --apps=VALUE [--prefix=VALUE] [--min_tags=VALUE]"
     exit 1
 fi
 
-echo Starting to Prune Images
+echo Starting to Prune Images for applications ${APPLICATIONS}
 IFS=',' read -r -a apps <<< ${APPLICATIONS}
 for app in "${apps[@]}"
 do
+    echo "Trimming spaces from \"${app}\""
     # Trim spaces
     trimmed_app=$(echo "$app" | xargs)
         echo "Processing ${trimmed_app}"

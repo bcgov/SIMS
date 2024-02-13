@@ -37,8 +37,8 @@ done
 
 # Validation of required arguments and env values
 if [ -z "$LICENSE_PLATE" ] || [ -z "$ENV" ] || [ -z "$APP_NAME" ]; then
-  echo "License plate, environment, and app name are required."
   echo "Usage: $0 --license_plate=VALUE --env=VALUE --app_name=VALUE [--prefix=VALUE] [--min_tags=VALUE]"
+  echo "License plate, environment, and app name are required."
   exit 1
 fi
 

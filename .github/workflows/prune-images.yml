@@ -52,7 +52,7 @@ jobs:
           ./pruneImages.sh \
               --license_plate=${{ inputs.licensePlate }} \
               --env=${{ inputs.environment }} \
-              --apps='"${{ inputs.applications }}"' \
+              --apps="${{ inputs.applications }}" \
               --prefix=${{ inputs.prefix }} \
               --min_tags=${{ inputs.minTags}}
           popd
