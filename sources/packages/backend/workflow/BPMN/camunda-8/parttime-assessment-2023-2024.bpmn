@@ -66,6 +66,7 @@
         <bpmn:flowNodeRef>Event_1e56skq</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1dvh1rf</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1j6ep9h</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_18vto57</bpmn:flowNodeRef>
         <bpmn:childLaneSet id="LaneSet_0v6vyq5">
           <bpmn:lane id="Lane_0l32w49" name="Award Calculation">
             <bpmn:flowNodeRef>Event_1h2w0hl</bpmn:flowNodeRef>
@@ -106,11 +107,12 @@
             <bpmn:flowNodeRef>Event_1e56skq</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_1dvh1rf</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_1j6ep9h</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Event_18vto57</bpmn:flowNodeRef>
           </bpmn:lane>
         </bpmn:childLaneSet>
       </bpmn:lane>
     </bpmn:laneSet>
-    <bpmn:sequenceFlow id="Flow_19cfg17" sourceRef="Gateway_1blaf95" targetRef="Event_1j6ep9h" />
+    <bpmn:sequenceFlow id="Flow_19cfg17" sourceRef="Gateway_1blaf95" targetRef="Event_18vto57" />
     <bpmn:sequenceFlow id="Flow_0wfngj4" sourceRef="Event_1dvh1rf" targetRef="Gateway_1blaf95" />
     <bpmn:sequenceFlow id="Flow_04xt4on" sourceRef="Event_1e56skq" targetRef="Gateway_1blaf95" />
     <bpmn:sequenceFlow id="Flow_173rbte" sourceRef="Event_0xpdeqq" targetRef="Gateway_1blaf95" />
@@ -203,37 +205,28 @@
     <bpmn:sequenceFlow id="Flow_1ekiozl" name="married / common-law" sourceRef="Gateway_0um3yvb" targetRef="Gateway_0zmvhsj">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= studentDataRelationshipStatus = "married"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:intermediateThrowEvent id="Event_1j6ep9h" name="calculatedDataTotalAssessedNeed">
+    <bpmn:intermediateThrowEvent id="Event_1dvh1rf" name="Calculate Offering Weeks Multiplier">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=sum([&#10;  calculatedDataActualTuitionCosts,&#10;  calculatedDataMandatoryFees,&#10;  calculatedDataProgramRelatedCosts,&#10;  calculatedDataTransportationAllownace,&#10;  calculatedDataMiscellaneousAllowance,&#10;  calculatedDataTotalChildCareCost&#10;][item != null])" target="calculatedDataTotalAssessedNeed" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_19cfg17</bpmn:incoming>
-      <bpmn:outgoing>Flow_0jntyac</bpmn:outgoing>
-    </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateThrowEvent id="Event_1dvh1rf" name="Calculate Total Child Care Costs">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=if calculatedDataChildCareCost &#62; 0&#10;  then min(((offeringCourseLoad/100) * dmnPartTimeProgramYearMaximums.limitWeeklyChildCare &#10;    * 17 * calculatedDataTotalEligibleDependentsForChildCare),&#10;  calculatedDataChildCareCost)&#10;else 0" target="calculatedDataTotalChildCareCost" />
+          <zeebe:output source="=17" target="calculatedDataOfferingWeeksMultiplier" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0mlhznt</bpmn:incoming>
       <bpmn:outgoing>Flow_0wfngj4</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateThrowEvent id="Event_1e56skq" name="Calculate Total Child Care Costs">
+    <bpmn:intermediateThrowEvent id="Event_1e56skq" name="Calculate Offering Weeks Multiplier">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if calculatedDataChildCareCost &#62; 0&#10;  then min(((offeringCourseLoad/100) * dmnPartTimeProgramYearMaximums.limitWeeklyChildCare &#10;    * 52 * calculatedDataTotalEligibleDependentsForChildCare),&#10;  calculatedDataChildCareCost)&#10;else 0" target="calculatedDataTotalChildCareCost" />
+          <zeebe:output source="=52" target="calculatedDataOfferingWeeksMultiplier" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1m2o8z2</bpmn:incoming>
       <bpmn:outgoing>Flow_04xt4on</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateThrowEvent id="Event_0xpdeqq" name="Calculate Total Child Care Costs">
+    <bpmn:intermediateThrowEvent id="Event_0xpdeqq" name="Calculate Offering Weeks Multiplier">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if calculatedDataChildCareCost &#62; 0&#10;  then min(((offeringCourseLoad/100) * dmnPartTimeProgramYearMaximums.limitWeeklyChildCare &#10;    * 34 * calculatedDataTotalEligibleDependentsForChildCare),&#10;  calculatedDataChildCareCost)&#10;else 0" target="calculatedDataTotalChildCareCost" />
+          <zeebe:output source="=34" target="calculatedDataOfferingWeeksMultiplier" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1pdrx9i</bpmn:incoming>
@@ -661,6 +654,25 @@
       <bpmn:outgoing>Flow_08mnfio</bpmn:outgoing>
       <bpmn:outgoing>Flow_1fbmivh</bpmn:outgoing>
     </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1x86r10" sourceRef="Event_18vto57" targetRef="Event_1j6ep9h" />
+    <bpmn:intermediateThrowEvent id="Event_1j6ep9h" name="calculatedDataTotalAssessedNeed">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=sum([&#10;  calculatedDataActualTuitionCosts,&#10;  calculatedDataMandatoryFees,&#10;  calculatedDataProgramRelatedCosts,&#10;  calculatedDataTransportationAllownace,&#10;  calculatedDataMiscellaneousAllowance,&#10;  calculatedDataTotalChildCareCost&#10;][item != null])" target="calculatedDataTotalAssessedNeed" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1x86r10</bpmn:incoming>
+      <bpmn:outgoing>Flow_0jntyac</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:intermediateThrowEvent id="Event_18vto57" name="Calculate Total Child Care Costs">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=if calculatedDataChildCareCost &#62; 0&#10;  then min(((offeringCourseLoad/100) * dmnPartTimeProgramYearMaximums.limitWeeklyChildCare &#10;    * calculatedDataOfferingWeeksMultiplier * calculatedDataTotalEligibleDependentsForChildCare),&#10;  calculatedDataChildCareCost)&#10;else 0" target="calculatedDataTotalChildCareCost" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_19cfg17</bpmn:incoming>
+      <bpmn:outgoing>Flow_1x86r10</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
     <bpmn:textAnnotation id="TextAnnotation_1myp6tg">
       <bpmn:text>Use CRA Income if provided
 partner1CalculatedTotalIncome
@@ -1020,25 +1032,19 @@ dmnX (comes from dmn)</bpmn:text>
       <bpmndi:BPMNShape id="Event_0xpdeqq_di" bpmnElement="Event_0xpdeqq">
         <dc:Bounds x="3082" y="1122" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="3058" y="1165" width="84" height="27" />
+          <dc:Bounds x="3056" y="1165" width="88" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1e56skq_di" bpmnElement="Event_1e56skq">
         <dc:Bounds x="3082" y="1222" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="3058" y="1265" width="84" height="27" />
+          <dc:Bounds x="3056" y="1265" width="88" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1dvh1rf_di" bpmnElement="Event_1dvh1rf">
         <dc:Bounds x="3082" y="1012" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="3058" y="1055" width="84" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1j6ep9h_di" bpmnElement="Event_1j6ep9h">
-        <dc:Bounds x="3352" y="1122" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="3329" y="1165" width="86" height="40" />
+          <dc:Bounds x="3060" y="1055" width="88" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0o432k6_di" bpmnElement="TextAnnotation_0o432k6">
@@ -1108,6 +1114,18 @@ dmnX (comes from dmn)</bpmn:text>
       <bpmndi:BPMNShape id="TextAnnotation_1myp6tg_di" bpmnElement="TextAnnotation_1myp6tg">
         <dc:Bounds x="1028" y="460" width="200" height="55" />
         <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1j6ep9h_di" bpmnElement="Event_1j6ep9h">
+        <dc:Bounds x="3452" y="1122" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3429" y="1165" width="86" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_18vto57_di" bpmnElement="Event_18vto57">
+        <dc:Bounds x="3332" y="1122" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3308" y="1165" width="84" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_189jv8b_di" bpmnElement="Flow_189jv8b">
         <di:waypoint x="1928" y="703" />
@@ -1376,7 +1394,7 @@ dmnX (comes from dmn)</bpmn:text>
         <di:waypoint x="4722" y="2270" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0jntyac_di" bpmnElement="Flow_0jntyac">
-        <di:waypoint x="3388" y="1140" />
+        <di:waypoint x="3488" y="1140" />
         <di:waypoint x="3580" y="1140" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_14w7mr0_di" bpmnElement="Flow_14w7mr0">
@@ -1412,7 +1430,7 @@ dmnX (comes from dmn)</bpmn:text>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_19cfg17_di" bpmnElement="Flow_19cfg17">
         <di:waypoint x="3255" y="1140" />
-        <di:waypoint x="3352" y="1140" />
+        <di:waypoint x="3332" y="1140" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_173rbte_di" bpmnElement="Flow_173rbte">
         <di:waypoint x="3118" y="1140" />
@@ -1507,6 +1525,10 @@ dmnX (comes from dmn)</bpmn:text>
       <bpmndi:BPMNEdge id="Association_0yc2t6b_di" bpmnElement="Association_0yc2t6b">
         <di:waypoint x="1080" y="602" />
         <di:waypoint x="1080" y="515" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1x86r10_di" bpmnElement="Flow_1x86r10">
+        <di:waypoint x="3368" y="1140" />
+        <di:waypoint x="3452" y="1140" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_1a4vdzr_di" bpmnElement="Group_1a4vdzr">
         <dc:Bounds x="1535" y="660" width="90" height="230" />
