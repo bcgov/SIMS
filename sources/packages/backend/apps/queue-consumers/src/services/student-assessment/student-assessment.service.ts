@@ -4,7 +4,7 @@ import {
   StudentAssessment,
   StudentAssessmentStatus,
 } from "@sims/sims-db";
-import { Equal, LessThan, Repository } from "typeorm";
+import { LessThan, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 
 /**
@@ -79,7 +79,7 @@ export class StudentAssessmentService {
       },
       where: {
         studentAssessmentStatus,
-        studentAssessmentStatusUpdatedOn: retryMaxDate,
+        studentAssessmentStatusUpdatedOn: LessThan(retryMaxDate),
       },
     });
   }
