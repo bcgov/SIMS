@@ -8,6 +8,7 @@ import {
   DisbursementSchedule,
   DisbursementScheduleStatus,
   DisbursementValueType,
+  OfferingIntensity,
   StudentAssessment,
   StudentAssessmentStatus,
   User,
@@ -110,8 +111,9 @@ export class AssessmentSequentialProcessingService {
    * Only pending awards or already sent awards will be considered.
    * Only federal and provincial grants are considered.
    * Grants that are common between part-time and full-time (e.g. CSGP, SBSD) applications will have
-   * their totals calculated independently of the intensity, which means that if the student has a part-time
-   * and a full-time application in the same year and both have a CSGP grant, its totals should be combined.
+   * their totals calculated per intensity, which means that if the student has a part-time
+   * and a full-time application in the same year and both have a CSGP grant, its totals will
+   * be individually calculated and returned.
    * The chronology of the applications is defined by the method {@link getSequencedApplications}.
    * @param assessmentId assessment id to be used as a reference to find the past applications.
    * @param options method options.
@@ -162,6 +164,7 @@ export class AssessmentSequentialProcessingService {
     const totals = await this.studentAssessmentRepo
       .createQueryBuilder("studentAssessment")
       .select("disbursementValue.valueCode", "valueCode")
+      .addSelect("offering.offeringIntensity", "offeringIntensity")
       .addSelect("SUM(disbursementValue.valueAmount)", "total")
       .innerJoin("studentAssessment.application", "application")
       .innerJoin(
@@ -169,6 +172,7 @@ export class AssessmentSequentialProcessingService {
         "disbursementSchedule",
       )
       .innerJoin("disbursementSchedule.disbursementValues", "disbursementValue")
+      .innerJoin("studentAssessment.offering", "offering")
       .where("application.applicationNumber IN (:...applicationNumbers)", {
         applicationNumbers,
       })
@@ -203,11 +207,17 @@ export class AssessmentSequentialProcessingService {
           DisbursementValueType.BCGrant,
         ],
       })
-      .groupBy("disbursementValue.valueCode")
-      .getRawMany<{ valueCode: string; total: string }>();
+      .groupBy("offering.offeringIntensity")
+      .addGroupBy("disbursementValue.valueCode")
+      .getRawMany<{
+        offeringIntensity: OfferingIntensity;
+        valueCode: string;
+        total: string;
+      }>();
     // Parses the values from DB ensuring that the total will be properly converted to a number.
     // The valueAmount from awards are mapped to string by Typeorm Postgres driver.
     return totals.map((total) => ({
+      offeringIntensity: total.offeringIntensity,
       valueCode: total.valueCode,
       total: +total.total,
     }));

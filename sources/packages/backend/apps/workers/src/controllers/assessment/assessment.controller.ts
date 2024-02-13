@@ -31,6 +31,7 @@ import {
 import { StudentAssessmentService } from "../../services";
 import {
   CRAIncomeVerification,
+  OfferingIntensity,
   StudentAppealRequest,
   StudentAssessment,
   SupportingUser,
@@ -56,6 +57,7 @@ import { CustomNamedError } from "@sims/utilities";
 import { MaxJobsToActivate } from "../../types";
 import {
   AssessmentSequentialProcessingService,
+  AwardTotal,
   SystemUsersService,
   WorkflowClientService,
 } from "@sims/services";
@@ -405,10 +407,7 @@ export class AssessmentController {
         jobLogger.log(
           `The assessment calculation order has been verified and the assessment id ${assessmentId} is ready to be processed.`,
         );
-        programYearTotalAwards.forEach(
-          (award) =>
-            (result[`programYearTotal${award.valueCode}`] = award.total),
-        );
+        this.createOutputForProgramYearTotals(programYearTotalAwards, result);
         result.isReadyForCalculation = true;
         return job.complete(result);
       }
@@ -421,6 +420,31 @@ export class AssessmentController {
         logger: jobLogger,
       });
     }
+  }
+
+  /**
+   * Create a new dynamic output variable for each award and offering intensity.
+   * Each variable is prefixed with 'programYearTotal' and then concatenated
+   * with the offering intensity as 'FullTime'/'PartTime' and the award code.
+   * @example
+   * programYearTotalFullTimeBCAG: 1250
+   * programYearTotalPartTimeBCAG: 3450
+   * @param programYearTotalAwards awards to be added to the output.
+   * @param output output to receive the dynamic property.
+   */
+  private createOutputForProgramYearTotals(
+    programYearTotalAwards: AwardTotal[],
+    output: VerifyAssessmentCalculationOrderJobOutDTO,
+  ): void {
+    // Create the dynamic variables to be outputted.
+    programYearTotalAwards.forEach((award) => {
+      const intensity =
+        award.offeringIntensity === OfferingIntensity.fullTime
+          ? "FullTime"
+          : "PartTime";
+      const outputName = `programYearTotal${intensity}${award.valueCode}`;
+      output[outputName] = award.total;
+    });
   }
 
   /**

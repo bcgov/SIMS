@@ -1,3 +1,5 @@
+import { OfferingIntensity } from "@sims/sims-db";
+
 /**
  * Application information part of a sequence of ordered applications.
  */
@@ -114,6 +116,7 @@ export class SequencedApplications {
  * Award code (e.g. CSPT, CSGD, CSGP, SBSD, BCAG) and its totals.
  */
 export interface AwardTotal {
+  offeringIntensity: OfferingIntensity;
   valueCode: string;
   total: number;
 }

@@ -6,7 +6,7 @@ import {
   saveFakeStudent,
 } from "@sims/test-utils";
 import {
-  FAKE_WORKER_JOB_RESULT_PROPERTY,
+  FakeWorkerJobResult,
   MockedZeebeJobResult,
 } from "../../../../../test/utils/worker-job-mock";
 import { createTestingAppModule } from "../../../../../test/helpers";
@@ -69,8 +69,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
     );
 
     // Asserts
-    expect(result).toHaveProperty(
-      FAKE_WORKER_JOB_RESULT_PROPERTY,
+    expect(FakeWorkerJobResult.getResultType(result)).toBe(
       MockedZeebeJobResult.Complete,
     );
 
@@ -153,8 +152,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
     );
 
     // Asserts
-    expect(result).toHaveProperty(
-      FAKE_WORKER_JOB_RESULT_PROPERTY,
+    expect(FakeWorkerJobResult.getResultType(result)).toBe(
       MockedZeebeJobResult.Complete,
     );
     // Asserts that the student assessment status has changed to completed.
@@ -222,8 +220,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
     );
 
     // Asserts
-    expect(result).toHaveProperty(
-      FAKE_WORKER_JOB_RESULT_PROPERTY,
+    expect(FakeWorkerJobResult.getResultType(result)).toBe(
       MockedZeebeJobResult.Complete,
     );
     // Ensures updateAssessmentStatusAndSaveWorkflowData was called.

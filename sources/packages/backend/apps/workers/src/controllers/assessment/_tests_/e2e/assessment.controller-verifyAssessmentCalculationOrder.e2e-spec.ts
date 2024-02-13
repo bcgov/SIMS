@@ -31,7 +31,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     assessmentController = nestApplication.get(AssessmentController);
   });
 
-  it("Should sum the grants from two past applications with different offering intensities when the applications are for the same student and program year in the past.", async () => {
+  it("Should sum the grants from two past applications with different offering intensities when the applications are for the same student and program year.", async () => {
     // Arrange
 
     // Create the student to be shared across the applications.
@@ -46,40 +46,28 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
           createFakeDisbursementValue(
             DisbursementValueType.CanadaLoan,
             "CSLP",
-            10000,
+            1,
           ),
           createFakeDisbursementValue(
             DisbursementValueType.CanadaGrant,
             "CSPT",
-            123,
+            2,
           ),
           createFakeDisbursementValue(
             DisbursementValueType.CanadaGrant,
             "CSGD",
-            456,
+            3,
           ),
           createFakeDisbursementValue(
             DisbursementValueType.CanadaGrant,
             "CSGP",
-            789,
+            4,
           ),
           // Should not be disbursed due to BCLM restriction.
-          createFakeDisbursementValue(
-            DisbursementValueType.BCLoan,
-            "BCSL",
-            5000,
-          ),
-          createFakeDisbursementValue(
-            DisbursementValueType.BCGrant,
-            "SBSD",
-            1011,
-          ),
+          createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 5),
+          createFakeDisbursementValue(DisbursementValueType.BCGrant, "SBSD", 6),
           // Should not be disbursed due to BCLM restriction.
-          createFakeDisbursementValue(
-            DisbursementValueType.BCGrant,
-            "BCAG",
-            1414,
-          ),
+          createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCAG", 7),
         ],
       },
       {
@@ -102,32 +90,28 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
           createFakeDisbursementValue(
             DisbursementValueType.CanadaLoan,
             "CSLF",
-            11500,
+            8,
           ),
           createFakeDisbursementValue(
             DisbursementValueType.CanadaGrant,
             "CSGD",
-            456,
+            9,
           ),
           createFakeDisbursementValue(
             DisbursementValueType.CanadaGrant,
             "CSGP",
-            789,
+            10,
           ),
-          createFakeDisbursementValue(
-            DisbursementValueType.BCLoan,
-            "BCSL",
-            7599,
-          ),
+          createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 11),
           createFakeDisbursementValue(
             DisbursementValueType.BCGrant,
             "SBSD",
-            1011,
+            12,
           ),
           createFakeDisbursementValue(
             DisbursementValueType.BCGrant,
             "BCAG",
-            1414,
+            13,
           ),
         ],
       },
@@ -168,11 +152,17 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     );
     expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
       isReadyForCalculation: true,
-      programYearTotalBCAG: 2828, // Present for both applications.
-      programYearTotalCSGD: 912, // Present for both applications.
-      programYearTotalCSGP: 1578, // Present for both applications.
-      programYearTotalCSPT: 123, // Present only for the part-time application.
-      programYearTotalSBSD: 2022, // Present for both applications.
+      // Full-time
+      programYearTotalFullTimeBCAG: 13,
+      programYearTotalFullTimeCSGD: 9,
+      programYearTotalFullTimeCSGP: 10,
+      programYearTotalFullTimeSBSD: 12,
+      // Part-time
+      programYearTotalPartTimeBCAG: 7,
+      programYearTotalPartTimeCSGD: 3,
+      programYearTotalPartTimeCSGP: 4,
+      programYearTotalPartTimeCSPT: 2,
+      programYearTotalPartTimeSBSD: 6,
     });
   });
 
@@ -243,11 +233,11 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     // and ignore the second disbursement with the declined COE.
     expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
       isReadyForCalculation: true,
-      programYearTotalCSGP: 1000,
+      programYearTotalPartTimeCSGP: 1000,
     });
   });
 
-  it("Should not return any program year total awards when there is no applications in the past for the same student and program year.", async () => {
+  it("Should not return any program year total awards when there are no applications in the past for the same student and program year.", async () => {
     // Arrange
 
     // Application currently being processed.
