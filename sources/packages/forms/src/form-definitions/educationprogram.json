@@ -626,7 +626,7 @@
                     "validateOn": "change",
                     "validate": {
                         "required": true,
-                        "onlyAvailableItems": false,
+                        "onlyAvailableItems": true,
                         "customMessage": "",
                         "custom": "",
                         "customPrivate": false,
