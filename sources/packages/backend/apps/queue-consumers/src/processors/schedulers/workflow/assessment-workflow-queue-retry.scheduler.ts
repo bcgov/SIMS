@@ -41,11 +41,10 @@ export class WorkflowQueueRetryScheduler extends BaseScheduler<AssessmentWorkflo
   ): Promise<string[]> {
     const processSummary = new ProcessSummary();
     try {
-      const logger = new LoggerService();
-      logger.debug("start");
+      this.logger.debug("start");
       processSummary.info("Checking assessments to be queued for retry.");
       // Check for assessments cancellations to be retried.
-      logger.debug(
+      this.logger.debug(
         "before executeEnqueueProcess -> enqueueCancelAssessmentRetryWorkflows",
       );
       await this.executeEnqueueProcess(
@@ -55,11 +54,11 @@ export class WorkflowQueueRetryScheduler extends BaseScheduler<AssessmentWorkflo
           this.workflowEnqueuerService,
         ),
       );
-      logger.debug(
+      this.logger.debug(
         "after executeEnqueueProcess -> enqueueCancelAssessmentRetryWorkflows",
       );
       // Check for assessments to be started.
-      logger.debug(
+      this.logger.debug(
         "before executeProcess -> enqueueStartAssessmentRetryWorkflows",
       );
       await this.executeEnqueueProcess(
@@ -69,10 +68,10 @@ export class WorkflowQueueRetryScheduler extends BaseScheduler<AssessmentWorkflo
           this.workflowEnqueuerService,
         ),
       );
-      logger.debug(
+      this.logger.debug(
         "after executeProcess -> enqueueStartAssessmentRetryWorkflows",
       );
-      logger.debug("getSuccessMessageWithAttentionCheck");
+      this.logger.debug("getSuccessMessageWithAttentionCheck");
       return getSuccessMessageWithAttentionCheck(
         ["Process finalized with success."],
         processSummary,

@@ -13,7 +13,7 @@ import {
   StudentAssessmentStatus,
 } from "@sims/sims-db";
 import { DataSource, Repository } from "typeorm";
-import { ProcessSummary } from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { SystemUsersService } from "@sims/services";
 import { InjectRepository } from "@nestjs/typeorm";
 
@@ -112,22 +112,35 @@ export class WorkflowEnqueuerService {
     retryMaxDate: Date,
   ): Promise<void> {
     try {
+      const logger = new LoggerService();
       summary.info(
         `Checking database for assessments waiting to be retried up to ${retryMaxDate}.`,
+      );
+      logger.debug(
+        "before enqueueStartAssessmentRetryWorkflows -> getAssessmentsToBeRetried",
       );
       const assessments =
         await this.studentAssessmentService.getAssessmentsToBeRetried(
           retryMaxDate,
           StudentAssessmentStatus.Queued,
         );
+      logger.debug(
+        "after enqueueStartAssessmentRetryWorkflows -> getAssessmentsToBeRetried",
+      );
       summary.info(`Found ${assessments.length} assessments.`);
       if (!assessments.length) {
         return;
       }
+      logger.debug(
+        "before enqueueStartAssessmentRetryWorkflows -> processInParallel",
+      );
       const children = await processInParallel(
         (assessment: StudentAssessment) =>
           this.queueAssessmentQueuedRetry(assessment),
         assessments,
+      );
+      logger.debug(
+        "after enqueueStartAssessmentRetryWorkflows -> processInParallel",
       );
       summary.children(...children);
       summary.info("All assessment retries were processed.");
@@ -136,6 +149,9 @@ export class WorkflowEnqueuerService {
         "Error while retrying assessment workflows to be processed.",
         error,
       );
+    } finally {
+      const logger = new LoggerService();
+      logger.debug("In enqueueStartAssessmentRetryWorkflows -> finally");
     }
   }
 
