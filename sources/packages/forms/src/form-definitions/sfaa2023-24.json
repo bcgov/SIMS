@@ -1625,7 +1625,8 @@
                 "threshold": 0.3
               },
               "id": "enuaazl",
-              "defaultValue": ""
+              "defaultValue": "",
+              "lockKey": true
             },
             {
               "title": "Program",
@@ -12917,7 +12918,8 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "e2utfe",
-              "tags": []
+              "tags": [],
+              "isNew": false
             },
             {
               "title": "Add Dependants Panel",
@@ -16660,8 +16662,7 @@
               "inputMask": "",
               "decimalLimit": 0,
               "requireDecimal": false,
-              "tags": [],
-              "isNew": false
+              "tags": []
             },
             {
               "label": "<strong>Will your partner be employed full-time or part-time during your study period</strong>",
@@ -16756,8 +16757,7 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "enyf4g",
-              "defaultValue": "",
-              "isNew": false
+              "defaultValue": ""
             },
             {
               "label": "<strong>Will  your partner be at home caring for eligible dependent children on a full-time basis during the your entire study period? </strong>",
@@ -16947,8 +16947,7 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "eoxnrvc",
-              "defaultValue": "",
-              "isNew": false
+              "defaultValue": ""
             },
             {
               "label": "<strong>Will your partner be a full-time post-secondary student for some or all of your study period?</strong>",
@@ -18331,8 +18330,7 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "e1ja09r",
-              "defaultValue": "",
-              "isNew": false
+              "defaultValue": ""
             },
             {
               "title": "Will your partner be paying for child support and/or spousal support during the your study period Panel",
@@ -23420,8 +23418,7 @@
               "inputMask": "",
               "decimalLimit": 0,
               "requireDecimal": false,
-              "tags": [],
-              "isNew": false
+              "tags": []
             },
             {
               "title": "CRA consent panel",
@@ -26391,10 +26388,10 @@
           "key": "dependantCareCostsPanel",
           "tags": [],
           "properties": {},
-          "customConditional": "",
+          "customConditional": "show = (data.howWillYouBeAttendingTheProgram === \"Full Time\" \n            || data.hasDependents === \"yes\");",
           "conditional": {
             "json": "",
-            "show": null,
+            "show": "",
             "when": null,
             "eq": ""
           },
@@ -26474,7 +26471,7 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": "",
                 "json": ""
@@ -26533,7 +26530,8 @@
               "showWordCount": false,
               "allowMultipleMasks": false,
               "addons": [],
-              "id": "elcakd"
+              "id": "elcakd",
+              "isNew": false
             },
             {
               "label": "<strong>Will you have a child age 11 years or under in daycare? </strong>",
@@ -26592,9 +26590,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
+                "show": "true",
+                "when": "hasDependents",
+                "eq": "yes",
                 "json": ""
               },
               "customConditional": "",
@@ -26628,7 +26626,8 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "evwiagm",
-              "defaultValue": ""
+              "defaultValue": "",
+              "isNew": false
             },
             {
               "title": "Daycare costs that you incur for your child(ren) age 11 years or under Panel",
@@ -26868,9 +26867,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
+                "show": "true",
+                "when": "hasDependents",
+                "eq": "yes",
                 "json": ""
               },
               "customConditional": "",
@@ -26904,7 +26903,8 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "epsy0r",
-              "defaultValue": ""
+              "defaultValue": "",
+              "isNew": false
             },
             {
               "title": "Total unsubsidized day-care costs during class hours for the proposed study period for disabled/infirmed dependents 12 years of age and older Panel",
