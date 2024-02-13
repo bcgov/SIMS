@@ -48,10 +48,9 @@ echo Starting to Prune Images for applications ${APPLICATIONS}
 IFS=',' read -r -a apps <<< ${APPLICATIONS}
 for app in "${apps[@]}"
 do
-    echo "Trimming spaces from \"${app}\""
     # Trim spaces
     trimmed_app=$(echo "$app" | xargs)
-        echo "Processing ${trimmed_app}"
+        echo "Processing \"${trimmed_app}\""
         ./fetchOldTags.sh \
             --license_plate=${LICENSE_PLATE} \
             --env=${ENV} \
