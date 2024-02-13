@@ -56,7 +56,7 @@ do
             --env=${ENV} \
             --app_name=${trimmed_app} \
             --prefix=${PREFIX} | \
-            xargs -I {} echo "oc tag ${LICENSE_PLATE}-tools/${trimmed_app}:{} --delete"
+            xargs -I {} oc tag ${LICENSE_PLATE}-tools/${trimmed_app}:{} --delete
 done
 
 echo Finished Pruning Images

@@ -7,7 +7,7 @@ on:
       applications:
         description: 'Comma seperated list of applications to prune'
         required: true
-        default: 'web-sims, api-sims'
+        default: 'web-sims, api-sims, queue-consumers-sims, workers-sims'
       licensePlate:
         description: 'OpenShift License Plate'
         required: true
