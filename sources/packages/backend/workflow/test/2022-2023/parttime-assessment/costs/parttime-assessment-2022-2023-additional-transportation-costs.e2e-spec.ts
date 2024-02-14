@@ -14,8 +14,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataAdditionalTransportKm = 0;
-      assessmentConsolidatedData.offeringWeeks = 20;
-      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 10;
+      assessmentConsolidatedData.offeringWeeks = 30;
+      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 30;
+      assessmentConsolidatedData.studentDataAdditionalTransportCost = 30;
       assessmentConsolidatedData.offeringDelivered =
         OfferingDeliveryOptions.Onsite;
       // Act
@@ -25,23 +26,25 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
           assessmentConsolidatedData,
         );
       // Assert
-      // calculatedDataTotalTransportationAllowance = 13 * 20 = 260
+      // calculatedDataTotalTransportationAllowance = 13 * 30 = 390
       expect(
         calculatedAssessment.variables
           .calculatedDataTotalTransportationAllowance,
-      ).toBe(260);
+      ).toBe(390);
     },
   );
+
   it(
-    "Should determine calculatedDataTotalTransportationAllowance when studentDataAdditionalTransportKm is zero  " +
-      "and offeringDelivered is not onsite",
+    "Should determine calculatedDataTotalTransportationAllowance when studentDataAdditionalTransportKm is zero " +
+      "and offeringDelivered is online",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataAdditionalTransportKm = 0;
-      assessmentConsolidatedData.offeringWeeks = 20;
-      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 10;
+      assessmentConsolidatedData.offeringWeeks = 30;
+      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 30;
+      assessmentConsolidatedData.studentDataAdditionalTransportCost = 30;
       assessmentConsolidatedData.offeringDelivered =
         OfferingDeliveryOptions.Online;
       // Act
@@ -51,7 +54,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
           assessmentConsolidatedData,
         );
       // Assert
-      // calculatedDataTotalTransportationAllowance = 0
       expect(
         calculatedAssessment.variables
           .calculatedDataTotalTransportationAllowance,
@@ -60,15 +62,16 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
   );
 
   it(
-    "Should determine calculatedDataTotalTransportationAllowance when studentDataAdditionalTransportKm less than 280 " +
+    "Should determine calculatedDataTotalTransportationAllowance when studentDataAdditionalTransportKm more than 280 " +
       "and studentDataAdditionalTransportPlacement is true and offeringDelivered is onsite",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataAdditionalTransportKm = 20;
-      assessmentConsolidatedData.offeringWeeks = 20;
-      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 10;
+      assessmentConsolidatedData.studentDataAdditionalTransportKm = 100;
+      assessmentConsolidatedData.offeringWeeks = 30;
+      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 20;
+      assessmentConsolidatedData.studentDataAdditionalTransportCost = 80;
       assessmentConsolidatedData.studentDataAdditionalTransportPlacement = true;
       assessmentConsolidatedData.offeringDelivered =
         OfferingDeliveryOptions.Onsite;
@@ -79,25 +82,26 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
           assessmentConsolidatedData,
         );
       // Assert
-      // calculatedDataTotalTransportationAllowance = (20 - 10) * 69 + (69 * 10 * 0.34) = 1174.6
+      // calculatedDataAdditionalTransportationMax = min((94-25), 80) * min(30, 20) * 0.34 = 469.2
+      // calculatedDataTotalTransportationAllowance = (30 - 20) * 13 + 469.2 = 599.2
       expect(
         calculatedAssessment.variables
           .calculatedDataTotalTransportationAllowance,
-      ).toBe(1174.6);
+      ).toBe(599.2);
     },
   );
 
   it(
     "Should determine calculatedDataTotalTransportationAllowance when studentDataAdditionalTransportKm less than 280 " +
-      "and studentDataAdditionalTransportPlacement is true and offeringDelivered is not onsite",
+      "and studentDataAdditionalTransportPlacement is true and offeringDelivered is online",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataAdditionalTransportKm = 20;
-      assessmentConsolidatedData.offeringWeeks = 20;
-      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 10;
-      assessmentConsolidatedData.studentDataAdditionalTransportCost = 100;
+      assessmentConsolidatedData.studentDataAdditionalTransportKm = 100;
+      assessmentConsolidatedData.offeringWeeks = 30;
+      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 20;
+      assessmentConsolidatedData.studentDataAdditionalTransportCost = 80;
       assessmentConsolidatedData.studentDataAdditionalTransportPlacement = true;
       assessmentConsolidatedData.offeringDelivered =
         OfferingDeliveryOptions.Online;
@@ -108,11 +112,74 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
           assessmentConsolidatedData,
         );
       // Assert
-      // calculatedDataTotalTransportationAllowance = 100 * 10 = 1000
+      // calculatedDataAdditionalTransportationMax = min((94-25), 80) * min(30, 20) * 0.34 = 469.2
+      // calculatedDataTotalTransportationAllowance = min(469.2, 80 * min(30, 20)) = 469.2
       expect(
         calculatedAssessment.variables
           .calculatedDataTotalTransportationAllowance,
-      ).toBe(1000);
+      ).toBe(469.2);
+    },
+  );
+
+  it(
+    "Should determine calculatedDataTotalTransportationAllowance when studentDataAdditionalTransportKm less than 280 " +
+      "and studentDataAdditionalTransportPlacement is false and offeringDelivered is onsite",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataAdditionalTransportKm = 100;
+      assessmentConsolidatedData.offeringWeeks = 30;
+      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 20;
+      assessmentConsolidatedData.studentDataAdditionalTransportCost = 80;
+      assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
+        false;
+      assessmentConsolidatedData.offeringDelivered =
+        OfferingDeliveryOptions.Onsite;
+      // Act
+      const calculatedAssessment =
+        await executePartTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+      // Assert
+      // calculatedDataAdditionalTransportationMax = min(94, 80) * min(30, 20) * 0.34 = 544
+      // calculatedDataTotalTransportationAllowance = (30 - 20) * 13 + 544 = 674
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataTotalTransportationAllowance,
+      ).toBe(674);
+    },
+  );
+
+  it(
+    "Should determine calculatedDataTotalTransportationAllowance when studentDataAdditionalTransportKm less than 280 " +
+      "and studentDataAdditionalTransportPlacement is false and offeringDelivered is online",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataAdditionalTransportKm = 100;
+      assessmentConsolidatedData.offeringWeeks = 30;
+      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 20;
+      assessmentConsolidatedData.studentDataAdditionalTransportCost = 80;
+      assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
+        false;
+      assessmentConsolidatedData.offeringDelivered =
+        OfferingDeliveryOptions.Online;
+      // Act
+      const calculatedAssessment =
+        await executePartTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+      // Assert
+      // calculatedDataAdditionalTransportationMax = min(94, 80) * min(30, 20) * 0.34 = 544
+      // calculatedDataTotalTransportationAllowance = min(544, 80 * min(30, 20)) = 544
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataTotalTransportationAllowance,
+      ).toBe(544);
     },
   );
 
@@ -124,8 +191,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataAdditionalTransportKm = 300;
-      assessmentConsolidatedData.offeringWeeks = 20;
-      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 10;
+      assessmentConsolidatedData.offeringWeeks = 30;
+      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 20;
+      assessmentConsolidatedData.studentDataAdditionalTransportCost = 80;
       assessmentConsolidatedData.studentDataAdditionalTransportPlacement = true;
       assessmentConsolidatedData.offeringDelivered =
         OfferingDeliveryOptions.Onsite;
@@ -136,25 +204,26 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
           assessmentConsolidatedData,
         );
       // Assert
-      // calculatedDataTotalTransportationAllowance = (20 - 10) * 94 + (69 * 10) = 1630
+      // calculatedDataAdditionalTransportationMax = min((94-25), 80) * min(30, 20) = 1380
+      // calculatedDataTotalTransportationAllowance = (30 - 20) * 13 + 1380 = 1510
       expect(
         calculatedAssessment.variables
           .calculatedDataTotalTransportationAllowance,
-      ).toBe(1630);
+      ).toBe(1510);
     },
   );
 
   it(
     "Should determine calculatedDataTotalTransportationAllowance when studentDataAdditionalTransportKm more than 280 " +
-      "and studentDataAdditionalTransportPlacement is true and offeringDelivered is not onsite",
+      "and studentDataAdditionalTransportPlacement is true and offeringDelivered is online",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataAdditionalTransportKm = 300;
-      assessmentConsolidatedData.offeringWeeks = 20;
-      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 10;
-      assessmentConsolidatedData.studentDataAdditionalTransportCost = 100;
+      assessmentConsolidatedData.offeringWeeks = 30;
+      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 20;
+      assessmentConsolidatedData.studentDataAdditionalTransportCost = 80;
       assessmentConsolidatedData.studentDataAdditionalTransportPlacement = true;
       assessmentConsolidatedData.offeringDelivered =
         OfferingDeliveryOptions.Online;
@@ -164,16 +233,75 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
           PROGRAM_YEAR,
           assessmentConsolidatedData,
         );
-      console.log(
-        "calculatedAssessment.variables: ",
-        calculatedAssessment.variables,
-      );
       // Assert
-      // calculatedDataTotalTransportationAllowance = 100 * 10 = 1000
+      // calculatedDataAdditionalTransportationMax = min((94-25), 80) * min(30, 20) = 1380
+      // calculatedDataTotalTransportationAllowance = min(1380, 80 * min(30, 20)) = 1380
       expect(
         calculatedAssessment.variables
           .calculatedDataTotalTransportationAllowance,
-      ).toBe(1000);
+      ).toBe(1380);
+    },
+  );
+
+  it(
+    "Should determine calculatedDataTotalTransportationAllowance when studentDataAdditionalTransportKm more than 280 " +
+      "and studentDataAdditionalTransportPlacement is false and offeringDelivered is onsite",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataAdditionalTransportKm = 300;
+      assessmentConsolidatedData.offeringWeeks = 30;
+      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 20;
+      assessmentConsolidatedData.studentDataAdditionalTransportCost = 80;
+      assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
+        false;
+      assessmentConsolidatedData.offeringDelivered =
+        OfferingDeliveryOptions.Onsite;
+      // Act
+      const calculatedAssessment =
+        await executePartTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+      // Assert
+      // calculatedDataAdditionalTransportationMax = min(94, 80) * min(30, 20) = 1600
+      // calculatedDataTotalTransportationAllowance = (30 - 20) * 13 + 1600 = 1730
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataTotalTransportationAllowance,
+      ).toBe(1730);
+    },
+  );
+
+  it(
+    "Should determine calculatedDataTotalTransportationAllowance when studentDataAdditionalTransportKm more than 280 " +
+      "and studentDataAdditionalTransportPlacement is false and offeringDelivered is online",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataAdditionalTransportKm = 300;
+      assessmentConsolidatedData.offeringWeeks = 30;
+      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 20;
+      assessmentConsolidatedData.studentDataAdditionalTransportCost = 80;
+      assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
+        false;
+      assessmentConsolidatedData.offeringDelivered =
+        OfferingDeliveryOptions.Online;
+      // Act
+      const calculatedAssessment =
+        await executePartTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+      // Assert
+      // calculatedDataAdditionalTransportationMax = min(94, 80) * min(30, 20) = 1600
+      // calculatedDataTotalTransportationAllowance = min(1600, 80 * min(30, 20)) = 1600
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataTotalTransportationAllowance,
+      ).toBe(1600);
     },
   );
 });
