@@ -5,7 +5,7 @@ import {
 } from "../../../test-utils";
 import { OfferingDeliveryOptions } from "@sims/test-utils";
 
-describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-transportation-allowance.`, () => {
+describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-transportation-costs.`, () => {
   it(
     "Should determine calculatedDataTotalTransportationAllowance when studentDataAdditionalTransportKm is zero " +
       "and offeringDelivered is onsite",
