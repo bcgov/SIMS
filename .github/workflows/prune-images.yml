@@ -4,6 +4,15 @@ run-name: Pruning all but the most recent ${{ inputs.minTags }} tags prior to wh
 on:
   workflow_dispatch:
     inputs:
+      environment:
+        type: choice
+        description: 'Environment'
+        required: true
+        options:
+          - dev
+          - test
+          - prod
+        default: 'test'
       applications:
         description: 'Comma seperated list of applications to prune'
         required: true
@@ -12,10 +21,6 @@ on:
         description: 'OpenShift License Plate'
         required: true
         default: '0c27fb'
-      environment:
-        description: 'Environment (dev, test, prod)'
-        required: true
-        default: 'dev'
       prefix:
         description: 'Branch prefix to restrict pruning to'
         required: false
