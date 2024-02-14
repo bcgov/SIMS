@@ -253,6 +253,7 @@ export class StudentAssessment extends RecordDataModel {
   @Column({
     name: "student_assessment_status_updated_on",
     type: "timestamptz",
+    default: () => "CURRENT_TIMESTAMP",
     nullable: false,
   })
   studentAssessmentStatusUpdatedOn: Date;

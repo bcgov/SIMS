@@ -164,9 +164,13 @@ export class WorkflowEnqueuerService {
     summary: ProcessSummary,
     retryMaxDate: Date,
   ): Promise<void> {
+    const logger = new LoggerService();
     try {
       summary.info(
         `Checking database for assessment cancellations requested to be retried up to ${retryMaxDate}.`,
+      );
+      logger.debug(
+        "before enqueueCancelAssessmentRetryWorkflows -> getAssessmentsToBeRetried",
       );
       const assessments =
         await this.studentAssessmentService.getAssessmentsToBeRetried(
@@ -177,14 +181,19 @@ export class WorkflowEnqueuerService {
       if (!assessments.length) {
         return;
       }
+      logger.debug(
+        "before enqueueCancelAssessmentRetryWorkflows -> processInParallel",
+      );
       const children = await processInParallel(
         (assessment: StudentAssessment) =>
           this.queueAssessmentCancellationRetry(assessment),
         assessments,
       );
+      logger.debug("Children", ...children);
       summary.children(...children);
       summary.info("All assessments cancellation retries were processed.");
     } catch (error: unknown) {
+      logger.debug("Error", error);
       summary.error("Error while retrying assessments cancellations.", error);
     }
   }
