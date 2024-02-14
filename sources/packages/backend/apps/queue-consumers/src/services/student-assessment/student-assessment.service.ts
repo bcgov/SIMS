@@ -73,7 +73,21 @@ export class StudentAssessmentService {
       | StudentAssessmentStatus.Queued
       | StudentAssessmentStatus.CancellationQueued,
   ): Promise<StudentAssessment[]> {
-    return this.studentAssessmentRepo.find({
+    return await this.studentAssessmentRepo
+      .createQueryBuilder("studentAssessment")
+      .select("id")
+      .where(
+        "studentAssessment.studentAssessmentStatus = :studentAssessmentStatus",
+        {
+          studentAssessmentStatus,
+        },
+      )
+      .andWhere(
+        "studentAssessment.studentAssessmentStatusUpdatedOn < :retryMaxDate",
+        { retryMaxDate },
+      )
+      .getMany();
+    /*return this.studentAssessmentRepo.find({
       select: {
         id: true,
       },
@@ -85,6 +99,6 @@ export class StudentAssessmentService {
       order: {
         id: "DESC", // Order by studentAssessmentStatusUpdatedOn in ascending order
       },
-    });
+    });*/
   }
 }
