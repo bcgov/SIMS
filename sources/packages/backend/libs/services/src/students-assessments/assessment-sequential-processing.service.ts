@@ -20,6 +20,8 @@ import { InjectRepository } from "@nestjs/typeorm";
 export class AssessmentSequentialProcessingService {
   constructor(
     private readonly dataSource: DataSource,
+    @InjectRepository(Application)
+    private readonly applicationRepo: Repository<Application>,
     @InjectRepository(StudentAssessment)
     private readonly studentAssessmentRepo: Repository<StudentAssessment>,
   ) {}
@@ -159,18 +161,18 @@ export class AssessmentSequentialProcessingService {
     const applicationNumbers = sequencedApplications.previous.map(
       (application) => application.applicationNumber,
     );
-    const totals = await this.studentAssessmentRepo
-      .createQueryBuilder("studentAssessment")
+    const totals = await this.applicationRepo
+      .createQueryBuilder("application")
       .select("disbursementValue.valueCode", "valueCode")
       .addSelect("offering.offeringIntensity", "offeringIntensity")
       .addSelect("SUM(disbursementValue.valueAmount)", "total")
-      .innerJoin("studentAssessment.application", "application")
+      .innerJoin("application.currentAssessment", "currentAssessment")
       .innerJoin(
-        "studentAssessment.disbursementSchedules",
+        "currentAssessment.disbursementSchedules",
         "disbursementSchedule",
       )
       .innerJoin("disbursementSchedule.disbursementValues", "disbursementValue")
-      .innerJoin("studentAssessment.offering", "offering")
+      .innerJoin("currentAssessment.offering", "offering")
       .where("application.applicationNumber IN (:...applicationNumbers)", {
         applicationNumbers,
       })
@@ -180,7 +182,7 @@ export class AssessmentSequentialProcessingService {
       })
       // Check for assessment completed status to avoid retrieving any cancelation status.
       .andWhere(
-        "studentAssessment.studentAssessmentStatus = :completedStudentAssessmentStatus",
+        "currentAssessment.studentAssessmentStatus = :completedStudentAssessmentStatus",
         {
           completedStudentAssessmentStatus: StudentAssessmentStatus.Completed,
         },
@@ -210,7 +212,7 @@ export class AssessmentSequentialProcessingService {
       .getRawMany<{
         offeringIntensity: OfferingIntensity;
         valueCode: string;
-        total: number;
+        total: string;
       }>();
     // Parses the values from DB ensuring that the total will be properly converted to a number.
     // The valueAmount from awards are mapped to string by Typeorm Postgres driver.
