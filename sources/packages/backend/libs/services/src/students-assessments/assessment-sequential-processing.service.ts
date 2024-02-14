@@ -20,8 +20,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 export class AssessmentSequentialProcessingService {
   constructor(
     private readonly dataSource: DataSource,
-    @InjectRepository(Application)
-    private readonly applicationRepo: Repository<Application>,
     @InjectRepository(StudentAssessment)
     private readonly studentAssessmentRepo: Repository<StudentAssessment>,
   ) {}
@@ -212,7 +210,7 @@ export class AssessmentSequentialProcessingService {
       .getRawMany<{
         offeringIntensity: OfferingIntensity;
         valueCode: string;
-        total: string;
+        total: number;
       }>();
     // Parses the values from DB ensuring that the total will be properly converted to a number.
     // The valueAmount from awards are mapped to string by Typeorm Postgres driver.

@@ -291,6 +291,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * @param assessmentId updated assessment.
    * @param workflowData workflow data to be saved.
    * @param entityManager used to execute the commands in the same transaction.
+   * @returns true if the update was executed or false in case the data was already present.
    */
   async updateAssessmentStatusAndSaveWorkflowData(
     assessmentId: number,
