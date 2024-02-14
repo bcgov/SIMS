@@ -205,7 +205,7 @@ export class StudentAssessment extends RecordDataModel {
     () => DisbursementSchedule,
     (disbursementSchedule) => disbursementSchedule.studentAssessment,
     {
-      eager: false,
+      lazy: true,
       cascade: ["insert", "update"],
       nullable: true,
     },
