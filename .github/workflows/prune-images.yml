@@ -17,10 +17,6 @@ on:
         description: 'Comma seperated list of applications to prune'
         required: true
         default: 'web-sims, api-sims, queue-consumers-sims, workers-sims'
-      licensePlate:
-        description: 'OpenShift License Plate'
-        required: true
-        default: '0c27fb'
       prefix:
         description: 'Branch prefix to restrict pruning to'
         required: false
@@ -38,7 +34,6 @@ jobs:
     steps:
       - name: Print env
         run: |
-          echo "License Plate: ${{ inputs.licensePlate }}"
           echo "Environment: ${{ inputs.environment }}"
           echo "Applications: ${{ inputs.applications }}"
           echo "Prefix: ${{ inputs.prefix }}"
@@ -55,7 +50,7 @@ jobs:
         run: |
           pushd devops/scripts
           ./pruneImages.sh \
-              --license_plate=${{ inputs.licensePlate }} \
+              --license_plate=${{ vars.OPENSHIFT_LICENSE_PLATE }} \
               --env=${{ inputs.environment }} \
               --apps="${{ inputs.applications }}" \
               --prefix=${{ inputs.prefix }} \
