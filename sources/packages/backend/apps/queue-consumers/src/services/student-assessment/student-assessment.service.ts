@@ -81,7 +81,7 @@ export class StudentAssessmentService {
         studentAssessmentStatus,
         studentAssessmentStatusUpdatedOn: LessThan(retryMaxDate),
       },
-      take: 100000, // Limit the results to the first 1000 records
+      take: 10000, // Limit the results to the first 1000 records
       order: {
         id: "DESC", // Order by studentAssessmentStatusUpdatedOn in ascending order
       },
