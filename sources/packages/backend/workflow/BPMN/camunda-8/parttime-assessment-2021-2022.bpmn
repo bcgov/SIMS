@@ -415,7 +415,7 @@
     <bpmn:intermediateThrowEvent id="Event_0ff3d52" name="awardEligibilityBCAG">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if institutionType = &#34;BC Public&#34;&#10;  and (calculatedDataTotalAssessedNeed &#62;= 1)&#10;  and (calculatedDataTotalFamilyIncome &#60; dmnPartTimeAwardFamilySizeVariables.limitAwardBCAGThresholdIncome)&#10;  and (programCredentialType = &#34;undergraduateCertificate&#34;&#10;       or programCredentialType = &#34;undergraduateDiploma&#34;&#10;       or programCredentialType = &#34;undergraduateDegree&#34;)&#10;then true &#10;else false" target="awardEligibilityBCAG" />
+          <zeebe:output source="=if institutionType = &#34;BC Public&#34;&#10;  and (calculatedDataTotalAssessedNeed &#62;= 1)&#10;  and (calculatedDataTotalFamilyIncome &#60; dmnPartTimeAwardFamilySizeVariables.limitAwardBCAGThresholdIncome)&#10;  and (programCredentialType = &#34;undergraduateCertificate&#34;&#10;	   or programCredentialType = &#34;undergraduateCitation&#34;&#10;       or programCredentialType = &#34;undergraduateDiploma&#34;&#10;       or programCredentialType = &#34;undergraduateDegree&#34;)&#10;then true &#10;else false" target="awardEligibilityBCAG" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0ao0mi8</bpmn:incoming>

@@ -6,6 +6,7 @@
 export const credentialTypeToDisplay = (credentialType: string): string => {
   const credentialTypeMap = {
     undergraduateCertificate: "Undergraduate Certificate",
+    undergraduateCitation: "Undergraduate Citation",
     undergraduateDiploma: "Undergraduate Diploma",
     undergraduateDegree: "Undergraduate Degree",
     graduateCertificate: "Graduate Certificate",

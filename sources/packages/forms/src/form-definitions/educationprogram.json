@@ -140,7 +140,7 @@
                     "encrypted": false,
                     "redrawOn": "",
                     "customDefaultValue": "",
-                    "calculateValue": "value = {\r\n    undergraduateCertificate: \"8\",\r\n    undergraduateDiploma: \"7\",\r\n    undergraduateDegree: \"3\",\r\n    graduateCertificate: \"5\",\r\n    graduateDiploma: \"5\",\r\n    graduateDegreeOrMasters: \"5\",\r\n    postGraduateOrDoctorate: \"6\",\r\n    qualifyingStudies: \"1\",\r\n};",
+                    "calculateValue": "value = {\r\n    undergraduateCertificate: \"8\",\r\n    undergraduateCitation: \"8\",\r\n    undergraduateDiploma: \"7\",\r\n    undergraduateDegree: \"3\",\r\n    graduateCertificate: \"5\",\r\n    graduateDiploma: \"5\",\r\n    graduateDegreeOrMasters: \"5\",\r\n    postGraduateOrDoctorate: \"6\",\r\n    qualifyingStudies: \"1\",\r\n};",
                     "calculateServer": true,
                     "key": "levelOfStudyCodes",
                     "tags": [],
@@ -564,6 +564,10 @@
                                 "value": "undergraduateCertificate"
                             },
                             {
+                                "label": "Undergraduate Citation",
+                                "value": "undergraduateCitation"
+                            },
+                            {
                                 "label": "Undergraduate Diploma",
                                 "value": "undergraduateDiploma"
                             },
@@ -622,7 +626,7 @@
                     "validateOn": "change",
                     "validate": {
                         "required": true,
-                        "onlyAvailableItems": false,
+                        "onlyAvailableItems": true,
                         "customMessage": "",
                         "custom": "",
                         "customPrivate": false,

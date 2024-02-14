@@ -422,6 +422,7 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
       graduateDegreeOrMasters: 5,
       postGraduateOrDoctorate: 6,
       undergraduateDiploma: 7,
+      undergraduateCitation: 8,
       undergraduateCertificate: 8,
     };
     const levelOfStudyCode = levelOfStudyCodeMap[credentialType];
