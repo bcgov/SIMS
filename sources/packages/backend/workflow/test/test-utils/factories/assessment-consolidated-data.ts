@@ -193,6 +193,7 @@ export function createFakeConsolidatedPartTimeData(
   assessmentConsolidatedData.offeringIntensity = OfferingIntensity.partTime;
   assessmentConsolidatedData.offeringStudyStartDate = `${programEndYear}-02-01`;
   assessmentConsolidatedData.offeringStudyEndDate = `${programEndYear}-05-24`;
+  assessmentConsolidatedData.studentDataAdditionalTransportKm = 0;
   return assessmentConsolidatedData;
 }
 

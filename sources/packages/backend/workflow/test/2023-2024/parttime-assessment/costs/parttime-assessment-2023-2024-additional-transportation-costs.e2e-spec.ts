@@ -83,6 +83,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
         );
       // Assert
       // calculatedDataAdditionalTransportationMax = min((94-25), 80) * min(30, 20) * 0.34 = 469.2
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataAdditionalTransportationMax,
+      ).toBe(469.2);
       // calculatedDataTotalTransportationAllowance = (30 - 20) * 13 + 469.2 = 599.2
       expect(
         calculatedAssessment.variables
@@ -113,6 +117,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
         );
       // Assert
       // calculatedDataAdditionalTransportationMax = min((94-25), 80) * min(30, 20) * 0.34 = 469.2
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataAdditionalTransportationMax,
+      ).toBe(469.2);
       // calculatedDataTotalTransportationAllowance = min(469.2, 80 * min(30, 20)) = 469.2
       expect(
         calculatedAssessment.variables
@@ -144,6 +152,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
         );
       // Assert
       // calculatedDataAdditionalTransportationMax = min(94, 80) * min(30, 20) * 0.34 = 544
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataAdditionalTransportationMax,
+      ).toBe(544);
       // calculatedDataTotalTransportationAllowance = (30 - 20) * 13 + 544 = 674
       expect(
         calculatedAssessment.variables
@@ -175,6 +187,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
         );
       // Assert
       // calculatedDataAdditionalTransportationMax = min(94, 80) * min(30, 20) * 0.34 = 544
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataAdditionalTransportationMax,
+      ).toBe(544);
       // calculatedDataTotalTransportationAllowance = min(544, 80 * min(30, 20)) = 544
       expect(
         calculatedAssessment.variables
@@ -205,6 +221,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
         );
       // Assert
       // calculatedDataAdditionalTransportationMax = min((94-25), 80) * min(30, 20) = 1380
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataAdditionalTransportationMax,
+      ).toBe(1380);
       // calculatedDataTotalTransportationAllowance = (30 - 20) * 13 + 1380 = 1510
       expect(
         calculatedAssessment.variables
@@ -235,6 +255,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
         );
       // Assert
       // calculatedDataAdditionalTransportationMax = min((94-25), 80) * min(30, 20) = 1380
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataAdditionalTransportationMax,
+      ).toBe(1380);
       // calculatedDataTotalTransportationAllowance = min(1380, 80 * min(30, 20)) = 1380
       expect(
         calculatedAssessment.variables
@@ -266,6 +290,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
         );
       // Assert
       // calculatedDataAdditionalTransportationMax = min(94, 80) * min(30, 20) = 1600
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataAdditionalTransportationMax,
+      ).toBe(1600);
       // calculatedDataTotalTransportationAllowance = (30 - 20) * 13 + 1600 = 1730
       expect(
         calculatedAssessment.variables
@@ -297,6 +325,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
         );
       // Assert
       // calculatedDataAdditionalTransportationMax = min(94, 80) * min(30, 20) = 1600
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataAdditionalTransportationMax,
+      ).toBe(1600);
       // calculatedDataTotalTransportationAllowance = min(1600, 80 * min(30, 20)) = 1600
       expect(
         calculatedAssessment.variables
