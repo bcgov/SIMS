@@ -115,6 +115,8 @@ export class AssessmentSequentialProcessingService {
    * and a full-time application in the same year and both have a CSGP grant, its totals will
    * be individually calculated and returned.
    * The chronology of the applications is defined by the method {@link getSequencedApplications}.
+   * Only the current assessment awards are considered since it must reflect the most updated
+   * workflow calculated values.
    * @param assessmentId assessment id to be used as a reference to find the past applications.
    * @param options method options.
    * - `alternativeReferenceDate` date that should be used to determine the order when the
