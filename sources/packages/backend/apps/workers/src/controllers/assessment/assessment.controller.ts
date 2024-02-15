@@ -1,3 +1,13 @@
+/**
+ * Workers must be implemented as idempotent methods and also with the ability to allow a retry operation.
+ * The idempotency would ensure the worker can be potentially be called multiple time to process the same job
+ * and it will produce the same impact and same result. To know more about it please check the link
+ * https://docs.camunda.io/docs/components/best-practices/development/dealing-with-problems-and-exceptions/#writing-idempotent-workers.
+ * The retry ability means that, in case of fail, the worker must ensure the data would still be consistent
+ * and a new retry operation would be successfully executed.
+ * Please see the below link also for some best practices for workers.
+ * https://docs.camunda.io/docs/components/best-practices/development/dealing-with-problems-and-exceptions/
+ */
 import { Controller, Logger } from "@nestjs/common";
 import { ZeebeWorker } from "../../zeebe";
 import {
@@ -21,6 +31,7 @@ import {
 import { StudentAssessmentService } from "../../services";
 import {
   CRAIncomeVerification,
+  OfferingIntensity,
   StudentAppealRequest,
   StudentAssessment,
   SupportingUser,
@@ -44,13 +55,22 @@ import {
 } from "@sims/services/workflow/variables/assessment-gateway";
 import { CustomNamedError } from "@sims/utilities";
 import { MaxJobsToActivate } from "../../types";
-import { WorkflowClientService } from "@sims/services";
+import {
+  AssessmentSequentialProcessingService,
+  AwardTotal,
+  SystemUsersService,
+  WorkflowClientService,
+} from "@sims/services";
+import { DataSource } from "typeorm";
 
 @Controller()
 export class AssessmentController {
   constructor(
+    private readonly dataSource: DataSource,
     private readonly studentAssessmentService: StudentAssessmentService,
     private readonly workflowClientService: WorkflowClientService,
+    private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
+    private readonly systemUsersService: SystemUsersService,
   ) {}
 
   /**
@@ -231,10 +251,36 @@ export class AssessmentController {
         jobLogger.error(message);
         return job.error(ASSESSMENT_NOT_FOUND, message);
       }
-      await this.studentAssessmentService.updateAssessmentStatusAndSaveWorkflowData(
-        job.variables.assessmentId,
-        job.variables.workflowData,
-      );
+      // The updateAssessmentStatusAndSaveWorkflowData and assessImpactedApplicationReassessmentNeeded are executed in the same transaction
+      // to force then to be successfully executed together or to fail together. In this way the worker can be safely retried from Camunda.
+      await this.dataSource.transaction(async (entityManager) => {
+        // Update status and workflow data ensuring that it will be updated only for the first time to ensure the worker idempotency.
+        const updated =
+          await this.studentAssessmentService.updateAssessmentStatusAndSaveWorkflowData(
+            job.variables.assessmentId,
+            job.variables.workflowData,
+            entityManager,
+          );
+        if (!updated) {
+          // If no rows were update it means that the data is already updated and the worker was already executed before.
+          jobLogger.log(
+            "Assessment status and workflow data were already updated. This indicates that the worker " +
+              "was invoked multiple times and it was already executed with success.",
+          );
+          return job.complete();
+        }
+        const impactedApplication =
+          await this.assessmentSequentialProcessingService.assessImpactedApplicationReassessmentNeeded(
+            job.variables.assessmentId,
+            this.systemUsersService.systemUser.id,
+            entityManager,
+          );
+        if (impactedApplication) {
+          jobLogger.log(
+            `Application id ${impactedApplication.id} was detected as impacted and will be reassessed.`,
+          );
+        }
+      });
       const studentId = assessment.application.student.id;
       const programYearId = assessment.application.programYear.id;
       // Check for any assessment which is waiting for calculation.
@@ -284,6 +330,9 @@ export class AssessmentController {
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
     const jobLogger = new Logger(job.type);
+    const result = {
+      isReadyForCalculation: false,
+    } as VerifyAssessmentCalculationOrderJobOutDTO;
     try {
       const assessment =
         await this.studentAssessmentService.getAssessmentSummary(
@@ -320,7 +369,7 @@ export class AssessmentController {
           `There is ongoing calculation happening for assessment id ${assessmentInCalculationStep.id} ` +
             `and hence the processing assessment id ${assessmentId} is waiting for that calculation to complete.`,
         );
-        return job.complete({ isReadyForCalculation: false });
+        return job.complete(result);
       }
       jobLogger.log(
         `There is no ongoing calculation happening while verifying the order for processing assessment id ${assessmentId}.`,
@@ -341,20 +390,61 @@ export class AssessmentController {
       const isReadyForCalculation =
         firstOutstandingStudentAssessment.id === job.variables.assessmentId;
       if (isReadyForCalculation) {
-        await this.studentAssessmentService.saveAssessmentCalculationStartDate(
-          assessmentId,
+        const saveAssessmentCalculationStartDate =
+          this.studentAssessmentService.saveAssessmentCalculationStartDate(
+            assessmentId,
+          );
+        const getProgramYearTotalAwards =
+          this.assessmentSequentialProcessingService.getProgramYearPreviousAwardsTotals(
+            assessmentId,
+            { alternativeReferenceDate: new Date() },
+          );
+        // Updates the calculation start date and get the program year totals in parallel.
+        const [, programYearTotalAwards] = await Promise.all([
+          saveAssessmentCalculationStartDate,
+          getProgramYearTotalAwards,
+        ]);
+        jobLogger.log(
+          `The assessment calculation order has been verified and the assessment id ${assessmentId} is ready to be processed.`,
         );
+        this.createOutputForProgramYearTotals(programYearTotalAwards, result);
+        result.isReadyForCalculation = true;
+        return job.complete(result);
       }
       jobLogger.log(
-        `The assessment calculation order has been verified and ready for calculation status is ${isReadyForCalculation} ` +
-          `for processing assessment id ${assessmentId}.`,
+        `The assessment calculation order has been verified and the assessment id ${assessmentId} is not ready to be processed.`,
       );
-      return job.complete({ isReadyForCalculation });
+      return job.complete(result);
     } catch (error: unknown) {
       return createUnexpectedJobFail(error, job, {
         logger: jobLogger,
       });
     }
+  }
+
+  /**
+   * Create a new dynamic output variable for each award and offering intensity.
+   * Each variable is prefixed with 'programYearTotal' and then concatenated
+   * with the offering intensity as 'FullTime'/'PartTime' and the award code.
+   * @example
+   * programYearTotalFullTimeBCAG: 1250
+   * programYearTotalPartTimeBCAG: 3450
+   * @param programYearTotalAwards awards to be added to the output.
+   * @param output output to receive the dynamic property.
+   */
+  private createOutputForProgramYearTotals(
+    programYearTotalAwards: AwardTotal[],
+    output: VerifyAssessmentCalculationOrderJobOutDTO,
+  ): void {
+    // Create the dynamic variables to be outputted.
+    programYearTotalAwards.forEach((award) => {
+      const intensity =
+        award.offeringIntensity === OfferingIntensity.fullTime
+          ? "FullTime"
+          : "PartTime";
+      const outputName = `programYearTotal${intensity}${award.valueCode}`;
+      output[outputName] = award.total;
+    });
   }
 
   /**

@@ -1,24 +1,37 @@
 import { Injectable } from "@nestjs/common";
-import { Brackets, EntityManager, Not } from "typeorm";
+import { Brackets, DataSource, EntityManager, Not, Repository } from "typeorm";
 import {
   Application,
   ApplicationStatus,
   AssessmentTriggerType,
   COEStatus,
   DisbursementSchedule,
+  DisbursementScheduleStatus,
+  DisbursementValueType,
+  OfferingIntensity,
   StudentAssessment,
+  StudentAssessmentStatus,
   User,
 } from "@sims/sims-db";
-import { SequencedApplications, SequentialApplication } from "..";
+import { AwardTotal, SequencedApplications, SequentialApplication } from "..";
+import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()
 export class AssessmentSequentialProcessingService {
+  constructor(
+    private readonly dataSource: DataSource,
+    @InjectRepository(Application)
+    private readonly applicationRepo: Repository<Application>,
+    @InjectRepository(StudentAssessment)
+    private readonly studentAssessmentRepo: Repository<StudentAssessment>,
+  ) {}
+
   /**
    * Checks if changes in an assessment can potentially causes changes in another application
    * which would demand a reassessment of the same.
    * @param assessmentId assessment currently changing (e.g. updated or cancelled).
    * @param auditUserId user that should be considered the one that is causing the changes.
-   * @param entityManager used to execute the commands in the same transaction.
+    @param entityManager used to execute the commands in the same transaction.
    * @returns impacted application if any, otherwise null.
    */
   async assessImpactedApplicationReassessmentNeeded(
@@ -60,7 +73,7 @@ export class AssessmentSequentialProcessingService {
       application.applicationNumber,
       application.student.id,
       application.programYear.id,
-      entityManager,
+      { entityManager },
     );
     if (!sequencedApplications.future.length) {
       // There are no future applications impacted.
@@ -93,6 +106,129 @@ export class AssessmentSequentialProcessingService {
   }
 
   /**
+   * Finds all applications before the one related to the {@link assessmentId} provided
+   * and returns the sum of all awards associated with non-overwritten applications.
+   * Only pending awards or already sent awards will be considered.
+   * Only federal and provincial grants are considered.
+   * Grants that are common between part-time and full-time (e.g. CSGP, SBSD) applications will have
+   * their totals calculated per intensity, which means that if the student has a part-time
+   * and a full-time application in the same year and both have a CSGP grant, its totals will
+   * be individually calculated and returned.
+   * The chronology of the applications is defined by the method {@link getSequencedApplications}.
+   * Only the current assessment awards are considered since it must reflect the most updated
+   * workflow calculated values.
+   * @param assessmentId assessment id to be used as a reference to find the past applications.
+   * @param options method options.
+   * - `alternativeReferenceDate` date that should be used to determine the order when the
+   * {@link assessmentId} used as reference does not have a calculated date yet.
+   * @returns list of existing awards and their totals, if any, otherwise it returns an empty array,
+   * for instance, if the application is the first application or the only application for the
+   * program year.
+   */
+  async getProgramYearPreviousAwardsTotals(
+    assessmentId: number,
+    options?: { alternativeReferenceDate?: Date },
+  ): Promise<AwardTotal[]> {
+    const assessment = await this.studentAssessmentRepo.findOne({
+      select: {
+        id: true,
+        application: {
+          id: true,
+          applicationNumber: true,
+          student: {
+            id: true,
+          },
+          programYear: {
+            id: true,
+          },
+        },
+      },
+      relations: {
+        application: { student: true, programYear: true },
+      },
+      where: {
+        id: assessmentId,
+      },
+    });
+    if (!assessment) {
+      throw new Error(`Assessment if ${assessmentId} not found.`);
+    }
+    const sequencedApplications = await this.getSequencedApplications(
+      assessment.application.applicationNumber,
+      assessment.application.student.id,
+      assessment.application.programYear.id,
+      { alternativeReferenceDate: options?.alternativeReferenceDate },
+    );
+    if (!sequencedApplications.previous.length) {
+      // There are no past applications.
+      return [];
+    }
+    const applicationNumbers = sequencedApplications.previous.map(
+      (application) => application.applicationNumber,
+    );
+    const totals = await this.applicationRepo
+      .createQueryBuilder("application")
+      .select("disbursementValue.valueCode", "valueCode")
+      .addSelect("offering.offeringIntensity", "offeringIntensity")
+      .addSelect("SUM(disbursementValue.valueAmount)", "total")
+      .innerJoin("application.currentAssessment", "currentAssessment")
+      .innerJoin(
+        "currentAssessment.disbursementSchedules",
+        "disbursementSchedule",
+      )
+      .innerJoin("disbursementSchedule.disbursementValues", "disbursementValue")
+      .innerJoin("currentAssessment.offering", "offering")
+      .where("application.applicationNumber IN (:...applicationNumbers)", {
+        applicationNumbers,
+      })
+      // Overwritten application can have awards associated with and they should not be considered.
+      .andWhere("application.applicationStatus != :overwrittenStatus", {
+        overwrittenStatus: ApplicationStatus.Overwritten,
+      })
+      // Check for assessment completed status to avoid retrieving any cancelation status.
+      .andWhere(
+        "currentAssessment.studentAssessmentStatus = :completedStudentAssessmentStatus",
+        {
+          completedStudentAssessmentStatus: StudentAssessmentStatus.Completed,
+        },
+      )
+      // Only consider disbursements in Pending, ReadyToSend, or Sent.
+      .andWhere(
+        "disbursementSchedule.disbursementScheduleStatus != :cancelledDisbursementScheduleStatus",
+        {
+          cancelledDisbursementScheduleStatus:
+            DisbursementScheduleStatus.Cancelled,
+        },
+      )
+      // Sequenced applications need at least one valid COE, which means that one can be cancelled
+      // and the other still valid. This ensures that only the valid one will be considered.
+      .andWhere("disbursementSchedule.coeStatus != :declinedCOEStatus", {
+        declinedCOEStatus: COEStatus.declined,
+      })
+      // Ensures that only grants will be returned since loans and not needed.
+      .andWhere("disbursementValue.valueType IN (:...grantsValueTypes)", {
+        grantsValueTypes: [
+          DisbursementValueType.CanadaGrant,
+          DisbursementValueType.BCGrant,
+        ],
+      })
+      .groupBy("offering.offeringIntensity")
+      .addGroupBy("disbursementValue.valueCode")
+      .getRawMany<{
+        offeringIntensity: OfferingIntensity;
+        valueCode: string;
+        total: string;
+      }>();
+    // Parses the values from DB ensuring that the total will be properly converted to a number.
+    // The valueAmount from awards are mapped to string by Typeorm Postgres driver.
+    return totals.map((total) => ({
+      offeringIntensity: total.offeringIntensity,
+      valueCode: total.valueCode,
+      total: +total.total,
+    }));
+  }
+
+  /**
    * Get the application correspondent to the {@link applicationNumber} as the current to then search
    * for applications in the past and in the future for the same student and the same program year.
    * If a reference date is not possible to be determined for the current application so no future
@@ -101,15 +237,22 @@ export class AssessmentSequentialProcessingService {
    * applications and the one to be considered as current for the {@link SequencedApplications}.
    * @param studentId student id.
    * @param programYearId program id to be considered.
-   * @param entityManager used to execute the commands in the same transaction.
+   * @param options method options.
+   * - `entityManager` used to execute the commands in the same transaction.
+   * - `alternativeReferenceDate` date that should be used to determine the order when the
+   * {@link applicationNumber} used as reference does not have a calculated date yet.
    * @returns sequenced applications.
    */
   private async getSequencedApplications(
     applicationNumber: string,
     studentId: number,
     programYearId: number,
-    entityManager: EntityManager,
+    options?: {
+      entityManager?: EntityManager;
+      alternativeReferenceDate?: Date;
+    },
   ): Promise<SequencedApplications> {
+    const entityManager = options?.entityManager ?? this.dataSource.manager;
     // Sub query to get the first assessment calculation date for an application to be used for ordering.
     // All applications versions should be considered, which means 'Overwritten' also.
     // This will ensure that once the application is calculated for the first time its
@@ -180,6 +323,10 @@ export class AssessmentSequentialProcessingService {
       .setParameters({ declinedCOEStatus: COEStatus.declined })
       .orderBy(`"${referenceAssessmentDateColumn}"`)
       .getRawMany<SequentialApplication>();
-    return new SequencedApplications(applicationNumber, sequentialApplications);
+    return new SequencedApplications(
+      applicationNumber,
+      sequentialApplications,
+      options?.alternativeReferenceDate,
+    );
   }
 }

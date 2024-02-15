@@ -30,6 +30,7 @@ import {
   MSFAANumberSharedService,
   ConfirmationOfEnrollmentService,
   GlobalHttpModule,
+  AssessmentSequentialProcessingService,
 } from "@sims/services";
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
@@ -73,6 +74,7 @@ import { TerminusModule } from "@nestjs/terminus";
     NoteSharedService,
     ConfirmationOfEnrollmentService,
     ZeebeHealthIndicator,
+    AssessmentSequentialProcessingService,
   ],
 })
 export class WorkersModule {}

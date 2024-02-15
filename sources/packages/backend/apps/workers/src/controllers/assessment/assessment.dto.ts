@@ -146,6 +146,12 @@ export interface WorkflowWrapUpJobInDTO {
   [WORKFLOW_DATA]: WorkflowData;
 }
 
-export interface VerifyAssessmentCalculationOrderJobOutDTO {
+/**
+ * Provides the status to the workflow that an assessment is the next in order to be processed.
+ * When {@link isReadyForCalculation} is true, dynamic properties will also be attached to the
+ * response representing the total awards values consumed for the particular student for the
+ * application program year.
+ */
+export type VerifyAssessmentCalculationOrderJobOutDTO = {
   isReadyForCalculation: boolean;
-}
+} & Record<string, number>;

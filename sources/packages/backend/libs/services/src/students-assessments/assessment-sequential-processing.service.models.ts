@@ -1,3 +1,5 @@
+import { OfferingIntensity } from "@sims/sims-db";
+
 /**
  * Application information part of a sequence of ordered applications.
  */
@@ -44,10 +46,13 @@ export class SequencedApplications {
    * determine which applications are in the past or in the future.
    * @param applications list of ordered applications to be segregated into
    * future or previous applications in relation to the {@link referenceApplicationNumber}.
+   * @param alternativeReferenceDate date that should be used to determine the order when the
+   * {@link referenceApplicationNumber} does not have a calculated date yet.
    */
   constructor(
     referenceApplicationNumber: string,
     applications: SequentialApplication[],
+    alternativeReferenceDate?: Date,
   ) {
     const referenceIndex = applications.findIndex(
       (application) =>
@@ -60,21 +65,23 @@ export class SequencedApplications {
       );
     }
     this._current = applications[referenceIndex];
-    if (!this.current.referenceAssessmentDate) {
+    const referenceAssessmentDate =
+      this._current.referenceAssessmentDate ?? alternativeReferenceDate;
+    if (!referenceAssessmentDate) {
       // If an assessment was never calculated, previous and future applications
       // should never be calculated because an order cannot be defined and
       // no impacts should be detected.
       return;
     }
-    // Separates the applications into previous or future based on its
-    // index since they are expected to be ordered.
+    // Separates the applications into previous or future based on its reference date.
     // The current application is still in the array and will be ignored
     // due based on the two if conditions present.
-    for (let i = 0; i < applications.length; i++) {
-      const application = applications[i];
-      if (i < referenceIndex) {
+    for (const application of applications) {
+      if (application.referenceAssessmentDate < referenceAssessmentDate) {
         this._previous.push(application);
-      } else if (i > referenceIndex) {
+      } else if (
+        application.referenceAssessmentDate > referenceAssessmentDate
+      ) {
         this._future.push(application);
       }
     }
@@ -103,4 +110,13 @@ export class SequencedApplications {
   get future(): ReadonlyArray<SequentialApplication> {
     return this._future;
   }
+}
+
+/**
+ * Award code (e.g. CSPT, CSGD, CSGP, SBSD, BCAG) and its totals.
+ */
+export interface AwardTotal {
+  offeringIntensity: OfferingIntensity;
+  valueCode: string;
+  total: number;
 }

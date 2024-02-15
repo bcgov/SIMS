@@ -14,9 +14,31 @@ export enum MockedZeebeJobResult {
 export const FAKE_WORKER_JOB_RESULT_PROPERTY = "resultType";
 export const FAKE_WORKER_JOB_ERROR_MESSAGE_PROPERTY = "errorMessage";
 export const FAKE_WORKER_JOB_ERROR_CODE_PROPERTY = "errorCode";
+export const FAKE_WORKER_OUTPUT_VARIABLES_PROPERTY = "outputVariables";
 
-export interface FakeWorkerJobResult {
+export class FakeWorkerJobResult {
   [FAKE_WORKER_JOB_RESULT_PROPERTY]: MockedZeebeJobResult;
+  /**
+   * Contains the dynamic list of outputted variables that will be sent
+   * to the Workflow when the method job.complete is invoked.
+   */
+  [FAKE_WORKER_OUTPUT_VARIABLES_PROPERTY]?: IOutputVariables;
+  /**
+   * Get the {@link MockedZeebeJobResult} from the expected property in the {@link result} parameter.
+   * @param result job execution result.
+   * @returns job result status.
+   */
+  static getResultType(result: unknown): MockedZeebeJobResult {
+    return result[FAKE_WORKER_JOB_RESULT_PROPERTY];
+  }
+  /**
+   * Get the optional worker output variables that can be returned from the job.complete method.
+   * @param result job execution result.
+   * @returns worker output variables, if any.
+   */
+  static getOutputVariables(result: unknown): IOutputVariables {
+    return result[FAKE_WORKER_OUTPUT_VARIABLES_PROPERTY];
+  }
 }
 
 /**
@@ -39,9 +61,13 @@ export function createFakeWorkerJob<
     variables: options?.variables,
     customHeaders: options?.customHeaders,
   } as ZeebeJob<WorkerInputVariables, CustomHeaderShape, WorkerOutputVariables>;
-  job.complete = jest.fn().mockResolvedValue({
-    resultType: MockedZeebeJobResult.Complete,
-  } as FakeWorkerJobResult);
+  job.complete = jest.fn().mockImplementation(
+    (updatedVariables?: WorkerOutputVariables) =>
+      ({
+        resultType: MockedZeebeJobResult.Complete,
+        outputVariables: updatedVariables,
+      } as FakeWorkerJobResult),
+  );
   job.fail = jest.fn().mockImplementation(
     (errorMessage: string, retries?: number) =>
       ({
