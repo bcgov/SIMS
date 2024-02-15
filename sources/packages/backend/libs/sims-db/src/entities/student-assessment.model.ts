@@ -191,14 +191,6 @@ export class StudentAssessment extends RecordDataModel {
   })
   noaApprovalStatus?: AssessmentStatus;
   /**
-   * Disbursement ids related to this assessment.
-   */
-  @RelationId(
-    (studentAssessment: StudentAssessment) =>
-      studentAssessment.disbursementSchedules,
-  )
-  disbursementSchedulesIds?: number[];
-  /**
    * Disbursements related to this assessment.
    */
   @OneToMany(
