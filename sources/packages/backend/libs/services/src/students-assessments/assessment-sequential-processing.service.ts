@@ -150,6 +150,9 @@ export class AssessmentSequentialProcessingService {
         id: assessmentId,
       },
     });
+    if (!assessment) {
+      throw new Error(`Assessment if ${assessmentId} not found.`);
+    }
     const sequencedApplications = await this.getSequencedApplications(
       assessment.application.applicationNumber,
       assessment.application.student.id,
