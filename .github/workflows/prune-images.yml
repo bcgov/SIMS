@@ -1,23 +1,24 @@
 name: Prune Images
-run-name: Prune old images from OpenShift
+run-name: Pruning all but the most recent ${{ inputs.minTags }} tags prior to what is deployed in ${{ inputs.environment }}
 
 on:
   workflow_dispatch:
     inputs:
-      applications:
-        description: 'Applications to prune'
-        required: true
-        default: 'web-sims, api-sims'
-      licensePlate:
-        description: 'License Plate'
-        required: true
-        default: '0c27fb'
       environment:
-        description: 'Environment (dev, test, prod)'
+        type: choice
+        description: 'Environment'
         required: true
-        default: 'dev'
+        options:
+          - dev
+          - test
+          - prod
+        default: 'test'
+      applications:
+        description: 'Comma seperated list of applications to prune'
+        required: true
+        default: 'web-sims, api-sims, queue-consumers-sims, workers-sims'
       prefix:
-        description: 'Prefix'
+        description: 'Branch prefix to restrict pruning to'
         required: false
         default: 'main'
       minTags:
@@ -33,8 +34,8 @@ jobs:
     steps:
       - name: Print env
         run: |
-          echo "License Plate: ${{ inputs.licensePlate }}"
           echo "Environment: ${{ inputs.environment }}"
+          echo "Applications: ${{ inputs.applications }}"
           echo "Prefix: ${{ inputs.prefix }}"
           echo "Minimum Tags: ${{ inputs.minTags }}"
       
@@ -47,17 +48,13 @@ jobs:
       
       - name: Prune Images
         run: |
-          IFS=',' read -r -a apps <<< ${{ inputs.applications }}
-          for app in "${apps[@]}"
-          do
-            # Trim spaces
-            trimmed_app=$(echo "$app" | xargs)
-            devops/scripts/fetchOldTags.sh \
-              --license_plate=${{ inputs.licensePlate }} \
+          pushd devops/scripts
+          ./pruneImages.sh \
+              --license_plate=${{ vars.OPENSHIFT_LICENSE_PLATE }} \
               --env=${{ inputs.environment }} \
-              --app_name=$app \
-              --prefix=${{ inputs.prefix }} | \
-              xargs -I {} echo "oc tag ${{ inputs.licensePlate }}-tools/$app:{}' --delete"
-          done
+              --apps="${{ inputs.applications }}" \
+              --prefix=${{ inputs.prefix }} \
+              --min_tags=${{ inputs.minTags}}
+          popd
     
           
