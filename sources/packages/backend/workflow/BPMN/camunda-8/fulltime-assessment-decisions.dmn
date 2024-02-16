@@ -10,7 +10,7 @@
       <output id="OutputClause_01j97oq" label="limitWeeklyChildCare" name="limitWeeklyChildCare" typeRef="string" />
       <output id="OutputClause_05wibwn" label="limitWeeklyAlimonyChildSupport" name="limitWeeklyAlimonyChildSupport" typeRef="string" />
       <output id="OutputClause_0o0ynbc" label="limitWeeklySecondResidence" name="limitWeeklySecondResidence" typeRef="string" />
-      <output id="OutputClause_0pshgc9" label="limitWeeklyTransportationAllowance" name="transportationweeklyAllowance" typeRef="string" />
+      <output id="OutputClause_0pshgc9" label="limitWeeklytransportationAllownace" name="transportationweeklyAllownace" typeRef="string" />
       <output id="OutputClause_1c5j7zc" label="limitWeeklyCPPperParent" name="limitWeeklyCPPperParent" typeRef="string" />
       <output id="OutputClause_1m4w70h" label="limitWeeklyEIPerParent" name="limitWeeklyEIPerParent" typeRef="string" />
       <rule id="DecisionRule_07fk6df">
