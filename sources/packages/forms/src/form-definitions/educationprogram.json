@@ -2097,12 +2097,12 @@
                     "data": {
                         "values": [
                             {
-                                "label": "12 weeks to less than 1 Year",
-                                "value": "12WeeksToLessThan1Year"
+                                "label": "12 weeks to 52 weeks",
+                                "value": "12WeeksTo52Weeks"
                             },
                             {
-                                "label": "52 weeks to 59 weeks",
-                                "value": "52WeeksTo59Weeks"
+                                "label": "53 weeks to 59 weeks",
+                                "value": "53WeeksTo59Weeks"
                             },
                             {
                                 "label": "60 weeks to less than 2 years",

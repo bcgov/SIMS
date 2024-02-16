@@ -12,8 +12,8 @@ export enum CredentialTypes {
 }
 
 export enum ProgramLengthOptions {
-  WeeksToLessThanYear = "12WeeksToLessThan1Year",
-  FiftyTwoWeeksToFiftyNineWeeks = "52WeeksTo59Weeks",
+  TwelveWeeksToFiftyTwoWeeks = "12WeeksTo52Weeks",
+  FiftyThreeWeeksToFiftyNineWeeks = "53WeeksTo59Weeks",
   SixtyWeeksToTwoYears = "60WeeksToLessThan2Years",
   TwoToThreeYears = "2YearsToLessThan3Years",
   ThreeToFourYears = "3YearsToLessThan4Years",

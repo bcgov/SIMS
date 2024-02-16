@@ -23,8 +23,8 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
   ).filter((type) => !EXPECTED_PROGRAM_CREDENTIAL_TYPES.includes(type));
   // Expected and not expected program length options.
   const EXPECTED_PROGRAM_LENGTH = [
-    ProgramLengthOptions.WeeksToLessThanYear,
-    ProgramLengthOptions.FiftyTwoWeeksToFiftyNineWeeks,
+    ProgramLengthOptions.TwelveWeeksToFiftyTwoWeeks,
+    ProgramLengthOptions.FiftyThreeWeeksToFiftyNineWeeks,
   ];
   const NOT_EXPECTED_PROGRAM_LENGTH = Object.values(
     ProgramLengthOptions,
@@ -99,7 +99,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
         assessmentConsolidatedData.programCredentialType =
           CredentialType.GraduateDiploma;
         assessmentConsolidatedData.programLength =
-          ProgramLengthOptions.FiftyTwoWeeksToFiftyNineWeeks;
+          ProgramLengthOptions.FiftyThreeWeeksToFiftyNineWeeks;
         // Act
         const calculatedAssessment =
           await executeFullTimeAssessmentForProgramYear(

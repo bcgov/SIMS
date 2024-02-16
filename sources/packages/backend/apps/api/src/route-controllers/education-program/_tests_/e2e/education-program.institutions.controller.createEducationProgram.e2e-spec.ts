@@ -70,7 +70,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         deliveredOnSite: true,
         deliveredOnline: false,
       },
-      completionYears: "12WeeksToLessThan1Year",
+      completionYears: "12WeeksTo52Weeks",
       courseLoadCalculation: "credit",
       regulatoryBody: "other",
       otherRegulatoryBody: "Other RB test",

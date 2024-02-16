@@ -53,7 +53,7 @@ describe("ECertPartTimeIntegrationService-createRequestContent", () => {
         weeksOfStudy: 51,
         fieldOfStudy: 15,
         yearOfStudy: 1,
-        completionYears: "12WeeksToLessThan1Year",
+        completionYears: "12WeeksTo52Weeks",
         enrollmentConfirmationDate: new Date("2023-11-03T19:59:44.913Z"),
         dateOfBirth: new Date("1973-01-31T00:00:00.000Z"),
         lastName: "SHAH",
