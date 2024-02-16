@@ -13,7 +13,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataAdditionalTransportKm = 0;
       assessmentConsolidatedData.offeringWeeks = 30;
       assessmentConsolidatedData.offeringDelivered =
         OfferingDeliveryOptions.Onsite;
@@ -24,7 +23,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
           assessmentConsolidatedData,
         );
       // Assert
-      // calculatedDataTotalTransportationAllowance = 13 * 30 = 390
+      // calculatedDataTotalTransportationAllowance = dmnPartTimeProgramYearMaximums.limitTransportationAllowance * offeringWeeks = 390
       expect(
         calculatedAssessment.variables
           .calculatedDataTotalTransportationAllowance,
@@ -39,7 +38,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataAdditionalTransportKm = 0;
       assessmentConsolidatedData.offeringDelivered =
         OfferingDeliveryOptions.Online;
       // Act
@@ -57,7 +55,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
   );
 
   it(
-    "Should determine calculatedDataTotalTransportationAllowance when studentDataAdditionalTransportKm less than 280 " +
+    "Should determine calculatedDataTotalTransportationAllowance when studentDataAdditionalTransportKm less than 280 and greater than 1 km " +
       "and studentDataAdditionalTransportPlacement is true and offeringDelivered is onsite",
     async () => {
       // Arrange
@@ -91,7 +89,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
   );
 
   it(
-    "Should determine calculatedDataTotalTransportationAllowance when studentDataAdditionalTransportKm less than 280 " +
+    "Should determine calculatedDataTotalTransportationAllowance when studentDataAdditionalTransportKm less than 280 and greater than 1 km " +
       "and studentDataAdditionalTransportPlacement is true and offeringDelivered is online",
     async () => {
       // Arrange
@@ -125,7 +123,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
   );
 
   it(
-    "Should determine calculatedDataTotalTransportationAllowance when studentDataAdditionalTransportKm less than 280 " +
+    "Should determine calculatedDataTotalTransportationAllowance when studentDataAdditionalTransportKm less than 280 and greater than 1 km " +
       "and studentDataAdditionalTransportPlacement is false and offeringDelivered is onsite",
     async () => {
       // Arrange
@@ -160,7 +158,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
   );
 
   it(
-    "Should determine calculatedDataTotalTransportationAllowance when studentDataAdditionalTransportKm less than 280 " +
+    "Should determine calculatedDataTotalTransportationAllowance when studentDataAdditionalTransportKm less than 280 and greater than 1 km " +
       "and studentDataAdditionalTransportPlacement is false and offeringDelivered is online",
     async () => {
       // Arrange
