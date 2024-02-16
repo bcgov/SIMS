@@ -6,55 +6,60 @@ on:
     inputs:
       environment:
         type: choice
-        description: 'Environment'
+        description: "Environment"
         required: true
         options:
           - dev
           - test
           - prod
-        default: 'test'
+        default: "test"
       applications:
-        description: 'Comma seperated list of applications to prune'
+        description: "Comma seperated list of applications to prune"
         required: true
-        default: 'web-sims, api-sims, queue-consumers-sims, workers-sims'
+        default: "web-sims, api-sims, queue-consumers-sims, workers-sims"
       prefix:
-        description: 'Branch prefix to restrict pruning to'
+        description: "Branch prefix to restrict pruning to"
         required: false
-        default: 'main'
+        default: "main"
       minTags:
-        description: 'Minimum number of Tags to keep'
+        description: "Minimum number of Tags to keep"
         required: false
-        default: '10'
+        default: "10"
   schedule:
-    - cron: '0 6 * * *' # Runs at 6 AM every day
+    - cron: "0 14 * * *" # Runs at 6 AM Pacific every day
 
 jobs:
   prune-images:
     runs-on: ubuntu-latest
     steps:
+      - name: Set default inputs when triggered via schedule
+        run: |
+          echo "ENVIRONMENT=${{ inputs.environment || 'test' }}" >> $GITHUB_ENV
+          echo "APPLICATIONS=${{ inputs.applications || 'web-sims, api-sims, queue-consumers-sims, workers-sims' }}" >> $GITHUB_ENV
+          echo "PREFIX=${{ inputs.prefix || 'main' }}" >> $GITHUB_ENV
+          echo "MIN_TAGS=${{ inputs.minTags || '10' }}" >> $GITHUB_ENV
+
       - name: Print env
         run: |
-          echo "Environment: ${{ inputs.environment }}"
-          echo "Applications: ${{ inputs.applications }}"
-          echo "Prefix: ${{ inputs.prefix }}"
-          echo "Minimum Tags: ${{ inputs.minTags }}"
-      
+          echo "Environment: ${ENVIRONMENT}"
+          echo "Applications: ${APPLICATIONS}"
+          echo "Prefix: ${PREFIX}"
+          echo "Minimum Tags: ${MIN_TAGS}
+
       - name: Checkout source code
         uses: actions/checkout@v3
-      
+
       - name: Login to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
-      
+
       - name: Prune Images
         run: |
           pushd devops/scripts
           ./pruneImages.sh \
               --license_plate=${{ vars.OPENSHIFT_LICENSE_PLATE }} \
-              --env=${{ inputs.environment }} \
-              --apps="${{ inputs.applications }}" \
-              --prefix=${{ inputs.prefix }} \
-              --min_tags=${{ inputs.minTags}}
+              --env=${ENVIRONMENT} \
+              --apps="${APPLICATIONS}" \
+              --prefix=${PREFIX} \
+              --min_tags=${MIN_TAGS}
           popd
-    
-          
