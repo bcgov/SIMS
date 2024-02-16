@@ -233,10 +233,6 @@ export class ApplicationStudentsController extends BaseController {
       payload.data.selectedOfferingEndDate = studyEndDate;
     }
 
-    // Set studentDataAdditionalTransportKm to 0 for Camunda assessment calculation
-    // if it is not provided from the student application payload
-    payload.data.studentDataAdditionalTransportKm =
-      payload.data.studentDataAdditionalTransportKm ?? 0;
     const submissionResult =
       await this.formService.dryRunSubmission<ApplicationData>(
         programYear.formName,
