@@ -30,6 +30,8 @@ objects:
                   value: ${NODE_ENV}
                 - name: QUEUE_CONSUMERS_PORT
                   value: "${PORT}"
+                - name: IS_FULLTIME_ALLOWED
+                  value: "${IS_FULLTIME_ALLOWED}"
                 - name: POSTGRES_HOST
                   value: "${DB_SERVICE}"
                 - name: REDIS_HOST
@@ -267,18 +269,18 @@ objects:
       minReplicas: "${{REPLICAS}}"
       maxReplicas: 10
       metrics:
-          - type: Resource
-            resource:
-              name: cpu
-              target:
-                type: Utilization
-                averageUtilization: 80
-          - type: Resource
-            resource:
-              name: memory
-              target:
-                type: AverageValue
-                averageValue: "230M"
+        - type: Resource
+          resource:
+            name: cpu
+            target:
+              type: Utilization
+              averageUtilization: 80
+        - type: Resource
+          resource:
+            name: memory
+            target:
+              type: AverageValue
+              averageValue: "230M"
   - apiVersion: policy/v1
     kind: PodDisruptionBudget
     metadata:
@@ -362,6 +364,8 @@ parameters:
   - name: HOST_NAME
     required: true
   - name: QUEUE_PREFIX
+    required: true
+  - name: IS_FULLTIME_ALLOWED
     required: true
   - name: ZONE_B_SFTP_SECRET_NAME
     value: zone-b-sftp
