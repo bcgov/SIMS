@@ -44,7 +44,7 @@ jobs:
           echo "Environment: ${ENVIRONMENT}"
           echo "Applications: ${APPLICATIONS}"
           echo "Prefix: ${PREFIX}"
-          echo "Minimum Tags: ${MIN_TAGS}
+          echo "Minimum Tags: ${MIN_TAGS}"
 
       - name: Checkout source code
         uses: actions/checkout@v3
