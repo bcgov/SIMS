@@ -14,7 +14,7 @@ VALUES
     'LGCY',
     'Legacy System Restriction',
     'Other',
-    ARRAY ['Stop Part Time Disbursement',
-'Stop Full Time Disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement',
+'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error' :: sims.restriction_notification_types
   );
