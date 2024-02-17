@@ -89,4 +89,4 @@ UPDATE
 SET
   is_included = TRUE
 WHERE
-  is_included = FALSE;
+  is_included IS FALSE;
