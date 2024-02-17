@@ -141,10 +141,15 @@ export class SFASIntegrationProcessingService {
 
       if (result.success) {
         try {
+          /**
+           * Bulk operation to update student id in SFAS individuals table after importing data from SFAS.
+           */
+          await this.sfasIndividualService.updateStudentId();
           await this.sfasIndividualService.updateDisbursementOverawards();
+          await this.sfasRestrictionService.updateStudentRestrictions();
         } catch (error) {
           const logMessage =
-            "Error while updating overawards balances imported from SFAS.";
+            "Error while updating overawards balances or inserting student restrictions imported from SFAS.";
           result.summary.push(logMessage);
           result.success = false;
           this.logger.error(logMessage);

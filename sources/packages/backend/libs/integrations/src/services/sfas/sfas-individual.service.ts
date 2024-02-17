@@ -131,7 +131,6 @@ export class SFASIndividualService
    * Updates and inserts new disbursement overaward balances from sfas to disbursement overawards table.
    */
   async updateDisbursementOverawards(): Promise<void> {
-    await this.updateStudentId();
     // Update BCSL and CSL overawards in parallel
     const updateBCSLDisbursementOverawardPromise =
       this.updateDisbursementOveraward(
