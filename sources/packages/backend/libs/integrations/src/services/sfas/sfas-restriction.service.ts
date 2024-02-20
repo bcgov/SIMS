@@ -31,7 +31,7 @@ export class SFASRestrictionService
   /**
    * Bulk operation to insert student restrictions from SFAS restrictions data.
    */
-  async updateStudentRestrictions(): Promise<void> {
+  async insertStudentRestrictions(): Promise<void> {
     await this.repo.manager.query(this.bulkInsertStudentRestrictionsSQL);
   }
 

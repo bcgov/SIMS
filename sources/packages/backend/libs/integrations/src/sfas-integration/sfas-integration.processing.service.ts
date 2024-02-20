@@ -146,7 +146,7 @@ export class SFASIntegrationProcessingService {
            */
           await this.sfasIndividualService.updateStudentId();
           await this.sfasIndividualService.updateDisbursementOverawards();
-          await this.sfasRestrictionService.updateStudentRestrictions();
+          await this.sfasRestrictionService.insertStudentRestrictions();
         } catch (error) {
           const logMessage =
             "Error while updating overawards balances or inserting student restrictions imported from SFAS.";

@@ -33,7 +33,7 @@ FROM
       sims.sfas_restrictions res
     WHERE
       res.removal_date IS NULL
-      AND res.is_included IS false
+      AND res.is_included = false
   ) r
   INNER JOIN sims.sfas_individuals i ON r.individual_id = i.id
   LEFT JOIN sims.restrictions restrictions ON r.mapped_code = restrictions.restriction_code
@@ -69,7 +69,7 @@ FROM
       sims.sfas_restrictions res
     WHERE
       res.removal_date IS NULL
-      AND res.is_included IS false
+      AND res.is_included = false
   ) r
   INNER JOIN sims.sfas_individuals i ON r.individual_id = i.id
   INNER JOIN sims.restrictions restrictions ON r.mapped_code = restrictions.restriction_code
@@ -77,7 +77,7 @@ FROM
   AND str.restriction_id = restrictions.id
 WHERE
   i.student_id IS NOT NULL
-  AND str.is_active IS FALSE
+  AND str.is_active = false
   OR str.restriction_id IS NULL;
 
 /*
@@ -90,4 +90,4 @@ UPDATE
 SET
   is_included = TRUE
 WHERE
-  is_included IS FALSE;
+  is_included = false;

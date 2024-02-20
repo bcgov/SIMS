@@ -1,5 +1,5 @@
 -- Rollback insert Legacy Restriction.
 DELETE FROM
-  sims.restrictions r
+  sims.restrictions
 WHERE
-  r.restriction_code = 'LGCY';
+  restriction_code = 'LGCY';
