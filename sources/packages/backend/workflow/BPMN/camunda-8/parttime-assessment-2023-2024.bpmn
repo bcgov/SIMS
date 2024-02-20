@@ -666,10 +666,10 @@
     <bpmn:intermediateThrowEvent id="Event_1fyviov" name="Calculate Total Transportation Allowance">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=// if the student is receiving an additional ammount based on a clinical or practicum&#10;// placement then reduce transportation allowance limit accordingly.&#10;if (calculatedDataAdditionalTransportPlacement = true)&#10;then&#10;    dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance - dmnPartTimeProgramYearMaximums.limitAdditionalTransportationPlacement&#10;  else&#10;    dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance" target="calculatedDataAdditionalTransportEstimatedCost" />
+          <zeebe:output source="=// If the student is receiving an additional ammount based on a clinical or practicum&#10;// placement then reduce transportation allowance limit accordingly.&#10;if (calculatedDataAdditionalTransportPlacement = true)&#10;then&#10;    dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance - dmnPartTimeProgramYearMaximums.limitAdditionalTransportationPlacement&#10;  else&#10;    dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance" target="calculatedDataAdditionalTransportEstimatedCost" />
           <zeebe:output source="=min(calculatedDataAdditionalTransportCost,&#10;calculatedDataAdditionalTransportEstimatedCost)" target="calculatedDataAdditionalWeeklyTransportationCost" />
           <zeebe:output source="=calculatedDataAdditionalWeeklyTransportationCost * calculatedDataAdditionalTransportWeeks * dmnPartTimeProgramYearMaximums.limitAdditionalTransportationKMReduction" target="calculatedDataAdditionalTransportationMax" />
-          <zeebe:output source="=if (offeringDelivered = &#34;onsite&#34;)&#10;then&#10;  (offeringWeeks - calculatedDataAdditionalTransportWeeks) * dmnPartTimeProgramYearMaximums.limitTransportationAllowance + calculatedDataAdditionalTransportationMax&#10;else&#10;  calculatedDataAdditionalTransportationMax" target="calculatedDataTotalTransportationAllowance" />
+          <zeebe:output source="=// If the offering is delivered onsite then transportation costs &#10;// for the weeks outside the additional transportation weeks are &#10;// calculated with maximum transportation allowance.&#10;if (offeringDelivered = &#34;onsite&#34;)&#10;then&#10;  (offeringWeeks - calculatedDataAdditionalTransportWeeks) * dmnPartTimeProgramYearMaximums.limitTransportationAllowance + calculatedDataAdditionalTransportationMax&#10;else&#10;  calculatedDataAdditionalTransportationMax" target="calculatedDataTotalTransportationAllowance" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1q9cwdm</bpmn:incoming>
@@ -684,10 +684,10 @@
     <bpmn:intermediateThrowEvent id="Event_0bab91y" name="Calculate Total Transportation Allowance">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=// if the student is receiving an additional ammount based on a clinical or practicum&#10;// placement then reduce transportation allowance limit accordingly.&#10;if (calculatedDataAdditionalTransportPlacement = true)&#10;then&#10;    dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance - dmnPartTimeProgramYearMaximums.limitAdditionalTransportationPlacement&#10;  else&#10;    dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance" target="calculatedDataAdditionalTransportEstimatedCost" />
+          <zeebe:output source="=// If the student is receiving an additional ammount based on a clinical or practicum&#10;// placement then reduce transportation allowance limit accordingly.&#10;if (calculatedDataAdditionalTransportPlacement = true)&#10;then&#10;    dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance - dmnPartTimeProgramYearMaximums.limitAdditionalTransportationPlacement&#10;  else&#10;    dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance" target="calculatedDataAdditionalTransportEstimatedCost" />
           <zeebe:output source="=min(calculatedDataAdditionalTransportCost,&#10;calculatedDataAdditionalTransportEstimatedCost)" target="calculatedDataAdditionalWeeklyTransportationCost" />
           <zeebe:output source="=calculatedDataAdditionalWeeklyTransportationCost * calculatedDataAdditionalTransportWeeks" target="calculatedDataAdditionalTransportationMax" />
-          <zeebe:output source="=if (offeringDelivered = &#34;onsite&#34;)&#10;then&#10;  (offeringWeeks - calculatedDataAdditionalTransportWeeks) * dmnPartTimeProgramYearMaximums.limitTransportationAllowance + calculatedDataAdditionalTransportationMax&#10;else&#10;  calculatedDataAdditionalTransportationMax" target="calculatedDataTotalTransportationAllowance" />
+          <zeebe:output source="=// If the offering is delivered onsite then transportation costs &#10;// for the weeks outside the additional transportation weeks are &#10;// calculated with maximum transportation allowance.&#10;if (offeringDelivered = &#34;onsite&#34;)&#10;then&#10;  (offeringWeeks - calculatedDataAdditionalTransportWeeks) * dmnPartTimeProgramYearMaximums.limitTransportationAllowance + calculatedDataAdditionalTransportationMax&#10;else&#10;  calculatedDataAdditionalTransportationMax" target="calculatedDataTotalTransportationAllowance" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1yysw0i</bpmn:incoming>
@@ -784,7 +784,7 @@
         <zeebe:ioMapping>
           <zeebe:output source="=if (studentDataAdditionalTransportKm = null)&#10;then&#10;  0&#10;else&#10;  studentDataAdditionalTransportKm" target="calculatedDataAdditionalTransportKm" />
           <zeebe:output source="=if (studentDataAdditionalTransportCost = null)&#10;then&#10;  0&#10;else&#10;  studentDataAdditionalTransportCost" target="calculatedDataAdditionalTransportCost" />
-          <zeebe:output source="=if (studentDataAdditionalTransportPlacement = null)&#10;then&#10;  0&#10;else&#10;  studentDataAdditionalTransportPlacement" target="calculatedDataAdditionalTransportPlacement" />
+          <zeebe:output source="=if (studentDataAdditionalTransportPlacement = null)&#10;then&#10;  false&#10;else&#10;  studentDataAdditionalTransportPlacement = &#34;yes&#34;" target="calculatedDataAdditionalTransportPlacement" />
           <zeebe:output source="=if (studentDataAdditionalTransportWeeks = null)&#10;then&#10;  0&#10;else&#10;  min(offeringWeeks, studentDataAdditionalTransportWeeks)" target="calculatedDataAdditionalTransportWeeks" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
