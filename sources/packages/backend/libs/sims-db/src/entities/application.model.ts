@@ -6,6 +6,7 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import {
   ApplicationDisabilityStatus,
@@ -57,6 +58,11 @@ export class Application extends RecordDataModel {
     length: APPLICATION_NUMBER_LENGTH,
   })
   applicationNumber: string;
+  /**
+   * Student id associated with this application.
+   */
+  @RelationId((application: Application) => application.student)
+  studentId: number;
   /**
    * Student associated with this application.
    */
