@@ -104,6 +104,9 @@ export class Application extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   pirProgram?: EducationProgram;
+
+  @RelationId((application: Application) => application.programYear)
+  programYearId: number;
   /**
    * References the program year related to the application.
    * This will be populated only when an active program year application is Submitted
