@@ -107,6 +107,15 @@ export class StudentAssessment extends RecordDataModel {
   })
   triggerType: AssessmentTriggerType;
   /**
+   * Offering id that must be used for any assessment/reassessment. This information can
+   * be null only during a PIR process. Upon a program/offering change, this will also
+   * represent the new/changed program/offering.
+   */
+  @RelationId(
+    (studentAssessment: StudentAssessment) => studentAssessment.offering,
+  )
+  offeringId?: number;
+  /**
    * Offering that must be used for any assessment/reassessment. This information can
    * be null only during a PIR process. Upon a program/offering change, this will also
    * represent the new/changed program/offering.
