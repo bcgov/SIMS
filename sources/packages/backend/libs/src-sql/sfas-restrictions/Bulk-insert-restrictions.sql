@@ -1,5 +1,5 @@
 /* 
- * After all the SFAS individuals are imported, 
+ * After all the SFAS restrictions are imported, 
  * the below query inserts one Legacy restriction entry 
  * per student if they have one or more restrictions 
  * imported from the sfas system that are not present 
@@ -42,7 +42,8 @@ WHERE
   AND restrictions.restriction_code IS NULL;
 
 /* 
- * The below query inserts restrictions from sfas 
+ * After all the SFAS restrictions are imported, 
+ * the below query inserts restrictions from sfas 
  * if those restrictions are valid restrictions 
  * in the sims system and are either not present in the 
  * sims student restrictions table or they are inactive. 
