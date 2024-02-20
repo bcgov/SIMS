@@ -5,7 +5,6 @@ import {
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
-  RelationId,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
@@ -172,12 +171,6 @@ export class EducationProgram extends RecordDataModel {
     enumName: "ProgramStatus",
   })
   programStatus: ProgramStatus;
-  /**
-   * Related institution.
-   */
-
-  @RelationId((program: EducationProgram) => program.institution)
-  institutionId: number;
 
   @OneToOne(() => Institution, { eager: false, cascade: true })
   @JoinColumn({
@@ -357,12 +350,6 @@ export class EducationProgram extends RecordDataModel {
   })
   effectiveEndDate?: string;
 
-  /**
-   * Education program note.
-   */
-  @RelationId((program: EducationProgram) => program.programNote)
-  programNoteId?: number;
-
   @OneToOne(() => Note, { eager: false, cascade: true, nullable: true })
   @JoinColumn({
     name: "program_note",
@@ -370,24 +357,12 @@ export class EducationProgram extends RecordDataModel {
   })
   programNote?: Note;
 
-  /**
-   * Education program assessed by.
-   */
-  @RelationId((program: EducationProgram) => program.assessedBy)
-  assessedById?: number;
-
   @ManyToOne(() => User, { eager: false, nullable: true })
   @JoinColumn({
     name: "assessed_by",
     referencedColumnName: "id",
   })
   assessedBy?: User;
-
-  /**
-   * Education program submitted by.
-   */
-  @RelationId((program: EducationProgram) => program.submittedBy)
-  submittedById?: number;
 
   @ManyToOne(() => User, { eager: false, nullable: true })
   @JoinColumn({

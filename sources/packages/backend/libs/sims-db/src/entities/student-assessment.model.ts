@@ -5,7 +5,6 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  RelationId,
 } from "typeorm";
 import {
   Application,
@@ -34,13 +33,6 @@ import { ApplicationOfferingChangeRequest } from "./application-offering-change-
 export class StudentAssessment extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
-  /**
-   * Application id related to this assessment.
-   */
-  @RelationId(
-    (studentAssessment: StudentAssessment) => studentAssessment.application,
-  )
-  applicationId: number;
   /**
    * Application related to this assessment.
    */
@@ -114,15 +106,6 @@ export class StudentAssessment extends RecordDataModel {
   })
   triggerType: AssessmentTriggerType;
   /**
-   * Offering id that must be used for any assessment/reassessment. This information can
-   * be null only during a PIR process. Upon a program/offering change, this will also
-   * represent the new/changed program/offering.
-   */
-  @RelationId(
-    (studentAssessment: StudentAssessment) => studentAssessment.offering,
-  )
-  offeringId?: number;
-  /**
    * Offering that must be used for any assessment/reassessment. This information can
    * be null only during a PIR process. Upon a program/offering change, this will also
    * represent the new/changed program/offering.
@@ -137,14 +120,6 @@ export class StudentAssessment extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   offering?: EducationProgramOffering;
-  /**
-   * When the reassessment happen due to a student appeal, this will provide to
-   * the workflow the data that need to be changed.
-   */
-  @RelationId(
-    (studentAssessment: StudentAssessment) => studentAssessment.studentAppeal,
-  )
-  studentAppealId?: number;
   /**
    * When the reassessment happen due to a student appeal, this will provide to
    * the workflow the data that need to be changed.
@@ -190,14 +165,6 @@ export class StudentAssessment extends RecordDataModel {
     nullable: true,
   })
   noaApprovalStatus?: AssessmentStatus;
-  /**
-   * Disbursement ids related to this assessment.
-   */
-  @RelationId(
-    (studentAssessment: StudentAssessment) =>
-      studentAssessment.disbursementSchedules,
-  )
-  disbursementSchedulesIds?: number[];
   /**
    * Disbursements related to this assessment.
    */

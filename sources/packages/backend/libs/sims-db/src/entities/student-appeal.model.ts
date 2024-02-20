@@ -6,7 +6,6 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
-  RelationId,
 } from "typeorm";
 import { Application, StudentAssessment } from ".";
 import { ColumnNames, TableNames } from "../constant";
@@ -21,13 +20,6 @@ import { StudentAppealRequest } from "./student-appeal-requests.model";
 export class StudentAppeal extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
-  /**
-   * Application id related to this student appeal.
-   */
-  @RelationId(
-    (studentAssessment: StudentAppeal) => studentAssessment.application,
-  )
-  applicationId: number;
   /**
    * Date that the student submitted the appeals.
    */

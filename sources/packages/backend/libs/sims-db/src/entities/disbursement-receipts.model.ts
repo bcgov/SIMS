@@ -5,7 +5,6 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  RelationId,
 } from "typeorm";
 import { DisbursementSchedule, DisbursementReceiptValue } from ".";
 import { ColumnNames, TableNames } from "../constant";
@@ -47,15 +46,6 @@ export class DisbursementReceipt extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   disbursementSchedule: DisbursementSchedule;
-
-  /**
-   * Disbursement schedule id.
-   */
-  @RelationId(
-    (disbursementReceipt: DisbursementReceipt) =>
-      disbursementReceipt.disbursementSchedule,
-  )
-  disbursementScheduleId: number;
 
   /**
    * Indicates the funding type of the disbursement receipt item. Values can have FE(Federal) or BC(Provincial).

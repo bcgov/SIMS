@@ -5,7 +5,6 @@ import {
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
-  RelationId,
 } from "typeorm";
 import { Note, User, Student } from ".";
 import { ColumnNames, TableNames } from "../constant";
@@ -176,11 +175,6 @@ export class SINValidation extends RecordDataModel {
     nullable: true,
   })
   sinExpiryDate?: string;
-  /**
-   * Student who requires a SIN validation.
-   */
-  @RelationId((sinValidation: SINValidation) => sinValidation.student)
-  studentId: number;
   /**
    * Student who requires a SIN validation.
    */

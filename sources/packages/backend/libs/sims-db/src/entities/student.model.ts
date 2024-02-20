@@ -7,7 +7,6 @@ import {
   ManyToMany,
   JoinTable,
   OneToMany,
-  RelationId,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
@@ -78,11 +77,6 @@ export class Student extends RecordDataModel {
     name: "sin_consent",
   })
   sinConsent: boolean;
-  /**
-   * List of all student restriction ids.
-   */
-  @RelationId((student: Student) => student.studentRestrictions)
-  studentRestrictionsIds?: number[];
   /**
    * List of all student restrictions.
    */

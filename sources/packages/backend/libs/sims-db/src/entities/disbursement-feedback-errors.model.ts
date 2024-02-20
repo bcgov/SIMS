@@ -4,7 +4,6 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  RelationId,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { DisbursementSchedule } from "./disbursement-schedule.model";
@@ -33,13 +32,6 @@ export class DisbursementFeedbackErrors extends RecordDataModel {
     name: "error_code",
   })
   errorCode: string;
-  /**
-   * Disbursement Schedule ids.
-   */
-  @RelationId(
-    (disbursementValue: DisbursementFeedbackErrors) =>
-      disbursementValue.disbursementSchedule,
-  )
   disbursementScheduleId: number;
   /**
    * Disbursement Schedule.

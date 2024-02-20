@@ -4,7 +4,6 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  RelationId,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
@@ -71,12 +70,6 @@ export class SupportingUser extends RecordDataModel {
   })
   supportingUserType: SupportingUserType;
   /**
-   * User id of the authenticated user providing the information
-   * as a Parent/Partner.
-   */
-  @RelationId((supportingUser: SupportingUser) => supportingUser.user)
-  userId?: number;
-  /**
    * User of the authenticated user providing the information
    * as a Parent/Partner.
    */
@@ -86,11 +79,6 @@ export class SupportingUser extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   user?: User;
-  /**
-   * Application id that needs additional information.
-   */
-  @RelationId((supportingUser: SupportingUser) => supportingUser.user)
-  applicationId: number;
   /**
    * Application that needs additional information.
    */
