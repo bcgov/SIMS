@@ -4,6 +4,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { Application, SupportingUser } from ".";
 import { ColumnNames, TableNames } from "../constant";
@@ -111,6 +112,14 @@ export class CRAIncomeVerification extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   application: Application;
+  /**
+   * Supporting user id that requires a CRA income verification.
+   */
+  @RelationId(
+    (craIncomeVerification: CRAIncomeVerification) =>
+      craIncomeVerification.supportingUser,
+  )
+  supportingUserId?: number;
   /**
    * Supporting user that requires a CRA income verification.
    */
