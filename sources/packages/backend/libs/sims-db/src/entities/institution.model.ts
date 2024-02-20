@@ -3,6 +3,7 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
   ManyToOne,
   JoinColumn,
   ManyToMany,
@@ -100,6 +101,9 @@ export class Institution extends RecordDataModel {
     cascade: false,
   })
   users: InstitutionUser[];
+
+  @RelationId((institution: Institution) => institution.institutionType)
+  institutionTypeId: number;
 
   @ManyToOne(() => InstitutionType, { eager: false, cascade: false })
   @JoinColumn({
