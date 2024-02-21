@@ -12,7 +12,7 @@
   </v-row>
   <v-row no-gutters class="mb-2">
     <v-col>
-      <slot name="subtitle">{{ subTitle }}</slot>
+      <slot name="subtitle"><span v-html="subTitle" /></slot>
     </v-col>
   </v-row>
 </template>
