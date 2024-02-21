@@ -26,7 +26,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
           assessmentConsolidatedData,
         );
       // Assert
-      // calculatedDataTotalTransportationAllowance = dmnPartTimeProgramYearMaximums.limitTransportationAllowance * offeringWeeks = 390
+      // calculatedDataTotalTransportationAllowance = dmnPartTimeProgramYearMaximums.limitTransportationAllowance * offeringWeeks
       expect(
         calculatedAssessment.variables
           .calculatedDataTotalTransportationAllowance,
@@ -81,8 +81,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
           assessmentConsolidatedData,
         );
       // Assert
-      // calculatedDataAdditionalTransportationMax = min((dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance - dmnPartTimeProgramYearMaximums.limitAdditionalTransportationPlacement), studentDataAdditionalTransportCost * min(offeringWeeks, studentDataAdditionalTransportWeeks)) * dmnPartTimeProgramYearMaximums.limitAdditionalTransportationKMReduction = 469.2
-      // calculatedDataTotalTransportationAllowance = (offeringWeeks - studentDataAdditionalTransportWeeks) * dmnPartTimeProgramYearMaximums.limitTransportationAllowance + calculatedDataAdditionalTransportationMax = 599.2
+      // calculatedDataAdditionalTransportationMax = min((dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance - dmnPartTimeProgramYearMaximums.limitAdditionalTransportationPlacement), studentDataAdditionalTransportCost * min(offeringWeeks, studentDataAdditionalTransportWeeks)) * dmnPartTimeProgramYearMaximums.limitAdditionalTransportationKMReduction
+      // calculatedDataTotalTransportationAllowance = (offeringWeeks - studentDataAdditionalTransportWeeks) * dmnPartTimeProgramYearMaximums.limitTransportationAllowance + calculatedDataAdditionalTransportationMax
       expect(
         calculatedAssessment.variables
           .calculatedDataAdditionalTransportationMax,
@@ -118,7 +118,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
           assessmentConsolidatedData,
         );
       // Assert
-      // calculatedDataAdditionalTransportationMax = min((dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance - dmnPartTimeProgramYearMaximums.limitAdditionalTransportationPlacement), studentDataAdditionalTransportCost * min(offeringWeeks, studentDataAdditionalTransportWeeks)) * dmnPartTimeProgramYearMaximums.limitAdditionalTransportationKMReduction = 469.2
+      // calculatedDataAdditionalTransportationMax = min((dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance - dmnPartTimeProgramYearMaximums.limitAdditionalTransportationPlacement), studentDataAdditionalTransportCost * min(offeringWeeks, studentDataAdditionalTransportWeeks)) * dmnPartTimeProgramYearMaximums.limitAdditionalTransportationKMReduction
       // calculatedDataTotalTransportationAllowance = calculatedDataAdditionalTransportationMax
       expect(
         calculatedAssessment.variables
@@ -155,8 +155,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
           assessmentConsolidatedData,
         );
       // Assert
-      // calculatedDataAdditionalTransportationMax = min(dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance - studentDataAdditionalTransportCost) * min(offeringWeeks, studentDataAdditionalTransportWeeks) * dmnPartTimeProgramYearMaximums.limitAdditionalTransportationKMReduction = 544
-      // calculatedDataTotalTransportationAllowance = (offeringWeeks - studentDataAdditionalTransportWeeks) * dmnPartTimeProgramYearMaximums.limitTransportationAllowance + calculatedDataAdditionalTransportationMax = 674
+      // calculatedDataAdditionalTransportationMax = min(dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance - studentDataAdditionalTransportCost) * min(offeringWeeks, studentDataAdditionalTransportWeeks) * dmnPartTimeProgramYearMaximums.limitAdditionalTransportationKMReduction
+      // calculatedDataTotalTransportationAllowance = (offeringWeeks - studentDataAdditionalTransportWeeks) * dmnPartTimeProgramYearMaximums.limitTransportationAllowance + calculatedDataAdditionalTransportationMax
       expect(
         calculatedAssessment.variables
           .calculatedDataAdditionalTransportationMax,
@@ -192,7 +192,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
           assessmentConsolidatedData,
         );
       // Assert
-      // calculatedDataAdditionalTransportationMax = min(dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance - studentDataAdditionalTransportCost) * min(offeringWeeks, studentDataAdditionalTransportWeeks) * dmnPartTimeProgramYearMaximums.limitAdditionalTransportationKMReduction = 544
+      // calculatedDataAdditionalTransportationMax = min(dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance - studentDataAdditionalTransportCost) * min(offeringWeeks, studentDataAdditionalTransportWeeks) * dmnPartTimeProgramYearMaximums.limitAdditionalTransportationKMReduction
       // calculatedDataTotalTransportationAllowance = calculatedDataAdditionalTransportationMax
       expect(
         calculatedAssessment.variables
@@ -229,8 +229,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
           assessmentConsolidatedData,
         );
       // Assert
-      // calculatedDataAdditionalTransportationMax = min((dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance - dmnPartTimeProgramYearMaximums.limitAdditionalTransportationPlacement), studentDataAdditionalTransportCost * min(offeringWeeks, studentDataAdditionalTransportWeeks)) = 1380
-      // calculatedDataTotalTransportationAllowance = (offeringWeeks - studentDataAdditionalTransportWeeks) * dmnPartTimeProgramYearMaximums.limitTransportationAllowance + calculatedDataAdditionalTransportationMax = 1510
+      // calculatedDataAdditionalTransportationMax = min((dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance - dmnPartTimeProgramYearMaximums.limitAdditionalTransportationPlacement), studentDataAdditionalTransportCost * min(offeringWeeks, studentDataAdditionalTransportWeeks))
+      // calculatedDataTotalTransportationAllowance = (offeringWeeks - studentDataAdditionalTransportWeeks) * dmnPartTimeProgramYearMaximums.limitTransportationAllowance + calculatedDataAdditionalTransportationMax
       expect(
         calculatedAssessment.variables
           .calculatedDataAdditionalTransportationMax,
@@ -266,7 +266,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
           assessmentConsolidatedData,
         );
       // Assert
-      // calculatedDataAdditionalTransportationMax = min((dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance - dmnPartTimeProgramYearMaximums.limitAdditionalTransportationPlacement), studentDataAdditionalTransportCost * min(offeringWeeks, studentDataAdditionalTransportWeeks)) = 1380
+      // calculatedDataAdditionalTransportationMax = min((dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance - dmnPartTimeProgramYearMaximums.limitAdditionalTransportationPlacement), studentDataAdditionalTransportCost * min(offeringWeeks, studentDataAdditionalTransportWeeks))
       // calculatedDataTotalTransportationAllowance = calculatedDataAdditionalTransportationMax
       expect(
         calculatedAssessment.variables
@@ -303,8 +303,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
           assessmentConsolidatedData,
         );
       // Assert
-      // calculatedDataAdditionalTransportationMax = min(dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance, studentDataAdditionalTransportCost) * min(offeringWeeks, studentDataAdditionalTransportWeeks) = 1600
-      // calculatedDataTotalTransportationAllowance = (offeringWeeks - studentDataAdditionalTransportWeeks) * dmnPartTimeProgramYearMaximums.limitTransportationAllowance + calculatedDataAdditionalTransportationMax = 1730
+      // calculatedDataAdditionalTransportationMax = min(dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance, studentDataAdditionalTransportCost) * min(offeringWeeks, studentDataAdditionalTransportWeeks)
+      // calculatedDataTotalTransportationAllowance = (offeringWeeks - studentDataAdditionalTransportWeeks) * dmnPartTimeProgramYearMaximums.limitTransportationAllowance + calculatedDataAdditionalTransportationMax
       expect(
         calculatedAssessment.variables
           .calculatedDataAdditionalTransportationMax,
@@ -340,7 +340,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
           assessmentConsolidatedData,
         );
       // Assert
-      // calculatedDataAdditionalTransportationMax = min(dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance, studentDataAdditionalTransportCost) * min(offeringWeeks, studentDataAdditionalTransportWeeks) = 1600
+      // calculatedDataAdditionalTransportationMax = min(dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance, studentDataAdditionalTransportCost) * min(offeringWeeks, studentDataAdditionalTransportWeeks)
       // calculatedDataTotalTransportationAllowance = calculatedDataAdditionalTransportationMax
       expect(
         calculatedAssessment.variables
@@ -378,7 +378,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
           assessmentConsolidatedData,
         );
       // Assert
-      // calculatedDataAdditionalTransportationMax = min(dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance, studentDataAdditionalTransportCost) * min(offeringWeeks, studentDataAdditionalTransportWeeks) = 1600
+      // calculatedDataAdditionalTransportationMax = min(dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance, studentDataAdditionalTransportCost) * min(offeringWeeks, studentDataAdditionalTransportWeeks)
       // calculatedDataTotalTransportationAllowance = calculatedDataAdditionalTransportationMax
       expect(
         calculatedAssessment.variables
