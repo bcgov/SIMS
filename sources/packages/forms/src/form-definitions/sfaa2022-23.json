@@ -30644,9 +30644,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": "true",
-            "when": "howWillYouBeAttendingTheProgram",
-            "eq": "Full Time"
+            "show": "",
+            "when": "",
+            "eq": ""
           },
           "logic": [],
           "attributes": {},

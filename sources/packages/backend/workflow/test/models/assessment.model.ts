@@ -130,6 +130,10 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   assessmentId?: number;
   studentDataSelectedOffering: number;
   studentDataApplicationPDPPDStatus: string;
+  studentDataAdditionalTransportKm: number;
+  studentDataAdditionalTransportCost: number;
+  studentDataAdditionalTransportWeeks: number;
+  studentDataAdditionalTransportPlacement: YesNoOptions;
 }
 
 /**
@@ -263,6 +267,8 @@ export interface CalculatedAssessmentModel {
   // Calculated Data
   calculatedDataTotalRemainingNeed1: number;
   calculatedDataTotalRemainingNeed3: number;
+  calculatedDataAdditionalTransportationMax: number;
+  calculatedDataTotalTransportationAllowance: number;
   // DMN Part Time Award Allowable Limits
   dmnPartTimeAwardAllowableLimits?: {
     limitAwardBCAGAmount: number;
@@ -280,6 +286,10 @@ export interface CalculatedAssessmentModel {
     limitAwardCSGDIncomeCap: number;
     limitAwardCSGD3OrMoreChildSlope: number;
     limitAwardCSGD2OrLessChildSlope: number;
+  };
+  // DMN Part Time Program Year Maximums
+  dmnPartTimeProgramYearMaximums?: {
+    limitTransportationAllowance: number;
   };
   // Disbursement schedules
   disbursementSchedules: Array<unknown>;

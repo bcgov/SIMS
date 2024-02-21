@@ -364,7 +364,7 @@
     <bpmn:serviceTask id="save-assessment-data-part-time-task" name="Save assessment output">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:input source="={&#10;  weeks: offeringWeeks,&#10;  tuitionCost: offeringActualTuitionCosts,&#10;  childcareCost: calculatedDataTotalChildCareCost,&#10;  totalFamilyIncome: calculatedDataTotalFamilyIncome,&#10;  transportationCost: calculatedDataTransportationAllownace,&#10;  booksAndSuppliesCost: offeringProgramRelatedCosts,&#10;  miscellaneousAllowance: calculatedDataMiscellaneousAllowance,&#10;  exceptionalEducationCost: offeringExceptionalExpenses,&#10;  assessedNeed: calculatedDataTotalAssessedNeed&#10;}" target="assessmentData" />
+          <zeebe:input source="={&#10;  weeks: offeringWeeks,&#10;  tuitionCost: offeringActualTuitionCosts,&#10;  childcareCost: calculatedDataTotalChildCareCost,&#10;  totalFamilyIncome: calculatedDataTotalFamilyIncome,&#10;  transportationCost: calculatedDataTotalTransportationAllowance,&#10;  booksAndSuppliesCost: offeringProgramRelatedCosts,&#10;  miscellaneousAllowance: calculatedDataMiscellaneousAllowance,&#10;  exceptionalEducationCost: offeringExceptionalExpenses,&#10;  assessedNeed: calculatedDataTotalAssessedNeed&#10;}" target="assessmentData" />
         </zeebe:ioMapping>
         <zeebe:taskDefinition type="save-assessment-data" />
       </bpmn:extensionElements>
