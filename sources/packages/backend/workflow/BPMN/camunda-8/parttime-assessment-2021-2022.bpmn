@@ -118,7 +118,6 @@
         <bpmn:flowNodeRef>Event_15d88qb</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_02qbvrn</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1lqekii</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_13hrqk7</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0ckfmt3</bpmn:flowNodeRef>
         <bpmn:childLaneSet id="LaneSet_0v6vyq5">
           <bpmn:lane id="Lane_0l32w49" name="Award Calculation">
@@ -164,7 +163,6 @@
             <bpmn:flowNodeRef>Event_15d88qb</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Gateway_02qbvrn</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_1lqekii</bpmn:flowNodeRef>
-            <bpmn:flowNodeRef>Event_13hrqk7</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_0ckfmt3</bpmn:flowNodeRef>
           </bpmn:lane>
         </bpmn:childLaneSet>
@@ -661,7 +659,6 @@
       <bpmn:incoming>Flow_0kk6ogk</bpmn:incoming>
       <bpmn:outgoing>Flow_0201yrq</bpmn:outgoing>
       <bpmn:outgoing>Flow_04xv6y2</bpmn:outgoing>
-      <bpmn:outgoing>Flow_1ibgfq9</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:intermediateThrowEvent id="Event_15d88qb" name="Calculate Total Transportation Allowance">
       <bpmn:extensionElements>
@@ -675,7 +672,6 @@
     <bpmn:exclusiveGateway id="Gateway_02qbvrn">
       <bpmn:incoming>Flow_0f31yl5</bpmn:incoming>
       <bpmn:incoming>Flow_0ce608y</bpmn:incoming>
-      <bpmn:incoming>Flow_0sezwqd</bpmn:incoming>
       <bpmn:outgoing>Flow_0qgamw3</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:intermediateThrowEvent id="Event_1lqekii" name="Calculate Total Transportation Allowance">
@@ -683,24 +679,12 @@
         <zeebe:ioMapping>
           <zeebe:output source="=// If the student is receiving an additional ammount based on a clinical or practicum&#10;// placement then reduce transportation allowance limit accordingly.&#10;if (calculatedDataAdditionalTransportPlacement = true)&#10;then&#10;    dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance - dmnPartTimeProgramYearMaximums.limitAdditionalTransportationPlacement&#10;  else&#10;    dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance" target="calculatedDataAdditionalTransportEstimatedCost" />
           <zeebe:output source="=min(calculatedDataAdditionalTransportCost,&#10;calculatedDataAdditionalTransportEstimatedCost)" target="calculatedDataAdditionalWeeklyTransportationCost" />
-          <zeebe:output source="=calculatedDataAdditionalWeeklyTransportationCost * calculatedDataAdditionalTransportWeeks * dmnPartTimeProgramYearMaximums.limitAdditionalTransportationKMReduction" target="calculatedDataAdditionalTransportationMax" />
+          <zeebe:output source="=calculatedDataAdditionalWeeklyTransportationCost * calculatedDataAdditionalTransportWeeks * calculatedDataAdditionalTransportKMReduction" target="calculatedDataAdditionalTransportationMax" />
           <zeebe:output source="=// If the offering is delivered onsite then transportation costs &#10;// for the weeks outside the additional transportation weeks are &#10;// calculated with maximum transportation allowance.&#10;if (offeringDelivered = &#34;onsite&#34;)&#10;then&#10;  (offeringWeeks - calculatedDataAdditionalTransportWeeks) * dmnPartTimeProgramYearMaximums.limitTransportationAllowance + calculatedDataAdditionalTransportationMax&#10;else&#10;  calculatedDataAdditionalTransportationMax" target="calculatedDataTotalTransportationAllowance" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_04xv6y2</bpmn:incoming>
       <bpmn:outgoing>Flow_0ce608y</bpmn:outgoing>
-    </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateThrowEvent id="Event_13hrqk7" name="Calculate Total Transportation Allowance">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=// If the student is receiving an additional ammount based on a clinical or practicum&#10;// placement then reduce transportation allowance limit accordingly.&#10;if (calculatedDataAdditionalTransportPlacement = true)&#10;then&#10;    dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance - dmnPartTimeProgramYearMaximums.limitAdditionalTransportationPlacement&#10;  else&#10;    dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance" target="calculatedDataAdditionalTransportEstimatedCost" />
-          <zeebe:output source="=min(calculatedDataAdditionalTransportCost,&#10;calculatedDataAdditionalTransportEstimatedCost)" target="calculatedDataAdditionalWeeklyTransportationCost" />
-          <zeebe:output source="=calculatedDataAdditionalWeeklyTransportationCost * calculatedDataAdditionalTransportWeeks" target="calculatedDataAdditionalTransportationMax" />
-          <zeebe:output source="=// If the offering is delivered onsite then transportation costs &#10;// for the weeks outside the additional transportation weeks are &#10;// calculated with maximum transportation allowance.&#10;if (offeringDelivered = &#34;onsite&#34;)&#10;then&#10;  (offeringWeeks - calculatedDataAdditionalTransportWeeks) * dmnPartTimeProgramYearMaximums.limitTransportationAllowance + calculatedDataAdditionalTransportationMax&#10;else&#10;  calculatedDataAdditionalTransportationMax" target="calculatedDataTotalTransportationAllowance" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1ibgfq9</bpmn:incoming>
-      <bpmn:outgoing>Flow_0sezwqd</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
     <bpmn:sequenceFlow id="Flow_0j9exwg" sourceRef="Gateway_1g0qy1m" targetRef="Event_1h2w0hl" />
     <bpmn:sequenceFlow id="Flow_047qz6n" sourceRef="Event_1h2w0hl" targetRef="Event_0jmbywn" />
@@ -769,15 +753,11 @@
     <bpmn:sequenceFlow id="Flow_0201yrq" name="Additional Transportation is 0km" sourceRef="Gateway_1o496q2" targetRef="Event_15d88qb">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=calculatedDataAdditionalTransportKm = 0</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_04xv6y2" name="Additional Transportation 280km And Less" sourceRef="Gateway_1o496q2" targetRef="Event_1lqekii">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=calculatedDataAdditionalTransportKm &gt; 0 and calculatedDataAdditionalTransportKm &lt;= 280</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1ibgfq9" name="Additional Transportation More Than 280km" sourceRef="Gateway_1o496q2" targetRef="Event_13hrqk7">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=calculatedDataAdditionalTransportKm &gt; 280</bpmn:conditionExpression>
+    <bpmn:sequenceFlow id="Flow_04xv6y2" name="Additional Transportation More Than 0km" sourceRef="Gateway_1o496q2" targetRef="Event_1lqekii">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=calculatedDataAdditionalTransportKm &gt; 0</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0f31yl5" sourceRef="Event_15d88qb" targetRef="Gateway_02qbvrn" />
     <bpmn:sequenceFlow id="Flow_0ce608y" sourceRef="Event_1lqekii" targetRef="Gateway_02qbvrn" />
-    <bpmn:sequenceFlow id="Flow_0sezwqd" sourceRef="Event_13hrqk7" targetRef="Gateway_02qbvrn" />
     <bpmn:intermediateThrowEvent id="Event_0ckfmt3" name="Calculate Additional Transportation Data">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
@@ -785,6 +765,7 @@
           <zeebe:output source="=if (studentDataAdditionalTransportCost = null)&#10;then&#10;  0&#10;else&#10;  studentDataAdditionalTransportCost" target="calculatedDataAdditionalTransportCost" />
           <zeebe:output source="=studentDataAdditionalTransportPlacement = &#34;yes&#34;" target="calculatedDataAdditionalTransportPlacement" />
           <zeebe:output source="=if (studentDataAdditionalTransportWeeks = null)&#10;then&#10;  0&#10;else&#10;  min(offeringWeeks, studentDataAdditionalTransportWeeks)" target="calculatedDataAdditionalTransportWeeks" />
+          <zeebe:output source="=if (calculatedDataAdditionalTransportKm = 0)&#10;then&#10;  0&#10;else&#10;  if (calculatedDataAdditionalTransportKm &#62; 280)&#10;  then&#10;    1&#10;  else&#10;    dmnPartTimeProgramYearMaximums.limitAdditionalTransportationKMReduction" target="calculatedDataAdditionalTransportKMReduction" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0e86y64</bpmn:incoming>
@@ -1140,12 +1121,6 @@ studentCalculatedTotalIncome</bpmn:text>
         <dc:Bounds x="2892" y="1122" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="2874" y="1165" width="72" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_13hrqk7_di" bpmnElement="Event_13hrqk7">
-        <dc:Bounds x="2892" y="1002" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="2874" y="1045" width="72" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0ckfmt3_di" bpmnElement="Event_0ckfmt3">
@@ -1521,15 +1496,7 @@ studentCalculatedTotalIncome</bpmn:text>
         <di:waypoint x="2745" y="1140" />
         <di:waypoint x="2892" y="1140" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2788" y="1095" width="82" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1ibgfq9_di" bpmnElement="Flow_1ibgfq9">
-        <di:waypoint x="2720" y="1115" />
-        <di:waypoint x="2720" y="1020" />
-        <di:waypoint x="2892" y="1020" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="2784" y="975" width="90" height="40" />
+          <dc:Bounds x="2791" y="1095" width="78" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0f31yl5_di" bpmnElement="Flow_0f31yl5">
@@ -1540,11 +1507,6 @@ studentCalculatedTotalIncome</bpmn:text>
       <bpmndi:BPMNEdge id="Flow_0ce608y_di" bpmnElement="Flow_0ce608y">
         <di:waypoint x="2928" y="1140" />
         <di:waypoint x="3005" y="1140" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0sezwqd_di" bpmnElement="Flow_0sezwqd">
-        <di:waypoint x="2928" y="1020" />
-        <di:waypoint x="3030" y="1020" />
-        <di:waypoint x="3030" y="1115" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0e86y64_di" bpmnElement="Flow_0e86y64">
         <di:waypoint x="2528" y="1140" />
