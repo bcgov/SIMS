@@ -33,7 +33,7 @@ FROM
           WHERE
             restriction_code = 'LGCY'
         )
-        AND student_restrictions.is_active = TRUE
+        AND student_restrictions.is_active = true
     ) filtered_student_restrictions
     RIGHT JOIN (
       SELECT
@@ -54,7 +54,7 @@ FROM
             sims.sfas_restrictions sfas_restrictions
           WHERE
             sfas_restrictions.removal_date IS NULL
-            AND sfas_restrictions.is_included = FALSE
+            AND sfas_restrictions.is_included = false
         ) mapped_restrictions
         INNER JOIN sims.sfas_individuals sfas_individuals ON mapped_restrictions.individual_id = sfas_individuals.id
         LEFT JOIN sims.restrictions restrictions ON mapped_restrictions.mapped_code = restrictions.restriction_code
