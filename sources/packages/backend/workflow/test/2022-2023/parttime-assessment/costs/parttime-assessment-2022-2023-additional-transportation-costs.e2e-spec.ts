@@ -3,7 +3,7 @@ import {
   createFakeConsolidatedPartTimeData,
   executePartTimeAssessmentForProgramYear,
 } from "../../../test-utils";
-import { OfferingDeliveryOptions } from "@sims/test-utils";
+import { OfferingDeliveryOptions, YesNoOptions } from "@sims/test-utils";
 const additionalTransportationOnsiteDistanceLimit = 280;
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-transportation-costs.`, () => {
@@ -58,7 +58,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
   it(
     "Should determine calculatedDataTotalTransportationAllowance when studentDataAdditionalTransportKm is " +
       `less than ${additionalTransportationOnsiteDistanceLimit} and greater than 1 km ` +
-      "and studentDataAdditionalTransportPlacement is true " +
+      "and studentDataAdditionalTransportPlacement is yes " +
       "and offeringDelivered is onsite",
     async () => {
       // Arrange
@@ -68,7 +68,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
       assessmentConsolidatedData.offeringWeeks = 30;
       assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 20;
       assessmentConsolidatedData.studentDataAdditionalTransportCost = 80;
-      assessmentConsolidatedData.studentDataAdditionalTransportPlacement = true;
+      assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
+        YesNoOptions.Yes;
       assessmentConsolidatedData.offeringDelivered =
         OfferingDeliveryOptions.Onsite;
       // Act
@@ -92,9 +93,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
   );
 
   it(
-    "Should determine calculatedDataTotalTransportationAllowance when studentDataAdditionalTransportKm is" +
+    "Should determine calculatedDataTotalTransportationAllowance when studentDataAdditionalTransportKm is " +
       `less than ${additionalTransportationOnsiteDistanceLimit} and greater than 1 km ` +
-      "and studentDataAdditionalTransportPlacement is true " +
+      "and studentDataAdditionalTransportPlacement is yes " +
       "and offeringDelivered is online",
     async () => {
       // Arrange
@@ -104,7 +105,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
       assessmentConsolidatedData.offeringWeeks = 30;
       assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 20;
       assessmentConsolidatedData.studentDataAdditionalTransportCost = 80;
-      assessmentConsolidatedData.studentDataAdditionalTransportPlacement = true;
+      assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
+        YesNoOptions.Yes;
       assessmentConsolidatedData.offeringDelivered =
         OfferingDeliveryOptions.Online;
       // Act
@@ -130,7 +132,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
   it(
     "Should determine calculatedDataTotalTransportationAllowance when studentDataAdditionalTransportKm is " +
       `less than ${additionalTransportationOnsiteDistanceLimit} and greater than 1 km ` +
-      "and studentDataAdditionalTransportPlacement is false " +
+      "and studentDataAdditionalTransportPlacement is no " +
       "and offeringDelivered is onsite",
     async () => {
       // Arrange
@@ -141,7 +143,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
       assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 20;
       assessmentConsolidatedData.studentDataAdditionalTransportCost = 80;
       assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
-        false;
+        YesNoOptions.No;
       assessmentConsolidatedData.offeringDelivered =
         OfferingDeliveryOptions.Onsite;
       // Act
@@ -167,7 +169,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
   it(
     "Should determine calculatedDataTotalTransportationAllowance when studentDataAdditionalTransportKm is " +
       `less than ${additionalTransportationOnsiteDistanceLimit} and greater than 1 km ` +
-      "and studentDataAdditionalTransportPlacement is false " +
+      "and studentDataAdditionalTransportPlacement is no " +
       "and offeringDelivered is online",
     async () => {
       // Arrange
@@ -178,7 +180,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
       assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 20;
       assessmentConsolidatedData.studentDataAdditionalTransportCost = 80;
       assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
-        false;
+        YesNoOptions.No;
       assessmentConsolidatedData.offeringDelivered =
         OfferingDeliveryOptions.Online;
       // Act
@@ -204,7 +206,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
   it(
     "Should determine calculatedDataTotalTransportationAllowance when studentDataAdditionalTransportKm is " +
       `more than ${additionalTransportationOnsiteDistanceLimit} km ` +
-      "and studentDataAdditionalTransportPlacement is true " +
+      "and studentDataAdditionalTransportPlacement is yes " +
       "and offeringDelivered is onsite",
     async () => {
       // Arrange
@@ -214,7 +216,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
       assessmentConsolidatedData.offeringWeeks = 30;
       assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 20;
       assessmentConsolidatedData.studentDataAdditionalTransportCost = 80;
-      assessmentConsolidatedData.studentDataAdditionalTransportPlacement = true;
+      assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
+        YesNoOptions.Yes;
       assessmentConsolidatedData.offeringDelivered =
         OfferingDeliveryOptions.Onsite;
       // Act
@@ -240,7 +243,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
   it(
     "Should determine calculatedDataTotalTransportationAllowance when studentDataAdditionalTransportKm is " +
       `more than ${additionalTransportationOnsiteDistanceLimit} km ` +
-      "studentDataAdditionalTransportPlacement is true " +
+      "studentDataAdditionalTransportPlacement is yes " +
       "and offeringDelivered is online",
     async () => {
       // Arrange
@@ -250,7 +253,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
       assessmentConsolidatedData.offeringWeeks = 30;
       assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 20;
       assessmentConsolidatedData.studentDataAdditionalTransportCost = 80;
-      assessmentConsolidatedData.studentDataAdditionalTransportPlacement = true;
+      assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
+        YesNoOptions.Yes;
       assessmentConsolidatedData.offeringDelivered =
         OfferingDeliveryOptions.Online;
       // Act
@@ -276,7 +280,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
   it(
     "Should determine calculatedDataTotalTransportationAllowance when studentDataAdditionalTransportKm is " +
       `more than ${additionalTransportationOnsiteDistanceLimit} km ` +
-      "and studentDataAdditionalTransportPlacement is false " +
+      "and studentDataAdditionalTransportPlacement is no " +
       "and offeringDelivered is onsite",
     async () => {
       // Arrange
@@ -287,7 +291,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
       assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 20;
       assessmentConsolidatedData.studentDataAdditionalTransportCost = 80;
       assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
-        false;
+        YesNoOptions.No;
       assessmentConsolidatedData.offeringDelivered =
         OfferingDeliveryOptions.Onsite;
       // Act
@@ -313,7 +317,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
   it(
     "Should determine calculatedDataTotalTransportationAllowance when studentDataAdditionalTransportKm is " +
       `more than ${additionalTransportationOnsiteDistanceLimit} km ` +
-      "and studentDataAdditionalTransportPlacement is false " +
+      "and studentDataAdditionalTransportPlacement is no " +
       "and offeringDelivered is online",
     async () => {
       // Arrange
@@ -324,7 +328,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
       assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 20;
       assessmentConsolidatedData.studentDataAdditionalTransportCost = 80;
       assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
-        false;
+        YesNoOptions.No;
       assessmentConsolidatedData.offeringDelivered =
         OfferingDeliveryOptions.Online;
       // Act
@@ -350,7 +354,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
   it(
     "Should determine calculatedDataTotalTransportationAllowance when studentDataAdditionalTransportKm is " +
       `more than ${additionalTransportationOnsiteDistanceLimit} km ` +
-      "and studentDataAdditionalTransportPlacement is false " +
+      "and studentDataAdditionalTransportPlacement is no " +
       "and offeringDelivered is onsite " +
       "and offeringWeeks is less than studentDataAdditionalTransportWeeks",
     async () => {
@@ -362,7 +366,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-additional-trans
       assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 30;
       assessmentConsolidatedData.studentDataAdditionalTransportCost = 80;
       assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
-        false;
+        YesNoOptions.No;
       assessmentConsolidatedData.offeringDelivered =
         OfferingDeliveryOptions.Onsite;
       // Act

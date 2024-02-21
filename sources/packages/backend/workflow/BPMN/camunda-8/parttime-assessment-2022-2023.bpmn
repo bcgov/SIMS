@@ -784,7 +784,7 @@
         <zeebe:ioMapping>
           <zeebe:output source="=if (studentDataAdditionalTransportKm = null)&#10;then&#10;  0&#10;else&#10;  studentDataAdditionalTransportKm" target="calculatedDataAdditionalTransportKm" />
           <zeebe:output source="=if (studentDataAdditionalTransportCost = null)&#10;then&#10;  0&#10;else&#10;  studentDataAdditionalTransportCost" target="calculatedDataAdditionalTransportCost" />
-          <zeebe:output source="=if (studentDataAdditionalTransportPlacement = null)&#10;then&#10;  false&#10;else&#10;  studentDataAdditionalTransportPlacement = &#34;yes&#34;" target="calculatedDataAdditionalTransportPlacement" />
+          <zeebe:output source="=studentDataAdditionalTransportPlacement = &#34;yes&#34;" target="calculatedDataAdditionalTransportPlacement" />
           <zeebe:output source="=if (studentDataAdditionalTransportWeeks = null)&#10;then&#10;  0&#10;else&#10;  min(offeringWeeks, studentDataAdditionalTransportWeeks)" target="calculatedDataAdditionalTransportWeeks" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>

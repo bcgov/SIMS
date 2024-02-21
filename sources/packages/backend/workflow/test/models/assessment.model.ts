@@ -133,7 +133,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataAdditionalTransportKm: number;
   studentDataAdditionalTransportCost: number;
   studentDataAdditionalTransportWeeks: number;
-  studentDataAdditionalTransportPlacement: boolean;
+  studentDataAdditionalTransportPlacement: YesNoOptions;
 }
 
 /**
