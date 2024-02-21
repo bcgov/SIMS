@@ -138,41 +138,42 @@ export class SFASIntegrationProcessingService {
       }
       await Promise.all(promises);
       this.logger.log("Records imported.");
-
+      try {
+        /**
+         * Bulk operation to update student id in SFAS individuals table after importing data from SFAS.
+         */
+        await this.sfasIndividualService.updateStudentId();
+      } catch (error) {
+        const logMessage =
+          "Error while updating student ids imported from SFAS.";
+        this.errorHandler(error, logMessage, result);
+      }
+      try {
+        await this.sfasIndividualService.updateDisbursementOverawards();
+      } catch (error) {
+        const logMessage =
+          "Error while updating overawards balances imported from SFAS.";
+        this.errorHandler(error, logMessage, result);
+      }
+      try {
+        await this.sfasRestrictionService.insertStudentRestrictions();
+      } catch (error) {
+        const logMessage =
+          "Error while inserting student restrictions imported from SFAS.";
+        this.errorHandler(error, logMessage, result);
+      }
       if (result.success) {
-        try {
-          /**
-           * Bulk operation to update student id in SFAS individuals table after importing data from SFAS.
-           */
-          await this.sfasIndividualService.updateStudentId();
-          await this.sfasIndividualService.updateDisbursementOverawards();
-          await this.sfasRestrictionService.insertStudentRestrictions();
-        } catch (error) {
-          const logMessage =
-            "Error while updating overawards balances or inserting student restrictions imported from SFAS.";
-          result.summary.push(logMessage);
-          result.success = false;
-          this.logger.error(logMessage);
-          this.logger.error(error);
-        }
-
         // Delete the file only if it was processed with success.
         try {
           await this.sfasService.deleteFile(remoteFilePath);
         } catch (error) {
           const logMessage = `Error while deleting SFAS integration file: ${remoteFilePath}`;
-          result.summary.push(logMessage);
-          result.success = false;
-          this.logger.error(logMessage);
-          this.logger.error(error);
+          this.errorHandler(error, logMessage, result);
         }
       }
     } catch (error) {
       const logMessage = `Error while processing SFAS integration file: ${remoteFilePath}`;
-      result.summary.push(logMessage);
-      result.success = false;
-      this.logger.error(logMessage);
-      this.logger.error(error);
+      this.errorHandler(error, logMessage, result);
     }
 
     return result;
@@ -204,6 +205,23 @@ export class SFASIntegrationProcessingService {
         break;
     }
     return dataImporter;
+  }
+
+  /**
+   * Error Handler.
+   * @param error error to be handled.
+   * @param logMessage log message.
+   * @param result sftp response result.
+   */
+  private errorHandler(
+    error: unknown,
+    logMessage: string,
+    result: ProcessSftpResponseResult,
+  ): void {
+    result.summary.push(logMessage);
+    result.success = false;
+    this.logger.error(logMessage);
+    this.logger.error(error);
   }
 
   @InjectLogger()
