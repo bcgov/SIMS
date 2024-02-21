@@ -8,37 +8,37 @@
 INSERT INTO
   sims.student_restrictions (student_id, restriction_id)
 SELECT
-  DISTINCT(i.student_id),
+  DISTINCT(sfas_individuals.student_id),
   (
     SELECT
-      res.id
+      restrictions.id
     FROM
-      sims.restrictions res
+      sims.restrictions restrictions
     WHERE
-      res.restriction_code = 'LGCY'
+      restrictions.restriction_code = 'LGCY'
   ) AS restriction_id
 FROM
   (
     SELECT
-      res.code,
+      sfas_restrictions.code,
       CASE
-        WHEN res.code = 'A12' THEN '12'
-        WHEN res.code = 'AF1' THEN 'AF'
-        WHEN res.code = 'B2D' THEN 'B2'
-        ELSE res.code
+        WHEN sfas_restrictions.code = 'A12' THEN '12'
+        WHEN sfas_restrictions.code = 'AF1' THEN 'AF'
+        WHEN sfas_restrictions.code = 'B2D' THEN 'B2'
+        ELSE sfas_restrictions.code
       END AS mapped_code,
-      res.individual_id,
-      res.is_included
+      sfas_restrictions.individual_id,
+      sfas_restrictions.is_included
     FROM
-      sims.sfas_restrictions res
+      sims.sfas_restrictions sfas_restrictions
     WHERE
-      res.removal_date IS NULL
-      AND res.is_included = false
-  ) r
-  INNER JOIN sims.sfas_individuals i ON r.individual_id = i.id
-  LEFT JOIN sims.restrictions restrictions ON r.mapped_code = restrictions.restriction_code
+      sfas_restrictions.removal_date IS NULL
+      AND sfas_restrictions.is_included = false
+  ) mapped_restrictions
+  INNER JOIN sims.sfas_individuals sfas_individuals ON mapped_restrictions.individual_id = sfas_individuals.id
+  LEFT JOIN sims.restrictions restrictions ON mapped_restrictions.mapped_code = restrictions.restriction_code
 WHERE
-  i.student_id IS NOT NULL
+  sfas_individuals.student_id IS NOT NULL
   AND restrictions.restriction_code IS NULL;
 
 /* 
@@ -51,34 +51,34 @@ WHERE
 INSERT INTO
   sims.student_restrictions (student_id, restriction_id)
 SELECT
-  (i.student_id),
+  (sfas_individuals.student_id),
   restrictions.id AS restriction_id
 FROM
   (
     SELECT
-      res.code,
+      sfas_restrictions.code,
       CASE
-        WHEN res.code = 'A12' THEN '12'
-        WHEN res.code = 'AF1' THEN 'AF'
-        WHEN res.code = 'B2D' THEN 'B2'
-        ELSE res.code
+        WHEN sfas_restrictions.code = 'A12' THEN '12'
+        WHEN sfas_restrictions.code = 'AF1' THEN 'AF'
+        WHEN sfas_restrictions.code = 'B2D' THEN 'B2'
+        ELSE sfas_restrictions.code
       END AS mapped_code,
-      res.individual_id,
-      res.is_included
+      sfas_restrictions.individual_id,
+      sfas_restrictions.is_included
     FROM
-      sims.sfas_restrictions res
+      sims.sfas_restrictions sfas_restrictions
     WHERE
-      res.removal_date IS NULL
-      AND res.is_included = false
-  ) r
-  INNER JOIN sims.sfas_individuals i ON r.individual_id = i.id
-  INNER JOIN sims.restrictions restrictions ON r.mapped_code = restrictions.restriction_code
-  LEFT JOIN sims.student_restrictions str ON str.student_id = i.student_id
-  AND str.restriction_id = restrictions.id
+      sfas_restrictions.removal_date IS NULL
+      AND sfas_restrictions.is_included = false
+  ) mapped_restrictions
+  INNER JOIN sims.sfas_individuals sfas_individuals ON mapped_restrictions.individual_id = sfas_individuals.id
+  INNER JOIN sims.restrictions restrictions ON mapped_restrictions.mapped_code = restrictions.restriction_code
+  LEFT JOIN sims.student_restrictions student_restrictions ON student_restrictions.student_id = sfas_individuals.student_id
+  AND student_restrictions.restriction_id = restrictions.id
 WHERE
-  i.student_id IS NOT NULL
-  AND str.is_active = false
-  OR str.restriction_id IS NULL;
+  sfas_individuals.student_id IS NOT NULL
+  AND student_restrictions.is_active = false
+  OR student_restrictions.restriction_id IS NULL;
 
 /*
  * Once all the restrictions have been added,
@@ -88,6 +88,6 @@ WHERE
 UPDATE
   sims.sfas_restrictions
 SET
-  is_included = TRUE
+  is_included = true
 WHERE
   is_included = false;
