@@ -49,12 +49,12 @@ FROM
               ELSE sfas_restrictions.code
             END AS mapped_code,
             sfas_restrictions.individual_id,
-            sfas_restrictions.is_included
+            sfas_restrictions.processed
           FROM
             sims.sfas_restrictions sfas_restrictions
           WHERE
             sfas_restrictions.removal_date IS NULL
-            AND sfas_restrictions.is_included = false
+            AND sfas_restrictions.processed = false
         ) mapped_restrictions
         INNER JOIN sims.sfas_individuals sfas_individuals ON mapped_restrictions.individual_id = sfas_individuals.id
         LEFT JOIN sims.restrictions restrictions ON mapped_restrictions.mapped_code = restrictions.restriction_code
@@ -89,12 +89,12 @@ FROM
         ELSE sfas_restrictions.code
       END AS mapped_code,
       sfas_restrictions.individual_id,
-      sfas_restrictions.is_included
+      sfas_restrictions.processed
     FROM
       sims.sfas_restrictions sfas_restrictions
     WHERE
       sfas_restrictions.removal_date IS NULL
-      AND sfas_restrictions.is_included = false
+      AND sfas_restrictions.processed = false
   ) mapped_restrictions
   INNER JOIN sims.sfas_individuals sfas_individuals ON mapped_restrictions.individual_id = sfas_individuals.id
   INNER JOIN sims.restrictions restrictions ON mapped_restrictions.mapped_code = restrictions.restriction_code
@@ -107,12 +107,12 @@ WHERE
 
 /*
  * Once all the restrictions have been added,
- * mark the is_included column to true for all
+ * mark the processed column to true for all
  * the newly imported restrictions.
  */
 UPDATE
   sims.sfas_restrictions
 SET
-  is_included = true
+  processed = true
 WHERE
-  is_included = false;
+  processed = false;
