@@ -6,8 +6,8 @@
  */
 export function getTotalYearsOfStudy(completionYears: string): number {
   switch (completionYears) {
-    case "12WeeksToLessThan1Year":
-    case "52WeeksTo59Weeks":
+    case "12WeeksTo52Weeks":
+    case "53WeeksTo59Weeks":
       return 1;
     case "60WeeksToLessThan2Years":
       return 2;

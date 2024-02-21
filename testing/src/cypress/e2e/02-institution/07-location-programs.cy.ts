@@ -357,7 +357,7 @@ describe("Location Program", () => {
       ProgramDeliveryOptions.OnSite
     );
     dashboardInstitutionObject.selectProgramLength(
-      ProgramLengthOptions.WeeksToLessThanYear
+      ProgramLengthOptions.TwelveWeeksToFiftyTwoWeeks
     );
     dashboardInstitutionObject.courseLoadCalculationRadioButton(
       CourseLoadCalculationOptions.CreditBased
