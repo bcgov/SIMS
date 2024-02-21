@@ -1,6 +1,6 @@
 -- Insert Legacy Restriction.
 INSERT INTO
-  restrictions (
+  sims.restrictions (
     restriction_type,
     restriction_code,
     description,
