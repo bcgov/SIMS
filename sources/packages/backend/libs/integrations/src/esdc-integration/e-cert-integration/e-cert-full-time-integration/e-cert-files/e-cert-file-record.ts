@@ -167,6 +167,10 @@ export class ECertFullTimeFileRecord extends ECertFileRecord {
    * ! All values must be rounded, only integers, no decimals.
    */
   grantAwards: Award[];
+  /**
+   * Persistent or prolonged disability flag (Y or N).
+   */
+  ppdFlag: string;
 
   public getFixedFormat(): string {
     try {
@@ -236,7 +240,8 @@ export class ECertFullTimeFileRecord extends ECertFileRecord {
 
       record.repeatAppend(SPACE_FILLER, DATE_FORMAT.length); // Borrower Address Last Update Date, optional, not provided.
       record.repeatAppend(SPACE_FILLER, DATE_FORMAT.length); // Borrower Alternate Address Last Update, optional, not provided.
-      record.repeatAppend(SPACE_FILLER, 69); // Trailing space
+      record.append(this.ppdFlag, 1);
+      record.repeatAppend(SPACE_FILLER, 68); // Trailing space
       return record.toString();
     } catch (error: unknown) {
       throw new Error(
