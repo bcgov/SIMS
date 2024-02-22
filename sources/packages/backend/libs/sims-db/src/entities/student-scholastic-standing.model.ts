@@ -5,7 +5,6 @@ import {
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
-  RelationId,
 } from "typeorm";
 import {
   Application,
@@ -26,13 +25,6 @@ import { StudentScholasticStandingChangeType } from "./student-scholastic-standi
 export class StudentScholasticStanding extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
-  /**
-   * Application id related to this scholastic standing change.
-   */
-  @RelationId(
-    (studentAssessment: StudentScholasticStanding) =>
-      studentAssessment.application,
-  )
   applicationId: number;
   /**
    * Application related to this scholastic standing change.
@@ -97,15 +89,6 @@ export class StudentScholasticStanding extends RecordDataModel {
     },
   )
   studentAssessment?: StudentAssessment;
-  /**
-   * Reference offering id is the offering id of the student application at the
-   * time of scholastic standings submission.
-   */
-  @RelationId(
-    (studentScholasticStanding: StudentScholasticStanding) =>
-      studentScholasticStanding.referenceOffering,
-  )
-  referenceOfferingId?: number;
   /**
    * The offering for the application at the time of scholastic standing submission.
    * Once the scholastic standing is submitted, if there is a reassessment then the current offering id will be different.

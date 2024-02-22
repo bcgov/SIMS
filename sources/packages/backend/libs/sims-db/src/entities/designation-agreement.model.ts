@@ -5,7 +5,6 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  RelationId,
 } from "typeorm";
 import {
   DesignationAgreementLocation,
@@ -25,11 +24,6 @@ import { RecordDataModel } from "./record.model";
 export class DesignationAgreement extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
-  /**
-   * Institution id that submitted the designation agreement.
-   */
-  @RelationId((designation: DesignationAgreement) => designation.institution)
-  institutionId: number;
   /**
    * Institution that submitted the designation agreement.
    */

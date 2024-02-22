@@ -73,13 +73,6 @@ export class Application extends RecordDataModel {
   })
   student: Student;
   /**
-   * References the location id related to the application
-   * at the moment it was submitted by the student. See
-   * further comments on the location property.
-   */
-  @RelationId((application: Application) => application.location)
-  locationId: number;
-  /**
    * References the location related to the application
    * at the moment it was submitted by the student.
    * For applications that do not have an offering
@@ -95,13 +88,6 @@ export class Application extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   location: InstitutionLocation;
-  /**
-   * References the program related to the application
-   * at the moment it was submitted by the student.
-   * See further comments on the pirProgram property.
-   */
-  @RelationId((application: Application) => application.pirProgram)
-  pirProgramId?: number;
   /**
    * References the program related to the application
    * at the moment it was submitted by the student.
@@ -147,11 +133,6 @@ export class Application extends RecordDataModel {
   })
   pirStatus?: ProgramInfoStatus;
   /**
-   * List of all files ids currently associated with the application.
-   */
-  @RelationId((application: Application) => application.studentFiles)
-  studentFilesIds: number[];
-  /**
    * List of all files currently associated with the application.
    */
   @OneToMany(
@@ -182,11 +163,6 @@ export class Application extends RecordDataModel {
     nullable: false,
   })
   applicationStatusUpdatedOn: Date;
-  /**
-   * Reason id why a Program Information Request (PIR) was denied.
-   */
-  @RelationId((application: Application) => application.pirDeniedReasonId)
-  pirDeniedId?: number;
   /**
    * Reason why a Program Information Request (PIR) was denied.
    */

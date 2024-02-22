@@ -35,13 +35,6 @@ export class StudentAssessment extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
   /**
-   * Application id related to this assessment.
-   */
-  @RelationId(
-    (studentAssessment: StudentAssessment) => studentAssessment.application,
-  )
-  applicationId: number;
-  /**
    * Application related to this assessment.
    */
   @ManyToOne(() => Application, {
@@ -190,14 +183,6 @@ export class StudentAssessment extends RecordDataModel {
     nullable: true,
   })
   noaApprovalStatus?: AssessmentStatus;
-  /**
-   * Disbursement ids related to this assessment.
-   */
-  @RelationId(
-    (studentAssessment: StudentAssessment) =>
-      studentAssessment.disbursementSchedules,
-  )
-  disbursementSchedulesIds?: number[];
   /**
    * Disbursements related to this assessment.
    */

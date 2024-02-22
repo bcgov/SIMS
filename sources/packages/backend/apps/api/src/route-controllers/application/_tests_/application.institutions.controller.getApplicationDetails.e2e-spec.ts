@@ -15,12 +15,11 @@ import {
   createFakeInstitutionLocation,
   saveFakeApplication,
 } from "@sims/test-utils";
-import { Institution, InstitutionLocation } from "@sims/sims-db";
+import { InstitutionLocation } from "@sims/sims-db";
 
 describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
   let app: INestApplication;
   let appDataSource: DataSource;
-  let collegeF: Institution;
   let collegeFLocation: InstitutionLocation;
   let collegeCLocation: InstitutionLocation;
 

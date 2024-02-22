@@ -5,7 +5,6 @@ import {
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
-  RelationId,
 } from "typeorm";
 import { Note, StudentAppeal, StudentAppealStatus, User } from ".";
 import { ColumnNames, TableNames } from "../constant";
@@ -20,15 +19,6 @@ import { RecordDataModel } from "./record.model";
 export class StudentAppealRequest extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
-  /**
-   * Student appeal id that groups the individual requests when the Student
-   * needs an appeal, one or more can be requested at the same time.
-   */
-  @RelationId(
-    (studentAppealRequest: StudentAppealRequest) =>
-      studentAppealRequest.studentAppeal,
-  )
-  studentAppealId: number;
   /**
    * Student appeal that groups the individual requests when the Student
    * needs an appeal. One or more can be requested at the same time.

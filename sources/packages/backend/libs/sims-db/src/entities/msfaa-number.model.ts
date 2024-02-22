@@ -4,7 +4,6 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  RelationId,
 } from "typeorm";
 import { Application, OfferingIntensity, Student } from ".";
 import { ColumnNames, TableNames } from "../constant";
@@ -89,11 +88,6 @@ export class MSFAANumber extends RecordDataModel {
     nullable: true,
   })
   newIssuingProvince?: string;
-  /**
-   * Student id related to this MSFAA.
-   */
-  @RelationId((msfaaNumber: MSFAANumber) => msfaaNumber.student)
-  studentId: number;
   /**
    * Student related to this MSFAA.
    */
