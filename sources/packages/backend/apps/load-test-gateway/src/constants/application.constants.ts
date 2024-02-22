@@ -1,4 +1,4 @@
-import { RelationshipStatus } from "@sims/sims-db";
+import { ApplicationDisabilityStatus, RelationshipStatus } from "@sims/sims-db";
 import { YesNoOptions } from "@sims/test-utils";
 
 export const APPLICATION_DATA_SINGLE_INDEPENDENT = {
@@ -11,6 +11,6 @@ export const APPLICATION_DATA_SINGLE_INDEPENDENT = {
   hasDependents: YesNoOptions.No,
   livingWithParents: YesNoOptions.No,
   youthInCare: YesNoOptions.No,
-  applicationPDPPDStatus: "noIDoNotHaveADisability",
+  applicationPDPPDStatus: ApplicationDisabilityStatus.noIDoNotHaveADisability,
   selectedOffering: null,
 };
