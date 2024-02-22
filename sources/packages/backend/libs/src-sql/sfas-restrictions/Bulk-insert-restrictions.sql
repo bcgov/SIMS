@@ -102,7 +102,10 @@ FROM
   AND student_restrictions.restriction_id = restrictions.id
 WHERE
   sfas_individuals.student_id IS NOT NULL
-  AND student_restrictions.is_active IS false;
+  AND (
+    student_restrictions.is_active = false
+    OR student_restrictions.restriction_id IS NULL
+  );
 
 /*
  * Once all the restrictions have been added,
