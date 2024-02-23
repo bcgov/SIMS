@@ -49,12 +49,13 @@
             <ul>
               <li>
                 Disbursements requests which are upcoming and will be required
-                at a later date. These are indicated by a 'Required' status.
+                at a later date. These are indicated by a
+                <strong>Required</strong> status.
               </li>
               <li>
                 Previously actioned Confirmation of Enrolment Requests which can
-                no longer be actioned. These are indicated by a 'Completed'
-                status.
+                no longer be actioned. These are indicated by a
+                <strong>Completed</strong> status.
               </li>
             </ul>
           </template>

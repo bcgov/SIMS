@@ -7,7 +7,7 @@
         :recordsCount="disbursements.results?.length"
       >
         <template #subtitle>
-          <slot name="coeSummarySubtitle">{{ subTitle }}</slot>
+          <slot name="coeSummarySubtitle" />
         </template>
         <template #actions>
           <v-text-field
