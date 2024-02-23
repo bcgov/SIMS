@@ -6,6 +6,9 @@
         :subTitle="subTitle"
         :recordsCount="disbursements.results?.length"
       >
+        <template #subtitle>
+          <slot name="coeSummarySubtitle">{{ subTitle }}</slot>
+        </template>
         <template #actions>
           <v-text-field
             density="compact"

@@ -43,13 +43,22 @@
           :enrollmentPeriod="EnrollmentPeriod.Upcoming"
           header="Upcoming and
         Previous Enrolments"
-          subTitle="This page contains two types of
-        records: <br />
-        i. disbursements requests which are upcoming and will be required at a
-        later date. These are indicated by a 'Required' status. <br />
-        ii. previously actioned Confirmation of Enrolment Requests which can no
-        longer be actioned. These are indicated by a 'Completed' status."
-        />
+        >
+          <template #coeSummarySubtitle>
+            <span>This page contains two types of records:</span>
+            <ul>
+              <li>
+                disbursements requests which are upcoming and will be required
+                at a later date. These are indicated by a 'Required' status.
+              </li>
+              <li>
+                previously actioned Confirmation of Enrolment Requests which can
+                no longer be actioned. These are indicated by a 'Completed'
+                status.
+              </li>
+            </ul>
+          </template>
+        </c-o-e-summary-data>
       </v-window-item>
     </v-window>
   </full-page-container>
