@@ -77,6 +77,10 @@ export const SFAS_IMPORT_RECORDS_PROGRESS_REPORT_PACE = 1000;
 export const HTTP_SERVICE_TIMEOUT = 30000;
 
 /**
- * ASCII default encoding for files.
+ * Default encoding for files.
+ * SFTP integrations and integration files uploaded to the system
+ * should be considered to be single byte characters and therefore
+ * latin1 (ISO8859-1) is used to include the ASCII extended
+ * characters.
  */
-export const FILE_DEFAULT_ENCODING = "ascii";
+export const FILE_DEFAULT_ENCODING = "latin1";
