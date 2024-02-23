@@ -39,7 +39,6 @@ describe("ECertFullTimeIntegrationService-createRequestContent", () => {
     const ecertRecords = [
       {
         sin: "445966120",
-        stopFullTimeBCFunding: false,
         courseLoad: 20,
         applicationNumber: "2023000009",
         documentNumber: 28,
