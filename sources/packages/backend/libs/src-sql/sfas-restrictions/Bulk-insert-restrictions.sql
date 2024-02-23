@@ -3,7 +3,8 @@
  * the below query inserts one Legacy restriction entry 
  * per student if they have one or more restrictions 
  * imported from the sfas system that are not present 
- * in the sims restrictions.
+ * in the sims restrictions. All the restrictions dealt 
+ * here are provincial restrictions only. 
  */
 INSERT INTO
   sims.student_restrictions (student_id, restriction_id, creator)
@@ -38,6 +39,11 @@ FROM
       AND restrictions.restriction_code IS NULL
   ) filtered_students
 WHERE
+  -- The below part of the query checks that for every student id which is a  
+  -- potential candidate to be inserted in the sims student_restrictions table
+  -- (using the above part of the query), is there already a pre-existing active 
+  -- LGCY restriction entry for that student in this table. If yes, the insert for 
+  -- LGCY restriction does not happen for that student.
   NOT EXISTS (
     SELECT
       1
