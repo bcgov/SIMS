@@ -1,12 +1,13 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource } from "typeorm";
-import { DataModelService, SFASRestriction } from "@sims/sims-db";
+import { DataSource, Repository } from "typeorm";
+import { DataModelService, Restriction, SFASRestriction } from "@sims/sims-db";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { getUTC, getISODateOnlyString, getSQLFileData } from "@sims/utilities";
 import { SFASDataImporter } from "./sfas-data-importer";
 import { SFASRecordIdentification } from "../../sfas-integration/sfas-files/sfas-record-identification";
 import { SFASRestrictionRecord } from "../../sfas-integration/sfas-files/sfas-restriction-record";
 import { SystemUsersService } from "@sims/services";
+import { InjectRepository } from "@nestjs/typeorm";
 
 const SFAS_RESTRICTIONS_RAW_SQL_FOLDER = "sfas-restrictions";
 
@@ -21,16 +22,13 @@ export class SFASRestrictionService
   implements SFASDataImporter
 {
   private readonly bulkInsertStudentRestrictionsSQL: string;
-  private readonly getLegacyRestrictionSQL: string;
   constructor(
     dataSource: DataSource,
     private readonly systemUsersService: SystemUsersService,
+    @InjectRepository(Restriction)
+    private readonly restrictionRepo: Repository<Restriction>,
   ) {
     super(dataSource.getRepository(SFASRestriction));
-    this.getLegacyRestrictionSQL = getSQLFileData(
-      "Get-legacy-restriction.sql",
-      SFAS_RESTRICTIONS_RAW_SQL_FOLDER,
-    );
     this.bulkInsertStudentRestrictionsSQL = getSQLFileData(
       "Bulk-insert-restrictions.sql",
       SFAS_RESTRICTIONS_RAW_SQL_FOLDER,
@@ -41,13 +39,12 @@ export class SFASRestrictionService
    * Bulk operation to insert student restrictions from SFAS restrictions data.
    */
   async insertStudentRestrictions(): Promise<void> {
-    const legacyRestrictionCode = "LGCY";
     try {
       const creator = this.systemUsersService.systemUser;
-      const [legacyRestriction] = await this.repo.manager.query(
-        this.getLegacyRestrictionSQL,
-        [legacyRestrictionCode],
-      );
+      const legacyRestriction = await this.restrictionRepo.findOne({
+        select: { id: true },
+        where: { restrictionCode: "LGCY" },
+      });
       await this.repo.manager.query(this.bulkInsertStudentRestrictionsSQL, [
         legacyRestriction.id,
         creator.id,

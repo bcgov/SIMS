@@ -18,15 +18,13 @@ FROM
     FROM
       (
         SELECT
-          sfas_restrictions.code,
           CASE
             WHEN sfas_restrictions.code = 'A12' THEN '12'
             WHEN sfas_restrictions.code = 'AF1' THEN 'AF'
             WHEN sfas_restrictions.code = 'B2D' THEN 'B2'
             ELSE sfas_restrictions.code
           END AS mapped_code,
-          sfas_restrictions.individual_id,
-          sfas_restrictions.processed
+          sfas_restrictions.individual_id
         FROM
           sims.sfas_restrictions sfas_restrictions
         WHERE
@@ -55,26 +53,29 @@ WHERE
  * After all the SFAS restrictions are imported, 
  * the below query inserts restrictions from sfas 
  * if those restrictions are valid restrictions 
- * in the sims system and are either not present in the 
- * sims student restrictions table or they are inactive. 
+ * in the sims system if they are either not present in the 
+ * sims student restrictions table or they are inactive. All
+ * the restrictions dealt here are provincial restrictions only. 
  */
 INSERT INTO
-  sims.student_restrictions (student_id, restriction_id)
+  sims.student_restrictions (student_id, restriction_id, creator)
 SELECT
   (sfas_individuals.student_id),
-  restrictions.id AS restriction_id
+  restrictions.id AS restriction_id,
+  $2
 FROM
   (
+    -- select sfas_restrictions records with mapped restriction (from sfas to sims) codes
+    -- and join with restrictions and student_restrictions table to
+    -- get the student ids to create restrictions.
     SELECT
-      sfas_restrictions.code,
       CASE
         WHEN sfas_restrictions.code = 'A12' THEN '12'
         WHEN sfas_restrictions.code = 'AF1' THEN 'AF'
         WHEN sfas_restrictions.code = 'B2D' THEN 'B2'
         ELSE sfas_restrictions.code
       END AS mapped_code,
-      sfas_restrictions.individual_id,
-      sfas_restrictions.processed
+      sfas_restrictions.individual_id
     FROM
       sims.sfas_restrictions sfas_restrictions
     WHERE
