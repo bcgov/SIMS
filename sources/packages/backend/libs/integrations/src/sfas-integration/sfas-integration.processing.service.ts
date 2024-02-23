@@ -138,15 +138,9 @@ export class SFASIntegrationProcessingService {
       }
       await Promise.all(promises);
       this.logger.log("Records imported.");
-      /**
-       * Bulk operation to update student id in SFAS individuals table after importing data from SFAS.
-       */
       this.logger.log("Updating student ids for SFAS individuals.");
       await this.sfasIndividualService.updateStudentId();
       this.logger.log("Student ids updated.");
-      /**
-       * Bulk operation to update and insert new disbursement overaward balances from sfas to disbursement overawards table.
-       */
       this.logger.log(
         "Updating and inserting new disbursement overaward balances from sfas to disbursement overawards table.",
       );
@@ -154,9 +148,6 @@ export class SFASIntegrationProcessingService {
       this.logger.log(
         "New disbursement overaward balances inserted to disbursement overawards table.",
       );
-      /**
-       * Bulk operation to insert student restrictions from SFAS restrictions data.
-       */
       this.logger.log(
         "Inserting student restrictions from SFAS restrictions data.",
       );

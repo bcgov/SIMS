@@ -97,7 +97,7 @@ export class SFASIndividualService
     try {
       await this.repo.manager.query(this.bulkUpdateStudentIdSQL);
     } catch (error) {
-      throw new Error("Error while updating ids imported from SFAS.", {
+      throw new Error("Error while updating student ids imported from SFAS.", {
         cause: error,
       });
     }

@@ -41,9 +41,10 @@ FROM
 WHERE
   -- The below part of the query checks that for every student id which is a  
   -- potential candidate to be inserted in the sims student_restrictions table
-  -- (using the above part of the query), is there already a pre-existing active 
+  -- (using the above part of the query), if there is already a pre-existing active 
   -- LGCY restriction entry for that student in this table. If yes, the insert for 
-  -- LGCY restriction does not happen for that student.
+  -- LGCY restriction does not happen for that student. If no, a LGCY restriction
+  -- entry is made for that student in the student_restrictions table.
   NOT EXISTS (
     SELECT
       1
@@ -71,7 +72,7 @@ SELECT
   $2
 FROM
   (
-    -- select sfas_restrictions records with mapped restriction (from sfas to sims) codes
+    -- select sfas_restrictions records with mapped restriction (from SFAS to SIMS) codes
     -- and join with restrictions and student_restrictions table to
     -- get the student ids to create restrictions.
     SELECT
