@@ -6,6 +6,7 @@ import { getUTC, getISODateOnlyString, getSQLFileData } from "@sims/utilities";
 import { SFASDataImporter } from "./sfas-data-importer";
 import { SFASRecordIdentification } from "../../sfas-integration/sfas-files/sfas-record-identification";
 import { SFASRestrictionRecord } from "../../sfas-integration/sfas-files/sfas-restriction-record";
+import { SystemUsersService } from "@sims/services";
 
 const SFAS_RESTRICTIONS_RAW_SQL_FOLDER = "sfas-restrictions";
 
@@ -20,8 +21,16 @@ export class SFASRestrictionService
   implements SFASDataImporter
 {
   private readonly bulkInsertStudentRestrictionsSQL: string;
-  constructor(dataSource: DataSource) {
+  private readonly getLegacyRestrictionSQL: string;
+  constructor(
+    dataSource: DataSource,
+    private readonly systemUsersService: SystemUsersService,
+  ) {
     super(dataSource.getRepository(SFASRestriction));
+    this.getLegacyRestrictionSQL = getSQLFileData(
+      "Get-legacy-restriction.sql",
+      SFAS_RESTRICTIONS_RAW_SQL_FOLDER,
+    );
     this.bulkInsertStudentRestrictionsSQL = getSQLFileData(
       "Bulk-insert-restrictions.sql",
       SFAS_RESTRICTIONS_RAW_SQL_FOLDER,
@@ -32,7 +41,25 @@ export class SFASRestrictionService
    * Bulk operation to insert student restrictions from SFAS restrictions data.
    */
   async insertStudentRestrictions(): Promise<void> {
-    await this.repo.manager.query(this.bulkInsertStudentRestrictionsSQL);
+    const legacyRestrictionCode = "LGCY";
+    try {
+      const creator = this.systemUsersService.systemUser;
+      const [legacyRestriction] = await this.repo.manager.query(
+        this.getLegacyRestrictionSQL,
+        [legacyRestrictionCode],
+      );
+      await this.repo.manager.query(this.bulkInsertStudentRestrictionsSQL, [
+        legacyRestriction.id,
+        creator.id,
+      ]);
+    } catch (error) {
+      throw new Error(
+        "Error while inserting student restrictions imported from SFAS.",
+        {
+          cause: error,
+        },
+      );
+    }
   }
 
   /**

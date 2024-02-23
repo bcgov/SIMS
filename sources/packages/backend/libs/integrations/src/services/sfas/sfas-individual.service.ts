@@ -94,7 +94,13 @@ export class SFASIndividualService
    * Bulk operation to update student id in SFAS individuals table after importing data from SFAS.
    */
   async updateStudentId(): Promise<void> {
-    await this.repo.manager.query(this.bulkUpdateStudentIdSQL);
+    try {
+      await this.repo.manager.query(this.bulkUpdateStudentIdSQL);
+    } catch (error) {
+      throw new Error("Error while updating ids imported from SFAS.", {
+        cause: error,
+      });
+    }
   }
 
   /**
@@ -131,39 +137,48 @@ export class SFASIndividualService
    * Updates and inserts new disbursement overaward balances from sfas to disbursement overawards table.
    */
   async updateDisbursementOverawards(): Promise<void> {
-    // Update BCSL and CSL overawards in parallel
-    const updateBCSLDisbursementOverawardPromise =
-      this.updateDisbursementOveraward(
-        SYSTEM_USER_USER_NAME,
-        DisbursementOverawardOriginType.LegacyOveraward,
-        BC_STUDENT_LOAN_AWARD_CODE,
+    try {
+      // Update BCSL and CSL overawards in parallel
+      const updateBCSLDisbursementOverawardPromise =
+        this.updateDisbursementOveraward(
+          SYSTEM_USER_USER_NAME,
+          DisbursementOverawardOriginType.LegacyOveraward,
+          BC_STUDENT_LOAN_AWARD_CODE,
+        );
+      const updateCSLFDisbursementOverawardPromise =
+        this.updateDisbursementOveraward(
+          SYSTEM_USER_USER_NAME,
+          DisbursementOverawardOriginType.LegacyOveraward,
+          CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
+        );
+      await Promise.all([
+        updateBCSLDisbursementOverawardPromise,
+        updateCSLFDisbursementOverawardPromise,
+      ]);
+      // Insert BCSL and CSL overawards in parallel
+      const insertBCSLDisbursementOverawardPromise =
+        this.insertDisbursementOveraward(
+          BC_STUDENT_LOAN_AWARD_CODE,
+          DisbursementOverawardOriginType.LegacyOveraward,
+          SYSTEM_USER_USER_NAME,
+        );
+      const insertCSLFDisbursementOverawardPromise =
+        this.insertDisbursementOveraward(
+          CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
+          DisbursementOverawardOriginType.LegacyOveraward,
+          SYSTEM_USER_USER_NAME,
+        );
+      await Promise.all([
+        insertBCSLDisbursementOverawardPromise,
+        insertCSLFDisbursementOverawardPromise,
+      ]);
+    } catch (error) {
+      throw new Error(
+        "Error while updating overawards balances imported from SFAS.",
+        {
+          cause: error,
+        },
       );
-    const updateCSLFDisbursementOverawardPromise =
-      this.updateDisbursementOveraward(
-        SYSTEM_USER_USER_NAME,
-        DisbursementOverawardOriginType.LegacyOveraward,
-        CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
-      );
-    await Promise.all([
-      updateBCSLDisbursementOverawardPromise,
-      updateCSLFDisbursementOverawardPromise,
-    ]);
-    // Insert BCSL and CSL overawards in parallel
-    const insertBCSLDisbursementOverawardPromise =
-      this.insertDisbursementOveraward(
-        BC_STUDENT_LOAN_AWARD_CODE,
-        DisbursementOverawardOriginType.LegacyOveraward,
-        SYSTEM_USER_USER_NAME,
-      );
-    const insertCSLFDisbursementOverawardPromise =
-      this.insertDisbursementOveraward(
-        CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
-        DisbursementOverawardOriginType.LegacyOveraward,
-        SYSTEM_USER_USER_NAME,
-      );
-    await Promise.all([
-      insertBCSLDisbursementOverawardPromise,
-      insertCSLFDisbursementOverawardPromise,
-    ]);
+    }
   }
 }

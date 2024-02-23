@@ -138,42 +138,53 @@ export class SFASIntegrationProcessingService {
       }
       await Promise.all(promises);
       this.logger.log("Records imported.");
-      try {
-        /**
-         * Bulk operation to update student id in SFAS individuals table after importing data from SFAS.
-         */
-        await this.sfasIndividualService.updateStudentId();
-      } catch (error) {
-        const logMessage =
-          "Error while updating student ids imported from SFAS.";
-        this.errorHandler(error, logMessage, result);
-      }
-      try {
-        await this.sfasIndividualService.updateDisbursementOverawards();
-      } catch (error) {
-        const logMessage =
-          "Error while updating overawards balances imported from SFAS.";
-        this.errorHandler(error, logMessage, result);
-      }
-      try {
-        await this.sfasRestrictionService.insertStudentRestrictions();
-      } catch (error) {
-        const logMessage =
-          "Error while inserting student restrictions imported from SFAS.";
-        this.errorHandler(error, logMessage, result);
-      }
+      /**
+       * Bulk operation to update student id in SFAS individuals table after importing data from SFAS.
+       */
+      this.logger.log("Updating student ids for SFAS individuals.");
+      await this.sfasIndividualService.updateStudentId();
+      this.logger.log("Student ids updated.");
+      /**
+       * Bulk operation to update and insert new disbursement overaward balances from sfas to disbursement overawards table.
+       */
+      this.logger.log(
+        "Updating and inserting new disbursement overaward balances from sfas to disbursement overawards table.",
+      );
+      await this.sfasIndividualService.updateDisbursementOverawards();
+      this.logger.log(
+        "New disbursement overaward balances inserted to disbursement overawards table.",
+      );
+      /**
+       * Bulk operation to insert student restrictions from SFAS restrictions data.
+       */
+      this.logger.log(
+        "Inserting student restrictions from SFAS restrictions data.",
+      );
+      await this.sfasRestrictionService.insertStudentRestrictions();
+      this.logger.log(
+        "Inserted student restrictions from SFAS restrictions data.",
+      );
       if (result.success) {
-        // Delete the file only if it was processed with success.
+        /**
+         * Delete the file only if it was processed with success.
+         */
         try {
           await this.sfasService.deleteFile(remoteFilePath);
         } catch (error) {
-          const logMessage = `Error while deleting SFAS integration file: ${remoteFilePath}`;
-          this.errorHandler(error, logMessage, result);
+          throw new Error(
+            `Error while deleting SFAS integration file: ${remoteFilePath}`,
+            {
+              cause: error,
+            },
+          );
         }
       }
     } catch (error) {
       const logMessage = `Error while processing SFAS integration file: ${remoteFilePath}`;
-      this.errorHandler(error, logMessage, result);
+      result.summary.push(logMessage);
+      result.success = false;
+      this.logger.error(logMessage);
+      this.logger.error(error);
     }
 
     return result;
@@ -205,23 +216,6 @@ export class SFASIntegrationProcessingService {
         break;
     }
     return dataImporter;
-  }
-
-  /**
-   * Error Handler.
-   * @param error error to be handled.
-   * @param logMessage log message.
-   * @param result sftp response result.
-   */
-  private errorHandler(
-    error: unknown,
-    logMessage: string,
-    result: ProcessSftpResponseResult,
-  ): void {
-    result.summary.push(logMessage);
-    result.success = false;
-    this.logger.error(logMessage);
-    this.logger.error(error);
   }
 
   @InjectLogger()
