@@ -19,6 +19,7 @@ import {
   getGenderCode,
   getMaritalStatusCode,
   getTotalYearsOfStudy,
+  getPPDFlag,
 } from "@sims/utilities";
 
 /**
@@ -122,6 +123,7 @@ export class ECertFullTimeIntegrationService extends ECertIntegrationService {
       record.gender = getGenderCode(ecertRecord.gender);
       record.maritalStatus = getMaritalStatusCode(ecertRecord.maritalStatus);
       record.studentNumber = ecertRecord.studentNumber;
+      record.ppdFlag = getPPDFlag(ecertRecord.calculatedPDPPDStatus);
       record.totalGrantAmount = totalGrantAmount;
       // List of grants to be sent ignoring grants with 0 dollar amount.
       record.grantAwards = getDisbursementValuesByType(ecertRecord.awards, [
