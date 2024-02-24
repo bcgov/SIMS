@@ -21,12 +21,13 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { defineComponent } from "vue";
 import { useFormioUtils } from "@/composables";
 import { StudentAppealRequest } from "@/types";
+import { PropType } from "vue";
 
 export default defineComponent({
   emits: ["submitted"],
   props: {
     studentAppealRequests: {
-      type: Object,
+      type: Object as PropType<StudentAppealRequest>,
       required: true,
     },
     readOnly: {

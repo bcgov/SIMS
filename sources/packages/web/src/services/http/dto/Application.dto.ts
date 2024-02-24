@@ -44,16 +44,18 @@ export interface ApplicationWithProgramYearAPIOutDTO {
 /**
  * DTO with primary identifiers of application.
  */
-export interface ApplicationIdentifiersAPIOutDTO {
+export interface ApplicationProgramYearAPIOutDTO {
   id: number;
   applicationNumber: string;
+  programYear: string;
 }
 
 /**
  * Base DTO for application dynamic data
  */
-export interface ApplicationBaseAPIOutDTO
-  extends ApplicationIdentifiersAPIOutDTO {
+export interface ApplicationBaseAPIOutDTO {
+  id: number;
+  applicationNumber: string;
   assessmentId?: number;
   data: any;
   applicationStatus: ApplicationStatus;
@@ -83,7 +85,9 @@ export interface ApplicationDataAPIOutDTO extends ApplicationBaseAPIOutDTO {
 /**
  * Interface for application summary
  */
-export interface ApplicationSummaryDTO extends ApplicationIdentifiersAPIOutDTO {
+export interface ApplicationSummaryDTO {
+  id: number;
+  applicationNumber: string;
   studyStartPeriod: string;
   studyEndPeriod: string;
   applicationName: string;

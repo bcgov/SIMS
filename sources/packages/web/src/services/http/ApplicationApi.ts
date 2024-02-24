@@ -13,7 +13,7 @@ import {
   ApplicationWithProgramYearAPIOutDTO,
   ApplicationDataAPIOutDTO,
   ApplicationBaseAPIOutDTO,
-  ApplicationIdentifiersAPIOutDTO,
+  ApplicationProgramYearAPIOutDTO,
   InProgressApplicationDetailsAPIOutDTO,
   PrimaryIdentifierAPIOutDTO,
   ApplicationProgressDetailsAPIOutDTO,
@@ -123,8 +123,8 @@ export class ApplicationApi extends HttpBaseClient {
 
   async getApplicationForRequestChange(
     applicationNumber: string,
-  ): Promise<ApplicationIdentifiersAPIOutDTO> {
-    return this.getCall<ApplicationIdentifiersAPIOutDTO>(
+  ): Promise<ApplicationProgramYearAPIOutDTO> {
+    return this.getCall<ApplicationProgramYearAPIOutDTO>(
       this.addClientRoot(`application/${applicationNumber}/appeal`),
     );
   }

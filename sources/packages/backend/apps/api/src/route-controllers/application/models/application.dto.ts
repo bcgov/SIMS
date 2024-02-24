@@ -75,15 +75,18 @@ export interface ApplicationFormData extends ApplicationData {
 /**
  * Application DTO with primary identifier(s)
  */
-export class ApplicationIdentifiersAPIOutDTO {
+export class ApplicationProgramYearAPIOutDTO {
   id: number;
   applicationNumber: string;
+  programYear: string;
 }
 
 /**
  * Base DTO for application
  */
-export class ApplicationBaseAPIOutDTO extends ApplicationIdentifiersAPIOutDTO {
+export class ApplicationBaseAPIOutDTO {
+  id: number;
+  applicationNumber: string;
   assessmentId?: number;
   data: ApplicationFormData;
   applicationStatus: ApplicationStatus;

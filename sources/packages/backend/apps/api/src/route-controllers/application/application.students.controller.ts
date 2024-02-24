@@ -37,7 +37,7 @@ import {
   SaveApplicationAPIInDTO,
   ApplicationDataAPIOutDTO,
   ApplicationWithProgramYearAPIOutDTO,
-  ApplicationIdentifiersAPIOutDTO,
+  ApplicationProgramYearAPIOutDTO,
   ApplicationNumberParamAPIInDTO,
   InProgressApplicationDetailsAPIOutDTO,
   ApplicationProgressDetailsAPIOutDTO,
@@ -506,7 +506,7 @@ export class ApplicationStudentsController extends BaseController {
   async getApplicationToRequestAppeal(
     @Param() applicationNumberParam: ApplicationNumberParamAPIInDTO,
     @UserToken() userToken: IUserToken,
-  ): Promise<ApplicationIdentifiersAPIOutDTO> {
+  ): Promise<ApplicationProgramYearAPIOutDTO> {
     const application =
       await this.applicationService.getApplicationToRequestAppeal(
         userToken.userId,
@@ -523,6 +523,7 @@ export class ApplicationStudentsController extends BaseController {
     return {
       id: application.id,
       applicationNumber: application.applicationNumber,
+      programYear: application.programYear.programYear,
     };
   }
 
