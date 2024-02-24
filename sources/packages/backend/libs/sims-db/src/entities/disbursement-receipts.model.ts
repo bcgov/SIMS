@@ -54,7 +54,7 @@ export class DisbursementReceipt extends RecordDataModel {
     name: "funding_type",
     nullable: false,
   })
-  fundingType: string;
+  fundingType: "FE" | "BC";
 
   /**
    * Total entitled disbursed amount for either FE(Federal) or BC(Provincial).

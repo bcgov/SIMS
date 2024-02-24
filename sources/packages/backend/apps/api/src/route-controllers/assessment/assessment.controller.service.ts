@@ -6,6 +6,7 @@ import {
   ApplicationExceptionStatus,
   StudentAssessmentStatus,
   ApplicationOfferingChangeRequestStatus,
+  OfferingIntensity,
 } from "@sims/sims-db";
 import {
   Injectable,
@@ -251,7 +252,7 @@ export class AssessmentControllerService {
    * Populate the final awards in a dynamic way like disbursement schedule(estimated) awards.
    * @param disbursementReceipts disbursement receipt details.
    * @param disbursementScheduleId disbursement schedule id of the disbursement receipt(s).
-   * @param identifier identifier which is used to create dynamic data by appending grant code
+   * @param identifier identifier which is used to create dynamic data by appending award code
    * to it.
    * @returns dynamic award data of disbursement receipts of a given disbursement.
    */
@@ -267,6 +268,19 @@ export class AssessmentControllerService {
       )
       .forEach((receipt) => {
         finalAward[`${identifier}Id`] = receipt.id;
+        // Check if a loan is part of the receipt (e.g. part-time provincial loans shouldn't be available).
+        const loanType = DisbursementReceiptService.getLoanAwardCode(
+          receipt.fundingType,
+          receipt.disbursementSchedule.studentAssessment.offering
+            .offeringIntensity,
+        );
+        if (loanType) {
+          // Add the loan to the list of awards returned.
+          const disbursementLoanKey = `${identifier}${loanType.toLowerCase()}`;
+          finalAward[disbursementLoanKey] =
+            receipt.totalEntitledDisbursedAmount;
+        }
+        // Add grants to the list of awards returned.
         receipt.disbursementReceiptValues.forEach((receiptValue) => {
           const disbursementValueKey = `${identifier}${receiptValue.grantType.toLowerCase()}`;
           finalAward[disbursementValueKey] = receiptValue.grantAmount;

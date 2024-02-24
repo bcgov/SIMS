@@ -1,13 +1,22 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource } from "typeorm";
-import { RecordDataModelService, DisbursementReceipt } from "@sims/sims-db";
+import {
+  RecordDataModelService,
+  DisbursementReceipt,
+  OfferingIntensity,
+} from "@sims/sims-db";
+import {
+  BC_STUDENT_LOAN_AWARD_CODE,
+  CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
+  CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE,
+} from "@sims/services/constants";
 
 /**
  * Service for disbursement receipts.
  */
 @Injectable()
 export class DisbursementReceiptService extends RecordDataModelService<DisbursementReceipt> {
-  constructor(private readonly dataSource: DataSource) {
+  constructor(dataSource: DataSource) {
     super(dataSource.getRepository(DisbursementReceipt));
   }
 
@@ -32,12 +41,20 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
     return this.repo.find({
       select: {
         id: true,
-        disbursementSchedule: { id: true },
+        fundingType: true,
+        totalEntitledDisbursedAmount: true,
+        disbursementSchedule: {
+          id: true,
+          studentAssessment: {
+            id: true,
+            offering: { id: true, offeringIntensity: true },
+          },
+        },
         disbursementReceiptValues: { grantType: true, grantAmount: true },
       },
       relations: {
         disbursementReceiptValues: true,
-        disbursementSchedule: true,
+        disbursementSchedule: { studentAssessment: { offering: true } },
       },
       where: {
         disbursementSchedule: {
@@ -53,5 +70,32 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
         },
       },
     });
+  }
+
+  /**
+   * Get the related loan award code based in the receipt.
+   * Provincial loans are not present for part-time disbursements.
+   * @param fundingType defines if the receipt is for a federal or provincial
+   * part of the disbursement.
+   * @param offeringIntensity offering intensity associate with the assessment
+   * related to the receipt.
+   * @returns loan award code, if possible.
+   */
+  static getLoanAwardCode(
+    fundingType: "FE" | "BC",
+    offeringIntensity: OfferingIntensity,
+  ): "CSLF" | "BCSL" | "CSLP" | null {
+    if (offeringIntensity === OfferingIntensity.fullTime) {
+      return fundingType === "FE"
+        ? CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE
+        : BC_STUDENT_LOAN_AWARD_CODE;
+    }
+    if (
+      offeringIntensity === OfferingIntensity.partTime &&
+      fundingType === "FE"
+    ) {
+      return CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE;
+    }
+    return null;
   }
 }
