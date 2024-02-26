@@ -138,28 +138,36 @@ export class SFASIntegrationProcessingService {
       }
       await Promise.all(promises);
       this.logger.log("Records imported.");
-
+      this.logger.log("Updating student ids for SFAS individuals.");
+      await this.sfasIndividualService.updateStudentId();
+      this.logger.log("Student ids updated.");
+      this.logger.log(
+        "Updating and inserting new disbursement overaward balances from sfas to disbursement overawards table.",
+      );
+      await this.sfasIndividualService.updateDisbursementOverawards();
+      this.logger.log(
+        "New disbursement overaward balances inserted to disbursement overawards table.",
+      );
+      this.logger.log(
+        "Inserting student restrictions from SFAS restrictions data.",
+      );
+      await this.sfasRestrictionService.insertStudentRestrictions();
+      this.logger.log(
+        "Inserted student restrictions from SFAS restrictions data.",
+      );
       if (result.success) {
-        try {
-          await this.sfasIndividualService.updateDisbursementOverawards();
-        } catch (error) {
-          const logMessage =
-            "Error while updating overawards balances imported from SFAS.";
-          result.summary.push(logMessage);
-          result.success = false;
-          this.logger.error(logMessage);
-          this.logger.error(error);
-        }
-
-        // Delete the file only if it was processed with success.
+        /**
+         * Delete the file only if it was processed with success.
+         */
         try {
           await this.sfasService.deleteFile(remoteFilePath);
         } catch (error) {
-          const logMessage = `Error while deleting SFAS integration file: ${remoteFilePath}`;
-          result.summary.push(logMessage);
-          result.success = false;
-          this.logger.error(logMessage);
-          this.logger.error(error);
+          throw new Error(
+            `Error while deleting SFAS integration file: ${remoteFilePath}`,
+            {
+              cause: error,
+            },
+          );
         }
       }
     } catch (error) {
