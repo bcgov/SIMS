@@ -63,12 +63,12 @@ export function createFakeDisbursementReceipt(relations: {
  * Create federal(FE) and provincial(BC) receipts records based in the disbursement and its awards values.
  * Each disbursement will generate two records on sims.disbursement_receipts, one for federal and another
  * for provincial awards.
- * @param disbursementSchedule disbursement with the awards to have the receipt created.
+ * @param disbursementSchedule disbursement with the awards to have the receipts created.
  */
 export async function saveFakeDisbursementReceiptsFromDisbursementSchedule(
   db: E2EDataSources,
   disbursementSchedule: DisbursementSchedule,
-) {
+): Promise<void> {
   // Federal receipt.
   const federalDisbursementReceipt = createFakeDisbursementReceipt({
     disbursementSchedule,
