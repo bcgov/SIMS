@@ -15,84 +15,86 @@ import {
   createFakeDisbursementValue,
   MSFAAStates,
   createFakeMSFAANumber,
+  saveFakeDisbursementReceiptsFromDisbursementSchedule,
 } from "@sims/test-utils";
 import {
   ApplicationStatus,
+  COEStatus,
   DisbursementValueType,
+  MSFAANumber,
   OfferingIntensity,
+  Student,
 } from "@sims/sims-db";
-import { TestingModule } from "@nestjs/testing";
+import { getDateOnlyFormat } from "@sims/utilities";
 
 describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
-  let appModule: TestingModule;
   let app: INestApplication;
   let db: E2EDataSources;
+  let sharedStudent: Student;
+  let sharedMSFAANumber: MSFAANumber;
 
   beforeAll(async () => {
     const { nestApplication, module, dataSource } =
       await createTestingAppModule();
-    appModule = module;
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    // Shared student to be used for tests that would not need further student customization.
+    sharedStudent = await saveFakeStudent(db.dataSource);
+    mockUserLoginInfo(module, sharedStudent);
+    // Valid MSFAA Number that will be part of the expected returned values.
+    sharedMSFAANumber = await db.msfaaNumber.save(
+      createFakeMSFAANumber(
+        { student: sharedStudent },
+        { msfaaState: MSFAAStates.Signed },
+      ),
+    );
   });
 
-  it("Should get the student assessment summary containing loan and all grants for an part-time application.", async () => {
-    // Create the student to be shared across the applications.
-    const student = await saveFakeStudent(db.dataSource);
-    mockUserLoginInfo(appModule, student);
-    // Valid MSFAA Number.
-    const msfaaNumber = await db.msfaaNumber.save(
-      createFakeMSFAANumber({ student }, { msfaaState: MSFAAStates.Signed }),
-    );
-    // Past part-time application with federal and provincial loans and grants.
-    // Loans will be ignored.
+  it("Should get the student assessment summary containing loan and all grants for a part-time application with a single disbursement.", async () => {
+    // First disbursement values.
+    const firstDisbursementValues = [
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaLoan,
+        "CSLP",
+        111,
+      ),
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaGrant,
+        "CSGP",
+        222,
+      ),
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaGrant,
+        "CSPT",
+        333,
+      ),
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaGrant,
+        "CSGD",
+        444,
+      ),
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCAG", 555),
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "SBSD", 666),
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCSG", 777),
+    ];
+    // Part-time application with federal and provincial loans and grants.
     const application = await saveFakeApplicationDisbursements(
       db.dataSource,
       {
-        student,
-        msfaaNumber,
-        firstDisbursementValues: [
-          createFakeDisbursementValue(
-            DisbursementValueType.CanadaLoan,
-            "CSLP",
-            111,
-          ),
-          createFakeDisbursementValue(
-            DisbursementValueType.CanadaGrant,
-            "CSGP",
-            222,
-          ),
-          createFakeDisbursementValue(
-            DisbursementValueType.CanadaGrant,
-            "CSPT",
-            333,
-          ),
-          createFakeDisbursementValue(
-            DisbursementValueType.CanadaGrant,
-            "CSGD",
-            444,
-          ),
-          createFakeDisbursementValue(
-            DisbursementValueType.BCGrant,
-            "BCAG",
-            555,
-          ),
-          createFakeDisbursementValue(
-            DisbursementValueType.BCGrant,
-            "SBSD",
-            666,
-          ),
-          createFakeDisbursementValue(
-            DisbursementValueType.BCGrant,
-            "BCSG",
-            777,
-          ),
-        ],
+        student: sharedStudent,
+        msfaaNumber: sharedMSFAANumber,
+        firstDisbursementValues,
       },
       {
         offeringIntensity: OfferingIntensity.partTime,
         applicationStatus: ApplicationStatus.Completed,
       },
+    );
+
+    const [firstSchedule] = application.currentAssessment.disbursementSchedules;
+    await saveFakeDisbursementReceiptsFromDisbursementSchedule(
+      db,
+      firstSchedule,
     );
 
     const endpoint = `/students/assessment/${application.currentAssessment.id}/award`;
@@ -101,35 +103,384 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
     );
 
     // Act/Assert
+    const offering = application.currentAssessment.offering;
     await request(app.getHttpServer())
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      // TODO: Validate result, create receipts record, validate receipts.
       .expect({
-        applicationNumber: "7560682449",
-        applicationStatus: "Completed",
-        institutionName: "Inc",
-        offeringIntensity: "Part Time",
-        offeringStudyStartDate: "Feb 23 2024",
-        offeringStudyEndDate: "Mar 06 2024",
+        applicationNumber: application.applicationNumber,
+        applicationStatus: ApplicationStatus.Completed,
+        institutionName: offering.educationProgram.institution.operatingName,
+        offeringIntensity: OfferingIntensity.partTime,
+        offeringStudyStartDate: getDateOnlyFormat(offering.studyStartDate),
+        offeringStudyEndDate: getDateOnlyFormat(offering.studyEndDate),
         estimatedAward: {
-          disbursement1Date: "Feb 24 2024",
-          disbursement1Status: "Pending",
-          disbursement1COEStatus: "Completed",
+          disbursement1Date: getDateOnlyFormat(firstSchedule.disbursementDate),
+          disbursement1Status: firstSchedule.disbursementScheduleStatus,
+          disbursement1COEStatus: COEStatus.completed,
           disbursement1MSFAANumber: "XXXXXXXXXX",
-          disbursement1MSFAAId: 45256,
+          disbursement1MSFAAId: sharedMSFAANumber.id,
           disbursement1MSFAACancelledDate: null,
-          disbursement1MSFAADateSigned: "2024-02-24",
+          disbursement1MSFAADateSigned: sharedMSFAANumber.dateSigned,
           disbursement1TuitionRemittance: 0,
-          disbursement1Id: 56661,
+          disbursement1Id: firstSchedule.id,
           disbursement1cslp: 111,
-          disbursement1csgd: 444,
           disbursement1csgp: 222,
           disbursement1cspt: 333,
+          disbursement1csgd: 444,
           disbursement1bcag: 555,
-          disbursement1bcsg: 777,
           disbursement1sbsd: 666,
+          disbursement1bcsg: 777,
+        },
+        finalAward: {
+          disbursementReceipt1cslp: 111,
+          disbursementReceipt1csgp: 222,
+          disbursementReceipt1cspt: 333,
+          disbursementReceipt1csgd: 444,
+          disbursementReceipt1bcag: 555,
+          disbursementReceipt1sbsd: 666,
+          disbursementReceipt1bcsg: 777,
+        },
+      });
+  });
+
+  it("Should get the student assessment summary containing loan and all grants for a part-time application with two disbursements.", async () => {
+    // First disbursement values.
+    const firstDisbursementValues = [
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaLoan,
+        "CSLP",
+        111,
+      ),
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaGrant,
+        "CSGP",
+        222,
+      ),
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaGrant,
+        "CSPT",
+        333,
+      ),
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaGrant,
+        "CSGD",
+        444,
+      ),
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCAG", 555),
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "SBSD", 666),
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCSG", 777),
+    ];
+    // Second disbursement values.
+    const secondDisbursementValues = [
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaLoan,
+        "CSLP",
+        9999,
+      ),
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaGrant,
+        "CSGP",
+        1010,
+      ),
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaGrant,
+        "CSPT",
+        1111,
+      ),
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaGrant,
+        "CSGD",
+        1212,
+      ),
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCAG", 1313),
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "SBSD", 1414),
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCSG", 1515),
+    ];
+    // Part-time application with federal and provincial loans and grants and two disbursements.
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        student: sharedStudent,
+        msfaaNumber: sharedMSFAANumber,
+        firstDisbursementValues,
+        secondDisbursementValues,
+      },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.Completed,
+        createSecondDisbursement: true,
+        secondDisbursementInitialValues: {
+          coeStatus: COEStatus.completed,
+          tuitionRemittanceRequestedAmount: 9876,
+        },
+      },
+    );
+    // Save receipts for both disbursements.
+    const saveReceiptsPromises =
+      application.currentAssessment.disbursementSchedules.map((disbursement) =>
+        saveFakeDisbursementReceiptsFromDisbursementSchedule(db, disbursement),
+      );
+    await Promise.all(saveReceiptsPromises);
+
+    const endpoint = `/students/assessment/${application.currentAssessment.id}/award`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act/Assert
+    const [firstSchedule, secondSchedule] =
+      application.currentAssessment.disbursementSchedules;
+    const offering = application.currentAssessment.offering;
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        applicationNumber: application.applicationNumber,
+        applicationStatus: ApplicationStatus.Completed,
+        institutionName: offering.educationProgram.institution.operatingName,
+        offeringIntensity: OfferingIntensity.partTime,
+        offeringStudyStartDate: getDateOnlyFormat(offering.studyStartDate),
+        offeringStudyEndDate: getDateOnlyFormat(offering.studyEndDate),
+        estimatedAward: {
+          // First disbursement schedule dynamic properties.
+          disbursement1Date: getDateOnlyFormat(firstSchedule.disbursementDate),
+          disbursement1Status: firstSchedule.disbursementScheduleStatus,
+          disbursement1COEStatus: COEStatus.completed,
+          disbursement1MSFAANumber: "XXXXXXXXXX",
+          disbursement1MSFAAId: sharedMSFAANumber.id,
+          disbursement1MSFAACancelledDate: null,
+          disbursement1MSFAADateSigned: sharedMSFAANumber.dateSigned,
+          disbursement1TuitionRemittance: 0,
+          disbursement1Id: firstSchedule.id,
+          disbursement1cslp: 111,
+          disbursement1csgp: 222,
+          disbursement1cspt: 333,
+          disbursement1csgd: 444,
+          disbursement1bcag: 555,
+          disbursement1sbsd: 666,
+          disbursement1bcsg: 777,
+          // Second disbursement schedule dynamic properties.
+          disbursement2Date: getDateOnlyFormat(secondSchedule.disbursementDate),
+          disbursement2Status: secondSchedule.disbursementScheduleStatus,
+          disbursement2COEStatus: COEStatus.completed,
+          disbursement2MSFAANumber: "XXXXXXXXXX",
+          disbursement2MSFAAId: sharedMSFAANumber.id,
+          disbursement2MSFAACancelledDate: null,
+          disbursement2MSFAADateSigned: sharedMSFAANumber.dateSigned,
+          disbursement2TuitionRemittance: 9876,
+          disbursement2Id: secondSchedule.id,
+          disbursement2cslp: 9999,
+          disbursement2csgp: 1010,
+          disbursement2cspt: 1111,
+          disbursement2csgd: 1212,
+          disbursement2bcag: 1313,
+          disbursement2sbsd: 1414,
+          disbursement2bcsg: 1515,
+        },
+        finalAward: {
+          // First disbursement schedule receipt dynamic properties.
+          disbursementReceipt1cslp: 111,
+          disbursementReceipt1csgp: 222,
+          disbursementReceipt1cspt: 333,
+          disbursementReceipt1csgd: 444,
+          disbursementReceipt1bcag: 555,
+          disbursementReceipt1sbsd: 666,
+          disbursementReceipt1bcsg: 777,
+          // Second disbursement schedule receipt dynamic properties.
+          disbursementReceipt2cslp: 9999,
+          disbursementReceipt2csgp: 1010,
+          disbursementReceipt2cspt: 1111,
+          disbursementReceipt2csgd: 1212,
+          disbursementReceipt2bcag: 1313,
+          disbursementReceipt2sbsd: 1414,
+          disbursementReceipt2bcsg: 1515,
+        },
+      });
+  });
+
+  it("Should get the student assessment summary containing federal and provincial loans and all grants for a full-time application with two disbursements.", async () => {
+    // First disbursement values.
+    const firstDisbursementValues = [
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaLoan,
+        "CSLF",
+        1000,
+      ),
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaGrant,
+        "CSGP",
+        10001,
+      ),
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaGrant,
+        "CSGD",
+        1002,
+      ),
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaGrant,
+        "CSGF",
+        1003,
+      ),
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaGrant,
+        "CSGT",
+        1004,
+      ),
+      createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 1005),
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCAG", 1006),
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "BGPD", 1007),
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "SBSD", 1008),
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCSG", 1009),
+    ];
+    // Second disbursement values.
+    const secondDisbursementValues = [
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaLoan,
+        "CSLF",
+        10010,
+      ),
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaGrant,
+        "CSGP",
+        10011,
+      ),
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaGrant,
+        "CSGD",
+        10012,
+      ),
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaGrant,
+        "CSGF",
+        10013,
+      ),
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaGrant,
+        "CSGT",
+        10014,
+      ),
+      createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 10015),
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCAG", 10016),
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "BGPD", 10017),
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "SBSD", 10018),
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCSG", 10019),
+    ];
+    // Full-time application with federal and provincial loans and grants and two disbursements.
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        student: sharedStudent,
+        msfaaNumber: sharedMSFAANumber,
+        firstDisbursementValues,
+        secondDisbursementValues,
+      },
+      {
+        offeringIntensity: OfferingIntensity.fullTime,
+        applicationStatus: ApplicationStatus.Completed,
+        createSecondDisbursement: true,
+        firstDisbursementInitialValues: {
+          tuitionRemittanceRequestedAmount: 1099,
+        },
+        secondDisbursementInitialValues: {
+          coeStatus: COEStatus.completed,
+        },
+      },
+    );
+    // Save receipts for both disbursements.
+    const saveReceiptsPromises =
+      application.currentAssessment.disbursementSchedules.map((disbursement) =>
+        saveFakeDisbursementReceiptsFromDisbursementSchedule(db, disbursement),
+      );
+    await Promise.all(saveReceiptsPromises);
+
+    const endpoint = `/students/assessment/${application.currentAssessment.id}/award`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act/Assert
+    const [firstSchedule, secondSchedule] =
+      application.currentAssessment.disbursementSchedules;
+    const offering = application.currentAssessment.offering;
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        applicationNumber: application.applicationNumber,
+        applicationStatus: ApplicationStatus.Completed,
+        institutionName: offering.educationProgram.institution.operatingName,
+        offeringIntensity: OfferingIntensity.fullTime,
+        offeringStudyStartDate: getDateOnlyFormat(offering.studyStartDate),
+        offeringStudyEndDate: getDateOnlyFormat(offering.studyEndDate),
+        estimatedAward: {
+          // First disbursement schedule dynamic properties.
+          disbursement1Date: getDateOnlyFormat(firstSchedule.disbursementDate),
+          disbursement1Status: firstSchedule.disbursementScheduleStatus,
+          disbursement1COEStatus: COEStatus.completed,
+          disbursement1MSFAANumber: "XXXXXXXXXX",
+          disbursement1MSFAAId: sharedMSFAANumber.id,
+          disbursement1MSFAACancelledDate: null,
+          disbursement1MSFAADateSigned: sharedMSFAANumber.dateSigned,
+          disbursement1TuitionRemittance: 1099,
+          disbursement1Id: firstSchedule.id,
+          disbursement1cslf: 1000,
+          disbursement1csgp: 10001,
+          disbursement1csgd: 1002,
+          disbursement1csgf: 1003,
+          disbursement1csgt: 1004,
+          disbursement1bcsl: 1005,
+          disbursement1bcag: 1006,
+          disbursement1bgpd: 1007,
+          disbursement1sbsd: 1008,
+          disbursement1bcsg: 1009,
+          // Second disbursement schedule dynamic properties.
+          disbursement2Date: getDateOnlyFormat(secondSchedule.disbursementDate),
+          disbursement2Status: secondSchedule.disbursementScheduleStatus,
+          disbursement2COEStatus: COEStatus.completed,
+          disbursement2MSFAANumber: "XXXXXXXXXX",
+          disbursement2MSFAAId: sharedMSFAANumber.id,
+          disbursement2MSFAACancelledDate: null,
+          disbursement2MSFAADateSigned: sharedMSFAANumber.dateSigned,
+          disbursement2TuitionRemittance: 0,
+          disbursement2Id: secondSchedule.id,
+          disbursement2cslf: 10010,
+          disbursement2csgp: 10011,
+          disbursement2csgd: 10012,
+          disbursement2csgf: 10013,
+          disbursement2csgt: 10014,
+          disbursement2bcsl: 10015,
+          disbursement2bcag: 10016,
+          disbursement2bgpd: 10017,
+          disbursement2sbsd: 10018,
+          disbursement2bcsg: 10019,
+        },
+        finalAward: {
+          // First disbursement schedule receipt dynamic properties.
+          disbursementReceipt1cslf: 1000,
+          disbursementReceipt1csgp: 10001,
+          disbursementReceipt1csgd: 1002,
+          disbursementReceipt1csgf: 1003,
+          disbursementReceipt1csgt: 1004,
+          disbursementReceipt1bcsl: 1005,
+          disbursementReceipt1bcag: 1006,
+          disbursementReceipt1bgpd: 1007,
+          disbursementReceipt1sbsd: 1008,
+          disbursementReceipt1bcsg: 1009,
+          // Second disbursement schedule receipt dynamic properties.
+          disbursementReceipt2cslf: 10010,
+          disbursementReceipt2csgp: 10011,
+          disbursementReceipt2csgd: 10012,
+          disbursementReceipt2csgf: 10013,
+          disbursementReceipt2csgt: 10014,
+          disbursementReceipt2bcsl: 10015,
+          disbursementReceipt2bcag: 10016,
+          disbursementReceipt2bgpd: 10017,
+          disbursementReceipt2sbsd: 10018,
+          disbursementReceipt2bcsg: 10019,
         },
       });
   });

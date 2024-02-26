@@ -31,6 +31,7 @@ export const BC_FUNDING_TYPES = [
  * that is represented by this code.
  */
 export const BC_TOTAL_GRANT_AWARD_CODE = "BCSG";
+
 export const BC_STUDENT_LOAN_AWARD_CODE = "BCSL";
 export const CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE = "CSLF";
 export const CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE = "CSLP";

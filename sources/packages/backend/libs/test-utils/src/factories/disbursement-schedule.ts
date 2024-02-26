@@ -43,7 +43,8 @@ export function createFakeDisbursementSchedule(
   schedule.coeDeniedReason = null;
   schedule.coeDeniedOtherDesc = null;
   schedule.studentAssessment = relations?.studentAssessment;
-  schedule.tuitionRemittanceRequestedAmount = 0;
+  schedule.tuitionRemittanceRequestedAmount =
+    options?.initialValues?.tuitionRemittanceRequestedAmount ?? 0;
   schedule.disbursementScheduleStatus =
     options?.initialValues?.disbursementScheduleStatus ??
     DisbursementScheduleStatus.Pending;

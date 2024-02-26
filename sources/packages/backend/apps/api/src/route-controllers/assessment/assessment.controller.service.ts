@@ -267,7 +267,6 @@ export class AssessmentControllerService {
         (receipt) => receipt.disbursementSchedule.id === disbursementScheduleId,
       )
       .forEach((receipt) => {
-        finalAward[`${identifier}Id`] = receipt.id;
         // Check if a loan is part of the receipt (e.g. part-time provincial loans shouldn't be available).
         const loanType = DisbursementReceiptService.getLoanAwardCode(
           receipt.fundingType,
@@ -277,8 +276,7 @@ export class AssessmentControllerService {
         if (loanType) {
           // Add the loan to the list of awards returned.
           const disbursementLoanKey = `${identifier}${loanType.toLowerCase()}`;
-          finalAward[disbursementLoanKey] =
-            receipt.totalEntitledDisbursedAmount;
+          finalAward[disbursementLoanKey] = receipt.totalDisbursedAmount;
         }
         // Add grants to the list of awards returned.
         receipt.disbursementReceiptValues.forEach((receiptValue) => {

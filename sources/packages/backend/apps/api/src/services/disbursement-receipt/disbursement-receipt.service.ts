@@ -42,7 +42,7 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
       select: {
         id: true,
         fundingType: true,
-        totalEntitledDisbursedAmount: true,
+        totalDisbursedAmount: true,
         disbursementSchedule: {
           id: true,
           studentAssessment: {
