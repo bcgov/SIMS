@@ -4,6 +4,7 @@ import {
   RecordDataModelService,
   DisbursementReceipt,
   OfferingIntensity,
+  RECEIPT_FUNDING_TYPE_FEDERAL,
 } from "@sims/sims-db";
 import {
   BC_STUDENT_LOAN_AWARD_CODE,
@@ -82,17 +83,17 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
    * @returns loan award code, if possible.
    */
   static getLoanAwardCode(
-    fundingType: "FE" | "BC",
+    fundingType: string,
     offeringIntensity: OfferingIntensity,
   ): "CSLF" | "BCSL" | "CSLP" | null {
     if (offeringIntensity === OfferingIntensity.fullTime) {
-      return fundingType === "FE"
+      return fundingType === RECEIPT_FUNDING_TYPE_FEDERAL
         ? CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE
         : BC_STUDENT_LOAN_AWARD_CODE;
     }
     if (
       offeringIntensity === OfferingIntensity.partTime &&
-      fundingType === "FE"
+      fundingType === RECEIPT_FUNDING_TYPE_FEDERAL
     ) {
       return CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE;
     }

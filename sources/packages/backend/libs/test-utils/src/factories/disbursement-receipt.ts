@@ -5,6 +5,8 @@ import {
   DisbursementValue,
   DisbursementValueType,
   InstitutionLocation,
+  RECEIPT_FUNDING_TYPE_FEDERAL,
+  RECEIPT_FUNDING_TYPE_PROVINCIAL,
 } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
 import * as faker from "faker";
@@ -36,7 +38,7 @@ export function createFakeDisbursementReceipt(relations: {
     student.sinValidation.sin ??
     faker.random.number({ min: 100000000, max: 899999999 }).toString();
   receipt.disbursementSchedule = relations.disbursementSchedule;
-  receipt.fundingType = "FE";
+  receipt.fundingType = RECEIPT_FUNDING_TYPE_FEDERAL;
   receipt.totalEntitledDisbursedAmount = randomAmount;
   receipt.totalDisbursedAmount = randomAmount;
   receipt.disburseDate = isoDateNow;
@@ -73,7 +75,7 @@ export async function saveFakeDisbursementReceiptsFromDisbursementSchedule(
   const federalDisbursementReceipt = createFakeDisbursementReceipt({
     disbursementSchedule,
   });
-  federalDisbursementReceipt.fundingType = "FE";
+  federalDisbursementReceipt.fundingType = RECEIPT_FUNDING_TYPE_FEDERAL;
   // Set federal loan amount.
   federalDisbursementReceipt.totalDisbursedAmount =
     disbursementSchedule.disbursementValues.find(
@@ -87,7 +89,7 @@ export async function saveFakeDisbursementReceiptsFromDisbursementSchedule(
     disbursementSchedule.disbursementValues.find(
       (award) => award.valueType === DisbursementValueType.BCLoan,
     )?.valueAmount ?? 0;
-  provincialDisbursementReceipt.fundingType = "BC";
+  provincialDisbursementReceipt.fundingType = RECEIPT_FUNDING_TYPE_PROVINCIAL;
   await db.disbursementReceipt.save([
     federalDisbursementReceipt,
     provincialDisbursementReceipt,
