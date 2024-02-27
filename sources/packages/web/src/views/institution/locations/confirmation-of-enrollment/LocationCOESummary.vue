@@ -41,8 +41,7 @@
         <c-o-e-summary-data
           :locationId="locationId"
           :enrollmentPeriod="EnrollmentPeriod.Upcoming"
-          header="Upcoming and
-        Previous Enrolments"
+          header="Upcoming and Previous Enrolments"
         >
           <template #coeSummarySubtitle>
             <span>This page contains two types of records:</span>
