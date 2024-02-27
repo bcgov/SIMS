@@ -21,6 +21,7 @@ export class SFASRestrictionService
   extends DataModelService<SFASRestriction>
   implements SFASDataImporter
 {
+  private readonly dataSource: DataSource;
   private readonly bulkInsertLegacyRestrictionsSQL: string;
   private readonly bulkInsertSFASMappedRestrictionsSQL: string;
   constructor(
@@ -50,15 +51,22 @@ export class SFASRestrictionService
         select: { id: true },
         where: { restrictionCode: "LGCY" },
       });
-      await this.repo.manager.transaction(async (manager) => {
-        await manager.query(this.bulkInsertLegacyRestrictionsSQL, [
-          legacyRestriction.id,
-          creator.id,
+      await this.dataSource.transaction(async (transactionalEntityManager) => {
+        const bulkInsertLegacyRestrictionsPromise =
+          transactionalEntityManager.query(
+            this.bulkInsertLegacyRestrictionsSQL,
+            [legacyRestriction.id, creator.id],
+          );
+        const bulkInsertSFASMappedRestrictionsPromise =
+          transactionalEntityManager.query(
+            this.bulkInsertSFASMappedRestrictionsSQL,
+            [creator.id],
+          );
+        await Promise.all([
+          bulkInsertLegacyRestrictionsPromise,
+          bulkInsertSFASMappedRestrictionsPromise,
         ]);
-        await manager.query(this.bulkInsertSFASMappedRestrictionsSQL, [
-          creator.id,
-        ]);
-        manager
+        await transactionalEntityManager
           .getRepository(SFASRestriction)
           .update(
             { processed: false },

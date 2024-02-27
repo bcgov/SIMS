@@ -9,8 +9,8 @@
 INSERT INTO
   sims.student_restrictions (student_id, restriction_id, creator)
 SELECT
-  (sfas_individuals.student_id),
-  restrictions.id AS restriction_id,
+  sfas_individuals.student_id,
+  restrictions.id,
   $1
 FROM
   (
