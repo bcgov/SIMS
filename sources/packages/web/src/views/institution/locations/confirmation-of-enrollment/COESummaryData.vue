@@ -3,9 +3,11 @@
     <v-container :fluid="true">
       <body-header
         :title="header"
-        :subTitle="subTitle"
         :recordsCount="disbursements.results?.length"
       >
+        <template #subtitle>
+          <slot name="coeSummarySubtitle">{{ coeSummarySubtitle }}</slot>
+        </template>
         <template #actions>
           <v-text-field
             density="compact"
@@ -109,9 +111,9 @@ export default defineComponent({
       type: String,
       required: true,
     },
-    subTitle: {
+    coeSummarySubtitle: {
       type: String,
-      required: true,
+      required: false,
     },
     enrollmentPeriod: {
       type: String as PropType<EnrollmentPeriod>,
