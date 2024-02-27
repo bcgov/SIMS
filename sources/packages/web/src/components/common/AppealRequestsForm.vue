@@ -18,10 +18,9 @@
 </template>
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { defineComponent } from "vue";
+import { defineComponent, PropType } from "vue";
 import { useFormioUtils } from "@/composables";
 import { StudentAppealRequest } from "@/types";
-import { PropType } from "vue";
 
 export default defineComponent({
   emits: ["submitted"],
