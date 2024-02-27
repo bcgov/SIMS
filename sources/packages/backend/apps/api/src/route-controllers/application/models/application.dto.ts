@@ -73,7 +73,8 @@ export interface ApplicationFormData extends ApplicationData {
   };
 }
 /**
- * Application DTO with primary identifier(s)
+ * Application and program year base
+ * information.
  */
 export class ApplicationProgramYearAPIOutDTO {
   id: number;

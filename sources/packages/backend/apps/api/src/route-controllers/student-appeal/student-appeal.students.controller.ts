@@ -46,6 +46,7 @@ import {
 } from "../../constants";
 import { StudentAppealRequestModel } from "../../services/student-appeal/student-appeal.model";
 import { StudentAppealControllerService } from "./student-appeal.controller.service";
+import { StudentAppealNonSubmissionData } from "./models/student-appeal.model";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -117,9 +118,20 @@ export class StudentAppealStudentsController extends BaseController {
     let dryRunSubmissionResults: DryRunSubmissionResult[] = [];
     try {
       const dryRunPromise: Promise<DryRunSubmissionResult>[] =
-        payload.studentAppealRequests.map((appeal) =>
-          this.formService.dryRunSubmission(appeal.formName, appeal.formData),
-        );
+        payload.studentAppealRequests.map((appeal) => {
+          // Check if the form has any non submission data(data which is not persisted but required for validation)
+          // which needs to be populated at the server side for dry run submission.
+          if (appeal.formData instanceof StudentAppealNonSubmissionData) {
+            appeal.formData = {
+              ...appeal.formData,
+              programYear: application.programYear.programYear,
+            };
+          }
+          return this.formService.dryRunSubmission(
+            appeal.formName,
+            appeal.formData,
+          );
+        });
       dryRunSubmissionResults = await Promise.all(dryRunPromise);
     } catch (error) {
       //TODO: Add a logger to log the error trace.

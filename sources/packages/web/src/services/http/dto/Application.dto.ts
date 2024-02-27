@@ -42,7 +42,8 @@ export interface ApplicationWithProgramYearAPIOutDTO {
 }
 
 /**
- * DTO with primary identifiers of application.
+ * Application and program year base
+ * information.
  */
 export interface ApplicationProgramYearAPIOutDTO {
   id: number;
