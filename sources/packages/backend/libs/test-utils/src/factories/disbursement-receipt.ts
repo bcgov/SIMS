@@ -66,11 +66,12 @@ export function createFakeDisbursementReceipt(relations: {
  * Each disbursement will generate two records on sims.disbursement_receipts, one for federal and another
  * for provincial awards.
  * @param disbursementSchedule disbursement with the awards to have the receipts created.
+ * @returns returns the federal and provincial receipt created and their awards receipts.
  */
 export async function saveFakeDisbursementReceiptsFromDisbursementSchedule(
   db: E2EDataSources,
   disbursementSchedule: DisbursementSchedule,
-): Promise<void> {
+): Promise<{ federal: DisbursementReceipt; provincial: DisbursementReceipt }> {
   // Federal receipt.
   const federalDisbursementReceipt = createFakeDisbursementReceipt({
     disbursementSchedule,
@@ -90,10 +91,7 @@ export async function saveFakeDisbursementReceiptsFromDisbursementSchedule(
       (award) => award.valueType === DisbursementValueType.BCLoan,
     )?.valueAmount ?? 0;
   provincialDisbursementReceipt.fundingType = RECEIPT_FUNDING_TYPE_PROVINCIAL;
-  await db.disbursementReceipt.save([
-    federalDisbursementReceipt,
-    provincialDisbursementReceipt,
-  ]);
+
   // Generate receipts for every federal grant part of the disbursement.
   const federalGrantsReceipts = createReceiptValuesFromDisbursementValues(
     disbursementSchedule.disbursementValues,
@@ -101,15 +99,25 @@ export async function saveFakeDisbursementReceiptsFromDisbursementSchedule(
     federalDisbursementReceipt,
   );
   // Generate receipts for every provincial grant part of the disbursement.
+  // The individual BC grants are not part of the receipt, only the total amount of them.
   const provincialGrantsReceipts = createReceiptValuesFromDisbursementValues(
     disbursementSchedule.disbursementValues,
-    DisbursementValueType.BCGrant,
+    DisbursementValueType.BCTotalGrant,
     provincialDisbursementReceipt,
   );
-  await db.disbursementReceiptValue.save([
-    ...federalGrantsReceipts,
-    ...provincialGrantsReceipts,
+  // Associate the receipts with their awards values.
+  federalDisbursementReceipt.disbursementReceiptValues = federalGrantsReceipts;
+  provincialDisbursementReceipt.disbursementReceiptValues =
+    provincialGrantsReceipts;
+  const [federal, provincial] = await db.disbursementReceipt.save([
+    federalDisbursementReceipt,
+    provincialDisbursementReceipt,
   ]);
+
+  return {
+    federal,
+    provincial,
+  };
 }
 
 /**

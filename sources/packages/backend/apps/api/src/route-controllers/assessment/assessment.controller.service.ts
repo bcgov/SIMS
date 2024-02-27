@@ -7,6 +7,8 @@ import {
   StudentAssessmentStatus,
   ApplicationOfferingChangeRequestStatus,
   OfferingIntensity,
+  DisbursementValueType,
+  RECEIPT_FUNDING_TYPE_PROVINCIAL,
 } from "@sims/sims-db";
 import {
   Injectable,
@@ -32,6 +34,7 @@ import {
 } from "./models/assessment.dto";
 import { getUserFullName } from "../../utilities";
 import { getDateOnlyFormat } from "@sims/utilities";
+import { BC_TOTAL_GRANT_AWARD_CODE } from "@sims/services/constants";
 
 @Injectable()
 export class AssessmentControllerService {
@@ -149,6 +152,10 @@ export class AssessmentControllerService {
           schedule.documentNumber;
       }
       schedule.disbursementValues.forEach((disbursement) => {
+        if (disbursement.valueType === DisbursementValueType.BCTotalGrant) {
+          // BC Total grants are not part of the students grants and should not be displayed to the student.
+          return;
+        }
         const disbursementValueKey = `${disbursementIdentifier}${disbursement.valueCode.toLowerCase()}`;
         disbursementDetails[disbursementValueKey] = disbursement.valueAmount;
       });
@@ -219,14 +226,14 @@ export class AssessmentControllerService {
       if (disbursementReceipts.length) {
         finalAward = this.populateDisbursementReceiptAwardValues(
           disbursementReceipts,
-          firstDisbursement.id,
+          firstDisbursement,
           "disbursementReceipt1",
         );
         if (secondDisbursement) {
           const secondDisbursementReceiptAwards =
             this.populateDisbursementReceiptAwardValues(
               disbursementReceipts,
-              secondDisbursement.id,
+              secondDisbursement,
               "disbursementReceipt2",
             );
           finalAward = { ...finalAward, ...secondDisbursementReceiptAwards };
@@ -258,13 +265,14 @@ export class AssessmentControllerService {
    */
   private populateDisbursementReceiptAwardValues(
     disbursementReceipts: DisbursementReceipt[],
-    disbursementScheduleId: number,
+    disbursementSchedule: DisbursementSchedule,
     identifier: string,
   ): Record<string, string | number> {
     const finalAward = {};
     disbursementReceipts
       .filter(
-        (receipt) => receipt.disbursementSchedule.id === disbursementScheduleId,
+        (receipt) =>
+          receipt.disbursementSchedule.id === disbursementSchedule.id,
       )
       .forEach((receipt) => {
         // Check if a loan is part of the receipt (e.g. part-time provincial loans shouldn't be available).
@@ -280,9 +288,38 @@ export class AssessmentControllerService {
         }
         // Add grants to the list of awards returned.
         receipt.disbursementReceiptValues.forEach((receiptValue) => {
+          if (receiptValue.grantType === BC_TOTAL_GRANT_AWARD_CODE) {
+            // BC Total grants are not part of the students grants and should not be displayed to the student.
+            return;
+          }
           const disbursementValueKey = `${identifier}${receiptValue.grantType.toLowerCase()}`;
           finalAward[disbursementValueKey] = receiptValue.grantAmount;
         });
+        if (receipt.fundingType === RECEIPT_FUNDING_TYPE_PROVINCIAL) {
+          // Create individual BC grants values from BC total grants(BCSG) receipt.
+          // Federal receipts do not contain individual BC grants.
+          const bcTotalGrantAward =
+            disbursementSchedule.disbursementValues.find(
+              (award) => award.valueCode === BC_TOTAL_GRANT_AWARD_CODE,
+            );
+          const bcTotalGrantsReceipt = receipt.disbursementReceiptValues.find(
+            (receipt) => receipt.grantType === BC_TOTAL_GRANT_AWARD_CODE,
+          );
+          // Check if the BC total grants and the receipt have the some total hence.
+          // If the values match the award values from the BC grants can be copied to the summary.
+          const bcGrantsReceiptMatch =
+            bcTotalGrantAward?.valueAmount ===
+            bcTotalGrantsReceipt?.grantAmount;
+          const bcGrants = disbursementSchedule.disbursementValues.filter(
+            (award) => award.valueType === DisbursementValueType.BCGrant,
+          );
+          bcGrants.forEach((bcGrant) => {
+            const disbursementValueKey = `${identifier}${bcGrant.valueCode.toLowerCase()}`;
+            finalAward[disbursementValueKey] = bcGrantsReceiptMatch
+              ? bcGrant.valueAmount
+              : null;
+          });
+        }
       });
     return finalAward;
   }

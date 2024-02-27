@@ -107,7 +107,6 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
     await db.disbursementReceiptValue.save(disbursementReceiptsValues);
 
     const finalAwards = {};
-    finalAwards["disbursementReceipt1Id"] = disbursementReceipt.id;
 
     disbursementReceiptsValues.forEach((disbursementReceiptsValue) => {
       finalAwards[
