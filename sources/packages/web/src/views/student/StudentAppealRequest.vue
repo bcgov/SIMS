@@ -82,7 +82,6 @@ export default defineComponent({
             form.data.applicationNumber,
           );
         applicationId = application.id;
-        console.log(application.programYear);
         appealRequestsForms.value = form.data.formNames.map(
           (formName) =>
             ({

@@ -45,10 +45,10 @@
                     "tableView": true,
                     "inputType": "text",
                     "inputMask": "",
-                    "label": "My total income in 2023 was",
+                    "label": "My total income in {{data.calculatedTaxYear}} was",
                     "key": "studentNewTaxReturnIncome",
                     "placeholder": "",
-                    "prefix": "",
+                    "prefix": "$",
                     "suffix": "",
                     "defaultValue": "",
                     "protected": false,
@@ -61,7 +61,7 @@
                     "validate": {
                         "required": true,
                         "multiple": "",
-                        "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
+                        "custom": "valid = (input >= 0 && input < data.maxMoneyValue) ? true : 'The number you have entered is outside the expected range.';"
                     },
                     "conditional": {
                         "show": "",
@@ -72,12 +72,14 @@
                     "labelPosition": "top",
                     "tags": [],
                     "properties": {},
-                    "lockKey": true
+                    "redrawOn": "calculatedTaxYear",
+                    "lockKey": true,
+                    "hideLabel": false
                 }
             ],
             "type": "panel",
             "breadcrumb": "default",
-            "hideLabel": false,
+            "hideLabel": true,
             "tags": [],
             "conditional": {
                 "show": "",
@@ -157,8 +159,7 @@
                         "eq": ""
                     },
                     "properties": {},
-                    "lockKey": true,
-                    "isNew": false
+                    "lockKey": true
                 },
                 {
                     "clearOnHide": false,
@@ -190,7 +191,7 @@
                             "validate": {
                                 "required": true,
                                 "multiple": "",
-                                "custom": ""
+                                "custom": "valid = (input >= 0 && input < data.maxMoneyValue) ? true : 'The number you have entered is outside the expected range.';"
                             },
                             "conditional": {
                                 "show": "",
@@ -206,7 +207,7 @@
                     ],
                     "type": "panel",
                     "breadcrumb": "default",
-                    "hideLabel": false,
+                    "hideLabel": true,
                     "tags": [],
                     "conditional": {
                         "show": "true",
@@ -255,8 +256,7 @@
                         "eq": ""
                     },
                     "properties": {},
-                    "lockKey": true,
-                    "isNew": false
+                    "lockKey": true
                 },
                 {
                     "clearOnHide": false,
@@ -288,7 +288,7 @@
                             "validate": {
                                 "required": true,
                                 "multiple": "",
-                                "custom": ""
+                                "custom": "valid = (input >= 0 && input < data.maxMoneyValue) ? true : 'The number you have entered is outside the expected range.';"
                             },
                             "conditional": {
                                 "show": "",
@@ -304,7 +304,7 @@
                     ],
                     "type": "panel",
                     "breadcrumb": "default",
-                    "hideLabel": false,
+                    "hideLabel": true,
                     "tags": [],
                     "conditional": {
                         "show": "true",
@@ -316,7 +316,7 @@
             ],
             "type": "panel",
             "breadcrumb": "default",
-            "hideLabel": false,
+            "hideLabel": true,
             "tags": [],
             "conditional": {
                 "show": "",
@@ -328,8 +328,8 @@
         {
             "input": true,
             "tableView": true,
-            "key": "maxIncome",
-            "label": "Max Income",
+            "key": "maxMoneyValue",
+            "label": "Max Money Value",
             "protected": false,
             "unique": false,
             "persistent": true,
@@ -359,7 +359,28 @@
                 "when": null,
                 "eq": ""
             },
-            "properties": {}
+            "properties": {},
+            "calculateValue": "",
+            "defaultValue": ""
+        },
+        {
+            "input": true,
+            "tableView": true,
+            "key": "calculatedTaxYear",
+            "label": "Calculated Tax Year",
+            "protected": false,
+            "unique": false,
+            "persistent": false,
+            "type": "hidden",
+            "tags": [],
+            "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+            },
+            "properties": {},
+            "calculateValue": "// From the program year, get the calendar start year of the the program year.\r\n// e.g. program year  = 2022-2023, calendar start year is 2022. And tax year should be 2021.\r\nconst [startYear] = data.programYear ? data.programYear.split(\"-\"):[];\r\nconst taxYear = startYear ? (+startYear)-1 : \"\";\r\nvalue = taxYear;",
+            "lockKey": true
         }
     ]
 }
