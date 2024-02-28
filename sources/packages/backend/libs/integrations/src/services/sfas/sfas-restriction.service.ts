@@ -21,11 +21,10 @@ export class SFASRestrictionService
   extends DataModelService<SFASRestriction>
   implements SFASDataImporter
 {
-  private readonly dataSource: DataSource;
   private readonly bulkInsertLegacyRestrictionsSQL: string;
   private readonly bulkInsertSFASMappedRestrictionsSQL: string;
   constructor(
-    dataSource: DataSource,
+    private readonly dataSource: DataSource,
     private readonly systemUsersService: SystemUsersService,
     @InjectRepository(Restriction)
     private readonly restrictionRepo: Repository<Restriction>,
@@ -105,6 +104,7 @@ export class SFASRestrictionService
     );
     restriction.removalDate = getISODateOnlyString(sfasRestriction.removalDate);
     restriction.extractedAt = getUTC(extractedDate);
+    restriction.processed = false;
     await this.repo.save(restriction, { reload: false, transaction: false });
   }
 
