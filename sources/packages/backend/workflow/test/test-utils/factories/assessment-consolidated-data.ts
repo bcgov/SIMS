@@ -88,6 +88,7 @@ export function createFakePartTimeAssessmentConsolidatedData(
     offeringCourseLoad: 40,
     studentDataCRAReportedIncome: 10001,
     partner1CRAReportedIncome: 15001,
+    programYearTotalPartTimeCSGD: 200,
   };
 }
 /**
