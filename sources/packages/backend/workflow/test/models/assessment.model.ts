@@ -134,6 +134,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataAdditionalTransportCost: number;
   studentDataAdditionalTransportWeeks: number;
   studentDataAdditionalTransportPlacement: YesNoOptions;
+  programYearTotalPartTimeCSGD: number;
 }
 
 /**
@@ -266,6 +267,7 @@ export interface CalculatedAssessmentModel {
   finalProvincialAwardNetSBSDAmount: number;
   // Calculated Data
   calculatedDataTotalRemainingNeed1: number;
+  calculatedDataTotalRemainingNeed2: number;
   calculatedDataTotalRemainingNeed3: number;
   calculatedDataAdditionalTransportationMax: number;
   calculatedDataTotalTransportationAllowance: number;
