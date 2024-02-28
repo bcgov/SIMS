@@ -55,7 +55,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     );
   });
 
-  it("Should determine federalAwardCSGDAmount for 3 or more dependants and calculatedDataTotalFamilyIncome > limitAwardCSGDIncomeCap", async () => {
+  it("Should determine federalAwardCSGDAmount, federalAwardCSGDAmount, finalFederalAwardNetCSGDAmount for 3 or more dependants and calculatedDataTotalFamilyIncome > limitAwardCSGDIncomeCap", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -129,6 +129,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
           assessmentConsolidatedData.programYearTotalPartTimeCSGD,
       ),
     );
+    expect(
+      calculatedAssessment.variables.finalFederalAwardNetCSGDAmount,
+    ).toEqual(calculatedAssessment.variables.federalAwardCSGDAmount);
   });
 
   it("Should determine federalAwardCSGDAmount for less than 3 dependants and calculatedDataTotalFamilyIncome <= limitAwardCSGDIncomeCap", async () => {
@@ -169,7 +172,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     );
   });
 
-  it("Should determine federalAwardCSGDAmount for less than 3 dependants and calculatedDataTotalFamilyIncome > limitAwardCSGDIncomeCap", async () => {
+  it("Should determine federalAwardCSGDAmount, federalAwardCSGDAmount, finalFederalAwardNetCSGDAmount for less than 3 dependants and calculatedDataTotalFamilyIncome > limitAwardCSGDIncomeCap", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -236,5 +239,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
           assessmentConsolidatedData.programYearTotalPartTimeCSGD,
       ),
     );
+    expect(
+      calculatedAssessment.variables.finalFederalAwardNetCSGDAmount,
+    ).toEqual(calculatedAssessment.variables.federalAwardCSGDAmount);
   });
 });
