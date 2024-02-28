@@ -200,7 +200,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       offeringType: OfferingTypes.Public,
       offeringDeclaration: true,
       actualTuitionCosts: 5000,
-      programRelatedCosts: 1000000,
+      programRelatedCosts: MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE + 1,
       mandatoryFees: 456,
       exceptionalExpenses: 555,
     };
@@ -212,7 +212,9 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect({
-        errors: ["Program related costs must be not greater than 999999."],
+        errors: [
+          `Program related costs must be not greater than ${MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE}.`,
+        ],
         infos: [],
         warnings: [
           {

@@ -359,7 +359,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     );
     const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}`;
     payload.offeringName = "Offering 3";
-    payload.mandatoryFees = 1000000;
+    payload.mandatoryFees = MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE + 1;
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -369,7 +369,9 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       .expect(HttpStatus.BAD_REQUEST)
       .expect({
         statusCode: HttpStatus.BAD_REQUEST,
-        message: ["Mandatory fees must be not greater than 999999."],
+        message: [
+          `Mandatory fees must be not greater than ${MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE}.`,
+        ],
         error: "The validated offerings have critical errors.",
       });
   });
