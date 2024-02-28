@@ -48,10 +48,15 @@ export default defineComponent({
     );
 
     const getAwardValue = (awardType: string): string | number => {
-      return (
-        props.awardDetails[`${props.identifier}${awardType.toLowerCase()}`] ??
-        "(Not eligible)"
-      );
+      const awardValue =
+        props.awardDetails[`${props.identifier}${awardType.toLowerCase()}`];
+      // If the award if defined but no values are present it means that a receipt value is missing.
+      if (awardValue === null) {
+        return "-";
+      }
+      // If the award in not defined at all it means that the award is not eligible an it was not
+      // part of the disbursement calculations output.
+      return awardValue ?? "(Not eligible)";
     };
 
     return {

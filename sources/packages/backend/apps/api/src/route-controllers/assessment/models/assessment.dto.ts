@@ -87,7 +87,8 @@ export class AwardDetailsAPIOutDTO {
   @ApiProperty({
     description:
       "Dynamic output from disbursement receipt for the given disbursement. " +
-      "Contains data that could represent a part-time or a full-time award details. ",
+      "Contains data that could represent a part-time or a full-time award details. " +
+      "If the conditions to have a receipt are not match this information will not be available.",
   })
-  finalAward: Record<string, string | number>;
+  finalAward?: Record<string, string | number>;
 }
