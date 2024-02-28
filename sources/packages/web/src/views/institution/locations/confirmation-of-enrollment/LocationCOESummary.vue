@@ -22,7 +22,7 @@
           <div>
             <v-icon start icon="fa:far fa-folder-open" class="px-1"></v-icon>
             <span class="label-bold" data-cy="upcomingEnrolmentTab">
-              Upcoming enrolment
+              Upcoming and Previous Enrolments
             </span>
           </div>
         </v-tab>
@@ -41,9 +41,24 @@
         <c-o-e-summary-data
           :locationId="locationId"
           :enrollmentPeriod="EnrollmentPeriod.Upcoming"
-          header="Upcoming enrolment"
-          subTitle="These applications are still outside of the 21 days of the study start date."
-        />
+          header="Upcoming and Previous Enrolments"
+        >
+          <template #coeSummarySubtitle>
+            <span>This page contains two types of records:</span>
+            <ul>
+              <li>
+                Disbursements requests which are upcoming and will be required
+                at a later date. These are indicated by a
+                <span class="font-bold">Required</span> status.
+              </li>
+              <li>
+                Previously actioned Confirmation of Enrolment Requests which can
+                no longer be actioned. These are indicated by a
+                <span class="font-bold">Completed</span> status.
+              </li>
+            </ul>
+          </template>
+        </c-o-e-summary-data>
       </v-window-item>
     </v-window>
   </full-page-container>

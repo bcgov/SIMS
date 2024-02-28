@@ -21,16 +21,21 @@ export class SFASRestrictionService
   extends DataModelService<SFASRestriction>
   implements SFASDataImporter
 {
-  private readonly bulkInsertStudentRestrictionsSQL: string;
+  private readonly bulkInsertLegacyRestrictionsSQL: string;
+  private readonly bulkInsertSFASMappedRestrictionsSQL: string;
   constructor(
-    dataSource: DataSource,
+    private readonly dataSource: DataSource,
     private readonly systemUsersService: SystemUsersService,
     @InjectRepository(Restriction)
     private readonly restrictionRepo: Repository<Restriction>,
   ) {
     super(dataSource.getRepository(SFASRestriction));
-    this.bulkInsertStudentRestrictionsSQL = getSQLFileData(
-      "Bulk-insert-restrictions.sql",
+    this.bulkInsertLegacyRestrictionsSQL = getSQLFileData(
+      "Bulk-insert-legacy-restrictions.sql",
+      SFAS_RESTRICTIONS_RAW_SQL_FOLDER,
+    );
+    this.bulkInsertSFASMappedRestrictionsSQL = getSQLFileData(
+      "Bulk-insert-sfas-mapped-restrictions.sql",
       SFAS_RESTRICTIONS_RAW_SQL_FOLDER,
     );
   }
@@ -45,10 +50,28 @@ export class SFASRestrictionService
         select: { id: true },
         where: { restrictionCode: "LGCY" },
       });
-      await this.repo.manager.query(this.bulkInsertStudentRestrictionsSQL, [
-        legacyRestriction.id,
-        creator.id,
-      ]);
+      await this.dataSource.transaction(async (transactionalEntityManager) => {
+        const bulkInsertLegacyRestrictionsPromise =
+          transactionalEntityManager.query(
+            this.bulkInsertLegacyRestrictionsSQL,
+            [legacyRestriction.id, creator.id],
+          );
+        const bulkInsertSFASMappedRestrictionsPromise =
+          transactionalEntityManager.query(
+            this.bulkInsertSFASMappedRestrictionsSQL,
+            [creator.id],
+          );
+        await Promise.all([
+          bulkInsertLegacyRestrictionsPromise,
+          bulkInsertSFASMappedRestrictionsPromise,
+        ]);
+        await transactionalEntityManager
+          .getRepository(SFASRestriction)
+          .update(
+            { processed: false },
+            { processed: true, updatedAt: new Date() },
+          );
+      });
     } catch (error) {
       throw new Error(
         "Error while inserting student restrictions imported from SFAS.",
@@ -81,6 +104,7 @@ export class SFASRestrictionService
     );
     restriction.removalDate = getISODateOnlyString(sfasRestriction.removalDate);
     restriction.extractedAt = getUTC(extractedDate);
+    restriction.processed = false;
     await this.repo.save(restriction, { reload: false, transaction: false });
   }
 

@@ -58,4 +58,13 @@ export class SFASRestriction extends BaseModel {
     nullable: false,
   })
   extractedAt: Date;
+  /**
+   * Boolean indicating if an SFAS restriction record was verified to
+   * determine if a restriction must be created in the student account.
+   */
+  @Column({
+    name: "processed",
+    nullable: false,
+  })
+  processed: boolean;
 }

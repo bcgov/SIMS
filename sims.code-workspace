@@ -1,0 +1,93 @@
+{
+  "folders": [
+    {
+      "name": "Web UI",
+      "path": "./sources/packages/web"
+    },
+    {
+      "name": "Backend",
+      "path": "./sources/packages/backend"
+    },
+    {
+      "name": "Forms",
+      "path": "./sources/packages/forms"
+    },
+    {
+      "name": "DevOps",
+      "path": "./devops"
+    },
+    {
+      "name": "Load Tests",
+      "path": "./sources/packages/load-test"
+    },
+    {
+      "name": "All",
+      "path": "."
+    }
+  ],
+  "extensions": {
+    "recommendations": [
+      "vue.volar",
+      "vue.vscode-typescript-vue-plugin",
+      "dbaeumer.vscode-eslint",
+      "esbenp.prettier-vscode",
+      "streetsidesoftware.code-spell-checker",
+      "aaron-bond.better-comments",
+      "ms-vscode.js-debug-nightly",
+      "adpyke.vscode-sql-formatter",
+      "redhat.vscode-yaml"
+    ]
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "View Outdated Web Packages",
+        "type": "shell",
+        "command": "npm outdated",
+        "options": {
+          "cwd": "${workspaceFolder:Web UI}"
+        },
+        "problemMatcher": []
+      },
+      {
+        "label": "View Outdated Backend Packages",
+        "type": "shell",
+        "command": "npm outdated",
+        "options": {
+          "cwd": "${workspaceFolder:Backend}"
+        },
+        "problemMatcher": []
+      },
+      {
+        "label": "View Outdated Forms Packages",
+        "type": "shell",
+        "command": "npm outdated",
+        "options": {
+          "cwd": "${workspaceFolder:Forms}"
+        },
+        "problemMatcher": []
+      }
+    ]
+  },
+  "settings": {
+    "eslint.workingDirectories": [{ "mode": "auto" }],
+    "search.exclude": {
+      "**/bin": true,
+      "**/obj": true,
+      "**/dist": true,
+      "**/node_modules": true
+    },
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.guides.bracketPairs": true,
+    "[vue][typescript][javascript]": {
+      "editor.formatOnSave": false,
+      "editor.codeActionsOnSave": {
+        "source.addMissingImports": "explicit",
+        "source.fixAll.eslint": "explicit"
+      }
+    },
+    "typescript.preferences.importModuleSpecifier": "non-relative"
+  }
+}
