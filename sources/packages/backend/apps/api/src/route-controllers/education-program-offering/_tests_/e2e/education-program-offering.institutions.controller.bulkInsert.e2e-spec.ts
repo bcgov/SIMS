@@ -413,7 +413,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
                 {
                   typeCode:
                     OfferingValidationWarnings.OfferingCostExceedMaximum,
-                  message: `Mandatory fees must be not greater than 100000.`,
+                  message: "Mandatory fees must be not greater than 100000.",
                 },
               ],
             },

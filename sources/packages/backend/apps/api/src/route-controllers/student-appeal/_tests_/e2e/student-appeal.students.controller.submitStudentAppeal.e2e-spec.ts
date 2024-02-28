@@ -28,6 +28,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
   let appDataSource: DataSource;
   let appModule: TestingModule;
   let db: E2EDataSources;
+  const FINANCIAL_INFORMATION_FORM_NAME = "studentfinancialinformationappeal";
 
   beforeAll(async () => {
     const { nestApplication, module, dataSource } =
@@ -54,17 +55,16 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
         { applicationStatus: ApplicationStatus.Completed },
       );
       // Prepare the data to request a change of financial information.
-      const financialInformationFormName = "studentfinancialinformationappeal";
       const financialInformationData = {
         programYear: application.programYear.programYear,
-        studentNewTaxReturnIncome: 8000,
-        studentNewHaveDaycareCosts12YearsOrOver: "no",
-        studentNewHaveDaycareCosts11YearsOrUnder: "no",
+        taxReturnIncome: 8000,
+        haveDaycareCosts12YearsOrOver: "no",
+        haveDaycareCosts11YearsOrUnder: "no",
       };
       const payload: StudentAppealAPIInDTO = {
         studentAppealRequests: [
           {
-            formName: financialInformationFormName,
+            formName: FINANCIAL_INFORMATION_FORM_NAME,
             formData: financialInformationData,
           },
         ],
@@ -83,13 +83,13 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
         AppStudentsModule,
         FormService,
       );
-      const mockDryRunSubmission = jest.fn().mockResolvedValue({
+      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
         valid: true,
-        formName: financialInformationFormName,
+        formName: FINANCIAL_INFORMATION_FORM_NAME,
         data: { data: financialInformationData },
       });
 
-      formService.dryRunSubmission = mockDryRunSubmission;
+      formService.dryRunSubmission = dryRunSubmissionMock;
 
       const endpoint = `/students/appeal/application/${application.id}`;
 
@@ -119,14 +119,14 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
       const [appealRequest] = studentAppeal.appealRequests;
       expect(studentAppeal.id).toBe(createdAppealId);
       expect(appealRequest.submittedFormName).toBe(
-        financialInformationFormName,
+        FINANCIAL_INFORMATION_FORM_NAME,
       );
       expect(appealRequest.submittedData).toStrictEqual(
         financialInformationData,
       );
       // Expect to call the dry run submission.
-      expect(mockDryRunSubmission).toHaveBeenCalledWith(
-        financialInformationFormName,
+      expect(dryRunSubmissionMock).toHaveBeenCalledWith(
+        FINANCIAL_INFORMATION_FORM_NAME,
         {
           ...financialInformationData,
           programYear: application.programYear.programYear,
@@ -159,16 +159,16 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
       });
       await db.studentAppeal.save(pendingAppeal);
       // Prepare the data to request a change of financial information.
-      const financialInformationFormName = "studentfinancialinformationappeal";
       const financialInformationData = {
-        studentNewTaxReturnIncome: 8000,
-        studentNewHaveDaycareCosts12YearsOrOver: "no",
-        studentNewHaveDaycareCosts11YearsOrUnder: "no",
+        programYear: application.programYear.programYear,
+        taxReturnIncome: 8000,
+        haveDaycareCosts12YearsOrOver: "no",
+        haveDaycareCosts11YearsOrUnder: "no",
       };
       const payload: StudentAppealAPIInDTO = {
         studentAppealRequests: [
           {
-            formName: financialInformationFormName,
+            formName: FINANCIAL_INFORMATION_FORM_NAME,
             formData: financialInformationData,
           },
         ],

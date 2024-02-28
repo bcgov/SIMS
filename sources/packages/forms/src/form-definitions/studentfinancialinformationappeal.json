@@ -46,7 +46,7 @@
                     "inputType": "text",
                     "inputMask": "",
                     "label": "My total income in {{data.calculatedTaxYear}} was",
-                    "key": "studentNewTaxReturnIncome",
+                    "key": "taxReturnIncome",
                     "placeholder": "",
                     "prefix": "$",
                     "suffix": "",
@@ -74,7 +74,8 @@
                     "properties": {},
                     "redrawOn": "calculatedTaxYear",
                     "lockKey": true,
-                    "hideLabel": false
+                    "hideLabel": false,
+                    "isNew": false
                 }
             ],
             "type": "panel",
@@ -124,8 +125,8 @@
                     "input": true,
                     "tableView": true,
                     "inputType": "radio",
-                    "label": "<strong>Will you have a child age 11 years or under in daycare? </strong>",
-                    "key": "studentNewHaveDaycareCosts11YearsOrUnder",
+                    "label": "Will you have a child age 11 years or under in daycare?",
+                    "key": "haveDaycareCosts11YearsOrUnder",
                     "values": [
                         {
                             "value": "yes",
@@ -159,7 +160,8 @@
                         "eq": ""
                     },
                     "properties": {},
-                    "lockKey": true
+                    "lockKey": true,
+                    "isNew": false
                 },
                 {
                     "clearOnHide": false,
@@ -175,8 +177,8 @@
                             "tableView": true,
                             "inputType": "text",
                             "inputMask": "",
-                            "label": "<strong>What are the daycare costs that you incur for your child(ren) age 11 years or under?</strong>",
-                            "key": "studentNewDaycareCosts11YearsOrUnder",
+                            "label": "What are the daycare costs that you incur for your child(ren) age 11 years or under?",
+                            "key": "daycareCosts11YearsOrUnder",
                             "placeholder": "",
                             "prefix": "$",
                             "suffix": "",
@@ -202,7 +204,8 @@
                             "labelPosition": "top",
                             "tags": [],
                             "properties": {},
-                            "lockKey": true
+                            "lockKey": true,
+                            "isNew": false
                         }
                     ],
                     "type": "panel",
@@ -211,18 +214,19 @@
                     "tags": [],
                     "conditional": {
                         "show": "true",
-                        "when": "studentNewHaveDaycareCosts11YearsOrUnder",
+                        "when": "haveDaycareCosts11YearsOrUnder",
                         "eq": "yes"
                     },
-                    "properties": {}
+                    "properties": {},
+                    "isNew": false
                 },
                 {
                     "autofocus": false,
                     "input": true,
                     "tableView": true,
                     "inputType": "radio",
-                    "label": "<strong>Will you have unsubsidized day-care costs during class hours for disabled/infirm dependants 12 years of age or older? </strong>",
-                    "key": "studentNewHaveDaycareCosts12YearsOrOver",
+                    "label": "Will you have unsubsidized day-care costs during class hours for disabled/infirm dependants 12 years of age or older?",
+                    "key": "haveDaycareCosts12YearsOrOver",
                     "values": [
                         {
                             "value": "yes",
@@ -256,7 +260,8 @@
                         "eq": ""
                     },
                     "properties": {},
-                    "lockKey": true
+                    "lockKey": true,
+                    "isNew": false
                 },
                 {
                     "clearOnHide": false,
@@ -272,8 +277,8 @@
                             "tableView": true,
                             "inputType": "text",
                             "inputMask": "",
-                            "label": "<strong>What are the total unsubsidized day-care costs during class hours for the proposed study period for disabled/infirm dependants 12 years of age and older?</strong>",
-                            "key": "studentNewDaycareCosts12YearsOrOver",
+                            "label": "What are the total unsubsidized day-care costs during class hours for the proposed study period for disabled/infirm dependants 12 years of age and older?",
+                            "key": "daycareCosts12YearsOrOver",
                             "placeholder": "",
                             "prefix": "$",
                             "suffix": "",
@@ -299,7 +304,8 @@
                             "labelPosition": "top",
                             "tags": [],
                             "properties": {},
-                            "lockKey": true
+                            "lockKey": true,
+                            "isNew": false
                         }
                     ],
                     "type": "panel",
@@ -308,10 +314,11 @@
                     "tags": [],
                     "conditional": {
                         "show": "true",
-                        "when": "studentNewHaveDaycareCosts12YearsOrOver",
+                        "when": "haveDaycareCosts12YearsOrOver",
                         "eq": "yes"
                     },
-                    "properties": {}
+                    "properties": {},
+                    "isNew": false
                 }
             ],
             "type": "panel",
@@ -323,7 +330,8 @@
                 "when": null,
                 "eq": ""
             },
-            "properties": {}
+            "properties": {},
+            "isNew": false
         },
         {
             "input": true,

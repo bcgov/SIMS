@@ -1,7 +1,7 @@
 /**
  * Student appeal form data which is not persisted
- * but used for logic or validation purpose.
+ * but used for logic or validation purposes.
  */
-export class StudentAppealNonSubmissionData {
+export class StudentAppealServerSideSubmissionData {
   programYear: string;
 }

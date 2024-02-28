@@ -445,20 +445,20 @@
           "data": {
             "values": [
               {
-                "label": "Income",
-                "value": "studentincomeappeal"
-              },
-              {
-                "label": "Partners Income",
-                "value": "partnerincomeappeal"
-              },
-              {
                 "value": "studentdisabilityappeal",
                 "label": "Disability Information"
               },
               {
                 "value": "studentfinancialinformationappeal",
                 "label": "Financial Information"
+              },
+              {
+                "label": "Income",
+                "value": "studentincomeappeal"
+              },
+              {
+                "label": "Partners Income",
+                "value": "partnerincomeappeal"
               }
             ],
             "resource": "",
