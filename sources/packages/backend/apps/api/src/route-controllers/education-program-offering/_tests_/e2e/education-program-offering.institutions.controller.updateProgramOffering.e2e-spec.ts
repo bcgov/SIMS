@@ -392,7 +392,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       actualTuitionCosts: 1234,
       programRelatedCosts: 3211,
       mandatoryFees: 456,
-      exceptionalExpenses: 1000000,
+      exceptionalExpenses: 100000001,
     };
 
     // Act/Assert
