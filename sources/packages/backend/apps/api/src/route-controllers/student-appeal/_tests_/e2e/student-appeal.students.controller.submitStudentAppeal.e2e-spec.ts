@@ -38,7 +38,6 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
   let appDataSource: DataSource;
   let appModule: TestingModule;
   let db: E2EDataSources;
-  let studentToken: string;
   let applicationRepo: Repository<Application>;
   let studentAppealRequestRepo: Repository<StudentAppealRequest>;
   const STUDENT_NEW_INCOME_FORM_NAME = "studentIncomeAppeal";
@@ -56,9 +55,6 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
     db = createE2EDataSources(dataSource);
     applicationRepo = dataSource.getRepository(Application);
     studentAppealRequestRepo = dataSource.getRepository(StudentAppealRequest);
-    studentToken = await getStudentToken(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-    );
   });
 
   it(
@@ -235,6 +231,10 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
     };
     // Mock user service to return the saved student.
     mockUserLoginInfo(appModule, student);
+    // Get any student user token.
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
 
     const endpoint = `/students/appeal/application/000`;
 
@@ -275,6 +275,10 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
     };
     // Mock user service to return the saved student.
     mockUserLoginInfo(appModule, student);
+    // Get any student user token.
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
 
     const endpoint = `/students/appeal/application/${application.id}`;
 
