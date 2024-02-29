@@ -161,6 +161,12 @@ export class StudentAppealStudentsController extends BaseController {
       userToken.userId,
       appealRequests,
     );
+
+    await this.studentAppealService.updateStudentAppealFiles(
+      userToken.userId,
+      appealRequests,
+    );
+
     return {
       id: studentAppeal.id,
     };

@@ -384,10 +384,6 @@ export interface ApplicationData {
    */
   selectedOffering?: number;
   /**
-   * Offering start date of the selected offering.
-   */
-  selectedOfferingDate?: string;
-  /**
    * Relationship status declared by the student.
    */
   relationshipStatus?: RelationshipStatus;
