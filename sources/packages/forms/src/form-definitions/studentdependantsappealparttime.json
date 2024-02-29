@@ -1,5 +1,5 @@
 {
-    "title": "Appeals - Student Dependants Part Time",
+    "title": "Appeals - Student Dependants",
     "name": "studentDependantsAppealPartTime",
     "path": "studentdependantsappealparttime",
     "type": "form",
@@ -10,7 +10,7 @@
     "components": [
         {
             "key": "dependantsInformationTitle",
-            "label": "Dependants Information (Part-Time Applications)",
+            "label": "Dependants Information",
             "input": false,
             "tag": "h3",
             "attrs": [
@@ -20,7 +20,7 @@
                 }
             ],
             "className": "category-header-medium primary-color",
-            "content": "Dependants Information (Part-Time Applications)",
+            "content": "Dependants Information",
             "type": "htmlelement",
             "hideLabel": true,
             "tags": [],
@@ -30,8 +30,7 @@
                 "eq": ""
             },
             "properties": {},
-            "lockKey": true,
-            "isNew": false
+            "lockKey": true
         },
         {
             "clearOnHide": false,
@@ -46,7 +45,7 @@
                     "input": true,
                     "tableView": true,
                     "inputType": "radio",
-                    "label": "<strong>Do you have any dependants?</strong>",
+                    "label": "Do you have any dependants?",
                     "key": "hasDependents",
                     "values": [
                         {
@@ -82,9 +81,9 @@
                     },
                     "properties": {},
                     "tooltip": "Dependants represent anyone who you support financially.",
-                    "errorLabel": "Dependent",
+                    "errorLabel": "",
                     "lockKey": true,
-                    "isNew": false
+                    "customClass": "\"customClass\": \"label-bold\""
                 },
                 {
                     "clearOnHide": false,
@@ -116,8 +115,7 @@
                                 "eq": ""
                             },
                             "properties": {},
-                            "lockKey": true,
-                            "isNew": false
+                            "lockKey": true
                         },
                         {
                             "key": "addDependantsHtml2",
@@ -141,8 +139,7 @@
                                 "eq": ""
                             },
                             "properties": {},
-                            "lockKey": true,
-                            "isNew": false
+                            "lockKey": true
                         },
                         {
                             "autofocus": false,
@@ -293,7 +290,7 @@
                                             "input": true,
                                             "tableView": false,
                                             "inputType": "radio",
-                                            "label": "<strong>Attending post secondary institution</strong>",
+                                            "label": "Attending post secondary institution",
                                             "key": "attendingPostSecondarySchool",
                                             "values": [
                                                 {
@@ -329,6 +326,7 @@
                                             },
                                             "properties": {},
                                             "lockKey": true,
+                                            "customClass": "",
                                             "isNew": false
                                         },
                                         {
@@ -336,7 +334,7 @@
                                             "input": true,
                                             "tableView": false,
                                             "inputType": "radio",
-                                            "label": "<strong>Declared on taxes due to a disability</strong>",
+                                            "label": "Declared on taxes due to a disability",
                                             "key": "declaredOnTaxes",
                                             "values": [
                                                 {
@@ -372,7 +370,7 @@
                                             },
                                             "properties": {},
                                             "lockKey": true,
-                                            "isNew": false
+                                            "customClass": "\"customClass\": \"label-bold\""
                                         },
                                         {
                                             "clearOnHide": false,
@@ -382,25 +380,6 @@
                                             "theme": "default",
                                             "tableView": false,
                                             "components": [
-                                                {
-                                                    "input": true,
-                                                    "tableView": false,
-                                                    "key": "dependantsIncomeTaxApplicationException",
-                                                    "label": "Application Exception - Dependant’s income tax",
-                                                    "protected": false,
-                                                    "unique": false,
-                                                    "persistent": true,
-                                                    "type": "hidden",
-                                                    "tags": [],
-                                                    "conditional": {
-                                                        "show": "",
-                                                        "when": null,
-                                                        "eq": ""
-                                                    },
-                                                    "properties": {},
-                                                    "lockKey": true,
-                                                    "isNew": false
-                                                },
                                                 {
                                                     "key": "addDependantsUploadHtml",
                                                     "label": "HTML",
@@ -423,8 +402,7 @@
                                                         "eq": ""
                                                     },
                                                     "properties": {},
-                                                    "lockKey": true,
-                                                    "isNew": false
+                                                    "lockKey": true
                                                 },
                                                 {
                                                     "key": "addDependantsUploadHtml2",
@@ -448,8 +426,7 @@
                                                         "eq": ""
                                                     },
                                                     "properties": {},
-                                                    "lockKey": true,
-                                                    "isNew": false
+                                                    "lockKey": true
                                                 },
                                                 {
                                                     "key": "addDependantsUploadHtml3",
@@ -474,8 +451,7 @@
                                                     },
                                                     "properties": {},
                                                     "customClass": "align-bullets",
-                                                    "lockKey": true,
-                                                    "isNew": false
+                                                    "lockKey": true
                                                 },
                                                 {
                                                     "key": "addDependantsUploadHtml4",
@@ -500,8 +476,7 @@
                                                     },
                                                     "properties": {},
                                                     "customClass": "align-bullets",
-                                                    "lockKey": true,
-                                                    "isNew": false
+                                                    "lockKey": true
                                                 },
                                                 {
                                                     "autofocus": false,
@@ -536,8 +511,7 @@
                                                     "validate": {
                                                         "required": true
                                                     },
-                                                    "lockKey": true,
-                                                    "isNew": false
+                                                    "lockKey": true
                                                 },
                                                 {
                                                     "clearOnHide": false,
@@ -560,8 +534,7 @@
                                                                         "eq": ""
                                                                     },
                                                                     "properties": {},
-                                                                    "lockKey": true,
-                                                                    "isNew": false
+                                                                    "lockKey": true
                                                                 }
                                                             ],
                                                             "width": 6,
@@ -601,8 +574,7 @@
                                                         "eq": ""
                                                     },
                                                     "properties": {},
-                                                    "lockKey": true,
-                                                    "isNew": false
+                                                    "lockKey": true
                                                 }
                                             ],
                                             "type": "panel",
@@ -615,8 +587,7 @@
                                                 "eq": "yes"
                                             },
                                             "properties": {},
-                                            "lockKey": true,
-                                            "isNew": false
+                                            "lockKey": true
                                         }
                                     ],
                                     "type": "fieldset",
@@ -629,8 +600,7 @@
                                         "eq": ""
                                     },
                                     "properties": {},
-                                    "lockKey": true,
-                                    "isNew": false
+                                    "lockKey": true
                                 }
                             ],
                             "tableView": false,
@@ -651,8 +621,7 @@
                             "properties": {},
                             "lockKey": true,
                             "hideLabel": true,
-                            "addAnother": "Add Another Dependant",
-                            "isNew": false
+                            "addAnother": "Add Another Dependant"
                         }
                     ],
                     "type": "panel",
@@ -665,15 +634,14 @@
                         "eq": "yes"
                     },
                     "properties": {},
-                    "lockKey": true,
-                    "isNew": false
+                    "lockKey": true
                 },
                 {
                     "autofocus": false,
                     "input": true,
                     "tableView": false,
                     "inputType": "radio",
-                    "label": "<strong>Are any of the dependants listed above supported by you financially but not under your sole custody?</strong>",
+                    "label": "Are any of the dependants listed above supported by you financially but not under your sole custody?",
                     "key": "supportnocustodyDependants",
                     "values": [
                         {
@@ -710,7 +678,7 @@
                     "properties": {},
                     "hideLabel": false,
                     "lockKey": true,
-                    "isNew": false
+                    "customClass": "\"customClass\": \"label-bold\""
                 },
                 {
                     "clearOnHide": false,
@@ -720,25 +688,6 @@
                     "theme": "default",
                     "tableView": false,
                     "components": [
-                        {
-                            "input": true,
-                            "tableView": false,
-                            "key": "dependantsSharedCustodyApplicationException",
-                            "label": "Application Exception - Dependant’s shared custody",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": true,
-                            "type": "hidden",
-                            "tags": [],
-                            "conditional": {
-                                "show": "",
-                                "when": null,
-                                "eq": ""
-                            },
-                            "properties": {},
-                            "lockKey": true,
-                            "isNew": false
-                        },
                         {
                             "key": "dependantsCustodyHtml",
                             "label": "HTML",
@@ -810,8 +759,7 @@
                             },
                             "properties": {},
                             "customClass": "align-bullets",
-                            "lockKey": true,
-                            "isNew": false
+                            "lockKey": true
                         },
                         {
                             "key": "dependantsCustodyHtml4",
@@ -872,8 +820,7 @@
                                 "required": true
                             },
                             "lockKey": true,
-                            "url": "student/files",
-                            "isNew": false
+                            "url": "student/files"
                         },
                         {
                             "clearOnHide": false,
@@ -949,8 +896,25 @@
                         "eq": "yes"
                     },
                     "properties": {},
-                    "lockKey": true,
-                    "isNew": false
+                    "lockKey": true
+                },
+                {
+                    "input": true,
+                    "tableView": false,
+                    "key": "programYear",
+                    "label": "Program Year",
+                    "protected": false,
+                    "unique": false,
+                    "persistent": false,
+                    "type": "hidden",
+                    "tags": [],
+                    "conditional": {
+                        "show": "",
+                        "when": null,
+                        "eq": ""
+                    },
+                    "properties": {},
+                    "lockKey": true
                 }
             ],
             "type": "panel",
@@ -963,8 +927,7 @@
                 "eq": ""
             },
             "properties": {},
-            "lockKey": true,
-            "isNew": false
+            "lockKey": true
         }
     ]
 }
