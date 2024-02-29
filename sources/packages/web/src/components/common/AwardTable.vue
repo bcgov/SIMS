@@ -54,7 +54,7 @@ export default defineComponent({
       if (awardValue === null) {
         return "-";
       }
-      // If the award in not defined at all it means that the award is not eligible an it was not
+      // If the award in not defined at all it means that the award is not eligible and it was not
       // part of the disbursement calculations output.
       return awardValue ?? "(Not eligible)";
     };
