@@ -31,6 +31,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
 
       // Assert
       expect(calculatedAssessment.variables.awardEligibilityCSGD).toBe(true);
+      expect(
+        calculatedAssessment.variables.finalFederalAwardNetCSGDAmount,
+      ).toBeGreaterThan(0);
     },
   );
 
