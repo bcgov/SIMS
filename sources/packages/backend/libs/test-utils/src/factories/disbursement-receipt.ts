@@ -113,7 +113,6 @@ export async function saveFakeDisbursementReceiptsFromDisbursementSchedule(
     federalDisbursementReceipt,
     provincialDisbursementReceipt,
   ]);
-
   return {
     federal,
     provincial,
