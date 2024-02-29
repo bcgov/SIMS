@@ -23,7 +23,7 @@ export const MINISTRY_FILE_UPLOAD_GROUP_NAME = "Ministry communications";
 /**
  * High estimated value to defined a max money amount for inputs that does not have a constrain defined.
  */
-export const MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE = 999999;
+export const MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE = 100000000;
 /**
  * Maximum allowable amount for offering tuition, books and supplies, mandatory fees and exceptional expenses.
  */

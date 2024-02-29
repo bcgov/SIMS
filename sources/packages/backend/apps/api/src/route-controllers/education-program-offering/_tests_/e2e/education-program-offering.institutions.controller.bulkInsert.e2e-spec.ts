@@ -405,7 +405,9 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
               sabcProgramCode: csvProgramSABCCodeSBC9,
               startDate: "2023-09-02",
               endDate: "2024-08-12",
-              errors: ["Mandatory fees must be not greater than 999999."],
+              errors: [
+                `Mandatory fees must be not greater than ${MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE}.`,
+              ],
               infos: [],
               warnings: [
                 {

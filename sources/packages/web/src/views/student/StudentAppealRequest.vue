@@ -83,7 +83,11 @@ export default defineComponent({
           );
         applicationId = application.id;
         appealRequestsForms.value = form.data.formNames.map(
-          (formName) => ({ formName } as StudentAppealRequest),
+          (formName) =>
+            ({
+              formName,
+              data: { programYear: application.programYear },
+            } as StudentAppealRequest),
         );
       } catch (error: unknown) {
         const errorMessage = "An error happened while requesting a change.";

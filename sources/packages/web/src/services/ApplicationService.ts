@@ -13,7 +13,7 @@ import {
   ApplicationWithProgramYearAPIOutDTO,
   ApplicationDataAPIOutDTO,
   ApplicationBaseAPIOutDTO,
-  ApplicationIdentifiersAPIOutDTO,
+  ApplicationProgramYearAPIOutDTO,
   PrimaryIdentifierAPIOutDTO,
   ApplicationProgressDetailsAPIOutDTO,
   EnrolmentApplicationDetailsAPIOutDTO,
@@ -111,7 +111,7 @@ export class ApplicationService {
 
   async getApplicationForRequestChange(
     applicationNumber: string,
-  ): Promise<ApplicationIdentifiersAPIOutDTO> {
+  ): Promise<ApplicationProgramYearAPIOutDTO> {
     return ApiClient.Application.getApplicationForRequestChange(
       applicationNumber,
     );

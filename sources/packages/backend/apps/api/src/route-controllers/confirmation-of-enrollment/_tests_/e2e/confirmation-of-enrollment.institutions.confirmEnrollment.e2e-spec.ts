@@ -230,7 +230,9 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
       .expect(HttpStatus.BAD_REQUEST)
       .expect({
         statusCode: 400,
-        message: ["tuitionRemittanceAmount must not be greater than 999999"],
+        message: [
+          `tuitionRemittanceAmount must not be greater than ${MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE}`,
+        ],
         error: "Bad Request",
       });
   });

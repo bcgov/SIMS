@@ -1,9 +1,9 @@
 {
   "title": "Student Request Change",
-  "display": "form",
-  "type": "form",
   "name": "studentRequestChange",
   "path": "studentrequestchange",
+  "type": "form",
+  "display": "form",
   "tags": [
     "common"
   ],
@@ -445,16 +445,20 @@
           "data": {
             "values": [
               {
+                "value": "studentdisabilityappeal",
+                "label": "Disability Information"
+              },
+              {
+                "value": "studentfinancialinformationappeal",
+                "label": "Financial Information"
+              },
+              {
                 "label": "Income",
                 "value": "studentincomeappeal"
               },
               {
                 "label": "Partners Income",
                 "value": "partnerincomeappeal"
-              },
-              {
-                "value": "studentdisabilityappeal",
-                "label": "Disability Information"
               }
             ],
             "resource": "",
@@ -503,7 +507,7 @@
           "tags": [],
           "properties": {},
           "conditional": {
-            "show": null,
+            "show": "",
             "when": null,
             "eq": "",
             "json": ""

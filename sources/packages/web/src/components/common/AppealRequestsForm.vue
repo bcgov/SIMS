@@ -18,7 +18,7 @@
 </template>
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { defineComponent } from "vue";
+import { defineComponent, PropType } from "vue";
 import { useFormioUtils } from "@/composables";
 import { StudentAppealRequest } from "@/types";
 
@@ -26,7 +26,7 @@ export default defineComponent({
   emits: ["submitted"],
   props: {
     studentAppealRequests: {
-      type: Object,
+      type: Object as PropType<StudentAppealRequest>,
       required: true,
     },
     readOnly: {

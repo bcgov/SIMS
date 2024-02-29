@@ -1,0 +1,394 @@
+{
+    "title": "Appeals - Student Financial Information",
+    "name": "studentFinancialInformationAppeal",
+    "path": "studentfinancialinformationappeal",
+    "type": "form",
+    "display": "form",
+    "tags": [
+        "common"
+    ],
+    "components": [
+        {
+            "key": "financialInformation",
+            "label": "Financial Information",
+            "input": false,
+            "tag": "p",
+            "attrs": [
+                {
+                    "value": "",
+                    "attr": ""
+                }
+            ],
+            "className": "category-header-medium primary-color",
+            "content": "Financial Information",
+            "type": "htmlelement",
+            "hideLabel": true,
+            "tags": [],
+            "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+            },
+            "properties": {}
+        },
+        {
+            "clearOnHide": false,
+            "key": "panel",
+            "input": false,
+            "title": "Financial Information Panel",
+            "theme": "default",
+            "tableView": false,
+            "components": [
+                {
+                    "autofocus": false,
+                    "input": true,
+                    "tableView": true,
+                    "inputType": "text",
+                    "inputMask": "",
+                    "label": "My total income in {{data.calculatedTaxYear}} was",
+                    "key": "taxReturnIncome",
+                    "placeholder": "",
+                    "prefix": "$",
+                    "suffix": "",
+                    "defaultValue": "",
+                    "protected": false,
+                    "persistent": true,
+                    "hidden": false,
+                    "clearOnHide": true,
+                    "delimiter": true,
+                    "decimalLimit": 0,
+                    "requireDecimal": false,
+                    "validate": {
+                        "required": true,
+                        "multiple": "",
+                        "custom": "valid = (input >= 0 && input < data.maxMoneyValue) ? true : 'The number you have entered is outside the expected range.';"
+                    },
+                    "conditional": {
+                        "show": "",
+                        "when": null,
+                        "eq": ""
+                    },
+                    "type": "currency",
+                    "labelPosition": "top",
+                    "tags": [],
+                    "properties": {},
+                    "redrawOn": "calculatedTaxYear",
+                    "lockKey": true,
+                    "hideLabel": false,
+                    "isNew": false
+                }
+            ],
+            "type": "panel",
+            "breadcrumb": "default",
+            "hideLabel": true,
+            "tags": [],
+            "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+            },
+            "properties": {}
+        },
+        {
+            "clearOnHide": false,
+            "key": "panel2",
+            "input": false,
+            "title": "Dependant care costs panel",
+            "theme": "default",
+            "tableView": false,
+            "components": [
+                {
+                    "key": "panel2Content",
+                    "label": "Content",
+                    "input": false,
+                    "tag": "h3",
+                    "attrs": [
+                        {
+                            "value": "",
+                            "attr": ""
+                        }
+                    ],
+                    "className": "category-header-medium primary-color",
+                    "content": "Dependant care costs",
+                    "type": "htmlelement",
+                    "hideLabel": true,
+                    "tags": [],
+                    "conditional": {
+                        "show": "",
+                        "when": null,
+                        "eq": ""
+                    },
+                    "properties": {}
+                },
+                {
+                    "autofocus": false,
+                    "input": true,
+                    "tableView": true,
+                    "inputType": "radio",
+                    "label": "Will you have a child age 11 years or under in daycare?",
+                    "key": "haveDaycareCosts11YearsOrUnder",
+                    "values": [
+                        {
+                            "value": "yes",
+                            "label": "Yes",
+                            "shortcut": ""
+                        },
+                        {
+                            "value": "no",
+                            "label": "No",
+                            "shortcut": ""
+                        }
+                    ],
+                    "defaultValue": "",
+                    "protected": false,
+                    "fieldSet": false,
+                    "persistent": true,
+                    "hidden": false,
+                    "clearOnHide": true,
+                    "validate": {
+                        "required": true,
+                        "custom": "",
+                        "customPrivate": false
+                    },
+                    "type": "radio",
+                    "labelPosition": "top",
+                    "optionsLabelPosition": "right",
+                    "tags": [],
+                    "conditional": {
+                        "show": "",
+                        "when": null,
+                        "eq": ""
+                    },
+                    "properties": {},
+                    "lockKey": true,
+                    "isNew": false
+                },
+                {
+                    "clearOnHide": false,
+                    "key": "panel2Panel",
+                    "input": false,
+                    "title": "Daycare costs that you incur for your child(ren) age 11 years or under Panel",
+                    "theme": "default",
+                    "tableView": false,
+                    "components": [
+                        {
+                            "autofocus": false,
+                            "input": true,
+                            "tableView": true,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "label": "What are the daycare costs that you incur for your child(ren) age 11 years or under?",
+                            "key": "daycareCosts11YearsOrUnder",
+                            "placeholder": "",
+                            "prefix": "$",
+                            "suffix": "",
+                            "defaultValue": "",
+                            "protected": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true,
+                            "delimiter": true,
+                            "decimalLimit": 2,
+                            "requireDecimal": true,
+                            "validate": {
+                                "required": true,
+                                "multiple": "",
+                                "custom": "valid = (input >= 0 && input < data.maxMoneyValue) ? true : 'The number you have entered is outside the expected range.';"
+                            },
+                            "conditional": {
+                                "show": "",
+                                "when": null,
+                                "eq": ""
+                            },
+                            "type": "currency",
+                            "labelPosition": "top",
+                            "tags": [],
+                            "properties": {},
+                            "lockKey": true,
+                            "isNew": false
+                        }
+                    ],
+                    "type": "panel",
+                    "breadcrumb": "default",
+                    "hideLabel": true,
+                    "tags": [],
+                    "conditional": {
+                        "show": "true",
+                        "when": "haveDaycareCosts11YearsOrUnder",
+                        "eq": "yes"
+                    },
+                    "properties": {},
+                    "isNew": false
+                },
+                {
+                    "autofocus": false,
+                    "input": true,
+                    "tableView": true,
+                    "inputType": "radio",
+                    "label": "Will you have unsubsidized day-care costs during class hours for disabled/infirm dependants 12 years of age or older?",
+                    "key": "haveDaycareCosts12YearsOrOver",
+                    "values": [
+                        {
+                            "value": "yes",
+                            "label": "Yes",
+                            "shortcut": ""
+                        },
+                        {
+                            "value": "no",
+                            "label": "No",
+                            "shortcut": ""
+                        }
+                    ],
+                    "defaultValue": "",
+                    "protected": false,
+                    "fieldSet": false,
+                    "persistent": true,
+                    "hidden": false,
+                    "clearOnHide": true,
+                    "validate": {
+                        "required": true,
+                        "custom": "",
+                        "customPrivate": false
+                    },
+                    "type": "radio",
+                    "labelPosition": "top",
+                    "optionsLabelPosition": "right",
+                    "tags": [],
+                    "conditional": {
+                        "show": "",
+                        "when": null,
+                        "eq": ""
+                    },
+                    "properties": {},
+                    "lockKey": true,
+                    "isNew": false
+                },
+                {
+                    "clearOnHide": false,
+                    "key": "panel2Panel2",
+                    "input": false,
+                    "title": "Total unsubsidized day-care costs during class hours for the proposed study period for disabled/infirmed dependents 12 years of age and older Panel",
+                    "theme": "default",
+                    "tableView": false,
+                    "components": [
+                        {
+                            "autofocus": false,
+                            "input": true,
+                            "tableView": true,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "label": "What are the total unsubsidized day-care costs during class hours for the proposed study period for disabled/infirm dependants 12 years of age and older?",
+                            "key": "daycareCosts12YearsOrOver",
+                            "placeholder": "",
+                            "prefix": "$",
+                            "suffix": "",
+                            "defaultValue": "",
+                            "protected": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true,
+                            "delimiter": true,
+                            "decimalLimit": 2,
+                            "requireDecimal": true,
+                            "validate": {
+                                "required": true,
+                                "multiple": "",
+                                "custom": "valid = (input >= 0 && input < data.maxMoneyValue) ? true : 'The number you have entered is outside the expected range.';"
+                            },
+                            "conditional": {
+                                "show": "",
+                                "when": null,
+                                "eq": ""
+                            },
+                            "type": "currency",
+                            "labelPosition": "top",
+                            "tags": [],
+                            "properties": {},
+                            "lockKey": true,
+                            "isNew": false
+                        }
+                    ],
+                    "type": "panel",
+                    "breadcrumb": "default",
+                    "hideLabel": true,
+                    "tags": [],
+                    "conditional": {
+                        "show": "true",
+                        "when": "haveDaycareCosts12YearsOrOver",
+                        "eq": "yes"
+                    },
+                    "properties": {},
+                    "isNew": false
+                }
+            ],
+            "type": "panel",
+            "breadcrumb": "default",
+            "hideLabel": true,
+            "tags": [],
+            "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+            },
+            "properties": {},
+            "isNew": false
+        },
+        {
+            "input": true,
+            "tableView": true,
+            "key": "maxMoneyValue",
+            "label": "Max Money Value",
+            "protected": false,
+            "unique": false,
+            "persistent": false,
+            "type": "hidden",
+            "tags": [],
+            "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+            },
+            "properties": {},
+            "lockKey": true,
+            "defaultValue": "100000000"
+        },
+        {
+            "input": true,
+            "tableView": true,
+            "key": "programYear",
+            "label": "Program Year",
+            "protected": false,
+            "unique": false,
+            "persistent": false,
+            "type": "hidden",
+            "tags": [],
+            "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+            },
+            "properties": {},
+            "calculateValue": "",
+            "defaultValue": ""
+        },
+        {
+            "input": true,
+            "tableView": true,
+            "key": "calculatedTaxYear",
+            "label": "Calculated Tax Year",
+            "protected": false,
+            "unique": false,
+            "persistent": false,
+            "type": "hidden",
+            "tags": [],
+            "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+            },
+            "properties": {},
+            "calculateValue": "// From the program year, get the calendar start year of the the program year.\r\n// e.g. program year  = 2022-2023, calendar start year is 2022. And tax year should be 2021.\r\nconst [startYear] = data.programYear ? data.programYear.split(\"-\"):[];\r\nconst taxYear = startYear ? (+startYear)-1 : \"\";\r\nvalue = taxYear;",
+            "lockKey": true
+        }
+    ]
+}

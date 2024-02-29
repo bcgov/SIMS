@@ -392,7 +392,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       actualTuitionCosts: 1234,
       programRelatedCosts: 3211,
       mandatoryFees: 456,
-      exceptionalExpenses: 1000000,
+      exceptionalExpenses: MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE + 1,
     };
 
     // Act/Assert
@@ -403,7 +403,9 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       .expect(HttpStatus.BAD_REQUEST)
       .expect({
         statusCode: HttpStatus.BAD_REQUEST,
-        message: ["Exceptional expenses must be not greater than 999999."],
+        message: [
+          `Exceptional expenses must be not greater than ${MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE}.`,
+        ],
         error: "The validated offerings have critical errors.",
       });
   });
