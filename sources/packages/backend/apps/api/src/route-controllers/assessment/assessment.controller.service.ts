@@ -7,7 +7,7 @@ import {
   StudentAssessmentStatus,
   ApplicationOfferingChangeRequestStatus,
   DisbursementValueType,
-  RECEIPT_FUNDING_TYPE_PROVINCIAL,
+  RECEIPT_FUNDING_TYPE_FEDERAL,
 } from "@sims/sims-db";
 import {
   Injectable,
@@ -34,6 +34,11 @@ import {
 import { getUserFullName } from "../../utilities";
 import { getDateOnlyFormat } from "@sims/utilities";
 import { BC_TOTAL_GRANT_AWARD_CODE } from "@sims/services/constants";
+
+/**
+ * Indicates that an eligible award is missing its receipt.
+ */
+const ELIGIBLE_AWARD_WITHOUT_RECEIPT = null;
 
 @Injectable()
 export class AssessmentControllerService {
@@ -257,7 +262,7 @@ export class AssessmentControllerService {
   /**
    * Populate the final awards in a dynamic way like disbursement schedule(estimated) awards.
    * @param disbursementReceipts disbursement receipt details.
-   * @param disbursementScheduleId disbursement schedule id of the disbursement receipt(s).
+   * @param disbursementSchedule disbursement schedule of the disbursement receipt(s).
    * @param identifier identifier which is used to create dynamic data by appending award code
    * to it.
    * @returns dynamic award data of disbursement receipts of a given disbursement.
@@ -294,7 +299,7 @@ export class AssessmentControllerService {
         identifier,
         award.valueCode,
       );
-      finalAward[disbursementValueKey] = null;
+      finalAward[disbursementValueKey] = ELIGIBLE_AWARD_WITHOUT_RECEIPT;
     });
     // Process the two expected receipts records for federal(FE) and the other for provincial(BC) awards.
     disbursementReceipts
@@ -314,20 +319,18 @@ export class AssessmentControllerService {
           const disbursementLoanKey = `${identifier}${loanType.toLowerCase()}`;
           finalAward[disbursementLoanKey] = receipt.totalDisbursedAmount;
         }
-        // Populate the receipt amount in the receipt awards.
-        // If an estimated disbursement award has no equivalent receipt its value will be left as null.
-        receipt.disbursementReceiptValues.forEach((receiptValue) => {
-          if (receiptValue.grantType === BC_TOTAL_GRANT_AWARD_CODE) {
-            // BC Total grants are not part of the students grants and should not be part of the summary.
-            return;
-          }
-          const disbursementValueKey = this.createReceiptFullIdentifier(
-            identifier,
-            receiptValue.grantType,
-          );
-          finalAward[disbursementValueKey] = receiptValue.grantAmount;
-        });
-        if (receipt.fundingType === RECEIPT_FUNDING_TYPE_PROVINCIAL) {
+        if (receipt.fundingType === RECEIPT_FUNDING_TYPE_FEDERAL) {
+          // Populate the receipt amount in the receipt awards.
+          // If an estimated disbursement award has no equivalent receipt its value will be left as null.
+          receipt.disbursementReceiptValues.forEach((receiptValue) => {
+            const disbursementValueKey = this.createReceiptFullIdentifier(
+              identifier,
+              receiptValue.grantType,
+            );
+            finalAward[disbursementValueKey] = receiptValue.grantAmount;
+          });
+        } else {
+          // BC receipts will contains only the BC total grant(BCSG) value.
           // Create individual BC grants values from BC total grants(BCSG) receipt.
           // Federal receipts do not contain individual BC grants.
           const bcTotalGrantAward =
@@ -343,7 +346,7 @@ export class AssessmentControllerService {
             // Check if the BC total grants and the receipt have the some total hence.
             // If the values match the award values from the BC grants can be copied to the summary.
             const bcGrantsReceiptMatch =
-              bcTotalGrantAward?.valueAmount ===
+              bcTotalGrantAward.valueAmount ===
               bcTotalGrantsReceipt?.grantAmount;
             const bcGrants = disbursementSchedule.disbursementValues.filter(
               (award) => award.valueType === DisbursementValueType.BCGrant,
@@ -355,7 +358,7 @@ export class AssessmentControllerService {
               );
               finalAward[disbursementValueKey] = bcGrantsReceiptMatch
                 ? bcGrant.valueAmount
-                : null;
+                : ELIGIBLE_AWARD_WITHOUT_RECEIPT;
             });
           }
         }
