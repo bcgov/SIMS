@@ -32,12 +32,6 @@
     <bpmn:textAnnotation id="TextAnnotation_1mxnhnv">
       <bpmn:text>Step 2</bpmn:text>
     </bpmn:textAnnotation>
-    <bpmn:textAnnotation id="TextAnnotation_0uicovc">
-      <bpmn:text>Step 3</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:textAnnotation id="TextAnnotation_0qbe2el">
-      <bpmn:text>Step 3</bpmn:text>
-    </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_15vd5py">
       <bpmn:text>Step 6</bpmn:text>
     </bpmn:textAnnotation>
@@ -50,7 +44,10 @@
     <bpmn:association id="Association_0ptatj5" sourceRef="Event_19hr2p7" targetRef="TextAnnotation_0b7u2ni" />
     <bpmn:association id="Association_18qf11c" sourceRef="Event_12swz45" targetRef="TextAnnotation_1osgqas" />
     <bpmn:association id="Association_1gi7mg0" sourceRef="Event_14d0375" targetRef="TextAnnotation_15vd5py" />
-    <bpmn:association id="Association_1waxb2u" sourceRef="Event_1iix0z3" targetRef="TextAnnotation_0qbe2el" />
+    <bpmn:textAnnotation id="TextAnnotation_18wu29l">
+      <bpmn:text>Step 3</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_160cvbz" associationDirection="None" sourceRef="Event_1eaa23y" targetRef="TextAnnotation_18wu29l" />
   </bpmn:collaboration>
   <bpmn:process id="parttime-assessment-2022-2023" isExecutable="true">
     <bpmn:laneSet id="LaneSet_0i75wz3">
@@ -808,7 +805,6 @@ studentCalculatedTotalIncome</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_0yc2t6b" sourceRef="Event_0hxxmu9" targetRef="TextAnnotation_1myp6tg" />
     <bpmn:association id="Association_1mr7raq" sourceRef="Event_0jmbywn" targetRef="TextAnnotation_1mxnhnv" />
-    <bpmn:association id="Association_0t62w9e" sourceRef="Event_10par1m" targetRef="TextAnnotation_0uicovc" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1cf99un">
@@ -1144,14 +1140,6 @@ studentCalculatedTotalIncome</bpmn:text>
           <dc:Bounds x="5662" y="2295" width="79" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_1mr7raq_di" bpmnElement="Association_1mr7raq">
-        <di:waypoint x="5303" y="2258" />
-        <di:waypoint x="5373" y="2200" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_1bxhzin" bpmnElement="Association_0t62w9e">
-        <di:waypoint x="5563" y="2108" />
-        <di:waypoint x="5631" y="2050" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="TextAnnotation_0o432k6_di" bpmnElement="TextAnnotation_0o432k6">
         <dc:Bounds x="790" y="238" width="362" height="113" />
         <bpmndi:BPMNLabel />
@@ -1539,6 +1527,10 @@ studentCalculatedTotalIncome</bpmn:text>
         <di:waypoint x="2558" y="1140" />
         <di:waypoint x="2625" y="1140" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04sebpz_di" bpmnElement="Flow_04sebpz">
+        <di:waypoint x="5718" y="2270" />
+        <di:waypoint x="5772" y="2270" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_1i7iirc_di" bpmnElement="Association_1i7iirc">
         <di:waypoint x="815" y="602" />
         <di:waypoint x="815" y="524" />
@@ -1555,13 +1547,13 @@ studentCalculatedTotalIncome</bpmn:text>
         <di:waypoint x="1060" y="602" />
         <di:waypoint x="1060" y="515" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_04sebpz_di" bpmnElement="Flow_04sebpz">
-        <di:waypoint x="5718" y="2270" />
-        <di:waypoint x="5772" y="2270" />
+      <bpmndi:BPMNEdge id="Association_1mr7raq_di" bpmnElement="Association_1mr7raq">
+        <di:waypoint x="5303" y="2258" />
+        <di:waypoint x="5373" y="2200" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1waxb2u_di" bpmnElement="Association_1waxb2u">
-        <di:waypoint x="5561" y="2256" />
-        <di:waypoint x="5586" y="2225" />
+      <bpmndi:BPMNEdge id="Association_160cvbz_di" bpmnElement="Association_160cvbz">
+        <di:waypoint x="5700" y="2252" />
+        <di:waypoint x="5700" y="2200" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_1a4vdzr_di" bpmnElement="Group_1a4vdzr">
         <dc:Bounds x="1535" y="660" width="90" height="230" />
@@ -1605,10 +1597,6 @@ studentCalculatedTotalIncome</bpmn:text>
         <dc:Bounds x="5340" y="2170" width="100" height="30" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1v6qryy" bpmnElement="TextAnnotation_0uicovc">
-        <dc:Bounds x="5599" y="2020" width="100" height="30" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0hjhvfj" bpmnElement="TextAnnotation_15vd5py">
         <dc:Bounds x="6139" y="2330" width="100" height="30" />
         <bpmndi:BPMNLabel />
@@ -1649,8 +1637,8 @@ studentCalculatedTotalIncome</bpmn:text>
         <di:waypoint x="6124" y="2398" />
         <di:waypoint x="6168" y="2360" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="BPMNShape_1c083c9" bpmnElement="TextAnnotation_0qbe2el">
-        <dc:Bounds x="5560" y="2195" width="100" height="30" />
+      <bpmndi:BPMNShape id="TextAnnotation_18wu29l_di" bpmnElement="TextAnnotation_18wu29l">
+        <dc:Bounds x="5650" y="2170" width="100" height="30" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>

@@ -8,12 +8,6 @@
     <bpmn:textAnnotation id="TextAnnotation_15vd5py">
       <bpmn:text>Step 6</bpmn:text>
     </bpmn:textAnnotation>
-    <bpmn:textAnnotation id="TextAnnotation_0qbe2el">
-      <bpmn:text>Step 3</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:textAnnotation id="TextAnnotation_0uicovc">
-      <bpmn:text>Step 3</bpmn:text>
-    </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_1mxnhnv">
       <bpmn:text>Step 2</bpmn:text>
     </bpmn:textAnnotation>
@@ -50,6 +44,10 @@
     <bpmn:association id="Association_1ledsf9" sourceRef="Event_1ki3afc" targetRef="TextAnnotation_06i946l" />
     <bpmn:association id="Association_1kl6b20" sourceRef="Event_0ff3d52" targetRef="TextAnnotation_0m6q3ry" />
     <bpmn:association id="Association_0k52tdi" sourceRef="Event_1yndxhv" targetRef="TextAnnotation_0cerfoa" />
+    <bpmn:textAnnotation id="TextAnnotation_13w21u1">
+      <bpmn:text>Step 3</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0gzo1wo" associationDirection="None" sourceRef="Event_1eaa23y" targetRef="TextAnnotation_13w21u1" />
   </bpmn:collaboration>
   <bpmn:process id="parttime-assessment-2023-2024" isExecutable="true">
     <bpmn:laneSet id="LaneSet_0i75wz3">
@@ -806,8 +804,6 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:association id="Association_08mmpo3" sourceRef="Event_1mkiqso" targetRef="TextAnnotation_1i74le7" />
     <bpmn:association id="Association_0eiso39" sourceRef="Event_0rpww4j" targetRef="TextAnnotation_0xf4j19" />
     <bpmn:association id="Association_1i7iirc" sourceRef="StartEvent_1" targetRef="TextAnnotation_0ymh6jx" />
-    <bpmn:association id="Association_1waxb2u" sourceRef="Event_1iix0z3" targetRef="TextAnnotation_0qbe2el" />
-    <bpmn:association id="Association_0t62w9e" sourceRef="Event_10par1m" targetRef="TextAnnotation_0uicovc" />
     <bpmn:association id="Association_1nid8vk" sourceRef="Event_13hierd" targetRef="TextAnnotation_0baenkl" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -1144,18 +1140,6 @@ dmnX (comes from dmn)</bpmn:text>
           <dc:Bounds x="5702" y="2295" width="79" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_1waxb2u_di" bpmnElement="Association_1waxb2u">
-        <di:waypoint x="5584" y="2258" />
-        <di:waypoint x="5620" y="2225" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_1bxhzin" bpmnElement="Association_0t62w9e">
-        <di:waypoint x="5582" y="2107" />
-        <di:waypoint x="5643" y="2050" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1nid8vk_di" bpmnElement="Association_1nid8vk">
-        <di:waypoint x="5827" y="2254" />
-        <di:waypoint x="5853" y="2200" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="TextAnnotation_1myp6tg_di" bpmnElement="TextAnnotation_1myp6tg">
         <dc:Bounds x="1028" y="460" width="200" height="55" />
         <bpmndi:BPMNLabel />
@@ -1543,6 +1527,10 @@ dmnX (comes from dmn)</bpmn:text>
         <di:waypoint x="2488" y="1140" />
         <di:waypoint x="2555" y="1140" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1dxjc84_di" bpmnElement="Flow_1dxjc84">
+        <di:waypoint x="5758" y="2270" />
+        <di:waypoint x="5802" y="2270" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_0yc2t6b_di" bpmnElement="Association_0yc2t6b">
         <di:waypoint x="1080" y="602" />
         <di:waypoint x="1080" y="515" />
@@ -1559,9 +1547,13 @@ dmnX (comes from dmn)</bpmn:text>
         <di:waypoint x="815" y="602" />
         <di:waypoint x="815" y="524" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1dxjc84_di" bpmnElement="Flow_1dxjc84">
-        <di:waypoint x="5758" y="2270" />
-        <di:waypoint x="5802" y="2270" />
+      <bpmndi:BPMNEdge id="Association_1nid8vk_di" bpmnElement="Association_1nid8vk">
+        <di:waypoint x="5827" y="2254" />
+        <di:waypoint x="5853" y="2200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0gzo1wo_di" bpmnElement="Association_0gzo1wo">
+        <di:waypoint x="5740" y="2252" />
+        <di:waypoint x="5740" y="2180" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_1a4vdzr_di" bpmnElement="Group_1a4vdzr">
         <dc:Bounds x="1535" y="660" width="90" height="230" />
@@ -1571,14 +1563,6 @@ dmnX (comes from dmn)</bpmn:text>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0hjhvfj" bpmnElement="TextAnnotation_15vd5py">
         <dc:Bounds x="6149" y="2330" width="100" height="30" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1c083c9" bpmnElement="TextAnnotation_0qbe2el">
-        <dc:Bounds x="5599" y="2195" width="100" height="30" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1v6qryy" bpmnElement="TextAnnotation_0uicovc">
-        <dc:Bounds x="5609" y="2020" width="100" height="30" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_1mxnhnv_di" bpmnElement="TextAnnotation_1mxnhnv">
@@ -1653,6 +1637,10 @@ dmnX (comes from dmn)</bpmn:text>
         <di:waypoint x="4417" y="1356" />
         <di:waypoint x="4532" y="1330" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_13w21u1_di" bpmnElement="TextAnnotation_13w21u1">
+        <dc:Bounds x="5690" y="2150" width="100" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
