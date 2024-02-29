@@ -6,7 +6,6 @@ import {
   ApplicationExceptionStatus,
   StudentAssessmentStatus,
   ApplicationOfferingChangeRequestStatus,
-  OfferingIntensity,
   DisbursementValueType,
   RECEIPT_FUNDING_TYPE_PROVINCIAL,
 } from "@sims/sims-db";
