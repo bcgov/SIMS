@@ -156,43 +156,6 @@ export class StudentAppealStudentsController extends BaseController {
         } as StudentAppealRequestModel),
     );
 
-    // Obtain the data for validDependent and isavalidDependant APIs for each dependant
-    // for student dependents appeal if it has dependents
-    for (let appealRequest of appealRequests) {
-      if (
-        appealRequest.formName === "studentDependantsAppealPartTime" &&
-        appealRequest.formData.hasDependents === "yes"
-      ) {
-        const newDependants = appealRequest.formData.dependants;
-        for (const dependant of newDependants) {
-          // Calculated value for validDependent API in student application
-          dependant.validDependent = -1;
-          const studyTime = application.data.studystartDate
-            ? new Date(application.data.studystartDate).getTime()
-            : application.data.selectedOfferingDate
-            ? new Date(application.data.selectedOfferingDate).getTime()
-            : null;
-          if (studyTime) {
-            const birthDateTime = new Date(dependant.dateOfBirth).getTime();
-            const difference = studyTime - birthDateTime;
-            const age = difference / (1000 * 60 * 60 * 24 * 365);
-            dependant.validDependent = parseInt(age.toString());
-          }
-          // Calculated value for isavalidDependant API in student application
-          dependant.isavalidDependant =
-            (dependant.validDependent >= 0 && dependant.validDependent <= 18) ||
-            (dependant.validDependent >= 19 &&
-              dependant.validDependent <= 22 &&
-              dependant.attendingPostSecondarySchool === "yes") ||
-            dependant.declaredOnTaxes === "yes";
-        }
-        appealRequest = {
-          ...appealRequest,
-          formData: { ...appealRequest.formData, dependents: newDependants },
-        };
-      }
-    }
-
     const studentAppeal = await this.studentAppealService.saveStudentAppeals(
       applicationId,
       userToken.userId,
