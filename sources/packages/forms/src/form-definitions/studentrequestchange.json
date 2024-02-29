@@ -459,21 +459,10 @@
               {
                 "label": "Partners Income",
                 "value": "partnerincomeappeal"
-<<<<<<< HEAD
-=======
-              },
-              {
-                "value": "studentdisabilityappeal",
-                "label": "Disability Information"
               },
               {
                 "value": "studentdependantsappealparttime",
-<<<<<<< HEAD
-                "label": "Add/Remove Dependants (Part-Time Applications)"
->>>>>>> 129fac43 (initial commit)
-=======
                 "label": "Add/Remove Dependants"
->>>>>>> 72772af0 (resolve comments - e2e test and studentrequestchange.json)
               }
             ],
             "resource": "",
