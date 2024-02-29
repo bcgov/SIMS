@@ -153,7 +153,7 @@ export class AssessmentControllerService {
       }
       schedule.disbursementValues.forEach((disbursement) => {
         if (disbursement.valueType === DisbursementValueType.BCTotalGrant) {
-          // BC Total grants are not part of the students grants and should not be displayed to the student.
+          // BC Total grants are not part of the students grants and should not be part of the summary.
           return;
         }
         const disbursementValueKey = `${disbursementIdentifier}${disbursement.valueCode.toLowerCase()}`;
@@ -262,6 +262,21 @@ export class AssessmentControllerService {
    * @param identifier identifier which is used to create dynamic data by appending award code
    * to it.
    * @returns dynamic award data of disbursement receipts of a given disbursement.
+   * @example
+   * finalAward: {
+   *    disbursementReceipt1cslf: 1000,
+   *    disbursementReceipt1csgp: 10001,
+   *    disbursementReceipt1bcsl: 1005,
+   *    disbursementReceipt1bcag: 1006,
+   *    disbursementReceipt1bgpd: 1007,
+   *    disbursementReceipt1sbsd: 1008,
+   *    disbursementReceipt2cslf: 1000,
+   *    disbursementReceipt2csgp: 10001,
+   *    disbursementReceipt2bcsl: 1005,
+   *    disbursementReceipt2bcag: 1006,
+   *    disbursementReceipt2bgpd: 1007,
+   *    disbursementReceipt2sbsd: 1008,
+      }
    */
   private populateDisbursementReceiptAwardValues(
     disbursementReceipts: DisbursementReceipt[],
@@ -269,21 +284,26 @@ export class AssessmentControllerService {
     identifier: string,
   ): Record<string, string | number> {
     const finalAward = {};
+    // Add all estimated awards to the list of receipts returned.
+    // Ensure that every estimated disbursement will be part of the summary.
+    disbursementSchedule.disbursementValues.forEach((award) => {
+      if (award.valueType === DisbursementValueType.BCTotalGrant) {
+        // BC Total grants are not part of the students grants and should not be part of the summary.
+        return;
+      }
+      const disbursementValueKey = this.createReceiptFullIdentifier(
+        identifier,
+        award.valueCode,
+      );
+      finalAward[disbursementValueKey] = null;
+    });
+    // Process the two expected receipts records for federal(FE) and the other for provincial(BC) awards.
     disbursementReceipts
       .filter(
         (receipt) =>
           receipt.disbursementSchedule.id === disbursementSchedule.id,
       )
       .forEach((receipt) => {
-        // Add all estimated awards to the list of receipts returned.
-        // Ensure that every estimated disbursement will be part of the summary.
-        disbursementSchedule.disbursementValues.forEach((award) => {
-          const disbursementValueKey = this.createReceiptFullIdentifier(
-            identifier,
-            award.valueCode,
-          );
-          finalAward[disbursementValueKey] = null;
-        });
         // Check if a loan is part of the receipt (e.g. part-time provincial loans shouldn't be available).
         const loanType = DisbursementReceiptService.getLoanAwardCode(
           receipt.fundingType,
@@ -299,7 +319,7 @@ export class AssessmentControllerService {
         // If an estimated disbursement award has no equivalent receipt its value will be left as null.
         receipt.disbursementReceiptValues.forEach((receiptValue) => {
           if (receiptValue.grantType === BC_TOTAL_GRANT_AWARD_CODE) {
-            // BC Total grants are not part of the students grants and should not be displayed to the student.
+            // BC Total grants are not part of the students grants and should not be part of the summary.
             return;
           }
           const disbursementValueKey = this.createReceiptFullIdentifier(
@@ -316,7 +336,7 @@ export class AssessmentControllerService {
               (award) => award.valueCode === BC_TOTAL_GRANT_AWARD_CODE,
             );
           // If the BC total grants award is not present consider that BC grants were
-          // not eligible and do not need to be returned processed.
+          // not eligible and do not need to be returned.
           if (bcTotalGrantAward) {
             const bcTotalGrantsReceipt = receipt.disbursementReceiptValues.find(
               (receipt) => receipt.grantType === BC_TOTAL_GRANT_AWARD_CODE,
@@ -344,6 +364,12 @@ export class AssessmentControllerService {
     return finalAward;
   }
 
+  /**
+   * Create the unique property name to represent the receipt values for each award.
+   * @param identifierPrefix prefix to be used for all properties.
+   * @param uniqueCode code to uniquely identify the property (e.g. CSLF, BCAG, BCSL).
+   * @returns returns the unique identifier (e.g. disbursementReceipt1cslf).
+   */
   private createReceiptFullIdentifier(
     identifierPrefix: string,
     uniqueCode: string,

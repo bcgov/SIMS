@@ -496,7 +496,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
       });
   });
 
-  it("Should get the student assessment summary containing federal, provincial loan, all federal grants and no provincial grants for a full-time application when the BCSG does not match.", async () => {
+  it("Should get the student assessment summary containing federal, provincial loan, all federal grants and no provincial grants values for a full-time application when the BCSG does not match.", async () => {
     // First disbursement values.
     const firstDisbursementValues = [
       createFakeDisbursementValue(DisbursementValueType.CanadaLoan, "CSLF", 1),
@@ -575,6 +575,10 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
           disbursementReceipt1cslf: 1,
           disbursementReceipt1csgp: 2,
           disbursementReceipt1bcsl: 3,
+          // BC grants are added but will not have its values copied from
+          // the estimated awards since the total does not match.
+          // This must be interpreted as if they are eligible but were
+          // not present in the receipt.
           disbursementReceipt1bcag: null,
           disbursementReceipt1sbsd: null,
         },

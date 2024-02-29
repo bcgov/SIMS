@@ -50,7 +50,7 @@ export default defineComponent({
     const getAwardValue = (awardType: string): string | number => {
       const awardValue =
         props.awardDetails[`${props.identifier}${awardType.toLowerCase()}`];
-      // If the award if defined but no values are present it means that a receipt value is missing.
+      // If the award is defined but no values are present it means that a receipt value is missing.
       if (awardValue === null) {
         return "-";
       }
