@@ -248,7 +248,7 @@ export default defineComponent({
       () =>
         !!(
           isFirstDisbursementCompleted.value &&
-          props.assessmentAwardData.finalAward.disbursementReceipt1Id
+          !!props.assessmentAwardData.finalAward
         ),
     );
 
@@ -256,7 +256,7 @@ export default defineComponent({
       () =>
         !!(
           isSecondDisbursementCompleted.value &&
-          props.assessmentAwardData.finalAward.disbursementReceipt2Id
+          props.assessmentAwardData.finalAward
         ),
     );
 
