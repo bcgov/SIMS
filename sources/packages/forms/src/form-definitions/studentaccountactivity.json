@@ -3074,8 +3074,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "eaaszn",
-                  "isNew": false
+                  "id": "eaaszn"
                 },
                 {
                   "title": "Code SINF - Temporary Social Insurance Number (SIN) expiration",
@@ -3182,7 +3181,6 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "id": "exuqcvt",
-                      "isNew": false,
                       "tags": []
                     }
                   ],
@@ -3225,8 +3223,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "ekuh9n",
-                  "isNew": false
+                  "id": "ekuh9n"
                 },
                 {
                   "title": "Code BCLM - BC Lifetime Maximum Reached",
@@ -3420,7 +3417,8 @@
                   "collapsible": true,
                   "collapsed": true,
                   "hideLabel": false,
-                  "lockKey": true
+                  "lockKey": true,
+                  "customClass": "collapsible"
                 },
                 {
                   "label": "HTML",
