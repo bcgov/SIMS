@@ -11,6 +11,17 @@ import { DisbursementReceiptModel } from "./disbursement-receipt.model";
 import { getISODateOnlyString } from "@sims/utilities";
 
 /**
+ * Map for the award types received in the receipt file
+ * and its equivalent award code.
+ */
+const RECEIPT_AWARD_MAP: Record<string, string> = {
+  FT: "CSGF",
+  TU: "CSGT",
+  FTDEP: "CSGD",
+  PD: "CSGP",
+};
+
+/**
  * Service for disbursement receipts.
  */
 @Injectable()
@@ -94,17 +105,19 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
     disbursementReceiptEntity.disbursementReceiptValues =
       disbursementReceipt.grants.map((grant) => {
         const disbursementReceiptValue = new DisbursementReceiptValue();
-        disbursementReceiptValue.grantType = grant.grantType;
+        disbursementReceiptValue.grantType =
+          DisbursementReceiptService.convertAwardCodeFromReceipt(
+            grant.grantType,
+          );
         disbursementReceiptValue.grantAmount = grant.grantAmount;
         disbursementReceiptValue.creator = creator;
         disbursementReceiptValue.createdAt = createdAt;
         return disbursementReceiptValue;
       });
     await this.dataSource.transaction(async (transactionalEntityManager) => {
-      //Query builder inserts does not cascade insert with relationships.
-      //Cascaded insert can be achieved only through repository.save().
-      //Hence inside a transaction we are using save to persist relations.
-
+      // Query builder inserts does not cascade insert with relationships.
+      // Cascaded insert can be achieved only through repository.save().
+      // Hence inside a transaction we are using save to persist relations.
       const result = await transactionalEntityManager
         .createQueryBuilder()
         .insert()
@@ -130,5 +143,9 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
       }
     });
     return generatedId;
+  }
+
+  private static convertAwardCodeFromReceipt(receiptAward: string): string {
+    return RECEIPT_AWARD_MAP[receiptAward] ?? receiptAward;
   }
 }
