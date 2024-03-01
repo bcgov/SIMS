@@ -42,7 +42,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
     );
   });
 
-  it("Should determine federalAwardBCAGAmount when calculatedDataTotalFamilyIncome > limitAwardBCAGIncomeCap", async () => {
+  it("Should determine federalAwardBCAGAmount, provincialAwardNetBCAGAmount when calculatedDataTotalFamilyIncome > limitAwardBCAGIncomeCap", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -101,22 +101,12 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
       assessmentConsolidatedData,
     );
     // Assert
-    // awardEligibilityBCAG is true
-    // provincialAwardNetBCAGAmount is greater than 0
+    // awardEligibilityBCAG is true.
+    // provincialAwardNetBCAGAmount is 800.
     expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(true);
     expect(
       calculatedAssessment.variables.federalAwardBCAGAmount,
     ).toBeGreaterThan(100);
-    expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(
-      Math.min(
-        calculatedAssessment.variables.calculatedDataTotalRemainingNeed3,
-        Math.min(
-          calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
-            .limitAwardBCAGAmount,
-          calculatedAssessment.variables.federalAwardBCAGAmount,
-        ),
-      ),
-    );
     expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(
       800,
     );
