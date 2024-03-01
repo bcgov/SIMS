@@ -12,6 +12,15 @@ import { numericTransformer } from "../transformers/numeric.transformer";
 import { RecordDataModel } from "./record.model";
 
 /**
+ * Known code for the federal receipt funding type.
+ */
+export const RECEIPT_FUNDING_TYPE_FEDERAL = "FE";
+/**
+ * Known code for the provincial receipt funding type.
+ */
+export const RECEIPT_FUNDING_TYPE_PROVINCIAL = "BC";
+
+/**
  * Disbursement receipts received from ESDC for the disbursements sent.
  */
 @Entity({ name: TableNames.DisbursementReceipts })
