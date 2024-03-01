@@ -35,11 +35,6 @@ import { getUserFullName } from "../../utilities";
 import { getDateOnlyFormat } from "@sims/utilities";
 import { BC_TOTAL_GRANT_AWARD_CODE } from "@sims/services/constants";
 
-/**
- * Indicates that an eligible award is missing its receipt.
- */
-const ELIGIBLE_AWARD_WITHOUT_RECEIPT = null;
-
 @Injectable()
 export class AssessmentControllerService {
   constructor(
@@ -299,7 +294,7 @@ export class AssessmentControllerService {
         identifier,
         award.valueCode,
       );
-      finalAward[disbursementValueKey] = ELIGIBLE_AWARD_WITHOUT_RECEIPT;
+      finalAward[disbursementValueKey] = null;
     });
     // Process the two expected receipts records for federal(FE) and the other for provincial(BC) awards.
     disbursementReceipts
@@ -358,7 +353,7 @@ export class AssessmentControllerService {
               );
               finalAward[disbursementValueKey] = bcGrantsReceiptMatch
                 ? bcGrant.valueAmount
-                : ELIGIBLE_AWARD_WITHOUT_RECEIPT;
+                : null;
             });
           }
         }
