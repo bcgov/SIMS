@@ -38,6 +38,22 @@ FROM
 WHERE
   sfas_individuals.student_id IS NOT NULL
   AND (
-    student_restrictions.is_active = false
-    OR student_restrictions.restriction_id IS NULL
+    student_restrictions.restriction_id IS NULL
+    OR (
+      -- if the restriction is found in the student_restrictions table
+      -- but is inactive, the below condition checks that there are no 
+      -- other entries of this same restriction for this particular student 
+      -- present in the student_restrictions table that are currently active.
+      student_restrictions.is_active = false
+      AND NOT EXISTS (
+        SELECT
+          1
+        FROM
+          sims.student_restrictions student_restrictions
+        WHERE
+          student_restrictions.student_id = sfas_individuals.student_id
+          AND student_restrictions.restriction_id = restrictions.id
+          AND student_restrictions.is_active = true
+      )
+    )
   );
