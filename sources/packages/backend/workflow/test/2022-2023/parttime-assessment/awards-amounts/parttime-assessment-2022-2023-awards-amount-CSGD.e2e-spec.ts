@@ -45,14 +45,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
         .limitAwardCSGDIncomeCap,
     );
-    expect(calculatedAssessment.variables.federalAwardCSGDAmount).toBe(
-      Math.min(
-        calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
-          .limitAwardCSGD3OrMoreChildAmount,
-        calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
-          .limitAwardCSGDAmount,
-      ),
-    );
+    expect(calculatedAssessment.variables.federalAwardCSGDAmount).toBe(1800);
   });
 
   it("Should determine federalAwardCSGDAmount for 3 or more dependants and calculatedDataTotalFamilyIncome > limitAwardCSGDIncomeCap", async () => {
@@ -122,6 +115,12 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
           .limitAwardCSGDAmount,
       ),
     );
+    expect(calculatedAssessment.variables.federalAwardNetCSGDAmount).toBe(
+      1201.20448,
+    );
+    expect(calculatedAssessment.variables.finalFederalAwardNetCSGDAmount).toBe(
+      1201.20448,
+    );
   });
 
   it("Should determine federalAwardCSGDAmount for less than 3 dependants and calculatedDataTotalFamilyIncome <= limitAwardCSGDIncomeCap", async () => {
@@ -152,14 +151,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
         .limitAwardCSGDIncomeCap,
     );
-    expect(calculatedAssessment.variables.federalAwardCSGDAmount).toBe(
-      Math.min(
-        calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
-          .limitAwardCSGD2OrLessChildAmount,
-        calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
-          .limitAwardCSGDAmount,
-      ),
-    );
+    expect(calculatedAssessment.variables.federalAwardCSGDAmount).toBe(1200);
   });
 
   it("Should determine federalAwardCSGDAmount for less than 3 dependants and calculatedDataTotalFamilyIncome > limitAwardCSGDIncomeCap", async () => {
@@ -221,6 +213,12 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
         calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
           .limitAwardCSGDAmount,
       ),
+    );
+    expect(calculatedAssessment.variables.federalAwardNetCSGDAmount).toBe(
+      659.0567998,
+    );
+    expect(calculatedAssessment.variables.finalFederalAwardNetCSGDAmount).toBe(
+      659.0567998,
     );
   });
 });
