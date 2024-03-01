@@ -64,6 +64,7 @@ import {
   SFASPartTimeApplicationsService,
 } from "@sims/services/sfas";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
+import { SFASRestrictionService } from "@sims/integrations/services/sfas";
 
 @Module({
   imports: [AuthModule, ConfigModule, ATBCIntegrationModule],
@@ -95,6 +96,7 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     SequenceControlService,
     StudentFileService,
     SFASIndividualService,
+    SFASRestrictionService,
     SFASApplicationService,
     SFASPartTimeApplicationsService,
     StudentRestrictionService,

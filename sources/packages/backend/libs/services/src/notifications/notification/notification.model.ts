@@ -51,6 +51,14 @@ export interface StudentRestrictionAddedNotification {
   userId: number;
 }
 
+export interface LegacyRestrictionAddedNotification {
+  firstName: string;
+  lastName: string;
+  email: string;
+  birthDate: Date;
+  userId: number;
+}
+
 export interface StudentNotification {
   givenNames: string;
   lastName: string;

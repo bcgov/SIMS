@@ -87,6 +87,7 @@ import {
   RestrictionSharedService,
   MSFAANumberSharedService,
 } from "@sims/services";
+import { SFASRestrictionService } from "@sims/integrations/services/sfas/sfas-restriction.service";
 
 @Module({
   imports: [AuthModule],
@@ -143,6 +144,7 @@ import {
     StudentControllerService,
     StudentService,
     SFASIndividualService,
+    SFASRestrictionService,
     SFASApplicationService,
     SFASPartTimeApplicationsService,
     StudentRestrictionService,

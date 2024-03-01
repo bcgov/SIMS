@@ -15,6 +15,7 @@ import {
   RestrictionNotificationType,
   StudentRestriction,
   DisabilityStatus,
+  SFASIndividual,
 } from "@sims/sims-db";
 import { DataSource, EntityManager, UpdateResult } from "typeorm";
 import { StudentUserToken } from "../../auth/userToken.interface";
@@ -41,12 +42,14 @@ import {
   BC_STUDENT_LOAN_AWARD_CODE,
   CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
 } from "@sims/services/constants";
+import { SFASRestrictionService } from "@sims/integrations/services/sfas";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
   constructor(
     private readonly dataSource: DataSource,
     private readonly sfasIndividualService: SFASIndividualService,
+    private readonly sfasRestrictionService: SFASRestrictionService,
     private readonly disbursementOverawardService: DisbursementOverawardService,
     private readonly noteSharedService: NoteSharedService,
   ) {
@@ -122,6 +125,7 @@ export class StudentService extends RecordDataModelService<Student> {
     externalEntityManager?: EntityManager,
     studentAccountApplicationId?: number,
   ): Promise<Student> {
+    let sfasIndividual: SFASIndividual;
     // SIN to be saved and used for comparisons.
     const studentSIN = removeWhiteSpaces(studentInfo.sinNumber);
     const existingStudent = await this.getExistingStudentForAccountCreation(
@@ -167,12 +171,11 @@ export class StudentService extends RecordDataModelService<Student> {
     student.sinConsent = studentInfo.sinConsent;
     try {
       // Get PD status from SFAS integration data.
-      const sfasIndividual =
-        await this.sfasIndividualService.getIndividualStudent(
-          user.lastName,
-          student.birthDate,
-          studentSIN,
-        );
+      sfasIndividual = await this.sfasIndividualService.getIndividualStudent(
+        user.lastName,
+        student.birthDate,
+        studentSIN,
+      );
       // If SFAS individual exist with matching details, read the disability status and effective date.
       if (sfasIndividual) {
         student.disabilityStatus = this.getDisabilityStatus(
@@ -215,6 +218,15 @@ export class StudentService extends RecordDataModelService<Student> {
         studentSIN,
         auditUserId,
         entityManager,
+      );
+      // For the newly created student, update the Processed status in the
+      // SFAS Restrictions table to false. This will enable for the SFAS
+      // Restrictions from previous imports that were originally marked as
+      // processed to be re-processed when the SFAS Integration Scheduler
+      // runs again, thus causing the restrictions imported from SFAS to be
+      // applied to the newly created student account.
+      await this.sfasRestrictionService.updateProcessedStatus(
+        sfasIndividual.id,
       );
 
       // Create the new entry in the student/user history/audit.
