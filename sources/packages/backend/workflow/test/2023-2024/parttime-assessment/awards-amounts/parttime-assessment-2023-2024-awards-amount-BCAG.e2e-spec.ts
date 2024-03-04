@@ -38,7 +38,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
     );
     expect(calculatedAssessment.variables.federalAwardBCAGAmount).toBe(1000);
     expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(
-      800,
+      700,
     );
   });
 
@@ -102,13 +102,13 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
     );
     // Assert
     // awardEligibilityBCAG is true.
-    // provincialAwardNetBCAGAmount is 800.
+    // provincialAwardNetBCAGAmount is 700.
     expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(true);
     expect(
       calculatedAssessment.variables.federalAwardBCAGAmount,
     ).toBeGreaterThan(100);
     expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(
-      800,
+      700,
     );
   });
 
