@@ -16,6 +16,7 @@ import {
   StudentRestriction,
   DisabilityStatus,
   SFASIndividual,
+  SFASRestriction,
 } from "@sims/sims-db";
 import { DataSource, EntityManager, UpdateResult } from "typeorm";
 import { StudentUserToken } from "../../auth/userToken.interface";
@@ -125,7 +126,6 @@ export class StudentService extends RecordDataModelService<Student> {
     externalEntityManager?: EntityManager,
     studentAccountApplicationId?: number,
   ): Promise<Student> {
-    let sfasIndividual: SFASIndividual;
     // SIN to be saved and used for comparisons.
     const studentSIN = removeWhiteSpaces(studentInfo.sinNumber);
     const existingStudent = await this.getExistingStudentForAccountCreation(
@@ -169,6 +169,7 @@ export class StudentService extends RecordDataModelService<Student> {
     };
     student.user = user;
     student.sinConsent = studentInfo.sinConsent;
+    let sfasIndividual: SFASIndividual;
     try {
       // Get PD status from SFAS integration data.
       sfasIndividual = await this.sfasIndividualService.getIndividualStudent(
@@ -225,9 +226,9 @@ export class StudentService extends RecordDataModelService<Student> {
       // processed to be re-processed when the SFAS Integration Scheduler
       // runs again, thus causing the restrictions imported from SFAS to be
       // applied to the newly created student account.
-      await this.sfasRestrictionService.updateProcessedStatus(
-        sfasIndividual.id,
-      );
+      await entityManager
+        .getRepository(SFASRestriction)
+        .update({ individualId: sfasIndividual.id }, { processed: false });
 
       // Create the new entry in the student/user history/audit.
       const studentUser = new StudentUser();

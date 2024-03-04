@@ -34,8 +34,6 @@ export class SFASRestrictionService
     private readonly notificationActionsService: NotificationActionsService,
     @InjectRepository(Restriction)
     private readonly restrictionRepo: Repository<Restriction>,
-    @InjectRepository(StudentRestriction)
-    private readonly studentRestrictionRepo: Repository<StudentRestriction>,
   ) {
     super(dataSource.getRepository(SFASRestriction));
     this.bulkInsertLegacyRestrictionsSQL = getSQLFileData(
@@ -125,37 +123,29 @@ export class SFASRestrictionService
   }
 
   /**
-   * Updates processed to false for the SFAS restrictions corresponding to the provided SFAS Individual Id.
-   * @param individualId provided SFAS Individual Id.
-   */
-  async updateProcessedStatus(individualId: number): Promise<void> {
-    await this.repo.update({ individualId }, { processed: false });
-  }
-
-  /**
    * Create notifications for newly created legacy student restrictions for the ministry.
    * @param studentIds student ids for which the legacy restriction notification needs to be sent.
    * @param entityManager entity manager to execute in transaction.
    */
   private async createLegacyRestrictionNotifications(
     studentIds: number[],
-    entityManager?: EntityManager,
+    entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const studentLegacyRestrictions = await this.studentRestrictionRepo.find({
-      select: {
-        student: {
-          birthDate: true,
-          user: { id: true, firstName: true, lastName: true, email: true },
+    const studentLegacyRestrictions = await entityManager
+      .getRepository(StudentRestriction)
+      .find({
+        select: {
+          student: {
+            birthDate: true,
+            user: { id: true, firstName: true, lastName: true, email: true },
+          },
         },
-      },
-      relations: { student: { user: true } },
-      where: {
-        restriction: { restrictionCode: "LGCY" },
-        isActive: true,
-        student: { id: In(studentIds) },
-      },
-    });
+        relations: { student: { user: true } },
+        where: {
+          student: { id: In(studentIds) },
+        },
+      });
     if (!studentLegacyRestrictions?.length) {
       // There are no notifications to be sent.
       return;
