@@ -760,7 +760,7 @@
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=  if (calculatedDataTotalFamilyIncome &#60;= dmnPartTimeAwardFamilySizeVariables.limitAwardBCAGIncomeCap)&#10;then dmnPartTimeAwardAllowableLimits.limitAwardBCAGAmount&#10;else&#10;  max(dmnPartTimeAwardAllowableLimits.limitAwardBCAGAmount - ((calculatedDataTotalFamilyIncome - dmnPartTimeAwardFamilySizeVariables.limitAwardBCAGIncomeCap) * dmnPartTimeAwardFamilySizeVariables.limitAwardBCAGSlope),&#10;     100&#10;  )" target="federalAwardBCAGAmount" />
-          <zeebe:output source="=if ((awardEligibilityBCAG = true) and (federalAwardBCAGAmount &#62;= 100))&#10;then&#10;  min(&#10;     calculatedDataTotalRemainingNeed3,&#10;     min(dmnPartTimeAwardAllowableLimits.limitAwardBCAGAmount, federalAwardBCAGAmount)&#10;  )&#10;else&#10;0" target="provincialAwardNetBCAGAmount" />
+          <zeebe:output source="=if ((awardEligibilityBCAG = true) and (federalAwardBCAGAmount &#62;= 100))&#10;then&#10;  min(&#10;     calculatedDataTotalRemainingNeed3,&#10;     min(dmnPartTimeAwardAllowableLimits.limitAwardBCAGAmount - programYearTotalPartTimeBCAG, federalAwardBCAGAmount)&#10;  )&#10;else&#10;0" target="provincialAwardNetBCAGAmount" />
           <zeebe:output source="=calculatedDataTotalRemainingNeed3 - provincialAwardNetBCAGAmount" target="calculatedDataTotalRemainingNeed4" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
@@ -1551,10 +1551,6 @@ dmnX (comes from dmn)</bpmn:text>
         <di:waypoint x="5827" y="2254" />
         <di:waypoint x="5853" y="2200" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0gzo1wo_di" bpmnElement="Association_0gzo1wo">
-        <di:waypoint x="5740" y="2252" />
-        <di:waypoint x="5740" y="2180" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_1a4vdzr_di" bpmnElement="Group_1a4vdzr">
         <dc:Bounds x="1535" y="660" width="90" height="230" />
       </bpmndi:BPMNShape>
@@ -1601,6 +1597,10 @@ dmnX (comes from dmn)</bpmn:text>
         <dc:Bounds x="4532" y="1304" width="398" height="41" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_13w21u1_di" bpmnElement="TextAnnotation_13w21u1">
+        <dc:Bounds x="5690" y="2150" width="100" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_1gi7mg0_di" bpmnElement="Association_1gi7mg0">
         <di:waypoint x="6134" y="2398" />
         <di:waypoint x="6178" y="2360" />
@@ -1637,10 +1637,10 @@ dmnX (comes from dmn)</bpmn:text>
         <di:waypoint x="4417" y="1356" />
         <di:waypoint x="4532" y="1330" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="TextAnnotation_13w21u1_di" bpmnElement="TextAnnotation_13w21u1">
-        <dc:Bounds x="5690" y="2150" width="100" height="30" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0gzo1wo_di" bpmnElement="Association_0gzo1wo">
+        <di:waypoint x="5740" y="2252" />
+        <di:waypoint x="5740" y="2180" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

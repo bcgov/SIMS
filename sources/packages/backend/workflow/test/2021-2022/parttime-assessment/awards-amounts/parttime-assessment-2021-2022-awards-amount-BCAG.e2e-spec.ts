@@ -7,7 +7,7 @@ import { InstitutionTypes } from "../../../models";
 import { YesNoOptions } from "@sims/test-utils";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BCAG.`, () => {
-  it("Should determine federalAwardBCAGAmount when calculatedDataTotalFamilyIncome <= limitAwardBCAGIncomeCap", async () => {
+  it("Should determine federalAwardBCAGAmount, provincialAwardNetBCAGAmount when calculatedDataTotalFamilyIncome <= limitAwardBCAGIncomeCap", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -37,6 +37,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
         .limitAwardBCAGAmount,
     );
     expect(calculatedAssessment.variables.federalAwardBCAGAmount).toBe(1000);
+    expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(
+      700,
+    );
   });
 
   it("Should determine federalAwardBCAGAmount when calculatedDataTotalFamilyIncome > limitAwardBCAGIncomeCap", async () => {
@@ -98,24 +101,11 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
       assessmentConsolidatedData,
     );
     // Assert
-    // awardEligibilityBCAG is true
-    // provincialAwardNetBCAGAmount is greater than 0
+    // awardEligibilityBCAG is true.
+    // provincialAwardNetBCAGAmount is 700.
     expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(true);
-    expect(
-      calculatedAssessment.variables.federalAwardBCAGAmount,
-    ).toBeGreaterThan(100);
     expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(
-      Math.min(
-        calculatedAssessment.variables.calculatedDataTotalRemainingNeed3,
-        Math.min(
-          calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
-            .limitAwardBCAGAmount,
-          calculatedAssessment.variables.federalAwardBCAGAmount,
-        ),
-      ),
-    );
-    expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(
-      1000,
+      700,
     );
   });
 
