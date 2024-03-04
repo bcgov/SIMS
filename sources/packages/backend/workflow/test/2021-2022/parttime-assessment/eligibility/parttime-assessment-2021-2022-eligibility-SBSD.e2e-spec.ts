@@ -35,7 +35,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-SBSD
         expect(calculatedAssessment.variables.awardEligibilitySBSD).toBe(true);
         expect(
           calculatedAssessment.variables.finalProvincialAwardNetSBSDAmount,
-        ).toBeGreaterThan(0);
+        ).toBe(710);
       });
     }
   });
