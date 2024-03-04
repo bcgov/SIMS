@@ -43,14 +43,12 @@ import {
   BC_STUDENT_LOAN_AWARD_CODE,
   CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
 } from "@sims/services/constants";
-import { SFASRestrictionService } from "@sims/integrations/services/sfas";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
   constructor(
     private readonly dataSource: DataSource,
     private readonly sfasIndividualService: SFASIndividualService,
-    private readonly sfasRestrictionService: SFASRestrictionService,
     private readonly disbursementOverawardService: DisbursementOverawardService,
     private readonly noteSharedService: NoteSharedService,
   ) {
