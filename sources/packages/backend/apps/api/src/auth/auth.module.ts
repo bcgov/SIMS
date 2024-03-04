@@ -34,6 +34,7 @@ import {
 } from "@sims/services";
 import { KeycloakService } from "@sims/auth/services";
 import { KeycloakConfig } from "@sims/auth/config";
+import { SFASRestrictionService } from "@sims/integrations/services/sfas";
 
 const jwtModule = JwtModule.register({
   publicKey: KeycloakConfig.PEM_PublicKey,
@@ -49,6 +50,7 @@ const jwtModule = JwtModule.register({
     JwtStrategy,
     StudentService,
     SFASIndividualService,
+    SFASRestrictionService,
     SINValidationService,
     DesignationAgreementLocationService,
     DisbursementOverawardService,

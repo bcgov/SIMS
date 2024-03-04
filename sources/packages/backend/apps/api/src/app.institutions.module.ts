@@ -84,6 +84,7 @@ import {
   SFASApplicationService,
   SFASPartTimeApplicationsService,
 } from "@sims/services/sfas";
+import { SFASRestrictionService } from "@sims/integrations/services/sfas";
 
 @Module({
   imports: [AuthModule],
@@ -144,6 +145,7 @@ import {
     EducationProgramOfferingControllerService,
     StudentService,
     SFASIndividualService,
+    SFASRestrictionService,
     SFASApplicationService,
     SFASPartTimeApplicationsService,
     EducationProgramOfferingImportCSVService,

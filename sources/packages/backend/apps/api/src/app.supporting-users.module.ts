@@ -28,6 +28,7 @@ import {
 } from "@sims/services/sfas";
 import { SupportingUserSupportingUsersController } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
+import { SFASRestrictionService } from "@sims/integrations/services/sfas";
 
 @Module({
   imports: [AuthModule],
@@ -44,6 +45,7 @@ import { AuthModule } from "./auth/auth.module";
     EducationProgramOfferingService,
     StudentService,
     SFASIndividualService,
+    SFASRestrictionService,
     SFASApplicationService,
     SFASPartTimeApplicationsService,
     EducationProgramOfferingValidationService,
