@@ -284,7 +284,7 @@ export class NotificationActionsService {
         template_id: templateId,
         personalisation: {
           givenNames: notification.firstName ?? "",
-          lastName: (notification.firstName ? " " : "") + notification.lastName,
+          lastName: notification.lastName,
           studentEmail: notification.email,
           dob: getDateOnlyFormat(notification.birthDate),
           dateTime: this.getDateTimeOnPSTTimeZone(),

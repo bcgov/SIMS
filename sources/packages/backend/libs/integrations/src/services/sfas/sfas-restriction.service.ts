@@ -4,6 +4,7 @@ import {
   DataModelService,
   Restriction,
   SFASRestriction,
+  Student,
   StudentRestriction,
 } from "@sims/sims-db";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
@@ -132,33 +133,21 @@ export class SFASRestrictionService
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const studentLegacyRestrictions = await entityManager
-      .getRepository(StudentRestriction)
-      .find({
-        select: {
-          student: {
-            birthDate: true,
-            user: { id: true, firstName: true, lastName: true, email: true },
-          },
-        },
-        relations: { student: { user: true } },
-        where: {
-          student: { id: In(studentIds) },
-        },
-      });
-    if (!studentLegacyRestrictions?.length) {
-      // There are no notifications to be sent.
-      return;
-    }
-    const notifications = studentLegacyRestrictions.map(
-      (legacyRestriction) => ({
-        firstName: legacyRestriction.student.user.firstName,
-        lastName: legacyRestriction.student.user.lastName,
-        userId: legacyRestriction.student.user.id,
-        email: legacyRestriction.student.user.email,
-        birthDate: new Date(legacyRestriction.student.birthDate),
-      }),
-    );
+    const students = await entityManager.getRepository(Student).find({
+      select: {
+        birthDate: true,
+        user: { id: true, firstName: true, lastName: true, email: true },
+      },
+      relations: { user: true },
+      where: { id: In(studentIds) },
+    });
+    const notifications = students.map((student) => ({
+      firstName: student.user.firstName,
+      lastName: student.user.lastName,
+      userId: student.user.id,
+      email: student.user.email,
+      birthDate: new Date(student.birthDate),
+    }));
     await this.notificationActionsService.saveLegacyRestrictionAddedNotification(
       notifications,
       auditUser.id,
