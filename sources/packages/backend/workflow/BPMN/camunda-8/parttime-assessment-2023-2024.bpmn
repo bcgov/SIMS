@@ -453,7 +453,8 @@
     <bpmn:intermediateThrowEvent id="Event_14d0375" name="calculate SBSD">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if awardEligibilitySBSD = true&#10;then&#10;dmnPartTimeAwardAllowableLimits.limitAwardSBSD40AndUpCourseLoadAmount&#10;else&#10;  0" target="provincialAwardNetSBSDAmount" />
+          <zeebe:output source="=programYearTotalFullTimeSBSD + programYearTotalPartTimeSBSD" target="programYearTotalSBSD" />
+          <zeebe:output source="=if awardEligibilitySBSD = true&#10;then&#10;dmnPartTimeAwardAllowableLimits.limitAwardSBSD40AndUpCourseLoadAmount - programYearTotalSBSD&#10;else&#10;  0" target="provincialAwardNetSBSDAmount" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1kzoimw</bpmn:incoming>
@@ -506,7 +507,8 @@
     <bpmn:intermediateThrowEvent id="Event_12swz45" name="calculate SBSD">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if awardEligibilitySBSD = true&#10;then&#10;dmnPartTimeAwardAllowableLimits.limitAwardSBSDUnder40CourseLoadAmount&#10;else&#10;  0" target="provincialAwardNetSBSDAmount" />
+          <zeebe:output source="=programYearTotalFullTimeSBSD + programYearTotalPartTimeSBSD" target="programYearTotalSBSD" />
+          <zeebe:output source="=if awardEligibilitySBSD = true&#10;then&#10;dmnPartTimeAwardAllowableLimits.limitAwardSBSDUnder40CourseLoadAmount - programYearTotalSBSD&#10;else&#10;  0" target="provincialAwardNetSBSDAmount" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0x4ck3r</bpmn:incoming>
