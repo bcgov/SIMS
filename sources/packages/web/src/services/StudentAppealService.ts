@@ -30,6 +30,7 @@ export class StudentAppealService {
         ({
           formName: request.formName,
           formData: request.data,
+          files: request.files,
         } as StudentAppealRequestAPIInDTO),
     );
     await ApiClient.StudentAppealApi.submitStudentAppeal(applicationId, {

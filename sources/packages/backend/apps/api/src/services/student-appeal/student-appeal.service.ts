@@ -12,7 +12,6 @@ import {
   User,
   mapFromRawAndEntities,
   getUserFullNameLikeSearch,
-  FileOriginType,
 } from "@sims/sims-db";
 import {
   PendingAndDeniedAppeals,
@@ -34,8 +33,6 @@ import {
 } from "./constants";
 import { NotificationActionsService } from "@sims/services/notifications";
 import { NoteSharedService } from "@sims/services";
-import { StudentFileService } from "../student-file/student-file.service";
-import { StudentService } from "../student/student.service";
 
 /**
  * Service layer for Student appeals.
@@ -47,8 +44,6 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     private readonly studentAppealRequestsService: StudentAppealRequestsService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly noteSharedService: NoteSharedService,
-    private readonly studentFileService: StudentFileService,
-    private readonly studentService: StudentService,
   ) {
     super(dataSource.getRepository(StudentAppeal));
   }
@@ -514,54 +509,5 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     const dbColumnName = fieldSortOptions[sortField];
     orderByCondition[dbColumnName] = sortOrder;
     return orderByCondition;
-  }
-
-  /**
-   * Get student dependant appeal from student appeal requests and
-   * update student file origin type to Appeal for any uploaded files
-   * @param userId Student user who submits the appeal.
-   * @param studentAppealRequests Payload data.
-   */
-  async updateStudentAppealFiles(
-    userId: number,
-    studentAppealRequests: StudentAppealRequestModel[],
-  ): Promise<void> {
-    // Get student dependant appeal from student appeal requests and
-    // update student file origin type to Appeal for any uploaded files
-    const studentDependantAppeal = studentAppealRequests.find(
-      (appeal) => appeal.formName === "studentDependantsAppealPartTime",
-    );
-    if (studentDependantAppeal) {
-      const formData = studentDependantAppeal.formData;
-      // Return the student appeal Id if the student has no dependants
-      if (formData.hasDependents === "no") return;
-      // Update Dependant custody student file if it is uploaded
-      const student = await this.studentService.getStudentByUserId(userId);
-      if (formData.supportnocustodyDependants === "yes") {
-        const dependantCustodyFile =
-          await this.studentFileService.getStudentFile(
-            formData.dependantCustodyFileUpload[0].name,
-            student.id,
-          );
-        if (dependantCustodyFile) {
-          dependantCustodyFile.fileOrigin = FileOriginType.Appeal;
-          await this.studentFileService.save(dependantCustodyFile);
-        }
-      }
-      // Search and update PD Dependent student files if they are uploaded for any dependant
-      const dependantsFiles: string[] = formData.dependants
-        .filter((dependant) => dependant.declaredOnTaxes === "yes")
-        .map((dependant) => dependant.pdDependentUpload[0].name);
-      if (dependantsFiles.length > 0) {
-        await this.studentFileService.updateStudentFiles(
-          student.id,
-          userId,
-          dependantsFiles,
-          FileOriginType.Appeal,
-          "PD Dependent",
-        );
-      }
-    }
-    return;
   }
 }

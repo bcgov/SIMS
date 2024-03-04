@@ -119,7 +119,6 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     auditUserId: number,
     uniqueFileNames: string[],
     fileOrigin: FileOriginType,
-    groupName: string,
     options?: FileUploadOptions,
   ): Promise<UpdateResult> {
     let updateResult: UpdateResult;
@@ -132,7 +131,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
             uniqueFileName: In(uniqueFileNames),
           },
           {
-            groupName,
+            groupName: options?.groupName,
             fileOrigin,
             metadata: options?.metadata,
             modifier: { id: auditUserId } as User,

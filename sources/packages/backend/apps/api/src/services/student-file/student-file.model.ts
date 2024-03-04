@@ -18,4 +18,8 @@ export interface FileUploadOptions {
    * Optional metadata of the file being saved.
    */
   metadata?: StudentFileMetadata;
+  /**
+   * Optional group name of the file being saved.
+   */
+  groupName?: string;
 }

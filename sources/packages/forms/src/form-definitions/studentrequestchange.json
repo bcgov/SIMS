@@ -445,6 +445,10 @@
           "data": {
             "values": [
               {
+                "value": "studentdependantsappealparttime",
+                "label": "Add/Remove Dependants"
+              },
+              {
                 "value": "studentdisabilityappeal",
                 "label": "Disability Information"
               },
@@ -459,10 +463,6 @@
               {
                 "label": "Partners Income",
                 "value": "partnerincomeappeal"
-              },
-              {
-                "value": "studentdependantsappealparttime",
-                "label": "Add/Remove Dependants"
               }
             ],
             "resource": "",
