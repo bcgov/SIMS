@@ -5,7 +5,6 @@ import {
   Restriction,
   SFASRestriction,
   Student,
-  StudentRestriction,
 } from "@sims/sims-db";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { getUTC, getISODateOnlyString, getSQLFileData } from "@sims/utilities";
