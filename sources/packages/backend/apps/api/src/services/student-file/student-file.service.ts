@@ -131,11 +131,6 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         fileOrigin,
         options,
       );
-
-      // Create student notification on file upload.
-      if (options?.saveFileUploadNotification) {
-        await options.saveFileUploadNotification(options.entityManager);
-      }
     } else {
       await this.dataSource.transaction(async (transactionalEntityManager) => {
         updateResult = await this.updateStudentFile(
@@ -146,11 +141,6 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
           fileOrigin,
           options,
         );
-
-        // Create student notification on file upload.
-        if (options?.saveFileUploadNotification) {
-          await options.saveFileUploadNotification(transactionalEntityManager);
-        }
       });
     }
 
@@ -169,7 +159,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
    * @param groupName group name of the file being save.
    * @param options file upload options.
    */
-  private updateStudentFile(
+  private async updateStudentFile(
     entityManager: EntityManager,
     studentId: number,
     auditUserId: number,
@@ -177,6 +167,9 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     fileOrigin: FileOriginType,
     options?: FileUploadOptions,
   ): Promise<UpdateResult> {
+    if (options?.saveFileUploadNotification) {
+      await options.saveFileUploadNotification(entityManager);
+    }
     return entityManager.getRepository(StudentFile).update(
       {
         student: { id: studentId },

@@ -27,7 +27,7 @@ import {
   RequiresStudentAccount,
   UserToken,
 } from "../../auth/decorators";
-import { IUserToken, StudentUserToken } from "../../auth/userToken.interface";
+import { StudentUserToken } from "../../auth/userToken.interface";
 import {
   ApiTags,
   ApiNotFoundResponse,
@@ -83,7 +83,7 @@ export class StudentAppealStudentsController extends BaseController {
   async submitStudentAppeal(
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @Body() payload: StudentAppealAPIInDTO,
-    @UserToken() userToken: IUserToken,
+    @UserToken() userToken: StudentUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     const application =
       await this.applicationService.getApplicationToRequestAppeal(
@@ -162,6 +162,7 @@ export class StudentAppealStudentsController extends BaseController {
     const studentAppeal = await this.studentAppealService.saveStudentAppeals(
       applicationId,
       userToken.userId,
+      userToken.studentId,
       appealRequests,
     );
 
