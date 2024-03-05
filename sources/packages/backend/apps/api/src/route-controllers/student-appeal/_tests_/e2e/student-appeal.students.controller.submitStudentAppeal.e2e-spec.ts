@@ -17,13 +17,16 @@ import {
   saveFakeApplication,
   saveFakeApplicationDisbursements,
   saveFakeStudent,
+  saveFakeStudentFileUpload,
 } from "@sims/test-utils";
 import { TestingModule } from "@nestjs/testing";
 import {
   Application,
   ApplicationStatus,
+  FileOriginType,
   StudentAppealRequest,
   StudentAppealStatus,
+  StudentFile,
 } from "@sims/sims-db";
 import { StudentAppealAPIInDTO } from "../../models/student-appeal.dto";
 import { AppStudentsModule } from "../../../../app.students.module";
@@ -40,8 +43,9 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
   let db: E2EDataSources;
   let applicationRepo: Repository<Application>;
   let studentAppealRequestRepo: Repository<StudentAppealRequest>;
+  let studentFileRepo: Repository<StudentFile>;
   const FINANCIAL_INFORMATION_FORM_NAME = "studentfinancialinformationappeal";
-  const DEPENDANT_INFORMATION_FORM_NAME = "studentDependantsAppealPartTime";
+  const DEPENDANT_INFORMATION_FORM_NAME = "studentDependantsAppeal";
 
   beforeAll(async () => {
     const { nestApplication, module, dataSource } =
@@ -52,6 +56,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
     db = createE2EDataSources(dataSource);
     applicationRepo = dataSource.getRepository(Application);
     studentAppealRequestRepo = dataSource.getRepository(StudentAppealRequest);
+    studentFileRepo = dataSource.getRepository(StudentFile);
   });
 
   it(
@@ -360,6 +365,23 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
     // Set application status to completed
     application.applicationStatus = ApplicationStatus.Completed;
     await applicationRepo.save(application);
+    // Create a pd dependent file and a dependant custody file
+    const pdDependentFile = await saveFakeStudentFileUpload(
+      appDataSource,
+      {
+        student,
+        creator: student.user,
+      },
+      { fileOrigin: FileOriginType.Temporary },
+    );
+    const dependantCustodyFile = await saveFakeStudentFileUpload(
+      appDataSource,
+      {
+        student,
+        creator: student.user,
+      },
+      { fileOrigin: FileOriginType.Temporary },
+    );
     // Prepare the data to request a change of dependants.
     const dependantInformationData = {
       hasDependents: "yes",
@@ -379,9 +401,9 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
           pdDependentUpload: [
             {
               storage: "url",
-              originalName: "JessLee_AlexLeeTax_2023.txt",
-              name: "JessLee_AlexLeeTax_2023-4315285a-b756-4084-95dc-781b51692d27.txt",
-              url: "student/files/JessLee_AlexLeeTax_2023-4315285a-b756-4084-95dc-781b51692d27.txt",
+              originalName: pdDependentFile.fileName,
+              name: pdDependentFile.uniqueFileName,
+              url: "student/files/" + pdDependentFile.uniqueFileName,
               size: 0,
               type: "text/plain",
               hash: "1cb251ec0d568de6a929b520c4aed8d1",
@@ -393,9 +415,9 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
       dependantCustodyFileUpload: [
         {
           storage: "url",
-          originalName: "JessLee_DependantsCustody.txt",
-          name: "JessLee_DependantsCustody-b76efea7-1515-4bd4-9a90-e55d7dde05a0.txt",
-          url: "student/files/JessLee_DependantsCustody-b76efea7-1515-4bd4-9a90-e55d7dde05a0.txt",
+          originalName: dependantCustodyFile.fileName,
+          name: dependantCustodyFile.uniqueFileName,
+          url: "student/files/" + dependantCustodyFile.uniqueFileName,
           size: 0,
           type: "text/plain",
           hash: "1cb251ec0d568de6a929b520c4aed8d1",
@@ -408,8 +430,8 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
           formName: DEPENDANT_INFORMATION_FORM_NAME,
           formData: dependantInformationData,
           files: [
-            "JessLee_AlexLeeTax_2023-4315285a-b756-4084-95dc-781b51692d27.txt",
-            "JessLee_DependantsCustody-b76efea7-1515-4bd4-9a90-e55d7dde05a0.txt",
+            pdDependentFile.uniqueFileName,
+            dependantCustodyFile.uniqueFileName,
           ],
         },
       ],
@@ -430,7 +452,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
     );
     const dryRunSubmissionMock = jest.fn().mockResolvedValue({
       valid: true,
-      formName: FINANCIAL_INFORMATION_FORM_NAME,
+      formName: DEPENDANT_INFORMATION_FORM_NAME,
       data: { data: dependantInformationData },
     });
 
@@ -439,18 +461,34 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
     const endpoint = `/students/appeal/application/${application.id}`;
 
     // Act/Assert
-    const response = await request(app.getHttpServer())
+    let createdAppealId: number;
+    await request(app.getHttpServer())
       .post(endpoint)
       .auth(studentToken, BEARER_AUTH_TYPE)
       .send(payload)
-      .expect(HttpStatus.CREATED);
+      .expect(HttpStatus.CREATED)
+      .expect((response) => {
+        expect(response.body.id).toBeGreaterThan(0);
+        createdAppealId = +response.body.id;
+      });
 
+    // Expect created student appeal request data to be the same in the payload
     const newStudentAppealRequest = await studentAppealRequestRepo.findOne({
-      where: { studentAppeal: { id: response.body.id } },
+      where: { studentAppeal: { id: createdAppealId } },
     });
     expect(newStudentAppealRequest.submittedData).toStrictEqual(
       payload.studentAppealRequests[0].formData,
     );
+    // Expect the file origin type to be Appeal for the updated pd dependent file
+    const updatedPdDependentFile = await studentFileRepo.findOne({
+      where: { id: pdDependentFile.id },
+    });
+    expect(updatedPdDependentFile.fileOrigin).toBe(FileOriginType.Appeal);
+    // Expect the file origin type to be Appeal for the updated dependent custody file
+    const updatedDependantCustodyFile = await studentFileRepo.findOne({
+      where: { id: dependantCustodyFile.id },
+    });
+    expect(updatedDependantCustodyFile.fileOrigin).toBe(FileOriginType.Appeal);
 
     // Expect to call the dry run submission.
     expect(dryRunSubmissionMock).toHaveBeenCalledWith(

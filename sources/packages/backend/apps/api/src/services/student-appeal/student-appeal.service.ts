@@ -12,6 +12,7 @@ import {
   User,
   mapFromRawAndEntities,
   getUserFullNameLikeSearch,
+  FileOriginType,
 } from "@sims/sims-db";
 import {
   PendingAndDeniedAppeals,
@@ -33,6 +34,8 @@ import {
 } from "./constants";
 import { NotificationActionsService } from "@sims/services/notifications";
 import { NoteSharedService } from "@sims/services";
+import { StudentFileService } from "../student-file/student-file.service";
+import { StudentService } from "../student/student.service";
 
 /**
  * Service layer for Student appeals.
@@ -44,6 +47,8 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     private readonly studentAppealRequestsService: StudentAppealRequestsService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly noteSharedService: NoteSharedService,
+    private readonly studentFileService: StudentFileService,
+    private readonly studentService: StudentService,
   ) {
     super(dataSource.getRepository(StudentAppeal));
   }
@@ -76,7 +81,23 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
           createdAt: currentDateTime,
         } as StudentAppealRequest),
     );
-    return this.repo.save(studentAppeal);
+
+    // Update the student appeal and files if exist using the same entity manager
+    // so that they are processed within the same transaction
+    return await this.dataSource.transaction(async (entityManager) => {
+      const student = await this.studentService.getStudentByUserId(userId);
+      const uniqueFileNames: string[] = studentAppealRequests.flatMap(
+        (studentAppeal) => studentAppeal.files,
+      );
+      this.studentFileService.updateStudentFiles(
+        student.id,
+        userId,
+        uniqueFileNames,
+        FileOriginType.Appeal,
+        { entityManager: entityManager },
+      );
+      return this.repo.save(studentAppeal);
+    });
   }
 
   /**

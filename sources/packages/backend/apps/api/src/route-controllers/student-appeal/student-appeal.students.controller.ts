@@ -14,8 +14,6 @@ import {
   ApplicationService,
   FormService,
   StudentAppealService,
-  StudentFileService,
-  StudentService,
 } from "../../services";
 import {
   StudentAppealAPIInDTO,
@@ -49,7 +47,6 @@ import {
 import { StudentAppealRequestModel } from "../../services/student-appeal/student-appeal.model";
 import { StudentAppealControllerService } from "./student-appeal.controller.service";
 import { StudentAppealServerSideSubmissionData } from "./models/student-appeal.model";
-import { FileOriginType } from "@sims/sims-db";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -61,8 +58,6 @@ export class StudentAppealStudentsController extends BaseController {
     private readonly applicationService: ApplicationService,
     private readonly formService: FormService,
     private readonly studentAppealControllerService: StudentAppealControllerService,
-    private readonly studentFileService: StudentFileService,
-    private readonly studentService: StudentService,
   ) {
     super();
   }
@@ -158,6 +153,9 @@ export class StudentAppealStudentsController extends BaseController {
         ({
           formName: result.formName,
           formData: result.data.data,
+          files: payload.studentAppealRequests.find(
+            (studentAppeal) => studentAppeal.formName === result.formName,
+          ).files,
         } as StudentAppealRequestModel),
     );
 
@@ -165,17 +163,6 @@ export class StudentAppealStudentsController extends BaseController {
       applicationId,
       userToken.userId,
       appealRequests,
-    );
-
-    const student = await this.studentService.getStudentByUserId(
-      userToken.userId,
-    );
-
-    await this.studentFileService.updateStudentFiles(
-      student.id,
-      userToken.userId,
-      payload.studentAppealRequests[0].files,
-      FileOriginType.Appeal,
     );
 
     return {

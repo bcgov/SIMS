@@ -22,4 +22,8 @@ export interface FileUploadOptions {
    * Optional group name of the file being saved.
    */
   groupName?: string;
+  /**
+   * Optional entity manager to update file and data in the same transaction
+   */
+  entityManager?: EntityManager;
 }
