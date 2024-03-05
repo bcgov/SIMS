@@ -115,9 +115,9 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
         return disbursementReceiptValue;
       });
     await this.dataSource.transaction(async (transactionalEntityManager) => {
-      // Query builder inserts does not cascade insert with relationships.
-      // Cascaded insert can be achieved only through repository.save().
-      // Hence inside a transaction we are using save to persist relations.
+      //Query builder inserts does not cascade insert with relationships.
+      //Cascaded insert can be achieved only through repository.save().
+      //Hence inside a transaction we are using save to persist relations.
       const result = await transactionalEntityManager
         .createQueryBuilder()
         .insert()
