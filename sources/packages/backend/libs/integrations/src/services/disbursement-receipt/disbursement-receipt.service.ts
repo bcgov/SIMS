@@ -11,7 +11,7 @@ import { DisbursementReceiptModel } from "./disbursement-receipt.model";
 import { getISODateOnlyString } from "@sims/utilities";
 
 /**
- * Map for the award types received in the receipt file
+ * Code maps for the award types received in the receipt file
  * and its equivalent award code.
  */
 const RECEIPT_AWARD_MAP: Record<string, string> = {
@@ -145,6 +145,13 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
     return generatedId;
   }
 
+  /**
+   * Converts an award receipt code to the award
+   * code understood by the system.
+   * Code not part of the known map will be returned as they are.
+   * @param receiptAward receipt award code (e.g. FT, TU, FTDEP, PD).
+   * @returns system award code, for instance, CSGF, CSGT, CSGD, CSGP.
+   */
   private static convertAwardCodeFromReceipt(receiptAward: string): string {
     return RECEIPT_AWARD_MAP[receiptAward] ?? receiptAward;
   }
