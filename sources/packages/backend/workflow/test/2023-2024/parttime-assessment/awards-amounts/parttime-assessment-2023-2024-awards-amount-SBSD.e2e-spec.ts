@@ -19,10 +19,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-SB
 
     // Assert
     expect(calculatedAssessment.variables.programYearTotalSBSD).toBe(90);
-    expect(
-      calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
-        .limitAwardSBSD40AndUpCourseLoadAmount,
-    ).toBe(800);
     expect(calculatedAssessment.variables.provincialAwardNetSBSDAmount).toBe(
       710,
     );
@@ -46,10 +42,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-SB
 
     // Assert
     expect(calculatedAssessment.variables.programYearTotalSBSD).toBe(90);
-    expect(
-      calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
-        .limitAwardSBSDUnder40CourseLoadAmount,
-    ).toBe(400);
     expect(calculatedAssessment.variables.provincialAwardNetSBSDAmount).toBe(
       310,
     );
@@ -75,10 +67,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-SB
     // Assert
     expect(calculatedAssessment.variables.awardEligibilitySBSD).toBe(true);
     expect(calculatedAssessment.variables.programYearTotalSBSD).toBe(1100);
-    expect(
-      calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
-        .limitAwardSBSD40AndUpCourseLoadAmount,
-    ).toBe(800);
     expect(calculatedAssessment.variables.provincialAwardNetSBSDAmount).toBe(0);
     expect(
       calculatedAssessment.variables.finalProvincialAwardNetSBSDAmount,
