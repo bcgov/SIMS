@@ -210,23 +210,25 @@ export class StudentService extends RecordDataModelService<Student> {
         await entityManager.getRepository(Student).save(student);
       }
 
-      await this.importSFASOverawards(
-        student.id,
-        student.user.lastName,
-        student.birthDate,
-        studentSIN,
-        auditUserId,
-        entityManager,
-      );
-      // For the newly created student, update the Processed status in the
-      // SFAS Restrictions table to false. This will enable for the SFAS
-      // Restrictions from previous imports that were originally marked as
-      // processed to be re-processed when the SFAS Integration Scheduler
-      // runs again, thus causing the restrictions imported from SFAS to be
-      // applied to the newly created student account.
-      await entityManager
-        .getRepository(SFASRestriction)
-        .update({ individualId: sfasIndividual.id }, { processed: false });
+      if (sfasIndividual) {
+        await this.importSFASOverawards(
+          student.id,
+          student.user.lastName,
+          student.birthDate,
+          studentSIN,
+          auditUserId,
+          entityManager,
+        );
+        // For the newly created student, update the Processed status in the
+        // SFAS Restrictions table to false. This will enable for the SFAS
+        // Restrictions from previous imports that were originally marked as
+        // processed to be re-processed when the SFAS Integration Scheduler
+        // runs again, thus causing the restrictions imported from SFAS to be
+        // applied to the newly created student account.
+        await entityManager
+          .getRepository(SFASRestriction)
+          .update({ individualId: sfasIndividual.id }, { processed: false });
+      }
 
       // Create the new entry in the student/user history/audit.
       const studentUser = new StudentUser();
