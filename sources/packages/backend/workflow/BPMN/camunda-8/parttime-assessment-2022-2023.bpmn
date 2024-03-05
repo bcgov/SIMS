@@ -439,7 +439,7 @@
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=  if (calculatedDataTotalFamilyIncome &#60;= dmnPartTimeAwardFamilySizeVariables.limitAwardBCAGIncomeCap)&#10;then dmnPartTimeAwardAllowableLimits.limitAwardBCAGAmount&#10;else&#10;  max(dmnPartTimeAwardAllowableLimits.limitAwardBCAGAmount - ((calculatedDataTotalFamilyIncome - dmnPartTimeAwardFamilySizeVariables.limitAwardBCAGIncomeCap) * dmnPartTimeAwardFamilySizeVariables.limitAwardBCAGSlope),&#10;     100&#10;  )" target="federalAwardBCAGAmount" />
-          <zeebe:output source="=if ((awardEligibilityBCAG = true) and (federalAwardBCAGAmount &#62;= 100))&#10;then&#10;  min(&#10;     calculatedDataTotalRemainingNeed3,&#10;     min(dmnPartTimeAwardAllowableLimits.limitAwardBCAGAmount, federalAwardBCAGAmount)&#10;  )&#10;else&#10;0" target="provincialAwardNetBCAGAmount" />
+          <zeebe:output source="=if ((awardEligibilityBCAG = true) and (federalAwardBCAGAmount &#62;= 100))&#10;then&#10;  min(&#10;     calculatedDataTotalRemainingNeed3,&#10;     min(dmnPartTimeAwardAllowableLimits.limitAwardBCAGAmount - programYearTotalPartTimeBCAG, federalAwardBCAGAmount)&#10;  )&#10;else&#10;0" target="provincialAwardNetBCAGAmount" />
           <zeebe:output source="=calculatedDataTotalRemainingNeed3 - provincialAwardNetBCAGAmount" target="calculatedDataTotalRemainingNeed4" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
@@ -1568,10 +1568,6 @@ studentCalculatedTotalIncome</bpmn:text>
       <bpmndi:BPMNEdge id="Association_1mr7raq_di" bpmnElement="Association_1mr7raq">
         <di:waypoint x="5303" y="2258" />
         <di:waypoint x="5373" y="2200" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_15wn7v0_di" bpmnElement="Flow_15wn7v0">
-        <di:waypoint x="3328" y="1140" />
-        <di:waypoint x="3362" y="1140" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_1a4vdzr_di" bpmnElement="Group_1a4vdzr">
         <dc:Bounds x="1535" y="660" width="90" height="230" />
