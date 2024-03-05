@@ -54,4 +54,4 @@ WHERE
       student_restrictions.student_id = filtered_students.student_id
       AND student_restrictions.restriction_id = $1
       AND student_restrictions.is_active = TRUE
-  );
+  ) RETURNING student_id;
