@@ -6,7 +6,7 @@ import { StudentAppeal, StudentAppealStatus } from "@sims/sims-db";
 export interface StudentAppealRequestModel {
   formName: string;
   formData: any;
-  files?: [];
+  files: string[];
 }
 
 /**

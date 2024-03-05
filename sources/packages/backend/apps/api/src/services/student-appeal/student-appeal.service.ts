@@ -86,13 +86,15 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       const uniqueFileNames: string[] = studentAppealRequests.flatMap(
         (studentAppeal) => studentAppeal.files,
       );
-      await this.studentFileService.updateStudentFiles(
-        studentId,
-        userId,
-        uniqueFileNames,
-        FileOriginType.Appeal,
-        { entityManager: entityManager },
-      );
+      if (uniqueFileNames.length > 0) {
+        await this.studentFileService.updateStudentFiles(
+          studentId,
+          userId,
+          uniqueFileNames,
+          FileOriginType.Appeal,
+          { entityManager: entityManager },
+        );
+      }
       return this.repo.save(studentAppeal);
     });
   }
