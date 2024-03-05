@@ -5340,7 +5340,7 @@
           "id": "esiiwy8"
         },
         {
-          "label": "HTML",
+          "label": "This includes for full time",
           "labelWidth": "",
           "labelMargin": "",
           "tag": "ul",
@@ -5351,7 +5351,7 @@
               "value": ""
             }
           ],
-          "content": "<li>\n  Income of your partner and/or parent(s)\n</li>\n<li>\n  Scholarships and busaries reported\n</li>\n<li>\n  Voluntary or targeted contributions reported\n</li>\n<li>\n  Assets reported by parents (dependant students only)\n</li>\n",
+          "content": "<li>\n  Income of your partner and/or parent(s), if applicable\n</li>\n<li>\n  Scholarships and bursaries reported\n</li>\n<li>\n  Voluntary or targeted contributions reported\n</li>\n<li>\n  Assets reported by parents, if applicable\n</li>",
           "refreshOnChange": false,
           "customClass": "align-bullets",
           "hidden": false,
@@ -5360,9 +5360,9 @@
           "tags": [],
           "properties": {},
           "conditional": {
-            "show": null,
-            "when": null,
-            "eq": "",
+            "show": "true",
+            "when": "offeringIntensity",
+            "eq": "Full Time",
             "json": ""
           },
           "customConditional": "",
@@ -5420,6 +5420,30 @@
           "allowMultipleMasks": false,
           "addons": [],
           "id": "egy4x9"
+        },
+        {
+          "key": "panel4Thisincludesforparttime",
+          "label": "This includes for part time",
+          "input": false,
+          "tag": "ul",
+          "attrs": [
+            {
+              "value": "",
+              "attr": ""
+            }
+          ],
+          "className": "",
+          "content": "<li>\n  Income of your partner and/or parent(s), if applicable\n</li>\n<li>\n  Assets reported by parents, if applicable\n</li>",
+          "type": "htmlelement",
+          "hideLabel": true,
+          "tags": [],
+          "conditional": {
+            "show": "true",
+            "when": "offeringIntensity",
+            "eq": "Part Time"
+          },
+          "properties": {},
+          "customClass": "align-bullets"
         },
         {
           "label": "HTML",
@@ -5662,7 +5686,8 @@
                   "showWordCount": false,
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "edn6y4"
+                  "id": "edn6y4",
+                  "isNew": false
                 },
                 {
                   "label": "Table",
@@ -5941,7 +5966,9 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "isNew": false,
+                            "tags": []
                           }
                         ]
                       }
@@ -7906,7 +7933,8 @@
                   "lazyLoad": false,
                   "header": [],
                   "caption": "",
-                  "id": "e830oao"
+                  "id": "e830oao",
+                  "isNew": false
                 },
                 {
                   "label": "HTML",
@@ -9913,11 +9941,12 @@
                   "showWordCount": false,
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "erb6d17"
+                  "id": "erb6d17",
+                  "isNew": false
                 },
                 {
                   "label": "Table",
-                  "numRows": 7,
+                  "numRows": 8,
                   "numCols": 2,
                   "cloneRows": false,
                   "cellAlignment": "left",
@@ -9935,7 +9964,7 @@
                   "tags": [],
                   "properties": {},
                   "conditional": {
-                    "show": true,
+                    "show": "true",
                     "when": "offeringIntensity",
                     "eq": "Part Time",
                     "json": ""
@@ -10193,7 +10222,9 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "isNew": false,
+                            "tags": []
                           }
                         ]
                       },
@@ -10272,7 +10303,66 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "isNew": false,
+                            "tags": []
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "key": "table3Content",
+                            "label": "Content",
+                            "input": false,
+                            "tag": "p",
+                            "attrs": [
+                              {
+                                "value": "",
+                                "attr": ""
+                              }
+                            ],
+                            "className": "",
+                            "content": "Mandatory Fees",
+                            "type": "htmlelement",
+                            "tags": [],
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "properties": {},
+                            "hideLabel": true
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "key": "table3Content2",
+                            "label": "Content",
+                            "input": false,
+                            "tag": "p",
+                            "attrs": [
+                              {
+                                "value": "",
+                                "attr": ""
+                              }
+                            ],
+                            "className": "",
+                            "content": "{{typeof data.assessment?.mandatoryFees === 'number' ? '$' + (data.assessment.mandatoryFees).toFixed(2) : '(Not eligible)'}}",
+                            "type": "htmlelement",
+                            "refreshOnChange": true,
+                            "hideLabel": true,
+                            "tags": [],
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "properties": {}
                           }
                         ]
                       }
@@ -10528,7 +10618,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{typeof data.assessment?.miscellaneousCost === 'number' ? '$' + (data.assessment.miscellaneousCost).toFixed(2) : '(Not eligible)'}}",
+                            "content": "{{typeof data.assessment?.miscellaneousAllowance === 'number' ? '$' + (data.assessment.miscellaneousAllowance).toFixed(2) : '(Not eligible)'}}",
                             "refreshOnChange": true,
                             "key": "miscellaneousCost",
                             "type": "htmlelement",
@@ -10574,7 +10664,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -10593,7 +10683,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       }
@@ -11186,7 +11277,8 @@
               "addons": [],
               "tree": false,
               "lazyLoad": false,
-              "id": "e6ekbvt"
+              "id": "e6ekbvt",
+              "isNew": false
             }
           ],
           "placeholder": "",
