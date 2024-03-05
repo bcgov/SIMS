@@ -131,7 +131,7 @@ export interface StructuredFile {
  * @returns header, records and footer.
  */
 export function getStructuredRecords(fileContent: string): StructuredFile {
-  const fileLines = fileContent.split(/\r\n|\n\r|\n|\r/);
+  const fileLines = fileContent.split(END_OF_LINE);
   const header = fileLines.shift();
   const footer = fileLines.pop();
   return {
