@@ -107,12 +107,12 @@
         <bpmn:flowNodeRef>Event_1eaa23y</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1otxsj1</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1h2w0hl</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_0nkkesr</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1wo2y47</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1yo12tx</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_12swz45</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_14d0375</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0jmbywn</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_0nkkesr</bpmn:flowNodeRef>
         <bpmn:childLaneSet id="LaneSet_0v6vyq5">
           <bpmn:lane id="Lane_0l32w49" name="Award Calculation">
             <bpmn:flowNodeRef>Gateway_04hunux</bpmn:flowNodeRef>
@@ -125,12 +125,12 @@
             <bpmn:flowNodeRef>Event_1eaa23y</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_1otxsj1</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_1h2w0hl</bpmn:flowNodeRef>
-            <bpmn:flowNodeRef>Event_0nkkesr</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Gateway_1wo2y47</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Gateway_1yo12tx</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_12swz45</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_14d0375</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_0jmbywn</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Event_0nkkesr</bpmn:flowNodeRef>
           </bpmn:lane>
           <bpmn:lane id="Lane_0pbg2l1" name="Primary Assessed Need and Award Eligibility">
             <bpmn:flowNodeRef>Event_1sg75ph</bpmn:flowNodeRef>
@@ -730,23 +730,13 @@
     <bpmn:intermediateThrowEvent id="Event_1h2w0hl" name="calculate CSGP">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if ((awardEligibilityCSGP = true) &#10;    and (calculatedDataTotalAssessedNeed &#62;= 1)) &#10;then dmnPartTimeAwardAllowableLimits.limitAwardCSGPAmount &#10;else 0" target="federalAwardNetCSGPAmount" />
+          <zeebe:output source="=if ((awardEligibilityCSGP = true) &#10;    and (calculatedDataTotalAssessedNeed &#62;= 1)) &#10;then max(dmnPartTimeAwardAllowableLimits.limitAwardCSGPAmount -programYearTotalCSGP,0)&#10;else 0" target="federalAwardNetCSGPAmount" />
           <zeebe:output source="=max(0,(calculatedDataTotalAssessedNeed - federalAwardNetCSGPAmount))" target="calculatedDataTotalRemainingNeed1" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0apjmd6</bpmn:incoming>
       <bpmn:outgoing>Flow_047qz6n</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateThrowEvent id="Event_0nkkesr" name="Program Year Total both FT and PT">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=programYearTotalFullTimeSBSD + programYearTotalPartTimeSBSD" target="programYearTotalSBSD" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0j9exwg</bpmn:incoming>
-      <bpmn:outgoing>Flow_0apjmd6</bpmn:outgoing>
-    </bpmn:intermediateThrowEvent>
-    <bpmn:sequenceFlow id="Flow_0apjmd6" sourceRef="Event_0nkkesr" targetRef="Event_1h2w0hl" />
     <bpmn:exclusiveGateway id="Gateway_1wo2y47">
       <bpmn:incoming>Flow_1dbuo7u</bpmn:incoming>
       <bpmn:outgoing>Flow_0x4ck3r</bpmn:outgoing>
@@ -786,6 +776,17 @@
       <bpmn:incoming>Flow_047qz6n</bpmn:incoming>
       <bpmn:outgoing>Flow_04d0tld</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
+    <bpmn:intermediateThrowEvent id="Event_0nkkesr" name="Program Year Total both FT and PT">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=programYearTotalFullTimeSBSD + programYearTotalPartTimeSBSD" target="programYearTotalSBSD" />
+          <zeebe:output source="=programYearTotalFullTimeCSGP + programYearTotalPartTimeCSGP" target="programYearTotalCSGP" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0j9exwg</bpmn:incoming>
+      <bpmn:outgoing>Flow_0apjmd6</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_0apjmd6" sourceRef="Event_0nkkesr" targetRef="Event_1h2w0hl" />
     <bpmn:textAnnotation id="TextAnnotation_1myp6tg">
       <bpmn:text>Use CRA Income if provided
 partner1CalculatedTotalIncome
@@ -1131,7 +1132,7 @@ dmnX (comes from dmn)</bpmn:text>
       <bpmndi:BPMNShape id="BPMNShape_03tqovb" bpmnElement="Event_0nkkesr">
         <dc:Bounds x="5162" y="2252" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="5138" y="2295" width="85" height="40" />
+          <dc:Bounds x="5138" y="2295" width="86" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1wo2y47_di" bpmnElement="Gateway_1wo2y47" isMarkerVisible="true">
