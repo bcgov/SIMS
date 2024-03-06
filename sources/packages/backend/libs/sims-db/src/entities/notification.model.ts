@@ -144,4 +144,8 @@ export enum NotificationMessageType {
    * An Application Offering Change Request completed by ministry.
    */
   ApplicationOfferingChangeRequestCompletedByMinistry = 14,
+  /**
+   * A legacy restriction added to the student account.
+   */
+  LegacyRestrictionAdded = 15,
 }

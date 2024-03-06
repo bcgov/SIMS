@@ -1,12 +1,17 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, Repository } from "typeorm";
-import { DataModelService, Restriction, SFASRestriction } from "@sims/sims-db";
+import { DataSource, EntityManager, In, Repository } from "typeorm";
+import {
+  DataModelService,
+  Restriction,
+  SFASRestriction,
+  Student,
+} from "@sims/sims-db";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { getUTC, getISODateOnlyString, getSQLFileData } from "@sims/utilities";
 import { SFASDataImporter } from "./sfas-data-importer";
 import { SFASRecordIdentification } from "../../sfas-integration/sfas-files/sfas-record-identification";
 import { SFASRestrictionRecord } from "../../sfas-integration/sfas-files/sfas-restriction-record";
-import { SystemUsersService } from "@sims/services";
+import { NotificationActionsService, SystemUsersService } from "@sims/services";
 import { InjectRepository } from "@nestjs/typeorm";
 
 const SFAS_RESTRICTIONS_RAW_SQL_FOLDER = "sfas-restrictions";
@@ -26,6 +31,7 @@ export class SFASRestrictionService
   constructor(
     private readonly dataSource: DataSource,
     private readonly systemUsersService: SystemUsersService,
+    private readonly notificationActionsService: NotificationActionsService,
     @InjectRepository(Restriction)
     private readonly restrictionRepo: Repository<Restriction>,
   ) {
@@ -61,7 +67,7 @@ export class SFASRestrictionService
             this.bulkInsertSFASMappedRestrictionsSQL,
             [creator.id],
           );
-        await Promise.all([
+        const [bulkInsertLegacyRestrictions] = await Promise.all([
           bulkInsertLegacyRestrictionsPromise,
           bulkInsertSFASMappedRestrictionsPromise,
         ]);
@@ -71,6 +77,14 @@ export class SFASRestrictionService
             { processed: false },
             { processed: true, updatedAt: new Date() },
           );
+        const bulkInsertLegacyRestrictionStudentIds =
+          bulkInsertLegacyRestrictions.map(
+            (restriction: { student_id: number }) => restriction.student_id,
+          );
+        await this.createLegacyRestrictionNotifications(
+          bulkInsertLegacyRestrictionStudentIds,
+          transactionalEntityManager,
+        );
       });
     } catch (error) {
       throw new Error(
@@ -106,6 +120,38 @@ export class SFASRestrictionService
     restriction.extractedAt = getUTC(extractedDate);
     restriction.processed = false;
     await this.repo.save(restriction, { reload: false, transaction: false });
+  }
+
+  /**
+   * Create notifications for newly created legacy student restrictions for the ministry.
+   * @param studentIds student ids for which the legacy restriction notification needs to be sent.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  private async createLegacyRestrictionNotifications(
+    studentIds: number[],
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const students = await entityManager.getRepository(Student).find({
+      select: {
+        birthDate: true,
+        user: { id: true, firstName: true, lastName: true, email: true },
+      },
+      relations: { user: true },
+      where: { id: In(studentIds) },
+    });
+    const notifications = students.map((student) => ({
+      firstName: student.user.firstName,
+      lastName: student.user.lastName,
+      userId: student.user.id,
+      email: student.user.email,
+      birthDate: new Date(student.birthDate),
+    }));
+    await this.notificationActionsService.saveLegacyRestrictionAddedNotification(
+      notifications,
+      auditUser.id,
+      entityManager,
+    );
   }
 
   @InjectLogger()

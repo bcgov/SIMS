@@ -20,4 +20,5 @@ export interface StudentAppealRequest {
   data: any;
   formName: string;
   approval?: StudentAppealApproval;
+  files: string[];
 }

@@ -17,6 +17,7 @@ import {
   NotificationEmailMessage,
   ApplicationOfferingChangeRequestInProgressWithStudentNotification,
   ApplicationOfferingChangeRequestCompleteNotification,
+  LegacyRestrictionAddedNotification,
 } from "..";
 import { GCNotifyService } from "./gc-notify.service";
 import { NotificationService } from "./notification.service";
@@ -253,6 +254,43 @@ export class NotificationActionsService {
       },
     }));
 
+    // Save notification into notification table.
+    await this.notificationService.saveNotifications(
+      notificationsToSend,
+      auditUserId,
+      { entityManager },
+    );
+  }
+
+  /**
+   * Creates a new ministry notification for each student when a legacy restriction is added to their account.
+   * @param notifications notifications information.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveLegacyRestrictionAddedNotification(
+    notifications: LegacyRestrictionAddedNotification[],
+    auditUserId: number,
+    entityManager?: EntityManager,
+  ): Promise<void> {
+    const templateId = await this.notificationMessageService.getTemplateId(
+      NotificationMessageType.LegacyRestrictionAdded,
+    );
+    const notificationsToSend = notifications.map((notification) => ({
+      userId: notification.userId,
+      messageType: NotificationMessageType.LegacyRestrictionAdded,
+      messagePayload: {
+        email_address: this.gcNotifyService.ministryToAddress(),
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.firstName ?? "",
+          lastName: notification.lastName,
+          studentEmail: notification.email,
+          dob: getDateOnlyFormat(notification.birthDate),
+          dateTime: this.getDateTimeOnPSTTimeZone(),
+        },
+      },
+    }));
     // Save notification into notification table.
     await this.notificationService.saveNotifications(
       notificationsToSend,

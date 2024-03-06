@@ -23,6 +23,8 @@ export class StudentAppealRequestAPIInDTO {
   @IsDefined()
   @JsonMaxSize(JSON_10KB)
   formData: unknown;
+  @IsDefined()
+  files: string[];
 }
 
 /**

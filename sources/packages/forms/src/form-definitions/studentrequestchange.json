@@ -445,6 +445,10 @@
           "data": {
             "values": [
               {
+                "value": "studentdependantsappeal",
+                "label": "Add/Remove Dependants"
+              },
+              {
                 "value": "studentdisabilityappeal",
                 "label": "Disability Information"
               },

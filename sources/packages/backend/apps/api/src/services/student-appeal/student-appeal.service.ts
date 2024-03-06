@@ -12,6 +12,7 @@ import {
   User,
   mapFromRawAndEntities,
   getUserFullNameLikeSearch,
+  FileOriginType,
 } from "@sims/sims-db";
 import {
   PendingAndDeniedAppeals,
@@ -33,6 +34,7 @@ import {
 } from "./constants";
 import { NotificationActionsService } from "@sims/services/notifications";
 import { NoteSharedService } from "@sims/services";
+import { StudentFileService } from "../student-file/student-file.service";
 
 /**
  * Service layer for Student appeals.
@@ -44,39 +46,57 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     private readonly studentAppealRequestsService: StudentAppealRequestsService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly noteSharedService: NoteSharedService,
+    private readonly studentFileService: StudentFileService,
   ) {
     super(dataSource.getRepository(StudentAppeal));
   }
 
   /**
    * Save student appeals that are requested by the student.
+   * Update student files if exist using the same transaction.
    * @param applicationId Application to which an appeal is submitted.
    * @param userId Student user who submits the appeal.
+   * @param studentId Student Id.
    * @param studentAppealRequests Payload data.
    */
   async saveStudentAppeals(
     applicationId: number,
     userId: number,
+    studentId: number,
     studentAppealRequests: StudentAppealRequestModel[],
   ): Promise<StudentAppeal> {
-    const studentAppeal = new StudentAppeal();
-    const currentDateTime = new Date();
-    const creator = { id: userId } as User;
-    studentAppeal.application = { id: applicationId } as Application;
-    studentAppeal.creator = creator;
-    studentAppeal.createdAt = currentDateTime;
-    studentAppeal.submittedDate = currentDateTime;
-    studentAppeal.appealRequests = studentAppealRequests.map(
-      (appealRequest) =>
-        ({
-          submittedFormName: appealRequest.formName,
-          submittedData: appealRequest.formData,
-          appealStatus: StudentAppealStatus.Pending,
-          creator: creator,
-          createdAt: currentDateTime,
-        } as StudentAppealRequest),
-    );
-    return this.repo.save(studentAppeal);
+    return await this.dataSource.transaction(async (entityManager) => {
+      const studentAppeal = new StudentAppeal();
+      const currentDateTime = new Date();
+      const creator = { id: userId } as User;
+      studentAppeal.application = { id: applicationId } as Application;
+      studentAppeal.creator = creator;
+      studentAppeal.createdAt = currentDateTime;
+      studentAppeal.submittedDate = currentDateTime;
+      studentAppeal.appealRequests = studentAppealRequests.map(
+        (appealRequest) =>
+          ({
+            submittedFormName: appealRequest.formName,
+            submittedData: appealRequest.formData,
+            appealStatus: StudentAppealStatus.Pending,
+            creator: creator,
+            createdAt: currentDateTime,
+          } as StudentAppealRequest),
+      );
+      const uniqueFileNames: string[] = studentAppealRequests.flatMap(
+        (studentAppeal) => studentAppeal.files,
+      );
+      if (uniqueFileNames.length > 0) {
+        await this.studentFileService.updateStudentFiles(
+          studentId,
+          userId,
+          uniqueFileNames,
+          FileOriginType.Appeal,
+          { entityManager: entityManager },
+        );
+      }
+      return this.repo.save(studentAppeal);
+    });
   }
 
   /**

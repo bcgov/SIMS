@@ -90,6 +90,8 @@ export function createFakePartTimeAssessmentConsolidatedData(
     partner1CRAReportedIncome: 15001,
     programYearTotalPartTimeCSGD: 200,
     programYearTotalPartTimeBCAG: 300,
+    programYearTotalPartTimeSBSD: 40,
+    programYearTotalFullTimeSBSD: 50,
   };
 }
 /**

@@ -24,6 +24,10 @@ export enum FileOriginType {
    * File submitted from the Ministry to the student account.
    */
   Ministry = "Ministry",
+  /**
+   * File submitted for student appeal.
+   */
+  Appeal = "Appeal",
 }
 
 export interface StudentFileMetadata {

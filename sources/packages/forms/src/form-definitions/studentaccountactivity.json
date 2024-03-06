@@ -3180,7 +3180,8 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "exuqcvt"
+                      "id": "exuqcvt",
+                      "tags": []
                     }
                   ],
                   "collapsed": true,
@@ -3334,7 +3335,8 @@
                       "showWordCount": false,
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "eqqh4i"
+                      "id": "eqqh4i",
+                      "isNew": false
                     }
                   ],
                   "collapsed": true,
@@ -3377,7 +3379,46 @@
                   "tree": false,
                   "lazyLoad": false,
                   "id": "e49h62j",
-                  "hideLabel": false
+                  "hideLabel": false,
+                  "isNew": false
+                },
+                {
+                  "clearOnHide": false,
+                  "key": "codeLGCYRestrictionPanel",
+                  "input": false,
+                  "title": "Code LGCY - Legacy Restriction",
+                  "theme": "default",
+                  "tableView": false,
+                  "components": [
+                    {
+                      "key": "codeLGCYRestrictionPanelContent",
+                      "input": false,
+                      "html": "<p>You have a historical restriction on your account. Please contact StudentAid BC for additional assistance.</p>\n",
+                      "type": "content",
+                      "tags": [],
+                      "conditional": {
+                        "show": "",
+                        "when": null,
+                        "eq": ""
+                      },
+                      "properties": {},
+                      "lockKey": true
+                    }
+                  ],
+                  "type": "panel",
+                  "breadcrumb": "default",
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "collapsible": true,
+                  "collapsed": true,
+                  "hideLabel": false,
+                  "lockKey": true,
+                  "customClass": "collapsible"
                 },
                 {
                   "label": "HTML",
@@ -10394,8 +10435,5 @@
       "id": "e6z1qd9",
       "addons": []
     }
-  ],
-  "created": "2023-01-11T21:27:07.204Z",
-  "modified": "2023-04-21T19:39:43.414Z",
-  "machineName": "studentAccountActivity"
+  ]
 }

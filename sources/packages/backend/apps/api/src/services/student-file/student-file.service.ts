@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, In, UpdateResult } from "typeorm";
+import { DataSource, EntityManager, In, UpdateResult } from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   RecordDataModelService,
@@ -119,33 +119,69 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     auditUserId: number,
     uniqueFileNames: string[],
     fileOrigin: FileOriginType,
-    groupName: string,
     options?: FileUploadOptions,
   ): Promise<UpdateResult> {
     let updateResult: UpdateResult;
-    await this.dataSource.transaction(async (transactionalEntityManager) => {
-      updateResult = await transactionalEntityManager
-        .getRepository(StudentFile)
-        .update(
-          {
-            student: { id: studentId },
-            uniqueFileName: In(uniqueFileNames),
-          },
-          {
-            groupName,
-            fileOrigin,
-            metadata: options?.metadata,
-            modifier: { id: auditUserId } as User,
-          },
+    if (options.entityManager) {
+      updateResult = await this.updateStudentFile(
+        options.entityManager,
+        studentId,
+        auditUserId,
+        uniqueFileNames,
+        fileOrigin,
+        options,
+      );
+    } else {
+      await this.dataSource.transaction(async (transactionalEntityManager) => {
+        updateResult = await this.updateStudentFile(
+          transactionalEntityManager,
+          studentId,
+          auditUserId,
+          uniqueFileNames,
+          fileOrigin,
+          options,
         );
-
-      // Create student notification on file upload.
-      if (options?.saveFileUploadNotification) {
-        await options.saveFileUploadNotification(transactionalEntityManager);
-      }
-    });
+      });
+    }
 
     return updateResult;
+  }
+
+  /**
+   * Update the files submitted by the student
+   * with proper data.
+   * @param entityManager entity manager for a given transaction.
+   * @param studentId student.
+   * @param auditUserId user that should be considered the one that is
+   * causing the changes.
+   * @param uniqueFileNames list of unique file names.
+   * @param fileOrigin origin of the file being saved.
+   * @param groupName group name of the file being save.
+   * @param options file upload options.
+   */
+  private async updateStudentFile(
+    entityManager: EntityManager,
+    studentId: number,
+    auditUserId: number,
+    uniqueFileNames: string[],
+    fileOrigin: FileOriginType,
+    options?: FileUploadOptions,
+  ): Promise<UpdateResult> {
+    if (options?.saveFileUploadNotification) {
+      await options.saveFileUploadNotification(entityManager);
+    }
+    return entityManager.getRepository(StudentFile).update(
+      {
+        student: { id: studentId },
+        uniqueFileName: In(uniqueFileNames),
+      },
+      {
+        groupName: options?.groupName,
+        fileOrigin,
+        metadata: options?.metadata,
+        modifier: { id: auditUserId } as User,
+      },
+    );
   }
 
   /**

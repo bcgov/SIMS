@@ -15,6 +15,8 @@ import {
   RestrictionNotificationType,
   StudentRestriction,
   DisabilityStatus,
+  SFASIndividual,
+  SFASRestriction,
 } from "@sims/sims-db";
 import { DataSource, EntityManager, UpdateResult } from "typeorm";
 import { StudentUserToken } from "../../auth/userToken.interface";
@@ -165,14 +167,14 @@ export class StudentService extends RecordDataModelService<Student> {
     };
     student.user = user;
     student.sinConsent = studentInfo.sinConsent;
+    let sfasIndividual: SFASIndividual;
     try {
       // Get PD status from SFAS integration data.
-      const sfasIndividual =
-        await this.sfasIndividualService.getIndividualStudent(
-          user.lastName,
-          student.birthDate,
-          studentSIN,
-        );
+      sfasIndividual = await this.sfasIndividualService.getIndividualStudent(
+        user.lastName,
+        student.birthDate,
+        studentSIN,
+      );
       // If SFAS individual exist with matching details, read the disability status and effective date.
       if (sfasIndividual) {
         student.disabilityStatus = this.getDisabilityStatus(
@@ -208,14 +210,25 @@ export class StudentService extends RecordDataModelService<Student> {
         await entityManager.getRepository(Student).save(student);
       }
 
-      await this.importSFASOverawards(
-        student.id,
-        student.user.lastName,
-        student.birthDate,
-        studentSIN,
-        auditUserId,
-        entityManager,
-      );
+      if (sfasIndividual) {
+        await this.importSFASOverawards(
+          student.id,
+          student.user.lastName,
+          student.birthDate,
+          studentSIN,
+          auditUserId,
+          entityManager,
+        );
+        // For the newly created student, update the Processed status in the
+        // SFAS Restrictions table to false. This will enable for the SFAS
+        // Restrictions from previous imports that were originally marked as
+        // processed to be re-processed when the SFAS Integration Scheduler
+        // runs again, thus causing the restrictions imported from SFAS to be
+        // applied to the newly created student account.
+        await entityManager
+          .getRepository(SFASRestriction)
+          .update({ individualId: sfasIndividual.id }, { processed: false });
+      }
 
       // Create the new entry in the student/user history/audit.
       const studentUser = new StudentUser();

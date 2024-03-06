@@ -302,8 +302,11 @@ export class StudentStudentsController extends BaseController {
       studentUserToken.userId,
       payload.associatedFiles,
       FileOriginType.Student,
-      payload.submittedForm.documentPurpose,
-      { saveFileUploadNotification, metadata: fileMetadata },
+      {
+        saveFileUploadNotification,
+        metadata: fileMetadata,
+        groupName: payload.submittedForm.documentPurpose,
+      },
     );
   }
 
