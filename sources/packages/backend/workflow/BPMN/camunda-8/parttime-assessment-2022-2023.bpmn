@@ -733,7 +733,7 @@
     <bpmn:intermediateThrowEvent id="Event_1h2w0hl" name="calculate CSGP">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if ((awardEligibilityCSGP = true) &#10;    and (calculatedDataTotalAssessedNeed &#62;= 1)) &#10;then max(dmnPartTimeAwardAllowableLimits.limitAwardCSGPAmount -programYearTotalCSGP,0)&#10;else 0" target="federalAwardNetCSGPAmount" />
+          <zeebe:output source="=if ((awardEligibilityCSGP = true) &#10;    and (calculatedDataTotalAssessedNeed &#62;= 1)) &#10;then max(dmnPartTimeAwardAllowableLimits.limitAwardCSGPAmount - programYearTotalCSGP,0)&#10;else 0" target="federalAwardNetCSGPAmount" />
           <zeebe:output source="=max(0,(calculatedDataTotalAssessedNeed - federalAwardNetCSGPAmount))" target="calculatedDataTotalRemainingNeed1" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
@@ -1572,6 +1572,10 @@ studentCalculatedTotalIncome</bpmn:text>
         <di:waypoint x="5198" y="2270" />
         <di:waypoint x="5242" y="2270" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_02seh0l_di" bpmnElement="Flow_02seh0l">
+        <di:waypoint x="3348" y="1140" />
+        <di:waypoint x="3372" y="1140" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_1i7iirc_di" bpmnElement="Association_1i7iirc">
         <di:waypoint x="815" y="602" />
         <di:waypoint x="815" y="524" />
@@ -1599,10 +1603,6 @@ studentCalculatedTotalIncome</bpmn:text>
       <bpmndi:BPMNEdge id="Association_1gi7mg0_di" bpmnElement="Association_1gi7mg0">
         <di:waypoint x="6151" y="2396" />
         <di:waypoint x="6178" y="2360" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_02seh0l_di" bpmnElement="Flow_02seh0l">
-        <di:waypoint x="3348" y="1140" />
-        <di:waypoint x="3372" y="1140" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_1a4vdzr_di" bpmnElement="Group_1a4vdzr">
         <dc:Bounds x="1535" y="660" width="90" height="230" />
