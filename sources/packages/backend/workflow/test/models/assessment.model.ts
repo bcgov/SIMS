@@ -300,4 +300,5 @@ export interface CalculatedAssessmentModel {
   };
   // Disbursement schedules
   disbursementSchedules: Array<unknown>;
+  calculatedDataTotalAcademicExpenses: number;
 }
