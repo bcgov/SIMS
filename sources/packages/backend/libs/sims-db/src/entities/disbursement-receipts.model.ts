@@ -66,7 +66,7 @@ export class DisbursementReceipt extends RecordDataModel {
   fundingType: string;
 
   /**
-   * Total entitled disbursed amount for either FE(Federal) or BC(Provincial).
+   * Total entitled loan disbursed amount for either FE(Federal) or BC(Provincial).
    */
   @Column({
     name: "total_entitled_disbursed_amount",
@@ -77,7 +77,7 @@ export class DisbursementReceipt extends RecordDataModel {
   totalEntitledDisbursedAmount: number;
 
   /**
-   * Total disbursed amount for either FE(Federal) or BC(Provincial).
+   * Total loan disbursed amount for either FE(Federal) or BC(Provincial).
    */
   @Column({
     name: "total_disbursed_amount",
@@ -139,7 +139,7 @@ export class DisbursementReceipt extends RecordDataModel {
   institutionCode: string;
 
   /**
-   * Method of disbursement to student. C(By cheque),E(By EFT), <space> disbursement only to institution.
+   * Method of disbursement to student, where C(cheque), E(EFT), or empty space for disbursement only to institution.
    */
   @Column({
     name: "disburse_method_student",
