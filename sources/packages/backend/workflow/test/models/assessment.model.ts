@@ -137,6 +137,8 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   programYearTotalPartTimeCSGD: number;
   programYearTotalPartTimeSBSD: number;
   programYearTotalFullTimeSBSD: number;
+  programYearTotalPartTimeCSGP: number;
+  programYearTotalFullTimeCSGP: number;
 }
 
 /**
@@ -225,6 +227,7 @@ export interface CalculatedAssessmentModel {
 
   // Full time.
   // CSGP
+  programYearTotalCSGP: number;
   federalAwardNetCSGPAmount: number;
   provincialAwardNetCSGPAmount: number;
   // CSGD
