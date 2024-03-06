@@ -11,6 +11,17 @@ import { DisbursementReceiptModel } from "./disbursement-receipt.model";
 import { getISODateOnlyString } from "@sims/utilities";
 
 /**
+ * Code maps for the award types received in the receipt file
+ * and its equivalent award code.
+ */
+const RECEIPT_AWARD_MAP: Record<string, string> = {
+  FT: "CSGF",
+  TU: "CSGT",
+  FTDEP: "CSGD",
+  PD: "CSGP",
+};
+
+/**
  * Service for disbursement receipts.
  */
 @Injectable()
@@ -94,7 +105,10 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
     disbursementReceiptEntity.disbursementReceiptValues =
       disbursementReceipt.grants.map((grant) => {
         const disbursementReceiptValue = new DisbursementReceiptValue();
-        disbursementReceiptValue.grantType = grant.grantType;
+        disbursementReceiptValue.grantType =
+          DisbursementReceiptService.convertAwardCodeFromReceipt(
+            grant.grantType,
+          );
         disbursementReceiptValue.grantAmount = grant.grantAmount;
         disbursementReceiptValue.creator = creator;
         disbursementReceiptValue.createdAt = createdAt;
@@ -104,7 +118,6 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
       //Query builder inserts does not cascade insert with relationships.
       //Cascaded insert can be achieved only through repository.save().
       //Hence inside a transaction we are using save to persist relations.
-
       const result = await transactionalEntityManager
         .createQueryBuilder()
         .insert()
@@ -130,5 +143,16 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
       }
     });
     return generatedId;
+  }
+
+  /**
+   * Converts an award receipt code to the award
+   * code understood by the system.
+   * Code not part of the known map will be returned as they are.
+   * @param receiptAward receipt award code (e.g. FT, TU, FTDEP, PD).
+   * @returns system award code, for instance, CSGF, CSGT, CSGD, CSGP.
+   */
+  private static convertAwardCodeFromReceipt(receiptAward: string): string {
+    return RECEIPT_AWARD_MAP[receiptAward] ?? receiptAward;
   }
 }

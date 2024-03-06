@@ -141,6 +141,8 @@ export interface FullTimeAssessment extends BaseAssessment {
 export interface PartTimeAssessment extends BaseAssessment {
   miscellaneousCost: number;
   totalAcademicExpenses: number;
+  // TODO: Mandatory fees could be potentially part of base assessment.
+  mandatoryFees: number;
 }
 /**
  * This is a type which provides the contract for FullTime and PartTime assessment payload
