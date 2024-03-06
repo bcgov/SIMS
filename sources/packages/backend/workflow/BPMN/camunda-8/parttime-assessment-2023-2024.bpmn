@@ -35,7 +35,6 @@
     <bpmn:textAnnotation id="TextAnnotation_0cerfoa">
       <bpmn:text>Assessment need is greater than or equal to 1 and income is less than threshold and at least 1 eligible dependant</bpmn:text>
     </bpmn:textAnnotation>
-    <bpmn:association id="Association_1mr7raq" sourceRef="Event_0jmbywn" targetRef="TextAnnotation_1mxnhnv" />
     <bpmn:association id="Association_0ptatj5" sourceRef="Event_19hr2p7" targetRef="TextAnnotation_0b7u2ni" />
     <bpmn:association id="Association_01prvbh" sourceRef="Event_084hvhv" targetRef="TextAnnotation_1lzmhpu" />
     <bpmn:association id="Association_1ledsf9" sourceRef="Event_1ki3afc" targetRef="TextAnnotation_06i946l" />
@@ -86,7 +85,6 @@
         <bpmn:flowNodeRef>Activity_134pojh</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_04hunux</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1xl9u43</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_0jmbywn</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_19hr2p7</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1bplh1d</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0ff3d52</bpmn:flowNodeRef>
@@ -114,11 +112,11 @@
         <bpmn:flowNodeRef>Gateway_1yo12tx</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_12swz45</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_14d0375</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_0jmbywn</bpmn:flowNodeRef>
         <bpmn:childLaneSet id="LaneSet_0v6vyq5">
           <bpmn:lane id="Lane_0l32w49" name="Award Calculation">
             <bpmn:flowNodeRef>Gateway_04hunux</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_1xl9u43</bpmn:flowNodeRef>
-            <bpmn:flowNodeRef>Event_0jmbywn</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_19hr2p7</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_1iix0z3</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_10par1m</bpmn:flowNodeRef>
@@ -132,6 +130,7 @@
             <bpmn:flowNodeRef>Gateway_1yo12tx</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_12swz45</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_14d0375</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Event_0jmbywn</bpmn:flowNodeRef>
           </bpmn:lane>
           <bpmn:lane id="Lane_0pbg2l1" name="Primary Assessed Need and Award Eligibility">
             <bpmn:flowNodeRef>Event_1sg75ph</bpmn:flowNodeRef>
@@ -458,17 +457,6 @@
     <bpmn:endEvent id="Event_1xl9u43">
       <bpmn:incoming>Flow_0foajxm</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:intermediateThrowEvent id="Event_0jmbywn" name="calculate CSPT">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=if (calculatedDataTotalFamilyIncome &#60;= dmnPartTimeAwardFamilySizeVariables.limitAwardCSPTIncomeCap)&#10;then dmnPartTimeAwardAllowableLimits.limitAwardCSPTAmount&#10;else&#10;  max(dmnPartTimeAwardAllowableLimits.limitAwardCSPTAmount - ((calculatedDataTotalFamilyIncome - dmnPartTimeAwardFamilySizeVariables.limitAwardCSPTIncomeCap) * dmnPartTimeAwardFamilySizeVariables.limitAwardCSPTSlope),&#10;     100&#10;  )" target="federalAwardCSPTAmount" />
-          <zeebe:output source="=if (awardEligibilityCSPT = true and calculatedDataTotalRemainingNeed1 &#62;= 100)&#10;then&#10;  min(&#10;     calculatedDataTotalRemainingNeed1,&#10;     min(dmnPartTimeAwardAllowableLimits.limitAwardCSPTAmount, federalAwardCSPTAmount)&#10;  )&#10;else&#10;0" target="federalAwardNetCSPTAmount" />
-          <zeebe:output source="=max(0,(calculatedDataTotalRemainingNeed1 - federalAwardNetCSPTAmount))" target="calculatedDataTotalRemainingNeed2" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_047qz6n</bpmn:incoming>
-      <bpmn:outgoing>Flow_04d0tld</bpmn:outgoing>
-    </bpmn:intermediateThrowEvent>
     <bpmn:intermediateThrowEvent id="Event_19hr2p7" name="calculate CSLP">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
@@ -787,6 +775,17 @@
       <bpmn:incoming>Flow_1kzoimw</bpmn:incoming>
       <bpmn:outgoing>Flow_10dvc27</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
+    <bpmn:intermediateThrowEvent id="Event_0jmbywn" name="calculate CSPT">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=if (calculatedDataTotalFamilyIncome &#60;= dmnPartTimeAwardFamilySizeVariables.limitAwardCSPTIncomeCap)&#10;then dmnPartTimeAwardAllowableLimits.limitAwardCSPTAmount&#10;else&#10;  max(dmnPartTimeAwardAllowableLimits.limitAwardCSPTAmount - ((calculatedDataTotalFamilyIncome - dmnPartTimeAwardFamilySizeVariables.limitAwardCSPTIncomeCap) * dmnPartTimeAwardFamilySizeVariables.limitAwardCSPTSlope),&#10;     100&#10;  )" target="federalAwardCSPTAmount" />
+          <zeebe:output source="=if (awardEligibilityCSPT = true and calculatedDataTotalRemainingNeed1 &#62;= 100)&#10;then&#10;  min(&#10;     calculatedDataTotalRemainingNeed1,&#10;     min(dmnPartTimeAwardAllowableLimits.limitAwardCSPTAmount, federalAwardCSPTAmount)&#10;  )&#10;else&#10;0" target="federalAwardNetCSPTAmount" />
+          <zeebe:output source="=max(0,(calculatedDataTotalRemainingNeed1 - federalAwardNetCSPTAmount))" target="calculatedDataTotalRemainingNeed2" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_047qz6n</bpmn:incoming>
+      <bpmn:outgoing>Flow_04d0tld</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
     <bpmn:textAnnotation id="TextAnnotation_1myp6tg">
       <bpmn:text>Use CRA Income if provided
 partner1CalculatedTotalIncome
@@ -817,6 +816,7 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:association id="Association_1nid8vk" sourceRef="Event_13hierd" targetRef="TextAnnotation_0baenkl" />
     <bpmn:association id="Association_18qf11c" sourceRef="Event_12swz45" targetRef="TextAnnotation_1osgqas" />
     <bpmn:association id="Association_1gi7mg0" sourceRef="Event_14d0375" targetRef="TextAnnotation_15vd5py" />
+    <bpmn:association id="Association_1mr7raq" sourceRef="Event_0jmbywn" targetRef="TextAnnotation_1mxnhnv" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1cf99un">
@@ -1011,12 +1011,6 @@ dmnX (comes from dmn)</bpmn:text>
       <bpmndi:BPMNShape id="Event_1xl9u43_di" bpmnElement="Event_1xl9u43">
         <dc:Bounds x="6452" y="2252" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0jmbywn_di" bpmnElement="Event_0jmbywn">
-        <dc:Bounds x="5312" y="2252" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="5292" y="2295" width="77" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1wh7fh1" bpmnElement="Event_19hr2p7">
         <dc:Bounds x="5892" y="2252" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -1158,13 +1152,15 @@ dmnX (comes from dmn)</bpmn:text>
           <dc:Bounds x="6122" y="2425" width="77" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_18qf11c_di" bpmnElement="Association_18qf11c">
-        <di:waypoint x="6169" y="2254" />
-        <di:waypoint x="6201" y="2200" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1gi7mg0_di" bpmnElement="Association_1gi7mg0">
-        <di:waypoint x="6171" y="2386" />
-        <di:waypoint x="6191" y="2360" />
+      <bpmndi:BPMNShape id="Event_0jmbywn_di" bpmnElement="Event_0jmbywn">
+        <dc:Bounds x="5332" y="2252" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="5313" y="2295" width="76" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1mr7raq_di" bpmnElement="Association_1mr7raq">
+        <di:waypoint x="5359" y="2254" />
+        <di:waypoint x="5392" y="2200" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="TextAnnotation_1myp6tg_di" bpmnElement="TextAnnotation_1myp6tg">
         <dc:Bounds x="1028" y="460" width="200" height="55" />
@@ -1438,7 +1434,7 @@ dmnX (comes from dmn)</bpmn:text>
         <di:waypoint x="5722" y="2270" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_04d0tld_di" bpmnElement="Flow_04d0tld">
-        <di:waypoint x="5348" y="2270" />
+        <di:waypoint x="5368" y="2270" />
         <di:waypoint x="5405" y="2270" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0foajxm_di" bpmnElement="Flow_0foajxm">
@@ -1447,7 +1443,7 @@ dmnX (comes from dmn)</bpmn:text>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_047qz6n_di" bpmnElement="Flow_047qz6n">
         <di:waypoint x="5278" y="2270" />
-        <di:waypoint x="5312" y="2270" />
+        <di:waypoint x="5332" y="2270" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1rnodvu_di" bpmnElement="Flow_1rnodvu">
         <di:waypoint x="5838" y="2270" />
@@ -1557,6 +1553,10 @@ dmnX (comes from dmn)</bpmn:text>
         <di:waypoint x="5758" y="2270" />
         <di:waypoint x="5802" y="2270" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0apjmd6_di" bpmnElement="Flow_0apjmd6">
+        <di:waypoint x="5198" y="2270" />
+        <di:waypoint x="5242" y="2270" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_0yc2t6b_di" bpmnElement="Association_0yc2t6b">
         <di:waypoint x="1080" y="602" />
         <di:waypoint x="1080" y="515" />
@@ -1577,13 +1577,13 @@ dmnX (comes from dmn)</bpmn:text>
         <di:waypoint x="5827" y="2254" />
         <di:waypoint x="5853" y="2200" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0apjmd6_di" bpmnElement="Flow_0apjmd6">
-        <di:waypoint x="5198" y="2270" />
-        <di:waypoint x="5242" y="2270" />
+      <bpmndi:BPMNEdge id="Association_18qf11c_di" bpmnElement="Association_18qf11c">
+        <di:waypoint x="6169" y="2254" />
+        <di:waypoint x="6201" y="2200" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1vdevsr_di" bpmnElement="Association_1vdevsr">
-        <di:waypoint x="5264" y="2253" />
-        <di:waypoint x="5277" y="2200" />
+      <bpmndi:BPMNEdge id="Association_1gi7mg0_di" bpmnElement="Association_1gi7mg0">
+        <di:waypoint x="6171" y="2386" />
+        <di:waypoint x="6191" y="2360" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_1a4vdzr_di" bpmnElement="Group_1a4vdzr">
         <dc:Bounds x="1535" y="660" width="90" height="230" />
@@ -1611,6 +1611,10 @@ dmnX (comes from dmn)</bpmn:text>
         <dc:Bounds x="5810" y="2170" width="100" height="30" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0i1l46o_di" bpmnElement="TextAnnotation_0i1l46o">
+        <dc:Bounds x="5230" y="2170" width="100" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_1lzmhpu_di" bpmnElement="TextAnnotation_1lzmhpu">
         <dc:Bounds x="4527" y="1250" width="458" height="30" />
         <bpmndi:BPMNLabel />
@@ -1631,10 +1635,6 @@ dmnX (comes from dmn)</bpmn:text>
         <dc:Bounds x="5690" y="2150" width="100" height="30" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_1mr7raq_di" bpmnElement="Association_1mr7raq">
-        <di:waypoint x="5341" y="2256" />
-        <di:waypoint x="5388" y="2200" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_0ptatj5_di" bpmnElement="Association_0ptatj5">
         <di:waypoint x="5920" y="2255" />
         <di:waypoint x="5959" y="2200" />
@@ -1659,10 +1659,10 @@ dmnX (comes from dmn)</bpmn:text>
         <di:waypoint x="5740" y="2252" />
         <di:waypoint x="5740" y="2180" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="TextAnnotation_0i1l46o_di" bpmnElement="TextAnnotation_0i1l46o">
-        <dc:Bounds x="5230" y="2170" width="100" height="30" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1vdevsr_di" bpmnElement="Association_1vdevsr">
+        <di:waypoint x="5264" y="2253" />
+        <di:waypoint x="5277" y="2200" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
