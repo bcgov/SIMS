@@ -267,7 +267,11 @@ describe(
       // Assert imported receipts.
       const [firstDisbursement] =
         application.currentAssessment.disbursementSchedules;
-      const { feReceipt } = await getReceiptsForAssert(firstDisbursement.id);
+      const { feReceipt, bcReceipt } = await getReceiptsForAssert(
+        firstDisbursement.id,
+      );
+      // BC receipt should not be present.
+      expect(bcReceipt).not.toBeDefined();
       // Assert federal receipt.
       // Document number.
       expect(feReceipt.disbursementSchedule.documentNumber).toBe(
