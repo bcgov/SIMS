@@ -209,8 +209,10 @@ export class StudentAESTController extends BaseController {
       userToken.userId,
       payload.associatedFiles,
       FileOriginType.Ministry,
-      MINISTRY_FILE_UPLOAD_GROUP_NAME,
-      { saveFileUploadNotification },
+      {
+        saveFileUploadNotification,
+        groupName: MINISTRY_FILE_UPLOAD_GROUP_NAME,
+      },
     );
   }
 

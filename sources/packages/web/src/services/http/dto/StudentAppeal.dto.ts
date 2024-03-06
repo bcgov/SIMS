@@ -3,6 +3,7 @@ import { StudentAppealStatus } from "@/types";
 export interface StudentAppealRequestAPIInDTO {
   formName: string;
   formData: unknown;
+  files: string[];
 }
 
 export interface StudentAppealAPIInDTO {

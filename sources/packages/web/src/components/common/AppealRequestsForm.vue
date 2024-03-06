@@ -36,7 +36,7 @@ export default defineComponent({
     },
   },
   setup(_props, context) {
-    const { checkFormioValidity } = useFormioUtils();
+    const { checkFormioValidity, getAssociatedFiles } = useFormioUtils();
     const appealForms: any[] = [];
     const appealFormLoaded = (form: any) => {
       appealForms.push(form);
@@ -49,6 +49,7 @@ export default defineComponent({
             ({
               formName: appealForm.form.name,
               data: appealForm.data,
+              files: getAssociatedFiles(appealForm),
             } as StudentAppealRequest),
         );
         context.emit("submitted", formsData);
