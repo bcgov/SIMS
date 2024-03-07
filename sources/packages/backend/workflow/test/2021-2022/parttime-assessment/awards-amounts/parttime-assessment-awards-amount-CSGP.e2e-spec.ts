@@ -21,7 +21,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     expect(calculatedAssessment.variables.programYearTotalCSGP).toBe(130);
     expect(calculatedAssessment.variables.federalAwardNetCSGPAmount).toBe(3870);
     expect(calculatedAssessment.variables.finalFederalAwardNetCSGPAmount).toBe(
-      calculatedAssessment.variables.federalAwardNetCSGPAmount,
+      3870,
     );
   });
 
@@ -44,7 +44,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     expect(calculatedAssessment.variables.programYearTotalCSGP).toBe(11000);
     expect(calculatedAssessment.variables.federalAwardNetCSGPAmount).toBe(0);
     expect(calculatedAssessment.variables.finalFederalAwardNetCSGPAmount).toBe(
-      calculatedAssessment.variables.federalAwardNetCSGPAmount,
+      0,
     );
   });
 });

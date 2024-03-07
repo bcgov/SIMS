@@ -24,7 +24,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-SB
     );
     expect(
       calculatedAssessment.variables.finalProvincialAwardNetSBSDAmount,
-    ).toBe(calculatedAssessment.variables.provincialAwardNetSBSDAmount);
+    ).toBe(710);
   });
 
   it("Should determine provincialAwardSBSDAmount when awardEligibilitySBSD is true and offeringCourseLoad is < 40", async () => {
@@ -47,7 +47,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-SB
     );
     expect(
       calculatedAssessment.variables.finalProvincialAwardNetSBSDAmount,
-    ).toBe(calculatedAssessment.variables.provincialAwardNetSBSDAmount);
+    ).toBe(310);
   });
 
   it("Should determine provincialAwardNetSBSDAmount as zero when awardEligibilitySBSD is true, programYearTotalSBSD (programYearTotalFullTimeSBSD + programYearTotalPartTimeSBSD) is greater than the dmnPartTimeAwardAllowableLimits for SBSD ", async () => {
@@ -70,7 +70,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-SB
     expect(calculatedAssessment.variables.provincialAwardNetSBSDAmount).toBe(0);
     expect(
       calculatedAssessment.variables.finalProvincialAwardNetSBSDAmount,
-    ).toBe(calculatedAssessment.variables.provincialAwardNetSBSDAmount);
+    ).toBe(0);
   });
 
   it("Should determine provincialAwardNetSBSDAmount as zero when awardEligibilitySBSD is false", async () => {
@@ -88,6 +88,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-SB
     expect(calculatedAssessment.variables.provincialAwardNetSBSDAmount).toBe(0);
     expect(
       calculatedAssessment.variables.finalProvincialAwardNetSBSDAmount,
-    ).toBe(calculatedAssessment.variables.provincialAwardNetSBSDAmount);
+    ).toBe(0);
   });
 });
