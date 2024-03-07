@@ -19,7 +19,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
 
     // Assert
     expect(calculatedAssessment.variables.programYearTotalCSGP).toBe(130);
-    expect(calculatedAssessment.variables.federalAwardNetCSGPAmount).toBe(3870);
+    expect(calculatedAssessment.variables.federalAwardNetCSGPAmount).toBe(2670);
     expect(calculatedAssessment.variables.finalFederalAwardNetCSGPAmount).toBe(
       calculatedAssessment.variables.federalAwardNetCSGPAmount,
     );
