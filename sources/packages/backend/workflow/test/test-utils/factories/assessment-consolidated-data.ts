@@ -92,6 +92,8 @@ export function createFakePartTimeAssessmentConsolidatedData(
     programYearTotalPartTimeBCAG: 300,
     programYearTotalPartTimeSBSD: 40,
     programYearTotalFullTimeSBSD: 50,
+    programYearTotalPartTimeCSGP: 60,
+    programYearTotalFullTimeCSGP: 70,
   };
 }
 /**
