@@ -23,6 +23,7 @@ import {
   isBeforeDate,
   isBetweenPeriod,
 } from "@sims/utilities";
+import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { SequenceControlService } from "../sequence-control/sequence-control.service";
 import { NotificationActionsService } from "../notifications";
 import {
@@ -34,6 +35,10 @@ import {
   FIRST_COE_NOT_COMPLETE,
   INVALID_TUITION_REMITTANCE_AMOUNT,
 } from "../constants";
+import {
+  AssessmentSequentialProcessingService,
+  SystemUsersService,
+} from "@sims/services";
 
 /**
  * Types of awards considered for the max tuition remittance calculation.
@@ -52,6 +57,8 @@ export class ConfirmationOfEnrollmentService {
     private readonly dataSource: DataSource,
     private readonly sequenceService: SequenceControlService,
     private readonly notificationActionsService: NotificationActionsService,
+    private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
+    private readonly systemUserService: SystemUsersService,
   ) {}
 
   /**
@@ -398,8 +405,10 @@ export class ConfirmationOfEnrollmentService {
 
   /**
    * Decline COE for a disbursement schedule.
+   * When the COE is declined, check for the first impacted application affected by COE being declined
+   * and if an impacted application found, then create a related application re-assessment for the same.
    ** Note: If an application has 2 COEs, and if the first COE is rejected then 2nd COE is implicitly rejected.
-   * @param disbursementScheduleId disbursement schedule id to be updated.
+   * @param disbursementSchedule disbursement schedule to be updated.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @param declinedReason COE declined reason details.
    * - `coeDeniedReasonId` Denied reason id.
@@ -407,7 +416,7 @@ export class ConfirmationOfEnrollmentService {
    * @param otherReasonDesc result of the update operation.
    */
   private async updateCOEToDeclined(
-    disbursementScheduleId: number,
+    disbursementSchedule: DisbursementSchedule,
     auditUserId: number,
     declinedReason: { coeDeniedReasonId: number; otherReasonDesc?: string },
   ): Promise<UpdateResult> {
@@ -428,7 +437,9 @@ export class ConfirmationOfEnrollmentService {
             modifier: auditUser,
             updatedAt: now,
           })
-          .where("id = :disbursementScheduleId", { disbursementScheduleId })
+          .where("id = :disbursementScheduleId", {
+            disbursementScheduleId: disbursementSchedule.id,
+          })
           .andWhere("coeStatus = :required", { required: COEStatus.required })
           .execute();
 
@@ -437,10 +448,27 @@ export class ConfirmationOfEnrollmentService {
             `While updating COE status to '${COEStatus.declined}' the number of affected row was bigger than the expected one. Expected 1 received ${updateResult.affected}`,
           );
         }
+        this.logger.log(
+          "Assessing if there is a future impacted application that need to be reassessed.",
+        );
+        const impactedApplication =
+          await this.assessmentSequentialProcessingService.assessImpactedApplicationReassessmentNeeded(
+            disbursementSchedule.studentAssessment.id,
+            this.systemUserService.systemUser.id,
+            transactionalEntityManager,
+          );
+
+        if (impactedApplication) {
+          this.logger.log(
+            `Application id ${impactedApplication.id} was detected as impacted and will be reassessed.`,
+          );
+        } else {
+          this.logger.log("No impacts were detected on future applications.");
+        }
 
         // Create a student notification when COE is confirmed.
         await this.createNotificationForDisbursementUpdate(
-          disbursementScheduleId,
+          disbursementSchedule.id,
           auditUserId,
           transactionalEntityManager,
         );
@@ -627,7 +655,7 @@ export class ConfirmationOfEnrollmentService {
       );
     }
 
-    await this.updateCOEToDeclined(disbursementSchedule.id, auditUserId, {
+    await this.updateCOEToDeclined(disbursementSchedule, auditUserId, {
       coeDeniedReasonId: declineReason.coeDenyReasonId,
       otherReasonDesc: declineReason.otherReasonDesc,
     });
@@ -676,4 +704,7 @@ export class ConfirmationOfEnrollmentService {
     );
     return nextDocumentNumber;
   }
+
+  @InjectLogger()
+  logger: LoggerService;
 }

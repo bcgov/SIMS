@@ -86,6 +86,7 @@ import {
   NoteSharedService,
   RestrictionSharedService,
   MSFAANumberSharedService,
+  AssessmentSequentialProcessingService,
 } from "@sims/services";
 
 @Module({
@@ -172,6 +173,7 @@ import {
     MSFAANumberSharedService,
     ApplicationOfferingChangeRequestService,
     ApplicationOfferingChangeRequestControllerService,
+    AssessmentSequentialProcessingService,
   ],
 })
 export class AppAESTModule {}

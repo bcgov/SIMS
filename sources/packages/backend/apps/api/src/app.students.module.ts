@@ -57,6 +57,7 @@ import {
   NoteSharedService,
   RestrictionSharedService,
   ConfirmationOfEnrollmentService,
+  AssessmentSequentialProcessingService,
 } from "@sims/services";
 import {
   SFASIndividualService,
@@ -124,6 +125,7 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     ApplicationOfferingChangeRequestControllerService,
     ApplicationOfferingChangeRequestService,
     ScholasticStandingControllerService,
+    AssessmentSequentialProcessingService,
   ],
 })
 export class AppStudentsModule {}

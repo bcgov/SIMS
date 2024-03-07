@@ -86,7 +86,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
 
   it(
     "Should decline the COE and create reassessment for impacted application(s) " +
-      "when institution decline a COE and COE of the application being declined can potentially " +
+      "when institution decline a COE and the application that belongs to COE being declined can potentially " +
       "impact one or more applications.",
     async () => {
       // Arrange
