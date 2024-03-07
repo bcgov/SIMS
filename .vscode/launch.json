@@ -59,51 +59,6 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Workflow - Current test file",
-      "program": "${workspaceFolder}/sources/packages/backend/node_modules/.bin/jest",
-      "args": [
-        "${fileBasenameNoExtension}",
-        "--runInBand",
-        "--config",
-        "./sources/packages/backend/workflow/test/jest-e2e.json",
-        "--forceExit"
-      ],
-      "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen",
-      "disableOptimisticBPs": true,
-      "windows": {
-        "program": "${workspaceFolder}/sources/packages/backend/node_modules/jest/bin/jest"
-      },
-      "env": {
-        "ENVIRONMENT": "test",
-        "TZ": "UTC"
-      }
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Workflow - all tests",
-      "program": "${workspaceFolder}/sources/packages/backend/node_modules/.bin/jest",
-      "args": [
-        "--runInBand",
-        "--config",
-        "./sources/packages/backend/workflow/test/jest-e2e.json",
-        "--forceExit"
-      ],
-      "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen",
-      "disableOptimisticBPs": true,
-      "windows": {
-        "program": "${workspaceFolder}/sources/packages/backend/node_modules/jest/bin/jest"
-      },
-      "env": {
-        "ENVIRONMENT": "test",
-        "TZ": "UTC"
-      }
-    },
-    {
-      "type": "node",
-      "request": "launch",
       "name": "Workers - Current test file",
       "program": "${workspaceFolder}/sources/packages/backend/node_modules/.bin/jest",
       "args": [
