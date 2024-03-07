@@ -9,6 +9,7 @@ import {
   DisbursementScheduleStatus,
   DisbursementValueType,
   OfferingIntensity,
+  StudentAppeal,
   StudentAssessment,
   StudentAssessmentStatus,
   User,
@@ -53,10 +54,14 @@ export class AssessmentSequentialProcessingService {
         student: {
           id: true,
         },
+        currentAssessment: {
+          studentAppeal: { id: true },
+        },
       },
       relations: {
         student: true,
         programYear: true,
+        currentAssessment: { studentAppeal: true },
       },
       where: {
         applicationStatus: Not(ApplicationStatus.Overwritten),
@@ -101,6 +106,9 @@ export class AssessmentSequentialProcessingService {
       createdAt: now,
       submittedBy: auditUser,
       submittedDate: now,
+      studentAppeal: {
+        id: application.currentAssessment.studentAppeal?.id,
+      } as StudentAppeal,
     } as StudentAssessment;
     return applicationRepo.save(impactedApplication);
   }

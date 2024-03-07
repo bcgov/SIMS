@@ -13,6 +13,7 @@ import {
   StudentRestriction,
   User,
   StudentScholasticStandingChangeType,
+  StudentAppeal,
 } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 import {
@@ -79,9 +80,11 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         "user.firstName",
         "user.lastName",
         "user.email",
+        "studentAppeal.id",
       ])
       .innerJoin("application.currentAssessment", "currentAssessment")
       .innerJoin("currentAssessment.offering", "offering")
+      .leftJoin("currentAssessment.studentAppeal", "studentAppeal")
       .innerJoin("application.location", "location")
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
@@ -252,6 +255,9 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
           submittedBy: auditUser,
           submittedDate: now,
           offering: { id: savedOffering.id } as EducationProgramOffering,
+          studentAppeal: {
+            id: application.currentAssessment.studentAppeal?.id,
+          } as StudentAppeal,
         } as StudentAssessment;
       } else {
         // If unsuccessful weeks, then add to the column.

@@ -13,6 +13,7 @@ import {
   NoteType,
   AssessmentTriggerType,
   StudentAssessment,
+  StudentAppeal,
 } from "@sims/sims-db";
 import { DataSource, Brackets, Repository, In } from "typeorm";
 import { PaginatedResults, PaginationOptions } from "../../utilities";
@@ -305,6 +306,7 @@ export class ApplicationOfferingChangeRequestService {
               email: true,
             },
           },
+          currentAssessment: { studentAppeal: { id: true } },
         },
         assessedNote: {
           id: true,
@@ -317,6 +319,7 @@ export class ApplicationOfferingChangeRequestService {
           student: {
             user: true,
           },
+          currentAssessment: { studentAppeal: true },
         },
         activeOffering: true,
         requestedOffering: {
@@ -601,6 +604,9 @@ export class ApplicationOfferingChangeRequestService {
           createdAt: currentDate,
           submittedBy: auditUser,
           submittedDate: currentDate,
+          studentAppeal: {
+            id: application.currentAssessment.studentAppeal?.id,
+          } as StudentAppeal,
         } as StudentAssessment;
       }
       await transactionalEntityManager
