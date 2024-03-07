@@ -5,7 +5,7 @@ import {
 } from "../../../test-utils";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CSGP.`, () => {
-  it("Should determine federalAwardCSGPAmount when awardEligibilityCSGP is true and offeringCourseLoad is 40 and up", async () => {
+  it("Should determine federalAwardCSGPAmount when awardEligibilityCSGP is true when studentDataApplicationPDPPDStatus is true", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -25,28 +25,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     );
   });
 
-  it("Should determine federalAwardCSGPAmount when awardEligibilityCSGP is true and offeringCourseLoad is < 40", async () => {
-    // Arrange
-    const assessmentConsolidatedData =
-      createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataApplicationPDPPDStatus = "yes";
-    assessmentConsolidatedData.offeringCourseLoad = 39;
-
-    // Act
-    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
-      PROGRAM_YEAR,
-      assessmentConsolidatedData,
-    );
-
-    // Assert
-    expect(calculatedAssessment.variables.programYearTotalCSGP).toBe(130);
-    expect(calculatedAssessment.variables.federalAwardNetCSGPAmount).toBe(3870);
-    expect(calculatedAssessment.variables.finalFederalAwardNetCSGPAmount).toBe(
-      calculatedAssessment.variables.federalAwardNetCSGPAmount,
-    );
-  });
-
-  it("Should determine federalAwardNetCSGPAmount as zero when awardEligibilityCSGP is true, programYearTotalCSGP (programYearTotalFullTimeCSGP + programYearTotalPartTimeCSGP) is greater than the dmnPartTimeAwardAllowableLimits for CSGP ", async () => {
+  it("Should determine federalAwardNetCSGPAmount as zero when awardEligibilityCSGP is true and programYearTotalCSGP (programYearTotalFullTimeCSGP + programYearTotalPartTimeCSGP) is greater than the dmnPartTimeAwardAllowableLimits for CSGP ", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
