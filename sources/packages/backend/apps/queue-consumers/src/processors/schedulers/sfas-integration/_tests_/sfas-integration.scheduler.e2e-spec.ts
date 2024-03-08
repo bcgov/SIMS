@@ -13,13 +13,15 @@ import {
   saveFakeStudentRestriction,
   SFAS_ALL_RESTRICTIONS_FILENAME,
   SFAS_LEGACY_RESTRICTION_FILENAME,
+  RestrictionCode,
 } from "@sims/test-utils";
 import * as Client from "ssh2-sftp-client";
 import { Job } from "bull";
 import * as path from "path";
 import { SFASIntegrationScheduler } from "../sfas-integration.scheduler";
 import { In } from "typeorm";
-import { RestrictionCode } from "@sims/services";
+import { Student } from "@sims/sims-db";
+import { SystemUsersService } from "@sims/services";
 
 describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
   let app: INestApplication;
@@ -27,6 +29,9 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
   let db: E2EDataSources;
   let sftpClientMock: DeepMocked<Client>;
   let sfasDownloadFolder: string;
+  let studentExists: Student;
+  let student: Student;
+  let systemUsersService: SystemUsersService;
 
   beforeAll(async () => {
     sfasDownloadFolder = path.join(__dirname, "sfas-files");
@@ -39,6 +44,24 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     sftpClientMock = sshClientMock;
     // Processor under test.
     processor = app.get(SFASIntegrationScheduler);
+    systemUsersService = nestApplication.get(SystemUsersService);
+    // Create student if it doesn't exist.
+    studentExists = await db.student.findOne({
+      where: {
+        birthDate: getISODateOnlyString(new Date("1998-03-24")),
+        user: { lastName: "FOUR" },
+        sinValidation: { sin: "900041310" },
+      },
+    });
+    student = studentExists;
+    if (!studentExists) {
+      student = await saveFakeStudent(db.dataSource);
+      // Update the student to ensure that the student imported from SFAS is the same student as the one created above.
+      student.birthDate = getISODateOnlyString(new Date("1998-03-24"));
+      student.user.lastName = "FOUR";
+      student.sinValidation.sin = "900041310";
+      await db.student.save(student);
+    }
   });
 
   beforeEach(async () => {
@@ -53,23 +76,8 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     await db.studentRestriction.delete({ id: In(ids) });
   });
 
-  it("Should save only one legacy restriction for the student if one or more restrictions are imported from SFAS which do not have a mapping to the SIMS restrictions", async () => {
-    const studentExists = await db.student.findOne({
-      where: {
-        birthDate: getISODateOnlyString(new Date("1998-03-24")),
-        user: { lastName: "FOUR" },
-        sinValidation: { sin: "900041310" },
-      },
-    });
-    let student = studentExists;
-    if (!studentExists) {
-      student = await saveFakeStudent(db.dataSource);
-      // Update the student to ensure that the student imported from SFAS is the same student as the one created above.
-      student.birthDate = getISODateOnlyString(new Date("1998-03-24"));
-      student.user.lastName = "FOUR";
-      student.sinValidation.sin = "900041310";
-      await db.student.save(student);
-    }
+  it("Should add only one legacy restriction for the student when one or more restrictions are imported from SFAS which do not have a mapping to the SIMS restrictions", async () => {
+    // Arrange
     // Queued job.
     const job = createMock<Job<void>>();
     mockDownloadFiles(sftpClientMock, [SFAS_LEGACY_RESTRICTION_FILENAME]);
@@ -86,30 +94,26 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       },
     });
     expect(studentRestrictionsCount).toBe(1);
+    const studentRestriction = await db.studentRestriction.findOne({
+      select: { creator: { id: true } },
+      relations: { creator: true },
+      where: {
+        student: { id: student.id },
+        restriction: { restrictionCode: "LGCY" },
+      },
+    });
+    expect(studentRestriction.creator.id).toEqual(
+      systemUsersService.systemUser.id,
+    );
   });
 
   it(
-    "Should not insert a restriction to SIMS student restrictions if the same restriction is imported from SFAS but is already active in SIMS, " +
-      "Should not insert a legacy restriction if a legacy restriction is already active in SIMS for the student, " +
-      "Should insert a restriction after mapping it to SIMS restriction if it is either inactive or is not at all present in the SIMS student restrictions, " +
-      "Should not insert a restriction if it has a restriction resolution date.",
+    "Should not insert a restriction to SIMS student restrictions when the same restriction is imported from SFAS but is already active in SIMS, " +
+      "Should not insert a legacy restriction when a legacy restriction is already active in SIMS for the student, " +
+      "Should insert a restriction after mapping it to SIMS restriction when it is either inactive or is not at all present in the SIMS student restrictions, " +
+      "Should not insert a restriction when it has a restriction resolution date.",
     async () => {
-      const studentExists = await db.student.findOne({
-        where: {
-          birthDate: getISODateOnlyString(new Date("1998-03-24")),
-          user: { lastName: "FOUR" },
-          sinValidation: { sin: "900041310" },
-        },
-      });
-      let student = studentExists;
-      if (!studentExists) {
-        student = await saveFakeStudent(db.dataSource);
-        // Update the student to ensure that the student imported from SFAS is the same student as the one created above.
-        student.birthDate = getISODateOnlyString(new Date("1998-03-24"));
-        student.user.lastName = "FOUR";
-        student.sinValidation.sin = "900041310";
-        await db.student.save(student);
-      }
+      // Arrange
       const restrictionB6B = await db.restriction.findOne({
         where: { restrictionCode: "B6B" },
       });
