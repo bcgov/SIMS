@@ -144,8 +144,8 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       // Assert
       // Expect the file was deleted from SFTP.
       expect(sftpClientMock.delete).toHaveBeenCalled();
-      // Expect a total of 4 restrictions to be inserted.
-      // Two originally inserted restrictions from before the file processing and then two B6B restrictions added from the file import.
+      // Expect a total of 5 restrictions to be inserted.
+      // Two originally inserted active restrictions (LGCY & B6B) from before the file processing and then two AF restrictions and one SSR added from the file import.
       const studentRestrictions = await db.studentRestriction.find({
         select: {
           id: true,
