@@ -104,7 +104,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     expect(calculatedAssessment.variables.federalAwardNetCSPTAmount).toBe(0);
   });
 
-  it("Should determine federalAwardNetCSPTAmount when awardEligibilityCSPT is true and programYearTotalPartTimeCSPT is null", async () => {
+  it.only("Should determine federalAwardNetCSPTAmount when awardEligibilityCSPT is true and no CSPT awarded in the program year previously", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);

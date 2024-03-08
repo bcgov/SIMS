@@ -91,7 +91,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-SB
     ).toBe(0);
   });
 
-  it("Should determine provincialAwardSBSDAmount when awardEligibilitySBSD is true, programYearTotalPartTimeSBSD, programYearTotalFullTimeSBSD are null and offeringCourseLoad is 40 and up", async () => {
+  it("Should determine provincialAwardSBSDAmount when awardEligibilitySBSD is true, no SBSD awarded in the program year previously and offeringCourseLoad is 40 and up", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);

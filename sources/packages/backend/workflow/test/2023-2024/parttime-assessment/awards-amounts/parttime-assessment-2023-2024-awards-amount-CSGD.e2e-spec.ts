@@ -222,7 +222,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     );
   });
 
-  it("Should determine federalAwardCSGDAmount when awardEligibilityCSGD is true and programYearTotalPartTimeCSGD is null", async () => {
+  it("Should determine federalAwardCSGDAmount when awardEligibilityCSGD is true and no CSGD awarded in the program year previously", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
