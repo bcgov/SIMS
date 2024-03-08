@@ -61,18 +61,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(
       53000,
     );
-    expect(calculatedAssessment.variables.federalAwardCSPTAmount).toBe(
-      Math.max(
-        calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
-          .limitAwardCSPTAmount -
-          (calculatedAssessment.variables.calculatedDataTotalFamilyIncome -
-            calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
-              .limitAwardCSPTIncomeCap) *
-            calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
-              .limitAwardCSPTSlope,
-        100,
-      ),
-    );
     expect(calculatedAssessment.variables.federalAwardCSPTAmount).toBeLessThan(
       3000,
     );
@@ -97,17 +85,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     expect(
       calculatedAssessment.variables.federalAwardCSPTAmount,
     ).toBeGreaterThan(100);
-    expect(calculatedAssessment.variables.federalAwardNetCSPTAmount).toBe(
-      Math.min(
-        calculatedAssessment.variables.calculatedDataTotalRemainingNeed1,
-        Math.min(
-          calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
-            .limitAwardCSPTAmount,
-          calculatedAssessment.variables.federalAwardCSPTAmount,
-        ),
-      ),
-    );
-    expect(calculatedAssessment.variables.federalAwardNetCSPTAmount).toBe(2520);
+    expect(calculatedAssessment.variables.federalAwardNetCSPTAmount).toBe(2440);
   });
 
   it("Should determine federalAwardNetCSPTAmount as zero when awardEligibilityCSPT is false", async () => {
@@ -124,5 +102,38 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     // Assert
     expect(calculatedAssessment.variables.awardEligibilityCSPT).toBe(false);
     expect(calculatedAssessment.variables.federalAwardNetCSPTAmount).toBe(0);
+  });
+
+  it("Should determine federalAwardNetCSPTAmount when awardEligibilityCSPT is true and programYearTotalPartTimeCSPT is null", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
+    assessmentConsolidatedData.studentDataRelationshipStatus = "married";
+    assessmentConsolidatedData.studentDataIsYourSpouseACanadianCitizen =
+      YesNoOptions.Yes;
+    assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
+    assessmentConsolidatedData.programYearTotalPartTimeCSPT = null;
+    // Act
+    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+    // Assert
+    expect(calculatedAssessment.variables.awardEligibilityCSPT).toBe(true);
+    expect(
+      calculatedAssessment.variables.federalAwardCSPTAmount,
+    ).toBeGreaterThan(100);
+    expect(calculatedAssessment.variables.federalAwardNetCSPTAmount).toBe(
+      Math.min(
+        calculatedAssessment.variables.calculatedDataTotalRemainingNeed1,
+        Math.min(
+          calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
+            .limitAwardCSPTAmount,
+          calculatedAssessment.variables.federalAwardCSPTAmount,
+        ),
+      ),
+    );
+    expect(calculatedAssessment.variables.federalAwardNetCSPTAmount).toBe(2520);
   });
 });
