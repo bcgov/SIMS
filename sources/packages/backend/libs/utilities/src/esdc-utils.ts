@@ -35,7 +35,7 @@ export function getGenderCode(gender: string): string {
  * @returns the phone number. (Eg: +1 (788) 999-7777 => 17889997777)
  */
 export function getFormattedPhone(phone: string): string {
-  return phone.replace(/[^0-9]/g, "");
+  return phone.replace(/\D/g, "");
 }
 
 /**
