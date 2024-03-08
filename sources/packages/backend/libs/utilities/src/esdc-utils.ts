@@ -30,6 +30,15 @@ export function getGenderCode(gender: string): string {
 }
 
 /**
+ * Returns phone number removing the hyphens.
+ * @param phone phone number to be formatted
+ * @returns phone number removing the hyphens in between. (Eg: 123-456-7890 => 1234567890)
+ */
+export function getFormattedPhone(phone: string): string {
+  return phone.replace(/-/g, "");
+}
+
+/**
  * Gets the Part-Time marital status code conversion for the MSFAA request file.
  */
 export function getPartTimeMaritalStatusCode(

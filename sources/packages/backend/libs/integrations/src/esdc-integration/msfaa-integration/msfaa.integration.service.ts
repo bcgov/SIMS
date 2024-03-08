@@ -20,6 +20,7 @@ import {
   getGenderCode,
   getMaritalStatusCode,
   getOfferingIntensityCode,
+  getFormattedPhone,
 } from "@sims/utilities";
 import { OfferingIntensity } from "@sims/sims-db";
 import { FILE_DEFAULT_ENCODING } from "@sims/services/constants";
@@ -84,7 +85,7 @@ export class MSFAAIntegrationService extends SFTPIntegrationBase<MSFAASFTPRespon
       msfaaDetail.provinceState = msfaaRecord.provinceState;
       msfaaDetail.postalCode = msfaaRecord.postalCode;
       msfaaDetail.country = msfaaRecord.country;
-      msfaaDetail.phone = msfaaRecord.phone;
+      msfaaDetail.phone = getFormattedPhone(msfaaRecord.phone);
       msfaaDetail.email = msfaaRecord.email;
       msfaaDetail.offeringIntensityCode = getOfferingIntensityCode(
         msfaaRecord.offeringIntensity,
