@@ -740,9 +740,15 @@
       <bpmn:incoming>Flow_16epk5m</bpmn:incoming>
       <bpmn:outgoing>Flow_047qz6n</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateThrowEvent id="Event_0nkkesr" name="Program Year Total both FT and PT">
+    <bpmn:intermediateThrowEvent id="Event_0nkkesr" name="Program Year Total Initialization">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
+          <zeebe:output source="=if(programYearTotalFullTimeCSGP = null) then 0 else programYearTotalFullTimeCSGP" target="programYearTotalFullTimeCSGP" />
+          <zeebe:output source="=if(programYearTotalPartTimeCSGP = null) then 0 else programYearTotalPartTimeCSGP" target="programYearTotalPartTimeCSGP" />
+          <zeebe:output source="=if(programYearTotalFullTimeSBSD = null) then 0 else programYearTotalFullTimeSBSD" target="programYearTotalFullTimeSBSD" />
+          <zeebe:output source="=if(programYearTotalPartTimSBSD = null) then 0 else programYearTotalPartTimeSBSD" target="programYearTotalPartTimeSBSD" />
+          <zeebe:output source="=if(programYearTotalPartTimeBCAG = null) then 0 else programYearTotalPartTimeBCAG" target="programYearTotalPartTimeBCAG" />
+          <zeebe:output source="=if(programYearTotalPartTimeCSGD = null) then 0 else programYearTotalPartTimeCSGD" target="programYearTotalPartTimeCSGD" />
           <zeebe:output source="=programYearTotalFullTimeSBSD + programYearTotalPartTimeSBSD" target="programYearTotalSBSD" />
           <zeebe:output source="=programYearTotalFullTimeCSGP + programYearTotalPartTimeCSGP" target="programYearTotalCSGP" />
         </zeebe:ioMapping>
