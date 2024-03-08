@@ -32,7 +32,7 @@ export function getGenderCode(gender: string): string {
 /**
  * Returns phone number keeping only digits 0 to 9.
  * @param phone phone number to be formatted.
- * @returns the phone number. (Eg: +1 (788) 999-7777 => 17889997777)
+ * @returns the phone number (Eg: +1 (788) 999-7777 => 17889997777).
  */
 export function getFormattedPhone(phone: string): string {
   return phone.replace(/\D/g, "");
