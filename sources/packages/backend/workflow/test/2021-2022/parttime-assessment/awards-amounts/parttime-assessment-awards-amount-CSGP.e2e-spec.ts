@@ -47,4 +47,26 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       0,
     );
   });
+
+  it("Should determine federalAwardCSGPAmount when awardEligibilityCSGP is true, programYearTotalPartTimeCSGP, programYearTotalFullTimeCSGP are null and studentDataApplicationPDPPDStatus is true", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.studentDataApplicationPDPPDStatus = "yes";
+    assessmentConsolidatedData.programYearTotalFullTimeCSGP = null;
+    assessmentConsolidatedData.programYearTotalPartTimeCSGP = null;
+
+    // Act
+    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+
+    // Assert
+    expect(calculatedAssessment.variables.programYearTotalCSGP).toBe(null);
+    expect(calculatedAssessment.variables.federalAwardNetCSGPAmount).toBe(4000);
+    expect(calculatedAssessment.variables.finalFederalAwardNetCSGPAmount).toBe(
+      4000,
+    );
+  });
 });

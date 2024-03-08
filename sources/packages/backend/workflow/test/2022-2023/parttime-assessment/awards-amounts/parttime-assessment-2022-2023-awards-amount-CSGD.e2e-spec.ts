@@ -221,4 +221,37 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       659.0567998,
     );
   });
+
+  it("Should determine federalAwardCSGDAmount when awardEligibilityCSGD is true and programYearTotalPartTimeCSGD is null", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.studentDataCRAReportedIncome = 35000;
+    assessmentConsolidatedData.studentDataRelationshipStatus = "married";
+    assessmentConsolidatedData.studentDataIsYourSpouseACanadianCitizen =
+      YesNoOptions.Yes;
+    assessmentConsolidatedData.partner1CRAReportedIncome = 35000;
+    assessmentConsolidatedData.studentDataDependants = [
+      createFakeStudentDependentEligible(
+        DependentEligibility.Eligible0To18YearsOld,
+      ),
+    ];
+    assessmentConsolidatedData.programYearTotalPartTimeCSGD = null;
+
+    // Act
+    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+    // Assert
+    // calculatedDataTotalFamilyIncome <= limitAwardCSGDIncomeCap
+    // federalAwardCSGDAmount
+    expect(calculatedAssessment.variables.awardEligibilityCSGD).toBe(true);
+    expect(calculatedAssessment.variables.federalAwardCSGDAmount).toBe(
+      859.0567998,
+    );
+    expect(calculatedAssessment.variables.federalAwardNetCSGDAmount).toBe(
+      859.0567998,
+    );
+  });
 });

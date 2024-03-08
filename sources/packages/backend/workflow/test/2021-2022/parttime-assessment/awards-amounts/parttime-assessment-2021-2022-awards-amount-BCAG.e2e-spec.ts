@@ -127,4 +127,31 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
     expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(false);
     expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(0);
   });
+
+  it("Should determine provincialAwardNetBCAGAmount when awardEligibilityBCAG is true and provincialAwardPartTimeBCAGAmount is null", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
+    assessmentConsolidatedData.studentDataRelationshipStatus = "married";
+    assessmentConsolidatedData.studentDataIsYourSpouseACanadianCitizen =
+      YesNoOptions.Yes;
+    assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
+    // Public institution
+    assessmentConsolidatedData.institutionType = InstitutionTypes.BCPublic;
+    assessmentConsolidatedData.programYearTotalPartTimeBCAG = null;
+
+    // Act
+    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+    // Assert
+    // awardEligibilityBCAG is true.
+    // provincialAwardNetBCAGAmount is 1000.
+    expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(true);
+    expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(
+      1000,
+    );
+  });
 });

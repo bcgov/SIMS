@@ -90,4 +90,28 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-SB
       calculatedAssessment.variables.finalProvincialAwardNetSBSDAmount,
     ).toBe(0);
   });
+
+  it("Should determine provincialAwardSBSDAmount when awardEligibilitySBSD is true, programYearTotalPartTimeSBSD, programYearTotalFullTimeSBSD are null and offeringCourseLoad is 40 and up", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.studentDataApplicationPDPPDStatus = "yes";
+    assessmentConsolidatedData.programYearTotalPartTimeSBSD = null;
+    assessmentConsolidatedData.programYearTotalFullTimeSBSD = null;
+
+    // Act
+    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+
+    // Assert
+    expect(calculatedAssessment.variables.programYearTotalSBSD).toBe(null);
+    expect(calculatedAssessment.variables.provincialAwardNetSBSDAmount).toBe(
+      800,
+    );
+    expect(
+      calculatedAssessment.variables.finalProvincialAwardNetSBSDAmount,
+    ).toBe(800);
+  });
 });
