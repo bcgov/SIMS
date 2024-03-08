@@ -9,6 +9,10 @@ import {
 import {
   E2EDataSources,
   createE2EDataSources,
+  createFakeEducationProgramOffering,
+  createFakeStudentAppeal,
+  createFakeStudentAssessment,
+  createFakeUser,
   saveFakeApplication,
   saveFakeApplicationOfferingRequestChange,
 } from "@sims/test-utils";
@@ -16,16 +20,20 @@ import {
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
   AssessmentTriggerType,
+  User,
 } from "@sims/sims-db";
+import { Repository } from "typeorm";
 
 describe("ApplicationOfferingChangeRequestAESTController(e2e)-assessApplicationOfferingChangeRequest", () => {
   let app: INestApplication;
   let db: E2EDataSources;
+  let userRepo: Repository<User>;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    userRepo = dataSource.getRepository(User);
   });
 
   it("Should assess the application offering change request for the provided application offering change request id.", async () => {
@@ -96,6 +104,90 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-assessApplicationO
       updatedApplicationOfferingChangeRequest.application.currentAssessment
         .offering.id,
     ).toBe(applicationOfferingChangeRequest.requestedOffering.id);
+  });
+
+  it("Should access the student appeal of the current assessment for the provided application offering change request id.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(db.dataSource, undefined, {
+      applicationStatus: ApplicationStatus.Completed,
+    });
+    const user = await userRepo.save(createFakeUser());
+    const studentAppeal = await createFakeStudentAppeal({ application });
+    const offering = await db.educationProgramOffering.save(
+      createFakeEducationProgramOffering({ auditUser: user }),
+    );
+    const studentAssessment = await createFakeStudentAssessment({
+      auditUser: user,
+      application,
+      offering,
+      studentAppeal,
+    });
+    application.currentAssessment = studentAssessment;
+    await db.application.save(application);
+    const applicationOfferingChangeRequest =
+      await saveFakeApplicationOfferingRequestChange(
+        db,
+        {
+          application,
+        },
+        {
+          initialValues: {
+            applicationOfferingChangeRequestStatus:
+              ApplicationOfferingChangeRequestStatus.InProgressWithSABC,
+          },
+        },
+      );
+    const note = "Some dummy note.";
+    const payload = {
+      note,
+      applicationOfferingChangeRequestStatus:
+        ApplicationOfferingChangeRequestStatus.Approved,
+    };
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const endpoint = `/aest/application-offering-change-request/${applicationOfferingChangeRequest.id}`;
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+    // Check if the application offering change request was assessed as expected.
+    const updatedApplicationOfferingChangeRequest =
+      await db.applicationOfferingChangeRequest.findOne({
+        select: {
+          id: true,
+          applicationOfferingChangeRequestStatus: true,
+          assessedNote: { description: true },
+          application: {
+            id: true,
+            currentAssessment: {
+              id: true,
+              triggerType: true,
+              offering: { id: true },
+              studentAppeal: { id: true },
+            },
+          },
+        },
+        relations: {
+          assessedNote: true,
+          application: {
+            currentAssessment: { offering: true, studentAppeal: true },
+          },
+        },
+        where: { id: applicationOfferingChangeRequest.id },
+      });
+    expect(
+      updatedApplicationOfferingChangeRequest.application.currentAssessment
+        .id !== studentAssessment.id,
+    ).toBeTruthy();
+    expect(
+      updatedApplicationOfferingChangeRequest.application.currentAssessment
+        .offering.id !== offering.id,
+    ).toBeTruthy();
+    expect(
+      updatedApplicationOfferingChangeRequest.application.currentAssessment
+        .studentAppeal.id,
+    ).toBe(studentAppeal.id);
   });
 
   it("Should not create a new assessment when the application offering change request has been declined by the ministry user.", async () => {

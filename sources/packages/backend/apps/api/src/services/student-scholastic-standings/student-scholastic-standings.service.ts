@@ -255,10 +255,16 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
           submittedBy: auditUser,
           submittedDate: now,
           offering: { id: savedOffering.id } as EducationProgramOffering,
-          studentAppeal: {
-            id: application.currentAssessment.studentAppeal?.id,
-          } as StudentAppeal,
         } as StudentAssessment;
+        // Update the student appeal record for the student assessment if it exists.
+        if (application.currentAssessment?.studentAppeal) {
+          scholasticStanding.studentAssessment = {
+            ...scholasticStanding.studentAssessment,
+            studentAppeal: {
+              id: application.currentAssessment.studentAppeal.id,
+            } as StudentAppeal,
+          } as StudentAssessment;
+        }
       } else {
         // If unsuccessful weeks, then add to the column.
         // * No cloning of offering and re-assessment is required in this scenario.

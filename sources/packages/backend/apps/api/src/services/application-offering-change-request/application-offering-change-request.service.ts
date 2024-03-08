@@ -306,7 +306,7 @@ export class ApplicationOfferingChangeRequestService {
               email: true,
             },
           },
-          currentAssessment: { studentAppeal: { id: true } },
+          currentAssessment: { id: true, studentAppeal: { id: true } },
         },
         assessedNote: {
           id: true,
@@ -594,6 +594,8 @@ export class ApplicationOfferingChangeRequestService {
         applicationOfferingChangeRequestStatus ===
         ApplicationOfferingChangeRequestStatus.Approved
       ) {
+        // Access the student assessment if it exists.
+        const studentAssessment = application.currentAssessment;
         // Create a new assessment if the application offering change request status is approved.
         application.currentAssessment = {
           application,
@@ -604,10 +606,16 @@ export class ApplicationOfferingChangeRequestService {
           createdAt: currentDate,
           submittedBy: auditUser,
           submittedDate: currentDate,
-          studentAppeal: {
-            id: application.currentAssessment.studentAppeal?.id,
-          } as StudentAppeal,
         } as StudentAssessment;
+        // Update the student appeal record for the student assessment if it exists.
+        if (studentAssessment?.studentAppeal) {
+          application.currentAssessment = {
+            ...application.currentAssessment,
+            studentAppeal: {
+              id: studentAssessment.studentAppeal.id,
+            } as StudentAppeal,
+          } as StudentAssessment;
+        }
       }
       await transactionalEntityManager
         .getRepository(ApplicationOfferingChangeRequest)

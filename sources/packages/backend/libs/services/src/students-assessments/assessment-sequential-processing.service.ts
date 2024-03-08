@@ -55,6 +55,7 @@ export class AssessmentSequentialProcessingService {
           id: true,
         },
         currentAssessment: {
+          id: true,
           studentAppeal: { id: true },
         },
       },
@@ -106,10 +107,32 @@ export class AssessmentSequentialProcessingService {
       createdAt: now,
       submittedBy: auditUser,
       submittedDate: now,
-      studentAppeal: {
-        id: application.currentAssessment.studentAppeal?.id,
-      } as StudentAppeal,
     } as StudentAssessment;
+    // Get future impacted application record
+    const impactedFutureApplication = await applicationRepo.findOne({
+      select: {
+        id: true,
+        currentAssessment: {
+          id: true,
+          studentAppeal: { id: true },
+        },
+      },
+      relations: {
+        currentAssessment: { studentAppeal: true },
+      },
+      where: {
+        id: futureSequencedApplication.applicationId,
+      },
+    });
+    // Update the student appeal record for the student assessment if it exists.
+    if (impactedFutureApplication.currentAssessment?.studentAppeal) {
+      impactedApplication.currentAssessment = {
+        ...impactedApplication.currentAssessment,
+        studentAppeal: {
+          id: impactedFutureApplication.currentAssessment.studentAppeal.id,
+        } as StudentAppeal,
+      } as StudentAssessment;
+    }
     return applicationRepo.save(impactedApplication);
   }
 
