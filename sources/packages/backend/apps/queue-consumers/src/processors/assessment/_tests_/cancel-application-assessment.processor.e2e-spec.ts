@@ -488,6 +488,49 @@ describe(
       );
     });
 
+    it(
+      "Should not assess for impacted application to create reassessment when an application assessment with " +
+        "a declined COE is being cancelled.",
+      async () => {
+        // Arrange
+
+        // Create the student to be shared across all these applications.
+        const student = await saveFakeStudent(db.dataSource);
+
+        // Current application to be cancelled with a declined COE.
+        const currentApplicationToCancel =
+          await saveFakeApplicationDisbursements(
+            db.dataSource,
+            { student },
+            {
+              offeringIntensity: OfferingIntensity.partTime,
+              applicationStatus: ApplicationStatus.Cancelled,
+              currentAssessmentInitialValues: {
+                assessmentWorkflowId: "some fake id",
+                assessmentDate: new Date(),
+                studentAssessmentStatus:
+                  StudentAssessmentStatus.CancellationQueued,
+              },
+              firstDisbursementInitialValues: { coeStatus: COEStatus.declined },
+            },
+          );
+        // Queued job.
+        const job = createMock<Job<CancelAssessmentQueueInDTO>>({
+          data: {
+            assessmentId: currentApplicationToCancel.currentAssessment.id,
+          },
+        });
+
+        // Act
+        const result = await processor.cancelAssessment(job);
+
+        // Asserts
+        expect(result.summary).toContain(
+          `Application id ${currentApplicationToCancel.id} was detected as impacted and will be reassessed.`,
+        );
+      },
+    );
+
     /**
      * Find a future impacted application to be asserted.
      * @param applicationId application to be find.
