@@ -106,7 +106,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-SB
     );
 
     // Assert
-    expect(calculatedAssessment.variables.programYearTotalSBSD).toBe(null);
+    expect(calculatedAssessment.variables.programYearTotalSBSD).toBe(0);
     expect(calculatedAssessment.variables.provincialAwardNetSBSDAmount).toBe(
       800,
     );
