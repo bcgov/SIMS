@@ -137,8 +137,8 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
         },
       },
     );
-    // Student appeal for the impacted application and its student assessment
-    const studentAppeal = await createFakeStudentAppeal({
+    // Student appeal for the impacted application and its student assessment.
+    const studentAppeal = createFakeStudentAppeal({
       application: impactedApplication,
       studentAssessment: impactedApplication.currentAssessment,
     });

@@ -257,7 +257,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
           offering: { id: savedOffering.id } as EducationProgramOffering,
         } as StudentAssessment;
         // Update the student appeal record for the student assessment if it exists.
-        if (application.currentAssessment?.studentAppeal) {
+        if (application.currentAssessment.studentAppeal) {
           scholasticStanding.studentAssessment = {
             ...scholasticStanding.studentAssessment,
             studentAppeal: {

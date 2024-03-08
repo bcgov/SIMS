@@ -108,28 +108,12 @@ export class AssessmentSequentialProcessingService {
       submittedBy: auditUser,
       submittedDate: now,
     } as StudentAssessment;
-    // Get future impacted application record
-    const impactedFutureApplication = await applicationRepo.findOne({
-      select: {
-        id: true,
-        currentAssessment: {
-          id: true,
-          studentAppeal: { id: true },
-        },
-      },
-      relations: {
-        currentAssessment: { studentAppeal: true },
-      },
-      where: {
-        id: futureSequencedApplication.applicationId,
-      },
-    });
     // Update the student appeal record for the student assessment if it exists.
-    if (impactedFutureApplication.currentAssessment?.studentAppeal) {
+    if (futureSequencedApplication.currentAssessmentAppealId) {
       impactedApplication.currentAssessment = {
         ...impactedApplication.currentAssessment,
         studentAppeal: {
-          id: impactedFutureApplication.currentAssessment.studentAppeal.id,
+          id: futureSequencedApplication.currentAssessmentAppealId,
         } as StudentAppeal,
       } as StudentAssessment;
     }
@@ -319,11 +303,13 @@ export class AssessmentSequentialProcessingService {
       .addSelect("application.applicationNumber", "applicationNumber")
       .addSelect("application.applicationStatus", "applicationStatus")
       .addSelect("currentAssessmentOffering.id", "currentAssessmentOfferingId")
+      .addSelect("currentAssessmentAppeal.id", "currentAssessmentAppealId")
       .addSelect(`(${assessmentDateSubQuery})`, referenceAssessmentDateColumn)
       .innerJoin("application.student", "student")
       .innerJoin("application.programYear", "programYear")
       .innerJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("currentAssessment.offering", "currentAssessmentOffering")
+      .leftJoin("currentAssessment.studentAppeal", "currentAssessmentAppeal")
       .where("student.id = :studentId", { studentId })
       .andWhere("programYear.id = :programYearId", { programYearId })
       .andWhere("application.applicationStatus != :overwrittenStatus", {

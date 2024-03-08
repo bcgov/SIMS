@@ -12,7 +12,6 @@ import {
   createFakeEducationProgramOffering,
   createFakeStudentAppeal,
   createFakeStudentAssessment,
-  createFakeUser,
   saveFakeApplication,
   saveFakeApplicationOfferingRequestChange,
 } from "@sims/test-utils";
@@ -20,20 +19,16 @@ import {
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
   AssessmentTriggerType,
-  User,
 } from "@sims/sims-db";
-import { Repository } from "typeorm";
 
 describe("ApplicationOfferingChangeRequestAESTController(e2e)-assessApplicationOfferingChangeRequest", () => {
   let app: INestApplication;
   let db: E2EDataSources;
-  let userRepo: Repository<User>;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
-    userRepo = dataSource.getRepository(User);
   });
 
   it("Should assess the application offering change request for the provided application offering change request id.", async () => {
@@ -69,6 +64,7 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-assessApplicationO
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
     // Check if the application offering change request was assessed as expected.
+    // A new assessment with a new offering should be created and the existing student appeal should be copied.
     const updatedApplicationOfferingChangeRequest =
       await db.applicationOfferingChangeRequest.findOne({
         select: {
@@ -106,17 +102,17 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-assessApplicationO
     ).toBe(applicationOfferingChangeRequest.requestedOffering.id);
   });
 
-  it("Should access the student appeal of the current assessment for the provided application offering change request id.", async () => {
+  it("Should assess the student appeal of the current assessment for the provided application offering change request id.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource, undefined, {
       applicationStatus: ApplicationStatus.Completed,
     });
-    const user = await userRepo.save(createFakeUser());
-    const studentAppeal = await createFakeStudentAppeal({ application });
+    const user = application.student.user;
+    const studentAppeal = createFakeStudentAppeal({ application });
     const offering = await db.educationProgramOffering.save(
       createFakeEducationProgramOffering({ auditUser: user }),
     );
-    const studentAssessment = await createFakeStudentAssessment({
+    const studentAssessment = createFakeStudentAssessment({
       auditUser: user,
       application,
       offering,
@@ -152,24 +148,21 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-assessApplicationO
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
     // Check if the application offering change request was assessed as expected.
+    // A new assessment with a new offering should be created and the existing student appeal should be copied.
     const updatedApplicationOfferingChangeRequest =
       await db.applicationOfferingChangeRequest.findOne({
         select: {
           id: true,
-          applicationOfferingChangeRequestStatus: true,
-          assessedNote: { description: true },
           application: {
             id: true,
             currentAssessment: {
               id: true,
-              triggerType: true,
               offering: { id: true },
               studentAppeal: { id: true },
             },
           },
         },
         relations: {
-          assessedNote: true,
           application: {
             currentAssessment: { offering: true, studentAppeal: true },
           },
@@ -177,13 +170,12 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-assessApplicationO
         where: { id: applicationOfferingChangeRequest.id },
       });
     expect(
-      updatedApplicationOfferingChangeRequest.application.currentAssessment
-        .id !== studentAssessment.id,
-    ).toBeTruthy();
+      updatedApplicationOfferingChangeRequest.application.currentAssessment.id,
+    ).not.toBe(studentAssessment.id);
     expect(
       updatedApplicationOfferingChangeRequest.application.currentAssessment
-        .offering.id !== offering.id,
-    ).toBeTruthy();
+        .offering.id,
+    ).not.toBe(offering.id);
     expect(
       updatedApplicationOfferingChangeRequest.application.currentAssessment
         .studentAppeal.id,
@@ -223,6 +215,7 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-assessApplicationO
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
     // Check if the application offering change request was assessed as expected.
+    // A new assessment with a new offering should be created and the existing student appeal should be copied.
     const updatedApplicationOfferingChangeRequest =
       await db.applicationOfferingChangeRequest.findOne({
         select: {

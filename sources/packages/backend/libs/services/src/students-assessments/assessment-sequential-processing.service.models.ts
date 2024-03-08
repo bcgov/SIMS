@@ -28,6 +28,10 @@ export interface SequentialApplication {
    * is still in progress.
    */
   currentAssessmentOfferingId?: number;
+  /**
+   * Current student appeal id associated to the current assessment of the active application.
+   */
+  currentAssessmentAppealId?: number;
 }
 
 /**

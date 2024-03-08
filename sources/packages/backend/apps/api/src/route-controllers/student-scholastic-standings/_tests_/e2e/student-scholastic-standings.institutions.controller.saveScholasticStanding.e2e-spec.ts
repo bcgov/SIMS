@@ -5,7 +5,7 @@ import {
   createFakeInstitutionLocation,
   createFakeStudentAppeal,
   getProviderInstanceForModule,
-  saveFakeApplicationDisbursements,
+  saveFakeApplication,
 } from "@sims/test-utils";
 import {
   BEARER_AUTH_TYPE,
@@ -20,7 +20,6 @@ import {
   ApplicationStatus,
   AssessmentTriggerType,
   InstitutionLocation,
-  StudentAssessmentStatus,
   StudentScholasticStandingChangeType,
 } from "@sims/sims-db";
 import {
@@ -31,7 +30,7 @@ import {
 } from "../../../../services";
 import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../../../constants";
 import { ScholasticStandingAPIInDTO } from "../../models/student-scholastic-standings.dto";
-import { addDays, getISODateOnlyString } from "@sims/utilities";
+import { getISODateOnlyString } from "@sims/utilities";
 import { AppInstitutionsModule } from "../../../../app.institutions.module";
 import { TestingModule } from "@nestjs/testing";
 
@@ -40,9 +39,8 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
   let appModule: TestingModule;
   let db: E2EDataSources;
   let collegeFLocation: InstitutionLocation;
-  let institutionUserToken: string;
-  const SCHOLASTIC_STANDING_FORM_NAME =
-    FormNames.ReportScholasticStandingChange;
+  let formService: FormService;
+  let payload: ScholasticStandingAPIInDTO;
 
   beforeAll(async () => {
     const { nestApplication, module, dataSource } =
@@ -61,45 +59,62 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
     );
-    // Institution token.
-    institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
+    // Mock the form service to validate the dry-run submission result.
+    // TODO: Form service must be hosted for E2E tests to validate dry run submission
+    // and this mock must be removed.
+    formService = await getProviderInstanceForModule(
+      appModule,
+      AppInstitutionsModule,
+      FormService,
     );
+  });
+
+  beforeEach(async () => {
+    payload = {
+      data: {
+        booksAndSupplies: 1000,
+        dateOfChange: getISODateOnlyString(new Date()),
+        scholasticStandingChangeType:
+          StudentScholasticStandingChangeType.ChangeInIntensity,
+      },
+    };
+    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+      valid: true,
+      formName: FormNames.ReportScholasticStandingChange,
+      data: { data: payload.data },
+    });
+    formService.dryRunSubmission = dryRunSubmissionMock;
   });
 
   it("Should throw bad request exception error when the payload is invalid for formIO dryRun test.", async () => {
     // Arrange
-    const application = await saveFakeApplicationDisbursements(db.dataSource, {
+    const application = await saveFakeApplication(db.dataSource, {
       institutionLocation: collegeFLocation,
     });
-    const payload = {
+    const invalidPayload = {
       data: {
         booksAndSupplies: 1000,
         scholasticStandingChangeType:
           StudentScholasticStandingChangeType.ChangeInIntensity,
       },
     };
-    // Mock the form service to validate the dry-run submission result.
-    // TODO: Form service must be hosted for E2E tests to validate dry run submission
-    // and this mock must be removed.
-    const formService = await getProviderInstanceForModule(
-      appModule,
-      AppInstitutionsModule,
-      FormService,
-    );
     const dryRunSubmissionMock = jest.fn().mockResolvedValue({
       valid: false,
-      formName: SCHOLASTIC_STANDING_FORM_NAME,
-      data: { data: payload.data },
+      formName: FormNames.ReportScholasticStandingChange,
+      data: { data: invalidPayload.data },
     });
     formService.dryRunSubmission = dryRunSubmissionMock;
+    // Institution token.
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
 
     const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
 
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
-      .send(payload)
+      .send(invalidPayload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.BAD_REQUEST)
       .expect({
@@ -111,28 +126,10 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
 
   it("Should throw unprocessable entity exception error when the application is not found.", async () => {
     // Arrange
-    const payload: ScholasticStandingAPIInDTO = {
-      data: {
-        booksAndSupplies: 1000,
-        dateOfChange: getISODateOnlyString(new Date()),
-        scholasticStandingChangeType:
-          StudentScholasticStandingChangeType.ChangeInIntensity,
-      },
-    };
-    // Mock the form service to validate the dry-run submission result.
-    // TODO: Form service must be hosted for E2E tests to validate dry run submission
-    // and this mock must be removed.
-    const formService = await getProviderInstanceForModule(
-      appModule,
-      AppInstitutionsModule,
-      FormService,
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
     );
-    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-      valid: true,
-      formName: SCHOLASTIC_STANDING_FORM_NAME,
-      data: { data: payload.data },
-    });
-    formService.dryRunSubmission = dryRunSubmissionMock;
+
     const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/0000`;
 
     // Act/Assert
@@ -148,35 +145,18 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       });
   });
 
-  it("Should throw unprocessable entity exception error when the application is not found.", async () => {
+  it("Should throw unprocessable entity exception error when the application change is not eligible.", async () => {
     // Arrange
-    const application = await saveFakeApplicationDisbursements(db.dataSource, {
+    const application = await saveFakeApplication(db.dataSource, {
       institutionLocation: collegeFLocation,
     });
     application.isArchived = true;
     await db.application.save(application);
-    const payload: ScholasticStandingAPIInDTO = {
-      data: {
-        booksAndSupplies: 1000,
-        dateOfChange: getISODateOnlyString(new Date()),
-        scholasticStandingChangeType:
-          StudentScholasticStandingChangeType.ChangeInIntensity,
-      },
-    };
-    // Mock the form service to validate the dry-run submission result.
-    // TODO: Form service must be hosted for E2E tests to validate dry run submission
-    // and this mock must be removed.
-    const formService = await getProviderInstanceForModule(
-      appModule,
-      AppInstitutionsModule,
-      FormService,
+    // Institution token.
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
     );
-    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-      valid: true,
-      formName: SCHOLASTIC_STANDING_FORM_NAME,
-      data: { data: payload.data },
-    });
-    formService.dryRunSubmission = dryRunSubmissionMock;
+
     const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
 
     // Act/Assert
@@ -193,33 +173,18 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
 
   it("Should throw unprocessable entity exception error when the application status is not complete.", async () => {
     // Arrange
-    const application = await saveFakeApplicationDisbursements(db.dataSource, {
-      institutionLocation: collegeFLocation,
-    });
-    application.applicationStatus = ApplicationStatus.InProgress;
-    await db.application.save(application);
-    const payload: ScholasticStandingAPIInDTO = {
-      data: {
-        booksAndSupplies: 1000,
-        dateOfChange: getISODateOnlyString(new Date()),
-        scholasticStandingChangeType:
-          StudentScholasticStandingChangeType.ChangeInIntensity,
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {
+        institutionLocation: collegeFLocation,
       },
-    };
-    // Mock the form service to validate the dry-run submission result.
-    // TODO: Form service must be hosted for E2E tests to validate dry run submission
-    // and this mock must be removed.
-    const formService = await getProviderInstanceForModule(
-      appModule,
-      AppInstitutionsModule,
-      FormService,
+      { applicationStatus: ApplicationStatus.InProgress },
     );
-    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-      valid: true,
-      formName: SCHOLASTIC_STANDING_FORM_NAME,
-      data: { data: payload.data },
-    });
-    formService.dryRunSubmission = dryRunSubmissionMock;
+    // Institution token.
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
     const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
 
     // Act/Assert
@@ -237,85 +202,69 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
 
   it("Should create a new scholastic standing when the institution user requests it.", async () => {
     // Arrange
-    const application = await saveFakeApplicationDisbursements(
+    const application = await saveFakeApplication(
       db.dataSource,
       {
         institutionLocation: collegeFLocation,
       },
       {
         applicationStatus: ApplicationStatus.Completed,
-        currentAssessmentInitialValues: {
-          assessmentWorkflowId: "some fake id",
-          assessmentDate: addDays(1),
-          studentAssessmentStatus: StudentAssessmentStatus.Completed,
-        },
       },
     );
-    // Createa student appeal for the application and its student assessment
-    const studentAppeal = await createFakeStudentAppeal({
+    // Create a student appeal for the application and its student assessment.
+    const studentAppeal = createFakeStudentAppeal({
       application: application,
       studentAssessment: application.currentAssessment,
     });
     application.currentAssessment.studentAppeal = studentAppeal;
     await db.application.save(application);
-    const payload: ScholasticStandingAPIInDTO = {
-      data: {
-        booksAndSupplies: 1000,
-        dateOfChange: getISODateOnlyString(new Date()),
-        scholasticStandingChangeType:
-          StudentScholasticStandingChangeType.ChangeInIntensity,
-      },
-    };
-    // Mock the form service to validate the dry-run submission result.
-    // TODO: Form service must be hosted for E2E tests to validate dry run submission
-    // and this mock must be removed.
-    const formService = await getProviderInstanceForModule(
-      appModule,
-      AppInstitutionsModule,
-      FormService,
+    // Institution token.
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
     );
-    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-      valid: true,
-      formName: SCHOLASTIC_STANDING_FORM_NAME,
-      data: { data: payload.data },
-    });
-    formService.dryRunSubmission = dryRunSubmissionMock;
+
     const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
 
     // Act/Assert
-    let createdScholasticStanding: number;
+    let createdScholasticStandingId: number;
     await request(app.getHttpServer())
       .post(endpoint)
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED)
       .expect((response) => {
-        console.log("response.body: ", response.body);
         expect(response.body.id).toBeGreaterThan(0);
-        createdScholasticStanding = +response.body.id;
+        createdScholasticStandingId = +response.body.id;
       });
-    const newScholasticStanding = await db.studentScholasticStanding.findOne({
+    const queryApplication = await db.application.findOne({
       select: {
         id: true,
-        application: { id: true },
-        studentAssessment: {
+        currentAssessment: {
           id: true,
           triggerType: true,
+          studentScholasticStanding: { id: true },
           studentAppeal: { id: true },
         },
       },
       relations: {
-        application: true,
-        studentAssessment: { studentAppeal: true },
+        currentAssessment: {
+          studentScholasticStanding: true,
+          studentAppeal: true,
+        },
       },
-      where: { id: createdScholasticStanding },
+      where: { id: application.id },
     });
-    expect(newScholasticStanding.application.id).toBe(application.id);
-    expect(newScholasticStanding.studentAssessment.triggerType).toBe(
+    expect(queryApplication.currentAssessment.id).not.toBe(
+      application.currentAssessment.id,
+    );
+    expect(queryApplication.currentAssessment.triggerType).toBe(
       AssessmentTriggerType.ScholasticStandingChange,
     );
-    expect(newScholasticStanding.studentAssessment.studentAppeal.id).toBe(
+    expect(queryApplication.currentAssessment.studentAppeal.id).toBe(
       studentAppeal.id,
     );
+    expect(
+      queryApplication.currentAssessment.studentScholasticStanding.id,
+    ).toBe(createdScholasticStandingId);
   });
 });

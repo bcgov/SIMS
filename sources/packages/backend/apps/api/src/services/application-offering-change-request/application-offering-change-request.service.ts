@@ -608,7 +608,7 @@ export class ApplicationOfferingChangeRequestService {
           submittedDate: currentDate,
         } as StudentAssessment;
         // Update the student appeal record for the student assessment if it exists.
-        if (studentAssessment?.studentAppeal) {
+        if (studentAssessment.studentAppeal) {
           application.currentAssessment = {
             ...application.currentAssessment,
             studentAppeal: {
