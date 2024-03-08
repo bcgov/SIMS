@@ -748,7 +748,7 @@
     <bpmn:intermediateThrowEvent id="Event_1h2w0hl" name="calculate CSGP">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if ((awardEligibilityCSGP = true) &#10;    and (calculatedDataTotalAssessedNeed &#62;= 1)) &#10;then max(dmnPartTimeAwardAllowableLimits.limitAwardCSGPAmount - programYearTotalCSGP, 0) &#10;else 0" target="federalAwardNetCSGPAmount" />
+          <zeebe:output source="=if ((awardEligibilityCSGP = true) &#10;    and (calculatedDataTotalAssessedNeed &#62;= 1)) &#10;then max(dmnPartTimeAwardAllowableLimits.limitAwardCSGPAmount - programYearTotalCSGP,0)&#10;else 0" target="federalAwardNetCSGPAmount" />
           <zeebe:output source="=max(0,(calculatedDataTotalAssessedNeed - federalAwardNetCSGPAmount))" target="calculatedDataTotalRemainingNeed1" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
