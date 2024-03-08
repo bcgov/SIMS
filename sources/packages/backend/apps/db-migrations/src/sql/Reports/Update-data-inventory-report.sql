@@ -1,7 +1,7 @@
 UPDATE
     sims.report_configs
 SET report_sql = (
-'       select
+        'select
 			      -- Application Processing Info
             applications.id as "Application ID",
 			      applications.application_number as "Application Number",
@@ -256,7 +256,7 @@ SET report_sql = (
             left join sims.student_assessments current_assessment on applications.current_assessment_id = current_assessment.id
             left join sims.institution_locations institution_locations on institution_locations.id = applications.location_id
             left join sims.institutions institutions on institutions.id = institution_locations.institution_id
-			left join sims.institution_type institution_types on institution_types.id = institutions.institution_type_id
+			      left join sims.institution_type institution_types on institution_types.id = institutions.institution_type_id
             left join sims.education_programs education_programs on education_programs.id = applications.pir_education_program_id
             left join sims.education_programs_offerings education_programs_offerings on current_assessment.offering_id = education_programs_offerings.id
             left join sims.student_scholastic_standings student_scholastic_standings on applications.id = student_scholastic_standings.application_id
