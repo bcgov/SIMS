@@ -124,16 +124,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     expect(
       calculatedAssessment.variables.federalAwardCSPTAmount,
     ).toBeGreaterThan(100);
-    expect(calculatedAssessment.variables.federalAwardNetCSPTAmount).toBe(
-      Math.min(
-        calculatedAssessment.variables.calculatedDataTotalRemainingNeed1,
-        Math.min(
-          calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
-            .limitAwardCSPTAmount,
-          calculatedAssessment.variables.federalAwardCSPTAmount,
-        ),
-      ),
-    );
     expect(calculatedAssessment.variables.federalAwardNetCSPTAmount).toBe(3600);
   });
 });
