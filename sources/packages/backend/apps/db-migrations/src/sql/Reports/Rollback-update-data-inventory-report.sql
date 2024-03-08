@@ -1,7 +1,7 @@
 UPDATE
     sims.report_configs
 SET report_sql = (
-'       selectz
+'       select
             -- Personal Info
             users.first_name as "First Name",
             users.last_name as "Last Name",

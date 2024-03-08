@@ -1,7 +1,7 @@
 UPDATE
     sims.report_configs
 SET report_sql = (
-'       selectz
+'       select
             -- Application Processing Info
             applications.id as "Application ID",
 			      applications.application_number as "Application Number",
