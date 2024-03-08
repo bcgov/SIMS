@@ -33,4 +33,19 @@ export enum RestrictionCode {
    * reached. It is calculated during E-cert.
    */
   BCLM = "BCLM",
+  /**
+   * Legacy Restriction.
+   */
+  LGCY = "LGCY",
+  /**
+   * Restriction for Bankruptcy with no student loans included.
+   */
+  B6B = "B6B",
+  /**
+   * Restriction for False/Misleading Information.
+   */
+  AF = "AF",
+  /**
+   * Verification restriction on file. Set up call back for Student case review verification team.
+   */
 }
