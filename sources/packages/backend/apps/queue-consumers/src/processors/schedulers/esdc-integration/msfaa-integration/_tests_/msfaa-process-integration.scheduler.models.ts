@@ -64,7 +64,7 @@ export const MSFAA_PART_TIME_OTHER_COUNTRY: MSFAATestInputData = {
   provinceState: undefined,
   postalCode: undefined,
   country: "United States",
-  phone: "222222222222222",
+  phone: "####4*****^%$#@$^9",
   email: "jane.doe@somedomain.com",
   offeringIntensity: OfferingIntensity.partTime,
 };

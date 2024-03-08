@@ -30,12 +30,12 @@ export function getGenderCode(gender: string): string {
 }
 
 /**
- * Returns phone number removing the hyphens.
- * @param phone phone number to be formatted
- * @returns phone number removing the hyphens in between. (Eg: 123-456-7890 => 1234567890)
+ * Returns phone number keeping only digits 0 to 9.
+ * @param phone phone number to be formatted.
+ * @returns the phone number. (Eg: +1 (788) 999-7777 => 17889997777)
  */
 export function getFormattedPhone(phone: string): string {
-  return phone.replace(/-/g, "");
+  return phone.replace(/[^0-9]/g, "");
 }
 
 /**
