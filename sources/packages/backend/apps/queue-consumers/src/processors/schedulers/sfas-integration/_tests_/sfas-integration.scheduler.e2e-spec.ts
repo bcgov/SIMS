@@ -95,7 +95,6 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     // Assert
     // Expect the file was deleted from SFTP.
     expect(sftpClientMock.delete).toHaveBeenCalled();
-    // Expect only one Legacy restriction to be inserted.
     const studentRestrictionsCount = await db.studentRestriction.count({
       where: {
         student: { id: sharedStudent.id },
@@ -103,7 +102,6 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         isActive: true,
       },
     });
-    expect(studentRestrictionsCount).toBe(1);
     const studentRestriction = await db.studentRestriction.findOne({
       select: { creator: { id: true } },
       relations: { creator: true },
@@ -113,6 +111,9 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         isActive: true,
       },
     });
+    // Expect only one Legacy restriction to be inserted.
+    expect(studentRestrictionsCount).toBe(1);
+    // Expect the restriction to be created by a system user.
     expect(studentRestriction.creator.id).toEqual(
       systemUsersService.systemUser.id,
     );
