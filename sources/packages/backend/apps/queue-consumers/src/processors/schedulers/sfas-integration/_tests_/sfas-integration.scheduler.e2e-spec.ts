@@ -17,10 +17,8 @@ import * as Client from "ssh2-sftp-client";
 import { Job } from "bull";
 import * as path from "path";
 import { SFASIntegrationScheduler } from "../sfas-integration.scheduler";
-import { In } from "typeorm";
 import { Restriction, Student, StudentRestriction } from "@sims/sims-db";
 import { SystemUsersService } from "@sims/services";
-import { share } from "rxjs";
 
 // SFAS received file mocks.
 const SFAS_LEGACY_RESTRICTION_FILENAME =
@@ -71,14 +69,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
 
   beforeEach(async () => {
     jest.clearAllMocks();
-    // // Empty the student restrictions table for each test.
-    // const studentRestrictionIds = await db.studentRestriction.find({
-    //   select: { id: true },
-    // });
-    // const ids = studentRestrictionIds.map(
-    //   (studentRestrictionId) => studentRestrictionId.id,
-    // );
-    // await db.studentRestriction.delete({ id: In(ids) });
+    // Set the isActive field to false for each record of the sharedStudent in the student restrictions table to not interfere with other tests.
     await db.studentRestriction.update(
       { student: { id: sharedStudent.id } },
       { isActive: false },
