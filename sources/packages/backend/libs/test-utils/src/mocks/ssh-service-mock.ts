@@ -19,12 +19,6 @@ export const MSFAA_FULL_TIME_RECEIVE_FILE_WITH_REACTIVATION_RECORD =
 export const MSFAA_FULL_TIME_RECEIVE_FILE_WITH_SINGLE_CANCELLATION_RECORD =
   "msfaa-full-time-receive-file-with-single-cancellation-record.dat";
 
-// SFAS received file mocks.
-export const SFAS_LEGACY_RESTRICTION_FILENAME =
-  "SFAS-TO-SIMS-2024MAR07-LEGACY-RESTRICTIONS.txt";
-export const SFAS_ALL_RESTRICTIONS_FILENAME =
-  "SFAS-TO-SIMS-2024MAR07-ALL-RESTRICTIONS.txt";
-
 /**
  * Represents a mocked uploaded file.
  */
