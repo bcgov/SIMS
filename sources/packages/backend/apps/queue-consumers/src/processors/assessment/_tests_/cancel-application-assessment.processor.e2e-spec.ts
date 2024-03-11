@@ -37,8 +37,6 @@ import { AssessmentSequentialProcessingService } from "@sims/services";
 import { TestingModule } from "@nestjs/testing";
 import { QueueConsumersModule } from "../../../../src/queue-consumers.module";
 
-jest.setTimeout(1200000);
-
 describe(
   describeProcessorRootTest(QueueNames.CancelApplicationAssessment),
   () => {
@@ -559,6 +557,17 @@ describe(
             assessmentId: currentApplicationToCancel.currentAssessment.id,
           },
         });
+        // Spy on assess impacted application method to make sure that it is not invoked.
+        const assessmentSequentialProcessingService =
+          await getProviderInstanceForModule(
+            testingModule,
+            QueueConsumersModule,
+            AssessmentSequentialProcessingService,
+          );
+        const sequentialProcessingServiceSpy = jest.spyOn(
+          assessmentSequentialProcessingService,
+          "assessImpactedApplicationReassessmentNeeded",
+        );
 
         // Act
         await processor.cancelAssessment(job);
@@ -572,16 +581,6 @@ describe(
           impactedApplicationAssessmentBeforeCancel.id,
         );
         // Also assert that method to assess impacted application was not called.
-        const assessmentSequentialProcessingService =
-          await getProviderInstanceForModule(
-            testingModule,
-            QueueConsumersModule,
-            AssessmentSequentialProcessingService,
-          );
-        const sequentialProcessingServiceSpy = jest.spyOn(
-          assessmentSequentialProcessingService,
-          "assessImpactedApplicationReassessmentNeeded",
-        );
         expect(sequentialProcessingServiceSpy).not.toHaveBeenCalled();
       },
     );

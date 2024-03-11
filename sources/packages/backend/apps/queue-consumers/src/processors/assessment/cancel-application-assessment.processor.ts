@@ -146,19 +146,19 @@ export class CancelApplicationAssessmentProcessor {
         transactionEntityManager,
       );
       await summary.info("Overawards rollback check executed.");
-      // Check if the assessment has no COE(s) which were declined.
-      const hasNoDeclinedCOE = assessment.disbursementSchedules.every(
-        (disbursement) => disbursement.coeStatus !== COEStatus.declined,
+      // Check if the assessment has one of the COE(s) declined.
+      const hasDeclinedCOE = assessment.disbursementSchedules.some(
+        (disbursement) => disbursement.coeStatus === COEStatus.declined,
       );
       if (
         assessment.application.applicationStatus !==
           ApplicationStatus.Overwritten &&
-        hasNoDeclinedCOE
+        !hasDeclinedCOE
       ) {
         // Overwritten applications do not cause impacts in future application and the checks can be completely skipped.
-        // If a COE of an application is declined, during the process of COE being declined
-        // impacted application if exist is identified and reassessed. And hence while cancelling
-        // an application with a declined COE must NOT be assessed for impacted application reassessment again.
+        // If a COE of an application is declined, during the process of COE being declined,
+        // the impacted application if exist is identified and reassessed.
+        // Hence while cancelling an application with a declined COE, it must NOT be assessed for impacted application reassessment again.
         await summary.info(
           "Assessing if there is a future impacted application that need to be reassessed.",
         );

@@ -27,7 +27,7 @@ import {
 } from "@sims/sims-db";
 import { addDays } from "@sims/utilities";
 
-describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment", () => {
+describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-denyConfirmationOfEnrollment", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let collegeC: Institution;
@@ -64,15 +64,13 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
     const [firstDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
     const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}/deny`;
+    const token = await getInstitutionToken(InstitutionTokenTypes.CollegeCUser);
     const coeDenyReasonId = 2;
     // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)
       .send({ coeDenyReasonId })
-      .auth(
-        await getInstitutionToken(InstitutionTokenTypes.CollegeCUser),
-        BEARER_AUTH_TYPE,
-      )
+      .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
     // Check if the COE is declined and declined with the provided reason.
     const declinedCOE = await db.disbursementSchedule.findOne({
@@ -106,7 +104,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
           applicationStatus: ApplicationStatus.Completed,
           currentAssessmentInitialValues: {
             assessmentWorkflowId: "some fake id",
-            assessmentDate: addDays(-1, new Date()),
+            assessmentDate: addDays(-1),
             studentAssessmentStatus: StudentAssessmentStatus.Completed,
           },
         },
@@ -144,7 +142,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
             applicationStatus: ApplicationStatus.Completed,
             currentAssessmentInitialValues: {
               assessmentWorkflowId: "some fake id",
-              assessmentDate: addDays(1, new Date()),
+              assessmentDate: addDays(1),
               studentAssessmentStatus: StudentAssessmentStatus.Submitted,
             },
           },
@@ -153,15 +151,15 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
       const [firstDisbursementSchedule] =
         applicationToDeclineCOE.currentAssessment.disbursementSchedules;
       const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}/deny`;
+      const token = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeCUser,
+      );
       const coeDenyReasonId = 2;
       // Act/Assert
       await request(app.getHttpServer())
         .patch(endpoint)
         .send({ coeDenyReasonId })
-        .auth(
-          await getInstitutionToken(InstitutionTokenTypes.CollegeCUser),
-          BEARER_AUTH_TYPE,
-        )
+        .auth(token, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK);
       // Check if the COE is declined and declined with the provided reason.
       const declinedCOE = await db.disbursementSchedule.findOne({

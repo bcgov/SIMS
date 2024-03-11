@@ -408,7 +408,8 @@ export class ConfirmationOfEnrollmentService {
    * When the COE is declined, check for the first impacted application affected by COE being declined
    * and if an impacted application found, then create a related application re-assessment for the same.
    ** Note: If an application has 2 COEs, and if the first COE is rejected then 2nd COE is implicitly rejected.
-   * @param disbursementSchedule disbursement schedule to be updated.
+   * @param disbursementScheduleId disbursement schedule id to be updated.
+   * @param studentAssessmentId assessment id of the given disbursement schedule.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @param declinedReason COE declined reason details.
    * - `coeDeniedReasonId` Denied reason id.
@@ -416,7 +417,8 @@ export class ConfirmationOfEnrollmentService {
    * @param otherReasonDesc result of the update operation.
    */
   private async updateCOEToDeclined(
-    disbursementSchedule: DisbursementSchedule,
+    disbursementScheduleId: number,
+    studentAssessmentId: number,
     auditUserId: number,
     declinedReason: { coeDeniedReasonId: number; otherReasonDesc?: string },
   ): Promise<UpdateResult> {
@@ -438,7 +440,7 @@ export class ConfirmationOfEnrollmentService {
             updatedAt: now,
           })
           .where("id = :disbursementScheduleId", {
-            disbursementScheduleId: disbursementSchedule.id,
+            disbursementScheduleId,
           })
           .andWhere("coeStatus = :required", { required: COEStatus.required })
           .execute();
@@ -453,7 +455,7 @@ export class ConfirmationOfEnrollmentService {
         );
         const impactedApplication =
           await this.assessmentSequentialProcessingService.assessImpactedApplicationReassessmentNeeded(
-            disbursementSchedule.studentAssessment.id,
+            studentAssessmentId,
             this.systemUserService.systemUser.id,
             transactionalEntityManager,
           );
@@ -468,7 +470,7 @@ export class ConfirmationOfEnrollmentService {
 
         // Create a student notification when COE is confirmed.
         await this.createNotificationForDisbursementUpdate(
-          disbursementSchedule.id,
+          disbursementScheduleId,
           auditUserId,
           transactionalEntityManager,
         );
@@ -655,10 +657,15 @@ export class ConfirmationOfEnrollmentService {
       );
     }
 
-    await this.updateCOEToDeclined(disbursementSchedule, auditUserId, {
-      coeDeniedReasonId: declineReason.coeDenyReasonId,
-      otherReasonDesc: declineReason.otherReasonDesc,
-    });
+    await this.updateCOEToDeclined(
+      disbursementSchedule.id,
+      disbursementSchedule.studentAssessment.id,
+      auditUserId,
+      {
+        coeDeniedReasonId: declineReason.coeDenyReasonId,
+        otherReasonDesc: declineReason.otherReasonDesc,
+      },
+    );
   }
 
   /**
