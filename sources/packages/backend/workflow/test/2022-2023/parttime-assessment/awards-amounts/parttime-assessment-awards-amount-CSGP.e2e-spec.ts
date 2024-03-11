@@ -5,7 +5,7 @@ import {
 } from "../../../test-utils";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CSGP.`, () => {
-  it("Should determine federalAwardCSGPAmount when awardEligibilityCSGP is true and studentDataApplicationPDPPDStatus is true", async () => {
+  it("Should determine federalAwardCSGPAmount when awardEligibilityCSGP is true and studentDataApplicationPDPPDStatus is yes", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -48,7 +48,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     );
   });
 
-  it("Should determine federalAwardCSGPAmount when awardEligibilityCSGP is true, no CSGP awarded in the program year previously and studentDataApplicationPDPPDStatus is true", async () => {
+  it("Should determine federalAwardCSGPAmount when awardEligibilityCSGP is true, no CSGP awarded in the program year previously and studentDataApplicationPDPPDStatus is yes", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
