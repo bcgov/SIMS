@@ -53,3 +53,30 @@ export enum AssessmentDataType {
    */
   PreAssessment,
 }
+
+/**
+ * Restriction codes.
+ */
+export enum RestrictionCode {
+  /**
+   * When an institution report withdrawal for a FT course on a
+   * student with a "WTHD" restriction , then "SSR" restriction
+   * is added to the student account.
+   */
+  SSR = "SSR",
+  /**
+   * Legacy Restriction.
+   */
+  LGCY = "LGCY",
+  /**
+   * Restriction for Bankruptcy with no student loans included.
+   */
+  B6B = "B6B",
+  /**
+   * Restriction for False/Misleading Information.
+   */
+  AF = "AF",
+  /**
+   * Verification restriction on file. Set up call back for Student case review verification team.
+   */
+}
