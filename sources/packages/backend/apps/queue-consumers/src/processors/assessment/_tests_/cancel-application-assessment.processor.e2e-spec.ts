@@ -261,7 +261,7 @@ describe(
           applicationStatus: ApplicationStatus.Completed,
           currentAssessmentInitialValues: {
             assessmentWorkflowId: "some fake id",
-            assessmentDate: addDays(-1, new Date()),
+            assessmentDate: addDays(-1),
             studentAssessmentStatus: StudentAssessmentStatus.Completed,
           },
         },
@@ -290,7 +290,7 @@ describe(
           applicationStatus: ApplicationStatus.Completed,
           currentAssessmentInitialValues: {
             assessmentWorkflowId: "some fake id",
-            assessmentDate: addDays(1, new Date()),
+            assessmentDate: addDays(1),
             studentAssessmentStatus: StudentAssessmentStatus.Submitted,
           },
         },
@@ -346,7 +346,7 @@ describe(
           applicationStatus: ApplicationStatus.Completed,
           currentAssessmentInitialValues: {
             assessmentWorkflowId: "some fake id",
-            assessmentDate: addDays(1, new Date()),
+            assessmentDate: addDays(1),
             studentAssessmentStatus: StudentAssessmentStatus.Submitted,
           },
         },
@@ -381,7 +381,7 @@ describe(
             applicationStatus: ApplicationStatus.Overwritten,
             currentAssessmentInitialValues: {
               assessmentWorkflowId: "some fake id",
-              assessmentDate: addDays(-1, new Date()),
+              assessmentDate: addDays(-1),
               studentAssessmentStatus: StudentAssessmentStatus.Completed,
             },
           },
@@ -395,7 +395,7 @@ describe(
           applicationStatus: ApplicationStatus.Cancelled,
           currentAssessmentInitialValues: {
             assessmentWorkflowId: "some fake id",
-            assessmentDate: addDays(1, new Date()),
+            assessmentDate: addDays(1),
             studentAssessmentStatus: StudentAssessmentStatus.CancellationQueued,
           },
         },
@@ -470,7 +470,7 @@ describe(
           applicationStatus: ApplicationStatus.Completed,
           currentAssessmentInitialValues: {
             assessmentWorkflowId: "some fake id",
-            assessmentDate: addDays(1, new Date()),
+            assessmentDate: addDays(1),
             studentAssessmentStatus: StudentAssessmentStatus.Submitted,
           },
           firstDisbursementInitialValues: {
@@ -527,7 +527,7 @@ describe(
               applicationStatus: ApplicationStatus.Completed,
               currentAssessmentInitialValues: {
                 assessmentWorkflowId: "some fake id",
-                assessmentDate: addDays(1, new Date()),
+                assessmentDate: addDays(1),
                 studentAssessmentStatus: StudentAssessmentStatus.Submitted,
               },
             },
