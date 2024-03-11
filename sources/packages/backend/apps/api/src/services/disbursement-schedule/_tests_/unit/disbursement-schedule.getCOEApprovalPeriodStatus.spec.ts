@@ -1,7 +1,9 @@
 import {
+  AssessmentSequentialProcessingService,
   ConfirmationOfEnrollmentService,
   NotificationActionsService,
   SequenceControlService,
+  SystemUsersService,
 } from "@sims/services";
 import { DataSource, Repository } from "typeorm";
 import { COE_WINDOW, addDays } from "@sims/utilities";
@@ -17,11 +19,16 @@ describe("DisbursementScheduleService-getCOEApprovalPeriodStatus", () => {
     const sequenceService = {} as SequenceControlService;
     const disbursementScheduleRepo = {} as Repository<DisbursementSchedule>;
     const notificationActionsService = {} as NotificationActionsService;
+    const assessmentSequentialProcessingService =
+      {} as AssessmentSequentialProcessingService;
+    const systemUsersService = {} as SystemUsersService;
     service = new ConfirmationOfEnrollmentService(
       disbursementScheduleRepo,
       dataSource,
       sequenceService,
       notificationActionsService,
+      assessmentSequentialProcessingService,
+      systemUsersService,
     );
   });
 
