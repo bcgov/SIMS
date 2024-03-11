@@ -110,12 +110,9 @@ export class AssessmentSequentialProcessingService {
     } as StudentAssessment;
     // Update the student appeal record for the student assessment if it exists.
     if (futureSequencedApplication.currentAssessmentAppealId) {
-      impactedApplication.currentAssessment = {
-        ...impactedApplication.currentAssessment,
-        studentAppeal: {
-          id: futureSequencedApplication.currentAssessmentAppealId,
-        } as StudentAppeal,
-      } as StudentAssessment;
+      impactedApplication.currentAssessment.studentAppeal = {
+        id: futureSequencedApplication.currentAssessmentAppealId,
+      } as StudentAppeal;
     }
     return applicationRepo.save(impactedApplication);
   }

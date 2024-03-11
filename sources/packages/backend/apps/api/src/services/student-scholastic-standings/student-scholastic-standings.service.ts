@@ -258,12 +258,9 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         } as StudentAssessment;
         // Update the student appeal record for the student assessment if it exists.
         if (application.currentAssessment.studentAppeal) {
-          scholasticStanding.studentAssessment = {
-            ...scholasticStanding.studentAssessment,
-            studentAppeal: {
-              id: application.currentAssessment.studentAppeal.id,
-            } as StudentAppeal,
-          } as StudentAssessment;
+          scholasticStanding.studentAssessment.studentAppeal = {
+            id: application.currentAssessment.studentAppeal.id,
+          } as StudentAppeal;
         }
       } else {
         // If unsuccessful weeks, then add to the column.

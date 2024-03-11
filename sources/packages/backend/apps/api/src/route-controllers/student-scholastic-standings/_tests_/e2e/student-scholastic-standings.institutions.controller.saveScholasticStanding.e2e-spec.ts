@@ -85,12 +85,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
           StudentScholasticStandingChangeType.ChangeInIntensity,
       },
     };
-    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-      valid: false,
-      formName: FormNames.ReportScholasticStandingChange,
-      data: { data: invalidPayload.data },
-    });
-    formService.dryRunSubmission = dryRunSubmissionMock;
+    mockFormioDryRun({ validDryRun: false, payload: invalidPayload });
     // Institution token.
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -259,10 +254,14 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
    * Centralized method to handle the form.io mock
    * @param options method options:
    * - `validDryRun`: boolean false indicates that the form mock resolved value is invalid. Default value is true.
+   * - `payload`: payload to be sent to the form to check for validation
    */
-  function mockFormioDryRun(options?: { validDryRun?: boolean }): void {
+  function mockFormioDryRun(options?: {
+    validDryRun?: boolean;
+    payload?: ScholasticStandingAPIInDTO;
+  }): void {
     const validDryRun = options?.validDryRun ?? true;
-    payload = {
+    payload = options?.payload ?? {
       data: {
         booksAndSupplies: 1000,
         dateOfChange: getISODateOnlyString(new Date()),
