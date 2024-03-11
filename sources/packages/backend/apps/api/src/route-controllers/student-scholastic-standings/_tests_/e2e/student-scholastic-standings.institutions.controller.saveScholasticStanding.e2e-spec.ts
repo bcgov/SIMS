@@ -251,10 +251,10 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
   });
 
   /**
-   * Centralized method to handle the form.io mock
+   * Centralized method to handle the form.io mock.
    * @param options method options:
    * - `validDryRun`: boolean false indicates that the form mock resolved value is invalid. Default value is true.
-   * - `payload`: payload to be sent to the form to check for validation
+   * - `payload`: payload to be sent to the form to check for validation.
    */
   function mockFormioDryRun(options?: {
     validDryRun?: boolean;
