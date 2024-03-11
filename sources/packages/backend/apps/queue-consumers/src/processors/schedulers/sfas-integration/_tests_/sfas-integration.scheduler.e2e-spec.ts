@@ -89,7 +89,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     const studentRestrictionsCount = await db.studentRestriction.count({
       where: {
         student: { id: sharedStudent.id },
-        restriction: { restrictionCode: "LGCY" },
+        restriction: { restrictionCode: RestrictionCode.LGCY },
         isActive: true,
       },
     });
@@ -98,7 +98,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       relations: { creator: true },
       where: {
         student: { id: sharedStudent.id },
-        restriction: { restrictionCode: "LGCY" },
+        restriction: { restrictionCode: RestrictionCode.LGCY },
         isActive: true,
       },
     });
@@ -115,13 +115,10 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       "Should insert a restriction after mapping it to SIMS restriction when it is either inactive or is not at all present in the SIMS student restrictions, ",
     async () => {
       // Arrange
-      const restrictionB6B = await findRestriction(RestrictionCode.B6B);
-      const restrictionLGCY = await findRestriction(RestrictionCode.LGCY);
-      const restrictionSSR = await findRestriction(RestrictionCode.SSR);
-      await saveStudentRestriction(restrictionB6B);
-      await saveStudentRestriction(restrictionLGCY);
-      const studentRestrictionSSR = await saveStudentRestriction(
-        restrictionSSR,
+      await findAndSaveRestriction(RestrictionCode.B6B);
+      await findAndSaveRestriction(RestrictionCode.LGCY);
+      const studentRestrictionSSR = await findAndSaveRestriction(
+        RestrictionCode.SSR,
       );
       studentRestrictionSSR.isActive = false;
       await db.studentRestriction.save(studentRestrictionSSR);
@@ -162,28 +159,19 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
   );
 
   /**
-   * Saves student restrictions.
-   * @param restriction restriction to be saved.
+   * Gets the restriction by the restriction code and saves the student restriction.
+   * @param restrictionCode restriction code to find and then save the student restriction.
    * @returns the saved student restriction.
    */
-  async function saveStudentRestriction(
-    restriction: Restriction,
+  async function findAndSaveRestriction(
+    restrictionCode: RestrictionCode,
   ): Promise<StudentRestriction> {
+    const restriction = await db.restriction.findOne({
+      where: { restrictionCode },
+    });
     return saveFakeStudentRestriction(db.dataSource, {
       student: sharedStudent,
       restriction,
-    });
-  }
-  /**
-   * Gets the restriction by the restriction code.
-   * @param restrictionCode restriction code to search.
-   * @returns the found restriction.
-   */
-  async function findRestriction(
-    restrictionCode: RestrictionCode,
-  ): Promise<Restriction> {
-    return db.restriction.findOne({
-      where: { restrictionCode },
     });
   }
 });
