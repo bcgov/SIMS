@@ -59,7 +59,7 @@ SET report_sql = (
             applications.data ->> ''exceptionalExpensesApplicationException'' as "Exceptional expense amount",
             applications.data ->> ''daycareCosts11YearsOrUnder'' as "Daycare cost amount",
             applications.data ->> ''totalUnsubsidizedDayCareCostsDuringClassHoursForTheProposedStudyPeriodForDisabledInfirmedDependents12YearsOfAgeAndOlderPanel'' as "Unsubsidized daycare amount",
-            applications.data ->> ''childSupport'' as "Child/Spousal Support amount",
+            applications.data ->> ''childSupport'' as "Child/Partner Support amount",
             applications.data ->> ''livingathomeRent'' as "Living in parent house and paying living expenses amount",
             applications.data ->> ''transportationcostsEstimate'' as "Additional transportation amount (as applicable)",
             -- Parent Info Self-Reported by Student
@@ -93,13 +93,13 @@ SET report_sql = (
             parent2.supporting_data ->> ''totalIncomeTaxLine43500'' as "Parent 2 Income tax paid (Line 43500)",
             parent2.supporting_data ->> ''parentalContributions'' as "Parent 2 contribution to student",
             parent2.supporting_data ->> ''parentsOtherDependants'' as "Parent 2 dependants other than applicant",
-            jsonb_array_length(parent1.supporting_data -> ''parentDependentTable'') as "Parent 2 number of other dependants",
+            jsonb_array_length(parent2.supporting_data -> ''parentDependentTable'') as "Parent 2 number of other dependants",
             parent2_dependant_number_post_sec_school.count as "Parent 2 number of dependants on post secondary school",
             parent2_dependant_number_disability.count as "Parent 2 number of dependants with disability",
-            -- Spouse Info
-            partner_users.first_name as "Spouse''s first name",
-            partner_users.last_name as "Spouse''s last name",
-            partner.sin as "Spouse''s SIN",
+            -- Partner Info
+            partner_users.first_name as "Partner''s first name",
+            partner_users.last_name as "Partner''s last name",
+            partner.sin as "Partner''s SIN",
             partner.supporting_data ->> ''totalIncome'' as "Partner income",
             partner.supporting_data ->> ''partnerEmployed'' as "Partner employment during study period (Yes/No)",
             partner.supporting_data ->> ''partnerCaringForDependant'' as "Partner caring for dependant (Yes/No )",
@@ -164,15 +164,15 @@ SET report_sql = (
             student_scholastic_standings.submitted_data ->> ''numberOfUnsuccessfulWeeks'' as "Number of unsuccessful weeks",
             student_scholastic_standings.unsuccessful_weeks as "Total number of unsuccessful weeks for that student",
             -- Assessed Costs Info
-            ''--TBD--'' as "Tuition", --offeringActualTuitionCosts
+            current_assessment.assessment_data ->> ''tuitionCost'' as "Tuition",
             ''--TBD--'' as "Mandatory fees", --offeringMandatoryFees
             current_assessment.assessment_data ->> ''booksAndSuppliesCost'' as "Books and supplies",
             current_assessment.assessment_data ->> ''exceptionalEducationCost'' as "Exceptional education costs",
             current_assessment.assessment_data ->> ''miscellaneousAllowance'' as "Living allowance",
             current_assessment.assessment_data ->> ''transportationCost'' as "Return transportation costs",
             current_assessment.assessment_data ->> ''childcareCost'' as "Child care costs",
-            current_assessment.assessment_data ->> ''tuitionCost'' as "Other transportation costs (appeal)",
-            ''--TBD--'' as "Total assessed costs", --calculatedDataTotalCosts
+            ''--TBD--'' as "Other transportation costs (appeal)",
+            current_assessment.assessment_data ->> ''totalAssessedCost'' as "Total assessed costs", --calculatedDataTotalCosts
             -- Assessed Resources Info
             ''--TBD--'' as "Contribution from targeted funds ",
             ''--TBD--'' as "Contribution from scholarships/bursaries/awards",
@@ -181,7 +181,7 @@ SET report_sql = (
             ''--TBD--'' as "Parental asset contribution",
             ''--TBD--'' as "Parental voluntary contribution",
             ''--TBD--'' as "Parent contribution",
-            ''--TBD--'' as "Spouse contribution",
+            ''--TBD--'' as "Partner contribution",
             ''--TBD--'' as "Other resources ",
             ''--TBD--'' as "Total assessed resources",
             -- Assessed Need
