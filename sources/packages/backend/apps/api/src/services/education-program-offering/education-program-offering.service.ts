@@ -22,6 +22,7 @@ import {
   StudentAssessmentStatus,
   StudyBreaksAndWeeks,
   isDatabaseConstraintError,
+  StudentAppeal,
 } from "@sims/sims-db";
 import { DataSource, In, Repository, UpdateResult } from "typeorm";
 import {
@@ -1064,7 +1065,9 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .addSelect("assessment.assessmentData IS NULL", "hasAssessmentData")
       .addSelect("application.data->>'workflowName'", "workflowName")
       .addSelect("assessment.assessmentWorkflowId", "assessmentWorkflowId")
+      .addSelect("studentAppeal.id", "assessmentAppealId")
       .innerJoin("application.currentAssessment", "assessment")
+      .leftJoin("assessment.studentAppeal", "studentAppeal")
       .innerJoin(
         EducationProgramOffering,
         "offering",
@@ -1087,6 +1090,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       "workflowName",
       "assessmentWorkflowId",
       "hasAssessmentData",
+      "assessmentAppealId",
     );
   }
 
@@ -1155,6 +1159,15 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
             submittedBy: auditUser,
             submittedDate: currentDate,
           } as StudentAssessment;
+          // Update the student appeal record for the student assessment if it exists.
+          if (application.assessmentAppealId) {
+            application.currentAssessment = {
+              ...application.currentAssessment,
+              studentAppeal: {
+                id: application.assessmentAppealId,
+              } as StudentAppeal,
+            } as StudentAssessment;
+          }
         }
 
         // If the application which is affected by offering change is not completed

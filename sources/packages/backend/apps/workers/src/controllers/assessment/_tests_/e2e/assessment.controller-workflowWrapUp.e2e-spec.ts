@@ -137,12 +137,11 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
         },
       },
     );
-    // Student appeal for the impacted application and its student assessment.
-    const studentAppeal = createFakeStudentAppeal({
-      application: impactedApplication,
-      studentAssessment: impactedApplication.currentAssessment,
-    });
-    impactedApplication.currentAssessment.studentAppeal = studentAppeal;
+    impactedApplication.currentAssessment.studentAppeal =
+      createFakeStudentAppeal({
+        application: impactedApplication,
+        studentAssessment: impactedApplication.currentAssessment,
+      });
     await db.studentAssessment.save(impactedApplication.currentAssessment);
     // Dummy workflowData to be saved during workflow wrap up.
     const workflowData = {
@@ -184,7 +183,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
       AssessmentTriggerType.RelatedApplicationChanged,
     );
     expect(expectedAssessment.currentAssessment.studentAppeal.id).toBe(
-      studentAppeal.id,
+      impactedApplication.currentAssessment.studentAppeal.id,
     );
   });
 
