@@ -17,7 +17,7 @@ import * as Client from "ssh2-sftp-client";
 import { Job } from "bull";
 import * as path from "path";
 import { SFASIntegrationScheduler } from "../sfas-integration.scheduler";
-import { Restriction, Student, StudentRestriction } from "@sims/sims-db";
+import { Student, StudentRestriction } from "@sims/sims-db";
 import { SystemUsersService } from "@sims/services";
 
 // SFAS received file mocks.
