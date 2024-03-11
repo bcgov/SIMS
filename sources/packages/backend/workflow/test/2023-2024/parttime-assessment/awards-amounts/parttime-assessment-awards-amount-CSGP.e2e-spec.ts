@@ -5,7 +5,7 @@ import {
 } from "../../../test-utils";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CSGP.`, () => {
-  it("Should determine federalAwardCSGPAmount when awardEligibilityCSGP is true and studentDataApplicationPDPPDStatus is true", async () => {
+  it("Should determine federalAwardCSGPAmount when awardEligibilityCSGP is true and studentDataApplicationPDPPDStatus is yes", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -45,6 +45,28 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     expect(calculatedAssessment.variables.federalAwardNetCSGPAmount).toBe(0);
     expect(calculatedAssessment.variables.finalFederalAwardNetCSGPAmount).toBe(
       0,
+    );
+  });
+
+  it("Should determine federalAwardCSGPAmount when awardEligibilityCSGP is true, no CSGP awarded in the program year previously and studentDataApplicationPDPPDStatus is yes", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.studentDataApplicationPDPPDStatus = "yes";
+    assessmentConsolidatedData.programYearTotalFullTimeCSGP = undefined;
+    assessmentConsolidatedData.programYearTotalPartTimeCSGP = undefined;
+
+    // Act
+    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+
+    // Assert
+    expect(calculatedAssessment.variables.programYearTotalCSGP).toBe(0);
+    expect(calculatedAssessment.variables.federalAwardNetCSGPAmount).toBe(2800);
+    expect(calculatedAssessment.variables.finalFederalAwardNetCSGPAmount).toBe(
+      2800,
     );
   });
 });

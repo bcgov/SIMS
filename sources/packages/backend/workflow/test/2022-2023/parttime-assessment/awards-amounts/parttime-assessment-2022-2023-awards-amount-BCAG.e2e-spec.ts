@@ -130,4 +130,57 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
     expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(false);
     expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(0);
   });
+
+  it("Should determine provincialAwardNetBCAGAmount when awardEligibilityBCAG is true and no BCAG awarded in the program year previously", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
+    assessmentConsolidatedData.studentDataRelationshipStatus = "married";
+    assessmentConsolidatedData.studentDataIsYourSpouseACanadianCitizen =
+      YesNoOptions.Yes;
+    assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
+    // Public institution
+    assessmentConsolidatedData.institutionType = InstitutionTypes.BCPublic;
+    assessmentConsolidatedData.programYearTotalPartTimeBCAG = undefined;
+
+    // Act
+    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+    // Assert
+    // awardEligibilityBCAG is true.
+    // provincialAwardNetBCAGAmount is 1000.
+    expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(true);
+    expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(
+      1000,
+    );
+  });
+
+  it("Should determine provincialAwardNetBCAGAmount as zero when awardEligibilityBCAG is true and difference between the programYearLimits and BCAG awarded in the program year previously is less than 100", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
+    assessmentConsolidatedData.studentDataRelationshipStatus = "married";
+    assessmentConsolidatedData.studentDataIsYourSpouseACanadianCitizen =
+      YesNoOptions.Yes;
+    assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
+    // Public institution
+    assessmentConsolidatedData.institutionType = InstitutionTypes.BCPublic;
+    assessmentConsolidatedData.programYearTotalPartTimeBCAG = 901;
+
+    // Act
+    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+    // Assert
+    // awardEligibilityBCAG is true.
+    // provincialAwardNetBCAGAmount is 0.
+    expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(true);
+    expect(calculatedAssessment.variables.limitAwardBCAGRemaining).toBe(99);
+    expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(0);
+  });
 });
