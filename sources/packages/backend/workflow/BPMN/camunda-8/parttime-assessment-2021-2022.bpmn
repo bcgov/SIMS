@@ -656,7 +656,8 @@
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=  if (calculatedDataTotalFamilyIncome &#60;= dmnPartTimeAwardFamilySizeVariables.limitAwardBCAGIncomeCap)&#10;then dmnPartTimeAwardAllowableLimits.limitAwardBCAGAmount&#10;else&#10;  max(dmnPartTimeAwardAllowableLimits.limitAwardBCAGAmount - ((calculatedDataTotalFamilyIncome - dmnPartTimeAwardFamilySizeVariables.limitAwardBCAGIncomeCap) * dmnPartTimeAwardFamilySizeVariables.limitAwardBCAGSlope),&#10;     100&#10;  )" target="federalAwardBCAGAmount" />
-          <zeebe:output source="=if ((awardEligibilityBCAG = true) and (federalAwardBCAGAmount &#62;= 100))&#10;then&#10;  min(&#10;     calculatedDataTotalRemainingNeed3,&#10;     max(min(dmnPartTimeAwardAllowableLimits.limitAwardBCAGAmount - programYearTotalPartTimeBCAG, federalAwardBCAGAmount),0)&#10;  )&#10;else&#10;0" target="provincialAwardNetBCAGAmount" />
+          <zeebe:output source="=dmnPartTimeAwardAllowableLimits.limitAwardBCAGAmount - programYearTotalPartTimeBCAG" target="limitAwardBCAGRemaining" />
+          <zeebe:output source="=if (awardEligibilityBCAG = true and federalAwardBCAGAmount &#62;= 100 and limitAwardBCAGRemaining &#62;= 100)&#10;then&#10;  min(calculatedDataTotalRemainingNeed3, limitAwardBCAGRemaining, federalAwardBCAGAmount)&#10;else&#10;0" target="provincialAwardNetBCAGAmount" />
           <zeebe:output source="=calculatedDataTotalRemainingNeed3 - provincialAwardNetBCAGAmount" target="calculatedDataTotalRemainingNeed4" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
@@ -718,9 +719,16 @@
       <bpmn:incoming>Flow_1kzoimw</bpmn:incoming>
       <bpmn:outgoing>Flow_10dvc27</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateThrowEvent id="Event_0irnnvd" name="Program Year Total both FT and PT">
+    <bpmn:intermediateThrowEvent id="Event_0irnnvd" name="Program Year Total Initialization">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
+          <zeebe:output source="=if(programYearTotalFullTimeCSGP = null) then 0 else programYearTotalFullTimeCSGP" target="programYearTotalFullTimeCSGP" />
+          <zeebe:output source="=if(programYearTotalPartTimeCSGP = null) then 0 else programYearTotalPartTimeCSGP" target="programYearTotalPartTimeCSGP" />
+          <zeebe:output source="=if(programYearTotalFullTimeSBSD = null) then 0 else programYearTotalFullTimeSBSD" target="programYearTotalFullTimeSBSD" />
+          <zeebe:output source="=if(programYearTotalPartTimeSBSD = null) then 0 else programYearTotalPartTimeSBSD" target="programYearTotalPartTimeSBSD" />
+          <zeebe:output source="=if(programYearTotalPartTimeBCAG = null) then 0 else programYearTotalPartTimeBCAG" target="programYearTotalPartTimeBCAG" />
+          <zeebe:output source="=if(programYearTotalPartTimeCSGD = null) then 0 else programYearTotalPartTimeCSGD" target="programYearTotalPartTimeCSGD" />
+          <zeebe:output source="=if(programYearTotalPartTimeCSPT = null) then 0 else programYearTotalPartTimeCSPT" target="programYearTotalPartTimeCSPT" />
           <zeebe:output source="=programYearTotalFullTimeSBSD + programYearTotalPartTimeSBSD" target="programYearTotalSBSD" />
           <zeebe:output source="=programYearTotalFullTimeCSGP + programYearTotalPartTimeCSGP" target="programYearTotalCSGP" />
         </zeebe:ioMapping>
@@ -732,7 +740,8 @@
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=if (calculatedDataTotalFamilyIncome &#60;= dmnPartTimeAwardFamilySizeVariables.limitAwardCSPTIncomeCap)&#10;then dmnPartTimeAwardAllowableLimits.limitAwardCSPTAmount&#10;else&#10;  max(dmnPartTimeAwardAllowableLimits.limitAwardCSPTAmount - ((calculatedDataTotalFamilyIncome - dmnPartTimeAwardFamilySizeVariables.limitAwardCSPTIncomeCap) * dmnPartTimeAwardFamilySizeVariables.limitAwardCSPTSlope),&#10;     100&#10;  )" target="federalAwardCSPTAmount" />
-          <zeebe:output source="=if (awardEligibilityCSPT = true and calculatedDataTotalRemainingNeed1 &#62;= 100)&#10;then&#10;  min(&#10;     calculatedDataTotalRemainingNeed1,&#10;     min(dmnPartTimeAwardAllowableLimits.limitAwardCSPTAmount, federalAwardCSPTAmount)&#10;  )&#10;else&#10;0" target="federalAwardNetCSPTAmount" />
+          <zeebe:output source="=dmnPartTimeAwardAllowableLimits.limitAwardCSPTAmount - programYearTotalPartTimeCSPT" target="limitAwardCSPTRemaining" />
+          <zeebe:output source="=if (awardEligibilityCSPT = true and calculatedDataTotalRemainingNeed1 &#62;= 100 and limitAwardCSPTRemaining &#62;= 100)&#10;then&#10;  min(calculatedDataTotalRemainingNeed1, limitAwardCSPTRemaining, federalAwardCSPTAmount)&#10;else&#10;0" target="federalAwardNetCSPTAmount" />
           <zeebe:output source="=max(0,(calculatedDataTotalRemainingNeed1 - federalAwardNetCSPTAmount))" target="calculatedDataTotalRemainingNeed2" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>

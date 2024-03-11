@@ -261,6 +261,7 @@ export interface CalculatedAssessmentModel {
   awardEligibilityCSPT: boolean;
   federalAwardCSPTAmount: number;
   federalAwardNetCSPTAmount: number;
+  limitAwardCSPTRemaining: number;
   finalFederalAwardNetCSPTAmount: number;
   // CSGP
   finalFederalAwardNetCSGPAmount: number;
@@ -268,6 +269,7 @@ export interface CalculatedAssessmentModel {
   finalFederalAwardNetCSGDAmount: number;
   // BCAG
   federalAwardBCAGAmount: number;
+  limitAwardBCAGRemaining: number;
   finalProvincialAwardNetBCAGAmount: number;
   // SBSD
   finalProvincialAwardNetSBSDAmount: number;

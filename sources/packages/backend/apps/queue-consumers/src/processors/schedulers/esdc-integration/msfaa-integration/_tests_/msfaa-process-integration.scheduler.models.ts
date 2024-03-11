@@ -64,7 +64,7 @@ export const MSFAA_PART_TIME_OTHER_COUNTRY: MSFAATestInputData = {
   provinceState: undefined,
   postalCode: undefined,
   country: "United States",
-  phone: "222222222222222",
+  phone: "####4*****^%$#@$^9",
   email: "jane.doe@somedomain.com",
   offeringIntensity: OfferingIntensity.partTime,
 };
@@ -84,7 +84,7 @@ export const MSFAA_PART_TIME_RELATIONSHIP_OTHER: MSFAATestInputData = {
   provinceState: "BC",
   postalCode: "H1H 1H1",
   country: "Canada",
-  phone: "9999999999999999999999",
+  phone: "99999999999999999999",
   email: "jane.doe@someotherdomain.com",
   offeringIntensity: OfferingIntensity.partTime,
 };
