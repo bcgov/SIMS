@@ -112,7 +112,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
 
   it(
     "Should not insert a restriction to SIMS student restrictions when the same restriction is imported from SFAS but is already active in SIMS or has a restriction resolution date, " +
-      "Should insert a restriction after mapping it to SIMS restriction when it is either inactive or is not at all present in the SIMS student restrictions, ",
+      "and it should insert a restriction after mapping it to SIMS restriction when it is either inactive or is not at all present in the SIMS student restrictions, ",
     async () => {
       // Arrange
       await findAndSaveRestriction(RestrictionCode.B6B);

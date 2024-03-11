@@ -60,7 +60,7 @@ export enum AssessmentDataType {
 export enum RestrictionCode {
   /**
    * When an institution report withdrawal for a FT course on a
-   * student WITH a "WTHD" restriction , then "SSR" restriction
+   * student with a "WTHD" restriction , then "SSR" restriction
    * is added to the student account.
    */
   SSR = "SSR",
