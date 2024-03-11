@@ -142,7 +142,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
     assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
     // Public institution
     assessmentConsolidatedData.institutionType = InstitutionTypes.BCPublic;
-    assessmentConsolidatedData.programYearTotalPartTimeBCAG = null;
+    assessmentConsolidatedData.programYearTotalPartTimeBCAG = undefined;
 
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(

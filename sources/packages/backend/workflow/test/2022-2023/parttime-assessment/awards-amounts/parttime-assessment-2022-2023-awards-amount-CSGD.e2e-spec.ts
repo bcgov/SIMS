@@ -236,7 +236,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
         DependentEligibility.Eligible0To18YearsOld,
       ),
     ];
-    assessmentConsolidatedData.programYearTotalPartTimeCSGD = null;
+    assessmentConsolidatedData.programYearTotalPartTimeCSGD = undefined;
 
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(

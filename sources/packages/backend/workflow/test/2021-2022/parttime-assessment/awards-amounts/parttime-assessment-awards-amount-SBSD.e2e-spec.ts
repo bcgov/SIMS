@@ -96,8 +96,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-SB
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataApplicationPDPPDStatus = "yes";
-    assessmentConsolidatedData.programYearTotalPartTimeSBSD = null;
-    assessmentConsolidatedData.programYearTotalFullTimeSBSD = null;
+    assessmentConsolidatedData.programYearTotalPartTimeSBSD = undefined;
+    assessmentConsolidatedData.programYearTotalFullTimeSBSD = undefined;
 
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(

@@ -113,7 +113,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.studentDataIsYourSpouseACanadianCitizen =
       YesNoOptions.Yes;
     assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
-    assessmentConsolidatedData.programYearTotalPartTimeCSPT = null;
+    assessmentConsolidatedData.programYearTotalPartTimeCSPT = undefined;
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
