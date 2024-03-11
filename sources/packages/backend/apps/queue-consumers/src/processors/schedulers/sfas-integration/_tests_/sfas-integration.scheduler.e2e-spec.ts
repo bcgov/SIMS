@@ -32,7 +32,6 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
   let db: E2EDataSources;
   let sftpClientMock: DeepMocked<Client>;
   let sfasDownloadFolder: string;
-  let studentExists: Student;
   let sharedStudent: Student;
   let systemUsersService: SystemUsersService;
 
@@ -49,15 +48,14 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     processor = app.get(SFASIntegrationScheduler);
     systemUsersService = nestApplication.get(SystemUsersService);
     // Create student if it doesn't exist.
-    studentExists = await db.student.findOne({
+    sharedStudent = await db.student.findOne({
       where: {
         birthDate: getISODateOnlyString(new Date("1998-03-24")),
         user: { lastName: "FOUR" },
         sinValidation: { sin: "900041310" },
       },
     });
-    sharedStudent = studentExists;
-    if (!studentExists) {
+    if (!sharedStudent) {
       sharedStudent = await saveFakeStudent(db.dataSource);
       // Update the student to ensure that the student imported from SFAS is the same student as the one created above.
       sharedStudent.birthDate = getISODateOnlyString(new Date("1998-03-24"));
