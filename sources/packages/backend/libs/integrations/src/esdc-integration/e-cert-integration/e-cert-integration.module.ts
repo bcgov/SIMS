@@ -7,6 +7,7 @@ import {
   ConfirmationOfEnrollmentService,
   DisbursementScheduleSharedService,
   RestrictionSharedService,
+  AssessmentSequentialProcessingService,
 } from "@sims/services";
 import { ECertFullTimeFileFooter } from "./e-cert-full-time-integration/e-cert-files/e-cert-file-footer";
 import { ECertFullTimeFileHeader } from "./e-cert-full-time-integration/e-cert-files/e-cert-file-header";
@@ -76,6 +77,7 @@ import { PartTimeECertFileHandler } from "./part-time-e-cert-file-handler";
     PersistCalculationsStep,
     FullTimeCalculationProcess,
     PartTimeCalculationProcess,
+    AssessmentSequentialProcessingService,
   ],
   exports: [
     FullTimeECertFileHandler,
