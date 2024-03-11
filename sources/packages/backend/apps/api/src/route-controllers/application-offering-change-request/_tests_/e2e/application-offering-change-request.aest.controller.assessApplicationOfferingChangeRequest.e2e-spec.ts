@@ -11,7 +11,6 @@ import {
   createE2EDataSources,
   createFakeEducationProgramOffering,
   createFakeStudentAppeal,
-  createFakeStudentAssessment,
   saveFakeApplication,
   saveFakeApplicationOfferingRequestChange,
 } from "@sims/test-utils";
@@ -112,12 +111,8 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-assessApplicationO
     const offering = await db.educationProgramOffering.save(
       createFakeEducationProgramOffering({ auditUser: user }),
     );
-    const studentAssessment = createFakeStudentAssessment({
-      auditUser: user,
-      application,
-      offering,
-      studentAppeal,
-    });
+    const studentAssessment = application.currentAssessment;
+    studentAssessment.studentAppeal = studentAppeal;
     application.currentAssessment = studentAssessment;
     await db.application.save(application);
     const applicationOfferingChangeRequest =

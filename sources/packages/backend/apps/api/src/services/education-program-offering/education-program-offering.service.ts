@@ -1161,12 +1161,9 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
           } as StudentAssessment;
           // Update the student appeal record for the student assessment if it exists.
           if (application.assessmentAppealId) {
-            application.currentAssessment = {
-              ...application.currentAssessment,
-              studentAppeal: {
-                id: application.assessmentAppealId,
-              } as StudentAppeal,
-            } as StudentAssessment;
+            application.currentAssessment.studentAppeal = {
+              id: application.assessmentAppealId,
+            } as StudentAppeal;
           }
         }
 

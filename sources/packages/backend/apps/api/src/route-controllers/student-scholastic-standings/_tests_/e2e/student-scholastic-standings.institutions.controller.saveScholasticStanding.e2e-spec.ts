@@ -70,20 +70,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
   });
 
   beforeEach(async () => {
-    payload = {
-      data: {
-        booksAndSupplies: 1000,
-        dateOfChange: getISODateOnlyString(new Date()),
-        scholasticStandingChangeType:
-          StudentScholasticStandingChangeType.ChangeInIntensity,
-      },
-    };
-    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-      valid: true,
-      formName: FormNames.ReportScholasticStandingChange,
-      data: { data: payload.data },
-    });
-    formService.dryRunSubmission = dryRunSubmissionMock;
+    mockFormioDryRun();
   });
 
   it("Should throw bad request exception error when the payload is invalid for formIO dryRun test.", async () => {
@@ -267,4 +254,21 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       queryApplication.currentAssessment.studentScholasticStanding.id,
     ).toBe(createdScholasticStandingId);
   });
+
+  function mockFormioDryRun(options?: { validDryRun?: boolean }): void {
+    const validDryRun = options?.validDryRun ?? true;
+    payload = {
+      data: {
+        booksAndSupplies: 1000,
+        dateOfChange: getISODateOnlyString(new Date()),
+        scholasticStandingChangeType:
+          StudentScholasticStandingChangeType.ChangeInIntensity,
+      },
+    };
+    formService.dryRunSubmission = jest.fn().mockResolvedValue({
+      valid: validDryRun,
+      formName: FormNames.ReportScholasticStandingChange,
+      data: { data: payload.data },
+    });
+  }
 });

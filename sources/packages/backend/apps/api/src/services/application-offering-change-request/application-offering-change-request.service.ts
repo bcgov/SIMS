@@ -609,12 +609,9 @@ export class ApplicationOfferingChangeRequestService {
         } as StudentAssessment;
         // Update the student appeal record for the student assessment if it exists.
         if (studentAssessment.studentAppeal) {
-          application.currentAssessment = {
-            ...application.currentAssessment,
-            studentAppeal: {
-              id: studentAssessment.studentAppeal.id,
-            } as StudentAppeal,
-          } as StudentAssessment;
+          application.currentAssessment.studentAppeal = {
+            id: studentAssessment.studentAppeal.id,
+          } as StudentAppeal;
         }
       }
       await transactionalEntityManager

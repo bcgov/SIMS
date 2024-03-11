@@ -140,7 +140,6 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
     impactedApplication.currentAssessment.studentAppeal =
       createFakeStudentAppeal({
         application: impactedApplication,
-        studentAssessment: impactedApplication.currentAssessment,
       });
     await db.studentAssessment.save(impactedApplication.currentAssessment);
     // Dummy workflowData to be saved during workflow wrap up.
