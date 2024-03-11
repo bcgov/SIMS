@@ -126,4 +126,28 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     ).toBeGreaterThan(100);
     expect(calculatedAssessment.variables.federalAwardNetCSPTAmount).toBe(3600);
   });
+
+  it("Should determine federalAwardNetCSPTAmount as zero when awardEligibilityCSPT is true and difference between the programYearLimits and CSPT awarded in the program year previously is less than 100", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.studentDataCRAReportedIncome = 60001;
+    assessmentConsolidatedData.studentDataRelationshipStatus = "married";
+    assessmentConsolidatedData.studentDataIsYourSpouseACanadianCitizen =
+      YesNoOptions.Yes;
+    assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
+    assessmentConsolidatedData.programYearTotalPartTimeCSPT = 3501;
+    // Act
+    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+    // Assert
+    expect(calculatedAssessment.variables.awardEligibilityCSPT).toBe(true);
+    expect(calculatedAssessment.variables.limitAwardCSPTRemaining).toBe(99);
+    expect(
+      calculatedAssessment.variables.federalAwardCSPTAmount,
+    ).toBeGreaterThan(100);
+    expect(calculatedAssessment.variables.federalAwardNetCSPTAmount).toBe(0);
+  });
 });
