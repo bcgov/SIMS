@@ -9,7 +9,6 @@ import {
 import {
   E2EDataSources,
   createE2EDataSources,
-  createFakeEducationProgramOffering,
   createFakeStudentAppeal,
   saveFakeApplication,
   saveFakeApplicationOfferingRequestChange,
@@ -106,11 +105,7 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-assessApplicationO
     const application = await saveFakeApplication(db.dataSource, undefined, {
       applicationStatus: ApplicationStatus.Completed,
     });
-    const user = application.student.user;
     const studentAppeal = createFakeStudentAppeal({ application });
-    const offering = await db.educationProgramOffering.save(
-      createFakeEducationProgramOffering({ auditUser: user }),
-    );
     const studentAssessment = application.currentAssessment;
     studentAssessment.studentAppeal = studentAppeal;
     application.currentAssessment = studentAssessment;
@@ -167,10 +162,6 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-assessApplicationO
     expect(
       updatedApplicationOfferingChangeRequest.application.currentAssessment.id,
     ).not.toBe(studentAssessment.id);
-    expect(
-      updatedApplicationOfferingChangeRequest.application.currentAssessment
-        .offering.id,
-    ).not.toBe(offering.id);
     expect(
       updatedApplicationOfferingChangeRequest.application.currentAssessment
         .studentAppeal.id,

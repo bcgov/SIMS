@@ -255,6 +255,11 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     ).toBe(createdScholasticStandingId);
   });
 
+  /**
+   * Centralized method to handle the form.io mock
+   * @param options method options:
+   * - `validDryRun`: boolean false indicates that the form mock resolved value is invalid. Default value is true.
+   */
   function mockFormioDryRun(options?: { validDryRun?: boolean }): void {
     const validDryRun = options?.validDryRun ?? true;
     payload = {
