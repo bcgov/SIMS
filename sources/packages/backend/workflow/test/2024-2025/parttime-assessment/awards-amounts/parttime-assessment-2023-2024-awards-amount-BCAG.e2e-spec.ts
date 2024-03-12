@@ -7,7 +7,7 @@ import { InstitutionTypes } from "../../../models";
 import { YesNoOptions } from "@sims/test-utils";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BCAG.`, () => {
-  it("Should determine federalAwardBCAGAmount, provincialAwardNetBCAGAmount when calculatedDataTotalFamilyIncome <= limitAwardBCAGIncomeCap", async () => {
+  it("Should determine federalAwardBCAGAmount when calculatedDataTotalFamilyIncome <= limitAwardBCAGIncomeCap", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -42,7 +42,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
     );
   });
 
-  it("Should determine federalAwardBCAGAmount when calculatedDataTotalFamilyIncome > limitAwardBCAGIncomeCap", async () => {
+  it("Should determine federalAwardBCAGAmount, provincialAwardNetBCAGAmount when calculatedDataTotalFamilyIncome > limitAwardBCAGIncomeCap", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -104,6 +104,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
     // awardEligibilityBCAG is true.
     // provincialAwardNetBCAGAmount is 700.
     expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(true);
+    expect(
+      calculatedAssessment.variables.federalAwardBCAGAmount,
+    ).toBeGreaterThan(100);
     expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(
       700,
     );

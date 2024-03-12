@@ -50,7 +50,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-SB
     ).toBe(310);
   });
 
-  it("Should determine provincialAwardNetSBSDAmount as zero when awardEligibilitySBSD is true, programYearTotalSBSD (programYearTotalFullTimeSBSD + programYearTotalPartTimeSBSD) is greater than the dmnPartTimeAwardAllowableLimits for SBSD", async () => {
+  it("Should determine provincialAwardNetSBSDAmount as zero when awardEligibilitySBSD is true, programYearTotalSBSD (programYearTotalFullTimeSBSD + programYearTotalPartTimeSBSD) is greater than the dmnPartTimeAwardAllowableLimits for SBSD ", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);

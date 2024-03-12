@@ -137,7 +137,7 @@ describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-child-car
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.offeringWeeks = 8;
       assessmentConsolidatedData.offeringCourseLoad = 20;
-      // Creates 2 eligible dependents.
+      // Creates 4 eligible and 4 not eligible dependents.
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentEligibleForChildcareCost(
           DependentChildCareEligibility.Eligible0To11YearsOld,
