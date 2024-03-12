@@ -9,6 +9,7 @@ import {
 import {
   E2EDataSources,
   createE2EDataSources,
+  createFakeStudentAppeal,
   saveFakeApplication,
   saveFakeApplicationOfferingRequestChange,
 } from "@sims/test-utils";
@@ -61,6 +62,7 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-assessApplicationO
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
     // Check if the application offering change request was assessed as expected.
+    // A new assessment with a new offering should be created and the existing student appeal should be copied.
     const updatedApplicationOfferingChangeRequest =
       await db.applicationOfferingChangeRequest.findOne({
         select: {
@@ -98,6 +100,74 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-assessApplicationO
     ).toBe(applicationOfferingChangeRequest.requestedOffering.id);
   });
 
+  it("Should assess the student appeal of the current assessment for the provided application offering change request id.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(db.dataSource, undefined, {
+      applicationStatus: ApplicationStatus.Completed,
+    });
+    const studentAppeal = createFakeStudentAppeal({ application });
+    const studentAssessment = application.currentAssessment;
+    studentAssessment.studentAppeal = studentAppeal;
+    application.currentAssessment = studentAssessment;
+    await db.application.save(application);
+    const applicationOfferingChangeRequest =
+      await saveFakeApplicationOfferingRequestChange(
+        db,
+        {
+          application,
+        },
+        {
+          initialValues: {
+            applicationOfferingChangeRequestStatus:
+              ApplicationOfferingChangeRequestStatus.InProgressWithSABC,
+          },
+        },
+      );
+    const note = "Some dummy note.";
+    const payload = {
+      note,
+      applicationOfferingChangeRequestStatus:
+        ApplicationOfferingChangeRequestStatus.Approved,
+    };
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const endpoint = `/aest/application-offering-change-request/${applicationOfferingChangeRequest.id}`;
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+    // Check if the application offering change request was assessed as expected.
+    // A new assessment with a new offering should be created and the existing student appeal should be copied.
+    const updatedApplicationOfferingChangeRequest =
+      await db.applicationOfferingChangeRequest.findOne({
+        select: {
+          id: true,
+          application: {
+            id: true,
+            currentAssessment: {
+              id: true,
+              offering: { id: true },
+              studentAppeal: { id: true },
+            },
+          },
+        },
+        relations: {
+          application: {
+            currentAssessment: { offering: true, studentAppeal: true },
+          },
+        },
+        where: { id: applicationOfferingChangeRequest.id },
+      });
+    expect(
+      updatedApplicationOfferingChangeRequest.application.currentAssessment.id,
+    ).not.toBe(studentAssessment.id);
+    expect(
+      updatedApplicationOfferingChangeRequest.application.currentAssessment
+        .studentAppeal.id,
+    ).toBe(studentAppeal.id);
+  });
+
   it("Should not create a new assessment when the application offering change request has been declined by the ministry user.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource, undefined, {
@@ -131,6 +201,7 @@ describe("ApplicationOfferingChangeRequestAESTController(e2e)-assessApplicationO
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
     // Check if the application offering change request was assessed as expected.
+    // A new assessment with a new offering should be created and the existing student appeal should be copied.
     const updatedApplicationOfferingChangeRequest =
       await db.applicationOfferingChangeRequest.findOne({
         select: {

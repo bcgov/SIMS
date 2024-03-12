@@ -5,6 +5,7 @@ import {
   Assessment,
   AssessmentTriggerType,
   EducationProgramOffering,
+  StudentAppeal,
   StudentAssessment,
   StudentAssessmentStatus,
   User,
@@ -15,6 +16,7 @@ export function createFakeStudentAssessment(
     auditUser: User;
     application?: Application;
     offering?: EducationProgramOffering;
+    studentAppeal?: StudentAppeal;
   },
   options?: { initialValue?: Partial<StudentAssessment> },
 ): StudentAssessment {
@@ -34,7 +36,7 @@ export function createFakeStudentAssessment(
   assessment.offering =
     relations?.offering ??
     createFakeEducationProgramOffering({ auditUser: relations?.auditUser });
-  assessment.studentAppeal = null;
+  assessment.studentAppeal = relations?.studentAppeal ?? null;
   assessment.studentScholasticStanding = null;
   assessment.noaApprovalStatus = null;
   assessment.disbursementSchedules = [];

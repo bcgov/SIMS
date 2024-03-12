@@ -103,7 +103,7 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @Body() payload: ScholasticStandingAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<void> {
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
     try {
       const submissionResult =
         await this.formService.dryRunSubmission<ScholasticStanding>(
@@ -114,12 +114,14 @@ export class ScholasticStandingInstitutionsController extends BaseController {
       if (!submissionResult.valid) {
         throw new BadRequestException("Invalid submission.");
       }
-      await this.studentScholasticStandingsService.processScholasticStanding(
-        locationId,
-        applicationId,
-        userToken.userId,
-        submissionResult.data.data,
-      );
+      const newStudentScholasticStanding =
+        await this.studentScholasticStandingsService.processScholasticStanding(
+          locationId,
+          applicationId,
+          userToken.userId,
+          submissionResult.data.data,
+        );
+      return { id: newStudentScholasticStanding.id };
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         switch (error.name) {

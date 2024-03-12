@@ -13,6 +13,7 @@ import {
   StudentRestriction,
   User,
   StudentScholasticStandingChangeType,
+  StudentAppeal,
 } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 import {
@@ -79,9 +80,11 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         "user.firstName",
         "user.lastName",
         "user.email",
+        "studentAppeal.id",
       ])
       .innerJoin("application.currentAssessment", "currentAssessment")
       .innerJoin("currentAssessment.offering", "offering")
+      .leftJoin("currentAssessment.studentAppeal", "studentAppeal")
       .innerJoin("application.location", "location")
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
@@ -253,6 +256,12 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
           submittedDate: now,
           offering: { id: savedOffering.id } as EducationProgramOffering,
         } as StudentAssessment;
+        // Update the student appeal record for the student assessment if it exists.
+        if (application.currentAssessment.studentAppeal) {
+          scholasticStanding.studentAssessment.studentAppeal = {
+            id: application.currentAssessment.studentAppeal.id,
+          } as StudentAppeal;
+        }
       } else {
         // If unsuccessful weeks, then add to the column.
         // * No cloning of offering and re-assessment is required in this scenario.

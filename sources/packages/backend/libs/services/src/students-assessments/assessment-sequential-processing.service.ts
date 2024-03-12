@@ -9,6 +9,7 @@ import {
   DisbursementScheduleStatus,
   DisbursementValueType,
   OfferingIntensity,
+  StudentAppeal,
   StudentAssessment,
   StudentAssessmentStatus,
   User,
@@ -53,10 +54,15 @@ export class AssessmentSequentialProcessingService {
         student: {
           id: true,
         },
+        currentAssessment: {
+          id: true,
+          studentAppeal: { id: true },
+        },
       },
       relations: {
         student: true,
         programYear: true,
+        currentAssessment: { studentAppeal: true },
       },
       where: {
         applicationStatus: Not(ApplicationStatus.Overwritten),
@@ -102,6 +108,12 @@ export class AssessmentSequentialProcessingService {
       submittedBy: auditUser,
       submittedDate: now,
     } as StudentAssessment;
+    // Update the student appeal record for the student assessment if it exists.
+    if (futureSequencedApplication.currentAssessmentAppealId) {
+      impactedApplication.currentAssessment.studentAppeal = {
+        id: futureSequencedApplication.currentAssessmentAppealId,
+      } as StudentAppeal;
+    }
     return applicationRepo.save(impactedApplication);
   }
 
@@ -288,11 +300,13 @@ export class AssessmentSequentialProcessingService {
       .addSelect("application.applicationNumber", "applicationNumber")
       .addSelect("application.applicationStatus", "applicationStatus")
       .addSelect("currentAssessmentOffering.id", "currentAssessmentOfferingId")
+      .addSelect("currentAssessmentAppeal.id", "currentAssessmentAppealId")
       .addSelect(`(${assessmentDateSubQuery})`, referenceAssessmentDateColumn)
       .innerJoin("application.student", "student")
       .innerJoin("application.programYear", "programYear")
       .innerJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("currentAssessment.offering", "currentAssessmentOffering")
+      .leftJoin("currentAssessment.studentAppeal", "currentAssessmentAppeal")
       .where("student.id = :studentId", { studentId })
       .andWhere("programYear.id = :programYearId", { programYearId })
       .andWhere("application.applicationStatus != :overwrittenStatus", {

@@ -13,6 +13,7 @@ import {
   NoteType,
   AssessmentTriggerType,
   StudentAssessment,
+  StudentAppeal,
 } from "@sims/sims-db";
 import { DataSource, Brackets, Repository, In } from "typeorm";
 import { PaginatedResults, PaginationOptions } from "../../utilities";
@@ -305,6 +306,7 @@ export class ApplicationOfferingChangeRequestService {
               email: true,
             },
           },
+          currentAssessment: { id: true, studentAppeal: { id: true } },
         },
         assessedNote: {
           id: true,
@@ -317,6 +319,7 @@ export class ApplicationOfferingChangeRequestService {
           student: {
             user: true,
           },
+          currentAssessment: { studentAppeal: true },
         },
         activeOffering: true,
         requestedOffering: {
@@ -591,6 +594,8 @@ export class ApplicationOfferingChangeRequestService {
         applicationOfferingChangeRequestStatus ===
         ApplicationOfferingChangeRequestStatus.Approved
       ) {
+        // Access the student assessment if it exists.
+        const studentAssessment = application.currentAssessment;
         // Create a new assessment if the application offering change request status is approved.
         application.currentAssessment = {
           application,
@@ -602,6 +607,12 @@ export class ApplicationOfferingChangeRequestService {
           submittedBy: auditUser,
           submittedDate: currentDate,
         } as StudentAssessment;
+        // Update the student appeal record for the student assessment if it exists.
+        if (studentAssessment.studentAppeal) {
+          application.currentAssessment.studentAppeal = {
+            id: studentAssessment.studentAppeal.id,
+          } as StudentAppeal;
+        }
       }
       await transactionalEntityManager
         .getRepository(ApplicationOfferingChangeRequest)

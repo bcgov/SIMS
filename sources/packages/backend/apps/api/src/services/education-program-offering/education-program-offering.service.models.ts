@@ -48,6 +48,7 @@ export class ApplicationAssessmentSummary extends Application {
   assessmentWorkflowId: string;
   workflowName: string;
   hasAssessmentData: boolean;
+  assessmentAppealId?: number;
 }
 
 /**
