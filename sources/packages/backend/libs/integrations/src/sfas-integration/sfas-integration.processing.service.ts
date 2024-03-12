@@ -54,7 +54,28 @@ export class SFASIntegrationProcessingService {
         break;
       }
     }
-
+    // The following sequence of actions take place after the files have been imported and processed.
+    // The below steps need to run even if there were 0 files imported. For instance, in case of a new
+    // student account creation, when this scheduler is run again, even though there are no files to process,
+    // the insertStudentRestrictions method below will be responsible for inserting the restrictions for this
+    // student previously imported from SFAS.
+    this.logger.log("Updating student ids for SFAS individuals.");
+    await this.sfasIndividualService.updateStudentId();
+    this.logger.log("Student ids updated.");
+    this.logger.log(
+      "Updating and inserting new disbursement overaward balances from sfas to disbursement overawards table.",
+    );
+    await this.sfasIndividualService.updateDisbursementOverawards();
+    this.logger.log(
+      "New disbursement overaward balances inserted to disbursement overawards table.",
+    );
+    this.logger.log(
+      "Inserting student restrictions from SFAS restrictions data.",
+    );
+    await this.sfasRestrictionService.insertStudentRestrictions();
+    this.logger.log(
+      "Inserted student restrictions from SFAS restrictions data.",
+    );
     return results;
   }
 
@@ -138,23 +159,6 @@ export class SFASIntegrationProcessingService {
       }
       await Promise.all(promises);
       this.logger.log("Records imported.");
-      this.logger.log("Updating student ids for SFAS individuals.");
-      await this.sfasIndividualService.updateStudentId();
-      this.logger.log("Student ids updated.");
-      this.logger.log(
-        "Updating and inserting new disbursement overaward balances from sfas to disbursement overawards table.",
-      );
-      await this.sfasIndividualService.updateDisbursementOverawards();
-      this.logger.log(
-        "New disbursement overaward balances inserted to disbursement overawards table.",
-      );
-      this.logger.log(
-        "Inserting student restrictions from SFAS restrictions data.",
-      );
-      await this.sfasRestrictionService.insertStudentRestrictions();
-      this.logger.log(
-        "Inserted student restrictions from SFAS restrictions data.",
-      );
       if (result.success) {
         /**
          * Delete the file only if it was processed with success.
