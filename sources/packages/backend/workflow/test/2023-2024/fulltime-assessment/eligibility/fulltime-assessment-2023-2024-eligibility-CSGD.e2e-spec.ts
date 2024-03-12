@@ -19,35 +19,27 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
-        assessmentConsolidatedData.offeringStudyStartDate,
       ),
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible18To22YearsOldAttendingHighSchool,
-        assessmentConsolidatedData.offeringStudyStartDate,
       ),
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible18To22YearsOldDeclaredOnTaxes,
-        assessmentConsolidatedData.offeringStudyStartDate,
       ),
       createFakeStudentDependentEligible(
         DependentEligibility.EligibleOver22YearsOld,
-        assessmentConsolidatedData.offeringStudyStartDate,
       ),
       createFakeStudentDependentNotEligible(
         DependentEligibility.Eligible0To18YearsOld,
-        assessmentConsolidatedData.offeringStudyStartDate,
       ),
       createFakeStudentDependentNotEligible(
         DependentEligibility.Eligible18To22YearsOldAttendingHighSchool,
-        assessmentConsolidatedData.offeringStudyStartDate,
       ),
       createFakeStudentDependentNotEligible(
         DependentEligibility.Eligible18To22YearsOldDeclaredOnTaxes,
-        assessmentConsolidatedData.offeringStudyStartDate,
       ),
       createFakeStudentDependentNotEligible(
         DependentEligibility.EligibleOver22YearsOld,
-        assessmentConsolidatedData.offeringStudyStartDate,
       ),
     ];
     // Act
@@ -101,7 +93,6 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentNotEligible(
         DependentEligibility.Eligible0To18YearsOld,
-        assessmentConsolidatedData.offeringStudyStartDate,
       ),
     ];
     // Act

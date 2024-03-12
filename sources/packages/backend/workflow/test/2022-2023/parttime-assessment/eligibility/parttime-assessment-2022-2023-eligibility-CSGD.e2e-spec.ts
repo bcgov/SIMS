@@ -19,7 +19,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentEligible(
           DependentEligibility.Eligible0To18YearsOld,
-          assessmentConsolidatedData.offeringStudyStartDate,
+          { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
         ),
       ];
 
@@ -45,7 +45,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
-        assessmentConsolidatedData.offeringStudyStartDate,
+        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
     ];
     assessmentConsolidatedData.studentDataCRAReportedIncome = 100000;
