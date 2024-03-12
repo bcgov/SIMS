@@ -85,7 +85,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
           StudentScholasticStandingChangeType.ChangeInIntensity,
       },
     };
-    mockFormioDryRun({ validDryRun: false, payload: invalidPayload });
+    mockFormioDryRun({ validDryRun: false });
     // Institution token.
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -254,14 +254,10 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
    * Centralized method to handle the form.io mock.
    * @param options method options:
    * - `validDryRun`: boolean false indicates that the form mock resolved value is invalid. Default value is true.
-   * - `payload`: payload to be sent to the form to check for validation.
    */
-  function mockFormioDryRun(options?: {
-    validDryRun?: boolean;
-    payload?: ScholasticStandingAPIInDTO;
-  }): void {
+  function mockFormioDryRun(options?: { validDryRun?: boolean }): void {
     const validDryRun = options?.validDryRun ?? true;
-    payload = options?.payload ?? {
+    payload = {
       data: {
         booksAndSupplies: 1000,
         dateOfChange: getISODateOnlyString(new Date()),
