@@ -90,7 +90,7 @@ export function createFakeStudentDependentNotEligible(
   switch (eligibility) {
     case DependentEligibility.Eligible0To18YearsOld:
       return {
-        dateOfBirth: addToDateOnlyString(referenceDate, -23, "years"),
+        dateOfBirth: addToDateOnlyString(referenceDate, -21, "years"),
         attendingPostSecondarySchool: YesNoOptions.No,
         declaredOnTaxes: YesNoOptions.No,
       };
