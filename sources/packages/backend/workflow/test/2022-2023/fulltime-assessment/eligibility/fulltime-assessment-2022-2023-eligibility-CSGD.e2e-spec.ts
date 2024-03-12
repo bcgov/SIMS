@@ -80,6 +80,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.EligibleOver22YearsOld,
+        assessmentConsolidatedData.offeringStudyStartDate,
       ),
     ];
     // Act

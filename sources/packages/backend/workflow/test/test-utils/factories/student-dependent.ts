@@ -46,13 +46,13 @@ export function createFakeStudentDependentEligible(
   switch (eligibility) {
     case DependentEligibility.Eligible0To18YearsOld:
       return {
-        dateOfBirth: addToDateOnlyString(studyStartDate, -17.9, "years"),
+        dateOfBirth: addToDateOnlyString(studyStartDate, -17, "years"),
         attendingPostSecondarySchool: YesNoOptions.No,
         declaredOnTaxes: YesNoOptions.No,
       };
     case DependentEligibility.Eligible18To22YearsOldAttendingHighSchool:
       return {
-        dateOfBirth: addToDateOnlyString(studyStartDate, -18.1, "years"),
+        dateOfBirth: addToDateOnlyString(studyStartDate, -19, "years"),
         attendingPostSecondarySchool: YesNoOptions.Yes,
         declaredOnTaxes: YesNoOptions.No,
       };
@@ -64,7 +64,7 @@ export function createFakeStudentDependentEligible(
       };
     case DependentEligibility.EligibleOver22YearsOld:
       return {
-        dateOfBirth: addToDateOnlyString(studyStartDate, -22.1, "years"),
+        dateOfBirth: addToDateOnlyString(studyStartDate, -23, "years"),
         attendingPostSecondarySchool: YesNoOptions.No,
         declaredOnTaxes: YesNoOptions.Yes,
       };
@@ -90,7 +90,7 @@ export function createFakeStudentDependentNotEligible(
       };
     case DependentEligibility.Eligible18To22YearsOldAttendingHighSchool:
       return {
-        dateOfBirth: addToDateOnlyString(studyStartDate, -18.1, "years"),
+        dateOfBirth: addToDateOnlyString(studyStartDate, -19, "years"),
         attendingPostSecondarySchool: YesNoOptions.No,
         declaredOnTaxes: YesNoOptions.No,
       };
@@ -102,7 +102,7 @@ export function createFakeStudentDependentNotEligible(
       };
     case DependentEligibility.EligibleOver22YearsOld:
       return {
-        dateOfBirth: addToDateOnlyString(studyStartDate, -22.1, "years"),
+        dateOfBirth: addToDateOnlyString(studyStartDate, -23, "years"),
         attendingPostSecondarySchool: YesNoOptions.No,
         declaredOnTaxes: YesNoOptions.No,
       };
