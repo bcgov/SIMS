@@ -13,7 +13,9 @@ import { DataSource, Repository } from "typeorm";
 import {
   createE2EDataSources,
   createFakeDisbursementOveraward,
+  createFakeStudentAssessment,
   E2EDataSources,
+  getProviderInstanceForModule,
   saveFakeApplication,
   saveFakeApplicationDisbursements,
   saveFakeStudent,
@@ -21,7 +23,6 @@ import {
 import {
   Application,
   ApplicationStatus,
-  Assessment,
   AssessmentTriggerType,
   COEStatus,
   DisbursementOveraward,
@@ -32,8 +33,9 @@ import {
   StudentAssessmentStatus,
 } from "@sims/sims-db";
 import * as faker from "faker";
-
-jest.setTimeout(1200000);
+import { AssessmentSequentialProcessingService } from "@sims/services";
+import { TestingModule } from "@nestjs/testing";
+import { QueueConsumersModule } from "../../../../src/queue-consumers.module";
 
 describe(
   describeProcessorRootTest(QueueNames.CancelApplicationAssessment),
@@ -46,11 +48,13 @@ describe(
     let studentAssessmentRepo: Repository<StudentAssessment>;
     let disbursementOverawardRepo: Repository<DisbursementOveraward>;
     let disbursementScheduleRepo: Repository<DisbursementSchedule>;
+    let testingModule: TestingModule;
 
     beforeAll(async () => {
-      const { nestApplication, dataSource, zbClient } =
+      const { nestApplication, module, dataSource, zbClient } =
         await createTestingAppModule();
       app = nestApplication;
+      testingModule = module;
       zbClientMock = zbClient;
       appDataSource = dataSource;
       studentAssessmentRepo = dataSource.getRepository(StudentAssessment);
@@ -257,7 +261,7 @@ describe(
           applicationStatus: ApplicationStatus.Completed,
           currentAssessmentInitialValues: {
             assessmentWorkflowId: "some fake id",
-            assessmentDate: addDays(-1, new Date()),
+            assessmentDate: addDays(-1),
             studentAssessmentStatus: StudentAssessmentStatus.Completed,
           },
         },
@@ -286,7 +290,7 @@ describe(
           applicationStatus: ApplicationStatus.Completed,
           currentAssessmentInitialValues: {
             assessmentWorkflowId: "some fake id",
-            assessmentDate: addDays(1, new Date()),
+            assessmentDate: addDays(1),
             studentAssessmentStatus: StudentAssessmentStatus.Submitted,
           },
         },
@@ -342,7 +346,7 @@ describe(
           applicationStatus: ApplicationStatus.Completed,
           currentAssessmentInitialValues: {
             assessmentWorkflowId: "some fake id",
-            assessmentDate: addDays(1, new Date()),
+            assessmentDate: addDays(1),
             studentAssessmentStatus: StudentAssessmentStatus.Submitted,
           },
         },
@@ -377,7 +381,7 @@ describe(
             applicationStatus: ApplicationStatus.Overwritten,
             currentAssessmentInitialValues: {
               assessmentWorkflowId: "some fake id",
-              assessmentDate: addDays(-1, new Date()),
+              assessmentDate: addDays(-1),
               studentAssessmentStatus: StudentAssessmentStatus.Completed,
             },
           },
@@ -391,7 +395,7 @@ describe(
           applicationStatus: ApplicationStatus.Cancelled,
           currentAssessmentInitialValues: {
             assessmentWorkflowId: "some fake id",
-            assessmentDate: addDays(1, new Date()),
+            assessmentDate: addDays(1),
             studentAssessmentStatus: StudentAssessmentStatus.CancellationQueued,
           },
         },
@@ -466,7 +470,7 @@ describe(
           applicationStatus: ApplicationStatus.Completed,
           currentAssessmentInitialValues: {
             assessmentWorkflowId: "some fake id",
-            assessmentDate: addDays(1, new Date()),
+            assessmentDate: addDays(1),
             studentAssessmentStatus: StudentAssessmentStatus.Submitted,
           },
           firstDisbursementInitialValues: {
@@ -488,6 +492,98 @@ describe(
         "No impacts were detected on future applications.",
       );
     });
+
+    it(
+      "Should not assess for impacted application to create reassessment when an application assessment with " +
+        "a declined COE is being cancelled.",
+      async () => {
+        // Arrange
+        // Create the student to be shared across all these applications.
+        const student = await saveFakeStudent(db.dataSource);
+
+        // Current application to be cancelled with a declined COE.
+        const currentApplicationToCancel =
+          await saveFakeApplicationDisbursements(
+            db.dataSource,
+            { student },
+            {
+              offeringIntensity: OfferingIntensity.partTime,
+              applicationStatus: ApplicationStatus.Cancelled,
+              currentAssessmentInitialValues: {
+                assessmentWorkflowId: "some fake id",
+                assessmentDate: new Date(),
+                studentAssessmentStatus:
+                  StudentAssessmentStatus.CancellationQueued,
+              },
+              firstDisbursementInitialValues: { coeStatus: COEStatus.declined },
+            },
+          );
+        const futureImpactedApplication =
+          await saveFakeApplicationDisbursements(
+            db.dataSource,
+            { student },
+            {
+              offeringIntensity: OfferingIntensity.partTime,
+              applicationStatus: ApplicationStatus.Completed,
+              currentAssessmentInitialValues: {
+                assessmentWorkflowId: "some fake id",
+                assessmentDate: addDays(1),
+                studentAssessmentStatus: StudentAssessmentStatus.Submitted,
+              },
+            },
+          );
+        // Create related application reassessment for the future application.
+        // Replicating the effect of COE getting declined for current application.
+        const impactedApplicationAssessmentBeforeCancel =
+          createFakeStudentAssessment(
+            {
+              auditUser: student.user,
+              application: futureImpactedApplication,
+            },
+            {
+              initialValue: {
+                triggerType: AssessmentTriggerType.RelatedApplicationChanged,
+              },
+            },
+          );
+        futureImpactedApplication.currentAssessment =
+          impactedApplicationAssessmentBeforeCancel;
+        await db.studentAssessment.save(
+          impactedApplicationAssessmentBeforeCancel,
+        );
+        // Queued job.
+        const job = createMock<Job<CancelAssessmentQueueInDTO>>({
+          data: {
+            assessmentId: currentApplicationToCancel.currentAssessment.id,
+          },
+        });
+        // Spy on assess impacted application method to make sure that it is not invoked.
+        const assessmentSequentialProcessingService =
+          await getProviderInstanceForModule(
+            testingModule,
+            QueueConsumersModule,
+            AssessmentSequentialProcessingService,
+          );
+        const sequentialProcessingServiceSpy = jest.spyOn(
+          assessmentSequentialProcessingService,
+          "assessImpactedApplicationReassessmentNeeded",
+        );
+
+        // Act
+        await processor.cancelAssessment(job);
+
+        // Assert
+        // Ensure that the cancellation did not create a new reassessment for the
+        // future impacted application.
+        const impactedApplicationCurrentAssessment =
+          await findImpactedApplication(futureImpactedApplication.id);
+        expect(impactedApplicationCurrentAssessment.currentAssessment.id).toBe(
+          impactedApplicationAssessmentBeforeCancel.id,
+        );
+        // Also assert that method to assess impacted application was not called.
+        expect(sequentialProcessingServiceSpy).not.toHaveBeenCalled();
+      },
+    );
 
     /**
      * Find a future impacted application to be asserted.

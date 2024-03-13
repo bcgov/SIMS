@@ -32,9 +32,11 @@ export class StudentAssessmentService {
           applicationStatus: true,
         },
         studentAssessmentStatus: true,
+        disbursementSchedules: { id: true, coeStatus: true },
       },
       relations: {
         application: true,
+        disbursementSchedules: true,
       },
       where: {
         id: assessmentId,

@@ -5,6 +5,7 @@ import {
   WorkflowClientService,
   ConfirmationOfEnrollmentService,
   SequenceControlService,
+  AssessmentSequentialProcessingService,
 } from "@sims/services";
 import { ConfigModule } from "@sims/utilities/config";
 import {
@@ -33,6 +34,7 @@ import { ECEResponseProcessingService } from "./ece-response.processing.service"
     InstitutionLocationService,
     ConfirmationOfEnrollmentService,
     SequenceControlService,
+    AssessmentSequentialProcessingService,
   ],
   exports: [ECEProcessingService, ECEResponseProcessingService],
 })

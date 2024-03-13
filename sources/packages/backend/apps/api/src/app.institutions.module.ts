@@ -78,6 +78,7 @@ import {
   WorkflowClientService,
   NoteSharedService,
   RestrictionSharedService,
+  AssessmentSequentialProcessingService,
 } from "@sims/services";
 import {
   SFASIndividualService,
@@ -168,6 +169,7 @@ import {
     ApplicationOfferingChangeRequestControllerService,
     ApplicationWithdrawalImportTextService,
     ApplicationBulkWithdrawalImportValidationService,
+    AssessmentSequentialProcessingService,
   ],
 })
 export class AppInstitutionsModule {}

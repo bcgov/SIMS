@@ -4,6 +4,8 @@ import { DataSource, Repository } from "typeorm";
 import { MaxTuitionRemittanceTypes } from "../../models/confirmation-of-enrollment.models";
 import { SequenceControlService } from "@sims/services/sequence-control/sequence-control.service";
 import { NotificationActionsService } from "@sims/services/notifications";
+import { AssessmentSequentialProcessingService } from "@sims/services/students-assessments/assessment-sequential-processing.service";
+import { SystemUsersService } from "@sims/services/system-users";
 
 describe("ConfirmationOfEnrollmentService-getMaxTuitionRemittance", () => {
   let service: ConfirmationOfEnrollmentService;
@@ -14,11 +16,16 @@ describe("ConfirmationOfEnrollmentService-getMaxTuitionRemittance", () => {
     const disbursementScheduleRepo = {} as Repository<DisbursementSchedule>;
     const sequenceService = {} as SequenceControlService;
     const notificationActionsService = {} as NotificationActionsService;
+    const assessmentSequentialProcessingService =
+      {} as AssessmentSequentialProcessingService;
+    const systemUsersService = {} as SystemUsersService;
     service = new ConfirmationOfEnrollmentService(
       disbursementScheduleRepo,
       dataSource,
       sequenceService,
       notificationActionsService,
+      assessmentSequentialProcessingService,
+      systemUsersService,
     );
   });
 

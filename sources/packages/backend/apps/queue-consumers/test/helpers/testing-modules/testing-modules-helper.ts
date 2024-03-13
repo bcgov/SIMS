@@ -12,6 +12,7 @@ import {
 } from "@sims/test-utils";
 import * as Client from "ssh2-sftp-client";
 import { DeepMocked, createMock } from "@golevelup/ts-jest";
+import { DiscoveryModule } from "@golevelup/nestjs-discovery";
 import { QueueModule } from "@sims/services/queue";
 import { SystemUsersService, ZeebeModule } from "@sims/services";
 
@@ -44,7 +45,7 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
   );
   const sshClientMock = createMock<Client>();
   const module: TestingModule = await Test.createTestingModule({
-    imports: [QueueConsumersModule],
+    imports: [QueueConsumersModule, DiscoveryModule],
   })
     .overrideProvider(SshService)
     .useValue(createSSHServiceMock(sshClientMock))
