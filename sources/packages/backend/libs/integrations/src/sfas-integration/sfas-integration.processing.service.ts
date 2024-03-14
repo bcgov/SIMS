@@ -54,7 +54,11 @@ export class SFASIntegrationProcessingService {
         break;
       }
     }
-    return this.postFileImportOperations(results, filePaths);
+    const resultPostFileImportOperation = await this.postFileImportOperations(
+      !!filePaths.length,
+    );
+    results.push(resultPostFileImportOperation);
+    return results;
   }
 
   /**
@@ -167,14 +171,12 @@ export class SFASIntegrationProcessingService {
    * Responsible for completing the post file import operations.
    * These include updating the student ids, disbursement overawards
    * and inserting student restrictions.
-   * @param results process sftp response result object.
-   * @param filePaths file paths to the imported SFAS files.
-   * @returns results process sftp response result object.
+   * @param executeDisbursementOverawardsUpdate boolean indicating if the disbursement overawards update should execute or not.
+   * @returns postFileImportResult process sftp response result object.
    */
   private async postFileImportOperations(
-    results: ProcessSftpResponseResult[],
-    filePaths: string[],
-  ): Promise<ProcessSftpResponseResult[]> {
+    executeDisbursementOverawardsUpdate: boolean,
+  ): Promise<ProcessSftpResponseResult> {
     // The following sequence of actions take place after the files have been imported and processed.
     // The steps - updateStudentId and insertStudentRestrictions need to run even if there were 0 files
     // imported and the updateDisbursementOverawards needs to run when there is atleast one file imported
@@ -183,7 +185,6 @@ export class SFASIntegrationProcessingService {
     // the insertStudentRestrictions method below will run and is responsible for inserting the restrictions
     // for this student previously imported from SFAS.
     const postFileImportResult = new ProcessSftpResponseResult();
-    results.push(postFileImportResult);
     try {
       postFileImportResult.summary.push(
         "Updating student ids for SFAS individuals.",
@@ -191,7 +192,7 @@ export class SFASIntegrationProcessingService {
       await this.sfasIndividualService.updateStudentId();
       postFileImportResult.summary.push("Student ids updated.");
       // Update the disbursement overawards if there is atleast one file to process.
-      if (filePaths.length) {
+      if (executeDisbursementOverawardsUpdate) {
         postFileImportResult.summary.push(
           "Updating and inserting new disbursement overaward balances from sfas to disbursement overawards table.",
         );
@@ -216,7 +217,7 @@ export class SFASIntegrationProcessingService {
       this.logger.log(logMessage);
       this.logger.error(error);
     }
-    return results;
+    return postFileImportResult;
   }
 
   /**
