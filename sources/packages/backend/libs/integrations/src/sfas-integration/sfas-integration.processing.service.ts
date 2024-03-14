@@ -59,23 +59,42 @@ export class SFASIntegrationProcessingService {
     // student account creation, when this scheduler is run again, even though there are no files to process,
     // the insertStudentRestrictions method below will be responsible for inserting the restrictions for this
     // student previously imported from SFAS.
-    this.logger.log("Updating student ids for SFAS individuals.");
-    await this.sfasIndividualService.updateStudentId();
-    this.logger.log("Student ids updated.");
-    this.logger.log(
-      "Updating and inserting new disbursement overaward balances from sfas to disbursement overawards table.",
-    );
-    await this.sfasIndividualService.updateDisbursementOverawards();
-    this.logger.log(
-      "New disbursement overaward balances inserted to disbursement overawards table.",
-    );
-    this.logger.log(
-      "Inserting student restrictions from SFAS restrictions data.",
-    );
-    await this.sfasRestrictionService.insertStudentRestrictions();
-    this.logger.log(
-      "Inserted student restrictions from SFAS restrictions data.",
-    );
+    const postFileImportResult = new ProcessSftpResponseResult();
+    try {
+      postFileImportResult.summary.push(
+        "Updating student ids for SFAS individuals.",
+      );
+      await this.sfasIndividualService.updateStudentId();
+      postFileImportResult.summary.push("Student ids updated.");
+      // Update the disbursement overawards if there is atleast one file to process.
+      if (filePaths.length) {
+        postFileImportResult.summary.push(
+          "Updating and inserting new disbursement overaward balances from sfas to disbursement overawards table.",
+        );
+        await this.sfasIndividualService.updateDisbursementOverawards();
+        postFileImportResult.summary.push(
+          "New disbursement overaward balances inserted to disbursement overawards table.",
+        );
+      }
+      postFileImportResult.summary.push(
+        "Inserting student restrictions from SFAS restrictions data.",
+      );
+      await this.sfasRestrictionService.insertStudentRestrictions();
+      postFileImportResult.summary.push(
+        "Inserted student restrictions from SFAS restrictions data.",
+      );
+      postFileImportResult.success = true;
+    } catch (error) {
+      const logMessage =
+        "Error while wrapping up post file processing operations.";
+      postFileImportResult.success = false;
+      postFileImportResult.summary.push(logMessage);
+      this.logger.log(logMessage);
+      this.logger.error(error);
+      postFileImportResult.error.push(error);
+    } finally {
+      results.push(postFileImportResult);
+    }
     return results;
   }
 

@@ -17,4 +17,5 @@ export class DownloadResult {
 export class ProcessSftpResponseResult {
   summary: string[] = [];
   success: boolean;
+  error: string[] = [];
 }

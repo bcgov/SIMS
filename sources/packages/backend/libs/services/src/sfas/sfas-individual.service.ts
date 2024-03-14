@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { Raw, Repository } from "typeorm";
-import { DataModelService, SFASIndividual, Student } from "@sims/sims-db";
+import { SFASIndividual, Student } from "@sims/sims-db";
 import { SFASIndividualDataSummary } from "./sfas-individual.model";
 import { InjectRepository } from "@nestjs/typeorm";
 
@@ -8,15 +8,13 @@ import { InjectRepository } from "@nestjs/typeorm";
  * Manages the data related to an individual/student in SFAS.
  */
 @Injectable()
-export class SFASIndividualService extends DataModelService<SFASIndividual> {
+export class SFASIndividualService {
   constructor(
     @InjectRepository(SFASIndividual)
-    sfasIndividualRepo: Repository<SFASIndividual>,
+    private readonly sfasIndividualRepo: Repository<SFASIndividual>,
     @InjectRepository(Student)
     private readonly studentRepo: Repository<Student>,
-  ) {
-    super(sfasIndividualRepo);
-  }
+  ) {}
 
   /**
    * Get SFAS student, if available.
@@ -30,9 +28,9 @@ export class SFASIndividualService extends DataModelService<SFASIndividual> {
     birthDate: string,
     sin: string,
   ): Promise<SFASIndividual> {
-    const individual = await this.repo
+    const individual = await this.sfasIndividualRepo
       .createQueryBuilder("individual")
-      .select("individual.pdStatus")
+      .select(["individual.id", "individual.pdStatus"])
       .where("lower(individual.lastName) = :lastName", {
         lastName: lastName.toLowerCase(),
       })
@@ -55,7 +53,7 @@ export class SFASIndividualService extends DataModelService<SFASIndividual> {
     birthDate: string,
     sin: string,
   ): Promise<SFASIndividual> {
-    return await this.repo.findOne({
+    return await this.sfasIndividualRepo.findOne({
       select: {
         id: true,
         cslOveraward: true,
@@ -97,7 +95,7 @@ export class SFASIndividualService extends DataModelService<SFASIndividual> {
     const sin = studentData.sinValidation.sin;
     const birthDate = studentData.birthDate;
     const lastName = studentData.user.lastName;
-    const sfasIndividualData = await this.repo
+    const sfasIndividualData = await this.sfasIndividualRepo
       .createQueryBuilder("sfasIndividual")
       .select(
         "SUM(sfasIndividual.unsuccessfulCompletion)::int",
