@@ -22,12 +22,15 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
+        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
+        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
+        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
     ];
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
@@ -60,12 +63,15 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
+        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
+        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
+        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
     ];
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
@@ -135,6 +141,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
+        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
     ];
     // Act
@@ -166,6 +173,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
+        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
     ];
     // Act
@@ -234,6 +242,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
+        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
     ];
     assessmentConsolidatedData.programYearTotalPartTimeCSGD = undefined;
