@@ -16,7 +16,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataCRAReportedIncome = 20000;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.studentDataIsYourSpouseACanadianCitizen =
+    assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport =
       YesNoOptions.Yes;
     assessmentConsolidatedData.partner1CRAReportedIncome = 20000;
     assessmentConsolidatedData.studentDataDependants = [
@@ -57,7 +57,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataCRAReportedIncome = 42000;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.studentDataIsYourSpouseACanadianCitizen =
+    assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport =
       YesNoOptions.Yes;
     assessmentConsolidatedData.partner1CRAReportedIncome = 42000;
     assessmentConsolidatedData.studentDataDependants = [
@@ -135,7 +135,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataCRAReportedIncome = 20000;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.studentDataIsYourSpouseACanadianCitizen =
+    assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport =
       YesNoOptions.Yes;
     assessmentConsolidatedData.partner1CRAReportedIncome = 20000;
     assessmentConsolidatedData.studentDataDependants = [
@@ -167,7 +167,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataCRAReportedIncome = 35000;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.studentDataIsYourSpouseACanadianCitizen =
+    assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport =
       YesNoOptions.Yes;
     assessmentConsolidatedData.partner1CRAReportedIncome = 35000;
     assessmentConsolidatedData.studentDataDependants = [
@@ -236,7 +236,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataCRAReportedIncome = 35000;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.studentDataIsYourSpouseACanadianCitizen =
+    assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport =
       YesNoOptions.Yes;
     assessmentConsolidatedData.partner1CRAReportedIncome = 35000;
     assessmentConsolidatedData.studentDataDependants = [

@@ -13,7 +13,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.studentDataIsYourSpouseACanadianCitizen =
+    assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport =
       YesNoOptions.Yes;
     assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
     // Act
@@ -48,7 +48,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.studentDataIsYourSpouseACanadianCitizen =
+    assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport =
       YesNoOptions.Yes;
     assessmentConsolidatedData.partner1CRAReportedIncome = 32999;
     // Act
@@ -90,7 +90,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.studentDataIsYourSpouseACanadianCitizen =
+    assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport =
       YesNoOptions.Yes;
     assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
     // Public institution
@@ -137,7 +137,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.studentDataIsYourSpouseACanadianCitizen =
+    assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport =
       YesNoOptions.Yes;
     assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
     // Public institution
@@ -164,7 +164,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.studentDataIsYourSpouseACanadianCitizen =
+    assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport =
       YesNoOptions.Yes;
     assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
     // Public institution
