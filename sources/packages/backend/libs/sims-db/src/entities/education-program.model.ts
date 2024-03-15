@@ -405,8 +405,8 @@ export class EducationProgram extends RecordDataModel {
   fieldOfStudyCode: number;
 
   /**
-   * Indicates if an education program is active and should be available for
-   * student and for institutions, for instance, while completing PIRs.
+   * Indicates if an education program is active and should be available, for instance,
+   * for students creating new applications or institutions completing PIRs.
    */
   @Column({
     name: "is_active",
@@ -416,7 +416,7 @@ export class EducationProgram extends RecordDataModel {
 
   /**
    * Last user id that updated the {@link isActive} column value on DB.
-   * If null, the is_active was never changed since its creation.
+   *  If null, the {@link isActive} value has never changed since its creation.
    */
   @ManyToOne(() => User, { eager: false, nullable: true })
   @JoinColumn({
@@ -427,7 +427,7 @@ export class EducationProgram extends RecordDataModel {
 
   /**
    * Last date and time the {@link isActive} column value was updated on DB.
-   * If null, the is_active was never changed since its creation.
+   * If null, the {@link isActive} value has never changed since its creation.
    */
   @Column({
     name: "is_active_updated_on",
