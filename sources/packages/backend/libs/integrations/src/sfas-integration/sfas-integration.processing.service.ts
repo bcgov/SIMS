@@ -54,7 +54,10 @@ export class SFASIntegrationProcessingService {
         break;
       }
     }
-
+    const resultPostFileImportOperation = await this.postFileImportOperations(
+      !!filePaths.length,
+    );
+    results.push(resultPostFileImportOperation);
     return results;
   }
 
@@ -138,23 +141,6 @@ export class SFASIntegrationProcessingService {
       }
       await Promise.all(promises);
       this.logger.log("Records imported.");
-      this.logger.log("Updating student ids for SFAS individuals.");
-      await this.sfasIndividualService.updateStudentId();
-      this.logger.log("Student ids updated.");
-      this.logger.log(
-        "Updating and inserting new disbursement overaward balances from sfas to disbursement overawards table.",
-      );
-      await this.sfasIndividualService.updateDisbursementOverawards();
-      this.logger.log(
-        "New disbursement overaward balances inserted to disbursement overawards table.",
-      );
-      this.logger.log(
-        "Inserting student restrictions from SFAS restrictions data.",
-      );
-      await this.sfasRestrictionService.insertStudentRestrictions();
-      this.logger.log(
-        "Inserted student restrictions from SFAS restrictions data.",
-      );
       if (result.success) {
         /**
          * Delete the file only if it was processed with success.
@@ -179,6 +165,59 @@ export class SFASIntegrationProcessingService {
     }
 
     return result;
+  }
+
+  /**
+   * Responsible for completing the post file import operations.
+   * These include updating the student ids, disbursement overawards
+   * and inserting student restrictions.
+   * @param executeDisbursementOverawardsUpdate boolean indicating if the disbursement overawards update should execute or not.
+   * @returns postFileImportResult process sftp response result object.
+   */
+  private async postFileImportOperations(
+    executeDisbursementOverawardsUpdate: boolean,
+  ): Promise<ProcessSftpResponseResult> {
+    // The following sequence of actions take place after the files have been imported and processed.
+    // The steps - updateStudentId and insertStudentRestrictions need to run even if there were 0 files
+    // imported and the updateDisbursementOverawards needs to run when there is atleast one file imported
+    // from SFAS. For instance, after a new student account creation in SIMS and its ministry approval,
+    // when the scheduled SFAS integration scheduler runs, even if there are no SFAS files to process,
+    // the insertStudentRestrictions method below will run and is responsible for inserting the restrictions
+    // for this student previously imported from SFAS.
+    const postFileImportResult = new ProcessSftpResponseResult();
+    try {
+      postFileImportResult.summary.push(
+        "Updating student ids for SFAS individuals.",
+      );
+      await this.sfasIndividualService.updateStudentId();
+      postFileImportResult.summary.push("Student ids updated.");
+      // Update the disbursement overawards if there is atleast one file to process.
+      if (executeDisbursementOverawardsUpdate) {
+        postFileImportResult.summary.push(
+          "Updating and inserting new disbursement overaward balances from sfas to disbursement overawards table.",
+        );
+        await this.sfasIndividualService.updateDisbursementOverawards();
+        postFileImportResult.summary.push(
+          "New disbursement overaward balances inserted to disbursement overawards table.",
+        );
+      }
+      postFileImportResult.summary.push(
+        "Inserting student restrictions from SFAS restrictions data.",
+      );
+      await this.sfasRestrictionService.insertStudentRestrictions();
+      postFileImportResult.summary.push(
+        "Inserted student restrictions from SFAS restrictions data.",
+      );
+      postFileImportResult.success = true;
+    } catch (error) {
+      const logMessage =
+        "Error while wrapping up post file processing operations.";
+      postFileImportResult.success = false;
+      postFileImportResult.summary.push(logMessage);
+      this.logger.log(logMessage);
+      this.logger.error(error);
+    }
+    return postFileImportResult;
   }
 
   /**
