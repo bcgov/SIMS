@@ -203,10 +203,10 @@ execution.setVariable('error_retry', 0);</camunda:script>
     <bpmn:sequenceFlow id="Flow_0p422wu" sourceRef="Activity_18tl1zq" targetRef="Gateway_0cadfpj" />
     <bpmn:sequenceFlow id="Flow_173ew5o" sourceRef="Activity_06igmr2" targetRef="Gateway_06w4wzo" />
     <bpmn:sequenceFlow id="Flow_1jp972k" name="Partner has valid SIN" sourceRef="Gateway_0ncevhz" targetRef="Activity_1439h2o">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isYourSpouseACanadianCitizen == "yes"}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isYourPartnerAbleToReport == "yes"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0rhvtjq" name="Partner has no SIN" sourceRef="Gateway_0ncevhz" targetRef="Activity_1sfa3ki">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isYourSpouseACanadianCitizen == "no"}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isYourPartnerAbleToReport == "no"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_00037dm" sourceRef="Activity_1sfa3ki" targetRef="Gateway_06w4wzo" />
     <bpmn:sequenceFlow id="Flow_0ljan8f" sourceRef="Activity_1439h2o" targetRef="Gateway_06w4wzo" />
@@ -948,7 +948,7 @@ JSON.stringify({ data: assessmentJson });
               <camunda:value>data.dependants</camunda:value>
               <camunda:value>data.pleaseProvideAnEstimationOfYourParentsIncome</camunda:value>
               <camunda:value>data.doYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber</camunda:value>
-              <camunda:value>data.isYourSpouseACanadianCitizen</camunda:value>
+              <camunda:value>data.isYourPartnerAbleToReport</camunda:value>
               <camunda:value>data.estimatedSpouseIncome</camunda:value>
               <camunda:value>programYear.startDate</camunda:value>
               <camunda:value>programYear.programYear</camunda:value>
@@ -1011,7 +1011,7 @@ JSON.stringify({ data: assessmentJson });
           <camunda:inputParameter name="httpSuccessCode">200</camunda:inputParameter>
           <camunda:outputParameter name="assessmentTriggerType">${triggerType}</camunda:outputParameter>
           <camunda:outputParameter name="estimatedSpouseIncome">${data_estimatedSpouseIncome}</camunda:outputParameter>
-          <camunda:outputParameter name="isYourSpouseACanadianCitizen">${data_isYourSpouseACanadianCitizen}</camunda:outputParameter>
+          <camunda:outputParameter name="isYourPartnerAbleToReport">${data_isYourPartnerAbleToReport}</camunda:outputParameter>
           <camunda:outputParameter name="doYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber">${data_doYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber}</camunda:outputParameter>
           <camunda:outputParameter name="pleaseProvideAnEstimationOfYourParentsIncome">${data_pleaseProvideAnEstimationOfYourParentsIncome}</camunda:outputParameter>
           <camunda:outputParameter name="numberOfParents">${data_numberOfParents}</camunda:outputParameter>
@@ -1254,7 +1254,7 @@ ${errorMsg}</camunda:inputParameter>
               <camunda:value>data.numberOfParents</camunda:value>
               <camunda:value>data.dependantstatus</camunda:value>
               <camunda:value>data.doYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber</camunda:value>
-              <camunda:value>data.isYourSpouseACanadianCitizen</camunda:value>
+              <camunda:value>data.isYourPartnerAbleToReport</camunda:value>
               <camunda:value>triggerType</camunda:value>
               <camunda:value>supportingUsers.Parent1.supportingData.totalIncome</camunda:value>
               <camunda:value>supportingUsers.Parent2.supportingData.totalIncome</camunda:value>
@@ -1267,7 +1267,7 @@ ${errorMsg}</camunda:inputParameter>
           <camunda:inputParameter name="errorCodeName">SIMS-GET-ASSESSMENT-ERROR</camunda:inputParameter>
           <camunda:inputParameter name="httpSuccessCode">200</camunda:inputParameter>
           <camunda:outputParameter name="assessmentTriggerType">${triggerType}</camunda:outputParameter>
-          <camunda:outputParameter name="isYourSpouseACanadianCitizen">${data_isYourSpouseACanadianCitizen}</camunda:outputParameter>
+          <camunda:outputParameter name="isYourPartnerAbleToReport">${data_isYourPartnerAbleToReport}</camunda:outputParameter>
           <camunda:outputParameter name="doYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber">${data_doYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber}</camunda:outputParameter>
           <camunda:outputParameter name="numberOfParents">${data_numberOfParents}</camunda:outputParameter>
           <camunda:outputParameter name="dependantstatus">${data_dependantstatus}</camunda:outputParameter>
@@ -1681,14 +1681,14 @@ JSON.stringify(updateProgramInfoJson);</camunda:script>
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${relationshipStatus != "married"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0fiknji" name="Partner has no SIN" sourceRef="Gateway_1ew03za" targetRef="Gateway_1lh5sdl">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isYourSpouseACanadianCitizen == "no"}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isYourPartnerAbleToReport == "no"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1ggm73d" sourceRef="Activity_1121s9q" targetRef="Gateway_1lh5sdl" />
     <bpmn:sequenceFlow id="Flow_0ud7y7a" name="Yes" sourceRef="Gateway_0wkoecx" targetRef="Gateway_1ew03za">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${relationshipStatus == "married"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_06axnqq" name="Partner has valid SIN" sourceRef="Gateway_1ew03za" targetRef="Activity_11wi2pz">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isYourSpouseACanadianCitizen == "yes"}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isYourPartnerAbleToReport == "yes"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0ptb2hn" sourceRef="Activity_11wi2pz" targetRef="Activity_1121s9q" />
     <bpmn:sequenceFlow id="Flow_0n9bchc" name="Independant" sourceRef="Gateway_05bfr8g" targetRef="Gateway_11vidi6">

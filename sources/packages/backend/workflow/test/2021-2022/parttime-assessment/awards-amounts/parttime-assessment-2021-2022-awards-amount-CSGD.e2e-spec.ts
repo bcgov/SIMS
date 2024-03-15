@@ -22,15 +22,12 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
-        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
-        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
-        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
     ];
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
@@ -48,10 +45,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
         .limitAwardCSGDIncomeCap,
     );
-    expect(calculatedAssessment.variables.federalAwardCSGDAmount).toBe(1260);
+    expect(calculatedAssessment.variables.federalAwardCSGDAmount).toBe(1800);
   });
 
-  it("Should determine federalAwardCSGDAmount for 3 or more dependants and calculatedDataTotalFamilyIncome > limitAwardCSGDIncomeCap", async () => {
+  it("Should determine federalAwardCSGDAmount, federalAwardNetCSGDAmount, finalFederalAwardNetCSGDAmount for 3 or more dependants and calculatedDataTotalFamilyIncome > limitAwardCSGDIncomeCap", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -63,15 +60,12 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
-        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
-        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
-        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
     ];
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
@@ -122,10 +116,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       ),
     );
     expect(calculatedAssessment.variables.federalAwardNetCSGDAmount).toBe(
-      950.832256,
+      1201.20448,
     );
     expect(calculatedAssessment.variables.finalFederalAwardNetCSGDAmount).toBe(
-      950.832256,
+      1201.20448,
     );
   });
 
@@ -141,7 +135,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
-        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
     ];
     // Act
@@ -158,10 +151,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
         .limitAwardCSGDIncomeCap,
     );
-    expect(calculatedAssessment.variables.federalAwardCSGDAmount).toBe(840);
+    expect(calculatedAssessment.variables.federalAwardCSGDAmount).toBe(1200);
   });
 
-  it("Should determine federalAwardCSGDAmount for less than 3 dependants and calculatedDataTotalFamilyIncome > limitAwardCSGDIncomeCap", async () => {
+  it("Should determine federalAwardCSGDAmount, federalAwardNetCSGDAmount, finalFederalAwardNetCSGDAmount for less than 3 dependants and calculatedDataTotalFamilyIncome > limitAwardCSGDIncomeCap", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -173,7 +166,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
-        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
     ];
     // Act
@@ -223,10 +215,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       ),
     );
     expect(calculatedAssessment.variables.federalAwardNetCSGDAmount).toBe(
-      496.86684445,
+      659.0567998,
     );
     expect(calculatedAssessment.variables.finalFederalAwardNetCSGDAmount).toBe(
-      496.86684445,
+      659.0567998,
     );
   });
 
@@ -242,7 +234,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
-        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
     ];
     assessmentConsolidatedData.programYearTotalPartTimeCSGD = undefined;
@@ -257,10 +248,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     // federalAwardCSGDAmount
     expect(calculatedAssessment.variables.awardEligibilityCSGD).toBe(true);
     expect(calculatedAssessment.variables.federalAwardCSGDAmount).toBe(
-      696.86684445,
+      859.0567998,
     );
     expect(calculatedAssessment.variables.federalAwardNetCSGDAmount).toBe(
-      696.86684445,
+      859.0567998,
     );
   });
 });

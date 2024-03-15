@@ -1192,10 +1192,10 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
     <bpmn:sequenceFlow id="Flow_1cl7iq9" sourceRef="Event_123oime" targetRef="Event_0zfn3be" />
     <bpmn:sequenceFlow id="Flow_0mhxp8e" sourceRef="Event_0s8ztj5" targetRef="Event_1ms14ig" />
     <bpmn:sequenceFlow id="Flow_08mnfio" name="yes" sourceRef="Gateway_0zmvhsj" targetRef="Event_00c1iyh">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourSpouseACanadianCitizen = "yes"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourPartnerAbleToReport = "yes"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1fbmivh" name="no" sourceRef="Gateway_0zmvhsj" targetRef="Event_02st413">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourSpouseACanadianCitizen = "no"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourPartnerAbleToReport = "no"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0y2zl5a" name="yes" sourceRef="Gateway_13qzd4v" targetRef="Gateway_1hun062">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataParentValidSinNumber = "yes"</bpmn:conditionExpression>
@@ -1253,7 +1253,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
     </bpmn:intermediateThrowEvent>
     <bpmn:sequenceFlow id="Flow_0dqxcli" sourceRef="Event_0hxxmu9" targetRef="Gateway_0um3yvb" />
     <bpmn:sequenceFlow id="Flow_1tcyqyg" sourceRef="StartEvent_1" targetRef="Event_0rpww4j" />
-    <bpmn:exclusiveGateway id="Gateway_0zmvhsj" name="isYourSpouseACanadianCitizen">
+    <bpmn:exclusiveGateway id="Gateway_0zmvhsj" name="isYourPartnerAbleToReport">
       <bpmn:incoming>Flow_1ekiozl</bpmn:incoming>
       <bpmn:outgoing>Flow_08mnfio</bpmn:outgoing>
       <bpmn:outgoing>Flow_1fbmivh</bpmn:outgoing>

@@ -3,10 +3,11 @@ import {
   createFakeConsolidatedPartTimeData,
   executePartTimeAssessmentForProgramYear,
 } from "../../../test-utils";
+import { InstitutionTypes } from "../../../models";
 import { YesNoOptions } from "@sims/test-utils";
 
-describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CSPT.`, () => {
-  it("Should determine federalAwardCSPTAmount when awardEligibilityCSPT is true and calculatedDataTotalFamilyIncome <= limitAwardCSPTIncomeCap", async () => {
+describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BCAG.`, () => {
+  it("Should determine federalAwardBCAGAmount, provincialAwardNetBCAGAmount when calculatedDataTotalFamilyIncome <= limitAwardBCAGIncomeCap", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -21,23 +22,27 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       assessmentConsolidatedData,
     );
     // Assert
+    // federalAwardBCAGAmount is 1000 (limitAwardBCAGAmount)
     expect(
       calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
     ).toBeLessThan(
       calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
-        .limitAwardCSPTIncomeCap,
+        .limitAwardBCAGIncomeCap,
     );
     expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(
       43000,
     );
-    expect(calculatedAssessment.variables.federalAwardCSPTAmount).toBe(
+    expect(calculatedAssessment.variables.federalAwardBCAGAmount).toBe(
       calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
-        .limitAwardCSPTAmount,
+        .limitAwardBCAGAmount,
     );
-    expect(calculatedAssessment.variables.federalAwardCSPTAmount).toBe(2520);
+    expect(calculatedAssessment.variables.federalAwardBCAGAmount).toBe(1000);
+    expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(
+      700,
+    );
   });
 
-  it("Should determine federalAwardCSPTAmount when awardEligibilityCSPT is true and calculatedDataTotalFamilyIncome > limitAwardCSPTIncomeCap", async () => {
+  it("Should determine federalAwardBCAGAmount when calculatedDataTotalFamilyIncome > limitAwardBCAGIncomeCap", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -52,21 +57,34 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       assessmentConsolidatedData,
     );
     // Assert
+    // federalAwardBCAGAmount is less than 1000
     expect(
       calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
     ).toBeGreaterThan(
       calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
-        .limitAwardCSPTIncomeCap,
+        .limitAwardBCAGIncomeCap,
     );
     expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(
       53000,
     );
-    expect(calculatedAssessment.variables.federalAwardCSPTAmount).toBeLessThan(
-      3000,
+    expect(calculatedAssessment.variables.federalAwardBCAGAmount).toBe(
+      Math.max(
+        calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
+          .limitAwardBCAGAmount -
+          (calculatedAssessment.variables.calculatedDataTotalFamilyIncome -
+            calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
+              .limitAwardBCAGIncomeCap) *
+            calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
+              .limitAwardBCAGSlope,
+        100,
+      ),
+    );
+    expect(calculatedAssessment.variables.federalAwardBCAGAmount).toBeLessThan(
+      1000,
     );
   });
 
-  it("Should determine federalAwardNetCSPTAmount when awardEligibilityCSPT is true", async () => {
+  it("Should determine provincialAwardNetBCAGAmount when awardEligibilityBCAG is true", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -75,36 +93,42 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport =
       YesNoOptions.Yes;
     assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
+    // Public institution
+    assessmentConsolidatedData.institutionType = InstitutionTypes.BCPublic;
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
       assessmentConsolidatedData,
     );
     // Assert
-    expect(calculatedAssessment.variables.awardEligibilityCSPT).toBe(true);
-    expect(
-      calculatedAssessment.variables.federalAwardCSPTAmount,
-    ).toBeGreaterThan(100);
-    expect(calculatedAssessment.variables.federalAwardNetCSPTAmount).toBe(2440);
+    // awardEligibilityBCAG is true.
+    // provincialAwardNetBCAGAmount is 700.
+    expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(true);
+    expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(
+      700,
+    );
   });
 
-  it("Should determine federalAwardNetCSPTAmount as zero when awardEligibilityCSPT is false", async () => {
+  it("Should determine provincialAwardNetBCAGAmount as zero when awardEligibilityBCAG is false", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-
-    assessmentConsolidatedData.studentDataCRAReportedIncome = 70001;
+    assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
+    // Private institution
+    assessmentConsolidatedData.institutionType = InstitutionTypes.BCPrivate;
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
       assessmentConsolidatedData,
     );
     // Assert
-    expect(calculatedAssessment.variables.awardEligibilityCSPT).toBe(false);
-    expect(calculatedAssessment.variables.federalAwardNetCSPTAmount).toBe(0);
+    // awardEligibilityBCAG is false
+    // provincialAwardNetBCAGAmount is 0
+    expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(false);
+    expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(0);
   });
 
-  it("Should determine federalAwardNetCSPTAmount when awardEligibilityCSPT is true and no CSPT awarded in the program year previously", async () => {
+  it("Should determine provincialAwardNetBCAGAmount when awardEligibilityBCAG is true and no BCAG awarded in the program year previously", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -113,41 +137,47 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport =
       YesNoOptions.Yes;
     assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
-    assessmentConsolidatedData.programYearTotalPartTimeCSPT = undefined;
+    // Public institution
+    assessmentConsolidatedData.institutionType = InstitutionTypes.BCPublic;
+    assessmentConsolidatedData.programYearTotalPartTimeBCAG = undefined;
+
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
       assessmentConsolidatedData,
     );
     // Assert
-    expect(calculatedAssessment.variables.awardEligibilityCSPT).toBe(true);
-    expect(
-      calculatedAssessment.variables.federalAwardCSPTAmount,
-    ).toBeGreaterThan(100);
-    expect(calculatedAssessment.variables.federalAwardNetCSPTAmount).toBe(2520);
+    // awardEligibilityBCAG is true.
+    // provincialAwardNetBCAGAmount is 1000.
+    expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(true);
+    expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(
+      1000,
+    );
   });
 
-  it("Should determine federalAwardNetCSPTAmount as zero when awardEligibilityCSPT is true and difference between the programYearLimits and CSPT awarded in the program year previously is less than 100", async () => {
+  it("Should determine provincialAwardNetBCAGAmount as zero when awardEligibilityBCAG is true and difference between the programYearLimits and BCAG awarded in the program year previously is less than 100", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataCRAReportedIncome = 60001;
+    assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
     assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport =
       YesNoOptions.Yes;
     assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
-    assessmentConsolidatedData.programYearTotalPartTimeCSPT = 2421;
+    // Public institution
+    assessmentConsolidatedData.institutionType = InstitutionTypes.BCPublic;
+    assessmentConsolidatedData.programYearTotalPartTimeBCAG = 901;
+
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
       assessmentConsolidatedData,
     );
     // Assert
-    expect(calculatedAssessment.variables.awardEligibilityCSPT).toBe(true);
-    expect(calculatedAssessment.variables.limitAwardCSPTRemaining).toBe(99);
-    expect(
-      calculatedAssessment.variables.federalAwardCSPTAmount,
-    ).toBeGreaterThan(100);
-    expect(calculatedAssessment.variables.federalAwardNetCSPTAmount).toBe(0);
+    // awardEligibilityBCAG is true.
+    // provincialAwardNetBCAGAmount is 0.
+    expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(true);
+    expect(calculatedAssessment.variables.limitAwardBCAGRemaining).toBe(99);
+    expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(0);
   });
 });

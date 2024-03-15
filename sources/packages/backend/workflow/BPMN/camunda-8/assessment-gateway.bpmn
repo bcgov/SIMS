@@ -157,7 +157,7 @@
     <bpmn:sequenceFlow id="Flow_1wde0bi" sourceRef="retrieve-supporting-info-for-partner-subprocess" targetRef="partner-income-verification-subprocess" />
     <bpmn:sequenceFlow id="Flow_03zfrkx" sourceRef="create-supporting-user-for-the-partner-task" targetRef="retrieve-supporting-info-for-partner-subprocess" />
     <bpmn:sequenceFlow id="Flow_14701yl" name="Has valid SIN" sourceRef="Gateway_176fysj" targetRef="create-supporting-user-for-the-partner-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourSpouseACanadianCitizen = "yes"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourPartnerAbleToReport = "yes"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0emvz6f" name="Yes" sourceRef="Gateway_05k6rp7" targetRef="Gateway_176fysj">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataRelationshipStatus = "married"</bpmn:conditionExpression>
@@ -196,7 +196,7 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataRelationshipStatus != "married"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1gii09j" name="Partner do not have SIN" sourceRef="Gateway_176fysj" targetRef="Gateway_1jdrla2">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourSpouseACanadianCitizen != "yes"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourPartnerAbleToReport != "yes"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1a980l7" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="needs-pir-gateway" />
     <bpmn:sequenceFlow id="Flow_0v2i46e" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="Gateway_05k6rp7" />
@@ -430,7 +430,7 @@
           <zeebe:output source="=null" target="studentDataParentValidSinNumber" />
           <zeebe:output source="=null" target="studentDataNumberOfParents" />
           <zeebe:output source="=null" target="studentDataRelationshipStatus" />
-          <zeebe:output source="=null" target="studentDataIsYourSpouseACanadianCitizen" />
+          <zeebe:output source="=null" target="studentDataIsYourPartnerAbleToReport" />
           <zeebe:output source="=null" target="parent1TotalIncome" />
           <zeebe:output source="=null" target="parent2TotalIncome" />
           <zeebe:output source="=null" target="partner1TotalIncome" />

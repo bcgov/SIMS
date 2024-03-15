@@ -175,7 +175,7 @@
     <bpmn:sequenceFlow id="Flow_191hsl9" sourceRef="Event_105ptqe" targetRef="Gateway_03c2fh6" />
     <bpmn:sequenceFlow id="Flow_1p7fyev" sourceRef="Gateway_03c2fh6" targetRef="Activity_0pvobml" />
     <bpmn:sequenceFlow id="Flow_08xi7o2" sourceRef="Activity_0pvobml" targetRef="Event_1sg75ph" />
-    <bpmn:exclusiveGateway id="Gateway_0zmvhsj" name="isYourSpouseACanadianCitizen">
+    <bpmn:exclusiveGateway id="Gateway_0zmvhsj" name="isYourPartnerAbleToReport">
       <bpmn:incoming>Flow_1ekiozl</bpmn:incoming>
       <bpmn:outgoing>Flow_08mnfio</bpmn:outgoing>
       <bpmn:outgoing>Flow_1fbmivh</bpmn:outgoing>
@@ -227,10 +227,10 @@
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1tcyqyg" sourceRef="StartEvent_1" targetRef="Event_0rpww4j" />
     <bpmn:sequenceFlow id="Flow_08mnfio" name="yes" sourceRef="Gateway_0zmvhsj" targetRef="Event_00c1iyh">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourSpouseACanadianCitizen = "yes"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourPartnerAbleToReport = "yes"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1fbmivh" name="no" sourceRef="Gateway_0zmvhsj" targetRef="Event_02st413">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourSpouseACanadianCitizen = "no"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourPartnerAbleToReport = "no"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1d1sl5k" sourceRef="Event_00c1iyh" targetRef="Event_1b81z89" />
     <bpmn:sequenceFlow id="Flow_0n7won7" sourceRef="Event_02st413" targetRef="Event_0a9extn" />

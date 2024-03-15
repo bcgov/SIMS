@@ -187,10 +187,10 @@
     <bpmn:sequenceFlow id="Flow_0n7won7" sourceRef="Event_02st413" targetRef="Event_0a9extn" />
     <bpmn:sequenceFlow id="Flow_1d1sl5k" sourceRef="Event_00c1iyh" targetRef="Event_1b81z89" />
     <bpmn:sequenceFlow id="Flow_1fbmivh" name="no" sourceRef="Gateway_0zmvhsj" targetRef="Event_02st413">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourSpouseACanadianCitizen = "no"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourPartnerAbleToReport = "no"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_08mnfio" name="yes" sourceRef="Gateway_0zmvhsj" targetRef="Event_00c1iyh">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourSpouseACanadianCitizen = "yes"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourPartnerAbleToReport = "yes"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1ekiozl" name="married / common-law" sourceRef="Gateway_0um3yvb" targetRef="Gateway_0zmvhsj">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= studentDataRelationshipStatus = "married"</bpmn:conditionExpression>
@@ -343,7 +343,7 @@
       <bpmn:incoming>Flow_08mnfio</bpmn:incoming>
       <bpmn:outgoing>Flow_1d1sl5k</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:exclusiveGateway id="Gateway_0zmvhsj" name="isYourSpouseACanadianCitizen">
+    <bpmn:exclusiveGateway id="Gateway_0zmvhsj" name="isYourPartnerAbleToReport">
       <bpmn:incoming>Flow_1ekiozl</bpmn:incoming>
       <bpmn:outgoing>Flow_08mnfio</bpmn:outgoing>
       <bpmn:outgoing>Flow_1fbmivh</bpmn:outgoing>

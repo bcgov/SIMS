@@ -10,7 +10,7 @@
         <zeebe:taskDefinition type="load-assessment-consolidated-data" />
         <zeebe:taskHeaders>
           <zeebe:header key="assessmentTriggerType" value="$.triggerType" />
-          <zeebe:header key="studentDataIsYourSpouseACanadianCitizen" value="$.data.isYourSpouseACanadianCitizen" />
+          <zeebe:header key="studentDataIsYourPartnerAbleToReport" value="$.data.isYourPartnerAbleToReport" />
           <zeebe:header key="studentDataParentValidSinNumber" value="$.data.parentValidSinNumber" />
           <zeebe:header key="studentDataNumberOfParents" value="$.data.numberOfParents" />
           <zeebe:header key="studentDataDependantstatus" value="$.data.dependantstatus" />
