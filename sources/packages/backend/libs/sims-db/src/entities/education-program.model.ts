@@ -416,7 +416,7 @@ export class EducationProgram extends RecordDataModel {
 
   /**
    * Last user id that updated the {@link isActive} column value on DB.
-   *  If null, the {@link isActive} value has never changed since its creation.
+   * If null, the {@link isActive} value has never changed since its creation.
    */
   @ManyToOne(() => User, { eager: false, nullable: true })
   @JoinColumn({
