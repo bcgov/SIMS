@@ -16137,7 +16137,7 @@
                   "value": ""
                 }
               ],
-              "content": "<Strong> Please be advised your partner will need to sign in to StudentAid BC and provide additional information.</Strong><br/> \nPartners must provide their information to StudentAid BC by logging in with a B.C. Services Card. If they are ineligible for a B.C. Services Card (e.g., if they do not have a valid SIN), select \"No\" to this question and provide information on their behalf.",
+              "content": "<Strong> Please be advised your partner will need to sign in to StudentAid BC and provide additional information.</Strong><br/> \nPartners must provide their information to StudentAid BC by logging in with a B.C. Services Card. If they are ineligible for a B.C. Services Card (e.g. if they do not have a valid SIN), select \"No\" to this question and provide information on their behalf.",
               "refreshOnChange": false,
               "customClass": "banner-info",
               "key": "additionalInformationRequired",
