@@ -332,7 +332,8 @@ redis-cluster-meet:
 	while read -r ip port; do \
 			oc exec -n $(NAMESPACE) -it redis-0 -- redis-cli -h $$ip -p $$port -a $$REDIS_PASSWORD -c CLUSTER MEET redis-0 $(REDIS_PORT); \
 	done; \
-	oc scale deployment -n $(NAMESPACE) app=redis --replicas=6
+
+# oc scale deployment -n $(NAMESPACE) app=redis --replicas=6
 
 create-db:
 	test -n $(DB_NAME)
