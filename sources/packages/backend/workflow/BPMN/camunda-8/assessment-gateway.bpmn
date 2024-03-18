@@ -231,7 +231,7 @@
       <bpmn:incoming>Flow_0bza37i</bpmn:incoming>
       <bpmn:outgoing>Flow_0umbeot</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_0h74s3m">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT5M</bpmn:timeDuration>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT12H</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:intermediateCatchEvent>
     <bpmn:eventBasedGateway id="verify-assessment-calculation-order-gateway">
@@ -501,7 +501,7 @@
       <bpmn:incoming>Flow_1ds5r8m</bpmn:incoming>
       <bpmn:outgoing>Flow_1sze0w6</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_0jk0tgh">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT30S</bpmn:timeDuration>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT12H</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:intermediateCatchEvent>
     <bpmn:exclusiveGateway id="pir-pending-gateway" name="Completed?">
@@ -716,7 +716,7 @@
       <bpmn:incoming>Flow_10lg2ud</bpmn:incoming>
       <bpmn:outgoing>verify-application-exceptions-retry-timer-flow</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_0ygi81c">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT30S</bpmn:timeDuration>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT12H</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:intermediateCatchEvent>
     <bpmn:intermediateCatchEvent id="application-exception-verified-message">
