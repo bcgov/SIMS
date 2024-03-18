@@ -18,6 +18,7 @@ import {
   ApplicationOfferingChangeRequestInProgressWithStudentNotification,
   ApplicationOfferingChangeRequestCompleteNotification,
   LegacyRestrictionAddedNotification,
+  EcertBlockedNotification,
 } from "..";
 import { GCNotifyService } from "./gc-notify.service";
 import { NotificationService } from "./notification.service";
@@ -614,6 +615,67 @@ export class NotificationActionsService {
     await this.notificationService.saveNotifications(
       eceResponseFileProcessingNotifications,
       auditUser.id,
+    );
+  }
+
+  /**
+   * Creates e-cert blocked notification for student and ministry.
+   * @param notification notification details.
+   * @param auditUserId user who blocks the ecert.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveEcertBlockedNotification(
+    notification: EcertBlockedNotification,
+    auditUserId: number,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const studentNotificationTemplateId =
+      await this.notificationMessageService.getTemplateId(
+        NotificationMessageType.StudentNotificationEcertBlocked,
+      );
+    const studentNotificationToSend = {
+      userId: auditUserId,
+      messageType: NotificationMessageType.StudentNotificationEcertBlocked,
+      messagePayload: {
+        email_address: notification.email,
+        template_id: studentNotificationTemplateId,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
+        },
+      },
+    };
+    const ministryNotificationTemplateId =
+      await this.notificationMessageService.getTemplateId(
+        NotificationMessageType.MinistryNotificationEcertBlocked,
+      );
+    const ministryNotificationToSend = {
+      userId: auditUserId,
+      messageType: NotificationMessageType.MinistryNotificationEcertBlocked,
+      messagePayload: {
+        email_address: this.gcNotifyService.ministryToAddress(),
+        template_id: ministryNotificationTemplateId,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
+          dob: getDateOnlyFormat(notification.dob),
+          studentEmail: notification.email,
+          applicationNumber: notification.applicationNumber,
+          dateTime: this.getDateTimeOnPSTTimeZone(),
+        },
+      },
+    };
+    // Save notification to be sent to the student into the notification table.
+    await this.notificationService.saveNotifications(
+      [studentNotificationToSend],
+      auditUserId,
+      { entityManager },
+    );
+    // Save notification to be sent to the ministry into the notification table.
+    await this.notificationService.saveNotifications(
+      [ministryNotificationToSend],
+      auditUserId,
+      { entityManager },
     );
   }
 

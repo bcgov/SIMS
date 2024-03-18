@@ -148,4 +148,12 @@ export enum NotificationMessageType {
    * A legacy restriction added to the student account.
    */
   LegacyRestrictionAdded = 15,
+  /**
+   * E-cert blocked.
+   */
+  StudentNotificationEcertBlocked = 16,
+  /**
+   * E-cert blocked.
+   */
+  MinistryNotificationEcertBlocked = 17,
 }

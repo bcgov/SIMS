@@ -15,6 +15,7 @@ import {
 import { ECertGenerationService } from "../e-cert-generation.service";
 import { Injectable } from "@nestjs/common";
 import { EligibleECertDisbursement } from "../disbursement-schedule.models";
+import { NotificationActionsService, SystemUsersService } from "@sims/services";
 
 /**
  * Executes the full-time calculations for the e-Cert generation.
@@ -23,6 +24,8 @@ import { EligibleECertDisbursement } from "../disbursement-schedule.models";
 export class FullTimeCalculationProcess extends ECertCalculationProcess {
   constructor(
     dataSource: DataSource,
+    systemUsersService: SystemUsersService,
+    notificationActionsService: NotificationActionsService,
     private readonly eCertGenerationService: ECertGenerationService,
     private readonly validateDisbursementFullTimeStep: ValidateDisbursementFullTimeStep,
     private readonly applyOverawardsDeductionsStep: ApplyOverawardsDeductionsStep,
@@ -33,7 +36,7 @@ export class FullTimeCalculationProcess extends ECertCalculationProcess {
     private readonly createBCTotalGrantsStep: CreateBCTotalGrantsStep,
     private readonly persistCalculationsStep: PersistCalculationsStep,
   ) {
-    super(dataSource);
+    super(dataSource, systemUsersService, notificationActionsService);
   }
 
   /**

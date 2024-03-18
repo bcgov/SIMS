@@ -1,8 +1,10 @@
 import { ECertProcessStep } from "../e-cert-processing-steps/e-cert-steps-models";
-import { DataSource } from "typeorm";
+import { DataSource, EntityManager } from "typeorm";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { parseJSONError, processInParallel } from "@sims/utilities";
 import { EligibleECertDisbursement } from "../disbursement-schedule.models";
+import { Student } from "@sims/sims-db";
+import { NotificationActionsService, SystemUsersService } from "@sims/services";
 
 /**
  * Disbursements grouped by student to allow parallel processing of students
@@ -17,7 +19,11 @@ interface GroupedDisbursementPerStudent {
  * Both offering intensity will have similar calculation steps and some additional ones.
  */
 export abstract class ECertCalculationProcess {
-  constructor(private readonly dataSource: DataSource) {}
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly systemUsersService: SystemUsersService,
+    private readonly notificationActionsService: NotificationActionsService,
+  ) {}
 
   /**
    * Get all disbursements currently eligible to be part of
@@ -119,6 +125,12 @@ export abstract class ECertCalculationProcess {
               disbursementLog,
             );
             if (!shouldProceed) {
+              // Create notification to the student and ministry when the disbursement is blocked.
+              this.createEcertBlockedNotification(
+                eCertDisbursement.studentId,
+                eCertDisbursement.applicationNumber,
+                entityManager,
+              );
               disbursementLog.info(
                 "The step determined that the calculation should be interrupted. This disbursement will not be part of the next e-Cert generation.",
               );
@@ -135,5 +147,40 @@ export abstract class ECertCalculationProcess {
         break;
       }
     }
+  }
+
+  /**
+   * Creates e-cert blocked notification.
+   * @param studentId student id associated with the blocked disbursement.
+   * @param applicationNumber application number associated with the blocked disbursement.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  private async createEcertBlockedNotification(
+    studentId: number,
+    applicationNumber: string,
+    entityManager: EntityManager,
+  ) {
+    const auditUser = this.systemUsersService.systemUser;
+    const student = await entityManager.getRepository(Student).findOne({
+      select: {
+        id: true,
+        birthDate: true,
+        user: { firstName: true, lastName: true, email: true },
+      },
+      relations: { user: true },
+      where: { id: studentId },
+    });
+    const notification = {
+      givenNames: student.user.firstName,
+      lastName: student.user.lastName,
+      email: student.user.email,
+      dob: new Date(student.birthDate),
+      applicationNumber: applicationNumber,
+    };
+    await this.notificationActionsService.saveEcertBlockedNotification(
+      notification,
+      auditUser.id,
+      entityManager,
+    );
   }
 }
