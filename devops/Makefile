@@ -313,26 +313,26 @@ init-redis-cluster:
 # Command to tell one Redis node to connect to another node and join the cluster. 
 # This is typically done when you are setting up a Redis Cluster or adding new nodes to an existing cluster to ensure they are aware of each other and can communicate effectively.
 redis-cluster-meet:
-    REDIS_PASSWORD=$$(oc get secret -n $(NAMESPACE) redis-creds -o jsonpath='{.data.password}' | base64 -d); \
-    oc get pods -n $(NAMESPACE) -l app=redis -o jsonpath='{range.items[*]}{.metadata.name} {end}' | \
-    while read -r pod_name; do \
-        oc delete pod $$pod_name -n $(NAMESPACE); \
-    done; \
-    sleep 30; \
-    oc get pods -n $(NAMESPACE) -l app=redis -o jsonpath='{range.items[*]}{.status.podIP} $(REDIS_PORT) {end}' | \
-    while read -r ip port; do \
-        NODE_INFO=$$(oc exec -n $(NAMESPACE) -it redis-0 -- redis-cli -h $$ip -p $$port -a $$REDIS_PASSWORD CLUSTER NODES | grep myself); \
-        IS_SLAVE=$$(echo "$$NODE_INFO" | grep "slave"); \
-        if [ -n "$$IS_SLAVE" ]; then \
-            NODE_ID=$$(echo "$$NODE_INFO" | awk '{print $$1}'); \
-            oc exec -n $(NAMESPACE) -it redis-0 -- redis-cli -h $$ip -p $$port -a $$REDIS_PASSWORD CLUSTER FORGET $$NODE_ID; \
-        fi; \
-    done; \
-    oc get pods -n $(NAMESPACE) -l app=redis -o jsonpath='{range.items[*]}{.status.podIP} $(REDIS_PORT) {end}' | \
-    while read -r ip port; do \
-        oc exec -n $(NAMESPACE) -it redis-0 -- redis-cli -h $$ip -p $$port -a $$REDIS_PASSWORD -c CLUSTER MEET redis-0 $(REDIS_PORT); \
-    done; \
-    oc scale deployment -n $(NAMESPACE) redis --replicas=6
+	REDIS_PASSWORD=$$(oc get secret -n $(NAMESPACE) redis-creds -o jsonpath='{.data.password}' | base64 -d); \
+	oc get pods -n $(NAMESPACE) -l app=redis -o jsonpath='{range.items[*]}{.metadata.name} {end}' | \
+	while read -r pod_name; do \
+			oc delete pod $$pod_name -n $(NAMESPACE); \
+	done; \
+	sleep 30; \
+	oc get pods -n $(NAMESPACE) -l app=redis -o jsonpath='{range.items[*]}{.status.podIP} $(REDIS_PORT) {end}' | \
+	while read -r ip port; do \
+			NODE_INFO=$$(oc exec -n $(NAMESPACE) -it redis-0 -- redis-cli -h $$ip -p $$port -a $$REDIS_PASSWORD CLUSTER NODES | grep myself); \
+			IS_SLAVE=$$(echo "$$NODE_INFO" | grep "slave"); \
+			if [ -n "$$IS_SLAVE" ]; then \
+					NODE_ID=$$(echo "$$NODE_INFO" | awk '{print $$1}'); \
+					oc exec -n $(NAMESPACE) -it redis-0 -- redis-cli -h $$ip -p $$port -a $$REDIS_PASSWORD CLUSTER FORGET $$NODE_ID; \
+			fi; \
+	done; \
+	oc get pods -n $(NAMESPACE) -l app=redis -o jsonpath='{range.items[*]}{.status.podIP} $(REDIS_PORT) {end}' | \
+	while read -r ip port; do \
+			oc exec -n $(NAMESPACE) -it redis-0 -- redis-cli -h $$ip -p $$port -a $$REDIS_PASSWORD -c CLUSTER MEET redis-0 $(REDIS_PORT); \
+	done; \
+	oc scale deployment -n $(NAMESPACE) redis --replicas=6
 
 create-db:
 	test -n $(DB_NAME)
