@@ -205,7 +205,7 @@ export const addHours = (hoursToAdd: number, date?: Date | string): Date => {
 export function addToDateOnlyString(
   date: string | Date,
   toAdd: number,
-  unit: dayjs.OpUnitType,
+  unit: dayjs.ManipulateType,
 ): string | undefined {
   if (date) {
     return getISODateOnlyString(dayjs(date).add(toAdd, unit).toDate());
