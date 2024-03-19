@@ -32,7 +32,7 @@ export function createFakeEducationProgram(
   program.credentialType = "credentialType";
   program.cipCode = "cipCode";
   program.nocCode = "nocCode";
-  program.sabcCode = options?.initialValue?.sabcCode ?? "sabcCode";
+  program.sabcCode = undefined; // Must be set by the consumer since it has unique constraints validation.
   program.regulatoryBody = "regulatoryBody";
   program.deliveredOnSite = options?.initialValue?.deliveredOnSite ?? false;
   program.deliveredOnline = options?.initialValue?.deliveredOnline ?? false;
@@ -50,5 +50,6 @@ export function createFakeEducationProgram(
   program.programIntensity = ProgramIntensity.fullTime;
   program.submittedBy = relations?.user;
   program.fieldOfStudyCode = 1;
+  program.isActive = options?.initialValue?.isActive ?? true;
   return program;
 }

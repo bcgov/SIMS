@@ -114,6 +114,29 @@ export class EducationProgramInstitutionsController extends BaseController {
   }
 
   /**
+   * Allows a program to be deactivated.
+   * @param programId program to be deactivated.
+   * @param payload information to support the deactivation.
+   */
+  @ApiNotFoundResponse({
+    description: "Not able to find the education program.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description: "The education program is already set as requested.",
+  })
+  @Patch(":programId/deactivate")
+  async deactivateProgram(
+    @Param("programId", ParseIntPipe) programId: number,
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<void> {
+    await this.educationProgramControllerService.deactivateProgram(
+      programId,
+      userToken.userId,
+      { institutionId: userToken.authorizations.institutionId },
+    );
+  }
+
+  /**
    * Get a key/value pair list of all approved programs.
    * @returns key/value pair list of all approved programs.
    */

@@ -14,7 +14,7 @@ import {
   getRawCount,
   ProgramIntensity,
 } from "@sims/sims-db";
-import { DataSource, In, Repository, Not, Equal } from "typeorm";
+import { DataSource, In, Repository, Not, Equal, UpdateResult } from "typeorm";
 import {
   SaveEducationProgram,
   EducationProgramsSummary,
@@ -26,11 +26,15 @@ import {
   SortPriority,
 } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
-import { EducationProgramOfferingService } from "../education-program-offering/education-program-offering.service";
 import {
   EDUCATION_PROGRAM_NOT_FOUND,
   DUPLICATE_SABC_CODE,
+  EDUCATION_PROGRAM_INVALID_OPERATION,
 } from "../../constants";
+import {
+  InstitutionService,
+  EducationProgramOfferingService,
+} from "../../services";
 
 const OTHER_REGULATORY_BODY = "other";
 @Injectable()
@@ -39,28 +43,38 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   constructor(
     private readonly dataSource: DataSource,
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
+    private readonly institutionService: InstitutionService,
   ) {
     super(dataSource.getRepository(EducationProgram));
     this.offeringsRepo = dataSource.getRepository(EducationProgramOffering);
   }
 
   /**
-   * Gets a program and ensure that this program belongs
+   * Gets a program and optionally ensures that this program belongs
    * to the expected institution including the institution
    * id in the query.
-   * @param programId Program id.
-   * @param institutionId Expected institution id.
-   * @returns program
+   * @param programId program id.
+   * @param institutionId expected institution id.
+   * @returns education program.
    */
   async getInstitutionProgram(
     programId: number,
-    institutionId: number,
+    institutionId?: number,
   ): Promise<EducationProgram> {
-    return this.repo
-      .createQueryBuilder("programs")
-      .where("programs.id = :programId", { programId })
-      .andWhere("programs.institution.id = :institutionId", { institutionId })
-      .getOne();
+    return this.repo.findOne({
+      select: {
+        id: true,
+        isActive: true,
+        institution: { id: true },
+      },
+      relations: {
+        institution: true,
+      },
+      where: {
+        id: programId,
+        institution: { id: institutionId },
+      },
+    });
   }
 
   /**
@@ -693,5 +707,64 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     });
 
     return !!result?.id;
+  }
+
+  /**
+   * Update the program active/inactive state.
+   * @param programId program to be updated.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param isActive value to update the isActive state for the program.
+   * @param options method options.
+   * - `institutionId` institution used for authorization.
+   * - `notes` notes associated with the change. Notes are optional and expected.
+   * @returns update result.
+   */
+  async updateEducationProgramIsActive(
+    programId: number,
+    auditUserId: number,
+    isActive: boolean,
+    options?: {
+      institutionId?: number;
+      notes?: string;
+    },
+  ): Promise<UpdateResult> {
+    // Ensures the program exists and the institution has access to it.
+    const program = await this.getInstitutionProgram(
+      programId,
+      options?.institutionId,
+    );
+    if (!program) {
+      throw new CustomNamedError(
+        "Not able to find the education program.",
+        EDUCATION_PROGRAM_NOT_FOUND,
+      );
+    }
+    // Avoid overriding the record with new auditing values if the isActive is already the expected one.
+    if (program.isActive === isActive) {
+      throw new CustomNamedError(
+        "The education program is already set as requested.",
+        EDUCATION_PROGRAM_INVALID_OPERATION,
+      );
+    }
+    return this.dataSource.transaction(async (entityManager) => {
+      if (options?.notes) {
+        await this.institutionService.createInstitutionNote(
+          program.institution.id,
+          NoteType.Program,
+          options.notes,
+          auditUserId,
+          entityManager,
+        );
+      }
+      const now = new Date();
+      const auditUser = { id: auditUserId } as User;
+      return this.repo.update(program.id, {
+        isActive,
+        isActiveUpdatedBy: auditUser,
+        isActiveUpdatedOn: now,
+        updatedAt: now,
+        modifier: auditUser,
+      });
+    });
   }
 }

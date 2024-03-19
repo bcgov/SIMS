@@ -45,8 +45,15 @@ export const BCEID_ACCOUNT_NOT_FOUND = "BCEID_ACCOUNT_NOT_FOUND";
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
 export const PIR_DENIED_REASON_NOT_FOUND_ERROR =
   "PIR_DENIED_REASON_NOT_FOUND_ERROR";
-
+/**
+ * Education program not found. Also used when the institution does not have access to it.
+ */
 export const EDUCATION_PROGRAM_NOT_FOUND = "EDUCATION_PROGRAM_NOT_FOUND";
+/**
+ * Some operation is being executed in a program in a moment that it is not expected.
+ */
+export const EDUCATION_PROGRAM_INVALID_OPERATION =
+  "EDUCATION_PROGRAM_INVALID_OPERATION";
 
 export const STUDENT_ACCOUNT_APPLICATION_NOT_FOUND =
   "STUDENT_ACCOUNT_APPLICATION_NOT_FOUND";

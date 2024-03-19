@@ -24,11 +24,8 @@ import { FormNames } from "../../services/form/constants";
 import {
   EDUCATION_PROGRAM_NOT_FOUND,
   DUPLICATE_SABC_CODE,
+  EDUCATION_PROGRAM_INVALID_OPERATION,
 } from "../../constants";
-import {
-  INSTITUTION_TYPE_BC_PUBLIC,
-  INSTITUTION_TYPE_BC_PRIVATE,
-} from "@sims/sims-db/constant";
 import { ApiProcessError } from "../../types";
 import { ApiUnprocessableEntityResponse } from "@nestjs/swagger";
 import { SaveEducationProgram } from "../../services/education-program/education-program.service.models";
@@ -228,5 +225,44 @@ export class EducationProgramControllerService {
       isBCPrivate: program.institution.institutionType.isBCPrivate,
       hasOfferings,
     };
+  }
+
+  /**
+   * Allows a program to be deactivated.
+   * @param programId program to be updated.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param isActive value to update the isActive state for the program.
+   * @param options method options.
+   * - `institutionId` institution used for authorization.
+   * - `notes` notes associated with the change. Notes are optional and expected.
+   */
+  async deactivateProgram(
+    programId: number,
+    auditUserId: number,
+    options?: {
+      institutionId?: number;
+      notes?: string;
+    },
+  ): Promise<void> {
+    try {
+      await this.programService.updateEducationProgramIsActive(
+        programId,
+        auditUserId,
+        false,
+        options,
+      );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        if (error.name === EDUCATION_PROGRAM_NOT_FOUND) {
+          throw new NotFoundException(error.message);
+        }
+        if (error.name === EDUCATION_PROGRAM_INVALID_OPERATION) {
+          throw new UnprocessableEntityException(
+            new ApiProcessError(error.message, error.name),
+          );
+        }
+      }
+      throw error;
+    }
   }
 }
