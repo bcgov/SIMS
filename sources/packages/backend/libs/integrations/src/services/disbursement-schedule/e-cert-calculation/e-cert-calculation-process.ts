@@ -126,7 +126,7 @@ export abstract class ECertCalculationProcess {
             );
             if (!shouldProceed) {
               // Create notification to the student and ministry when the disbursement is blocked.
-              this.createEcertBlockedNotification(
+              await this.createEcertBlockedNotification(
                 eCertDisbursement.studentId,
                 eCertDisbursement.applicationNumber,
                 entityManager,
