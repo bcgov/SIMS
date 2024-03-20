@@ -3,7 +3,7 @@ import { DataSource, EntityManager } from "typeorm";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { parseJSONError, processInParallel } from "@sims/utilities";
 import { EligibleECertDisbursement } from "../disbursement-schedule.models";
-import { Notification, Student } from "@sims/sims-db";
+import { Student } from "@sims/sims-db";
 import { NotificationActionsService, SystemUsersService } from "@sims/services";
 
 /**
