@@ -716,7 +716,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * @param isActive value to update the isActive state for the program.
    * @param options method options.
    * - `institutionId` institution used for authorization.
-   * - `notes` notes associated with the change. Notes are optional and expected.
+   * - `notes` notes associated with the change.
    * @returns update result.
    */
   async updateEducationProgramIsActive(
@@ -758,7 +758,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       }
       const now = new Date();
       const auditUser = { id: auditUserId } as User;
-      return this.repo.update(program.id, {
+      return entityManager.getRepository(EducationProgram).update(program.id, {
         isActive,
         isActiveUpdatedBy: auditUser,
         isActiveUpdatedOn: now,

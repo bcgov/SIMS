@@ -234,7 +234,7 @@ export class EducationProgramControllerService {
    * @param isActive value to update the isActive state for the program.
    * @param options method options.
    * - `institutionId` institution used for authorization.
-   * - `notes` notes associated with the change. Notes are optional and expected.
+   * - `notes` notes associated with the change.
    */
   async deactivateProgram(
     programId: number,

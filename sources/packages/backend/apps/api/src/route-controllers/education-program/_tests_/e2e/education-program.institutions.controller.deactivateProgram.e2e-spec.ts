@@ -64,12 +64,13 @@ describe("EducationProgramInstitutionsController(e2e)-deactivateProgram", () => 
       },
       where: { id: program.id },
     });
+    const expectedUser = { id: collegeCUser.id };
     expect(educationProgram).toEqual({
       id: program.id,
       isActive: false,
       isActiveUpdatedOn: expect.any(Date),
-      isActiveUpdatedBy: { id: collegeCUser.id },
-      modifier: { id: collegeCUser.id },
+      isActiveUpdatedBy: expectedUser,
+      modifier: expectedUser,
     });
   });
 
@@ -82,7 +83,7 @@ describe("EducationProgramInstitutionsController(e2e)-deactivateProgram", () => 
     await db.educationProgram.save(program);
 
     const endpoint = `/institutions/education-program/${program.id}/deactivate`;
-    // Program created by College C user and tried to be accessed by the College C.
+    // Program created by College C and the user will be authenticated using College F.
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
