@@ -3,7 +3,7 @@ INSERT INTO
 VALUES
   (
     16,
-    'Disbursement blocked student notification',
+    'Disbursement withheld',
     'bf53ce0d-c59c-4d03-badb-e0cab04ac582'
   ),
   (
