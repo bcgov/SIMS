@@ -18,7 +18,8 @@ import {
   ApplicationOfferingChangeRequestInProgressWithStudentNotification,
   ApplicationOfferingChangeRequestCompleteNotification,
   LegacyRestrictionAddedNotification,
-  EcertBlockedNotification,
+  DisbursementBlockedNotificationForMinistry,
+  DisbursementBlockedNotificationForStudent,
 } from "..";
 import { GCNotifyService } from "./gc-notify.service";
 import { NotificationService } from "./notification.service";
@@ -619,42 +620,61 @@ export class NotificationActionsService {
   }
 
   /**
-   * Creates e-cert blocked notification for student and ministry.
+   * Creates blocked disbursement notification for student.
    * @param notification notification details.
-   * @param auditUserId user who blocks the ecert.
+   * @param userId student's user id associated with this notification.
    * @param entityManager entity manager to execute in transaction.
    */
-  async saveEcertBlockedNotification(
-    notification: EcertBlockedNotification,
-    auditUserId: number,
+  async saveDisbursementBlockedNotificationForStudent(
+    notification: DisbursementBlockedNotificationForStudent,
+    userId: number,
     entityManager: EntityManager,
   ): Promise<void> {
-    const studentNotificationTemplateId =
-      await this.notificationMessageService.getTemplateId(
-        NotificationMessageType.StudentNotificationEcertBlocked,
-      );
-    const studentNotificationToSend = {
-      userId: auditUserId,
-      messageType: NotificationMessageType.StudentNotificationEcertBlocked,
+    const auditUser = this.systemUsersService.systemUser;
+    const templateId = await this.notificationMessageService.getTemplateId(
+      NotificationMessageType.StudentNotificationDisbursementBlocked,
+    );
+    const notificationToSend = {
+      userId,
+      messageType:
+        NotificationMessageType.StudentNotificationDisbursementBlocked,
       messagePayload: {
         email_address: notification.email,
-        template_id: studentNotificationTemplateId,
+        template_id: templateId,
         personalisation: {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
         },
       },
     };
-    const ministryNotificationTemplateId =
-      await this.notificationMessageService.getTemplateId(
-        NotificationMessageType.MinistryNotificationEcertBlocked,
-      );
+    // Save notification to be sent to the student into the notification table.
+    await this.notificationService.saveNotifications(
+      [notificationToSend],
+      auditUser.id,
+      { entityManager },
+    );
+  }
+
+  /**
+   * Creates blocked disbursement notification for ministry.
+   * @param notification notification details.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveDisbursementBlockedNotificationForMinistry(
+    notification: DisbursementBlockedNotificationForMinistry,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const templateId = await this.notificationMessageService.getTemplateId(
+      NotificationMessageType.MinistryNotificationDisbursementBlocked,
+    );
     const ministryNotificationToSend = {
-      userId: auditUserId,
-      messageType: NotificationMessageType.MinistryNotificationEcertBlocked,
+      userId: auditUser.id,
+      messageType:
+        NotificationMessageType.MinistryNotificationDisbursementBlocked,
       messagePayload: {
         email_address: this.gcNotifyService.ministryToAddress(),
-        template_id: ministryNotificationTemplateId,
+        template_id: templateId,
         personalisation: {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
@@ -665,16 +685,10 @@ export class NotificationActionsService {
         },
       },
     };
-    // Save notification to be sent to the student into the notification table.
-    await this.notificationService.saveNotifications(
-      [studentNotificationToSend],
-      auditUserId,
-      { entityManager },
-    );
     // Save notification to be sent to the ministry into the notification table.
     await this.notificationService.saveNotifications(
       [ministryNotificationToSend],
-      auditUserId,
+      auditUser.id,
       { entityManager },
     );
   }

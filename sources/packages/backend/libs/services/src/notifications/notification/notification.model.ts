@@ -66,11 +66,17 @@ export interface StudentNotification {
   userId: number;
 }
 
-export interface EcertBlockedNotification {
+export interface DisbursementBlockedNotificationForStudent {
   givenNames: string;
   lastName: string;
   email: string;
-  dob: Date;
+}
+
+export interface DisbursementBlockedNotificationForMinistry {
+  givenNames: string;
+  lastName: string;
+  email: string;
+  dob: string;
   applicationNumber: string;
 }
 

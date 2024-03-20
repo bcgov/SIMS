@@ -3,7 +3,7 @@ import { DataSource, EntityManager } from "typeorm";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { parseJSONError, processInParallel } from "@sims/utilities";
 import { EligibleECertDisbursement } from "../disbursement-schedule.models";
-import { Student } from "@sims/sims-db";
+import { Notification, Student } from "@sims/sims-db";
 import { NotificationActionsService, SystemUsersService } from "@sims/services";
 
 /**
@@ -125,12 +125,23 @@ export abstract class ECertCalculationProcess {
               disbursementLog,
             );
             if (!shouldProceed) {
-              // Create notification to the student and ministry when the disbursement is blocked.
-              await this.createEcertBlockedNotification(
-                eCertDisbursement.studentId,
-                eCertDisbursement.applicationNumber,
-                entityManager,
-              );
+              // Create notification to the student when the disbursement is blocked.
+              const disbursementBlockedNotificationForStudentPromise =
+                this.createDisbursementBlockedNotificationForStudent(
+                  eCertDisbursement.studentId,
+                  entityManager,
+                );
+              // Create notification to the ministry when the disbursement is blocked.
+              const disbursementBlockedNotificationForMinistryPromise =
+                this.createDisbursementBlockedNotificationForMinistry(
+                  eCertDisbursement.studentId,
+                  eCertDisbursement.applicationNumber,
+                  entityManager,
+                );
+              await Promise.all([
+                disbursementBlockedNotificationForStudentPromise,
+                disbursementBlockedNotificationForMinistryPromise,
+              ]);
               disbursementLog.info(
                 "The step determined that the calculation should be interrupted. This disbursement will not be part of the next e-Cert generation.",
               );
@@ -150,17 +161,45 @@ export abstract class ECertCalculationProcess {
   }
 
   /**
-   * Creates e-cert blocked notification.
+   * Creates disbursement blocked notification for student.
+   * @param studentId student id associated with the blocked disbursement.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  private async createDisbursementBlockedNotificationForStudent(
+    studentId: number,
+    entityManager: EntityManager,
+  ) {
+    const student = await entityManager.getRepository(Student).findOne({
+      select: {
+        id: true,
+        user: { firstName: true, lastName: true, email: true },
+      },
+      relations: { user: true },
+      where: { id: studentId },
+    });
+    const notification = {
+      givenNames: student.user.firstName,
+      lastName: student.user.lastName,
+      email: student.user.email,
+    };
+    await this.notificationActionsService.saveDisbursementBlockedNotificationForStudent(
+      notification,
+      student.user.id,
+      entityManager,
+    );
+  }
+
+  /**
+   * Creates disbursement blocked notification for ministry.
    * @param studentId student id associated with the blocked disbursement.
    * @param applicationNumber application number associated with the blocked disbursement.
    * @param entityManager entity manager to execute in transaction.
    */
-  private async createEcertBlockedNotification(
+  private async createDisbursementBlockedNotificationForMinistry(
     studentId: number,
     applicationNumber: string,
     entityManager: EntityManager,
   ) {
-    const auditUser = this.systemUsersService.systemUser;
     const student = await entityManager.getRepository(Student).findOne({
       select: {
         id: true,
@@ -174,12 +213,11 @@ export abstract class ECertCalculationProcess {
       givenNames: student.user.firstName,
       lastName: student.user.lastName,
       email: student.user.email,
-      dob: new Date(student.birthDate),
+      dob: student.birthDate,
       applicationNumber: applicationNumber,
     };
-    await this.notificationActionsService.saveEcertBlockedNotification(
+    await this.notificationActionsService.saveDisbursementBlockedNotificationForMinistry(
       notification,
-      auditUser.id,
       entityManager,
     );
   }
