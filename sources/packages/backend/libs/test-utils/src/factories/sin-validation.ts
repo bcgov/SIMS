@@ -8,7 +8,7 @@ export function createFakeSINValidation(relations?: {
   const sinValidation = new SINValidation();
   // Generated an invalid SIN and avoiding a number starting with 9
   // to the SIN be considered not temporary by default.
-  sinValidation.sin = faker.random
+  sinValidation.sin = faker.datatype
     .number({ min: 100000000, max: 899999999 })
     .toString();
   sinValidation.dateSent = now;

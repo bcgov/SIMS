@@ -4,7 +4,7 @@ import { INSTITUTION_TYPE_BC_PRIVATE } from "@sims/sims-db/constant";
 
 export function createFakeInstitution(): Institution {
   const institution = new Institution();
-  institution.businessGuid = faker.random.uuid();
+  institution.businessGuid = faker.datatype.uuid();
   institution.legalOperatingName = faker.company.companyName();
   institution.operatingName = faker.company.companySuffix();
   institution.primaryPhone = faker.phone.phoneNumber("##########");

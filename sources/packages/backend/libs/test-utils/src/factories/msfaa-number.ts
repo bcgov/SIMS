@@ -54,7 +54,7 @@ export function createFakeMSFAANumber(
   msfaaNumber.referenceApplication = relations?.referenceApplication;
   msfaaNumber.msfaaNumber =
     options?.msfaaInitialValues?.msfaaNumber ??
-    faker.random
+    faker.datatype
       .number({
         min: 1000000000,
         max: 9999999999,

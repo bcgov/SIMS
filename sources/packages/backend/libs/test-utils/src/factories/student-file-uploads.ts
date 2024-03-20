@@ -24,7 +24,10 @@ export function createFakeStudentFileUpload(
   const studentFile = new StudentFile();
   studentFile.fileName = faker.system.fileName();
   studentFile.uniqueFileName =
-    studentFile.fileName + faker.random.uuid() + "." + faker.system.fileType();
+    studentFile.fileName +
+    faker.datatype.uuid() +
+    "." +
+    faker.system.fileType();
   studentFile.groupName = "Ministry communications";
   studentFile.mimeType = faker.system.mimeType();
   studentFile.fileContent = Buffer.from(faker.random.words(50), "utf-8");
