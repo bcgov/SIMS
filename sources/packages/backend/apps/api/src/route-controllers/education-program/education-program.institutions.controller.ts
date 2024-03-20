@@ -116,7 +116,6 @@ export class EducationProgramInstitutionsController extends BaseController {
   /**
    * Allows a program to be deactivated.
    * @param programId program to be deactivated.
-   * @param payload information to support the deactivation.
    */
   @ApiNotFoundResponse({
     description: "Not able to find the education program.",

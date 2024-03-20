@@ -231,7 +231,6 @@ export class EducationProgramControllerService {
    * Allows a program to be deactivated.
    * @param programId program to be updated.
    * @param auditUserId user that should be considered the one that is causing the changes.
-   * @param isActive value to update the isActive state for the program.
    * @param options method options.
    * - `institutionId` institution used for authorization.
    * - `notes` notes associated with the change.
@@ -257,9 +256,7 @@ export class EducationProgramControllerService {
           throw new NotFoundException(error.message);
         }
         if (error.name === EDUCATION_PROGRAM_INVALID_OPERATION) {
-          throw new UnprocessableEntityException(
-            new ApiProcessError(error.message, error.name),
-          );
+          throw new UnprocessableEntityException(error.message);
         }
       }
       throw error;
