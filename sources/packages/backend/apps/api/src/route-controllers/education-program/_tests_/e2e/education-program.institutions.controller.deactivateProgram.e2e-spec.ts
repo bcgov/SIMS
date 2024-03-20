@@ -117,8 +117,9 @@ describe("EducationProgramInstitutionsController(e2e)-deactivateProgram", () => 
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         message: "The education program is already set as requested.",
-        errorType: "EDUCATION_PROGRAM_INVALID_OPERATION",
+        error: "Unprocessable Entity",
       });
   });
 

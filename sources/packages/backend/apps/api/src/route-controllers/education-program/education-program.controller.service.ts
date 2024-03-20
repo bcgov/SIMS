@@ -228,6 +228,34 @@ export class EducationProgramControllerService {
   }
 
   /**
+   * Allows a program to be deactivated by an Institution.
+   * @param programId program to be updated.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param options method options.
+   * - `institutionId` institution used for authorization.
+   */
+  async deactivateProgram(
+    programId: number,
+    auditUserId: number,
+    options: {
+      institutionId: number;
+    },
+  ): Promise<void>;
+  /**
+   * Allows a program to be deactivated by the Ministry providing additional notes.
+   * @param programId program to be updated.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param options method options.
+   * - `notes` notes associated with the change.
+   */
+  async deactivateProgram(
+    programId: number,
+    auditUserId: number,
+    options: {
+      notes: string;
+    },
+  ): Promise<void>;
+  /**
    * Allows a program to be deactivated.
    * @param programId program to be updated.
    * @param auditUserId user that should be considered the one that is causing the changes.
