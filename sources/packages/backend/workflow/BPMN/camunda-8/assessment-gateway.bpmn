@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.20.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0" camunda:diagramRelationId="f874f098-96b6-491d-81ec-ecf7a0d8c67a">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.21.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0" camunda:diagramRelationId="f874f098-96b6-491d-81ec-ecf7a0d8c67a">
   <bpmn:collaboration id="Collaboration_0z9wj8q">
     <bpmn:participant id="application-in-progress" name="Assessment" processRef="assessment-gateway" />
     <bpmn:group id="Group_1k2osho" categoryValueRef="CategoryValue_1yy7g02" />
@@ -231,7 +231,7 @@
       <bpmn:incoming>Flow_0bza37i</bpmn:incoming>
       <bpmn:outgoing>Flow_0umbeot</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_0h74s3m">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT5M</bpmn:timeDuration>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT12H</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:intermediateCatchEvent>
     <bpmn:eventBasedGateway id="verify-assessment-calculation-order-gateway">
@@ -501,7 +501,7 @@
       <bpmn:incoming>Flow_1ds5r8m</bpmn:incoming>
       <bpmn:outgoing>Flow_1sze0w6</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_0jk0tgh">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT30S</bpmn:timeDuration>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT12H</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:intermediateCatchEvent>
     <bpmn:exclusiveGateway id="pir-pending-gateway" name="Completed?">
@@ -716,7 +716,7 @@
       <bpmn:incoming>Flow_10lg2ud</bpmn:incoming>
       <bpmn:outgoing>verify-application-exceptions-retry-timer-flow</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_0ygi81c">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT30S</bpmn:timeDuration>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT12H</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:intermediateCatchEvent>
     <bpmn:intermediateCatchEvent id="application-exception-verified-message">
