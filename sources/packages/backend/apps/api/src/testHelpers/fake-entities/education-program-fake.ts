@@ -32,7 +32,7 @@ export function createFakeEducationProgram(
   program.credentialType = "credentialType";
   program.cipCode = "cipCode";
   program.nocCode = "nocCode";
-  program.sabcCode = undefined; // Must be set by the consumer since it has unique constraints validation.
+  program.sabcCode = options?.initialValue?.sabcCode;
   program.regulatoryBody = "regulatoryBody";
   program.deliveredOnSite = options?.initialValue?.deliveredOnSite ?? false;
   program.deliveredOnline = options?.initialValue?.deliveredOnline ?? false;
