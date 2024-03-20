@@ -31,6 +31,7 @@ export enum Role {
   InstitutionApproveDeclineDesignation = "institution-approve-decline-designation",
   InstitutionApproveDeclineOfferingChanges = "institution-approve-decline-offering-changes",
   InstitutionApproveDeclineApplicationOfferingChangeRequest = "institution-approve-decline-application-offering-change-request",
+  InstitutionDeclineEducationProgram = "institution-decline-education-program",
   StudentReissueMSFAA = "student-reissue-msfaa",
   StudentUpdateDisabilityStatus = "student-update-disability-status",
 }

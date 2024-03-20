@@ -140,6 +140,8 @@ export class EducationProgramAESTController extends BaseController {
   @ApiUnprocessableEntityResponse({
     description: "The education program is already set as requested.",
   })
+  // TODO: To be added
+  //@Roles(Role.InstitutionApproveDeclineProgram)
   @Patch(":programId/deactivate")
   async deactivateProgram(
     @UserToken() userToken: IUserToken,
