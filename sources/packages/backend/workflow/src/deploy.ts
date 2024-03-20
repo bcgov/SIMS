@@ -23,7 +23,7 @@ import {
   console.info(`**** Deploying to Camunda ****\n`);
   console.info(`Deploying to Zeebe address ${process.env.ZEEBE_ADDRESS}`);
 
-  const directory = path.resolve(__dirname, `../BPMN/camunda-8`);
+  const directory = path.resolve(__dirname, `../src/workflow-definitions`);
   console.info(`Getting resources from ${directory}`);
   const fileNames: string[] = fs.readdirSync(directory);
   if (fileNames.length === 0) {
