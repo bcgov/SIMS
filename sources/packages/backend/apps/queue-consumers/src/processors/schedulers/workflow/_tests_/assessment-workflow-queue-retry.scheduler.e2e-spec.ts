@@ -9,9 +9,9 @@ import {
 import {
   E2EDataSources,
   createE2EDataSources,
-  getQueueProviderName,
   saveFakeApplication,
 } from "@sims/test-utils";
+import { getQueueProviderName } from "@sims/test-utils/mocks";
 import { Not } from "typeorm";
 import { StudentAssessmentStatus } from "@sims/sims-db";
 import {

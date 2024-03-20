@@ -2,10 +2,8 @@ import { INestApplication } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { DataSource } from "typeorm";
 import { WorkersModule } from "../../../src/workers.module";
-import {
-  createZeebeModuleMock,
-  overrideImportsMetadata,
-} from "@sims/test-utils";
+import { overrideImportsMetadata } from "@sims/test-utils";
+import { createZeebeModuleMock } from "@sims/test-utils/mocks";
 import { SystemUsersService, ZeebeModule } from "@sims/services";
 
 /**

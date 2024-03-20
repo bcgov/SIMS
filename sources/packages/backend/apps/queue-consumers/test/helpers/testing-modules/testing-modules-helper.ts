@@ -2,14 +2,14 @@ import { INestApplication } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { DataSource } from "typeorm";
 import { QueueConsumersModule } from "../../../src/queue-consumers.module";
-import { createZeebeModuleMock } from "@sims/test-utils/mocks/zeebe-client-mock";
 import { ZBClient } from "zeebe-node";
 import { SshService } from "@sims/integrations/services";
+import { overrideImportsMetadata } from "@sims/test-utils";
 import {
   QueueModuleMock,
   createSSHServiceMock,
-  overrideImportsMetadata,
-} from "@sims/test-utils";
+  createZeebeModuleMock,
+} from "@sims/test-utils/mocks";
 import * as Client from "ssh2-sftp-client";
 import { DeepMocked, createMock } from "@golevelup/ts-jest";
 import { DiscoveryModule } from "@golevelup/nestjs-discovery";

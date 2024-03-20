@@ -10,12 +10,11 @@ import {
   E2EDataSources,
   createFakeDisbursementFeedbackError,
   createE2EDataSources,
-  getUploadedFile,
   saveFakeStudentRestriction,
   createFakeInstitution,
   createFakeInstitutionLocation,
-  getUploadedFiles,
 } from "@sims/test-utils";
+import { getUploadedFile, getUploadedFiles } from "@sims/test-utils/mocks";
 import * as Client from "ssh2-sftp-client";
 import { ArrayContains, Not } from "typeorm";
 import {

@@ -12,9 +12,9 @@ import {
   createE2EDataSources,
   createFakeStudentAssessment,
   createFakeUser,
-  getQueueProviderName,
   saveFakeApplication,
 } from "@sims/test-utils";
+import { getQueueProviderName } from "@sims/test-utils/mocks";
 import { Not } from "typeorm";
 import {
   Application,
