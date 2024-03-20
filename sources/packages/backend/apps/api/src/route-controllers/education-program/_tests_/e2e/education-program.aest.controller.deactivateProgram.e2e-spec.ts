@@ -96,7 +96,7 @@ describe("EducationProgramAESTController(e2e)-deactivateProgram", () => {
     await db.educationProgram.save(program);
 
     const endpoint = `/aest/education-program/${program.id}/deactivate`;
-    const userToken = await getAESTToken(AESTGroups.OperationsAdministrators);
+    const userToken = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -115,7 +115,7 @@ describe("EducationProgramAESTController(e2e)-deactivateProgram", () => {
   it("Should return a not found HTTP status when the program id does not exists.", async () => {
     // Arrange
     const endpoint = `/aest/education-program/99999/deactivate`;
-    const userToken = await getAESTToken(AESTGroups.OperationsAdministrators);
+    const userToken = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -129,6 +129,29 @@ describe("EducationProgramAESTController(e2e)-deactivateProgram", () => {
         statusCode: HttpStatus.NOT_FOUND,
         message: "Not able to find the education program.",
         error: "Not Found",
+      });
+  });
+
+  it("Should return a bad request HTTP status when payload is invalid.", async () => {
+    // Arrange
+    const endpoint = `/aest/education-program/99999/deactivate`;
+    const userToken = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send({
+        note: undefined,
+      })
+      .auth(userToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: [
+          "note must be shorter than or equal to 1000 characters",
+          "note should not be empty",
+        ],
+        error: "Bad Request",
       });
   });
 
