@@ -4,7 +4,7 @@ import { ProcessSummary } from "@sims/utilities/logger";
 import { parseJSONError, processInParallel } from "@sims/utilities";
 import { EligibleECertDisbursement } from "../disbursement-schedule.models";
 import { Student } from "@sims/sims-db";
-import { NotificationActionsService, SystemUsersService } from "@sims/services";
+import { NotificationActionsService } from "@sims/services";
 
 /**
  * Disbursements grouped by student to allow parallel processing of students
@@ -21,7 +21,6 @@ interface GroupedDisbursementPerStudent {
 export abstract class ECertCalculationProcess {
   constructor(
     private readonly dataSource: DataSource,
-    private readonly systemUsersService: SystemUsersService,
     private readonly notificationActionsService: NotificationActionsService,
   ) {}
 
