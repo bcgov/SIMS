@@ -61,7 +61,7 @@ export function createFakeApplication(
   // with fixed length of 10 characters.
   application.applicationNumber =
     options?.initialValue?.applicationNumber ??
-    faker.random.number({ max: 9999999999, min: 1000000000 }).toString();
+    faker.datatype.number({ max: 9999999999, min: 1000000000 }).toString();
   application.applicationException = relations?.applicationException;
   application.location = relations?.location ?? createFakeInstitutionLocation();
   return application;

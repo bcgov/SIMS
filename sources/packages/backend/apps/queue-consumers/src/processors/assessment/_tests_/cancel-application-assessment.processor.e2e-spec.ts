@@ -73,7 +73,7 @@ describe(
 
     it("Should cancel the assessment pending disbursements and rollback overawards when the cancelled application has overawards and also one sent and one pending disbursements.", async () => {
       // Arrange
-      const workflowInstanceId = faker.random
+      const workflowInstanceId = faker.datatype
         .number({
           min: 1000000000,
           max: 9999999999,

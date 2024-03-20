@@ -18,10 +18,10 @@ import {
   createFakeDisbursementOveraward,
   createFakeDisbursementValue,
   createFakeMSFAANumber,
-  getUploadedFile,
   saveFakeApplicationDisbursements,
   saveFakeStudent,
 } from "@sims/test-utils";
+import { getUploadedFile } from "@sims/test-utils/mocks";
 import { IsNull, Like, Not } from "typeorm";
 import {
   createTestingAppModule,

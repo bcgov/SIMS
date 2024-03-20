@@ -27,10 +27,10 @@ export function createFakeEducationProgramOffering(relations?: {
     relations?.institutionLocation?.institution ?? relations.institution;
   const offering = new EducationProgramOffering();
   offering.name = faker.random.word();
-  offering.actualTuitionCosts = faker.random.number(1000);
-  offering.programRelatedCosts = faker.random.number(1000);
-  offering.mandatoryFees = faker.random.number(1000);
-  offering.exceptionalExpenses = faker.random.number(1000);
+  offering.actualTuitionCosts = faker.datatype.number(1000);
+  offering.programRelatedCosts = faker.datatype.number(1000);
+  offering.mandatoryFees = faker.datatype.number(1000);
+  offering.exceptionalExpenses = faker.datatype.number(1000);
   offering.offeringDelivered = "offeringDelivered";
   offering.lacksStudyBreaks = true;
   offering.educationProgram =
