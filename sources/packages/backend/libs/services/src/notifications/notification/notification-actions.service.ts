@@ -18,6 +18,7 @@ import {
   ApplicationOfferingChangeRequestInProgressWithStudentNotification,
   ApplicationOfferingChangeRequestCompleteNotification,
   LegacyRestrictionAddedNotification,
+  DisbursementBlockedNotificationForMinistry,
 } from "..";
 import { GCNotifyService } from "./gc-notify.service";
 import { NotificationService } from "./notification.service";
@@ -614,6 +615,78 @@ export class NotificationActionsService {
     await this.notificationService.saveNotifications(
       eceResponseFileProcessingNotifications,
       auditUser.id,
+    );
+  }
+
+  /**
+   * Creates blocked disbursement notification for student.
+   * @param notification notification details.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveDisbursementBlockedNotificationForStudent(
+    notification: StudentNotification,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const templateId = await this.notificationMessageService.getTemplateId(
+      NotificationMessageType.StudentNotificationDisbursementBlocked,
+    );
+    const notificationToSend = {
+      userId: notification.userId,
+      messageType:
+        NotificationMessageType.StudentNotificationDisbursementBlocked,
+      messagePayload: {
+        email_address: notification.toAddress,
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
+        },
+      },
+    };
+    // Save notification to be sent to the student into the notification table.
+    await this.notificationService.saveNotifications(
+      [notificationToSend],
+      auditUser.id,
+      { entityManager },
+    );
+  }
+
+  /**
+   * Creates blocked disbursement notification for ministry.
+   * @param notification notification details.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveDisbursementBlockedNotificationForMinistry(
+    notification: DisbursementBlockedNotificationForMinistry,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const templateId = await this.notificationMessageService.getTemplateId(
+      NotificationMessageType.MinistryNotificationDisbursementBlocked,
+    );
+    const ministryNotificationToSend = {
+      userId: auditUser.id,
+      messageType:
+        NotificationMessageType.MinistryNotificationDisbursementBlocked,
+      messagePayload: {
+        email_address: this.gcNotifyService.ministryToAddress(),
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
+          dob: getDateOnlyFormat(notification.dob),
+          studentEmail: notification.email,
+          applicationNumber: notification.applicationNumber,
+          dateTime: this.getDateTimeOnPSTTimeZone(),
+        },
+      },
+    };
+    // Save notification to be sent to the ministry into the notification table.
+    await this.notificationService.saveNotifications(
+      [ministryNotificationToSend],
+      auditUser.id,
+      { entityManager },
     );
   }
 
