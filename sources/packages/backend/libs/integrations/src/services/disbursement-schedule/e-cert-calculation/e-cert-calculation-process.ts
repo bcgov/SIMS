@@ -4,7 +4,11 @@ import { ProcessSummary } from "@sims/utilities/logger";
 import { parseJSONError, processInParallel } from "@sims/utilities";
 import { EligibleECertDisbursement } from "../disbursement-schedule.models";
 import { Student } from "@sims/sims-db";
-import { NotificationActionsService } from "@sims/services";
+import {
+  DisbursementBlockedNotificationForMinistry,
+  NotificationActionsService,
+  StudentNotification,
+} from "@sims/services";
 
 /**
  * Disbursements grouped by student to allow parallel processing of students
@@ -168,13 +172,13 @@ export abstract class ECertCalculationProcess {
       relations: { user: true },
       where: { id: studentId },
     });
-    const studentNotification = {
+    const studentNotification: StudentNotification = {
       givenNames: student.user.firstName,
       lastName: student.user.lastName,
       toAddress: student.user.email,
       userId: student.user.id,
     };
-    const ministryNotification = {
+    const ministryNotification: DisbursementBlockedNotificationForMinistry = {
       givenNames: student.user.firstName,
       lastName: student.user.lastName,
       email: student.user.email,
