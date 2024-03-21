@@ -30,7 +30,7 @@ describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
     const institution = createFakeInstitution();
     institution.operatingName = FAKE_INSTITUTION_NAME;
     // Using uuid to keep the legal operating name unique for institution.
-    institution.legalOperatingName = faker.random.uuid();
+    institution.legalOperatingName = faker.datatype.uuid();
     await db.institution.save(institution);
     // Modifying the text to uppercase to validate non case sensitive search.
     const legalNameSearchText = institution.legalOperatingName.toUpperCase();
@@ -67,7 +67,7 @@ describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
     const institution = createFakeInstitution();
     institution.operatingName = FAKE_INSTITUTION_NAME;
     // Using uuid to keep the legal operating name unique for institution.
-    institution.legalOperatingName = faker.random.uuid();
+    institution.legalOperatingName = faker.datatype.uuid();
     await db.institution.save(institution);
     const operatingNameSearchText = "Search E2E Test institution";
     const legalNameSearchText = institution.legalOperatingName;

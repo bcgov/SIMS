@@ -33,7 +33,7 @@ export function createFakeDisbursementSchedule(
   // per e-Cert documentation. Numbers under 1000000 can still be used for E2E tests.
   schedule.documentNumber =
     options?.initialValues?.documentNumber ??
-    faker.random.number({ min: 1000000, max: 9999999 });
+    faker.datatype.number({ min: 1000000, max: 9999999 });
   schedule.disbursementDate =
     options?.initialValues?.disbursementDate ?? nowString;
   schedule.negotiatedExpiryDate = nowString;

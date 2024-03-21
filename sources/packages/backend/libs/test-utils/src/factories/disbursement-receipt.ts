@@ -28,7 +28,7 @@ export function createFakeDisbursementReceipt(relations: {
     relations.disbursementSchedule.studentAssessment.application.student;
   const now = new Date();
   const isoDateNow = getISODateOnlyString(new Date());
-  const randomAmount = faker.random.number({
+  const randomAmount = faker.datatype.number({
     min: 1000,
     max: 8999,
   });
@@ -36,7 +36,7 @@ export function createFakeDisbursementReceipt(relations: {
   receipt.batchRunDate = isoDateNow;
   receipt.studentSIN =
     student.sinValidation.sin ??
-    faker.random.number({ min: 100000000, max: 899999999 }).toString();
+    faker.datatype.number({ min: 100000000, max: 899999999 }).toString();
   receipt.disbursementSchedule = relations.disbursementSchedule;
   receipt.fundingType = RECEIPT_FUNDING_TYPE_FEDERAL;
   receipt.totalEntitledDisbursedAmount = randomAmount;

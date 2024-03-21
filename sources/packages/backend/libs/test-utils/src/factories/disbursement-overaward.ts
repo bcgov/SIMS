@@ -20,7 +20,7 @@ export function createFakeDisbursementOveraward(relations?: {
   disbursementOveraward.student = relations?.student;
   disbursementOveraward.studentAssessment = relations?.studentAssessment;
   disbursementOveraward.disbursementSchedule = relations?.disbursementSchedule;
-  disbursementOveraward.overawardValue = faker.random.number({
+  disbursementOveraward.overawardValue = faker.datatype.number({
     min: 500,
     max: 50000,
   });

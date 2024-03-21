@@ -8,11 +8,11 @@ import {
 import {
   E2EDataSources,
   createE2EDataSources,
-  mockDownloadFiles,
   saveFakeStudent,
   saveFakeStudentRestriction,
   RestrictionCode,
 } from "@sims/test-utils";
+import { mockDownloadFiles } from "@sims/test-utils/mocks";
 import * as Client from "ssh2-sftp-client";
 import { Job } from "bull";
 import * as path from "path";

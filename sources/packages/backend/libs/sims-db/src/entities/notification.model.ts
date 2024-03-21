@@ -65,7 +65,6 @@ export class Notification extends RecordDataModel {
     nullable: true,
   })
   dateRead?: Date;
-
   /**
    * Error details of a permanent failure if occurred while processing the notification.
    * A permanent failure indicates that a notification could not be delivered to
@@ -148,4 +147,12 @@ export enum NotificationMessageType {
    * A legacy restriction added to the student account.
    */
   LegacyRestrictionAdded = 15,
+  /**
+   * Student disbursement blocked.
+   */
+  StudentNotificationDisbursementBlocked = 16,
+  /**
+   * Ministry disbursement blocked.
+   */
+  MinistryNotificationDisbursementBlocked = 17,
 }

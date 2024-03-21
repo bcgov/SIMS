@@ -9,6 +9,12 @@ import { PartTimeMSFAAProcessResponseIntegrationScheduler } from "../msfaa-part-
 import {
   E2EDataSources,
   createE2EDataSources,
+  MSFAAStates,
+  saveFakeApplicationDisbursements,
+  saveFakeStudent,
+  createFakeMSFAANumber,
+} from "@sims/test-utils";
+import {
   createFileFromStructuredRecords,
   getStructuredRecords,
   mockDownloadFiles,
@@ -16,11 +22,7 @@ import {
   MSFAA_PART_TIME_RECEIVE_FILE_WITH_INVALID_RECORDS_COUNT,
   MSFAA_PART_TIME_RECEIVE_FILE_WITH_INVALID_SIN_HASH_TOTAL,
   MSFAA_PART_TIME_RECEIVE_FILE_WITH_REACTIVATION_RECORD,
-  MSFAAStates,
-  saveFakeApplicationDisbursements,
-  saveFakeStudent,
-  createFakeMSFAANumber,
-} from "@sims/test-utils";
+} from "@sims/test-utils/mocks";
 import { THROW_AWAY_MSFAA_NUMBER } from "./msfaa-helper";
 import {
   ApplicationStatus,

@@ -7,11 +7,8 @@ import {
   describeProcessorRootTest,
 } from "../../../../../../test/helpers";
 import { PartTimeMSFAAProcessIntegrationScheduler } from "../msfaa-part-time-process-integration.scheduler";
-import {
-  E2EDataSources,
-  createE2EDataSources,
-  getUploadedFile,
-} from "@sims/test-utils";
+import { E2EDataSources, createE2EDataSources } from "@sims/test-utils";
+import { getUploadedFile } from "@sims/test-utils/mocks";
 import * as Client from "ssh2-sftp-client";
 import { In, IsNull } from "typeorm";
 import { saveMSFAATestInputsData } from "./msfaa-factory";

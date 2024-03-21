@@ -3,7 +3,7 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
 import { AuthTestController } from "../src/testHelpers/controllers/auth-test/auth-test.controller";
-import { createZeebeModuleMock } from "@sims/test-utils";
+import { createZeebeModuleMock } from "@sims/test-utils/mocks";
 import { KeycloakConfig } from "@sims/auth/config";
 import { KeycloakService } from "@sims/auth/services";
 import {

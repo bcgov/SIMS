@@ -66,6 +66,14 @@ export interface StudentNotification {
   userId: number;
 }
 
+export interface DisbursementBlockedNotificationForMinistry {
+  givenNames: string;
+  lastName: string;
+  email: string;
+  dob: string;
+  applicationNumber: string;
+}
+
 export interface NotificationProcessingSummary {
   notificationsProcessed: number;
   notificationsSuccessfullyProcessed: number;
