@@ -19,7 +19,6 @@ import {
   ApplicationOfferingChangeRequestCompleteNotification,
   LegacyRestrictionAddedNotification,
   DisbursementBlockedNotificationForMinistry,
-  DisbursementBlockedNotificationForStudent,
 } from "..";
 import { GCNotifyService } from "./gc-notify.service";
 import { NotificationService } from "./notification.service";
