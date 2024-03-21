@@ -778,6 +778,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * @param institutionId
    * @param note
    * @returns saved Note.
+   * @deprecated use {@link createInstitutionNote} instead.
    */
   async saveInstitutionNote(institutionId: number, note: Note): Promise<Note> {
     await this.repo
@@ -795,6 +796,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * @param noteDescription note description.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @returns saved Note.
+   * @deprecated use {@link createInstitutionNote} instead.
    */
   async addInstitutionNote(
     institutionId: number,

@@ -90,10 +90,12 @@
     },
     "typescript.preferences.importModuleSpecifier": "non-relative",
     "cSpell.words": [
+      "AEST",
       "ESDC",
       "MSFAA",
       "NSLSC",
       "Overaward",
+      "SABC",
       "SFAS",
       "timestamptz",
       "typeorm"

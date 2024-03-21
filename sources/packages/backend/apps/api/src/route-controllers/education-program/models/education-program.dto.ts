@@ -179,3 +179,9 @@ export class DeclineProgramAPIInDTO {
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   declinedNote: string;
 }
+
+export class DeactivateProgramAPIInDTO {
+  @IsNotEmpty()
+  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
+  note: string;
+}
