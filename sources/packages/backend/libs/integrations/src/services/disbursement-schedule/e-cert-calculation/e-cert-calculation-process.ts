@@ -124,23 +124,12 @@ export abstract class ECertCalculationProcess {
               disbursementLog,
             );
             if (!shouldProceed) {
-              // Create notification to the student when the disbursement is blocked.
-              const disbursementBlockedNotificationForStudentPromise =
-                this.createDisbursementBlockedNotificationForStudent(
-                  eCertDisbursement.studentId,
-                  entityManager,
-                );
-              // Create notification to the ministry when the disbursement is blocked.
-              const disbursementBlockedNotificationForMinistryPromise =
-                this.createDisbursementBlockedNotificationForMinistry(
-                  eCertDisbursement.studentId,
-                  eCertDisbursement.applicationNumber,
-                  entityManager,
-                );
-              await Promise.all([
-                disbursementBlockedNotificationForStudentPromise,
-                disbursementBlockedNotificationForMinistryPromise,
-              ]);
+              // Create notifications to the student and ministry when the disbursement is blocked.
+              await this.createDisbursementBlockedNotifications(
+                eCertDisbursement.studentId,
+                eCertDisbursement.applicationNumber,
+                entityManager,
+              );
               disbursementLog.info(
                 "The step determined that the calculation should be interrupted. This disbursement will not be part of the next e-Cert generation.",
               );
@@ -160,41 +149,12 @@ export abstract class ECertCalculationProcess {
   }
 
   /**
-   * Creates disbursement blocked notification for student.
-   * @param studentId student id associated with the blocked disbursement.
-   * @param entityManager entity manager to execute in transaction.
-   */
-  private async createDisbursementBlockedNotificationForStudent(
-    studentId: number,
-    entityManager: EntityManager,
-  ) {
-    const student = await entityManager.getRepository(Student).findOne({
-      select: {
-        id: true,
-        user: { firstName: true, lastName: true, email: true },
-      },
-      relations: { user: true },
-      where: { id: studentId },
-    });
-    const notification = {
-      givenNames: student.user.firstName,
-      lastName: student.user.lastName,
-      email: student.user.email,
-    };
-    await this.notificationActionsService.saveDisbursementBlockedNotificationForStudent(
-      notification,
-      student.user.id,
-      entityManager,
-    );
-  }
-
-  /**
-   * Creates disbursement blocked notification for ministry.
+   * Creates disbursement blocked notifications for student and ministry.
    * @param studentId student id associated with the blocked disbursement.
    * @param applicationNumber application number associated with the blocked disbursement.
    * @param entityManager entity manager to execute in transaction.
    */
-  private async createDisbursementBlockedNotificationForMinistry(
+  private async createDisbursementBlockedNotifications(
     studentId: number,
     applicationNumber: string,
     entityManager: EntityManager,
@@ -208,16 +168,32 @@ export abstract class ECertCalculationProcess {
       relations: { user: true },
       where: { id: studentId },
     });
-    const notification = {
+    const studentNotification = {
+      givenNames: student.user.firstName,
+      lastName: student.user.lastName,
+      toAddress: student.user.email,
+      userId: student.user.id,
+    };
+    const ministryNotification = {
       givenNames: student.user.firstName,
       lastName: student.user.lastName,
       email: student.user.email,
       dob: student.birthDate,
       applicationNumber: applicationNumber,
     };
-    await this.notificationActionsService.saveDisbursementBlockedNotificationForMinistry(
-      notification,
-      entityManager,
-    );
+    const disbursementBlockedNotificationForStudentPromise =
+      this.notificationActionsService.saveDisbursementBlockedNotificationForStudent(
+        studentNotification,
+        entityManager,
+      );
+    const disbursementBlockedNotificationForMinistryPromise =
+      this.notificationActionsService.saveDisbursementBlockedNotificationForMinistry(
+        ministryNotification,
+        entityManager,
+      );
+    await Promise.all([
+      disbursementBlockedNotificationForStudentPromise,
+      disbursementBlockedNotificationForMinistryPromise,
+    ]);
   }
 }

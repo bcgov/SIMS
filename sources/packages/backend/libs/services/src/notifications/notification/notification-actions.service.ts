@@ -622,12 +622,10 @@ export class NotificationActionsService {
   /**
    * Creates blocked disbursement notification for student.
    * @param notification notification details.
-   * @param userId student's user id associated with this notification.
    * @param entityManager entity manager to execute in transaction.
    */
   async saveDisbursementBlockedNotificationForStudent(
-    notification: DisbursementBlockedNotificationForStudent,
-    userId: number,
+    notification: StudentNotification,
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
@@ -635,11 +633,11 @@ export class NotificationActionsService {
       NotificationMessageType.StudentNotificationDisbursementBlocked,
     );
     const notificationToSend = {
-      userId,
+      userId: notification.userId,
       messageType:
         NotificationMessageType.StudentNotificationDisbursementBlocked,
       messagePayload: {
-        email_address: notification.email,
+        email_address: notification.toAddress,
         template_id: templateId,
         personalisation: {
           givenNames: notification.givenNames ?? "",
