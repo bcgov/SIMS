@@ -8,6 +8,6 @@ VALUES
   ),
   (
     17,
-    'Disbursement blocked ministry notification',
+    'Disbursement withheld ministry notification',
     'a0bf7cc1-b3f7-463a-a594-d9f10b704e80'
   );
