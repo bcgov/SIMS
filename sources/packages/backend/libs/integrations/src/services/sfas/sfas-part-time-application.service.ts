@@ -44,6 +44,11 @@ export class SFASPartTimeApplicationsService
     application.CSGPAward = sfasApplication.CSGPAward;
     application.SBSDAward = sfasApplication.SBSDAward;
     application.extractedAt = getUTC(extractedDate);
+    application.CSPTAward = sfasApplication.CSPTAward;
+    application.CSGDAward = sfasApplication.CSGDAward;
+    application.BCAGAward = sfasApplication.BCAGAward;
+    application.CSLPAward = sfasApplication.CSLPAward;
+    application.programYearId = sfasApplication.programYearId;
     await this.repo.save(application, { reload: false, transaction: false });
   }
 

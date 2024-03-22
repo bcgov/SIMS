@@ -15,6 +15,7 @@ import {
 import { mockDownloadFiles } from "@sims/test-utils/mocks";
 import * as Client from "ssh2-sftp-client";
 import { Job } from "bull";
+import * as dayjs from "dayjs";
 import * as path from "path";
 import { SFASIntegrationScheduler } from "../sfas-integration.scheduler";
 import { Student, StudentRestriction } from "@sims/sims-db";
@@ -25,6 +26,8 @@ const SFAS_LEGACY_RESTRICTION_FILENAME =
   "SFAS-TO-SIMS-2024MAR07-LEGACY-RESTRICTIONS.txt";
 const SFAS_ALL_RESTRICTIONS_FILENAME =
   "SFAS-TO-SIMS-2024MAR07-ALL-RESTRICTIONS.txt";
+const SFAS_SAIL_DATA_FILENAME =
+  "SFAS-TO-SIMS-2024MAR21-PY-MAXIMUM-DATA-IMPORT.txt";
 
 describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
   let app: INestApplication;
@@ -152,6 +155,95 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         [RestrictionCode.AF]: 2,
         [RestrictionCode.B6B]: 1,
         [RestrictionCode.SSR]: 1,
+      });
+    },
+  );
+
+  it(
+    "Should add a SFAS part time application record when importing data from SFAS " +
+      "where the record type is the part time application data record.",
+    async () => {
+      // Arrange
+      // Queued job.
+      const job = createMock<Job<void>>();
+      mockDownloadFiles(sftpClientMock, [SFAS_SAIL_DATA_FILENAME]);
+      // Act
+      const processingResults = await processor.processSFASIntegrationFiles(
+        job,
+      );
+      // Assert
+      // Expect the file was deleted from SFTP.
+      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the file contains 2 records.
+      expect(processingResults[0].summary[1]).toBe("File contains 2 records.");
+      const startDate = dayjs("20230801", "YYYYMMDD", false).format(
+        "YYYY-MM-DD",
+      );
+      const endDate = dayjs("20240201", "YYYYMMDD", false).format("YYYY-MM-DD");
+      const sfasPartTimeApplicationsCount =
+        await db.sfasPartTimeApplications.count({
+          where: {
+            startDate: startDate,
+            endDate: endDate,
+          },
+        });
+      expect(sfasPartTimeApplicationsCount).toBe(2);
+      // Expect the database data to be the same as the file data for one record.
+      const firstSFASPartTimeApplication =
+        await db.sfasPartTimeApplications.findOne({
+          select: {
+            startDate: true,
+            endDate: true,
+            CSGPAward: true,
+            SBSDAward: true,
+            CSPTAward: true,
+            CSGDAward: true,
+            BCAGAward: true,
+            CSLPAward: true,
+            programYearId: true,
+          },
+          where: {
+            individualId: 950000360,
+          },
+        });
+      expect(firstSFASPartTimeApplication).toEqual({
+        startDate: startDate,
+        endDate: endDate,
+        CSGPAward: 4000,
+        SBSDAward: 300,
+        CSPTAward: 30000,
+        CSGDAward: 165,
+        BCAGAward: 24,
+        CSLPAward: 500,
+        programYearId: 20232024,
+      });
+      const secondSFASPartTimeApplication =
+        await db.sfasPartTimeApplications.findOne({
+          select: {
+            startDate: true,
+            endDate: true,
+            CSGPAward: true,
+            SBSDAward: true,
+            CSPTAward: true,
+            CSGDAward: true,
+            BCAGAward: true,
+            CSLPAward: true,
+            programYearId: true,
+          },
+          where: {
+            individualId: 950000361,
+          },
+        });
+      expect(secondSFASPartTimeApplication).toEqual({
+        startDate: startDate,
+        endDate: endDate,
+        CSGPAward: 5000,
+        SBSDAward: 400,
+        CSPTAward: 40000,
+        CSGDAward: 166,
+        BCAGAward: 25,
+        CSLPAward: 600,
+        programYearId: 20232024,
       });
     },
   );

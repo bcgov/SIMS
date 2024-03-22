@@ -33,6 +33,7 @@ import {
   ReportConfig,
   Restriction,
   SFASApplication,
+  SFASPartTimeApplications,
   SFASIndividual,
   SFASRestriction,
   SINValidation,
@@ -104,6 +105,9 @@ export function createE2EDataSources(dataSource: DataSource): E2EDataSources {
     restriction: dataSource.getRepository(Restriction),
     sequenceControl: dataSource.getRepository(SequenceControl),
     sfasApplication: dataSource.getRepository(SFASApplication),
+    sfasPartTimeApplications: dataSource.getRepository(
+      SFASPartTimeApplications,
+    ),
     sfasIndividual: dataSource.getRepository(SFASIndividual),
     sfasPartTimeApplicationRecord: dataSource.getRepository(
       SFASPartTimeApplicationRecord,
@@ -170,6 +174,7 @@ export interface E2EDataSources {
   sequenceControl: Repository<SequenceControl>;
   sfasApplication: Repository<SFASApplication>;
   sfasIndividual: Repository<SFASIndividual>;
+  sfasPartTimeApplications: Repository<SFASPartTimeApplications>;
   sfasPartTimeApplicationRecord: Repository<SFASPartTimeApplicationRecord>;
   sfasRestriction: Repository<SFASRestriction>;
   sinValidation: Repository<SINValidation>;

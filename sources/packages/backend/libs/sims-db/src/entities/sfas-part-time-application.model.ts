@@ -56,4 +56,45 @@ export class SFASPartTimeApplications extends BaseSFASApplicationModel {
     nullable: false,
   })
   extractedAt: Date;
+  /**
+   * CSPT Award Amount (sail_extract_data.sail_cspt_amt).
+   */
+  @Column({
+    name: "cspt_award",
+    nullable: true,
+  })
+  CSPTAward: number;
+  /**
+   * CSGD Award Amount (sail_extract_data.sail_ptdep_amt).
+   */
+  @Column({
+    name: "csgd_award",
+    nullable: true,
+  })
+  CSGDAward: number;
+  /**
+   * BCAG-PT Amount (sail_extract_data.sail_bcag_amt).
+   */
+  @Column({
+    name: "bcag_award",
+    nullable: true,
+  })
+  BCAGAward: number;
+  /**
+   * CSLP Amount (sail_extract_data.sail_cslp_amt).
+   */
+  @Column({
+    name: "cslp_award",
+    nullable: true,
+  })
+  CSLPAward: number;
+  /**
+   * Program Year ID associated with application.
+   * Example: 20202021.
+   */
+  @Column({
+    name: "program_year_id",
+    nullable: true,
+  })
+  programYearId?: number;
 }

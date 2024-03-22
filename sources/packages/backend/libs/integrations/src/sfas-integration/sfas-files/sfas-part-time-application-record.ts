@@ -48,4 +48,45 @@ export class SFASPartTimeApplicationRecord extends SFASRecordIdentification {
       ? +this.line.substring(49, 49 + 10).trim()
       : null;
   }
+  /**
+   * CSPT Award Amount (sail_extract_data.sail_cspt_award_amt).
+   */
+  get CSPTAward(): number | null {
+    return this.line.substring(59, 59 + 10).trim()
+      ? +this.line.substring(59, 59 + 10).trim()
+      : null;
+  }
+  /**
+   * CSGD Award Amount (sail_extract_data.sail_ptdep_award_amt).
+   */
+  get CSGDAward(): number | null {
+    return this.line.substring(69, 69 + 10).trim()
+      ? +this.line.substring(69, 69 + 10).trim()
+      : null;
+  }
+  /**
+   * BCAG-PT Amount (sail_extract_data.sail_bcag_award_amt).
+   */
+  get BCAGAward(): number | null {
+    return this.line.substring(79, 79 + 10).trim()
+      ? +this.line.substring(79, 79 + 10).trim()
+      : null;
+  }
+  /**
+   * CSLP Amount (sail_extract_data.sail_cslp_award_amt).
+   */
+  get CSLPAward(): number | null {
+    return this.line.substring(89, 89 + 10).trim()
+      ? +this.line.substring(89, 89 + 10).trim()
+      : null;
+  }
+  /**
+   * Program Year ID associated with application.
+   * Example: 20202021.
+   */
+  get programYearId(): number | null {
+    return this.line.substring(99, 99 + 8).trim()
+      ? +this.line.substring(99, 99 + 8).trim()
+      : null;
+  }
 }
