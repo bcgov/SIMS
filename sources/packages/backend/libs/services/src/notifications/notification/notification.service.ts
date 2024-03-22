@@ -44,8 +44,10 @@ export class NotificationService extends RecordDataModelService<Notification> {
   /**
    * Saves all notifications.
    * @param notifications information to create the notifications.
+   * @param disbursementId disbursement id associated with the notification being saved.
    * @param auditUserId id of the user creating the notifications.
    * @param options save notification options.
+   * - `disbursementId` disbursement id associated with the notification being saved.
    * - `entityManager` optional repository that can be provided, for instance,
    * to execute the command as part of an existing transaction. If not provided
    * the local repository will be used instead.
@@ -55,12 +57,14 @@ export class NotificationService extends RecordDataModelService<Notification> {
     notifications: SaveNotificationModel[],
     auditUserId: number,
     options?: {
-      entityManager: EntityManager;
+      disbursementId?: number;
+      entityManager?: EntityManager;
     },
   ): Promise<number[]> {
     const newNotifications = notifications.map((notification) => ({
       user: { id: notification.userId } as User,
       creator: { id: auditUserId } as User,
+      metadata: { disbursement_id: options.disbursementId },
       messagePayload: notification.messagePayload,
       notificationMessage: {
         id: notification.messageType,

@@ -621,10 +621,12 @@ export class NotificationActionsService {
   /**
    * Creates blocked disbursement notification for student.
    * @param notification notification details.
+   * @param disbursementId disbursement id.
    * @param entityManager entity manager to execute in transaction.
    */
   async saveDisbursementBlockedNotificationForStudent(
     notification: StudentNotification,
+    disbursementId: number,
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
@@ -648,17 +650,19 @@ export class NotificationActionsService {
     await this.notificationService.saveNotifications(
       [notificationToSend],
       auditUser.id,
-      { entityManager },
+      { disbursementId, entityManager },
     );
   }
 
   /**
    * Creates blocked disbursement notification for ministry.
    * @param notification notification details.
+   * @param disbursementId disbursement id.
    * @param entityManager entity manager to execute in transaction.
    */
   async saveDisbursementBlockedNotificationForMinistry(
     notification: DisbursementBlockedNotificationForMinistry,
+    disbursementId: number,
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
@@ -686,7 +690,7 @@ export class NotificationActionsService {
     await this.notificationService.saveNotifications(
       [ministryNotificationToSend],
       auditUser.id,
-      { entityManager },
+      { disbursementId, entityManager },
     );
   }
 

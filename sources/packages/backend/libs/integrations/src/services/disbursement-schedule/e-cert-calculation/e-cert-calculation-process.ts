@@ -1,9 +1,15 @@
 import { ECertProcessStep } from "../e-cert-processing-steps/e-cert-steps-models";
 import { DataSource, EntityManager } from "typeorm";
 import { ProcessSummary } from "@sims/utilities/logger";
-import { parseJSONError, processInParallel } from "@sims/utilities";
+import {
+  addDays,
+  getUTC,
+  getUTCNow,
+  parseJSONError,
+  processInParallel,
+} from "@sims/utilities";
 import { EligibleECertDisbursement } from "../disbursement-schedule.models";
-import { Student } from "@sims/sims-db";
+import { Notification, Student } from "@sims/sims-db";
 import {
   DisbursementBlockedNotificationForMinistry,
   NotificationActionsService,
@@ -129,11 +135,47 @@ export abstract class ECertCalculationProcess {
             );
             if (!shouldProceed) {
               // Create notifications to the student and ministry when the disbursement is blocked.
-              await this.createDisbursementBlockedNotifications(
-                eCertDisbursement.studentId,
-                eCertDisbursement.applicationNumber,
-                entityManager,
+              const notificationMessageId = 16;
+              const notification = await entityManager
+                .getRepository(Notification)
+                .createQueryBuilder("notifications")
+                .select("count(*)::int", "notificationsCount")
+                .addSelect("max(notifications.created_at)", "max_created_at")
+                .innerJoin(
+                  "notifications.notificationMessage",
+                  "notificationMessage",
+                )
+                .where("notificationMessage.id = :notificationMessageId", {
+                  notificationMessageId,
+                })
+                .andWhere("notifications.permanent_failure_error IS NULL")
+                .andWhere(
+                  "notifications.metadata->>'disbursement_id' = :disbursementId",
+                  {
+                    disbursementId: eCertDisbursement.disbursement.id,
+                  },
+                )
+                .getRawOne<{
+                  max_created_at: Date;
+                  notificationsCount: number;
+                }>();
+              const sevenDaysLaterDate = getUTC(
+                addDays(7, notification.max_created_at),
               );
+              // Condition check to create notifications: Less than 3 notifications are created previously and there are no failures in sending those created notifications.
+              // Plus, it has been atleast 7 days from the last created notification for this disbursement.
+              if (
+                !notification.notificationsCount ||
+                (notification.notificationsCount < 3 &&
+                  sevenDaysLaterDate < getUTCNow())
+              ) {
+                await this.createDisbursementBlockedNotifications(
+                  eCertDisbursement.disbursement.id,
+                  eCertDisbursement.studentId,
+                  eCertDisbursement.applicationNumber,
+                  entityManager,
+                );
+              }
               disbursementLog.info(
                 "The step determined that the calculation should be interrupted. This disbursement will not be part of the next e-Cert generation.",
               );
@@ -154,11 +196,13 @@ export abstract class ECertCalculationProcess {
 
   /**
    * Creates disbursement blocked notifications for student and ministry.
+   * @param disbursementId disbursement id associated with the blocked disbursement.
    * @param studentId student id associated with the blocked disbursement.
    * @param applicationNumber application number associated with the blocked disbursement.
    * @param entityManager entity manager to execute in transaction.
    */
   private async createDisbursementBlockedNotifications(
+    disbursementId: number,
     studentId: number,
     applicationNumber: string,
     entityManager: EntityManager,
@@ -188,11 +232,13 @@ export abstract class ECertCalculationProcess {
     const disbursementBlockedNotificationForStudentPromise =
       this.notificationActionsService.saveDisbursementBlockedNotificationForStudent(
         studentNotification,
+        disbursementId,
         entityManager,
       );
     const disbursementBlockedNotificationForMinistryPromise =
       this.notificationActionsService.saveDisbursementBlockedNotificationForMinistry(
         ministryNotification,
+        disbursementId,
         entityManager,
       );
     await Promise.all([
