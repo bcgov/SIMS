@@ -139,38 +139,12 @@ export abstract class ECertCalculationProcess {
               disbursementLog,
             );
             if (!shouldProceed) {
-              // Create notifications to the student and ministry when the disbursement is blocked.
-              const notificationMessageId = 16;
-              const notification = await entityManager
-                .getRepository(Notification)
-                .createQueryBuilder("notifications")
-                .select("count(*)::int", "notificationsCount")
-                .addSelect("max(notifications.created_at)", "max_created_at")
-                .innerJoin(
-                  "notifications.notificationMessage",
-                  "notificationMessage",
-                )
-                .where("notificationMessage.id = :notificationMessageId", {
-                  notificationMessageId,
-                })
-                .andWhere("notifications.permanent_failure_error IS NULL")
-                .andWhere(
-                  "notifications.metadata->>'disbursement_id' = :disbursementId",
-                  {
-                    disbursementId: eCertDisbursement.disbursement.id,
-                  },
-                )
-                .getRawOne<NotificationData>();
-              const sevenDaysLaterDate = getUTC(
-                addDays(7, notification.max_created_at),
-              );
-              // Condition check to create notifications: Less than 3 notifications are created previously and there are no failures in sending those created notifications.
-              // Plus, it has been atleast 7 days from the last created notification for this disbursement.
-              if (
-                !notification.notificationsCount ||
-                (notification.notificationsCount < 3 &&
-                  sevenDaysLaterDate < getUTCNow())
-              ) {
+              const shouldCreateNotification =
+                await this.shouldCreateDisbursementBlockedNotification(
+                  eCertDisbursement.disbursement.id,
+                  entityManager,
+                );
+              if (shouldCreateNotification) {
                 await this.createDisbursementBlockedNotifications(
                   eCertDisbursement.disbursement.id,
                   eCertDisbursement.studentId,
@@ -194,6 +168,47 @@ export abstract class ECertCalculationProcess {
         break;
       }
     }
+  }
+
+  /**
+   * Checks whether the disbursement blocked notification should be created or not.
+   * @param disbursementId disbursement id.
+   * @param entityManager entity manager to execute in transaction.
+   * @returns boolean indicating if the disbursement blocked notification should be created or not.
+   */
+  private async shouldCreateDisbursementBlockedNotification(
+    disbursementId: number,
+    entityManager: EntityManager,
+  ): Promise<boolean> {
+    // Create notifications to the student and ministry when the disbursement is blocked.
+    const notificationMessageId = 16;
+    const notification = await entityManager
+      .getRepository(Notification)
+      .createQueryBuilder("notifications")
+      .select("count(*)::int", "notificationsCount")
+      .addSelect("max(notifications.created_at)", "max_created_at")
+      .innerJoin("notifications.notificationMessage", "notificationMessage")
+      .where("notificationMessage.id = :notificationMessageId", {
+        notificationMessageId,
+      })
+      .andWhere("notifications.permanent_failure_error IS NULL")
+      .andWhere(
+        "notifications.metadata->>'disbursement_id' = :disbursementId",
+        {
+          disbursementId,
+        },
+      )
+      .getRawOne<NotificationData>();
+    const sevenDaysLaterDate = getUTC(addDays(7, notification.max_created_at));
+    // Condition check to create notifications: Less than 3 notifications are created previously and there are no failures in sending those created notifications.
+    // Plus, it has been atleast 7 days from the last created notification for this disbursement.
+    if (
+      !notification.notificationsCount ||
+      (notification.notificationsCount < 3 && sevenDaysLaterDate < getUTCNow())
+    ) {
+      return true;
+    }
+    return false;
   }
 
   /**
