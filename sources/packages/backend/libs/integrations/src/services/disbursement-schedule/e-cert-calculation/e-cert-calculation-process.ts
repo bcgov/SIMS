@@ -24,6 +24,11 @@ interface GroupedDisbursementPerStudent {
   [studentId: number]: EligibleECertDisbursement[];
 }
 
+interface NotificationData {
+  max_created_at: Date;
+  notificationsCount: number;
+}
+
 /**
  * Base process for e-Cert calculations independently of the offering intensity.
  * Both offering intensity will have similar calculation steps and some additional ones.
@@ -155,10 +160,7 @@ export abstract class ECertCalculationProcess {
                     disbursementId: eCertDisbursement.disbursement.id,
                   },
                 )
-                .getRawOne<{
-                  max_created_at: Date;
-                  notificationsCount: number;
-                }>();
+                .getRawOne<NotificationData>();
               const sevenDaysLaterDate = getUTC(
                 addDays(7, notification.max_created_at),
               );
