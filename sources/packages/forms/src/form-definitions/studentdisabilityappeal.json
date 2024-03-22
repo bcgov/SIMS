@@ -163,6 +163,7 @@
           "clearOnHide": true,
           "validate": {
             "required": true,
+            "onlyAvailableItems": true,
             "custom": "",
             "customPrivate": false
           },
