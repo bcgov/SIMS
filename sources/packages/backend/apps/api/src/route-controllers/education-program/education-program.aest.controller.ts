@@ -20,11 +20,16 @@ import {
   ApproveProgramAPIInDTO,
   EducationProgramAPIOutDTO,
   EducationProgramsSummaryAPIOutDTO,
+  DeactivateProgramAPIInDTO,
 } from "./models/education-program.dto";
 import { EducationProgramService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import { UserGroups } from "../../auth/user-groups.enum";
-import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import {
   PaginatedResultsAPIOutDTO,
@@ -121,6 +126,31 @@ export class EducationProgramAESTController extends BaseController {
       institutionId,
       programId,
       userToken.userId,
+    );
+  }
+
+  /**
+   * Allows a program to be deactivated.
+   * @param programId program to be deactivated.
+   * @param payload information to support the deactivation.
+   */
+  @ApiNotFoundResponse({
+    description: "Not able to find the education program.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description: "The education program is already set as requested.",
+  })
+  @Roles(Role.InstitutionDeactivateEducationProgram)
+  @Patch(":programId/deactivate")
+  async deactivateProgram(
+    @UserToken() userToken: IUserToken,
+    @Param("programId", ParseIntPipe) programId: number,
+    @Body() payload: DeactivateProgramAPIInDTO,
+  ): Promise<void> {
+    await this.educationProgramControllerService.deactivateProgram(
+      programId,
+      userToken.userId,
+      { notes: payload.note },
     );
   }
 }
