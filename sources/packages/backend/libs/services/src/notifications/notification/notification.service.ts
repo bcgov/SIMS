@@ -61,15 +61,22 @@ export class NotificationService extends RecordDataModelService<Notification> {
       entityManager?: EntityManager;
     },
   ): Promise<number[]> {
-    const newNotifications = notifications.map((notification) => ({
-      user: { id: notification.userId } as User,
-      creator: { id: auditUserId } as User,
-      metadata: { disbursement_id: options.disbursementId },
-      messagePayload: notification.messagePayload,
-      notificationMessage: {
-        id: notification.messageType,
-      } as NotificationMessage,
-    }));
+    const newNotifications = notifications.map((notification) => {
+      const notificationToSave = {
+        user: { id: notification.userId } as User,
+        creator: { id: auditUserId } as User,
+        messagePayload: notification.messagePayload,
+        notificationMessage: {
+          id: notification.messageType,
+        } as NotificationMessage,
+      };
+      if (options?.disbursementId) {
+        notificationToSave["metadata"] = {
+          disbursement_id: options?.disbursementId,
+        };
+      }
+      return notificationToSave;
+    });
     const repository =
       options?.entityManager?.getRepository(Notification) ?? this.repo;
     // Breaks the execution in chunks to allow the inserts of a huge amount of records.
