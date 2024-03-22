@@ -44,7 +44,6 @@ export class NotificationService extends RecordDataModelService<Notification> {
   /**
    * Saves all notifications.
    * @param notifications information to create the notifications.
-   * @param disbursementId disbursement id associated with the notification being saved.
    * @param auditUserId id of the user creating the notifications.
    * @param options save notification options.
    * - `disbursementId` disbursement id associated with the notification being saved.
