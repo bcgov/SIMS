@@ -165,3 +165,7 @@ export interface ApproveProgramAPIInDTO {
 export interface DeclineProgramAPIInDTO {
   declinedNote: string;
 }
+
+export interface DeactivateProgramAPIInDTO {
+  note: string;
+}

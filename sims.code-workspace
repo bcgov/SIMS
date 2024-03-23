@@ -91,6 +91,7 @@
     "typescript.preferences.importModuleSpecifier": "non-relative",
     "cSpell.words": [
       "AEST",
+      "composables",
       "ESDC",
       "MSFAA",
       "NSLSC",

@@ -5,13 +5,31 @@ export function useModalDialog<T, TParameter = any>() {
   const loading = ref(false);
   const showParameter = ref<TParameter>();
   let promise: (value: T) => void;
+  let beforeResolvePromise: ((value: T) => Promise<boolean>) | undefined;
 
-  const resolvePromise = (value: T, options?: { keepModalOpen? }) => {
+  const resolvePromise = async (
+    value: T,
+    options?: { keepModalOpen?: boolean },
+  ) => {
+    if (beforeResolvePromise) {
+      loading.value = true;
+      const success = await beforeResolvePromise(value);
+      loading.value = false;
+      if (!success) {
+        // Abort the promise resolution if the beforeResolvePromise
+        // is present and did not return true.
+        return;
+      }
+    }
     showDialog.value = options?.keepModalOpen ?? false;
     promise(value);
   };
 
-  const showModal = async (params?: TParameter): Promise<T> => {
+  const showModal = async (
+    params?: TParameter,
+    canResolvePromise?: (value: T) => Promise<boolean>,
+  ): Promise<T> => {
+    beforeResolvePromise = canResolvePromise;
     showParameter.value = params;
     showDialog.value = true;
     loading.value = false;
@@ -36,8 +54,12 @@ export function useModalDialog<T, TParameter = any>() {
 }
 
 export interface ModalDialog<T, TParameter = any> {
-  showModal: (params?: TParameter) => Promise<T>;
+  showModal: (
+    params?: TParameter,
+    canResolvePromise?: (value: T) => Promise<boolean>,
+  ) => Promise<T>;
   hideModal: () => void;
   showDialog: Ref<boolean>;
   loading: Ref<boolean>;
+  beforeResolvePromise: () => Promise<boolean>;
 }

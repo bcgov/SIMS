@@ -6,6 +6,7 @@ import {
 import ApiClient from "@/services/http/ApiClient";
 import {
   ApproveProgramAPIInDTO,
+  DeactivateProgramAPIInDTO,
   DeclineProgramAPIInDTO,
   EducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
@@ -182,5 +183,17 @@ export class EducationProgramService {
       institutionId,
       payload,
     );
+  }
+
+  /**
+   * Allows a program to be deactivated.
+   * @param programId program to be deactivated.
+   * @param payload information to support the deactivation.
+   */
+  async deactivateProgram(
+    programId: number,
+    payload?: DeactivateProgramAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.EducationProgram.deactivateProgram(programId, payload);
   }
 }
