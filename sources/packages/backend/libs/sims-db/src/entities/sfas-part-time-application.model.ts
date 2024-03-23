@@ -38,7 +38,7 @@ export class SFASPartTimeApplications extends BaseSFASApplicationModel {
     name: "csgp_award",
     nullable: true,
   })
-  CSGPAward: number;
+  csgpAward: number;
   /**
    * SBSD Award Amount (sail_extract_data.sail_bcsl_sbsd_award_amt ).
    */
@@ -46,7 +46,7 @@ export class SFASPartTimeApplications extends BaseSFASApplicationModel {
     name: "sbsd_award",
     nullable: true,
   })
-  SBSDAward: number;
+  sbsdAward: number;
   /**
    * Date that the record was extracted from SFAS.
    */
@@ -63,7 +63,7 @@ export class SFASPartTimeApplications extends BaseSFASApplicationModel {
     name: "cspt_award",
     nullable: true,
   })
-  CSPTAward: number;
+  csptAward: number;
   /**
    * CSGD Award Amount (sail_extract_data.sail_ptdep_amt).
    */
@@ -71,7 +71,7 @@ export class SFASPartTimeApplications extends BaseSFASApplicationModel {
     name: "csgd_award",
     nullable: true,
   })
-  CSGDAward: number;
+  csgdAward: number;
   /**
    * BCAG-PT Amount (sail_extract_data.sail_bcag_amt).
    */
@@ -79,7 +79,7 @@ export class SFASPartTimeApplications extends BaseSFASApplicationModel {
     name: "bcag_award",
     nullable: true,
   })
-  BCAGAward: number;
+  bcagAward: number;
   /**
    * CSLP Amount (sail_extract_data.sail_cslp_amt).
    */
@@ -87,7 +87,7 @@ export class SFASPartTimeApplications extends BaseSFASApplicationModel {
     name: "cslp_award",
     nullable: true,
   })
-  CSLPAward: number;
+  cslpAward: number;
   /**
    * Program Year ID associated with application.
    * Example: 20202021.

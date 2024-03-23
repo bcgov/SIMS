@@ -6,17 +6,14 @@ export class AddSFASPartTimeApplicationPYMaximumColumns1711061241340
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData(
-        "Add-col-py-maximum-support.sql",
-        "SFASPartTimeApplications",
-      ),
+      getSQLFileData("Add-cols-sfas-pt-awards.sql", "SFASPartTimeApplications"),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Rollback-add-col-py-maximum-support.sql",
+        "Rollback-add-cols-sfas-pt-awards.sql",
         "SFASPartTimeApplications",
       ),
     );

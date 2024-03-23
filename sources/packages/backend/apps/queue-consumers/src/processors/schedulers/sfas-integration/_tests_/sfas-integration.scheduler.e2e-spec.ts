@@ -20,6 +20,7 @@ import * as path from "path";
 import { SFASIntegrationScheduler } from "../sfas-integration.scheduler";
 import { Student, StudentRestriction } from "@sims/sims-db";
 import { SystemUsersService } from "@sims/services";
+import { In } from "typeorm";
 
 // SFAS received file mocks.
 const SFAS_LEGACY_RESTRICTION_FILENAME =
@@ -27,7 +28,7 @@ const SFAS_LEGACY_RESTRICTION_FILENAME =
 const SFAS_ALL_RESTRICTIONS_FILENAME =
   "SFAS-TO-SIMS-2024MAR07-ALL-RESTRICTIONS.txt";
 const SFAS_SAIL_DATA_FILENAME =
-  "SFAS-TO-SIMS-2024MAR21-PY-MAXIMUM-DATA-IMPORT.txt";
+  "SFAS-TO-SIMS-2024MAR21-PT-APPLICATION-DATA-IMPORT.txt";
 
 describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
   let app: INestApplication;
@@ -174,76 +175,67 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       // Assert
       // Expect the file was deleted from SFTP.
       expect(sftpClientMock.delete).toHaveBeenCalled();
-      // Expect the file contains 2 records.
-      expect(processingResults[0].summary[1]).toBe("File contains 2 records.");
+      // Expect the file contains 3 records.
+      expect(processingResults[0].summary[1]).toBe("File contains 3 records.");
       const startDate = dayjs("20230801", "YYYYMMDD", false).format(
         "YYYY-MM-DD",
       );
       const endDate = dayjs("20240201", "YYYYMMDD", false).format("YYYY-MM-DD");
-      const sfasPartTimeApplicationsCount =
-        await db.sfasPartTimeApplications.count({
-          where: {
-            startDate: startDate,
-            endDate: endDate,
-          },
-        });
-      expect(sfasPartTimeApplicationsCount).toBe(2);
       // Expect the database data to be the same as the file data for one record.
-      const firstSFASPartTimeApplication =
-        await db.sfasPartTimeApplications.findOne({
-          select: {
-            startDate: true,
-            endDate: true,
-            CSGPAward: true,
-            SBSDAward: true,
-            CSPTAward: true,
-            CSGDAward: true,
-            BCAGAward: true,
-            CSLPAward: true,
-            programYearId: true,
-          },
-          where: {
-            individualId: 950000360,
-          },
-        });
+      const sfasPartTimeApplications = await db.sfasPartTimeApplications.find({
+        select: {
+          startDate: true,
+          endDate: true,
+          csgpAward: true,
+          sbsdAward: true,
+          csptAward: true,
+          csgdAward: true,
+          bcagAward: true,
+          cslpAward: true,
+          programYearId: true,
+        },
+        where: {
+          individualId: In([950000360, 950000361, 950000362]),
+        },
+      });
+      expect(sfasPartTimeApplications.length).toBe(3);
+      const [
+        firstSFASPartTimeApplication,
+        secondSFASPartTimeApplication,
+        thirdSFASPartTimeApplication,
+      ] = sfasPartTimeApplications;
       expect(firstSFASPartTimeApplication).toEqual({
         startDate: startDate,
         endDate: endDate,
-        CSGPAward: 4000,
-        SBSDAward: 300,
-        CSPTAward: 30000,
-        CSGDAward: 165,
-        BCAGAward: 24,
-        CSLPAward: 500,
+        csgpAward: 4000,
+        sbsdAward: 300,
+        csptAward: 30000,
+        csgdAward: 165,
+        bcagAward: 24,
+        cslpAward: 500,
         programYearId: 20232024,
       });
-      const secondSFASPartTimeApplication =
-        await db.sfasPartTimeApplications.findOne({
-          select: {
-            startDate: true,
-            endDate: true,
-            CSGPAward: true,
-            SBSDAward: true,
-            CSPTAward: true,
-            CSGDAward: true,
-            BCAGAward: true,
-            CSLPAward: true,
-            programYearId: true,
-          },
-          where: {
-            individualId: 950000361,
-          },
-        });
       expect(secondSFASPartTimeApplication).toEqual({
         startDate: startDate,
         endDate: endDate,
-        CSGPAward: 5000,
-        SBSDAward: 400,
-        CSPTAward: 40000,
-        CSGDAward: 166,
-        BCAGAward: 25,
-        CSLPAward: 600,
+        csgpAward: 5000,
+        sbsdAward: 400,
+        csptAward: 40000,
+        csgdAward: 166,
+        bcagAward: 25,
+        cslpAward: 600,
         programYearId: 20232024,
+      });
+      expect(thirdSFASPartTimeApplication).toEqual({
+        startDate: startDate,
+        endDate: endDate,
+        csgpAward: 6000,
+        sbsdAward: 500,
+        csptAward: 50000,
+        csgdAward: 167,
+        bcagAward: 26,
+        cslpAward: 700,
+        programYearId: null,
       });
     },
   );

@@ -2,7 +2,7 @@
 ALTER TABLE 
   sims.sfas_part_time_applications 
 ADD 
-  COLUMN IF NOT EXISTS cspt_award NUMERIC(10);
+  COLUMN cspt_award NUMERIC(10);
 
 COMMENT ON COLUMN sims.sfas_part_time_applications.cspt_award IS 'CSPT Award Amount (sail_extract_data.sail_cspt_amt).';
 
@@ -10,7 +10,7 @@ COMMENT ON COLUMN sims.sfas_part_time_applications.cspt_award IS 'CSPT Award Amo
 ALTER TABLE 
   sims.sfas_part_time_applications 
 ADD 
-  COLUMN IF NOT EXISTS csgd_award NUMERIC(10);
+  COLUMN csgd_award NUMERIC(10);
 
 COMMENT ON COLUMN sims.sfas_part_time_applications.csgd_award IS 'CSGD Award Amount (sail_extract_data.sail_ptdep_amt).';
 
@@ -18,7 +18,7 @@ COMMENT ON COLUMN sims.sfas_part_time_applications.csgd_award IS 'CSGD Award Amo
 ALTER TABLE 
   sims.sfas_part_time_applications 
 ADD 
-  COLUMN IF NOT EXISTS bcag_award NUMERIC(10);
+  COLUMN bcag_award NUMERIC(10);
 
 COMMENT ON COLUMN sims.sfas_part_time_applications.bcag_award IS 'BCAG-PT Amount (sail_extract_data.sail_bcag_amt).';
 
@@ -26,7 +26,7 @@ COMMENT ON COLUMN sims.sfas_part_time_applications.bcag_award IS 'BCAG-PT Amount
 ALTER TABLE 
   sims.sfas_part_time_applications 
 ADD 
-  COLUMN IF NOT EXISTS cslp_award NUMERIC(10);
+  COLUMN cslp_award NUMERIC(10);
 
 COMMENT ON COLUMN sims.sfas_part_time_applications.cslp_award IS 'CSLP Amount (sail_extract_data.sail_cslp_amt).';
 
@@ -34,6 +34,6 @@ COMMENT ON COLUMN sims.sfas_part_time_applications.cslp_award IS 'CSLP Amount (s
 ALTER TABLE 
   sims.sfas_part_time_applications 
 ADD 
-  COLUMN IF NOT EXISTS program_year_id NUMERIC(8);
+  COLUMN program_year_id NUMERIC(8);
 
 COMMENT ON COLUMN sims.sfas_part_time_applications.program_year_id IS 'Program Year ID associated with application, like 20202021.';
