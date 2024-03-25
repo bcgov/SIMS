@@ -57,8 +57,7 @@ export default defineComponent({
   setup(props) {
     const page = ref(DEFAULT_PAGE_NUMBER);
     const pageLimit = ref(DEFAULT_PAGE_LIMIT);
-    const { dateOnlyLongString, formatCurrency, emptyStringFiller } =
-      useFormatters();
+    const { dateOnlyLongString, formatCurrency } = useFormatters();
     const studentLoanBalanceDetails = ref(
       [] as StudentMonthlyLoanBalanceDetailAPIOutDTO[],
     );
@@ -79,7 +78,6 @@ export default defineComponent({
       studentLoanBalanceDetails,
       dateOnlyLongString,
       formatCurrency,
-      emptyStringFiller,
     };
   },
 });
