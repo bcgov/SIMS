@@ -685,8 +685,8 @@ export class NotificationActionsService {
           applicationNumber: notification.applicationNumber,
           dateTime: this.getDateTimeOnPSTTimeZone(),
         },
-        metadata: { disbursementId },
       },
+      metadata: { disbursementId },
     };
     // Save notification to be sent to the ministry into the notification table.
     await this.notificationService.saveNotifications(
