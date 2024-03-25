@@ -1,14 +1,9 @@
 import { ECertProcessStep } from "../e-cert-processing-steps/e-cert-steps-models";
-import { DataSource, EntityManager } from "typeorm";
+import { DataSource } from "typeorm";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { parseJSONError, processInParallel } from "@sims/utilities";
 import { EligibleECertDisbursement } from "../disbursement-schedule.models";
-import { Student } from "@sims/sims-db";
-import {
-  DisbursementBlockedNotificationForMinistry,
-  NotificationActionsService,
-  StudentNotification,
-} from "@sims/services";
+import { ECertNotificationService } from "@sims/integrations/services";
 
 /**
  * Disbursements grouped by student to allow parallel processing of students
@@ -25,7 +20,7 @@ interface GroupedDisbursementPerStudent {
 export abstract class ECertCalculationProcess {
   constructor(
     private readonly dataSource: DataSource,
-    private readonly notificationActionsService: NotificationActionsService,
+    private readonly eCertNotificationService: ECertNotificationService,
   ) {}
 
   /**
@@ -128,10 +123,8 @@ export abstract class ECertCalculationProcess {
               disbursementLog,
             );
             if (!shouldProceed) {
-              // Create notifications to the student and ministry when the disbursement is blocked.
-              await this.createDisbursementBlockedNotifications(
-                eCertDisbursement.studentId,
-                eCertDisbursement.applicationNumber,
+              await this.eCertNotificationService.createDisbursementBlockedNotification(
+                eCertDisbursement.disbursement.id,
                 entityManager,
               );
               disbursementLog.info(
@@ -150,54 +143,5 @@ export abstract class ECertCalculationProcess {
         break;
       }
     }
-  }
-
-  /**
-   * Creates disbursement blocked notifications for student and ministry.
-   * @param studentId student id associated with the blocked disbursement.
-   * @param applicationNumber application number associated with the blocked disbursement.
-   * @param entityManager entity manager to execute in transaction.
-   */
-  private async createDisbursementBlockedNotifications(
-    studentId: number,
-    applicationNumber: string,
-    entityManager: EntityManager,
-  ) {
-    const student = await entityManager.getRepository(Student).findOne({
-      select: {
-        id: true,
-        birthDate: true,
-        user: { firstName: true, lastName: true, email: true },
-      },
-      relations: { user: true },
-      where: { id: studentId },
-    });
-    const studentNotification: StudentNotification = {
-      givenNames: student.user.firstName,
-      lastName: student.user.lastName,
-      toAddress: student.user.email,
-      userId: student.user.id,
-    };
-    const ministryNotification: DisbursementBlockedNotificationForMinistry = {
-      givenNames: student.user.firstName,
-      lastName: student.user.lastName,
-      email: student.user.email,
-      dob: student.birthDate,
-      applicationNumber: applicationNumber,
-    };
-    const disbursementBlockedNotificationForStudentPromise =
-      this.notificationActionsService.saveDisbursementBlockedNotificationForStudent(
-        studentNotification,
-        entityManager,
-      );
-    const disbursementBlockedNotificationForMinistryPromise =
-      this.notificationActionsService.saveDisbursementBlockedNotificationForMinistry(
-        ministryNotification,
-        entityManager,
-      );
-    await Promise.all([
-      disbursementBlockedNotificationForStudentPromise,
-      disbursementBlockedNotificationForMinistryPromise,
-    ]);
   }
 }
