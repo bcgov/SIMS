@@ -49,3 +49,5 @@ export * from "./sin-validation/sin-validation-files/sin-validation-file-respons
 export * from "./sin-validation/sin-validation.integration.service";
 export * from "./sin-validation/sin-validation.processing.service";
 export * from "./sin-validation/sin-validation.module";
+export * from "./student-loan-balances/student-loan-balances.processing.service";
+export * from "./student-loan-balances/student-loan-balances.integration.service";
