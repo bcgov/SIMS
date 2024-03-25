@@ -9,7 +9,7 @@
       ></status-chip-program>
     </template>
     <template #actions>
-      <v-menu class="label-bold-menu" v-if="educationProgram.isActive">
+      <v-menu class="label-bold-menu">
         <template v-slot:activator="{ props }">
           <v-btn
             color="primary"
@@ -29,7 +29,8 @@
           <v-list-item @click="goToProgram" :title="programActionLabel" />
           <v-divider-inset-opaque />
           <v-list-item
-            base-color="red"
+            :disabled="!educationProgram.isActive"
+            base-color="danger"
             @click="deactivate"
             title="Deactivate"
           />
@@ -149,9 +150,13 @@ export default defineComponent({
     );
 
     const programActionLabel = computed(() => {
-      return AuthService.shared.authClientType === ClientIdType.Institution
-        ? "Edit"
-        : "View Program";
+      if (
+        !props.educationProgram.isActive ||
+        AuthService.shared.authClientType === ClientIdType.AEST
+      ) {
+        return "View Program";
+      }
+      return "Edit";
     });
 
     const goToProgram = () => {

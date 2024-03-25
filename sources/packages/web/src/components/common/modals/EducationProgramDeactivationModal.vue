@@ -5,7 +5,6 @@
       title="Confirm deactivation"
       ref="confirmDeactivationModal"
       okLabel="Confirm deactivation"
-      primary-button-color="red"
       keepModalOpen="true"
       ><template #content
         ><span class="font-bold"
@@ -31,7 +30,7 @@
       <template #footer>
         <footer-buttons
           primaryLabel="Confirm deactivation"
-          primaryButtonColor="red"
+          primaryButtonColor="danger"
           @primaryClick="submit"
           @secondaryClick="cancel"
           :processing="loading"
@@ -83,7 +82,6 @@ export default defineComponent({
       deactivateProgramForm,
       showDialog,
       showModal,
-      resolvePromise,
       loading,
       checkNotesLengthRule,
       submit,

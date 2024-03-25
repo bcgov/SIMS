@@ -84,7 +84,7 @@ export default defineComponent({
       return clientType.value === ClientIdType.AEST;
     });
     const isReadonly = computed(() => {
-      return isAESTUser.value;
+      return isAESTUser.value || !programData.value.isActive;
     });
 
     const loadFormData = async () => {
