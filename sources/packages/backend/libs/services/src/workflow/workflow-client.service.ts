@@ -25,8 +25,11 @@ export class WorkflowClientService {
     assessmentId: number,
   ): Promise<CreateProcessInstanceResponse> {
     try {
-      return await this.zeebeClient.createProcessInstance(workflowName, {
-        assessmentId,
+      return await this.zeebeClient.createProcessInstance({
+        bpmnProcessId: workflowName,
+        variables: {
+          assessmentId,
+        },
       });
     } catch (error: unknown) {
       this.logger.error(

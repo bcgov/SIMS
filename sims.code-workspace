@@ -89,6 +89,16 @@
       }
     },
     "typescript.preferences.importModuleSpecifier": "non-relative",
-    "cSpell.words": ["ESDC", "MSFAA", "NSLSC", "Overaward", "SFAS", "typeorm"]
+    "cSpell.words": [
+      "AEST",
+      "ESDC",
+      "MSFAA",
+      "NSLSC",
+      "Overaward",
+      "SABC",
+      "SFAS",
+      "timestamptz",
+      "typeorm"
+    ]
   }
 }

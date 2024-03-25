@@ -3,6 +3,7 @@ import { DataSource } from "typeorm";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { parseJSONError, processInParallel } from "@sims/utilities";
 import { EligibleECertDisbursement } from "../disbursement-schedule.models";
+import { ECertNotificationService } from "@sims/integrations/services";
 
 /**
  * Disbursements grouped by student to allow parallel processing of students
@@ -17,7 +18,10 @@ interface GroupedDisbursementPerStudent {
  * Both offering intensity will have similar calculation steps and some additional ones.
  */
 export abstract class ECertCalculationProcess {
-  constructor(private readonly dataSource: DataSource) {}
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly eCertNotificationService: ECertNotificationService,
+  ) {}
 
   /**
    * Get all disbursements currently eligible to be part of
@@ -119,6 +123,10 @@ export abstract class ECertCalculationProcess {
               disbursementLog,
             );
             if (!shouldProceed) {
+              await this.eCertNotificationService.createDisbursementBlockedNotification(
+                eCertDisbursement.disbursement.id,
+                entityManager,
+              );
               disbursementLog.info(
                 "The step determined that the calculation should be interrupted. This disbursement will not be part of the next e-Cert generation.",
               );

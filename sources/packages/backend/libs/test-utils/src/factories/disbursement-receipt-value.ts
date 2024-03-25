@@ -20,7 +20,7 @@ export function createFakeDisbursementReceiptValue(
     initialValues.grantType ?? faker.random.alpha({ count: 4 });
   disbursementReceiptValue.grantAmount =
     initialValues.grantAmount ??
-    faker.random.number({
+    faker.datatype.number({
       min: 1000,
       max: 9999,
     });

@@ -16045,7 +16045,7 @@
               "id": "ez14edi"
             },
             {
-              "label": "<strong>Does your partner have a valid Social Insurance Number?</strong>",
+              "label": "<strong>Is your partner eligible for a B.C. Services Card?</strong>",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -16070,9 +16070,9 @@
                 "unique": false,
                 "onlyAvailableItems": false
               },
-              "key": "isYourSpouseACanadianCitizen",
+              "key": "isYourPartnerAbleToReport",
               "attributes": {
-                "data-cy": "isYourSpouseACanadianCitizen"
+                "data-cy": "isYourPartnerAbleToReport"
               },
               "type": "radio",
               "input": true,
@@ -16137,13 +16137,13 @@
                   "value": ""
                 }
               ],
-              "content": "<Strong> Please be advised your partner will need to sign in to StudentAid BC and provide additional information.</Strong><br/> \r\nPlease check your email after submitting your application. An email will be sent to you with instructions for your partner to sign in. Your application cannot proceed until this information is received.\r\n<br />",
+              "content": "<Strong> Please be advised your partner will need to sign in to StudentAid BC and provide additional information.</Strong><br/> \nPartners must provide their information to StudentAid BC by logging in with a B.C. Services Card. If they are ineligible for a B.C. Services Card (e.g. if they do not have a valid SIN), select \"No\" to this question and provide information on their behalf.",
               "refreshOnChange": false,
               "customClass": "banner-info",
               "key": "additionalInformationRequired",
               "conditional": {
                 "show": true,
-                "when": "isYourSpouseACanadianCitizen",
+                "when": "isYourPartnerAbleToReport",
                 "eq": "yes"
               },
               "type": "htmlelement",
@@ -16218,7 +16218,7 @@
               "key": "spouseEstimation",
               "conditional": {
                 "show": true,
-                "when": "isYourSpouseACanadianCitizen",
+                "when": "isYourPartnerAbleToReport",
                 "eq": "no"
               },
               "type": "htmlelement",
@@ -16332,7 +16332,7 @@
           "key": "partnerIncomePanel",
           "conditional": {
             "show": true,
-            "when": "isYourSpouseACanadianCitizen",
+            "when": "isYourPartnerAbleToReport",
             "eq": "no"
           },
           "type": "panel",
@@ -16607,7 +16607,7 @@
               "key": "estimatedSpouseIncome",
               "conditional": {
                 "show": "true",
-                "when": "isYourSpouseACanadianCitizen",
+                "when": "isYourPartnerAbleToReport",
                 "eq": "no"
               },
               "type": "currency",
@@ -16760,7 +16760,7 @@
               "defaultValue": ""
             },
             {
-              "label": "<strong>Will  your partner be at home caring for eligible dependent children on a full-time basis during the your entire study period? </strong>",
+              "label": "<strong>Will your partner be at home caring for eligible dependent children on a full-time basis during your entire study period? </strong>",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -16855,7 +16855,7 @@
               "defaultValue": ""
             },
             {
-              "label": "<strong>Will your partner be living with you during the your study period?</strong>",
+              "label": "<strong>Will your partner be living with you during your study period?</strong>",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -17216,7 +17216,7 @@
               "id": "eum6wts"
             },
             {
-              "label": "<strong>Will your partner recieve income assistance/social assistance (welfare) and/or BC income assistance for persons with disabilities during the your study period?</strong>",
+              "label": "<strong>Will your partner recieve income assistance/social assistance (welfare) and/or BC income assistance for persons with disabilities during your study period?</strong>",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -17471,7 +17471,7 @@
               "id": "e1rvvnw"
             },
             {
-              "label": "<strong>Will your partner be in receipt of Employment Insurance benefits during the your study period?</strong>",
+              "label": "<strong>Will your partner be in receipt of Employment Insurance benefits during your study period?</strong>",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -17566,7 +17566,7 @@
               "defaultValue": ""
             },
             {
-              "title": "Will your partner be in receipt of Employment Insurance benefits during the your study period Panel",
+              "title": "Will your partner be in receipt of Employment Insurance benefits during your study period Panel",
               "breadcrumbClickable": false,
               "buttonSettings": {
                 "previous": false,
@@ -17583,7 +17583,7 @@
                 "eq": "yes"
               },
               "type": "panel",
-              "label": "Will your partner be in receipt of Employment Insurance benefits during the your study period Panel",
+              "label": "Will your partner be in receipt of Employment Insurance benefits during your study period Panel",
               "input": false,
               "tableView": false,
               "components": [
@@ -17727,7 +17727,7 @@
               "id": "e4idhzf"
             },
             {
-              "label": "<strong>Will your partner be in receipt of federal or provincial permanent disability benefits during the your study period?</strong>",
+              "label": "<strong>Will your partner be in receipt of federal or provincial permanent disability benefits during your study period?</strong>",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -17822,7 +17822,7 @@
               "defaultValue": ""
             },
             {
-              "title": "Will your partner be in receipt of federal or provincial permanent disability benefits during the your study period Panel",
+              "title": "Will your partner be in receipt of federal or provincial permanent disability benefits during your study period Panel",
               "breadcrumbClickable": false,
               "buttonSettings": {
                 "previous": false,
@@ -17839,7 +17839,7 @@
                 "eq": "yes"
               },
               "type": "panel",
-              "label": "Will your partner be in receipt of federal or provincial permanent disability benefits during the your study period Panel",
+              "label": "Will your partner be in receipt of federal or provincial permanent disability benefits during your study period Panel",
               "input": false,
               "tableView": false,
               "components": [
@@ -17983,7 +17983,7 @@
               "id": "eh2gbg4"
             },
             {
-              "label": "<strong>Will your partner be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during the your study period?</strong>",
+              "label": "<strong>Will your partner be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during your study period?</strong>",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -18078,7 +18078,7 @@
               "defaultValue": ""
             },
             {
-              "title": "Will your partner be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during the your study period Panel",
+              "title": "Will your partner be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during your study period Panel",
               "breadcrumbClickable": false,
               "buttonSettings": {
                 "previous": false,
@@ -18238,7 +18238,7 @@
               "id": "e5j24i"
             },
             {
-              "label": "<strong>Will your partner be paying for child support and/or spousal support during the your study period?</strong>",
+              "label": "<strong>Will your partner be paying for child support and/or spousal support during your study period?</strong>",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -18333,7 +18333,7 @@
               "defaultValue": ""
             },
             {
-              "title": "Will your partner be paying for child support and/or spousal support during the your study period Panel",
+              "title": "Will your partner be paying for child support and/or spousal support during your study period Panel",
               "breadcrumbClickable": false,
               "buttonSettings": {
                 "previous": false,

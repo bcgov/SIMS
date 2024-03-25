@@ -23,6 +23,10 @@ import {
   SupportingUserService,
   StudentAccountApplicationsService,
   ApplicationOfferingChangeRequestService,
+  InstitutionService,
+  BCeIDService,
+  InstitutionUserAuthService,
+  UserService,
 } from "./services";
 import {
   ApplicationStudentsController,
@@ -126,6 +130,10 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     ApplicationOfferingChangeRequestService,
     ScholasticStandingControllerService,
     AssessmentSequentialProcessingService,
+    InstitutionService,
+    BCeIDService,
+    InstitutionUserAuthService,
+    UserService,
   ],
 })
 export class AppStudentsModule {}

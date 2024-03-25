@@ -13,7 +13,7 @@ function createFakeSFASIndividual(options?: {
   initialValues?: Partial<SFASIndividual>;
 }) {
   const sfasIndividual = new SFASIndividual();
-  sfasIndividual.id = faker.random.number({ min: 100000000, max: 999999999 });
+  sfasIndividual.id = faker.datatype.number({ min: 100000000, max: 999999999 });
   sfasIndividual.birthDate =
     options?.initialValues?.birthDate ??
     getISODateOnlyString(faker.date.past(18));
@@ -21,7 +21,7 @@ function createFakeSFASIndividual(options?: {
     options?.initialValues?.lastName ?? faker.name.lastName();
   sfasIndividual.sin =
     options?.initialValues?.sin ??
-    faker.random.number({ min: 100000000, max: 899999999 }).toString();
+    faker.datatype.number({ min: 100000000, max: 899999999 }).toString();
   sfasIndividual.unsuccessfulCompletion =
     options?.initialValues?.unsuccessfulCompletion ?? 0;
   sfasIndividual.neb = options?.initialValues?.neb ?? 0;

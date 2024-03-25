@@ -152,9 +152,12 @@ describe(
       await processor.startAssessment(job);
 
       // Assert
-      expect(zbClientMock.createProcessInstance).toHaveBeenCalledWith(
-        workflowName,
+      const createProcessInstancePayload = {
+        bpmnProcessId: workflowName,
         variables,
+      };
+      expect(zbClientMock.createProcessInstance).toHaveBeenCalledWith(
+        createProcessInstancePayload,
       );
     });
   },

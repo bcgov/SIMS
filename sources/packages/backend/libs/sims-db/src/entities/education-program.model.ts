@@ -403,4 +403,36 @@ export class EducationProgram extends RecordDataModel {
     name: "field_of_study_code",
   })
   fieldOfStudyCode: number;
+
+  /**
+   * Indicates if an education program is active and should be available, for instance,
+   * for students creating new applications or institutions completing PIRs.
+   */
+  @Column({
+    name: "is_active",
+    nullable: false,
+  })
+  isActive: boolean;
+
+  /**
+   * Last user id that updated the {@link isActive} column value on DB.
+   * If null, the {@link isActive} value has never changed since its creation.
+   */
+  @ManyToOne(() => User, { eager: false, nullable: true })
+  @JoinColumn({
+    name: "is_active_updated_by",
+    referencedColumnName: ColumnNames.ID,
+  })
+  isActiveUpdatedBy?: User;
+
+  /**
+   * Last date and time the {@link isActive} column value was updated on DB.
+   * If null, the {@link isActive} value has never changed since its creation.
+   */
+  @Column({
+    name: "is_active_updated_on",
+    type: "timestamptz",
+    nullable: true,
+  })
+  isActiveUpdatedOn?: Date;
 }

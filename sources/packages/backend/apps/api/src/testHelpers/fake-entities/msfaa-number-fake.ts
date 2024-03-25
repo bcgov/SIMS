@@ -5,7 +5,7 @@ import * as faker from "faker";
 export function createFakeMSFAANumber(student?: Student): MSFAANumber {
   const msfaaNumber = new MSFAANumber();
   msfaaNumber.student = student ?? createFakeStudent();
-  msfaaNumber.msfaaNumber = faker.random
+  msfaaNumber.msfaaNumber = faker.datatype
     .number({
       min: 1111111111,
       max: 9999999999,

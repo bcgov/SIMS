@@ -3,11 +3,8 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { DataSource } from "typeorm";
 import { AppModule } from "../../app.module";
 import { setGlobalPipes } from "../../utilities";
-import {
-  QueueModuleMock,
-  createZeebeModuleMock,
-  overrideImportsMetadata,
-} from "@sims/test-utils";
+import { overrideImportsMetadata } from "@sims/test-utils";
+import { createZeebeModuleMock, QueueModuleMock } from "@sims/test-utils/mocks";
 import { QueueModule } from "@sims/services/queue";
 import { SystemUsersService, ZeebeModule } from "@sims/services";
 import { DiscoveryModule } from "@golevelup/nestjs-discovery";
