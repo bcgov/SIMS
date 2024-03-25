@@ -125,8 +125,6 @@ export abstract class ECertCalculationProcess {
             if (!shouldProceed) {
               await this.eCertNotificationService.createDisbursementBlockedNotification(
                 eCertDisbursement.disbursement.id,
-                eCertDisbursement.studentId,
-                eCertDisbursement.applicationNumber,
                 entityManager,
               );
               disbursementLog.info(

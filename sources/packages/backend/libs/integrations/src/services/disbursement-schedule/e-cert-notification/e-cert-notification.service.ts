@@ -30,14 +30,10 @@ export class ECertNotificationService {
   /**
    * Checks and creates disbursement blocked notification.
    * @param disbursementId disbursement id.
-   * @param studentId student id associated with the blocked disbursement.
-   * @param applicationNumber application number associated with the blocked disbursement.
    * @param entityManager entity manager to execute in transaction.
    */
   async createDisbursementBlockedNotification(
     disbursementId: number,
-    studentId: number,
-    applicationNumber: string,
     entityManager: EntityManager,
   ): Promise<void> {
     const shouldCreateNotification =
@@ -80,8 +76,8 @@ export class ECertNotificationService {
     const canSendNewNotification =
       dateDifference(new Date(), notification.maxCreatedAt) >=
       BLOCKED_DISBURSEMENT_NOTIFICATION_MIN_DAYS_INTERVAL;
-    // Condition check to create notifications: Less than 3 notifications are created previously and there are no failures in sending those created notifications.
-    // Plus, it has been at least 7 days from the last created notification for this disbursement.
+    // Condition check to create notifications: Less than BLOCKED_DISBURSEMENT_MAXIMUM_NOTIFICATIONS_TO_SEND notifications are created previously and there are no failures in sending those created notifications.
+    // Plus, it has been at least BLOCKED_DISBURSEMENT_NOTIFICATION_MIN_DAYS_INTERVAL days from the last created notification for this disbursement.
     return (
       !notification.notificationCount ||
       (notification.notificationCount <
