@@ -97,7 +97,10 @@
       />
     </v-col>
   </v-row>
-  <decline-education-program-modal ref="declineEducationProgramModal" />
+  <education-program-deactivation-modal
+    ref="declineEducationProgramModal"
+    :notes-required="notesRequired"
+  />
 </template>
 
 <script lang="ts">
@@ -114,7 +117,7 @@ import {
   DeactivateProgramAPIInDTO,
   EducationProgramAPIOutDTO,
 } from "@/services/http/dto";
-import DeclineEducationProgramModal from "@/components/common/modals/DeclineEducationProgramModal.vue";
+import EducationProgramDeactivationModal from "@/components/common/modals/EducationProgramDeactivationModal.vue";
 import { ModalDialog, useSnackBar } from "@/composables";
 import ApiClient from "@/services/http/ApiClient";
 
@@ -122,7 +125,7 @@ export default defineComponent({
   emits: {
     programDataUpdated: null,
   },
-  components: { DeclineEducationProgramModal, StatusChipProgram },
+  components: { EducationProgramDeactivationModal, StatusChipProgram },
   props: {
     programId: {
       type: Number,
@@ -144,6 +147,7 @@ export default defineComponent({
     const declineEducationProgramModal = ref(
       {} as ModalDialog<DeactivateProgramAPIInDTO | boolean>,
     );
+
     const programActionLabel = computed(() => {
       return AuthService.shared.authClientType === ClientIdType.Institution
         ? "Edit"
@@ -169,6 +173,17 @@ export default defineComponent({
       });
     };
 
+    const notesRequired = computed(
+      () => AuthService.shared.authClientType === ClientIdType.AEST,
+    );
+
+    const deactivate = async () => {
+      await declineEducationProgramModal.value.showModal(
+        undefined,
+        canResolvePromise,
+      );
+    };
+
     const canResolvePromise = async (
       modalResult: DeactivateProgramAPIInDTO | boolean,
     ): Promise<boolean> => {
@@ -176,7 +191,10 @@ export default defineComponent({
         return true;
       }
       try {
-        await ApiClient.EducationProgram.deactivateProgram(props.programId);
+        await ApiClient.EducationProgram.deactivateProgram(
+          props.programId,
+          modalResult as DeactivateProgramAPIInDTO,
+        );
         snackBar.success("Program deactivate with success.");
         context.emit("programDataUpdated");
         return true;
@@ -186,19 +204,13 @@ export default defineComponent({
       }
     };
 
-    const deactivate = async () => {
-      await declineEducationProgramModal.value.showModal(
-        undefined,
-        canResolvePromise,
-      );
-    };
-
     return {
       goToProgram,
       ProgramIntensity,
       programActionLabel,
       declineEducationProgramModal,
       deactivate,
+      notesRequired,
     };
   },
 });

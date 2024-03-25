@@ -18,6 +18,7 @@
           cannot be undone.
         </p>
         <v-textarea
+          v-if="notesRequired"
           v-model="noteDescription"
           variant="outlined"
           label="Note"
@@ -46,6 +47,12 @@ import { VForm } from "@/types";
 import { DeactivateProgramAPIInDTO } from "@/services/http/dto";
 
 export default defineComponent({
+  props: {
+    notesRequired: {
+      type: Boolean,
+      required: true,
+    },
+  },
   setup() {
     const { showDialog, resolvePromise, showModal, loading, hideModal } =
       useModalDialog<DeactivateProgramAPIInDTO | boolean>();
@@ -67,7 +74,6 @@ export default defineComponent({
 
     const cancel = () => {
       deactivateProgramForm.value.reset();
-      deactivateProgramForm.value.resetValidation();
       resolvePromise(false);
       hideModal();
     };
