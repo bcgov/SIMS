@@ -1,6 +1,8 @@
-import { RecordTypeCodes } from "../models/student-loan-balances.model";
+import {
+  DATE_FORMAT,
+  RecordTypeCodes,
+} from "../models/student-loan-balances.model";
 import { getDateOnlyFromFormat } from "@sims/utilities";
-import { DATE_FORMAT } from "apps/api/src/services";
 
 /**
  * Header of the Student Loan Balances file.
