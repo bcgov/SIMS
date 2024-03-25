@@ -40,12 +40,16 @@ export function createFakeStudent(
  * - `sinValidation` related SIN validation.
  * @param options student options.
  * - `initialValue` student initial values.
+ * - `sinValidationInitialValue` sinValidation initial value.
  * @returns persisted student with relations provided.
  */
 export async function saveFakeStudent(
   dataSource: DataSource,
   relations?: { student?: Student; user?: User; sinValidation?: SINValidation },
-  options?: { initialValue?: Partial<Student> },
+  options?: {
+    initialValue?: Partial<Student>;
+    sinValidationInitialValue?: Partial<SINValidation>;
+  },
 ): Promise<Student> {
   const studentRepo = dataSource.getRepository(Student);
   const student = await studentRepo.save(
@@ -56,6 +60,10 @@ export async function saveFakeStudent(
   );
   // Saving SIN validation after student is saved due to cyclic dependency error.
   student.sinValidation =
-    relations?.sinValidation ?? createFakeSINValidation({ student });
+    relations?.sinValidation ??
+    createFakeSINValidation(
+      { student },
+      { initialValue: options?.sinValidationInitialValue },
+    );
   return studentRepo.save(student);
 }

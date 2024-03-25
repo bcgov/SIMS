@@ -3,6 +3,8 @@ import {
   Assessment,
   COEStatus,
   DisbursementScheduleStatus,
+  NotificationMessage,
+  NotificationMessageType,
   OfferingIntensity,
 } from "@sims/sims-db";
 import {
@@ -12,6 +14,7 @@ import {
   createFakeMSFAANumber,
   saveFakeApplicationDisbursements,
   saveFakeStudent,
+  saveFakeNotification,
 } from "@sims/test-utils";
 import { getUploadedFile } from "@sims/test-utils/mocks";
 import { IsNull, Like, Not } from "typeorm";
@@ -29,6 +32,7 @@ import * as dayjs from "dayjs";
 import { DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS } from "@sims/services/constants";
 import { PartTimeCertRecordParser } from "./parsers/part-time-e-cert-record-parser";
 import { loadDisbursementSchedules } from "./e-cert-utils";
+import { SystemUsersService } from "@sims/services";
 
 describe(
   describeQueueProcessorRootTest(QueueNames.PartTimeECertIntegration),
@@ -37,6 +41,7 @@ describe(
     let processor: PartTimeECertProcessIntegrationScheduler;
     let db: E2EDataSources;
     let sftpClientMock: DeepMocked<Client>;
+    let systemUsersService: SystemUsersService;
 
     beforeAll(async () => {
       // Env variable required for querying the eligible e-Cert records.
@@ -48,6 +53,7 @@ describe(
       sftpClientMock = sshClientMock;
       // Processor under test.
       processor = app.get(PartTimeECertProcessIntegrationScheduler);
+      systemUsersService = nestApplication.get(SystemUsersService);
     });
 
     beforeEach(async () => {
@@ -65,6 +71,373 @@ describe(
         { sequenceName: Like("ECERT_PT_SENT_FILE_%") },
         { sequenceNumber: "0" },
       );
+    });
+
+    it("Should create a notification for the ministry and student for a blocked disbursement when there are no previously existing notifications for the disbursement.", async () => {
+      // Arrange
+      // Student with invalid SIN to block the disbursement.
+      const student = await saveFakeStudent(db.dataSource, undefined, {
+        sinValidationInitialValue: {
+          isValidSIN: false,
+        },
+      });
+      // Valid MSFAA Number.
+      const msfaaNumber = await db.msfaaNumber.save(
+        createFakeMSFAANumber(
+          { student },
+          {
+            msfaaState: MSFAAStates.Signed,
+            msfaaInitialValues: {
+              offeringIntensity: OfferingIntensity.partTime,
+            },
+          },
+        ),
+      );
+      // Student application.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student, msfaaNumber },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            assessmentData: { weeks: 5 } as Assessment,
+            assessmentDate: new Date(),
+          },
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+          },
+        },
+      );
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processECert(mockedJob.job);
+
+      // Assert
+      expect(result).toStrictEqual([
+        "Process finalized with success.",
+        "Generated file: none",
+        "Uploaded records: 0",
+      ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Creating notifications for disbursement id: ${application.currentAssessment.disbursementSchedules[0].id} for student and ministry.`,
+          `Completed creating notifications for disbursement id: ${application.currentAssessment.disbursementSchedules[0].id} for student and ministry.`,
+        ]),
+      ).toBe(true);
+      const studentNotificationCount = await db.notification.count({
+        where: {
+          notificationMessage: {
+            id: NotificationMessageType.StudentNotificationDisbursementBlocked,
+          },
+          metadata: {
+            disbursementId:
+              application.currentAssessment.disbursementSchedules[0].id,
+          },
+          user: { id: application.student.user.id },
+          creator: { id: systemUsersService.systemUser.id },
+        },
+      });
+      expect(studentNotificationCount).toBe(1);
+      const ministryNotificationCount = await db.notification.count({
+        where: {
+          notificationMessage: {
+            id: NotificationMessageType.MinistryNotificationDisbursementBlocked,
+          },
+          metadata: {
+            disbursementId:
+              application.currentAssessment.disbursementSchedules[0].id,
+          },
+          user: { id: systemUsersService.systemUser.id },
+          creator: { id: systemUsersService.systemUser.id },
+        },
+      });
+      expect(ministryNotificationCount).toBe(1);
+    });
+
+    it("Should not create a notification for the student for a disbursement when there are already 3 notifications created.", async () => {
+      // Arrange
+      // Student with invalid SIN to block the disbursement.
+      const student = await saveFakeStudent(db.dataSource, undefined, {
+        sinValidationInitialValue: {
+          isValidSIN: false,
+        },
+      });
+      // Valid MSFAA Number.
+      const msfaaNumber = await db.msfaaNumber.save(
+        createFakeMSFAANumber(
+          { student },
+          {
+            msfaaState: MSFAAStates.Signed,
+            msfaaInitialValues: {
+              offeringIntensity: OfferingIntensity.partTime,
+            },
+          },
+        ),
+      );
+      // Student application.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student, msfaaNumber },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            assessmentData: { weeks: 5 } as Assessment,
+            assessmentDate: new Date(),
+          },
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+          },
+        },
+      );
+      // Create pre-existing 3 notifications for the above created disbursement.
+      let notificationCounter = 3;
+      while (notificationCounter > 0 && notificationCounter--) {
+        await saveFakeNotification(
+          db.dataSource,
+          {
+            user: student.user,
+            creator: systemUsersService.systemUser,
+            notificationMessage: {
+              id: NotificationMessageType.StudentNotificationDisbursementBlocked,
+            } as NotificationMessage,
+          },
+          {
+            initialValue: {
+              messagePayload: {
+                email_address: student.user.email,
+                template_id:
+                  NotificationMessageType.StudentNotificationDisbursementBlocked,
+                personalisation: {
+                  givenNames: student.user.firstName ?? "",
+                  lastName: student.user.lastName,
+                },
+              },
+              metadata: {
+                disbursementId:
+                  application.currentAssessment.disbursementSchedules[0].id,
+              },
+            },
+          },
+        );
+      }
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processECert(mockedJob.job);
+
+      // Assert
+      expect(result).toStrictEqual([
+        "Process finalized with success.",
+        "Generated file: none",
+        "Uploaded records: 0",
+      ]);
+      const studentNotificationCount = await db.notification.count({
+        where: {
+          notificationMessage: {
+            id: NotificationMessageType.StudentNotificationDisbursementBlocked,
+          },
+          metadata: {
+            disbursementId:
+              application.currentAssessment.disbursementSchedules[0].id,
+          },
+          user: { id: application.student.user.id },
+          creator: { id: systemUsersService.systemUser.id },
+        },
+      });
+      expect(studentNotificationCount).toBe(3);
+    });
+
+    it("Should not create a notification for the student for a disbursement when an attempt is made to create the 2nd notification before 7 days from the first notification.", async () => {
+      // Arrange
+      // Student with invalid SIN to block the disbursement.
+      const student = await saveFakeStudent(db.dataSource, undefined, {
+        sinValidationInitialValue: {
+          isValidSIN: false,
+        },
+      });
+      // Valid MSFAA Number.
+      const msfaaNumber = await db.msfaaNumber.save(
+        createFakeMSFAANumber(
+          { student },
+          {
+            msfaaState: MSFAAStates.Signed,
+            msfaaInitialValues: {
+              offeringIntensity: OfferingIntensity.partTime,
+            },
+          },
+        ),
+      );
+      // Student application.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student, msfaaNumber },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            assessmentData: { weeks: 5 } as Assessment,
+            assessmentDate: new Date(),
+          },
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+          },
+        },
+      );
+      const todaysDate = new Date();
+      // Create 1 pre-existing notification for the above created disbursement.
+      await saveFakeNotification(
+        db.dataSource,
+        {
+          user: student.user,
+          creator: systemUsersService.systemUser,
+          notificationMessage: {
+            id: NotificationMessageType.StudentNotificationDisbursementBlocked,
+          } as NotificationMessage,
+        },
+        {
+          initialValue: {
+            messagePayload: {
+              email_address: student.user.email,
+              template_id:
+                NotificationMessageType.StudentNotificationDisbursementBlocked,
+              personalisation: {
+                givenNames: student.user.firstName ?? "",
+                lastName: student.user.lastName,
+              },
+            },
+            metadata: {
+              disbursementId:
+                application.currentAssessment.disbursementSchedules[0].id,
+            },
+            createdAt: new Date(todaysDate.setDate(todaysDate.getDate() - 6)),
+          },
+        },
+      );
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processECert(mockedJob.job);
+
+      // Assert
+      expect(result).toStrictEqual([
+        "Process finalized with success.",
+        "Generated file: none",
+        "Uploaded records: 0",
+      ]);
+      const studentNotificationCount = await db.notification.count({
+        where: {
+          notificationMessage: {
+            id: NotificationMessageType.StudentNotificationDisbursementBlocked,
+          },
+          metadata: {
+            disbursementId:
+              application.currentAssessment.disbursementSchedules[0].id,
+          },
+          user: { id: application.student.user.id },
+          creator: { id: systemUsersService.systemUser.id },
+        },
+      });
+      expect(studentNotificationCount).toBe(1);
+    });
+
+    it("Should create a notification for the student for a disbursement when an attempt is made to create the 2nd notification on or after 7 days from the first notification.", async () => {
+      // Arrange
+      // Student with invalid SIN to block the disbursement.
+      const student = await saveFakeStudent(db.dataSource, undefined, {
+        sinValidationInitialValue: {
+          isValidSIN: false,
+        },
+      });
+      // Valid MSFAA Number.
+      const msfaaNumber = await db.msfaaNumber.save(
+        createFakeMSFAANumber(
+          { student },
+          {
+            msfaaState: MSFAAStates.Signed,
+            msfaaInitialValues: {
+              offeringIntensity: OfferingIntensity.partTime,
+            },
+          },
+        ),
+      );
+      // Student application.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student, msfaaNumber },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            assessmentData: { weeks: 5 } as Assessment,
+            assessmentDate: new Date(),
+          },
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+          },
+        },
+      );
+      const todaysDate = new Date();
+      // Create 1 pre-existing notification for the above created disbursement.
+      await saveFakeNotification(
+        db.dataSource,
+        {
+          user: student.user,
+          creator: systemUsersService.systemUser,
+          notificationMessage: {
+            id: NotificationMessageType.StudentNotificationDisbursementBlocked,
+          } as NotificationMessage,
+        },
+        {
+          initialValue: {
+            messagePayload: {
+              email_address: student.user.email,
+              template_id:
+                NotificationMessageType.StudentNotificationDisbursementBlocked,
+              personalisation: {
+                givenNames: student.user.firstName ?? "",
+                lastName: student.user.lastName,
+              },
+            },
+            metadata: {
+              disbursementId:
+                application.currentAssessment.disbursementSchedules[0].id,
+            },
+            createdAt: new Date(todaysDate.setDate(todaysDate.getDate() - 7)),
+          },
+        },
+      );
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processECert(mockedJob.job);
+
+      // Assert
+      expect(result).toStrictEqual([
+        "Process finalized with success.",
+        "Generated file: none",
+        "Uploaded records: 0",
+      ]);
+      const studentNotificationCount = await db.notification.count({
+        where: {
+          notificationMessage: {
+            id: NotificationMessageType.StudentNotificationDisbursementBlocked,
+          },
+          metadata: {
+            disbursementId:
+              application.currentAssessment.disbursementSchedules[0].id,
+          },
+          user: { id: application.student.user.id },
+          creator: { id: systemUsersService.systemUser.id },
+        },
+      });
+      expect(studentNotificationCount).toBe(2);
     });
 
     it("Should create an e-Cert with one disbursement record for one student with one eligible schedule.", async () => {
