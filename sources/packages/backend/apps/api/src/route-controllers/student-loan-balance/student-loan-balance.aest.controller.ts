@@ -12,7 +12,7 @@ import { UserGroups } from "../../auth/user-groups.enum";
 import { StudentService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
-import { StudentMonthlyLoanBalanceAPIOutDTO } from "./models/student-loan-balance.dto";
+import { StudentLoanBalanceAPIOutDTO } from "./models/student-loan-balance.dto";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -35,13 +35,13 @@ export class StudentLoanBalanceAESTController extends BaseController {
   @Get("part-time/student/:studentId")
   async getStudentPartTimeLoanBalance(
     @Param("studentId", ParseIntPipe) studentId: number,
-  ): Promise<StudentMonthlyLoanBalanceAPIOutDTO> {
+  ): Promise<StudentLoanBalanceAPIOutDTO> {
     const studentExist = await this.studentService.studentExists(studentId);
     if (!studentExist) {
       throw new NotFoundException("Student not found.");
     }
     //TODO: Remove the static values when actual implementation is done.
-    const staticData: StudentMonthlyLoanBalanceAPIOutDTO = {
+    const staticData: StudentLoanBalanceAPIOutDTO = {
       loanBalanceDetails: [
         { balanceDate: "2024-01-10", cslBalance: 100 },
         { balanceDate: "2024-02-10", cslBalance: 200 },
