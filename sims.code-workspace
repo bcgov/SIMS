@@ -98,7 +98,8 @@
       "SABC",
       "SFAS",
       "timestamptz",
-      "typeorm"
+      "typeorm",
+      "CSLP"
     ]
   }
 }

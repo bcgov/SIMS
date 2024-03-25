@@ -1,5 +1,5 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
-import { StudentMonthlyLoanBalanceAPIOutDTO } from "@/services/http/dto";
+import { StudentLoanBalanceAPIOutDTO } from "@/services/http/dto";
 
 /**
  * Http API client for student loan balance.
@@ -13,8 +13,8 @@ export class StudentLoanBalanceApi extends HttpBaseClient {
    */
   async getStudentPartTimeLoanBalance(
     studentId: number,
-  ): Promise<StudentMonthlyLoanBalanceAPIOutDTO> {
-    return this.getCall<StudentMonthlyLoanBalanceAPIOutDTO>(
+  ): Promise<StudentLoanBalanceAPIOutDTO> {
+    return this.getCall<StudentLoanBalanceAPIOutDTO>(
       this.addClientRoot(`student-loan-balance/part-time/student/${studentId}`),
     );
   }

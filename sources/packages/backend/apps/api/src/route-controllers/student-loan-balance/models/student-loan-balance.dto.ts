@@ -1,7 +1,7 @@
 /**
  * Student loan balance details of a month.
  */
-class StudentLoanBalanceDetailsAPIOutDTO {
+class StudentMonthlyLoanBalanceDetailAPIOutDTO {
   balanceDate: string;
   cslBalance: number;
 }
@@ -10,6 +10,6 @@ class StudentLoanBalanceDetailsAPIOutDTO {
  * Monthly loan balance details of a student
  * upto 12 months from current date.
  */
-export class StudentMonthlyLoanBalanceAPIOutDTO {
-  loanBalanceDetails: StudentLoanBalanceDetailsAPIOutDTO[];
+export class StudentLoanBalanceAPIOutDTO {
+  loanBalanceDetails: StudentMonthlyLoanBalanceDetailAPIOutDTO[];
 }

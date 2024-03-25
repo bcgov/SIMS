@@ -2,8 +2,8 @@
   <body-header-container :enableCardView="true">
     <template #header>
       <body-header
-        title="Part time monthly loan balance"
-        subTitle="Balance of part time Canada student loan outstanding between the student and NSLSC at any given time.
+        title="Part-Time monthly loan balance"
+        subTitle="Balance of part-time Canada Student Loan outstanding between the student and NSLSC at any given time.
         This amount is updated once per month, and affects a student's eligibility for future funding, as a student 
         cannot exceed the maximum limit in total outstanding balance."
       />
@@ -24,7 +24,7 @@
               </span>
             </template>
           </Column>
-          <Column field="cslBalance" header="CSL PT Balance">
+          <Column field="cslBalance" header="CSLP Balance">
             <template #body="slotProps">
               <span>
                 {{ formatCurrency(slotProps.data.cslBalance) }}
@@ -45,7 +45,7 @@ import {
   DEFAULT_PAGE_NUMBER,
 } from "@/types";
 import { useFormatters } from "@/composables";
-import { StudentLoanBalanceDetailsAPIOutDTO } from "@/services/http/dto";
+import { StudentMonthlyLoanBalanceDetailAPIOutDTO } from "@/services/http/dto";
 
 export default defineComponent({
   props: {
@@ -60,7 +60,7 @@ export default defineComponent({
     const { dateOnlyLongString, formatCurrency, emptyStringFiller } =
       useFormatters();
     const studentLoanBalanceDetails = ref(
-      [] as StudentLoanBalanceDetailsAPIOutDTO[],
+      [] as StudentMonthlyLoanBalanceDetailAPIOutDTO[],
     );
 
     onMounted(async () => {

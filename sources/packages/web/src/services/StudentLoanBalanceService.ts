@@ -1,5 +1,5 @@
 import ApiClient from "@/services/http/ApiClient";
-import { StudentMonthlyLoanBalanceAPIOutDTO } from "@/services/http/dto";
+import { StudentLoanBalanceAPIOutDTO } from "@/services/http/dto";
 
 /**
  * Client service layer for student loan balance.
@@ -20,7 +20,7 @@ export class StudentLoanBalanceService {
    */
   async getStudentPartTimeLoanBalance(
     studentId: number,
-  ): Promise<StudentMonthlyLoanBalanceAPIOutDTO> {
+  ): Promise<StudentLoanBalanceAPIOutDTO> {
     return ApiClient.StudentLoanBalanceApi.getStudentPartTimeLoanBalance(
       studentId,
     );
