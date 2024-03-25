@@ -49,5 +49,8 @@ export * from "./sin-validation/sin-validation-files/sin-validation-file-respons
 export * from "./sin-validation/sin-validation.integration.service";
 export * from "./sin-validation/sin-validation.processing.service";
 export * from "./sin-validation/sin-validation.module";
+export * from "./student-loan-balances/student-loan-balances-files/student-loan-balances-file-footer";
+export * from "./student-loan-balances/student-loan-balances-files/student-loan-balances-file-header";
+export * from "./student-loan-balances/student-loan-balances-files/student-loan-balances-file-response";
 export * from "./student-loan-balances/student-loan-balances.processing.service";
 export * from "./student-loan-balances/student-loan-balances.integration.service";
