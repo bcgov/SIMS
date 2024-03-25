@@ -8,7 +8,7 @@ import {
 import { ColumnNames, TableNames } from "../constant";
 import { NotificationMessage } from "./notification-message.model";
 import { PermanentFailureError } from "./notification-permanent-failure-error.type";
-import { Metadata } from "./notification-metadata.type";
+import { NotificationMetadata } from "./notification-metadata.type";
 import { RecordDataModel } from "./record.model";
 import { User } from "./user.model";
 
@@ -83,7 +83,7 @@ export class Notification extends RecordDataModel {
     type: "jsonb",
     nullable: true,
   })
-  metadata: Metadata;
+  metadata?: NotificationMetadata;
 }
 
 /**

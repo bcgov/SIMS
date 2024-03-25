@@ -1,6 +1,6 @@
 /**
  * Metadata for notification.
  */
-export interface Metadata {
-  disbursement_id: number;
+export interface NotificationMetadata {
+  disbursementId: number;
 }

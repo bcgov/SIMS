@@ -14,6 +14,7 @@ import { ECertGenerationService } from "../e-cert-generation.service";
 import { Injectable } from "@nestjs/common";
 import { EligibleECertDisbursement } from "../disbursement-schedule.models";
 import { NotificationActionsService } from "@sims/services";
+import { ECertNotificationService } from "../e-cert-notification/e-cert-notification.service";
 
 /**
  * Executes the part-time calculations for the e-Cert generation.
@@ -22,7 +23,7 @@ import { NotificationActionsService } from "@sims/services";
 export class PartTimeCalculationProcess extends ECertCalculationProcess {
   constructor(
     dataSource: DataSource,
-    notificationActionsService: NotificationActionsService,
+    ecertNotificationService: ECertNotificationService,
     private readonly eCertGenerationService: ECertGenerationService,
     private readonly validateDisbursementPartTimeStep: ValidateDisbursementPartTimeStep,
     private readonly applyOverawardsDeductionsStep: ApplyOverawardsDeductionsStep,
@@ -31,7 +32,7 @@ export class PartTimeCalculationProcess extends ECertCalculationProcess {
     private readonly createBCTotalGrantsStep: CreateBCTotalGrantsStep,
     private readonly persistCalculationsStep: PersistCalculationsStep,
   ) {
-    super(dataSource, notificationActionsService);
+    super(dataSource, ecertNotificationService);
   }
 
   /**

@@ -1,10 +1,15 @@
 import { NotificationMessageType } from "@sims/sims-db";
 import { NotificationEmailMessage } from "./gc-notify.model";
 
+interface NotificationMetadata {
+  disbursementId: number;
+}
+
 export interface SaveNotificationModel {
   userId?: number;
   messageType: NotificationMessageType;
   messagePayload: NotificationEmailMessage;
+  metadata?: NotificationMetadata;
 }
 
 export interface StudentFileUploadNotification {

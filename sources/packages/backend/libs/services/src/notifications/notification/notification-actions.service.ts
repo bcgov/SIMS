@@ -645,12 +645,13 @@ export class NotificationActionsService {
           lastName: notification.lastName,
         },
       },
+      metadata: { disbursementId },
     };
     // Save notification to be sent to the student into the notification table.
     await this.notificationService.saveNotifications(
       [notificationToSend],
       auditUser.id,
-      { disbursementId, entityManager },
+      { entityManager },
     );
   }
 
@@ -684,13 +685,14 @@ export class NotificationActionsService {
           applicationNumber: notification.applicationNumber,
           dateTime: this.getDateTimeOnPSTTimeZone(),
         },
+        metadata: { disbursementId },
       },
     };
     // Save notification to be sent to the ministry into the notification table.
     await this.notificationService.saveNotifications(
       [ministryNotificationToSend],
       auditUser.id,
-      { disbursementId, entityManager },
+      { entityManager },
     );
   }
 
