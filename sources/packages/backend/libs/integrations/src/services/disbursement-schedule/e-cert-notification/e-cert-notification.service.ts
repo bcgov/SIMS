@@ -74,7 +74,7 @@ export class ECertNotificationService {
       })
       .getRawOne<NotificationData>();
     const canSendNewNotification =
-      dateDifference(new Date(), notification.maxCreatedAt) >=
+      dateDifference(new Date(), notification.maxCreatedAt) >
       BLOCKED_DISBURSEMENT_NOTIFICATION_MIN_DAYS_INTERVAL;
     // Condition check to create notifications: Less than BLOCKED_DISBURSEMENT_MAXIMUM_NOTIFICATIONS_TO_SEND notifications are created previously and there are no failures in sending those created notifications.
     // Plus, it has been at least BLOCKED_DISBURSEMENT_NOTIFICATION_MIN_DAYS_INTERVAL days from the last created notification for this disbursement.
