@@ -99,6 +99,7 @@ export class ECertNotificationService {
       .getRepository(DisbursementSchedule)
       .findOne({
         select: {
+          id: true,
           studentAssessment: {
             id: true,
             application: {
