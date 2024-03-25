@@ -25,12 +25,21 @@ import {
 } from "./gc-notify.model";
 import { CustomNamedError, processInParallel } from "@sims/utilities";
 import { GC_NOTIFY_PERMANENT_FAILURE_ERROR } from "@sims/services/constants";
+import { NotificationMetadata } from "@sims/sims-db/entities/notification-metadata.type";
 
 /**
  * While performing a possible huge amount of inserts,
  * breaks the execution in chunks.
  */
 const NOTIFICATIONS_INSERT_CHUNK_SIZE = 1000;
+
+interface NotificationToSave {
+  user: User;
+  creator: User;
+  messagePayload: NotificationEmailMessage;
+  notificationMessage: NotificationMessage;
+  metadata?: NotificationMetadata;
+}
 
 @Injectable()
 export class NotificationService extends RecordDataModelService<Notification> {
@@ -59,7 +68,7 @@ export class NotificationService extends RecordDataModelService<Notification> {
     },
   ): Promise<number[]> {
     const newNotifications = notifications.map((notification) => {
-      const notificationToSave = {
+      const notificationToSave: NotificationToSave = {
         user: { id: notification.userId } as User,
         creator: { id: auditUserId } as User,
         messagePayload: notification.messagePayload,
@@ -68,7 +77,7 @@ export class NotificationService extends RecordDataModelService<Notification> {
         } as NotificationMessage,
       };
       if (notification.metadata) {
-        notificationToSave["metadata"] = notification.metadata;
+        notificationToSave.metadata = notification.metadata;
       }
       return notificationToSave;
     });

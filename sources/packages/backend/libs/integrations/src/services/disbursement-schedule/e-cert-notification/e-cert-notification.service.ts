@@ -4,7 +4,10 @@ import {
   NotificationActionsService,
   StudentNotification,
 } from "@sims/services";
-import { BLOCKED_DISBURSEMENT_NOTIFICATION_MIN_DAYS_INTERVAL } from "@sims/services/constants";
+import {
+  BLOCKED_DISBURSEMENT_MAXIMUM_NOTIFICATIONS_TO_SEND,
+  BLOCKED_DISBURSEMENT_NOTIFICATION_MIN_DAYS_INTERVAL,
+} from "@sims/services/constants";
 import { Notification, NotificationMessageType, Student } from "@sims/sims-db";
 import { dateDifference } from "@sims/utilities";
 import { EntityManager } from "typeorm";
@@ -78,10 +81,12 @@ export class ECertNotificationService {
       dateDifference(new Date(), notification.maxCreatedAt) >
       BLOCKED_DISBURSEMENT_NOTIFICATION_MIN_DAYS_INTERVAL;
     // Condition check to create notifications: Less than 3 notifications are created previously and there are no failures in sending those created notifications.
-    // Plus, it has been atleast 7 days from the last created notification for this disbursement.
+    // Plus, it has been at least 7 days from the last created notification for this disbursement.
     return (
       !notification.notificationCount ||
-      (notification.notificationCount < 3 && canSendNewNotification)
+      (notification.notificationCount <
+        BLOCKED_DISBURSEMENT_MAXIMUM_NOTIFICATIONS_TO_SEND &&
+        canSendNewNotification)
     );
   }
 
