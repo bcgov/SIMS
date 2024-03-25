@@ -8,7 +8,11 @@ import {
   BLOCKED_DISBURSEMENT_MAXIMUM_NOTIFICATIONS_TO_SEND,
   BLOCKED_DISBURSEMENT_NOTIFICATION_MIN_DAYS_INTERVAL,
 } from "@sims/services/constants";
-import { Notification, NotificationMessageType, Student } from "@sims/sims-db";
+import {
+  DisbursementSchedule,
+  Notification,
+  NotificationMessageType,
+} from "@sims/sims-db";
 import { dateDifference } from "@sims/utilities";
 import { EntityManager } from "typeorm";
 
@@ -44,8 +48,6 @@ export class ECertNotificationService {
     if (shouldCreateNotification) {
       await this.createDisbursementBlockedNotifications(
         disbursementId,
-        studentId,
-        applicationNumber,
         entityManager,
       );
     }
@@ -61,8 +63,6 @@ export class ECertNotificationService {
     disbursementId: number,
     entityManager: EntityManager,
   ): Promise<boolean> {
-    const notificationMessageId =
-      NotificationMessageType.StudentNotificationDisbursementBlocked;
     const notification = await entityManager
       .getRepository(Notification)
       .createQueryBuilder("notification")
@@ -70,9 +70,9 @@ export class ECertNotificationService {
       .addSelect("max(notification.createdAt)", "maxCreatedAt")
       .innerJoin("notification.notificationMessage", "notificationMessage")
       .where("notificationMessage.id = :notificationMessageId", {
-        notificationMessageId,
+        notificationMessageId:
+          NotificationMessageType.StudentNotificationDisbursementBlocked,
       })
-      .andWhere("notification.permanentFailureError IS NULL")
       .andWhere("notification.metadata->>'disbursementId' = :disbursementId", {
         disbursementId,
       })
@@ -93,25 +93,39 @@ export class ECertNotificationService {
   /**
    * Creates disbursement blocked notifications for student and ministry.
    * @param disbursementId disbursement id associated with the blocked disbursement.
-   * @param studentId student id associated with the blocked disbursement.
-   * @param applicationNumber application number associated with the blocked disbursement.
    * @param entityManager entity manager to execute in transaction.
    */
   private async createDisbursementBlockedNotifications(
     disbursementId: number,
-    studentId: number,
-    applicationNumber: string,
     entityManager: EntityManager,
   ): Promise<void> {
-    const student = await entityManager.getRepository(Student).findOne({
-      select: {
-        id: true,
-        birthDate: true,
-        user: { firstName: true, lastName: true, email: true },
-      },
-      relations: { user: true },
-      where: { id: studentId },
-    });
+    const disbursement = await entityManager
+      .getRepository(DisbursementSchedule)
+      .findOne({
+        select: {
+          studentAssessment: {
+            id: true,
+            application: {
+              id: true,
+              student: {
+                id: true,
+                birthDate: true,
+                user: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  email: true,
+                },
+              },
+            },
+          },
+        },
+        relations: {
+          studentAssessment: { application: { student: { user: true } } },
+        },
+        where: { id: disbursementId },
+      });
+    const student = disbursement.studentAssessment.application.student;
     const studentNotification: StudentNotification = {
       givenNames: student.user.firstName,
       lastName: student.user.lastName,
@@ -123,7 +137,8 @@ export class ECertNotificationService {
       lastName: student.user.lastName,
       email: student.user.email,
       dob: student.birthDate,
-      applicationNumber: applicationNumber,
+      applicationNumber:
+        disbursement.studentAssessment.application.applicationNumber,
     };
     const disbursementBlockedNotificationForStudentPromise =
       this.notificationActionsService.saveDisbursementBlockedNotificationForStudent(
