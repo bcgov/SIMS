@@ -1,6 +1,6 @@
 import { InjectQueue, Process, Processor } from "@nestjs/bull";
 import { Job, Queue } from "bull";
-import { BaseScheduler } from "../base-scheduler";
+import { BaseScheduler } from "../../base-scheduler";
 import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
 import {
@@ -8,14 +8,14 @@ import {
   LoggerService,
   ProcessSummary,
 } from "@sims/utilities/logger";
-import { logProcessSummaryToJobLogger } from "../../../utilities";
+import { logProcessSummaryToJobLogger } from "../../../../utilities";
 import { StudentLoanBalancesProcessingService } from "@sims/integrations/esdc-integration";
-import { ProcessResponseQueue } from "../esdc-integration/models/esdc.models";
+import { ProcessResponseQueue } from "../models/esdc.models";
 /**
  * Process Student Loan Balances file from the SFTP location.
  */
 @Processor(QueueNames.StudentLoanBalances)
-export class StudentLoanBalancesIntegrationScheduler extends BaseScheduler<void> {
+export class StudentLoanBalancesScheduler extends BaseScheduler<void> {
   constructor(
     @InjectQueue(QueueNames.StudentLoanBalances)
     schedulerQueue: Queue<void>,
@@ -32,7 +32,7 @@ export class StudentLoanBalancesIntegrationScheduler extends BaseScheduler<void>
    * @returns processing result.
    */
   @Process()
-  async processStudentLoanBalancesIntegrationFiles(
+  async processStudentLoanBalancesFiles(
     job: Job<void>,
   ): Promise<ProcessResponseQueue[] | string[]> {
     const processSummary = new ProcessSummary();
