@@ -15,7 +15,6 @@ import {
 import { mockDownloadFiles } from "@sims/test-utils/mocks";
 import * as Client from "ssh2-sftp-client";
 import { Job } from "bull";
-import * as dayjs from "dayjs";
 import * as path from "path";
 import { SFASIntegrationScheduler } from "../sfas-integration.scheduler";
 import { Student, StudentRestriction } from "@sims/sims-db";
@@ -177,10 +176,8 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       expect(sftpClientMock.delete).toHaveBeenCalled();
       // Expect the file contains 3 records.
       expect(processingResults[0].summary[1]).toBe("File contains 3 records.");
-      const startDate = dayjs("20230801", "YYYYMMDD", false).format(
-        "YYYY-MM-DD",
-      );
-      const endDate = dayjs("20240201", "YYYYMMDD", false).format("YYYY-MM-DD");
+      const startDate = getISODateOnlyString("2023-08-01");
+      const endDate = getISODateOnlyString("2024-02-01");
       // Expect the database data to be the same as the file data for one record.
       const sfasPartTimeApplications = await db.sfasPartTimeApplications.find({
         select: {

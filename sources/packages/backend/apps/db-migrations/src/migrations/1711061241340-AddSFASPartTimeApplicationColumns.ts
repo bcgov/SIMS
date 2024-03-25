@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../utilities/sqlLoader";
 
-export class AddSFASPartTimeApplicationPYMaximumColumns1711061241340
+export class AddSFASPartTimeApplicationColumns1711061241340
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
