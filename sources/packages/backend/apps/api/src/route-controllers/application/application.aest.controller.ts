@@ -149,11 +149,11 @@ export class ApplicationAESTController extends BaseController {
       );
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
-        switch (error.name) {
-          case APPLICATION_NOT_FOUND:
-            throw new NotFoundException(error.message);
-          case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
-            throw new UnprocessableEntityException(error.message);
+        if (error.name === APPLICATION_NOT_FOUND) {
+          throw new NotFoundException(error.message);
+        }
+        if (error.name === INVALID_OPERATION_IN_THE_CURRENT_STATUS) {
+          throw new UnprocessableEntityException(error.message);
         }
       }
       throw error;

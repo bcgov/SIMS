@@ -33,9 +33,8 @@
 <script lang="ts">
 import { VForm } from "@/types";
 import { ref, defineComponent } from "vue";
-import { useRules } from "@/composables";
+import { useRules, useModalDialog } from "@/composables";
 import { ManualReassessmentAPIInDTO } from "@/services/http/dto/Assessment.dto";
-import { useModalDialog } from "@/composables";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 
 export default defineComponent({
