@@ -64,7 +64,7 @@ describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
     jest.clearAllMocks();
   });
 
-  it("Should add loan balance for the student.;", async () => {
+  it("Should add monthly loan balance record for the student.;", async () => {
     // Arrange
     // Queued job.
     const job = createMock<Job<void>>();

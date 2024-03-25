@@ -6,19 +6,13 @@ export class AddStudentLoanBalancesProcessIntegrationQueue1711326633395
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData(
-        "Add-student-loan-balances-process-integration-queue.sql",
-        "Queue",
-      ),
+      getSQLFileData("Add-student-loan-balances-queue.sql", "Queue"),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData(
-        "Rollback-add-student-loan-balances-process-integration-queue.sql",
-        "Queue",
-      ),
+      getSQLFileData("Rollback-add-student-loan-balances-queue.sql", "Queue"),
     );
   }
 }

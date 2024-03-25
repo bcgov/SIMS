@@ -2,7 +2,7 @@ INSERT INTO
   sims.queue_configurations(queue_name, queue_configuration)
 VALUES
   (
-    'student-loan-balance-process-integration',
+    'student-loan-balances',
     '{
         "retry": 3,
         "retryInterval": 180000,
