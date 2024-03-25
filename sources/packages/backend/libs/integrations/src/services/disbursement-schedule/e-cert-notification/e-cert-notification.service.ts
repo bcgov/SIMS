@@ -103,6 +103,7 @@ export class ECertNotificationService {
             id: true,
             application: {
               id: true,
+              applicationNumber: true,
               student: {
                 id: true,
                 birthDate: true,
