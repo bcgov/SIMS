@@ -33,13 +33,14 @@ export class StudentLoanBalanceAESTController extends BaseController {
     description: "Student not found.",
   })
   @Get("part-time/student/:studentId")
-  async getPartTimeLoanBalanceByStudent(
+  async getStudentPartTimeLoanBalance(
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<StudentMonthlyLoanBalanceAPIOutDTO> {
     const studentExist = await this.studentService.studentExists(studentId);
     if (!studentExist) {
       throw new NotFoundException("Student not found.");
     }
+    //TODO: Remove the static values when actual implementation is done.
     const staticData: StudentMonthlyLoanBalanceAPIOutDTO = {
       loanBalanceDetails: [
         { balanceDate: "2024-01-10", cslBalance: 100 },
