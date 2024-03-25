@@ -94,7 +94,10 @@ export class EducationProgramInstitutionsController extends BaseController {
    * @param payload information to be updated.
    */
   @ApiUnprocessableEntityResponse({
-    description: "Not able to a save the program due to an invalid request.",
+    description:
+      "Not able to a save the program due to an invalid request or " +
+      "SABC code is duplicated or " +
+      "program is inactive.",
   })
   @ApiNotFoundResponse({
     description: "Not able to find the education program.",

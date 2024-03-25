@@ -56,6 +56,7 @@ export interface EducationProgramAPIOutDTO {
   assessedBy?: string;
   effectiveEndDate?: string;
   fieldOfStudyCode: number;
+  isActive: boolean;
 }
 
 /**
@@ -72,6 +73,7 @@ export interface EducationProgramsSummaryAPIOutDTO {
   locationName: string;
   locationId: number;
   programStatus: ProgramStatus;
+  isActive: boolean;
 }
 
 /**

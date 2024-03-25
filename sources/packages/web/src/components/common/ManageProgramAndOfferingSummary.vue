@@ -5,6 +5,7 @@
         :programId="programId"
         :locationId="locationId"
         :educationProgram="educationProgram"
+        @program-data-updated="$emit('programDataUpdated')"
       />
       <hr class="horizontal-divider" />
       <offering-summary
@@ -23,6 +24,9 @@ import OfferingSummary from "@/components/common/OfferingSummary.vue";
 import { EducationProgramAPIOutDTO } from "@/services/http/dto";
 
 export default defineComponent({
+  emits: {
+    programDataUpdated: null,
+  },
   components: { ProgramDetails, OfferingSummary },
   props: {
     programId: {

@@ -23,6 +23,7 @@
       :programId="programId"
       :locationId="locationId"
       :educationProgram="educationProgram"
+      @program-data-updated="programDataUpdated"
     />
   </full-page-container>
 </template>
@@ -58,9 +59,12 @@ export default defineComponent({
 
     onMounted(getEducationProgramAndOffering);
 
+    const programDataUpdated = () => getEducationProgramAndOffering();
+
     return {
       educationProgram,
       InstitutionRoutesConst,
+      programDataUpdated,
     };
   },
 });

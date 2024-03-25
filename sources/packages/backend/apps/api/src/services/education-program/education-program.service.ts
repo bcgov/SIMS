@@ -129,6 +129,12 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
           EDUCATION_PROGRAM_NOT_FOUND,
         );
       }
+      if (!program.isActive) {
+        throw new CustomNamedError(
+          "Education program cannot be edited when inactive.",
+          EDUCATION_PROGRAM_INVALID_OPERATION,
+        );
+      }
       // Check if education program has offering(s). This check is required to
       // prevent a user from updating fields that are not supposed
       // to be updated if the education program has 1 or more offerings.
@@ -248,6 +254,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .addSelect("location.id", "locationId")
       .addSelect("location.name", "locationName")
       .addSelect("programs.programStatus", "programStatus")
+      .addSelect("programs.isActive", "isActive")
       .addSelect(
         (qb) =>
           qb
@@ -330,6 +337,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       credentialType: program.credentialType,
       submittedDate: program.programSubmittedAt,
       programStatus: program.programStatus,
+      isActive: program.isActive,
       totalOfferings: program.totalOfferings,
       locationId: program.locationId,
       locationName: program.locationName,
@@ -513,6 +521,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "assessedBy.lastName",
         "programs.assessedDate",
         "programs.effectiveEndDate",
+        "programs.isActive",
       ])
       .leftJoin("programs.submittedBy", "submittedBy")
       .leftJoin("programs.assessedBy", "assessedBy")

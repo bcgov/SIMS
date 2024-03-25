@@ -4,11 +4,12 @@
       <status-chip-program
         class="ml-2 mb-2"
         :status="educationProgram.programStatus"
+        :is-active="educationProgram.isActive"
         data-cy="programStatus"
       ></status-chip-program>
     </template>
     <template #actions>
-      <v-menu class="label-bold-menu">
+      <v-menu class="label-bold-menu" v-if="educationProgram.isActive">
         <template v-slot:activator="{ props }">
           <v-btn
             color="primary"
@@ -118,6 +119,9 @@ import { ModalDialog, useSnackBar } from "@/composables";
 import ApiClient from "@/services/http/ApiClient";
 
 export default defineComponent({
+  emits: {
+    programDataUpdated: null,
+  },
   components: { DeclineEducationProgramModal, StatusChipProgram },
   props: {
     programId: {
@@ -134,7 +138,7 @@ export default defineComponent({
       default: {} as EducationProgramAPIOutDTO,
     },
   },
-  setup(props) {
+  setup(props, context) {
     const snackBar = useSnackBar();
     const router = useRouter();
     const declineEducationProgramModal = ref(
@@ -174,6 +178,7 @@ export default defineComponent({
       try {
         await ApiClient.EducationProgram.deactivateProgram(props.programId);
         snackBar.success("Program deactivate with success.");
+        context.emit("programDataUpdated");
         return true;
       } catch (error) {
         snackBar.error("An error happened while deactivating the program.");

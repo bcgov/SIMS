@@ -56,6 +56,7 @@ export interface EducationProgramsSummary {
   credentialType: string;
   submittedDate: Date;
   programStatus: ProgramStatus;
+  isActive: boolean;
   totalOfferings: number;
   locationId: number;
   locationName: string;
