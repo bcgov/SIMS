@@ -5,7 +5,7 @@ import {
   StudentNotification,
 } from "@sims/services";
 import { BLOCKED_DISBURSEMENT_NOTIFICATION_MIN_DAYS_INTERVAL } from "@sims/services/constants";
-import { Notification, Student } from "@sims/sims-db";
+import { Notification, NotificationMessageType, Student } from "@sims/sims-db";
 import { dateDifference } from "@sims/utilities";
 import { EntityManager } from "typeorm";
 
@@ -58,7 +58,8 @@ export class ECertNotificationService {
     disbursementId: number,
     entityManager: EntityManager,
   ): Promise<boolean> {
-    const notificationMessageId = 16;
+    const notificationMessageId =
+      NotificationMessageType.StudentNotificationDisbursementBlocked;
     const notification = await entityManager
       .getRepository(Notification)
       .createQueryBuilder("notification")
