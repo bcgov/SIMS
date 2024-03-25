@@ -78,7 +78,7 @@ export class ECertNotificationService {
       })
       .getRawOne<NotificationData>();
     const canSendNewNotification =
-      dateDifference(new Date(), notification.maxCreatedAt) >
+      dateDifference(new Date(), notification.maxCreatedAt) >=
       BLOCKED_DISBURSEMENT_NOTIFICATION_MIN_DAYS_INTERVAL;
     // Condition check to create notifications: Less than 3 notifications are created previously and there are no failures in sending those created notifications.
     // Plus, it has been at least 7 days from the last created notification for this disbursement.
@@ -102,7 +102,7 @@ export class ECertNotificationService {
     studentId: number,
     applicationNumber: string,
     entityManager: EntityManager,
-  ) {
+  ): Promise<void> {
     const student = await entityManager.getRepository(Student).findOne({
       select: {
         id: true,

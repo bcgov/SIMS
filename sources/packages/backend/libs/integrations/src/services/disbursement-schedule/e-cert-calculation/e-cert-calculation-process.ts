@@ -20,7 +20,7 @@ interface GroupedDisbursementPerStudent {
 export abstract class ECertCalculationProcess {
   constructor(
     private readonly dataSource: DataSource,
-    private readonly ecertNotificationService: ECertNotificationService,
+    private readonly eCertNotificationService: ECertNotificationService,
   ) {}
 
   /**
@@ -123,7 +123,7 @@ export abstract class ECertCalculationProcess {
               disbursementLog,
             );
             if (!shouldProceed) {
-              await this.ecertNotificationService.createDisbursementBlockedNotification(
+              await this.eCertNotificationService.createDisbursementBlockedNotification(
                 eCertDisbursement.disbursement.id,
                 eCertDisbursement.studentId,
                 eCertDisbursement.applicationNumber,

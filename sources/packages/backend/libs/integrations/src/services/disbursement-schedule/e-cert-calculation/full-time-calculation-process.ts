@@ -24,7 +24,7 @@ import { ECertNotificationService } from "../e-cert-notification/e-cert-notifica
 export class FullTimeCalculationProcess extends ECertCalculationProcess {
   constructor(
     dataSource: DataSource,
-    ecertNotificationService: ECertNotificationService,
+    eCertNotificationService: ECertNotificationService,
     private readonly eCertGenerationService: ECertGenerationService,
     private readonly validateDisbursementFullTimeStep: ValidateDisbursementFullTimeStep,
     private readonly applyOverawardsDeductionsStep: ApplyOverawardsDeductionsStep,
@@ -35,7 +35,7 @@ export class FullTimeCalculationProcess extends ECertCalculationProcess {
     private readonly createBCTotalGrantsStep: CreateBCTotalGrantsStep,
     private readonly persistCalculationsStep: PersistCalculationsStep,
   ) {
-    super(dataSource, ecertNotificationService);
+    super(dataSource, eCertNotificationService);
   }
 
   /**

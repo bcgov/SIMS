@@ -77,7 +77,9 @@ export class Notification extends RecordDataModel {
     nullable: true,
   })
   permanentFailureError: PermanentFailureError[];
-  /** Metadata information related to the saved notification. */
+  /**
+   * Metadata information related to the saved notification.
+   */
   @Column({
     name: "metadata",
     type: "jsonb",
