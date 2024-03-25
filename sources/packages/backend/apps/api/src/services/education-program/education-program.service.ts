@@ -691,7 +691,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   }
 
   /**
-   * Check if the given institution has already a program with the given SABC code.
+   * Check if the given institution has already a program with the given SABC code for an active program.
    * @param institutionId id of the institution to have the programs retrieved.
    * @param sabcCode SABC code.
    * @param programId programId in case it is an update. It will be ignored in case of `undefined`.
@@ -702,20 +702,16 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     sabcCode: string,
     programId?: number,
   ): Promise<boolean> {
-    const result = await this.repo.findOne({
-      select: {
-        id: true,
-      },
+    return this.repo.exists({
       where: {
         id: programId ? Not(Equal(programId)) : undefined,
         sabcCode: sabcCode,
         institution: {
           id: institutionId,
         },
+        isActive: true,
       },
     });
-
-    return !!result?.id;
   }
 
   /**
