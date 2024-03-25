@@ -5,6 +5,7 @@ export enum Role {
   /**
    * AEST roles.
    */
+  AESTAdmin = "aest-admin",
   AESTReports = "aest-reports",
   AESTCreateInstitution = "aest-create-institution",
   StudentAddRestriction = "student-add-restriction",

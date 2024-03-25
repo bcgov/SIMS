@@ -1,0 +1,90 @@
+<template>
+  <v-form ref="reassessmentForm">
+    <modal-dialog-base :showDialog="showDialog" title="Trigger Reassement">
+      <template #content>
+        <p class="pt-1 brand-gray-text">
+          Triggering reassessment will not change student's application inputs
+          currently on file. This will rerun the student's assessment,
+          potentially requiring a school to reconfirm enrolment, and potentially
+          new eCert requests to be issued. For more information, please consult
+          the SIMS Operations Manual.
+        </p>
+        <error-summary :errors="reassessmentForm.errors" />
+        <v-textarea
+          label="Notes"
+          variant="outlined"
+          hide-details="auto"
+          v-model="note"
+          :rules="[checkNotesLengthRule]"
+          required
+        />
+      </template>
+      <template #footer>
+        <footer-buttons
+          :processing="loading"
+          primaryLabel="Trigger reassessment"
+          @secondaryClick="cancel"
+          @primaryClick="triggerReassessment"
+        />
+      </template>
+    </modal-dialog-base>
+  </v-form>
+</template>
+<script lang="ts">
+import { VForm } from "@/types";
+import { ref, defineComponent } from "vue";
+import { useRules } from "@/composables";
+import { ManualReassessmentAPIInDTO } from "@/services/http/dto/Assessment.dto";
+import { useModalDialog } from "@/composables";
+import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
+
+export default defineComponent({
+  emits: [],
+  components: {
+    ModalDialogBase,
+  },
+  setup() {
+    const {
+      showDialog,
+      showModal,
+      resolvePromise,
+      showParameter,
+      hideModal,
+      loading,
+    } = useModalDialog<ManualReassessmentAPIInDTO | false>();
+    const triggerReassessmentModal = {} as ManualReassessmentAPIInDTO;
+    const reassessmentForm = ref({} as VForm);
+    const { checkNotesLengthRule } = useRules();
+    const note = ref("");
+    const cancel = () => {
+      reassessmentForm.value.reset();
+      reassessmentForm.value.resetValidation();
+      resolvePromise(false);
+    };
+    const triggerReassessment = async () => {
+      const validationResult = await reassessmentForm.value.validate();
+      if (!validationResult.valid) {
+        return;
+      }
+      triggerReassessmentModal.note = note.value;
+      resolvePromise(triggerReassessmentModal, {
+        keepModalOpen: false,
+      });
+      reassessmentForm.value.reset();
+    };
+    return {
+      showDialog,
+      showModal,
+      resolvePromise,
+      showParameter,
+      hideModal,
+      loading,
+      reassessmentForm,
+      triggerReassessment,
+      cancel,
+      checkNotesLengthRule,
+      note,
+    };
+  },
+});
+</script>

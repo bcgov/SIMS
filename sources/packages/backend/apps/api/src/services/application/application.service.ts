@@ -54,6 +54,7 @@ import { SequenceControlService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
 import { NotificationActionsService } from "@sims/services/notifications";
 import { InstitutionLocationService } from "../institution-location/institution-location.service";
+import { ApplicationAssessmentDetailsAPIOutDTO as ApplicationAssessmentStatusDetailsAPIOutDTO } from "apps/api/src/route-controllers/application/models/application.dto";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
@@ -1649,6 +1650,34 @@ export class ApplicationService extends RecordDataModelService<Application> {
         OFFERING_PROGRAM_YEAR_MISMATCH,
       );
     }
+  }
+
+  /**
+   * Gets application and assessment status details.
+   * @param applicationId application id.
+   */
+  async getApplicationAssessmentStatusDetails(
+    applicationId: number,
+  ): Promise<ApplicationAssessmentStatusDetailsAPIOutDTO> {
+    const application = await this.repo.findOne({
+      select: {
+        id: true,
+        currentAssessment: { id: true, studentAssessmentStatus: true },
+        isArchived: true,
+      },
+      relations: {
+        currentAssessment: true,
+      },
+      where: {
+        id: applicationId,
+      },
+    });
+    return {
+      applicationId: application.id,
+      currentAssessmentStatus:
+        application.currentAssessment.studentAssessmentStatus,
+      isApplicationArchived: application.isArchived,
+    };
   }
 
   @InjectLogger()

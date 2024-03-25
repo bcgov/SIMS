@@ -20,6 +20,12 @@
       @viewApplicationException="goToApplicationException"
       @viewOfferingRequest="goToOfferingRequest"
     />
+    <manual-reassessment
+      class="mb-5"
+      :applicationId="applicationId"
+      @reassessmentTriggered="reloadComponents"
+      :key="manualReassessmentKey"
+    />
     <history-assessment
       class="mb-5"
       :applicationId="applicationId"
@@ -32,6 +38,7 @@
       @viewOfferingRequest="goToOfferingRequest"
       @viewApplicationException="goToApplicationException"
       @viewScholasticStandingChange="goToScholasticStanding"
+      :key="historyKey"
     />
   </full-page-container>
 </template>
@@ -39,15 +46,17 @@
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import { AssessmentTriggerType } from "@/types";
 import RequestAssessment from "@/components/aest/students/assessment/Request.vue";
 import HistoryAssessment from "@/components/aest/students/assessment/History.vue";
+import ManualReassessment from "@/components/aest/students/assessment/ManualReassessment.vue";
 
 export default defineComponent({
   components: {
     RequestAssessment,
     HistoryAssessment,
+    ManualReassessment,
   },
   props: {
     studentId: {
@@ -61,6 +70,9 @@ export default defineComponent({
   },
   setup(props) {
     const router = useRouter();
+    const historyKey = ref(0);
+    const manualReassessmentKey = ref(0);
+
     // The assessment trigger types for which the request form must be visible by default.
     const assessmentRequestTypes = [
       AssessmentTriggerType.StudentAppeal,
@@ -135,6 +147,11 @@ export default defineComponent({
       });
     };
 
+    const reloadComponents = () => {
+      historyKey.value++;
+      manualReassessmentKey.value++;
+    };
+
     return {
       AESTRoutesConst,
       goToStudentAppeal,
@@ -144,6 +161,9 @@ export default defineComponent({
       goToOfferingRequest,
       assessmentRequestTypes,
       goToStudentApplicationOfferingChangeRequest,
+      historyKey,
+      manualReassessmentKey,
+      reloadComponents,
     };
   },
 });
