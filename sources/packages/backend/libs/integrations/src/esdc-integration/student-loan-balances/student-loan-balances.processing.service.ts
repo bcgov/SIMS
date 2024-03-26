@@ -38,7 +38,7 @@ export class StudentLoanBalancesProcessingService {
       await this.studentLoanBalancesIntegrationService.getResponseFilesFullPath(
         this.esdcConfig.ftpResponseFolder,
         new RegExp(
-          `^${this.esdcConfig.environmentCode}EDU.PBC.PT.MBAL.[0-9]{8}\.*`,
+          `^${this.esdcConfig.environmentCode}EDU.PBC.PT.MBAL.[0-9]{8}.*`,
           "i",
         ),
       );
