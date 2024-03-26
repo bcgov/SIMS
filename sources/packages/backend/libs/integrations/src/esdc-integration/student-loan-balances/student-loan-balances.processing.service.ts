@@ -89,6 +89,7 @@ export class StudentLoanBalancesProcessingService {
             studentLoanBalanceRecord.lastName,
             getISODateOnlyString(studentLoanBalanceRecord.birthDate),
           );
+        // If student not found continue.
         if (!student) {
           result.processSummary.push(
             `Student not found for line ${studentLoanBalanceRecord.lineNumber}`,
@@ -100,6 +101,7 @@ export class StudentLoanBalancesProcessingService {
         studentLoanBalances.cslBalance = studentLoanBalanceRecord.cslBalance;
         studentLoanBalances.balanceDate =
           studentLoanBalancesSFTPResponseFile.header.balanceDate;
+        // Save the student loan balance.
         await this.studentLoanBalancesService.save(studentLoanBalances);
         result.processSummary.push(
           `Inserted Student Loan balances record from line ${studentLoanBalanceRecord.lineNumber}.`,
