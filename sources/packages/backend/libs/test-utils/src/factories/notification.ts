@@ -62,7 +62,7 @@ function createFakeNotification(
   },
 ): Notification {
   const notification = new Notification();
-  notification.user = relations.user ?? createFakeUser();
+  notification.user = relations?.user ?? createFakeUser();
   notification.notificationMessage =
     relations?.notificationMessage ??
     ({
