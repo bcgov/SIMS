@@ -278,7 +278,6 @@ describe(
           },
         },
       );
-      const todaysDate = new Date();
       // Create 1 pre-existing notification for the above created disbursement.
       await saveFakeNotification(
         db.dataSource,
@@ -304,7 +303,7 @@ describe(
               disbursementId:
                 application.currentAssessment.disbursementSchedules[0].id,
             },
-            createdAt: new Date(todaysDate.setDate(todaysDate.getDate() - 6)),
+            createdAt: addDays(-6),
           },
         },
       );
@@ -368,7 +367,6 @@ describe(
           },
         },
       );
-      const todaysDate = new Date();
       // Create 1 pre-existing notification for the above created disbursement.
       await saveFakeNotification(
         db.dataSource,
@@ -394,7 +392,7 @@ describe(
               disbursementId:
                 application.currentAssessment.disbursementSchedules[0].id,
             },
-            createdAt: new Date(todaysDate.setDate(todaysDate.getDate() - 7)),
+            createdAt: addDays(-7),
           },
         },
       );

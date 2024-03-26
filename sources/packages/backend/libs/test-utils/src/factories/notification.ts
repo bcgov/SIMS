@@ -5,7 +5,6 @@ import {
   User,
 } from "@sims/sims-db";
 import { DataSource } from "typeorm";
-import { createFakeUser } from "./user";
 import * as faker from "faker";
 
 /**
@@ -62,7 +61,7 @@ function createFakeNotification(
   },
 ): Notification {
   const notification = new Notification();
-  notification.user = relations?.user ?? createFakeUser();
+  notification.user = relations?.user;
   notification.notificationMessage =
     relations?.notificationMessage ??
     ({
