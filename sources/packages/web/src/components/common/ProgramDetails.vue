@@ -28,12 +28,18 @@
         >
           <v-list-item @click="goToProgram" :title="programActionLabel" />
           <v-divider-inset-opaque />
-          <v-list-item
-            :disabled="!educationProgram.isActive"
-            base-color="danger"
-            @click="deactivate"
-            title="Deactivate"
-          />
+          <check-permission-role
+            :role="Role.InstitutionDeactivateEducationProgram"
+          >
+            <template #="{ notAllowed }">
+              <v-list-item
+                :disabled="!educationProgram.isActive || notAllowed"
+                base-color="danger"
+                @click="deactivate"
+                title="Deactivate"
+              />
+            </template>
+          </check-permission-role>
         </v-list>
       </v-menu>
     </template>
@@ -121,12 +127,18 @@ import {
 import EducationProgramDeactivationModal from "@/components/common/modals/EducationProgramDeactivationModal.vue";
 import { ModalDialog, useSnackBar } from "@/composables";
 import ApiClient from "@/services/http/ApiClient";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import { Role } from "@/types";
 
 export default defineComponent({
   emits: {
     programDataUpdated: null,
   },
-  components: { EducationProgramDeactivationModal, StatusChipProgram },
+  components: {
+    EducationProgramDeactivationModal,
+    StatusChipProgram,
+    CheckPermissionRole,
+  },
   props: {
     programId: {
       type: Number,
@@ -216,6 +228,7 @@ export default defineComponent({
       declineEducationProgramModal,
       deactivate,
       notesRequired,
+      Role,
     };
   },
 });
