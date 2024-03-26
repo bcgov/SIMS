@@ -13,7 +13,7 @@ export class StudentLoanBalancesFileHeader {
    */
   recordTypeCode: RecordTypeCodes;
   /**
-   * Month end balance end date of the line.
+   * Loan balance end date of the line.
    */
   balanceDate: Date;
 
