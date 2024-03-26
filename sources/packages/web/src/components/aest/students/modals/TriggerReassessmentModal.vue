@@ -43,14 +43,9 @@ export default defineComponent({
     ModalDialogBase,
   },
   setup() {
-    const {
-      showDialog,
-      showModal,
-      resolvePromise,
-      showParameter,
-      hideModal,
-      loading,
-    } = useModalDialog<ManualReassessmentAPIInDTO | false>();
+    const { showDialog, showModal, resolvePromise, loading } = useModalDialog<
+      ManualReassessmentAPIInDTO | false
+    >();
     const triggerReassessmentModal = {} as ManualReassessmentAPIInDTO;
     const reassessmentForm = ref({} as VForm);
     const { checkNotesLengthRule } = useRules();
@@ -74,9 +69,6 @@ export default defineComponent({
     return {
       showDialog,
       showModal,
-      resolvePromise,
-      showParameter,
-      hideModal,
       loading,
       reassessmentForm,
       triggerReassessment,

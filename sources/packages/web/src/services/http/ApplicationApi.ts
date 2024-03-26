@@ -212,8 +212,8 @@ export class ApplicationApi extends HttpBaseClient {
   }
 
   /**
-   *
-   * @param applicationId
+   * Gets application and assessment status details.
+   * @param applicationId application id.
    */
   async getApplicationAssessmentStatusDetails(
     applicationId: number,

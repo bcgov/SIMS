@@ -17,8 +17,8 @@
               class="ml-2 float-right"
               color="primary"
               prepend-icon="fa:fa fa-refresh"
-              :disabled="notAllowed || triggerButtonDisabled"
-              @click="triggerReassement()"
+              :disabled="notAllowed || openModalButtonDisabled"
+              @click="openTriggerReassessmentModal()"
             >
               Trigger reassessment
             </v-btn>
@@ -54,20 +54,20 @@ export default defineComponent({
     const reassessmentModal = ref(
       {} as ModalDialog<ManualReassessmentAPIInDTO | false>,
     );
-    const triggerButtonDisabled = ref(true);
+    const openModalButtonDisabled = ref(true);
 
     onMounted(async () => {
       const applicationAssessmentStatusDetails =
         await ApplicationService.shared.getApplicationAssessmentStatusDetails(
           props.applicationId,
         );
-      triggerButtonDisabled.value =
+      openModalButtonDisabled.value =
         applicationAssessmentStatusDetails.currentAssessmentStatus !==
           StudentAssessmentStatus.Completed ||
         applicationAssessmentStatusDetails.isApplicationArchived;
     });
 
-    const triggerReassement = async () => {
+    const openTriggerReassessmentModal = async () => {
       const responseData = await reassessmentModal.value.showModal();
       if (responseData) {
         try {
@@ -85,8 +85,8 @@ export default defineComponent({
     };
     return {
       reassessmentModal,
-      triggerReassement,
-      triggerButtonDisabled,
+      openTriggerReassessmentModal,
+      openModalButtonDisabled,
       Role,
     };
   },

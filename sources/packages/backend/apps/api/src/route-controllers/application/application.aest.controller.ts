@@ -129,7 +129,7 @@ export class ApplicationAESTController extends BaseController {
    * Application cannot be archived and current assessment must be in completed status.
    * @param applicationId application id.
    */
-  //@Roles(Role.AESTAdmin)
+  @Roles(Role.AESTAdmin)
   @Post(":applicationId/manual-reassessment")
   @ApiNotFoundResponse({ description: "Application id not found." })
   @ApiUnprocessableEntityResponse({
