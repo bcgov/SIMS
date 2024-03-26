@@ -686,6 +686,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         institution: {
           id: institutionId,
         },
+        isActive: true,
       },
     });
   }
