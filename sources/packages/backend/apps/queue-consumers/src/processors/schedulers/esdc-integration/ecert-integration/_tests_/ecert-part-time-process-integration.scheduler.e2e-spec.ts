@@ -53,7 +53,7 @@ describe(
       sftpClientMock = sshClientMock;
       // Processor under test.
       processor = app.get(PartTimeECertProcessIntegrationScheduler);
-      systemUsersService = nestApplication.get(SystemUsersService);
+      systemUsersService = app.get(SystemUsersService);
     });
 
     beforeEach(async () => {
@@ -100,10 +100,6 @@ describe(
         {
           offeringIntensity: OfferingIntensity.partTime,
           applicationStatus: ApplicationStatus.Completed,
-          currentAssessmentInitialValues: {
-            assessmentData: { weeks: 5 } as Assessment,
-            assessmentDate: new Date(),
-          },
           firstDisbursementInitialValues: {
             coeStatus: COEStatus.completed,
           },
@@ -121,10 +117,12 @@ describe(
         "Generated file: none",
         "Uploaded records: 0",
       ]);
+      const disbursementScheduleId =
+        application.currentAssessment.disbursementSchedules[0].id;
       expect(
         mockedJob.containLogMessages([
-          `Creating notifications for disbursement id: ${application.currentAssessment.disbursementSchedules[0].id} for student and ministry.`,
-          `Completed creating notifications for disbursement id: ${application.currentAssessment.disbursementSchedules[0].id} for student and ministry.`,
+          `Creating notifications for disbursement id: ${disbursementScheduleId} for student and ministry.`,
+          `Completed creating notifications for disbursement id: ${disbursementScheduleId} for student and ministry.`,
         ]),
       ).toBe(true);
       const studentNotificationCount = await db.notification.count({
@@ -184,10 +182,6 @@ describe(
         {
           offeringIntensity: OfferingIntensity.partTime,
           applicationStatus: ApplicationStatus.Completed,
-          currentAssessmentInitialValues: {
-            assessmentData: { weeks: 5 } as Assessment,
-            assessmentDate: new Date(),
-          },
           firstDisbursementInitialValues: {
             coeStatus: COEStatus.completed,
           },
@@ -279,10 +273,6 @@ describe(
         {
           offeringIntensity: OfferingIntensity.partTime,
           applicationStatus: ApplicationStatus.Completed,
-          currentAssessmentInitialValues: {
-            assessmentData: { weeks: 5 } as Assessment,
-            assessmentDate: new Date(),
-          },
           firstDisbursementInitialValues: {
             coeStatus: COEStatus.completed,
           },
@@ -373,10 +363,6 @@ describe(
         {
           offeringIntensity: OfferingIntensity.partTime,
           applicationStatus: ApplicationStatus.Completed,
-          currentAssessmentInitialValues: {
-            assessmentData: { weeks: 5 } as Assessment,
-            assessmentDate: new Date(),
-          },
           firstDisbursementInitialValues: {
             coeStatus: COEStatus.completed,
           },
