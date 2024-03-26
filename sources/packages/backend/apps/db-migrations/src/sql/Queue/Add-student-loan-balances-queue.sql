@@ -9,5 +9,5 @@ VALUES
         "dashboardReadonly": false,
         "cron": "0 17 * * *",
         "cleanUpPeriod": 2592000000
-      }' :: json
+    }' :: json
   );
