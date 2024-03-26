@@ -8,6 +8,7 @@ import {
 import { ColumnNames, TableNames } from "../constant";
 import { NotificationMessage } from "./notification-message.model";
 import { PermanentFailureError } from "./notification-permanent-failure-error.type";
+import { NotificationMetadata } from "./notification-metadata.type";
 import { RecordDataModel } from "./record.model";
 import { User } from "./user.model";
 
@@ -76,6 +77,15 @@ export class Notification extends RecordDataModel {
     nullable: true,
   })
   permanentFailureError: PermanentFailureError[];
+  /**
+   * Metadata information related to the saved notification.
+   */
+  @Column({
+    name: "metadata",
+    type: "jsonb",
+    nullable: true,
+  })
+  metadata?: NotificationMetadata;
 }
 
 /**

@@ -20,6 +20,7 @@ import {
   DisbursementScheduleErrorsService,
   DisbursementScheduleService,
   ECertGenerationService,
+  ECertNotificationService,
   SshService,
 } from "../../services";
 import { SystemUserModule } from "@sims/services/system-users";
@@ -65,6 +66,7 @@ import { PartTimeECertFileHandler } from "./part-time-e-cert-file-handler";
     ConfirmationOfEnrollmentService,
     SFASApplicationService,
     DisbursementScheduleSharedService,
+    ECertNotificationService,
     // e-Cert calculation steps.
     ValidateDisbursementFullTimeStep,
     ValidateDisbursementPartTimeStep,

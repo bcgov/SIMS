@@ -55,7 +55,7 @@ export class NotificationService extends RecordDataModelService<Notification> {
     notifications: SaveNotificationModel[],
     auditUserId: number,
     options?: {
-      entityManager: EntityManager;
+      entityManager?: EntityManager;
     },
   ): Promise<number[]> {
     const newNotifications = notifications.map((notification) => ({
@@ -65,6 +65,7 @@ export class NotificationService extends RecordDataModelService<Notification> {
       notificationMessage: {
         id: notification.messageType,
       } as NotificationMessage,
+      metadata: notification.metadata,
     }));
     const repository =
       options?.entityManager?.getRepository(Notification) ?? this.repo;
