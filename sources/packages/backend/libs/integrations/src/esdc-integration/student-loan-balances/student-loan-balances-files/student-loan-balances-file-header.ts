@@ -26,7 +26,7 @@ export class StudentLoanBalancesFileHeader {
     const header = new StudentLoanBalancesFileHeader();
     header.recordTypeCode = line.substring(0, 2) as RecordTypeCodes;
     header.balanceDate = getDateOnlyFromFormat(
-      line.substring(21, 28),
+      line.substring(21, 29),
       DATE_FORMAT,
     );
     return header;

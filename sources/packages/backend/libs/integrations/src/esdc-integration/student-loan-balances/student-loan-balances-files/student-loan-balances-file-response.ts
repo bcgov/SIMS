@@ -23,24 +23,24 @@ export class StudentLoanBalancesFileResponse {
    * SIN of the student to match and update the student loan balance.
    */
   get sin(): string {
-    return this.line.substring(2, 10);
+    return this.line.substring(2, 11);
   }
   /**
    * Last name of the student to match and update the student loan balance.
    */
   get lastName(): string {
-    return this.line.substring(20, 69);
+    return this.line.substring(20, 70).trim();
   }
   /**
    * Date of birth of the student to match and update the student loan balance.
    */
   get birthDate(): Date {
-    return getDateOnlyFromFormat(this.line.substring(91, 98), DATE_FORMAT);
+    return getDateOnlyFromFormat(this.line.substring(91, 99), DATE_FORMAT);
   }
   /**
    * Date of birth of the student to match and update the student loan balance.
    */
   get cslBalance(): number {
-    return +this.line.substring(13, 19);
+    return +this.line.substring(13, 20);
   }
 }

@@ -94,7 +94,7 @@ export class StudentLoanBalancesProcessingService {
           continue;
         }
         const studentLoanBalances = new StudentLoanBalances();
-        studentLoanBalances.studentId = student.id;
+        studentLoanBalances.student = student;
         studentLoanBalances.cslBalance = studentLoanBalanceRecord.cslBalance;
         studentLoanBalances.balanceDate =
           studentLoanBalancesSFTPResponseFile.header.balanceDate;
