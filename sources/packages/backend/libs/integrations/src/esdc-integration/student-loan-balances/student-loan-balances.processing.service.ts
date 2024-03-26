@@ -42,6 +42,8 @@ export class StudentLoanBalancesProcessingService {
           "i",
         ),
       );
+    // Sort remote file paths by name
+    remoteFilePaths.sort();
     const processFiles: ProcessSFTPResponseResult[] = [];
     for (const remoteFilePath of remoteFilePaths) {
       processFiles.push(await this.processFile(remoteFilePath));
