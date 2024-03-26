@@ -26,7 +26,6 @@ describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
   let db: E2EDataSources;
   let sftpClientMock: DeepMocked<Client>;
   let studentLoanBalancesDownloadFolder: string;
-  let sharedStudent: Student;
 
   beforeAll(async () => {
     studentLoanBalancesDownloadFolder = path.join(
@@ -42,22 +41,6 @@ describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
     sftpClientMock = sshClientMock;
     // Processor under test.
     processor = app.get(StudentLoanBalancesScheduler);
-    // Create student if it doesn't exist.
-    sharedStudent = await db.student.findOne({
-      where: {
-        birthDate: getISODateOnlyString(new Date("1998-03-24")),
-        user: { lastName: "FOUR" },
-        sinValidation: { sin: "900041310" },
-      },
-    });
-    if (!sharedStudent) {
-      sharedStudent = await saveFakeStudent(db.dataSource);
-      // Update the student to ensure that the student receiving loan balance is the same student as the one created above.
-      sharedStudent.birthDate = getISODateOnlyString(new Date("1998-03-24"));
-      sharedStudent.user.lastName = "FOUR";
-      sharedStudent.sinValidation.sin = "900041310";
-      await db.student.save(sharedStudent);
-    }
   });
 
   beforeEach(async () => {
@@ -66,6 +49,22 @@ describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
 
   it("Should add monthly loan balance record for the student.;", async () => {
     // Arrange
+    // Create student if it doesn't exist.
+    let student: Student = await db.student.findOne({
+      where: {
+        birthDate: getISODateOnlyString(new Date("1998-03-24")),
+        user: { lastName: "FOUR" },
+        sinValidation: { sin: "900041310" },
+      },
+    });
+    if (!student) {
+      student = await saveFakeStudent(db.dataSource);
+      // Update the student to ensure that the student receiving loan balance is the same student as the one created above.
+      student.birthDate = getISODateOnlyString(new Date("1998-03-24"));
+      student.user.lastName = "FOUR";
+      student.sinValidation.sin = "900041310";
+      await db.student.save(student);
+    }
     // Queued job.
     const job = createMock<Job<void>>();
     mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
@@ -76,10 +75,36 @@ describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
     expect(sftpClientMock.delete).toHaveBeenCalled();
     const studentLoanBalancesCount = await db.studentLoanBalances.count({
       where: {
-        student: { id: sharedStudent.id },
+        student: { id: student.id },
       },
     });
     // Expect student loan balance contains the student record.
     expect(studentLoanBalancesCount).toBeGreaterThan(0);
+  });
+
+  it("Should not add monthly loan balance record if the student is not found.;", async () => {
+    // Arrange
+    // Create student.
+    const notFoundStudent = await saveFakeStudent(db.dataSource);
+    // Update the student to ensure that the student receiving loan balance is not the same student as the one created above.
+    notFoundStudent.birthDate = getISODateOnlyString(new Date("1998-03-24"));
+    notFoundStudent.user.lastName = "NOTFOUND";
+    notFoundStudent.sinValidation.sin = "900041320";
+    await db.student.save(notFoundStudent);
+    // Queued job.
+    const job = createMock<Job<void>>();
+    mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
+    // Act
+    await processor.processStudentLoanBalancesFiles(job);
+    // Assert
+    // Expect the file was deleted from SFTP.
+    expect(sftpClientMock.delete).toHaveBeenCalled();
+    const studentLoanBalancesCount = await db.studentLoanBalances.count({
+      where: {
+        student: { id: notFoundStudent.id },
+      },
+    });
+    // Expect student loan balance contains the student record.
+    expect(studentLoanBalancesCount).toBe(0);
   });
 });
