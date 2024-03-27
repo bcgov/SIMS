@@ -3,7 +3,11 @@ import {
   Assessment,
   COEStatus,
   DisbursementScheduleStatus,
+  Notification,
+  NotificationMessage,
+  NotificationMessageType,
   OfferingIntensity,
+  Student,
 } from "@sims/sims-db";
 import {
   E2EDataSources,
@@ -12,6 +16,7 @@ import {
   createFakeMSFAANumber,
   saveFakeApplicationDisbursements,
   saveFakeStudent,
+  createFakeNotification,
 } from "@sims/test-utils";
 import { getUploadedFile } from "@sims/test-utils/mocks";
 import { IsNull, Like, Not } from "typeorm";
@@ -29,6 +34,7 @@ import * as dayjs from "dayjs";
 import { DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS } from "@sims/services/constants";
 import { PartTimeCertRecordParser } from "./parsers/part-time-e-cert-record-parser";
 import { loadDisbursementSchedules } from "./e-cert-utils";
+import { GCNotifyService, SystemUsersService } from "@sims/services";
 
 describe(
   describeQueueProcessorRootTest(QueueNames.PartTimeECertIntegration),
@@ -37,6 +43,8 @@ describe(
     let processor: PartTimeECertProcessIntegrationScheduler;
     let db: E2EDataSources;
     let sftpClientMock: DeepMocked<Client>;
+    let systemUsersService: SystemUsersService;
+    let gcNotifyService: GCNotifyService;
 
     beforeAll(async () => {
       // Env variable required for querying the eligible e-Cert records.
@@ -48,6 +56,8 @@ describe(
       sftpClientMock = sshClientMock;
       // Processor under test.
       processor = app.get(PartTimeECertProcessIntegrationScheduler);
+      systemUsersService = app.get(SystemUsersService);
+      gcNotifyService = app.get(GCNotifyService);
     });
 
     beforeEach(async () => {
@@ -65,6 +75,155 @@ describe(
         { sequenceName: Like("ECERT_PT_SENT_FILE_%") },
         { sequenceNumber: "0" },
       );
+    });
+
+    it("Should create a notification for the ministry and student for a blocked disbursement when there are no previously existing notifications for the disbursement.", async () => {
+      // Arrange
+      const { student, disbursementId } = await createTestData();
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processECert(mockedJob.job);
+
+      // Assert
+      expect(result).toStrictEqual([
+        "Process finalized with success.",
+        "Generated file: none",
+        "Uploaded records: 0",
+      ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Creating notifications for disbursement id: ${disbursementId} for student and ministry.`,
+          `Completed creating notifications for disbursement id: ${disbursementId} for student and ministry.`,
+        ]),
+      ).toBe(true);
+      const notifications = await db.notification.find({
+        select: {
+          id: true,
+          user: { id: true },
+          notificationMessage: { id: true },
+        },
+        relations: { user: true, notificationMessage: true },
+        where: {
+          metadata: {
+            disbursementId,
+          },
+          dateSent: IsNull(),
+        },
+        order: { notificationMessage: { id: "ASC" } },
+      });
+      expect(notifications).toEqual([
+        {
+          id: expect.any(Number),
+          notificationMessage: {
+            id: NotificationMessageType.StudentNotificationDisbursementBlocked,
+          },
+          user: { id: student.user.id },
+        },
+        {
+          id: expect.any(Number),
+          notificationMessage: {
+            id: NotificationMessageType.MinistryNotificationDisbursementBlocked,
+          },
+          user: { id: systemUsersService.systemUser.id },
+        },
+      ]);
+    });
+
+    it("Should not create a notification for the student for a disbursement when there are already 3 notifications created.", async () => {
+      // Arrange
+      const { student, disbursementId } = await createTestData();
+      // Create pre-existing notificationsToCreate notifications for the student and ministry for the above created disbursement.
+      const notificationsToCreate = 3;
+      await saveNotifications(notificationsToCreate, student, disbursementId);
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processECert(mockedJob.job);
+
+      // Assert
+      expect(result).toStrictEqual([
+        "Process finalized with success.",
+        "Generated file: none",
+        "Uploaded records: 0",
+      ]);
+      const notificationsCount = await db.notification.count({
+        where: {
+          metadata: {
+            disbursementId,
+          },
+          dateSent: IsNull(),
+        },
+      });
+      expect(notificationsCount).toBe(0);
+    });
+
+    it("Should not create a notification for the student for a disbursement when an attempt is made to create the 2nd notification before 7 days from the first notification.", async () => {
+      // Arrange
+      const { student, disbursementId } = await createTestData();
+      // Create 1 pre-existing notification for the student and the ministry 6 days before the current date for the above created disbursement.
+      await saveNotifications(1, student, disbursementId, -6);
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processECert(mockedJob.job);
+
+      // Assert
+      expect(result).toStrictEqual([
+        "Process finalized with success.",
+        "Generated file: none",
+        "Uploaded records: 0",
+      ]);
+      const notificationsCount = await db.notification.count({
+        where: {
+          notificationMessage: {
+            id: NotificationMessageType.StudentNotificationDisbursementBlocked,
+          },
+          metadata: {
+            disbursementId,
+          },
+          dateSent: IsNull(),
+        },
+      });
+      expect(notificationsCount).toBe(0);
+    });
+
+    it("Should create a notification for the student for a disbursement when an attempt is made to create the 2nd notification on or after 7 days from the first notification.", async () => {
+      // Arrange
+      const { student, disbursementId } = await createTestData();
+      // Create 1 pre-existing notification for the above created disbursement.
+      await saveNotifications(1, student, disbursementId, -7);
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processECert(mockedJob.job);
+
+      // Assert
+      expect(result).toStrictEqual([
+        "Process finalized with success.",
+        "Generated file: none",
+        "Uploaded records: 0",
+      ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Creating notifications for disbursement id: ${disbursementId} for student and ministry.`,
+          `Completed creating notifications for disbursement id: ${disbursementId} for student and ministry.`,
+        ]),
+      ).toBe(true);
+      const notificationsCount = await db.notification.count({
+        where: {
+          metadata: {
+            disbursementId,
+          },
+          dateSent: IsNull(),
+        },
+      });
+      // Checking 1 created notification for the student and 1 notification for the ministry.
+      expect(notificationsCount).toBe(2);
     });
 
     it("Should create an e-Cert with one disbursement record for one student with one eligible schedule.", async () => {
@@ -294,5 +453,127 @@ describe(
         DisbursementScheduleStatus.Pending,
       );
     });
+
+    /**
+     * Create and save required number of notifications for student and ministry.
+     * @param notificationsCounter number of notifications to create.
+     * @param student related student.
+     * @param disbursementId related disbursement id.
+     * @param daysAhead optional daysAhead to add the specified number of days.
+     */
+    async function saveNotifications(
+      notificationsCounter: number,
+      student: Student,
+      disbursementId: number,
+      daysAhead?: number,
+    ): Promise<void> {
+      let notificationsCount = notificationsCounter;
+      const notifications: Notification[] = [];
+      while (notificationsCount > 0) {
+        const studentNotification = createFakeNotification(
+          {
+            user: student.user,
+            auditUser: systemUsersService.systemUser,
+            notificationMessage: {
+              id: NotificationMessageType.StudentNotificationDisbursementBlocked,
+            } as NotificationMessage,
+          },
+          {
+            initialValue: {
+              messagePayload: {
+                email_address: student.user.email,
+                template_id:
+                  NotificationMessageType.StudentNotificationDisbursementBlocked,
+                personalisation: {
+                  givenNames: student.user.firstName ?? "",
+                  lastName: student.user.lastName,
+                },
+              },
+              metadata: {
+                disbursementId,
+              },
+              createdAt: daysAhead ? addDays(daysAhead) : new Date(),
+              dateSent: new Date(),
+            },
+          },
+        );
+        const ministryNotification = createFakeNotification(
+          {
+            user: systemUsersService.systemUser,
+            auditUser: systemUsersService.systemUser,
+            notificationMessage: {
+              id: NotificationMessageType.MinistryNotificationDisbursementBlocked,
+            } as NotificationMessage,
+          },
+          {
+            initialValue: {
+              messagePayload: {
+                email_address: gcNotifyService.ministryToAddress(),
+                template_id:
+                  NotificationMessageType.MinistryNotificationDisbursementBlocked,
+                personalisation: {
+                  givenNames: student.user.firstName ?? "",
+                  lastName: student.user.lastName,
+                },
+              },
+              metadata: {
+                disbursementId,
+              },
+              createdAt: daysAhead ? addDays(daysAhead) : new Date(),
+              dateSent: new Date(),
+            },
+          },
+        );
+        notifications.push(studentNotification);
+        notifications.push(ministryNotification);
+        notificationsCount--;
+      }
+      await db.notification.save(notifications);
+    }
+
+    /**
+     * Creates the test data required for the individual tests.
+     * @returns the required test data.
+     */
+    async function createTestData(): Promise<{
+      student: Student;
+      disbursementId: number;
+    }> {
+      // Student with invalid SIN to block the disbursement.
+      const student = await saveFakeStudent(db.dataSource, undefined, {
+        sinValidationInitialValue: {
+          isValidSIN: false,
+        },
+      });
+      // Valid MSFAA Number.
+      const msfaaNumber = await db.msfaaNumber.save(
+        createFakeMSFAANumber(
+          { student },
+          {
+            msfaaState: MSFAAStates.Signed,
+            msfaaInitialValues: {
+              offeringIntensity: OfferingIntensity.partTime,
+            },
+          },
+        ),
+      );
+      // Student application.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student, msfaaNumber },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+          },
+        },
+      );
+      return {
+        student,
+        disbursementId:
+          application.currentAssessment.disbursementSchedules[0].id,
+      };
+    }
   },
 );

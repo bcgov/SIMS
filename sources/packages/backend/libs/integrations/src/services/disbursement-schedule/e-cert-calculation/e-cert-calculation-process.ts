@@ -126,6 +126,7 @@ export abstract class ECertCalculationProcess {
               await this.eCertNotificationService.createDisbursementBlockedNotification(
                 eCertDisbursement.disbursement.id,
                 entityManager,
+                parentLog,
               );
               disbursementLog.info(
                 "The step determined that the calculation should be interrupted. This disbursement will not be part of the next e-Cert generation.",
