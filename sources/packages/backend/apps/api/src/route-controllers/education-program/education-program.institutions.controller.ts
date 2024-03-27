@@ -73,7 +73,9 @@ export class EducationProgramInstitutionsController extends BaseController {
    * @returns id of the created program.
    */
   @ApiUnprocessableEntityResponse({
-    description: "Not able to a save the program due to an invalid request.",
+    description:
+      "Not able to a save the program due to an invalid request or " +
+      "duplicate SABC code.",
   })
   @Post()
   async createEducationProgram(

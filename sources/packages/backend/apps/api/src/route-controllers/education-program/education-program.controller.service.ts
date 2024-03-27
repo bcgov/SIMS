@@ -107,8 +107,7 @@ export class EducationProgramControllerService {
 
     if (!submissionResult.valid) {
       throw new UnprocessableEntityException(
-        "Not able to a save the program due to an invalid request or " +
-          "duplicate SABC code.",
+        "Not able to a save the program due to an invalid request.",
       );
     }
 
