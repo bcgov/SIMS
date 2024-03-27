@@ -112,16 +112,16 @@ describe(
         },
         order: { notificationMessage: { id: "ASC" } },
       });
-      notifications.map((notification) => delete notification.id);
-
       expect(notifications).toEqual([
         {
+          id: expect.any(Number),
           notificationMessage: {
             id: NotificationMessageType.StudentNotificationDisbursementBlocked,
           },
           user: { id: student.user.id },
         },
         {
+          id: expect.any(Number),
           notificationMessage: {
             id: NotificationMessageType.MinistryNotificationDisbursementBlocked,
           },
@@ -455,17 +455,20 @@ describe(
 
     /**
      * Create and save required number of notifications for student and ministry.
-     * @param notificationsCount number of notifications to create.
+     * @param notificationsCounter number of notifications to create.
      * @param student related student.
      * @param disbursementId related disbursement id.
+     * @param daysAhead optional daysAhead to add the specified number of days.
      */
     async function saveNotifications(
-      notificationsCount: number,
+      notificationsCounter: number,
       student: Student,
       disbursementId: number,
       daysAhead?: number,
     ): Promise<void> {
-      while (notificationsCount > 0 && notificationsCount--) {
+      let notificationsCount = notificationsCounter;
+      const notificationPromises = [];
+      while (notificationsCount > 0) {
         const studentNotification = createFakeNotification(
           {
             user: student.user,
@@ -520,8 +523,12 @@ describe(
         );
         studentNotification.dateSent = new Date();
         ministryNotification.dateSent = new Date();
-        await db.notification.save([studentNotification, ministryNotification]);
+        notificationPromises.push(
+          db.notification.save([studentNotification, ministryNotification]),
+        );
+        notificationsCount--;
       }
+      await Promise.all(notificationPromises);
     }
 
     /**

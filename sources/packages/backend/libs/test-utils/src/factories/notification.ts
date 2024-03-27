@@ -14,7 +14,7 @@ import * as faker from "faker";
 function createDummyMessagePayload(): NotificationEmailMessage {
   return {
     email_address: faker.internet.email(),
-    template_id: NotificationMessageType.StudentFileUpload.toString(),
+    template_id: faker.datatype.string(),
     personalisation: {
       givenNames: faker.name.firstName(),
       lastName: faker.name.lastName(),
