@@ -32,7 +32,7 @@ export class StudentLoanBalanceAESTController extends BaseController {
   @ApiNotFoundResponse({
     description: "Student not found.",
   })
-  @Get("part-time/student/:studentId")
+  @Get("student/:studentId")
   async getStudentLoanBalance(
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<StudentLoanBalanceAPIOutDTO> {

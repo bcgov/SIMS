@@ -15,7 +15,7 @@ export class StudentLoanBalanceApi extends HttpBaseClient {
     studentId: number,
   ): Promise<StudentLoanBalanceAPIOutDTO> {
     return this.getCall<StudentLoanBalanceAPIOutDTO>(
-      this.addClientRoot(`student-loan-balance/part-time/student/${studentId}`),
+      this.addClientRoot(`student-loan-balance/student/${studentId}`),
     );
   }
 }
