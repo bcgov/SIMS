@@ -27,7 +27,6 @@ import {
   EDUCATION_PROGRAM_INVALID_OPERATION,
 } from "../../constants";
 import { ApiProcessError } from "../../types";
-import { ApiUnprocessableEntityResponse } from "@nestjs/swagger";
 import { SaveEducationProgram } from "../../services/education-program/education-program.service.models";
 import { InstitutionService } from "../../services/institution/institution.service";
 
@@ -108,7 +107,8 @@ export class EducationProgramControllerService {
 
     if (!submissionResult.valid) {
       throw new UnprocessableEntityException(
-        "Not able to a save the program due to an invalid request.",
+        "Not able to a save the program due to an invalid request or " +
+          "duplicate SABC code.",
       );
     }
 

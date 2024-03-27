@@ -154,7 +154,7 @@ export default defineComponent({
       default: {} as EducationProgramAPIOutDTO,
     },
   },
-  setup(props, context) {
+  setup(props, { emit }) {
     const snackBar = useSnackBar();
     const router = useRouter();
     const declineEducationProgramModal = ref(
@@ -212,8 +212,8 @@ export default defineComponent({
           props.programId,
           modalResult as DeactivateProgramAPIInDTO,
         );
-        snackBar.success("Program deactivate with success.");
-        context.emit("programDataUpdated");
+        snackBar.success("Program deactivated with success.");
+        emit("programDataUpdated");
         return true;
       } catch (error) {
         snackBar.error("An error happened while deactivating the program.");

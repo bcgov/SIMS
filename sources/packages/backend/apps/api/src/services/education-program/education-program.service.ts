@@ -350,48 +350,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   }
 
   /**
-   * Gets the program with respect to the programId
-   * @param programId Id of the Program.
-   * @returns summary for location
-   */
-  async getLocationPrograms(
-    programId: number,
-    institutionId: number,
-  ): Promise<EducationProgram> {
-    return this.repo
-      .createQueryBuilder("programs")
-      .select([
-        "programs.id",
-        "programs.name",
-        "programs.description",
-        "programs.credentialType",
-        "programs.cipCode",
-        "programs.nocCode",
-        "programs.sabcCode",
-        "programs.programStatus",
-        "programs.programIntensity",
-        "programs.institutionProgramCode",
-        "programs.institution",
-        "institution.id",
-        "institution.legalOperatingName",
-        "institution.operatingName",
-        "programs.submittedDate",
-        "submittedBy.firstName",
-        "submittedBy.lastName",
-        "assessedBy.firstName",
-        "assessedBy.lastName",
-        "programs.assessedDate",
-        "programs.effectiveEndDate",
-      ])
-      .where("programs.id = :id", { id: programId })
-      .andWhere("programs.institution.id = :institutionId", { institutionId })
-      .innerJoin("programs.institution", "institution")
-      .leftJoin("programs.submittedBy", "submittedBy")
-      .leftJoin("programs.assessedBy", "assessedBy")
-      .getOne();
-  }
-
-  /**
    * Get programs that have at least one offering
    * for a particular location.
    * @param locationId id of the location that should have the

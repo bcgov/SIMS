@@ -4,8 +4,6 @@
       :showDialog="showDialog"
       title="Confirm deactivation"
       ref="confirmDeactivationModal"
-      okLabel="Confirm deactivation"
-      keepModalOpen="true"
       ><template #content
         ><span class="font-bold"
           >Please confirm you no longer require this program?</span
