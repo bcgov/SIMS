@@ -14,7 +14,7 @@ import {
   createFakeMSFAANumber,
   saveFakeApplicationDisbursements,
   saveFakeStudent,
-  saveFakeNotification,
+  createFakeNotification,
 } from "@sims/test-utils";
 import { getUploadedFile } from "@sims/test-utils/mocks";
 import { IsNull, Like, Not } from "typeorm";
@@ -190,11 +190,10 @@ describe(
       // Create pre-existing 3 notifications for the above created disbursement.
       let notificationCounter = 3;
       while (notificationCounter > 0 && notificationCounter--) {
-        await saveFakeNotification(
-          db.dataSource,
+        const notification = createFakeNotification(
           {
             user: student.user,
-            creator: systemUsersService.systemUser,
+            auditUser: systemUsersService.systemUser,
             notificationMessage: {
               id: NotificationMessageType.StudentNotificationDisbursementBlocked,
             } as NotificationMessage,
@@ -217,6 +216,7 @@ describe(
             },
           },
         );
+        await db.notification.save(notification);
       }
       // Queued job.
       const mockedJob = mockBullJob<void>();
@@ -279,11 +279,10 @@ describe(
         },
       );
       // Create 1 pre-existing notification for the above created disbursement.
-      await saveFakeNotification(
-        db.dataSource,
+      const notification = createFakeNotification(
         {
           user: student.user,
-          creator: systemUsersService.systemUser,
+          auditUser: systemUsersService.systemUser,
           notificationMessage: {
             id: NotificationMessageType.StudentNotificationDisbursementBlocked,
           } as NotificationMessage,
@@ -307,6 +306,7 @@ describe(
           },
         },
       );
+      await db.notification.save(notification);
       // Queued job.
       const mockedJob = mockBullJob<void>();
 
@@ -368,11 +368,10 @@ describe(
         },
       );
       // Create 1 pre-existing notification for the above created disbursement.
-      await saveFakeNotification(
-        db.dataSource,
+      const notification = createFakeNotification(
         {
           user: student.user,
-          creator: systemUsersService.systemUser,
+          auditUser: systemUsersService.systemUser,
           notificationMessage: {
             id: NotificationMessageType.StudentNotificationDisbursementBlocked,
           } as NotificationMessage,
@@ -396,6 +395,7 @@ describe(
           },
         },
       );
+      await db.notification.save(notification);
       // Queued job.
       const mockedJob = mockBullJob<void>();
 
