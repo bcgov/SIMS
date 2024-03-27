@@ -105,7 +105,7 @@
     </v-col>
   </v-row>
   <education-program-deactivation-modal
-    ref="declineEducationProgramModal"
+    ref="deactivateEducationProgramModal"
     :notes-required="notesRequired"
   />
 </template>
@@ -157,7 +157,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const snackBar = useSnackBar();
     const router = useRouter();
-    const declineEducationProgramModal = ref(
+    const deactivateEducationProgramModal = ref(
       {} as ModalDialog<DeactivateProgramAPIInDTO | boolean>,
     );
 
@@ -195,7 +195,7 @@ export default defineComponent({
     );
 
     const deactivate = async () => {
-      await declineEducationProgramModal.value.showModal(
+      await deactivateEducationProgramModal.value.showModal(
         undefined,
         canResolvePromise,
       );
@@ -225,7 +225,7 @@ export default defineComponent({
       goToProgram,
       ProgramIntensity,
       programActionLabel,
-      declineEducationProgramModal,
+      deactivateEducationProgramModal,
       deactivate,
       notesRequired,
       Role,
