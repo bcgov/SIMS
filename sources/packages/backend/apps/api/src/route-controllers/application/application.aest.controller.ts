@@ -39,6 +39,7 @@ import {
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "@sims/services/constants";
 import { IUserToken, Role } from "../../auth";
+import { StudentAssessmentStatus } from "@sims/sims-db";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -134,7 +135,8 @@ export class ApplicationAESTController extends BaseController {
   @ApiNotFoundResponse({ description: "Application id not found." })
   @ApiUnprocessableEntityResponse({
     description:
-      "Not possible to reassess application because current assessment is not in complete status",
+      `Application current assessment expected to be '${StudentAssessmentStatus.Completed}' to allow manual reassessment or ` +
+      "application cannot have manual reassessment after being archived.",
   })
   async manualReassessment(
     @Body() payload: ManualReassessmentAPIInDTO,
