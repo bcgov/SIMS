@@ -3,7 +3,7 @@ import {
   RecordTypeCodes,
   StudentLoanBalancesSFTPResponseFile,
 } from "./models/student-loan-balances.model";
-import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
+import { ConfigService } from "@sims/utilities/config";
 import { Injectable } from "@nestjs/common";
 import { StudentLoanBalancesFileHeader } from "./student-loan-balances-files/student-loan-balances-file-header";
 import { StudentLoanBalancesFileFooter } from "./student-loan-balances-files/student-loan-balances-file-footer";
@@ -11,10 +11,8 @@ import { StudentLoanBalancesFileResponse } from "./student-loan-balances-files/s
 
 @Injectable()
 export class StudentLoanBalancesIntegrationService extends SFTPIntegrationBase<StudentLoanBalancesSFTPResponseFile> {
-  private readonly esdcConfig: ESDCIntegrationConfig;
   constructor(config: ConfigService, sshService: SshService) {
     super(config.zoneBSFTP, sshService);
-    this.esdcConfig = config.esdcIntegration;
   }
 
   /**
@@ -33,7 +31,7 @@ export class StudentLoanBalancesIntegrationService extends SFTPIntegrationBase<S
     ); // Read and remove header.
     if (header.recordTypeCode !== RecordTypeCodes.Header) {
       this.logger.error(
-        `The Student loan balances file ${remoteFilePath} has an invalid transaction code on header: ${header.recordTypeCode}`,
+        `The Student loan balances file ${remoteFilePath} has an invalid record type on header: ${header.recordTypeCode}.`,
       );
       // If the header is not the expected one, throw an error.
       throw new Error("Invalid file header.");
@@ -45,14 +43,14 @@ export class StudentLoanBalancesIntegrationService extends SFTPIntegrationBase<S
     );
     if (footer.recordTypeCode !== RecordTypeCodes.Footer) {
       this.logger.error(
-        `The Student loan balances file ${remoteFilePath} has an invalid transaction code on footer: ${footer.recordTypeCode}`,
+        `The Student loan balances file ${remoteFilePath} has an invalid record type on footer: ${footer.recordTypeCode}.`,
       );
       // If the footer is not the expected one, throw an error.
       throw new Error("Invalid file footer.");
     }
     if (footer.recordCount !== fileLines.length) {
       this.logger.error(
-        `The Student loan balances file ${remoteFilePath} records in the footer ${footer.recordCount} does not match the total number of records ${fileLines.length}`,
+        `The number of Student loan balance records ${fileLines.length} does not match the records in the footer ${footer.recordCount}.`,
       );
       // If the footer is not the expected one, throw an error.
       throw new Error(

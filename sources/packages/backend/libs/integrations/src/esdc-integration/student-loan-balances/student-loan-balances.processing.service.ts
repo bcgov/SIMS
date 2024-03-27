@@ -13,7 +13,6 @@ import {
   LoggerService,
   ProcessSummary,
 } from "@sims/utilities/logger";
-import { Student } from "@sims/sims-db";
 import { StudentLoanBalances } from "@sims/sims-db/entities/student-loan-balances.model";
 import { getISODateOnlyString } from "@sims/utilities";
 
@@ -52,8 +51,6 @@ export class StudentLoanBalancesProcessingService {
           "i",
         ),
       );
-    // Sort remote file paths by name.
-    remoteFilePaths.sort((a, b) => a.localeCompare(b));
     const processFiles: ProcessSFTPResponseResult[] = [];
     for (const remoteFilePath of remoteFilePaths) {
       processFiles.push(await this.processFile(remoteFilePath));
