@@ -250,9 +250,14 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   /**
    * Creates a manual assessment for the application.
    * @param applicationId application id.
+   * @param note note.
    * @param userId user id who triggered the manual reassessment.
    */
-  manualReassessment(applicationId: number, note: string, userId: number) {
+  async manualReassessment(
+    applicationId: number,
+    note: string,
+    userId: number,
+  ): Promise<void> {
     return this.dataSource.transaction(async (transactionalEntityManager) => {
       const currentUser = { id: userId } as User;
       const now = new Date();
@@ -261,17 +266,31 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       const application = await applicationRepo.findOne({
         select: {
           id: true,
-          currentAssessment: true as unknown,
+          currentAssessment: {
+            id: true,
+            offering: {
+              id: true,
+            },
+            studentAppeal: {
+              id: true,
+            },
+          },
+          studentAssessments: {
+            id: true,
+            studentAssessmentStatus: true,
+          },
           student: { id: true },
         },
-        relations: [
-          "currentAssessment",
-          "currentAssessment.offering",
-          "currentAssessment.studentAppeal",
-          "student",
-        ],
+        relations: {
+          currentAssessment: { offering: true, studentAppeal: true },
+          studentAssessments: true,
+          student: true,
+        },
         where: {
           id: applicationId,
+          studentAssessments: {
+            triggerType: AssessmentTriggerType.OriginalAssessment,
+          },
         },
       });
 
@@ -281,18 +300,19 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
           APPLICATION_NOT_FOUND,
         );
       }
-      if (
-        application.currentAssessment.studentAssessmentStatus !==
-        StudentAssessmentStatus.Completed
-      ) {
-        throw new CustomNamedError(
-          `Application current assessment expected to be '${StudentAssessmentStatus.Completed}' to allow manual reassessment.`,
-          INVALID_OPERATION_IN_THE_CURRENT_STATUS,
-        );
-      }
       if (application.isArchived) {
         throw new CustomNamedError(
           `Application cannot have manual reassessment after being archived.`,
+          INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+        );
+      }
+      const [originalAssessment] = application.studentAssessments;
+      if (
+        originalAssessment.studentAssessmentStatus !==
+        StudentAssessmentStatus.Completed
+      ) {
+        throw new CustomNamedError(
+          `Application original assessment expected to be '${StudentAssessmentStatus.Completed}' to allow manual reassessment.`,
           INVALID_OPERATION_IN_THE_CURRENT_STATUS,
         );
       }
@@ -331,7 +351,8 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
 
       await transactionalEntityManager
         .getRepository(StudentAssessment)
-        .save(newCurrentAssessment);
+        .insert(newCurrentAssessment);
+
       application.currentAssessment = newCurrentAssessment;
       await applicationRepo.update(
         { id: application.id },

@@ -133,6 +133,6 @@ export interface CompletedApplicationDetailsAPIOutDTO
 
 export interface ApplicationAssessmentStatusDetailsAPIOutDTO {
   applicationId: number;
-  currentAssessmentStatus: StudentAssessmentStatus;
+  originalAssessmentStatus: StudentAssessmentStatus;
   isApplicationArchived: boolean;
 }

@@ -62,7 +62,7 @@ export default defineComponent({
           props.applicationId,
         );
       openModalButtonDisabled.value =
-        applicationAssessmentStatusDetails.currentAssessmentStatus !==
+        applicationAssessmentStatusDetails.originalAssessmentStatus !==
           StudentAssessmentStatus.Completed ||
         applicationAssessmentStatusDetails.isApplicationArchived;
     });

@@ -200,6 +200,6 @@ export class ManualReassessmentAPIInDTO {
 
 export class ApplicationAssessmentDetailsAPIOutDTO {
   applicationId: number;
-  currentAssessmentStatus: StudentAssessmentStatus;
+  originalAssessmentStatus: StudentAssessmentStatus;
   isApplicationArchived: boolean;
 }

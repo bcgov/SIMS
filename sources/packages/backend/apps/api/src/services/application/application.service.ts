@@ -1662,20 +1662,26 @@ export class ApplicationService extends RecordDataModelService<Application> {
     const application = await this.repo.findOne({
       select: {
         id: true,
-        currentAssessment: { id: true, studentAssessmentStatus: true },
         isArchived: true,
+        studentAssessments: {
+          id: true,
+          studentAssessmentStatus: true,
+        },
       },
       relations: {
-        currentAssessment: true,
+        studentAssessments: true,
       },
       where: {
         id: applicationId,
+        studentAssessments: {
+          triggerType: AssessmentTriggerType.OriginalAssessment,
+        },
       },
     });
+    const [originalAssessment] = application.studentAssessments;
     return {
       applicationId: application.id,
-      currentAssessmentStatus:
-        application.currentAssessment.studentAssessmentStatus,
+      originalAssessmentStatus: originalAssessment.studentAssessmentStatus,
       isApplicationArchived: application.isArchived,
     };
   }

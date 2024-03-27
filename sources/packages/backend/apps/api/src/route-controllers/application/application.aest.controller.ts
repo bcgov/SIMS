@@ -127,7 +127,7 @@ export class ApplicationAESTController extends BaseController {
 
   /**
    * Triggers manual reassessment for an application.
-   * Application cannot be archived and current assessment must be in completed status.
+   * Application cannot be archived and original assessment must be in completed status.
    * @param applicationId application id.
    */
   @Roles(Role.AESTAdmin)
@@ -135,7 +135,7 @@ export class ApplicationAESTController extends BaseController {
   @ApiNotFoundResponse({ description: "Application id not found." })
   @ApiUnprocessableEntityResponse({
     description:
-      `Application current assessment expected to be '${StudentAssessmentStatus.Completed}' to allow manual reassessment or ` +
+      `Application original assessment expected to be '${StudentAssessmentStatus.Completed}' to allow manual reassessment or ` +
       "application cannot have manual reassessment after being archived.",
   })
   async manualReassessment(
