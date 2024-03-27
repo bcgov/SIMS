@@ -54,5 +54,6 @@ export function createFakeNotification(
     options?.initialValue?.messagePayload ?? createDummyMessagePayload();
   notification.creator = relations?.auditUser ?? null;
   notification.createdAt = options?.initialValue?.createdAt;
+  notification.dateSent = options?.initialValue?.dateSent;
   return notification;
 }

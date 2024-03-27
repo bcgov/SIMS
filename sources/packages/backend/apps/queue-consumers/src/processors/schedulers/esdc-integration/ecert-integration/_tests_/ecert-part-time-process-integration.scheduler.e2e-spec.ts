@@ -3,6 +3,7 @@ import {
   Assessment,
   COEStatus,
   DisbursementScheduleStatus,
+  Notification,
   NotificationMessage,
   NotificationMessageType,
   OfferingIntensity,
@@ -467,7 +468,7 @@ describe(
       daysAhead?: number,
     ): Promise<void> {
       let notificationsCount = notificationsCounter;
-      const notificationPromises = [];
+      const notifications: Notification[] = [];
       while (notificationsCount > 0) {
         const studentNotification = createFakeNotification(
           {
@@ -492,6 +493,7 @@ describe(
                 disbursementId,
               },
               createdAt: daysAhead ? addDays(daysAhead) : new Date(),
+              dateSent: new Date(),
             },
           },
         );
@@ -518,17 +520,15 @@ describe(
                 disbursementId,
               },
               createdAt: daysAhead ? addDays(daysAhead) : new Date(),
+              dateSent: new Date(),
             },
           },
         );
-        studentNotification.dateSent = new Date();
-        ministryNotification.dateSent = new Date();
-        notificationPromises.push(
-          db.notification.save([studentNotification, ministryNotification]),
-        );
+        notifications.push(studentNotification);
+        notifications.push(ministryNotification);
         notificationsCount--;
       }
-      await Promise.all(notificationPromises);
+      await db.notification.save(notifications);
     }
 
     /**
