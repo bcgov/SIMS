@@ -39,13 +39,9 @@
 <script lang="ts">
 import { ref, onMounted, defineComponent } from "vue";
 import { StudentLoanBalanceService } from "@/services/StudentLoanBalanceService";
-import {
-  DEFAULT_PAGE_LIMIT,
-  PAGINATION_LIST,
-  DEFAULT_PAGE_NUMBER,
-} from "@/types";
+import { DEFAULT_PAGE_LIMIT, PAGINATION_LIST } from "@/types";
 import { useFormatters } from "@/composables";
-import { StudentMonthlyLoanBalanceDetailAPIOutDTO } from "@/services/http/dto";
+import { StudentLoanBalanceDetailAPIOutDTO } from "@/services/http/dto";
 
 export default defineComponent({
   props: {
@@ -55,16 +51,15 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const page = ref(DEFAULT_PAGE_NUMBER);
     const pageLimit = ref(DEFAULT_PAGE_LIMIT);
     const { dateOnlyLongString, formatCurrency } = useFormatters();
     const studentLoanBalanceDetails = ref(
-      [] as StudentMonthlyLoanBalanceDetailAPIOutDTO[],
+      [] as StudentLoanBalanceDetailAPIOutDTO[],
     );
 
     onMounted(async () => {
       const studentMonthlyLoanBalance =
-        await StudentLoanBalanceService.shared.getStudentPartTimeLoanBalance(
+        await StudentLoanBalanceService.shared.getStudentLoanBalance(
           props.studentId,
         );
       studentLoanBalanceDetails.value =
@@ -72,7 +67,6 @@ export default defineComponent({
     });
 
     return {
-      page,
       pageLimit,
       PAGINATION_LIST,
       studentLoanBalanceDetails,

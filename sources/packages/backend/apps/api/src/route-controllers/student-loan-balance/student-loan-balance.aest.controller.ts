@@ -24,16 +24,16 @@ export class StudentLoanBalanceAESTController extends BaseController {
   }
 
   /**
-   * Get the monthly part-time loan balance details of
-   * the given student upto 12 months.
+   * Get loan balance details of
+   * the given student upto 12 recent records received.
    * @param studentId student.
-   * @returns student monthly part-time loan balance.
+   * @returns student loan balance.
    */
   @ApiNotFoundResponse({
     description: "Student not found.",
   })
   @Get("part-time/student/:studentId")
-  async getStudentPartTimeLoanBalance(
+  async getStudentLoanBalance(
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<StudentLoanBalanceAPIOutDTO> {
     const studentExist = await this.studentService.studentExists(studentId);
@@ -43,9 +43,9 @@ export class StudentLoanBalanceAESTController extends BaseController {
     //TODO: Remove the static values when actual implementation is done.
     const staticData: StudentLoanBalanceAPIOutDTO = {
       loanBalanceDetails: [
-        { balanceDate: "2024-01-10", cslBalance: 100 },
+        { balanceDate: "2024-03-10", cslBalance: 100 },
         { balanceDate: "2024-02-10", cslBalance: 200 },
-        { balanceDate: "2024-03-10", cslBalance: 300 },
+        { balanceDate: "2024-01-10", cslBalance: 300 },
       ],
     };
     return staticData;

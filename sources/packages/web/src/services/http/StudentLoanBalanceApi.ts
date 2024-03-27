@@ -6,12 +6,12 @@ import { StudentLoanBalanceAPIOutDTO } from "@/services/http/dto";
  */
 export class StudentLoanBalanceApi extends HttpBaseClient {
   /**
-   * Get the monthly part-time loan balance details of
-   * the given student upto 12 months.
+   * Get loan balance details of
+   * the given student upto 12 recent records received.
    * @param studentId student.
-   * @returns student monthly part-time loan balance.
+   * @returns student loan balance.
    */
-  async getStudentPartTimeLoanBalance(
+  async getStudentLoanBalance(
     studentId: number,
   ): Promise<StudentLoanBalanceAPIOutDTO> {
     return this.getCall<StudentLoanBalanceAPIOutDTO>(
