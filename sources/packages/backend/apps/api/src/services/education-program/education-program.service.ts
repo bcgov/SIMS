@@ -129,6 +129,12 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
           EDUCATION_PROGRAM_NOT_FOUND,
         );
       }
+      if (!program.isActive) {
+        throw new CustomNamedError(
+          "Education program cannot be edited when inactive.",
+          EDUCATION_PROGRAM_INVALID_OPERATION,
+        );
+      }
       // Check if education program has offering(s). This check is required to
       // prevent a user from updating fields that are not supposed
       // to be updated if the education program has 1 or more offerings.
@@ -248,6 +254,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .addSelect("location.id", "locationId")
       .addSelect("location.name", "locationName")
       .addSelect("programs.programStatus", "programStatus")
+      .addSelect("programs.isActive", "isActive")
       .addSelect(
         (qb) =>
           qb
@@ -330,6 +337,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       credentialType: program.credentialType,
       submittedDate: program.programSubmittedAt,
       programStatus: program.programStatus,
+      isActive: program.isActive,
       totalOfferings: program.totalOfferings,
       locationId: program.locationId,
       locationName: program.locationName,
@@ -339,48 +347,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       results: programSummary,
       count: totalCount,
     };
-  }
-
-  /**
-   * Gets the program with respect to the programId
-   * @param programId Id of the Program.
-   * @returns summary for location
-   */
-  async getLocationPrograms(
-    programId: number,
-    institutionId: number,
-  ): Promise<EducationProgram> {
-    return this.repo
-      .createQueryBuilder("programs")
-      .select([
-        "programs.id",
-        "programs.name",
-        "programs.description",
-        "programs.credentialType",
-        "programs.cipCode",
-        "programs.nocCode",
-        "programs.sabcCode",
-        "programs.programStatus",
-        "programs.programIntensity",
-        "programs.institutionProgramCode",
-        "programs.institution",
-        "institution.id",
-        "institution.legalOperatingName",
-        "institution.operatingName",
-        "programs.submittedDate",
-        "submittedBy.firstName",
-        "submittedBy.lastName",
-        "assessedBy.firstName",
-        "assessedBy.lastName",
-        "programs.assessedDate",
-        "programs.effectiveEndDate",
-      ])
-      .where("programs.id = :id", { id: programId })
-      .andWhere("programs.institution.id = :institutionId", { institutionId })
-      .innerJoin("programs.institution", "institution")
-      .leftJoin("programs.submittedBy", "submittedBy")
-      .leftJoin("programs.assessedBy", "assessedBy")
-      .getOne();
   }
 
   /**
@@ -513,6 +479,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "assessedBy.lastName",
         "programs.assessedDate",
         "programs.effectiveEndDate",
+        "programs.isActive",
       ])
       .leftJoin("programs.submittedBy", "submittedBy")
       .leftJoin("programs.assessedBy", "assessedBy")
@@ -677,12 +644,13 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         institution: {
           id: institutionId,
         },
+        isActive: true,
       },
     });
   }
 
   /**
-   * Check if the given institution has already a program with the given SABC code.
+   * Check if the given institution has already a program with the given SABC code for an active program.
    * @param institutionId id of the institution to have the programs retrieved.
    * @param sabcCode SABC code.
    * @param programId programId in case it is an update. It will be ignored in case of `undefined`.
@@ -693,20 +661,16 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     sabcCode: string,
     programId?: number,
   ): Promise<boolean> {
-    const result = await this.repo.findOne({
-      select: {
-        id: true,
-      },
+    return this.repo.exists({
       where: {
         id: programId ? Not(Equal(programId)) : undefined,
         sabcCode: sabcCode,
         institution: {
           id: institutionId,
         },
+        isActive: true,
       },
     });
-
-    return !!result?.id;
   }
 
   /**

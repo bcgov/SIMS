@@ -72,6 +72,7 @@
             ><template #body="slotProps">
               <status-chip-program
                 :status="slotProps.data.programStatus"
+                :is-active="slotProps.data.isActive"
               ></status-chip-program> </template
           ></Column>
           <Column header="Action">

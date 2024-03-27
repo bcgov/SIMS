@@ -4,19 +4,44 @@
       <status-chip-program
         class="ml-2 mb-2"
         :status="educationProgram.programStatus"
+        :is-active="educationProgram.isActive"
         data-cy="programStatus"
       ></status-chip-program>
     </template>
     <template #actions>
-      <v-btn
-        class="float-right label-bold"
-        variant="outlined"
-        @click="programButtonAction"
-        color="primary"
-        data-cy="programButtonAction"
-      >
-        {{ programActionLabel }}
-      </v-btn>
+      <v-menu class="label-bold-menu">
+        <template v-slot:activator="{ props }">
+          <v-btn
+            color="primary"
+            v-bind="props"
+            prepend-icon="fa:fa fa-chevron-circle-down"
+            class="float-right"
+          >
+            Program actions
+          </v-btn>
+        </template>
+        <v-list
+          active-class="active-list-item"
+          density="compact"
+          bg-color="default"
+          color="primary"
+        >
+          <v-list-item @click="goToProgram" :title="programActionLabel" />
+          <v-divider-inset-opaque />
+          <check-permission-role
+            :role="Role.InstitutionDeactivateEducationProgram"
+          >
+            <template #="{ notAllowed }">
+              <v-list-item
+                :disabled="!educationProgram.isActive || notAllowed"
+                base-color="danger"
+                @click="deactivate"
+                title="Deactivate"
+              />
+            </template>
+          </check-permission-role>
+        </v-list>
+      </v-menu>
     </template>
   </body-header>
   <v-row>
@@ -79,11 +104,15 @@
       />
     </v-col>
   </v-row>
+  <education-program-deactivation-modal
+    ref="deactivateEducationProgramModal"
+    :notes-required="notesRequired"
+  />
 </template>
 
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import {
   InstitutionRoutesConst,
   AESTRoutesConst,
@@ -91,10 +120,25 @@ import {
 import { ProgramIntensity, ClientIdType } from "@/types";
 import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
 import { AuthService } from "@/services/AuthService";
-import { EducationProgramAPIOutDTO } from "@/services/http/dto";
+import {
+  DeactivateProgramAPIInDTO,
+  EducationProgramAPIOutDTO,
+} from "@/services/http/dto";
+import EducationProgramDeactivationModal from "@/components/common/modals/EducationProgramDeactivationModal.vue";
+import { ModalDialog, useSnackBar } from "@/composables";
+import ApiClient from "@/services/http/ApiClient";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import { Role } from "@/types";
 
 export default defineComponent({
-  components: { StatusChipProgram },
+  emits: {
+    programDataUpdated: null,
+  },
+  components: {
+    EducationProgramDeactivationModal,
+    StatusChipProgram,
+    CheckPermissionRole,
+  },
   props: {
     programId: {
       type: Number,
@@ -110,25 +154,26 @@ export default defineComponent({
       default: {} as EducationProgramAPIOutDTO,
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
+    const snackBar = useSnackBar();
     const router = useRouter();
-    const clientType = computed(() => AuthService.shared.authClientType);
-
-    const isInstitutionUser = computed(() => {
-      return clientType.value === ClientIdType.Institution;
-    });
-
-    const isAESTUser = computed(() => {
-      return clientType.value === ClientIdType.AEST;
-    });
+    const deactivateEducationProgramModal = ref(
+      {} as ModalDialog<DeactivateProgramAPIInDTO | boolean>,
+    );
 
     const programActionLabel = computed(() => {
-      return isInstitutionUser.value ? "Edit" : "View Program";
+      if (
+        !props.educationProgram.isActive ||
+        AuthService.shared.authClientType === ClientIdType.AEST
+      ) {
+        return "View Program";
+      }
+      return "Edit";
     });
 
-    const programButtonAction = () => {
-      if (isInstitutionUser.value) {
-        router.push({
+    const goToProgram = () => {
+      if (AuthService.shared.authClientType === ClientIdType.Institution) {
+        return router.push({
           name: InstitutionRoutesConst.EDIT_LOCATION_PROGRAMS,
           params: {
             programId: props.programId,
@@ -136,24 +181,54 @@ export default defineComponent({
           },
         });
       }
+      return router.push({
+        name: AESTRoutesConst.VIEW_PROGRAM,
+        params: {
+          programId: props.programId,
+          locationId: props.locationId,
+        },
+      });
+    };
 
-      if (isAESTUser.value) {
-        router.push({
-          name: AESTRoutesConst.VIEW_PROGRAM,
-          params: {
-            programId: props.programId,
-            locationId: props.locationId,
-          },
-        });
+    const notesRequired = computed(
+      () => AuthService.shared.authClientType === ClientIdType.AEST,
+    );
+
+    const deactivate = async () => {
+      await deactivateEducationProgramModal.value.showModal(
+        undefined,
+        canResolvePromise,
+      );
+    };
+
+    const canResolvePromise = async (
+      modalResult: DeactivateProgramAPIInDTO | boolean,
+    ): Promise<boolean> => {
+      if (modalResult === false) {
+        return true;
+      }
+      try {
+        await ApiClient.EducationProgram.deactivateProgram(
+          props.programId,
+          modalResult as DeactivateProgramAPIInDTO,
+        );
+        snackBar.success("Program deactivated with success.");
+        emit("programDataUpdated");
+        return true;
+      } catch (error) {
+        snackBar.error("An error happened while deactivating the program.");
+        return false;
       }
     };
 
     return {
-      programButtonAction,
+      goToProgram,
       ProgramIntensity,
-      isInstitutionUser,
-      isAESTUser,
       programActionLabel,
+      deactivateEducationProgramModal,
+      deactivate,
+      notesRequired,
+      Role,
     };
   },
 });

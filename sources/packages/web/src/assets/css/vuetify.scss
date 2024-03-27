@@ -180,3 +180,7 @@
 .overflow-visible .v-card {
   overflow: visible;
 }
+
+.label-bold-menu .v-list-item .v-list-item-title {
+  @extend .label-bold;
+}

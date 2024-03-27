@@ -3,6 +3,7 @@ import HttpBaseClient from "./common/HttpBaseClient";
 import { getPaginationQueryString } from "@/helpers";
 import {
   ApproveProgramAPIInDTO,
+  DeactivateProgramAPIInDTO,
   DeclineProgramAPIInDTO,
   EducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
@@ -162,6 +163,21 @@ export class EducationProgramApi extends HttpBaseClient {
       this.addClientRoot(
         `education-program/${programId}/institution/${institutionId}/decline`,
       ),
+      payload,
+    );
+  }
+
+  /**
+   * Allows a program to be deactivated.
+   * @param programId program to be deactivated.
+   * @param payload information to support the deactivation.
+   */
+  async deactivateProgram(
+    programId: number,
+    payload?: DeactivateProgramAPIInDTO,
+  ): Promise<void> {
+    await this.patchCall(
+      this.addClientRoot(`education-program/${programId}/deactivate`),
       payload,
     );
   }
