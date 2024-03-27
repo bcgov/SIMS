@@ -1580,7 +1580,7 @@
                     "allowCalculateOverride": false,
                     "validate": {
                         "required": true,
-                        "onlyAvailableItems": false,
+                        "onlyAvailableItems": true,
                         "customMessage": "",
                         "minSelectedCount": "",
                         "maxSelectedCount": "",
@@ -1679,7 +1679,7 @@
                     "allowCalculateOverride": false,
                     "validate": {
                         "required": true,
-                        "onlyAvailableItems": false,
+                        "onlyAvailableItems": true,
                         "customMessage": "",
                         "custom": "",
                         "customPrivate": false,
@@ -1869,7 +1869,7 @@
                     "allowCalculateOverride": false,
                     "validate": {
                         "required": true,
-                        "onlyAvailableItems": false,
+                        "onlyAvailableItems": true,
                         "customMessage": "",
                         "custom": "",
                         "customPrivate": false,
@@ -2260,7 +2260,7 @@
                     "allowCalculateOverride": false,
                     "validate": {
                         "required": true,
-                        "onlyAvailableItems": false,
+                        "onlyAvailableItems": true,
                         "customMessage": "",
                         "custom": "",
                         "customPrivate": false,
@@ -2355,7 +2355,7 @@
                     "allowCalculateOverride": false,
                     "validate": {
                         "required": true,
-                        "onlyAvailableItems": false,
+                        "onlyAvailableItems": true,
                         "customMessage": "",
                         "custom": "",
                         "customPrivate": false,
@@ -2450,7 +2450,7 @@
                     "allowCalculateOverride": false,
                     "validate": {
                         "required": true,
-                        "onlyAvailableItems": false,
+                        "onlyAvailableItems": true,
                         "customMessage": "",
                         "custom": "",
                         "customPrivate": false,
@@ -2621,7 +2621,7 @@
                     "allowCalculateOverride": false,
                     "validate": {
                         "required": true,
-                        "onlyAvailableItems": false,
+                        "onlyAvailableItems": true,
                         "customMessage": "",
                         "custom": "",
                         "customPrivate": false,
@@ -2912,7 +2912,7 @@
                     "validateOn": "change",
                     "validate": {
                         "required": true,
-                        "onlyAvailableItems": false,
+                        "onlyAvailableItems": true,
                         "customMessage": "",
                         "custom": "",
                         "customPrivate": false,
@@ -3265,7 +3265,7 @@
                     "allowCalculateOverride": false,
                     "validate": {
                         "required": true,
-                        "onlyAvailableItems": false,
+                        "onlyAvailableItems": true,
                         "customMessage": "",
                         "minSelectedCount": "",
                         "maxSelectedCount": "",
@@ -3624,7 +3624,7 @@
                     "allowCalculateOverride": false,
                     "validate": {
                         "required": true,
-                        "onlyAvailableItems": false,
+                        "onlyAvailableItems": true,
                         "customMessage": "",
                         "custom": "",
                         "customPrivate": false,
@@ -4056,7 +4056,7 @@
                     "allowCalculateOverride": false,
                     "validate": {
                         "required": true,
-                        "onlyAvailableItems": false,
+                        "onlyAvailableItems": true,
                         "customMessage": "",
                         "custom": "",
                         "customPrivate": false,
@@ -4151,7 +4151,7 @@
                     "allowCalculateOverride": false,
                     "validate": {
                         "required": true,
-                        "onlyAvailableItems": false,
+                        "onlyAvailableItems": true,
                         "customMessage": "",
                         "custom": "",
                         "customPrivate": false,
@@ -4503,7 +4503,7 @@
                     "allowCalculateOverride": false,
                     "validate": {
                         "required": true,
-                        "onlyAvailableItems": false,
+                        "onlyAvailableItems": true,
                         "customMessage": "",
                         "custom": "",
                         "customPrivate": false,
@@ -4598,7 +4598,7 @@
                     "allowCalculateOverride": false,
                     "validate": {
                         "required": true,
-                        "onlyAvailableItems": false,
+                        "onlyAvailableItems": true,
                         "customMessage": "",
                         "custom": "",
                         "customPrivate": false,
@@ -4769,7 +4769,7 @@
                     "allowCalculateOverride": false,
                     "validate": {
                         "required": true,
-                        "onlyAvailableItems": false,
+                        "onlyAvailableItems": true,
                         "customMessage": "",
                         "custom": "",
                         "customPrivate": false,
@@ -5122,7 +5122,7 @@
                     "allowCalculateOverride": false,
                     "validate": {
                         "required": true,
-                        "onlyAvailableItems": false,
+                        "onlyAvailableItems": true,
                         "customMessage": "",
                         "custom": "",
                         "customPrivate": false,
@@ -5217,7 +5217,7 @@
                     "allowCalculateOverride": false,
                     "validate": {
                         "required": true,
-                        "onlyAvailableItems": false,
+                        "onlyAvailableItems": true,
                         "customMessage": "",
                         "custom": "",
                         "customPrivate": false,
@@ -5570,7 +5570,7 @@
                     "allowCalculateOverride": false,
                     "validate": {
                         "required": true,
-                        "onlyAvailableItems": false,
+                        "onlyAvailableItems": true,
                         "customMessage": "",
                         "custom": "",
                         "customPrivate": false,
@@ -5665,7 +5665,7 @@
                     "allowCalculateOverride": false,
                     "validate": {
                         "required": true,
-                        "onlyAvailableItems": false,
+                        "onlyAvailableItems": true,
                         "customMessage": "",
                         "custom": "",
                         "customPrivate": false,
