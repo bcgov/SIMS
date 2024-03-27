@@ -11,7 +11,7 @@
           assessment or other downstream actions (COE requests, eCert requests)
           without requiring the student to edit and resubmit their application.
         </p>
-        <check-permission-role :role="Role.AESTAdmin">
+        <check-permission-role :role="Role.AESTManualTriggerReassessment">
           <template #="{ notAllowed }">
             <v-btn
               class="ml-2 float-right"
