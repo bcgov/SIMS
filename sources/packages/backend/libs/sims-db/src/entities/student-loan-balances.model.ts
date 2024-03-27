@@ -4,7 +4,6 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  RelationId,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
@@ -22,9 +21,6 @@ export class StudentLoanBalances extends RecordDataModel {
   /**
    * Student id associated with this Loan Balance.
    */
-  @RelationId(
-    (studentLoanBalances: StudentLoanBalances) => studentLoanBalances.student,
-  )
   studentId: number;
   /**
    * Student associated with this Loan Balance.
@@ -50,8 +46,7 @@ export class StudentLoanBalances extends RecordDataModel {
    */
   @Column({
     name: "balance_date",
-    type: "timestamptz",
-    nullable: true,
+    type: "date",
   })
-  balanceDate?: Date;
+  balanceDate: Date;
 }

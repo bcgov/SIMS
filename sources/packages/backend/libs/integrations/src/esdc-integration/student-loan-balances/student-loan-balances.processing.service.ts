@@ -8,7 +8,11 @@ import {
   StudentService,
 } from "@sims/integrations/services";
 import * as path from "path";
-import { InjectLogger, LoggerService } from "@sims/utilities/logger";
+import {
+  InjectLogger,
+  LoggerService,
+  ProcessSummary,
+} from "@sims/utilities/logger";
 import { Student } from "@sims/sims-db";
 import { StudentLoanBalances } from "@sims/sims-db/entities/student-loan-balances.model";
 import { getISODateOnlyString } from "@sims/utilities";
@@ -31,9 +35,15 @@ export class StudentLoanBalancesProcessingService {
 
   /**
    * Download all files from SFTP and process them all.
+   * @param parentProcessSummary parent process summary.
    * @returns Summary with what was processed and the list of all errors, if any.
    */
-  async processStudentLoanBalances(): Promise<ProcessSFTPResponseResult[]> {
+  async processStudentLoanBalances(
+    parentProcessSummary: ProcessSummary,
+  ): Promise<ProcessSFTPResponseResult[]> {
+    // Process summary to be populated by each enqueueing workflow call.
+    const serviceProcessSummary = new ProcessSummary();
+    parentProcessSummary.children(serviceProcessSummary);
     const remoteFilePaths =
       await this.studentLoanBalancesIntegrationService.getResponseFilesFullPath(
         this.esdcConfig.ftpResponseFolder,
@@ -83,16 +93,15 @@ export class StudentLoanBalancesProcessingService {
     const fileName = path.basename(remoteFilePath);
     for (const studentLoanBalanceRecord of studentLoanBalancesSFTPResponseFile.records) {
       try {
-        const student: Student =
-          await this.studentService.getStudentByPersonalInfo(
-            studentLoanBalanceRecord.sin,
-            studentLoanBalanceRecord.lastName,
-            getISODateOnlyString(studentLoanBalanceRecord.birthDate),
-          );
+        const student = await this.studentService.getStudentByPersonalInfo(
+          studentLoanBalanceRecord.sin,
+          studentLoanBalanceRecord.lastName,
+          getISODateOnlyString(studentLoanBalanceRecord.birthDate),
+        );
         // If student not found continue.
         if (!student) {
           result.processSummary.push(
-            `Student not found for line ${studentLoanBalanceRecord.lineNumber}`,
+            `Student not found for line ${studentLoanBalanceRecord.lineNumber}.`,
           );
           continue;
         }

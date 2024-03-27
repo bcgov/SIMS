@@ -10,7 +10,6 @@ import {
 } from "@sims/utilities/logger";
 import { logProcessSummaryToJobLogger } from "../../../../utilities";
 import { StudentLoanBalancesProcessingService } from "@sims/integrations/esdc-integration";
-import { ProcessResponseQueue } from "../models/esdc.models";
 /**
  * Process Student Loan Balances file from the SFTP location.
  */
@@ -32,22 +31,14 @@ export class StudentLoanBalancesScheduler extends BaseScheduler<void> {
    * @returns processing result.
    */
   @Process()
-  async processStudentLoanBalancesFiles(
-    job: Job<void>,
-  ): Promise<ProcessResponseQueue[] | string[]> {
+  async processStudentLoanBalancesFiles(job: Job<void>): Promise<string[]> {
     const processSummary = new ProcessSummary();
     try {
-      processSummary.info("Processing Student Loan Balances files...");
-      const processingResults =
-        await this.studentLoanBalancesProcessingService.processStudentLoanBalances();
+      processSummary.info("Processing Student Loan Balances files.");
+      await this.studentLoanBalancesProcessingService.processStudentLoanBalances(
+        processSummary,
+      );
       processSummary.info("Completed processing Student Loan Balances files.");
-      await this.cleanSchedulerQueueHistory();
-      return processingResults.map((result) => {
-        return {
-          processSummary: result.processSummary,
-          errorsSummary: result.errorsSummary,
-        };
-      });
     } catch (error: unknown) {
       const errorMessage = "Unexpected error while executing the job.";
       processSummary.error(errorMessage, error);
@@ -58,6 +49,7 @@ export class StudentLoanBalancesScheduler extends BaseScheduler<void> {
       await this.cleanSchedulerQueueHistory();
     }
   }
+
   @InjectLogger()
   logger: LoggerService;
 }

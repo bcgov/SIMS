@@ -2,16 +2,12 @@ CREATE TABLE sims.student_loan_balances(
   id SERIAL PRIMARY KEY,
   student_id INT NOT NULL REFERENCES sims.students(id),
   csl_balance NUMERIC(8, 2) NOT NULL,
-  balance_date TIMESTAMP WITH TIME ZONE,
+  balance_date DATE,
   -- Audit columns
-  created_at timestamp without time zone NOT NULL DEFAULT now(),
-  updated_at timestamp without time zone NOT NULL DEFAULT now(),
-  creator INT NULL DEFAULT NULL REFERENCES users(id) ON DELETE
-  SET
-    NULL,
-    modifier INT NULL DEFAULT NULL REFERENCES users(id) ON DELETE
-  SET
-    NULL
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  creator INT NULL DEFAULT NULL REFERENCES sims.users(id),
+  modifier INT NULL DEFAULT NULL REFERENCES sims.users(id)
 );
 
 -- ## Comments
