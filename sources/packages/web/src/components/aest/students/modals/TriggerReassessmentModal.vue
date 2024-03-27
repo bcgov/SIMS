@@ -38,7 +38,6 @@ import { ManualReassessmentAPIInDTO } from "@/services/http/dto/Assessment.dto";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 
 export default defineComponent({
-  emits: [],
   components: {
     ModalDialogBase,
   },
