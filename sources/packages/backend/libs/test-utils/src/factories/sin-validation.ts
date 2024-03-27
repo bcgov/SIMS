@@ -1,6 +1,14 @@
 import { SINValidation, Student } from "@sims/sims-db";
 import * as faker from "faker";
 
+/**
+ * Creates a fake SINValidation.
+ * @param relations SINValidation relations.
+ * `student` related student.
+ * @param options SINValidation options.
+ * `initialValue` SINValidation initial value.
+ * @returns persisted SINValidation with relations provided.
+ */
 export function createFakeSINValidation(
   relations?: {
     student?: Student;
