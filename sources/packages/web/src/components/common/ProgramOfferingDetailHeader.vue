@@ -133,11 +133,12 @@ export default defineComponent({
         router.push({
           name: InstitutionRoutesConst.INSTITUTION_PROFILE,
         });
+      } else {
+        router.push({
+          name: AESTRoutesConst.INSTITUTION_PROFILE,
+          params: { institutionId: props.headerDetails.institutionId },
+        });
       }
-      router.push({
-        name: AESTRoutesConst.INSTITUTION_PROFILE,
-        params: { institutionId: props.headerDetails.institutionId },
-      });
     };
     return {
       ProgramStatus,
