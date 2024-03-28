@@ -12,7 +12,10 @@ export class CreateStudentLoanBalances1711342815738
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Drop-student-loan-balances.sql", "StudentLoanBalances"),
+      getSQLFileData(
+        "Rollback-create-student-loan-balances.sql",
+        "StudentLoanBalances",
+      ),
     );
   }
 }
