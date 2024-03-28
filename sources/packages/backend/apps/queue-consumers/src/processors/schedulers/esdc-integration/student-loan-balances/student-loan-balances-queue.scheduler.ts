@@ -8,7 +8,10 @@ import {
   LoggerService,
   ProcessSummary,
 } from "@sims/utilities/logger";
-import { logProcessSummaryToJobLogger } from "../../../../utilities";
+import {
+  getSuccessMessageWithAttentionCheck,
+  logProcessSummaryToJobLogger,
+} from "../../../../utilities";
 import { StudentLoanBalancesProcessingService } from "@sims/integrations/esdc-integration";
 
 /**
@@ -40,6 +43,10 @@ export class StudentLoanBalancesScheduler extends BaseScheduler<void> {
         processSummary,
       );
       processSummary.info("Completed processing Student Loan Balances files.");
+      return getSuccessMessageWithAttentionCheck(
+        ["Process finalized with success."],
+        processSummary,
+      );
     } catch (error: unknown) {
       const errorMessage = "Unexpected error while executing the job.";
       processSummary.error(errorMessage, error);

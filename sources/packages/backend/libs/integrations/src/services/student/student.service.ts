@@ -1,12 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import {
-  DisabilityStatus,
-  RecordDataModelService,
-  SINValidation,
-  Student,
-  User,
-} from "@sims/sims-db";
+import { DisabilityStatus, SINValidation, Student, User } from "@sims/sims-db";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import {
   DataSource,
@@ -17,14 +11,12 @@ import {
 } from "typeorm";
 
 @Injectable()
-export class StudentService extends RecordDataModelService<Student> {
+export class StudentService {
   constructor(
     dataSource: DataSource,
     @InjectRepository(Student)
     private readonly studentRepo: Repository<Student>,
-  ) {
-    super(dataSource.getRepository(Student));
-  }
+  ) {}
 
   /**
    * Update the disability status to requested.
@@ -37,7 +29,7 @@ export class StudentService extends RecordDataModelService<Student> {
     auditUser: User,
   ): Promise<UpdateResult> {
     const now = new Date();
-    return this.repo.update(
+    return this.studentRepo.update(
       { id: studentId },
       {
         studentPDSentAt: now,
@@ -54,7 +46,7 @@ export class StudentService extends RecordDataModelService<Student> {
    * @returns student.
    */
   async getStudentById(studentId: number): Promise<Student> {
-    return this.repo.findOne({
+    return this.studentRepo.findOne({
       select: {
         id: true,
         sinValidation: { id: true, sin: true },
@@ -71,7 +63,7 @@ export class StudentService extends RecordDataModelService<Student> {
    * @returns Students pending SIN validation.
    */
   async getStudentsPendingSinValidation(): Promise<Student[]> {
-    return this.repo
+    return this.studentRepo
       .createQueryBuilder("student")
       .select([
         "student.id",
@@ -157,7 +149,7 @@ export class StudentService extends RecordDataModelService<Student> {
     disabilityStatus: DisabilityStatus,
     disabilityStatusUpdatedDate: Date,
   ): Promise<UpdateResult> {
-    return this.repo.update(
+    return this.studentRepo.update(
       { id: studentId },
       { disabilityStatus, studentPDUpdateAt: disabilityStatusUpdatedDate },
     );

@@ -88,6 +88,8 @@ export class StudentLoanBalancesProcessingService {
     const fileName = path.basename(remoteFilePath);
     try {
       await this.dataSource.transaction(async (transactionalEntityManager) => {
+        const studentLoanBalancesRepo =
+          transactionalEntityManager.getRepository(StudentLoanBalances);
         for (const studentLoanBalanceRecord of studentLoanBalancesSFTPResponseFile.records) {
           const student = await this.studentService.getStudentByPersonalInfo(
             studentLoanBalanceRecord.sin,
@@ -102,14 +104,12 @@ export class StudentLoanBalancesProcessingService {
             );
             continue;
           }
-          await transactionalEntityManager
-            .getRepository(StudentLoanBalances)
-            .insert({
-              student: student,
-              cslBalance: studentLoanBalanceRecord.cslBalance,
-              balanceDate:
-                studentLoanBalancesSFTPResponseFile.header.balanceDate,
-            });
+
+          await studentLoanBalancesRepo.insert({
+            student: student,
+            cslBalance: studentLoanBalanceRecord.cslBalance,
+            balanceDate: studentLoanBalancesSFTPResponseFile.header.balanceDate,
+          });
         }
       });
       result.processSummary.push(
