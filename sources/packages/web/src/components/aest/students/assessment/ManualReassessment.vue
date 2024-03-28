@@ -31,14 +31,16 @@
 <script lang="ts">
 import { ref, defineComponent, onMounted } from "vue";
 import { ModalDialog, useSnackBar } from "@/composables";
-import { ManualReassessmentAPIInDTO } from "@/services/http/dto/Assessment.dto";
+import { ManualReassessmentAPIInDTO } from "@/services/http/dto/Application.dto";
 import TriggerReassessmentModal from "@/components/aest/students/modals/TriggerReassessmentModal.vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import { Role, StudentAssessmentStatus } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default defineComponent({
-  emits: ["reassessmentTriggered"],
+  emits: {
+    reassessmentTriggered: null,
+  },
   components: {
     TriggerReassessmentModal,
     CheckPermissionRole,
@@ -78,7 +80,9 @@ export default defineComponent({
           context.emit("reassessmentTriggered");
           snackBar.success("Reassessment triggered successfully.");
         } catch {
-          snackBar.error("Unexpected error while triggering reassessment.");
+          snackBar.error(
+            "Unexpected error while triggering manual reassessment.",
+          );
           reassessmentModal.value.loading = false;
         }
       }

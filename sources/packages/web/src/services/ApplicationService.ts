@@ -174,15 +174,15 @@ export class ApplicationService {
   }
 
   /**
-   * Trigger reassessment for the application's current assessment.
+   * Triggers a manual reassessment for the application.
    * @param applicationId application id.
-   * @param payload information to update the application.
+   * @param payload contains notes for the application.
    */
   async triggerManualReassessment(
     applicationId: number,
     payload: ManualReassessmentAPIInDTO,
-  ): Promise<void> {
-    await ApiClient.Application.triggerManualReassessment(
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    return ApiClient.Application.triggerManualReassessment(
       applicationId,
       payload,
     );
@@ -191,6 +191,7 @@ export class ApplicationService {
   /**
    * Gets application and assessment status details.
    * @param applicationId application id.
+   * @returns application and assessment details.
    */
   async getApplicationAssessmentStatusDetails(
     applicationId: number,

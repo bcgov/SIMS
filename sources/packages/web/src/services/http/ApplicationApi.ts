@@ -204,9 +204,9 @@ export class ApplicationApi extends HttpBaseClient {
   async triggerManualReassessment(
     applicationId: number,
     payload: ManualReassessmentAPIInDTO,
-  ): Promise<void> {
-    await this.postCall(
-      this.addClientRoot(`application/${applicationId}/manual-reassessment`),
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    return this.postCall(
+      this.addClientRoot(`assessment/${applicationId}/manual-reassessment`),
       payload,
     );
   }
@@ -214,14 +214,13 @@ export class ApplicationApi extends HttpBaseClient {
   /**
    * Gets application and assessment status details.
    * @param applicationId application id.
+   * @returns application and assessment details.
    */
   async getApplicationAssessmentStatusDetails(
     applicationId: number,
   ): Promise<ApplicationAssessmentStatusDetailsAPIOutDTO> {
-    return await this.getCall(
-      this.addClientRoot(
-        `application/${applicationId}/application-assessment-status-details`,
-      ),
+    return this.getCall(
+      this.addClientRoot(`application/${applicationId}/assessment-details`),
     );
   }
 }

@@ -136,3 +136,7 @@ export interface ApplicationAssessmentStatusDetailsAPIOutDTO {
   originalAssessmentStatus: StudentAssessmentStatus;
   isApplicationArchived: boolean;
 }
+
+export interface ManualReassessmentAPIInDTO {
+  note: string;
+}

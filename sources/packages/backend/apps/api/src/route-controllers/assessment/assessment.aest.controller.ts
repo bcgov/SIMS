@@ -1,6 +1,20 @@
-import { Controller, Get, Param, ParseIntPipe } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
+  Post,
+  UnprocessableEntityException,
+} from "@nestjs/common";
 import BaseController from "../BaseController";
-import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  Groups,
+  Roles,
+  UserToken,
+} from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ClientTypeBaseRoute } from "../../types";
 import { UserGroups } from "../../auth/user-groups.enum";
@@ -16,6 +30,16 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { AssessmentControllerService } from "./assessment.controller.service";
+import {
+  APPLICATION_NOT_FOUND,
+  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+} from "@sims/services/constants";
+import { StudentAssessmentStatus } from "@sims/sims-db";
+import { CustomNamedError } from "@sims/utilities";
+import { Role, IUserToken } from "apps/api/src/auth";
+import { ManualReassessmentAPIInDTO } from "apps/api/src/route-controllers/application/models/application.dto";
+import { PrimaryIdentifierAPIOutDTO } from "apps/api/src/route-controllers/models/primary.identifier.dto";
+import { StudentAssessmentService } from "../../services";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -24,6 +48,7 @@ import { AssessmentControllerService } from "./assessment.controller.service";
 export class AssessmentAESTController extends BaseController {
   constructor(
     private readonly assessmentControllerService: AssessmentControllerService,
+    private readonly studentAssessmentService: StudentAssessmentService,
   ) {
     super();
   }
@@ -100,5 +125,45 @@ export class AssessmentAESTController extends BaseController {
       assessmentId,
       true,
     );
+  }
+
+  /**
+   * Triggers manual reassessment for an application.
+   * Application cannot be archived and original assessment must be in completed status.
+   * @param payload request payload.
+   * @param applicationId application id.
+   */
+  @Roles(Role.AESTManualTriggerReassessment)
+  @Post(":applicationId/manual-reassessment")
+  @ApiNotFoundResponse({ description: "Application id not found." })
+  @ApiUnprocessableEntityResponse({
+    description:
+      `Application original assessment expected to be '${StudentAssessmentStatus.Completed}' to allow manual reassessment or ` +
+      "application cannot have manual reassessment after being archived.",
+  })
+  async manualReassessment(
+    @Body() payload: ManualReassessmentAPIInDTO,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+    @UserToken() userToken: IUserToken,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    try {
+      const manualAssessment =
+        await this.studentAssessmentService.manualReassessment(
+          applicationId,
+          payload.note,
+          userToken.userId,
+        );
+      return { id: manualAssessment.id };
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        if (error.name === APPLICATION_NOT_FOUND) {
+          throw new NotFoundException(error.message);
+        }
+        if (error.name === INVALID_OPERATION_IN_THE_CURRENT_STATUS) {
+          throw new UnprocessableEntityException(error.message);
+        }
+      }
+      throw error;
+    }
   }
 }

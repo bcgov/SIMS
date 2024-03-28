@@ -5,15 +5,13 @@ import {
   Param,
   ParseIntPipe,
   Post,
-  Body,
   UnprocessableEntityException,
 } from "@nestjs/common";
-import { ApplicationService, StudentAssessmentService } from "../../services";
+import { ApplicationService } from "../../services";
 import BaseController from "../BaseController";
 import {
   ApplicationAssessmentDetailsAPIOutDTO,
   ApplicationBaseAPIOutDTO,
-  ManualReassessmentAPIInDTO,
 } from "./models/application.dto";
 import {
   AllowAuthorizedParty,
@@ -39,7 +37,6 @@ import {
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "@sims/services/constants";
 import { IUserToken, Role } from "../../auth";
-import { StudentAssessmentStatus } from "@sims/sims-db";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -50,7 +47,6 @@ export class ApplicationAESTController extends BaseController {
     private readonly applicationService: ApplicationService,
     private readonly applicationControllerService: ApplicationControllerService,
     private readonly msfaaNumberSharedService: MSFAANumberSharedService,
-    private readonly studentAssessmentService: StudentAssessmentService,
   ) {
     super();
   }
@@ -126,63 +122,27 @@ export class ApplicationAESTController extends BaseController {
   }
 
   /**
-   * Triggers manual reassessment for an application.
-   * Application cannot be archived and original assessment must be in completed status.
-   * @param applicationId application id.
-   */
-  @Roles(Role.AESTManualTriggerReassessment)
-  @Post(":applicationId/manual-reassessment")
-  @ApiNotFoundResponse({ description: "Application id not found." })
-  @ApiUnprocessableEntityResponse({
-    description:
-      `Application original assessment expected to be '${StudentAssessmentStatus.Completed}' to allow manual reassessment or ` +
-      "application cannot have manual reassessment after being archived.",
-  })
-  async manualReassessment(
-    @Body() payload: ManualReassessmentAPIInDTO,
-    @Param("applicationId", ParseIntPipe) applicationId: number,
-    @UserToken() userToken: IUserToken,
-  ): Promise<void> {
-    try {
-      await this.studentAssessmentService.manualReassessment(
-        applicationId,
-        payload.note,
-        userToken.userId,
-      );
-    } catch (error: unknown) {
-      if (error instanceof CustomNamedError) {
-        if (error.name === APPLICATION_NOT_FOUND) {
-          throw new NotFoundException(error.message);
-        }
-        if (error.name === INVALID_OPERATION_IN_THE_CURRENT_STATUS) {
-          throw new UnprocessableEntityException(error.message);
-        }
-      }
-      throw error;
-    }
-  }
-
-  /**
    * Gets application and assessment status details.
    * @param applicationId application id.
+   * @returns application and assessment status details.
    */
-  @Get(":applicationId/application-assessment-status-details")
-  @ApiNotFoundResponse({ description: "Application id not found." })
+  @Get(":applicationId/assessment-details")
+  @ApiNotFoundResponse({ description: "Application not found." })
   async getApplicationAssessmentStatusDetails(
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<ApplicationAssessmentDetailsAPIOutDTO> {
-    try {
-      return await this.applicationService.getApplicationAssessmentStatusDetails(
+    const application =
+      await this.applicationService.getApplicationAssessmentStatusDetails(
         applicationId,
       );
-    } catch (error: unknown) {
-      if (
-        error instanceof CustomNamedError &&
-        error.name === APPLICATION_NOT_FOUND
-      ) {
-        throw new NotFoundException(error.message);
-      }
-      throw error;
+    if (!application) {
+      throw new NotFoundException("Application not found.");
     }
+    const [originalAssessment] = application.studentAssessments;
+    return {
+      applicationId: application.id,
+      originalAssessmentStatus: originalAssessment.studentAssessmentStatus,
+      isApplicationArchived: application.isArchived,
+    };
   }
 }

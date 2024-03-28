@@ -1,6 +1,6 @@
 <template>
   <v-form ref="reassessmentForm">
-    <modal-dialog-base :showDialog="showDialog" title="Trigger Reassement">
+    <modal-dialog-base :showDialog="showDialog" title="Trigger Reassessment">
       <template #content>
         <p class="pt-1 brand-gray-text">
           Triggering reassessment will not change student's application inputs
@@ -34,7 +34,7 @@
 import { VForm } from "@/types";
 import { ref, defineComponent } from "vue";
 import { useRules, useModalDialog } from "@/composables";
-import { ManualReassessmentAPIInDTO } from "@/services/http/dto/Assessment.dto";
+import { ManualReassessmentAPIInDTO } from "@/services/http/dto/Application.dto";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 
 export default defineComponent({
@@ -51,7 +51,6 @@ export default defineComponent({
     const note = ref("");
     const cancel = () => {
       reassessmentForm.value.reset();
-      reassessmentForm.value.resetValidation();
       resolvePromise(false);
     };
     const triggerReassessment = async () => {

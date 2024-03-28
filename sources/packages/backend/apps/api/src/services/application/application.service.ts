@@ -1658,8 +1658,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
    */
   async getApplicationAssessmentStatusDetails(
     applicationId: number,
-  ): Promise<ApplicationAssessmentStatusDetailsAPIOutDTO> {
-    const application = await this.repo.findOne({
+  ): Promise<Application> {
+    return await this.repo.findOne({
       select: {
         id: true,
         isArchived: true,
@@ -1678,12 +1678,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         },
       },
     });
-    const [originalAssessment] = application.studentAssessments;
-    return {
-      applicationId: application.id,
-      originalAssessmentStatus: originalAssessment.studentAssessmentStatus,
-      isApplicationArchived: application.isArchived,
-    };
   }
 
   @InjectLogger()

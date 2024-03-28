@@ -52,8 +52,7 @@ export enum AssessmentTriggerType {
    */
   RelatedApplicationChanged = "Related application changed",
   /**
-   * Triggered manually by a ministry user. The application must not be archived and the
-   * current assessment status must be completed.
+   * Triggered manually by a ministry user.
    */
   ManualReassessment = "Manual reassessment",
 }

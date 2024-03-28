@@ -24,7 +24,6 @@
       class="mb-5"
       :applicationId="applicationId"
       @reassessmentTriggered="reloadComponents"
-      :key="manualReassessmentKey"
     />
     <history-assessment
       class="mb-5"
@@ -162,7 +161,6 @@ export default defineComponent({
       assessmentRequestTypes,
       goToStudentApplicationOfferingChangeRequest,
       historyKey,
-      manualReassessmentKey,
       reloadComponents,
     };
   },

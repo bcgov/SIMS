@@ -9,9 +9,7 @@ import {
   User,
   Application,
   StudentAssessmentStatus,
-  Note,
   NoteType,
-  Student,
 } from "@sims/sims-db";
 import { Brackets, DataSource } from "typeorm";
 import { CustomNamedError } from "@sims/utilities";
@@ -23,14 +21,17 @@ import {
   APPLICATION_NOT_FOUND,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "@sims/services/constants";
-import { application } from "express";
+import { NoteSharedService } from "@sims/services";
 
 /**
  * Manages the student assessment related operations.
  */
 @Injectable()
 export class StudentAssessmentService extends RecordDataModelService<StudentAssessment> {
-  constructor(private readonly dataSource: DataSource) {
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly noteSharedService: NoteSharedService,
+  ) {
     super(dataSource.getRepository(StudentAssessment));
   }
 
@@ -252,15 +253,14 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * @param applicationId application id.
    * @param note note.
    * @param userId user id who triggered the manual reassessment.
+   * @returns the id of the assessment created.
    */
   async manualReassessment(
     applicationId: number,
     note: string,
     userId: number,
-  ): Promise<void> {
+  ): Promise<StudentAssessment> {
     return this.dataSource.transaction(async (transactionalEntityManager) => {
-      const currentUser = { id: userId } as User;
-      const now = new Date();
       const applicationRepo =
         transactionalEntityManager.getRepository(Application);
       const application = await applicationRepo.findOne({
@@ -268,18 +268,12 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
           id: true,
           currentAssessment: {
             id: true,
-            offering: {
-              id: true,
-            },
-            studentAppeal: {
-              id: true,
-            },
+            offering: { id: true },
+            studentAppeal: { id: true },
           },
-          studentAssessments: {
-            id: true,
-            studentAssessmentStatus: true,
-          },
+          studentAssessments: true,
           student: { id: true },
+          isArchived: true,
         },
         relations: {
           currentAssessment: { offering: true, studentAppeal: true },
@@ -317,47 +311,33 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         );
       }
 
-      // Adds application note.
-      const newNote = new Note();
-      newNote.description = note;
-      newNote.noteType = NoteType.Application;
-      newNote.creator = currentUser;
-      newNote.createdAt = now;
-      const savedNote = await transactionalEntityManager
-        .getRepository(Note)
-        .save(newNote);
-      // Associates the created note with the student.
-      await transactionalEntityManager
-        .getRepository(Student)
-        .createQueryBuilder()
-        .relation(Student, "notes")
-        .of(application.student)
-        .add(savedNote);
-
-      const oldCurrentAssessment = application.currentAssessment;
-      const newCurrentAssessment = new StudentAssessment();
-      newCurrentAssessment.triggerType =
-        AssessmentTriggerType.ManualReassessment;
-      newCurrentAssessment.studentAssessmentStatus =
-        StudentAssessmentStatus.Submitted;
-      newCurrentAssessment.studentAssessmentStatusUpdatedOn = now;
-      newCurrentAssessment.offering = oldCurrentAssessment.offering;
-      newCurrentAssessment.studentAppeal = oldCurrentAssessment.studentAppeal;
-      newCurrentAssessment.submittedDate = now;
-      newCurrentAssessment.submittedBy = currentUser;
-      newCurrentAssessment.createdAt = now;
-      newCurrentAssessment.creator = currentUser;
-      newCurrentAssessment.application = application;
-
-      await transactionalEntityManager
-        .getRepository(StudentAssessment)
-        .insert(newCurrentAssessment);
-
-      application.currentAssessment = newCurrentAssessment;
-      await applicationRepo.update(
-        { id: application.id },
-        { currentAssessment: newCurrentAssessment },
+      await this.noteSharedService.createStudentNote(
+        application.student.id,
+        NoteType.Application,
+        note,
+        userId,
+        transactionalEntityManager,
       );
+
+      const auditUser = { id: userId } as User;
+      const now = new Date();
+      const oldCurrentAssessment = application.currentAssessment;
+      const applicationToBeSaved = { id: application.id } as Application;
+      applicationToBeSaved.currentAssessment = {
+        application: applicationToBeSaved,
+        offering: { id: oldCurrentAssessment.offering.id },
+        studentAppeal: oldCurrentAssessment?.studentAppeal?.id
+          ? { id: oldCurrentAssessment.studentAppeal.id }
+          : undefined,
+        triggerType: AssessmentTriggerType.ManualReassessment,
+        creator: auditUser,
+        createdAt: now,
+        submittedBy: auditUser,
+        submittedDate: now,
+      } as StudentAssessment;
+
+      const savedApplication = await applicationRepo.save(applicationToBeSaved);
+      return savedApplication.currentAssessment;
     });
   }
 }
