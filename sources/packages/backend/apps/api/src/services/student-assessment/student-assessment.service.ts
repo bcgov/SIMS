@@ -7,6 +7,9 @@ import {
   AssessmentTriggerType,
   StudentAssessment,
   User,
+  Application,
+  StudentAssessmentStatus,
+  NoteType,
 } from "@sims/sims-db";
 import { Brackets, DataSource } from "typeorm";
 import { CustomNamedError } from "@sims/utilities";
@@ -14,13 +17,21 @@ import {
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
 } from "./student-assessment.constants";
+import {
+  APPLICATION_NOT_FOUND,
+  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+} from "@sims/services/constants";
+import { NoteSharedService } from "@sims/services";
 
 /**
  * Manages the student assessment related operations.
  */
 @Injectable()
 export class StudentAssessmentService extends RecordDataModelService<StudentAssessment> {
-  constructor(dataSource: DataSource) {
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly noteSharedService: NoteSharedService,
+  ) {
     super(dataSource.getRepository(StudentAssessment));
   }
 
@@ -235,5 +246,98 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .orderBy("assessment.studentAssessmentStatus", "DESC")
       .addOrderBy("assessment.submittedDate", "DESC")
       .getMany();
+  }
+
+  /**
+   * Creates a manual assessment for the application.
+   * @param applicationId application id.
+   * @param note note.
+   * @param userId user id who triggered the manual reassessment.
+   * @returns the id of the assessment created.
+   */
+  async manualReassessment(
+    applicationId: number,
+    note: string,
+    userId: number,
+  ): Promise<StudentAssessment> {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
+      const applicationRepo =
+        transactionalEntityManager.getRepository(Application);
+      const application = await applicationRepo.findOne({
+        select: {
+          id: true,
+          currentAssessment: {
+            id: true,
+            offering: { id: true },
+            studentAppeal: { id: true },
+          },
+          studentAssessments: true,
+          student: { id: true },
+          isArchived: true,
+        },
+        relations: {
+          currentAssessment: { offering: true, studentAppeal: true },
+          studentAssessments: true,
+          student: true,
+        },
+        where: {
+          id: applicationId,
+          studentAssessments: {
+            triggerType: AssessmentTriggerType.OriginalAssessment,
+          },
+        },
+      });
+
+      if (!application) {
+        throw new CustomNamedError(
+          `Application not found.`,
+          APPLICATION_NOT_FOUND,
+        );
+      }
+      if (application.isArchived) {
+        throw new CustomNamedError(
+          `Application cannot have manual reassessment after being archived.`,
+          INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+        );
+      }
+      const [originalAssessment] = application.studentAssessments;
+      if (
+        originalAssessment.studentAssessmentStatus !==
+        StudentAssessmentStatus.Completed
+      ) {
+        throw new CustomNamedError(
+          `Application original assessment expected to be '${StudentAssessmentStatus.Completed}' to allow manual reassessment.`,
+          INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+        );
+      }
+
+      await this.noteSharedService.createStudentNote(
+        application.student.id,
+        NoteType.Application,
+        note,
+        userId,
+        transactionalEntityManager,
+      );
+
+      const auditUser = { id: userId } as User;
+      const now = new Date();
+      const oldCurrentAssessment = application.currentAssessment;
+      const applicationToBeSaved = { id: application.id } as Application;
+      applicationToBeSaved.currentAssessment = {
+        application: applicationToBeSaved,
+        offering: { id: oldCurrentAssessment.offering.id },
+        studentAppeal: oldCurrentAssessment?.studentAppeal?.id
+          ? { id: oldCurrentAssessment.studentAppeal.id }
+          : undefined,
+        triggerType: AssessmentTriggerType.ManualReassessment,
+        creator: auditUser,
+        createdAt: now,
+        submittedBy: auditUser,
+        submittedDate: now,
+      } as StudentAssessment;
+
+      const savedApplication = await applicationRepo.save(applicationToBeSaved);
+      return savedApplication.currentAssessment;
+    });
   }
 }

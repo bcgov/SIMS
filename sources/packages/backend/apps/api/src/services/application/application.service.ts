@@ -1651,6 +1651,34 @@ export class ApplicationService extends RecordDataModelService<Application> {
     }
   }
 
+  /**
+   * Gets application and assessment status details.
+   * @param applicationId application id.
+   */
+  async getApplicationAssessmentStatusDetails(
+    applicationId: number,
+  ): Promise<Application> {
+    return await this.repo.findOne({
+      select: {
+        id: true,
+        isArchived: true,
+        studentAssessments: {
+          id: true,
+          studentAssessmentStatus: true,
+        },
+      },
+      relations: {
+        studentAssessments: true,
+      },
+      where: {
+        id: applicationId,
+        studentAssessments: {
+          triggerType: AssessmentTriggerType.OriginalAssessment,
+        },
+      },
+    });
+  }
+
   @InjectLogger()
   logger: LoggerService;
 }

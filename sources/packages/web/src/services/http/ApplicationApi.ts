@@ -19,6 +19,8 @@ import {
   ApplicationProgressDetailsAPIOutDTO,
   EnrolmentApplicationDetailsAPIOutDTO,
   CompletedApplicationDetailsAPIOutDTO,
+  ManualReassessmentAPIInDTO,
+  ApplicationAssessmentStatusDetailsAPIOutDTO,
 } from "@/services/http/dto";
 
 export class ApplicationApi extends HttpBaseClient {
@@ -191,6 +193,34 @@ export class ApplicationApi extends HttpBaseClient {
     await this.postCall(
       this.addClientRoot(`application/${applicationId}/reissue-msfaa`),
       null,
+    );
+  }
+
+  /**
+   * Triggers a manual reassessment for the application.
+   * @param applicationId application id.
+   * @param payload payload.
+   */
+  async triggerManualReassessment(
+    applicationId: number,
+    payload: ManualReassessmentAPIInDTO,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    return this.postCall(
+      this.addClientRoot(`assessment/${applicationId}/manual-reassessment`),
+      payload,
+    );
+  }
+
+  /**
+   * Gets application and assessment status details.
+   * @param applicationId application id.
+   * @returns application and assessment details.
+   */
+  async getApplicationAssessmentStatusDetails(
+    applicationId: number,
+  ): Promise<ApplicationAssessmentStatusDetailsAPIOutDTO> {
+    return this.getCall(
+      this.addClientRoot(`application/${applicationId}/assessment-details`),
     );
   }
 }
