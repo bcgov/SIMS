@@ -3,18 +3,16 @@ import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { StudentLoanBalancesIntegrationService } from "./student-loan-balances.integration.service";
 import { StudentLoanBalancesSFTPResponseFile } from "./models/student-loan-balances.model";
-import {
-  StudentLoanBalancesService,
-  StudentService,
-} from "@sims/integrations/services";
+import { StudentService } from "@sims/integrations/services";
 import * as path from "path";
 import {
   InjectLogger,
   LoggerService,
   ProcessSummary,
 } from "@sims/utilities/logger";
-import { StudentLoanBalances } from "@sims/sims-db/entities/student-loan-balances.model";
 import { getISODateOnlyString } from "@sims/utilities";
+import { DataSource } from "typeorm";
+import { StudentLoanBalances } from "@sims/sims-db";
 
 /**
  * Manages to process the Student Loan Balances files
@@ -24,9 +22,9 @@ import { getISODateOnlyString } from "@sims/utilities";
 export class StudentLoanBalancesProcessingService {
   private readonly esdcConfig: ESDCIntegrationConfig;
   constructor(
+    private readonly dataSource: DataSource,
     config: ConfigService,
     private readonly studentLoanBalancesIntegrationService: StudentLoanBalancesIntegrationService,
-    private readonly studentLoanBalancesService: StudentLoanBalancesService,
     private readonly studentService: StudentService,
   ) {
     this.esdcConfig = config.esdcIntegration;
@@ -88,36 +86,40 @@ export class StudentLoanBalancesProcessingService {
     );
     // Get only the file name for logging.
     const fileName = path.basename(remoteFilePath);
-    for (const studentLoanBalanceRecord of studentLoanBalancesSFTPResponseFile.records) {
-      try {
-        const student = await this.studentService.getStudentByPersonalInfo(
-          studentLoanBalanceRecord.sin,
-          studentLoanBalanceRecord.lastName,
-          getISODateOnlyString(studentLoanBalanceRecord.birthDate),
-        );
-        // If student not found continue.
-        if (!student) {
-          result.processSummary.push(
-            `Student not found for line ${studentLoanBalanceRecord.lineNumber}.`,
+    try {
+      await this.dataSource.transaction(async (transactionalEntityManager) => {
+        for (const studentLoanBalanceRecord of studentLoanBalancesSFTPResponseFile.records) {
+          const student = await this.studentService.getStudentByPersonalInfo(
+            studentLoanBalanceRecord.sin,
+            studentLoanBalanceRecord.lastName,
+            getISODateOnlyString(studentLoanBalanceRecord.birthDate),
+            transactionalEntityManager,
           );
-          continue;
+          // If student not found continue.
+          if (!student) {
+            result.processSummary.push(
+              `Student not found for line ${studentLoanBalanceRecord.lineNumber}.`,
+            );
+            continue;
+          }
+          await transactionalEntityManager
+            .getRepository(StudentLoanBalances)
+            .insert({
+              student: student,
+              cslBalance: studentLoanBalanceRecord.cslBalance,
+              balanceDate:
+                studentLoanBalancesSFTPResponseFile.header.balanceDate,
+            });
         }
-        const studentLoanBalances = new StudentLoanBalances();
-        studentLoanBalances.student = student;
-        studentLoanBalances.cslBalance = studentLoanBalanceRecord.cslBalance;
-        studentLoanBalances.balanceDate =
-          studentLoanBalancesSFTPResponseFile.header.balanceDate;
-        // Save the student loan balance.
-        await this.studentLoanBalancesService.save(studentLoanBalances);
-        result.processSummary.push(
-          `Inserted Student Loan balances record from line ${studentLoanBalanceRecord.lineNumber}.`,
-        );
-      } catch (error) {
-        // Log the error but allow the process to continue.
-        const errorDescription = `Error processing record line number ${studentLoanBalanceRecord.lineNumber} from file ${fileName}.`;
-        result.errorsSummary.push(errorDescription);
-        this.logger.error(`${errorDescription}. ${error}`);
-      }
+      });
+      result.processSummary.push(
+        `Inserted Student Loan balances file  ${fileName}.`,
+      );
+    } catch (error) {
+      // Log the error but allow the process to continue.
+      const errorDescription = `Error processing file ${fileName}.`;
+      result.errorsSummary.push(errorDescription);
+      this.logger.error(`${errorDescription}. ${error}`);
     }
     try {
       await this.studentLoanBalancesIntegrationService.deleteFile(

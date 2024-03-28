@@ -9,8 +9,7 @@ CREATE TABLE sims.student_loan_balances(
   creator INT NULL DEFAULT NULL REFERENCES sims.users(id),
   modifier INT NULL DEFAULT NULL REFERENCES sims.users(id),
   -- Constraint
-  CONSTRAINT student_balance_date UNIQUE (student_id, balance_date);
-
+  CONSTRAINT student_balance_date UNIQUE (student_id, balance_date)
 );
 
 -- ## Comments

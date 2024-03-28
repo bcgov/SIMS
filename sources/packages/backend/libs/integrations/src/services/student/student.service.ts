@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 import {
   DisabilityStatus,
   RecordDataModelService,
@@ -7,11 +8,21 @@ import {
   User,
 } from "@sims/sims-db";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
-import { DataSource, EntityManager, Raw, UpdateResult } from "typeorm";
+import {
+  DataSource,
+  EntityManager,
+  Raw,
+  Repository,
+  UpdateResult,
+} from "typeorm";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
-  constructor(dataSource: DataSource) {
+  constructor(
+    dataSource: DataSource,
+    @InjectRepository(Student)
+    private readonly studentRepo: Repository<Student>,
+  ) {
     super(dataSource.getRepository(Student));
   }
 
@@ -117,8 +128,10 @@ export class StudentService extends RecordDataModelService<Student> {
     sin: string,
     lastName: string,
     birthDate: string,
+    entityManager?: EntityManager,
   ): Promise<Student> {
-    return this.repo.findOne({
+    const repo = entityManager?.getRepository(Student) ?? this.studentRepo;
+    return repo.findOne({
       select: { id: true, disabilityStatus: true },
       where: {
         sinValidation: { sin },
