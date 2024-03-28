@@ -52,6 +52,7 @@ import {
   DisbursementOveraward,
   QueueConfiguration,
   ApplicationOfferingChangeRequest,
+  StudentLoanBalances,
 } from "./entities";
 import { ClusterNode, ClusterOptions, RedisOptions } from "ioredis";
 import {
@@ -202,4 +203,5 @@ export const DBEntities = [
   DisbursementOveraward,
   QueueConfiguration,
   ApplicationOfferingChangeRequest,
+  StudentLoanBalances,
 ];
