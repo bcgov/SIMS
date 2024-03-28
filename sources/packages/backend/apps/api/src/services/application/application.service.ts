@@ -54,7 +54,6 @@ import { SequenceControlService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
 import { NotificationActionsService } from "@sims/services/notifications";
 import { InstitutionLocationService } from "../institution-location/institution-location.service";
-import { ApplicationAssessmentDetailsAPIOutDTO as ApplicationAssessmentStatusDetailsAPIOutDTO } from "apps/api/src/route-controllers/application/models/application.dto";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
