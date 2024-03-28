@@ -31,7 +31,7 @@
 <script lang="ts">
 import { ref, defineComponent, onMounted } from "vue";
 import { ModalDialog, useSnackBar } from "@/composables";
-import { ManualReassessmentAPIInDTO } from "@/services/http/dto/Application.dto";
+import { ManualReassessmentAPIInDTO } from "@/services/http/dto";
 import TriggerReassessmentModal from "@/components/aest/students/modals/TriggerReassessmentModal.vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import { Role, StudentAssessmentStatus } from "@/types";

@@ -33,7 +33,7 @@
 import { VForm } from "@/types";
 import { ref, defineComponent } from "vue";
 import { useRules, useModalDialog } from "@/composables";
-import { ManualReassessmentAPIInDTO } from "@/services/http/dto/Application.dto";
+import { ManualReassessmentAPIInDTO } from "@/services/http/dto";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 
 export default defineComponent({
@@ -44,7 +44,6 @@ export default defineComponent({
     const { showDialog, showModal, resolvePromise, loading } = useModalDialog<
       ManualReassessmentAPIInDTO | false
     >();
-    const triggerReassessmentModal = {} as ManualReassessmentAPIInDTO;
     const reassessmentForm = ref({} as VForm);
     const { checkNotesLengthRule } = useRules();
     const note = ref("");
@@ -57,10 +56,7 @@ export default defineComponent({
       if (!validationResult.valid) {
         return;
       }
-      triggerReassessmentModal.note = note.value;
-      resolvePromise(triggerReassessmentModal, {
-        keepModalOpen: false,
-      });
+      resolvePromise({ note: note.value }, { keepModalOpen: false });
       reassessmentForm.value.reset();
     };
     return {
