@@ -18,7 +18,7 @@
               color="primary"
               prepend-icon="fa:fa fa-refresh"
               :disabled="notAllowed || openModalButtonDisabled"
-              @click="openTriggerReassessmentModal()"
+              @click="openTriggerReassessmentModal"
             >
               Trigger reassessment
             </v-btn>
@@ -51,7 +51,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props, context) {
+  setup(props, { emit }) {
     const snackBar = useSnackBar();
     const reassessmentModal = ref(
       {} as ModalDialog<ManualReassessmentAPIInDTO | false>,
@@ -77,7 +77,7 @@ export default defineComponent({
             props.applicationId,
             responseData,
           );
-          context.emit("reassessmentTriggered");
+          emit("reassessmentTriggered");
           snackBar.success("Reassessment triggered successfully.");
         } catch {
           snackBar.error(

@@ -23,7 +23,7 @@
     <manual-reassessment
       class="mb-5"
       :applicationId="applicationId"
-      @reassessmentTriggered="reloadComponents"
+      @reassessmentTriggered="reloadHistory"
     />
     <history-assessment
       class="mb-5"
@@ -70,7 +70,6 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
     const historyKey = ref(0);
-    const manualReassessmentKey = ref(0);
 
     // The assessment trigger types for which the request form must be visible by default.
     const assessmentRequestTypes = [
@@ -146,9 +145,9 @@ export default defineComponent({
       });
     };
 
-    const reloadComponents = () => {
+    const reloadHistory = () => {
+      // Changing key's component makes it to re-render/reload.
       historyKey.value++;
-      manualReassessmentKey.value++;
     };
 
     return {
@@ -161,7 +160,7 @@ export default defineComponent({
       assessmentRequestTypes,
       goToStudentApplicationOfferingChangeRequest,
       historyKey,
-      reloadComponents,
+      reloadHistory,
     };
   },
 });

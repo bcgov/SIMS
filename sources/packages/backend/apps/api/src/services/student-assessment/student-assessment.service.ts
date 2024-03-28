@@ -22,6 +22,7 @@ import {
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "@sims/services/constants";
 import { NoteSharedService } from "@sims/services";
+import { ApplicationService } from "../../services";
 
 /**
  * Manages the student assessment related operations.
@@ -31,6 +32,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   constructor(
     private readonly dataSource: DataSource,
     private readonly noteSharedService: NoteSharedService,
+    private readonly applicationService: ApplicationService,
   ) {
     super(dataSource.getRepository(StudentAssessment));
   }
@@ -261,32 +263,11 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     userId: number,
   ): Promise<StudentAssessment> {
     return this.dataSource.transaction(async (transactionalEntityManager) => {
-      const applicationRepo =
-        transactionalEntityManager.getRepository(Application);
-      const application = await applicationRepo.findOne({
-        select: {
-          id: true,
-          currentAssessment: {
-            id: true,
-            offering: { id: true },
-            studentAppeal: { id: true },
-          },
-          studentAssessments: true,
-          student: { id: true },
-          isArchived: true,
-        },
-        relations: {
-          currentAssessment: { offering: true, studentAppeal: true },
-          studentAssessments: true,
-          student: true,
-        },
-        where: {
-          id: applicationId,
-          studentAssessments: {
-            triggerType: AssessmentTriggerType.OriginalAssessment,
-          },
-        },
-      });
+      const application =
+        await this.applicationService.getApplicationAssessmentStatusDetails(
+          applicationId,
+          { entityManager: transactionalEntityManager },
+        );
 
       if (!application) {
         throw new CustomNamedError(
@@ -297,6 +278,18 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       if (application.isArchived) {
         throw new CustomNamedError(
           `Application cannot have manual reassessment after being archived.`,
+          INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+        );
+      }
+      if (
+        [
+          ApplicationStatus.Cancelled,
+          ApplicationStatus.Overwritten,
+          ApplicationStatus.Draft,
+        ].includes(application.applicationStatus)
+      ) {
+        throw new CustomNamedError(
+          `Application cannot have manual reassessment in any of the statuses: ${ApplicationStatus.Cancelled}, ${ApplicationStatus.Overwritten} or ${ApplicationStatus.Draft}.`,
           INVALID_OPERATION_IN_THE_CURRENT_STATUS,
         );
       }
@@ -322,7 +315,11 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       const auditUser = { id: userId } as User;
       const now = new Date();
       const oldCurrentAssessment = application.currentAssessment;
-      const applicationToBeSaved = { id: application.id } as Application;
+      const applicationToBeSaved = {
+        id: application.id,
+        modifier: auditUser,
+        updatedAt: now,
+      } as Application;
       applicationToBeSaved.currentAssessment = {
         application: applicationToBeSaved,
         offering: { id: oldCurrentAssessment.offering.id },
@@ -336,6 +333,8 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         submittedDate: now,
       } as StudentAssessment;
 
+      const applicationRepo =
+        transactionalEntityManager.getRepository(Application);
       const savedApplication = await applicationRepo.save(applicationToBeSaved);
       return savedApplication.currentAssessment;
     });

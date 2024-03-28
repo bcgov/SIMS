@@ -34,7 +34,7 @@ import {
   APPLICATION_NOT_FOUND,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "@sims/services/constants";
-import { StudentAssessmentStatus } from "@sims/sims-db";
+import { ApplicationStatus, StudentAssessmentStatus } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 import { Role, IUserToken } from "../../auth";
 import { ManualReassessmentAPIInDTO } from "../application/models/application.dto";
@@ -129,9 +129,10 @@ export class AssessmentAESTController extends BaseController {
 
   /**
    * Triggers manual reassessment for an application.
-   * Application cannot be archived and original assessment must be in completed status.
+   * Application cannot be archived or in any of the statuses 'Cancelled', 'Overwritten' or 'Draft' and original assessment must be in completed status.
    * @param payload request payload.
    * @param applicationId application id.
+   * @returns id of the assessment created.
    */
   @Roles(Role.AESTManualTriggerReassessment)
   @Post(":applicationId/manual-reassessment")
@@ -139,7 +140,8 @@ export class AssessmentAESTController extends BaseController {
   @ApiUnprocessableEntityResponse({
     description:
       `Application original assessment expected to be '${StudentAssessmentStatus.Completed}' to allow manual reassessment or ` +
-      "application cannot have manual reassessment after being archived.",
+      "application cannot have manual reassessment after being archived or " +
+      `application cannot have manual reassessment in any of the statuses: ${ApplicationStatus.Cancelled}, ${ApplicationStatus.Overwritten} or ${ApplicationStatus.Draft}.`,
   })
   async manualReassessment(
     @Body() payload: ManualReassessmentAPIInDTO,
