@@ -9,7 +9,6 @@
           new eCert requests to be issued. For more information, please consult
           the SIMS Operations Manual.
         </p>
-        <error-summary :errors="reassessmentForm.errors" />
         <v-textarea
           label="Notes"
           variant="outlined"
