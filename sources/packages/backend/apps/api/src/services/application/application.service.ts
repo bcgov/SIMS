@@ -1656,6 +1656,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param applicationId application id.
    * @param options method options:
    * - `entityManager`: entity manager to be optionally used.
+   * @returns application with assessment details populated.
    */
   async getApplicationAssessmentStatusDetails(
     applicationId: number,

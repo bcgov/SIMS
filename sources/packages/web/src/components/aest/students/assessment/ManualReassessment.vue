@@ -1,32 +1,28 @@
 <template>
-  <v-card>
-    <v-container>
-      <TriggerReassessmentModal ref="reassessmentModal" />
-      <body-header title="Trigger Reassessment Manually" class="m-1">
-      </body-header>
-      <content-group class="mt-4 pb-16">
-        <p>
-          Manual system trigger to re-perform assessment using existing
-          application inputs. This should be used as a means of triggering the
-          assessment or other downstream actions (COE requests, eCert requests)
-          without requiring the student to edit and resubmit their application.
-        </p>
-        <check-permission-role :role="Role.AESTManualTriggerReassessment">
-          <template #="{ notAllowed }">
-            <v-btn
-              class="ml-2 float-right"
-              color="primary"
-              prepend-icon="fa:fa fa-refresh"
-              :disabled="notAllowed || openModalButtonDisabled"
-              @click="openTriggerReassessmentModal"
-            >
-              Trigger reassessment
-            </v-btn>
-          </template>
-        </check-permission-role>
-      </content-group>
-    </v-container>
-  </v-card>
+  <body-header-container :enableCardView="true">
+    <trigger-reassessment-modal ref="reassessmentModal" />
+    <template #header>
+      <body-header
+        title="Trigger Reassessment Manually"
+        subTitle="Manual system trigger to re-perform assessment using existing application inputs. This should be used as a means of triggering the assessment or other downstream actions (COE requests, eCert requests) without requiring the student to edit and resubmit their application."
+      />
+    </template>
+    <content-group class="mt-4 pb-16">
+      <check-permission-role :role="Role.AESTManualTriggerReassessment">
+        <template #="{ notAllowed }">
+          <v-btn
+            class="ml-2 float-right"
+            color="primary"
+            prepend-icon="fa:fa fa-refresh"
+            :disabled="notAllowed || openModalButtonDisabled"
+            @click="openTriggerReassessmentModal"
+          >
+            Trigger reassessment
+          </v-btn>
+        </template>
+      </check-permission-role>
+    </content-group>
+  </body-header-container>
 </template>
 <script lang="ts">
 import { ref, defineComponent, onMounted } from "vue";

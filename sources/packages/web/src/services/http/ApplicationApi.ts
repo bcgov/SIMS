@@ -200,6 +200,7 @@ export class ApplicationApi extends HttpBaseClient {
    * Triggers a manual reassessment for the application.
    * @param applicationId application id.
    * @param payload payload.
+   * @returns id of assessment just created.
    */
   async triggerManualReassessment(
     applicationId: number,
