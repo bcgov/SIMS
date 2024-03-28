@@ -79,7 +79,7 @@ describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
     expect(studentLoanBalances[0].cslBalance).toBe(148154.0);
   });
 
-  it.only("Should not add monthly loan balance record if the student is not found.;", async () => {
+  it("Should not add monthly loan balance record if the student is not found.;", async () => {
     // Arrange
     // Queued job.
     const job = createMock<Job<void>>();
