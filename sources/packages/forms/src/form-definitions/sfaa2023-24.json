@@ -4,9 +4,7 @@
   "path": "sfaa2023-24",
   "type": "form",
   "display": "wizard",
-  "tags": [
-    "common"
-  ],
+  "tags": ["common"],
   "components": [
     {
       "title": "Welcome",
@@ -7049,7 +7047,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "Citizen and Residency",
                 "custom": "",
                 "customPrivate": false,
@@ -8363,7 +8361,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "Have lived in B.C. for at least 12 consecutive months",
                 "custom": "",
                 "customPrivate": false,
@@ -8728,7 +8726,7 @@
                   "allowCalculateOverride": false,
                   "validate": {
                     "required": true,
-                    "onlyAvailableItems": false,
+                    "onlyAvailableItems": true,
                     "customMessage": "",
                     "custom": "",
                     "customPrivate": false,
@@ -9770,7 +9768,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
@@ -9974,7 +9972,7 @@
                   "allowCalculateOverride": false,
                   "validate": {
                     "required": true,
-                    "onlyAvailableItems": false,
+                    "onlyAvailableItems": true,
                     "customMessage": "",
                     "custom": "",
                     "customPrivate": false,
@@ -10128,7 +10126,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
@@ -10217,6 +10215,7 @@
                   "clearOnHide": true,
                   "validate": {
                     "required": false,
+                    "onlyAvailableItems": true,
                     "custom": "",
                     "customPrivate": false
                   },
@@ -10286,7 +10285,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
@@ -10859,7 +10858,7 @@
               ],
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "custom": "",
                 "customPrivate": false,
                 "strictDateValidation": false,
@@ -11139,7 +11138,7 @@
                 "strictDateValidation": false,
                 "multiple": false,
                 "unique": false,
-                "onlyAvailableItems": false
+                "onlyAvailableItems": true
               },
               "key": "addTrustContactToContactSABC",
               "attributes": {
@@ -11664,7 +11663,7 @@
                       "allowCalculateOverride": false,
                       "validate": {
                         "required": true,
-                        "onlyAvailableItems": false,
+                        "onlyAvailableItems": true,
                         "customMessage": "",
                         "custom": "",
                         "customPrivate": false,
@@ -12857,7 +12856,7 @@
                 "strictDateValidation": false,
                 "multiple": false,
                 "unique": false,
-                "onlyAvailableItems": false
+                "onlyAvailableItems": true
               },
               "errorLabel": "Dependent",
               "key": "hasDependents",
@@ -13455,7 +13454,7 @@
                           "allowCalculateOverride": false,
                           "validate": {
                             "required": true,
-                            "onlyAvailableItems": false,
+                            "onlyAvailableItems": true,
                             "customMessage": "",
                             "custom": "",
                             "customPrivate": false,
@@ -13532,7 +13531,7 @@
                             "strictDateValidation": false,
                             "multiple": false,
                             "unique": false,
-                            "onlyAvailableItems": false
+                            "onlyAvailableItems": true
                           },
                           "key": "declaredOnTaxes",
                           "attributes": {
@@ -14707,7 +14706,7 @@
                 "strictDateValidation": false,
                 "multiple": false,
                 "unique": false,
-                "onlyAvailableItems": false
+                "onlyAvailableItems": true
               },
               "key": "supportnocustodyDependants",
               "attributes": {
@@ -16068,7 +16067,7 @@
                 "strictDateValidation": false,
                 "multiple": false,
                 "unique": false,
-                "onlyAvailableItems": false
+                "onlyAvailableItems": true
               },
               "key": "isYourPartnerAbleToReport",
               "attributes": {
@@ -16706,7 +16705,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
@@ -16801,7 +16800,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
@@ -16896,7 +16895,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
@@ -16991,7 +16990,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
@@ -17257,7 +17256,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
@@ -17512,7 +17511,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
@@ -17768,7 +17767,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
@@ -18024,7 +18023,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
@@ -18279,7 +18278,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
@@ -18534,7 +18533,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
@@ -19046,7 +19045,7 @@
                 "strictDateValidation": false,
                 "multiple": false,
                 "unique": false,
-                "onlyAvailableItems": false
+                "onlyAvailableItems": true
               },
               "key": "parentbcResident",
               "attributes": {
@@ -19150,7 +19149,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
@@ -19245,7 +19244,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
@@ -20131,7 +20130,7 @@
                     "strictDateValidation": false,
                     "multiple": false,
                     "unique": false,
-                    "onlyAvailableItems": false
+                    "onlyAvailableItems": true
                   },
                   "key": "doYourParentsHaveDependantsOtherThanYourself",
                   "attributes": {
@@ -20490,7 +20489,7 @@
                             "strictDateValidation": false,
                             "multiple": false,
                             "unique": false,
-                            "onlyAvailableItems": false
+                            "onlyAvailableItems": true
                           },
                           "key": "willThisDependantBeAttendingHighSchoolOrFullTimePostSecondarySchoolAtTheStartOfYourStudyPeriod",
                           "attributes": {
@@ -20575,7 +20574,7 @@
                             "strictDateValidation": false,
                             "multiple": false,
                             "unique": false,
-                            "onlyAvailableItems": false
+                            "onlyAvailableItems": true
                           },
                           "key": "didYouParentSClaimThisDependantOnTheir20XxIncomeTaxReturnDueToADisability",
                           "attributes": {
@@ -22072,7 +22071,7 @@
                   "allowCalculateOverride": false,
                   "validate": {
                     "required": true,
-                    "onlyAvailableItems": false,
+                    "onlyAvailableItems": true,
                     "customMessage": "",
                     "custom": "",
                     "customPrivate": false,
@@ -23921,6 +23920,7 @@
               "clearOnHide": true,
               "validate": {
                 "required": true,
+                "onlyAvailableItems": true,
                 "custom": "",
                 "customPrivate": false
               },
@@ -24248,7 +24248,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
@@ -24652,7 +24652,7 @@
                   "allowCalculateOverride": false,
                   "validate": {
                     "required": false,
-                    "onlyAvailableItems": false,
+                    "onlyAvailableItems": true,
                     "customMessage": "",
                     "custom": "",
                     "customPrivate": false,
@@ -25171,7 +25171,7 @@
                 "strictDateValidation": false,
                 "multiple": false,
                 "unique": false,
-                "onlyAvailableItems": false
+                "onlyAvailableItems": true
               },
               "key": "exceptionalExpense",
               "attributes": {
@@ -25555,7 +25555,7 @@
                     "strictDateValidation": false,
                     "multiple": false,
                     "unique": false,
-                    "onlyAvailableItems": false
+                    "onlyAvailableItems": true
                   },
                   "conditional": {
                     "show": null,
@@ -26575,7 +26575,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
@@ -26852,7 +26852,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
@@ -27129,7 +27129,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
@@ -27561,7 +27561,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
@@ -27817,7 +27817,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
@@ -28073,7 +28073,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
@@ -28329,7 +28329,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
@@ -28585,7 +28585,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
@@ -28940,7 +28940,7 @@
                 "strictDateValidation": false,
                 "multiple": false,
                 "unique": false,
-                "onlyAvailableItems": false
+                "onlyAvailableItems": true
               },
               "errorLabel": "Living with your parent/guardian",
               "key": "livingWithParents",
@@ -29040,7 +29040,7 @@
                     "strictDateValidation": false,
                     "multiple": false,
                     "unique": false,
-                    "onlyAvailableItems": false
+                    "onlyAvailableItems": true
                   },
                   "key": "livingathomeRent",
                   "conditional": {
@@ -29373,7 +29373,7 @@
                         "strictDateValidation": false,
                         "multiple": false,
                         "unique": false,
-                        "onlyAvailableItems": false
+                        "onlyAvailableItems": true
                       },
                       "key": "livingathomerentDescription",
                       "conditional": {
@@ -30408,7 +30408,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
@@ -30907,7 +30907,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
@@ -31139,7 +31139,7 @@
                     "strictDateValidation": false,
                     "multiple": false,
                     "unique": false,
-                    "onlyAvailableItems": false
+                    "onlyAvailableItems": true
                   },
                   "overlay": {
                     "style": "",
@@ -31294,6 +31294,7 @@
                   "clearOnHide": true,
                   "validate": {
                     "required": true,
+                    "onlyAvailableItems": true,
                     "custom": "",
                     "customPrivate": false
                   },

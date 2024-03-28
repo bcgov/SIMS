@@ -147,6 +147,7 @@
                     "clearOnHide": true,
                     "validate": {
                         "required": true,
+                        "onlyAvailableItems": true,
                         "custom": "",
                         "customPrivate": false
                     },
@@ -247,6 +248,7 @@
                     "clearOnHide": true,
                     "validate": {
                         "required": true,
+                        "onlyAvailableItems": true,
                         "custom": "",
                         "customPrivate": false
                     },

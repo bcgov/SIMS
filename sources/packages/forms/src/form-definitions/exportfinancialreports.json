@@ -4,9 +4,7 @@
   "type": "form",
   "name": "exportfinancialreports",
   "path": "exportfinancialreports",
-  "tags": [
-    "common"
-  ],
+  "tags": ["common"],
   "components": [
     {
       "title": "Export Financial Report Panel",
