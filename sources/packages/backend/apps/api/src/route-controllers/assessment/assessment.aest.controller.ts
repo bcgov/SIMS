@@ -36,7 +36,7 @@ import {
 } from "@sims/services/constants";
 import { StudentAssessmentStatus } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
-import { Role, IUserToken } from "apps/api/src/auth";
+import { Role, IUserToken } from "../../auth";
 import { ManualReassessmentAPIInDTO } from "apps/api/src/route-controllers/application/models/application.dto";
 import { PrimaryIdentifierAPIOutDTO } from "apps/api/src/route-controllers/models/primary.identifier.dto";
 import { StudentAssessmentService } from "../../services";
