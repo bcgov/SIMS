@@ -9,7 +9,7 @@ export class StudentLoanBalancesFileFooter {
    */
   recordTypeCode: RecordTypeCodes;
   /**
-   * Total records in the file (dos not include header and footer).
+   * Total records in the file (does not include header and footer).
    */
   recordCount: number;
   /**
@@ -17,7 +17,7 @@ export class StudentLoanBalancesFileFooter {
    * @param line fixed line formatted.
    * @returns file footer.
    */
-  static createFromLine(line?: string): StudentLoanBalancesFileFooter {
+  static createFromLine(line: string): StudentLoanBalancesFileFooter {
     const footer = new StudentLoanBalancesFileFooter();
     footer.recordTypeCode = line.substring(0, 2) as RecordTypeCodes;
     footer.recordCount = +line.substring(2, 8);

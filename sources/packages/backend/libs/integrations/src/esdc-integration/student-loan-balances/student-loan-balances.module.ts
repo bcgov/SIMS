@@ -5,8 +5,10 @@ import {
   SshService,
   StudentLoanBalancesService,
 } from "@sims/integrations/services";
-import { StudentLoanBalancesIntegrationService } from "./student-loan-balances.integration.service";
-import { StudentLoanBalancesProcessingService } from "./student-loan-balances.processing.service";
+import {
+  StudentLoanBalancesIntegrationService,
+  StudentLoanBalancesProcessingService,
+} from "@sims/integrations/esdc-integration";
 
 @Module({
   imports: [ConfigModule],

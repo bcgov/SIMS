@@ -4,6 +4,7 @@ import { QueueNames, getISODateOnlyString } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
+  mockBullJob,
 } from "../../../../../../test/helpers";
 import {
   E2EDataSources,
@@ -14,7 +15,6 @@ import { mockDownloadFiles } from "@sims/test-utils/mocks";
 import * as Client from "ssh2-sftp-client";
 import { Job } from "bull";
 import * as path from "path";
-import { Student } from "@sims/sims-db";
 import { StudentLoanBalancesScheduler } from "../student-loan-balances-queue.scheduler";
 
 // Student loan balances received file mocks.
@@ -47,26 +47,18 @@ describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
     jest.clearAllMocks();
   });
 
-  it("Should add monthly loan balance record for the student.;", async () => {
+  it("Should add monthly loan balance record for the student when the student matches SIN, DOB, and last name.", async () => {
     // Arrange
     // Create student if it doesn't exist.
-    let student: Student = await db.student.findOne({
-      where: {
-        birthDate: getISODateOnlyString(new Date("1998-03-24")),
-        user: { lastName: "FOUR" },
-        sinValidation: { sin: "900041310" },
-      },
-    });
-    if (!student) {
-      student = await saveFakeStudent(db.dataSource);
-      // Update the student to ensure that the student receiving loan balance is the same student as the one created above.
-      student.birthDate = getISODateOnlyString(new Date("1998-03-24"));
-      student.user.lastName = "FOUR";
-      student.sinValidation.sin = "900041310";
-      await db.student.save(student);
-    }
+    const student = await saveFakeStudent(db.dataSource);
+    // Update the student to ensure that the student receiving loan balance is the same student as the one created above.
+    student.birthDate = getISODateOnlyString(new Date("1998-03-24"));
+    student.user.lastName = "FOUR";
+    student.sinValidation.sin = "900041310";
+    await db.student.save(student);
+
     // Queued job.
-    const job = createMock<Job<void>>();
+    const { job } = mockBullJob<void>();
     mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
     // Act
     await processor.processStudentLoanBalancesFiles(job);

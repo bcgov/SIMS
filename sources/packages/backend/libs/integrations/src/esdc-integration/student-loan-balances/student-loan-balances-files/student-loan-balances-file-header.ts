@@ -22,7 +22,7 @@ export class StudentLoanBalancesFileHeader {
    * @param line fixed line formatted.
    * @returns file header.
    */
-  static createFromLine(line?: string): StudentLoanBalancesFileHeader {
+  static createFromLine(line: string): StudentLoanBalancesFileHeader {
     const header = new StudentLoanBalancesFileHeader();
     header.recordTypeCode = line.substring(0, 2) as RecordTypeCodes;
     header.balanceDate = getDateOnlyFromFormat(
