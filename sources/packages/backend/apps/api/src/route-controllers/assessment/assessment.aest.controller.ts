@@ -37,8 +37,8 @@ import {
 import { StudentAssessmentStatus } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 import { Role, IUserToken } from "../../auth";
-import { ManualReassessmentAPIInDTO } from "apps/api/src/route-controllers/application/models/application.dto";
-import { PrimaryIdentifierAPIOutDTO } from "apps/api/src/route-controllers/models/primary.identifier.dto";
+import { ManualReassessmentAPIInDTO } from "../application/models/application.dto";
+import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { StudentAssessmentService } from "../../services";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
