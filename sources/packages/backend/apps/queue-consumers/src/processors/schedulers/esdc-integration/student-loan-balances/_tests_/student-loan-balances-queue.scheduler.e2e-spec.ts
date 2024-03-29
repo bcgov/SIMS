@@ -51,13 +51,22 @@ describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
   it("Should add monthly loan balance record for the student when the student matches SIN, DOB, and last name.", async () => {
     // Arrange
     // Create student if it doesn't exist.
-    const student = await saveFakeStudent(db.dataSource);
-    // Update the student to ensure that the student receiving loan balance is the same student as the one created above.
-    student.birthDate = getISODateOnlyString(new Date("1998-03-24"));
-    student.user.lastName = "FOUR";
-    student.sinValidation.sin = "900041310";
-    await db.student.save(student);
-
+    let student = await db.student.findOne({
+      where: {
+        birthDate: getISODateOnlyString(new Date("1998-03-24")),
+        user: { lastName: "LASTNAME" },
+        sinValidation: { sin: "900041310" },
+      },
+    });
+    if (!student) {
+      student = await saveFakeStudent(db.dataSource);
+      // Update the student to ensure that the student receiving loan balance is the same student as the one created above.
+      student.birthDate = getISODateOnlyString(new Date("1998-03-24"));
+      student.user.lastName = "LASTNAME";
+      student.sinValidation.sin = "900041310";
+      await db.student.save(student);
+    }
+    db.studentLoanBalances.delete({ studentId: student.id });
     // Queued job.
     const { job } = mockBullJob<void>();
     mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
