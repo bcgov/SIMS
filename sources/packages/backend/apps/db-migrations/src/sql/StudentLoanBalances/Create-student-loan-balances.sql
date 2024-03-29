@@ -2,7 +2,7 @@ CREATE TABLE sims.student_loan_balances(
   id SERIAL PRIMARY KEY,
   student_id INT NOT NULL REFERENCES sims.students(id),
   csl_balance NUMERIC(8, 2) NOT NULL,
-  balance_date DATE,
+  balance_date DATE NOT NULL,
   -- Audit columns
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
@@ -30,3 +30,5 @@ COMMENT ON COLUMN sims.student_loan_balances.updated_at IS 'Record update timest
 COMMENT ON COLUMN sims.student_loan_balances.creator IS 'Creator of the record.';
 
 COMMENT ON COLUMN sims.student_loan_balances.modifier IS 'Modifier of the record.';
+
+COMMENT ON CONSTRAINT student_balance_date ON sims.student_loan_balances IS 'Ensures student loan balance for a particular student and the balance date is unique.';

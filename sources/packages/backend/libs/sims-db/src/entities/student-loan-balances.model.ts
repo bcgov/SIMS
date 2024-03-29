@@ -1,13 +1,6 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from "typeorm";
-import { ColumnNames, TableNames } from "../constant";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
-import { Student } from "./student.model";
 import { numericTransformer } from "../transformers/numeric.transformer";
 
 /**
@@ -21,16 +14,12 @@ export class StudentLoanBalances extends RecordDataModel {
   /**
    * Student id associated with this Loan Balance.
    */
-  studentId: number;
-  /**
-   * Student associated with this Loan Balance.
-   */
-  @ManyToOne(() => Student, { eager: false, cascade: false })
-  @JoinColumn({
+  @Column({
     name: "student_id",
-    referencedColumnName: ColumnNames.ID,
+    type: "integer",
+    nullable: false,
   })
-  student: Student;
+  studentId: number;
   /**
    * Loan balance value (a positive value indicates the amount the student owes as NSLSC Loan).
    */
@@ -47,6 +36,7 @@ export class StudentLoanBalances extends RecordDataModel {
   @Column({
     name: "balance_date",
     type: "date",
+    nullable: false,
   })
-  balanceDate: Date;
+  balanceDate: string;
 }

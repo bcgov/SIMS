@@ -64,13 +64,14 @@ describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
     // Act
     const result = await processor.processStudentLoanBalancesFiles(job);
     // Assert
-    expect(result).toBeUndefined;
+    expect(result.length).toBe(1);
+    expect(result).toContain("Process finalized with success.");
     // Expect the file was deleted from SFTP.
     expect(sftpClientMock.delete).toHaveBeenCalled();
     const studentLoanBalances: StudentLoanBalances[] =
       await db.studentLoanBalances.find({
         where: {
-          student: { id: student.id },
+          studentId: student.id,
         },
       });
     // Expect student loan balance contains the student record.
@@ -87,11 +88,15 @@ describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
     // Act
     const result = await processor.processStudentLoanBalancesFiles(job);
     // Assert
+    expect(result.length).toBe(3);
+    expect(result).toContain(
+      "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+    );
     // Expect the file was deleted from SFTP.
     expect(sftpClientMock.delete).toHaveBeenCalled();
     const studentLoanBalancesCount = await db.studentLoanBalances.count({
       where: {
-        student: { id: 25 },
+        studentId: 25,
       },
     });
     // Expect student loan balance contains the student record.

@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
-import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { StudentLoanBalancesIntegrationService } from "./student-loan-balances.integration.service";
 import { StudentLoanBalancesSFTPResponseFile } from "./models/student-loan-balances.model";
 import { StudentService } from "@sims/integrations/services";
@@ -37,10 +36,9 @@ export class StudentLoanBalancesProcessingService {
    */
   async processStudentLoanBalances(
     parentProcessSummary: ProcessSummary,
-  ): Promise<ProcessSFTPResponseResult[]> {
+  ): Promise<void> {
     // Process summary to be populated by each enqueueing workflow call.
     const serviceProcessSummary = new ProcessSummary();
-    parentProcessSummary.children(serviceProcessSummary);
     const remoteFilePaths =
       await this.studentLoanBalancesIntegrationService.getResponseFilesFullPath(
         this.esdcConfig.ftpResponseFolder,
@@ -49,11 +47,10 @@ export class StudentLoanBalancesProcessingService {
           "i",
         ),
       );
-    const processFiles: ProcessSFTPResponseResult[] = [];
     for (const remoteFilePath of remoteFilePaths) {
-      processFiles.push(await this.processFile(remoteFilePath));
+      await this.processFile(remoteFilePath, serviceProcessSummary);
+      parentProcessSummary.children(serviceProcessSummary);
     }
-    return processFiles;
   }
 
   /**
@@ -63,9 +60,9 @@ export class StudentLoanBalancesProcessingService {
    */
   private async processFile(
     remoteFilePath: string,
-  ): Promise<ProcessSFTPResponseResult> {
-    const result = new ProcessSFTPResponseResult();
-    result.processSummary.push(`Processing file ${remoteFilePath}.`);
+    childrenProcessSummary: ProcessSummary,
+  ): Promise<void> {
+    childrenProcessSummary.info(`Processing file ${remoteFilePath}.`);
     let studentLoanBalancesSFTPResponseFile: StudentLoanBalancesSFTPResponseFile;
     try {
       studentLoanBalancesSFTPResponseFile =
@@ -74,14 +71,11 @@ export class StudentLoanBalancesProcessingService {
         );
     } catch (error) {
       this.logger.error(error);
-      result.errorsSummary.push(
+      childrenProcessSummary.error(
         `Error downloading file ${remoteFilePath}. Error: ${error}`,
       );
-      // Abort the process nicely not throwing an exception and
-      // allowing other response files to be processed.
-      return result;
     }
-    result.processSummary.push(
+    childrenProcessSummary.info(
       `File contains ${studentLoanBalancesSFTPResponseFile.records.length} Student Loan balances.`,
     );
     // Get only the file name for logging.
@@ -99,26 +93,28 @@ export class StudentLoanBalancesProcessingService {
           );
           // If student not found continue.
           if (!student) {
-            result.processSummary.push(
+            childrenProcessSummary.error(
               `Student not found for line ${studentLoanBalanceRecord.lineNumber}.`,
             );
             continue;
           }
 
           await studentLoanBalancesRepo.insert({
-            student: student,
+            studentId: student.id,
             cslBalance: studentLoanBalanceRecord.cslBalance,
-            balanceDate: studentLoanBalancesSFTPResponseFile.header.balanceDate,
+            balanceDate: getISODateOnlyString(
+              studentLoanBalancesSFTPResponseFile.header.balanceDate,
+            ),
           });
         }
       });
-      result.processSummary.push(
+      childrenProcessSummary.info(
         `Inserted Student Loan balances file  ${fileName}.`,
       );
     } catch (error) {
       // Log the error but allow the process to continue.
       const errorDescription = `Error processing file ${fileName}.`;
-      result.errorsSummary.push(errorDescription);
+      childrenProcessSummary.error(errorDescription);
       this.logger.error(`${errorDescription}. ${error}`);
     }
     try {
@@ -131,9 +127,8 @@ export class StudentLoanBalancesProcessingService {
       // processed again and could be deleted in the second attempt.
       const logMessage = `Error while deleting Student Loan Balances response file: ${remoteFilePath}`;
       this.logger.error(logMessage);
-      result.errorsSummary.push(logMessage);
+      childrenProcessSummary.error(logMessage);
     }
-    return result;
   }
 
   @InjectLogger()

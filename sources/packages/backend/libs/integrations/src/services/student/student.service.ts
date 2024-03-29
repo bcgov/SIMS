@@ -2,18 +2,11 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DisabilityStatus, SINValidation, Student, User } from "@sims/sims-db";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
-import {
-  DataSource,
-  EntityManager,
-  Raw,
-  Repository,
-  UpdateResult,
-} from "typeorm";
+import { EntityManager, Raw, Repository, UpdateResult } from "typeorm";
 
 @Injectable()
 export class StudentService {
   constructor(
-    dataSource: DataSource,
     @InjectRepository(Student)
     private readonly studentRepo: Repository<Student>,
   ) {}
