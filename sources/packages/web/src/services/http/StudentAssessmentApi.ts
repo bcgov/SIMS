@@ -4,6 +4,8 @@ import {
   AssessmentNOAAPIOutDTO,
   RequestAssessmentSummaryAPIOutDTO,
   AwardDetailsAPIOutDTO,
+  ManualReassessmentAPIInDTO,
+  PrimaryIdentifierAPIOutDTO,
 } from "@/services/http/dto";
 
 /**
@@ -97,5 +99,23 @@ export class StudentAssessmentApi extends HttpBaseClient {
       ? `assessment/student/${studentId}/application/${applicationId}/assessment/${assessmentId}/award`
       : `assessment/${assessmentId}/award`;
     return this.getCall<AwardDetailsAPIOutDTO>(this.addClientRoot(endpoint));
+  }
+
+  /**
+   * Triggers a manual reassessment for the application.
+   * @param applicationId application id.
+   * @param payload payload.
+   * @returns id of assessment just created.
+   */
+  async triggerManualReassessment(
+    applicationId: number,
+    payload: ManualReassessmentAPIInDTO,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    return this.postCall(
+      this.addClientRoot(
+        `assessment/application/${applicationId}/manual-reassessment`,
+      ),
+      payload,
+    );
   }
 }

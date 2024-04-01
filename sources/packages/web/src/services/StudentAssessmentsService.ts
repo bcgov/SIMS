@@ -4,6 +4,8 @@ import {
   AssessmentNOAAPIOutDTO,
   RequestAssessmentSummaryAPIOutDTO,
   AwardDetailsAPIOutDTO,
+  ManualReassessmentAPIInDTO,
+  PrimaryIdentifierAPIOutDTO,
 } from "@/services/http/dto";
 
 /**
@@ -97,6 +99,22 @@ export class StudentAssessmentsService {
       assessmentId,
       studentId,
       applicationId,
+    );
+  }
+
+  /**
+   * Triggers a manual reassessment for the application.
+   * @param applicationId application id.
+   * @param payload contains notes for the application.
+   * @returns id of the assessment just created.
+   */
+  async triggerManualReassessment(
+    applicationId: number,
+    payload: ManualReassessmentAPIInDTO,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    return ApiClient.StudentAssessmentApi.triggerManualReassessment(
+      applicationId,
+      payload,
     );
   }
 }
