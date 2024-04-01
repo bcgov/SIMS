@@ -37,13 +37,6 @@ describe("StudentLoanBalanceAESTController(e2e)-getStudentLoanBalance", () => {
         { cslBalance: 100 },
       );
       await db.studentLoanBalance.save(studentBalanceRecords);
-      // Expected loan balance records.
-      const expectedStudentBalanceRecords = studentBalanceRecords.map(
-        (record) => ({
-          cslBalance: record.cslBalance,
-          balanceDate: record.balanceDate,
-        }),
-      );
       const endpoint = `/aest/student-loan-balance/student/${student.id}`;
       const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
@@ -53,6 +46,13 @@ describe("StudentLoanBalanceAESTController(e2e)-getStudentLoanBalance", () => {
         .auth(token, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
         .expect((response) => {
+          // Expected loan balance records.
+          const expectedStudentBalanceRecords = studentBalanceRecords.map(
+            (record) => ({
+              cslBalance: record.cslBalance,
+              balanceDate: record.balanceDate,
+            }),
+          );
           expect(response.body.loanBalanceDetails).toStrictEqual(
             expectedStudentBalanceRecords,
           );
@@ -79,12 +79,6 @@ describe("StudentLoanBalanceAESTController(e2e)-getStudentLoanBalance", () => {
         MAXIMUM_ESSENTIAL_LOAN_BALANCE_RECORDS,
         { cslBalance: 100 },
       );
-      // Expected loan balance records based on maximum essential count of records.
-      const expectedStudentBalanceRecords =
-        essentialStudentLoanBalanceRecords.map((record) => ({
-          cslBalance: record.cslBalance,
-          balanceDate: record.balanceDate,
-        }));
       const endpoint = `/aest/student-loan-balance/student/${student.id}`;
       const token = await getAESTToken(AESTGroups.Operations);
 
@@ -94,6 +88,12 @@ describe("StudentLoanBalanceAESTController(e2e)-getStudentLoanBalance", () => {
         .auth(token, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
         .expect((response) => {
+          // Expected loan balance records based on maximum essential count of records.
+          const expectedStudentBalanceRecords =
+            essentialStudentLoanBalanceRecords.map((record) => ({
+              cslBalance: record.cslBalance,
+              balanceDate: record.balanceDate,
+            }));
           expect(response.body.loanBalanceDetails).toStrictEqual(
             expectedStudentBalanceRecords,
           );
