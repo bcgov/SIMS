@@ -28,10 +28,11 @@ describe("StudentLoanBalanceAESTController(e2e)-getStudentLoanBalance", () => {
 
   it(
     "Should get all the student loan balance records," +
-      ` when a student has loan balance records less than ${MAXIMUM_ESSENTIAL_LOAN_BALANCE_RECORDS}.`,
+      ` when a student has less than ${MAXIMUM_ESSENTIAL_LOAN_BALANCE_RECORDS} loan balance records.`,
     async () => {
       // Arrange
       const student = await saveFakeStudent(db.dataSource);
+      // Create 4 loan balance records for the student.
       const studentBalanceRecords = createStudentBalanceRecords(4, 100);
       const studentLoanBalance = studentBalanceRecords.map((record) => {
         return createFakeStudentLoanBalance(
@@ -63,10 +64,11 @@ describe("StudentLoanBalanceAESTController(e2e)-getStudentLoanBalance", () => {
 
   it(
     `Should get the student loan balance up to recent ${MAXIMUM_ESSENTIAL_LOAN_BALANCE_RECORDS}` +
-      ` records, when a student has loan balance records more than ${MAXIMUM_ESSENTIAL_LOAN_BALANCE_RECORDS}.`,
+      ` records, when a student has more than ${MAXIMUM_ESSENTIAL_LOAN_BALANCE_RECORDS} loan balance records.`,
     async () => {
       // Arrange
       const student = await saveFakeStudent(db.dataSource);
+      // Create loan balance records more than maximum essential records in recent  for the student.
       const studentBalanceRecords = createStudentBalanceRecords(
         MAXIMUM_ESSENTIAL_LOAN_BALANCE_RECORDS + 2,
         100,
@@ -88,7 +90,7 @@ describe("StudentLoanBalanceAESTController(e2e)-getStudentLoanBalance", () => {
         100,
       );
       const endpoint = `/aest/student-loan-balance/student/${student.id}`;
-      const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+      const token = await getAESTToken(AESTGroups.Operations);
 
       // Act/Assert
       await request(app.getHttpServer())
@@ -102,6 +104,23 @@ describe("StudentLoanBalanceAESTController(e2e)-getStudentLoanBalance", () => {
         });
     },
   );
+
+  it("Should throw not found error when the student id is not valid. ", async () => {
+    // Arrange
+    const endpoint = "/aest/student-loan-balance/student/99999";
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        statusCode: 404,
+        message: "Student not found.",
+        error: "Not Found",
+      });
+  });
 
   afterAll(async () => {
     await app?.close();
