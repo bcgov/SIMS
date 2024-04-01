@@ -1673,7 +1673,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
           offering: { id: true },
           studentAppeal: { id: true },
         },
-        studentAssessments: true,
+        studentAssessments: { studentAssessmentStatus: true },
         student: { id: true },
         isArchived: true,
         applicationStatus: true,

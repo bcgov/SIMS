@@ -255,7 +255,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * @param applicationId application id.
    * @param note note.
    * @param userId user id who triggered the manual reassessment.
-   * @returns the id of the assessment created.
+   * @returns the assessment created.
    */
   async manualReassessment(
     applicationId: number,
@@ -271,7 +271,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
 
       if (!application) {
         throw new CustomNamedError(
-          `Application not found.`,
+          "Application not found.",
           APPLICATION_NOT_FOUND,
         );
       }
