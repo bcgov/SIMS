@@ -7,13 +7,12 @@ import {
   getAESTToken,
 } from "../../../../testHelpers";
 import { MAXIMUM_ESSENTIAL_LOAN_BALANCE_RECORDS } from "../../../../utilities";
-
 import {
   E2EDataSources,
   createE2EDataSources,
   saveFakeStudent,
+  createFakeStudentLoanBalance,
 } from "@sims/test-utils";
-import { createFakeStudentLoanBalance } from "@sims/test-utils/factories/student-loan-balance";
 import { addToDateOnlyString } from "@sims/utilities";
 
 describe("StudentLoanBalanceAESTController(e2e)-getStudentLoanBalance", () => {
@@ -27,13 +26,16 @@ describe("StudentLoanBalanceAESTController(e2e)-getStudentLoanBalance", () => {
   });
 
   it(
-    "Should get all the student loan balance records," +
+    "Should get all the student loan balance records" +
       ` when a student has less than ${MAXIMUM_ESSENTIAL_LOAN_BALANCE_RECORDS} loan balance records.`,
     async () => {
       // Arrange
       const student = await saveFakeStudent(db.dataSource);
-      // Create 4 loan balance records for the student.
-      const studentBalanceRecords = createStudentBalanceRecords(4, 100);
+      // Create loan balance records less than maximum essential records in recent for the student.
+      const studentBalanceRecords = createStudentBalanceRecords(
+        MAXIMUM_ESSENTIAL_LOAN_BALANCE_RECORDS - 1,
+        100,
+      );
       const studentLoanBalance = studentBalanceRecords.map((record) => {
         return createFakeStudentLoanBalance(
           { student },
@@ -64,13 +66,13 @@ describe("StudentLoanBalanceAESTController(e2e)-getStudentLoanBalance", () => {
 
   it(
     `Should get the student loan balance up to recent ${MAXIMUM_ESSENTIAL_LOAN_BALANCE_RECORDS}` +
-      ` records, when a student has more than ${MAXIMUM_ESSENTIAL_LOAN_BALANCE_RECORDS} loan balance records.`,
+      ` records when a student has more than ${MAXIMUM_ESSENTIAL_LOAN_BALANCE_RECORDS} loan balance records.`,
     async () => {
       // Arrange
       const student = await saveFakeStudent(db.dataSource);
-      // Create loan balance records more than maximum essential records in recent  for the student.
+      // Create loan balance records more than maximum essential records in recent for the student.
       const studentBalanceRecords = createStudentBalanceRecords(
-        MAXIMUM_ESSENTIAL_LOAN_BALANCE_RECORDS + 2,
+        MAXIMUM_ESSENTIAL_LOAN_BALANCE_RECORDS + 1,
         100,
       );
       const studentLoanBalance = studentBalanceRecords.map((record) => {
@@ -116,7 +118,7 @@ describe("StudentLoanBalanceAESTController(e2e)-getStudentLoanBalance", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.NOT_FOUND)
       .expect({
-        statusCode: 404,
+        statusCode: HttpStatus.NOT_FOUND,
         message: "Student not found.",
         error: "Not Found",
       });
