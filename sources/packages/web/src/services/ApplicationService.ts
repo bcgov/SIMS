@@ -18,7 +18,6 @@ import {
   ApplicationProgressDetailsAPIOutDTO,
   EnrolmentApplicationDetailsAPIOutDTO,
   CompletedApplicationDetailsAPIOutDTO,
-  ManualReassessmentAPIInDTO,
   ApplicationAssessmentStatusDetailsAPIOutDTO,
 } from "@/services/http/dto";
 
@@ -171,22 +170,6 @@ export class ApplicationService {
    */
   async reissueMSFAA(applicationId: number): Promise<void> {
     await ApiClient.Application.reissueMSFAA(applicationId);
-  }
-
-  /**
-   * Triggers a manual reassessment for the application.
-   * @param applicationId application id.
-   * @param payload contains notes for the application.
-   * @returns id of the assessment just created.
-   */
-  async triggerManualReassessment(
-    applicationId: number,
-    payload: ManualReassessmentAPIInDTO,
-  ): Promise<PrimaryIdentifierAPIOutDTO> {
-    return ApiClient.Application.triggerManualReassessment(
-      applicationId,
-      payload,
-    );
   }
 
   /**

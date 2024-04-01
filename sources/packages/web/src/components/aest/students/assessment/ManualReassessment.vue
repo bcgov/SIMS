@@ -32,6 +32,7 @@ import TriggerReassessmentModal from "@/components/aest/students/modals/TriggerR
 import { ApplicationService } from "@/services/ApplicationService";
 import { ApplicationStatus, Role, StudentAssessmentStatus } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 
 export default defineComponent({
   emits: {
@@ -74,7 +75,7 @@ export default defineComponent({
       const responseData = await reassessmentModal.value.showModal();
       if (responseData) {
         try {
-          await ApplicationService.shared.triggerManualReassessment(
+          await StudentAssessmentsService.shared.triggerManualReassessment(
             props.applicationId,
             responseData,
           );
