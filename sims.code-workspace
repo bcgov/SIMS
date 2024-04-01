@@ -101,6 +101,9 @@
       "timestamptz",
       "typeorm",
       "CSLP"
-    ]
+    ],
+    "[json]": {
+      "editor.defaultFormatter": "vscode.json-language-features"
+    }
   }
 }

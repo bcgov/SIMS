@@ -4,7 +4,9 @@
   "path": "sfaa2021-22",
   "type": "form",
   "display": "wizard",
-  "tags": ["common"],
+  "tags": [
+    "common"
+  ],
   "components": [
     {
       "title": "Welcome",
