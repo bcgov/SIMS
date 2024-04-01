@@ -18,6 +18,7 @@ import {
   ApplicationProgressDetailsAPIOutDTO,
   EnrolmentApplicationDetailsAPIOutDTO,
   CompletedApplicationDetailsAPIOutDTO,
+  ApplicationAssessmentStatusDetailsAPIOutDTO,
 } from "@/services/http/dto";
 
 export class ApplicationService {
@@ -169,5 +170,18 @@ export class ApplicationService {
    */
   async reissueMSFAA(applicationId: number): Promise<void> {
     await ApiClient.Application.reissueMSFAA(applicationId);
+  }
+
+  /**
+   * Gets application and assessment status details.
+   * @param applicationId application id.
+   * @returns application and assessment details.
+   */
+  async getApplicationAssessmentStatusDetails(
+    applicationId: number,
+  ): Promise<ApplicationAssessmentStatusDetailsAPIOutDTO> {
+    return ApiClient.Application.getApplicationAssessmentStatusDetails(
+      applicationId,
+    );
   }
 }

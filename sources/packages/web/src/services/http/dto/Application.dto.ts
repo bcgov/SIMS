@@ -11,6 +11,7 @@ import {
   StudentAppealStatus,
   StudentScholasticStandingChangeType,
   ApplicationOfferingChangeRequestStatus,
+  StudentAssessmentStatus,
 } from "@/types";
 
 export interface InProgressApplicationDetailsAPIOutDTO {
@@ -128,4 +129,11 @@ export interface CompletedApplicationDetailsAPIOutDTO
   scholasticStandingChangeType?: StudentScholasticStandingChangeType;
   applicationOfferingChangeRequestId?: number;
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
+}
+
+export interface ApplicationAssessmentStatusDetailsAPIOutDTO {
+  applicationId: number;
+  originalAssessmentStatus: StudentAssessmentStatus;
+  isApplicationArchived: boolean;
+  applicationStatus: ApplicationStatus;
 }

@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, In, Not, Brackets } from "typeorm";
+import { DataSource, In, Not, Brackets, EntityManager } from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   RecordDataModelService,
@@ -1649,6 +1649,47 @@ export class ApplicationService extends RecordDataModelService<Application> {
         OFFERING_PROGRAM_YEAR_MISMATCH,
       );
     }
+  }
+
+  /**
+   * Gets application and assessment status details.
+   * @param applicationId application id.
+   * @param options method options:
+   * - `entityManager`: entity manager to be optionally used.
+   * @returns application with assessment details populated.
+   */
+  async getApplicationAssessmentStatusDetails(
+    applicationId: number,
+    options?: { entityManager?: EntityManager },
+  ): Promise<Application> {
+    const applicationRepo = options?.entityManager
+      ? options.entityManager.getRepository(Application)
+      : this.repo;
+    return applicationRepo.findOne({
+      select: {
+        id: true,
+        currentAssessment: {
+          id: true,
+          offering: { id: true },
+          studentAppeal: { id: true },
+        },
+        studentAssessments: { studentAssessmentStatus: true },
+        student: { id: true },
+        isArchived: true,
+        applicationStatus: true,
+      },
+      relations: {
+        currentAssessment: { offering: true, studentAppeal: true },
+        studentAssessments: true,
+        student: true,
+      },
+      where: {
+        id: applicationId,
+        studentAssessments: {
+          triggerType: AssessmentTriggerType.OriginalAssessment,
+        },
+      },
+    });
   }
 
   @InjectLogger()
