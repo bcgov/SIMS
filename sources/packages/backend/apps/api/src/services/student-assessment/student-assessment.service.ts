@@ -321,10 +321,9 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         updatedAt: now,
       } as Application;
       applicationToBeSaved.currentAssessment = {
+        application: applicationToBeSaved,
         offering: { id: oldCurrentAssessment.offering.id },
-        studentAppeal: oldCurrentAssessment?.studentAppeal?.id
-          ? { id: oldCurrentAssessment.studentAppeal.id }
-          : undefined,
+        studentAppeal: oldCurrentAssessment.studentAppeal,
         triggerType: AssessmentTriggerType.ManualReassessment,
         creator: auditUser,
         createdAt: now,
