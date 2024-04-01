@@ -15,7 +15,7 @@ import { Student } from "./student.model";
  * Loan Balance file.
  */
 @Entity({ name: TableNames.StudentLoanBalances })
-export class StudentLoanBalances extends RecordDataModel {
+export class StudentLoanBalance extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
   /**

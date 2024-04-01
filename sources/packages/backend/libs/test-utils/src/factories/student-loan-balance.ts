@@ -1,4 +1,4 @@
-import { Student, StudentLoanBalances, User } from "@sims/sims-db";
+import { Student, StudentLoanBalance, User } from "@sims/sims-db";
 import { addToDateOnlyString, getISODateOnlyString } from "@sims/utilities";
 import * as faker from "faker";
 
@@ -17,9 +17,9 @@ export function createFakeStudentLoanBalance(
     student: Student;
     auditUser?: User;
   },
-  options?: { initialValues: Partial<StudentLoanBalances> },
-): StudentLoanBalances {
-  const studentLoanBalance = new StudentLoanBalances();
+  options?: { initialValues: Partial<StudentLoanBalance> },
+): StudentLoanBalance {
+  const studentLoanBalance = new StudentLoanBalance();
   studentLoanBalance.student = relations.student;
   studentLoanBalance.cslBalance =
     options?.initialValues?.cslBalance ??
@@ -40,26 +40,20 @@ export function createFakeStudentLoanBalance(
  * - `cslBalance` loan balance amount.
  * @returns student loan balance records.
  */
-export function createStudentBalanceRecords(
+export function createFakeStudentBalances(
   studentId: number,
   numberOfRecords: number,
   options?: { cslBalance?: number },
-): StudentLoanBalances[] {
+): StudentLoanBalance[] {
   [];
-  const cslBalance =
-    options?.cslBalance ??
-    faker.datatype.number({
-      min: 100,
-      max: 900,
-    });
-  return Array.from(Array(numberOfRecords).keys()).map((recordIndex) => {
-    return createFakeStudentLoanBalance(
+  return Array.from(Array(numberOfRecords).keys()).map((recordIndex) =>
+    createFakeStudentLoanBalance(
       {
         student: { id: studentId } as Student,
       },
       {
         initialValues: {
-          cslBalance,
+          cslBalance: options?.cslBalance,
           balanceDate: addToDateOnlyString(
             new Date(),
             (recordIndex + 1) * -1,
@@ -67,6 +61,6 @@ export function createStudentBalanceRecords(
           ),
         },
       },
-    );
-  });
+    ),
+  );
 }

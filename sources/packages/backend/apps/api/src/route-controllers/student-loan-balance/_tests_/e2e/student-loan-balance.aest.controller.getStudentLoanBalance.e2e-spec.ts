@@ -11,7 +11,7 @@ import {
   E2EDataSources,
   createE2EDataSources,
   saveFakeStudent,
-  createStudentBalanceRecords,
+  createFakeStudentBalances,
 } from "@sims/test-utils";
 
 describe("StudentLoanBalanceAESTController(e2e)-getStudentLoanBalance", () => {
@@ -31,7 +31,7 @@ describe("StudentLoanBalanceAESTController(e2e)-getStudentLoanBalance", () => {
       // Arrange
       const student = await saveFakeStudent(db.dataSource);
       // Create loan balance records less than maximum essential records in recent for the student.
-      const studentBalanceRecords = createStudentBalanceRecords(
+      const studentBalanceRecords = createFakeStudentBalances(
         student.id,
         MAXIMUM_ESSENTIAL_LOAN_BALANCE_RECORDS - 1,
         { cslBalance: 100 },
@@ -67,14 +67,14 @@ describe("StudentLoanBalanceAESTController(e2e)-getStudentLoanBalance", () => {
       // Arrange
       const student = await saveFakeStudent(db.dataSource);
       // Create loan balance records more than maximum essential records in recent for the student.
-      const studentBalanceRecords = createStudentBalanceRecords(
+      const studentBalanceRecords = createFakeStudentBalances(
         student.id,
         MAXIMUM_ESSENTIAL_LOAN_BALANCE_RECORDS + 1,
         { cslBalance: 100 },
       );
       await db.studentLoanBalance.save(studentBalanceRecords);
       // Maximum essential recent loan balance records.
-      const essentialStudentLoanBalanceRecords = createStudentBalanceRecords(
+      const essentialStudentLoanBalanceRecords = createFakeStudentBalances(
         student.id,
         MAXIMUM_ESSENTIAL_LOAN_BALANCE_RECORDS,
         { cslBalance: 100 },
