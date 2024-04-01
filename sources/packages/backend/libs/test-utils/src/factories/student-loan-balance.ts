@@ -45,7 +45,6 @@ export function createFakeStudentBalances(
   numberOfRecords: number,
   options?: { cslBalance?: number },
 ): StudentLoanBalance[] {
-  [];
   return Array.from(Array(numberOfRecords).keys()).map((recordIndex) =>
     createFakeStudentLoanBalance(
       {
