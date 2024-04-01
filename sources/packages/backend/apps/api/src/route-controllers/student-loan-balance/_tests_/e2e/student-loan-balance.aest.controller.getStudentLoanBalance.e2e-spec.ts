@@ -11,9 +11,8 @@ import {
   E2EDataSources,
   createE2EDataSources,
   saveFakeStudent,
-  createFakeStudentLoanBalance,
+  createStudentBalanceRecords,
 } from "@sims/test-utils";
-import { addToDateOnlyString } from "@sims/utilities";
 
 describe("StudentLoanBalanceAESTController(e2e)-getStudentLoanBalance", () => {
   let app: INestApplication;
@@ -33,21 +32,18 @@ describe("StudentLoanBalanceAESTController(e2e)-getStudentLoanBalance", () => {
       const student = await saveFakeStudent(db.dataSource);
       // Create loan balance records less than maximum essential records in recent for the student.
       const studentBalanceRecords = createStudentBalanceRecords(
+        student.id,
         MAXIMUM_ESSENTIAL_LOAN_BALANCE_RECORDS - 1,
-        100,
+        { cslBalance: 100 },
       );
-      const studentLoanBalance = studentBalanceRecords.map((record) => {
-        return createFakeStudentLoanBalance(
-          { student },
-          {
-            initialValues: {
-              cslBalance: record.cslBalance,
-              balanceDate: record.balanceDate,
-            },
-          },
-        );
-      });
-      await db.studentLoanBalance.save(studentLoanBalance);
+      await db.studentLoanBalance.save(studentBalanceRecords);
+      // Expected loan balance records.
+      const expectedStudentBalanceRecords = studentBalanceRecords.map(
+        (record) => ({
+          cslBalance: record.cslBalance,
+          balanceDate: record.balanceDate,
+        }),
+      );
       const endpoint = `/aest/student-loan-balance/student/${student.id}`;
       const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
@@ -58,7 +54,7 @@ describe("StudentLoanBalanceAESTController(e2e)-getStudentLoanBalance", () => {
         .expect(HttpStatus.OK)
         .expect((response) => {
           expect(response.body.loanBalanceDetails).toStrictEqual(
-            studentBalanceRecords,
+            expectedStudentBalanceRecords,
           );
         });
     },
@@ -72,25 +68,23 @@ describe("StudentLoanBalanceAESTController(e2e)-getStudentLoanBalance", () => {
       const student = await saveFakeStudent(db.dataSource);
       // Create loan balance records more than maximum essential records in recent for the student.
       const studentBalanceRecords = createStudentBalanceRecords(
+        student.id,
         MAXIMUM_ESSENTIAL_LOAN_BALANCE_RECORDS + 1,
-        100,
+        { cslBalance: 100 },
       );
-      const studentLoanBalance = studentBalanceRecords.map((record) => {
-        return createFakeStudentLoanBalance(
-          { student },
-          {
-            initialValues: {
-              cslBalance: record.cslBalance,
-              balanceDate: record.balanceDate,
-            },
-          },
-        );
-      });
-      await db.studentLoanBalance.save(studentLoanBalance);
-      const expectedStudentBalanceRecords = createStudentBalanceRecords(
+      await db.studentLoanBalance.save(studentBalanceRecords);
+      // Maximum essential recent loan balance records.
+      const essentialStudentLoanBalanceRecords = createStudentBalanceRecords(
+        student.id,
         MAXIMUM_ESSENTIAL_LOAN_BALANCE_RECORDS,
-        100,
+        { cslBalance: 100 },
       );
+      // Expected loan balance records based on maximum essential count of records.
+      const expectedStudentBalanceRecords =
+        essentialStudentLoanBalanceRecords.map((record) => ({
+          cslBalance: record.cslBalance,
+          balanceDate: record.balanceDate,
+        }));
       const endpoint = `/aest/student-loan-balance/student/${student.id}`;
       const token = await getAESTToken(AESTGroups.Operations);
 
@@ -107,7 +101,7 @@ describe("StudentLoanBalanceAESTController(e2e)-getStudentLoanBalance", () => {
     },
   );
 
-  it("Should throw not found error when the student id is not valid. ", async () => {
+  it("Should throw not found error when the student id is not valid.", async () => {
     // Arrange
     const endpoint = "/aest/student-loan-balance/student/99999";
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
@@ -127,25 +121,4 @@ describe("StudentLoanBalanceAESTController(e2e)-getStudentLoanBalance", () => {
   afterAll(async () => {
     await app?.close();
   });
-
-  /**
-   * Created student loan balance records.
-   * @param numberOfRecords number of records to create.
-   * @param cslBalance loan balance amount.
-   * @returns student loan balance records.
-   */
-  function createStudentBalanceRecords(
-    numberOfRecords: number,
-    cslBalance: number,
-  ): { cslBalance: number; balanceDate: string }[] {
-    const loanBalanceRecords: { cslBalance: number; balanceDate: string }[] =
-      [];
-    for (let i = 1; i <= numberOfRecords; i++) {
-      loanBalanceRecords.push({
-        cslBalance,
-        balanceDate: addToDateOnlyString(new Date(), -i, "month"),
-      });
-    }
-    return loanBalanceRecords;
-  }
 });
