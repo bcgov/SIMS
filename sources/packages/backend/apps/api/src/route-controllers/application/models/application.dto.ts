@@ -1,12 +1,5 @@
 import { IntersectionType } from "@nestjs/swagger";
-import {
-  IsObject,
-  IsOptional,
-  IsPositive,
-  Length,
-  IsNotEmpty,
-  MaxLength,
-} from "class-validator";
+import { IsObject, IsOptional, IsPositive, Length } from "class-validator";
 import {
   ApplicationExceptionStatus,
   ApplicationStatus,
@@ -21,7 +14,6 @@ import {
   AssessmentTriggerType,
   StudentScholasticStandingChangeType,
   ApplicationOfferingChangeRequestStatus,
-  NOTE_DESCRIPTION_MAX_LENGTH,
   StudentAssessmentStatus,
 } from "@sims/sims-db";
 import { JsonMaxSize } from "../../../utilities/class-validation";
@@ -192,14 +184,9 @@ export class CompletedApplicationDetailsAPIOutDTO extends EnrolmentApplicationDe
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
 }
 
-export class ManualReassessmentAPIInDTO {
-  @IsNotEmpty()
-  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
-  note: string;
-}
-
-export class ApplicationAssessmentDetailsAPIOutDTO {
+export class ApplicationAssessmentStatusDetailsAPIOutDTO {
   applicationId: number;
   originalAssessmentStatus: StudentAssessmentStatus;
   isApplicationArchived: boolean;
+  applicationStatus: ApplicationStatus;
 }

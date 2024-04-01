@@ -207,7 +207,9 @@ export class ApplicationApi extends HttpBaseClient {
     payload: ManualReassessmentAPIInDTO,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     return this.postCall(
-      this.addClientRoot(`assessment/${applicationId}/manual-reassessment`),
+      this.addClientRoot(
+        `assessment/application/${applicationId}/manual-reassessment`,
+      ),
       payload,
     );
   }

@@ -1665,7 +1665,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     const applicationRepo = options?.entityManager
       ? options.entityManager.getRepository(Application)
       : this.repo;
-    return await applicationRepo.findOne({
+    return applicationRepo.findOne({
       select: {
         id: true,
         currentAssessment: {

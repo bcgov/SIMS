@@ -10,7 +10,7 @@ import {
 import { ApplicationService } from "../../services";
 import BaseController from "../BaseController";
 import {
-  ApplicationAssessmentDetailsAPIOutDTO,
+  ApplicationAssessmentStatusDetailsAPIOutDTO,
   ApplicationBaseAPIOutDTO,
 } from "./models/application.dto";
 import {
@@ -130,7 +130,7 @@ export class ApplicationAESTController extends BaseController {
   @ApiNotFoundResponse({ description: "Application not found." })
   async getApplicationAssessmentStatusDetails(
     @Param("applicationId", ParseIntPipe) applicationId: number,
-  ): Promise<ApplicationAssessmentDetailsAPIOutDTO> {
+  ): Promise<ApplicationAssessmentStatusDetailsAPIOutDTO> {
     const application =
       await this.applicationService.getApplicationAssessmentStatusDetails(
         applicationId,
@@ -143,6 +143,7 @@ export class ApplicationAESTController extends BaseController {
       applicationId: application.id,
       originalAssessmentStatus: originalAssessment.studentAssessmentStatus,
       isApplicationArchived: application.isArchived,
+      applicationStatus: application.applicationStatus,
     };
   }
 }

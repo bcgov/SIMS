@@ -257,7 +257,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * @param userId user id who triggered the manual reassessment.
    * @returns the assessment created.
    */
-  async manualReassessment(
+  async createManualReassessment(
     applicationId: number,
     note: string,
     userId: number,
@@ -321,7 +321,6 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         updatedAt: now,
       } as Application;
       applicationToBeSaved.currentAssessment = {
-        application: applicationToBeSaved,
         offering: { id: oldCurrentAssessment.offering.id },
         studentAppeal: oldCurrentAssessment?.studentAppeal?.id
           ? { id: oldCurrentAssessment.studentAppeal.id }

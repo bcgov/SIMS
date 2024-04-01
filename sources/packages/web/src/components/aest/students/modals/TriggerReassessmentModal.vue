@@ -56,7 +56,7 @@ export default defineComponent({
       if (!validationResult.valid) {
         return;
       }
-      resolvePromise({ note: note.value }, { keepModalOpen: false });
+      resolvePromise({ note: note.value });
       reassessmentForm.value.reset();
     };
     return {

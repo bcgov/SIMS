@@ -37,7 +37,7 @@ import {
 import { ApplicationStatus, StudentAssessmentStatus } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 import { Role, IUserToken } from "../../auth";
-import { ManualReassessmentAPIInDTO } from "../application/models/application.dto";
+import { ManualReassessmentAPIInDTO } from "../assessment/models/assessment.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { StudentAssessmentService } from "../../services";
 
@@ -135,7 +135,7 @@ export class AssessmentAESTController extends BaseController {
    * @returns id of the assessment created.
    */
   @Roles(Role.AESTManualTriggerReassessment)
-  @Post(":applicationId/manual-reassessment")
+  @Post("application/:applicationId/manual-reassessment")
   @ApiNotFoundResponse({ description: "Application id not found." })
   @ApiUnprocessableEntityResponse({
     description:
@@ -150,7 +150,7 @@ export class AssessmentAESTController extends BaseController {
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     try {
       const manualAssessment =
-        await this.studentAssessmentService.manualReassessment(
+        await this.studentAssessmentService.createManualReassessment(
           applicationId,
           payload.note,
           userToken.userId,

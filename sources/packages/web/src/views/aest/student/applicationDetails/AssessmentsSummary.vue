@@ -146,7 +146,7 @@ export default defineComponent({
     };
 
     const reloadHistory = () => {
-      // Changing key's component makes it to re-render/reload.
+      // Changing component's key makes it to re-render/reload.
       historyKey.value++;
     };
 

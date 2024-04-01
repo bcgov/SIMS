@@ -83,3 +83,7 @@ export interface AwardDetailsAPIOutDTO {
    */
   finalAward?: Record<string, string | number>;
 }
+
+export interface ManualReassessmentAPIInDTO {
+  note: string;
+}
