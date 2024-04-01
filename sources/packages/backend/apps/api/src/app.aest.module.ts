@@ -29,6 +29,7 @@ import {
   DisbursementReceiptService,
   DisbursementScheduleService,
   ApplicationOfferingChangeRequestService,
+  StudentLoanBalanceService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -176,6 +177,7 @@ import {
     ApplicationOfferingChangeRequestService,
     ApplicationOfferingChangeRequestControllerService,
     AssessmentSequentialProcessingService,
+    StudentLoanBalanceService,
   ],
 })
 export class AppAESTModule {}

@@ -30,3 +30,5 @@ COMMENT ON COLUMN sims.student_loan_balances.updated_at IS 'Record update timest
 COMMENT ON COLUMN sims.student_loan_balances.creator IS 'Creator of the record.';
 
 COMMENT ON COLUMN sims.student_loan_balances.modifier IS 'Modifier of the record.';
+
+COMMENT ON CONSTRAINT student_balance_date ON sims.student_loan_balances IS 'Ensures student loan balance for a particular student and the balance date is unique.';

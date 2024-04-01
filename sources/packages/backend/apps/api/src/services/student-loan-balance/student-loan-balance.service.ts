@@ -1,16 +1,29 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Application, StudentLoanBalances } from "@sims/sims-db";
+import { StudentLoanBalances } from "@sims/sims-db";
 import { Repository } from "typeorm";
 
 @Injectable()
-export class ApplicationOfferingChangeRequestService {
+export class StudentLoanBalanceService {
   constructor(
-    @InjectRepository(Application)
+    @InjectRepository(StudentLoanBalances)
     private readonly studentLoanBalanceRepo: Repository<StudentLoanBalances>,
   ) {}
 
-  async getSummaryByStatus(): Promise<StudentLoanBalances[]> {
-    return [];
+  /**
+   * Get loan balance details of
+   * the given student upto 12 recent records.
+   * @param studentId student.
+   * @returns student loan balance.
+   */
+  async getStudentLoanBalance(
+    studentId: number,
+  ): Promise<StudentLoanBalances[]> {
+    return this.studentLoanBalanceRepo.find({
+      select: { id: true, balanceDate: true, cslBalance: true },
+      where: { student: { id: studentId } },
+      order: { balanceDate: "DESC" },
+      take: 12,
+    });
   }
 }

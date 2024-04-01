@@ -7,8 +7,8 @@ import {
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
-import { Student } from "./student.model";
 import { numericTransformer } from "../transformers/numeric.transformer";
+import { Student } from "./student.model";
 
 /**
  * Stores files information and content from NSLSC
@@ -19,13 +19,9 @@ export class StudentLoanBalances extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
   /**
-   * Student id associated with this Loan Balance.
-   */
-  studentId: number;
-  /**
    * Student associated with this Loan Balance.
    */
-  @ManyToOne(() => Student, { eager: false, cascade: false })
+  @ManyToOne(() => Student, { eager: false, cascade: false, nullable: false })
   @JoinColumn({
     name: "student_id",
     referencedColumnName: ColumnNames.ID,
@@ -47,6 +43,7 @@ export class StudentLoanBalances extends RecordDataModel {
   @Column({
     name: "balance_date",
     type: "date",
+    nullable: false,
   })
-  balanceDate: Date;
+  balanceDate: string;
 }
