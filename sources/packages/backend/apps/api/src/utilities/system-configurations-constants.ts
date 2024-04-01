@@ -103,3 +103,8 @@ export const AWARD_VALUE_CODE_LENGTH = 4;
  * weeks reaches the value in the const, a restriction will be generated.
  */
 export const SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS = 68;
+/**
+ * Maximum recent loan balance records considered essential for
+ * the loan balance statement.
+ */
+export const MAXIMUM_ESSENTIAL_LOAN_BALANCE_RECORDS = 12;

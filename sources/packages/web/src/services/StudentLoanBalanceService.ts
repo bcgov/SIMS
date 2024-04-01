@@ -14,7 +14,7 @@ export class StudentLoanBalanceService {
 
   /**
    * Get loan balance details of
-   * the given student up to 12 recent records received.
+   * the given student up to essential recent records received.
    * @param studentId student.
    * @returns student loan balance.
    */

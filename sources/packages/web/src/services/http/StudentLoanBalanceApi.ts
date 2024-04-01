@@ -7,7 +7,7 @@ import { StudentLoanBalanceAPIOutDTO } from "@/services/http/dto";
 export class StudentLoanBalanceApi extends HttpBaseClient {
   /**
    * Get loan balance details of
-   * the given student upto 12 recent records received.
+   * the given student upto essential recent records received.
    * @param studentId student.
    * @returns student loan balance.
    */

@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { StudentLoanBalances } from "@sims/sims-db";
 import { Repository } from "typeorm";
+import { MAXIMUM_ESSENTIAL_LOAN_BALANCE_RECORDS } from "../../utilities";
 
 @Injectable()
 export class StudentLoanBalanceService {
@@ -12,7 +13,7 @@ export class StudentLoanBalanceService {
 
   /**
    * Get loan balance details of
-   * the given student upto 12 recent records.
+   * the given student upto essential recent records.
    * @param studentId student.
    * @returns student loan balance.
    */
@@ -23,7 +24,7 @@ export class StudentLoanBalanceService {
       select: { id: true, balanceDate: true, cslBalance: true },
       where: { student: { id: studentId } },
       order: { balanceDate: "DESC" },
-      take: 12,
+      take: MAXIMUM_ESSENTIAL_LOAN_BALANCE_RECORDS,
     });
   }
 }

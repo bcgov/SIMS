@@ -31,7 +31,7 @@ export class StudentLoanBalanceAESTController extends BaseController {
 
   /**
    * Get loan balance details of
-   * the given student upto 12 recent records received.
+   * the given student upto essential recent records received.
    * @param studentId student.
    * @returns student loan balance.
    */
