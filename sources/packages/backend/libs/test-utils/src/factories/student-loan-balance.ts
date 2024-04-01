@@ -38,7 +38,7 @@ export function createFakeStudentLoanBalance(
  * @param numberOfRecords number of records to create.
  * @param options options.
  * - `cslBalance` loan balance amount.
- * @returns student loan balance records.
+ * @returns student loan balance to be persisted.
  */
 export function createFakeStudentBalances(
   studentId: number,
