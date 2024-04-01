@@ -1,0 +1,1 @@
+DROP TABLE sims.student_loan_balances;

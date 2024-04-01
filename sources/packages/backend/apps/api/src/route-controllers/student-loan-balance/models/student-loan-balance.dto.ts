@@ -1,7 +1,7 @@
 /**
  * Student loan balance details.
  */
-class StudentLoanBalanceDetailAPIOutDTO {
+export class StudentLoanBalanceDetailAPIOutDTO {
   balanceDate: string;
   cslBalance: number;
 }

@@ -57,6 +57,7 @@ export const TableNames = {
   Notifications: "notifications",
   QueueConfigurations: "queue_configurations",
   ApplicationOfferingChangeRequests: "application_offering_change_requests",
+  StudentLoanBalances: "student_loan_balances",
 };
 
 export const INSTITUTION_TYPE_BC_PUBLIC = 1;
