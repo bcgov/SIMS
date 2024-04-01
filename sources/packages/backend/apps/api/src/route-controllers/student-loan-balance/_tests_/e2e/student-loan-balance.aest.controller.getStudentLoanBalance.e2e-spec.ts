@@ -107,6 +107,12 @@ describe("StudentLoanBalanceAESTController(e2e)-getStudentLoanBalance", () => {
     await app?.close();
   });
 
+  /**
+   * Created student loan balance records.
+   * @param numberOfRecords number of records to create.
+   * @param cslBalance loan balance amount.
+   * @returns student loan balance records.
+   */
   function createStudentBalanceRecords(
     numberOfRecords: number,
     cslBalance: number,
