@@ -2715,7 +2715,7 @@
                     "strictDateValidation": false,
                     "multiple": false,
                     "unique": false,
-                    "onlyAvailableItems": false
+                    "onlyAvailableItems": true
                   },
                   "key": "parentsOtherDependants",
                   "type": "radio",
@@ -3228,7 +3228,7 @@
                             "strictDateValidation": false,
                             "multiple": false,
                             "unique": false,
-                            "onlyAvailableItems": false
+                            "onlyAvailableItems": true
                           },
                           "key": "attendingPostSecondarySchool",
                           "type": "radio",
@@ -3310,7 +3310,7 @@
                             "strictDateValidation": false,
                             "multiple": false,
                             "unique": false,
-                            "onlyAvailableItems": false
+                            "onlyAvailableItems": true
                           },
                           "key": "declaredOnTaxes",
                           "type": "radio",

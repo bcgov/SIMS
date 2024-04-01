@@ -2131,7 +2131,7 @@
                     "strictDateValidation": false,
                     "multiple": false,
                     "unique": false,
-                    "onlyAvailableItems": false
+                    "onlyAvailableItems": true
                   },
                   "key": "partnerEmployed",
                   "type": "radio",
@@ -2233,7 +2233,7 @@
                   "allowCalculateOverride": false,
                   "validate": {
                     "required": true,
-                    "onlyAvailableItems": false,
+                    "onlyAvailableItems": true,
                     "customMessage": "",
                     "custom": "",
                     "customPrivate": false,
@@ -2309,7 +2309,7 @@
                     "strictDateValidation": false,
                     "multiple": false,
                     "unique": false,
-                    "onlyAvailableItems": false
+                    "onlyAvailableItems": true
                   },
                   "key": "partnerLivingWithStudent",
                   "type": "radio",
@@ -2393,7 +2393,7 @@
                     "strictDateValidation": false,
                     "multiple": false,
                     "unique": false,
-                    "onlyAvailableItems": false
+                    "onlyAvailableItems": true
                   },
                   "key": "partnerFulltimeStudent",
                   "type": "radio",
@@ -2655,7 +2655,7 @@
                   "allowCalculateOverride": false,
                   "validate": {
                     "required": true,
-                    "onlyAvailableItems": false,
+                    "onlyAvailableItems": true,
                     "customMessage": "",
                     "custom": "",
                     "customPrivate": false,
@@ -2916,7 +2916,7 @@
                   "allowCalculateOverride": false,
                   "validate": {
                     "required": true,
-                    "onlyAvailableItems": false,
+                    "onlyAvailableItems": true,
                     "customMessage": "",
                     "custom": "",
                     "customPrivate": false,
@@ -3155,7 +3155,7 @@
                     "strictDateValidation": false,
                     "multiple": false,
                     "unique": false,
-                    "onlyAvailableItems": false
+                    "onlyAvailableItems": true
                   },
                   "key": "partnerReceivePDBenefits",
                   "type": "radio",
@@ -3422,7 +3422,7 @@
                   "allowCalculateOverride": false,
                   "validate": {
                     "required": true,
-                    "onlyAvailableItems": false,
+                    "onlyAvailableItems": true,
                     "customMessage": "",
                     "custom": "",
                     "customPrivate": false,
@@ -3662,7 +3662,7 @@
                     "strictDateValidation": false,
                     "multiple": false,
                     "unique": false,
-                    "onlyAvailableItems": false
+                    "onlyAvailableItems": true
                   },
                   "key": "partnerPaySupport",
                   "type": "radio",
@@ -3909,7 +3909,7 @@
                     "strictDateValidation": false,
                     "multiple": false,
                     "unique": false,
-                    "onlyAvailableItems": false
+                    "onlyAvailableItems": true
                   },
                   "key": "strongDurringYourStudyPeriodWillYourPartnerBeTakingCareOfEligibleDependantsStrong",
                   "type": "radio",
