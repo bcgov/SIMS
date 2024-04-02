@@ -77,15 +77,15 @@ describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
     expect(result).toContain("Process finalized with success.");
     // Expect the file was deleted from SFTP.
     expect(sftpClientMock.delete).toHaveBeenCalled();
-    const studentLoanBalances: StudentLoanBalance[] =
+    const studentLoanBalance: StudentLoanBalance[] =
       await db.studentLoanBalance.find({
         where: {
           studentId: student.id,
         },
       });
     // Expect student loan balance contains the student record.
-    expect(studentLoanBalances.length).toBe(1);
-    expect(studentLoanBalances).toStrictEqual([
+    expect(studentLoanBalance.length).toBe(1);
+    expect(studentLoanBalance).toStrictEqual([
       {
         balanceDate: "2023-12-31",
         cslBalance: 148154.0,
