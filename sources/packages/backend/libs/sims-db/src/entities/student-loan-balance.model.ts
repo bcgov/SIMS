@@ -1,7 +1,14 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { TableNames } from "../constant";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { numericTransformer } from "../transformers/numeric.transformer";
+import { Student } from "./student.model";
 
 /**
  * Stores files information and content from NSLSC
@@ -12,14 +19,14 @@ export class StudentLoanBalance extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
   /**
-   * Student id associated with this Loan Balance.
+   * Student associated with this Loan Balance.
    */
-  @Column({
+  @ManyToOne(() => Student, { eager: false, cascade: false, nullable: false })
+  @JoinColumn({
     name: "student_id",
-    type: "integer",
-    nullable: false,
+    referencedColumnName: ColumnNames.ID,
   })
-  studentId: number;
+  student: Student;
   /**
    * Loan balance value (a positive value indicates the amount the student owes as NSLSC Loan).
    */

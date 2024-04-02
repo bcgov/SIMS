@@ -66,7 +66,7 @@ describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
       student.sinValidation.sin = "900041310";
       await db.student.save(student);
     }
-    await db.studentLoanBalance.delete({ studentId: student.id });
+    await db.studentLoanBalance.delete({ student: student });
     // Queued job.
     const { job } = mockBullJob<void>();
     mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
@@ -80,7 +80,7 @@ describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
     const studentLoanBalance: StudentLoanBalance[] =
       await db.studentLoanBalance.find({
         where: {
-          studentId: student.id,
+          student: student,
         },
       });
     // Expect student loan balance contains the student record.
@@ -109,7 +109,7 @@ describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
     expect(sftpClientMock.delete).toHaveBeenCalled();
     const studentLoanBalancesCount = await db.studentLoanBalance.count({
       where: {
-        studentId: 25,
+        student: { id: 25 },
       },
     });
     // Expect student loan balance contains the student record.
