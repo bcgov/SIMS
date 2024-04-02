@@ -19,10 +19,8 @@ import {
   NoteType,
   StudentAssessmentStatus,
 } from "@sims/sims-db";
-import { application } from "express";
-import { Not } from "typeorm";
 
-describe("AssessmentStudentsController(e2e)-manualReassessment", () => {
+describe("AssessmentAESTController(e2e)-manualReassessment", () => {
   let app: INestApplication;
   let db: E2EDataSources;
 
@@ -213,7 +211,7 @@ describe("AssessmentStudentsController(e2e)-manualReassessment", () => {
 
   it("Should throw not found when the application is not found.", async () => {
     // Arrange
-    const endpoint = `/aest/assessment/application/9999999/manual-reassessment`;
+    const endpoint = "/aest/assessment/application/9999999/manual-reassessment";
     const payload = {
       note: "Testing manual reassessment with an inexistent application.",
     };
