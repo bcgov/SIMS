@@ -17,7 +17,6 @@ import { mockDownloadFiles } from "@sims/test-utils/mocks";
 import * as Client from "ssh2-sftp-client";
 import * as path from "path";
 import { StudentLoanBalancesScheduler } from "../student-loan-balances-queue.scheduler";
-import { StudentLoanBalance } from "@sims/sims-db";
 import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
 
 // Student loan balances received file mocks.
@@ -83,16 +82,15 @@ describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
     expect(result).toContain("Process finalized with success.");
     // Expect the file was deleted from SFTP.
     expect(sftpClientMock.delete).toHaveBeenCalled();
-    const studentLoanBalance: StudentLoanBalance[] =
-      await db.studentLoanBalance.find({
-        select: {
-          balanceDate: true,
-          cslBalance: true,
-        },
-        where: {
-          student: { id: student.id },
-        },
-      });
+    const studentLoanBalance = await db.studentLoanBalance.find({
+      select: {
+        balanceDate: true,
+        cslBalance: true,
+      },
+      where: {
+        student: { id: student.id },
+      },
+    });
     // Expect student loan balance contains the student record.
     expect(studentLoanBalance).toEqual([
       {
