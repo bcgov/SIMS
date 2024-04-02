@@ -1,4 +1,4 @@
-import { DeepMocked, createMock } from "@golevelup/ts-jest";
+import { DeepMocked } from "@golevelup/ts-jest";
 import { INestApplication } from "@nestjs/common";
 import { QueueNames, getISODateOnlyString } from "@sims/utilities";
 import {
@@ -15,7 +15,6 @@ import {
 } from "@sims/test-utils";
 import { mockDownloadFiles } from "@sims/test-utils/mocks";
 import * as Client from "ssh2-sftp-client";
-import { Job } from "bull";
 import * as path from "path";
 import { StudentLoanBalancesScheduler } from "../student-loan-balances-queue.scheduler";
 import { StudentLoanBalance } from "@sims/sims-db";
@@ -67,12 +66,20 @@ describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
       sinValidation,
     });
     // Queued job.
-    const { job } = mockBullJob<void>();
+    const mockedJob = mockBullJob<void>();
     mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
     // Act
-    const result = await processor.processStudentLoanBalancesFiles(job);
+    const result = await processor.processStudentLoanBalancesFiles(
+      mockedJob.job,
+    );
     // Assert
     expect(result.length).toBe(1);
+    expect(
+      mockedJob.containLogMessages([
+        `File contains 1 Student Loan balances.`,
+        `Inserted Student Loan balances file ${STUDENT_LOAN_BALANCES_FILENAME}.`,
+      ]),
+    ).toBe(true);
     expect(result).toContain("Process finalized with success.");
     // Expect the file was deleted from SFTP.
     expect(sftpClientMock.delete).toHaveBeenCalled();
@@ -87,7 +94,7 @@ describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
         },
       });
     // Expect student loan balance contains the student record.
-    expect(studentLoanBalance).toStrictEqual([
+    expect(studentLoanBalance).toEqual([
       {
         balanceDate: "2023-12-31",
         cslBalance: 148154,
@@ -98,15 +105,22 @@ describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
   it("Should not add monthly loan balance record when the student is not found.", async () => {
     // Arrange
     // Queued job.
-    const { job } = mockBullJob<void>();
+    const mockedJob = mockBullJob<void>();
     mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
     // Act
-    const result = await processor.processStudentLoanBalancesFiles(job);
+    const result = await processor.processStudentLoanBalancesFiles(
+      mockedJob.job,
+    );
     // Assert
     expect(result.length).toBe(3);
     expect(result).toContain(
       "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
     );
+    expect(
+      mockedJob.containLogMessages([
+        `Error processing file ${STUDENT_LOAN_BALANCES_FILENAME}.`,
+      ]),
+    ).toBe(true);
     // Expect the file was deleted from SFTP.
     expect(sftpClientMock.delete).toHaveBeenCalled();
     const studentLoanBalancesCount = await db.studentLoanBalance.count({
