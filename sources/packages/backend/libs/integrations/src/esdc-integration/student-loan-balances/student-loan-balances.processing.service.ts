@@ -32,7 +32,6 @@ export class StudentLoanBalancesProcessingService {
   /**
    * Download all files from SFTP and process them all.
    * @param parentProcessSummary parent process summary.
-   * @returns Summary with what was processed and the list of all errors, if any.
    */
   async processStudentLoanBalances(
     parentProcessSummary: ProcessSummary,
@@ -56,7 +55,6 @@ export class StudentLoanBalancesProcessingService {
   /**
    * Process each individual Student Loan Balances response file from the SFTP.
    * @param remoteFilePath Student Loan Balances response file to be processed.
-   * @returns process summary and errors summary.
    */
   private async processFile(
     remoteFilePath: string,
@@ -71,7 +69,7 @@ export class StudentLoanBalancesProcessingService {
         );
     } catch (error) {
       this.logger.error(error);
-      childrenProcessSummary.error(
+      childrenProcessSummary.warn(
         `Error downloading file ${remoteFilePath}. Error: ${error}`,
       );
     }
@@ -109,7 +107,7 @@ export class StudentLoanBalancesProcessingService {
         }
       });
       childrenProcessSummary.info(
-        `Inserted Student Loan balances file  ${fileName}.`,
+        `Inserted Student Loan balances file ${fileName}.`,
       );
     } catch (error) {
       // Log the error but allow the process to continue.
