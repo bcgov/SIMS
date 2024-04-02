@@ -8,6 +8,6 @@ VALUES
         "retryInterval": 180000,
         "dashboardReadonly": false,
         "cron": "0 17 * * *",
-        "cleanUpPeriod": 2592000000
+        "cleanUpPeriod": 5184000000
     }' :: json
   );
