@@ -101,7 +101,7 @@ export class StudentLoanBalancesProcessingService {
           );
           // If student not found continue.
           if (!student) {
-            childrenProcessSummary.warn(
+            childrenProcessSummary.info(
               `Student not found for line ${studentLoanBalanceRecord.lineNumber}.`,
             );
             continue;

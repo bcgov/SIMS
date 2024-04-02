@@ -111,9 +111,7 @@ describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
     );
     // Assert
     expect(result.length).toBe(3);
-    expect(result).toContain(
-      "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-    );
+    expect(result).toContain("Process finalized with success.");
     expect(
       mockedJob.containLogMessages([
         `Error processing file ${STUDENT_LOAN_BALANCES_FILENAME}.`,
