@@ -109,7 +109,7 @@ export class StudentLoanBalancesProcessingService {
           const auditUser = { id: auditUserId } as User;
           const now = new Date();
           await studentLoanBalancesRepo.insert({
-            studentId: student.id,
+            student: student,
             cslBalance: studentLoanBalanceRecord.cslBalance,
             balanceDate: getISODateOnlyString(
               studentLoanBalancesSFTPResponseFile.header.balanceDate,
