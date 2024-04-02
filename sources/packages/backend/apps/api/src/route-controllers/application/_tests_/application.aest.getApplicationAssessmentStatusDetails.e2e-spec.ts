@@ -49,7 +49,7 @@ describe("ApplicationAESTController(e2e)-getApplicationAssessmentStatusDetails",
       });
   });
 
-  it("Should throw not found error when cannot find application.", async () => {
+  it("Should throw not found error when application is not found.", async () => {
     // Arrange
     const endpoint = "/aest/application/99999999/assessment-details";
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
