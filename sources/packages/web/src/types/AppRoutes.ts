@@ -104,7 +104,7 @@ export enum AppRoutes {
   NotAllowedUser = "login/not-allowed-user",
   StudentNotes = "student-notes/:studentId",
   StudentRestrictions = "student-restrictions/:studentId",
-  Overawards = "overawards",
+  Balances = "balances",
   StudentDetail = "student/:studentId",
   StudentProfile = "profile",
   Applications = "applications",

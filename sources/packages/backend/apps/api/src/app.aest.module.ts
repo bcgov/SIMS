@@ -29,6 +29,7 @@ import {
   DisbursementReceiptService,
   DisbursementScheduleService,
   ApplicationOfferingChangeRequestService,
+  StudentLoanBalanceService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -69,6 +70,7 @@ import {
   RestrictionControllerService,
   ApplicationOfferingChangeRequestAESTController,
   ApplicationOfferingChangeRequestControllerService,
+  StudentLoanBalanceAESTController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -113,6 +115,7 @@ import {
     ConfirmationOfEnrollmentAESTController,
     OverawardAESTController,
     ApplicationOfferingChangeRequestAESTController,
+    StudentLoanBalanceAESTController,
   ],
   providers: [
     ApplicationExceptionControllerService,
@@ -174,6 +177,7 @@ import {
     ApplicationOfferingChangeRequestService,
     ApplicationOfferingChangeRequestControllerService,
     AssessmentSequentialProcessingService,
+    StudentLoanBalanceService,
   ],
 })
 export class AppAESTModule {}

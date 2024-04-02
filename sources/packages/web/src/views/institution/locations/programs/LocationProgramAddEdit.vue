@@ -28,9 +28,8 @@
     <formio-container
       formName="educationProgram"
       :formData="programData"
-      :readOnly="isReadonly"
       @submitted="submitted"
-      ><template #actions="{ submit }" v-if="!isReadonly">
+      ><template #actions="{ submit }" v-if="!programData.isReadonly">
         <footer-buttons
           :processing="processing"
           primaryLabel="Submit"
@@ -48,7 +47,7 @@ import {
   InstitutionRoutesConst,
   AESTRoutesConst,
 } from "@/constants/routes/RouteConstants";
-import { onMounted, ref, computed, defineComponent } from "vue";
+import { ref, computed, defineComponent, isReadonly, onMounted } from "vue";
 import { ApiProcessError, ClientIdType, FormIOForm } from "@/types";
 import { useFormioUtils, useSnackBar } from "@/composables";
 import { AuthService } from "@/services/AuthService";
@@ -58,6 +57,10 @@ import {
   EducationProgramAPIOutDTO,
 } from "@/services/http/dto";
 import { InstitutionService } from "@/services/InstitutionService";
+
+type EducationProgramFormData = EducationProgramAPIOutDTO & {
+  isReadonly: boolean;
+};
 
 export default defineComponent({
   props: {
@@ -76,23 +79,24 @@ export default defineComponent({
     const { excludeExtraneousValues } = useFormioUtils();
     const router = useRouter();
     const clientType = computed(() => AuthService.shared.authClientType);
-    const programData = ref({} as EducationProgramAPIOutDTO);
+    const programData = ref({} as EducationProgramFormData);
     const isInstitutionUser = computed(() => {
       return clientType.value === ClientIdType.Institution;
     });
     const isAESTUser = computed(() => {
       return clientType.value === ClientIdType.AEST;
     });
-    const isReadonly = computed(() => {
-      return isAESTUser.value;
-    });
 
     const loadFormData = async () => {
       if (props.programId) {
-        programData.value =
+        const educationProgram =
           await EducationProgramService.shared.getEducationProgram(
             props.programId,
           );
+        programData.value = {
+          ...educationProgram,
+          isReadonly: isAESTUser.value || !educationProgram.isActive,
+        };
       } else {
         // Initialize programData with institution profile data.
         const institutionProfile = await InstitutionService.shared.getDetail();
@@ -100,7 +104,8 @@ export default defineComponent({
           isBCPrivate: institutionProfile.isBCPrivate,
           isBCPublic: institutionProfile.isBCPublic,
           hasOfferings: false,
-        } as EducationProgramAPIOutDTO;
+          isReadonly: false,
+        } as EducationProgramFormData;
       }
     };
 
@@ -172,9 +177,9 @@ export default defineComponent({
     });
 
     const subTitle = computed(() => {
-      if (isReadonly.value) {
+      if (programData.value.isReadonly) {
         return "View Program";
-      } else if (props.programId && !isReadonly.value) {
+      } else if (props.programId && !programData.value.isReadonly) {
         return "Edit Program";
       } else if (!props?.programId) {
         return "Create Program";

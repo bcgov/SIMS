@@ -3882,7 +3882,7 @@
                 "strictDateValidation": false,
                 "multiple": false,
                 "unique": false,
-                "onlyAvailableItems": false
+                "onlyAvailableItems": true
               },
               "key": "isCostDifferent",
               "type": "radio",

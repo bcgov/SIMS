@@ -31,7 +31,7 @@
             >
               <template v-for="(item, index) in items" :key="index">
                 <v-list-item :value="index" @click="item.command">
-                  <v-list-item-title :class="item.textColor">
+                  <v-list-item-title>
                     <span class="label-bold">{{ item.label }}</span>
                   </v-list-item-title>
                 </v-list-item>

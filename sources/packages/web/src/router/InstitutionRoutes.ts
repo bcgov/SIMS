@@ -46,7 +46,7 @@ import InstitutionStudentApplications from "@/views/institution/student/Institut
 import InstitutionApplicationView from "@/views/institution/student/InstitutionStudentApplicationView.vue";
 import InstitutionStudentRestrictions from "@/views/institution/student/InstitutionStudentRestrictions.vue";
 import InstitutionStudentFileUploads from "@/views/institution/student/InstitutionStudentFileUploads.vue";
-import InstitutionStudentOverawards from "@/views/institution/student/InstitutionStudentOverawards.vue";
+import InstitutionStudentBalances from "@/views/institution/student/InstitutionStudentBalances.vue";
 import InstitutionStudentNotes from "@/views/institution/student/InstitutionStudentNotes.vue";
 import InstitutionAssessmentsSummary from "@/views/institution/student/applicationDetails/InstitutionAssessmentsSummary.vue";
 import ApplicationExceptions from "@/views/institution/student/applicationDetails/ApplicationExceptions.vue";
@@ -652,10 +652,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             },
           },
           {
-            path: AppRoutes.Overawards,
-            name: InstitutionRoutesConst.STUDENT_OVERAWARDS,
+            path: AppRoutes.Balances,
+            name: InstitutionRoutesConst.STUDENT_BALANCES,
             props: true,
-            component: InstitutionStudentOverawards,
+            component: InstitutionStudentBalances,
             meta: {
               clientType: ClientIdType.Institution,
               institutionUserTypes: [

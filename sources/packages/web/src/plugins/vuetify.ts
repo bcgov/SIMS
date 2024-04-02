@@ -51,6 +51,7 @@ export default createVuetify({
           warning: "#ff7a00",
           success: "#16c92e",
           error: "#e4222e",
+          danger: "#e4222e",
           "info-bg": "#F0EEF9",
           "warning-bg": "#FFF9ED",
           "success-bg": "#EEFFEF",

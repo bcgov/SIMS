@@ -5,12 +5,14 @@ import {
   Assessment,
   AssessmentStatus,
   AssessmentTriggerType,
+  NOTE_DESCRIPTION_MAX_LENGTH,
   OfferingIntensity,
   OfferingStatus,
   StudentAppealStatus,
   StudentAssessmentStatus,
 } from "@sims/sims-db";
 import { ApiProperty } from "@nestjs/swagger";
+import { IsNotEmpty, MaxLength } from "class-validator";
 
 export enum RequestAssessmentTypeAPIOutDTO {
   StudentException = "Student exceptions",
@@ -91,4 +93,10 @@ export class AwardDetailsAPIOutDTO {
       "If the conditions to have a receipt are not match this information will not be available.",
   })
   finalAward?: Record<string, string | number>;
+}
+
+export class ManualReassessmentAPIInDTO {
+  @IsNotEmpty()
+  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
+  note: string;
 }

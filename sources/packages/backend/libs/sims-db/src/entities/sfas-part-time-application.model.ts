@@ -38,7 +38,7 @@ export class SFASPartTimeApplications extends BaseSFASApplicationModel {
     name: "csgp_award",
     nullable: true,
   })
-  CSGPAward: number;
+  csgpAward?: number;
   /**
    * SBSD Award Amount (sail_extract_data.sail_bcsl_sbsd_award_amt ).
    */
@@ -46,7 +46,7 @@ export class SFASPartTimeApplications extends BaseSFASApplicationModel {
     name: "sbsd_award",
     nullable: true,
   })
-  SBSDAward: number;
+  sbsdAward?: number;
   /**
    * Date that the record was extracted from SFAS.
    */
@@ -56,4 +56,45 @@ export class SFASPartTimeApplications extends BaseSFASApplicationModel {
     nullable: false,
   })
   extractedAt: Date;
+  /**
+   * CSPT Award Amount (sail_extract_data.sail_cspt_amt).
+   */
+  @Column({
+    name: "cspt_award",
+    nullable: true,
+  })
+  csptAward?: number;
+  /**
+   * CSGD Award Amount (sail_extract_data.sail_ptdep_amt).
+   */
+  @Column({
+    name: "csgd_award",
+    nullable: true,
+  })
+  csgdAward?: number;
+  /**
+   * BCAG-PT Amount (sail_extract_data.sail_bcag_amt).
+   */
+  @Column({
+    name: "bcag_award",
+    nullable: true,
+  })
+  bcagAward?: number;
+  /**
+   * CSLP Amount (sail_extract_data.sail_cslp_amt).
+   */
+  @Column({
+    name: "cslp_award",
+    nullable: true,
+  })
+  cslpAward?: number;
+  /**
+   * Program Year ID associated with application.
+   * Example: 20202021.
+   */
+  @Column({
+    name: "program_year_id",
+    nullable: true,
+  })
+  programYearId?: number;
 }

@@ -5,6 +5,7 @@ export enum Role {
   /**
    * AEST roles.
    */
+  AESTManualTriggerReassessment = "aest-manual-trigger-reassessment",
   AESTReports = "aest-reports",
   AESTCreateInstitution = "aest-create-institution",
   StudentAddRestriction = "student-add-restriction",
@@ -31,6 +32,7 @@ export enum Role {
   InstitutionApproveDeclineDesignation = "institution-approve-decline-designation",
   InstitutionApproveDeclineOfferingChanges = "institution-approve-decline-offering-changes",
   InstitutionApproveDeclineApplicationOfferingChangeRequest = "institution-approve-decline-application-offering-change-request",
+  InstitutionDeactivateEducationProgram = "institution-deactivate-education-program",
   StudentReissueMSFAA = "student-reissue-msfaa",
   StudentUpdateDisabilityStatus = "student-update-disability-status",
 }

@@ -95,10 +95,10 @@ export default defineComponent({
         }),
       },
       {
-        label: "Overawards",
+        label: "Balances",
         icon: "fa:fa fa-circle-dollar-to-slot",
         command: () => ({
-          name: AESTRoutesConst.STUDENT_OVERAWARDS,
+          name: AESTRoutesConst.STUDENT_BALANCES,
           params: { studentId: props.studentId },
         }),
       },

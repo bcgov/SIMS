@@ -17,7 +17,7 @@
         class="ml-2"
         variant="elevated"
         data-cy="primaryFooterButton"
-        color="primary"
+        :color="primaryButtonColor"
         @click="$emit('primaryClick')"
         :loading="processing"
       >
@@ -55,6 +55,11 @@ export default defineComponent({
       type: Boolean,
       required: false,
       default: true,
+    },
+    primaryButtonColor: {
+      type: String,
+      required: false,
+      default: "primary",
     },
     justify: {
       type: String,

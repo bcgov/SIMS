@@ -91,6 +91,7 @@
     "typescript.preferences.importModuleSpecifier": "non-relative",
     "cSpell.words": [
       "AEST",
+      "composables",
       "ESDC",
       "MSFAA",
       "NSLSC",
@@ -98,7 +99,11 @@
       "SABC",
       "SFAS",
       "timestamptz",
-      "typeorm"
-    ]
+      "typeorm",
+      "CSLP"
+    ],
+    "[json]": {
+      "editor.defaultFormatter": "vscode.json-language-features"
+    }
   }
 }

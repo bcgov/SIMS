@@ -19,6 +19,7 @@ import {
   ApplicationProgressDetailsAPIOutDTO,
   EnrolmentApplicationDetailsAPIOutDTO,
   CompletedApplicationDetailsAPIOutDTO,
+  ApplicationAssessmentStatusDetailsAPIOutDTO,
 } from "@/services/http/dto";
 
 export class ApplicationApi extends HttpBaseClient {
@@ -191,6 +192,19 @@ export class ApplicationApi extends HttpBaseClient {
     await this.postCall(
       this.addClientRoot(`application/${applicationId}/reissue-msfaa`),
       null,
+    );
+  }
+
+  /**
+   * Gets application and assessment status details.
+   * @param applicationId application id.
+   * @returns application and assessment details.
+   */
+  async getApplicationAssessmentStatusDetails(
+    applicationId: number,
+  ): Promise<ApplicationAssessmentStatusDetailsAPIOutDTO> {
+    return this.getCall(
+      this.addClientRoot(`application/${applicationId}/assessment-details`),
     );
   }
 }

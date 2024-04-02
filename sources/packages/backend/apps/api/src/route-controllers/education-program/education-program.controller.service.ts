@@ -27,7 +27,6 @@ import {
   EDUCATION_PROGRAM_INVALID_OPERATION,
 } from "../../constants";
 import { ApiProcessError } from "../../types";
-import { ApiUnprocessableEntityResponse } from "@nestjs/swagger";
 import { SaveEducationProgram } from "../../services/education-program/education-program.service.models";
 import { InstitutionService } from "../../services/institution/institution.service";
 
@@ -71,6 +70,7 @@ export class EducationProgramControllerService {
         locationId: program.locationId,
         locationName: program.locationName,
         programStatus: program.programStatus,
+        isActive: program.isActive,
         credentialTypeToDisplay: credentialTypeToDisplay(
           program.credentialType,
         ),
@@ -87,11 +87,6 @@ export class EducationProgramControllerService {
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @returns inserted/updated program.
    */
-  @ApiUnprocessableEntityResponse({
-    description:
-      "Not able to a save the program due to an invalid request or " +
-      "SABC code is duplicated.",
-  })
   async saveProgram(
     payload: EducationProgramAPIInDTO,
     institutionId: number,
@@ -128,13 +123,15 @@ export class EducationProgramControllerService {
       );
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
-        if (error.name === EDUCATION_PROGRAM_NOT_FOUND) {
-          throw new NotFoundException(error.message);
-        }
-        if (error.name === DUPLICATE_SABC_CODE) {
-          throw new UnprocessableEntityException(
-            new ApiProcessError(error.message, error.name),
-          );
+        switch (error.name) {
+          case EDUCATION_PROGRAM_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case EDUCATION_PROGRAM_INVALID_OPERATION:
+            throw new UnprocessableEntityException(error.message);
+          case DUPLICATE_SABC_CODE:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
         }
       }
       throw error;
@@ -224,6 +221,7 @@ export class EducationProgramControllerService {
       isBCPublic: program.institution.institutionType.isBCPublic,
       isBCPrivate: program.institution.institutionType.isBCPrivate,
       hasOfferings,
+      isActive: program.isActive,
     };
   }
 

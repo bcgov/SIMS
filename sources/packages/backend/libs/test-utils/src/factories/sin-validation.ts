@@ -1,9 +1,20 @@
 import { SINValidation, Student } from "@sims/sims-db";
 import * as faker from "faker";
 
-export function createFakeSINValidation(relations?: {
-  student?: Student;
-}): SINValidation {
+/**
+ * Creates a fake SINValidation.
+ * @param relations SINValidation relations.
+ * `student` related student.
+ * @param options SINValidation options.
+ * `initialValue` SINValidation initial value.
+ * @returns persisted SINValidation with relations provided.
+ */
+export function createFakeSINValidation(
+  relations?: {
+    student?: Student;
+  },
+  options?: { initialValue?: Partial<SINValidation> },
+): SINValidation {
   const now = new Date();
   const sinValidation = new SINValidation();
   // Generated an invalid SIN and avoiding a number starting with 9
@@ -19,7 +30,7 @@ export function createFakeSINValidation(relations?: {
   sinValidation.surnameSent = null;
   sinValidation.dobSent = null;
   sinValidation.genderSent = null;
-  sinValidation.isValidSIN = true;
+  sinValidation.isValidSIN = options?.initialValue?.isValidSIN ?? true;
   sinValidation.sinStatus = "1";
   sinValidation.validSINCheck = "Y";
   sinValidation.validBirthdateCheck = "Y";

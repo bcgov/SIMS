@@ -41,9 +41,14 @@ export class SFASPartTimeApplicationsService
     application.id = sfasApplication.applicationId;
     application.startDate = getISODateOnlyString(sfasApplication.startDate);
     application.endDate = getISODateOnlyString(sfasApplication.endDate);
-    application.CSGPAward = sfasApplication.CSGPAward;
-    application.SBSDAward = sfasApplication.SBSDAward;
+    application.csgpAward = sfasApplication.csgpAward;
+    application.sbsdAward = sfasApplication.sbsdAward;
     application.extractedAt = getUTC(extractedDate);
+    application.csptAward = sfasApplication.csptAward;
+    application.csgdAward = sfasApplication.csgdAward;
+    application.bcagAward = sfasApplication.bcagAward;
+    application.cslpAward = sfasApplication.cslpAward;
+    application.programYearId = sfasApplication.programYearId;
     await this.repo.save(application, { reload: false, transaction: false });
   }
 

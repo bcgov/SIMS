@@ -14,6 +14,7 @@ import {
   AssessmentTriggerType,
   StudentScholasticStandingChangeType,
   ApplicationOfferingChangeRequestStatus,
+  StudentAssessmentStatus,
 } from "@sims/sims-db";
 import { JsonMaxSize } from "../../../utilities/class-validation";
 import { JSON_20KB } from "../../../constants";
@@ -181,4 +182,11 @@ export class CompletedApplicationDetailsAPIOutDTO extends EnrolmentApplicationDe
   scholasticStandingChangeType?: StudentScholasticStandingChangeType;
   applicationOfferingChangeRequestId?: number;
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
+}
+
+export class ApplicationAssessmentStatusDetailsAPIOutDTO {
+  applicationId: number;
+  originalAssessmentStatus: StudentAssessmentStatus;
+  isApplicationArchived: boolean;
+  applicationStatus: ApplicationStatus;
 }

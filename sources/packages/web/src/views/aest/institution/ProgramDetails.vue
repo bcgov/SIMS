@@ -38,11 +38,12 @@
         status: educationProgram.programStatus,
       }"
     />
-    <ManageProgramAndOfferingSummary
+    <manage-program-and-offering-summary
       :programId="programId"
       :locationId="locationId"
       :educationProgram="educationProgram"
       :institutionId="institutionId"
+      @program-data-updated="programDataUpdated"
     />
     <!-- approve program modal -->
     <ApproveProgramModal ref="approveProgramModal" />
@@ -153,6 +154,8 @@ export default defineComponent({
       if (declineProgramData) await submitDeclineProgram(declineProgramData);
     };
 
+    const programDataUpdated = () => getEducationProgramAndOffering();
+
     onMounted(getEducationProgramAndOffering);
 
     return {
@@ -164,6 +167,7 @@ export default defineComponent({
       declineProgramModal,
       declineProgram,
       Role,
+      programDataUpdated,
     };
   },
 });

@@ -14,6 +14,7 @@ import {
   NotificationMessageType,
 } from "@sims/sims-db";
 import { dateDifference } from "@sims/utilities";
+import { ProcessSummary } from "@sims/utilities/logger";
 import { EntityManager } from "typeorm";
 
 interface NotificationData {
@@ -31,10 +32,12 @@ export class ECertNotificationService {
    * Checks and creates disbursement blocked notification.
    * @param disbursementId disbursement id.
    * @param entityManager entity manager to execute in transaction.
+   * @param parentLog cumulative process log.
    */
   async createDisbursementBlockedNotification(
     disbursementId: number,
     entityManager: EntityManager,
+    parentLog: ProcessSummary,
   ): Promise<void> {
     const shouldCreateNotification =
       await this.shouldCreateDisbursementBlockedNotification(
@@ -42,9 +45,17 @@ export class ECertNotificationService {
         entityManager,
       );
     if (shouldCreateNotification) {
+      const notificationLog = new ProcessSummary();
+      parentLog.children(notificationLog);
+      notificationLog.info(
+        `Creating notifications for disbursement id: ${disbursementId} for student and ministry.`,
+      );
       await this.createDisbursementBlockedNotifications(
         disbursementId,
         entityManager,
+      );
+      notificationLog.info(
+        `Completed creating notifications for disbursement id: ${disbursementId} for student and ministry.`,
       );
     }
   }

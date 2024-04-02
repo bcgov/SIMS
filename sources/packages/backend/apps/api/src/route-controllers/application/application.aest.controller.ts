@@ -9,7 +9,10 @@ import {
 } from "@nestjs/common";
 import { ApplicationService } from "../../services";
 import BaseController from "../BaseController";
-import { ApplicationBaseAPIOutDTO } from "./models/application.dto";
+import {
+  ApplicationAssessmentStatusDetailsAPIOutDTO,
+  ApplicationBaseAPIOutDTO,
+} from "./models/application.dto";
 import {
   AllowAuthorizedParty,
   Groups,
@@ -116,5 +119,31 @@ export class ApplicationAESTController extends BaseController {
       }
       throw error;
     }
+  }
+
+  /**
+   * Gets application and assessment status details.
+   * @param applicationId application id.
+   * @returns application and assessment status details.
+   */
+  @Get(":applicationId/assessment-details")
+  @ApiNotFoundResponse({ description: "Application not found." })
+  async getApplicationAssessmentStatusDetails(
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+  ): Promise<ApplicationAssessmentStatusDetailsAPIOutDTO> {
+    const application =
+      await this.applicationService.getApplicationAssessmentStatusDetails(
+        applicationId,
+      );
+    if (!application) {
+      throw new NotFoundException("Application not found.");
+    }
+    const [originalAssessment] = application.studentAssessments;
+    return {
+      applicationId: application.id,
+      originalAssessmentStatus: originalAssessment.studentAssessmentStatus,
+      isApplicationArchived: application.isArchived,
+      applicationStatus: application.applicationStatus,
+    };
   }
 }

@@ -58,6 +58,7 @@ export class EducationProgramAPIOutDTO {
   assessedDate?: Date;
   assessedBy?: string;
   effectiveEndDate?: string;
+  isActive: boolean;
 }
 
 export class StudentEducationProgramAPIOutDTO {
@@ -80,6 +81,7 @@ export class EducationProgramsSummaryAPIOutDTO {
   locationName: string;
   locationId: number;
   programStatus: ProgramStatus;
+  isActive: boolean;
 }
 
 /**
