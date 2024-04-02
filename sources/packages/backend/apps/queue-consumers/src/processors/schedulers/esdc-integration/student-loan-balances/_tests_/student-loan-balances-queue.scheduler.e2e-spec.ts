@@ -79,7 +79,6 @@ describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
     const studentLoanBalance: StudentLoanBalance[] =
       await db.studentLoanBalance.find({
         select: {
-          student: { id: true },
           balanceDate: true,
           cslBalance: true,
         },
@@ -91,9 +90,8 @@ describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
     expect(studentLoanBalance.length).toBe(1);
     expect(studentLoanBalance).toStrictEqual([
       {
-        student: { id: student.id },
         balanceDate: "2023-12-31",
-        cslBalance: 148154.0,
+        cslBalance: 148154,
       },
     ]);
   });
