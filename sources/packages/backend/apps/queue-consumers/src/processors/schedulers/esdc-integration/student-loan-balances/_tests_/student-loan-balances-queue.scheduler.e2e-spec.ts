@@ -72,7 +72,7 @@ describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
     // Act
     const result = await processor.processStudentLoanBalancesFiles(job);
     // Assert
-    //expect(result.length).toBe(1);
+    expect(result.length).toBe(1);
     expect(result).toContain("Process finalized with success.");
     // Expect the file was deleted from SFTP.
     expect(sftpClientMock.delete).toHaveBeenCalled();
@@ -87,7 +87,6 @@ describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
         },
       });
     // Expect student loan balance contains the student record.
-    expect(studentLoanBalance.length).toBe(1);
     expect(studentLoanBalance).toStrictEqual([
       {
         balanceDate: "2023-12-31",
@@ -96,10 +95,10 @@ describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
     ]);
   });
 
-  it("Should not add monthly loan balance record if the student is not found.", async () => {
+  it("Should not add monthly loan balance record when the student is not found.", async () => {
     // Arrange
     // Queued job.
-    const job = createMock<Job<void>>();
+    const { job } = mockBullJob<void>();
     mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
     // Act
     const result = await processor.processStudentLoanBalancesFiles(job);

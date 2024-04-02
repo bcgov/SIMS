@@ -40,7 +40,6 @@ export class StudentLoanBalancesProcessingService {
     auditUserId: number,
   ): Promise<void> {
     // Process summary to be populated by each enqueueing workflow call.
-    const serviceProcessSummary = new ProcessSummary();
     const remoteFilePaths =
       await this.studentLoanBalancesIntegrationService.getResponseFilesFullPath(
         this.esdcConfig.ftpResponseFolder,
@@ -50,12 +49,13 @@ export class StudentLoanBalancesProcessingService {
         ),
       );
     for (const remoteFilePath of remoteFilePaths) {
+      const serviceProcessSummary = new ProcessSummary();
+      parentProcessSummary.children(serviceProcessSummary);
       await this.processFile(
         remoteFilePath,
         serviceProcessSummary,
         auditUserId,
       );
-      parentProcessSummary.children(serviceProcessSummary);
     }
   }
 

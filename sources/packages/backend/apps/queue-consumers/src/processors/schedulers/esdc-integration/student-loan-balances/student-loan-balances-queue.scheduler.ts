@@ -42,8 +42,10 @@ export class StudentLoanBalancesScheduler extends BaseScheduler<void> {
     try {
       processSummary.info("Processing Student Loan Balances files.");
       const auditUser = this.systemUsersService.systemUser;
+      const serviceProcessSummary = new ProcessSummary();
+      processSummary.children(serviceProcessSummary);
       await this.studentLoanBalancesProcessingService.processStudentLoanBalances(
-        processSummary,
+        serviceProcessSummary,
         auditUser.id,
       );
       processSummary.info("Completed processing Student Loan Balances files.");
