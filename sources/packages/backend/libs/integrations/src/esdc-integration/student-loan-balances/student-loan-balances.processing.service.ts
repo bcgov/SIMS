@@ -49,11 +49,11 @@ export class StudentLoanBalancesProcessingService {
         ),
       );
     for (const remoteFilePath of remoteFilePaths) {
-      const serviceProcessSummary = new ProcessSummary();
-      parentProcessSummary.children(serviceProcessSummary);
+      const fileProcessingSummary = new ProcessSummary();
+      parentProcessSummary.children(fileProcessingSummary);
       await this.processFile(
         remoteFilePath,
-        serviceProcessSummary,
+        fileProcessingSummary,
         auditUserId,
       );
     }
@@ -79,7 +79,7 @@ export class StudentLoanBalancesProcessingService {
         );
     } catch (error) {
       this.logger.error(error);
-      childrenProcessSummary.warn(
+      childrenProcessSummary.error(
         `Error downloading file ${remoteFilePath}. Error: ${error}`,
       );
     }
@@ -101,7 +101,7 @@ export class StudentLoanBalancesProcessingService {
           );
           // If student not found continue.
           if (!student) {
-            childrenProcessSummary.error(
+            childrenProcessSummary.warn(
               `Student not found for line ${studentLoanBalanceRecord.lineNumber}.`,
             );
             continue;
