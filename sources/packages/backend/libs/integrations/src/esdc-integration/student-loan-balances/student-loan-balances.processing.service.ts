@@ -11,7 +11,7 @@ import {
 } from "@sims/utilities/logger";
 import { getISODateOnlyString } from "@sims/utilities";
 import { DataSource } from "typeorm";
-import { StudentLoanBalance } from "@sims/sims-db";
+import { StudentLoanBalance, User } from "@sims/sims-db";
 
 /**
  * Manages to process the Student Loan Balances files
@@ -32,9 +32,12 @@ export class StudentLoanBalancesProcessingService {
   /**
    * Download all files from SFTP and process them all.
    * @param parentProcessSummary parent process summary.
+   * @param auditUserId user that should be considered the one that is
+   * causing the changes.
    */
   async processStudentLoanBalances(
     parentProcessSummary: ProcessSummary,
+    auditUserId: number,
   ): Promise<void> {
     // Process summary to be populated by each enqueueing workflow call.
     const serviceProcessSummary = new ProcessSummary();
@@ -47,7 +50,11 @@ export class StudentLoanBalancesProcessingService {
         ),
       );
     for (const remoteFilePath of remoteFilePaths) {
-      await this.processFile(remoteFilePath, serviceProcessSummary);
+      await this.processFile(
+        remoteFilePath,
+        serviceProcessSummary,
+        auditUserId,
+      );
       parentProcessSummary.children(serviceProcessSummary);
     }
   }
@@ -55,10 +62,13 @@ export class StudentLoanBalancesProcessingService {
   /**
    * Process each individual Student Loan Balances response file from the SFTP.
    * @param remoteFilePath Student Loan Balances response file to be processed.
+   * @param auditUserId user that should be considered the one that is
+   * causing the changes.
    */
   private async processFile(
     remoteFilePath: string,
     childrenProcessSummary: ProcessSummary,
+    auditUserId: number,
   ): Promise<void> {
     childrenProcessSummary.info(`Processing file ${remoteFilePath}.`);
     let studentLoanBalancesSFTPResponseFile: StudentLoanBalancesSFTPResponseFile;
@@ -96,13 +106,16 @@ export class StudentLoanBalancesProcessingService {
             );
             continue;
           }
-
+          const auditUser = { id: auditUserId } as User;
+          const now = new Date();
           await studentLoanBalancesRepo.insert({
             studentId: student.id,
             cslBalance: studentLoanBalanceRecord.cslBalance,
             balanceDate: getISODateOnlyString(
               studentLoanBalancesSFTPResponseFile.header.balanceDate,
             ),
+            createdAt: now,
+            creator: auditUser,
           });
         }
       });

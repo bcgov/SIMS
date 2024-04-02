@@ -107,6 +107,7 @@ export class StudentService {
    * @param sin sin.
    * @param lastName last name.
    * @param birthDate birth date.
+   * @param entityManager entity manager to execute in transaction.
    * @returns student.
    */
   async getStudentByPersonalInfo(

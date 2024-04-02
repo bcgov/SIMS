@@ -13,6 +13,7 @@ import {
   logProcessSummaryToJobLogger,
 } from "../../../../utilities";
 import { StudentLoanBalancesProcessingService } from "@sims/integrations/esdc-integration";
+import { SystemUsersService } from "@sims/services";
 
 /**
  * Process Student Loan Balances file from the SFTP location.
@@ -24,6 +25,7 @@ export class StudentLoanBalancesScheduler extends BaseScheduler<void> {
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly studentLoanBalancesProcessingService: StudentLoanBalancesProcessingService,
+    private readonly systemUsersService: SystemUsersService,
   ) {
     super(schedulerQueue, queueService);
   }
@@ -39,8 +41,10 @@ export class StudentLoanBalancesScheduler extends BaseScheduler<void> {
     const processSummary = new ProcessSummary();
     try {
       processSummary.info("Processing Student Loan Balances files.");
+      const auditUser = this.systemUsersService.systemUser;
       await this.studentLoanBalancesProcessingService.processStudentLoanBalances(
         processSummary,
+        auditUser.id,
       );
       processSummary.info("Completed processing Student Loan Balances files.");
       return getSuccessMessageWithAttentionCheck(
