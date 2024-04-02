@@ -1,6 +1,6 @@
 import { DeepMocked } from "@golevelup/ts-jest";
 import { INestApplication } from "@nestjs/common";
-import { QueueNames, getISODateOnlyString } from "@sims/utilities";
+import { QueueNames } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
@@ -56,7 +56,7 @@ describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
     const fakeUser = createFakeUser();
     fakeUser.lastName = "LASTNAME";
     const fakeStudent = createFakeStudent(fakeUser);
-    fakeStudent.birthDate = getISODateOnlyString(new Date("1998-03-24"));
+    fakeStudent.birthDate = "1998-03-24";
     // SIN validation
     const sinValidation = createFakeSINValidation({ student: fakeStudent });
     sinValidation.sin = "900041310";
