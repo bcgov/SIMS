@@ -66,7 +66,7 @@ describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
       student.sinValidation.sin = "900041310";
       await db.student.save(student);
     }
-    db.studentLoanBalances.delete({ studentId: student.id });
+    await db.studentLoanBalances.delete({ studentId: student.id });
     // Queued job.
     const { job } = mockBullJob<void>();
     mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
