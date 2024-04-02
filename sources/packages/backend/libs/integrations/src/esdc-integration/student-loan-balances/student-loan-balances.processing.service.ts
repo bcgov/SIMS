@@ -11,7 +11,7 @@ import {
 } from "@sims/utilities/logger";
 import { getISODateOnlyString } from "@sims/utilities";
 import { DataSource } from "typeorm";
-import { StudentLoanBalances } from "@sims/sims-db";
+import { StudentLoanBalance } from "@sims/sims-db";
 
 /**
  * Manages to process the Student Loan Balances files
@@ -83,7 +83,7 @@ export class StudentLoanBalancesProcessingService {
     try {
       await this.dataSource.transaction(async (transactionalEntityManager) => {
         const studentLoanBalancesRepo =
-          transactionalEntityManager.getRepository(StudentLoanBalances);
+          transactionalEntityManager.getRepository(StudentLoanBalance);
         for (const studentLoanBalanceRecord of studentLoanBalancesSFTPResponseFile.records) {
           const student = await this.studentService.getStudentByPersonalInfo(
             studentLoanBalanceRecord.sin,

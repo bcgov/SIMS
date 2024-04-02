@@ -8,7 +8,7 @@ import { numericTransformer } from "../transformers/numeric.transformer";
  * Loan Balance file.
  */
 @Entity({ name: TableNames.StudentLoanBalances })
-export class StudentLoanBalances extends RecordDataModel {
+export class StudentLoanBalance extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
   /**

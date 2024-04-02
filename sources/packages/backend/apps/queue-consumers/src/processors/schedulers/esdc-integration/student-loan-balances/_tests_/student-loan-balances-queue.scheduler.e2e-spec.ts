@@ -16,7 +16,7 @@ import * as Client from "ssh2-sftp-client";
 import { Job } from "bull";
 import * as path from "path";
 import { StudentLoanBalancesScheduler } from "../student-loan-balances-queue.scheduler";
-import { StudentLoanBalances } from "@sims/sims-db";
+import { StudentLoanBalance } from "@sims/sims-db";
 
 // Student loan balances received file mocks.
 const STUDENT_LOAN_BALANCES_FILENAME = "PEDU.PBC.PT.MBAL.20240302.001";
@@ -77,7 +77,7 @@ describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
     expect(result).toContain("Process finalized with success.");
     // Expect the file was deleted from SFTP.
     expect(sftpClientMock.delete).toHaveBeenCalled();
-    const studentLoanBalances: StudentLoanBalances[] =
+    const studentLoanBalances: StudentLoanBalance[] =
       await db.studentLoanBalances.find({
         where: {
           studentId: student.id,
@@ -85,11 +85,15 @@ describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
       });
     // Expect student loan balance contains the student record.
     expect(studentLoanBalances.length).toBe(1);
-    expect(studentLoanBalances[0].balanceDate).toBe("2023-12-31");
-    expect(studentLoanBalances[0].cslBalance).toBe(148154.0);
+    expect(studentLoanBalances).toStrictEqual([
+      {
+        balanceDate: "2023-12-31",
+        cslBalance: 148154.0,
+      },
+    ]);
   });
 
-  it("Should not add monthly loan balance record if the student is not found.;", async () => {
+  it("Should not add monthly loan balance record if the student is not found.", async () => {
     // Arrange
     // Queued job.
     const job = createMock<Job<void>>();

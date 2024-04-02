@@ -48,7 +48,7 @@ import {
   StudentUser,
   SupportingUser,
   User,
-  StudentLoanBalances,
+  StudentLoanBalance,
 } from "@sims/sims-db";
 import { DataSource, Repository } from "typeorm";
 
@@ -123,7 +123,7 @@ export function createE2EDataSources(dataSource: DataSource): E2EDataSources {
     studentScholasticStanding: dataSource.getRepository(
       StudentScholasticStanding,
     ),
-    studentLoanBalances: dataSource.getRepository(StudentLoanBalances),
+    studentLoanBalances: dataSource.getRepository(StudentLoanBalance),
     studentUser: dataSource.getRepository(StudentUser),
     supportingUser: dataSource.getRepository(SupportingUser),
     user: dataSource.getRepository(User),
@@ -188,5 +188,5 @@ export interface E2EDataSources {
   user: Repository<User>;
   notification: Repository<Notification>;
   applicationOfferingChangeRequest: Repository<ApplicationOfferingChangeRequest>;
-  studentLoanBalances: Repository<StudentLoanBalances>;
+  studentLoanBalances: Repository<StudentLoanBalance>;
 }
