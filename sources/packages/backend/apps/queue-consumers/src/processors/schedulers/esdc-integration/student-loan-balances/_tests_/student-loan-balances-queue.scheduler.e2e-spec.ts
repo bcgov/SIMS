@@ -9,7 +9,6 @@ import {
 import {
   E2EDataSources,
   createE2EDataSources,
-  createFakeStudent,
   createFakeUser,
   saveFakeStudent,
 } from "@sims/test-utils";
@@ -17,9 +16,10 @@ import { mockDownloadFiles } from "@sims/test-utils/mocks";
 import * as Client from "ssh2-sftp-client";
 import * as path from "path";
 import { StudentLoanBalancesScheduler } from "../student-loan-balances-queue.scheduler";
-import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
 
-// Student loan balances received file mocks.
+/**
+ * Student loan balances received file mocks.
+ */
 const STUDENT_LOAN_BALANCES_FILENAME = "PEDU.PBC.PT.MBAL.20240302.001";
 
 describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
@@ -54,16 +54,16 @@ describe(describeProcessorRootTest(QueueNames.StudentLoanBalances), () => {
     // Create student.
     const fakeUser = createFakeUser();
     fakeUser.lastName = "LASTNAME";
-    const fakeStudent = createFakeStudent(fakeUser);
-    fakeStudent.birthDate = "1998-03-24";
-    // SIN validation
-    const sinValidation = createFakeSINValidation({ student: fakeStudent });
-    sinValidation.sin = "900041310";
+    const user = await db.user.save(fakeUser);
     // Student
-    const student = await saveFakeStudent(db.dataSource, {
-      student: fakeStudent,
-      sinValidation,
-    });
+    const student = await saveFakeStudent(
+      db.dataSource,
+      { user },
+      {
+        initialValue: { birthDate: "1998-03-24" },
+        sinValidationInitialValue: { sin: "900041310" },
+      },
+    );
     // Queued job.
     const mockedJob = mockBullJob<void>();
     mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
