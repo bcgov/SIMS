@@ -36,7 +36,7 @@ describe("AssessmentAESTController(e2e)-manualReassessment", () => {
     application.currentAssessment.studentAssessmentStatus =
       StudentAssessmentStatus.Completed;
     const originalAssessment = application.currentAssessment;
-    application.studentAssessments = [application.currentAssessment];
+
     // Add an appeal to the application and current assessment/original assessement
     const approvedAppealRequest = createFakeStudentAppealRequest();
     const approvedAppeal = createFakeStudentAppeal({
@@ -127,7 +127,6 @@ describe("AssessmentAESTController(e2e)-manualReassessment", () => {
     const application = await saveFakeApplication(db.dataSource);
     application.currentAssessment.studentAssessmentStatus =
       StudentAssessmentStatus.Cancelled;
-    application.studentAssessments = [application.currentAssessment];
     await db.application.save(application);
 
     const endpoint = `/aest/assessment/application/${application.id}/manual-reassessment`;

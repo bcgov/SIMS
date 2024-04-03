@@ -281,6 +281,7 @@ export async function saveFakeApplication(
       fakeOriginalAssessment,
     );
     savedApplication.currentAssessment = savedOriginalAssessment;
+    savedApplication.studentAssessments = [savedOriginalAssessment];
   } else {
     savedApplication.location = null;
   }
