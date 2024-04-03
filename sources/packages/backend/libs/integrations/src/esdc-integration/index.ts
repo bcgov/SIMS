@@ -54,4 +54,4 @@ export * from "./student-loan-balances/student-loan-balances-files/student-loan-
 export * from "./student-loan-balances/student-loan-balances-files/student-loan-balances-file-response";
 export * from "./student-loan-balances/student-loan-balances.processing.service";
 export * from "./student-loan-balances/student-loan-balances.integration.service";
-export * from "./student-loan-balances/student-loan-balances.module";
+export * from "./student-loan-balances/student-loan-balances-integration.module";

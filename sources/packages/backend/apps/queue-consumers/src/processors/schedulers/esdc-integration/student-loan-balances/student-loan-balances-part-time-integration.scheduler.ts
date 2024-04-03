@@ -18,10 +18,10 @@ import { SystemUsersService } from "@sims/services";
 /**
  * Process Student Loan Balances file from the SFTP location.
  */
-@Processor(QueueNames.StudentLoanBalances)
-export class StudentLoanBalancesScheduler extends BaseScheduler<void> {
+@Processor(QueueNames.StudentLoanBalancesPartTimeIntegration)
+export class StudentLoanBalancesPartTimeIntegrationScheduler extends BaseScheduler<void> {
   constructor(
-    @InjectQueue(QueueNames.StudentLoanBalances)
+    @InjectQueue(QueueNames.StudentLoanBalancesPartTimeIntegration)
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly studentLoanBalancesProcessingService: StudentLoanBalancesProcessingService,

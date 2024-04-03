@@ -16,4 +16,4 @@ import {
   ],
   exports: [StudentLoanBalancesProcessingService],
 })
-export class StudentLoanBalancesModule {}
+export class StudentLoanBalancesIntegrationModule {}

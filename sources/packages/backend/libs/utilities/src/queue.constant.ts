@@ -27,5 +27,5 @@ export enum QueueNames {
   ProcessArchiveApplications = "archive-applications",
   AssessmentWorkflowEnqueuer = "assessment-workflow-enqueuer",
   AssessmentWorkflowQueueRetry = "assessment-workflow-queue-retry",
-  StudentLoanBalances = "student-loan-balances",
+  StudentLoanBalancesPartTimeIntegration = "student-loan-balance-part-time-integration",
 }
