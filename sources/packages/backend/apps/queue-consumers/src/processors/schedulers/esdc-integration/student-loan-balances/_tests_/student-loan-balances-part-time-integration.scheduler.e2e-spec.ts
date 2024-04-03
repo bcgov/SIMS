@@ -112,7 +112,7 @@ describe(
         mockedJob.job,
       );
       // Assert
-      expect(result.length).toBe(1);
+      expect(result.length).toBe(3);
       expect(result).toContain("Process finalized with success.");
       expect(
         mockedJob.containLogMessages([
