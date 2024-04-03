@@ -36,7 +36,6 @@ describe("AssessmentAESTController(e2e)-manualReassessment", () => {
     application.currentAssessment.studentAssessmentStatus =
       StudentAssessmentStatus.Completed;
     const originalAssessment = application.currentAssessment;
-    application.studentAssessments = [application.currentAssessment];
     // Add an appeal to the application and current assessment/original assessement
     const approvedAppealRequest = createFakeStudentAppealRequest();
     const approvedAppeal = createFakeStudentAppeal({
@@ -98,7 +97,7 @@ describe("AssessmentAESTController(e2e)-manualReassessment", () => {
     });
 
     const manualAssessment = applicationFromDb.currentAssessment;
-    expect(manualAssessment).toMatchObject({
+    expect(manualAssessment).toStrictEqual({
       id: responseReassessmentId,
       triggerType: AssessmentTriggerType.ManualReassessment,
       studentAssessmentStatus: StudentAssessmentStatus.Submitted,
