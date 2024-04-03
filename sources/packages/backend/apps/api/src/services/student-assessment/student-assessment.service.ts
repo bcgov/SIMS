@@ -277,7 +277,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       }
       if (application.isArchived) {
         throw new CustomNamedError(
-          `Application cannot have manual reassessment after being archived.`,
+          "Application cannot have manual reassessment after being archived.",
           INVALID_OPERATION_IN_THE_CURRENT_STATUS,
         );
       }
