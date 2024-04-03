@@ -2,7 +2,10 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { StudentLoanBalancesIntegrationService } from "./student-loan-balances.integration.service";
 import { StudentLoanBalancesSFTPResponseFile } from "./models/student-loan-balances.model";
-import { StudentService } from "@sims/integrations/services";
+import {
+  StudentService,
+  StudentLoanBalanceService,
+} from "@sims/integrations/services";
 import * as path from "path";
 import {
   InjectLogger,
@@ -25,6 +28,7 @@ export class StudentLoanBalancesProcessingService {
     config: ConfigService,
     private readonly studentLoanBalancesIntegrationService: StudentLoanBalancesIntegrationService,
     private readonly studentService: StudentService,
+    private readonly studentLoanBalanceService: StudentLoanBalanceService,
   ) {
     this.esdcConfig = config.esdcIntegration;
   }
@@ -92,6 +96,10 @@ export class StudentLoanBalancesProcessingService {
       await this.dataSource.transaction(async (transactionalEntityManager) => {
         const studentLoanBalancesRepo =
           transactionalEntityManager.getRepository(StudentLoanBalance);
+        const previousBalanceDate =
+          await this.studentLoanBalanceService.getLastBalanceDate(
+            transactionalEntityManager,
+          );
         for (const studentLoanBalanceRecord of studentLoanBalancesSFTPResponseFile.records) {
           const student = await this.studentService.getStudentByPersonalInfo(
             studentLoanBalanceRecord.sin,
@@ -115,6 +123,15 @@ export class StudentLoanBalancesProcessingService {
             ),
             creator: auditUser,
           });
+        }
+        if (previousBalanceDate) {
+          // If no previous balance date is present no records exists in the
+          // database and there is no need to insert zero balance records.
+          await this.studentLoanBalanceService.insertZeroBalanceRecords(
+            transactionalEntityManager,
+            previousBalanceDate,
+            studentLoanBalancesSFTPResponseFile.header.balanceDate,
+          );
         }
       });
       childrenProcessSummary.info(

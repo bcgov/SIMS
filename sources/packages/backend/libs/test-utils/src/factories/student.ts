@@ -8,10 +8,15 @@ import { getISODateOnlyString } from "@sims/utilities";
 // updated.
 export function createFakeStudent(
   user?: User,
-  options?: { initialValue: Partial<Student> },
+  options?: {
+    initialValue: Partial<Student>;
+    userInitialValue?: Partial<User>;
+  },
 ): Student {
   const student = new Student();
-  student.user = user ?? createFakeUser();
+  student.user =
+    user ??
+    createFakeUser(undefined, { initialValue: options?.userInitialValue });
   student.birthDate =
     options?.initialValue?.birthDate ??
     getISODateOnlyString(faker.date.past(18));
@@ -50,6 +55,7 @@ export async function saveFakeStudent(
   relations?: { student?: Student; user?: User; sinValidation?: SINValidation },
   options?: {
     initialValue?: Partial<Student>;
+    userInitialValue?: Partial<User>;
     sinValidationInitialValue?: Partial<SINValidation>;
   },
 ): Promise<Student> {
@@ -58,6 +64,7 @@ export async function saveFakeStudent(
     relations?.student ??
       createFakeStudent(relations?.user, {
         initialValue: options?.initialValue,
+        userInitialValue: options?.userInitialValue,
       }),
   );
   // Saving SIN validation after student is saved due to cyclic dependency error.
