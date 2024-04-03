@@ -11,7 +11,7 @@ import {
   createE2EDataSources,
   saveFakeApplication,
 } from "@sims/test-utils";
-import { ApplicationStatus } from "@sims/sims-db";
+import { ApplicationStatus, StudentAssessmentStatus } from "@sims/sims-db";
 
 describe("ApplicationAESTController(e2e)-getApplicationAssessmentStatusDetails", () => {
   let app: INestApplication;
@@ -42,10 +42,9 @@ describe("ApplicationAESTController(e2e)-getApplicationAssessmentStatusDetails",
       .expect(HttpStatus.OK)
       .expect({
         applicationId: application.id,
-        originalAssessmentStatus:
-          application.studentAssessments[0].studentAssessmentStatus,
-        isApplicationArchived: application.isArchived,
-        applicationStatus: application.applicationStatus,
+        originalAssessmentStatus: StudentAssessmentStatus.Submitted,
+        isApplicationArchived: true,
+        applicationStatus: ApplicationStatus.Completed,
       });
   });
 

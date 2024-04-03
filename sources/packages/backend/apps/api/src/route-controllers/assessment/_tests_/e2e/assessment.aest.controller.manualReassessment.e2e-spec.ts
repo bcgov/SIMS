@@ -35,6 +35,7 @@ describe("AssessmentAESTController(e2e)-manualReassessment", () => {
     const application = await saveFakeApplication(db.dataSource);
     application.currentAssessment.studentAssessmentStatus =
       StudentAssessmentStatus.Completed;
+    const originalAssessment = application.currentAssessment;
     application.studentAssessments = [application.currentAssessment];
     // Add an appeal to the application and current assessment/original assessement
     const approvedAppealRequest = createFakeStudentAppealRequest();
@@ -52,7 +53,7 @@ describe("AssessmentAESTController(e2e)-manualReassessment", () => {
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
-    let responseReassessmentId;
+    let responseReassessmentId: number;
     await request(app.getHttpServer())
       .post(endpoint)
       .send(payload)
@@ -60,7 +61,7 @@ describe("AssessmentAESTController(e2e)-manualReassessment", () => {
       .expect(HttpStatus.CREATED)
       .then((response) => {
         responseReassessmentId = response.body.id;
-        expect(responseReassessmentId).toStrictEqual(expect.any(Number));
+        expect(responseReassessmentId).toEqual(expect.any(Number));
       });
 
     const applicationFromDb = await db.application.findOne({
@@ -95,19 +96,15 @@ describe("AssessmentAESTController(e2e)-manualReassessment", () => {
         },
       },
     });
-    const [originalAssessment] = applicationFromDb.studentAssessments;
+
     const manualAssessment = applicationFromDb.currentAssessment;
-    expect(manualAssessment.id).toBe(responseReassessmentId);
-    expect(manualAssessment.triggerType).toBe(
-      AssessmentTriggerType.ManualReassessment,
-    );
-    expect(manualAssessment.studentAssessmentStatus).toBe(
-      StudentAssessmentStatus.Submitted,
-    );
-    expect(manualAssessment.offering.id).toBe(originalAssessment.offering.id);
-    expect(manualAssessment.studentAppeal.id).toBe(
-      originalAssessment.studentAppeal.id,
-    );
+    expect(manualAssessment).toMatchObject({
+      id: responseReassessmentId,
+      triggerType: AssessmentTriggerType.ManualReassessment,
+      studentAssessmentStatus: StudentAssessmentStatus.Submitted,
+      offering: { id: originalAssessment.offering.id },
+      studentAppeal: { id: originalAssessment.studentAppeal.id },
+    });
 
     const student = await db.student.findOne({
       select: { notes: true },
@@ -125,7 +122,7 @@ describe("AssessmentAESTController(e2e)-manualReassessment", () => {
     );
   });
 
-  it(`Should throw unprocessable entity when the original assessment has ${StudentAssessmentStatus.Completed} status.`, async () => {
+  it(`Should throw unprocessable entity when the original assessment does not have ${StudentAssessmentStatus.Completed} status.`, async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource);
     application.currentAssessment.studentAssessmentStatus =
