@@ -9,6 +9,7 @@ import {
   CRAProcessIntegrationScheduler,
   SINValidationProcessIntegrationScheduler,
   SINValidationRequestIntegrationScheduler,
+  StudentLoanBalancesPartTimeIntegrationScheduler,
   FullTimeMSFAAProcessIntegrationScheduler,
   PartTimeMSFAAProcessIntegrationScheduler,
   PartTimeECertProcessIntegrationScheduler,
@@ -50,6 +51,7 @@ import {
   FedRestrictionIntegrationModule,
   MSFAAIntegrationModule,
   SINValidationModule,
+  StudentLoanBalancesIntegrationModule,
 } from "@sims/integrations/esdc-integration";
 import { CRAIntegrationModule } from "@sims/integrations/cra-integration/cra-integration.module";
 import {
@@ -81,6 +83,7 @@ import { MicroserviceHealthIndicator, TerminusModule } from "@nestjs/terminus";
     FedRestrictionIntegrationModule,
     MSFAAIntegrationModule,
     SINValidationModule,
+    StudentLoanBalancesIntegrationModule,
     TerminusModule,
   ],
   providers: [
@@ -100,6 +103,7 @@ import { MicroserviceHealthIndicator, TerminusModule } from "@nestjs/terminus";
     WorkflowClientService,
     SINValidationProcessIntegrationScheduler,
     SINValidationRequestIntegrationScheduler,
+    StudentLoanBalancesPartTimeIntegrationScheduler,
     FullTimeMSFAAProcessIntegrationScheduler,
     MSFAANumberService,
     PartTimeMSFAAProcessIntegrationScheduler,

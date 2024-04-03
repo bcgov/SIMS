@@ -12,7 +12,9 @@ export function createFakeStudent(
 ): Student {
   const student = new Student();
   student.user = user ?? createFakeUser();
-  student.birthDate = getISODateOnlyString(faker.date.past(18));
+  student.birthDate =
+    options?.initialValue?.birthDate ??
+    getISODateOnlyString(faker.date.past(18));
   student.gender = "X";
   student.contactInfo = {
     address: {

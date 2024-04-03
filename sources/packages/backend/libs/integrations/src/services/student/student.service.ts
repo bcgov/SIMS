@@ -1,19 +1,15 @@
 import { Injectable } from "@nestjs/common";
-import {
-  DisabilityStatus,
-  RecordDataModelService,
-  SINValidation,
-  Student,
-  User,
-} from "@sims/sims-db";
+import { InjectRepository } from "@nestjs/typeorm";
+import { DisabilityStatus, SINValidation, Student, User } from "@sims/sims-db";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
-import { DataSource, EntityManager, Raw, UpdateResult } from "typeorm";
+import { EntityManager, Raw, Repository, UpdateResult } from "typeorm";
 
 @Injectable()
-export class StudentService extends RecordDataModelService<Student> {
-  constructor(dataSource: DataSource) {
-    super(dataSource.getRepository(Student));
-  }
+export class StudentService {
+  constructor(
+    @InjectRepository(Student)
+    private readonly studentRepo: Repository<Student>,
+  ) {}
 
   /**
    * Update the disability status to requested.
@@ -26,7 +22,7 @@ export class StudentService extends RecordDataModelService<Student> {
     auditUser: User,
   ): Promise<UpdateResult> {
     const now = new Date();
-    return this.repo.update(
+    return this.studentRepo.update(
       { id: studentId },
       {
         studentPDSentAt: now,
@@ -43,7 +39,7 @@ export class StudentService extends RecordDataModelService<Student> {
    * @returns student.
    */
   async getStudentById(studentId: number): Promise<Student> {
-    return this.repo.findOne({
+    return this.studentRepo.findOne({
       select: {
         id: true,
         sinValidation: { id: true, sin: true },
@@ -60,7 +56,7 @@ export class StudentService extends RecordDataModelService<Student> {
    * @returns Students pending SIN validation.
    */
   async getStudentsPendingSinValidation(): Promise<Student[]> {
-    return this.repo
+    return this.studentRepo
       .createQueryBuilder("student")
       .select([
         "student.id",
@@ -111,14 +107,17 @@ export class StudentService extends RecordDataModelService<Student> {
    * @param sin sin.
    * @param lastName last name.
    * @param birthDate birth date.
+   * @param entityManager entity manager to execute in transaction.
    * @returns student.
    */
   async getStudentByPersonalInfo(
     sin: string,
     lastName: string,
     birthDate: string,
+    entityManager?: EntityManager,
   ): Promise<Student> {
-    return this.repo.findOne({
+    const repo = entityManager?.getRepository(Student) ?? this.studentRepo;
+    return repo.findOne({
       select: { id: true, disabilityStatus: true },
       where: {
         sinValidation: { sin },
@@ -144,7 +143,7 @@ export class StudentService extends RecordDataModelService<Student> {
     disabilityStatus: DisabilityStatus,
     disabilityStatusUpdatedDate: Date,
   ): Promise<UpdateResult> {
-    return this.repo.update(
+    return this.studentRepo.update(
       { id: studentId },
       { disabilityStatus, studentPDUpdateAt: disabilityStatusUpdatedDate },
     );
