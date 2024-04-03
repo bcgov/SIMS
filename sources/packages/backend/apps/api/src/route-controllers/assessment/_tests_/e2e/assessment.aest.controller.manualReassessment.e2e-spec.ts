@@ -30,13 +30,13 @@ describe("AssessmentAESTController(e2e)-manualReassessment", () => {
     db = createE2EDataSources(dataSource);
   });
 
-  it.only("Should create a manual reassessment when requested.", async () => {
+  it("Should create a manual reassessment when requested.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource);
     application.currentAssessment.studentAssessmentStatus =
       StudentAssessmentStatus.Completed;
     const originalAssessment = application.currentAssessment;
-    // Add an appeal to the application and current assessment/original assessement
+    // Add an appeal to the application and current assessment/original assessment.
     const approvedAppealRequest = createFakeStudentAppealRequest();
     const approvedAppeal = createFakeStudentAppeal({
       application,
@@ -83,16 +83,9 @@ describe("AssessmentAESTController(e2e)-manualReassessment", () => {
       },
       relations: {
         currentAssessment: { offering: true, studentAppeal: true },
-        studentAssessments: {
-          offering: true,
-          studentAppeal: true,
-        },
       },
       where: {
         id: application.id,
-        studentAssessments: {
-          triggerType: AssessmentTriggerType.OriginalAssessment,
-        },
       },
     });
 
@@ -110,15 +103,15 @@ describe("AssessmentAESTController(e2e)-manualReassessment", () => {
       relations: { notes: true },
       where: { id: application.student.id },
     });
-    expect(student.notes).toContainEqual(
-      expect.objectContaining({
+    expect(student.notes).toEqual([
+      {
         id: expect.any(Number),
         description: payload.note,
         noteType: NoteType.Application,
         updatedAt: expect.any(Date),
         createdAt: expect.any(Date),
-      }),
-    );
+      },
+    ]);
   });
 
   it(`Should throw unprocessable entity when the original assessment does not have ${StudentAssessmentStatus.Completed} status.`, async () => {

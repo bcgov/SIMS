@@ -23,7 +23,7 @@ describe("ApplicationAESTController(e2e)-getApplicationAssessmentStatusDetails",
     db = createE2EDataSources(dataSource);
   });
 
-  it("Should get application and assessment status details when requested.", async () => {
+  it("Should get assessment status for an application when requested for an application id.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource, undefined, {
       applicationStatus: ApplicationStatus.Completed,
