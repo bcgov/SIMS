@@ -104,6 +104,11 @@ describe(
 
     it("Should not add monthly loan balance record when the student is not found.", async () => {
       // Arrange
+      // Create Student.
+      const student = await saveFakeStudent(db.dataSource, undefined, {
+        initialValue: { birthDate: "1998-03-24" },
+        sinValidationInitialValue: { sin: "900041310" },
+      });
       // Queued job.
       const mockedJob = mockBullJob<void>();
       mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
@@ -123,7 +128,7 @@ describe(
       expect(sftpClientMock.delete).toHaveBeenCalled();
       const studentLoanBalancesCount = await db.studentLoanBalance.count({
         where: {
-          student: { id: 25 },
+          student: { id: student.id },
         },
       });
       // Expect student loan balance contains the student record.
