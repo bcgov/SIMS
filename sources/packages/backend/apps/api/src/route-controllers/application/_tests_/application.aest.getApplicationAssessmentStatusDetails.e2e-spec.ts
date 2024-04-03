@@ -28,7 +28,6 @@ describe("ApplicationAESTController(e2e)-getApplicationAssessmentStatusDetails",
     const application = await saveFakeApplication(db.dataSource, undefined, {
       applicationStatus: ApplicationStatus.Completed,
     });
-    application.studentAssessments = [application.currentAssessment];
     application.isArchived = true;
     await db.application.save(application);
 
