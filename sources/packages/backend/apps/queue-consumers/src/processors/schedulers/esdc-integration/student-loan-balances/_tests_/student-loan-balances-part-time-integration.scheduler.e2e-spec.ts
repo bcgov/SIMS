@@ -110,7 +110,7 @@ describe(
       // Arrange
       // Create Student.
       const student = await saveFakeStudent(db.dataSource, undefined, {
-        initialValue: { birthDate: "1997-03-24" },
+        initialValue: { birthDate: "1998-03-24" },
         sinValidationInitialValue: { sin: "900041310" },
       });
       // Queued job.
