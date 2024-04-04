@@ -1,9 +1,11 @@
 import { Injectable } from "@nestjs/common";
+import { SystemUsersService } from "@sims/services";
 import { StudentLoanBalance } from "@sims/sims-db";
 import { EntityManager } from "typeorm";
 
 @Injectable()
 export class StudentLoanBalanceService {
+  constructor(private readonly systemUserService: SystemUsersService) {}
   /**
    * Most recent balance present on database.
    * If no records are present, returns undefined.
@@ -13,12 +15,13 @@ export class StudentLoanBalanceService {
   async getLastBalanceDate(
     entityManager: EntityManager,
   ): Promise<Date | undefined> {
+    const maxBalanceDateAlias = "maxBalanceDate";
     const lastBalanceDate = await entityManager
       .getRepository(StudentLoanBalance)
-      .createQueryBuilder()
-      .select("MAX(balanceDate)")
+      .createQueryBuilder("studentLoanBalance")
+      .select("MAX(studentLoanBalance.balanceDate)", maxBalanceDateAlias)
       .getRawOne();
-    return lastBalanceDate ? new Date(lastBalanceDate) : undefined;
+    return lastBalanceDate[maxBalanceDateAlias] ?? undefined;
   }
 
   /**
@@ -42,19 +45,29 @@ export class StudentLoanBalanceService {
     const existsQuery = studentLoanBalanceRepo
       .createQueryBuilder("studentLoanBalanceExists")
       .select("1")
-      .where(`studentLoanBalanceExists.studentId = ${mainQueryAlias}.studentId`)
-      .andWhere("studentLoanBalanceExists.balanceDate = :currentBalanceDate", {
-        currentBalanceDate,
-      })
+      .where(`student_id = "${mainQueryAlias}".student_id`)
+      .andWhere("balance_date = :currentBalanceDate")
       .getQuery();
     // Select all the student balances with a balance greater than zero in the
     // previous balance that are no longer present in the current updated balance.
     const [selectQuery, selectParameters] = studentLoanBalanceRepo
       .createQueryBuilder(mainQueryAlias)
-      .where("studentLoanBalance.cslBalance > 0")
-      .andWhere("balanceDate = previousBalanceDate:", { previousBalanceDate })
+      .select(`${mainQueryAlias}.student.id`, "studentId")
+      .addSelect("0", "cslBalance")
+      .addSelect(":currentBalanceDate", "balanceDate")
+      .addSelect(":userServiceId", "creator")
+      .where(`${mainQueryAlias}.cslBalance > 0`)
+      .andWhere(`${mainQueryAlias}.balanceDate = :previousBalanceDate`)
       .andWhere(`NOT EXISTS (${existsQuery})`)
+      .setParameters({
+        currentBalanceDate,
+        previousBalanceDate,
+        userServiceId: this.systemUserService.systemUser.id,
+      })
       .getQueryAndParameters();
-    await studentLoanBalanceRepo.query(selectQuery, selectParameters);
+    await studentLoanBalanceRepo.query(
+      `INSERT INTO sims.student_loan_balances (student_id, csl_balance, balance_date, creator) (${selectQuery})`,
+      selectParameters,
+    );
   }
 }
