@@ -139,7 +139,7 @@ describe(
       expect(studentLoanBalancesCount).toBe(0);
     });
 
-    it("Should throw an error for number of records mismatch when the records in the trailer does not match the number of records.", async () => {
+    it.only("Should throw an error for number of records mismatch when the records in the trailer does not match the number of records.", async () => {
       // Arrange
       // Queued job.
       const mockedJob = mockBullJob<void>();

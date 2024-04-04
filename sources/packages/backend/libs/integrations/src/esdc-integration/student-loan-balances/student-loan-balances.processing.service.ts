@@ -77,17 +77,24 @@ export class StudentLoanBalancesProcessingService {
   ): Promise<void> {
     childrenProcessSummary.info(`Processing file ${remoteFilePath}.`);
     let studentLoanBalancesSFTPResponseFile: StudentLoanBalancesSFTPResponseFile;
-    // Get only the file name for logging.
-    const fileName = path.basename(remoteFilePath);
-    let lineNumber;
     try {
       studentLoanBalancesSFTPResponseFile =
         await this.studentLoanBalancesIntegrationService.downloadResponseFile(
           remoteFilePath,
         );
-      childrenProcessSummary.info(
-        `File contains ${studentLoanBalancesSFTPResponseFile.records.length} Student Loan balances.`,
+    } catch (error) {
+      this.logger.error(error);
+      childrenProcessSummary.error(
+        `Error processing file ${remoteFilePath}. Error: ${error.message}`,
       );
+    }
+    childrenProcessSummary.info(
+      `File contains ${studentLoanBalancesSFTPResponseFile.records.length} Student Loan balances.`,
+    );
+    // Get only the file name for logging.
+    const fileName = path.basename(remoteFilePath);
+    let lineNumber;
+    try {
       await this.dataSource.transaction(async (transactionalEntityManager) => {
         const studentLoanBalancesRepo =
           transactionalEntityManager.getRepository(StudentLoanBalance);
