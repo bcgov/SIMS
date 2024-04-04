@@ -85,7 +85,7 @@ export class StudentLoanBalancesProcessingService {
     } catch (error) {
       this.logger.error(error);
       childrenProcessSummary.error(
-        `Error processing file ${remoteFilePath}. Error: ${error.message}`,
+        `Error downloading file ${remoteFilePath}. Error: ${error}`,
       );
     }
     childrenProcessSummary.info(
