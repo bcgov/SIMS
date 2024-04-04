@@ -1,4 +1,4 @@
-import { Injectable, UnprocessableEntityException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { StudentLoanBalancesIntegrationService } from "./student-loan-balances.integration.service";
 import { StudentLoanBalancesSFTPResponseFile } from "./models/student-loan-balances.model";
