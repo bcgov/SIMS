@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnprocessableEntityException } from "@nestjs/common";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { StudentLoanBalancesIntegrationService } from "./student-loan-balances.integration.service";
 import { StudentLoanBalancesSFTPResponseFile } from "./models/student-loan-balances.model";
@@ -9,9 +9,10 @@ import {
   LoggerService,
   ProcessSummary,
 } from "@sims/utilities/logger";
-import { getISODateOnlyString } from "@sims/utilities";
+import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
 import { DataSource } from "typeorm";
 import { StudentLoanBalance, User } from "@sims/sims-db";
+import { STUDENT_LOAN_BALANCE_DUPLICATE_RECORD } from "@sims/services/constants";
 
 /**
  * Manages to process the Student Loan Balances files
@@ -79,9 +80,13 @@ export class StudentLoanBalancesProcessingService {
         );
     } catch (error) {
       this.logger.error(error);
-      childrenProcessSummary.error(
-        `Error downloading file ${remoteFilePath}. Error: ${error}`,
-      );
+      if (error instanceof CustomNamedError) {
+        childrenProcessSummary.error(error.message);
+      } else {
+        childrenProcessSummary.error(
+          `Error downloading file ${remoteFilePath}. Error: ${error.message}`,
+        );
+      }
     }
     childrenProcessSummary.info(
       `File contains ${studentLoanBalancesSFTPResponseFile.records.length} Student Loan balances.`,
@@ -123,8 +128,14 @@ export class StudentLoanBalancesProcessingService {
     } catch (error) {
       // Log the error but allow the process to continue.
       const errorDescription = `Error processing file ${fileName}.`;
-      childrenProcessSummary.error(errorDescription);
-      this.logger.error(`${errorDescription}. ${error}`);
+      childrenProcessSummary.error(`${errorDescription}.${error.message}`);
+      this.logger.error(`${errorDescription}.${error.message}`);
+      if (error instanceof Error) {
+        throw new CustomNamedError(
+          "Student loan balance has duplicate record.",
+          STUDENT_LOAN_BALANCE_DUPLICATE_RECORD,
+        );
+      }
     }
     try {
       await this.studentLoanBalancesIntegrationService.deleteFile(
