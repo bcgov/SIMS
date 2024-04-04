@@ -104,7 +104,7 @@ describe(
       ]);
     });
 
-    it.only("Should not add monthly loan balance record when the student is not found.", async () => {
+    it("Should not add monthly loan balance record when the student is not found.", async () => {
       // Arrange
       // Create Student.
       const student = await saveFakeStudent(db.dataSource, undefined, {
