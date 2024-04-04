@@ -9,10 +9,14 @@ import {
   LoggerService,
   ProcessSummary,
 } from "@sims/utilities/logger";
-import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
+import { getISODateOnlyString } from "@sims/utilities";
 import { DataSource } from "typeorm";
-import { StudentLoanBalance, User } from "@sims/sims-db";
-import { STUDENT_LOAN_BALANCE_DUPLICATE_RECORD } from "@sims/services/constants";
+import {
+  DatabaseConstraintNames,
+  StudentLoanBalance,
+  User,
+  isDatabaseConstraintError,
+} from "@sims/sims-db";
 
 /**
  * Manages to process the Student Loan Balances files
@@ -73,27 +77,22 @@ export class StudentLoanBalancesProcessingService {
   ): Promise<void> {
     childrenProcessSummary.info(`Processing file ${remoteFilePath}.`);
     let studentLoanBalancesSFTPResponseFile: StudentLoanBalancesSFTPResponseFile;
+    // Get only the file name for logging.
+    const fileName = path.basename(remoteFilePath);
+    let lineNumber;
     try {
       studentLoanBalancesSFTPResponseFile =
         await this.studentLoanBalancesIntegrationService.downloadResponseFile(
           remoteFilePath,
         );
-    } catch (error) {
-      this.logger.error(error);
-      childrenProcessSummary.error(
-        `Error downloading file ${remoteFilePath}. Error: ${error.message}`,
+      childrenProcessSummary.info(
+        `File contains ${studentLoanBalancesSFTPResponseFile.records.length} Student Loan balances.`,
       );
-    }
-    childrenProcessSummary.info(
-      `File contains ${studentLoanBalancesSFTPResponseFile.records.length} Student Loan balances.`,
-    );
-    // Get only the file name for logging.
-    const fileName = path.basename(remoteFilePath);
-    try {
       await this.dataSource.transaction(async (transactionalEntityManager) => {
         const studentLoanBalancesRepo =
           transactionalEntityManager.getRepository(StudentLoanBalance);
         for (const studentLoanBalanceRecord of studentLoanBalancesSFTPResponseFile.records) {
+          lineNumber = studentLoanBalanceRecord.lineNumber;
           const student = await this.studentService.getStudentByPersonalInfo(
             studentLoanBalanceRecord.sin,
             studentLoanBalanceRecord.lastName,
@@ -103,7 +102,7 @@ export class StudentLoanBalancesProcessingService {
           // If student not found continue.
           if (!student) {
             childrenProcessSummary.info(
-              `Student not found for line ${studentLoanBalanceRecord.lineNumber}.`,
+              `Student not found for line ${lineNumber}.`,
             );
             continue;
           }
@@ -122,15 +121,21 @@ export class StudentLoanBalancesProcessingService {
         `Inserted Student Loan balances file ${fileName}.`,
       );
     } catch (error) {
-      // Log the error but allow the process to continue.
-      const errorDescription = `Error processing file ${fileName}.`;
-      childrenProcessSummary.error(`${errorDescription} ${error.message}`);
-      this.logger.error(`${errorDescription} ${error.message}`);
-      if (error instanceof Error) {
-        throw new CustomNamedError(
-          "Student loan balance has duplicate record.",
-          STUDENT_LOAN_BALANCE_DUPLICATE_RECORD,
-        );
+      if (
+        isDatabaseConstraintError(
+          error,
+          DatabaseConstraintNames.StudentLoanBalanceDateUniqueConstraint,
+        )
+      ) {
+        // Log the error but allow the process to continue.
+        const errorDescription = `Student loan balance already exists for the student and balance date at line ${lineNumber}.`;
+        childrenProcessSummary.error(errorDescription);
+        this.logger.error(errorDescription);
+      } else {
+        // Log the error but allow the process to continue.
+        const errorDescription = `Error processing file ${fileName}.`;
+        childrenProcessSummary.error(`${errorDescription} ${error.message}`);
+        this.logger.error(`${errorDescription} ${error.message}`);
       }
     }
     try {
