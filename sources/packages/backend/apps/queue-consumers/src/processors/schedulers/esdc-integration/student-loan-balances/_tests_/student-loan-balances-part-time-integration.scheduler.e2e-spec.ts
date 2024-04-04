@@ -126,7 +126,7 @@ describe(
       expect(result.length).toBe(1);
       expect(result).toContain("Process finalized with success.");
       expect(
-        mockedJob.containLogMessages([`Student not found for line 2.`]),
+        mockedJob.containLogMessages(["Student not found for line 2."]),
       ).toBe(true);
       // Expect the file was deleted from SFTP.
       expect(sftpClientMock.delete).toHaveBeenCalled();
@@ -139,7 +139,7 @@ describe(
       expect(studentLoanBalancesCount).toBe(0);
     });
 
-    it("Should throw an error that number of records mismatch when the records in the trailer does not match the number of records.", async () => {
+    it("Should throw an error for number of records mismatch when the records in the trailer does not match the number of records.", async () => {
       // Arrange
       // Queued job.
       const mockedJob = mockBullJob<void>();

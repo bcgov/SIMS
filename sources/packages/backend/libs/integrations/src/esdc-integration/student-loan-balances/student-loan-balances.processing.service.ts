@@ -84,7 +84,7 @@ export class StudentLoanBalancesProcessingService {
         childrenProcessSummary.error(error.message);
       } else {
         childrenProcessSummary.error(
-          `Error downloading file ${remoteFilePath}. Error: ${error.message}`,
+          `Error processing file ${remoteFilePath}. Error: ${error.message}`,
         );
       }
     }
@@ -128,8 +128,8 @@ export class StudentLoanBalancesProcessingService {
     } catch (error) {
       // Log the error but allow the process to continue.
       const errorDescription = `Error processing file ${fileName}.`;
-      childrenProcessSummary.error(`${errorDescription}.${error.message}`);
-      this.logger.error(`${errorDescription}.${error.message}`);
+      childrenProcessSummary.error(`${errorDescription} ${error.message}`);
+      this.logger.error(`${errorDescription} ${error.message}`);
       if (error instanceof Error) {
         throw new CustomNamedError(
           "Student loan balance has duplicate record.",

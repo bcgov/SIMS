@@ -41,7 +41,7 @@ export class StudentLoanBalancesIntegrationService extends SFTPIntegrationBase<S
       );
       // If the header is not the expected one, throw an error.
       throw new CustomNamedError(
-        "Invalid file header.",
+        `Invalid record type ${header.recordTypeCode} on header.`,
         STUDENT_LOAN_BALANCE_INVALID_FILE_HEADER,
       );
     }
@@ -56,7 +56,7 @@ export class StudentLoanBalancesIntegrationService extends SFTPIntegrationBase<S
       );
       // If the footer is not the expected one, throw an error.
       throw new CustomNamedError(
-        "Invalid file footer.",
+        `Invalid record type ${footer.recordTypeCode} on footer.`,
         STUDENT_LOAN_BALANCE_INVALID_FILE_FOOTER,
       );
     }
