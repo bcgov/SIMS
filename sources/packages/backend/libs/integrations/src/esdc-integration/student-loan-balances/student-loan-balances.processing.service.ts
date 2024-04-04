@@ -80,13 +80,9 @@ export class StudentLoanBalancesProcessingService {
         );
     } catch (error) {
       this.logger.error(error);
-      if (error instanceof CustomNamedError) {
-        childrenProcessSummary.error(error.message);
-      } else {
-        childrenProcessSummary.error(
-          `Error processing file ${remoteFilePath}. Error: ${error.message}`,
-        );
-      }
+      childrenProcessSummary.error(
+        `Error downloading file ${remoteFilePath}. Error: ${error.message}`,
+      );
     }
     childrenProcessSummary.info(
       `File contains ${studentLoanBalancesSFTPResponseFile.records.length} Student Loan balances.`,

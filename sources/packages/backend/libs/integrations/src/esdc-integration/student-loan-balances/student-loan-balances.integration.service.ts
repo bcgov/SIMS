@@ -8,12 +8,6 @@ import { Injectable } from "@nestjs/common";
 import { StudentLoanBalancesFileHeader } from "./student-loan-balances-files/student-loan-balances-file-header";
 import { StudentLoanBalancesFileFooter } from "./student-loan-balances-files/student-loan-balances-file-footer";
 import { StudentLoanBalancesFileResponse } from "./student-loan-balances-files/student-loan-balances-file-response";
-import { CustomNamedError } from "@sims/utilities";
-import {
-  STUDENT_LOAN_BALANCE_INVALID_FILE_FOOTER,
-  STUDENT_LOAN_BALANCE_INVALID_FILE_HEADER,
-  STUDENT_LOAN_BALANCE_RECORDS_MISMATCH,
-} from "@sims/services/constants";
 
 @Injectable()
 export class StudentLoanBalancesIntegrationService extends SFTPIntegrationBase<StudentLoanBalancesSFTPResponseFile> {
@@ -40,9 +34,8 @@ export class StudentLoanBalancesIntegrationService extends SFTPIntegrationBase<S
         `The Student loan balances file ${remoteFilePath} has an invalid record type on header: ${header.recordTypeCode}.`,
       );
       // If the header is not the expected one, throw an error.
-      throw new CustomNamedError(
+      throw new Error(
         `Invalid record type ${header.recordTypeCode} on header.`,
-        STUDENT_LOAN_BALANCE_INVALID_FILE_HEADER,
       );
     }
     // Remove the footer.
@@ -55,9 +48,8 @@ export class StudentLoanBalancesIntegrationService extends SFTPIntegrationBase<S
         `The Student loan balances file ${remoteFilePath} has an invalid record type on footer: ${footer.recordTypeCode}.`,
       );
       // If the footer is not the expected one, throw an error.
-      throw new CustomNamedError(
+      throw new Error(
         `Invalid record type ${footer.recordTypeCode} on footer.`,
-        STUDENT_LOAN_BALANCE_INVALID_FILE_FOOTER,
       );
     }
     if (footer.recordCount !== fileLines.length) {
@@ -65,9 +57,8 @@ export class StudentLoanBalancesIntegrationService extends SFTPIntegrationBase<S
         `The number of Student loan balance records ${fileLines.length} does not match the records in the footer ${footer.recordCount}.`,
       );
       // If the footer is not the expected one, throw an error.
-      throw new CustomNamedError(
+      throw new Error(
         "Records in footer does not match the number of records.",
-        STUDENT_LOAN_BALANCE_RECORDS_MISMATCH,
       );
     }
     // Generate the records.
