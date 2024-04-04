@@ -21,6 +21,8 @@ import { StudentLoanBalancesPartTimeIntegrationScheduler } from "../student-loan
  * Student loan balances received file mocks.
  */
 const STUDENT_LOAN_BALANCES_FILENAME = "PEDU.PBC.PT.MBAL.20240302.001";
+const STUDENT_LOAN_BALANCES_STUDENT_NOT_FOUND_FILENAME =
+  "PEDU.PBC.PT.MBAL.20240102.001";
 const STUDENT_LOAN_BALANCES_RECORDS_MISMATCH_FILENAME =
   "PEDU.PBC.PT.MBAL.20240202.001";
 
@@ -108,12 +110,14 @@ describe(
       // Arrange
       // Create Student.
       const student = await saveFakeStudent(db.dataSource, undefined, {
-        initialValue: { birthDate: "1998-03-24" },
+        initialValue: { birthDate: "1997-03-24" },
         sinValidationInitialValue: { sin: "900041310" },
       });
       // Queued job.
       const mockedJob = mockBullJob<void>();
-      mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
+      mockDownloadFiles(sftpClientMock, [
+        STUDENT_LOAN_BALANCES_STUDENT_NOT_FOUND_FILENAME,
+      ]);
       // Act
       const result = await processor.processStudentLoanBalancesFiles(
         mockedJob.job,
