@@ -77,24 +77,17 @@ export class StudentLoanBalancesProcessingService {
   ): Promise<void> {
     childrenProcessSummary.info(`Processing file ${remoteFilePath}.`);
     let studentLoanBalancesSFTPResponseFile: StudentLoanBalancesSFTPResponseFile;
+    // Get only the file name for logging.
+    const fileName = path.basename(remoteFilePath);
+    let lineNumber: number;
     try {
       studentLoanBalancesSFTPResponseFile =
         await this.studentLoanBalancesIntegrationService.downloadResponseFile(
           remoteFilePath,
         );
-    } catch (error) {
-      this.logger.error(error);
-      childrenProcessSummary.error(
-        `Error downloading file ${remoteFilePath}. Error: ${error}`,
+      childrenProcessSummary.info(
+        `File contains ${studentLoanBalancesSFTPResponseFile.records.length} Student Loan balances.`,
       );
-    }
-    childrenProcessSummary.info(
-      `File contains ${studentLoanBalancesSFTPResponseFile.records.length} Student Loan balances.`,
-    );
-    // Get only the file name for logging.
-    const fileName = path.basename(remoteFilePath);
-    let lineNumber;
-    try {
       await this.dataSource.transaction(async (transactionalEntityManager) => {
         const studentLoanBalancesRepo =
           transactionalEntityManager.getRepository(StudentLoanBalance);
@@ -144,18 +137,19 @@ export class StudentLoanBalancesProcessingService {
         childrenProcessSummary.error(`${errorDescription} ${error.message}`);
         this.logger.error(`${errorDescription} ${error.message}`);
       }
-    }
-    try {
-      await this.studentLoanBalancesIntegrationService.deleteFile(
-        remoteFilePath,
-      );
-    } catch (error) {
-      // Log the error but allow the process to continue.
-      // If there was an issue only during the file removal, it will be
-      // processed again and could be deleted in the second attempt.
-      const logMessage = `Error while deleting Student Loan Balances response file: ${remoteFilePath}`;
-      this.logger.error(logMessage);
-      childrenProcessSummary.error(logMessage);
+    } finally {
+      try {
+        await this.studentLoanBalancesIntegrationService.deleteFile(
+          remoteFilePath,
+        );
+      } catch (error) {
+        // Log the error but allow the process to continue.
+        // If there was an issue only during the file removal, it will be
+        // processed again and could be deleted in the second attempt.
+        const logMessage = `Error while deleting Student Loan Balances response file: ${remoteFilePath}`;
+        this.logger.error(logMessage);
+        childrenProcessSummary.error(logMessage);
+      }
     }
   }
 
