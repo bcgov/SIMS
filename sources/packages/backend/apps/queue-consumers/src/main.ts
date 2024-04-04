@@ -10,6 +10,7 @@ import { QueueConsumersModule } from "./queue-consumers.module";
 import * as basicAuth from "express-basic-auth";
 import { LoggerService } from "@sims/utilities/logger";
 import { SystemUsersService } from "@sims/services";
+import { QueueNames, schedulerQueueNames } from "@sims/utilities";
 
 (async () => {
   const app = await NestFactory.create(QueueConsumersModule);
@@ -29,10 +30,20 @@ import { SystemUsersService } from "@sims/services";
   // Create bull board UI dashboard for queue management.
   const serverAdapter = new ExpressAdapter();
   serverAdapter.setBasePath("/admin/queues");
-  const bullBoardQueues = queues.map((queue) => {
-    return new BullAdapter(app.get<Queue>(`BullQueue_${queue.name}`), {
-      readOnlyMode: queue.dashboardReadonly,
-    });
+  const bullBoardQueues: BullAdapter[] = [];
+  queues.forEach((queue) => {
+    if (
+      !queue.isActive &&
+      schedulerQueueNames.includes(queue.name as QueueNames)
+    ) {
+      logger.log(`Queue service "${queue.name}" is inactive.`);
+    } else {
+      bullBoardQueues.push(
+        new BullAdapter(app.get<Queue>(`BullQueue_${queue.name}`), {
+          readOnlyMode: queue.dashboardReadonly,
+        }),
+      );
+    }
   });
   createBullBoard({
     queues: bullBoardQueues,

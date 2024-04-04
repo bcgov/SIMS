@@ -23,9 +23,40 @@ export enum QueueNames {
   PartTimeMSFAAProcessResponseIntegration = "part-time-msfaa-process-response-integration",
   FullTimeMSFAAProcessResponseIntegration = "full-time-msfaa-process-response-integration",
   SFASIntegration = "sfas-integration",
+  ATBCResponseIntegration = "atbc-response-integration",
   ProcessNotifications = "process-notifications",
   ProcessArchiveApplications = "archive-applications",
   AssessmentWorkflowEnqueuer = "assessment-workflow-enqueuer",
   AssessmentWorkflowQueueRetry = "assessment-workflow-queue-retry",
   StudentLoanBalancesPartTimeIntegration = "student-loan-balances-part-time-integration",
 }
+
+/**
+ * List of scheduler queue names.
+ */
+export const schedulerQueueNames: QueueNames[] = [
+  QueueNames.IER12Integration,
+  QueueNames.CRAProcessIntegration,
+  QueueNames.CRAResponseIntegration,
+  QueueNames.SINValidationProcessIntegration,
+  QueueNames.SINValidationRequestIntegration,
+  QueueNames.PartTimeMSFAAProcessIntegration,
+  QueueNames.PartTimeECertIntegration,
+  QueueNames.PartTimeFeedbackIntegration,
+  QueueNames.FullTimeMSFAAIntegration,
+  QueueNames.FullTimeECertIntegration,
+  QueueNames.FullTimeFeedbackIntegration,
+  QueueNames.FederalRestrictionsIntegration,
+  QueueNames.FullTimeDisbursementReceiptsFileIntegration,
+  QueueNames.ECEProcessIntegration,
+  QueueNames.ECEProcessResponseIntegration,
+  QueueNames.FINProcessProvincialDailyDisbursementsIntegration,
+  QueueNames.PartTimeMSFAAProcessResponseIntegration,
+  QueueNames.FullTimeMSFAAProcessResponseIntegration,
+  QueueNames.SFASIntegration,
+  QueueNames.ATBCResponseIntegration,
+  QueueNames.ProcessNotifications,
+  QueueNames.ProcessArchiveApplications,
+  QueueNames.AssessmentWorkflowEnqueuer,
+  QueueNames.AssessmentWorkflowQueueRetry,
+];
