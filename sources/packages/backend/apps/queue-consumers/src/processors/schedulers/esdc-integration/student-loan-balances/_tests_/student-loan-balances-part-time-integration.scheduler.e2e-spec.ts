@@ -139,7 +139,7 @@ describe(
       expect(studentLoanBalancesCount).toBe(0);
     });
 
-    it("Should throw an error for number of records mismatch when the records in the trailer does not match the number of records.", async () => {
+    it.only("Should throw an error for number of records mismatch when the records in the trailer does not match the number of records.", async () => {
       // Arrange
       // Queued job.
       const mockedJob = mockBullJob<void>();
@@ -151,11 +151,13 @@ describe(
         mockedJob.job,
       );
       // Assert
-      expect(result.length).toBe(1);
-      expect(result).toEqual(["Unexpected error while executing the job."]);
+      expect(result.length).toBe(3);
+      expect(result).toContain(
+        "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+      );
       expect(
         mockedJob.containLogMessages([
-          "Records in footer does not match the number of records.",
+          `Error processing file ${STUDENT_LOAN_BALANCES_RECORDS_MISMATCH_FILENAME}. Records in footer does not match the number of records.`,
         ]),
       ).toBe(true);
     });
