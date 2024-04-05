@@ -234,7 +234,7 @@ export class StudentService extends RecordDataModelService<Student> {
         // If there is a match in SFAS, record that information is available from legacy system with a note attached to the student.
         this.addStudentNote(
           student.id,
-          NoteType.System,
+          NoteType.General,
           "Successful match with legacy systems - data has been transferred.",
           this.systemUsersService.systemUser.id,
         );
