@@ -30,4 +30,14 @@ export class NotificationMessage extends RecordDataModel {
     nullable: false,
   })
   templateId: string;
+  /**
+   * Address to send the email notification.
+   */
+  @Column({
+    name: "email_contacts",
+    nullable: true,
+    array: true,
+    type: "varchar",
+  })
+  email_contacts?: string[];
 }
