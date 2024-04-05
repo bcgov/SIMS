@@ -117,19 +117,21 @@ export class StudentLoanBalancesProcessingService {
         `Inserted Student Loan balances file ${fileName}.`,
       );
     } catch (error: unknown) {
-      if (
-        isDatabaseConstraintError(
-          error,
-          DatabaseConstraintNames.StudentLoanBalanceDateUniqueConstraint,
-        )
-      ) {
-        // Log the error but allow the process to continue.
-        const errorDescription = `Student loan balance already exists for the student and balance date at line ${lineNumber}.`;
-        childrenProcessSummary.error(errorDescription, error);
-      } else {
-        // Log the error but allow the process to continue.
-        const errorDescription = `Error processing file ${fileName}.`;
-        childrenProcessSummary.error(errorDescription, error);
+      if (error instanceof Error) {
+        if (
+          isDatabaseConstraintError(
+            error,
+            DatabaseConstraintNames.StudentLoanBalanceDateUniqueConstraint,
+          )
+        ) {
+          // Log the error but allow the process to continue.
+          const errorDescription = `Student loan balance already exists for the student and balance date at line ${lineNumber}.`;
+          childrenProcessSummary.error(errorDescription, error.message);
+        } else {
+          // Log the error but allow the process to continue.
+          const errorDescription = `Error processing file ${fileName}.`;
+          childrenProcessSummary.error(errorDescription, error.message);
+        }
       }
     } finally {
       try {
@@ -137,11 +139,13 @@ export class StudentLoanBalancesProcessingService {
           remoteFilePath,
         );
       } catch (error: unknown) {
-        // Log the error but allow the process to continue.
-        // If there was an issue only during the file removal, it will be
-        // processed again and could be deleted in the second attempt.
-        const logMessage = `Error while deleting Student Loan Balances response file: ${remoteFilePath}`;
-        childrenProcessSummary.error(logMessage, error);
+        if (error instanceof Error) {
+          // Log the error but allow the process to continue.
+          // If there was an issue only during the file removal, it will be
+          // processed again and could be deleted in the second attempt.
+          const logMessage = `Error while deleting Student Loan Balances response file: ${remoteFilePath}`;
+          childrenProcessSummary.error(logMessage, error.message);
+        }
       }
     }
   }
