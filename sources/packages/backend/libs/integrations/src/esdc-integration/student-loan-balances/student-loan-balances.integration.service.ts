@@ -1,5 +1,6 @@
 import { SFTPIntegrationBase, SshService } from "@sims/integrations/services";
 import {
+  FILE_PARSING_ERROR,
   RecordTypeCodes,
   StudentLoanBalancesSFTPResponseFile,
 } from "./models/student-loan-balances.model";
@@ -8,6 +9,7 @@ import { Injectable } from "@nestjs/common";
 import { StudentLoanBalancesFileHeader } from "./student-loan-balances-files/student-loan-balances-file-header";
 import { StudentLoanBalancesFileFooter } from "./student-loan-balances-files/student-loan-balances-file-footer";
 import { StudentLoanBalancesFileResponse } from "./student-loan-balances-files/student-loan-balances-file-response";
+import { CustomNamedError } from "@sims/utilities";
 
 @Injectable()
 export class StudentLoanBalancesIntegrationService extends SFTPIntegrationBase<StudentLoanBalancesSFTPResponseFile> {
@@ -34,7 +36,10 @@ export class StudentLoanBalancesIntegrationService extends SFTPIntegrationBase<S
         `The Student loan balances file ${remoteFilePath} has an invalid record type on header: ${header.recordTypeCode}.`,
       );
       // If the header is not the expected one, throw an error.
-      throw new Error("Invalid file header.");
+      throw new CustomNamedError(
+        `Invalid record type ${header.recordTypeCode} on header.`,
+        FILE_PARSING_ERROR,
+      );
     }
     // Remove the footer.
     // Not part of the processing.
@@ -46,15 +51,19 @@ export class StudentLoanBalancesIntegrationService extends SFTPIntegrationBase<S
         `The Student loan balances file ${remoteFilePath} has an invalid record type on footer: ${footer.recordTypeCode}.`,
       );
       // If the footer is not the expected one, throw an error.
-      throw new Error("Invalid file footer.");
+      throw new CustomNamedError(
+        `Invalid record type ${footer.recordTypeCode} on footer.`,
+        FILE_PARSING_ERROR,
+      );
     }
     if (footer.recordCount !== fileLines.length) {
       this.logger.error(
         `The number of Student loan balance records ${fileLines.length} does not match the records in the footer ${footer.recordCount}.`,
       );
       // If the footer is not the expected one, throw an error.
-      throw new Error(
+      throw new CustomNamedError(
         "Records in footer does not match the number of records.",
+        FILE_PARSING_ERROR,
       );
     }
     // Generate the records.

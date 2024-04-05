@@ -21,6 +21,10 @@ import { StudentLoanBalancesPartTimeIntegrationScheduler } from "../student-loan
  * Student loan balances received file mocks.
  */
 const STUDENT_LOAN_BALANCES_FILENAME = "PEDU.PBC.PT.MBAL.20240302.001";
+const STUDENT_LOAN_BALANCES_STUDENT_NOT_FOUND_FILENAME =
+  "PEDU.PBC.PT.MBAL.20240102.001";
+const STUDENT_LOAN_BALANCES_RECORDS_MISMATCH_FILENAME =
+  "PEDU.PBC.PT.MBAL.20240202.001";
 
 describe(
   describeProcessorRootTest(QueueNames.StudentLoanBalancesPartTimeIntegration),
@@ -77,7 +81,7 @@ describe(
       expect(result.length).toBe(1);
       expect(
         mockedJob.containLogMessages([
-          `File contains 1 Student Loan balances.`,
+          "File contains 1 Student Loan balances.",
           `Inserted Student Loan balances file ${STUDENT_LOAN_BALANCES_FILENAME}.`,
         ]),
       ).toBe(true);
@@ -111,18 +115,18 @@ describe(
       });
       // Queued job.
       const mockedJob = mockBullJob<void>();
-      mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
+      mockDownloadFiles(sftpClientMock, [
+        STUDENT_LOAN_BALANCES_STUDENT_NOT_FOUND_FILENAME,
+      ]);
       // Act
       const result = await processor.processStudentLoanBalancesFiles(
         mockedJob.job,
       );
       // Assert
-      expect(result.length).toBe(3);
+      expect(result.length).toBe(1);
       expect(result).toContain("Process finalized with success.");
       expect(
-        mockedJob.containLogMessages([
-          `Error processing file ${STUDENT_LOAN_BALANCES_FILENAME}.`,
-        ]),
+        mockedJob.containLogMessages(["Student not found for line 2."]),
       ).toBe(true);
       // Expect the file was deleted from SFTP.
       expect(sftpClientMock.delete).toHaveBeenCalled();
@@ -133,6 +137,29 @@ describe(
       });
       // Expect student loan balance contains the student record.
       expect(studentLoanBalancesCount).toBe(0);
+    });
+
+    it("Should throw an error for number of records mismatch when the records in the trailer does not match the number of records.", async () => {
+      // Arrange
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+      mockDownloadFiles(sftpClientMock, [
+        STUDENT_LOAN_BALANCES_RECORDS_MISMATCH_FILENAME,
+      ]);
+      // Act
+      const result = await processor.processStudentLoanBalancesFiles(
+        mockedJob.job,
+      );
+      // Assert
+      expect(result.length).toBe(3);
+      expect(result).toContain(
+        "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+      );
+      expect(
+        mockedJob.containLogMessages([
+          "Records in footer does not match the number of records.",
+        ]),
+      ).toBe(true);
     });
   },
 );
