@@ -4,11 +4,7 @@ import { StudentLoanBalancesIntegrationService } from "./student-loan-balances.i
 import { StudentLoanBalancesSFTPResponseFile } from "./models/student-loan-balances.model";
 import { StudentService } from "@sims/integrations/services";
 import * as path from "path";
-import {
-  InjectLogger,
-  LoggerService,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { ProcessSummary } from "@sims/utilities/logger";
 import { getISODateOnlyString } from "@sims/utilities";
 import { DataSource } from "typeorm";
 import {
@@ -120,7 +116,7 @@ export class StudentLoanBalancesProcessingService {
       childrenProcessSummary.info(
         `Inserted Student Loan balances file ${fileName}.`,
       );
-    } catch (error) {
+    } catch (error: unknown) {
       if (
         isDatabaseConstraintError(
           error,
@@ -129,30 +125,24 @@ export class StudentLoanBalancesProcessingService {
       ) {
         // Log the error but allow the process to continue.
         const errorDescription = `Student loan balance already exists for the student and balance date at line ${lineNumber}.`;
-        childrenProcessSummary.error(errorDescription);
-        this.logger.error(errorDescription);
+        childrenProcessSummary.error(errorDescription, error);
       } else {
         // Log the error but allow the process to continue.
         const errorDescription = `Error processing file ${fileName}.`;
-        childrenProcessSummary.error(`${errorDescription} ${error.message}`);
-        this.logger.error(`${errorDescription} ${error.message}`);
+        childrenProcessSummary.error(errorDescription, error);
       }
     } finally {
       try {
         await this.studentLoanBalancesIntegrationService.deleteFile(
           remoteFilePath,
         );
-      } catch (error) {
+      } catch (error: unknown) {
         // Log the error but allow the process to continue.
         // If there was an issue only during the file removal, it will be
         // processed again and could be deleted in the second attempt.
         const logMessage = `Error while deleting Student Loan Balances response file: ${remoteFilePath}`;
-        this.logger.error(logMessage);
-        childrenProcessSummary.error(logMessage);
+        childrenProcessSummary.error(logMessage, error);
       }
     }
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }
