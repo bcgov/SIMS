@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { QueueConfiguration } from "@sims/sims-db";
-import { QueueNames, schedulerQueueNames } from "@sims/utilities";
+import { QueueNames } from "@sims/utilities";
 import Bull from "bull";
 import { Repository } from "typeorm";
 import { QueueModel } from "./model/queue.model";
@@ -33,17 +33,6 @@ export class QueueService {
   }
 
   /**
-   * Get all inactive queue names.
-   * @returns queue names.
-   */
-  async getInactiveQueueConfigurations(): Promise<QueueNames[]> {
-    const queues = await this.getAllQueueConfigurations();
-    return queues
-      .filter((queue) => queue.isActive === false)
-      .map((queue) => queue.queueName);
-  }
-
-  /**
    * Get queue configuration details for the requested queue name.
    * @param queueName queue name
    * @returns queue configuration.
@@ -65,6 +54,7 @@ export class QueueService {
       name: queue.queueName,
       dashboardReadonly: queue.queueConfiguration.dashboardReadonly,
       isActive: queue.isActive,
+      cron: queue.queueConfiguration.cron,
     }));
   }
 
@@ -75,14 +65,6 @@ export class QueueService {
    */
   async getQueueConfiguration(queueName: QueueNames): Promise<Bull.JobOptions> {
     const queueConfig = await this.queueConfigurationDetails(queueName);
-    // If a queue configuration record is inactive due to its false in_active flag
-    // and the queue is a scheduler queue, then it will return undefined.
-    if (
-      !queueConfig.isActive &&
-      schedulerQueueNames.includes(queueConfig.queueName)
-    ) {
-      return;
-    }
     const config = {} as Bull.JobOptions;
     const queueConfiguration = queueConfig.queueConfiguration;
     if (queueConfiguration.retry && queueConfiguration.retryInterval) {

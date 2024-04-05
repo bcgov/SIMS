@@ -1,6 +1,6 @@
 import { LoggerService, OnApplicationBootstrap } from "@nestjs/common";
 import { QueueService } from "@sims/services/queue";
-import { QueueNames, schedulerQueueNames } from "@sims/utilities";
+import { QueueNames } from "@sims/utilities";
 import { ConfigService } from "@sims/utilities/config";
 import { InjectLogger } from "@sims/utilities/logger";
 import { CronRepeatOptions, Queue } from "bull";
@@ -33,9 +33,6 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
     const queueConfig = await this.queueService.getQueueConfiguration(
       this.schedulerQueue.name as QueueNames,
     );
-    if (!queueConfig) {
-      return { cron: "inactive" } as CronRepeatOptions;
-    }
     return queueConfig.repeat as CronRepeatOptions;
   }
 
@@ -51,14 +48,17 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
    * any old cron job delete it and add the new job to the queue.
    */
   async onApplicationBootstrap(): Promise<void> {
-    // Stops schedulers from running if their isActive status is false
-    // and they fall into the scheduler-queues category.
-    const inactiveQueueNames =
-      await this.queueService.getInactiveQueueConfigurations();
-    if (
-      inactiveQueueNames.includes(this.schedulerQueue.name as QueueNames) &&
-      schedulerQueueNames.includes(this.schedulerQueue.name as QueueNames)
-    ) {
+    // Stops this scheduler from running if the isActive status is false
+    // and it falls into the scheduler-queues category (cron returns a value).
+    const queueConfigurations =
+      await this.queueService.getAllQueueConfigurations();
+    const isInactiveQueue = queueConfigurations.find(
+      (queue) =>
+        queue.queueName === this.schedulerQueue.name &&
+        queue.isActive === false &&
+        queue.queueConfiguration.cron,
+    );
+    if (isInactiveQueue) {
       await this.schedulerQueue.obliterate({ force: true });
       return;
     }
