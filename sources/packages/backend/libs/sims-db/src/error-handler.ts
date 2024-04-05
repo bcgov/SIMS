@@ -12,6 +12,10 @@ export enum DatabaseConstraintNames {
    * Applied on table sims.education_programs_offerings.
    */
   LocationIDProgramIDOfferingNameStudyDatesYearOfStudyIndex = "loc_id_prog_id_offer_name_study_dts_year_study_index",
+  /**
+   * Student and balance date unique constraint in sims.student_loan_balances table.
+   */
+  StudentLoanBalanceDateUniqueConstraint = "student_balance_date",
 }
 
 /**

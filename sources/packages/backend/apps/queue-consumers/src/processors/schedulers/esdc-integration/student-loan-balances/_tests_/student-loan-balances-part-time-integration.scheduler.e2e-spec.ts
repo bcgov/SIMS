@@ -23,7 +23,10 @@ import * as faker from "faker";
  * Student loan balances received file mocks.
  */
 const STUDENT_LOAN_BALANCES_FILENAME = "PEDU.PBC.PT.MBAL.20240302.001";
-const RESERVED_USER_LAST_NAME = "STUDENT_LOAN_BALANCE_LAST_NAME";
+const STUDENT_LOAN_BALANCES_STUDENT_NOT_FOUND_FILENAME =
+  "PEDU.PBC.PT.MBAL.20240102.001";
+const STUDENT_LOAN_BALANCES_RECORDS_MISMATCH_FILENAME =
+  "PEDU.PBC.PT.MBAL.20240202.001";
 
 describe(
   describeProcessorRootTest(QueueNames.StudentLoanBalancesPartTimeIntegration),
@@ -86,7 +89,7 @@ describe(
       expect(result.length).toBe(1);
       expect(
         mockedJob.containLogMessages([
-          `File contains 1 Student Loan balances.`,
+          "File contains 1 Student Loan balances.",
           `Inserted Student Loan balances file ${STUDENT_LOAN_BALANCES_FILENAME}.`,
         ]),
       ).toBe(true);
@@ -120,7 +123,9 @@ describe(
       });
       // Queued job.
       const mockedJob = mockBullJob<void>();
-      mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
+      mockDownloadFiles(sftpClientMock, [
+        STUDENT_LOAN_BALANCES_STUDENT_NOT_FOUND_FILENAME,
+      ]);
       // Act
       const result = await processor.processStudentLoanBalancesFiles(
         mockedJob.job,
@@ -128,6 +133,9 @@ describe(
       // Assert
       expect(result.length).toBe(1);
       expect(result).toContain("Process finalized with success.");
+      expect(
+        mockedJob.containLogMessages(["Student not found for line 2."]),
+      ).toBe(true);
       // Expect the file was deleted from SFTP.
       expect(sftpClientMock.delete).toHaveBeenCalled();
       const studentLoanBalancesCount = await db.studentLoanBalance.count({
@@ -139,172 +147,27 @@ describe(
       expect(studentLoanBalancesCount).toBe(0);
     });
 
-    it("Should add a zero balance record for a student with a positive balance in the previous month when the same student is no longer in the most recently received file.", async () => {
+    it("Should throw an error for number of records mismatch when the records in the trailer does not match the number of records.", async () => {
       // Arrange
-      const previousBalanceDate = "2023-11-30";
-      const currentBalanceDate = "2023-12-31";
-      // Student with a random name that will not be present in the file
-      // and should have a zero balance record created.
-      const student = await saveFakeStudent(db.dataSource, undefined, {
-        userInitialValue: { lastName: faker.datatype.uuid() },
-      });
-      // Create an existing balance for the student.
-      await db.studentLoanBalance.insert(
-        createFakeStudentLoanBalance(
-          { student },
-          {
-            initialValues: {
-              balanceDate: previousBalanceDate,
-              cslBalance: 1234,
-            },
-          },
-        ),
-      );
-
       // Queued job.
       const mockedJob = mockBullJob<void>();
-      mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
-
+      mockDownloadFiles(sftpClientMock, [
+        STUDENT_LOAN_BALANCES_RECORDS_MISMATCH_FILENAME,
+      ]);
       // Act
       const result = await processor.processStudentLoanBalancesFiles(
         mockedJob.job,
       );
-
       // Assert
-      expect(result).toContain("Process finalized with success.");
-      const studentLoanBalance = await db.studentLoanBalance.find({
-        select: {
-          balanceDate: true,
-          cslBalance: true,
-        },
-        where: {
-          student: { id: student.id },
-          balanceDate: currentBalanceDate,
-        },
-      });
-      // Expect student loan balance to be zero for the newly imported file.
-      expect(studentLoanBalance).toEqual([
-        {
-          balanceDate: currentBalanceDate,
-          cslBalance: 0,
-        },
-      ]);
-    });
-
-    it("Should ignore a student with a zero balance in the previous month when a new file is imported and the student is not in the file records.", async () => {
-      // Arrange
-      const previousBalanceDate = "2023-11-30";
-      // Student with a random name that will not be present in the file
-      // and should have a zero balance record created.
-      const student = await saveFakeStudent(db.dataSource, undefined, {
-        userInitialValue: { lastName: faker.datatype.uuid() },
-      });
-      // Create an existing zero balance for the student.
-      await db.studentLoanBalance.insert(
-        createFakeStudentLoanBalance(
-          { student },
-          {
-            initialValues: {
-              balanceDate: previousBalanceDate,
-              cslBalance: 0,
-            },
-          },
-        ),
+      expect(result.length).toBe(3);
+      expect(result).toContain(
+        "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
       );
-
-      // Queued job.
-      const mockedJob = mockBullJob<void>();
-      mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
-
-      // Act
-      const result = await processor.processStudentLoanBalancesFiles(
-        mockedJob.job,
-      );
-
-      // Assert
-      expect(result).toContain("Process finalized with success.");
-      const studentLoanBalance = await db.studentLoanBalance.find({
-        select: {
-          balanceDate: true,
-          cslBalance: true,
-        },
-        where: {
-          student: { id: student.id },
-        },
-      });
-      // Student with an already zero balance record will not be present the newly imported file.
-      expect(studentLoanBalance).toEqual([
-        {
-          balanceDate: previousBalanceDate,
-          cslBalance: 0,
-        },
-      ]);
-    });
-
-    it("Should create a new balance when the student has a zero balance record in the previous balance and a new positive balance is received.", async () => {
-      // Arrange
-      const previousBalanceDate = "2023-11-30";
-      const currentBalanceDate = "2023-12-31";
-      // Create user.
-      const fakeUser = createFakeUser();
-      fakeUser.lastName = RESERVED_USER_LAST_NAME;
-      const user = await db.user.save(fakeUser);
-      // Student
-      const student = await saveFakeStudent(
-        db.dataSource,
-        { user },
-        {
-          initialValue: { birthDate: "1998-03-24" },
-          sinValidationInitialValue: { sin: "900041310" },
-        },
-      );
-      // Create an existing zero balance for the student.
-      await db.studentLoanBalance.insert(
-        createFakeStudentLoanBalance(
-          { student },
-          {
-            initialValues: {
-              balanceDate: previousBalanceDate,
-              cslBalance: 0,
-            },
-          },
-        ),
-      );
-
-      // Queued job.
-      const mockedJob = mockBullJob<void>();
-      mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
-
-      // Act
-      const result = await processor.processStudentLoanBalancesFiles(
-        mockedJob.job,
-      );
-
-      // Assert
-      expect(result).toContain("Process finalized with success.");
-      const studentLoanBalances = await db.studentLoanBalance.find({
-        select: {
-          balanceDate: true,
-          cslBalance: true,
-        },
-        where: {
-          student: { id: student.id },
-        },
-        order: {
-          cslBalance: "ASC",
-        },
-      });
-      // Expect student loan balance to be positive again after he had a zero balance in the previous imported file.
-      expect(studentLoanBalances).toEqual([
-        {
-          balanceDate: previousBalanceDate,
-          cslBalance: 0,
-        },
-        {
-          balanceDate: currentBalanceDate,
-          cslBalance: 148154,
-        },
-      ]);
+      expect(
+        mockedJob.containLogMessages([
+          "Records in footer does not match the number of records.",
+        ]),
+      ).toBe(true);
     });
   },
 );
