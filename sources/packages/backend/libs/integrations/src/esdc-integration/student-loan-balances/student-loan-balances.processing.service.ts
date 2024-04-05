@@ -5,7 +5,7 @@ import { StudentLoanBalancesSFTPResponseFile } from "./models/student-loan-balan
 import { StudentService } from "@sims/integrations/services";
 import * as path from "path";
 import { ProcessSummary } from "@sims/utilities/logger";
-import { getISODateOnlyString } from "@sims/utilities";
+import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
 import { DataSource } from "typeorm";
 import {
   DatabaseConstraintNames,
@@ -126,6 +126,9 @@ export class StudentLoanBalancesProcessingService {
         // Log the error but allow the process to continue.
         const errorDescription = `Student loan balance already exists for the student and balance date at line ${lineNumber}.`;
         childrenProcessSummary.error(errorDescription);
+      }
+      if (error instanceof CustomNamedError) {
+        childrenProcessSummary.error(error.message);
       } else {
         // Log the error but allow the process to continue.
         const errorDescription = `Error processing file ${fileName}.`;

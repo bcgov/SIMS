@@ -157,7 +157,7 @@ describe(
       );
       expect(
         mockedJob.containLogMessages([
-          `Error processing file ${STUDENT_LOAN_BALANCES_RECORDS_MISMATCH_FILENAME}. "Records in footer does not match the number of records."`,
+          "Records in footer does not match the number of records.",
         ]),
       ).toBe(true);
     });
