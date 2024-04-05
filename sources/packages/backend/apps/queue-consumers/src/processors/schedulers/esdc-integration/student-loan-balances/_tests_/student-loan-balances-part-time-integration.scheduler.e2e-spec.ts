@@ -18,6 +18,7 @@ import * as Client from "ssh2-sftp-client";
 import * as path from "path";
 import { StudentLoanBalancesPartTimeIntegrationScheduler } from "../student-loan-balances-part-time-integration.scheduler";
 import * as faker from "faker";
+import { Student } from "@sims/sims-db";
 
 /**
  * Student loan balances received file mocks.
@@ -72,18 +73,7 @@ describe(
     it("Should add monthly loan balance record for the student when the student matches SIN, DOB, and last name.", async () => {
       // Arrange
       // Create user.
-      const fakeUser = createFakeUser();
-      fakeUser.lastName = RESERVED_USER_LAST_NAME;
-      const user = await db.user.save(fakeUser);
-      // Student
-      const student = await saveFakeStudent(
-        db.dataSource,
-        { user },
-        {
-          initialValue: { birthDate: "1998-03-24" },
-          sinValidationInitialValue: { sin: "900041310" },
-        },
-      );
+      const student = await createStudentWithSpecificLastName("reserved");
       // Queued job.
       const mockedJob = mockBullJob<void>();
       mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
@@ -123,10 +113,7 @@ describe(
     it("Should not add monthly loan balance record when the student is not found.", async () => {
       // Arrange
       // Create Student.
-      const student = await saveFakeStudent(db.dataSource, undefined, {
-        initialValue: { birthDate: "1998-03-24" },
-        sinValidationInitialValue: { sin: "900041310" },
-      });
+      const student = await createStudentWithSpecificLastName("random");
       // Queued job.
       const mockedJob = mockBullJob<void>();
       mockDownloadFiles(sftpClientMock, [
@@ -182,9 +169,8 @@ describe(
       const currentBalanceDate = "2023-12-31";
       // Student with a random name that will not be present in the file
       // and should have a zero balance record created.
-      const student = await saveFakeStudent(db.dataSource, undefined, {
-        userInitialValue: { lastName: faker.datatype.uuid() },
-      });
+      const student = await createStudentWithSpecificLastName("random");
+
       // Create an existing balance for the student.
       await db.studentLoanBalance.insert(
         createFakeStudentLoanBalance(
@@ -233,9 +219,7 @@ describe(
       const previousBalanceDate = "2023-11-30";
       // Student with a random name that will not be present in the file
       // and should have a zero balance record created.
-      const student = await saveFakeStudent(db.dataSource, undefined, {
-        userInitialValue: { lastName: faker.datatype.uuid() },
-      });
+      const student = await createStudentWithSpecificLastName("random");
       // Create an existing zero balance for the student.
       await db.studentLoanBalance.insert(
         createFakeStudentLoanBalance(
@@ -282,19 +266,8 @@ describe(
       // Arrange
       const previousBalanceDate = "2023-11-30";
       const currentBalanceDate = "2023-12-31";
-      // Create user.
-      const fakeUser = createFakeUser();
-      fakeUser.lastName = RESERVED_USER_LAST_NAME;
-      const user = await db.user.save(fakeUser);
       // Student
-      const student = await saveFakeStudent(
-        db.dataSource,
-        { user },
-        {
-          initialValue: { birthDate: "1998-03-24" },
-          sinValidationInitialValue: { sin: "900041310" },
-        },
-      );
+      const student = await createStudentWithSpecificLastName("reserved");
       // Create an existing zero balance for the student.
       await db.studentLoanBalance.insert(
         createFakeStudentLoanBalance(
@@ -343,5 +316,31 @@ describe(
         },
       ]);
     });
+
+    /**
+     * Create a user and a student with the required last name.
+     * @param lastNameType type of last name.
+     * - `random` will create a student with a random generated GUID.
+     * - `reserved` will create the student with the name as {@link RESERVED_USER_LAST_NAME}
+     * to match with a imported file.
+     * @returns student with the specific last name.
+     */
+    async function createStudentWithSpecificLastName(
+      lastNameType: "random" | "reserved",
+    ): Promise<Student> {
+      const user = createFakeUser();
+      user.lastName =
+        lastNameType === "reserved"
+          ? RESERVED_USER_LAST_NAME
+          : faker.datatype.uuid();
+      return saveFakeStudent(
+        db.dataSource,
+        { user },
+        {
+          initialValue: { birthDate: "1998-03-24" },
+          sinValidationInitialValue: { sin: "900041310" },
+        },
+      );
+    }
   },
 );
