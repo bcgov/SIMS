@@ -1,6 +1,13 @@
 import * as faker from "faker";
 import { User } from "@sims/sims-db";
 
+/**
+ * Creates a fake user.
+ * @param userName user name.
+ * @param options fake user options.
+ * - `initialValues` initial values to be used to create the user.
+ * @returns user entity ready to be persisted.
+ */
 export function createFakeUser(
   userName?: string,
   options?: {

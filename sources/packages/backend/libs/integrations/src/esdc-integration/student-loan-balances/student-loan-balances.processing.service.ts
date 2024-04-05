@@ -130,9 +130,9 @@ export class StudentLoanBalancesProcessingService {
           // If no previous balance date is present no records exists in the
           // database and there is no need to insert zero balance records.
           await this.studentLoanBalanceService.insertZeroBalanceRecords(
-            transactionalEntityManager,
             previousBalanceDate,
             studentLoanBalancesSFTPResponseFile.header.balanceDate,
+            transactionalEntityManager,
           );
         }
       });

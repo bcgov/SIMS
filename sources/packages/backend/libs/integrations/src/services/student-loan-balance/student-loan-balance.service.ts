@@ -6,6 +6,7 @@ import { EntityManager } from "typeorm";
 @Injectable()
 export class StudentLoanBalanceService {
   constructor(private readonly systemUserService: SystemUsersService) {}
+
   /**
    * Most recent balance present on database.
    * If no records are present, returns undefined.
@@ -33,15 +34,15 @@ export class StudentLoanBalanceService {
    * After new student balance records are added to the database, checks if some students
    * are no longer present in the statement which would indicate they no longer have
    * a balance and a zero balance record will be inserted.
-   * @param entityManager used to get the data in and share the database transaction.
    * @param previousBalanceDate most recent inserted balance date before the {@link currentBalanceDate}.
    * @param currentBalanceDate date of the balance inserted into database that need
    * to be checked if zero balance records are needed.
+   * @param entityManager used to get the data in and share the database transaction.
    */
   async insertZeroBalanceRecords(
-    entityManager: EntityManager,
     previousBalanceDate: Date,
     currentBalanceDate: Date,
+    entityManager: EntityManager,
   ): Promise<void> {
     const mainQueryAlias = "studentLoanBalance";
     const studentLoanBalanceRepo =

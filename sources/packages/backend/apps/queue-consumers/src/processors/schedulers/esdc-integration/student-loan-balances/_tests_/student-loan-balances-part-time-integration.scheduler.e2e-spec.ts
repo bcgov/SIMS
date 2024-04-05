@@ -191,7 +191,7 @@ describe(
       ]);
     });
 
-    it("Should ignore a student with a zero balance balance in the previous month when a new file is imported and the student is not in the file records.", async () => {
+    it("Should ignore a student with a zero balance in the previous month when a new file is imported and the student is not in the file records.", async () => {
       // Arrange
       const previousBalanceDate = "2023-11-30";
       // Student with a random name that will not be present in the file
