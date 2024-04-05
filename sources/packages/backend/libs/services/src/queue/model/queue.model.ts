@@ -4,5 +4,5 @@ export interface QueueModel extends Omit<BullModuleOptions, "redis"> {
   name: string;
   dashboardReadonly?: boolean;
   isActive?: boolean;
-  cron?: string;
+  isScheduler?: boolean;
 }

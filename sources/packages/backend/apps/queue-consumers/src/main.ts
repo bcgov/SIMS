@@ -31,7 +31,7 @@ import { SystemUsersService } from "@sims/services";
   serverAdapter.setBasePath("/admin/queues");
   const bullBoardQueues: BullAdapter[] = [];
   queues.forEach((queue) => {
-    if (!queue.isActive && queue.cron) {
+    if (!queue.isActive && queue.isScheduler) {
       logger.log(`Queue service "${queue.name}" is inactive.`);
     } else {
       bullBoardQueues.push(

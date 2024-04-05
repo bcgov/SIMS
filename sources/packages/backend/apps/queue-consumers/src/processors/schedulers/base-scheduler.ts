@@ -51,14 +51,14 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
     // Stops this scheduler from running if the isActive status is false
     // and it falls into the scheduler-queues category (cron returns a value).
     const queueConfigurations =
-      await this.queueService.getAllQueueConfigurations();
-    const isInactiveQueue = queueConfigurations.find(
+      await this.queueService.queueConfigurationModel();
+    const inactiveQueue = queueConfigurations.find(
       (queue) =>
-        queue.queueName === this.schedulerQueue.name &&
-        queue.isActive === false &&
-        queue.queueConfiguration.cron,
+        queue.name === this.schedulerQueue.name &&
+        !queue.isActive &&
+        queue.isScheduler,
     );
-    if (isInactiveQueue) {
+    if (inactiveQueue) {
       await this.schedulerQueue.obliterate({ force: true });
       return;
     }
