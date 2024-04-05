@@ -190,5 +190,121 @@ describe(
         },
       ]);
     });
+
+    it("Should ignore a student with a zero balance balance in the previous month when a new file is imported and the student is not in the file records.", async () => {
+      // Arrange
+      const previousBalanceDate = "2023-11-30";
+      // Student with a random name that will not be present in the file
+      // and should have a zero balance record created.
+      const student = await saveFakeStudent(db.dataSource, undefined, {
+        userInitialValue: { lastName: faker.datatype.uuid() },
+      });
+      // Create an existing zero balance for the student.
+      await db.studentLoanBalance.insert(
+        createFakeStudentLoanBalance(
+          { student },
+          {
+            initialValues: {
+              balanceDate: previousBalanceDate,
+              cslBalance: 0,
+            },
+          },
+        ),
+      );
+
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+      mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
+
+      // Act
+      const result = await processor.processStudentLoanBalancesFiles(
+        mockedJob.job,
+      );
+
+      // Assert
+      expect(result).toContain("Process finalized with success.");
+      const studentLoanBalance = await db.studentLoanBalance.find({
+        select: {
+          balanceDate: true,
+          cslBalance: true,
+        },
+        where: {
+          student: { id: student.id },
+        },
+      });
+      // Student with an already zero balance record will not be present the newly imported file.
+      expect(studentLoanBalance).toEqual([
+        {
+          balanceDate: previousBalanceDate,
+          cslBalance: 0,
+        },
+      ]);
+    });
+
+    it("Should create a new balance when the student has a zero balance record in the previous balance and a new positive balance is received.", async () => {
+      // Arrange
+      const previousBalanceDate = "2023-11-30";
+      const currentBalanceDate = "2023-12-31";
+      // Create user.
+      const fakeUser = createFakeUser();
+      fakeUser.lastName = RESERVED_USER_LAST_NAME;
+      const user = await db.user.save(fakeUser);
+      // Student
+      const student = await saveFakeStudent(
+        db.dataSource,
+        { user },
+        {
+          initialValue: { birthDate: "1998-03-24" },
+          sinValidationInitialValue: { sin: "900041310" },
+        },
+      );
+      // Create an existing zero balance for the student.
+      await db.studentLoanBalance.insert(
+        createFakeStudentLoanBalance(
+          { student },
+          {
+            initialValues: {
+              balanceDate: previousBalanceDate,
+              cslBalance: 0,
+            },
+          },
+        ),
+      );
+
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+      mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
+
+      // Act
+      const result = await processor.processStudentLoanBalancesFiles(
+        mockedJob.job,
+      );
+
+      // Assert
+      expect(result).toContain("Process finalized with success.");
+      const studentLoanBalances = await db.studentLoanBalance.find({
+        select: {
+          balanceDate: true,
+          cslBalance: true,
+        },
+        where: {
+          student: { id: student.id },
+        },
+        order: {
+          cslBalance: "ASC",
+        },
+      });
+      // Expect student loan balance to be positive again after he had a zero balance in the previous imported file.
+      expect(studentLoanBalances).toEqual([
+        {
+          balanceDate: previousBalanceDate,
+          cslBalance: 0,
+        },
+        {
+          balanceDate: currentBalanceDate,
+          cslBalance: 148154,
+        },
+      ]);
+    });
   },
 );

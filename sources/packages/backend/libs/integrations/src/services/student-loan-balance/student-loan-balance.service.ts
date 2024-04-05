@@ -9,10 +9,12 @@ export class StudentLoanBalanceService {
   /**
    * Most recent balance present on database.
    * If no records are present, returns undefined.
+   * @param referenceBalanceDate used as a reference to get the last balance before this date.
    * @param entityManager used to get the data in and share the database transaction.
    * @returns the most updated balance date, if present, otherwise, undefined.
    */
   async getLastBalanceDate(
+    referenceBalanceDate: Date,
     entityManager: EntityManager,
   ): Promise<Date | undefined> {
     const maxBalanceDateAlias = "maxBalanceDate";
@@ -20,6 +22,9 @@ export class StudentLoanBalanceService {
       .getRepository(StudentLoanBalance)
       .createQueryBuilder("studentLoanBalance")
       .select("MAX(studentLoanBalance.balanceDate)", maxBalanceDateAlias)
+      .where("studentLoanBalance.balanceDate < :referenceBalanceDate", {
+        referenceBalanceDate,
+      })
       .getRawOne();
     return lastBalanceDate[maxBalanceDateAlias] ?? undefined;
   }

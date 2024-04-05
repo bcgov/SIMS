@@ -96,8 +96,10 @@ export class StudentLoanBalancesProcessingService {
       await this.dataSource.transaction(async (transactionalEntityManager) => {
         const studentLoanBalancesRepo =
           transactionalEntityManager.getRepository(StudentLoanBalance);
+        // Previous balance date immediately before the one being imported, if one exists.
         const previousBalanceDate =
           await this.studentLoanBalanceService.getLastBalanceDate(
+            studentLoanBalancesSFTPResponseFile.header.balanceDate,
             transactionalEntityManager,
           );
         for (const studentLoanBalanceRecord of studentLoanBalancesSFTPResponseFile.records) {
