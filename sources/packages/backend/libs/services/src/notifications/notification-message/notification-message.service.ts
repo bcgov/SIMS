@@ -13,26 +13,27 @@ export class NotificationMessageService extends RecordDataModelService<Notificat
   }
 
   /**
-   * Retrieves the template id of a notification message.
+   * Retrieves the notification details of a notification message.
    * @param notificationMessageTypeId id of the user who will receive the message.
    * @param options options.
    * - `entityManager` external entity manager to run in a transaction.
-   * @returns template Id of the notification message.
+   * @returns notification details of the notification message.
    */
-  async getTemplateId(
+  async getNotificationDetails(
     notificationMessageTypeId: NotificationMessageType,
     options?: { entityManager?: EntityManager },
-  ): Promise<string> {
+  ): Promise<NotificationMessage> {
     const notificationMessageRepo =
       options?.entityManager?.getRepository(NotificationMessage) ?? this.repo;
     const notificationMessage = await notificationMessageRepo.findOne({
       select: {
         templateId: true,
+        emailContacts: true,
       },
       where: {
         id: notificationMessageTypeId,
       },
     });
-    return notificationMessage.templateId;
+    return notificationMessage;
   }
 }

@@ -20,7 +20,6 @@ import {
   LegacyRestrictionAddedNotification,
   DisbursementBlockedNotificationForMinistry,
 } from "..";
-import { GCNotifyService } from "./gc-notify.service";
 import { NotificationService } from "./notification.service";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { ECE_RESPONSE_ATTACHMENT_FILE_NAME } from "@sims/integrations/constants";
@@ -29,7 +28,6 @@ import { SystemUsersService } from "@sims/services/system-users";
 @Injectable()
 export class NotificationActionsService {
   constructor(
-    private readonly gcNotifyService: GCNotifyService,
     private readonly notificationService: NotificationService,
     private readonly notificationMessageService: NotificationMessageService,
     private readonly systemUsersService: SystemUsersService,
@@ -49,29 +47,34 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager?: EntityManager,
   ): Promise<void> {
-    const templateId = await this.notificationMessageService.getTemplateId(
-      NotificationMessageType.StudentFileUpload,
-    );
-    const notificationToSend = {
-      userId: notification.userId,
-      messageType: NotificationMessageType.StudentFileUpload,
-      messagePayload: {
-        email_address: this.gcNotifyService.ministryToAddress(),
-        template_id: templateId,
-        personalisation: {
-          givenNames: notification.firstName ?? "",
-          lastName: notification.lastName,
-          dob: getDateOnlyFormat(notification.birthDate),
-          applicationNumber: notification.applicationNumber,
-          documentPurpose: notification.documentPurpose,
-          date: this.getDateTimeOnPSTTimeZone(),
+    const notificationDetails =
+      await this.notificationMessageService.getNotificationDetails(
+        NotificationMessageType.StudentFileUpload,
+      );
+    const ministryNotificationsToSend = [];
+    notificationDetails.emailContacts.forEach((emailContact) => {
+      const notificationToSend = {
+        userId: notification.userId,
+        messageType: NotificationMessageType.StudentFileUpload,
+        messagePayload: {
+          email_address: emailContact,
+          template_id: notificationDetails.templateId,
+          personalisation: {
+            givenNames: notification.firstName ?? "",
+            lastName: notification.lastName,
+            dob: getDateOnlyFormat(notification.birthDate),
+            applicationNumber: notification.applicationNumber,
+            documentPurpose: notification.documentPurpose,
+            date: this.getDateTimeOnPSTTimeZone(),
+          },
         },
-      },
-    };
+      };
+      ministryNotificationsToSend.push(notificationToSend);
+    });
 
     // Save notification into notification table.
     await this.notificationService.saveNotifications(
-      [notificationToSend],
+      ministryNotificationsToSend,
       auditUserId,
       { entityManager },
     );
@@ -90,16 +93,17 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager?: EntityManager,
   ): Promise<void> {
-    const templateId = await this.notificationMessageService.getTemplateId(
-      NotificationMessageType.MinistryFileUpload,
-    );
+    const notificationDetails =
+      await this.notificationMessageService.getNotificationDetails(
+        NotificationMessageType.MinistryFileUpload,
+      );
 
     const notificationToSend = {
       userId: notification.userId,
       messageType: NotificationMessageType.MinistryFileUpload,
       messagePayload: {
         email_address: notification.toAddress,
-        template_id: templateId,
+        template_id: notificationDetails.templateId,
         personalisation: {
           givenNames: notification.firstName ?? "",
           lastName: notification.lastName,
@@ -127,13 +131,14 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager?: EntityManager,
   ): Promise<void> {
-    const templateId = await this.notificationMessageService.getTemplateId(
-      NotificationMessageType.MSFAACancellation,
-    );
+    const notificationDetails =
+      await this.notificationMessageService.getNotificationDetails(
+        NotificationMessageType.MSFAACancellation,
+      );
 
     const messagePayload: NotificationEmailMessage = {
       email_address: notification.toAddress,
-      template_id: templateId,
+      template_id: notificationDetails.templateId,
       personalisation: {
         givenNames: notification.givenNames ?? "",
         lastName: notification.lastName,
@@ -165,12 +170,13 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager?: EntityManager,
   ): Promise<void> {
-    const templateId = await this.notificationMessageService.getTemplateId(
-      NotificationMessageType.ApplicationOfferingChangeRequestInProgressWithStudent,
-    );
+    const notificationDetails =
+      await this.notificationMessageService.getNotificationDetails(
+        NotificationMessageType.ApplicationOfferingChangeRequestInProgressWithStudent,
+      );
     const messagePayload: NotificationEmailMessage = {
       email_address: notification.toAddress,
-      template_id: templateId,
+      template_id: notificationDetails.templateId,
       personalisation: {
         givenNames: notification.givenNames ?? "",
         lastName: notification.lastName,
@@ -201,12 +207,13 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager: EntityManager,
   ): Promise<void> {
-    const templateId = await this.notificationMessageService.getTemplateId(
-      NotificationMessageType.ApplicationOfferingChangeRequestCompletedByMinistry,
-    );
+    const notificationDetails =
+      await this.notificationMessageService.getNotificationDetails(
+        NotificationMessageType.ApplicationOfferingChangeRequestCompletedByMinistry,
+      );
     const messagePayload: NotificationEmailMessage = {
       email_address: notification.toAddress,
-      template_id: templateId,
+      template_id: notificationDetails.templateId,
       personalisation: {
         givenNames: notification.givenNames ?? "",
         lastName: notification.lastName,
@@ -237,16 +244,17 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager?: EntityManager,
   ): Promise<void> {
-    const templateId = await this.notificationMessageService.getTemplateId(
-      NotificationMessageType.StudentRestrictionAdded,
-    );
+    const notificationDetails =
+      await this.notificationMessageService.getNotificationDetails(
+        NotificationMessageType.StudentRestrictionAdded,
+      );
 
     const notificationsToSend = notifications.map((notification) => ({
       userId: notification.userId,
       messageType: NotificationMessageType.StudentRestrictionAdded,
       messagePayload: {
         email_address: notification.toAddress,
-        template_id: templateId,
+        template_id: notificationDetails.templateId,
         personalisation: {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
@@ -274,27 +282,32 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager?: EntityManager,
   ): Promise<void> {
-    const templateId = await this.notificationMessageService.getTemplateId(
-      NotificationMessageType.LegacyRestrictionAdded,
-    );
-    const notificationsToSend = notifications.map((notification) => ({
-      userId: notification.userId,
-      messageType: NotificationMessageType.LegacyRestrictionAdded,
-      messagePayload: {
-        email_address: this.gcNotifyService.ministryToAddress(),
-        template_id: templateId,
-        personalisation: {
-          givenNames: notification.firstName ?? "",
-          lastName: notification.lastName,
-          studentEmail: notification.email,
-          dob: getDateOnlyFormat(notification.birthDate),
-          dateTime: this.getDateTimeOnPSTTimeZone(),
+    const notificationDetails =
+      await this.notificationMessageService.getNotificationDetails(
+        NotificationMessageType.LegacyRestrictionAdded,
+      );
+    const ministryNotificationsToSend = [];
+    notificationDetails.emailContacts.forEach((emailContact) => {
+      const notificationsToSend = notifications.map((notification) => ({
+        userId: notification.userId,
+        messageType: NotificationMessageType.LegacyRestrictionAdded,
+        messagePayload: {
+          email_address: emailContact,
+          template_id: notificationDetails.templateId,
+          personalisation: {
+            givenNames: notification.firstName ?? "",
+            lastName: notification.lastName,
+            studentEmail: notification.email,
+            dob: getDateOnlyFormat(notification.birthDate),
+            dateTime: this.getDateTimeOnPSTTimeZone(),
+          },
         },
-      },
-    }));
+      }));
+      ministryNotificationsToSend.push(...notificationsToSend);
+    });
     // Save notification into notification table.
     await this.notificationService.saveNotifications(
-      notificationsToSend,
+      ministryNotificationsToSend,
       auditUserId,
       { entityManager },
     );
@@ -312,16 +325,17 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager: EntityManager,
   ): Promise<void> {
-    const templateId = await this.notificationMessageService.getTemplateId(
-      NotificationMessageType.MinistryCompletesException,
-    );
+    const notificationDetails =
+      await this.notificationMessageService.getNotificationDetails(
+        NotificationMessageType.MinistryCompletesException,
+      );
 
     const exceptionCompleteNotification = {
       userId: notification.userId,
       messageType: NotificationMessageType.MinistryCompletesException,
       messagePayload: {
         email_address: notification.toAddress,
-        template_id: templateId,
+        template_id: notificationDetails.templateId,
         personalisation: {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
@@ -349,16 +363,17 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager: EntityManager,
   ): Promise<void> {
-    const templateId = await this.notificationMessageService.getTemplateId(
-      NotificationMessageType.MinistryCompletesChange,
-    );
+    const notificationDetails =
+      await this.notificationMessageService.getNotificationDetails(
+        NotificationMessageType.MinistryCompletesChange,
+      );
 
     const changeRequestCompleteNotification = {
       userId: notification.userId,
       messageType: NotificationMessageType.MinistryCompletesChange,
       messagePayload: {
         email_address: notification.toAddress,
-        template_id: templateId,
+        template_id: notificationDetails.templateId,
         personalisation: {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
@@ -386,16 +401,17 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager: EntityManager,
   ): Promise<void> {
-    const templateId = await this.notificationMessageService.getTemplateId(
-      NotificationMessageType.InstitutionReportsChange,
-    );
+    const notificationDetails =
+      await this.notificationMessageService.getNotificationDetails(
+        NotificationMessageType.InstitutionReportsChange,
+      );
 
     const institutionReportChangeNotification = {
       userId: notification.userId,
       messageType: NotificationMessageType.InstitutionReportsChange,
       messagePayload: {
         email_address: notification.toAddress,
-        template_id: templateId,
+        template_id: notificationDetails.templateId,
         personalisation: {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
@@ -423,16 +439,17 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager: EntityManager,
   ): Promise<void> {
-    const templateId = await this.notificationMessageService.getTemplateId(
-      NotificationMessageType.InstitutionCompletesPIR,
-    );
+    const notificationDetails =
+      await this.notificationMessageService.getNotificationDetails(
+        NotificationMessageType.InstitutionCompletesPIR,
+      );
 
     const institutionCompletePIRNotification = {
       userId: notification.userId,
       messageType: NotificationMessageType.InstitutionCompletesPIR,
       messagePayload: {
         email_address: notification.toAddress,
-        template_id: templateId,
+        template_id: notificationDetails.templateId,
         personalisation: {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
@@ -460,16 +477,17 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager: EntityManager,
   ): Promise<void> {
-    const templateId = await this.notificationMessageService.getTemplateId(
-      NotificationMessageType.InstitutionCompletesCOE,
-    );
+    const notificationDetails =
+      await this.notificationMessageService.getNotificationDetails(
+        NotificationMessageType.InstitutionCompletesCOE,
+      );
 
     const institutionConfirmCOENotification = {
       userId: notification.userId,
       messageType: NotificationMessageType.InstitutionCompletesCOE,
       messagePayload: {
         email_address: notification.toAddress,
-        template_id: templateId,
+        template_id: notificationDetails.templateId,
         personalisation: {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
@@ -507,16 +525,17 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager: EntityManager,
   ): Promise<void> {
-    const templateId = await this.notificationMessageService.getTemplateId(
-      NotificationMessageType.AssessmentReadyForConfirmation,
-      { entityManager },
-    );
+    const notificationDetails =
+      await this.notificationMessageService.getNotificationDetails(
+        NotificationMessageType.AssessmentReadyForConfirmation,
+        { entityManager },
+      );
     const assessmentReadyNotification = {
       userId: notification.userId,
       messageType: NotificationMessageType.AssessmentReadyForConfirmation,
       messagePayload: {
         email_address: notification.toAddress,
-        template_id: templateId,
+        template_id: notificationDetails.templateId,
         personalisation: {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
@@ -542,15 +561,16 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager: EntityManager,
   ): Promise<void> {
-    const templateId = await this.notificationMessageService.getTemplateId(
-      NotificationMessageType.SINValidationComplete,
-    );
+    const notificationDetails =
+      await this.notificationMessageService.getNotificationDetails(
+        NotificationMessageType.SINValidationComplete,
+      );
     const sinCompleteNotification = {
       userId: notification.userId,
       messageType: NotificationMessageType.SINValidationComplete,
       messagePayload: {
         email_address: notification.toAddress,
-        template_id: templateId,
+        template_id: notificationDetails.templateId,
         personalisation: {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
@@ -576,15 +596,16 @@ export class NotificationActionsService {
     notification: ECEResponseFileProcessingNotification,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const templateId = await this.notificationMessageService.getTemplateId(
-      NotificationMessageType.ECEResponseFileProcessing,
-    );
+    const notificationDetails =
+      await this.notificationMessageService.getNotificationDetails(
+        NotificationMessageType.ECEResponseFileProcessing,
+      );
     const eceResponseFileProcessingNotifications = [];
 
     for (const integrationContact of notification.integrationContacts) {
       const messagePayload: NotificationEmailMessage = {
         email_address: integrationContact,
-        template_id: templateId,
+        template_id: notificationDetails.templateId,
         personalisation: {
           date: this.getDateTimeOnPSTTimeZone(),
           institutionCode: notification.institutionCode,
@@ -630,16 +651,17 @@ export class NotificationActionsService {
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const templateId = await this.notificationMessageService.getTemplateId(
-      NotificationMessageType.StudentNotificationDisbursementBlocked,
-    );
+    const notificationDetails =
+      await this.notificationMessageService.getNotificationDetails(
+        NotificationMessageType.StudentNotificationDisbursementBlocked,
+      );
     const notificationToSend = {
       userId: notification.userId,
       messageType:
         NotificationMessageType.StudentNotificationDisbursementBlocked,
       messagePayload: {
         email_address: notification.toAddress,
-        template_id: templateId,
+        template_id: notificationDetails.templateId,
         personalisation: {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
@@ -667,30 +689,35 @@ export class NotificationActionsService {
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const templateId = await this.notificationMessageService.getTemplateId(
-      NotificationMessageType.MinistryNotificationDisbursementBlocked,
-    );
-    const ministryNotificationToSend = {
-      userId: auditUser.id,
-      messageType:
+    const notificationDetails =
+      await this.notificationMessageService.getNotificationDetails(
         NotificationMessageType.MinistryNotificationDisbursementBlocked,
-      messagePayload: {
-        email_address: this.gcNotifyService.ministryToAddress(),
-        template_id: templateId,
-        personalisation: {
-          givenNames: notification.givenNames ?? "",
-          lastName: notification.lastName,
-          dob: getDateOnlyFormat(notification.dob),
-          studentEmail: notification.email,
-          applicationNumber: notification.applicationNumber,
-          dateTime: this.getDateTimeOnPSTTimeZone(),
+      );
+    const ministryNotificationsToSend = [];
+    notificationDetails.emailContacts.forEach((emailContact) => {
+      const ministryNotificationToSend = {
+        userId: auditUser.id,
+        messageType:
+          NotificationMessageType.MinistryNotificationDisbursementBlocked,
+        messagePayload: {
+          email_address: emailContact,
+          template_id: notificationDetails.templateId,
+          personalisation: {
+            givenNames: notification.givenNames ?? "",
+            lastName: notification.lastName,
+            dob: getDateOnlyFormat(notification.dob),
+            studentEmail: notification.email,
+            applicationNumber: notification.applicationNumber,
+            dateTime: this.getDateTimeOnPSTTimeZone(),
+          },
         },
-      },
-      metadata: { disbursementId },
-    };
+        metadata: { disbursementId },
+      };
+      ministryNotificationsToSend.push(ministryNotificationToSend);
+    });
     // Save notification to be sent to the ministry into the notification table.
     await this.notificationService.saveNotifications(
-      [ministryNotificationToSend],
+      ministryNotificationsToSend,
       auditUser.id,
       { entityManager },
     );

@@ -39,5 +39,5 @@ export class NotificationMessage extends RecordDataModel {
     array: true,
     type: "varchar",
   })
-  email_contacts?: string[];
+  emailContacts?: string[];
 }
