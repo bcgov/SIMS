@@ -81,7 +81,7 @@ export class StudentLoanBalanceService {
       .where("studentLoanBalance.balanceDate < :referenceBalanceDate", {
         referenceBalanceDate,
       })
-      .getRawOne();
+      .getRawOne<{ [maxBalanceDateAlias]: Date }>();
     return lastBalanceDate[maxBalanceDateAlias] ?? undefined;
   }
 }
