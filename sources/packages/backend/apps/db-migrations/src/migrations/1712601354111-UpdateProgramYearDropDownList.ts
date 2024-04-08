@@ -12,7 +12,7 @@ export class UpdateProgramYearDropDownList1712601354111
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Rollback-program-year-drop-down-list.sql", "ProgramYear"),
+      getSQLFileData("Rollback-update-program-year-drop-down-list.sql", "ProgramYear"),
     );
   }
 }
