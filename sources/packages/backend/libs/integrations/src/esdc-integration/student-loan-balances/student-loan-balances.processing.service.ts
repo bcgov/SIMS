@@ -91,12 +91,6 @@ export class StudentLoanBalancesProcessingService {
       await this.dataSource.transaction(async (transactionalEntityManager) => {
         const studentLoanBalancesRepo =
           transactionalEntityManager.getRepository(StudentLoanBalance);
-        // Previous balance date immediately before the one being imported, if one exists.
-        const previousBalanceDate =
-          await this.studentLoanBalanceService.getLastBalanceDate(
-            studentLoanBalancesSFTPResponseFile.header.balanceDate,
-            transactionalEntityManager,
-          );
         for (const studentLoanBalanceRecord of studentLoanBalancesSFTPResponseFile.records) {
           lineNumber = studentLoanBalanceRecord.lineNumber;
           const student = await this.studentService.getStudentByPersonalInfo(
@@ -122,15 +116,10 @@ export class StudentLoanBalancesProcessingService {
             creator: auditUser,
           });
         }
-        if (previousBalanceDate) {
-          // If no previous balance date is present no records exists in the
-          // database and there is no need to insert zero balance records.
-          await this.studentLoanBalanceService.insertZeroBalanceRecords(
-            previousBalanceDate,
-            studentLoanBalancesSFTPResponseFile.header.balanceDate,
-            transactionalEntityManager,
-          );
-        }
+        await this.studentLoanBalanceService.insertZeroBalanceRecords(
+          studentLoanBalancesSFTPResponseFile.header.balanceDate,
+          transactionalEntityManager,
+        );
       });
       childrenProcessSummary.info(
         `Inserted Student Loan balances file ${fileName}.`,

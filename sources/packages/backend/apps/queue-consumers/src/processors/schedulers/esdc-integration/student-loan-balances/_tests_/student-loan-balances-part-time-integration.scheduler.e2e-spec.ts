@@ -304,7 +304,7 @@ describe(
           cslBalance: "ASC",
         },
       });
-      // Expect student loan balance to be positive again after he had a zero balance in the previous imported file.
+      // Expect student loan balance to be positive again after it had a zero balance in the previous imported file.
       expect(studentLoanBalances).toEqual([
         {
           balanceDate: previousBalanceDate,
