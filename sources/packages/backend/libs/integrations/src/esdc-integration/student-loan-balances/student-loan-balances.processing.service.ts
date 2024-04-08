@@ -116,9 +116,16 @@ export class StudentLoanBalancesProcessingService {
             creator: auditUser,
           });
         }
-        await this.studentLoanBalanceService.insertZeroBalanceRecords(
-          studentLoanBalancesSFTPResponseFile.header.balanceDate,
-          transactionalEntityManager,
+        childrenProcessSummary.info(
+          "Checking if zero balance records must be inserted.",
+        );
+        const insertResult =
+          await this.studentLoanBalanceService.insertZeroBalanceRecords(
+            studentLoanBalancesSFTPResponseFile.header.balanceDate,
+            transactionalEntityManager,
+          );
+        childrenProcessSummary.info(
+          `Amount of zero balance records inserted: ${insertResult.length}.`,
         );
       });
       childrenProcessSummary.info(

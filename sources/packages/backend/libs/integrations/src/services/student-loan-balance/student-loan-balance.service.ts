@@ -18,7 +18,7 @@ export class StudentLoanBalanceService {
   async insertZeroBalanceRecords(
     currentBalanceDate: Date,
     entityManager: EntityManager,
-  ): Promise<void> {
+  ): Promise<Pick<StudentLoanBalance, "id">[]> {
     // Previous balance date immediately before the one being imported, if one exists.
     const previousBalanceDate = await this.getLastBalanceDate(
       currentBalanceDate,
@@ -27,7 +27,7 @@ export class StudentLoanBalanceService {
     if (!previousBalanceDate) {
       // If no previous balance date is present, no records exists in the
       // database and there is no need to insert zero balance records.
-      return;
+      return [];
     }
     const mainQueryAlias = "studentLoanBalance";
     const studentLoanBalanceRepo =
@@ -56,8 +56,8 @@ export class StudentLoanBalanceService {
         userServiceId: this.systemUserService.systemUser.id,
       })
       .getQueryAndParameters();
-    await studentLoanBalanceRepo.query(
-      `INSERT INTO sims.student_loan_balances (student_id, csl_balance, balance_date, creator) (${selectQuery})`,
+    return studentLoanBalanceRepo.query(
+      `INSERT INTO sims.student_loan_balances (student_id, csl_balance, balance_date, creator) (${selectQuery}) RETURNING id`,
       selectParameters,
     );
   }

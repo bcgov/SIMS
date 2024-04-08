@@ -195,6 +195,12 @@ describe(
 
       // Assert
       expect(result).toContain("Process finalized with success.");
+      expect(
+        mockedJob.containLogMessages([
+          "Checking if zero balance records must be inserted.",
+          "Amount of zero balance records inserted: 1.",
+        ]),
+      ).toBe(true);
       const studentLoanBalance = await db.studentLoanBalance.find({
         select: {
           balanceDate: true,
@@ -244,6 +250,12 @@ describe(
 
       // Assert
       expect(result).toContain("Process finalized with success.");
+      expect(
+        mockedJob.containLogMessages([
+          "Checking if zero balance records must be inserted.",
+          "Amount of zero balance records inserted: 0.",
+        ]),
+      ).toBe(true);
       const studentLoanBalance = await db.studentLoanBalance.find({
         select: {
           balanceDate: true,
@@ -292,6 +304,12 @@ describe(
 
       // Assert
       expect(result).toContain("Process finalized with success.");
+      expect(
+        mockedJob.containLogMessages([
+          "Checking if zero balance records must be inserted.",
+          "Amount of zero balance records inserted: 0.",
+        ]),
+      ).toBe(true);
       const studentLoanBalances = await db.studentLoanBalance.find({
         select: {
           balanceDate: true,
