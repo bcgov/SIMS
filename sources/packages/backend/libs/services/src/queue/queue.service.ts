@@ -26,8 +26,6 @@ export class QueueService {
       select: {
         queueName: true,
         queueConfiguration: true as unknown,
-      },
-      where: {
         isActive: true,
       },
     });
@@ -55,6 +53,8 @@ export class QueueService {
     return queues.map((queue) => ({
       name: queue.queueName,
       dashboardReadonly: queue.queueConfiguration.dashboardReadonly,
+      isActive: queue.isActive,
+      isScheduler: !!queue.queueConfiguration.cron,
     }));
   }
 
