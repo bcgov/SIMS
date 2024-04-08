@@ -805,9 +805,9 @@
     <bpmn:sequenceFlow id="Flow_0sp9tv0" sourceRef="Activity_1vwijyc" targetRef="Event_1mkiqso" />
     <bpmn:scriptTask id="Activity_1vwijyc" name="Define Dependents">
       <bpmn:extensionElements>
-        <zeebe:script expression="=// Consider only dependents who were born on or before the study end date.&#10;inputDependents[date(item.dateOfBirth) &#60;= date(offeringStudyEndDate)]" resultVariable="calculatedDataDependants" />
+        <zeebe:script expression="=// Consider only dependents who were born on or before the study end date.&#10;inputDataDependents[date(item.dateOfBirth) &#60;= date(offeringStudyEndDate)]" resultVariable="calculatedDataDependants" />
         <zeebe:ioMapping>
-          <zeebe:input source="=//TODO: Student appeal variable needs to be considered here.&#10;if studentDataDependants = null &#10;then []&#10;else studentDataDependants" target="inputDependents" />
+          <zeebe:input source="=//TODO: Student appeal variable needs to be considered here.&#10;if studentDataDependants = null &#10;then []&#10;else studentDataDependants" target="inputDataDependents" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_15xhu93</bpmn:incoming>
