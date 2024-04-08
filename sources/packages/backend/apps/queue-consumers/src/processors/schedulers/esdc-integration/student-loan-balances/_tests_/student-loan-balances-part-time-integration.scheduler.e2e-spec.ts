@@ -265,7 +265,7 @@ describe(
           student: { id: student.id },
         },
       });
-      // Student with an already zero balance record will not be present the newly imported file.
+      // Student with an already zero balance record with a previous balance date will not be inserted with another zero balance entry.
       expect(studentLoanBalance).toEqual([
         {
           balanceDate: previousBalanceDate,
