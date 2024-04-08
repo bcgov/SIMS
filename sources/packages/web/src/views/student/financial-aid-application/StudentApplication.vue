@@ -19,9 +19,8 @@
           Financial Aid Application
         </p>
         <p class="px-2">
-          Apply to see if you are applicable for provincial or federal loans and
-          grant. This is for students attending full-time or part-time
-          post-secondary studies.
+          Please select your program year. This is for students attending
+          full-time or part-time studies.
         </p>
         <v-select
           v-model="programYearId"
