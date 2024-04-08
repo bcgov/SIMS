@@ -19,6 +19,8 @@ import {
   ApplicationOfferingChangeRequestCompleteNotification,
   LegacyRestrictionAddedNotification,
   DisbursementBlockedNotificationForMinistry,
+  ApplicationExceptionRequestNotificationForMinistry,
+  ApplicationEditedFifthTimeNotificationForMinistry,
 } from "..";
 import { NotificationService } from "./notification.service";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
@@ -715,7 +717,93 @@ export class NotificationActionsService {
       };
       ministryNotificationsToSend.push(ministryNotificationToSend);
     });
-    // Save notification to be sent to the ministry into the notification table.
+    // Save notifications to be sent to the ministry into the notification table.
+    await this.notificationService.saveNotifications(
+      ministryNotificationsToSend,
+      auditUser.id,
+      { entityManager },
+    );
+  }
+
+  /**
+   * Creates application exception request notification for ministry.
+   * @param notification notification details.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveApplicationExceptionRequestNotificationForMinistry(
+    notification: ApplicationExceptionRequestNotificationForMinistry,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const notificationDetails =
+      await this.notificationMessageService.getNotificationDetails(
+        NotificationMessageType.MinistryNotificationApplicationExceptionRequest,
+      );
+    const ministryNotificationsToSend = [];
+    notificationDetails.emailContacts.forEach((emailContact) => {
+      const ministryNotificationToSend = {
+        userId: auditUser.id,
+        messageType:
+          NotificationMessageType.MinistryNotificationApplicationExceptionRequest,
+        messagePayload: {
+          email_address: emailContact,
+          template_id: notificationDetails.templateId,
+          personalisation: {
+            givenNames: notification.givenNames ?? "",
+            lastName: notification.lastName,
+            dob: getDateOnlyFormat(notification.dob),
+            studentEmail: notification.email,
+            applicationNumber: notification.applicationNumber,
+            dateTime: this.getDateTimeOnPSTTimeZone(),
+          },
+        },
+      };
+      ministryNotificationsToSend.push(ministryNotificationToSend);
+    });
+    // Save notifications to be sent to the ministry into the notification table.
+    await this.notificationService.saveNotifications(
+      ministryNotificationsToSend,
+      auditUser.id,
+      { entityManager },
+    );
+  }
+
+  /**
+   * Creates application edited 5th time notification for ministry.
+   * @param notification notification details.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveApplicationEditedFifthTimeNotificationForMinistry(
+    notification: ApplicationEditedFifthTimeNotificationForMinistry,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const notificationDetails =
+      await this.notificationMessageService.getNotificationDetails(
+        NotificationMessageType.MinistryNotificationApplicationEditedFifthTime,
+      );
+    const ministryNotificationsToSend = [];
+    notificationDetails.emailContacts.forEach((emailContact) => {
+      const ministryNotificationToSend = {
+        userId: auditUser.id,
+        messageType:
+          NotificationMessageType.MinistryNotificationApplicationEditedFifthTime,
+        messagePayload: {
+          email_address: emailContact,
+          template_id: notificationDetails.templateId,
+          personalisation: {
+            givenNames: notification.givenNames ?? "",
+            lastName: notification.lastName,
+            dob: getDateOnlyFormat(notification.dob),
+            studentEmail: notification.email,
+            applicationNumber: notification.applicationNumber,
+            dateTime: this.getDateTimeOnPSTTimeZone(),
+          },
+        },
+      };
+      ministryNotificationsToSend.push(ministryNotificationToSend);
+    });
+    // Save notifications to be sent to the ministry into the notification table.
     await this.notificationService.saveNotifications(
       ministryNotificationsToSend,
       auditUser.id,

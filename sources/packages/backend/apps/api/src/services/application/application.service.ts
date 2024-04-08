@@ -52,8 +52,12 @@ import {
 } from "../../constants";
 import { SequenceControlService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
-import { NotificationActionsService } from "@sims/services/notifications";
+import {
+  ApplicationExceptionRequestNotificationForMinistry,
+  NotificationActionsService,
+} from "@sims/services/notifications";
 import { InstitutionLocationService } from "../institution-location/institution-location.service";
+import { APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION } from "@sims/services/constants";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
@@ -80,6 +84,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly offeringService: EducationProgramOfferingService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly institutionLocationService: InstitutionLocationService,
+    private readonly notificationActionService: NotificationActionsService,
   ) {
     super(dataSource.getRepository(Application));
   }
@@ -276,8 +281,29 @@ export class ApplicationService extends RecordDataModelService<Application> {
       application.currentAssessment.updatedAt = now;
 
       await applicationRepository.save([application, newApplication]);
+      // Create a notification if the application is edited for the 5th time.
+      const applicationsCount = await applicationRepository.count({
+        where: { applicationNumber: newApplication.applicationNumber },
+      });
+      if (
+        applicationsCount ===
+        APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION + 1
+      ) {
+        const student = application.student;
+        const ministryNotification: ApplicationExceptionRequestNotificationForMinistry =
+          {
+            givenNames: student.user.firstName,
+            lastName: student.user.lastName,
+            email: student.user.email,
+            dob: student.birthDate,
+            applicationNumber: application.applicationNumber,
+          };
+        await this.notificationActionService.saveApplicationEditedFifthTimeNotificationForMinistry(
+          ministryNotification,
+          transactionalEntityManager,
+        );
+      }
     });
-
     return { application, createdAssessment: originalAssessment };
   }
 

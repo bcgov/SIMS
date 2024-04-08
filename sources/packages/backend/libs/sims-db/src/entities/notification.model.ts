@@ -165,4 +165,12 @@ export enum NotificationMessageType {
    * Ministry disbursement blocked.
    */
   MinistryNotificationDisbursementBlocked = 17,
+  /**
+   * Student submits application with exception request.
+   */
+  MinistryNotificationApplicationExceptionRequest = 19,
+  /**
+   * Application edited for the 5th time.
+   */
+  MinistryNotificationApplicationEditedFifthTime = 21,
 }

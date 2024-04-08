@@ -76,6 +76,22 @@ export interface DisbursementBlockedNotificationForMinistry {
   applicationNumber: string;
 }
 
+export interface ApplicationExceptionRequestNotificationForMinistry {
+  givenNames: string;
+  lastName: string;
+  email: string;
+  dob: string;
+  applicationNumber: string;
+}
+
+export interface ApplicationEditedFifthTimeNotificationForMinistry {
+  givenNames: string;
+  lastName: string;
+  email: string;
+  dob: string;
+  applicationNumber: string;
+}
+
 export interface NotificationProcessingSummary {
   notificationsProcessed: number;
   notificationsSuccessfullyProcessed: number;

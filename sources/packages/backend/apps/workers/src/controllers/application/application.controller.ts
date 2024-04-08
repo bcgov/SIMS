@@ -25,12 +25,19 @@ import { APPLICATION_ID } from "@sims/services/workflow/variables/assessment-gat
 import { MaxJobsToActivate } from "../../types";
 import { Workers } from "@sims/services/constants";
 import { createUnexpectedJobFail } from "../../utilities";
+import {
+  ApplicationExceptionRequestNotificationForMinistry,
+  NotificationActionsService,
+} from "@sims/services";
+import { DataSource } from "typeorm";
 
 @Controller()
 export class ApplicationController {
   constructor(
+    private readonly dataSource: DataSource,
     private readonly applicationService: ApplicationService,
     private readonly applicationExceptionService: ApplicationExceptionService,
+    private readonly notificationActionService: NotificationActionsService,
   ) {}
 
   /**
@@ -118,14 +125,31 @@ export class ApplicationController {
         application.data,
       );
       if (exceptions.length) {
-        const createdException =
-          await this.applicationExceptionService.createException(
-            job.variables.applicationId,
-            exceptions,
+        await this.dataSource.transaction(async (entityManager) => {
+          const createdException =
+            await this.applicationExceptionService.createException(
+              job.variables.applicationId,
+              exceptions,
+            );
+          jobLogger.log("Exception created.");
+          jobLogger.log("Creating notification for the created exception.");
+          const student = application.student;
+          const ministryNotification: ApplicationExceptionRequestNotificationForMinistry =
+            {
+              givenNames: student.user.firstName,
+              lastName: student.user.lastName,
+              email: student.user.email,
+              dob: student.birthDate,
+              applicationNumber: application.applicationNumber,
+            };
+          await this.notificationActionService.saveApplicationExceptionRequestNotificationForMinistry(
+            ministryNotification,
+            entityManager,
           );
-        jobLogger.log("Exception created.");
-        return job.complete({
-          applicationExceptionStatus: createdException.exceptionStatus,
+          jobLogger.log("Created notification for the created exception.");
+          return job.complete({
+            applicationExceptionStatus: createdException.exceptionStatus,
+          });
         });
       }
       jobLogger.log("Verified application exception.");
