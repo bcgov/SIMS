@@ -38,6 +38,7 @@ import {
 import {
   DisbursementOverawardService,
   NoteSharedService,
+  SystemUsersService,
 } from "@sims/services";
 import {
   BC_STUDENT_LOAN_AWARD_CODE,
@@ -51,6 +52,7 @@ export class StudentService extends RecordDataModelService<Student> {
     private readonly sfasIndividualService: SFASIndividualService,
     private readonly disbursementOverawardService: DisbursementOverawardService,
     private readonly noteSharedService: NoteSharedService,
+    private readonly systemUsersService: SystemUsersService,
   ) {
     super(dataSource.getRepository(Student));
     this.logger.log("[Created]");
@@ -228,6 +230,15 @@ export class StudentService extends RecordDataModelService<Student> {
         await entityManager
           .getRepository(SFASRestriction)
           .update({ individualId: sfasIndividual.id }, { processed: false });
+
+        // If there is a match in SFAS, record that information is available from legacy system with a note attached to the student.
+        await this.noteSharedService.createStudentNote(
+          student.id,
+          NoteType.General,
+          "Successful match with legacy systems - data has been transferred.",
+          this.systemUsersService.systemUser.id,
+          entityManager,
+        );
       }
 
       // Create the new entry in the student/user history/audit.
