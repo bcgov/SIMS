@@ -13,12 +13,17 @@ import {
 import { StudentService } from "../student/student.service";
 import { CustomNamedError } from "@sims/utilities";
 import { STUDENT_ACCOUNT_APPLICATION_NOT_FOUND } from "../../constants";
+import {
+  NotificationActionsService,
+  StudentRequestsBasicBCeIDAccountNotificationForMinistry,
+} from "@sims/services";
 
 @Injectable()
 export class StudentAccountApplicationsService extends RecordDataModelService<StudentAccountApplication> {
   constructor(
     private readonly dataSource: DataSource,
     private readonly studentService: StudentService,
+    private readonly notificationActionsService: NotificationActionsService,
   ) {
     super(dataSource.getRepository(StudentAccountApplication));
   }
@@ -90,7 +95,21 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
     newAccountApplication.createdAt = now;
     newAccountApplication.submittedData = studentProfile;
     newAccountApplication.submittedDate = now;
-    return this.repo.save(newAccountApplication);
+    const ministryNotification: StudentRequestsBasicBCeIDAccountNotificationForMinistry =
+      {
+        givenNames: newUser.firstName,
+        lastName: newUser.lastName,
+        email: newUser.email,
+        dob: studentProfile.dateOfBirth,
+        applicationNumber: "",
+      };
+    return await this.dataSource.transaction(async (entityManager) => {
+      await this.notificationActionsService.saveStudentRequestsBasicBCeIDAccountNotificationForMinistry(
+        ministryNotification,
+        entityManager,
+      );
+      return this.repo.save(newAccountApplication);
+    });
   }
 
   /**

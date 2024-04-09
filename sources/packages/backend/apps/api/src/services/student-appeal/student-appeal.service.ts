@@ -32,7 +32,10 @@ import {
   STUDENT_APPEAL_INVALID_OPERATION,
   STUDENT_APPEAL_NOT_FOUND,
 } from "./constants";
-import { NotificationActionsService } from "@sims/services/notifications";
+import {
+  NotificationActionsService,
+  StudentSubmittedChangeRequestNotificationForMinistry,
+} from "@sims/services/notifications";
 import { NoteSharedService } from "@sims/services";
 import { StudentFileService } from "../student-file/student-file.service";
 
@@ -95,6 +98,19 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
           { entityManager: entityManager },
         );
       }
+      const student = studentAppeal.application.student;
+      const ministryNotification: StudentSubmittedChangeRequestNotificationForMinistry =
+        {
+          givenNames: student.user.firstName,
+          lastName: student.user.lastName,
+          email: student.user.email,
+          dob: student.birthDate,
+          applicationNumber: studentAppeal.application.applicationNumber,
+        };
+      await this.notificationActionsService.saveStudentSubmittedChangeRequestNotificationForMinistry(
+        ministryNotification,
+        entityManager,
+      );
       return this.repo.save(studentAppeal);
     });
   }

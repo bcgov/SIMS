@@ -21,6 +21,8 @@ import {
   DisbursementBlockedNotificationForMinistry,
   ApplicationExceptionRequestNotificationForMinistry,
   ApplicationEditedFifthTimeNotificationForMinistry,
+  StudentSubmittedChangeRequestNotificationForMinistry,
+  InstitutionRequestsDesignationNotificationForMinistry,
 } from "..";
 import { NotificationService } from "./notification.service";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
@@ -797,6 +799,135 @@ export class NotificationActionsService {
             dob: getDateOnlyFormat(notification.dob),
             studentEmail: notification.email,
             applicationNumber: notification.applicationNumber,
+            dateTime: this.getDateTimeOnPSTTimeZone(),
+          },
+        },
+      };
+      ministryNotificationsToSend.push(ministryNotificationToSend);
+    });
+    // Save notifications to be sent to the ministry into the notification table.
+    await this.notificationService.saveNotifications(
+      ministryNotificationsToSend,
+      auditUser.id,
+      { entityManager },
+    );
+  }
+
+  /**
+   * Creates student submitted change request after COE notification for ministry.
+   * @param notification notification details.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveStudentSubmittedChangeRequestNotificationForMinistry(
+    notification: StudentSubmittedChangeRequestNotificationForMinistry,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const notificationDetails =
+      await this.notificationMessageService.getNotificationDetails(
+        NotificationMessageType.StudentSubmittedChangeRequestNotificationForMinistry,
+      );
+    const ministryNotificationsToSend = [];
+    notificationDetails.emailContacts.forEach((emailContact) => {
+      const ministryNotificationToSend = {
+        userId: auditUser.id,
+        messageType:
+          NotificationMessageType.StudentSubmittedChangeRequestNotificationForMinistry,
+        messagePayload: {
+          email_address: emailContact,
+          template_id: notificationDetails.templateId,
+          personalisation: {
+            givenNames: notification.givenNames ?? "",
+            lastName: notification.lastName,
+            dob: getDateOnlyFormat(notification.dob),
+            studentEmail: notification.email,
+            applicationNumber: notification.applicationNumber,
+            dateTime: this.getDateTimeOnPSTTimeZone(),
+          },
+        },
+      };
+      ministryNotificationsToSend.push(ministryNotificationToSend);
+    });
+    // Save notifications to be sent to the ministry into the notification table.
+    await this.notificationService.saveNotifications(
+      ministryNotificationsToSend,
+      auditUser.id,
+      { entityManager },
+    );
+  }
+
+  /**
+   * Creates student requests basic bceid account notification for ministry.
+   * @param notification notification details.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveStudentRequestsBasicBCeIDAccountNotificationForMinistry(
+    notification: StudentSubmittedChangeRequestNotificationForMinistry,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const notificationDetails =
+      await this.notificationMessageService.getNotificationDetails(
+        NotificationMessageType.StudentRequestsBasicBCeIDAccountNotificationForMinistry,
+      );
+    const ministryNotificationsToSend = [];
+    notificationDetails.emailContacts.forEach((emailContact) => {
+      const ministryNotificationToSend = {
+        userId: auditUser.id,
+        messageType:
+          NotificationMessageType.StudentRequestsBasicBCeIDAccountNotificationForMinistry,
+        messagePayload: {
+          email_address: emailContact,
+          template_id: notificationDetails.templateId,
+          personalisation: {
+            givenNames: notification.givenNames ?? "",
+            lastName: notification.lastName,
+            dob: getDateOnlyFormat(notification.dob),
+            studentEmail: notification.email,
+            applicationNumber: notification.applicationNumber,
+            dateTime: this.getDateTimeOnPSTTimeZone(),
+          },
+        },
+      };
+      ministryNotificationsToSend.push(ministryNotificationToSend);
+    });
+    // Save notifications to be sent to the ministry into the notification table.
+    await this.notificationService.saveNotifications(
+      ministryNotificationsToSend,
+      auditUser.id,
+      { entityManager },
+    );
+  }
+
+  /**
+   * Creates institution requests designation notification for ministry.
+   * @param notification notification details.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveInstitutionRequestsDesignationNotificationForMinistry(
+    notification: InstitutionRequestsDesignationNotificationForMinistry,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const notificationDetails =
+      await this.notificationMessageService.getNotificationDetails(
+        NotificationMessageType.InstitutionRequestsDesignationNotificationForMinistry,
+      );
+    const ministryNotificationsToSend = [];
+    notificationDetails.emailContacts.forEach((emailContact) => {
+      const ministryNotificationToSend = {
+        userId: auditUser.id,
+        messageType:
+          NotificationMessageType.InstitutionRequestsDesignationNotificationForMinistry,
+        messagePayload: {
+          email_address: emailContact,
+          template_id: notificationDetails.templateId,
+          personalisation: {
+            institutionOperatingName: notification.institutionOperatingName,
+            institutionLocationName: notification.institutionLocationName,
+            programName: notification.programName,
+            offeringName: notification.offeringName,
+            institutionPrimaryEmail: notification.institutionPrimaryEmail,
             dateTime: this.getDateTimeOnPSTTimeZone(),
           },
         },

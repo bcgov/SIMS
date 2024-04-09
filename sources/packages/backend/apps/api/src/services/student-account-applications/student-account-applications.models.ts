@@ -1,3 +1,4 @@
+import { StringBuilder } from "@sims/utilities";
 import { StudentInfo } from "../student/student.service.models";
 
 /**
@@ -12,6 +13,20 @@ export interface StudentAccountApplicationCreateModel {
   email: string;
   firstName: string;
   lastName: string;
+  dateOfBirth: string;
+  addressLine1: string;
+  addressLine2: string;
+  canadaPostalCode: string;
+  city: string;
+  country: string;
+  gender: string;
+  identityProvider: string;
+  mode: string;
+  phone: string;
+  postalCode: string;
+  provinceState: string;
+  selectedCountry: string;
+  sinConsent: boolean;
 }
 
 /**

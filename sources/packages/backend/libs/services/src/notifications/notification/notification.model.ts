@@ -1,6 +1,7 @@
 import { NotificationMessageType } from "@sims/sims-db";
 import { NotificationEmailMessage } from "./gc-notify.model";
 import { NotificationMetadata } from "@sims/sims-db/entities/notification-metadata.type";
+import { StringBuilder } from "@sims/utilities";
 
 export interface SaveNotificationModel {
   userId?: number;
@@ -92,6 +93,22 @@ export interface ApplicationEditedFifthTimeNotificationForMinistry {
   applicationNumber: string;
 }
 
+export interface StudentSubmittedChangeRequestNotificationForMinistry {
+  givenNames: string;
+  lastName: string;
+  email: string;
+  dob: string;
+  applicationNumber: string;
+}
+
+export interface StudentRequestsBasicBCeIDAccountNotificationForMinistry {
+  givenNames: string;
+  lastName: string;
+  email: string;
+  dob: string;
+  applicationNumber: string;
+}
+
 export interface NotificationProcessingSummary {
   notificationsProcessed: number;
   notificationsSuccessfullyProcessed: number;
@@ -108,4 +125,13 @@ export interface ECEResponseFileProcessingNotification {
   duplicateDisbursements: number;
   disbursementsFailedToProcess: number;
   attachmentFileContent: string;
+}
+
+export interface InstitutionRequestsDesignationNotificationForMinistry {
+  institutionOperatingName: string;
+  institutionLocationName: string;
+  programName: string;
+  offeringName: string;
+  institutionPrimaryEmail: string;
+  dateTime: string;
 }
