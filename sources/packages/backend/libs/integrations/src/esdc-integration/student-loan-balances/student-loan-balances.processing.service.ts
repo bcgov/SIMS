@@ -2,7 +2,10 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { StudentLoanBalancesIntegrationService } from "./student-loan-balances.integration.service";
 import { StudentLoanBalancesSFTPResponseFile } from "./models/student-loan-balances.model";
-import { StudentService } from "@sims/integrations/services";
+import {
+  StudentService,
+  StudentLoanBalanceService,
+} from "@sims/integrations/services";
 import * as path from "path";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
@@ -26,6 +29,7 @@ export class StudentLoanBalancesProcessingService {
     config: ConfigService,
     private readonly studentLoanBalancesIntegrationService: StudentLoanBalancesIntegrationService,
     private readonly studentService: StudentService,
+    private readonly studentLoanBalanceService: StudentLoanBalanceService,
   ) {
     this.esdcConfig = config.esdcIntegration;
   }
@@ -112,6 +116,17 @@ export class StudentLoanBalancesProcessingService {
             creator: auditUser,
           });
         }
+        childrenProcessSummary.info(
+          "Checking if zero balance records must be inserted.",
+        );
+        const insertResult =
+          await this.studentLoanBalanceService.insertZeroBalanceRecords(
+            studentLoanBalancesSFTPResponseFile.header.balanceDate,
+            transactionalEntityManager,
+          );
+        childrenProcessSummary.info(
+          `Amount of zero balance records inserted: ${insertResult.length}.`,
+        );
       });
       childrenProcessSummary.info(
         `Inserted Student Loan balances file ${fileName}.`,
