@@ -70,8 +70,10 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
   }
 
   /**
-   * Create a new student account application to be reviewed by
-   * the Ministry to confirm the student's basic BCeID identity.
+   * Creates a new student account application to be reviewed by
+   * the Ministry to confirm the student's basic BCeID identity
+   * and saves a notification for the ministry as a part of the
+   * same transaction.
    * @param userName user name that uniquely identifies this user.
    * @param studentProfile information to be assessed by the Ministry.
    * @returns student account application created id.
@@ -102,12 +104,14 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
         email: newUser.email,
         dob: studentProfile.dateOfBirth,
       };
-    return await this.dataSource.transaction(async (entityManager) => {
+    return this.dataSource.transaction(async (entityManager) => {
       await this.notificationActionsService.saveStudentRequestsBasicBCeIDAccountNotificationForMinistry(
         ministryNotification,
         entityManager,
       );
-      return this.repo.save(newAccountApplication);
+      return entityManager
+        .getRepository(StudentAccountApplication)
+        .save(newAccountApplication);
     });
   }
 

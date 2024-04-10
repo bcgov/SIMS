@@ -524,7 +524,9 @@ export class ApplicationOfferingChangeRequestService {
   }
 
   /**
-   * Update the application offering change request status for the given application offering change request id.
+   * Update the application offering change request status for the given application offering change request id and
+   * saves a notification for the ministry if the student approves the application offering change request at their end
+   * as a part of the same transaction.
    * @param applicationOfferingChangeRequestId application offering change request id for which to update the status.
    * @param applicationOfferingChangeRequestStatus the application offering change request status to be updated.
    * @param studentConsent student consent to approve the application offering change request.
@@ -585,10 +587,12 @@ export class ApplicationOfferingChangeRequestService {
             updatedAt: currentDate,
           },
         );
-      await this.notificationActionsService.saveApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry(
-        ministryNotification,
-        entityManager,
-      );
+      applicationOfferingChangeRequestStatus ===
+        ApplicationOfferingChangeRequestStatus.InProgressWithSABC ??
+        (await this.notificationActionsService.saveApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry(
+          ministryNotification,
+          entityManager,
+        ));
     });
   }
 

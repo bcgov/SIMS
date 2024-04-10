@@ -94,14 +94,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * If the application is already in Draft state, then on submit the, existing
    * row will be updated with the payload and application status will be set to
    * Submitted and applicationStatusUpdatedOn will also be update and new workflow is started.
-   * If a student submit/re-submit and an existing application that is not in draft state
+   * If a student submit/re-submit an existing application that is not in draft state
    * (i.e existing application should be in any one of these status, submitted, In Progress,
    * Assessment, Enrollment), then the existing application status is set to `Overwritten` and
    * applicationStatusUpdatedOn is updated and delete the corresponding workflow and creates a
    * new Application with same Application Number and Program Year as that of the Overwritten
    * Application and with newly submitted payload. And starts a new workflow for the newly created
-   * Application.
-   * a new application with status 'Submitted'
+   * Application. If the application is edited for the 5th time, a notification is saved for the
+   * ministry along with the edited application as a part of the same transaction.
    * If the PIR is not required, then offering is assigned to the assessment on submission
    * and the applicant student is assessed for SIN restriction.
    * @param applicationId application id that must be updated to submitted.

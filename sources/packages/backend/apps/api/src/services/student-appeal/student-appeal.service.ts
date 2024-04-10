@@ -55,8 +55,9 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
   }
 
   /**
-   * Save student appeals that are requested by the student.
-   * Update student files if exist using the same transaction.
+   * Save student appeals that are requested by the student,
+   * update student files if exist and save a notification for the
+   * ministry using the same transaction.
    * @param applicationId Application to which an appeal is submitted.
    * @param userId Student user who submits the appeal.
    * @param studentId Student Id.
@@ -68,7 +69,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     studentId: number,
     studentAppealRequests: StudentAppealRequestModel[],
   ): Promise<StudentAppeal> {
-    return await this.dataSource.transaction(async (entityManager) => {
+    return this.dataSource.transaction(async (entityManager) => {
       const studentAppeal = new StudentAppeal();
       const currentDateTime = new Date();
       const creator = { id: userId } as User;
@@ -111,7 +112,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         ministryNotification,
         entityManager,
       );
-      return this.repo.save(studentAppeal);
+      return entityManager.getRepository(StudentAppeal).save(studentAppeal);
     });
   }
 
