@@ -5,6 +5,7 @@ import {
 import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 import {
   DependentChildCareEligibility,
+  createFakeStudentDependentBornAfterStudyEndDate,
   createFakeStudentDependentEligibleForChildcareCost,
   createFakeStudentDependentNotEligibleForChildcareCost,
 } from "../../../test-utils/factories";
@@ -208,4 +209,42 @@ describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-child-car
       ).toBe(0);
     },
   );
+
+  it("Should calculate child care costs as 0 when student does not have any dependant born on or before study end date.", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.studentDataDaycareCosts11YearsOrUnder = 300;
+    assessmentConsolidatedData.studentDataDaycareCosts12YearsOrOver = 300;
+    assessmentConsolidatedData.offeringWeeks = 8;
+    assessmentConsolidatedData.offeringCourseLoad = 20;
+    // Dependent(s) born after study end date are not considered
+    // as eligible for any calculation.
+    assessmentConsolidatedData.studentDataDependants = [
+      createFakeStudentDependentBornAfterStudyEndDate(
+        assessmentConsolidatedData.offeringStudyEndDate,
+      ),
+    ];
+    // Act
+    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+    // Assert
+    // Childcare cost for the category 11 years and under must be 0
+    // as the student does not have any dependent in this category.
+    expect(
+      calculatedAssessment.variables.calculatedDataDaycareCosts11YearsOrUnder,
+    ).toBe(0);
+    // Childcare cost for the category 12 years and over must be 0
+    // as the student does not have any dependent in this category.
+    expect(
+      calculatedAssessment.variables.calculatedDataDaycareCosts12YearsOrOver,
+    ).toBe(0);
+    // Child care cost must be 0 for the student application.
+    expect(calculatedAssessment.variables.calculatedDataChildCareCost).toBe(0);
+    expect(
+      calculatedAssessment.variables.calculatedDataTotalChildCareCost,
+    ).toBe(0);
+  });
 });

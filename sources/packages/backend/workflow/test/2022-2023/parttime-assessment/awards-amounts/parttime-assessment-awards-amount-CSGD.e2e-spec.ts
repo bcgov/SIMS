@@ -5,6 +5,7 @@ import {
 } from "../../../test-utils";
 import {
   DependentEligibility,
+  createFakeStudentDependentBornAfterStudyEndDate,
   createFakeStudentDependentEligible,
 } from "../../../test-utils/factories";
 import { YesNoOptions } from "@sims/test-utils";
@@ -143,6 +144,13 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
         DependentEligibility.Eligible0To18YearsOld,
         { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
+      createFakeStudentDependentEligible(
+        DependentEligibility.Eligible18To22YearsOldAttendingHighSchool,
+        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
+      ),
+      createFakeStudentDependentBornAfterStudyEndDate(
+        assessmentConsolidatedData.offeringStudyEndDate,
+      ),
     ];
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
@@ -152,6 +160,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     // Assert
     // calculatedDataTotalFamilyIncome <= limitAwardCSGDIncomeCap
     // federalAwardCSGDAmount
+    expect(
+      calculatedAssessment.variables.calculatedDataTotalEligibleDependants,
+    ).toBe(2);
     expect(
       calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
     ).toBeLessThan(

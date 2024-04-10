@@ -5,6 +5,7 @@ import {
 } from "../../../test-utils";
 import {
   DependentEligibility,
+  createFakeStudentDependentBornAfterStudyEndDate,
   createFakeStudentDependentEligible,
 } from "../../../test-utils/factories";
 
@@ -76,6 +77,33 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
     );
 
     // Assert
+    expect(calculatedAssessment.variables.awardEligibilityCSGD).toBe(false);
+    expect(calculatedAssessment.variables.finalFederalAwardNetCSGDAmount).toBe(
+      0,
+    );
+  });
+
+  it("Should determine CSGD as not eligible when there is no dependant born on or before study end date.", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+    // Dependent(s) born after study end date are not considered
+    // as eligible for any calculation.
+    assessmentConsolidatedData.studentDataDependants = [
+      createFakeStudentDependentBornAfterStudyEndDate(
+        assessmentConsolidatedData.offeringStudyEndDate,
+      ),
+    ];
+    // Act
+    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+
+    // Assert
+    expect(
+      calculatedAssessment.variables.calculatedDataTotalEligibleDependants,
+    ).toBe(0);
     expect(calculatedAssessment.variables.awardEligibilityCSGD).toBe(false);
     expect(calculatedAssessment.variables.finalFederalAwardNetCSGDAmount).toBe(
       0,
