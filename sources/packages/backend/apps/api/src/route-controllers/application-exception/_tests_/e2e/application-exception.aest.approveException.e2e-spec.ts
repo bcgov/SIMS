@@ -56,7 +56,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
 
     expect(zbClient.publishMessage).toHaveBeenCalledWith(
       expect.objectContaining({
-        correlationKey: application.applicationException.id.toString(),
+        correlationKey: application.id.toString(),
         name: "application-exception-verified",
         variables: {
           applicationExceptionStatus: "Approved",
@@ -95,7 +95,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
 
     expect(zbClient.publishMessage).toHaveBeenCalledWith(
       expect.objectContaining({
-        correlationKey: application.applicationException.id.toString(),
+        correlationKey: application.id.toString(),
         name: "application-exception-verified",
         variables: {
           applicationExceptionStatus: "Declined",
