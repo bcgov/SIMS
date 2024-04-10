@@ -76,6 +76,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   appealsStudentIncomeAppealData?: JSONDoc;
   appealsPartnerIncomeAppealData?: JSONDoc;
   appealsStudentDisabilityAppealData?: JSONDoc;
+  appealsStudentFinancialInformationAppealData?: JSONDoc;
   studentDataIsYourPartnerAbleToReport?: YesNoOptions;
   studentDataParentValidSinNumber?: YesNoOptions;
   studentDataNumberOfParents?: 1 | 2;
@@ -214,6 +215,7 @@ export interface CalculatedAssessmentModel {
   totalFederalContribution: number;
   totalProvincialContribution: number;
   calculatedDataPDPPDStatus: boolean;
+  calculatedDataTaxReturnIncome: number;
 
   // Common variables used in both full-time and part-time.
   // CSGP
