@@ -23,6 +23,10 @@ import {
   ApplicationEditedFifthTimeNotificationForMinistry,
   StudentSubmittedChangeRequestNotificationForMinistry,
   InstitutionRequestsDesignationNotificationForMinistry,
+  StudentRequestsBasicBCeIDAccountNotificationForMinistry,
+  InstitutionAddsPendingOfferingNotificationForMinistry,
+  InstitutionAddsPendingProgramNotificationForMinistry,
+  ApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry,
 } from "..";
 import { NotificationService } from "./notification.service";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
@@ -739,14 +743,14 @@ export class NotificationActionsService {
     const auditUser = this.systemUsersService.systemUser;
     const notificationDetails =
       await this.notificationMessageService.getNotificationDetails(
-        NotificationMessageType.MinistryNotificationApplicationExceptionRequest,
+        NotificationMessageType.ApplicationExceptionRequestNotificationForMinistry,
       );
     const ministryNotificationsToSend = [];
     notificationDetails.emailContacts.forEach((emailContact) => {
       const ministryNotificationToSend = {
         userId: auditUser.id,
         messageType:
-          NotificationMessageType.MinistryNotificationApplicationExceptionRequest,
+          NotificationMessageType.ApplicationExceptionRequestNotificationForMinistry,
         messagePayload: {
           email_address: emailContact,
           template_id: notificationDetails.templateId,
@@ -782,14 +786,14 @@ export class NotificationActionsService {
     const auditUser = this.systemUsersService.systemUser;
     const notificationDetails =
       await this.notificationMessageService.getNotificationDetails(
-        NotificationMessageType.MinistryNotificationApplicationEditedFifthTime,
+        NotificationMessageType.ApplicationEditedFifthTimeNotificationForMinistry,
       );
     const ministryNotificationsToSend = [];
     notificationDetails.emailContacts.forEach((emailContact) => {
       const ministryNotificationToSend = {
         userId: auditUser.id,
         messageType:
-          NotificationMessageType.MinistryNotificationApplicationEditedFifthTime,
+          NotificationMessageType.ApplicationEditedFifthTimeNotificationForMinistry,
         messagePayload: {
           email_address: emailContact,
           template_id: notificationDetails.templateId,
@@ -862,7 +866,7 @@ export class NotificationActionsService {
    * @param entityManager entity manager to execute in transaction.
    */
   async saveStudentRequestsBasicBCeIDAccountNotificationForMinistry(
-    notification: StudentSubmittedChangeRequestNotificationForMinistry,
+    notification: StudentRequestsBasicBCeIDAccountNotificationForMinistry,
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
@@ -876,6 +880,48 @@ export class NotificationActionsService {
         userId: auditUser.id,
         messageType:
           NotificationMessageType.StudentRequestsBasicBCeIDAccountNotificationForMinistry,
+        messagePayload: {
+          email_address: emailContact,
+          template_id: notificationDetails.templateId,
+          personalisation: {
+            givenNames: notification.givenNames ?? "",
+            lastName: notification.lastName,
+            dob: getDateOnlyFormat(notification.dob),
+            studentEmail: notification.email,
+            dateTime: this.getDateTimeOnPSTTimeZone(),
+          },
+        },
+      };
+      ministryNotificationsToSend.push(ministryNotificationToSend);
+    });
+    // Save notifications to be sent to the ministry into the notification table.
+    await this.notificationService.saveNotifications(
+      ministryNotificationsToSend,
+      auditUser.id,
+      { entityManager },
+    );
+  }
+
+  /**
+   * Creates application offering change request approved by student notification for ministry.
+   * @param notification notification details.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry(
+    notification: ApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const notificationDetails =
+      await this.notificationMessageService.getNotificationDetails(
+        NotificationMessageType.ApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry,
+      );
+    const ministryNotificationsToSend = [];
+    notificationDetails.emailContacts.forEach((emailContact) => {
+      const ministryNotificationToSend = {
+        userId: auditUser.id,
+        messageType:
+          NotificationMessageType.ApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry,
         messagePayload: {
           email_address: emailContact,
           template_id: notificationDetails.templateId,
@@ -923,6 +969,89 @@ export class NotificationActionsService {
           email_address: emailContact,
           template_id: notificationDetails.templateId,
           personalisation: {
+            institutionName: notification.institutionName,
+            institutionOperatingName: notification.institutionOperatingName,
+            institutionPrimaryEmail: notification.institutionPrimaryEmail,
+            dateTime: this.getDateTimeOnPSTTimeZone(),
+          },
+        },
+      };
+      ministryNotificationsToSend.push(ministryNotificationToSend);
+    });
+    // Save notifications to be sent to the ministry into the notification table.
+    await this.notificationService.saveNotifications(
+      ministryNotificationsToSend,
+      auditUser.id,
+      { entityManager },
+    );
+  }
+
+  /**
+   * Creates institution adds pending program notification for ministry.
+   * @param notification notification details.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveInstitutionAddsPendingProgramNotificationForMinistry(
+    notification: InstitutionAddsPendingProgramNotificationForMinistry,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const notificationDetails =
+      await this.notificationMessageService.getNotificationDetails(
+        NotificationMessageType.InstitutionAddsPendingProgramNotificationForMinistry,
+      );
+    const ministryNotificationsToSend = [];
+    notificationDetails.emailContacts.forEach((emailContact) => {
+      const ministryNotificationToSend = {
+        userId: auditUser.id,
+        messageType:
+          NotificationMessageType.InstitutionAddsPendingProgramNotificationForMinistry,
+        messagePayload: {
+          email_address: emailContact,
+          template_id: notificationDetails.templateId,
+          personalisation: {
+            institutionName: notification.institutionName,
+            institutionOperatingName: notification.institutionOperatingName,
+            institutionPrimaryEmail: notification.institutionPrimaryEmail,
+            dateTime: this.getDateTimeOnPSTTimeZone(),
+          },
+        },
+      };
+      ministryNotificationsToSend.push(ministryNotificationToSend);
+    });
+    // Save notifications to be sent to the ministry into the notification table.
+    await this.notificationService.saveNotifications(
+      ministryNotificationsToSend,
+      auditUser.id,
+      { entityManager },
+    );
+  }
+
+  /**
+   * Creates institution adds pending offering notification for ministry.
+   * @param notification notification details.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveInstitutionAddsPendingOfferingNotificationForMinistry(
+    notification: InstitutionAddsPendingOfferingNotificationForMinistry,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const notificationDetails =
+      await this.notificationMessageService.getNotificationDetails(
+        NotificationMessageType.InstitutionAddsPendingOfferingNotificationForMinistry,
+      );
+    const ministryNotificationsToSend = [];
+    notificationDetails.emailContacts.forEach((emailContact) => {
+      const ministryNotificationToSend = {
+        userId: auditUser.id,
+        messageType:
+          NotificationMessageType.InstitutionAddsPendingOfferingNotificationForMinistry,
+        messagePayload: {
+          email_address: emailContact,
+          template_id: notificationDetails.templateId,
+          personalisation: {
+            institutionName: notification.institutionName,
             institutionOperatingName: notification.institutionOperatingName,
             institutionLocationName: notification.institutionLocationName,
             programName: notification.programName,

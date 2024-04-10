@@ -35,6 +35,10 @@ import {
   InstitutionService,
   EducationProgramOfferingService,
 } from "../../services";
+import {
+  InstitutionAddsPendingProgramNotificationForMinistry,
+  NotificationActionsService,
+} from "@sims/services";
 
 const OTHER_REGULATORY_BODY = "other";
 @Injectable()
@@ -44,6 +48,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     private readonly dataSource: DataSource,
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
     private readonly institutionService: InstitutionService,
+    private readonly notificationActionsService: NotificationActionsService,
   ) {
     super(dataSource.getRepository(EducationProgram));
     this.offeringsRepo = dataSource.getRepository(EducationProgramOffering);
@@ -105,8 +110,8 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   }
 
   /**
-   * Insert/update an education program at institution level
-   * that will be available for all locations.
+   * Inserts/updates an education program at institution level that will be available for all
+   * locations and saves a notification to the ministry as a part of the same transaction.
    * @param programId if provided will update the record, otherwise will insert a new one.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @param educationProgram Information used to save the program.
@@ -227,7 +232,22 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     } else {
       program.modifier = auditUser;
     }
-    return this.repo.save(program);
+    const institution = program.institution;
+    const ministryNotification: InstitutionAddsPendingProgramNotificationForMinistry =
+      {
+        institutionName: institution.legalOperatingName,
+        institutionOperatingName: institution.operatingName,
+        programName: program.name,
+        institutionPrimaryEmail: institution.primaryEmail,
+      };
+    return this.dataSource.transaction(async (entityManager) => {
+      program.programStatus === ProgramStatus.Pending ??
+        (await this.notificationActionsService.saveInstitutionAddsPendingProgramNotificationForMinistry(
+          ministryNotification,
+          entityManager,
+        ));
+      return entityManager.getRepository(EducationProgram).save(program);
+    });
   }
 
   /**

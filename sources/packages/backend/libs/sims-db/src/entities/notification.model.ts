@@ -172,7 +172,7 @@ export enum NotificationMessageType {
   /**
    * Student submits application with exception request.
    */
-  MinistryNotificationApplicationExceptionRequest = 19,
+  ApplicationExceptionRequestNotificationForMinistry = 19,
   /**
    * Student requests basic BCeID account.
    */
@@ -180,7 +180,19 @@ export enum NotificationMessageType {
   /**
    * Application edited for the 5th time.
    */
-  MinistryNotificationApplicationEditedFifthTime = 21,
+  ApplicationEditedFifthTimeNotificationForMinistry = 21,
+  /**
+   * An Application Offering Change Request approved by the student.
+   */
+  ApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry = 22,
+  /**
+   * Institution adds pending program.
+   */
+  InstitutionAddsPendingProgramNotificationForMinistry = 23,
+  /**
+   * Institution adds pending offering.
+   */
+  InstitutionAddsPendingOfferingNotificationForMinistry = 24,
   /**
    * Institution Requests Designation.
    */

@@ -64,17 +64,23 @@ import {
 import { EducationProgramOfferingValidationService } from "./education-program-offering-validation.service";
 import * as os from "os";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import {
+  InstitutionAddsPendingOfferingNotificationForMinistry,
+  NotificationActionsService,
+} from "@sims/services";
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
   constructor(
     private readonly dataSource: DataSource,
     private readonly offeringValidationService: EducationProgramOfferingValidationService,
+    private readonly notificationActionsService: NotificationActionsService,
   ) {
     super(dataSource.getRepository(EducationProgramOffering));
   }
 
   /**
-   * Creates a new education program offering at program level
+   * Creates a new education program offering at program level and saves a notification
+   * for the ministry as a part of the same transaction.
    * @param educationProgramOffering Information used to create the program offering.
    * @param userId User who creates the offering.
    * @returns Education program offering created.
@@ -96,7 +102,26 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programOffering.parentOffering = programOffering;
 
     try {
-      return await this.repo.save(programOffering);
+      const institution = programOffering.educationProgram.institution;
+      const ministryNotification: InstitutionAddsPendingOfferingNotificationForMinistry =
+        {
+          institutionName: institution.legalOperatingName,
+          institutionOperatingName: institution.operatingName,
+          institutionLocationName: programOffering.institutionLocation.name,
+          programName: programOffering.educationProgram.name,
+          offeringName: programOffering.name,
+          institutionPrimaryEmail: institution.primaryEmail,
+        };
+      return await this.dataSource.transaction(async (entityManager) => {
+        programOffering.offeringStatus === OfferingStatus.CreationPending ??
+          (await this.notificationActionsService.saveInstitutionAddsPendingOfferingNotificationForMinistry(
+            ministryNotification,
+            entityManager,
+          ));
+        return entityManager
+          .getRepository(EducationProgramOffering)
+          .save(programOffering);
+      });
     } catch (error: unknown) {
       if (
         isDatabaseConstraintError(

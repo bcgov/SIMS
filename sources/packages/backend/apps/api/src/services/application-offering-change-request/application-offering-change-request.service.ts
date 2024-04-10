@@ -18,6 +18,7 @@ import {
 import { DataSource, Brackets, Repository, In } from "typeorm";
 import { PaginatedResults, PaginationOptions } from "../../utilities";
 import {
+  ApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry,
   NoteSharedService,
   NotificationActionsService,
   SystemUsersService,
@@ -537,18 +538,58 @@ export class ApplicationOfferingChangeRequestService {
   ): Promise<void> {
     const auditUser = { id: auditUserId } as User;
     const currentDate = new Date();
-    await this.applicationOfferingChangeRequestRepo.update(
+    const applicationOfferingChangeRequestDetails =
+      await this.applicationOfferingChangeRequestRepo.findOne({
+        select: {
+          id: true,
+          application: {
+            id: true,
+            applicationNumber: true,
+            student: {
+              id: true,
+              birthDate: true,
+              user: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+            },
+          },
+        },
+        relations: { application: { student: { user: true } } },
+        where: { id: applicationOfferingChangeRequestId },
+      });
+    const student = applicationOfferingChangeRequestDetails.application.student;
+    const ministryNotification: ApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry =
       {
-        id: applicationOfferingChangeRequestId,
-      },
-      {
-        applicationOfferingChangeRequestStatus,
-        studentConsent,
-        studentActionDate: currentDate,
-        modifier: auditUser,
-        updatedAt: currentDate,
-      },
-    );
+        givenNames: student.user.firstName,
+        lastName: student.user.lastName,
+        email: student.user.email,
+        dob: student.birthDate,
+        applicationNumber:
+          applicationOfferingChangeRequestDetails.application.applicationNumber,
+      };
+    return this.dataSource.transaction(async (entityManager) => {
+      await entityManager
+        .getRepository(ApplicationOfferingChangeRequest)
+        .update(
+          {
+            id: applicationOfferingChangeRequestId,
+          },
+          {
+            applicationOfferingChangeRequestStatus,
+            studentConsent,
+            studentActionDate: currentDate,
+            modifier: auditUser,
+            updatedAt: currentDate,
+          },
+        );
+      await this.notificationActionsService.saveApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry(
+        ministryNotification,
+        entityManager,
+      );
+    });
   }
 
   /**

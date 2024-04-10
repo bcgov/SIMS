@@ -106,6 +106,13 @@ export interface StudentRequestsBasicBCeIDAccountNotificationForMinistry {
   lastName: string;
   email: string;
   dob: string;
+}
+
+export interface ApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry {
+  givenNames: string;
+  lastName: string;
+  email: string;
+  dob: string;
   applicationNumber: string;
 }
 
@@ -128,10 +135,23 @@ export interface ECEResponseFileProcessingNotification {
 }
 
 export interface InstitutionRequestsDesignationNotificationForMinistry {
+  institutionName: string;
+  institutionOperatingName: string;
+  institutionPrimaryEmail: string;
+}
+
+export interface InstitutionAddsPendingProgramNotificationForMinistry {
+  institutionName: string;
+  institutionOperatingName: string;
+  programName: string;
+  institutionPrimaryEmail: string;
+}
+
+export interface InstitutionAddsPendingOfferingNotificationForMinistry {
+  institutionName: string;
   institutionOperatingName: string;
   institutionLocationName: string;
   programName: string;
   offeringName: string;
   institutionPrimaryEmail: string;
-  dateTime: string;
 }
