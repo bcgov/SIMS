@@ -84,6 +84,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "disbursementValue.valueType",
         "disbursementValue.valueCode",
         "disbursementValue.valueAmount",
+        "disbursementValue.effectiveAmount",
       ])
       .innerJoin("assessment.application", "application")
       .innerJoin("application.student", "student")

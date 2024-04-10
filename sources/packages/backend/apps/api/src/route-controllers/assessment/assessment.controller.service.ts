@@ -8,6 +8,9 @@ import {
   ApplicationOfferingChangeRequestStatus,
   DisbursementValueType,
   RECEIPT_FUNDING_TYPE_FEDERAL,
+  OfferingIntensity,
+  StudentAssessment,
+  DisbursementValue,
 } from "@sims/sims-db";
 import {
   Injectable,
@@ -204,7 +207,6 @@ export class AssessmentControllerService {
       assessmentId,
       options,
     );
-
     if (!assessment) {
       throw new NotFoundException("Assessment not found.");
     }
@@ -214,29 +216,34 @@ export class AssessmentControllerService {
     );
     const [firstDisbursement, secondDisbursement] =
       assessment.disbursementSchedules;
+
     let finalAward: Record<string, string | number> = undefined;
     // Populate the final awards in a dynamic way like disbursement schedule(estimated) awards.
     if (firstDisbursement.coeStatus === COEStatus.completed) {
-      const disbursementReceipts =
-        await this.disbursementReceiptService.getDisbursementReceiptByAssessment(
-          assessmentId,
-          options,
-        );
-      if (disbursementReceipts.length) {
-        finalAward = this.populateDisbursementReceiptAwardValues(
-          disbursementReceipts,
-          firstDisbursement,
-          "disbursementReceipt1",
-        );
-        if (secondDisbursement) {
-          const secondDisbursementReceiptAwards =
-            this.populateDisbursementReceiptAwardValues(
-              disbursementReceipts,
-              secondDisbursement,
-              "disbursementReceipt2",
-            );
-          finalAward = { ...finalAward, ...secondDisbursementReceiptAwards };
-        }
+      let disbursementReceipts: DisbursementReceipt[];
+      if (
+        assessment.offering.offeringIntensity === OfferingIntensity.fullTime
+      ) {
+        disbursementReceipts =
+          await this.disbursementReceiptService.getDisbursementReceiptByAssessment(
+            assessment.id,
+          );
+      }
+      finalAward = await this.populateDisbursementFinalAwardValues(
+        assessment,
+        firstDisbursement,
+        "disbursementReceipt1",
+        disbursementReceipts,
+      );
+      if (secondDisbursement) {
+        const secondDisbursementAwards =
+          await this.populateDisbursementFinalAwardValues(
+            assessment,
+            secondDisbursement,
+            "disbursementReceipt2",
+            disbursementReceipts,
+          );
+        finalAward = { ...finalAward, ...secondDisbursementAwards };
       }
     }
     return {
@@ -256,10 +263,14 @@ export class AssessmentControllerService {
 
   /**
    * Populate the final awards in a dynamic way like disbursement schedule(estimated) awards.
-   * @param disbursementReceipts disbursement receipt details.
+   * @param assessment student assessment.
    * @param disbursementSchedule disbursement schedule of the disbursement receipt(s).
    * @param identifier identifier which is used to create dynamic data by appending award code
    * to it.
+   * @param options options,
+   * - `studentId` studentId student to whom the award details belong to.
+   * - `applicationId` application is used for authorization purposes to
+   * ensure that a user has access to the specific application data.
    * @returns dynamic award data of disbursement receipts of a given disbursement.
    * @example
    * finalAward: {
@@ -277,11 +288,42 @@ export class AssessmentControllerService {
    *    disbursementReceipt2sbsd: 1008,
       }
    */
-  private populateDisbursementReceiptAwardValues(
+  private async populateDisbursementFinalAwardValues(
+    assessment: StudentAssessment,
+    disbursementSchedule: DisbursementSchedule,
+    identifier: string,
+    disbursementReceipts?: DisbursementReceipt[],
+  ): Promise<Record<string, string | number>> {
+    if (assessment.offering.offeringIntensity === OfferingIntensity.fullTime) {
+      // Full-time receipts are expected to contains all information about awards disbursed
+      // to students but specific BC grants. Receipts should be used as a source of the information
+      // for full-time application.
+      return this.populateDisbursementReceiptAwardValues(
+        disbursementReceipts,
+        disbursementSchedule,
+        identifier,
+      );
+    }
+    // Part-time receipts will not contains all the awards value hence the e-Cert effective
+    // values are used instead to provide the best information as possible.
+    return this.populateDisbursementECertAwardValues(
+      disbursementSchedule.disbursementValues,
+      identifier,
+    );
+  }
+
+  /**
+   *
+   * @param disbursementReceipts
+   * @param disbursementSchedule disbursement schedule of the disbursement receipt(s).
+   * @param identifier
+   * @returns
+   */
+  private async populateDisbursementReceiptAwardValues(
     disbursementReceipts: DisbursementReceipt[],
     disbursementSchedule: DisbursementSchedule,
     identifier: string,
-  ): Record<string, string | number> {
+  ): Promise<Record<string, string | number>> {
     const finalAward = {};
     // Add all estimated awards to the list of receipts returned.
     // Ensure that every estimated disbursement will be part of the summary.
@@ -358,6 +400,25 @@ export class AssessmentControllerService {
           }
         }
       });
+    return finalAward;
+  }
+
+  private populateDisbursementECertAwardValues(
+    disbursementValues: DisbursementValue[],
+    identifier: string,
+  ): Record<string, string | number> {
+    const finalAward = {};
+    disbursementValues.forEach((award) => {
+      if (award.valueType === DisbursementValueType.BCTotalGrant) {
+        // BC Total grants are not part of the students grants and should not be part of the summary.
+        return;
+      }
+      const disbursementValueKey = this.createReceiptFullIdentifier(
+        identifier,
+        award.valueCode,
+      );
+      finalAward[disbursementValueKey] = award.effectiveAmount;
+    });
     return finalAward;
   }
 
