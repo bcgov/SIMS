@@ -148,6 +148,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
         DependentEligibility.Eligible18To22YearsOldAttendingHighSchool,
         { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
+      // Dependent(s) born after study end date are not considered
+      // as eligible for any calculation.
       createFakeStudentDependentBornAfterStudyEndDate(
         assessmentConsolidatedData.offeringStudyEndDate,
       ),
