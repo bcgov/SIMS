@@ -12,6 +12,12 @@ export interface StudentDependent extends JSONDoc {
   declaredOnTaxes: YesNoOptions;
 }
 
+export interface StudentFinancialInformationAppealData extends JSONDoc {
+  taxReturnIncome: number;
+  daycareCosts12YearsOrOver?: number;
+  daycareCosts11YearsOrUnder?: number;
+}
+
 export enum CredentialType {
   UnderGraduateCertificate = "undergraduateCertificate",
   UnderGraduateCitation = "undergraduateCitation",
@@ -76,7 +82,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   appealsStudentIncomeAppealData?: JSONDoc;
   appealsPartnerIncomeAppealData?: JSONDoc;
   appealsStudentDisabilityAppealData?: JSONDoc;
-  appealsStudentFinancialInformationAppealData?: JSONDoc;
+  appealsStudentFinancialInformationAppealData?: StudentFinancialInformationAppealData;
   studentDataIsYourPartnerAbleToReport?: YesNoOptions;
   studentDataParentValidSinNumber?: YesNoOptions;
   studentDataNumberOfParents?: 1 | 2;
