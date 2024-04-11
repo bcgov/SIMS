@@ -85,7 +85,8 @@ export class ApplicationController {
   /**
    * Searches the student application dynamic data recursively trying to
    * find properties with the value defined as "studentApplicationException"
-   * which identifies an application exception to be reviewed by the Ministry.
+   * which identifies an application exception to be reviewed by the Ministry
+   * and saves a notification to be sent to the ministry as a part of the same transaction.
    * @returns application exceptions status.
    */
   @ZeebeWorker(Workers.VerifyApplicationExceptions, {
@@ -130,6 +131,7 @@ export class ApplicationController {
             await this.applicationExceptionService.createException(
               job.variables.applicationId,
               exceptions,
+              entityManager,
             );
           jobLogger.log("Exception created.");
           jobLogger.log("Creating notification for the created exception.");
