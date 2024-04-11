@@ -105,7 +105,7 @@ export class ApplicationExceptionAESTController extends BaseController {
           userToken.userId,
         );
       await this.workflowClientService.sendApplicationExceptionApproval(
-        updatedException.id,
+        updatedException.application.id,
         updatedException.exceptionStatus,
       );
     } catch (error: unknown) {
