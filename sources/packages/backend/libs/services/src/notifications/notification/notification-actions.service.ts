@@ -72,8 +72,9 @@ export class NotificationActionsService {
             lastName: notification.lastName,
             dob: getDateOnlyFormat(notification.birthDate),
             applicationNumber: notification.applicationNumber,
+            studentEmail: notification.email,
             documentPurpose: notification.documentPurpose,
-            date: this.getDateTimeOnPSTTimeZone(),
+            dateTime: this.getDateTimeOnPSTTimeZone(),
           },
         },
       };
@@ -1013,6 +1014,7 @@ export class NotificationActionsService {
             institutionName: notification.institutionName,
             institutionOperatingName: notification.institutionOperatingName,
             institutionPrimaryEmail: notification.institutionPrimaryEmail,
+            programName: notification.programName,
             dateTime: this.getDateTimeOnPSTTimeZone(),
           },
         },

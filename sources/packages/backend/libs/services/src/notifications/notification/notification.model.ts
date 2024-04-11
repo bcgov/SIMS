@@ -1,7 +1,6 @@
 import { NotificationMessageType } from "@sims/sims-db";
 import { NotificationEmailMessage } from "./gc-notify.model";
 import { NotificationMetadata } from "@sims/sims-db/entities/notification-metadata.type";
-import { StringBuilder } from "@sims/utilities";
 
 export interface SaveNotificationModel {
   userId?: number;
@@ -14,6 +13,7 @@ export interface StudentFileUploadNotification {
   firstName: string;
   lastName: string;
   birthDate: Date;
+  email: string;
   applicationNumber?: string;
   documentPurpose: string;
   userId: number;

@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, In } from "typeorm";
+import { DataSource, In, Repository } from "typeorm";
 import {
   RecordDataModelService,
   DesignationAgreement,
@@ -27,11 +27,13 @@ import {
  */
 @Injectable()
 export class DesignationAgreementService extends RecordDataModelService<DesignationAgreement> {
+  private readonly institutionRepo: Repository<Institution>;
   constructor(
     private readonly dataSource: DataSource,
     private readonly notificationActionsService: NotificationActionsService,
   ) {
     super(dataSource.getRepository(DesignationAgreement));
+    this.institutionRepo = dataSource.getRepository(Institution);
   }
 
   /**
@@ -75,16 +77,14 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
         return newLocation;
       },
     );
-    const institution = await this.dataSource
-      .getRepository(Institution)
-      .findOne({
-        select: {
-          operatingName: true,
-          legalOperatingName: true,
-          primaryEmail: true,
-        },
-        where: { id: institutionId },
-      });
+    const institution = await this.institutionRepo.findOne({
+      select: {
+        operatingName: true,
+        legalOperatingName: true,
+        primaryEmail: true,
+      },
+      where: { id: institutionId },
+    });
     const ministryNotification: InstitutionRequestsDesignationNotificationForMinistry =
       {
         institutionName: institution.legalOperatingName,

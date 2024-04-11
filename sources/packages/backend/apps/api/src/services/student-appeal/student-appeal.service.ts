@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Brackets, DataSource } from "typeorm";
+import { Brackets, DataSource, Repository } from "typeorm";
 import {
   RecordDataModelService,
   Application,
@@ -44,6 +44,7 @@ import { StudentFileService } from "../student-file/student-file.service";
  */
 @Injectable()
 export class StudentAppealService extends RecordDataModelService<StudentAppeal> {
+  private readonly applicationRepo: Repository<Application>;
   constructor(
     private readonly dataSource: DataSource,
     private readonly studentAppealRequestsService: StudentAppealRequestsService,
@@ -52,6 +53,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     private readonly studentFileService: StudentFileService,
   ) {
     super(dataSource.getRepository(StudentAppeal));
+    this.applicationRepo = this.dataSource.getRepository(Application);
   }
 
   /**
@@ -99,14 +101,31 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
           { entityManager: entityManager },
         );
       }
-      const student = studentAppeal.application.student;
+      const application = await this.applicationRepo.findOne({
+        select: {
+          id: true,
+          applicationNumber: true,
+          student: {
+            id: true,
+            birthDate: true,
+            user: { id: true, firstName: true, lastName: true, email: true },
+          },
+        },
+        relations: {
+          student: {
+            user: true,
+          },
+        },
+        where: { id: applicationId },
+      });
+      const student = application.student;
       const ministryNotification: StudentSubmittedChangeRequestNotificationForMinistry =
         {
           givenNames: student.user.firstName,
           lastName: student.user.lastName,
           email: student.user.email,
           dob: student.birthDate,
-          applicationNumber: studentAppeal.application.applicationNumber,
+          applicationNumber: application.applicationNumber,
         };
       await this.notificationActionsService.saveStudentSubmittedChangeRequestNotificationForMinistry(
         ministryNotification,

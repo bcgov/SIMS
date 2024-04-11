@@ -70,12 +70,15 @@ import {
 } from "@sims/services";
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
+  private readonly institutionLocationRepo: Repository<InstitutionLocation>;
   constructor(
     private readonly dataSource: DataSource,
     private readonly offeringValidationService: EducationProgramOfferingValidationService,
     private readonly notificationActionsService: NotificationActionsService,
   ) {
     super(dataSource.getRepository(EducationProgramOffering));
+    this.institutionLocationRepo =
+      this.dataSource.getRepository(InstitutionLocation);
   }
 
   /**
@@ -102,22 +105,37 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programOffering.parentOffering = programOffering;
 
     try {
-      const institution = programOffering.educationProgram.institution;
+      const institutionLocation = await this.institutionLocationRepo.findOne({
+        select: {
+          id: true,
+          name: true,
+          institution: {
+            id: true,
+            operatingName: true,
+            legalOperatingName: true,
+            primaryEmail: true,
+          },
+        },
+        relations: { institution: true },
+        where: { id: programOffering.institutionLocation.id },
+      });
+      const institution = institutionLocation.institution;
       const ministryNotification: InstitutionAddsPendingOfferingNotificationForMinistry =
         {
           institutionName: institution.legalOperatingName,
           institutionOperatingName: institution.operatingName,
-          institutionLocationName: programOffering.institutionLocation.name,
-          programName: programOffering.educationProgram.name,
-          offeringName: programOffering.name,
+          institutionLocationName: institutionLocation.name,
+          programName: educationProgramOffering.programContext.name,
+          offeringName: educationProgramOffering.offeringName,
           institutionPrimaryEmail: institution.primaryEmail,
         };
       return await this.dataSource.transaction(async (entityManager) => {
-        programOffering.offeringStatus === OfferingStatus.CreationPending ??
-          (await this.notificationActionsService.saveInstitutionAddsPendingOfferingNotificationForMinistry(
-            ministryNotification,
-            entityManager,
-          ));
+        programOffering.offeringStatus === OfferingStatus.CreationPending
+          ? await this.notificationActionsService.saveInstitutionAddsPendingOfferingNotificationForMinistry(
+              ministryNotification,
+              entityManager,
+            )
+          : null;
         return entityManager
           .getRepository(EducationProgramOffering)
           .save(programOffering);

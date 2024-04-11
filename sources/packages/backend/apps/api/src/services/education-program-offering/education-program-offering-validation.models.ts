@@ -159,6 +159,7 @@ export const currencyNumberOptions: IsNumberOptions = {
 export type EducationProgramForOfferingValidationContext = Pick<
   EducationProgram,
   | "id"
+  | "name"
   | "programIntensity"
   | "hasWILComponent"
   | "deliveredOnSite"

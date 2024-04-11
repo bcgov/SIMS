@@ -44,6 +44,7 @@ const OTHER_REGULATORY_BODY = "other";
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
   private readonly offeringsRepo: Repository<EducationProgramOffering>;
+  private readonly institutionRepo: Repository<Institution>;
   constructor(
     private readonly dataSource: DataSource,
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
@@ -52,6 +53,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   ) {
     super(dataSource.getRepository(EducationProgram));
     this.offeringsRepo = dataSource.getRepository(EducationProgramOffering);
+    this.institutionRepo = dataSource.getRepository(Institution);
   }
 
   /**
@@ -232,7 +234,14 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     } else {
       program.modifier = auditUser;
     }
-    const institution = program.institution;
+    const institution = await this.institutionRepo.findOne({
+      select: {
+        operatingName: true,
+        legalOperatingName: true,
+        primaryEmail: true,
+      },
+      where: { id: institutionId },
+    });
     const ministryNotification: InstitutionAddsPendingProgramNotificationForMinistry =
       {
         institutionName: institution.legalOperatingName,
@@ -241,11 +250,12 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         institutionPrimaryEmail: institution.primaryEmail,
       };
     return this.dataSource.transaction(async (entityManager) => {
-      program.programStatus === ProgramStatus.Pending ??
-        (await this.notificationActionsService.saveInstitutionAddsPendingProgramNotificationForMinistry(
-          ministryNotification,
-          entityManager,
-        ));
+      program.programStatus === ProgramStatus.Pending
+        ? await this.notificationActionsService.saveInstitutionAddsPendingProgramNotificationForMinistry(
+            ministryNotification,
+            entityManager,
+          )
+        : null;
       return entityManager.getRepository(EducationProgram).save(program);
     });
   }

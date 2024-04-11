@@ -588,11 +588,12 @@ export class ApplicationOfferingChangeRequestService {
           },
         );
       applicationOfferingChangeRequestStatus ===
-        ApplicationOfferingChangeRequestStatus.InProgressWithSABC ??
-        (await this.notificationActionsService.saveApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry(
-          ministryNotification,
-          entityManager,
-        ));
+      ApplicationOfferingChangeRequestStatus.InProgressWithSABC
+        ? await this.notificationActionsService.saveApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry(
+            ministryNotification,
+            entityManager,
+          )
+        : null;
     });
   }
 
