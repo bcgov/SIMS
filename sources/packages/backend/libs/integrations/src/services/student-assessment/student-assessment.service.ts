@@ -170,17 +170,4 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       },
     });
   }
-
-  /**
-   * Get the student id for the assessment.
-   * @param assessmentId assessment id.
-   * @returns student id.
-   */
-  async getStudentId(assessmentId: number): Promise<StudentAssessment> {
-    return this.repo.findOne({
-      select: { application: { student: { id: true } } },
-      relations: { application: { student: true } },
-      where: { id: assessmentId },
-    });
-  }
 }

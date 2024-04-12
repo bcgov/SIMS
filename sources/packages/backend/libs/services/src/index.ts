@@ -33,3 +33,4 @@ export * from "./global-http/global-http.module";
 export * from "./application/application-shared.service";
 export * from "./students-assessments/assessment-sequential-processing.service.models";
 export * from "./student-loan-balance/student-loan-balance-shared.service";
+export * from "./students-assessments/student-assessment-shared.service";

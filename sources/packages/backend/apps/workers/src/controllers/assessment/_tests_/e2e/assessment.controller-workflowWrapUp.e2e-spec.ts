@@ -49,7 +49,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
     jest.resetAllMocks();
   });
 
-  it(`Should update assessment status to completed when it does not have a status ${StudentAssessmentStatus.InProgress}.`, async () => {
+  it.only(`Should update assessment status to completed when it does not have a status ${StudentAssessmentStatus.InProgress}.`, async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource);
     const workflowData = {

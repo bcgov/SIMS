@@ -32,6 +32,7 @@ import {
   GlobalHttpModule,
   AssessmentSequentialProcessingService,
   StudentLoanBalanceSharedService,
+  StudentAssessmentSharedService,
 } from "@sims/services";
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
@@ -77,6 +78,7 @@ import { TerminusModule } from "@nestjs/terminus";
     ZeebeHealthIndicator,
     AssessmentSequentialProcessingService,
     StudentLoanBalanceSharedService,
+    StudentAssessmentSharedService,
   ],
 })
 export class WorkersModule {}
