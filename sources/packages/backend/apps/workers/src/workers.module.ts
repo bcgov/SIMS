@@ -36,6 +36,7 @@ import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
 import { SystemUserModule } from "@sims/services/system-users";
 import { TerminusModule } from "@nestjs/terminus";
+import { StudentLoanBalanceService } from "@sims/integrations/services";
 
 @Module({
   imports: [
@@ -75,6 +76,7 @@ import { TerminusModule } from "@nestjs/terminus";
     ConfirmationOfEnrollmentService,
     ZeebeHealthIndicator,
     AssessmentSequentialProcessingService,
+    StudentLoanBalanceService,
   ],
 })
 export class WorkersModule {}
