@@ -32,3 +32,4 @@ export * from "./msfaa-number/msfaa-number-shared.service";
 export * from "./global-http/global-http.module";
 export * from "./application/application-shared.service";
 export * from "./students-assessments/assessment-sequential-processing.service.models";
+export * from "./student-loan-balance/student-loan-balance-shared.service";

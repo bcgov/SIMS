@@ -2,16 +2,13 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { SystemUsersService } from "@sims/services";
 import { StudentLoanBalance } from "@sims/sims-db";
-import { EntityManager, Repository } from "typeorm";
-import { StudentAssessmentService } from "../student-assessment/student-assessment.service";
+import { EntityManager } from "typeorm";
 
 @Injectable()
 export class StudentLoanBalanceService {
   constructor(
     @InjectRepository(StudentLoanBalance)
-    private readonly studentLoanBalanceRepo: Repository<StudentLoanBalance>,
     private readonly systemUserService: SystemUsersService,
-    private readonly studentAssessmentService: StudentAssessmentService,
   ) {}
 
   /**
@@ -90,25 +87,5 @@ export class StudentLoanBalanceService {
       })
       .getRawOne<{ [maxBalanceDateAlias]: Date }>();
     return lastBalanceDate[maxBalanceDateAlias] ?? undefined;
-  }
-
-  /**
-   * Most recent CSLP balance for the particular assessment.
-   * @param assessmentId assessment id.
-   * @returns latest CSLP balance.
-   */
-  async getLatestCSLPBalance(
-    assessmentId: number,
-  ): Promise<StudentLoanBalance> {
-    const studentAssessment = await this.studentAssessmentService.getStudentId(
-      assessmentId,
-    );
-    if (studentAssessment.application.student.id) {
-      return this.studentLoanBalanceRepo.findOne({
-        select: { cslBalance: true },
-        where: { student: { id: studentAssessment.application.student.id } },
-        order: { balanceDate: "DESC" },
-      });
-    }
   }
 }

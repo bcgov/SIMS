@@ -4,7 +4,6 @@ import {
   StudentService,
   SshService,
   StudentLoanBalanceService,
-  StudentAssessmentService,
 } from "@sims/integrations/services";
 import {
   StudentLoanBalancesIntegrationService,
@@ -19,7 +18,6 @@ import {
     StudentLoanBalancesIntegrationService,
     StudentLoanBalancesProcessingService,
     StudentLoanBalanceService,
-    StudentAssessmentService,
   ],
   exports: [StudentLoanBalancesProcessingService],
 })
