@@ -22,6 +22,7 @@ import {
   ECertGenerationService,
   ECertNotificationService,
   SshService,
+  StudentLoanBalanceService,
 } from "../../services";
 import { SystemUserModule } from "@sims/services/system-users";
 import { SFASApplicationService } from "@sims/services/sfas";
@@ -82,6 +83,7 @@ import { PartTimeECertFileHandler } from "./part-time-e-cert-file-handler";
     FullTimeCalculationProcess,
     PartTimeCalculationProcess,
     AssessmentSequentialProcessingService,
+    StudentLoanBalanceService,
   ],
   exports: [
     FullTimeECertFileHandler,
