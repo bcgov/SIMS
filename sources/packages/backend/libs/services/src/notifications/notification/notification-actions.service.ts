@@ -56,9 +56,15 @@ export class NotificationActionsService {
     entityManager?: EntityManager,
   ): Promise<void> {
     const notificationDetails =
-      await this.notificationMessageService.getNotificationDetails(
+      await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.StudentFileUpload,
       );
+    if (!notificationDetails.emailContacts?.length) {
+      this.logger.error(
+        `Email template id ${NotificationMessageType.StudentFileUpload} requires a configured email to be sent.`,
+      );
+      return;
+    }
     const ministryNotificationsToSend = [];
     notificationDetails.emailContacts.forEach((emailContact) => {
       const notificationToSend = {
@@ -103,7 +109,7 @@ export class NotificationActionsService {
     entityManager?: EntityManager,
   ): Promise<void> {
     const notificationDetails =
-      await this.notificationMessageService.getNotificationDetails(
+      await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.MinistryFileUpload,
       );
 
@@ -141,7 +147,7 @@ export class NotificationActionsService {
     entityManager?: EntityManager,
   ): Promise<void> {
     const notificationDetails =
-      await this.notificationMessageService.getNotificationDetails(
+      await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.MSFAACancellation,
       );
 
@@ -180,7 +186,7 @@ export class NotificationActionsService {
     entityManager?: EntityManager,
   ): Promise<void> {
     const notificationDetails =
-      await this.notificationMessageService.getNotificationDetails(
+      await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.ApplicationOfferingChangeRequestInProgressWithStudent,
       );
     const messagePayload: NotificationEmailMessage = {
@@ -217,7 +223,7 @@ export class NotificationActionsService {
     entityManager: EntityManager,
   ): Promise<void> {
     const notificationDetails =
-      await this.notificationMessageService.getNotificationDetails(
+      await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.ApplicationOfferingChangeRequestCompletedByMinistry,
       );
     const messagePayload: NotificationEmailMessage = {
@@ -254,7 +260,7 @@ export class NotificationActionsService {
     entityManager?: EntityManager,
   ): Promise<void> {
     const notificationDetails =
-      await this.notificationMessageService.getNotificationDetails(
+      await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.StudentRestrictionAdded,
       );
 
@@ -292,9 +298,15 @@ export class NotificationActionsService {
     entityManager?: EntityManager,
   ): Promise<void> {
     const notificationDetails =
-      await this.notificationMessageService.getNotificationDetails(
+      await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.LegacyRestrictionAdded,
       );
+    if (!notificationDetails.emailContacts?.length) {
+      this.logger.error(
+        `Email template id ${NotificationMessageType.LegacyRestrictionAdded} requires a configured email to be sent.`,
+      );
+      return;
+    }
     const ministryNotificationsToSend = [];
     notificationDetails.emailContacts.forEach((emailContact) => {
       const notificationsToSend = notifications.map((notification) => ({
@@ -335,7 +347,7 @@ export class NotificationActionsService {
     entityManager: EntityManager,
   ): Promise<void> {
     const notificationDetails =
-      await this.notificationMessageService.getNotificationDetails(
+      await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.MinistryCompletesException,
       );
 
@@ -373,7 +385,7 @@ export class NotificationActionsService {
     entityManager: EntityManager,
   ): Promise<void> {
     const notificationDetails =
-      await this.notificationMessageService.getNotificationDetails(
+      await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.MinistryCompletesChange,
       );
 
@@ -411,7 +423,7 @@ export class NotificationActionsService {
     entityManager: EntityManager,
   ): Promise<void> {
     const notificationDetails =
-      await this.notificationMessageService.getNotificationDetails(
+      await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.InstitutionReportsChange,
       );
 
@@ -449,7 +461,7 @@ export class NotificationActionsService {
     entityManager: EntityManager,
   ): Promise<void> {
     const notificationDetails =
-      await this.notificationMessageService.getNotificationDetails(
+      await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.InstitutionCompletesPIR,
       );
 
@@ -487,7 +499,7 @@ export class NotificationActionsService {
     entityManager: EntityManager,
   ): Promise<void> {
     const notificationDetails =
-      await this.notificationMessageService.getNotificationDetails(
+      await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.InstitutionCompletesCOE,
       );
 
@@ -535,7 +547,7 @@ export class NotificationActionsService {
     entityManager: EntityManager,
   ): Promise<void> {
     const notificationDetails =
-      await this.notificationMessageService.getNotificationDetails(
+      await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.AssessmentReadyForConfirmation,
         { entityManager },
       );
@@ -571,7 +583,7 @@ export class NotificationActionsService {
     entityManager: EntityManager,
   ): Promise<void> {
     const notificationDetails =
-      await this.notificationMessageService.getNotificationDetails(
+      await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.SINValidationComplete,
       );
     const sinCompleteNotification = {
@@ -606,7 +618,7 @@ export class NotificationActionsService {
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     const notificationDetails =
-      await this.notificationMessageService.getNotificationDetails(
+      await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.ECEResponseFileProcessing,
       );
     const eceResponseFileProcessingNotifications = [];
@@ -661,7 +673,7 @@ export class NotificationActionsService {
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     const notificationDetails =
-      await this.notificationMessageService.getNotificationDetails(
+      await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.StudentNotificationDisbursementBlocked,
       );
     const notificationToSend = {
@@ -699,9 +711,15 @@ export class NotificationActionsService {
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     const notificationDetails =
-      await this.notificationMessageService.getNotificationDetails(
+      await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.MinistryNotificationDisbursementBlocked,
       );
+    if (!notificationDetails.emailContacts?.length) {
+      this.logger.error(
+        `Email template id ${NotificationMessageType.MinistryNotificationDisbursementBlocked} requires a configured email to be sent.`,
+      );
+      return;
+    }
     const ministryNotificationsToSend = [];
     notificationDetails.emailContacts.forEach((emailContact) => {
       const ministryNotificationToSend = {
@@ -743,9 +761,15 @@ export class NotificationActionsService {
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     const notificationDetails =
-      await this.notificationMessageService.getNotificationDetails(
+      await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.ApplicationExceptionRequestNotificationForMinistry,
       );
+    if (!notificationDetails.emailContacts?.length) {
+      this.logger.error(
+        `Email template id ${NotificationMessageType.ApplicationExceptionRequestNotificationForMinistry} requires a configured email to be sent.`,
+      );
+      return;
+    }
     const ministryNotificationsToSend = [];
     notificationDetails.emailContacts.forEach((emailContact) => {
       const ministryNotificationToSend = {
@@ -786,9 +810,15 @@ export class NotificationActionsService {
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     const notificationDetails =
-      await this.notificationMessageService.getNotificationDetails(
+      await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.ApplicationEditedFifthTimeNotificationForMinistry,
       );
+    if (!notificationDetails.emailContacts?.length) {
+      this.logger.error(
+        `Email template id ${NotificationMessageType.ApplicationEditedFifthTimeNotificationForMinistry} requires a configured email to be sent.`,
+      );
+      return;
+    }
     const ministryNotificationsToSend = [];
     notificationDetails.emailContacts.forEach((emailContact) => {
       const ministryNotificationToSend = {
@@ -829,9 +859,15 @@ export class NotificationActionsService {
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     const notificationDetails =
-      await this.notificationMessageService.getNotificationDetails(
+      await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.StudentSubmittedChangeRequestNotificationForMinistry,
       );
+    if (!notificationDetails.emailContacts?.length) {
+      this.logger.error(
+        `Email template id ${NotificationMessageType.StudentSubmittedChangeRequestNotificationForMinistry} requires a configured email to be sent.`,
+      );
+      return;
+    }
     const ministryNotificationsToSend = [];
     notificationDetails.emailContacts.forEach((emailContact) => {
       const ministryNotificationToSend = {
@@ -872,9 +908,15 @@ export class NotificationActionsService {
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     const notificationDetails =
-      await this.notificationMessageService.getNotificationDetails(
+      await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.StudentRequestsBasicBCeIDAccountNotificationForMinistry,
       );
+    if (!notificationDetails.emailContacts?.length) {
+      this.logger.error(
+        `Email template id ${NotificationMessageType.StudentRequestsBasicBCeIDAccountNotificationForMinistry} requires a configured email to be sent.`,
+      );
+      return;
+    }
     const ministryNotificationsToSend = [];
     notificationDetails.emailContacts.forEach((emailContact) => {
       const ministryNotificationToSend = {
@@ -914,9 +956,15 @@ export class NotificationActionsService {
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     const notificationDetails =
-      await this.notificationMessageService.getNotificationDetails(
+      await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.ApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry,
       );
+    if (!notificationDetails.emailContacts?.length) {
+      this.logger.error(
+        `Email template id ${NotificationMessageType.ApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry} requires a configured email to be sent.`,
+      );
+      return;
+    }
     const ministryNotificationsToSend = [];
     notificationDetails.emailContacts.forEach((emailContact) => {
       const ministryNotificationToSend = {
@@ -957,9 +1005,15 @@ export class NotificationActionsService {
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     const notificationDetails =
-      await this.notificationMessageService.getNotificationDetails(
+      await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.InstitutionRequestsDesignationNotificationForMinistry,
       );
+    if (!notificationDetails.emailContacts?.length) {
+      this.logger.error(
+        `Email template id ${NotificationMessageType.InstitutionRequestsDesignationNotificationForMinistry} requires a configured email to be sent.`,
+      );
+      return;
+    }
     const ministryNotificationsToSend = [];
     notificationDetails.emailContacts.forEach((emailContact) => {
       const ministryNotificationToSend = {
@@ -998,9 +1052,15 @@ export class NotificationActionsService {
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     const notificationDetails =
-      await this.notificationMessageService.getNotificationDetails(
+      await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.InstitutionAddsPendingProgramNotificationForMinistry,
       );
+    if (!notificationDetails.emailContacts?.length) {
+      this.logger.error(
+        `Email template id ${NotificationMessageType.InstitutionAddsPendingProgramNotificationForMinistry} requires a configured email to be sent.`,
+      );
+      return;
+    }
     const ministryNotificationsToSend = [];
     notificationDetails.emailContacts.forEach((emailContact) => {
       const ministryNotificationToSend = {
@@ -1040,9 +1100,15 @@ export class NotificationActionsService {
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     const notificationDetails =
-      await this.notificationMessageService.getNotificationDetails(
+      await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.InstitutionAddsPendingOfferingNotificationForMinistry,
       );
+    if (!notificationDetails.emailContacts?.length) {
+      this.logger.error(
+        `Email template id ${NotificationMessageType.InstitutionAddsPendingOfferingNotificationForMinistry} requires a configured email to be sent.`,
+      );
+      return;
+    }
     const ministryNotificationsToSend = [];
     notificationDetails.emailContacts.forEach((emailContact) => {
       const ministryNotificationToSend = {

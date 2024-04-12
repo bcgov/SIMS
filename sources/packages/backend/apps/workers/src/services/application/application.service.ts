@@ -75,6 +75,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
         id: true,
         applicationNumber: true,
         pirStatus: true,
+        student: {
+          id: true,
+          birthDate: true,
+          user: { id: true, firstName: true, lastName: true, email: true },
+        },
         data: !options?.loadDynamicData
           ? undefined
           : {
@@ -84,11 +89,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationException: {
           id: true,
           exceptionStatus: true,
-        },
-        student: {
-          id: true,
-          birthDate: true,
-          user: { id: true, firstName: true, lastName: true, email: true },
         },
       },
       relations: {

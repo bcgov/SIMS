@@ -13,13 +13,13 @@ export class NotificationMessageService extends RecordDataModelService<Notificat
   }
 
   /**
-   * Retrieves the notification details of a notification message.
+   * Retrieves the notification message details of a notification message.
    * @param notificationMessageTypeId id of the user who will receive the message.
    * @param options options.
    * - `entityManager` external entity manager to run in a transaction.
    * @returns notification details of the notification message.
    */
-  async getNotificationDetails(
+  async getNotificationMessageDetails(
     notificationMessageTypeId: NotificationMessageType,
     options?: { entityManager?: EntityManager },
   ): Promise<NotificationMessage> {
