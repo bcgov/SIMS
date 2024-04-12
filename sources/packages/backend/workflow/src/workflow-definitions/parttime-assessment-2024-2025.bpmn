@@ -841,10 +841,9 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:sequenceFlow id="Flow_13hzh8q" sourceRef="Gateway_0wuxqll" targetRef="Activity_1vwijyc" />
     <bpmn:scriptTask id="Activity_17xl9w5" name="Define PD/PPD Status">
       <bpmn:extensionElements>
-        <zeebe:script expression="=if inputStudentNewPDPPDStatus = null&#10;  then&#10;    inputStudentDataApplicationPDPPDStatus&#10;  else&#10;    inputStudentNewPDPPDStatus&#10;" resultVariable="calculatedDataPDPPDStatus" />
+        <zeebe:script expression="=inputStudentPDPPDStatus = &#34;yes&#34;" resultVariable="calculatedDataPDPPDStatus" />
         <zeebe:ioMapping>
-          <zeebe:input source="=if appealsStudentDisabilityAppealData != null &#10;  then &#10;    if appealsStudentDisabilityAppealData.studentNewPDPPDStatus = &#34;yes&#34;&#10;      then true&#10;    else&#10;      false&#10;  else&#10;    null" target="inputStudentNewPDPPDStatus" />
-          <zeebe:input source="=if studentDataApplicationPDPPDStatus = &#34;yes&#34;&#10;  then &#10;    true&#10;  else&#10;    false" target="inputStudentDataApplicationPDPPDStatus" />
+          <zeebe:input source="=if appealsStudentDisabilityAppealData != null &#10;  then &#10;    appealsStudentDisabilityAppealData.studentNewPDPPDStatus&#10;  else&#10;    studentDataApplicationPDPPDStatus" target="inputStudentPDPPDStatus" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_01eben1</bpmn:incoming>
@@ -863,14 +862,14 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:scriptTask id="Activity_1r2wvtx" name="Define Financial Information">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:input source="=if appealsStudentFinancialInformationAppealData = null and appealsStudentFinancialInformationAppealData.taxReturnIncome = null &#10;  then studentDataTaxReturnIncome &#10;  else appealsStudentFinancialInformationAppealData.taxReturnIncome" target="inputDataTaxReturnIncome" />
-          <zeebe:input source="=if appealsStudentFinancialInformationAppealData = null and appealsStudentFinancialInformationAppealData.daycareCosts12YearsOrOver = null &#10;  then studentDataDaycareCosts12YearsOrOver &#10;  else appealsStudentFinancialInformationAppealData.daycareCosts12YearsOrOver" target="inputDataDaycareCosts12YearsOrOver" />
-          <zeebe:input source="=if appealsStudentFinancialInformationAppealData = null and appealsStudentFinancialInformationAppealData.daycareCosts11YearsOrUnder = null &#10;  then studentDataDaycareCosts11YearsOrUnder &#10;  else appealsStudentFinancialInformationAppealData.daycareCosts11YearsOrUnder" target="inputDataDaycareCosts11YearsOrUnder" />
+          <zeebe:input source="=if appealsStudentFinancialInformationAppealData = null&#10;  then studentDataTaxReturnIncome &#10;  else appealsStudentFinancialInformationAppealData.taxReturnIncome" target="inputDataTaxReturnIncome" />
+          <zeebe:input source="=if appealsStudentFinancialInformationAppealData = null &#10;  then studentDataDaycareCosts12YearsOrOver &#10;  else appealsStudentFinancialInformationAppealData.daycareCosts12YearsOrOver" target="inputDataDaycareCosts12YearsOrOver" />
+          <zeebe:input source="=if appealsStudentFinancialInformationAppealData = null&#10;  then studentDataDaycareCosts11YearsOrUnder &#10;  else appealsStudentFinancialInformationAppealData.daycareCosts11YearsOrUnder" target="inputDataDaycareCosts11YearsOrUnder" />
           <zeebe:output source="=calculatedDataStudentFinancialInformation.calculatedDataTaxReturnIncome" target="calculatedDataTaxReturnIncome" />
           <zeebe:output source="=calculatedDataStudentFinancialInformation.calculatedDataDaycareCosts12YearsOrOver" target="calculatedDataDaycareCosts12YearsOrOver" />
           <zeebe:output source="=calculatedDataStudentFinancialInformation.calculatedDataDaycareCosts11YearsOrUnder" target="calculatedDataDaycareCosts11YearsOrUnder" />
         </zeebe:ioMapping>
-        <zeebe:script expression="={&#10; calculatedDataTaxReturnIncome:  (if inputDataTaxReturnIncome = null then 0 else inputDataTaxReturnIncome),&#10; calculatedDataDaycareCosts12YearsOrOver: (if inputDataDaycareCosts12YearsOrOver = null then 0 else inputDataDaycareCosts12YearsOrOver),&#10; calculatedDataDaycareCosts11YearsOrUnder: (if inputDataDaycareCosts11YearsOrUnder = null then 0 else inputDataDaycareCosts11YearsOrUnder)&#10;}" resultVariable="calculatedDataStudentFinancialInformation" />
+        <zeebe:script expression="={&#10; calculatedDataTaxReturnIncome:  inputDataTaxReturnIncome,&#10; calculatedDataDaycareCosts12YearsOrOver: (if inputDataDaycareCosts12YearsOrOver = null then 0 else inputDataDaycareCosts12YearsOrOver),&#10; calculatedDataDaycareCosts11YearsOrUnder: (if inputDataDaycareCosts11YearsOrUnder = null then 0 else inputDataDaycareCosts11YearsOrUnder)&#10;}" resultVariable="calculatedDataStudentFinancialInformation" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1qbu3xc</bpmn:incoming>
       <bpmn:outgoing>Flow_1l5v6bs</bpmn:outgoing>
