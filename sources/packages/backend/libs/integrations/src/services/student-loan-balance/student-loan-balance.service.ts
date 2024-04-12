@@ -1,11 +1,18 @@
 import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 import { SystemUsersService } from "@sims/services";
 import { StudentLoanBalance } from "@sims/sims-db";
-import { EntityManager } from "typeorm";
+import { EntityManager, Repository } from "typeorm";
+import { StudentAssessmentService } from "../student-assessment/student-assessment.service";
 
 @Injectable()
 export class StudentLoanBalanceService {
-  constructor(private readonly systemUserService: SystemUsersService) {}
+  constructor(
+    @InjectRepository(StudentLoanBalance)
+    private readonly studentLoanBalanceRepo: Repository<StudentLoanBalance>,
+    private readonly systemUserService: SystemUsersService,
+    private readonly studentAssessmentService: StudentAssessmentService,
+  ) {}
 
   /**
    * After new student balance records are added to the database, checks if some students
@@ -63,7 +70,7 @@ export class StudentLoanBalanceService {
   }
 
   /**
-   * Most recent balance present on database.
+   * Most recent balance date present on database.
    * If no records are present, returns undefined.
    * @param referenceBalanceDate used as a reference to get the last balance before this date.
    * @param entityManager used to get the data in and share the database transaction.
@@ -83,5 +90,25 @@ export class StudentLoanBalanceService {
       })
       .getRawOne<{ [maxBalanceDateAlias]: Date }>();
     return lastBalanceDate[maxBalanceDateAlias] ?? undefined;
+  }
+
+  /**
+   * Most recent CSLP balance for the particular assessment.
+   * @param assessmentId assessment id.
+   * @returns latest CSLP balance.
+   */
+  async getLatestCSLPBalance(
+    assessmentId: number,
+  ): Promise<StudentLoanBalance> {
+    const studentAssessment = await this.studentAssessmentService.getStudentId(
+      assessmentId,
+    );
+    if (studentAssessment.application.student.id) {
+      return this.studentLoanBalanceRepo.findOne({
+        select: { cslBalance: true },
+        where: { student: { id: studentAssessment.application.student.id } },
+        order: { balanceDate: "DESC" },
+      });
+    }
   }
 }

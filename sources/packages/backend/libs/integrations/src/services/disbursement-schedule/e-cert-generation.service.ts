@@ -10,6 +10,7 @@ import {
   Application,
   StudentRestriction,
   COEStatus,
+  StudentAssessment,
 } from "@sims/sims-db";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
@@ -321,5 +322,26 @@ export class ECertGenerationService {
         createdAt: "ASC",
       },
     });
+  }
+
+  /**
+   * Get the lifetime maximums of CSLP and is used in the e-Cert generation.
+   * @param assessmentId disbursement assessment id.
+   * @param entityManager used to execute the commands in the same transaction.
+   * @returns lifetime maximums of CSLP.
+   */
+  async getCSLPLifetimeMaximums(
+    assessmentId: number,
+    entityManager: EntityManager,
+  ): Promise<number> {
+    const studentAssessment = await entityManager
+      .getRepository(StudentAssessment)
+      .findOne({
+        select: { workflowData: true as unknown },
+        where: { id: assessmentId },
+      });
+    if (studentAssessment.workflowData) {
+      return studentAssessment.workflowData.dmnValues.lifetimeMaximumCSLP;
+    }
   }
 }

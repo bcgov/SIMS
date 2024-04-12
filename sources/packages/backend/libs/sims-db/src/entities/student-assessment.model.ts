@@ -330,6 +330,9 @@ export interface WorkflowData {
     livingWithParents: FormYesNoOptions;
     numberOfParents?: number;
   };
+  dmnValues: {
+    lifetimeMaximumCSLP: number;
+  };
   calculatedData: {
     parentalAssets?: number;
     studentMaritalStatusCode: StudentMaritalStatusCode;

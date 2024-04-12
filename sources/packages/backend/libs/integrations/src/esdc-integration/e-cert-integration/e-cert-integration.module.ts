@@ -33,6 +33,7 @@ import {
   CalculateTuitionRemittanceEffectiveAmountStep,
   CreateBCTotalGrantsStep,
   PersistCalculationsStep,
+  ValidateCSLPLifetimeMaximumCheckStep,
   ValidateDisbursementFullTimeStep,
   ValidateDisbursementPartTimeStep,
 } from "@sims/integrations/services/disbursement-schedule/e-cert-processing-steps";
@@ -70,6 +71,7 @@ import { PartTimeECertFileHandler } from "./part-time-e-cert-file-handler";
     // e-Cert calculation steps.
     ValidateDisbursementFullTimeStep,
     ValidateDisbursementPartTimeStep,
+    ValidateCSLPLifetimeMaximumCheckStep,
     ApplyOverawardsDeductionsStep,
     CalculateEffectiveValueStep,
     ApplyStopBCFundingRestrictionFullTimeStep,
