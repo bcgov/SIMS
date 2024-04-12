@@ -17,7 +17,6 @@ import {
   ApplicationUpdateStatusJobInDTO,
 } from "..";
 import {
-  Application,
   ApplicationException,
   ApplicationExceptionStatus,
 } from "@sims/sims-db";
