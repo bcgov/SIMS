@@ -1,5 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, In, Not, Brackets, EntityManager } from "typeorm";
+import {
+  DataSource,
+  In,
+  Not,
+  Brackets,
+  EntityManager,
+  Repository,
+} from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   RecordDataModelService,
@@ -73,6 +80,7 @@ export const INSUFFICIENT_APPLICATION_SEARCH_PARAMS =
 
 @Injectable()
 export class ApplicationService extends RecordDataModelService<Application> {
+  private readonly studentRepo: Repository<Student>;
   constructor(
     private readonly configService: ConfigService,
     private readonly dataSource: DataSource,
@@ -87,6 +95,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly notificationActionService: NotificationActionsService,
   ) {
     super(dataSource.getRepository(Application));
+    this.studentRepo = this.dataSource.getRepository(Student);
   }
 
   /**
@@ -286,10 +295,20 @@ export class ApplicationService extends RecordDataModelService<Application> {
         where: { applicationNumber: newApplication.applicationNumber },
       });
       if (
-        applicationsCount ===
+        applicationsCount >=
         APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION + 1
       ) {
-        const student = application.student;
+        const student = await this.studentRepo.findOne({
+          select: {
+            id: true,
+            birthDate: true,
+            user: { id: true, firstName: true, lastName: true, email: true },
+          },
+          relations: {
+            user: true,
+          },
+          where: { id: application.studentId },
+        });
         const ministryNotification: ApplicationExceptionRequestNotificationForMinistry =
           {
             givenNames: student.user.firstName,

@@ -16,7 +16,11 @@ import {
   ApplicationUpdateStatusJobHeaderDTO,
   ApplicationUpdateStatusJobInDTO,
 } from "..";
-import { ApplicationExceptionStatus } from "@sims/sims-db";
+import {
+  Application,
+  ApplicationException,
+  ApplicationExceptionStatus,
+} from "@sims/sims-db";
 import {
   APPLICATION_NOT_FOUND,
   APPLICATION_STATUS_NOT_UPDATED,
@@ -126,8 +130,9 @@ export class ApplicationController {
         application.data,
       );
       if (exceptions.length) {
+        let createdException: ApplicationException;
         await this.dataSource.transaction(async (entityManager) => {
-          const createdException =
+          createdException =
             await this.applicationExceptionService.createException(
               job.variables.applicationId,
               exceptions,
@@ -149,9 +154,9 @@ export class ApplicationController {
             entityManager,
           );
           jobLogger.log("Created notification for the created exception.");
-          return job.complete({
-            applicationExceptionStatus: createdException.exceptionStatus,
-          });
+        });
+        return job.complete({
+          applicationExceptionStatus: createdException.exceptionStatus,
         });
       }
       jobLogger.log("Verified application exception.");
