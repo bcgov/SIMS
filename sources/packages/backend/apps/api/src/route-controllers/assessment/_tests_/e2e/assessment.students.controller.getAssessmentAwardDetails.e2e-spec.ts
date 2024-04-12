@@ -20,6 +20,7 @@ import {
 import {
   ApplicationStatus,
   COEStatus,
+  DisbursementScheduleStatus,
   DisbursementValueType,
   MSFAANumber,
   OfferingIntensity,
@@ -51,7 +52,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
     );
   });
 
-  it("Should get the student assessment summary containing loan and all grants values from e-Cert effective amount for a part-time application with a single disbursement .", async () => {
+  it("Should get the student assessment summary containing loan and all grants values from e-Cert effective amount for a part-time application with a single disbursement.", async () => {
     // First disbursement values.
     const firstDisbursementValues = [
       createFakeDisbursementValue(
@@ -103,6 +104,9 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
       {
         offeringIntensity: OfferingIntensity.partTime,
         applicationStatus: ApplicationStatus.Completed,
+        firstDisbursementInitialValues: {
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        },
       },
     );
 
@@ -247,6 +251,9 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
         offeringIntensity: OfferingIntensity.partTime,
         applicationStatus: ApplicationStatus.Completed,
         createSecondDisbursement: true,
+        firstDisbursementInitialValues: {
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        },
         secondDisbursementInitialValues: {
           coeStatus: COEStatus.completed,
           tuitionRemittanceRequestedAmount: 9876,
@@ -329,6 +336,65 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
           disbursementReceipt2csgd: 1210,
           disbursementReceipt2bcag: 1310,
           disbursementReceipt2sbsd: 1410,
+        },
+      });
+  });
+
+  it("Should not generate final awards values for a part-time application when the disbursement was not sent yet.", async () => {
+    const firstDisbursementValues = [
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaLoan,
+        "CSLP",
+        111,
+        { effectiveAmount: 110 },
+      ),
+    ];
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        student: sharedStudent,
+        msfaaNumber: sharedMSFAANumber,
+        firstDisbursementValues,
+      },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.Completed,
+        firstDisbursementInitialValues: {
+          disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+        },
+      },
+    );
+
+    const endpoint = `/students/assessment/${application.currentAssessment.id}/award`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act/Assert
+    const [firstSchedule] = application.currentAssessment.disbursementSchedules;
+    const offering = application.currentAssessment.offering;
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        applicationNumber: application.applicationNumber,
+        applicationStatus: ApplicationStatus.Completed,
+        institutionName: offering.educationProgram.institution.operatingName,
+        offeringIntensity: OfferingIntensity.partTime,
+        offeringStudyStartDate: getDateOnlyFormat(offering.studyStartDate),
+        offeringStudyEndDate: getDateOnlyFormat(offering.studyEndDate),
+        estimatedAward: {
+          disbursement1Date: getDateOnlyFormat(firstSchedule.disbursementDate),
+          disbursement1Status: firstSchedule.disbursementScheduleStatus,
+          disbursement1COEStatus: COEStatus.completed,
+          disbursement1MSFAANumber: "XXXXXXXXXX",
+          disbursement1MSFAAId: sharedMSFAANumber.id,
+          disbursement1MSFAACancelledDate: null,
+          disbursement1MSFAADateSigned: sharedMSFAANumber.dateSigned,
+          disbursement1TuitionRemittance: 0,
+          disbursement1Id: firstSchedule.id,
+          disbursement1cslp: 111,
         },
       });
   });
@@ -422,6 +488,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
         applicationStatus: ApplicationStatus.Completed,
         createSecondDisbursement: true,
         firstDisbursementInitialValues: {
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
           tuitionRemittanceRequestedAmount: 1099,
         },
         secondDisbursementInitialValues: {
@@ -546,6 +613,9 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
       {
         offeringIntensity: OfferingIntensity.fullTime,
         applicationStatus: ApplicationStatus.Completed,
+        firstDisbursementInitialValues: {
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        },
       },
     );
     const [firstSchedule] = application.currentAssessment.disbursementSchedules;

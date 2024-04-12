@@ -63,8 +63,7 @@ export class DisbursementSchedule extends RecordDataModel {
    */
   @Column({
     name: "date_sent",
-    type: "date",
-    transformer: dateOnlyTransformer,
+    type: "timestamptz",
     nullable: true,
   })
   dateSent?: Date;
