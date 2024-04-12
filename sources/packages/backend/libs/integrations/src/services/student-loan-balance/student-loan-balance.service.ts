@@ -1,15 +1,11 @@
 import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
 import { SystemUsersService } from "@sims/services";
 import { StudentLoanBalance } from "@sims/sims-db";
 import { EntityManager } from "typeorm";
 
 @Injectable()
 export class StudentLoanBalanceService {
-  constructor(
-    @InjectRepository(StudentLoanBalance)
-    private readonly systemUserService: SystemUsersService,
-  ) {}
+  constructor(private readonly systemUserService: SystemUsersService) {}
 
   /**
    * After new student balance records are added to the database, checks if some students
