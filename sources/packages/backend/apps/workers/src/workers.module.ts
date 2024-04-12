@@ -36,7 +36,6 @@ import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
 import { SystemUserModule } from "@sims/services/system-users";
 import { TerminusModule } from "@nestjs/terminus";
-import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
 
 @Module({
   imports: [
@@ -48,7 +47,6 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     SystemUserModule,
     NotificationsModule,
     TerminusModule,
-    ECertIntegrationModule,
   ],
   controllers: [
     AssessmentController,
