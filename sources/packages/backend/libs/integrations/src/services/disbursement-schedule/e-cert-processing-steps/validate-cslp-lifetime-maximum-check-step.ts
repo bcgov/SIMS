@@ -29,22 +29,25 @@ export class ValidateCSLPLifetimeMaximumCheckStep implements ECertProcessStep {
     log: ProcessSummary,
   ): Promise<boolean> {
     log.info("Validate CSLP Lifetime Maximum.");
+    //Fetch lifetime maximum of CSLP from the workflow data.
     const lifetimeMaximumsCSLP =
       await this.eCertGenerationService.getCSLPLifetimeMaximums(
         eCertDisbursement.assessmentId,
         entityManager,
       );
+    //Get latest CSLP monthly balance.
     const studentLoanBalance =
       await this.studentLoanBalanceSharedService.getLatestCSLPBalance(
         eCertDisbursement.assessmentId,
       );
-    const totalDisbursementCSLPAmount =
+    //Get the disbursed value for the CSLP in the current disbursement.
+    const disbursementCSLPAmount =
       eCertDisbursement.disbursement.disbursementValues.find(
         (item) => item.valueCode === CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE,
       ).valueAmount;
     return (
       lifetimeMaximumsCSLP <=
-      totalDisbursementCSLPAmount + studentLoanBalance.cslBalance
+      disbursementCSLPAmount + studentLoanBalance.cslBalance
     );
   }
 }
