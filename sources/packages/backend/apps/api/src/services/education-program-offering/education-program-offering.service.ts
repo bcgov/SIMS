@@ -130,12 +130,12 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
           institutionPrimaryEmail: institution.primaryEmail,
         };
       return await this.dataSource.transaction(async (entityManager) => {
-        programOffering.offeringStatus === OfferingStatus.CreationPending
-          ? await this.notificationActionsService.saveInstitutionAddsPendingOfferingNotificationForMinistry(
-              ministryNotification,
-              entityManager,
-            )
-          : null;
+        if (programOffering.offeringStatus === OfferingStatus.CreationPending) {
+          await this.notificationActionsService.saveInstitutionAddsPendingOfferingNotificationForMinistry(
+            ministryNotification,
+            entityManager,
+          );
+        }
         return entityManager
           .getRepository(EducationProgramOffering)
           .save(programOffering);

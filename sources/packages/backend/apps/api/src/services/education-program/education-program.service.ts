@@ -250,12 +250,12 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         institutionPrimaryEmail: institution.primaryEmail,
       };
     return this.dataSource.transaction(async (entityManager) => {
-      program.programStatus === ProgramStatus.Pending
-        ? await this.notificationActionsService.saveInstitutionAddsPendingProgramNotificationForMinistry(
-            ministryNotification,
-            entityManager,
-          )
-        : null;
+      if (program.programStatus === ProgramStatus.Pending) {
+        await this.notificationActionsService.saveInstitutionAddsPendingProgramNotificationForMinistry(
+          ministryNotification,
+          entityManager,
+        );
+      }
       return entityManager.getRepository(EducationProgram).save(program);
     });
   }

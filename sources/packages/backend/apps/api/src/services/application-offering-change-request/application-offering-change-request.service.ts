@@ -587,13 +587,15 @@ export class ApplicationOfferingChangeRequestService {
             updatedAt: currentDate,
           },
         );
-      applicationOfferingChangeRequestStatus ===
-      ApplicationOfferingChangeRequestStatus.InProgressWithSABC
-        ? await this.notificationActionsService.saveApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry(
-            ministryNotification,
-            entityManager,
-          )
-        : null;
+      if (
+        applicationOfferingChangeRequestStatus ===
+        ApplicationOfferingChangeRequestStatus.InProgressWithSABC
+      ) {
+        await this.notificationActionsService.saveApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry(
+          ministryNotification,
+          entityManager,
+        );
+      }
     });
   }
 
