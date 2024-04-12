@@ -50,6 +50,7 @@ import {
   SupportingUser,
   User,
   StudentLoanBalance,
+  NotificationMessage,
 } from "@sims/sims-db";
 import { DataSource, Repository } from "typeorm";
 
@@ -131,6 +132,7 @@ export function createE2EDataSources(dataSource: DataSource): E2EDataSources {
     supportingUser: dataSource.getRepository(SupportingUser),
     user: dataSource.getRepository(User),
     notification: dataSource.getRepository(Notification),
+    notificationMessage: dataSource.getRepository(NotificationMessage),
     applicationOfferingChangeRequest: dataSource.getRepository(
       ApplicationOfferingChangeRequest,
     ),
@@ -192,6 +194,7 @@ export interface E2EDataSources {
   supportingUser: Repository<SupportingUser>;
   user: Repository<User>;
   notification: Repository<Notification>;
+  notificationMessage: Repository<NotificationMessage>;
   applicationOfferingChangeRequest: Repository<ApplicationOfferingChangeRequest>;
   studentLoanBalance: Repository<StudentLoanBalance>;
 }

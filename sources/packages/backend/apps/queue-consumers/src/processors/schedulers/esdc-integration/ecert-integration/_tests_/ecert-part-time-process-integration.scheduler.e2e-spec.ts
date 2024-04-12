@@ -58,6 +58,13 @@ describe(
       processor = app.get(PartTimeECertProcessIntegrationScheduler);
       systemUsersService = app.get(SystemUsersService);
       gcNotifyService = app.get(GCNotifyService);
+      // Insert fake email contact to send ministry email.
+      await db.notificationMessage.update(
+        {
+          id: NotificationMessageType.MinistryNotificationDisbursementBlocked,
+        },
+        { emailContacts: ["shashank.x.shekhar@gov.bc.ca"] },
+      );
     });
 
     beforeEach(async () => {
