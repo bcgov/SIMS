@@ -19,7 +19,8 @@ import {
     StudentLoanBalancesIntegrationService,
     StudentLoanBalancesProcessingService,
     StudentLoanBalanceService,
+    StudentAssessmentService,
   ],
-  exports: [StudentLoanBalancesProcessingService, StudentAssessmentService],
+  exports: [StudentLoanBalancesProcessingService],
 })
 export class StudentLoanBalancesIntegrationModule {}
