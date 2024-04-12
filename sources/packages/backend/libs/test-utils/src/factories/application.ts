@@ -181,7 +181,7 @@ export async function saveFakeApplicationDisbursements(
       numberOfParents: 2,
     },
     dmnValues: {
-      lifetimeMaximumCSLP: 1000,
+      lifetimeMaximumCSLP: 0,
     },
     calculatedData: {
       familySize: 2,

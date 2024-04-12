@@ -9,6 +9,9 @@ export const WORKFLOW_DATA_SINGLE_INDEPENDENT_WITH_NO_DEPENDENTS: IER12WorkflowD
       livingWithParents: FormYesNoOptions.No,
       numberOfParents: undefined,
     },
+    dmnValues: {
+      lifetimeMaximumCSLP: 0,
+    },
     calculatedData: {
       pdppdStatus: false,
       parentalAssets: undefined,
