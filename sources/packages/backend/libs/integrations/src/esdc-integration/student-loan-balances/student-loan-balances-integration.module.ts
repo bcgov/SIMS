@@ -1,6 +1,10 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@sims/utilities/config";
-import { StudentService, SshService } from "@sims/integrations/services";
+import {
+  StudentService,
+  SshService,
+  StudentLoanBalanceService,
+} from "@sims/integrations/services";
 import {
   StudentLoanBalancesIntegrationService,
   StudentLoanBalancesProcessingService,
@@ -13,6 +17,7 @@ import {
     StudentService,
     StudentLoanBalancesIntegrationService,
     StudentLoanBalancesProcessingService,
+    StudentLoanBalanceService,
   ],
   exports: [StudentLoanBalancesProcessingService],
 })

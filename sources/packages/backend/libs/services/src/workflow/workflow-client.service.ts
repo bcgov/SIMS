@@ -150,17 +150,17 @@ export class WorkflowClientService {
    * When an exception is detected in the student application dynamic data, for instance,
    * when some document was uploaded and need to be reviewed, the workflow will stop till
    * this message is received with the approval or denial from the Ministry user.
-   * @param applicationExceptionId exception id to send the message.
+   * @param applicationId application id to send the message when exception is verified.
    * @param status approval or denial status.
    */
   async sendApplicationExceptionApproval(
-    applicationExceptionId: number,
+    applicationId: number,
     status: ApplicationExceptionStatus,
   ): Promise<void> {
     try {
       await this.zeebeClient.publishMessage({
         name: "application-exception-verified",
-        correlationKey: applicationExceptionId.toString(),
+        correlationKey: applicationId.toString(),
         timeToLive: ZEEBE_PUBLISH_MESSAGE_DEFAULT_TIME_TO_LEAVE,
         variables: {
           [APPLICATION_EXCEPTION_STATUS]: status,
@@ -168,7 +168,7 @@ export class WorkflowClientService {
       });
     } catch (error: unknown) {
       this.logger.error(
-        `Error while sending application exception approval message applicationExceptionId: ${applicationExceptionId}.`,
+        `Error while sending application exception verified message for applicationId: ${applicationId}.`,
       );
       this.logger.error(error);
       // The error is not thrown here, as we are failing silently.

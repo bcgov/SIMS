@@ -29,10 +29,17 @@ import { SystemUsersService } from "@sims/services";
   // Create bull board UI dashboard for queue management.
   const serverAdapter = new ExpressAdapter();
   serverAdapter.setBasePath("/admin/queues");
-  const bullBoardQueues = queues.map((queue) => {
-    return new BullAdapter(app.get<Queue>(`BullQueue_${queue.name}`), {
-      readOnlyMode: queue.dashboardReadonly,
-    });
+  const bullBoardQueues: BullAdapter[] = [];
+  queues.forEach((queue) => {
+    if (!queue.isActive && queue.isScheduler) {
+      logger.log(`Queue service "${queue.name}" is inactive.`);
+    } else {
+      bullBoardQueues.push(
+        new BullAdapter(app.get<Queue>(`BullQueue_${queue.name}`), {
+          readOnlyMode: queue.dashboardReadonly,
+        }),
+      );
+    }
   });
   createBullBoard({
     queues: bullBoardQueues,

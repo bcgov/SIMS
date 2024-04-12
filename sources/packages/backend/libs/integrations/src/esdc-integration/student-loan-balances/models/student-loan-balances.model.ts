@@ -3,6 +3,8 @@ import { StudentLoanBalancesFileResponse } from "../student-loan-balances-files/
 
 export const DATE_FORMAT = "YYYYMMDD";
 
+export const FILE_PARSING_ERROR = "FILE_PARSING_ERROR";
+
 /**
  * Represents the parsed content of a file
  * downloaded from the SFTP response folder.

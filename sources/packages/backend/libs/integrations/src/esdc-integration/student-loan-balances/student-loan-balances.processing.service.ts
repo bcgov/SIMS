@@ -1,18 +1,21 @@
-import { Injectable, UnprocessableEntityException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { StudentLoanBalancesIntegrationService } from "./student-loan-balances.integration.service";
 import { StudentLoanBalancesSFTPResponseFile } from "./models/student-loan-balances.model";
-import { StudentService } from "@sims/integrations/services";
-import * as path from "path";
 import {
-  InjectLogger,
-  LoggerService,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+  StudentService,
+  StudentLoanBalanceService,
+} from "@sims/integrations/services";
+import * as path from "path";
+import { ProcessSummary } from "@sims/utilities/logger";
 import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
 import { DataSource } from "typeorm";
-import { StudentLoanBalance, User } from "@sims/sims-db";
-import { STUDENT_LOAN_BALANCE_DUPLICATE_RECORD } from "@sims/services/constants";
+import {
+  DatabaseConstraintNames,
+  StudentLoanBalance,
+  User,
+  isDatabaseConstraintError,
+} from "@sims/sims-db";
 
 /**
  * Manages to process the Student Loan Balances files
@@ -26,6 +29,7 @@ export class StudentLoanBalancesProcessingService {
     config: ConfigService,
     private readonly studentLoanBalancesIntegrationService: StudentLoanBalancesIntegrationService,
     private readonly studentService: StudentService,
+    private readonly studentLoanBalanceService: StudentLoanBalanceService,
   ) {
     this.esdcConfig = config.esdcIntegration;
   }
@@ -73,31 +77,22 @@ export class StudentLoanBalancesProcessingService {
   ): Promise<void> {
     childrenProcessSummary.info(`Processing file ${remoteFilePath}.`);
     let studentLoanBalancesSFTPResponseFile: StudentLoanBalancesSFTPResponseFile;
+    // Get only the file name for logging.
+    const fileName = path.basename(remoteFilePath);
+    let lineNumber: number;
     try {
       studentLoanBalancesSFTPResponseFile =
         await this.studentLoanBalancesIntegrationService.downloadResponseFile(
           remoteFilePath,
         );
-    } catch (error) {
-      this.logger.error(error);
-      if (error instanceof CustomNamedError) {
-        childrenProcessSummary.error(error.message);
-      } else {
-        childrenProcessSummary.error(
-          `Error downloading file ${remoteFilePath}. Error: ${error.message}`,
-        );
-      }
-    }
-    childrenProcessSummary.info(
-      `File contains ${studentLoanBalancesSFTPResponseFile.records.length} Student Loan balances.`,
-    );
-    // Get only the file name for logging.
-    const fileName = path.basename(remoteFilePath);
-    try {
+      childrenProcessSummary.info(
+        `File contains ${studentLoanBalancesSFTPResponseFile.records.length} Student Loan balances.`,
+      );
       await this.dataSource.transaction(async (transactionalEntityManager) => {
         const studentLoanBalancesRepo =
           transactionalEntityManager.getRepository(StudentLoanBalance);
         for (const studentLoanBalanceRecord of studentLoanBalancesSFTPResponseFile.records) {
+          lineNumber = studentLoanBalanceRecord.lineNumber;
           const student = await this.studentService.getStudentByPersonalInfo(
             studentLoanBalanceRecord.sin,
             studentLoanBalanceRecord.lastName,
@@ -107,7 +102,7 @@ export class StudentLoanBalancesProcessingService {
           // If student not found continue.
           if (!student) {
             childrenProcessSummary.info(
-              `Student not found for line ${studentLoanBalanceRecord.lineNumber}.`,
+              `Student not found for line ${lineNumber}.`,
             );
             continue;
           }
@@ -121,36 +116,51 @@ export class StudentLoanBalancesProcessingService {
             creator: auditUser,
           });
         }
+        childrenProcessSummary.info(
+          "Checking if zero balance records must be inserted.",
+        );
+        const insertResult =
+          await this.studentLoanBalanceService.insertZeroBalanceRecords(
+            studentLoanBalancesSFTPResponseFile.header.balanceDate,
+            transactionalEntityManager,
+          );
+        childrenProcessSummary.info(
+          `Amount of zero balance records inserted: ${insertResult.length}.`,
+        );
       });
       childrenProcessSummary.info(
         `Inserted Student Loan balances file ${fileName}.`,
       );
-    } catch (error) {
-      // Log the error but allow the process to continue.
-      const errorDescription = `Error processing file ${fileName}.`;
-      childrenProcessSummary.error(`${errorDescription}.${error.message}`);
-      this.logger.error(`${errorDescription}.${error.message}`);
-      if (error instanceof Error) {
-        throw new CustomNamedError(
-          "Student loan balance has duplicate record.",
-          STUDENT_LOAN_BALANCE_DUPLICATE_RECORD,
+    } catch (error: unknown) {
+      if (
+        isDatabaseConstraintError(
+          error,
+          DatabaseConstraintNames.StudentLoanBalanceDateUniqueConstraint,
+        )
+      ) {
+        // Log the error but allow the process to continue.
+        const errorDescription = `Student loan balance already exists for the student and balance date at line ${lineNumber}.`;
+        childrenProcessSummary.error(errorDescription);
+      }
+      if (error instanceof CustomNamedError) {
+        childrenProcessSummary.error(error.message);
+      } else {
+        // Log the error but allow the process to continue.
+        const errorDescription = `Error processing file ${fileName}.`;
+        childrenProcessSummary.error(errorDescription, error);
+      }
+    } finally {
+      try {
+        await this.studentLoanBalancesIntegrationService.deleteFile(
+          remoteFilePath,
         );
+      } catch (error: unknown) {
+        // Log the error but allow the process to continue.
+        // If there was an issue only during the file removal, it will be
+        // processed again and could be deleted in the second attempt.
+        const logMessage = `Error while deleting Student Loan Balances response file: ${remoteFilePath}`;
+        childrenProcessSummary.error(logMessage);
       }
     }
-    try {
-      await this.studentLoanBalancesIntegrationService.deleteFile(
-        remoteFilePath,
-      );
-    } catch (error) {
-      // Log the error but allow the process to continue.
-      // If there was an issue only during the file removal, it will be
-      // processed again and could be deleted in the second attempt.
-      const logMessage = `Error while deleting Student Loan Balances response file: ${remoteFilePath}`;
-      this.logger.error(logMessage);
-      childrenProcessSummary.error(logMessage);
-    }
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

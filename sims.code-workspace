@@ -92,15 +92,18 @@
     "cSpell.words": [
       "AEST",
       "composables",
+      "CSLP",
       "ESDC",
+      "golevelup",
+      "MBAL",
       "MSFAA",
       "NSLSC",
       "Overaward",
+      "PEDU",
       "SABC",
       "SFAS",
       "timestamptz",
-      "typeorm",
-      "CSLP"
+      "typeorm"
     ],
     "[json]": {
       "editor.defaultFormatter": "vscode.json-language-features"

@@ -155,3 +155,18 @@ export function createFakeStudentDependentNotEligibleForChildcareCost(
     declaredOnTaxes: YesNoOptions.No,
   };
 }
+
+/**
+ * Create a student dependent who is born after study end date.
+ * @param studyEndDate study end date of the offering.
+ * @returns dependent born after study end date.
+ */
+export function createFakeStudentDependentBornAfterStudyEndDate(
+  studyEndDate: Date | string,
+): StudentDependent {
+  return {
+    dateOfBirth: addToDateOnlyString(studyEndDate, 1, "day"),
+    attendingPostSecondarySchool: YesNoOptions.No,
+    declaredOnTaxes: YesNoOptions.No,
+  };
+}

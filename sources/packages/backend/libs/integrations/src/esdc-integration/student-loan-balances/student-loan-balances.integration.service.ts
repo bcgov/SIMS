@@ -1,5 +1,6 @@
 import { SFTPIntegrationBase, SshService } from "@sims/integrations/services";
 import {
+  FILE_PARSING_ERROR,
   RecordTypeCodes,
   StudentLoanBalancesSFTPResponseFile,
 } from "./models/student-loan-balances.model";
@@ -9,11 +10,6 @@ import { StudentLoanBalancesFileHeader } from "./student-loan-balances-files/stu
 import { StudentLoanBalancesFileFooter } from "./student-loan-balances-files/student-loan-balances-file-footer";
 import { StudentLoanBalancesFileResponse } from "./student-loan-balances-files/student-loan-balances-file-response";
 import { CustomNamedError } from "@sims/utilities";
-import {
-  STUDENT_LOAN_BALANCE_INVALID_FILE_FOOTER,
-  STUDENT_LOAN_BALANCE_INVALID_FILE_HEADER,
-  STUDENT_LOAN_BALANCE_RECORDS_MISMATCH,
-} from "@sims/services/constants";
 
 @Injectable()
 export class StudentLoanBalancesIntegrationService extends SFTPIntegrationBase<StudentLoanBalancesSFTPResponseFile> {
@@ -41,8 +37,8 @@ export class StudentLoanBalancesIntegrationService extends SFTPIntegrationBase<S
       );
       // If the header is not the expected one, throw an error.
       throw new CustomNamedError(
-        "Invalid file header.",
-        STUDENT_LOAN_BALANCE_INVALID_FILE_HEADER,
+        `Invalid record type ${header.recordTypeCode} on header.`,
+        FILE_PARSING_ERROR,
       );
     }
     // Remove the footer.
@@ -56,8 +52,8 @@ export class StudentLoanBalancesIntegrationService extends SFTPIntegrationBase<S
       );
       // If the footer is not the expected one, throw an error.
       throw new CustomNamedError(
-        "Invalid file footer.",
-        STUDENT_LOAN_BALANCE_INVALID_FILE_FOOTER,
+        `Invalid record type ${footer.recordTypeCode} on footer.`,
+        FILE_PARSING_ERROR,
       );
     }
     if (footer.recordCount !== fileLines.length) {
@@ -67,7 +63,7 @@ export class StudentLoanBalancesIntegrationService extends SFTPIntegrationBase<S
       // If the footer is not the expected one, throw an error.
       throw new CustomNamedError(
         "Records in footer does not match the number of records.",
-        STUDENT_LOAN_BALANCE_RECORDS_MISMATCH,
+        FILE_PARSING_ERROR,
       );
     }
     // Generate the records.

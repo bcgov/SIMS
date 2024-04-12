@@ -48,6 +48,20 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
    * any old cron job delete it and add the new job to the queue.
    */
   async onApplicationBootstrap(): Promise<void> {
+    // Stops this scheduler from running if the isActive status is false
+    // and it falls into the scheduler-queues category (cron returns a value).
+    const queueConfigurations =
+      await this.queueService.queueConfigurationModel();
+    const inactiveQueue = queueConfigurations.find(
+      (queue) =>
+        queue.name === this.schedulerQueue.name &&
+        !queue.isActive &&
+        queue.isScheduler,
+    );
+    if (inactiveQueue) {
+      await this.schedulerQueue.obliterate({ force: true });
+      return;
+    }
     // TODO: Allow only part time schedulers based on config is temporary
     // and will be removed during fulltime release.
     // As the logic is temporary solution and must be easily reverted,
