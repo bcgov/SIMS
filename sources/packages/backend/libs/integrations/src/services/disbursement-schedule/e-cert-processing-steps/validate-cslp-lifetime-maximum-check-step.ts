@@ -42,6 +42,6 @@ export class ValidateCSLPLifetimeMaximumCheckStep implements ECertProcessStep {
           (previousValue, currentValue) => previousValue + currentValue,
           0,
         );
-    return lifetimeMaximumsCSLP > totalDisbursementCSLPAmount;
+    return lifetimeMaximumsCSLP <= totalDisbursementCSLPAmount;
   }
 }
