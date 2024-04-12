@@ -340,7 +340,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
       });
   });
 
-  it("Should not generate final awards values for a part-time application when the disbursement was not sent yet.", async () => {
+  it("Should not generate final award values for a part-time application when the disbursement has not been sent yet.", async () => {
     const firstDisbursementValues = [
       createFakeDisbursementValue(
         DisbursementValueType.CanadaLoan,
