@@ -39,6 +39,11 @@ import { getUserFullName } from "../../utilities";
 import { getDateOnlyFormat } from "@sims/utilities";
 import { BC_TOTAL_GRANT_AWARD_CODE } from "@sims/services/constants";
 
+/**
+ * Final award value dynamic identifier prefix.
+ */
+const DISBURSEMENT_RECEIPT_PREFIX = "disbursementReceipt";
+
 @Injectable()
 export class AssessmentControllerService {
   constructor(
@@ -295,7 +300,7 @@ export class AssessmentControllerService {
         const awards = await this.populateDisbursementReceiptAwardValues(
           disbursementReceipts,
           schedule,
-          `disbursementReceipt${index++}`,
+          `${DISBURSEMENT_RECEIPT_PREFIX}${index++}`,
         );
         finalAward = { ...finalAward, ...awards };
       }
@@ -307,7 +312,7 @@ export class AssessmentControllerService {
     for (const schedule of assessment.disbursementSchedules) {
       const awards = this.populateDisbursementECertAwardValues(
         schedule.disbursementValues,
-        `disbursementReceipt${index++}`,
+        `${DISBURSEMENT_RECEIPT_PREFIX}${index++}`,
       );
       finalAward = { ...finalAward, ...awards };
     }
