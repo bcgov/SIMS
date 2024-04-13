@@ -411,7 +411,9 @@ export class AssessmentController {
           await this.studentLoanBalanceSharedService.getLatestCSLPBalance(
             assessmentId,
           );
-        result["latestCSLPBalance"] = studentLoanBalance.cslBalance;
+        result["latestCSLPBalance"] = studentLoanBalance[0]
+          ? studentLoanBalance[0].cslBalance
+          : 0;
         jobLogger.log(
           `The assessment calculation order has been verified and the assessment id ${assessmentId} is ready to be processed.`,
         );
