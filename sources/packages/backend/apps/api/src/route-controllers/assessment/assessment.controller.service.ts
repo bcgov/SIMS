@@ -129,7 +129,7 @@ export class AssessmentControllerService {
     // Setting default value.
     const includeDocumentNumber = options?.includeDocumentNumber ?? false;
     const includeDateSent = options?.includeDateSent ?? false;
-    const maskMSFAA = options?.maskMSFAA ?? false;
+    const maskMSFAA = options?.maskMSFAA ?? true;
     const disbursementDetails = {};
     disbursementSchedules.forEach((schedule, index) => {
       const disbursementIdentifier = `disbursement${index + 1}`;
@@ -200,6 +200,11 @@ export class AssessmentControllerService {
    * - `studentId` studentId student to whom the award details belong to.
    * - `applicationId` application is used for authorization purposes to
    * ensure that a user has access to the specific application data.
+   * - `includeDocumentNumber` when true document number is mapped
+   * to disbursement dynamic data.
+   * - `includeDateSent `  when true date sent is mapped
+   * to disbursement dynamic data.
+   * - `maskMSFAA` mask MSFAA or not.
    * @returns estimated and actual award details.
    */
   async getAssessmentAwardDetails(
@@ -209,11 +214,13 @@ export class AssessmentControllerService {
       applicationId?: number;
       includeDocumentNumber?: boolean;
       includeDateSent?: boolean;
+      maskMSFAA?: boolean;
     },
   ): Promise<AwardDetailsAPIOutDTO> {
     // Setting default value.
     const includeDocumentNumber = options?.includeDocumentNumber ?? false;
     const includeDateSent = options?.includeDateSent ?? false;
+    const maskMSFAA = options?.maskMSFAA ?? true;
     const assessment = await this.assessmentService.getAssessmentForNOA(
       assessmentId,
       options,
@@ -223,10 +230,11 @@ export class AssessmentControllerService {
     }
     const estimatedAward = this.populateDisbursementAwardValues(
       assessment.disbursementSchedules,
-      { includeDocumentNumber, includeDateSent },
+      { includeDocumentNumber, includeDateSent, maskMSFAA },
     );
     const finalAward = await this.populateDisbursementFinalAwardsValues(
       assessment,
+      options,
     );
     return {
       applicationNumber: assessment.application.applicationNumber,
@@ -256,6 +264,10 @@ export class AssessmentControllerService {
    */
   private async populateDisbursementFinalAwardsValues(
     assessment: StudentAssessment,
+    options?: {
+      studentId?: number;
+      applicationId?: number;
+    },
   ): Promise<DynamicAwardValue | undefined> {
     const [firstDisbursement] = assessment.disbursementSchedules;
     if (
@@ -272,6 +284,7 @@ export class AssessmentControllerService {
       const disbursementReceipts =
         await this.disbursementReceiptService.getDisbursementReceiptByAssessment(
           assessment.id,
+          options,
         );
       if (!disbursementReceipts.length) {
         // If the receipts are not available no additional processing is needed.

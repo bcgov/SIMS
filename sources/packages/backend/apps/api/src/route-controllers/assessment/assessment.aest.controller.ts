@@ -123,7 +123,7 @@ export class AssessmentAESTController extends BaseController {
   ): Promise<AwardDetailsAPIOutDTO> {
     return this.assessmentControllerService.getAssessmentAwardDetails(
       assessmentId,
-      { includeDateSent: true, includeDocumentNumber: true },
+      { includeDateSent: true, includeDocumentNumber: true, maskMSFAA: false },
     );
   }
 
