@@ -118,8 +118,7 @@ export class AssessmentControllerService {
    * @param options for NOA.
    * - `includeDocumentNumber` when true document number is mapped
    * to disbursement dynamic data.
-   * - `includeDateSent `  when true date sent is mapped
-   * to disbursement dynamic data.
+   * - `includeDateSent` when true, date sent is mapped to disbursement dynamic data.
    * - `maskMSFAA` mask MSFAA or not.
    * @returns disbursement dynamic award data.
    */
