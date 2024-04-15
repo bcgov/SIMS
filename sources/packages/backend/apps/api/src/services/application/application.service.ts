@@ -295,7 +295,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         where: { applicationNumber: newApplication.applicationNumber },
       });
       if (
-        applicationsCount >=
+        applicationsCount ===
         APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION + 1
       ) {
         const student = await this.studentRepo.findOne({
