@@ -591,7 +591,7 @@ export class ApplicationOfferingChangeRequestService {
         applicationOfferingChangeRequestStatus ===
         ApplicationOfferingChangeRequestStatus.InProgressWithSABC
       ) {
-        await this.notificationActionsService.saveApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry(
+        await this.notificationActionsService.saveApplicationOfferingChangeApprovedByStudent(
           ministryNotification,
           entityManager,
         );

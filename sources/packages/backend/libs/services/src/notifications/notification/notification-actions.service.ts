@@ -804,7 +804,7 @@ export class NotificationActionsService {
    * @param notification notification details.
    * @param entityManager entity manager to execute in transaction.
    */
-  async saveApplicationEditedFifthTimeNotificationForMinistry(
+  async saveApplicationEditedTooManyTimesNotification(
     notification: ApplicationEditedFifthTimeNotificationForMinistry,
     entityManager: EntityManager,
   ): Promise<void> {
@@ -950,7 +950,7 @@ export class NotificationActionsService {
    * @param notification notification details.
    * @param entityManager entity manager to execute in transaction.
    */
-  async saveApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry(
+  async saveApplicationOfferingChangeApprovedByStudent(
     notification: ApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry,
     entityManager: EntityManager,
   ): Promise<void> {

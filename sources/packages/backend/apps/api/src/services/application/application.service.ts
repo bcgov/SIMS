@@ -1,12 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import {
-  DataSource,
-  In,
-  Not,
-  Brackets,
-  EntityManager,
-  Repository,
-} from "typeorm";
+import { DataSource, In, Not, Brackets, EntityManager } from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   RecordDataModelService,
@@ -65,6 +58,7 @@ import {
 } from "@sims/services/notifications";
 import { InstitutionLocationService } from "../institution-location/institution-location.service";
 import { APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION } from "@sims/services/constants";
+import { StudentService } from "@sims/integrations/services";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
@@ -80,7 +74,6 @@ export const INSUFFICIENT_APPLICATION_SEARCH_PARAMS =
 
 @Injectable()
 export class ApplicationService extends RecordDataModelService<Application> {
-  private readonly studentRepo: Repository<Student>;
   constructor(
     private readonly configService: ConfigService,
     private readonly dataSource: DataSource,
@@ -93,9 +86,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly notificationActionsService: NotificationActionsService,
     private readonly institutionLocationService: InstitutionLocationService,
     private readonly notificationActionService: NotificationActionsService,
+    private readonly studentService: StudentService,
   ) {
     super(dataSource.getRepository(Application));
-    this.studentRepo = this.dataSource.getRepository(Student);
   }
 
   /**
@@ -109,8 +102,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * applicationStatusUpdatedOn is updated and delete the corresponding workflow and creates a
    * new Application with same Application Number and Program Year as that of the Overwritten
    * Application and with newly submitted payload. And starts a new workflow for the newly created
-   * Application. If the application is edited for the 5th time, a notification is saved for the
-   * ministry along with the edited application as a part of the same transaction.
+   * Application. If the application is edited for the APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION times,
+   * a notification is saved for the ministry along with the edited application as a part of the same transaction.
    * If the PIR is not required, then offering is assigned to the assessment on submission
    * and the applicant student is assessed for SIN restriction.
    * @param applicationId application id that must be updated to submitted.
@@ -288,42 +281,49 @@ export class ApplicationService extends RecordDataModelService<Application> {
       application.currentAssessment.modifier = auditUser;
       application.currentAssessment.studentAssessmentStatusUpdatedOn = now;
       application.currentAssessment.updatedAt = now;
-
       await applicationRepository.save([application, newApplication]);
-      // Create a notification if the application is edited for the 5th time.
-      const applicationsCount = await applicationRepository.count({
-        where: { applicationNumber: newApplication.applicationNumber },
-      });
-      if (
-        applicationsCount ===
-        APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION + 1
-      ) {
-        const student = await this.studentRepo.findOne({
-          select: {
-            id: true,
-            birthDate: true,
-            user: { id: true, firstName: true, lastName: true, email: true },
-          },
-          relations: {
-            user: true,
-          },
-          where: { id: application.studentId },
-        });
-        const ministryNotification: ApplicationExceptionRequestNotificationForMinistry =
-          {
-            givenNames: student.user.firstName,
-            lastName: student.user.lastName,
-            email: student.user.email,
-            dob: student.birthDate,
-            applicationNumber: application.applicationNumber,
-          };
-        await this.notificationActionService.saveApplicationEditedFifthTimeNotificationForMinistry(
-          ministryNotification,
-          transactionalEntityManager,
-        );
-      }
+      await this.saveApplicationEditedTooManyTimesNotification(
+        newApplication.applicationNumber,
+        application.studentId,
+        transactionalEntityManager,
+      );
     });
     return { application, createdAssessment: originalAssessment };
+  }
+
+  /**
+   * Saves a notification when the application is edited too many times
+   * governed by APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION.
+   * @param applicationNumber application number of the related application.
+   * @param studentId related student id.
+   * @param transactionalEntityManager entity manager to be a part of the transaction.
+   */
+  private async saveApplicationEditedTooManyTimesNotification(
+    applicationNumber: string,
+    studentId: number,
+    transactionalEntityManager: EntityManager,
+  ): Promise<void> {
+    // Create a notification if the application is edited for APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION time.
+    const applicationRepository =
+      transactionalEntityManager.getRepository(Application);
+    const applicationsCount = await applicationRepository.count({
+      where: { applicationNumber },
+    });
+    if (applicationsCount === APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION + 1) {
+      const student = await this.studentService.getStudentById(studentId);
+      const ministryNotification: ApplicationExceptionRequestNotificationForMinistry =
+        {
+          givenNames: student.user.firstName,
+          lastName: student.user.lastName,
+          email: student.user.email,
+          dob: student.birthDate,
+          applicationNumber,
+        };
+      await this.notificationActionService.saveApplicationEditedTooManyTimesNotification(
+        ministryNotification,
+        transactionalEntityManager,
+      );
+    }
   }
 
   /**
