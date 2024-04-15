@@ -65,9 +65,8 @@ export class NotificationActionsService {
       );
       return;
     }
-    const ministryNotificationsToSend = [];
-    notificationDetails.emailContacts.forEach((emailContact) => {
-      const notificationToSend = {
+    const ministryNotificationsToSend = notificationDetails.emailContacts.map(
+      (emailContact) => ({
         userId: notification.userId,
         messageType: NotificationMessageType.StudentFileUpload,
         messagePayload: {
@@ -76,16 +75,15 @@ export class NotificationActionsService {
           personalisation: {
             givenNames: notification.firstName ?? "",
             lastName: notification.lastName,
-            dob: getDateOnlyFormat(notification.birthDate),
+            birthDate: getDateOnlyFormat(notification.birthDate),
             applicationNumber: notification.applicationNumber,
             studentEmail: notification.email,
             documentPurpose: notification.documentPurpose,
             dateTime: this.getDateTimeOnPSTTimeZone(),
           },
         },
-      };
-      ministryNotificationsToSend.push(notificationToSend);
-    });
+      }),
+    );
 
     // Save notification into notification table.
     await this.notificationService.saveNotifications(
@@ -319,7 +317,7 @@ export class NotificationActionsService {
             givenNames: notification.firstName ?? "",
             lastName: notification.lastName,
             studentEmail: notification.email,
-            dob: getDateOnlyFormat(notification.birthDate),
+            birthDate: getDateOnlyFormat(notification.birthDate),
             dateTime: this.getDateTimeOnPSTTimeZone(),
           },
         },
