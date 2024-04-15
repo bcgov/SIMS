@@ -46,6 +46,7 @@ export class ValidateCSLPLifetimeMaximumCheckStep implements ECertProcessStep {
       eCertDisbursement.disbursement.disbursementValues.find(
         (item) => item.valueCode === CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE,
       );
+    //Check if lifetime maximum CSLP is less than or equal to the disbursed CSLP + latest student loan balance.
     return (
       lifetimeMaximumsCSLP <=
       (disbursementCSLP ? disbursementCSLP.valueAmount : 0) +

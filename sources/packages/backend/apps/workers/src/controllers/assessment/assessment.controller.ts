@@ -409,7 +409,7 @@ export class AssessmentController {
         // Fetch the latest CSLP balance for the student.
         const studentLoanBalance =
           await this.studentLoanBalanceSharedService.getLatestCSLPBalance(
-            assessmentId,
+            studentId,
           );
         result["latestCSLPBalance"] = studentLoanBalance[0]
           ? studentLoanBalance[0].cslBalance
