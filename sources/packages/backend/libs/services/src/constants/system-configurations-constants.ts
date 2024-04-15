@@ -90,8 +90,3 @@ export const BLOCKED_DISBURSEMENT_NOTIFICATION_MIN_DAYS_INTERVAL = 7;
  * Represents the maximum number of disbursement blocked notifications to send.
  * */
 export const BLOCKED_DISBURSEMENT_MAXIMUM_NOTIFICATIONS_TO_SEND = 3;
-
-/**
- * Represents the count of the number of times an application is edited to trigger a notification to be sent to the ministry.
- */
-export const APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION = 5;

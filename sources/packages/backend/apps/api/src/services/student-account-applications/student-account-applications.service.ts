@@ -101,7 +101,7 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
       givenNames: newUser.firstName,
       lastName: newUser.lastName,
       email: newUser.email,
-      dob: studentProfile.dateOfBirth,
+      birthDate: studentProfile.dateOfBirth,
     };
     return this.dataSource.transaction(async (entityManager) => {
       await this.notificationActionsService.saveStudentRequestsBasicBCeIDAccountNotification(

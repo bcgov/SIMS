@@ -180,7 +180,7 @@ export enum NotificationMessageType {
   /**
    * Application edited for the 5th time.
    */
-  ApplicationEditedFifthTimeNotification = 21,
+  ApplicationEditedTooManyTimesNotification = 21,
   /**
    * An Application Offering Change Request approved by the student.
    */

@@ -145,7 +145,7 @@ export class ApplicationController {
               givenNames: student.user.firstName,
               lastName: student.user.lastName,
               email: student.user.email,
-              dob: student.birthDate,
+              birthDate: student.birthDate,
               applicationNumber: application.applicationNumber,
             };
           await this.notificationActionService.saveApplicationExceptionRequestNotification(

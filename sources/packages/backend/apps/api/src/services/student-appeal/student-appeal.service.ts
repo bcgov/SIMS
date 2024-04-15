@@ -123,7 +123,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         givenNames: student.user.firstName,
         lastName: student.user.lastName,
         email: student.user.email,
-        dob: student.birthDate,
+        birthDate: student.birthDate,
         applicationNumber: application.applicationNumber,
       };
       await this.notificationActionsService.saveStudentSubmittedChangeRequestNotification(

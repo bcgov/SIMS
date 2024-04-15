@@ -69,11 +69,11 @@ export interface StudentNotification {
   userId: number;
 }
 
-export interface DisbursementBlockedNotificationForMinistry {
+export interface DisbursementBlockedNotification {
   givenNames: string;
   lastName: string;
   email: string;
-  dob: string;
+  birthDate: string;
   applicationNumber: string;
 }
 
@@ -81,15 +81,15 @@ export interface ApplicationExceptionRequestNotification {
   givenNames: string;
   lastName: string;
   email: string;
-  dob: string;
+  birthDate: string;
   applicationNumber: string;
 }
 
-export interface ApplicationEditedFifthTimeNotification {
+export interface ApplicationEditedTooManyTimesNotification {
   givenNames: string;
   lastName: string;
   email: string;
-  dob: string;
+  birthDate: string;
   applicationNumber: string;
 }
 
@@ -97,7 +97,7 @@ export interface StudentSubmittedChangeRequestNotification {
   givenNames: string;
   lastName: string;
   email: string;
-  dob: string;
+  birthDate: string;
   applicationNumber: string;
 }
 
@@ -105,14 +105,14 @@ export interface StudentRequestsBasicBCeIDAccountNotification {
   givenNames: string;
   lastName: string;
   email: string;
-  dob: string;
+  birthDate: string;
 }
 
 export interface ApplicationOfferingChangeRequestApprovedByStudentNotification {
   givenNames: string;
   lastName: string;
   email: string;
-  dob: string;
+  birthDate: string;
   applicationNumber: string;
 }
 

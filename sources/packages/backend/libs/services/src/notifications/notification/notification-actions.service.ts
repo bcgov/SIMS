@@ -18,9 +18,9 @@ import {
   ApplicationOfferingChangeRequestInProgressWithStudentNotification,
   ApplicationOfferingChangeRequestCompleteNotification,
   LegacyRestrictionAddedNotification,
-  DisbursementBlockedNotificationForMinistry,
+  DisbursementBlockedNotification,
   ApplicationExceptionRequestNotification,
-  ApplicationEditedFifthTimeNotification,
+  ApplicationEditedTooManyTimesNotification,
   StudentSubmittedChangeRequestNotification,
   InstitutionRequestsDesignationNotification,
   StudentRequestsBasicBCeIDAccountNotification,
@@ -705,7 +705,7 @@ export class NotificationActionsService {
    * @param entityManager entity manager to execute in transaction.
    */
   async saveDisbursementBlockedNotificationForMinistry(
-    notification: DisbursementBlockedNotificationForMinistry,
+    notification: DisbursementBlockedNotification,
     disbursementId: number,
     entityManager: EntityManager,
   ): Promise<void> {
@@ -732,7 +732,7 @@ export class NotificationActionsService {
           personalisation: {
             givenNames: notification.givenNames ?? "",
             lastName: notification.lastName,
-            dob: getDateOnlyFormat(notification.dob),
+            birthDate: getDateOnlyFormat(notification.birthDate),
             studentEmail: notification.email,
             applicationNumber: notification.applicationNumber,
             dateTime: this.getDateTimeOnPSTTimeZone(),
@@ -782,7 +782,7 @@ export class NotificationActionsService {
           personalisation: {
             givenNames: notification.givenNames ?? "",
             lastName: notification.lastName,
-            dob: getDateOnlyFormat(notification.dob),
+            birthDate: getDateOnlyFormat(notification.birthDate),
             studentEmail: notification.email,
             applicationNumber: notification.applicationNumber,
             dateTime: this.getDateTimeOnPSTTimeZone(),
@@ -805,17 +805,17 @@ export class NotificationActionsService {
    * @param entityManager entity manager to execute in transaction.
    */
   async saveApplicationEditedTooManyTimesNotification(
-    notification: ApplicationEditedFifthTimeNotification,
+    notification: ApplicationEditedTooManyTimesNotification,
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     const notificationDetails =
       await this.notificationMessageService.getNotificationMessageDetails(
-        NotificationMessageType.ApplicationEditedFifthTimeNotification,
+        NotificationMessageType.ApplicationEditedTooManyTimesNotification,
       );
     if (!notificationDetails.emailContacts?.length) {
       this.logger.error(
-        `Email template id ${NotificationMessageType.ApplicationEditedFifthTimeNotification} requires a configured email to be sent.`,
+        `Email template id ${NotificationMessageType.ApplicationEditedTooManyTimesNotification} requires a configured email to be sent.`,
       );
       return;
     }
@@ -824,14 +824,14 @@ export class NotificationActionsService {
       const ministryNotificationToSend = {
         userId: auditUser.id,
         messageType:
-          NotificationMessageType.ApplicationEditedFifthTimeNotification,
+          NotificationMessageType.ApplicationEditedTooManyTimesNotification,
         messagePayload: {
           email_address: emailContact,
           template_id: notificationDetails.templateId,
           personalisation: {
             givenNames: notification.givenNames ?? "",
             lastName: notification.lastName,
-            dob: getDateOnlyFormat(notification.dob),
+            birthDate: getDateOnlyFormat(notification.birthDate),
             studentEmail: notification.email,
             applicationNumber: notification.applicationNumber,
             dateTime: this.getDateTimeOnPSTTimeZone(),
@@ -880,7 +880,7 @@ export class NotificationActionsService {
           personalisation: {
             givenNames: notification.givenNames ?? "",
             lastName: notification.lastName,
-            dob: getDateOnlyFormat(notification.dob),
+            birthDate: getDateOnlyFormat(notification.birthDate),
             studentEmail: notification.email,
             applicationNumber: notification.applicationNumber,
             dateTime: this.getDateTimeOnPSTTimeZone(),
@@ -929,7 +929,7 @@ export class NotificationActionsService {
           personalisation: {
             givenNames: notification.givenNames ?? "",
             lastName: notification.lastName,
-            dob: getDateOnlyFormat(notification.dob),
+            birthDate: getDateOnlyFormat(notification.birthDate),
             studentEmail: notification.email,
             dateTime: this.getDateTimeOnPSTTimeZone(),
           },
@@ -977,7 +977,7 @@ export class NotificationActionsService {
           personalisation: {
             givenNames: notification.givenNames ?? "",
             lastName: notification.lastName,
-            dob: getDateOnlyFormat(notification.dob),
+            birthDate: getDateOnlyFormat(notification.birthDate),
             studentEmail: notification.email,
             applicationNumber: notification.applicationNumber,
             dateTime: this.getDateTimeOnPSTTimeZone(),

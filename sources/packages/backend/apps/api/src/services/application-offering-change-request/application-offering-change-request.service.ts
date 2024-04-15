@@ -568,7 +568,7 @@ export class ApplicationOfferingChangeRequestService {
         givenNames: student.user.firstName,
         lastName: student.user.lastName,
         email: student.user.email,
-        dob: student.birthDate,
+        birthDate: student.birthDate,
         applicationNumber:
           applicationOfferingChangeRequestDetails.application.applicationNumber,
       };
