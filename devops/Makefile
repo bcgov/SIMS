@@ -179,7 +179,7 @@ print-status:
 	@echo " +---------------------------------------------------------+ "
 
 init-project:
-	@echo "Run initial set-up for the project, including network security\n" 
+	@echo "Run initial set-up for the project, including network security\n"
 	@oc -n $(NAMESPACE) process -f openshift/networkpolicy.yml -p NAMESPACE=$(NAMESPACE) | oc -n $(NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) policy add-role-to-group system:image-puller system:serviceaccounts:$(NAMESPACE)
 	@oc -n $(NAMESPACE) create rolebinding github-action --clusterrole=edit --serviceaccount=$(BUILD_NAMESPACE):github-action --namespace=$(NAMESPACE)
@@ -310,7 +310,7 @@ init-redis-cluster:
 	REDIS_NODES=$$(oc get pods -n $(NAMESPACE) -l app=redis -o jsonpath='{range .items[*]}{.status.podIP}:$(REDIS_PORT) ' | sed 's/ :$(REDIS_PORT) $$/ /'); \
 	oc exec -n $(NAMESPACE) -it redis-0 -- redis-cli -a $$REDIS_PASSWORD --cluster create $$REDIS_NODES --cluster-replicas 1
 
-# Command to tell one Redis node to connect to another node and join the cluster. 
+# Command to tell one Redis node to connect to another node and join the cluster.
 # This is typically done when you are setting up a Redis Cluster or adding new nodes to an existing cluster to ensure they are aware of each other and can communicate effectively.
 redis-cluster-meet:
 	REDIS_PASSWORD=$$(oc get secret -n $(NAMESPACE) redis-creds -o jsonpath='{.data.password}' | base64 -d); \
@@ -346,9 +346,9 @@ run-db-migrations:
 		-p IMAGE_STREAM_TAG="$(DB_MIGRATIONS_BUILD_REF):$(BUILD_REF)" \
 		-p BUILD_TAG=$(BUILD_REF) \
 		-p JOB_NAME=$(DB_MIGRATIONS_JOB_NAME) \
-		| oc -n $(NAMESPACE) apply -f - 
+		| oc -n $(NAMESPACE) apply -f -
 
-wait-for-db-migrations: 
+wait-for-db-migrations:
 	while [ "$$(oc -n $(NAMESPACE) get job $(DB_MIGRATIONS_JOB_NAME) -o=jsonpath='{.status.conditions[?(@.type=="Complete")].status}' || echo "None")" != "True" ] && [ "$$WAIT_TIME" -lt "$$MAX_WAIT" ]; do sleep 5; WAIT_TIME=$$((WAIT_TIME+5)); done
 	if [ "$$(oc -n $(NAMESPACE) get job $(DB_MIGRATIONS_JOB_NAME) -o=jsonpath='{.status.conditions[?(@.type=="Complete")].status}' || echo "None")" != "True" ]; then echo "Error: Job $(DB_MIGRATIONS_JOB_NAME) failed to complete within the specified timeout"; exit 1; fi
 
@@ -364,7 +364,7 @@ delete-db-migrations:
 deploy-api:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(KEYCLOAK_REALM)"	
+	test -n "$(KEYCLOAK_REALM)"
 	test -n "$(KEYCLOAK_AUTH_URL)"
 	test -n "$(BCeID_WEB_SERVICE_WSDL)"
 	test -n "$(FORMS_SECRET_NAME)"
@@ -597,7 +597,7 @@ db-backup-deploy-patroni:
 		-p DATABASE_PASSWORD_KEY_NAME=database-password \
   	-p ENVIRONMENT_FRIENDLY_NAME='SIMS $(NAMESPACE) POSTGRESQL DB Backups' \
 		-p TABLE_SCHEMA='sims' \
-		| oc -n $(NAMESPACE) apply -f -	                                                                       
+		| oc -n $(NAMESPACE) apply -f -
 
 db-backup-deploy-patroni-delete:
 	test -n "$(NAMESPACE)"
@@ -615,4 +615,4 @@ db-backup-deploy-patroni-delete:
 # Remove redis and resources including secrets from openshift namespace.
 delete-redis:
 	@echo "+\n++ Removing redis and resources on $(NAMESPACE)\n+"
-	@oc delete -n $(NAMESPACE) all,rc,svc,dc,route,pvc,secret,configmap,sa,RoleBinding -l app=redis
+	@oc delete -n $(NAMESPACE) all,rc,svc,dc,route,pvc,secret,configmap,sa -l app=redis
