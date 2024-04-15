@@ -159,7 +159,7 @@ export default defineComponent({
         disabilityStatus: disabilityStatusToDisplay(
           studentInfo.disabilityStatus,
         ),
-        disabilityStatusValue: studentInfo.disabilityStatus,
+        studentProfileDisabilityStatusValue: studentInfo.disabilityStatus,
       };
       const programYear = {
         programYearStartDate: applicationData.programYearStartDate,

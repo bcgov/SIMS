@@ -10675,12 +10675,12 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": "true",
-                "when": "applicationPDPPDStatus",
-                "eq": "noIDoNotHaveADisability",
+                "show": "",
+                "when": null,
+                "eq": "",
                 "json": ""
               },
-              "customConditional": "show = (!data.readOnly && (data.applicationPDPPDStatus == 'noIDoNotHaveADisability' || data.applicationPDPPDStatus == 'noIWantToAccessOtherFundingTypes') && (data.disabilityStatusValue == 'PD' || data.disabilityStatusValue == 'PPD'));",
+              "customConditional": "show = (!data.readOnly && (data.applicationPDPPDStatus === 'noIDoNotHaveADisability' || data.applicationPDPPDStatus === 'noIWantToAccessOtherFundingTypes') && (data.studentProfileDisabilityStatusValue === 'PD' || data.studentProfileDisabilityStatusValue === 'PPD'));",
               "logic": [],
               "attributes": {},
               "overlay": {
@@ -12455,11 +12455,11 @@
         {
           "input": true,
           "tableView": true,
-          "key": "disabilityStatusValue",
-          "label": "Disability status value",
+          "key": "studentProfileDisabilityStatusValue",
+          "label": "Student profile disability status value",
           "protected": false,
           "unique": false,
-          "persistent": true,
+          "persistent": false,
           "type": "hidden",
           "tags": [],
           "conditional": {

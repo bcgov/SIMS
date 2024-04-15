@@ -1,4 +1,5 @@
 {
+  "_id": "65e8d8dc940cd2f72a5f6304",
   "title": "SFAA2023-24",
   "name": "SFAA2023-24",
   "path": "sfaa2023-24",
@@ -7,6 +8,7 @@
   "tags": [
     "common"
   ],
+  "owner": "65e8d72a78696f831ef28c83",
   "components": [
     {
       "title": "Welcome",
@@ -10674,12 +10676,12 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": "true",
-                "when": "bcResident",
-                "eq": "no",
+                "show": "",
+                "when": null,
+                "eq": "",
                 "json": ""
               },
-              "customConditional": "show = (!data.readOnly && (data.applicationPDPPDStatus == 'noIDoNotHaveADisability' || data.applicationPDPPDStatus == 'noIWantToAccessOtherFundingTypes') && (data.disabilityStatusValue == 'PD' || data.disabilityStatusValue == 'PPD'));",
+              "customConditional": "show = (!data.readOnly && (data.applicationPDPPDStatus === 'noIDoNotHaveADisability' || data.applicationPDPPDStatus === 'noIWantToAccessOtherFundingTypes') && (data.studentProfileDisabilityStatusValue === 'PD' || data.studentProfileDisabilityStatusValue === 'PPD'));",
               "logic": [],
               "attributes": {},
               "overlay": {
@@ -12454,11 +12456,11 @@
         {
           "input": true,
           "tableView": true,
-          "key": "disabilityStatusValue",
-          "label": "Disability status value",
+          "key": "studentProfileDisabilityStatusValue",
+          "label": "Student profile disability status value",
           "protected": false,
           "unique": false,
-          "persistent": true,
+          "persistent": false,
           "type": "hidden",
           "tags": [],
           "conditional": {
