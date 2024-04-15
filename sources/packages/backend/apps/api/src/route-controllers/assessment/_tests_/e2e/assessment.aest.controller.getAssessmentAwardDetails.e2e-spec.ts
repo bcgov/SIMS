@@ -414,7 +414,7 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
 
   it("Should throw not found exception when assessment is not found.", async () => {
     // Arrange
-    const endpoint =  "/aest/assessment/99999/award";
+    const endpoint = "/aest/assessment/99999/award";
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
