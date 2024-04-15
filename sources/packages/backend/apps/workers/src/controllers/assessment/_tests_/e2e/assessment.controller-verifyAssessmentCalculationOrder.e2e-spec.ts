@@ -152,6 +152,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     );
     expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
       isReadyForCalculation: true,
+      latestCSLPBalance: 0,
       // Full-time
       programYearTotalFullTimeBCAG: 13,
       programYearTotalFullTimeCSGD: 9,
@@ -233,6 +234,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     // and ignore the second disbursement with the declined COE.
     expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
       isReadyForCalculation: true,
+      latestCSLPBalance: 0,
       programYearTotalPartTimeCSGP: 1000,
     });
   });
@@ -267,6 +269,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     );
     expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
       isReadyForCalculation: true,
+      latestCSLPBalance: 0,
     });
   });
 });
