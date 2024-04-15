@@ -37,7 +37,7 @@ export function createFakeDisbursementSchedule(
   schedule.disbursementDate =
     options?.initialValues?.disbursementDate ?? nowString;
   schedule.negotiatedExpiryDate = nowString;
-  schedule.dateSent = null;
+  schedule.dateSent = options?.initialValues?.dateSent;
   schedule.disbursementValues = relations?.disbursementValues;
   schedule.coeStatus = options?.initialValues?.coeStatus ?? COEStatus.required;
   schedule.coeUpdatedBy = null;

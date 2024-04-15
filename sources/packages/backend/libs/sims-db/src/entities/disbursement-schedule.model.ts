@@ -17,7 +17,6 @@ import {
   DisbursementFeedbackErrors,
 } from ".";
 import { ColumnNames, TableNames } from "../constant";
-import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 import { DisbursementValue } from "./disbursement-values.model";
 import { RecordDataModel } from "./record.model";
 import { StudentAssessment } from "./student-assessment.model";
@@ -63,8 +62,7 @@ export class DisbursementSchedule extends RecordDataModel {
    */
   @Column({
     name: "date_sent",
-    type: "date",
-    transformer: dateOnlyTransformer,
+    type: "timestamptz",
     nullable: true,
   })
   dateSent?: Date;

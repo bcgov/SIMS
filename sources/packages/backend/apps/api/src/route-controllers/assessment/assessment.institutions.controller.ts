@@ -121,8 +121,7 @@ export class AssessmentInstitutionsController extends BaseController {
   ): Promise<AwardDetailsAPIOutDTO> {
     return this.assessmentControllerService.getAssessmentAwardDetails(
       assessmentId,
-      true,
-      { studentId, applicationId },
+      { studentId, applicationId, includeDocumentNumber: true },
     );
   }
 }

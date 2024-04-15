@@ -20,6 +20,7 @@ import {
 import {
   ApplicationStatus,
   COEStatus,
+  DisbursementScheduleStatus,
   DisbursementValueType,
   MSFAANumber,
   OfferingIntensity,
@@ -51,35 +52,45 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
     );
   });
 
-  it("Should get the student assessment summary containing loan and all grants for a part-time application with a single disbursement.", async () => {
+  it("Should get the student assessment summary containing loan and all grants values from e-Cert effective amount for a part-time application with a single disbursement.", async () => {
     // First disbursement values.
     const firstDisbursementValues = [
       createFakeDisbursementValue(
         DisbursementValueType.CanadaLoan,
         "CSLP",
         111,
+        { effectiveAmount: 110 },
       ),
       createFakeDisbursementValue(
         DisbursementValueType.CanadaGrant,
         "CSGP",
         222,
+        { effectiveAmount: 220 },
       ),
       createFakeDisbursementValue(
         DisbursementValueType.CanadaGrant,
         "CSPT",
         333,
+        { effectiveAmount: 330 },
       ),
       createFakeDisbursementValue(
         DisbursementValueType.CanadaGrant,
         "CSGD",
         444,
+        { effectiveAmount: 440 },
       ),
-      createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCAG", 555),
-      createFakeDisbursementValue(DisbursementValueType.BCGrant, "SBSD", 666),
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCAG", 555, {
+        effectiveAmount: 550,
+      }),
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "SBSD", 666, {
+        effectiveAmount: 660,
+      }),
+      // Must be ignored in the result even being present with an effective value.
       createFakeDisbursementValue(
         DisbursementValueType.BCTotalGrant,
         "BCSG",
-        555 + 666,
+        123,
+        { effectiveAmount: 123 },
       ),
     ];
     // Part-time application with federal and provincial loans and grants.
@@ -93,13 +104,12 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
       {
         offeringIntensity: OfferingIntensity.partTime,
         applicationStatus: ApplicationStatus.Completed,
+        firstDisbursementInitialValues: {
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          // Adding date sent to ensure that will not be returned by the API (students should not receive it).
+          dateSent: new Date(),
+        },
       },
-    );
-
-    const [firstSchedule] = application.currentAssessment.disbursementSchedules;
-    await saveFakeDisbursementReceiptsFromDisbursementSchedule(
-      db,
-      firstSchedule,
     );
 
     const endpoint = `/students/assessment/${application.currentAssessment.id}/award`;
@@ -108,6 +118,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
     );
 
     // Act/Assert
+    const [firstSchedule] = application.currentAssessment.disbursementSchedules;
     const offering = application.currentAssessment.offering;
     await request(app.getHttpServer())
       .get(endpoint)
@@ -138,45 +149,55 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
           disbursement1sbsd: 666,
         },
         finalAward: {
-          disbursementReceipt1cslp: 111,
-          disbursementReceipt1csgp: 222,
-          disbursementReceipt1cspt: 333,
-          disbursementReceipt1csgd: 444,
-          disbursementReceipt1bcag: 555,
-          disbursementReceipt1sbsd: 666,
+          disbursementReceipt1cslp: 110,
+          disbursementReceipt1csgp: 220,
+          disbursementReceipt1cspt: 330,
+          disbursementReceipt1csgd: 440,
+          disbursementReceipt1bcag: 550,
+          disbursementReceipt1sbsd: 660,
         },
       });
   });
 
-  it("Should get the student assessment summary containing loan and all grants for a part-time application with two disbursements.", async () => {
+  it("Should get the student assessment summary containing loan and all grants values from e-Cert effective amount for a part-time application with two disbursements.", async () => {
     // First disbursement values.
     const firstDisbursementValues = [
       createFakeDisbursementValue(
         DisbursementValueType.CanadaLoan,
         "CSLP",
         111,
+        { effectiveAmount: 110 },
       ),
       createFakeDisbursementValue(
         DisbursementValueType.CanadaGrant,
         "CSGP",
         222,
+        { effectiveAmount: 220 },
       ),
       createFakeDisbursementValue(
         DisbursementValueType.CanadaGrant,
         "CSPT",
         333,
+        { effectiveAmount: 330 },
       ),
       createFakeDisbursementValue(
         DisbursementValueType.CanadaGrant,
         "CSGD",
         444,
+        { effectiveAmount: 440 },
       ),
-      createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCAG", 555),
-      createFakeDisbursementValue(DisbursementValueType.BCGrant, "SBSD", 666),
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCAG", 555, {
+        effectiveAmount: 550,
+      }),
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "SBSD", 666, {
+        effectiveAmount: 660,
+      }),
+      // Must be ignored in the result even being present with an effective value.
       createFakeDisbursementValue(
         DisbursementValueType.BCTotalGrant,
         "BCSG",
-        555 + 666,
+        123,
+        { effectiveAmount: 123 },
       ),
     ];
     // Second disbursement values.
@@ -185,28 +206,38 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
         DisbursementValueType.CanadaLoan,
         "CSLP",
         9999,
+        { effectiveAmount: 9990 },
       ),
       createFakeDisbursementValue(
         DisbursementValueType.CanadaGrant,
         "CSGP",
         1010,
+        { effectiveAmount: 1010 },
       ),
       createFakeDisbursementValue(
         DisbursementValueType.CanadaGrant,
         "CSPT",
         1111,
+        { effectiveAmount: 1110 },
       ),
       createFakeDisbursementValue(
         DisbursementValueType.CanadaGrant,
         "CSGD",
         1212,
+        { effectiveAmount: 1210 },
       ),
-      createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCAG", 1313),
-      createFakeDisbursementValue(DisbursementValueType.BCGrant, "SBSD", 1414),
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCAG", 1313, {
+        effectiveAmount: 1310,
+      }),
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "SBSD", 1414, {
+        effectiveAmount: 1410,
+      }),
+      // Must be ignored in the result even being present with an effective value.
       createFakeDisbursementValue(
         DisbursementValueType.BCTotalGrant,
         "BCSG",
-        1313 + 1414,
+        1234,
+        { effectiveAmount: 1234 },
       ),
     ];
     // Part-time application with federal and provincial loans and grants and two disbursements.
@@ -222,6 +253,9 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
         offeringIntensity: OfferingIntensity.partTime,
         applicationStatus: ApplicationStatus.Completed,
         createSecondDisbursement: true,
+        firstDisbursementInitialValues: {
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        },
         secondDisbursementInitialValues: {
           coeStatus: COEStatus.completed,
           tuitionRemittanceRequestedAmount: 9876,
@@ -291,19 +325,78 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
         },
         finalAward: {
           // First disbursement schedule receipt dynamic properties.
-          disbursementReceipt1cslp: 111,
-          disbursementReceipt1csgp: 222,
-          disbursementReceipt1cspt: 333,
-          disbursementReceipt1csgd: 444,
-          disbursementReceipt1bcag: 555,
-          disbursementReceipt1sbsd: 666,
+          disbursementReceipt1cslp: 110,
+          disbursementReceipt1csgp: 220,
+          disbursementReceipt1cspt: 330,
+          disbursementReceipt1csgd: 440,
+          disbursementReceipt1bcag: 550,
+          disbursementReceipt1sbsd: 660,
           // Second disbursement schedule receipt dynamic properties.
-          disbursementReceipt2cslp: 9999,
+          disbursementReceipt2cslp: 9990,
           disbursementReceipt2csgp: 1010,
-          disbursementReceipt2cspt: 1111,
-          disbursementReceipt2csgd: 1212,
-          disbursementReceipt2bcag: 1313,
-          disbursementReceipt2sbsd: 1414,
+          disbursementReceipt2cspt: 1110,
+          disbursementReceipt2csgd: 1210,
+          disbursementReceipt2bcag: 1310,
+          disbursementReceipt2sbsd: 1410,
+        },
+      });
+  });
+
+  it("Should not generate final award values for a part-time application when the disbursement has not been sent yet.", async () => {
+    const firstDisbursementValues = [
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaLoan,
+        "CSLP",
+        111,
+        { effectiveAmount: 110 },
+      ),
+    ];
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        student: sharedStudent,
+        msfaaNumber: sharedMSFAANumber,
+        firstDisbursementValues,
+      },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.Completed,
+        firstDisbursementInitialValues: {
+          disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+        },
+      },
+    );
+
+    const endpoint = `/students/assessment/${application.currentAssessment.id}/award`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act/Assert
+    const [firstSchedule] = application.currentAssessment.disbursementSchedules;
+    const offering = application.currentAssessment.offering;
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        applicationNumber: application.applicationNumber,
+        applicationStatus: ApplicationStatus.Completed,
+        institutionName: offering.educationProgram.institution.operatingName,
+        offeringIntensity: OfferingIntensity.partTime,
+        offeringStudyStartDate: getDateOnlyFormat(offering.studyStartDate),
+        offeringStudyEndDate: getDateOnlyFormat(offering.studyEndDate),
+        estimatedAward: {
+          disbursement1Date: getDateOnlyFormat(firstSchedule.disbursementDate),
+          disbursement1Status: firstSchedule.disbursementScheduleStatus,
+          disbursement1COEStatus: COEStatus.completed,
+          disbursement1MSFAANumber: "XXXXXXXXXX",
+          disbursement1MSFAAId: sharedMSFAANumber.id,
+          disbursement1MSFAACancelledDate: null,
+          disbursement1MSFAADateSigned: sharedMSFAANumber.dateSigned,
+          disbursement1TuitionRemittance: 0,
+          disbursement1Id: firstSchedule.id,
+          disbursement1cslp: 111,
         },
       });
   });
@@ -397,7 +490,10 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
         applicationStatus: ApplicationStatus.Completed,
         createSecondDisbursement: true,
         firstDisbursementInitialValues: {
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
           tuitionRemittanceRequestedAmount: 1099,
+          // Adding date sent to ensure that will not be returned by the API (students should not receive it).
+          dateSent: new Date(),
         },
         secondDisbursementInitialValues: {
           coeStatus: COEStatus.completed,
@@ -521,6 +617,9 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
       {
         offeringIntensity: OfferingIntensity.fullTime,
         applicationStatus: ApplicationStatus.Completed,
+        firstDisbursementInitialValues: {
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        },
       },
     );
     const [firstSchedule] = application.currentAssessment.disbursementSchedules;

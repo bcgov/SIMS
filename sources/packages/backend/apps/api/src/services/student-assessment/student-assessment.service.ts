@@ -77,6 +77,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "disbursementSchedule.disbursementScheduleStatus",
         "disbursementSchedule.coeStatus",
         "disbursementSchedule.tuitionRemittanceRequestedAmount",
+        "disbursementSchedule.dateSent",
         "msfaaNumber.id",
         "msfaaNumber.msfaaNumber",
         "msfaaNumber.dateSigned",
@@ -84,6 +85,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "disbursementValue.valueType",
         "disbursementValue.valueCode",
         "disbursementValue.valueAmount",
+        "disbursementValue.effectiveAmount",
       ])
       .innerJoin("assessment.application", "application")
       .innerJoin("application.student", "student")

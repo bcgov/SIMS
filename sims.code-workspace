@@ -27,7 +27,6 @@
   ],
   "extensions": {
     "recommendations": [
-      "vue.volar",
       "vue.vscode-typescript-vue-plugin",
       "dbaeumer.vscode-eslint",
       "esbenp.prettier-vscode",
@@ -91,8 +90,18 @@
     "typescript.preferences.importModuleSpecifier": "non-relative",
     "cSpell.words": [
       "AEST",
+      "bcag",
+      "BCSG",
+      "bcsl",
+      "bgpd",
       "composables",
+      "CSGD",
+      "csgf",
+      "csgp",
+      "csgt",
+      "cslf",
       "CSLP",
+      "CSPT",
       "ESDC",
       "golevelup",
       "MBAL",
@@ -101,6 +110,7 @@
       "Overaward",
       "PEDU",
       "SABC",
+      "sbsd",
       "SFAS",
       "timestamptz",
       "typeorm"
