@@ -49,6 +49,7 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
   });
 
   it("Should get the student assessment award summary containing all federal and provincial estimated and final awards for a full-time application with two disbursements when the receipts are available.", async () => {
+    // Arrange
     const [dateSent1, dateSent2] = [addDays(-30), addDays(-1)];
     // First disbursement values.
     const firstDisbursementValues = [
@@ -223,6 +224,7 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
   });
 
   it("Should get the student assessment award summary containing estimated and final awards for a part-time application with two disbursements when e-Cert was sent.", async () => {
+    // Arrange
     const [dateSent1, dateSent2] = [addDays(-60), addDays(-5)];
     // First disbursement values.
     const firstDisbursementValues = [
@@ -412,7 +414,7 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
 
   it("Should throw not found exception when assessment is not found.", async () => {
     // Arrange
-    const endpoint = `/aest/assessment/99999/award`;
+    const endpoint =  "/aest/assessment/99999/award";
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert

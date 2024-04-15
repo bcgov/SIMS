@@ -106,6 +106,8 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
         applicationStatus: ApplicationStatus.Completed,
         firstDisbursementInitialValues: {
           disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          // Adding date sent to ensure that will not be returned by the API (students should not receive it).
+          dateSent: new Date(),
         },
       },
     );

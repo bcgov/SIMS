@@ -207,8 +207,7 @@ export class AssessmentControllerService {
    * ensure that a user has access to the specific application data.
    * - `includeDocumentNumber` when true document number is mapped
    * to disbursement dynamic data.
-   * - `includeDateSent `  when true date sent is mapped
-   * to disbursement dynamic data.
+   * - `includeDateSent` when true, date sent is mapped to disbursement dynamic data.
    * - `maskMSFAA` mask MSFAA or not.
    * @returns estimated and actual award details.
    */
@@ -259,8 +258,6 @@ export class AssessmentControllerService {
   /**
    * Populate the final awards in a dynamic way like disbursement schedule(estimated) awards.
    * @param assessment student assessment.
-   * @param disbursementSchedule disbursement schedule of the disbursement receipt(s).
-   * @param identifier identifier which is used to create dynamic data by appending award code to it.
    * @param options options,
    * - `studentId` studentId student to whom the award details belong to.
    * - `applicationId` application is used for authorization purposes to
@@ -297,7 +294,7 @@ export class AssessmentControllerService {
       }
       let index = 1;
       for (const schedule of assessment.disbursementSchedules) {
-        const awards = await this.populateDisbursementReceiptAwardValues(
+        const awards = this.populateDisbursementReceiptAwardValues(
           disbursementReceipts,
           schedule,
           `${DISBURSEMENT_RECEIPT_PREFIX}${index++}`,
@@ -306,7 +303,7 @@ export class AssessmentControllerService {
       }
       return finalAward;
     }
-    // Part-time receipts will not contains all the awards value hence the e-Cert effective
+    // Part-time receipts will not contain all the awards value hence the e-Cert effective
     // values are used instead to provide the best information as possible.
     let index = 1;
     for (const schedule of assessment.disbursementSchedules) {
@@ -326,11 +323,11 @@ export class AssessmentControllerService {
    * @param identifier identifier which is used to create dynamic data by appending award code to it.
    * @returns dynamic award data of disbursement receipts of a given disbursement.
    */
-  private async populateDisbursementReceiptAwardValues(
+  private populateDisbursementReceiptAwardValues(
     disbursementReceipts: DisbursementReceipt[],
     disbursementSchedule: DisbursementSchedule,
     identifier: string,
-  ): Promise<DynamicAwardValue> {
+  ): DynamicAwardValue {
     const finalAward: DynamicAwardValue = {};
     // Add all estimated awards to the list of receipts returned.
     // Ensure that every estimated disbursement will be part of the summary.
