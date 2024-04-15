@@ -168,33 +168,33 @@ export enum NotificationMessageType {
   /**
    * Student submitted change request after COE.
    */
-  StudentSubmittedChangeRequestNotificationForMinistry = 18,
+  StudentSubmittedChangeRequestNotification = 18,
   /**
    * Student submits application with exception request.
    */
-  ApplicationExceptionRequestNotificationForMinistry = 19,
+  ApplicationExceptionRequestNotification = 19,
   /**
    * Student requests basic BCeID account.
    */
-  StudentRequestsBasicBCeIDAccountNotificationForMinistry = 20,
+  StudentRequestsBasicBCeIDAccountNotification = 20,
   /**
    * Application edited for the 5th time.
    */
-  ApplicationEditedFifthTimeNotificationForMinistry = 21,
+  ApplicationEditedFifthTimeNotification = 21,
   /**
    * An Application Offering Change Request approved by the student.
    */
-  ApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry = 22,
+  ApplicationOfferingChangeRequestApprovedByStudentNotification = 22,
   /**
    * Institution adds pending program.
    */
-  InstitutionAddsPendingProgramNotificationForMinistry = 23,
+  InstitutionAddsPendingProgramNotification = 23,
   /**
    * Institution adds pending offering.
    */
-  InstitutionAddsPendingOfferingNotificationForMinistry = 24,
+  InstitutionAddsPendingOfferingNotification = 24,
   /**
    * Institution Requests Designation.
    */
-  InstitutionRequestsDesignationNotificationForMinistry = 25,
+  InstitutionRequestsDesignationNotification = 25,
 }

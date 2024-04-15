@@ -36,7 +36,7 @@ import {
   EducationProgramOfferingService,
 } from "../../services";
 import {
-  InstitutionAddsPendingProgramNotificationForMinistry,
+  InstitutionAddsPendingProgramNotification,
   NotificationActionsService,
 } from "@sims/services";
 
@@ -242,16 +242,15 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       },
       where: { id: institutionId },
     });
-    const ministryNotification: InstitutionAddsPendingProgramNotificationForMinistry =
-      {
-        institutionName: institution.legalOperatingName,
-        institutionOperatingName: institution.operatingName,
-        programName: program.name,
-        institutionPrimaryEmail: institution.primaryEmail,
-      };
+    const ministryNotification: InstitutionAddsPendingProgramNotification = {
+      institutionName: institution.legalOperatingName,
+      institutionOperatingName: institution.operatingName,
+      programName: program.name,
+      institutionPrimaryEmail: institution.primaryEmail,
+    };
     return this.dataSource.transaction(async (entityManager) => {
       if (program.programStatus === ProgramStatus.Pending) {
-        await this.notificationActionsService.saveInstitutionAddsPendingProgramNotificationForMinistry(
+        await this.notificationActionsService.saveInstitutionAddsPendingProgramNotification(
           ministryNotification,
           entityManager,
         );

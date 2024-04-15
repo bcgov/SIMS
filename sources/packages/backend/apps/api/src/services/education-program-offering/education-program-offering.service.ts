@@ -65,7 +65,7 @@ import { EducationProgramOfferingValidationService } from "./education-program-o
 import * as os from "os";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
-  InstitutionAddsPendingOfferingNotificationForMinistry,
+  InstitutionAddsPendingOfferingNotification,
   NotificationActionsService,
 } from "@sims/services";
 @Injectable()
@@ -120,18 +120,17 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         where: { id: programOffering.institutionLocation.id },
       });
       const institution = institutionLocation.institution;
-      const ministryNotification: InstitutionAddsPendingOfferingNotificationForMinistry =
-        {
-          institutionName: institution.legalOperatingName,
-          institutionOperatingName: institution.operatingName,
-          institutionLocationName: institutionLocation.name,
-          programName: educationProgramOffering.programContext.name,
-          offeringName: educationProgramOffering.offeringName,
-          institutionPrimaryEmail: institution.primaryEmail,
-        };
+      const ministryNotification: InstitutionAddsPendingOfferingNotification = {
+        institutionName: institution.legalOperatingName,
+        institutionOperatingName: institution.operatingName,
+        institutionLocationName: institutionLocation.name,
+        programName: educationProgramOffering.programContext.name,
+        offeringName: educationProgramOffering.offeringName,
+        institutionPrimaryEmail: institution.primaryEmail,
+      };
       return await this.dataSource.transaction(async (entityManager) => {
         if (programOffering.offeringStatus === OfferingStatus.CreationPending) {
-          await this.notificationActionsService.saveInstitutionAddsPendingOfferingNotificationForMinistry(
+          await this.notificationActionsService.saveInstitutionAddsPendingOfferingNotification(
             ministryNotification,
             entityManager,
           );

@@ -16,7 +16,7 @@ import {
   DesignationLocationAPIInDTO,
 } from "../../route-controllers/designation-agreement/models/designation-agreement.dto";
 import {
-  InstitutionRequestsDesignationNotificationForMinistry,
+  InstitutionRequestsDesignationNotification,
   NotificationActionsService,
 } from "@sims/services";
 
@@ -85,14 +85,13 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
       },
       where: { id: institutionId },
     });
-    const ministryNotification: InstitutionRequestsDesignationNotificationForMinistry =
-      {
-        institutionName: institution.legalOperatingName,
-        institutionOperatingName: institution.operatingName,
-        institutionPrimaryEmail: institution.primaryEmail,
-      };
+    const ministryNotification: InstitutionRequestsDesignationNotification = {
+      institutionName: institution.legalOperatingName,
+      institutionOperatingName: institution.operatingName,
+      institutionPrimaryEmail: institution.primaryEmail,
+    };
     return this.dataSource.transaction(async (entityManager) => {
-      await this.notificationActionsService.saveInstitutionRequestsDesignationNotificationForMinistry(
+      await this.notificationActionsService.saveInstitutionRequestsDesignationNotification(
         ministryNotification,
         entityManager,
       );

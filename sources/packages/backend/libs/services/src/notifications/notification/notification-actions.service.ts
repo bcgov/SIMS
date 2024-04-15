@@ -19,14 +19,14 @@ import {
   ApplicationOfferingChangeRequestCompleteNotification,
   LegacyRestrictionAddedNotification,
   DisbursementBlockedNotificationForMinistry,
-  ApplicationExceptionRequestNotificationForMinistry,
-  ApplicationEditedFifthTimeNotificationForMinistry,
-  StudentSubmittedChangeRequestNotificationForMinistry,
-  InstitutionRequestsDesignationNotificationForMinistry,
-  StudentRequestsBasicBCeIDAccountNotificationForMinistry,
-  InstitutionAddsPendingOfferingNotificationForMinistry,
-  InstitutionAddsPendingProgramNotificationForMinistry,
-  ApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry,
+  ApplicationExceptionRequestNotification,
+  ApplicationEditedFifthTimeNotification,
+  StudentSubmittedChangeRequestNotification,
+  InstitutionRequestsDesignationNotification,
+  StudentRequestsBasicBCeIDAccountNotification,
+  InstitutionAddsPendingOfferingNotification,
+  InstitutionAddsPendingProgramNotification,
+  ApplicationOfferingChangeRequestApprovedByStudentNotification,
 } from "..";
 import { NotificationService } from "./notification.service";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
@@ -755,18 +755,18 @@ export class NotificationActionsService {
    * @param notification notification details.
    * @param entityManager entity manager to execute in transaction.
    */
-  async saveApplicationExceptionRequestNotificationForMinistry(
-    notification: ApplicationExceptionRequestNotificationForMinistry,
+  async saveApplicationExceptionRequestNotification(
+    notification: ApplicationExceptionRequestNotification,
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     const notificationDetails =
       await this.notificationMessageService.getNotificationMessageDetails(
-        NotificationMessageType.ApplicationExceptionRequestNotificationForMinistry,
+        NotificationMessageType.ApplicationExceptionRequestNotification,
       );
     if (!notificationDetails.emailContacts?.length) {
       this.logger.error(
-        `Email template id ${NotificationMessageType.ApplicationExceptionRequestNotificationForMinistry} requires a configured email to be sent.`,
+        `Email template id ${NotificationMessageType.ApplicationExceptionRequestNotification} requires a configured email to be sent.`,
       );
       return;
     }
@@ -775,7 +775,7 @@ export class NotificationActionsService {
       const ministryNotificationToSend = {
         userId: auditUser.id,
         messageType:
-          NotificationMessageType.ApplicationExceptionRequestNotificationForMinistry,
+          NotificationMessageType.ApplicationExceptionRequestNotification,
         messagePayload: {
           email_address: emailContact,
           template_id: notificationDetails.templateId,
@@ -805,17 +805,17 @@ export class NotificationActionsService {
    * @param entityManager entity manager to execute in transaction.
    */
   async saveApplicationEditedTooManyTimesNotification(
-    notification: ApplicationEditedFifthTimeNotificationForMinistry,
+    notification: ApplicationEditedFifthTimeNotification,
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     const notificationDetails =
       await this.notificationMessageService.getNotificationMessageDetails(
-        NotificationMessageType.ApplicationEditedFifthTimeNotificationForMinistry,
+        NotificationMessageType.ApplicationEditedFifthTimeNotification,
       );
     if (!notificationDetails.emailContacts?.length) {
       this.logger.error(
-        `Email template id ${NotificationMessageType.ApplicationEditedFifthTimeNotificationForMinistry} requires a configured email to be sent.`,
+        `Email template id ${NotificationMessageType.ApplicationEditedFifthTimeNotification} requires a configured email to be sent.`,
       );
       return;
     }
@@ -824,7 +824,7 @@ export class NotificationActionsService {
       const ministryNotificationToSend = {
         userId: auditUser.id,
         messageType:
-          NotificationMessageType.ApplicationEditedFifthTimeNotificationForMinistry,
+          NotificationMessageType.ApplicationEditedFifthTimeNotification,
         messagePayload: {
           email_address: emailContact,
           template_id: notificationDetails.templateId,
@@ -853,18 +853,18 @@ export class NotificationActionsService {
    * @param notification notification details.
    * @param entityManager entity manager to execute in transaction.
    */
-  async saveStudentSubmittedChangeRequestNotificationForMinistry(
-    notification: StudentSubmittedChangeRequestNotificationForMinistry,
+  async saveStudentSubmittedChangeRequestNotification(
+    notification: StudentSubmittedChangeRequestNotification,
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     const notificationDetails =
       await this.notificationMessageService.getNotificationMessageDetails(
-        NotificationMessageType.StudentSubmittedChangeRequestNotificationForMinistry,
+        NotificationMessageType.StudentSubmittedChangeRequestNotification,
       );
     if (!notificationDetails.emailContacts?.length) {
       this.logger.error(
-        `Email template id ${NotificationMessageType.StudentSubmittedChangeRequestNotificationForMinistry} requires a configured email to be sent.`,
+        `Email template id ${NotificationMessageType.StudentSubmittedChangeRequestNotification} requires a configured email to be sent.`,
       );
       return;
     }
@@ -873,7 +873,7 @@ export class NotificationActionsService {
       const ministryNotificationToSend = {
         userId: auditUser.id,
         messageType:
-          NotificationMessageType.StudentSubmittedChangeRequestNotificationForMinistry,
+          NotificationMessageType.StudentSubmittedChangeRequestNotification,
         messagePayload: {
           email_address: emailContact,
           template_id: notificationDetails.templateId,
@@ -902,18 +902,18 @@ export class NotificationActionsService {
    * @param notification notification details.
    * @param entityManager entity manager to execute in transaction.
    */
-  async saveStudentRequestsBasicBCeIDAccountNotificationForMinistry(
-    notification: StudentRequestsBasicBCeIDAccountNotificationForMinistry,
+  async saveStudentRequestsBasicBCeIDAccountNotification(
+    notification: StudentRequestsBasicBCeIDAccountNotification,
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     const notificationDetails =
       await this.notificationMessageService.getNotificationMessageDetails(
-        NotificationMessageType.StudentRequestsBasicBCeIDAccountNotificationForMinistry,
+        NotificationMessageType.StudentRequestsBasicBCeIDAccountNotification,
       );
     if (!notificationDetails.emailContacts?.length) {
       this.logger.error(
-        `Email template id ${NotificationMessageType.StudentRequestsBasicBCeIDAccountNotificationForMinistry} requires a configured email to be sent.`,
+        `Email template id ${NotificationMessageType.StudentRequestsBasicBCeIDAccountNotification} requires a configured email to be sent.`,
       );
       return;
     }
@@ -922,7 +922,7 @@ export class NotificationActionsService {
       const ministryNotificationToSend = {
         userId: auditUser.id,
         messageType:
-          NotificationMessageType.StudentRequestsBasicBCeIDAccountNotificationForMinistry,
+          NotificationMessageType.StudentRequestsBasicBCeIDAccountNotification,
         messagePayload: {
           email_address: emailContact,
           template_id: notificationDetails.templateId,
@@ -951,17 +951,17 @@ export class NotificationActionsService {
    * @param entityManager entity manager to execute in transaction.
    */
   async saveApplicationOfferingChangeApprovedByStudent(
-    notification: ApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry,
+    notification: ApplicationOfferingChangeRequestApprovedByStudentNotification,
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     const notificationDetails =
       await this.notificationMessageService.getNotificationMessageDetails(
-        NotificationMessageType.ApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry,
+        NotificationMessageType.ApplicationOfferingChangeRequestApprovedByStudentNotification,
       );
     if (!notificationDetails.emailContacts?.length) {
       this.logger.error(
-        `Email template id ${NotificationMessageType.ApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry} requires a configured email to be sent.`,
+        `Email template id ${NotificationMessageType.ApplicationOfferingChangeRequestApprovedByStudentNotification} requires a configured email to be sent.`,
       );
       return;
     }
@@ -970,7 +970,7 @@ export class NotificationActionsService {
       const ministryNotificationToSend = {
         userId: auditUser.id,
         messageType:
-          NotificationMessageType.ApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry,
+          NotificationMessageType.ApplicationOfferingChangeRequestApprovedByStudentNotification,
         messagePayload: {
           email_address: emailContact,
           template_id: notificationDetails.templateId,
@@ -999,18 +999,18 @@ export class NotificationActionsService {
    * @param notification notification details.
    * @param entityManager entity manager to execute in transaction.
    */
-  async saveInstitutionRequestsDesignationNotificationForMinistry(
-    notification: InstitutionRequestsDesignationNotificationForMinistry,
+  async saveInstitutionRequestsDesignationNotification(
+    notification: InstitutionRequestsDesignationNotification,
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     const notificationDetails =
       await this.notificationMessageService.getNotificationMessageDetails(
-        NotificationMessageType.InstitutionRequestsDesignationNotificationForMinistry,
+        NotificationMessageType.InstitutionRequestsDesignationNotification,
       );
     if (!notificationDetails.emailContacts?.length) {
       this.logger.error(
-        `Email template id ${NotificationMessageType.InstitutionRequestsDesignationNotificationForMinistry} requires a configured email to be sent.`,
+        `Email template id ${NotificationMessageType.InstitutionRequestsDesignationNotification} requires a configured email to be sent.`,
       );
       return;
     }
@@ -1019,7 +1019,7 @@ export class NotificationActionsService {
       const ministryNotificationToSend = {
         userId: auditUser.id,
         messageType:
-          NotificationMessageType.InstitutionRequestsDesignationNotificationForMinistry,
+          NotificationMessageType.InstitutionRequestsDesignationNotification,
         messagePayload: {
           email_address: emailContact,
           template_id: notificationDetails.templateId,
@@ -1046,18 +1046,18 @@ export class NotificationActionsService {
    * @param notification notification details.
    * @param entityManager entity manager to execute in transaction.
    */
-  async saveInstitutionAddsPendingProgramNotificationForMinistry(
-    notification: InstitutionAddsPendingProgramNotificationForMinistry,
+  async saveInstitutionAddsPendingProgramNotification(
+    notification: InstitutionAddsPendingProgramNotification,
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     const notificationDetails =
       await this.notificationMessageService.getNotificationMessageDetails(
-        NotificationMessageType.InstitutionAddsPendingProgramNotificationForMinistry,
+        NotificationMessageType.InstitutionAddsPendingProgramNotification,
       );
     if (!notificationDetails.emailContacts?.length) {
       this.logger.error(
-        `Email template id ${NotificationMessageType.InstitutionAddsPendingProgramNotificationForMinistry} requires a configured email to be sent.`,
+        `Email template id ${NotificationMessageType.InstitutionAddsPendingProgramNotification} requires a configured email to be sent.`,
       );
       return;
     }
@@ -1066,7 +1066,7 @@ export class NotificationActionsService {
       const ministryNotificationToSend = {
         userId: auditUser.id,
         messageType:
-          NotificationMessageType.InstitutionAddsPendingProgramNotificationForMinistry,
+          NotificationMessageType.InstitutionAddsPendingProgramNotification,
         messagePayload: {
           email_address: emailContact,
           template_id: notificationDetails.templateId,
@@ -1094,18 +1094,18 @@ export class NotificationActionsService {
    * @param notification notification details.
    * @param entityManager entity manager to execute in transaction.
    */
-  async saveInstitutionAddsPendingOfferingNotificationForMinistry(
-    notification: InstitutionAddsPendingOfferingNotificationForMinistry,
+  async saveInstitutionAddsPendingOfferingNotification(
+    notification: InstitutionAddsPendingOfferingNotification,
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     const notificationDetails =
       await this.notificationMessageService.getNotificationMessageDetails(
-        NotificationMessageType.InstitutionAddsPendingOfferingNotificationForMinistry,
+        NotificationMessageType.InstitutionAddsPendingOfferingNotification,
       );
     if (!notificationDetails.emailContacts?.length) {
       this.logger.error(
-        `Email template id ${NotificationMessageType.InstitutionAddsPendingOfferingNotificationForMinistry} requires a configured email to be sent.`,
+        `Email template id ${NotificationMessageType.InstitutionAddsPendingOfferingNotification} requires a configured email to be sent.`,
       );
       return;
     }
@@ -1114,7 +1114,7 @@ export class NotificationActionsService {
       const ministryNotificationToSend = {
         userId: auditUser.id,
         messageType:
-          NotificationMessageType.InstitutionAddsPendingOfferingNotificationForMinistry,
+          NotificationMessageType.InstitutionAddsPendingOfferingNotification,
         messagePayload: {
           email_address: emailContact,
           template_id: notificationDetails.templateId,

@@ -15,7 +15,7 @@ import { CustomNamedError } from "@sims/utilities";
 import { STUDENT_ACCOUNT_APPLICATION_NOT_FOUND } from "../../constants";
 import {
   NotificationActionsService,
-  StudentRequestsBasicBCeIDAccountNotificationForMinistry,
+  StudentRequestsBasicBCeIDAccountNotification,
 } from "@sims/services";
 
 @Injectable()
@@ -97,15 +97,14 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
     newAccountApplication.createdAt = now;
     newAccountApplication.submittedData = studentProfile;
     newAccountApplication.submittedDate = now;
-    const ministryNotification: StudentRequestsBasicBCeIDAccountNotificationForMinistry =
-      {
-        givenNames: newUser.firstName,
-        lastName: newUser.lastName,
-        email: newUser.email,
-        dob: studentProfile.dateOfBirth,
-      };
+    const ministryNotification: StudentRequestsBasicBCeIDAccountNotification = {
+      givenNames: newUser.firstName,
+      lastName: newUser.lastName,
+      email: newUser.email,
+      dob: studentProfile.dateOfBirth,
+    };
     return this.dataSource.transaction(async (entityManager) => {
-      await this.notificationActionsService.saveStudentRequestsBasicBCeIDAccountNotificationForMinistry(
+      await this.notificationActionsService.saveStudentRequestsBasicBCeIDAccountNotification(
         ministryNotification,
         entityManager,
       );

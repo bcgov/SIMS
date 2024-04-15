@@ -29,7 +29,7 @@ import { MaxJobsToActivate } from "../../types";
 import { Workers } from "@sims/services/constants";
 import { createUnexpectedJobFail } from "../../utilities";
 import {
-  ApplicationExceptionRequestNotificationForMinistry,
+  ApplicationExceptionRequestNotification,
   NotificationActionsService,
 } from "@sims/services";
 import { DataSource } from "typeorm";
@@ -140,7 +140,7 @@ export class ApplicationController {
           jobLogger.log("Exception created.");
           jobLogger.log("Creating notification for the created exception.");
           const student = application.student;
-          const ministryNotification: ApplicationExceptionRequestNotificationForMinistry =
+          const ministryNotification: ApplicationExceptionRequestNotification =
             {
               givenNames: student.user.firstName,
               lastName: student.user.lastName,
@@ -148,7 +148,7 @@ export class ApplicationController {
               dob: student.birthDate,
               applicationNumber: application.applicationNumber,
             };
-          await this.notificationActionService.saveApplicationExceptionRequestNotificationForMinistry(
+          await this.notificationActionService.saveApplicationExceptionRequestNotification(
             ministryNotification,
             entityManager,
           );

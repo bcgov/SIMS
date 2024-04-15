@@ -77,7 +77,7 @@ export interface DisbursementBlockedNotificationForMinistry {
   applicationNumber: string;
 }
 
-export interface ApplicationExceptionRequestNotificationForMinistry {
+export interface ApplicationExceptionRequestNotification {
   givenNames: string;
   lastName: string;
   email: string;
@@ -85,7 +85,7 @@ export interface ApplicationExceptionRequestNotificationForMinistry {
   applicationNumber: string;
 }
 
-export interface ApplicationEditedFifthTimeNotificationForMinistry {
+export interface ApplicationEditedFifthTimeNotification {
   givenNames: string;
   lastName: string;
   email: string;
@@ -93,7 +93,7 @@ export interface ApplicationEditedFifthTimeNotificationForMinistry {
   applicationNumber: string;
 }
 
-export interface StudentSubmittedChangeRequestNotificationForMinistry {
+export interface StudentSubmittedChangeRequestNotification {
   givenNames: string;
   lastName: string;
   email: string;
@@ -101,14 +101,14 @@ export interface StudentSubmittedChangeRequestNotificationForMinistry {
   applicationNumber: string;
 }
 
-export interface StudentRequestsBasicBCeIDAccountNotificationForMinistry {
+export interface StudentRequestsBasicBCeIDAccountNotification {
   givenNames: string;
   lastName: string;
   email: string;
   dob: string;
 }
 
-export interface ApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry {
+export interface ApplicationOfferingChangeRequestApprovedByStudentNotification {
   givenNames: string;
   lastName: string;
   email: string;
@@ -134,20 +134,20 @@ export interface ECEResponseFileProcessingNotification {
   attachmentFileContent: string;
 }
 
-export interface InstitutionRequestsDesignationNotificationForMinistry {
+export interface InstitutionRequestsDesignationNotification {
   institutionName: string;
   institutionOperatingName: string;
   institutionPrimaryEmail: string;
 }
 
-export interface InstitutionAddsPendingProgramNotificationForMinistry {
+export interface InstitutionAddsPendingProgramNotification {
   institutionName: string;
   institutionOperatingName: string;
   programName: string;
   institutionPrimaryEmail: string;
 }
 
-export interface InstitutionAddsPendingOfferingNotificationForMinistry {
+export interface InstitutionAddsPendingOfferingNotification {
   institutionName: string;
   institutionOperatingName: string;
   institutionLocationName: string;

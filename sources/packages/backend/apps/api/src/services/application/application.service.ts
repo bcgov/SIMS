@@ -53,12 +53,12 @@ import {
 import { SequenceControlService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
 import {
-  ApplicationExceptionRequestNotificationForMinistry,
+  ApplicationExceptionRequestNotification,
   NotificationActionsService,
 } from "@sims/services/notifications";
 import { InstitutionLocationService } from "../institution-location/institution-location.service";
 import { APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION } from "@sims/services/constants";
-import { StudentService } from "@sims/integrations/services";
+import { StudentService } from "..";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
@@ -311,14 +311,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
     });
     if (applicationsCount === APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION + 1) {
       const student = await this.studentService.getStudentById(studentId);
-      const ministryNotification: ApplicationExceptionRequestNotificationForMinistry =
-        {
-          givenNames: student.user.firstName,
-          lastName: student.user.lastName,
-          email: student.user.email,
-          dob: student.birthDate,
-          applicationNumber,
-        };
+      const ministryNotification: ApplicationExceptionRequestNotification = {
+        givenNames: student.user.firstName,
+        lastName: student.user.lastName,
+        email: student.user.email,
+        dob: student.birthDate,
+        applicationNumber,
+      };
       await this.notificationActionService.saveApplicationEditedTooManyTimesNotification(
         ministryNotification,
         transactionalEntityManager,

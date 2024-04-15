@@ -34,7 +34,7 @@ import {
 } from "./constants";
 import {
   NotificationActionsService,
-  StudentSubmittedChangeRequestNotificationForMinistry,
+  StudentSubmittedChangeRequestNotification,
 } from "@sims/services/notifications";
 import { NoteSharedService } from "@sims/services";
 import { StudentFileService } from "../student-file/student-file.service";
@@ -119,15 +119,14 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         where: { id: applicationId },
       });
       const student = application.student;
-      const ministryNotification: StudentSubmittedChangeRequestNotificationForMinistry =
-        {
-          givenNames: student.user.firstName,
-          lastName: student.user.lastName,
-          email: student.user.email,
-          dob: student.birthDate,
-          applicationNumber: application.applicationNumber,
-        };
-      await this.notificationActionsService.saveStudentSubmittedChangeRequestNotificationForMinistry(
+      const ministryNotification: StudentSubmittedChangeRequestNotification = {
+        givenNames: student.user.firstName,
+        lastName: student.user.lastName,
+        email: student.user.email,
+        dob: student.birthDate,
+        applicationNumber: application.applicationNumber,
+      };
+      await this.notificationActionsService.saveStudentSubmittedChangeRequestNotification(
         ministryNotification,
         entityManager,
       );

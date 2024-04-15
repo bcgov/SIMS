@@ -18,7 +18,7 @@ import {
 import { DataSource, Brackets, Repository, In } from "typeorm";
 import { PaginatedResults, PaginationOptions } from "../../utilities";
 import {
-  ApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry,
+  ApplicationOfferingChangeRequestApprovedByStudentNotification,
   NoteSharedService,
   NotificationActionsService,
   SystemUsersService,
@@ -563,7 +563,7 @@ export class ApplicationOfferingChangeRequestService {
         where: { id: applicationOfferingChangeRequestId },
       });
     const student = applicationOfferingChangeRequestDetails.application.student;
-    const ministryNotification: ApplicationOfferingChangeRequestApprovedByStudentNotificationForMinistry =
+    const ministryNotification: ApplicationOfferingChangeRequestApprovedByStudentNotification =
       {
         givenNames: student.user.firstName,
         lastName: student.user.lastName,
