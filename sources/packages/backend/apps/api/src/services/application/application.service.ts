@@ -303,7 +303,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
     studentId: number,
     transactionalEntityManager: EntityManager,
   ): Promise<void> {
-    // Create a notification if the application is edited for APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION time.
     const applicationRepository =
       transactionalEntityManager.getRepository(Application);
     const applicationsCount = await applicationRepository.count({
@@ -320,6 +319,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       };
       await this.notificationActionService.saveApplicationEditedTooManyTimesNotification(
         ministryNotification,
+        applicationNumber,
         transactionalEntityManager,
       );
     }

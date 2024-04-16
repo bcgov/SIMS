@@ -24,7 +24,13 @@ import {
   isDatabaseConstraintError,
   StudentAppeal,
 } from "@sims/sims-db";
-import { DataSource, In, Repository, UpdateResult } from "typeorm";
+import {
+  DataSource,
+  EntityManager,
+  In,
+  Repository,
+  UpdateResult,
+} from "typeorm";
 import {
   OfferingsFilter,
   PrecedingOfferingSummaryModel,
@@ -75,6 +81,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     private readonly dataSource: DataSource,
     private readonly offeringValidationService: EducationProgramOfferingValidationService,
     private readonly notificationActionsService: NotificationActionsService,
+    private readonly entityManager: EntityManager,
   ) {
     super(dataSource.getRepository(EducationProgramOffering));
     this.institutionLocationRepo =
@@ -105,40 +112,20 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programOffering.parentOffering = programOffering;
 
     try {
-      const institutionLocation = await this.institutionLocationRepo.findOne({
-        select: {
-          id: true,
-          name: true,
-          institution: {
-            id: true,
-            operatingName: true,
-            legalOperatingName: true,
-            primaryEmail: true,
-          },
+      await this.saveEducationProgramNotification(
+        {
+          name: educationProgramOffering.programContext.name,
+          offeringName: educationProgramOffering.offeringName,
         },
-        relations: { institution: true },
-        where: { id: programOffering.institutionLocation.id },
-      });
-      const institution = institutionLocation.institution;
-      const ministryNotification: InstitutionAddsPendingOfferingNotification = {
-        institutionName: institution.legalOperatingName,
-        institutionOperatingName: institution.operatingName,
-        institutionLocationName: institutionLocation.name,
-        programName: educationProgramOffering.programContext.name,
-        offeringName: educationProgramOffering.offeringName,
-        institutionPrimaryEmail: institution.primaryEmail,
-      };
-      return await this.dataSource.transaction(async (entityManager) => {
-        if (programOffering.offeringStatus === OfferingStatus.CreationPending) {
-          await this.notificationActionsService.saveInstitutionAddsPendingOfferingNotification(
-            ministryNotification,
-            entityManager,
-          );
-        }
-        return entityManager
-          .getRepository(EducationProgramOffering)
-          .save(programOffering);
-      });
+        {
+          offeringStatus: programOffering.offeringStatus,
+          institutionLocation: programOffering.institutionLocation,
+        },
+        this.entityManager,
+      );
+      return await this.entityManager
+        .getRepository(EducationProgramOffering)
+        .save(programOffering);
     } catch (error: unknown) {
       if (
         isDatabaseConstraintError(
@@ -206,6 +193,53 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       allResults.push(...finalResults);
       return allResults;
     });
+  }
+
+  /**
+   * Creates a ministry notification for the saved education
+   * program offering as a part of the same transaction.
+   * @param educationProgramOffering information used to create the program offering.
+   * @param programOffering program offering to be saved.
+   * @param entityManager entity manager to be part of the transaction.
+   */
+  private async saveEducationProgramNotification(
+    educationProgramOffering: Pick<OfferingValidationModel, "offeringName"> &
+      Pick<OfferingValidationModel["programContext"], "name">,
+    programOffering: Pick<
+      EducationProgramOffering,
+      "offeringStatus" | "institutionLocation"
+    >,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const institutionLocation = await this.institutionLocationRepo.findOne({
+      select: {
+        id: true,
+        name: true,
+        institution: {
+          id: true,
+          operatingName: true,
+          legalOperatingName: true,
+          primaryEmail: true,
+        },
+      },
+      relations: { institution: true },
+      where: { id: programOffering.institutionLocation.id },
+    });
+    const institution = institutionLocation.institution;
+    const ministryNotification: InstitutionAddsPendingOfferingNotification = {
+      institutionName: institution.legalOperatingName,
+      institutionOperatingName: institution.operatingName,
+      institutionLocationName: institutionLocation.name,
+      programName: educationProgramOffering.name,
+      offeringName: educationProgramOffering.offeringName,
+      institutionPrimaryEmail: institution.primaryEmail,
+    };
+    if (programOffering.offeringStatus === OfferingStatus.CreationPending) {
+      await this.notificationActionsService.saveInstitutionAddsPendingOfferingNotification(
+        ministryNotification,
+        entityManager,
+      );
+    }
   }
 
   /**

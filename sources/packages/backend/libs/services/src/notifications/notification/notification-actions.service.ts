@@ -794,12 +794,14 @@ export class NotificationActionsService {
   }
 
   /**
-   * Creates application edited 5th time notification for ministry.
+   * Creates application edited too many times notification for the ministry.
    * @param notification notification details.
+   * @param applicationNumber related application number.
    * @param entityManager entity manager to execute in transaction.
    */
   async saveApplicationEditedTooManyTimesNotification(
     notification: ApplicationEditedTooManyTimesNotification,
+    applicationNumber: string,
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
@@ -830,6 +832,7 @@ export class NotificationActionsService {
             dateTime: this.getDateTimeOnPSTTimeZone(),
           },
         },
+        metadata: { applicationNumber },
       }),
     );
     // Save notifications to be sent to the ministry into the notification table.
