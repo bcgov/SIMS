@@ -6,13 +6,14 @@ import { EligibleECertDisbursement } from "../disbursement-schedule.models";
 import { ECertGenerationService } from "../e-cert-generation.service";
 import { CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE } from "@sims/services/constants";
 import { StudentLoanBalanceSharedService } from "@sims/services/student-loan-balance/student-loan-balance-shared.service";
-import { StudentLoanBalance } from "@sims/sims-db";
 
 /**
- * Fetch the latest  balance for the student and validate if CSLP has reached lifetime maximum.
+ * Fetch the latest balance for the student and validate if CSLP has reached lifetime maximum.
  */
 @Injectable()
-export class ValidateCSLPLifetimeMaximumCheckStep implements ECertProcessStep {
+export class ValidateCSLPLifetimeMaximumPartTimeCheckStep
+  implements ECertProcessStep
+{
   constructor(
     private readonly eCertGenerationService: ECertGenerationService,
     private readonly studentLoanBalanceSharedService: StudentLoanBalanceSharedService,
@@ -30,27 +31,28 @@ export class ValidateCSLPLifetimeMaximumCheckStep implements ECertProcessStep {
     log: ProcessSummary,
   ): Promise<boolean> {
     log.info("Validate CSLP Lifetime Maximum.");
-    //Fetch lifetime maximum of CSLP from the workflow data.
+    // Fetch lifetime maximum of CSLP from the workflow data.
     const lifetimeMaximumsCSLP =
       await this.eCertGenerationService.getCSLPLifetimeMaximums(
         eCertDisbursement.assessmentId,
         entityManager,
-      );
-    //Get latest CSLP monthly balance.
-    const studentLoanBalances: StudentLoanBalance[] =
-      await this.studentLoanBalanceSharedService.getLatestCSLPBalance(
-        eCertDisbursement.studentId,
       );
     //Get the disbursed value for the CSLP in the current disbursement.
     const disbursementCSLP =
       eCertDisbursement.disbursement.disbursementValues.find(
         (item) => item.valueCode === CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE,
       );
+    if (!disbursementCSLP?.valueAmount) {
+      return true;
+    }
+    //Get latest CSLP monthly balance.
+    const latestCSLPBalance =
+      await this.studentLoanBalanceSharedService.getLatestCSLPBalance(
+        eCertDisbursement.studentId,
+      );
     //Check if lifetime maximum CSLP is less than or equal to the sum of disbursed CSLP and latest student loan balance.
     return (
-      lifetimeMaximumsCSLP >=
-      (disbursementCSLP ? disbursementCSLP.valueAmount : 0) +
-        (studentLoanBalances[0] ? studentLoanBalances[0].cslBalance : 0)
+      lifetimeMaximumsCSLP >= disbursementCSLP.valueAmount + latestCSLPBalance
     );
   }
 }

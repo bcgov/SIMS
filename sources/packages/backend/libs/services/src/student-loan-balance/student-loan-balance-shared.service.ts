@@ -9,11 +9,19 @@ export class StudentLoanBalanceSharedService {
     private readonly studentLoanBalanceRepo: Repository<StudentLoanBalance>,
   ) {}
 
-  async getLatestCSLPBalance(studentId: number): Promise<StudentLoanBalance[]> {
-    return this.studentLoanBalanceRepo.find({
-      select: { cslBalance: true },
-      where: { student: { id: studentId } },
-      order: { balanceDate: "DESC" },
-    });
+  /**
+   * Get the latest CSLP balance for the student.
+   * @param studentId Student id.
+   * @returns latest CSLP balance or 0 if there are no records.
+   */
+  async getLatestCSLPBalance(student_id: number): Promise<number> {
+    const getStudentLatestLoanBalance = await this.studentLoanBalanceRepo
+      .createQueryBuilder("studentLoanBalances")
+      .select(["studentLoanBalances.cslBalance"])
+      .innerJoin("studentLoanBalances.student", "student")
+      .where("student.id = :student_id", { student_id })
+      .limit(1)
+      .getOne();
+    return getStudentLatestLoanBalance?.cslBalance ?? 0;
   }
 }

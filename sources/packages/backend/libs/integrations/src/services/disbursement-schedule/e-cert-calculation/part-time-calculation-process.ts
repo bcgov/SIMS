@@ -8,7 +8,7 @@ import {
   CalculateTuitionRemittanceEffectiveAmountStep,
   CreateBCTotalGrantsStep,
   PersistCalculationsStep,
-  ValidateCSLPLifetimeMaximumCheckStep,
+  ValidateCSLPLifetimeMaximumPartTimeCheckStep,
   ValidateDisbursementPartTimeStep,
 } from "../e-cert-processing-steps";
 import { ECertGenerationService } from "../e-cert-generation.service";
@@ -26,7 +26,7 @@ export class PartTimeCalculationProcess extends ECertCalculationProcess {
     eCertNotificationService: ECertNotificationService,
     private readonly eCertGenerationService: ECertGenerationService,
     private readonly validateDisbursementPartTimeStep: ValidateDisbursementPartTimeStep,
-    private readonly validateCSLPLifetimeMaximumCheckStep: ValidateCSLPLifetimeMaximumCheckStep,
+    private readonly validateCSLPLifetimeMaximumCheckStep: ValidateCSLPLifetimeMaximumPartTimeCheckStep,
     private readonly applyOverawardsDeductionsStep: ApplyOverawardsDeductionsStep,
     private readonly calculateEffectiveValueStep: CalculateEffectiveValueStep,
     private readonly calculateTuitionRemittanceEffectiveAmountStep: CalculateTuitionRemittanceEffectiveAmountStep,
