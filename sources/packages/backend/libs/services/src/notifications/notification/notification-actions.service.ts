@@ -718,9 +718,8 @@ export class NotificationActionsService {
       );
       return;
     }
-    const ministryNotificationsToSend = [];
-    notificationDetails.emailContacts.forEach((emailContact) => {
-      const ministryNotificationToSend = {
+    const ministryNotificationsToSend = notificationDetails.emailContacts.map(
+      (emailContact) => ({
         userId: auditUser.id,
         messageType:
           NotificationMessageType.MinistryNotificationDisbursementBlocked,
@@ -737,9 +736,8 @@ export class NotificationActionsService {
           },
         },
         metadata: { disbursementId },
-      };
-      ministryNotificationsToSend.push(ministryNotificationToSend);
-    });
+      }),
+    );
     // Save notifications to be sent to the ministry into the notification table.
     await this.notificationService.saveNotifications(
       ministryNotificationsToSend,
@@ -768,9 +766,8 @@ export class NotificationActionsService {
       );
       return;
     }
-    const ministryNotificationsToSend = [];
-    notificationDetails.emailContacts.forEach((emailContact) => {
-      const ministryNotificationToSend = {
+    const ministryNotificationsToSend = notificationDetails.emailContacts.map(
+      (emailContact) => ({
         userId: auditUser.id,
         messageType:
           NotificationMessageType.ApplicationExceptionRequestNotification,
@@ -786,9 +783,8 @@ export class NotificationActionsService {
             dateTime: this.getDateTimeOnPSTTimeZone(),
           },
         },
-      };
-      ministryNotificationsToSend.push(ministryNotificationToSend);
-    });
+      }),
+    );
     // Save notifications to be sent to the ministry into the notification table.
     await this.notificationService.saveNotifications(
       ministryNotificationsToSend,
@@ -817,9 +813,8 @@ export class NotificationActionsService {
       );
       return;
     }
-    const ministryNotificationsToSend = [];
-    notificationDetails.emailContacts.forEach((emailContact) => {
-      const ministryNotificationToSend = {
+    const ministryNotificationsToSend = notificationDetails.emailContacts.map(
+      (emailContact) => ({
         userId: auditUser.id,
         messageType:
           NotificationMessageType.ApplicationEditedTooManyTimesNotification,
@@ -835,9 +830,8 @@ export class NotificationActionsService {
             dateTime: this.getDateTimeOnPSTTimeZone(),
           },
         },
-      };
-      ministryNotificationsToSend.push(ministryNotificationToSend);
-    });
+      }),
+    );
     // Save notifications to be sent to the ministry into the notification table.
     await this.notificationService.saveNotifications(
       ministryNotificationsToSend,
@@ -866,9 +860,8 @@ export class NotificationActionsService {
       );
       return;
     }
-    const ministryNotificationsToSend = [];
-    notificationDetails.emailContacts.forEach((emailContact) => {
-      const ministryNotificationToSend = {
+    const ministryNotificationsToSend = notificationDetails.emailContacts.map(
+      (emailContact) => ({
         userId: auditUser.id,
         messageType:
           NotificationMessageType.StudentSubmittedChangeRequestNotification,
@@ -884,9 +877,8 @@ export class NotificationActionsService {
             dateTime: this.getDateTimeOnPSTTimeZone(),
           },
         },
-      };
-      ministryNotificationsToSend.push(ministryNotificationToSend);
-    });
+      }),
+    );
     // Save notifications to be sent to the ministry into the notification table.
     await this.notificationService.saveNotifications(
       ministryNotificationsToSend,
@@ -915,9 +907,8 @@ export class NotificationActionsService {
       );
       return;
     }
-    const ministryNotificationsToSend = [];
-    notificationDetails.emailContacts.forEach((emailContact) => {
-      const ministryNotificationToSend = {
+    const ministryNotificationsToSend = notificationDetails.emailContacts.map(
+      (emailContact) => ({
         userId: auditUser.id,
         messageType:
           NotificationMessageType.StudentRequestsBasicBCeIDAccountNotification,
@@ -932,9 +923,8 @@ export class NotificationActionsService {
             dateTime: this.getDateTimeOnPSTTimeZone(),
           },
         },
-      };
-      ministryNotificationsToSend.push(ministryNotificationToSend);
-    });
+      }),
+    );
     // Save notifications to be sent to the ministry into the notification table.
     await this.notificationService.saveNotifications(
       ministryNotificationsToSend,
@@ -963,9 +953,8 @@ export class NotificationActionsService {
       );
       return;
     }
-    const ministryNotificationsToSend = [];
-    notificationDetails.emailContacts.forEach((emailContact) => {
-      const ministryNotificationToSend = {
+    const ministryNotificationsToSend = notificationDetails.emailContacts.map(
+      (emailContact) => ({
         userId: auditUser.id,
         messageType:
           NotificationMessageType.ApplicationOfferingChangeRequestApprovedByStudentNotification,
@@ -981,9 +970,8 @@ export class NotificationActionsService {
             dateTime: this.getDateTimeOnPSTTimeZone(),
           },
         },
-      };
-      ministryNotificationsToSend.push(ministryNotificationToSend);
-    });
+      }),
+    );
     // Save notifications to be sent to the ministry into the notification table.
     await this.notificationService.saveNotifications(
       ministryNotificationsToSend,
@@ -1012,9 +1000,8 @@ export class NotificationActionsService {
       );
       return;
     }
-    const ministryNotificationsToSend = [];
-    notificationDetails.emailContacts.forEach((emailContact) => {
-      const ministryNotificationToSend = {
+    const ministryNotificationsToSend = notificationDetails.emailContacts.map(
+      (emailContact) => ({
         userId: auditUser.id,
         messageType:
           NotificationMessageType.InstitutionRequestsDesignationNotification,
@@ -1028,9 +1015,8 @@ export class NotificationActionsService {
             dateTime: this.getDateTimeOnPSTTimeZone(),
           },
         },
-      };
-      ministryNotificationsToSend.push(ministryNotificationToSend);
-    });
+      }),
+    );
     // Save notifications to be sent to the ministry into the notification table.
     await this.notificationService.saveNotifications(
       ministryNotificationsToSend,
@@ -1059,9 +1045,8 @@ export class NotificationActionsService {
       );
       return;
     }
-    const ministryNotificationsToSend = [];
-    notificationDetails.emailContacts.forEach((emailContact) => {
-      const ministryNotificationToSend = {
+    const ministryNotificationsToSend = notificationDetails.emailContacts.map(
+      (emailContact) => ({
         userId: auditUser.id,
         messageType:
           NotificationMessageType.InstitutionAddsPendingProgramNotification,
@@ -1076,9 +1061,8 @@ export class NotificationActionsService {
             dateTime: this.getDateTimeOnPSTTimeZone(),
           },
         },
-      };
-      ministryNotificationsToSend.push(ministryNotificationToSend);
-    });
+      }),
+    );
     // Save notifications to be sent to the ministry into the notification table.
     await this.notificationService.saveNotifications(
       ministryNotificationsToSend,
@@ -1107,9 +1091,8 @@ export class NotificationActionsService {
       );
       return;
     }
-    const ministryNotificationsToSend = [];
-    notificationDetails.emailContacts.forEach((emailContact) => {
-      const ministryNotificationToSend = {
+    const ministryNotificationsToSend = notificationDetails.emailContacts.map(
+      (emailContact) => ({
         userId: auditUser.id,
         messageType:
           NotificationMessageType.InstitutionAddsPendingOfferingNotification,
@@ -1126,9 +1109,8 @@ export class NotificationActionsService {
             dateTime: this.getDateTimeOnPSTTimeZone(),
           },
         },
-      };
-      ministryNotificationsToSend.push(ministryNotificationToSend);
-    });
+      }),
+    );
     // Save notifications to be sent to the ministry into the notification table.
     await this.notificationService.saveNotifications(
       ministryNotificationsToSend,
