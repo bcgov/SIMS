@@ -57,9 +57,9 @@ export class PartTimeCalculationProcess extends ECertCalculationProcess {
   protected calculationSteps(): ECertProcessStep[] {
     return [
       this.validateDisbursementPartTimeStep,
+      this.validateCSLPLifetimeMaximumCheckStep,
       this.applyOverawardsDeductionsStep,
       this.calculateEffectiveValueStep,
-      this.validateCSLPLifetimeMaximumCheckStep,
       this.calculateTuitionRemittanceEffectiveAmountStep,
       this.createBCTotalGrantsStep,
       this.persistCalculationsStep,

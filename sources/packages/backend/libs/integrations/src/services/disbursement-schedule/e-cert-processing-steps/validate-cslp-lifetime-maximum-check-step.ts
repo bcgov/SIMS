@@ -48,7 +48,7 @@ export class ValidateCSLPLifetimeMaximumCheckStep implements ECertProcessStep {
       );
     //Check if lifetime maximum CSLP is less than or equal to the sum of disbursed CSLP and latest student loan balance.
     return (
-      lifetimeMaximumsCSLP <=
+      lifetimeMaximumsCSLP >=
       (disbursementCSLP ? disbursementCSLP.valueAmount : 0) +
         (studentLoanBalances[0] ? studentLoanBalances[0].cslBalance : 0)
     );
