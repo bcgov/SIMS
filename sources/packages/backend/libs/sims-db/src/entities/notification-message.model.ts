@@ -31,7 +31,7 @@ export class NotificationMessage extends RecordDataModel {
   })
   templateId: string;
   /**
-   * Address to send the email notification.
+   * Email addresses to receive a notification when these emails are targeted to someone, not the user, for instance, the Ministry or an external party.
    */
   @Column({
     name: "email_contacts",

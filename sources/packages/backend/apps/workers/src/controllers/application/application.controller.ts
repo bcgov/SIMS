@@ -129,16 +129,14 @@ export class ApplicationController {
         application.data,
       );
       if (exceptions.length) {
-        let createdException: ApplicationException;
-        await this.dataSource.transaction(async (entityManager) => {
-          createdException =
+        return await this.dataSource.transaction(async (entityManager) => {
+          const createdException =
             await this.applicationExceptionService.createException(
               job.variables.applicationId,
               exceptions,
               entityManager,
             );
-          jobLogger.log("Exception created.");
-          jobLogger.log("Creating notification for the created exception.");
+          jobLogger.log("Verified and created exception.");
           const student = application.student;
           const ministryNotification: ApplicationExceptionRequestNotification =
             {
@@ -153,12 +151,12 @@ export class ApplicationController {
             entityManager,
           );
           jobLogger.log("Created notification for the created exception.");
-        });
-        return job.complete({
-          applicationExceptionStatus: createdException.exceptionStatus,
+          return job.complete({
+            applicationExceptionStatus: createdException.exceptionStatus,
+          });
         });
       }
-      jobLogger.log("Verified application exception.");
+      jobLogger.log("Verified application exception. No exceptions created.");
       return job.complete({
         applicationExceptionStatus: ApplicationExceptionStatus.Approved,
       });
