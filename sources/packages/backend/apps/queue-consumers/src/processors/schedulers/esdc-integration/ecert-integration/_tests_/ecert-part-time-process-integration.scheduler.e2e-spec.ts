@@ -63,7 +63,7 @@ describe(
         {
           id: NotificationMessageType.MinistryNotificationDisbursementBlocked,
         },
-        { emailContacts: ["shashank.x.shekhar@gov.bc.ca"] },
+        { emailContacts: ["dummy@gmail.com"] },
       );
     });
 
