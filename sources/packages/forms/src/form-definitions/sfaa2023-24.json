@@ -1,5 +1,4 @@
 {
-  "_id": "65e8d8dc940cd2f72a5f6304",
   "title": "SFAA2023-24",
   "name": "SFAA2023-24",
   "path": "sfaa2023-24",
@@ -8,7 +7,6 @@
   "tags": [
     "common"
   ],
-  "owner": "65e8d72a78696f831ef28c83",
   "components": [
     {
       "title": "Welcome",
