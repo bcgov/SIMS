@@ -81,7 +81,6 @@ export interface IER12WorkflowData {
     livingWithParents: FormYesNoOptions;
     numberOfParents?: number;
   };
-
   calculatedData: {
     pdppdStatus: boolean;
     parentalAssets?: number;
