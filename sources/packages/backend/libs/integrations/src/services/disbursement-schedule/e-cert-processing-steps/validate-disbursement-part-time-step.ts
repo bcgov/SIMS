@@ -70,19 +70,34 @@ export class ValidateDisbursementPartTimeStep
       return true;
     }
     // Fetch lifetime maximum of CSLP from the workflow data.
-    const lifetimeMaximumsCSLP =
-      await this.eCertGenerationService.getCSLPLifetimeMaximums(
+    const lifetimeMaximumsCSLPPromise =
+      this.eCertGenerationService.getCSLPLifetimeMaximums(
         eCertDisbursement.assessmentId,
         entityManager,
       );
     //Get latest CSLP monthly balance.
-    const latestCSLPBalance =
-      await this.studentLoanBalanceSharedService.getLatestCSLPBalance(
+    const latestCSLPBalancePromise =
+      this.studentLoanBalanceSharedService.getLatestCSLPBalance(
         eCertDisbursement.studentId,
       );
+    const [lifetimeMaximumsCSLP, latestCSLPBalance] = await Promise.all([
+      lifetimeMaximumsCSLPPromise,
+      latestCSLPBalancePromise,
+    ]);
     //Check if lifetime maximum CSLP is less than or equal to the sum of disbursed CSLP and latest student loan balance.
-    return (
-      lifetimeMaximumsCSLP >= disbursementCSLP.valueAmount + latestCSLPBalance
-    );
+    if (
+      lifetimeMaximumsCSLP >=
+      disbursementCSLP.valueAmount + latestCSLPBalance
+    ) {
+      log.info(
+        "Lifetime maximum CSLP is less than or equal to the sum of disbursed CSLP and latest student loan balance",
+      );
+      return true;
+    } else {
+      log.info(
+        "Lifetime maximum CSLP is reached, part time disbursement is stopped.",
+      );
+      return false;
+    }
   }
 }
