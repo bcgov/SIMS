@@ -605,7 +605,7 @@ export class OfferingValidationModel {
   /**
    * Institution location name of the institution that will be associated with this offering.
    */
-  @IsNotEmpty({ message: `${userFriendlyNames.locationName} is required.` })
+  @IsNotEmpty({ message: "Institution location name is required." })
   locationName: string;
   /**
    * Program information required to execute the offering validation.
