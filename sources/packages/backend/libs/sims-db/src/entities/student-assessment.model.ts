@@ -331,7 +331,7 @@ export interface WorkflowData {
     numberOfParents?: number;
   };
   dmnValues: {
-    lifetimeMaximumCSLP: number;
+    lifetimeMaximumCSLP?: number;
   };
   calculatedData: {
     parentalAssets?: number;
