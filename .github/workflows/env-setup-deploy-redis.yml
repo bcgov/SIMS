@@ -14,7 +14,7 @@ on:
         default: ""
 
 jobs:
-  recoverRedis:
+  deployRedis:
     name: Deploy Redis in Openshift
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}

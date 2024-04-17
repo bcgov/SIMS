@@ -17,8 +17,8 @@ on:
         default: 6379
 
 jobs:
-  recoverRedis:
-    name: Deploy Redis in Openshift
+  initRedisCluster:
+    name: Init Redis Cluster in Openshift
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     env:
@@ -31,7 +31,7 @@ jobs:
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
-      - name: Init Redis
+      - name: Init Redis Cluster
         working-directory: "./devops/"
         run: |
           make init-redis-cluster NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }} REDIS_PORT=${{ inputs.redisPort }}

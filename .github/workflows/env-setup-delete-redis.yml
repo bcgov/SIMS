@@ -14,7 +14,7 @@ on:
         default: ""
 
 jobs:
-  recoverRedis:
+  deleteRedis:
     name: Delete Redis in Openshift
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
