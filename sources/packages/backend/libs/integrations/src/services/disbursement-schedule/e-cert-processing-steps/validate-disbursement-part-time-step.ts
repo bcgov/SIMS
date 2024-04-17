@@ -29,11 +29,11 @@ export class ValidateDisbursementPartTimeStep
    * @param entityManager used to execute the commands in the same transaction.
    * @param log cumulative log summary.
    */
-  executeStep(
+  async executeStep(
     eCertDisbursement: EligibleECertDisbursement,
     entityManager: EntityManager,
     log: ProcessSummary,
-  ): boolean {
+  ): Promise<boolean> {
     log.info("Executing part-time disbursement validations.");
     let shouldContinue = super.validate(eCertDisbursement, log);
     // Validate stop part-time disbursement restrictions.
@@ -47,11 +47,14 @@ export class ValidateDisbursementPartTimeStep
       );
       shouldContinue = false;
     }
-    this.validateCSLPLifetimeMaximumCheckStep(
+    const validateLifetimeMaximumCSLP = await this.validateCSLPLifetimeMaximum(
       eCertDisbursement,
       entityManager,
       log,
     );
+    if (!validateLifetimeMaximumCSLP) {
+      shouldContinue = false;
+    }
     return shouldContinue;
   }
 
@@ -61,13 +64,13 @@ export class ValidateDisbursementPartTimeStep
    * @param entityManager used to execute the commands in the same transaction.
    * @param log cumulative log summary.
    */
-  private async validateCSLPLifetimeMaximumCheckStep(
+  private async validateCSLPLifetimeMaximum(
     eCertDisbursement: EligibleECertDisbursement,
     entityManager: EntityManager,
     log: ProcessSummary,
   ) {
     log.info("Validate CSLP Lifetime Maximum.");
-    //Get the disbursed value for the CSLP in the current disbursement.
+    // Get the disbursed value for the CSLP in the current disbursement.
     const disbursementCSLP =
       eCertDisbursement.disbursement.disbursementValues.find(
         (item) => item.valueCode === CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE,
@@ -81,7 +84,7 @@ export class ValidateDisbursementPartTimeStep
         eCertDisbursement.assessmentId,
         entityManager,
       );
-    //Get latest CSLP monthly balance.
+    // Get latest CSLP monthly balance.
     const latestCSLPBalancePromise =
       this.studentLoanBalanceSharedService.getLatestCSLPBalance(
         eCertDisbursement.studentId,
@@ -90,20 +93,19 @@ export class ValidateDisbursementPartTimeStep
       lifetimeMaximumsCSLPPromise,
       latestCSLPBalancePromise,
     ]);
-    //Check if lifetime maximum CSLP is less than or equal to the sum of disbursed CSLP and latest student loan balance.
+    // Check if lifetime maximum CSLP is less than or equal to the sum of disbursed CSLP and latest student loan balance.
     if (
       lifetimeMaximumsCSLP >=
       disbursementCSLP.valueAmount + latestCSLPBalance
     ) {
       log.info(
-        "Lifetime maximum CSLP is less than or equal to the sum of disbursed CSLP and latest student loan balance",
+        "Lifetime maximum CSLP is greater than or equal to the sum of disbursed CSLP and latest student loan balance.",
       );
       return true;
-    } else {
-      log.info(
-        "Lifetime maximum CSLP is reached, part time disbursement is stopped.",
-      );
-      return false;
     }
+    log.info(
+      "Lifetime maximum CSLP is reached, part time disbursement is stopped.",
+    );
+    return false;
   }
 }

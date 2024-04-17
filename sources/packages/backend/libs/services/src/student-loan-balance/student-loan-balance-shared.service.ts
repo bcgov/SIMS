@@ -15,13 +15,14 @@ export class StudentLoanBalanceSharedService {
    * @param studentId Student id.
    * @returns latest CSLP balance or 0 if there are no records.
    */
-  async getLatestCSLPBalance(student_id: number): Promise<number> {
+  async getLatestCSLPBalance(studentId: number): Promise<number> {
     const getStudentLatestLoanBalance = await this.studentLoanBalanceRepo
-      .createQueryBuilder("studentLoanBalances")
-      .select(["studentLoanBalances.cslBalance"])
-      .innerJoin("studentLoanBalances.student", "student")
-      .where("student.id = :student_id", { student_id })
+      .createQueryBuilder("studentLoanBalance")
+      .select("studentLoanBalance.cslBalance")
+      .innerJoin("studentLoanBalance.student", "student")
+      .where("student.id = :studentId", { studentId })
       .limit(1)
+      .orderBy("studentLoanBalance.balanceDate", "DESC")
       .getOne();
     return getStudentLatestLoanBalance?.cslBalance ?? 0;
   }

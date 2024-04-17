@@ -406,11 +406,15 @@ export class AssessmentController {
           saveAssessmentCalculationStartDate,
           getProgramYearTotalAwards,
         ]);
-        // Fetch the latest CSLP balance for the student.
-        result["latestCSLPBalance"] =
-          await this.studentLoanBalanceSharedService.getLatestCSLPBalance(
-            studentId,
-          );
+        if (
+          assessment.offering.offeringIntensity === OfferingIntensity.partTime
+        ) {
+          // Fetch the latest CSLP balance for the student.
+          result.latestCSLPBalance =
+            await this.studentLoanBalanceSharedService.getLatestCSLPBalance(
+              studentId,
+            );
+        }
         jobLogger.log(
           `The assessment calculation order has been verified and the assessment id ${assessmentId} is ready to be processed.`,
         );
