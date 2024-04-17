@@ -19,6 +19,8 @@ import {
   getUserFullNameLikeSearch,
   transformToApplicationEntitySortField,
   StudentAssessmentStatus,
+  Notification,
+  NotificationMessageType,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
@@ -60,6 +62,9 @@ import {
 import { InstitutionLocationService } from "../institution-location/institution-location.service";
 import { StudentService } from "..";
 
+interface NotificationData {
+  notificationCount: number;
+}
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
   "ONLY_ONE_APPLICATION_DRAFT_PER_STUDENT_ALLOWED";
@@ -308,20 +313,39 @@ export class ApplicationService extends RecordDataModelService<Application> {
     const applicationsCount = await applicationRepository.count({
       where: { applicationNumber },
     });
-    if (applicationsCount === APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION + 1) {
-      const student = await this.studentService.getStudentById(studentId);
-      const ministryNotification: ApplicationEditedTooManyTimesNotification = {
-        givenNames: student.user.firstName,
-        lastName: student.user.lastName,
-        email: student.user.email,
-        birthDate: student.birthDate,
-        applicationNumber,
-      };
-      await this.notificationActionService.saveApplicationEditedTooManyTimesNotification(
-        ministryNotification,
-        applicationNumber,
-        transactionalEntityManager,
-      );
+    if (applicationsCount > APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION) {
+      const notification = await transactionalEntityManager
+        .getRepository(Notification)
+        .createQueryBuilder("notification")
+        .select("count(*)::int", "notificationCount")
+        .innerJoin("notification.notificationMessage", "notificationMessage")
+        .where("notificationMessage.id = :notificationMessageId", {
+          notificationMessageId:
+            NotificationMessageType.ApplicationEditedTooManyTimesNotification,
+        })
+        .andWhere(
+          "notification.metadata->>'applicationNumber' = :applicationNumber",
+          {
+            applicationNumber,
+          },
+        )
+        .getRawOne<NotificationData>();
+      if (!notification.notificationCount) {
+        const student = await this.studentService.getStudentById(studentId);
+        const ministryNotification: ApplicationEditedTooManyTimesNotification =
+          {
+            givenNames: student.user.firstName,
+            lastName: student.user.lastName,
+            email: student.user.email,
+            birthDate: student.birthDate,
+            applicationNumber,
+          };
+        await this.notificationActionService.saveApplicationEditedTooManyTimesNotification(
+          ministryNotification,
+          applicationNumber,
+          transactionalEntityManager,
+        );
+      }
     }
   }
 
