@@ -325,7 +325,7 @@ export class ECertGenerationService {
   }
 
   /**
-   * Get the lifetime maximums of CSLP and is used in the e-Cert generation.
+   * Get the lifetime maximums of CSLP of the student which is used in the e-Cert generation.
    * @param assessmentId disbursement assessment id.
    * @param entityManager used to execute the commands in the same transaction.
    * @returns lifetime maximums of CSLP.
