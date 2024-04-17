@@ -11,10 +11,6 @@ on:
         description: "Build Ref"
         required: true
         default: ""
-      redisPort:
-        description: "Redis Port"
-        required: false
-        default: 6379
 
 jobs:
   initRedisCluster:
@@ -34,4 +30,4 @@ jobs:
       - name: Init Redis Cluster
         working-directory: "./devops/"
         run: |
-          make init-redis-cluster NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }} REDIS_PORT=${{ inputs.redisPort }}
+          echo "yes" | make init-redis-cluster NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
