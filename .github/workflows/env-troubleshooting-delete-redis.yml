@@ -1,0 +1,34 @@
+name: Env Troubleshooting - Delete Redis in Openshift
+run-name: Env Troubleshooting - Delete Redis in Openshift from ${{ inputs.environment }} using ${{ inputs.gitRef }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment"
+        required: true
+        type: environment
+      gitRef:
+        description: "Build Ref"
+        required: true
+        default: ""
+
+jobs:
+  recoverRedis:
+    name: Delete Redis in Openshift
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    env:
+      NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
+    steps:
+      - name: Checkout Target Branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.gitRef }}
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
+      - name: Delete Redis
+        working-directory: "./devops/"
+        run: |
+          make delete-redis NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
