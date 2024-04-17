@@ -26,6 +26,7 @@ import {
   OfferingValidationResult,
   OfferingValidationModel,
   CreateFromValidatedOfferingError,
+  InstitutionLocationService,
 } from "../../services";
 import {
   deliveryMethod,
@@ -51,6 +52,7 @@ export class EducationProgramOfferingControllerService {
     private readonly offeringService: EducationProgramOfferingService,
     private readonly programService: EducationProgramService,
     private readonly programOfferingService: EducationProgramOfferingService,
+    private readonly institutionLocationService: InstitutionLocationService,
   ) {}
 
   /**
@@ -163,6 +165,9 @@ export class EducationProgramOfferingControllerService {
       programId,
       institutionId,
     );
+    // Get institution location details.
+    const institutionLocation =
+      await this.institutionLocationService.getInstitutionLocation(locationId);
     if (!program) {
       throw new NotFoundException(
         "Program to create the offering not found for the institution.",
@@ -171,6 +176,7 @@ export class EducationProgramOfferingControllerService {
     return {
       ...payload,
       locationId,
+      locationName: institutionLocation.name,
       studyBreaks: payload.studyBreaks,
       programContext: program,
     };
