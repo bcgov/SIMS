@@ -26,12 +26,12 @@ export class ValidateDisbursementPartTimeStep
   /**
    * Validate part-time disbursements.
    * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
-   * @param _entityManager not used for this step.
+   * @param entityManager used to execute the commands in the same transaction.
    * @param log cumulative log summary.
    */
   executeStep(
     eCertDisbursement: EligibleECertDisbursement,
-    _entityManager: EntityManager,
+    entityManager: EntityManager,
     log: ProcessSummary,
   ): boolean {
     log.info("Executing part-time disbursement validations.");
@@ -49,12 +49,18 @@ export class ValidateDisbursementPartTimeStep
     }
     this.validateCSLPLifetimeMaximumCheckStep(
       eCertDisbursement,
-      _entityManager,
+      entityManager,
       log,
     );
     return shouldContinue;
   }
 
+  /**
+   * Validate if CSLP disbursed exceeded the lifetime maximums.
+   * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
+   * @param entityManager used to execute the commands in the same transaction.
+   * @param log cumulative log summary.
+   */
   private async validateCSLPLifetimeMaximumCheckStep(
     eCertDisbursement: EligibleECertDisbursement,
     entityManager: EntityManager,

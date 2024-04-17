@@ -341,6 +341,6 @@ export class ECertGenerationService {
       .select("studentAssessment.workflowData ->> 'dmnValues'", "dmnValues")
       .where("studentAssessment.id = :assessmentId", { assessmentId })
       .getRawOne();
-    return dmnValues.lifetimeMaximumCSLP;
+    return dmnValues?.lifetimeMaximumCSLP ?? 0;
   }
 }
