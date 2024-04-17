@@ -147,7 +147,7 @@ objects:
             resources:
               requests:
                 storage: ${PVC_SIZE}
-          storageClassName: ${STORAGE_CLASS}
+            storageClassName: ${STORAGE_CLASS}
   - apiVersion: policy/v1
     kind: PodDisruptionBudget
     metadata:
