@@ -330,7 +330,7 @@ export interface WorkflowData {
     livingWithParents: FormYesNoOptions;
     numberOfParents?: number;
   };
-  dmnValues: {
+  dmnValues?: {
     lifetimeMaximumCSLP?: number;
   };
   calculatedData: {
