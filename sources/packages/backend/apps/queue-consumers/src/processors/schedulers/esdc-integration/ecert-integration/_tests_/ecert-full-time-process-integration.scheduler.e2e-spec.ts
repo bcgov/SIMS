@@ -496,9 +496,6 @@ describe(
                 livingWithParents: FormYesNoOptions.Yes,
                 numberOfParents: 2,
               },
-              dmnValues: {
-                lifetimeMaximumCSLP: 0,
-              },
               calculatedData: {
                 familySize: 2,
                 studentMSOLAllowance: 7777,
@@ -571,9 +568,6 @@ describe(
                 livingWithParents: FormYesNoOptions.Yes,
                 numberOfParents: 2,
               },
-              dmnValues: {
-                lifetimeMaximumCSLP: 0,
-              },
               calculatedData: {
                 familySize: 2,
                 studentMSOLAllowance: 7777,
@@ -643,9 +637,6 @@ describe(
                 relationshipStatus: RelationshipStatus.Single,
                 livingWithParents: FormYesNoOptions.Yes,
                 numberOfParents: 2,
-              },
-              dmnValues: {
-                lifetimeMaximumCSLP: 0,
               },
               calculatedData: {
                 familySize: 2,

@@ -81,9 +81,7 @@ export interface IER12WorkflowData {
     livingWithParents: FormYesNoOptions;
     numberOfParents?: number;
   };
-  dmnValues: {
-    lifetimeMaximumCSLP: number;
-  };
+
   calculatedData: {
     pdppdStatus: boolean;
     parentalAssets?: number;

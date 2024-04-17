@@ -9,9 +9,7 @@ export const WORKFLOW_DATA_SINGLE_INDEPENDENT_WITH_NO_DEPENDENTS: IER12WorkflowD
       livingWithParents: FormYesNoOptions.No,
       numberOfParents: undefined,
     },
-    dmnValues: {
-      lifetimeMaximumCSLP: 0,
-    },
+
     calculatedData: {
       pdppdStatus: false,
       parentalAssets: undefined,
@@ -40,9 +38,6 @@ export const WORKFLOW_DATA_MARRIED_WITH_DEPENDENTS: IER12WorkflowData = {
     relationshipStatus: RelationshipStatus.Married,
     livingWithParents: FormYesNoOptions.No,
     numberOfParents: undefined,
-  },
-  dmnValues: {
-    lifetimeMaximumCSLP: 0,
   },
   calculatedData: {
     pdppdStatus: false,
@@ -73,9 +68,6 @@ export const WORKFLOW_DATA_DEPENDANT_RELATIONSHIP_OTHER_LIVING_WITH_PARENTS: IER
       relationshipStatus: RelationshipStatus.Other,
       livingWithParents: FormYesNoOptions.Yes,
       numberOfParents: 2,
-    },
-    dmnValues: {
-      lifetimeMaximumCSLP: 0,
     },
     calculatedData: {
       pdppdStatus: false,
