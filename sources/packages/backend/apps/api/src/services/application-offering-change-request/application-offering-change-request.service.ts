@@ -367,6 +367,37 @@ export class ApplicationOfferingChangeRequestService {
   }
 
   /**
+   * Gets the application offering change request details.
+   * @param applicationOfferingChangeRequestId application offering change request id to get the details.
+   * @returns fetched application offering change request details.
+   */
+  async getApplicationOfferingChangeRequestById(
+    applicationOfferingChangeRequestId: number,
+  ): Promise<ApplicationOfferingChangeRequest> {
+    return this.applicationOfferingChangeRequestRepo.findOne({
+      select: {
+        id: true,
+        application: {
+          id: true,
+          applicationNumber: true,
+          student: {
+            id: true,
+            birthDate: true,
+            user: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
+        },
+      },
+      relations: { application: { student: { user: true } } },
+      where: { id: applicationOfferingChangeRequestId },
+    });
+  }
+
+  /**
    * Get the Application Offering Change Request Status by id.
    * @param applicationOfferingChangeRequestId the application offering change request id.
    * @param options method options:
@@ -541,27 +572,9 @@ export class ApplicationOfferingChangeRequestService {
     const auditUser = { id: auditUserId } as User;
     const currentDate = new Date();
     const applicationOfferingChangeRequestDetails =
-      await this.applicationOfferingChangeRequestRepo.findOne({
-        select: {
-          id: true,
-          application: {
-            id: true,
-            applicationNumber: true,
-            student: {
-              id: true,
-              birthDate: true,
-              user: {
-                id: true,
-                firstName: true,
-                lastName: true,
-                email: true,
-              },
-            },
-          },
-        },
-        relations: { application: { student: { user: true } } },
-        where: { id: applicationOfferingChangeRequestId },
-      });
+      await this.getApplicationOfferingChangeRequestById(
+        applicationOfferingChangeRequestId,
+      );
     const student = applicationOfferingChangeRequestDetails.application.student;
     const ministryNotification: ApplicationOfferingChangeRequestApprovedByStudentNotification =
       {

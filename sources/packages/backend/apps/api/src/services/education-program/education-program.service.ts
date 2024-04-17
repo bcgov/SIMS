@@ -52,7 +52,6 @@ const OTHER_REGULATORY_BODY = "other";
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
   private readonly offeringsRepo: Repository<EducationProgramOffering>;
-  private readonly institutionRepo: Repository<Institution>;
   constructor(
     private readonly dataSource: DataSource,
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
@@ -62,7 +61,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   ) {
     super(dataSource.getRepository(EducationProgram));
     this.offeringsRepo = dataSource.getRepository(EducationProgramOffering);
-    this.institutionRepo = dataSource.getRepository(Institution);
   }
 
   /**
@@ -764,14 +762,9 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     institutionId: number,
     entityManager: EntityManager,
   ) {
-    const institution = await this.institutionRepo.findOne({
-      select: {
-        operatingName: true,
-        legalOperatingName: true,
-        primaryEmail: true,
-      },
-      where: { id: institutionId },
-    });
+    const institution = await this.institutionService.getInstitutionDetailById(
+      institutionId,
+    );
     const ministryNotification: InstitutionAddsPendingProgramNotification = {
       institutionName: institution.legalOperatingName,
       institutionOperatingName: institution.operatingName,

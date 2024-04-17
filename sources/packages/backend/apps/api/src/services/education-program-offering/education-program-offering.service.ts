@@ -74,18 +74,17 @@ import {
   InstitutionAddsPendingOfferingNotification,
   NotificationActionsService,
 } from "@sims/services";
+import { InstitutionLocationService } from "..";
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
-  private readonly institutionLocationRepo: Repository<InstitutionLocation>;
   constructor(
     private readonly dataSource: DataSource,
     private readonly offeringValidationService: EducationProgramOfferingValidationService,
     private readonly notificationActionsService: NotificationActionsService,
+    private readonly institutionLocationService: InstitutionLocationService,
     private readonly entityManager: EntityManager,
   ) {
     super(dataSource.getRepository(EducationProgramOffering));
-    this.institutionLocationRepo =
-      this.dataSource.getRepository(InstitutionLocation);
   }
 
   /**
@@ -211,20 +210,10 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     >,
     entityManager: EntityManager,
   ): Promise<void> {
-    const institutionLocation = await this.institutionLocationRepo.findOne({
-      select: {
-        id: true,
-        name: true,
-        institution: {
-          id: true,
-          operatingName: true,
-          legalOperatingName: true,
-          primaryEmail: true,
-        },
-      },
-      relations: { institution: true },
-      where: { id: programOffering.institutionLocation.id },
-    });
+    const institutionLocation =
+      await this.institutionLocationService.getInstitutionLocation(
+        programOffering.institutionLocation.id,
+      );
     const institution = institutionLocation.institution;
     const ministryNotification: InstitutionAddsPendingOfferingNotification = {
       institutionName: institution.legalOperatingName,

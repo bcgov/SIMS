@@ -158,6 +158,13 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
       .getMany();
   }
 
+  /**
+   * Gets the institution location details for the provided
+   * institution location id.
+   * @param locationId location id to fetch the details.
+   * @param institutionId related institution id.
+   * @returns fetched institution location details.
+   */
   async getInstitutionLocation(
     locationId: number,
     institutionId?: number,
@@ -170,16 +177,18 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         "institutionLocation.id",
         "institutionLocation.institutionCode",
         "institutionLocation.primaryContact",
+        "institution.operatingName",
+        "institution.legalOperatingName",
+        "institution.primaryEmail",
       ])
+      .innerJoin("institutionLocation.institution", "institution")
       .where("institutionLocation.id = :locationId", {
         locationId: locationId,
       });
     if (institutionId) {
-      query
-        .innerJoin("institutionLocation.institution", "institution")
-        .andWhere("institution.id = :id", {
-          id: institutionId,
-        });
+      query.andWhere("institution.id = :id", {
+        id: institutionId,
+      });
     }
     return query.getOne();
   }

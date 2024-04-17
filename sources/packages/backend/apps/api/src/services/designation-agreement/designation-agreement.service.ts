@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, Repository } from "typeorm";
+import { DataSource } from "typeorm";
 import {
   RecordDataModelService,
   DesignationAgreement,
@@ -19,6 +19,7 @@ import {
   InstitutionRequestsDesignationNotification,
   NotificationActionsService,
 } from "@sims/services";
+import { InstitutionService } from "..";
 
 /**
  * Manages the operations needed for designation agreements that are submitted by the institutions
@@ -27,13 +28,12 @@ import {
  */
 @Injectable()
 export class DesignationAgreementService extends RecordDataModelService<DesignationAgreement> {
-  private readonly institutionRepo: Repository<Institution>;
   constructor(
     private readonly dataSource: DataSource,
+    private readonly institutionService: InstitutionService,
     private readonly notificationActionsService: NotificationActionsService,
   ) {
     super(dataSource.getRepository(DesignationAgreement));
-    this.institutionRepo = dataSource.getRepository(Institution);
   }
 
   /**
@@ -77,14 +77,9 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
         return newLocation;
       },
     );
-    const institution = await this.institutionRepo.findOne({
-      select: {
-        operatingName: true,
-        legalOperatingName: true,
-        primaryEmail: true,
-      },
-      where: { id: institutionId },
-    });
+    const institution = await this.institutionService.getInstitutionDetailById(
+      institutionId,
+    );
     const ministryNotification: InstitutionRequestsDesignationNotification = {
       institutionName: institution.legalOperatingName,
       institutionOperatingName: institution.operatingName,

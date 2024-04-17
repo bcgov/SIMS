@@ -691,6 +691,9 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       .select([
         "institution",
         "institution.businessGuid",
+        "institution.operatingName",
+        "institution.legalOperatingName",
+        "institution.primaryEmail",
         "institutionType.id",
         "institutionType.name",
       ])

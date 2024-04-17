@@ -38,22 +38,22 @@ import {
 } from "@sims/services/notifications";
 import { NoteSharedService } from "@sims/services";
 import { StudentFileService } from "../student-file/student-file.service";
+import { ApplicationService } from "../application/application.service";
 
 /**
  * Service layer for Student appeals.
  */
 @Injectable()
 export class StudentAppealService extends RecordDataModelService<StudentAppeal> {
-  private readonly applicationRepo: Repository<Application>;
   constructor(
     private readonly dataSource: DataSource,
     private readonly studentAppealRequestsService: StudentAppealRequestsService,
+    private readonly applicationService: ApplicationService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly noteSharedService: NoteSharedService,
     private readonly studentFileService: StudentFileService,
   ) {
     super(dataSource.getRepository(StudentAppeal));
-    this.applicationRepo = this.dataSource.getRepository(Application);
   }
 
   /**
@@ -101,23 +101,9 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
           { entityManager: entityManager },
         );
       }
-      const application = await this.applicationRepo.findOne({
-        select: {
-          id: true,
-          applicationNumber: true,
-          student: {
-            id: true,
-            birthDate: true,
-            user: { id: true, firstName: true, lastName: true, email: true },
-          },
-        },
-        relations: {
-          student: {
-            user: true,
-          },
-        },
-        where: { id: applicationId },
-      });
+      const application = await this.applicationService.getApplicationInfo(
+        applicationId,
+      );
       const student = application.student;
       const ministryNotification: StudentSubmittedChangeRequestNotification = {
         givenNames: student.user.firstName,

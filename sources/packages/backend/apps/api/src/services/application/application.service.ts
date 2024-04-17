@@ -1573,17 +1573,18 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
   /**
    * Gets the application details belonging to an institution location.
-   * @param locationId location id.
    * @param applicationId application id.
+   * @param locationId optional location id.
    * @returns student application.
    */
   async getApplicationInfo(
-    locationId: number,
     applicationId: number,
+    locationId?: number,
   ): Promise<Application> {
     return this.repo.findOne({
       select: {
         id: true,
+        applicationNumber: true,
         data: true as unknown,
         programYear: {
           id: true,
@@ -1596,7 +1597,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
           birthDate: true,
           user: {
             id: true,
+            firstName: true,
             lastName: true,
+            email: true,
           },
           sinValidation: {
             id: true,
@@ -1640,8 +1643,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
   ): Promise<void> {
     // Validate if the application exists and the location has access to it.
     const application = await this.getApplicationInfo(
-      locationId,
       applicationId,
+      locationId,
     );
     if (!application) {
       throw new CustomNamedError(
