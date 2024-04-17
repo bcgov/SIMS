@@ -82,8 +82,8 @@ export class EducationProgramOfferingImportCSVService {
           : OfferingTypes.Private,
       offeringDeclaration: csvModel.consent === YesNoOptions.Yes,
       courseLoad: csvModel.courseLoad,
-      locationId: locationsMap[csvModel.institutionLocationCode].id,
-      locationName: locationsMap[csvModel.institutionLocationCode].name,
+      locationId: locationsMap[csvModel.institutionLocationCode]?.id,
+      locationName: locationsMap[csvModel.institutionLocationCode]?.name,
       programContext: programsMap[csvModel.sabcProgramCode],
     }));
   }
