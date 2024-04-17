@@ -1,5 +1,5 @@
-name: Env Troubleshooting - Deploy Redis in Openshift
-run-name: Env Troubleshooting - Deploy Redis in Openshift from ${{ inputs.gitRef }} to ${{ inputs.environment }}
+name: Env Setup - Deploy Redis in Openshift
+run-name: Env Setup - Deploy Redis in Openshift from ${{ inputs.gitRef }} to ${{ inputs.environment }}
 
 on:
   workflow_dispatch:
