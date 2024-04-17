@@ -68,13 +68,13 @@ import {
   WILComponentOptions,
 } from "./education-program-offering-validation.models";
 import { EducationProgramOfferingValidationService } from "./education-program-offering-validation.service";
+import { InstitutionLocationService } from "../institution-location/institution-location.service";
 import * as os from "os";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   InstitutionAddsPendingOfferingNotification,
   NotificationActionsService,
 } from "@sims/services";
-import { InstitutionLocationService } from "..";
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
   constructor(
@@ -111,14 +111,18 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programOffering.parentOffering = programOffering;
 
     try {
-      await this.saveEducationProgramNotification(
+      const institutionLocation =
+        await this.institutionLocationService.getInstitutionLocation(
+          educationProgramOffering.locationId,
+        );
+      await this.saveEducationProgramOfferingNotification(
         {
           name: educationProgramOffering.programContext.name,
           offeringName: educationProgramOffering.offeringName,
         },
         {
           offeringStatus: programOffering.offeringStatus,
-          institutionLocation: programOffering.institutionLocation,
+          institutionLocation,
         },
         this.entityManager,
       );
@@ -163,6 +167,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       const maxPromisesAllowed = os.cpus().length;
       // Hold all the promises that must be processed.
       const promises: Promise<CreateValidatedOfferingResult>[] = [];
+      const notificationPromises: Promise<void>[] = [];
       const allResults: CreateValidatedOfferingResult[] = [];
       for (const validatedOffering of validatedOfferings) {
         promises.push(
@@ -172,9 +177,26 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
             auditUserId,
           ),
         );
+        notificationPromises.push(
+          this.saveEducationProgramOfferingNotification(
+            {
+              name: validatedOffering.offeringModel.programContext.name,
+              offeringName: validatedOffering.offeringModel.offeringName,
+            },
+            {
+              offeringStatus: validatedOffering.offeringStatus,
+              institutionLocation: {
+                id: validatedOffering.offeringModel.locationId,
+                name: validatedOffering.offeringModel.locationName,
+              },
+            },
+            entityManager,
+          ),
+        );
         if (promises.length >= maxPromisesAllowed) {
           // Waits for all be processed.
           const insertResults = await Promise.all(promises);
+          await Promise.all(notificationPromises);
           const newOfferings = insertResults.map(
             (result) => result.createdOfferingId,
           );
@@ -185,6 +207,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         }
       }
       const finalResults = await Promise.all(promises);
+      await Promise.all(notificationPromises);
       const newOfferings = finalResults.map(
         (result) => result.createdOfferingId,
       );
@@ -201,13 +224,15 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * @param programOffering program offering to be saved.
    * @param entityManager entity manager to be part of the transaction.
    */
-  private async saveEducationProgramNotification(
+  private async saveEducationProgramOfferingNotification(
     educationProgramOffering: Pick<OfferingValidationModel, "offeringName"> &
       Pick<OfferingValidationModel["programContext"], "name">,
-    programOffering: Pick<
-      EducationProgramOffering,
-      "offeringStatus" | "institutionLocation"
-    >,
+    programOffering: Pick<EducationProgramOffering, "offeringStatus"> & {
+      institutionLocation: Pick<
+        EducationProgramOffering["institutionLocation"],
+        "id" | "name"
+      >;
+    },
     entityManager: EntityManager,
   ): Promise<void> {
     const institutionLocation =

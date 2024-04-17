@@ -77,6 +77,7 @@ const userFriendlyNames = {
   lacksStudyBreaks: "Lacks study breaks",
   studyBreaks: "Study breaks",
   locationId: "Location",
+  locationName: "LocationName",
   programContext: "Program",
   breakStartDate: "Study break start date",
   breakEndDate: "Study break end date",
@@ -601,6 +602,11 @@ export class OfferingValidationModel {
     message: "Related institution location was not found or was not provided.",
   })
   locationId: number;
+  /**
+   * Institution location name of the institution that will be associated with this offering.
+   */
+  @IsNotEmpty({ message: `${userFriendlyNames.locationName} is required.` })
+  locationName: string;
   /**
    * Program information required to execute the offering validation.
    */

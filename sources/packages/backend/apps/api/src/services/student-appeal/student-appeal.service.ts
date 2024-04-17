@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Brackets, DataSource, Repository } from "typeorm";
+import { Brackets, DataSource } from "typeorm";
 import {
   RecordDataModelService,
   Application,

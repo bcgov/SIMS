@@ -20,8 +20,12 @@ import { CustomNamedError } from "@sims/utilities";
 import { OFFERING_VALIDATION_CSV_PARSE_ERROR } from "../../constants";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 
+interface LocationDetails {
+  id: number;
+  name: string;
+}
 const MAX_STUDY_BREAKS_ENTRIES = 5;
-type InstitutionCodeToIdMap = Record<string, number>;
+type InstitutionCodeToIdMap = Record<string, LocationDetails>;
 type ProgramCodeToProgramMap = Record<string, EducationProgram>;
 
 /**
@@ -78,7 +82,8 @@ export class EducationProgramOfferingImportCSVService {
           : OfferingTypes.Private,
       offeringDeclaration: csvModel.consent === YesNoOptions.Yes,
       courseLoad: csvModel.courseLoad,
-      locationId: locationsMap[csvModel.institutionLocationCode],
+      locationId: locationsMap[csvModel.institutionLocationCode].id,
+      locationName: locationsMap[csvModel.institutionLocationCode].name,
       programContext: programsMap[csvModel.sabcProgramCode],
     }));
   }
@@ -97,7 +102,10 @@ export class EducationProgramOfferingImportCSVService {
     const institutionMap: InstitutionCodeToIdMap = {};
     locations.forEach((location) => {
       if (location.institutionCode) {
-        institutionMap[location.institutionCode] = location.id;
+        institutionMap[location.institutionCode] = {
+          id: location.id,
+          name: location.locationName,
+        };
       }
     });
     return institutionMap;

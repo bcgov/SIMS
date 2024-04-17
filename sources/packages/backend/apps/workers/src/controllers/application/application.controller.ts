@@ -16,10 +16,7 @@ import {
   ApplicationUpdateStatusJobHeaderDTO,
   ApplicationUpdateStatusJobInDTO,
 } from "..";
-import {
-  ApplicationException,
-  ApplicationExceptionStatus,
-} from "@sims/sims-db";
+import { ApplicationExceptionStatus } from "@sims/sims-db";
 import {
   APPLICATION_NOT_FOUND,
   APPLICATION_STATUS_NOT_UPDATED,
