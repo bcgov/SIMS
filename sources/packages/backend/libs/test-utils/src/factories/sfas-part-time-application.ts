@@ -29,8 +29,6 @@ export function createFakeSFASPartTimeApplication(options?: {
     getISODateOnlyString(faker.date.past(18));
   sfasPartTimeApplication.endDate =
     options?.initialValues.endDate ?? getISODateOnlyString(faker.date.past(18));
-  sfasPartTimeApplication.programYearId =
-    options?.initialValues.programYearId ?? 20222023;
   sfasPartTimeApplication.cslpAward = options?.initialValues.cslpAward ?? 0;
   sfasPartTimeApplication.csgpAward = options?.initialValues.csgpAward ?? 0;
   sfasPartTimeApplication.sbsdAward = options?.initialValues.sbsdAward ?? 0;

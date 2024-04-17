@@ -18,10 +18,6 @@ import {
 } from "@sims/sims-db";
 import { AwardTotal, SequencedApplications, SequentialApplication } from "..";
 import { InjectRepository } from "@nestjs/typeorm";
-import {
-  SAILApplicationAwards,
-  SFASApplicationAwards,
-} from "@sims/services/sfas/sfas-application.model";
 import { getISODateOnlyString } from "@sims/utilities";
 
 @Injectable()
@@ -194,23 +190,35 @@ export class AssessmentSequentialProcessingService {
       assessment.application.programYear.id,
       { alternativeReferenceDate: options?.alternativeReferenceDate },
     );
-    // Get the first assessment date for the current application. If there are multiple
-    // assessments for the current application, then set the first assessment date to
-    // the assessment date of the first assessment.
-    const firstAssessmentDate = getISODateOnlyString(
+    // Get the first assessment date ever calculated for the current application.
+    // If there are multiple assessments for the current application, then set the
+    // first assessment date to the assessment date of the first assessment.
+    const referenceAssessmentDate = getISODateOnlyString(
       sequencedApplications.current.referenceAssessmentDate,
     );
-    const [sfasAwardsTotals, sailAwardsTotals] = await Promise.all([
-      this.getProgramYearSFASAwardsTotals(assessment, firstAssessmentDate),
-      this.getProgramYearSAILAwardsTotals(assessment, firstAssessmentDate),
+    const lastName = assessment.application.student.user.lastName;
+    const sin = assessment.application.student.sinValidation.sin;
+    const birthDate = assessment.application.student.birthDate;
+    const programYearStartDate = assessment.application.programYear.startDate;
+    const [sfasAwardsTotals, sfasPartTimeAwardsTotals] = await Promise.all([
+      this.getProgramYearSFASAwardsTotals(
+        lastName,
+        birthDate,
+        sin,
+        programYearStartDate,
+        referenceAssessmentDate,
+      ),
+      this.getProgramYearSFASPartTimeAwardsTotals(
+        lastName,
+        birthDate,
+        sin,
+        programYearStartDate,
+        referenceAssessmentDate,
+      ),
     ]);
     if (!sequencedApplications.previous.length) {
-      // There are no past applications. Return SFAS/SAIL awards if there are any.
-      return this.mergeProgramYearAwardsTotals(
-        [],
-        sfasAwardsTotals,
-        sailAwardsTotals,
-      );
+      // There are no past applications. Return SFAS full time and part time awards if there are any.
+      return [...sfasAwardsTotals, ...sfasPartTimeAwardsTotals];
     }
     const applicationNumbers = sequencedApplications.previous.map(
       (application) => application.applicationNumber,
@@ -275,11 +283,11 @@ export class AssessmentSequentialProcessingService {
       valueCode: total.valueCode,
       total: +total.total,
     }));
-    return this.mergeProgramYearAwardsTotals(
-      disbursementTotals,
-      sfasAwardsTotals,
-      sailAwardsTotals,
-    );
+    return [
+      ...disbursementTotals,
+      ...sfasAwardsTotals,
+      ...sfasPartTimeAwardsTotals,
+    ];
   }
 
   /**
@@ -388,24 +396,26 @@ export class AssessmentSequentialProcessingService {
 
   /**
    * Get SFAS application awards totals.
-   * @param assessment current assessment being processed.
-   * @param firstAssessmentDate date of the first assessment date of the current application.
+   * @param lastName last name of the student.
+   * @param birthDate birth date of the student.
+   * @param sin: SIN number of the student.
+   * @param programYearStartDate: the start date of the program year.
+   * @param referenceAssessmentDate  date of the first assessment date of the current application.
    * @returns SFAS application awards totals.
    */
-  async getProgramYearSFASAwardsTotals(
-    assessment: StudentAssessment,
-    firstAssessmentDate: string,
+  private async getProgramYearSFASAwardsTotals(
+    lastName: string,
+    birthDate: string,
+    sin: string,
+    programYearStartDate: string,
+    referenceAssessmentDate: string,
   ): Promise<AwardTotal[]> {
-    const lastName = assessment.application.student.user.lastName;
-    const sin = assessment.application.student.sinValidation.sin;
-    const birthDate = assessment.application.student.birthDate;
-    const programYearStartDate = assessment.application.programYear.startDate;
     const sfasApplicationAwards = this.sfasApplicationsRepo
       .createQueryBuilder("sfasApplication")
-      .select("SUM(sfasApplication.csgp_award)", "CSGP")
-      .addSelect("SUM(sfasApplication.sbsd_award)", "SBSD")
-      .addSelect("SUM(sfasApplication.csgd_award)", "CSGD")
-      .addSelect("SUM(sfasApplication.bcag_award)", "BCAG")
+      .select("SUM(sfasApplication.csgpAward)", "CSGP")
+      .addSelect("SUM(sfasApplication.sbsdAward)", "SBSD")
+      .addSelect("SUM(sfasApplication.csgdAward)", "CSGD")
+      .addSelect("SUM(sfasApplication.bcagAward)", "BCAG")
       .innerJoin("sfasApplication.individual", "sfasStudent")
       .where("lower(sfasStudent.lastName) = lower(:lastName)", { lastName })
       .andWhere("sfasStudent.sin = :sin", { sin })
@@ -414,47 +424,48 @@ export class AssessmentSequentialProcessingService {
         startDate: programYearStartDate,
       })
       .andWhere("sfasApplication.endDate < :endDate", {
-        endDate: firstAssessmentDate,
+        endDate: referenceAssessmentDate,
       });
 
-    const awards =
-      await sfasApplicationAwards.getRawOne<SFASApplicationAwards>();
+    const awards = await sfasApplicationAwards.getRawOne<
+      Record<"CSGP" | "SBSD" | "CSGD" | "BCAG", string>
+    >();
     const totals: AwardTotal[] = [];
-    if (awards) {
-      Object.entries(awards).forEach(([key, value]) => {
-        if (+value > 0) {
-          totals.push({
-            offeringIntensity: OfferingIntensity.fullTime,
-            valueCode: key,
-            total: +value,
-          });
-        }
-      });
-    }
+    Object.entries(awards).forEach(([key, value]) => {
+      if (value && +value > 0) {
+        totals.push({
+          offeringIntensity: OfferingIntensity.fullTime,
+          valueCode: key,
+          total: +value,
+        });
+      }
+    });
     return totals;
   }
 
   /**
-   * Get SFAS part time (SAIL) application awards totals.
-   * @param assessment Current assessment being processed.
-   * @param firstAssessmentDate Date of the first assessment date of the current application.
+   * Get SFAS part time application awards totals.
+   * @param lastName last name of the student.
+   * @param birthDate birth date of the student.
+   * @param sin: SIN number of the student.
+   * @param programYearStartDate: the start date of the program year.
+   * @param referenceAssessmentDate  date of the first assessment date of the current application.
    * @returns SFAS application part time awards totals.
    */
-  async getProgramYearSAILAwardsTotals(
-    assessment: StudentAssessment,
-    firstAssessmentDate: string,
+  private async getProgramYearSFASPartTimeAwardsTotals(
+    lastName: string,
+    birthDate: string,
+    sin: string,
+    programYearStartDate: string,
+    referenceAssessmentDate: string,
   ): Promise<AwardTotal[]> {
-    const lastName = assessment.application.student.user.lastName;
-    const sin = assessment.application.student.sinValidation.sin;
-    const birthDate = assessment.application.student.birthDate;
-    const programYearStartDate = assessment.application.programYear.startDate;
-    const sailApplicationAwards = this.sfasPartTimeApplicationsRepo
+    const sfasPartTimeApplicationAwards = this.sfasPartTimeApplicationsRepo
       .createQueryBuilder("sfasPTApplication")
-      .select("SUM(sfasPTApplication.csgp_award)", "CSGP")
-      .addSelect("SUM(sfasPTApplication.sbsd_award)", "SBSD")
-      .addSelect("SUM(sfasPTApplication.csgd_award)", "CSGD")
-      .addSelect("SUM(sfasPTApplication.bcag_award)", "BCAG")
-      .addSelect("SUM(sfasPTApplication.cspt_award)", "CSPT")
+      .select("SUM(sfasPTApplication.csgpAward)", "CSGP")
+      .addSelect("SUM(sfasPTApplication.sbsdAward)", "SBSD")
+      .addSelect("SUM(sfasPTApplication.csgdAward)", "CSGD")
+      .addSelect("SUM(sfasPTApplication.bcagAward)", "BCAG")
+      .addSelect("SUM(sfasPTApplication.csptAward)", "CSPT")
       .innerJoin("sfasPTApplication.individual", "sfasStudent")
       .where("lower(sfasStudent.lastName) = lower(:lastName)", { lastName })
       .andWhere("sfasStudent.sin = :sin", { sin })
@@ -463,61 +474,21 @@ export class AssessmentSequentialProcessingService {
         startDate: programYearStartDate,
       })
       .andWhere("sfasPTApplication.endDate < :endDate", {
-        endDate: firstAssessmentDate,
+        endDate: referenceAssessmentDate,
       });
-    const awards =
-      await sailApplicationAwards.getRawOne<SAILApplicationAwards>();
+    const awards = await sfasPartTimeApplicationAwards.getRawOne<
+      Record<"CSGP" | "SBSD" | "CSGD" | "BCAG" | "CSPT", string>
+    >();
     const totals: AwardTotal[] = [];
-    if (awards) {
-      Object.entries(awards).forEach(([key, value]) => {
-        if (+value > 0) {
-          totals.push({
-            offeringIntensity: OfferingIntensity.partTime,
-            valueCode: key,
-            total: +value,
-          });
-        }
-      });
-    }
-    return totals;
-  }
-
-  /**
-   * Merge disbursement totals, SFAS and SAIL application awards totals.
-   * @param disbursementTotals disbursement awards totals.
-   * @param sfasAwardsTotals SFAS application awards totals.
-   * @param sailAwardsTotals SAIL application awards totals.
-   */
-  mergeProgramYearAwardsTotals(
-    disbursementTotals: AwardTotal[],
-    sfasAwardsTotals: AwardTotal[],
-    sailAwardsTotals: AwardTotal[],
-  ): AwardTotal[] {
-    const legacyAwardsTotals = sfasAwardsTotals.concat(sailAwardsTotals);
-    if (disbursementTotals.length === 0) {
-      return legacyAwardsTotals;
-    }
-    legacyAwardsTotals.forEach((award: AwardTotal) => {
-      const index = disbursementTotals.findIndex(
-        (disbursement) =>
-          disbursement.offeringIntensity === award.offeringIntensity &&
-          disbursement.valueCode === award.valueCode,
-      );
-      if (index > -1) {
-        disbursementTotals[index] = {
-          ...disbursementTotals[index],
-          total: disbursementTotals[index].total + award.total,
-        };
-      }
-      // Only push to totals if award.total is greater than zero.
-      else if (award.total > 0) {
-        disbursementTotals.push({
-          offeringIntensity: award.offeringIntensity,
-          valueCode: award.valueCode,
-          total: award.total,
+    Object.entries(awards).forEach(([key, value]) => {
+      if (value && +value > 0) {
+        totals.push({
+          offeringIntensity: OfferingIntensity.partTime,
+          valueCode: key,
+          total: +value,
         });
       }
     });
-    return disbursementTotals;
+    return totals;
   }
 }

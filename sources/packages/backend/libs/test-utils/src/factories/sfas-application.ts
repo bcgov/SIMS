@@ -21,8 +21,6 @@ export function createFakeSFASApplication(options?: {
     getISODateOnlyString(faker.date.past(18));
   sfasApplication.endDate =
     options?.initialValues.endDate ?? getISODateOnlyString(faker.date.past(18));
-  sfasApplication.programYearId =
-    options?.initialValues.programYearId ?? 20222023;
   sfasApplication.individualId = options?.initialValues.individualId ?? 1;
   sfasApplication.bslAward = options?.initialValues.bslAward ?? 20;
   sfasApplication.cslAward = options?.initialValues.cslAward ?? 20;
