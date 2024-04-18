@@ -57,7 +57,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
     private readonly institutionService: InstitutionService,
     private readonly notificationActionsService: NotificationActionsService,
-    private readonly entityManager: EntityManager,
   ) {
     super(dataSource.getRepository(EducationProgram));
     this.offeringsRepo = dataSource.getRepository(EducationProgramOffering);
@@ -241,12 +240,18 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     } else {
       program.modifier = auditUser;
     }
-    await this.saveInstitutionAddsPendingProgramNotification(
-      { name: program.name, programStatus: program.programStatus },
-      institutionId,
-      this.entityManager,
+    return await this.dataSource.transaction(
+      async (transactionalEntityManager) => {
+        await this.saveInstitutionAddsPendingProgramNotification(
+          { name: program.name, programStatus: program.programStatus },
+          institutionId,
+          transactionalEntityManager,
+        );
+        return transactionalEntityManager
+          .getRepository(EducationProgram)
+          .save(program);
+      },
     );
-    return this.entityManager.getRepository(EducationProgram).save(program);
   }
 
   /**
