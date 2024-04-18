@@ -75,7 +75,7 @@ export interface AwardDetailsAPIOutDTO {
    * Dynamic output of the workflow calculation.
    * Contains data that could represent a part-time or a full-time award details.
    */
-  estimatedAward: Record<string, string | number>;
+  estimatedAward: Record<string, string | number | Date>;
   /**
    * Dynamic output from disbursement receipt for the given disbursement.
    * Contains data that could represent a part-time or a full-time award details.

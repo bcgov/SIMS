@@ -82,12 +82,31 @@
         <content-group>
           <h3 class="category-header-medium primary-color my-3">Final award</h3>
           <!-- Final award table. -->
-          <award-table
-            :awardDetails="assessmentAwardData.finalAward"
-            :offeringIntensity="assessmentAwardData.offeringIntensity"
-            identifier="disbursementReceipt1"
-            v-if="showFirstFinalAward"
-          />
+          <div v-if="isFirstDisbursementCompleted">
+            <award-table
+              v-if="showFirstFinalAward"
+              :awardDetails="assessmentAwardData.finalAward"
+              :offeringIntensity="assessmentAwardData.offeringIntensity"
+              identifier="disbursementReceipt1"
+            />
+            <content-group-info v-if="allowFinalAwardExtendedInformation">
+              <div>
+                <span class="label-bold">Date eCert sent: </span>
+                <span>{{
+                  dateOnlyLongString(
+                    assessmentAwardData.estimatedAward
+                      .disbursement1DateSent as Date,
+                  )
+                }}</span>
+              </div>
+              <div>
+                <span class="label-bold">Certificate number: </span>
+                <span>{{
+                  assessmentAwardData.estimatedAward.disbursement1DocumentNumber
+                }}</span>
+              </div>
+            </content-group-info>
+          </div>
           <div v-else>
             {{
               getFinalAwardNotAvailableMessage(
@@ -180,12 +199,30 @@
             Final award
           </div>
           <!-- Final award table. -->
-          <award-table
-            :awardDetails="assessmentAwardData.finalAward"
-            :offeringIntensity="assessmentAwardData.offeringIntensity"
-            identifier="disbursementReceipt2"
-            v-if="showSecondFinalAward"
-          />
+          <div v-if="showSecondFinalAward">
+            <award-table
+              :awardDetails="assessmentAwardData.finalAward"
+              :offeringIntensity="assessmentAwardData.offeringIntensity"
+              identifier="disbursementReceipt2"
+            />
+            <content-group-info v-if="allowFinalAwardExtendedInformation">
+              <div>
+                <span class="label-bold">Date eCert sent: </span>
+                <span>{{
+                  dateOnlyLongString(
+                    assessmentAwardData.estimatedAward
+                      .disbursement2DateSent as Date,
+                  )
+                }}</span>
+              </div>
+              <div>
+                <span class="label-bold">Certificate number: </span>
+                <span>{{
+                  assessmentAwardData.estimatedAward.disbursement2DocumentNumber
+                }}</span>
+              </div>
+            </content-group-info>
+          </div>
           <div v-else>
             {{
               getFinalAwardNotAvailableMessage(
@@ -202,11 +239,12 @@
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { AwardDetailsAPIOutDTO } from "@/services/http/dto";
-import { COEStatus, StatusInfo } from "@/types";
+import { COEStatus, DisbursementScheduleStatus, StatusInfo } from "@/types";
 import { PropType, computed, defineComponent } from "vue";
 import AwardTable from "@/components/common/AwardTable.vue";
 import StatusInfoEnrolment from "@/components/common/StatusInfoEnrolment.vue";
 import ConfirmEnrolment from "@/components/common/ConfirmEnrolment.vue";
+import { useFormatters } from "@/composables";
 
 export default defineComponent({
   emits: {
@@ -229,20 +267,26 @@ export default defineComponent({
       type: Boolean,
       required: false,
     },
+    allowFinalAwardExtendedInformation: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   setup(props) {
+    const { dateOnlyLongString } = useFormatters();
     const isFirstDisbursementCompleted = computed<boolean>(
       () =>
-        props.assessmentAwardData.estimatedAward?.disbursement1COEStatus ===
-        COEStatus.completed,
+        props.assessmentAwardData.estimatedAward?.disbursement1Status ===
+        DisbursementScheduleStatus.Sent,
     );
     const isSecondDisbursementAvailable = computed(
       () => props.assessmentAwardData.estimatedAward?.disbursement2Date,
     );
     const isSecondDisbursementCompleted = computed<boolean>(
       () =>
-        props.assessmentAwardData.estimatedAward?.disbursement2COEStatus ===
-        COEStatus.completed,
+        props.assessmentAwardData.estimatedAward?.disbursement2Status ===
+        DisbursementScheduleStatus.Sent,
     );
     const showFirstFinalAward = computed<boolean>(
       () =>
@@ -256,7 +300,7 @@ export default defineComponent({
       () =>
         !!(
           isSecondDisbursementCompleted.value &&
-          props.assessmentAwardData.finalAward
+          !!props.assessmentAwardData.finalAward
         ),
     );
 
@@ -271,6 +315,7 @@ export default defineComponent({
     };
 
     return {
+      dateOnlyLongString,
       AESTRoutesConst,
       isSecondDisbursementAvailable,
       isSecondDisbursementCompleted,

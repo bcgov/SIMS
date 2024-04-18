@@ -15,6 +15,7 @@
       :assessment-award-data="assessmentAwardData"
       :notice-of-assessment-route="noticeOfAssessmentRoute"
       :allow-confirm-enrolment="true"
+      :allow-final-award-extended-information="true"
       @confirm-enrolment="confirmEnrolment"
     />
   </full-page-container>
