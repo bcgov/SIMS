@@ -10,10 +10,6 @@ on:
         description: "Environment"
         required: true
         type: environment
-      gitRef:
-        description: "Build Ref"
-        required: true
-        default: ""
 
 jobs:
   deleteRedis:
