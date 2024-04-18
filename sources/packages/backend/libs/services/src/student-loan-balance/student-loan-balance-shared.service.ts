@@ -19,8 +19,7 @@ export class StudentLoanBalanceSharedService {
     const getStudentLatestLoanBalance = await this.studentLoanBalanceRepo
       .createQueryBuilder("studentLoanBalance")
       .select("studentLoanBalance.cslBalance")
-      .innerJoin("studentLoanBalance.student", "student")
-      .where("student.id = :studentId", { studentId })
+      .where("studentLoanBalance.student.id = :studentId", { studentId })
       .limit(1)
       .orderBy("studentLoanBalance.balanceDate", "DESC")
       .getOne();
