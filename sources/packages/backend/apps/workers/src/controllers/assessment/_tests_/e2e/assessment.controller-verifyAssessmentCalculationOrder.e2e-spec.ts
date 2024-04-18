@@ -510,6 +510,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     // The calculation will only take SFAS and SFAS part time application data where the start date is the date before the first assessment date of the current application.
     expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
       isReadyForCalculation: true,
+      latestCSLPBalance: 0,
       // Full-time
       programYearTotalFullTimeCSGD: 18,
       programYearTotalFullTimeCSGP: 20,
@@ -667,6 +668,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     // The calculation will only take SFAS and SFAS part time application data where the start date is the date before the first assessment date of the current application.
     expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
       isReadyForCalculation: true,
+      latestCSLPBalance: 0,
       // Full-time
       programYearTotalFullTimeCSGD: 9,
       programYearTotalFullTimeCSGP: 10,
@@ -714,6 +716,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     // The result will not have data from SFAS or SFAS part time application data.
     expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
       isReadyForCalculation: true,
+      latestCSLPBalance: 0,
     });
   });
 });
