@@ -336,11 +336,14 @@ export class ECertGenerationService {
   ): Promise<number> {
     const studentAssessmentRepo =
       entityManager.getRepository(StudentAssessment);
-    const dmnValues = await studentAssessmentRepo
+    const queryResult = await studentAssessmentRepo
       .createQueryBuilder("studentAssessment")
-      .select("studentAssessment.workflowData ->> 'dmnValues'", "dmnValues")
+      .select(
+        "studentAssessment.workflowData -> 'dmnValues' ->> 'lifetimeMaximumCSLP'",
+        "lifetimeMaximumCSLP",
+      )
       .where("studentAssessment.id = :assessmentId", { assessmentId })
       .getRawOne();
-    return dmnValues?.lifetimeMaximumCSLP ?? 0;
+    return queryResult?.lifetimeMaximumCSLP ?? 0;
   }
 }
