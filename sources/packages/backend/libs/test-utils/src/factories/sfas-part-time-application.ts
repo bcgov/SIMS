@@ -1,16 +1,21 @@
-import { SFASPartTimeApplications } from "@sims/sims-db";
+import { SFASIndividual, SFASPartTimeApplications } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
 import * as faker from "faker";
 
 /**
  * Create and save fake SFAS part time application.
+ * @param relations dependencies.
+ * - `SFASIndividual` related SFAS individual.
  * @param options SFAS part time application options.
  * - `initialValues` SFAS part time application initial values.
  * @returns persisted SFAS part time application.
  */
-export function createFakeSFASPartTimeApplication(options?: {
-  initialValues?: Partial<SFASPartTimeApplications>;
-}): SFASPartTimeApplications {
+export function createFakeSFASPartTimeApplication(
+  relations: { individual: SFASIndividual },
+  options?: {
+    initialValues?: Partial<SFASPartTimeApplications>;
+  },
+): SFASPartTimeApplications {
   const sfasPartTimeApplication = new SFASPartTimeApplications();
   sfasPartTimeApplication.id =
     faker.datatype.number({
@@ -22,8 +27,7 @@ export function createFakeSFASPartTimeApplication(options?: {
       min: 2000,
       max: 29999,
     });
-  sfasPartTimeApplication.individualId =
-    options?.initialValues.individualId ?? 1;
+  sfasPartTimeApplication.individualId = relations.individual.id;
   sfasPartTimeApplication.startDate =
     options?.initialValues.startDate ??
     getISODateOnlyString(faker.date.past(18));

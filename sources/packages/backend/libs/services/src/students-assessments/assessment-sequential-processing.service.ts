@@ -423,10 +423,9 @@ export class AssessmentSequentialProcessingService {
       .andWhere("sfasApplication.startDate >= :startDate", {
         startDate: programYearStartDate,
       })
-      .andWhere("sfasApplication.endDate < :endDate", {
-        endDate: referenceAssessmentDate,
+      .andWhere("sfasApplication.startDate < :referenceAssessmentDate", {
+        referenceAssessmentDate,
       });
-
     const awards = await sfasApplicationAwards.getRawOne<
       Record<"CSGP" | "SBSD" | "CSGD" | "BCAG", string>
     >();
@@ -473,8 +472,8 @@ export class AssessmentSequentialProcessingService {
       .andWhere("sfasPTApplication.startDate >= :startDate", {
         startDate: programYearStartDate,
       })
-      .andWhere("sfasPTApplication.endDate < :endDate", {
-        endDate: referenceAssessmentDate,
+      .andWhere("sfasPTApplication.startDate < :referenceAssessmentDate", {
+        referenceAssessmentDate,
       });
     const awards = await sfasPartTimeApplicationAwards.getRawOne<
       Record<"CSGP" | "SBSD" | "CSGD" | "BCAG" | "CSPT", string>

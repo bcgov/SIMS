@@ -1,16 +1,21 @@
-import { SFASApplication } from "@sims/sims-db";
+import { SFASApplication, SFASIndividual } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
 import * as faker from "faker";
 
 /**
  * Create fake SFAS application.
+ * @param relations dependencies.
+ * - `SFASIndividual` related SFAS individual.
  * @param options SFAS application options.
  * - `initialValues` SFAS application initial values.
  * @returns persisted SFAS application.
  */
-export function createFakeSFASApplication(options?: {
-  initialValues?: Partial<SFASApplication>;
-}): SFASApplication {
+export function createFakeSFASApplication(
+  relations: { individual: SFASIndividual },
+  options?: {
+    initialValues?: Partial<SFASApplication>;
+  },
+): SFASApplication {
   const sfasApplication = new SFASApplication();
   sfasApplication.id = faker.datatype.number({
     min: 100000000,
@@ -21,7 +26,7 @@ export function createFakeSFASApplication(options?: {
     getISODateOnlyString(faker.date.past(18));
   sfasApplication.endDate =
     options?.initialValues.endDate ?? getISODateOnlyString(faker.date.past(18));
-  sfasApplication.individualId = options?.initialValues.individualId ?? 1;
+  sfasApplication.individual = relations.individual;
   sfasApplication.bslAward = options?.initialValues.bslAward ?? 20;
   sfasApplication.cslAward = options?.initialValues.cslAward ?? 20;
   sfasApplication.bcagAward = options?.initialValues.bcagAward ?? 0;

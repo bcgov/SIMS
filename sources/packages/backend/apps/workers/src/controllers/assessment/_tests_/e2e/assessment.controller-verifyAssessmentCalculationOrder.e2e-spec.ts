@@ -397,9 +397,18 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     );
     const firstAssessmentDate =
       currentApplication.currentAssessment.assessmentDate;
-    // The end date for the SFAS and SFAS part time application record is set to the date before the first assessment date of the current application.
-    const beforeFirstAssessmentDate = addDays(-5, firstAssessmentDate);
-    // Create the second assessment for the current application with a different assessment date.
+    // The start date for the first SFAS and SFAS part time application record is set to the date before the first assessment date of the current application.
+    const firstLegacyApplicationStartDate = addDays(-10, firstAssessmentDate);
+    const firstLegacyApplicationEndDate = addDays(30, firstAssessmentDate);
+    // The start date for the second SFAS and SFAS part time application record is set to the date after the end date of the first SFAS application.
+    const secondLegacyApplicationStartDate = addDays(
+      10,
+      firstLegacyApplicationEndDate,
+    );
+    const secondLegacyApplicationEndDate = addDays(
+      40,
+      firstLegacyApplicationEndDate,
+    );
     const secondAssessment = createFakeStudentAssessment(
       {
         auditUser: currentApplication.student.user,
@@ -424,53 +433,59 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         sin: student.sinValidation.sin,
       },
     });
-    // SFAS application with the end date as the end date of the program year.
-    const firstFakeSFASApplication = createFakeSFASApplication({
-      initialValues: {
-        startDate: currentApplication.programYear.startDate,
-        endDate: currentApplication.programYear.endDate,
-        individualId: sfasIndividual.id,
-        csgdAward: 9,
-        csgpAward: 10,
-        sbsdAward: 12,
-        bcagAward: 13,
+    // First SFAS application with the start date before the first assessment date of the current application.
+    const firstFakeSFASApplication = createFakeSFASApplication(
+      { individual: sfasIndividual },
+      {
+        initialValues: {
+          startDate: getISODateOnlyString(firstLegacyApplicationStartDate),
+          endDate: getISODateOnlyString(firstLegacyApplicationEndDate),
+          csgdAward: 9,
+          csgpAward: 10,
+          sbsdAward: 12,
+          bcagAward: 13,
+        },
       },
-    });
-    // SFAS application with the end date as the date before the first assessment date of the current application.
-    const secondFakeSFASApplication = createFakeSFASApplication({
-      initialValues: {
-        startDate: currentApplication.programYear.startDate,
-        endDate: getISODateOnlyString(beforeFirstAssessmentDate),
-        individualId: sfasIndividual.id,
-        csgdAward: 9,
-        csgpAward: 10,
-        sbsdAward: 12,
-        bcagAward: 13,
+    );
+    // Second SFAS application with the start date after the end date of the first SFAS application.
+    const secondFakeSFASApplication = createFakeSFASApplication(
+      { individual: sfasIndividual },
+      {
+        initialValues: {
+          startDate: getISODateOnlyString(secondLegacyApplicationStartDate),
+          endDate: getISODateOnlyString(secondLegacyApplicationEndDate),
+          csgdAward: 9,
+          csgpAward: 10,
+          sbsdAward: 12,
+          bcagAward: 13,
+        },
       },
-    });
+    );
     await db.dataSource
       .getRepository(SFASApplication)
       .save([firstFakeSFASApplication, secondFakeSFASApplication]);
-    // SFAS part time application with the end date as the end date of the program year.
-    const firstFakeSFASPartTimeApplication = createFakeSFASPartTimeApplication({
-      initialValues: {
-        startDate: currentApplication.programYear.startDate,
-        endDate: currentApplication.programYear.endDate,
-        individualId: sfasIndividual.id,
-        csptAward: 2,
-        csgdAward: 3,
-        csgpAward: 4,
-        sbsdAward: 6,
-        bcagAward: 7,
-      },
-    });
-    // SFAS part time application with the end date as the date before the first assessment date of the current application.
-    const secondFakeSFASPartTimeApplication = createFakeSFASPartTimeApplication(
+    // First SFAS part time application with the start date before the first assessment date of the current application.
+    const firstFakeSFASPartTimeApplication = createFakeSFASPartTimeApplication(
+      { individual: sfasIndividual },
       {
         initialValues: {
-          startDate: currentApplication.programYear.startDate,
-          endDate: getISODateOnlyString(beforeFirstAssessmentDate),
-          individualId: sfasIndividual.id,
+          startDate: getISODateOnlyString(firstLegacyApplicationStartDate),
+          endDate: getISODateOnlyString(firstLegacyApplicationEndDate),
+          csptAward: 2,
+          csgdAward: 3,
+          csgpAward: 4,
+          sbsdAward: 6,
+          bcagAward: 7,
+        },
+      },
+    );
+    // Second SFAS part time application with the start date after the end date of the first SFAS part time application.
+    const secondFakeSFASPartTimeApplication = createFakeSFASPartTimeApplication(
+      { individual: sfasIndividual },
+      {
+        initialValues: {
+          startDate: getISODateOnlyString(secondLegacyApplicationStartDate),
+          endDate: getISODateOnlyString(secondLegacyApplicationEndDate),
           csptAward: 2,
           csgdAward: 3,
           csgpAward: 4,
@@ -495,7 +510,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     expect(FakeWorkerJobResult.getResultType(result)).toBe(
       MockedZeebeJobResult.Complete,
     );
-    // The calculation will only take SFAS and SFAS part time application data where the end date is the date before the first assessment date of the current application.
+    // The calculation will only take SFAS and SFAS part time application data where the start date is the date before the first assessment date of the current application.
     expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
       isReadyForCalculation: true,
       // Full-time
@@ -538,8 +553,18 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     );
     const firstAssessmentDate =
       currentApplication.currentAssessment.assessmentDate;
-    // The end date for the SFAS and SFAS part time application record is set to the date before the first assessment date of the current application.
-    const beforeFirstAssessmentDate = addDays(-5, firstAssessmentDate);
+    // The start date for the first SFAS and SFAS part time application record is set to the date before the first assessment date of the current application.
+    const firstLegacyApplicationStartDate = addDays(-10, firstAssessmentDate);
+    const firstLegacyApplicationEndDate = addDays(30, firstAssessmentDate);
+    // The start date for the second SFAS and SFAS part time application record is set to the date after the end date of the first SFAS application.
+    const secondLegacyApplicationStartDate = addDays(
+      10,
+      firstLegacyApplicationEndDate,
+    );
+    const secondLegacyApplicationEndDate = addDays(
+      40,
+      firstLegacyApplicationEndDate,
+    );
     // Create the second assessment for the current application with a different assessment date.
     const secondAssessment = createFakeStudentAssessment(
       {
@@ -565,53 +590,59 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         sin: student.sinValidation.sin,
       },
     });
-    // SFAS application with the end date as the end date of the program year.
-    const firstFakeSFASApplication = createFakeSFASApplication({
-      initialValues: {
-        startDate: currentApplication.programYear.startDate,
-        endDate: currentApplication.programYear.endDate,
-        individualId: sfasIndividual.id,
-        csgdAward: 9,
-        csgpAward: 10,
-        sbsdAward: 12,
-        bcagAward: 13,
+    // First SFAS application with the start date before the first assessment date of the current application.
+    const firstFakeSFASApplication = createFakeSFASApplication(
+      { individual: sfasIndividual },
+      {
+        initialValues: {
+          startDate: getISODateOnlyString(firstLegacyApplicationStartDate),
+          endDate: getISODateOnlyString(firstLegacyApplicationEndDate),
+          csgdAward: 9,
+          csgpAward: 10,
+          sbsdAward: 12,
+          bcagAward: 13,
+        },
       },
-    });
-    // SFAS application with the end date as the date before the first assessment date of the current application.
-    const secondFakeSFASApplication = createFakeSFASApplication({
-      initialValues: {
-        startDate: currentApplication.programYear.startDate,
-        endDate: getISODateOnlyString(beforeFirstAssessmentDate),
-        individualId: sfasIndividual.id,
-        csgdAward: 9,
-        csgpAward: 10,
-        sbsdAward: 12,
-        bcagAward: 13,
+    );
+    // Second SFAS application with the start date after the end date of the first SFAS application.
+    const secondFakeSFASApplication = createFakeSFASApplication(
+      { individual: sfasIndividual },
+      {
+        initialValues: {
+          startDate: getISODateOnlyString(secondLegacyApplicationStartDate),
+          endDate: getISODateOnlyString(secondLegacyApplicationEndDate),
+          csgdAward: 9,
+          csgpAward: 10,
+          sbsdAward: 12,
+          bcagAward: 13,
+        },
       },
-    });
+    );
     await db.dataSource
       .getRepository(SFASApplication)
       .save([firstFakeSFASApplication, secondFakeSFASApplication]);
-    // SFAS part time application with the end date as the end date of the program year.
-    const firstFakeSFASPartTimeApplication = createFakeSFASPartTimeApplication({
-      initialValues: {
-        startDate: currentApplication.programYear.startDate,
-        endDate: currentApplication.programYear.endDate,
-        individualId: sfasIndividual.id,
-        csptAward: 2,
-        csgdAward: 3,
-        csgpAward: 4,
-        sbsdAward: 6,
-        bcagAward: 7,
-      },
-    });
-    // SFAS part time application with the end date as the date before the first assessment date of the current application.
-    const secondFakeSFASPartTimeApplication = createFakeSFASPartTimeApplication(
+    // First SFAS part time application with the start date before the first assessment date of the current application.
+    const firstFakeSFASPartTimeApplication = createFakeSFASPartTimeApplication(
+      { individual: sfasIndividual },
       {
         initialValues: {
-          startDate: currentApplication.programYear.startDate,
-          endDate: getISODateOnlyString(beforeFirstAssessmentDate),
-          individualId: sfasIndividual.id,
+          startDate: getISODateOnlyString(firstLegacyApplicationStartDate),
+          endDate: getISODateOnlyString(firstLegacyApplicationEndDate),
+          csptAward: 2,
+          csgdAward: 3,
+          csgpAward: 4,
+          sbsdAward: 6,
+          bcagAward: 7,
+        },
+      },
+    );
+    // Second SFAS part time application with the start date after the end date of the first SFAS part time application.
+    const secondFakeSFASPartTimeApplication = createFakeSFASPartTimeApplication(
+      { individual: sfasIndividual },
+      {
+        initialValues: {
+          startDate: getISODateOnlyString(secondLegacyApplicationStartDate),
+          endDate: getISODateOnlyString(secondLegacyApplicationEndDate),
           csptAward: 2,
           csgdAward: 3,
           csgpAward: 4,
@@ -636,7 +667,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     expect(FakeWorkerJobResult.getResultType(result)).toBe(
       MockedZeebeJobResult.Complete,
     );
-    // The calculation will only take SFAS and SFAS part time application data where the end date is the date before the first assessment date of the current application.
+    // The calculation will only take SFAS and SFAS part time application data where the start date is the date before the first assessment date of the current application.
     expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
       isReadyForCalculation: true,
       // Full-time
