@@ -1,5 +1,4 @@
 import {
-  Allow,
   ArrayMinSize,
   IsBoolean,
   IsDateString,
