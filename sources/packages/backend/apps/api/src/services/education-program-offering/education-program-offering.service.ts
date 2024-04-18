@@ -225,6 +225,9 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     institutionLocationName: string,
     entityManager: EntityManager,
   ): Promise<void> {
+    if (programOfferingStatus !== OfferingStatus.CreationPending) {
+      return;
+    }
     const institutionLocation =
       await this.institutionLocationService.getInstitutionLocation(
         institutionLocationId,
@@ -238,12 +241,10 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       offeringName,
       institutionPrimaryEmail: institution.primaryEmail,
     };
-    if (programOfferingStatus === OfferingStatus.CreationPending) {
-      await this.notificationActionsService.saveInstitutionAddsPendingOfferingNotification(
-        ministryNotification,
-        entityManager,
-      );
-    }
+    await this.notificationActionsService.saveInstitutionAddsPendingOfferingNotification(
+      ministryNotification,
+      entityManager,
+    );
   }
 
   /**

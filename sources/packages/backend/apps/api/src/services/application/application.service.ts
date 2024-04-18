@@ -295,7 +295,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
   /**
    * Saves a notification when the application is edited too many times
-   * governed by APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION.
+   * governed by {@link APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION}.
    * @param applicationNumber application number of the related application.
    * @param studentId related student id.
    * @param transactionalEntityManager entity manager to be a part of the transaction.
