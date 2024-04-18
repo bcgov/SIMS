@@ -122,15 +122,14 @@ export class NotificationService extends RecordDataModelService<Notification> {
   }
 
   /**
-   * Checks if a notification exists for the given optional parameters provided.
+   * Checks if a notification exists for the provided application number.
    * @param transactionalEntityManager entity manager to be part of the transaction.
-   * @param options related options.
-   * - `applicationNumber` related application number.
+   * @param applicationNumber related application number.
    * @returns boolean true if the notification exists, else false.
    */
-  async checkNotificationExists(
+  async checkApplicationEditedTooManyTimesNotificationExists(
     transactionalEntityManager: EntityManager,
-    options?: { applicationNumber?: string },
+    applicationNumber: string,
   ): Promise<boolean> {
     return transactionalEntityManager
       .getRepository(Notification)
@@ -143,7 +142,7 @@ export class NotificationService extends RecordDataModelService<Notification> {
       .andWhere(
         "notification.metadata->>'applicationNumber' = :applicationNumber",
         {
-          applicationNumber: options?.applicationNumber,
+          applicationNumber,
         },
       )
       .getExists();

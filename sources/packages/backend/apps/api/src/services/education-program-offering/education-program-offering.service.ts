@@ -75,6 +75,7 @@ import {
   InstitutionAddsPendingOfferingNotification,
   NotificationActionsService,
 } from "@sims/services";
+import { validate } from "class-validator";
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
   constructor(
@@ -115,8 +116,10 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
           await this.saveEducationProgramOfferingNotification(
             educationProgramOffering.offeringName,
             educationProgramOffering.programContext.name,
+            educationProgramOffering.operatingName,
+            educationProgramOffering.legalOperatingName,
+            educationProgramOffering.primaryEmail,
             programOffering.offeringStatus,
-            programOffering.institutionLocation.id,
             programOffering.institutionLocation.name,
             transactionalEntityManager,
           );
@@ -177,8 +180,10 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
           this.saveEducationProgramOfferingNotification(
             validatedOffering.offeringModel.offeringName,
             validatedOffering.offeringModel.programContext.name,
+            validatedOffering.offeringModel.operatingName,
+            validatedOffering.offeringModel.legalOperatingName,
+            validatedOffering.offeringModel.primaryEmail,
             validatedOffering.offeringStatus,
-            validatedOffering.offeringModel.locationId,
             validatedOffering.offeringModel.locationName,
             entityManager,
           ),
@@ -212,34 +217,33 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * program offering as a part of the same transaction.
    * @param offeringName offering name.
    * @param programName related program name.
+   * @param operatingName institution operating name.
+   * @param legalOperatingName institution legal operating name.
+   * @param primaryEmail institution primary email.
    * @param programOfferingStatus related program offering status.
-   * @param institutionLocationId related institution location id.
    * @param institutionLocationName related institution location name.
    * @param entityManager entity manager to be part of the transaction.
    */
   private async saveEducationProgramOfferingNotification(
     offeringName: string,
     programName: string,
+    operatingName: string,
+    legalOperatingName: string,
+    primaryEmail: string,
     programOfferingStatus: OfferingStatus,
-    institutionLocationId: number,
     institutionLocationName: string,
     entityManager: EntityManager,
   ): Promise<void> {
     if (programOfferingStatus !== OfferingStatus.CreationPending) {
       return;
     }
-    const institutionLocation =
-      await this.institutionLocationService.getInstitutionLocation(
-        institutionLocationId,
-      );
-    const institution = institutionLocation.institution;
     const ministryNotification: InstitutionAddsPendingOfferingNotification = {
-      institutionName: institution.legalOperatingName,
-      institutionOperatingName: institution.operatingName,
+      institutionName: legalOperatingName,
+      institutionOperatingName: operatingName,
       institutionLocationName,
       programName,
       offeringName,
-      institutionPrimaryEmail: institution.primaryEmail,
+      institutionPrimaryEmail: primaryEmail,
     };
     await this.notificationActionsService.saveInstitutionAddsPendingOfferingNotification(
       ministryNotification,

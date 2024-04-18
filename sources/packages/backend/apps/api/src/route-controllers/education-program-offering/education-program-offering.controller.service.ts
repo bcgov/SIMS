@@ -177,6 +177,9 @@ export class EducationProgramOfferingControllerService {
       ...payload,
       locationId,
       locationName: institutionLocation.name,
+      operatingName: institutionLocation.institution.operatingName,
+      legalOperatingName: institutionLocation.institution.legalOperatingName,
+      primaryEmail: institutionLocation.institution.primaryEmail,
       studyBreaks: payload.studyBreaks,
       programContext: program,
     };

@@ -219,6 +219,29 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   }
 
   /**
+   * Gets the location details of the institution.
+   * @param institutionId institution id to get the location institution details for.
+   * @returns institution location details.
+   */
+  async getLocationDetails(
+    institutionId: number,
+  ): Promise<InstitutionLocation[]> {
+    return this.repo.find({
+      select: {
+        id: true,
+        name: true,
+        institution: {
+          operatingName: true,
+          legalOperatingName: true,
+          primaryEmail: true,
+        },
+      },
+      relations: { institution: true },
+      where: { institution: { id: institutionId } },
+    });
+  }
+
+  /**
    * Validate if all the supplied locationIds
    * in a payload belongs to the given institution.
    * @param institutionId

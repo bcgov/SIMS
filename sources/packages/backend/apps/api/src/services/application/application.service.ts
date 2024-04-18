@@ -104,7 +104,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * applicationStatusUpdatedOn is updated and delete the corresponding workflow and creates a
    * new Application with same Application Number and Program Year as that of the Overwritten
    * Application and with newly submitted payload. And starts a new workflow for the newly created
-   * Application. If the application is edited for the APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION times,
+   * Application. If the application is edited for the {@link APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION} times,
    * a notification is saved for the ministry along with the edited application as a part of the same transaction.
    * If the PIR is not required, then offering is assigned to the assessment on submission
    * and the applicant student is assessed for SIN restriction.
@@ -312,9 +312,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
     });
     if (applicationsCount > APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION) {
       const notificationExists =
-        await this.notificationService.checkNotificationExists(
+        await this.notificationService.checkApplicationEditedTooManyTimesNotificationExists(
           transactionalEntityManager,
-          { applicationNumber },
+          applicationNumber,
         );
       if (!notificationExists) {
         const student = await this.studentService.getStudentById(studentId);

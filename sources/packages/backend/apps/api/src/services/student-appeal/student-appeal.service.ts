@@ -112,11 +112,19 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         birthDate: student.birthDate,
         applicationNumber: application.applicationNumber,
       };
-      await this.notificationActionsService.saveStudentSubmittedChangeRequestNotification(
-        ministryNotification,
-        entityManager,
-      );
-      return entityManager.getRepository(StudentAppeal).save(studentAppeal);
+      const notificationPromise =
+        this.notificationActionsService.saveStudentSubmittedChangeRequestNotification(
+          ministryNotification,
+          entityManager,
+        );
+      const studentAppealPromise = entityManager
+        .getRepository(StudentAppeal)
+        .save(studentAppeal);
+      const [, createdStudentAppeal] = await Promise.all([
+        notificationPromise,
+        studentAppealPromise,
+      ]);
+      return createdStudentAppeal;
     });
   }
 

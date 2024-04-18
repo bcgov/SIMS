@@ -1,4 +1,5 @@
 import {
+  Allow,
   ArrayMinSize,
   IsBoolean,
   IsDateString,
@@ -608,6 +609,21 @@ export class OfferingValidationModel {
    */
   @IsNotEmpty({ message: "Institution location name is required." })
   locationName: string;
+  /**
+   * Institution operating name used as supporting data, for instance, as part of the notification to indicate offering in pending status.
+   */
+  @Allow()
+  operatingName: string;
+  /**
+   * Institution legal operating name used as supporting data, for instance, as part of the notification to indicate offering in pending status.
+   */
+  @IsNotEmpty({ message: "Institution legal operating name is required." })
+  legalOperatingName: string;
+  /**
+   * Institution primary email, used as supporting data, for instance, as part of the notification to indicate offering in pending status.
+   */
+  @IsNotEmpty({ message: "Institution legal operating name is required." })
+  primaryEmail: string;
   /**
    * Program information required to execute the offering validation.
    */

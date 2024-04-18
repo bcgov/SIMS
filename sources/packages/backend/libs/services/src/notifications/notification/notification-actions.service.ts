@@ -106,7 +106,7 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager?: EntityManager,
   ): Promise<void> {
-    const notificationDetails =
+    const { templateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.MinistryFileUpload,
       );
@@ -116,7 +116,7 @@ export class NotificationActionsService {
       messageType: NotificationMessageType.MinistryFileUpload,
       messagePayload: {
         email_address: notification.toAddress,
-        template_id: notificationDetails.templateId,
+        template_id: templateId,
         personalisation: {
           givenNames: notification.firstName ?? "",
           lastName: notification.lastName,
@@ -220,13 +220,13 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager: EntityManager,
   ): Promise<void> {
-    const notificationDetails =
+    const { templateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.ApplicationOfferingChangeRequestCompletedByMinistry,
       );
     const messagePayload: NotificationEmailMessage = {
       email_address: notification.toAddress,
-      template_id: notificationDetails.templateId,
+      template_id: templateId,
       personalisation: {
         givenNames: notification.givenNames ?? "",
         lastName: notification.lastName,

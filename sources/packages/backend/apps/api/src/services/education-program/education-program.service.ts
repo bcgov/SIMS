@@ -240,18 +240,16 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     } else {
       program.modifier = auditUser;
     }
-    return await this.dataSource.transaction(
-      async (transactionalEntityManager) => {
-        await this.saveInstitutionAddsPendingProgramNotification(
-          { name: program.name, programStatus: program.programStatus },
-          institutionId,
-          transactionalEntityManager,
-        );
-        return transactionalEntityManager
-          .getRepository(EducationProgram)
-          .save(program);
-      },
-    );
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
+      await this.saveInstitutionAddsPendingProgramNotification(
+        { name: program.name, programStatus: program.programStatus },
+        institutionId,
+        transactionalEntityManager,
+      );
+      return transactionalEntityManager
+        .getRepository(EducationProgram)
+        .save(program);
+    });
   }
 
   /**
@@ -767,7 +765,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     program: Pick<EducationProgram, "name" | "programStatus">,
     institutionId: number,
     entityManager: EntityManager,
-  ) {
+  ): Promise<void> {
+    if (program.programStatus !== ProgramStatus.Pending) {
+      return;
+    }
     const institution = await this.institutionService.getInstitutionDetailById(
       institutionId,
     );
@@ -777,11 +778,9 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       programName: program.name,
       institutionPrimaryEmail: institution.primaryEmail,
     };
-    if (program.programStatus === ProgramStatus.Pending) {
-      await this.notificationActionsService.saveInstitutionAddsPendingProgramNotification(
-        ministryNotification,
-        entityManager,
-      );
-    }
+    await this.notificationActionsService.saveInstitutionAddsPendingProgramNotification(
+      ministryNotification,
+      entityManager,
+    );
   }
 }

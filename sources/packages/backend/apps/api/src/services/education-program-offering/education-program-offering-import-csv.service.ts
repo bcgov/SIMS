@@ -20,9 +20,15 @@ import { CustomNamedError } from "@sims/utilities";
 import { OFFERING_VALIDATION_CSV_PARSE_ERROR } from "../../constants";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 
+interface InstitutionDetails {
+  operatingName: string;
+  legalOperatingName: string;
+  primaryEmail: string;
+}
 interface LocationDetails {
   id: number;
   name: string;
+  institutionDetails: InstitutionDetails;
 }
 const MAX_STUDY_BREAKS_ENTRIES = 5;
 type InstitutionCodeToIdMap = Record<string, LocationDetails>;
@@ -84,6 +90,15 @@ export class EducationProgramOfferingImportCSVService {
       courseLoad: csvModel.courseLoad,
       locationId: locationsMap[csvModel.institutionLocationCode]?.id,
       locationName: locationsMap[csvModel.institutionLocationCode]?.name,
+      operatingName:
+        locationsMap[csvModel.institutionLocationCode]?.institutionDetails
+          .operatingName,
+      legalOperatingName:
+        locationsMap[csvModel.institutionLocationCode]?.institutionDetails
+          .legalOperatingName,
+      primaryEmail:
+        locationsMap[csvModel.institutionLocationCode]?.institutionDetails
+          .primaryEmail,
       programContext: programsMap[csvModel.sabcProgramCode],
     }));
   }
@@ -96,7 +111,7 @@ export class EducationProgramOfferingImportCSVService {
   private async getLocationsMaps(
     institutionId: number,
   ): Promise<InstitutionCodeToIdMap> {
-    const locations = await this.institutionLocationService.getLocations(
+    const locations = await this.institutionLocationService.getLocationDetails(
       institutionId,
     );
     const institutionMap: InstitutionCodeToIdMap = {};
@@ -104,7 +119,12 @@ export class EducationProgramOfferingImportCSVService {
       if (location.institutionCode) {
         institutionMap[location.institutionCode] = {
           id: location.id,
-          name: location.locationName,
+          name: location.name,
+          institutionDetails: {
+            operatingName: location.institution.operatingName,
+            legalOperatingName: location.institution.legalOperatingName,
+            primaryEmail: location.institution.primaryEmail,
+          },
         };
       }
     });
