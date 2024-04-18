@@ -31583,7 +31583,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "<h4 class=\"category-header-medium-small\">Documents Required</h4>\n<ul>\n  <li>Letter describing your situation to indicate why an exception should be made (including why you cannot move closer to your school)</li>\n<li>Copy of your vehicle insurance</li>\n<li>All relevant supporting documentation (work schedule, clinical or practicum information, etc.)</li>\n</ul>",
+                      "content": "<h4 class=\"category-header-medium-small\">Documents Required</h4>\n<ul>\n  <li>A letter describing your situation to indicate why an exception should be made (including why you cannot move closer to your school)</li>\n<li>A copy of your vehicle insurance</li>\n<li>All relevant supporting documentation (work schedule, clinical or practicum information, etc.)</li>\n</ul>",
                       "refreshOnChange": false,
                       "customClass": "align-bullets",
                       "key": "html28",
