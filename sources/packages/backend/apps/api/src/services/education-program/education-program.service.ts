@@ -653,6 +653,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       select: {
         id: true,
         sabcCode: true,
+        name: true,
         programIntensity: true,
         hasWILComponent: true,
         deliveredOnSite: true,
