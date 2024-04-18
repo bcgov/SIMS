@@ -1,5 +1,8 @@
 name: Env Setup - Initialize Redis Cluster in Openshift
 run-name: Env Setup - Initialize Redis Cluster in Openshift from ${{ inputs.gitRef }} to ${{ inputs.environment }}
+
+concurrency: redis-setup
+
 on:
   workflow_dispatch:
     inputs:

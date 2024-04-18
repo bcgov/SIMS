@@ -1,6 +1,8 @@
 name: Env Setup - Redis recovery in Openshift
 run-name: Env Setup - Redis recovery in Openshift from ${{ inputs.gitRef }} to ${{ inputs.environment }}
 
+concurrency: redis-setup
+
 on:
   workflow_dispatch:
     inputs:

@@ -1,6 +1,8 @@
 name: Env Setup - Delete Redis in Openshift
 run-name: Env Setup - Delete Redis in Openshift from ${{ inputs.environment }} using ${{ inputs.gitRef }}
 
+concurrency: redis-setup
+
 on:
   workflow_dispatch:
     inputs:
