@@ -63,7 +63,7 @@ export class StudentLoanBalanceService {
   }
 
   /**
-   * Most recent balance present on database.
+   * Most recent balance date present on database.
    * If no records are present, returns undefined.
    * @param referenceBalanceDate used as a reference to get the last balance before this date.
    * @param entityManager used to get the data in and share the database transaction.

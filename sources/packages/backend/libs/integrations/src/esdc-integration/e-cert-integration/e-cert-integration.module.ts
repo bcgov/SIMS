@@ -8,6 +8,7 @@ import {
   DisbursementScheduleSharedService,
   RestrictionSharedService,
   AssessmentSequentialProcessingService,
+  StudentLoanBalanceSharedService,
 } from "@sims/services";
 import { ECertFullTimeFileFooter } from "./e-cert-full-time-integration/e-cert-files/e-cert-file-footer";
 import { ECertFullTimeFileHeader } from "./e-cert-full-time-integration/e-cert-files/e-cert-file-header";
@@ -80,6 +81,7 @@ import { PartTimeECertFileHandler } from "./part-time-e-cert-file-handler";
     FullTimeCalculationProcess,
     PartTimeCalculationProcess,
     AssessmentSequentialProcessingService,
+    StudentLoanBalanceSharedService,
   ],
   exports: [
     FullTimeECertFileHandler,

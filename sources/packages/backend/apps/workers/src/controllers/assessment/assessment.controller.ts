@@ -62,6 +62,7 @@ import {
   WorkflowClientService,
 } from "@sims/services";
 import { DataSource } from "typeorm";
+import { StudentLoanBalanceSharedService } from "@sims/services/student-loan-balance/student-loan-balance-shared.service";
 
 @Controller()
 export class AssessmentController {
@@ -71,6 +72,7 @@ export class AssessmentController {
     private readonly workflowClientService: WorkflowClientService,
     private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
     private readonly systemUsersService: SystemUsersService,
+    private readonly studentLoanBalanceSharedService: StudentLoanBalanceSharedService,
   ) {}
 
   /**
@@ -404,6 +406,15 @@ export class AssessmentController {
           saveAssessmentCalculationStartDate,
           getProgramYearTotalAwards,
         ]);
+        if (
+          assessment.offering.offeringIntensity === OfferingIntensity.partTime
+        ) {
+          // Fetch the latest CSLP balance for the student.
+          result.latestCSLPBalance =
+            await this.studentLoanBalanceSharedService.getLatestCSLPBalance(
+              studentId,
+            );
+        }
         jobLogger.log(
           `The assessment calculation order has been verified and the assessment id ${assessmentId} is ready to be processed.`,
         );
