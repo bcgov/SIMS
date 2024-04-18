@@ -63,7 +63,7 @@ describe(
         {
           id: NotificationMessageType.MinistryNotificationDisbursementBlocked,
         },
-        { emailContacts: ["dummy@gmail.com"] },
+        { emailContacts: ["dummy@some.domain"] },
       );
     });
 
