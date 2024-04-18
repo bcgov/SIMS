@@ -165,14 +165,14 @@ export class EducationProgramOfferingControllerService {
       programId,
       institutionId,
     );
-    // Get institution location details.
-    const institutionLocation =
-      await this.institutionLocationService.getInstitutionLocation(locationId);
     if (!program) {
       throw new NotFoundException(
         "Program to create the offering not found for the institution.",
       );
     }
+    // Get institution location details.
+    const institutionLocation =
+      await this.institutionLocationService.getInstitutionLocation(locationId);
     return {
       ...payload,
       locationId,

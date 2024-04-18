@@ -5,6 +5,7 @@ import {
   User,
   NotificationMessage,
   PermanentFailureError,
+  NotificationMessageType,
 } from "@sims/sims-db";
 import {
   DataSource,
@@ -118,6 +119,34 @@ export class NotificationService extends RecordDataModelService<Notification> {
     pollingRecordsLimit: number,
   ): Promise<NotificationProcessingSummary> {
     return await this.processUnsentNotificationsRecursive(pollingRecordsLimit);
+  }
+
+  /**
+   * Checks if a notification exists for the given optional parameters provided.
+   * @param transactionalEntityManager entity manager to be part of the transaction.
+   * @param options related options.
+   * - `applicationNumber` related application number.
+   * @returns boolean true if the notification exists, else false.
+   */
+  async checkNotificationExists(
+    transactionalEntityManager: EntityManager,
+    options?: { applicationNumber?: string },
+  ): Promise<boolean> {
+    return transactionalEntityManager
+      .getRepository(Notification)
+      .createQueryBuilder("notification")
+      .innerJoin("notification.notificationMessage", "notificationMessage")
+      .where("notificationMessage.id = :notificationMessageId", {
+        notificationMessageId:
+          NotificationMessageType.ApplicationEditedTooManyTimesNotification,
+      })
+      .andWhere(
+        "notification.metadata->>'applicationNumber' = :applicationNumber",
+        {
+          applicationNumber: options?.applicationNumber,
+        },
+      )
+      .getExists();
   }
 
   /**

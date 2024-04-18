@@ -604,6 +604,7 @@ export class OfferingValidationModel {
   locationId: number;
   /**
    * Institution location name of the institution that will be associated with this offering.
+   * Used as supporting data, for instance, as part of the notification to indicate offering in pending status.
    */
   @IsNotEmpty({ message: "Institution location name is required." })
   locationName: string;

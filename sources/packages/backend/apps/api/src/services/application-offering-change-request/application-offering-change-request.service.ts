@@ -368,11 +368,11 @@ export class ApplicationOfferingChangeRequestService {
 
   /**
    * Gets the application offering change request details.
-   * @param applicationOfferingChangeRequestId application offering change request id to get the details.
+   * @param id application offering change request id to get the details.
    * @returns fetched application offering change request details.
    */
   async getApplicationOfferingChangeRequestById(
-    applicationOfferingChangeRequestId: number,
+    id: number,
   ): Promise<ApplicationOfferingChangeRequest> {
     return this.applicationOfferingChangeRequestRepo.findOne({
       select: {
@@ -393,7 +393,7 @@ export class ApplicationOfferingChangeRequestService {
         },
       },
       relations: { application: { student: { user: true } } },
-      where: { id: applicationOfferingChangeRequestId },
+      where: { id },
     });
   }
 
