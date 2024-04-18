@@ -1,5 +1,5 @@
 name: Env Setup - Delete Redis in Openshift
-run-name: Env Setup - Delete Redis in Openshift from ${{ inputs.environment }} using ${{ inputs.gitRef }}
+run-name: Env Setup - Delete Redis in Openshift from ${{ inputs.environment }} using ${{ github.ref_name }}
 
 concurrency: redis-setup
 
@@ -10,10 +10,6 @@ on:
         description: "Environment"
         required: true
         type: environment
-      gitRef:
-        description: "Build Ref"
-        required: true
-        default: ""
 
 jobs:
   deleteRedis:
