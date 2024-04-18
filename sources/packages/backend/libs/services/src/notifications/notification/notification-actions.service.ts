@@ -59,6 +59,9 @@ export class NotificationActionsService {
       await this.assertNotificationMessageDetails(
         NotificationMessageType.StudentFileUpload,
       );
+    if (!emailContacts?.length) {
+      return;
+    }
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
       userId: notification.userId,
       messageType: NotificationMessageType.StudentFileUpload,
@@ -253,7 +256,6 @@ export class NotificationActionsService {
       await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.StudentRestrictionAdded,
       );
-
     const notificationsToSend = notifications.map((notification) => ({
       userId: notification.userId,
       messageType: NotificationMessageType.StudentRestrictionAdded,
@@ -291,6 +293,9 @@ export class NotificationActionsService {
       await this.assertNotificationMessageDetails(
         NotificationMessageType.LegacyRestrictionAdded,
       );
+    if (!emailContacts?.length) {
+      return;
+    }
     const ministryNotificationsToSend = [];
     emailContacts.forEach((emailContact) => {
       const notificationsToSend = notifications.map((notification) => ({
@@ -698,6 +703,9 @@ export class NotificationActionsService {
       await this.assertNotificationMessageDetails(
         NotificationMessageType.MinistryNotificationDisbursementBlocked,
       );
+    if (!emailContacts?.length) {
+      return;
+    }
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
       userId: auditUser.id,
       messageType:
@@ -738,6 +746,9 @@ export class NotificationActionsService {
       await this.assertNotificationMessageDetails(
         NotificationMessageType.ApplicationExceptionRequestNotification,
       );
+    if (!emailContacts?.length) {
+      return;
+    }
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
       userId: auditUser.id,
       messageType:
@@ -779,6 +790,9 @@ export class NotificationActionsService {
       await this.assertNotificationMessageDetails(
         NotificationMessageType.ApplicationEditedTooManyTimesNotification,
       );
+    if (!emailContacts?.length) {
+      return;
+    }
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
       userId: auditUser.id,
       messageType:
@@ -819,6 +833,9 @@ export class NotificationActionsService {
       await this.assertNotificationMessageDetails(
         NotificationMessageType.StudentSubmittedChangeRequestNotification,
       );
+    if (!emailContacts?.length) {
+      return;
+    }
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
       userId: auditUser.id,
       messageType:
@@ -858,6 +875,9 @@ export class NotificationActionsService {
       await this.assertNotificationMessageDetails(
         NotificationMessageType.StudentRequestsBasicBCeIDAccountNotification,
       );
+    if (!emailContacts?.length) {
+      return;
+    }
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
       userId: auditUser.id,
       messageType:
@@ -896,6 +916,9 @@ export class NotificationActionsService {
       await this.assertNotificationMessageDetails(
         NotificationMessageType.ApplicationOfferingChangeRequestApprovedByStudentNotification,
       );
+    if (!emailContacts?.length) {
+      return;
+    }
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
       userId: auditUser.id,
       messageType:
@@ -935,6 +958,9 @@ export class NotificationActionsService {
       await this.assertNotificationMessageDetails(
         NotificationMessageType.InstitutionRequestsDesignationNotification,
       );
+    if (!emailContacts?.length) {
+      return;
+    }
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
       userId: auditUser.id,
       messageType:
@@ -972,6 +998,9 @@ export class NotificationActionsService {
       await this.assertNotificationMessageDetails(
         NotificationMessageType.InstitutionAddsPendingProgramNotification,
       );
+    if (!emailContacts?.length) {
+      return;
+    }
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
       userId: auditUser.id,
       messageType:
@@ -1010,6 +1039,9 @@ export class NotificationActionsService {
       await this.assertNotificationMessageDetails(
         NotificationMessageType.InstitutionAddsPendingOfferingNotification,
       );
+    if (!emailContacts?.length) {
+      return;
+    }
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
       userId: auditUser.id,
       messageType:

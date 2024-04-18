@@ -20,15 +20,12 @@ import { CustomNamedError } from "@sims/utilities";
 import { OFFERING_VALIDATION_CSV_PARSE_ERROR } from "../../constants";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 
-interface InstitutionDetails {
-  operatingName: string;
-  legalOperatingName: string;
-  primaryEmail: string;
-}
 interface LocationDetails {
   id: number;
   name: string;
-  institutionDetails: InstitutionDetails;
+  operatingName: string;
+  legalOperatingName: string;
+  primaryEmail: string;
 }
 const MAX_STUDY_BREAKS_ENTRIES = 5;
 type InstitutionCodeToIdMap = Record<string, LocationDetails>;
@@ -91,14 +88,11 @@ export class EducationProgramOfferingImportCSVService {
       locationId: locationsMap[csvModel.institutionLocationCode]?.id,
       locationName: locationsMap[csvModel.institutionLocationCode]?.name,
       operatingName:
-        locationsMap[csvModel.institutionLocationCode]?.institutionDetails
-          .operatingName,
+        locationsMap[csvModel.institutionLocationCode]?.operatingName,
       legalOperatingName:
-        locationsMap[csvModel.institutionLocationCode]?.institutionDetails
-          .legalOperatingName,
+        locationsMap[csvModel.institutionLocationCode]?.legalOperatingName,
       primaryEmail:
-        locationsMap[csvModel.institutionLocationCode]?.institutionDetails
-          .primaryEmail,
+        locationsMap[csvModel.institutionLocationCode]?.primaryEmail,
       programContext: programsMap[csvModel.sabcProgramCode],
     }));
   }
@@ -120,11 +114,9 @@ export class EducationProgramOfferingImportCSVService {
         institutionMap[location.institutionCode] = {
           id: location.id,
           name: location.name,
-          institutionDetails: {
-            operatingName: location.institution.operatingName,
-            legalOperatingName: location.institution.legalOperatingName,
-            primaryEmail: location.institution.primaryEmail,
-          },
+          operatingName: location.institution.operatingName,
+          legalOperatingName: location.institution.legalOperatingName,
+          primaryEmail: location.institution.primaryEmail,
         };
       }
     });
