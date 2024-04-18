@@ -14,20 +14,17 @@ import {
 import { createTestingAppModule } from "../../../../../test/helpers";
 import { AssessmentController } from "../../assessment.controller";
 import {
-  Application,
   ApplicationStatus,
   COEStatus,
   DisbursementValueType,
   OfferingIntensity,
-  ProgramYear,
-  SFASApplication,
-  SFASPartTimeApplications,
   StudentAssessmentStatus,
 } from "@sims/sims-db";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { createFakeVerifyAssessmentCalculationOrderPayload } from "./verify-assessment-calculation-order-factory";
 import { createFakeSFASApplication } from "@sims/test-utils/factories/sfas-application";
 import { createFakeSFASPartTimeApplication } from "@sims/test-utils/factories/sfas-part-time-application";
+import * as faker from "faker";
 
 describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
   let db: E2EDataSources;
@@ -289,9 +286,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     // Create the student and program year to be shared across the applications.
     const student = await saveFakeStudent(db.dataSource);
     // Get the program year for the start date.
-    const programYear = await db.dataSource
-      .getRepository(ProgramYear)
-      .findOne({ where: { id: 2 } });
+    const programYear = await db.programYear.findOne({ where: { id: 2 } });
 
     // Past part-time application with federal and provincial loans and grants.
     // Loans will be ignored.
@@ -398,12 +393,15 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     const firstAssessmentDate =
       currentApplication.currentAssessment.assessmentDate;
     // The start date for the first SFAS and SFAS part time application record is set to the date before the first assessment date of the current application.
-    const firstLegacyApplicationStartDate = addDays(-10, firstAssessmentDate);
+    const firstLegacyApplicationStartDate = faker.date.between(
+      programYear.startDate,
+      addDays(-1, firstAssessmentDate),
+    );
     const firstLegacyApplicationEndDate = addDays(30, firstAssessmentDate);
     // The start date for the second SFAS and SFAS part time application record is set to the date after the end date of the first SFAS application.
-    const secondLegacyApplicationStartDate = addDays(
-      10,
+    const secondLegacyApplicationStartDate = faker.date.between(
       firstLegacyApplicationEndDate,
+      addDays(10, firstLegacyApplicationEndDate),
     );
     const secondLegacyApplicationEndDate = addDays(
       40,
@@ -423,7 +421,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
       },
     );
     currentApplication.currentAssessment = secondAssessment;
-    await db.dataSource.getRepository(Application).save(currentApplication);
+    await db.application.save(currentApplication);
 
     // SFAS Individual.
     const sfasIndividual = await saveFakeSFASIndividual(db.dataSource, {
@@ -461,9 +459,10 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         },
       },
     );
-    await db.dataSource
-      .getRepository(SFASApplication)
-      .save([firstFakeSFASApplication, secondFakeSFASApplication]);
+    await db.sfasApplication.save([
+      firstFakeSFASApplication,
+      secondFakeSFASApplication,
+    ]);
     // First SFAS part time application with the start date before the first assessment date of the current application.
     const firstFakeSFASPartTimeApplication = createFakeSFASPartTimeApplication(
       { individual: sfasIndividual },
@@ -494,12 +493,10 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         },
       },
     );
-    await db.dataSource
-      .getRepository(SFASPartTimeApplications)
-      .save([
-        firstFakeSFASPartTimeApplication,
-        secondFakeSFASPartTimeApplication,
-      ]);
+    await db.sfasPartTimeApplications.save([
+      firstFakeSFASPartTimeApplication,
+      secondFakeSFASPartTimeApplication,
+    ]);
     // Act
     const result = await assessmentController.verifyAssessmentCalculationOrder(
       createFakeVerifyAssessmentCalculationOrderPayload(
@@ -533,9 +530,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     // Create the student to be shared across the applications.
     const student = await saveFakeStudent(db.dataSource);
     // Get the program year for the start date.
-    const programYear = await db.dataSource
-      .getRepository(ProgramYear)
-      .findOne({ where: { id: 2 } });
+    const programYear = await db.programYear.findOne({ where: { id: 2 } });
 
     // Current application having the first assessment already processed.
     const currentApplication = await saveFakeApplicationDisbursements(
@@ -554,12 +549,15 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     const firstAssessmentDate =
       currentApplication.currentAssessment.assessmentDate;
     // The start date for the first SFAS and SFAS part time application record is set to the date before the first assessment date of the current application.
-    const firstLegacyApplicationStartDate = addDays(-10, firstAssessmentDate);
+    const firstLegacyApplicationStartDate = faker.date.between(
+      programYear.startDate,
+      addDays(-1, firstAssessmentDate),
+    );
     const firstLegacyApplicationEndDate = addDays(30, firstAssessmentDate);
     // The start date for the second SFAS and SFAS part time application record is set to the date after the end date of the first SFAS application.
-    const secondLegacyApplicationStartDate = addDays(
-      10,
+    const secondLegacyApplicationStartDate = faker.date.between(
       firstLegacyApplicationEndDate,
+      addDays(10, firstLegacyApplicationEndDate),
     );
     const secondLegacyApplicationEndDate = addDays(
       40,
@@ -580,7 +578,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
       },
     );
     currentApplication.currentAssessment = secondAssessment;
-    await db.dataSource.getRepository(Application).save(currentApplication);
+    await db.application.save(currentApplication);
 
     // SFAS Individual.
     const sfasIndividual = await saveFakeSFASIndividual(db.dataSource, {
@@ -618,9 +616,10 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         },
       },
     );
-    await db.dataSource
-      .getRepository(SFASApplication)
-      .save([firstFakeSFASApplication, secondFakeSFASApplication]);
+    await db.sfasApplication.save([
+      firstFakeSFASApplication,
+      secondFakeSFASApplication,
+    ]);
     // First SFAS part time application with the start date before the first assessment date of the current application.
     const firstFakeSFASPartTimeApplication = createFakeSFASPartTimeApplication(
       { individual: sfasIndividual },
@@ -651,12 +650,10 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         },
       },
     );
-    await db.dataSource
-      .getRepository(SFASPartTimeApplications)
-      .save([
-        firstFakeSFASPartTimeApplication,
-        secondFakeSFASPartTimeApplication,
-      ]);
+    await db.sfasPartTimeApplications.save([
+      firstFakeSFASPartTimeApplication,
+      secondFakeSFASPartTimeApplication,
+    ]);
     // Act
     const result = await assessmentController.verifyAssessmentCalculationOrder(
       createFakeVerifyAssessmentCalculationOrderPayload(
