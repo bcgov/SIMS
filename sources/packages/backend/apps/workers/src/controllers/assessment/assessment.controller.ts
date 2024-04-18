@@ -454,7 +454,9 @@ export class AssessmentController {
           ? "FullTime"
           : "PartTime";
       const outputName = `programYearTotal${intensity}${award.valueCode}`;
-      output[outputName] = award.total;
+      output[outputName] = output[outputName]
+        ? output[outputName] + award.total
+        : award.total;
     });
   }
 
