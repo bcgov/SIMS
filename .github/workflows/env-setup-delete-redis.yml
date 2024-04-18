@@ -24,7 +24,7 @@ jobs:
       - name: Checkout Target Branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.gitRef }}
+          ref: ${{ github.ref_name }}
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
