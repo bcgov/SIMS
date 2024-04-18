@@ -401,10 +401,27 @@ export class AssessmentController {
             assessmentId,
             { alternativeReferenceDate: new Date() },
           );
-        // Updates the calculation start date and get the program year totals in parallel.
-        const [, programYearTotalAwards] = await Promise.all([
+        const getSFASApplicationAwards =
+          this.assessmentSequentialProcessingService.getProgramYearLegacyAwardsTotals(
+            assessmentId,
+            "sfasApplication",
+          );
+        const getSFASPartTimeApplicationAwards =
+          this.assessmentSequentialProcessingService.getProgramYearLegacyAwardsTotals(
+            assessmentId,
+            "sfasPTApplication",
+          );
+        // Updates the calculation start date and get the program year totals and SFAS/SAIL application awards in parallel.
+        const [
+          ,
+          programYearTotalAwards,
+          sfasApplicationAwards,
+          sfasPartTimeApplicationAwards,
+        ] = await Promise.all([
           saveAssessmentCalculationStartDate,
           getProgramYearTotalAwards,
+          getSFASApplicationAwards,
+          getSFASPartTimeApplicationAwards,
         ]);
         if (
           assessment.offering.offeringIntensity === OfferingIntensity.partTime

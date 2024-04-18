@@ -9,6 +9,8 @@ import {
   DisbursementScheduleStatus,
   DisbursementValueType,
   OfferingIntensity,
+  SFASApplication,
+  SFASPartTimeApplications,
   StudentAppeal,
   StudentAssessment,
   StudentAssessmentStatus,
@@ -16,6 +18,11 @@ import {
 } from "@sims/sims-db";
 import { AwardTotal, SequencedApplications, SequentialApplication } from "..";
 import { InjectRepository } from "@nestjs/typeorm";
+import {
+  SFASApplicationAwards,
+  SFASApplicationAwardsEnum,
+} from "@sims/services/sfas/sfas-application.model";
+import { getISODateOnlyString } from "@sims/utilities";
 
 @Injectable()
 export class AssessmentSequentialProcessingService {
@@ -25,6 +32,10 @@ export class AssessmentSequentialProcessingService {
     private readonly applicationRepo: Repository<Application>,
     @InjectRepository(StudentAssessment)
     private readonly studentAssessmentRepo: Repository<StudentAssessment>,
+    @InjectRepository(SFASApplication)
+    private readonly sfasApplicationsRepo: Repository<SFASApplication>,
+    @InjectRepository(SFASPartTimeApplications)
+    private readonly sfasPartTimeApplicationsRepo: Repository<SFASPartTimeApplications>,
   ) {}
 
   /**
@@ -342,5 +353,145 @@ export class AssessmentSequentialProcessingService {
       sequentialApplications,
       options?.alternativeReferenceDate,
     );
+  }
+
+  /**
+   * Get SFAS application part time awards data from either the SFAS application table or
+   * the SFAS part time applications table depending on the SFAS application query type.
+   * @param assessmentId Current assessment being processed.
+   * @param sfasApplicationType SFAS application query type (sfasApplication or sfasPTApplication).
+   * @returns SFAS application part time awards data.
+   */
+  async getProgramYearLegacyAwardsTotals(
+    assessmentId: number,
+    sfasApplicationType: string,
+  ): Promise<SFASApplicationAwards> {
+    const assessment = await this.studentAssessmentRepo.findOne({
+      select: {
+        id: true,
+        application: {
+          id: true,
+          applicationNumber: true,
+          student: {
+            id: true,
+            birthDate: true,
+            sinValidation: {
+              sin: true,
+            },
+            user: {
+              lastName: true,
+            },
+          },
+          programYear: {
+            id: true,
+            startDate: true,
+          },
+        },
+        assessmentDate: true,
+      },
+      relations: {
+        application: {
+          student: { sinValidation: true, user: true },
+          programYear: true,
+        },
+      },
+      where: {
+        id: assessmentId,
+      },
+    });
+    if (!assessment) {
+      throw new Error(`Assessment if ${assessmentId} not found.`);
+    }
+    const lastName = assessment.application.student.user.lastName;
+    const sin = assessment.application.student.sinValidation.sin;
+    const birthDate = assessment.application.student.birthDate;
+    const programYearStartDate = assessment.application.programYear.startDate;
+    // Get the first assessment date for the current application. If there are multiple
+    // assessments for the current application, then set the first assessment date to
+    // the assessment date of the first assessment.
+    let firstAssessmentDate = getISODateOnlyString(assessment.assessmentDate);
+    const firstAssessment = await this.dataSource.manager
+      .getRepository(StudentAssessment)
+      .createQueryBuilder("assessment")
+      .select("assessment.assessmentDate")
+      .innerJoin("assessment.application", "application")
+      .where("assessment.id = :assessmentId", { assessmentId: assessment.id })
+      .where("application.applicationNumber = :applicationNumber", {
+        applicationNumber: assessment.application.applicationNumber,
+      })
+      .orderBy("assessment.assessmentDate")
+      .getOne();
+    if (firstAssessment) {
+      firstAssessmentDate = getISODateOnlyString(
+        firstAssessment.assessmentDate,
+      );
+    }
+    const sfasApplicationLegacyRepo =
+      sfasApplicationType === "sfasPTApplication"
+        ? this.sfasPartTimeApplicationsRepo
+        : this.sfasApplicationsRepo;
+    const sfasApplicationLegacyAwards = sfasApplicationLegacyRepo
+      .createQueryBuilder(`${sfasApplicationType}`)
+      .select(`SUM(${sfasApplicationType}.csgp_award)`, "CSGP")
+      .addSelect(`SUM(${sfasApplicationType}.sbsd_award)`, "SBSD")
+      .addSelect(`SUM(${sfasApplicationType}.csgd_award)`, "CSGD")
+      .addSelect(`SUM(${sfasApplicationType}.bcag_award)`, "BCAG");
+    if (sfasApplicationType === "sfasPTApplication")
+      sfasApplicationLegacyAwards.addSelect(
+        `SUM(${sfasApplicationType}.cspt_award)`,
+        "CSPT",
+      );
+    sfasApplicationLegacyAwards
+      .innerJoin(`${sfasApplicationType}.individual`, "sfasStudent")
+      .where("lower(sfasStudent.lastName) = lower(:lastName)", { lastName })
+      .andWhere("sfasStudent.sin = :sin", { sin })
+      .andWhere("sfasStudent.birthDate = :birthDate", { birthDate })
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where(`${sfasApplicationType}.startDate >= :startDate`, {
+            startDate: programYearStartDate,
+          }).andWhere(`${sfasApplicationType}.endDate <= :endDate`, {
+            endDate: firstAssessmentDate,
+          });
+        }),
+      );
+    return sfasApplicationLegacyAwards.getRawOne<SFASApplicationAwards>();
+  }
+
+  /**
+   * Push SFAS/SAIL application awards to total awards list.
+   * @param totals Total awards array.
+   * @param sfasLegacyAwards SFAS/SAIL application awards data.
+   * @param offeringIntensity Offering intensity.
+   */
+  appendSFASAwardsToTotals(
+    totals: AwardTotal[],
+    sfasLegacyAwards: SFASApplicationAwards,
+    offeringIntensity: OfferingIntensity,
+  ) {
+    // Loop through sfasLegacyAwards's keys to find existing value in totals.
+    // Modify the existing value or push the new data into totals.
+    Object.keys(sfasLegacyAwards).forEach((key: SFASApplicationAwardsEnum) => {
+      const index = totals.findIndex(
+        (value) =>
+          value.offeringIntensity === offeringIntensity &&
+          value.valueCode === key,
+      );
+      const awardValue = +sfasLegacyAwards[key];
+      if (index > -1) {
+        totals[index] = {
+          ...totals[index],
+          total: +totals[index].total + awardValue,
+        };
+      }
+      // Only push to totals if awardValue is greater than zero.
+      else if (awardValue > 0) {
+        totals.push({
+          offeringIntensity: offeringIntensity,
+          valueCode: key,
+          total: awardValue,
+        });
+      }
+    });
   }
 }
