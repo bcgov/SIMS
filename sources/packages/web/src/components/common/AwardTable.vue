@@ -23,13 +23,14 @@
 import { PropType, defineComponent, computed } from "vue";
 import { OfferingIntensity } from "@/types";
 import { AWARDS, AwardDetail } from "@/constants/award-constants";
+import { DynamicAwardValue } from "@/services/http/dto";
 
 export default defineComponent({
   props: {
     awardDetails: {
-      type: Object as PropType<Record<string, string | number | Date>>,
+      type: Object as PropType<DynamicAwardValue>,
       required: true,
-      default: {} as Record<string, string | number | Date>,
+      default: {} as DynamicAwardValue,
     },
     identifier: {
       type: String,
