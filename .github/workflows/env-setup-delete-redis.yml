@@ -10,6 +10,10 @@ on:
         description: "Environment"
         required: true
         type: environment
+      gitRef:
+        description: "Build Ref"
+        required: true
+        default: ""
 
 jobs:
   deleteRedis:
@@ -29,4 +33,4 @@ jobs:
       - name: Delete Redis
         working-directory: "./devops/"
         run: |
-          make delete-redis NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
+          make delete-redis

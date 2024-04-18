@@ -29,8 +29,8 @@ jobs:
       - name: Init Redis
         working-directory: "./devops/"
         run: |
-          make init-redis NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
+          make init-redis
       - name: Deploy Redis
         working-directory: "./devops/"
         run: |
-          make deploy-redis NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
+          make deploy-redis

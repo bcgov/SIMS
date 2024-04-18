@@ -29,4 +29,4 @@ jobs:
       - name: Init Redis Cluster
         working-directory: "./devops/"
         run: |
-          echo "yes" |make init-redis-cluster NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
+          echo "yes" |make init-redis-cluster
