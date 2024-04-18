@@ -20,12 +20,14 @@ import {
   DisbursementValueType,
   OfferingIntensity,
   ProgramYear,
+  SFASApplication,
+  SFASPartTimeApplications,
   StudentAssessmentStatus,
 } from "@sims/sims-db";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { createFakeVerifyAssessmentCalculationOrderPayload } from "./verify-assessment-calculation-order-factory";
-import { saveFakeSFASApplication } from "@sims/test-utils/factories/sfas-application";
-import { saveFakeSFASPartTimeApplication } from "@sims/test-utils/factories/sfas-part-time-application";
+import { createFakeSFASApplication } from "@sims/test-utils/factories/sfas-application";
+import { createFakeSFASPartTimeApplication } from "@sims/test-utils/factories/sfas-part-time-application";
 
 describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
   let db: E2EDataSources;
@@ -281,14 +283,15 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     });
   });
 
-  it("Should sum the grants and awards from two past applications with different offering intensities and SFAS/SAIL applications data when the applications are for the same student and program year.", async () => {
+  it("Should sum the grants from past applications with different offering intensities and awards from SFAS/SAIL applications data when the applications are for the same student and program year.", async () => {
     // Arrange
 
     // Create the student and program year to be shared across the applications.
     const student = await saveFakeStudent(db.dataSource);
+    // Get the program year for the start date.
     const programYear = await db.dataSource
       .getRepository(ProgramYear)
-      .findOne({ where: { id: 3 } });
+      .findOne({ where: { id: 2 } });
 
     // Past part-time application with federal and provincial loans and grants.
     // Loans will be ignored.
@@ -323,7 +326,6 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
           // Should not be disbursed due to BCLM restriction.
           createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCAG", 7),
         ],
-        programYear,
       },
       {
         offeringIntensity: OfferingIntensity.partTime,
@@ -331,7 +333,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         currentAssessmentInitialValues: {
           assessmentWorkflowId: "some fake id",
           studentAssessmentStatus: StudentAssessmentStatus.Completed,
-          assessmentDate: addDays(-5),
+          assessmentDate: addDays(10, programYear.startDate),
         },
       },
     );
@@ -369,7 +371,6 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
             13,
           ),
         ],
-        programYear: programYear,
       },
       {
         offeringIntensity: OfferingIntensity.fullTime,
@@ -377,26 +378,28 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         currentAssessmentInitialValues: {
           assessmentWorkflowId: "some fake id",
           studentAssessmentStatus: StudentAssessmentStatus.Completed,
-          assessmentDate: addDays(-4),
+          assessmentDate: addDays(20, programYear.startDate),
         },
       },
     );
     // Current application having the first assessment already processed.
     const currentApplication = await saveFakeApplicationDisbursements(
       db.dataSource,
-      { student, programYear: programYear },
+      { student },
       {
         offeringIntensity: OfferingIntensity.partTime,
         applicationStatus: ApplicationStatus.InProgress,
         currentAssessmentInitialValues: {
           assessmentWorkflowId: "some fake id",
           studentAssessmentStatus: StudentAssessmentStatus.Completed,
-          assessmentDate: addDays(-3),
+          assessmentDate: addDays(30, programYear.startDate),
         },
       },
     );
     const firstAssessmentDate =
       currentApplication.currentAssessment.assessmentDate;
+    // The end date for the SFAS/SAIL application record is set to the date before the first assessment date of the current application.
+    const beforeFirstAssessmentDate = addDays(-5, firstAssessmentDate);
     // Create the second assessment for the current application with a different assessment date.
     const secondAssessment = createFakeStudentAssessment(
       {
@@ -409,7 +412,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
           ...currentApplication.currentAssessment,
           assessmentWorkflowId: "some fake id",
           studentAssessmentStatus: StudentAssessmentStatus.InProgress,
-          assessmentDate: addDays(-1),
+          assessmentDate: addDays(40, programYear.startDate),
         },
       },
     );
@@ -426,11 +429,10 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
       },
     });
     // SFAS application with the end date as the end date of the program year.
-    await saveFakeSFASApplication(db.dataSource, {
+    const firstFakeSFASApplication = createFakeSFASApplication({
       initialValues: {
         startDate: currentApplication.programYear.startDate,
         endDate: currentApplication.programYear.endDate,
-        programYearId: 20232024,
         individualId: sfasIndividual.id,
         csgdAward: 9,
         csgpAward: 10,
@@ -438,12 +440,14 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         bcagAward: 13,
       },
     });
-    // SFAS application with the end date as the first assessment date of the current application.
-    await saveFakeSFASApplication(db.dataSource, {
+    await db.dataSource
+      .getRepository(SFASApplication)
+      .save(firstFakeSFASApplication);
+    // SFAS application with the end date as the date before the first assessment date of the current application.
+    const secondFakeSFASApplication = createFakeSFASApplication({
       initialValues: {
         startDate: currentApplication.programYear.startDate,
-        endDate: getISODateOnlyString(firstAssessmentDate),
-        programYearId: 20232024,
+        endDate: getISODateOnlyString(beforeFirstAssessmentDate),
         individualId: sfasIndividual.id,
         csgdAward: 9,
         csgpAward: 10,
@@ -451,12 +455,14 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         bcagAward: 13,
       },
     });
-    // SFAS part time application with the end date as the end date of the program year.
-    await saveFakeSFASPartTimeApplication(db.dataSource, {
+    await db.dataSource
+      .getRepository(SFASApplication)
+      .save(secondFakeSFASApplication);
+    // SFAS part time (SAIL) application with the end date as the end date of the program year.
+    const firstFakeSAILApplication = createFakeSFASPartTimeApplication({
       initialValues: {
         startDate: currentApplication.programYear.startDate,
         endDate: currentApplication.programYear.endDate,
-        programYearId: 20232024,
         individualId: sfasIndividual.id,
         csptAward: 2,
         csgdAward: 3,
@@ -465,12 +471,14 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         bcagAward: 7,
       },
     });
-    // SFAS part time application with the end date as the first assessment date of the current application.
-    await saveFakeSFASPartTimeApplication(db.dataSource, {
+    await db.dataSource
+      .getRepository(SFASPartTimeApplications)
+      .save(firstFakeSAILApplication);
+    // SFAS part time (SAIL) application with the end date as the date before the first assessment date of the current application.
+    const secondFakeSAILApplication = createFakeSFASPartTimeApplication({
       initialValues: {
         startDate: currentApplication.programYear.startDate,
-        endDate: getISODateOnlyString(firstAssessmentDate),
-        programYearId: 20232024,
+        endDate: getISODateOnlyString(beforeFirstAssessmentDate),
         individualId: sfasIndividual.id,
         csptAward: 2,
         csgdAward: 3,
@@ -479,17 +487,20 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         bcagAward: 7,
       },
     });
+    await db.dataSource
+      .getRepository(SFASPartTimeApplications)
+      .save(secondFakeSAILApplication);
     // Act
     const result = await assessmentController.verifyAssessmentCalculationOrder(
       createFakeVerifyAssessmentCalculationOrderPayload(
         currentApplication.currentAssessment.id,
       ),
     );
-    // Asserts
+    // Assert
     expect(FakeWorkerJobResult.getResultType(result)).toBe(
       MockedZeebeJobResult.Complete,
     );
-    // The calculation will only take SFAS/SAIL application data where the end date is the first assessment date of the current application.
+    // The calculation will only take SFAS/SAIL application data where the end date is the date before the first assessment date of the current application.
     expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
       isReadyForCalculation: true,
       // Full-time
@@ -506,31 +517,35 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     });
   });
 
-  it("Should sum the awards from SFAS/SAIL applications data when there is no past application and the applications are for the same student and program year.", async () => {
+  it("Should sum the awards from SFAS/SAIL applications data when there is no past application for the same student and program year.", async () => {
     // Arrange
 
     // Create the student to be shared across the applications.
     const student = await saveFakeStudent(db.dataSource);
+    // Get the program year for the start date.
     const programYear = await db.dataSource
       .getRepository(ProgramYear)
-      .findOne({ where: { id: 3 } });
+      .findOne({ where: { id: 2 } });
+
     // Current application having the first assessment already processed.
     const currentApplication = await saveFakeApplicationDisbursements(
       db.dataSource,
-      { student, programYear: programYear },
+      { student },
       {
         offeringIntensity: OfferingIntensity.partTime,
         applicationStatus: ApplicationStatus.InProgress,
         currentAssessmentInitialValues: {
           assessmentWorkflowId: "some fake id",
           studentAssessmentStatus: StudentAssessmentStatus.Completed,
-          assessmentDate: addDays(-3),
+          assessmentDate: addDays(30, programYear.startDate),
         },
       },
     );
     const firstAssessmentDate =
       currentApplication.currentAssessment.assessmentDate;
-    // Create the second assessment for the current application on a different assessment date.
+    // The end date for the SFAS/SAIL application record is set to the date before the first assessment date of the current application.
+    const beforeFirstAssessmentDate = addDays(-5, firstAssessmentDate);
+    // Create the second assessment for the current application with a different assessment date.
     const secondAssessment = createFakeStudentAssessment(
       {
         auditUser: currentApplication.student.user,
@@ -542,7 +557,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
           ...currentApplication.currentAssessment,
           assessmentWorkflowId: "some fake id",
           studentAssessmentStatus: StudentAssessmentStatus.InProgress,
-          assessmentDate: addDays(-1),
+          assessmentDate: addDays(40, programYear.startDate),
         },
       },
     );
@@ -559,11 +574,10 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
       },
     });
     // SFAS application with the end date as the end date of the program year.
-    await saveFakeSFASApplication(db.dataSource, {
+    const firstFakeSFASApplication = createFakeSFASApplication({
       initialValues: {
         startDate: currentApplication.programYear.startDate,
         endDate: currentApplication.programYear.endDate,
-        programYearId: 20232024,
         individualId: sfasIndividual.id,
         csgdAward: 9,
         csgpAward: 10,
@@ -571,12 +585,14 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         bcagAward: 13,
       },
     });
-    // SFAS application with the end date as the first assessment date of the current application.
-    await saveFakeSFASApplication(db.dataSource, {
+    await db.dataSource
+      .getRepository(SFASApplication)
+      .save(firstFakeSFASApplication);
+    // SFAS application with the end date as the date before the first assessment date of the current application.
+    const secondFakeSFASApplication = createFakeSFASApplication({
       initialValues: {
         startDate: currentApplication.programYear.startDate,
-        endDate: getISODateOnlyString(firstAssessmentDate),
-        programYearId: 20232024,
+        endDate: getISODateOnlyString(beforeFirstAssessmentDate),
         individualId: sfasIndividual.id,
         csgdAward: 9,
         csgpAward: 10,
@@ -584,12 +600,14 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         bcagAward: 13,
       },
     });
-    // SFAS part time application with the end date as the end date of the program year.
-    await saveFakeSFASPartTimeApplication(db.dataSource, {
+    await db.dataSource
+      .getRepository(SFASApplication)
+      .save(secondFakeSFASApplication);
+    // SFAS part time (SAIL) application with the end date as the end date of the program year.
+    const firstFakeSAILApplication = createFakeSFASPartTimeApplication({
       initialValues: {
         startDate: currentApplication.programYear.startDate,
         endDate: currentApplication.programYear.endDate,
-        programYearId: 20232024,
         individualId: sfasIndividual.id,
         csptAward: 2,
         csgdAward: 3,
@@ -598,12 +616,15 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         bcagAward: 7,
       },
     });
-    // SFAS part time application with the end date as first assessment date of the current application.
-    await saveFakeSFASPartTimeApplication(db.dataSource, {
+    await db.dataSource
+      .getRepository(SFASPartTimeApplications)
+      .save(firstFakeSAILApplication);
+    // SAIL application with the end date as the date before the first assessment date of the current application.
+    // SFAS part time (SAIL) application with the end date as the date before the first assessment date of the current application.
+    const secondFakeSAILApplication = createFakeSFASPartTimeApplication({
       initialValues: {
         startDate: currentApplication.programYear.startDate,
-        endDate: getISODateOnlyString(firstAssessmentDate),
-        programYearId: 20232024,
+        endDate: getISODateOnlyString(beforeFirstAssessmentDate),
         individualId: sfasIndividual.id,
         csptAward: 2,
         csgdAward: 3,
@@ -612,17 +633,20 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         bcagAward: 7,
       },
     });
+    await db.dataSource
+      .getRepository(SFASPartTimeApplications)
+      .save(secondFakeSAILApplication);
     // Act
     const result = await assessmentController.verifyAssessmentCalculationOrder(
       createFakeVerifyAssessmentCalculationOrderPayload(
         currentApplication.currentAssessment.id,
       ),
     );
-    // Asserts
+    // Assert
     expect(FakeWorkerJobResult.getResultType(result)).toBe(
       MockedZeebeJobResult.Complete,
     );
-    // The calculation will only take SFAS/SAIL application data where the end date is the first assessment date of the current application.
+    // The calculation will only take SFAS/SAIL application data where the end date is the date before the first assessment date of the current application.
     expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
       isReadyForCalculation: true,
       // Full-time

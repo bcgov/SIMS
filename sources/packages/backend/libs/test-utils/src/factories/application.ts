@@ -47,7 +47,8 @@ export function createFakeApplication(
   const application = new Application();
   application.data = options?.initialValue.data ?? ({} as ApplicationData);
   application.programYear = relations?.programYear ?? createFakeProgramYear();
-  application.programYear.id = relations?.programYear?.id ?? 2;
+  // TODO get programYear from relations instead of setting the id here.
+  application.programYear.id = 2;
   application.student = relations?.student ?? createFakeStudent();
   application.applicationStatusUpdatedOn =
     options?.initialValue?.applicationStatusUpdatedOn ?? new Date();
@@ -100,7 +101,6 @@ export async function saveFakeApplicationDisbursements(
     student?: Student;
     msfaaNumber?: MSFAANumber;
     program?: EducationProgram;
-    programYear?: ProgramYear;
   },
   options?: {
     applicationStatus?: ApplicationStatus;
@@ -228,7 +228,6 @@ export async function saveFakeApplication(
     institutionLocation?: InstitutionLocation;
     student?: Student;
     program?: EducationProgram;
-    programYear?: ProgramYear;
   },
   options?: {
     applicationStatus?: ApplicationStatus;
@@ -256,7 +255,6 @@ export async function saveFakeApplication(
   const fakeApplication = createFakeApplication({
     student: savedStudent,
     location: relations?.institutionLocation,
-    programYear: relations?.programYear,
   });
   fakeApplication.applicationStatus = applicationStatus;
   const savedApplication = await applicationRepo.save(fakeApplication);
