@@ -612,7 +612,7 @@ export class OfferingValidationModel {
   /**
    * Institution operating name used as supporting data, for instance, as part of the notification to indicate offering in pending status.
    */
-  @Allow()
+  @IsNotEmpty({ message: "Institution operating name is required." })
   operatingName: string;
   /**
    * Institution legal operating name used as supporting data, for instance, as part of the notification to indicate offering in pending status.
