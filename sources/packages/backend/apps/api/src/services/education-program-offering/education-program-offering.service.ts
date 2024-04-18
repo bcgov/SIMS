@@ -68,21 +68,19 @@ import {
   WILComponentOptions,
 } from "./education-program-offering-validation.models";
 import { EducationProgramOfferingValidationService } from "./education-program-offering-validation.service";
-import { InstitutionLocationService } from "../institution-location/institution-location.service";
 import * as os from "os";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   InstitutionAddsPendingOfferingNotification,
   NotificationActionsService,
 } from "@sims/services";
-import { validate } from "class-validator";
+
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
   constructor(
     private readonly dataSource: DataSource,
     private readonly offeringValidationService: EducationProgramOfferingValidationService,
     private readonly notificationActionsService: NotificationActionsService,
-    private readonly institutionLocationService: InstitutionLocationService,
   ) {
     super(dataSource.getRepository(EducationProgramOffering));
   }
