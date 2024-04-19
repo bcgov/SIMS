@@ -2,6 +2,7 @@ import {
   createE2EDataSources,
   createFakeDisbursementValue,
   createFakeStudentAssessment,
+  createFakeStudentLoanBalance,
   E2EDataSources,
   saveFakeApplicationDisbursements,
   saveFakeSFASIndividual,
@@ -717,6 +718,106 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
       isReadyForCalculation: true,
       latestCSLPBalance: 0,
+    });
+  });
+
+  it("Should return latest CSLP balance, when the student submits a parttime application and has a value in the student loan balance table", async () => {
+    // Arrange
+
+    // Create the student to be shared across the applications.
+    const student = await saveFakeStudent(db.dataSource);
+
+    // Current application having the first assessment already processed.
+    const currentApplication = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      { student },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.InProgress,
+        currentAssessmentInitialValues: {
+          assessmentWorkflowId: "some fake id",
+          studentAssessmentStatus: StudentAssessmentStatus.InProgress,
+        },
+      },
+    );
+
+    //Update CSLP balance for the student.
+    await db.studentLoanBalance.insert(
+      createFakeStudentLoanBalance(
+        { student },
+        {
+          initialValues: {
+            balanceDate: "2023-11-30",
+            cslBalance: 1000,
+          },
+        },
+      ),
+    );
+
+    // Act
+    const result = await assessmentController.verifyAssessmentCalculationOrder(
+      createFakeVerifyAssessmentCalculationOrderPayload(
+        currentApplication.currentAssessment.id,
+      ),
+    );
+
+    // Assert
+    expect(FakeWorkerJobResult.getResultType(result)).toBe(
+      MockedZeebeJobResult.Complete,
+    );
+    // The result will not have data from SFAS or SFAS part time application data.
+    expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
+      isReadyForCalculation: true,
+      latestCSLPBalance: 1000,
+    });
+  });
+
+  it("Should not return latest CSLP balance, when the student submits a fulltime application and has a value in the student loan balance table", async () => {
+    // Arrange
+
+    // Create the student to be shared across the applications.
+    const student = await saveFakeStudent(db.dataSource);
+
+    // Current application having the first assessment already processed.
+    const currentApplication = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      { student },
+      {
+        offeringIntensity: OfferingIntensity.fullTime,
+        applicationStatus: ApplicationStatus.InProgress,
+        currentAssessmentInitialValues: {
+          assessmentWorkflowId: "some fake id",
+          studentAssessmentStatus: StudentAssessmentStatus.InProgress,
+        },
+      },
+    );
+
+    //Update CSLP balance for the student.
+    await db.studentLoanBalance.insert(
+      createFakeStudentLoanBalance(
+        { student },
+        {
+          initialValues: {
+            balanceDate: "2023-11-30",
+          },
+        },
+      ),
+    );
+
+    // Act
+    const result = await assessmentController.verifyAssessmentCalculationOrder(
+      createFakeVerifyAssessmentCalculationOrderPayload(
+        currentApplication.currentAssessment.id,
+      ),
+    );
+    
+    // Assert
+    expect(FakeWorkerJobResult.getResultType(result)).toBe(
+      MockedZeebeJobResult.Complete,
+    );
+    // The result will not have data from SFAS or SFAS part time application data.
+    expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
+      isReadyForCalculation: true,
     });
   });
 });

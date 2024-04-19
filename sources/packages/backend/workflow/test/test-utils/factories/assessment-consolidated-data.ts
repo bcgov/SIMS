@@ -95,6 +95,7 @@ export function createFakePartTimeAssessmentConsolidatedData(
     programYearTotalPartTimeCSGP: 60,
     programYearTotalFullTimeCSGP: 70,
     programYearTotalPartTimeCSPT: 80,
+    latestCSLPBalance: 0,
   };
 }
 /**

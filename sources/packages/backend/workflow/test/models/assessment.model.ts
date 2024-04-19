@@ -146,6 +146,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   programYearTotalFullTimeSBSD: number;
   programYearTotalPartTimeCSGP: number;
   programYearTotalFullTimeCSGP: number;
+  latestCSLPBalance: number;
 }
 
 /**
@@ -265,6 +266,10 @@ export interface CalculatedAssessmentModel {
   provincialAwardNetSBSDAmount: number;
 
   // Part time.
+  //CSLP
+  federalAwardNetCSLPAmount: number;
+  limitAwardCSLPRemaining: number;
+  latestCSLPBalance: number;
   // CSPT
   awardEligibilityCSPT: boolean;
   federalAwardCSPTAmount: number;
@@ -285,6 +290,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataTotalRemainingNeed1: number;
   calculatedDataTotalRemainingNeed2: number;
   calculatedDataTotalRemainingNeed3: number;
+  calculatedDataTotalRemainingNeed4: number;
   calculatedDataAdditionalTransportationMax: number;
   calculatedDataTotalTransportationAllowance: number;
   // DMN Part Time Award Allowable Limits
@@ -296,6 +302,7 @@ export interface CalculatedAssessmentModel {
     limitAwardCSGD2OrLessChildAmount: number;
     limitAwardSBSDUnder40CourseLoadAmount: number;
     limitAwardSBSD40AndUpCourseLoadAmount: number;
+    limitAwardCSLPAmount: number;
   };
   // DMN Part Time Award Family Size Variables
   dmnPartTimeAwardFamilySizeVariables?: {
