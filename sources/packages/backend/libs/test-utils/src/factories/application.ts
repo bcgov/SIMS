@@ -131,7 +131,9 @@ export async function saveFakeApplicationDisbursements(
         relations?.disbursementValues ?? [
           createFakeDisbursementValue(
             DisbursementValueType.CanadaLoan,
-            "CSLF",
+            options?.offeringIntensity === OfferingIntensity.fullTime
+              ? "CSLF"
+              : "CSLP",
             1,
           ),
         ],

@@ -741,7 +741,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
       },
     );
 
-    //Update CSLP balance for the student.
+    // Update CSLP balance for the student.
     await db.studentLoanBalance.insert(
       createFakeStudentLoanBalance(
         { student },
@@ -792,13 +792,14 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
       },
     );
 
-    //Update CSLP balance for the student.
+    // Update CSLP balance for the student.
     await db.studentLoanBalance.insert(
       createFakeStudentLoanBalance(
         { student },
         {
           initialValues: {
             balanceDate: "2023-11-30",
+            cslBalance: 1000,
           },
         },
       ),
@@ -810,7 +811,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         currentApplication.currentAssessment.id,
       ),
     );
-    
+
     // Assert
     expect(FakeWorkerJobResult.getResultType(result)).toBe(
       MockedZeebeJobResult.Complete,
