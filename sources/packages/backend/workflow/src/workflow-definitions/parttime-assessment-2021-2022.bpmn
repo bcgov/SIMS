@@ -1829,26 +1829,6 @@ studentCalculatedTotalIncome</bpmn:text>
         <di:waypoint x="2860" y="1000" />
         <di:waypoint x="2892" y="1000" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0yc2t6b_di" bpmnElement="Association_0yc2t6b">
-        <di:waypoint x="1080" y="602" />
-        <di:waypoint x="1080" y="515" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1nid8vk_di" bpmnElement="Association_1nid8vk">
-        <di:waypoint x="5827" y="2254" />
-        <di:waypoint x="5853" y="2200" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_18qf11c_di" bpmnElement="Association_18qf11c">
-        <di:waypoint x="6169" y="2254" />
-        <di:waypoint x="6201" y="2200" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1gi7mg0_di" bpmnElement="Association_1gi7mg0">
-        <di:waypoint x="6171" y="2386" />
-        <di:waypoint x="6191" y="2360" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1mr7raq_di" bpmnElement="Association_1mr7raq">
-        <di:waypoint x="5359" y="2254" />
-        <di:waypoint x="5392" y="2200" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1i635oj_di" bpmnElement="Flow_1i635oj">
         <di:waypoint x="2928" y="1000" />
         <di:waypoint x="2950" y="1000" />
@@ -1884,21 +1864,25 @@ studentCalculatedTotalIncome</bpmn:text>
         <di:waypoint x="3265" y="1140" />
         <di:waypoint x="3315" y="1140" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0k52tdi_di" bpmnElement="Association_0k52tdi">
-        <di:waypoint x="4647" y="1355" />
-        <di:waypoint x="4746" y="1332" />
+      <bpmndi:BPMNEdge id="Association_0yc2t6b_di" bpmnElement="Association_0yc2t6b">
+        <di:waypoint x="1080" y="602" />
+        <di:waypoint x="1080" y="515" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1kl6b20_di" bpmnElement="Association_1kl6b20">
-        <di:waypoint x="4647" y="1433" />
-        <di:waypoint x="4746" y="1395" />
+      <bpmndi:BPMNEdge id="Association_1nid8vk_di" bpmnElement="Association_1nid8vk">
+        <di:waypoint x="5827" y="2254" />
+        <di:waypoint x="5853" y="2200" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1ledsf9_di" bpmnElement="Association_1ledsf9">
-        <di:waypoint x="4647" y="1524" />
-        <di:waypoint x="4746" y="1491" />
+      <bpmndi:BPMNEdge id="Association_18qf11c_di" bpmnElement="Association_18qf11c">
+        <di:waypoint x="6169" y="2254" />
+        <di:waypoint x="6201" y="2200" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_01prvbh_di" bpmnElement="Association_01prvbh">
-        <di:waypoint x="4648" y="1279" />
-        <di:waypoint x="4746" y="1261" />
+      <bpmndi:BPMNEdge id="Association_1gi7mg0_di" bpmnElement="Association_1gi7mg0">
+        <di:waypoint x="6171" y="2386" />
+        <di:waypoint x="6191" y="2360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1mr7raq_di" bpmnElement="Association_1mr7raq">
+        <di:waypoint x="5359" y="2254" />
+        <di:waypoint x="5392" y="2200" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_1a4vdzr_di" bpmnElement="Group_1a4vdzr">
         <dc:Bounds x="1535" y="660" width="90" height="230" />
@@ -1930,6 +1914,22 @@ studentCalculatedTotalIncome</bpmn:text>
         <dc:Bounds x="5230" y="2170" width="100" height="30" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1lzmhpu_di" bpmnElement="TextAnnotation_1lzmhpu">
+        <dc:Bounds x="4746" y="1250" width="458" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_06i946l_di" bpmnElement="TextAnnotation_06i946l">
+        <dc:Bounds x="4746" y="1480" width="448" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0m6q3ry_di" bpmnElement="TextAnnotation_0m6q3ry">
+        <dc:Bounds x="4746" y="1380" width="370" height="60" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0cerfoa_di" bpmnElement="TextAnnotation_0cerfoa">
+        <dc:Bounds x="4746" y="1304" width="398" height="41" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_13w21u1_di" bpmnElement="TextAnnotation_13w21u1">
         <dc:Bounds x="5690" y="2150" width="100" height="30" />
         <bpmndi:BPMNLabel />
@@ -1952,6 +1952,12 @@ studentCalculatedTotalIncome</bpmn:text>
           <dc:Bounds x="814" y="437" width="33" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Group_0hnsgkk_di" bpmnElement="Group_0hnsgkk">
+        <dc:Bounds x="2380" y="910" width="610" height="420" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Group_081xfok_di" bpmnElement="Group_081xfok">
+        <dc:Bounds x="3000" y="910" width="290" height="420" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_0ptatj5_di" bpmnElement="Association_0ptatj5">
         <di:waypoint x="5920" y="2255" />
         <di:waypoint x="5959" y="2200" />
@@ -1972,28 +1978,22 @@ studentCalculatedTotalIncome</bpmn:text>
         <di:waypoint x="550" y="638" />
         <di:waypoint x="550" y="730" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="TextAnnotation_0cerfoa_di" bpmnElement="TextAnnotation_0cerfoa">
-        <dc:Bounds x="4746" y="1304" width="398" height="41" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0m6q3ry_di" bpmnElement="TextAnnotation_0m6q3ry">
-        <dc:Bounds x="4746" y="1380" width="370" height="60" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_06i946l_di" bpmnElement="TextAnnotation_06i946l">
-        <dc:Bounds x="4746" y="1480" width="448" height="30" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1lzmhpu_di" bpmnElement="TextAnnotation_1lzmhpu">
-        <dc:Bounds x="4746" y="1250" width="458" height="30" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Group_0hnsgkk_di" bpmnElement="Group_0hnsgkk">
-        <dc:Bounds x="2380" y="910" width="610" height="420" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Group_081xfok_di" bpmnElement="Group_081xfok">
-        <dc:Bounds x="3000" y="910" width="290" height="420" />
-      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0k52tdi_di" bpmnElement="Association_0k52tdi">
+        <di:waypoint x="4647" y="1355" />
+        <di:waypoint x="4746" y="1332" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1kl6b20_di" bpmnElement="Association_1kl6b20">
+        <di:waypoint x="4647" y="1433" />
+        <di:waypoint x="4746" y="1395" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1ledsf9_di" bpmnElement="Association_1ledsf9">
+        <di:waypoint x="4647" y="1524" />
+        <di:waypoint x="4746" y="1491" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_01prvbh_di" bpmnElement="Association_01prvbh">
+        <di:waypoint x="4648" y="1279" />
+        <di:waypoint x="4746" y="1261" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
