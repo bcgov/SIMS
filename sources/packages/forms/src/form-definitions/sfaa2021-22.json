@@ -31174,11 +31174,6 @@
                   "tableView": false,
                   "values": [
                     {
-                      "label": "I don’t require additional transportation allowance.",
-                      "value": "notRequired",
-                      "shortcut": ""
-                    },
-                    {
                       "label": "There is limited or no public transit where I live",
                       "value": "noLimit",
                       "shortcut": ""
@@ -31196,7 +31191,7 @@
                   ],
                   "key": "transportationcostsituation",
                   "conditional": {
-                    "show": true,
+                    "show": "true",
                     "when": "eligibleForAnAdditionalTransportationAllowance",
                     "eq": "yes"
                   },
@@ -31233,7 +31228,7 @@
                   "attributes": {},
                   "validateOn": "change",
                   "validate": {
-                    "required": false,
+                    "required": true,
                     "custom": "",
                     "customPrivate": false,
                     "strictDateValidation": false,
@@ -31511,7 +31506,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "Please provide one of the documents below.",
+                      "content": "Please upload supporting documents so that StudentAid BC can assess your request.",
                       "refreshOnChange": false,
                       "key": "html105",
                       "type": "htmlelement",
@@ -31556,7 +31551,7 @@
                         "unique": false
                       },
                       "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": ""
                       },
@@ -31576,7 +31571,8 @@
                       "addons": [],
                       "tag": "p",
                       "id": "e29azc",
-                      "className": ""
+                      "className": "",
+                      "tags": []
                     },
                     {
                       "label": "HTML",
@@ -31586,7 +31582,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "<h4 class=\"category-header-medium-small\">Documents Accepted</h4>\r\n<ul>\r\n  <li>Copy of your vehicle insurance <strong>and</strong></li>\r\n  <li>Work, clinical, or practicum location and schedule <strong>or</strong></li>\r\n  <li>Statement that outlines the family responsibilities that require additional travel (e.g. driving children to and from school or daycare) <strong>or</strong></li>\r\n  <li>Statement why you can’t move closer to your school</li>\r\n</ul>",
+                      "content": "<h4 class=\"category-header-medium-small\">Documents Required</h4>\n<ul>\n  <li>A letter describing your situation to indicate why an exception should be made (including why you cannot move closer to your school)</li>\n<li>A copy of your vehicle insurance</li>\n<li>All relevant supporting documentation (work schedule, clinical or practicum information, etc.)</li>\n</ul>",
                       "refreshOnChange": false,
                       "customClass": "align-bullets",
                       "key": "html28",
@@ -31631,7 +31627,7 @@
                         "unique": false
                       },
                       "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": ""
                       },
@@ -31651,7 +31647,8 @@
                       "addons": [],
                       "tag": "p",
                       "id": "euf75k",
-                      "className": ""
+                      "className": "",
+                      "tags": []
                     },
                     {
                       "label": "HTML",
@@ -31661,7 +31658,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "<h4 class=\"category-header-medium-small\">Instructions</h4>\r\n<ul>\r\n  <li>Upload a photo or scanned copy of your documentation</li>\r\n  <li>Rename your document to \"<strong>FirstnameLastName_Transportation</strong>\" before uploading</li>\r\n  (e.g. JessieLee_Transportation)\r\n</ul>",
+                      "content": "<h4 class=\"category-header-medium-small\">Instructions</h4>\n<ul>\n<li>Rename your document to \"<strong>FirstnameLastname_Transportation</strong>\" before uploading</li>\n  (e.g. JessieLee_Transportation)\n  <li>Upload a photo or scanned copy of your documentation</li>\n</ul>",
                       "refreshOnChange": false,
                       "customClass": "align-bullets",
                       "key": "html29",
@@ -31706,7 +31703,7 @@
                         "unique": false
                       },
                       "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": ""
                       },
@@ -31726,7 +31723,8 @@
                       "addons": [],
                       "tag": "p",
                       "id": "eo0wfja",
-                      "className": ""
+                      "className": "",
+                      "tags": []
                     },
                     {
                       "label": "Upload supporting documents (optional):",
@@ -32037,87 +32035,6 @@
                       "lazyLoad": false,
                       "autoAdjust": false,
                       "id": "ek4ohwi"
-                    },
-                    {
-                      "label": "<strong>Please estimate your weekly transportation costs.</strong>",
-                      "prefix": "$",
-                      "mask": false,
-                      "spellcheck": true,
-                      "tableView": false,
-                      "currency": "CAD",
-                      "inputFormat": "plain",
-                      "validate": {
-                        "required": true,
-                        "custom": "",
-                        "customPrivate": false,
-                        "strictDateValidation": false,
-                        "multiple": false,
-                        "unique": false,
-                        "min": "",
-                        "max": "",
-                        "step": "any",
-                        "integer": ""
-                      },
-                      "key": "transportationcostsEstimate",
-                      "customConditional": "show = (data.transportationcostsituation === 'noLimit' || data.transportationcostsituation === 'special' || data.transportationcostsituation === 'educationPlacement' || data.transportationcostsituation === 'other');",
-                      "type": "currency",
-                      "input": true,
-                      "delimiter": true,
-                      "placeholder": "",
-                      "customClass": "",
-                      "suffix": "",
-                      "multiple": false,
-                      "defaultValue": null,
-                      "protected": false,
-                      "unique": false,
-                      "persistent": true,
-                      "hidden": false,
-                      "clearOnHide": true,
-                      "refreshOn": "",
-                      "redrawOn": "",
-                      "modalEdit": false,
-                      "dataGridLabel": false,
-                      "labelPosition": "top",
-                      "description": "",
-                      "errorLabel": "",
-                      "tooltip": "",
-                      "hideLabel": false,
-                      "tabindex": "",
-                      "disabled": false,
-                      "autofocus": false,
-                      "dbIndex": false,
-                      "customDefaultValue": "",
-                      "calculateValue": "",
-                      "calculateServer": false,
-                      "widget": {
-                        "type": "input"
-                      },
-                      "attributes": {},
-                      "validateOn": "change",
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": ""
-                      },
-                      "overlay": {
-                        "style": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
-                      "allowCalculateOverride": false,
-                      "encrypted": false,
-                      "showCharCount": false,
-                      "showWordCount": false,
-                      "properties": {},
-                      "allowMultipleMasks": false,
-                      "addons": [],
-                      "id": "e0owegk",
-                      "inputType": "text",
-                      "inputMask": "",
-                      "decimalLimit": 2,
-                      "requireDecimal": true
                     }
                   ],
                   "allowPrevious": false,
