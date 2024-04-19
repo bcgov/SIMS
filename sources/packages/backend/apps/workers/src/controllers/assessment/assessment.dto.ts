@@ -154,4 +154,5 @@ export interface WorkflowWrapUpJobInDTO {
  */
 export type VerifyAssessmentCalculationOrderJobOutDTO = {
   isReadyForCalculation: boolean;
+  latestCSLPBalance?: number;
 } & Record<string, number>;

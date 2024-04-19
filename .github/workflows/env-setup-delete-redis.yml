@@ -1,5 +1,5 @@
-name: Env Setup - Redis recovery in Openshift
-run-name: Env Setup - Redis recovery in Openshift from ${{ inputs.gitRef }} to ${{ inputs.environment }}
+name: Env Setup - Delete Redis in Openshift
+run-name: Env Setup - Delete Redis in Openshift from ${{ inputs.environment }} using ${{ github.ref_name }}
 
 concurrency: redis-setup
 
@@ -10,27 +10,23 @@ on:
         description: "Environment"
         required: true
         type: environment
-      gitRef:
-        description: "Build Ref"
-        required: true
-        default: ""
 
 jobs:
-  recoverRedis:
-    name: Redis recovery in Openshift
+  deleteRedis:
+    name: Delete Redis in Openshift
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     env:
       NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
     steps:
       - name: Checkout Target Branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.gitRef }}
+          ref: ${{ github.ref_name }}
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
-      - name: Redis cluster meet
+      - name: Delete Redis
         working-directory: "./devops/"
         run: |
-          make redis-cluster-meet
+          make delete-redis

@@ -447,13 +447,17 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     return this.repo.findOne({
       select: {
         id: true,
+        offering: { offeringIntensity: true },
         application: {
           id: true,
           student: { id: true },
           programYear: { id: true },
         },
       },
-      relations: { application: { student: true, programYear: true } },
+      relations: {
+        application: { student: true, programYear: true },
+        offering: true,
+      },
       where: { id: assessmentId },
     });
   }

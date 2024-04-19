@@ -367,7 +367,8 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_19hr2p7" name="calculate CSLP">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=min(dmnPartTimeAwardAllowableLimits.limitAwardCSLPAmount,calculatedDataTotalRemainingNeed4)" target="federalAwardNetCSLPAmount" />
+          <zeebe:output source="=dmnPartTimeAwardAllowableLimits.limitAwardCSLPAmount - latestCSLPBalance" target="limitAwardCSLPRemaining" />
+          <zeebe:output source="=min(limitAwardCSLPRemaining,calculatedDataTotalRemainingNeed4)" target="federalAwardNetCSLPAmount" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1rnodvu</bpmn:incoming>
