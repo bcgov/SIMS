@@ -498,21 +498,6 @@ describe(
           currentAssessmentInitialValues: {
             assessmentData: { weeks: 5 } as Assessment,
             assessmentDate: new Date(),
-            workflowData: {
-              studentData: {
-                dependantStatus: "dependant",
-                relationshipStatus: RelationshipStatus.Single,
-                livingWithParents: FormYesNoOptions.Yes,
-              },
-              dmnValues: { lifetimeMaximumCSLP: 10000 },
-              calculatedData: {
-                familySize: 2,
-                studentMSOLAllowance: 7777,
-                totalNonEducationalCost: 22,
-                studentMaritalStatusCode: "SI",
-                pdppdStatus: false,
-              },
-            },
           },
           firstDisbursementInitialValues: {
             coeStatus: COEStatus.completed,
@@ -583,21 +568,6 @@ describe(
           currentAssessmentInitialValues: {
             assessmentData: { weeks: 5 } as Assessment,
             assessmentDate: new Date(),
-            workflowData: {
-              studentData: {
-                dependantStatus: "dependant",
-                relationshipStatus: RelationshipStatus.Single,
-                livingWithParents: FormYesNoOptions.Yes,
-              },
-              dmnValues: { lifetimeMaximumCSLP: 10000 },
-              calculatedData: {
-                familySize: 2,
-                studentMSOLAllowance: 7777,
-                totalNonEducationalCost: 22,
-                studentMaritalStatusCode: "SI",
-                pdppdStatus: false,
-              },
-            },
           },
           firstDisbursementInitialValues: {
             coeStatus: COEStatus.completed,

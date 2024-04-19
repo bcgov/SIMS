@@ -189,6 +189,9 @@ export async function saveFakeApplicationDisbursements(
       studentMaritalStatusCode: "SI",
       pdppdStatus: false,
     },
+    ...(options.offeringIntensity === OfferingIntensity.partTime && {
+      dmnValues: { lifetimeMaximumCSLP: 10000 },
+    }),
   };
   savedApplication.currentAssessment.disbursementSchedules =
     disbursementSchedules;
