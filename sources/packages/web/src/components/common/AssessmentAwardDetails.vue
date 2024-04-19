@@ -19,24 +19,7 @@
             :offeringIntensity="assessmentAwardData.offeringIntensity"
             identifier="disbursement1"
           />
-          <div class="my-3">
-            <status-info-enrolment
-              :coeStatus="
-                assessmentAwardData.estimatedAward.disbursement1COEStatus as COEStatus
-              "
-            />
-            <confirm-enrolment
-              v-if="allowConfirmEnrolment"
-              :coeStatus="
-                assessmentAwardData.estimatedAward.disbursement1COEStatus as COEStatus
-              "
-              :applicationStatus="assessmentAwardData.applicationStatus"
-              :disbursementId="
-                assessmentAwardData.estimatedAward.disbursement1Id as number
-              "
-              @confirmEnrolment="$emit('confirmEnrolment', $event)"
-            />
-          </div>
+
           <div
             class="my-3"
             v-if="
@@ -82,9 +65,8 @@
         <content-group>
           <h3 class="category-header-medium primary-color my-3">Final award</h3>
           <!-- Final award table. -->
-          <div v-if="isFirstDisbursementCompleted">
+          <template v-if="showFirstFinalAward">
             <award-table
-              v-if="showFirstFinalAward"
               :awardDetails="assessmentAwardData.finalAward"
               :offeringIntensity="assessmentAwardData.offeringIntensity"
               identifier="disbursementReceipt1"
@@ -106,15 +88,35 @@
                 }}</span>
               </div>
             </content-group-info>
-          </div>
-          <div v-else>
+            <!-- Part-time final awards are retrieved from e-Cert generated values and requires further explanation.  -->
+            <p
+              v-if="
+                assessmentAwardData.offeringIntensity ===
+                OfferingIntensity.partTime
+              "
+            >
+              These final award amounts are what has been requested to the
+              National Student Loan Service Centre (NSLSC). If you want to
+              confirm the amounts you will receive or when they will be
+              disbursed, please access your
+              <a
+                href="https://protege-secure.csnpe-nslsc.canada.ca/en/public/sign-in-method"
+                rel="noopener"
+                target="_blank"
+                >NSLSC account</a
+              >.
+            </p>
+          </template>
+          <p v-else>
             {{
               getFinalAwardNotAvailableMessage(
                 assessmentAwardData.estimatedAward
                   .disbursement1COEStatus as COEStatus,
+                assessmentAwardData.estimatedAward
+                  .disbursement1Status as DisbursementScheduleStatus,
               )
             }}
-          </div>
+          </p>
         </content-group>
       </v-col>
     </v-row>
@@ -199,7 +201,7 @@
             Final award
           </div>
           <!-- Final award table. -->
-          <div v-if="showSecondFinalAward">
+          <template v-if="showSecondFinalAward">
             <award-table
               :awardDetails="assessmentAwardData.finalAward"
               :offeringIntensity="assessmentAwardData.offeringIntensity"
@@ -222,15 +224,35 @@
                 }}</span>
               </div>
             </content-group-info>
-          </div>
-          <div v-else>
+            <!-- Part-time final awards are retrieved from e-Cert generated values and requires further explanation.  -->
+            <p
+              v-if="
+                assessmentAwardData.offeringIntensity ===
+                OfferingIntensity.partTime
+              "
+            >
+              These final award amounts are what has been requested to the
+              National Student Loan Service Centre (NSLSC). If you want to
+              confirm the amounts you will receive or when they will be
+              disbursed, please access your
+              <a
+                href="https://protege-secure.csnpe-nslsc.canada.ca/en/public/sign-in-method"
+                rel="noopener"
+                target="_blank"
+                >NSLSC account</a
+              >.
+            </p>
+          </template>
+          <p v-else>
             {{
               getFinalAwardNotAvailableMessage(
                 assessmentAwardData.estimatedAward
                   .disbursement2COEStatus as COEStatus,
+                assessmentAwardData.estimatedAward
+                  .disbursement2Status as DisbursementScheduleStatus,
               )
             }}
-          </div>
+          </p>
         </content-group>
       </v-col>
     </v-row>
@@ -239,7 +261,12 @@
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { AwardDetailsAPIOutDTO } from "@/services/http/dto";
-import { COEStatus, DisbursementScheduleStatus, StatusInfo } from "@/types";
+import {
+  COEStatus,
+  OfferingIntensity,
+  StatusInfo,
+  DisbursementScheduleStatus,
+} from "@/types";
 import { PropType, computed, defineComponent } from "vue";
 import AwardTable from "@/components/common/AwardTable.vue";
 import StatusInfoEnrolment from "@/components/common/StatusInfoEnrolment.vue";
@@ -277,25 +304,23 @@ export default defineComponent({
     const { dateOnlyLongString } = useFormatters();
     const isFirstDisbursementCompleted = computed<boolean>(
       () =>
-        props.assessmentAwardData.estimatedAward?.disbursement1Status ===
-        DisbursementScheduleStatus.Sent,
+        props.assessmentAwardData.estimatedAward?.disbursement1COEStatus ===
+        COEStatus.completed,
     );
     const isSecondDisbursementAvailable = computed(
       () => props.assessmentAwardData.estimatedAward?.disbursement2Date,
     );
     const isSecondDisbursementCompleted = computed<boolean>(
       () =>
-        props.assessmentAwardData.estimatedAward?.disbursement2Status ===
-        DisbursementScheduleStatus.Sent,
+        props.assessmentAwardData.estimatedAward?.disbursement2COEStatus ===
+        COEStatus.completed,
     );
-    const showFirstFinalAward = computed<boolean>(
-      () =>
-        !!(
-          isFirstDisbursementCompleted.value &&
-          !!props.assessmentAwardData.finalAward
-        ),
-    );
-
+    const showFirstFinalAward = computed<boolean>(() => {
+      return !!(
+        isFirstDisbursementCompleted.value &&
+        !!props.assessmentAwardData.finalAward
+      );
+    });
     const showSecondFinalAward = computed<boolean>(
       () =>
         !!(
@@ -304,14 +329,22 @@ export default defineComponent({
         ),
     );
 
-    const getFinalAwardNotAvailableMessage = (coeStatus: COEStatus) => {
-      if (coeStatus === COEStatus.completed) {
-        return "The final award will be shown once confirmed by NSLSC.";
-      }
-      if (coeStatus === COEStatus.required) {
+    const getFinalAwardNotAvailableMessage = (
+      coeStatus: COEStatus,
+      disbursementStatus: DisbursementScheduleStatus,
+    ): string | undefined => {
+      if (disbursementStatus === DisbursementScheduleStatus.Pending) {
         return "The final award can't be calculated at this time.";
       }
-      return "The final award is no longer applicable due to a change. Any scheduled disbursements will be cancelled.";
+      if (disbursementStatus === DisbursementScheduleStatus.Sent) {
+        // This message will be displayed only for full-time since the part-time sent e-Cert
+        // will have the final awards populates, which should overrides this message entirely.
+        return "The final award will be shown once confirmed by NSLSC.";
+      }
+      if (coeStatus === COEStatus.declined) {
+        return "The final award is no longer applicable due to a change. Any scheduled disbursements will be cancelled.";
+      }
+      return undefined;
     };
 
     return {
@@ -324,6 +357,8 @@ export default defineComponent({
       showSecondFinalAward,
       getFinalAwardNotAvailableMessage,
       StatusInfo,
+      OfferingIntensity,
+      DisbursementScheduleStatus,
     };
   },
 });

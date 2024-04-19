@@ -57,6 +57,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     const query = this.repo
       .createQueryBuilder("assessment")
       .select([
+        "assessment.id",
         "assessment.assessmentData",
         "assessment.noaApprovalStatus",
         "application.id",
