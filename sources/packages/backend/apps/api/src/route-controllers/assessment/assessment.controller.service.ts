@@ -1,6 +1,5 @@
 import {
   DisbursementSchedule,
-  COEStatus,
   DisbursementReceipt,
   AssessmentTriggerType,
   ApplicationExceptionStatus,
@@ -8,6 +7,10 @@ import {
   ApplicationOfferingChangeRequestStatus,
   DisbursementValueType,
   RECEIPT_FUNDING_TYPE_FEDERAL,
+  OfferingIntensity,
+  StudentAssessment,
+  DisbursementValue,
+  DisbursementScheduleStatus,
 } from "@sims/sims-db";
 import {
   Injectable,
@@ -30,10 +33,16 @@ import {
   RequestAssessmentSummaryAPIOutDTO,
   RequestAssessmentTypeAPIOutDTO,
   AssessmentHistorySummaryAPIOutDTO,
+  DynamicAwardValue,
 } from "./models/assessment.dto";
 import { getUserFullName } from "../../utilities";
 import { getDateOnlyFormat } from "@sims/utilities";
 import { BC_TOTAL_GRANT_AWARD_CODE } from "@sims/services/constants";
+
+/**
+ * Final award value dynamic identifier prefix.
+ */
+const DISBURSEMENT_RECEIPT_PREFIX = "disbursementReceipt";
 
 @Injectable()
 export class AssessmentControllerService {
@@ -109,6 +118,7 @@ export class AssessmentControllerService {
    * @param options for NOA.
    * - `includeDocumentNumber` when true document number is mapped
    * to disbursement dynamic data.
+   * - `includeDateSent` when true, date sent is mapped to disbursement dynamic data.
    * - `maskMSFAA` mask MSFAA or not.
    * @returns disbursement dynamic award data.
    */
@@ -116,14 +126,14 @@ export class AssessmentControllerService {
     disbursementSchedules: DisbursementSchedule[],
     options?: {
       includeDocumentNumber?: boolean;
+      includeDateSent?: boolean;
       maskMSFAA?: boolean;
     },
-  ): Record<string, string | number> {
+  ): DynamicAwardValue {
     // Setting default value.
     const includeDocumentNumber = options?.includeDocumentNumber ?? false;
-    const maskMSFAA = [true, false].includes(options?.maskMSFAA)
-      ? options.maskMSFAA
-      : true;
+    const includeDateSent = options?.includeDateSent ?? false;
+    const maskMSFAA = options?.maskMSFAA ?? true;
     const disbursementDetails = {};
     disbursementSchedules.forEach((schedule, index) => {
       const disbursementIdentifier = `disbursement${index + 1}`;
@@ -146,6 +156,10 @@ export class AssessmentControllerService {
       disbursementDetails[`${disbursementIdentifier}TuitionRemittance`] =
         schedule.tuitionRemittanceRequestedAmount;
       disbursementDetails[`${disbursementIdentifier}Id`] = schedule.id;
+      if (includeDateSent) {
+        disbursementDetails[`${disbursementIdentifier}DateSent`] =
+          schedule.dateSent;
+      }
       if (includeDocumentNumber) {
         disbursementDetails[`${disbursementIdentifier}DocumentNumber`] =
           schedule.documentNumber;
@@ -190,55 +204,41 @@ export class AssessmentControllerService {
    * - `studentId` studentId student to whom the award details belong to.
    * - `applicationId` application is used for authorization purposes to
    * ensure that a user has access to the specific application data.
+   * - `includeDocumentNumber` when true document number is mapped
+   * to disbursement dynamic data.
+   * - `includeDateSent` when true, date sent is mapped to disbursement dynamic data.
+   * - `maskMSFAA` mask MSFAA or not.
    * @returns estimated and actual award details.
    */
   async getAssessmentAwardDetails(
     assessmentId: number,
-    includeDocumentNumber = false,
     options?: {
       studentId?: number;
       applicationId?: number;
+      includeDocumentNumber?: boolean;
+      includeDateSent?: boolean;
+      maskMSFAA?: boolean;
     },
   ): Promise<AwardDetailsAPIOutDTO> {
+    // Setting default value.
+    const includeDocumentNumber = options?.includeDocumentNumber ?? false;
+    const includeDateSent = options?.includeDateSent ?? false;
+    const maskMSFAA = options?.maskMSFAA ?? true;
     const assessment = await this.assessmentService.getAssessmentForNOA(
       assessmentId,
       options,
     );
-
     if (!assessment) {
       throw new NotFoundException("Assessment not found.");
     }
     const estimatedAward = this.populateDisbursementAwardValues(
       assessment.disbursementSchedules,
-      { includeDocumentNumber },
+      { includeDocumentNumber, includeDateSent, maskMSFAA },
     );
-    const [firstDisbursement, secondDisbursement] =
-      assessment.disbursementSchedules;
-    let finalAward: Record<string, string | number> = undefined;
-    // Populate the final awards in a dynamic way like disbursement schedule(estimated) awards.
-    if (firstDisbursement.coeStatus === COEStatus.completed) {
-      const disbursementReceipts =
-        await this.disbursementReceiptService.getDisbursementReceiptByAssessment(
-          assessmentId,
-          options,
-        );
-      if (disbursementReceipts.length) {
-        finalAward = this.populateDisbursementReceiptAwardValues(
-          disbursementReceipts,
-          firstDisbursement,
-          "disbursementReceipt1",
-        );
-        if (secondDisbursement) {
-          const secondDisbursementReceiptAwards =
-            this.populateDisbursementReceiptAwardValues(
-              disbursementReceipts,
-              secondDisbursement,
-              "disbursementReceipt2",
-            );
-          finalAward = { ...finalAward, ...secondDisbursementReceiptAwards };
-        }
-      }
-    }
+    const finalAward = await this.populateDisbursementFinalAwardsValues(
+      assessment,
+      options,
+    );
     return {
       applicationNumber: assessment.application.applicationNumber,
       applicationStatus: assessment.application.applicationStatus,
@@ -256,33 +256,78 @@ export class AssessmentControllerService {
 
   /**
    * Populate the final awards in a dynamic way like disbursement schedule(estimated) awards.
-   * @param disbursementReceipts disbursement receipt details.
-   * @param disbursementSchedule disbursement schedule of the disbursement receipt(s).
-   * @param identifier identifier which is used to create dynamic data by appending award code
-   * to it.
+   * @param assessment student assessment.
+   * @param options options,
+   * - `studentId` studentId student to whom the award details belong to.
+   * - `applicationId` application is used for authorization purposes to
+   * ensure that a user has access to the specific application data.
    * @returns dynamic award data of disbursement receipts of a given disbursement.
-   * @example
-   * finalAward: {
-   *    disbursementReceipt1cslf: 1000,
-   *    disbursementReceipt1csgp: 10001,
-   *    disbursementReceipt1bcsl: 1005,
-   *    disbursementReceipt1bcag: 1006,
-   *    disbursementReceipt1bgpd: 1007,
-   *    disbursementReceipt1sbsd: 1008,
-   *    disbursementReceipt2cslf: 1000,
-   *    disbursementReceipt2csgp: 10001,
-   *    disbursementReceipt2bcsl: 1005,
-   *    disbursementReceipt2bcag: 1006,
-   *    disbursementReceipt2bgpd: 1007,
-   *    disbursementReceipt2sbsd: 1008,
+   */
+  private async populateDisbursementFinalAwardsValues(
+    assessment: StudentAssessment,
+    options?: {
+      studentId?: number;
+      applicationId?: number;
+    },
+  ): Promise<DynamicAwardValue | undefined> {
+    const [firstDisbursement] = assessment.disbursementSchedules;
+    if (
+      firstDisbursement.disbursementScheduleStatus !==
+      DisbursementScheduleStatus.Sent
+    ) {
+      // If a e-Cert was never generated no additional processing is needed.
+      return undefined;
+    }
+    let finalAward: DynamicAwardValue = undefined;
+    if (assessment.offering.offeringIntensity === OfferingIntensity.fullTime) {
+      // Full-time receipts are expected to contains all information about awards disbursed to students
+      // but specific BC grants. Receipts should be used as a source of the information for full-time application.
+      const disbursementReceipts =
+        await this.disbursementReceiptService.getDisbursementReceiptByAssessment(
+          assessment.id,
+          options,
+        );
+      if (!disbursementReceipts.length) {
+        // If the receipts are not available no additional processing is needed.
+        return finalAward;
       }
+      let index = 1;
+      for (const schedule of assessment.disbursementSchedules) {
+        const awards = this.populateDisbursementReceiptAwardValues(
+          disbursementReceipts,
+          schedule,
+          `${DISBURSEMENT_RECEIPT_PREFIX}${index++}`,
+        );
+        finalAward = { ...finalAward, ...awards };
+      }
+      return finalAward;
+    }
+    // Part-time receipts will not contain all the awards value hence the e-Cert effective
+    // values are used instead to provide the best information as possible.
+    let index = 1;
+    for (const schedule of assessment.disbursementSchedules) {
+      const awards = this.populateDisbursementECertAwardValues(
+        schedule.disbursementValues,
+        `${DISBURSEMENT_RECEIPT_PREFIX}${index++}`,
+      );
+      finalAward = { ...finalAward, ...awards };
+    }
+    return finalAward;
+  }
+
+  /**
+   * Populate final awards values from disbursements receipts.
+   * @param disbursementReceipts disbursement receipts.
+   * @param disbursementSchedule disbursement schedules.
+   * @param identifier identifier which is used to create dynamic data by appending award code to it.
+   * @returns dynamic award data of disbursement receipts of a given disbursement.
    */
   private populateDisbursementReceiptAwardValues(
     disbursementReceipts: DisbursementReceipt[],
     disbursementSchedule: DisbursementSchedule,
     identifier: string,
-  ): Record<string, string | number> {
-    const finalAward = {};
+  ): DynamicAwardValue {
+    const finalAward: DynamicAwardValue = {};
     // Add all estimated awards to the list of receipts returned.
     // Ensure that every estimated disbursement will be part of the summary.
     disbursementSchedule.disbursementValues.forEach((award) => {
@@ -358,6 +403,31 @@ export class AssessmentControllerService {
           }
         }
       });
+    return finalAward;
+  }
+
+  /**
+   * Populate final awards values from e-Cert effective values.
+   * @param disbursementValues disbursement values with the effective amounts used to generate the e-Cert.
+   * @param identifier identifier which is used to create dynamic data by appending award code to it.
+   * @returns dynamic award data of disbursement receipts of a given disbursement.
+   */
+  private populateDisbursementECertAwardValues(
+    disbursementValues: DisbursementValue[],
+    identifier: string,
+  ): DynamicAwardValue {
+    const finalAward: DynamicAwardValue = {};
+    disbursementValues.forEach((award) => {
+      if (award.valueType === DisbursementValueType.BCTotalGrant) {
+        // BC Total grants are not part of the students grants and should not be part of the summary.
+        return;
+      }
+      const disbursementValueKey = this.createReceiptFullIdentifier(
+        identifier,
+        award.valueCode,
+      );
+      finalAward[disbursementValueKey] = award.effectiveAmount;
+    });
     return finalAward;
   }
 

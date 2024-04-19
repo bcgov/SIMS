@@ -24,6 +24,7 @@ import {
 import {
   ApplicationStatus,
   DisbursementReceiptValue,
+  DisbursementScheduleStatus,
   Institution,
   InstitutionLocation,
 } from "@sims/sims-db";
@@ -77,6 +78,9 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
       },
       {
         applicationStatus: ApplicationStatus.Completed,
+        firstDisbursementInitialValues: {
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        },
       },
     );
     const assessment = application.currentAssessment;

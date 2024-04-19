@@ -14,6 +14,26 @@ import {
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, MaxLength } from "class-validator";
 
+/**
+ * Dynamic object with awards values.
+ * @example
+ * {
+ *    disbursementReceipt1cslf: 1000,
+ *    disbursementReceipt1csgp: 10001,
+ *    disbursementReceipt1bcsl: 1005,
+ *    disbursementReceipt1bcag: 1006,
+ *    disbursementReceipt1bgpd: 1007,
+ *    disbursementReceipt1sbsd: 1008,
+ *    disbursementReceipt2cslf: 1000,
+ *    disbursementReceipt2csgp: 10001,
+ *    disbursementReceipt2bcsl: 1005,
+ *    disbursementReceipt2bcag: 1006,
+ *    disbursementReceipt2bgpd: 1007,
+ *    disbursementReceipt2sbsd: 1008,
+ *   }
+ */
+export type DynamicAwardValue = Record<string, string | number | Date>;
+
 export enum RequestAssessmentTypeAPIOutDTO {
   StudentException = "Student exceptions",
   StudentAppeal = "Student appeal",
@@ -68,7 +88,7 @@ export class AssessmentNOAAPIOutDTO {
   offeringStudyStartDate: string;
   offeringStudyEndDate: string;
   eligibleAmount: number;
-  disbursement: Record<string, string | number>;
+  disbursement: DynamicAwardValue;
   noaApprovalStatus: AssessmentStatus;
   applicationStatus: ApplicationStatus;
 }
@@ -85,14 +105,14 @@ export class AwardDetailsAPIOutDTO {
       "Dynamic output of the workflow calculation. " +
       "Contains data that could represent a part-time or a full-time award details. ",
   })
-  estimatedAward: Record<string, string | number>;
+  estimatedAward: DynamicAwardValue;
   @ApiProperty({
     description:
       "Dynamic output from disbursement receipt for the given disbursement. " +
       "Contains data that could represent a part-time or a full-time award details. " +
       "If the conditions to have a receipt are not match this information will not be available.",
   })
-  finalAward?: Record<string, string | number>;
+  finalAward?: DynamicAwardValue;
 }
 
 export class ManualReassessmentAPIInDTO {
