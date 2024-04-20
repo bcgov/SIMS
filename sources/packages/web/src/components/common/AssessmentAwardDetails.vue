@@ -19,27 +19,6 @@
             :offeringIntensity="assessmentAwardData.offeringIntensity"
             identifier="disbursement1"
           />
-
-          <div
-            class="my-3"
-            v-if="
-              assessmentAwardData.estimatedAward.disbursement1TuitionRemittance
-            "
-          >
-            <status-info-label :status="StatusInfo.Completed"
-              >Tuition remittance applied
-              <span class="label-bold"
-                >-${{
-                  assessmentAwardData.estimatedAward
-                    .disbursement1TuitionRemittance
-                }}</span
-              >
-              <tooltip-icon
-                >Tuition remittance is when your institution requests money from
-                your award to pay for upcoming school fees.</tooltip-icon
-              >
-            </status-info-label>
-          </div>
           <content-group-info>
             <div>
               <span class="label-bold">Earliest date of disbursement: </span>
@@ -59,6 +38,44 @@
               }}</span>
             </div>
           </content-group-info>
+          <div class="my-3">
+            <status-info-enrolment
+              :coeStatus="
+                assessmentAwardData.estimatedAward.disbursement1COEStatus as COEStatus
+              "
+            />
+            <confirm-enrolment
+              v-if="allowConfirmEnrolment"
+              :coeStatus="
+                assessmentAwardData.estimatedAward.disbursement1COEStatus as COEStatus
+              "
+              :applicationStatus="assessmentAwardData.applicationStatus"
+              :disbursementId="
+                assessmentAwardData.estimatedAward.disbursement1Id as number
+              "
+              @confirmEnrolment="$emit('confirmEnrolment', $event)"
+            />
+          </div>
+          <div
+            class="my-3"
+            v-if="
+              assessmentAwardData.estimatedAward.disbursement1TuitionRemittance
+            "
+          >
+            <status-info-label :status="StatusInfo.Completed">
+              Tuition remittance applied
+              <span class="label-bold"
+                >-${{
+                  assessmentAwardData.estimatedAward
+                    .disbursement2TuitionRemittance
+                }}</span
+              >
+              <tooltip-icon
+                >Tuition remittance is when your institution requests money from
+                your award to pay for upcoming school fees.</tooltip-icon
+              >
+            </status-info-label>
+          </div>
         </content-group>
       </v-col>
       <v-col>
@@ -94,6 +111,7 @@
                 assessmentAwardData.offeringIntensity ===
                 OfferingIntensity.partTime
               "
+              :class="{ 'mt-2': !allowFinalAwardExtendedInformation }"
             >
               These final award amounts are what has been requested to the
               National Student Loan Service Centre (NSLSC). If you want to
@@ -136,6 +154,25 @@
             :offeringIntensity="assessmentAwardData.offeringIntensity"
             identifier="disbursement2"
           />
+          <content-group-info>
+            <div>
+              <span class="label-bold">Earliest date of disbursement: </span>
+              <span>{{
+                assessmentAwardData.estimatedAward.disbursement2Date
+              }}</span>
+            </div>
+            <div
+              v-if="
+                isSecondDisbursementCompleted &&
+                assessmentAwardData.estimatedAward.disbursement2DocumentNumber
+              "
+            >
+              <span class="label-bold">Certificate number: </span>
+              <span>{{
+                assessmentAwardData.estimatedAward.disbursement2DocumentNumber
+              }}</span>
+            </div>
+          </content-group-info>
           <div class="my-3">
             <status-info-enrolment
               :coeStatus="
@@ -174,25 +211,6 @@
               >
             </status-info-label>
           </div>
-          <content-group-info>
-            <div>
-              <span class="label-bold">Earliest date of disbursement: </span>
-              <span>{{
-                assessmentAwardData.estimatedAward.disbursement2Date
-              }}</span>
-            </div>
-            <div
-              v-if="
-                isSecondDisbursementCompleted &&
-                assessmentAwardData.estimatedAward.disbursement2DocumentNumber
-              "
-            >
-              <span class="label-bold">Certificate number: </span>
-              <span>{{
-                assessmentAwardData.estimatedAward.disbursement2DocumentNumber
-              }}</span>
-            </div>
-          </content-group-info>
         </content-group>
       </v-col>
       <v-col>
@@ -230,6 +248,7 @@
                 assessmentAwardData.offeringIntensity ===
                 OfferingIntensity.partTime
               "
+              :class="{ 'mt-2': !allowFinalAwardExtendedInformation }"
             >
               These final award amounts are what has been requested to the
               National Student Loan Service Centre (NSLSC). If you want to
@@ -260,7 +279,7 @@
 </template>
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { AwardDetailsAPIOutDTO } from "@/services/http/dto";
+import { AwardDetailsAPIOutDTO, DynamicAwardValue } from "@/services/http/dto";
 import {
   COEStatus,
   OfferingIntensity,
@@ -302,6 +321,28 @@ export default defineComponent({
   },
   setup(props) {
     const { dateOnlyLongString } = useFormatters();
+    /**
+     * Checks of the dynamic object with the final awards contains at least one property
+     * related to first or second disbursements.
+     * @param disbursement indicates the "first" or "second" disbursement.
+     * @param finalAward dynamic final award object.
+     */
+    const hasDisbursementReceipt = (
+      disbursement: "first" | "second",
+      finalAward?: DynamicAwardValue,
+    ) => {
+      if (!finalAward) {
+        return false;
+      }
+      const identifier =
+        disbursement === "first"
+          ? "disbursementReceipt1"
+          : "disbursementReceipt2";
+      return Object.keys(finalAward).some((propName) =>
+        propName.startsWith(identifier),
+      );
+    };
+
     const isFirstDisbursementCompleted = computed<boolean>(
       () =>
         props.assessmentAwardData.estimatedAward?.disbursement1COEStatus ===
@@ -318,14 +359,14 @@ export default defineComponent({
     const showFirstFinalAward = computed<boolean>(() => {
       return !!(
         isFirstDisbursementCompleted.value &&
-        !!props.assessmentAwardData.finalAward
+        hasDisbursementReceipt("first", props.assessmentAwardData.finalAward)
       );
     });
     const showSecondFinalAward = computed<boolean>(
       () =>
         !!(
           isSecondDisbursementCompleted.value &&
-          !!props.assessmentAwardData.finalAward
+          hasDisbursementReceipt("second", props.assessmentAwardData.finalAward)
         ),
     );
 
