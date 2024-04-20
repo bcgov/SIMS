@@ -67,7 +67,7 @@
               <span class="label-bold"
                 >-${{
                   assessmentAwardData.estimatedAward
-                    .disbursement2TuitionRemittance
+                    .disbursement1TuitionRemittance
                 }}</span
               >
               <tooltip-icon
@@ -342,7 +342,6 @@ export default defineComponent({
         propName.startsWith(identifier),
       );
     };
-
     const isFirstDisbursementCompleted = computed<boolean>(
       () =>
         props.assessmentAwardData.estimatedAward?.disbursement1COEStatus ===
@@ -369,7 +368,6 @@ export default defineComponent({
           hasDisbursementReceipt("second", props.assessmentAwardData.finalAward)
         ),
     );
-
     const getFinalAwardNotAvailableMessage = (
       coeStatus: COEStatus,
       disbursementStatus: DisbursementScheduleStatus,
