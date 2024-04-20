@@ -109,6 +109,11 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
           // Adding date sent to ensure that will not be returned by the API (students should not receive it).
           dateSent: new Date(),
         },
+        secondDisbursementInitialValues: {
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          // Adding date sent to ensure that will not be returned by the API (students should not receive it).
+          dateSent: new Date(),
+        },
       },
     );
 
@@ -257,6 +262,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
           disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
         },
         secondDisbursementInitialValues: {
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
           coeStatus: COEStatus.completed,
           tuitionRemittanceRequestedAmount: 9876,
         },
