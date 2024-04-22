@@ -230,6 +230,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
       select: {
         id: true,
         name: true,
+        institutionCode: true,
         institution: {
           operatingName: true,
           legalOperatingName: true,

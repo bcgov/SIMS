@@ -621,7 +621,7 @@ export class OfferingValidationModel {
   /**
    * Institution primary email, used as supporting data, for instance, as part of the notification to indicate offering in pending status.
    */
-  @IsNotEmpty({ message: "Institution legal operating name is required." })
+  @IsNotEmpty({ message: "Institution primary email is required." })
   primaryEmail: string;
   /**
    * Program information required to execute the offering validation.
