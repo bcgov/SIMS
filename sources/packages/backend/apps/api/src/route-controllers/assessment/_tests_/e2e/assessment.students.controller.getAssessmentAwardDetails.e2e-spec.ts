@@ -502,6 +502,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
           dateSent: new Date(),
         },
         secondDisbursementInitialValues: {
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
           coeStatus: COEStatus.completed,
         },
       },
