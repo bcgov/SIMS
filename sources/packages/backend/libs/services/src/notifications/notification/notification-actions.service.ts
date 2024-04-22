@@ -1086,7 +1086,7 @@ export class NotificationActionsService {
       this.logger.error(
         `Email template id ${notificationMessageTypeId} requires a configured email to be sent.`,
       );
-      return;
+      return { templateId, emailContacts };
     }
     return { templateId, emailContacts };
   }
