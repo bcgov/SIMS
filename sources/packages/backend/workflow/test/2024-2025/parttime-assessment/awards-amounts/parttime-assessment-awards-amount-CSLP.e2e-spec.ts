@@ -14,7 +14,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     sharedAssessmentConsolidatedData.studentDataCRAReportedIncome = 2000;
   });
 
-  it("Should determine federalAwardCSLPAmount dmnPartTimeAwardAllowableLimits.limitAwardCSLPAmount when the student has does not have loan balance and there is a calculatedDataTotalRemainingNeed4", async () => {
+  it("Should determine CSLP award for an assessment which involves loan and grants when the student does not have any loan balance and has remaining need for loan", async () => {
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
@@ -22,10 +22,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     );
 
     // Assert
-    expect(
-      calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
-        .limitAwardCSLPAmount,
-    ).toBe(10000);
     expect(calculatedAssessment.variables.limitAwardCSLPRemaining).toBe(10000);
     expect(calculatedAssessment.variables.latestCSLPBalance).toBe(0);
     expect(
@@ -34,9 +30,12 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     expect(calculatedAssessment.variables.federalAwardNetCSLPAmount).toBe(
       10000,
     );
+    expect(calculatedAssessment.variables.finalFederalAwardNetCSLPAmount).toBe(
+      10000,
+    );
   });
 
-  it("Should determine federalAwardCSLPAmount to be difference of latestCSLPBalance and dmnPartTimeAwardAllowableLimits.limitAwardCSLPAmount when the student has loan balance and there is a calculatedDataTotalRemainingNeed4", async () => {
+  it("Should CSLP award for an assessment which involves loan and grants when the student have loan balance and has remaining need for loan", async () => {
     // Arrange
     // Set latestCSLPBalance for the student as 1000.
     sharedAssessmentConsolidatedData.latestCSLPBalance = 1000;
@@ -48,15 +47,14 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     );
 
     // Assert
-    expect(
-      calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
-        .limitAwardCSLPAmount,
-    ).toBe(10000);
     expect(calculatedAssessment.variables.limitAwardCSLPRemaining).toBe(9000);
     expect(calculatedAssessment.variables.latestCSLPBalance).toBe(1000);
     expect(
       calculatedAssessment.variables.calculatedDataTotalRemainingNeed4,
     ).toBe(22858);
     expect(calculatedAssessment.variables.federalAwardNetCSLPAmount).toBe(9000);
+    expect(calculatedAssessment.variables.finalFederalAwardNetCSLPAmount).toBe(
+      9000,
+    );
   });
 });

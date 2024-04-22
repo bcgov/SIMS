@@ -270,6 +270,7 @@ export interface CalculatedAssessmentModel {
   federalAwardNetCSLPAmount: number;
   limitAwardCSLPRemaining: number;
   latestCSLPBalance: number;
+  finalFederalAwardNetCSLPAmount: number;
   // CSPT
   awardEligibilityCSPT: boolean;
   federalAwardCSPTAmount: number;
