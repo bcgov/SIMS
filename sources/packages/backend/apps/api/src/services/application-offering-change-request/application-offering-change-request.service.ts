@@ -300,6 +300,7 @@ export class ApplicationOfferingChangeRequestService {
           },
           student: {
             id: true,
+            birthDate: true,
             user: {
               id: true,
               firstName: true,
@@ -364,37 +365,6 @@ export class ApplicationOfferingChangeRequestService {
         },
       });
     return applicationOfferingChangeRequest;
-  }
-
-  /**
-   * Gets the application offering change request details.
-   * @param id application offering change request id to get the details.
-   * @returns fetched application offering change request details.
-   */
-  async getApplicationOfferingChangeRequestById(
-    id: number,
-  ): Promise<ApplicationOfferingChangeRequest> {
-    return this.applicationOfferingChangeRequestRepo.findOne({
-      select: {
-        id: true,
-        application: {
-          id: true,
-          applicationNumber: true,
-          student: {
-            id: true,
-            birthDate: true,
-            user: {
-              id: true,
-              firstName: true,
-              lastName: true,
-              email: true,
-            },
-          },
-        },
-      },
-      relations: { application: { student: { user: true } } },
-      where: { id },
-    });
   }
 
   /**
@@ -571,10 +541,9 @@ export class ApplicationOfferingChangeRequestService {
   ): Promise<void> {
     const auditUser = { id: auditUserId } as User;
     const currentDate = new Date();
-    const applicationOfferingChangeRequestDetails =
-      await this.getApplicationOfferingChangeRequestById(
-        applicationOfferingChangeRequestId,
-      );
+    const applicationOfferingChangeRequestDetails = await this.getById(
+      applicationOfferingChangeRequestId,
+    );
     const student = applicationOfferingChangeRequestDetails.application.student;
     const ministryNotification: ApplicationOfferingChangeRequestApprovedByStudentNotification =
       {

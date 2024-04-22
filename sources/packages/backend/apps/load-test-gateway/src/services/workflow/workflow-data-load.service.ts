@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import {
   Application,
+  ApplicationData,
   EducationProgramOffering,
   Student,
   StudentAssessment,
@@ -49,7 +50,7 @@ export class WorkflowDataLoadService {
           student: preliminaryData.student,
           location: preliminaryData.offering.institutionLocation,
         },
-        { initialValue: { data: submittedApplicationData } },
+        { initialValue: { data: submittedApplicationData as ApplicationData } },
       );
       applications.push(application);
     }

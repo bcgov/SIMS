@@ -219,6 +219,7 @@ export async function saveFakeApplicationDisbursements(
  * @param options additional options:
  * - `applicationStatus` application status for the application.
  * - `offeringIntensity` if provided sets the offering intensity for the created fakeApplication, otherwise sets it to fulltime by default.
+ * - `applicationData` related application data.
  * @returns the created application.
  */
 export async function saveFakeApplication(
@@ -232,6 +233,7 @@ export async function saveFakeApplication(
   options?: {
     applicationStatus?: ApplicationStatus;
     offeringIntensity?: OfferingIntensity;
+    applicationData?: ApplicationData;
   },
 ): Promise<Application> {
   const userRepo = dataSource.getRepository(User);
@@ -252,10 +254,13 @@ export async function saveFakeApplication(
     savedStudent = await studentRepo.save(createFakeStudent(savedUser));
   }
   // Create and save application.
-  const fakeApplication = createFakeApplication({
-    student: savedStudent,
-    location: relations?.institutionLocation,
-  });
+  const fakeApplication = createFakeApplication(
+    {
+      student: savedStudent,
+      location: relations?.institutionLocation,
+    },
+    { initialValue: { data: options?.applicationData } },
+  );
   fakeApplication.applicationStatus = applicationStatus;
   const savedApplication = await applicationRepo.save(fakeApplication);
   // Offering.

@@ -771,6 +771,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     }
     const institution = await this.institutionService.getInstitutionDetailById(
       institutionId,
+      entityManager,
     );
     const ministryNotification: InstitutionAddsPendingProgramNotification = {
       institutionName: institution.legalOperatingName,

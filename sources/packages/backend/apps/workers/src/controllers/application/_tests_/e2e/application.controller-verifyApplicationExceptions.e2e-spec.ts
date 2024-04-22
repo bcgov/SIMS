@@ -5,6 +5,7 @@ import {
   createFakeApplication,
   createFakeApplicationException,
   E2EDataSources,
+  saveFakeApplication,
   saveFakeStudent,
 } from "@sims/test-utils";
 import { ICustomHeaders } from "zeebe-node";
@@ -35,14 +36,18 @@ describe("ApplicationController(e2e)-verifyApplicationExceptions", () => {
 
   it("Should create and associate application exceptions when there are some exceptions for the application.", async () => {
     // Arrange
-    const student = await saveFakeStudent(db.dataSource);
-    const fakeApplication = createFakeApplication({ student });
-    fakeApplication.data = {
-      workflowName: "",
-      test: {
-        test: "studentApplicationException",
+    const fakeApplication = await saveFakeApplication(
+      db.dataSource,
+      undefined,
+      {
+        applicationData: {
+          workflowName: "",
+          test: {
+            test: "studentApplicationException",
+          },
+        } as ApplicationData,
       },
-    } as ApplicationData;
+    );
     const savedApplication = await db.application.save(fakeApplication);
     const verifyApplicationExceptionsPayload =
       createFakeVerifyApplicationExceptionsPayload(savedApplication.id);

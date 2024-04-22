@@ -71,6 +71,9 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     studentId: number,
     studentAppealRequests: StudentAppealRequestModel[],
   ): Promise<StudentAppeal> {
+    const application = await this.applicationService.getApplicationInfo(
+      applicationId,
+    );
     return this.dataSource.transaction(async (entityManager) => {
       const studentAppeal = new StudentAppeal();
       const currentDateTime = new Date();
@@ -101,9 +104,6 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
           { entityManager: entityManager },
         );
       }
-      const application = await this.applicationService.getApplicationInfo(
-        applicationId,
-      );
       const student = application.student;
       const ministryNotification: StudentSubmittedChangeRequestNotification = {
         givenNames: student.user.firstName,

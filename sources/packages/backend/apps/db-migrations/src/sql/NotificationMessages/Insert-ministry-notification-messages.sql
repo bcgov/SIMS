@@ -3,12 +3,12 @@ INSERT INTO
 VALUES
   (
     18,
-    'Ministry notification for student submits change request after COE',
+    'Ministry notification for student submits change request after COE.',
     '241a360a-07d6-486f-9aa4-fae6903e1cff'
   ),
   (
     19,
-    'Ministry notification for student submits application with exception request',
+    'Ministry notification for student submits application with exception request.',
     '997c6625-5571-4c92-94d1-7d7c1b86fd8c'
   ),
   (

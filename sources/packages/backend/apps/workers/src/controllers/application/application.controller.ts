@@ -127,13 +127,12 @@ export class ApplicationController {
       );
       if (exceptions.length) {
         return await this.dataSource.transaction(async (entityManager) => {
-          const createdException =
-            await this.applicationExceptionService.createException(
+          const exceptionPromise =
+            this.applicationExceptionService.createException(
               job.variables.applicationId,
               exceptions,
               entityManager,
             );
-          jobLogger.log("Verified and created exception.");
           const student = application.student;
           const ministryNotification: ApplicationExceptionRequestNotification =
             {
@@ -143,10 +142,16 @@ export class ApplicationController {
               birthDate: student.birthDate,
               applicationNumber: application.applicationNumber,
             };
-          await this.notificationActionService.saveApplicationExceptionRequestNotification(
-            ministryNotification,
-            entityManager,
-          );
+          const applicationExceptionRequestNotificationPromise =
+            this.notificationActionService.saveApplicationExceptionRequestNotification(
+              ministryNotification,
+              entityManager,
+            );
+          const [createdException] = await Promise.all([
+            exceptionPromise,
+            applicationExceptionRequestNotificationPromise,
+          ]);
+          jobLogger.log("Verified and created exception.");
           jobLogger.log("Created notification for the created exception.");
           return job.complete({
             applicationExceptionStatus: createdException.exceptionStatus,
