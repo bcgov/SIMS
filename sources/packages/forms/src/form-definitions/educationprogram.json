@@ -59,7 +59,8 @@
                     "key": "html3",
                     "type": "htmlelement",
                     "input": false,
-                    "tableView": false
+                    "tableView": false,
+                    "hideLabel": true
                 },
                 {
                     "collapsible": false,
@@ -77,7 +78,18 @@
                             "key": "levelOfStudyCodes",
                             "type": "hidden",
                             "input": true,
-                            "tableView": false
+                            "tableView": false,
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "isNew": false,
+                            "tags": [],
+                            "conditional": {
+                                "show": "",
+                                "when": null,
+                                "eq": ""
+                            },
+                            "properties": {}
                         },
                         {
                             "label": "Field Of Study Codes",
@@ -86,16 +98,37 @@
                             "key": "fieldOfStudyCodes",
                             "type": "hidden",
                             "input": true,
-                            "tableView": false
+                            "tableView": false,
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "isNew": false,
+                            "tags": [],
+                            "conditional": {
+                                "show": "",
+                                "when": null,
+                                "eq": ""
+                            },
+                            "properties": {}
                         },
                         {
                             "label": "SABC Codes",
-                            "calculateValue": "value =\r\n{\r\n    11: \"Z\",\r\n    \"09\": \"Z\",\r\n    52: \"Z\",\r\n    \"01\": \"Z\",\r\n    \"03\": \"Z\",\r\n    \"05\": \"X\",\r\n    16: \"X\",\r\n    23: \"X\",\r\n    24: \"X\",\r\n    25: \"X\",\r\n    42: \"X\",\r\n    27: \"X\",\r\n    30: \"X\",\r\n    38: \"X\",\r\n    40: \"X\",\r\n    45: \"X\",\r\n    50: \"X\",\r\n    53: \"X\",\r\n    54: \"X\",\r\n    55: \"X\",\r\n    13: \"W\",\r\n    19: \"W\",\r\n    28: \"W\",\r\n    31: \"W\",\r\n    44: \"W\",\r\n    60: \"V\",\r\n    \"04\": \"U\",\r\n    10: \"U\",\r\n    14: \"U\",\r\n    15: \"U\",\r\n    29: \"U\",\r\n    41: \"U\",\r\n    26: \"U\",\r\n    22: \"S\",\r\n    43: \"S\",\r\n    51: \"R\",\r\n    61: \"R\",\r\n    39: \"Q\",\r\n    12: \"P\",\r\n    21: \"P\",\r\n    32: \"P\",\r\n    33: \"P\",\r\n    34: \"P\",\r\n    35: \"P\",\r\n    36: \"P\",\r\n    37: \"P\",\r\n    46: \"P\",\r\n    47: \"P\",\r\n    48: \"P\",\r\n    49: \"P\"\r\n};",
+                            "calculateValue": "value =\r\n{\r\n    11: \"Z\",\r\n    \"09\": \"Z\",\r\n    52: \"Z\",\r\n    \"01\": \"Y\",\r\n    \"03\": \"Y\",\r\n    \"05\": \"X\",\r\n    16: \"X\",\r\n    23: \"X\",\r\n    24: \"X\",\r\n    25: \"X\",\r\n    42: \"X\",\r\n    27: \"X\",\r\n    30: \"X\",\r\n    38: \"X\",\r\n    40: \"X\",\r\n    45: \"X\",\r\n    50: \"X\",\r\n    53: \"X\",\r\n    54: \"X\",\r\n    55: \"X\",\r\n    13: \"W\",\r\n    19: \"W\",\r\n    28: \"W\",\r\n    31: \"W\",\r\n    44: \"W\",\r\n    60: \"V\",\r\n    \"04\": \"U\",\r\n    10: \"U\",\r\n    14: \"U\",\r\n    15: \"U\",\r\n    29: \"U\",\r\n    41: \"U\",\r\n    26: \"T\",\r\n    22: \"S\",\r\n    43: \"S\",\r\n    51: \"R\",\r\n    61: \"R\",\r\n    39: \"Q\",\r\n    12: \"P\",\r\n    21: \"P\",\r\n    32: \"P\",\r\n    33: \"P\",\r\n    34: \"P\",\r\n    35: \"P\",\r\n    36: \"P\",\r\n    37: \"P\",\r\n    46: \"P\",\r\n    47: \"P\",\r\n    48: \"P\",\r\n    49: \"P\"\r\n};",
                             "calculateServer": true,
                             "key": "sabcCodes",
                             "type": "hidden",
                             "input": true,
-                            "tableView": false
+                            "tableView": false,
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "tags": [],
+                            "conditional": {
+                                "show": "",
+                                "when": null,
+                                "eq": ""
+                            },
+                            "properties": {}
                         },
                         {
                             "label": "Program name",
@@ -110,7 +143,26 @@
                                 "data-cy": "programName"
                             },
                             "type": "textfield",
-                            "input": true
+                            "input": true,
+                            "autofocus": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true,
+                            "spellcheck": true,
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": ""
+                            }
                         },
                         {
                             "label": "Program description",
@@ -126,7 +178,20 @@
                                 "data-cy": "programDescription"
                             },
                             "type": "textarea",
-                            "input": true
+                            "input": true,
+                            "autofocus": false,
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "rows": 3,
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "wysiwyg": false,
+                            "clearOnHide": true,
+                            "spellcheck": true
                         },
                         {
                             "label": "Credential type",
@@ -203,7 +268,22 @@
                             },
                             "type": "select",
                             "input": true,
-                            "searchThreshold": 0.3
+                            "searchThreshold": 0.3,
+                            "autofocus": false,
+                            "placeholder": "",
+                            "dataSrc": "values",
+                            "valueProperty": "",
+                            "defaultValue": "",
+                            "refreshOn": "",
+                            "filter": "",
+                            "authenticate": false,
+                            "template": "<span>{{ item.label }}</span>",
+                            "multiple": false,
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true
                         },
                         {
                             "label": "Classification of Instructional Programs (CIP)",
@@ -241,7 +321,26 @@
                                 "data-cy": "cipCode"
                             },
                             "type": "textfield",
-                            "input": true
+                            "input": true,
+                            "autofocus": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true,
+                            "spellcheck": true,
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": ""
+                            }
                         },
                         {
                             "label": "Field of study code",
@@ -258,7 +357,26 @@
                                 "data-cy": "fieldOfStudyCode"
                             },
                             "type": "textfield",
-                            "input": true
+                            "input": true,
+                            "autofocus": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true,
+                            "spellcheck": true,
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": ""
+                            }
                         },
                         {
                             "label": "National Occupational Classifcation (NOC)",
@@ -295,7 +413,26 @@
                             },
                             "type": "textfield",
                             "input": true,
-                            "lockKey": true
+                            "lockKey": true,
+                            "autofocus": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true,
+                            "spellcheck": true,
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": ""
+                            }
                         },
                         {
                             "label": "SABC program code, if this program has been approved for SABC funding before",
@@ -331,7 +468,26 @@
                                 "data-cy": "sabcCode"
                             },
                             "type": "textfield",
-                            "input": true
+                            "input": true,
+                            "autofocus": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true,
+                            "spellcheck": true,
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": ""
+                            }
                         },
                         {
                             "label": "Institution Program Code",
@@ -362,9 +518,39 @@
                                 "data-cy": "institutionProgramCode"
                             },
                             "type": "textfield",
-                            "input": true
+                            "input": true,
+                            "autofocus": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true,
+                            "spellcheck": true,
+                            "validate": {
+                                "required": false,
+                                "minLength": "",
+                                "maxLength": "",
+                                "pattern": "",
+                                "custom": "",
+                                "customPrivate": false
+                            },
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": ""
+                            }
                         }
-                    ]
+                    ],
+                    "clearOnHide": false,
+                    "title": "",
+                    "theme": "default"
                 },
                 {
                     "label": "Program eligibility",
@@ -382,7 +568,8 @@
                     "key": "programEligibility",
                     "type": "htmlelement",
                     "input": false,
-                    "tableView": false
+                    "tableView": false,
+                    "hideLabel": true
                 },
                 {
                     "collapsible": false,
@@ -441,7 +628,15 @@
                                 "data-cy": "programIntensity"
                             },
                             "type": "radio",
-                            "input": true
+                            "input": true,
+                            "autofocus": false,
+                            "inputType": "radio",
+                            "defaultValue": "",
+                            "protected": false,
+                            "fieldSet": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true
                         },
                         {
                             "label": "How will this program be delivered? (Select all that apply)",
@@ -476,7 +671,13 @@
                             "type": "selectboxes",
                             "input": true,
                             "inputType": "checkbox",
-                            "lockKey": true
+                            "lockKey": true,
+                            "autofocus": false,
+                            "inline": false,
+                            "protected": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true
                         },
                         {
                             "label": "Will the program also be offered and delivered at 100% course load on site?",
@@ -504,7 +705,15 @@
                                 "data-cy": "deliveredOnlineAlsoOnsite"
                             },
                             "type": "radio",
-                            "input": true
+                            "input": true,
+                            "autofocus": false,
+                            "inputType": "radio",
+                            "defaultValue": "",
+                            "protected": false,
+                            "fieldSet": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true
                         },
                         {
                             "label": "Will the students earn the same number of credits in the same time period as students in other StudentAid BC eligible programs delivered on site?",
@@ -533,7 +742,15 @@
                                 "data-cy": "sameOnlineCreditsEarned"
                             },
                             "type": "radio",
-                            "input": true
+                            "input": true,
+                            "autofocus": false,
+                            "inputType": "radio",
+                            "defaultValue": "",
+                            "protected": false,
+                            "fieldSet": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true
                         },
                         {
                             "label": "Will they earn academic credits that are recognized at another designated institution listed in the BC Transfer Guide or other acceptable articulation agreements from other jurisdictions?",
@@ -561,7 +778,15 @@
                                 "data-cy": "earnAcademicCreditsOtherInstitution"
                             },
                             "type": "radio",
-                            "input": true
+                            "input": true,
+                            "autofocus": false,
+                            "inputType": "radio",
+                            "defaultValue": "",
+                            "protected": false,
+                            "fieldSet": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true
                         },
                         {
                             "label": "HTML",
@@ -579,7 +804,9 @@
                             "customConditional": "const isBCInstitution = data.isBCPublic || data.isBCPrivate;\nshow = (!isBCInstitution && data.deliveredOnlineAlsoOnsite === \"no\" && data.sameOnlineCreditsEarned === \"no\" && data.earnAcademicCreditsOtherInstitution === \"no\");",
                             "type": "htmlelement",
                             "input": false,
-                            "tableView": false
+                            "tableView": false,
+                            "hideLabel": true,
+                            "tag": "p"
                         },
                         {
                             "label": "HTML",
@@ -594,7 +821,10 @@
                             "key": "html11",
                             "type": "htmlelement",
                             "input": false,
-                            "tableView": false
+                            "tableView": false,
+                            "hideLabel": true,
+                            "tag": "p",
+                            "className": ""
                         },
                         {
                             "label": "Program length",
@@ -643,7 +873,22 @@
                             },
                             "type": "select",
                             "input": true,
-                            "searchThreshold": 0.3
+                            "searchThreshold": 0.3,
+                            "autofocus": false,
+                            "placeholder": "",
+                            "dataSrc": "values",
+                            "valueProperty": "",
+                            "defaultValue": "",
+                            "refreshOn": "",
+                            "filter": "",
+                            "authenticate": false,
+                            "template": "<span>{{ item.label }}</span>",
+                            "multiple": false,
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true
                         },
                         {
                             "label": "Program course load calculation is:",
@@ -670,7 +915,15 @@
                                 "data-cy": "courseLoadCalculation"
                             },
                             "type": "radio",
-                            "input": true
+                            "input": true,
+                            "autofocus": false,
+                            "inputType": "radio",
+                            "defaultValue": "",
+                            "protected": false,
+                            "fieldSet": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true
                         },
                         {
                             "label": "Does this program include a minimum of 20 instructional hours per week?",
@@ -702,7 +955,15 @@
                                 "data-cy": "minHoursWeek"
                             },
                             "type": "radio",
-                            "input": true
+                            "input": true,
+                            "autofocus": false,
+                            "inputType": "radio",
+                            "defaultValue": "",
+                            "protected": false,
+                            "fieldSet": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true
                         },
                         {
                             "label": "Is this an aviation program?",
@@ -730,7 +991,15 @@
                                 "data-cy": "isAviationProgram"
                             },
                             "type": "radio",
-                            "input": true
+                            "input": true,
+                            "autofocus": false,
+                            "inputType": "radio",
+                            "defaultValue": "",
+                            "protected": false,
+                            "fieldSet": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true
                         },
                         {
                             "label": "HTML",
@@ -748,7 +1017,9 @@
                             "customConditional": "show = (data.courseLoadCalculation === \"hours\" && data.minHoursWeek === \"no\" && data.isAviationProgram === \"no\");",
                             "type": "htmlelement",
                             "input": false,
-                            "tableView": false
+                            "tableView": false,
+                            "hideLabel": true,
+                            "tag": "p"
                         },
                         {
                             "label": "Does this program include a minimum of 15 instructional hours per week",
@@ -776,7 +1047,15 @@
                                 "data-cy": "minHoursWeekAvi"
                             },
                             "type": "radio",
-                            "input": true
+                            "input": true,
+                            "autofocus": false,
+                            "inputType": "radio",
+                            "defaultValue": "",
+                            "protected": false,
+                            "fieldSet": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true
                         },
                         {
                             "label": "HTML",
@@ -794,7 +1073,9 @@
                             "customConditional": "show = (data.courseLoadCalculation === \"hours\" && data.minHoursWeek === \"no\" && data.isAviationProgram === \"yes\" && data.minHoursWeekAvi === \"no\");",
                             "type": "htmlelement",
                             "input": false,
-                            "tableView": false
+                            "tableView": false,
+                            "hideLabel": true,
+                            "tag": "p"
                         },
                         {
                             "label": "HTML",
@@ -809,7 +1090,10 @@
                             "key": "html7",
                             "type": "htmlelement",
                             "input": false,
-                            "tableView": false
+                            "tableView": false,
+                            "hideLabel": true,
+                            "tag": "p",
+                            "className": ""
                         },
                         {
                             "label": "Which regulatory body does this program belong to?",
@@ -857,7 +1141,22 @@
                             "type": "select",
                             "input": true,
                             "searchThreshold": 0.3,
-                            "hideLabel": true
+                            "hideLabel": true,
+                            "autofocus": false,
+                            "placeholder": "",
+                            "dataSrc": "values",
+                            "valueProperty": "",
+                            "defaultValue": "",
+                            "refreshOn": "",
+                            "filter": "",
+                            "authenticate": false,
+                            "template": "<span>{{ item.label }}</span>",
+                            "multiple": false,
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true
                         },
                         {
                             "input": true,
@@ -875,9 +1174,26 @@
                                 "eq": "other"
                             },
                             "type": "textfield",
-                            "lockKey": true
+                            "lockKey": true,
+                            "autofocus": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true,
+                            "spellcheck": true
                         }
-                    ]
+                    ],
+                    "clearOnHide": false,
+                    "title": "",
+                    "theme": "default"
                 },
                 {
                     "label": "HTML",
@@ -983,7 +1299,13 @@
                             "type": "selectboxes",
                             "input": true,
                             "inputType": "checkbox",
-                            "lockKey": true
+                            "lockKey": true,
+                            "autofocus": false,
+                            "inline": false,
+                            "protected": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true
                         },
                         {
                             "label": "Entrance requirements warning banner",
@@ -1003,9 +1325,13 @@
                             "tableView": false,
                             "hideLabel": true,
                             "lockKey": true,
-                            "customConditional": "show = !!data.entranceRequirements.noneOfTheAboveEntranceRequirements;"
+                            "customConditional": "show = !!data.entranceRequirements.noneOfTheAboveEntranceRequirements;",
+                            "tag": "p"
                         }
-                    ]
+                    ],
+                    "clearOnHide": false,
+                    "title": "",
+                    "theme": "default"
                 },
                 {
                     "label": "HTML",
@@ -1022,7 +1348,8 @@
                     "key": "html9",
                     "type": "htmlelement",
                     "input": false,
-                    "tableView": false
+                    "tableView": false,
+                    "hideLabel": true
                 },
                 {
                     "collapsible": false,
@@ -1080,7 +1407,15 @@
                                 "data-cy": "eslEligibility"
                             },
                             "type": "radio",
-                            "input": true
+                            "input": true,
+                            "autofocus": false,
+                            "inputType": "radio",
+                            "defaultValue": "",
+                            "protected": false,
+                            "fieldSet": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true
                         },
                         {
                             "label": "ESL Error",
@@ -1102,9 +1437,14 @@
                             },
                             "type": "htmlelement",
                             "input": false,
-                            "tableView": false
+                            "tableView": false,
+                            "hideLabel": true,
+                            "tag": "p"
                         }
-                    ]
+                    ],
+                    "clearOnHide": false,
+                    "title": "",
+                    "theme": "default"
                 },
                 {
                     "label": "Program partnerships",
@@ -1121,7 +1461,8 @@
                     "key": "programPartnerships",
                     "type": "htmlelement",
                     "input": false,
-                    "tableView": false
+                    "tableView": false,
+                    "hideLabel": true
                 },
                 {
                     "label": "HTML",
@@ -1137,7 +1478,10 @@
                     "key": "html10",
                     "type": "htmlelement",
                     "input": false,
-                    "tableView": false
+                    "tableView": false,
+                    "hideLabel": true,
+                    "tag": "p",
+                    "className": ""
                 },
                 {
                     "collapsible": false,
@@ -1194,7 +1538,15 @@
                                 "data-cy": "hasJointInstitution"
                             },
                             "type": "radio",
-                            "input": true
+                            "input": true,
+                            "autofocus": false,
+                            "inputType": "radio",
+                            "defaultValue": "",
+                            "protected": false,
+                            "fieldSet": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true
                         },
                         {
                             "label": "Are all institutions you partner with for this program designated by Student Aid BC?",
@@ -1226,7 +1578,15 @@
                                 "data-cy": "hasJointDesignatedInstitution"
                             },
                             "type": "radio",
-                            "input": true
+                            "input": true,
+                            "autofocus": false,
+                            "inputType": "radio",
+                            "defaultValue": "",
+                            "protected": false,
+                            "fieldSet": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true
                         },
                         {
                             "label": "Join Program Error",
@@ -1248,9 +1608,14 @@
                             },
                             "type": "htmlelement",
                             "input": false,
-                            "tableView": false
+                            "tableView": false,
+                            "hideLabel": true,
+                            "tag": "p"
                         }
-                    ]
+                    ],
+                    "clearOnHide": false,
+                    "title": "",
+                    "theme": "default"
                 },
                 {
                     "label": "HTML",
@@ -1267,7 +1632,8 @@
                     "key": "html13",
                     "type": "htmlelement",
                     "input": false,
-                    "tableView": false
+                    "tableView": false,
+                    "hideLabel": true
                 },
                 {
                     "collapsible": false,
@@ -1324,7 +1690,15 @@
                                 "data-cy": "hasWILComponent"
                             },
                             "type": "radio",
-                            "input": true
+                            "input": true,
+                            "autofocus": false,
+                            "inputType": "radio",
+                            "defaultValue": "",
+                            "protected": false,
+                            "fieldSet": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true
                         },
                         {
                             "label": "Is the WIL approved by your regulator or oversight body?",
@@ -1356,7 +1730,15 @@
                                 "data-cy": "isWILApproved"
                             },
                             "type": "radio",
-                            "input": true
+                            "input": true,
+                            "autofocus": false,
+                            "inputType": "radio",
+                            "defaultValue": "",
+                            "protected": false,
+                            "fieldSet": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true
                         },
                         {
                             "label": "HTML",
@@ -1374,7 +1756,9 @@
                             "customConditional": "show = (data.hasWILComponent === \"yes\" && data.isWILApproved === \"no\");",
                             "type": "htmlelement",
                             "input": false,
-                            "tableView": false
+                            "tableView": false,
+                            "hideLabel": true,
+                            "tag": "p"
                         },
                         {
                             "label": "Does the WIL meet the program eligibility requirements according to StudentAid BC policy?",
@@ -1403,7 +1787,15 @@
                                 "data-cy": "wilProgramEligibility"
                             },
                             "type": "radio",
-                            "input": true
+                            "input": true,
+                            "autofocus": false,
+                            "inputType": "radio",
+                            "defaultValue": "",
+                            "protected": false,
+                            "fieldSet": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true
                         },
                         {
                             "label": "HTML",
@@ -1421,9 +1813,14 @@
                             "customConditional": "show = (data.hasWILComponent === \"yes\" && data.isWILApproved === \"yes\" && data.wilProgramEligibility === \"no\");",
                             "type": "htmlelement",
                             "input": false,
-                            "tableView": false
+                            "tableView": false,
+                            "hideLabel": true,
+                            "tag": "p"
                         }
-                    ]
+                    ],
+                    "clearOnHide": false,
+                    "title": "",
+                    "theme": "default"
                 },
                 {
                     "label": "HTML",
@@ -1440,7 +1837,8 @@
                     "key": "html16",
                     "type": "htmlelement",
                     "input": false,
-                    "tableView": false
+                    "tableView": false,
+                    "hideLabel": true
                 },
                 {
                     "collapsible": false,
@@ -1497,7 +1895,15 @@
                                 "data-cy": "hasTravel"
                             },
                             "type": "radio",
-                            "input": true
+                            "input": true,
+                            "autofocus": false,
+                            "inputType": "radio",
+                            "defaultValue": "",
+                            "protected": false,
+                            "fieldSet": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true
                         },
                         {
                             "label": "Does the field trip, field placement, or travel meet the program eligibility requirements according to StudentAid BC policy?",
@@ -1529,7 +1935,15 @@
                                 "data-cy": "travelProgramEligibility"
                             },
                             "type": "radio",
-                            "input": true
+                            "input": true,
+                            "autofocus": false,
+                            "inputType": "radio",
+                            "defaultValue": "",
+                            "protected": false,
+                            "fieldSet": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true
                         },
                         {
                             "label": "HTML",
@@ -1547,9 +1961,14 @@
                             "customConditional": "show = (data.hasTravel === \"yes\" && data.travelProgramEligibility === \"no\");",
                             "type": "htmlelement",
                             "input": false,
-                            "tableView": false
+                            "tableView": false,
+                            "hideLabel": true,
+                            "tag": "p"
                         }
-                    ]
+                    ],
+                    "clearOnHide": false,
+                    "title": "",
+                    "theme": "default"
                 },
                 {
                     "label": "HTML",
@@ -1566,7 +1985,8 @@
                     "key": "html18",
                     "type": "htmlelement",
                     "input": false,
-                    "tableView": false
+                    "tableView": false,
+                    "hideLabel": true
                 },
                 {
                     "collapsible": false,
@@ -1623,7 +2043,15 @@
                                 "data-cy": "hasIntlExchange"
                             },
                             "type": "radio",
-                            "input": true
+                            "input": true,
+                            "autofocus": false,
+                            "inputType": "radio",
+                            "defaultValue": "",
+                            "protected": false,
+                            "fieldSet": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true
                         },
                         {
                             "label": "Does the international exchange meet the program eligibility requirements according to StudentAid BC policy?",
@@ -1655,7 +2083,15 @@
                                 "data-cy": "intlExchangeProgramEligibility"
                             },
                             "type": "radio",
-                            "input": true
+                            "input": true,
+                            "autofocus": false,
+                            "inputType": "radio",
+                            "defaultValue": "",
+                            "protected": false,
+                            "fieldSet": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true
                         },
                         {
                             "label": "HTML",
@@ -1673,9 +2109,14 @@
                             "customConditional": "show = (data.hasIntlExchange === \"yes\" && data.intlExchangeProgramEligibility === \"no\");",
                             "type": "htmlelement",
                             "input": false,
-                            "tableView": false
+                            "tableView": false,
+                            "hideLabel": true,
+                            "tag": "p"
                         }
-                    ]
+                    ],
+                    "clearOnHide": false,
+                    "title": "",
+                    "theme": "default"
                 },
                 {
                     "label": "Declaration",
@@ -1692,7 +2133,8 @@
                     "key": "declaration",
                     "type": "htmlelement",
                     "input": false,
-                    "tableView": false
+                    "tableView": false,
+                    "hideLabel": true
                 },
                 {
                     "collapsible": false,
@@ -1738,7 +2180,10 @@
                             "key": "html12",
                             "type": "htmlelement",
                             "input": false,
-                            "tableView": false
+                            "tableView": false,
+                            "hideLabel": true,
+                            "tag": "p",
+                            "className": ""
                         },
                         {
                             "label": "I confirm this program meets the policies outlined in the StudentAid BC policy manual.",
@@ -1752,18 +2197,36 @@
                                 "data-cy": "programDeclaration"
                             },
                             "type": "checkbox",
-                            "input": true
+                            "input": true,
+                            "autofocus": false,
+                            "inputType": "checkbox",
+                            "hideLabel": false,
+                            "dataGridLabel": false,
+                            "protected": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "name": "",
+                            "value": "",
+                            "clearOnHide": true
                         }
-                    ]
+                    ],
+                    "clearOnHide": false,
+                    "title": "",
+                    "theme": "default"
                 }
-            ]
+            ],
+            "clearOnHide": false,
+            "theme": "default"
         },
         {
             "label": "hasOfferings",
             "key": "totalOfferings",
             "type": "hidden",
             "input": true,
-            "tableView": false
+            "tableView": false,
+            "protected": false,
+            "unique": false,
+            "persistent": true
         },
         {
             "label": "Is Read-only",
@@ -1771,14 +2234,19 @@
             "key": "isReadonly",
             "type": "hidden",
             "input": true,
-            "tableView": false
+            "tableView": false,
+            "protected": false,
+            "unique": false
         },
         {
             "label": "isBCPrivate",
             "key": "isBCPrivate",
             "type": "hidden",
             "input": true,
-            "tableView": false
+            "tableView": false,
+            "protected": false,
+            "unique": false,
+            "persistent": true
         },
         {
             "input": true,
@@ -1786,7 +2254,10 @@
             "key": "isBCPublic",
             "label": "isBCPublic",
             "type": "hidden",
-            "lockKey": true
+            "lockKey": true,
+            "protected": false,
+            "unique": false,
+            "persistent": true
         },
         {
             "label": "Program Status",
@@ -1795,7 +2266,10 @@
             "key": "programStatus",
             "type": "hidden",
             "input": true,
-            "tableView": false
+            "tableView": false,
+            "protected": false,
+            "unique": false,
+            "persistent": true
         }
     ]
 }
