@@ -131,9 +131,9 @@ export async function saveFakeApplicationDisbursements(
         relations?.disbursementValues ?? [
           createFakeDisbursementValue(
             DisbursementValueType.CanadaLoan,
-            options?.offeringIntensity === OfferingIntensity.fullTime
-              ? "CSLF"
-              : "CSLP",
+            options?.offeringIntensity === OfferingIntensity.partTime
+              ? "CSLP"
+              : "CSLF",
             1,
           ),
         ],
@@ -189,9 +189,12 @@ export async function saveFakeApplicationDisbursements(
       studentMaritalStatusCode: "SI",
       pdppdStatus: false,
     },
-    ...(options?.offeringIntensity === OfferingIntensity.partTime && {
-      dmnValues: { lifetimeMaximumCSLP: 10000 },
-    }),
+    // Defining lifetimeMaximumCSLP as 10000 as default makes the student to have a minimum student loan balance for ecert generation.
+    // Without a value to this will make the disbursement to be blocked.
+    dmnValues:
+      options?.offeringIntensity === OfferingIntensity.partTime
+        ? { lifetimeMaximumCSLP: 10000 }
+        : undefined,
   };
   savedApplication.currentAssessment.disbursementSchedules =
     disbursementSchedules;

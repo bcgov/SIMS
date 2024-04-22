@@ -27,7 +27,6 @@ import {
   DisbursementScheduleStatus,
   Institution,
   InstitutionLocation,
-  OfferingIntensity,
 } from "@sims/sims-db";
 import { getDateOnlyFormat } from "@sims/utilities";
 import { saveStudentApplicationForCollegeC } from "../../../student/_tests_/e2e/student.institutions.utils";
@@ -78,7 +77,6 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
         msfaaNumber: currentMSFAA,
       },
       {
-        offeringIntensity: OfferingIntensity.fullTime,
         applicationStatus: ApplicationStatus.Completed,
         firstDisbursementInitialValues: {
           disbursementScheduleStatus: DisbursementScheduleStatus.Sent,

@@ -266,7 +266,7 @@ export interface CalculatedAssessmentModel {
   provincialAwardNetSBSDAmount: number;
 
   // Part time.
-  //CSLP
+  // CSLP
   federalAwardNetCSLPAmount: number;
   limitAwardCSLPRemaining: number;
   latestCSLPBalance: number;

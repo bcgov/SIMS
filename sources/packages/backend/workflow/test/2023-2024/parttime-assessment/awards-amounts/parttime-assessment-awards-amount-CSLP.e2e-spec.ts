@@ -6,19 +6,19 @@ import {
 import { AssessmentConsolidatedData } from "workflow/test/models";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CSLP.`, () => {
-  let assessmentConsolidatedData: AssessmentConsolidatedData;
+  let sharedAssessmentConsolidatedData: AssessmentConsolidatedData;
 
   beforeAll(async () => {
-    assessmentConsolidatedData =
+    sharedAssessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataCRAReportedIncome = 2000;
+    sharedAssessmentConsolidatedData.studentDataCRAReportedIncome = 2000;
   });
 
   it("Should determine federalAwardCSLPAmount dmnPartTimeAwardAllowableLimits.limitAwardCSLPAmount when the student has does not have loan balance and there is a calculatedDataTotalRemainingNeed4", async () => {
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
-      assessmentConsolidatedData,
+      sharedAssessmentConsolidatedData,
     );
 
     // Assert
@@ -38,13 +38,13 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
 
   it("Should determine federalAwardCSLPAmount to be difference of latestCSLPBalance and dmnPartTimeAwardAllowableLimits.limitAwardCSLPAmount when the student has loan balance and there is a calculatedDataTotalRemainingNeed4", async () => {
     // Arrange
-    //Set latestCSLPBalance for the student as 1000.
-    assessmentConsolidatedData.latestCSLPBalance = 1000;
+    // Set latestCSLPBalance for the student as 1000.
+    sharedAssessmentConsolidatedData.latestCSLPBalance = 1000;
 
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
-      assessmentConsolidatedData,
+      sharedAssessmentConsolidatedData,
     );
 
     // Assert
