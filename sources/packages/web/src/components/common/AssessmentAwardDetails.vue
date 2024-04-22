@@ -365,6 +365,9 @@ export default defineComponent({
       coeStatus: COEStatus,
       disbursementStatus: DisbursementScheduleStatus,
     ): string | undefined => {
+      if (coeStatus === COEStatus.declined) {
+        return "The final award is no longer applicable due to a change. Any scheduled disbursements will be cancelled.";
+      }
       if (disbursementStatus === DisbursementScheduleStatus.Pending) {
         return "The final award can't be calculated at this time.";
       }
@@ -372,9 +375,6 @@ export default defineComponent({
         // This message will be displayed only for full-time since the part-time sent e-Cert
         // will have the final awards populates, which should overrides this message entirely.
         return "The final award will be shown once confirmed by NSLSC.";
-      }
-      if (coeStatus === COEStatus.declined) {
-        return "The final award is no longer applicable due to a change. Any scheduled disbursements will be cancelled.";
       }
       return undefined;
     };
