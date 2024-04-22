@@ -721,7 +721,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     });
   });
 
-  it("Should return latest CSLP balance, when the student submits a parttime application and has a value in the student loan balance table", async () => {
+  it("Should return latest CSLP balance, when the student submits a part-time application and has a value in the student loan balance table", async () => {
     // Arrange
 
     // Create the student to be shared across the applications.
@@ -785,7 +785,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     });
   });
 
-  it("Should not return latest CSLP balance, when the student submits a fulltime application and has a value in the student loan balance table", async () => {
+  it("Should not return latest CSLP balance, when the student submits a full-time application and has a value in the student loan balance table", async () => {
     // Arrange
 
     // Create the student to be shared across the applications.

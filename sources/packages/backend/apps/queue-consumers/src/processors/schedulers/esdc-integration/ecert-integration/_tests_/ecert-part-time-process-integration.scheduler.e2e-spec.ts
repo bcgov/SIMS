@@ -495,7 +495,6 @@ describe(
           offeringIntensity: OfferingIntensity.partTime,
           applicationStatus: ApplicationStatus.Completed,
           currentAssessmentInitialValues: {
-            assessmentData: { weeks: 5 } as Assessment,
             assessmentDate: new Date(),
           },
           firstDisbursementInitialValues: {
@@ -508,6 +507,21 @@ describe(
 
       // Act
       const result = await processor.processECert(job);
+
+      // Assert
+      expect(result).toStrictEqual([
+        "Process finalized with success.",
+        "Generated file: none",
+        "Uploaded records: 0",
+      ]);
+      const [disbursement] =
+        application.currentAssessment.disbursementSchedules;
+      const isScheduleNotSent = await db.disbursementSchedule.exists({
+        where: {
+          id: disbursement.id,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+        },
+      });
 
       const [firstDisbursement] =
         application.currentAssessment.disbursementSchedules;
@@ -525,22 +539,6 @@ describe(
         },
         order: { notificationMessage: { id: "ASC" } },
       });
-
-      // Assert
-      expect(result).toStrictEqual([
-        "Process finalized with success.",
-        "Generated file: none",
-        "Uploaded records: 0",
-      ]);
-      const [disbursement] =
-        application.currentAssessment.disbursementSchedules;
-      const isScheduleNotSent = await db.disbursementSchedule.exists({
-        where: {
-          id: disbursement.id,
-          disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
-        },
-      });
-
       expect(notifications).toEqual([
         {
           id: expect.any(Number),

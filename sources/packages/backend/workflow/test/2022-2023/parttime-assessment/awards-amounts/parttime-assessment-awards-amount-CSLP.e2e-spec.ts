@@ -14,7 +14,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     sharedAssessmentConsolidatedData.studentDataCRAReportedIncome = 2000;
   });
 
-  it("Should determine CSLP award for an assessment which involves loan and grants when the student does not have any loan balance and has remaining need for loan", async () => {
+  it("Should determine CSLP award for an assessment which involves loan and grants when the student does not have any loan balance and has remaining need for loan.", async () => {
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
@@ -35,7 +35,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     );
   });
 
-  it("Should CSLP award for an assessment which involves loan and grants when the student have loan balance and has remaining need for loan", async () => {
+  it("Should determine CSLP award for an assessment which involves loan and grants when the student have loan balance and has remaining need for loan.", async () => {
     // Arrange
     // Set latestCSLPBalance for the student as 1000.
     sharedAssessmentConsolidatedData.latestCSLPBalance = 1000;
