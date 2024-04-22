@@ -5,7 +5,7 @@ import {
 } from "../../../test-utils";
 import { AssessmentConsolidatedData } from "workflow/test/models";
 
-describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CSLP.`, () => {
+describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-awards-amount-CSLP.`, () => {
   let sharedAssessmentConsolidatedData: AssessmentConsolidatedData;
 
   beforeAll(async () => {

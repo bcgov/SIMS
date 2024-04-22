@@ -522,6 +522,7 @@ describe(
           disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
         },
       });
+      expect(isScheduleNotSent).toBe(true);
 
       const [firstDisbursement] =
         application.currentAssessment.disbursementSchedules;
@@ -555,8 +556,6 @@ describe(
           user: { id: systemUsersService.systemUser.id },
         },
       ]);
-
-      expect(isScheduleNotSent).toBe(true);
     });
 
     it("Should create an e-Cert record for student when the maximum lifetime CSLP amount is greater than or equal to the sum of latest CSLP balance and the disbursement amount.", async () => {
