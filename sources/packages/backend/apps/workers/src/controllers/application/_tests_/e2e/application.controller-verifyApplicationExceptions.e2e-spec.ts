@@ -6,7 +6,6 @@ import {
   createFakeApplicationException,
   E2EDataSources,
   saveFakeApplication,
-  saveFakeStudent,
 } from "@sims/test-utils";
 import { ICustomHeaders } from "zeebe-node";
 import {
