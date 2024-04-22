@@ -748,6 +748,19 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         {
           initialValues: {
             balanceDate: "2023-11-30",
+            cslBalance: 2000,
+          },
+        },
+      ),
+    );
+
+    // Update another CSLP balance for the student.
+    await db.studentLoanBalance.insert(
+      createFakeStudentLoanBalance(
+        { student },
+        {
+          initialValues: {
+            balanceDate: "2023-12-30",
             cslBalance: 1000,
           },
         },
