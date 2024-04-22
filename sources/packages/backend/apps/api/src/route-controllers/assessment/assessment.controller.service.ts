@@ -293,6 +293,12 @@ export class AssessmentControllerService {
       }
       let index = 1;
       for (const schedule of assessment.disbursementSchedules) {
+        if (
+          schedule.disbursementScheduleStatus !==
+          DisbursementScheduleStatus.Sent
+        ) {
+          break;
+        }
         const awards = this.populateDisbursementReceiptAwardValues(
           disbursementReceipts,
           schedule,
