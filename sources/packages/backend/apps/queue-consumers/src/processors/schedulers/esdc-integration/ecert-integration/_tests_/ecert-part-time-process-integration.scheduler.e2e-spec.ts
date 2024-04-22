@@ -3,6 +3,7 @@ import {
   Assessment,
   COEStatus,
   DisbursementScheduleStatus,
+  DisbursementValueType,
   Notification,
   NotificationMessage,
   NotificationMessageType,
@@ -18,6 +19,7 @@ import {
   saveFakeStudent,
   createFakeNotification,
   createFakeStudentLoanBalance,
+  createFakeDisbursementValue,
 } from "@sims/test-utils";
 import { getUploadedFile } from "@sims/test-utils/mocks";
 import { IsNull, Like, Not } from "typeorm";
@@ -455,7 +457,7 @@ describe(
       );
     });
 
-    it("Should not create an e-Cert record for student when the maximum lifetime CSLP amount is less than the sum of latest CSLP balance and the disbursed amount.", async () => {
+    it("Should not create an e-Cert record for student when the maximum lifetime CSLP amount is less than the sum of latest CSLP balance and the disbursement amount.", async () => {
       // Arrange
 
       // Student with valid SIN.
@@ -479,7 +481,6 @@ describe(
           { student },
           {
             initialValues: {
-              balanceDate: "2023-11-30",
               cslBalance: 10000,
             },
           },
@@ -508,6 +509,23 @@ describe(
       // Act
       const result = await processor.processECert(job);
 
+      const [firstDisbursement] =
+        application.currentAssessment.disbursementSchedules;
+
+      const notifications = await db.notification.find({
+        select: {
+          id: true,
+          user: { id: true },
+          notificationMessage: { id: true },
+        },
+        relations: { user: true, notificationMessage: true },
+        where: {
+          metadata: { disbursementId: firstDisbursement.id },
+          dateSent: IsNull(),
+        },
+        order: { notificationMessage: { id: "ASC" } },
+      });
+
       // Assert
       expect(result).toStrictEqual([
         "Process finalized with success.",
@@ -522,10 +540,28 @@ describe(
           disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
         },
       });
+
+      expect(notifications).toEqual([
+        {
+          id: expect.any(Number),
+          notificationMessage: {
+            id: NotificationMessageType.StudentNotificationDisbursementBlocked,
+          },
+          user: { id: student.user.id },
+        },
+        {
+          id: expect.any(Number),
+          notificationMessage: {
+            id: NotificationMessageType.MinistryNotificationDisbursementBlocked,
+          },
+          user: { id: systemUsersService.systemUser.id },
+        },
+      ]);
+
       expect(isScheduleNotSent).toBe(true);
     });
 
-    it("Should create an e-Cert record for student when the maximum lifetime CSLP amount is greater than or equal to the sum of latest CSLP balance and the disbursed amount.", async () => {
+    it("Should create an e-Cert record for student when the maximum lifetime CSLP amount is greater than or equal to the sum of latest CSLP balance and the disbursement amount.", async () => {
       // Arrange
 
       // Student with valid SIN.
@@ -549,8 +585,7 @@ describe(
           { student },
           {
             initialValues: {
-              balanceDate: "2023-11-30",
-              cslBalance: 9999,
+              cslBalance: 9700,
             },
           },
         ),
@@ -559,7 +594,17 @@ describe(
       // Student application eligible for e-Cert.
       const application = await saveFakeApplicationDisbursements(
         db.dataSource,
-        { student, msfaaNumber },
+        {
+          student,
+          msfaaNumber,
+          disbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLP",
+              300,
+            ),
+          ],
+        },
         {
           offeringIntensity: OfferingIntensity.partTime,
           applicationStatus: ApplicationStatus.Completed,
@@ -709,7 +754,17 @@ describe(
       // Student application.
       const application = await saveFakeApplicationDisbursements(
         db.dataSource,
-        { student, msfaaNumber },
+        {
+          student,
+          msfaaNumber,
+          disbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLP",
+              300,
+            ),
+          ],
+        },
         {
           offeringIntensity: OfferingIntensity.partTime,
           applicationStatus: ApplicationStatus.Completed,
