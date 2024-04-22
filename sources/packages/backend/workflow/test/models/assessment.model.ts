@@ -293,6 +293,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataTotalRemainingNeed3: number;
   calculatedDataTotalRemainingNeed4: number;
   calculatedDataAdditionalTransportationMax: number;
+  calculatedDataAdditionalTransportationAllowance: number;
   calculatedDataTotalTransportationAllowance: number;
   // DMN Part Time Award Allowable Limits
   dmnPartTimeAwardAllowableLimits?: {
