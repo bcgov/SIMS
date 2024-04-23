@@ -540,18 +540,6 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: AppRoutes.ViewOfferingChangeRequestComplete,
-        name: AESTRoutesConst.OFFERING_CHANGE_REQUEST_COMPLETE,
-        props: true,
-        components: {
-          default: ViewOfferingChangeRequestComplete,
-          sidebar: AESTHomeSideBar,
-        },
-        meta: {
-          clientType: ClientIdType.AEST,
-        },
-      },
-      {
         path: AppRoutes.PendingApplicationOfferingChangeRequests,
         name: AESTRoutesConst.REQUEST_CHANGE_OFFERINGS,
         components: {
