@@ -15,6 +15,11 @@ import {
   UpdateDesignationDetailsAPIInDTO,
   DesignationLocationAPIInDTO,
 } from "../../route-controllers/designation-agreement/models/designation-agreement.dto";
+import {
+  InstitutionRequestsDesignationNotification,
+  NotificationActionsService,
+} from "@sims/services";
+import { InstitutionService } from "..";
 
 /**
  * Manages the operations needed for designation agreements that are submitted by the institutions
@@ -23,7 +28,11 @@ import {
  */
 @Injectable()
 export class DesignationAgreementService extends RecordDataModelService<DesignationAgreement> {
-  constructor(private readonly dataSource: DataSource) {
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly institutionService: InstitutionService,
+    private readonly notificationActionsService: NotificationActionsService,
+  ) {
     super(dataSource.getRepository(DesignationAgreement));
   }
 
@@ -32,7 +41,8 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
    * is meant to me initiated by the institution signing officer
    * for further assessment of the Ministry.
    * The designation agreement and the location that are part of it will
-   * be saved as part of the same DB transaction.
+   * be saved as part of the same DB transaction. This transaction will also
+   * save an institution designation request notification for the ministry.
    * @param institutionId institution id requesting the designation.
    * @param submittedData dynamic data that represents the designation requested.
    * @param submittedByUserId institution user submitting the designation.
@@ -67,7 +77,23 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
         return newLocation;
       },
     );
-    return this.repo.save(newDesignation);
+    const institution = await this.institutionService.getInstitutionDetailById(
+      institutionId,
+    );
+    const ministryNotification: InstitutionRequestsDesignationNotification = {
+      institutionName: institution.legalOperatingName,
+      institutionOperatingName: institution.operatingName,
+      institutionPrimaryEmail: institution.primaryEmail,
+    };
+    return this.dataSource.transaction(async (entityManager) => {
+      await this.notificationActionsService.saveInstitutionRequestsDesignationNotification(
+        ministryNotification,
+        entityManager,
+      );
+      return entityManager
+        .getRepository(DesignationAgreement)
+        .save(newDesignation);
+    });
   }
 
   /**

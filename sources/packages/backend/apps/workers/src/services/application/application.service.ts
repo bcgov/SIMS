@@ -73,7 +73,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return this.repo.findOne({
       select: {
         id: true,
+        applicationNumber: true,
         pirStatus: true,
+        student: {
+          id: true,
+          birthDate: true,
+          user: { id: true, firstName: true, lastName: true, email: true },
+        },
         data: !options?.loadDynamicData
           ? undefined
           : {
@@ -87,6 +93,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       },
       relations: {
         applicationException: true,
+        student: { user: true },
       },
       where: {
         id: applicationId,

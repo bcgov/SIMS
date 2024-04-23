@@ -158,6 +158,13 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
       .getMany();
   }
 
+  /**
+   * Gets the institution location details for the provided
+   * institution location id.
+   * @param locationId location id to fetch the details.
+   * @param institutionId related institution id.
+   * @returns fetched institution location details.
+   */
   async getInstitutionLocation(
     locationId: number,
     institutionId?: number,
@@ -170,16 +177,18 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         "institutionLocation.id",
         "institutionLocation.institutionCode",
         "institutionLocation.primaryContact",
+        "institution.operatingName",
+        "institution.legalOperatingName",
+        "institution.primaryEmail",
       ])
+      .innerJoin("institutionLocation.institution", "institution")
       .where("institutionLocation.id = :locationId", {
         locationId: locationId,
       });
     if (institutionId) {
-      query
-        .innerJoin("institutionLocation.institution", "institution")
-        .andWhere("institution.id = :id", {
-          id: institutionId,
-        });
+      query.andWhere("institution.id = :id", {
+        id: institutionId,
+      });
     }
     return query.getOne();
   }
@@ -207,6 +216,30 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
       .getMany();
 
     return allLocations.map((location) => location.id);
+  }
+
+  /**
+   * Gets the location details of the institution.
+   * @param institutionId institution id to get the location institution details for.
+   * @returns institution location details.
+   */
+  async getLocationDetails(
+    institutionId: number,
+  ): Promise<InstitutionLocation[]> {
+    return this.repo.find({
+      select: {
+        id: true,
+        name: true,
+        institutionCode: true,
+        institution: {
+          operatingName: true,
+          legalOperatingName: true,
+          primaryEmail: true,
+        },
+      },
+      relations: { institution: true },
+      where: { institution: { id: institutionId } },
+    });
   }
 
   /**

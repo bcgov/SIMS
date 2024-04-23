@@ -13,6 +13,7 @@ export interface StudentFileUploadNotification {
   firstName: string;
   lastName: string;
   birthDate: Date;
+  email: string;
   applicationNumber?: string;
   documentPurpose: string;
   userId: number;
@@ -68,11 +69,50 @@ export interface StudentNotification {
   userId: number;
 }
 
-export interface DisbursementBlockedNotificationForMinistry {
+export interface DisbursementBlockedNotification {
   givenNames: string;
   lastName: string;
   email: string;
-  dob: string;
+  birthDate: string;
+  applicationNumber: string;
+}
+
+export interface ApplicationExceptionRequestNotification {
+  givenNames: string;
+  lastName: string;
+  email: string;
+  birthDate: string;
+  applicationNumber: string;
+}
+
+export interface ApplicationEditedTooManyTimesNotification {
+  givenNames: string;
+  lastName: string;
+  email: string;
+  birthDate: string;
+  applicationNumber: string;
+}
+
+export interface StudentSubmittedChangeRequestNotification {
+  givenNames: string;
+  lastName: string;
+  email: string;
+  birthDate: string;
+  applicationNumber: string;
+}
+
+export interface StudentRequestsBasicBCeIDAccountNotification {
+  givenNames: string;
+  lastName: string;
+  email: string;
+  birthDate: string;
+}
+
+export interface ApplicationOfferingChangeRequestApprovedByStudentNotification {
+  givenNames: string;
+  lastName: string;
+  email: string;
+  birthDate: string;
   applicationNumber: string;
 }
 
@@ -92,4 +132,26 @@ export interface ECEResponseFileProcessingNotification {
   duplicateDisbursements: number;
   disbursementsFailedToProcess: number;
   attachmentFileContent: string;
+}
+
+export interface InstitutionRequestsDesignationNotification {
+  institutionName: string;
+  institutionOperatingName: string;
+  institutionPrimaryEmail: string;
+}
+
+export interface InstitutionAddsPendingProgramNotification {
+  institutionName: string;
+  institutionOperatingName: string;
+  programName: string;
+  institutionPrimaryEmail: string;
+}
+
+export interface InstitutionAddsPendingOfferingNotification {
+  institutionName: string;
+  institutionOperatingName: string;
+  institutionLocationName: string;
+  programName: string;
+  offeringName: string;
+  institutionPrimaryEmail: string;
 }

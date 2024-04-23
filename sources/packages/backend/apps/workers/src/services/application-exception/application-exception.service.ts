@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource } from "typeorm";
+import { DataSource, EntityManager } from "typeorm";
 import {
   RecordDataModelService,
   Application,
@@ -25,11 +25,13 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
    * @param applicationId application that contains the exceptions.
    * @param exceptionNames unique identifier names for the exceptions.
    * causing the changes.
+   * @param entityManager entity manager to execute in the transaction.
    * @returns created exception.
    */
   async createException(
     applicationId: number,
     exceptionNames: string[],
+    entityManager: EntityManager,
   ): Promise<ApplicationException> {
     const newException = new ApplicationException();
     newException.application = { id: applicationId } as Application;
@@ -37,7 +39,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
     newException.exceptionRequests = exceptionNames.map(
       (exceptionName) => ({ exceptionName } as ApplicationExceptionRequest),
     );
-    return this.repo.save(newException);
+    return entityManager.getRepository(ApplicationException).save(newException);
   }
 
   /**

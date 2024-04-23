@@ -24,12 +24,19 @@ import {
   isDatabaseConstraintError,
   StudentAppeal,
 } from "@sims/sims-db";
-import { DataSource, In, Repository, UpdateResult } from "typeorm";
+import {
+  DataSource,
+  EntityManager,
+  In,
+  Repository,
+  UpdateResult,
+} from "typeorm";
 import {
   OfferingsFilter,
   PrecedingOfferingSummaryModel,
   ApplicationAssessmentSummary,
   EducationProgramOfferingBasicData,
+  EducationProgramOfferingNotification,
 } from "./education-program-offering.service.models";
 import {
   sortOfferingsColumnMap,
@@ -64,17 +71,24 @@ import {
 import { EducationProgramOfferingValidationService } from "./education-program-offering-validation.service";
 import * as os from "os";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import {
+  InstitutionAddsPendingOfferingNotification,
+  NotificationActionsService,
+} from "@sims/services";
+
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
   constructor(
     private readonly dataSource: DataSource,
     private readonly offeringValidationService: EducationProgramOfferingValidationService,
+    private readonly notificationActionsService: NotificationActionsService,
   ) {
     super(dataSource.getRepository(EducationProgramOffering));
   }
 
   /**
-   * Creates a new education program offering at program level
+   * Creates a new education program offering at program level and saves a notification
+   * for the ministry as a part of the same transaction.
    * @param educationProgramOffering Information used to create the program offering.
    * @param userId User who creates the offering.
    * @returns Education program offering created.
@@ -94,9 +108,27 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programOffering.creator = { id: userId } as User;
     // When creating a new offering, parent id and the primary id are the same.
     programOffering.parentOffering = programOffering;
-
+    const educationProgramOfferingNotificationData = {
+      offeringName: educationProgramOffering.offeringName,
+      programName: educationProgramOffering.programContext.name,
+      operatingName: educationProgramOffering.operatingName,
+      legalOperatingName: educationProgramOffering.legalOperatingName,
+      primaryEmail: educationProgramOffering.primaryEmail,
+      programOfferingStatus: programOffering.offeringStatus,
+      institutionLocationName: programOffering.institutionLocation.name,
+    };
     try {
-      return await this.repo.save(programOffering);
+      return await this.dataSource.transaction(
+        async (transactionalEntityManager) => {
+          await this.saveEducationProgramOfferingNotification(
+            educationProgramOfferingNotificationData,
+            transactionalEntityManager,
+          );
+          return await transactionalEntityManager
+            .getRepository(EducationProgramOffering)
+            .save(programOffering);
+        },
+      );
     } catch (error: unknown) {
       if (
         isDatabaseConstraintError(
@@ -135,6 +167,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       const maxPromisesAllowed = os.cpus().length;
       // Hold all the promises that must be processed.
       const promises: Promise<CreateValidatedOfferingResult>[] = [];
+      const notificationPromises: Promise<void>[] = [];
       const allResults: CreateValidatedOfferingResult[] = [];
       for (const validatedOffering of validatedOfferings) {
         promises.push(
@@ -144,9 +177,26 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
             auditUserId,
           ),
         );
+        const educationProgramOfferingNotificationData = {
+          offeringName: validatedOffering.offeringModel.offeringName,
+          programName: validatedOffering.offeringModel.programContext.name,
+          operatingName: validatedOffering.offeringModel.operatingName,
+          legalOperatingName:
+            validatedOffering.offeringModel.legalOperatingName,
+          primaryEmail: validatedOffering.offeringModel.primaryEmail,
+          programOfferingStatus: validatedOffering.offeringStatus,
+          institutionLocationName: validatedOffering.offeringModel.locationName,
+        };
+        notificationPromises.push(
+          this.saveEducationProgramOfferingNotification(
+            educationProgramOfferingNotificationData,
+            entityManager,
+          ),
+        );
         if (promises.length >= maxPromisesAllowed) {
           // Waits for all be processed.
           const insertResults = await Promise.all(promises);
+          await Promise.all(notificationPromises);
           const newOfferings = insertResults.map(
             (result) => result.createdOfferingId,
           );
@@ -157,6 +207,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         }
       }
       const finalResults = await Promise.all(promises);
+      await Promise.all(notificationPromises);
       const newOfferings = finalResults.map(
         (result) => result.createdOfferingId,
       );
@@ -164,6 +215,35 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       allResults.push(...finalResults);
       return allResults;
     });
+  }
+
+  /**
+   * Creates a ministry notification for the saved education
+   * program offering as a part of the same transaction.
+   * @param notificationData notification data required to create the notification.
+   * @param entityManager entity manager to be part of the transaction.
+   */
+  private async saveEducationProgramOfferingNotification(
+    notificationData: EducationProgramOfferingNotification,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    if (
+      notificationData.programOfferingStatus !== OfferingStatus.CreationPending
+    ) {
+      return;
+    }
+    const ministryNotification: InstitutionAddsPendingOfferingNotification = {
+      institutionName: notificationData.legalOperatingName,
+      institutionOperatingName: notificationData.operatingName,
+      institutionLocationName: notificationData.institutionLocationName,
+      programName: notificationData.programName,
+      offeringName: notificationData.offeringName,
+      institutionPrimaryEmail: notificationData.primaryEmail,
+    };
+    await this.notificationActionsService.saveInstitutionAddsPendingOfferingNotification(
+      ministryNotification,
+      entityManager,
+    );
   }
 
   /**
@@ -448,8 +528,27 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     );
     programOffering.offeringStatus = offeringValidation.offeringStatus;
     programOffering.modifier = { id: userId } as User;
+    const educationProgramOfferingNotificationData = {
+      offeringName: educationProgramOffering.offeringName,
+      programName: educationProgramOffering.programContext.name,
+      operatingName: educationProgramOffering.operatingName,
+      legalOperatingName: educationProgramOffering.legalOperatingName,
+      primaryEmail: educationProgramOffering.primaryEmail,
+      programOfferingStatus: programOffering.offeringStatus,
+      institutionLocationName: programOffering.institutionLocation.name,
+    };
     try {
-      return await this.repo.update(offeringId, programOffering);
+      return await this.dataSource.transaction(
+        async (transactionalEntityManager) => {
+          await this.saveEducationProgramOfferingNotification(
+            educationProgramOfferingNotificationData,
+            transactionalEntityManager,
+          );
+          return transactionalEntityManager
+            .getRepository(EducationProgramOffering)
+            .update(offeringId, programOffering);
+        },
+      );
     } catch (error: unknown) {
       if (
         isDatabaseConstraintError(

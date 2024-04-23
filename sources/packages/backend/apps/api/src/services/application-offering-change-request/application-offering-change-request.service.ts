@@ -18,6 +18,7 @@ import {
 import { DataSource, Brackets, Repository, In } from "typeorm";
 import { PaginatedResults, PaginationOptions } from "../../utilities";
 import {
+  ApplicationOfferingChangeRequestApprovedByStudentNotification,
   NoteSharedService,
   NotificationActionsService,
   SystemUsersService,
@@ -299,6 +300,7 @@ export class ApplicationOfferingChangeRequestService {
           },
           student: {
             id: true,
+            birthDate: true,
             user: {
               id: true,
               firstName: true,
@@ -523,7 +525,9 @@ export class ApplicationOfferingChangeRequestService {
   }
 
   /**
-   * Update the application offering change request status for the given application offering change request id.
+   * Update the application offering change request status for the given application offering change request id and
+   * saves a notification for the ministry if the student approves the application offering change request at their end
+   * as a part of the same transaction.
    * @param applicationOfferingChangeRequestId application offering change request id for which to update the status.
    * @param applicationOfferingChangeRequestStatus the application offering change request status to be updated.
    * @param studentConsent student consent to approve the application offering change request.
@@ -537,18 +541,44 @@ export class ApplicationOfferingChangeRequestService {
   ): Promise<void> {
     const auditUser = { id: auditUserId } as User;
     const currentDate = new Date();
-    await this.applicationOfferingChangeRequestRepo.update(
-      {
-        id: applicationOfferingChangeRequestId,
-      },
-      {
-        applicationOfferingChangeRequestStatus,
-        studentConsent,
-        studentActionDate: currentDate,
-        modifier: auditUser,
-        updatedAt: currentDate,
-      },
+    const applicationOfferingChangeRequestDetails = await this.getById(
+      applicationOfferingChangeRequestId,
     );
+    const student = applicationOfferingChangeRequestDetails.application.student;
+    const ministryNotification: ApplicationOfferingChangeRequestApprovedByStudentNotification =
+      {
+        givenNames: student.user.firstName,
+        lastName: student.user.lastName,
+        email: student.user.email,
+        birthDate: student.birthDate,
+        applicationNumber:
+          applicationOfferingChangeRequestDetails.application.applicationNumber,
+      };
+    return this.dataSource.transaction(async (entityManager) => {
+      await entityManager
+        .getRepository(ApplicationOfferingChangeRequest)
+        .update(
+          {
+            id: applicationOfferingChangeRequestId,
+          },
+          {
+            applicationOfferingChangeRequestStatus,
+            studentConsent,
+            studentActionDate: currentDate,
+            modifier: auditUser,
+            updatedAt: currentDate,
+          },
+        );
+      if (
+        applicationOfferingChangeRequestStatus ===
+        ApplicationOfferingChangeRequestStatus.InProgressWithSABC
+      ) {
+        await this.notificationActionsService.saveApplicationOfferingChangeApprovedByStudent(
+          ministryNotification,
+          entityManager,
+        );
+      }
+    });
   }
 
   /**

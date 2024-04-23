@@ -25,12 +25,19 @@ import { APPLICATION_ID } from "@sims/services/workflow/variables/assessment-gat
 import { MaxJobsToActivate } from "../../types";
 import { Workers } from "@sims/services/constants";
 import { createUnexpectedJobFail } from "../../utilities";
+import {
+  ApplicationExceptionRequestNotification,
+  NotificationActionsService,
+} from "@sims/services";
+import { DataSource } from "typeorm";
 
 @Controller()
 export class ApplicationController {
   constructor(
+    private readonly dataSource: DataSource,
     private readonly applicationService: ApplicationService,
     private readonly applicationExceptionService: ApplicationExceptionService,
+    private readonly notificationActionService: NotificationActionsService,
   ) {}
 
   /**
@@ -78,7 +85,8 @@ export class ApplicationController {
   /**
    * Searches the student application dynamic data recursively trying to
    * find properties with the value defined as "studentApplicationException"
-   * which identifies an application exception to be reviewed by the Ministry.
+   * which identifies an application exception to be reviewed by the Ministry
+   * and saves a notification to be sent to the ministry as a part of the same transaction.
    * @returns application exceptions status.
    */
   @ZeebeWorker(Workers.VerifyApplicationExceptions, {
@@ -118,17 +126,39 @@ export class ApplicationController {
         application.data,
       );
       if (exceptions.length) {
-        const createdException =
-          await this.applicationExceptionService.createException(
-            job.variables.applicationId,
-            exceptions,
-          );
-        jobLogger.log("Exception created.");
-        return job.complete({
-          applicationExceptionStatus: createdException.exceptionStatus,
+        return await this.dataSource.transaction(async (entityManager) => {
+          const exceptionPromise =
+            this.applicationExceptionService.createException(
+              job.variables.applicationId,
+              exceptions,
+              entityManager,
+            );
+          const student = application.student;
+          const ministryNotification: ApplicationExceptionRequestNotification =
+            {
+              givenNames: student.user.firstName,
+              lastName: student.user.lastName,
+              email: student.user.email,
+              birthDate: student.birthDate,
+              applicationNumber: application.applicationNumber,
+            };
+          const applicationExceptionRequestNotificationPromise =
+            this.notificationActionService.saveApplicationExceptionRequestNotification(
+              ministryNotification,
+              entityManager,
+            );
+          const [createdException] = await Promise.all([
+            exceptionPromise,
+            applicationExceptionRequestNotificationPromise,
+          ]);
+          jobLogger.log("Verified and created exception.");
+          jobLogger.log("Created notification for the created exception.");
+          return job.complete({
+            applicationExceptionStatus: createdException.exceptionStatus,
+          });
         });
       }
-      jobLogger.log("Verified application exception.");
+      jobLogger.log("Verified application exception. No exceptions created.");
       return job.complete({
         applicationExceptionStatus: ApplicationExceptionStatus.Approved,
       });

@@ -320,6 +320,10 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
               endDate: "2024-08-12",
               errors: [
                 "Related institution location was not found or was not provided.",
+                "Institution location name is required.",
+                "Institution operating name is required.",
+                "Institution legal operating name is required.",
+                "Institution primary email is required.",
               ],
               infos: [],
               warnings: [

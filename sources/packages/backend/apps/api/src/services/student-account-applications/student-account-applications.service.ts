@@ -13,12 +13,17 @@ import {
 import { StudentService } from "../student/student.service";
 import { CustomNamedError } from "@sims/utilities";
 import { STUDENT_ACCOUNT_APPLICATION_NOT_FOUND } from "../../constants";
+import {
+  NotificationActionsService,
+  StudentRequestsBasicBCeIDAccountNotification,
+} from "@sims/services";
 
 @Injectable()
 export class StudentAccountApplicationsService extends RecordDataModelService<StudentAccountApplication> {
   constructor(
     private readonly dataSource: DataSource,
     private readonly studentService: StudentService,
+    private readonly notificationActionsService: NotificationActionsService,
   ) {
     super(dataSource.getRepository(StudentAccountApplication));
   }
@@ -65,8 +70,10 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
   }
 
   /**
-   * Create a new student account application to be reviewed by
-   * the Ministry to confirm the student's basic BCeID identity.
+   * Creates a new student account application to be reviewed by
+   * the Ministry to confirm the student's basic BCeID identity
+   * and saves a notification for the ministry as a part of the
+   * same transaction.
    * @param userName user name that uniquely identifies this user.
    * @param studentProfile information to be assessed by the Ministry.
    * @returns student account application created id.
@@ -90,7 +97,21 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
     newAccountApplication.createdAt = now;
     newAccountApplication.submittedData = studentProfile;
     newAccountApplication.submittedDate = now;
-    return this.repo.save(newAccountApplication);
+    const ministryNotification: StudentRequestsBasicBCeIDAccountNotification = {
+      givenNames: newUser.firstName,
+      lastName: newUser.lastName,
+      email: newUser.email,
+      birthDate: studentProfile.dateOfBirth,
+    };
+    return this.dataSource.transaction(async (entityManager) => {
+      await this.notificationActionsService.saveStudentRequestsBasicBCeIDAccountNotification(
+        ministryNotification,
+        entityManager,
+      );
+      return entityManager
+        .getRepository(StudentAccountApplication)
+        .save(newAccountApplication);
+    });
   }
 
   /**

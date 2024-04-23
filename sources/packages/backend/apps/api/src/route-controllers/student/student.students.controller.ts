@@ -281,6 +281,7 @@ export class StudentStudentsController extends BaseController {
         {
           firstName: student.user.firstName,
           lastName: student.user.lastName,
+          email: student.user.email,
           birthDate: new Date(student.birthDate),
           documentPurpose: payload.submittedForm.documentPurpose,
           applicationNumber: payload.submittedForm.applicationNumber,

@@ -165,4 +165,36 @@ export enum NotificationMessageType {
    * Ministry disbursement blocked.
    */
   MinistryNotificationDisbursementBlocked = 17,
+  /**
+   * Student submitted change request after COE.
+   */
+  StudentSubmittedChangeRequestNotification = 18,
+  /**
+   * Student submits application with exception request.
+   */
+  ApplicationExceptionRequestNotification = 19,
+  /**
+   * Student requests basic BCeID account.
+   */
+  StudentRequestsBasicBCeIDAccountNotification = 20,
+  /**
+   * Application edited for the 5th time.
+   */
+  ApplicationEditedTooManyTimesNotification = 21,
+  /**
+   * An Application Offering Change Request approved by the student.
+   */
+  ApplicationOfferingChangeRequestApprovedByStudentNotification = 22,
+  /**
+   * Institution adds pending program.
+   */
+  InstitutionAddsPendingProgramNotification = 23,
+  /**
+   * Institution adds pending offering.
+   */
+  InstitutionAddsPendingOfferingNotification = 24,
+  /**
+   * Institution Requests Designation.
+   */
+  InstitutionRequestsDesignationNotification = 25,
 }

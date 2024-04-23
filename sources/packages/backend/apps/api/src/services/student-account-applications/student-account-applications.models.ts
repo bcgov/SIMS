@@ -12,6 +12,7 @@ export interface StudentAccountApplicationCreateModel {
   email: string;
   firstName: string;
   lastName: string;
+  dateOfBirth: string;
 }
 
 /**
@@ -20,7 +21,6 @@ export interface StudentAccountApplicationCreateModel {
  */
 export type StudentAccountApplicationApprovalModel = StudentInfo &
   StudentAccountApplicationCreateModel & {
-    dateOfBirth: string;
     gender: string;
   };
 

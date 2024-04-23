@@ -33,6 +33,7 @@ import {
   PaginationOptions,
   PaginatedResults,
   offeringBelongToProgramYear,
+  APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION,
 } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import {
@@ -52,8 +53,13 @@ import {
 } from "../../constants";
 import { SequenceControlService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
-import { NotificationActionsService } from "@sims/services/notifications";
+import {
+  ApplicationEditedTooManyTimesNotification,
+  NotificationActionsService,
+  NotificationService,
+} from "@sims/services/notifications";
 import { InstitutionLocationService } from "../institution-location/institution-location.service";
+import { StudentService } from "..";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
@@ -80,6 +86,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly offeringService: EducationProgramOfferingService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly institutionLocationService: InstitutionLocationService,
+    private readonly notificationService: NotificationService,
+    private readonly notificationActionService: NotificationActionsService,
+    private readonly studentService: StudentService,
   ) {
     super(dataSource.getRepository(Application));
   }
@@ -89,14 +98,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * If the application is already in Draft state, then on submit the, existing
    * row will be updated with the payload and application status will be set to
    * Submitted and applicationStatusUpdatedOn will also be update and new workflow is started.
-   * If a student submit/re-submit and an existing application that is not in draft state
+   * If a student submit/re-submit an existing application that is not in draft state
    * (i.e existing application should be in any one of these status, submitted, In Progress,
    * Assessment, Enrollment), then the existing application status is set to `Overwritten` and
    * applicationStatusUpdatedOn is updated and delete the corresponding workflow and creates a
    * new Application with same Application Number and Program Year as that of the Overwritten
    * Application and with newly submitted payload. And starts a new workflow for the newly created
-   * Application.
-   * a new application with status 'Submitted'
+   * Application. If the application is edited for the {@link APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION} times,
+   * a notification is saved for the ministry along with the edited application as a part of the same transaction.
    * If the PIR is not required, then offering is assigned to the assessment on submission
    * and the applicant student is assessed for SIN restriction.
    * @param applicationId application id that must be updated to submitted.
@@ -274,11 +283,56 @@ export class ApplicationService extends RecordDataModelService<Application> {
       application.currentAssessment.modifier = auditUser;
       application.currentAssessment.studentAssessmentStatusUpdatedOn = now;
       application.currentAssessment.updatedAt = now;
-
       await applicationRepository.save([application, newApplication]);
+      await this.saveApplicationEditedTooManyTimesNotification(
+        newApplication.applicationNumber,
+        application.studentId,
+        transactionalEntityManager,
+      );
     });
-
     return { application, createdAssessment: originalAssessment };
+  }
+
+  /**
+   * Saves a notification when the application is edited too many times
+   * governed by {@link APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION}.
+   * @param applicationNumber application number of the related application.
+   * @param studentId related student id.
+   * @param transactionalEntityManager entity manager to be a part of the transaction.
+   */
+  private async saveApplicationEditedTooManyTimesNotification(
+    applicationNumber: string,
+    studentId: number,
+    transactionalEntityManager: EntityManager,
+  ): Promise<void> {
+    const applicationRepository =
+      transactionalEntityManager.getRepository(Application);
+    const applicationsCount = await applicationRepository.count({
+      where: { applicationNumber },
+    });
+    if (applicationsCount > APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION) {
+      const notificationExists =
+        await this.notificationService.checkApplicationEditedTooManyTimesNotificationExists(
+          transactionalEntityManager,
+          applicationNumber,
+        );
+      if (!notificationExists) {
+        const student = await this.studentService.getStudentById(studentId);
+        const ministryNotification: ApplicationEditedTooManyTimesNotification =
+          {
+            givenNames: student.user.firstName,
+            lastName: student.user.lastName,
+            email: student.user.email,
+            birthDate: student.birthDate,
+            applicationNumber,
+          };
+        await this.notificationActionService.saveApplicationEditedTooManyTimesNotification(
+          ministryNotification,
+          applicationNumber,
+          transactionalEntityManager,
+        );
+      }
+    }
   }
 
   /**
@@ -1529,17 +1583,18 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
   /**
    * Gets the application details belonging to an institution location.
-   * @param locationId location id.
    * @param applicationId application id.
+   * @param locationId optional location id.
    * @returns student application.
    */
   async getApplicationInfo(
-    locationId: number,
     applicationId: number,
+    locationId?: number,
   ): Promise<Application> {
     return this.repo.findOne({
       select: {
         id: true,
+        applicationNumber: true,
         data: true as unknown,
         programYear: {
           id: true,
@@ -1552,7 +1607,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
           birthDate: true,
           user: {
             id: true,
+            firstName: true,
             lastName: true,
+            email: true,
           },
           sinValidation: {
             id: true,
@@ -1596,8 +1653,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
   ): Promise<void> {
     // Validate if the application exists and the location has access to it.
     const application = await this.getApplicationInfo(
-      locationId,
       applicationId,
+      locationId,
     );
     if (!application) {
       throw new CustomNamedError(

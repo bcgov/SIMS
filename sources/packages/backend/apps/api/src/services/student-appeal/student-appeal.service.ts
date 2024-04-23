@@ -32,9 +32,13 @@ import {
   STUDENT_APPEAL_INVALID_OPERATION,
   STUDENT_APPEAL_NOT_FOUND,
 } from "./constants";
-import { NotificationActionsService } from "@sims/services/notifications";
+import {
+  NotificationActionsService,
+  StudentSubmittedChangeRequestNotification,
+} from "@sims/services/notifications";
 import { NoteSharedService } from "@sims/services";
 import { StudentFileService } from "../student-file/student-file.service";
+import { ApplicationService } from "../application/application.service";
 
 /**
  * Service layer for Student appeals.
@@ -44,6 +48,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
   constructor(
     private readonly dataSource: DataSource,
     private readonly studentAppealRequestsService: StudentAppealRequestsService,
+    private readonly applicationService: ApplicationService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly noteSharedService: NoteSharedService,
     private readonly studentFileService: StudentFileService,
@@ -52,8 +57,9 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
   }
 
   /**
-   * Save student appeals that are requested by the student.
-   * Update student files if exist using the same transaction.
+   * Save student appeals that are requested by the student,
+   * update student files if exist and save a notification for the
+   * ministry using the same transaction.
    * @param applicationId Application to which an appeal is submitted.
    * @param userId Student user who submits the appeal.
    * @param studentId Student Id.
@@ -65,7 +71,10 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     studentId: number,
     studentAppealRequests: StudentAppealRequestModel[],
   ): Promise<StudentAppeal> {
-    return await this.dataSource.transaction(async (entityManager) => {
+    const application = await this.applicationService.getApplicationInfo(
+      applicationId,
+    );
+    return this.dataSource.transaction(async (entityManager) => {
       const studentAppeal = new StudentAppeal();
       const currentDateTime = new Date();
       const creator = { id: userId } as User;
@@ -95,7 +104,27 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
           { entityManager: entityManager },
         );
       }
-      return this.repo.save(studentAppeal);
+      const student = application.student;
+      const ministryNotification: StudentSubmittedChangeRequestNotification = {
+        givenNames: student.user.firstName,
+        lastName: student.user.lastName,
+        email: student.user.email,
+        birthDate: student.birthDate,
+        applicationNumber: application.applicationNumber,
+      };
+      const notificationPromise =
+        this.notificationActionsService.saveStudentSubmittedChangeRequestNotification(
+          ministryNotification,
+          entityManager,
+        );
+      const studentAppealPromise = entityManager
+        .getRepository(StudentAppeal)
+        .save(studentAppeal);
+      const [, createdStudentAppeal] = await Promise.all([
+        notificationPromise,
+        studentAppealPromise,
+      ]);
+      return createdStudentAppeal;
     });
   }
 

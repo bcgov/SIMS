@@ -14,7 +14,15 @@ import {
   getRawCount,
   ProgramIntensity,
 } from "@sims/sims-db";
-import { DataSource, In, Repository, Not, Equal, UpdateResult } from "typeorm";
+import {
+  DataSource,
+  In,
+  Repository,
+  Not,
+  Equal,
+  UpdateResult,
+  EntityManager,
+} from "typeorm";
 import {
   SaveEducationProgram,
   EducationProgramsSummary,
@@ -35,6 +43,10 @@ import {
   InstitutionService,
   EducationProgramOfferingService,
 } from "../../services";
+import {
+  InstitutionAddsPendingProgramNotification,
+  NotificationActionsService,
+} from "@sims/services";
 
 const OTHER_REGULATORY_BODY = "other";
 @Injectable()
@@ -44,6 +56,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     private readonly dataSource: DataSource,
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
     private readonly institutionService: InstitutionService,
+    private readonly notificationActionsService: NotificationActionsService,
   ) {
     super(dataSource.getRepository(EducationProgram));
     this.offeringsRepo = dataSource.getRepository(EducationProgramOffering);
@@ -105,8 +118,8 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   }
 
   /**
-   * Insert/update an education program at institution level
-   * that will be available for all locations.
+   * Inserts/updates an education program at institution level that will be available for all
+   * locations and saves a notification to the ministry as a part of the same transaction.
    * @param programId if provided will update the record, otherwise will insert a new one.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @param educationProgram Information used to save the program.
@@ -227,7 +240,16 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     } else {
       program.modifier = auditUser;
     }
-    return this.repo.save(program);
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
+      await this.saveInstitutionAddsPendingProgramNotification(
+        { name: program.name, programStatus: program.programStatus },
+        institutionId,
+        transactionalEntityManager,
+      );
+      return transactionalEntityManager
+        .getRepository(EducationProgram)
+        .save(program);
+    });
   }
 
   /**
@@ -634,6 +656,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       select: {
         id: true,
         sabcCode: true,
+        name: true,
         programIntensity: true,
         hasWILComponent: true,
         deliveredOnSite: true,
@@ -730,5 +753,35 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         modifier: auditUser,
       });
     });
+  }
+
+  /**
+   * Saves institution adds pending program notification for the ministry.
+   * @param program program
+   * @param institutionId related institution id.
+   * @param entityManager
+   */
+  private async saveInstitutionAddsPendingProgramNotification(
+    program: Pick<EducationProgram, "name" | "programStatus">,
+    institutionId: number,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    if (program.programStatus !== ProgramStatus.Pending) {
+      return;
+    }
+    const institution = await this.institutionService.getInstitutionDetailById(
+      institutionId,
+      { entityManager },
+    );
+    const ministryNotification: InstitutionAddsPendingProgramNotification = {
+      institutionName: institution.legalOperatingName,
+      institutionOperatingName: institution.operatingName,
+      programName: program.name,
+      institutionPrimaryEmail: institution.primaryEmail,
+    };
+    await this.notificationActionsService.saveInstitutionAddsPendingProgramNotification(
+      ministryNotification,
+      entityManager,
+    );
   }
 }

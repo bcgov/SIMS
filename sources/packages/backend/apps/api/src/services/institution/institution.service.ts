@@ -683,14 +683,24 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   /**
    * Get the institution by ID.
    * @param institutionId Institution id.
+   * @param options related options.
+   * `entityManager` entity manager to be used in the transaction.
    * @returns Location retrieved, if found, otherwise returns null.
    */
-  async getInstitutionDetailById(institutionId: number): Promise<Institution> {
-    return this.repo
+  async getInstitutionDetailById(
+    institutionId: number,
+    options?: { entityManager?: EntityManager },
+  ): Promise<Institution> {
+    const repo =
+      options?.entityManager?.getRepository(Institution) ?? this.repo;
+    return repo
       .createQueryBuilder("institution")
       .select([
         "institution",
         "institution.businessGuid",
+        "institution.operatingName",
+        "institution.legalOperatingName",
+        "institution.primaryEmail",
         "institutionType.id",
         "institutionType.name",
       ])

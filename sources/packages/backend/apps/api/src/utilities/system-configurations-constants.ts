@@ -108,3 +108,7 @@ export const SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS = 68;
  * the loan balance statement.
  */
 export const MAXIMUM_ESSENTIAL_LOAN_BALANCE_RECORDS = 12;
+/**
+ * Represents the count of the number of times an application is edited to trigger a notification to be sent to the ministry.
+ */
+export const APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION = 5;

@@ -58,3 +58,16 @@ export class ApplicationAssessmentSummary extends Application {
 export interface EducationProgramOfferingBasicData {
   offeringName: string;
 }
+
+/**
+ * Offering data used to create the notification template.
+ */
+export interface EducationProgramOfferingNotification {
+  offeringName: string;
+  programName: string;
+  operatingName: string;
+  legalOperatingName: string;
+  primaryEmail: string;
+  programOfferingStatus: OfferingStatus;
+  institutionLocationName: string;
+}

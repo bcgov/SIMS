@@ -30,4 +30,14 @@ export class NotificationMessage extends RecordDataModel {
     nullable: false,
   })
   templateId: string;
+  /**
+   * Email addresses to receive a notification when these emails are targeted to someone, not the user, for instance, the Ministry or an external party.
+   */
+  @Column({
+    name: "email_contacts",
+    nullable: true,
+    array: true,
+    type: "varchar",
+  })
+  emailContacts?: string[];
 }

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import {
-  DisbursementBlockedNotificationForMinistry,
+  DisbursementBlockedNotification,
   NotificationActionsService,
   StudentNotification,
 } from "@sims/services";
@@ -141,11 +141,11 @@ export class ECertNotificationService {
       toAddress: student.user.email,
       userId: student.user.id,
     };
-    const ministryNotification: DisbursementBlockedNotificationForMinistry = {
+    const ministryNotification: DisbursementBlockedNotification = {
       givenNames: student.user.firstName,
       lastName: student.user.lastName,
       email: student.user.email,
-      dob: student.birthDate,
+      birthDate: student.birthDate,
       applicationNumber:
         disbursement.studentAssessment.application.applicationNumber,
     };

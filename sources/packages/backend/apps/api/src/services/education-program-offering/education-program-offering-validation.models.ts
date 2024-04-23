@@ -77,6 +77,7 @@ const userFriendlyNames = {
   lacksStudyBreaks: "Lacks study breaks",
   studyBreaks: "Study breaks",
   locationId: "Location",
+  locationName: "LocationName",
   programContext: "Program",
   breakStartDate: "Study break start date",
   breakEndDate: "Study break end date",
@@ -159,6 +160,7 @@ export const currencyNumberOptions: IsNumberOptions = {
 export type EducationProgramForOfferingValidationContext = Pick<
   EducationProgram,
   | "id"
+  | "name"
   | "programIntensity"
   | "hasWILComponent"
   | "deliveredOnSite"
@@ -600,6 +602,27 @@ export class OfferingValidationModel {
     message: "Related institution location was not found or was not provided.",
   })
   locationId: number;
+  /**
+   * Institution location name of the institution that will be associated with this offering.
+   * Used as supporting data, for instance, as part of the notification to indicate offering in pending status.
+   */
+  @IsNotEmpty({ message: "Institution location name is required." })
+  locationName: string;
+  /**
+   * Institution operating name used as supporting data, for instance, as part of the notification to indicate offering in pending status.
+   */
+  @IsNotEmpty({ message: "Institution operating name is required." })
+  operatingName: string;
+  /**
+   * Institution legal operating name used as supporting data, for instance, as part of the notification to indicate offering in pending status.
+   */
+  @IsNotEmpty({ message: "Institution legal operating name is required." })
+  legalOperatingName: string;
+  /**
+   * Institution primary email, used as supporting data, for instance, as part of the notification to indicate offering in pending status.
+   */
+  @IsNotEmpty({ message: "Institution primary email is required." })
+  primaryEmail: string;
   /**
    * Program information required to execute the offering validation.
    */
