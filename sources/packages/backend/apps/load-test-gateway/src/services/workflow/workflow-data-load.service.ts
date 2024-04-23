@@ -50,7 +50,7 @@ export class WorkflowDataLoadService {
           student: preliminaryData.student,
           location: preliminaryData.offering.institutionLocation,
         },
-        { initialValue: { data: submittedApplicationData as ApplicationData } },
+        { initialValue: { data: submittedApplicationData } },
       );
       applications.push(application);
     }

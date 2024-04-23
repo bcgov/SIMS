@@ -692,8 +692,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     options?: { entityManager?: EntityManager },
   ): Promise<Institution> {
     const repo =
-      options?.entityManager?.getRepository(Institution) ??
-      this.dataSource.getRepository(Institution);
+      options?.entityManager?.getRepository(Institution) ?? this.repo;
     return repo
       .createQueryBuilder("institution")
       .select([

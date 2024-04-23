@@ -124,7 +124,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
             educationProgramOfferingNotificationData,
             transactionalEntityManager,
           );
-          return transactionalEntityManager
+          return await transactionalEntityManager
             .getRepository(EducationProgramOffering)
             .save(programOffering);
         },
