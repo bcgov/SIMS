@@ -480,6 +480,9 @@ describe(
         createFakeStudentLoanBalance(
           { student },
           {
+            // Default test data for CSLP life time maximum same as CSLP balance provided here.
+            // When the CSLP balance is equal to maximum limit
+            // then any new disbursement with a CSLP award greater than 0 cannot be sent.
             initialValues: {
               cslBalance: 10000,
             },
