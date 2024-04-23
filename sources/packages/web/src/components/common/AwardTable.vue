@@ -23,13 +23,14 @@
 import { PropType, defineComponent, computed } from "vue";
 import { OfferingIntensity } from "@/types";
 import { AWARDS, AwardDetail } from "@/constants/award-constants";
+import { DynamicAwardValue } from "@/services/http/dto";
 
 export default defineComponent({
   props: {
     awardDetails: {
-      type: Object as PropType<Record<string, string | number>>,
+      type: Object as PropType<DynamicAwardValue>,
       required: true,
-      default: {} as Record<string, string | number>,
+      default: {} as DynamicAwardValue,
     },
     identifier: {
       type: String,
@@ -47,7 +48,7 @@ export default defineComponent({
       ),
     );
 
-    const getAwardValue = (awardType: string): string | number => {
+    const getAwardValue = (awardType: string): string | number | Date => {
       const awardValue =
         props.awardDetails[`${props.identifier}${awardType.toLowerCase()}`];
       // If the award is defined but no values are present it means that a receipt value is missing.

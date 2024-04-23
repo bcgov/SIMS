@@ -293,6 +293,12 @@ export class AssessmentControllerService {
       }
       let index = 1;
       for (const schedule of assessment.disbursementSchedules) {
+        if (
+          schedule.disbursementScheduleStatus !==
+          DisbursementScheduleStatus.Sent
+        ) {
+          break;
+        }
         const awards = this.populateDisbursementReceiptAwardValues(
           disbursementReceipts,
           schedule,
@@ -306,6 +312,11 @@ export class AssessmentControllerService {
     // values are used instead to provide the best information as possible.
     let index = 1;
     for (const schedule of assessment.disbursementSchedules) {
+      if (
+        schedule.disbursementScheduleStatus !== DisbursementScheduleStatus.Sent
+      ) {
+        break;
+      }
       const awards = this.populateDisbursementECertAwardValues(
         schedule.disbursementValues,
         `${DISBURSEMENT_RECEIPT_PREFIX}${index++}`,

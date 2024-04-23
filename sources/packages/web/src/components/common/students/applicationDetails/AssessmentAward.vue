@@ -16,6 +16,7 @@
   <assessment-award-details
     :assessmentAwardData="assessmentAwardData"
     :allowConfirmEnrolment="allowConfirmEnrolment"
+    :allow-final-award-extended-information="allowFinalAwardExtendedInformation"
     @confirmEnrolment="$emit('confirmEnrolment', $event)"
   />
 </template>
@@ -44,6 +45,11 @@ export default defineComponent({
       required: true,
     },
     allowConfirmEnrolment: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    allowFinalAwardExtendedInformation: {
       type: Boolean,
       required: false,
       default: false,

@@ -124,6 +124,7 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
           tuitionRemittanceRequestedAmount: 1099,
         },
         secondDisbursementInitialValues: {
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
           coeStatus: COEStatus.completed,
           dateSent: dateSent2,
         },
@@ -324,6 +325,7 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
           dateSent: dateSent1,
         },
         secondDisbursementInitialValues: {
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
           coeStatus: COEStatus.completed,
           tuitionRemittanceRequestedAmount: 9876,
           dateSent: dateSent2,
