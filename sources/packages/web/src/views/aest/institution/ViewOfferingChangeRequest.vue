@@ -136,7 +136,7 @@ export default defineComponent({
           );
 
           router.push({
-            name: AESTRoutesConst.REQUEST_CHANGE_OFFERINGS,
+            name: AESTRoutesConst.OFFERING_CHANGE_REQUESTS,
           });
           const snackbarMessage =
             offeringStatus === OfferingStatus.Approved
