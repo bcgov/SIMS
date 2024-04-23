@@ -177,6 +177,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         "institutionLocation.id",
         "institutionLocation.institutionCode",
         "institutionLocation.primaryContact",
+        "institution.id",
         "institution.operatingName",
         "institution.legalOperatingName",
         "institution.primaryEmail",
