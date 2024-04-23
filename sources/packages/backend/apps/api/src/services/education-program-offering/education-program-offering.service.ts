@@ -115,7 +115,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       legalOperatingName: educationProgramOffering.legalOperatingName,
       primaryEmail: educationProgramOffering.primaryEmail,
       programOfferingStatus: programOffering.offeringStatus,
-      institutionLocationName: programOffering.institutionLocation.name,
+      institutionLocationName: educationProgramOffering.locationName,
     };
     try {
       return await this.dataSource.transaction(
@@ -535,7 +535,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       legalOperatingName: educationProgramOffering.legalOperatingName,
       primaryEmail: educationProgramOffering.primaryEmail,
       programOfferingStatus: programOffering.offeringStatus,
-      institutionLocationName: programOffering.institutionLocation.name,
+      institutionLocationName: educationProgramOffering.locationName,
     };
     try {
       return await this.dataSource.transaction(
