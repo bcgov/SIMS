@@ -3,6 +3,7 @@ import {
   Assessment,
   COEStatus,
   DisbursementScheduleStatus,
+  DisbursementValueType,
   Notification,
   NotificationMessage,
   NotificationMessageType,
@@ -17,6 +18,8 @@ import {
   saveFakeApplicationDisbursements,
   saveFakeStudent,
   createFakeNotification,
+  createFakeStudentLoanBalance,
+  createFakeDisbursementValue,
 } from "@sims/test-utils";
 import { getUploadedFile } from "@sims/test-utils/mocks";
 import { IsNull, Like, Not } from "typeorm";
@@ -291,7 +294,7 @@ describe(
       const [firstSchedule] =
         application.currentAssessment.disbursementSchedules;
       // Assert schedule is updated to 'sent' with the dateSent defined.
-      const scheduleIsSent = await db.disbursementSchedule.exist({
+      const scheduleIsSent = await db.disbursementSchedule.exists({
         where: {
           id: firstSchedule.id,
           dateSent: Not(IsNull()),
@@ -454,6 +457,197 @@ describe(
       );
     });
 
+    it("Should not create an e-Cert record for student when the maximum lifetime CSLP amount is less than the sum of latest CSLP balance and the disbursement amount.", async () => {
+      // Arrange
+
+      // Student with valid SIN.
+      const student = await saveFakeStudent(db.dataSource);
+      // Valid MSFAA Number.
+      const msfaaNumber = await db.msfaaNumber.save(
+        createFakeMSFAANumber(
+          { student },
+          {
+            msfaaState: MSFAAStates.Signed,
+            msfaaInitialValues: {
+              offeringIntensity: OfferingIntensity.partTime,
+            },
+          },
+        ),
+      );
+
+      // Update CSLP balance for the student.
+      await db.studentLoanBalance.insert(
+        createFakeStudentLoanBalance(
+          { student },
+          {
+            // Default test data for CSLP life time maximum same as CSLP balance provided here.
+            // When the CSLP balance is equal to maximum limit
+            // then any new disbursement with a CSLP award greater than 0 cannot be sent.
+            initialValues: {
+              cslBalance: 10000,
+            },
+          },
+        ),
+      );
+
+      // Student application eligible for e-Cert.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student, msfaaNumber },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            assessmentDate: new Date(),
+          },
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+          },
+        },
+      );
+      // Queued job.
+      const { job } = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processECert(job);
+
+      // Assert
+      expect(result).toStrictEqual([
+        "Process finalized with success.",
+        "Generated file: none",
+        "Uploaded records: 0",
+      ]);
+      const [disbursement] =
+        application.currentAssessment.disbursementSchedules;
+      const isScheduleNotSent = await db.disbursementSchedule.exists({
+        where: {
+          id: disbursement.id,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+        },
+      });
+      expect(isScheduleNotSent).toBe(true);
+
+      const [firstDisbursement] =
+        application.currentAssessment.disbursementSchedules;
+
+      const notifications = await db.notification.find({
+        select: {
+          id: true,
+          user: { id: true },
+          notificationMessage: { id: true },
+        },
+        relations: { user: true, notificationMessage: true },
+        where: {
+          metadata: { disbursementId: firstDisbursement.id },
+          dateSent: IsNull(),
+        },
+        order: { notificationMessage: { id: "ASC" } },
+      });
+      expect(notifications).toEqual([
+        {
+          id: expect.any(Number),
+          notificationMessage: {
+            id: NotificationMessageType.StudentNotificationDisbursementBlocked,
+          },
+          user: { id: student.user.id },
+        },
+        {
+          id: expect.any(Number),
+          notificationMessage: {
+            id: NotificationMessageType.MinistryNotificationDisbursementBlocked,
+          },
+          user: { id: systemUsersService.systemUser.id },
+        },
+      ]);
+    });
+
+    it("Should create an e-Cert record for student when the maximum lifetime CSLP amount is greater than or equal to the sum of latest CSLP balance and the disbursement amount.", async () => {
+      // Arrange
+
+      // Student with valid SIN.
+      const student = await saveFakeStudent(db.dataSource);
+      // Valid MSFAA Number.
+      const msfaaNumber = await db.msfaaNumber.save(
+        createFakeMSFAANumber(
+          { student },
+          {
+            msfaaState: MSFAAStates.Signed,
+            msfaaInitialValues: {
+              offeringIntensity: OfferingIntensity.partTime,
+            },
+          },
+        ),
+      );
+
+      // Update CSLP balance for the student.
+      await db.studentLoanBalance.insert(
+        createFakeStudentLoanBalance(
+          { student },
+          {
+            initialValues: {
+              cslBalance: 9700,
+            },
+          },
+        ),
+      );
+
+      // Student application eligible for e-Cert.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          student,
+          msfaaNumber,
+          disbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLP",
+              300,
+            ),
+          ],
+        },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            assessmentData: { weeks: 5 } as Assessment,
+            assessmentDate: new Date(),
+          },
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+          },
+        },
+      );
+      // Queued job.
+      const { job } = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processECert(job);
+
+      // Assert
+      // Assert uploaded file.
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const fileDate = dayjs().format("YYYYMMDD");
+      const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
+      expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+      expect(result).toStrictEqual([
+        "Process finalized with success.",
+        `Generated file: ${uploadedFileName}`,
+        "Uploaded records: 1",
+      ]);
+
+      const [firstSchedule] =
+        application.currentAssessment.disbursementSchedules;
+      // Assert schedule is updated to 'sent' with the dateSent defined.
+      const scheduleIsSent = await db.disbursementSchedule.exists({
+        where: {
+          id: firstSchedule.id,
+          dateSent: Not(IsNull()),
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        },
+      });
+      expect(scheduleIsSent).toBe(true);
+    });
+
     /**
      * Create and save required number of notifications for student and ministry.
      * @param notificationsCounter number of notifications to create.
@@ -560,7 +754,17 @@ describe(
       // Student application.
       const application = await saveFakeApplicationDisbursements(
         db.dataSource,
-        { student, msfaaNumber },
+        {
+          student,
+          msfaaNumber,
+          disbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLP",
+              300,
+            ),
+          ],
+        },
         {
           offeringIntensity: OfferingIntensity.partTime,
           applicationStatus: ApplicationStatus.Completed,
