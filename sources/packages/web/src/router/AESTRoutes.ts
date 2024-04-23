@@ -51,7 +51,6 @@ import StudentApplicationExceptions from "@/views/aest/student/StudentApplicatio
 import OfferingChangeRequests from "@/views/aest/institution/OfferingChangeRequests.vue";
 import ViewOfferingChangeRequest from "@/views/aest/institution/ViewOfferingChangeRequest.vue";
 import ViewPendingOfferingChangeRequests from "@/views/aest/institution/ViewPendingOfferingChangeRequests.vue";
-import ViewOfferingChangeRequestComplete from "@/views/aest/institution/ViewOfferingChangeRequestComplete.vue";
 import StudentApplicationAppeals from "@/views/aest/student/StudentApplicationAppeals.vue";
 import ApplicationOfferingChangeRequestForm from "@/views/aest/institution/ApplicationOfferingChangeRequestForm.vue";
 import StudentAccountApplications from "@/views/aest/student/StudentAccountApplications.vue";
