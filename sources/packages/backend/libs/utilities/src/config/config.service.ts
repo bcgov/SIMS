@@ -57,7 +57,6 @@ export class ConfigService {
     return this.getCachedConfig("notifyConfig", {
       url: process.env.GC_NOTIFY_URL,
       apiKey: process.env.GC_NOTIFY_API_KEY,
-      toAddress: process.env.GC_NOTIFY_TO_ADDRESS,
     });
   }
 

@@ -135,11 +135,6 @@ objects:
                     secretKeyRef:
                       key: ${GC_NOTIFY_API_KEY_NAME_KEY}
                       name: ${QUEUE_CONSUMERS_SECRET_NAME}
-                - name: GC_NOTIFY_TO_ADDRESS
-                  valueFrom:
-                    secretKeyRef:
-                      key: ${GC_NOTIFY_TO_ADDRESS_NAME_KEY}
-                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
                 - name: SFAS_RECEIVE_FOLDER
                   valueFrom:
                     secretKeyRef:
@@ -383,8 +378,6 @@ parameters:
     value: gc-notify-url
   - name: GC_NOTIFY_API_KEY_NAME_KEY
     value: gc-notify-api-key
-  - name: GC_NOTIFY_TO_ADDRESS_NAME_KEY
-    value: gc-notify-to-address
   - name: SFAS_RECEIVE_FOLDER_NAME_KEY
     value: sfas-receive-folder
   - name: ATBC_LOGIN_ENDPOINT

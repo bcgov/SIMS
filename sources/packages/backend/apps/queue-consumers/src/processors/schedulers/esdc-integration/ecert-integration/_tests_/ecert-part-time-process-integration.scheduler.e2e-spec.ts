@@ -37,7 +37,8 @@ import * as dayjs from "dayjs";
 import { DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS } from "@sims/services/constants";
 import { PartTimeCertRecordParser } from "./parsers/part-time-e-cert-record-parser";
 import { loadDisbursementSchedules } from "./e-cert-utils";
-import { GCNotifyService, SystemUsersService } from "@sims/services";
+import { SystemUsersService } from "@sims/services";
+import * as faker from "faker";
 
 describe(
   describeQueueProcessorRootTest(QueueNames.PartTimeECertIntegration),
@@ -47,7 +48,6 @@ describe(
     let db: E2EDataSources;
     let sftpClientMock: DeepMocked<Client>;
     let systemUsersService: SystemUsersService;
-    let gcNotifyService: GCNotifyService;
 
     beforeAll(async () => {
       // Env variable required for querying the eligible e-Cert records.
@@ -60,7 +60,6 @@ describe(
       // Processor under test.
       processor = app.get(PartTimeECertProcessIntegrationScheduler);
       systemUsersService = app.get(SystemUsersService);
-      gcNotifyService = app.get(GCNotifyService);
       // Insert fake email contact to send ministry email.
       await db.notificationMessage.update(
         {
@@ -709,7 +708,7 @@ describe(
           {
             initialValue: {
               messagePayload: {
-                email_address: gcNotifyService.ministryToAddress(),
+                email_address: faker.internet.email(),
                 template_id:
                   NotificationMessageType.MinistryNotificationDisbursementBlocked,
                 personalisation: {

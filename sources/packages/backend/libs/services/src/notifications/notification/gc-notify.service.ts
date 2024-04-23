@@ -21,10 +21,6 @@ export class GCNotifyService {
     this.gcNotifyConfig = this.configService.notify;
   }
 
-  ministryToAddress() {
-    return this.gcNotifyConfig.toAddress;
-  }
-
   /**
    * Send email notification by passing the requestPayload.
    * @param payload email message payload.
