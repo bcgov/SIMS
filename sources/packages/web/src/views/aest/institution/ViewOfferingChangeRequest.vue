@@ -136,11 +136,7 @@ export default defineComponent({
           );
 
           router.push({
-            name: AESTRoutesConst.OFFERING_CHANGE_REQUEST_COMPLETE,
-            params: {
-              programId: props.programId,
-              offeringId: props.offeringId,
-            },
+            name: AESTRoutesConst.REQUEST_CHANGE_OFFERINGS,
           });
           const snackbarMessage =
             offeringStatus === OfferingStatus.Approved
