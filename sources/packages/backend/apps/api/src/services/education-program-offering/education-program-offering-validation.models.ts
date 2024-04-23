@@ -687,13 +687,3 @@ export interface CreateValidatedOfferingResult {
   validatedOffering: OfferingValidationResult;
   createdOfferingId?: number;
 }
-
-export interface EducationProgramOfferingNotification {
-  offeringName: string;
-  programName: string;
-  operatingName: string;
-  legalOperatingName: string;
-  primaryEmail: string;
-  programOfferingStatus: OfferingStatus;
-  institutionLocationName: string;
-}

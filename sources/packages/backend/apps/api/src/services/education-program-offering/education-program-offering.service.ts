@@ -36,6 +36,7 @@ import {
   PrecedingOfferingSummaryModel,
   ApplicationAssessmentSummary,
   EducationProgramOfferingBasicData,
+  EducationProgramOfferingNotification,
 } from "./education-program-offering.service.models";
 import {
   sortOfferingsColumnMap,
@@ -66,7 +67,6 @@ import {
   OfferingValidationModel,
   OfferingDeliveryOptions,
   WILComponentOptions,
-  EducationProgramOfferingNotification,
 } from "./education-program-offering-validation.models";
 import { EducationProgramOfferingValidationService } from "./education-program-offering-validation.service";
 import * as os from "os";
