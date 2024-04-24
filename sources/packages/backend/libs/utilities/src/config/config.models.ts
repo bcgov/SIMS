@@ -44,7 +44,6 @@ export interface BCeIDConfig {
 export interface GCNotify {
   url: string;
   apiKey: string;
-  toAddress: string;
 }
 
 export interface UserPasswordCredential {
