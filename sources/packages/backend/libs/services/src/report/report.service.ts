@@ -4,6 +4,8 @@ import { RecordDataModelService, ReportConfig } from "@sims/sims-db";
 import { CustomNamedError, StringBuilder } from "@sims/utilities";
 import { ReportsFilterModel } from "./report.models";
 import { REPORT_CONFIG_NOT_FOUND, FILTER_PARAMS_MISMATCH } from "./constants";
+import { unparse } from "papaparse";
+
 /**
  * Service layer for reports.
  */
@@ -49,7 +51,7 @@ export class ReportService extends RecordDataModelService<ReportConfig> {
       }
     });
     const reportData = await this.connection.query(reportQuery, parameters);
-    return this.buildCSVString(reportData);
+    return unparse(reportData);
   }
 
   /**
@@ -86,31 +88,5 @@ export class ReportService extends RecordDataModelService<ReportConfig> {
    */
   private async getConfig(reportName: string): Promise<ReportConfig> {
     return this.repo.findOne({ where: { reportName: reportName } });
-  }
-
-  /**
-   * Build CSV string from a dynamic object array.
-   * @param reportData
-   * @returns CSV string.
-   */
-  private buildCSVString(reportData: any[]): string {
-    if (!reportData || reportData.length === 0) {
-      return "No data found.";
-    }
-    //The report data as array of dynamic object is transformed into CSV string content to
-    //to be streamed as CSV file. Keys of first array item used to form the header line of CSV string.
-    const reportCSVContent = new StringBuilder();
-    const reportHeaders = Object.keys(reportData[0]);
-    reportCSVContent.appendLine(reportHeaders.join(","));
-    reportData.forEach((reportDataItem) => {
-      let dataItem = "";
-      reportHeaders.forEach((header, index) => {
-        dataItem += index
-          ? `,${reportDataItem[header]}`
-          : reportDataItem[header];
-      });
-      reportCSVContent.appendLine(dataItem);
-    });
-    return reportCSVContent.toString();
   }
 }
