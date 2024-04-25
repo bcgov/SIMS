@@ -12,6 +12,8 @@ const exports = {
   ],
 };
 if (process.env.NODE_ENV === "production") {
+  // Enable the source maps needed to support proper stack trace errors in production
+  // pointing to typescript files (.ts) instead of javascript (.js) references.
   exports.devtool = "source-map";
 }
 module.exports = exports;
