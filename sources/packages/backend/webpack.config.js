@@ -1,6 +1,5 @@
 const CopyPlugin = require("copy-webpack-plugin");
-module.exports = {
-  devtool: "source-map",
+const exports = {
   plugins: [
     new CopyPlugin({
       patterns: [
@@ -12,3 +11,7 @@ module.exports = {
     }),
   ],
 };
+if (process.env.NODE_ENV === "production") {
+  exports.devtool = "source-map";
+}
+module.exports = exports;
