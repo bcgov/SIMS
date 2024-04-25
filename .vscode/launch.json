@@ -2,6 +2,57 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug - API",
+      "cwd": "${workspaceFolder}/sources/packages/backend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start:debug", "api"],
+      "autoAttachChildProcesses": true,
+      "restart": true,
+      "sourceMaps": true,
+      "stopOnEntry": false,
+      "console": "integratedTerminal",
+      "sourceMapPathOverrides": {
+        "webpack:///./~/*": "${workspaceFolder}/sources/packages/backend/node_modules/*",
+        "webpack://?:*/*": "${workspaceFolder}/sources/packages/backend/*"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug - Workers",
+      "cwd": "${workspaceFolder}/sources/packages/backend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start:debug", "workers"],
+      "autoAttachChildProcesses": true,
+      "restart": true,
+      "sourceMaps": true,
+      "stopOnEntry": false,
+      "console": "integratedTerminal",
+      "sourceMapPathOverrides": {
+        "webpack:///./~/*": "${workspaceFolder}/sources/packages/backend/node_modules/*",
+        "webpack://?:*/*": "${workspaceFolder}/sources/packages/backend/*"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug - Queue-consumers",
+      "cwd": "${workspaceFolder}/sources/packages/backend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start:debug", "queue-consumers"],
+      "autoAttachChildProcesses": true,
+      "restart": true,
+      "sourceMaps": true,
+      "stopOnEntry": false,
+      "console": "integratedTerminal",
+      "sourceMapPathOverrides": {
+        "webpack:///./~/*": "${workspaceFolder}/sources/packages/backend/node_modules/*",
+        "webpack://?:*/*": "${workspaceFolder}/sources/packages/backend/*"
+      }
+    },
+    {
       "name": "Attach Nest JS",
       "request": "attach",
       "sourceMapPathOverrides": {
