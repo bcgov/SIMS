@@ -70,7 +70,7 @@
     "ioredis": "^5.2.4",
     "jsonpath": "^1.1.1",
     "jwt-decode": "^3.1.2",
-    "papaparse": "^5.3.2",
+    "papaparse": "^5.4.1",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "pg": "^8.5.1",
