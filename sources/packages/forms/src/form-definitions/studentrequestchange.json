@@ -463,6 +463,10 @@
               {
                 "label": "Partners Income",
                 "value": "partnerincomeappeal"
+              },
+              {
+                "label": "Additional Transportation",
+                "value": "studentadditionaltransportationappeal"
               }
             ],
             "resource": "",

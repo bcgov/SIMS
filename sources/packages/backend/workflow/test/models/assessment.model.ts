@@ -18,6 +18,21 @@ export interface StudentFinancialInformationAppealData extends JSONDoc {
   daycareCosts11YearsOrUnder?: number;
 }
 
+export enum TransportationCostSituation {
+  notRequired = "notRequired",
+  noLimit = "noLimit",
+  educationPlacement = "educationPlacement",
+  special = "special",
+}
+
+export interface StudentAdditionalTransportationAppealData extends JSONDoc {
+  transportationCostSituation: TransportationCostSituation;
+  additionalTransportCost?: number;
+  additionalTransportKm?: number;
+  additionalTransportWeeks?: number;
+  additionalTransportPlacement?: "yes" | "no";
+}
+
 export enum CredentialType {
   UnderGraduateCertificate = "undergraduateCertificate",
   UnderGraduateCitation = "undergraduateCitation",
@@ -83,6 +98,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   appealsPartnerIncomeAppealData?: JSONDoc;
   appealsStudentDisabilityAppealData?: JSONDoc;
   appealsStudentFinancialInformationAppealData?: StudentFinancialInformationAppealData;
+  appealsStudentAdditionalTransportationAppealData?: StudentAdditionalTransportationAppealData;
   studentDataIsYourPartnerAbleToReport?: YesNoOptions;
   studentDataParentValidSinNumber?: YesNoOptions;
   studentDataNumberOfParents?: 1 | 2;
@@ -194,6 +210,10 @@ export interface AssessmentModel {
 }
 
 export interface CalculatedAssessmentModel {
+  calculatedDataAdditionalTransportKm: number;
+  calculatedDataAdditionalTransportCost: number;
+  calculatedDataAdditionalTransportWeeks: number;
+  calculatedDataAdditionalTransportPlacement: "yes" | "no";
   offeringWeeks: number;
   calculatedDataTotalTutionCost: number;
   calculatedDataDaycareCosts11YearsOrUnder: number;
