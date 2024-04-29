@@ -5,6 +5,7 @@ import {
   ApplicationStatus,
   COEStatus,
   DisbursementSchedule,
+  DisbursementScheduleStatus,
   DisbursementValueType,
   User,
 } from "@sims/sims-db";
@@ -424,61 +425,62 @@ export class ConfirmationOfEnrollmentService {
   ): Promise<UpdateResult> {
     const auditUser = { id: auditUserId } as User;
     const now = new Date();
-    return await this.dataSource.transaction(
-      async (transactionalEntityManager) => {
-        const updateResult = await transactionalEntityManager
-          .getRepository(DisbursementSchedule)
-          .createQueryBuilder()
-          .update(DisbursementSchedule)
-          .set({
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
+      const updateResult = await transactionalEntityManager
+        .getRepository(DisbursementSchedule)
+        .update(
+          {
+            coeStatus: COEStatus.required,
+            // Use th assessment id to ensure the second disbursement will
+            // be cancelled if the first one is cancelled.
+            studentAssessment: { id: studentAssessmentId },
+          },
+          {
             coeStatus: COEStatus.declined,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Cancelled,
             coeUpdatedBy: auditUser,
             coeUpdatedAt: now,
             coeDeniedReason: { id: declinedReason.coeDeniedReasonId },
             coeDeniedOtherDesc: declinedReason.otherReasonDesc,
             modifier: auditUser,
             updatedAt: now,
-          })
-          .where("id = :disbursementScheduleId", {
-            disbursementScheduleId,
-          })
-          .andWhere("coeStatus = :required", { required: COEStatus.required })
-          .execute();
-
-        if (updateResult.affected !== 1) {
-          throw new Error(
-            `While updating COE status to '${COEStatus.declined}' the number of affected row was bigger than the expected one. Expected 1 received ${updateResult.affected}`,
-          );
-        }
-        this.logger.log(
-          "Assessing if there is a future impacted application that need to be reassessed.",
+          },
         );
-        const impactedApplication =
-          await this.assessmentSequentialProcessingService.assessImpactedApplicationReassessmentNeeded(
-            studentAssessmentId,
-            this.systemUserService.systemUser.id,
-            transactionalEntityManager,
-          );
 
-        if (impactedApplication) {
-          this.logger.log(
-            `Application id ${impactedApplication.id} was detected as impacted and will be reassessed.`,
-          );
-        } else {
-          this.logger.log("No impacts were detected on future applications.");
-        }
-
-        // Create a student notification when COE is confirmed.
-        await this.createNotificationForDisbursementUpdate(
-          disbursementScheduleId,
-          auditUserId,
+      if (!updateResult.affected || updateResult.affected > 2) {
+        throw new Error(
+          `While updating COE status to '${COEStatus.declined}' the number of affected records was not expected. Expected 1 or 2, received ${updateResult.affected}.`,
+        );
+      }
+      this.logger.log(
+        "Assessing if there is a future impacted application that need to be reassessed.",
+      );
+      const impactedApplication =
+        await this.assessmentSequentialProcessingService.assessImpactedApplicationReassessmentNeeded(
+          studentAssessmentId,
+          this.systemUserService.systemUser.id,
           transactionalEntityManager,
         );
 
-        return updateResult;
-      },
-    );
+      if (impactedApplication) {
+        this.logger.log(
+          `Application id ${impactedApplication.id} was detected as impacted and will be reassessed.`,
+        );
+      } else {
+        this.logger.log("No impacts were detected on future applications.");
+      }
+
+      // Create a student notification when COE is declined.
+      await this.createNotificationForDisbursementUpdate(
+        disbursementScheduleId,
+        auditUserId,
+        transactionalEntityManager,
+      );
+
+      return updateResult;
+    });
   }
+
   /**
    * Approve confirmation of enrollment(COE).
    * An application can have up to two COEs based on the disbursement schedule,
