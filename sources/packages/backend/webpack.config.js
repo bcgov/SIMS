@@ -1,5 +1,9 @@
 const CopyPlugin = require("copy-webpack-plugin");
-const exports = {
+module.exports = {
+  // Enable the source maps needed to support proper stack trace errors in production
+  // pointing to typescript files (.ts) instead of javascript (.js) references.
+  // DEBUG is set as 'true' only when using start:debug' script.
+  devtool: process.env.DEBUG === "true" ? undefined : "source-map",
   plugins: [
     new CopyPlugin({
       patterns: [
@@ -11,9 +15,3 @@ const exports = {
     }),
   ],
 };
-if (process.env.NODE_ENV === "production") {
-  // Enable the source maps needed to support proper stack trace errors in production
-  // pointing to typescript files (.ts) instead of javascript (.js) references.
-  exports.devtool = "source-map";
-}
-module.exports = exports;
