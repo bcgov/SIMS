@@ -118,6 +118,24 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   }
 
   /**
+   * Get the Education Program of an Application.
+   * if the Education Program is not active
+   *  return null
+   * else
+   *  return the Education Program row.
+   * @param educationProgramId Selected Form ProgramYear of the application.
+   */
+  async getActiveEducationProgram(
+    educationProgramId: number,
+  ): Promise<EducationProgram> {
+    return this.repo
+      .createQueryBuilder("programs")
+      .where("programs.is_active = true")
+      .andWhere("programs.id  = :educationProgramId", { educationProgramId })
+      .getOne();
+  }
+
+  /**
    * Inserts/updates an education program at institution level that will be available for all
    * locations and saves a notification to the ministry as a part of the same transaction.
    * @param programId if provided will update the record, otherwise will insert a new one.
@@ -404,9 +422,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .createQueryBuilder("programs")
       .where("programs.programStatus = :programStatus", {
         programStatus: ProgramStatus.Approved,
-      });
+      })
+      .andWhere("programs.isActive = true");
     if (!isFulltimeAllowed) {
-      programsQuery.where("programs.programIntensity = :programIntensity", {
+      programsQuery.andWhere("programs.programIntensity = :programIntensity", {
         programIntensity: ProgramIntensity.fullTimePartTime,
       });
     }

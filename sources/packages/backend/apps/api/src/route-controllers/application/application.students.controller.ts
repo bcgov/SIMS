@@ -30,6 +30,7 @@ import {
   SupportingUserService,
   StudentAppealService,
   ApplicationOfferingChangeRequestService,
+  EducationProgramService,
 } from "../../services";
 import { IUserToken, StudentUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -88,6 +89,7 @@ export class ApplicationStudentsController extends BaseController {
     private readonly formService: FormService,
     private readonly studentService: StudentService,
     private readonly programYearService: ProgramYearService,
+    private readonly educationProgramService: EducationProgramService,
     private readonly offeringService: EducationProgramOfferingService,
     private readonly confirmationOfEnrollmentService: ConfirmationOfEnrollmentService,
     private readonly applicationControllerService: ApplicationControllerService,
@@ -201,6 +203,15 @@ export class ApplicationStudentsController extends BaseController {
         OfferingIntensity.fullTime
     ) {
       throw new UnprocessableEntityException("Invalid offering intensity.");
+    }
+    const educationProgram =
+      await this.educationProgramService.getActiveEducationProgram(
+        payload.data.programId,
+      );
+    if (!educationProgram) {
+      throw new UnprocessableEntityException(
+        "Education Program is not active. Not able to create an application invalid request.",
+      );
     }
     // studyStartDate from payload is set as studyStartDate
     let studyStartDate = payload.data.studystartDate;
