@@ -431,7 +431,7 @@ export class ConfirmationOfEnrollmentService {
         .update(
           {
             coeStatus: COEStatus.required,
-            // Use th assessment id to ensure the second disbursement will
+            // Use assessment id to ensure the second disbursement will
             // be cancelled if the first one is cancelled.
             studentAssessment: { id: studentAssessmentId },
           },
@@ -449,7 +449,11 @@ export class ConfirmationOfEnrollmentService {
 
       if (!updateResult.affected || updateResult.affected > 2) {
         throw new Error(
-          `While updating COE status to '${COEStatus.declined}' the number of affected records was not expected. Expected 1 or 2, received ${updateResult.affected}.`,
+          `While updating COE status to '${
+            COEStatus.declined
+          }' the number of affected records was not expected. Expected 1 or 2, received ${
+            updateResult.affected ?? 0
+          }.`,
         );
       }
       this.logger.log(

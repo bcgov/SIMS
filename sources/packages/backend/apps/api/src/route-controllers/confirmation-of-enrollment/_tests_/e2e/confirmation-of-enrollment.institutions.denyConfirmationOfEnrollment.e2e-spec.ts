@@ -197,7 +197,6 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-denyConfirmationOf
 
   it("Should decline first and the second COEs and cancel first and the second disbursements when the institution declines the first COE.", async () => {
     // Arrange
-    // Application in the past that must be ignored.
     const application = await saveFakeApplicationDisbursements(
       db.dataSource,
       {
@@ -296,7 +295,6 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-denyConfirmationOf
 
   it("Should decline the second COE and cancel the second disbursement when the institution declines the second COE.", async () => {
     // Arrange
-    // Application in the past that must be ignored.
     const application = await saveFakeApplicationDisbursements(
       db.dataSource,
       {
