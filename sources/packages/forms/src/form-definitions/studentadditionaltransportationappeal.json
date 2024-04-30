@@ -1089,6 +1089,24 @@
           "tree": false,
           "lazyLoad": false,
           "id": "ev5rghf"
+        },
+        {
+          "input": true,
+          "tableView": false,
+          "key": "programYear",
+          "label": "Program Year",
+          "protected": false,
+          "unique": false,
+          "persistent": false,
+          "type": "hidden",
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "lockKey": true
         }
       ],
       "type": "panel",
