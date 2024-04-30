@@ -21,7 +21,7 @@
           <template #="{ notAllowed }">
             <v-list-item
               :to="{ name: AESTRoutesConst.REPORTS }"
-              prepend-icon="mdi-home-outline"
+              prepend-icon="mdi-content-copy"
               title="Reports"
               :disabled="notAllowed"
             />

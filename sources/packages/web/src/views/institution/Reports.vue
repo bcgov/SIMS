@@ -1,20 +1,26 @@
 <template>
-  <Reports title="Ministry" :isMinistry="true" :reportTypes="reportTypes" />
+  <Reports
+    title="Institution"
+    :isBCPublic="isBCPublic"
+    :reportTypes="reportTypes"
+  />
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import { ReportsFilterAPIInDTO } from "@/services/http/dto";
-import { useSnackBar, useFileUtils } from "@/composables";
+import { useSnackBar, useFileUtils, useInstitutionState } from "@/composables";
 import { FormIOForm, Role } from "@/types";
 import Reports from "@/components/common/Reports.vue";
-import { ReportTypes } from "@/types/contracts/aest/Reports";
+import { ReportTypes } from "@/types/contracts/institution/Reports";
 
 export default defineComponent({
   components: {
     Reports,
   },
   setup() {
+    const { institutionState } = useInstitutionState();
+    const isBCPublic = institutionState.value.isBCPublic;
     const snackBar = useSnackBar();
     const fileUtils = useFileUtils();
     let formData: FormIOForm;
@@ -24,11 +30,7 @@ export default defineComponent({
     const submitForm = () => {
       return formData.submit();
     };
-    const reportTypes = [
-      ReportTypes.ForecastDisbursements,
-      ReportTypes.Disbursements,
-      ReportTypes.DataInventory,
-    ];
+    const reportTypes = [ReportTypes.OfferingDetails];
     const exportReport = async (data: ReportsFilterAPIInDTO) => {
       try {
         await fileUtils.downloadReports(data);
@@ -36,7 +38,14 @@ export default defineComponent({
         snackBar.error("Unexpected error while downloading the report.");
       }
     };
-    return { exportReport, formLoaded, submitForm, Role, reportTypes };
+    return {
+      exportReport,
+      formLoaded,
+      submitForm,
+      reportTypes,
+      Role,
+      isBCPublic,
+    };
   },
 });
 </script>

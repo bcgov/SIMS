@@ -59,6 +59,7 @@ import RequestApplicationChangeFormView from "@/views/institution/locations/requ
 import AvailableToChange from "@/views/institution/locations/request-a-change/request-a-change/AvailableToChange.vue";
 import InProgress from "@/views/institution/locations/request-a-change/request-a-change/InProgress.vue";
 import Completed from "@/views/institution/locations/request-a-change/request-a-change/Completed.vue";
+import Reports from "@/views/institution/Reports.vue";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {
@@ -574,6 +575,19 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         name: InstitutionRoutesConst.WITHDRAWAL_UPLOAD,
         components: {
           default: WithdrawalUpload,
+          sidebar: ManageInstitutionSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.Institution,
+          institutionUserTypes: [InstitutionUserTypes.admin],
+          allowOnlyBCPublic: true,
+        },
+      },
+      {
+        path: AppRoutes.Reports,
+        name: InstitutionRoutesConst.REPORTS,
+        components: {
+          default: Reports,
           sidebar: ManageInstitutionSideBar,
         },
         meta: {

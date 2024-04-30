@@ -17,7 +17,7 @@ export function useFormioDropdownLoader() {
     form: any,
     dropdownName: string,
     loadMethod: Promise<OptionItemAPIOutDTO[]> | OptionItemAPIOutDTO[],
-  ) => {
+  ): Promise<void> => {
     // Find the dropdown to be populated with the locations.
     const dropdown = formioUtils.getComponent(form, dropdownName);
     const optionsItems = await loadMethod;
@@ -189,6 +189,36 @@ export function useFormioDropdownLoader() {
     );
   };
 
+  const loadReportTypes = async (
+    form: any,
+    dropdownName: string,
+    isMinistry: boolean,
+  ): Promise<void> => {
+    return isMinistry
+      ? loadDropdown(form, dropdownName, getMinistryReportTypes())
+      : loadDropdown(form, dropdownName, getInstitutionReportTypes());
+  };
+
+  const getInstitutionReportTypes = (): OptionItemAPIOutDTO[] => {
+    return [
+      {
+        description: "Offering Details",
+        id: "Offering_Details_Report",
+      },
+    ];
+  };
+
+  const getMinistryReportTypes = (): OptionItemAPIOutDTO[] => {
+    return [
+      {
+        description: "Forecast disbursements",
+        id: "Disbursement_Forecast_Report",
+      },
+      { description: "Disbursements", id: "Disbursement_Report" },
+      { description: "Data Inventory", id: "Data_Inventory_Report" },
+    ];
+  };
+
   return {
     loadLocations,
     loadProgramsForLocation,
@@ -199,5 +229,6 @@ export function useFormioDropdownLoader() {
     loadPIRDeniedReasonList,
     loadProgramYear,
     loadProgramIntensityDetails,
+    loadReportTypes,
   };
 }

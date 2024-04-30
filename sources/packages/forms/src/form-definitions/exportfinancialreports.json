@@ -1,9 +1,9 @@
 {
   "title": "Export Financial Reports",
-  "display": "form",
-  "type": "form",
   "name": "exportfinancialreports",
   "path": "exportfinancialreports",
+  "type": "form",
+  "display": "form",
   "tags": [
     "common"
   ],
@@ -113,20 +113,7 @@
                   "multiple": false,
                   "dataSrc": "values",
                   "data": {
-                    "values": [
-                      {
-                        "label": "Forecast disbursements",
-                        "value": "Disbursement_Forecast_Report"
-                      },
-                      {
-                        "label": "Disbursements",
-                        "value": "Disbursement_Report"
-                      },
-                      {
-                        "value": "Data_Inventory_Report",
-                        "label": "Data Inventory"
-                      }
-                    ],
+                    "values": [],
                     "resource": "",
                     "json": "",
                     "url": "",
@@ -169,11 +156,11 @@
                   "unique": false,
                   "errorLabel": "",
                   "errors": "",
-                  "key": "reportName",
+                  "key": "selectedReportType",
                   "tags": [],
                   "properties": {},
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": "",
                     "json": ""
@@ -215,7 +202,9 @@
                     "threshold": 0.3
                   },
                   "id": "epfngcm",
-                  "defaultValue": ""
+                  "defaultValue": "",
+                  "lockKey": true,
+                  "isNew": false
                 }
               ],
               "width": 6,
