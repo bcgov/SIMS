@@ -799,11 +799,13 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .select([
         "offerings.id",
         "location.id",
+        "program.isActive",
         "offerings.studyStartDate",
         "offerings.studyEndDate",
         "offerings.offeringIntensity",
       ])
       .innerJoin("offerings.institutionLocation", "location")
+      .innerJoin("offerings.educationProgram", "program")
       .where("offerings.id = :offeringId", { offeringId })
       .andWhere("location.id = :locationId", { locationId })
       .getOne();

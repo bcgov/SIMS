@@ -137,9 +137,12 @@ export default defineComponent({
       studentName.value = application.fullName;
       applicationNumber.value = application.applicationNumber;
       activeOfferingId.value = application.offeringId;
+      await EducationProgramService.shared.getProgramsListForInstitutions();
       programs.value =
         await EducationProgramService.shared.getProgramsListForInstitutions();
-      selectedProgram.value = application.programId;
+      if (application.programIsActive) {
+        selectedProgram.value = application.programId;
+      }
       await selectedProgramChanged();
     });
 

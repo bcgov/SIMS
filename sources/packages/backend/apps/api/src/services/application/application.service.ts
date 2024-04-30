@@ -50,6 +50,7 @@ import {
   OFFERING_INTENSITY_MISMATCH,
   OFFERING_DOES_NOT_BELONG_TO_LOCATION,
   OFFERING_PROGRAM_YEAR_MISMATCH,
+  EDUCATION_PROGRAM_IS_NOT_ACTIVE,
 } from "../../constants";
 import { SequenceControlService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
@@ -59,7 +60,7 @@ import {
   NotificationService,
 } from "@sims/services/notifications";
 import { InstitutionLocationService } from "../institution-location/institution-location.service";
-import { StudentService } from "..";
+import { EducationProgramService, StudentService } from "..";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
@@ -84,6 +85,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly fileService: StudentFileService,
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly offeringService: EducationProgramOfferingService,
+    //private readonly educationProgramService: EducationProgramService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly institutionLocationService: InstitutionLocationService,
     private readonly notificationService: NotificationService,
@@ -1675,6 +1677,19 @@ export class ApplicationService extends RecordDataModelService<Application> {
         OFFERING_DOES_NOT_BELONG_TO_LOCATION,
       );
     }
+
+    // Validates if the offering exists and belongs to the location.
+    /*const program =
+      await this.educationProgramService.getActiveEducationProgram(
+        offering.educationProgram.id,
+      );
+
+    if (!program) {
+      throw new CustomNamedError(
+        "The program is not active.",
+        EDUCATION_PROGRAM_IS_NOT_ACTIVE,
+      );
+    }*/
 
     // Validate possible overlaps with exists applications.
     await this.validateOverlappingDates(

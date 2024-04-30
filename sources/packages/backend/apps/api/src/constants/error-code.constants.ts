@@ -148,6 +148,11 @@ export const OFFERING_PROGRAM_YEAR_MISMATCH = "OFFERING_PROGRAM_YEAR_MISMATCH";
 export const OFFERING_DOES_NOT_BELONG_TO_LOCATION =
   "OFFERING_DOES_NOT_BELONG_TO_LOCATION";
 /**
+ * Education program is not active.
+ */
+export const EDUCATION_PROGRAM_IS_NOT_ACTIVE =
+  "EDUCATION_PROGRAM_IS_NOT_ACTIVE";
+/**
  * The text content to perform the application withdrawal is not in the
  * expected format and cannot be parsed.
  */
