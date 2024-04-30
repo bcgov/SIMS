@@ -7,7 +7,6 @@
   "tags": [
     "common"
   ],
-  "owner": "64711d803a5a30268c17ebe1",
   "components": [
     {
       "key": "financialInformation",
@@ -80,7 +79,7 @@
           "tableView": false,
           "components": [
             {
-              "label": "<strong>Which of the following best describes your situation?</strong>",
+              "label": "Which of the following best describes your situation?",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -1079,16 +1078,6 @@
         "eq": ""
       },
       "properties": {}
-    }
-  ],
-  "access": [
-    {
-      "type": "read_all",
-      "roles": [
-        "64711d803a5a30268c17eb9b",
-        "64711d803a5a30268c17eb9f",
-        "64711d803a5a30268c17eba3"
-      ]
     }
   ]
 }

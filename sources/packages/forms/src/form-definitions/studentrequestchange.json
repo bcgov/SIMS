@@ -449,6 +449,10 @@
                 "label": "Add/Remove Dependants"
               },
               {
+                "label": "Additional Transportation",
+                "value": "studentadditionaltransportationappeal"
+              },
+              {
                 "value": "studentdisabilityappeal",
                 "label": "Disability Information"
               },
@@ -463,10 +467,6 @@
               {
                 "label": "Partners Income",
                 "value": "partnerincomeappeal"
-              },
-              {
-                "label": "Additional Transportation",
-                "value": "studentadditionaltransportationappeal"
               }
             ],
             "resource": "",

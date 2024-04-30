@@ -19,10 +19,10 @@ export interface StudentFinancialInformationAppealData extends JSONDoc {
 }
 
 export enum TransportationCostSituation {
-  notRequired = "notRequired",
-  noLimit = "noLimit",
-  educationPlacement = "educationPlacement",
-  special = "special",
+  NotRequired = "notRequired",
+  NoLimit = "noLimit",
+  EducationPlacement = "educationPlacement",
+  Special = "special",
 }
 
 export interface StudentAdditionalTransportationAppealData extends JSONDoc {
@@ -30,7 +30,7 @@ export interface StudentAdditionalTransportationAppealData extends JSONDoc {
   additionalTransportCost?: number;
   additionalTransportKm?: number;
   additionalTransportWeeks?: number;
-  additionalTransportPlacement?: "yes" | "no";
+  additionalTransportPlacement?: YesNoOptions;
 }
 
 export enum CredentialType {

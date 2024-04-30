@@ -26,7 +26,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-addition
           additionalTransportKm: 12,
           additionalTransportCost: 111,
           additionalTransportWeeks: 1,
-          transportationCostSituation: TransportationCostSituation.noLimit,
+          transportationCostSituation: TransportationCostSituation.NoLimit,
           additionalTransportPlacement: YesNoOptions.Yes,
         };
       // Act
@@ -69,7 +69,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-addition
 
       assessmentConsolidatedData.appealsStudentAdditionalTransportationAppealData =
         {
-          transportationCostSituation: TransportationCostSituation.notRequired,
+          transportationCostSituation: TransportationCostSituation.NotRequired,
         };
       // Act
       const calculatedAssessment =
@@ -94,6 +94,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-addition
       ).toBe(false);
     },
   );
+
   it(
     "Should have calculated student additional transportation variables assigned with student data values " +
       "when there is no request a change for student additional transportation.",
