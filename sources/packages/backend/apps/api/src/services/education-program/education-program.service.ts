@@ -453,6 +453,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         programStatus: ProgramStatus.Approved,
       })
       .andWhere("programs.institution.id = :institutionId", { institutionId })
+      .andWhere("programs.isActive = true")
       .orderBy("programs.name")
       .getMany();
   }

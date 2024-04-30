@@ -204,14 +204,16 @@ export class ApplicationStudentsController extends BaseController {
     ) {
       throw new UnprocessableEntityException("Invalid offering intensity.");
     }
-    const educationProgram =
-      await this.educationProgramService.getActiveEducationProgram(
-        payload.data.programId,
-      );
-    if (!educationProgram) {
-      throw new UnprocessableEntityException(
-        "Education Program is not active. Not able to create an application invalid request.",
-      );
+    if (payload.data.programId) {
+      const educationProgram =
+        await this.educationProgramService.getActiveEducationProgram(
+          payload.data.programId,
+        );
+      if (!educationProgram) {
+        throw new UnprocessableEntityException(
+          "Education Program is not active. Not able to create an application invalid request.",
+        );
+      }
     }
     // studyStartDate from payload is set as studyStartDate
     let studyStartDate = payload.data.studystartDate;
