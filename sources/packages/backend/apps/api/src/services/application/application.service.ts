@@ -85,11 +85,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly fileService: StudentFileService,
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly offeringService: EducationProgramOfferingService,
-    //private readonly educationProgramService: EducationProgramService,
+    private readonly educationProgramService: EducationProgramService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly institutionLocationService: InstitutionLocationService,
     private readonly notificationService: NotificationService,
-    private readonly notificationActionService: NotificationActionsService,
     private readonly studentService: StudentService,
   ) {
     super(dataSource.getRepository(Application));
@@ -328,7 +327,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
             birthDate: student.birthDate,
             applicationNumber,
           };
-        await this.notificationActionService.saveApplicationEditedTooManyTimesNotification(
+        await this.notificationActionsService.saveApplicationEditedTooManyTimesNotification(
           ministryNotification,
           applicationNumber,
           transactionalEntityManager,
@@ -1679,7 +1678,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     }
 
     // Validates if the offering exists and belongs to the location.
-    /*const program =
+    const program =
       await this.educationProgramService.getActiveEducationProgram(
         offering.educationProgram.id,
       );
@@ -1689,7 +1688,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "The program is not active.",
         EDUCATION_PROGRAM_IS_NOT_ACTIVE,
       );
-    }*/
+    }
 
     // Validate possible overlaps with exists applications.
     await this.validateOverlappingDates(

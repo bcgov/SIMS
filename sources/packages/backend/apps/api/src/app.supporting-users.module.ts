@@ -12,6 +12,10 @@ import {
   EducationProgramOfferingValidationService,
   InstitutionLocationService,
   DesignationAgreementLocationService,
+  EducationProgramService,
+  InstitutionService,
+  BCeIDService,
+  InstitutionUserAuthService,
 } from "./services";
 import {
   DisbursementOverawardService,
@@ -35,6 +39,9 @@ import { AuthModule } from "./auth/auth.module";
   providers: [
     SupportingUserService,
     ApplicationService,
+    InstitutionService,
+    InstitutionUserAuthService,
+    BCeIDService,
     UserService,
     FormService,
     SequenceControlService,
@@ -42,6 +49,7 @@ import { AuthModule } from "./auth/auth.module";
     RestrictionService,
     StudentRestrictionService,
     EducationProgramOfferingService,
+    EducationProgramService,
     StudentService,
     SFASIndividualService,
     SFASApplicationService,
