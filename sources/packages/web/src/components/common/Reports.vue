@@ -10,16 +10,13 @@
       @submitted="exportReport"
     ></formio>
     <v-row class="justify-center m-4">
-      <check-permission-role v-if="isMinistry" :role="Role.AESTReports">
+      <check-permission-role :role="Role.AESTReports">
         <template #="{ notAllowed }">
           <v-btn color="primary" @click="submitForm" :disabled="notAllowed"
             >Export CSV file</v-btn
           >
         </template>
-      </check-permission-role>
-      <v-btn v-else color="primary" @click="submitForm" :disabled="!isBCPublic"
-        >Export CSV file</v-btn
-      ></v-row
+      </check-permission-role></v-row
     >
   </full-page-container>
 </template>
@@ -31,7 +28,6 @@ import {
   useSnackBar,
   useFileUtils,
   useFormioDropdownLoader,
-  useFormioUtils,
 } from "@/composables";
 import { FormIOForm, Role } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -41,26 +37,20 @@ export default defineComponent({
     CheckPermissionRole,
   },
   props: {
-    isMinistry: { type: Boolean, required: false },
-    isBCPublic: { type: Boolean, required: false },
     title: { type: String, required: true },
+    reportType: { type: Number, required: true },
   },
   setup(props) {
     const snackBar = useSnackBar();
     const fileUtils = useFileUtils();
-    const formioUtils = useFormioUtils();
     const formioDataLoader = useFormioDropdownLoader();
-    const REPORT_TYPE_DROPDOWN_KEY = "selectedReportType";
+    const REPORT_TYPE_DROPDOWN_KEY = "reportName";
     let formData: FormIOForm;
     const formLoaded = async (form: FormIOForm) => {
-      formData = form;
-      console.log("Form: ", form);
-      const dropdown = formioUtils.getComponent(form, REPORT_TYPE_DROPDOWN_KEY);
-      console.log("Dropdown: ", dropdown);
       await formioDataLoader.loadReportTypes(
         form,
         REPORT_TYPE_DROPDOWN_KEY,
-        props.isMinistry,
+        props.reportType,
       );
     };
     const submitForm = () => {

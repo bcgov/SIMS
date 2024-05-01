@@ -1,5 +1,5 @@
 <template>
-  <Reports title="Ministry" :isMinistry="true" :reportTypes="reportTypes" />
+  <Reports title="Ministry" :reportType="ReportTypes.MinistryReport" />
 </template>
 
 <script lang="ts">
@@ -8,7 +8,7 @@ import { ReportsFilterAPIInDTO } from "@/services/http/dto";
 import { useSnackBar, useFileUtils } from "@/composables";
 import { FormIOForm, Role } from "@/types";
 import Reports from "@/components/common/Reports.vue";
-import { ReportTypes } from "@/types/contracts/aest/Reports";
+import { ReportTypes } from "@/types/contracts/Reports";
 
 export default defineComponent({
   components: {
@@ -24,11 +24,6 @@ export default defineComponent({
     const submitForm = () => {
       return formData.submit();
     };
-    const reportTypes = [
-      ReportTypes.ForecastDisbursements,
-      ReportTypes.Disbursements,
-      ReportTypes.DataInventory,
-    ];
     const exportReport = async (data: ReportsFilterAPIInDTO) => {
       try {
         await fileUtils.downloadReports(data);
@@ -36,7 +31,7 @@ export default defineComponent({
         snackBar.error("Unexpected error while downloading the report.");
       }
     };
-    return { exportReport, formLoaded, submitForm, Role, reportTypes };
+    return { exportReport, formLoaded, submitForm, Role, ReportTypes };
   },
 });
 </script>

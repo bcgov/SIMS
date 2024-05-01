@@ -1,9 +1,5 @@
 <template>
-  <Reports
-    title="Institution"
-    :isBCPublic="isBCPublic"
-    :reportTypes="reportTypes"
-  />
+  <Reports title="Institution" :reportType="ReportTypes.InstitutionReport" />
 </template>
 
 <script lang="ts">
@@ -12,7 +8,7 @@ import { ReportsFilterAPIInDTO } from "@/services/http/dto";
 import { useSnackBar, useFileUtils, useInstitutionState } from "@/composables";
 import { FormIOForm, Role } from "@/types";
 import Reports from "@/components/common/Reports.vue";
-import { ReportTypes } from "@/types/contracts/institution/Reports";
+import { ReportTypes } from "@/types/contracts/Reports";
 
 export default defineComponent({
   components: {
@@ -30,7 +26,6 @@ export default defineComponent({
     const submitForm = () => {
       return formData.submit();
     };
-    const reportTypes = [ReportTypes.OfferingDetails];
     const exportReport = async (data: ReportsFilterAPIInDTO) => {
       try {
         await fileUtils.downloadReports(data);
@@ -42,10 +37,11 @@ export default defineComponent({
       exportReport,
       formLoaded,
       submitForm,
-      reportTypes,
+      ReportTypes,
       Role,
       isBCPublic,
     };
   },
 });
 </script>
+@/types/contracts/Reports
