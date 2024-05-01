@@ -19,6 +19,7 @@ export function createFakeEducationProgramOffering(relations?: {
   program?: EducationProgram;
   institution?: Institution;
   institutionLocation?: InstitutionLocation;
+  isProgramActive?: boolean;
 }): EducationProgramOffering {
   // Case an institution location is provided already associated with
   // an institution ensure that the relationship will be kept and
@@ -38,6 +39,7 @@ export function createFakeEducationProgramOffering(relations?: {
     createFakeEducationProgram({
       institution,
       auditUser: relations.auditUser,
+      isActive: relations?.isProgramActive,
     });
   offering.institutionLocation =
     relations?.institutionLocation ?? createFakeInstitutionLocation();
