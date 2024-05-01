@@ -162,7 +162,8 @@ export class ApplicationStudentsController extends BaseController {
     description:
       "Program Year is not active or " +
       "Selected offering id is invalid or " +
-      "invalid study dates or selected study start date is not within the program year " +
+      "invalid study dates or selected study start date is not within the program year or " +
+      "Education Program is not active. Not able to create an application invalid request " +
       "or APPLICATION_NOT_VALID or INVALID_OPERATION_IN_THE_CURRENT_STATUS or ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE " +
       "or INSTITUTION_LOCATION_NOT_VALID or OFFERING_NOT_VALID " +
       "or Invalid offering intensity",
