@@ -40,7 +40,7 @@
       "tableView": false,
       "components": [
         {
-          "title": "Transportation Exception Content",
+          "title": "Transportation Content",
           "labelWidth": "",
           "labelMargin": "",
           "theme": "default",

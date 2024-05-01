@@ -26,7 +26,8 @@ export enum TransportationCostSituation {
 }
 
 export interface StudentAdditionalTransportationAppealData extends JSONDoc {
-  transportationCostSituation: TransportationCostSituation;
+  eligibleForAnAdditionalTransportationAllowance: YesNoOptions;
+  transportationCostSituation?: TransportationCostSituation;
   additionalTransportCost?: number;
   additionalTransportKm?: number;
   additionalTransportWeeks?: number;
