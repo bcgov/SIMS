@@ -31,7 +31,7 @@
     <template #content
       ><strong>Your institution declined your enrolment status.</strong> Reason
       from your institution: {{ coeDenialReason }}. The disbursement associated
-      with this application have now been cancelled. To receive funding for this
+      with this application has now been cancelled. To receive funding for this
       application, you must 'edit' your application and re-submit in order to
       allow your institution to Confirm your Enrolment again.</template
     >
