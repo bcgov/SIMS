@@ -20,12 +20,13 @@ import {
   ApplicationStatus,
   AssessmentTriggerType,
   COEStatus,
+  DisbursementScheduleStatus,
   Institution,
   InstitutionLocation,
   OfferingIntensity,
   StudentAssessmentStatus,
 } from "@sims/sims-db";
-import { addDays } from "@sims/utilities";
+import { COE_WINDOW, addDays, getISODateOnlyString } from "@sims/utilities";
 
 describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-denyConfirmationOfEnrollment", () => {
   let app: INestApplication;
@@ -193,6 +194,171 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-denyConfirmationOf
       ).not.toBe(AssessmentTriggerType.RelatedApplicationChanged);
     },
   );
+
+  it("Should decline first and the second COEs and cancel first and the second disbursements when the institution declines the first COE.", async () => {
+    // Arrange
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+      },
+      {
+        createSecondDisbursement: true,
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.Enrolment,
+        firstDisbursementInitialValues: {
+          coeStatus: COEStatus.required,
+          disbursementDate: getISODateOnlyString(new Date()),
+        },
+        secondDisbursementInitialValues: {
+          coeStatus: COEStatus.required,
+          disbursementDate: getISODateOnlyString(addDays(30)),
+        },
+      },
+    );
+
+    const [firstDisbursement, secondDisbursement] =
+      application.currentAssessment.disbursementSchedules;
+    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursement.id}/deny`;
+    const token = await getInstitutionToken(InstitutionTokenTypes.CollegeCUser);
+    const coeDenyReasonId = 2;
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send({ coeDenyReasonId })
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+
+    // Check if the COEs are declined and the expected fields are updated.
+    const [firstDisbursementSaved, secondDisbursementSaved] =
+      await db.disbursementSchedule.find({
+        select: {
+          id: true,
+          coeStatus: true,
+          coeDeniedReason: { id: true },
+          disbursementScheduleStatus: true,
+          coeUpdatedBy: {
+            id: true,
+          },
+          modifier: {
+            id: true,
+          },
+          coeUpdatedAt: true,
+          updatedAt: true,
+        },
+        relations: {
+          coeDeniedReason: true,
+          coeUpdatedBy: true,
+          modifier: true,
+        },
+        where: { studentAssessment: { id: application.currentAssessment.id } },
+        order: { disbursementDate: "ASC" },
+      });
+    // Values expected to be the same among the saved disbursements.
+    const sharedExpectedSavedValues = {
+      coeStatus: COEStatus.declined,
+      coeDeniedReason: {
+        id: coeDenyReasonId,
+      },
+      disbursementScheduleStatus: DisbursementScheduleStatus.Cancelled,
+      coeUpdatedBy: {
+        id: expect.any(Number),
+      },
+      modifier: {
+        id: expect.any(Number),
+      },
+      coeUpdatedAt: expect.any(Date),
+      updatedAt: expect.any(Date),
+    };
+    expect(firstDisbursementSaved).toEqual({
+      id: firstDisbursement.id,
+      ...sharedExpectedSavedValues,
+    });
+    expect(secondDisbursementSaved).toEqual({
+      id: secondDisbursement.id,
+      ...sharedExpectedSavedValues,
+    });
+    expect(firstDisbursementSaved.modifier.id).toBe(
+      secondDisbursementSaved.modifier.id,
+    );
+    expect(firstDisbursementSaved.coeUpdatedBy.id).toBe(
+      secondDisbursementSaved.coeUpdatedBy.id,
+    );
+    expect(firstDisbursementSaved.coeUpdatedAt).toEqual(
+      secondDisbursementSaved.coeUpdatedAt,
+    );
+    expect(firstDisbursementSaved.updatedAt).toEqual(
+      secondDisbursementSaved.updatedAt,
+    );
+  });
+
+  it("Should decline the second COE and cancel the second disbursement when the institution declines the second COE.", async () => {
+    // Arrange
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+      },
+      {
+        createSecondDisbursement: true,
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.Completed,
+        firstDisbursementInitialValues: {
+          coeStatus: COEStatus.completed,
+          disbursementDate: getISODateOnlyString(new Date()),
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        },
+        secondDisbursementInitialValues: {
+          coeStatus: COEStatus.required,
+          disbursementDate: getISODateOnlyString(addDays(COE_WINDOW - 1)),
+        },
+      },
+    );
+
+    const [firstDisbursement, secondDisbursement] =
+      application.currentAssessment.disbursementSchedules;
+    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${secondDisbursement.id}/deny`;
+    const token = await getInstitutionToken(InstitutionTokenTypes.CollegeCUser);
+    const coeDenyReasonId = 2;
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send({ coeDenyReasonId })
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+
+    // Check if the second COE is declined and the expected fields are updated.
+    const [firstDisbursementSaved, secondDisbursementSaved] =
+      await db.disbursementSchedule.find({
+        select: {
+          id: true,
+          coeStatus: true,
+          coeDeniedReason: { id: true },
+          disbursementScheduleStatus: true,
+        },
+        relations: { coeDeniedReason: true },
+        where: { studentAssessment: { id: application.currentAssessment.id } },
+        order: { disbursementDate: "ASC" },
+      });
+    // First disbursement should not have the values updated.
+    expect(firstDisbursementSaved).toEqual({
+      id: firstDisbursement.id,
+      coeStatus: COEStatus.completed,
+      disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+      coeDeniedReason: null,
+    });
+    // Second disbursement main updated values.
+    expect(secondDisbursementSaved).toEqual({
+      id: secondDisbursement.id,
+      coeStatus: COEStatus.declined,
+      disbursementScheduleStatus: DisbursementScheduleStatus.Cancelled,
+      coeDeniedReason: {
+        id: coeDenyReasonId,
+      },
+    });
+  });
 
   /**
    * Get application current assessment details to

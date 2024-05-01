@@ -29,9 +29,11 @@
     background-color="error-bg"
   >
     <template #content
-      ><span class="font-bold">Reason from your institution:</span>
-      {{ coeDenialReason }}. Please note any scheduled payment(s) will be
-      cancelled.</template
+      ><strong>Your institution declined your enrolment status.</strong> Reason
+      from your institution: {{ coeDenialReason }}. The disbursement associated
+      with this application have now been cancelled. To receive funding for this
+      application, you must 'edit' your application and re-submit in order to
+      allow your institution to Confirm your Enrolment again.</template
     >
   </application-status-tracker-banner>
 
