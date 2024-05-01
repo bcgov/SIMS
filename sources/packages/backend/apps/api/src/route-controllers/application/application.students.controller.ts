@@ -204,10 +204,10 @@ export class ApplicationStudentsController extends BaseController {
     ) {
       throw new UnprocessableEntityException("Invalid offering intensity.");
     }
-    if (payload.data.programId) {
+    if (payload.data.selectedProgram) {
       const educationProgram =
         await this.educationProgramService.getActiveEducationProgram(
-          payload.data.programId,
+          payload.data.selectedProgram,
         );
       if (!educationProgram) {
         throw new UnprocessableEntityException(
