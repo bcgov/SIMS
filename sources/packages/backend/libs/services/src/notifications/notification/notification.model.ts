@@ -26,6 +26,15 @@ export interface MinistryStudentFileUploadNotification {
   userId: number;
 }
 
+export interface PartialStudentMatchNotification {
+  givenNames: string;
+  lastName: string;
+  dob: Date;
+  matchTime: Date;
+  studentEmail: string;
+  matches: string;
+}
+
 export interface MSFAACancellationNotification {
   givenNames: string;
   lastName: string;

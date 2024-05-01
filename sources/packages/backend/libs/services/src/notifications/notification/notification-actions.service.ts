@@ -27,6 +27,7 @@ import {
   InstitutionAddsPendingOfferingNotification,
   InstitutionAddsPendingProgramNotification,
   ApplicationOfferingChangeRequestApprovedByStudentNotification,
+  PartialStudentMatchNotification,
 } from "..";
 import { NotificationService } from "./notification.service";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
@@ -123,6 +124,51 @@ export class NotificationActionsService {
     // Save notification into notification table.
     await this.notificationService.saveNotifications(
       [notificationToSend],
+      auditUserId,
+      { entityManager },
+    );
+  }
+
+  /**
+   * Creates a notification when there is a partial match for a student account.
+   * @param notification input parameters to generate the notification.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param entityManager optional repository that can be provided, for instance,
+   * to execute the command as part of an existing transaction. If not provided
+   * the local repository will be used instead.
+   */
+  async savePartialStudentMatchNotification(
+    notification: PartialStudentMatchNotification,
+    auditUserId: number,
+    entityManager?: EntityManager,
+  ): Promise<void> {
+    const { templateId, emailContacts } =
+      await this.notificationMessageService.getNotificationMessageDetails(
+        NotificationMessageType.MinistryFileUpload,
+      );
+    if (!emailContacts?.length) {
+      return;
+    }
+
+    const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
+      messageType: NotificationMessageType.PartialStudentMatchNotification,
+      messagePayload: {
+        template_id: templateId,
+        email_address: emailContact,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
+          dob: getDateOnlyFormat(notification.dob),
+          matchTime: this.getDateTimeOnPSTTimeZone(),
+          studentEmail: notification.studentEmail,
+          matches: notification.matches,
+        },
+      },
+    }));
+
+    // Save notification into notification table.
+    await this.notificationService.saveNotifications(
+      ministryNotificationsToSend,
       auditUserId,
       { entityManager },
     );

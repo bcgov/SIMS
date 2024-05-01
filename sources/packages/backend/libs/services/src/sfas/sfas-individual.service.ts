@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Raw, Repository } from "typeorm";
+import { Brackets, Raw, Repository } from "typeorm";
 import { SFASIndividual, Student } from "@sims/sims-db";
 import { SFASIndividualDataSummary } from "./sfas-individual.model";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -36,6 +36,49 @@ export class SFASIndividualService {
       })
       .andWhere("individual.sin = :sin", { sin })
       .andWhere("individual.birthDate = :birthDate", { birthDate })
+      .getOne();
+
+    return individual;
+  }
+
+  /**
+   * Get SFAS student partial match, if available.
+   * At least two of the three parameters must match.
+   * @param lastName student last name.
+   * @param birthDate student data of birth.
+   * @param sin student Social Insurance Number.
+   * @returns SFAS Student.
+   */
+  async getIndividualStudentPartialMatch(
+    lastName: string,
+    birthDate: string,
+    sin: string,
+  ): Promise<SFASIndividual> {
+    const individual = await this.sfasIndividualRepo
+      .createQueryBuilder("individual")
+      .select(["individual.id", "individual.pdStatus"])
+      .where(
+        new Brackets((qb) => {
+          qb.where("lower(individual.lastName) = :lastName", {
+            lastName: lastName.toLowerCase(),
+          }).andWhere("individual.sin = :sin", { sin });
+        }),
+      )
+      .orWhere(
+        new Brackets((qb) => {
+          qb.where("lower(individual.lastName) = :lastName", {
+            lastName: lastName.toLowerCase(),
+          }).andWhere("individual.birthDate = :birthDate", { birthDate });
+        }),
+      )
+      .orWhere(
+        new Brackets((qb) => {
+          qb.where("individual.sin = :sin", { sin }).andWhere(
+            "individual.birthDate = :birthDate",
+            { birthDate },
+          );
+        }),
+      )
       .getOne();
 
     return individual;

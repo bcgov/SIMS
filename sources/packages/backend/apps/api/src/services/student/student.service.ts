@@ -38,6 +38,7 @@ import {
 import {
   DisbursementOverawardService,
   NoteSharedService,
+  NotificationActionsService,
   SystemUsersService,
 } from "@sims/services";
 import {
@@ -49,6 +50,7 @@ import {
 export class StudentService extends RecordDataModelService<Student> {
   constructor(
     private readonly dataSource: DataSource,
+    private readonly notificationActionsService: NotificationActionsService,
     private readonly sfasIndividualService: SFASIndividualService,
     private readonly disbursementOverawardService: DisbursementOverawardService,
     private readonly noteSharedService: NoteSharedService,
@@ -192,6 +194,38 @@ export class StudentService extends RecordDataModelService<Student> {
       this.logger.error("Unable to get SFAS information of student.");
       this.logger.error(error);
       throw error;
+    }
+
+    // If sfasIndividual wasn't found, check for a partial match
+    if (!sfasIndividual) {
+      let partialMatch: SFASIndividual;
+      try {
+        partialMatch =
+          await this.sfasIndividualService.getIndividualStudentPartialMatch(
+            user.lastName,
+            student.birthDate,
+            studentSIN,
+          );
+
+        if (partialMatch) {
+          // Send out a notification of a partial match for the student information.
+          await this.notificationActionsService.savePartialStudentMatchNotification(
+            {
+              givenNames: student.user.firstName,
+              lastName: student.user.lastName,
+              dob: new Date(student.birthDate),
+              matches: "TODO",
+              studentEmail: student.user.email,
+              matchTime: new Date(),
+            },
+            auditUserId,
+            externalEntityManager,
+          );
+        }
+      } catch (error) {
+        this.logger.error(error);
+        throw error;
+      }
     }
 
     return this.dataSource.transaction(async (localEntityManager) => {
