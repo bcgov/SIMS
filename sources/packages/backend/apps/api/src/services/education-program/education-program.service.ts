@@ -660,6 +660,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.deliveredOnSite",
         "programs.description",
         "programs.id",
+        "programs.isActive",
       ])
       .where("programs.id = :programId", { programId })
       .getOne();
