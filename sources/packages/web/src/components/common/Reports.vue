@@ -47,8 +47,9 @@ export default defineComponent({
     const REPORT_TYPE_DROPDOWN_KEY = "reportName";
     let formData: FormIOForm;
     const formLoaded = async (form: FormIOForm) => {
+      formData = form;
       await formioDataLoader.loadReportTypes(
-        form,
+        formData,
         REPORT_TYPE_DROPDOWN_KEY,
         props.reportType,
       );
