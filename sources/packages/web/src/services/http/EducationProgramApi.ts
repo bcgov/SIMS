@@ -105,14 +105,19 @@ export class EducationProgramApi extends HttpBaseClient {
   /**
    * Gets location programs option list authorized for students.
    * @param locationId location id.
+   * @param programYearId program year id.
+   * @param loadInActiveProgram do we need to load inactive program to the list or not.
+   * @param isIncludeInActiveProgramYear isIncludeInActiveProgramYear, if isIncludeInActiveProgramYear, then both active
+   * and not active program year is considered.
    * @returns location programs option list.
    */
   async getLocationProgramsOptionList(
     locationId: number,
     programYearId: number,
+    loadInActiveProgram: boolean,
     isIncludeInActiveProgramYear?: boolean,
   ): Promise<OptionItemAPIOutDTO[]> {
-    let url = `education-program/location/${locationId}/program-year/${programYearId}/options-list`;
+    let url = `education-program/location/${locationId}/program-year/${programYearId}/loadInActiveProgram/${loadInActiveProgram}/options-list`;
     if (isIncludeInActiveProgramYear) {
       url = `${url}?isIncludeInActiveProgramYear=${isIncludeInActiveProgramYear}`;
     }

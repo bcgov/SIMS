@@ -1677,7 +1677,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
     }
 
-    // Validates if the offering exists and belongs to the location.
+    // Validates if the Program is active.
     const program =
       await this.educationProgramService.getActiveEducationProgram(
         offering.educationProgram.id,

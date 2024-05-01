@@ -93,6 +93,7 @@ export function useFormioDropdownLoader() {
     locationId: number,
     dropdownName: string,
     programYearId: number,
+    loadInActiveProgram: boolean,
     isIncludeInActiveProgramYear?: boolean,
   ) => {
     return loadDropdown(
@@ -101,6 +102,7 @@ export function useFormioDropdownLoader() {
       EducationProgramService.shared.getLocationProgramsOptionList(
         locationId,
         programYearId,
+        loadInActiveProgram,
         isIncludeInActiveProgramYear,
       ),
     );

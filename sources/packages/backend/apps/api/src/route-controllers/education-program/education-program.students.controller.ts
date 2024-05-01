@@ -64,14 +64,19 @@ export class EducationProgramStudentsController extends BaseController {
    * Executes the students-based authorization (students must have access to all programs).
    * @param locationId location id.
    * @param programYearId program year that the program belongs to.
+   * @param loadInActiveProgram do we need to load inactive program to the list or not.
    * @param isIncludeInActiveProgramYear if true, only programs associate with active
    * program years are considered.
    * @returns key/value pair list of programs.
    */
-  @Get("location/:locationId/program-year/:programYearId/options-list")
+  @Get(
+    "location/:locationId/program-year/:programYearId/loadInActiveProgram/:loadInActiveProgram/options-list",
+  )
   async getLocationProgramsOptionList(
     @Param("locationId", ParseIntPipe) locationId: number,
     @Param("programYearId", ParseIntPipe) programYearId: number,
+    @Param("loadInActiveProgram", ParseBoolPipe)
+    loadInActiveProgram: boolean,
     @Query(
       "isIncludeInActiveProgramYear",
       new DefaultValuePipe(false),
@@ -84,6 +89,7 @@ export class EducationProgramStudentsController extends BaseController {
       locationId,
       programYearId,
       isFulltimeAllowed,
+      loadInActiveProgram,
       isIncludeInActiveProgramYear,
     );
 
