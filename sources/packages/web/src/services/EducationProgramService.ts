@@ -128,7 +128,6 @@ export class EducationProgramService {
    * Gets location programs option list authorized for students.
    * @param locationId location id.
    * @param programYearId program year id.
-   * @param loadInActiveProgram do we need to load inactive program to the list or not.
    * @param isIncludeInActiveProgramYear isIncludeInActiveProgramYear, if isIncludeInActiveProgramYear, then both active
    * and not active program year is considered.
    * @returns location programs option list.
@@ -136,13 +135,11 @@ export class EducationProgramService {
   async getLocationProgramsOptionList(
     locationId: number,
     programYearId: number,
-    loadInActiveProgram: boolean,
     isIncludeInActiveProgramYear?: boolean,
   ): Promise<OptionItemAPIOutDTO[]> {
     return ApiClient.EducationProgram.getLocationProgramsOptionList(
       locationId,
       programYearId,
-      loadInActiveProgram,
       isIncludeInActiveProgramYear,
     );
   }

@@ -3,7 +3,6 @@
     :formName="selectedForm"
     :data="initialData"
     :readOnly="isReadOnly"
-    :loadInActiveProgram="loadInActiveProgram"
     @loaded="formLoaded"
     @changed="formChanged"
     @submitted="submitted"
@@ -54,10 +53,6 @@ export default defineComponent({
       required: true,
     },
     isReadOnly: {
-      type: Boolean,
-      required: true,
-    },
-    loadInActiveProgram: {
       type: Boolean,
       required: true,
     },
@@ -115,7 +110,6 @@ export default defineComponent({
             +selectedLocationId,
             PROGRAMS_DROPDOWN_KEY,
             props.programYearId,
-            props.loadInActiveProgram,
             props.isReadOnly,
           );
         }
@@ -234,7 +228,6 @@ export default defineComponent({
             +selectedLocationId,
             PROGRAMS_DROPDOWN_KEY,
             props.programYearId,
-            props.loadInActiveProgram,
             props.isReadOnly,
           );
         }

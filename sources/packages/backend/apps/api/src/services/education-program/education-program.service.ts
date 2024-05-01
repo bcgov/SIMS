@@ -396,7 +396,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * offering associated with.
    * @param programYearId program year id.
    * @param isFulltimeAllowed is fulltime allowed.
-   * @param loadInActiveProgram do we need to load inactive program to the list or not.
    * @param includeInActivePY includeInActivePY, if includeInActivePY, then both active
    * and not active program year is considered.
    * @returns programs with offerings under the specified location.
@@ -405,7 +404,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     locationId: number,
     programYearId: number,
     isFulltimeAllowed: boolean,
-    loadInActiveProgram: boolean,
     includeInActivePY?: boolean,
   ): Promise<Partial<EducationProgram>[]> {
     const offeringExistsQuery = this.offeringsRepo
@@ -424,9 +422,8 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .createQueryBuilder("programs")
       .where("programs.programStatus = :programStatus", {
         programStatus: ProgramStatus.Approved,
-      });
-    if (!loadInActiveProgram)
-      programsQuery.andWhere("programs.isActive = true");
+      })
+      .andWhere("programs.isActive = true");
     if (!isFulltimeAllowed) {
       programsQuery.andWhere("programs.programIntensity = :programIntensity", {
         programIntensity: ProgramIntensity.fullTimePartTime,

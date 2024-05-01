@@ -32,7 +32,6 @@
       :selectedForm="selectedForm"
       :initialData="initialData"
       :isReadOnly="isReadOnly"
-      :loadInActiveProgram="loadInActiveProgram"
       :programYearId="programYearId"
       @formLoadedCallback="loadForm"
       @submitApplication="submitApplication"
@@ -108,7 +107,6 @@ export default defineComponent({
     const isFirstPage = ref(true);
     const isLastPage = ref(false);
     const isReadOnly = ref(false);
-    const loadInActiveProgram = ref(false);
     const notDraft = ref(false);
     const existingApplication = ref({} as ApplicationDataAPIOutDTO);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
@@ -143,12 +141,6 @@ export default defineComponent({
           ApplicationStatus.Overwritten,
         ].includes(applicationData.applicationStatus) || !!props.readOnly;
 
-      //Check if the edit application is from assessment or in progress status and enable the program load.
-      loadInActiveProgram.value = [
-        ApplicationStatus.Assessment,
-        ApplicationStatus.InProgress,
-      ].includes(applicationData.applicationStatus);
-
       notDraft.value =
         !!props.readOnly ||
         ![ApplicationStatus.Draft].includes(applicationData.applicationStatus);
@@ -178,7 +170,6 @@ export default defineComponent({
         ...studentFormData,
         ...programYear,
         isReadOnly: isReadOnly.value,
-        isEditApplication: loadInActiveProgram.value,
         isFulltimeAllowed,
       };
       existingApplication.value = applicationData;
@@ -288,7 +279,6 @@ export default defineComponent({
       submittingApplication,
       customEventCallback,
       isReadOnly,
-      loadInActiveProgram,
       notDraft,
       confirmEditApplication,
       editApplication,
