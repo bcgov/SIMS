@@ -799,6 +799,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .select([
         "offerings.id",
         "location.id",
+        "program.id",
         "program.isActive",
         "offerings.studyStartDate",
         "offerings.studyEndDate",
