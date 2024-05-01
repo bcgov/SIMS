@@ -79,104 +79,162 @@
           "tableView": false,
           "components": [
             {
-              "label": "<strong>Which of the following best describes your situation?</strong>",
-              "optionsLabelPosition": "right",
-              "inline": false,
-              "tableView": false,
-              "values": [
+              "key": "panelAdditionalTransportationdescription",
+              "label": "Additional Transportation description",
+              "input": false,
+              "tag": "p",
+              "attrs": [
                 {
-                  "label": "I don't require additional transportation allowance",
-                  "value": "notRequired",
-                  "shortcut": ""
-                },
-                {
-                  "label": "There is limited or no public transit where I live",
-                  "value": "noLimit",
-                  "shortcut": ""
-                },
-                {
-                  "label": "I am in a clinical or practicum placement that requires additional travel",
-                  "value": "educationPlacement",
-                  "shortcut": ""
-                },
-                {
-                  "label": "I have special circumstances that require additional travel (work, family responsibilities, living distance from school).",
-                  "value": "special",
-                  "shortcut": ""
+                  "value": "",
+                  "attr": ""
                 }
               ],
-              "key": "transportationCostSituation",
+              "className": "",
+              "content": "You may be eligible for an additional transportation allowance if there is limited or no local public transit where you live, or if you have special circumstances that require extra travel.",
+              "type": "htmlelement",
+              "hideLabel": true,
+              "tags": [],
               "conditional": {
                 "show": "",
                 "when": null,
                 "eq": ""
               },
-              "type": "radio",
+              "properties": {}
+            },
+            {
+              "autofocus": false,
               "input": true,
-              "placeholder": "",
-              "prefix": "",
-              "customClass": "",
-              "suffix": "",
-              "multiple": false,
-              "defaultValue": null,
+              "tableView": true,
+              "inputType": "radio",
+              "label": "Do you want to be assessed for additional transportation costs",
+              "key": "eligibleForAnAdditionalTransportationAllowance",
+              "values": [
+                {
+                  "value": "yes",
+                  "label": "Yes",
+                  "shortcut": ""
+                },
+                {
+                  "value": "no",
+                  "label": "No",
+                  "shortcut": ""
+                }
+              ],
+              "defaultValue": "",
               "protected": false,
-              "unique": false,
-              "persistent": true,
+              "fieldSet": false,
+              "persistent": false,
               "hidden": false,
               "clearOnHide": true,
-              "refreshOn": "",
-              "redrawOn": "",
-              "modalEdit": false,
-              "dataGridLabel": false,
-              "labelPosition": "top",
-              "description": "",
-              "errorLabel": "",
-              "tooltip": "",
-              "hideLabel": false,
-              "tabindex": "",
-              "disabled": false,
-              "autofocus": false,
-              "dbIndex": false,
-              "customDefaultValue": "",
-              "calculateValue": "",
-              "calculateServer": false,
-              "widget": null,
-              "attributes": {},
-              "validateOn": "change",
               "validate": {
                 "required": true,
                 "custom": "",
-                "customPrivate": false,
-                "strictDateValidation": false,
-                "multiple": false,
-                "unique": false,
-                "onlyAvailableItems": true
+                "customPrivate": false
               },
-              "overlay": {
-                "style": "",
-                "left": "",
-                "top": "",
-                "width": "",
-                "height": ""
-              },
-              "allowCalculateOverride": false,
-              "encrypted": false,
-              "showCharCount": false,
-              "showWordCount": false,
-              "properties": {},
-              "allowMultipleMasks": false,
-              "addons": [],
-              "inputType": "radio",
-              "fieldSet": false,
-              "id": "efqfe2q",
+              "type": "radio",
+              "labelPosition": "top",
+              "optionsLabelPosition": "right",
               "tags": [],
-              "lockKey": true,
-              "isNew": false
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+              },
+              "properties": {},
+              "lockKey": true
             },
             {
               "input": true,
               "tree": true,
               "components": [
+                {
+                  "label": "Which of the following best describes your situation?",
+                  "optionsLabelPosition": "right",
+                  "inline": false,
+                  "tableView": false,
+                  "values": [
+                    {
+                      "label": "There is limited or no public transit where I live",
+                      "value": "noLimit",
+                      "shortcut": ""
+                    },
+                    {
+                      "label": "I am in a clinical or practicum placement that requires additional travel",
+                      "value": "educationPlacement",
+                      "shortcut": ""
+                    },
+                    {
+                      "label": "I have special circumstances that require additional travel (work, family responsibilities, living distance from school).",
+                      "value": "special",
+                      "shortcut": ""
+                    }
+                  ],
+                  "key": "transportationCostSituation",
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "type": "radio",
+                  "input": true,
+                  "placeholder": "",
+                  "prefix": "",
+                  "customClass": "",
+                  "suffix": "",
+                  "multiple": false,
+                  "defaultValue": null,
+                  "protected": false,
+                  "unique": false,
+                  "persistent": true,
+                  "hidden": false,
+                  "clearOnHide": true,
+                  "refreshOn": "",
+                  "redrawOn": "",
+                  "modalEdit": false,
+                  "dataGridLabel": false,
+                  "labelPosition": "top",
+                  "description": "",
+                  "errorLabel": "",
+                  "tooltip": "",
+                  "tabindex": "",
+                  "disabled": false,
+                  "autofocus": false,
+                  "dbIndex": false,
+                  "customDefaultValue": "",
+                  "calculateValue": "",
+                  "calculateServer": false,
+                  "widget": null,
+                  "attributes": {},
+                  "validateOn": "change",
+                  "validate": {
+                    "required": true,
+                    "custom": "",
+                    "customPrivate": false,
+                    "strictDateValidation": false,
+                    "multiple": false,
+                    "unique": false,
+                    "onlyAvailableItems": true
+                  },
+                  "overlay": {
+                    "style": "",
+                    "left": "",
+                    "top": "",
+                    "width": "",
+                    "height": ""
+                  },
+                  "allowCalculateOverride": false,
+                  "encrypted": false,
+                  "showCharCount": false,
+                  "showWordCount": false,
+                  "properties": {},
+                  "allowMultipleMasks": false,
+                  "addons": [],
+                  "inputType": "radio",
+                  "fieldSet": false,
+                  "id": "efqfe2q",
+                  "tags": [],
+                  "lockKey": true
+                },
                 {
                   "autofocus": false,
                   "input": true,
@@ -672,7 +730,7 @@
                       "fileMaxSize": "4MB",
                       "multiple": true,
                       "key": "transportationCostsFile",
-                      "customConditional": "show = (data.transportationCostSituation === 'noLimit' || data.transportationCostSituation === 'special' || data.transportationCostSituation === 'educationPlacement');",
+                      "customConditional": "",
                       "type": "file",
                       "url": "student/files",
                       "input": true,
@@ -1041,13 +1099,12 @@
               "labelPosition": "top",
               "tags": [],
               "conditional": {
-                "show": "",
-                "when": null,
-                "eq": ""
+                "show": "true",
+                "when": "eligibleForAnAdditionalTransportationAllowance",
+                "eq": "yes"
               },
               "properties": {},
-              "customConditional": "show = (data.transportationCostSituation === 'noLimit' || data.transportationCostSituation === 'special' || data.transportationCostSituation === 'educationPlacement');",
-              "isNew": false
+              "customConditional": ""
             }
           ],
           "placeholder": "",
