@@ -97,7 +97,7 @@ export default defineComponent({
       sidebarBottomItems.value.push({
         title: "Reports",
         props: {
-          prependIcon: "mdi-content-copy",
+          prependIcon: "fa:fa-regular fa-copy",
           to: {
             name: InstitutionRoutesConst.REPORTS,
           },

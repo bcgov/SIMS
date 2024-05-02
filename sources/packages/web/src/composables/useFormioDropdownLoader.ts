@@ -6,7 +6,6 @@ import { ProgramYearService } from "@/services/ProgramYearService";
 import { OfferingIntensity } from "../types";
 import { useFormioUtils } from ".";
 import { OptionItemAPIOutDTO } from "@/services/http/dto";
-import { ReportTypes } from "@/types/contracts/Reports";
 /**
  * Common methods to load dropdowns(selects) data on Form.IO that could
  * be reusable or at least simplify the form data load logic.
@@ -193,31 +192,9 @@ export function useFormioDropdownLoader() {
   const loadReportTypes = async (
     form: any,
     dropdownName: string,
-    reportType: number,
+    reportList: OptionItemAPIOutDTO[],
   ): Promise<void> => {
-    return reportType === ReportTypes.MinistryReport
-      ? loadDropdown(form, dropdownName, getMinistryReportTypes())
-      : loadDropdown(form, dropdownName, getInstitutionReportTypes());
-  };
-
-  const getInstitutionReportTypes = (): OptionItemAPIOutDTO[] => {
-    return [
-      {
-        description: "Offering Details",
-        id: "Offering_Details_Report",
-      },
-    ];
-  };
-
-  const getMinistryReportTypes = (): OptionItemAPIOutDTO[] => {
-    return [
-      {
-        description: "Forecast disbursements",
-        id: "Disbursement_Forecast_Report",
-      },
-      { description: "Disbursements", id: "Disbursement_Report" },
-      { description: "Data Inventory", id: "Data_Inventory_Report" },
-    ];
+    loadDropdown(form, dropdownName, reportList);
   };
 
   return {

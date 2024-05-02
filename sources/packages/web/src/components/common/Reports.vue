@@ -1,9 +1,8 @@
 <template>
-  <full-page-container>
-    <template #header>
-      <header-navigator :title="title" subTitle="Reports" />
+  <body-header-container
+    ><template #header>
+      <body-header title="Export reports" />
     </template>
-    <body-header title="Export reports" />
     <formio
       formName="exportfinancialreports"
       @loaded="formLoaded"
@@ -12,18 +11,25 @@
     <v-row class="justify-center m-4">
       <check-permission-role :role="Role.AESTReports">
         <template #="{ notAllowed }">
-          <v-btn color="primary" @click="submitForm" :disabled="notAllowed"
+          <v-btn
+            color="primary"
+            @click="submitForm"
+            :disabled="notAllowed"
+            :loading="loading"
             >Export CSV file</v-btn
           >
         </template>
-      </check-permission-role></v-row
-    >
-  </full-page-container>
+      </check-permission-role>
+    </v-row>
+  </body-header-container>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { ReportsFilterAPIInDTO } from "@/services/http/dto";
+import { defineComponent, ref } from "vue";
+import {
+  ReportsFilterAPIInDTO,
+  OptionItemAPIOutDTO,
+} from "@/services/http/dto";
 import {
   useSnackBar,
   useFileUtils,
@@ -38,33 +44,37 @@ export default defineComponent({
   },
   props: {
     title: { type: String, required: true },
-    reportType: { type: Number, required: true },
+    reportList: { type: Array<OptionItemAPIOutDTO>, required: true },
   },
   setup(props) {
     const snackBar = useSnackBar();
-    const fileUtils = useFileUtils();
+    const { downloadReports } = useFileUtils();
     const formioDataLoader = useFormioDropdownLoader();
     const REPORT_TYPE_DROPDOWN_KEY = "reportName";
+    const loading = ref(false);
     let formData: FormIOForm;
     const formLoaded = async (form: FormIOForm) => {
       formData = form;
       await formioDataLoader.loadReportTypes(
         formData,
         REPORT_TYPE_DROPDOWN_KEY,
-        props.reportType,
+        props.reportList,
       );
     };
     const submitForm = () => {
-      return formData.submit();
+      loading.value = true;
+      const submittedForm = formData.submit();
+      loading.value = false;
+      return submittedForm;
     };
     const exportReport = async (data: ReportsFilterAPIInDTO) => {
       try {
-        await fileUtils.downloadReports(data);
+        await downloadReports(data);
       } catch {
         snackBar.error("Unexpected error while downloading the report.");
       }
     };
-    return { exportReport, formLoaded, submitForm, Role };
+    return { exportReport, formLoaded, submitForm, Role, loading };
   },
 });
 </script>
