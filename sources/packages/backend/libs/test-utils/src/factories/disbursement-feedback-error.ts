@@ -26,6 +26,7 @@ export function createFakeDisbursementFeedbackError(
   feedbackError.dateReceived = options?.initialValues?.dateReceived ?? now;
   feedbackError.errorCode = options?.initialValues?.errorCode ?? "EDU-99999";
   feedbackError.disbursementSchedule = relations.disbursementSchedule;
+  feedbackError.ecertFeedbackError = relations.ecertFeedbackError;
   feedbackError.updatedAt = options?.initialValues?.updatedAt ?? now;
   return feedbackError;
 }
