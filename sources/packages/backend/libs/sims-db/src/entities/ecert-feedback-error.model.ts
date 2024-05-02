@@ -14,7 +14,7 @@ export class ECertFeedbackError {
    * Error code.
    */
   @Column({
-    name: "submitted_date",
+    name: "error_code",
   })
   errorCode: string;
 
@@ -22,7 +22,7 @@ export class ECertFeedbackError {
    * Error description.
    */
   @Column({
-    name: "submitted_date",
+    name: "error_description",
   })
   errorDescription: string;
 
