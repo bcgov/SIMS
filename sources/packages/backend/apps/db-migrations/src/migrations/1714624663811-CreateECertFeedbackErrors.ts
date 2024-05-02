@@ -8,21 +8,21 @@ export class CreateECertFeedbackErrors1714624663811
     await queryRunner.query(
       getSQLFileData(
         "Create-ecert-feedback-errors-table.sql",
-        "ECertFeedbackErrors",
+        "EertFeedbackErrors",
       ),
     );
 
     await queryRunner.query(
       getSQLFileData(
         "Insert-ecert-feedback-errors-full-time.sql",
-        "ECertFeedbackErrors",
+        "EertFeedbackErrors",
       ),
     );
 
     await queryRunner.query(
       getSQLFileData(
         "Insert-ecert-feedback-errors-part-time.sql",
-        "ECertFeedbackErrors",
+        "EertFeedbackErrors",
       ),
     );
   }
@@ -31,7 +31,7 @@ export class CreateECertFeedbackErrors1714624663811
     await queryRunner.query(
       getSQLFileData(
         "Rollback-create-ecert-feedback-errors-table.sql",
-        "ECertFeedbackErrors",
+        "EertFeedbackErrors",
       ),
     );
   }
