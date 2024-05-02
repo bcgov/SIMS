@@ -102,7 +102,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-addition
 
   it(
     "Should have calculated student additional transportation variables assigned with 0 " +
-      "when there is a request a change for student additional transportation not required.",
+      "when there is a request a change for not eligible for transportation allowance.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =

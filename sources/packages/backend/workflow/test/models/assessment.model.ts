@@ -19,7 +19,6 @@ export interface StudentFinancialInformationAppealData extends JSONDoc {
 }
 
 export enum TransportationCostSituation {
-  NotRequired = "notRequired",
   NoLimit = "noLimit",
   EducationPlacement = "educationPlacement",
   Special = "special",

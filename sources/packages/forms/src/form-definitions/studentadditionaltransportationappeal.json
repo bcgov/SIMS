@@ -9,8 +9,8 @@
   ],
   "components": [
     {
-      "key": "financialInformation",
-      "label": "Additional Transportation",
+      "key": "additionTransportationLabel",
+      "label": "Additional Transportation ",
       "input": false,
       "tag": "p",
       "attrs": [
@@ -20,7 +20,7 @@
         }
       ],
       "className": "category-header-medium primary-color",
-      "content": "Additional Transportation",
+      "content": "Additional transportation cost",
       "type": "htmlelement",
       "hideLabel": true,
       "tags": [],
