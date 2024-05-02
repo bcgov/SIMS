@@ -31,7 +31,7 @@ export class CreateECertFeedbackErrors1714624663811
     await queryRunner.query(
       getSQLFileData(
         "Rollback-create-ecert-feedback-errors-table.sql",
-        "EertFeedbackErrors",
+        "ECertFeedbackErrors",
       ),
     );
   }
