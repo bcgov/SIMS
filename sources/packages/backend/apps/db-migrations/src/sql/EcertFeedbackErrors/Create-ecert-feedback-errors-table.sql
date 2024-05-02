@@ -1,7 +1,7 @@
 CREATE TABLE sims.ecert_feedback_errors(
     id SERIAL PRIMARY KEY,
     error_code VARCHAR(10) NOT NULL,
-    error_description VARCHAR(100) NOT NULL,
+    error_description VARCHAR(250) NOT NULL,
     offering_intensity sims.offering_intensity NOT NULL,
     block_funding BOOLEAN NOT NULL,
     -- There are no audit columns for this field as it is not expected to be updated
