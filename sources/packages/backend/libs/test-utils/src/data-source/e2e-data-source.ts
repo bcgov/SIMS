@@ -51,6 +51,7 @@ import {
   User,
   StudentLoanBalance,
   NotificationMessage,
+  ECertFeedbackError,
 } from "@sims/sims-db";
 import { DataSource, Repository } from "typeorm";
 
@@ -137,6 +138,7 @@ export function createE2EDataSources(dataSource: DataSource): E2EDataSources {
       ApplicationOfferingChangeRequest,
     ),
     studentLoanBalance: dataSource.getRepository(StudentLoanBalance),
+    ecertFeedbackError: dataSource.getRepository(ECertFeedbackError),
   };
 }
 
@@ -197,4 +199,5 @@ export interface E2EDataSources {
   notificationMessage: Repository<NotificationMessage>;
   applicationOfferingChangeRequest: Repository<ApplicationOfferingChangeRequest>;
   studentLoanBalance: Repository<StudentLoanBalance>;
+  ecertFeedbackError: Repository<ECertFeedbackError>;
 }

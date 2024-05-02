@@ -53,6 +53,7 @@ import {
   QueueConfiguration,
   ApplicationOfferingChangeRequest,
   StudentLoanBalance,
+  ECertFeedbackError,
 } from "./entities";
 import { ClusterNode, ClusterOptions, RedisOptions } from "ioredis";
 import {
@@ -204,4 +205,5 @@ export const DBEntities = [
   QueueConfiguration,
   ApplicationOfferingChangeRequest,
   StudentLoanBalance,
+  ECertFeedbackError,
 ];

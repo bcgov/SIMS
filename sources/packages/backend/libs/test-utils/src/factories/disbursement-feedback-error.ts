@@ -1,6 +1,7 @@
 import {
   DisbursementFeedbackErrors,
   DisbursementSchedule,
+  ECertFeedbackError,
 } from "@sims/sims-db";
 
 /**
@@ -14,6 +15,7 @@ import {
 export function createFakeDisbursementFeedbackError(
   relations: {
     disbursementSchedule: DisbursementSchedule;
+    ecertFeedbackError: ECertFeedbackError;
   },
   options?: {
     initialValues?: Partial<DisbursementFeedbackErrors>;
