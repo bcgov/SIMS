@@ -7,6 +7,9 @@ import { TableNames } from "../constant";
  */
 @Entity({ name: TableNames.ECertFeedbackErrors })
 export class ECertFeedbackError {
+  /**
+   * Auto-generated sequential primary key column.
+   */
   @PrimaryGeneratedColumn()
   id: number;
 
