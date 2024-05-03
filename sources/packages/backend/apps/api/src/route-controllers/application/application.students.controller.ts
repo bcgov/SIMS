@@ -74,6 +74,7 @@ import {
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
   OfferingIntensity,
+  ProgramYear,
   StudentAppealStatus,
 } from "@sims/sims-db";
 import { ConfirmationOfEnrollmentService } from "@sims/services";
@@ -144,46 +145,17 @@ export class ApplicationStudentsController extends BaseController {
       firstCOE,
     );
   }
-
   /**
-   * Submit an existing student application changing the status
-   * to submitted and triggering the necessary processes.
-   * The system will ensure that an application will always be
-   * transitioning from draft to submitted status. The student
-   * application is not supposed to be created directly in the
-   * submitted status in any scenario.
-   * @param payload payload to create the draft application.
-   * @param applicationId application id to be changed to submitted.
-   * @param studentToken token from the authenticated student.
+   * Validate the values in the submitted application before submitting.
+   * @param payload payload to create the application.
+   * @param programYear program year of the submitted application.
    */
-  @CheckSinValidation()
-  @Patch(":applicationId/submit")
-  @ApiUnprocessableEntityResponse({
-    description:
-      "Program Year is not active or " +
-      "Selected offering id is invalid or " +
-      "invalid study dates or selected study start date is not within the program year or " +
-      "Education Program is not active. Not able to create an application invalid request " +
-      "or APPLICATION_NOT_VALID or INVALID_OPERATION_IN_THE_CURRENT_STATUS or ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE " +
-      "or INSTITUTION_LOCATION_NOT_VALID or OFFERING_NOT_VALID " +
-      "or Invalid offering intensity",
-  })
-  @ApiBadRequestResponse({
-    description: "Form validation failed or Offering intensity type is invalid",
-  })
-  @ApiNotFoundResponse({ description: "Application not found." })
-  @ApiForbiddenResponse({
-    description: "You have a restriction on your account.",
-  })
-  async submitApplication(
+  private async validateSubmitApplicationData(
     @Body() payload: SaveApplicationAPIInDTO,
-    @Param("applicationId", ParseIntPipe) applicationId: number,
-    @UserToken() studentToken: StudentUserToken,
+    @Param() programYear: ProgramYear,
   ): Promise<void> {
     const isFulltimeAllowed = this.configService.isFulltimeAllowed;
-    const programYear = await this.programYearService.getActiveProgramYear(
-      payload.programYearId,
-    );
+
     // The check to validate the values for howWillYouBeAttendingTheProgram can be removed once the toggle for IS_FULL_TIME_ALLOWED is no longer needed
     // and the types are hard-coded again in the form.io definition using the onlyAvailableItems as true.
     if (
@@ -246,6 +218,49 @@ export class ApplicationStudentsController extends BaseController {
       payload.data.selectedOfferingDate = studyStartDate;
       payload.data.selectedOfferingEndDate = studyEndDate;
     }
+  }
+
+  /**
+   * Submit an existing student application changing the status
+   * to submitted and triggering the necessary processes.
+   * The system will ensure that an application will always be
+   * transitioning from draft to submitted status. The student
+   * application is not supposed to be created directly in the
+   * submitted status in any scenario.
+   * @param payload payload to create the draft application.
+   * @param applicationId application id to be changed to submitted.
+   * @param studentToken token from the authenticated student.
+   */
+  @CheckSinValidation()
+  @Patch(":applicationId/submit")
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Program Year is not active or " +
+      "Selected offering id is invalid or " +
+      "invalid study dates or selected study start date is not within the program year or " +
+      "Education Program is not active. Not able to create an application invalid request " +
+      "or APPLICATION_NOT_VALID or INVALID_OPERATION_IN_THE_CURRENT_STATUS or ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE " +
+      "or INSTITUTION_LOCATION_NOT_VALID or OFFERING_NOT_VALID " +
+      "or Invalid offering intensity",
+  })
+  @ApiBadRequestResponse({
+    description: "Form validation failed or Offering intensity type is invalid",
+  })
+  @ApiNotFoundResponse({ description: "Application not found." })
+  @ApiForbiddenResponse({
+    description: "You have a restriction on your account.",
+  })
+  async submitApplication(
+    @Body() payload: SaveApplicationAPIInDTO,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+    @UserToken() studentToken: StudentUserToken,
+  ): Promise<void> {
+    const programYear = await this.programYearService.getActiveProgramYear(
+      payload.programYearId,
+    );
+
+    // Validate the values in the submitted application before submitting.
+    await this.validateSubmitApplicationData(payload, programYear);
 
     const submissionResult =
       await this.formService.dryRunSubmission<ApplicationData>(
@@ -273,8 +288,8 @@ export class ApplicationStudentsController extends BaseController {
         studentToken.userId,
         student.sinValidation.sin,
         student.birthDate,
-        studyStartDate,
-        studyEndDate,
+        payload.data.studystartDate,
+        payload.data.studyendDate,
       );
       await this.applicationService.submitApplication(
         applicationId,
