@@ -3,6 +3,7 @@
   <formio
     formName="exportfinancialreports"
     @loaded="formLoaded"
+    @changed="formChanged"
     @submitted="exportReport"
   ></formio>
   <v-row class="justify-center m-4">
@@ -30,9 +31,11 @@ import {
   useSnackBar,
   useFileUtils,
   useFormioDropdownLoader,
+  useFormioUtils,
 } from "@/composables";
 import { FormIOForm, Role } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import { InstitutionReports } from "@/types/contracts/Reports";
 
 export default defineComponent({
   components: {
@@ -45,8 +48,10 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const { downloadReports } = useFileUtils();
     const formioDataLoader = useFormioDropdownLoader();
+    const formioUtils = useFormioUtils();
     const REPORT_TYPE_DROPDOWN_KEY = "reportName";
     const loading = ref(false);
+    const PROGRAM_YEAR_DROPDOWN_KEY = "programYear";
     let formData: FormIOForm;
     const formLoaded = async (form: FormIOForm) => {
       formData = form;
@@ -55,6 +60,19 @@ export default defineComponent({
         REPORT_TYPE_DROPDOWN_KEY,
         props.reportList,
       );
+    };
+    const formChanged = async (form: FormIOForm, event: any) => {
+      formData = form;
+      const reportType = formioUtils.getComponentValueByKey(
+        formData,
+        REPORT_TYPE_DROPDOWN_KEY,
+      );
+      if (
+        event.changed?.component.key === REPORT_TYPE_DROPDOWN_KEY &&
+        reportType === InstitutionReports.OfferingDetails
+      ) {
+        await loadInstitutionReportDetails(formData);
+      }
     };
     const submitForm = () => {
       formData.submit();
@@ -69,7 +87,10 @@ export default defineComponent({
         loading.value = false;
       }
     };
-    return { exportReport, formLoaded, submitForm, Role, loading };
+    const loadInstitutionReportDetails = async (form: FormIOForm) => {
+      await formioDataLoader.loadProgramYear(form, PROGRAM_YEAR_DROPDOWN_KEY);
+    };
+    return { exportReport, formLoaded, formChanged, submitForm, Role, loading };
   },
 });
 </script>

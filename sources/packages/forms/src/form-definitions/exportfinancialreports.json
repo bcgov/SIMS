@@ -141,7 +141,7 @@
           "validateOn": "change",
           "validate": {
             "required": true,
-            "onlyAvailableItems": true,
+            "onlyAvailableItems": false,
             "customMessage": "",
             "custom": "",
             "customPrivate": false,
@@ -200,6 +200,53 @@
           },
           "id": "epfngcm",
           "defaultValue": "",
+          "lockKey": true,
+          "isNew": false
+        },
+        {
+          "autofocus": false,
+          "input": true,
+          "tableView": true,
+          "label": "Program Year",
+          "key": "programYear",
+          "placeholder": "Select Program Year",
+          "data": {
+            "values": [
+              {
+                "value": "",
+                "label": ""
+              }
+            ],
+            "json": "",
+            "url": "",
+            "resource": "",
+            "custom": ""
+          },
+          "dataSrc": "values",
+          "valueProperty": "",
+          "defaultValue": "",
+          "refreshOn": "",
+          "filter": "",
+          "authenticate": false,
+          "template": "<span>{{ item.label }}</span>",
+          "multiple": false,
+          "protected": false,
+          "unique": false,
+          "persistent": true,
+          "hidden": false,
+          "clearOnHide": true,
+          "validate": {
+            "required": true
+          },
+          "type": "select",
+          "labelPosition": "top",
+          "tags": [],
+          "conditional": {
+            "show": "true",
+            "when": "reportName",
+            "eq": "Offering_Details_Report"
+          },
+          "properties": {},
           "lockKey": true
         },
         {
@@ -210,7 +257,6 @@
           "tooltip": "",
           "customClass": "",
           "hidden": false,
-          "hideLabel": true,
           "disabled": false,
           "tableView": false,
           "modalEdit": false,
@@ -509,12 +555,12 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
+                "show": "true",
+                "when": "reportName",
+                "eq": "Student_Unmet_Need_Report",
                 "json": ""
               },
-              "customConditional": "",
+              "customConditional": "show = data['reportName'] === 'Student_Unmet_Need_Report' || data['reportName'] === 'Disbursement_Forecast_Report' || data['reportName'] === 'Disbursement_Report' || data['reportName'] === 'Data_Inventory_Report'",
               "logic": [],
               "attributes": {},
               "overlay": {

@@ -1,5 +1,5 @@
 import { JsonMaxSize } from "../../../utilities/class-validation";
-import { Allow, MaxLength } from "class-validator";
+import { Allow, IsNumber, MaxLength } from "class-validator";
 import { JSON_10KB, REPORT_NAME_MAX_LENGTH } from "../../../constants";
 
 /**
@@ -19,4 +19,9 @@ export class ReportsFilterAPIInDTO {
   @Allow()
   @JsonMaxSize(JSON_10KB)
   params: ReportFilterParamAPIInDTO;
+}
+
+export class InstitutionReportsFilterAPIInDTO extends ReportsFilterAPIInDTO {
+  @IsNumber()
+  programYear: number;
 }

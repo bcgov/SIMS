@@ -1,11 +1,15 @@
 import { Injectable } from "@nestjs/common";
 import { Connection } from "typeorm";
 import { RecordDataModelService, ReportConfig } from "@sims/sims-db";
-import { CustomNamedError } from "@sims/utilities";
+import {
+  CustomNamedError,
+  getFileNameAsCurrentTimestamp,
+} from "@sims/utilities";
 import { ReportsFilterModel } from "./report.models";
 import { REPORT_CONFIG_NOT_FOUND, FILTER_PARAMS_MISMATCH } from "./constants";
+import { Response } from "express";
+import { Readable } from "stream";
 import { unparse } from "papaparse";
-
 /**
  * Service layer for reports.
  */
@@ -52,6 +56,28 @@ export class ReportService extends RecordDataModelService<ReportConfig> {
     });
     const reportData = await this.connection.query(reportQuery, parameters);
     return unparse(reportData);
+  }
+
+  /**
+   * Stream file as downloadable response.
+   * @param response http response as file.
+   * @param reportName report name.
+   * @param fileContent content of the file.
+   */
+  streamFile(response: Response, reportName: string, fileContent: string) {
+    const timestamp = getFileNameAsCurrentTimestamp();
+    const filename = `${reportName}_${timestamp}.csv`;
+    response.setHeader(
+      "Content-Disposition",
+      `attachment; filename=${filename}`,
+    );
+    response.setHeader("Content-Type", "text/csv");
+    response.setHeader("Content-Length", fileContent.toString().length);
+
+    const stream = new Readable();
+    stream.push(fileContent.toString());
+    stream.push(null);
+    stream.pipe(response);
   }
 
   /**
