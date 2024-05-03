@@ -124,12 +124,18 @@ export class EducationProgramApi extends HttpBaseClient {
 
   /**
    * Get a key/value pair list of all approved programs.
+   * @param isIncludeInActiveProgram isIncludeInActiveProgram, if isIncludeInActiveProgram, then both active
+   * and not active education program is considered.
    * @returns key/value pair list of all approved programs.
    */
-  async getProgramsListForInstitutions(): Promise<OptionItemAPIOutDTO[]> {
-    return this.getCall<OptionItemAPIOutDTO[]>(
-      this.addClientRoot("education-program/programs-list"),
-    );
+  async getProgramsListForInstitutions(
+    isIncludeInActiveProgram?: boolean,
+  ): Promise<OptionItemAPIOutDTO[]> {
+    let url = "education-program/programs-list";
+    if (isIncludeInActiveProgram) {
+      url = `${url}?isIncludeInActiveProgram=${isIncludeInActiveProgram}`;
+    }
+    return this.getCall<OptionItemAPIOutDTO[]>(this.addClientRoot(url));
   }
 
   /**

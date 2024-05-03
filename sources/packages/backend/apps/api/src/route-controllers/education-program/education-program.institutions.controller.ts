@@ -1,8 +1,10 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Get,
   Param,
+  ParseBoolPipe,
   ParseIntPipe,
   Patch,
   Post,
@@ -142,14 +144,23 @@ export class EducationProgramInstitutionsController extends BaseController {
 
   /**
    * Get a key/value pair list of all approved programs.
+   * @param isIncludeInActiveProgram if true, only education programs with active
+   * are considered else both active and inactive programs are considered.
    * @returns key/value pair list of all approved programs.
    */
   @Get("programs-list")
   async getProgramsListForInstitutions(
     @UserToken() userToken: IInstitutionUserToken,
+    @Query(
+      "isIncludeInActiveProgram",
+      new DefaultValuePipe(false),
+      ParseBoolPipe,
+    )
+    isIncludeInActiveProgram: boolean,
   ): Promise<OptionItemAPIOutDTO[]> {
     const programs = await this.programService.getPrograms(
       userToken.authorizations.institutionId,
+      isIncludeInActiveProgram,
     );
     return programs.map((program) => ({
       id: program.id,
