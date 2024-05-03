@@ -123,7 +123,7 @@
               "defaultValue": "",
               "protected": false,
               "fieldSet": false,
-              "persistent": false,
+              "persistent": true,
               "hidden": false,
               "clearOnHide": true,
               "validate": {
@@ -144,8 +144,12 @@
               "lockKey": true
             },
             {
-              "input": true,
-              "tree": true,
+              "clearOnHide": false,
+              "key": "panelPanel",
+              "input": false,
+              "title": "Transportation Allowance",
+              "theme": "default",
+              "tableView": false,
               "components": [
                 {
                   "label": "Which of the following best describes your situation?",
@@ -324,7 +328,7 @@
                   "hidden": false,
                   "clearOnHide": true,
                   "validate": {
-                    "required": false,
+                    "required": true,
                     "min": 0,
                     "max": 52,
                     "step": "any",
@@ -1089,14 +1093,9 @@
                   "hideLabel": false
                 }
               ],
-              "tableView": true,
-              "label": "Additional Transportation Container",
-              "key": "panelAdditionalTransportationContainer",
-              "protected": false,
-              "persistent": true,
-              "clearOnHide": true,
-              "type": "container",
-              "labelPosition": "top",
+              "type": "panel",
+              "breadcrumb": "default",
+              "hideLabel": true,
               "tags": [],
               "conditional": {
                 "show": "true",
@@ -1104,7 +1103,8 @@
                 "eq": "yes"
               },
               "properties": {},
-              "customConditional": ""
+              "customClass": "formio-panel-unset",
+              "isNew": false
             }
           ],
           "placeholder": "",

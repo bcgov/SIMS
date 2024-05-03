@@ -153,6 +153,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   assessmentId?: number;
   studentDataSelectedOffering: number;
   studentDataApplicationPDPPDStatus: string;
+  studentDataEligibleForAnAdditionalTransportationAllowance: YesNoOptions;
   studentDataAdditionalTransportKm: number;
   studentDataAdditionalTransportCost: number;
   studentDataAdditionalTransportWeeks: number;
