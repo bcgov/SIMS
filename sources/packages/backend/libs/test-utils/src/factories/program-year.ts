@@ -16,7 +16,7 @@ export function createFakeProgramYear(programYearPrefix?: number): ProgramYear {
   const programYear = new ProgramYear();
   programYear.formName = `SFAA${startingYear}-${endingYear}`;
   programYear.programYear = `${startingYear}-${endingYear}`;
-  programYear.programYearDesc = `Study starting between August 01, ${startingYear} and July 31, ${endingYear}`;
+  programYear.programYearDesc = `My first day of classes starts between August 01, ${startingYear} and July 31, ${endingYear}`;
   programYear.active = true;
   programYear.parentFormName = `${programYear.formName}-parent`;
   programYear.partnerFormName = `${programYear.formName}-partner`;

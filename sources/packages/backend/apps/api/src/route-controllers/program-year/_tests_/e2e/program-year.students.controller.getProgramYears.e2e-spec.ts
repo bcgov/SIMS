@@ -53,22 +53,35 @@ describe("ProgramYearStudentsController(e2e)-getProgramYears", () => {
         expect(programYearList).toEqual(
           expect.arrayContaining([
             expect.objectContaining({
-              id: programYear2004.id,
               description:
-                "(2004-2005) - Study starting between August 01, 2004 and July 31, 2005",
+                "(2004-2005) - My first day of classes starts between August 01, 2004 and July 31, 2005",
             }),
             expect.objectContaining({
-              id: programYear2005.id,
               description:
-                "(2005-2006) - Study starting between August 01, 2005 and July 31, 2006",
+                "(2005-2006) - My first day of classes starts between August 01, 2005 and July 31, 2006",
+            }),
+            expect.objectContaining({
+              description:
+                "(2021-2022) - My first day of classes starts between August 01, 2021 and July 31, 2022",
+            }),
+            expect.objectContaining({
+              description:
+                "(2022-2023) - My first day of classes starts between August 01, 2022 and July 31, 2023",
+            }),
+            expect.objectContaining({
+              description:
+                "(2023-2024) - My first day of classes starts between August 01, 2023 and July 31, 2024",
+            }),
+            expect.objectContaining({
+              description:
+                "(2024-2025) - My first day of classes starts between August 01, 2024 and July 31, 2025",
             }),
           ]),
         );
         expect(programYearList).not.toContainEqual(
           expect.objectContaining({
-            id: programYear2003.id,
             description:
-              "(2003-2004) - Study starting between August 01, 2003 and July 31, 2004",
+              "(2003-2004) - My first day of classes starts between August 01, 2003 and July 31, 2004",
           }),
         );
       });
