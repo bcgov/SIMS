@@ -17,11 +17,15 @@ import {
 import { AppAESTModule } from "../../../../app.aest.module";
 import { FormNames, FormService } from "../../../../services";
 import { NotificationMessageType } from "@sims/sims-db";
+import { In, IsNull } from "typeorm";
 
 describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountApplication", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let sharedFormService: FormService;
+  const testSIN1 = "534012702";
+  const testSIN2 = "534012703";
+  const blankSIN = "000000000";
 
   beforeAll(async () => {
     const { nestApplication, dataSource, module } =
@@ -40,16 +44,30 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
       { id: NotificationMessageType.PartialStudentMatchNotification },
       { emailContacts: ["dummy@some.domain"] },
     );
-    await db.notification.clear();
   });
 
   beforeEach(async () => {
     jest.resetAllMocks();
     // Ensure the SIN used for this method will not conflict.
-    await db.sfasIndividual.update({ sin: "534012702" }, { sin: "000000000" });
-    await db.sfasIndividual.update({ sin: "534012703" }, { sin: "000000000" });
-    await db.sinValidation.update({ sin: "534012702" }, { sin: "000000000" });
-    await db.sinValidation.update({ sin: "534012703" }, { sin: "000000000" });
+    await db.sfasIndividual.update(
+      { sin: In([testSIN1, testSIN2]) },
+      { sin: blankSIN },
+    );
+    await db.sinValidation.update(
+      { sin: In([testSIN1, testSIN2]) },
+      { sin: blankSIN },
+    );
+    await db.notification.update(
+      {
+        dateSent: IsNull(),
+        notificationMessage: {
+          id: NotificationMessageType.PartialStudentMatchNotification,
+        },
+      },
+      {
+        dateSent: new Date(),
+      },
+    );
   });
 
   it("Should send a notification message when at least a partial match is found for importing a student record from SFAS.", async () => {
@@ -112,8 +130,6 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
         expect(response.body.id).toBeGreaterThan(0);
       });
     // Check that the notification is in the database.
-    const notificationMessageType =
-      NotificationMessageType.PartialStudentMatchNotification;
     const notification = await db.notification.findOne({
       select: {
         id: true,
@@ -123,12 +139,12 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
       },
       relations: { notificationMessage: true, user: true },
       where: {
+        dateSent: IsNull(),
         notificationMessage: {
-          id: notificationMessageType,
+          id: NotificationMessageType.PartialStudentMatchNotification,
         },
       },
     });
-    expect(notification.dateSent).toBe(null);
     expect(notification.messagePayload["email_address"]).toEqual(
       "dummy@some.domain",
     );
