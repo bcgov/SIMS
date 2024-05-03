@@ -4,6 +4,7 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
   IsBCPublicInstitution,
+  IsInstitutionAdmin,
 } from "../../auth/decorators";
 import { FormService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
@@ -32,6 +33,7 @@ export class ReportInstitutionsController extends BaseController {
     description: "Not able to export report due to an invalid request.",
   })
   @IsBCPublicInstitution()
+  @IsInstitutionAdmin()
   @Post()
   async exportReport(
     @Body() payload: InstitutionReportsFilterAPIInDTO,
