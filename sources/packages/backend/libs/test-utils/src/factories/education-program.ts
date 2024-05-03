@@ -8,11 +8,13 @@ import {
 } from "@sims/sims-db";
 import { createFakeInstitution } from "@sims/test-utils";
 
-export function createFakeEducationProgram(relations?: {
-  auditUser: User;
-  institution?: Institution;
-  isActive?: boolean;
-}): EducationProgram {
+export function createFakeEducationProgram(
+  relations?: {
+    auditUser: User;
+    institution?: Institution;
+  },
+  options?: { isActive?: boolean },
+): EducationProgram {
   const program = new EducationProgram();
   program.name = faker.name.jobArea();
   program.description = "description";
@@ -36,6 +38,6 @@ export function createFakeEducationProgram(relations?: {
   program.institution = relations?.institution ?? createFakeInstitution();
   program.programIntensity = ProgramIntensity.fullTime;
   program.submittedBy = relations?.auditUser;
-  program.isActive = relations?.isActive ?? true;
+  program.isActive = options?.isActive ?? true;
   return program;
 }

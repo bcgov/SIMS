@@ -38,11 +38,15 @@ export function createFakeEducationProgramOffering(
   offering.lacksStudyBreaks = true;
   offering.educationProgram =
     relations?.program ??
-    createFakeEducationProgram({
-      institution,
-      auditUser: relations.auditUser,
-      isActive: options?.programInitialValues.isActive,
-    });
+    createFakeEducationProgram(
+      {
+        institution,
+        auditUser: relations.auditUser,
+      },
+      {
+        isActive: options?.programInitialValues.isActive,
+      },
+    );
   offering.institutionLocation =
     relations?.institutionLocation ?? createFakeInstitutionLocation();
   offering.offeringIntensity = OfferingIntensity.fullTime;
