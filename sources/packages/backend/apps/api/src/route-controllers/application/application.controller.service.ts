@@ -107,7 +107,7 @@ export class ApplicationControllerService {
         data.selectedProgram,
       );
       if (selectedProgram) {
-        // Assign selected program && selected offering for application as null when the program is in active.
+        // Assign selected program && selected offering for application as null when the program is inactive.
         if (!selectedProgram.isActive) {
           data.selectedProgram = null;
           data.selectedOffering = null;

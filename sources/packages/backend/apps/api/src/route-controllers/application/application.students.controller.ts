@@ -212,7 +212,7 @@ export class ApplicationStudentsController extends BaseController {
         );
       if (!educationProgram) {
         throw new UnprocessableEntityException(
-          "Education Program is not active. Not able to create an application invalid request.",
+          "Education Program is not active. Not able to submit application due to invalid request.",
         );
       }
     }
