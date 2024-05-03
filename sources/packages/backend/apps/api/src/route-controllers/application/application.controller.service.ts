@@ -110,7 +110,6 @@ export class ApplicationControllerService {
         // Assign selected program && selected offering for application as null when the program is inactive.
         if (!selectedProgram.isActive) {
           data.selectedProgram = null;
-          data.selectedOffering = null;
         }
         // Assign program name for readonly form.
         additionalFormData.selectedProgramName = selectedProgram.name;
