@@ -25,7 +25,10 @@ import {
 import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
 import { addDays } from "@sims/utilities";
 import { STUDY_DATE_OVERLAP_ERROR } from "../../../../utilities";
-import { OFFERING_INTENSITY_MISMATCH } from "../../../../constants";
+import {
+  EDUCATION_PROGRAM_IS_NOT_ACTIVE,
+  OFFERING_INTENSITY_MISMATCH,
+} from "../../../../constants";
 
 describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createApplicationOfferingChangeRequest", () => {
   let app: INestApplication;
@@ -516,12 +519,10 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       .post(endpoint)
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.INTERNAL_SERVER_ERROR)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-        message:
-          "Error while submitting an application offering change request",
-        error: "Internal Server Error",
+        message: "The education program is not active.",
+        errorType: EDUCATION_PROGRAM_IS_NOT_ACTIVE,
       });
   });
 

@@ -1685,7 +1685,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
     if (!program) {
       throw new CustomNamedError(
-        "The program is not active.",
+        "The education program is not active.",
         EDUCATION_PROGRAM_IS_NOT_ACTIVE,
       );
     }

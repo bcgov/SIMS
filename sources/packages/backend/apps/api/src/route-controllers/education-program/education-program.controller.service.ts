@@ -99,15 +99,6 @@ export class EducationProgramControllerService {
       await this.institutionService.getInstitutionTypeById(institutionId);
     payload.isBCPrivate = institutionType.isBCPrivate;
     payload.isBCPublic = institutionType.isBCPublic;
-    if (programId) {
-      const educationProgram =
-        await this.educationProgramService.getActiveEducationProgram(programId);
-      if (!educationProgram) {
-        throw new UnprocessableEntityException(
-          "Education Program is not active. Not able to a save the program due to an invalid request.",
-        );
-      }
-    }
     const submissionResult =
       await this.formService.dryRunSubmission<SaveEducationProgram>(
         FormNames.EducationProgram,
