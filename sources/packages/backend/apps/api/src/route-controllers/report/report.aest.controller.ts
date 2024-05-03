@@ -19,7 +19,7 @@ import { FormService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import { CustomNamedError } from "@sims/utilities";
 import BaseController from "../BaseController";
-import { ReportsFilterAPIInDTO } from "./models/report.dto";
+import { MinistryReportsFilterAPIInDTO } from "./models/report.dto";
 import { FormNames } from "../../services/form/constants";
 import { Role } from "../../auth/roles.enum";
 import {
@@ -59,7 +59,7 @@ export class ReportAESTController extends BaseController {
   @Roles(Role.AESTReports)
   @Post()
   async exportReport(
-    @Body() payload: ReportsFilterAPIInDTO,
+    @Body() payload: MinistryReportsFilterAPIInDTO,
     @Res() response: Response,
   ): Promise<void> {
     const submissionResult = await this.formService.dryRunSubmission(
