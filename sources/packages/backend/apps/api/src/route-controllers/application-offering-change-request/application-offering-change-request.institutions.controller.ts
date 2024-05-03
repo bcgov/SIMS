@@ -298,9 +298,6 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
             throw new NotFoundException(error.message);
           case STUDY_DATE_OVERLAP_ERROR:
           case EDUCATION_PROGRAM_IS_NOT_ACTIVE:
-            throw new UnprocessableEntityException(
-              new ApiProcessError(error.message, error.name),
-            );
           case OFFERING_INTENSITY_MISMATCH:
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),
