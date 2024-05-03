@@ -5,6 +5,7 @@ import {
   UnprocessableEntityException,
 } from "@nestjs/common";
 import {
+  EDUCATION_PROGRAM_IS_NOT_ACTIVE,
   OFFERING_CREATION_CRITICAL_ERROR,
   OFFERING_VALIDATION_CRITICAL_ERROR,
   OFFERING_VALIDATION_CSV_CONTENT_FORMAT_ERROR,
@@ -168,6 +169,14 @@ export class EducationProgramOfferingControllerService {
     if (!program) {
       throw new NotFoundException(
         "Program to create the offering not found for the institution.",
+      );
+    }
+    if (!program.isActive) {
+      throw new UnprocessableEntityException(
+        new ApiProcessError(
+          "The education program is not active.",
+          EDUCATION_PROGRAM_IS_NOT_ACTIVE,
+        ),
       );
     }
     // Get institution location details.

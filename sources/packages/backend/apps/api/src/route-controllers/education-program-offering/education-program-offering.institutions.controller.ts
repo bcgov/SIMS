@@ -104,6 +104,9 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   @ApiNotFoundResponse({
     description: "Not able to find the program in the provided location.",
   })
+  @ApiUnprocessableEntityResponse({
+    description: "The education program is not active.",
+  })
   @Post("location/:locationId/education-program/:programId/validation")
   @HttpCode(HttpStatus.OK)
   async validateOffering(
@@ -164,7 +167,8 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   @ApiUnprocessableEntityResponse({
     description:
       "Not able to a create an offering due to an invalid request or " +
-      "duplication error. An offering with the same name, year of study, start date and end date was found.",
+      "duplication error. An offering with the same name, year of study, start date and end date was found." +
+      "or the education program is not active.",
   })
   @Post("location/:locationId/education-program/:programId")
   async createOffering(
@@ -215,7 +219,8 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     description:
       "Either offering for the program and location is not found " +
       "or the offering is not in the appropriate state to be updated " +
-      "or the request is invalid.",
+      "or the request is invalid." +
+      "or the education program is not active.",
   })
   @Patch(
     "location/:locationId/education-program/:programId/offering/:offeringId",
@@ -433,7 +438,8 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   })
   @ApiUnprocessableEntityResponse({
     description:
-      "The request is not valid or offering for given program and location not found or not in valid status.",
+      "The request is not valid or offering for given program and location not found or not in valid status." +
+      "or the education program is not active.",
   })
   @ApiBadRequestResponse({
     description: "Not able to a create an offering due to an invalid request.",
