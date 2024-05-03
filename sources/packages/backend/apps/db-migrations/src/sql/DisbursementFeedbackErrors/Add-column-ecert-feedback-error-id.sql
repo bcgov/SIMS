@@ -9,20 +9,20 @@ COMMENT ON COLUMN sims.disbursement_feedback_errors.ecert_feedback_error_id IS '
 UPDATE
     sims.disbursement_feedback_errors
 SET
-    ecert_feedback_error_id = errors.id
+    ecert_feedback_error_id = ecert_feedback_error.id
 FROM
-    sims.ecert_feedback_errors errors
+    sims.ecert_feedback_errors ecert_feedback_error
 WHERE
-    errors.error_code = sims.disbursement_feedback_errors.error_code
-    AND errors.offering_intensity = (
+    ecert_feedback_error.error_code = sims.disbursement_feedback_errors.error_code
+    AND ecert_feedback_error.offering_intensity = (
         SELECT
-            epo.offering_intensity
+            offering.offering_intensity
         FROM
-            sims.disbursement_schedules ds
-            INNER JOIN sims.student_assessments sa ON ds.student_assessment_id = sa.id
-            INNER JOIN sims.education_programs_offerings epo ON sa.offering_id = epo.id
+            sims.disbursement_schedules disbursement_schedule
+            INNER JOIN sims.student_assessments student_assessment ON disbursement_schedule.student_assessment_id = student_assessment.id
+            INNER JOIN sims.education_programs_offerings offering ON student_assessment.offering_id = offering.id
         WHERE
-            ds.id = sims.disbursement_feedback_errors.disbursement_schedule_id
+            disbursement_schedule.id = sims.disbursement_feedback_errors.disbursement_schedule_id
     );
 
 -- Once the ecert_feedback_error_id is populated set the column to be NOT NULL.

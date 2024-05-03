@@ -524,12 +524,12 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     const [disbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
     // Assign a full-time e-Cert feedback error for the expected error code.
-    const ecertFeedbackError = await db.ecertFeedbackError.findOne({
+    const eCertFeedbackError = await db.eCertFeedbackError.findOne({
       select: { id: true },
       where: { errorCode, offeringIntensity: OfferingIntensity.fullTime },
     });
     const feedbackError = createFakeDisbursementFeedbackError(
-      { disbursementSchedule, ecertFeedbackError },
+      { disbursementSchedule, eCertFeedbackError },
       {
         initialValues: {
           errorCode,

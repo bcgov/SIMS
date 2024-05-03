@@ -138,7 +138,7 @@ export function createE2EDataSources(dataSource: DataSource): E2EDataSources {
       ApplicationOfferingChangeRequest,
     ),
     studentLoanBalance: dataSource.getRepository(StudentLoanBalance),
-    ecertFeedbackError: dataSource.getRepository(ECertFeedbackError),
+    eCertFeedbackError: dataSource.getRepository(ECertFeedbackError),
   };
 }
 
@@ -199,5 +199,5 @@ export interface E2EDataSources {
   notificationMessage: Repository<NotificationMessage>;
   applicationOfferingChangeRequest: Repository<ApplicationOfferingChangeRequest>;
   studentLoanBalance: Repository<StudentLoanBalance>;
-  ecertFeedbackError: Repository<ECertFeedbackError>;
+  eCertFeedbackError: Repository<ECertFeedbackError>;
 }

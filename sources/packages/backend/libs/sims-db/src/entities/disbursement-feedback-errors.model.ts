@@ -52,5 +52,5 @@ export class DisbursementFeedbackErrors extends RecordDataModel {
     name: "ecert_feedback_error_id",
     referencedColumnName: ColumnNames.ID,
   })
-  ecertFeedbackError: ECertFeedbackError;
+  eCertFeedbackError: ECertFeedbackError;
 }

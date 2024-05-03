@@ -8,6 +8,7 @@ import {
  * Creates a new disbursement feedback error.
  * @param relations dependencies.
  * - `disbursementSchedule` associated disbursement schedule.
+ * - `eCertFeedbackError` feedback error received.
  * @param options additional options.
  * - `initialValues` initial feedback error record values.
  * @returns disbursement feedback error to be saved.
@@ -15,7 +16,7 @@ import {
 export function createFakeDisbursementFeedbackError(
   relations: {
     disbursementSchedule: DisbursementSchedule;
-    ecertFeedbackError: ECertFeedbackError;
+    eCertFeedbackError: ECertFeedbackError;
   },
   options?: {
     initialValues?: Partial<DisbursementFeedbackErrors>;
@@ -26,7 +27,7 @@ export function createFakeDisbursementFeedbackError(
   feedbackError.dateReceived = options?.initialValues?.dateReceived ?? now;
   feedbackError.errorCode = options?.initialValues?.errorCode ?? "EDU-99999";
   feedbackError.disbursementSchedule = relations.disbursementSchedule;
-  feedbackError.ecertFeedbackError = relations.ecertFeedbackError;
+  feedbackError.eCertFeedbackError = relations.eCertFeedbackError;
   feedbackError.updatedAt = options?.initialValues?.updatedAt ?? now;
   return feedbackError;
 }

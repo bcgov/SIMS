@@ -4,7 +4,7 @@ CREATE TABLE sims.ecert_feedback_errors(
     error_description VARCHAR(250) NOT NULL,
     offering_intensity sims.offering_intensity NOT NULL,
     block_funding BOOLEAN NOT NULL,
-    -- There are no audit columns for this field as it is not expected to be updated
+    -- There are no audit columns for this table as it is not expected to be updated
     -- by an application user.
     CONSTRAINT error_code_offering_intensity_unique UNIQUE (error_code, offering_intensity)
 );

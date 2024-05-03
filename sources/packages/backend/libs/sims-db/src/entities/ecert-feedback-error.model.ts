@@ -39,7 +39,6 @@ export class ECertFeedbackError {
    */
   @Column({
     name: "block_funding",
-    nullable: false,
   })
   blockFunding: boolean;
 }
