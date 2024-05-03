@@ -158,7 +158,7 @@ export class NotificationActionsService {
         personalisation: {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
-          dob: getDateOnlyFormat(notification.dob),
+          birthDate: getDateOnlyFormat(notification.birthDate),
           matchTime: this.getDateTimeOnPSTTimeZone(),
           studentEmail: notification.studentEmail,
           matches: notification.matches,

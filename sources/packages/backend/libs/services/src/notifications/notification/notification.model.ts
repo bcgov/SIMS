@@ -29,7 +29,7 @@ export interface MinistryStudentFileUploadNotification {
 export interface PartialStudentMatchNotification {
   givenNames: string;
   lastName: string;
-  dob: Date;
+  birthDate: Date;
   matchTime: Date;
   studentEmail: string;
   matches: string;

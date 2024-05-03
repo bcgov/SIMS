@@ -230,7 +230,7 @@ export class StudentService extends RecordDataModelService<Student> {
             {
               givenNames: student.user.firstName,
               lastName: student.user.lastName,
-              dob: new Date(student.birthDate),
+              birthDate: new Date(student.birthDate),
               matches: matches,
               studentEmail: student.user.email,
               matchTime: new Date(),

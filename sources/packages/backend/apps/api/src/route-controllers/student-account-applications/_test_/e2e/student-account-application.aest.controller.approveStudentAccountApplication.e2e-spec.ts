@@ -157,7 +157,7 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
     expect(
       notification.messagePayload["personalisation"]["studentEmail"],
     ).toEqual(user.email);
-    expect(notification.messagePayload["personalisation"]["dob"]).toEqual(
+    expect(notification.messagePayload["personalisation"]["birthDate"]).toEqual(
       "Jan 31 2001",
     );
     expect(notification.messagePayload["personalisation"]["matches"]).toEqual(
