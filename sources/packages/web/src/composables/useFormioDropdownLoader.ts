@@ -17,7 +17,7 @@ export function useFormioDropdownLoader() {
     form: any,
     dropdownName: string,
     loadMethod: Promise<OptionItemAPIOutDTO[]> | OptionItemAPIOutDTO[],
-  ) => {
+  ): Promise<void> => {
     // Find the dropdown to be populated with the locations.
     const dropdown = formioUtils.getComponent(form, dropdownName);
     const optionsItems = await loadMethod;
@@ -199,5 +199,6 @@ export function useFormioDropdownLoader() {
     loadPIRDeniedReasonList,
     loadProgramYear,
     loadProgramIntensityDetails,
+    loadDropdown,
   };
 }

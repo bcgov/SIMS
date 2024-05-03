@@ -1,7 +1,7 @@
 <template>
   <full-page-container>
     <template #header
-      ><header-navigator title="Ministry" subTitle="Reports" />
+      ><header-navigator title="Institution" subTitle="Reports" />
     </template>
     <reports :report-list="reportList" />
   </full-page-container>
@@ -18,13 +18,13 @@ export default defineComponent({
   setup() {
     const reportList = [
       {
-        description: "Forecast disbursements",
-        id: "Disbursement_Forecast_Report",
+        description: "Offering Details",
+        id: "Offering_Details_Report",
       },
-      { description: "Disbursements", id: "Disbursement_Report" },
-      { description: "Data Inventory", id: "Data_Inventory_Report" },
     ];
-    return { reportList };
+    return {
+      reportList,
+    };
   },
 });
 </script>
