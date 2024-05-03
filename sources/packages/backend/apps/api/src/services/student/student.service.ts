@@ -209,12 +209,29 @@ export class StudentService extends RecordDataModelService<Student> {
 
         if (partialMatch) {
           // Send out a notification of a partial match for the student information.
+          let matches = "";
+          if (
+            user.lastName === partialMatch.lastName &&
+            student.birthDate === partialMatch.birthDate
+          ) {
+            matches = "Last name and birth date match.";
+          } else if (
+            user.lastName === partialMatch.lastName &&
+            studentSIN === partialMatch.sin
+          ) {
+            matches = "Last name and SIN match.";
+          } else if (
+            studentSIN === partialMatch.sin &&
+            student.birthDate === partialMatch.birthDate
+          ) {
+            matches = "Birth date and SIN match.";
+          }
           await this.notificationActionsService.savePartialStudentMatchNotification(
             {
               givenNames: student.user.firstName,
               lastName: student.user.lastName,
               dob: new Date(student.birthDate),
-              matches: "TODO",
+              matches: matches,
               studentEmail: student.user.email,
               matchTime: new Date(),
             },

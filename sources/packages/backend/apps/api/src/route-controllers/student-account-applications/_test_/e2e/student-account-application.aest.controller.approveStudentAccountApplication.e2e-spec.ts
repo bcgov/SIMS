@@ -9,73 +9,108 @@ import {
 import {
   E2EDataSources,
   createE2EDataSources,
-  saveFakeStudent,
+  createFakeStudentAccountApplication,
+  createFakeUser,
+  getProviderInstanceForModule,
+  saveFakeSFASIndividual,
 } from "@sims/test-utils";
-import { NotificationMessageType, Student } from "@sims/sims-db";
-import { getISODateOnlyString } from "@sims/utilities";
+import { AppAESTModule } from "../../../../app.aest.module";
+import { FormNames, FormService } from "../../../../services";
+import { NotificationMessageType } from "@sims/sims-db";
 
-describe("ConfirmationOfStudentAccounts(e2e)-confirmAccount", () => {
+describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountApplication", () => {
   let app: INestApplication;
   let db: E2EDataSources;
-  let sharedStudent: Student;
-  let partialMatchStudent: Student;
+  let sharedFormService: FormService;
 
   beforeAll(async () => {
-    const { nestApplication, dataSource } = await createTestingAppModule();
+    const { nestApplication, dataSource, module } =
+      await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
 
-    // Create student if it doesn't exist.
-    sharedStudent = await db.student.findOne({
-      where: {
-        birthDate: getISODateOnlyString(new Date("1998-03-24")),
-        user: { lastName: "FOUR" },
-        sinValidation: { sin: "900041310" },
-      },
-    });
-    if (!sharedStudent) {
-      sharedStudent = await saveFakeStudent(db.dataSource);
-      // Update the student to ensure that the student imported from SFAS is the same student as the one created above.
-      sharedStudent.birthDate = getISODateOnlyString(new Date("1998-03-24"));
-      sharedStudent.user.lastName = "FOUR";
-      sharedStudent.sinValidation.sin = "900041310";
-      await db.student.save(sharedStudent);
-    }
-    // Create a second student for a partial match.
-    partialMatchStudent = await db.student.findOne({
-      where: {
-        birthDate: getISODateOnlyString(new Date("1998-03-24")),
-        user: { lastName: "FOURTH" },
-        sinValidation: { sin: "900041310" },
-      },
-    });
-    if (!partialMatchStudent) {
-      partialMatchStudent = await saveFakeStudent(db.dataSource);
-      // Update the student to ensure that the student imported from SFAS is the same student as the one created above.
-      partialMatchStudent.birthDate = getISODateOnlyString(
-        new Date("1998-03-24"),
-      );
-      partialMatchStudent.user.lastName = "FOURTH";
-      partialMatchStudent.sinValidation.sin = "900041310";
-      await db.student.save(partialMatchStudent);
-    }
+    sharedFormService = await getProviderInstanceForModule(
+      module,
+      AppAESTModule,
+      FormService,
+    );
+
+    // Insert a fake email contact to send ministry email.
+    await db.notificationMessage.update(
+      { id: NotificationMessageType.PartialStudentMatchNotification },
+      { emailContacts: ["dummy@some.domain"] },
+    );
+    await db.notification.clear();
+  });
+
+  beforeEach(async () => {
+    jest.resetAllMocks();
+    // Ensure the SIN used for this method will not conflict.
+    await db.sfasIndividual.update({ sin: "534012702" }, { sin: "000000000" });
+    await db.sfasIndividual.update({ sin: "534012703" }, { sin: "000000000" });
+    await db.sinValidation.update({ sin: "534012702" }, { sin: "000000000" });
+    await db.sinValidation.update({ sin: "534012703" }, { sin: "000000000" });
   });
 
   it("Should send a notification message when at least a partial match is found for importing a student record from SFAS.", async () => {
-    // Run the check for partial student matches. TODO somehow
-    // possibly with an endpoint call?
-    /*
-    const endpoint = `/aest/student-account-applications`; // fix actual endpoint
+    // Arrange
+    const user = await db.user.save(createFakeUser());
+    // Submitted data to simulated the exists student account already saved on DB.
+    // Same data will be used to be submitted when Ministry is approving it.
+    const submittedData = {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      dateOfBirth: "2001-01-31",
+      phone: "1234567890",
+      sinNumber: "534012702",
+      mode: "aest-account-approval",
+      identityProvider: "bceidboth",
+      sinConsent: true,
+      gender: "X",
+      addressLine1: "address 1",
+      city: "Victoria",
+      country: "Canada",
+      postalCode: "H1H1H1H",
+      provinceState: "BC",
+      selectedCountry: "canada",
+      canadaPostalCode: "H1H1H1H",
+    };
+    // Save the fake student account application to be later approved by the Ministry
+    // and create the Student Account.
+    const studentAccountApplication = await db.studentAccountApplication.save(
+      createFakeStudentAccountApplication(
+        { user },
+        { initialValues: { submittedData } },
+      ),
+    );
 
+    await saveFakeSFASIndividual(db.dataSource, {
+      initialValues: {
+        lastName: user.lastName,
+        birthDate: "2001-01-31",
+        sin: "534012703",
+      },
+    });
+
+    const endpoint = `/aest/student-account-application/${studentAccountApplication.id}/approve`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    // Mock the form.io response.
+    sharedFormService.dryRunSubmission = jest.fn().mockResolvedValue({
+      valid: true,
+      formName: FormNames.StudentProfile,
+      data: { data: submittedData },
+    });
+
+    // Act/Assert
     await request(app.getHttpServer())
-      .patch(endpoint)
-      .auth(
-        await getAESTToken(AESTGroups.BusinessAdministrators),
-        BEARER_AUTH_TYPE,
-      )
-      .expect(HttpStatus.OK);
-      */
-
+      .post(endpoint)
+      .send(submittedData)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        expect(response.body.id).toBeGreaterThan(0);
+      });
     // Check that the notification is in the database.
     const notificationMessageType =
       NotificationMessageType.PartialStudentMatchNotification;
@@ -94,14 +129,24 @@ describe("ConfirmationOfStudentAccounts(e2e)-confirmAccount", () => {
       },
     });
     expect(notification.dateSent).toBe(null);
-    // expect(notification.messagePayload).toStrictEqual({
-    //   email_address: notification.user.email,
-    //   template_id: notification.notificationMessage.templateId,
-    //   personalisation: {
-    //     lastName: notification.user.lastName,
-    //     givenNames: notification.user.firstName,
-    //   },
-    // });
+    expect(notification.messagePayload["email_address"]).toEqual(
+      "dummy@some.domain",
+    );
+    expect(notification.messagePayload["personalisation"]["lastName"]).toEqual(
+      user.lastName,
+    );
+    expect(
+      notification.messagePayload["personalisation"]["givenNames"],
+    ).toEqual(user.firstName);
+    expect(
+      notification.messagePayload["personalisation"]["studentEmail"],
+    ).toEqual(user.email);
+    expect(notification.messagePayload["personalisation"]["dob"]).toEqual(
+      "Jan 31 2001",
+    );
+    expect(notification.messagePayload["personalisation"]["matches"]).toEqual(
+      "Last name and birth date match.",
+    );
   });
 
   afterAll(async () => {

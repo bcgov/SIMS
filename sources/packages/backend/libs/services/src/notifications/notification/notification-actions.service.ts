@@ -143,8 +143,8 @@ export class NotificationActionsService {
     entityManager?: EntityManager,
   ): Promise<void> {
     const { templateId, emailContacts } =
-      await this.notificationMessageService.getNotificationMessageDetails(
-        NotificationMessageType.MinistryFileUpload,
+      await this.assertNotificationMessageDetails(
+        NotificationMessageType.PartialStudentMatchNotification,
       );
     if (!emailContacts?.length) {
       return;

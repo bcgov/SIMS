@@ -56,7 +56,12 @@ export class SFASIndividualService {
   ): Promise<SFASIndividual> {
     const individual = await this.sfasIndividualRepo
       .createQueryBuilder("individual")
-      .select(["individual.id", "individual.pdStatus"])
+      .select([
+        "individual.id",
+        "individual.lastName",
+        "individual.sin",
+        "individual.birthDate",
+      ])
       .where(
         new Brackets((qb) => {
           qb.where("lower(individual.lastName) = :lastName", {
