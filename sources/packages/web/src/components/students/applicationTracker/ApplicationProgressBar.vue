@@ -25,9 +25,8 @@
       />
       <assessment
         v-else-if="applicationStatus === ApplicationStatus.Assessment"
-        :showRelatedApplicationChanged="
-          applicationProgressDetails.assessmentTriggerType ===
-          AssessmentTriggerType.RelatedApplicationChanged
+        :assessmentTriggerType="
+          applicationProgressDetails.assessmentTriggerType!
         "
       />
       <enrolment

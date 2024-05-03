@@ -1,5 +1,9 @@
 <template>
-  <related-application-changed v-if="showRelatedApplicationChanged" />
+  <related-application-changed
+    v-if="
+      assessmentTriggerType === AssessmentTriggerType.RelatedApplicationChanged
+    "
+  />
   <application-status-tracker-banner
     label="Action required! Please accept your assessment"
     icon="fa:fas fa-exclamation-triangle"
@@ -15,7 +19,8 @@
 <script lang="ts">
 import ApplicationStatusTrackerBanner from "@/components/students/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
 import RelatedApplicationChanged from "@/components/students/applicationTracker/RelatedApplicationChanged.vue";
-import { defineComponent } from "vue";
+import { AssessmentTriggerType } from "@/types";
+import { defineComponent, PropType } from "vue";
 
 export default defineComponent({
   components: {
@@ -23,11 +28,13 @@ export default defineComponent({
     RelatedApplicationChanged,
   },
   props: {
-    showRelatedApplicationChanged: {
-      type: Boolean,
-      required: false,
-      default: false,
+    assessmentTriggerType: {
+      type: String as PropType<AssessmentTriggerType>,
+      required: true,
     },
+  },
+  setup() {
+    return { AssessmentTriggerType };
   },
 });
 </script>

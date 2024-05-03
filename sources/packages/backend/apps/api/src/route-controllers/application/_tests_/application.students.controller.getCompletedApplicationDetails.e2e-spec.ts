@@ -269,25 +269,30 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
       });
   });
 
-  it("Should get application details when the current assessment trigger type is 'Related application changed'.", async () => {
+  it("Should get application details when the current assessment is impacted and the trigger type is 'Related application changed'.", async () => {
     // Arrange
     const application = await saveFakeApplicationDisbursements(
       appDataSource,
       { student },
-      { createSecondDisbursement: true },
+      {
+        applicationStatus: ApplicationStatus.Completed,
+        createSecondDisbursement: true,
+        currentAssessmentInitialValues: {
+          triggerType: AssessmentTriggerType.RelatedApplicationChanged,
+        },
+      },
     );
-    application.applicationStatus = ApplicationStatus.Completed;
-    application.currentAssessment.triggerType =
-      AssessmentTriggerType.RelatedApplicationChanged;
-    await applicationRepo.save(application);
+
     const [firstDisbursement, secondDisbursement] =
       application.currentAssessment.disbursementSchedules;
     firstDisbursement.coeStatus = COEStatus.completed;
     await disbursementScheduleRepo.save(firstDisbursement);
+
     const endpoint = `/students/application/${application.id}/completed`;
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
+
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)

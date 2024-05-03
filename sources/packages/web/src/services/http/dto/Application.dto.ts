@@ -27,7 +27,7 @@ export interface InProgressApplicationDetailsAPIOutDTO {
   parent1Info?: SuccessWaitingStatus;
   parent2Info?: SuccessWaitingStatus;
   partnerInfo?: SuccessWaitingStatus;
-  assessmentInCalculationStep?: SuccessWaitingStatus;
+  outstandingAssessmentStatus: SuccessWaitingStatus;
 }
 
 export interface SaveApplicationAPIInDTO {
@@ -108,7 +108,7 @@ export interface ApplicationProgressDetailsAPIOutDTO {
   appealStatus?: StudentAppealStatus;
   scholasticStandingChangeType?: StudentScholasticStandingChangeType;
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
-  assessmentTriggerType: AssessmentTriggerType;
+  assessmentTriggerType?: AssessmentTriggerType;
 }
 
 export interface DisbursementDetailsAPIOutDTO {

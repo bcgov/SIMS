@@ -6,3 +6,4 @@ export * from "./mocked-providers/jwt-service-mock";
 export * from "./testing-modules/testing-modules-helper";
 export * from "./auth";
 export * from "./fake-entities";
+export * from "./student-assessment/student-assessment-helpers";

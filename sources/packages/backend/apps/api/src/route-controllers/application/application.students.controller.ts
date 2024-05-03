@@ -44,6 +44,7 @@ import {
   ApplicationProgressDetailsAPIOutDTO,
   EnrolmentApplicationDetailsAPIOutDTO,
   CompletedApplicationDetailsAPIOutDTO,
+  SuccessWaitingStatus,
 } from "./models/application.dto";
 import {
   AllowAuthorizedParty,
@@ -73,10 +74,10 @@ import { ApplicationData } from "@sims/sims-db/entities/application.model";
 import {
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
-  AssessmentTriggerType,
   OfferingIntensity,
   StudentAppealStatus,
 } from "@sims/sims-db";
+import { AssessmentSequentialProcessingService } from "@sims/services";
 import { ConfirmationOfEnrollmentService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
 
@@ -99,6 +100,7 @@ export class ApplicationStudentsController extends BaseController {
     private readonly studentAppealService: StudentAppealService,
     private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
     private readonly configService: ConfigService,
+    private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
   ) {
     super();
   }
@@ -597,12 +599,23 @@ export class ApplicationStudentsController extends BaseController {
         supportingUserDetails,
       );
 
-    const assessmentInCalculationStep =
-      await this.applicationControllerService.processApplicationInCalculationDetails(
+    // Get the first outstanding assessment waiting for calculation as per the sequence.
+    const firstOutstandingStudentAssessment =
+      await this.assessmentSequentialProcessingService.getOutstandingAssessmentsForStudentInSequence(
         studentToken.studentId,
         application.programYear.id,
-        application.currentAssessment.id,
       );
+
+    let outstandingAssessmentStatus = SuccessWaitingStatus.Success;
+
+    // If first outstanding assessment returns a value and its Id is different
+    // from the current assessment Id, then assessmentInCalculationStep is Waiting.
+    if (
+      firstOutstandingStudentAssessment &&
+      firstOutstandingStudentAssessment.id !== application.currentAssessment.id
+    ) {
+      outstandingAssessmentStatus = SuccessWaitingStatus.Waiting;
+    }
 
     return {
       id: application.id,
@@ -610,9 +623,9 @@ export class ApplicationStudentsController extends BaseController {
       pirStatus: application.pirStatus,
       pirDeniedReason: getPIRDeniedReason(application),
       exceptionStatus: application.applicationException?.exceptionStatus,
+      outstandingAssessmentStatus: outstandingAssessmentStatus,
       ...incomeVerification,
       ...supportingUser,
-      ...assessmentInCalculationStep,
     };
   }
 
@@ -661,9 +674,7 @@ export class ApplicationStudentsController extends BaseController {
         applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus;
     }
 
-    const assessmentTriggerType =
-      application.currentAssessment?.triggerType ??
-      AssessmentTriggerType.OriginalAssessment;
+    const assessmentTriggerType = application.currentAssessment.triggerType;
 
     const disbursements =
       application.currentAssessment?.disbursementSchedules ?? [];
@@ -715,7 +726,7 @@ export class ApplicationStudentsController extends BaseController {
       ...this.applicationControllerService.transformToEnrolmentApplicationDetailsAPIOutDTO(
         application.currentAssessment.disbursementSchedules,
       ),
-      assessmentTriggerType: application.currentAssessment?.triggerType,
+      assessmentTriggerType: application.currentAssessment.triggerType,
     };
   }
 

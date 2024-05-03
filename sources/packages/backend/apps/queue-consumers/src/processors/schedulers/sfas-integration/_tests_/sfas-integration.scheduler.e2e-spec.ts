@@ -194,6 +194,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         where: {
           individualId: In([950000360, 950000361, 950000362]),
         },
+        order: { individualId: "ASC" },
       });
       expect(sfasPartTimeApplications.length).toBe(3);
       const [

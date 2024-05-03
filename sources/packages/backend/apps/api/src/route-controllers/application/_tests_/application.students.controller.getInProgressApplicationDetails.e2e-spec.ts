@@ -6,6 +6,7 @@ import {
   getStudentToken,
   getStudentByFakeStudentUserType,
   FakeStudentUsersTypes,
+  mockOutstandingAssessment,
 } from "../../../testHelpers";
 import {
   createFakeCRAIncomeVerification,
@@ -21,16 +22,21 @@ import {
   SupportingUserType,
 } from "@sims/sims-db";
 import { SuccessWaitingStatus } from "../models/application.dto";
+import { addDays, getISODateOnlyString } from "@sims/utilities";
+import { TestingModule } from "@nestjs/testing";
 
 describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () => {
   let app: INestApplication;
-  let student: Student;
   let db: E2EDataSources;
+  let appModule: TestingModule;
+  let student: Student;
 
   beforeAll(async () => {
-    const { nestApplication, dataSource } = await createTestingAppModule();
+    const { nestApplication, module, dataSource } =
+      await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    appModule = module;
     student = await getStudentByFakeStudentUserType(
       FakeStudentUsersTypes.FakeStudentUserType1,
       dataSource,
@@ -66,6 +72,9 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
     );
     await db.craIncomeVerification.save([studentCRAIncomeVerification]);
 
+    // Mock assessment service to return the saved student assessment.
+    await mockOutstandingAssessment(appModule, application.currentAssessment);
+
     const endpoint = `/students/application/${application.id}/in-progress`;
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -81,7 +90,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
         applicationStatus: application.applicationStatus,
         pirStatus: application.pirStatus,
         studentIncomeVerificationStatus: SuccessWaitingStatus.Success,
-        assessmentInCalculationStep: SuccessWaitingStatus.Success,
+        outstandingAssessmentStatus: SuccessWaitingStatus.Success,
       });
   });
 
@@ -138,6 +147,9 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
       parent2CRAIncomeVerification,
     ]);
 
+    // Mock assessment service to return the saved student assessment.
+    await mockOutstandingAssessment(appModule, application.currentAssessment);
+
     const endpoint = `/students/application/${application.id}/in-progress`;
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -157,7 +169,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
         parent2IncomeVerificationStatus: SuccessWaitingStatus.Success,
         parent1Info: SuccessWaitingStatus.Success,
         parent2Info: SuccessWaitingStatus.Success,
-        assessmentInCalculationStep: SuccessWaitingStatus.Success,
+        outstandingAssessmentStatus: SuccessWaitingStatus.Success,
       });
   });
 
@@ -198,6 +210,9 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
       partnerCRAIncomeVerification,
     ]);
 
+    // Mock assessment service to return the saved student assessment.
+    await mockOutstandingAssessment(appModule, application.currentAssessment);
+
     const endpoint = `/students/application/${application.id}/in-progress`;
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -215,23 +230,134 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
         studentIncomeVerificationStatus: SuccessWaitingStatus.Success,
         partnerIncomeVerificationStatus: SuccessWaitingStatus.Success,
         partnerInfo: SuccessWaitingStatus.Success,
-        assessmentInCalculationStep: SuccessWaitingStatus.Success,
+        outstandingAssessmentStatus: SuccessWaitingStatus.Success,
       });
   });
 
-  it("Should get application in-progress details when there is an in-progress student assessment that is not the current assessment.", async () => {
+  it("Should get application in-progress details when there is an in-progress student assessment for an offering with later study start date.", async () => {
     // Arrange
 
-    const application = await saveFakeApplication(db.dataSource, { student });
+    const currentApplication = await saveFakeApplication(db.dataSource, {
+      student,
+    });
 
-    const previousAssessment = createFakeStudentAssessment(
+    // Create a previous application with an offering whose study start date and end date are much later
+    // than the current offering ones.
+    const futureApplication = await saveFakeApplication(db.dataSource, {
+      student,
+    });
+    const futureOffering = await db.educationProgramOffering.findOne({
+      select: {
+        id: true,
+        studyStartDate: true,
+        studyEndDate: true,
+      },
+      where: {
+        id: futureApplication.currentAssessment.offeringId,
+      },
+    });
+    futureOffering.studyStartDate = getISODateOnlyString(addDays(60));
+    futureOffering.studyEndDate = getISODateOnlyString(addDays(90));
+    await db.educationProgramOffering.save(futureOffering);
+
+    // Create an in-progress student assessment for the previous offering.
+    const futureAssessment = createFakeStudentAssessment(
       {
-        auditUser: application.student.user,
-        application,
+        auditUser: futureApplication.student.user,
+        application: futureApplication,
+        offering: futureOffering,
       },
       {
         initialValue: {
-          calculationStartDate: new Date(),
+          calculationStartDate: addDays(70),
+          studentAssessmentStatus: StudentAssessmentStatus.InProgress,
+        },
+      },
+    );
+    await db.studentAssessment.save(futureAssessment);
+
+    // Create CRA income verifications for student.
+    const studentCRAIncomeVerification = createFakeCRAIncomeVerification(
+      {
+        application: currentApplication,
+      },
+      { initialValues: { dateReceived: new Date() } },
+    );
+    await db.craIncomeVerification.save([studentCRAIncomeVerification]);
+
+    // Mock assessment service to return the saved student assessment.
+    await mockOutstandingAssessment(
+      appModule,
+      currentApplication.currentAssessment,
+    );
+
+    const endpoint = `/students/application/${currentApplication.id}/in-progress`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act/Assert
+    // The current assessment is not blocked by the future assessment because it is assessed first and
+    // the offering study start date is earlier than the future offering.
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        id: currentApplication.id,
+        applicationStatus: currentApplication.applicationStatus,
+        pirStatus: currentApplication.pirStatus,
+        studentIncomeVerificationStatus: SuccessWaitingStatus.Success,
+        outstandingAssessmentStatus: SuccessWaitingStatus.Success,
+      });
+
+    // Change the Submitted and In-progress assessments to Completed to allow other test cases.
+    currentApplication.currentAssessment.studentAssessmentStatus =
+      StudentAssessmentStatus.Completed;
+    futureAssessment.studentAssessmentStatus =
+      StudentAssessmentStatus.Completed;
+    await db.studentAssessment.save([
+      currentApplication.currentAssessment,
+      futureAssessment,
+    ]);
+  });
+
+  it("Should get application in-progress details when there is an in-progress student assessment for an offering with earlier study start date.", async () => {
+    // Arrange
+
+    const currentApplication = await saveFakeApplication(db.dataSource, {
+      student,
+    });
+
+    // Create a previous application with an offering whose study start date and end date are much earlier
+    // than the current offering ones.
+    const previousApplication = await saveFakeApplication(db.dataSource, {
+      student,
+    });
+    const previousOffering = await db.educationProgramOffering.findOne({
+      select: {
+        id: true,
+        studyStartDate: true,
+        studyEndDate: true,
+      },
+      where: {
+        id: previousApplication.currentAssessment.offeringId,
+      },
+    });
+    previousOffering.studyStartDate = getISODateOnlyString(addDays(-60));
+    previousOffering.studyEndDate = getISODateOnlyString(addDays(-30));
+    await db.educationProgramOffering.save(previousOffering);
+
+    // Create an in-progress student assessment for the previous offering.
+    const previousAssessment = createFakeStudentAssessment(
+      {
+        auditUser: previousApplication.student.user,
+        application: previousApplication,
+        offering: previousOffering,
+      },
+      {
+        initialValue: {
+          calculationStartDate: addDays(-10),
           studentAssessmentStatus: StudentAssessmentStatus.InProgress,
         },
       },
@@ -241,34 +367,40 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
     // Create CRA income verifications for student.
     const studentCRAIncomeVerification = createFakeCRAIncomeVerification(
       {
-        application,
+        application: currentApplication,
       },
       { initialValues: { dateReceived: new Date() } },
     );
     await db.craIncomeVerification.save([studentCRAIncomeVerification]);
 
-    const endpoint = `/students/application/${application.id}/in-progress`;
+    const endpoint = `/students/application/${currentApplication.id}/in-progress`;
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
 
     // Act/Assert
+    // The current assessment is blocked by the previous assessment, so the outstanding assessment status is waiting.
     await request(app.getHttpServer())
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect({
-        id: application.id,
-        applicationStatus: application.applicationStatus,
-        pirStatus: application.pirStatus,
+        id: currentApplication.id,
+        applicationStatus: currentApplication.applicationStatus,
+        pirStatus: currentApplication.pirStatus,
         studentIncomeVerificationStatus: SuccessWaitingStatus.Success,
-        assessmentInCalculationStep: SuccessWaitingStatus.Waiting,
+        outstandingAssessmentStatus: SuccessWaitingStatus.Waiting,
       });
 
-    // Change the In-progress assessment to Completed to allow other test cases.
+    // Change the Submitted and In-progress assessments to Completed to allow other test cases.
+    currentApplication.currentAssessment.studentAssessmentStatus =
+      StudentAssessmentStatus.Completed;
     previousAssessment.studentAssessmentStatus =
       StudentAssessmentStatus.Completed;
-    await db.studentAssessment.save(previousAssessment);
+    await db.studentAssessment.save([
+      currentApplication.currentAssessment,
+      previousAssessment,
+    ]);
   });
 
   afterAll(async () => {

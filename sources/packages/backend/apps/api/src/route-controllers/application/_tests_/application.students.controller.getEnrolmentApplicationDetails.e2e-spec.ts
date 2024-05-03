@@ -33,23 +33,22 @@ describe("ApplicationStudentsController(e2e)-getEnrolmentApplicationDetails", ()
     );
   });
 
-  it("Should get application progress details when the current assessment trigger type is 'Related application changed'.", async () => {
+  it("Should get application enrolment details when the current assessment trigger type is 'Related application changed'.", async () => {
     // Arrange
 
     const application = await saveFakeApplicationDisbursements(
       db.dataSource,
       { student },
       {
-        applicationStatus: ApplicationStatus.Completed,
+        applicationStatus: ApplicationStatus.Enrolment,
         createSecondDisbursement: true,
+        currentAssessmentInitialValues: {
+          triggerType: AssessmentTriggerType.RelatedApplicationChanged,
+        },
       },
     );
     const [firstDisbursement, secondDisbursement] =
       application.currentAssessment.disbursementSchedules;
-
-    application.currentAssessment.triggerType =
-      AssessmentTriggerType.RelatedApplicationChanged;
-    await db.application.save(application);
 
     const endpoint = `/students/application/${application.id}/enrolment`;
     const token = await getStudentToken(

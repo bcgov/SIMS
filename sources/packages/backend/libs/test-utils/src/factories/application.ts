@@ -210,6 +210,9 @@ export async function saveFakeApplicationDisbursements(
   savedApplication.currentAssessment.studentAssessmentStatus =
     options?.currentAssessmentInitialValues?.studentAssessmentStatus ??
     savedApplication.currentAssessment.studentAssessmentStatus;
+  savedApplication.currentAssessment.triggerType =
+    options?.currentAssessmentInitialValues?.triggerType ??
+    savedApplication.currentAssessment.triggerType;
   savedApplication.currentAssessment = await studentAssessmentRepo.save(
     savedApplication.currentAssessment,
   );

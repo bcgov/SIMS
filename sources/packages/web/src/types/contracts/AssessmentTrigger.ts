@@ -51,4 +51,8 @@ export enum AssessmentTriggerType {
    * to be adjusted.
    */
   RelatedApplicationChanged = "Related application changed",
+  /**
+   * Triggered manually by a ministry user.
+   */
+  ManualReassessment = "Manual reassessment",
 }
