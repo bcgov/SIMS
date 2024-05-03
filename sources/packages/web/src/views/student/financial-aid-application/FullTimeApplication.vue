@@ -28,7 +28,7 @@
         </template>
       </header-navigator>
     </template>
-    <student-application
+    <StudentApplication
       :selectedForm="selectedForm"
       :initialData="initialData"
       :isReadOnly="isReadOnly"
@@ -40,7 +40,7 @@
       :processing="submittingApplication"
     />
   </student-page-container>
-  <confirm-edit-application
+  <ConfirmEditApplication
     ref="editApplicationModal"
     @confirmEditApplication="editApplication"
   />
