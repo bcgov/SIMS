@@ -14,13 +14,15 @@ import {
 } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
 
-export function createFakeEducationProgramOffering(relations?: {
-  auditUser: User;
-  program?: EducationProgram;
-  institution?: Institution;
-  institutionLocation?: InstitutionLocation;
-  isProgramActive?: boolean;
-}): EducationProgramOffering {
+export function createFakeEducationProgramOffering(
+  relations?: {
+    auditUser: User;
+    program?: EducationProgram;
+    institution?: Institution;
+    institutionLocation?: InstitutionLocation;
+  },
+  options?: { programInitialValues?: Partial<EducationProgram> },
+): EducationProgramOffering {
   // Case an institution location is provided already associated with
   // an institution ensure that the relationship will be kept and
   // another institution will not be generated.
@@ -39,7 +41,7 @@ export function createFakeEducationProgramOffering(relations?: {
     createFakeEducationProgram({
       institution,
       auditUser: relations.auditUser,
-      isActive: relations?.isProgramActive,
+      isActive: options?.programInitialValues.isActive,
     });
   offering.institutionLocation =
     relations?.institutionLocation ?? createFakeInstitutionLocation();

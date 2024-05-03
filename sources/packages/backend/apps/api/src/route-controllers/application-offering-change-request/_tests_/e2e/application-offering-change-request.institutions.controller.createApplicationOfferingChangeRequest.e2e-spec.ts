@@ -492,11 +492,13 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
     await db.application.save(application);
 
     // New offering with full time intensity.
-    const newOffering = createFakeEducationProgramOffering({
-      auditUser: savedUser,
-      isProgramActive: false,
-      institutionLocation: collegeFLocation,
-    });
+    const newOffering = createFakeEducationProgramOffering(
+      {
+        auditUser: savedUser,
+        institutionLocation: collegeFLocation,
+      },
+      { programInitialValues: { isActive: false } },
+    );
     // Updating study period, that belongs to the program year.
     newOffering.studyStartDate = addDays(
       5,
