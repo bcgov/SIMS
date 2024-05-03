@@ -37,6 +37,7 @@ import {
   ProgramInfoStatus,
 } from "@sims/sims-db";
 import {
+  EDUCATION_PROGRAM_IS_NOT_ACTIVE,
   OFFERING_DOES_NOT_BELONG_TO_LOCATION,
   OFFERING_INTENSITY_MISMATCH,
   OFFERING_PROGRAM_YEAR_MISMATCH,
@@ -250,6 +251,10 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
           case APPLICATION_NOT_FOUND:
             throw new NotFoundException(error.message);
           case STUDY_DATE_OVERLAP_ERROR:
+          case EDUCATION_PROGRAM_IS_NOT_ACTIVE:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
           case OFFERING_INTENSITY_MISMATCH:
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),
