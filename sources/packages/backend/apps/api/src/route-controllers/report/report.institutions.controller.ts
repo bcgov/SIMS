@@ -1,17 +1,5 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Post,
-  Res,
-  UnprocessableEntityException,
-} from "@nestjs/common";
-import {
-  ApiBadRequestResponse,
-  ApiTags,
-  ApiUnprocessableEntityResponse,
-} from "@nestjs/swagger";
-import { Response } from "express";
+import { BadRequestException, Body, Controller, Post } from "@nestjs/common";
+import { ApiBadRequestResponse, ApiTags } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
@@ -19,18 +7,9 @@ import {
 } from "../../auth/decorators";
 import { FormService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
-import { CustomNamedError } from "@sims/utilities";
 import BaseController from "../BaseController";
-import {
-  InstitutionReportsFilterAPIInDTO,
-  ReportsFilterAPIInDTO,
-} from "./models/report.dto";
+import { InstitutionReportsFilterAPIInDTO } from "./models/report.dto";
 import { FormNames } from "../../services/form/constants";
-import {
-  FILTER_PARAMS_MISMATCH,
-  ReportService,
-  REPORT_CONFIG_NOT_FOUND,
-} from "@sims/services";
 
 /**
  * Controller for Reports for Institution Client.
@@ -40,10 +19,7 @@ import {
 @Controller("report")
 @ApiTags(`${ClientTypeBaseRoute.Institution}-report`)
 export class ReportInstitutionsController extends BaseController {
-  constructor(
-    private readonly reportService: ReportService,
-    private readonly formService: FormService,
-  ) {
+  constructor(private readonly formService: FormService) {
     super();
   }
 

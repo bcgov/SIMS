@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Get,
-  NotFoundException,
-  Param,
-  ParseIntPipe,
-} from "@nestjs/common";
+import { Controller, Get, NotFoundException } from "@nestjs/common";
 import { ProgramYearService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
