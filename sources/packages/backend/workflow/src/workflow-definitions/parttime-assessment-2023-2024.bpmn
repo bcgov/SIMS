@@ -784,7 +784,7 @@ studentCalculatedTotalIncome</bpmn:text>
           <zeebe:output source="=calculatedDataStudentAddtionalTransportation.calculatedDataAdditionalTransportWeeks" target="calculatedDataAdditionalTransportWeeks" />
           <zeebe:output source="=calculatedDataStudentAddtionalTransportation.calculatedDataAdditionalTransportPlacement" target="calculatedDataAdditionalTransportPlacement" />
         </zeebe:ioMapping>
-        <zeebe:script expression="={&#10;  calculatedDataAdditionalTransportKm: (if calculatedDataAdditionalTransportKm = null then 0 else calculatedDataAdditionalTransportKm),&#10;  calculatedDataAdditionalTransportCost: (if calculatedDataAdditionalTransportCost = null then 0 else calculatedDataAdditionalTransportCost),&#10;  calculatedDataAdditionalTransportWeeks: (if calculatedDataAdditionalTransportWeeks = null then 0 else calculatedDataAdditionalTransportWeeks),&#10;  calculatedDataAdditionalTransportPlacement: (calculatedDataAdditionalTransportPlacement = &#34;yes&#34;)&#10;} &#10;  " resultVariable="calculatedDataStudentAddtionalTransportation" />
+        <zeebe:script expression="={&#10;  calculatedDataAdditionalTransportKm: calculatedDataAdditionalTransportKm,&#10;  calculatedDataAdditionalTransportCost: calculatedDataAdditionalTransportCost,&#10;  calculatedDataAdditionalTransportWeeks: calculatedDataAdditionalTransportWeeks,&#10;  calculatedDataAdditionalTransportPlacement: (calculatedDataAdditionalTransportPlacement = &#34;yes&#34;)&#10;} &#10;  " resultVariable="calculatedDataStudentAddtionalTransportation" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0btwcpj</bpmn:incoming>
       <bpmn:outgoing>Flow_13678dh</bpmn:outgoing>
@@ -801,9 +801,6 @@ studentCalculatedTotalIncome</bpmn:text>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_1mtcoea" name="Not eligible for additional transportation" sourceRef="Gateway_14myy0o" targetRef="Activity_032sxqf" />
     <bpmn:sequenceFlow id="Flow_1me1lzd" sourceRef="Activity_032sxqf" targetRef="Gateway_1ofk363" />
-    <bpmn:sequenceFlow id="Flow_0btwcpj" name="Eligible for additional transportation" sourceRef="Gateway_14myy0o" targetRef="Activity_1q1wdvs">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=calculatedDataEligibleForAnAdditionalTransportationAllowance = "yes"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_13678dh" sourceRef="Activity_1q1wdvs" targetRef="Gateway_1ofk363" />
     <bpmn:exclusiveGateway id="Gateway_03c2fh6">
       <bpmn:incoming>Flow_0s0yqph</bpmn:incoming>
@@ -1087,6 +1084,9 @@ studentCalculatedTotalIncome</bpmn:text>
       <bpmn:incoming>Flow_08xi7o2</bpmn:incoming>
       <bpmn:outgoing>Flow_1dkitnr</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_0btwcpj" name="Eligible for additional transportation" sourceRef="Gateway_14myy0o" targetRef="Activity_1q1wdvs">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=calculatedDataEligibleForAnAdditionalTransportationAllowance = "yes"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
   </bpmn:process>
   <bpmn:category id="Category_0appz4m">
     <bpmn:categoryValue id="CategoryValue_0m7wcdu" value="Appeals" />
