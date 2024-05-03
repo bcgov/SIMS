@@ -17,6 +17,8 @@ import { FormNames } from "../../services/form/constants";
  * This consists of all Rest APIs for reports.
  */
 @AllowAuthorizedParty(AuthorizedParties.institution)
+@IsBCPublicInstitution()
+@IsInstitutionAdmin()
 @Controller("report")
 @ApiTags(`${ClientTypeBaseRoute.Institution}-report`)
 export class ReportInstitutionsController extends BaseController {
@@ -32,8 +34,6 @@ export class ReportInstitutionsController extends BaseController {
   @ApiBadRequestResponse({
     description: "Not able to export report due to an invalid request.",
   })
-  @IsBCPublicInstitution()
-  @IsInstitutionAdmin()
   @Post()
   async exportReport(
     @Body() payload: InstitutionReportsFilterAPIInDTO,
