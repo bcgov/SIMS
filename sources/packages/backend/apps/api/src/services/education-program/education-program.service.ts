@@ -118,21 +118,16 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   }
 
   /**
-   * Get the Education Program of an Application.
-   * if the Education Program is not active
-   *  return null
-   * else
-   *  return the Education Program row.
-   * @param educationProgramId Selected Form ProgramYear of the application.
+   * Check if education program is active.
+   * @param educationProgramId program id.
    */
-  async getActiveEducationProgram(
-    educationProgramId: number,
-  ): Promise<EducationProgram> {
-    return this.repo
-      .createQueryBuilder("programs")
-      .where("programs.is_active = true")
-      .andWhere("programs.id  = :educationProgramId", { educationProgramId })
-      .getOne();
+  async isProgramActive(educationProgramId: number): Promise<boolean> {
+    return this.repo.exists({
+      where: {
+        id: educationProgramId,
+        isActive: true,
+      },
+    });
   }
 
   /**

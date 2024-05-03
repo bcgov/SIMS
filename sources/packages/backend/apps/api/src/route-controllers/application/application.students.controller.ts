@@ -178,34 +178,37 @@ export class ApplicationStudentsController extends BaseController {
       throw new UnprocessableEntityException("Invalid offering intensity.");
     }
     if (payload.data.selectedProgram) {
-      const educationProgram =
-        await this.educationProgramService.getActiveEducationProgram(
+      const isProgramActive =
+        await this.educationProgramService.isProgramActive(
           payload.data.selectedProgram,
         );
-      if (!educationProgram) {
+      if (!isProgramActive) {
         throw new UnprocessableEntityException(
           "Education Program is not active. Not able to submit application due to invalid request.",
         );
       }
     }
+
     // studyStartDate from payload is set as studyStartDate
     let studyStartDate = payload.data.studystartDate;
     let studyEndDate = payload.data.studyendDate;
     if (payload.data.selectedOffering) {
       const offering = await this.offeringService.getOfferingById(
         payload.data.selectedOffering,
+        payload.data.selectedProgram,
       );
+      if (!offering) {
+        throw new UnprocessableEntityException(
+          "Selected offering id is invalid.",
+        );
+      }
       if (
         !isFulltimeAllowed &&
         offering.offeringIntensity === OfferingIntensity.fullTime
       ) {
         throw new UnprocessableEntityException("Invalid offering intensity.");
       }
-      if (!offering) {
-        throw new UnprocessableEntityException(
-          "Selected offering id is invalid.",
-        );
-      }
+
       // if  studyStartDate is not in payload
       // then selectedOffering will be there in payload,
       // then study start date taken from offering

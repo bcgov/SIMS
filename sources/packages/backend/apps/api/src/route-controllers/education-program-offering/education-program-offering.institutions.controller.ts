@@ -71,6 +71,7 @@ import {
   OFFERING_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   OFFERING_VALIDATION_CRITICAL_ERROR,
   OFFERING_VALIDATION_CSV_PARSE_ERROR,
+  EDUCATION_PROGRAM_IS_NOT_ACTIVE,
 } from "../../constants";
 import { OfferingCSVModel } from "../../services/education-program-offering/education-program-offering-import-csv.models";
 import { Request } from "express";
@@ -197,6 +198,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
           case OFFERING_VALIDATION_CRITICAL_ERROR:
             throw new BadRequestException(error.objectInfo, error.message);
           case OFFERING_SAVE_UNIQUE_ERROR:
+          case EDUCATION_PROGRAM_IS_NOT_ACTIVE:
             throw new UnprocessableEntityException(error.message);
         }
       }
@@ -262,6 +264,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
         switch (error.name) {
           case OFFERING_INVALID_OPERATION_IN_THE_CURRENT_STATE:
           case OFFERING_SAVE_UNIQUE_ERROR:
+          case EDUCATION_PROGRAM_IS_NOT_ACTIVE:
             throw new UnprocessableEntityException(error.message);
           case OFFERING_VALIDATION_CRITICAL_ERROR:
             throw new BadRequestException(error.objectInfo, error.message);

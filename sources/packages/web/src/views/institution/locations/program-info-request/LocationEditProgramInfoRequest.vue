@@ -29,7 +29,7 @@
 <script lang="ts">
 import { RouteLocationRaw, useRouter } from "vue-router";
 import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
-import { ref, defineComponent } from "vue";
+import { ref, defineComponent, computed } from "vue";
 import {
   useFormioUtils,
   useFormioDropdownLoader,
@@ -89,6 +89,13 @@ export default defineComponent({
     const SELECTED_OFFERING_END_DATE_KEY = "selectedOfferingEndDate";
     const DENY_PIR_KEY = "denyProgramInformationRequest";
 
+    // Defining readonly based on PIR status.
+    const isReadOnly = computed(() =>
+      ["submitted", "completed", "declined"].includes(
+        programRequestData?.value?.pirStatus?.toLowerCase(),
+      ),
+    );
+
     const loadOfferingsForProgram = async (form: any) => {
       selectedProgramId = formioUtils.getComponentValueByKey(
         form,
@@ -142,12 +149,7 @@ export default defineComponent({
 
       // While loading a PIR that is in the some readonly status
       // the editable area of the form should be disabled.
-      const readonlyStatus = ["submitted", "completed", "declined"];
-      if (
-        readonlyStatus.includes(
-          programRequestData.value.pirStatus.toLowerCase(),
-        )
-      ) {
+      if (isReadOnly.value) {
         const institutionEnteredDetails = formioUtils.getComponent(
           form,
           INSTITUTION_DETAILS_PANEL,
@@ -158,6 +160,7 @@ export default defineComponent({
       await formioDataLoader.loadProgramsForInstitution(
         form,
         PROGRAMS_DROPDOWN_KEY,
+        { isIncludeInActiveProgram: isReadOnly.value },
       );
 
       await loadOfferingsForProgram(form);

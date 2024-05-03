@@ -111,11 +111,14 @@ export function useFormioDropdownLoader() {
   const loadProgramsForInstitution = async (
     form: any,
     dropdownName: string,
+    options: { isIncludeInActiveProgram?: boolean },
   ) => {
     return loadDropdown(
       form,
       dropdownName,
-      EducationProgramService.shared.getProgramsListForInstitutions(true),
+      EducationProgramService.shared.getProgramsListForInstitutions(
+        options?.isIncludeInActiveProgram,
+      ),
     );
   };
 

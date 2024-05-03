@@ -1678,7 +1678,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     }
 
     // Validates if the Program is active.
-    if (!offering.educationProgram?.isActive) {
+    if (!offering.educationProgram.isActive) {
       throw new CustomNamedError(
         "The education program is not active.",
         EDUCATION_PROGRAM_IS_NOT_ACTIVE,

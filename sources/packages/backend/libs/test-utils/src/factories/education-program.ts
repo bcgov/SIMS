@@ -13,7 +13,7 @@ export function createFakeEducationProgram(
     auditUser: User;
     institution?: Institution;
   },
-  options?: { isActive?: boolean },
+  options?: { programInitialValues?: Partial<EducationProgram> },
 ): EducationProgram {
   const program = new EducationProgram();
   program.name = faker.name.jobArea();
@@ -38,6 +38,6 @@ export function createFakeEducationProgram(
   program.institution = relations?.institution ?? createFakeInstitution();
   program.programIntensity = ProgramIntensity.fullTime;
   program.submittedBy = relations?.auditUser;
-  program.isActive = options?.isActive ?? true;
+  program.isActive = options?.programInitialValues?.isActive ?? true;
   return program;
 }
