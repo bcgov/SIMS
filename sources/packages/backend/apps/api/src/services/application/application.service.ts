@@ -1678,12 +1678,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     }
 
     // Validates if the Program is active.
-    const program =
-      await this.educationProgramService.getActiveEducationProgram(
-        offering.educationProgram.id,
-      );
-
-    if (!program) {
+    if (!offering.educationProgram?.isActive) {
       throw new CustomNamedError(
         "The education program is not active.",
         EDUCATION_PROGRAM_IS_NOT_ACTIVE,
