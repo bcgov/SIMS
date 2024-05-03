@@ -189,14 +189,6 @@ export function useFormioDropdownLoader() {
     );
   };
 
-  const loadReportTypes = async (
-    form: any,
-    dropdownName: string,
-    reportList: OptionItemAPIOutDTO[],
-  ): Promise<void> => {
-    loadDropdown(form, dropdownName, reportList);
-  };
-
   return {
     loadLocations,
     loadProgramsForLocation,
@@ -207,6 +199,6 @@ export function useFormioDropdownLoader() {
     loadPIRDeniedReasonList,
     loadProgramYear,
     loadProgramIntensityDetails,
-    loadReportTypes,
+    loadDropdown,
   };
 }

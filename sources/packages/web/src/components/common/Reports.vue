@@ -1,27 +1,23 @@
 <template>
-  <body-header-container
-    ><template #header>
-      <body-header title="Export reports" />
-    </template>
-    <formio
-      formName="exportfinancialreports"
-      @loaded="formLoaded"
-      @submitted="exportReport"
-    ></formio>
-    <v-row class="justify-center m-4">
-      <check-permission-role :role="Role.AESTReports">
-        <template #="{ notAllowed }">
-          <v-btn
-            color="primary"
-            @click="submitForm"
-            :disabled="notAllowed"
-            :loading="loading"
-            >Export CSV file</v-btn
-          >
-        </template>
-      </check-permission-role>
-    </v-row>
-  </body-header-container>
+  <body-header title="Export reports" />
+  <formio
+    formName="exportfinancialreports"
+    @loaded="formLoaded"
+    @submitted="exportReport"
+  ></formio>
+  <v-row class="justify-center m-4">
+    <check-permission-role :role="Role.AESTReports">
+      <template #="{ notAllowed }">
+        <v-btn
+          color="primary"
+          @click="submitForm"
+          :disabled="notAllowed"
+          :loading="loading"
+          >Export CSV file</v-btn
+        >
+      </template>
+    </check-permission-role>
+  </v-row>
 </template>
 
 <script lang="ts">
@@ -43,7 +39,6 @@ export default defineComponent({
     CheckPermissionRole,
   },
   props: {
-    title: { type: String, required: true },
     reportList: { type: Array<OptionItemAPIOutDTO>, required: true },
   },
   setup(props) {
@@ -55,23 +50,23 @@ export default defineComponent({
     let formData: FormIOForm;
     const formLoaded = async (form: FormIOForm) => {
       formData = form;
-      await formioDataLoader.loadReportTypes(
+      await formioDataLoader.loadDropdown(
         formData,
         REPORT_TYPE_DROPDOWN_KEY,
         props.reportList,
       );
     };
     const submitForm = () => {
-      loading.value = true;
-      const submittedForm = formData.submit();
-      loading.value = false;
-      return submittedForm;
+      formData.submit();
     };
     const exportReport = async (data: ReportsFilterAPIInDTO) => {
       try {
+        loading.value = true;
         await downloadReports(data);
       } catch {
         snackBar.error("Unexpected error while downloading the report.");
+      } finally {
+        loading.value = false;
       }
     };
     return { exportReport, formLoaded, submitForm, Role, loading };

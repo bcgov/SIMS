@@ -3,7 +3,7 @@
     <template #header
       ><header-navigator title="Ministry" subTitle="Reports" />
     </template>
-    <Reports title="Ministry" :reportList="reportList" />
+    <reports :report-list="reportList" />
   </full-page-container>
 </template>
 
