@@ -35,7 +35,6 @@ export class EducationProgramControllerService {
   constructor(
     private readonly programService: EducationProgramService,
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
-    private readonly educationProgramService: EducationProgramService,
     private readonly formService: FormService,
     private readonly institutionService: InstitutionService,
   ) {}
@@ -99,6 +98,7 @@ export class EducationProgramControllerService {
       await this.institutionService.getInstitutionTypeById(institutionId);
     payload.isBCPrivate = institutionType.isBCPrivate;
     payload.isBCPublic = institutionType.isBCPublic;
+
     const submissionResult =
       await this.formService.dryRunSubmission<SaveEducationProgram>(
         FormNames.EducationProgram,
