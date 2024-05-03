@@ -214,7 +214,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataAdditionalTransportKm: number;
   calculatedDataAdditionalTransportCost: number;
   calculatedDataAdditionalTransportWeeks: number;
-  calculatedDataAdditionalTransportPlacement: "yes" | "no";
+  calculatedDataAdditionalTransportPlacement: YesNoOptions;
   offeringWeeks: number;
   calculatedDataTotalTutionCost: number;
   calculatedDataDaycareCosts11YearsOrUnder: number;
