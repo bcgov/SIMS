@@ -20,7 +20,7 @@ export interface ApplicationOfferingChangeSummaryAPIOutDTO {
 export interface ApplicationOfferingChangeSummaryDetailAPIOutDTO {
   applicationNumber: string;
   programId: number;
-  programIsActive: boolean;
+  isProgramActive: boolean;
   offeringId: number;
   offeringIntensity: OfferingIntensity;
   programYearId: number;

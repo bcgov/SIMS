@@ -139,7 +139,7 @@ export default defineComponent({
       activeOfferingId.value = application.offeringId;
       programs.value =
         await EducationProgramService.shared.getProgramsListForInstitutions();
-      if (application.programIsActive) {
+      if (application.isProgramActive) {
         selectedProgram.value = application.programId;
       }
       await selectedProgramChanged();

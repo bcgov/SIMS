@@ -136,7 +136,7 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
     return {
       applicationNumber: application.applicationNumber,
       programId: application.currentAssessment.offering.educationProgram.id,
-      programIsActive:
+      isProgramActive:
         application.currentAssessment.offering.educationProgram.isActive,
       offeringId: application.currentAssessment.offering.id,
       offeringIntensity:
