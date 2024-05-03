@@ -41,6 +41,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-addition
 
       // Assert
       expect(
+        calculatedAssessment.variables
+          .calculatedDataEligibleForAnAdditionalTransportationAllowance,
+      ).toBe("yes");
+      expect(
         calculatedAssessment.variables.calculatedDataAdditionalTransportKm,
       ).toBe(12);
       expect(
@@ -85,6 +89,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-addition
 
       // Assert
       expect(
+        calculatedAssessment.variables
+          .calculatedDataEligibleForAnAdditionalTransportationAllowance,
+      ).toBe("no");
+      expect(
         calculatedAssessment.variables.calculatedDataAdditionalTransportKm,
       ).toBe(0);
       expect(
@@ -124,6 +132,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-addition
         );
 
       // Assert
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataEligibleForAnAdditionalTransportationAllowance,
+      ).toBe("yes");
       expect(
         calculatedAssessment.variables.calculatedDataAdditionalTransportKm,
       ).toBe(30);

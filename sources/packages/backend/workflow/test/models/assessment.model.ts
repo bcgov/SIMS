@@ -211,10 +211,11 @@ export interface AssessmentModel {
 }
 
 export interface CalculatedAssessmentModel {
+  calculatedDataEligibleForAnAdditionalTransportationAllowance: YesNoOptions;
   calculatedDataAdditionalTransportKm: number;
   calculatedDataAdditionalTransportCost: number;
   calculatedDataAdditionalTransportWeeks: number;
-  calculatedDataAdditionalTransportPlacement: YesNoOptions;
+  calculatedDataAdditionalTransportPlacement: boolean;
   offeringWeeks: number;
   calculatedDataTotalTutionCost: number;
   calculatedDataDaycareCosts11YearsOrUnder: number;
