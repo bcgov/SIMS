@@ -160,7 +160,7 @@ export class EducationProgramInstitutionsController extends BaseController {
   ): Promise<OptionItemAPIOutDTO[]> {
     const programs = await this.programService.getPrograms(
       userToken.authorizations.institutionId,
-      isIncludeInActiveProgram,
+      { isIncludeInActiveProgram },
     );
     return programs.map((program) => ({
       id: program.id,
