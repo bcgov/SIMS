@@ -111,6 +111,9 @@ export class ApplicationControllerService {
         if (!selectedProgram.isActive) {
           data.selectedProgram = null;
         }
+        if (selectedProgram.programStatus !== ProgramStatus.Approved) {
+          data.selectedProgram = null;
+        }
         // Assign program name for readonly form.
         additionalFormData.selectedProgramName = selectedProgram.name;
         // Program details.
@@ -127,9 +130,6 @@ export class ApplicationControllerService {
           id: selectedProgram.id,
           name: selectedProgram.name,
         };
-        if (selectedProgram.programStatus !== ProgramStatus.Approved) {
-          data.selectedProgram = null;
-        }
       } else {
         data.selectedProgram = null;
       }

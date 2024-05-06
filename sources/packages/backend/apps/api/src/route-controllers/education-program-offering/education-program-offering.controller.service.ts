@@ -173,10 +173,8 @@ export class EducationProgramOfferingControllerService {
     }
     if (!program.isActive) {
       throw new UnprocessableEntityException(
-        new ApiProcessError(
-          "The education program is not active.",
-          EDUCATION_PROGRAM_IS_NOT_ACTIVE,
-        ),
+        "The education program is not active.",
+        EDUCATION_PROGRAM_IS_NOT_ACTIVE,
       );
     }
     // Get institution location details.

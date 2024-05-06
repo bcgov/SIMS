@@ -436,13 +436,14 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   /**
    * Get programs for a particular institution.
    * @param institutionId id of the institution.
-   * @param isIncludeInActiveProgram if true, only education programs with active
-   * are considered else both active and inactive programs are considered.
+   * @param options method options:
+   * - `isIncludeInActiveProgram`: if isIncludeInActiveProgram, then both active
+   * and not active education program is considered.
    * @returns programs under the specified institution.
    */
   async getPrograms(
     institutionId: number,
-    isIncludeInActiveProgram?: boolean,
+    options?: { isIncludeInActiveProgram?: boolean },
   ): Promise<Partial<EducationProgram>[]> {
     const query = this.repo
       .createQueryBuilder("programs")
@@ -451,7 +452,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         programStatus: ProgramStatus.Approved,
       })
       .andWhere("programs.institution.id = :institutionId", { institutionId });
-    if (!isIncludeInActiveProgram) {
+    if (!options?.isIncludeInActiveProgram) {
       query.andWhere("programs.isActive = true");
     }
     return query.orderBy("programs.name").getMany();

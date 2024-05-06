@@ -146,16 +146,15 @@ export class EducationProgramService {
 
   /**
    * Get a key/value pair list of all approved programs.
-   * @param isIncludeInActiveProgram isIncludeInActiveProgram, if isIncludeInActiveProgram, then both active
+   * @param options method options:
+   * - `isIncludeInActiveProgram`: if isIncludeInActiveProgram, then both active
    * and not active education program is considered.
    * @returns key/value pair list of all approved programs.
    */
-  async getProgramsListForInstitutions(
-    isIncludeInActiveProgram?: boolean,
-  ): Promise<OptionItemAPIOutDTO[]> {
-    return ApiClient.EducationProgram.getProgramsListForInstitutions(
-      isIncludeInActiveProgram,
-    );
+  async getProgramsListForInstitutions(options?: {
+    isIncludeInActiveProgram?: boolean;
+  }): Promise<OptionItemAPIOutDTO[]> {
+    return ApiClient.EducationProgram.getProgramsListForInstitutions(options);
   }
 
   /**

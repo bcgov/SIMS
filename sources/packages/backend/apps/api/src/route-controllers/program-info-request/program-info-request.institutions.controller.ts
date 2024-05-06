@@ -251,12 +251,12 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
           case APPLICATION_NOT_FOUND:
             throw new NotFoundException(error.message);
           case STUDY_DATE_OVERLAP_ERROR:
-          case EDUCATION_PROGRAM_IS_NOT_ACTIVE:
           case OFFERING_INTENSITY_MISMATCH:
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),
             );
           case OFFERING_PROGRAM_YEAR_MISMATCH:
+          case EDUCATION_PROGRAM_IS_NOT_ACTIVE:
             throw new UnprocessableEntityException(error.message);
           case OFFERING_DOES_NOT_BELONG_TO_LOCATION:
             throw new UnauthorizedException(error.message);

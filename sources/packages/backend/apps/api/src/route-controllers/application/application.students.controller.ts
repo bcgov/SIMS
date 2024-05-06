@@ -151,8 +151,7 @@ export class ApplicationStudentsController extends BaseController {
    * @param programYear program year of the submitted application.
    */
   private async validateSubmitApplicationData(
-    @Body() payload: SaveApplicationAPIInDTO,
-    @Param() programYear: ProgramYear,
+    payload: SaveApplicationAPIInDTO,
   ): Promise<void> {
     const isFulltimeAllowed = this.configService.isFulltimeAllowed;
 
@@ -164,11 +163,6 @@ export class ApplicationStudentsController extends BaseController {
       )
     ) {
       throw new BadRequestException("Offering intensity type is invalid.");
-    }
-    if (!programYear) {
-      throw new UnprocessableEntityException(
-        "Program Year is not active. Not able to create an application invalid request.",
-      );
     }
     if (
       !isFulltimeAllowed &&
@@ -184,7 +178,7 @@ export class ApplicationStudentsController extends BaseController {
         );
       if (!isProgramActive) {
         throw new UnprocessableEntityException(
-          "Education Program is not active. Not able to submit application due to invalid request.",
+          "Education Program not found or is not active. Not able to submit application due to invalid request.",
         );
       }
     }
@@ -261,9 +255,13 @@ export class ApplicationStudentsController extends BaseController {
     const programYear = await this.programYearService.getActiveProgramYear(
       payload.programYearId,
     );
-
+    if (!programYear) {
+      throw new UnprocessableEntityException(
+        "Program Year is not active. Not able to create an application invalid request.",
+      );
+    }
     // Validate the values in the submitted application before submitting.
-    await this.validateSubmitApplicationData(payload, programYear);
+    await this.validateSubmitApplicationData(payload);
 
     const submissionResult =
       await this.formService.dryRunSubmission<ApplicationData>(

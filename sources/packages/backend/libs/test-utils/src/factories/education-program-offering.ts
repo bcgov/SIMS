@@ -44,7 +44,7 @@ export function createFakeEducationProgramOffering(
         auditUser: relations.auditUser,
       },
       {
-        programInitialValues: options?.programInitialValues,
+        initialValues: options?.programInitialValues,
       },
     );
   offering.institutionLocation =
