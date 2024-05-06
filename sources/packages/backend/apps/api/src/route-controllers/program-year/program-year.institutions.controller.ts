@@ -1,5 +1,4 @@
-import { Controller, Get, NotFoundException } from "@nestjs/common";
-import { ProgramYearService } from "../../services";
+import { Controller, Get } from "@nestjs/common";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.decorator";

@@ -1,6 +1,6 @@
 import { JsonMaxSize } from "../../../utilities/class-validation";
-import { Allow, IsEnum, IsNumber, MaxLength } from "class-validator";
-import { JSON_10KB, REPORT_NAME_MAX_LENGTH } from "../../../constants";
+import { Allow, IsEnum } from "class-validator";
+import { JSON_10KB } from "../../../constants";
 
 /**
  * Filter param dynamic json.
