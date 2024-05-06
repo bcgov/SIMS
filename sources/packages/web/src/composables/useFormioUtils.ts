@@ -58,6 +58,8 @@ export function useFormioUtils() {
    * stored along the recursive iterations.
    * @param matchCondition match condition to include
    * a component in the results.
+   * @param options related options.
+   * - `stopOnFirstMatch` stop the recursive search as soon as the first match is found.
    */
   const internalRecursiveSearch = (
     components: any[],
@@ -97,6 +99,8 @@ export function useFormioUtils() {
    * a component in the results.
    * @returns all the components that matches the
    * matchCondition function.
+   * @param options related options.
+   * - `stopOnFirstMatch` stop the recursive search as soon as the first match is found.
    */
   const recursiveSearch = (
     form: any,

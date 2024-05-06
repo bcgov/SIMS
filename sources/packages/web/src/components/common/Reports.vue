@@ -47,7 +47,7 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const { downloadReports } = useFileUtils();
     const formioDataLoader = useFormioDropdownLoader();
-    const formioUtils = useFormioUtils();
+    const { getFirstComponent } = useFormioUtils();
     const REPORT_TYPE_DROPDOWN_KEY = "reportName";
     const loading = ref(false);
     const PROGRAM_YEAR_DROPDOWN_KEY = "programYear";
@@ -63,7 +63,7 @@ export default defineComponent({
     const formChanged = async (form: FormIOForm, event: FormIOChangeEvent) => {
       // Populates the program year select component if required.
       if (event.changed?.component.key === REPORT_TYPE_DROPDOWN_KEY) {
-        const programYearSelect = formioUtils.getFirstComponent(
+        const programYearSelect = getFirstComponent(
           form,
           PROGRAM_YEAR_DROPDOWN_KEY,
         );
