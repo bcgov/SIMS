@@ -198,51 +198,13 @@ export class StudentService extends RecordDataModelService<Student> {
 
     // If sfasIndividual wasn't found, check for a partial match
     if (!sfasIndividual) {
-      let partialMatch: SFASIndividual;
-      try {
-        partialMatch =
-          await this.sfasIndividualService.getIndividualStudentPartialMatch(
-            user.lastName,
-            student.birthDate,
-            studentSIN,
-          );
-
-        if (partialMatch) {
-          // Send out a notification of a partial match for the student information.
-          let matches = "";
-          if (
-            user.lastName === partialMatch.lastName &&
-            student.birthDate === partialMatch.birthDate
-          ) {
-            matches = "Last name and birth date match.";
-          } else if (
-            user.lastName === partialMatch.lastName &&
-            studentSIN === partialMatch.sin
-          ) {
-            matches = "Last name and SIN match.";
-          } else if (
-            studentSIN === partialMatch.sin &&
-            student.birthDate === partialMatch.birthDate
-          ) {
-            matches = "Birth date and SIN match.";
-          }
-          await this.notificationActionsService.savePartialStudentMatchNotification(
-            {
-              givenNames: student.user.firstName,
-              lastName: student.user.lastName,
-              birthDate: new Date(student.birthDate),
-              matches: matches,
-              studentEmail: student.user.email,
-              matchTime: new Date(),
-            },
-            auditUserId,
-            externalEntityManager,
-          );
-        }
-      } catch (error) {
-        this.logger.error(error);
-        throw error;
-      }
+      this.getStudentPartialMatch(
+        user,
+        student,
+        studentSIN,
+        auditUserId,
+        externalEntityManager,
+      );
     }
 
     return this.dataSource.transaction(async (localEntityManager) => {
@@ -368,6 +330,70 @@ export class StudentService extends RecordDataModelService<Student> {
     }
 
     return null;
+  }
+
+  /**
+   * Check for a partial match for a student in SFAS.
+   * @param user user to be matched against.
+   * @param student student to be matched against.
+   * @param studentSIN sin to be matched against.
+   * @param auditUserId audit user for the notification.
+   * @param externalEntityManager entityManager to be used to perform the query.
+   */
+  private async getStudentPartialMatch(
+    user: User,
+    student: Student,
+    studentSIN: string,
+    auditUserId: number,
+    externalEntityManager: EntityManager,
+  ) {
+    let partialMatch: SFASIndividual;
+    try {
+      partialMatch =
+        await this.sfasIndividualService.getIndividualStudentPartialMatch(
+          user.lastName,
+          student.birthDate,
+          studentSIN,
+        );
+
+      if (partialMatch) {
+        // Send out a notification of a partial match for the student information.
+        let matches = "";
+        if (
+          user.lastName.toLocaleLowerCase() ===
+            partialMatch.lastName.toLocaleLowerCase() &&
+          student.birthDate === partialMatch.birthDate
+        ) {
+          matches = "Last name and birth date match.";
+        } else if (
+          user.lastName.toLocaleLowerCase() ===
+            partialMatch.lastName.toLocaleLowerCase() &&
+          studentSIN === partialMatch.sin
+        ) {
+          matches = "Last name and SIN match.";
+        } else if (
+          studentSIN === partialMatch.sin &&
+          student.birthDate === partialMatch.birthDate
+        ) {
+          matches = "Birth date and SIN match.";
+        }
+        await this.notificationActionsService.savePartialStudentMatchNotification(
+          {
+            givenNames: student.user.firstName,
+            lastName: student.user.lastName,
+            birthDate: new Date(student.birthDate),
+            matches: matches,
+            studentEmail: student.user.email,
+            matchTime: new Date(),
+          },
+          auditUserId,
+          externalEntityManager,
+        );
+      }
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
   }
 
   /**

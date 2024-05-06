@@ -54,7 +54,7 @@ export class SFASIndividualService {
     birthDate: string,
     sin: string,
   ): Promise<SFASIndividual> {
-    const individual = await this.sfasIndividualRepo
+    return this.sfasIndividualRepo
       .createQueryBuilder("individual")
       .select([
         "individual.id",
@@ -85,8 +85,6 @@ export class SFASIndividualService {
         }),
       )
       .getOne();
-
-    return individual;
   }
 
   /**

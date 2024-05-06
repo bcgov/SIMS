@@ -6,7 +6,7 @@ import { StudentAccountApplication, User } from "@sims/sims-db";
  * - `user` student that requested an account creation. It must be persisted already to database.
  * - `assessedBy` ministry user that approved or denied the student account application. It must be persisted already to database.
  * @param options options:
- * - `initialValue` values to be used instead of the default ones.
+ * - `initialValues` values to be used instead of the default ones.
  * @returns a fake student account application ready to be persisted.
  */
 export function createFakeStudentAccountApplication(
