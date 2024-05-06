@@ -29,12 +29,12 @@
 import { ref, defineComponent } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { MenuItemModel } from "@/types";
-import { useInstitutionState } from "@/composables";
+import { useInstitutionAuth } from "@/composables";
 
 export default defineComponent({
   components: {},
   setup() {
-    const { institutionState } = useInstitutionState();
+    const { isBCPublic } = useInstitutionAuth();
     const items = ref<MenuItemModel[]>([
       {
         title: "Manage Profile",
@@ -84,13 +84,22 @@ export default defineComponent({
         },
       },
     ]);
-    if (institutionState.value.isBCPublic) {
+    if (isBCPublic.value) {
       sidebarBottomItems.value.push({
         title: "Withdrawal Upload",
         props: {
           prependIcon: "fa:fa-solid fa-upload",
           to: {
             name: InstitutionRoutesConst.WITHDRAWAL_UPLOAD,
+          },
+        },
+      });
+      sidebarBottomItems.value.push({
+        title: "Reports",
+        props: {
+          prependIcon: "fa:fa-regular fa-copy",
+          to: {
+            name: InstitutionRoutesConst.REPORTS,
           },
         },
       });

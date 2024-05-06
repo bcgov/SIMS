@@ -23,6 +23,7 @@ import {
   COEStatus,
   DisbursementScheduleStatus,
   InstitutionLocation,
+  OfferingIntensity,
   RelationshipStatus,
   RestrictionActionType,
 } from "@sims/sims-db";
@@ -522,9 +523,19 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     const [errorCode] = FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS;
     const [disbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
+    // Assign a full-time e-Cert feedback error for the expected error code.
+    const eCertFeedbackError = await db.eCertFeedbackError.findOne({
+      select: { id: true },
+      where: { errorCode, offeringIntensity: OfferingIntensity.fullTime },
+    });
     const feedbackError = createFakeDisbursementFeedbackError(
-      { disbursementSchedule },
-      { initialValues: { errorCode, updatedAt: dateUtils.addDays(-1) } },
+      { disbursementSchedule, eCertFeedbackError },
+      {
+        initialValues: {
+          errorCode,
+          updatedAt: dateUtils.addDays(-1),
+        },
+      },
     );
     await db.disbursementFeedbackErrors.save(feedbackError);
     // Queued job.

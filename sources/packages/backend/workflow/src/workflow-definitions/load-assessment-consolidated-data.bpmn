@@ -88,6 +88,7 @@
           <zeebe:header key="appealsPartnerIncomeAppealData" value="$.appeals.partnerIncomeAppeal.submittedData" />
           <zeebe:header key="appealsStudentDisabilityAppealData" value="$.appeals.studentDisabilityAppeal.submittedData" />
           <zeebe:header key="appealsStudentFinancialInformationAppealData" value="$.appeals.studentFinancialInformationAppeal.submittedData" />
+          <zeebe:header key="appealsStudentAdditionalTransportationAppealData" value="$.appeals.studentAdditionalTransportationAppeal.submittedData" />
           <zeebe:header key="offeringCourseLoad" value="$.offering.courseLoad" />
           <zeebe:header key="offeringWeeks" value="$.offering.studyBreaks.totalFundedWeeks" />
           <zeebe:header key="studentDataDependants" value="$.data.dependants[*][&#39;dateOfBirth&#39;,&#39;declaredOnTaxes&#39;,&#39;attendingPostSecondarySchool&#39;]" />
@@ -102,6 +103,7 @@
           <zeebe:header key="studentDataStudentParentNetContribution" value="$.data.studentParentNetContribution" />
           <zeebe:header key="studentDataPartnerTotalIncomeAssistance" value="$.data.partnertotalincomeAssistance" />
           <zeebe:header key="studentDataPartTimeAwardTypesToBeConsidered" value="$.data.partTimeAwardTypesToBeConsidered" />
+          <zeebe:header key="studentDataEligibleForAnAdditionalTransportationAllowance" value="$.data.eligibleForAnAdditionalTransportationAllowance" />
           <zeebe:header key="studentDataAdditionalTransportKm" value="$.data.additionalTransportKm" />
           <zeebe:header key="studentDataAdditionalTransportCost" value="$.data.additionalTransportCost" />
           <zeebe:header key="studentDataAdditionalTransportWeeks" value="$.data.additionalTransportWeeks" />

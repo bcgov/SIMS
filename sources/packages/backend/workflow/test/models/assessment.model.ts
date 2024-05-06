@@ -18,6 +18,21 @@ export interface StudentFinancialInformationAppealData extends JSONDoc {
   daycareCosts11YearsOrUnder?: number;
 }
 
+export enum TransportationCostSituation {
+  NoLimit = "noLimit",
+  EducationPlacement = "educationPlacement",
+  Special = "special",
+}
+
+export interface StudentAdditionalTransportationAppealData extends JSONDoc {
+  eligibleForAnAdditionalTransportationAllowance: YesNoOptions;
+  transportationCostSituation?: TransportationCostSituation;
+  additionalTransportCost?: number;
+  additionalTransportKm?: number;
+  additionalTransportWeeks?: number;
+  additionalTransportPlacement?: YesNoOptions;
+}
+
 export enum CredentialType {
   UnderGraduateCertificate = "undergraduateCertificate",
   UnderGraduateCitation = "undergraduateCitation",
@@ -83,6 +98,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   appealsPartnerIncomeAppealData?: JSONDoc;
   appealsStudentDisabilityAppealData?: JSONDoc;
   appealsStudentFinancialInformationAppealData?: StudentFinancialInformationAppealData;
+  appealsStudentAdditionalTransportationAppealData?: StudentAdditionalTransportationAppealData;
   studentDataIsYourPartnerAbleToReport?: YesNoOptions;
   studentDataParentValidSinNumber?: YesNoOptions;
   studentDataNumberOfParents?: 1 | 2;
@@ -137,6 +153,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   assessmentId?: number;
   studentDataSelectedOffering: number;
   studentDataApplicationPDPPDStatus: string;
+  studentDataEligibleForAnAdditionalTransportationAllowance: YesNoOptions;
   studentDataAdditionalTransportKm: number;
   studentDataAdditionalTransportCost: number;
   studentDataAdditionalTransportWeeks: number;
@@ -194,6 +211,11 @@ export interface AssessmentModel {
 }
 
 export interface CalculatedAssessmentModel {
+  calculatedDataEligibleForAnAdditionalTransportationAllowance: YesNoOptions;
+  calculatedDataAdditionalTransportKm: number;
+  calculatedDataAdditionalTransportCost: number;
+  calculatedDataAdditionalTransportWeeks: number;
+  calculatedDataAdditionalTransportPlacement: boolean;
   offeringWeeks: number;
   calculatedDataTotalTutionCost: number;
   calculatedDataDaycareCosts11YearsOrUnder: number;

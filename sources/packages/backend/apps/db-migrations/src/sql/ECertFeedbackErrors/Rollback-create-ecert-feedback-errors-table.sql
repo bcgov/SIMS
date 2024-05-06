@@ -1,0 +1,1 @@
+DROP TABLE sims.ecert_feedback_errors;

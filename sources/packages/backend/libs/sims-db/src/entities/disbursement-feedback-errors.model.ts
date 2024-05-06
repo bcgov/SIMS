@@ -8,6 +8,7 @@ import {
 import { ColumnNames, TableNames } from "../constant";
 import { DisbursementSchedule } from "./disbursement-schedule.model";
 import { RecordDataModel } from "./record.model";
+import { ECertFeedbackError } from "./ecert-feedback-error.model";
 
 /**
  * Disbursement feedback errors codes for each schedule on a Student Application.
@@ -42,4 +43,14 @@ export class DisbursementFeedbackErrors extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   disbursementSchedule: DisbursementSchedule;
+
+  /**
+   * E-Cert feedback error received.
+   */
+  @ManyToOne(() => ECertFeedbackError, { eager: false, cascade: false })
+  @JoinColumn({
+    name: "ecert_feedback_error_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  eCertFeedbackError: ECertFeedbackError;
 }
