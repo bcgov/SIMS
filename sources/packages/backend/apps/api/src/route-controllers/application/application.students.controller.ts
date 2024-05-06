@@ -74,7 +74,6 @@ import {
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
   OfferingIntensity,
-  ProgramYear,
   StudentAppealStatus,
 } from "@sims/sims-db";
 import { ConfirmationOfEnrollmentService } from "@sims/services";

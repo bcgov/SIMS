@@ -25,10 +25,7 @@ import {
 import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
 import { addDays } from "@sims/utilities";
 import { STUDY_DATE_OVERLAP_ERROR } from "../../../../utilities";
-import {
-  EDUCATION_PROGRAM_IS_NOT_ACTIVE,
-  OFFERING_INTENSITY_MISMATCH,
-} from "../../../../constants";
+import { OFFERING_INTENSITY_MISMATCH } from "../../../../constants";
 
 describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createApplicationOfferingChangeRequest", () => {
   let app: INestApplication;
