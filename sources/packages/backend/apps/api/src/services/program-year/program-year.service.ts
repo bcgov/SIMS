@@ -8,7 +8,7 @@ export class ProgramYearService extends RecordDataModelService<ProgramYear> {
     super(dataSource.getRepository(ProgramYear));
   }
 
-  /***
+  /**
    * Get all active the program years information.
    * @returns active program years ordered by name in descendent order.
    */
