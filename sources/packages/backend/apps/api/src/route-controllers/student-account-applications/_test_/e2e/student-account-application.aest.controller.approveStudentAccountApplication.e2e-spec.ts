@@ -16,8 +16,14 @@ import {
 } from "@sims/test-utils";
 import { AppAESTModule } from "../../../../app.aest.module";
 import { FormNames, FormService } from "../../../../services";
-import { NotificationMessageType } from "@sims/sims-db";
+import {
+  Notification,
+  NotificationMessageType,
+  StudentAccountApplication,
+  User,
+} from "@sims/sims-db";
 import { In, IsNull } from "typeorm";
+import * as faker from "faker";
 
 describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountApplication", () => {
   let app: INestApplication;
@@ -28,6 +34,7 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
   const BLANK_SIN = "000000000";
   const TEST_BIRTH_DATE1 = "2001-01-31";
   const TEST_BIRTH_DATE2 = "2001-01-05";
+  const TEST_EMAIL = "dummy@some.domain";
 
   beforeAll(async () => {
     const { nestApplication, dataSource, module } =
@@ -44,7 +51,7 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
     // Insert a fake email contact to send ministry email.
     await db.notificationMessage.update(
       { id: NotificationMessageType.PartialStudentMatchNotification },
-      { emailContacts: ["dummy@some.domain"] },
+      { emailContacts: [TEST_EMAIL] },
     );
   });
 
@@ -72,12 +79,8 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
     );
   });
 
-  it("Should send a notification message when at least a partial match is found with matching last name and birth dates for importing a student record from SFAS.", async () => {
-    // Arrange
-    const user = await db.user.save(createFakeUser());
-    // Submitted data to simulated the exists student account already saved on DB.
-    // Same data will be used to be submitted when Ministry is approving it.
-    const submittedData = {
+  function createFakeSubmittedData(user: User) {
+    return {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
@@ -96,23 +99,12 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
       selectedCountry: "canada",
       canadaPostalCode: "H1H1H1H",
     };
-    // Save the fake student account application to be later approved by the Ministry
-    // and create the Student Account.
-    const studentAccountApplication = await db.studentAccountApplication.save(
-      createFakeStudentAccountApplication(
-        { user },
-        { initialValues: { submittedData } },
-      ),
-    );
+  }
 
-    await saveFakeSFASIndividual(db.dataSource, {
-      initialValues: {
-        lastName: user.lastName,
-        birthDate: TEST_BIRTH_DATE1,
-        sin: TEST_SIN2,
-      },
-    });
-
+  async function mockFormioResponse(
+    submittedData: string | object,
+    studentAccountApplication: StudentAccountApplication,
+  ) {
     const endpoint = `/aest/student-account-application/${studentAccountApplication.id}/approve`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     // Mock the form.io response.
@@ -131,8 +123,11 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
       .then((response) => {
         expect(response.body.id).toBeGreaterThan(0);
       });
-    // Check that the notification is in the database.
-    const notification = await db.notification.findOne({
+  }
+
+  async function getPartialMatchNotification(): Promise<Notification> {
+    // Fetch the notification from the database.
+    return db.notification.findOne({
       select: {
         id: true,
         dateSent: true,
@@ -147,45 +142,53 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
         },
       },
     });
+  }
 
-    expect(notification.messagePayload["email_address"]).toEqual(
-      "dummy@some.domain",
+  it("Should send a notification message when at least a partial match is found with matching last name and birth dates for importing a student record from SFAS.", async () => {
+    // Arrange
+    const user = await db.user.save(createFakeUser());
+    const submittedData = createFakeSubmittedData(user);
+
+    // Save the fake student account application to be later approved by the Ministry
+    // and create the Student Account.
+    const studentAccountApplication = await db.studentAccountApplication.save(
+      createFakeStudentAccountApplication(
+        { user },
+        { initialValues: { submittedData } },
+      ),
     );
+    await saveFakeSFASIndividual(db.dataSource, {
+      initialValues: {
+        lastName: user.lastName,
+        birthDate: TEST_BIRTH_DATE1,
+        sin: TEST_SIN2,
+      },
+    });
 
-    expect(notification.messagePayload["personalisation"]).toEqual({
-      lastName: user.lastName,
-      givenNames: user.firstName,
-      studentEmail: user.email,
-      birthDate: "Jan 31 2001",
-      matches: "Last name and birth date match.",
-      matchTime: expect.any(String),
+    await mockFormioResponse(submittedData, studentAccountApplication);
+
+    // Check that the notification is in the database.
+    const notification = await getPartialMatchNotification();
+
+    expect(notification.messagePayload).toEqual({
+      email_address: TEST_EMAIL,
+      template_id: expect.any(String),
+      personalisation: {
+        lastName: user.lastName,
+        givenNames: user.firstName,
+        studentEmail: user.email,
+        birthDate: "Jan 31 2001",
+        matches: "Last name and birth date match.",
+        matchTime: expect.any(String),
+      },
     });
   });
 
   it("Should send a notification message when at least a partial match is found with matching last name and SINs for importing a student record from SFAS.", async () => {
     // Arrange
     const user = await db.user.save(createFakeUser());
-    // Submitted data to simulated the exists student account already saved on DB.
-    // Same data will be used to be submitted when Ministry is approving it.
-    const submittedData = {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      dateOfBirth: TEST_BIRTH_DATE1,
-      phone: "1234567890",
-      sinNumber: TEST_SIN1,
-      mode: "aest-account-approval",
-      identityProvider: "bceidboth",
-      sinConsent: true,
-      gender: "X",
-      addressLine1: "address 1",
-      city: "Victoria",
-      country: "Canada",
-      postalCode: "H1H1H1H",
-      provinceState: "BC",
-      selectedCountry: "canada",
-      canadaPostalCode: "H1H1H1H",
-    };
+    const submittedData = createFakeSubmittedData(user);
+
     // Save the fake student account application to be later approved by the Ministry
     // and create the Student Account.
     const studentAccountApplication = await db.studentAccountApplication.save(
@@ -203,79 +206,30 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
       },
     });
 
-    const endpoint = `/aest/student-account-application/${studentAccountApplication.id}/approve`;
-    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-    // Mock the form.io response.
-    sharedFormService.dryRunSubmission = jest.fn().mockResolvedValue({
-      valid: true,
-      formName: FormNames.StudentProfile,
-      data: { data: submittedData },
-    });
+    await mockFormioResponse(submittedData, studentAccountApplication);
 
-    // Act/Assert
-    await request(app.getHttpServer())
-      .post(endpoint)
-      .send(submittedData)
-      .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.CREATED)
-      .then((response) => {
-        expect(response.body.id).toBeGreaterThan(0);
-      });
     // Check that the notification is in the database.
-    const notification = await db.notification.findOne({
-      select: {
-        id: true,
-        dateSent: true,
-        messagePayload: true,
-        notificationMessage: { templateId: true },
-      },
-      relations: { notificationMessage: true, user: true },
-      where: {
-        dateSent: IsNull(),
-        notificationMessage: {
-          id: NotificationMessageType.PartialStudentMatchNotification,
-        },
-      },
-    });
+    const notification = await getPartialMatchNotification();
 
-    expect(notification.messagePayload["email_address"]).toEqual(
-      "dummy@some.domain",
-    );
-
-    expect(notification.messagePayload["personalisation"]).toEqual({
-      lastName: user.lastName,
-      givenNames: user.firstName,
-      studentEmail: user.email,
-      birthDate: "Jan 31 2001",
-      matches: "Last name and SIN match.",
-      matchTime: expect.any(String),
+    expect(notification.messagePayload).toEqual({
+      email_address: TEST_EMAIL,
+      template_id: expect.any(String),
+      personalisation: {
+        lastName: user.lastName,
+        givenNames: user.firstName,
+        studentEmail: user.email,
+        birthDate: "Jan 31 2001",
+        matches: "Last name and SIN match.",
+        matchTime: expect.any(String),
+      },
     });
   });
 
   it("Should send a notification message when at least a partial match is found with matching SIN and birth dates for importing a student record from SFAS.", async () => {
     // Arrange
     const user = await db.user.save(createFakeUser());
-    // Submitted data to simulated the exists student account already saved on DB.
-    // Same data will be used to be submitted when Ministry is approving it.
-    const submittedData = {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      dateOfBirth: TEST_BIRTH_DATE1,
-      phone: "1234567890",
-      sinNumber: TEST_SIN1,
-      mode: "aest-account-approval",
-      identityProvider: "bceidboth",
-      sinConsent: true,
-      gender: "X",
-      addressLine1: "address 1",
-      city: "Victoria",
-      country: "Canada",
-      postalCode: "H1H1H1H",
-      provinceState: "BC",
-      selectedCountry: "canada",
-      canadaPostalCode: "H1H1H1H",
-    };
+    const submittedData = createFakeSubmittedData(user);
+
     // Save the fake student account application to be later approved by the Ministry
     // and create the Student Account.
     const studentAccountApplication = await db.studentAccountApplication.save(
@@ -287,58 +241,28 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
 
     await saveFakeSFASIndividual(db.dataSource, {
       initialValues: {
-        lastName: user.lastName + "e",
+        lastName: faker.datatype.uuid(),
         birthDate: TEST_BIRTH_DATE1,
         sin: TEST_SIN1,
       },
     });
 
-    const endpoint = `/aest/student-account-application/${studentAccountApplication.id}/approve`;
-    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-    // Mock the form.io response.
-    sharedFormService.dryRunSubmission = jest.fn().mockResolvedValue({
-      valid: true,
-      formName: FormNames.StudentProfile,
-      data: { data: submittedData },
-    });
+    await mockFormioResponse(submittedData, studentAccountApplication);
 
-    // Act/Assert
-    await request(app.getHttpServer())
-      .post(endpoint)
-      .send(submittedData)
-      .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.CREATED)
-      .then((response) => {
-        expect(response.body.id).toBeGreaterThan(0);
-      });
     // Check that the notification is in the database.
-    const notification = await db.notification.findOne({
-      select: {
-        id: true,
-        dateSent: true,
-        messagePayload: true,
-        notificationMessage: { templateId: true },
-      },
-      relations: { notificationMessage: true, user: true },
-      where: {
-        dateSent: IsNull(),
-        notificationMessage: {
-          id: NotificationMessageType.PartialStudentMatchNotification,
-        },
-      },
-    });
+    const notification = await getPartialMatchNotification();
 
-    expect(notification.messagePayload["email_address"]).toEqual(
-      "dummy@some.domain",
-    );
-
-    expect(notification.messagePayload["personalisation"]).toEqual({
-      lastName: user.lastName,
-      givenNames: user.firstName,
-      studentEmail: user.email,
-      birthDate: "Jan 31 2001",
-      matches: "Birth date and SIN match.",
-      matchTime: expect.any(String),
+    expect(notification.messagePayload).toEqual({
+      email_address: TEST_EMAIL,
+      template_id: expect.any(String),
+      personalisation: {
+        lastName: user.lastName,
+        givenNames: user.firstName,
+        studentEmail: user.email,
+        birthDate: "Jan 31 2001",
+        matches: "Birth date and SIN match.",
+        matchTime: expect.any(String),
+      },
     });
   });
 
