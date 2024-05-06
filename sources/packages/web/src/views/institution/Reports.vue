@@ -21,10 +21,6 @@ export default defineComponent({
         description: "Offering Details",
         id: "Offering_Details_Report",
       },
-      {
-        description: "Student Unmet Need",
-        id: "Student_Unmet_Need_Report",
-      },
     ];
     return {
       reportList,

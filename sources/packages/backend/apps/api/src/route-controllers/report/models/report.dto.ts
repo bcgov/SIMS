@@ -22,7 +22,7 @@ enum MinistryReportNames {
 
 /**
  * API dto to define the criteria to extract the financial report.
- ** Basic class validators used as dry-run submission will validate payload.
+ * Basic class validators used as dry-run submission will validate payload.
  */
 export class ReportsFilterAPIInDTO {
   @Allow()
@@ -31,17 +31,11 @@ export class ReportsFilterAPIInDTO {
 }
 
 export class InstitutionReportsFilterAPIInDTO extends ReportsFilterAPIInDTO {
-  @Allow()
-  @MaxLength(REPORT_NAME_MAX_LENGTH)
   @IsEnum(InstitutionReportNames)
   reportName: string;
-  @IsNumber()
-  programYear: number;
 }
 
 export class MinistryReportsFilterAPIInDTO extends ReportsFilterAPIInDTO {
-  @Allow()
-  @MaxLength(REPORT_NAME_MAX_LENGTH)
   @IsEnum(MinistryReportNames)
   reportName: string;
 }

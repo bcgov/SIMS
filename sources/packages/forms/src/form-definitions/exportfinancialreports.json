@@ -204,52 +204,6 @@
           "isNew": false
         },
         {
-          "autofocus": false,
-          "input": true,
-          "tableView": true,
-          "label": "Program Year",
-          "key": "programYear",
-          "placeholder": "Select Program Year",
-          "data": {
-            "values": [
-              {
-                "value": "",
-                "label": ""
-              }
-            ],
-            "json": "",
-            "url": "",
-            "resource": "",
-            "custom": ""
-          },
-          "dataSrc": "values",
-          "valueProperty": "",
-          "defaultValue": "",
-          "refreshOn": "",
-          "filter": "",
-          "authenticate": false,
-          "template": "<span>{{ item.label }}</span>",
-          "multiple": false,
-          "protected": false,
-          "unique": false,
-          "persistent": true,
-          "hidden": false,
-          "clearOnHide": true,
-          "validate": {
-            "required": true
-          },
-          "type": "select",
-          "labelPosition": "top",
-          "tags": [],
-          "conditional": {
-            "show": "true",
-            "when": "reportName",
-            "eq": "Offering_Details_Report"
-          },
-          "properties": {},
-          "lockKey": true
-        },
-        {
           "label": "Container",
           "labelPosition": "top",
           "labelWidth": "",
@@ -306,6 +260,53 @@
           "type": "container",
           "input": true,
           "components": [
+            {
+              "autofocus": false,
+              "input": true,
+              "tableView": true,
+              "label": "Program Year",
+              "key": "programYear",
+              "placeholder": "Select Program Year",
+              "data": {
+                "values": [
+                  {
+                    "value": "",
+                    "label": ""
+                  }
+                ],
+                "json": "",
+                "url": "",
+                "resource": "",
+                "custom": ""
+              },
+              "dataSrc": "values",
+              "valueProperty": "",
+              "defaultValue": "",
+              "refreshOn": "",
+              "filter": "",
+              "authenticate": false,
+              "template": "<span>{{ item.label }}</span>",
+              "multiple": false,
+              "protected": false,
+              "unique": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
+              "validate": {
+                "required": true
+              },
+              "type": "select",
+              "labelPosition": "top",
+              "tags": [],
+              "conditional": {
+                "show": "true",
+                "when": "reportName",
+                "eq": "Offering_Details_Report"
+              },
+              "properties": {},
+              "lockKey": true,
+              "isNew": false
+            },
             {
               "label": "Columns",
               "labelWidth": "",
@@ -549,7 +550,6 @@
               "autoAdjust": false,
               "customClass": "",
               "hidden": false,
-              "hideLabel": false,
               "modalEdit": false,
               "key": "columns",
               "tags": [],
@@ -560,7 +560,7 @@
                 "eq": "Student_Unmet_Need_Report",
                 "json": ""
               },
-              "customConditional": "show = data['reportName'] === 'Student_Unmet_Need_Report' || data['reportName'] === 'Disbursement_Forecast_Report' || data['reportName'] === 'Disbursement_Report' || data['reportName'] === 'Data_Inventory_Report'",
+              "customConditional": "show = data['reportName'] === 'Disbursement_Forecast_Report' || data['reportName'] === 'Disbursement_Report' || data['reportName'] === 'Data_Inventory_Report'",
               "logic": [],
               "attributes": {},
               "overlay": {
@@ -615,7 +615,8 @@
               "addons": [],
               "tree": false,
               "lazyLoad": false,
-              "id": "ecn2x9"
+              "id": "ecn2x9",
+              "hideLabel": true
             },
             {
               "label": "Intensity",
@@ -714,7 +715,8 @@
               "allowMultipleMasks": false,
               "addons": [],
               "fieldSet": false,
-              "id": "enqlwsq"
+              "id": "enqlwsq",
+              "isNew": false
             }
           ],
           "placeholder": "",
@@ -735,7 +737,8 @@
           "addons": [],
           "tree": true,
           "lazyLoad": false,
-          "id": "ekcfpz"
+          "id": "ekcfpz",
+          "isNew": false
         }
       ],
       "id": "eouyt8n"

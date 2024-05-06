@@ -33,9 +33,8 @@ import {
   useFormioDropdownLoader,
   useFormioUtils,
 } from "@/composables";
-import { FormIOForm, Role } from "@/types";
+import { FormIOChangeEvent, FormIOForm, Role } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
-import { InstitutionReports } from "@/types/contracts/Reports";
 
 export default defineComponent({
   components: {
@@ -61,17 +60,24 @@ export default defineComponent({
         props.reportList,
       );
     };
-    const formChanged = async (form: FormIOForm, event: any) => {
-      formData = form;
-      const reportType = formioUtils.getComponentValueByKey(
-        formData,
-        REPORT_TYPE_DROPDOWN_KEY,
-      );
-      if (
-        event.changed?.component.key === REPORT_TYPE_DROPDOWN_KEY &&
-        reportType === InstitutionReports.OfferingDetails
-      ) {
-        await formioDataLoader.loadProgramYear(form, PROGRAM_YEAR_DROPDOWN_KEY);
+    const formChanged = async (form: FormIOForm, event: FormIOChangeEvent) => {
+      // Populates the program year select component if required.
+      if (event.changed?.component.key === REPORT_TYPE_DROPDOWN_KEY) {
+        const programYearSelect = formioUtils.getFirstComponent(
+          form,
+          PROGRAM_YEAR_DROPDOWN_KEY,
+        );
+        if (
+          programYearSelect._visible &&
+          !programYearSelect.selectOptions.length
+        ) {
+          // Load program year data if the select is visible and
+          // its items are not populated yet.
+          await formioDataLoader.loadProgramYear(
+            form,
+            PROGRAM_YEAR_DROPDOWN_KEY,
+          );
+        }
       }
     };
     const submitForm = () => {

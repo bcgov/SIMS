@@ -71,6 +71,7 @@ import {
   ApplicationOfferingChangeRequestControllerService,
   ProgramYearInstitutionsController,
   ReportInstitutionsController,
+  ProgramYearControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -176,6 +177,7 @@ import {
     ApplicationWithdrawalImportTextService,
     ApplicationBulkWithdrawalImportValidationService,
     AssessmentSequentialProcessingService,
+    ProgramYearControllerService,
     ProgramYearService,
     ReportService,
   ],

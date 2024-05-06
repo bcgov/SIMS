@@ -174,11 +174,17 @@ export function useFormioDropdownLoader() {
   };
 
   const loadProgramYear = async (form: any, dropdownName: string) => {
-    return loadDropdown(
-      form,
-      dropdownName,
-      ProgramYearService.shared.getProgramYearOptions(),
+    // Find the dropdown to be populated with the locations.
+    const dropdown = formioUtils.getFirstComponent(form, dropdownName);
+    const optionsItems =
+      await ProgramYearService.shared.getProgramYearOptions();
+    dropdown.component.data.values = optionsItems.map(
+      (item: OptionItemAPIOutDTO) => ({
+        value: item.id,
+        label: item.description,
+      }),
     );
+    dropdown.redraw();
   };
 
   const loadPIRDeniedReasonList = async (form: any, dropdownName: string) => {

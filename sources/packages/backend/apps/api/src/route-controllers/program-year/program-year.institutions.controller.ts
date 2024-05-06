@@ -7,13 +7,16 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { IsBCPublicInstitution } from "../../auth/decorators";
+import { ProgramYearControllerService } from "./program-year.controller.service";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @IsBCPublicInstitution()
 @Controller("program-year")
 @ApiTags(`${ClientTypeBaseRoute.Institution}-program-year`)
 export class ProgramYearInstitutionsController extends BaseController {
-  constructor(private readonly programYearService: ProgramYearService) {
+  constructor(
+    private readonly programYearControllerService: ProgramYearControllerService,
+  ) {
     super();
   }
 
@@ -26,13 +29,6 @@ export class ProgramYearInstitutionsController extends BaseController {
     description: "No program years were found.",
   })
   async getProgramYears(): Promise<OptionItemAPIOutDTO[]> {
-    const programYears = await this.programYearService.getProgramYears();
-    if (!programYears) {
-      throw new NotFoundException(`Program Years are not found.`);
-    }
-    return programYears.map((programYear) => ({
-      id: programYear.id,
-      description: `(${programYear.programYear}) - ${programYear.programYearDesc}`,
-    }));
+    return this.programYearControllerService.getProgramYears();
   }
 }

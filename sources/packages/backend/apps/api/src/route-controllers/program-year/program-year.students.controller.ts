@@ -14,13 +14,17 @@ import { ProgramYearAPIOutDTO } from "./models/program-year.dto";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { RequiresStudentAccount } from "../../auth/decorators";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
+import { ProgramYearControllerService } from "./program-year.controller.service";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
 @Controller("program-year")
 @ApiTags(`${ClientTypeBaseRoute.Student}-program-year`)
 export class ProgramYearStudentsController extends BaseController {
-  constructor(private readonly programYearService: ProgramYearService) {
+  constructor(
+    private readonly programYearControllerService: ProgramYearControllerService,
+    private readonly programYearService: ProgramYearService,
+  ) {
     super();
   }
 
@@ -33,16 +37,7 @@ export class ProgramYearStudentsController extends BaseController {
     description: "No program years were found.",
   })
   async getProgramYears(): Promise<OptionItemAPIOutDTO[]> {
-    const programYears = await this.programYearService.getProgramYears();
-
-    if (!programYears) {
-      throw new NotFoundException(`Program Years are not found.`);
-    }
-
-    return programYears.map((programYear) => ({
-      id: programYear.id,
-      description: `(${programYear.programYear}) - ${programYear.programYearDesc}`,
-    }));
+    return this.programYearControllerService.getProgramYears();
   }
 
   /**

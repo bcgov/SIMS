@@ -27,6 +27,7 @@ import {
   ReportService,
   REPORT_CONFIG_NOT_FOUND,
 } from "@sims/services";
+import { ReportControllerService } from "./report.controller.service";
 
 /**
  * Controller for Reports for AEST Client.
@@ -38,6 +39,7 @@ import {
 @ApiTags(`${ClientTypeBaseRoute.AEST}-report`)
 export class ReportAESTController extends BaseController {
   constructor(
+    private readonly reportControllerService: ReportControllerService,
     private readonly reportService: ReportService,
     private readonly formService: FormService,
   ) {
@@ -77,7 +79,11 @@ export class ReportAESTController extends BaseController {
       const reportData = await this.reportService.getReportDataAsCSV(
         submissionResult.data.data,
       );
-      this.reportService.streamFile(response, payload.reportName, reportData);
+      this.reportControllerService.streamFile(
+        response,
+        payload.reportName,
+        reportData,
+      );
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         switch (error.name) {

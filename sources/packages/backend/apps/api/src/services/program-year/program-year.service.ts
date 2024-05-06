@@ -15,6 +15,7 @@ export class ProgramYearService extends RecordDataModelService<ProgramYear> {
   async getProgramYears(): Promise<ProgramYear[]> {
     return this.repo.find({
       select: {
+        id: true,
         programYear: true,
         programYearDesc: true,
       },
