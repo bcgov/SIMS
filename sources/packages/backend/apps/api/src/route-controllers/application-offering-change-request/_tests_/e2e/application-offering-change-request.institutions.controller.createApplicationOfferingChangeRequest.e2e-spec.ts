@@ -524,7 +524,8 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
         message: "The education program is not active.",
-        errorType: EDUCATION_PROGRAM_IS_NOT_ACTIVE,
+        error: "Unprocessable Entity",
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
       });
   });
 
