@@ -71,7 +71,7 @@ export default defineComponent({
         event.changed?.component.key === REPORT_TYPE_DROPDOWN_KEY &&
         reportType === InstitutionReports.OfferingDetails
       ) {
-        await loadInstitutionReportDetails(formData);
+        await formioDataLoader.loadProgramYear(form, PROGRAM_YEAR_DROPDOWN_KEY);
       }
     };
     const submitForm = () => {
@@ -86,9 +86,6 @@ export default defineComponent({
       } finally {
         loading.value = false;
       }
-    };
-    const loadInstitutionReportDetails = async (form: FormIOForm) => {
-      await formioDataLoader.loadProgramYear(form, PROGRAM_YEAR_DROPDOWN_KEY);
     };
     return { exportReport, formLoaded, formChanged, submitForm, Role, loading };
   },

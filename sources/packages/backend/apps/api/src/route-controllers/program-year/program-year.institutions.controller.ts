@@ -9,6 +9,7 @@ import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { IsBCPublicInstitution } from "../../auth/decorators";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
+@IsBCPublicInstitution()
 @Controller("program-year")
 @ApiTags(`${ClientTypeBaseRoute.Institution}-program-year`)
 export class ProgramYearInstitutionsController extends BaseController {
@@ -20,7 +21,6 @@ export class ProgramYearInstitutionsController extends BaseController {
    * Gets a list of program years returned as option items (id/description pair).
    * @returns an array of program years as id/description objects.
    */
-  @IsBCPublicInstitution()
   @Get("options-list")
   @ApiNotFoundResponse({
     description: "No program years were found.",
