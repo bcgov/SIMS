@@ -3,7 +3,7 @@ import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.decorator";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
+import { ApiTags } from "@nestjs/swagger";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { IsBCPublicInstitution } from "../../auth/decorators";
 import { ProgramYearControllerService } from "./program-year.controller.service";
