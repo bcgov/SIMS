@@ -24,9 +24,6 @@ export class ProgramYearInstitutionsController extends BaseController {
    * @returns an array of program years as id/description objects.
    */
   @Get("options-list")
-  @ApiNotFoundResponse({
-    description: "No program years were found.",
-  })
   async getProgramYears(): Promise<OptionItemAPIOutDTO[]> {
     return this.programYearControllerService.getProgramYears();
   }
