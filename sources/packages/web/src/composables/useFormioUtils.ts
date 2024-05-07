@@ -101,6 +101,7 @@ export function useFormioUtils() {
    * matchCondition function.
    * @param options related options.
    * - `stopOnFirstMatch` stop the recursive search as soon as the first match is found.
+   * @returns the component(s) satisfying the match condition.
    */
   const recursiveSearch = (
     form: any,
