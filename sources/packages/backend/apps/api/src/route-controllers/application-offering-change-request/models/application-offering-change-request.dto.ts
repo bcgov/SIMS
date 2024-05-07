@@ -33,6 +33,7 @@ export class ApplicationOfferingChangeSummaryAPIOutDTO {
 export class ApplicationOfferingChangeSummaryDetailAPIOutDTO {
   applicationNumber: string;
   programId: number;
+  isProgramActive: boolean;
   offeringId: number;
   offeringIntensity: OfferingIntensity;
   programYearId: number;

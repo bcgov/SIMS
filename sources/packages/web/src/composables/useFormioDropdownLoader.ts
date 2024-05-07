@@ -106,16 +106,23 @@ export function useFormioDropdownLoader() {
     );
   };
 
-  // Retrieve the list of programs
-  // a particular institution.
+  /**
+   * Retrieve the list of programs for a particular institution.
+   * @param form form in which the dropdown is loaded.
+   * @param dropdownName dropdown name.
+   * @param options method options:
+   * - `isIncludeInActiveProgram`: if isIncludeInActiveProgram, then both active
+   * and not active education program is considered.
+   */
   const loadProgramsForInstitution = async (
     form: any,
     dropdownName: string,
+    options?: { isIncludeInActiveProgram?: boolean },
   ) => {
     return loadDropdown(
       form,
       dropdownName,
-      EducationProgramService.shared.getProgramsListForInstitutions(),
+      EducationProgramService.shared.getProgramsListForInstitutions(options),
     );
   };
 

@@ -62,9 +62,23 @@ export class ApplicationControllerService {
     data: ApplicationData,
   ): Promise<ApplicationFormData> {
     const additionalFormData = {} as ApplicationFormData;
-    // Check wether the selected location is designated or not.
-    // If selected location is not designated, then make the
-    // selectedLocation null
+    await this.processSelectedLocation(data, additionalFormData);
+    await this.processSelectedProgram(data, additionalFormData);
+    await this.processSelectedOffering(data, additionalFormData);
+    return { ...data, ...additionalFormData };
+  }
+
+  /**
+   * Check whether the selected location is designated or not.
+   * If selected location is not designated, then make the
+   * selectedLocation null.
+   * @param data application data.
+   * @param additionalFormData form data for readonly form.
+   */
+  private async processSelectedLocation(
+    data: ApplicationData,
+    additionalFormData: ApplicationFormData,
+  ) {
     if (data.selectedLocation) {
       const designatedLocation = await this.locationService.getLocation(
         data.selectedLocation,
@@ -72,21 +86,37 @@ export class ApplicationControllerService {
       if (!designatedLocation.isDesignated) {
         data.selectedLocation = null;
       }
-      // Assign location name for readonly form
+      // Assign location name for readonly form.
       additionalFormData.selectedLocationName = designatedLocation.locationName;
     }
-    // Check wether the program is approved or not.
-    // If selected program is not approved, then make the
-    // selectedLocation null
+  }
+
+  /**
+   * Check wether the program is approved or not.
+   * If selected program is not approved, then make the
+   * selectedProgram null.
+   * @param data application data.
+   * @param additionalFormData form data for readonly form.
+   */
+  private async processSelectedProgram(
+    data: ApplicationData,
+    additionalFormData: ApplicationFormData,
+  ) {
     if (data.selectedProgram) {
       const selectedProgram = await this.programService.getProgramById(
         data.selectedProgram,
       );
-
       if (selectedProgram) {
-        // Assign program name for readonly form
+        // Assign selected program && selected offering for application as null when the program is inactive.
+        if (!selectedProgram.isActive) {
+          data.selectedProgram = null;
+        }
+        if (selectedProgram.programStatus !== ProgramStatus.Approved) {
+          data.selectedProgram = null;
+        }
+        // Assign program name for readonly form.
         additionalFormData.selectedProgramName = selectedProgram.name;
-        // Program details
+        // Program details.
         additionalFormData.selectedProgramDesc = {
           credentialType: selectedProgram.credentialType,
           credentialTypeToDisplay: credentialTypeToDisplay(
@@ -100,14 +130,23 @@ export class ApplicationControllerService {
           id: selectedProgram.id,
           name: selectedProgram.name,
         };
-        if (selectedProgram.programStatus !== ProgramStatus.Approved) {
-          data.selectedProgram = null;
-        }
       } else {
         data.selectedProgram = null;
       }
     }
-    // Get selected offering details.
+  }
+
+  /**
+   * Get selected offering details.
+   * If selected offering is not found, then make the
+   * selectedOffering null.
+   * @param data application data.
+   * @param additionalFormData form data for readonly form.
+   */
+  private async processSelectedOffering(
+    data: ApplicationData,
+    additionalFormData: ApplicationFormData,
+  ) {
     if (data.selectedOffering) {
       const selectedOffering = await this.offeringService.getOfferingById(
         data.selectedOffering,
@@ -119,7 +158,6 @@ export class ApplicationControllerService {
         data.selectedOffering = null;
       }
     }
-    return { ...data, ...additionalFormData };
   }
 
   /**
