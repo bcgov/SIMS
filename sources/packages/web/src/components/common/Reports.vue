@@ -62,7 +62,7 @@ export default defineComponent({
     };
     const formChanged = async (form: FormIOForm, event: FormIOChangeEvent) => {
       // Populates the program year select component if required.
-      if (event.changed?.component.key === REPORT_TYPE_DROPDOWN_KEY) {
+      if (event.changed.component.key === REPORT_TYPE_DROPDOWN_KEY) {
         const programYearSelect = getFirstComponent(
           form,
           PROGRAM_YEAR_DROPDOWN_KEY,
