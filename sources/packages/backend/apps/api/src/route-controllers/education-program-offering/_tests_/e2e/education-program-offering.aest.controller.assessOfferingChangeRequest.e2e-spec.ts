@@ -87,7 +87,7 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
       .expect({
         statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         message:
-          "Either offering not found or the offering not in appropriate status to be approved or declined for change.",
+          "Either offering not found, program inactive or the offering not in appropriate status to be approved or declined for change.",
         error: "Unprocessable Entity",
       });
   });
