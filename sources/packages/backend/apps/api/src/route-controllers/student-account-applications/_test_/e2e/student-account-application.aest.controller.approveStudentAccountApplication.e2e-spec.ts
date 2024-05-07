@@ -79,71 +79,6 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
     );
   });
 
-  function createFakeSubmittedData(user: User) {
-    return {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      dateOfBirth: TEST_BIRTH_DATE1,
-      phone: "1234567890",
-      sinNumber: TEST_SIN1,
-      mode: "aest-account-approval",
-      identityProvider: "bceidboth",
-      sinConsent: true,
-      gender: "X",
-      addressLine1: "address 1",
-      city: "Victoria",
-      country: "Canada",
-      postalCode: "H1H1H1H",
-      provinceState: "BC",
-      selectedCountry: "canada",
-      canadaPostalCode: "H1H1H1H",
-    };
-  }
-
-  async function mockFormioResponse(
-    submittedData: string | object,
-    studentAccountApplication: StudentAccountApplication,
-  ) {
-    const endpoint = `/aest/student-account-application/${studentAccountApplication.id}/approve`;
-    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-    // Mock the form.io response.
-    sharedFormService.dryRunSubmission = jest.fn().mockResolvedValue({
-      valid: true,
-      formName: FormNames.StudentProfile,
-      data: { data: submittedData },
-    });
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .post(endpoint)
-      .send(submittedData)
-      .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.CREATED)
-      .then((response) => {
-        expect(response.body.id).toBeGreaterThan(0);
-      });
-  }
-
-  async function getPartialMatchNotification(): Promise<Notification> {
-    // Fetch the notification from the database.
-    return db.notification.findOne({
-      select: {
-        id: true,
-        dateSent: true,
-        messagePayload: true,
-        notificationMessage: { templateId: true },
-      },
-      relations: { notificationMessage: true, user: true },
-      where: {
-        dateSent: IsNull(),
-        notificationMessage: {
-          id: NotificationMessageType.PartialStudentMatchNotification,
-        },
-      },
-    });
-  }
-
   it("Should send a notification message when at least a partial match is found with matching last name and birth dates for importing a student record from SFAS.", async () => {
     // Arrange
     const user = await db.user.save(createFakeUser());
@@ -165,8 +100,24 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
       },
     });
 
-    await mockFormioResponse(submittedData, studentAccountApplication);
+    const endpoint = `/aest/student-account-application/${studentAccountApplication.id}/approve`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    // Mock the form.io response.
+    sharedFormService.dryRunSubmission = jest.fn().mockResolvedValue({
+      valid: true,
+      formName: FormNames.StudentProfile,
+      data: { data: submittedData },
+    });
 
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(submittedData)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        expect(response.body.id).toBeGreaterThan(0);
+      });
     // Check that the notification is in the database.
     const notification = await getPartialMatchNotification();
 
@@ -206,8 +157,24 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
       },
     });
 
-    await mockFormioResponse(submittedData, studentAccountApplication);
+    const endpoint = `/aest/student-account-application/${studentAccountApplication.id}/approve`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    // Mock the form.io response.
+    sharedFormService.dryRunSubmission = jest.fn().mockResolvedValue({
+      valid: true,
+      formName: FormNames.StudentProfile,
+      data: { data: submittedData },
+    });
 
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(submittedData)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        expect(response.body.id).toBeGreaterThan(0);
+      });
     // Check that the notification is in the database.
     const notification = await getPartialMatchNotification();
 
@@ -247,7 +214,24 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
       },
     });
 
-    await mockFormioResponse(submittedData, studentAccountApplication);
+    const endpoint = `/aest/student-account-application/${studentAccountApplication.id}/approve`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    // Mock the form.io response.
+    sharedFormService.dryRunSubmission = jest.fn().mockResolvedValue({
+      valid: true,
+      formName: FormNames.StudentProfile,
+      data: { data: submittedData },
+    });
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(submittedData)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        expect(response.body.id).toBeGreaterThan(0);
+      });
 
     // Check that the notification is in the database.
     const notification = await getPartialMatchNotification();
@@ -269,4 +253,52 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
   afterAll(async () => {
     await app?.close();
   });
+
+  /**
+   * Create and return a dictionary of testing data to use in creating a testing student account.
+   * @param user user to use for populating the name and email.
+   * @returns dictionary with details for creating a new student account for testing purposes.
+   */
+  function createFakeSubmittedData(user: User) {
+    return {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      dateOfBirth: TEST_BIRTH_DATE1,
+      phone: "1234567890",
+      sinNumber: TEST_SIN1,
+      mode: "aest-account-approval",
+      identityProvider: "bceidboth",
+      sinConsent: true,
+      gender: "X",
+      addressLine1: "address 1",
+      city: "Victoria",
+      country: "Canada",
+      postalCode: "H1H1H1H",
+      provinceState: "BC",
+      selectedCountry: "canada",
+      canadaPostalCode: "H1H1H1H",
+    };
+  }
+
+  /**
+   * Fetch the notification of a partial match from the database.
+   */
+  async function getPartialMatchNotification(): Promise<Notification> {
+    return db.notification.findOne({
+      select: {
+        id: true,
+        dateSent: true,
+        messagePayload: true,
+        notificationMessage: { templateId: true },
+      },
+      relations: { notificationMessage: true, user: true },
+      where: {
+        dateSent: IsNull(),
+        notificationMessage: {
+          id: NotificationMessageType.PartialStudentMatchNotification,
+        },
+      },
+    });
+  }
 });
