@@ -20,6 +20,7 @@ import {
   getMaritalStatusCode,
   getTotalYearsOfStudy,
   getPPDFlag,
+  getFormattedPostalCode,
 } from "@sims/utilities";
 
 /**
@@ -118,7 +119,10 @@ export class ECertFullTimeIntegrationService extends ECertIntegrationService {
       record.city = ecertRecord.city;
       record.country = ecertRecord.country;
       record.emailAddress = ecertRecord.email;
-      record.postalCode = ecertRecord.postalCode;
+      record.postalCode = getFormattedPostalCode(
+        ecertRecord.country,
+        ecertRecord.postalCode,
+      );
       record.provinceState = ecertRecord.provinceState;
       record.gender = getGenderCode(ecertRecord.gender);
       record.maritalStatus = getMaritalStatusCode(ecertRecord.maritalStatus);

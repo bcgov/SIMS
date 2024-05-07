@@ -15,7 +15,6 @@ import {
 import { SequenceControlService, SystemUsersService } from "@sims/services";
 import {
   CustomNamedError,
-  getFormattedPostalCode,
   getISODateOnlyString,
   parseJSONError,
   processInParallel,
@@ -262,10 +261,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
       city: addressInfo.city,
       country: addressInfo.country,
       provinceState: addressInfo.provinceState,
-      postalCode: getFormattedPostalCode(
-        addressInfo.country,
-        addressInfo.postalCode,
-      ),
+      postalCode: addressInfo.postalCode,
       email: student.user.email,
       gender: student.gender,
       maritalStatus: application.relationshipStatus,
