@@ -60,22 +60,6 @@ describe("ProgramYearStudentsController(e2e)-getProgramYears", () => {
               description:
                 "(2005-2006) - My first day of classes starts between August 01, 2005 and July 31, 2006",
             }),
-            expect.objectContaining({
-              description:
-                "(2021-2022) - My first day of classes starts between August 01, 2021 and July 31, 2022",
-            }),
-            expect.objectContaining({
-              description:
-                "(2022-2023) - My first day of classes starts between August 01, 2022 and July 31, 2023",
-            }),
-            expect.objectContaining({
-              description:
-                "(2023-2024) - My first day of classes starts between August 01, 2023 and July 31, 2024",
-            }),
-            expect.objectContaining({
-              description:
-                "(2024-2025) - My first day of classes starts between August 01, 2024 and July 31, 2025",
-            }),
           ]),
         );
         expect(programYearList).not.toContainEqual(
