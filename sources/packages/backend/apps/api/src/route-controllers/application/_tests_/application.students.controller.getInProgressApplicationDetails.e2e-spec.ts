@@ -247,14 +247,14 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
     const futureApplication = await saveFakeApplication(db.dataSource, {
       student,
     });
-    const futureApplicationOffering =
-      futureApplication.currentAssessment.offering;
+    const currentApplicationOffering =
+      currentApplication.currentAssessment.offering;
     const futureOffering = futureApplication.currentAssessment.offering;
     futureOffering.studyStartDate = getISODateOnlyString(
-      addDays(10, futureApplicationOffering.studyStartDate),
+      addDays(10, currentApplicationOffering.studyStartDate),
     );
     futureOffering.studyEndDate = getISODateOnlyString(
-      addDays(30, futureApplicationOffering.studyStartDate),
+      addDays(30, currentApplicationOffering.studyStartDate),
     );
     await db.educationProgramOffering.save(futureOffering);
 
