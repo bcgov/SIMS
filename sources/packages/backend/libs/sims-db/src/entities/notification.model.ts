@@ -197,4 +197,8 @@ export enum NotificationMessageType {
    * Institution Requests Designation.
    */
   InstitutionRequestsDesignationNotification = 25,
+  /**
+   * A partial match for a new student account was found.
+   */
+  PartialStudentMatchNotification = 26,
 }

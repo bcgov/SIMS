@@ -38,6 +38,7 @@ import {
 import {
   DisbursementOverawardService,
   NoteSharedService,
+  NotificationActionsService,
   SystemUsersService,
 } from "@sims/services";
 import {
@@ -49,6 +50,7 @@ import {
 export class StudentService extends RecordDataModelService<Student> {
   constructor(
     private readonly dataSource: DataSource,
+    private readonly notificationActionsService: NotificationActionsService,
     private readonly sfasIndividualService: SFASIndividualService,
     private readonly disbursementOverawardService: DisbursementOverawardService,
     private readonly noteSharedService: NoteSharedService,
@@ -187,6 +189,15 @@ export class StudentService extends RecordDataModelService<Student> {
           sfasIndividual.ppdStatusDate,
           student.disabilityStatus,
         );
+      } else {
+        // If sfasIndividual wasn't found, check for a partial match
+        await this.checkLegacyIndividualPartialMatch(
+          user,
+          student,
+          studentSIN,
+          auditUserId,
+          externalEntityManager,
+        );
       }
     } catch (error) {
       this.logger.error("Unable to get SFAS information of student.");
@@ -317,6 +328,62 @@ export class StudentService extends RecordDataModelService<Student> {
     }
 
     return null;
+  }
+
+  /**
+   * Check for a partial match for a student in SFAS.
+   * @param user user to be matched against.
+   * @param student student to be matched against.
+   * @param studentSIN sin to be matched against.
+   * @param auditUserId audit user for the notification.
+   * @param externalEntityManager entityManager to be used to perform the query and if needed, save the notification.
+   */
+  private async checkLegacyIndividualPartialMatch(
+    user: User,
+    student: Student,
+    studentSIN: string,
+    auditUserId: number,
+    externalEntityManager: EntityManager,
+  ): Promise<void> {
+    const partialMatch: SFASIndividual =
+      await this.sfasIndividualService.getIndividualStudentPartialMatch(
+        user.lastName,
+        student.birthDate,
+        studentSIN,
+      );
+
+    if (partialMatch) {
+      // Send out a notification of a partial match for the student information.
+      let matches = "";
+      if (
+        user.lastName.toLowerCase() === partialMatch.lastName.toLowerCase() &&
+        student.birthDate === partialMatch.birthDate
+      ) {
+        matches = "Last name and birth date match.";
+      } else if (
+        user.lastName.toLowerCase() === partialMatch.lastName.toLowerCase() &&
+        studentSIN === partialMatch.sin
+      ) {
+        matches = "Last name and SIN match.";
+      } else if (
+        studentSIN === partialMatch.sin &&
+        student.birthDate === partialMatch.birthDate
+      ) {
+        matches = "Birth date and SIN match.";
+      }
+      await this.notificationActionsService.savePartialStudentMatchNotification(
+        {
+          givenNames: student.user.firstName,
+          lastName: student.user.lastName,
+          birthDate: new Date(student.birthDate),
+          matches: matches,
+          studentEmail: student.user.email,
+          matchTime: new Date(),
+        },
+        auditUserId,
+        externalEntityManager,
+      );
+    }
   }
 
   /**

@@ -31,3 +31,4 @@ export * from "./factories/designation-agreement-locations";
 export * from "./factories/disbursement-feedback-error";
 export * from "./factories/notification";
 export * from "./factories/student-loan-balance";
+export * from "./factories/student-account-application";
