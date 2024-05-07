@@ -200,8 +200,7 @@
           },
           "id": "epfngcm",
           "defaultValue": "",
-          "lockKey": true,
-          "isNew": false
+          "lockKey": true
         },
         {
           "label": "Container",
@@ -304,8 +303,7 @@
                 "eq": "Offering_Details_Report"
               },
               "properties": {},
-              "lockKey": true,
-              "isNew": false
+              "lockKey": true
             },
             {
               "label": "Columns",
@@ -556,11 +554,11 @@
               "properties": {},
               "conditional": {
                 "show": "",
-                "when": "",
+                "when": null,
                 "eq": "",
                 "json": ""
               },
-              "customConditional": "show = data['reportName'] === 'Disbursement_Forecast_Report' || data['reportName'] === 'Disbursement_Report' || data['reportName'] === 'Data_Inventory_Report'",
+              "customConditional": "show = \n    data['reportName'] === 'Disbursement_Forecast_Report' \n    || data['reportName'] === 'Disbursement_Report' \n    || data['reportName'] === 'Data_Inventory_Report'",
               "logic": [],
               "attributes": {},
               "overlay": {
@@ -715,8 +713,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "fieldSet": false,
-              "id": "enqlwsq",
-              "isNew": false
+              "id": "enqlwsq"
             }
           ],
           "placeholder": "",
@@ -737,8 +734,7 @@
           "addons": [],
           "tree": true,
           "lazyLoad": false,
-          "id": "ekcfpz",
-          "isNew": false
+          "id": "ekcfpz"
         }
       ],
       "id": "eouyt8n"

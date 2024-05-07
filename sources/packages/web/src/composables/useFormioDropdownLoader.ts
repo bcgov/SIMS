@@ -3,7 +3,7 @@ import { EducationProgramService } from "../services/EducationProgramService";
 import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { ProgramYearService } from "@/services/ProgramYearService";
-import { OfferingIntensity } from "../types";
+import { FormIOComponent, FormIOForm, OfferingIntensity } from "../types";
 import { useFormioUtils } from ".";
 import { OptionItemAPIOutDTO } from "@/services/http/dto";
 /**
@@ -13,13 +13,19 @@ import { OptionItemAPIOutDTO } from "@/services/http/dto";
  */
 export function useFormioDropdownLoader() {
   const formioUtils = useFormioUtils();
+  const { getComponent } = useFormioUtils();
   const loadDropdown = async (
-    form: any,
-    dropdownName: string,
+    form: FormIOForm,
+    targetDropdown: string | FormIOComponent,
     loadMethod: Promise<OptionItemAPIOutDTO[]> | OptionItemAPIOutDTO[],
   ): Promise<void> => {
-    // Find the dropdown to be populated with the locations.
-    const dropdown = formioUtils.getComponent(form, dropdownName);
+    // Find the dropdown to be populated.
+    let dropdown: FormIOComponent;
+    if (typeof targetDropdown === "string") {
+      dropdown = getComponent(form, targetDropdown);
+    } else {
+      dropdown = targetDropdown;
+    }
     const optionsItems = await loadMethod;
     dropdown.component.data.values = optionsItems.map(
       (item: OptionItemAPIOutDTO) => ({
@@ -176,15 +182,11 @@ export function useFormioDropdownLoader() {
   const loadProgramYear = async (form: any, dropdownName: string) => {
     // Find the dropdown to be populated with the locations.
     const dropdown = formioUtils.getFirstComponent(form, dropdownName);
-    const optionsItems =
-      await ProgramYearService.shared.getProgramYearOptions();
-    dropdown.component.data.values = optionsItems.map(
-      (item: OptionItemAPIOutDTO) => ({
-        value: item.id,
-        label: item.description,
-      }),
+    return loadDropdown(
+      form,
+      dropdown,
+      ProgramYearService.shared.getProgramYearOptions(),
     );
-    dropdown.redraw();
   };
 
   const loadPIRDeniedReasonList = async (form: any, dropdownName: string) => {
