@@ -279,15 +279,11 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
       {
         applicationStatus: ApplicationStatus.Completed,
         createSecondDisbursement: true,
-        currentAssessmentInitialValues: {
-          triggerType: AssessmentTriggerType.RelatedApplicationChanged,
-        },
         firstDisbursementInitialValues: {
           coeStatus: COEStatus.completed,
         },
       },
     );
-    application.applicationStatus = ApplicationStatus.Completed;
     application.currentAssessment.triggerType =
       AssessmentTriggerType.RelatedApplicationChanged;
     await applicationRepo.save(application);

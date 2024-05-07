@@ -4,9 +4,8 @@ import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   getStudentToken,
-  getStudentByFakeStudentUserType,
   FakeStudentUsersTypes,
-  mockOutstandingAssessment,
+  mockUserLoginInfo,
 } from "../../../testHelpers";
 import {
   createFakeCRAIncomeVerification,
@@ -14,14 +13,9 @@ import {
   createE2EDataSources,
   E2EDataSources,
   saveFakeApplication,
-  createFakeStudentAssessment,
+  saveFakeStudent,
 } from "@sims/test-utils";
-import {
-  ApplicationStatus,
-  Student,
-  StudentAssessmentStatus,
-  SupportingUserType,
-} from "@sims/sims-db";
+import { ApplicationStatus, SupportingUserType } from "@sims/sims-db";
 import { SuccessWaitingStatus } from "../models/application.dto";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { TestingModule } from "@nestjs/testing";
@@ -30,7 +24,6 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
   let app: INestApplication;
   let db: E2EDataSources;
   let appModule: TestingModule;
-  let student: Student;
 
   beforeAll(async () => {
     const { nestApplication, module, dataSource } =
@@ -38,14 +31,14 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
     app = nestApplication;
     db = createE2EDataSources(dataSource);
     appModule = module;
-    student = await getStudentByFakeStudentUserType(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-      dataSource,
-    );
   });
 
   it("Should throw not found error when application is not found.", async () => {
     // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+
+    // Mock user services to return the saved student.
+    await mockUserLoginInfo(appModule, student);
 
     const endpoint = `/students/application/99999999/in-progress`;
     const token = await getStudentToken(
@@ -61,6 +54,10 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
 
   it("Should get application in-progress details when the student does not have a supporting user.", async () => {
     // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+
+    // Mock user services to return the saved student.
+    await mockUserLoginInfo(appModule, student);
 
     const application = await saveFakeApplication(db.dataSource, { student });
 
@@ -72,9 +69,6 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
       { initialValues: { dateReceived: new Date() } },
     );
     await db.craIncomeVerification.save([studentCRAIncomeVerification]);
-
-    // Mock assessment service to return the saved student assessment.
-    await mockOutstandingAssessment(appModule, application.currentAssessment);
 
     const endpoint = `/students/application/${application.id}/in-progress`;
     const token = await getStudentToken(
@@ -97,6 +91,10 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
 
   it("Should get application in-progress details when the student has parents as supporting users.", async () => {
     // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+
+    // Mock user services to return the saved student.
+    await mockUserLoginInfo(appModule, student);
 
     const application = await saveFakeApplication(db.dataSource, { student });
 
@@ -148,9 +146,6 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
       parent2CRAIncomeVerification,
     ]);
 
-    // Mock assessment service to return the saved student assessment.
-    await mockOutstandingAssessment(appModule, application.currentAssessment);
-
     const endpoint = `/students/application/${application.id}/in-progress`;
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -176,6 +171,10 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
 
   it("Should get application in-progress details when the student has partner as supporting user.", async () => {
     // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+
+    // Mock user services to return the saved student.
+    await mockUserLoginInfo(appModule, student);
 
     const application = await saveFakeApplication(db.dataSource, { student });
 
@@ -211,9 +210,6 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
       partnerCRAIncomeVerification,
     ]);
 
-    // Mock assessment service to return the saved student assessment.
-    await mockOutstandingAssessment(appModule, application.currentAssessment);
-
     const endpoint = `/students/application/${application.id}/in-progress`;
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -237,6 +233,10 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
 
   it("Should get application in-progress details when there is an in-progress student assessment for an offering with later study start date.", async () => {
     // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+
+    // Mock user services to return the saved student.
+    await mockUserLoginInfo(appModule, student);
 
     const currentApplication = await saveFakeApplication(db.dataSource, {
       student,
@@ -247,31 +247,16 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
     const futureApplication = await saveFakeApplication(db.dataSource, {
       student,
     });
+    const futureApplicationOffering =
+      futureApplication.currentAssessment.offering;
     const futureOffering = futureApplication.currentAssessment.offering;
-    futureOffering.studyStartDate = getISODateOnlyString(addDays(60));
-    futureOffering.studyEndDate = getISODateOnlyString(addDays(90));
+    futureOffering.studyStartDate = getISODateOnlyString(
+      addDays(10, futureApplicationOffering.studyStartDate),
+    );
+    futureOffering.studyEndDate = getISODateOnlyString(
+      addDays(30, futureApplicationOffering.studyStartDate),
+    );
     await db.educationProgramOffering.save(futureOffering);
-
-    // Create an in-progress student assessment for the future offering.
-    const futureAssessment = createFakeStudentAssessment(
-      {
-        auditUser: futureApplication.student.user,
-        application: futureApplication,
-        offering: futureOffering,
-      },
-      {
-        initialValue: {
-          studentAssessmentStatus: StudentAssessmentStatus.InProgress,
-        },
-      },
-    );
-    await db.studentAssessment.save(futureAssessment);
-
-    // Mock assessment service to return the saved student assessment.
-    await mockOutstandingAssessment(
-      appModule,
-      currentApplication.currentAssessment,
-    );
 
     const endpoint = `/students/application/${currentApplication.id}/in-progress`;
     const token = await getStudentToken(
@@ -295,7 +280,12 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
 
   it("Should get application in-progress details when there is an in-progress student assessment for an offering with earlier study start date.", async () => {
     // Arrange
+    const student = await saveFakeStudent(db.dataSource);
 
+    // Mock user services to return the saved student.
+    await mockUserLoginInfo(appModule, student);
+
+    // Application to get in-progress details.
     const currentApplication = await saveFakeApplication(
       db.dataSource,
       {
@@ -313,31 +303,18 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
       },
       { applicationStatus: ApplicationStatus.InProgress },
     );
-    // Create a previous offering.
+
     const currentApplicationOffering =
       currentApplication.currentAssessment.offering;
     const previousApplicationOffering =
       previousApplication.currentAssessment.offering;
     previousApplicationOffering.studyStartDate = getISODateOnlyString(
+      addDays(-30, currentApplicationOffering.studyStartDate),
+    );
+    previousApplicationOffering.studyEndDate = getISODateOnlyString(
       addDays(-10, currentApplicationOffering.studyStartDate),
     );
     await db.educationProgramOffering.save(previousApplicationOffering);
-
-    // Create an in-progress student assessment for the previous offering.
-    const previousAssessment = createFakeStudentAssessment(
-      {
-        auditUser: previousApplication.student.user,
-        application: previousApplication,
-        offering: previousApplicationOffering,
-      },
-      {
-        initialValue: {
-          calculationStartDate: addDays(-10),
-          studentAssessmentStatus: StudentAssessmentStatus.InProgress,
-        },
-      },
-    );
-    await db.studentAssessment.save(previousAssessment);
 
     const endpoint = `/students/application/${currentApplication.id}/in-progress`;
     const token = await getStudentToken(
