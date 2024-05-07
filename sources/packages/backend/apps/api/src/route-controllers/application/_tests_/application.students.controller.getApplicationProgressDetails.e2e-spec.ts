@@ -149,14 +149,15 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
       {
         applicationStatus: ApplicationStatus.Completed,
         createSecondDisbursement: true,
-        currentAssessmentInitialValues: {
-          triggerType: AssessmentTriggerType.RelatedApplicationChanged,
-        },
       },
     );
 
     const [firstDisbursement, secondDisbursement] =
       application.currentAssessment.disbursementSchedules;
+
+    application.currentAssessment.triggerType =
+      AssessmentTriggerType.RelatedApplicationChanged;
+    await db.application.save(application);
 
     const endpoint = `/students/application/${application.id}/progress-details`;
     const token = await getStudentToken(

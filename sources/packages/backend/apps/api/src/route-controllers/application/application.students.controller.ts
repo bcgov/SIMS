@@ -77,8 +77,10 @@ import {
   OfferingIntensity,
   StudentAppealStatus,
 } from "@sims/sims-db";
-import { AssessmentSequentialProcessingService } from "@sims/services";
-import { ConfirmationOfEnrollmentService } from "@sims/services";
+import {
+  AssessmentSequentialProcessingService,
+  ConfirmationOfEnrollmentService,
+} from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
@@ -606,16 +608,13 @@ export class ApplicationStudentsController extends BaseController {
         application.programYear.id,
       );
 
-    let outstandingAssessmentStatus = SuccessWaitingStatus.Success;
-
     // If first outstanding assessment returns a value and its Id is different
     // from the current assessment Id, then assessmentInCalculationStep is Waiting.
-    if (
+    const outstandingAssessmentStatus =
       firstOutstandingStudentAssessment &&
       firstOutstandingStudentAssessment.id !== application.currentAssessment.id
-    ) {
-      outstandingAssessmentStatus = SuccessWaitingStatus.Waiting;
-    }
+        ? SuccessWaitingStatus.Waiting
+        : SuccessWaitingStatus.Success;
 
     return {
       id: application.id,
@@ -674,7 +673,7 @@ export class ApplicationStudentsController extends BaseController {
         applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus;
     }
 
-    const assessmentTriggerType = application.currentAssessment.triggerType;
+    const assessmentTriggerType = application.currentAssessment?.triggerType;
 
     const disbursements =
       application.currentAssessment?.disbursementSchedules ?? [];

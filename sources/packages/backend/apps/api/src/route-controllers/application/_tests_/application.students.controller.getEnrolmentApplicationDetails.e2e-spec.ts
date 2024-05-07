@@ -42,13 +42,14 @@ describe("ApplicationStudentsController(e2e)-getEnrolmentApplicationDetails", ()
       {
         applicationStatus: ApplicationStatus.Enrolment,
         createSecondDisbursement: true,
-        currentAssessmentInitialValues: {
-          triggerType: AssessmentTriggerType.RelatedApplicationChanged,
-        },
       },
     );
     const [firstDisbursement, secondDisbursement] =
       application.currentAssessment.disbursementSchedules;
+
+    application.currentAssessment.triggerType =
+      AssessmentTriggerType.RelatedApplicationChanged;
+    await db.application.save(application);
 
     const endpoint = `/students/application/${application.id}/enrolment`;
     const token = await getStudentToken(

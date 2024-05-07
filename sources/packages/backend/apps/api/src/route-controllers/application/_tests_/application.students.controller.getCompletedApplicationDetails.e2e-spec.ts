@@ -116,14 +116,16 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
     const application = await saveFakeApplicationDisbursements(
       appDataSource,
       { student },
-      { createSecondDisbursement: true },
+      {
+        createSecondDisbursement: true,
+        firstDisbursementInitialValues: { coeStatus: COEStatus.completed },
+      },
     );
     application.applicationStatus = ApplicationStatus.Completed;
     await applicationRepo.save(application);
     const [firstDisbursement, secondDisbursement] =
       application.currentAssessment.disbursementSchedules;
-    firstDisbursement.coeStatus = COEStatus.completed;
-    await disbursementScheduleRepo.save(firstDisbursement);
+
     const endpoint = `/students/application/${application.id}/completed`;
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -280,13 +282,18 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         currentAssessmentInitialValues: {
           triggerType: AssessmentTriggerType.RelatedApplicationChanged,
         },
+        firstDisbursementInitialValues: {
+          coeStatus: COEStatus.completed,
+        },
       },
     );
+    application.applicationStatus = ApplicationStatus.Completed;
+    application.currentAssessment.triggerType =
+      AssessmentTriggerType.RelatedApplicationChanged;
+    await applicationRepo.save(application);
 
     const [firstDisbursement, secondDisbursement] =
       application.currentAssessment.disbursementSchedules;
-    firstDisbursement.coeStatus = COEStatus.completed;
-    await disbursementScheduleRepo.save(firstDisbursement);
 
     const endpoint = `/students/application/${application.id}/completed`;
     const token = await getStudentToken(
