@@ -71,3 +71,15 @@ export function getCountryCode(country: string): string {
   }
   return country;
 }
+
+export function getFormattedPostalCode(
+  country: string,
+  postalCode: string,
+): string {
+  if (country.toUpperCase() === "CANADA" && postalCode) {
+    const postalCodeCharArray = [...postalCode];
+    postalCodeCharArray.splice(3, 0, " ");
+    return postalCodeCharArray.join("");
+  }
+  return postalCode;
+}
