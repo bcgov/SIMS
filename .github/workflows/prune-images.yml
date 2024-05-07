@@ -14,9 +14,13 @@ on:
           - prod
         default: "test"
       applications:
-        description: "Comma seperated list of applications to prune"
+        description: "Comma seperated list of application Image Streams to prune"
         required: true
         default: "web-sims, api-sims, queue-consumers-sims, workers-sims"
+      jobs:
+          description: "Comma seperated list of job Image Streams to prune"
+          required: true
+          default: "db.migrations"
       prefix:
         description: "Branch prefix to restrict pruning to"
         required: false
@@ -43,6 +47,7 @@ jobs:
         run: |
           echo "Environment: ${ENVIRONMENT}"
           echo "Applications: ${APPLICATIONS}"
+          echo "Jobs: ${JOBS}"
           echo "Prefix: ${PREFIX}"
           echo "Minimum Tags: ${MIN_TAGS}"
 
@@ -62,4 +67,11 @@ jobs:
               --apps="${APPLICATIONS}" \
               --prefix=${PREFIX} \
               --min_tags=${MIN_TAGS}
+          ./pruneImages.sh \
+              --license_plate=${{ vars.OPENSHIFT_LICENSE_PLATE }} \
+              --env=${ENVIRONMENT} \
+              --apps="${JOBS}" \
+              --prefix=${PREFIX} \
+              --min_tags=${MIN_TAGS} \
+              --type=JOB
           popd

@@ -37,8 +37,8 @@ done
 
 # Validation of required arguments and env values
 if [ -z "$LICENSE_PLATE" ] || [ -z "$ENV" ] || [ -z "$APP_NAME" ]; then
-  echo "Usage: $0 --license_plate=VALUE --env=VALUE --app_name=VALUE [--prefix=VALUE] [--min_tags=VALUE]"
-  echo "License plate, environment, and app name are required."
+  echo "Usage: $0 --license_plate=VALUE --env=VALUE --APP_NAME=VALUE [--prefix=VALUE] [--min_tags=VALUE]"
+  echo "License plate, environment, and job name are required."
   exit 1
 fi
 
@@ -54,30 +54,37 @@ case "$ENV" in
 esac
 
 # Setup internal variables
-DC_NAMESPACE="${LICENSE_PLATE}-${ENV}"
+JOB_NAMESPACE="${LICENSE_PLATE}-${ENV}"
 IS_NAMESPACE="${LICENSE_PLATE}-tools"
-DC_NAME="${ENV}-${APP_NAME}"
+JOB_NAME="${ENV}-${APP_NAME}"
 
-# Lookup the dc to get the deployed container image tag
-DC_IMAGE=$(oc get dc/$DC_NAME -n $DC_NAMESPACE -o json | jq -r '.spec.template.spec.containers[].image')
-if [ -z "$DC_IMAGE" ]; then
-  echo "DeploymentConfig image tag not found." >&2
+# Lookup the job to get the deployed container image tag
+JOB_IMAGE=$(oc get job/$JOB_NAME -n $JOB_NAMESPACE -o json | jq -r '.spec.template.spec.containers[].image')
+if [ -z "$JOB_IMAGE" ]; then
+  echo "Job image tag not found." >&2
   exit 1
 fi
 
-# Extract the GitHub run number from the DC Image
-DC_BUILD_ID=$(echo "$DC_IMAGE" | grep -oE '[0-9]+$')
-if [ -z "$DC_BUILD_ID" ]; then
-  echo "No GitHub run number found in DC image tag." >&2
+#Extract the Image Stream name from the JOB Image
+IS_NAME=$(echo "${JOB_IMAGE}" | awk -F'/|:' '{print $(NF-1)}')
+if [ -z "$IS_NAME" ]; then
+  echo "No ImageStream name found in Job Image tag." >&2
+  exit 1
+fi
+
+# Extract the GitHub run number from the JOB Image
+JOB_BUILD_ID=$(echo "$JOB_IMAGE" | grep -oE '[0-9]+$')
+if [ -z "$JOB_BUILD_ID" ]; then
+  echo "No GitHub run number found in Job image tag." >&2
   exit 1
 fi
 
 # Process ImageStream Tags and output those prior to the deployed version
-oc get is/$APP_NAME -n $IS_NAMESPACE -o json | jq -r --arg DC_BUILD_ID "$DC_BUILD_ID" --arg PREFIX "$PREFIX" --arg IS_NAME "$APP_NAME" --argjson MIN_TAGS "$MIN_TAGS" '
+oc get is/$IS_NAME -n $IS_NAMESPACE -o json | jq -r --arg JOB_BUILD_ID "$JOB_BUILD_ID" --arg PREFIX "$PREFIX" --arg IS_NAME "$IS_NAME" --argjson MIN_TAGS "$MIN_TAGS" '
   .status.tags
   | map(select(.tag | startswith($PREFIX) and test(".*-[0-9]+$")))
   | map(.tag)
-  | map(select(capture(".*-(?<id>[0-9]+)$").id | tonumber < ($DC_BUILD_ID | tonumber)))
+  | map(select(capture(".*-(?<id>[0-9]+)$").id | tonumber < ($JOB_BUILD_ID | tonumber)))
   | sort_by(capture(".*-(?<id>[0-9]+)$").id | tonumber)
   | if $MIN_TAGS > 0 then .[:-$MIN_TAGS] else . end
   | .[]

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Usage: $0 --license_plate=VALUE --env=VALUE --apps=VALUE [--prefix=VALUE] [--min_tags=VALUE]
+# Usage: $0 --license_plate=VALUE --env=VALUE --apps=VALUE [--prefix=VALUE] [--min_tags=VALUE] [--type=DC|JOB]
 
 # Initialize default values
 LICENSE_PLATE=""
@@ -8,6 +8,7 @@ ENV=""
 APPLICATIONS=""
 PREFIX=""
 MIN_TAGS=10  # Default to keeping 10 tags if MIN_TAGS is not specified
+TYPE="DC"
 
 # Parse named arguments
 while [ $# -gt 0 ]; do
@@ -26,6 +27,9 @@ while [ $# -gt 0 ]; do
       ;;
     --min_tags=*)
       MIN_TAGS="${1#*=}"
+      ;;
+    --type=*)
+      TYPE="${1#*=}"
       ;;
     *)
       echo "Usage: $0 --license_plate=VALUE --env=VALUE --apps=VALUE [--prefix=VALUE] [--min_tags=VALUE]"
@@ -51,13 +55,18 @@ do
     # Trim spaces
     trimmed_app=$(echo "$app" | xargs)
         echo "Processing \"${trimmed_app}\""
-        ./fetchOldTags.sh \
+        if [ "${TYPE}" == "JOB" ]; then
+            SCRIPT="./fetchOldJobTags.sh"
+        else
+            SCRIPT="./fetchOldTags.sh"
+        fi
+        ${SCRIPT} \
             --license_plate=${LICENSE_PLATE} \
             --env=${ENV} \
             --app_name=${trimmed_app} \
-            --prefix=${PREFIX} | \
-            xargs -I {} oc tag ${LICENSE_PLATE}-tools/${trimmed_app}:{} --delete
+            --prefix=${PREFIX} \
+            --min_tags=${MIN_TAGS} | \
+            xargs -I {} oc tag ${LICENSE_PLATE}-tools/{} --delete
 done
 
-echo Finished Pruning Images
-
+echo Finished Pruning Images for type ${TYPE} and applications ${APPLICATIONS}
