@@ -122,9 +122,7 @@ export function useFormioDropdownLoader() {
     return loadDropdown(
       form,
       dropdownName,
-      EducationProgramService.shared.getProgramsListForInstitutions({
-        isIncludeInActiveProgram: options?.isIncludeInActiveProgram,
-      }),
+      EducationProgramService.shared.getProgramsListForInstitutions(options),
     );
   };
 

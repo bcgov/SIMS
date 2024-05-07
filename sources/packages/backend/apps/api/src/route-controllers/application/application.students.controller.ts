@@ -147,7 +147,6 @@ export class ApplicationStudentsController extends BaseController {
   /**
    * Validate the values in the submitted application before submitting.
    * @param payload payload to create the application.
-   * @param programYear program year of the submitted application.
    */
   private async validateSubmitApplicationData(
     payload: SaveApplicationAPIInDTO,
