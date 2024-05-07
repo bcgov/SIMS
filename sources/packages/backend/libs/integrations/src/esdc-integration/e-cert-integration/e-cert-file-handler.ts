@@ -33,6 +33,7 @@ import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { ECertGenerationService } from "@sims/integrations/services";
 import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
+import { error } from "console";
 
 /**
  * Used to abort the e-Cert generation process, cancel the current transaction,
@@ -445,16 +446,26 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
   private sanitizeAndTransformToFeedbackErrors(
     eCertFeedbackResponseRecords: ECertResponseRecord[],
     eCertFeedbackErrorCodeMap: Record<string, number>,
-  ): DisbursementFeedbackRecord {
+  ): DisbursementFeedbackRecord[] {
     const sanitizedFeedbackRecords: DisbursementFeedbackRecord[] = [];
+    const unknownFeedbackErrorCodes: string[] = [];
     for (const eCertFeedbackResponseRecord of eCertFeedbackResponseRecords) {
-      const availableErrors = [
+      const receivedErrors = [
         eCertFeedbackResponseRecord.errorCode1,
         eCertFeedbackResponseRecord.errorCode2,
         eCertFeedbackResponseRecord.errorCode3,
         eCertFeedbackResponseRecord.errorCode4,
         eCertFeedbackResponseRecord.errorCode5,
-      ].filter((error) => !!error);
+      ].filter((errorCode) => !!errorCode);
+      const unknownErrors = receivedErrors.filter(
+        (error) => !!!eCertFeedbackErrorCodeMap[error],
+      );
+      sanitizedFeedbackRecords.push({
+        documentNumber: eCertFeedbackResponseRecord.documentNumber,
+        receivedErrorIds: receivedErrors.map(
+          (errorCode) => eCertFeedbackErrorCodeMap[errorCode],
+        ),
+      });
     }
     return sanitizedFeedbackRecords;
   }
