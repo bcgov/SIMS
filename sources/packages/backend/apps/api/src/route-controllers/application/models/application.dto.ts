@@ -142,9 +142,14 @@ export class ApplicationSupportingUserDetails {
   partnerInfo?: SuccessWaitingStatus;
 }
 
+export class ApplicationInCalculationDetails {
+  assessmentInCalculationStep?: SuccessWaitingStatus;
+}
+
 export class InProgressApplicationDetailsAPIOutDTO extends IntersectionType(
   ApplicationSupportingUserDetails,
   ApplicationIncomeVerification,
+  ApplicationInCalculationDetails,
 ) {
   id: number;
   applicationStatus: ApplicationStatus;
@@ -163,6 +168,7 @@ export class ApplicationProgressDetailsAPIOutDTO {
   appealStatus?: StudentAppealStatus;
   scholasticStandingChangeType?: StudentScholasticStandingChangeType;
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
+  assessmentTriggerType: AssessmentTriggerType;
 }
 
 export class DisbursementDetailsAPIOutDTO {
@@ -174,6 +180,7 @@ export class DisbursementDetailsAPIOutDTO {
 export class EnrolmentApplicationDetailsAPIOutDTO {
   firstDisbursement: DisbursementDetailsAPIOutDTO;
   secondDisbursement?: DisbursementDetailsAPIOutDTO;
+  assessmentTriggerType?: AssessmentTriggerType;
 }
 
 export class CompletedApplicationDetailsAPIOutDTO extends EnrolmentApplicationDetailsAPIOutDTO {

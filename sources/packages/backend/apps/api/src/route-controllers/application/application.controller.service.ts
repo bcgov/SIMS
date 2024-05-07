@@ -4,6 +4,7 @@ import {
   InstitutionLocationService,
   EducationProgramService,
   StudentRestrictionService,
+  StudentAssessmentService,
 } from "../../services";
 import {
   ApplicationFormData,
@@ -13,6 +14,7 @@ import {
   ApplicationIncomeVerification,
   ApplicationSupportingUserDetails,
   EnrolmentApplicationDetailsAPIOutDTO,
+  ApplicationInCalculationDetails,
 } from "./models/application.dto";
 import {
   credentialTypeToDisplay,
@@ -48,6 +50,7 @@ export class ApplicationControllerService {
     private readonly locationService: InstitutionLocationService,
     private readonly programService: EducationProgramService,
     private readonly studentRestrictionService: StudentRestrictionService,
+    private readonly studentAssessmentService: StudentAssessmentService,
   ) {}
 
   /**
@@ -371,5 +374,42 @@ export class ApplicationControllerService {
     }
 
     return supportingUserDetails;
+  }
+
+  /**
+   * Process application in calculation details.
+   * @param studentId student id.
+   * @param programYearId program year id.
+   * @param currentAssessmentId current assessment id.
+   * @return processed object.
+   */
+  async processApplicationInCalculationDetails(
+    studentId: number,
+    programYearId: number,
+    currentAssessmentId: number,
+  ): Promise<ApplicationInCalculationDetails> {
+    const assessmentInCalculationStep =
+      await this.studentAssessmentService.getAssessmentInCalculationStep(
+        studentId,
+        programYearId,
+      );
+
+    const assessmentInCalculationDetails =
+      {} as ApplicationInCalculationDetails;
+
+    assessmentInCalculationDetails.assessmentInCalculationStep =
+      SuccessWaitingStatus.Success;
+
+    // If assessmentInCalculationStep returns a value and its Id is different
+    // from the current assessment Id, then assessmentInCalculationStep is Waiting.
+    if (
+      assessmentInCalculationStep &&
+      assessmentInCalculationStep.id !== currentAssessmentId
+    ) {
+      assessmentInCalculationDetails.assessmentInCalculationStep =
+        SuccessWaitingStatus.Waiting;
+    }
+
+    return assessmentInCalculationDetails;
   }
 }

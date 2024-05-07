@@ -225,6 +225,21 @@
       ApplicationExceptionStatus.Approved
     "
   />
+
+  <application-status-tracker-banner
+    label="Waiting for other applications in the program year"
+    icon="fa:fas fa-clock"
+    icon-color="secondary"
+    v-if="
+      applicationDetails?.assessmentInCalculationStep ===
+      SuccessWaitingStatus.Waiting
+    "
+    ><template #content
+      >There are other applications for this program year that may affect your
+      assessment. Once any earlier applications have been assessed this
+      application will move to the assessment stage.</template
+    ></application-status-tracker-banner
+  >
 </template>
 <script lang="ts">
 import ApplicationStatusTrackerBanner from "@/components/students/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";

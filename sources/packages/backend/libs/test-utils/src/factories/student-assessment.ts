@@ -43,5 +43,7 @@ export function createFakeStudentAssessment(
   assessment.studentAssessmentStatus =
     options?.initialValue?.studentAssessmentStatus ??
     StudentAssessmentStatus.Submitted;
+  assessment.calculationStartDate =
+    options?.initialValue?.calculationStartDate ?? null;
   return assessment;
 }

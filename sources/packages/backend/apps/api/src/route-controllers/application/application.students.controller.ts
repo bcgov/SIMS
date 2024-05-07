@@ -73,6 +73,7 @@ import { ApplicationData } from "@sims/sims-db/entities/application.model";
 import {
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
+  AssessmentTriggerType,
   OfferingIntensity,
   StudentAppealStatus,
 } from "@sims/sims-db";
@@ -596,6 +597,13 @@ export class ApplicationStudentsController extends BaseController {
         supportingUserDetails,
       );
 
+    const assessmentInCalculationStep =
+      await this.applicationControllerService.processApplicationInCalculationDetails(
+        studentToken.studentId,
+        application.programYear.id,
+        application.currentAssessment.id,
+      );
+
     return {
       id: application.id,
       applicationStatus: application.applicationStatus,
@@ -604,6 +612,7 @@ export class ApplicationStudentsController extends BaseController {
       exceptionStatus: application.applicationException?.exceptionStatus,
       ...incomeVerification,
       ...supportingUser,
+      ...assessmentInCalculationStep,
     };
   }
 
@@ -652,6 +661,10 @@ export class ApplicationStudentsController extends BaseController {
         applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus;
     }
 
+    const assessmentTriggerType =
+      application.currentAssessment?.triggerType ??
+      AssessmentTriggerType.OriginalAssessment;
+
     const disbursements =
       application.currentAssessment?.disbursementSchedules ?? [];
 
@@ -670,6 +683,7 @@ export class ApplicationStudentsController extends BaseController {
       appealStatus,
       scholasticStandingChangeType: scholasticStandingChange?.changeType,
       applicationOfferingChangeRequestStatus,
+      assessmentTriggerType,
     };
   }
 
@@ -697,9 +711,12 @@ export class ApplicationStudentsController extends BaseController {
         `Application id ${applicationId} not found or not in relevant status to get enrolment details.`,
       );
     }
-    return this.applicationControllerService.transformToEnrolmentApplicationDetailsAPIOutDTO(
-      application.currentAssessment.disbursementSchedules,
-    );
+    return {
+      ...this.applicationControllerService.transformToEnrolmentApplicationDetailsAPIOutDTO(
+        application.currentAssessment.disbursementSchedules,
+      ),
+      assessmentTriggerType: application.currentAssessment?.triggerType,
+    };
   }
 
   /**

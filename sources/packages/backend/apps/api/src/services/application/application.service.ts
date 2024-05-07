@@ -1486,6 +1486,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
             disbursementDate: true,
             disbursementScheduleStatus: true,
           },
+          triggerType: true,
         },
         applicationException: {
           id: true,
@@ -1503,6 +1504,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
           id: true,
           changeType: true,
         },
+        programYear: { id: true },
       },
       relations: {
         pirDeniedReasonId: true,
@@ -1510,6 +1512,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationException: true,
         location: true,
         studentScholasticStandings: true,
+        programYear: true,
       },
       where: {
         id: applicationId,

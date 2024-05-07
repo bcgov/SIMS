@@ -25,6 +25,10 @@
       />
       <assessment
         v-else-if="applicationStatus === ApplicationStatus.Assessment"
+        :showRelatedApplicationChanged="
+          applicationProgressDetails.assessmentTriggerType ===
+          AssessmentTriggerType.RelatedApplicationChanged
+        "
       />
       <enrolment
         v-else-if="applicationStatus === ApplicationStatus.Enrolment"
@@ -51,6 +55,7 @@ import {
   StudentAppealStatus,
   StudentScholasticStandingChangeType,
   ApplicationOfferingChangeRequestStatus,
+  AssessmentTriggerType,
 } from "@/types";
 import { PropType, ref, defineComponent, computed, onMounted } from "vue";
 import { ApplicationProgressDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
@@ -190,6 +195,7 @@ export default defineComponent({
     );
 
     return {
+      AssessmentTriggerType,
       applicationTrackerLabels,
       trackerApplicationStatus,
       disabled,

@@ -340,4 +340,37 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       return savedApplication.currentAssessment;
     });
   }
+
+  /**
+   * Check if there is any assessment in calculation step currently
+   * during this time for the given student in given program year.
+   * Calculation step includes from calculating the assessment numbers
+   * to persisting calculated data in the system.
+   * @param studentId student id.
+   * @param programYearId program year id.
+   * @returns assessment in calculation step.
+   */
+  async getAssessmentInCalculationStep(
+    studentId: number,
+    programYearId: number,
+  ): Promise<StudentAssessment> {
+    return this.repo
+      .createQueryBuilder("assessment")
+      .select("assessment.id")
+      .innerJoin("assessment.application", "application")
+      .where("assessment.calculationStartDate is not null")
+      .andWhere(
+        "assessment.studentAssessmentStatus = :studentAssessmentStatus",
+        {
+          studentAssessmentStatus: StudentAssessmentStatus.InProgress,
+        },
+      )
+      .andWhere("application.student.id = :studentId", {
+        studentId,
+      })
+      .andWhere("application.programYear.id = :programYearId", {
+        programYearId,
+      })
+      .getOne();
+  }
 }
