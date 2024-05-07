@@ -92,16 +92,13 @@ export function useFormioUtils() {
   /**
    * Iterates recursively in all components checking for
    * a matchCondition provided as a parameter.
-   * @param components components to iterate through.
-   * @param matchedComponents cumulative results being
-   * stored along the recursive iterations.
+   * @param form form to iterate through.
    * @param matchCondition match condition to include
    * a component in the results.
-   * @returns all the components that matches the
-   * matchCondition function.
    * @param options related options.
    * - `stopOnFirstMatch` stop the recursive search as soon as the first match is found.
-   * @returns the component(s) satisfying the match condition.
+   * @returns all the components that matches the
+   * matchCondition function.
    */
   const recursiveSearch = (
     form: any,
