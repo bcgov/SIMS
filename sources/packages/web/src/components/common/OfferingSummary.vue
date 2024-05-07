@@ -17,6 +17,7 @@
         />
         <v-btn
           v-if="isInstitutionUser"
+          :disabled="!canCreateOffering"
           class="ml-2 float-right"
           @click="goToAddNewOffering()"
           color="primary"
@@ -128,6 +129,10 @@ export default defineComponent({
       type: Number,
       required: true,
     },
+    canCreateOffering: {
+      type: Boolean,
+      required: true,
+    },
   },
   setup(props) {
     const router = useRouter();
@@ -145,7 +150,9 @@ export default defineComponent({
       return clientType.value === ClientIdType.AEST;
     });
     const offeringActionLabel = computed(() => {
-      return isInstitutionUser.value ? "Edit" : "View";
+      return isInstitutionUser.value && props.canCreateOffering
+        ? "Edit"
+        : "View";
     });
 
     const goToAddNewOffering = () => {
@@ -163,14 +170,25 @@ export default defineComponent({
 
     const offeringButtonAction = (offeringId: number) => {
       if (isInstitutionUser.value) {
-        router.push({
-          name: InstitutionRoutesConst.EDIT_LOCATION_OFFERINGS,
-          params: {
-            offeringId: offeringId,
-            programId: props.programId,
-            locationId: props.locationId,
-          },
-        });
+        if (props.canCreateOffering) {
+          router.push({
+            name: InstitutionRoutesConst.EDIT_LOCATION_OFFERINGS,
+            params: {
+              offeringId: offeringId,
+              programId: props.programId,
+              locationId: props.locationId,
+            },
+          });
+        } else {
+          router.push({
+            name: InstitutionRoutesConst.INSTITUTION_VIEW_OFFERING,
+            params: {
+              offeringId: offeringId,
+              programId: props.programId,
+              locationId: props.locationId,
+            },
+          });
+        }
       }
       if (isAESTUser.value) {
         router.push({
