@@ -16,12 +16,7 @@ import {
 } from "@sims/test-utils";
 import { AppAESTModule } from "../../../../app.aest.module";
 import { FormNames, FormService } from "../../../../services";
-import {
-  Notification,
-  NotificationMessageType,
-  StudentAccountApplication,
-  User,
-} from "@sims/sims-db";
+import { Notification, NotificationMessageType, User } from "@sims/sims-db";
 import { In, IsNull } from "typeorm";
 import * as faker from "faker";
 
