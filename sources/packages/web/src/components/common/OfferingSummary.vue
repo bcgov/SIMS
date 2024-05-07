@@ -181,7 +181,7 @@ export default defineComponent({
           });
         } else {
           router.push({
-            name: InstitutionRoutesConst.INSTITUTION_VIEW_OFFERING,
+            name: InstitutionRoutesConst.VIEW_LOCATION_OFFERINGS,
             params: {
               offeringId: offeringId,
               programId: props.programId,

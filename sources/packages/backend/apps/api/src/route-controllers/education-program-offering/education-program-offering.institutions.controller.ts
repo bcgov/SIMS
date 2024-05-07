@@ -238,7 +238,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
       locationId,
       programId,
       offeringId,
-      true,
+      { isEditOnly: true, isIncludeInActiveProgram: false },
     );
     if (!offering) {
       throw new UnprocessableEntityException(
@@ -301,11 +301,11 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
       locationId,
       programId,
       offeringId,
-      true,
+      { isEditOnly: true, isIncludeInActiveProgram: false },
     );
     if (!offering) {
       throw new UnprocessableEntityException(
-        "Either offering for the program and location is not found or the offering is not in the appropriate status to be updated.",
+        "Either offering for the program and location is not found, program inactive or the offering is not in the appropriate status to be updated.",
       );
     }
     await this.programOfferingService.updateEducationProgramOfferingBasicData(
@@ -362,6 +362,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
       locationId,
       programId,
       offeringId,
+      { isIncludeInActiveProgram: true },
     );
     // To check if the offering has any submitted student aid application.
     const existingApplicationPromise =

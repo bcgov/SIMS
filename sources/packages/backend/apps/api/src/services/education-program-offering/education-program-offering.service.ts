@@ -408,15 +408,18 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * @param locationId
    * @param programId
    * @param offeringId
-   * @param isEditOnly if set to true then fetch offering
+   * @param options method options:
+   * - `isEditOnly` if set to true then fetch offering
    * in status Approved | Declined | Pending.
+   * - `isIncludeInActiveProgram`: if isIncludeInActiveProgram, then both active
+   * and not active education program is considered.
    * @returns
    */
   async getProgramOffering(
     locationId: number,
     programId: number,
     offeringId: number,
-    isEditOnly?: boolean,
+    options?: { isEditOnly?: boolean; isIncludeInActiveProgram?: boolean },
   ): Promise<EducationProgramOffering> {
     const offeringQuery = this.repo
       .createQueryBuilder("offerings")
@@ -465,7 +468,11 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         locationId: locationId,
       });
 
-    if (isEditOnly) {
+    if (!options?.isIncludeInActiveProgram) {
+      offeringQuery.andWhere("educationProgram.isActive = true");
+    }
+
+    if (options?.isEditOnly) {
       offeringQuery.andWhere(
         "offerings.offeringStatus IN (:...offeringStatus)",
         {
@@ -996,13 +1003,16 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     const currentOffering = await this.getOfferingToRequestChange(
       offeringId,
       OfferingStatus.Approved,
-      programId,
-      locationId,
+      {
+        programId: programId,
+        locationId: locationId,
+        isIncludeInActiveProgram: false,
+      },
     );
 
     if (!currentOffering) {
       throw new CustomNamedError(
-        "Either offering for given location and program not found or the offering not in appropriate status to be requested for change.",
+        "Either offering for given location and program not found/ not active or the offering not in appropriate status to be requested for change.",
         OFFERING_NOT_VALID,
       );
     }
@@ -1042,15 +1052,21 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * Offering in Approved status alone can be requested for change.
    * @param offeringId offering requested for change.
    * @param offeringStatus status of the approval.
-   * @param programId program of the offering.
-   * @param locationId location of the offering.
+   * @param options options for the query:
+   * - `programId`: program of the offering.
+   * - `locationId`: location of the offering.
+   * - `isIncludeInActiveProgram`: if isIncludeInActiveProgram, then both active
+   * and not active education program is considered.
    * @returns offering.
    */
   async getOfferingToRequestChange(
     offeringId: number,
     offeringStatus: OfferingStatus,
-    programId?: number,
-    locationId?: number,
+    options?: {
+      programId?: number;
+      locationId?: number;
+      isIncludeInActiveProgram?: boolean;
+    },
   ): Promise<EducationProgramOffering> {
     const offeringSummaryQuery = this.repo
       .createQueryBuilder("offerings")
@@ -1062,6 +1078,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "institution.id",
       ])
       .innerJoin("offerings.institutionLocation", "location")
+      .innerJoin("offerings.educationProgram", "educationProgram")
       .innerJoin("location.institution", "institution")
       .leftJoin("offerings.parentOffering", "parentOffering")
       .leftJoin("offerings.precedingOffering", "precedingOffering")
@@ -1072,22 +1089,26 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         offeringStatus,
       });
 
-    if (programId) {
+    if (options?.programId) {
       offeringSummaryQuery.andWhere(
         "offerings.educationProgram.id = :programId",
         {
-          programId: programId,
+          programId: options?.programId,
         },
       );
     }
 
-    if (locationId) {
+    if (options?.locationId) {
       offeringSummaryQuery.andWhere(
         "offerings.institutionLocation.id = :locationId",
         {
-          locationId: locationId,
+          locationId: options?.locationId,
         },
       );
+    }
+
+    if (!options?.isIncludeInActiveProgram) {
+      offeringSummaryQuery.andWhere("educationProgram.isActive = true");
     }
 
     return offeringSummaryQuery.getOne();
@@ -1219,11 +1240,12 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     const requestedOffering = await this.getOfferingToRequestChange(
       offeringId,
       OfferingStatus.ChangeAwaitingApproval,
+      { isIncludeInActiveProgram: false },
     );
 
     if (!requestedOffering) {
       throw new CustomNamedError(
-        "Either offering not found or the offering not in appropriate status to be approved or declined for change.",
+        "Either offering not found, program inactive or the offering not in appropriate status to be approved or declined for change.",
         OFFERING_NOT_VALID,
       );
     }

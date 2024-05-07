@@ -17,7 +17,7 @@ import ManageDesignations from "@/views/institution/designations/ManageDesignati
 import DesignationRequest from "@/views/institution/designations/DesignationRequest.vue";
 import DesignationView from "@/views/institution/designations/DesignationView.vue";
 import InstitutionUserDetails from "@/views/institution/InstitutionUserDetails.vue";
-import InstitutionViewOffering from "@/views/institution/locations/offerings/OfferingView.vue";
+import LocationOfferingView from "@/views/institution/locations/offerings/LocationOfferingView.vue";
 import {
   InstitutionRoutesConst,
   SharedRouteConst,
@@ -534,9 +534,9 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: AppRoutes.InstitutionViewOffering,
-        name: InstitutionRoutesConst.INSTITUTION_VIEW_OFFERING,
-        components: InstitutionViewOffering,
+        path: AppRoutes.LocationOfferingsView,
+        name: InstitutionRoutesConst.VIEW_LOCATION_OFFERINGS,
+        component: LocationOfferingView,
         props: true,
         meta: {
           clientType: ClientIdType.Institution,
