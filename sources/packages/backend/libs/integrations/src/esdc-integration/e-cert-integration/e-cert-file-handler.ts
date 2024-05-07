@@ -29,10 +29,10 @@ import {
   ESDCFileResponse,
 } from "./models/e-cert-integration-model";
 import { ECertIntegrationService } from "./e-cert.integration.service";
-import { ECertFullTimeResponseRecord } from "./e-cert-full-time-integration/e-cert-files/e-cert-response-record";
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { ECertGenerationService } from "@sims/integrations/services";
+import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
 
 /**
  * Used to abort the e-Cert generation process, cancel the current transaction,
@@ -41,6 +41,14 @@ import { ECertGenerationService } from "@sims/integrations/services";
  */
 const ECERT_GENERATION_NO_RECORDS_AVAILABLE =
   "ECERT_GENERATION_NO_RECORDS_AVAILABLE";
+
+/**
+ * Feedback received for a disbursement.
+ */
+interface DisbursementFeedbackRecord {
+  documentNumber: number;
+  receivedErrorIds: number[];
+}
 
 export abstract class ECertFileHandler extends ESDCFileHandler {
   esdcConfig: ESDCIntegrationConfig;
@@ -290,15 +298,21 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
       this.esdcConfig.ftpResponseFolder,
       new RegExp(`^${this.esdcConfig.environmentCode}${fileCode}`, "i"),
     );
-    const processFiles: ProcessSFTPResponseResult[] = [];
+    const processResults: ProcessSFTPResponseResult[] = [];
+    // Return if there are no files to be processed.
     if (!filePaths.length) {
-      return processFiles;
+      const processResult = new ProcessSFTPResponseResult();
+      processResult.processSummary.push(
+        `There are no disbursement feedback error files to be processed for ${offeringIntensity}`,
+      );
+      processResults.push(processResult);
+      return processResults;
     }
     const eCertFeedbackErrorCodeMap = await this.getECertFeedbackErrorsMap(
       offeringIntensity,
     );
     for (const filePath of filePaths) {
-      processFiles.push(
+      processResults.push(
         await this.processFile(
           eCertIntegrationService,
           filePath,
@@ -306,7 +320,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
         ),
       );
     }
-    return processFiles;
+    return processResults;
   }
 
   /**
@@ -314,6 +328,8 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
    * @param eCertIntegrationService
    * @param filePath E-Cert response file to be processed.
    * @param offeringIntensity offering intensity.
+   * @param eCertFeedbackErrorCodeMap e-Cert feedback error map
+   * to get error id by error code.
    * @returns Process summary and errors summary.
    */
   private async processFile(
@@ -324,12 +340,11 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     const result = new ProcessSFTPResponseResult();
     result.processSummary.push(`Processing file ${filePath}.`);
 
-    let responseFile: ECertFullTimeResponseRecord[];
+    let eCertFeedbackResponseRecords: ECertResponseRecord[];
 
     try {
-      responseFile = await eCertIntegrationService.downloadResponseFile(
-        filePath,
-      );
+      eCertFeedbackResponseRecords =
+        await eCertIntegrationService.downloadResponseFile(filePath);
     } catch (error) {
       this.logger.error(error);
       result.errorsSummary.push(`Error downloading file ${filePath}. ${error}`);
@@ -338,9 +353,11 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
       return result;
     }
 
-    result.processSummary.push(`File contains ${responseFile.length} records.`);
+    result.processSummary.push(
+      `File contains ${eCertFeedbackResponseRecords.length} records.`,
+    );
 
-    for (const feedbackRecord of responseFile) {
+    for (const feedbackRecord of eCertFeedbackResponseRecords) {
       try {
         await this.processErrorCodeRecords(feedbackRecord);
         this.logger.log(
@@ -378,7 +395,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
    * @param feedbackRecord E-Cert received record
    */
   private async processErrorCodeRecords(
-    feedbackRecord: ECertFullTimeResponseRecord,
+    feedbackRecord: ECertResponseRecord,
   ): Promise<void> {
     const disbursementSchedule =
       await this.disbursementScheduleService.getDisbursementScheduleByDocumentNumber(
@@ -423,6 +440,23 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
         eCertFeedbackError.id;
     }
     return eCertFeedbackErrorCodeMap;
+  }
+
+  private sanitizeAndTransformToFeedbackErrors(
+    eCertFeedbackResponseRecords: ECertResponseRecord[],
+    eCertFeedbackErrorCodeMap: Record<string, number>,
+  ): DisbursementFeedbackRecord {
+    const sanitizedFeedbackRecords: DisbursementFeedbackRecord[] = [];
+    for (const eCertFeedbackResponseRecord of eCertFeedbackResponseRecords) {
+      const availableErrors = [
+        eCertFeedbackResponseRecord.errorCode1,
+        eCertFeedbackResponseRecord.errorCode2,
+        eCertFeedbackResponseRecord.errorCode3,
+        eCertFeedbackResponseRecord.errorCode4,
+        eCertFeedbackResponseRecord.errorCode5,
+      ].filter((error) => !!error);
+    }
+    return sanitizedFeedbackRecords;
   }
 
   @InjectLogger()
