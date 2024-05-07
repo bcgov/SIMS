@@ -24,7 +24,6 @@ import { EducationProgramOfferingService } from "@/services/EducationProgramOffe
 import { onMounted, ref, computed, defineComponent } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { EducationProgramOfferingAPIOutDTO } from "@/services/http/dto";
-import { BannerTypes } from "@/types/contracts/Banner";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 import OfferingForm from "@/components/common/OfferingForm.vue";
 
@@ -69,7 +68,6 @@ export default defineComponent({
     });
     return {
       initialData,
-      BannerTypes,
       routeLocation,
     };
   },
