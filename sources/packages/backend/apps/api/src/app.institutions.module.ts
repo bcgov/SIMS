@@ -30,6 +30,7 @@ import {
   ApplicationOfferingChangeRequestService,
   ApplicationWithdrawalImportTextService,
   ApplicationBulkWithdrawalImportValidationService,
+  ProgramYearService,
 } from "./services";
 import {
   ApplicationControllerService,
@@ -68,6 +69,9 @@ import {
   RestrictionControllerService,
   ApplicationOfferingChangeRequestInstitutionsController,
   ApplicationOfferingChangeRequestControllerService,
+  ProgramYearInstitutionsController,
+  ReportInstitutionsController,
+  ProgramYearControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -79,6 +83,7 @@ import {
   NoteSharedService,
   RestrictionSharedService,
   AssessmentSequentialProcessingService,
+  ReportService,
 } from "@sims/services";
 import {
   SFASIndividualService,
@@ -109,6 +114,8 @@ import {
     OverawardInstitutionsController,
     NoteInstitutionsController,
     ApplicationOfferingChangeRequestInstitutionsController,
+    ProgramYearInstitutionsController,
+    ReportInstitutionsController,
   ],
   providers: [
     ApplicationControllerService,
@@ -169,6 +176,9 @@ import {
     ApplicationWithdrawalImportTextService,
     ApplicationBulkWithdrawalImportValidationService,
     AssessmentSequentialProcessingService,
+    ProgramYearControllerService,
+    ProgramYearService,
+    ReportService,
   ],
 })
 export class AppInstitutionsModule {}

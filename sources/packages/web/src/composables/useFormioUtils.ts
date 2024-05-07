@@ -1,4 +1,4 @@
-import { FormIOForm } from "@/types";
+import { FormIOComponent, FormIOForm } from "@/types";
 import { ClassConstructor, plainToClass } from "class-transformer";
 import { Utils } from "formiojs";
 
@@ -9,6 +9,24 @@ export function useFormioUtils() {
   // Get a component in a form definition once it is loaded.
   const getComponent = (form: any, componentKey: string): any => {
     return Utils.getComponent(form.components, componentKey, true);
+  };
+
+  /**
+   * Recursively find a component by its key and returns the first one found.
+   * @param form form.io form.
+   * @param componentKey form.io API key name.
+   * @returns first component found.
+   */
+  const getFirstComponent = (
+    form: FormIOForm,
+    componentKey: string,
+  ): FormIOComponent => {
+    const [firstComponentFound] = recursiveSearch(
+      form,
+      (component) => component.key === componentKey,
+      { stopOnFirstMatch: true },
+    );
+    return firstComponentFound;
   };
 
   // Forces a component to execute a redraw.
@@ -40,18 +58,29 @@ export function useFormioUtils() {
    * stored along the recursive iterations.
    * @param matchCondition match condition to include
    * a component in the results.
+   * @param options related options.
+   * - `stopOnFirstMatch` stop the recursive search as soon as the first match is found.
    */
   const internalRecursiveSearch = (
     components: any[],
     matchedComponents: any[],
     matchCondition: (component: any) => boolean,
+    options?: {
+      stopOnFirstMatch: boolean;
+    },
   ) => {
+    const stopOnFirstMatch = options?.stopOnFirstMatch ?? false;
     components.forEach((component: any) => {
+      if (stopOnFirstMatch && matchedComponents.length) {
+        // If only the first match is needed, and one was found, stop searching.
+        return;
+      }
       if (component.components) {
         internalRecursiveSearch(
           component.components,
           matchedComponents,
           matchCondition,
+          options,
         );
       }
       if (matchCondition(component)) {
@@ -63,20 +92,28 @@ export function useFormioUtils() {
   /**
    * Iterates recursively in all components checking for
    * a matchCondition provided as a parameter.
-   * @param components components to iterate through.
-   * @param matchedComponents cumulative results being
-   * stored along the recursive iterations.
+   * @param form form to iterate through.
    * @param matchCondition match condition to include
    * a component in the results.
+   * @param options related options.
+   * - `stopOnFirstMatch` stop the recursive search as soon as the first match is found.
    * @returns all the components that matches the
    * matchCondition function.
    */
   const recursiveSearch = (
     form: any,
     matchCondition: (component: any) => boolean,
+    options?: {
+      stopOnFirstMatch: boolean;
+    },
   ): any[] => {
     const matchedComponents: any[] = [];
-    internalRecursiveSearch(form.components, matchedComponents, matchCondition);
+    internalRecursiveSearch(
+      form.components,
+      matchedComponents,
+      matchCondition,
+      options,
+    );
     return matchedComponents;
   };
 
@@ -179,6 +216,7 @@ export function useFormioUtils() {
 
   return {
     getComponent,
+    getFirstComponent,
     redrawComponent,
     getComponentValueByKey,
     getComponentsOfType,
