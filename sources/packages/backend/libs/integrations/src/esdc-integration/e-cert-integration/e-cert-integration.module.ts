@@ -20,6 +20,7 @@ import { ConfigModule } from "@sims/utilities/config";
 import {
   DisbursementScheduleErrorsService,
   DisbursementScheduleService,
+  ECertFeedbackErrorService,
   ECertGenerationService,
   ECertNotificationService,
   SshService,
@@ -82,6 +83,7 @@ import { PartTimeECertFileHandler } from "./part-time-e-cert-file-handler";
     PartTimeCalculationProcess,
     AssessmentSequentialProcessingService,
     StudentLoanBalanceSharedService,
+    ECertFeedbackErrorService,
   ],
   exports: [
     FullTimeECertFileHandler,

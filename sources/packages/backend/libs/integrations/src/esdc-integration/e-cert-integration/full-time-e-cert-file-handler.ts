@@ -2,6 +2,7 @@ import { OfferingIntensity } from "@sims/sims-db";
 import {
   DisbursementScheduleErrorsService,
   DisbursementScheduleService,
+  ECertFeedbackErrorService,
 } from "../../services";
 import { SequenceControlService, SystemUsersService } from "@sims/services";
 import {
@@ -31,6 +32,7 @@ export class FullTimeECertFileHandler extends ECertFileHandler {
     eCertGenerationService: ECertGenerationService,
     disbursementScheduleErrorsService: DisbursementScheduleErrorsService,
     systemUserService: SystemUsersService,
+    eCertFeedbackErrorService: ECertFeedbackErrorService,
     private readonly eCertIntegrationService: ECertFullTimeIntegrationService,
   ) {
     super(
@@ -40,6 +42,7 @@ export class FullTimeECertFileHandler extends ECertFileHandler {
       eCertGenerationService,
       disbursementScheduleErrorsService,
       systemUserService,
+      eCertFeedbackErrorService,
     );
   }
 
@@ -68,6 +71,7 @@ export class FullTimeECertFileHandler extends ECertFileHandler {
     return this.processResponses(
       this.eCertIntegrationService,
       ECERT_FULL_TIME_FEEDBACK_FILE_CODE,
+      OfferingIntensity.fullTime,
     );
   }
 }

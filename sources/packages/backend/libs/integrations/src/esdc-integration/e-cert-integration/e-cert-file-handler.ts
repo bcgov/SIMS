@@ -11,6 +11,7 @@ import {
 import {
   DisbursementScheduleErrorsService,
   DisbursementScheduleService,
+  ECertFeedbackErrorService,
 } from "../../services";
 import { SequenceControlService, SystemUsersService } from "@sims/services";
 import {
@@ -50,6 +51,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     private readonly eCertGenerationService: ECertGenerationService,
     private readonly disbursementScheduleErrorsService: DisbursementScheduleErrorsService,
     private readonly systemUserService: SystemUsersService,
+    private readonly eCertFeedbackErrorService: ECertFeedbackErrorService,
   ) {
     super(configService);
   }
@@ -276,20 +278,32 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
    * Download all files from E-Cert Response folder on SFTP and process them all.
    * @param eCertIntegrationService
    * @param fileCode ECert response file code to be processed.
+   * @param offeringIntensity offering intensity.
    * @returns Summary with what was processed and the list of all errors, if any.
    */
   async processResponses(
     eCertIntegrationService: ECertIntegrationService,
     fileCode: string,
+    offeringIntensity: OfferingIntensity,
   ): Promise<ProcessSFTPResponseResult[]> {
     const filePaths = await eCertIntegrationService.getResponseFilesFullPath(
       this.esdcConfig.ftpResponseFolder,
       new RegExp(`^${this.esdcConfig.environmentCode}${fileCode}`, "i"),
     );
     const processFiles: ProcessSFTPResponseResult[] = [];
+    if (!filePaths.length) {
+      return processFiles;
+    }
+    const eCertFeedbackErrorCodeMap = await this.getECertFeedbackErrorsMap(
+      offeringIntensity,
+    );
     for (const filePath of filePaths) {
       processFiles.push(
-        await this.processFile(eCertIntegrationService, filePath),
+        await this.processFile(
+          eCertIntegrationService,
+          filePath,
+          eCertFeedbackErrorCodeMap,
+        ),
       );
     }
     return processFiles;
@@ -299,11 +313,13 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
    * Process each individual E-Cert response file from the SFTP.
    * @param eCertIntegrationService
    * @param filePath E-Cert response file to be processed.
+   * @param offeringIntensity offering intensity.
    * @returns Process summary and errors summary.
    */
   private async processFile(
     eCertIntegrationService: ECertIntegrationService,
     filePath: string,
+    eCertFeedbackErrorCodeMap: Record<string, number>,
   ): Promise<ProcessSFTPResponseResult> {
     const result = new ProcessSFTPResponseResult();
     result.processSummary.push(`Processing file ${filePath}.`);
@@ -385,6 +401,28 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
         `${feedbackRecord.documentNumber} document number not found in disbursement_schedule table.`,
       );
     }
+  }
+
+  /**
+   * Get eCert feedback error map which has
+   * error code as key and error id as value.
+   * The map is generated for the given offering intensity.
+   * @example {ERR01:1}.
+   * @param offeringIntensity offering intensity.
+   */
+  private async getECertFeedbackErrorsMap(
+    offeringIntensity: OfferingIntensity,
+  ): Promise<Record<string, number>> {
+    const eCertFeedbackErrors =
+      await this.eCertFeedbackErrorService.getECertFeedbackErrorsByOfferingIntensity(
+        offeringIntensity,
+      );
+    const eCertFeedbackErrorCodeMap: Record<string, number> = {};
+    for (const eCertFeedbackError of eCertFeedbackErrors) {
+      eCertFeedbackErrorCodeMap[eCertFeedbackError.errorCode] =
+        eCertFeedbackError.id;
+    }
+    return eCertFeedbackErrorCodeMap;
   }
 
   @InjectLogger()
