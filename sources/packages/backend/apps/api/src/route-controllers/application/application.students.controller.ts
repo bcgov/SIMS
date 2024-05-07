@@ -44,6 +44,7 @@ import {
   ApplicationProgressDetailsAPIOutDTO,
   EnrolmentApplicationDetailsAPIOutDTO,
   CompletedApplicationDetailsAPIOutDTO,
+  SuccessWaitingStatus,
 } from "./models/application.dto";
 import {
   AllowAuthorizedParty,
@@ -76,7 +77,10 @@ import {
   OfferingIntensity,
   StudentAppealStatus,
 } from "@sims/sims-db";
-import { ConfirmationOfEnrollmentService } from "@sims/services";
+import {
+  AssessmentSequentialProcessingService,
+  ConfirmationOfEnrollmentService,
+} from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
@@ -98,6 +102,7 @@ export class ApplicationStudentsController extends BaseController {
     private readonly studentAppealService: StudentAppealService,
     private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
     private readonly configService: ConfigService,
+    private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
   ) {
     super();
   }
@@ -596,12 +601,28 @@ export class ApplicationStudentsController extends BaseController {
         supportingUserDetails,
       );
 
+    // Get the first outstanding assessment waiting for calculation as per the sequence.
+    const firstOutstandingStudentAssessment =
+      await this.assessmentSequentialProcessingService.getOutstandingAssessmentsForStudentInSequence(
+        studentToken.studentId,
+        application.programYear.id,
+      );
+
+    // If first outstanding assessment returns a value and its Id is different
+    // from the current assessment Id, then assessmentInCalculationStep is Waiting.
+    const outstandingAssessmentStatus =
+      firstOutstandingStudentAssessment &&
+      firstOutstandingStudentAssessment.id !== application.currentAssessment.id
+        ? SuccessWaitingStatus.Waiting
+        : SuccessWaitingStatus.Success;
+
     return {
       id: application.id,
       applicationStatus: application.applicationStatus,
       pirStatus: application.pirStatus,
       pirDeniedReason: getPIRDeniedReason(application),
       exceptionStatus: application.applicationException?.exceptionStatus,
+      outstandingAssessmentStatus: outstandingAssessmentStatus,
       ...incomeVerification,
       ...supportingUser,
     };
@@ -652,6 +673,8 @@ export class ApplicationStudentsController extends BaseController {
         applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus;
     }
 
+    const assessmentTriggerType = application.currentAssessment?.triggerType;
+
     const disbursements =
       application.currentAssessment?.disbursementSchedules ?? [];
 
@@ -670,6 +693,7 @@ export class ApplicationStudentsController extends BaseController {
       appealStatus,
       scholasticStandingChangeType: scholasticStandingChange?.changeType,
       applicationOfferingChangeRequestStatus,
+      assessmentTriggerType,
     };
   }
 
@@ -697,9 +721,12 @@ export class ApplicationStudentsController extends BaseController {
         `Application id ${applicationId} not found or not in relevant status to get enrolment details.`,
       );
     }
-    return this.applicationControllerService.transformToEnrolmentApplicationDetailsAPIOutDTO(
-      application.currentAssessment.disbursementSchedules,
-    );
+    return {
+      ...this.applicationControllerService.transformToEnrolmentApplicationDetailsAPIOutDTO(
+        application.currentAssessment.disbursementSchedules,
+      ),
+      assessmentTriggerType: application.currentAssessment.triggerType,
+    };
   }
 
   /**

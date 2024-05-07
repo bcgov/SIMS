@@ -138,6 +138,19 @@
     "
   />
 
+  <application-status-tracker-banner
+    label="Waiting for other applications in the program year"
+    icon="fa:fas fa-clock"
+    icon-color="secondary"
+    content="There are other applications for this program year that may affect your
+      assessment. Once any earlier applications have been assessed this
+      application will move to the assessment stage."
+    v-if="
+      applicationDetails?.outstandingAssessmentStatus ===
+      SuccessWaitingStatus.Waiting
+    "
+  />
+
   <!-- Success cards. -->
   <application-status-tracker-banner
     label="Income verification completed"

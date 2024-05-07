@@ -113,6 +113,13 @@
     :background-color="hasDisbursementEvent ? undefined : 'success-bg'"
     content="Your institution updated the study period that was submitted with your application, which changed your assessment evaluation. Please review your new assessment in the table below. If you have concerns or require more information, please contact the Financial Aid Officer from your institution."
   />
+  <!-- Related Application Changed -->
+  <related-application-changed
+    v-if="
+      assessmentDetails.assessmentTriggerType ===
+      AssessmentTriggerType.RelatedApplicationChanged
+    "
+  />
   <!-- Student appeal - approved -->
   <application-status-tracker-banner
     v-if="
@@ -173,6 +180,7 @@ import { CompletedApplicationDetailsAPIOutDTO } from "@/services/http/dto/Applic
 import ApplicationStatusTrackerBanner from "@/components/students/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
 import DisbursementBanner from "@/components/students/applicationTracker/DisbursementBanner.vue";
 import MultipleDisbursementBanner from "@/components/students/applicationTracker/MultipleDisbursementBanner.vue";
+import RelatedApplicationChanged from "@/components/students/applicationTracker/RelatedApplicationChanged.vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 
@@ -181,6 +189,7 @@ export default defineComponent({
     ApplicationStatusTrackerBanner,
     DisbursementBanner,
     MultipleDisbursementBanner,
+    RelatedApplicationChanged,
   },
   props: {
     applicationId: {

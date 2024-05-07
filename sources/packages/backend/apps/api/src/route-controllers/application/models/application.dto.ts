@@ -151,6 +151,7 @@ export class InProgressApplicationDetailsAPIOutDTO extends IntersectionType(
   pirStatus: ProgramInfoStatus;
   pirDeniedReason?: string;
   exceptionStatus?: ApplicationExceptionStatus;
+  outstandingAssessmentStatus: SuccessWaitingStatus;
 }
 
 export class ApplicationProgressDetailsAPIOutDTO {
@@ -163,6 +164,7 @@ export class ApplicationProgressDetailsAPIOutDTO {
   appealStatus?: StudentAppealStatus;
   scholasticStandingChangeType?: StudentScholasticStandingChangeType;
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
+  assessmentTriggerType?: AssessmentTriggerType;
 }
 
 export class DisbursementDetailsAPIOutDTO {
@@ -174,6 +176,7 @@ export class DisbursementDetailsAPIOutDTO {
 export class EnrolmentApplicationDetailsAPIOutDTO {
   firstDisbursement: DisbursementDetailsAPIOutDTO;
   secondDisbursement?: DisbursementDetailsAPIOutDTO;
+  assessmentTriggerType?: AssessmentTriggerType;
 }
 
 export class CompletedApplicationDetailsAPIOutDTO extends EnrolmentApplicationDetailsAPIOutDTO {

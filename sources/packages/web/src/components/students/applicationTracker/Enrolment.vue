@@ -1,4 +1,10 @@
 <template>
+  <related-application-changed
+    v-if="
+      applicationCOEDetails.assessmentTriggerType ===
+      AssessmentTriggerType.RelatedApplicationChanged
+    "
+  />
   <multiple-disbursement-banner
     v-if="applicationCOEDetails?.secondDisbursement"
     :firstCOEStatus="applicationCOEDetails?.firstDisbursement?.coeStatus"
@@ -12,17 +18,19 @@
   />
 </template>
 <script lang="ts">
-import { COEStatus } from "@/types";
+import { COEStatus, AssessmentTriggerType } from "@/types";
 import { onMounted, ref, defineComponent } from "vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import { EnrolmentApplicationDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
 import DisbursementBanner from "@/components/students/applicationTracker/DisbursementBanner.vue";
 import MultipleDisbursementBanner from "@/components/students/applicationTracker/MultipleDisbursementBanner.vue";
+import RelatedApplicationChanged from "@/components/students/applicationTracker/RelatedApplicationChanged.vue";
 
 export default defineComponent({
   components: {
     DisbursementBanner,
     MultipleDisbursementBanner,
+    RelatedApplicationChanged,
   },
   props: {
     applicationId: {
@@ -50,6 +58,7 @@ export default defineComponent({
     });
 
     return {
+      AssessmentTriggerType,
       applicationCOEDetails,
       multipleCOEDenialReason,
       COEStatus,
