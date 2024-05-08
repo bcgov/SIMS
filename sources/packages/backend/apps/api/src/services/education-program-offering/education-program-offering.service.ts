@@ -1067,7 +1067,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "precedingOffering.id",
         "location.id",
         "institution.id",
-        "educationProgram.isActive",
+        "educationProgram",
       ])
       .innerJoin("offerings.institutionLocation", "location")
       .innerJoin("offerings.educationProgram", "educationProgram")

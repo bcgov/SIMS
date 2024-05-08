@@ -2,11 +2,22 @@
   <full-page-container>
     <template #header>
       <header-navigator
-        title="Study period offerings"
+        title="Program detail"
         :routeLocation="routeLocation"
-        subTitle="View Request"
+        subTitle="View Offering"
       >
       </header-navigator>
+    </template>
+    <template #alerts>
+      <banner
+        v-if="hasExistingApplication"
+        class="mb-2"
+        :type="BannerTypes.Success"
+        header="Students have applied financial aid for this offering"
+        summary="You can still make changes to the name. If you need edit the locked fields, please click on the edit actions menu and request to edit."
+      />
+    </template>
+    <template #details-header>
       <program-offering-detail-header
         class="m-4"
         :headerDetails="{
@@ -24,8 +35,10 @@ import { EducationProgramOfferingService } from "@/services/EducationProgramOffe
 import { onMounted, ref, computed, defineComponent } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { EducationProgramOfferingAPIOutDTO } from "@/services/http/dto";
+import { OfferingStatus } from "@/types";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 import OfferingForm from "@/components/common/OfferingForm.vue";
+import { BannerTypes } from "@/types/contracts/Banner";
 
 export default defineComponent({
   components: {
@@ -55,6 +68,11 @@ export default defineComponent({
         locationId: props.locationId,
       },
     }));
+    const hasExistingApplication = computed(
+      () =>
+        initialData.value.hasExistingApplication &&
+        initialData.value.offeringStatus === OfferingStatus.Approved,
+    );
     const loadFormData = async () => {
       initialData.value =
         await EducationProgramOfferingService.shared.getOfferingDetailsByLocationAndProgram(
@@ -68,7 +86,10 @@ export default defineComponent({
     });
     return {
       initialData,
+      hasExistingApplication,
+      OfferingStatus,
       routeLocation,
+      BannerTypes,
     };
   },
 });
