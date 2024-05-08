@@ -58,7 +58,7 @@ jobs:
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
 
-      - name: Prune Images
+      - name: Prune DC Images
         run: |
           pushd devops/scripts
           ./pruneImages.sh \
@@ -67,6 +67,11 @@ jobs:
               --apps="${APPLICATIONS}" \
               --prefix=${PREFIX} \
               --min_tags=${MIN_TAGS}
+          popd
+
+      - name: Prune Job Images
+        run: |
+          pushd devops/scripts
           ./pruneImages.sh \
               --license_plate=${{ vars.OPENSHIFT_LICENSE_PLATE }} \
               --env=${ENVIRONMENT} \
