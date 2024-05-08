@@ -1000,6 +1000,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       programId,
       locationId,
     );
+
     if (!currentOffering) {
       throw new CustomNamedError(
         "Either offering for given location and program not found or the offering not in appropriate status to be requested for change.",
@@ -1012,6 +1013,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         OFFERING_NOT_VALID,
       );
     }
+
     const requestedOffering = this.populateProgramOffering(
       educationProgramOffering,
     );
@@ -1096,6 +1098,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         },
       );
     }
+
     return offeringSummaryQuery.getOne();
   }
 
@@ -1229,21 +1232,21 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
 
     if (!requestedOffering) {
       throw new CustomNamedError(
-        "Either offering not found, program inactive or the offering not in appropriate status to be approved or declined for change.",
+        "Either offering not found or the offering not in appropriate status to be approved or declined for change.",
         OFFERING_NOT_VALID,
       );
     }
 
     if (!requestedOffering.educationProgram.isActive) {
       throw new CustomNamedError(
-        "Either offering not found, program inactive or the offering not in appropriate status to be approved or declined for change.",
+        "Program is not active and the offering cannot be updated.",
         OFFERING_NOT_VALID,
       );
     }
 
     if (!requestedOffering.precedingOffering) {
       throw new CustomNamedError(
-        "Program is not active to request a change for the offering.",
+        "The offering requested for change does not have a preceding offering",
         OFFERING_NOT_VALID,
       );
     }
