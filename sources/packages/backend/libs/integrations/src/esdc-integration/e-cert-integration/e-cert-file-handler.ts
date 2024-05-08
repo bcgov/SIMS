@@ -33,7 +33,6 @@ import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { ECertGenerationService } from "@sims/integrations/services";
 import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
-import { error } from "console";
 
 /**
  * Used to abort the e-Cert generation process, cancel the current transaction,
@@ -42,6 +41,8 @@ import { error } from "console";
  */
 const ECERT_GENERATION_NO_RECORDS_AVAILABLE =
   "ECERT_GENERATION_NO_RECORDS_AVAILABLE";
+
+const UNKNOWN_FEEDBACK_ERROR_CODE = "UNKNOWN_FEEDBACK_ERROR_CODE";
 
 /**
  * Feedback received for a disbursement.
@@ -338,8 +339,8 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     filePath: string,
     eCertFeedbackErrorCodeMap: Record<string, number>,
   ): Promise<ProcessSFTPResponseResult> {
-    const result = new ProcessSFTPResponseResult();
-    result.processSummary.push(`Processing file ${filePath}.`);
+    const processResult = new ProcessSFTPResponseResult();
+    processResult.processSummary.push(`Processing file ${filePath}.`);
 
     let eCertFeedbackResponseRecords: ECertResponseRecord[];
 
@@ -348,32 +349,38 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
         await eCertIntegrationService.downloadResponseFile(filePath);
     } catch (error) {
       this.logger.error(error);
-      result.errorsSummary.push(`Error downloading file ${filePath}. ${error}`);
+      processResult.errorsSummary.push(
+        `Error downloading file ${filePath}. ${error}`,
+      );
       // Abort the process nicely not throwing an exception and
       // allowing other response files to be processed.
-      return result;
+      return processResult;
     }
-
-    result.processSummary.push(
+    // Processing the records.
+    processResult.processSummary.push(
       `File contains ${eCertFeedbackResponseRecords.length} records.`,
     );
-
-    for (const feedbackRecord of eCertFeedbackResponseRecords) {
-      try {
-        await this.processErrorCodeRecords(feedbackRecord);
-        this.logger.log(
-          `Successfully processed line ${feedbackRecord.lineNumber}.`,
-        );
-      } catch (error) {
-        // Log the error but allow the process to continue.
-        const errorDescription = `Error processing record line number ${feedbackRecord.lineNumber} from file ${filePath}, error: ${error}`;
-        result.errorsSummary.push(errorDescription);
+    try {
+      this.sanitizeErrorCodes(
+        eCertFeedbackResponseRecords,
+        eCertFeedbackErrorCodeMap,
+      );
+    } catch (error: unknown) {
+      if (
+        error instanceof CustomNamedError &&
+        error.name === UNKNOWN_FEEDBACK_ERROR_CODE
+      ) {
+        // Log the error summary and abort processing the file when any of the received error codes are
+        // unknown to the system.
+        const errorDescription = `Error processing the records for the file ${filePath}, error: ${error}`;
         this.logger.error(`${errorDescription}. Error: ${error}`);
+        processResult.errorsSummary.push(errorDescription);
+        return processResult;
       }
     }
 
     try {
-      if (result.errorsSummary.length === 0) {
+      if (processResult.errorsSummary.length === 0) {
         // if there is an error in the file do not delete the file
         await eCertIntegrationService.deleteFile(filePath);
       }
@@ -383,10 +390,10 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
       // processed again and could be deleted in the second attempt.
       const logMessage = `Error while deleting E-Cert response file: ${filePath}`;
       this.logger.error(logMessage);
-      result.errorsSummary.push(logMessage);
+      processResult.errorsSummary.push(logMessage);
     }
 
-    return result;
+    return processResult;
   }
 
   /**
@@ -395,29 +402,31 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
    * the document number in DisbursementFeedbackErrors.
    * @param feedbackRecord E-Cert received record
    */
-  private async processErrorCodeRecords(
-    feedbackRecord: ECertResponseRecord,
+  private async createDisbursementFeedbackErrors(
+    eCertFeedbackResponseRecords: ECertResponseRecord[],
+    eCertFeedbackErrorCodeMap: Record<string, number>,
+    processSummaryResult: ProcessSFTPResponseResult,
   ): Promise<void> {
-    const disbursementSchedule =
-      await this.disbursementScheduleService.getDisbursementScheduleByDocumentNumber(
-        feedbackRecord.documentNumber,
-      );
-    if (disbursementSchedule) {
+    const dateReceived = new Date();
+    for (const eCertFeedbackResponseRecord of eCertFeedbackResponseRecords) {
+      const receivedErrorIds = [
+        eCertFeedbackResponseRecord.errorCode1,
+        eCertFeedbackResponseRecord.errorCode2,
+        eCertFeedbackResponseRecord.errorCode3,
+        eCertFeedbackResponseRecord.errorCode4,
+        eCertFeedbackResponseRecord.errorCode5,
+      ]
+        .filter((errorCode) => errorCode)
+        .map((errorCode) => eCertFeedbackErrorCodeMap[errorCode]);
+
       await this.disbursementScheduleErrorsService.createECertErrorRecord(
-        disbursementSchedule,
-        [
-          feedbackRecord.errorCode1,
-          feedbackRecord.errorCode2,
-          feedbackRecord.errorCode3,
-          feedbackRecord.errorCode4,
-          feedbackRecord.errorCode5,
-        ].filter((error) => error),
-        new Date(),
+        eCertFeedbackResponseRecord.documentNumber,
+        receivedErrorIds,
+        dateReceived,
       );
-    } else {
-      throw new Error(
-        `${feedbackRecord.documentNumber} document number not found in disbursement_schedule table.`,
-      );
+      const logMessage = `Disbursement feedback error created for document number ${eCertFeedbackResponseRecord.documentNumber} and record line number ${eCertFeedbackResponseRecord.lineNumber} .`;
+      this.logger.log(logMessage);
+      processSummaryResult.processSummary.push(logMessage);
     }
   }
 
@@ -443,31 +452,37 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     return eCertFeedbackErrorCodeMap;
   }
 
-  private sanitizeAndTransformToFeedbackErrors(
+  /**
+   * Sanitize the e-Cert response records validating the error codes.
+   * @param eCertFeedbackResponseRecords
+   * @param eCertFeedbackErrorCodeMap
+   */
+  private sanitizeErrorCodes(
     eCertFeedbackResponseRecords: ECertResponseRecord[],
     eCertFeedbackErrorCodeMap: Record<string, number>,
-  ): DisbursementFeedbackRecord[] {
-    const sanitizedFeedbackRecords: DisbursementFeedbackRecord[] = [];
-    const unknownFeedbackErrorCodes: string[] = [];
-    for (const eCertFeedbackResponseRecord of eCertFeedbackResponseRecords) {
-      const receivedErrors = [
-        eCertFeedbackResponseRecord.errorCode1,
-        eCertFeedbackResponseRecord.errorCode2,
-        eCertFeedbackResponseRecord.errorCode3,
-        eCertFeedbackResponseRecord.errorCode4,
-        eCertFeedbackResponseRecord.errorCode5,
-      ].filter((errorCode) => !!errorCode);
-      const unknownErrors = receivedErrors.filter(
-        (error) => !!!eCertFeedbackErrorCodeMap[error],
-      );
-      sanitizedFeedbackRecords.push({
-        documentNumber: eCertFeedbackResponseRecord.documentNumber,
-        receivedErrorIds: receivedErrors.map(
-          (errorCode) => eCertFeedbackErrorCodeMap[errorCode],
+  ): void {
+    // Check for error codes sent that are not known to the system.
+    // In the case the system needs to be updated with latest error codes.
+    const unknownFeedbackErrorCodes: string[] =
+      eCertFeedbackResponseRecords.flatMap((eCertFeedbackResponseRecord) =>
+        [
+          eCertFeedbackResponseRecord.errorCode1,
+          eCertFeedbackResponseRecord.errorCode2,
+          eCertFeedbackResponseRecord.errorCode3,
+          eCertFeedbackResponseRecord.errorCode4,
+          eCertFeedbackResponseRecord.errorCode5,
+        ].filter(
+          (errorCode) => errorCode && !eCertFeedbackErrorCodeMap[errorCode],
         ),
-      });
+      );
+    if (unknownFeedbackErrorCodes.length) {
+      throw new CustomNamedError(
+        `The following error codes are unknown to the system. ${Array.from(
+          new Set(unknownFeedbackErrorCodes),
+        )}`,
+        UNKNOWN_FEEDBACK_ERROR_CODE,
+      );
     }
-    return sanitizedFeedbackRecords;
   }
 
   @InjectLogger()
