@@ -19,14 +19,17 @@ import {
   saveFakeApplication,
 } from "@sims/test-utils";
 import {
+  Application,
   ApplicationStatus,
   AssessmentTriggerType,
   EducationProgramOffering,
   InstitutionLocation,
   OfferingStatus,
+  StudentAssessmentStatus,
   User,
 } from "@sims/sims-db";
 import { OfferingChangeAssessmentAPIInDTO } from "apps/api/src/route-controllers/education-program-offering/models/education-program-offering.dto";
+import { In } from "typeorm";
 
 describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeRequest", () => {
   let app: INestApplication;
@@ -234,7 +237,7 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
   );
 
   it(
-    "Should determine applications for a requested offering when the offering change is approved" +
+    "Should determine completed applications for a requested offering when the offering change is approved" +
       "and there are applications associated with the requested offering.",
     async () => {
       // Arrange
@@ -301,6 +304,71 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
         expect(
           queryApplication.currentAssessment.studentAppeal.id,
         ).toBeGreaterThan(0);
+      });
+    },
+  );
+
+  it(
+    "Should determine in-progress applications for a requested offering when the offering change is approved" +
+      "and there are applications associated with the requested offering.",
+    async () => {
+      // Arrange
+      const applications: Application[] = [];
+      for (let i = 0; i < 2; i++) {
+        const application = await saveFakeApplication(
+          db.dataSource,
+          {
+            institution: collegeFLocation.institution,
+            institutionLocation: collegeFLocation,
+          },
+          {
+            applicationStatus: ApplicationStatus.InProgress,
+          },
+        );
+        application.currentAssessment.offering = precedingOffering;
+        await db.application.save(application);
+        applications.push(application);
+      }
+
+      const payload: OfferingChangeAssessmentAPIInDTO = {
+        offeringStatus: OfferingStatus.Approved,
+        assessmentNotes: "offering change approved",
+      };
+      // Ministry token.
+      const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+      const endpoint = `/aest/education-program-offering/${requestedOffering.id}/assess-change-request`;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .patch(endpoint)
+        .send(payload)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK);
+
+      const queryApplications = await db.application.find({
+        select: {
+          id: true,
+          applicationStatus: true,
+          currentAssessment: {
+            studentAssessmentStatus: true,
+          },
+        },
+        relations: {
+          currentAssessment: true,
+        },
+        where: {
+          id: In(applications.map((application) => application.id)),
+        },
+      });
+      expect(queryApplications.length).toBe(2);
+      queryApplications.forEach((queryApplication) => {
+        expect(queryApplication.applicationStatus).toBe(
+          ApplicationStatus.Cancelled,
+        );
+        expect(queryApplication.currentAssessment.studentAssessmentStatus).toBe(
+          StudentAssessmentStatus.CancellationRequested,
+        );
       });
     },
   );
