@@ -997,20 +997,21 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     const currentOffering = await this.getOfferingToRequestChange(
       offeringId,
       OfferingStatus.Approved,
-      {
-        programId: programId,
-        locationId: locationId,
-        isIncludeInActiveProgram: false,
-      },
+      programId,
+      locationId,
     );
-
     if (!currentOffering) {
       throw new CustomNamedError(
-        "Either offering for given location and program not found/ not active or the offering not in appropriate status to be requested for change.",
+        "Either offering for given location and program not found or the offering not in appropriate status to be requested for change.",
         OFFERING_NOT_VALID,
       );
     }
-
+    if (!currentOffering.educationProgram.isActive) {
+      throw new CustomNamedError(
+        "Program is not active to request a change for the offering.",
+        OFFERING_NOT_VALID,
+      );
+    }
     const requestedOffering = this.populateProgramOffering(
       educationProgramOffering,
     );
@@ -1046,21 +1047,15 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * Offering in Approved status alone can be requested for change.
    * @param offeringId offering requested for change.
    * @param offeringStatus status of the approval.
-   * @param options options for the query:
-   * - `programId`: program of the offering.
-   * - `locationId`: location of the offering.
-   * - `isIncludeInActiveProgram`: if isIncludeInActiveProgram, then both active
-   * and not active education program is considered.
+   * @param programId program of the offering.
+   * @param locationId location of the offering.
    * @returns offering.
    */
   async getOfferingToRequestChange(
     offeringId: number,
     offeringStatus: OfferingStatus,
-    options?: {
-      programId?: number;
-      locationId?: number;
-      isIncludeInActiveProgram?: boolean;
-    },
+    programId?: number,
+    locationId?: number,
   ): Promise<EducationProgramOffering> {
     const offeringSummaryQuery = this.repo
       .createQueryBuilder("offerings")
@@ -1070,6 +1065,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "precedingOffering.id",
         "location.id",
         "institution.id",
+        "educationProgram.isActive",
       ])
       .innerJoin("offerings.institutionLocation", "location")
       .innerJoin("offerings.educationProgram", "educationProgram")
@@ -1083,28 +1079,23 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         offeringStatus,
       });
 
-    if (options?.programId) {
+    if (programId) {
       offeringSummaryQuery.andWhere(
         "offerings.educationProgram.id = :programId",
         {
-          programId: options?.programId,
+          programId: programId,
         },
       );
     }
 
-    if (options?.locationId) {
+    if (locationId) {
       offeringSummaryQuery.andWhere(
         "offerings.institutionLocation.id = :locationId",
         {
-          locationId: options?.locationId,
+          locationId: locationId,
         },
       );
     }
-
-    if (!options?.isIncludeInActiveProgram) {
-      offeringSummaryQuery.andWhere("educationProgram.isActive = true");
-    }
-
     return offeringSummaryQuery.getOne();
   }
 
@@ -1234,7 +1225,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     const requestedOffering = await this.getOfferingToRequestChange(
       offeringId,
       OfferingStatus.ChangeAwaitingApproval,
-      { isIncludeInActiveProgram: false },
     );
 
     if (!requestedOffering) {
@@ -1244,9 +1234,16 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       );
     }
 
+    if (!requestedOffering.educationProgram.isActive) {
+      throw new CustomNamedError(
+        "Either offering not found, program inactive or the offering not in appropriate status to be approved or declined for change.",
+        OFFERING_NOT_VALID,
+      );
+    }
+
     if (!requestedOffering.precedingOffering) {
       throw new CustomNamedError(
-        "The offering requested for change does not have a preceding offering.",
+        "Program is not active to request a change for the offering.",
         OFFERING_NOT_VALID,
       );
     }
