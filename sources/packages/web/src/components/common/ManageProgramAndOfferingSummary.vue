@@ -11,7 +11,7 @@
       <offering-summary
         :programId="programId"
         :locationId="locationId"
-        :isEditAllowed="isEditAllowed"
+        :isEditAllowed="educationProgram.isActive"
         :institutionId="institutionId"
       />
     </v-container>
@@ -46,11 +46,6 @@ export default defineComponent({
     institutionId: {
       type: Number,
       required: false,
-    },
-    isEditAllowed: {
-      type: Boolean,
-      required: true,
-      default: false,
     },
   },
 });
