@@ -9,12 +9,14 @@ import {
   AllowAuthorizedParty,
   IsBCPublicInstitution,
   IsInstitutionAdmin,
+  UserToken,
 } from "../../auth/decorators";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import { InstitutionReportsFilterAPIInDTO } from "./models/report.dto";
 import { Response } from "express";
 import { ReportControllerService } from "./report.controller.service";
+import { IInstitutionUserToken } from "../../auth";
 
 /**
  * Controller for Reports for Institution Client.
@@ -35,6 +37,7 @@ export class ReportInstitutionsController extends BaseController {
   /**
    * Rest API to export reports in csv format.
    * @param payload report filter payload.
+   * @param userToken institution user token.
    * @param response http response as file.
    */
   @ApiBadRequestResponse({
@@ -47,8 +50,11 @@ export class ReportInstitutionsController extends BaseController {
   @Post()
   async exportReport(
     @Body() payload: InstitutionReportsFilterAPIInDTO,
+    @UserToken() userToken: IInstitutionUserToken,
     @Res() response: Response,
   ): Promise<void> {
-    await this.reportControllerService.generateReport(payload, response);
+    await this.reportControllerService.generateReport(payload, response, {
+      institutionId: userToken.authorizations.institutionId,
+    });
   }
 }

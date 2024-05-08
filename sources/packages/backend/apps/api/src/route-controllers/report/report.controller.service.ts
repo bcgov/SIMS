@@ -32,10 +32,13 @@ export class ReportControllerService {
    * Generates report in csv format.
    * @param payload report filter payload.
    * @param response http response as file.
+   * @param options related options.
+   * - `institutionId` related institution id.
    */
   async generateReport(
     payload: MinistryReportsFilterAPIInDTO,
     response: Response,
+    options?: { institutionId?: number },
   ): Promise<void> {
     const submissionResult = await this.formService.dryRunSubmission(
       FormNames.ExportFinancialReports,
@@ -47,9 +50,10 @@ export class ReportControllerService {
       );
     }
     try {
-      const reportData = await this.reportService.getReportDataAsCSV(
-        submissionResult.data.data,
-      );
+      const reportData = await this.reportService.getReportDataAsCSV({
+        ...submissionResult.data.data,
+        institutionId: options?.institutionId,
+      });
       this.streamFile(response, payload.reportName, reportData);
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
