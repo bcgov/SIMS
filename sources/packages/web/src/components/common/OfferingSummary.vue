@@ -16,8 +16,7 @@
           hide-details="auto"
         />
         <v-btn
-          v-if="isInstitutionUser"
-          :disabled="!isEditAllowed"
+          v-if="allowOfferingEdit"
           class="ml-2 float-right"
           @click="goToAddNewOffering()"
           color="primary"
@@ -132,6 +131,7 @@ export default defineComponent({
     isEditAllowed: {
       type: Boolean,
       required: true,
+      default: false,
     },
   },
   setup(props) {
@@ -146,11 +146,16 @@ export default defineComponent({
     const isInstitutionUser = computed(() => {
       return clientType.value === ClientIdType.Institution;
     });
+
+    const allowOfferingEdit = computed(() => {
+      return isInstitutionUser.value || props.isEditAllowed;
+    });
+
     const isAESTUser = computed(() => {
       return clientType.value === ClientIdType.AEST;
     });
     const offeringActionLabel = computed(() => {
-      return isInstitutionUser.value && props.isEditAllowed ? "Edit" : "View";
+      return allowOfferingEdit.value ? "Edit" : "View";
     });
 
     const goToAddNewOffering = () => {
@@ -271,6 +276,7 @@ export default defineComponent({
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
       dateOnlyLongString,
+      allowOfferingEdit,
     };
   },
 });
