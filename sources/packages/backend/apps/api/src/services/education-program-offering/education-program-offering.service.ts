@@ -1237,13 +1237,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       );
     }
 
-    if (!requestedOffering.educationProgram.isActive) {
-      throw new CustomNamedError(
-        "Program is not active and the offering cannot be updated.",
-        OFFERING_NOT_VALID,
-      );
-    }
-
     if (!requestedOffering.precedingOffering) {
       throw new CustomNamedError(
         "The offering requested for change does not have a preceding offering.",
