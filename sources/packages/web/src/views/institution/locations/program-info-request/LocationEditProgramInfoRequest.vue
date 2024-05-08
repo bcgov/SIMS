@@ -146,7 +146,7 @@ export default defineComponent({
           programRequestData.value.pirStatus,
         ),
         selectedProgram:
-          !isReadOnly.value || !programRequestData.value.isActiveProgram
+          !isReadOnly.value && !programRequestData.value.isActiveProgram
             ? null
             : programRequestData.value.selectedProgram,
       };
