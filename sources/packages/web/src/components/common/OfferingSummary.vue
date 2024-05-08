@@ -17,7 +17,7 @@
         />
         <v-btn
           v-if="isInstitutionUser"
-          :disabled="!canCreateOffering"
+          :disabled="!isEditAllowed"
           class="ml-2 float-right"
           @click="goToAddNewOffering()"
           color="primary"
@@ -129,7 +129,7 @@ export default defineComponent({
       type: Number,
       required: true,
     },
-    canCreateOffering: {
+    isEditAllowed: {
       type: Boolean,
       required: true,
     },
@@ -150,9 +150,7 @@ export default defineComponent({
       return clientType.value === ClientIdType.AEST;
     });
     const offeringActionLabel = computed(() => {
-      return isInstitutionUser.value && props.canCreateOffering
-        ? "Edit"
-        : "View";
+      return isInstitutionUser.value && props.isEditAllowed ? "Edit" : "View";
     });
 
     const goToAddNewOffering = () => {
@@ -170,7 +168,7 @@ export default defineComponent({
 
     const offeringButtonAction = (offeringId: number) => {
       if (isInstitutionUser.value) {
-        if (props.canCreateOffering) {
+        if (props.isEditAllowed) {
           router.push({
             name: InstitutionRoutesConst.EDIT_LOCATION_OFFERINGS,
             params: {
