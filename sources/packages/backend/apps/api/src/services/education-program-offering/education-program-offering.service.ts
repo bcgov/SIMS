@@ -408,18 +408,15 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * @param locationId
    * @param programId
    * @param offeringId
-   * @param options method options:
-   * - `isEditOnly` if set to true then fetch offering
+   * @param isEditOnly if set to true then fetch offering
    * in status Approved | Declined | Pending.
-   * - `isIncludeInActiveProgram`: if isIncludeInActiveProgram, then both active
-   * and not active education program is considered.
    * @returns
    */
   async getProgramOffering(
     locationId: number,
     programId: number,
     offeringId: number,
-    options?: { isEditOnly?: boolean; isIncludeInActiveProgram?: boolean },
+    isEditOnly?: boolean,
   ): Promise<EducationProgramOffering> {
     const offeringQuery = this.repo
       .createQueryBuilder("offerings")
@@ -452,6 +449,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "institutionLocation.name",
         "institution.legalOperatingName",
         "institution.operatingName",
+        "educationProgram.isActive",
       ])
       .innerJoin("offerings.educationProgram", "educationProgram")
       .innerJoin("offerings.institutionLocation", "institutionLocation")
@@ -468,11 +466,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         locationId: locationId,
       });
 
-    if (!options?.isIncludeInActiveProgram) {
-      offeringQuery.andWhere("educationProgram.isActive = true");
-    }
-
-    if (options?.isEditOnly) {
+    if (isEditOnly) {
       offeringQuery.andWhere(
         "offerings.offeringStatus IN (:...offeringStatus)",
         {

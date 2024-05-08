@@ -173,7 +173,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationData.selectedLocation,
         applicationData.selectedProgram,
         applicationData.selectedOffering,
-        { isIncludeInActiveProgram: true },
       );
       if (!offering) {
         throw new CustomNamedError(
