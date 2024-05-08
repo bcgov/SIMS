@@ -72,6 +72,12 @@ export function getCountryCode(country: string): string {
   return country;
 }
 
+/**
+ * Returns a formatted postal code `A#A #A#` only for Canada addresses.
+ * @param country country for the address.
+ * @param postalCode postal code to be formatted.
+ * @returns a formatted postal code.
+ */
 export function getFormattedPostalCode(
   country: string,
   postalCode: string,
