@@ -1246,7 +1246,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
 
     if (!requestedOffering.precedingOffering) {
       throw new CustomNamedError(
-        "The offering requested for change does not have a preceding offering",
+        "The offering requested for change does not have a preceding offering.",
         OFFERING_NOT_VALID,
       );
     }
