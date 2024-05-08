@@ -1,3 +1,4 @@
+import { CANADA_POSTAL_CODE_LENGTH } from "@sims/services/constants";
 import { RelationshipStatus, OfferingIntensity } from "@sims/sims-db";
 
 /**
@@ -82,7 +83,10 @@ export function getFormattedPostalCode(
   country: string,
   postalCode: string,
 ): string {
-  if (country.toUpperCase() === "CANADA" && postalCode) {
+  if (
+    country.toUpperCase() === "CANADA" &&
+    postalCode?.length === CANADA_POSTAL_CODE_LENGTH
+  ) {
     const postalCodeCharArray = [...postalCode];
     postalCodeCharArray.splice(3, 0, " ");
     return postalCodeCharArray.join("");
