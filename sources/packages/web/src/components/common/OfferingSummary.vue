@@ -148,7 +148,7 @@ export default defineComponent({
     });
 
     const allowOfferingEdit = computed(() => {
-      return isInstitutionUser.value || props.isEditAllowed;
+      return isInstitutionUser.value && props.isEditAllowed;
     });
 
     const isAESTUser = computed(() => {
