@@ -134,6 +134,9 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
     result.selectedProgram =
       originalAssessmentOffering?.educationProgram.id ??
       application.pirProgram?.id;
+    result.isActiveProgram =
+      application.pirProgram?.isActive ??
+      originalAssessmentOffering?.educationProgram.isActive;
     // Offering only available when PIR is completed.
     if (originalAssessmentOffering) {
       result.selectedOffering = originalAssessmentOffering.id;

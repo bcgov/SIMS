@@ -145,6 +145,10 @@ export default defineComponent({
         programInfoRequestStatus: mapProgramInfoChipStatus(
           programRequestData.value.pirStatus,
         ),
+        selectedProgram:
+          !isReadOnly.value || !programRequestData.value.isActiveProgram
+            ? null
+            : programRequestData.value.selectedProgram,
       };
 
       // While loading a PIR that is in the some readonly status
