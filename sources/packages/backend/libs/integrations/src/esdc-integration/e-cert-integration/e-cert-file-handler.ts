@@ -42,16 +42,6 @@ import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
 const ECERT_GENERATION_NO_RECORDS_AVAILABLE =
   "ECERT_GENERATION_NO_RECORDS_AVAILABLE";
 
-const UNKNOWN_FEEDBACK_ERROR_CODE = "UNKNOWN_FEEDBACK_ERROR_CODE";
-
-/**
- * Feedback received for a disbursement.
- */
-interface DisbursementFeedbackRecord {
-  documentNumber: number;
-  receivedErrorIds: number[];
-}
-
 export abstract class ECertFileHandler extends ESDCFileHandler {
   esdcConfig: ESDCIntegrationConfig;
   constructor(
@@ -365,50 +355,43 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
         eCertFeedbackResponseRecords,
         eCertFeedbackErrorCodeMap,
       );
+      for (const eCertFeedbackResponseRecord of eCertFeedbackResponseRecords) {
+        await this.createDisbursementFeedbackError(
+          eCertFeedbackResponseRecord,
+          eCertFeedbackErrorCodeMap,
+          processResult,
+        );
+      }
     } catch (error: unknown) {
-      if (
-        error instanceof CustomNamedError &&
-        error.name === UNKNOWN_FEEDBACK_ERROR_CODE
-      ) {
-        // Log the error summary and abort processing the file when any of the received error codes are
-        // unknown to the system.
-        const errorDescription = `Error processing the records for the file ${filePath}, error: ${error}`;
-        this.logger.error(`${errorDescription}. Error: ${error}`);
-        processResult.errorsSummary.push(errorDescription);
-        return processResult;
+      // Any error caught here will abort the file processing.
+      const errorDescription = `Error processing the file ${filePath}. Error: ${error}`;
+      this.logger.error(errorDescription);
+      processResult.errorsSummary.push(errorDescription);
+      return processResult;
+    } finally {
+      if (!processResult.errorsSummary.length) {
+        await this.deleteFile(eCertIntegrationService, filePath, processResult);
       }
     }
-
-    try {
-      if (processResult.errorsSummary.length === 0) {
-        // if there is an error in the file do not delete the file
-        await eCertIntegrationService.deleteFile(filePath);
-      }
-    } catch (error) {
-      // Log the error but allow the process to continue.
-      // If there was an issue only during the file removal, it will be
-      // processed again and could be deleted in the second attempt.
-      const logMessage = `Error while deleting E-Cert response file: ${filePath}`;
-      this.logger.error(logMessage);
-      processResult.errorsSummary.push(logMessage);
-    }
-
     return processResult;
   }
 
   /**
-   * Process the feedback record from the E-Cert response file
-   * and save the error code and disbursementSchedule_id respective to
-   * the document number in DisbursementFeedbackErrors.
-   * @param feedbackRecord E-Cert received record
+   * Create disbursement feedback errors
+   * for the errors received in a response record.
+   * @param eCertFeedbackResponseRecord e-Cert feedback response record.
+   * @param eCertFeedbackErrorCodeMap e-Cert feedback error map
+   * to get error id by error code.
+   * @param filePath file path.
+   * @param processResult processing result.
    */
-  private async createDisbursementFeedbackErrors(
-    eCertFeedbackResponseRecords: ECertResponseRecord[],
+  private async createDisbursementFeedbackError(
+    eCertFeedbackResponseRecord: ECertResponseRecord,
     eCertFeedbackErrorCodeMap: Record<string, number>,
-    processSummaryResult: ProcessSFTPResponseResult,
+    processResult: ProcessSFTPResponseResult,
   ): Promise<void> {
-    const dateReceived = new Date();
-    for (const eCertFeedbackResponseRecord of eCertFeedbackResponseRecords) {
+    try {
+      const dateReceived = new Date();
       const receivedErrorIds = [
         eCertFeedbackResponseRecord.errorCode1,
         eCertFeedbackResponseRecord.errorCode2,
@@ -424,9 +407,14 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
         receivedErrorIds,
         dateReceived,
       );
-      const logMessage = `Disbursement feedback error created for document number ${eCertFeedbackResponseRecord.documentNumber} and record line number ${eCertFeedbackResponseRecord.lineNumber} .`;
+      const logMessage = `Disbursement feedback error created for document number ${eCertFeedbackResponseRecord.documentNumber} at line ${eCertFeedbackResponseRecord.lineNumber}.`;
       this.logger.log(logMessage);
-      processSummaryResult.processSummary.push(logMessage);
+      processResult.processSummary.push(logMessage);
+    } catch (error: unknown) {
+      // Log the error message and continue the processing.
+      const errorDescription = `Error processing the record for document number ${eCertFeedbackResponseRecord.documentNumber} at line ${eCertFeedbackResponseRecord.lineNumber}. Error: ${error}`;
+      this.logger.error(errorDescription);
+      processResult.errorsSummary.push(errorDescription);
     }
   }
 
@@ -454,8 +442,9 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
 
   /**
    * Sanitize the e-Cert response records validating the error codes.
-   * @param eCertFeedbackResponseRecords
-   * @param eCertFeedbackErrorCodeMap
+   * @param eCertFeedbackResponseRecords e-Cert feedback response records to sanitize.
+   * @param eCertFeedbackErrorCodeMap e-Cert feedback error map
+   * to get error id by error code.
    */
   private sanitizeErrorCodes(
     eCertFeedbackResponseRecords: ECertResponseRecord[],
@@ -476,12 +465,34 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
         ),
       );
     if (unknownFeedbackErrorCodes.length) {
-      throw new CustomNamedError(
+      throw new Error(
         `The following error codes are unknown to the system. ${Array.from(
           new Set(unknownFeedbackErrorCodes),
-        )}`,
-        UNKNOWN_FEEDBACK_ERROR_CODE,
+        ).join(",")}`,
       );
+    }
+  }
+
+  /**
+   * Delete the feedback file after processing.
+   * @param eCertIntegrationService integration service.
+   * @param filePath file path.
+   * @param processResult processing result.
+   */
+  private async deleteFile(
+    eCertIntegrationService: ECertIntegrationService,
+    filePath: string,
+    processResult: ProcessSFTPResponseResult,
+  ) {
+    try {
+      await eCertIntegrationService.deleteFile(filePath);
+    } catch (error) {
+      // Log the error but allow the process to continue.
+      // If there was an issue only during the file removal, it will be
+      // processed again and could be deleted in the second attempt.
+      const logMessage = `Error while deleting E-Cert response file: ${filePath}`;
+      this.logger.error(logMessage);
+      processResult.errorsSummary.push(logMessage);
     }
   }
 
