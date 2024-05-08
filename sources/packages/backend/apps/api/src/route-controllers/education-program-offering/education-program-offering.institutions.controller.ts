@@ -310,7 +310,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     );
     if (!offering) {
       throw new UnprocessableEntityException(
-        "Either offering for the program and location is not found, program inactive or the offering is not in the appropriate status to be updated.",
+        "Either offering for the program and location is not found or the offering is not in the appropriate status to be updated.",
       );
     }
     if (!offering.educationProgram.isActive) {
