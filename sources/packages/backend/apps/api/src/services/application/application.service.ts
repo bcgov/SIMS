@@ -519,6 +519,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "user.lastName",
         "pirProgram.id",
         "pirProgram.name",
+        "pirProgram.isActive",
         "educationProgram.id",
         "offering.id",
         "offering.name",

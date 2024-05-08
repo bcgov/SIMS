@@ -245,6 +245,11 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
         "Either offering for the program and location is not found or the offering is not in the appropriate status to be updated.",
       );
     }
+    if (!offering.educationProgram.isActive) {
+      throw new UnprocessableEntityException(
+        "Program is not active and the offering cannot be updated.",
+      );
+    }
 
     try {
       const offeringValidationModel =
@@ -306,6 +311,11 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     if (!offering) {
       throw new UnprocessableEntityException(
         "Either offering for the program and location is not found or the offering is not in the appropriate status to be updated.",
+      );
+    }
+    if (!offering.educationProgram.isActive) {
+      throw new UnprocessableEntityException(
+        "Program is not active and the offering cannot be updated.",
       );
     }
     await this.programOfferingService.updateEducationProgramOfferingBasicData(

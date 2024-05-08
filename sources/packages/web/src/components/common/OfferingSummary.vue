@@ -16,7 +16,7 @@
           hide-details="auto"
         />
         <v-btn
-          v-if="isInstitutionUser"
+          v-if="allowOfferingEdit"
           class="ml-2 float-right"
           @click="goToAddNewOffering()"
           color="primary"
@@ -128,6 +128,11 @@ export default defineComponent({
       type: Number,
       required: true,
     },
+    isEditAllowed: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   setup(props) {
     const router = useRouter();
@@ -141,11 +146,16 @@ export default defineComponent({
     const isInstitutionUser = computed(() => {
       return clientType.value === ClientIdType.Institution;
     });
+
+    const allowOfferingEdit = computed(() => {
+      return isInstitutionUser.value && props.isEditAllowed;
+    });
+
     const isAESTUser = computed(() => {
       return clientType.value === ClientIdType.AEST;
     });
     const offeringActionLabel = computed(() => {
-      return isInstitutionUser.value ? "Edit" : "View";
+      return allowOfferingEdit.value ? "Edit" : "View";
     });
 
     const goToAddNewOffering = () => {
@@ -163,14 +173,25 @@ export default defineComponent({
 
     const offeringButtonAction = (offeringId: number) => {
       if (isInstitutionUser.value) {
-        router.push({
-          name: InstitutionRoutesConst.EDIT_LOCATION_OFFERINGS,
-          params: {
-            offeringId: offeringId,
-            programId: props.programId,
-            locationId: props.locationId,
-          },
-        });
+        if (props.isEditAllowed) {
+          router.push({
+            name: InstitutionRoutesConst.EDIT_LOCATION_OFFERINGS,
+            params: {
+              offeringId: offeringId,
+              programId: props.programId,
+              locationId: props.locationId,
+            },
+          });
+        } else {
+          router.push({
+            name: InstitutionRoutesConst.VIEW_LOCATION_OFFERINGS,
+            params: {
+              offeringId: offeringId,
+              programId: props.programId,
+              locationId: props.locationId,
+            },
+          });
+        }
       }
       if (isAESTUser.value) {
         router.push({
@@ -255,6 +276,7 @@ export default defineComponent({
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
       dateOnlyLongString,
+      allowOfferingEdit,
     };
   },
 });

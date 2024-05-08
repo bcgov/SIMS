@@ -449,6 +449,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "institutionLocation.name",
         "institution.legalOperatingName",
         "institution.operatingName",
+        "educationProgram.isActive",
       ])
       .innerJoin("offerings.educationProgram", "educationProgram")
       .innerJoin("offerings.institutionLocation", "institutionLocation")
@@ -1006,6 +1007,12 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         OFFERING_NOT_VALID,
       );
     }
+    if (!currentOffering.educationProgram.isActive) {
+      throw new CustomNamedError(
+        "Program is not active to request a change for the offering.",
+        OFFERING_NOT_VALID,
+      );
+    }
 
     const requestedOffering = this.populateProgramOffering(
       educationProgramOffering,
@@ -1060,8 +1067,11 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "precedingOffering.id",
         "location.id",
         "institution.id",
+        "educationProgram.id",
+        "educationProgram.isActive",
       ])
       .innerJoin("offerings.institutionLocation", "location")
+      .innerJoin("offerings.educationProgram", "educationProgram")
       .innerJoin("location.institution", "institution")
       .leftJoin("offerings.parentOffering", "parentOffering")
       .leftJoin("offerings.precedingOffering", "precedingOffering")
