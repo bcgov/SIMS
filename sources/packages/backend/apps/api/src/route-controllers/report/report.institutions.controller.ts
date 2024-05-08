@@ -1,16 +1,20 @@
-import { BadRequestException, Body, Controller, Post } from "@nestjs/common";
-import { ApiBadRequestResponse, ApiTags } from "@nestjs/swagger";
+import { Body, Controller, Post, Res } from "@nestjs/common";
+import {
+  ApiBadRequestResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
   IsBCPublicInstitution,
   IsInstitutionAdmin,
 } from "../../auth/decorators";
-import { FormService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import { InstitutionReportsFilterAPIInDTO } from "./models/report.dto";
-import { FormNames } from "../../services/form/constants";
+import { Response } from "express";
+import { ReportControllerService } from "./report.controller.service";
 
 /**
  * Controller for Reports for Institution Client.
@@ -22,7 +26,9 @@ import { FormNames } from "../../services/form/constants";
 @Controller("report")
 @ApiTags(`${ClientTypeBaseRoute.Institution}-report`)
 export class ReportInstitutionsController extends BaseController {
-  constructor(private readonly formService: FormService) {
+  constructor(
+    private readonly reportControllerService: ReportControllerService,
+  ) {
     super();
   }
 
@@ -34,19 +40,15 @@ export class ReportInstitutionsController extends BaseController {
   @ApiBadRequestResponse({
     description: "Not able to export report due to an invalid request.",
   })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Either report config missing or filter parameters not matching the report config.",
+  })
   @Post()
   async exportReport(
     @Body() payload: InstitutionReportsFilterAPIInDTO,
+    @Res() response: Response,
   ): Promise<void> {
-    const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.ExportFinancialReports,
-      payload,
-    );
-    if (!submissionResult.valid) {
-      throw new BadRequestException(
-        "Not able to export report due to an invalid request.",
-      );
-    }
-    //TODO: Build report here
+    await this.reportControllerService.generateReport(payload, response);
   }
 }
