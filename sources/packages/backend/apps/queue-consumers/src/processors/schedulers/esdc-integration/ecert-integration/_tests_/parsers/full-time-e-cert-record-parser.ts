@@ -73,4 +73,11 @@ export class FullTimeCertRecordParser extends ECertRecordParser {
   grantAmount(grantCode: string): number | undefined {
     return this.awards[grantCode];
   }
+
+  /**
+   * Postal code from student's contact info.
+   */
+  get postalCode(): string {
+    return this.record.substring(307, 314).trim();
+  }
 }

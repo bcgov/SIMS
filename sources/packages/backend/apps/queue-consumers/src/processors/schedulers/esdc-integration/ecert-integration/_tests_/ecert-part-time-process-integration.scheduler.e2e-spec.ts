@@ -255,7 +255,17 @@ describe(
       // Student application eligible for e-Cert.
       const application = await saveFakeApplicationDisbursements(
         db.dataSource,
-        { student, msfaaNumber },
+        {
+          student,
+          msfaaNumber,
+          firstDisbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLP",
+              1234.57,
+            ),
+          ],
+        },
         {
           offeringIntensity: OfferingIntensity.partTime,
           applicationStatus: ApplicationStatus.Completed,
@@ -291,10 +301,18 @@ describe(
       const [header, record, footer] = uploadedFile.fileLines;
       // Validate header.
       expect(header).toContain("01BC  NEW PT ENTITLEMENT");
-      // Validate record.
-      expect(record.substring(0, 2)).toBe("02");
       // Validate footer.
+      // Record Type.
       expect(footer.substring(0, 2)).toBe("99");
+      // Total amount disbursed including 2 decimals.
+      expect(footer.substring(17, 26)).toBe("000123500");
+      // Validate record.
+      const recordParsed = new PartTimeCertRecordParser(record);
+      expect(recordParsed.recordType).toBe("02");
+      expect(recordParsed.firstName).toBe(student.user.firstName);
+      expect(recordParsed.lastName).toBe(student.user.lastName);
+      expect(recordParsed.disbursementAmount).toBe(1235.0);
+      // TODO include other fields as needed.
 
       // Assert Canada Loan overawards were deducted.
       const [firstSchedule] =

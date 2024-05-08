@@ -16,7 +16,7 @@ export function createFakeStudent(
     options?.initialValue?.birthDate ??
     getISODateOnlyString(faker.date.past(18));
   student.gender = "X";
-  student.contactInfo = {
+  student.contactInfo = options?.initialValue?.contactInfo ?? {
     address: {
       addressLine1: faker.address.streetAddress(),
       city: faker.address.city(),

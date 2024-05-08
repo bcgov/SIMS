@@ -74,6 +74,90 @@ describe(
       );
     });
 
+    it("Should generate disbursement file with formatted records when there is data for the ecert generation.", async () => {
+      // Arrange
+      const student = await saveFakeStudent(
+        db.dataSource,
+        {},
+        {
+          initialValue: {
+            contactInfo: {
+              address: {
+                postalCode: "V1V1V1",
+                addressLine1: "345 Douglas St.",
+                country: "canada",
+                city: "Victoria",
+                provinceState: "BC",
+              },
+              phone: "2501234567",
+            },
+          },
+        },
+      );
+      // Valid MSFAA Number.
+      const msfaaNumber = await db.msfaaNumber.save(
+        createFakeMSFAANumber({ student }, { msfaaState: MSFAAStates.Signed }),
+      );
+
+      // Student application eligible for e-Cert.
+      await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student, msfaaNumber },
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            assessmentData: { weeks: 5 } as Assessment,
+            assessmentDate: new Date(),
+            workflowData: {
+              studentData: {
+                dependantStatus: "dependant",
+                relationshipStatus: RelationshipStatus.Single,
+                livingWithParents: FormYesNoOptions.Yes,
+                numberOfParents: 2,
+              },
+              calculatedData: {
+                familySize: 2,
+                studentMSOLAllowance: 7777,
+                totalNonEducationalCost: 22,
+                studentMaritalStatusCode: "SI",
+                pdppdStatus: false,
+              },
+            },
+          },
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+          },
+        },
+      );
+
+      // Queued job.
+      const { job } = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processECert(job);
+
+      // Assert uploaded file.
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const fileDate = dayjs().format("YYYYMMDD");
+      const uploadedFileName = `MSFT-Request\\DPBC.EDU.FTECERTS.${fileDate}.001`;
+      expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+      expect(result).toStrictEqual([
+        "Process finalized with success.",
+        `Generated file: ${uploadedFileName}`,
+        "Uploaded records: 1",
+      ]);
+      const [header, record1, footer] = uploadedFile.fileLines;
+      // Validate header.
+      expect(header).toContain("100BC  NEW ENTITLEMENT");
+      // Validate footer.
+      expect(footer.substring(0, 18)).toBe("999NEW ENTITLEMENT");
+      // Validate record.
+      const record1Parsed = new FullTimeCertRecordParser(record1);
+      expect(record1Parsed.postalCode).toBe("V1V 1V1");
+      // TODO Add other fields as needed.
+    });
+
     it("Should execute overawards deductions and calculate awards effective value", async () => {
       // Arrange
 
