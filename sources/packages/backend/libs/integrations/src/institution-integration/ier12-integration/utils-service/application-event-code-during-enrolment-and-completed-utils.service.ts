@@ -60,7 +60,9 @@ export class ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService {
       case DisbursementScheduleStatus.Sent:
         return this.eventCodeForCompletedApplicationWithSentDisbursement(
           currentDisbursementSchedule.disbursementValues,
-          currentDisbursementSchedule.disbursementFeedbackErrors,
+          currentDisbursementSchedule.disbursementFeedbackErrors.map(
+            (feedbackError) => feedbackError.eCertFeedbackError,
+          ),
         );
     }
   }

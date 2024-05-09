@@ -3,10 +3,10 @@ import {
   ApplicationStatus,
   AssessmentTriggerType,
   COEStatus,
-  DisbursementFeedbackErrors,
   DisbursementSchedule,
   DisbursementScheduleStatus,
   DisbursementValue,
+  ECertFeedbackError,
   StudentMaritalStatusCode,
   StudentScholasticStandingChangeType,
 } from "@sims/sims-db";
@@ -257,7 +257,7 @@ export type DisbursementScheduleForApplicationEventDate = Pick<
  * Disbursement feedback error for application event date.
  */
 export type DisbursementFeedbackErrorsForApplicationEventDate = Pick<
-  DisbursementFeedbackErrors,
+  ECertFeedbackError,
   "errorCode"
 >;
 
