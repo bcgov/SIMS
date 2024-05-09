@@ -37,8 +37,8 @@ VALUES
       -- the provided program year in the WHERE clause.  
       program_years.id = :programYear
     LEFT JOIN (
-      -- Get all the offerings having atleast one application in the given 
-      -- program year with their applications count satisfying the conditions
+      -- Get all the offerings having at least one application in the given 
+      -- Program year with their applications count satisfying the conditions
       -- from the WHERE clause.
       SELECT
         education_programs_offerings.id AS "id",
