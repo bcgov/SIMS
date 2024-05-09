@@ -127,6 +127,9 @@ export class EducationProgramService {
   /**
    * Gets location programs option list authorized for students.
    * @param locationId location id.
+   * @param programYearId program year id.
+   * @param isIncludeInActiveProgramYear isIncludeInActiveProgramYear, if isIncludeInActiveProgramYear, then both active
+   * and not active program year is considered.
    * @returns location programs option list.
    */
   async getLocationProgramsOptionList(
@@ -143,10 +146,15 @@ export class EducationProgramService {
 
   /**
    * Get a key/value pair list of all approved programs.
+   * @param options method options:
+   * - `isIncludeInActiveProgram`: if isIncludeInActiveProgram, then both active
+   * and not active education program is considered.
    * @returns key/value pair list of all approved programs.
    */
-  async getProgramsListForInstitutions(): Promise<OptionItemAPIOutDTO[]> {
-    return ApiClient.EducationProgram.getProgramsListForInstitutions();
+  async getProgramsListForInstitutions(options?: {
+    isIncludeInActiveProgram?: boolean;
+  }): Promise<OptionItemAPIOutDTO[]> {
+    return ApiClient.EducationProgram.getProgramsListForInstitutions(options);
   }
 
   /**

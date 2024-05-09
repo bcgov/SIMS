@@ -3,6 +3,7 @@
   <formio
     formName="exportfinancialreports"
     @loaded="formLoaded"
+    @changed="formChanged"
     @submitted="exportReport"
   ></formio>
   <v-row class="justify-center m-4">
@@ -30,8 +31,9 @@ import {
   useSnackBar,
   useFileUtils,
   useFormioDropdownLoader,
+  useFormioUtils,
 } from "@/composables";
-import { FormIOForm, Role } from "@/types";
+import { FormIOChangeEvent, FormIOForm, Role } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default defineComponent({
@@ -45,8 +47,10 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const { downloadReports } = useFileUtils();
     const formioDataLoader = useFormioDropdownLoader();
+    const { getFirstComponent } = useFormioUtils();
     const REPORT_TYPE_DROPDOWN_KEY = "reportName";
     const loading = ref(false);
+    const PROGRAM_YEAR_DROPDOWN_KEY = "programYear";
     let formData: FormIOForm;
     const formLoaded = async (form: FormIOForm) => {
       formData = form;
@@ -55,6 +59,26 @@ export default defineComponent({
         REPORT_TYPE_DROPDOWN_KEY,
         props.reportList,
       );
+    };
+    const formChanged = async (form: FormIOForm, event: FormIOChangeEvent) => {
+      // Populates the program year select component if required.
+      if (event.changed.component.key === REPORT_TYPE_DROPDOWN_KEY) {
+        const programYearSelect = getFirstComponent(
+          form,
+          PROGRAM_YEAR_DROPDOWN_KEY,
+        );
+        if (
+          programYearSelect._visible &&
+          !programYearSelect.selectOptions.length
+        ) {
+          // Load program year data if the select is visible and
+          // its items are not populated yet.
+          await formioDataLoader.loadProgramYear(
+            form,
+            PROGRAM_YEAR_DROPDOWN_KEY,
+          );
+        }
+      }
     };
     const submitForm = () => {
       formData.submit();
@@ -69,7 +93,7 @@ export default defineComponent({
         loading.value = false;
       }
     };
-    return { exportReport, formLoaded, submitForm, Role, loading };
+    return { exportReport, formLoaded, formChanged, submitForm, Role, loading };
   },
 });
 </script>

@@ -50,6 +50,7 @@ import {
   StudentAppealControllerService,
   ScholasticStandingControllerService,
   ScholasticStandingStudentsController,
+  ProgramYearControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { ConfigModule } from "@sims/utilities/config";
@@ -92,6 +93,7 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     ApplicationService,
     FormService,
     StudentService,
+    ProgramYearControllerService,
     ProgramYearService,
     EducationProgramOfferingService,
     DisbursementScheduleService,

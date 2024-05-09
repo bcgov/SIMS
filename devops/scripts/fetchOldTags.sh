@@ -73,7 +73,7 @@ if [ -z "$DC_BUILD_ID" ]; then
 fi
 
 # Process ImageStream Tags and output those prior to the deployed version
-oc get is/$APP_NAME -n $IS_NAMESPACE -o json | jq -r --arg DC_BUILD_ID "$DC_BUILD_ID" --arg PREFIX "$PREFIX" --argjson MIN_TAGS "$MIN_TAGS" '
+oc get is/$APP_NAME -n $IS_NAMESPACE -o json | jq -r --arg DC_BUILD_ID "$DC_BUILD_ID" --arg PREFIX "$PREFIX" --arg IS_NAME "$APP_NAME" --argjson MIN_TAGS "$MIN_TAGS" '
   .status.tags
   | map(select(.tag | startswith($PREFIX) and test(".*-[0-9]+$")))
   | map(.tag)
@@ -81,4 +81,5 @@ oc get is/$APP_NAME -n $IS_NAMESPACE -o json | jq -r --arg DC_BUILD_ID "$DC_BUIL
   | sort_by(capture(".*-(?<id>[0-9]+)$").id | tonumber)
   | if $MIN_TAGS > 0 then .[:-$MIN_TAGS] else . end
   | .[]
+  | "\($IS_NAME):\(.)"
 '

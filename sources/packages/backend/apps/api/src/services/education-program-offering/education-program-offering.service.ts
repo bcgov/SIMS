@@ -449,6 +449,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "institutionLocation.name",
         "institution.legalOperatingName",
         "institution.operatingName",
+        "educationProgram.isActive",
       ])
       .innerJoin("offerings.educationProgram", "educationProgram")
       .innerJoin("offerings.institutionLocation", "institutionLocation")
@@ -799,11 +800,14 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .select([
         "offerings.id",
         "location.id",
+        "program.id",
+        "program.isActive",
         "offerings.studyStartDate",
         "offerings.studyEndDate",
         "offerings.offeringIntensity",
       ])
       .innerJoin("offerings.institutionLocation", "location")
+      .innerJoin("offerings.educationProgram", "program")
       .where("offerings.id = :offeringId", { offeringId })
       .andWhere("location.id = :locationId", { locationId })
       .getOne();
@@ -812,6 +816,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   /**
    * Get offering details by offering id.
    * @param offeringId offering id.
+   * @param programId program id.
    * @param options options for the query:
    * - `locationId`: location for authorization.
    * @returns offering object.
@@ -820,6 +825,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     offeringId: number,
     options?: {
       locationId?: number;
+      programId?: number;
     },
   ): Promise<EducationProgramOffering> {
     const offeringQuery = this.repo
@@ -870,7 +876,11 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .where("offering.id = :offeringId", {
         offeringId,
       });
-
+    if (options?.programId) {
+      offeringQuery.andWhere("educationProgram.id = :programId", {
+        programId: options.programId,
+      });
+    }
     if (options?.locationId) {
       offeringQuery.andWhere("institutionLocation.id = :locationId", {
         locationId: options.locationId,
@@ -997,6 +1007,12 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         OFFERING_NOT_VALID,
       );
     }
+    if (!currentOffering.educationProgram.isActive) {
+      throw new CustomNamedError(
+        "Program is not active to request a change for the offering.",
+        OFFERING_NOT_VALID,
+      );
+    }
 
     const requestedOffering = this.populateProgramOffering(
       educationProgramOffering,
@@ -1051,8 +1067,11 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "precedingOffering.id",
         "location.id",
         "institution.id",
+        "educationProgram.id",
+        "educationProgram.isActive",
       ])
       .innerJoin("offerings.institutionLocation", "location")
+      .innerJoin("offerings.educationProgram", "educationProgram")
       .innerJoin("location.institution", "institution")
       .leftJoin("offerings.parentOffering", "parentOffering")
       .leftJoin("offerings.precedingOffering", "precedingOffering")

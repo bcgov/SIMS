@@ -287,7 +287,7 @@ export class AssessmentController {
       const programYearId = assessment.application.programYear.id;
       // Check for any assessment which is waiting for calculation.
       const nextOutstandingAssessmentInSequence =
-        await this.studentAssessmentService.getOutstandingAssessmentsForStudentInSequence(
+        await this.assessmentSequentialProcessingService.getOutstandingAssessmentsForStudentInSequence(
           studentId,
           programYearId,
         );
@@ -378,7 +378,7 @@ export class AssessmentController {
       );
       // Get the first outstanding assessment waiting for calculation as per the sequence.
       const firstOutstandingStudentAssessment =
-        await this.studentAssessmentService.getOutstandingAssessmentsForStudentInSequence(
+        await this.assessmentSequentialProcessingService.getOutstandingAssessmentsForStudentInSequence(
           studentId,
           programYearId,
         );

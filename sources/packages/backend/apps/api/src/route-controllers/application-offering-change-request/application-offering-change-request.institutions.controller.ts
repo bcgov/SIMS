@@ -48,6 +48,7 @@ import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { IInstitutionUserToken } from "../../auth";
 import { CustomNamedError } from "@sims/utilities";
 import {
+  EDUCATION_PROGRAM_IS_NOT_ACTIVE,
   OFFERING_DOES_NOT_BELONG_TO_LOCATION,
   OFFERING_INTENSITY_MISMATCH,
   OFFERING_PROGRAM_YEAR_MISMATCH,
@@ -136,6 +137,8 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
     return {
       applicationNumber: application.applicationNumber,
       programId: application.currentAssessment.offering.educationProgram.id,
+      isProgramActive:
+        application.currentAssessment.offering.educationProgram.isActive,
       offeringId: application.currentAssessment.offering.id,
       offeringIntensity:
         application.currentAssessment.offering.offeringIntensity,
@@ -299,6 +302,7 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
               new ApiProcessError(error.message, error.name),
             );
           case OFFERING_PROGRAM_YEAR_MISMATCH:
+          case EDUCATION_PROGRAM_IS_NOT_ACTIVE:
             throw new UnprocessableEntityException(error.message);
           case OFFERING_DOES_NOT_BELONG_TO_LOCATION:
             throw new UnauthorizedException(error.message);

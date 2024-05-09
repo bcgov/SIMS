@@ -12,18 +12,14 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { Response } from "express";
-import { Readable } from "stream";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups, Roles } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { FormService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
-import {
-  CustomNamedError,
-  getFileNameAsCurrentTimestamp,
-} from "@sims/utilities";
+import { CustomNamedError } from "@sims/utilities";
 import BaseController from "../BaseController";
-import { ReportsFilterAPIInDTO } from "./models/report.dto";
+import { MinistryReportsFilterAPIInDTO } from "./models/report.dto";
 import { FormNames } from "../../services/form/constants";
 import { Role } from "../../auth/roles.enum";
 import {
@@ -31,6 +27,7 @@ import {
   ReportService,
   REPORT_CONFIG_NOT_FOUND,
 } from "@sims/services";
+import { ReportControllerService } from "./report.controller.service";
 
 /**
  * Controller for Reports for AEST Client.
@@ -42,6 +39,7 @@ import {
 @ApiTags(`${ClientTypeBaseRoute.AEST}-report`)
 export class ReportAESTController extends BaseController {
   constructor(
+    private readonly reportControllerService: ReportControllerService,
     private readonly reportService: ReportService,
     private readonly formService: FormService,
   ) {
@@ -63,7 +61,7 @@ export class ReportAESTController extends BaseController {
   @Roles(Role.AESTReports)
   @Post()
   async exportReport(
-    @Body() payload: ReportsFilterAPIInDTO,
+    @Body() payload: MinistryReportsFilterAPIInDTO,
     @Res() response: Response,
   ): Promise<void> {
     const submissionResult = await this.formService.dryRunSubmission(
@@ -81,7 +79,11 @@ export class ReportAESTController extends BaseController {
       const reportData = await this.reportService.getReportDataAsCSV(
         submissionResult.data.data,
       );
-      this.streamFile(response, payload.reportName, reportData);
+      this.reportControllerService.streamFile(
+        response,
+        payload.reportName,
+        reportData,
+      );
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         switch (error.name) {
@@ -94,31 +96,5 @@ export class ReportAESTController extends BaseController {
       }
       throw error;
     }
-  }
-
-  /**
-   * Stream file as downloadable response.
-   * @param response http response as file.
-   * @param reportName report name.
-   * @param fileContent content of the file.
-   */
-  private streamFile(
-    response: Response,
-    reportName: string,
-    fileContent: string,
-  ) {
-    const timestamp = getFileNameAsCurrentTimestamp();
-    const filename = `${reportName}_${timestamp}.csv`;
-    response.setHeader(
-      "Content-Disposition",
-      `attachment; filename=${filename}`,
-    );
-    response.setHeader("Content-Type", "text/csv");
-    response.setHeader("Content-Length", fileContent.toString().length);
-
-    const stream = new Readable();
-    stream.push(fileContent.toString());
-    stream.push(null);
-    stream.pipe(response);
   }
 }

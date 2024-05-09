@@ -19,6 +19,7 @@ import {
 import { AwardTotal, SequencedApplications, SequentialApplication } from "..";
 import { InjectRepository } from "@nestjs/typeorm";
 import { getISODateOnlyString } from "@sims/utilities";
+import { StudentAssessmentDetail } from "./student-assessment.model";
 
 @Injectable()
 export class AssessmentSequentialProcessingService {
@@ -489,5 +490,61 @@ export class AssessmentSequentialProcessingService {
       }
     });
     return totals;
+  }
+
+  /**
+   * Get first outstanding student assessment to be calculated
+   * in the order of original assessment study start date.
+   * @param studentId student id.
+   * @param programYearId program year id.
+   * @returns student assessment to be calculated.
+   */
+  async getOutstandingAssessmentsForStudentInSequence(
+    studentId: number,
+    programYearId: number,
+  ): Promise<StudentAssessmentDetail> {
+    const originalAssessmentStudyStartDateAlias =
+      "originalAssessmentStudyStartDate";
+    // Sub query to get the original assessment study start date of a given assessment's application.
+    const originalAssessmentDateSubQuery = this.studentAssessmentRepo
+      .createQueryBuilder("studentAssessment")
+      .select("offering.studyStartDate")
+      .innerJoin("studentAssessment.offering", "offering")
+      .where("studentAssessment.application.id = assessment.application.id")
+      .andWhere("studentAssessment.triggerType = :triggerType")
+      .limit(1)
+      .getSql();
+
+    return (
+      this.studentAssessmentRepo
+        .createQueryBuilder("assessment")
+        .select("assessment.id", "id")
+        .addSelect(
+          `(${originalAssessmentDateSubQuery})`,
+          originalAssessmentStudyStartDateAlias,
+        )
+        .innerJoin("assessment.application", "application")
+        .where(
+          "assessment.studentAssessmentStatus NOT IN (:...studentAssessmentStatus)",
+        )
+        // Exclude the assessments which are waiting for PIR confirmation
+        // as they do not have a confirmed study start date.
+        .andWhere("assessment.offering IS NOT NULL")
+        .andWhere("application.student.id = :studentId")
+        .andWhere("application.programYear.id = :programYearId")
+        .setParameter("triggerType", AssessmentTriggerType.OriginalAssessment)
+        .setParameter("studentAssessmentStatus", [
+          StudentAssessmentStatus.Completed,
+          StudentAssessmentStatus.CancellationRequested,
+          StudentAssessmentStatus.CancellationQueued,
+          StudentAssessmentStatus.Cancelled,
+        ])
+        .setParameter("studentId", studentId)
+        .setParameter("programYearId", programYearId)
+        .orderBy(`"${originalAssessmentStudyStartDateAlias}"`)
+        .addOrderBy("assessment.createdAt")
+        .limit(1)
+        .getRawOne<StudentAssessmentDetail>()
+    );
   }
 }

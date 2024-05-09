@@ -73,3 +73,7 @@ export * from "./application-offering-change-request/application-offering-change
 export * from "./application-offering-change-request/application-offering-change-request.controller.service";
 export * from "./application-offering-change-request/application-offering-change-request.aest.controller";
 export * from "./student-loan-balance/student-loan-balance.aest.controller";
+export * from "./program-year/program-year.institutions.controller";
+export * from "./report/report.institutions.controller";
+export * from "./report/report.controller.service";
+export * from "./program-year/program-year.controller.service";

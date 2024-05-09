@@ -50,6 +50,7 @@ import {
   OFFERING_INTENSITY_MISMATCH,
   OFFERING_DOES_NOT_BELONG_TO_LOCATION,
   OFFERING_PROGRAM_YEAR_MISMATCH,
+  EDUCATION_PROGRAM_IS_NOT_ACTIVE,
 } from "../../constants";
 import { SequenceControlService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
@@ -59,7 +60,7 @@ import {
   NotificationService,
 } from "@sims/services/notifications";
 import { InstitutionLocationService } from "../institution-location/institution-location.service";
-import { StudentService } from "..";
+import { EducationProgramService, StudentService } from "..";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
@@ -84,10 +85,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly fileService: StudentFileService,
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly offeringService: EducationProgramOfferingService,
+    private readonly educationProgramService: EducationProgramService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly institutionLocationService: InstitutionLocationService,
     private readonly notificationService: NotificationService,
-    private readonly notificationActionService: NotificationActionsService,
     private readonly studentService: StudentService,
   ) {
     super(dataSource.getRepository(Application));
@@ -326,7 +327,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
             birthDate: student.birthDate,
             applicationNumber,
           };
-        await this.notificationActionService.saveApplicationEditedTooManyTimesNotification(
+        await this.notificationActionsService.saveApplicationEditedTooManyTimesNotification(
           ministryNotification,
           applicationNumber,
           transactionalEntityManager,
@@ -518,6 +519,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "user.lastName",
         "pirProgram.id",
         "pirProgram.name",
+        "pirProgram.isActive",
         "educationProgram.id",
         "offering.id",
         "offering.name",
@@ -1485,6 +1487,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
             disbursementDate: true,
             disbursementScheduleStatus: true,
           },
+          triggerType: true,
         },
         applicationException: {
           id: true,
@@ -1502,6 +1505,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
           id: true,
           changeType: true,
         },
+        programYear: { id: true },
       },
       relations: {
         pirDeniedReasonId: true,
@@ -1509,6 +1513,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationException: true,
         location: true,
         studentScholasticStandings: true,
+        programYear: true,
       },
       where: {
         id: applicationId,
@@ -1673,6 +1678,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
       throw new CustomNamedError(
         "The location does not have access to the offering.",
         OFFERING_DOES_NOT_BELONG_TO_LOCATION,
+      );
+    }
+
+    // Validates if the Program is active.
+    if (!offering.educationProgram.isActive) {
+      throw new CustomNamedError(
+        "The education program is not active.",
+        EDUCATION_PROGRAM_IS_NOT_ACTIVE,
       );
     }
 

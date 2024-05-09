@@ -8,12 +8,20 @@ export class ProgramYearService extends RecordDataModelService<ProgramYear> {
     super(dataSource.getRepository(ProgramYear));
   }
 
+  /**
+   * Get all active the program years information.
+   * @returns active program years ordered by name in descendent order.
+   */
   async getProgramYears(): Promise<ProgramYear[]> {
-    return this.repo
-      .createQueryBuilder("programYear")
-      .where("programYear.is_active = true")
-      .orderBy("programYear.id", "DESC")
-      .getMany();
+    return this.repo.find({
+      select: {
+        id: true,
+        programYear: true,
+        programYearDesc: true,
+      },
+      where: { active: true },
+      order: { programYear: "DESC" },
+    });
   }
 
   /**

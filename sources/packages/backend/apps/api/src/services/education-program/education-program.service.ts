@@ -118,6 +118,19 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   }
 
   /**
+   * Check if education program is active.
+   * @param educationProgramId program id.
+   */
+  async isProgramActive(educationProgramId: number): Promise<boolean> {
+    return this.repo.exists({
+      where: {
+        id: educationProgramId,
+        isActive: true,
+      },
+    });
+  }
+
+  /**
    * Inserts/updates an education program at institution level that will be available for all
    * locations and saves a notification to the ministry as a part of the same transaction.
    * @param programId if provided will update the record, otherwise will insert a new one.
@@ -404,9 +417,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .createQueryBuilder("programs")
       .where("programs.programStatus = :programStatus", {
         programStatus: ProgramStatus.Approved,
-      });
+      })
+      .andWhere("programs.isActive = true");
     if (!isFulltimeAllowed) {
-      programsQuery.where("programs.programIntensity = :programIntensity", {
+      programsQuery.andWhere("programs.programIntensity = :programIntensity", {
         programIntensity: ProgramIntensity.fullTimePartTime,
       });
     }
@@ -422,21 +436,28 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   /**
    * Get programs for a particular institution.
    * @param institutionId id of the institution.
+   * @param options method options:
+   * - `isIncludeInActiveProgram`: if isIncludeInActiveProgram, then both active
+   * and not active education program is considered.
    * @returns programs under the specified institution.
    */
   async getPrograms(
     institutionId: number,
+    options?: { isIncludeInActiveProgram?: boolean },
   ): Promise<Partial<EducationProgram>[]> {
-    return this.repo
+    const query = this.repo
       .createQueryBuilder("programs")
       .select(["programs.id", "programs.name"])
       .where("programs.programStatus = :programStatus", {
         programStatus: ProgramStatus.Approved,
       })
-      .andWhere("programs.institution.id = :institutionId", { institutionId })
-      .orderBy("programs.name")
-      .getMany();
+      .andWhere("programs.institution.id = :institutionId", { institutionId });
+    if (!options?.isIncludeInActiveProgram) {
+      query.andWhere("programs.isActive = true");
+    }
+    return query.orderBy("programs.name").getMany();
   }
+
   /**
    * Gets program details with program id.
    * @param programId Program id.
@@ -640,6 +661,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.deliveredOnSite",
         "programs.description",
         "programs.id",
+        "programs.isActive",
       ])
       .where("programs.id = :programId", { programId })
       .getOne();

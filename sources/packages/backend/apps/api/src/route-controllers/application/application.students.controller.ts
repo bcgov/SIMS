@@ -30,6 +30,7 @@ import {
   SupportingUserService,
   StudentAppealService,
   ApplicationOfferingChangeRequestService,
+  EducationProgramService,
 } from "../../services";
 import { IUserToken, StudentUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -43,6 +44,7 @@ import {
   ApplicationProgressDetailsAPIOutDTO,
   EnrolmentApplicationDetailsAPIOutDTO,
   CompletedApplicationDetailsAPIOutDTO,
+  SuccessWaitingStatus,
 } from "./models/application.dto";
 import {
   AllowAuthorizedParty,
@@ -75,7 +77,10 @@ import {
   OfferingIntensity,
   StudentAppealStatus,
 } from "@sims/sims-db";
-import { ConfirmationOfEnrollmentService } from "@sims/services";
+import {
+  AssessmentSequentialProcessingService,
+  ConfirmationOfEnrollmentService,
+} from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
@@ -88,6 +93,7 @@ export class ApplicationStudentsController extends BaseController {
     private readonly formService: FormService,
     private readonly studentService: StudentService,
     private readonly programYearService: ProgramYearService,
+    private readonly educationProgramService: EducationProgramService,
     private readonly offeringService: EducationProgramOfferingService,
     private readonly confirmationOfEnrollmentService: ConfirmationOfEnrollmentService,
     private readonly applicationControllerService: ApplicationControllerService,
@@ -96,6 +102,7 @@ export class ApplicationStudentsController extends BaseController {
     private readonly studentAppealService: StudentAppealService,
     private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
     private readonly configService: ConfigService,
+    private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
   ) {
     super();
   }
@@ -142,6 +149,76 @@ export class ApplicationStudentsController extends BaseController {
       firstCOE,
     );
   }
+  /**
+   * Validate the values in the submitted application before submitting.
+   * @param payload payload to create the application.
+   */
+  private async validateSubmitApplicationData(
+    payload: SaveApplicationAPIInDTO,
+  ): Promise<void> {
+    const isFulltimeAllowed = this.configService.isFulltimeAllowed;
+
+    // The check to validate the values for howWillYouBeAttendingTheProgram can be removed once the toggle for IS_FULL_TIME_ALLOWED is no longer needed
+    // and the types are hard-coded again in the form.io definition using the onlyAvailableItems as true.
+    if (
+      ![OfferingIntensity.fullTime, OfferingIntensity.partTime].includes(
+        payload.data.howWillYouBeAttendingTheProgram,
+      )
+    ) {
+      throw new BadRequestException("Offering intensity type is invalid.");
+    }
+    if (
+      !isFulltimeAllowed &&
+      payload.data.howWillYouBeAttendingTheProgram ===
+        OfferingIntensity.fullTime
+    ) {
+      throw new UnprocessableEntityException("Invalid offering intensity.");
+    }
+    if (payload.data.selectedProgram) {
+      const isProgramActive =
+        await this.educationProgramService.isProgramActive(
+          payload.data.selectedProgram,
+        );
+      if (!isProgramActive) {
+        throw new UnprocessableEntityException(
+          "Education Program not found or is not active. Not able to submit application due to invalid request.",
+        );
+      }
+    }
+
+    // studyStartDate from payload is set as studyStartDate
+    let studyStartDate = payload.data.studystartDate;
+    let studyEndDate = payload.data.studyendDate;
+    if (payload.data.selectedOffering) {
+      const offering = await this.offeringService.getOfferingById(
+        payload.data.selectedOffering,
+        payload.data.selectedProgram,
+      );
+      if (!offering) {
+        throw new UnprocessableEntityException(
+          "Selected offering id is invalid.",
+        );
+      }
+      if (
+        !isFulltimeAllowed &&
+        offering.offeringIntensity === OfferingIntensity.fullTime
+      ) {
+        throw new UnprocessableEntityException("Invalid offering intensity.");
+      }
+
+      // if  studyStartDate is not in payload
+      // then selectedOffering will be there in payload,
+      // then study start date taken from offering
+      studyStartDate = offering.studyStartDate;
+      studyEndDate = offering.studyEndDate;
+      // This ensures that if an offering is selected in student application,
+      // then the study start date and study end date present in form submission payload
+      // belongs to the selected offering and hence prevents these dates being modified in the
+      // middle before coming to API.
+      payload.data.selectedOfferingDate = studyStartDate;
+      payload.data.selectedOfferingEndDate = studyEndDate;
+    }
+  }
 
   /**
    * Submit an existing student application changing the status
@@ -160,7 +237,8 @@ export class ApplicationStudentsController extends BaseController {
     description:
       "Program Year is not active or " +
       "Selected offering id is invalid or " +
-      "invalid study dates or selected study start date is not within the program year " +
+      "invalid study dates or selected study start date is not within the program year or " +
+      "Education Program is not active. Not able to create an application invalid request " +
       "or APPLICATION_NOT_VALID or INVALID_OPERATION_IN_THE_CURRENT_STATUS or ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE " +
       "or INSTITUTION_LOCATION_NOT_VALID or OFFERING_NOT_VALID " +
       "or Invalid offering intensity",
@@ -177,61 +255,16 @@ export class ApplicationStudentsController extends BaseController {
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<void> {
-    const isFulltimeAllowed = this.configService.isFulltimeAllowed;
     const programYear = await this.programYearService.getActiveProgramYear(
       payload.programYearId,
     );
-    // The check to validate the values for howWillYouBeAttendingTheProgram can be removed once the toggle for IS_FULL_TIME_ALLOWED is no longer needed
-    // and the types are hard-coded again in the form.io definition using the onlyAvailableItems as true.
-    if (
-      ![OfferingIntensity.fullTime, OfferingIntensity.partTime].includes(
-        payload.data.howWillYouBeAttendingTheProgram,
-      )
-    ) {
-      throw new BadRequestException("Offering intensity type is invalid.");
-    }
     if (!programYear) {
       throw new UnprocessableEntityException(
         "Program Year is not active. Not able to create an application invalid request.",
       );
     }
-    if (
-      !isFulltimeAllowed &&
-      payload.data.howWillYouBeAttendingTheProgram ===
-        OfferingIntensity.fullTime
-    ) {
-      throw new UnprocessableEntityException("Invalid offering intensity.");
-    }
-    // studyStartDate from payload is set as studyStartDate
-    let studyStartDate = payload.data.studystartDate;
-    let studyEndDate = payload.data.studyendDate;
-    if (payload.data.selectedOffering) {
-      const offering = await this.offeringService.getOfferingById(
-        payload.data.selectedOffering,
-      );
-      if (
-        !isFulltimeAllowed &&
-        offering.offeringIntensity === OfferingIntensity.fullTime
-      ) {
-        throw new UnprocessableEntityException("Invalid offering intensity.");
-      }
-      if (!offering) {
-        throw new UnprocessableEntityException(
-          "Selected offering id is invalid.",
-        );
-      }
-      // if  studyStartDate is not in payload
-      // then selectedOffering will be there in payload,
-      // then study start date taken from offering
-      studyStartDate = offering.studyStartDate;
-      studyEndDate = offering.studyEndDate;
-      // This ensures that if an offering is selected in student application,
-      // then the study start date and study end date present in form submission payload
-      // belongs to the selected offering and hence prevents these dates being modified in the
-      // middle before coming to API.
-      payload.data.selectedOfferingDate = studyStartDate;
-      payload.data.selectedOfferingEndDate = studyEndDate;
-    }
+    // Validate the values in the submitted application before submitting.
+    await this.validateSubmitApplicationData(payload);
 
     const submissionResult =
       await this.formService.dryRunSubmission<ApplicationData>(
@@ -259,8 +292,8 @@ export class ApplicationStudentsController extends BaseController {
         studentToken.userId,
         student.sinValidation.sin,
         student.birthDate,
-        studyStartDate,
-        studyEndDate,
+        payload.data.studystartDate,
+        payload.data.studyendDate,
       );
       await this.applicationService.submitApplication(
         applicationId,
@@ -568,12 +601,28 @@ export class ApplicationStudentsController extends BaseController {
         supportingUserDetails,
       );
 
+    // Get the first outstanding assessment waiting for calculation as per the sequence.
+    const firstOutstandingStudentAssessment =
+      await this.assessmentSequentialProcessingService.getOutstandingAssessmentsForStudentInSequence(
+        studentToken.studentId,
+        application.programYear.id,
+      );
+
+    // If first outstanding assessment returns a value and its Id is different
+    // from the current assessment Id, then assessmentInCalculationStep is Waiting.
+    const outstandingAssessmentStatus =
+      firstOutstandingStudentAssessment &&
+      firstOutstandingStudentAssessment.id !== application.currentAssessment.id
+        ? SuccessWaitingStatus.Waiting
+        : SuccessWaitingStatus.Success;
+
     return {
       id: application.id,
       applicationStatus: application.applicationStatus,
       pirStatus: application.pirStatus,
       pirDeniedReason: getPIRDeniedReason(application),
       exceptionStatus: application.applicationException?.exceptionStatus,
+      outstandingAssessmentStatus: outstandingAssessmentStatus,
       ...incomeVerification,
       ...supportingUser,
     };
@@ -624,6 +673,8 @@ export class ApplicationStudentsController extends BaseController {
         applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus;
     }
 
+    const assessmentTriggerType = application.currentAssessment?.triggerType;
+
     const disbursements =
       application.currentAssessment?.disbursementSchedules ?? [];
 
@@ -642,6 +693,7 @@ export class ApplicationStudentsController extends BaseController {
       appealStatus,
       scholasticStandingChangeType: scholasticStandingChange?.changeType,
       applicationOfferingChangeRequestStatus,
+      assessmentTriggerType,
     };
   }
 
@@ -669,9 +721,12 @@ export class ApplicationStudentsController extends BaseController {
         `Application id ${applicationId} not found or not in relevant status to get enrolment details.`,
       );
     }
-    return this.applicationControllerService.transformToEnrolmentApplicationDetailsAPIOutDTO(
-      application.currentAssessment.disbursementSchedules,
-    );
+    return {
+      ...this.applicationControllerService.transformToEnrolmentApplicationDetailsAPIOutDTO(
+        application.currentAssessment.disbursementSchedules,
+      ),
+      assessmentTriggerType: application.currentAssessment.triggerType,
+    };
   }
 
   /**

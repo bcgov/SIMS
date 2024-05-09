@@ -80,6 +80,11 @@ export enum FormIOCustomEventTypes {
 
 export interface FormIOComponent {
   id: string;
+  key: string;
   tags: string[];
   components: FormIOComponent[];
+  selectOptions: unknown[];
+  _visible: boolean;
+  component: any;
+  redraw: any;
 }

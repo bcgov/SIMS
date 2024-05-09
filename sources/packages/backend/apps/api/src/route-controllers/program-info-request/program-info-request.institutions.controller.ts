@@ -37,6 +37,7 @@ import {
   ProgramInfoStatus,
 } from "@sims/sims-db";
 import {
+  EDUCATION_PROGRAM_IS_NOT_ACTIVE,
   OFFERING_DOES_NOT_BELONG_TO_LOCATION,
   OFFERING_INTENSITY_MISMATCH,
   OFFERING_PROGRAM_YEAR_MISMATCH,
@@ -133,6 +134,7 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
     result.selectedProgram =
       originalAssessmentOffering?.educationProgram.id ??
       application.pirProgram?.id;
+    result.isActiveProgram = application.pirProgram?.isActive;
     // Offering only available when PIR is completed.
     if (originalAssessmentOffering) {
       result.selectedOffering = originalAssessmentOffering.id;
@@ -255,6 +257,7 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
               new ApiProcessError(error.message, error.name),
             );
           case OFFERING_PROGRAM_YEAR_MISMATCH:
+          case EDUCATION_PROGRAM_IS_NOT_ACTIVE:
             throw new UnprocessableEntityException(error.message);
           case OFFERING_DOES_NOT_BELONG_TO_LOCATION:
             throw new UnauthorizedException(error.message);
