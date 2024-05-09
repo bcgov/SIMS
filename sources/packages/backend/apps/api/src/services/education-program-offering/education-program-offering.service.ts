@@ -1169,12 +1169,11 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .createQueryBuilder("application")
       .select("application.id")
       .addSelect("application.applicationStatus")
-      .addSelect("assessment.id", "assessmentId")
+      .addSelect("assessment.id")
       .addSelect("assessment.assessmentData IS NULL", "hasAssessmentData")
       .addSelect("application.data->>'workflowName'", "workflowName")
       .addSelect("assessment.assessmentWorkflowId", "assessmentWorkflowId")
       .addSelect("studentAppeal.id", "assessmentAppealId")
-      .addSelect("assessment", "currentAssessment")
       .innerJoin("application.currentAssessment", "assessment")
       .leftJoin("assessment.studentAppeal", "studentAppeal")
       .innerJoin(
@@ -1282,14 +1281,12 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
           application.applicationStatus = ApplicationStatus.Cancelled;
 
           // Updates the current assessment status to cancellation required.
-          application.currentAssessment.application = application;
           application.currentAssessment.studentAssessmentStatus =
             StudentAssessmentStatus.CancellationRequested;
           application.currentAssessment.modifier = auditUser;
           application.currentAssessment.studentAssessmentStatusUpdatedOn =
             currentDate;
           application.currentAssessment.updatedAt = currentDate;
-          application.currentAssessment.submittedBy = auditUser;
         }
 
         application.modifier = auditUser;

@@ -60,14 +60,16 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
     precedingOffering = createFakeEducationProgramOffering({
       auditUser: savedUser,
     });
-    precedingOffering.offeringStatus = OfferingStatus.ChangeAwaitingApproval;
-    await db.educationProgramOffering.save(precedingOffering);
     requestedOffering = createFakeEducationProgramOffering({
       auditUser: savedUser,
     });
+    precedingOffering.offeringStatus = OfferingStatus.ChangeAwaitingApproval;
     requestedOffering.offeringStatus = OfferingStatus.ChangeAwaitingApproval;
     requestedOffering.precedingOffering = precedingOffering;
-    await db.educationProgramOffering.save(requestedOffering);
+    await db.educationProgramOffering.save([
+      precedingOffering,
+      requestedOffering,
+    ]);
   });
 
   it("Should throw unprocessable entity exception error when the offering is not found.", async () => {
@@ -170,8 +172,8 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
   });
 
   it(
-    "Should determine both of preceding and requested offerings when the offering change is approved " +
-      "and there is no applications associated with the requested offering.",
+    "Should determine the offering change for an offering without any associated application " +
+      "when the offering change is approved.",
     async () => {
       // Arrange
       const payload: OfferingChangeAssessmentAPIInDTO = {
@@ -237,8 +239,8 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
   );
 
   it(
-    "Should determine completed applications for a requested offering when the offering change is approved" +
-      "and there are applications associated with the requested offering.",
+    "Should determine the offering change for an offering with one or more applications in completed status " +
+      "when the offering change is approved.",
     async () => {
       // Arrange
       for (let i = 0; i < 2; i++) {
@@ -309,12 +311,18 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
   );
 
   it(
-    "Should determine in-progress applications for a requested offering when the offering change is approved" +
-      "and there are applications associated with the requested offering.",
+    "Should determine the offering change for an offering with one or more applications not in completed status " +
+      "when the offering change is approved.",
     async () => {
       // Arrange
+
+      const notCompletedApplicationStatus = [
+        ApplicationStatus.InProgress,
+        ApplicationStatus.Assessment,
+        ApplicationStatus.Enrolment,
+      ];
       const applications: Application[] = [];
-      for (let i = 0; i < 2; i++) {
+      for (const applicationStatus of notCompletedApplicationStatus) {
         const application = await saveFakeApplication(
           db.dataSource,
           {
@@ -322,7 +330,7 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
             institutionLocation: collegeFLocation,
           },
           {
-            applicationStatus: ApplicationStatus.InProgress,
+            applicationStatus: applicationStatus,
           },
         );
         application.currentAssessment.offering = precedingOffering;
@@ -361,7 +369,7 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
           id: In(applications.map((application) => application.id)),
         },
       });
-      expect(queryApplications.length).toBe(2);
+      expect(queryApplications.length).toBe(3);
       queryApplications.forEach((queryApplication) => {
         expect(queryApplication.applicationStatus).toBe(
           ApplicationStatus.Cancelled,
@@ -370,6 +378,48 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
           StudentAssessmentStatus.CancellationRequested,
         );
       });
+
+      const processedPrecedingOffering =
+        await db.educationProgramOffering.findOne({
+          select: {
+            id: true,
+            offeringStatus: true,
+          },
+          where: {
+            id: precedingOffering.id,
+          },
+        });
+      expect(processedPrecedingOffering.offeringStatus).toBe(
+        OfferingStatus.ChangeOverwritten,
+      );
+
+      const processedRequestedOffering =
+        await db.educationProgramOffering.findOne({
+          select: {
+            id: true,
+            institutionLocation: {
+              id: true,
+              institution: { id: true, notes: { id: true, description: true } },
+            },
+            offeringStatus: true,
+            offeringNote: { id: true, description: true },
+          },
+          relations: {
+            offeringNote: true,
+            institutionLocation: { institution: { notes: true } },
+          },
+          where: {
+            id: requestedOffering.id,
+          },
+        });
+      expect(processedRequestedOffering.offeringStatus).toBe(
+        OfferingStatus.Approved,
+      );
+      const notes =
+        processedRequestedOffering.institutionLocation.institution.notes;
+      expect(notes.length).toBe(1);
+      expect(notes[0].id).toBe(processedRequestedOffering.offeringNote.id);
+      expect(notes[0].description).toBe(payload.assessmentNotes);
     },
   );
 
