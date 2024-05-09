@@ -19,7 +19,6 @@ import {
   saveFakeApplication,
 } from "@sims/test-utils";
 import {
-  Application,
   ApplicationStatus,
   AssessmentTriggerType,
   EducationProgramOffering,
@@ -171,257 +170,242 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
     );
   });
 
-  it(
-    "Should determine the offering change for an offering without any associated application " +
-      "when the offering change is approved.",
-    async () => {
-      // Arrange
-      const payload: OfferingChangeAssessmentAPIInDTO = {
-        offeringStatus: OfferingStatus.Approved,
-        assessmentNotes: "offering change approved",
-      };
-      // Ministry token.
-      const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+  it("Should determine the offering change for an offering without any associated application when the offering change is approved.", async () => {
+    // Arrange
+    const payload: OfferingChangeAssessmentAPIInDTO = {
+      offeringStatus: OfferingStatus.Approved,
+      assessmentNotes: "offering change approved",
+    };
+    // Ministry token.
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
-      const endpoint = `/aest/education-program-offering/${requestedOffering.id}/assess-change-request`;
+    const endpoint = `/aest/education-program-offering/${requestedOffering.id}/assess-change-request`;
 
-      // Act/Assert
-      await request(app.getHttpServer())
-        .patch(endpoint)
-        .send(payload)
-        .auth(token, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.OK);
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
 
-      const queryPrecedingOffering = await db.educationProgramOffering.findOne({
+    const queryPrecedingOffering = await db.educationProgramOffering.findOne({
+      select: {
+        id: true,
+        offeringStatus: true,
+      },
+      where: { id: precedingOffering.id },
+    });
+    const queryRequestedOffering = await db.educationProgramOffering.findOne({
+      select: {
+        id: true,
+        offeringStatus: true,
+        offeringNote: { id: true, description: true },
+      },
+      relations: { offeringNote: true },
+      where: { id: requestedOffering.id },
+    });
+    expect(queryPrecedingOffering.offeringStatus).toBe(
+      OfferingStatus.ChangeOverwritten,
+    );
+    expect(queryRequestedOffering.offeringStatus).toBe(OfferingStatus.Approved);
+    expect(queryRequestedOffering.offeringNote.description).toBe(
+      "offering change approved",
+    );
+    const queryApplications = await db.application.find({
+      select: {
+        id: true,
+        currentAssessment: {
+          triggerType: true,
+          offering: { id: true },
+        },
+      },
+      relations: {
+        currentAssessment: { offering: true },
+      },
+      where: {
+        currentAssessment: {
+          offering: { id: requestedOffering.id },
+        },
+      },
+    });
+    expect(queryApplications.length).toBe(0);
+  });
+
+  it("Should determine the offering change for an offering with one or more applications in Completed status when the offering change is approved.", async () => {
+    // Arrange
+    for (let i = 0; i < 2; i++) {
+      const application = await saveFakeApplication(
+        db.dataSource,
+        {
+          institution: collegeFLocation.institution,
+          institutionLocation: collegeFLocation,
+        },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+        },
+      );
+      // Create a student appeal for the application and its student assessment.
+      const studentAppeal = createFakeStudentAppeal({
+        application: application,
+        studentAssessment: application.currentAssessment,
+      });
+      application.currentAssessment.studentAppeal = studentAppeal;
+      application.currentAssessment.offering = precedingOffering;
+      await db.application.save(application);
+    }
+
+    const payload: OfferingChangeAssessmentAPIInDTO = {
+      offeringStatus: OfferingStatus.Approved,
+      assessmentNotes: "offering change approved",
+    };
+    // Ministry token.
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    const endpoint = `/aest/education-program-offering/${requestedOffering.id}/assess-change-request`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+
+    const queryApplications = await db.application.find({
+      select: {
+        id: true,
+        currentAssessment: {
+          triggerType: true,
+          offering: { id: true },
+          studentAppeal: { id: true },
+        },
+      },
+      relations: {
+        currentAssessment: { offering: true, studentAppeal: true },
+      },
+      where: {
+        currentAssessment: {
+          offering: { id: requestedOffering.id },
+        },
+      },
+    });
+    expect(queryApplications.length).toBe(2);
+    queryApplications.forEach((queryApplication) => {
+      expect(queryApplication.currentAssessment.triggerType).toBe(
+        AssessmentTriggerType.OfferingChange,
+      );
+      expect(
+        queryApplication.currentAssessment.studentAppeal.id,
+      ).toBeGreaterThan(0);
+    });
+  });
+
+  it("Should approve the offering change when the offering has one or more applications not in Completed status and add a institution note on approval.", async () => {
+    // Arrange
+    const notCompletedApplicationStatus = [
+      ApplicationStatus.InProgress,
+      ApplicationStatus.Assessment,
+      ApplicationStatus.Enrolment,
+    ];
+    const applicationIds: number[] = [];
+    for (const applicationStatus of notCompletedApplicationStatus) {
+      const application = await saveFakeApplication(
+        db.dataSource,
+        {
+          institution: collegeFLocation.institution,
+          institutionLocation: collegeFLocation,
+        },
+        {
+          applicationStatus: applicationStatus,
+        },
+      );
+      application.currentAssessment.offering = precedingOffering;
+      await db.application.save(application);
+      applicationIds.push(application.id);
+    }
+
+    const payload: OfferingChangeAssessmentAPIInDTO = {
+      offeringStatus: OfferingStatus.Approved,
+      assessmentNotes: "offering change approved",
+    };
+    // Ministry token.
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    const endpoint = `/aest/education-program-offering/${requestedOffering.id}/assess-change-request`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+
+    const queryApplications = await db.application.find({
+      select: {
+        id: true,
+        applicationStatus: true,
+        currentAssessment: {
+          studentAssessmentStatus: true,
+        },
+      },
+      relations: {
+        currentAssessment: true,
+      },
+      where: {
+        id: In(applicationIds),
+      },
+    });
+    expect(queryApplications.length).toBe(3);
+    queryApplications.forEach((queryApplication) => {
+      expect(queryApplication.applicationStatus).toBe(
+        ApplicationStatus.Cancelled,
+      );
+      expect(queryApplication.currentAssessment.studentAssessmentStatus).toBe(
+        StudentAssessmentStatus.CancellationRequested,
+      );
+    });
+
+    const processedPrecedingOffering =
+      await db.educationProgramOffering.findOne({
         select: {
           id: true,
           offeringStatus: true,
         },
-        where: { id: precedingOffering.id },
+        where: {
+          id: precedingOffering.id,
+        },
       });
-      const queryRequestedOffering = await db.educationProgramOffering.findOne({
+    expect(processedPrecedingOffering.offeringStatus).toBe(
+      OfferingStatus.ChangeOverwritten,
+    );
+
+    const processedRequestedOffering =
+      await db.educationProgramOffering.findOne({
         select: {
           id: true,
+          institutionLocation: {
+            id: true,
+            institution: { id: true, notes: { id: true, description: true } },
+          },
           offeringStatus: true,
           offeringNote: { id: true, description: true },
         },
-        relations: { offeringNote: true },
-        where: { id: requestedOffering.id },
-      });
-      expect(queryPrecedingOffering.offeringStatus).toBe(
-        OfferingStatus.ChangeOverwritten,
-      );
-      expect(queryRequestedOffering.offeringStatus).toBe(
-        OfferingStatus.Approved,
-      );
-      expect(queryRequestedOffering.offeringNote.description).toBe(
-        "offering change approved",
-      );
-      const queryApplications = await db.application.find({
-        select: {
-          id: true,
-          currentAssessment: {
-            triggerType: true,
-            offering: { id: true },
-          },
-        },
         relations: {
-          currentAssessment: { offering: true },
+          offeringNote: true,
+          institutionLocation: { institution: { notes: true } },
         },
         where: {
-          currentAssessment: {
-            offering: { id: requestedOffering.id },
-          },
+          id: requestedOffering.id,
         },
       });
-      expect(queryApplications.length).toBe(0);
-    },
-  );
-
-  it(
-    "Should determine the offering change for an offering with one or more applications in completed status " +
-      "when the offering change is approved.",
-    async () => {
-      // Arrange
-      for (let i = 0; i < 2; i++) {
-        const application = await saveFakeApplication(
-          db.dataSource,
-          {
-            institution: collegeFLocation.institution,
-            institutionLocation: collegeFLocation,
-          },
-          {
-            applicationStatus: ApplicationStatus.Completed,
-          },
-        );
-        // Create a student appeal for the application and its student assessment.
-        const studentAppeal = createFakeStudentAppeal({
-          application: application,
-          studentAssessment: application.currentAssessment,
-        });
-        application.currentAssessment.studentAppeal = studentAppeal;
-        application.currentAssessment.offering = precedingOffering;
-        await db.application.save(application);
-      }
-
-      const payload: OfferingChangeAssessmentAPIInDTO = {
-        offeringStatus: OfferingStatus.Approved,
-        assessmentNotes: "offering change approved",
-      };
-      // Ministry token.
-      const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-
-      const endpoint = `/aest/education-program-offering/${requestedOffering.id}/assess-change-request`;
-
-      // Act/Assert
-      await request(app.getHttpServer())
-        .patch(endpoint)
-        .send(payload)
-        .auth(token, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.OK);
-
-      const queryApplications = await db.application.find({
-        select: {
-          id: true,
-          currentAssessment: {
-            triggerType: true,
-            offering: { id: true },
-            studentAppeal: { id: true },
-          },
-        },
-        relations: {
-          currentAssessment: { offering: true, studentAppeal: true },
-        },
-        where: {
-          currentAssessment: {
-            offering: { id: requestedOffering.id },
-          },
-        },
-      });
-      expect(queryApplications.length).toBe(2);
-      queryApplications.forEach((queryApplication) => {
-        expect(queryApplication.currentAssessment.triggerType).toBe(
-          AssessmentTriggerType.OfferingChange,
-        );
-        expect(
-          queryApplication.currentAssessment.studentAppeal.id,
-        ).toBeGreaterThan(0);
-      });
-    },
-  );
-
-  it(
-    "Should determine the offering change for an offering with one or more applications not in completed status " +
-      "when the offering change is approved.",
-    async () => {
-      // Arrange
-
-      const notCompletedApplicationStatus = [
-        ApplicationStatus.InProgress,
-        ApplicationStatus.Assessment,
-        ApplicationStatus.Enrolment,
-      ];
-      const applications: Application[] = [];
-      for (const applicationStatus of notCompletedApplicationStatus) {
-        const application = await saveFakeApplication(
-          db.dataSource,
-          {
-            institution: collegeFLocation.institution,
-            institutionLocation: collegeFLocation,
-          },
-          {
-            applicationStatus: applicationStatus,
-          },
-        );
-        application.currentAssessment.offering = precedingOffering;
-        await db.application.save(application);
-        applications.push(application);
-      }
-
-      const payload: OfferingChangeAssessmentAPIInDTO = {
-        offeringStatus: OfferingStatus.Approved,
-        assessmentNotes: "offering change approved",
-      };
-      // Ministry token.
-      const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-
-      const endpoint = `/aest/education-program-offering/${requestedOffering.id}/assess-change-request`;
-
-      // Act/Assert
-      await request(app.getHttpServer())
-        .patch(endpoint)
-        .send(payload)
-        .auth(token, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.OK);
-
-      const queryApplications = await db.application.find({
-        select: {
-          id: true,
-          applicationStatus: true,
-          currentAssessment: {
-            studentAssessmentStatus: true,
-          },
-        },
-        relations: {
-          currentAssessment: true,
-        },
-        where: {
-          id: In(applications.map((application) => application.id)),
-        },
-      });
-      expect(queryApplications.length).toBe(3);
-      queryApplications.forEach((queryApplication) => {
-        expect(queryApplication.applicationStatus).toBe(
-          ApplicationStatus.Cancelled,
-        );
-        expect(queryApplication.currentAssessment.studentAssessmentStatus).toBe(
-          StudentAssessmentStatus.CancellationRequested,
-        );
-      });
-
-      const processedPrecedingOffering =
-        await db.educationProgramOffering.findOne({
-          select: {
-            id: true,
-            offeringStatus: true,
-          },
-          where: {
-            id: precedingOffering.id,
-          },
-        });
-      expect(processedPrecedingOffering.offeringStatus).toBe(
-        OfferingStatus.ChangeOverwritten,
-      );
-
-      const processedRequestedOffering =
-        await db.educationProgramOffering.findOne({
-          select: {
-            id: true,
-            institutionLocation: {
-              id: true,
-              institution: { id: true, notes: { id: true, description: true } },
-            },
-            offeringStatus: true,
-            offeringNote: { id: true, description: true },
-          },
-          relations: {
-            offeringNote: true,
-            institutionLocation: { institution: { notes: true } },
-          },
-          where: {
-            id: requestedOffering.id,
-          },
-        });
-      expect(processedRequestedOffering.offeringStatus).toBe(
-        OfferingStatus.Approved,
-      );
-      const notes =
-        processedRequestedOffering.institutionLocation.institution.notes;
-      expect(notes.length).toBe(1);
-      expect(notes[0].id).toBe(processedRequestedOffering.offeringNote.id);
-      expect(notes[0].description).toBe(payload.assessmentNotes);
-    },
-  );
+    expect(processedRequestedOffering.offeringStatus).toBe(
+      OfferingStatus.Approved,
+    );
+    const notes =
+      processedRequestedOffering.institutionLocation.institution.notes;
+    expect(notes.length).toBe(1);
+    expect(notes[0].id).toBe(processedRequestedOffering.offeringNote.id);
+    expect(notes[0].description).toBe(payload.assessmentNotes);
+  });
 
   afterAll(async () => {
     await app?.close();

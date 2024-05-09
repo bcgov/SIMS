@@ -1194,7 +1194,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .getRawAndEntities();
     return mapFromRawAndEntities<ApplicationAssessmentSummary>(
       applications,
-      "assessmentId",
       "workflowName",
       "assessmentWorkflowId",
       "hasAssessmentData",
