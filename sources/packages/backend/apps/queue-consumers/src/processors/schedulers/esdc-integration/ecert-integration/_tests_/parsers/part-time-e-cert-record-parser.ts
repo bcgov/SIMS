@@ -33,7 +33,7 @@ export class PartTimeCertRecordParser extends ECertRecordParser {
    * Disbursement amount.
    * This field includes 2 decimals in the file.
    */
-  get disbursementAmount(): number {
-    return +this.record.substring(457, 466).trim() / 100;
+  get disbursementAmount(): string {
+    return this.record.substring(457, 466);
   }
 }

@@ -1,6 +1,6 @@
-import { CANADA_POSTAL_CODE_LENGTH } from "@sims/services/constants";
 import { RelationshipStatus, OfferingIntensity } from "@sims/sims-db";
 
+const CANADA_POSTAL_CODE_LENGTH = 6;
 /**
  * Gets the offering intensity code conversion for the MSFAA request file
  */
