@@ -291,7 +291,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     // Return if there are no files to be processed.
     if (!filePaths.length) {
       processSummary.info(
-        `There are no disbursement feedback error files to be processed for ${offeringIntensity}`,
+        `There are no disbursement feedback error files to be processed for ${offeringIntensity}.`,
       );
     }
     // Get eCert feedback error map for all the error codes.
