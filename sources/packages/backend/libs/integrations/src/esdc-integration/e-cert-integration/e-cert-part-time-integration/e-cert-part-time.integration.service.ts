@@ -95,7 +95,7 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
       record.certNumber = ecertRecord.documentNumber;
       record.disbursementDate = ecertRecord.disbursementDate;
       record.documentProducedDate = ecertRecord.documentProducedDate;
-      record.disbursementAmount = disbursementAmount;
+      record.disbursementAmount = combineDecimalPlaces(disbursementAmount);
       record.schoolAmount = combineDecimalPlaces(ecertRecord.schoolAmount);
       record.educationalStartDate = ecertRecord.educationalStartDate;
       record.educationalEndDate = ecertRecord.educationalEndDate;

@@ -28,4 +28,12 @@ export class PartTimeCertRecordParser extends ECertRecordParser {
   get lastName(): string {
     return this.record.substring(2, 27).trim();
   }
+
+  /**
+   * Disbursement amount.
+   * This field includes 2 decimals in the file.
+   */
+  get disbursementAmount(): string {
+    return this.record.substring(457, 466);
+  }
 }

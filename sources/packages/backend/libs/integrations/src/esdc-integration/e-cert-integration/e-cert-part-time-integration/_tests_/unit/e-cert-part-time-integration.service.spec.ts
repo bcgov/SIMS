@@ -124,7 +124,7 @@ describe("ECertPartTimeIntegrationService-createRequestContent", () => {
         certNumber: ecertRecord.documentNumber,
         disbursementDate: ecertRecord.disbursementDate,
         documentProducedDate: ecertRecord.documentProducedDate,
-        disbursementAmount: 6554,
+        disbursementAmount: 655400,
         schoolAmount: ecertRecord.schoolAmount,
         educationalStartDate: ecertRecord.educationalStartDate,
         educationalEndDate: ecertRecord.educationalEndDate,
@@ -155,7 +155,7 @@ describe("ECertPartTimeIntegrationService-createRequestContent", () => {
       },
       {
         recordTypeCode: "99",
-        totalAmountDisbursed: 6554,
+        totalAmountDisbursed: 655400,
         recordCount: 1,
       },
     ]);

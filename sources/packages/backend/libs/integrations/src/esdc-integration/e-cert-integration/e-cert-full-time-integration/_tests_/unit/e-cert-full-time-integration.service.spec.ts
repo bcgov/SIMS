@@ -166,7 +166,7 @@ describe("ECertFullTimeIntegrationService-createRequestContent", () => {
         lastName: ecertRecord.lastName,
         maritalStatus: getMaritalStatusCode(ecertRecord.maritalStatus),
         negotiatedExpiryDate: ecertRecord.negotiatedExpiryDate,
-        postalCode: ecertRecord.postalCode,
+        postalCode: "V1V 1V1",
         ppdFlag: getPPDFlag(ecertRecord.calculatedPDPPDStatus),
         provinceState: ecertRecord.provinceState,
         recordType: RecordTypeCodes.ECertFullTimeRecord,

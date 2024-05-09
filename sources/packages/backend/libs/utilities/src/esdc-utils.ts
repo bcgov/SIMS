@@ -1,5 +1,6 @@
 import { RelationshipStatus, OfferingIntensity } from "@sims/sims-db";
 
+const CANADA_POSTAL_CODE_LENGTH = 6;
 /**
  * Gets the offering intensity code conversion for the MSFAA request file
  */
@@ -70,4 +71,25 @@ export function getCountryCode(country: string): string {
     return "CAN";
   }
   return country;
+}
+
+/**
+ * Returns a formatted postal code `A#A #A#` only for Canada addresses.
+ * @param country country for the address.
+ * @param postalCode postal code to be formatted.
+ * @returns a formatted postal code.
+ */
+export function getFormattedPostalCode(
+  country: string,
+  postalCode: string,
+): string {
+  if (
+    country.toUpperCase() === "CANADA" &&
+    postalCode?.length === CANADA_POSTAL_CODE_LENGTH
+  ) {
+    const postalCodeCharArray = [...postalCode];
+    postalCodeCharArray.splice(3, 0, " ");
+    return postalCodeCharArray.join("");
+  }
+  return postalCode;
 }
