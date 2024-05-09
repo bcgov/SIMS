@@ -9,7 +9,7 @@ VALUES
       education_programs.sabc_code AS "SABC Program Code",
       education_programs_offerings.offering_name AS "Offering Name",
       education_programs_offerings.year_of_study AS "Year of Study",
-      education_programs_offerings."offering_intensity" AS "Offering Intensity",
+      education_programs_offerings.offering_intensity AS "Offering Intensity",
       education_programs_offerings.course_load AS "Course Load",
       education_programs_offerings.offering_delivered AS "Delivery Type",
       education_programs_offerings.has_offering_wil_component AS "WIL Component",
@@ -17,20 +17,14 @@ VALUES
       education_programs_offerings.study_start_date AS "Start Date",
       education_programs_offerings.study_end_date AS "End Date",
       NOT education_programs_offerings.lacks_study_breaks AS "Has Study Breaks",
-      COALESCE(education_programs_offerings.actual_tuition_costs,
-      0) AS "Actual Tuition",
-      COALESCE(education_programs_offerings.program_related_costs,
-      0) AS "Program Related Costs",
-      COALESCE(education_programs_offerings.mandatory_fees,
-      0) AS "Mandatory Fees",
-      COALESCE(education_programs_offerings.exceptional_expenses,
-      0) AS "Exceptional Expenses",
-      education_programs_offerings.offering_type AS "Public Offering",
-      education_programs_offerings."offering_status" AS "Status",
-      COALESCE((education_programs_offerings.study_breaks ->> ''totalFundedWeeks'')::INTEGER,
-      0) AS "Funded Weeks",
-      COALESCE(offerings_with_applications."Total Applications",
-      0)
+      education_programs_offerings.actual_tuition_costs AS "Actual Tuition",
+      education_programs_offerings.program_related_costs AS "Program Related Costs",
+      education_programs_offerings.mandatory_fees AS "Mandatory Fees",
+      education_programs_offerings.exceptional_expenses AS "Exceptional Expenses",
+      education_programs_offerings.offering_type AS "Offering Type",
+      education_programs_offerings.offering_status AS "Status",
+      education_programs_offerings.study_breaks ->> ''totalFundedWeeks'' AS "Funded Weeks",
+      offerings_with_applications.total_applications AS "Total Applications"
     FROM
       sims.education_programs_offerings education_programs_offerings
     INNER JOIN sims.institution_locations institution_locations ON
@@ -38,11 +32,17 @@ VALUES
     INNER JOIN sims.education_programs education_programs ON
       education_programs_offerings.program_id = education_programs.id
     INNER JOIN sims.program_years ON
+      -- program year is used to merge the offerings and the program year table on the
+      -- provided program year which is then used to filter the offerings belonging to
+      -- the provided program year in the WHERE clause.  
       program_years.id = :programYear
     LEFT JOIN (
+      -- Get all the offerings having atleast one application in the given 
+      -- program year with their applications count satisfying the conditions
+      -- from the WHERE clause.
       SELECT
-        education_programs_offerings.id AS "ID",
-        COUNT(applications.id) AS "Total Applications"
+        education_programs_offerings.id AS "id",
+        COUNT(applications.id) AS "total_applications"
       FROM
         sims.education_programs_offerings education_programs_offerings
       INNER JOIN sims.institution_locations institution_locations ON
@@ -51,22 +51,22 @@ VALUES
         education_programs_offerings.id = student_assessments.offering_id
       INNER JOIN sims.applications applications ON
         applications.current_assessment_id = student_assessments.id
-      INNER JOIN sims.program_years program_years ON
-        applications.program_year_id = program_years.id
       WHERE
-        program_years.id = :programYear
+        applications.program_year_id = :programYear
         AND education_programs_offerings.offering_intensity = ANY(:offeringIntensity)
           AND institution_locations.institution_id = :institutionId
+          AND applications.application_status = ''Completed''
         GROUP BY
           education_programs_offerings.id) offerings_with_applications ON
-      education_programs_offerings.id = offerings_with_applications."ID"
+      education_programs_offerings.id = offerings_with_applications."id"
     WHERE
       education_programs_offerings.offering_intensity = ANY(:offeringIntensity)
+      AND education_programs_offerings.offering_type != ''Scholastic standing''
       AND institution_locations.institution_id = :institutionId
       AND education_programs_offerings.study_start_date BETWEEN program_years.start_date AND program_years.end_date
     ORDER BY
       institution_locations.institution_code,
       education_programs.program_name,
       education_programs_offerings.offering_name,
-      education_programs_offerings."offering_intensity";'
+      education_programs_offerings.offering_intensity;'
   );

@@ -49,12 +49,9 @@ export class ReportControllerService {
         "Not able to export report due to an invalid request.",
       );
     }
-    options?.institutionId
-      ? (submissionResult.data.data.params = {
-          ...submissionResult.data.data.params,
-          institutionId: options?.institutionId,
-        })
-      : null;
+    if (options?.institutionId) {
+      submissionResult.data.data.params.institutionId = options.institutionId;
+    }
     try {
       const reportData = await this.reportService.getReportDataAsCSV(
         submissionResult.data.data,
