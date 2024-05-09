@@ -3,9 +3,16 @@ import { PartTimeECertFileHandler } from "@sims/integrations/esdc-integration";
 import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
-import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
-import { ESDCFileResponse } from "../models/esdc.models";
+import {
+  InjectLogger,
+  LoggerService,
+  ProcessSummary,
+} from "@sims/utilities/logger";
+import {
+  getSuccessMessageWithAttentionCheck,
+  logProcessSummaryToJobLogger,
+} from "../../../../utilities";
 
 @Processor(QueueNames.PartTimeFeedbackIntegration)
 export class PartTimeECertFeedbackIntegrationScheduler extends BaseScheduler<void> {
@@ -24,23 +31,32 @@ export class PartTimeECertFeedbackIntegrationScheduler extends BaseScheduler<voi
    * @returns Summary with what was processed and the list of all errors, if any.
    */
   @Process()
-  async processPartTimeResponses(job: Job<void>): Promise<ESDCFileResponse[]> {
-    const summary = new QueueProcessSummary({
-      appLogger: this.logger,
-      jobLogger: job,
-    });
-    await summary.info(
-      `Processing e-Cert part-time feedback integration job ${job.id} of type ${job.name}.`,
+  async processPartTimeResponses(job: Job<void>): Promise<string[]> {
+    const processSummary = new ProcessSummary();
+    processSummary.info(
+      `Processing e-Cert part-time feedback integration job.`,
     );
-    const partTimeResults =
-      await this.partTimeECertFileHandler.processECertResponses();
-    await this.cleanSchedulerQueueHistory();
-    await summary.info(
-      `Completed e-Cert part-time feedback integration job ${job.id} of type ${job.name}.`,
-    );
-    return partTimeResults.map((partTimeResult) => ({
-      processSummary: partTimeResult.processSummary,
-      errorsSummary: partTimeResult.errorsSummary,
-    }));
+    try {
+      await this.partTimeECertFileHandler.processECertResponses(processSummary);
+      processSummary.info(
+        `Completed e-Cert part-time feedback integration job.`,
+      );
+      return getSuccessMessageWithAttentionCheck(
+        ["Process finalized with success."],
+        processSummary,
+      );
+    } catch (error: unknown) {
+      const errorMessage =
+        "Unexpected error while executing the e-Cert part-time feedback integration job.";
+      processSummary.error(errorMessage, error);
+      return [errorMessage];
+    } finally {
+      this.logger.logProcessSummary(processSummary);
+      await logProcessSummaryToJobLogger(processSummary, job);
+      await this.cleanSchedulerQueueHistory();
+    }
   }
+
+  @InjectLogger()
+  logger: LoggerService;
 }

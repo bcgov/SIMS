@@ -26,7 +26,6 @@ import {
   Award,
   ECertRecord,
   ECertUploadResult,
-  ESDCFileResponse,
 } from "./models/e-cert-integration-model";
 import { ECertIntegrationService } from "./e-cert.integration.service";
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
@@ -66,10 +65,11 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
 
   /**
    * Method to call the e-cert feedback file processing and the list of all errors, if any.
+   * @param processSummary cumulative process log.
    * @returns result of the file upload with the file generated and the
    * amount of records added to the file.
    */
-  abstract processECertResponses(): Promise<ESDCFileResponse[]>;
+  abstract processECertResponses(processSummary: ProcessSummary): Promise<void>;
 
   /**
    * Generate the e-Cert file for Full-Time/Part-Time disbursements available to be sent to ESDC.
@@ -276,16 +276,18 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
 
   /**
    * Download all files from E-Cert Response folder on SFTP and process them all.
-   * @param eCertIntegrationService
+   * @param processSummary process summary of all files processed.
+   * @param eCertIntegrationService Integration service to read and delete the files.
    * @param fileCode ECert response file code to be processed.
    * @param offeringIntensity offering intensity.
    * @returns Summary with what was processed and the list of all errors, if any.
    */
   async processResponses(
+    processSummary: ProcessSummary,
     eCertIntegrationService: ECertIntegrationService,
     fileCode: string,
     offeringIntensity: OfferingIntensity,
-  ): Promise<ProcessSFTPResponseResult[]> {
+  ): Promise<void> {
     const filePaths = await eCertIntegrationService.getResponseFilesFullPath(
       this.esdcConfig.ftpResponseFolder,
       new RegExp(`^${this.esdcConfig.environmentCode}${fileCode}`, "i"),
@@ -293,30 +295,39 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     const processResults: ProcessSFTPResponseResult[] = [];
     // Return if there are no files to be processed.
     if (!filePaths.length) {
-      const processResult = new ProcessSFTPResponseResult();
-      processResult.processSummary.push(
+      processSummary.info(
         `There are no disbursement feedback error files to be processed for ${offeringIntensity}`,
       );
-      processResults.push(processResult);
-      return processResults;
     }
-    const eCertFeedbackErrorCodeMap = await this.getECertFeedbackErrorsMap(
-      offeringIntensity,
-    );
+    // Get eCert feedback error map for all the error codes.
+    let eCertFeedbackErrorCodeMap: Record<string, number>;
+    try {
+      eCertFeedbackErrorCodeMap = await this.getECertFeedbackErrorsMap(
+        offeringIntensity,
+      );
+    } catch (error: unknown) {
+      processSummary.error(
+        "Error retrieving e-Cert feedback error map for error codes.",
+        error,
+      );
+    }
     for (const filePath of filePaths) {
+      const fileProcessingSummary = new ProcessSummary();
+      processSummary.children(fileProcessingSummary);
       processResults.push(
         await this.processFile(
+          fileProcessingSummary,
           eCertIntegrationService,
           filePath,
           eCertFeedbackErrorCodeMap,
         ),
       );
     }
-    return processResults;
   }
 
   /**
    * Process each individual E-Cert response file from the SFTP.
+   * @param processSummary process summary of file processing.
    * @param eCertIntegrationService
    * @param filePath E-Cert response file to be processed.
    * @param offeringIntensity offering intensity.
@@ -325,29 +336,24 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
    * @returns Process summary and errors summary.
    */
   private async processFile(
+    processSummary: ProcessSummary,
     eCertIntegrationService: ECertIntegrationService,
     filePath: string,
     eCertFeedbackErrorCodeMap: Record<string, number>,
   ): Promise<ProcessSFTPResponseResult> {
-    const processResult = new ProcessSFTPResponseResult();
-    processResult.processSummary.push(`Processing file ${filePath}.`);
-
+    processSummary.info(`Processing file ${filePath}.`);
     let eCertFeedbackResponseRecords: ECertResponseRecord[];
-
     try {
       eCertFeedbackResponseRecords =
         await eCertIntegrationService.downloadResponseFile(filePath);
     } catch (error) {
-      this.logger.error(error);
-      processResult.errorsSummary.push(
-        `Error downloading file ${filePath}. ${error}`,
-      );
       // Abort the process nicely not throwing an exception and
       // allowing other response files to be processed.
-      return processResult;
+      processSummary.error(`Error downloading file ${filePath}.`, error);
+      return;
     }
     // Processing the records.
-    processResult.processSummary.push(
+    processSummary.info(
       `File contains ${eCertFeedbackResponseRecords.length} records.`,
     );
     try {
@@ -356,29 +362,33 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
         eCertFeedbackErrorCodeMap,
       );
       for (const eCertFeedbackResponseRecord of eCertFeedbackResponseRecords) {
+        const recordProcessSummary = new ProcessSummary();
+        processSummary.children(recordProcessSummary);
         await this.createDisbursementFeedbackError(
+          recordProcessSummary,
           eCertFeedbackResponseRecord,
           eCertFeedbackErrorCodeMap,
-          processResult,
         );
       }
     } catch (error: unknown) {
       // Any error caught here will abort the file processing.
-      const errorDescription = `Error processing the file ${filePath}. Error: ${error}`;
-      this.logger.error(errorDescription);
-      processResult.errorsSummary.push(errorDescription);
-      return processResult;
+      processSummary.error(`Error processing the file ${filePath}.`, error);
+      return;
     } finally {
-      if (!processResult.errorsSummary.length) {
-        await this.deleteFile(eCertIntegrationService, filePath, processResult);
+      if (!processSummary.getLogLevelSum().error) {
+        await this.deleteFile(
+          eCertIntegrationService,
+          filePath,
+          processSummary,
+        );
       }
     }
-    return processResult;
   }
 
   /**
    * Create disbursement feedback errors
    * for the errors received in a response record.
+   * @param processSummary process summary of record processing.
    * @param eCertFeedbackResponseRecord e-Cert feedback response record.
    * @param eCertFeedbackErrorCodeMap e-Cert feedback error map
    * to get error id by error code.
@@ -386,9 +396,9 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
    * @param processResult processing result.
    */
   private async createDisbursementFeedbackError(
+    processSummary: ProcessSummary,
     eCertFeedbackResponseRecord: ECertResponseRecord,
     eCertFeedbackErrorCodeMap: Record<string, number>,
-    processResult: ProcessSFTPResponseResult,
   ): Promise<void> {
     try {
       const dateReceived = new Date();
@@ -407,14 +417,15 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
         receivedErrorIds,
         dateReceived,
       );
-      const logMessage = `Disbursement feedback error created for document number ${eCertFeedbackResponseRecord.documentNumber} at line ${eCertFeedbackResponseRecord.lineNumber}.`;
-      this.logger.log(logMessage);
-      processResult.processSummary.push(logMessage);
+      processSummary.info(
+        `Disbursement feedback error created for document number ${eCertFeedbackResponseRecord.documentNumber} at line ${eCertFeedbackResponseRecord.lineNumber}.`,
+      );
     } catch (error: unknown) {
       // Log the error message and continue the processing.
-      const errorDescription = `Error processing the record for document number ${eCertFeedbackResponseRecord.documentNumber} at line ${eCertFeedbackResponseRecord.lineNumber}. Error: ${error}`;
-      this.logger.error(errorDescription);
-      processResult.errorsSummary.push(errorDescription);
+      processSummary.error(
+        `Error processing the record for document number ${eCertFeedbackResponseRecord.documentNumber} at line ${eCertFeedbackResponseRecord.lineNumber}.`,
+        error,
+      );
     }
   }
 
@@ -482,7 +493,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
   private async deleteFile(
     eCertIntegrationService: ECertIntegrationService,
     filePath: string,
-    processResult: ProcessSFTPResponseResult,
+    processSummary: ProcessSummary,
   ) {
     try {
       await eCertIntegrationService.deleteFile(filePath);
@@ -490,9 +501,10 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
       // Log the error but allow the process to continue.
       // If there was an issue only during the file removal, it will be
       // processed again and could be deleted in the second attempt.
-      const logMessage = `Error while deleting E-Cert response file: ${filePath}`;
-      this.logger.error(logMessage);
-      processResult.errorsSummary.push(logMessage);
+      processSummary.error(
+        `Error while deleting E-Cert response file: ${filePath}`,
+        error,
+      );
     }
   }
 

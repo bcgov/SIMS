@@ -39,7 +39,9 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
         documentNumber,
       );
     if (!disbursementSchedule) {
-      throw new Error(`Document number ${documentNumber} not found.`);
+      throw new Error(
+        `Disbursement for document number ${documentNumber} not found.`,
+      );
     }
     const auditUser = this.systemUsersService.systemUser;
     const disbursementFeedbackErrors = errorCodeIds.map((errorCodeId) => {

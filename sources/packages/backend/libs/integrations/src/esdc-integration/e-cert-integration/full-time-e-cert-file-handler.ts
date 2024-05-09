@@ -9,10 +9,7 @@ import {
   ECERT_FULL_TIME_FILE_CODE,
   ECERT_FULL_TIME_FEEDBACK_FILE_CODE,
 } from "@sims/services/constants";
-import {
-  ECertUploadResult,
-  ESDCFileResponse,
-} from "./models/e-cert-integration-model";
+import { ECertUploadResult } from "./models/e-cert-integration-model";
 import { Injectable } from "@nestjs/common";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { ECertGenerationService } from "@sims/integrations/services";
@@ -64,11 +61,13 @@ export class FullTimeECertFileHandler extends ECertFileHandler {
 
   /**
    * Method to call the Full-time feedback file processing and the list of all errors, if any.
+   * @param processSummary cumulative process log.
    * @returns result of the file upload with the file generated and the
    * amount of records added to the file.
    */
-  async processECertResponses(): Promise<ESDCFileResponse[]> {
-    return this.processResponses(
+  async processECertResponses(processSummary: ProcessSummary): Promise<void> {
+    await this.processResponses(
+      processSummary,
       this.eCertIntegrationService,
       ECERT_FULL_TIME_FEEDBACK_FILE_CODE,
       OfferingIntensity.fullTime,

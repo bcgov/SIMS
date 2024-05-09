@@ -27,14 +27,6 @@ export class DisbursementFeedbackErrors extends RecordDataModel {
   })
   dateReceived: Date;
   /**
-   * Error Code.
-   */
-  @Column({
-    name: "error_code",
-  })
-  errorCode: string;
-  disbursementScheduleId: number;
-  /**
    * Disbursement Schedule.
    */
   @ManyToOne(() => DisbursementSchedule, { eager: false, cascade: false })

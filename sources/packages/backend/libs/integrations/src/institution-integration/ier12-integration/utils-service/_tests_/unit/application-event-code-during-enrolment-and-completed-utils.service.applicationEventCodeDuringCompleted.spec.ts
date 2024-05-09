@@ -171,7 +171,7 @@ describe("applicationEventCodeDuringEnrolmentAndCompletedUtilsService-applicatio
         disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
         disbursementFeedbackErrors: [
           {
-            errorCode: feedbackErrorCode,
+            eCertFeedbackError: { errorCode: feedbackErrorCode },
           },
         ],
       } as DisbursementScheduleForApplicationEventCode;
@@ -197,7 +197,7 @@ describe("applicationEventCodeDuringEnrolmentAndCompletedUtilsService-applicatio
         disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
         disbursementFeedbackErrors: [
           {
-            errorCode: "XXXXX",
+            eCertFeedbackError: { errorCode: "XXXXX" },
           },
         ],
         disbursementValues: [{ restrictionAmountSubtracted: 100 }],
@@ -224,7 +224,7 @@ describe("applicationEventCodeDuringEnrolmentAndCompletedUtilsService-applicatio
         disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
         disbursementFeedbackErrors: [
           {
-            errorCode: "XXXXX",
+            eCertFeedbackError: { errorCode: "XXXXX" },
           },
         ],
         disbursementValues: [{ restrictionAmountSubtracted: 0 }],
