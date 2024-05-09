@@ -27,7 +27,7 @@ VALUES
       0) AS "Exceptional Expenses",
       education_programs_offerings.offering_type AS "Public Offering",
       education_programs_offerings."offering_status" AS "Status",
-      COALESCE((education_programs_offerings.study_breaks ->> ' totalFundedWeeks ')::INTEGER,
+      COALESCE((education_programs_offerings.study_breaks ->> ''totalFundedWeeks'')::INTEGER,
       0) AS "Funded Weeks",
       COALESCE(offerings_with_applications."Total Applications",
       0)
@@ -63,5 +63,10 @@ VALUES
     WHERE
       education_programs_offerings.offering_intensity = ANY(:offeringIntensity)
       AND institution_locations.institution_id = :institutionId
-      AND education_programs_offerings.study_start_date BETWEEN program_years.start_date AND program_years.end_date;'
+      AND education_programs_offerings.study_start_date BETWEEN program_years.start_date AND program_years.end_date
+    ORDER BY
+      institution_locations.institution_code,
+      education_programs.program_name,
+      education_programs_offerings.offering_name,
+      education_programs_offerings."offering_intensity";'
   );
