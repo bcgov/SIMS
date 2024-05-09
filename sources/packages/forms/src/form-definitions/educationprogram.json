@@ -1,2275 +1,2278 @@
 {
-    "title": "Education Program",
-    "name": "educationProgram",
-    "path": "educationprogram",
-    "type": "form",
-    "display": "form",
-    "tags": [
-        "common"
-    ],
-    "components": [
+  "title": "Education Program",
+  "name": "educationProgram",
+  "path": "educationprogram",
+  "type": "form",
+  "display": "form",
+  "tags": [
+    "common"
+  ],
+  "components": [
+    {
+      "title": "Education Program Main Container",
+      "customClass": "formio-panel-unset",
+      "collapsible": false,
+      "hideLabel": true,
+      "key": "educationProgramMainContainer",
+      "logic": [
         {
-            "title": "Education Program Main Container",
-            "customClass": "formio-panel-unset",
-            "collapsible": false,
-            "hideLabel": true,
-            "key": "educationProgramMainContainer",
-            "logic": [
-                {
-                    "name": "Read-only Form",
-                    "trigger": {
-                        "type": "simple",
-                        "simple": {
-                            "show": true,
-                            "when": "isReadonly",
-                            "eq": "true"
-                        }
-                    },
-                    "actions": [
-                        {
-                            "name": "Disable form",
-                            "type": "property",
-                            "property": {
-                                "label": "Disabled",
-                                "value": "disabled",
-                                "type": "boolean"
-                            },
-                            "state": true
-                        }
-                    ]
-                }
-            ],
-            "type": "panel",
-            "label": "Panel",
-            "input": false,
-            "tableView": false,
-            "components": [
-                {
-                    "label": "HTML",
-                    "tag": "h2",
-                    "className": "category-header-large primary-color",
-                    "attrs": [
-                        {
-                            "attr": "",
-                            "value": ""
-                        }
-                    ],
-                    "content": "Program information",
-                    "refreshOnChange": false,
-                    "key": "html3",
-                    "type": "htmlelement",
-                    "input": false,
-                    "tableView": false,
-                    "hideLabel": true
-                },
-                {
-                    "collapsible": false,
-                    "hideLabel": true,
-                    "key": "panel",
-                    "type": "panel",
-                    "label": "Panel",
-                    "input": false,
-                    "tableView": false,
-                    "components": [
-                        {
-                            "label": "Level Of Study Codes",
-                            "calculateValue": "value = {\r\n    undergraduateCertificate: \"8\",\r\n    undergraduateCitation: \"8\",\r\n    undergraduateDiploma: \"7\",\r\n    undergraduateDegree: \"3\",\r\n    graduateCertificate: \"5\",\r\n    graduateDiploma: \"5\",\r\n    graduateDegreeOrMasters: \"5\",\r\n    postGraduateOrDoctorate: \"6\",\r\n    qualifyingStudies: \"1\",\r\n};",
-                            "calculateServer": true,
-                            "key": "levelOfStudyCodes",
-                            "type": "hidden",
-                            "input": true,
-                            "tableView": false,
-                            "protected": false,
-                            "unique": false,
-                            "persistent": true,
-                            "isNew": false,
-                            "tags": [],
-                            "conditional": {
-                                "show": "",
-                                "when": null,
-                                "eq": ""
-                            },
-                            "properties": {}
-                        },
-                        {
-                            "label": "Field Of Study Codes",
-                            "calculateValue": "value = {\r\n  P7: \"25\",\r\n  P5: \"55\",\r\n  P8: \"25\",\r\n  P3: \"40\",\r\n  P6: \"70\",\r\n  P4: \"40\",\r\n  P2: \"25\",\r\n  P1: \"25\",\r\n  Q4: \"39\",\r\n  Q7: \"24\",\r\n  Q5: \"54\",\r\n  Q1: \"24\",\r\n  Q6: \"69\",\r\n  Q2: \"24\",\r\n  Q8: \"24\",\r\n  Q3: \"39\",\r\n  R7: \"23\",\r\n  R6: \"68\",\r\n  R4: \"38\",\r\n  R5: \"53\",\r\n  R2: \"23\",\r\n  R3: \"38\",\r\n  R8: \"23\",\r\n  R1: \"23\",\r\n  S8: \"22\",\r\n  S1: \"22\",\r\n  S4: \"37\",\r\n  S3: \"37\",\r\n  S2: \"22\",\r\n  S5: \"52\",\r\n  S7: \"22\",\r\n  S6: \"67\",\r\n  T1: \"21\",\r\n  T7: \"21\",\r\n  T4: \"36\",\r\n  T5: \"51\",\r\n  T3: \"36\",\r\n  T8: \"21\",\r\n  T6: \"66\",\r\n  T2: \"21\",\r\n  U8: \"20\",\r\n  U3: \"35\",\r\n  U2: \"20\",\r\n  U4: \"35\",\r\n  U7: \"20\",\r\n  U5: \"50\",\r\n  U1: \"20\",\r\n  U6: \"65\",\r\n  V1: \"19\",\r\n  V3: \"34\",\r\n  V6: \"64\",\r\n  V5: \"49\",\r\n  V2: \"19\",\r\n  V7: \"19\",\r\n  V4: \"34\",\r\n  V8: \"19\",\r\n  W8: \"18\",\r\n  W4: \"33\",\r\n  W2: \"18\",\r\n  W7: \"18\",\r\n  W5: \"48\",\r\n  W1: \"18\",\r\n  W3: \"33\",\r\n  W6: \"63\",\r\n  X5: \"47\",\r\n  X2: \"17\",\r\n  X1: \"17\",\r\n  X4: \"32\",\r\n  X8: \"17\",\r\n  X3: \"32\",\r\n  X6: \"62\",\r\n  X7: \"17\",\r\n  Y4: \"31\",\r\n  Y8: \"16\",\r\n  Y5: \"46\",\r\n  Y6: \"61\",\r\n  Y2: \"16\",\r\n  Y3: \"31\",\r\n  Y1: \"16\",\r\n  Y7: \"16\",\r\n  Z7: \"15\",\r\n  Z8: \"15\",\r\n  Z5: \"45\",\r\n  Z4: \"30\",\r\n  Z2: \"15\",\r\n  Z3: \"30\",\r\n  Z1: \"15\",\r\n  Z6: \"60\",\r\n};",
-                            "calculateServer": true,
-                            "key": "fieldOfStudyCodes",
-                            "type": "hidden",
-                            "input": true,
-                            "tableView": false,
-                            "protected": false,
-                            "unique": false,
-                            "persistent": true,
-                            "isNew": false,
-                            "tags": [],
-                            "conditional": {
-                                "show": "",
-                                "when": null,
-                                "eq": ""
-                            },
-                            "properties": {}
-                        },
-                        {
-                            "label": "SABC Codes",
-                            "calculateValue": "value =\r\n{\r\n    11: \"Z\",\r\n    \"09\": \"Z\",\r\n    52: \"Z\",\r\n    \"01\": \"Y\",\r\n    \"03\": \"Y\",\r\n    \"05\": \"X\",\r\n    16: \"X\",\r\n    23: \"X\",\r\n    24: \"X\",\r\n    25: \"X\",\r\n    42: \"X\",\r\n    27: \"X\",\r\n    30: \"X\",\r\n    38: \"X\",\r\n    40: \"X\",\r\n    45: \"X\",\r\n    50: \"X\",\r\n    53: \"X\",\r\n    54: \"X\",\r\n    55: \"X\",\r\n    13: \"W\",\r\n    19: \"W\",\r\n    28: \"W\",\r\n    31: \"W\",\r\n    44: \"W\",\r\n    60: \"V\",\r\n    \"04\": \"U\",\r\n    10: \"U\",\r\n    14: \"U\",\r\n    15: \"U\",\r\n    29: \"U\",\r\n    41: \"U\",\r\n    26: \"T\",\r\n    22: \"S\",\r\n    43: \"S\",\r\n    51: \"R\",\r\n    61: \"R\",\r\n    39: \"Q\",\r\n    12: \"P\",\r\n    21: \"P\",\r\n    32: \"P\",\r\n    33: \"P\",\r\n    34: \"P\",\r\n    35: \"P\",\r\n    36: \"P\",\r\n    37: \"P\",\r\n    46: \"P\",\r\n    47: \"P\",\r\n    48: \"P\",\r\n    49: \"P\"\r\n};",
-                            "calculateServer": true,
-                            "key": "sabcCodes",
-                            "type": "hidden",
-                            "input": true,
-                            "tableView": false,
-                            "protected": false,
-                            "unique": false,
-                            "persistent": true,
-                            "tags": [],
-                            "conditional": {
-                                "show": "",
-                                "when": null,
-                                "eq": ""
-                            },
-                            "properties": {}
-                        },
-                        {
-                            "label": "Program name",
-                            "showCharCount": true,
-                            "tableView": true,
-                            "validate": {
-                                "required": true,
-                                "maxLength": 100
-                            },
-                            "key": "name",
-                            "attributes": {
-                                "data-cy": "programName"
-                            },
-                            "type": "textfield",
-                            "input": true,
-                            "autofocus": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true,
-                            "spellcheck": true,
-                            "conditional": {
-                                "show": null,
-                                "when": null,
-                                "eq": ""
-                            }
-                        },
-                        {
-                            "label": "Program description",
-                            "autoExpand": false,
-                            "showCharCount": true,
-                            "tableView": true,
-                            "validate": {
-                                "maxLength": 500,
-                                "customMessage": "Too Long"
-                            },
-                            "key": "description",
-                            "attributes": {
-                                "data-cy": "programDescription"
-                            },
-                            "type": "textarea",
-                            "input": true,
-                            "autofocus": false,
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "rows": 3,
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "wysiwyg": false,
-                            "clearOnHide": true,
-                            "spellcheck": true
-                        },
-                        {
-                            "label": "Credential type",
-                            "widget": "html5",
-                            "tableView": true,
-                            "data": {
-                                "values": [
-                                    {
-                                        "label": "Undergraduate Certificate",
-                                        "value": "undergraduateCertificate"
-                                    },
-                                    {
-                                        "label": "Undergraduate Citation",
-                                        "value": "undergraduateCitation"
-                                    },
-                                    {
-                                        "label": "Undergraduate Diploma",
-                                        "value": "undergraduateDiploma"
-                                    },
-                                    {
-                                        "label": "Undergraduate Degree",
-                                        "value": "undergraduateDegree"
-                                    },
-                                    {
-                                        "label": "Graduate Certificate",
-                                        "value": "graduateCertificate"
-                                    },
-                                    {
-                                        "label": "Graduate Diploma",
-                                        "value": "graduateDiploma"
-                                    },
-                                    {
-                                        "label": "Graduate Degree / Master’s",
-                                        "value": "graduateDegreeOrMasters"
-                                    },
-                                    {
-                                        "label": "Post-Graduate / Doctorate",
-                                        "value": "postGraduateOrDoctorate"
-                                    },
-                                    {
-                                        "label": "Qualifying Studies",
-                                        "value": "qualifyingStudies"
-                                    }
-                                ]
-                            },
-                            "validate": {
-                                "required": true,
-                                "onlyAvailableItems": true
-                            },
-                            "key": "credentialType",
-                            "logic": [
-                                {
-                                    "name": "Disable Credential Input",
-                                    "trigger": {
-                                        "type": "javascript",
-                                        "javascript": "result = data.hasOfferings;"
-                                    },
-                                    "actions": [
-                                        {
-                                            "name": "Disable edit",
-                                            "type": "property",
-                                            "property": {
-                                                "label": "Disabled",
-                                                "value": "disabled",
-                                                "type": "boolean"
-                                            },
-                                            "state": true
-                                        }
-                                    ]
-                                }
-                            ],
-                            "attributes": {
-                                "data-cy": "credentialType"
-                            },
-                            "type": "select",
-                            "input": true,
-                            "searchThreshold": 0.3,
-                            "autofocus": false,
-                            "placeholder": "",
-                            "dataSrc": "values",
-                            "valueProperty": "",
-                            "defaultValue": "",
-                            "refreshOn": "",
-                            "filter": "",
-                            "authenticate": false,
-                            "template": "<span>{{ item.label }}</span>",
-                            "multiple": false,
-                            "protected": false,
-                            "unique": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true
-                        },
-                        {
-                            "label": "Classification of Instructional Programs (CIP)",
-                            "description": "Format (##.####)",
-                            "tableView": true,
-                            "calculateServer": true,
-                            "validate": {
-                                "required": true,
-                                "pattern": "^[0-9]{2}\\.[0-9]{4}$",
-                                "customMessage": "Invalid format"
-                            },
-                            "key": "cipCode",
-                            "logic": [
-                                {
-                                    "name": "Disable CIP Code Input",
-                                    "trigger": {
-                                        "type": "javascript",
-                                        "javascript": "result = data.hasOfferings;"
-                                    },
-                                    "actions": [
-                                        {
-                                            "name": "Disable Input",
-                                            "type": "property",
-                                            "property": {
-                                                "label": "Disabled",
-                                                "value": "disabled",
-                                                "type": "boolean"
-                                            },
-                                            "state": true
-                                        }
-                                    ]
-                                }
-                            ],
-                            "attributes": {
-                                "data-cy": "cipCode"
-                            },
-                            "type": "textfield",
-                            "input": true,
-                            "autofocus": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true,
-                            "spellcheck": true,
-                            "conditional": {
-                                "show": null,
-                                "when": null,
-                                "eq": ""
-                            }
-                        },
-                        {
-                            "label": "Field of study code",
-                            "disabled": true,
-                            "tableView": true,
-                            "calculateValue": "const sabcCode = data.sabcCodes[data.cipCode.substring(0, 2)];\r\nconst levelOfStudyCode =  data.levelOfStudyCodes[data.credentialType];\r\nvalue = (sabcCode && levelOfStudyCode) ? data.fieldOfStudyCodes[sabcCode + levelOfStudyCode] : 20;",
-                            "calculateServer": true,
-                            "validate": {
-                                "required": true,
-                                "customMessage": "The combination of the Credential Type and CIP did not result in a known Field of Study code."
-                            },
-                            "key": "fieldOfStudyCode",
-                            "attributes": {
-                                "data-cy": "fieldOfStudyCode"
-                            },
-                            "type": "textfield",
-                            "input": true,
-                            "autofocus": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true,
-                            "spellcheck": true,
-                            "conditional": {
-                                "show": null,
-                                "when": null,
-                                "eq": ""
-                            }
-                        },
-                        {
-                            "label": "National Occupational Classifcation (NOC)",
-                            "description": "Format (#####) Optional**",
-                            "tableView": true,
-                            "validate": {
-                                "pattern": "[0-9]{5}",
-                                "customMessage": "Incorrect Format"
-                            },
-                            "key": "nocCode",
-                            "logic": [
-                                {
-                                    "name": "Disable NOC Code",
-                                    "trigger": {
-                                        "type": "javascript",
-                                        "javascript": "result = data.hasOfferings;"
-                                    },
-                                    "actions": [
-                                        {
-                                            "name": "Disable Input",
-                                            "type": "property",
-                                            "property": {
-                                                "label": "Disabled",
-                                                "value": "disabled",
-                                                "type": "boolean"
-                                            },
-                                            "state": true
-                                        }
-                                    ]
-                                }
-                            ],
-                            "attributes": {
-                                "data-cy": "nocCode"
-                            },
-                            "type": "textfield",
-                            "input": true,
-                            "lockKey": true,
-                            "autofocus": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true,
-                            "spellcheck": true,
-                            "conditional": {
-                                "show": null,
-                                "when": null,
-                                "eq": ""
-                            }
-                        },
-                        {
-                            "label": "SABC program code, if this program has been approved for SABC funding before",
-                            "description": "Format (XXX#) Optional**",
-                            "tableView": true,
-                            "validate": {
-                                "pattern": "[[A-Z]{3}[0-9]{1}",
-                                "customMessage": "Incorrect Format"
-                            },
-                            "key": "sabcCode",
-                            "logic": [
-                                {
-                                    "name": "Disable SABC Input",
-                                    "trigger": {
-                                        "type": "javascript",
-                                        "javascript": "result = data.hasOfferings;"
-                                    },
-                                    "actions": [
-                                        {
-                                            "name": "Disable Input",
-                                            "type": "property",
-                                            "property": {
-                                                "label": "Disabled",
-                                                "value": "disabled",
-                                                "type": "boolean"
-                                            },
-                                            "state": true
-                                        }
-                                    ]
-                                }
-                            ],
-                            "attributes": {
-                                "data-cy": "sabcCode"
-                            },
-                            "type": "textfield",
-                            "input": true,
-                            "autofocus": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true,
-                            "spellcheck": true,
-                            "conditional": {
-                                "show": null,
-                                "when": null,
-                                "eq": ""
-                            }
-                        },
-                        {
-                            "label": "Institution Program Code",
-                            "tableView": true,
-                            "key": "institutionProgramCode",
-                            "logic": [
-                                {
-                                    "name": "Disable Program Code Input",
-                                    "trigger": {
-                                        "type": "javascript",
-                                        "javascript": "result = data.hasOfferings;"
-                                    },
-                                    "actions": [
-                                        {
-                                            "name": "Disable Input",
-                                            "type": "property",
-                                            "property": {
-                                                "label": "Disabled",
-                                                "value": "disabled",
-                                                "type": "boolean"
-                                            },
-                                            "state": true
-                                        }
-                                    ]
-                                }
-                            ],
-                            "attributes": {
-                                "data-cy": "institutionProgramCode"
-                            },
-                            "type": "textfield",
-                            "input": true,
-                            "autofocus": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true,
-                            "spellcheck": true,
-                            "validate": {
-                                "required": false,
-                                "minLength": "",
-                                "maxLength": "",
-                                "pattern": "",
-                                "custom": "",
-                                "customPrivate": false
-                            },
-                            "conditional": {
-                                "show": null,
-                                "when": null,
-                                "eq": ""
-                            }
-                        }
-                    ],
-                    "clearOnHide": false,
-                    "title": "",
-                    "theme": "default"
-                },
-                {
-                    "label": "Program eligibility",
-                    "tag": "h2",
-                    "className": "category-header-large primary-color",
-                    "attrs": [
-                        {
-                            "attr": "",
-                            "value": ""
-                        }
-                    ],
-                    "content": "Program eligibility",
-                    "refreshOnChange": false,
-                    "customClass": "category-header-medium primary-color",
-                    "key": "programEligibility",
-                    "type": "htmlelement",
-                    "input": false,
-                    "tableView": false,
-                    "hideLabel": true
-                },
-                {
-                    "collapsible": false,
-                    "hideLabel": true,
-                    "key": "panel1",
-                    "logic": [
-                        {
-                            "name": "Disable Eligibility Inputs",
-                            "trigger": {
-                                "type": "javascript",
-                                "javascript": "result = data.hasOfferings;"
-                            },
-                            "actions": [
-                                {
-                                    "name": "Disable Inputs",
-                                    "type": "property",
-                                    "property": {
-                                        "label": "Disabled",
-                                        "value": "disabled",
-                                        "type": "boolean"
-                                    },
-                                    "state": true
-                                }
-                            ]
-                        }
-                    ],
-                    "type": "panel",
-                    "label": "Panel",
-                    "input": false,
-                    "tableView": false,
-                    "components": [
-                        {
-                            "label": "Are students able to take this on a part time basis?",
-                            "optionsLabelPosition": "right",
-                            "tooltip": "A part-time program has a course load between 20 and 59%. A full-time program must have a course load of: 60% or greater or Between 40 and 60% for students with a permanent disability.",
-                            "inline": false,
-                            "tableView": false,
-                            "values": [
-                                {
-                                    "label": "Yes",
-                                    "value": "Full Time and Part Time",
-                                    "shortcut": ""
-                                },
-                                {
-                                    "label": "No",
-                                    "value": "Full Time",
-                                    "shortcut": ""
-                                }
-                            ],
-                            "validate": {
-                                "required": true,
-                                "onlyAvailableItems": true
-                            },
-                            "key": "programIntensity",
-                            "attributes": {
-                                "data-cy": "programIntensity"
-                            },
-                            "type": "radio",
-                            "input": true,
-                            "autofocus": false,
-                            "inputType": "radio",
-                            "defaultValue": "",
-                            "protected": false,
-                            "fieldSet": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true
-                        },
-                        {
-                            "label": "How will this program be delivered? (Select all that apply)",
-                            "optionsLabelPosition": "right",
-                            "tableView": false,
-                            "defaultValue": {
-                                "deliveredOnSite": false,
-                                "deliveredOnline": false,
-                                "onSite": false,
-                                "online": false,
-                                "onsite": false
-                            },
-                            "values": [
-                                {
-                                    "label": "On site",
-                                    "value": "deliveredOnSite",
-                                    "shortcut": ""
-                                },
-                                {
-                                    "label": "Online",
-                                    "value": "deliveredOnline",
-                                    "shortcut": ""
-                                }
-                            ],
-                            "validate": {
-                                "required": true
-                            },
-                            "key": "programDeliveryTypes",
-                            "attributes": {
-                                "data-cy": "programDeliveryTypes"
-                            },
-                            "type": "selectboxes",
-                            "input": true,
-                            "inputType": "checkbox",
-                            "lockKey": true,
-                            "autofocus": false,
-                            "inline": false,
-                            "protected": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true
-                        },
-                        {
-                            "label": "Will the program also be offered and delivered at 100% course load on site?",
-                            "optionsLabelPosition": "right",
-                            "inline": false,
-                            "tableView": false,
-                            "values": [
-                                {
-                                    "label": "Yes",
-                                    "value": "yes",
-                                    "shortcut": ""
-                                },
-                                {
-                                    "label": "No",
-                                    "value": "no",
-                                    "shortcut": ""
-                                }
-                            ],
-                            "validate": {
-                                "required": true
-                            },
-                            "key": "deliveredOnlineAlsoOnsite",
-                            "customConditional": "const isBCInstitution = data.isBCPublic || data.isBCPrivate;\nshow = (!isBCInstitution && data.programDeliveryTypes.deliveredOnline);",
-                            "attributes": {
-                                "data-cy": "deliveredOnlineAlsoOnsite"
-                            },
-                            "type": "radio",
-                            "input": true,
-                            "autofocus": false,
-                            "inputType": "radio",
-                            "defaultValue": "",
-                            "protected": false,
-                            "fieldSet": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true
-                        },
-                        {
-                            "label": "Will the students earn the same number of credits in the same time period as students in other StudentAid BC eligible programs delivered on site?",
-                            "optionsLabelPosition": "right",
-                            "inline": false,
-                            "tableView": false,
-                            "values": [
-                                {
-                                    "label": "Yes",
-                                    "value": "yes",
-                                    "shortcut": ""
-                                },
-                                {
-                                    "label": "No",
-                                    "value": "no",
-                                    "shortcut": ""
-                                }
-                            ],
-                            "validate": {
-                                "required": true,
-                                "onlyAvailableItems": true
-                            },
-                            "key": "sameOnlineCreditsEarned",
-                            "customConditional": "const isBCInstitution = data.isBCPublic || data.isBCPrivate;\nshow = (!isBCInstitution && data.deliveredOnlineAlsoOnsite === \"no\");",
-                            "attributes": {
-                                "data-cy": "sameOnlineCreditsEarned"
-                            },
-                            "type": "radio",
-                            "input": true,
-                            "autofocus": false,
-                            "inputType": "radio",
-                            "defaultValue": "",
-                            "protected": false,
-                            "fieldSet": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true
-                        },
-                        {
-                            "label": "Will they earn academic credits that are recognized at another designated institution listed in the BC Transfer Guide or other acceptable articulation agreements from other jurisdictions?",
-                            "optionsLabelPosition": "right",
-                            "inline": false,
-                            "tableView": false,
-                            "values": [
-                                {
-                                    "label": "Yes",
-                                    "value": "yes",
-                                    "shortcut": ""
-                                },
-                                {
-                                    "label": "No",
-                                    "value": "no",
-                                    "shortcut": ""
-                                }
-                            ],
-                            "validate": {
-                                "required": true
-                            },
-                            "key": "earnAcademicCreditsOtherInstitution",
-                            "customConditional": "const isBCInstitution = data.isBCPublic || data.isBCPrivate;\nshow = (!isBCInstitution && data.deliveredOnlineAlsoOnsite === \"no\" && data.sameOnlineCreditsEarned ===\"no\");",
-                            "attributes": {
-                                "data-cy": "earnAcademicCreditsOtherInstitution"
-                            },
-                            "type": "radio",
-                            "input": true,
-                            "autofocus": false,
-                            "inputType": "radio",
-                            "defaultValue": "",
-                            "protected": false,
-                            "fieldSet": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true
-                        },
-                        {
-                            "label": "HTML",
-                            "className": "alert alert-warning fa fa-exclamation-circle",
-                            "attrs": [
-                                {
-                                    "attr": "",
-                                    "value": ""
-                                }
-                            ],
-                            "content": "<strong> This program is ineligible for StudentAid BC funding</strong>",
-                            "refreshOnChange": false,
-                            "customClass": "banner-warning",
-                            "key": "html4",
-                            "customConditional": "const isBCInstitution = data.isBCPublic || data.isBCPrivate;\nshow = (!isBCInstitution && data.deliveredOnlineAlsoOnsite === \"no\" && data.sameOnlineCreditsEarned === \"no\" && data.earnAcademicCreditsOtherInstitution === \"no\");",
-                            "type": "htmlelement",
-                            "input": false,
-                            "tableView": false,
-                            "hideLabel": true,
-                            "tag": "p"
-                        },
-                        {
-                            "label": "HTML",
-                            "attrs": [
-                                {
-                                    "attr": "",
-                                    "value": ""
-                                }
-                            ],
-                            "content": "<strong>Program length</strong><br>This qualifies students for specific funds or grants.",
-                            "refreshOnChange": false,
-                            "key": "html11",
-                            "type": "htmlelement",
-                            "input": false,
-                            "tableView": false,
-                            "hideLabel": true,
-                            "tag": "p",
-                            "className": ""
-                        },
-                        {
-                            "label": "Program length",
-                            "widget": "html5",
-                            "hideLabel": true,
-                            "tableView": true,
-                            "data": {
-                                "values": [
-                                    {
-                                        "label": "12 weeks to 52 weeks",
-                                        "value": "12WeeksTo52Weeks"
-                                    },
-                                    {
-                                        "label": "53 weeks to 59 weeks",
-                                        "value": "53WeeksTo59Weeks"
-                                    },
-                                    {
-                                        "label": "60 weeks to less than 2 years",
-                                        "value": "60WeeksToLessThan2Years"
-                                    },
-                                    {
-                                        "label": "2 Years to less than 3Years",
-                                        "value": "2YearsToLessThan3Years"
-                                    },
-                                    {
-                                        "label": "3 Years to less than 4 Years",
-                                        "value": "3YearsToLessThan4Years"
-                                    },
-                                    {
-                                        "label": "4 Years to less than 5Years",
-                                        "value": "4YearsToLessThan5Years"
-                                    },
-                                    {
-                                        "value": "5YearsOrMore",
-                                        "label": "5 Years or More"
-                                    }
-                                ]
-                            },
-                            "validate": {
-                                "required": true,
-                                "onlyAvailableItems": true
-                            },
-                            "key": "completionYears",
-                            "attributes": {
-                                "data-cy": "completionYears"
-                            },
-                            "type": "select",
-                            "input": true,
-                            "searchThreshold": 0.3,
-                            "autofocus": false,
-                            "placeholder": "",
-                            "dataSrc": "values",
-                            "valueProperty": "",
-                            "defaultValue": "",
-                            "refreshOn": "",
-                            "filter": "",
-                            "authenticate": false,
-                            "template": "<span>{{ item.label }}</span>",
-                            "multiple": false,
-                            "protected": false,
-                            "unique": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true
-                        },
-                        {
-                            "label": "Program course load calculation is:",
-                            "optionsLabelPosition": "right",
-                            "inline": false,
-                            "tableView": false,
-                            "values": [
-                                {
-                                    "label": "Credit based",
-                                    "value": "credit",
-                                    "shortcut": ""
-                                },
-                                {
-                                    "label": "Hours based",
-                                    "value": "hours",
-                                    "shortcut": ""
-                                }
-                            ],
-                            "validate": {
-                                "required": true
-                            },
-                            "key": "courseLoadCalculation",
-                            "attributes": {
-                                "data-cy": "courseLoadCalculation"
-                            },
-                            "type": "radio",
-                            "input": true,
-                            "autofocus": false,
-                            "inputType": "radio",
-                            "defaultValue": "",
-                            "protected": false,
-                            "fieldSet": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true
-                        },
-                        {
-                            "label": "Does this program include a minimum of 20 instructional hours per week?",
-                            "optionsLabelPosition": "right",
-                            "inline": false,
-                            "tableView": false,
-                            "values": [
-                                {
-                                    "label": "Yes",
-                                    "value": "yes",
-                                    "shortcut": ""
-                                },
-                                {
-                                    "label": "No",
-                                    "value": "no",
-                                    "shortcut": ""
-                                }
-                            ],
-                            "validate": {
-                                "required": true
-                            },
-                            "key": "minHoursWeek",
-                            "conditional": {
-                                "show": true,
-                                "when": "courseLoadCalculation",
-                                "eq": "hours"
-                            },
-                            "attributes": {
-                                "data-cy": "minHoursWeek"
-                            },
-                            "type": "radio",
-                            "input": true,
-                            "autofocus": false,
-                            "inputType": "radio",
-                            "defaultValue": "",
-                            "protected": false,
-                            "fieldSet": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true
-                        },
-                        {
-                            "label": "Is this an aviation program?",
-                            "optionsLabelPosition": "right",
-                            "inline": false,
-                            "tableView": false,
-                            "values": [
-                                {
-                                    "label": "Yes",
-                                    "value": "yes",
-                                    "shortcut": ""
-                                },
-                                {
-                                    "label": "No",
-                                    "value": "no",
-                                    "shortcut": ""
-                                }
-                            ],
-                            "validate": {
-                                "required": true
-                            },
-                            "key": "isAviationProgram",
-                            "customConditional": "show = (data.courseLoadCalculation === \"hours\" && data.minHoursWeek === \"no\");",
-                            "attributes": {
-                                "data-cy": "isAviationProgram"
-                            },
-                            "type": "radio",
-                            "input": true,
-                            "autofocus": false,
-                            "inputType": "radio",
-                            "defaultValue": "",
-                            "protected": false,
-                            "fieldSet": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true
-                        },
-                        {
-                            "label": "HTML",
-                            "className": "alert alert-warning fa fa-exclamation-circle",
-                            "attrs": [
-                                {
-                                    "attr": "",
-                                    "value": ""
-                                }
-                            ],
-                            "content": "<strong> This program is inegligible for StudentAid BC funding</strong><br>The program needs to be a minimum of 20 instructional hours.",
-                            "refreshOnChange": true,
-                            "customClass": "banner-warning",
-                            "key": "html6",
-                            "customConditional": "show = (data.courseLoadCalculation === \"hours\" && data.minHoursWeek === \"no\" && data.isAviationProgram === \"no\");",
-                            "type": "htmlelement",
-                            "input": false,
-                            "tableView": false,
-                            "hideLabel": true,
-                            "tag": "p"
-                        },
-                        {
-                            "label": "Does this program include a minimum of 15 instructional hours per week",
-                            "optionsLabelPosition": "right",
-                            "inline": false,
-                            "tableView": false,
-                            "values": [
-                                {
-                                    "label": "Yes",
-                                    "value": "yes",
-                                    "shortcut": ""
-                                },
-                                {
-                                    "label": "No",
-                                    "value": "no",
-                                    "shortcut": ""
-                                }
-                            ],
-                            "validate": {
-                                "required": true
-                            },
-                            "key": "minHoursWeekAvi",
-                            "customConditional": "show = (data.courseLoadCalculation === \"hours\" && data.minHoursWeek === \"no\" && data.isAviationProgram === \"yes\");",
-                            "attributes": {
-                                "data-cy": "minHoursWeekAvi"
-                            },
-                            "type": "radio",
-                            "input": true,
-                            "autofocus": false,
-                            "inputType": "radio",
-                            "defaultValue": "",
-                            "protected": false,
-                            "fieldSet": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true
-                        },
-                        {
-                            "label": "HTML",
-                            "className": "alert alert-warning fa fa-exclamation-circle",
-                            "attrs": [
-                                {
-                                    "attr": "",
-                                    "value": ""
-                                }
-                            ],
-                            "content": "<strong> This program is ineligible for StudentAid BC funding</strong><br>The aviation program needs to be a minimum of 15 instructional hours.",
-                            "refreshOnChange": false,
-                            "customClass": "banner-warning",
-                            "key": "html5",
-                            "customConditional": "show = (data.courseLoadCalculation === \"hours\" && data.minHoursWeek === \"no\" && data.isAviationProgram === \"yes\" && data.minHoursWeekAvi === \"no\");",
-                            "type": "htmlelement",
-                            "input": false,
-                            "tableView": false,
-                            "hideLabel": true,
-                            "tag": "p"
-                        },
-                        {
-                            "label": "HTML",
-                            "attrs": [
-                                {
-                                    "attr": "",
-                                    "value": ""
-                                }
-                            ],
-                            "content": "<strong>Which regulatory body does this program belong to?</strong><br>\nAll programs must be approved by your regulatory body to meet the criteria. If your program has not been approved yet, please contact your regulatory body first.",
-                            "refreshOnChange": false,
-                            "key": "html7",
-                            "type": "htmlelement",
-                            "input": false,
-                            "tableView": false,
-                            "hideLabel": true,
-                            "tag": "p",
-                            "className": ""
-                        },
-                        {
-                            "label": "Which regulatory body does this program belong to?",
-                            "widget": "html5",
-                            "tableView": true,
-                            "data": {
-                                "values": [
-                                    {
-                                        "label": "PTIB",
-                                        "value": "ptib"
-                                    },
-                                    {
-                                        "label": "DQAB",
-                                        "value": "dqab"
-                                    },
-                                    {
-                                        "label": "Private Act of B.C. Legislature",
-                                        "value": "privateActLegislature"
-                                    },
-                                    {
-                                        "label": "Skilled Trades BC",
-                                        "value": "skilledTradesBC"
-                                    },
-                                    {
-                                        "label": "ICBC",
-                                        "value": "icbc"
-                                    },
-                                    {
-                                        "value": "senateOrEducationCouncil",
-                                        "label": "Senate, Academic Council, Education Council, and/or Program Council and Board of Governors"
-                                    },
-                                    {
-                                        "value": "other",
-                                        "label": "Other"
-                                    }
-                                ]
-                            },
-                            "validate": {
-                                "required": true
-                            },
-                            "key": "regulatoryBody",
-                            "attributes": {
-                                "data-cy": "regulatoryBody"
-                            },
-                            "type": "select",
-                            "input": true,
-                            "searchThreshold": 0.3,
-                            "hideLabel": true,
-                            "autofocus": false,
-                            "placeholder": "",
-                            "dataSrc": "values",
-                            "valueProperty": "",
-                            "defaultValue": "",
-                            "refreshOn": "",
-                            "filter": "",
-                            "authenticate": false,
-                            "template": "<span>{{ item.label }}</span>",
-                            "multiple": false,
-                            "protected": false,
-                            "unique": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true
-                        },
-                        {
-                            "input": true,
-                            "tableView": true,
-                            "label": "Other institution regulatory body",
-                            "key": "otherRegulatoryBody",
-                            "validate": {
-                                "required": true,
-                                "minLength": 1,
-                                "maxLength": 100
-                            },
-                            "conditional": {
-                                "show": "true",
-                                "when": "regulatoryBody",
-                                "eq": "other"
-                            },
-                            "type": "textfield",
-                            "lockKey": true,
-                            "autofocus": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true,
-                            "spellcheck": true
-                        }
-                    ],
-                    "clearOnHide": false,
-                    "title": "",
-                    "theme": "default"
-                },
-                {
-                    "label": "HTML",
-                    "tag": "h2",
-                    "className": "category-header-large primary-color",
-                    "attrs": [
-                        {
-                            "attr": "",
-                            "value": ""
-                        }
-                    ],
-                    "content": "Entrance requirements",
-                    "refreshOnChange": false,
-                    "key": "html8",
-                    "type": "htmlelement",
-                    "input": false,
-                    "tableView": false,
-                    "hideLabel": true
-                },
-                {
-                    "collapsible": false,
-                    "hideLabel": true,
-                    "key": "panel8",
-                    "logic": [
-                        {
-                            "name": "Disable Entrance Inputs",
-                            "trigger": {
-                                "type": "javascript",
-                                "javascript": "result = data.hasOfferings;"
-                            },
-                            "actions": [
-                                {
-                                    "name": "Disable Inputs",
-                                    "type": "property",
-                                    "property": {
-                                        "label": "Disabled",
-                                        "value": "disabled",
-                                        "type": "boolean"
-                                    },
-                                    "state": true
-                                }
-                            ]
-                        }
-                    ],
-                    "type": "panel",
-                    "label": "Panel",
-                    "input": false,
-                    "tableView": false,
-                    "components": [
-                        {
-                            "label": "What are the entrance requirements for this program? (Select all that apply)",
-                            "optionsLabelPosition": "right",
-                            "tableView": false,
-                            "defaultValue": {
-                                "studentsToHaveGraduatedFromGrade12OrEquivalent": false,
-                                "studentsAre19YearsOldOrOlderBeforeTheStartOfClasses": false,
-                                "thisProgramHasEntranceRequirementsEstablishedByTheInstitutionThatEnableCompletionOfTheProgramStudy": false,
-                                "thisProgramIsApprovedByTheBCInudstryTrainingAuthorityAndStudentsMustMeetTheEntranceRequirementsSetByTheBCIta": false,
-                                "hasMinimunAge": false,
-                                "highSchool": false,
-                                "minHighSchool": false,
-                                "requirementsByInstitution": false,
-                                "requirementsByBcita": false,
-                                "hasMinimumAge": false,
-                                "requirementsByBCITA": false,
-                                "noneOfTheAboveEntranceRequirements": false
-                            },
-                            "values": [
-                                {
-                                    "label": "Students to have graduated from grade 12 or equivalent.",
-                                    "value": "minHighSchool",
-                                    "shortcut": ""
-                                },
-                                {
-                                    "label": "Students are 19 years old or older before the start of classes.",
-                                    "value": "hasMinimumAge",
-                                    "shortcut": ""
-                                },
-                                {
-                                    "label": "For post-secondary level academic credit-based programs: This program has entrance requirements established by the institution that enable completion of the program of study.",
-                                    "value": "requirementsByInstitution",
-                                    "shortcut": ""
-                                },
-                                {
-                                    "label": "This program is approved by the SkilledTradesBC and students must meet the entrance requirements set by the B.C. ITA.",
-                                    "value": "requirementsByBCITA",
-                                    "shortcut": ""
-                                },
-                                {
-                                    "value": "noneOfTheAboveEntranceRequirements",
-                                    "label": "None of the above",
-                                    "shortcut": ""
-                                }
-                            ],
-                            "validate": {
-                                "required": true,
-                                "custom": "const shouldSelectOneOfTheAboveOrAnotherOption =\r\n  (data.entranceRequirements.minHighSchool ||\r\n    data.entranceRequirements.hasMinimumAge ||\r\n    data.entranceRequirements.requirementsByInstitution ||\r\n    data.entranceRequirements.requirementsByBCITA) &&\r\n  data.entranceRequirements.noneOfTheAboveEntranceRequirements;\r\n\r\nvalid = shouldSelectOneOfTheAboveOrAnotherOption\r\n  ? \"Please select at least one of the entrance requirements or 'None of the above'.\"\r\n  : true;"
-                            },
-                            "key": "entranceRequirements",
-                            "attributes": {
-                                "data-cy": "entranceRequirements"
-                            },
-                            "type": "selectboxes",
-                            "input": true,
-                            "inputType": "checkbox",
-                            "lockKey": true,
-                            "autofocus": false,
-                            "inline": false,
-                            "protected": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true
-                        },
-                        {
-                            "label": "Entrance requirements warning banner",
-                            "className": "alert alert-warning fa fa-exclamation-circle",
-                            "attrs": [
-                                {
-                                    "attr": "",
-                                    "value": ""
-                                }
-                            ],
-                            "content": "<strong> This program is ineligible for StudentAid BC funding.</strong><br/>\nAn entrance requirement is required.",
-                            "refreshOnChange": false,
-                            "customClass": "banner-warning",
-                            "key": "entrance-requirement-banner",
-                            "type": "htmlelement",
-                            "input": false,
-                            "tableView": false,
-                            "hideLabel": true,
-                            "lockKey": true,
-                            "customConditional": "show = !!data.entranceRequirements.noneOfTheAboveEntranceRequirements;",
-                            "tag": "p"
-                        }
-                    ],
-                    "clearOnHide": false,
-                    "title": "",
-                    "theme": "default"
-                },
-                {
-                    "label": "HTML",
-                    "tag": "h2",
-                    "className": "category-header-large primary-color",
-                    "attrs": [
-                        {
-                            "attr": "",
-                            "value": ""
-                        }
-                    ],
-                    "content": "English as a Second Language (ESL) content",
-                    "refreshOnChange": false,
-                    "key": "html9",
-                    "type": "htmlelement",
-                    "input": false,
-                    "tableView": false,
-                    "hideLabel": true
-                },
-                {
-                    "collapsible": false,
-                    "hideLabel": true,
-                    "key": "panel9",
-                    "logic": [
-                        {
-                            "name": "Disable ESL Inputs",
-                            "trigger": {
-                                "type": "javascript",
-                                "javascript": "result = data.hasOfferings;"
-                            },
-                            "actions": [
-                                {
-                                    "name": "Disable Inputs",
-                                    "type": "property",
-                                    "property": {
-                                        "label": "Disabled",
-                                        "value": "disabled",
-                                        "type": "boolean"
-                                    },
-                                    "state": true
-                                }
-                            ]
-                        }
-                    ],
-                    "type": "panel",
-                    "label": "Panel",
-                    "input": false,
-                    "tableView": false,
-                    "components": [
-                        {
-                            "label": "What percentage of the program has ESL Content?",
-                            "optionsLabelPosition": "right",
-                            "inline": false,
-                            "tableView": false,
-                            "values": [
-                                {
-                                    "label": "Less than 20%",
-                                    "value": "lessThan20",
-                                    "shortcut": ""
-                                },
-                                {
-                                    "label": "20% or more",
-                                    "value": "20OrMore",
-                                    "shortcut": ""
-                                }
-                            ],
-                            "redrawOn": "data",
-                            "validate": {
-                                "required": true
-                            },
-                            "key": "eslEligibility",
-                            "attributes": {
-                                "data-cy": "eslEligibility"
-                            },
-                            "type": "radio",
-                            "input": true,
-                            "autofocus": false,
-                            "inputType": "radio",
-                            "defaultValue": "",
-                            "protected": false,
-                            "fieldSet": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true
-                        },
-                        {
-                            "label": "ESL Error",
-                            "className": "alert alert-warning fa fa-exclamation-circle",
-                            "attrs": [
-                                {
-                                    "attr": "",
-                                    "value": ""
-                                }
-                            ],
-                            "content": "<strong> This program is ineligible for StudentAid BC funding.</strong><br/>\nESL can’t exceed 20% of course content.",
-                            "refreshOnChange": false,
-                            "customClass": "banner-warning",
-                            "key": "html",
-                            "conditional": {
-                                "show": true,
-                                "when": "eslEligibility",
-                                "eq": "20OrMore"
-                            },
-                            "type": "htmlelement",
-                            "input": false,
-                            "tableView": false,
-                            "hideLabel": true,
-                            "tag": "p"
-                        }
-                    ],
-                    "clearOnHide": false,
-                    "title": "",
-                    "theme": "default"
-                },
-                {
-                    "label": "Program partnerships",
-                    "tag": "h2",
-                    "className": "category-header-large primary-color",
-                    "attrs": [
-                        {
-                            "attr": "",
-                            "value": ""
-                        }
-                    ],
-                    "content": "Program partnerships",
-                    "refreshOnChange": false,
-                    "key": "programPartnerships",
-                    "type": "htmlelement",
-                    "input": false,
-                    "tableView": false,
-                    "hideLabel": true
-                },
-                {
-                    "label": "HTML",
-                    "attrs": [
-                        {
-                            "attr": "",
-                            "value": ""
-                        }
-                    ],
-                    "content": "If this program is offered at a partner institution, that institution must also be designated by SABC. Find out which institutions are designated on <a href=\"https://studentaidbc.ca/\">StudentAidBC.ca.</a>",
-                    "refreshOnChange": false,
-                    "customClass": "mt-n2",
-                    "key": "html10",
-                    "type": "htmlelement",
-                    "input": false,
-                    "tableView": false,
-                    "hideLabel": true,
-                    "tag": "p",
-                    "className": ""
-                },
-                {
-                    "collapsible": false,
-                    "hideLabel": true,
-                    "key": "panel10",
-                    "logic": [
-                        {
-                            "name": "Disable Partnership Input",
-                            "trigger": {
-                                "type": "javascript",
-                                "javascript": "result = data.hasOfferings;"
-                            },
-                            "actions": [
-                                {
-                                    "name": "Disable Input",
-                                    "type": "property",
-                                    "property": {
-                                        "label": "Disabled",
-                                        "value": "disabled",
-                                        "type": "boolean"
-                                    },
-                                    "state": true
-                                }
-                            ]
-                        }
-                    ],
-                    "type": "panel",
-                    "label": "Panel",
-                    "input": false,
-                    "tableView": false,
-                    "components": [
-                        {
-                            "label": "Is the program offered jointly or in partnership with other institutions?",
-                            "optionsLabelPosition": "right",
-                            "inline": false,
-                            "tableView": false,
-                            "values": [
-                                {
-                                    "label": "Yes",
-                                    "value": "yes",
-                                    "shortcut": ""
-                                },
-                                {
-                                    "label": "No",
-                                    "value": "no",
-                                    "shortcut": ""
-                                }
-                            ],
-                            "validate": {
-                                "required": true
-                            },
-                            "key": "hasJointInstitution",
-                            "attributes": {
-                                "data-cy": "hasJointInstitution"
-                            },
-                            "type": "radio",
-                            "input": true,
-                            "autofocus": false,
-                            "inputType": "radio",
-                            "defaultValue": "",
-                            "protected": false,
-                            "fieldSet": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true
-                        },
-                        {
-                            "label": "Are all institutions you partner with for this program designated by Student Aid BC?",
-                            "optionsLabelPosition": "right",
-                            "inline": false,
-                            "tableView": false,
-                            "values": [
-                                {
-                                    "label": "Yes",
-                                    "value": "yes",
-                                    "shortcut": ""
-                                },
-                                {
-                                    "label": "No",
-                                    "value": "no",
-                                    "shortcut": ""
-                                }
-                            ],
-                            "validate": {
-                                "required": true
-                            },
-                            "key": "hasJointDesignatedInstitution",
-                            "conditional": {
-                                "show": true,
-                                "when": "hasJointInstitution",
-                                "eq": "yes"
-                            },
-                            "attributes": {
-                                "data-cy": "hasJointDesignatedInstitution"
-                            },
-                            "type": "radio",
-                            "input": true,
-                            "autofocus": false,
-                            "inputType": "radio",
-                            "defaultValue": "",
-                            "protected": false,
-                            "fieldSet": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true
-                        },
-                        {
-                            "label": "Join Program Error",
-                            "className": "alert alert-warning fa fa-exclamation-circle",
-                            "attrs": [
-                                {
-                                    "attr": "",
-                                    "value": ""
-                                }
-                            ],
-                            "content": "<strong> This program is ineligible for StudentAid BC funding.</strong><br/>\nAll partner institutions must be designated by StudentAid BC..",
-                            "refreshOnChange": false,
-                            "customClass": "banner-warning",
-                            "key": "joinProgramError",
-                            "conditional": {
-                                "show": true,
-                                "when": "hasJointDesignatedInstitution",
-                                "eq": "no"
-                            },
-                            "type": "htmlelement",
-                            "input": false,
-                            "tableView": false,
-                            "hideLabel": true,
-                            "tag": "p"
-                        }
-                    ],
-                    "clearOnHide": false,
-                    "title": "",
-                    "theme": "default"
-                },
-                {
-                    "label": "HTML",
-                    "tag": "h2",
-                    "className": "category-header-large primary-color",
-                    "attrs": [
-                        {
-                            "attr": "",
-                            "value": ""
-                        }
-                    ],
-                    "content": "Work-integrated learning (WIL)",
-                    "refreshOnChange": false,
-                    "key": "html13",
-                    "type": "htmlelement",
-                    "input": false,
-                    "tableView": false,
-                    "hideLabel": true
-                },
-                {
-                    "collapsible": false,
-                    "hideLabel": true,
-                    "key": "panel13",
-                    "logic": [
-                        {
-                            "name": "Disable WIL Input",
-                            "trigger": {
-                                "type": "javascript",
-                                "javascript": "result = data.hasOfferings;"
-                            },
-                            "actions": [
-                                {
-                                    "name": "Disable Input",
-                                    "type": "property",
-                                    "property": {
-                                        "label": "Disabled",
-                                        "value": "disabled",
-                                        "type": "boolean"
-                                    },
-                                    "state": true
-                                }
-                            ]
-                        }
-                    ],
-                    "type": "panel",
-                    "label": "Panel",
-                    "input": false,
-                    "tableView": false,
-                    "components": [
-                        {
-                            "label": "Does this program have a WIL component?",
-                            "optionsLabelPosition": "right",
-                            "inline": false,
-                            "tableView": false,
-                            "values": [
-                                {
-                                    "label": "Yes",
-                                    "value": "yes",
-                                    "shortcut": ""
-                                },
-                                {
-                                    "label": "No",
-                                    "value": "no",
-                                    "shortcut": ""
-                                }
-                            ],
-                            "validate": {
-                                "required": true
-                            },
-                            "key": "hasWILComponent",
-                            "attributes": {
-                                "data-cy": "hasWILComponent"
-                            },
-                            "type": "radio",
-                            "input": true,
-                            "autofocus": false,
-                            "inputType": "radio",
-                            "defaultValue": "",
-                            "protected": false,
-                            "fieldSet": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true
-                        },
-                        {
-                            "label": "Is the WIL approved by your regulator or oversight body?",
-                            "optionsLabelPosition": "right",
-                            "inline": false,
-                            "tableView": false,
-                            "values": [
-                                {
-                                    "label": "Yes",
-                                    "value": "yes",
-                                    "shortcut": ""
-                                },
-                                {
-                                    "label": "No",
-                                    "value": "no",
-                                    "shortcut": ""
-                                }
-                            ],
-                            "validate": {
-                                "required": true
-                            },
-                            "key": "isWILApproved",
-                            "conditional": {
-                                "show": true,
-                                "when": "hasWILComponent",
-                                "eq": "yes"
-                            },
-                            "attributes": {
-                                "data-cy": "isWILApproved"
-                            },
-                            "type": "radio",
-                            "input": true,
-                            "autofocus": false,
-                            "inputType": "radio",
-                            "defaultValue": "",
-                            "protected": false,
-                            "fieldSet": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true
-                        },
-                        {
-                            "label": "HTML",
-                            "className": "alert alert-warning fa fa-exclamation-circle",
-                            "attrs": [
-                                {
-                                    "attr": "",
-                                    "value": ""
-                                }
-                            ],
-                            "content": "<strong> This program is ineligible for StudentAid BC funding</strong><br>The work-integrated learning component must be approved by your regulator or oversight body first.",
-                            "refreshOnChange": false,
-                            "customClass": "banner-warning",
-                            "key": "html14",
-                            "customConditional": "show = (data.hasWILComponent === \"yes\" && data.isWILApproved === \"no\");",
-                            "type": "htmlelement",
-                            "input": false,
-                            "tableView": false,
-                            "hideLabel": true,
-                            "tag": "p"
-                        },
-                        {
-                            "label": "Does the WIL meet the program eligibility requirements according to StudentAid BC policy?",
-                            "optionsLabelPosition": "right",
-                            "inline": false,
-                            "tableView": false,
-                            "values": [
-                                {
-                                    "label": "Yes",
-                                    "value": "yes",
-                                    "shortcut": ""
-                                },
-                                {
-                                    "label": "No",
-                                    "value": "no",
-                                    "shortcut": ""
-                                }
-                            ],
-                            "redrawOn": "data",
-                            "validate": {
-                                "required": true
-                            },
-                            "key": "wilProgramEligibility",
-                            "customConditional": "show = (data.hasWILComponent === \"yes\" && data.isWILApproved === \"yes\");",
-                            "attributes": {
-                                "data-cy": "wilProgramEligibility"
-                            },
-                            "type": "radio",
-                            "input": true,
-                            "autofocus": false,
-                            "inputType": "radio",
-                            "defaultValue": "",
-                            "protected": false,
-                            "fieldSet": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true
-                        },
-                        {
-                            "label": "HTML",
-                            "className": "alert alert-warning fa fa-exclamation-circle",
-                            "attrs": [
-                                {
-                                    "attr": "",
-                                    "value": ""
-                                }
-                            ],
-                            "content": "<strong> This program is ineligible for StudentAid BC funding</strong><br>This must meet the StudentAid BC policy.",
-                            "refreshOnChange": false,
-                            "customClass": "banner-warning",
-                            "key": "html15",
-                            "customConditional": "show = (data.hasWILComponent === \"yes\" && data.isWILApproved === \"yes\" && data.wilProgramEligibility === \"no\");",
-                            "type": "htmlelement",
-                            "input": false,
-                            "tableView": false,
-                            "hideLabel": true,
-                            "tag": "p"
-                        }
-                    ],
-                    "clearOnHide": false,
-                    "title": "",
-                    "theme": "default"
-                },
-                {
-                    "label": "HTML",
-                    "tag": "h2",
-                    "className": "category-header-large primary-color",
-                    "attrs": [
-                        {
-                            "attr": "",
-                            "value": ""
-                        }
-                    ],
-                    "content": "Field trip, field placement, or travel",
-                    "refreshOnChange": false,
-                    "key": "html16",
-                    "type": "htmlelement",
-                    "input": false,
-                    "tableView": false,
-                    "hideLabel": true
-                },
-                {
-                    "collapsible": false,
-                    "hideLabel": true,
-                    "key": "panel16",
-                    "logic": [
-                        {
-                            "name": "Disable Field Trip Input",
-                            "trigger": {
-                                "type": "javascript",
-                                "javascript": "result = data.hasOfferings;"
-                            },
-                            "actions": [
-                                {
-                                    "name": "Disable Input",
-                                    "type": "property",
-                                    "property": {
-                                        "label": "Disabled",
-                                        "value": "disabled",
-                                        "type": "boolean"
-                                    },
-                                    "state": true
-                                }
-                            ]
-                        }
-                    ],
-                    "type": "panel",
-                    "label": "Panel",
-                    "input": false,
-                    "tableView": false,
-                    "components": [
-                        {
-                            "label": "Is a field trip, field placement or travel part of this program?",
-                            "optionsLabelPosition": "right",
-                            "inline": false,
-                            "tableView": false,
-                            "values": [
-                                {
-                                    "label": "Yes",
-                                    "value": "yes",
-                                    "shortcut": ""
-                                },
-                                {
-                                    "label": "No",
-                                    "value": "no",
-                                    "shortcut": ""
-                                }
-                            ],
-                            "validate": {
-                                "required": true
-                            },
-                            "key": "hasTravel",
-                            "attributes": {
-                                "data-cy": "hasTravel"
-                            },
-                            "type": "radio",
-                            "input": true,
-                            "autofocus": false,
-                            "inputType": "radio",
-                            "defaultValue": "",
-                            "protected": false,
-                            "fieldSet": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true
-                        },
-                        {
-                            "label": "Does the field trip, field placement, or travel meet the program eligibility requirements according to StudentAid BC policy?",
-                            "optionsLabelPosition": "right",
-                            "inline": false,
-                            "tableView": false,
-                            "values": [
-                                {
-                                    "label": "Yes",
-                                    "value": "yes",
-                                    "shortcut": ""
-                                },
-                                {
-                                    "label": "No",
-                                    "value": "no",
-                                    "shortcut": ""
-                                }
-                            ],
-                            "validate": {
-                                "required": true
-                            },
-                            "key": "travelProgramEligibility",
-                            "conditional": {
-                                "show": true,
-                                "when": "hasTravel",
-                                "eq": "yes"
-                            },
-                            "attributes": {
-                                "data-cy": "travelProgramEligibility"
-                            },
-                            "type": "radio",
-                            "input": true,
-                            "autofocus": false,
-                            "inputType": "radio",
-                            "defaultValue": "",
-                            "protected": false,
-                            "fieldSet": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true
-                        },
-                        {
-                            "label": "HTML",
-                            "className": "alert alert-warning fa fa-exclamation-circle",
-                            "attrs": [
-                                {
-                                    "attr": "",
-                                    "value": ""
-                                }
-                            ],
-                            "content": "<strong> This program is ineligible for StudentAid BC funding</strong><br>This must meet the StudentAid BC policy.",
-                            "refreshOnChange": false,
-                            "customClass": "banner-warning",
-                            "key": "html17",
-                            "customConditional": "show = (data.hasTravel === \"yes\" && data.travelProgramEligibility === \"no\");",
-                            "type": "htmlelement",
-                            "input": false,
-                            "tableView": false,
-                            "hideLabel": true,
-                            "tag": "p"
-                        }
-                    ],
-                    "clearOnHide": false,
-                    "title": "",
-                    "theme": "default"
-                },
-                {
-                    "label": "HTML",
-                    "tag": "h2",
-                    "className": "category-header-large primary-color",
-                    "attrs": [
-                        {
-                            "attr": "",
-                            "value": ""
-                        }
-                    ],
-                    "content": "International exchange",
-                    "refreshOnChange": false,
-                    "key": "html18",
-                    "type": "htmlelement",
-                    "input": false,
-                    "tableView": false,
-                    "hideLabel": true
-                },
-                {
-                    "collapsible": false,
-                    "hideLabel": true,
-                    "key": "panel18",
-                    "logic": [
-                        {
-                            "name": "Disable Exchange Input",
-                            "trigger": {
-                                "type": "javascript",
-                                "javascript": "result = data.hasOfferings;"
-                            },
-                            "actions": [
-                                {
-                                    "name": "Disable Input",
-                                    "type": "property",
-                                    "property": {
-                                        "label": "Disabled",
-                                        "value": "disabled",
-                                        "type": "boolean"
-                                    },
-                                    "state": true
-                                }
-                            ]
-                        }
-                    ],
-                    "type": "panel",
-                    "label": "Panel",
-                    "input": false,
-                    "tableView": false,
-                    "components": [
-                        {
-                            "label": "Does the program have an international exchange?",
-                            "optionsLabelPosition": "right",
-                            "inline": false,
-                            "tableView": false,
-                            "values": [
-                                {
-                                    "label": "Yes",
-                                    "value": "yes",
-                                    "shortcut": ""
-                                },
-                                {
-                                    "label": "No",
-                                    "value": "no",
-                                    "shortcut": ""
-                                }
-                            ],
-                            "validate": {
-                                "required": true
-                            },
-                            "key": "hasIntlExchange",
-                            "attributes": {
-                                "data-cy": "hasIntlExchange"
-                            },
-                            "type": "radio",
-                            "input": true,
-                            "autofocus": false,
-                            "inputType": "radio",
-                            "defaultValue": "",
-                            "protected": false,
-                            "fieldSet": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true
-                        },
-                        {
-                            "label": "Does the international exchange meet the program eligibility requirements according to StudentAid BC policy?",
-                            "optionsLabelPosition": "right",
-                            "inline": false,
-                            "tableView": false,
-                            "values": [
-                                {
-                                    "label": "Yes",
-                                    "value": "yes",
-                                    "shortcut": ""
-                                },
-                                {
-                                    "label": "No",
-                                    "value": "no",
-                                    "shortcut": ""
-                                }
-                            ],
-                            "validate": {
-                                "required": true
-                            },
-                            "key": "intlExchangeProgramEligibility",
-                            "conditional": {
-                                "show": true,
-                                "when": "hasIntlExchange",
-                                "eq": "yes"
-                            },
-                            "attributes": {
-                                "data-cy": "intlExchangeProgramEligibility"
-                            },
-                            "type": "radio",
-                            "input": true,
-                            "autofocus": false,
-                            "inputType": "radio",
-                            "defaultValue": "",
-                            "protected": false,
-                            "fieldSet": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "clearOnHide": true
-                        },
-                        {
-                            "label": "HTML",
-                            "className": "alert alert-warning fa fa-exclamation-circle",
-                            "attrs": [
-                                {
-                                    "attr": "",
-                                    "value": ""
-                                }
-                            ],
-                            "content": "<strong> This program is ineligible for StudentAid BC funding</strong><br>This must meet the StudentAid BC policy.",
-                            "refreshOnChange": false,
-                            "customClass": "banner-warning",
-                            "key": "html19",
-                            "customConditional": "show = (data.hasIntlExchange === \"yes\" && data.intlExchangeProgramEligibility === \"no\");",
-                            "type": "htmlelement",
-                            "input": false,
-                            "tableView": false,
-                            "hideLabel": true,
-                            "tag": "p"
-                        }
-                    ],
-                    "clearOnHide": false,
-                    "title": "",
-                    "theme": "default"
-                },
-                {
-                    "label": "Declaration",
-                    "tag": "h2",
-                    "className": "category-header-large primary-color",
-                    "attrs": [
-                        {
-                            "attr": "",
-                            "value": ""
-                        }
-                    ],
-                    "content": "Declaration",
-                    "refreshOnChange": false,
-                    "key": "declaration",
-                    "type": "htmlelement",
-                    "input": false,
-                    "tableView": false,
-                    "hideLabel": true
-                },
-                {
-                    "collapsible": false,
-                    "hideLabel": true,
-                    "key": "panel12",
-                    "logic": [
-                        {
-                            "name": "Disable Declaration Input",
-                            "trigger": {
-                                "type": "javascript",
-                                "javascript": "result = data.hasOfferings;"
-                            },
-                            "actions": [
-                                {
-                                    "name": "Disable Input",
-                                    "type": "property",
-                                    "property": {
-                                        "label": "Disabled",
-                                        "value": "disabled",
-                                        "type": "boolean"
-                                    },
-                                    "state": true
-                                }
-                            ]
-                        }
-                    ],
-                    "type": "panel",
-                    "label": "Panel",
-                    "input": false,
-                    "tableView": false,
-                    "components": [
-                        {
-                            "label": "HTML",
-                            "attrs": [
-                                {
-                                    "attr": "",
-                                    "value": ""
-                                }
-                            ],
-                            "content": "All information is subject to verification and auditing.",
-                            "refreshOnChange": false,
-                            "customClass": "category-header-medium-small primary-color",
-                            "key": "html12",
-                            "type": "htmlelement",
-                            "input": false,
-                            "tableView": false,
-                            "hideLabel": true,
-                            "tag": "p",
-                            "className": ""
-                        },
-                        {
-                            "label": "I confirm this program meets the policies outlined in the StudentAid BC policy manual.",
-                            "tableView": false,
-                            "defaultValue": false,
-                            "validate": {
-                                "required": true
-                            },
-                            "key": "programDeclaration",
-                            "attributes": {
-                                "data-cy": "programDeclaration"
-                            },
-                            "type": "checkbox",
-                            "input": true,
-                            "autofocus": false,
-                            "inputType": "checkbox",
-                            "hideLabel": false,
-                            "dataGridLabel": false,
-                            "protected": false,
-                            "persistent": true,
-                            "hidden": false,
-                            "name": "",
-                            "value": "",
-                            "clearOnHide": true
-                        }
-                    ],
-                    "clearOnHide": false,
-                    "title": "",
-                    "theme": "default"
-                }
-            ],
-            "clearOnHide": false,
-            "theme": "default"
-        },
-        {
-            "label": "hasOfferings",
-            "key": "totalOfferings",
-            "type": "hidden",
-            "input": true,
-            "tableView": false,
-            "protected": false,
-            "unique": false,
-            "persistent": true
-        },
-        {
-            "label": "Is Read-only",
-            "persistent": "client-only",
-            "key": "isReadonly",
-            "type": "hidden",
-            "input": true,
-            "tableView": false,
-            "protected": false,
-            "unique": false
-        },
-        {
-            "label": "isBCPrivate",
-            "key": "isBCPrivate",
-            "type": "hidden",
-            "input": true,
-            "tableView": false,
-            "protected": false,
-            "unique": false,
-            "persistent": true
-        },
-        {
-            "input": true,
-            "tableView": false,
-            "key": "isBCPublic",
-            "label": "isBCPublic",
-            "type": "hidden",
-            "lockKey": true,
-            "protected": false,
-            "unique": false,
-            "persistent": true
-        },
-        {
-            "label": "Program Status",
-            "calculateValue": "if (\r\n  data.hasJointDesignatedInstitution === \"no\" ||\r\n  data.eslEligibility === \"20OrMore\" ||\r\n  data.entranceRequirements.noneOfTheAboveEntranceRequirements === true ||\r\n  (data.deliveredOnlineAlsoOnsite === \"no\" &&\r\n    data.sameOnlineCreditsEarned === \"no\" &&\r\n    data.earnAcademicCreditsOtherInstitution === \"no\") ||\r\n  (data.courseLoadCalculation === \"hours\" &&\r\n    data.minHoursWeek === \"no\" &&\r\n    data.isAviationProgram === \"no\") ||\r\n  (data.courseLoadCalculation === \"hours\" &&\r\n    data.minHoursWeek === \"no\" &&\r\n    data.isAviationProgram === \"yes\" &&\r\n    data.minHoursWeekAvi === \"no\") ||\r\n  (data.hasWILComponent === \"yes\" && data.isWILApproved === \"no\") ||\r\n  (data.hasWILComponent === \"yes\" &&\r\n    data.isWILApproved === \"yes\" &&\r\n    data.wilProgramEligibility === \"no\") ||\r\n  (data.hasTravel === \"yes\" && data.travelProgramEligibility === \"no\") ||\r\n  (data.hasIntlExchange === \"yes\" &&\r\n    data.intlExchangeProgramEligibility === \"no\")\r\n) {\r\n  value = \"Pending\";\r\n} else {\r\n  value = \"Approved\";\r\n}",
-            "calculateServer": true,
-            "key": "programStatus",
-            "type": "hidden",
-            "input": true,
-            "tableView": false,
-            "protected": false,
-            "unique": false,
-            "persistent": true
+          "name": "Read-only Form",
+          "trigger": {
+            "type": "simple",
+            "simple": {
+              "show": true,
+              "when": "isReadonly",
+              "eq": "true"
+            }
+          },
+          "actions": [
+            {
+              "name": "Disable form",
+              "type": "property",
+              "property": {
+                "label": "Disabled",
+                "value": "disabled",
+                "type": "boolean"
+              },
+              "state": true
+            }
+          ]
         }
-    ]
+      ],
+      "type": "panel",
+      "label": "Panel",
+      "input": false,
+      "tableView": false,
+      "components": [
+        {
+          "label": "HTML",
+          "tag": "h2",
+          "className": "category-header-large primary-color",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Program information",
+          "refreshOnChange": false,
+          "key": "html3",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false,
+          "hideLabel": true
+        },
+        {
+          "collapsible": false,
+          "hideLabel": true,
+          "key": "panel",
+          "type": "panel",
+          "label": "Panel",
+          "input": false,
+          "tableView": false,
+          "components": [
+            {
+              "label": "Level Of Study Codes",
+              "calculateValue": "value = {\r\n    undergraduateCertificate: \"8\",\r\n    undergraduateCitation: \"8\",\r\n    undergraduateDiploma: \"7\",\r\n    undergraduateDegree: \"3\",\r\n    graduateCertificate: \"5\",\r\n    graduateDiploma: \"5\",\r\n    graduateDegreeOrMasters: \"5\",\r\n    postGraduateOrDoctorate: \"6\",\r\n    qualifyingStudies: \"1\",\r\n};",
+              "calculateServer": true,
+              "key": "levelOfStudyCodes",
+              "type": "hidden",
+              "input": true,
+              "tableView": false,
+              "protected": false,
+              "unique": false,
+              "persistent": true,
+              "tags": [],
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+              },
+              "properties": {}
+            },
+            {
+              "label": "Field Of Study Codes",
+              "calculateValue": "value = {\r\n  P7: \"25\",\r\n  P5: \"55\",\r\n  P8: \"25\",\r\n  P3: \"40\",\r\n  P6: \"70\",\r\n  P4: \"40\",\r\n  P2: \"25\",\r\n  P1: \"25\",\r\n  Q4: \"39\",\r\n  Q7: \"24\",\r\n  Q5: \"54\",\r\n  Q1: \"24\",\r\n  Q6: \"69\",\r\n  Q2: \"24\",\r\n  Q8: \"24\",\r\n  Q3: \"39\",\r\n  R7: \"23\",\r\n  R6: \"68\",\r\n  R4: \"38\",\r\n  R5: \"53\",\r\n  R2: \"23\",\r\n  R3: \"38\",\r\n  R8: \"23\",\r\n  R1: \"23\",\r\n  S8: \"22\",\r\n  S1: \"22\",\r\n  S4: \"37\",\r\n  S3: \"37\",\r\n  S2: \"22\",\r\n  S5: \"52\",\r\n  S7: \"22\",\r\n  S6: \"67\",\r\n  T1: \"21\",\r\n  T7: \"21\",\r\n  T4: \"36\",\r\n  T5: \"51\",\r\n  T3: \"36\",\r\n  T8: \"21\",\r\n  T6: \"66\",\r\n  T2: \"21\",\r\n  U8: \"20\",\r\n  U3: \"35\",\r\n  U2: \"20\",\r\n  U4: \"35\",\r\n  U7: \"20\",\r\n  U5: \"50\",\r\n  U1: \"20\",\r\n  U6: \"65\",\r\n  V1: \"19\",\r\n  V3: \"34\",\r\n  V6: \"64\",\r\n  V5: \"49\",\r\n  V2: \"19\",\r\n  V7: \"19\",\r\n  V4: \"34\",\r\n  V8: \"19\",\r\n  W8: \"18\",\r\n  W4: \"33\",\r\n  W2: \"18\",\r\n  W7: \"18\",\r\n  W5: \"48\",\r\n  W1: \"18\",\r\n  W3: \"33\",\r\n  W6: \"63\",\r\n  X5: \"47\",\r\n  X2: \"17\",\r\n  X1: \"17\",\r\n  X4: \"32\",\r\n  X8: \"17\",\r\n  X3: \"32\",\r\n  X6: \"62\",\r\n  X7: \"17\",\r\n  Y4: \"31\",\r\n  Y8: \"16\",\r\n  Y5: \"46\",\r\n  Y6: \"61\",\r\n  Y2: \"16\",\r\n  Y3: \"31\",\r\n  Y1: \"16\",\r\n  Y7: \"16\",\r\n  Z7: \"15\",\r\n  Z8: \"15\",\r\n  Z5: \"45\",\r\n  Z4: \"30\",\r\n  Z2: \"15\",\r\n  Z3: \"30\",\r\n  Z1: \"15\",\r\n  Z6: \"60\",\r\n};",
+              "calculateServer": true,
+              "key": "fieldOfStudyCodes",
+              "type": "hidden",
+              "input": true,
+              "tableView": false,
+              "protected": false,
+              "unique": false,
+              "persistent": true,
+              "tags": [],
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+              },
+              "properties": {}
+            },
+            {
+              "label": "SABC Codes",
+              "calculateValue": "value =\r\n{\r\n    11: \"Z\",\r\n    \"09\": \"Z\",\r\n    52: \"Z\",\r\n    \"01\": \"Y\",\r\n    \"03\": \"Y\",\r\n    \"05\": \"X\",\r\n    16: \"X\",\r\n    23: \"X\",\r\n    24: \"X\",\r\n    25: \"X\",\r\n    42: \"X\",\r\n    27: \"X\",\r\n    30: \"X\",\r\n    38: \"X\",\r\n    40: \"X\",\r\n    45: \"X\",\r\n    50: \"X\",\r\n    53: \"X\",\r\n    54: \"X\",\r\n    55: \"X\",\r\n    13: \"W\",\r\n    19: \"W\",\r\n    28: \"W\",\r\n    31: \"W\",\r\n    44: \"W\",\r\n    60: \"V\",\r\n    \"04\": \"U\",\r\n    10: \"U\",\r\n    14: \"U\",\r\n    15: \"U\",\r\n    29: \"U\",\r\n    41: \"U\",\r\n    26: \"T\",\r\n    22: \"S\",\r\n    43: \"S\",\r\n    51: \"R\",\r\n    61: \"R\",\r\n    39: \"Q\",\r\n    12: \"P\",\r\n    21: \"P\",\r\n    32: \"P\",\r\n    33: \"P\",\r\n    34: \"P\",\r\n    35: \"P\",\r\n    36: \"P\",\r\n    37: \"P\",\r\n    46: \"P\",\r\n    47: \"P\",\r\n    48: \"P\",\r\n    49: \"P\"\r\n};",
+              "calculateServer": true,
+              "key": "sabcCodes",
+              "type": "hidden",
+              "input": true,
+              "tableView": false,
+              "protected": false,
+              "unique": false,
+              "persistent": true,
+              "tags": [],
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+              },
+              "properties": {}
+            },
+            {
+              "label": "Program name",
+              "showCharCount": true,
+              "tableView": true,
+              "validate": {
+                "required": true,
+                "maxLength": 100
+              },
+              "key": "name",
+              "attributes": {
+                "data-cy": "programName"
+              },
+              "type": "textfield",
+              "input": true,
+              "autofocus": false,
+              "inputType": "text",
+              "inputMask": "",
+              "placeholder": "",
+              "prefix": "",
+              "suffix": "",
+              "multiple": false,
+              "defaultValue": "",
+              "protected": false,
+              "unique": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
+              "spellcheck": true,
+              "conditional": {
+                "show": null,
+                "when": null,
+                "eq": ""
+              }
+            },
+            {
+              "label": "Program description",
+              "autoExpand": false,
+              "showCharCount": true,
+              "tableView": true,
+              "validate": {
+                "maxLength": 500,
+                "customMessage": "Too Long"
+              },
+              "key": "description",
+              "attributes": {
+                "data-cy": "programDescription"
+              },
+              "type": "textarea",
+              "input": true,
+              "autofocus": false,
+              "placeholder": "",
+              "prefix": "",
+              "suffix": "",
+              "rows": 3,
+              "multiple": false,
+              "defaultValue": "",
+              "protected": false,
+              "persistent": true,
+              "hidden": false,
+              "wysiwyg": false,
+              "clearOnHide": true,
+              "spellcheck": true
+            },
+            {
+              "label": "Credential type",
+              "widget": "html5",
+              "tableView": true,
+              "data": {
+                "values": [
+                  {
+                    "label": "Undergraduate Certificate",
+                    "value": "undergraduateCertificate"
+                  },
+                  {
+                    "label": "Undergraduate Citation",
+                    "value": "undergraduateCitation"
+                  },
+                  {
+                    "label": "Undergraduate Diploma",
+                    "value": "undergraduateDiploma"
+                  },
+                  {
+                    "label": "Undergraduate Degree",
+                    "value": "undergraduateDegree"
+                  },
+                  {
+                    "label": "Graduate Certificate",
+                    "value": "graduateCertificate"
+                  },
+                  {
+                    "label": "Graduate Diploma",
+                    "value": "graduateDiploma"
+                  },
+                  {
+                    "label": "Graduate Degree / Master’s",
+                    "value": "graduateDegreeOrMasters"
+                  },
+                  {
+                    "label": "Post-Graduate / Doctorate",
+                    "value": "postGraduateOrDoctorate"
+                  },
+                  {
+                    "label": "Qualifying Studies",
+                    "value": "qualifyingStudies"
+                  }
+                ]
+              },
+              "validate": {
+                "required": true,
+                "onlyAvailableItems": true
+              },
+              "key": "credentialType",
+              "logic": [
+                {
+                  "name": "Disable Credential Input",
+                  "trigger": {
+                    "type": "javascript",
+                    "javascript": "result = data.hasOfferings;"
+                  },
+                  "actions": [
+                    {
+                      "name": "Disable edit",
+                      "type": "property",
+                      "property": {
+                        "label": "Disabled",
+                        "value": "disabled",
+                        "type": "boolean"
+                      },
+                      "state": true
+                    }
+                  ]
+                }
+              ],
+              "attributes": {
+                "data-cy": "credentialType"
+              },
+              "type": "select",
+              "input": true,
+              "searchThreshold": 0.3,
+              "autofocus": false,
+              "placeholder": "",
+              "dataSrc": "values",
+              "valueProperty": "",
+              "defaultValue": "",
+              "refreshOn": "",
+              "filter": "",
+              "authenticate": false,
+              "template": "<span>{{ item.label }}</span>",
+              "multiple": false,
+              "protected": false,
+              "unique": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true
+            },
+            {
+              "label": "Classification of Instructional Programs (CIP)",
+              "description": "Format (##.####)",
+              "tableView": true,
+              "calculateServer": true,
+              "validate": {
+                "required": true,
+                "pattern": "^[0-9]{2}\\.[0-9]{4}$",
+                "customMessage": "Invalid format"
+              },
+              "key": "cipCode",
+              "logic": [
+                {
+                  "name": "Disable CIP Code Input",
+                  "trigger": {
+                    "type": "javascript",
+                    "javascript": "result = data.hasOfferings;"
+                  },
+                  "actions": [
+                    {
+                      "name": "Disable Input",
+                      "type": "property",
+                      "property": {
+                        "label": "Disabled",
+                        "value": "disabled",
+                        "type": "boolean"
+                      },
+                      "state": true
+                    }
+                  ]
+                }
+              ],
+              "attributes": {
+                "data-cy": "cipCode"
+              },
+              "type": "textfield",
+              "input": true,
+              "autofocus": false,
+              "inputType": "text",
+              "inputMask": "",
+              "placeholder": "",
+              "prefix": "",
+              "suffix": "",
+              "multiple": false,
+              "defaultValue": "",
+              "protected": false,
+              "unique": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
+              "spellcheck": true,
+              "conditional": {
+                "show": null,
+                "when": null,
+                "eq": ""
+              }
+            },
+            {
+              "label": "Field of study code",
+              "disabled": true,
+              "tableView": true,
+              "calculateValue": "const sabcCode = data.sabcCodes[data.cipCode.substring(0, 2)];\r\nconst levelOfStudyCode =  data.levelOfStudyCodes[data.credentialType];\r\nvalue = (sabcCode && levelOfStudyCode) ? data.fieldOfStudyCodes[sabcCode + levelOfStudyCode] : 20;",
+              "calculateServer": true,
+              "validate": {
+                "required": true,
+                "customMessage": "The combination of the Credential Type and CIP did not result in a known Field of Study code."
+              },
+              "key": "fieldOfStudyCode",
+              "attributes": {
+                "data-cy": "fieldOfStudyCode"
+              },
+              "type": "textfield",
+              "input": true,
+              "autofocus": false,
+              "inputType": "text",
+              "inputMask": "",
+              "placeholder": "",
+              "prefix": "",
+              "suffix": "",
+              "multiple": false,
+              "defaultValue": "",
+              "protected": false,
+              "unique": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
+              "spellcheck": true,
+              "conditional": {
+                "show": null,
+                "when": null,
+                "eq": ""
+              }
+            },
+            {
+              "label": "National Occupational Classifcation (NOC)",
+              "description": "Format (#####) Optional**",
+              "tableView": true,
+              "validate": {
+                "pattern": "[0-9]{5}",
+                "customMessage": "Incorrect Format"
+              },
+              "key": "nocCode",
+              "logic": [
+                {
+                  "name": "Disable NOC Code",
+                  "trigger": {
+                    "type": "javascript",
+                    "javascript": "result = data.hasOfferings;"
+                  },
+                  "actions": [
+                    {
+                      "name": "Disable Input",
+                      "type": "property",
+                      "property": {
+                        "label": "Disabled",
+                        "value": "disabled",
+                        "type": "boolean"
+                      },
+                      "state": true
+                    }
+                  ]
+                }
+              ],
+              "attributes": {
+                "data-cy": "nocCode"
+              },
+              "type": "textfield",
+              "input": true,
+              "lockKey": true,
+              "autofocus": false,
+              "inputType": "text",
+              "inputMask": "",
+              "placeholder": "",
+              "prefix": "",
+              "suffix": "",
+              "multiple": false,
+              "defaultValue": "",
+              "protected": false,
+              "unique": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
+              "spellcheck": true,
+              "conditional": {
+                "show": null,
+                "when": null,
+                "eq": ""
+              }
+            },
+            {
+              "label": "SABC program code",
+              "description": "Format (XXX#) Mandatory field if using the 'offerings upload' feature. Otherwise optional.",
+              "tableView": true,
+              "validate": {
+                "pattern": "[[A-Z]{3}[0-9]{1}",
+                "customMessage": "Incorrect Format"
+              },
+              "key": "sabcCode",
+              "logic": [
+                {
+                  "name": "Disable SABC Input",
+                  "trigger": {
+                    "type": "javascript",
+                    "javascript": "result = data.hasOfferings;"
+                  },
+                  "actions": [
+                    {
+                      "name": "Disable Input",
+                      "type": "property",
+                      "property": {
+                        "label": "Disabled",
+                        "value": "disabled",
+                        "type": "boolean"
+                      },
+                      "state": true
+                    }
+                  ]
+                }
+              ],
+              "attributes": {
+                "data-cy": "sabcCode"
+              },
+              "type": "textfield",
+              "input": true,
+              "autofocus": false,
+              "inputType": "text",
+              "inputMask": "",
+              "placeholder": "",
+              "prefix": "",
+              "suffix": "",
+              "multiple": false,
+              "defaultValue": "",
+              "protected": false,
+              "unique": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
+              "spellcheck": true,
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+              },
+              "labelPosition": "top",
+              "inputFormat": "plain",
+              "tags": [],
+              "properties": {},
+              "tooltip": "Please see our <a href='https://studentaidbc.ca/sites/all/files/school-officials/how-to-assign-program-codes.pdf'>job aid</a> to choose the appropriate code for your program."
+            },
+            {
+              "label": "Institution Program Code",
+              "tableView": true,
+              "key": "institutionProgramCode",
+              "logic": [
+                {
+                  "name": "Disable Program Code Input",
+                  "trigger": {
+                    "type": "javascript",
+                    "javascript": "result = data.hasOfferings;"
+                  },
+                  "actions": [
+                    {
+                      "name": "Disable Input",
+                      "type": "property",
+                      "property": {
+                        "label": "Disabled",
+                        "value": "disabled",
+                        "type": "boolean"
+                      },
+                      "state": true
+                    }
+                  ]
+                }
+              ],
+              "attributes": {
+                "data-cy": "institutionProgramCode"
+              },
+              "type": "textfield",
+              "input": true,
+              "autofocus": false,
+              "inputType": "text",
+              "inputMask": "",
+              "placeholder": "",
+              "prefix": "",
+              "suffix": "",
+              "multiple": false,
+              "defaultValue": "",
+              "protected": false,
+              "unique": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
+              "spellcheck": true,
+              "validate": {
+                "required": false,
+                "minLength": "",
+                "maxLength": "",
+                "pattern": "",
+                "custom": "",
+                "customPrivate": false
+              },
+              "conditional": {
+                "show": null,
+                "when": null,
+                "eq": ""
+              }
+            }
+          ],
+          "clearOnHide": false,
+          "title": "",
+          "theme": "default"
+        },
+        {
+          "label": "Program eligibility",
+          "tag": "h2",
+          "className": "category-header-large primary-color",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Program eligibility",
+          "refreshOnChange": false,
+          "customClass": "category-header-medium primary-color",
+          "key": "programEligibility",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false,
+          "hideLabel": true
+        },
+        {
+          "collapsible": false,
+          "hideLabel": true,
+          "key": "panel1",
+          "logic": [
+            {
+              "name": "Disable Eligibility Inputs",
+              "trigger": {
+                "type": "javascript",
+                "javascript": "result = data.hasOfferings;"
+              },
+              "actions": [
+                {
+                  "name": "Disable Inputs",
+                  "type": "property",
+                  "property": {
+                    "label": "Disabled",
+                    "value": "disabled",
+                    "type": "boolean"
+                  },
+                  "state": true
+                }
+              ]
+            }
+          ],
+          "type": "panel",
+          "label": "Panel",
+          "input": false,
+          "tableView": false,
+          "components": [
+            {
+              "label": "Are students able to take this on a part time basis?",
+              "optionsLabelPosition": "right",
+              "tooltip": "A part-time program has a course load between 20 and 59%. A full-time program must have a course load of: 60% or greater or Between 40 and 60% for students with a permanent disability.",
+              "inline": false,
+              "tableView": false,
+              "values": [
+                {
+                  "label": "Yes",
+                  "value": "Full Time and Part Time",
+                  "shortcut": ""
+                },
+                {
+                  "label": "No",
+                  "value": "Full Time",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true,
+                "onlyAvailableItems": true
+              },
+              "key": "programIntensity",
+              "attributes": {
+                "data-cy": "programIntensity"
+              },
+              "type": "radio",
+              "input": true,
+              "autofocus": false,
+              "inputType": "radio",
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true
+            },
+            {
+              "label": "How will this program be delivered? (Select all that apply)",
+              "optionsLabelPosition": "right",
+              "tableView": false,
+              "defaultValue": {
+                "deliveredOnSite": false,
+                "deliveredOnline": false,
+                "onSite": false,
+                "online": false,
+                "onsite": false
+              },
+              "values": [
+                {
+                  "label": "On site",
+                  "value": "deliveredOnSite",
+                  "shortcut": ""
+                },
+                {
+                  "label": "Online",
+                  "value": "deliveredOnline",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true
+              },
+              "key": "programDeliveryTypes",
+              "attributes": {
+                "data-cy": "programDeliveryTypes"
+              },
+              "type": "selectboxes",
+              "input": true,
+              "inputType": "checkbox",
+              "lockKey": true,
+              "autofocus": false,
+              "inline": false,
+              "protected": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true
+            },
+            {
+              "label": "Will the program also be offered and delivered at 100% course load on site?",
+              "optionsLabelPosition": "right",
+              "inline": false,
+              "tableView": false,
+              "values": [
+                {
+                  "label": "Yes",
+                  "value": "yes",
+                  "shortcut": ""
+                },
+                {
+                  "label": "No",
+                  "value": "no",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true
+              },
+              "key": "deliveredOnlineAlsoOnsite",
+              "customConditional": "const isBCInstitution = data.isBCPublic || data.isBCPrivate;\nshow = (!isBCInstitution && data.programDeliveryTypes.deliveredOnline);",
+              "attributes": {
+                "data-cy": "deliveredOnlineAlsoOnsite"
+              },
+              "type": "radio",
+              "input": true,
+              "autofocus": false,
+              "inputType": "radio",
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true
+            },
+            {
+              "label": "Will the students earn the same number of credits in the same time period as students in other StudentAid BC eligible programs delivered on site?",
+              "optionsLabelPosition": "right",
+              "inline": false,
+              "tableView": false,
+              "values": [
+                {
+                  "label": "Yes",
+                  "value": "yes",
+                  "shortcut": ""
+                },
+                {
+                  "label": "No",
+                  "value": "no",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true,
+                "onlyAvailableItems": true
+              },
+              "key": "sameOnlineCreditsEarned",
+              "customConditional": "const isBCInstitution = data.isBCPublic || data.isBCPrivate;\nshow = (!isBCInstitution && data.deliveredOnlineAlsoOnsite === \"no\");",
+              "attributes": {
+                "data-cy": "sameOnlineCreditsEarned"
+              },
+              "type": "radio",
+              "input": true,
+              "autofocus": false,
+              "inputType": "radio",
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true
+            },
+            {
+              "label": "Will they earn academic credits that are recognized at another designated institution listed in the BC Transfer Guide or other acceptable articulation agreements from other jurisdictions?",
+              "optionsLabelPosition": "right",
+              "inline": false,
+              "tableView": false,
+              "values": [
+                {
+                  "label": "Yes",
+                  "value": "yes",
+                  "shortcut": ""
+                },
+                {
+                  "label": "No",
+                  "value": "no",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true
+              },
+              "key": "earnAcademicCreditsOtherInstitution",
+              "customConditional": "const isBCInstitution = data.isBCPublic || data.isBCPrivate;\nshow = (!isBCInstitution && data.deliveredOnlineAlsoOnsite === \"no\" && data.sameOnlineCreditsEarned ===\"no\");",
+              "attributes": {
+                "data-cy": "earnAcademicCreditsOtherInstitution"
+              },
+              "type": "radio",
+              "input": true,
+              "autofocus": false,
+              "inputType": "radio",
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true
+            },
+            {
+              "label": "HTML",
+              "className": "alert alert-warning fa fa-exclamation-circle",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<strong> This program is ineligible for StudentAid BC funding</strong>",
+              "refreshOnChange": false,
+              "customClass": "banner-warning",
+              "key": "html4",
+              "customConditional": "const isBCInstitution = data.isBCPublic || data.isBCPrivate;\nshow = (!isBCInstitution && data.deliveredOnlineAlsoOnsite === \"no\" && data.sameOnlineCreditsEarned === \"no\" && data.earnAcademicCreditsOtherInstitution === \"no\");",
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false,
+              "hideLabel": true,
+              "tag": "p"
+            },
+            {
+              "label": "HTML",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<strong>Program length</strong><br>This qualifies students for specific funds or grants.",
+              "refreshOnChange": false,
+              "key": "html11",
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false,
+              "hideLabel": true,
+              "tag": "p",
+              "className": ""
+            },
+            {
+              "label": "Program length",
+              "widget": "html5",
+              "hideLabel": true,
+              "tableView": true,
+              "data": {
+                "values": [
+                  {
+                    "label": "12 weeks to 52 weeks",
+                    "value": "12WeeksTo52Weeks"
+                  },
+                  {
+                    "label": "53 weeks to 59 weeks",
+                    "value": "53WeeksTo59Weeks"
+                  },
+                  {
+                    "label": "60 weeks to less than 2 years",
+                    "value": "60WeeksToLessThan2Years"
+                  },
+                  {
+                    "label": "2 Years to less than 3Years",
+                    "value": "2YearsToLessThan3Years"
+                  },
+                  {
+                    "label": "3 Years to less than 4 Years",
+                    "value": "3YearsToLessThan4Years"
+                  },
+                  {
+                    "label": "4 Years to less than 5Years",
+                    "value": "4YearsToLessThan5Years"
+                  },
+                  {
+                    "value": "5YearsOrMore",
+                    "label": "5 Years or More"
+                  }
+                ]
+              },
+              "validate": {
+                "required": true,
+                "onlyAvailableItems": true
+              },
+              "key": "completionYears",
+              "attributes": {
+                "data-cy": "completionYears"
+              },
+              "type": "select",
+              "input": true,
+              "searchThreshold": 0.3,
+              "autofocus": false,
+              "placeholder": "",
+              "dataSrc": "values",
+              "valueProperty": "",
+              "defaultValue": "",
+              "refreshOn": "",
+              "filter": "",
+              "authenticate": false,
+              "template": "<span>{{ item.label }}</span>",
+              "multiple": false,
+              "protected": false,
+              "unique": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true
+            },
+            {
+              "label": "Program course load calculation is:",
+              "optionsLabelPosition": "right",
+              "inline": false,
+              "tableView": false,
+              "values": [
+                {
+                  "label": "Credit based",
+                  "value": "credit",
+                  "shortcut": ""
+                },
+                {
+                  "label": "Hours based",
+                  "value": "hours",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true
+              },
+              "key": "courseLoadCalculation",
+              "attributes": {
+                "data-cy": "courseLoadCalculation"
+              },
+              "type": "radio",
+              "input": true,
+              "autofocus": false,
+              "inputType": "radio",
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true
+            },
+            {
+              "label": "Does this program include a minimum of 20 instructional hours per week?",
+              "optionsLabelPosition": "right",
+              "inline": false,
+              "tableView": false,
+              "values": [
+                {
+                  "label": "Yes",
+                  "value": "yes",
+                  "shortcut": ""
+                },
+                {
+                  "label": "No",
+                  "value": "no",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true
+              },
+              "key": "minHoursWeek",
+              "conditional": {
+                "show": true,
+                "when": "courseLoadCalculation",
+                "eq": "hours"
+              },
+              "attributes": {
+                "data-cy": "minHoursWeek"
+              },
+              "type": "radio",
+              "input": true,
+              "autofocus": false,
+              "inputType": "radio",
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true
+            },
+            {
+              "label": "Is this an aviation program?",
+              "optionsLabelPosition": "right",
+              "inline": false,
+              "tableView": false,
+              "values": [
+                {
+                  "label": "Yes",
+                  "value": "yes",
+                  "shortcut": ""
+                },
+                {
+                  "label": "No",
+                  "value": "no",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true
+              },
+              "key": "isAviationProgram",
+              "customConditional": "show = (data.courseLoadCalculation === \"hours\" && data.minHoursWeek === \"no\");",
+              "attributes": {
+                "data-cy": "isAviationProgram"
+              },
+              "type": "radio",
+              "input": true,
+              "autofocus": false,
+              "inputType": "radio",
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true
+            },
+            {
+              "label": "HTML",
+              "className": "alert alert-warning fa fa-exclamation-circle",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<strong> This program is inegligible for StudentAid BC funding</strong><br>The program needs to be a minimum of 20 instructional hours.",
+              "refreshOnChange": true,
+              "customClass": "banner-warning",
+              "key": "html6",
+              "customConditional": "show = (data.courseLoadCalculation === \"hours\" && data.minHoursWeek === \"no\" && data.isAviationProgram === \"no\");",
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false,
+              "hideLabel": true,
+              "tag": "p"
+            },
+            {
+              "label": "Does this program include a minimum of 15 instructional hours per week",
+              "optionsLabelPosition": "right",
+              "inline": false,
+              "tableView": false,
+              "values": [
+                {
+                  "label": "Yes",
+                  "value": "yes",
+                  "shortcut": ""
+                },
+                {
+                  "label": "No",
+                  "value": "no",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true
+              },
+              "key": "minHoursWeekAvi",
+              "customConditional": "show = (data.courseLoadCalculation === \"hours\" && data.minHoursWeek === \"no\" && data.isAviationProgram === \"yes\");",
+              "attributes": {
+                "data-cy": "minHoursWeekAvi"
+              },
+              "type": "radio",
+              "input": true,
+              "autofocus": false,
+              "inputType": "radio",
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true
+            },
+            {
+              "label": "HTML",
+              "className": "alert alert-warning fa fa-exclamation-circle",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<strong> This program is ineligible for StudentAid BC funding</strong><br>The aviation program needs to be a minimum of 15 instructional hours.",
+              "refreshOnChange": false,
+              "customClass": "banner-warning",
+              "key": "html5",
+              "customConditional": "show = (data.courseLoadCalculation === \"hours\" && data.minHoursWeek === \"no\" && data.isAviationProgram === \"yes\" && data.minHoursWeekAvi === \"no\");",
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false,
+              "hideLabel": true,
+              "tag": "p"
+            },
+            {
+              "label": "HTML",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<strong>Which regulatory body does this program belong to?</strong><br>\nAll programs must be approved by your regulatory body to meet the criteria. If your program has not been approved yet, please contact your regulatory body first.",
+              "refreshOnChange": false,
+              "key": "html7",
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false,
+              "hideLabel": true,
+              "tag": "p",
+              "className": ""
+            },
+            {
+              "label": "Which regulatory body does this program belong to?",
+              "widget": "html5",
+              "tableView": true,
+              "data": {
+                "values": [
+                  {
+                    "label": "PTIB",
+                    "value": "ptib"
+                  },
+                  {
+                    "label": "DQAB",
+                    "value": "dqab"
+                  },
+                  {
+                    "label": "Private Act of B.C. Legislature",
+                    "value": "privateActLegislature"
+                  },
+                  {
+                    "label": "Skilled Trades BC",
+                    "value": "skilledTradesBC"
+                  },
+                  {
+                    "label": "ICBC",
+                    "value": "icbc"
+                  },
+                  {
+                    "value": "senateOrEducationCouncil",
+                    "label": "Senate, Academic Council, Education Council, and/or Program Council and Board of Governors"
+                  },
+                  {
+                    "value": "other",
+                    "label": "Other"
+                  }
+                ]
+              },
+              "validate": {
+                "required": true
+              },
+              "key": "regulatoryBody",
+              "attributes": {
+                "data-cy": "regulatoryBody"
+              },
+              "type": "select",
+              "input": true,
+              "searchThreshold": 0.3,
+              "hideLabel": true,
+              "autofocus": false,
+              "placeholder": "",
+              "dataSrc": "values",
+              "valueProperty": "",
+              "defaultValue": "",
+              "refreshOn": "",
+              "filter": "",
+              "authenticate": false,
+              "template": "<span>{{ item.label }}</span>",
+              "multiple": false,
+              "protected": false,
+              "unique": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true
+            },
+            {
+              "input": true,
+              "tableView": true,
+              "label": "Other institution regulatory body",
+              "key": "otherRegulatoryBody",
+              "validate": {
+                "required": true,
+                "minLength": 1,
+                "maxLength": 100
+              },
+              "conditional": {
+                "show": "true",
+                "when": "regulatoryBody",
+                "eq": "other"
+              },
+              "type": "textfield",
+              "lockKey": true,
+              "autofocus": false,
+              "inputType": "text",
+              "inputMask": "",
+              "placeholder": "",
+              "prefix": "",
+              "suffix": "",
+              "multiple": false,
+              "defaultValue": "",
+              "protected": false,
+              "unique": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
+              "spellcheck": true
+            }
+          ],
+          "clearOnHide": false,
+          "title": "",
+          "theme": "default"
+        },
+        {
+          "label": "HTML",
+          "tag": "h2",
+          "className": "category-header-large primary-color",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Entrance requirements",
+          "refreshOnChange": false,
+          "key": "html8",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false,
+          "hideLabel": true
+        },
+        {
+          "collapsible": false,
+          "hideLabel": true,
+          "key": "panel8",
+          "logic": [
+            {
+              "name": "Disable Entrance Inputs",
+              "trigger": {
+                "type": "javascript",
+                "javascript": "result = data.hasOfferings;"
+              },
+              "actions": [
+                {
+                  "name": "Disable Inputs",
+                  "type": "property",
+                  "property": {
+                    "label": "Disabled",
+                    "value": "disabled",
+                    "type": "boolean"
+                  },
+                  "state": true
+                }
+              ]
+            }
+          ],
+          "type": "panel",
+          "label": "Panel",
+          "input": false,
+          "tableView": false,
+          "components": [
+            {
+              "label": "What are the entrance requirements for this program? (Select all that apply)",
+              "optionsLabelPosition": "right",
+              "tableView": false,
+              "defaultValue": {
+                "studentsToHaveGraduatedFromGrade12OrEquivalent": false,
+                "studentsAre19YearsOldOrOlderBeforeTheStartOfClasses": false,
+                "thisProgramHasEntranceRequirementsEstablishedByTheInstitutionThatEnableCompletionOfTheProgramStudy": false,
+                "thisProgramIsApprovedByTheBCInudstryTrainingAuthorityAndStudentsMustMeetTheEntranceRequirementsSetByTheBCIta": false,
+                "hasMinimunAge": false,
+                "highSchool": false,
+                "minHighSchool": false,
+                "requirementsByInstitution": false,
+                "requirementsByBcita": false,
+                "hasMinimumAge": false,
+                "requirementsByBCITA": false,
+                "noneOfTheAboveEntranceRequirements": false
+              },
+              "values": [
+                {
+                  "label": "Students to have graduated from grade 12 or equivalent.",
+                  "value": "minHighSchool",
+                  "shortcut": ""
+                },
+                {
+                  "label": "Students are 19 years old or older before the start of classes.",
+                  "value": "hasMinimumAge",
+                  "shortcut": ""
+                },
+                {
+                  "label": "For post-secondary level academic credit-based programs: This program has entrance requirements established by the institution that enable completion of the program of study.",
+                  "value": "requirementsByInstitution",
+                  "shortcut": ""
+                },
+                {
+                  "label": "This program is approved by the SkilledTradesBC and students must meet the entrance requirements set by the B.C. ITA.",
+                  "value": "requirementsByBCITA",
+                  "shortcut": ""
+                },
+                {
+                  "value": "noneOfTheAboveEntranceRequirements",
+                  "label": "None of the above",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true,
+                "custom": "const shouldSelectOneOfTheAboveOrAnotherOption =\r\n  (data.entranceRequirements.minHighSchool ||\r\n    data.entranceRequirements.hasMinimumAge ||\r\n    data.entranceRequirements.requirementsByInstitution ||\r\n    data.entranceRequirements.requirementsByBCITA) &&\r\n  data.entranceRequirements.noneOfTheAboveEntranceRequirements;\r\n\r\nvalid = shouldSelectOneOfTheAboveOrAnotherOption\r\n  ? \"Please select at least one of the entrance requirements or 'None of the above'.\"\r\n  : true;"
+              },
+              "key": "entranceRequirements",
+              "attributes": {
+                "data-cy": "entranceRequirements"
+              },
+              "type": "selectboxes",
+              "input": true,
+              "inputType": "checkbox",
+              "lockKey": true,
+              "autofocus": false,
+              "inline": false,
+              "protected": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true
+            },
+            {
+              "label": "Entrance requirements warning banner",
+              "className": "alert alert-warning fa fa-exclamation-circle",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<strong> This program is ineligible for StudentAid BC funding.</strong><br/>\nAn entrance requirement is required.",
+              "refreshOnChange": false,
+              "customClass": "banner-warning",
+              "key": "entrance-requirement-banner",
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false,
+              "hideLabel": true,
+              "lockKey": true,
+              "customConditional": "show = !!data.entranceRequirements.noneOfTheAboveEntranceRequirements;",
+              "tag": "p"
+            }
+          ],
+          "clearOnHide": false,
+          "title": "",
+          "theme": "default"
+        },
+        {
+          "label": "HTML",
+          "tag": "h2",
+          "className": "category-header-large primary-color",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "English as a Second Language (ESL) content",
+          "refreshOnChange": false,
+          "key": "html9",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false,
+          "hideLabel": true
+        },
+        {
+          "collapsible": false,
+          "hideLabel": true,
+          "key": "panel9",
+          "logic": [
+            {
+              "name": "Disable ESL Inputs",
+              "trigger": {
+                "type": "javascript",
+                "javascript": "result = data.hasOfferings;"
+              },
+              "actions": [
+                {
+                  "name": "Disable Inputs",
+                  "type": "property",
+                  "property": {
+                    "label": "Disabled",
+                    "value": "disabled",
+                    "type": "boolean"
+                  },
+                  "state": true
+                }
+              ]
+            }
+          ],
+          "type": "panel",
+          "label": "Panel",
+          "input": false,
+          "tableView": false,
+          "components": [
+            {
+              "label": "What percentage of the program has ESL Content?",
+              "optionsLabelPosition": "right",
+              "inline": false,
+              "tableView": false,
+              "values": [
+                {
+                  "label": "Less than 20%",
+                  "value": "lessThan20",
+                  "shortcut": ""
+                },
+                {
+                  "label": "20% or more",
+                  "value": "20OrMore",
+                  "shortcut": ""
+                }
+              ],
+              "redrawOn": "data",
+              "validate": {
+                "required": true
+              },
+              "key": "eslEligibility",
+              "attributes": {
+                "data-cy": "eslEligibility"
+              },
+              "type": "radio",
+              "input": true,
+              "autofocus": false,
+              "inputType": "radio",
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true
+            },
+            {
+              "label": "ESL Error",
+              "className": "alert alert-warning fa fa-exclamation-circle",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<strong> This program is ineligible for StudentAid BC funding.</strong><br/>\nESL can’t exceed 20% of course content.",
+              "refreshOnChange": false,
+              "customClass": "banner-warning",
+              "key": "html",
+              "conditional": {
+                "show": true,
+                "when": "eslEligibility",
+                "eq": "20OrMore"
+              },
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false,
+              "hideLabel": true,
+              "tag": "p"
+            }
+          ],
+          "clearOnHide": false,
+          "title": "",
+          "theme": "default"
+        },
+        {
+          "label": "Program partnerships",
+          "tag": "h2",
+          "className": "category-header-large primary-color",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Program partnerships",
+          "refreshOnChange": false,
+          "key": "programPartnerships",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false,
+          "hideLabel": true
+        },
+        {
+          "label": "HTML",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "If this program is offered at a partner institution, that institution must also be designated by SABC. Find out which institutions are designated on <a href=\"https://studentaidbc.ca/\">StudentAidBC.ca.</a>",
+          "refreshOnChange": false,
+          "customClass": "mt-n2",
+          "key": "html10",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false,
+          "hideLabel": true,
+          "tag": "p",
+          "className": ""
+        },
+        {
+          "collapsible": false,
+          "hideLabel": true,
+          "key": "panel10",
+          "logic": [
+            {
+              "name": "Disable Partnership Input",
+              "trigger": {
+                "type": "javascript",
+                "javascript": "result = data.hasOfferings;"
+              },
+              "actions": [
+                {
+                  "name": "Disable Input",
+                  "type": "property",
+                  "property": {
+                    "label": "Disabled",
+                    "value": "disabled",
+                    "type": "boolean"
+                  },
+                  "state": true
+                }
+              ]
+            }
+          ],
+          "type": "panel",
+          "label": "Panel",
+          "input": false,
+          "tableView": false,
+          "components": [
+            {
+              "label": "Is the program offered jointly or in partnership with other institutions?",
+              "optionsLabelPosition": "right",
+              "inline": false,
+              "tableView": false,
+              "values": [
+                {
+                  "label": "Yes",
+                  "value": "yes",
+                  "shortcut": ""
+                },
+                {
+                  "label": "No",
+                  "value": "no",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true
+              },
+              "key": "hasJointInstitution",
+              "attributes": {
+                "data-cy": "hasJointInstitution"
+              },
+              "type": "radio",
+              "input": true,
+              "autofocus": false,
+              "inputType": "radio",
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true
+            },
+            {
+              "label": "Are all institutions you partner with for this program designated by Student Aid BC?",
+              "optionsLabelPosition": "right",
+              "inline": false,
+              "tableView": false,
+              "values": [
+                {
+                  "label": "Yes",
+                  "value": "yes",
+                  "shortcut": ""
+                },
+                {
+                  "label": "No",
+                  "value": "no",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true
+              },
+              "key": "hasJointDesignatedInstitution",
+              "conditional": {
+                "show": true,
+                "when": "hasJointInstitution",
+                "eq": "yes"
+              },
+              "attributes": {
+                "data-cy": "hasJointDesignatedInstitution"
+              },
+              "type": "radio",
+              "input": true,
+              "autofocus": false,
+              "inputType": "radio",
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true
+            },
+            {
+              "label": "Join Program Error",
+              "className": "alert alert-warning fa fa-exclamation-circle",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<strong> This program is ineligible for StudentAid BC funding.</strong><br/>\nAll partner institutions must be designated by StudentAid BC..",
+              "refreshOnChange": false,
+              "customClass": "banner-warning",
+              "key": "joinProgramError",
+              "conditional": {
+                "show": true,
+                "when": "hasJointDesignatedInstitution",
+                "eq": "no"
+              },
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false,
+              "hideLabel": true,
+              "tag": "p"
+            }
+          ],
+          "clearOnHide": false,
+          "title": "",
+          "theme": "default"
+        },
+        {
+          "label": "HTML",
+          "tag": "h2",
+          "className": "category-header-large primary-color",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Work-integrated learning (WIL)",
+          "refreshOnChange": false,
+          "key": "html13",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false,
+          "hideLabel": true
+        },
+        {
+          "collapsible": false,
+          "hideLabel": true,
+          "key": "panel13",
+          "logic": [
+            {
+              "name": "Disable WIL Input",
+              "trigger": {
+                "type": "javascript",
+                "javascript": "result = data.hasOfferings;"
+              },
+              "actions": [
+                {
+                  "name": "Disable Input",
+                  "type": "property",
+                  "property": {
+                    "label": "Disabled",
+                    "value": "disabled",
+                    "type": "boolean"
+                  },
+                  "state": true
+                }
+              ]
+            }
+          ],
+          "type": "panel",
+          "label": "Panel",
+          "input": false,
+          "tableView": false,
+          "components": [
+            {
+              "label": "Does this program have a WIL component?",
+              "optionsLabelPosition": "right",
+              "inline": false,
+              "tableView": false,
+              "values": [
+                {
+                  "label": "Yes",
+                  "value": "yes",
+                  "shortcut": ""
+                },
+                {
+                  "label": "No",
+                  "value": "no",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true
+              },
+              "key": "hasWILComponent",
+              "attributes": {
+                "data-cy": "hasWILComponent"
+              },
+              "type": "radio",
+              "input": true,
+              "autofocus": false,
+              "inputType": "radio",
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true
+            },
+            {
+              "label": "Is the WIL approved by your regulator or oversight body?",
+              "optionsLabelPosition": "right",
+              "inline": false,
+              "tableView": false,
+              "values": [
+                {
+                  "label": "Yes",
+                  "value": "yes",
+                  "shortcut": ""
+                },
+                {
+                  "label": "No",
+                  "value": "no",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true
+              },
+              "key": "isWILApproved",
+              "conditional": {
+                "show": true,
+                "when": "hasWILComponent",
+                "eq": "yes"
+              },
+              "attributes": {
+                "data-cy": "isWILApproved"
+              },
+              "type": "radio",
+              "input": true,
+              "autofocus": false,
+              "inputType": "radio",
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true
+            },
+            {
+              "label": "HTML",
+              "className": "alert alert-warning fa fa-exclamation-circle",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<strong> This program is ineligible for StudentAid BC funding</strong><br>The work-integrated learning component must be approved by your regulator or oversight body first.",
+              "refreshOnChange": false,
+              "customClass": "banner-warning",
+              "key": "html14",
+              "customConditional": "show = (data.hasWILComponent === \"yes\" && data.isWILApproved === \"no\");",
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false,
+              "hideLabel": true,
+              "tag": "p"
+            },
+            {
+              "label": "Does the WIL meet the program eligibility requirements according to StudentAid BC policy?",
+              "optionsLabelPosition": "right",
+              "inline": false,
+              "tableView": false,
+              "values": [
+                {
+                  "label": "Yes",
+                  "value": "yes",
+                  "shortcut": ""
+                },
+                {
+                  "label": "No",
+                  "value": "no",
+                  "shortcut": ""
+                }
+              ],
+              "redrawOn": "data",
+              "validate": {
+                "required": true
+              },
+              "key": "wilProgramEligibility",
+              "customConditional": "show = (data.hasWILComponent === \"yes\" && data.isWILApproved === \"yes\");",
+              "attributes": {
+                "data-cy": "wilProgramEligibility"
+              },
+              "type": "radio",
+              "input": true,
+              "autofocus": false,
+              "inputType": "radio",
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true
+            },
+            {
+              "label": "HTML",
+              "className": "alert alert-warning fa fa-exclamation-circle",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<strong> This program is ineligible for StudentAid BC funding</strong><br>This must meet the StudentAid BC policy.",
+              "refreshOnChange": false,
+              "customClass": "banner-warning",
+              "key": "html15",
+              "customConditional": "show = (data.hasWILComponent === \"yes\" && data.isWILApproved === \"yes\" && data.wilProgramEligibility === \"no\");",
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false,
+              "hideLabel": true,
+              "tag": "p"
+            }
+          ],
+          "clearOnHide": false,
+          "title": "",
+          "theme": "default"
+        },
+        {
+          "label": "HTML",
+          "tag": "h2",
+          "className": "category-header-large primary-color",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Field trip, field placement, or travel",
+          "refreshOnChange": false,
+          "key": "html16",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false,
+          "hideLabel": true
+        },
+        {
+          "collapsible": false,
+          "hideLabel": true,
+          "key": "panel16",
+          "logic": [
+            {
+              "name": "Disable Field Trip Input",
+              "trigger": {
+                "type": "javascript",
+                "javascript": "result = data.hasOfferings;"
+              },
+              "actions": [
+                {
+                  "name": "Disable Input",
+                  "type": "property",
+                  "property": {
+                    "label": "Disabled",
+                    "value": "disabled",
+                    "type": "boolean"
+                  },
+                  "state": true
+                }
+              ]
+            }
+          ],
+          "type": "panel",
+          "label": "Panel",
+          "input": false,
+          "tableView": false,
+          "components": [
+            {
+              "label": "Is a field trip, field placement or travel part of this program?",
+              "optionsLabelPosition": "right",
+              "inline": false,
+              "tableView": false,
+              "values": [
+                {
+                  "label": "Yes",
+                  "value": "yes",
+                  "shortcut": ""
+                },
+                {
+                  "label": "No",
+                  "value": "no",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true
+              },
+              "key": "hasTravel",
+              "attributes": {
+                "data-cy": "hasTravel"
+              },
+              "type": "radio",
+              "input": true,
+              "autofocus": false,
+              "inputType": "radio",
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true
+            },
+            {
+              "label": "Does the field trip, field placement, or travel meet the program eligibility requirements according to StudentAid BC policy?",
+              "optionsLabelPosition": "right",
+              "inline": false,
+              "tableView": false,
+              "values": [
+                {
+                  "label": "Yes",
+                  "value": "yes",
+                  "shortcut": ""
+                },
+                {
+                  "label": "No",
+                  "value": "no",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true
+              },
+              "key": "travelProgramEligibility",
+              "conditional": {
+                "show": true,
+                "when": "hasTravel",
+                "eq": "yes"
+              },
+              "attributes": {
+                "data-cy": "travelProgramEligibility"
+              },
+              "type": "radio",
+              "input": true,
+              "autofocus": false,
+              "inputType": "radio",
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true
+            },
+            {
+              "label": "HTML",
+              "className": "alert alert-warning fa fa-exclamation-circle",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<strong> This program is ineligible for StudentAid BC funding</strong><br>This must meet the StudentAid BC policy.",
+              "refreshOnChange": false,
+              "customClass": "banner-warning",
+              "key": "html17",
+              "customConditional": "show = (data.hasTravel === \"yes\" && data.travelProgramEligibility === \"no\");",
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false,
+              "hideLabel": true,
+              "tag": "p"
+            }
+          ],
+          "clearOnHide": false,
+          "title": "",
+          "theme": "default"
+        },
+        {
+          "label": "HTML",
+          "tag": "h2",
+          "className": "category-header-large primary-color",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "International exchange",
+          "refreshOnChange": false,
+          "key": "html18",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false,
+          "hideLabel": true
+        },
+        {
+          "collapsible": false,
+          "hideLabel": true,
+          "key": "panel18",
+          "logic": [
+            {
+              "name": "Disable Exchange Input",
+              "trigger": {
+                "type": "javascript",
+                "javascript": "result = data.hasOfferings;"
+              },
+              "actions": [
+                {
+                  "name": "Disable Input",
+                  "type": "property",
+                  "property": {
+                    "label": "Disabled",
+                    "value": "disabled",
+                    "type": "boolean"
+                  },
+                  "state": true
+                }
+              ]
+            }
+          ],
+          "type": "panel",
+          "label": "Panel",
+          "input": false,
+          "tableView": false,
+          "components": [
+            {
+              "label": "Does the program have an international exchange?",
+              "optionsLabelPosition": "right",
+              "inline": false,
+              "tableView": false,
+              "values": [
+                {
+                  "label": "Yes",
+                  "value": "yes",
+                  "shortcut": ""
+                },
+                {
+                  "label": "No",
+                  "value": "no",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true
+              },
+              "key": "hasIntlExchange",
+              "attributes": {
+                "data-cy": "hasIntlExchange"
+              },
+              "type": "radio",
+              "input": true,
+              "autofocus": false,
+              "inputType": "radio",
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true
+            },
+            {
+              "label": "Does the international exchange meet the program eligibility requirements according to StudentAid BC policy?",
+              "optionsLabelPosition": "right",
+              "inline": false,
+              "tableView": false,
+              "values": [
+                {
+                  "label": "Yes",
+                  "value": "yes",
+                  "shortcut": ""
+                },
+                {
+                  "label": "No",
+                  "value": "no",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true
+              },
+              "key": "intlExchangeProgramEligibility",
+              "conditional": {
+                "show": true,
+                "when": "hasIntlExchange",
+                "eq": "yes"
+              },
+              "attributes": {
+                "data-cy": "intlExchangeProgramEligibility"
+              },
+              "type": "radio",
+              "input": true,
+              "autofocus": false,
+              "inputType": "radio",
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true
+            },
+            {
+              "label": "HTML",
+              "className": "alert alert-warning fa fa-exclamation-circle",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<strong> This program is ineligible for StudentAid BC funding</strong><br>This must meet the StudentAid BC policy.",
+              "refreshOnChange": false,
+              "customClass": "banner-warning",
+              "key": "html19",
+              "customConditional": "show = (data.hasIntlExchange === \"yes\" && data.intlExchangeProgramEligibility === \"no\");",
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false,
+              "hideLabel": true,
+              "tag": "p"
+            }
+          ],
+          "clearOnHide": false,
+          "title": "",
+          "theme": "default"
+        },
+        {
+          "label": "Declaration",
+          "tag": "h2",
+          "className": "category-header-large primary-color",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Declaration",
+          "refreshOnChange": false,
+          "key": "declaration",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false,
+          "hideLabel": true
+        },
+        {
+          "collapsible": false,
+          "hideLabel": true,
+          "key": "panel12",
+          "logic": [
+            {
+              "name": "Disable Declaration Input",
+              "trigger": {
+                "type": "javascript",
+                "javascript": "result = data.hasOfferings;"
+              },
+              "actions": [
+                {
+                  "name": "Disable Input",
+                  "type": "property",
+                  "property": {
+                    "label": "Disabled",
+                    "value": "disabled",
+                    "type": "boolean"
+                  },
+                  "state": true
+                }
+              ]
+            }
+          ],
+          "type": "panel",
+          "label": "Panel",
+          "input": false,
+          "tableView": false,
+          "components": [
+            {
+              "label": "HTML",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "All information is subject to verification and auditing.",
+              "refreshOnChange": false,
+              "customClass": "category-header-medium-small primary-color",
+              "key": "html12",
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false,
+              "hideLabel": true,
+              "tag": "p",
+              "className": ""
+            },
+            {
+              "label": "I confirm this program meets the policies outlined in the StudentAid BC policy manual.",
+              "tableView": false,
+              "defaultValue": false,
+              "validate": {
+                "required": true
+              },
+              "key": "programDeclaration",
+              "attributes": {
+                "data-cy": "programDeclaration"
+              },
+              "type": "checkbox",
+              "input": true,
+              "autofocus": false,
+              "inputType": "checkbox",
+              "hideLabel": false,
+              "dataGridLabel": false,
+              "protected": false,
+              "persistent": true,
+              "hidden": false,
+              "name": "",
+              "value": "",
+              "clearOnHide": true
+            }
+          ],
+          "clearOnHide": false,
+          "title": "",
+          "theme": "default"
+        }
+      ],
+      "clearOnHide": false,
+      "theme": "default"
+    },
+    {
+      "label": "hasOfferings",
+      "key": "totalOfferings",
+      "type": "hidden",
+      "input": true,
+      "tableView": false,
+      "protected": false,
+      "unique": false,
+      "persistent": true
+    },
+    {
+      "label": "Is Read-only",
+      "persistent": "client-only",
+      "key": "isReadonly",
+      "type": "hidden",
+      "input": true,
+      "tableView": false,
+      "protected": false,
+      "unique": false
+    },
+    {
+      "label": "isBCPrivate",
+      "key": "isBCPrivate",
+      "type": "hidden",
+      "input": true,
+      "tableView": false,
+      "protected": false,
+      "unique": false,
+      "persistent": true
+    },
+    {
+      "input": true,
+      "tableView": false,
+      "key": "isBCPublic",
+      "label": "isBCPublic",
+      "type": "hidden",
+      "lockKey": true,
+      "protected": false,
+      "unique": false,
+      "persistent": true
+    },
+    {
+      "label": "Program Status",
+      "calculateValue": "if (\r\n  data.hasJointDesignatedInstitution === \"no\" ||\r\n  data.eslEligibility === \"20OrMore\" ||\r\n  data.entranceRequirements.noneOfTheAboveEntranceRequirements === true ||\r\n  (data.deliveredOnlineAlsoOnsite === \"no\" &&\r\n    data.sameOnlineCreditsEarned === \"no\" &&\r\n    data.earnAcademicCreditsOtherInstitution === \"no\") ||\r\n  (data.courseLoadCalculation === \"hours\" &&\r\n    data.minHoursWeek === \"no\" &&\r\n    data.isAviationProgram === \"no\") ||\r\n  (data.courseLoadCalculation === \"hours\" &&\r\n    data.minHoursWeek === \"no\" &&\r\n    data.isAviationProgram === \"yes\" &&\r\n    data.minHoursWeekAvi === \"no\") ||\r\n  (data.hasWILComponent === \"yes\" && data.isWILApproved === \"no\") ||\r\n  (data.hasWILComponent === \"yes\" &&\r\n    data.isWILApproved === \"yes\" &&\r\n    data.wilProgramEligibility === \"no\") ||\r\n  (data.hasTravel === \"yes\" && data.travelProgramEligibility === \"no\") ||\r\n  (data.hasIntlExchange === \"yes\" &&\r\n    data.intlExchangeProgramEligibility === \"no\")\r\n) {\r\n  value = \"Pending\";\r\n} else {\r\n  value = \"Approved\";\r\n}",
+      "calculateServer": true,
+      "key": "programStatus",
+      "type": "hidden",
+      "input": true,
+      "tableView": false,
+      "protected": false,
+      "unique": false,
+      "persistent": true
+    }
+  ]
 }
