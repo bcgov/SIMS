@@ -15,7 +15,7 @@ import {
 import { Response } from "express";
 import { Readable } from "stream";
 import { FormService } from "../../services";
-import { MinistryReportsFilterAPIInDTO } from "./models/report.dto";
+import { ReportsFilterAPIInDTO } from "./models/report.dto";
 import { FormNames } from "../../services/form/constants";
 
 /**
@@ -36,7 +36,7 @@ export class ReportControllerService {
    * - `institutionId` related institution id.
    */
   async generateReport(
-    payload: MinistryReportsFilterAPIInDTO,
+    payload: ReportsFilterAPIInDTO,
     response: Response,
     options?: { institutionId?: number },
   ): Promise<void> {
@@ -61,8 +61,6 @@ export class ReportControllerService {
           case REPORT_CONFIG_NOT_FOUND:
           case FILTER_PARAMS_MISMATCH:
             throw new UnprocessableEntityException(error.message);
-          default:
-            throw error;
         }
       }
       throw error;
