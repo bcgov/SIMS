@@ -28,7 +28,7 @@ export class FullTimeECertFeedbackIntegrationScheduler extends BaseScheduler<voi
   /**
    * Download all files from FullTime E-Cert Response folder on SFTP and process them all.
    * @params job job details.
-   * @returns Summary with what was processed and the list of all errors, if any.
+   * @returns processing results.
    */
   @Process()
   async processFullTimeResponses(job: Job<void>): Promise<string[]> {

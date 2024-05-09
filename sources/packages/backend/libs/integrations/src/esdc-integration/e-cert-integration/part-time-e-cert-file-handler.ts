@@ -62,8 +62,6 @@ export class PartTimeECertFileHandler extends ECertFileHandler {
   /**
    * Method to call the Part-time feedback file processing and the list of all errors, if any.
    * @param processSummary cumulative process log.
-   * @returns result of the file upload with the file generated and the
-   * amount of records added to the file.
    */
   async processECertResponses(processSummary: ProcessSummary): Promise<void> {
     await this.processResponses(

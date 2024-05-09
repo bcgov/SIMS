@@ -28,7 +28,6 @@ import {
   ECertUploadResult,
 } from "./models/e-cert-integration-model";
 import { ECertIntegrationService } from "./e-cert.integration.service";
-import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { ECertGenerationService } from "@sims/integrations/services";
 import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
@@ -66,8 +65,6 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
   /**
    * Method to call the e-cert feedback file processing and the list of all errors, if any.
    * @param processSummary cumulative process log.
-   * @returns result of the file upload with the file generated and the
-   * amount of records added to the file.
    */
   abstract processECertResponses(processSummary: ProcessSummary): Promise<void>;
 
@@ -280,7 +277,6 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
    * @param eCertIntegrationService Integration service to read and delete the files.
    * @param fileCode ECert response file code to be processed.
    * @param offeringIntensity offering intensity.
-   * @returns Summary with what was processed and the list of all errors, if any.
    */
   async processResponses(
     processSummary: ProcessSummary,
@@ -292,7 +288,6 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
       this.esdcConfig.ftpResponseFolder,
       new RegExp(`^${this.esdcConfig.environmentCode}${fileCode}`, "i"),
     );
-    const processResults: ProcessSFTPResponseResult[] = [];
     // Return if there are no files to be processed.
     if (!filePaths.length) {
       processSummary.info(
@@ -314,13 +309,11 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     for (const filePath of filePaths) {
       const fileProcessingSummary = new ProcessSummary();
       processSummary.children(fileProcessingSummary);
-      processResults.push(
-        await this.processFile(
-          fileProcessingSummary,
-          eCertIntegrationService,
-          filePath,
-          eCertFeedbackErrorCodeMap,
-        ),
+      await this.processFile(
+        fileProcessingSummary,
+        eCertIntegrationService,
+        filePath,
+        eCertFeedbackErrorCodeMap,
       );
     }
   }
@@ -333,14 +326,13 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
    * @param offeringIntensity offering intensity.
    * @param eCertFeedbackErrorCodeMap e-Cert feedback error map
    * to get error id by error code.
-   * @returns Process summary and errors summary.
    */
   private async processFile(
     processSummary: ProcessSummary,
     eCertIntegrationService: ECertIntegrationService,
     filePath: string,
     eCertFeedbackErrorCodeMap: Record<string, number>,
-  ): Promise<ProcessSFTPResponseResult> {
+  ): Promise<void> {
     processSummary.info(`Processing file ${filePath}.`);
     let eCertFeedbackResponseRecords: ECertResponseRecord[];
     try {
@@ -392,8 +384,6 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
    * @param eCertFeedbackResponseRecord e-Cert feedback response record.
    * @param eCertFeedbackErrorCodeMap e-Cert feedback error map
    * to get error id by error code.
-   * @param filePath file path.
-   * @param processResult processing result.
    */
   private async createDisbursementFeedbackError(
     processSummary: ProcessSummary,
@@ -430,11 +420,12 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
   }
 
   /**
-   * Get eCert feedback error map which has
+   * Get eCert feedback error code map which has
    * error code as key and error id as value.
    * The map is generated for the given offering intensity.
    * @example {ERR01:1}.
    * @param offeringIntensity offering intensity.
+   * @returns error code map.
    */
   private async getECertFeedbackErrorsMap(
     offeringIntensity: OfferingIntensity,
@@ -456,6 +447,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
    * @param eCertFeedbackResponseRecords e-Cert feedback response records to sanitize.
    * @param eCertFeedbackErrorCodeMap e-Cert feedback error map
    * to get error id by error code.
+   * @throws unknown error code error.
    */
   private sanitizeErrorCodes(
     eCertFeedbackResponseRecords: ECertResponseRecord[],
@@ -488,7 +480,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
    * Delete the feedback file after processing.
    * @param eCertIntegrationService integration service.
    * @param filePath file path.
-   * @param processResult processing result.
+   * @param processSummary process summary.
    */
   private async deleteFile(
     eCertIntegrationService: ECertIntegrationService,

@@ -24,8 +24,9 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
 
   /**
    * Save Error codes from the E-Cert feedback file.
-   * @param disbursementSchedule disbursementSchedule.
-   * @param errorCodes Error Code to be saved.
+   * @param documentNumber disbursement document number.
+   * @param errorCodeIds e-Cert feedback error ids
+   * of error codes received.
    * @param dateReceived Date Received.
    * @returns Created E-Cert Error record.
    */
