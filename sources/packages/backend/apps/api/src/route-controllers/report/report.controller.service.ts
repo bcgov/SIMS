@@ -49,11 +49,16 @@ export class ReportControllerService {
         "Not able to export report due to an invalid request.",
       );
     }
+    options?.institutionId
+      ? (submissionResult.data.data.params = {
+          ...submissionResult.data.data.params,
+          institutionId: options?.institutionId,
+        })
+      : null;
     try {
-      const reportData = await this.reportService.getReportDataAsCSV({
-        ...submissionResult.data.data,
-        institutionId: options?.institutionId,
-      });
+      const reportData = await this.reportService.getReportDataAsCSV(
+        submissionResult.data.data,
+      );
       this.streamFile(response, payload.reportName, reportData);
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
