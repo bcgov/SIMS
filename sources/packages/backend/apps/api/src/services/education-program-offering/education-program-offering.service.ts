@@ -1179,7 +1179,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .createQueryBuilder("application")
       .select("application.id")
       .addSelect("application.applicationStatus")
-      .addSelect("assessment.id", "assessmentId")
+      .addSelect("assessment.id")
       .addSelect("assessment.assessmentData IS NULL", "hasAssessmentData")
       .addSelect("application.data->>'workflowName'", "workflowName")
       .addSelect("assessment.assessmentWorkflowId", "assessmentWorkflowId")
@@ -1204,7 +1204,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .getRawAndEntities();
     return mapFromRawAndEntities<ApplicationAssessmentSummary>(
       applications,
-      "assessmentId",
       "workflowName",
       "assessmentWorkflowId",
       "hasAssessmentData",
