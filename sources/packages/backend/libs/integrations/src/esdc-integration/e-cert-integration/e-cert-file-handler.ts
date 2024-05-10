@@ -1,8 +1,4 @@
-import {
-  LoggerService,
-  InjectLogger,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { ProcessSummary } from "@sims/utilities/logger";
 import {
   DisbursementSchedule,
   DisbursementScheduleStatus,
@@ -10,7 +6,6 @@ import {
 } from "@sims/sims-db";
 import {
   DisbursementScheduleErrorsService,
-  DisbursementScheduleService,
   ECertFeedbackErrorService,
 } from "../../services";
 import { SequenceControlService, SystemUsersService } from "@sims/services";
@@ -40,12 +35,17 @@ import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
 const ECERT_GENERATION_NO_RECORDS_AVAILABLE =
   "ECERT_GENERATION_NO_RECORDS_AVAILABLE";
 
+/**
+ * ECert feedback error map with error code and
+ * e-Cert feedback error id.
+ */
+type ECertFeedbackCodeMap = Record<string, number>;
+
 export abstract class ECertFileHandler extends ESDCFileHandler {
   esdcConfig: ESDCIntegrationConfig;
   constructor(
     configService: ConfigService,
     private readonly sequenceService: SequenceControlService,
-    private readonly disbursementScheduleService: DisbursementScheduleService,
     private readonly eCertGenerationService: ECertGenerationService,
     private readonly disbursementScheduleErrorsService: DisbursementScheduleErrorsService,
     private readonly systemUserService: SystemUsersService,
@@ -295,7 +295,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
       );
     }
     // Get eCert feedback error map for all the error codes.
-    let eCertFeedbackErrorCodeMap: Record<string, number>;
+    let eCertFeedbackErrorCodeMap: ECertFeedbackCodeMap;
     try {
       eCertFeedbackErrorCodeMap = await this.getECertFeedbackErrorsMap(
         offeringIntensity,
@@ -321,9 +321,8 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
   /**
    * Process each individual E-Cert response file from the SFTP.
    * @param processSummary process summary of file processing.
-   * @param eCertIntegrationService
+   * @param eCertIntegrationService integration service.
    * @param filePath E-Cert response file to be processed.
-   * @param offeringIntensity offering intensity.
    * @param eCertFeedbackErrorCodeMap e-Cert feedback error map
    * to get error id by error code.
    */
@@ -331,7 +330,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     processSummary: ProcessSummary,
     eCertIntegrationService: ECertIntegrationService,
     filePath: string,
-    eCertFeedbackErrorCodeMap: Record<string, number>,
+    eCertFeedbackErrorCodeMap: ECertFeedbackCodeMap,
   ): Promise<void> {
     processSummary.info(`Processing file ${filePath}.`);
     let eCertFeedbackResponseRecords: ECertResponseRecord[];
@@ -365,7 +364,6 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     } catch (error: unknown) {
       // Any error caught here will abort the file processing.
       processSummary.error(`Error processing the file ${filePath}.`, error);
-      return;
     } finally {
       if (!processSummary.getLogLevelSum().error) {
         await this.deleteFile(
@@ -388,7 +386,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
   private async createDisbursementFeedbackError(
     processSummary: ProcessSummary,
     eCertFeedbackResponseRecord: ECertResponseRecord,
-    eCertFeedbackErrorCodeMap: Record<string, number>,
+    eCertFeedbackErrorCodeMap: ECertFeedbackCodeMap,
   ): Promise<void> {
     try {
       const dateReceived = new Date();
@@ -429,12 +427,12 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
    */
   private async getECertFeedbackErrorsMap(
     offeringIntensity: OfferingIntensity,
-  ): Promise<Record<string, number>> {
+  ): Promise<ECertFeedbackCodeMap> {
     const eCertFeedbackErrors =
       await this.eCertFeedbackErrorService.getECertFeedbackErrorsByOfferingIntensity(
         offeringIntensity,
       );
-    const eCertFeedbackErrorCodeMap: Record<string, number> = {};
+    const eCertFeedbackErrorCodeMap: ECertFeedbackCodeMap = {};
     for (const eCertFeedbackError of eCertFeedbackErrors) {
       eCertFeedbackErrorCodeMap[eCertFeedbackError.errorCode] =
         eCertFeedbackError.id;
@@ -451,7 +449,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
    */
   private sanitizeErrorCodes(
     eCertFeedbackResponseRecords: ECertResponseRecord[],
-    eCertFeedbackErrorCodeMap: Record<string, number>,
+    eCertFeedbackErrorCodeMap: ECertFeedbackCodeMap,
   ): void {
     // Check for error codes sent that are not known to the system.
     // In the case the system needs to be updated with latest error codes.
@@ -469,9 +467,11 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
       );
     if (unknownFeedbackErrorCodes.length) {
       throw new Error(
-        `The following error codes are unknown to the system. ${Array.from(
+        `The following error codes are unknown to the system: ${Array.from(
           new Set(unknownFeedbackErrorCodes),
-        ).join(",")}`,
+        )
+          .join(",")
+          .concat(".")}`,
       );
     }
   }
@@ -494,12 +494,9 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
       // If there was an issue only during the file removal, it will be
       // processed again and could be deleted in the second attempt.
       processSummary.error(
-        `Error while deleting E-Cert response file: ${filePath}`,
+        `Error while deleting E-Cert response file: ${filePath}.`,
         error,
       );
     }
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }
