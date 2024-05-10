@@ -25,7 +25,6 @@ export function createFakeDisbursementFeedbackError(
   const now = new Date();
   const feedbackError = new DisbursementFeedbackErrors();
   feedbackError.dateReceived = options?.initialValues?.dateReceived ?? now;
-  feedbackError.errorCode = options?.initialValues?.errorCode ?? "EDU-99999";
   feedbackError.disbursementSchedule = relations.disbursementSchedule;
   feedbackError.eCertFeedbackError = relations.eCertFeedbackError;
   feedbackError.updatedAt = options?.initialValues?.updatedAt ?? now;

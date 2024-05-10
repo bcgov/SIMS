@@ -1,8 +1,4 @@
-import {
-  LoggerService,
-  InjectLogger,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { ProcessSummary } from "@sims/utilities/logger";
 import {
   DisbursementSchedule,
   DisbursementScheduleStatus,
@@ -10,7 +6,7 @@ import {
 } from "@sims/sims-db";
 import {
   DisbursementScheduleErrorsService,
-  DisbursementScheduleService,
+  ECertFeedbackErrorService,
 } from "../../services";
 import { SequenceControlService, SystemUsersService } from "@sims/services";
 import {
@@ -25,13 +21,11 @@ import {
   Award,
   ECertRecord,
   ECertUploadResult,
-  ESDCFileResponse,
 } from "./models/e-cert-integration-model";
 import { ECertIntegrationService } from "./e-cert.integration.service";
-import { ECertFullTimeResponseRecord } from "./e-cert-full-time-integration/e-cert-files/e-cert-response-record";
-import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { ECertGenerationService } from "@sims/integrations/services";
+import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
 
 /**
  * Used to abort the e-Cert generation process, cancel the current transaction,
@@ -41,15 +35,21 @@ import { ECertGenerationService } from "@sims/integrations/services";
 const ECERT_GENERATION_NO_RECORDS_AVAILABLE =
   "ECERT_GENERATION_NO_RECORDS_AVAILABLE";
 
+/**
+ * ECert feedback error map with error code and
+ * e-Cert feedback error id.
+ */
+type ECertFeedbackCodeMap = Record<string, number>;
+
 export abstract class ECertFileHandler extends ESDCFileHandler {
   esdcConfig: ESDCIntegrationConfig;
   constructor(
     configService: ConfigService,
     private readonly sequenceService: SequenceControlService,
-    private readonly disbursementScheduleService: DisbursementScheduleService,
     private readonly eCertGenerationService: ECertGenerationService,
     private readonly disbursementScheduleErrorsService: DisbursementScheduleErrorsService,
     private readonly systemUserService: SystemUsersService,
+    private readonly eCertFeedbackErrorService: ECertFeedbackErrorService,
   ) {
     super(configService);
   }
@@ -64,10 +64,9 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
 
   /**
    * Method to call the e-cert feedback file processing and the list of all errors, if any.
-   * @returns result of the file upload with the file generated and the
-   * amount of records added to the file.
+   * @param processSummary cumulative process log.
    */
-  abstract processECertResponses(): Promise<ESDCFileResponse[]>;
+  abstract processECertResponses(processSummary: ProcessSummary): Promise<void>;
 
   /**
    * Generate the e-Cert file for Full-Time/Part-Time disbursements available to be sent to ESDC.
@@ -274,119 +273,228 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
 
   /**
    * Download all files from E-Cert Response folder on SFTP and process them all.
-   * @param eCertIntegrationService
+   * @param processSummary process summary of all files processed.
+   * @param eCertIntegrationService Integration service to read and delete the files.
    * @param fileCode ECert response file code to be processed.
-   * @returns Summary with what was processed and the list of all errors, if any.
+   * @param offeringIntensity offering intensity.
    */
   async processResponses(
+    processSummary: ProcessSummary,
     eCertIntegrationService: ECertIntegrationService,
     fileCode: string,
-  ): Promise<ProcessSFTPResponseResult[]> {
+    offeringIntensity: OfferingIntensity,
+  ): Promise<void> {
     const filePaths = await eCertIntegrationService.getResponseFilesFullPath(
       this.esdcConfig.ftpResponseFolder,
       new RegExp(`^${this.esdcConfig.environmentCode}${fileCode}`, "i"),
     );
-    const processFiles: ProcessSFTPResponseResult[] = [];
-    for (const filePath of filePaths) {
-      processFiles.push(
-        await this.processFile(eCertIntegrationService, filePath),
+    // Return if there are no files to be processed.
+    if (!filePaths.length) {
+      processSummary.info(
+        `There are no disbursement feedback error files to be processed for ${offeringIntensity}.`,
       );
     }
-    return processFiles;
+    // Get eCert feedback error map for all the error codes.
+    let eCertFeedbackErrorCodeMap: ECertFeedbackCodeMap;
+    try {
+      eCertFeedbackErrorCodeMap = await this.getECertFeedbackErrorsMap(
+        offeringIntensity,
+      );
+    } catch (error: unknown) {
+      processSummary.error(
+        "Error retrieving e-Cert feedback error map for error codes.",
+        error,
+      );
+    }
+    for (const filePath of filePaths) {
+      const fileProcessingSummary = new ProcessSummary();
+      processSummary.children(fileProcessingSummary);
+      await this.processFile(
+        fileProcessingSummary,
+        eCertIntegrationService,
+        filePath,
+        eCertFeedbackErrorCodeMap,
+      );
+    }
   }
 
   /**
    * Process each individual E-Cert response file from the SFTP.
-   * @param eCertIntegrationService
+   * @param processSummary process summary of file processing.
+   * @param eCertIntegrationService integration service.
    * @param filePath E-Cert response file to be processed.
-   * @returns Process summary and errors summary.
+   * @param eCertFeedbackErrorCodeMap e-Cert feedback error map
+   * to get error id by error code.
    */
   private async processFile(
+    processSummary: ProcessSummary,
     eCertIntegrationService: ECertIntegrationService,
     filePath: string,
-  ): Promise<ProcessSFTPResponseResult> {
-    const result = new ProcessSFTPResponseResult();
-    result.processSummary.push(`Processing file ${filePath}.`);
-
-    let responseFile: ECertFullTimeResponseRecord[];
-
+    eCertFeedbackErrorCodeMap: ECertFeedbackCodeMap,
+  ): Promise<void> {
+    processSummary.info(`Processing file ${filePath}.`);
+    let eCertFeedbackResponseRecords: ECertResponseRecord[];
     try {
-      responseFile = await eCertIntegrationService.downloadResponseFile(
-        filePath,
-      );
+      eCertFeedbackResponseRecords =
+        await eCertIntegrationService.downloadResponseFile(filePath);
     } catch (error) {
-      this.logger.error(error);
-      result.errorsSummary.push(`Error downloading file ${filePath}. ${error}`);
       // Abort the process nicely not throwing an exception and
       // allowing other response files to be processed.
-      return result;
+      processSummary.error(`Error downloading file ${filePath}.`, error);
+      return;
     }
-
-    result.processSummary.push(`File contains ${responseFile.length} records.`);
-
-    for (const feedbackRecord of responseFile) {
-      try {
-        await this.processErrorCodeRecords(feedbackRecord);
-        this.logger.log(
-          `Successfully processed line ${feedbackRecord.lineNumber}.`,
-        );
-      } catch (error) {
-        // Log the error but allow the process to continue.
-        const errorDescription = `Error processing record line number ${feedbackRecord.lineNumber} from file ${filePath}, error: ${error}`;
-        result.errorsSummary.push(errorDescription);
-        this.logger.error(`${errorDescription}. Error: ${error}`);
-      }
-    }
-
+    // Processing the records.
+    processSummary.info(
+      `File contains ${eCertFeedbackResponseRecords.length} records.`,
+    );
     try {
-      if (result.errorsSummary.length === 0) {
-        // if there is an error in the file do not delete the file
-        await eCertIntegrationService.deleteFile(filePath);
+      this.sanitizeErrorCodes(
+        eCertFeedbackResponseRecords,
+        eCertFeedbackErrorCodeMap,
+      );
+      for (const eCertFeedbackResponseRecord of eCertFeedbackResponseRecords) {
+        const recordProcessSummary = new ProcessSummary();
+        processSummary.children(recordProcessSummary);
+        await this.createDisbursementFeedbackError(
+          recordProcessSummary,
+          eCertFeedbackResponseRecord,
+          eCertFeedbackErrorCodeMap,
+        );
       }
+    } catch (error: unknown) {
+      // Any error caught here will abort the file processing.
+      processSummary.error(`Error processing the file ${filePath}.`, error);
+    } finally {
+      if (!processSummary.getLogLevelSum().error) {
+        await this.deleteFile(
+          eCertIntegrationService,
+          filePath,
+          processSummary,
+        );
+      }
+    }
+  }
+
+  /**
+   * Create disbursement feedback errors
+   * for the errors received in a response record.
+   * @param processSummary process summary of record processing.
+   * @param eCertFeedbackResponseRecord e-Cert feedback response record.
+   * @param eCertFeedbackErrorCodeMap e-Cert feedback error map
+   * to get error id by error code.
+   */
+  private async createDisbursementFeedbackError(
+    processSummary: ProcessSummary,
+    eCertFeedbackResponseRecord: ECertResponseRecord,
+    eCertFeedbackErrorCodeMap: ECertFeedbackCodeMap,
+  ): Promise<void> {
+    try {
+      const dateReceived = new Date();
+      const receivedErrorIds = [
+        eCertFeedbackResponseRecord.errorCode1,
+        eCertFeedbackResponseRecord.errorCode2,
+        eCertFeedbackResponseRecord.errorCode3,
+        eCertFeedbackResponseRecord.errorCode4,
+        eCertFeedbackResponseRecord.errorCode5,
+      ]
+        .filter((errorCode) => errorCode)
+        .map((errorCode) => eCertFeedbackErrorCodeMap[errorCode]);
+
+      await this.disbursementScheduleErrorsService.createECertErrorRecord(
+        eCertFeedbackResponseRecord.documentNumber,
+        receivedErrorIds,
+        dateReceived,
+      );
+      processSummary.info(
+        `Disbursement feedback error created for document number ${eCertFeedbackResponseRecord.documentNumber} at line ${eCertFeedbackResponseRecord.lineNumber}.`,
+      );
+    } catch (error: unknown) {
+      // Log the error message and continue the processing.
+      processSummary.error(
+        `Error processing the record for document number ${eCertFeedbackResponseRecord.documentNumber} at line ${eCertFeedbackResponseRecord.lineNumber}.`,
+        error,
+      );
+    }
+  }
+
+  /**
+   * Get eCert feedback error code map which has
+   * error code as key and error id as value.
+   * The map is generated for the given offering intensity.
+   * @example {ERR01:1}.
+   * @param offeringIntensity offering intensity.
+   * @returns error code map.
+   */
+  private async getECertFeedbackErrorsMap(
+    offeringIntensity: OfferingIntensity,
+  ): Promise<ECertFeedbackCodeMap> {
+    const eCertFeedbackErrors =
+      await this.eCertFeedbackErrorService.getECertFeedbackErrorsByOfferingIntensity(
+        offeringIntensity,
+      );
+    const eCertFeedbackErrorCodeMap: ECertFeedbackCodeMap = {};
+    for (const eCertFeedbackError of eCertFeedbackErrors) {
+      eCertFeedbackErrorCodeMap[eCertFeedbackError.errorCode] =
+        eCertFeedbackError.id;
+    }
+    return eCertFeedbackErrorCodeMap;
+  }
+
+  /**
+   * Sanitize the e-Cert response records validating the error codes.
+   * @param eCertFeedbackResponseRecords e-Cert feedback response records to sanitize.
+   * @param eCertFeedbackErrorCodeMap e-Cert feedback error map
+   * to get error id by error code.
+   * @throws unknown error code error.
+   */
+  private sanitizeErrorCodes(
+    eCertFeedbackResponseRecords: ECertResponseRecord[],
+    eCertFeedbackErrorCodeMap: ECertFeedbackCodeMap,
+  ): void {
+    // Check for error codes sent that are not known to the system.
+    // In the case the system needs to be updated with latest error codes.
+    const unknownFeedbackErrorCodes: string[] =
+      eCertFeedbackResponseRecords.flatMap((eCertFeedbackResponseRecord) =>
+        [
+          eCertFeedbackResponseRecord.errorCode1,
+          eCertFeedbackResponseRecord.errorCode2,
+          eCertFeedbackResponseRecord.errorCode3,
+          eCertFeedbackResponseRecord.errorCode4,
+          eCertFeedbackResponseRecord.errorCode5,
+        ].filter(
+          (errorCode) => errorCode && !eCertFeedbackErrorCodeMap[errorCode],
+        ),
+      );
+    if (unknownFeedbackErrorCodes.length) {
+      throw new Error(
+        `The following error codes are unknown to the system: ${Array.from(
+          new Set(unknownFeedbackErrorCodes),
+        ).join(",")}.`,
+      );
+    }
+  }
+
+  /**
+   * Delete the feedback file after processing.
+   * @param eCertIntegrationService integration service.
+   * @param filePath file path.
+   * @param processSummary process summary.
+   */
+  private async deleteFile(
+    eCertIntegrationService: ECertIntegrationService,
+    filePath: string,
+    processSummary: ProcessSummary,
+  ) {
+    try {
+      await eCertIntegrationService.deleteFile(filePath);
     } catch (error) {
       // Log the error but allow the process to continue.
       // If there was an issue only during the file removal, it will be
       // processed again and could be deleted in the second attempt.
-      const logMessage = `Error while deleting E-Cert response file: ${filePath}`;
-      this.logger.error(logMessage);
-      result.errorsSummary.push(logMessage);
-    }
-
-    return result;
-  }
-
-  /**
-   * Process the feedback record from the E-Cert response file
-   * and save the error code and disbursementSchedule_id respective to
-   * the document number in DisbursementFeedbackErrors.
-   * @param feedbackRecord E-Cert received record
-   */
-  private async processErrorCodeRecords(
-    feedbackRecord: ECertFullTimeResponseRecord,
-  ): Promise<void> {
-    const disbursementSchedule =
-      await this.disbursementScheduleService.getDisbursementScheduleByDocumentNumber(
-        feedbackRecord.documentNumber,
-      );
-    if (disbursementSchedule) {
-      await this.disbursementScheduleErrorsService.createECertErrorRecord(
-        disbursementSchedule,
-        [
-          feedbackRecord.errorCode1,
-          feedbackRecord.errorCode2,
-          feedbackRecord.errorCode3,
-          feedbackRecord.errorCode4,
-          feedbackRecord.errorCode5,
-        ].filter((error) => error),
-        new Date(),
-      );
-    } else {
-      throw new Error(
-        `${feedbackRecord.documentNumber} document number not found in disbursement_schedule table.`,
+      processSummary.error(
+        `Error while deleting E-Cert response file: ${filePath}.`,
+        error,
       );
     }
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }
