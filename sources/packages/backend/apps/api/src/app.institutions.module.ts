@@ -72,6 +72,7 @@ import {
   ProgramYearInstitutionsController,
   ReportInstitutionsController,
   ProgramYearControllerService,
+  ReportControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -178,6 +179,7 @@ import {
     AssessmentSequentialProcessingService,
     ProgramYearControllerService,
     ProgramYearService,
+    ReportControllerService,
     ReportService,
   ],
 })

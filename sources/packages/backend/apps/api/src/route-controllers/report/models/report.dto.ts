@@ -24,10 +24,11 @@ enum MinistryReportNames {
  * API dto to define the criteria to extract the financial report.
  * Basic class validators used as dry-run submission will validate payload.
  */
-export class ReportsFilterAPIInDTO {
+export abstract class ReportsFilterAPIInDTO {
   @Allow()
   @JsonMaxSize(JSON_10KB)
   params: ReportFilterParamAPIInDTO;
+  abstract reportName: string;
 }
 
 export class InstitutionReportsFilterAPIInDTO extends ReportsFilterAPIInDTO {
