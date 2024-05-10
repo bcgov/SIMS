@@ -434,7 +434,7 @@
             },
             {
               "label": "SABC program code",
-              "description": "Format (XXX#) Mandatory field if using the 'offerings upload' feature. Otherwise optional.",
+              "description": "Format (XXX#) Mandatory field if using the \"Offerings Upload\" feature. Otherwise optional.",
               "tableView": true,
               "validate": {
                 "pattern": "[[A-Z]{3}[0-9]{1}",
