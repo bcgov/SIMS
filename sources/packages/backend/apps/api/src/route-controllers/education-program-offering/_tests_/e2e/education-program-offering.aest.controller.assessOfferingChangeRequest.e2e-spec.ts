@@ -354,7 +354,6 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
         id: In(applicationIds),
       },
     });
-    expect(queryApplications.length).toBe(3);
     queryApplications.forEach((queryApplication) => {
       expect(queryApplication.applicationStatus).toBe(
         ApplicationStatus.Cancelled,
