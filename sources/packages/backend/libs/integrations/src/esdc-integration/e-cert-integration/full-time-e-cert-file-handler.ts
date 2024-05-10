@@ -1,7 +1,6 @@
 import { OfferingIntensity } from "@sims/sims-db";
 import {
   DisbursementScheduleErrorsService,
-  DisbursementScheduleService,
   ECertFeedbackErrorService,
 } from "../../services";
 import { SequenceControlService, SystemUsersService } from "@sims/services";
@@ -25,7 +24,6 @@ export class FullTimeECertFileHandler extends ECertFileHandler {
   constructor(
     configService: ConfigService,
     sequenceService: SequenceControlService,
-    disbursementScheduleService: DisbursementScheduleService,
     eCertGenerationService: ECertGenerationService,
     disbursementScheduleErrorsService: DisbursementScheduleErrorsService,
     systemUserService: SystemUsersService,
@@ -35,7 +33,6 @@ export class FullTimeECertFileHandler extends ECertFileHandler {
     super(
       configService,
       sequenceService,
-      disbursementScheduleService,
       eCertGenerationService,
       disbursementScheduleErrorsService,
       systemUserService,
