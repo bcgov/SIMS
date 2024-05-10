@@ -469,9 +469,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
       throw new Error(
         `The following error codes are unknown to the system: ${Array.from(
           new Set(unknownFeedbackErrorCodes),
-        )
-          .join(",")
-          .concat(".")}`,
+        ).join(",")}.`,
       );
     }
   }
