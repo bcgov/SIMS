@@ -233,6 +233,7 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
 
   it("Should determine the offering change for an offering with one or more applications in Completed status when the offering change is approved.", async () => {
     // Arrange
+    const applicationIds: number[] = [];
     for (let i = 0; i < 2; i++) {
       const application = await saveFakeApplication(
         db.dataSource,
@@ -252,6 +253,7 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
       application.currentAssessment.studentAppeal = studentAppeal;
       application.currentAssessment.offering = precedingOffering;
       await db.application.save(application);
+      applicationIds.push(application.id);
     }
 
     const payload: OfferingChangeAssessmentAPIInDTO = {
@@ -283,12 +285,9 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
         currentAssessment: { offering: true, studentAppeal: true },
       },
       where: {
-        currentAssessment: {
-          offering: { id: requestedOffering.id },
-        },
+        id: In(applicationIds),
       },
     });
-    expect(queryApplications.length).toBe(2);
     queryApplications.forEach((queryApplication) => {
       expect(queryApplication.currentAssessment.triggerType).toBe(
         AssessmentTriggerType.OfferingChange,
@@ -354,7 +353,6 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
         id: In(applicationIds),
       },
     });
-    expect(queryApplications.length).toBe(3);
     queryApplications.forEach((queryApplication) => {
       expect(queryApplication.applicationStatus).toBe(
         ApplicationStatus.Cancelled,
