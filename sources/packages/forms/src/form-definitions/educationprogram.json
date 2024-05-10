@@ -490,7 +490,7 @@
               "inputFormat": "plain",
               "tags": [],
               "properties": {},
-              "tooltip": "Please see our <a href='https://studentaidbc.ca/sites/all/files/school-officials/how-to-assign-program-codes.pdf'>job aid</a> to choose the appropriate code for your program."
+              "tooltip": "Please see our <a href='https://studentaidbc.ca/sites/all/files/school-officials/how-to-assign-program-codes.pdf' target='_blank' class='formio-href' rel='noopener noreferrer'>job aid</a> to choose the appropriate code for your program."
             },
             {
               "label": "Institution Program Code",
