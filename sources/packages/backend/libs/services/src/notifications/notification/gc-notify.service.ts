@@ -35,7 +35,7 @@ export class GCNotifyService {
         payload,
         {
           headers: {
-            Authorization: `ApiKey-v1 ${this.gcNotifyConfig.apiKey}`,
+            Authorization: this.gcNotifyConfig.apiKey,
           },
         },
       );
