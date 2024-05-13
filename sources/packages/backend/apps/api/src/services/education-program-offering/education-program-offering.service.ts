@@ -1171,7 +1171,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   async getApplicationsToSubmitReassessment(
     offeringId: number,
   ): Promise<Application[]> {
-    return await this.dataSource
+    return this.dataSource
       .getRepository(Application)
       .createQueryBuilder("application")
       .select("application.id")
