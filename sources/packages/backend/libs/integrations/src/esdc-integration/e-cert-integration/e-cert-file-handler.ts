@@ -341,14 +341,10 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     } catch (error: unknown) {
       // Abort the process nicely not throwing an exception and
       // allowing other response files to be processed.
-      if (error instanceof CustomNamedError) {
-        processSummary.error(error.message);
-      } else {
-        processSummary.error(
-          `Unknown error downloading the file ${filePath}.`,
-          error,
-        );
-      }
+      processSummary.error(
+        `Error downloading and parsing the file ${filePath}.`,
+        error,
+      );
       return;
     }
     // Processing the records.
@@ -382,10 +378,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
       }
     } catch (error: unknown) {
       // Any error caught here will abort the file processing.
-      processSummary.error(
-        `Unknown error processing the file ${filePath}.`,
-        error,
-      );
+      processSummary.error(`Error processing the file ${filePath}.`, error);
     } finally {
       if (!processSummary.getLogLevelSum().error) {
         await this.deleteFile(
@@ -437,11 +430,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     } catch (error: unknown) {
       // Log the error message and continue the processing.
       const errorMessage = `Error processing the record for document number ${eCertFeedbackResponseRecord.documentNumber} at line ${eCertFeedbackResponseRecord.lineNumber}.`;
-      if (error instanceof CustomNamedError) {
-        processSummary.error(`${errorMessage} ${error.message}`);
-      } else {
-        processSummary.error(errorMessage, error);
-      }
+      processSummary.error(errorMessage, error);
     }
   }
 

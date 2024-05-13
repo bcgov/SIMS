@@ -84,13 +84,17 @@ describe(
       const result = await processor.processPartTimeResponses(mockedJob.job);
 
       // Assert
+      const downloadedFile = path.join(
+        process.env.ESDC_RESPONSE_FOLDER,
+        FEEDBACK_ERROR_FILE_SINGLE_RECORD,
+      );
       expect(result).toContain(
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
       );
       expect(result.length).toBe(3);
       expect(
         mockedJob.containLogMessages([
-          "The E-Cert file has an invalid record type code on header.",
+          `Error downloading and parsing the file ${downloadedFile}. The E-Cert file has an invalid record type code on header.`,
         ]),
       ).toBe(true);
       // The file is not expected to be deleted from SFTP.
@@ -116,13 +120,17 @@ describe(
       const result = await processor.processPartTimeResponses(mockedJob.job);
 
       // Assert
+      const downloadedFile = path.join(
+        process.env.ESDC_RESPONSE_FOLDER,
+        FEEDBACK_ERROR_FILE_SINGLE_RECORD,
+      );
       expect(result).toContain(
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
       );
       expect(result.length).toBe(3);
       expect(
         mockedJob.containLogMessages([
-          "The E-Cert file has an invalid record type code on trailer.",
+          `Error downloading and parsing the file ${downloadedFile}. The E-Cert file has an invalid record type code on trailer.`,
         ]),
       ).toBe(true);
       // The file is not expected to be deleted from SFTP.
@@ -148,13 +156,17 @@ describe(
       const result = await processor.processPartTimeResponses(mockedJob.job);
 
       // Assert
+      const downloadedFile = path.join(
+        process.env.ESDC_RESPONSE_FOLDER,
+        FEEDBACK_ERROR_FILE_SINGLE_RECORD,
+      );
       expect(result).toContain(
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
       );
       expect(result.length).toBe(3);
       expect(
         mockedJob.containLogMessages([
-          "The E-Cert file has invalid number of records.",
+          `Error downloading and parsing the file ${downloadedFile}. The E-Cert file has invalid number of records.`,
         ]),
       ).toBe(true);
       // The file is not expected to be deleted from SFTP.
@@ -183,13 +195,17 @@ describe(
       const result = await processor.processPartTimeResponses(mockedJob.job);
 
       // Assert
+      const downloadedFile = path.join(
+        process.env.ESDC_RESPONSE_FOLDER,
+        FEEDBACK_ERROR_FILE_SINGLE_RECORD,
+      );
       expect(result).toContain(
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
       );
       expect(result.length).toBe(3);
       expect(
         mockedJob.containLogMessages([
-          "The E-Cert file has TotalSINHash inconsistent with the total sum of sin in the records.",
+          `Error downloading and parsing the file ${downloadedFile}. The E-Cert file has TotalSINHash inconsistent with the total sum of sin in the records.`,
         ]),
       ).toBe(true);
       // The file is not expected to be deleted from SFTP.
