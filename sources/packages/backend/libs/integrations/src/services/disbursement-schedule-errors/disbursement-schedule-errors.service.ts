@@ -3,9 +3,10 @@ import { DataSource, InsertResult } from "typeorm";
 import {
   RecordDataModelService,
   DisbursementFeedbackErrors,
-  DisbursementSchedule,
+  ECertFeedbackError,
 } from "@sims/sims-db";
 import { SystemUsersService } from "@sims/services";
+import { DisbursementScheduleService } from "../disbursement-schedule/disbursement-schedule.service";
 
 /**
  * Service layer for Disbursement Schedule Errors
@@ -15,6 +16,7 @@ import { SystemUsersService } from "@sims/services";
 export class DisbursementScheduleErrorsService extends RecordDataModelService<DisbursementFeedbackErrors> {
   constructor(
     private readonly systemUsersService: SystemUsersService,
+    private readonly disbursementScheduleService: DisbursementScheduleService,
     dataSource: DataSource,
   ) {
     super(dataSource.getRepository(DisbursementFeedbackErrors));
@@ -22,31 +24,42 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
 
   /**
    * Save Error codes from the E-Cert feedback file.
-   * @param disbursementSchedule disbursementSchedule.
-   * @param errorCodes Error Code to be saved.
+   * @param documentNumber disbursement document number.
+   * @param errorCodeIds e-Cert feedback error ids
+   * of error codes received.
    * @param dateReceived Date Received.
    * @returns Created E-Cert Error record.
    */
   async createECertErrorRecord(
-    disbursementSchedule: DisbursementSchedule,
-    errorCodes: string[],
+    documentNumber: number,
+    errorCodeIds: number[],
     dateReceived: Date,
   ): Promise<InsertResult> {
+    const disbursementSchedule =
+      await this.disbursementScheduleService.getDisbursementScheduleByDocumentNumber(
+        documentNumber,
+      );
+    if (!disbursementSchedule) {
+      throw new Error(
+        `Disbursement for document number ${documentNumber} not found.`,
+      );
+    }
     const auditUser = this.systemUsersService.systemUser;
-    const errorCodesObject = errorCodes.map((errorCode) => {
-      const newDisbursementsFeedbackErrors = new DisbursementFeedbackErrors();
-      newDisbursementsFeedbackErrors.disbursementSchedule =
-        disbursementSchedule;
-      newDisbursementsFeedbackErrors.errorCode = errorCode;
-      newDisbursementsFeedbackErrors.dateReceived = dateReceived;
-      newDisbursementsFeedbackErrors.creator = auditUser;
-      return newDisbursementsFeedbackErrors;
+    const disbursementFeedbackErrors = errorCodeIds.map((errorCodeId) => {
+      const disbursementFeedbackError = new DisbursementFeedbackErrors();
+      disbursementFeedbackError.disbursementSchedule = disbursementSchedule;
+      disbursementFeedbackError.eCertFeedbackError = {
+        id: errorCodeId,
+      } as ECertFeedbackError;
+      disbursementFeedbackError.dateReceived = dateReceived;
+      disbursementFeedbackError.creator = auditUser;
+      return disbursementFeedbackError;
     });
     return this.repo
       .createQueryBuilder()
       .insert()
       .into(DisbursementFeedbackErrors)
-      .values(errorCodesObject)
+      .values(disbursementFeedbackErrors)
       .orIgnore()
       .execute();
   }

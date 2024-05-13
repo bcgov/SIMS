@@ -35,7 +35,7 @@ describe("ApplicationEventDateUtilsService-getApplicationEventDate", () => {
       dateSent: addDays(2, new Date()),
       disbursementFeedbackErrors: [
         {
-          errorCode: feedbackErrorCode,
+          eCertFeedbackError: { errorCode: feedbackErrorCode },
           updatedAt: addDays(-2, new Date()),
         } as DisbursementFeedbackErrors,
       ],

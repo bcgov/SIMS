@@ -29,7 +29,12 @@ import {
   mockBullJob,
 } from "../../../../../../test/helpers";
 import { INestApplication } from "@nestjs/common";
-import { QueueNames, addDays, getISODateOnlyString } from "@sims/utilities";
+import {
+  QueueNames,
+  addDays,
+  formatDate,
+  getISODateOnlyString,
+} from "@sims/utilities";
 import { FullTimeECertProcessIntegrationScheduler } from "../ecert-full-time-process-integration.scheduler";
 import { DeepMocked } from "@golevelup/ts-jest";
 import * as Client from "ssh2-sftp-client";
@@ -99,6 +104,8 @@ describe(
         createFakeMSFAANumber({ student }, { msfaaState: MSFAAStates.Signed }),
       );
 
+      const coeUpdatedAtDate = new Date();
+
       // Student application eligible for e-Cert.
       await saveFakeApplicationDisbursements(
         db.dataSource,
@@ -127,6 +134,7 @@ describe(
           },
           firstDisbursementInitialValues: {
             coeStatus: COEStatus.completed,
+            coeUpdatedAt: coeUpdatedAtDate,
           },
         },
       );
@@ -154,6 +162,9 @@ describe(
       expect(footer.substring(0, 18)).toBe("999NEW ENTITLEMENT");
       // Validate record.
       const record1Parsed = new FullTimeCertRecordParser(record1);
+      expect(record1Parsed.enrollmentConfirmationDate).toBe(
+        formatDate(coeUpdatedAtDate, "YYYYMMDD"),
+      );
       expect(record1Parsed.postalCode).toBe("V1V 1V1");
       // TODO Add other fields as needed.
     });

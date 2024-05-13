@@ -2,7 +2,6 @@ import {
   OfferingIntensity,
   OfferingStatus,
   OfferingTypes,
-  Application,
 } from "@sims/sims-db";
 
 export interface EducationProgramOfferingSummaryModel {
@@ -32,23 +31,6 @@ export interface OfferingsFilter {
  */
 export interface PrecedingOfferingSummaryModel {
   applicationsCount: number;
-}
-
-/**
- * The additional properties which are required
- * to start the new assessment workflow
- * and delete the existing workflow instance for an application.
- */
-export class ApplicationAssessmentSummary extends Application {
-  /**
-   * Assessment id prior to the application be prepared for the reassessment.
-   * Useful to keep the information to cancel the application.
-   */
-  assessmentId: number;
-  assessmentWorkflowId: string;
-  workflowName: string;
-  hasAssessmentData: boolean;
-  assessmentAppealId?: number;
 }
 
 /**

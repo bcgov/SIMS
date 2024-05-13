@@ -1,17 +1,14 @@
 import { OfferingIntensity } from "@sims/sims-db";
 import {
   DisbursementScheduleErrorsService,
-  DisbursementScheduleService,
+  ECertFeedbackErrorService,
 } from "../../services";
 import { SequenceControlService, SystemUsersService } from "@sims/services";
 import {
   ECERT_PART_TIME_FEEDBACK_FILE_CODE,
   ECERT_PART_TIME_FILE_CODE,
 } from "@sims/services/constants";
-import {
-  ECertUploadResult,
-  ESDCFileResponse,
-} from "./models/e-cert-integration-model";
+import { ECertUploadResult } from "./models/e-cert-integration-model";
 import { Injectable } from "@nestjs/common";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { ECertGenerationService } from "@sims/integrations/services";
@@ -27,19 +24,19 @@ export class PartTimeECertFileHandler extends ECertFileHandler {
   constructor(
     configService: ConfigService,
     sequenceService: SequenceControlService,
-    disbursementScheduleService: DisbursementScheduleService,
     eCertGenerationService: ECertGenerationService,
     disbursementScheduleErrorsService: DisbursementScheduleErrorsService,
     systemUserService: SystemUsersService,
+    eCertFeedbackErrorService: ECertFeedbackErrorService,
     private readonly eCertIntegrationService: ECertPartTimeIntegrationService,
   ) {
     super(
       configService,
       sequenceService,
-      disbursementScheduleService,
       eCertGenerationService,
       disbursementScheduleErrorsService,
       systemUserService,
+      eCertFeedbackErrorService,
     );
   }
 
@@ -61,13 +58,14 @@ export class PartTimeECertFileHandler extends ECertFileHandler {
 
   /**
    * Method to call the Part-time feedback file processing and the list of all errors, if any.
-   * @returns result of the file upload with the file generated and the
-   * amount of records added to the file.
+   * @param processSummary cumulative process log.
    */
-  async processECertResponses(): Promise<ESDCFileResponse[]> {
-    return this.processResponses(
+  async processECertResponses(processSummary: ProcessSummary): Promise<void> {
+    await this.processResponses(
+      processSummary,
       this.eCertIntegrationService,
       ECERT_PART_TIME_FEEDBACK_FILE_CODE,
+      OfferingIntensity.partTime,
     );
   }
 }

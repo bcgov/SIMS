@@ -112,7 +112,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
           },
           disbursementFeedbackErrors: {
             updatedAt: true,
-            errorCode: true,
+            eCertFeedbackError: { id: true, errorCode: true },
           },
         },
       },
@@ -120,7 +120,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         disbursementSchedules: {
           disbursementValues: true,
           disbursementReceipts: true,
-          disbursementFeedbackErrors: true,
+          disbursementFeedbackErrors: { eCertFeedbackError: true },
         },
         application: {
           student: {

@@ -75,9 +75,16 @@ export class FullTimeCertRecordParser extends ECertRecordParser {
   }
 
   /**
+   * Enrolment confirmation date.
+   */
+  get enrollmentConfirmationDate(): string {
+    return this.record.substring(134, 142);
+  }
+
+  /**
    * Postal code from student's contact info.
    */
   get postalCode(): string {
-    return this.record.substring(307, 314);
+    return this.record.substring(303, 310);
   }
 }

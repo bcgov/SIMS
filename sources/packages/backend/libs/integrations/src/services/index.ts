@@ -18,3 +18,4 @@ export * from "./sin-validation/sin-validation.service";
 export * from "./institution-location/institution-location.service";
 export * from "./disbursement-schedule/e-cert-notification/e-cert-notification.service";
 export * from "./student-loan-balance/student-loan-balance.service";
+export * from "./ecert-feedback-error/ecert-feedback-error.service";

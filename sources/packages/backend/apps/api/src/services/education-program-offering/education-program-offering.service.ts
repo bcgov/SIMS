@@ -18,11 +18,9 @@ import {
   StudyBreak,
   ProgramYear,
   DatabaseConstraintNames,
-  mapFromRawAndEntities,
   StudentAssessmentStatus,
   StudyBreaksAndWeeks,
   isDatabaseConstraintError,
-  StudentAppeal,
 } from "@sims/sims-db";
 import {
   DataSource,
@@ -34,7 +32,6 @@ import {
 import {
   OfferingsFilter,
   PrecedingOfferingSummaryModel,
-  ApplicationAssessmentSummary,
   EducationProgramOfferingBasicData,
   EducationProgramOfferingNotification,
 } from "./education-program-offering.service.models";
@@ -1173,17 +1170,14 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    */
   async getApplicationsToSubmitReassessment(
     offeringId: number,
-  ): Promise<ApplicationAssessmentSummary[]> {
-    const applications = await this.dataSource
+  ): Promise<Application[]> {
+    return this.dataSource
       .getRepository(Application)
       .createQueryBuilder("application")
       .select("application.id")
       .addSelect("application.applicationStatus")
-      .addSelect("assessment.id", "assessmentId")
-      .addSelect("assessment.assessmentData IS NULL", "hasAssessmentData")
-      .addSelect("application.data->>'workflowName'", "workflowName")
-      .addSelect("assessment.assessmentWorkflowId", "assessmentWorkflowId")
-      .addSelect("studentAppeal.id", "assessmentAppealId")
+      .addSelect("assessment.id")
+      .addSelect("studentAppeal.id")
       .innerJoin("application.currentAssessment", "assessment")
       .leftJoin("assessment.studentAppeal", "studentAppeal")
       .innerJoin(
@@ -1201,15 +1195,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         },
       )
       .andWhere("offering.id = :offeringId", { offeringId })
-      .getRawAndEntities();
-    return mapFromRawAndEntities<ApplicationAssessmentSummary>(
-      applications,
-      "assessmentId",
-      "workflowName",
-      "assessmentWorkflowId",
-      "hasAssessmentData",
-      "assessmentAppealId",
-    );
+      .getMany();
   }
 
   /**
@@ -1257,7 +1243,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     precedingOffering.updatedAt = currentDate;
     precedingOffering.assessedBy = auditUser;
     precedingOffering.assessedDate = currentDate;
-    let applications: ApplicationAssessmentSummary[] = [];
+    let applications: Application[] = [];
 
     // Populate the status accordingly and get impacted applications
     // when the offering change is approved.
@@ -1276,13 +1262,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
             createdAt: currentDate,
             submittedBy: auditUser,
             submittedDate: currentDate,
+            studentAppeal: application.currentAssessment.studentAppeal,
           } as StudentAssessment;
-          // Update the student appeal record for the student assessment if it exists.
-          if (application.assessmentAppealId) {
-            application.currentAssessment.studentAppeal = {
-              id: application.assessmentAppealId,
-            } as StudentAppeal;
-          }
         }
 
         // If the application which is affected by offering change is not completed

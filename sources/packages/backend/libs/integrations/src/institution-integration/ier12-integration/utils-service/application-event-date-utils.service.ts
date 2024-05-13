@@ -1,9 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import {
-  Application,
-  ApplicationStatus,
-  DisbursementFeedbackErrors,
-} from "@sims/sims-db";
+import { Application, ApplicationStatus } from "@sims/sims-db";
 import {
   ApplicationEventCode,
   DisbursementScheduleForApplicationEventDate,
@@ -36,7 +32,12 @@ export class ApplicationEventDateUtilsService {
           : disbursementSchedule.updatedAt;
       case ApplicationEventCode.DISE:
         return this.getFullTimeFeedbackErrorUpdateAt(
-          disbursementSchedule.disbursementFeedbackErrors,
+          disbursementSchedule.disbursementFeedbackErrors.map(
+            (feedbackError) => ({
+              updatedAt: feedbackError.updatedAt,
+              errorCode: feedbackError.eCertFeedbackError.errorCode,
+            }),
+          ),
         );
       case ApplicationEventCode.DISR:
         return addDays(
@@ -57,10 +58,7 @@ export class ApplicationEventDateUtilsService {
    * @returns full-time feedback error updated at date.
    */
   private getFullTimeFeedbackErrorUpdateAt(
-    disbursementFeedbackErrors: Pick<
-      DisbursementFeedbackErrors,
-      "errorCode" | "updatedAt"
-    >[],
+    disbursementFeedbackErrors: { updatedAt: Date; errorCode: string }[],
   ): Date {
     const [{ updatedAt }] = disbursementFeedbackErrors.filter(
       (disbursementFeedbackErrors) =>

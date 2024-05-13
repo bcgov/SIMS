@@ -532,7 +532,6 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
       { disbursementSchedule, eCertFeedbackError },
       {
         initialValues: {
-          errorCode,
           updatedAt: dateUtils.addDays(-1),
         },
       },
