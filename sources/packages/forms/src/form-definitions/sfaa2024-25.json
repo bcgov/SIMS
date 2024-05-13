@@ -31341,7 +31341,7 @@
                   "hidden": false,
                   "clearOnHide": true,
                   "validate": {
-                    "required": false,
+                    "required": true,
                     "min": 0,
                     "max": 52,
                     "step": "any",
