@@ -45,4 +45,12 @@ export class DisbursementFeedbackErrors extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   eCertFeedbackError: ECertFeedbackError;
+
+  /**
+   * Integration file name that imported the feedback error.
+   */
+  @Column({
+    name: "feedback_file_name",
+  })
+  feedbackFileName: string;
 }

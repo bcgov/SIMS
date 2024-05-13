@@ -27,6 +27,7 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
   /**
    * Save Error codes from the E-Cert feedback file.
    * @param documentNumber disbursement document number.
+   * @param feedbackFileName feedback integration file name.
    * @param errorCodeIds e-Cert feedback error ids
    * of error codes received.
    * @param dateReceived Date Received.
@@ -34,6 +35,7 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
    */
   async createECertErrorRecord(
     documentNumber: number,
+    feedbackFileName: string,
     errorCodeIds: number[],
     dateReceived: Date,
   ): Promise<InsertResult> {
@@ -54,6 +56,7 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
       disbursementFeedbackError.eCertFeedbackError = {
         id: errorCodeId,
       } as ECertFeedbackError;
+      disbursementFeedbackError.feedbackFileName = feedbackFileName;
       disbursementFeedbackError.dateReceived = dateReceived;
       disbursementFeedbackError.creator = auditUser;
       return disbursementFeedbackError;

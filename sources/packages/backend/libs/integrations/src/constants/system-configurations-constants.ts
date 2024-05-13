@@ -26,3 +26,7 @@ export const ECE_RESPONSE_ATTACHMENT_FILE_NAME =
  * Regex to split a file content string with line breaks.
  */
 export const LINE_BREAK_SPLIT_REGEX = /\r\n|\n\r|\n|\r/;
+/**
+ * Regex to extract only the file name from the file path.
+ */
+export const PARSE_FILE_NAME_FROM_PATH_REGEX = /^.*[\\/]/;

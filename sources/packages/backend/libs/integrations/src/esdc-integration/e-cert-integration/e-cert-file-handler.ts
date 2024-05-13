@@ -26,6 +26,7 @@ import { ECertIntegrationService } from "./e-cert.integration.service";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { ECertGenerationService } from "@sims/integrations/services";
 import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
+import { PARSE_FILE_NAME_FROM_PATH_REGEX } from "@sims/integrations/constants";
 
 /**
  * Used to abort the e-Cert generation process, cancel the current transaction,
@@ -364,6 +365,11 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
         processSummary.error(unknownErrorCodesMessage);
         return;
       }
+      // Get the file name from the file path.
+      const feedbackFileName = filePath.replace(
+        PARSE_FILE_NAME_FROM_PATH_REGEX,
+        "",
+      );
       for (const eCertFeedbackResponseRecord of eCertFeedbackResponseRecords) {
         const recordProcessSummary = new ProcessSummary();
         processSummary.children(recordProcessSummary);
@@ -371,6 +377,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
           recordProcessSummary,
           eCertFeedbackResponseRecord,
           eCertFeedbackErrorCodeMap,
+          feedbackFileName,
         );
       }
     } catch (error: unknown) {
@@ -397,11 +404,14 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
    * @param eCertFeedbackResponseRecord e-Cert feedback response record.
    * @param eCertFeedbackErrorCodeMap e-Cert feedback error map
    * to get error id by error code.
+   * @param feedbackFileName integration file name.
+   *
    */
   private async createDisbursementFeedbackError(
     processSummary: ProcessSummary,
     eCertFeedbackResponseRecord: ECertResponseRecord,
     eCertFeedbackErrorCodeMap: ECertFeedbackCodeMap,
+    feedbackFileName: string,
   ): Promise<void> {
     try {
       const dateReceived = new Date();
@@ -417,6 +427,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
 
       await this.disbursementScheduleErrorsService.createECertErrorRecord(
         eCertFeedbackResponseRecord.documentNumber,
+        feedbackFileName,
         receivedErrorIds,
         dateReceived,
       );

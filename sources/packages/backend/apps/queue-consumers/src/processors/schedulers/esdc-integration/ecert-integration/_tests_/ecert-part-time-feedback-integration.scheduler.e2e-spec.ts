@@ -272,6 +272,7 @@ describe(
             id: true,
             disbursementSchedule: { id: true },
             eCertFeedbackError: { id: true, errorCode: true },
+            feedbackFileName: true,
           },
           relations: { disbursementSchedule: true, eCertFeedbackError: true },
           where: {
@@ -287,6 +288,7 @@ describe(
           id: expect.any(Number),
           errorCode: SHARED_ERROR_CODE,
         },
+        feedbackFileName: FEEDBACK_ERROR_FILE_SINGLE_RECORD,
       });
     });
 
@@ -341,6 +343,7 @@ describe(
               id: true,
               disbursementSchedule: { id: true },
               eCertFeedbackError: { id: true, errorCode: true },
+              feedbackFileName: true,
             },
             relations: { disbursementSchedule: true, eCertFeedbackError: true },
             where: {
@@ -356,6 +359,7 @@ describe(
             id: expect.any(Number),
             errorCode: SHARED_ERROR_CODE,
           },
+          feedbackFileName: FEEDBACK_ERROR_FILE_MULTIPLE_RECORDS,
         });
       },
     );
