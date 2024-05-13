@@ -71,8 +71,8 @@ describe(
         [FEEDBACK_ERROR_FILE_SINGLE_RECORD],
         (fileContent: string) => {
           const file = getStructuredRecords(fileContent);
-          // Force the header to be wrong.
-          file.header = file.header.replace("100222  NEW", "500222  NEW");
+          // Force the record type in header to be wrong.
+          file.header = file.header.replace("1", "5");
           return createFileFromStructuredRecords(file);
         },
       );
@@ -107,8 +107,8 @@ describe(
         [FEEDBACK_ERROR_FILE_SINGLE_RECORD],
         (fileContent: string) => {
           const file = getStructuredRecords(fileContent);
-          // Force the SIN hash total footer to be wrong.
-          file.footer = file.footer.replace("999 NEW", "777 NEW");
+          // Force the record type in footer to be wrong.
+          file.footer = file.footer.replace("9", "7");
           return createFileFromStructuredRecords(file);
         },
       );
@@ -143,7 +143,7 @@ describe(
         [FEEDBACK_ERROR_FILE_SINGLE_RECORD],
         (fileContent: string) => {
           const file = getStructuredRecords(fileContent);
-          // Force the SIN hash total footer to be wrong.
+          // Force the total number of records in footer to be wrong.
           file.footer = file.footer.replace("1000000001", "1000000002");
           return createFileFromStructuredRecords(file);
         },
@@ -179,7 +179,7 @@ describe(
         [FEEDBACK_ERROR_FILE_SINGLE_RECORD],
         (fileContent: string) => {
           const file = getStructuredRecords(fileContent);
-          // Force the SIN hash total footer to be wrong.
+          // Force the SIN hash total in footer to be wrong.
           file.footer = file.footer.replace("399800143", "399800144");
           return createFileFromStructuredRecords(file);
         },

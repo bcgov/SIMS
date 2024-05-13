@@ -106,9 +106,8 @@ export class ProcessSummary {
     scope: LogScopes = LogScopes.Combined,
   ): void {
     let errorDescription = "";
-    // Considering that logging the stack trace is not useful for custom named errors
-    // and only message is sufficient the custom named errors are identified and
-    // custom error message is added to the process summary.
+    // Considering that logging the stack trace is not useful for custom-named errors and only message is sufficient,
+    // the custom-named errors are identified and custom error message is added to the process summary.
     // For any other runtime error, logging the stack trace is considered as essential.
     if (error) {
       errorDescription =

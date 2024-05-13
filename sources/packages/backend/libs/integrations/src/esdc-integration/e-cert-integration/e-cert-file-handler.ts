@@ -26,7 +26,7 @@ import { ECertIntegrationService } from "./e-cert.integration.service";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { ECertGenerationService } from "@sims/integrations/services";
 import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
-import { PARSE_FILE_NAME_FROM_PATH_REGEX } from "@sims/integrations/constants";
+import * as path from "path";
 
 /**
  * Used to abort the e-Cert generation process, cancel the current transaction,
@@ -362,10 +362,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
         return;
       }
       // Get the file name from the file path.
-      const feedbackFileName = filePath.replace(
-        PARSE_FILE_NAME_FROM_PATH_REGEX,
-        "",
-      );
+      const feedbackFileName = path.basename(filePath);
       for (const eCertFeedbackResponseRecord of eCertFeedbackResponseRecords) {
         const recordProcessSummary = new ProcessSummary();
         processSummary.children(recordProcessSummary);

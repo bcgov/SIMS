@@ -4,6 +4,8 @@ ALTER TABLE
 ADD
     COLUMN error_code VARCHAR(10);
 
+COMMENT ON COLUMN sims.disbursement_feedback_errors.error_code IS 'Errors code received from feedback file for the disbursement sent to ESDC.';
+
 -- Populate error_code based on existing column ecert_feedback_error_id.
 UPDATE
     sims.disbursement_feedback_errors

@@ -72,8 +72,8 @@ describe(
         [FEEDBACK_ERROR_FILE_SINGLE_RECORD],
         (fileContent: string) => {
           const file = getStructuredRecords(fileContent);
-          // Force the header to be wrong.
-          file.header = file.header.replace("01 222NEW", "10 222NEW");
+          // Force the record type in header to be wrong.
+          file.header = file.header.replace("01", "10");
           return createFileFromStructuredRecords(file);
         },
       );
@@ -108,8 +108,8 @@ describe(
         [FEEDBACK_ERROR_FILE_SINGLE_RECORD],
         (fileContent: string) => {
           const file = getStructuredRecords(fileContent);
-          // Force the SIN hash total footer to be wrong.
-          file.footer = file.footer.replace("99NEW PT", "89NEW PT");
+          // Force the record type in footer to be wrong.
+          file.footer = file.footer.replace("9", "8");
           return createFileFromStructuredRecords(file);
         },
       );
@@ -144,8 +144,8 @@ describe(
         [FEEDBACK_ERROR_FILE_SINGLE_RECORD],
         (fileContent: string) => {
           const file = getStructuredRecords(fileContent);
-          // Force the SIN hash total footer to be wrong.
-          file.footer = file.footer.replace("5000000001", "5000000002");
+          // Force the total number of records in footer to be wrong.
+          file.footer = file.footer.replace("1", "2");
           return createFileFromStructuredRecords(file);
         },
       );
@@ -180,11 +180,8 @@ describe(
         [FEEDBACK_ERROR_FILE_SINGLE_RECORD],
         (fileContent: string) => {
           const file = getStructuredRecords(fileContent);
-          // Force the SIN hash total footer to be wrong.
-          file.footer = file.footer.replace(
-            "000000399800085",
-            "000000399800086",
-          );
+          // Force the SIN hash total in footer to be wrong.
+          file.footer = file.footer.replace("399800085", "399800086");
           return createFileFromStructuredRecords(file);
         },
       );

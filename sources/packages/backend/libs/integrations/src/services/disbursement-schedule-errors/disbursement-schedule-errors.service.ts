@@ -8,7 +8,7 @@ import {
 import { SystemUsersService } from "@sims/services";
 import { DisbursementScheduleService } from "../disbursement-schedule/disbursement-schedule.service";
 import { CustomNamedError } from "@sims/utilities";
-import { DOCUMENT_NUMBER_NOT_FOUND } from "@sims/services/constants";
+import { DOCUMENT_NUMBER_NOT_FOUND } from "@sims/integrations/constants";
 
 /**
  * Service layer for Disbursement Schedule Errors
