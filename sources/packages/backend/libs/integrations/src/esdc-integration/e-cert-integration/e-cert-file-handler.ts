@@ -337,10 +337,17 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     try {
       eCertFeedbackResponseRecords =
         await eCertIntegrationService.downloadResponseFile(filePath);
-    } catch (error) {
+    } catch (error: unknown) {
       // Abort the process nicely not throwing an exception and
       // allowing other response files to be processed.
-      processSummary.error(`Error downloading file ${filePath}.`, error);
+      if (error instanceof CustomNamedError) {
+        processSummary.error(error.message);
+      } else {
+        processSummary.error(
+          `Unknown error downloading the file ${filePath}.`,
+          error,
+        );
+      }
       return;
     }
     // Processing the records.
@@ -348,10 +355,15 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
       `File contains ${eCertFeedbackResponseRecords.length} records.`,
     );
     try {
-      this.sanitizeErrorCodes(
+      const unknownErrorCodesMessage = this.getUnknownErrorCodesMessage(
         eCertFeedbackResponseRecords,
         eCertFeedbackErrorCodeMap,
       );
+      if (unknownErrorCodesMessage) {
+        // Abort the file processing and return after logging the unknown error codes.
+        processSummary.error(unknownErrorCodesMessage);
+        return;
+      }
       for (const eCertFeedbackResponseRecord of eCertFeedbackResponseRecords) {
         const recordProcessSummary = new ProcessSummary();
         processSummary.children(recordProcessSummary);
@@ -363,7 +375,10 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
       }
     } catch (error: unknown) {
       // Any error caught here will abort the file processing.
-      processSummary.error(`Error processing the file ${filePath}.`, error);
+      processSummary.error(
+        `Unknown error processing the file ${filePath}.`,
+        error,
+      );
     } finally {
       if (!processSummary.getLogLevelSum().error) {
         await this.deleteFile(
@@ -410,10 +425,12 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
       );
     } catch (error: unknown) {
       // Log the error message and continue the processing.
-      processSummary.error(
-        `Error processing the record for document number ${eCertFeedbackResponseRecord.documentNumber} at line ${eCertFeedbackResponseRecord.lineNumber}.`,
-        error,
-      );
+      const errorMessage = `Error processing the record for document number ${eCertFeedbackResponseRecord.documentNumber} at line ${eCertFeedbackResponseRecord.lineNumber}.`;
+      if (error instanceof CustomNamedError) {
+        processSummary.error(`${errorMessage} ${error.message}`);
+      } else {
+        processSummary.error(errorMessage, error);
+      }
     }
   }
 
@@ -441,16 +458,16 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
   }
 
   /**
-   * Sanitize the e-Cert response records validating the error codes.
-   * @param eCertFeedbackResponseRecords e-Cert feedback response records to sanitize.
+   * Validate the error codes in e-Cert response records and create unknown error code message.
+   * @param eCertFeedbackResponseRecords e-Cert feedback response records to validate.
    * @param eCertFeedbackErrorCodeMap e-Cert feedback error map
    * to get error id by error code.
-   * @throws unknown error code error.
+   * @returns unknown error code message if any unknown error codes are present.
    */
-  private sanitizeErrorCodes(
+  private getUnknownErrorCodesMessage(
     eCertFeedbackResponseRecords: ECertResponseRecord[],
     eCertFeedbackErrorCodeMap: ECertFeedbackCodeMap,
-  ): void {
+  ): string | undefined {
     // Check for error codes sent that are not known to the system.
     // In the case the system needs to be updated with latest error codes.
     const unknownFeedbackErrorCodes: string[] =
@@ -466,11 +483,9 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
         ),
       );
     if (unknownFeedbackErrorCodes.length) {
-      throw new Error(
-        `The following error codes are unknown to the system: ${Array.from(
-          new Set(unknownFeedbackErrorCodes),
-        ).join(",")}.`,
-      );
+      return `The following error codes are unknown to the system: ${Array.from(
+        new Set(unknownFeedbackErrorCodes),
+      ).join(",")}.`;
     }
   }
 

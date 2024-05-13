@@ -7,6 +7,8 @@ import {
 } from "@sims/sims-db";
 import { SystemUsersService } from "@sims/services";
 import { DisbursementScheduleService } from "../disbursement-schedule/disbursement-schedule.service";
+import { CustomNamedError } from "@sims/utilities";
+import { DOCUMENT_NUMBER_NOT_FOUND } from "@sims/services/constants";
 
 /**
  * Service layer for Disbursement Schedule Errors
@@ -40,8 +42,9 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
         documentNumber,
       );
     if (!disbursementSchedule) {
-      throw new Error(
+      throw new CustomNamedError(
         `Disbursement for document number ${documentNumber} not found.`,
+        DOCUMENT_NUMBER_NOT_FOUND,
       );
     }
     const auditUser = this.systemUsersService.systemUser;

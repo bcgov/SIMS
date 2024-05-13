@@ -24,20 +24,19 @@ import { QueueNames } from "@sims/utilities";
 import { DeepMocked } from "@golevelup/ts-jest";
 import * as Client from "ssh2-sftp-client";
 import * as path from "path";
-import { PartTimeECertFeedbackIntegrationScheduler } from "../ecert-part-time-feedback-integration.scheduler";
+import { FullTimeECertFeedbackIntegrationScheduler } from "../ecert-full-time-feedback-integration.scheduler";
 
-const FEEDBACK_ERROR_FILE_SINGLE_RECORD =
-  "EDU.PBC.NEW.ECERTSFB.PT.SINGLERECORD";
+const FEEDBACK_ERROR_FILE_SINGLE_RECORD = "EDU.PBC.FTECERTSFB.SINGLERECORD";
 const FEEDBACK_ERROR_FILE_MULTIPLE_RECORDS =
-  "EDU.PBC.NEW.ECERTSFB.PT.MULTIPLERECORDS";
-const SHARED_DOCUMENT_NUMBER = 7777;
-const SHARED_ERROR_CODE = "EDU-00128";
+  "EDU.PBC.FTECERTSFB.MULTIPLERECORDS";
+const SHARED_DOCUMENT_NUMBER = 6666;
+const SHARED_ERROR_CODE = "EDU-00099";
 
 describe(
-  describeQueueProcessorRootTest(QueueNames.PartTimeFeedbackIntegration),
+  describeQueueProcessorRootTest(QueueNames.FullTimeFeedbackIntegration),
   () => {
     let app: INestApplication;
-    let processor: PartTimeECertFeedbackIntegrationScheduler;
+    let processor: FullTimeECertFeedbackIntegrationScheduler;
     let db: E2EDataSources;
     let sftpClientMock: DeepMocked<Client>;
 
@@ -53,7 +52,7 @@ describe(
       db = createE2EDataSources(dataSource);
       sftpClientMock = sshClientMock;
       // Processor under test.
-      processor = app.get(PartTimeECertFeedbackIntegrationScheduler);
+      processor = app.get(FullTimeECertFeedbackIntegrationScheduler);
     });
 
     beforeEach(async () => {
@@ -73,7 +72,7 @@ describe(
         (fileContent: string) => {
           const file = getStructuredRecords(fileContent);
           // Force the header to be wrong.
-          file.header = file.header.replace("01 222NEW", "10 222NEW");
+          file.header = file.header.replace("100222  NEW", "500222  NEW");
           return createFileFromStructuredRecords(file);
         },
       );
@@ -81,7 +80,7 @@ describe(
       const mockedJob = mockBullJob<void>();
 
       // Act
-      const result = await processor.processPartTimeResponses(mockedJob.job);
+      const result = await processor.processFullTimeResponses(mockedJob.job);
 
       // Assert
       expect(result).toContain(
@@ -105,7 +104,7 @@ describe(
         (fileContent: string) => {
           const file = getStructuredRecords(fileContent);
           // Force the SIN hash total footer to be wrong.
-          file.footer = file.footer.replace("99NEW PT", "89NEW PT");
+          file.footer = file.footer.replace("999 NEW", "777 NEW");
           return createFileFromStructuredRecords(file);
         },
       );
@@ -113,7 +112,7 @@ describe(
       const mockedJob = mockBullJob<void>();
 
       // Act
-      const result = await processor.processPartTimeResponses(mockedJob.job);
+      const result = await processor.processFullTimeResponses(mockedJob.job);
 
       // Assert
       expect(result).toContain(
@@ -137,7 +136,7 @@ describe(
         (fileContent: string) => {
           const file = getStructuredRecords(fileContent);
           // Force the SIN hash total footer to be wrong.
-          file.footer = file.footer.replace("5000000001", "5000000002");
+          file.footer = file.footer.replace("1000000001", "1000000002");
           return createFileFromStructuredRecords(file);
         },
       );
@@ -145,7 +144,7 @@ describe(
       const mockedJob = mockBullJob<void>();
 
       // Act
-      const result = await processor.processPartTimeResponses(mockedJob.job);
+      const result = await processor.processFullTimeResponses(mockedJob.job);
 
       // Assert
       expect(result).toContain(
@@ -169,10 +168,7 @@ describe(
         (fileContent: string) => {
           const file = getStructuredRecords(fileContent);
           // Force the SIN hash total footer to be wrong.
-          file.footer = file.footer.replace(
-            "000000399800085",
-            "000000399800086",
-          );
+          file.footer = file.footer.replace("399800143", "399800144");
           return createFileFromStructuredRecords(file);
         },
       );
@@ -180,7 +176,7 @@ describe(
       const mockedJob = mockBullJob<void>();
 
       // Act
-      const result = await processor.processPartTimeResponses(mockedJob.job);
+      const result = await processor.processFullTimeResponses(mockedJob.job);
 
       // Assert
       expect(result).toContain(
@@ -213,7 +209,7 @@ describe(
       const mockedJob = mockBullJob<void>();
 
       // Act
-      const result = await processor.processPartTimeResponses(mockedJob.job);
+      const result = await processor.processFullTimeResponses(mockedJob.job);
 
       // Assert
       expect(result).toContain(
@@ -235,7 +231,7 @@ describe(
         db.dataSource,
         undefined,
         {
-          offeringIntensity: OfferingIntensity.partTime,
+          offeringIntensity: OfferingIntensity.fullTime,
           applicationStatus: ApplicationStatus.Completed,
           firstDisbursementInitialValues: {
             coeStatus: COEStatus.completed,
@@ -249,7 +245,7 @@ describe(
       const mockedJob = mockBullJob<void>();
 
       // Act
-      const result = await processor.processPartTimeResponses(mockedJob.job);
+      const result = await processor.processFullTimeResponses(mockedJob.job);
 
       // Assert
       expect(result.length).toBe(1);
@@ -299,7 +295,7 @@ describe(
           db.dataSource,
           undefined,
           {
-            offeringIntensity: OfferingIntensity.partTime,
+            offeringIntensity: OfferingIntensity.fullTime,
             applicationStatus: ApplicationStatus.Completed,
             firstDisbursementInitialValues: {
               coeStatus: COEStatus.completed,
@@ -315,7 +311,7 @@ describe(
         const mockedJob = mockBullJob<void>();
 
         // Act
-        const result = await processor.processPartTimeResponses(mockedJob.job);
+        const result = await processor.processFullTimeResponses(mockedJob.job);
 
         // Assert
         expect(result.length).toBe(3);
