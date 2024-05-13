@@ -12,7 +12,7 @@
       "label": "Form title",
       "labelWidth": "",
       "labelMargin": "",
-      "tag": "h3",
+      "tag": "h2",
       "className": "category-header-large primary-color",
       "attrs": [
         {
