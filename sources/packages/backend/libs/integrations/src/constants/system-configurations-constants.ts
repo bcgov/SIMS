@@ -21,3 +21,8 @@ export const ECE_RESPONSE_COE_DECLINED_REASON =
  */
 export const ECE_RESPONSE_ATTACHMENT_FILE_NAME =
   "Processing_Summary_Report.txt";
+
+/**
+ * Regex to split a file content string with line breaks.
+ */
+export const LINE_BREAK_SPLIT_REGEX = /\r\n|\n\r|\n|\r/;

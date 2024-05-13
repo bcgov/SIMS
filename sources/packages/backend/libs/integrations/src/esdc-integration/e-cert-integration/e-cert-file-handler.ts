@@ -26,6 +26,7 @@ import { ECertIntegrationService } from "./e-cert.integration.service";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { ECertGenerationService } from "@sims/integrations/services";
 import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
+import * as path from "path";
 
 /**
  * Used to abort the e-Cert generation process, cancel the current transaction,
@@ -337,10 +338,13 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     try {
       eCertFeedbackResponseRecords =
         await eCertIntegrationService.downloadResponseFile(filePath);
-    } catch (error) {
+    } catch (error: unknown) {
       // Abort the process nicely not throwing an exception and
       // allowing other response files to be processed.
-      processSummary.error(`Error downloading file ${filePath}.`, error);
+      processSummary.error(
+        `Error downloading and parsing the file ${filePath}.`,
+        error,
+      );
       return;
     }
     // Processing the records.
@@ -348,10 +352,17 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
       `File contains ${eCertFeedbackResponseRecords.length} records.`,
     );
     try {
-      this.sanitizeErrorCodes(
+      const unknownErrorCodesMessage = this.getUnknownErrorCodesMessage(
         eCertFeedbackResponseRecords,
         eCertFeedbackErrorCodeMap,
       );
+      if (unknownErrorCodesMessage) {
+        // Abort the file processing and return after logging the unknown error codes.
+        processSummary.error(unknownErrorCodesMessage);
+        return;
+      }
+      // Get the file name from the file path.
+      const feedbackFileName = path.basename(filePath);
       for (const eCertFeedbackResponseRecord of eCertFeedbackResponseRecords) {
         const recordProcessSummary = new ProcessSummary();
         processSummary.children(recordProcessSummary);
@@ -359,6 +370,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
           recordProcessSummary,
           eCertFeedbackResponseRecord,
           eCertFeedbackErrorCodeMap,
+          feedbackFileName,
         );
       }
     } catch (error: unknown) {
@@ -382,11 +394,14 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
    * @param eCertFeedbackResponseRecord e-Cert feedback response record.
    * @param eCertFeedbackErrorCodeMap e-Cert feedback error map
    * to get error id by error code.
+   * @param feedbackFileName integration file name.
+   *
    */
   private async createDisbursementFeedbackError(
     processSummary: ProcessSummary,
     eCertFeedbackResponseRecord: ECertResponseRecord,
     eCertFeedbackErrorCodeMap: ECertFeedbackCodeMap,
+    feedbackFileName: string,
   ): Promise<void> {
     try {
       const dateReceived = new Date();
@@ -402,6 +417,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
 
       await this.disbursementScheduleErrorsService.createECertErrorRecord(
         eCertFeedbackResponseRecord.documentNumber,
+        feedbackFileName,
         receivedErrorIds,
         dateReceived,
       );
@@ -410,10 +426,8 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
       );
     } catch (error: unknown) {
       // Log the error message and continue the processing.
-      processSummary.error(
-        `Error processing the record for document number ${eCertFeedbackResponseRecord.documentNumber} at line ${eCertFeedbackResponseRecord.lineNumber}.`,
-        error,
-      );
+      const errorMessage = `Error processing the record for document number ${eCertFeedbackResponseRecord.documentNumber} at line ${eCertFeedbackResponseRecord.lineNumber}.`;
+      processSummary.error(errorMessage, error);
     }
   }
 
@@ -441,16 +455,16 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
   }
 
   /**
-   * Sanitize the e-Cert response records validating the error codes.
-   * @param eCertFeedbackResponseRecords e-Cert feedback response records to sanitize.
+   * Validate the error codes in e-Cert response records and create unknown error code message.
+   * @param eCertFeedbackResponseRecords e-Cert feedback response records to validate.
    * @param eCertFeedbackErrorCodeMap e-Cert feedback error map
    * to get error id by error code.
-   * @throws unknown error code error.
+   * @returns unknown error code message if any unknown error codes are present.
    */
-  private sanitizeErrorCodes(
+  private getUnknownErrorCodesMessage(
     eCertFeedbackResponseRecords: ECertResponseRecord[],
     eCertFeedbackErrorCodeMap: ECertFeedbackCodeMap,
-  ): void {
+  ): string | undefined {
     // Check for error codes sent that are not known to the system.
     // In the case the system needs to be updated with latest error codes.
     const unknownFeedbackErrorCodes: string[] =
@@ -466,11 +480,9 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
         ),
       );
     if (unknownFeedbackErrorCodes.length) {
-      throw new Error(
-        `The following error codes are unknown to the system: ${Array.from(
-          new Set(unknownFeedbackErrorCodes),
-        ).join(",")}.`,
-      );
+      return `The following error codes are unknown to the system: ${Array.from(
+        new Set(unknownFeedbackErrorCodes),
+      ).join(",")}.`;
     }
   }
 

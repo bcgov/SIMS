@@ -1,3 +1,4 @@
+import { CustomNamedError } from "../custom-named-error";
 import { parseJSONError } from "../parse-json";
 
 /**
@@ -104,7 +105,16 @@ export class ProcessSummary {
     error: unknown = null,
     scope: LogScopes = LogScopes.Combined,
   ): void {
-    const errorDescription = error ? parseJSONError(error) : "";
+    let errorDescription = "";
+    // Considering that logging the stack trace is not useful for custom-named errors and only message is sufficient,
+    // the custom-named errors are identified and custom error message is added to the process summary.
+    // For any other runtime error, logging the stack trace is considered as essential.
+    if (error) {
+      errorDescription =
+        error instanceof CustomNamedError
+          ? error.message
+          : parseJSONError(error);
+    }
     const errorMessage = `${message} ${errorDescription}`.trim();
     this.logs[scope].push(new LogEntry(errorMessage, LogLevels.Error));
   }

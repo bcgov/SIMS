@@ -4,6 +4,7 @@ import { DeepMocked } from "@golevelup/ts-jest";
 import { END_OF_LINE } from "@sims/utilities";
 import { readFileSync } from "fs";
 import { FILE_DEFAULT_ENCODING } from "@sims/services/constants";
+import { LINE_BREAK_SPLIT_REGEX } from "@sims/integrations/constants";
 
 // MSFAA received files mocks.
 export const MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD =
@@ -131,7 +132,7 @@ export interface StructuredFile {
  * @returns header, records and footer.
  */
 export function getStructuredRecords(fileContent: string): StructuredFile {
-  const fileLines = fileContent.split(END_OF_LINE);
+  const fileLines = fileContent.split(LINE_BREAK_SPLIT_REGEX);
   const header = fileLines.shift();
   const footer = fileLines.pop();
   return {

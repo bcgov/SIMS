@@ -10,6 +10,8 @@ import {
   FixedFormatFileLine,
   SFTPIntegrationBase,
 } from "@sims/integrations/services/ssh";
+import { CustomNamedError } from "@sims/utilities";
+import { FILE_PARSING_ERROR } from "@sims/services/constants";
 
 @Injectable()
 export abstract class ECertIntegrationService extends SFTPIntegrationBase<
@@ -53,8 +55,9 @@ export abstract class ECertIntegrationService extends SFTPIntegrationBase<
         `The E-Cert file ${remoteFilePath} has an invalid record type code on header: ${header.recordTypeCode}`,
       );
       // If the header is not the expected one.
-      throw new Error(
-        "The E-Cert file has an invalid record type code on header",
+      throw new CustomNamedError(
+        "The E-Cert file has an invalid record type code on header.",
+        FILE_PARSING_ERROR,
       );
     }
 
@@ -70,8 +73,9 @@ export abstract class ECertIntegrationService extends SFTPIntegrationBase<
         `The E-Cert file ${remoteFilePath} has an invalid record type code on trailer: ${trailer.recordTypeCode}`,
       );
       // If the trailer is not the expected one.
-      throw new Error(
-        "The E-Cert file has an invalid record type code on trailer",
+      throw new CustomNamedError(
+        "The E-Cert file has an invalid record type code on trailer.",
+        FILE_PARSING_ERROR,
       );
     }
 
@@ -84,7 +88,10 @@ export abstract class ECertIntegrationService extends SFTPIntegrationBase<
         `The E-Cert file ${remoteFilePath} has invalid number of records, expected ${trailer.recordCount} but got ${fileLines.length}`,
       );
       // If the number of records does not match the trailer record count..
-      throw new Error("The E-Cert file has invalid number of records");
+      throw new CustomNamedError(
+        "The E-Cert file has invalid number of records.",
+        FILE_PARSING_ERROR,
+      );
     }
 
     // Generate the records.
@@ -107,11 +114,12 @@ export abstract class ECertIntegrationService extends SFTPIntegrationBase<
      */
     if (sumOfAllSin !== trailer.totalSINHash) {
       this.logger.error(
-        `The E-Cert file ${remoteFilePath} has SINHash inconsistent with the total sum of sin in the records`,
+        `The E-Cert file ${remoteFilePath} has SINHash inconsistent with the total sum of sin in the records.`,
       );
       // If the Sum hash total of SIN in the records does not match the trailer SIN hash total count.
-      throw new Error(
-        "The E-Cert file has TotalSINHash inconsistent with the total sum of sin in the records",
+      throw new CustomNamedError(
+        "The E-Cert file has TotalSINHash inconsistent with the total sum of sin in the records.",
+        FILE_PARSING_ERROR,
       );
     }
     return feedbackRecords;

@@ -24,6 +24,7 @@ import {
 } from "@sims/utilities";
 import { OfferingIntensity } from "@sims/sims-db";
 import { FILE_DEFAULT_ENCODING } from "@sims/services/constants";
+import { LINE_BREAK_SPLIT_REGEX } from "@sims/integrations/constants";
 
 /**
  * Manages the creation of the content files that needs to be sent
@@ -152,7 +153,7 @@ export class MSFAAIntegrationService extends SFTPIntegrationBase<MSFAASFTPRespon
       // Convert the file content to an array of text lines and remove possible blank lines.
       const fileLines = fileContent
         .toString()
-        .split(/\r\n|\n\r|\n|\r/)
+        .split(LINE_BREAK_SPLIT_REGEX)
         .filter((line) => line.length > 0);
       // Read the first line to check if the header code is the expected one.
       const header = MSFAAFileHeader.createFromLine(fileLines.shift()); // Read and remove header.

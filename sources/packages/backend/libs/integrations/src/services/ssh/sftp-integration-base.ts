@@ -6,6 +6,7 @@ import { SFTPConfig } from "@sims/utilities/config";
 import { FixedFormatFileLine } from "./sftp-integration-base.models";
 import { END_OF_LINE } from "@sims/utilities";
 import { FILE_DEFAULT_ENCODING } from "@sims/services/constants";
+import { LINE_BREAK_SPLIT_REGEX } from "@sims/integrations/constants";
 
 /**
  * Provides the basic features to enable the SFTP integration.
@@ -141,7 +142,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
       // Convert the file content to an array of text lines and remove possible blank lines.
       return fileContent
         .toString()
-        .split(/\r\n|\n\r|\n|\r/)
+        .split(LINE_BREAK_SPLIT_REGEX)
         .filter((line) => line.length > 0);
     } finally {
       await SshService.closeQuietly(client);

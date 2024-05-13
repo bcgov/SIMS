@@ -7,6 +7,8 @@ import {
 } from "@sims/sims-db";
 import { SystemUsersService } from "@sims/services";
 import { DisbursementScheduleService } from "../disbursement-schedule/disbursement-schedule.service";
+import { CustomNamedError } from "@sims/utilities";
+import { DOCUMENT_NUMBER_NOT_FOUND } from "@sims/integrations/constants";
 
 /**
  * Service layer for Disbursement Schedule Errors
@@ -25,6 +27,7 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
   /**
    * Save Error codes from the E-Cert feedback file.
    * @param documentNumber disbursement document number.
+   * @param feedbackFileName feedback integration file name.
    * @param errorCodeIds e-Cert feedback error ids
    * of error codes received.
    * @param dateReceived Date Received.
@@ -32,6 +35,7 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
    */
   async createECertErrorRecord(
     documentNumber: number,
+    feedbackFileName: string,
     errorCodeIds: number[],
     dateReceived: Date,
   ): Promise<InsertResult> {
@@ -40,8 +44,9 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
         documentNumber,
       );
     if (!disbursementSchedule) {
-      throw new Error(
+      throw new CustomNamedError(
         `Disbursement for document number ${documentNumber} not found.`,
+        DOCUMENT_NUMBER_NOT_FOUND,
       );
     }
     const auditUser = this.systemUsersService.systemUser;
@@ -51,6 +56,7 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
       disbursementFeedbackError.eCertFeedbackError = {
         id: errorCodeId,
       } as ECertFeedbackError;
+      disbursementFeedbackError.feedbackFileName = feedbackFileName;
       disbursementFeedbackError.dateReceived = dateReceived;
       disbursementFeedbackError.creator = auditUser;
       return disbursementFeedbackError;
