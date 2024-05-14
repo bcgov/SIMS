@@ -18,7 +18,6 @@ export default defineComponent({
   },
   setup(props) {
     const headingTag = computed(() => {
-      console.log("props.title", props.title);
       return `h${props.level}`;
     });
     return { headingTag };
