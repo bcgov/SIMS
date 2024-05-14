@@ -225,11 +225,11 @@ export async function saveFakeApplicationDisbursements(
  * - `student` related student.
  * - `program` related education program.
  * - `offering` related education program offering.
+ * - `programYear` related program year.
  * @param options additional options:
  * - `applicationStatus` application status for the application.
  * - `offeringIntensity` if provided sets the offering intensity for the created fakeApplication, otherwise sets it to fulltime by default.
  * - `applicationData` related application data.
- * - `applicationProgramYearId` related program year id of the application.
  * @returns the created application.
  */
 export async function saveFakeApplication(
@@ -240,12 +240,12 @@ export async function saveFakeApplication(
     student?: Student;
     program?: EducationProgram;
     offering?: EducationProgramOffering;
+    programYear?: ProgramYear;
   },
   options?: {
     applicationStatus?: ApplicationStatus;
     offeringIntensity?: OfferingIntensity;
     applicationData?: ApplicationData;
-    applicationProgramYearId?: number;
   },
 ): Promise<Application> {
   const userRepo = dataSource.getRepository(User);
@@ -274,7 +274,7 @@ export async function saveFakeApplication(
     {
       initialValue: {
         data: options?.applicationData,
-        programYearId: options?.applicationProgramYearId,
+        programYearId: relations?.programYear?.id,
       },
     },
   );

@@ -27,7 +27,7 @@ import { parse } from "papaparse";
 import * as request from "supertest";
 import { SystemUsersService } from "@sims/services";
 import { AppInstitutionsModule } from "../../../../app.institutions.module";
-import { FormService } from "../../../../services";
+import { FormNames, FormService } from "../../../../services";
 import { TestingModule } from "@nestjs/testing";
 
 describe("ReportInstitutionsController(e2e)-exportReport", () => {
@@ -41,7 +41,6 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
   let systemUsersService: SystemUsersService;
   let formService: FormService;
   let programYear: ProgramYear;
-  const REPORT_FORM_NAME = "exportfinancialreports";
   const PROGRAM_YEAR_PREFIX = 2010;
 
   beforeAll(async () => {
@@ -83,7 +82,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
     programYear = await ensureProgramYearExists(db, PROGRAM_YEAR_PREFIX);
   });
 
-  it("Should generate the offering details report when a report generation request is made with the appropriate parameters i.e. program year and the offering intensity", async () => {
+  it("Should generate the offering details report when a report generation request is made with the appropriate program year and offering intensity.", async () => {
     // Arrange
 
     // Created 3 offerings as follows:
@@ -123,10 +122,10 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
         institutionLocation: collegeFLocation,
         student,
         offering: secondSavedOffering,
+        programYear,
       },
       {
         applicationStatus: ApplicationStatus.Completed,
-        applicationProgramYearId: programYear.id,
       },
     );
     // 3rd offering: with an application belonging to the location of the institution for which the report is not generated.
@@ -148,10 +147,10 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
         institutionLocation: collegeCLocation,
         student,
         offering: thirdSavedOffering,
+        programYear,
       },
       {
         applicationStatus: ApplicationStatus.Completed,
-        applicationProgramYearId: programYear.id,
       },
     );
     const payload = {
@@ -166,7 +165,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
     };
     const dryRunSubmissionMock = jest.fn().mockResolvedValue({
       valid: true,
-      formName: REPORT_FORM_NAME,
+      formName: FormNames.ExportFinancialReports,
       data: { data: payload },
     });
     formService.dryRunSubmission = dryRunSubmissionMock;
