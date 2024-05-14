@@ -25,7 +25,7 @@
               color="primary"
             >
               <template v-for="(item, index) in items" :key="index">
-                <v-list-item :value="index" @click="item.command">
+                <v-list-item :value="index" @click="item.command" tabindex="0">
                   <template v-slot:prepend>
                     <v-icon :icon="item.icon" :color="item.iconColor"></v-icon>
                   </template>
