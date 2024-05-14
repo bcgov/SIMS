@@ -17,7 +17,7 @@ on:
         description: "Comma seperated list of application Image Streams to prune"
         required: true
         default: "web-sims, api-sims, queue-consumers-sims, workers-sims"
-      jobs:
+      ocjobs:
           description: "Comma seperated list of job Image Streams to prune"
           required: true
           default: "db.migrations"
@@ -40,6 +40,7 @@ jobs:
         run: |
           echo "ENVIRONMENT=${{ inputs.environment || 'test' }}" >> $GITHUB_ENV
           echo "APPLICATIONS=${{ inputs.applications || 'web-sims, api-sims, queue-consumers-sims, workers-sims' }}" >> $GITHUB_ENV
+          echo "OCJOBS=${{ inputs.ocjobs || 'db.migrations' }}" >> $GITHUB_ENV
           echo "PREFIX=${{ inputs.prefix || 'main' }}" >> $GITHUB_ENV
           echo "MIN_TAGS=${{ inputs.minTags || '10' }}" >> $GITHUB_ENV
 
@@ -47,7 +48,7 @@ jobs:
         run: |
           echo "Environment: ${ENVIRONMENT}"
           echo "Applications: ${APPLICATIONS}"
-          echo "Jobs: ${JOBS}"
+          echo "Jobs: ${OCJOBS}"
           echo "Prefix: ${PREFIX}"
           echo "Minimum Tags: ${MIN_TAGS}"
 
@@ -75,7 +76,7 @@ jobs:
           ./pruneImages.sh \
               --license_plate=${{ vars.OPENSHIFT_LICENSE_PLATE }} \
               --env=${ENVIRONMENT} \
-              --apps="${JOBS}" \
+              --apps="${OCJOBS}" \
               --prefix=${PREFIX} \
               --min_tags=${MIN_TAGS} \
               --type=JOB
