@@ -20,7 +20,6 @@
     <div v-else>
       <body-header
         title="Fill in the field(s) below"
-        title-header-level="2"
         subTitle="StudentAid BC will review your application change after you submit the fields below."
       ></body-header>
       <appeal-requests-form

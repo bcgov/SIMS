@@ -3,7 +3,6 @@
     <v-container>
       <body-header
         title="History"
-        title-header-level="2"
         class="m-1"
         subTitle="A history of applications"
         :recordsCount="assessmentHistory.length"

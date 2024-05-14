@@ -1,10 +1,7 @@
 <template>
   <body-header-container :enableCardView="true"
     ><template #header>
-      <body-header
-        :title="applicationOfferingChangeDetails.studentName"
-        title-header-level="2"
-      />
+      <body-header :title="applicationOfferingChangeDetails.studentName" />
       <header-title-value
         class="mb-2"
         title="Application #"

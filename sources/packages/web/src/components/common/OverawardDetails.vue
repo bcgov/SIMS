@@ -3,7 +3,6 @@
     <template #header>
       <body-header
         title="Overawards"
-        title-header-level="2"
         subTitle="Overaward amounts generated due to application reassessments"
       />
     </template>
@@ -58,7 +57,6 @@
     <template #header>
       <body-header
         title="Overaward deductions"
-        title-header-level="2"
         subTitle="History of money that was deducted from one or more applications to pay back what is owed"
       >
         <template #actions v-if="allowManualOverawardDeduction">

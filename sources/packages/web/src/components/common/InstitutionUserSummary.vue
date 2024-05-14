@@ -2,11 +2,7 @@
 <template>
   <body-header-container>
     <template #header>
-      <body-header
-        title="All users"
-        title-header-level="2"
-        :recordsCount="usersListAndCount.count"
-      >
+      <body-header title="All users" :recordsCount="usersListAndCount.count">
         <template #subtitle>
           <ul>
             <li>

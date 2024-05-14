@@ -3,7 +3,6 @@
     <v-container>
       <body-header
         title="Requests"
-        title-header-level="2"
         class="m-1"
         subTitle="Requests for application changes that may require reassessments"
         :recordsCount="requestedAssessment.length"

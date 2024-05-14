@@ -1,5 +1,5 @@
 <template>
-  <body-header title="Export reports" title-header-level="2" />
+  <body-header title="Export reports" />
   <formio
     formName="exportfinancialreports"
     @loaded="formLoaded"

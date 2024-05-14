@@ -9,7 +9,6 @@
     </template>
     <body-header
       title="Active applications"
-      title-header-level="2"
       data-cy="activeApplicationsTab"
       :recordsCount="applications.length"
     />

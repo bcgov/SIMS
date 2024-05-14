@@ -4,7 +4,6 @@
     <template #header>
       <body-header
         title="All locations"
-        title-header-level="2"
         :recordsCount="institutionLocationList.length"
         ><template #actions>
           <!-- Todo: We to eventually eliminate the logic which is based

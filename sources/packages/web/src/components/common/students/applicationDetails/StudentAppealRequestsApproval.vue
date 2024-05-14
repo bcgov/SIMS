@@ -1,5 +1,5 @@
 <template>
-  <body-header title="Student change" title-header-level="2">
+  <body-header title="Student change">
     <template #status-chip>
       <status-chip-requested-assessment :status="appealStatus" />
     </template>

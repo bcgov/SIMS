@@ -1,7 +1,7 @@
 <template>
   <body-header-container>
     <template #header>
-      <body-header title="Profile" title-header-level="2" />
+      <body-header title="Profile" />
     </template>
     <h3 class="category-header-medium">Student profile</h3>
     <content-group>

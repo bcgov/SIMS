@@ -4,7 +4,6 @@
     <template #header>
       <body-header
         title="Applications"
-        title-header-level="2"
         :recordsCount="applicationsAndCount.count"
       ></body-header>
     </template>

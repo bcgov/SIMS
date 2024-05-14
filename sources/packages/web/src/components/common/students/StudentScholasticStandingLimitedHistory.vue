@@ -1,10 +1,7 @@
 <template>
   <body-header-container :enableCardView="true">
     <template #header>
-      <body-header
-        title="Scholastic Standing Limited History"
-        title-header-level="2"
-      />
+      <body-header title="Scholastic Standing Limited History" />
     </template>
     <content-group
       ><p class="label-bold-normal">

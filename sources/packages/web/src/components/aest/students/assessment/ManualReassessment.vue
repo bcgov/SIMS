@@ -4,7 +4,6 @@
     <template #header>
       <body-header
         title="Trigger Reassessment Manually"
-        title-header-level="2"
         subTitle="Manual system trigger to re-perform assessment using existing application inputs. This should be used as a means of triggering the assessment or other downstream actions (COE requests, eCert requests) without requiring the student to edit and resubmit their application."
       />
     </template>

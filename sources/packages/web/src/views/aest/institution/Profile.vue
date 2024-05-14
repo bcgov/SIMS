@@ -2,7 +2,7 @@
   <tab-container>
     <body-header-container>
       <template #header>
-        <body-header title="Profile" title-header-level="2">
+        <body-header title="Profile">
           <template #actions>
             <check-permission-role :role="Role.InstitutionEditProfile">
               <template #="{ notAllowed }">

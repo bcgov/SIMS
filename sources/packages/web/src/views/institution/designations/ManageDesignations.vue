@@ -9,7 +9,6 @@
     </template>
     <body-header
       title="Designation requests"
-      title-header-level="2"
       :recordsCount="designations.length"
     >
       <template #subtitle>

@@ -2,7 +2,7 @@
   <full-page-container>
     <body-header-container>
       <template #header>
-        <body-header title="Search Students" title-header-level="2">
+        <body-header title="Search Students">
           <template #subtitle
             >Lookup students by entering their information below.</template
           >

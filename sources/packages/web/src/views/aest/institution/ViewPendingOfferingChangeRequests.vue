@@ -5,7 +5,6 @@
     </template>
     <body-header
       title="Requested application changes"
-      title-header-level="2"
       :recordsCount="applications?.count"
     >
       <template #subtitle>

@@ -1,7 +1,7 @@
 <template>
   <body-header-container>
     <template #header>
-      <body-header :title="studentName" title-header-level="2">
+      <body-header :title="studentName">
         <template #subtitle
           ><detail-header :headerMap="headerDetailsData"
         /></template>

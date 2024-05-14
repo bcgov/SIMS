@@ -4,7 +4,6 @@
       <template #header>
         <body-header
           title="Designation agreements"
-          title-header-level="2"
           :recordsCount="designations?.length"
         >
         </body-header>

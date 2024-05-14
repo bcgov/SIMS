@@ -33,7 +33,7 @@ export default defineComponent({
     },
     titleHeaderLevel: {
       type: Number,
-      default: 1,
+      default: 2,
     },
     subTitle: {
       type: String,

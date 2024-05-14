@@ -4,7 +4,6 @@
       <template #header>
         <body-header
           title="Social Insurance Number"
-          title-header-level="2"
           subTitle="The first row will always be the student's current active SIN."
           :recordsCount="studentSINValidations?.length"
         >

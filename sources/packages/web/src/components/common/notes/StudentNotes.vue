@@ -1,7 +1,7 @@
 <template>
   <body-header-container>
     <template #header>
-      <body-header title="Notes" title-header-level="2">
+      <body-header title="Notes">
         <template #actions>
           <v-btn-toggle
             v-model="toggleNotes"

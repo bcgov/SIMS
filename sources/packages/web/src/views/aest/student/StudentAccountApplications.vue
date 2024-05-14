@@ -5,7 +5,6 @@
     </template>
     <body-header
       title="Requested accounts"
-      title-header-level="2"
       subTitle="Make a determination for students requesting to login with a Basic BCeID."
       :recordsCount="accountApplications?.length"
     >

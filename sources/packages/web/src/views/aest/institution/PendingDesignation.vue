@@ -5,7 +5,6 @@
     </template>
     <body-header
       title="Pending Designations"
-      title-header-level="2"
       subTitle="Make a determination on each designation after viewing it's content."
       :recordsCount="designations?.length"
     >

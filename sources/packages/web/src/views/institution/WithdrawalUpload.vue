@@ -101,7 +101,6 @@
       <content-group v-if="validationResults.length">
         <body-header
           title="Validation summary"
-          title-header-level="2"
           :recordsCount="validationResults.length"
         ></body-header>
         <banner

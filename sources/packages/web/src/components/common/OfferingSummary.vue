@@ -1,7 +1,6 @@
 <template>
   <body-header
     title="Study period offerings"
-    title-header-level="2"
     :recordsCount="offeringsAndCount.count"
   >
     <template #actions>

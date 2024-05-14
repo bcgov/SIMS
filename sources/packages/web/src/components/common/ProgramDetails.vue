@@ -1,9 +1,5 @@
 <template>
-  <body-header
-    :title="educationProgram.name"
-    title-header-level="2"
-    data-cy="programName"
-  >
+  <body-header :title="educationProgram.name" data-cy="programName">
     <template #status-chip>
       <status-chip-program
         class="ml-2 mb-2"
