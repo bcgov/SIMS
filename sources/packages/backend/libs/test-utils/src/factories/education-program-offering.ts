@@ -56,7 +56,9 @@ export function createFakeEducationProgramOffering(
   offering.offeringType = OfferingTypes.Public;
   offering.yearOfStudy = 1;
   offering.courseLoad = 45;
-  offering.hasOfferingWILComponent = "no";
+  offering.hasOfferingWILComponent =
+    options?.initialValues?.hasOfferingWILComponent ?? "no";
+  offering.offeringWILType = options?.initialValues?.offeringWILType;
   offering.offeringDeclaration = true;
   offering.studyStartDate =
     options?.initialValues?.studyStartDate ??

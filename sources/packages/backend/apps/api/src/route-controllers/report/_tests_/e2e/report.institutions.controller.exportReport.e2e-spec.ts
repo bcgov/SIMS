@@ -87,7 +87,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
 
     // Created 3 offerings as follows:
     // 1st offering with 0 applications.
-    // 2nd offering with two applications for two different students belonging to the location of the institution for which the report is generated.
+    // 2nd offering with an application for a student belonging to the location of the institution for which the report is generated.
     // 3rd offering with an application for a student belonging to the location of a different institution for which this report is not generated.
     const student = await saveFakeStudent(db.dataSource);
     // 1st offering: with no submitted applications to it.
@@ -109,7 +109,12 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
         institutionLocation: collegeFLocation,
         auditUser: institutionUser,
       },
-      { initialValues: { studyStartDate: "2010-09-01" } },
+      {
+        initialValues: {
+          studyStartDate: "2010-09-01",
+          offeringWILType: "dummy type",
+        },
+      },
     );
     const secondSavedOffering = await db.educationProgramOffering.save(
       secondFakeOffering,
@@ -182,7 +187,6 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
       .then((response) => {
         const fileContent = response.request.res["text"];
         const parsedResult = parse(fileContent, {
-          delimiter: ",",
           header: true,
         });
         expect(parsedResult.data).toEqual(
@@ -190,15 +194,14 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
             {
               "Institution Location Code": collegeFLocation.institutionCode,
               Program: secondSavedOffering.educationProgram.name,
-              "SABC Program Code":
-                secondSavedOffering.educationProgram.sabcCode ?? "",
+              "SABC Program Code": "",
               "Offering Name": secondSavedOffering.name,
               "Year of Study": secondSavedOffering.yearOfStudy.toString(),
               "Offering Intensity": secondSavedOffering.offeringIntensity,
               "Course Load": secondSavedOffering.courseLoad.toString(),
               "Delivery Type": secondSavedOffering.offeringDelivered,
               "WIL Component": secondSavedOffering.hasOfferingWILComponent,
-              "WIL Component Type": secondSavedOffering.offeringWILType ?? "",
+              "WIL Component Type": "dummy type",
               "Start Date": secondSavedOffering.studyStartDate,
               "End Date": secondSavedOffering.studyEndDate,
               "Has Study Breaks":
@@ -219,15 +222,14 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
             {
               "Institution Location Code": collegeFLocation.institutionCode,
               Program: firstSavedOffering.educationProgram.name,
-              "SABC Program Code":
-                firstSavedOffering.educationProgram.sabcCode ?? "",
+              "SABC Program Code": "",
               "Offering Name": firstSavedOffering.name,
               "Year of Study": firstSavedOffering.yearOfStudy.toString(),
               "Offering Intensity": firstSavedOffering.offeringIntensity,
               "Course Load": firstSavedOffering.courseLoad.toString(),
               "Delivery Type": firstSavedOffering.offeringDelivered,
               "WIL Component": firstSavedOffering.hasOfferingWILComponent,
-              "WIL Component Type": firstSavedOffering.offeringWILType ?? "",
+              "WIL Component Type": "",
               "Start Date": firstSavedOffering.studyStartDate,
               "End Date": firstSavedOffering.studyEndDate,
               "Has Study Breaks":
