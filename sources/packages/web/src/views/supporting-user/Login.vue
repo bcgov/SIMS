@@ -13,9 +13,9 @@
             </p>
           </v-card-text>
           <content-group>
-            <h3 class="category-header-medium primary-color">
+            <h2 class="category-header-medium primary-color">
               Login or sign up
-            </h3>
+            </h2>
             <p class="sign-in-description">
               Whether you are a new or returning user—login or sign up here
               using your BC Services Card.

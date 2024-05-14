@@ -1,7 +1,11 @@
 <template>
   <v-row no-gutters>
     <v-col cols="auto" class="mr-2">
-      <h2 class="category-header-large color-blue">{{ fullTitleMessage }}</h2>
+      <dynamic-header
+        :title="fullTitleMessage"
+        :level="titleHeaderLevel"
+        class="category-header-large color-blue"
+      />
     </v-col>
     <v-col cols="auto" class="mr-2">
       <slot name="status-chip"></slot>
@@ -19,11 +23,17 @@
 
 <script lang="ts">
 import { computed, defineComponent } from "vue";
+import DynamicHeader from "./DynamicHeader.vue";
 export default defineComponent({
+  components: { DynamicHeader },
   props: {
     title: {
       type: String,
       required: true,
+    },
+    titleHeaderLevel: {
+      type: Number,
+      default: 1,
     },
     subTitle: {
       type: String,

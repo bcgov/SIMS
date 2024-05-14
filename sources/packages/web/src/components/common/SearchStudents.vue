@@ -68,7 +68,7 @@
       /> </content-group
   ></v-form>
   <template v-if="studentsFound">
-    <body-header title="Results" />
+    <body-header title="Results" title-header-level="2" />
     <content-group>
       <toggle-content :toggled="!students?.length">
         <DataTable :value="students">

@@ -2,6 +2,7 @@
   <full-page-container>
     <body-header
       title="Search Institution"
+      title-header-level="2"
       subTitle="Look up an institution by entering their information below."
     >
     </body-header>
@@ -43,7 +44,7 @@
       </content-group>
     </v-form>
     <template v-if="institutionsFound">
-      <body-header title="Results" />
+      <body-header title="Results" title-header-level="2" />
       <content-group>
         <DataTable
           v-if="institutionsFound"

@@ -7,7 +7,11 @@
         subTitle="Programs"
       />
     </template>
-    <body-header title="All programs" :recordsCount="programAndCount?.count">
+    <body-header
+      title="All programs"
+      title-header-level="2"
+      :recordsCount="programAndCount?.count"
+    >
       <template #actions>
         <v-row class="m-0 p-0">
           <v-text-field

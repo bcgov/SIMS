@@ -1,7 +1,7 @@
 <template>
   <v-card class="p-4">
     <template v-if="applicationStatus !== ApplicationStatus.Cancelled">
-      <body-header title="Track your application" />
+      <body-header title="Track your application" title-header-level="2" />
       <stepper-progress-bar
         :progressBarValue="trackerApplicationStatus"
         :progressStepLabels="applicationTrackerLabels"

@@ -9,7 +9,9 @@
     </template>
     <body-header-container :enableCardView="true">
       <template #header
-        ><body-header title="Understanding your overawards"
+        ><body-header
+          title="Understanding your overawards"
+          title-header-level="2"
       /></template>
       <div class="mt-2">
         <v-row

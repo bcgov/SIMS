@@ -1,7 +1,7 @@
 <template>
   <body-header-container :enableCardView="true">
     <template #header>
-      <body-header title="All restrictions">
+      <body-header title="All restrictions" title-header-level="2">
         <template #actions v-if="canAddRestrictions">
           <check-permission-role :role="Role.StudentAddRestriction">
             <template #="{ notAllowed }">

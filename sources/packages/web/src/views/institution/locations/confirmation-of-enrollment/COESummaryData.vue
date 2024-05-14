@@ -3,6 +3,7 @@
     <v-container :fluid="true">
       <body-header
         :title="header"
+        title-header-level="2"
         :recordsCount="disbursements.results?.length"
       >
         <template #subtitle>

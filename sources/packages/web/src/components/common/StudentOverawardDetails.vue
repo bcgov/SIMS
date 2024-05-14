@@ -3,6 +3,7 @@
     <template #header>
       <body-header
         title="Overaward balances"
+        title-header-level="2"
         subTitle="A balance of overawards broken down by award type"
       />
     </template>

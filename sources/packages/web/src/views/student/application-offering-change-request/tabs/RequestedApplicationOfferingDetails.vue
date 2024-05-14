@@ -2,7 +2,7 @@
   <tab-container :enableCardView="false" class="mt-n1">
     <body-header-container>
       <template #header>
-        <body-header :title="studentFullName">
+        <body-header :title="studentFullName" title-header-level="2">
           <template #subtitle
             ><detail-header :headerMap="headerDetailsData"
           /></template>

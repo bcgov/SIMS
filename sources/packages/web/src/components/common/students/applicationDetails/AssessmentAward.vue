@@ -1,6 +1,7 @@
 <template>
   <body-header
     title="Summary"
+    title-header-level="2"
     subTitle="Below is the summary from your assessment. To view your entire assessment, click on View assessment."
   >
     <template #actions>

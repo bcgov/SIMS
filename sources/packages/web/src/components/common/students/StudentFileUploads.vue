@@ -3,6 +3,7 @@
     <template #header>
       <body-header
         title="File Uploads"
+        title-header-level="2"
         :recordsCount="studentFileUploads?.length"
       >
         <template #actions v-if="canUploadFiles">

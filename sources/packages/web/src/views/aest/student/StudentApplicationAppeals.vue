@@ -5,6 +5,7 @@
     </template>
     <body-header
       title="Requested appeals"
+      title-header-level="2"
       :recordsCount="applicationAppeals.results?.length"
       subTitle="Make a determination on requested change(s) that may require a reassessment"
     >

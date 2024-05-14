@@ -4,6 +4,7 @@
       <template #header>
         <body-header
           title="All Programs"
+          title-header-level="2"
           :recordsCount="institutionProgramsSummary.count"
         >
           <template #actions>

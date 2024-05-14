@@ -2,7 +2,7 @@
   <tab-container>
     <body-header-container>
       <template #header>
-        <body-header title="All Restrictions">
+        <body-header title="All Restrictions" title-header-level="2">
           <template #actions>
             <check-permission-role :role="Role.InstitutionAddRestriction">
               <template #="{ notAllowed }">

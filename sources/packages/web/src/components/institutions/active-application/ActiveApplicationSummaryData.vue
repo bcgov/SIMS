@@ -3,6 +3,7 @@
     <v-container :fluid="true">
       <body-header
         title="Applications"
+        title-header-level="2"
         :recordsCount="applications.results?.length"
       >
         <template #actions>

@@ -2,7 +2,11 @@
   <tab-container>
     <body-header-container>
       <template #header>
-        <body-header title="Applications" :recordsCount="applications?.count">
+        <body-header
+          title="Applications"
+          title-header-level="2"
+          :recordsCount="applications?.count"
+        >
           <template #subtitle>
             Waiting for the student and StudentAid BC decision on the requested
             change
