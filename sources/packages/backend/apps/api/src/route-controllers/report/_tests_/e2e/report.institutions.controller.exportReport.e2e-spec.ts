@@ -187,7 +187,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
         });
         expect(parsedResult.data).toEqual(
           expect.arrayContaining([
-            expect.objectContaining({
+            {
               "Institution Location Code": collegeFLocation.institutionCode,
               Program: secondSavedOffering.educationProgram.name,
               "SABC Program Code":
@@ -215,8 +215,8 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
               "Funded Weeks":
                 secondSavedOffering.studyBreaks.totalFundedWeeks.toString(),
               "Total Applications": "1",
-            }),
-            expect.objectContaining({
+            },
+            {
               "Institution Location Code": collegeFLocation.institutionCode,
               Program: firstSavedOffering.educationProgram.name,
               "SABC Program Code":
@@ -244,35 +244,10 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
               "Funded Weeks":
                 firstSavedOffering.studyBreaks.totalFundedWeeks.toString(),
               "Total Applications": "",
-            }),
+            },
             expect.not.objectContaining({
               "Institution Location Code": collegeCLocation.institutionCode,
-              Program: thirdSavedOffering.educationProgram.name,
-              "SABC Program Code":
-                thirdSavedOffering.educationProgram.sabcCode ?? "",
               "Offering Name": thirdSavedOffering.name,
-              "Year of Study": thirdSavedOffering.yearOfStudy.toString(),
-              "Offering Intensity": thirdSavedOffering.offeringIntensity,
-              "Course Load": thirdSavedOffering.courseLoad.toString(),
-              "Delivery Type": thirdSavedOffering.offeringDelivered,
-              "WIL Component": thirdSavedOffering.hasOfferingWILComponent,
-              "WIL Component Type": thirdSavedOffering.offeringWILType ?? "",
-              "Start Date": thirdSavedOffering.studyStartDate,
-              "End Date": thirdSavedOffering.studyEndDate,
-              "Has Study Breaks":
-                (!thirdSavedOffering.lacksStudyBreaks).toString(),
-              "Actual Tuition":
-                thirdSavedOffering.actualTuitionCosts.toString(),
-              "Program Related Costs":
-                thirdSavedOffering.programRelatedCosts.toString(),
-              "Mandatory Fees": thirdSavedOffering.mandatoryFees.toString(),
-              "Exceptional Expenses":
-                thirdSavedOffering.exceptionalExpenses.toString(),
-              "Offering Type": thirdSavedOffering.offeringType,
-              Status: thirdSavedOffering.offeringStatus,
-              "Funded Weeks":
-                thirdSavedOffering.studyBreaks.totalFundedWeeks.toString(),
-              "Total Applications": "",
             }),
           ]),
         );
