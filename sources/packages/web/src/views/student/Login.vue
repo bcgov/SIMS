@@ -12,9 +12,9 @@
           <content-group>
             <v-row>
               <v-col>
-                <h3 class="category-header-medium primary-color">
+                <h2 class="category-header-medium primary-color">
                   Login or sign up
-                </h3>
+                </h2>
                 <p class="sign-in-description">
                   Whether you are a new or returning user—login or sign up using
                   your BC Services Card.
@@ -42,9 +42,9 @@
   </v-card>
   <v-card elevation="2" class="mx-auto mt-6" max-width="670px" outlined>
     <v-card-text>
-      <h3 class="category-header-medium primary-color">
+      <h2 class="category-header-medium primary-color">
         Frequently asked questions
-      </h3>
+      </h2>
       <v-expansion-panels>
         <v-expansion-panel
           collapse-icon="$expanderCollapseIcon"

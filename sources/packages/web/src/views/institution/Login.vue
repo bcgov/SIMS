@@ -18,9 +18,9 @@
             >.
           </p>
           <content-group>
-            <h3 class="category-header-medium primary-color">
+            <h2 class="category-header-medium primary-color">
               Login or register
-            </h3>
+            </h2>
             <p>No account? Please register through the BCeID website below.</p>
             <v-btn
               data-cy="login"
