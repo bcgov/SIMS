@@ -164,7 +164,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
           "Full Time": true,
           "Part Time": false,
         },
-        programYear: 10,
+        programYear: programYear.id,
       },
     };
     const dryRunSubmissionMock = jest.fn().mockResolvedValue({
