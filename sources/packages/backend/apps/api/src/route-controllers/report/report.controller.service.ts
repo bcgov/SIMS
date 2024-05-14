@@ -45,10 +45,10 @@ export class ReportControllerService {
       FormNames.ExportFinancialReports,
       payload,
     );
-    if (
-      !submissionResult.valid ||
-      !this.programYearExists(payload.params.programYear as number)
-    ) {
+    const programYearExists = await this.programYearExists(
+      payload.params.programYear as number,
+    );
+    if (!submissionResult.valid || !programYearExists) {
       throw new BadRequestException(
         "Not able to export report due to an invalid request.",
       );
