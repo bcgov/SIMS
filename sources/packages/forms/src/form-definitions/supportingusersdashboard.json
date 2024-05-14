@@ -1,7 +1,5 @@
 {
   "title": "Supporting Users Dashboard",
-  "display": "form",
-  "type": "form",
   "name": "supportingusersdashboard",
   "path": "supportingusersdashboard",
   "tags": [
@@ -13,7 +11,7 @@
       "labelWidth": "",
       "labelMargin": "",
       "tag": "h1",
-      "className": "",
+      "className": "category-header-x-large primary-color",
       "attrs": [
         {
           "attr": "",
@@ -22,7 +20,7 @@
       ],
       "content": "Welcome!",
       "refreshOnChange": false,
-      "customClass": "category-header-x-large primary-color",
+      "customClass": "",
       "hidden": false,
       "modalEdit": false,
       "key": "html",
