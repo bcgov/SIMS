@@ -48,7 +48,7 @@ export function createFakeApplication(
   application.data = options?.initialValue.data ?? ({} as ApplicationData);
   application.programYear = relations?.programYear ?? createFakeProgramYear();
   // TODO get programYear from relations instead of setting the id here.
-  application.programYear.id = options?.initialValue?.programYearId ?? 2;
+  application.programYear.id = relations?.programYear?.id ?? 2;
   application.student = relations?.student ?? createFakeStudent();
   application.applicationStatusUpdatedOn =
     options?.initialValue?.applicationStatusUpdatedOn ?? new Date();
@@ -270,11 +270,11 @@ export async function saveFakeApplication(
     {
       student: savedStudent,
       location: relations?.institutionLocation,
+      programYear: relations?.programYear,
     },
     {
       initialValue: {
         data: options?.applicationData,
-        programYearId: relations?.programYear?.id,
       },
     },
   );
