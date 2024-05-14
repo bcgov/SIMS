@@ -1,5 +1,7 @@
 {
   "title": "Supporting Users Dashboard",
+  "display": "form",
+  "type": "form",
   "name": "supportingusersdashboard",
   "path": "supportingusersdashboard",
   "tags": [
