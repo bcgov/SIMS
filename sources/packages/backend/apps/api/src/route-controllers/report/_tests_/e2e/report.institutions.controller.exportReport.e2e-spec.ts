@@ -4,6 +4,7 @@ import {
   Institution,
   InstitutionLocation,
   ProgramYear,
+  User,
 } from "@sims/sims-db";
 import {
   E2EDataSources,
@@ -25,7 +26,6 @@ import {
 } from "../../../../testHelpers";
 import { parse } from "papaparse";
 import * as request from "supertest";
-import { SystemUsersService } from "@sims/services";
 import { AppInstitutionsModule } from "../../../../app.institutions.module";
 import { FormNames, FormService } from "../../../../services";
 import { TestingModule } from "@nestjs/testing";
@@ -38,9 +38,9 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
   let collegeFLocation: InstitutionLocation;
   let collegeC: Institution;
   let collegeCLocation: InstitutionLocation;
-  let systemUsersService: SystemUsersService;
   let formService: FormService;
   let programYear: ProgramYear;
+  let institutionUser: User;
   const PROGRAM_YEAR_PREFIX = 2010;
 
   beforeAll(async () => {
@@ -56,11 +56,12 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
       FormService,
     );
     // College F.
-    const { institution: collegeF } = await getAuthRelatedEntities(
+    const { institution: collegeF, user } = await getAuthRelatedEntities(
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
     );
     collegeFLocation = createFakeInstitutionLocation({ institution: collegeF });
+    institutionUser = user;
     await authorizeUserTokenForLocation(
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
@@ -77,7 +78,6 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
       InstitutionTokenTypes.CollegeCUser,
       collegeCLocation,
     );
-    systemUsersService = nestApplication.get(SystemUsersService);
     // Program Year for the following tests.
     programYear = await ensureProgramYearExists(db, PROGRAM_YEAR_PREFIX);
   });
@@ -89,14 +89,13 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
     // 1st offering with 0 applications.
     // 2nd offering with two applications for two different students belonging to the location of the institution for which the report is generated.
     // 3rd offering with an application for a student belonging to the location of a different institution for which this report is not generated.
-    const auditUser = systemUsersService.systemUser;
     const student = await saveFakeStudent(db.dataSource);
     // 1st offering: with no submitted applications to it.
     const firstFakeOffering = createFakeEducationProgramOffering(
       {
         institution: collegeF,
         institutionLocation: collegeFLocation,
-        auditUser,
+        auditUser: institutionUser,
       },
       { initialValues: { studyStartDate: "2010-09-01" } },
     );
@@ -108,7 +107,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
       {
         institution: collegeF,
         institutionLocation: collegeFLocation,
-        auditUser,
+        auditUser: institutionUser,
       },
       { initialValues: { studyStartDate: "2010-09-01" } },
     );
@@ -133,7 +132,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
       {
         institution: collegeC,
         institutionLocation: collegeCLocation,
-        auditUser,
+        auditUser: institutionUser,
       },
       { initialValues: { studyStartDate: "2010-09-01" } },
     );
@@ -185,7 +184,6 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
         const parsedResult = parse(fileContent, {
           delimiter: ",",
           header: true,
-          skipEmptyLines: "greedy",
         });
         expect(parsedResult.data).toEqual(
           expect.arrayContaining([
