@@ -8,6 +8,7 @@ import {
 import {
   createFakeEducationProgramOffering,
   createFakeInstitutionLocation,
+  getProviderInstanceForModule,
   saveFakeApplication,
   saveFakeStudent,
 } from "@sims/test-utils";
@@ -23,10 +24,13 @@ import { DataSource, Repository } from "typeorm";
 import { parse } from "papaparse";
 import * as request from "supertest";
 import { SystemUsersService } from "@sims/services";
-import { getDateOnlyString } from "@sims/utilities";
+import { AppInstitutionsModule } from "../../../../app.institutions.module";
+import { FormService } from "../../../../services";
+import { TestingModule } from "@nestjs/testing";
 
 describe("ReportInstitutionsController(e2e)-exportReport", () => {
   let app: INestApplication;
+  let appModule: TestingModule;
   let appDataSource: DataSource;
   let collegeF: Institution;
   let collegeFLocation: InstitutionLocation;
@@ -34,11 +38,21 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
   let collegeCLocation: InstitutionLocation;
   let offeringRepo: Repository<EducationProgramOffering>;
   let systemUsersService: SystemUsersService;
+  let formService: FormService;
+  const REPORT_FORM_NAME = "exportfinancialreports";
 
   beforeAll(async () => {
-    const { nestApplication, dataSource } = await createTestingAppModule();
+    const { nestApplication, module, dataSource } =
+      await createTestingAppModule();
     app = nestApplication;
+    appModule = module;
     appDataSource = dataSource;
+    // Mock the form service to validate the dry-run submission result.
+    formService = await getProviderInstanceForModule(
+      appModule,
+      AppInstitutionsModule,
+      FormService,
+    );
     // College F.
     const { institution: collegeF } = await getAuthRelatedEntities(
       appDataSource,
@@ -124,10 +138,6 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
       },
       { applicationStatus: ApplicationStatus.Completed },
     );
-    const endpoint = "/institutions/report";
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
     const payload = {
       reportName: "Offering_Details_Report",
       params: {
@@ -138,6 +148,16 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
         programYear: 2,
       },
     };
+    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+      valid: true,
+      formName: REPORT_FORM_NAME,
+      data: { data: payload },
+    });
+    formService.dryRunSubmission = dryRunSubmissionMock;
+    const endpoint = "/institutions/report";
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
     // Act/Assert
 
     await request(app.getHttpServer())
@@ -166,12 +186,8 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
               "Delivery Type": secondSavedOffering.offeringDelivered,
               "WIL Component": secondSavedOffering.hasOfferingWILComponent,
               "WIL Component Type": secondSavedOffering.offeringWILType ?? "",
-              "Start Date": getDateOnlyString(
-                secondSavedOffering.studyStartDate,
-              ).toString(),
-              "End Date": getDateOnlyString(
-                secondSavedOffering.studyEndDate,
-              ).toString(),
+              "Start Date": secondSavedOffering.studyStartDate,
+              "End Date": secondSavedOffering.studyEndDate,
               "Has Study Breaks":
                 (!secondSavedOffering.lacksStudyBreaks).toString(),
               "Actual Tuition":
@@ -199,12 +215,8 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
               "Delivery Type": firstSavedOffering.offeringDelivered,
               "WIL Component": firstSavedOffering.hasOfferingWILComponent,
               "WIL Component Type": firstSavedOffering.offeringWILType ?? "",
-              "Start Date": getDateOnlyString(
-                firstSavedOffering.studyStartDate,
-              ).toString(),
-              "End Date": getDateOnlyString(
-                firstSavedOffering.studyEndDate,
-              ).toString(),
+              "Start Date": firstSavedOffering.studyStartDate,
+              "End Date": firstSavedOffering.studyEndDate,
               "Has Study Breaks":
                 (!firstSavedOffering.lacksStudyBreaks).toString(),
               "Actual Tuition":
@@ -232,12 +244,8 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
               "Delivery Type": thirdSavedOffering.offeringDelivered,
               "WIL Component": thirdSavedOffering.hasOfferingWILComponent,
               "WIL Component Type": thirdSavedOffering.offeringWILType ?? "",
-              "Start Date": getDateOnlyString(
-                thirdSavedOffering.studyStartDate,
-              ).toString(),
-              "End Date": getDateOnlyString(
-                thirdSavedOffering.studyEndDate,
-              ).toString(),
+              "Start Date": thirdSavedOffering.studyStartDate,
+              "End Date": thirdSavedOffering.studyEndDate,
               "Has Study Breaks":
                 (!thirdSavedOffering.lacksStudyBreaks).toString(),
               "Actual Tuition":
