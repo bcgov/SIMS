@@ -1,13 +1,16 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
   ApplicationStatus,
-  EducationProgramOffering,
   Institution,
   InstitutionLocation,
+  ProgramYear,
 } from "@sims/sims-db";
 import {
+  E2EDataSources,
+  createE2EDataSources,
   createFakeEducationProgramOffering,
   createFakeInstitutionLocation,
+  ensureProgramYearExists,
   getProviderInstanceForModule,
   saveFakeApplication,
   saveFakeStudent,
@@ -20,7 +23,6 @@ import {
   getAuthRelatedEntities,
   getInstitutionToken,
 } from "../../../../testHelpers";
-import { DataSource, Repository } from "typeorm";
 import { parse } from "papaparse";
 import * as request from "supertest";
 import { SystemUsersService } from "@sims/services";
@@ -31,22 +33,23 @@ import { TestingModule } from "@nestjs/testing";
 describe("ReportInstitutionsController(e2e)-exportReport", () => {
   let app: INestApplication;
   let appModule: TestingModule;
-  let appDataSource: DataSource;
+  let db: E2EDataSources;
   let collegeF: Institution;
   let collegeFLocation: InstitutionLocation;
   let collegeC: Institution;
   let collegeCLocation: InstitutionLocation;
-  let offeringRepo: Repository<EducationProgramOffering>;
   let systemUsersService: SystemUsersService;
   let formService: FormService;
+  let programYear: ProgramYear;
   const REPORT_FORM_NAME = "exportfinancialreports";
+  const PROGRAM_YEAR_PREFIX = 2010;
 
   beforeAll(async () => {
     const { nestApplication, module, dataSource } =
       await createTestingAppModule();
     app = nestApplication;
     appModule = module;
-    appDataSource = dataSource;
+    db = createE2EDataSources(dataSource);
     // Mock the form service to validate the dry-run submission result.
     formService = await getProviderInstanceForModule(
       appModule,
@@ -55,28 +58,29 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
     );
     // College F.
     const { institution: collegeF } = await getAuthRelatedEntities(
-      appDataSource,
+      db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
     );
     collegeFLocation = createFakeInstitutionLocation({ institution: collegeF });
     await authorizeUserTokenForLocation(
-      appDataSource,
+      db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
     );
     // College C.
     const { institution: collegeC } = await getAuthRelatedEntities(
-      appDataSource,
+      db.dataSource,
       InstitutionTokenTypes.CollegeCUser,
     );
     collegeCLocation = createFakeInstitutionLocation({ institution: collegeC });
     await authorizeUserTokenForLocation(
-      appDataSource,
+      db.dataSource,
       InstitutionTokenTypes.CollegeCUser,
       collegeCLocation,
     );
-    offeringRepo = appDataSource.getRepository(EducationProgramOffering);
     systemUsersService = nestApplication.get(SystemUsersService);
+    // Program Year for the following tests.
+    programYear = await ensureProgramYearExists(db, PROGRAM_YEAR_PREFIX);
   });
 
   it("Should generate the offering details report when a report generation request is made with the appropriate parameters i.e. program year and the offering intensity", async () => {
@@ -87,7 +91,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
     // 2nd offering with two applications for two different students belonging to the location of the institution for which the report is generated.
     // 3rd offering with an application for a student belonging to the location of a different institution for which this report is not generated.
     const auditUser = systemUsersService.systemUser;
-    const student = await saveFakeStudent(appDataSource);
+    const student = await saveFakeStudent(db.dataSource);
     // 1st offering: with no submitted applications to it.
     const firstFakeOffering = createFakeEducationProgramOffering(
       {
@@ -95,9 +99,11 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
         institutionLocation: collegeFLocation,
         auditUser,
       },
-      { initialValues: { studyStartDate: "2022-09-01" } },
+      { initialValues: { studyStartDate: "2010-09-01" } },
     );
-    const firstSavedOffering = await offeringRepo.save(firstFakeOffering);
+    const firstSavedOffering = await db.educationProgramOffering.save(
+      firstFakeOffering,
+    );
     // 2nd offering: with an application belonging to the location of the institution for which the report is generated.
     const secondFakeOffering = createFakeEducationProgramOffering(
       {
@@ -105,18 +111,23 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
         institutionLocation: collegeFLocation,
         auditUser,
       },
-      { initialValues: { studyStartDate: "2022-09-01" } },
+      { initialValues: { studyStartDate: "2010-09-01" } },
     );
-    const secondSavedOffering = await offeringRepo.save(secondFakeOffering);
+    const secondSavedOffering = await db.educationProgramOffering.save(
+      secondFakeOffering,
+    );
     await saveFakeApplication(
-      appDataSource,
+      db.dataSource,
       {
         institution: collegeF,
         institutionLocation: collegeFLocation,
         student,
         offering: secondSavedOffering,
       },
-      { applicationStatus: ApplicationStatus.Completed },
+      {
+        applicationStatus: ApplicationStatus.Completed,
+        applicationProgramYearId: programYear.id,
+      },
     );
     // 3rd offering: with an application belonging to the location of the institution for which the report is not generated.
     const thirdFakeOffering = createFakeEducationProgramOffering(
@@ -125,18 +136,23 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
         institutionLocation: collegeCLocation,
         auditUser,
       },
-      { initialValues: { studyStartDate: "2022-09-01" } },
+      { initialValues: { studyStartDate: "2010-09-01" } },
     );
-    const thirdSavedOffering = await offeringRepo.save(thirdFakeOffering);
+    const thirdSavedOffering = await db.educationProgramOffering.save(
+      thirdFakeOffering,
+    );
     await saveFakeApplication(
-      appDataSource,
+      db.dataSource,
       {
         institution: collegeC,
         institutionLocation: collegeCLocation,
         student,
         offering: thirdSavedOffering,
       },
-      { applicationStatus: ApplicationStatus.Completed },
+      {
+        applicationStatus: ApplicationStatus.Completed,
+        applicationProgramYearId: programYear.id,
+      },
     );
     const payload = {
       reportName: "Offering_Details_Report",
@@ -145,7 +161,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
           "Full Time": true,
           "Part Time": false,
         },
-        programYear: 2,
+        programYear: 10,
       },
     };
     const dryRunSubmissionMock = jest.fn().mockResolvedValue({

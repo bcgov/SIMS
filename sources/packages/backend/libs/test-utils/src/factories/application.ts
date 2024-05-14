@@ -48,7 +48,7 @@ export function createFakeApplication(
   application.data = options?.initialValue.data ?? ({} as ApplicationData);
   application.programYear = relations?.programYear ?? createFakeProgramYear();
   // TODO get programYear from relations instead of setting the id here.
-  application.programYear.id = 2;
+  application.programYear.id = options?.initialValue?.programYearId ?? 2;
   application.student = relations?.student ?? createFakeStudent();
   application.applicationStatusUpdatedOn =
     options?.initialValue?.applicationStatusUpdatedOn ?? new Date();
@@ -229,6 +229,7 @@ export async function saveFakeApplicationDisbursements(
  * - `applicationStatus` application status for the application.
  * - `offeringIntensity` if provided sets the offering intensity for the created fakeApplication, otherwise sets it to fulltime by default.
  * - `applicationData` related application data.
+ * - `applicationProgramYearId` related program year id of the application.
  * @returns the created application.
  */
 export async function saveFakeApplication(
@@ -244,6 +245,7 @@ export async function saveFakeApplication(
     applicationStatus?: ApplicationStatus;
     offeringIntensity?: OfferingIntensity;
     applicationData?: ApplicationData;
+    applicationProgramYearId?: number;
   },
 ): Promise<Application> {
   const userRepo = dataSource.getRepository(User);
@@ -269,7 +271,12 @@ export async function saveFakeApplication(
       student: savedStudent,
       location: relations?.institutionLocation,
     },
-    { initialValue: { data: options?.applicationData } },
+    {
+      initialValue: {
+        data: options?.applicationData,
+        programYearId: options?.applicationProgramYearId,
+      },
+    },
   );
   fakeApplication.applicationStatus = applicationStatus;
   const savedApplication = await applicationRepo.save(fakeApplication);
