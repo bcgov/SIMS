@@ -127,6 +127,17 @@ export function getDateOnly(stringDate: string): Date | null {
   return null;
 }
 
+/***
+ * Parse a new string in the expected format YYYY-MM-DD and returns
+ * a new string with the local time defined as 00:00:00.000Z.
+ */
+export function getDateOnlyString(stringDate: string): string | null {
+  if (stringDate) {
+    return `${stringDate}T00:00:00.000Z`;
+  }
+  return null;
+}
+
 /**
  * Get date from date-string in the given format.
  * @param stringDate date string.

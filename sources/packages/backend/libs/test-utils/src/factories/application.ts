@@ -224,6 +224,7 @@ export async function saveFakeApplicationDisbursements(
  * - `institutionLocation` related location.
  * - `student` related student.
  * - `program` related education program.
+ * - `offering` related education program offering.
  * @param options additional options:
  * - `applicationStatus` application status for the application.
  * - `offeringIntensity` if provided sets the offering intensity for the created fakeApplication, otherwise sets it to fulltime by default.
@@ -237,6 +238,7 @@ export async function saveFakeApplication(
     institutionLocation?: InstitutionLocation;
     student?: Student;
     program?: EducationProgram;
+    offering?: EducationProgramOffering;
   },
   options?: {
     applicationStatus?: ApplicationStatus;
@@ -272,17 +274,19 @@ export async function saveFakeApplication(
   fakeApplication.applicationStatus = applicationStatus;
   const savedApplication = await applicationRepo.save(fakeApplication);
   // Offering.
-  const fakeOffering = createFakeEducationProgramOffering({
-    institution: relations?.institution,
-    institutionLocation: relations?.institutionLocation,
-    program: relations?.program,
-    auditUser: savedUser,
-  });
-  fakeOffering.offeringIntensity =
-    options?.offeringIntensity ?? OfferingIntensity.fullTime;
-  fakeOffering.parentOffering = fakeOffering;
-  const savedOffering = await offeringRepo.save(fakeOffering);
-
+  let savedOffering = relations?.offering;
+  if (!savedOffering) {
+    const fakeOffering = createFakeEducationProgramOffering({
+      institution: relations?.institution,
+      institutionLocation: relations?.institutionLocation,
+      program: relations?.program,
+      auditUser: savedUser,
+    });
+    fakeOffering.offeringIntensity =
+      options?.offeringIntensity ?? OfferingIntensity.fullTime;
+    fakeOffering.parentOffering = fakeOffering;
+    savedOffering = await offeringRepo.save(fakeOffering);
+  }
   if (savedApplication.applicationStatus !== ApplicationStatus.Draft) {
     // Original assessment.
     const fakeOriginalAssessment = createFakeStudentAssessment({
