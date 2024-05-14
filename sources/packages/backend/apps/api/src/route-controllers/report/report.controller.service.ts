@@ -14,7 +14,7 @@ import {
 } from "@sims/utilities";
 import { Response } from "express";
 import { Readable } from "stream";
-import { FormService } from "../../services";
+import { FormService, ProgramYearService } from "../../services";
 import { ReportsFilterAPIInDTO } from "./models/report.dto";
 import { FormNames } from "../../services/form/constants";
 
@@ -26,6 +26,7 @@ export class ReportControllerService {
   constructor(
     private readonly reportService: ReportService,
     private readonly formService: FormService,
+    private readonly programYearService: ProgramYearService,
   ) {}
 
   /**
@@ -44,7 +45,10 @@ export class ReportControllerService {
       FormNames.ExportFinancialReports,
       payload,
     );
-    if (!submissionResult.valid) {
+    if (
+      !submissionResult.valid ||
+      !this.programYearExists(payload.params.programYear as number)
+    ) {
       throw new BadRequestException(
         "Not able to export report due to an invalid request.",
       );
@@ -67,6 +71,19 @@ export class ReportControllerService {
       }
       throw error;
     }
+  }
+
+  /**
+   * Checks for the existence of the provided program year.
+   * @param programYear program year to validate.
+   * @returns boolean indicating if the programYear exists or not.
+   */
+  private async programYearExists(programYear: number): Promise<boolean> {
+    const programYears = await this.programYearService.getProgramYears();
+    const activeProgramYears = programYears.map(
+      (programYear) => programYear.id,
+    );
+    return activeProgramYears.includes(programYear);
   }
 
   /**
