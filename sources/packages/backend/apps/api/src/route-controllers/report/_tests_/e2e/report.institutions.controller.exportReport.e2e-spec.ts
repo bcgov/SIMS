@@ -177,8 +177,8 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
-    // Act/Assert
 
+    // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
       .send(payload)

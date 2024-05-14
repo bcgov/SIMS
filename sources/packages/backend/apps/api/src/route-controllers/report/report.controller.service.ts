@@ -45,12 +45,17 @@ export class ReportControllerService {
       FormNames.ExportFinancialReports,
       payload,
     );
-    const programYearExists = await this.programYearExists(
-      payload.params.programYear as number,
-    );
-    if (!submissionResult.valid || !programYearExists) {
+    if (!submissionResult.valid) {
       throw new BadRequestException(
         "Not able to export report due to an invalid request.",
+      );
+    }
+    const programYearExists = await this.programYearService.programYearExists(
+      payload.params.programYear as number,
+    );
+    if (!programYearExists) {
+      throw new BadRequestException(
+        "Not able to export report due to an invalid program year.",
       );
     }
     if (options?.institutionId) {
@@ -71,19 +76,6 @@ export class ReportControllerService {
       }
       throw error;
     }
-  }
-
-  /**
-   * Checks for the existence of the provided program year.
-   * @param programYear program year to validate.
-   * @returns boolean indicating if the programYear exists or not.
-   */
-  private async programYearExists(programYear: number): Promise<boolean> {
-    const programYears = await this.programYearService.getProgramYears();
-    const activeProgramYears = programYears.map(
-      (programYear) => programYear.id,
-    );
-    return activeProgramYears.includes(programYear);
   }
 
   /**
