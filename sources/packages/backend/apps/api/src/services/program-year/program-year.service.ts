@@ -25,6 +25,15 @@ export class ProgramYearService extends RecordDataModelService<ProgramYear> {
   }
 
   /**
+   * Checks for the existence of the provided program year.
+   * @param id program year id to validate.
+   * @returns boolean indicating true if the programYear exists, false otherwise.
+   */
+  async programYearExists(id: number): Promise<boolean> {
+    return this.repo.exists({ where: { id, active: true } });
+  }
+
+  /**
    * Get the Program Year of an Application,
    * if the ProgramYear is not active
    *  return null

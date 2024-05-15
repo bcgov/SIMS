@@ -16,12 +16,15 @@ import { getISODateOnlyString } from "@sims/utilities";
 
 export function createFakeEducationProgramOffering(
   relations?: {
-    auditUser: User;
+    auditUser?: User;
     program?: EducationProgram;
     institution?: Institution;
     institutionLocation?: InstitutionLocation;
   },
-  options?: { programInitialValues?: Partial<EducationProgram> },
+  options?: {
+    initialValues?: Partial<EducationProgramOffering>;
+    programInitialValues?: Partial<EducationProgram>;
+  },
 ): EducationProgramOffering {
   // Case an institution location is provided already associated with
   // an institution ensure that the relationship will be kept and
@@ -53,10 +56,16 @@ export function createFakeEducationProgramOffering(
   offering.offeringType = OfferingTypes.Public;
   offering.yearOfStudy = 1;
   offering.courseLoad = 45;
-  offering.hasOfferingWILComponent = "no";
+  offering.hasOfferingWILComponent =
+    options?.initialValues?.hasOfferingWILComponent ?? "no";
+  offering.offeringWILType = options?.initialValues?.offeringWILType;
   offering.offeringDeclaration = true;
-  offering.studyStartDate = getISODateOnlyString(faker.date.recent(1));
-  offering.studyEndDate = getISODateOnlyString(faker.date.soon(30));
+  offering.studyStartDate =
+    options?.initialValues?.studyStartDate ??
+    getISODateOnlyString(faker.date.recent(1));
+  offering.studyEndDate =
+    options?.initialValues?.studyEndDate ??
+    getISODateOnlyString(faker.date.soon(30));
   offering.studyBreaks = {
     totalFundedWeeks: 16,
   } as StudyBreaksAndWeeks;

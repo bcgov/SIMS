@@ -48,7 +48,7 @@ export function createFakeApplication(
   application.data = options?.initialValue.data ?? ({} as ApplicationData);
   application.programYear = relations?.programYear ?? createFakeProgramYear();
   // TODO get programYear from relations instead of setting the id here.
-  application.programYear.id = 2;
+  application.programYear.id = relations?.programYear?.id ?? 2;
   application.student = relations?.student ?? createFakeStudent();
   application.applicationStatusUpdatedOn =
     options?.initialValue?.applicationStatusUpdatedOn ?? new Date();
@@ -224,6 +224,8 @@ export async function saveFakeApplicationDisbursements(
  * - `institutionLocation` related location.
  * - `student` related student.
  * - `program` related education program.
+ * - `offering` related education program offering.
+ * - `programYear` related program year.
  * @param options additional options:
  * - `applicationStatus` application status for the application.
  * - `offeringIntensity` if provided sets the offering intensity for the created fakeApplication, otherwise sets it to fulltime by default.
@@ -237,6 +239,8 @@ export async function saveFakeApplication(
     institutionLocation?: InstitutionLocation;
     student?: Student;
     program?: EducationProgram;
+    offering?: EducationProgramOffering;
+    programYear?: ProgramYear;
   },
   options?: {
     applicationStatus?: ApplicationStatus;
@@ -266,23 +270,30 @@ export async function saveFakeApplication(
     {
       student: savedStudent,
       location: relations?.institutionLocation,
+      programYear: relations?.programYear,
     },
-    { initialValue: { data: options?.applicationData } },
+    {
+      initialValue: {
+        data: options?.applicationData,
+      },
+    },
   );
   fakeApplication.applicationStatus = applicationStatus;
   const savedApplication = await applicationRepo.save(fakeApplication);
   // Offering.
-  const fakeOffering = createFakeEducationProgramOffering({
-    institution: relations?.institution,
-    institutionLocation: relations?.institutionLocation,
-    program: relations?.program,
-    auditUser: savedUser,
-  });
-  fakeOffering.offeringIntensity =
-    options?.offeringIntensity ?? OfferingIntensity.fullTime;
-  fakeOffering.parentOffering = fakeOffering;
-  const savedOffering = await offeringRepo.save(fakeOffering);
-
+  let savedOffering = relations?.offering;
+  if (!savedOffering) {
+    const fakeOffering = createFakeEducationProgramOffering({
+      institution: relations?.institution,
+      institutionLocation: relations?.institutionLocation,
+      program: relations?.program,
+      auditUser: savedUser,
+    });
+    fakeOffering.offeringIntensity =
+      options?.offeringIntensity ?? OfferingIntensity.fullTime;
+    fakeOffering.parentOffering = fakeOffering;
+    savedOffering = await offeringRepo.save(fakeOffering);
+  }
   if (savedApplication.applicationStatus !== ApplicationStatus.Draft) {
     // Original assessment.
     const fakeOriginalAssessment = createFakeStudentAssessment({

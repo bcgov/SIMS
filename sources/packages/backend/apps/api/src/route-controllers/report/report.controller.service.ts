@@ -14,7 +14,7 @@ import {
 } from "@sims/utilities";
 import { Response } from "express";
 import { Readable } from "stream";
-import { FormService } from "../../services";
+import { FormService, ProgramYearService } from "../../services";
 import { ReportsFilterAPIInDTO } from "./models/report.dto";
 import { FormNames } from "../../services/form/constants";
 
@@ -26,6 +26,7 @@ export class ReportControllerService {
   constructor(
     private readonly reportService: ReportService,
     private readonly formService: FormService,
+    private readonly programYearService: ProgramYearService,
   ) {}
 
   /**
@@ -47,6 +48,14 @@ export class ReportControllerService {
     if (!submissionResult.valid) {
       throw new BadRequestException(
         "Not able to export report due to an invalid request.",
+      );
+    }
+    const programYearExists = await this.programYearService.programYearExists(
+      payload.params.programYear as number,
+    );
+    if (!programYearExists) {
+      throw new BadRequestException(
+        "Not able to export report due to an invalid program year.",
       );
     }
     if (options?.institutionId) {
