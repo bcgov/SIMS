@@ -12,8 +12,8 @@
       "label": "HTML",
       "labelWidth": "",
       "labelMargin": "",
-      "tag": "p",
-      "className": "",
+      "tag": "h1",
+      "className": "category-header-x-large primary-color",
       "attrs": [
         {
           "attr": "",
@@ -22,7 +22,7 @@
       ],
       "content": "Welcome!",
       "refreshOnChange": false,
-      "customClass": "category-header-x-large primary-color",
+      "customClass": "",
       "hidden": false,
       "modalEdit": false,
       "key": "html",
@@ -201,7 +201,7 @@
                           "label": "HTML",
                           "labelWidth": "",
                           "labelMargin": "",
-                          "tag": "div",
+                          "tag": "h2",
                           "className": "category-header-medium primary-color mb-2",
                           "attrs": [
                             {
@@ -525,7 +525,7 @@
                           "label": "HTML",
                           "labelWidth": "",
                           "labelMargin": "",
-                          "tag": "div",
+                          "tag": "h2",
                           "className": "category-header-medium primary-color mb-2",
                           "attrs": [
                             {

@@ -2,6 +2,7 @@
   <full-page-container>
     <body-header
       title="Search for application"
+      title-header-level="1"
       subTitle="To provide your supporting information, please search for the application
       by entering the requested information below. All fields are mandatory and
       must match exactly with the information provided on the student
