@@ -23,6 +23,7 @@
             elevation="1"
             color="secondary"
             v-bind="props"
+            aria-label="Account"
           ></v-btn>
         </template>
         <v-list>
