@@ -61,7 +61,7 @@ SET
     WHERE
       education_programs_offerings.offering_intensity = ANY(:offeringIntensity)
       AND education_programs_offerings.offering_type != ''Scholastic standing''
-      and education_programs_offerings."offering_status" in (''Approved'', ''Creation pending'', ''Change under review'')
+      and education_programs_offerings.offering_status in (''Approved'', ''Creation pending'', ''Change under review'')
       AND education_programs_offerings.study_start_date BETWEEN program_years.start_date AND program_years.end_date
       AND institution_locations.institution_id = :institutionId
     ORDER BY
