@@ -260,6 +260,23 @@ export class StudentAssessment extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   relatedApplicationAssessment?: StudentAssessment;
+  /**
+   * Last reported assessment id corresponding to the offering date change.
+   */
+  @Column({
+    name: "previous_date_changed_reported_assessment_id",
+    nullable: true,
+  })
+  previousDateChangedReportedAssessmentId?: number;
+  /**
+   * Timestamp for the last reported assessment id.
+   */
+  @Column({
+    name: "reported_date",
+    type: "timestamptz",
+    nullable: true,
+  })
+  reportedDate?: true;
 }
 
 /**
