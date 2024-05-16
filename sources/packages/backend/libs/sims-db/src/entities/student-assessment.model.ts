@@ -276,7 +276,7 @@ export class StudentAssessment extends RecordDataModel {
     type: "timestamptz",
     nullable: true,
   })
-  reportedDate?: true;
+  reportedDate?: Date;
 }
 
 /**
