@@ -1,8 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import {
-  ApplicationStatus,
   AssessmentStatus,
-  AssessmentTriggerType,
   DisbursementScheduleStatus,
   RecordDataModelService,
   StudentAppealStatus,
