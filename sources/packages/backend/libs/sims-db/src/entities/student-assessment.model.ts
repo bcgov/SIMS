@@ -263,6 +263,7 @@ export class StudentAssessment extends RecordDataModel {
   /**
    * Last reported assessment id corresponding to the offering date change.
    */
+  @ManyToOne(() => StudentAssessment, { nullable: true })
   @Column({
     name: "previous_date_changed_reported_assessment_id",
     nullable: true,
