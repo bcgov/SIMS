@@ -244,7 +244,8 @@
       "allowMultipleMasks": false,
       "addons": [],
       "content": "",
-      "id": "ezw3z3n"
+      "id": "ezw3z3n",
+      "className": ""
     },
     {
       "label": "HTML",
@@ -493,7 +494,8 @@
           "allowMultipleMasks": false,
           "addons": [],
           "tag": "p",
-          "id": "ehr88uc"
+          "id": "ehr88uc",
+          "className": ""
         },
         {
           "label": "Columns",
@@ -572,7 +574,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "eqy16y"
+                  "id": "eqy16y",
+                  "className": ""
                 },
                 {
                   "label": "Offering Intensity",
@@ -739,7 +742,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "e9jqkeo"
+                  "id": "e9jqkeo",
+                  "className": ""
                 },
                 {
                   "label": "Offering Intensity",
@@ -814,7 +818,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "ef8ymoj"
+                  "id": "ef8ymoj",
+                  "className": ""
                 }
               ],
               "width": 6,
@@ -1124,7 +1129,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "ehgf3nk"
+                  "id": "ehgf3nk",
+                  "className": ""
                 },
                 {
                   "label": "Offering Intensity",
@@ -1199,7 +1205,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "ehap7rt"
+                  "id": "ehap7rt",
+                  "className": ""
                 }
               ],
               "width": 6,
@@ -1363,7 +1370,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "ecvq6el"
+                  "id": "ecvq6el",
+                  "className": ""
                 },
                 {
                   "label": "Offering Intensity",
@@ -1438,7 +1446,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "ebvpkvo"
+                  "id": "ebvpkvo",
+                  "className": ""
                 }
               ],
               "width": 6,
@@ -1523,7 +1532,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "ec20u7"
+                  "id": "ec20u7",
+                  "className": ""
                 },
                 {
                   "label": "Offering Intensity",
@@ -1598,7 +1608,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "e6wi9p"
+                  "id": "e6wi9p",
+                  "className": ""
                 }
               ],
               "width": 6,
@@ -1753,7 +1764,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "epz3htv"
+                  "id": "epz3htv",
+                  "className": ""
                 },
                 {
                   "label": "Application Offering Start Date",
@@ -1828,7 +1840,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "eaw7bwq"
+                  "id": "eaw7bwq",
+                  "className": ""
                 }
               ],
               "width": 6,
@@ -1913,7 +1926,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "e5sfdao"
+                  "id": "e5sfdao",
+                  "className": ""
                 },
                 {
                   "label": "Data Grid",
@@ -2061,7 +2075,9 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "tag": "p"
+                      "tag": "p",
+                      "inDataGrid": true,
+                      "className": ""
                     }
                   ],
                   "placeholder": "",
@@ -2315,7 +2331,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "ejtzdeu"
+                  "id": "ejtzdeu",
+                  "className": ""
                 },
                 {
                   "label": "Offering Intensity",
@@ -2390,7 +2407,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "emeqh9j"
+                  "id": "emeqh9j",
+                  "className": ""
                 }
               ],
               "width": 6,
@@ -2475,7 +2493,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "eewczqp"
+                  "id": "eewczqp",
+                  "className": ""
                 },
                 {
                   "label": "Offering Intensity",
@@ -2550,7 +2569,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "egrfrd"
+                  "id": "egrfrd",
+                  "className": ""
                 }
               ],
               "width": 6,
@@ -2705,7 +2725,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "evukui"
+                  "id": "evukui",
+                  "className": ""
                 },
                 {
                   "label": "Offering Intensity",
@@ -2780,7 +2801,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "ev55wdj"
+                  "id": "ev55wdj",
+                  "className": ""
                 }
               ],
               "width": 6,
@@ -2865,7 +2887,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "e5vwz5"
+                  "id": "e5vwz5",
+                  "className": ""
                 },
                 {
                   "label": "Offering Intensity",
@@ -2940,7 +2963,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "eop28fc"
+                  "id": "eop28fc",
+                  "className": ""
                 }
               ],
               "width": 6,
@@ -3151,7 +3175,8 @@
       "allowMultipleMasks": false,
       "addons": [],
       "content": "",
-      "id": "egwszn8"
+      "id": "egwszn8",
+      "className": ""
     },
     {
       "title": "Panel",
@@ -3284,31 +3309,32 @@
           "allowMultipleMasks": false,
           "addons": [],
           "tag": "p",
-          "id": "e66yot4"
+          "id": "e66yot4",
+          "className": ""
         },
         {
-          "label": "<strong>Select a change in circumstance</strong>",
+          "label": "Select a change in circumstance",
           "optionsLabelPosition": "right",
           "inline": false,
           "tableView": false,
           "values": [
             {
-              "label": "Student went from full-time to part-time studies (vice-versa) or started a different program",
-              "value": "Change in intensity",
+              "label": "Student is transferring to a different institution or campus",
+              "value": "Student transfer",
               "shortcut": ""
             },
             {
-              "label": "Student completed program early",
+              "label": "Student completed funded study period offering early",
               "value": "Student completed program early",
               "shortcut": ""
             },
             {
-              "label": "Student did not complete program",
+              "label": "Student did not complete program {{ data.applicationStatus }}",
               "value": "Student did not complete program",
               "shortcut": ""
             },
             {
-              "label": "Student withdrew from program",
+              "label": "Student withdrew from funded period",
               "value": "Student withdrew from program",
               "shortcut": ""
             }
@@ -3356,7 +3382,7 @@
           "attributes": {},
           "validateOn": "change",
           "conditional": {
-            "show": null,
+            "show": "",
             "when": null,
             "eq": ""
           },
@@ -3376,17 +3402,18 @@
           "addons": [],
           "inputType": "radio",
           "fieldSet": false,
-          "id": "ew5zdek"
+          "id": "ew5zdek",
+          "tags": []
         },
         {
-          "title": "Student went from full-time to part-time studies (vice-versa) or started a different program Panel",
+          "title": "Student is transferring to a different institution or campus - Panel",
           "collapsible": false,
           "hideLabel": true,
-          "key": "differentIntensityProgramPanel",
+          "key": "studentTransferPanel",
           "conditional": {
-            "show": true,
+            "show": "true",
             "when": "scholasticStandingChangeType",
-            "eq": "Change in intensity"
+            "eq": "Student transfer"
           },
           "type": "panel",
           "label": "Panel",
@@ -3399,7 +3426,7 @@
                 {
                   "components": [
                     {
-                      "label": "Date of change",
+                      "label": "Last day the student is attending your institution",
                       "labelPosition": "top",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -3478,7 +3505,7 @@
                       "tags": [],
                       "properties": {},
                       "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": "",
                         "json": ""
@@ -3645,15 +3672,17 @@
           "lazyLoad": false,
           "theme": "default",
           "breadcrumb": "default",
-          "id": "e61gpq"
+          "id": "e61gpq",
+          "tags": [],
+          "lockKey": true
         },
         {
-          "title": "Student completed program early Panel",
+          "title": "Student completed funded study period offering early - Panel",
           "collapsible": false,
           "hideLabel": true,
           "key": "studentCompletedProgramEarlyPanel",
           "conditional": {
-            "show": true,
+            "show": "true",
             "when": "scholasticStandingChangeType",
             "eq": "Student completed program early"
           },
@@ -3859,7 +3888,7 @@
               "id": "ei3m3ha"
             },
             {
-              "label": "<strong>Were the students program costs different than the original program costs?</strong>",
+              "label": "Were the students program costs different than the original program costs?",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -3918,7 +3947,7 @@
               "attributes": {},
               "validateOn": "change",
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": ""
               },
@@ -3938,15 +3967,16 @@
               "addons": [],
               "inputType": "radio",
               "fieldSet": false,
-              "id": "edepa6"
+              "id": "edepa6",
+              "tags": []
             },
             {
-              "title": "Please record the students final costs Panel",
+              "title": "Please record the students final costs - Panel",
               "collapsible": false,
               "hideLabel": true,
               "key": "pleaseRecordTheStudentsFinalCostsPanel",
               "conditional": {
-                "show": true,
+                "show": "true",
                 "when": "isCostDifferent",
                 "eq": "yes"
               },
@@ -4027,7 +4057,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "egsdzzq"
+                  "id": "egsdzzq",
+                  "className": ""
                 },
                 {
                   "label": "Columns",
@@ -4109,7 +4140,11 @@
                           "properties": {},
                           "allowMultipleMasks": false,
                           "addons": [],
-                          "id": "enepq4v"
+                          "id": "enepq4v",
+                          "inputType": "text",
+                          "inputMask": "",
+                          "decimalLimit": 2,
+                          "requireDecimal": true
                         }
                       ],
                       "width": 6,
@@ -4195,7 +4230,11 @@
                           "properties": {},
                           "allowMultipleMasks": false,
                           "addons": [],
-                          "id": "ebblc9m"
+                          "id": "ebblc9m",
+                          "inputType": "text",
+                          "inputMask": "",
+                          "decimalLimit": 2,
+                          "requireDecimal": true
                         }
                       ],
                       "width": 6,
@@ -4352,7 +4391,11 @@
                           "properties": {},
                           "allowMultipleMasks": false,
                           "addons": [],
-                          "id": "e9g8p4d"
+                          "id": "e9g8p4d",
+                          "inputType": "text",
+                          "inputMask": "",
+                          "decimalLimit": 2,
+                          "requireDecimal": true
                         }
                       ],
                       "width": 6,
@@ -4439,7 +4482,11 @@
                           "properties": {},
                           "allowMultipleMasks": false,
                           "addons": [],
-                          "id": "e9mi4id"
+                          "id": "e9mi4id",
+                          "inputType": "text",
+                          "inputMask": "",
+                          "decimalLimit": 2,
+                          "requireDecimal": true
                         }
                       ],
                       "width": 6,
@@ -4572,7 +4619,8 @@
               "lazyLoad": false,
               "theme": "default",
               "breadcrumb": "default",
-              "id": "ebv8hio"
+              "id": "ebv8hio",
+              "tags": []
             }
           ],
           "placeholder": "",
@@ -4630,15 +4678,16 @@
           "lazyLoad": false,
           "theme": "default",
           "breadcrumb": "default",
-          "id": "e6pkr5k"
+          "id": "e6pkr5k",
+          "tags": []
         },
         {
-          "title": "Student did not complete program Panel",
+          "title": "Student did not complete program - Panel",
           "collapsible": false,
           "hideLabel": true,
           "key": "studentDidNotCompleteProgramPanel",
           "conditional": {
-            "show": true,
+            "show": "true",
             "when": "scholasticStandingChangeType",
             "eq": "Student did not complete program"
           },
@@ -4728,7 +4777,8 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "e72tng9h"
+                      "id": "e72tng9h",
+                      "inputType": "number"
                     }
                   ],
                   "width": 6,
@@ -4815,7 +4865,7 @@
               "id": "ercv3d"
             },
             {
-              "label": "<strong>Select the reason of incompletion</strong>",
+              "label": "Select the reason of incompletion",
               "optionsLabelPosition": "right",
               "tableView": false,
               "defaultValue": {
@@ -4883,7 +4933,7 @@
               "attributes": {},
               "validateOn": "change",
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": ""
               },
@@ -5045,15 +5095,16 @@
           "lazyLoad": false,
           "theme": "default",
           "breadcrumb": "default",
-          "id": "e2jnmtr"
+          "id": "e2jnmtr",
+          "tags": []
         },
         {
-          "title": "studentWithdrewFromProgram Panel",
+          "title": "Student Withdrew from funded period - Panel",
           "collapsible": false,
           "hideLabel": true,
           "key": "studentWithdrewFromProgramPanel",
           "conditional": {
-            "show": true,
+            "show": "true",
             "when": "scholasticStandingChangeType",
             "eq": "Student withdrew from program"
           },
@@ -5314,7 +5365,8 @@
           "lazyLoad": false,
           "theme": "default",
           "breadcrumb": "default",
-          "id": "edzpahk"
+          "id": "edzpahk",
+          "tags": []
         }
       ],
       "placeholder": "",
@@ -5356,152 +5408,6 @@
       "tree": false,
       "lazyLoad": false,
       "id": "ez7we23"
-    },
-    {
-      "label": "applicationId",
-      "labelWidth": "",
-      "labelMargin": "",
-      "customClass": "",
-      "modalEdit": false,
-      "defaultValue": null,
-      "persistent": false,
-      "protected": false,
-      "dbIndex": false,
-      "encrypted": false,
-      "redrawOn": "",
-      "customDefaultValue": "",
-      "calculateValue": "",
-      "calculateServer": false,
-      "key": "applicationId",
-      "tags": [],
-      "properties": {},
-      "logic": [],
-      "attributes": {},
-      "overlay": {
-        "style": "",
-        "page": "",
-        "left": "",
-        "top": "",
-        "width": "",
-        "height": ""
-      },
-      "type": "hidden",
-      "input": true,
-      "tableView": false,
-      "placeholder": "",
-      "prefix": "",
-      "suffix": "",
-      "multiple": false,
-      "unique": false,
-      "hidden": false,
-      "clearOnHide": true,
-      "refreshOn": "",
-      "dataGridLabel": false,
-      "labelPosition": "top",
-      "description": "",
-      "errorLabel": "",
-      "tooltip": "",
-      "hideLabel": false,
-      "tabindex": "",
-      "disabled": false,
-      "autofocus": false,
-      "widget": {
-        "type": "input"
-      },
-      "validateOn": "change",
-      "validate": {
-        "required": false,
-        "custom": "",
-        "customPrivate": false,
-        "strictDateValidation": false,
-        "multiple": false,
-        "unique": false
-      },
-      "conditional": {
-        "show": null,
-        "when": null,
-        "eq": ""
-      },
-      "allowCalculateOverride": false,
-      "showCharCount": false,
-      "showWordCount": false,
-      "allowMultipleMasks": false,
-      "addons": [],
-      "inputType": "hidden",
-      "id": "e72g6d"
-    },
-    {
-      "label": "applicationStatus",
-      "labelWidth": "",
-      "labelMargin": "",
-      "customClass": "",
-      "modalEdit": false,
-      "defaultValue": null,
-      "persistent": false,
-      "protected": false,
-      "dbIndex": false,
-      "encrypted": false,
-      "redrawOn": "",
-      "customDefaultValue": "",
-      "calculateValue": "",
-      "calculateServer": false,
-      "key": "applicationStatus",
-      "tags": [],
-      "properties": {},
-      "logic": [],
-      "attributes": {},
-      "overlay": {
-        "style": "",
-        "page": "",
-        "left": "",
-        "top": "",
-        "width": "",
-        "height": ""
-      },
-      "type": "hidden",
-      "input": true,
-      "tableView": false,
-      "placeholder": "",
-      "prefix": "",
-      "suffix": "",
-      "multiple": false,
-      "unique": false,
-      "hidden": false,
-      "clearOnHide": true,
-      "refreshOn": "",
-      "dataGridLabel": false,
-      "labelPosition": "top",
-      "description": "",
-      "errorLabel": "",
-      "tooltip": "",
-      "hideLabel": false,
-      "tabindex": "",
-      "disabled": false,
-      "autofocus": false,
-      "widget": {
-        "type": "input"
-      },
-      "validateOn": "change",
-      "validate": {
-        "required": false,
-        "custom": "",
-        "customPrivate": false,
-        "strictDateValidation": false,
-        "multiple": false,
-        "unique": false
-      },
-      "conditional": {
-        "show": null,
-        "when": null,
-        "eq": ""
-      },
-      "allowCalculateOverride": false,
-      "showCharCount": false,
-      "showWordCount": false,
-      "allowMultipleMasks": false,
-      "addons": [],
-      "inputType": "hidden",
-      "id": "eootfh"
     }
   ]
 }

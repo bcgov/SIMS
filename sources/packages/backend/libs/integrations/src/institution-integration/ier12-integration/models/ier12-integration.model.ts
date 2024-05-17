@@ -125,10 +125,6 @@ export enum ScholasticStandingCode {
    * Early completion.
    */
   EC = "EC",
-  /**
-   * Change in intensity.
-   */
-  CI = "CI",
 }
 
 export enum YNFlag {

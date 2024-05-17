@@ -82,7 +82,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       data: {
         booksAndSupplies: 1000,
         scholasticStandingChangeType:
-          StudentScholasticStandingChangeType.ChangeInIntensity,
+          StudentScholasticStandingChangeType.StudentTransfer,
       },
     };
     mockFormioDryRun({ validDryRun: false });
@@ -262,7 +262,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
         booksAndSupplies: 1000,
         dateOfChange: getISODateOnlyString(new Date()),
         scholasticStandingChangeType:
-          StudentScholasticStandingChangeType.ChangeInIntensity,
+          StudentScholasticStandingChangeType.StudentTransfer,
       },
     };
     formService.dryRunSubmission = jest.fn().mockResolvedValue({
