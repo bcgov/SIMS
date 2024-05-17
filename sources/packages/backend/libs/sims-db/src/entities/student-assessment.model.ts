@@ -260,6 +260,24 @@ export class StudentAssessment extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   relatedApplicationAssessment?: StudentAssessment;
+  /**
+   * Previously reported assessment for the application.
+   */
+  @ManyToOne(() => StudentAssessment, { nullable: true })
+  @JoinColumn({
+    name: "previous_date_changed_reported_assessment_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  previousDateChangedReportedAssessment?: StudentAssessment;
+  /**
+   * Date on which the assessment causing the study date change has been reported.
+   */
+  @Column({
+    name: "reported_date",
+    type: "timestamptz",
+    nullable: true,
+  })
+  reportedDate?: Date;
 }
 
 /**
