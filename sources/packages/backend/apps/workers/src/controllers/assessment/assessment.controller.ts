@@ -281,7 +281,9 @@ export class AssessmentController {
             lastReportedAssessmentId,
           );
         } else {
-          jobLogger.log("No last reported assessment id found.");
+          jobLogger.log(
+            "Application not yet completed or no last reported assessment id found.",
+          );
         }
         const impactedApplication =
           await this.assessmentSequentialProcessingService.assessImpactedApplicationReassessmentNeeded(

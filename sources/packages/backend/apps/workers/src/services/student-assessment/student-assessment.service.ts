@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import {
+  ApplicationStatus,
   AssessmentStatus,
   DisbursementScheduleStatus,
   RecordDataModelService,
@@ -368,8 +369,14 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   async getLastReportedAssessment(assessmentId: number): Promise<number> {
     const application = await this.repo.findOne({
       select: { application: { id: true } },
-      where: { id: assessmentId },
+      where: {
+        id: assessmentId,
+        application: { applicationStatus: ApplicationStatus.Completed },
+      },
     });
+    if (!application) {
+      return;
+    }
     const lastBTypeReportedAssessment = await this.repo.findOne({
       select: { id: true },
       where: {
