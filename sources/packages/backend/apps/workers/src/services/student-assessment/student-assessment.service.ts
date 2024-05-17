@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import {
   ApplicationStatus,
   AssessmentStatus,
+  AssessmentTriggerType,
   DisbursementScheduleStatus,
   RecordDataModelService,
   StudentAppealStatus,
@@ -338,68 +339,85 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   /**
    * Updates the last reported assessment for the current assessment.
    * @param currentAssessmentId current assessment id.
-   * @param previousDateChangedReportedAssessment previous date changed reported assessment.
+   * @param applicationId related application id.
+   * @param studyStartDate related study start date.
+   * @param studyEndDate related study end date.
    * @returns true if the update was executed or false in case the
-   * previousDateChangedReportedAssessment was already present.
+   * previousDateChangedReportedAssessment was already present or
+   * in case the update of previousDateChangedReportedAssessment is
+   * not required if the offering start and end dates are the same.
    */
   async updateLastReportedAssessment(
     currentAssessmentId: number,
-    previousDateChangedReportedAssessment,
+    applicationId: number,
+    studyStartDate: string,
+    studyEndDate: string,
   ): Promise<boolean> {
-    const updateExists = await this.repo.exists({
-      where: {
-        id: currentAssessmentId,
-        previousDateChangedReportedAssessment: Not(IsNull()),
-      },
-    });
-    if (!updateExists) {
-      await this.repo.update(currentAssessmentId, {
-        previousDateChangedReportedAssessment,
+    const lastReportedAssessment = await this.getLastReportedAssessment(
+      applicationId,
+    );
+    if (!lastReportedAssessment) {
+      return;
+    }
+    if (
+      studyStartDate !== lastReportedAssessment.offering.studyStartDate ||
+      studyEndDate !== lastReportedAssessment.offering.studyEndDate
+    ) {
+      const updateExists = await this.repo.exists({
+        where: {
+          id: currentAssessmentId,
+          previousDateChangedReportedAssessment: Not(IsNull()),
+        },
       });
-      return true;
+      if (!updateExists) {
+        await this.repo.update(currentAssessmentId, {
+          previousDateChangedReportedAssessment: lastReportedAssessment,
+        });
+        return true;
+      }
+      return false;
     }
     return false;
   }
 
   /**
    * Gets the last reported assessment.
-   * @param assessmentId current assessment id.
-   * @returns assessment id of the last reported assessment.
+   * @param applicationId current assessment application id.
+   * @returns last reported assessment.
    */
-  async getLastReportedAssessment(assessmentId: number): Promise<number> {
-    const application = await this.repo.findOne({
-      select: { application: { id: true } },
-      where: {
-        id: assessmentId,
-        application: { applicationStatus: ApplicationStatus.Completed },
-      },
-    });
-    if (!application) {
-      return;
-    }
+  private async getLastReportedAssessment(
+    applicationId: number,
+  ): Promise<StudentAssessment> {
     const lastBTypeReportedAssessment = await this.repo.findOne({
-      select: { id: true },
+      select: {
+        id: true,
+        offering: { studyStartDate: true, studyEndDate: true },
+      },
+      relations: { offering: true },
       where: {
-        application: { id: application.id },
+        application: { id: applicationId },
         previousDateChangedReportedAssessment: Not(IsNull()),
         reportedDate: Not(IsNull()),
       },
       order: { assessmentDate: "DESC" },
     });
     if (!lastBTypeReportedAssessment) {
-      const lastReportedEcert = await this.repo.findOne({
-        select: { id: true },
+      const lastReportedDisbursement = await this.repo.findOne({
+        select: {
+          id: true,
+          offering: { studyStartDate: true, studyEndDate: true },
+        },
         where: {
+          application: { id: applicationId },
           disbursementSchedules: {
             disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
           },
-          application: { id: application.id },
         },
         order: { assessmentDate: "DESC" },
       });
-      return lastReportedEcert?.id;
+      return lastReportedDisbursement;
     }
-    return lastBTypeReportedAssessment.id;
+    return lastBTypeReportedAssessment;
   }
 
   /**
@@ -458,11 +476,16 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     return this.repo.findOne({
       select: {
         id: true,
-        offering: { offeringIntensity: true },
+        offering: {
+          studyStartDate: true,
+          studyEndDate: true,
+          offeringIntensity: true,
+        },
         application: {
           id: true,
           student: { id: true },
           programYear: { id: true },
+          applicationStatus: true,
         },
       },
       relations: {
