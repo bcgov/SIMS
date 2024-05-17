@@ -267,7 +267,7 @@ export class StudentAssessment extends RecordDataModel {
     name: "previous_date_changed_reported_assessment_id",
     nullable: true,
   })
-  previousDateChangedReportedAssessmentId?: number;
+  previousDateChangedReportedAssessment?: StudentAssessment;
   /**
    * Timestamp for the last reported assessment id.
    */

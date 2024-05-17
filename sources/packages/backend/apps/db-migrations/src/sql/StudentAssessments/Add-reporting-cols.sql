@@ -3,7 +3,7 @@ ALTER table
 ADD
   COLUMN previous_date_changed_reported_assessment_id INT REFERENCES sims.student_assessments(id);
 
-COMMENT ON COLUMN sims.student_assessments.previous_date_changed_reported_assessment_id IS 'Assessment that changed the study dates of the application after previously reported assessment.';
+COMMENT ON COLUMN sims.student_assessments.previous_date_changed_reported_assessment_id IS 'Previously reported assessment for the application.';
 
 ALTER TABLE
   sims.student_assessments
