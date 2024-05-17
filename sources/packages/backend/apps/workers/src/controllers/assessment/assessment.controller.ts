@@ -30,6 +30,7 @@ import {
 } from "..";
 import { StudentAssessmentService } from "../../services";
 import {
+  ApplicationStatus,
   CRAIncomeVerification,
   OfferingIntensity,
   StudentAppealRequest,
@@ -271,19 +272,24 @@ export class AssessmentController {
           );
           return job.complete();
         }
-        const lastReportedAssessmentId =
-          await this.studentAssessmentService.getLastReportedAssessment(
-            job.variables.assessmentId,
-          );
-        if (lastReportedAssessmentId) {
-          await this.studentAssessmentService.updateLastReportedAssessment(
-            job.variables.assessmentId,
-            lastReportedAssessmentId,
-          );
+        const application = assessment.application;
+        if (application.applicationStatus === ApplicationStatus.Completed) {
+          const updatedLastReportedAssessment =
+            await this.studentAssessmentService.updateLastReportedAssessment(
+              job.variables.assessmentId,
+              application.id,
+              assessment.offering.studyStartDate,
+              assessment.offering.studyEndDate,
+            );
+          if (updatedLastReportedAssessment === undefined) {
+            jobLogger.log("No previous reported assessment found.");
+          } else if (!updatedLastReportedAssessment) {
+            jobLogger.log(
+              "Last reported assessment id was previously updated or need not be updated.",
+            );
+          }
         } else {
-          jobLogger.log(
-            "Application not yet completed or no last reported assessment id found.",
-          );
+          jobLogger.log("Application is not yet completed.");
         }
         const impactedApplication =
           await this.assessmentSequentialProcessingService.assessImpactedApplicationReassessmentNeeded(
