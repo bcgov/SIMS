@@ -261,7 +261,7 @@ export class StudentAssessment extends RecordDataModel {
   })
   relatedApplicationAssessment?: StudentAssessment;
   /**
-   * Last reported assessment id corresponding to the offering date change.
+   * Previously reported assessment for the application.
    */
   @ManyToOne(() => StudentAssessment, { nullable: true })
   @JoinColumn({
@@ -270,7 +270,7 @@ export class StudentAssessment extends RecordDataModel {
   })
   previousDateChangedReportedAssessment?: StudentAssessment;
   /**
-   * Timestamp for the last reported assessment id.
+   * Date on which the assessment causing the study date change has been reported.
    */
   @Column({
     name: "reported_date",
