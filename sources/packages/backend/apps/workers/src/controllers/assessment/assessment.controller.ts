@@ -271,6 +271,18 @@ export class AssessmentController {
           );
           return job.complete();
         }
+        const lastReportedAssessmentId =
+          await this.studentAssessmentService.getLastReportedAssessment(
+            job.variables.assessmentId,
+          );
+        if (lastReportedAssessmentId) {
+          await this.studentAssessmentService.updateLastReportedAssessment(
+            job.variables.assessmentId,
+            lastReportedAssessmentId,
+          );
+        } else {
+          jobLogger.log("No last reported assessment id found.");
+        }
         const impactedApplication =
           await this.assessmentSequentialProcessingService.assessImpactedApplicationReassessmentNeeded(
             job.variables.assessmentId,

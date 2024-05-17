@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import {
   AssessmentStatus,
+  DisbursementScheduleStatus,
   RecordDataModelService,
   StudentAppealStatus,
   StudentAssessment,
@@ -331,6 +332,67 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       });
     }
     return true;
+  }
+
+  /**
+   * Updates the last reported assessment for the current assessment.
+   * @param currentAssessmentId current assessment id.
+   * @param previousDateChangedReportedAssessment previous date changed reported assessment.
+   * @returns true if the update was executed or false in case the
+   * previousDateChangedReportedAssessment was already present.
+   */
+  async updateLastReportedAssessment(
+    currentAssessmentId: number,
+    previousDateChangedReportedAssessment,
+  ): Promise<boolean> {
+    const updateExists = await this.repo.exists({
+      where: {
+        id: currentAssessmentId,
+        previousDateChangedReportedAssessment: Not(IsNull()),
+      },
+    });
+    if (!updateExists) {
+      await this.repo.update(currentAssessmentId, {
+        previousDateChangedReportedAssessment,
+      });
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Gets the last reported assessment.
+   * @param assessmentId current assessment id.
+   * @returns assessment id of the last reported assessment.
+   */
+  async getLastReportedAssessment(assessmentId: number): Promise<number> {
+    const application = await this.repo.findOne({
+      select: { application: { id: true } },
+      where: { id: assessmentId },
+    });
+    const lastBTypeReportedAssessment = await this.repo.findOne({
+      select: { id: true },
+      where: {
+        application: { id: application.id },
+        previousDateChangedReportedAssessment: Not(IsNull()),
+        reportedDate: Not(IsNull()),
+      },
+      order: { assessmentDate: "DESC" },
+    });
+    if (!lastBTypeReportedAssessment) {
+      const lastReportedEcert = await this.repo.findOne({
+        select: { id: true },
+        where: {
+          disbursementSchedules: {
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+          application: { id: application.id },
+        },
+        order: { assessmentDate: "DESC" },
+      });
+      return lastReportedEcert?.id;
+    }
+    return lastBTypeReportedAssessment.id;
   }
 
   /**
