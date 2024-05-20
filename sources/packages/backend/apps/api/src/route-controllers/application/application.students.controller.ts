@@ -653,6 +653,7 @@ export class ApplicationStudentsController extends BaseController {
 
     let appealStatus: StudentAppealStatus;
     let applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus;
+    let hasFeedbackError = false;
     if (application.applicationStatus === ApplicationStatus.Completed) {
       const appealPromise = this.studentAppealService.getAppealsForApplication(
         applicationId,
@@ -664,13 +665,18 @@ export class ApplicationStudentsController extends BaseController {
           applicationId,
           userToken.studentId,
         );
-      const [[appeal], applicationOfferingChangeRequest] = await Promise.all([
-        appealPromise,
-        applicationOfferingChangeRequestPromise,
-      ]);
+      const feedbackErrorPromise =
+        this.applicationService.hasFeedbackErrorBlockingFunds(applicationId);
+      const [[appeal], applicationOfferingChangeRequest, feedbackError] =
+        await Promise.all([
+          appealPromise,
+          applicationOfferingChangeRequestPromise,
+          feedbackErrorPromise,
+        ]);
       appealStatus = appeal?.status;
       applicationOfferingChangeRequestStatus =
         applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus;
+      hasFeedbackError = feedbackError;
     }
 
     const assessmentTriggerType = application.currentAssessment?.triggerType;
@@ -694,6 +700,7 @@ export class ApplicationStudentsController extends BaseController {
       scholasticStandingChangeType: scholasticStandingChange?.changeType,
       applicationOfferingChangeRequestStatus,
       assessmentTriggerType,
+      hasFeedbackError,
     };
   }
 
@@ -757,12 +764,19 @@ export class ApplicationStudentsController extends BaseController {
         applicationId,
         userToken.studentId,
       );
-    const [application, [appeal], applicationOfferingChangeRequest] =
-      await Promise.all([
-        getApplicationPromise,
-        appealPromise,
-        applicationOfferingChangeRequestPromise,
-      ]);
+    const hasFeedbackErrorPromise =
+      this.applicationService.hasFeedbackErrorBlockingFunds(applicationId);
+    const [
+      application,
+      [appeal],
+      applicationOfferingChangeRequest,
+      hasFeedbackError,
+    ] = await Promise.all([
+      getApplicationPromise,
+      appealPromise,
+      applicationOfferingChangeRequestPromise,
+      hasFeedbackErrorPromise,
+    ]);
     if (!application) {
       throw new NotFoundException(
         `Application not found or not on ${ApplicationStatus.Completed} status.`,
@@ -782,6 +796,7 @@ export class ApplicationStudentsController extends BaseController {
       applicationOfferingChangeRequestId: applicationOfferingChangeRequest?.id,
       applicationOfferingChangeRequestStatus:
         applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus,
+      hasFeedbackError,
     };
   }
 }

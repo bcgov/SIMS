@@ -1,4 +1,13 @@
 <template>
+  <!-- Student application having one or more disbursement feedback errors that block funding. -->
+  <application-status-tracker-banner
+    v-if="assessmentDetails.hasFeedbackError"
+    label="There is an issue with your funding request"
+    icon="fa:fas fa-exclamation-triangle"
+    icon-color="warning"
+    background-color="warning-bg"
+    content="Your request for funding sent to NSLSC was initially rejected because of errors with your assessment and/or with your account. Please contact StudentAid BC for assistance in resolving this issue. Please note, this message may remain after the issue has been resolved."
+  />
   <!-- Student appeal - waiting approval -->
   <application-status-tracker-banner
     v-if="assessmentDetails.appealStatus === StudentAppealStatus.Pending"

@@ -1762,6 +1762,28 @@ export class ApplicationService extends RecordDataModelService<Application> {
     });
   }
 
+  /**
+   * Check if the application has any feedback errors received
+   * that will block the student funding.
+   * @param applicationId application.
+   * @returns flag which indicates if application has any errors
+   * blocking funding.
+   */
+  async hasFeedbackErrorBlockingFunds(applicationId: number): Promise<boolean> {
+    return this.repo.exists({
+      where: {
+        id: applicationId,
+        currentAssessment: {
+          disbursementSchedules: {
+            disbursementFeedbackErrors: {
+              eCertFeedbackError: { blockFunding: true },
+            },
+          },
+        },
+      },
+    });
+  }
+
   @InjectLogger()
   logger: LoggerService;
 }

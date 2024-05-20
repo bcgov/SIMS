@@ -161,7 +161,8 @@ export default defineComponent({
           ApplicationOfferingChangeRequestStatus.InProgressWithSABC ||
         applicationProgressDetails.value
           .applicationOfferingChangeRequestStatus ===
-          ApplicationOfferingChangeRequestStatus.InProgressWithStudent
+          ApplicationOfferingChangeRequestStatus.InProgressWithStudent ||
+        applicationProgressDetails.value.hasFeedbackError
       ) {
         // Application is completed but has warnings.
         statusIconDetails.value = STATUS_ICON_WARNING;
