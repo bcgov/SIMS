@@ -307,6 +307,8 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
         ScholasticStandingCode.UC,
       [StudentScholasticStandingChangeType.StudentCompletedProgramEarly]:
         ScholasticStandingCode.EC,
+      [StudentScholasticStandingChangeType.StudentTransfer]:
+        ScholasticStandingCode.ST,
     };
     return scholasticStandingCodeMap[scholasticStandingChangeType];
   }

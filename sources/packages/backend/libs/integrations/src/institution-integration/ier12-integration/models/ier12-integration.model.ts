@@ -125,6 +125,10 @@ export enum ScholasticStandingCode {
    * Early completion.
    */
   EC = "EC",
+  /**
+   * Student transfer.
+   */
+  ST = "ST",
 }
 
 export enum YNFlag {
