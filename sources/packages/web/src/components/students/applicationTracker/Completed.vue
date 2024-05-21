@@ -1,7 +1,7 @@
 <template>
   <!-- Student application having one or more disbursement feedback errors that block funding. -->
   <application-status-tracker-banner
-    v-if="assessmentDetails.hasFeedbackError"
+    v-if="assessmentDetails.hasBlockFundingFeedbackError"
     label="There is an issue with your funding request"
     icon="fa:fas fa-exclamation-triangle"
     icon-color="warning"

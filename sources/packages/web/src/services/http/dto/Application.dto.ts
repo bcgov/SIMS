@@ -109,7 +109,7 @@ export interface ApplicationProgressDetailsAPIOutDTO {
   scholasticStandingChangeType?: StudentScholasticStandingChangeType;
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
   assessmentTriggerType?: AssessmentTriggerType;
-  hasFeedbackError: boolean;
+  hasBlockFundingFeedbackError: boolean;
 }
 
 export interface DisbursementDetailsAPIOutDTO {
@@ -133,7 +133,7 @@ export interface CompletedApplicationDetailsAPIOutDTO
   scholasticStandingChangeType?: StudentScholasticStandingChangeType;
   applicationOfferingChangeRequestId?: number;
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
-  hasFeedbackError: boolean;
+  hasBlockFundingFeedbackError: boolean;
 }
 
 export interface ApplicationAssessmentStatusDetailsAPIOutDTO {

@@ -653,7 +653,7 @@ export class ApplicationStudentsController extends BaseController {
 
     let appealStatus: StudentAppealStatus;
     let applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus;
-    let hasFeedbackError = false;
+    let hasBlockFundingFeedbackError = false;
     if (application.applicationStatus === ApplicationStatus.Completed) {
       const appealPromise = this.studentAppealService.getAppealsForApplication(
         applicationId,
@@ -676,7 +676,7 @@ export class ApplicationStudentsController extends BaseController {
       appealStatus = appeal?.status;
       applicationOfferingChangeRequestStatus =
         applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus;
-      hasFeedbackError = feedbackError;
+      hasBlockFundingFeedbackError = feedbackError;
     }
 
     const assessmentTriggerType = application.currentAssessment?.triggerType;
@@ -700,7 +700,7 @@ export class ApplicationStudentsController extends BaseController {
       scholasticStandingChangeType: scholasticStandingChange?.changeType,
       applicationOfferingChangeRequestStatus,
       assessmentTriggerType,
-      hasFeedbackError,
+      hasBlockFundingFeedbackError,
     };
   }
 
@@ -764,18 +764,18 @@ export class ApplicationStudentsController extends BaseController {
         applicationId,
         userToken.studentId,
       );
-    const hasFeedbackErrorPromise =
+    const hasBlockFundingFeedbackErrorPromise =
       this.applicationService.hasFeedbackErrorBlockingFunds(applicationId);
     const [
       application,
       [appeal],
       applicationOfferingChangeRequest,
-      hasFeedbackError,
+      hasBlockFundingFeedbackError,
     ] = await Promise.all([
       getApplicationPromise,
       appealPromise,
       applicationOfferingChangeRequestPromise,
-      hasFeedbackErrorPromise,
+      hasBlockFundingFeedbackErrorPromise,
     ]);
     if (!application) {
       throw new NotFoundException(
@@ -796,7 +796,7 @@ export class ApplicationStudentsController extends BaseController {
       applicationOfferingChangeRequestId: applicationOfferingChangeRequest?.id,
       applicationOfferingChangeRequestStatus:
         applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus,
-      hasFeedbackError,
+      hasBlockFundingFeedbackError,
     };
   }
 }

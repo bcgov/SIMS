@@ -141,7 +141,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
         applicationOfferingChangeRequestStatus:
           ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
         assessmentTriggerType: application.currentAssessment.triggerType,
-        hasFeedbackError: false,
+        hasBlockFundingFeedbackError: false,
       });
   });
 
@@ -182,7 +182,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
         firstCOEStatus: firstDisbursement.coeStatus,
         secondCOEStatus: secondDisbursement.coeStatus,
         assessmentTriggerType: AssessmentTriggerType.RelatedApplicationChanged,
-        hasFeedbackError: false,
+        hasBlockFundingFeedbackError: false,
       });
   });
 
@@ -235,7 +235,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
           pirStatus: application.pirStatus,
           firstCOEStatus: COEStatus.completed,
           assessmentTriggerType: application.currentAssessment.triggerType,
-          hasFeedbackError: false,
+          hasBlockFundingFeedbackError: false,
         });
     },
   );
@@ -289,7 +289,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
           pirStatus: application.pirStatus,
           firstCOEStatus: COEStatus.completed,
           assessmentTriggerType: application.currentAssessment.triggerType,
-          hasFeedbackError: true,
+          hasBlockFundingFeedbackError: true,
         });
     },
   );

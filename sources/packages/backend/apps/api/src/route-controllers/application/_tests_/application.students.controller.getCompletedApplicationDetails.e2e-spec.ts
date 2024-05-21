@@ -150,7 +150,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
             secondDisbursement.disbursementScheduleStatus,
         },
         assessmentTriggerType: application.currentAssessment.triggerType,
-        hasFeedbackError: false,
+        hasBlockFundingFeedbackError: false,
       });
   });
 
@@ -194,7 +194,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         assessmentTriggerType: application.currentAssessment.triggerType,
         scholasticStandingChangeType:
           StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
-        hasFeedbackError: false,
+        hasBlockFundingFeedbackError: false,
       });
   });
 
@@ -273,7 +273,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           pendingApplicationOfferingChangeRequest.id,
         applicationOfferingChangeRequestStatus:
           ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
-        hasFeedbackError: false,
+        hasBlockFundingFeedbackError: false,
       });
   });
 
@@ -319,7 +319,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
             secondDisbursement.disbursementScheduleStatus,
         },
         assessmentTriggerType: AssessmentTriggerType.RelatedApplicationChanged,
-        hasFeedbackError: false,
+        hasBlockFundingFeedbackError: false,
       });
   });
 
@@ -371,7 +371,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
             disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
-          hasFeedbackError: false,
+          hasBlockFundingFeedbackError: false,
         });
     },
   );
@@ -424,7 +424,69 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
             disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
-          hasFeedbackError: true,
+          hasBlockFundingFeedbackError: true,
+        });
+    },
+  );
+
+  it(
+    "Should get application details with feedback error status as true when the application has one or more feedback errors" +
+      " that block funding received for second disbursement and the offering intensity is part-time.",
+    async () => {
+      // Arrange
+      const application = await saveFakeApplicationDisbursements(
+        appDataSource,
+        { student },
+        {
+          createSecondDisbursement: true,
+          applicationStatus: ApplicationStatus.Completed,
+          offeringIntensity: OfferingIntensity.partTime,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+          secondDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+        },
+      );
+      const [, secondDisbursement] =
+        application.currentAssessment.disbursementSchedules;
+      // Feedback error which blocks funding.
+      const eCertFeedbackError = await db.eCertFeedbackError.findOne({
+        select: { id: true },
+        where: {
+          blockFunding: true,
+          offeringIntensity: OfferingIntensity.partTime,
+        },
+      });
+      // Create fake disbursement feedback error.
+      const feedbackError = createFakeDisbursementFeedbackError({
+        disbursementSchedule: secondDisbursement,
+        eCertFeedbackError,
+      });
+      await db.disbursementFeedbackErrors.save(feedbackError);
+      const endpoint = `/students/application/${application.id}/completed`;
+      const token = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          firstDisbursement: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+          secondDisbursement: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+          assessmentTriggerType: application.currentAssessment.triggerType,
+          hasBlockFundingFeedbackError: true,
         });
     },
   );
@@ -477,7 +539,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
             disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
-          hasFeedbackError: true,
+          hasBlockFundingFeedbackError: true,
         });
     },
   );
