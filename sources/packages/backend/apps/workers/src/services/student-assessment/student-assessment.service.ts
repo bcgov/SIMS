@@ -389,6 +389,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     const lastBTypeReportedAssessment = await this.repo.findOne({
       select: {
         id: true,
+        assessmentDate: true,
         offering: { studyStartDate: true, studyEndDate: true },
       },
       relations: { offering: true },
@@ -403,6 +404,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       const lastReportedDisbursement = await this.repo.findOne({
         select: {
           id: true,
+          assessmentDate: true,
           offering: { studyStartDate: true, studyEndDate: true },
         },
         where: {
