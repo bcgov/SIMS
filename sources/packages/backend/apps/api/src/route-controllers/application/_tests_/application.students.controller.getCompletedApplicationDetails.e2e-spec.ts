@@ -17,6 +17,7 @@ import {
   saveFakeApplicationOfferingRequestChange,
   createE2EDataSources,
   E2EDataSources,
+  createFakeDisbursementFeedbackError,
 } from "@sims/test-utils";
 import {
   Application,
@@ -25,6 +26,8 @@ import {
   AssessmentTriggerType,
   COEStatus,
   DisbursementSchedule,
+  DisbursementScheduleStatus,
+  OfferingIntensity,
   Student,
   StudentAppeal,
   StudentAppealStatus,
@@ -147,6 +150,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
             secondDisbursement.disbursementScheduleStatus,
         },
         assessmentTriggerType: application.currentAssessment.triggerType,
+        hasFeedbackError: false,
       });
   });
 
@@ -190,6 +194,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         assessmentTriggerType: application.currentAssessment.triggerType,
         scholasticStandingChangeType:
           StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+        hasFeedbackError: false,
       });
   });
 
@@ -268,6 +273,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           pendingApplicationOfferingChangeRequest.id,
         applicationOfferingChangeRequestStatus:
           ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
+        hasFeedbackError: false,
       });
   });
 
@@ -313,8 +319,168 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
             secondDisbursement.disbursementScheduleStatus,
         },
         assessmentTriggerType: AssessmentTriggerType.RelatedApplicationChanged,
+        hasFeedbackError: false,
       });
   });
+
+  it(
+    "Should get application details with feedback error status as false when the application has one or more feedback errors but none of them" +
+      " block funding and the offering intensity is part-time.",
+    async () => {
+      // Arrange
+      const application = await saveFakeApplicationDisbursements(
+        appDataSource,
+        { student },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+          offeringIntensity: OfferingIntensity.partTime,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+        },
+      );
+      const [firstDisbursement] =
+        application.currentAssessment.disbursementSchedules;
+      // Feedback error which does not block funding.
+      const eCertFeedbackError = await db.eCertFeedbackError.findOne({
+        select: { id: true },
+        where: {
+          blockFunding: false,
+          offeringIntensity: OfferingIntensity.partTime,
+        },
+      });
+      // Create fake disbursement feedback error.
+      const feedbackError = createFakeDisbursementFeedbackError({
+        disbursementSchedule: firstDisbursement,
+        eCertFeedbackError,
+      });
+      await db.disbursementFeedbackErrors.save(feedbackError);
+      const endpoint = `/students/application/${application.id}/completed`;
+      const token = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          firstDisbursement: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+          assessmentTriggerType: application.currentAssessment.triggerType,
+          hasFeedbackError: false,
+        });
+    },
+  );
+
+  it(
+    "Should get application details with feedback error status as true when the application has one or more feedback errors" +
+      " that block funding and the offering intensity is part-time.",
+    async () => {
+      // Arrange
+      const application = await saveFakeApplicationDisbursements(
+        appDataSource,
+        { student },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+          offeringIntensity: OfferingIntensity.partTime,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+        },
+      );
+      const [firstDisbursement] =
+        application.currentAssessment.disbursementSchedules;
+      // Feedback error which blocks funding.
+      const eCertFeedbackError = await db.eCertFeedbackError.findOne({
+        select: { id: true },
+        where: {
+          blockFunding: true,
+          offeringIntensity: OfferingIntensity.partTime,
+        },
+      });
+      // Create fake disbursement feedback error.
+      const feedbackError = createFakeDisbursementFeedbackError({
+        disbursementSchedule: firstDisbursement,
+        eCertFeedbackError,
+      });
+      await db.disbursementFeedbackErrors.save(feedbackError);
+      const endpoint = `/students/application/${application.id}/completed`;
+      const token = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          firstDisbursement: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+          assessmentTriggerType: application.currentAssessment.triggerType,
+          hasFeedbackError: true,
+        });
+    },
+  );
+
+  it(
+    "Should get application details with feedback error status as true when the application has one or more feedback errors" +
+      " that block funding and the offering intensity is full-time.",
+    async () => {
+      // Arrange
+      const application = await saveFakeApplicationDisbursements(
+        appDataSource,
+        { student },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+          offeringIntensity: OfferingIntensity.fullTime,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+        },
+      );
+      const [firstDisbursement] =
+        application.currentAssessment.disbursementSchedules;
+      // Feedback error for full-time which blocks funding.
+      const eCertFeedbackError = await db.eCertFeedbackError.findOne({
+        select: { id: true },
+        where: {
+          blockFunding: true,
+          offeringIntensity: OfferingIntensity.fullTime,
+        },
+      });
+      // Create fake disbursement feedback error.
+      const feedbackError = createFakeDisbursementFeedbackError({
+        disbursementSchedule: firstDisbursement,
+        eCertFeedbackError,
+      });
+      await db.disbursementFeedbackErrors.save(feedbackError);
+      const endpoint = `/students/application/${application.id}/completed`;
+      const token = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          firstDisbursement: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+          assessmentTriggerType: application.currentAssessment.triggerType,
+          hasFeedbackError: true,
+        });
+    },
+  );
 
   afterAll(async () => {
     await app?.close();
