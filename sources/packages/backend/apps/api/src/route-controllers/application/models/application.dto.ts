@@ -165,6 +165,7 @@ export class ApplicationProgressDetailsAPIOutDTO {
   scholasticStandingChangeType?: StudentScholasticStandingChangeType;
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
   assessmentTriggerType?: AssessmentTriggerType;
+  hasBlockFundingFeedbackError: boolean;
 }
 
 export class DisbursementDetailsAPIOutDTO {
@@ -185,6 +186,7 @@ export class CompletedApplicationDetailsAPIOutDTO extends EnrolmentApplicationDe
   scholasticStandingChangeType?: StudentScholasticStandingChangeType;
   applicationOfferingChangeRequestId?: number;
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
+  hasBlockFundingFeedbackError: boolean;
 }
 
 export class ApplicationAssessmentStatusDetailsAPIOutDTO {
