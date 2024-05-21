@@ -2,6 +2,7 @@
   <formio-container
     formName="reportScholasticStandingChange"
     :formData="data"
+    @loaded="formLoaded"
     @submitted="submitted"
   >
     <template #actions="{ submit }" v-if="!readOnly">
@@ -21,6 +22,7 @@ import {
   ScholasticStandingSubmittedDetailsAPIOutDTO,
 } from "@/services/http/dto";
 import { FormIOForm } from "@/types";
+import { useFormioUtils } from "@/composables";
 
 interface ScholasticStanding
   extends ScholasticStandingSubmittedDetailsAPIOutDTO {
@@ -49,9 +51,22 @@ export default defineComponent({
     },
   },
   setup(props, context) {
+    const { getComponent } = useFormioUtils();
     const data = ref(
       {} as ScholasticStanding | ScholasticStandingBeforeSubmission,
     );
+
+    const formLoaded = (form: FormIOForm) => {
+      const scholasticStandingChangeType = getComponent(
+        form,
+        "scholasticStandingChangeType",
+      );
+
+      // TODO: WIP - Test.
+      console.log(scholasticStandingChangeType);
+      scholasticStandingChangeType.component.values[2].label = "Tests";
+      scholasticStandingChangeType.redraw();
+    };
 
     const setReadOnlyData = () => {
       data.value = { ...props.initialData, readOnly: props.readOnly };
@@ -73,7 +88,7 @@ export default defineComponent({
       context.emit("cancel");
     };
 
-    return { data, submitted, cancel };
+    return { formLoaded, data, submitted, cancel };
   },
 });
 </script>
