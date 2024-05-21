@@ -48,6 +48,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     options?: {
       filterNoEffectRestrictions?: boolean;
       onlyActive?: boolean;
+      filterRestrictionActionType?: RestrictionActionType;
     },
   ): Promise<StudentRestriction[]> {
     const query = this.repo
@@ -62,6 +63,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         "restriction.restrictionCode",
         "restriction.description",
         "restriction.notificationType",
+        "restriction.actionType",
       ])
       .innerJoin("studentRestrictions.restriction", "restriction")
       .innerJoin("studentRestrictions.student", "student")

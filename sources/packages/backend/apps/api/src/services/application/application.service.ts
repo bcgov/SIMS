@@ -1558,18 +1558,30 @@ export class ApplicationService extends RecordDataModelService<Application> {
             disbursementScheduleStatus: true,
             coeDeniedReason: { id: true, reason: true },
             coeDeniedOtherDesc: true,
+            msfaaNumber: { id: true, dateSigned: true, cancelledDate: true },
           },
+          workflowData: true as unknown,
+          offering: { id: true, offeringIntensity: true },
         },
         studentScholasticStandings: {
           id: true,
           changeType: true,
         },
+        student: {
+          id: true,
+          studentRestrictions: {
+            id: true,
+            restriction: { id: true, actionType: true, restrictionCode: true },
+          },
+        },
       },
       relations: {
         currentAssessment: {
-          disbursementSchedules: { coeDeniedReason: true },
+          disbursementSchedules: { coeDeniedReason: true, msfaaNumber: true },
+          offering: true,
         },
         studentScholasticStandings: true,
+        student: { studentRestrictions: { restriction: true } },
       },
       where: {
         id: applicationId,

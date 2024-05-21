@@ -1,4 +1,39 @@
 <template>
+  <application-status-tracker-banner
+    label="Attention! You are not yet eligible to receive funding."
+    icon="fa:fas fa-exclamation-circle"
+    icon-color="danger"
+    background-color="error-bg"
+    content="You have applied for disability funding on your application, but your
+      disability status on your student profile has not yet been verified. Only
+      once your status is verified will you be able to receive funding."
+    v-if="!applicationCOEDetails.verifiedDisabilityStatus"
+  />
+
+  <application-status-tracker-banner
+    label="Attention! You are not yet eligible to receive funding."
+    icon="fa:fas fa-exclamation-circle"
+    icon-color="danger"
+    background-color="error-bg"
+    content="You have not yet signed your MSFAA number with the National Student Loans
+      Service Center. Your MSFAA number was issued on your Notice of Assessment
+      - you must use that number to sign your Master Student Financial
+      Assistance Agreement with NSLSC before you are eligible to receive your
+      funding. Alternatively, this could be due to your MSFAA being cancelled."
+    v-if="!applicationCOEDetails.hasValidMSFAAStatus"
+  />
+
+  <application-status-tracker-banner
+    label="Attention! You are not yet eligible to receive funding."
+    icon="fa:fas fa-exclamation-circle"
+    icon-color="danger"
+    background-color="error-bg"
+    content="You have a restriction on your account making you ineligible to receive
+      funding. Please contact StudentAid BC if you still require assistance in
+      identifying the cause of this issue and help resolving the issue."
+    v-if="applicationCOEDetails.hasRestriction"
+  />
+
   <related-application-changed
     v-if="
       applicationCOEDetails.assessmentTriggerType ===
@@ -25,12 +60,14 @@ import { EnrolmentApplicationDetailsAPIOutDTO } from "@/services/http/dto/Applic
 import DisbursementBanner from "@/components/students/applicationTracker/DisbursementBanner.vue";
 import MultipleDisbursementBanner from "@/components/students/applicationTracker/MultipleDisbursementBanner.vue";
 import RelatedApplicationChanged from "@/components/students/applicationTracker/RelatedApplicationChanged.vue";
+import ApplicationStatusTrackerBanner from "@/components/students/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
 
 export default defineComponent({
   components: {
     DisbursementBanner,
     MultipleDisbursementBanner,
     RelatedApplicationChanged,
+    ApplicationStatusTrackerBanner,
   },
   props: {
     applicationId: {

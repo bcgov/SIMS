@@ -31,6 +31,7 @@ import {
   StudentAppealService,
   ApplicationOfferingChangeRequestService,
   EducationProgramService,
+  StudentRestrictionService,
 } from "../../services";
 import { IUserToken, StudentUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -74,7 +75,9 @@ import { ApplicationData } from "@sims/sims-db/entities/application.model";
 import {
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
+  DisabilityStatus,
   OfferingIntensity,
+  RestrictionActionType,
   StudentAppealStatus,
 } from "@sims/sims-db";
 import {
@@ -103,6 +106,7 @@ export class ApplicationStudentsController extends BaseController {
     private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
     private readonly configService: ConfigService,
     private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
+    private readonly studentRestrictionService: StudentRestrictionService,
   ) {
     super();
   }
@@ -728,11 +732,57 @@ export class ApplicationStudentsController extends BaseController {
         `Application id ${applicationId} not found or not in relevant status to get enrolment details.`,
       );
     }
+
+    // Verify Disability Status PD/PPD.
+    const verifiedDisabilityStatus = application.currentAssessment.workflowData
+      .calculatedData.pdppdStatus
+      ? [(DisabilityStatus.PD, DisabilityStatus.PPD)].includes(
+          application.student.disabilityStatus,
+        )
+      : true;
+
+    // Verify MSFAA status which is signed OR cancelled.
+    let hasSignature = true;
+    let isNotCancelled = true;
+    const disbursementSchedules =
+      application.currentAssessment.disbursementSchedules;
+    disbursementSchedules.forEach((disbursementSchedule) => {
+      hasSignature =
+        hasSignature && !!disbursementSchedule.msfaaNumber?.dateSigned;
+      isNotCancelled =
+        isNotCancelled && !disbursementSchedule.msfaaNumber?.cancelledDate;
+    });
+    const hasValidMSFAAStatus = hasSignature && isNotCancelled;
+
+    // Get restriction records from the student restrictions.
+    // Filter restrictions based on offering intensity.
+    // Remove restrictions with duplicated restriction code.
+    let hasRestriction = false;
+    const studentRestrictions = application.student.studentRestrictions;
+    if (studentRestrictions.length > 0) {
+      // Filter restriction action type based on offering intensity.
+      if (
+        application.currentAssessment.offering.offeringIntensity ===
+        OfferingIntensity.partTime
+      ) {
+        const filterStudentRestrictions = studentRestrictions.filter(
+          (studentRestriction) =>
+            studentRestriction.restriction.actionType.includes(
+              RestrictionActionType.StopPartTimeDisbursement,
+            ),
+        );
+        hasRestriction = filterStudentRestrictions.length > 0;
+      }
+    }
+
     return {
       ...this.applicationControllerService.transformToEnrolmentApplicationDetailsAPIOutDTO(
         application.currentAssessment.disbursementSchedules,
       ),
       assessmentTriggerType: application.currentAssessment.triggerType,
+      verifiedDisabilityStatus,
+      hasValidMSFAAStatus,
+      hasRestriction,
     };
   }
 

@@ -178,6 +178,9 @@ export class EnrolmentApplicationDetailsAPIOutDTO {
   firstDisbursement?: DisbursementDetailsAPIOutDTO;
   secondDisbursement?: DisbursementDetailsAPIOutDTO;
   assessmentTriggerType?: AssessmentTriggerType;
+  verifiedDisabilityStatus?: boolean;
+  hasValidMSFAAStatus?: boolean;
+  hasRestriction?: boolean;
 }
 
 export class CompletedApplicationDetailsAPIOutDTO extends EnrolmentApplicationDetailsAPIOutDTO {

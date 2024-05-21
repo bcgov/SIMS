@@ -122,6 +122,9 @@ export interface EnrolmentApplicationDetailsAPIOutDTO {
   firstDisbursement?: DisbursementDetailsAPIOutDTO;
   secondDisbursement?: DisbursementDetailsAPIOutDTO;
   assessmentTriggerType: AssessmentTriggerType;
+  verifiedDisabilityStatus: boolean;
+  hasValidMSFAAStatus: boolean;
+  hasRestriction: boolean;
 }
 
 export interface CompletedApplicationDetailsAPIOutDTO
