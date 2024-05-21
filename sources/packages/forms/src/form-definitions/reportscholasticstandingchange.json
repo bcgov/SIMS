@@ -1,13 +1,32 @@
 {
   "title": "Report Scholastic Standing Change",
-  "display": "form",
-  "type": "form",
   "name": "reportscholasticstandingchange",
   "path": "reportscholasticstandingchange",
+  "type": "form",
+  "display": "form",
   "tags": [
     "common"
   ],
   "components": [
+    {
+      "input": true,
+      "tableView": true,
+      "key": "applicationOfferingIntensity",
+      "label": "Offering Intensity (Part Time or Full Time) - Used to define custom labels",
+      "protected": false,
+      "unique": false,
+      "persistent": true,
+      "type": "hidden",
+      "tags": [],
+      "conditional": {
+        "show": "",
+        "when": null,
+        "eq": ""
+      },
+      "properties": {},
+      "lockKey": true,
+      "calculateValue": "if(value === \"Full Time\"){\n    // No adjustments needed.\n    return;\n}\n// Find the option and adjust it to Part-time.\nconst scholasticStandingChangeType = utils.getComponent(form.components, \"scholasticStandingChangeType\");\nconst studentDidNotCompleteProgramOption = scholasticStandingChangeType.values.find(option => option.value === \"Student did not complete program\");\nstudentDidNotCompleteProgramOption.label = \"Student did not complete courses they were funded\";"
+    },
     {
       "label": "Student Name",
       "labelWidth": "",
@@ -956,7 +975,9 @@
       "lazyLoad": false,
       "theme": "default",
       "breadcrumb": "default",
-      "id": "ehl1qf"
+      "id": "ehl1qf",
+      "isNew": false,
+      "tags": []
     },
     {
       "title": "Offering Details Panel",
@@ -3329,7 +3350,7 @@
               "shortcut": ""
             },
             {
-              "label": "Student did not complete program {{ data.applicationStatus }}",
+              "label": "Student was unsuccessful in completing their funded study period offering",
               "value": "Student did not complete program",
               "shortcut": ""
             },
