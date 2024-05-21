@@ -158,7 +158,14 @@ export class AssessmentController {
         jobLogger.error(message);
         return job.error(ASSESSMENT_NOT_FOUND, message);
       }
-      const assessmentDTO = this.transformToAssessmentDTO(assessment);
+      const noaApproval =
+        await this.studentAssessmentService.assessmentNOAExists(
+          assessment.application.id,
+        );
+      const assessmentDTO = this.transformToAssessmentDTO(
+        assessment,
+        noaApproval,
+      );
       const outputVariables = filterObjectProperties(
         assessmentDTO,
         job.customHeaders,
@@ -469,6 +476,7 @@ export class AssessmentController {
    */
   private transformToAssessmentDTO(
     assessment: StudentAssessment,
+    noaApproval?: boolean,
   ): ApplicationAssessmentJobOutDTO {
     const application = assessment.application;
     const [studentCRAIncome] = application.craIncomeVerifications?.filter(
@@ -478,6 +486,8 @@ export class AssessmentController {
     const institutionLocation = offering?.institutionLocation;
     return {
       applicationId: application.id,
+      applicationStatus: application.applicationStatus,
+      noaApproval: noaApproval,
       triggerType: assessment.triggerType,
       data: application.data,
       programYear: {

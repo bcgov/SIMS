@@ -81,6 +81,7 @@ export class AssessmentNOAAPIOutDTO {
   assessment: Assessment;
   applicationId: number;
   applicationNumber: string;
+  applicationCurrentAssessment: number;
   fullName: string;
   programName: string;
   locationName: string;

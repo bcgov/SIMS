@@ -83,6 +83,14 @@ export interface ApplicationAssessmentJobOutDTO {
    */
   applicationId: number;
   /**
+   * Current status of the application.
+   */
+  applicationStatus: string;
+  /**
+   * If any NOA has been approved for the application.
+   */
+  noaApproval: boolean;
+  /**
    * Origin of the assessment.
    */
   triggerType: AssessmentTriggerType;

@@ -20,6 +20,7 @@
               @click="confirmCancelApplication"
               >Cancel application</v-btn
             ><v-btn
+              v-if="assessmentId === currentAssessmentId"
               class="ml-2"
               color="primary"
               data-cy="AcceptAssessment"
@@ -63,6 +64,10 @@ export default defineComponent({
     assessmentId: {
       type: Number,
       required: true,
+    },
+    currentAssessmentId: {
+      type: Number,
+      required: false,
     },
   },
   setup(props) {

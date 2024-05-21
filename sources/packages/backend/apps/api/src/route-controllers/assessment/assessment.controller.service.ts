@@ -94,6 +94,7 @@ export class AssessmentControllerService {
       noaApprovalStatus: assessment.noaApprovalStatus,
       applicationStatus: assessment.application.applicationStatus,
       applicationNumber: assessment.application.applicationNumber,
+      applicationCurrentAssessment: assessment.application.currentAssessment.id,
       fullName: getUserFullName(assessment.application.student.user),
       programName: assessment.offering.educationProgram.name,
       locationName: assessment.offering.institutionLocation.name,
