@@ -26,7 +26,6 @@ import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validati
 import { addDays } from "@sims/utilities";
 import { STUDY_DATE_OVERLAP_ERROR } from "../../../../utilities";
 import { OFFERING_INTENSITY_MISMATCH } from "../../../../constants";
-import { application } from "express";
 
 describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createApplicationOfferingChangeRequest", () => {
   let app: INestApplication;

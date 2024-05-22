@@ -23,6 +23,8 @@ import {
   UpdateResult,
   EntityManager,
   MoreThan,
+  IsNull,
+  Brackets,
 } from "typeorm";
 import {
   SaveEducationProgram,
@@ -48,6 +50,8 @@ import {
   InstitutionAddsPendingProgramNotification,
   NotificationActionsService,
 } from "@sims/services";
+import { query } from "express";
+import { async } from "rxjs";
 
 const OTHER_REGULATORY_BODY = "other";
 @Injectable()
@@ -127,11 +131,18 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     educationProgramId: number,
   ): Promise<boolean> {
     return this.repo.exists({
-      where: {
-        id: educationProgramId,
-        isActive: true,
-        effectiveEndDate: MoreThan(getISODateOnlyString(new Date())),
-      },
+      where: [
+        {
+          id: educationProgramId,
+          isActive: true,
+          effectiveEndDate: MoreThan(getISODateOnlyString(new Date())),
+        },
+        {
+          id: educationProgramId,
+          isActive: true,
+          effectiveEndDate: IsNull(),
+        },
+      ],
     });
   }
 
@@ -436,9 +447,13 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         programStatus: ProgramStatus.Approved,
       })
       .andWhere("programs.isActive = true")
-      .andWhere("programs.effectiveEndDate > :currentDate", {
-        currentDate: getISODateOnlyString(new Date()),
-      });
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where("programs.effectiveEndDate > :currentDate", {
+            currentDate: getISODateOnlyString(new Date()),
+          }).orWhere("programs.effectiveEndDate is null");
+        }),
+      );
     if (!isFulltimeAllowed) {
       programsQuery.andWhere("programs.programIntensity = :programIntensity", {
         programIntensity: ProgramIntensity.fullTimePartTime,
@@ -473,7 +488,13 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       })
       .andWhere("programs.institution.id = :institutionId", { institutionId });
     if (!options?.isIncludeInActiveProgram) {
-      query.andWhere("programs.isActive = true");
+      query.andWhere("programs.isActive = true").andWhere(
+        new Brackets((qb) => {
+          qb.where("programs.effectiveEndDate > :currentDate", {
+            currentDate: getISODateOnlyString(new Date()),
+          }).orWhere("programs.effectiveEndDate is null");
+        }),
+      );
     }
     return query.orderBy("programs.name").getMany();
   }
@@ -705,13 +726,24 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         deliveredOnSite: true,
         deliveredOnline: true,
       },
-      where: {
-        sabcCode: In(sabcCodes),
-        institution: {
-          id: institutionId,
+      where: [
+        {
+          sabcCode: In(sabcCodes),
+          institution: {
+            id: institutionId,
+          },
+          isActive: true,
+          effectiveEndDate: MoreThan(getISODateOnlyString(new Date())),
         },
-        isActive: true,
-      },
+        {
+          sabcCode: In(sabcCodes),
+          institution: {
+            id: institutionId,
+          },
+          isActive: true,
+          effectiveEndDate: IsNull(),
+        },
+      ],
     });
   }
 
@@ -728,14 +760,26 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     programId?: number,
   ): Promise<boolean> {
     return this.repo.exists({
-      where: {
-        id: programId ? Not(Equal(programId)) : undefined,
-        sabcCode: sabcCode,
-        institution: {
-          id: institutionId,
+      where: [
+        {
+          id: programId ? Not(Equal(programId)) : undefined,
+          sabcCode: sabcCode,
+          institution: {
+            id: institutionId,
+          },
+          isActive: true,
+          effectiveEndDate: MoreThan(getISODateOnlyString(new Date())),
         },
-        isActive: true,
-      },
+        {
+          id: programId ? Not(Equal(programId)) : undefined,
+          sabcCode: sabcCode,
+          institution: {
+            id: institutionId,
+          },
+          isActive: true,
+          effectiveEndDate: IsNull(),
+        },
+      ],
     });
   }
 
