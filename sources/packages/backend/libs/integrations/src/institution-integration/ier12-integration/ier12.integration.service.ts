@@ -278,7 +278,7 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
       (scholasticStandingChangeType ===
         StudentScholasticStandingChangeType.StudentCompletedProgramEarly ||
         scholasticStandingChangeType ===
-          StudentScholasticStandingChangeType.StudentTransfer)
+          StudentScholasticStandingChangeType.SchoolTransfer)
     ) {
       return studyEndDate;
     }
@@ -307,7 +307,7 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
         ScholasticStandingCode.UC,
       [StudentScholasticStandingChangeType.StudentCompletedProgramEarly]:
         ScholasticStandingCode.EC,
-      [StudentScholasticStandingChangeType.StudentTransfer]:
+      [StudentScholasticStandingChangeType.SchoolTransfer]:
         ScholasticStandingCode.ST,
     };
     return scholasticStandingCodeMap[scholasticStandingChangeType];

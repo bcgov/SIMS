@@ -3377,7 +3377,7 @@
           "values": [
             {
               "label": "Student is transferring to a different institution or campus",
-              "value": "Student transfer",
+              "value": "School transfer",
               "shortcut": ""
             },
             {
@@ -3460,18 +3460,17 @@
           "inputType": "radio",
           "fieldSet": false,
           "id": "ew5zdek",
-          "tags": [],
-          "isNew": false
+          "tags": []
         },
         {
           "title": "Student is transferring to a different institution or campus - Panel",
           "collapsible": false,
           "hideLabel": true,
-          "key": "studentTransferPanel",
+          "key": "schoolTransferPanel",
           "conditional": {
             "show": "true",
             "when": "scholasticStandingChangeType",
-            "eq": "Student transfer"
+            "eq": "School transfer"
           },
           "type": "panel",
           "label": "Panel",
@@ -3946,7 +3945,7 @@
               "id": "ei3m3ha"
             },
             {
-              "label": "Were the students program costs different than the original program costs?",
+              "label": "Were the students study period costs different than the originally reported costs?",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
