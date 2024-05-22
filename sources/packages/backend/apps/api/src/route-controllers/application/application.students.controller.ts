@@ -175,13 +175,13 @@ export class ApplicationStudentsController extends BaseController {
       throw new UnprocessableEntityException("Invalid offering intensity.");
     }
     if (payload.data.selectedProgram) {
-      const isProgramActive =
-        await this.educationProgramService.isProgramActive(
+      const isProgramActiveAndNotExpired =
+        await this.educationProgramService.isProgramActiveAndNotExpired(
           payload.data.selectedProgram,
         );
-      if (!isProgramActive) {
+      if (!isProgramActiveAndNotExpired) {
         throw new UnprocessableEntityException(
-          "Education Program not found or is not active. Not able to submit application due to invalid request.",
+          "Education Program not found, is not active or is expired. Not able to submit application due to invalid request.",
         );
       }
     }

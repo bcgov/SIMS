@@ -153,6 +153,10 @@ export const OFFERING_DOES_NOT_BELONG_TO_LOCATION =
 export const EDUCATION_PROGRAM_IS_NOT_ACTIVE =
   "EDUCATION_PROGRAM_IS_NOT_ACTIVE";
 /**
+ * Education program is expired.
+ */
+export const EDUCATION_PROGRAM_IS_EXPIRED = "EDUCATION_PROGRAM_IS_EXPIRED";
+/**
  * The text content to perform the application withdrawal is not in the
  * expected format and cannot be parsed.
  */

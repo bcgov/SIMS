@@ -22,6 +22,7 @@ import {
   Equal,
   UpdateResult,
   EntityManager,
+  MoreThan,
 } from "typeorm";
 import {
   SaveEducationProgram,
@@ -33,7 +34,7 @@ import {
   PaginatedResults,
   SortPriority,
 } from "../../utilities";
-import { CustomNamedError } from "@sims/utilities";
+import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
 import {
   EDUCATION_PROGRAM_NOT_FOUND,
   DUPLICATE_SABC_CODE,
@@ -78,6 +79,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       select: {
         id: true,
         isActive: true,
+        effectiveEndDate: true,
         institution: { id: true },
       },
       relations: {
@@ -118,14 +120,17 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   }
 
   /**
-   * Check if education program is active.
+   * Check if education program is active and not expired.
    * @param educationProgramId program id.
    */
-  async isProgramActive(educationProgramId: number): Promise<boolean> {
+  async isProgramActiveAndNotExpired(
+    educationProgramId: number,
+  ): Promise<boolean> {
     return this.repo.exists({
       where: {
         id: educationProgramId,
         isActive: true,
+        effectiveEndDate: MoreThan(getISODateOnlyString(new Date())),
       },
     });
   }
@@ -158,6 +163,12 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       if (!program.isActive) {
         throw new CustomNamedError(
           "Education program cannot be edited when inactive.",
+          EDUCATION_PROGRAM_INVALID_OPERATION,
+        );
+      }
+      if (program.isExpired) {
+        throw new CustomNamedError(
+          "Education program cannot be edited when expired.",
           EDUCATION_PROGRAM_INVALID_OPERATION,
         );
       }
@@ -291,6 +302,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .addSelect("programs.programStatus", "programStatus")
       .addSelect("programs.isActive", "isActive")
       .addSelect(
+        "CASE WHEN programs.effectiveEndDate > :currentDate THEN true ELSE false END",
+        "isExpired",
+      )
+      .addSelect(
         (qb) =>
           qb
             .select("COUNT(*)")
@@ -308,7 +323,8 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "location",
         "institution.id = location.institution.id",
       )
-      .where("programs.institution.id = :institutionId", { institutionId });
+      .where("programs.institution.id = :institutionId", { institutionId })
+      .setParameter("currentDate", getISODateOnlyString(new Date()));
 
     // This queryParams is for getRawCount, which is different from the
     // query parameter assigned to paginatedProgramQuery like
@@ -373,6 +389,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       submittedDate: program.programSubmittedAt,
       programStatus: program.programStatus,
       isActive: program.isActive,
+      isExpired: program.isExpired,
       totalOfferings: program.totalOfferings,
       locationId: program.locationId,
       locationName: program.locationName,
@@ -418,7 +435,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .where("programs.programStatus = :programStatus", {
         programStatus: ProgramStatus.Approved,
       })
-      .andWhere("programs.isActive = true");
+      .andWhere("programs.isActive = true")
+      .andWhere("programs.effectiveEndDate > :currentDate", {
+        currentDate: getISODateOnlyString(new Date()),
+      });
     if (!isFulltimeAllowed) {
       programsQuery.andWhere("programs.programIntensity = :programIntensity", {
         programIntensity: ProgramIntensity.fullTimePartTime,
@@ -662,6 +682,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.description",
         "programs.id",
         "programs.isActive",
+        "programs.effectiveEndDate",
       ])
       .where("programs.id = :programId", { programId })
       .getOne();

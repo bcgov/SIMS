@@ -71,6 +71,7 @@ export class EducationProgramControllerService {
         locationName: program.locationName,
         programStatus: program.programStatus,
         isActive: program.isActive,
+        isExpired: program.isExpired,
         credentialTypeToDisplay: credentialTypeToDisplay(
           program.credentialType,
         ),
@@ -222,6 +223,7 @@ export class EducationProgramControllerService {
       isBCPrivate: program.institution.institutionType.isBCPrivate,
       hasOfferings,
       isActive: program.isActive,
+      isExpired: program.isExpired,
     };
   }
 

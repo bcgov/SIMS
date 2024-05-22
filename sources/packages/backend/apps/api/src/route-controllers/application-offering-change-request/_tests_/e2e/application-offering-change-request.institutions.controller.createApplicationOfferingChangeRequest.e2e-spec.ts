@@ -26,6 +26,7 @@ import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validati
 import { addDays } from "@sims/utilities";
 import { STUDY_DATE_OVERLAP_ERROR } from "../../../../utilities";
 import { OFFERING_INTENSITY_MISMATCH } from "../../../../constants";
+import { application } from "express";
 
 describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createApplicationOfferingChangeRequest", () => {
   let app: INestApplication;
@@ -521,6 +522,69 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
         message: "The education program is not active.",
+        error: "Unprocessable Entity",
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      });
+  });
+
+  it.only("Should throw program is not active error when trying to submit an application offering request for an expired program.", async () => {
+    // Arrange
+    const savedUser = await db.user.save(createFakeUser());
+    // Student has a completed application to the institution.
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      { institutionLocation: collegeFLocation },
+      {
+        applicationStatus: ApplicationStatus.Completed,
+      },
+    );
+    // Student SIN Validation.
+    application.student.sinValidation = createFakeSINValidation({
+      student: application.student,
+    });
+    application.data.howWillYouBeAttendingTheProgram =
+      OfferingIntensity.fullTime;
+
+    await db.student.save(application.student);
+    await db.application.save(application);
+
+    // New offering with full time intensity.
+    const newOffering = createFakeEducationProgramOffering(
+      {
+        auditUser: savedUser,
+        institutionLocation: collegeFLocation,
+      },
+      {
+        programInitialValues: {
+          effectiveEndDate: addDays(-1).toISOString(),
+        },
+      },
+    );
+    // Updating study period, that belongs to the program year.
+    newOffering.studyStartDate = addDays(
+      5,
+      application.programYear.startDate,
+    ).toISOString();
+    newOffering.studyEndDate = addDays(
+      85,
+      application.programYear.startDate,
+    ).toISOString();
+    await db.educationProgramOffering.save(newOffering);
+
+    const payload = {
+      applicationId: application.id,
+      offeringId: newOffering.id,
+      reason: "Test reason.",
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message: "The education program is expired.",
         error: "Unprocessable Entity",
         statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
       });

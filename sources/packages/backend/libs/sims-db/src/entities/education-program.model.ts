@@ -1,4 +1,7 @@
 import {
+  AfterInsert,
+  AfterLoad,
+  AfterUpdate,
   Column,
   Entity,
   JoinColumn,
@@ -11,6 +14,7 @@ import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { Institution, Note, User, ProgramStatus } from ".";
 import { ProgramIntensity } from "./program-intensity.type";
+import { getISODateOnlyString } from "@sims/utilities";
 
 /**
  * The main resource table to store education programs related information.
@@ -413,6 +417,18 @@ export class EducationProgram extends RecordDataModel {
     nullable: false,
   })
   isActive: boolean;
+
+  isExpired: boolean;
+
+  @AfterLoad()
+  @AfterInsert()
+  @AfterUpdate()
+  updateIsExpired() {
+    if (!this.effectiveEndDate) this.isExpired = false;
+    else
+      this.isExpired =
+        getISODateOnlyString(new Date()) >= this.effectiveEndDate;
+  }
 
   /**
    * Last user id that updated the {@link isActive} column value on DB.

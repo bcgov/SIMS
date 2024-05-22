@@ -5,6 +5,7 @@ import {
   UnprocessableEntityException,
 } from "@nestjs/common";
 import {
+  EDUCATION_PROGRAM_IS_EXPIRED,
   EDUCATION_PROGRAM_IS_NOT_ACTIVE,
   OFFERING_CREATION_CRITICAL_ERROR,
   OFFERING_VALIDATION_CRITICAL_ERROR,
@@ -175,6 +176,12 @@ export class EducationProgramOfferingControllerService {
       throw new UnprocessableEntityException(
         "The education program is not active.",
         EDUCATION_PROGRAM_IS_NOT_ACTIVE,
+      );
+    }
+    if (!program.isExpired) {
+      throw new UnprocessableEntityException(
+        "The education program is expired.",
+        EDUCATION_PROGRAM_IS_EXPIRED,
       );
     }
     // Get institution location details.

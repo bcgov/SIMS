@@ -447,6 +447,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "institution.legalOperatingName",
         "institution.operatingName",
         "educationProgram.isActive",
+        "educationProgram.effectiveEndDate",
       ])
       .innerJoin("offerings.educationProgram", "educationProgram")
       .innerJoin("offerings.institutionLocation", "institutionLocation")
@@ -799,6 +800,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "location.id",
         "program.id",
         "program.isActive",
+        "program.effectiveEndDate",
         "offerings.studyStartDate",
         "offerings.studyEndDate",
         "offerings.offeringIntensity",
@@ -1010,6 +1012,12 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         OFFERING_NOT_VALID,
       );
     }
+    if (!currentOffering.educationProgram.isExpired) {
+      throw new CustomNamedError(
+        "Program is expired to request a change for the offering.",
+        OFFERING_NOT_VALID,
+      );
+    }
 
     const requestedOffering = this.populateProgramOffering(
       educationProgramOffering,
@@ -1066,6 +1074,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "institution.id",
         "educationProgram.id",
         "educationProgram.isActive",
+        "educationProgram.effectiveEndDate",
       ])
       .innerJoin("offerings.institutionLocation", "location")
       .innerJoin("offerings.educationProgram", "educationProgram")

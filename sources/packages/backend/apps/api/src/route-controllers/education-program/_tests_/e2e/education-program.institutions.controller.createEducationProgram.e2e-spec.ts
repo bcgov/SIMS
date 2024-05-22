@@ -166,6 +166,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         assessedById: null,
         submittedById: collegeFUser.id,
         isActive: true,
+        isExpired: false,
       }),
     );
   });
