@@ -336,57 +336,89 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
 
   /**
    * Updates the last reported assessment for the current assessment.
-   * @param currentAssessmentId current assessment id.
-   * @param applicationId related application id.
-   * @param studyStartDate related study start date.
-   * @param studyEndDate related study end date.
-   * @returns true if the update was executed or false in case the
-   * previousDateChangedReportedAssessment was already present or
-   * in case the update of previousDateChangedReportedAssessment is
-   * not required if the offering start and end dates are the same.
+   * @param assessmentId related assessment id.
+   * @param entityManager entity manager to be part of the transaction.
+   * @returns updated assessment.
    */
   async updateLastReportedAssessment(
-    currentAssessmentId: number,
-    applicationId: number,
-    studyStartDate: string,
-    studyEndDate: string,
-  ): Promise<boolean> {
+    assessmentId: number,
+    entityManager: EntityManager,
+  ): Promise<UpdateResult | undefined> {
+    const assessment = await this.repo.findOne({
+      select: {
+        id: true,
+        offering: {
+          studyStartDate: true,
+          studyEndDate: true,
+        },
+        application: {
+          id: true,
+        },
+      },
+      relations: {
+        application: true,
+        offering: true,
+      },
+      where: { id: assessmentId },
+    });
+    const studentAssessmentRepo =
+      entityManager.getRepository(StudentAssessment);
+    const auditUser = this.systemUsersService.systemUser;
     const lastReportedAssessment = await this.getLastReportedAssessment(
-      applicationId,
+      assessment.application.id,
+      entityManager,
     );
-    if (!lastReportedAssessment) {
+    if (
+      !lastReportedAssessment ||
+      (assessment.offering.studyStartDate ===
+        lastReportedAssessment.offering.studyStartDate &&
+        assessment.offering.studyEndDate ===
+          lastReportedAssessment.offering.studyEndDate)
+    ) {
       return;
     }
-    if (
-      studyStartDate !== lastReportedAssessment.offering.studyStartDate ||
-      studyEndDate !== lastReportedAssessment.offering.studyEndDate
-    ) {
-      const updateExists = await this.repo.exists({
-        where: {
-          id: currentAssessmentId,
-          previousDateChangedReportedAssessment: Not(IsNull()),
-        },
-      });
-      if (!updateExists) {
-        await this.repo.update(currentAssessmentId, {
-          previousDateChangedReportedAssessment: lastReportedAssessment,
-        });
-        return true;
-      }
-      return false;
-    }
-    return false;
+    return studentAssessmentRepo.update(
+      {
+        id: assessmentId,
+      },
+      {
+        previousDateChangedReportedAssessment: lastReportedAssessment,
+        modifier: auditUser,
+      },
+    );
   }
 
   /**
    * Gets the last reported assessment.
    * @param applicationId current assessment application id.
+   * @param entityManager entity manager to be part of the transaction.
    * @returns last reported assessment.
    */
   private async getLastReportedAssessment(
     applicationId: number,
+    entityManager: EntityManager,
   ): Promise<StudentAssessment> {
-    const lastBTypeReportedAssessment = await this.repo.findOne({
+    const studentAssessmentRepo =
+      entityManager.getRepository(StudentAssessment);
+    const lastApplicationChangeReportedAssessment =
+      await studentAssessmentRepo.findOne({
+        select: {
+          id: true,
+          assessmentDate: true,
+          offering: { studyStartDate: true, studyEndDate: true },
+        },
+        relations: { offering: true },
+        where: {
+          application: { id: applicationId },
+          previousDateChangedReportedAssessment: Not(IsNull()),
+          reportedDate: Not(IsNull()),
+        },
+        order: { assessmentDate: "DESC" },
+      });
+    if (lastApplicationChangeReportedAssessment) {
+      return lastApplicationChangeReportedAssessment;
+    }
+    return studentAssessmentRepo.findOne({
       select: {
         id: true,
         assessmentDate: true,
@@ -395,29 +427,12 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       relations: { offering: true },
       where: {
         application: { id: applicationId },
-        previousDateChangedReportedAssessment: Not(IsNull()),
-        reportedDate: Not(IsNull()),
+        disbursementSchedules: {
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        },
       },
       order: { assessmentDate: "DESC" },
     });
-    if (!lastBTypeReportedAssessment) {
-      const lastReportedDisbursement = await this.repo.findOne({
-        select: {
-          id: true,
-          assessmentDate: true,
-          offering: { studyStartDate: true, studyEndDate: true },
-        },
-        where: {
-          application: { id: applicationId },
-          disbursementSchedules: {
-            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
-          },
-        },
-        order: { assessmentDate: "DESC" },
-      });
-      return lastReportedDisbursement;
-    }
-    return lastBTypeReportedAssessment;
   }
 
   /**
@@ -476,9 +491,8 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     return this.repo.findOne({
       select: {
         id: true,
+        previousDateChangedReportedAssessment: { id: true },
         offering: {
-          studyStartDate: true,
-          studyEndDate: true,
           offeringIntensity: true,
         },
         application: {

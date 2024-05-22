@@ -273,20 +273,23 @@ export class AssessmentController {
           return job.complete();
         }
         const application = assessment.application;
-        if (application.applicationStatus === ApplicationStatus.Completed) {
+        if (
+          application.applicationStatus === ApplicationStatus.Completed &&
+          !assessment.previousDateChangedReportedAssessment
+        ) {
           const updatedLastReportedAssessment =
             await this.studentAssessmentService.updateLastReportedAssessment(
               job.variables.assessmentId,
-              application.id,
-              assessment.offering.studyStartDate,
-              assessment.offering.studyEndDate,
+              entityManager,
             );
-          if (updatedLastReportedAssessment === undefined) {
-            jobLogger.log("No previous reported assessment found.");
-          } else if (!updatedLastReportedAssessment) {
+          if (updatedLastReportedAssessment.affected) {
+            jobLogger.log("Last reported date changed assessment was updated.");
+          } else if (updatedLastReportedAssessment === undefined) {
             jobLogger.log(
-              "Last reported assessment id was previously updated or need not be updated.",
+              "No previous reported assessment found or no last reported assessment update needed.",
             );
+          } else if (!updatedLastReportedAssessment) {
+            jobLogger.log("Last reported assessment was previously updated.");
           }
         } else {
           jobLogger.log("Application is not yet completed.");
