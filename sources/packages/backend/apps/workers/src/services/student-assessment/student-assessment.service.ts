@@ -405,7 +405,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         select: {
           id: true,
           assessmentDate: true,
-          offering: { studyStartDate: true, studyEndDate: true },
+          offering: { id: true, studyStartDate: true, studyEndDate: true },
         },
         relations: { offering: true },
         where: {
@@ -422,7 +422,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       select: {
         id: true,
         assessmentDate: true,
-        offering: { studyStartDate: true, studyEndDate: true },
+        offering: { id: true, studyStartDate: true, studyEndDate: true },
       },
       relations: { offering: true },
       where: {
