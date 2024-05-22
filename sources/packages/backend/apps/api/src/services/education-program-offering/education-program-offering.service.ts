@@ -1012,7 +1012,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         OFFERING_NOT_VALID,
       );
     }
-    if (!currentOffering.educationProgram.isExpired) {
+    if (currentOffering.educationProgram.isExpired) {
       throw new CustomNamedError(
         "Program is expired to request a change for the offering.",
         OFFERING_NOT_VALID,
