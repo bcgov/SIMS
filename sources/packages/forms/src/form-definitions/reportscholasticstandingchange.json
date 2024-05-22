@@ -25,7 +25,8 @@
       },
       "properties": {},
       "lockKey": true,
-      "calculateValue": "if(value === \"Full Time\"){\n    // No adjustments needed.\n    return;\n}\n// Find the option and adjust it to Part-time.\nconst scholasticStandingChangeType = utils.getComponent(form.components, \"scholasticStandingChangeType\");\nconst studentDidNotCompleteProgramOption = scholasticStandingChangeType.values.find(option => option.value === \"Student did not complete program\");\nstudentDidNotCompleteProgramOption.label = \"Student did not complete courses they were funded\";"
+      "calculateValue": "if(value === \"Part Time\"){\n    // Find the option and adjust it to Part-time.\n    const scholasticStandingChangeType = utils.getComponent(form.components, \"scholasticStandingChangeType\");\n    const studentDidNotCompleteProgramOption = scholasticStandingChangeType.values.find(option => option.value === \"Student did not complete program\");\n    studentDidNotCompleteProgramOption.label = \"Student did not complete courses they were funded for\";\n}",
+      "isNew": false
     },
     {
       "label": "Student Name",
@@ -976,7 +977,6 @@
       "theme": "default",
       "breadcrumb": "default",
       "id": "ehl1qf",
-      "isNew": false,
       "tags": []
     },
     {
@@ -3334,6 +3334,42 @@
           "className": ""
         },
         {
+          "clearOnHide": false,
+          "key": "panelPanel",
+          "input": false,
+          "title": "When do I report a change for a Student?",
+          "theme": "default",
+          "tableView": false,
+          "components": [
+            {
+              "key": "panelPanelContent",
+              "input": false,
+              "html": "<p><strong>Student withdrew from funded study period offering</strong><br />\nAccording to StudentAid BC policy, a student may need to be reported as withdrawn if:</p>\n\n<ul>\n\t<li>Student drops below 60% attendance (40% for students with a disability) for three consecutive calendar weeks of study</li>\n\t<li>Student increases course load from Part-Time to Full-Time studies</li>\n\t<li>Student misses two consecutive calendar weeks of study</li>\n\t<li>Student misses sufficient days/hours that they can no longer successfully complete the study period offering</li>\n\t<li>Student transfers to a new institution<br />\n\t&nbsp;</li>\n</ul>\n\n<p><strong>Student completed funded study period offering early</strong><br />\nEnter the revised completion date of the student</p>\n\n<p><strong>Student was unsuccessful in completing their funded study period&nbsp;(Full-time students only)</strong><br />\nIf a Full-Time student was unsuccessful in completing their funded study period offering, enter the total length of the study period offering in which the student was unsuccessful.</p>\n\n<p><strong>Student did not complete courses they were funded for&nbsp;(Part-time students only)</strong><br />\nIf a Part-Time student did not complete courses they were funded for, enter the total length of the study period in which the student was unsuccessful.</p>\n\n<p><strong>Student is transferring to a different campus</strong><br />\nIf a student is transferring to another school, report the last day of classes that they will attend at your school</p>\n\n<p>This will allow the student to submit a new application to the correct school without penalizing them in any way for the transfer.</p>\n",
+              "type": "content",
+              "tags": [],
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+              },
+              "properties": {}
+            }
+          ],
+          "type": "panel",
+          "breadcrumb": "default",
+          "hideLabel": false,
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "collapsible": true,
+          "collapsed": true,
+          "customClass": "collapsible"
+        },
+        {
           "label": "Select a change in circumstance",
           "optionsLabelPosition": "right",
           "inline": false,
@@ -3424,7 +3460,8 @@
           "inputType": "radio",
           "fieldSet": false,
           "id": "ew5zdek",
-          "tags": []
+          "tags": [],
+          "isNew": false
         },
         {
           "title": "Student is transferring to a different institution or campus - Panel",
