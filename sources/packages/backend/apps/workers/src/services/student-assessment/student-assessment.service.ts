@@ -504,6 +504,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       },
       relations: {
         application: { student: true, programYear: true },
+        previousDateChangedReportedAssessment: true,
         offering: true,
       },
       where: { id: assessmentId },
