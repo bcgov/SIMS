@@ -344,7 +344,9 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     assessmentId: number,
     entityManager: EntityManager,
   ): Promise<UpdateResult | undefined> {
-    const assessment = await this.repo.findOne({
+    const studentAssessmentRepo =
+      entityManager.getRepository(StudentAssessment);
+    const assessment = await studentAssessmentRepo.findOne({
       select: {
         id: true,
         offering: {
@@ -361,8 +363,6 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       },
       where: { id: assessmentId },
     });
-    const studentAssessmentRepo =
-      entityManager.getRepository(StudentAssessment);
     const auditUser = this.systemUsersService.systemUser;
     const lastReportedAssessment = await this.getLastReportedAssessment(
       assessment.application.id,
