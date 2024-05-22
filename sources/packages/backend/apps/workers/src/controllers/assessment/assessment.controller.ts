@@ -282,7 +282,7 @@ export class AssessmentController {
               job.variables.assessmentId,
               entityManager,
             );
-          if (updatedLastReportedAssessment.affected) {
+          if (updatedLastReportedAssessment?.affected) {
             jobLogger.log("Last reported date changed assessment was updated.");
           } else if (updatedLastReportedAssessment === undefined) {
             jobLogger.log(
