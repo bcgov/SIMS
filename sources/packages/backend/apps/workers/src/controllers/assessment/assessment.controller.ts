@@ -626,7 +626,9 @@ export class AssessmentController {
         entityManager,
       );
     if (!lastReportedAssessmentUpdateResult) {
-      jobLogger.log("No last reported date changed assessment was found.");
+      jobLogger.log(
+        "No last reported date change assessment was found or the last reported date change assessment update is not required.",
+      );
       return;
     }
     if (lastReportedAssessmentUpdateResult.affected) {
