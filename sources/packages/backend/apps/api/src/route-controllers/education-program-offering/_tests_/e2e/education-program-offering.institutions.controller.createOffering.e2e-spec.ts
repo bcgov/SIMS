@@ -35,6 +35,7 @@ import {
   StudyBreaksAndWeeksOutDTO,
 } from "../../models/education-program-offering.dto";
 import { WILComponentOptions } from "../../../../services";
+import { getISODateOnlyString } from "@sims/utilities";
 
 describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", () => {
   let app: INestApplication;
@@ -195,6 +196,67 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         courseLoad: null,
       }),
     );
+  });
+
+  it("Should throw error when education program is expired.", async () => {
+    // Arrange
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    const fakeEducationProgram = createFakeEducationProgram(
+      {
+        institution: collegeF,
+        user: collegeFUser,
+      },
+      {
+        initialValue: {
+          effectiveEndDate: getISODateOnlyString(new Date()),
+        },
+      },
+    );
+    fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
+    const savedFakeEducationProgram = await db.educationProgram.save(
+      fakeEducationProgram,
+    );
+    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}`;
+    const studyBreak = {
+      breakStartDate: "2023-12-01",
+      breakEndDate: "2024-01-01",
+    };
+    const payload = {
+      offeringName: "Offering 1",
+      yearOfStudy: 1,
+      offeringIntensity: OfferingIntensity.fullTime,
+      offeringDelivered: OfferingDeliveryOptions.Onsite,
+      hasOfferingWILComponent: "no",
+      studyStartDate: "2023-09-01",
+      studyEndDate: "2024-06-30",
+      lacksStudyBreaks: false,
+      studyBreaks: [
+        {
+          breakStartDate: studyBreak.breakStartDate,
+          breakEndDate: studyBreak.breakEndDate,
+        },
+      ],
+      offeringType: OfferingTypes.Public,
+      offeringDeclaration: true,
+      actualTuitionCosts: 1234,
+      programRelatedCosts: 3211,
+      mandatoryFees: 456,
+      exceptionalExpenses: 555,
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        message: "The education program is expired.",
+        error: "EDUCATION_PROGRAM_IS_EXPIRED",
+      });
   });
 
   it(

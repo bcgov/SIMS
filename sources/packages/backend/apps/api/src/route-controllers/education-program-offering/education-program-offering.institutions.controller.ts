@@ -201,6 +201,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
             throw new BadRequestException(error.objectInfo, error.message);
           case OFFERING_SAVE_UNIQUE_ERROR:
           case EDUCATION_PROGRAM_IS_NOT_ACTIVE:
+          case EDUCATION_PROGRAM_IS_EXPIRED:
             throw new UnprocessableEntityException(error.message);
         }
       }

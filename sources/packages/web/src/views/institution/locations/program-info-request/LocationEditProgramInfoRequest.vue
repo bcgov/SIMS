@@ -149,7 +149,7 @@ export default defineComponent({
         selectedProgram:
           !isReadOnly.value &&
           (!programRequestData.value.isActiveProgram ||
-            programRequestData.value.isExpired)
+            programRequestData.value.isExpiredProgram)
             ? null
             : programRequestData.value.selectedProgram,
       };
