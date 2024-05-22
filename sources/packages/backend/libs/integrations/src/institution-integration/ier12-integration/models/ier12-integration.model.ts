@@ -126,7 +126,7 @@ export enum ScholasticStandingCode {
    */
   EC = "EC",
   /**
-   * Student transfer.
+   * School transfer.
    */
   ST = "ST",
 }

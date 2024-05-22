@@ -1,1 +1,0 @@
-ALTER TYPE sims.student_scholastic_standing_change_types RENAME VALUE 'Change in intensity' TO 'Student transfer';

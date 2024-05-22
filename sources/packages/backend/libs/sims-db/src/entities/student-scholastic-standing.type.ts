@@ -7,7 +7,7 @@ export enum StudentScholasticStandingChangeType {
   /**
    * Student is transferring to a different institution or campus.
    */
-  StudentTransfer = "Student transfer",
+  SchoolTransfer = "School transfer",
   /**
    * Student completed the offering before the expected time.
    */
