@@ -527,7 +527,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       });
   });
 
-  it.only("Should throw program is not active error when trying to submit an application offering request for an expired program.", async () => {
+  it("Should throw program is not active error when trying to submit an application offering request for an expired program.", async () => {
     // Arrange
     const savedUser = await db.user.save(createFakeUser());
     // Student has a completed application to the institution.

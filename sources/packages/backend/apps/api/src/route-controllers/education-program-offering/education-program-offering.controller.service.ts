@@ -178,7 +178,7 @@ export class EducationProgramOfferingControllerService {
         EDUCATION_PROGRAM_IS_NOT_ACTIVE,
       );
     }
-    if (!program.isExpired) {
+    if (program.isExpired) {
       throw new UnprocessableEntityException(
         "The education program is expired.",
         EDUCATION_PROGRAM_IS_EXPIRED,
