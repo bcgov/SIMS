@@ -310,10 +310,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .addSelect("location.name", "locationName")
       .addSelect("programs.programStatus", "programStatus")
       .addSelect("programs.isActive", "isActive")
-      .addSelect(
-        "CASE WHEN programs.effectiveEndDate > :currentDate THEN true ELSE false END",
-        "isExpired",
-      )
+      .addSelect("programs.effectiveEndDate", "effectiveEndDate")
       .addSelect(
         (qb) =>
           qb
@@ -332,8 +329,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "location",
         "institution.id = location.institution.id",
       )
-      .where("programs.institution.id = :institutionId", { institutionId })
-      .setParameter("currentDate", getISODateOnlyString(new Date()));
+      .where("programs.institution.id = :institutionId", { institutionId });
 
     // This queryParams is for getRawCount, which is different from the
     // query parameter assigned to paginatedProgramQuery like
@@ -398,7 +394,9 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       submittedDate: program.programSubmittedAt,
       programStatus: program.programStatus,
       isActive: program.isActive,
-      isExpired: program.isExpired,
+      isExpired:
+        getISODateOnlyString(program.effectiveEndDate) <=
+        getISODateOnlyString(new Date()),
       totalOfferings: program.totalOfferings,
       locationId: program.locationId,
       locationName: program.locationName,

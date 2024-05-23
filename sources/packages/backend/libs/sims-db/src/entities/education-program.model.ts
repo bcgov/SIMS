@@ -362,6 +362,27 @@ export class EducationProgram extends RecordDataModel {
   effectiveEndDate?: string;
 
   /**
+   * Indicates is an education program has reached its effective end date.
+   * It is not updated for typeOrm raw results queries (i.e. getRawOne and getRawMany).
+   */
+  isExpired: boolean;
+
+  /**
+   * Updates `isExpired` property with `true` in case the effective end date has been reached or
+   * the effective end date is null. Otherwise `false`.
+   * This method is called after retrieve, insert or update operations.
+   */
+  @AfterLoad()
+  @AfterInsert()
+  @AfterUpdate()
+  updateIsExpired() {
+    if (!this.effectiveEndDate) this.isExpired = false;
+    else
+      this.isExpired =
+        getISODateOnlyString(new Date()) >= this.effectiveEndDate;
+  }
+
+  /**
    * Education program note.
    */
   @RelationId((program: EducationProgram) => program.programNote)
@@ -417,18 +438,6 @@ export class EducationProgram extends RecordDataModel {
     nullable: false,
   })
   isActive: boolean;
-
-  isExpired: boolean;
-
-  @AfterLoad()
-  @AfterInsert()
-  @AfterUpdate()
-  updateIsExpired() {
-    if (!this.effectiveEndDate) this.isExpired = false;
-    else
-      this.isExpired =
-        getISODateOnlyString(new Date()) >= this.effectiveEndDate;
-  }
 
   /**
    * Last user id that updated the {@link isActive} column value on DB.
