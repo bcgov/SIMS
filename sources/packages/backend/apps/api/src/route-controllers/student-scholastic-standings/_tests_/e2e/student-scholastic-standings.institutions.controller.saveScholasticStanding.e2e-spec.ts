@@ -259,7 +259,6 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     const validDryRun = options?.validDryRun ?? true;
     payload = {
       data: {
-        booksAndSupplies: 1000,
         dateOfChange: getISODateOnlyString(new Date()),
         scholasticStandingChangeType:
           StudentScholasticStandingChangeType.SchoolTransfer,
