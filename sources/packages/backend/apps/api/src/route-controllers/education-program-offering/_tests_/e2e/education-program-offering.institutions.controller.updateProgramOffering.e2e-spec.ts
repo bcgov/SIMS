@@ -176,7 +176,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
         },
       },
     );
-    fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
     const savedFakeEducationProgram = await db.educationProgram.save(
       fakeEducationProgram,
     );
