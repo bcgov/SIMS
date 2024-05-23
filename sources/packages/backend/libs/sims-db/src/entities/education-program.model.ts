@@ -362,8 +362,10 @@ export class EducationProgram extends RecordDataModel {
   effectiveEndDate?: string;
 
   /**
-   * Indicates is an education program has reached its effective end date.
-   * It is not updated for typeOrm raw results queries (i.e. getRawOne and getRawMany).
+   * Indicates whether an education program has reached its effective end date or not.
+   * Note that:
+   *   - It is not updated for typeOrm raw results queries (i.e. getRawOne and getRawMany).
+   *   - `effectiveEndDate` should have been selected in the query for this to be properly evaluated.
    */
   isExpired: boolean;
 
