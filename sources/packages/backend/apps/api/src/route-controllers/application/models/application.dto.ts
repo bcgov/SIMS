@@ -175,7 +175,7 @@ export class DisbursementDetailsAPIOutDTO {
 }
 
 export class EnrolmentApplicationDetailsAPIOutDTO {
-  firstDisbursement: DisbursementDetailsAPIOutDTO;
+  firstDisbursement?: DisbursementDetailsAPIOutDTO;
   secondDisbursement?: DisbursementDetailsAPIOutDTO;
   assessmentTriggerType?: AssessmentTriggerType;
 }

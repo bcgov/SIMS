@@ -188,21 +188,22 @@ export class ApplicationControllerService {
     disbursementSchedules: DisbursementSchedule[],
   ): EnrolmentApplicationDetailsAPIOutDTO {
     const [firstDisbursement, secondDisbursement] = disbursementSchedules;
-    const details: EnrolmentApplicationDetailsAPIOutDTO = {
-      firstDisbursement: {
+    const details = {} as EnrolmentApplicationDetailsAPIOutDTO;
+    if (firstDisbursement) {
+      details.firstDisbursement = {
         coeStatus: firstDisbursement.coeStatus,
         disbursementScheduleStatus:
           firstDisbursement.disbursementScheduleStatus,
         coeDenialReason: getCOEDeniedReason(firstDisbursement),
-      },
-    };
-    if (secondDisbursement) {
-      details.secondDisbursement = {
-        coeStatus: secondDisbursement.coeStatus,
-        disbursementScheduleStatus:
-          secondDisbursement.disbursementScheduleStatus,
-        coeDenialReason: getCOEDeniedReason(secondDisbursement),
       };
+      if (secondDisbursement) {
+        details.secondDisbursement = {
+          coeStatus: secondDisbursement.coeStatus,
+          disbursementScheduleStatus:
+            secondDisbursement.disbursementScheduleStatus,
+          coeDenialReason: getCOEDeniedReason(secondDisbursement),
+        };
+      }
     }
     return details;
   }

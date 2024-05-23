@@ -150,11 +150,11 @@ export default defineComponent({
   props: {
     firstCOEStatus: {
       type: String as PropType<COEStatus>,
-      required: true,
+      required: false,
     },
     secondCOEStatus: {
       type: String as PropType<COEStatus>,
-      required: true,
+      required: false,
     },
     coeDenialReason: {
       type: String,

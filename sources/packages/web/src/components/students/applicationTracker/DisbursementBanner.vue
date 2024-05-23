@@ -81,11 +81,11 @@ export default defineComponent({
   props: {
     coeStatus: {
       type: String as PropType<COEStatus>,
-      required: true,
+      required: false,
     },
     coeDenialReason: {
       type: String,
-      required: true,
+      required: false,
     },
     disbursementStatus: {
       type: String as PropType<DisbursementScheduleStatus>,

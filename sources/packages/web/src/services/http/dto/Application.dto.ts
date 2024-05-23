@@ -119,7 +119,7 @@ export interface DisbursementDetailsAPIOutDTO {
 }
 
 export interface EnrolmentApplicationDetailsAPIOutDTO {
-  firstDisbursement: DisbursementDetailsAPIOutDTO;
+  firstDisbursement?: DisbursementDetailsAPIOutDTO;
   secondDisbursement?: DisbursementDetailsAPIOutDTO;
   assessmentTriggerType: AssessmentTriggerType;
 }
