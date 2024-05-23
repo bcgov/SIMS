@@ -8,7 +8,7 @@ import {
   StudentAssessmentStatus,
   WorkflowData,
 } from "@sims/sims-db";
-import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
+import { CustomNamedError } from "@sims/utilities";
 import { DataSource, EntityManager, IsNull, Not, UpdateResult } from "typeorm";
 import {
   ASSESSMENT_NOT_FOUND,
@@ -17,12 +17,6 @@ import {
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "@sims/services/constants";
 import { NotificationActionsService, SystemUsersService } from "@sims/services";
-
-interface LastApplicationChangeReportedAssessment {
-  studentAssessmentId: number;
-  offeringStudyStartDate: string;
-  offeringStudyEndDate: string;
-}
 
 /**
  * Manages the student assessment related operations.
@@ -377,9 +371,9 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     if (
       !lastReportedAssessment ||
       (assessment.offering.studyStartDate ===
-        lastReportedAssessment.offeringStudyStartDate &&
+        lastReportedAssessment.offering.studyStartDate &&
         assessment.offering.studyEndDate ===
-          lastReportedAssessment.offeringStudyStartDate)
+          lastReportedAssessment.offering.studyEndDate)
     ) {
       return;
     }
@@ -389,7 +383,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       },
       {
         previousDateChangedReportedAssessment: {
-          id: lastReportedAssessment.studentAssessmentId,
+          id: lastReportedAssessment.id,
         },
         modifier: auditUser,
       },
@@ -405,14 +399,17 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   private async getLastReportedAssessment(
     applicationId: number,
     entityManager: EntityManager,
-  ): Promise<LastApplicationChangeReportedAssessment> {
+  ): Promise<StudentAssessment> {
     const studentAssessmentRepo =
       entityManager.getRepository(StudentAssessment);
     const lastApplicationChangeReportedAssessment = await studentAssessmentRepo
       .createQueryBuilder("studentAssessment")
-      .select("studentAssessment.id", "studentAssessmentId")
-      .addSelect("offering.studyStartDate", "offeringStudyStartDate")
-      .addSelect("offering.studyEndDate", "offeringStudyEndDate")
+      .select([
+        "studentAssessment.id",
+        "offering.id",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+      ])
       .innerJoin("studentAssessment.offering", "offering")
       .innerJoin("studentAssessment.application", "application")
       .where("application.id = :applicationId", {
@@ -424,15 +421,18 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .andWhere("studentAssessment.reportedDate IS NOT NULL")
       .orderBy("studentAssessment.assessmentDate", "DESC")
       .limit(1)
-      .getRawOne<LastApplicationChangeReportedAssessment>();
+      .getOne();
     if (lastApplicationChangeReportedAssessment) {
       return lastApplicationChangeReportedAssessment;
     }
     return studentAssessmentRepo
       .createQueryBuilder("studentAssessment")
-      .select("studentAssessment.id", "studentAssessmentId")
-      .addSelect("offering.studyStartDate", "offeringStudyStartDate")
-      .addSelect("offering.studyEndDate", "offeringStudyEndDate")
+      .select([
+        "studentAssessment.id",
+        "offering.id",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+      ])
       .innerJoin("studentAssessment.offering", "offering")
       .innerJoin("studentAssessment.application", "application")
       .innerJoin(
@@ -448,7 +448,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       )
       .orderBy("studentAssessment.assessmentDate", "DESC")
       .limit(1)
-      .getRawOne<LastApplicationChangeReportedAssessment>();
+      .getOne();
   }
 
   /**
