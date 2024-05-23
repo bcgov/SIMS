@@ -226,7 +226,7 @@ export default defineComponent({
 
     const hasDisbursementEvent = computed(() => {
       return (
-        assessmentDetails.value.firstDisbursement.coeStatus !==
+        assessmentDetails.value.firstDisbursement?.coeStatus !==
         COEStatus.required
       );
     });
