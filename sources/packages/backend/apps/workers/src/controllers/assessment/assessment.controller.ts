@@ -273,7 +273,11 @@ export class AssessmentController {
           return job.complete();
         }
         const application = assessment.application;
-        // Only check for previousDateChangedReportedAssessment only if there doesn't exist one and the application is in Completed state.
+        // Previous date change reported assessments can only exist for completed applications
+        // with at least one disbursement sent to ESDC.
+        // Hence applications that are not completed cannot have previous date change reported assessments.
+        // To ensure the implementation to be idempotent, update previous date change reported assessment
+        // only if it is not updated already.
         if (
           application.applicationStatus === ApplicationStatus.Completed &&
           !assessment.previousDateChangedReportedAssessment
