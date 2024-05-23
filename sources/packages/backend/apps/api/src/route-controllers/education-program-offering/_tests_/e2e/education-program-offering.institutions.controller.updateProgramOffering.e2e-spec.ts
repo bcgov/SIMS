@@ -162,9 +162,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
 
   it("Should throw error when education program is expired.", async () => {
     // Arrange
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
     const fakeEducationProgram = createFakeEducationProgram(
       {
         institution: collegeF,
@@ -214,6 +211,9 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       mandatoryFees: 456,
       exceptionalExpenses: 555,
     };
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
 
     // Act/Assert
     await request(app.getHttpServer())
