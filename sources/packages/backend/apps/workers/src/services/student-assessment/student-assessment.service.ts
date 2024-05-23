@@ -408,7 +408,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   ): Promise<LastApplicationChangeReportedAssessment> {
     const studentAssessmentRepo =
       entityManager.getRepository(StudentAssessment);
-    let lastApplicationChangeReportedAssessment = await studentAssessmentRepo
+    const lastApplicationChangeReportedAssessment = await studentAssessmentRepo
       .createQueryBuilder("studentAssessment")
       .select("studentAssessment.id", "studentAssessmentId")
       .addSelect("offering.studyStartDate", "offeringStudyStartDate")
@@ -426,18 +426,9 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .limit(1)
       .getRawOne<LastApplicationChangeReportedAssessment>();
     if (lastApplicationChangeReportedAssessment) {
-      return {
-        studentAssessmentId:
-          lastApplicationChangeReportedAssessment.studentAssessmentId,
-        offeringStudyStartDate: getISODateOnlyString(
-          lastApplicationChangeReportedAssessment.offeringStudyStartDate,
-        ),
-        offeringStudyEndDate: getISODateOnlyString(
-          lastApplicationChangeReportedAssessment.offeringStudyEndDate,
-        ),
-      };
+      return lastApplicationChangeReportedAssessment;
     }
-    lastApplicationChangeReportedAssessment = await studentAssessmentRepo
+    return studentAssessmentRepo
       .createQueryBuilder("studentAssessment")
       .select("studentAssessment.id", "studentAssessmentId")
       .addSelect("offering.studyStartDate", "offeringStudyStartDate")
@@ -458,16 +449,6 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .orderBy("studentAssessment.assessmentDate", "DESC")
       .limit(1)
       .getRawOne<LastApplicationChangeReportedAssessment>();
-    return {
-      studentAssessmentId:
-        lastApplicationChangeReportedAssessment.studentAssessmentId,
-      offeringStudyStartDate: getISODateOnlyString(
-        lastApplicationChangeReportedAssessment.offeringStudyStartDate,
-      ),
-      offeringStudyEndDate: getISODateOnlyString(
-        lastApplicationChangeReportedAssessment.offeringStudyEndDate,
-      ),
-    };
   }
 
   /**
