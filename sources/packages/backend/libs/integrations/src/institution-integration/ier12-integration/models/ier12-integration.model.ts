@@ -126,9 +126,9 @@ export enum ScholasticStandingCode {
    */
   EC = "EC",
   /**
-   * Change in intensity.
+   * School transfer.
    */
-  CI = "CI",
+  ST = "ST",
 }
 
 export enum YNFlag {

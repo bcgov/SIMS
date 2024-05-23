@@ -5,11 +5,9 @@
  */
 export enum StudentScholasticStandingChangeType {
   /**
-   * Student went from full-time to part-time studies (vice-versa) or started a different program.
-   * This scholastic standing change type is only used to finish the current application. changing
-   * from full-time to part-time studies (vice-versa) is not part of the scholastic standing change.
+   * Student is transferring to a different institution or campus.
    */
-  ChangeInIntensity = "Change in intensity",
+  SchoolTransfer = "School transfer",
   /**
    * Student completed the offering before the expected time.
    */

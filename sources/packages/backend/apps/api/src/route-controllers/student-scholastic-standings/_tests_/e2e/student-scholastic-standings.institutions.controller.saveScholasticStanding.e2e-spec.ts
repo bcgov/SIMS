@@ -82,7 +82,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       data: {
         booksAndSupplies: 1000,
         scholasticStandingChangeType:
-          StudentScholasticStandingChangeType.ChangeInIntensity,
+          StudentScholasticStandingChangeType.SchoolTransfer,
       },
     };
     mockFormioDryRun({ validDryRun: false });
@@ -182,7 +182,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       });
   });
 
-  it("Should create a new scholastic standing when the institution user requests it.", async () => {
+  it("Should create a new scholastic standing when the institution user requests it and keep the existent student appeal.", async () => {
     // Arrange
     const application = await saveFakeApplication(
       db.dataSource,
@@ -259,10 +259,9 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     const validDryRun = options?.validDryRun ?? true;
     payload = {
       data: {
-        booksAndSupplies: 1000,
         dateOfChange: getISODateOnlyString(new Date()),
         scholasticStandingChangeType:
-          StudentScholasticStandingChangeType.ChangeInIntensity,
+          StudentScholasticStandingChangeType.SchoolTransfer,
       },
     };
     formService.dryRunSubmission = jest.fn().mockResolvedValue({

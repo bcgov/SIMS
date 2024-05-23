@@ -102,7 +102,9 @@
       "cslf",
       "CSLP",
       "CSPT",
+      "ecert",
       "ESDC",
+      "Formio",
       "golevelup",
       "MBAL",
       "MSFAA",
@@ -114,8 +116,7 @@
       "SFAS",
       "timestamptz",
       "typeorm",
-      "unparse",
-      "ecert"
+      "unparse"
     ],
     "[json]": {
       "editor.defaultFormatter": "vscode.json-language-features"
