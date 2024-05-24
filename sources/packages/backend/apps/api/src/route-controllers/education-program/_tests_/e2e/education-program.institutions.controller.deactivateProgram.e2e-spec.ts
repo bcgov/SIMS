@@ -68,7 +68,6 @@ describe("EducationProgramInstitutionsController(e2e)-deactivateProgram", () => 
     expect(educationProgram).toEqual({
       id: program.id,
       isActive: false,
-      isExpired: false,
       isActiveUpdatedOn: expect.any(Date),
       isActiveUpdatedBy: expectedUser,
       modifier: expectedUser,
