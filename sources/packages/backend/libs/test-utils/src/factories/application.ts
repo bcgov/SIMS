@@ -241,6 +241,7 @@ export async function saveFakeApplication(
     program?: EducationProgram;
     offering?: EducationProgramOffering;
     programYear?: ProgramYear;
+    msfaaNumber?: MSFAANumber;
   },
   options?: {
     applicationStatus?: ApplicationStatus;

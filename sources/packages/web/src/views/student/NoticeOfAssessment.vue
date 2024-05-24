@@ -9,6 +9,7 @@
           params: {
             applicationId: applicationId,
             assessmentId: assessmentId,
+            currentAssessmentId: currentAssessmentId,
           },
         }"
         ><template #buttons v-if="!viewOnly">
@@ -20,7 +21,11 @@
               @click="confirmCancelApplication"
               >Cancel application</v-btn
             ><v-btn
-              v-if="assessmentId === currentAssessmentId"
+              v-if="
+                () => {
+                  return assessmentId === currentAssessmentId;
+                }
+              "
               class="ml-2"
               color="primary"
               data-cy="AcceptAssessment"
