@@ -30,6 +30,7 @@ import {
 } from "..";
 import { StudentAssessmentService } from "../../services";
 import {
+  ApplicationStatus,
   CRAIncomeVerification,
   OfferingIntensity,
   StudentAppealRequest,
@@ -61,7 +62,7 @@ import {
   SystemUsersService,
   WorkflowClientService,
 } from "@sims/services";
-import { DataSource } from "typeorm";
+import { DataSource, EntityManager } from "typeorm";
 import { StudentLoanBalanceSharedService } from "@sims/services/student-loan-balance/student-loan-balance-shared.service";
 
 @Controller()
@@ -270,6 +271,22 @@ export class AssessmentController {
               "was invoked multiple times and it was already executed with success.",
           );
           return job.complete();
+        }
+        const application = assessment.application;
+        // Previous date change reported assessments can only exist for completed applications
+        // with at least one disbursement sent to ESDC.
+        // Hence applications that are not completed cannot have previous date change reported assessments.
+        // To ensure the implementation to be idempotent, update previous date change reported assessment
+        // only if it is not updated already.
+        if (
+          application.applicationStatus === ApplicationStatus.Completed &&
+          !assessment.previousDateChangedReportedAssessment
+        ) {
+          await this.updatePreviousDateChangeReportedAssessment(
+            job.variables.assessmentId,
+            entityManager,
+            jobLogger,
+          );
         }
         const impactedApplication =
           await this.assessmentSequentialProcessingService.assessImpactedApplicationReassessmentNeeded(
@@ -594,5 +611,38 @@ export class AssessmentController {
       };
     });
     return flattenedAppealRequests;
+  }
+
+  /**
+   * Updates the last reported assessment for the provided assessment.
+   * @param assessmentId assessment id.
+   * @param entityManager entity manager to be used in the transaction.
+   * @param jobLogger job logger.
+   */
+  private async updatePreviousDateChangeReportedAssessment(
+    assessmentId: number,
+    entityManager: EntityManager,
+    jobLogger: Logger,
+  ) {
+    const lastReportedAssessmentUpdateResult =
+      await this.studentAssessmentService.updateLastReportedAssessment(
+        assessmentId,
+        entityManager,
+      );
+    if (!lastReportedAssessmentUpdateResult) {
+      jobLogger.log(
+        "No last reported date change assessment was found or the last reported date change assessment update is not required.",
+      );
+      return;
+    }
+    if (lastReportedAssessmentUpdateResult.affected) {
+      jobLogger.log(
+        "Last reported date changed assessment was found and updated.",
+      );
+      return;
+    }
+    throw new Error(
+      "Previous date changed assessment update was not successful. This could be due to assessment id being not valid.",
+    );
   }
 }

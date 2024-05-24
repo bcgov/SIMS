@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import {
   AssessmentStatus,
+  DisbursementScheduleStatus,
   RecordDataModelService,
   StudentAppealStatus,
   StudentAssessment,
@@ -334,6 +335,123 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   }
 
   /**
+   * Updates the last reported assessment for the current assessment.
+   * @param assessmentId related assessment id.
+   * @param entityManager entity manager to be part of the transaction.
+   * @returns updated assessment.
+   */
+  async updateLastReportedAssessment(
+    assessmentId: number,
+    entityManager: EntityManager,
+  ): Promise<UpdateResult | undefined> {
+    const studentAssessmentRepo =
+      entityManager.getRepository(StudentAssessment);
+    const assessment = await studentAssessmentRepo.findOne({
+      select: {
+        id: true,
+        offering: {
+          studyStartDate: true,
+          studyEndDate: true,
+        },
+        application: {
+          id: true,
+        },
+      },
+      relations: {
+        application: true,
+        offering: true,
+      },
+      where: { id: assessmentId },
+    });
+    const auditUser = this.systemUsersService.systemUser;
+    const lastReportedAssessment = await this.getLastReportedAssessment(
+      assessment.application.id,
+      entityManager,
+    );
+    if (
+      !lastReportedAssessment ||
+      (assessment.offering.studyStartDate ===
+        lastReportedAssessment.offering.studyStartDate &&
+        assessment.offering.studyEndDate ===
+          lastReportedAssessment.offering.studyEndDate)
+    ) {
+      return;
+    }
+    return studentAssessmentRepo.update(
+      {
+        id: assessmentId,
+      },
+      {
+        previousDateChangedReportedAssessment: {
+          id: lastReportedAssessment.id,
+        },
+        modifier: auditUser,
+      },
+    );
+  }
+
+  /**
+   * Gets the last reported assessment.
+   * @param applicationId current assessment application id.
+   * @param entityManager entity manager to be part of the transaction.
+   * @returns last reported assessment.
+   */
+  private async getLastReportedAssessment(
+    applicationId: number,
+    entityManager: EntityManager,
+  ): Promise<StudentAssessment> {
+    const studentAssessmentRepo =
+      entityManager.getRepository(StudentAssessment);
+    const lastApplicationChangeReportedAssessment = await studentAssessmentRepo
+      .createQueryBuilder("studentAssessment")
+      .select([
+        "studentAssessment.id",
+        "offering.id",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+      ])
+      .innerJoin("studentAssessment.offering", "offering")
+      .innerJoin("studentAssessment.application", "application")
+      .where("application.id = :applicationId", {
+        applicationId,
+      })
+      .andWhere(
+        "studentAssessment.previousDateChangedReportedAssessment IS NOT NULL",
+      )
+      .andWhere("studentAssessment.reportedDate IS NOT NULL")
+      .orderBy("studentAssessment.assessmentDate", "DESC")
+      .limit(1)
+      .getOne();
+    if (lastApplicationChangeReportedAssessment) {
+      return lastApplicationChangeReportedAssessment;
+    }
+    return studentAssessmentRepo
+      .createQueryBuilder("studentAssessment")
+      .select([
+        "studentAssessment.id",
+        "offering.id",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+      ])
+      .innerJoin("studentAssessment.offering", "offering")
+      .innerJoin("studentAssessment.application", "application")
+      .innerJoin(
+        "studentAssessment.disbursementSchedules",
+        "disbursementSchedules",
+      )
+      .where("application.id = :applicationId", {
+        applicationId,
+      })
+      .andWhere(
+        "disbursementSchedules.disbursementScheduleStatus = :disbursementScheduleStatus",
+        { disbursementScheduleStatus: DisbursementScheduleStatus.Sent },
+      )
+      .orderBy("studentAssessment.assessmentDate", "DESC")
+      .limit(1)
+      .getOne();
+  }
+
+  /**
    * Check if there is any assessment in calculation step currently
    * during this time for the given student in given program year.
    * Calculation step includes from calculating the assessment numbers
@@ -389,15 +507,20 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     return this.repo.findOne({
       select: {
         id: true,
-        offering: { offeringIntensity: true },
+        previousDateChangedReportedAssessment: { id: true },
+        offering: {
+          offeringIntensity: true,
+        },
         application: {
           id: true,
           student: { id: true },
           programYear: { id: true },
+          applicationStatus: true,
         },
       },
       relations: {
         application: { student: true, programYear: true },
+        previousDateChangedReportedAssessment: true,
         offering: true,
       },
       where: { id: assessmentId },
