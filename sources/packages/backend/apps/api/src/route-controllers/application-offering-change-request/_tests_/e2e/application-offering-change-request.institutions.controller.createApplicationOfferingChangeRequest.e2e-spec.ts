@@ -537,12 +537,6 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
         applicationStatus: ApplicationStatus.Completed,
       },
     );
-    // Student SIN Validation.
-    application.student.sinValidation = createFakeSINValidation({
-      student: application.student,
-    });
-    application.data.howWillYouBeAttendingTheProgram =
-      OfferingIntensity.fullTime;
 
     await db.student.save(application.student);
     await db.application.save(application);
@@ -554,20 +548,21 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
         institutionLocation: collegeFLocation,
       },
       {
+        initialValues: {
+          studyStartDate: addDays(
+            5,
+            application.programYear.startDate,
+          ).toISOString(),
+          studyEndDate: addDays(
+            85,
+            application.programYear.startDate,
+          ).toISOString(),
+        },
         programInitialValues: {
           effectiveEndDate: addDays(-1).toISOString(),
         },
       },
     );
-    // Updating study period, that belongs to the program year.
-    newOffering.studyStartDate = addDays(
-      5,
-      application.programYear.startDate,
-    ).toISOString();
-    newOffering.studyEndDate = addDays(
-      85,
-      application.programYear.startDate,
-    ).toISOString();
     await db.educationProgramOffering.save(newOffering);
 
     const payload = {

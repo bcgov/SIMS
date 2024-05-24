@@ -362,26 +362,13 @@ export class EducationProgram extends RecordDataModel {
   effectiveEndDate?: string;
 
   /**
-   * Indicates whether an education program has reached its effective end date or not.
-   * Note that:
-   *   - It is not updated for typeOrm raw results queries (i.e. getRawOne and getRawMany).
-   *   - `effectiveEndDate` should have been selected in the query for this to be properly evaluated.
-   */
-  isExpired: boolean;
-
-  /**
-   * Updates `isExpired` property with `true` in case the effective end date has been reached or
+   * Returns `true` in case the effective end date has been reached or
    * the effective end date is null. Otherwise `false`.
-   * This method is called after retrieve, insert or update operations.
    */
-  @AfterLoad()
-  @AfterInsert()
-  @AfterUpdate()
-  updateIsExpired() {
-    if (!this.effectiveEndDate) this.isExpired = false;
-    else
-      this.isExpired =
-        getISODateOnlyString(new Date()) >= this.effectiveEndDate;
+  get isExpired(): boolean {
+    return (
+      !!this.effectiveEndDate && new Date() >= new Date(this.effectiveEndDate)
+    );
   }
 
   /**
