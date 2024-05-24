@@ -107,11 +107,12 @@ export class ApplicationControllerService {
         data.selectedProgram,
       );
       if (selectedProgram) {
-        // Assign selected program && selected offering for application as null when the program is inactive or expired.
-        if (!selectedProgram.isActive || selectedProgram.isExpired) {
-          data.selectedProgram = null;
-        }
-        if (selectedProgram.programStatus !== ProgramStatus.Approved) {
+        // Assign selected program && selected offering for application as null when the program is not approved, inactive or expired.
+        if (
+          !selectedProgram.isActive ||
+          selectedProgram.isExpired ||
+          selectedProgram.programStatus !== ProgramStatus.Approved
+        ) {
           data.selectedProgram = null;
         }
         // Assign program name for readonly form.

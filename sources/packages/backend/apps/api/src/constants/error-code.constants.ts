@@ -154,6 +154,8 @@ export const EDUCATION_PROGRAM_IS_NOT_ACTIVE =
   "EDUCATION_PROGRAM_IS_NOT_ACTIVE";
 /**
  * Education program is expired.
+ * Education programs that need to be approved by the Ministry have an effective end date.
+ * Auto-approved programs do not have an effective end date set and do not expire.
  */
 export const EDUCATION_PROGRAM_IS_EXPIRED = "EDUCATION_PROGRAM_IS_EXPIRED";
 /**

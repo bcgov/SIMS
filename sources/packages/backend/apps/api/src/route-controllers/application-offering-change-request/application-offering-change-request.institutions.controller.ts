@@ -135,16 +135,14 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
         "Application not found or it is not eligible.",
       );
     }
+    const offering = application.currentAssessment.offering;
     return {
       applicationNumber: application.applicationNumber,
-      programId: application.currentAssessment.offering.educationProgram.id,
-      isProgramActive:
-        application.currentAssessment.offering.educationProgram.isActive,
-      isProgramExpired:
-        application.currentAssessment.offering.educationProgram.isExpired,
-      offeringId: application.currentAssessment.offering.id,
-      offeringIntensity:
-        application.currentAssessment.offering.offeringIntensity,
+      programId: offering.educationProgram.id,
+      isProgramActive: offering.educationProgram.isActive,
+      isProgramExpired: offering.educationProgram.isExpired,
+      offeringId: offering.id,
+      offeringIntensity: offering.offeringIntensity,
       programYearId: application.programYear.id,
       fullName: getUserFullName(application.student.user),
     };
