@@ -75,7 +75,7 @@
         <bpmn:flowNodeRef>release-assessment-calculation-message</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>associate-msfaa-task</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>update-noa-status-to-not-required-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_00r58gc</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>update-noa-status-to-not-required-application-completed-task</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1xse027</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_04wql0w</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0w0bgro</bpmn:flowNodeRef>
@@ -709,7 +709,7 @@
     <bpmn:sequenceFlow id="Flow_0hmh3m7" sourceRef="update-noa-status-to-not-required-task" targetRef="Gateway_04wql0w" />
     <bpmn:sequenceFlow id="Flow_0p1lgm7" sourceRef="update-noa-status-to-required-task" targetRef="Gateway_04wql0w" />
     <bpmn:sequenceFlow id="Flow_0mayggl" sourceRef="update-application-status-to-assessment-task" targetRef="update-noa-status-to-required-task" />
-    <bpmn:serviceTask id="Activity_00r58gc" name="Update NOA status to &#39;Not Required&#39;">
+    <bpmn:serviceTask id="update-noa-status-to-not-required-application-completed-task" name="Update NOA status to &#39;Not Required&#39;">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="update-noa-status" />
         <zeebe:taskHeaders>
@@ -724,7 +724,7 @@
       <bpmn:outgoing>Flow_1cb5fpw</bpmn:outgoing>
       <bpmn:outgoing>Flow_1wkpr1a</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_1wkpr1a" name="Application Completed" sourceRef="Gateway_1xse027" targetRef="Activity_00r58gc">
+    <bpmn:sequenceFlow id="Flow_1wkpr1a" name="Application Completed" sourceRef="Gateway_1xse027" targetRef="update-noa-status-to-not-required-application-completed-task">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationStatus = "Completed"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:exclusiveGateway id="Gateway_04wql0w">
@@ -763,7 +763,7 @@
       <bpmn:incoming>Flow_1o87o98</bpmn:incoming>
       <bpmn:outgoing>Flow_1txrz77</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_1o87o98" sourceRef="Activity_00r58gc" targetRef="Gateway_0f9knk0" />
+    <bpmn:sequenceFlow id="Flow_1o87o98" sourceRef="update-noa-status-to-not-required-application-completed-task" targetRef="Gateway_0f9knk0" />
     <bpmn:serviceTask id="update-application-status-to-assessment-task" name="Update Application Status to &#39;Assessment&#39;">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="update-application-status" />
@@ -1070,7 +1070,7 @@
         <dc:Bounds x="3670" y="1640" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1kjbwdp" bpmnElement="Activity_00r58gc">
+      <bpmndi:BPMNShape id="BPMNShape_1kjbwdp" bpmnElement="update-noa-status-to-not-required-application-completed-task">
         <dc:Bounds x="3670" y="1740" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
