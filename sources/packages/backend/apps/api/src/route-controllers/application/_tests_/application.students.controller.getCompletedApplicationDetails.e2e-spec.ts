@@ -628,8 +628,10 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         application.currentAssessment.disbursementSchedules;
       application.currentAssessment.workflowData.calculatedData.pdppdStatus =
         true;
+      await db.studentAssessment.save(application.currentAssessment);
+
       application.student.disabilityStatus = DisabilityStatus.PD;
-      await db.application.save(application);
+      await db.student.save(application.student);
 
       const endpoint = `/students/application/${application.id}/completed`;
       const token = await getStudentToken(
