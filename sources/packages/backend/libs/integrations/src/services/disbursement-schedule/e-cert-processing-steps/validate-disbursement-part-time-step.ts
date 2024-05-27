@@ -89,7 +89,7 @@ export class ValidateDisbursementPartTimeStep
     );
 
     const hasValidDisbursement =
-      disbursementValidation.validateCSLPDisbursement(
+      await disbursementValidation.validateCSLPDisbursement(
         CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE,
         entityManager,
       );
