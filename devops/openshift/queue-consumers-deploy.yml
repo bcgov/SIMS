@@ -275,7 +275,7 @@ objects:
             name: memory
             target:
               type: AverageValue
-              averageValue: "230M"
+              averageValue: "350M"
   - apiVersion: policy/v1
     kind: PodDisruptionBudget
     metadata:
@@ -295,11 +295,11 @@ parameters:
   - name: CPU_LIMIT
     value: "0.2"
   - name: MEMORY_LIMIT
-    value: "256M"
+    value: "512M"
   - name: CPU_REQUEST
     value: "0.1"
   - name: MEMORY_REQUEST
-    value: "128M"
+    value: "384M"
   - name: REPLICAS
     value: "2"
   - name: DB_SERVICE
