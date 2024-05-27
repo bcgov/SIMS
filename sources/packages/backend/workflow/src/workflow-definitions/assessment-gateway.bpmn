@@ -685,7 +685,7 @@
       <bpmn:outgoing>Flow_0358dxp</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_1tq976n" messageRef="Message_16elhuc" />
     </bpmn:intermediateCatchEvent>
-    <bpmn:serviceTask id="associate-msfaa-task" name="Aassociate MSFAA">
+    <bpmn:serviceTask id="associate-msfaa-task" name="Associate MSFAA">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:input source="={&#10;  weeks: offeringWeeks,&#10;  tuitionCost: 5009,&#10;  childcareCost: 0,&#10;  livingAllowance: 13609.3,&#10;  totalAssessedCost: 21840.3,&#10;  totalFamilyIncome: 0,&#10;  totalFederalAward: 5533.4,&#10;  otherAllowableCost: 0,&#10;  transportationCost: null,&#10;  secondResidenceCost: 0,&#10;  totalAssessmentNeed: 18444.68,&#10;  booksAndSuppliesCost: 3000,&#10;  totalProvincialAward: 3688.94,&#10;  alimonyOrChildSupport: 0,&#10;  federalAssessmentNeed: 9222.34,&#10;  partnerStudentLoanCost: null,&#10;  exceptionalEducationCost: 222,&#10;  provincialAssessmentNeed: 9222.34,&#10;  totalFederalContribution: 12617.96,&#10;  parentAssessedContribution: 10817.96,&#10;  partnerAssessedContribution: 0,&#10;  totalProvincialContribution: 12617.96,&#10;  studentTotalFederalContribution: 1800,&#10;  studentTotalProvincialContribution: 1800&#10;}" target="assessmentData" />
