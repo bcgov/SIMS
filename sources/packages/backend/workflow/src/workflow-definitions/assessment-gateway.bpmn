@@ -115,7 +115,7 @@
     <bpmn:sequenceFlow id="Flow_1izp0bk" sourceRef="save-assessment-data-task" targetRef="Gateway_1hwknxt" />
     <bpmn:sequenceFlow id="Flow_1mpwyku" sourceRef="Gateway_1hwknxt" targetRef="associate-msfaa-task" />
     <bpmn:sequenceFlow id="Flow_01iq5cw" name="Has NOA Approval" sourceRef="Gateway_1m2js1c" targetRef="update-noa-status-to-not-required-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationNOAApproval = true</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationHasNOAApproval = true</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1atzf7v" sourceRef="associate-msfaa-task" targetRef="Gateway_1xse027" />
     <bpmn:sequenceFlow id="Flow_1a4wzic" name="Does Not Have NOA Approval" sourceRef="Gateway_1m2js1c" targetRef="update-application-status-to-assessment-task" />

@@ -407,8 +407,8 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
 
   /**
    * Check if any NOAs have been accepted for a given application.
-   * @param applicationId the application to check associated assessments for
-   * @returns boolean if NOA acceptance exist on any related assessments
+   * @param applicationId the application to check associated assessments for.
+   * @returns boolean if NOA acceptance exist on any related assessments.
    */
   async assessmentNOAExists(applicationId: number): Promise<boolean> {
     return this.repo.exists({

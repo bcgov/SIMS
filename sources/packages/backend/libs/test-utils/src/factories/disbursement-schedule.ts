@@ -14,6 +14,7 @@ import * as faker from "faker";
  * @param relations dependencies.
  * - `studentAssessment` student assessment.
  * - `disbursementValues` disbursement values to be inserted.
+ * - `msfaaNumber` msfaaNumber to be added to the schedule.
  * @param options additional options.
  * - `initialValues` initial values.
  * @returns

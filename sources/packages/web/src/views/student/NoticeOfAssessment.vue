@@ -9,7 +9,6 @@
           params: {
             applicationId: applicationId,
             assessmentId: assessmentId,
-            currentAssessmentId: currentAssessmentId,
           },
         }"
         ><template #buttons v-if="!viewOnly">
@@ -23,7 +22,7 @@
             ><v-btn
               v-if="
                 () => {
-                  return assessmentId === currentAssessmentId;
+                  return assessmentId === currAssessmentId;
                 }
               "
               class="ml-2"
@@ -70,10 +69,6 @@ export default defineComponent({
       type: Number,
       required: true,
     },
-    currentAssessmentId: {
-      type: Number,
-      required: false,
-    },
   },
   setup(props) {
     const router = useRouter();
@@ -81,15 +76,18 @@ export default defineComponent({
     const assessment = ref<AssessmentNOAAPIOutDTO>();
     const snackBar = useSnackBar();
     const viewOnly = ref(true);
+    let currAssessmentId = 0;
 
     const assessmentDataLoaded = (
       applicationStatus: ApplicationStatus,
       noaApprovalStatus: AssessmentStatus,
+      currentAssessmentId: number,
     ) => {
       viewOnly.value = !(
         applicationStatus === ApplicationStatus.Assessment &&
         noaApprovalStatus === AssessmentStatus.required
       );
+      currAssessmentId = currentAssessmentId;
     };
 
     const confirmAssessment = async () => {
@@ -123,6 +121,7 @@ export default defineComponent({
       AssessmentStatus,
       ClientIdType,
       viewOnly,
+      currAssessmentId,
       confirmCancelApplication,
       cancelApplicationModal,
       assessmentDataLoaded,

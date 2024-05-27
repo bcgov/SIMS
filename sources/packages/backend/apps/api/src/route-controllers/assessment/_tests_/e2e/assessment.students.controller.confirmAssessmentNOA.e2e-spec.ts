@@ -39,7 +39,7 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
     db = createE2EDataSources(dataSource);
   });
 
-  it("Should approve an assessment if requirements for approval are met.", async () => {
+  it("Should allow NOA approval only for the current application assessment when the application has multiple assessments.", async () => {
     // Arrange
 
     // Create the new student to be mocked as the authenticated one.

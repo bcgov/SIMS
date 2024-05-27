@@ -161,7 +161,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       ])
       .innerJoin("assessment.application", "application")
       .innerJoin("application.student", "student")
-      .leftJoin("application.currentAssessment", "currentAssessment")
+      .innerJoin("application.currentAssessment", "currentAssessment")
       .where("assessment.id = :assessmentId", { assessmentId })
       .andWhere("student.id = :studentId", { studentId })
       .getOne();

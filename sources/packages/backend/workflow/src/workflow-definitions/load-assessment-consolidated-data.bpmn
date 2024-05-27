@@ -109,7 +109,7 @@
           <zeebe:header key="studentDataAdditionalTransportWeeks" value="$.data.additionalTransportWeeks" />
           <zeebe:header key="studentDataAdditionalTransportPlacement" value="$.data.additionalTransportPlacement" />
           <zeebe:header key="applicationStatus" value="$.applicationStatus" />
-          <zeebe:header key="applicationNOAApproval" value="$.noaApproval" />
+          <zeebe:header key="applicationHasNOAApproval" value="$.hasNOAApproval" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1jdhbms</bpmn:incoming>

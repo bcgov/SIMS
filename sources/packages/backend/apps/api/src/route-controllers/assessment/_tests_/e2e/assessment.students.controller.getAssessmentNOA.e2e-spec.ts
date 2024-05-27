@@ -40,7 +40,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
     db = createE2EDataSources(dataSource);
   });
 
-  it("Should get the student noa details for an eligible application when the student tries to access it.", async () => {
+  it("Should get the student NOA details for an eligible application when the student tries to access it.", async () => {
     // Arrange
 
     // Create the new student to be mocked as the authenticated one.
