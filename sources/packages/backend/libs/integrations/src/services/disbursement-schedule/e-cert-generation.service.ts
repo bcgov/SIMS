@@ -36,6 +36,8 @@ export class ECertGenerationService {
   constructor(
     @InjectRepository(Application)
     private readonly applicationRepo: Repository<Application>,
+    @InjectRepository(StudentAssessment)
+    private readonly studentAssessmentRepo: Repository<StudentAssessment>,
     private readonly configService: ConfigService,
   ) {}
 
@@ -332,10 +334,11 @@ export class ECertGenerationService {
    */
   async getCSLPLifetimeMaximums(
     assessmentId: number,
-    entityManager: EntityManager,
+    entityManager?: EntityManager,
   ): Promise<number> {
-    const studentAssessmentRepo =
-      entityManager.getRepository(StudentAssessment);
+    const studentAssessmentRepo = entityManager
+      ? entityManager.getRepository(StudentAssessment)
+      : this.studentAssessmentRepo;
     const queryResult = await studentAssessmentRepo
       .createQueryBuilder("studentAssessment")
       .select(

@@ -15,17 +15,25 @@ import {
   createE2EDataSources,
   E2EDataSources,
   createFakeDisbursementFeedbackError,
+  saveFakeStudentRestriction,
+  MSFAAStates,
+  createFakeMSFAANumber,
 } from "@sims/test-utils";
 import {
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
   AssessmentTriggerType,
   COEStatus,
+  DisabilityStatus,
   DisbursementScheduleStatus,
   OfferingIntensity,
+  RestrictionActionType,
   Student,
   StudentAppealStatus,
 } from "@sims/sims-db";
+import { ArrayContains } from "typeorm";
+import { CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE } from "@sims/services/constants";
+import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
 
 describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () => {
   let app: INestApplication;
@@ -142,6 +150,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
           ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
         assessmentTriggerType: application.currentAssessment.triggerType,
         hasBlockFundingFeedbackError: false,
+        hasInvalidDisbursement: true,
       });
   });
 
@@ -183,6 +192,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
         secondCOEStatus: secondDisbursement.coeStatus,
         assessmentTriggerType: AssessmentTriggerType.RelatedApplicationChanged,
         hasBlockFundingFeedbackError: false,
+        hasInvalidDisbursement: true,
       });
   });
 
@@ -236,6 +246,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
           firstCOEStatus: COEStatus.completed,
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: false,
+          hasInvalidDisbursement: true,
         });
     },
   );
@@ -290,6 +301,146 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
           firstCOEStatus: COEStatus.completed,
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: true,
+          hasInvalidDisbursement: true,
+        });
+    },
+  );
+
+  it(
+    "Should get application progress details with invalid disbursement as true when there are restrictions associated " +
+      "with the current student and the offering intensity is part time.",
+    async () => {
+      // Arrange
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+          offeringIntensity: OfferingIntensity.partTime,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+        },
+      );
+      const restriction = await db.restriction.findOne({
+        where: {
+          actionType: ArrayContains([
+            RestrictionActionType.StopPartTimeDisbursement,
+          ]),
+        },
+      });
+      await saveFakeStudentRestriction(db.dataSource, {
+        student,
+        application,
+        restriction,
+      });
+
+      const endpoint = `/students/application/${application.id}/progress-details`;
+      const token = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          applicationStatus: application.applicationStatus,
+          applicationStatusUpdatedOn:
+            application.applicationStatusUpdatedOn.toISOString(),
+          pirStatus: application.pirStatus,
+          firstCOEStatus: COEStatus.completed,
+          assessmentTriggerType: application.currentAssessment.triggerType,
+          hasBlockFundingFeedbackError: false,
+          hasInvalidDisbursement: true,
+        });
+    },
+  );
+
+  it(
+    "Should get application progress details with invalid disbursement as false when the student has valid disability status, " +
+      "the student has a valid SIN, the MSFAA number is signed and the cancelled date is null, student doesn't have any student restrictions, " +
+      "the disbursement CSLP value amount is greater than the sum of disbursement CSLP value amount and the latest CSLP balance and " +
+      "the offering intensity is part time.",
+    async () => {
+      // Arrange
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+          offeringIntensity: OfferingIntensity.partTime,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+        },
+      );
+
+      // Ensure that the student's disability status is valid.
+      application.currentAssessment.workflowData.calculatedData.pdppdStatus =
+        true;
+      application.student.disabilityStatus = DisabilityStatus.PD;
+
+      // Ensure that the student has a valid SIN.
+      application.student.sinValidation = createFakeSINValidation({
+        student,
+      });
+      await db.student.save(application.student);
+      await db.application.save(application);
+
+      // Ensure that the MSFAA number is signed and the cancelled date is null.
+      const [firstDisbursement] =
+        application.currentAssessment.disbursementSchedules;
+      firstDisbursement.msfaaNumber = createFakeMSFAANumber(
+        {
+          student,
+          referenceApplication: application,
+        },
+        {
+          msfaaState: MSFAAStates.Signed,
+        },
+      );
+      await db.msfaaNumber.save(firstDisbursement.msfaaNumber);
+      await db.disbursementSchedule.save(firstDisbursement);
+
+      // Ensure that the student doesn't have any student restrictions.
+      const studentRestrictions = await db.studentRestriction.find({
+        select: { id: true, student: { id: true } },
+        relations: { student: true },
+        where: { student: { id: application.student.id } },
+      });
+      await db.studentRestriction.remove(studentRestrictions);
+
+      // Ensure that the disbursement CSLP value amount is greater than the sum of disbursement CSLP value amount and the latest CSLP balance
+      const disbursementCSLP = firstDisbursement.disbursementValues.find(
+        (item) => item.valueCode === CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE,
+      );
+      disbursementCSLP.valueAmount =
+        application.currentAssessment.workflowData.dmnValues
+          .lifetimeMaximumCSLP - 100;
+      await db.disbursementValue.save(disbursementCSLP);
+
+      const endpoint = `/students/application/${application.id}/progress-details`;
+      const token = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          applicationStatus: application.applicationStatus,
+          applicationStatusUpdatedOn:
+            application.applicationStatusUpdatedOn.toISOString(),
+          pirStatus: application.pirStatus,
+          firstCOEStatus: COEStatus.completed,
+          assessmentTriggerType: application.currentAssessment.triggerType,
+          hasBlockFundingFeedbackError: false,
+          hasInvalidDisbursement: false,
         });
     },
   );

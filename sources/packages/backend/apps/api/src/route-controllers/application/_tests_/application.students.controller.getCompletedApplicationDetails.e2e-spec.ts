@@ -1,6 +1,6 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { DataSource, Repository } from "typeorm";
+import { ArrayContains, DataSource, Repository } from "typeorm";
 import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
@@ -18,6 +18,9 @@ import {
   createE2EDataSources,
   E2EDataSources,
   createFakeDisbursementFeedbackError,
+  saveFakeStudentRestriction,
+  createFakeMSFAANumber,
+  MSFAAStates,
 } from "@sims/test-utils";
 import {
   Application,
@@ -25,9 +28,11 @@ import {
   ApplicationStatus,
   AssessmentTriggerType,
   COEStatus,
+  DisabilityStatus,
   DisbursementSchedule,
   DisbursementScheduleStatus,
   OfferingIntensity,
+  RestrictionActionType,
   Student,
   StudentAppeal,
   StudentAppealStatus,
@@ -36,6 +41,8 @@ import {
   User,
 } from "@sims/sims-db";
 import { addDays } from "@sims/utilities";
+import { CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE } from "@sims/services/constants";
+import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
 
 describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", () => {
   let app: INestApplication;
@@ -151,6 +158,11 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         },
         assessmentTriggerType: application.currentAssessment.triggerType,
         hasBlockFundingFeedbackError: false,
+        hasValidDisabilityStatus: true,
+        hasValidMSFAAStatus: false,
+        hasRestriction: true,
+        hasValidSIN: false,
+        hasValidCSLPDisbursement: true,
       });
   });
 
@@ -195,6 +207,11 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         scholasticStandingChangeType:
           StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
         hasBlockFundingFeedbackError: false,
+        hasValidDisabilityStatus: true,
+        hasValidMSFAAStatus: false,
+        hasRestriction: true,
+        hasValidSIN: false,
+        hasValidCSLPDisbursement: true,
       });
   });
 
@@ -274,6 +291,11 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         applicationOfferingChangeRequestStatus:
           ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
         hasBlockFundingFeedbackError: false,
+        hasValidDisabilityStatus: true,
+        hasValidMSFAAStatus: false,
+        hasRestriction: true,
+        hasValidSIN: false,
+        hasValidCSLPDisbursement: true,
       });
   });
 
@@ -320,6 +342,11 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         },
         assessmentTriggerType: AssessmentTriggerType.RelatedApplicationChanged,
         hasBlockFundingFeedbackError: false,
+        hasValidDisabilityStatus: true,
+        hasValidMSFAAStatus: false,
+        hasRestriction: true,
+        hasValidSIN: false,
+        hasValidCSLPDisbursement: true,
       });
   });
 
@@ -372,6 +399,11 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: false,
+          hasValidDisabilityStatus: true,
+          hasValidMSFAAStatus: false,
+          hasRestriction: true,
+          hasValidSIN: false,
+          hasValidCSLPDisbursement: true,
         });
     },
   );
@@ -425,6 +457,11 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: true,
+          hasValidDisabilityStatus: true,
+          hasValidMSFAAStatus: false,
+          hasRestriction: true,
+          hasValidSIN: false,
+          hasValidCSLPDisbursement: true,
         });
     },
   );
@@ -487,6 +524,11 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: true,
+          hasValidDisabilityStatus: true,
+          hasValidMSFAAStatus: false,
+          hasRestriction: true,
+          hasValidSIN: false,
+          hasValidCSLPDisbursement: true,
         });
     },
   );
@@ -540,6 +582,260 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: true,
+          hasValidDisabilityStatus: true,
+          hasValidMSFAAStatus: false,
+          hasRestriction: true,
+          hasValidSIN: false,
+          hasValidCSLPDisbursement: true,
+        });
+    },
+  );
+
+  it(
+    "Should get application details with valid disability status as true when the calculated PDPPD status is true " +
+      "and the student's disability status is permanent disability and the offering intensity is part time.",
+    async () => {
+      // Arrange
+      const application = await saveFakeApplicationDisbursements(
+        appDataSource,
+        { student },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+          offeringIntensity: OfferingIntensity.partTime,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+        },
+      );
+      application.currentAssessment.workflowData.calculatedData.pdppdStatus =
+        true;
+      application.student.disabilityStatus = DisabilityStatus.PD;
+      await db.application.save(application);
+
+      const endpoint = `/students/application/${application.id}/completed`;
+      const token = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .then((response) => {
+          expect(response.body.firstDisbursement).toStrictEqual({
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          });
+          expect(response.body.hasValidDisabilityStatus).toBeTruthy();
+        });
+    },
+  );
+
+  it(
+    "Should get application details with valid MSFAA status as true when the the MSFAA number is signed " +
+      "and there is no cancelled date and the offering intensity is part time.",
+    async () => {
+      // Arrange
+      const application = await saveFakeApplicationDisbursements(
+        appDataSource,
+        { student },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+          offeringIntensity: OfferingIntensity.partTime,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+        },
+      );
+      const [firstDisbursement] =
+        application.currentAssessment.disbursementSchedules;
+      const msfaaNumber = createFakeMSFAANumber(
+        {
+          student,
+          referenceApplication: application,
+        },
+        {
+          msfaaState: MSFAAStates.Signed,
+        },
+      );
+      await db.msfaaNumber.save(msfaaNumber);
+
+      firstDisbursement.msfaaNumber = msfaaNumber;
+      await db.disbursementSchedule.save(firstDisbursement);
+
+      const endpoint = `/students/application/${application.id}/completed`;
+      const token = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .then((response) => {
+          expect(response.body.firstDisbursement).toStrictEqual({
+            coeStatus: firstDisbursement.coeStatus,
+            disbursementScheduleStatus:
+              firstDisbursement.disbursementScheduleStatus,
+          });
+          expect(response.body.hasValidMSFAAStatus).toBeTruthy();
+        });
+    },
+  );
+
+  it(
+    "Should get application details with valid restriction as false when there are restrictions associated " +
+      "with the current student and the offering intensity is part time.",
+    async () => {
+      // Arrange
+      const application = await saveFakeApplicationDisbursements(
+        appDataSource,
+        { student },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+          offeringIntensity: OfferingIntensity.partTime,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+        },
+      );
+      const [firstDisbursement] =
+        application.currentAssessment.disbursementSchedules;
+
+      const restriction = await db.restriction.findOne({
+        where: {
+          actionType: ArrayContains([
+            RestrictionActionType.StopPartTimeDisbursement,
+          ]),
+        },
+      });
+      await saveFakeStudentRestriction(db.dataSource, {
+        student,
+        application,
+        restriction,
+      });
+
+      const endpoint = `/students/application/${application.id}/completed`;
+      const token = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .then((response) => {
+          expect(response.body.firstDisbursement).toStrictEqual({
+            coeStatus: firstDisbursement.coeStatus,
+            disbursementScheduleStatus:
+              firstDisbursement.disbursementScheduleStatus,
+          });
+          expect(response.body.hasRestriction).toBeTruthy();
+        });
+    },
+  );
+
+  it(
+    "Should get application details with valid SIN as false when the student doesn't have a valid SIN and " +
+      "the offering intensity is part time.",
+    async () => {
+      // Arrange
+      const application = await saveFakeApplicationDisbursements(
+        appDataSource,
+        { student },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+          offeringIntensity: OfferingIntensity.partTime,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+        },
+      );
+      application.student.sinValidation = createFakeSINValidation(
+        {
+          student,
+        },
+        { initialValue: { isValidSIN: false } },
+      );
+      await db.student.save(application.student);
+
+      const [firstDisbursement] =
+        application.currentAssessment.disbursementSchedules;
+
+      const endpoint = `/students/application/${application.id}/completed`;
+      const token = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .then((response) => {
+          expect(response.body.firstDisbursement).toStrictEqual({
+            coeStatus: firstDisbursement.coeStatus,
+            disbursementScheduleStatus:
+              firstDisbursement.disbursementScheduleStatus,
+          });
+          expect(response.body.hasValidSIN).toBeFalsy();
+        });
+    },
+  );
+
+  it(
+    "Should get application details with valid CSLP disbursement as false " +
+      "when the life time maximums CSLP value is less than the sum of disbursement CSLP value amount " +
+      "and the latest CSLP balance and the offering intensity is part time.",
+    async () => {
+      // Arrange
+      const application = await saveFakeApplicationDisbursements(
+        appDataSource,
+        { student },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+          offeringIntensity: OfferingIntensity.partTime,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+        },
+      );
+      const [firstDisbursement] =
+        application.currentAssessment.disbursementSchedules;
+
+      const disbursementCSLP = firstDisbursement.disbursementValues.find(
+        (item) => item.valueCode === CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE,
+      );
+      disbursementCSLP.valueAmount =
+        application.currentAssessment.workflowData.dmnValues
+          .lifetimeMaximumCSLP + 1;
+      await db.disbursementValue.save(disbursementCSLP);
+
+      const endpoint = `/students/application/${application.id}/completed`;
+      const token = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .then((response) => {
+          expect(response.body.firstDisbursement).toStrictEqual({
+            coeStatus: firstDisbursement.coeStatus,
+            disbursementScheduleStatus:
+              firstDisbursement.disbursementScheduleStatus,
+          });
+          expect(response.body.hasValidCSLPDisbursement).toBeFalsy();
         });
     },
   );

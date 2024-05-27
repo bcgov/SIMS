@@ -63,6 +63,7 @@ import {
   RestrictionSharedService,
   ConfirmationOfEnrollmentService,
   AssessmentSequentialProcessingService,
+  StudentLoanBalanceSharedService,
 } from "@sims/services";
 import {
   SFASIndividualService,
@@ -70,6 +71,7 @@ import {
   SFASPartTimeApplicationsService,
 } from "@sims/services/sfas";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
+import { ECertGenerationService } from "@sims/integrations/services";
 
 @Module({
   imports: [AuthModule, ConfigModule, ATBCIntegrationModule],
@@ -136,6 +138,8 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
     BCeIDService,
     InstitutionUserAuthService,
     UserService,
+    ECertGenerationService,
+    StudentLoanBalanceSharedService,
   ],
 })
 export class AppStudentsModule {}

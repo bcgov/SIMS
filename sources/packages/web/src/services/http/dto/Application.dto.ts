@@ -110,6 +110,7 @@ export interface ApplicationProgressDetailsAPIOutDTO {
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
   assessmentTriggerType?: AssessmentTriggerType;
   hasBlockFundingFeedbackError: boolean;
+  hasInvalidDisbursement: boolean;
 }
 
 export interface DisbursementDetailsAPIOutDTO {
@@ -137,6 +138,11 @@ export interface CompletedApplicationDetailsAPIOutDTO
   applicationOfferingChangeRequestId?: number;
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
   hasBlockFundingFeedbackError: boolean;
+  hasValidDisabilityStatus: boolean;
+  hasValidMSFAAStatus: boolean;
+  hasRestriction: boolean;
+  hasValidSIN: boolean;
+  hasValidCSLPDisbursement: boolean;
 }
 
 export interface ApplicationAssessmentStatusDetailsAPIOutDTO {

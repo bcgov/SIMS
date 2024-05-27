@@ -166,6 +166,7 @@ export class ApplicationProgressDetailsAPIOutDTO {
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
   assessmentTriggerType?: AssessmentTriggerType;
   hasBlockFundingFeedbackError: boolean;
+  hasInvalidDisbursement: boolean;
 }
 
 export class DisbursementDetailsAPIOutDTO {
@@ -190,6 +191,11 @@ export class CompletedApplicationDetailsAPIOutDTO extends EnrolmentApplicationDe
   applicationOfferingChangeRequestId?: number;
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
   hasBlockFundingFeedbackError: boolean;
+  hasValidDisabilityStatus?: boolean;
+  hasValidMSFAAStatus?: boolean;
+  hasRestriction?: boolean;
+  hasValidSIN?: boolean;
+  hasValidCSLPDisbursement?: boolean;
 }
 
 export class ApplicationAssessmentStatusDetailsAPIOutDTO {

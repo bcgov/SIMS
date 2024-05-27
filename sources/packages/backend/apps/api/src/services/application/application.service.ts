@@ -1486,8 +1486,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
             coeStatus: true,
             disbursementDate: true,
             disbursementScheduleStatus: true,
+            disbursementValues: {
+              id: true,
+              valueCode: true,
+              valueAmount: true,
+            },
+            msfaaNumber: { id: true, cancelledDate: true, dateSigned: true },
           },
           triggerType: true,
+          workflowData: true as unknown,
         },
         applicationException: {
           id: true,
@@ -1501,6 +1508,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
           studystartDate: true,
           howWillYouBeAttendingTheProgram: true,
         },
+        student: {
+          id: true,
+          disabilityStatus: true,
+          sinValidation: { id: true, isValidSIN: true },
+          studentRestrictions: {
+            id: true,
+            restriction: { id: true, actionType: true },
+          },
+        },
         studentScholasticStandings: {
           id: true,
           changeType: true,
@@ -1509,9 +1525,19 @@ export class ApplicationService extends RecordDataModelService<Application> {
       },
       relations: {
         pirDeniedReasonId: true,
-        currentAssessment: { offering: true, disbursementSchedules: true },
+        currentAssessment: {
+          offering: true,
+          disbursementSchedules: {
+            disbursementValues: true,
+            msfaaNumber: true,
+          },
+        },
         applicationException: true,
         location: true,
+        student: {
+          sinValidation: true,
+          studentRestrictions: { restriction: true },
+        },
         studentScholasticStandings: true,
         programYear: true,
       },
@@ -1559,6 +1585,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
             coeDeniedReason: { id: true, reason: true },
             coeDeniedOtherDesc: true,
             msfaaNumber: { id: true, dateSigned: true, cancelledDate: true },
+            disbursementValues: {
+              id: true,
+              valueCode: true,
+              valueAmount: true,
+            },
           },
           workflowData: true as unknown,
           offering: { id: true, offeringIntensity: true },
@@ -1569,19 +1600,28 @@ export class ApplicationService extends RecordDataModelService<Application> {
         },
         student: {
           id: true,
+          disabilityStatus: true,
           studentRestrictions: {
             id: true,
             restriction: { id: true, actionType: true, restrictionCode: true },
           },
+          sinValidation: { id: true, isValidSIN: true },
         },
       },
       relations: {
         currentAssessment: {
-          disbursementSchedules: { coeDeniedReason: true, msfaaNumber: true },
+          disbursementSchedules: {
+            coeDeniedReason: true,
+            msfaaNumber: true,
+            disbursementValues: true,
+          },
           offering: true,
         },
         studentScholasticStandings: true,
-        student: { studentRestrictions: { restriction: true } },
+        student: {
+          studentRestrictions: { restriction: true },
+          sinValidation: true,
+        },
       },
       where: {
         id: applicationId,

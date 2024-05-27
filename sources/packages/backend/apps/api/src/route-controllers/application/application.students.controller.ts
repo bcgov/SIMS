@@ -31,7 +31,6 @@ import {
   StudentAppealService,
   ApplicationOfferingChangeRequestService,
   EducationProgramService,
-  StudentRestrictionService,
 } from "../../services";
 import { IUserToken, StudentUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -83,8 +82,12 @@ import {
 import {
   AssessmentSequentialProcessingService,
   ConfirmationOfEnrollmentService,
+  StudentLoanBalanceSharedService,
 } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
+import { DisbursementEligibilityValidation } from "@sims/integrations/services/disbursement-schedule/disbursement-eligibility-validation";
+import { ECertGenerationService } from "@sims/integrations/services";
+import { CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE } from "@sims/services/constants";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -106,7 +109,8 @@ export class ApplicationStudentsController extends BaseController {
     private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
     private readonly configService: ConfigService,
     private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
-    private readonly studentRestrictionService: StudentRestrictionService,
+    private readonly eCertGenerationService: ECertGenerationService,
+    private readonly studentLoanBalanceSharedService: StudentLoanBalanceSharedService,
   ) {
     super();
   }
@@ -693,6 +697,26 @@ export class ApplicationStudentsController extends BaseController {
     );
     const [firstDisbursement, secondDisbursement] = disbursements;
     const [scholasticStandingChange] = application.studentScholasticStandings;
+
+    // Create a new disbursement validation FT/PT object to access its properties for validation.
+    const disbursementValidation = new DisbursementEligibilityValidation(
+      this.eCertGenerationService,
+      this.studentLoanBalanceSharedService,
+      firstDisbursement,
+      application,
+    );
+    const hasValidCSLPDisbursement =
+      await disbursementValidation.validateCSLPDisbursement(
+        CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE,
+      );
+    const hasInvalidDisbursement = !(
+      disbursementValidation.hasValidDisabilityStatus &&
+      disbursementValidation.hasValidMSFAAStatus &&
+      !disbursementValidation.hasRestriction &&
+      disbursementValidation.hasValidSIN &&
+      hasValidCSLPDisbursement
+    );
+
     return {
       applicationStatus: application.applicationStatus,
       applicationStatusUpdatedOn: application.applicationStatusUpdatedOn,
@@ -705,6 +729,7 @@ export class ApplicationStudentsController extends BaseController {
       applicationOfferingChangeRequestStatus,
       assessmentTriggerType,
       hasBlockFundingFeedbackError,
+      hasInvalidDisbursement,
     };
   }
 
@@ -837,6 +862,21 @@ export class ApplicationStudentsController extends BaseController {
         application.currentAssessment.disbursementSchedules,
       );
     const [scholasticStandingChange] = application.studentScholasticStandings;
+
+    // Create a new disbursement validation FT/PT object to access its properties for validation.
+    const [firstDisbursement] =
+      application.currentAssessment.disbursementSchedules;
+    const disbursementValidation = new DisbursementEligibilityValidation(
+      this.eCertGenerationService,
+      this.studentLoanBalanceSharedService,
+      firstDisbursement,
+      application,
+    );
+    const hasValidCSLPDisbursement =
+      await disbursementValidation.validateCSLPDisbursement(
+        CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE,
+      );
+
     return {
       firstDisbursement: enrolmentDetails.firstDisbursement,
       secondDisbursement: enrolmentDetails.secondDisbursement,
@@ -847,6 +887,11 @@ export class ApplicationStudentsController extends BaseController {
       applicationOfferingChangeRequestStatus:
         applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus,
       hasBlockFundingFeedbackError,
+      hasValidDisabilityStatus: disbursementValidation.hasValidDisabilityStatus,
+      hasValidMSFAAStatus: disbursementValidation.hasValidMSFAAStatus,
+      hasRestriction: disbursementValidation.hasRestriction,
+      hasValidSIN: disbursementValidation.hasValidSIN,
+      hasValidCSLPDisbursement,
     };
   }
 }
