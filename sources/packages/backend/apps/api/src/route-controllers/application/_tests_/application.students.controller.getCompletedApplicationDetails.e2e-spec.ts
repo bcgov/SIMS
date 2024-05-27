@@ -72,6 +72,22 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
       FakeStudentUsersTypes.FakeStudentUserType1,
       dataSource,
     );
+    student.sinValidation = createFakeSINValidation(
+      {
+        student,
+      },
+      { initialValue: { isValidSIN: true } },
+    );
+    await db.student.save(student);
+  });
+
+  beforeEach(async () => {
+    const studentRestrictions = await db.studentRestriction.find({
+      select: { id: true, student: { id: true } },
+      relations: { student: true },
+      where: { student: { id: student.id } },
+    });
+    await db.studentRestriction.remove(studentRestrictions);
   });
 
   it("Should throw NotFoundException when the application is not associated with the authenticated student.", async () => {
@@ -160,8 +176,8 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         hasBlockFundingFeedbackError: false,
         hasValidDisabilityStatus: true,
         hasValidMSFAAStatus: false,
-        hasRestriction: true,
-        hasValidSIN: false,
+        hasRestriction: false,
+        hasValidSIN: true,
         hasValidCSLPDisbursement: true,
       });
   });
@@ -209,8 +225,8 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         hasBlockFundingFeedbackError: false,
         hasValidDisabilityStatus: true,
         hasValidMSFAAStatus: false,
-        hasRestriction: true,
-        hasValidSIN: false,
+        hasRestriction: false,
+        hasValidSIN: true,
         hasValidCSLPDisbursement: true,
       });
   });
@@ -293,8 +309,8 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         hasBlockFundingFeedbackError: false,
         hasValidDisabilityStatus: true,
         hasValidMSFAAStatus: false,
-        hasRestriction: true,
-        hasValidSIN: false,
+        hasRestriction: false,
+        hasValidSIN: true,
         hasValidCSLPDisbursement: true,
       });
   });
@@ -344,8 +360,8 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         hasBlockFundingFeedbackError: false,
         hasValidDisabilityStatus: true,
         hasValidMSFAAStatus: false,
-        hasRestriction: true,
-        hasValidSIN: false,
+        hasRestriction: false,
+        hasValidSIN: true,
         hasValidCSLPDisbursement: true,
       });
   });
@@ -401,8 +417,8 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           hasBlockFundingFeedbackError: false,
           hasValidDisabilityStatus: true,
           hasValidMSFAAStatus: false,
-          hasRestriction: true,
-          hasValidSIN: false,
+          hasRestriction: false,
+          hasValidSIN: true,
           hasValidCSLPDisbursement: true,
         });
     },
@@ -459,8 +475,8 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           hasBlockFundingFeedbackError: true,
           hasValidDisabilityStatus: true,
           hasValidMSFAAStatus: false,
-          hasRestriction: true,
-          hasValidSIN: false,
+          hasRestriction: false,
+          hasValidSIN: true,
           hasValidCSLPDisbursement: true,
         });
     },
@@ -526,8 +542,8 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           hasBlockFundingFeedbackError: true,
           hasValidDisabilityStatus: true,
           hasValidMSFAAStatus: false,
-          hasRestriction: true,
-          hasValidSIN: false,
+          hasRestriction: false,
+          hasValidSIN: true,
           hasValidCSLPDisbursement: true,
         });
     },
@@ -584,8 +600,8 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           hasBlockFundingFeedbackError: true,
           hasValidDisabilityStatus: true,
           hasValidMSFAAStatus: false,
-          hasRestriction: true,
-          hasValidSIN: false,
+          hasRestriction: false,
+          hasValidSIN: true,
           hasValidCSLPDisbursement: true,
         });
     },
@@ -608,6 +624,8 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           },
         },
       );
+      const [firstDisbursement] =
+        application.currentAssessment.disbursementSchedules;
       application.currentAssessment.workflowData.calculatedData.pdppdStatus =
         true;
       application.student.disabilityStatus = DisabilityStatus.PD;
@@ -623,12 +641,19 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         .get(endpoint)
         .auth(token, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
-        .then((response) => {
-          expect(response.body.firstDisbursement).toStrictEqual({
-            coeStatus: COEStatus.completed,
-            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
-          });
-          expect(response.body.hasValidDisabilityStatus).toBeTruthy();
+        .expect({
+          firstDisbursement: {
+            coeStatus: firstDisbursement.coeStatus,
+            disbursementScheduleStatus:
+              firstDisbursement.disbursementScheduleStatus,
+          },
+          assessmentTriggerType: application.currentAssessment.triggerType,
+          hasBlockFundingFeedbackError: false,
+          hasValidDisabilityStatus: true,
+          hasValidMSFAAStatus: false,
+          hasRestriction: false,
+          hasValidSIN: true,
+          hasValidCSLPDisbursement: true,
         });
     },
   );
@@ -676,13 +701,19 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         .get(endpoint)
         .auth(token, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
-        .then((response) => {
-          expect(response.body.firstDisbursement).toStrictEqual({
+        .expect({
+          firstDisbursement: {
             coeStatus: firstDisbursement.coeStatus,
             disbursementScheduleStatus:
               firstDisbursement.disbursementScheduleStatus,
-          });
-          expect(response.body.hasValidMSFAAStatus).toBeTruthy();
+          },
+          assessmentTriggerType: application.currentAssessment.triggerType,
+          hasBlockFundingFeedbackError: false,
+          hasValidDisabilityStatus: true,
+          hasValidMSFAAStatus: true,
+          hasRestriction: false,
+          hasValidSIN: true,
+          hasValidCSLPDisbursement: true,
         });
     },
   );
@@ -730,13 +761,19 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         .get(endpoint)
         .auth(token, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
-        .then((response) => {
-          expect(response.body.firstDisbursement).toStrictEqual({
+        .expect({
+          firstDisbursement: {
             coeStatus: firstDisbursement.coeStatus,
             disbursementScheduleStatus:
               firstDisbursement.disbursementScheduleStatus,
-          });
-          expect(response.body.hasRestriction).toBeTruthy();
+          },
+          assessmentTriggerType: application.currentAssessment.triggerType,
+          hasBlockFundingFeedbackError: false,
+          hasValidDisabilityStatus: true,
+          hasValidMSFAAStatus: false,
+          hasRestriction: true,
+          hasValidSIN: true,
+          hasValidCSLPDisbursement: true,
         });
     },
   );
@@ -758,12 +795,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           },
         },
       );
-      application.student.sinValidation = createFakeSINValidation(
-        {
-          student,
-        },
-        { initialValue: { isValidSIN: false } },
-      );
+      application.student.sinValidation.isValidSIN = false;
       await db.student.save(application.student);
 
       const [firstDisbursement] =
@@ -779,13 +811,19 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         .get(endpoint)
         .auth(token, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
-        .then((response) => {
-          expect(response.body.firstDisbursement).toStrictEqual({
+        .expect({
+          firstDisbursement: {
             coeStatus: firstDisbursement.coeStatus,
             disbursementScheduleStatus:
               firstDisbursement.disbursementScheduleStatus,
-          });
-          expect(response.body.hasValidSIN).toBeFalsy();
+          },
+          assessmentTriggerType: application.currentAssessment.triggerType,
+          hasBlockFundingFeedbackError: false,
+          hasValidDisabilityStatus: true,
+          hasValidMSFAAStatus: false,
+          hasRestriction: false,
+          hasValidSIN: false,
+          hasValidCSLPDisbursement: true,
         });
     },
   );
@@ -829,13 +867,19 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         .get(endpoint)
         .auth(token, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
-        .then((response) => {
-          expect(response.body.firstDisbursement).toStrictEqual({
+        .expect({
+          firstDisbursement: {
             coeStatus: firstDisbursement.coeStatus,
             disbursementScheduleStatus:
               firstDisbursement.disbursementScheduleStatus,
-          });
-          expect(response.body.hasValidCSLPDisbursement).toBeFalsy();
+          },
+          assessmentTriggerType: application.currentAssessment.triggerType,
+          hasBlockFundingFeedbackError: false,
+          hasValidDisabilityStatus: true,
+          hasValidMSFAAStatus: false,
+          hasRestriction: false,
+          hasValidSIN: false,
+          hasValidCSLPDisbursement: false,
         });
     },
   );
