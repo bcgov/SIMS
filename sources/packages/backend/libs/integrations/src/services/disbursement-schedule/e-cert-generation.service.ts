@@ -44,21 +44,23 @@ export class ECertGenerationService {
    * to be part of an e-Cert. The data returned will contain the disbursement
    * entity model to be updated and all supporting information needed to
    * execute all calculations steps.
-   * @param offeringIntensity offering intensity to retrieve the disbursements.
+   * @param options query options.
+   * - `offeringIntensity`: offering intensity to retrieve the disbursements.
+   * - `applicationId`: restricts the query to a specific application.
+   * - `checkDisbursementMinDate`: check only for disbursements that are close
+   * to the date to be disbursed and can already be part of an e-Cert.
    * @returns eligible disbursements to be potentially added to an e-Cert.
    */
-  async getEligibleDisbursements(
-    offeringIntensity: OfferingIntensity,
-  ): Promise<EligibleECertDisbursement[]> {
-    // Define the minimum date to send a disbursement.
-    const disbursementMinDate = getISODateOnlyString(
-      addDays(DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS),
-    );
+  async getEligibleDisbursements(options: {
+    offeringIntensity?: OfferingIntensity;
+    applicationId?: number;
+    checkDisbursementMinDate?: boolean;
+  }): Promise<EligibleECertDisbursement[]> {
     // Applications with offerings end dates beyond the archive limit will no longer be disbursed.
     const offeringEndDateMinDate = addDays(
       -this.configService.applicationArchiveDays,
     );
-    const eligibleApplications = await this.applicationRepo
+    const eligibleApplicationsQuery = this.applicationRepo
       .createQueryBuilder("application")
       .select([
         "application.id",
@@ -122,18 +124,39 @@ export class ECertGenerationService {
       .andWhere("disbursementSchedule.coeStatus != :coeStatus", {
         coeStatus: COEStatus.declined,
       })
-      .andWhere("disbursementSchedule.disbursementDate <= :disbursementDate", {
-        disbursementDate: disbursementMinDate,
-      })
-      .andWhere("offering.offeringIntensity = :offeringIntensity", {
-        offeringIntensity,
-      })
       .andWhere("offering.studyEndDate >= :offeringEndDateMinDate", {
         offeringEndDateMinDate,
       })
       .orderBy("disbursementSchedule.disbursementDate", "ASC")
-      .addOrderBy("disbursementSchedule.createdAt", "ASC")
-      .getMany();
+      .addOrderBy("disbursementSchedule.createdAt", "ASC");
+    // Add optional constraints as needed.
+    if (options.applicationId) {
+      eligibleApplicationsQuery.andWhere("application.id = :applicationId", {
+        applicationId: options.applicationId,
+      });
+    }
+    if (options.offeringIntensity) {
+      eligibleApplicationsQuery.andWhere(
+        "offering.offeringIntensity = :offeringIntensity",
+        {
+          offeringIntensity: options.offeringIntensity,
+        },
+      );
+    }
+    if (options.checkDisbursementMinDate) {
+      // Define the minimum date to send a disbursement.
+      const disbursementMinDate = getISODateOnlyString(
+        addDays(DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS),
+      );
+      eligibleApplicationsQuery.andWhere(
+        "disbursementSchedule.disbursementDate <= :disbursementDate",
+        {
+          disbursementDate: disbursementMinDate,
+        },
+      );
+    }
+    // Execute the query to get eligible disbursements.
+    const eligibleApplications = await eligibleApplicationsQuery.getMany();
 
     // Creates a unique array of active restrictions per student to be shared
     // across all disbursements.
