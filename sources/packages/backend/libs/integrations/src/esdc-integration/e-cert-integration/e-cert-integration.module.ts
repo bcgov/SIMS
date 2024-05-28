@@ -85,6 +85,7 @@ import { PartTimeECertFileHandler } from "./part-time-e-cert-file-handler";
     AssessmentSequentialProcessingService,
     StudentLoanBalanceSharedService,
     ECertFeedbackErrorService,
+    ECertPreValidationService,
   ],
   exports: [
     FullTimeECertFileHandler,
