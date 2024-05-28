@@ -58,44 +58,14 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
 
   it("Should create an education program when valid data is passed.", async () => {
     // Arrange
-    const programStatus = ProgramStatus.Approved;
-    const payload = {
-      name: faker.lorem.words(5),
-      description: faker.lorem.words(5),
-      credentialType: "undergraduateCertificate",
-      cipCode: "11.1111",
-      fieldOfStudyCode: "15",
-      nocCode: "2174",
-      sabcCode: `${faker.random.alpha({ count: 3 })}1`,
-      institutionProgramCode: faker.random.alpha({ count: 3 }),
-      programIntensity: "Full Time and Part Time",
-      programDeliveryTypes: {
-        deliveredOnSite: true,
-        deliveredOnline: false,
-      },
-      completionYears: "12WeeksTo52Weeks",
-      courseLoadCalculation: "credit",
-      regulatoryBody: "other",
-      otherRegulatoryBody: "Other RB test",
-      entranceRequirements: {
-        minHighSchool: true,
-        hasMinimumAge: true,
-        requirementsByInstitution: true,
-        requirementsByBCITA: true,
-        noneOfTheAboveEntranceRequirements: false,
-      },
-      eslEligibility: "lessThan20",
-      hasJointInstitution: "no",
-      hasWILComponent: "no",
-      hasTravel: "no",
-      hasIntlExchange: "no",
-      programDeclaration: true,
-    };
+    const sabcCode = `${faker.random.alpha({ count: 3 })}1`;
+    const payload = getPayload(sabcCode);
     const formService = await getProviderInstanceForModule(
       testingModule,
       AppInstitutionsModule,
       FormService,
     );
+    const programStatus = ProgramStatus.Approved;
     formService.dryRunSubmission = jest.fn().mockResolvedValue({
       valid: true,
       data: { data: { ...payload, programStatus } },
@@ -176,57 +146,15 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
 
   it("Should throw duplicate SABC code for education program when there is already an active education program with the same SABC code.", async () => {
     // Arrange
-    const sameSabcCode = `${faker.random.alpha({ count: 3 })}9`;
-    const existingEducationProgram = createFakeEducationProgram(
-      {
-        institution: collegeF,
-        user: collegeFUser,
-      },
-      {
-        initialValue: {
-          sabcCode: sameSabcCode,
-        } as Partial<EducationProgram>,
-      },
-    );
-    await db.educationProgram.save(existingEducationProgram);
-    const programStatus = ProgramStatus.Approved;
-    const payload = {
-      name: faker.lorem.words(5),
-      description: faker.lorem.words(5),
-      credentialType: "undergraduateCertificate",
-      cipCode: "11.1111",
-      fieldOfStudyCode: "15",
-      nocCode: "2174",
-      sabcCode: sameSabcCode,
-      institutionProgramCode: faker.random.alpha({ count: 3 }),
-      programIntensity: "Full Time and Part Time",
-      programDeliveryTypes: {
-        deliveredOnSite: true,
-        deliveredOnline: false,
-      },
-      completionYears: "12WeeksTo52Weeks",
-      courseLoadCalculation: "credit",
-      regulatoryBody: "other",
-      otherRegulatoryBody: "Other RB test",
-      entranceRequirements: {
-        minHighSchool: true,
-        hasMinimumAge: true,
-        requirementsByInstitution: true,
-        requirementsByBCITA: true,
-        noneOfTheAboveEntranceRequirements: false,
-      },
-      eslEligibility: "lessThan20",
-      hasJointInstitution: "no",
-      hasWILComponent: "no",
-      hasTravel: "no",
-      hasIntlExchange: "no",
-      programDeclaration: true,
-    };
+    const sameSabcCode = "GGG9";
+    await saveEducationProgram(sameSabcCode);
+    const payload = getPayload(sameSabcCode);
     const formService = await getProviderInstanceForModule(
       testingModule,
       AppInstitutionsModule,
       FormService,
     );
+    const programStatus = ProgramStatus.Approved;
     formService.dryRunSubmission = jest.fn().mockResolvedValue({
       valid: true,
       data: { data: { ...payload, programStatus } },
@@ -250,58 +178,19 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
 
   it("Should create an education program when SABC code passed exists for an expired education program.", async () => {
     // Arrange
-    const sameSabcCode = `${faker.random.alpha({ count: 3 })}9`;
-    const existingEducationProgram = createFakeEducationProgram(
-      {
-        institution: collegeF,
-        user: collegeFUser,
-      },
-      {
-        initialValue: {
-          sabcCode: sameSabcCode,
-          effectiveEndDate: getISODateOnlyString(new Date()),
-        } as Partial<EducationProgram>,
-      },
+    const sameSabcCode = "TTT8";
+    await saveEducationProgram(
+      sameSabcCode,
+      true,
+      getISODateOnlyString(new Date()),
     );
-    await db.educationProgram.save(existingEducationProgram);
-    const programStatus = ProgramStatus.Approved;
-    const payload = {
-      name: faker.lorem.words(5),
-      description: faker.lorem.words(5),
-      credentialType: "undergraduateCertificate",
-      cipCode: "11.1111",
-      fieldOfStudyCode: "15",
-      nocCode: "2174",
-      sabcCode: sameSabcCode,
-      institutionProgramCode: faker.random.alpha({ count: 3 }),
-      programIntensity: "Full Time and Part Time",
-      programDeliveryTypes: {
-        deliveredOnSite: true,
-        deliveredOnline: false,
-      },
-      completionYears: "12WeeksTo52Weeks",
-      courseLoadCalculation: "credit",
-      regulatoryBody: "other",
-      otherRegulatoryBody: "Other RB test",
-      entranceRequirements: {
-        minHighSchool: true,
-        hasMinimumAge: true,
-        requirementsByInstitution: true,
-        requirementsByBCITA: true,
-        noneOfTheAboveEntranceRequirements: false,
-      },
-      eslEligibility: "lessThan20",
-      hasJointInstitution: "no",
-      hasWILComponent: "no",
-      hasTravel: "no",
-      hasIntlExchange: "no",
-      programDeclaration: true,
-    };
+    const payload = getPayload(sameSabcCode);
     const formService = await getProviderInstanceForModule(
       testingModule,
       AppInstitutionsModule,
       FormService,
     );
+    const programStatus = ProgramStatus.Approved;
     formService.dryRunSubmission = jest.fn().mockResolvedValue({
       valid: true,
       data: { data: { ...payload, programStatus } },
@@ -335,59 +224,19 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
 
   it("Should create an education program when SABC code passed exists for an education program flagged as inactive.", async () => {
     // Arrange
-    const sameSabcCode = `${faker.random.alpha({ count: 3 })}9`;
-    const existingEducationProgram = createFakeEducationProgram(
-      {
-        institution: collegeF,
-        user: collegeFUser,
-      },
-      {
-        initialValue: {
-          sabcCode: sameSabcCode,
-          isActive: false,
-          effectiveEndDate: getISODateOnlyString(addDays(1)),
-        } as Partial<EducationProgram>,
-      },
+    const sameSabcCode = "MMM7";
+    await saveEducationProgram(
+      sameSabcCode,
+      false,
+      getISODateOnlyString(addDays(1)),
     );
-    await db.educationProgram.save(existingEducationProgram);
-    const programStatus = ProgramStatus.Approved;
-    const payload = {
-      name: faker.lorem.words(5),
-      description: faker.lorem.words(5),
-      credentialType: "undergraduateCertificate",
-      cipCode: "11.1111",
-      fieldOfStudyCode: "15",
-      nocCode: "2174",
-      sabcCode: sameSabcCode,
-      institutionProgramCode: faker.random.alpha({ count: 3 }),
-      programIntensity: "Full Time and Part Time",
-      programDeliveryTypes: {
-        deliveredOnSite: true,
-        deliveredOnline: false,
-      },
-      completionYears: "12WeeksTo52Weeks",
-      courseLoadCalculation: "credit",
-      regulatoryBody: "other",
-      otherRegulatoryBody: "Other RB test",
-      entranceRequirements: {
-        minHighSchool: true,
-        hasMinimumAge: true,
-        requirementsByInstitution: true,
-        requirementsByBCITA: true,
-        noneOfTheAboveEntranceRequirements: false,
-      },
-      eslEligibility: "lessThan20",
-      hasJointInstitution: "no",
-      hasWILComponent: "no",
-      hasTravel: "no",
-      hasIntlExchange: "no",
-      programDeclaration: true,
-    };
+    const payload = getPayload(sameSabcCode);
     const formService = await getProviderInstanceForModule(
       testingModule,
       AppInstitutionsModule,
       FormService,
     );
+    const programStatus = ProgramStatus.Approved;
     formService.dryRunSubmission = jest.fn().mockResolvedValue({
       valid: true,
       data: { data: { ...payload, programStatus } },
@@ -418,6 +267,74 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       }),
     );
   });
+
+  /**
+   * Saves an education program with parameters.
+   * @param sabcCode SABC code.
+   * @param isActive is active flag.
+   * @param effectiveEndDate effective end date.
+   * @returns an education program.
+   */
+  async function saveEducationProgram(
+    sabcCode: string,
+    isActive?: boolean,
+    effectiveEndDate?: string,
+  ) {
+    const educationProgram = createFakeEducationProgram(
+      {
+        institution: collegeF,
+        user: collegeFUser,
+      },
+      {
+        initialValue: {
+          sabcCode,
+          isActive,
+          effectiveEndDate,
+        } as Partial<EducationProgram>,
+      },
+    );
+    return db.educationProgram.save(educationProgram);
+  }
+
+  /**
+   * Returns a payload with the passed sabcCode.
+   * @param programStatus program status.
+   * @param sabcCode SABC code.
+   */
+  function getPayload(sabcCode: string) {
+    return {
+      name: faker.lorem.words(5),
+      description: faker.lorem.words(5),
+      credentialType: "undergraduateCertificate",
+      cipCode: "11.1111",
+      fieldOfStudyCode: "15",
+      nocCode: "2174",
+      sabcCode: sabcCode,
+      institutionProgramCode: faker.random.alpha({ count: 3 }),
+      programIntensity: "Full Time and Part Time",
+      programDeliveryTypes: {
+        deliveredOnSite: true,
+        deliveredOnline: false,
+      },
+      completionYears: "12WeeksTo52Weeks",
+      courseLoadCalculation: "credit",
+      regulatoryBody: "other",
+      otherRegulatoryBody: "Other RB test",
+      entranceRequirements: {
+        minHighSchool: true,
+        hasMinimumAge: true,
+        requirementsByInstitution: true,
+        requirementsByBCITA: true,
+        noneOfTheAboveEntranceRequirements: false,
+      },
+      eslEligibility: "lessThan20",
+      hasJointInstitution: "no",
+      hasWILComponent: "no",
+      hasTravel: "no",
+      hasIntlExchange: "no",
+      programDeclaration: true,
+    };
+  }
 
   afterAll(async () => {
     await app?.close();
