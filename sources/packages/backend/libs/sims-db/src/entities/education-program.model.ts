@@ -11,6 +11,7 @@ import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { Institution, Note, User, ProgramStatus } from ".";
 import { ProgramIntensity } from "./program-intensity.type";
+import { isSameOrAfterDate } from "@sims/utilities";
 
 /**
  * The main resource table to store education programs related information.
@@ -362,9 +363,7 @@ export class EducationProgram extends RecordDataModel {
    * the effective end date is null. Otherwise `false`.
    */
   get isExpired(): boolean {
-    return (
-      !!this.effectiveEndDate && new Date() >= new Date(this.effectiveEndDate)
-    );
+    return isSameOrAfterDate(new Date(), this.effectiveEndDate);
   }
 
   /**

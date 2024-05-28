@@ -37,7 +37,11 @@ import {
   PaginatedResults,
   SortPriority,
 } from "../../utilities";
-import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
+import {
+  CustomNamedError,
+  getISODateOnlyString,
+  isSameOrAfterDate,
+} from "@sims/utilities";
 import {
   EDUCATION_PROGRAM_NOT_FOUND,
   DUPLICATE_SABC_CODE,
@@ -372,9 +376,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       submittedDate: program.programSubmittedAt,
       programStatus: program.programStatus,
       isActive: program.isActive,
-      isExpired:
-        getISODateOnlyString(program.effectiveEndDate) <=
-        getISODateOnlyString(new Date()),
+      isExpired: isSameOrAfterDate(new Date(), program.effectiveEndDate),
       totalOfferings: program.totalOfferings,
       locationId: program.locationId,
       locationName: program.locationName,

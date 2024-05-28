@@ -174,7 +174,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     );
   });
 
-  it("Should throw duplicate SABC code for education program when there is already an active education program with the same SABC.", async () => {
+  it("Should throw duplicate SABC code for education program when there is already an active education program with the same SABC code.", async () => {
     // Arrange
     const sameSabcCode = `${faker.random.alpha({ count: 3 })}9`;
     const existingEducationProgram = createFakeEducationProgram(
