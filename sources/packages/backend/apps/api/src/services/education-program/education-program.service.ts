@@ -376,7 +376,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       submittedDate: program.programSubmittedAt,
       programStatus: program.programStatus,
       isActive: program.isActive,
-      isExpired: isSameOrAfterDate(new Date(), program.effectiveEndDate),
+      isExpired: isSameOrAfterDate(program.effectiveEndDate, new Date()),
       totalOfferings: program.totalOfferings,
       locationId: program.locationId,
       locationName: program.locationName,

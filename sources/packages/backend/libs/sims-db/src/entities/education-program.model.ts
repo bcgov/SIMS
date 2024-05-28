@@ -363,7 +363,7 @@ export class EducationProgram extends RecordDataModel {
    * the effective end date is null. Otherwise `false`.
    */
   get isExpired(): boolean {
-    return isSameOrAfterDate(new Date(), this.effectiveEndDate);
+    return isSameOrAfterDate(this.effectiveEndDate, new Date());
   }
 
   /**
