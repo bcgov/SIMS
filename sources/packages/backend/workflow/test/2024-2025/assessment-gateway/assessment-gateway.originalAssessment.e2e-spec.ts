@@ -1,5 +1,5 @@
 import { ASSESSMENT_ID } from "@sims/services/workflow/variables/assessment-gateway";
-import { AssessmentTriggerType } from "@sims/sims-db";
+import { ApplicationStatus, AssessmentTriggerType } from "@sims/sims-db";
 import { ZBClient } from "zeebe-node";
 import { AssessmentConsolidatedData } from "../../models";
 import {
@@ -83,6 +83,106 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
       WorkflowServiceTasks.SaveDisbursementSchedules,
       WorkflowServiceTasks.AssociateMSFAA,
       WorkflowServiceTasks.UpdateNOAStatusToRequired,
+      WorkflowServiceTasks.VerifyAssessmentCalculationOrderTask,
+    );
+  });
+
+  it("Should update NOA status to not required when the application is completed.", async () => {
+    // Arrange
+
+    // Assessment consolidated mocked data.
+    const assessmentConsolidatedData: AssessmentConsolidatedData = {
+      assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
+      ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
+      ...createFakeSingleIndependentStudentData(),
+      // Application with PIR not required.
+      studentDataSelectedOffering: 1,
+    };
+
+    assessmentConsolidatedData.applicationStatus = ApplicationStatus.Completed;
+
+    const workersMockedData = createWorkersMockedData([
+      createLoadAssessmentDataTaskMock({ assessmentConsolidatedData }),
+      createVerifyApplicationExceptionsTaskMock(),
+      createIncomeRequestTaskMock({
+        incomeVerificationId: incomeVerificationId++,
+        subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
+      }),
+      createVerifyAssessmentCalculationOrderTaskMock(),
+    ]);
+
+    const currentAssessmentId = assessmentId++;
+
+    // Act/Assert
+    const assessmentGatewayResponse =
+      await zeebeClientProvider.createProcessInstanceWithResult({
+        bpmnProcessId: "assessment-gateway",
+        variables: {
+          [ASSESSMENT_ID]: currentAssessmentId,
+          ...workersMockedData,
+        },
+        requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
+      });
+    expectToPassThroughServiceTasks(
+      assessmentGatewayResponse.variables,
+      WorkflowServiceTasks.AssociateWorkflowInstance,
+      WorkflowSubprocesses.LoadConsolidatedDataSubmitOrReassessment,
+      WorkflowSubprocesses.LoadConsolidatedDataPreAssessment,
+      WorkflowServiceTasks.VerifyApplicationExceptions,
+      WorkflowServiceTasks.ProgramInfoNotRequired,
+      WorkflowServiceTasks.SaveDisbursementSchedules,
+      WorkflowServiceTasks.AssociateMSFAA,
+      WorkflowServiceTasks.UpdateNOAStatusToNotRequiredApplicationCompleted,
+      WorkflowServiceTasks.VerifyAssessmentCalculationOrderTask,
+    );
+  });
+
+  it("Should update NOA status to not required when there is an NOA approval.", async () => {
+    // Arrange
+
+    // Assessment consolidated mocked data.
+    const assessmentConsolidatedData: AssessmentConsolidatedData = {
+      assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
+      ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
+      ...createFakeSingleIndependentStudentData(),
+      // Application with PIR not required.
+      studentDataSelectedOffering: 1,
+    };
+
+    assessmentConsolidatedData.applicationHasNOAApproval = true;
+
+    const workersMockedData = createWorkersMockedData([
+      createLoadAssessmentDataTaskMock({ assessmentConsolidatedData }),
+      createVerifyApplicationExceptionsTaskMock(),
+      createIncomeRequestTaskMock({
+        incomeVerificationId: incomeVerificationId++,
+        subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
+      }),
+      createVerifyAssessmentCalculationOrderTaskMock(),
+    ]);
+
+    const currentAssessmentId = assessmentId++;
+
+    // Act/Assert
+    const assessmentGatewayResponse =
+      await zeebeClientProvider.createProcessInstanceWithResult({
+        bpmnProcessId: "assessment-gateway",
+        variables: {
+          [ASSESSMENT_ID]: currentAssessmentId,
+          ...workersMockedData,
+        },
+        requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
+      });
+    expectToPassThroughServiceTasks(
+      assessmentGatewayResponse.variables,
+      WorkflowServiceTasks.AssociateWorkflowInstance,
+      WorkflowSubprocesses.LoadConsolidatedDataSubmitOrReassessment,
+      WorkflowSubprocesses.LoadConsolidatedDataPreAssessment,
+      WorkflowServiceTasks.VerifyApplicationExceptions,
+      WorkflowServiceTasks.ProgramInfoNotRequired,
+      WorkflowServiceTasks.SaveDisbursementSchedules,
+      WorkflowServiceTasks.AssociateMSFAA,
+      WorkflowServiceTasks.UpdateNOAStatusToNotRequired,
       WorkflowServiceTasks.VerifyAssessmentCalculationOrderTask,
     );
   });
