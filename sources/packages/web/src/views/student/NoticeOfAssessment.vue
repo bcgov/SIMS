@@ -20,11 +20,7 @@
               @click="confirmCancelApplication"
               >Cancel application</v-btn
             ><v-btn
-              v-if="
-                () => {
-                  return assessmentId === currAssessmentId;
-                }
-              "
+              v-if="assessmentId == currAssessmentId"
               class="ml-2"
               color="primary"
               data-cy="AcceptAssessment"
@@ -76,7 +72,7 @@ export default defineComponent({
     const assessment = ref<AssessmentNOAAPIOutDTO>();
     const snackBar = useSnackBar();
     const viewOnly = ref(true);
-    let currAssessmentId = 0;
+    const currAssessmentId = ref(0);
 
     const assessmentDataLoaded = (
       applicationStatus: ApplicationStatus,
@@ -87,7 +83,7 @@ export default defineComponent({
         applicationStatus === ApplicationStatus.Assessment &&
         noaApprovalStatus === AssessmentStatus.required
       );
-      currAssessmentId = currentAssessmentId;
+      currAssessmentId.value = currentAssessmentId;
     };
 
     const confirmAssessment = async () => {
