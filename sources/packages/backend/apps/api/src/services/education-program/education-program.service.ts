@@ -25,6 +25,7 @@ import {
   MoreThan,
   IsNull,
   Brackets,
+  Or,
 } from "typeorm";
 import {
   SaveEducationProgram,
@@ -119,29 +120,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         programStatus: ProgramStatus.Approved,
       })
       .getOne();
-  }
-
-  /**
-   * Check if education program is active and not expired.
-   * @param educationProgramId program id.
-   */
-  async isProgramActiveAndNotExpired(
-    educationProgramId: number,
-  ): Promise<boolean> {
-    return this.repo.exists({
-      where: [
-        {
-          id: educationProgramId,
-          isActive: true,
-          effectiveEndDate: MoreThan(getISODateOnlyString(new Date())),
-        },
-        {
-          id: educationProgramId,
-          isActive: true,
-          effectiveEndDate: IsNull(),
-        },
-      ],
-    });
   }
 
   /**
@@ -445,9 +423,9 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .andWhere("programs.isActive = true")
       .andWhere(
         new Brackets((qb) => {
-          qb.where("programs.effectiveEndDate > :currentDate", {
-            currentDate: getISODateOnlyString(new Date()),
-          }).orWhere("programs.effectiveEndDate is null");
+          qb.where("programs.effectiveEndDate is null").orWhere(
+            "programs.effectiveEndDate > CURRENT_DATE",
+          );
         }),
       );
     if (!isFulltimeAllowed) {
@@ -486,9 +464,9 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     if (!options?.isIncludeInActiveProgram) {
       query.andWhere("programs.isActive = true").andWhere(
         new Brackets((qb) => {
-          qb.where("programs.effectiveEndDate > :currentDate", {
-            currentDate: getISODateOnlyString(new Date()),
-          }).orWhere("programs.effectiveEndDate is null");
+          qb.where("programs.effectiveEndDate is null").orWhere(
+            "programs.effectiveEndDate > CURRENT_DATE",
+          );
         }),
       );
     }
@@ -729,15 +707,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
             id: institutionId,
           },
           isActive: true,
-          effectiveEndDate: MoreThan(getISODateOnlyString(new Date())),
-        },
-        {
-          sabcCode: In(sabcCodes),
-          institution: {
-            id: institutionId,
-          },
-          isActive: true,
-          effectiveEndDate: IsNull(),
+          effectiveEndDate: Or(
+            IsNull(),
+            MoreThan(getISODateOnlyString(new Date())),
+          ),
         },
       ],
     });
@@ -756,26 +729,18 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     programId?: number,
   ): Promise<boolean> {
     return this.repo.exists({
-      where: [
-        {
-          id: programId ? Not(Equal(programId)) : undefined,
-          sabcCode: sabcCode,
-          institution: {
-            id: institutionId,
-          },
-          isActive: true,
-          effectiveEndDate: MoreThan(getISODateOnlyString(new Date())),
+      where: {
+        id: programId ? Not(Equal(programId)) : undefined,
+        sabcCode: sabcCode,
+        institution: {
+          id: institutionId,
         },
-        {
-          id: programId ? Not(Equal(programId)) : undefined,
-          sabcCode: sabcCode,
-          institution: {
-            id: institutionId,
-          },
-          isActive: true,
-          effectiveEndDate: IsNull(),
-        },
-      ],
+        isActive: true,
+        effectiveEndDate: Or(
+          IsNull(),
+          MoreThan(getISODateOnlyString(new Date())),
+        ),
+      },
     });
   }
 

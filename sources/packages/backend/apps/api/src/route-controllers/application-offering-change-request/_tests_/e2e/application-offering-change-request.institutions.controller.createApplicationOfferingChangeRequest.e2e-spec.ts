@@ -23,7 +23,7 @@ import {
   OfferingIntensity,
 } from "@sims/sims-db";
 import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
-import { addDays } from "@sims/utilities";
+import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { STUDY_DATE_OVERLAP_ERROR } from "../../../../utilities";
 import { OFFERING_INTENSITY_MISMATCH } from "../../../../constants";
 
@@ -559,7 +559,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
           ).toISOString(),
         },
         programInitialValues: {
-          effectiveEndDate: addDays(-1).toISOString(),
+          effectiveEndDate: getISODateOnlyString(new Date()),
         },
       },
     );

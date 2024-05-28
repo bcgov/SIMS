@@ -1,7 +1,4 @@
 import {
-  AfterInsert,
-  AfterLoad,
-  AfterUpdate,
   Column,
   Entity,
   JoinColumn,
@@ -14,7 +11,6 @@ import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { Institution, Note, User, ProgramStatus } from ".";
 import { ProgramIntensity } from "./program-intensity.type";
-import { getISODateOnlyString } from "@sims/utilities";
 
 /**
  * The main resource table to store education programs related information.
