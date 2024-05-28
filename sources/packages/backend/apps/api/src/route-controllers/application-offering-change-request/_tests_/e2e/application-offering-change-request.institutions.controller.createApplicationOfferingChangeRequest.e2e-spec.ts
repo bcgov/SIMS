@@ -87,14 +87,12 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       institutionLocation: collegeFLocation,
     });
     // Updating study period, that belongs to the program year.
-    fakeOffering.studyStartDate = addDays(
-      5,
-      application.programYear.startDate,
-    ).toISOString();
-    fakeOffering.studyEndDate = addDays(
-      85,
-      application.programYear.startDate,
-    ).toISOString();
+    fakeOffering.studyStartDate = getISODateOnlyString(
+      addDays(5, application.programYear.startDate),
+    );
+    fakeOffering.studyEndDate = getISODateOnlyString(
+      addDays(85, application.programYear.startDate),
+    );
     await db.educationProgramOffering.save(fakeOffering);
 
     const payload = {
@@ -150,15 +148,19 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
 
     // Updating study period, that belongs to the program year.
     existingApplicationWithOverlapStudyPeriod.currentAssessment.offering.studyStartDate =
-      addDays(
-        5,
-        existingApplicationWithOverlapStudyPeriod.programYear.startDate,
-      ).toISOString();
+      getISODateOnlyString(
+        addDays(
+          5,
+          existingApplicationWithOverlapStudyPeriod.programYear.startDate,
+        ),
+      );
     existingApplicationWithOverlapStudyPeriod.currentAssessment.offering.studyEndDate =
-      addDays(
-        85,
-        existingApplicationWithOverlapStudyPeriod.programYear.startDate,
-      ).toISOString();
+      getISODateOnlyString(
+        addDays(
+          85,
+          existingApplicationWithOverlapStudyPeriod.programYear.startDate,
+        ),
+      );
 
     await db.educationProgramOffering.save(
       existingApplicationWithOverlapStudyPeriod.currentAssessment.offering,
@@ -193,17 +195,21 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       institutionLocation: collegeFLocation,
     });
     // Updating study period, that overlaps with student existing application offering.
-    fakeOffering.studyStartDate = addDays(
-      5,
-      existingApplicationWithOverlapStudyPeriod.currentAssessment.offering
-        .studyStartDate,
-    ).toISOString();
+    fakeOffering.studyStartDate = getISODateOnlyString(
+      addDays(
+        5,
+        existingApplicationWithOverlapStudyPeriod.currentAssessment.offering
+          .studyStartDate,
+      ),
+    );
 
-    fakeOffering.studyEndDate = addDays(
-      50,
-      existingApplicationWithOverlapStudyPeriod.currentAssessment.offering
-        .studyStartDate,
-    ).toISOString();
+    fakeOffering.studyEndDate = getISODateOnlyString(
+      addDays(
+        50,
+        existingApplicationWithOverlapStudyPeriod.currentAssessment.offering
+          .studyStartDate,
+      ),
+    );
 
     await db.educationProgramOffering.save(fakeOffering);
 
@@ -302,14 +308,12 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       institutionLocation: collegeFLocation,
     });
     // Updating study period, that belongs to a future(different) program year.
-    fakeOffering.studyStartDate = addDays(
-      400,
-      application.programYear.startDate,
-    ).toISOString();
-    fakeOffering.studyEndDate = addDays(
-      450,
-      application.programYear.startDate,
-    ).toISOString();
+    fakeOffering.studyStartDate = getISODateOnlyString(
+      addDays(400, application.programYear.startDate),
+    );
+    fakeOffering.studyEndDate = getISODateOnlyString(
+      addDays(450, application.programYear.startDate),
+    );
 
     await db.educationProgramOffering.save(fakeOffering);
 
@@ -437,14 +441,12 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       institutionLocation: collegeFLocation,
     });
     // Updating study period, that belongs to the program year.
-    fakeOffering.studyStartDate = addDays(
-      5,
-      application.programYear.startDate,
-    ).toISOString();
-    fakeOffering.studyEndDate = addDays(
-      85,
-      application.programYear.startDate,
-    ).toISOString();
+    fakeOffering.studyStartDate = getISODateOnlyString(
+      addDays(5, application.programYear.startDate),
+    );
+    fakeOffering.studyEndDate = getISODateOnlyString(
+      addDays(85, application.programYear.startDate),
+    );
     await db.educationProgramOffering.save(fakeOffering);
 
     const payload = {
@@ -497,14 +499,12 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       { programInitialValues: { isActive: false } },
     );
     // Updating study period, that belongs to the program year.
-    newOffering.studyStartDate = addDays(
-      5,
-      application.programYear.startDate,
-    ).toISOString();
-    newOffering.studyEndDate = addDays(
-      85,
-      application.programYear.startDate,
-    ).toISOString();
+    newOffering.studyStartDate = getISODateOnlyString(
+      addDays(5, application.programYear.startDate),
+    );
+    newOffering.studyEndDate = getISODateOnlyString(
+      addDays(85, application.programYear.startDate),
+    );
     await db.educationProgramOffering.save(newOffering);
 
     const payload = {
@@ -549,14 +549,12 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       },
       {
         initialValues: {
-          studyStartDate: addDays(
-            5,
-            application.programYear.startDate,
-          ).toISOString(),
-          studyEndDate: addDays(
-            85,
-            application.programYear.startDate,
-          ).toISOString(),
+          studyStartDate: getISODateOnlyString(
+            addDays(5, application.programYear.startDate),
+          ),
+          studyEndDate: getISODateOnlyString(
+            addDays(85, application.programYear.startDate),
+          ),
         },
         programInitialValues: {
           effectiveEndDate: getISODateOnlyString(new Date()),

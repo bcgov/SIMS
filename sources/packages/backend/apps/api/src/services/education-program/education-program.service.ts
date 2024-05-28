@@ -702,19 +702,17 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         deliveredOnSite: true,
         deliveredOnline: true,
       },
-      where: [
-        {
-          sabcCode: In(sabcCodes),
-          institution: {
-            id: institutionId,
-          },
-          isActive: true,
-          effectiveEndDate: Or(
-            IsNull(),
-            MoreThan(getISODateOnlyString(new Date())),
-          ),
+      where: {
+        sabcCode: In(sabcCodes),
+        institution: {
+          id: institutionId,
         },
-      ],
+        isActive: true,
+        effectiveEndDate: Or(
+          IsNull(),
+          MoreThan(getISODateOnlyString(new Date())),
+        ),
+      },
     });
   }
 
