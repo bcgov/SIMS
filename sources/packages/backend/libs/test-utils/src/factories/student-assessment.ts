@@ -35,7 +35,10 @@ export function createFakeStudentAssessment(
     AssessmentTriggerType.OriginalAssessment;
   assessment.offering =
     relations?.offering ??
-    createFakeEducationProgramOffering({ auditUser: relations?.auditUser });
+    createFakeEducationProgramOffering(
+      { auditUser: relations?.auditUser },
+      { initialValues: options?.initialValue },
+    );
   assessment.studentAppeal = relations?.studentAppeal ?? null;
   assessment.studentScholasticStanding = null;
   assessment.noaApprovalStatus = null;
@@ -45,5 +48,8 @@ export function createFakeStudentAssessment(
     StudentAssessmentStatus.Submitted;
   assessment.calculationStartDate =
     options?.initialValue?.calculationStartDate ?? null;
+  assessment.previousDateChangedReportedAssessment =
+    options?.initialValue?.previousDateChangedReportedAssessment ?? null;
+  assessment.reportedDate = options?.initialValue?.reportedDate ?? null;
   return assessment;
 }

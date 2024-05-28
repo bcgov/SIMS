@@ -1,6 +1,8 @@
 import {
   createE2EDataSources,
+  createFakeEducationProgramOffering,
   createFakeStudentAppeal,
+  createFakeStudentAssessment,
   E2EDataSources,
   saveFakeApplication,
   saveFakeApplicationDisbursements,
@@ -14,17 +16,22 @@ import { createTestingAppModule } from "../../../../../test/helpers";
 import { createFakeWorkflowWrapUpPayload } from "./workflow-wrap-up-factory";
 import { AssessmentController } from "../../assessment.controller";
 import {
+  Application,
   ApplicationStatus,
   AssessmentTriggerType,
+  COEStatus,
+  DisbursementScheduleStatus,
   OfferingIntensity,
+  StudentAssessment,
   StudentAssessmentStatus,
+  User,
   WorkflowData,
 } from "@sims/sims-db";
 import {
   AssessmentSequentialProcessingService,
   SystemUsersService,
 } from "@sims/services";
-import { addDays } from "@sims/utilities";
+import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { StudentAssessmentService } from "../../../../services";
 
 describe("AssessmentController(e2e)-workflowWrapUp", () => {
@@ -49,7 +56,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
     jest.resetAllMocks();
   });
 
-  it(`Should update assessment status to completed when it does not have a status ${StudentAssessmentStatus.InProgress}.`, async () => {
+  it(`Should update assessment status to completed when it has the ${StudentAssessmentStatus.InProgress} status.`, async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource);
     const workflowData = {
@@ -240,4 +247,539 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
       assessImpactedApplicationReassessmentNeededMock,
     ).not.toHaveBeenCalled();
   });
+
+  it("Should populate the previousDateChangedReportedAssessment when the e-Cert was generated for the 'Original Assessment' and offering dates changed as a result of the reassessment.", async () => {
+    // Arrange
+    const auditUser = systemUsersService.systemUser;
+    const now = new Date();
+    const savedApplication = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      undefined,
+      {
+        applicationStatus: ApplicationStatus.Completed,
+        createSecondDisbursement: false,
+        firstDisbursementInitialValues: {
+          coeStatus: COEStatus.completed,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        },
+      },
+    );
+    const originalAssessmentId = savedApplication.currentAssessment.id;
+    const differentStudyStartDate = new Date(
+      savedApplication.currentAssessment.offering.studyStartDate,
+    );
+    differentStudyStartDate.setDate(differentStudyStartDate.getDate() + 1);
+    await saveOfferingAndAssessment(savedApplication, now, auditUser, {
+      studyStartDate: getISODateOnlyString(differentStudyStartDate),
+    });
+    savedApplication.currentAssessment.studentAssessmentStatus =
+      StudentAssessmentStatus.InProgress;
+    const workflowData = {
+      studentData: {
+        dependantStatus: "independant",
+      },
+    } as WorkflowData;
+    await db.studentAssessment.save(savedApplication.currentAssessment);
+
+    // Act
+    const result = await assessmentController.workflowWrapUp(
+      createFakeWorkflowWrapUpPayload(
+        savedApplication.currentAssessment.id,
+        workflowData,
+      ),
+    );
+
+    // Asserts
+    expect(FakeWorkerJobResult.getResultType(result)).toBe(
+      MockedZeebeJobResult.Complete,
+    );
+    // Asserts that the student assessment status has changed to completed.
+    const expectedAssessment = await db.studentAssessment.findOne({
+      select: {
+        id: true,
+        previousDateChangedReportedAssessment: { id: true },
+      },
+      relations: {
+        modifier: true,
+        previousDateChangedReportedAssessment: true,
+      },
+      where: { id: savedApplication.currentAssessment.id },
+    });
+    expect(expectedAssessment.previousDateChangedReportedAssessment.id).toBe(
+      originalAssessmentId,
+    );
+  });
+
+  it("Should not populate the previousDateChangedReportedAssessment when the e-Cert was generated for the 'Original Assessment' and offering dates didn't change as a result of the reassessment.", async () => {
+    // Arrange
+    const auditUser = systemUsersService.systemUser;
+    const now = new Date();
+    const savedApplication = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      undefined,
+      {
+        applicationStatus: ApplicationStatus.Completed,
+        currentAssessmentInitialValues: {
+          assessmentDate: now,
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+        },
+        createSecondDisbursement: false,
+        firstDisbursementInitialValues: {
+          coeStatus: COEStatus.completed,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        },
+      },
+    );
+    await saveOfferingAndAssessment(savedApplication, now, auditUser, {
+      studyStartDate:
+        savedApplication.currentAssessment.offering.studyStartDate,
+      studyEndDate: savedApplication.currentAssessment.offering.studyEndDate,
+    });
+    savedApplication.currentAssessment.studentAssessmentStatus =
+      StudentAssessmentStatus.InProgress;
+    const workflowData = {
+      studentData: {
+        dependantStatus: "independant",
+      },
+    } as WorkflowData;
+    await db.studentAssessment.save(savedApplication.currentAssessment);
+
+    // Act
+    const result = await assessmentController.workflowWrapUp(
+      createFakeWorkflowWrapUpPayload(
+        savedApplication.currentAssessment.id,
+        workflowData,
+      ),
+    );
+
+    // Asserts
+    expect(FakeWorkerJobResult.getResultType(result)).toBe(
+      MockedZeebeJobResult.Complete,
+    );
+    // Asserts that the student assessment status has changed to completed.
+    const expectedAssessment = await db.studentAssessment.findOne({
+      select: {
+        id: true,
+        previousDateChangedReportedAssessment: { id: true },
+      },
+      relations: {
+        modifier: true,
+        previousDateChangedReportedAssessment: true,
+      },
+      where: { id: savedApplication.currentAssessment.id },
+    });
+    expect(expectedAssessment.previousDateChangedReportedAssessment).toBeNull();
+  });
+
+  it("Should not populate the previousDateChangedReportedAssessment when the e-Cert is not generated for the 'Original Assessment' and offering dates changed as a result of the reassessment.", async () => {
+    // Arrange
+    const auditUser = systemUsersService.systemUser;
+    const now = new Date();
+    const savedApplication = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      undefined,
+      {
+        applicationStatus: ApplicationStatus.Completed,
+        currentAssessmentInitialValues: {
+          assessmentDate: now,
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+        },
+        createSecondDisbursement: false,
+        firstDisbursementInitialValues: {
+          coeStatus: COEStatus.completed,
+        },
+      },
+    );
+    const differentStudyStartDate = new Date(
+      savedApplication.currentAssessment.offering.studyStartDate,
+    );
+    differentStudyStartDate.setDate(differentStudyStartDate.getDate() + 1);
+    await saveOfferingAndAssessment(savedApplication, now, auditUser, {
+      studyStartDate: getISODateOnlyString(differentStudyStartDate),
+    });
+    savedApplication.currentAssessment.studentAssessmentStatus =
+      StudentAssessmentStatus.InProgress;
+    const workflowData = {
+      studentData: {
+        dependantStatus: "independant",
+      },
+    } as WorkflowData;
+    await db.studentAssessment.save(savedApplication.currentAssessment);
+
+    // Act
+    const result = await assessmentController.workflowWrapUp(
+      createFakeWorkflowWrapUpPayload(
+        savedApplication.currentAssessment.id,
+        workflowData,
+      ),
+    );
+
+    // Asserts
+    expect(FakeWorkerJobResult.getResultType(result)).toBe(
+      MockedZeebeJobResult.Complete,
+    );
+    // Asserts that the student assessment status has changed to completed.
+    const expectedAssessment = await db.studentAssessment.findOne({
+      select: {
+        id: true,
+        previousDateChangedReportedAssessment: { id: true },
+      },
+      relations: {
+        modifier: true,
+        previousDateChangedReportedAssessment: true,
+      },
+      where: { id: savedApplication.currentAssessment.id },
+    });
+    expect(expectedAssessment.previousDateChangedReportedAssessment).toBeNull();
+  });
+
+  it("Should populate the previousDateChangedReportedAssessment with the most recent reported reassessment when there are previously reported reassessments.", async () => {
+    // Arrange
+    const auditUser = systemUsersService.systemUser;
+    const now = new Date();
+    const savedApplication = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      undefined,
+      {
+        applicationStatus: ApplicationStatus.Completed,
+        currentAssessmentInitialValues: {
+          assessmentDate: now,
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+        },
+        createSecondDisbursement: false,
+        firstDisbursementInitialValues: {
+          coeStatus: COEStatus.completed,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        },
+      },
+    );
+    const originalAssessment = savedApplication.currentAssessment;
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const differentStudyStartDate = new Date(
+      savedApplication.currentAssessment.offering.studyStartDate,
+    );
+    differentStudyStartDate.setDate(differentStudyStartDate.getDate() + 1);
+    const firstReassessment = await saveOfferingAndAssessment(
+      savedApplication,
+      tomorrow,
+      auditUser,
+      {
+        studyStartDate: getISODateOnlyString(differentStudyStartDate),
+        reportedDate: now,
+        previousDateChangedReportedAssessment: originalAssessment,
+      },
+    );
+    const dayAfterTomorrow = new Date();
+    dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
+    differentStudyStartDate.setDate(differentStudyStartDate.getDate() + 1);
+    const latestReportedAssessment = await saveOfferingAndAssessment(
+      savedApplication,
+      dayAfterTomorrow,
+      auditUser,
+      {
+        studyStartDate: getISODateOnlyString(differentStudyStartDate),
+        reportedDate: now,
+        previousDateChangedReportedAssessment: firstReassessment,
+      },
+    );
+    const afterDayAfterTomorrow = new Date();
+    afterDayAfterTomorrow.setDate(afterDayAfterTomorrow.getDate() + 3);
+    differentStudyStartDate.setDate(differentStudyStartDate.getDate() + 1);
+    await saveOfferingAndAssessment(
+      savedApplication,
+      afterDayAfterTomorrow,
+      auditUser,
+      {
+        studyStartDate: getISODateOnlyString(differentStudyStartDate),
+      },
+    );
+    savedApplication.currentAssessment.studentAssessmentStatus =
+      StudentAssessmentStatus.InProgress;
+    await db.studentAssessment.save(savedApplication.currentAssessment);
+    const workflowData = {
+      studentData: {
+        dependantStatus: "independant",
+      },
+    } as WorkflowData;
+
+    // Act
+    const result = await assessmentController.workflowWrapUp(
+      createFakeWorkflowWrapUpPayload(
+        savedApplication.currentAssessment.id,
+        workflowData,
+      ),
+    );
+
+    // Asserts
+    expect(FakeWorkerJobResult.getResultType(result)).toBe(
+      MockedZeebeJobResult.Complete,
+    );
+    // Asserts that the student assessment status has changed to completed.
+    const expectedAssessment = await db.studentAssessment.findOne({
+      select: {
+        id: true,
+        previousDateChangedReportedAssessment: { id: true },
+      },
+      relations: {
+        modifier: true,
+        previousDateChangedReportedAssessment: true,
+      },
+      where: { id: savedApplication.currentAssessment.id },
+    });
+    expect(expectedAssessment.previousDateChangedReportedAssessment.id).toBe(
+      latestReportedAssessment.id,
+    );
+  });
+
+  it("Should not populate the previousDateChangedReportedAssessment if there are multiple reassessments where an intermediate reassessment has a different offering date but the current one changed the offering date back to the value of the latest reported assessment.", async () => {
+    // Arrange
+    const auditUser = systemUsersService.systemUser;
+    const now = new Date();
+    const savedApplication = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      undefined,
+      {
+        applicationStatus: ApplicationStatus.Completed,
+        currentAssessmentInitialValues: {
+          assessmentDate: now,
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+        },
+        createSecondDisbursement: false,
+        firstDisbursementInitialValues: {
+          coeStatus: COEStatus.completed,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        },
+      },
+    );
+    const originalAssessment = savedApplication.currentAssessment;
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const differentStudyStartDate = new Date(
+      savedApplication.currentAssessment.offering.studyStartDate,
+    );
+    differentStudyStartDate.setDate(differentStudyStartDate.getDate() + 1);
+    const reportedReassessmentStudyStartDate = getISODateOnlyString(
+      differentStudyStartDate,
+    );
+    const reportedReassessmentStudyEndDate = getISODateOnlyString(
+      savedApplication.currentAssessment.offering.studyEndDate,
+    );
+    const firstReportedReassessment = await saveOfferingAndAssessment(
+      savedApplication,
+      tomorrow,
+      auditUser,
+      {
+        studyStartDate: reportedReassessmentStudyStartDate,
+        studyEndDate: reportedReassessmentStudyEndDate,
+        reportedDate: now,
+        previousDateChangedReportedAssessment: originalAssessment,
+      },
+    );
+    const dayAfterTomorrow = new Date();
+    dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
+    differentStudyStartDate.setDate(differentStudyStartDate.getDate() + 1);
+    await saveOfferingAndAssessment(
+      savedApplication,
+      dayAfterTomorrow,
+      auditUser,
+      {
+        studyStartDate: getISODateOnlyString(differentStudyStartDate),
+        previousDateChangedReportedAssessment: firstReportedReassessment,
+      },
+    );
+    const afterDayAfterTomorrow = new Date();
+    afterDayAfterTomorrow.setDate(afterDayAfterTomorrow.getDate() + 3);
+    differentStudyStartDate.setDate(differentStudyStartDate.getDate() + 1);
+    await saveOfferingAndAssessment(
+      savedApplication,
+      afterDayAfterTomorrow,
+      auditUser,
+      {
+        studyStartDate: reportedReassessmentStudyStartDate,
+        studyEndDate: reportedReassessmentStudyEndDate,
+      },
+    );
+    savedApplication.currentAssessment.studentAssessmentStatus =
+      StudentAssessmentStatus.InProgress;
+    await db.studentAssessment.save(savedApplication.currentAssessment);
+    const workflowData = {
+      studentData: {
+        dependantStatus: "independant",
+      },
+    } as WorkflowData;
+
+    // Act
+    const result = await assessmentController.workflowWrapUp(
+      createFakeWorkflowWrapUpPayload(
+        savedApplication.currentAssessment.id,
+        workflowData,
+      ),
+    );
+
+    // Asserts
+    expect(FakeWorkerJobResult.getResultType(result)).toBe(
+      MockedZeebeJobResult.Complete,
+    );
+    // Asserts that the student assessment status has changed to completed.
+    const expectedAssessment = await db.studentAssessment.findOne({
+      select: {
+        id: true,
+        previousDateChangedReportedAssessment: { id: true },
+      },
+      relations: {
+        modifier: true,
+        previousDateChangedReportedAssessment: true,
+      },
+      where: { id: savedApplication.currentAssessment.id },
+    });
+    expect(expectedAssessment.previousDateChangedReportedAssessment).toBeNull();
+  });
+
+  it("Should not populate the previousDateChangedReportedAssessment if there are multiple reassessments where an intermediate reassessment has a different offering date but the current one changed the offering dates back to the value of the last generated ecert when there are no report based reported assessments.", async () => {
+    // Arrange
+    const auditUser = systemUsersService.systemUser;
+    const now = new Date();
+    const savedApplication = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      undefined,
+      {
+        applicationStatus: ApplicationStatus.Completed,
+        currentAssessmentInitialValues: {
+          assessmentDate: now,
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+        },
+        createSecondDisbursement: false,
+        firstDisbursementInitialValues: {
+          coeStatus: COEStatus.completed,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        },
+      },
+    );
+    const originalAssessment = savedApplication.currentAssessment;
+    const originalAssessmentStudyStartDate = getISODateOnlyString(
+      savedApplication.currentAssessment.offering.studyStartDate,
+    );
+    const originalAssessmentStudyEndDate = getISODateOnlyString(
+      savedApplication.currentAssessment.offering.studyEndDate,
+    );
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const differentStudyStartDate = new Date(
+      savedApplication.currentAssessment.offering.studyStartDate,
+    );
+    differentStudyStartDate.setDate(differentStudyStartDate.getDate() + 1);
+    await saveOfferingAndAssessment(savedApplication, tomorrow, auditUser, {
+      studyStartDate: getISODateOnlyString(differentStudyStartDate),
+      previousDateChangedReportedAssessment: originalAssessment,
+    });
+    const dayAfterTomorrow = new Date();
+    dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
+    differentStudyStartDate.setDate(differentStudyStartDate.getDate() + 1);
+    await saveOfferingAndAssessment(
+      savedApplication,
+      dayAfterTomorrow,
+      auditUser,
+      {
+        studyStartDate: originalAssessmentStudyStartDate,
+        studyEndDate: originalAssessmentStudyEndDate,
+      },
+    );
+    savedApplication.currentAssessment.studentAssessmentStatus =
+      StudentAssessmentStatus.InProgress;
+    await db.studentAssessment.save(savedApplication.currentAssessment);
+    const workflowData = {
+      studentData: {
+        dependantStatus: "independant",
+      },
+    } as WorkflowData;
+
+    // Act
+    const result = await assessmentController.workflowWrapUp(
+      createFakeWorkflowWrapUpPayload(
+        savedApplication.currentAssessment.id,
+        workflowData,
+      ),
+    );
+
+    // Asserts
+    expect(FakeWorkerJobResult.getResultType(result)).toBe(
+      MockedZeebeJobResult.Complete,
+    );
+    // Asserts that the student assessment status has changed to completed.
+    const expectedAssessment = await db.studentAssessment.findOne({
+      select: {
+        id: true,
+        previousDateChangedReportedAssessment: { id: true },
+      },
+      relations: {
+        modifier: true,
+        previousDateChangedReportedAssessment: true,
+      },
+      where: { id: savedApplication.currentAssessment.id },
+    });
+    expect(expectedAssessment.previousDateChangedReportedAssessment).toBeNull();
+  });
+
+  /**
+   * Saves an offering and assessment for that offering.
+   * @param savedApplication related saved application.
+   * @param assessmentDate related assessment date.
+   * @param auditUser audit user.
+   * @param options related options.
+   * - `studyStartDate` offering study start date.
+   * - `studyEndDate` offering study end date.
+   * - `reportedDate` date on which the assessment causing the study date change has been reported.
+   * - `previousDateChangedReportedAssessment` previous date change reported assessment of the saved application.
+   * @returns saved offering change assessment.
+   */
+  async function saveOfferingAndAssessment(
+    savedApplication: Application,
+    assessmentDate: Date,
+    auditUser: User,
+    options?: {
+      studyStartDate?: string;
+      studyEndDate?: string;
+      reportedDate?: Date;
+      previousDateChangedReportedAssessment?: StudentAssessment;
+    },
+  ): Promise<StudentAssessment> {
+    const updatedOffering = createFakeEducationProgramOffering(
+      { auditUser, institutionLocation: savedApplication.location },
+      {
+        initialValues: {
+          studyStartDate: options?.studyStartDate,
+          studyEndDate: options?.studyEndDate,
+        },
+      },
+    );
+    const savedOffering = await db.educationProgramOffering.save(
+      updatedOffering,
+    );
+    const initialValue = {
+      triggerType: AssessmentTriggerType.OfferingChange,
+      assessmentDate,
+      studentAssessmentStatus: StudentAssessmentStatus.Completed,
+    };
+    if (options?.reportedDate) {
+      initialValue["reportedDate"] = options?.reportedDate;
+      initialValue["previousDateChangedReportedAssessment"] =
+        options?.previousDateChangedReportedAssessment;
+    }
+    const offeringChangeAssessment = createFakeStudentAssessment(
+      {
+        application: savedApplication,
+        auditUser,
+        offering: savedOffering,
+      },
+      {
+        initialValue,
+      },
+    );
+    const savedOfferingChangeAssessment = await db.studentAssessment.save(
+      offeringChangeAssessment,
+    );
+    savedApplication.currentAssessment = savedOfferingChangeAssessment;
+    return savedOfferingChangeAssessment;
+  }
 });
