@@ -43,9 +43,10 @@ export class PartTimeCalculationProcess extends ECertCalculationProcess {
    * @returns eligible disbursements to be validated and calculated.
    */
   protected getDisbursements(): Promise<EligibleECertDisbursement[]> {
-    return this.eCertGenerationService.getEligibleDisbursements(
-      OfferingIntensity.partTime,
-    );
+    return this.eCertGenerationService.getEligibleDisbursements({
+      offeringIntensity: OfferingIntensity.partTime,
+      checkDisbursementMinDate: true,
+    });
   }
 
   /**
