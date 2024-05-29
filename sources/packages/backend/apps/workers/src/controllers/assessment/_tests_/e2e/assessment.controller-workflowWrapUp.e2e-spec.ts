@@ -40,6 +40,8 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
   let systemUsersService: SystemUsersService;
   let studentAssessmentService: StudentAssessmentService;
   let assessmentSequentialProcessingService: AssessmentSequentialProcessingService;
+  let now: Date;
+  let auditUser: User;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -50,10 +52,12 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
     assessmentSequentialProcessingService = nestApplication.get(
       AssessmentSequentialProcessingService,
     );
+    auditUser = systemUsersService.systemUser;
+    now = new Date();
   });
 
   beforeEach(() => {
-    jest.resetAllMocks();
+    jest.restoreAllMocks();
   });
 
   it(`Should update assessment status to completed when it has the ${StudentAssessmentStatus.InProgress} status.`, async () => {
@@ -101,7 +105,6 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
     expect(expectedAssessment.studentAssessmentStatusUpdatedOn).toBeInstanceOf(
       Date,
     );
-    const auditUser = systemUsersService.systemUser;
     expect(expectedAssessment.modifier).toEqual(auditUser);
     expect(expectedAssessment.updatedAt).toBeInstanceOf(Date);
   });
@@ -250,13 +253,15 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
 
   it("Should populate the previousDateChangedReportedAssessment when the e-Cert was generated for the 'Original Assessment' and offering dates changed as a result of the reassessment.", async () => {
     // Arrange
-    const auditUser = systemUsersService.systemUser;
-    const now = new Date();
     const savedApplication = await saveFakeApplicationDisbursements(
       db.dataSource,
       undefined,
       {
         applicationStatus: ApplicationStatus.Completed,
+        currentAssessmentInitialValues: {
+          assessmentDate: now,
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+        },
         createSecondDisbursement: false,
         firstDisbursementInitialValues: {
           coeStatus: COEStatus.completed,
@@ -274,12 +279,12 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
     });
     savedApplication.currentAssessment.studentAssessmentStatus =
       StudentAssessmentStatus.InProgress;
+    await db.studentAssessment.save(savedApplication.currentAssessment);
     const workflowData = {
       studentData: {
         dependantStatus: "independant",
       },
     } as WorkflowData;
-    await db.studentAssessment.save(savedApplication.currentAssessment);
 
     // Act
     const result = await assessmentController.workflowWrapUp(
@@ -312,8 +317,6 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
 
   it("Should not populate the previousDateChangedReportedAssessment when the e-Cert was generated for the 'Original Assessment' and offering dates didn't change as a result of the reassessment.", async () => {
     // Arrange
-    const auditUser = systemUsersService.systemUser;
-    const now = new Date();
     const savedApplication = await saveFakeApplicationDisbursements(
       db.dataSource,
       undefined,
@@ -373,8 +376,6 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
 
   it("Should not populate the previousDateChangedReportedAssessment when the e-Cert is not generated for the 'Original Assessment' and offering dates changed as a result of the reassessment.", async () => {
     // Arrange
-    const auditUser = systemUsersService.systemUser;
-    const now = new Date();
     const savedApplication = await saveFakeApplicationDisbursements(
       db.dataSource,
       undefined,
@@ -435,8 +436,6 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
 
   it("Should populate the previousDateChangedReportedAssessment with the most recent reported reassessment when there are previously reported reassessments.", async () => {
     // Arrange
-    const auditUser = systemUsersService.systemUser;
-    const now = new Date();
     const savedApplication = await saveFakeApplicationDisbursements(
       db.dataSource,
       undefined,
@@ -534,8 +533,6 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
 
   it("Should not populate the previousDateChangedReportedAssessment if there are multiple reassessments where an intermediate reassessment has a different offering date but the current one changed the offering date back to the value of the latest reported assessment.", async () => {
     // Arrange
-    const auditUser = systemUsersService.systemUser;
-    const now = new Date();
     const savedApplication = await saveFakeApplicationDisbursements(
       db.dataSource,
       undefined,
@@ -638,8 +635,6 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
 
   it("Should not populate the previousDateChangedReportedAssessment if there are multiple reassessments where an intermediate reassessment has a different offering date but the current one changed the offering dates back to the value of the last generated ecert when there are no report based reported assessments.", async () => {
     // Arrange
-    const auditUser = systemUsersService.systemUser;
-    const now = new Date();
     const savedApplication = await saveFakeApplicationDisbursements(
       db.dataSource,
       undefined,
