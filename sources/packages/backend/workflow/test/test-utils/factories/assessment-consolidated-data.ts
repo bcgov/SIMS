@@ -10,7 +10,7 @@ import {
   OfferingDeliveryOptions,
   AssessmentDataType,
 } from "@sims/test-utils";
-import { OfferingIntensity } from "@sims/sims-db";
+import { ApplicationStatus, OfferingIntensity } from "@sims/sims-db";
 
 /**
  * Create fake consolidated data
@@ -47,6 +47,8 @@ export function createFakeAssessmentConsolidatedData(
     offeringExceptionalExpenses: 500,
     offeringWeeks: 16,
     studentDataApplicationPDPPDStatus: "noIDoNotHaveADisability",
+    applicationStatus: ApplicationStatus.Assessment,
+    applicationHasNOAApproval: false,
   };
 }
 
@@ -168,6 +170,8 @@ function getDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
     partner1TotalIncome: null,
     partner1CRAReportedIncome: null,
     assessmentId: null,
+    applicationStatus: null,
+    applicationHasNOAApproval: null,
   } as AssessmentConsolidatedData;
 }
 

@@ -72,6 +72,10 @@ export default defineComponent({
       type: Number,
       required: true,
     },
+    currentAssessmentId: {
+      type: Number,
+      required: false,
+    },
   },
   setup(props) {
     const assessmentAwardData = ref<AwardDetailsAPIOutDTO>();
@@ -91,6 +95,7 @@ export default defineComponent({
       params: {
         applicationId: props.applicationId,
         assessmentId: props.assessmentId,
+        currentAssessmentId: props.currentAssessmentId,
       },
     }));
 

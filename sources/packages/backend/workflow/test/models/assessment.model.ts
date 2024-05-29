@@ -164,6 +164,8 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   programYearTotalPartTimeCSGP: number;
   programYearTotalFullTimeCSGP: number;
   latestCSLPBalance: number;
+  applicationStatus: string;
+  applicationHasNOAApproval: boolean;
 }
 
 /**

@@ -10,6 +10,7 @@ import {
   StudyBreaksAndWeeks,
   AssessmentStatus,
   WorkflowData,
+  ApplicationStatus,
 } from "@sims/sims-db";
 
 export interface AssociateWorkflowInstanceJobInDTO {
@@ -82,6 +83,14 @@ export interface ApplicationAssessmentJobOutDTO {
    * Application associated with this application.
    */
   applicationId: number;
+  /**
+   * Current status of the application.
+   */
+  applicationStatus: ApplicationStatus;
+  /**
+   * If any NOA has been approved for the application.
+   */
+  hasNOAApproval: boolean;
   /**
    * Origin of the assessment.
    */

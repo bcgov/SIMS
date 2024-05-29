@@ -124,6 +124,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "assessment.triggerType",
         "application.id",
         "application.data",
+        "application.applicationStatus",
         "programYear.programYear",
         "programYear.startDate",
         "programYear.endDate",
@@ -524,6 +525,20 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         offering: true,
       },
       where: { id: assessmentId },
+    });
+  }
+
+  /**
+   * Check if any NOAs have been accepted for a given application.
+   * @param applicationId the application to check associated assessments for.
+   * @returns boolean if NOA acceptance exist on any related assessments.
+   */
+  async assessmentNOAExists(applicationId: number): Promise<boolean> {
+    return this.repo.exists({
+      where: {
+        application: { id: applicationId },
+        noaApprovalStatus: AssessmentStatus.completed,
+      },
     });
   }
 }
