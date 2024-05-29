@@ -176,17 +176,6 @@ export class ApplicationStudentsController extends BaseController {
     ) {
       throw new UnprocessableEntityException("Invalid offering intensity.");
     }
-    if (payload.data.selectedProgram) {
-      const isProgramActive =
-        await this.educationProgramService.isProgramActive(
-          payload.data.selectedProgram,
-        );
-      if (!isProgramActive) {
-        throw new UnprocessableEntityException(
-          "Education Program not found or is not active. Not able to submit application due to invalid request.",
-        );
-      }
-    }
 
     // studyStartDate from payload is set as studyStartDate
     let studyStartDate = payload.data.studystartDate;
@@ -207,7 +196,16 @@ export class ApplicationStudentsController extends BaseController {
       ) {
         throw new UnprocessableEntityException("Invalid offering intensity.");
       }
-
+      if (!offering.educationProgram.isActive) {
+        throw new UnprocessableEntityException(
+          "The education program is not active.",
+        );
+      }
+      if (offering.educationProgram.isExpired) {
+        throw new UnprocessableEntityException(
+          "The education program is expired.",
+        );
+      }
       // if  studyStartDate is not in payload
       // then selectedOffering will be there in payload,
       // then study start date taken from offering
@@ -240,7 +238,8 @@ export class ApplicationStudentsController extends BaseController {
       "Program Year is not active or " +
       "Selected offering id is invalid or " +
       "invalid study dates or selected study start date is not within the program year or " +
-      "Education Program is not active. Not able to create an application invalid request " +
+      "the education program is not active or " +
+      "the education program is expired or " +
       "or APPLICATION_NOT_VALID or INVALID_OPERATION_IN_THE_CURRENT_STATUS or ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE " +
       "or INSTITUTION_LOCATION_NOT_VALID or OFFERING_NOT_VALID " +
       "or Invalid offering intensity",

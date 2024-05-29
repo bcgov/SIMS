@@ -57,6 +57,7 @@ export interface EducationProgramsSummary {
   submittedDate: Date;
   programStatus: ProgramStatus;
   isActive: boolean;
+  isExpired: boolean;
   totalOfferings: number;
   locationId: number;
   locationName: string;

@@ -4,7 +4,7 @@
       <status-chip-program
         class="ml-2 mb-2"
         :status="educationProgram.programStatus"
-        :is-active="educationProgram.isActive"
+        :is-active="educationProgram.isActive && !educationProgram.isExpired"
         data-cy="programStatus"
       ></status-chip-program>
     </template>
@@ -33,7 +33,11 @@
           >
             <template #="{ notAllowed }">
               <v-list-item
-                :disabled="!educationProgram.isActive || notAllowed"
+                :disabled="
+                  !educationProgram.isActive ||
+                  educationProgram.isExpired ||
+                  notAllowed
+                "
                 base-color="danger"
                 @click="deactivate"
                 title="Deactivate"
@@ -164,6 +168,7 @@ export default defineComponent({
     const programActionLabel = computed(() => {
       if (
         !props.educationProgram.isActive ||
+        props.educationProgram.isExpired ||
         AuthService.shared.authClientType === ClientIdType.AEST
       ) {
         return "View Program";

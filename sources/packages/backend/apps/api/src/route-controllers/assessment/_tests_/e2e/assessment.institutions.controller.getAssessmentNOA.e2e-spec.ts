@@ -145,6 +145,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
         fullName: getUserFullName(application.student.user),
         locationName: assessment.offering.institutionLocation.name,
         noaApprovalStatus: assessment.noaApprovalStatus,
+        applicationCurrentAssessmentId: application.currentAssessment.id,
         offeringIntensity: assessment.offering.offeringIntensity,
         offeringStudyEndDate: getDateOnlyFormat(
           assessment.offering.studyEndDate,
@@ -247,6 +248,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
         fullName: getUserFullName(application.student.user),
         locationName: assessment.offering.institutionLocation.name,
         noaApprovalStatus: assessment.noaApprovalStatus,
+        applicationCurrentAssessmentId: application.currentAssessment.id,
         offeringIntensity: assessment.offering.offeringIntensity,
         offeringStudyEndDate: getDateOnlyFormat(
           assessment.offering.studyEndDate,

@@ -25,6 +25,7 @@ export class ProgramInfoRequestAPIOutDTO {
   offeringIntensitySelectedByStudent: OfferingIntensity;
   programYearId: number;
   isActiveProgram?: boolean;
+  isExpiredProgram?: boolean;
   isActiveProgramYear: boolean;
   offeringName: string;
   offeringDelivered: string;

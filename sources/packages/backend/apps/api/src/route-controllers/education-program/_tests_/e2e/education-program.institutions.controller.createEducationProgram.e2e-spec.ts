@@ -1,5 +1,6 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
+  EducationProgram,
   Institution,
   InstitutionLocation,
   ProgramStatus,
@@ -18,12 +19,14 @@ import {
   getInstitutionToken,
   authorizeUserTokenForLocation,
   getAuthRelatedEntities,
+  createFakeEducationProgram,
 } from "../../../../testHelpers";
 import * as request from "supertest";
 import { FormService } from "../../../../services";
 import { TestingModule } from "@nestjs/testing";
 import { AppInstitutionsModule } from "../../../../app.institutions.module";
 import * as faker from "faker";
+import { addDays, getISODateOnlyString } from "@sims/utilities";
 
 describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", () => {
   let app: INestApplication;
@@ -55,44 +58,14 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
 
   it("Should create an education program when valid data is passed.", async () => {
     // Arrange
-    const programStatus = ProgramStatus.Approved;
-    const payload = {
-      name: faker.lorem.words(5),
-      description: faker.lorem.words(5),
-      credentialType: "undergraduateCertificate",
-      cipCode: "11.1111",
-      fieldOfStudyCode: "15",
-      nocCode: "2174",
-      sabcCode: `${faker.random.alpha({ count: 3 })}1`,
-      institutionProgramCode: faker.random.alpha({ count: 3 }),
-      programIntensity: "Full Time and Part Time",
-      programDeliveryTypes: {
-        deliveredOnSite: true,
-        deliveredOnline: false,
-      },
-      completionYears: "12WeeksTo52Weeks",
-      courseLoadCalculation: "credit",
-      regulatoryBody: "other",
-      otherRegulatoryBody: "Other RB test",
-      entranceRequirements: {
-        minHighSchool: true,
-        hasMinimumAge: true,
-        requirementsByInstitution: true,
-        requirementsByBCITA: true,
-        noneOfTheAboveEntranceRequirements: false,
-      },
-      eslEligibility: "lessThan20",
-      hasJointInstitution: "no",
-      hasWILComponent: "no",
-      hasTravel: "no",
-      hasIntlExchange: "no",
-      programDeclaration: true,
-    };
+    const sabcCode = `${faker.random.alpha({ count: 3 })}1`;
+    const payload = getPayload(sabcCode);
     const formService = await getProviderInstanceForModule(
       testingModule,
       AppInstitutionsModule,
       FormService,
     );
+    const programStatus = ProgramStatus.Approved;
     formService.dryRunSubmission = jest.fn().mockResolvedValue({
       valid: true,
       data: { data: { ...payload, programStatus } },
@@ -166,9 +139,202 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         assessedById: null,
         submittedById: collegeFUser.id,
         isActive: true,
+        isExpired: false,
       }),
     );
   });
+
+  it("Should throw duplicate SABC code for education program when there is already an active education program with the same SABC code.", async () => {
+    // Arrange
+    const sameSabcCode = "GGG9";
+    await saveEducationProgram(sameSabcCode);
+    const payload = getPayload(sameSabcCode);
+    const formService = await getProviderInstanceForModule(
+      testingModule,
+      AppInstitutionsModule,
+      FormService,
+    );
+    const programStatus = ProgramStatus.Approved;
+    formService.dryRunSubmission = jest.fn().mockResolvedValue({
+      valid: true,
+      data: { data: { ...payload, programStatus } },
+    });
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    const endpoint = "/institutions/education-program";
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        errorType: "DUPLICATE_SABC_CODE",
+        message: "Duplicate SABC code.",
+      });
+  });
+
+  it("Should create an education program when SABC code passed exists for an expired education program.", async () => {
+    // Arrange
+    const sameSabcCode = "TTT8";
+    await saveEducationProgram(
+      sameSabcCode,
+      true,
+      getISODateOnlyString(new Date()),
+    );
+    const payload = getPayload(sameSabcCode);
+    const formService = await getProviderInstanceForModule(
+      testingModule,
+      AppInstitutionsModule,
+      FormService,
+    );
+    const programStatus = ProgramStatus.Approved;
+    formService.dryRunSubmission = jest.fn().mockResolvedValue({
+      valid: true,
+      data: { data: { ...payload, programStatus } },
+    });
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    const endpoint = "/institutions/education-program";
+
+    // Act/Assert
+    let educationProgramId: number;
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        expect(response.body.id).toBeGreaterThan(0);
+        educationProgramId = response.body.id;
+      });
+
+    const educationProgram = await db.educationProgram.findOne({
+      where: { id: educationProgramId },
+    });
+    expect(educationProgram).toEqual(
+      expect.objectContaining({
+        sabcCode: payload.sabcCode,
+      }),
+    );
+  });
+
+  it("Should create an education program when SABC code passed exists for an education program flagged as inactive.", async () => {
+    // Arrange
+    const sameSabcCode = "MMM7";
+    await saveEducationProgram(
+      sameSabcCode,
+      false,
+      getISODateOnlyString(addDays(1)),
+    );
+    const payload = getPayload(sameSabcCode);
+    const formService = await getProviderInstanceForModule(
+      testingModule,
+      AppInstitutionsModule,
+      FormService,
+    );
+    const programStatus = ProgramStatus.Approved;
+    formService.dryRunSubmission = jest.fn().mockResolvedValue({
+      valid: true,
+      data: { data: { ...payload, programStatus } },
+    });
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    const endpoint = "/institutions/education-program";
+
+    // Act/Assert
+    let educationProgramId: number;
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        expect(response.body.id).toBeGreaterThan(0);
+        educationProgramId = response.body.id;
+      });
+
+    const educationProgram = await db.educationProgram.findOne({
+      where: { id: educationProgramId },
+    });
+    expect(educationProgram).toEqual(
+      expect.objectContaining({
+        sabcCode: payload.sabcCode,
+      }),
+    );
+  });
+
+  /**
+   * Saves an education program with parameters.
+   * @param sabcCode SABC code.
+   * @param isActive is active flag.
+   * @param effectiveEndDate effective end date.
+   * @returns an education program.
+   */
+  async function saveEducationProgram(
+    sabcCode: string,
+    isActive?: boolean,
+    effectiveEndDate?: string,
+  ) {
+    const educationProgram = createFakeEducationProgram(
+      {
+        institution: collegeF,
+        user: collegeFUser,
+      },
+      {
+        initialValue: {
+          sabcCode,
+          isActive,
+          effectiveEndDate,
+        } as Partial<EducationProgram>,
+      },
+    );
+    return db.educationProgram.save(educationProgram);
+  }
+
+  /**
+   * Returns a payload with the passed sabcCode.
+   * @param programStatus program status.
+   * @param sabcCode SABC code.
+   */
+  function getPayload(sabcCode: string) {
+    return {
+      name: faker.lorem.words(5),
+      description: faker.lorem.words(5),
+      credentialType: "undergraduateCertificate",
+      cipCode: "11.1111",
+      fieldOfStudyCode: "15",
+      nocCode: "2174",
+      sabcCode: sabcCode,
+      institutionProgramCode: faker.random.alpha({ count: 3 }),
+      programIntensity: "Full Time and Part Time",
+      programDeliveryTypes: {
+        deliveredOnSite: true,
+        deliveredOnline: false,
+      },
+      completionYears: "12WeeksTo52Weeks",
+      courseLoadCalculation: "credit",
+      regulatoryBody: "other",
+      otherRegulatoryBody: "Other RB test",
+      entranceRequirements: {
+        minHighSchool: true,
+        hasMinimumAge: true,
+        requirementsByInstitution: true,
+        requirementsByBCITA: true,
+        noneOfTheAboveEntranceRequirements: false,
+      },
+      eslEligibility: "lessThan20",
+      hasJointInstitution: "no",
+      hasWILComponent: "no",
+      hasTravel: "no",
+      hasIntlExchange: "no",
+      programDeclaration: true,
+    };
+  }
 
   afterAll(async () => {
     await app?.close();

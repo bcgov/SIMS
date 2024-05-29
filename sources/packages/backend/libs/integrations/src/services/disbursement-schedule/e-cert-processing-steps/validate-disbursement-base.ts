@@ -18,7 +18,7 @@ export abstract class ValidateDisbursementBase {
     eCertDisbursement: EligibleECertDisbursement,
     log: ProcessSummary,
   ): ECertFailedValidation[] {
-    const validationResults = [] as ECertFailedValidation[];
+    const validationResults: ECertFailedValidation[] = [];
     // COE
     if (eCertDisbursement.disbursement.coeStatus !== COEStatus.completed) {
       log.info("Waiting for confirmation of enrolment to be completed.");

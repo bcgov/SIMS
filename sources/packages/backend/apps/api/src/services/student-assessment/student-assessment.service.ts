@@ -63,6 +63,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "application.id",
         "application.applicationNumber",
         "application.applicationStatus",
+        "currentAssessment.id",
         "student.id",
         "user.firstName",
         "user.lastName",
@@ -90,6 +91,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       ])
       .innerJoin("assessment.application", "application")
       .innerJoin("application.student", "student")
+      .innerJoin("application.currentAssessment", "currentAssessment")
       .innerJoin("student.user", "user")
       .innerJoin("assessment.offering", "offering")
       .innerJoin("offering.educationProgram", "educationProgram")
@@ -155,9 +157,11 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "assessment.id",
         "application.id",
         "application.applicationStatus",
+        "currentAssessment.id",
       ])
       .innerJoin("assessment.application", "application")
       .innerJoin("application.student", "student")
+      .innerJoin("application.currentAssessment", "currentAssessment")
       .where("assessment.id = :assessmentId", { assessmentId })
       .andWhere("student.id = :studentId", { studentId })
       .getOne();
@@ -177,6 +181,14 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
       );
     }
+
+    if (assessment.application.currentAssessment.id !== assessment.id) {
+      throw new CustomNamedError(
+        `An assessment other than the current one may not be approved.`,
+        ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
+      );
+    }
+
     const auditUser = { id: auditUserId } as User;
     const now = new Date();
     assessment.noaApprovalStatus = AssessmentStatus.completed;

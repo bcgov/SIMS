@@ -22,6 +22,10 @@ import {
   Equal,
   UpdateResult,
   EntityManager,
+  MoreThan,
+  IsNull,
+  Brackets,
+  Or,
 } from "typeorm";
 import {
   SaveEducationProgram,
@@ -33,7 +37,11 @@ import {
   PaginatedResults,
   SortPriority,
 } from "../../utilities";
-import { CustomNamedError } from "@sims/utilities";
+import {
+  CustomNamedError,
+  getISODateOnlyString,
+  isSameOrAfterDate,
+} from "@sims/utilities";
 import {
   EDUCATION_PROGRAM_NOT_FOUND,
   DUPLICATE_SABC_CODE,
@@ -78,6 +86,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       select: {
         id: true,
         isActive: true,
+        effectiveEndDate: true,
         institution: { id: true },
       },
       relations: {
@@ -118,19 +127,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   }
 
   /**
-   * Check if education program is active.
-   * @param educationProgramId program id.
-   */
-  async isProgramActive(educationProgramId: number): Promise<boolean> {
-    return this.repo.exists({
-      where: {
-        id: educationProgramId,
-        isActive: true,
-      },
-    });
-  }
-
-  /**
    * Inserts/updates an education program at institution level that will be available for all
    * locations and saves a notification to the ministry as a part of the same transaction.
    * @param programId if provided will update the record, otherwise will insert a new one.
@@ -158,6 +154,12 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       if (!program.isActive) {
         throw new CustomNamedError(
           "Education program cannot be edited when inactive.",
+          EDUCATION_PROGRAM_INVALID_OPERATION,
+        );
+      }
+      if (program.isExpired) {
+        throw new CustomNamedError(
+          "Education program cannot be edited when expired.",
           EDUCATION_PROGRAM_INVALID_OPERATION,
         );
       }
@@ -290,6 +292,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .addSelect("location.name", "locationName")
       .addSelect("programs.programStatus", "programStatus")
       .addSelect("programs.isActive", "isActive")
+      .addSelect("programs.effectiveEndDate", "effectiveEndDate")
       .addSelect(
         (qb) =>
           qb
@@ -373,6 +376,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       submittedDate: program.programSubmittedAt,
       programStatus: program.programStatus,
       isActive: program.isActive,
+      isExpired: isSameOrAfterDate(program.effectiveEndDate, new Date()),
       totalOfferings: program.totalOfferings,
       locationId: program.locationId,
       locationName: program.locationName,
@@ -418,7 +422,14 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .where("programs.programStatus = :programStatus", {
         programStatus: ProgramStatus.Approved,
       })
-      .andWhere("programs.isActive = true");
+      .andWhere("programs.isActive = true")
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where("programs.effectiveEndDate is null").orWhere(
+            "programs.effectiveEndDate > CURRENT_DATE",
+          );
+        }),
+      );
     if (!isFulltimeAllowed) {
       programsQuery.andWhere("programs.programIntensity = :programIntensity", {
         programIntensity: ProgramIntensity.fullTimePartTime,
@@ -453,7 +464,13 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       })
       .andWhere("programs.institution.id = :institutionId", { institutionId });
     if (!options?.isIncludeInActiveProgram) {
-      query.andWhere("programs.isActive = true");
+      query.andWhere("programs.isActive = true").andWhere(
+        new Brackets((qb) => {
+          qb.where("programs.effectiveEndDate is null").orWhere(
+            "programs.effectiveEndDate > CURRENT_DATE",
+          );
+        }),
+      );
     }
     return query.orderBy("programs.name").getMany();
   }
@@ -662,6 +679,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.description",
         "programs.id",
         "programs.isActive",
+        "programs.effectiveEndDate",
       ])
       .where("programs.id = :programId", { programId })
       .getOne();
@@ -690,6 +708,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
           id: institutionId,
         },
         isActive: true,
+        effectiveEndDate: Or(
+          IsNull(),
+          MoreThan(getISODateOnlyString(new Date())),
+        ),
       },
     });
   }
@@ -714,6 +736,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
           id: institutionId,
         },
         isActive: true,
+        effectiveEndDate: Or(
+          IsNull(),
+          MoreThan(getISODateOnlyString(new Date())),
+        ),
       },
     });
   }

@@ -95,7 +95,10 @@ export default defineComponent({
           );
         programData.value = {
           ...educationProgram,
-          isReadonly: isAESTUser.value || !educationProgram.isActive,
+          isReadonly:
+            isAESTUser.value ||
+            !educationProgram.isActive ||
+            educationProgram.isExpired,
         };
       } else {
         // Initialize programData with institution profile data.

@@ -81,6 +81,7 @@ export default defineComponent({
     assessmentDataLoaded: (
       applicationStatus: ApplicationStatus,
       noaApprovalStatus: AssessmentStatus,
+      currentAssessmentId: number,
     ) => {
       return !!applicationStatus && !!noaApprovalStatus;
     },
@@ -196,6 +197,7 @@ export default defineComponent({
         "assessmentDataLoaded",
         initialData.value.applicationStatus,
         initialData.value.noaApprovalStatus,
+        initialData.value.applicationCurrentAssessmentId,
       );
     };
 

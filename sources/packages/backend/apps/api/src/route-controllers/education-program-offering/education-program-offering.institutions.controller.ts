@@ -72,6 +72,7 @@ import {
   OFFERING_VALIDATION_CRITICAL_ERROR,
   OFFERING_VALIDATION_CSV_PARSE_ERROR,
   EDUCATION_PROGRAM_IS_NOT_ACTIVE,
+  EDUCATION_PROGRAM_IS_EXPIRED,
 } from "../../constants";
 import { OfferingCSVModel } from "../../services/education-program-offering/education-program-offering-import-csv.models";
 import { Request } from "express";
@@ -168,8 +169,9 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   @ApiUnprocessableEntityResponse({
     description:
       "Not able to a create an offering due to an invalid request or " +
-      "duplication error. An offering with the same name, year of study, start date and end date was found." +
-      "or the education program is not active.",
+      "duplication error. An offering with the same name, year of study, start date and end date was found or " +
+      "the education program is not active or " +
+      "the education program is expired. ",
   })
   @Post("location/:locationId/education-program/:programId")
   async createOffering(
@@ -199,6 +201,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
             throw new BadRequestException(error.objectInfo, error.message);
           case OFFERING_SAVE_UNIQUE_ERROR:
           case EDUCATION_PROGRAM_IS_NOT_ACTIVE:
+          case EDUCATION_PROGRAM_IS_EXPIRED:
             throw new UnprocessableEntityException(error.message);
         }
       }
@@ -221,8 +224,9 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     description:
       "Either offering for the program and location is not found " +
       "or the offering is not in the appropriate state to be updated " +
-      "or the request is invalid." +
-      "or the education program is not active.",
+      "or the request is invalid " +
+      "or program is not active and the offering cannot be updated " +
+      "or program is expired and the offering cannot be updated.",
   })
   @Patch(
     "location/:locationId/education-program/:programId/offering/:offeringId",
@@ -250,6 +254,11 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
         "Program is not active and the offering cannot be updated.",
       );
     }
+    if (offering.educationProgram.isExpired) {
+      throw new UnprocessableEntityException(
+        "Program is expired and the offering cannot be updated.",
+      );
+    }
 
     try {
       const offeringValidationModel =
@@ -270,6 +279,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
           case OFFERING_INVALID_OPERATION_IN_THE_CURRENT_STATE:
           case OFFERING_SAVE_UNIQUE_ERROR:
           case EDUCATION_PROGRAM_IS_NOT_ACTIVE:
+          case EDUCATION_PROGRAM_IS_EXPIRED:
             throw new UnprocessableEntityException(error.message);
           case OFFERING_VALIDATION_CRITICAL_ERROR:
             throw new BadRequestException(error.objectInfo, error.message);
@@ -316,6 +326,11 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     if (!offering.educationProgram.isActive) {
       throw new UnprocessableEntityException(
         "Program is not active and the offering cannot be updated.",
+      );
+    }
+    if (offering.educationProgram.isExpired) {
+      throw new UnprocessableEntityException(
+        "Program is expired and the offering cannot be updated.",
       );
     }
     await this.programOfferingService.updateEducationProgramOfferingBasicData(
@@ -451,8 +466,9 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   })
   @ApiUnprocessableEntityResponse({
     description:
-      "The request is not valid or offering for given program and location not found or not in valid status." +
-      "or the education program is not active.",
+      "The request is not valid or offering for given program and location not found or not in valid status or " +
+      "the education program is not active or" +
+      "the education program is expired.",
   })
   @ApiBadRequestResponse({
     description: "Not able to a create an offering due to an invalid request.",

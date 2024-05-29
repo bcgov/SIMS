@@ -263,35 +263,31 @@ export enum ECertFailedValidation {
   /**
    * Waiting for confirmation of enrolment to be completed.
    */
-  NonCompletedCOE,
+  NonCompletedCOE = "NonCompletedCOE",
   /**
    * Student SIN is invalid or the validation is pending.
    */
-  InvalidSIN,
+  InvalidSIN = "InvalidSIN",
   /**
    * Student MSFAA associated with the disbursement is cancelled.
    */
-  MSFAACanceled,
+  MSFAACanceled = "MSFAACanceled",
   /**
    * Student MSFAA associated with the disbursement is not signed.
    */
-  MSFAANotSigned,
-  /**
-   * Student MSFAA associated with the disbursement is not signed or is cancelled.
-   */
-  MSFAANotValid,
+  MSFAANotSigned = "MSFAANotSigned",
   /**
    * Student disability Status PD/PPD is not verified.
    */
-  DisabilityStatusNotConfirmed,
+  DisabilityStatusNotConfirmed = "DisabilityStatusNotConfirmed",
   /**
    * Student has an active 'StopFullTimeDisbursement' or 'StopPartTimeDisbursement'
    * restriction and the disbursement calculation will not proceed.
    */
-  HasStopDisbursementRestriction,
+  HasStopDisbursementRestriction = "HasStopDisbursementRestriction",
   /**
    * Lifetime maximum CSLP is reached.
    * Affects only part-time disbursements.
    */
-  LifetimeMaximumCSLP,
+  LifetimeMaximumCSLP = "LifetimeMaximumCSLP",
 }

@@ -51,5 +51,6 @@ export function createFakeEducationProgram(
   program.submittedBy = relations?.user;
   program.fieldOfStudyCode = 1;
   program.isActive = options?.initialValue?.isActive ?? true;
+  program.effectiveEndDate = options?.initialValue?.effectiveEndDate ?? null;
   return program;
 }
