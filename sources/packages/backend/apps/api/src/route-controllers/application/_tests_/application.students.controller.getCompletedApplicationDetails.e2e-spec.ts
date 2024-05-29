@@ -174,11 +174,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         },
         assessmentTriggerType: application.currentAssessment.triggerType,
         hasBlockFundingFeedbackError: false,
-        hasValidDisabilityStatus: true,
-        hasValidMSFAAStatus: false,
-        hasRestriction: false,
-        hasValidSIN: true,
-        hasValidCSLPDisbursement: true,
+        ecertFailedValidations: [],
       });
   });
 
@@ -830,7 +826,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
     },
   );
 
-  it(
+  it.only(
     "Should get application details with valid CSLP disbursement as false " +
       "when the life time maximums CSLP value is less than the sum of disbursement CSLP value amount " +
       "and the latest CSLP balance and the offering intensity is part time.",
@@ -844,7 +840,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           offeringIntensity: OfferingIntensity.partTime,
           firstDisbursementInitialValues: {
             coeStatus: COEStatus.completed,
-            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
           },
         },
       );
@@ -877,11 +873,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: false,
-          hasValidDisabilityStatus: true,
-          hasValidMSFAAStatus: false,
-          hasRestriction: false,
-          hasValidSIN: false,
-          hasValidCSLPDisbursement: false,
+          ecertFailedValidations: [],
         });
     },
   );

@@ -71,7 +71,12 @@ import {
   SFASPartTimeApplicationsService,
 } from "@sims/services/sfas";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
+import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
 import { ECertGenerationService } from "@sims/integrations/services";
+import {
+  ValidateDisbursementFullTimeStep,
+  ValidateDisbursementPartTimeStep,
+} from "@sims/integrations/services/disbursement-schedule/e-cert-processing-steps";
 
 @Module({
   imports: [AuthModule, ConfigModule, ATBCIntegrationModule],
@@ -140,6 +145,9 @@ import { ECertGenerationService } from "@sims/integrations/services";
     UserService,
     ECertGenerationService,
     StudentLoanBalanceSharedService,
+    ValidateDisbursementFullTimeStep,
+    ValidateDisbursementPartTimeStep,
+    ECertPreValidationService,
   ],
 })
 export class AppStudentsModule {}

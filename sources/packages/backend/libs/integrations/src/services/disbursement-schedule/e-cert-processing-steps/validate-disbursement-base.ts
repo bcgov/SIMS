@@ -39,6 +39,14 @@ export abstract class ValidateDisbursementBase {
       log.info(`Student MSFAA associated with the disbursement is not signed.`);
       validationResults.push(ECertFailedValidation.MSFAANotSigned);
     }
+    // MSFAA invalid.
+    if (
+      eCertDisbursement.disbursement.msfaaNumber.cancelledDate ||
+      !eCertDisbursement.disbursement.msfaaNumber.dateSigned
+    ) {
+      log.info(`Student MSFAA associated with the disbursement is not valid.`);
+      validationResults.push(ECertFailedValidation.MSFAANotValid);
+    }
     // Disability Status PD/PPD Verified.
     const disabilityStatusValidation = eCertDisbursement.disabilityDetails
       .calculatedPDPPDStatus

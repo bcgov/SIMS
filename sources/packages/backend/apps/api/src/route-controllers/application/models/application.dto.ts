@@ -18,6 +18,7 @@ import {
 } from "@sims/sims-db";
 import { JsonMaxSize } from "../../../utilities/class-validation";
 import { JSON_20KB } from "../../../constants";
+import { ECertFailedValidation } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
 
 export class SaveApplicationAPIInDTO {
   /**
@@ -166,7 +167,7 @@ export class ApplicationProgressDetailsAPIOutDTO {
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
   assessmentTriggerType?: AssessmentTriggerType;
   hasBlockFundingFeedbackError: boolean;
-  hasInvalidDisbursement: boolean;
+  hasEcertFailedValidations: boolean;
 }
 
 export class DisbursementDetailsAPIOutDTO {
@@ -179,9 +180,6 @@ export class EnrolmentApplicationDetailsAPIOutDTO {
   firstDisbursement?: DisbursementDetailsAPIOutDTO;
   secondDisbursement?: DisbursementDetailsAPIOutDTO;
   assessmentTriggerType?: AssessmentTriggerType;
-  verifiedDisabilityStatus?: boolean;
-  hasValidMSFAAStatus?: boolean;
-  hasRestriction?: boolean;
 }
 
 export class CompletedApplicationDetailsAPIOutDTO extends EnrolmentApplicationDetailsAPIOutDTO {
@@ -191,11 +189,7 @@ export class CompletedApplicationDetailsAPIOutDTO extends EnrolmentApplicationDe
   applicationOfferingChangeRequestId?: number;
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
   hasBlockFundingFeedbackError: boolean;
-  hasValidDisabilityStatus?: boolean;
-  hasValidMSFAAStatus?: boolean;
-  hasRestriction?: boolean;
-  hasValidSIN?: boolean;
-  hasValidCSLPDisbursement?: boolean;
+  ecertFailedValidations: ECertFailedValidation[];
 }
 
 export class ApplicationAssessmentStatusDetailsAPIOutDTO {

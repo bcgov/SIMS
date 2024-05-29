@@ -106,37 +106,14 @@
     content="You have applied for disability funding on your application, but your
       disability status on your student profile has not yet been verified. Only
       once your status is verified will you be able to receive funding."
-    v-if="!hasValidDisbursement"
+    v-if="!!ecertFailedValidationDetails.length"
     ><template #content
       ><ul>
-        <li v-if="!assessmentDetails.hasValidDisabilityStatus">
-          You have applied for disability funding on your application, but your
-          disability status on your student profile has not yet been verified.
-          Only once your status is verified will you be able to receive funding.
-        </li>
-        <li v-if="!assessmentDetails.hasValidMSFAAStatus">
-          You have not yet signed your MSFAA number with the National Student
-          Loans Service Center. Your MSFAA number was issued on your Notice of
-          Assessment - you must use that number to sign your Master Student
-          Financial Assistance Agreement with NSLSC before you are eligible to
-          receive your funding. Alternatively, this could be due to your MSFAA
-          being cancelled.
-        </li>
-        <li v-if="assessmentDetails.hasRestriction">
-          You have a restriction on your account making you ineligible to
-          receive funding. Please contact StudentAid BC if you still require
-          assistance in identifying the cause of this issue and help resolving
-          the issue.
-        </li>
-        <li v-if="!assessmentDetails.hasValidSIN">
-          Your SIN is invalid and your funding cannot be issued. Contact
-          StudentAid BC for assistance.
-        </li>
-        <li v-if="!assessmentDetails.hasValidCSLPDisbursement">
-          Your current funding assessment would exceed your allowable lifetime
-          limit for Part-Time Canada Student Loan. Your assessment must be
-          adjusted to stay within your lifetime limit. Contact StudentAid BC for
-          assistance.
+        <li
+          v-for="ecertFailedValidationDetail in ecertFailedValidationDetails"
+          :key="ecertFailedValidationDetail.failedType"
+        >
+          {{ ecertFailedValidationDetail.failedMessage }}
         </li>
       </ul>
     </template>
@@ -235,6 +212,10 @@ import MultipleDisbursementBanner from "@/components/students/applicationTracker
 import RelatedApplicationChanged from "@/components/students/applicationTracker/RelatedApplicationChanged.vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
+import {
+  EcertFailedValidationDetail,
+  ECERT_FAILED_MESSAGES,
+} from "@/constants";
 
 export default defineComponent({
   components: {
@@ -253,7 +234,7 @@ export default defineComponent({
     const router = useRouter();
     const assessmentDetails = ref({} as CompletedApplicationDetailsAPIOutDTO);
     const multipleCOEDenialReason = ref<string>();
-    const hasValidDisbursement = ref<boolean>();
+    const ecertFailedValidationDetails = ref<EcertFailedValidationDetail[]>([]);
 
     onMounted(async () => {
       assessmentDetails.value =
@@ -267,12 +248,18 @@ export default defineComponent({
         assessmentDetails.value.firstDisbursement?.coeDenialReason ??
         assessmentDetails.value.secondDisbursement?.coeDenialReason;
 
-      hasValidDisbursement.value =
-        assessmentDetails.value.hasValidDisabilityStatus &&
-        assessmentDetails.value.hasValidMSFAAStatus &&
-        !assessmentDetails.value.hasRestriction &&
-        assessmentDetails.value.hasValidSIN &&
-        assessmentDetails.value.hasValidCSLPDisbursement;
+      console.info(
+        "assessmentDetails.value.ecertFailedValidations: ",
+        assessmentDetails.value.ecertFailedValidations,
+      );
+      ECERT_FAILED_MESSAGES.forEach((detail) => {
+        if (
+          assessmentDetails.value.ecertFailedValidations.includes(
+            detail.failedType,
+          )
+        )
+          ecertFailedValidationDetails.value.push(detail);
+      });
     });
 
     const hasDisbursementEvent = computed(() => {
@@ -301,7 +288,8 @@ export default defineComponent({
     return {
       assessmentDetails,
       multipleCOEDenialReason,
-      hasValidDisbursement,
+      ecertFailedValidationDetails,
+      ECERT_FAILED_MESSAGES,
       COEStatus,
       AssessmentTriggerType,
       StudentAppealStatus,

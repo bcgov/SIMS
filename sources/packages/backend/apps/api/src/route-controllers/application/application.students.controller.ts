@@ -74,20 +74,15 @@ import { ApplicationData } from "@sims/sims-db/entities/application.model";
 import {
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
-  DisabilityStatus,
   OfferingIntensity,
-  RestrictionActionType,
   StudentAppealStatus,
 } from "@sims/sims-db";
 import {
   AssessmentSequentialProcessingService,
   ConfirmationOfEnrollmentService,
-  StudentLoanBalanceSharedService,
 } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
-import { DisbursementEligibilityValidation } from "@sims/integrations/services/disbursement-schedule/disbursement-eligibility-validation";
-import { ECertGenerationService } from "@sims/integrations/services";
-import { CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE } from "@sims/services/constants";
+import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -109,8 +104,7 @@ export class ApplicationStudentsController extends BaseController {
     private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
     private readonly configService: ConfigService,
     private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
-    private readonly eCertGenerationService: ECertGenerationService,
-    private readonly studentLoanBalanceSharedService: StudentLoanBalanceSharedService,
+    private readonly eCertPreValidationService: ECertPreValidationService,
   ) {
     super();
   }
@@ -698,24 +692,8 @@ export class ApplicationStudentsController extends BaseController {
     const [firstDisbursement, secondDisbursement] = disbursements;
     const [scholasticStandingChange] = application.studentScholasticStandings;
 
-    // Create a new disbursement validation FT/PT object to access its properties for validation.
-    const disbursementValidation = new DisbursementEligibilityValidation(
-      this.eCertGenerationService,
-      this.studentLoanBalanceSharedService,
-      firstDisbursement,
-      application,
-    );
-    const hasValidCSLPDisbursement =
-      await disbursementValidation.validateCSLPDisbursement(
-        CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE,
-      );
-    const hasInvalidDisbursement = !(
-      disbursementValidation.hasValidDisabilityStatus &&
-      disbursementValidation.hasValidMSFAAStatus &&
-      !disbursementValidation.hasRestriction &&
-      disbursementValidation.hasValidSIN &&
-      hasValidCSLPDisbursement
-    );
+    const ecertFailedValidations =
+      await this.eCertPreValidationService.executePreValidations(applicationId);
 
     return {
       applicationStatus: application.applicationStatus,
@@ -729,7 +707,7 @@ export class ApplicationStudentsController extends BaseController {
       applicationOfferingChangeRequestStatus,
       assessmentTriggerType,
       hasBlockFundingFeedbackError,
-      hasInvalidDisbursement,
+      hasEcertFailedValidations: !!ecertFailedValidations.length,
     };
   }
 
@@ -758,56 +736,11 @@ export class ApplicationStudentsController extends BaseController {
       );
     }
 
-    // Verify Disability Status PD/PPD.
-    const verifiedDisabilityStatus = application.currentAssessment.workflowData
-      .calculatedData.pdppdStatus
-      ? [(DisabilityStatus.PD, DisabilityStatus.PPD)].includes(
-          application.student.disabilityStatus,
-        )
-      : true;
-
-    // Verify MSFAA status which is signed OR cancelled.
-    let hasSignature = true;
-    let isNotCancelled = true;
-    const disbursementSchedules =
-      application.currentAssessment.disbursementSchedules;
-    disbursementSchedules.forEach((disbursementSchedule) => {
-      hasSignature =
-        hasSignature && !!disbursementSchedule.msfaaNumber?.dateSigned;
-      isNotCancelled =
-        isNotCancelled && !disbursementSchedule.msfaaNumber?.cancelledDate;
-    });
-    const hasValidMSFAAStatus = hasSignature && isNotCancelled;
-
-    // Get restriction records from the student restrictions.
-    // Filter restrictions based on offering intensity.
-    // Remove restrictions with duplicated restriction code.
-    let hasRestriction = false;
-    const studentRestrictions = application.student.studentRestrictions;
-    if (studentRestrictions.length > 0) {
-      // Filter restriction action type based on offering intensity.
-      if (
-        application.currentAssessment.offering.offeringIntensity ===
-        OfferingIntensity.partTime
-      ) {
-        const filterStudentRestrictions = studentRestrictions.filter(
-          (studentRestriction) =>
-            studentRestriction.restriction.actionType.includes(
-              RestrictionActionType.StopPartTimeDisbursement,
-            ),
-        );
-        hasRestriction = filterStudentRestrictions.length > 0;
-      }
-    }
-
     return {
       ...this.applicationControllerService.transformToEnrolmentApplicationDetailsAPIOutDTO(
         application.currentAssessment.disbursementSchedules,
       ),
       assessmentTriggerType: application.currentAssessment.triggerType,
-      verifiedDisabilityStatus,
-      hasValidMSFAAStatus,
-      hasRestriction,
     };
   }
 
@@ -863,19 +796,8 @@ export class ApplicationStudentsController extends BaseController {
       );
     const [scholasticStandingChange] = application.studentScholasticStandings;
 
-    // Create a new disbursement validation FT/PT object to access its properties for validation.
-    const [firstDisbursement] =
-      application.currentAssessment.disbursementSchedules;
-    const disbursementValidation = new DisbursementEligibilityValidation(
-      this.eCertGenerationService,
-      this.studentLoanBalanceSharedService,
-      firstDisbursement,
-      application,
-    );
-    const hasValidCSLPDisbursement =
-      await disbursementValidation.validateCSLPDisbursement(
-        CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE,
-      );
+    const ecertFailedValidations =
+      await this.eCertPreValidationService.executePreValidations(applicationId);
 
     return {
       firstDisbursement: enrolmentDetails.firstDisbursement,
@@ -887,11 +809,7 @@ export class ApplicationStudentsController extends BaseController {
       applicationOfferingChangeRequestStatus:
         applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus,
       hasBlockFundingFeedbackError,
-      hasValidDisabilityStatus: disbursementValidation.hasValidDisabilityStatus,
-      hasValidMSFAAStatus: disbursementValidation.hasValidMSFAAStatus,
-      hasRestriction: disbursementValidation.hasRestriction,
-      hasValidSIN: disbursementValidation.hasValidSIN,
-      hasValidCSLPDisbursement,
+      ecertFailedValidations: ecertFailedValidations,
     };
   }
 }

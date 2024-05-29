@@ -277,6 +277,10 @@ export enum ECertFailedValidation {
    */
   MSFAANotSigned,
   /**
+   * Student MSFAA associated with the disbursement is not signed or is cancelled.
+   */
+  MSFAANotValid,
+  /**
    * Student disability Status PD/PPD is not verified.
    */
   DisabilityStatusNotConfirmed,

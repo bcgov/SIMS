@@ -11,7 +11,6 @@ import { getRestrictionByActionType } from "./e-cert-steps-utils";
 import { CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE } from "@sims/services/constants";
 import { ECertGenerationService } from "../e-cert-generation.service";
 import { StudentLoanBalanceSharedService } from "@sims/services";
-import { DisbursementEligibilityValidation } from "@sims/integrations/services/disbursement-schedule/disbursement-eligibility-validation";
 import { ECertPreValidator } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation/e-cert-pre-validation-service-models";
 
 /**
@@ -112,23 +111,26 @@ export class ValidateDisbursementPartTimeStep
     if (!disbursementCSLP?.valueAmount) {
       return true;
     }
-
-    const disbursementValidation = new DisbursementEligibilityValidation(
-      this.eCertGenerationService,
-      this.studentLoanBalanceSharedService,
-      eCertDisbursement.disbursement,
-      null,
-      eCertDisbursement,
-    );
-
-    const hasValidDisbursement =
-      await disbursementValidation.validateCSLPDisbursement(
-        CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE,
+    // Fetch lifetime maximum of CSLP from the workflow data.
+    const lifetimeMaximumsCSLPPromise =
+      this.eCertGenerationService.getCSLPLifetimeMaximums(
+        eCertDisbursement.assessmentId,
         entityManager,
       );
-
+    // Get latest CSLP monthly balance.
+    const latestCSLPBalancePromise =
+      this.studentLoanBalanceSharedService.getLatestCSLPBalance(
+        eCertDisbursement.studentId,
+      );
+    const [lifetimeMaximumsCSLP, latestCSLPBalance] = await Promise.all([
+      lifetimeMaximumsCSLPPromise,
+      latestCSLPBalancePromise,
+    ]);
     // Check if lifetime maximum CSLP is less than or equal to the sum of disbursed CSLP and latest student loan balance.
-    if (hasValidDisbursement) {
+    if (
+      lifetimeMaximumsCSLP >=
+      disbursementCSLP.valueAmount + latestCSLPBalance
+    ) {
       log.info(
         "Lifetime maximum CSLP is greater than or equal to the sum of disbursed CSLP and latest student loan balance.",
       );

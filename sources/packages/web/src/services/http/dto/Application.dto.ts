@@ -12,6 +12,7 @@ import {
   StudentScholasticStandingChangeType,
   ApplicationOfferingChangeRequestStatus,
   StudentAssessmentStatus,
+  ECertFailedValidation,
 } from "@/types";
 
 export interface InProgressApplicationDetailsAPIOutDTO {
@@ -110,7 +111,7 @@ export interface ApplicationProgressDetailsAPIOutDTO {
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
   assessmentTriggerType?: AssessmentTriggerType;
   hasBlockFundingFeedbackError: boolean;
-  hasInvalidDisbursement: boolean;
+  hasEcertFailedValidations: boolean;
 }
 
 export interface DisbursementDetailsAPIOutDTO {
@@ -123,9 +124,6 @@ export interface EnrolmentApplicationDetailsAPIOutDTO {
   firstDisbursement?: DisbursementDetailsAPIOutDTO;
   secondDisbursement?: DisbursementDetailsAPIOutDTO;
   assessmentTriggerType: AssessmentTriggerType;
-  verifiedDisabilityStatus: boolean;
-  hasValidMSFAAStatus: boolean;
-  hasRestriction: boolean;
 }
 
 export interface CompletedApplicationDetailsAPIOutDTO
@@ -138,11 +136,7 @@ export interface CompletedApplicationDetailsAPIOutDTO
   applicationOfferingChangeRequestId?: number;
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
   hasBlockFundingFeedbackError: boolean;
-  hasValidDisabilityStatus: boolean;
-  hasValidMSFAAStatus: boolean;
-  hasRestriction: boolean;
-  hasValidSIN: boolean;
-  hasValidCSLPDisbursement: boolean;
+  ecertFailedValidations: ECertFailedValidation[];
 }
 
 export interface ApplicationAssessmentStatusDetailsAPIOutDTO {
