@@ -3,12 +3,16 @@ import { ProcessSummary } from "@sims/utilities/logger";
 import { EntityManager } from "typeorm";
 import { ECertProcessStep, ValidateDisbursementBase } from ".";
 import { Injectable } from "@nestjs/common";
-import { EligibleECertDisbursement } from "../disbursement-schedule.models";
+import {
+  ECertFailedValidation,
+  EligibleECertDisbursement,
+} from "../disbursement-schedule.models";
 import { getRestrictionByActionType } from "./e-cert-steps-utils";
 import { CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE } from "@sims/services/constants";
 import { ECertGenerationService } from "../e-cert-generation.service";
 import { StudentLoanBalanceSharedService } from "@sims/services";
 import { DisbursementEligibilityValidation } from "@sims/integrations/services/disbursement-schedule/disbursement-eligibility-validation";
+import { ECertPreValidator } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation/e-cert-pre-validation-service-models";
 
 /**
  * Specific e-Cert validations for part-time.
@@ -16,7 +20,7 @@ import { DisbursementEligibilityValidation } from "@sims/integrations/services/d
 @Injectable()
 export class ValidateDisbursementPartTimeStep
   extends ValidateDisbursementBase
-  implements ECertProcessStep
+  implements ECertProcessStep, ECertPreValidator
 {
   constructor(
     private readonly eCertGenerationService: ECertGenerationService,
@@ -35,8 +39,35 @@ export class ValidateDisbursementPartTimeStep
     entityManager: EntityManager,
     log: ProcessSummary,
   ): Promise<boolean> {
+    const validations = await this.executePreValidations(
+      eCertDisbursement,
+      entityManager,
+      log,
+    );
+    return !validations.length;
+  }
+
+  /**
+   * Allow the evaluation of conditions that would block
+   * an eligible disbursement to be disbursed.
+   * The intention to to know ahead of time of the existence
+   * of such conditions in a way that an action can take
+   * to allow the money to be disbursed.
+   * @param eCertDisbursement eligible disbursement to be validated.
+   * @param _entityManager keep it compliant with the required parameters
+   * used by {@link ECertProcessStep}.
+   * @param log keep it compliant with the required parameters
+   * used by {@link ECertProcessStep}.
+   * @returns list of failed validations, otherwise an empty array if
+   * no blocking conditions were found.
+   */
+  async executePreValidations(
+    eCertDisbursement: EligibleECertDisbursement,
+    entityManager: EntityManager,
+    log: ProcessSummary,
+  ): Promise<ECertFailedValidation[]> {
     log.info("Executing part-time disbursement validations.");
-    let shouldContinue = super.validate(eCertDisbursement, log);
+    const validationResults = super.validate(eCertDisbursement, log);
     // Validate stop part-time disbursement restrictions.
     const stopPartTimeDisbursement = getRestrictionByActionType(
       eCertDisbursement,
@@ -46,7 +77,9 @@ export class ValidateDisbursementPartTimeStep
       log.info(
         `Student has an active '${RestrictionActionType.StopPartTimeDisbursement}' restriction and the disbursement calculation will not proceed.`,
       );
-      shouldContinue = false;
+      validationResults.push(
+        ECertFailedValidation.HasStopDisbursementRestriction,
+      );
     }
     const validateLifetimeMaximumCSLP = await this.validateCSLPLifetimeMaximum(
       eCertDisbursement,
@@ -54,9 +87,9 @@ export class ValidateDisbursementPartTimeStep
       log,
     );
     if (!validateLifetimeMaximumCSLP) {
-      shouldContinue = false;
+      validationResults.push(ECertFailedValidation.LifetimeMaximumCSLP);
     }
-    return shouldContinue;
+    return validationResults;
   }
 
   /**
