@@ -59,7 +59,7 @@
               <td data-cy="programStatus">
                 <status-chip-program
                   :status="item.programStatus"
-                  :is-active="item.isActive"
+                  :is-active="item.isActive && !item.isExpired"
                 ></status-chip-program>
               </td>
               <td>

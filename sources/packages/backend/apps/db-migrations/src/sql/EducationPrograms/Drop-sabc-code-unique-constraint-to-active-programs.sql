@@ -1,0 +1,1 @@
+DROP INDEX sims.institution_id_sabc_code_unique;

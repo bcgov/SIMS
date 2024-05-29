@@ -39,5 +39,6 @@ export function createFakeEducationProgram(
   program.programIntensity = ProgramIntensity.fullTime;
   program.submittedBy = relations?.auditUser;
   program.isActive = options?.initialValues?.isActive ?? true;
+  program.effectiveEndDate = options?.initialValues?.effectiveEndDate ?? null;
   return program;
 }

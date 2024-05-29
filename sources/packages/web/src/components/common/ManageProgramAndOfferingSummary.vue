@@ -11,7 +11,9 @@
       <offering-summary
         :programId="programId"
         :locationId="locationId"
-        :isEditAllowed="educationProgram.isActive"
+        :isEditAllowed="
+          educationProgram.isActive && !educationProgram.isExpired
+        "
         :institutionId="institutionId"
       />
     </v-container>
