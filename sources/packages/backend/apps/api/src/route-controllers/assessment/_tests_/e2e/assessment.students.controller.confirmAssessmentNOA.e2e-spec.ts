@@ -41,7 +41,8 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
 
   it("Should allow NOA approval for the current application assessment when the application has multiple assessments.", async () => {
     // Arrange
-    const newAssessmentID = await createApplicationAndAssessments(true);
+    const assessmentIDS = await createApplicationAndAssessments();
+    const newAssessmentID = assessmentIDS["currentAssessmentId"];
 
     const currentEndpoint = `/students/assessment/${newAssessmentID}/confirm-assessment`;
 
@@ -71,7 +72,8 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
 
   it("Should not allow NOA approval for old application assessments when the application has multiple assessments.", async () => {
     // Arrange
-    const oldAssessmentID = await createApplicationAndAssessments(false);
+    const assessmentIDS = await createApplicationAndAssessments();
+    const oldAssessmentID = assessmentIDS["oldAssessmentId"];
 
     const oldEndpoint = `/students/assessment/${oldAssessmentID}/confirm-assessment`;
 
@@ -88,12 +90,12 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
 
   /**
    * Creates an application with two assessments.
-   * @param shouldReturnCurrent Flag to either return the current or old ID.
-   * @returns Old or new Assessment ID.
+   * @returns Old and new Assessment ID.
    */
-  async function createApplicationAndAssessments(
-    shouldReturnCurrent: boolean,
-  ): Promise<number> {
+  async function createApplicationAndAssessments(): Promise<{
+    currentAssessmentId: number;
+    oldAssessmentId: number;
+  }> {
     // Create the new student to be mocked as the authenticated one.
     const student = await saveFakeStudent(db.dataSource);
     // Mock user services to return the saved student.
@@ -154,7 +156,10 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
       ],
     });
     await db.disbursementSchedule.save(newAssessmentDisbursement);
-    return shouldReturnCurrent ? newCurrentAssessment.id : oldAssessment.id;
+    return {
+      currentAssessmentId: newCurrentAssessment.id,
+      oldAssessmentId: oldAssessment.id,
+    };
   }
 
   afterAll(async () => {

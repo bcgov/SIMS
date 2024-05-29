@@ -97,9 +97,8 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
       ...createFakeSingleIndependentStudentData(),
       // Application with PIR not required.
       studentDataSelectedOffering: 1,
+      applicationStatus: ApplicationStatus.Completed,
     };
-
-    assessmentConsolidatedData.applicationStatus = ApplicationStatus.Completed;
 
     const workersMockedData = createWorkersMockedData([
       createLoadAssessmentDataTaskMock({ assessmentConsolidatedData }),
@@ -113,7 +112,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
 
     const currentAssessmentId = assessmentId++;
 
-    // Act/Assert
+    // Act
     const assessmentGatewayResponse =
       await zeebeClientProvider.createProcessInstanceWithResult({
         bpmnProcessId: "assessment-gateway",
@@ -123,6 +122,8 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
         },
         requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
       });
+
+    // Assert
     expectToPassThroughServiceTasks(
       assessmentGatewayResponse.variables,
       WorkflowServiceTasks.AssociateWorkflowInstance,
@@ -147,9 +148,8 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
       ...createFakeSingleIndependentStudentData(),
       // Application with PIR not required.
       studentDataSelectedOffering: 1,
+      applicationHasNOAApproval: true,
     };
-
-    assessmentConsolidatedData.applicationHasNOAApproval = true;
 
     const workersMockedData = createWorkersMockedData([
       createLoadAssessmentDataTaskMock({ assessmentConsolidatedData }),
