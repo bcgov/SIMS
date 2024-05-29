@@ -39,9 +39,61 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
     db = createE2EDataSources(dataSource);
   });
 
-  it("Should allow NOA approval only for the current application assessment when the application has multiple assessments.", async () => {
+  it("Should allow NOA approval for the current application assessment when the application has multiple assessments.", async () => {
     // Arrange
+    const newAssessmentID = await createApplicationAndAssessments(true);
 
+    const currentEndpoint = `/students/assessment/${newAssessmentID}/confirm-assessment`;
+
+    const studentUserToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(currentEndpoint)
+      .auth(studentUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+
+    const updatedAssessment = await db.studentAssessment.findOne({
+      select: {
+        id: true,
+        noaApprovalStatus: true,
+      },
+      where: { id: newAssessmentID },
+    });
+
+    expect(updatedAssessment).toEqual({
+      id: newAssessmentID,
+      noaApprovalStatus: AssessmentStatus.completed,
+    });
+  });
+
+  it("Should not allow NOA approval for old application assessments when the application has multiple assessments.", async () => {
+    // Arrange
+    const oldAssessmentID = await createApplicationAndAssessments(false);
+
+    const oldEndpoint = `/students/assessment/${oldAssessmentID}/confirm-assessment`;
+
+    const studentUserToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(oldEndpoint)
+      .auth(studentUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY);
+  });
+
+  /**
+   * Creates an application with two assessments.
+   * @param shouldReturnCurrent Flag to either return the current or old ID.
+   * @returns Old or new Assessment ID.
+   */
+  async function createApplicationAndAssessments(
+    shouldReturnCurrent: boolean,
+  ): Promise<number> {
     // Create the new student to be mocked as the authenticated one.
     const student = await saveFakeStudent(db.dataSource);
     // Mock user services to return the saved student.
@@ -102,37 +154,8 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
       ],
     });
     await db.disbursementSchedule.save(newAssessmentDisbursement);
-
-    const oldEndpoint = `/students/assessment/${oldAssessment.id}/confirm-assessment`;
-    const currentEndpoint = `/students/assessment/${application.currentAssessment.id}/confirm-assessment`;
-
-    const studentUserToken = await getStudentToken(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-    );
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .patch(oldEndpoint)
-      .auth(studentUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.UNPROCESSABLE_ENTITY);
-
-    await request(app.getHttpServer())
-      .patch(currentEndpoint)
-      .auth(studentUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK);
-
-    const updatedAssessment = await db.studentAssessment.findOne({
-      select: {
-        id: true,
-        noaApprovalStatus: true,
-      },
-      where: { id: application.currentAssessment.id },
-    });
-    expect(updatedAssessment).toEqual({
-      id: application.currentAssessment.id,
-      noaApprovalStatus: AssessmentStatus.completed,
-    });
-  });
+    return shouldReturnCurrent ? newCurrentAssessment.id : oldAssessment.id;
+  }
 
   afterAll(async () => {
     await app?.close();
