@@ -18,6 +18,10 @@ export default defineComponent({
   setup() {
     const reportList = [
       {
+        description: "Institution Designation",
+        id: "Institution_Designation_Report",
+      },
+      {
         description: "Forecast disbursements",
         id: "Disbursement_Forecast_Report",
       },

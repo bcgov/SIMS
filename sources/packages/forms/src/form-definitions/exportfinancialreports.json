@@ -303,7 +303,8 @@
                 "eq": "Offering_Details_Report"
               },
               "properties": {},
-              "lockKey": true
+              "lockKey": true,
+              "isNew": false
             },
             {
               "label": "Columns",
@@ -558,7 +559,7 @@
                 "eq": "",
                 "json": ""
               },
-              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Data_Inventory_Report'",
+              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Data_Inventory_Report'\n    || data.reportName === 'Institution_Designation_Report'",
               "logic": [],
               "attributes": {},
               "overlay": {
@@ -614,7 +615,8 @@
               "tree": false,
               "lazyLoad": false,
               "id": "ecn2x9",
-              "hideLabel": true
+              "hideLabel": true,
+              "isNew": false
             },
             {
               "label": "Intensity",
@@ -680,12 +682,12 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": "",
                 "json": ""
               },
-              "customConditional": "",
+              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Data_Inventory_Report'",
               "logic": [],
               "attributes": {},
               "overlay": {
@@ -713,7 +715,8 @@
               "allowMultipleMasks": false,
               "addons": [],
               "fieldSet": false,
-              "id": "enqlwsq"
+              "id": "enqlwsq",
+              "isNew": false
             }
           ],
           "placeholder": "",
