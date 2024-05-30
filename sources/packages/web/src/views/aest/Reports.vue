@@ -19,6 +19,7 @@ export default defineComponent({
     const reportList = [
       { description: "Data Inventory", id: "Data_Inventory_Report" },
       { description: "Disbursements", id: "Disbursement_Report" },
+      { description: "eCert Errors", id: "ECert_Errors_Report" },
       {
         description: "Forecast disbursements",
         id: "Disbursement_Forecast_Report",
