@@ -1,9 +1,9 @@
-INSERT INTO 
+INSERT INTO
     sims.report_configs (report_name, report_sql)
-VALUES 
+VALUES
     (
-    'ECert_Errors_Report',
-    'select
+        'ECert_Errors_Report',
+        'select
         disbursement_schedules.id as "eCert Number",
         applications.application_number as "Application Number",
         users.first_name as "First Name",
@@ -13,8 +13,7 @@ VALUES
         education_programs_offerings.study_start_date as "Study Start Date",
         education_programs_offerings.study_end_date as "Study End Date",
         to_char(disbursement_feedback_errors.date_received, ''YYYY-MM-DD'') as "Error Logged Date",
-        STRING_AGG(ecert_feedback_errors.error_code,
-        ', ') as "Error Codes"
+        STRING_AGG(ecert_feedback_errors.error_code,'', '') as "Error Codes"
     from
         sims.disbursement_feedback_errors
     inner join sims.ecert_feedback_errors on
@@ -46,4 +45,5 @@ VALUES
         education_programs_offerings.study_end_date,
         disbursement_feedback_errors.date_received
     order by
-        disbursement_schedules.id');
+        disbursement_schedules.id;'
+    );
