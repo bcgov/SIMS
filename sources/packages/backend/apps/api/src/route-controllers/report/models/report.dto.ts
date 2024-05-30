@@ -18,6 +18,7 @@ enum MinistryReportNames {
   ForecastDisbursements = "Disbursement_Forecast_Report",
   Disbursements = "Disbursement_Report",
   DataInventory = "Data_Inventory_Report",
+  ECertErrors = "ECert_Errors",
 }
 
 /**

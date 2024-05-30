@@ -4,9 +4,7 @@
   "path": "exportfinancialreports",
   "type": "form",
   "display": "form",
-  "tags": [
-    "common"
-  ],
+  "tags": ["common"],
   "components": [
     {
       "title": "Export Financial Report Panel",
@@ -200,7 +198,8 @@
           },
           "id": "epfngcm",
           "defaultValue": "",
-          "lockKey": true
+          "lockKey": true,
+          "isNew": false
         },
         {
           "label": "Container",
@@ -303,7 +302,8 @@
                 "eq": "Offering_Details_Report"
               },
               "properties": {},
-              "lockKey": true
+              "lockKey": true,
+              "isNew": false
             },
             {
               "label": "Columns",
@@ -558,7 +558,7 @@
                 "eq": "",
                 "json": ""
               },
-              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Data_Inventory_Report'",
+              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Data_Inventory_Report'\n    || data.reportName === 'ECert_Errors'",
               "logic": [],
               "attributes": {},
               "overlay": {
@@ -713,7 +713,8 @@
               "allowMultipleMasks": false,
               "addons": [],
               "fieldSet": false,
-              "id": "enqlwsq"
+              "id": "enqlwsq",
+              "isNew": false
             }
           ],
           "placeholder": "",
@@ -734,10 +735,12 @@
           "addons": [],
           "tree": true,
           "lazyLoad": false,
-          "id": "ekcfpz"
+          "id": "ekcfpz",
+          "isNew": false
         }
       ],
-      "id": "eouyt8n"
+      "id": "eouyt8n",
+      "isNew": false
     },
     {
       "label": "applicationId",
