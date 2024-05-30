@@ -6,13 +6,13 @@ export class CreateECertErrorsReport1717081412569
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Create-eCert-errors-report.sql", "Reports"),
+      getSQLFileData("Create-e-cert-errors-report.sql", "Reports"),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Drop-eCert-errors-report.sql", "Reports"),
+      getSQLFileData("Rollback-create-e-cert-errors-report.sql", "Reports"),
     );
   }
 }
