@@ -248,10 +248,6 @@ export default defineComponent({
         assessmentDetails.value.firstDisbursement?.coeDenialReason ??
         assessmentDetails.value.secondDisbursement?.coeDenialReason;
 
-      console.info(
-        "assessmentDetails.value.ecertFailedValidations: ",
-        assessmentDetails.value.ecertFailedValidations,
-      );
       ECERT_FAILED_MESSAGES.forEach((detail) => {
         if (
           assessmentDetails.value.ecertFailedValidations.includes(

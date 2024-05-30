@@ -24,7 +24,6 @@ import {
   ApplicationStatus,
   AssessmentTriggerType,
   COEStatus,
-  DisabilityStatus,
   DisbursementScheduleStatus,
   OfferingIntensity,
   RestrictionActionType,
@@ -32,7 +31,6 @@ import {
   StudentAppealStatus,
 } from "@sims/sims-db";
 import { ArrayContains } from "typeorm";
-import { CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE } from "@sims/services/constants";
 import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
 
 describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () => {
@@ -150,7 +148,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
           ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
         assessmentTriggerType: application.currentAssessment.triggerType,
         hasBlockFundingFeedbackError: false,
-        hasInvalidDisbursement: true,
+        hasEcertFailedValidations: false,
       });
   });
 
@@ -192,7 +190,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
         secondCOEStatus: secondDisbursement.coeStatus,
         assessmentTriggerType: AssessmentTriggerType.RelatedApplicationChanged,
         hasBlockFundingFeedbackError: false,
-        hasInvalidDisbursement: true,
+        hasEcertFailedValidations: false,
       });
   });
 
@@ -246,7 +244,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
           firstCOEStatus: COEStatus.completed,
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: false,
-          hasInvalidDisbursement: true,
+          hasEcertFailedValidations: false,
         });
     },
   );
@@ -301,7 +299,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
           firstCOEStatus: COEStatus.completed,
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: true,
-          hasInvalidDisbursement: true,
+          hasEcertFailedValidations: false,
         });
     },
   );
@@ -353,16 +351,15 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
           firstCOEStatus: COEStatus.completed,
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: false,
-          hasInvalidDisbursement: true,
+          hasEcertFailedValidations: false,
         });
     },
   );
 
   it(
-    "Should get application progress details with invalid disbursement as false when the student has valid disability status, " +
-      "the student has a valid SIN, the MSFAA number is signed and the cancelled date is null, student doesn't have any student restrictions, " +
-      "the disbursement CSLP value amount is greater than the sum of disbursement CSLP value amount and the latest CSLP balance and " +
-      "the offering intensity is part time.",
+    "Should get application progress details with ecert failed validations array having invalid SIN for " +
+      "an application with its first disbursement having pending schedule status when " +
+      "the student's inValidSIN is false and the offering intensity is part time.",
     async () => {
       // Arrange
       const application = await saveFakeApplicationDisbursements(
@@ -373,27 +370,14 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
           offeringIntensity: OfferingIntensity.partTime,
           firstDisbursementInitialValues: {
             coeStatus: COEStatus.completed,
-            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
           },
         },
       );
-
-      // Ensure that the student's disability status is valid.
-      application.currentAssessment.workflowData.calculatedData.pdppdStatus =
-        true;
-      application.student.disabilityStatus = DisabilityStatus.PD;
-
-      // Ensure that the student has a valid SIN.
-      application.student.sinValidation = createFakeSINValidation({
-        student,
-      });
-      await db.student.save(application.student);
-      await db.application.save(application);
-
-      // Ensure that the MSFAA number is signed and the cancelled date is null.
       const [firstDisbursement] =
         application.currentAssessment.disbursementSchedules;
-      firstDisbursement.msfaaNumber = createFakeMSFAANumber(
+
+      const msfaaNumber = createFakeMSFAANumber(
         {
           student,
           referenceApplication: application,
@@ -402,25 +386,18 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
           msfaaState: MSFAAStates.Signed,
         },
       );
-      await db.msfaaNumber.save(firstDisbursement.msfaaNumber);
+      await db.msfaaNumber.save(msfaaNumber);
+
+      firstDisbursement.msfaaNumber = msfaaNumber;
       await db.disbursementSchedule.save(firstDisbursement);
 
-      // Ensure that the student doesn't have any student restrictions.
-      const studentRestrictions = await db.studentRestriction.find({
-        select: { id: true, student: { id: true } },
-        relations: { student: true },
-        where: { student: { id: application.student.id } },
-      });
-      await db.studentRestriction.remove(studentRestrictions);
-
-      // Ensure that the disbursement CSLP value amount is greater than the sum of disbursement CSLP value amount and the latest CSLP balance
-      const disbursementCSLP = firstDisbursement.disbursementValues.find(
-        (item) => item.valueCode === CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE,
+      student.sinValidation = createFakeSINValidation(
+        {
+          student,
+        },
+        { initialValue: { isValidSIN: false } },
       );
-      disbursementCSLP.valueAmount =
-        application.currentAssessment.workflowData.dmnValues
-          .lifetimeMaximumCSLP - 100;
-      await db.disbursementValue.save(disbursementCSLP);
+      await db.student.save(student);
 
       const endpoint = `/students/application/${application.id}/progress-details`;
       const token = await getStudentToken(
@@ -440,7 +417,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
           firstCOEStatus: COEStatus.completed,
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: false,
-          hasInvalidDisbursement: false,
+          hasEcertFailedValidations: true,
         });
     },
   );
