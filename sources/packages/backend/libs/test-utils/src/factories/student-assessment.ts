@@ -17,6 +17,7 @@ export function createFakeStudentAssessment(
     application?: Application;
     offering?: EducationProgramOffering;
     studentAppeal?: StudentAppeal;
+    previousDateChangedReportedAssessment?: StudentAssessment;
   },
   options?: { initialValue?: Partial<StudentAssessment> },
 ): StudentAssessment {
@@ -49,7 +50,7 @@ export function createFakeStudentAssessment(
   assessment.calculationStartDate =
     options?.initialValue?.calculationStartDate ?? null;
   assessment.previousDateChangedReportedAssessment =
-    options?.initialValue?.previousDateChangedReportedAssessment ?? null;
+    relations?.previousDateChangedReportedAssessment ?? null;
   assessment.reportedDate = options?.initialValue?.reportedDate ?? null;
   return assessment;
 }
