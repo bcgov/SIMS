@@ -4,20 +4,15 @@ VALUES
   (
     'Institution_Designation_Report',
     'SELECT
-      institutions.operating_name,
-      institution_locations.name,
-      institution_locations.institution_code,
-      institution_type.name,
-      CASE
-        WHEN designation_agreements.designation_status = ''Pending'' THEN ''Pending''
-        WHEN (designation_agreements.designation_status = ''Declined''
-        OR (designation_agreements.designation_status = ''Approved''
-        AND designation_agreement_locations.approved = FALSE)) THEN ''Declined''
-        WHEN designation_agreements.designation_status = ''Approved''
-        AND designation_agreement_locations.approved = TRUE THEN ''Approved''
-      END "Designation Status",
-      designation_agreements.assessed_date,
-      designation_agreements.end_date,
+      institutions.operating_name AS "Institution Operating Name",
+      institution_locations.name AS "Location Name",
+      institution_locations.institution_code AS "Location Code",
+      institution_type.name AS "Institution Type",
+      designation_agreement_locations.requested AS "Request for designation",
+      designation_agreement_locations.approved AS "Approved for designation",
+      designation_agreements.designation_status AS "Designation Status",
+      designation_agreements.assessed_date AS "Assessed Date",
+      designation_agreements.end_date AS "Expiry Date",
       institution_locations.primary_contact ->> ''firstName'' AS "Location Contact",
       institution_locations.primary_contact ->> ''email'' AS "Contact Email"
     FROM
@@ -31,12 +26,12 @@ VALUES
     INNER JOIN sims.designation_agreements designation_agreements ON
         designation_agreements.id = designation_agreement_locations.designation_agreement_id
     WHERE
-      AND designation_agreements.assessed_date BETWEEN :startDate AND :endDate
+      designation_agreements.assessed_date BETWEEN :startDate AND :endDate
       OR designation_agreements.end_date BETWEEN :startDate AND :endDate
     ORDER BY
       institutions.operating_name ASC,
       institution_locations.institution_code ASC,
-      "Designation Status" ASC,
+      designation_agreements.designation_status ASC,
       designation_agreements.assessed_date DESC,
       designation_agreements.end_date DESC;'
   );
