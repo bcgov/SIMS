@@ -274,7 +274,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
       addDays(1, savedApplication.currentAssessment.offering.studyStartDate),
     );
     await saveOfferingAndAssessment(savedApplication, now, auditUser, null, {
-      studyStartDate: getISODateOnlyString(differentStudyStartDate),
+      studyStartDate: differentStudyStartDate,
     });
     savedApplication.currentAssessment.studentAssessmentStatus =
       StudentAssessmentStatus.InProgress;
@@ -382,7 +382,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
       addDays(1, savedApplication.currentAssessment.offering.studyStartDate),
     );
     await saveOfferingAndAssessment(savedApplication, now, auditUser, null, {
-      studyStartDate: getISODateOnlyString(differentStudyStartDate),
+      studyStartDate: differentStudyStartDate,
     });
     savedApplication.currentAssessment.studentAssessmentStatus =
       StudentAssessmentStatus.InProgress;
@@ -530,13 +530,10 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
     );
     const originalAssessment = savedApplication.currentAssessment;
     const tomorrow = addDays(1, new Date());
-    let differentStudyStartDate = addDays(
-      1,
-      originalAssessment.offering.studyStartDate,
+    let differentStudyStartDate = getISODateOnlyString(
+      addDays(1, originalAssessment.offering.studyStartDate),
     );
-    const reportedReassessmentStudyStartDate = getISODateOnlyString(
-      differentStudyStartDate,
-    );
+    const reportedReassessmentStudyStartDate = differentStudyStartDate;
     const reportedReassessmentStudyEndDate = getISODateOnlyString(
       originalAssessment.offering.studyEndDate,
     );
@@ -554,9 +551,8 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
       },
     );
     const dayAfterTomorrow = addDays(2, new Date());
-    differentStudyStartDate = addDays(
-      2,
-      originalAssessment.offering.studyStartDate,
+    differentStudyStartDate = getISODateOnlyString(
+      addDays(2, originalAssessment.offering.studyStartDate),
     );
     await saveOfferingAndAssessment(
       savedApplication,
@@ -566,7 +562,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
         previousDateChangedReportedAssessment: firstReportedReassessment,
       },
       {
-        studyStartDate: getISODateOnlyString(differentStudyStartDate),
+        studyStartDate: differentStudyStartDate,
       },
     );
     const afterDayAfterTomorrow = addDays(3, new Date());
@@ -636,9 +632,8 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
       originalAssessment.offering.studyEndDate,
     );
     const tomorrow = addDays(1, new Date());
-    const differentStudyStartDate = addDays(
-      1,
-      originalAssessment.offering.studyStartDate,
+    const differentStudyStartDate = getISODateOnlyString(
+      addDays(1, originalAssessment.offering.studyStartDate),
     );
     await saveOfferingAndAssessment(
       savedApplication,
@@ -648,7 +643,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
         previousDateChangedReportedAssessment: originalAssessment,
       },
       {
-        studyStartDate: getISODateOnlyString(differentStudyStartDate),
+        studyStartDate: differentStudyStartDate,
       },
     );
     const dayAfterTomorrow = addDays(2, new Date());
