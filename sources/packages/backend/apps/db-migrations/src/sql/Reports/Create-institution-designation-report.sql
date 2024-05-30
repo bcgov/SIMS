@@ -31,7 +31,12 @@ VALUES
     INNER JOIN sims.designation_agreements designation_agreements ON
         designation_agreements.id = designation_agreement_locations.designation_agreement_id
     WHERE
-        institution_locations.institution_id = :institutionId
       AND designation_agreements.assessed_date BETWEEN :startDate AND :endDate
-      OR designation_agreements.end_date BETWEEN :startDate AND :endDate;'
+      OR designation_agreements.end_date BETWEEN :startDate AND :endDate
+    ORDER BY
+      institutions.operating_name ASC,
+      institution_locations.institution_code ASC,
+      "Designation Status" ASC,
+      designation_agreements.assessed_date DESC,
+      designation_agreements.end_date DESC;'
   );

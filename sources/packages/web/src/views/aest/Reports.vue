@@ -17,16 +17,16 @@ export default defineComponent({
   },
   setup() {
     const reportList = [
-      {
-        description: "Institution Designation",
-        id: "Institution_Designation_Report",
-      },
+      { description: "Data Inventory", id: "Data_Inventory_Report" },
+      { description: "Disbursements", id: "Disbursement_Report" },
       {
         description: "Forecast disbursements",
         id: "Disbursement_Forecast_Report",
       },
-      { description: "Disbursements", id: "Disbursement_Report" },
-      { description: "Data Inventory", id: "Data_Inventory_Report" },
+      {
+        description: "Institution Designation",
+        id: "Institution_Designation_Report",
+      },
     ];
     return { reportList };
   },
