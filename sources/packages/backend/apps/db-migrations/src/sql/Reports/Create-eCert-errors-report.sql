@@ -12,7 +12,7 @@ VALUES
         disbursement_feedback_errors.feedback_file_name as "Feedback File Name",
         education_programs_offerings.study_start_date as "Study Start Date",
         education_programs_offerings.study_end_date as "Study End Date",
-        to_char(disbursement_feedback_errors.date_received, ''YYYY-MM-DD'') as "Error Logged Date",
+        to_char(disbursement_feedback_errors.date_received,''YYYY-MM-DD'') as "Error Logged Date",
         STRING_AGG(ecert_feedback_errors.error_code,'', '') as "Error Codes"
     from
         sims.disbursement_feedback_errors
