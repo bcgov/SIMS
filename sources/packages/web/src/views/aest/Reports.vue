@@ -23,7 +23,7 @@ export default defineComponent({
       },
       { description: "Disbursements", id: "Disbursement_Report" },
       { description: "Data Inventory", id: "Data_Inventory_Report" },
-      { description: "eCert Errors", id: "ECert_Errors" },
+      { description: "eCert Errors", id: "ECert_Errors_Report" },
     ];
     return { reportList };
   },
