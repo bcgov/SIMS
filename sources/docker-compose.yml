@@ -5,6 +5,10 @@ services:
   # API
   api:
     image: api-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
+    deploy:
+      resources:
+        limits:
+          memory: 512M
     container_name: api-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
     build:
       context: ./packages/backend
@@ -68,6 +72,10 @@ services:
   # Workers
   workers:
     image: workers-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
+    deploy:
+      resources:
+        limits:
+          memory: 512M
     container_name: workers-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
     build:
       context: ./packages/backend
@@ -103,6 +111,10 @@ services:
   # Queue consumers
   queue-consumers:
     image: queue-consumers-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
+    deploy:
+      resources:
+        limits:
+          memory: 512M
     container_name: queue-consumers-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
     build:
       context: ./packages/backend

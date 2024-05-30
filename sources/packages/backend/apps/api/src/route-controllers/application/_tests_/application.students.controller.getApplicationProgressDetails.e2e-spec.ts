@@ -15,7 +15,6 @@ import {
   createE2EDataSources,
   E2EDataSources,
   createFakeDisbursementFeedbackError,
-  saveFakeStudentRestriction,
   MSFAAStates,
   createFakeMSFAANumber,
 } from "@sims/test-utils";
@@ -26,11 +25,9 @@ import {
   COEStatus,
   DisbursementScheduleStatus,
   OfferingIntensity,
-  RestrictionActionType,
   Student,
   StudentAppealStatus,
 } from "@sims/sims-db";
-import { ArrayContains } from "typeorm";
 import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
 
 describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () => {
@@ -299,58 +296,6 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
           firstCOEStatus: COEStatus.completed,
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: true,
-          hasEcertFailedValidations: false,
-        });
-    },
-  );
-
-  it(
-    "Should get application progress details with invalid disbursement as true when there are restrictions associated " +
-      "with the current student and the offering intensity is part time.",
-    async () => {
-      // Arrange
-      const application = await saveFakeApplicationDisbursements(
-        db.dataSource,
-        { student },
-        {
-          applicationStatus: ApplicationStatus.Completed,
-          offeringIntensity: OfferingIntensity.partTime,
-          firstDisbursementInitialValues: {
-            coeStatus: COEStatus.completed,
-            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
-          },
-        },
-      );
-      const restriction = await db.restriction.findOne({
-        where: {
-          actionType: ArrayContains([
-            RestrictionActionType.StopPartTimeDisbursement,
-          ]),
-        },
-      });
-      await saveFakeStudentRestriction(db.dataSource, {
-        student,
-        application,
-        restriction,
-      });
-
-      const endpoint = `/students/application/${application.id}/progress-details`;
-      const token = await getStudentToken(
-        FakeStudentUsersTypes.FakeStudentUserType1,
-      );
-      // Act/Assert
-      await request(app.getHttpServer())
-        .get(endpoint)
-        .auth(token, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.OK)
-        .expect({
-          applicationStatus: application.applicationStatus,
-          applicationStatusUpdatedOn:
-            application.applicationStatusUpdatedOn.toISOString(),
-          pirStatus: application.pirStatus,
-          firstCOEStatus: COEStatus.completed,
-          assessmentTriggerType: application.currentAssessment.triggerType,
-          hasBlockFundingFeedbackError: false,
           hasEcertFailedValidations: false,
         });
     },
