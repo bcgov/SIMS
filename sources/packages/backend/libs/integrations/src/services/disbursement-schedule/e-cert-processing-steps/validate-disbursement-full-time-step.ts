@@ -3,8 +3,12 @@ import { ProcessSummary } from "@sims/utilities/logger";
 import { EntityManager } from "typeorm";
 import { ECertProcessStep, ValidateDisbursementBase } from ".";
 import { Injectable } from "@nestjs/common";
-import { EligibleECertDisbursement } from "../disbursement-schedule.models";
+import {
+  ECertFailedValidation,
+  EligibleECertDisbursement,
+} from "../disbursement-schedule.models";
 import { getRestrictionByActionType } from "./e-cert-steps-utils";
+import { ECertPreValidator } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
 
 /**
  * Specific e-Cert validations for full-time.
@@ -12,7 +16,7 @@ import { getRestrictionByActionType } from "./e-cert-steps-utils";
 @Injectable()
 export class ValidateDisbursementFullTimeStep
   extends ValidateDisbursementBase
-  implements ECertProcessStep
+  implements ECertProcessStep, ECertPreValidator
 {
   /**
    * Validate full-time disbursements.
@@ -20,13 +24,39 @@ export class ValidateDisbursementFullTimeStep
    * @param _entityManager not used for this step.
    * @param log cumulative log summary.
    */
-  executeStep(
+  async executeStep(
     eCertDisbursement: EligibleECertDisbursement,
     _entityManager: EntityManager,
     log: ProcessSummary,
-  ): boolean {
+  ): Promise<boolean> {
+    const validations = await this.executePreValidations(
+      eCertDisbursement,
+      _entityManager,
+      log,
+    );
+    return !validations.length;
+  }
+
+  /**
+   * Allow the evaluation of conditions that would block
+   * an eligible disbursement to be disbursed.
+   * The intention to to know ahead of time of the existence
+   * of such conditions in a way that an action can take
+   * to allow the money to be disbursed.
+   * @param eCertDisbursement eligible disbursement to be validated.
+   * @param _entityManager not used for full-time.
+   * @param log keep it compliant with the required parameters
+   * used by {@link ECertProcessStep}.
+   * @returns list of failed validations, otherwise an empty array if
+   * no blocking conditions were found.
+   */
+  async executePreValidations(
+    eCertDisbursement: EligibleECertDisbursement,
+    _entityManager: EntityManager,
+    log: ProcessSummary,
+  ): Promise<ECertFailedValidation[]> {
     log.info("Executing full-time disbursement validations.");
-    let shouldContinue = super.validate(eCertDisbursement, log);
+    const validationResults = super.validate(eCertDisbursement, log);
     // Validate stop full-time disbursement restrictions.
     const stopFullTimeDisbursement = getRestrictionByActionType(
       eCertDisbursement,
@@ -36,8 +66,10 @@ export class ValidateDisbursementFullTimeStep
       log.info(
         `Student has an active '${RestrictionActionType.StopFullTimeDisbursement}' restriction and the disbursement calculation will not proceed.`,
       );
-      shouldContinue = false;
+      validationResults.push(
+        ECertFailedValidation.HasStopDisbursementRestriction,
+      );
     }
-    return shouldContinue;
+    return validationResults;
   }
 }

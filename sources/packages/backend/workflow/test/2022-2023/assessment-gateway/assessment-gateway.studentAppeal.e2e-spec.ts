@@ -54,14 +54,14 @@ describe(`E2E Test Workflow assessment gateway on student appeal for ${PROGRAM_Y
       WorkflowServiceTasks.AssociateWorkflowInstance,
       WorkflowServiceTasks.SaveDisbursementSchedules,
       WorkflowServiceTasks.AssociateMSFAA,
-      WorkflowServiceTasks.UpdateNOAStatusToNotRequired,
+      WorkflowServiceTasks.UpdateApplicationStatusToAssessment,
+      WorkflowServiceTasks.UpdateNOAStatusToRequired,
       WorkflowServiceTasks.WorkflowWrapUpTask,
       WorkflowServiceTasks.VerifyAssessmentCalculationOrderTask,
     );
     expectNotToPassThroughServiceTasks(
       assessmentGatewayResponse.variables,
       WorkflowServiceTasks.UpdateApplicationStatusToInProgress,
-      WorkflowServiceTasks.UpdateApplicationStatusToAssessment,
     );
   });
 });

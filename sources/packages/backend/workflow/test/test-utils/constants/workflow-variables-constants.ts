@@ -14,6 +14,7 @@ export enum WorkflowServiceTasks {
   UpdateApplicationStatusToAssessment = "update-application-status-to-assessment-task",
   UpdateNOAStatusToRequired = "update-noa-status-to-required-task",
   UpdateNOAStatusToNotRequired = "update-noa-status-to-not-required-task",
+  UpdateNOAStatusToNotRequiredApplicationCompleted = "update-noa-status-to-not-required-application-completed-task",
   SaveAssessmentData = "save-assessment-data-task",
   SaveAssessmentDataPartTime = "save-assessment-data-part-time-task",
   SaveDisbursementSchedules = "save-disbursement-task",

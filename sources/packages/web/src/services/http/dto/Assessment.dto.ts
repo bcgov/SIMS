@@ -50,6 +50,7 @@ export interface AssessmentNOAAPIOutDTO {
   assessment: Assessment;
   applicationId: number;
   applicationNumber: string;
+  applicationCurrentAssessmentId: number;
   fullName: string;
   programName: string;
   locationName: string;

@@ -51,6 +51,7 @@ import {
   OFFERING_DOES_NOT_BELONG_TO_LOCATION,
   OFFERING_PROGRAM_YEAR_MISMATCH,
   EDUCATION_PROGRAM_IS_NOT_ACTIVE,
+  EDUCATION_PROGRAM_IS_EXPIRED,
 } from "../../constants";
 import { SequenceControlService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
@@ -520,6 +521,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "pirProgram.id",
         "pirProgram.name",
         "pirProgram.isActive",
+        "pirProgram.effectiveEndDate",
         "educationProgram.id",
         "offering.id",
         "offering.name",
@@ -1686,6 +1688,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
       throw new CustomNamedError(
         "The education program is not active.",
         EDUCATION_PROGRAM_IS_NOT_ACTIVE,
+      );
+    }
+
+    // Validates if the program is expired.
+    if (offering.educationProgram.isExpired) {
+      throw new CustomNamedError(
+        "The education program is expired.",
+        EDUCATION_PROGRAM_IS_EXPIRED,
       );
     }
 

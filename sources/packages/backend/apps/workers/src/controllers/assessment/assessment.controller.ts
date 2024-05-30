@@ -159,7 +159,14 @@ export class AssessmentController {
         jobLogger.error(message);
         return job.error(ASSESSMENT_NOT_FOUND, message);
       }
-      const assessmentDTO = this.transformToAssessmentDTO(assessment);
+      const hasNOAApproval =
+        await this.studentAssessmentService.assessmentNOAExists(
+          assessment.application.id,
+        );
+      const assessmentDTO = this.transformToAssessmentDTO(
+        assessment,
+        hasNOAApproval,
+      );
       const outputVariables = filterObjectProperties(
         assessmentDTO,
         job.customHeaders,
@@ -481,11 +488,13 @@ export class AssessmentController {
    * Creates a well-known object that represents the universe of possible
    * information that can be later filtered.
    * @param assessment assessment to be converted.
+   * @param hasNOAApproval if a notice of assessment has been approved for the application.
    * @returns well-known object that represents the universe of possible
    * information that can be later filtered.
    */
   private transformToAssessmentDTO(
     assessment: StudentAssessment,
+    hasNOAApproval: boolean,
   ): ApplicationAssessmentJobOutDTO {
     const application = assessment.application;
     const [studentCRAIncome] = application.craIncomeVerifications?.filter(
@@ -495,6 +504,8 @@ export class AssessmentController {
     const institutionLocation = offering?.institutionLocation;
     return {
       applicationId: application.id,
+      applicationStatus: application.applicationStatus,
+      hasNOAApproval,
       triggerType: assessment.triggerType,
       data: application.data,
       programYear: {

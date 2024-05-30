@@ -200,7 +200,8 @@
           },
           "id": "epfngcm",
           "defaultValue": "",
-          "lockKey": true
+          "lockKey": true,
+          "isNew": false
         },
         {
           "label": "Container",
@@ -559,7 +560,7 @@
                 "eq": "",
                 "json": ""
               },
-              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Data_Inventory_Report'\n    || data.reportName === 'Institution_Designation_Report'",
+              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Data_Inventory_Report'\n    || data.reportName === 'Institution_Designation_Report'\n    || data.reportName === 'ECert_Errors_Report'",
               "logic": [],
               "attributes": {},
               "overlay": {
@@ -737,10 +738,12 @@
           "addons": [],
           "tree": true,
           "lazyLoad": false,
-          "id": "ekcfpz"
+          "id": "ekcfpz",
+          "isNew": false
         }
       ],
-      "id": "eouyt8n"
+      "id": "eouyt8n",
+      "isNew": false
     },
     {
       "label": "applicationId",

@@ -39,6 +39,7 @@ import {
   ValidateDisbursementPartTimeStep,
 } from "@sims/integrations/services/disbursement-schedule/e-cert-processing-steps";
 import {
+  ECertPreValidationService,
   FullTimeCalculationProcess,
   PartTimeCalculationProcess,
 } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
@@ -84,12 +85,14 @@ import { PartTimeECertFileHandler } from "./part-time-e-cert-file-handler";
     AssessmentSequentialProcessingService,
     StudentLoanBalanceSharedService,
     ECertFeedbackErrorService,
+    ECertPreValidationService,
   ],
   exports: [
     FullTimeECertFileHandler,
     PartTimeECertFileHandler,
     FullTimeCalculationProcess,
     PartTimeCalculationProcess,
+    ECertPreValidationService,
   ],
 })
 export class ECertIntegrationModule {}

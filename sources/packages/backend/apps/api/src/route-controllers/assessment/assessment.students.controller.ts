@@ -77,7 +77,8 @@ export class AssessmentStudentsController extends BaseController {
     description: "Not able to find the assessment for the student.",
   })
   @ApiUnprocessableEntityResponse({
-    description: "Student not found or assessment confirmation failed.",
+    description:
+      "Student not found or assessment confirmation failed or an assessment other than the current one may not be approved.",
   })
   @Patch(":assessmentId/confirm-assessment")
   async confirmAssessmentNOA(

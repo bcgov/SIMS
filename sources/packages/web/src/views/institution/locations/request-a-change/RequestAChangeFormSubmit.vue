@@ -140,7 +140,7 @@ export default defineComponent({
       programs.value =
         await EducationProgramService.shared.getProgramsListForInstitutions();
       // Check if program is Active and populate it.
-      if (application.isProgramActive) {
+      if (application.isProgramActive && !application.isProgramExpired) {
         selectedProgram.value = application.programId;
       }
       await selectedProgramChanged();

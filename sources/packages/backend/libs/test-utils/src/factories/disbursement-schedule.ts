@@ -4,6 +4,7 @@ import {
   DisbursementScheduleStatus,
   DisbursementValue,
   StudentAssessment,
+  MSFAANumber,
 } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
 import * as faker from "faker";
@@ -13,6 +14,7 @@ import * as faker from "faker";
  * @param relations dependencies.
  * - `studentAssessment` student assessment.
  * - `disbursementValues` disbursement values to be inserted.
+ * - `msfaaNumber` msfaaNumber to be added to the schedule.
  * @param options additional options.
  * - `initialValues` initial values.
  * @returns
@@ -21,6 +23,7 @@ export function createFakeDisbursementSchedule(
   relations?: {
     studentAssessment?: StudentAssessment;
     disbursementValues?: DisbursementValue[];
+    msfaaNumber?: MSFAANumber;
   },
   options?: {
     initialValues?: Partial<DisbursementSchedule>;
@@ -50,5 +53,6 @@ export function createFakeDisbursementSchedule(
   schedule.disbursementScheduleStatus =
     options?.initialValues?.disbursementScheduleStatus ??
     DisbursementScheduleStatus.Pending;
+  schedule.msfaaNumber = relations?.msfaaNumber;
   return schedule;
 }

@@ -23,7 +23,7 @@ import {
   OfferingIntensity,
 } from "@sims/sims-db";
 import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
-import { addDays } from "@sims/utilities";
+import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { STUDY_DATE_OVERLAP_ERROR } from "../../../../utilities";
 import { OFFERING_INTENSITY_MISMATCH } from "../../../../constants";
 
@@ -87,14 +87,12 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       institutionLocation: collegeFLocation,
     });
     // Updating study period, that belongs to the program year.
-    fakeOffering.studyStartDate = addDays(
-      5,
-      application.programYear.startDate,
-    ).toISOString();
-    fakeOffering.studyEndDate = addDays(
-      85,
-      application.programYear.startDate,
-    ).toISOString();
+    fakeOffering.studyStartDate = getISODateOnlyString(
+      addDays(5, application.programYear.startDate),
+    );
+    fakeOffering.studyEndDate = getISODateOnlyString(
+      addDays(85, application.programYear.startDate),
+    );
     await db.educationProgramOffering.save(fakeOffering);
 
     const payload = {
@@ -150,15 +148,19 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
 
     // Updating study period, that belongs to the program year.
     existingApplicationWithOverlapStudyPeriod.currentAssessment.offering.studyStartDate =
-      addDays(
-        5,
-        existingApplicationWithOverlapStudyPeriod.programYear.startDate,
-      ).toISOString();
+      getISODateOnlyString(
+        addDays(
+          5,
+          existingApplicationWithOverlapStudyPeriod.programYear.startDate,
+        ),
+      );
     existingApplicationWithOverlapStudyPeriod.currentAssessment.offering.studyEndDate =
-      addDays(
-        85,
-        existingApplicationWithOverlapStudyPeriod.programYear.startDate,
-      ).toISOString();
+      getISODateOnlyString(
+        addDays(
+          85,
+          existingApplicationWithOverlapStudyPeriod.programYear.startDate,
+        ),
+      );
 
     await db.educationProgramOffering.save(
       existingApplicationWithOverlapStudyPeriod.currentAssessment.offering,
@@ -193,17 +195,21 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       institutionLocation: collegeFLocation,
     });
     // Updating study period, that overlaps with student existing application offering.
-    fakeOffering.studyStartDate = addDays(
-      5,
-      existingApplicationWithOverlapStudyPeriod.currentAssessment.offering
-        .studyStartDate,
-    ).toISOString();
+    fakeOffering.studyStartDate = getISODateOnlyString(
+      addDays(
+        5,
+        existingApplicationWithOverlapStudyPeriod.currentAssessment.offering
+          .studyStartDate,
+      ),
+    );
 
-    fakeOffering.studyEndDate = addDays(
-      50,
-      existingApplicationWithOverlapStudyPeriod.currentAssessment.offering
-        .studyStartDate,
-    ).toISOString();
+    fakeOffering.studyEndDate = getISODateOnlyString(
+      addDays(
+        50,
+        existingApplicationWithOverlapStudyPeriod.currentAssessment.offering
+          .studyStartDate,
+      ),
+    );
 
     await db.educationProgramOffering.save(fakeOffering);
 
@@ -302,14 +308,12 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       institutionLocation: collegeFLocation,
     });
     // Updating study period, that belongs to a future(different) program year.
-    fakeOffering.studyStartDate = addDays(
-      400,
-      application.programYear.startDate,
-    ).toISOString();
-    fakeOffering.studyEndDate = addDays(
-      450,
-      application.programYear.startDate,
-    ).toISOString();
+    fakeOffering.studyStartDate = getISODateOnlyString(
+      addDays(400, application.programYear.startDate),
+    );
+    fakeOffering.studyEndDate = getISODateOnlyString(
+      addDays(450, application.programYear.startDate),
+    );
 
     await db.educationProgramOffering.save(fakeOffering);
 
@@ -437,14 +441,12 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       institutionLocation: collegeFLocation,
     });
     // Updating study period, that belongs to the program year.
-    fakeOffering.studyStartDate = addDays(
-      5,
-      application.programYear.startDate,
-    ).toISOString();
-    fakeOffering.studyEndDate = addDays(
-      85,
-      application.programYear.startDate,
-    ).toISOString();
+    fakeOffering.studyStartDate = getISODateOnlyString(
+      addDays(5, application.programYear.startDate),
+    );
+    fakeOffering.studyEndDate = getISODateOnlyString(
+      addDays(85, application.programYear.startDate),
+    );
     await db.educationProgramOffering.save(fakeOffering);
 
     const payload = {
@@ -497,14 +499,12 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       { programInitialValues: { isActive: false } },
     );
     // Updating study period, that belongs to the program year.
-    newOffering.studyStartDate = addDays(
-      5,
-      application.programYear.startDate,
-    ).toISOString();
-    newOffering.studyEndDate = addDays(
-      85,
-      application.programYear.startDate,
-    ).toISOString();
+    newOffering.studyStartDate = getISODateOnlyString(
+      addDays(5, application.programYear.startDate),
+    );
+    newOffering.studyEndDate = getISODateOnlyString(
+      addDays(85, application.programYear.startDate),
+    );
     await db.educationProgramOffering.save(newOffering);
 
     const payload = {
@@ -521,6 +521,62 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
         message: "The education program is not active.",
+        error: "Unprocessable Entity",
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      });
+  });
+
+  it("Should throw program is expired error when trying to submit an application offering request for an expired program.", async () => {
+    // Arrange
+    const savedUser = await db.user.save(createFakeUser());
+    // Student has a completed application to the institution.
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      { institutionLocation: collegeFLocation },
+      {
+        applicationStatus: ApplicationStatus.Completed,
+      },
+    );
+
+    await db.student.save(application.student);
+    await db.application.save(application);
+
+    // New offering with full time intensity.
+    const newOffering = createFakeEducationProgramOffering(
+      {
+        auditUser: savedUser,
+        institutionLocation: collegeFLocation,
+      },
+      {
+        initialValues: {
+          studyStartDate: getISODateOnlyString(
+            addDays(5, application.programYear.startDate),
+          ),
+          studyEndDate: getISODateOnlyString(
+            addDays(85, application.programYear.startDate),
+          ),
+        },
+        programInitialValues: {
+          effectiveEndDate: getISODateOnlyString(new Date()),
+        },
+      },
+    );
+    await db.educationProgramOffering.save(newOffering);
+
+    const payload = {
+      applicationId: application.id,
+      offeringId: newOffering.id,
+      reason: "Test reason.",
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message: "The education program is expired.",
         error: "Unprocessable Entity",
         statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
       });
