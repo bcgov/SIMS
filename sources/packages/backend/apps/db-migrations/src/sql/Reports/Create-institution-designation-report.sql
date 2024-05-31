@@ -9,8 +9,8 @@ VALUES
       institution_locations.institution_code AS "Location Code",
       institution_type.name AS "Institution Type",
       designation_agreements.designation_status AS "Designation Status",
-      designation_agreements.assessed_date::date AS "Assessed Date",
-      designation_agreements.end_date::date AS "Expiry Date",
+      CAST(designation_agreements.assessed_date AS varchar) AS "Assessed Date",
+      CAST(designation_agreements.end_date AS varchar) AS "Expiry Date",
       CONCAT(
         institution_locations.primary_contact ->> ''firstName'',
         '' '',
