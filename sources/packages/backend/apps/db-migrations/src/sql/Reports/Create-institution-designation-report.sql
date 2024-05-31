@@ -13,7 +13,7 @@ VALUES
       designation_agreements.end_date AS "Expiry Date",
       CONCAT(
         institution_locations.primary_contact ->> ''firstName'',
-        ' ',
+        '' '',
         institution_locations.primary_contact ->> ''lastName''
       ) AS "Location Contact",
       designation_agreement_locations.requested AS "Request for designation",
