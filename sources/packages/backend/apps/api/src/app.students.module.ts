@@ -77,9 +77,15 @@ import {
   ValidateDisbursementFullTimeStep,
   ValidateDisbursementPartTimeStep,
 } from "@sims/integrations/services/disbursement-schedule/e-cert-processing-steps";
+import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
 
 @Module({
-  imports: [AuthModule, ConfigModule, ATBCIntegrationModule],
+  imports: [
+    AuthModule,
+    ConfigModule,
+    ATBCIntegrationModule,
+    ECertIntegrationModule,
+  ],
   controllers: [
     ApplicationStudentsController,
     StudentStudentsController,

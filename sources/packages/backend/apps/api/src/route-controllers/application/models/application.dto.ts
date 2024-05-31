@@ -167,7 +167,7 @@ export class ApplicationProgressDetailsAPIOutDTO {
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
   assessmentTriggerType?: AssessmentTriggerType;
   hasBlockFundingFeedbackError: boolean;
-  hasEcertFailedValidations: boolean;
+  hasECertFailedValidations: boolean;
 }
 
 export class DisbursementDetailsAPIOutDTO {
@@ -189,7 +189,7 @@ export class CompletedApplicationDetailsAPIOutDTO extends EnrolmentApplicationDe
   applicationOfferingChangeRequestId?: number;
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
   hasBlockFundingFeedbackError: boolean;
-  ecertFailedValidations: ECertFailedValidation[];
+  eCertFailedValidations: ECertFailedValidation[];
 }
 
 export class ApplicationAssessmentStatusDetailsAPIOutDTO {

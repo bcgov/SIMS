@@ -163,7 +163,7 @@ export default defineComponent({
           .applicationOfferingChangeRequestStatus ===
           ApplicationOfferingChangeRequestStatus.InProgressWithStudent ||
         applicationProgressDetails.value.hasBlockFundingFeedbackError ||
-        applicationProgressDetails.value.hasEcertFailedValidations
+        applicationProgressDetails.value.hasECertFailedValidations
       ) {
         // Application is completed but has warnings.
         statusIconDetails.value = STATUS_ICON_WARNING;

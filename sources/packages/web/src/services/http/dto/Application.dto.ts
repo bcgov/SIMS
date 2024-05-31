@@ -111,7 +111,7 @@ export interface ApplicationProgressDetailsAPIOutDTO {
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
   assessmentTriggerType?: AssessmentTriggerType;
   hasBlockFundingFeedbackError: boolean;
-  hasEcertFailedValidations: boolean;
+  hasECertFailedValidations: boolean;
 }
 
 export interface DisbursementDetailsAPIOutDTO {
@@ -136,7 +136,7 @@ export interface CompletedApplicationDetailsAPIOutDTO
   applicationOfferingChangeRequestId?: number;
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
   hasBlockFundingFeedbackError: boolean;
-  ecertFailedValidations: ECertFailedValidation[];
+  eCertFailedValidations: ECertFailedValidation[];
 }
 
 export interface ApplicationAssessmentStatusDetailsAPIOutDTO {

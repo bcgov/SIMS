@@ -1,4 +1,5 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
+import { TestingModule } from "@nestjs/testing";
 import * as request from "supertest";
 import { ArrayContains, DataSource, Repository } from "typeorm";
 import {
@@ -7,6 +8,7 @@ import {
   FakeStudentUsersTypes,
   getStudentToken,
   getStudentByFakeStudentUserType,
+  mockUserLoginInfo,
 } from "../../../testHelpers";
 import {
   createFakeStudentAppeal,
@@ -21,6 +23,7 @@ import {
   saveFakeStudentRestriction,
   createFakeMSFAANumber,
   MSFAAStates,
+  saveFakeStudent,
 } from "@sims/test-utils";
 import {
   Application,
@@ -42,11 +45,11 @@ import {
 } from "@sims/sims-db";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE } from "@sims/services/constants";
-import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
 import { ECertFailedValidation } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
 
 describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", () => {
   let app: INestApplication;
+  let appModule: TestingModule;
   let appDataSource: DataSource;
   let applicationRepo: Repository<Application>;
   let disbursementScheduleRepo: Repository<DisbursementSchedule>;
@@ -55,12 +58,12 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
   let submittedByInstitutionUser: User;
   let student: Student;
   let db: E2EDataSources;
-  let application: Application;
-  let firstDisbursement: DisbursementSchedule;
 
   beforeAll(async () => {
-    const { nestApplication, dataSource } = await createTestingAppModule();
+    const { nestApplication, module, dataSource } =
+      await createTestingAppModule();
     app = nestApplication;
+    appModule = module;
     appDataSource = dataSource;
     db = createE2EDataSources(dataSource);
     const userRepo = dataSource.getRepository(User);
@@ -75,52 +78,6 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
       FakeStudentUsersTypes.FakeStudentUserType1,
       dataSource,
     );
-    student.sinValidation = createFakeSINValidation(
-      {
-        student,
-      },
-      { initialValue: { isValidSIN: true } },
-    );
-    await db.student.save(student);
-  });
-
-  beforeEach(async () => {
-    const studentRestrictions = await db.studentRestriction.find({
-      select: { id: true, student: { id: true } },
-      relations: { student: true },
-      where: { student: { id: student.id } },
-    });
-    await db.studentRestriction.remove(studentRestrictions);
-
-    // Arrange
-    // Create an application with the first disbursement status as pending for eCert validation test cases.
-    application = await saveFakeApplicationDisbursements(
-      appDataSource,
-      { student },
-      {
-        applicationStatus: ApplicationStatus.Completed,
-        offeringIntensity: OfferingIntensity.partTime,
-        firstDisbursementInitialValues: {
-          coeStatus: COEStatus.completed,
-          disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
-        },
-      },
-    );
-    [firstDisbursement] = application.currentAssessment.disbursementSchedules;
-    // Create a MSFAA number record for the first disbursement.
-    const msfaaNumber = createFakeMSFAANumber(
-      {
-        student,
-        referenceApplication: application,
-      },
-      {
-        msfaaState: MSFAAStates.Signed,
-      },
-    );
-    await db.msfaaNumber.save(msfaaNumber);
-
-    firstDisbursement.msfaaNumber = msfaaNumber;
-    await db.disbursementSchedule.save(firstDisbursement);
   });
 
   it("Should throw NotFoundException when the application is not associated with the authenticated student.", async () => {
@@ -207,7 +164,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         },
         assessmentTriggerType: application.currentAssessment.triggerType,
         hasBlockFundingFeedbackError: false,
-        ecertFailedValidations: [],
+        eCertFailedValidations: [],
       });
   });
 
@@ -252,7 +209,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         scholasticStandingChangeType:
           StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
         hasBlockFundingFeedbackError: false,
-        ecertFailedValidations: [],
+        eCertFailedValidations: [],
       });
   });
 
@@ -332,7 +289,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         applicationOfferingChangeRequestStatus:
           ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
         hasBlockFundingFeedbackError: false,
-        ecertFailedValidations: [],
+        eCertFailedValidations: [],
       });
   });
 
@@ -379,7 +336,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         },
         assessmentTriggerType: AssessmentTriggerType.RelatedApplicationChanged,
         hasBlockFundingFeedbackError: false,
-        ecertFailedValidations: [],
+        eCertFailedValidations: [],
       });
   });
 
@@ -432,7 +389,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: false,
-          ecertFailedValidations: [],
+          eCertFailedValidations: [],
         });
     },
   );
@@ -486,7 +443,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: true,
-          ecertFailedValidations: [],
+          eCertFailedValidations: [],
         });
     },
   );
@@ -549,7 +506,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: true,
-          ecertFailedValidations: [],
+          eCertFailedValidations: [],
         });
     },
   );
@@ -603,7 +560,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: true,
-          ecertFailedValidations: [],
+          eCertFailedValidations: [],
         });
     },
   );
@@ -613,6 +570,38 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
       "the calculated PDPPD status is true and the student's disability status is permanent disability and the offering intensity is part time.",
     async () => {
       // Arrange
+      const student = await saveFakeStudent(db.dataSource);
+      const msfaaNumber = createFakeMSFAANumber(
+        {
+          student,
+        },
+        {
+          msfaaState: MSFAAStates.Signed,
+        },
+      );
+      await db.msfaaNumber.save(msfaaNumber);
+
+      // Mock user services to return the saved student.
+      await mockUserLoginInfo(appModule, student);
+
+      const application = await saveFakeApplicationDisbursements(
+        appDataSource,
+        {
+          student,
+          msfaaNumber,
+        },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+          offeringIntensity: OfferingIntensity.partTime,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+          },
+        },
+      );
+      const [firstDisbursement] =
+        application.currentAssessment.disbursementSchedules;
+
       application.currentAssessment.workflowData.calculatedData.pdppdStatus =
         true;
       await db.studentAssessment.save(application.currentAssessment);
@@ -638,7 +627,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: false,
-          ecertFailedValidations: [
+          eCertFailedValidations: [
             ECertFailedValidation.DisabilityStatusNotConfirmed,
           ],
         });
@@ -650,15 +639,38 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
       "the the MSFAA number is not signed and there is a cancelled date and the offering intensity is part time.",
     async () => {
       // Arrange
-      const msfaaNumber = createFakeMSFAANumber({
-        student,
-        referenceApplication: application,
-      });
-      msfaaNumber.cancelledDate = getISODateOnlyString(new Date());
+      const student = await saveFakeStudent(db.dataSource);
+      const msfaaNumber = createFakeMSFAANumber(
+        {
+          student,
+        },
+        {
+          msfaaState: MSFAAStates.Signed,
+        },
+      );
       await db.msfaaNumber.save(msfaaNumber);
 
-      firstDisbursement.msfaaNumber = msfaaNumber;
-      await db.disbursementSchedule.save(firstDisbursement);
+      // Mock user services to return the saved student.
+      await mockUserLoginInfo(appModule, student);
+
+      const application = await saveFakeApplicationDisbursements(
+        appDataSource,
+        { student, msfaaNumber },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+          offeringIntensity: OfferingIntensity.partTime,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+          },
+        },
+      );
+      const [firstDisbursement] =
+        application.currentAssessment.disbursementSchedules;
+
+      msfaaNumber.dateSigned = null;
+      msfaaNumber.cancelledDate = getISODateOnlyString(new Date());
+      await db.msfaaNumber.save(msfaaNumber);
 
       const endpoint = `/students/application/${application.id}/completed`;
       const token = await getStudentToken(
@@ -678,7 +690,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: false,
-          ecertFailedValidations: [
+          eCertFailedValidations: [
             ECertFailedValidation.MSFAACanceled,
             ECertFailedValidation.MSFAANotSigned,
             ECertFailedValidation.MSFAANotValid,
@@ -692,6 +704,35 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
       "there are restrictions associated with the current student and the offering intensity is part time.",
     async () => {
       // Arrange
+      const student = await saveFakeStudent(db.dataSource);
+      const msfaaNumber = createFakeMSFAANumber(
+        {
+          student,
+        },
+        {
+          msfaaState: MSFAAStates.Signed,
+        },
+      );
+      await db.msfaaNumber.save(msfaaNumber);
+
+      // Mock user services to return the saved student.
+      await mockUserLoginInfo(appModule, student);
+
+      const application = await saveFakeApplicationDisbursements(
+        appDataSource,
+        { student, msfaaNumber },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+          offeringIntensity: OfferingIntensity.partTime,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+          },
+        },
+      );
+      const [firstDisbursement] =
+        application.currentAssessment.disbursementSchedules;
+
       const restriction = await db.restriction.findOne({
         where: {
           actionType: ArrayContains([
@@ -723,7 +764,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: false,
-          ecertFailedValidations: [
+          eCertFailedValidations: [
             ECertFailedValidation.HasStopDisbursementRestriction,
           ],
         });
@@ -735,6 +776,35 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
       "the student doesn't have a valid SIN and the offering intensity is part time.",
     async () => {
       // Arrange
+      const student = await saveFakeStudent(db.dataSource);
+      const msfaaNumber = createFakeMSFAANumber(
+        {
+          student,
+        },
+        {
+          msfaaState: MSFAAStates.Signed,
+        },
+      );
+      await db.msfaaNumber.save(msfaaNumber);
+
+      // Mock user services to return the saved student.
+      await mockUserLoginInfo(appModule, student);
+
+      const application = await saveFakeApplicationDisbursements(
+        appDataSource,
+        { student, msfaaNumber },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+          offeringIntensity: OfferingIntensity.partTime,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+          },
+        },
+      );
+      const [firstDisbursement] =
+        application.currentAssessment.disbursementSchedules;
+
       application.student.sinValidation.isValidSIN = false;
       await db.student.save(application.student);
 
@@ -756,12 +826,8 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: false,
-          ecertFailedValidations: [ECertFailedValidation.InvalidSIN],
+          eCertFailedValidations: [ECertFailedValidation.InvalidSIN],
         });
-
-      // Set isValidSIn to true for the next test case.
-      application.student.sinValidation.isValidSIN = true;
-      await db.student.save(application.student);
     },
   );
 
@@ -771,6 +837,35 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
       "and the latest CSLP balance and the offering intensity is part time.",
     async () => {
       // Arrange
+      const student = await saveFakeStudent(db.dataSource);
+      const msfaaNumber = createFakeMSFAANumber(
+        {
+          student,
+        },
+        {
+          msfaaState: MSFAAStates.Signed,
+        },
+      );
+      await db.msfaaNumber.save(msfaaNumber);
+
+      // Mock user services to return the saved student.
+      await mockUserLoginInfo(appModule, student);
+
+      const application = await saveFakeApplicationDisbursements(
+        appDataSource,
+        { student, msfaaNumber },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+          offeringIntensity: OfferingIntensity.partTime,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+          },
+        },
+      );
+      const [firstDisbursement] =
+        application.currentAssessment.disbursementSchedules;
+
       const disbursementCSLP = firstDisbursement.disbursementValues.find(
         (item) => item.valueCode === CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE,
       );
@@ -797,7 +892,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: false,
-          ecertFailedValidations: [ECertFailedValidation.LifetimeMaximumCSLP],
+          eCertFailedValidations: [ECertFailedValidation.LifetimeMaximumCSLP],
         });
     },
   );

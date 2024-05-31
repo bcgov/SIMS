@@ -691,7 +691,7 @@ export class ApplicationStudentsController extends BaseController {
     const [firstDisbursement, secondDisbursement] = disbursements;
     const [scholasticStandingChange] = application.studentScholasticStandings;
 
-    const ecertFailedValidations =
+    const eCertFailedValidations =
       await this.eCertPreValidationService.executePreValidations(applicationId);
 
     return {
@@ -706,7 +706,7 @@ export class ApplicationStudentsController extends BaseController {
       applicationOfferingChangeRequestStatus,
       assessmentTriggerType,
       hasBlockFundingFeedbackError,
-      hasEcertFailedValidations: !!ecertFailedValidations.length,
+      hasECertFailedValidations: !!eCertFailedValidations.length,
     };
   }
 
@@ -773,16 +773,20 @@ export class ApplicationStudentsController extends BaseController {
       );
     const hasBlockFundingFeedbackErrorPromise =
       this.applicationService.hasFeedbackErrorBlockingFunds(applicationId);
+    const eCertFailedValidationsPromise =
+      this.eCertPreValidationService.executePreValidations(applicationId);
     const [
       application,
       [appeal],
       applicationOfferingChangeRequest,
       hasBlockFundingFeedbackError,
+      eCertFailedValidations,
     ] = await Promise.all([
       getApplicationPromise,
       appealPromise,
       applicationOfferingChangeRequestPromise,
       hasBlockFundingFeedbackErrorPromise,
+      eCertFailedValidationsPromise,
     ]);
     if (!application) {
       throw new NotFoundException(
@@ -795,9 +799,6 @@ export class ApplicationStudentsController extends BaseController {
       );
     const [scholasticStandingChange] = application.studentScholasticStandings;
 
-    const ecertFailedValidations =
-      await this.eCertPreValidationService.executePreValidations(applicationId);
-
     return {
       firstDisbursement: enrolmentDetails.firstDisbursement,
       secondDisbursement: enrolmentDetails.secondDisbursement,
@@ -808,7 +809,7 @@ export class ApplicationStudentsController extends BaseController {
       applicationOfferingChangeRequestStatus:
         applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus,
       hasBlockFundingFeedbackError,
-      ecertFailedValidations: ecertFailedValidations,
+      eCertFailedValidations,
     };
   }
 }

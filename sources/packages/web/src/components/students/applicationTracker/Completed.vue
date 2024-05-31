@@ -100,12 +100,9 @@
   />
   <application-status-tracker-banner
     label="Attention! You are not yet eligible to receive funding."
-    icon="fa:fas fa-exclamation-circle"
-    icon-color="danger"
+    icon="fa:fas fa-exclamation-triangle"
+    icon-color="warning"
     background-color="error-bg"
-    content="You have applied for disability funding on your application, but your
-      disability status on your student profile has not yet been verified. Only
-      once your status is verified will you be able to receive funding."
     v-if="!!ecertFailedValidationDetails.length"
     ><template #content
       ><ul>
@@ -250,7 +247,7 @@ export default defineComponent({
 
       ECERT_FAILED_MESSAGES.forEach((detail) => {
         if (
-          assessmentDetails.value.ecertFailedValidations.includes(
+          assessmentDetails.value.eCertFailedValidations.includes(
             detail.failedType,
           )
         )
@@ -285,7 +282,6 @@ export default defineComponent({
       assessmentDetails,
       multipleCOEDenialReason,
       ecertFailedValidationDetails,
-      ECERT_FAILED_MESSAGES,
       COEStatus,
       AssessmentTriggerType,
       StudentAppealStatus,
