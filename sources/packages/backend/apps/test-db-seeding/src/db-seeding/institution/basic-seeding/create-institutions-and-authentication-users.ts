@@ -76,7 +76,9 @@ export class CreateInstitutionsAndAuthenticationUsers {
     // Create the users associated with the institution.
     for (const user of institutionsData.users) {
       // Create fake user.
-      const fakeUser = createFakeUser(user.userName);
+      const fakeUser = createFakeUser({
+        initialValue: { userName: user.userName },
+      });
       fakeUser.firstName = user.firstName;
       fakeUser.lastName = user.lastName;
       // Save user to DB.

@@ -47,7 +47,9 @@ export class InstitutionUserService {
   @DataSeedMethod()
   async createInstitutionLegalSigningAuthUser(): Promise<void> {
     // Create fake user.
-    const fakeUser = createFakeUser(SIMS_COLL_F_LEGAL_SIGNING_USER);
+    const fakeUser = createFakeUser({
+      initialValue: { userName: SIMS_COLL_F_LEGAL_SIGNING_USER },
+    });
     const createdFakeUser = await this.userRepo.save(fakeUser);
 
     // Create fake institution.
@@ -86,7 +88,9 @@ export class InstitutionUserService {
   @DataSeedMethod()
   async createInstitutionAdmin(): Promise<void> {
     // Create fake user.
-    const fakeUser = createFakeUser(SIMS_COLL_C_ADMIN);
+    const fakeUser = createFakeUser({
+      initialValue: { userName: SIMS_COLL_C_ADMIN },
+    });
     const createdFakeUser = await this.userRepo.save(fakeUser);
 
     // Create fake institution.
