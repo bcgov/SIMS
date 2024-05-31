@@ -655,6 +655,7 @@ export class ApplicationStudentsController extends BaseController {
     let appealStatus: StudentAppealStatus;
     let applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus;
     let hasBlockFundingFeedbackError = false;
+    let hasECertFailedValidations = false;
     if (application.applicationStatus === ApplicationStatus.Completed) {
       const appealPromise = this.studentAppealService.getAppealsForApplication(
         applicationId,
@@ -668,16 +669,24 @@ export class ApplicationStudentsController extends BaseController {
         );
       const feedbackErrorPromise =
         this.applicationService.hasFeedbackErrorBlockingFunds(applicationId);
-      const [[appeal], applicationOfferingChangeRequest, feedbackError] =
-        await Promise.all([
-          appealPromise,
-          applicationOfferingChangeRequestPromise,
-          feedbackErrorPromise,
-        ]);
+      const eCertFailedValidationsPromise =
+        this.eCertPreValidationService.executePreValidations(applicationId);
+      const [
+        [appeal],
+        applicationOfferingChangeRequest,
+        feedbackError,
+        eCertFailedValidations,
+      ] = await Promise.all([
+        appealPromise,
+        applicationOfferingChangeRequestPromise,
+        feedbackErrorPromise,
+        eCertFailedValidationsPromise,
+      ]);
       appealStatus = appeal?.status;
       applicationOfferingChangeRequestStatus =
         applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus;
       hasBlockFundingFeedbackError = feedbackError;
+      hasECertFailedValidations = !!eCertFailedValidations.length;
     }
 
     const assessmentTriggerType = application.currentAssessment?.triggerType;
@@ -691,9 +700,6 @@ export class ApplicationStudentsController extends BaseController {
     const [firstDisbursement, secondDisbursement] = disbursements;
     const [scholasticStandingChange] = application.studentScholasticStandings;
 
-    const eCertFailedValidations =
-      await this.eCertPreValidationService.executePreValidations(applicationId);
-
     return {
       applicationStatus: application.applicationStatus,
       applicationStatusUpdatedOn: application.applicationStatusUpdatedOn,
@@ -706,7 +712,7 @@ export class ApplicationStudentsController extends BaseController {
       applicationOfferingChangeRequestStatus,
       assessmentTriggerType,
       hasBlockFundingFeedbackError,
-      hasECertFailedValidations: !!eCertFailedValidations.length,
+      hasECertFailedValidations,
     };
   }
 

@@ -63,7 +63,6 @@ import {
   RestrictionSharedService,
   ConfirmationOfEnrollmentService,
   AssessmentSequentialProcessingService,
-  StudentLoanBalanceSharedService,
 } from "@sims/services";
 import {
   SFASIndividualService,
@@ -71,12 +70,6 @@ import {
   SFASPartTimeApplicationsService,
 } from "@sims/services/sfas";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
-import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
-import { ECertGenerationService } from "@sims/integrations/services";
-import {
-  ValidateDisbursementFullTimeStep,
-  ValidateDisbursementPartTimeStep,
-} from "@sims/integrations/services/disbursement-schedule/e-cert-processing-steps";
 import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
 
 @Module({
@@ -149,11 +142,6 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     BCeIDService,
     InstitutionUserAuthService,
     UserService,
-    ECertGenerationService,
-    StudentLoanBalanceSharedService,
-    ValidateDisbursementFullTimeStep,
-    ValidateDisbursementPartTimeStep,
-    ECertPreValidationService,
   ],
 })
 export class AppStudentsModule {}

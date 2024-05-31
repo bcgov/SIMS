@@ -12,14 +12,19 @@ export const ECERT_FAILED_MESSAGES: EcertFailedValidationDetail[] = [
       "Your SIN is invalid and your funding cannot be issued. Contact StudentAid BC for assistance.",
   },
   {
-    failedType: ECertFailedValidation.MSFAANotValid,
-    failedMessage:
-      "You have not yet signed your MSFAA number with the National Student Loans Service Center. Your MSFAA number was issued on your Notice of Assessment - you must use that number to sign your Master Student Financial Assistance Agreement with NSLSC before you are eligible to receive your funding. Alternatively, this could be due to your MSFAA being cancelled.",
-  },
-  {
     failedType: ECertFailedValidation.DisabilityStatusNotConfirmed,
     failedMessage:
       "You have applied for disability funding on your application, but your disability status on your student profile has not yet been verified. Only once your status is verified will you be able to receive funding.",
+  },
+  {
+    failedType: ECertFailedValidation.MSFAANotSigned,
+    failedMessage:
+      "You have not yet signed your MSFAA number with the National Student Loans Service Center. Your MSFAA number was issued on your Notice of Assessment - you must use that number to sign your Master Student Financial Assistance Agreement with NSLSC before you are eligible to receive your funding.",
+  },
+  {
+    failedType: ECertFailedValidation.MSFAACanceled,
+    failedMessage:
+      "Your MSFAA number has been cancelled by the National Student Loans Service Center (NSLSC). Please contact NSLSC to find out why it was cancelled. Until this is resolved, you will not be eligible to receive funding.",
   },
   {
     failedType: ECertFailedValidation.HasStopDisbursementRestriction,

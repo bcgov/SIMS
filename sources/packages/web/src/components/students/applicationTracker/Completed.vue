@@ -110,7 +110,23 @@
           v-for="ecertFailedValidationDetail in ecertFailedValidationDetails"
           :key="ecertFailedValidationDetail.failedType"
         >
-          {{ ecertFailedValidationDetail.failedMessage }}
+          <span
+            v-if="
+              ecertFailedValidationDetail.failedType ===
+              ECertFailedValidation.MSFAACanceled
+            "
+            >Your MSFAA number has been cancelled by the National Student Loans
+            Service Center (NSLSC). Please
+            <a
+              href="https://protege-secure.csnpe-nslsc.canada.ca/en/public/contact/contact-us"
+              rel="noopener"
+              target="_blank"
+              >contact NSLSC</a
+            >
+            to find out why it was cancelled. Until this is resolved, you will
+            not be eligible to receive funding.
+          </span>
+          <span v-else>{{ ecertFailedValidationDetail.failedMessage }}</span>
         </li>
       </ul>
     </template>
@@ -197,6 +213,7 @@ import {
   ApplicationOfferingChangeRequestStatus,
   AssessmentTriggerType,
   COEStatus,
+  ECertFailedValidation,
   StudentAppealStatus,
   StudentScholasticStandingChangeType,
 } from "@/types";
@@ -282,6 +299,7 @@ export default defineComponent({
       assessmentDetails,
       multipleCOEDenialReason,
       ecertFailedValidationDetails,
+      ECertFailedValidation,
       COEStatus,
       AssessmentTriggerType,
       StudentAppealStatus,

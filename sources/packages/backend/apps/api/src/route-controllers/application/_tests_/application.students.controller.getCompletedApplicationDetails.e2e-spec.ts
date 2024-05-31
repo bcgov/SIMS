@@ -693,7 +693,6 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           eCertFailedValidations: [
             ECertFailedValidation.MSFAACanceled,
             ECertFailedValidation.MSFAANotSigned,
-            ECertFailedValidation.MSFAANotValid,
           ],
         });
     },
