@@ -15,8 +15,8 @@ import {
 import { getISODateOnlyString } from "@sims/utilities";
 
 export function createFakeEducationProgramOffering(
-  relations?: {
-    auditUser?: User;
+  relations: {
+    auditUser: User;
     program?: EducationProgram;
     institution?: Institution;
     institutionLocation?: InstitutionLocation;
