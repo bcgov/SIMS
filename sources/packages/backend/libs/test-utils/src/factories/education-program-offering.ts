@@ -52,8 +52,7 @@ export function createFakeEducationProgramOffering(
     );
   offering.institutionLocation =
     relations?.institutionLocation ?? createFakeInstitutionLocation();
-  offering.offeringIntensity =
-    options?.initialValues?.offeringIntensity ?? OfferingIntensity.fullTime;
+  offering.offeringIntensity = OfferingIntensity.fullTime;
   offering.offeringType = OfferingTypes.Public;
   offering.yearOfStudy = 1;
   offering.courseLoad = 45;

@@ -49,7 +49,7 @@ export class CreateStudentUsers {
     },
   ): Promise<void> {
     // Create the user for the student.
-    const fakeUser = createFakeUser({ initialValue: { userName: username } });
+    const fakeUser = createFakeUser(username);
     await this.userRepo.save(fakeUser);
     // Create the student.
     const fakeStudent = createFakeStudent(fakeUser);

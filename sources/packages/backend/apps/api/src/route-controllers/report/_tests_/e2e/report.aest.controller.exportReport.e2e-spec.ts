@@ -11,25 +11,36 @@ import {
   createFakeStudentAssessment,
   createFakeUser,
   getProviderInstanceForModule,
+  saveFakeApplicationDisbursements,
 } from "@sims/test-utils";
 import {
   AESTGroups,
   BEARER_AUTH_TYPE,
+  FakeStudentUsersTypes,
   createTestingAppModule,
   getAESTToken,
+  getStudentByFakeStudentUserType,
 } from "../../../../testHelpers";
 import { parse } from "papaparse";
 import * as request from "supertest";
 import { FormNames, FormService } from "../../../../services";
 import { AppAESTModule } from "../../../../app.aest.module";
 import { TestingModule } from "@nestjs/testing";
-import { OfferingIntensity } from "@sims/sims-db";
+import {
+  ApplicationStatus,
+  COEStatus,
+  DisbursementScheduleStatus,
+  OfferingIntensity,
+} from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
+import { DataSource } from "typeorm";
 
 describe("ReportAestController(e2e)-exportReport", () => {
   let app: INestApplication;
   let appModule: TestingModule;
   let db: E2EDataSources;
+  let appDataSource: DataSource;
+
   let formService: FormService;
 
   beforeAll(async () => {
@@ -37,6 +48,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
       await createTestingAppModule();
     app = nestApplication;
     appModule = module;
+    appDataSource = dataSource;
     db = createE2EDataSources(dataSource);
     // Mock the form service to validate the dry-run submission result.
     formService = await getProviderInstanceForModule(
@@ -48,64 +60,20 @@ describe("ReportAestController(e2e)-exportReport", () => {
 
   it("Should generate the eCert Feedback Errors report when a report generation request is made with the appropriate offering intensity and date range.", async () => {
     // Arrange
-    // Create fake User.
-    const savedUser = await db.user.save(createFakeUser());
-    const fakeUser = await db.user.save(
-      createFakeUser({
-        initialValue: { firstName: "John", lastName: "Doe" },
-      }),
-    );
-    // Create fake Student.
-    const fakeStudent = await db.student.save(
-      createFakeStudent(fakeUser, {
-        initialValue: {
-          birthDate: "Jan 31 2001",
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      undefined,
+      {
+        applicationStatus: ApplicationStatus.Completed,
+        offeringIntensity: OfferingIntensity.partTime,
+        firstDisbursementInitialValues: {
+          coeStatus: COEStatus.completed,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
         },
-      }),
+      },
     );
-    // Create fake Application.
-    const fakeApplication = await db.application.save(
-      createFakeApplication(
-        {
-          student: fakeStudent,
-        },
-        { initialValue: { applicationNumber: "28        " } },
-      ),
-    );
-    // Create fake Institution Location.
-    const fakeInstitutionLocation = await db.institutionLocation.save(
-      createFakeInstitutionLocation(),
-    );
-    // Create fake Education Program Offering.
-    const fakeEducationProgramOffering = await db.educationProgramOffering.save(
-      createFakeEducationProgramOffering(
-        { auditUser: savedUser, institutionLocation: fakeInstitutionLocation },
-        {
-          initialValues: {
-            studyStartDate: "2024-06-01",
-            studyEndDate: "2024-12-01",
-            offeringIntensity: OfferingIntensity.partTime,
-          },
-        },
-      ),
-    );
-    // Create fake Assessment.
-    const fakeStudentAssessment = await db.studentAssessment.save(
-      createFakeStudentAssessment({
-        auditUser: savedUser,
-        application: fakeApplication,
-        offering: fakeEducationProgramOffering,
-      }),
-    );
-    // Create fake Disbursement Schedule.
-    const fakeDisbursementSchedule = await db.disbursementSchedule.save(
-      createFakeDisbursementSchedule(
-        {
-          studentAssessment: fakeStudentAssessment,
-        },
-        { initialValues: { documentNumber: 1234 } },
-      ),
-    );
+    const [firstDisbursement] =
+      application.currentAssessment.disbursementSchedules;
     // Feedback error sample.
     const eCertFeedbackError = await db.eCertFeedbackError.findOne({
       select: { id: true, errorCode: true },
@@ -118,7 +86,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
       await db.disbursementFeedbackErrors.save(
         createFakeDisbursementFeedbackError(
           {
-            disbursementSchedule: fakeDisbursementSchedule,
+            disbursementSchedule: firstDisbursement,
             eCertFeedbackError: eCertFeedbackError,
           },
           {
@@ -162,24 +130,23 @@ describe("ReportAestController(e2e)-exportReport", () => {
         const parsedResult = parse(fileContent, {
           header: true,
         });
-        console.log(parsedResult.data);
+        const studentAssessment = firstDisbursement.studentAssessment;
+        const offering = studentAssessment.offering;
+        const fakeApplication = studentAssessment.application;
+        const student = fakeApplication.student;
+        const user = student.user;
         expect(parsedResult.data).toEqual(
           expect.arrayContaining([
             {
-              "eCert Number":
-                fakeDisbursementSchedule.documentNumber.toString(),
+              "eCert Number": firstDisbursement.documentNumber.toString(),
               "Application Number": fakeApplication.applicationNumber,
-              "First Name": fakeUser.firstName,
-              "Last Name": fakeUser.lastName,
-              "Date of Birth": getISODateOnlyString(fakeStudent.birthDate),
+              "First Name": user.firstName,
+              "Last Name": user.lastName,
+              "Date of Birth": getISODateOnlyString(student.birthDate),
               "Feedback File Name":
                 fakeDisbursementFeedbackError.feedbackFileName,
-              "Study Start Date": getISODateOnlyString(
-                fakeEducationProgramOffering.studyStartDate,
-              ),
-              "Study End Date": getISODateOnlyString(
-                fakeEducationProgramOffering.studyEndDate,
-              ),
+              "Study Start Date": getISODateOnlyString(offering.studyStartDate),
+              "Study End Date": getISODateOnlyString(offering.studyEndDate),
               "Error Logged Date": getISODateOnlyString(
                 fakeDisbursementFeedbackError.dateReceived,
               ),

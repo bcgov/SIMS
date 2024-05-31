@@ -52,7 +52,7 @@ export class CreateAESTUsers {
    */
   private async createAESTUser(userName: string): Promise<User> {
     // Create fake user.
-    const fakeUser = createFakeUser({ initialValue: { userName: userName } });
+    const fakeUser = createFakeUser(userName);
     // Save user to DB.
     return this.userRepo.save(fakeUser);
   }
