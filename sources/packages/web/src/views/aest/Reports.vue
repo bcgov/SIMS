@@ -17,13 +17,17 @@ export default defineComponent({
   },
   setup() {
     const reportList = [
+      { description: "Data Inventory", id: "Data_Inventory_Report" },
+      { description: "Disbursements", id: "Disbursement_Report" },
+      { description: "eCert Errors", id: "ECert_Errors_Report" },
       {
         description: "Forecast disbursements",
         id: "Disbursement_Forecast_Report",
       },
-      { description: "Disbursements", id: "Disbursement_Report" },
-      { description: "Data Inventory", id: "Data_Inventory_Report" },
-      { description: "eCert Errors", id: "ECert_Errors_Report" },
+      {
+        description: "Institution Designation",
+        id: "Institution_Designation_Report",
+      },
     ];
     return { reportList };
   },
