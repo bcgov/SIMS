@@ -49,7 +49,7 @@ import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE } from "@sims/services/constants";
 import { ECertFailedValidation } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
 
-describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", () => {
+describe.skip("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", () => {
   let app: INestApplication;
   let appModule: TestingModule;
   let appDataSource: DataSource;

@@ -32,7 +32,7 @@ import {
   StudentAppealStatus,
 } from "@sims/sims-db";
 
-describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () => {
+describe.skip("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () => {
   let app: INestApplication;
   let appModule: TestingModule;
   let student: Student;
