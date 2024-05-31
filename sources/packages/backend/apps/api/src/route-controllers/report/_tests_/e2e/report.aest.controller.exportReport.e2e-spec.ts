@@ -133,7 +133,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
       reportName: "ECert_Errors_Report",
       params: {
         offeringIntensity: {
-          "Full Time": true,
+          "Full Time": false,
           "Part Time": true,
         },
         startDate: "2023-10-01",
