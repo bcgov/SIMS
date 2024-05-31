@@ -24,6 +24,7 @@ import {
   createFakeMSFAANumber,
   MSFAAStates,
   saveFakeStudent,
+  createFakeDisbursementValue,
 } from "@sims/test-utils";
 import {
   Application,
@@ -34,6 +35,7 @@ import {
   DisabilityStatus,
   DisbursementSchedule,
   DisbursementScheduleStatus,
+  DisbursementValueType,
   OfferingIntensity,
   RestrictionActionType,
   Student,
@@ -570,7 +572,11 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
       "the calculated PDPPD status is true and the student's disability status is permanent disability and the offering intensity is part time.",
     async () => {
       // Arrange
-      const student = await saveFakeStudent(db.dataSource);
+      const student = await saveFakeStudent(db.dataSource, undefined, {
+        initialValue: {
+          disabilityStatus: DisabilityStatus.Requested,
+        },
+      });
       const msfaaNumber = createFakeMSFAANumber(
         {
           student,
@@ -605,9 +611,6 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
       application.currentAssessment.workflowData.calculatedData.pdppdStatus =
         true;
       await db.studentAssessment.save(application.currentAssessment);
-
-      application.student.disabilityStatus = DisabilityStatus.Requested;
-      await db.student.save(application.student);
 
       const endpoint = `/students/application/${application.id}/completed`;
       const token = await getStudentToken(
@@ -645,7 +648,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           student,
         },
         {
-          msfaaState: MSFAAStates.Signed,
+          msfaaState: MSFAAStates.Pending | MSFAAStates.CancelledOtherProvince,
         },
       );
       await db.msfaaNumber.save(msfaaNumber);
@@ -668,7 +671,6 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
       const [firstDisbursement] =
         application.currentAssessment.disbursementSchedules;
 
-      msfaaNumber.dateSigned = null;
       msfaaNumber.cancelledDate = getISODateOnlyString(new Date());
       await db.msfaaNumber.save(msfaaNumber);
 
@@ -852,7 +854,17 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
 
       const application = await saveFakeApplicationDisbursements(
         appDataSource,
-        { student, msfaaNumber },
+        {
+          student,
+          msfaaNumber,
+          disbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE,
+              10001,
+            ),
+          ],
+        },
         {
           applicationStatus: ApplicationStatus.Completed,
           offeringIntensity: OfferingIntensity.partTime,
@@ -864,14 +876,6 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
       );
       const [firstDisbursement] =
         application.currentAssessment.disbursementSchedules;
-
-      const disbursementCSLP = firstDisbursement.disbursementValues.find(
-        (item) => item.valueCode === CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE,
-      );
-      disbursementCSLP.valueAmount =
-        application.currentAssessment.workflowData.dmnValues
-          .lifetimeMaximumCSLP + 1;
-      await db.disbursementValue.save(disbursementCSLP);
 
       const endpoint = `/students/application/${application.id}/completed`;
       const token = await getStudentToken(

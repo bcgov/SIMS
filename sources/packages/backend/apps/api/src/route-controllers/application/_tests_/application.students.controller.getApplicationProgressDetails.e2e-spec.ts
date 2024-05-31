@@ -312,11 +312,9 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
       "the student's isValidSIN is false and the offering intensity is part time.",
     async () => {
       // Arrange
-      const student = await saveFakeStudent(
-        db.dataSource,
-        {},
-        { sinValidationInitialValue: { isValidSIN: false } },
-      );
+      const student = await saveFakeStudent(db.dataSource, undefined, {
+        sinValidationInitialValue: { isValidSIN: false },
+      });
       const msfaaNumber = createFakeMSFAANumber(
         {
           student,
