@@ -114,7 +114,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 512M
+          memory: 768M
     container_name: queue-consumers-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
     build:
       context: ./packages/backend

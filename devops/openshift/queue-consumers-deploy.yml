@@ -295,11 +295,11 @@ parameters:
   - name: CPU_LIMIT
     value: "0.2"
   - name: MEMORY_LIMIT
-    value: "512M"
+    value: "768M"
   - name: CPU_REQUEST
     value: "0.1"
   - name: MEMORY_REQUEST
-    value: "384M"
+    value: "512M"
   - name: REPLICAS
     value: "2"
   - name: DB_SERVICE
