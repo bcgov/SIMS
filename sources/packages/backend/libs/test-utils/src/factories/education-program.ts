@@ -9,7 +9,7 @@ import {
 import { createFakeInstitution } from "@sims/test-utils";
 
 export function createFakeEducationProgram(
-  relations?: {
+  relations: {
     auditUser: User;
     institution?: Institution;
   },
@@ -37,7 +37,7 @@ export function createFakeEducationProgram(
   program.programDeclaration = true;
   program.institution = relations?.institution ?? createFakeInstitution();
   program.programIntensity = ProgramIntensity.fullTime;
-  program.submittedBy = relations?.auditUser;
+  program.submittedBy = relations.auditUser;
   program.isActive = options?.initialValues?.isActive ?? true;
   program.effectiveEndDate = options?.initialValues?.effectiveEndDate ?? null;
   return program;
