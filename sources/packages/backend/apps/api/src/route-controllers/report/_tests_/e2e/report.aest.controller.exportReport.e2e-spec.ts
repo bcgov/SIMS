@@ -2,24 +2,15 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
   E2EDataSources,
   createE2EDataSources,
-  createFakeApplication,
   createFakeDisbursementFeedbackError,
-  createFakeDisbursementSchedule,
-  createFakeEducationProgramOffering,
-  createFakeInstitutionLocation,
-  createFakeStudent,
-  createFakeStudentAssessment,
-  createFakeUser,
   getProviderInstanceForModule,
   saveFakeApplicationDisbursements,
 } from "@sims/test-utils";
 import {
   AESTGroups,
   BEARER_AUTH_TYPE,
-  FakeStudentUsersTypes,
   createTestingAppModule,
   getAESTToken,
-  getStudentByFakeStudentUserType,
 } from "../../../../testHelpers";
 import { parse } from "papaparse";
 import * as request from "supertest";
