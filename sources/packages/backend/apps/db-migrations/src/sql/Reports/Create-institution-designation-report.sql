@@ -9,16 +9,18 @@ VALUES
       institution_locations.institution_code AS "Location Code",
       institution_type.name AS "Institution Type",
       designation_agreements.designation_status AS "Designation Status",
-      CAST(designation_agreements.assessed_date AS varchar) AS "Assessed Date",
+      CAST(
+        CAST(designation_agreements.assessed_date AS date) AS varchar
+      ) AS "Assessed Date",
       CAST(designation_agreements.end_date AS varchar) AS "Expiry Date",
       CONCAT(
-        institution_locations.primary_contact ->> ''firstName'',
+        institution_locations.primary_contact ->> '' firstName '',
         '' '',
-        institution_locations.primary_contact ->> ''lastName''
+        institution_locations.primary_contact ->> '' lastName ''
       ) AS "Location Contact",
       designation_agreement_locations.requested AS "Request for designation",
       designation_agreement_locations.approved AS "Approved for designation",
-      institution_locations.primary_contact ->> ''email'' AS "Contact Email"
+      institution_locations.primary_contact ->> '' email '' AS "Contact Email"
     FROM
       sims.institution_locations institution_locations
       INNER JOIN sims.institutions institutions ON institution_locations.institution_id = institutions.id
