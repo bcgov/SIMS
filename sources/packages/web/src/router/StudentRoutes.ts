@@ -99,7 +99,10 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.Assessment,
         name: StudentRoutesConst.NOTICE_OF_ASSESSMENT_VIEW,
         component: Assessment,
-        props: true,
+        props: (route) => ({
+          applicationId: parseInt(route.params.applicationId as string),
+          assessmentId: parseInt(route.params.assessmentId as string),
+        }),
         meta: {
           clientType: ClientIdType.Student,
         },

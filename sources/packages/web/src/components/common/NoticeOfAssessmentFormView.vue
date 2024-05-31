@@ -81,9 +81,13 @@ export default defineComponent({
     assessmentDataLoaded: (
       applicationStatus: ApplicationStatus,
       noaApprovalStatus: AssessmentStatus,
-      currentAssessmentId: number,
+      applicationCurrentAssessmentId: number,
     ) => {
-      return !!applicationStatus && !!noaApprovalStatus;
+      return (
+        !!applicationStatus &&
+        !!noaApprovalStatus &&
+        !!applicationCurrentAssessmentId
+      );
     },
     reissueMSFAA: (
       applicationId: number,

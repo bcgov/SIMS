@@ -77,13 +77,13 @@ export default defineComponent({
     const assessmentDataLoaded = (
       applicationStatus: ApplicationStatus,
       noaApprovalStatus: AssessmentStatus,
-      assessmentId: number,
+      applicationCurrentAssessmentId: number,
     ) => {
       viewOnly.value = !(
         applicationStatus === ApplicationStatus.Assessment &&
         noaApprovalStatus === AssessmentStatus.required
       );
-      currentAssessmentId.value = assessmentId;
+      currentAssessmentId.value = applicationCurrentAssessmentId;
     };
 
     const confirmAssessment = async () => {
