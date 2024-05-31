@@ -13,13 +13,13 @@ VALUES
         CAST(designation_agreements.assessed_date AS date) AS varchar
       ) AS "Assessed Date",
       CAST(designation_agreements.end_date AS varchar) AS "Expiry Date",
+      designation_agreement_locations.requested AS "Request for designation",
+      designation_agreement_locations.approved AS "Approved for designation",
       CONCAT(
         institution_locations.primary_contact ->> ''firstName'',
         '' '',
         institution_locations.primary_contact ->> ''lastName''
       ) AS "Location Contact",
-      designation_agreement_locations.requested AS "Request for designation",
-      designation_agreement_locations.approved AS "Approved for designation",
       institution_locations.primary_contact ->> ''email'' AS "Contact Email"
     FROM
       sims.institution_locations institution_locations
