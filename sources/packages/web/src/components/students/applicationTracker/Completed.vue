@@ -53,6 +53,39 @@
     background-color="warning-bg"
     content="If the requested change is approved by StudentAid BC, your application will be re-evaluated with a new assessment below."
   />
+  <application-status-tracker-banner
+    label="Attention! You are not yet eligible to receive funding."
+    icon="fa:fas fa-exclamation-triangle"
+    icon-color="warning"
+    background-color="warning-bg"
+    v-if="!!ecertFailedValidationDetails.length"
+    ><template #content
+      ><ul>
+        <li
+          v-for="ecertFailedValidationDetail in ecertFailedValidationDetails"
+          :key="ecertFailedValidationDetail.failedType"
+        >
+          <span
+            v-if="
+              ecertFailedValidationDetail.failedType ===
+              ECertFailedValidation.MSFAACanceled
+            "
+            >Your MSFAA number has been cancelled by the National Student Loans
+            Service Center (NSLSC). Please
+            <a
+              href="https://protege-secure.csnpe-nslsc.canada.ca/en/public/contact/contact-us"
+              rel="noopener"
+              target="_blank"
+              >contact NSLSC</a
+            >
+            to find out why it was cancelled. Until this is resolved, you will
+            not be eligible to receive funding.
+          </span>
+          <span v-else>{{ ecertFailedValidationDetail.failedMessage }}</span>
+        </li>
+      </ul>
+    </template>
+  </application-status-tracker-banner>
   <!-- Scholastic standing changed - student did not complete the program -->
   <application-status-tracker-banner
     v-if="
@@ -98,39 +131,6 @@
     background-color="error-bg"
     content="You can review the outcomes of your requested changes in the table below by clicking “View request”. Please note your application will proceed without your requested changes, based on your last assessment."
   />
-  <application-status-tracker-banner
-    label="Attention! You are not yet eligible to receive funding."
-    icon="fa:fas fa-exclamation-triangle"
-    icon-color="warning"
-    background-color="error-bg"
-    v-if="!!ecertFailedValidationDetails.length"
-    ><template #content
-      ><ul>
-        <li
-          v-for="ecertFailedValidationDetail in ecertFailedValidationDetails"
-          :key="ecertFailedValidationDetail.failedType"
-        >
-          <span
-            v-if="
-              ecertFailedValidationDetail.failedType ===
-              ECertFailedValidation.MSFAACanceled
-            "
-            >Your MSFAA number has been cancelled by the National Student Loans
-            Service Center (NSLSC). Please
-            <a
-              href="https://protege-secure.csnpe-nslsc.canada.ca/en/public/contact/contact-us"
-              rel="noopener"
-              target="_blank"
-              >contact NSLSC</a
-            >
-            to find out why it was cancelled. Until this is resolved, you will
-            not be eligible to receive funding.
-          </span>
-          <span v-else>{{ ecertFailedValidationDetail.failedMessage }}</span>
-        </li>
-      </ul>
-    </template>
-  </application-status-tracker-banner>
   <!-- Scholastic standing changed -->
   <application-status-tracker-banner
     v-if="
