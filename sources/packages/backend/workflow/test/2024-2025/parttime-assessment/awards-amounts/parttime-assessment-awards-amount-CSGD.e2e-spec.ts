@@ -123,10 +123,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       ),
     );
     expect(calculatedAssessment.variables.federalAwardNetCSGDAmount).toBe(
-      950.832256,
+      1021.455424,
     );
     expect(calculatedAssessment.variables.finalFederalAwardNetCSGDAmount).toBe(
-      950.832256,
+      1021.455424,
     );
   });
 
@@ -236,10 +236,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       ),
     );
     expect(calculatedAssessment.variables.federalAwardNetCSGDAmount).toBe(
-      496.86684445,
+      536.5661968,
     );
     expect(calculatedAssessment.variables.finalFederalAwardNetCSGDAmount).toBe(
-      496.86684445,
+      536.5661968,
     );
   });
 
@@ -270,10 +270,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     // federalAwardCSGDAmount
     expect(calculatedAssessment.variables.awardEligibilityCSGD).toBe(true);
     expect(calculatedAssessment.variables.federalAwardCSGDAmount).toBe(
-      696.86684445,
+      736.5661968,
     );
     expect(calculatedAssessment.variables.federalAwardNetCSGDAmount).toBe(
-      696.86684445,
+      736.5661968,
     );
   });
 });
