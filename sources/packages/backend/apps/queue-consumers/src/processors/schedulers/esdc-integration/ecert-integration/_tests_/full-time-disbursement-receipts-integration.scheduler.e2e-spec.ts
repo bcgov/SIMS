@@ -197,12 +197,14 @@ describe(
         firstDisbursement.id,
       );
       // Assert federal receipt.
-      // Batch run date.
-      expect(feReceipt.batchRunDate).toBe("2024-01-30");
-      // File date.
-      expect(feReceipt.fileDate).toBe("2024-01-31");
-      // Sequence number.
-      expect(feReceipt.sequenceNumber).toBe(3228);
+      // Header details.
+      expect(feReceipt).toEqual(
+        expect.objectContaining({
+          batchRunDate: "2024-01-30",
+          fileDate: "2024-01-31",
+          sequenceNumber: 3228,
+        }),
+      );
       // Document number.
       expect(feReceipt.disbursementSchedule.documentNumber).toBe(
         SHARED_DOCUMENT_NUMBER,
@@ -222,12 +224,14 @@ describe(
         XYZ: 444,
       });
       // Assert provincial receipt.
-      // Batch run date.
-      expect(bcReceipt.batchRunDate).toBe("2024-01-30");
-      // File date.
-      expect(bcReceipt.fileDate).toBe("2024-01-31");
-      // Sequence number.
-      expect(bcReceipt.sequenceNumber).toBe(3228);
+      // Header details.
+      expect(bcReceipt).toEqual(
+        expect.objectContaining({
+          batchRunDate: "2024-01-30",
+          fileDate: "2024-01-31",
+          sequenceNumber: 3228,
+        }),
+      );
       // Document number.
       expect(bcReceipt.disbursementSchedule.documentNumber).toBe(
         SHARED_DOCUMENT_NUMBER,
