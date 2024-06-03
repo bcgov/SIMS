@@ -74,6 +74,7 @@
                 :value="index"
                 @click="item.command"
                 :to="item.props?.to"
+                tabindex="0"
               >
                 <v-list-item-title>
                   <span class="label-bold">{{ item.title }}</span>
