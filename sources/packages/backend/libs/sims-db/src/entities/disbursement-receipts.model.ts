@@ -230,9 +230,7 @@ export class DisbursementReceipt extends RecordDataModel {
    */
   @Column({
     name: "sequence_number",
-    type: "integer",
     nullable: false,
-    transformer: numericTransformer,
   })
   sequenceNumber: number;
 }
