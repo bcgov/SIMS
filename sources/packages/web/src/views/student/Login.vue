@@ -7,24 +7,25 @@
             Welcome to StudentAid BC
           </h1>
           <p class="mb-5">
-            Access your student account to apply for financial aid.
+            Access your student account to apply for student financial
+            assistance.
           </p>
           <content-group>
             <v-row>
               <v-col>
                 <h2 class="category-header-medium primary-color">
-                  Login or sign up
+                  Log in or Register
                 </h2>
                 <p class="sign-in-description">
-                  Whether you are a new or returning user—login or sign up using
-                  your BC Services Card.
+                  Whether you are a new or returning user—log in or register
+                  using the BC Services Card account.
                 </p>
                 <v-btn
                   color="primary"
                   @click="login(IdentityProviders.BCSC)"
                   prepend-icon="fa:fa fa-user"
                 >
-                  Login / Sign up with BCSC
+                  Log in/Register
                 </v-btn>
               </v-col>
             </v-row>
@@ -49,84 +50,74 @@
         <v-expansion-panel
           collapse-icon="$expanderCollapseIcon"
           expand-icon="$expanderExpandIcon"
-          title="I have a BC Services Card. How can I use it to login?"
+          title="I have a BC Services Card account. How can I use it to log in?"
         >
           <v-expansion-panel-text
-            >Using your BC Services Card to login to StudentAid BC is quick and
-            easy. Click on the login button above and follow the steps. For more
-            information, please visit
+            >Using your BC Services Card account to log in to StudentAid BC is
+            quick and easy. Click on the login button above and follow the
+            steps. For more information, please visit
             <a
               rel="noopener"
               target="_blank"
               href="https://id.gov.bc.ca/account/"
-              >BC Services Card website</a
+              >BC Services Card account website</a
             >.</v-expansion-panel-text
           >
         </v-expansion-panel>
         <v-expansion-panel
           collapse-icon="$expanderCollapseIcon"
           expand-icon="$expanderExpandIcon"
-          title="I don't have a BC Services Card. How can I get one?"
+          title="I don't have a BC Services Card account. How can I get one?"
         >
           <v-expansion-panel-text
-            >There are a few ways you can get a BC Services Card. Learn how to
-            get a BC Services Card on the
+            >Learn how to get a BC Services Card account on the
             <a
               rel="noopener"
               target="_blank"
-              href="https://www2.gov.bc.ca/gov/content/governments/government-id/bc-services-card/your-card/get-a-card"
-              >BC Government website</a
+              href="https://id.gov.bc.ca/account/"
+              >BC Services Card account website</a
             >.</v-expansion-panel-text
           >
         </v-expansion-panel>
         <v-expansion-panel
           collapse-icon="$expanderCollapseIcon"
           expand-icon="$expanderExpandIcon"
-          title="I can't get a BC Services Card. What can I do?"
+          title="I am not eligible for a BC Services Card account. What can I do?"
         >
           <v-expansion-panel-text
             ><p>
-              Using the BC Services Card is the quickest and easiest way to
-              apply for financial aid. However, we understand not everyone is
-              able to get a BC Services Card. Please follow the steps below to
-              request an alternate way to login.
+              Using the BC Services Card account is the easiest, most secure way
+              to apply for student financial aid. However, we understand not
+              everyone is eligible for the BC Services Card account. Please
+              follow the steps below to inquire about alternate login options.
             </p>
             <p>
-              <strong>What you need to do</strong>
+              <strong>What you need to do:</strong>
             </p>
             <p>
-              Step 1: Please email a request to StudentAidBC@gov.bc.ca. You will
-              receive further instructions to confirm your identity and how to
-              apply for financial aid.
-            </p>
-            <p>
-              Step 2: After your identity is verified, you will be instructed to
-              create a Basic BCeID account. Click on the button below to access
-              the BCeID registration page.
-            </p>
-            <p>
-              Step 3: Login using your Basic BCeID to complete your StudentAid
-              BC account registration. Click on the button below to login.
+              Please email a request to StudentAidBC@gov.bc.ca and provide a
+              detailed explanation why you are not eligible for a BC Services
+              Card account. StudentAid BC will review your request and provide
+              further instructions via email.
             </p>
             <v-btn
               color="primary"
               @click="login(IdentityProviders.BCeIDBoth)"
               prepend-icon="fa:fa fa-user"
             >
-              Login / Sign up with Basic BCeID
+              Log in/Register with Basic BCeID
             </v-btn>
           </v-expansion-panel-text>
         </v-expansion-panel>
         <v-expansion-panel
           collapse-icon="$expanderCollapseIcon"
           expand-icon="$expanderExpandIcon"
-          title="I have a Basic BCeID account. How can I upgrade my account to use a
-            BC Services Card instead?"
+          title="I have a Basic BCeID account. How can I upgrade to use the BC Services Card account?"
         >
           <v-expansion-panel-text
-            >When you login using your BC Services Card, your Basic BCeID
-            account will be disabled and you can begin using your BC Services
-            Card.</v-expansion-panel-text
+            >Simply log in using your BC Services Card account. Once you
+            successfully log in with your BC Services Card account, your Basic
+            BCeID account will be disabled.</v-expansion-panel-text
           >
         </v-expansion-panel>
       </v-expansion-panels>
