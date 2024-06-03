@@ -82,7 +82,7 @@ export class ConfigService {
       port: parseInt(process.env.ZONE_B_SFTP_SERVER_PORT),
       username: process.env.ZONE_B_SFTP_USER_NAME,
       passphrase: process.env.ZONE_B_SFTP_PRIVATE_KEY_PASSPHRASE,
-      privateKey: process.env.ZONE_B_SFTP_PRIVATE_KEY.replace(/\\n/g, "\n"),
+      privateKey: process.env.ZONE_B_SFTP_PRIVATE_KEY?.replace(/\\n/g, "\n"),
     });
   }
 
