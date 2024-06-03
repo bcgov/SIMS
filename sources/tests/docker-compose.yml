@@ -74,6 +74,7 @@ services:
       - ESDC_REQUEST_FOLDER=${ESDC_REQUEST_FOLDER}
       - ESDC_RESPONSE_FOLDER=${ESDC_RESPONSE_FOLDER}
       - ESDC_ENVIRONMENT_CODE=${ESDC_ENVIRONMENT_CODE}
+      - QUEUE_CONSUMERS_PORT=${QUEUE_CONSUMERS_PORT}
     networks:
       - local-network-tests
     restart: always
