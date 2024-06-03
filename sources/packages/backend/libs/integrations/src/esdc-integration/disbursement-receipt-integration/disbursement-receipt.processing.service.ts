@@ -113,7 +113,7 @@ export class DisbursementReceiptProcessingService {
           const generatedIdentifier =
             await this.disbursementReceiptService.insertDisbursementReceipt(
               response,
-              responseData.header.batchRunDate,
+              responseData.header,
               disbursementScheduleId,
               auditUserId,
               createdAt,
