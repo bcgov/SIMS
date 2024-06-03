@@ -12,21 +12,13 @@ ADD
 
 COMMENT ON COLUMN sims.disbursement_receipts.total_entitled_grant_amount IS 'This reflects the sequence number as produced by NSLSC report.';
 
-/ /
-Update
-  the existing records with dummy
-values
-.
+-- Updates the existing records with dummy values.
 UPDATE
   sims.disbursement_receipts
 SET
   file_date = CURRENT_DATE;
 
-/ /
-Update
-  the existing records with dummy
-values
-.
+-- Updates the existing records with dummy values.
 UPDATE
   sims.disbursement_receipts
 SET
