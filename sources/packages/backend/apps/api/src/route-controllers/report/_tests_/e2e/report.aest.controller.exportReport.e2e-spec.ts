@@ -166,6 +166,10 @@ describe("ReportAestController(e2e)-exportReport", () => {
       approvedDesignationAgreementLocation.institutionLocation;
     const nonDesignatedInstitutionLocation =
       declinedDesignationAgreementLocation.institutionLocation;
+    const designatedPrimaryContact =
+      designatedInstitutionLocation.primaryContact;
+    const nonDesignatedPrimaryContact =
+      nonDesignatedInstitutionLocation.primaryContact;
     const payload = {
       reportName: "Institution_Designation_Report",
       params: {
@@ -211,11 +215,10 @@ describe("ReportAestController(e2e)-exportReport", () => {
               "Approved for designation":
                 approvedDesignationAgreementLocation.approved.toString(),
               "Location Contact":
-                designatedInstitutionLocation.primaryContact.firstName +
+                designatedPrimaryContact.firstName +
                 " " +
-                designatedInstitutionLocation.primaryContact.lastName,
-              "Contact Email":
-                designatedInstitutionLocation.primaryContact.email,
+                designatedPrimaryContact.lastName,
+              "Contact Email": designatedPrimaryContact.email,
             },
             {
               "Institution Operating Name":
@@ -231,11 +234,10 @@ describe("ReportAestController(e2e)-exportReport", () => {
               "Approved for designation":
                 declinedDesignationAgreementLocation.approved.toString(),
               "Location Contact":
-                nonDesignatedInstitutionLocation.primaryContact.firstName +
+                nonDesignatedPrimaryContact.firstName +
                 " " +
-                nonDesignatedInstitutionLocation.primaryContact.lastName,
-              "Contact Email":
-                nonDesignatedInstitutionLocation.primaryContact.email,
+                nonDesignatedPrimaryContact.lastName,
+              "Contact Email": nonDesignatedPrimaryContact.email,
             },
           ]),
         );
