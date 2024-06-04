@@ -14,16 +14,17 @@ import { createFakeUser } from "@sims/test-utils";
  * this method approves the first location's designation request,
  * second location onwards are not approved for their designation request.
  * @param db e2e data sources.
- * @param options options,
+ * @param options related options.
  * - `numberOfLocations` number of locations.
+ * - `initialValues` designation agreement initial values.
  * @returns created and saved fake designation agreement location/s.
  * */
 export async function saveFakeDesignationAgreementLocation(
   db: E2EDataSources,
   options: {
-    numberOfLocations: number;
+    numberOfLocations?: number;
     initialValues?: Partial<DesignationAgreement>;
-  },
+  } = { numberOfLocations: 1 },
 ): Promise<DesignationAgreementLocation[]> {
   const fakeInstitution = await db.institution.save(createFakeInstitution());
   // Create fake institution locations.
