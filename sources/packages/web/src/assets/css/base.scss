@@ -362,6 +362,10 @@ strong {
   border: 1px solid $common-border-color;
 }
 
+.v-card.overflow {
+  overflow: visible;
+}
+
 .content-group-info {
   background-color: $default-background;
   border: 2px solid $common-border-color !important;
