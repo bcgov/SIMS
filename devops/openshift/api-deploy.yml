@@ -394,3 +394,5 @@ parameters:
     value: password
   - name: QUEUE_PREFIX
     required: true
+  - name: APPLICATION_ARCHIVE_DAYS
+    require: true
