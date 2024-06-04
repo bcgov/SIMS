@@ -70,9 +70,15 @@ import {
   SFASPartTimeApplicationsService,
 } from "@sims/services/sfas";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
+import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
 
 @Module({
-  imports: [AuthModule, ConfigModule, ATBCIntegrationModule],
+  imports: [
+    AuthModule,
+    ConfigModule,
+    ATBCIntegrationModule,
+    ECertIntegrationModule,
+  ],
   controllers: [
     ApplicationStudentsController,
     StudentStudentsController,

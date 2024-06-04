@@ -12,6 +12,7 @@ import {
   StudentScholasticStandingChangeType,
   ApplicationOfferingChangeRequestStatus,
   StudentAssessmentStatus,
+  ECertFailedValidation,
 } from "@/types";
 
 export interface InProgressApplicationDetailsAPIOutDTO {
@@ -110,6 +111,7 @@ export interface ApplicationProgressDetailsAPIOutDTO {
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
   assessmentTriggerType?: AssessmentTriggerType;
   hasBlockFundingFeedbackError: boolean;
+  hasECertFailedValidations: boolean;
 }
 
 export interface DisbursementDetailsAPIOutDTO {
@@ -134,6 +136,7 @@ export interface CompletedApplicationDetailsAPIOutDTO
   applicationOfferingChangeRequestId?: number;
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
   hasBlockFundingFeedbackError: boolean;
+  eCertFailedValidations: ECertFailedValidation[];
 }
 
 export interface ApplicationAssessmentStatusDetailsAPIOutDTO {

@@ -53,6 +53,39 @@
     background-color="warning-bg"
     content="If the requested change is approved by StudentAid BC, your application will be re-evaluated with a new assessment below."
   />
+  <application-status-tracker-banner
+    label="Attention! You are not yet eligible to receive funding."
+    icon="fa:fas fa-exclamation-triangle"
+    icon-color="warning"
+    background-color="warning-bg"
+    v-if="!!ecertFailedValidationDetails.length"
+    ><template #content
+      ><ul>
+        <li
+          v-for="ecertFailedValidationDetail in ecertFailedValidationDetails"
+          :key="ecertFailedValidationDetail.failedType"
+        >
+          <span
+            v-if="
+              ecertFailedValidationDetail.failedType ===
+              ECertFailedValidation.MSFAACanceled
+            "
+            >Your MSFAA number has been cancelled by the National Student Loans
+            Service Center (NSLSC). Please
+            <a
+              href="https://protege-secure.csnpe-nslsc.canada.ca/en/public/contact/contact-us"
+              rel="noopener"
+              target="_blank"
+              >contact NSLSC</a
+            >
+            to find out why it was cancelled. Until this is resolved, you will
+            not be eligible to receive funding.
+          </span>
+          <span v-else>{{ ecertFailedValidationDetail.failedMessage }}</span>
+        </li>
+      </ul>
+    </template>
+  </application-status-tracker-banner>
   <!-- Scholastic standing changed - student did not complete the program -->
   <application-status-tracker-banner
     v-if="
@@ -180,6 +213,7 @@ import {
   ApplicationOfferingChangeRequestStatus,
   AssessmentTriggerType,
   COEStatus,
+  ECertFailedValidation,
   StudentAppealStatus,
   StudentScholasticStandingChangeType,
 } from "@/types";
@@ -192,6 +226,10 @@ import MultipleDisbursementBanner from "@/components/students/applicationTracker
 import RelatedApplicationChanged from "@/components/students/applicationTracker/RelatedApplicationChanged.vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
+import {
+  EcertFailedValidationDetail,
+  ECERT_FAILED_MESSAGES,
+} from "@/constants";
 
 export default defineComponent({
   components: {
@@ -210,6 +248,7 @@ export default defineComponent({
     const router = useRouter();
     const assessmentDetails = ref({} as CompletedApplicationDetailsAPIOutDTO);
     const multipleCOEDenialReason = ref<string>();
+    const ecertFailedValidationDetails = ref<EcertFailedValidationDetail[]>([]);
 
     onMounted(async () => {
       assessmentDetails.value =
@@ -222,6 +261,15 @@ export default defineComponent({
       multipleCOEDenialReason.value =
         assessmentDetails.value.firstDisbursement?.coeDenialReason ??
         assessmentDetails.value.secondDisbursement?.coeDenialReason;
+
+      ECERT_FAILED_MESSAGES.forEach((detail) => {
+        if (
+          assessmentDetails.value.eCertFailedValidations.includes(
+            detail.failedType,
+          )
+        )
+          ecertFailedValidationDetails.value.push(detail);
+      });
     });
 
     const hasDisbursementEvent = computed(() => {
@@ -250,6 +298,8 @@ export default defineComponent({
     return {
       assessmentDetails,
       multipleCOEDenialReason,
+      ecertFailedValidationDetails,
+      ECertFailedValidation,
       COEStatus,
       AssessmentTriggerType,
       StudentAppealStatus,
