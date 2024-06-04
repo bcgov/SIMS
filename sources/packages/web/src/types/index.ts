@@ -44,3 +44,4 @@ export * from "@/types/contracts/StudentScholasticStanding";
 export * from "@/types/contracts/ApplicationOfferingChangeRequestStatus";
 export * from "@/types/contracts/StatusChip";
 export * from "@/types/contracts/ApplicationOfferingChangeRequest";
+export * from "@/types/contracts/ECertFailedValidation";

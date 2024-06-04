@@ -9,6 +9,7 @@ import {
 } from "@sims/sims-db";
 import { DisbursementReceiptModel } from "./disbursement-receipt.model";
 import { getISODateOnlyString } from "@sims/utilities";
+import { DisbursementReceiptHeader } from "@sims/integrations/esdc-integration";
 
 /**
  * Code maps for the award types received in the receipt file
@@ -54,7 +55,7 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
    */
   async insertDisbursementReceipt(
     disbursementReceipt: DisbursementReceiptModel,
-    batchRunDate: Date,
+    header: DisbursementReceiptHeader,
     disbursementScheduleId: number,
     auditUserId: number,
     createdAt: Date,
@@ -65,7 +66,11 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
     // The insert of disbursement receipt always comes from an external source through integration.
     // Hence all the date fields are parsed as date object from external source as their date format
     // may not be necessarily ISO date format.
-    disbursementReceiptEntity.batchRunDate = getISODateOnlyString(batchRunDate);
+    disbursementReceiptEntity.batchRunDate = getISODateOnlyString(
+      header.batchRunDate,
+    );
+    disbursementReceiptEntity.fileDate = getISODateOnlyString(header.fileDate);
+    disbursementReceiptEntity.sequenceNumber = header.sequenceNumber;
     disbursementReceiptEntity.studentSIN = disbursementReceipt.studentSIN;
     disbursementReceiptEntity.disbursementSchedule = {
       id: disbursementScheduleId,

@@ -158,6 +158,8 @@ objects:
                     secretKeyRef:
                       key: ${ZEEBE_AUTHORIZATION_SERVER_URL_KEY}
                       name: ${API_SECRET_NAME}
+                - name: APPLICATION_ARCHIVE_DAYS
+                  value: ${APPLICATION_ARCHIVE_DAYS}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
@@ -392,3 +394,5 @@ parameters:
     value: password
   - name: QUEUE_PREFIX
     required: true
+  - name: APPLICATION_ARCHIVE_DAYS
+    require: true

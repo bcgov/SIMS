@@ -1,7 +1,6 @@
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { Injectable } from "@nestjs/common";
 import { FedRestrictionIntegrationService } from "./fed-restriction.integration.service";
-import * as os from "os";
 import { DataSource, InsertResult } from "typeorm";
 import { FederalRestriction, Restriction } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
@@ -15,6 +14,12 @@ import {
 } from "@sims/integrations/services";
 import { SystemUsersService } from "@sims/services/system-users";
 import { StudentRestrictionSharedService } from "@sims/services";
+
+/**
+ * Used to limit the number of asynchronous operations that will
+ * start at the same time while inserting the records.
+ */
+const FEDERAL_RESTRICTION_BULK_INSERT_MAX_PARALLELISM = 4;
 
 /**
  * Manages the process to import the entire snapshot of federal
@@ -173,9 +178,6 @@ export class FedRestrictionProcessingService {
         queryRunner.manager,
       );
 
-      // Used to limit the number of asynchronous operations
-      // that will start at the same time.
-      const maxPromisesAllowed = os.cpus().length;
       // Hold all the promises that must be processed.
       const promises: Promise<InsertResult | void>[] = [];
       this.logger.log("Starting bulk insert...");
@@ -222,7 +224,9 @@ export class FedRestrictionProcessingService {
             hasBulkInsertError = true;
           });
         promises.push(insertPromises);
-        if (promises.length >= maxPromisesAllowed) {
+        if (
+          promises.length >= FEDERAL_RESTRICTION_BULK_INSERT_MAX_PARALLELISM
+        ) {
           // Waits for all to be processed or some to fail.
           await Promise.all(promises);
           // Clear the array.

@@ -197,6 +197,14 @@ describe(
         firstDisbursement.id,
       );
       // Assert federal receipt.
+      // Header details.
+      expect(feReceipt).toEqual(
+        expect.objectContaining({
+          batchRunDate: "2024-01-30",
+          fileDate: "2024-01-31",
+          sequenceNumber: 3228,
+        }),
+      );
       // Document number.
       expect(feReceipt.disbursementSchedule.documentNumber).toBe(
         SHARED_DOCUMENT_NUMBER,
@@ -216,6 +224,14 @@ describe(
         XYZ: 444,
       });
       // Assert provincial receipt.
+      // Header details.
+      expect(bcReceipt).toEqual(
+        expect.objectContaining({
+          batchRunDate: "2024-01-30",
+          fileDate: "2024-01-31",
+          sequenceNumber: 3228,
+        }),
+      );
       // Document number.
       expect(bcReceipt.disbursementSchedule.documentNumber).toBe(
         SHARED_DOCUMENT_NUMBER,
@@ -311,6 +327,9 @@ describe(
           id: true,
           fundingType: true,
           totalDisbursedAmount: true,
+          batchRunDate: true,
+          fileDate: true,
+          sequenceNumber: true,
           disbursementSchedule: {
             id: true,
             documentNumber: true,

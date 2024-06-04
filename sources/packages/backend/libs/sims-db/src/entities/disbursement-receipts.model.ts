@@ -214,4 +214,23 @@ export class DisbursementReceipt extends RecordDataModel {
     nullable: false,
   })
   studyPeriodEndDate: string;
+
+  /**
+   * This reflects the date when the NSLSC file was produced.
+   */
+  @Column({
+    name: "file_date",
+    type: "date",
+    nullable: false,
+  })
+  fileDate: string;
+
+  /**
+   * This reflects the sequence number as produced by NSLSC report.
+   */
+  @Column({
+    name: "sequence_number",
+    nullable: false,
+  })
+  sequenceNumber: number;
 }

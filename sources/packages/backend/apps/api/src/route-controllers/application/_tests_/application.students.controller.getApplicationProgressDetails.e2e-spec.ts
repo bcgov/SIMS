@@ -1,4 +1,5 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
+import { TestingModule } from "@nestjs/testing";
 import * as request from "supertest";
 import {
   BEARER_AUTH_TYPE,
@@ -6,6 +7,7 @@ import {
   FakeStudentUsersTypes,
   getStudentToken,
   getStudentByFakeStudentUserType,
+  mockUserLoginInfo,
 } from "../../../testHelpers";
 import {
   createFakeStudentAppeal,
@@ -15,6 +17,9 @@ import {
   createE2EDataSources,
   E2EDataSources,
   createFakeDisbursementFeedbackError,
+  MSFAAStates,
+  createFakeMSFAANumber,
+  saveFakeStudent,
 } from "@sims/test-utils";
 import {
   ApplicationOfferingChangeRequestStatus,
@@ -29,12 +34,15 @@ import {
 
 describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () => {
   let app: INestApplication;
+  let appModule: TestingModule;
   let student: Student;
   let db: E2EDataSources;
 
   beforeAll(async () => {
-    const { nestApplication, dataSource } = await createTestingAppModule();
+    const { nestApplication, module, dataSource } =
+      await createTestingAppModule();
     app = nestApplication;
+    appModule = module;
     db = createE2EDataSources(dataSource);
     student = await getStudentByFakeStudentUserType(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -142,6 +150,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
           ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
         assessmentTriggerType: application.currentAssessment.triggerType,
         hasBlockFundingFeedbackError: false,
+        hasECertFailedValidations: false,
       });
   });
 
@@ -183,6 +192,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
         secondCOEStatus: secondDisbursement.coeStatus,
         assessmentTriggerType: AssessmentTriggerType.RelatedApplicationChanged,
         hasBlockFundingFeedbackError: false,
+        hasECertFailedValidations: false,
       });
   });
 
@@ -236,6 +246,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
           firstCOEStatus: COEStatus.completed,
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: false,
+          hasECertFailedValidations: false,
         });
     },
   );
@@ -290,6 +301,65 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
           firstCOEStatus: COEStatus.completed,
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: true,
+          hasECertFailedValidations: false,
+        });
+    },
+  );
+
+  it(
+    "Should get application progress details with ecert failed validations array having invalid SIN for " +
+      "an application with its first disbursement having pending schedule status when " +
+      "the student's isValidSIN is false and the offering intensity is part time.",
+    async () => {
+      // Arrange
+      const student = await saveFakeStudent(db.dataSource, undefined, {
+        sinValidationInitialValue: { isValidSIN: false },
+      });
+      const msfaaNumber = createFakeMSFAANumber(
+        {
+          student,
+        },
+        {
+          msfaaState: MSFAAStates.Signed,
+        },
+      );
+      await db.msfaaNumber.save(msfaaNumber);
+
+      // Mock user services to return the saved student.
+      await mockUserLoginInfo(appModule, student);
+
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student, msfaaNumber },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+          offeringIntensity: OfferingIntensity.partTime,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+          },
+        },
+      );
+
+      const endpoint = `/students/application/${application.id}/progress-details`;
+      const token = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          applicationStatus: application.applicationStatus,
+          applicationStatusUpdatedOn:
+            application.applicationStatusUpdatedOn.toISOString(),
+          pirStatus: application.pirStatus,
+          firstCOEStatus: COEStatus.completed,
+          assessmentTriggerType: application.currentAssessment.triggerType,
+          hasBlockFundingFeedbackError: false,
+          hasECertFailedValidations: true,
         });
     },
   );

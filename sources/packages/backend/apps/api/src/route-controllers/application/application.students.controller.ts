@@ -82,6 +82,7 @@ import {
   ConfirmationOfEnrollmentService,
 } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
+import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -103,6 +104,7 @@ export class ApplicationStudentsController extends BaseController {
     private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
     private readonly configService: ConfigService,
     private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
+    private readonly eCertPreValidationService: ECertPreValidationService,
   ) {
     super();
   }
@@ -653,6 +655,7 @@ export class ApplicationStudentsController extends BaseController {
     let appealStatus: StudentAppealStatus;
     let applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus;
     let hasBlockFundingFeedbackError = false;
+    let hasECertFailedValidations = false;
     if (application.applicationStatus === ApplicationStatus.Completed) {
       const appealPromise = this.studentAppealService.getAppealsForApplication(
         applicationId,
@@ -666,16 +669,24 @@ export class ApplicationStudentsController extends BaseController {
         );
       const feedbackErrorPromise =
         this.applicationService.hasFeedbackErrorBlockingFunds(applicationId);
-      const [[appeal], applicationOfferingChangeRequest, feedbackError] =
-        await Promise.all([
-          appealPromise,
-          applicationOfferingChangeRequestPromise,
-          feedbackErrorPromise,
-        ]);
+      const eCertFailedValidationsPromise =
+        this.eCertPreValidationService.executePreValidations(applicationId);
+      const [
+        [appeal],
+        applicationOfferingChangeRequest,
+        feedbackError,
+        eCertFailedValidations,
+      ] = await Promise.all([
+        appealPromise,
+        applicationOfferingChangeRequestPromise,
+        feedbackErrorPromise,
+        eCertFailedValidationsPromise,
+      ]);
       appealStatus = appeal?.status;
       applicationOfferingChangeRequestStatus =
         applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus;
       hasBlockFundingFeedbackError = feedbackError;
+      hasECertFailedValidations = !!eCertFailedValidations.length;
     }
 
     const assessmentTriggerType = application.currentAssessment?.triggerType;
@@ -688,6 +699,7 @@ export class ApplicationStudentsController extends BaseController {
     );
     const [firstDisbursement, secondDisbursement] = disbursements;
     const [scholasticStandingChange] = application.studentScholasticStandings;
+
     return {
       applicationStatus: application.applicationStatus,
       applicationStatusUpdatedOn: application.applicationStatusUpdatedOn,
@@ -700,6 +712,7 @@ export class ApplicationStudentsController extends BaseController {
       applicationOfferingChangeRequestStatus,
       assessmentTriggerType,
       hasBlockFundingFeedbackError,
+      hasECertFailedValidations,
     };
   }
 
@@ -727,6 +740,7 @@ export class ApplicationStudentsController extends BaseController {
         `Application id ${applicationId} not found or not in relevant status to get enrolment details.`,
       );
     }
+
     return {
       ...this.applicationControllerService.transformToEnrolmentApplicationDetailsAPIOutDTO(
         application.currentAssessment.disbursementSchedules,
@@ -765,16 +779,20 @@ export class ApplicationStudentsController extends BaseController {
       );
     const hasBlockFundingFeedbackErrorPromise =
       this.applicationService.hasFeedbackErrorBlockingFunds(applicationId);
+    const eCertFailedValidationsPromise =
+      this.eCertPreValidationService.executePreValidations(applicationId);
     const [
       application,
       [appeal],
       applicationOfferingChangeRequest,
       hasBlockFundingFeedbackError,
+      eCertFailedValidations,
     ] = await Promise.all([
       getApplicationPromise,
       appealPromise,
       applicationOfferingChangeRequestPromise,
       hasBlockFundingFeedbackErrorPromise,
+      eCertFailedValidationsPromise,
     ]);
     if (!application) {
       throw new NotFoundException(
@@ -786,6 +804,7 @@ export class ApplicationStudentsController extends BaseController {
         application.currentAssessment.disbursementSchedules,
       );
     const [scholasticStandingChange] = application.studentScholasticStandings;
+
     return {
       firstDisbursement: enrolmentDetails.firstDisbursement,
       secondDisbursement: enrolmentDetails.secondDisbursement,
@@ -796,6 +815,7 @@ export class ApplicationStudentsController extends BaseController {
       applicationOfferingChangeRequestStatus:
         applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus,
       hasBlockFundingFeedbackError,
+      eCertFailedValidations,
     };
   }
 }

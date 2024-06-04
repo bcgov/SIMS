@@ -34,6 +34,11 @@ export function createFakeDisbursementReceipt(relations: {
   });
   const receipt = new DisbursementReceipt();
   receipt.batchRunDate = isoDateNow;
+  receipt.fileDate = isoDateNow;
+  receipt.sequenceNumber = faker.datatype.number({
+    min: 1,
+    max: 99999,
+  });
   receipt.studentSIN =
     student.sinValidation.sin ??
     faker.datatype.number({ min: 100000000, max: 899999999 }).toString();
