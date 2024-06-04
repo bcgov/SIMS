@@ -168,7 +168,7 @@
                           "tags": [],
                           "properties": {},
                           "conditional": {
-                            "show": "",
+                            "show": null,
                             "when": null,
                             "eq": "",
                             "json": ""

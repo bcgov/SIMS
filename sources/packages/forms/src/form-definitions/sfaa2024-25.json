@@ -168,7 +168,7 @@
                           "tags": [],
                           "properties": {},
                           "conditional": {
-                            "show": "",
+                            "show": null,
                             "when": null,
                             "eq": "",
                             "json": ""
@@ -31496,6 +31496,7 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "id": "esmabhd",
+                      "isNew": false,
                       "tags": []
                     },
                     {
@@ -32099,7 +32100,8 @@
                   "theme": "default",
                   "breadcrumb": "default",
                   "id": "ew7bwiw",
-                  "tags": []
+                  "tags": [],
+                  "isNew": false
                 }
               ],
               "placeholder": "",
