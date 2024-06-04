@@ -376,6 +376,7 @@ deploy-api:
 	test -n "$(QUEUE_PREFIX)"
 	test -n "$(API_PORT)"
 	test -n "$(IS_FULLTIME_ALLOWED)"
+	test -n "$(APPLICATION_ARCHIVE_DAYS)"
 	@echo "+\n++ Deploying API with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml \
 		-p NAME=$(API) \
@@ -398,6 +399,7 @@ deploy-api:
 		-p SWAGGER_ENABLED=$(SWAGGER_ENABLED) \
 		-p SWAGGER_NAME=$(SWAGGER_NAME) \
 		-p QUEUE_PREFIX=$(QUEUE_PREFIX) \
+		-p APPLICATION_ARCHIVE_DAYS=$(APPLICATION_ARCHIVE_DAYS) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(API))
 
