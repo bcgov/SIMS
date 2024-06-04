@@ -75,10 +75,9 @@ export function createFakeDesignationAgreement(
     addDays(-10, new Date()),
     "YYYYMMDD",
   );
-  fakeDesignationAgreement.endDate = formatDate(
-    addDays(90, new Date()),
-    "YYYYMMDD",
-  );
+  fakeDesignationAgreement.endDate =
+    options?.initialValue?.endDate ??
+    formatDate(addDays(90, new Date()), "YYYYMMDD");
   fakeDesignationAgreement.designationAgreementLocations =
     newFakeInstitutionLocations.map((location: InstitutionLocation) => {
       const newLocation = new DesignationAgreementLocation();
@@ -88,6 +87,5 @@ export function createFakeDesignationAgreement(
       newLocation.createdAt = now;
       return newLocation;
     });
-
   return fakeDesignationAgreement;
 }
