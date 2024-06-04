@@ -21,7 +21,6 @@ import { TestingModule } from "@nestjs/testing";
 import {
   ApplicationStatus,
   COEStatus,
-  DesignationAgreement,
   DisbursementScheduleStatus,
   OfferingIntensity,
 } from "@sims/sims-db";
