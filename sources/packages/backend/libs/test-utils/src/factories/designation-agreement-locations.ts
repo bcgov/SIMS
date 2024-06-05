@@ -22,9 +22,9 @@ import { createFakeUser } from "@sims/test-utils";
 export async function saveFakeDesignationAgreementLocation(
   db: E2EDataSources,
   options: {
-    numberOfLocations?: number;
+    numberOfLocations: number;
     initialValues?: Partial<DesignationAgreement>;
-  } = { numberOfLocations: 1 },
+  },
 ): Promise<DesignationAgreementLocation[]> {
   const fakeInstitution = await db.institution.save(createFakeInstitution());
   // Create fake institution locations.
@@ -47,19 +47,12 @@ export async function saveFakeDesignationAgreementLocation(
           endDate: options.initialValues?.endDate,
           assessedDate: options.initialValues?.assessedDate,
         },
+        locationApprovedDesignationRequest: true,
       },
     ),
   );
-  const designationAgreementLocations =
-    savedDesignationAgreement.designationAgreementLocations;
-  designationAgreementLocations.forEach(
-    (designationAgreementLocation) =>
-      (designationAgreementLocation.approved = false),
-  );
-  const [designatedLocation] = designationAgreementLocations;
-  designatedLocation.approved = true;
   const savedDesignationAgreementLocations =
-    await db.designationAgreementLocation.save(designationAgreementLocations);
+    savedDesignationAgreement.designationAgreementLocations;
   savedDesignationAgreementLocations.forEach(
     (savedDesignationAgreementLocation) =>
       (savedDesignationAgreementLocation.designationAgreement =

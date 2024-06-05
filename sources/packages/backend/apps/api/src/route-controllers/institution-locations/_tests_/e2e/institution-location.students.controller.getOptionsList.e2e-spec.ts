@@ -28,6 +28,15 @@ describe("InstitutionLocationStudentsController(e2e)-getOptionsList", () => {
       await saveFakeDesignationAgreementLocation(db, {
         numberOfLocations: 2,
       });
+    // Setting the designation statuses.
+    designatedLocation.approved = true;
+    nonDesignatedLocation.approved = false;
+
+    await db.designationAgreementLocation.save([
+      designatedLocation,
+      nonDesignatedLocation,
+    ]);
+
     const endpoint = "/students/location/options-list";
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,

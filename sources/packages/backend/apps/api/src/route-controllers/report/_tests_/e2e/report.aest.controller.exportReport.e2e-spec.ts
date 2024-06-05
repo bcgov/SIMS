@@ -160,6 +160,10 @@ describe("ReportAestController(e2e)-exportReport", () => {
         endDate: getISODateOnlyString(addDays(30, new Date())),
       },
     });
+    declinedDesignationAgreementLocation.approved = false;
+    await db.designationAgreementLocation.save(
+      declinedDesignationAgreementLocation,
+    );
     const designationAgreement =
       approvedDesignationAgreementLocation.designationAgreement;
     const designatedInstitutionLocation =
