@@ -31259,7 +31259,7 @@
                   "tableView": false,
                   "inputType": "text",
                   "inputMask": "",
-                  "label": "Please estimate your weekly transportation costs:",
+                  "label": "Please estimate your weekly transportation costs.",
                   "key": "additionalTransportCost",
                   "placeholder": "",
                   "prefix": "$",
