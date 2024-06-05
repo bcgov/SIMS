@@ -151,21 +151,23 @@ describe("ReportAestController(e2e)-exportReport", () => {
 
   it("Should generate the Institution Designation report when a report generation request is made with the appropriate date range filters.", async () => {
     // Arrange
+    const designationAgreement = await saveFakeDesignationAgreementLocation(
+      db,
+      {
+        numberOfLocations: 2,
+        initialValues: {
+          endDate: getISODateOnlyString(addDays(30, new Date())),
+        },
+      },
+    );
     const [
       approvedDesignationAgreementLocation,
       declinedDesignationAgreementLocation,
-    ] = await saveFakeDesignationAgreementLocation(db, {
-      numberOfLocations: 2,
-      initialValues: {
-        endDate: getISODateOnlyString(addDays(30, new Date())),
-      },
-    });
+    ] = designationAgreement.designationAgreementLocations;
     declinedDesignationAgreementLocation.approved = false;
     await db.designationAgreementLocation.save(
       declinedDesignationAgreementLocation,
     );
-    const designationAgreement =
-      approvedDesignationAgreementLocation.designationAgreement;
     const designatedInstitutionLocation =
       approvedDesignationAgreementLocation.institutionLocation;
     const nonDesignatedInstitutionLocation =

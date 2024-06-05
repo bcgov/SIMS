@@ -24,10 +24,11 @@ describe("InstitutionLocationStudentsController(e2e)-getOptionsList", () => {
 
   it("Should get the list of all designated institution location which should contain the only newly created designated location and not the newly created non designated location when student requests.", async () => {
     // Arrange
+    const newDesignation = await saveFakeDesignationAgreementLocation(db, {
+      numberOfLocations: 2,
+    });
     const [designatedLocation, nonDesignatedLocation] =
-      await saveFakeDesignationAgreementLocation(db, {
-        numberOfLocations: 2,
-      });
+      newDesignation.designationAgreementLocations;
     // Setting the designation statuses.
     designatedLocation.approved = true;
     nonDesignatedLocation.approved = false;
@@ -41,7 +42,6 @@ describe("InstitutionLocationStudentsController(e2e)-getOptionsList", () => {
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
-
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)

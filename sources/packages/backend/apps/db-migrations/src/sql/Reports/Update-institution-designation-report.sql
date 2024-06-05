@@ -27,10 +27,14 @@ SET
       INNER JOIN sims.designation_agreement_locations designation_agreement_locations ON designation_agreement_locations.location_id = institution_locations.id
       INNER JOIN sims.designation_agreements designation_agreements ON designation_agreements.id = designation_agreement_locations.designation_agreement_id
     WHERE
-      designation_agreements.assessed_date between ((timestamp :startDate) AT TIME ZONE ''UTC'')
-      and ((timestamp :endDate) AT TIME ZONE ''UTC'')
-      OR designation_agreements.end_date BETWEEN ((timestamp :startDate) AT TIME ZONE ''UTC'')
-      and ((timestamp :endDate) AT TIME ZONE ''UTC'')
+      (
+        designation_agreements.assessed_date >= CAST(:startDate as timestamptz)
+        AND designation_agreements.assessed_date < CAST(:endDate as timestamptz) + INTERVAL ''1 DAY''
+      )
+      OR (
+        designation_agreements.end_date >= CAST(:startDate as timestamptz)
+        AND designation_agreements.end_date < CAST(:endDate as timestamptz) + INTERVAL ''1 DAY''
+      )
     ORDER BY
       institutions.operating_name ASC,
       institution_locations.institution_code ASC,

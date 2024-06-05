@@ -9,15 +9,12 @@ import { createMultipleFakeInstitutionLocations } from "./institution-location";
 import { createFakeUser } from "@sims/test-utils";
 
 /**
- * Creates and saves fake designation agreement location/s.
- * In case two or more locations are requested for designation,
- * this method approves the first location's designation request,
- * second location onwards are not approved for their designation request.
+ * Creates and saves fake designation agreement with location/s.
  * @param db e2e data sources.
  * @param options related options.
  * - `numberOfLocations` number of locations.
  * - `initialValues` designation agreement initial values.
- * @returns created and saved fake designation agreement location/s.
+ * @returns designation agreement with the created locations associated.
  * */
 export async function saveFakeDesignationAgreementLocation(
   db: E2EDataSources,
@@ -25,7 +22,7 @@ export async function saveFakeDesignationAgreementLocation(
     numberOfLocations: number;
     initialValues?: Partial<DesignationAgreement>;
   },
-): Promise<DesignationAgreementLocation[]> {
+): Promise<DesignationAgreement> {
   const fakeInstitution = await db.institution.save(createFakeInstitution());
   // Create fake institution locations.
   const fakeInstitutionLocations = await db.institutionLocation.save(
@@ -35,7 +32,7 @@ export async function saveFakeDesignationAgreementLocation(
     ),
   );
   const fakeUser = await db.user.save(createFakeUser());
-  const savedDesignationAgreement = await db.designationAgreement.save(
+  return db.designationAgreement.save(
     createFakeDesignationAgreement(
       {
         fakeInstitution,
@@ -51,12 +48,4 @@ export async function saveFakeDesignationAgreementLocation(
       },
     ),
   );
-  const savedDesignationAgreementLocations =
-    savedDesignationAgreement.designationAgreementLocations;
-  savedDesignationAgreementLocations.forEach(
-    (savedDesignationAgreementLocation) =>
-      (savedDesignationAgreementLocation.designationAgreement =
-        savedDesignationAgreement),
-  );
-  return savedDesignationAgreementLocations;
 }
