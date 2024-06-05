@@ -19,6 +19,8 @@ import * as faker from "faker";
  * @param options options,
  * - `designationStatus` designation status, by default
  * it is approved.
+ * - `locationApprovedDesignationRequest` if true, sets all
+ * the location designation requests to approved.
  * @returns fake designation agreement.
  * */
 export function createFakeDesignationAgreement(
@@ -29,6 +31,7 @@ export function createFakeDesignationAgreement(
   },
   options?: {
     initialValue?: Partial<DesignationAgreement>;
+    locationApprovedDesignationRequest?: boolean;
   },
 ): DesignationAgreement {
   const now = new Date();
@@ -75,19 +78,18 @@ export function createFakeDesignationAgreement(
     addDays(-10, new Date()),
     "YYYYMMDD",
   );
-  fakeDesignationAgreement.endDate = formatDate(
-    addDays(90, new Date()),
-    "YYYYMMDD",
-  );
+  fakeDesignationAgreement.endDate =
+    options?.initialValue?.endDate ??
+    formatDate(addDays(90, new Date()), "YYYYMMDD");
   fakeDesignationAgreement.designationAgreementLocations =
     newFakeInstitutionLocations.map((location: InstitutionLocation) => {
       const newLocation = new DesignationAgreementLocation();
       newLocation.institutionLocation = location;
       newLocation.requested = true;
+      newLocation.approved = options?.locationApprovedDesignationRequest;
       newLocation.creator = newFakeUser;
       newLocation.createdAt = now;
       return newLocation;
     });
-
   return fakeDesignationAgreement;
 }

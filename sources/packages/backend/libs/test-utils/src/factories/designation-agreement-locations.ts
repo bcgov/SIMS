@@ -1,4 +1,7 @@
-import { DesignationAgreementLocation } from "@sims/sims-db";
+import {
+  DesignationAgreement,
+  DesignationAgreementLocation,
+} from "@sims/sims-db";
 import { E2EDataSources } from "../data-source/e2e-data-source";
 import { createFakeDesignationAgreement } from "./designation-agreement";
 import { createFakeInstitution } from "./institution";
@@ -6,18 +9,20 @@ import { createMultipleFakeInstitutionLocations } from "./institution-location";
 import { createFakeUser } from "@sims/test-utils";
 
 /**
- * Create and save fake designation agreement location/s.
+ * Creates and saves fake designation agreement with location/s.
  * @param db e2e data sources.
- * @param options options,
+ * @param options related options.
  * - `numberOfLocations` number of locations.
- * @returns created and saved fake designation agreement location/s.
+ * - `initialValues` designation agreement initial values.
+ * @returns designation agreement with the created locations associated.
  * */
 export async function saveFakeDesignationAgreementLocation(
   db: E2EDataSources,
   options: {
     numberOfLocations: number;
+    initialValues?: Partial<DesignationAgreement>;
   },
-): Promise<DesignationAgreementLocation[]> {
+): Promise<DesignationAgreement> {
   const fakeInstitution = await db.institution.save(createFakeInstitution());
   // Create fake institution locations.
   const fakeInstitutionLocations = await db.institutionLocation.save(
@@ -27,24 +32,20 @@ export async function saveFakeDesignationAgreementLocation(
     ),
   );
   const fakeUser = await db.user.save(createFakeUser());
-  const designationAgreement = await db.designationAgreement.save(
-    createFakeDesignationAgreement({
-      fakeInstitution,
-      fakeInstitutionLocations,
-      fakeUser,
-    }),
+  return db.designationAgreement.save(
+    createFakeDesignationAgreement(
+      {
+        fakeInstitution,
+        fakeInstitutionLocations,
+        fakeUser,
+      },
+      {
+        initialValue: {
+          endDate: options.initialValues?.endDate,
+          assessedDate: options.initialValues?.assessedDate,
+        },
+        locationApprovedDesignationRequest: true,
+      },
+    ),
   );
-
-  const designationAgreementLocations = fakeInstitutionLocations.map(
-    (fakeInstitutionLocation) => {
-      const designationAgreementLocation = new DesignationAgreementLocation();
-      designationAgreementLocation.designationAgreement = designationAgreement;
-      designationAgreementLocation.institutionLocation =
-        fakeInstitutionLocation;
-      designationAgreementLocation.requested = true;
-      designationAgreementLocation.approved = true;
-      return designationAgreementLocation;
-    },
-  );
-  return db.designationAgreementLocation.save(designationAgreementLocations);
 }

@@ -1,5 +1,5 @@
 <template>
-  <full-page-container>
+  <full-page-container class="overflow-visible">
     <template #header
       ><header-navigator title="Ministry" subTitle="Reports" />
     </template>
