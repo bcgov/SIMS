@@ -23758,7 +23758,7 @@
               "id": "eo4yj69"
             },
             {
-              "label": "I give the Canadian Revenue Agency consent to verify the data I have provided in my application.",
+              "label": "I give the Canada Revenue Agency consent to verify the data I have provided in my application.",
               "customClass": "font-weight-bold",
               "tableView": true,
               "defaultValue": false,
@@ -23770,7 +23770,7 @@
                 "multiple": false,
                 "unique": false
               },
-              "errorLabel": "Canadian Revenue Agency consent",
+              "errorLabel": "Canada Revenue Agency consent",
               "key": "craConsent",
               "type": "checkbox",
               "input": true,
@@ -23925,7 +23925,7 @@
                   "value": ""
                 }
               ],
-              "content": "Award Types",
+              "content": "Award types",
               "refreshOnChange": false,
               "customClass": "",
               "hidden": false,
@@ -24051,7 +24051,7 @@
                 }
               ],
               "className": "alert alert-info fa fa-info-circle",
-              "content": "<strong> Info!</strong><br /> I am required to start making payments on the first day of the seventh month after leaving studies; my payments are made up of principal and any accrued interest, if applicable.",
+              "content": "<strong> Info!</strong><br /> You have six months from your study period end date before you must start paying back your loans.",
               "type": "htmlelement",
               "hideLabel": false,
               "tags": [],
@@ -30894,7 +30894,7 @@
                   "value": ""
                 }
               ],
-              "content": "You may be eligible for an additional transportation allowance if there is limited or no local public transit where you live, or if you have special circumstances that require extra travel. ",
+              "content": "You may be eligible for an additional transportation allowance if you are the primary operator of your vehicle and there is limited or no local transit where you live, or if you have special circumstances that require extra travel.",
               "refreshOnChange": false,
               "customClass": "",
               "hidden": false,
@@ -31173,7 +31173,7 @@
                   "tableView": false,
                   "values": [
                     {
-                      "label": "There is limited or no public transit where I live",
+                      "label": "Public transit takes more than two hours from your neighborhood to your school and back by the quickest/most direct route.",
                       "value": "noLimit",
                       "shortcut": ""
                     },
@@ -31294,7 +31294,7 @@
                   "input": true,
                   "tableView": false,
                   "inputType": "number",
-                  "label": "Please estimate your weekly travel distance in kilometers:",
+                  "label": "Please estimate your weekly travel distance from home to school in kilometers:",
                   "key": "additionalTransportKm",
                   "placeholder": "",
                   "prefix": "",
@@ -31507,7 +31507,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "Please upload supporting documents so that StudentAid BC can assess your request.",
+                      "content": "Please provide all of the applicable documents below.",
                       "refreshOnChange": false,
                       "key": "html105",
                       "type": "htmlelement",
@@ -31583,7 +31583,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "<h4 class=\"category-header-medium-small\">Documents Required</h4>\n<ul>\n  <li>A letter describing your situation to indicate why an exception should be made (including why you cannot move closer to your school)</li>\n<li>A copy of your vehicle insurance</li>\n<li>All relevant supporting documentation (work schedule, clinical or practicum information, etc.)</li>\n</ul>",
+                      "content": "<h4 class=\"category-header-medium-small\">Documents Required</h4>\n<ul>\n  <li>Copy of your vehicle insurance and</li>\n<li>Work, clinical, or practicum location and schedule with a letter of explanation and</li>\n<li>Statement that outlines the family responsibilities that require additional travel (e.g. driving children to and\nfrom school or daycare) and</li>\n<li>Statement why you can’t move closer to your school</li>\n</ul>",
                       "refreshOnChange": false,
                       "customClass": "align-bullets",
                       "key": "html28",
