@@ -257,6 +257,8 @@ export interface CalculatedAssessmentModel {
   awardEligibilityBCAG: boolean;
   // SBSD
   awardEligibilitySBSD: boolean;
+  // CSLP
+  awardEligibilityCSLP: boolean;
 
   // Full time.
   // CSGP

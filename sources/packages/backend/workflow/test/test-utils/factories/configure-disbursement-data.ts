@@ -13,6 +13,7 @@ export function createFakeConfigureDisbursementPartTimeData(
     offeringStudyStartDate: `${programEndYear}-02-01`,
     offeringStudyEndDate: `${programEndYear}-05-24`,
     offeringWeeks: 17,
+    awardEligibilityCSLP: true,
     awardEligibilityCSGP: true,
     awardEligibilityCSGD: true,
     awardEligibilityCSPT: true,

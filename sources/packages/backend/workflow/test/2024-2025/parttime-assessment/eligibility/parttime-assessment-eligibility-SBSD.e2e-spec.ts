@@ -40,6 +40,32 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-SBSD
     }
   });
 
+  describe("Should determine SBSD as not eligible when total family income is greater than the threshold and", () => {
+    for (const institutionType of EXPECTED_INSTITUTION_TYPES) {
+      it(`institutionType is ${institutionType}`, async () => {
+        // Arrange
+        const assessmentConsolidatedData =
+          createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+        assessmentConsolidatedData.institutionType = institutionType;
+        assessmentConsolidatedData.studentDataApplicationPDPPDStatus = "yes";
+        assessmentConsolidatedData.studentDataCRAReportedIncome = 75479;
+
+        // Act
+        const calculatedAssessment =
+          await executePartTimeAssessmentForProgramYear(
+            PROGRAM_YEAR,
+            assessmentConsolidatedData,
+          );
+
+        // Assert
+        expect(calculatedAssessment.variables.awardEligibilitySBSD).toBe(false);
+        expect(
+          calculatedAssessment.variables.finalProvincialAwardNetSBSDAmount,
+        ).toBe(0);
+      });
+    }
+  });
+
   describe("Should determine SBSD as not eligible when", () => {
     for (const institutionType of NOT_EXPECTED_INSTITUTION_TYPES) {
       it(`institutionType is ${institutionType}`, async () => {
