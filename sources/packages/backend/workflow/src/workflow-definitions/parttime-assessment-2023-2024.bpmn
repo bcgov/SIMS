@@ -75,10 +75,10 @@ studentCalculatedTotalIncome</bpmn:text>
     <bpmn:association id="Association_1i7iirc" sourceRef="StartEvent_1" targetRef="TextAnnotation_0ymh6jx" />
     <bpmn:association id="Association_0eiso39" sourceRef="Event_0rpww4j" targetRef="TextAnnotation_0xf4j19" />
     <bpmn:association id="Association_0yc2t6b" sourceRef="Event_0hxxmu9" targetRef="TextAnnotation_1myp6tg" />
-    <bpmn:textAnnotation id="TextAnnotation_15vwlnn">
+    <bpmn:textAnnotation id="TextAnnotation_0wcncz1">
       <bpmn:text>Financial need min $1 AND and income is less than threshold, then cslpEligibility is YES</bpmn:text>
     </bpmn:textAnnotation>
-    <bpmn:association id="Association_1ng8s5h" associationDirection="None" sourceRef="Event_130o03v" targetRef="TextAnnotation_15vwlnn" />
+    <bpmn:association id="Association_1y0l2mk" associationDirection="None" sourceRef="Event_0jsq5je" targetRef="TextAnnotation_0wcncz1" />
   </bpmn:collaboration>
   <bpmn:process id="parttime-assessment-2023-2024" isExecutable="true">
     <bpmn:laneSet id="LaneSet_0i75wz3">
@@ -169,7 +169,7 @@ studentCalculatedTotalIncome</bpmn:text>
         <bpmn:flowNodeRef>Gateway_14myy0o</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1ofk363</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1sg75ph</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_130o03v</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_0jsq5je</bpmn:flowNodeRef>
         <bpmn:childLaneSet id="LaneSet_0v6vyq5">
           <bpmn:lane id="Lane_0l32w49" name="Award Calculation">
             <bpmn:flowNodeRef>Gateway_04hunux</bpmn:flowNodeRef>
@@ -231,7 +231,7 @@ studentCalculatedTotalIncome</bpmn:text>
             <bpmn:flowNodeRef>Gateway_14myy0o</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Gateway_1ofk363</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_1sg75ph</bpmn:flowNodeRef>
-            <bpmn:flowNodeRef>Event_130o03v</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Event_0jsq5je</bpmn:flowNodeRef>
           </bpmn:lane>
         </bpmn:childLaneSet>
       </bpmn:lane>
@@ -424,7 +424,7 @@ studentCalculatedTotalIncome</bpmn:text>
       <bpmn:incoming>Flow_0ulp5sz</bpmn:incoming>
       <bpmn:incoming>Flow_0ri2jnh</bpmn:incoming>
       <bpmn:incoming>Flow_1ryt95t</bpmn:incoming>
-      <bpmn:incoming>Flow_0ffnk5e</bpmn:incoming>
+      <bpmn:incoming>Flow_0kra8re</bpmn:incoming>
       <bpmn:outgoing>Flow_0j9exwg</bpmn:outgoing>
     </bpmn:parallelGateway>
     <bpmn:intermediateThrowEvent id="Event_1bplh1d" name="awardEligibilityCSPT">
@@ -481,7 +481,7 @@ studentCalculatedTotalIncome</bpmn:text>
       <bpmn:outgoing>Flow_0ri2jnh</bpmn:outgoing>
       <bpmn:outgoing>Flow_157t178</bpmn:outgoing>
       <bpmn:outgoing>Flow_0qjtrgn</bpmn:outgoing>
-      <bpmn:outgoing>Flow_0i0c6r3</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1vkmf8w</bpmn:outgoing>
     </bpmn:parallelGateway>
     <bpmn:businessRuleTask id="Activity_134pojh" name="dmnPartTimeAwardFamilySizeVariables">
       <bpmn:extensionElements>
@@ -1095,17 +1095,17 @@ studentCalculatedTotalIncome</bpmn:text>
     <bpmn:sequenceFlow id="Flow_0btwcpj" name="Eligible for additional transportation" sourceRef="Gateway_14myy0o" targetRef="Activity_1q1wdvs">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=calculatedDataEligibleForAnAdditionalTransportationAllowance = "yes"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:intermediateThrowEvent id="Event_130o03v" name="awardEligibilityCSLP">
+    <bpmn:intermediateThrowEvent id="Event_0jsq5je" name="awardEligibilityCSLP">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=if (calculatedDataTotalAssessedNeed &#62;= 1)&#10;  and (calculatedDataTotalFamilyIncome &#60; dmnPartTimeAwardFamilySizeVariables.limitAwardCSLPThresholdIncome)&#10;then true&#10;else false" target="awardEligibilityCSLP" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0i0c6r3</bpmn:incoming>
-      <bpmn:outgoing>Flow_0ffnk5e</bpmn:outgoing>
+      <bpmn:incoming>Flow_1vkmf8w</bpmn:incoming>
+      <bpmn:outgoing>Flow_0kra8re</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:sequenceFlow id="Flow_0i0c6r3" sourceRef="Gateway_0u6r40r" targetRef="Event_130o03v" />
-    <bpmn:sequenceFlow id="Flow_0ffnk5e" sourceRef="Event_130o03v" targetRef="Gateway_1g0qy1m" />
+    <bpmn:sequenceFlow id="Flow_1vkmf8w" sourceRef="Gateway_0u6r40r" targetRef="Event_0jsq5je" />
+    <bpmn:sequenceFlow id="Flow_0kra8re" sourceRef="Event_0jsq5je" targetRef="Gateway_1g0qy1m" />
   </bpmn:process>
   <bpmn:category id="Category_0appz4m">
     <bpmn:categoryValue id="CategoryValue_0m7wcdu" value="Appeals" />
@@ -1534,10 +1534,10 @@ studentCalculatedTotalIncome</bpmn:text>
           <dc:Bounds x="2648" y="1187" width="85" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0i4b9q0" bpmnElement="Event_130o03v">
-        <dc:Bounds x="5342" y="1622" width="36" height="36" />
+      <bpmndi:BPMNShape id="BPMNShape_0sktxhe" bpmnElement="Event_0jsq5je">
+        <dc:Bounds x="5342" y="1612" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="5320" y="1665" width="81" height="27" />
+          <dc:Bounds x="5320" y="1655" width="81" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_08xi7o2_di" bpmnElement="Flow_08xi7o2">
@@ -2080,19 +2080,19 @@ studentCalculatedTotalIncome</bpmn:text>
           <dc:Bounds x="2780" y="1066" width="67" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0i0c6r3_di" bpmnElement="Flow_0i0c6r3">
+      <bpmndi:BPMNEdge id="Flow_1vkmf8w_di" bpmnElement="Flow_1vkmf8w">
         <di:waypoint x="5270" y="1185" />
-        <di:waypoint x="5270" y="1640" />
-        <di:waypoint x="5342" y="1640" />
+        <di:waypoint x="5270" y="1630" />
+        <di:waypoint x="5342" y="1630" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0ffnk5e_di" bpmnElement="Flow_0ffnk5e">
-        <di:waypoint x="5378" y="1640" />
-        <di:waypoint x="5460" y="1640" />
+      <bpmndi:BPMNEdge id="Flow_0kra8re_di" bpmnElement="Flow_0kra8re">
+        <di:waypoint x="5378" y="1630" />
+        <di:waypoint x="5460" y="1630" />
         <di:waypoint x="5460" y="1185" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_1evxfa3" bpmnElement="Association_1ng8s5h">
-        <di:waypoint x="5377" y="1636" />
-        <di:waypoint x="5476" y="1616" />
+      <bpmndi:BPMNEdge id="Association_1y0l2mk_di" bpmnElement="Association_1y0l2mk">
+        <di:waypoint x="5377" y="1626" />
+        <di:waypoint x="5476" y="1606" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_1a4vdzr_di" bpmnElement="Group_1a4vdzr">
         <dc:Bounds x="1895" y="600" width="90" height="230" />
@@ -2228,8 +2228,8 @@ studentCalculatedTotalIncome</bpmn:text>
         <di:waypoint x="1464" y="543" />
         <di:waypoint x="1485" y="455" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="BPMNShape_0cgyf5m" bpmnElement="TextAnnotation_15vwlnn">
-        <dc:Bounds x="5476" y="1590" width="426" height="46" />
+      <bpmndi:BPMNShape id="TextAnnotation_0wcncz1_di" bpmnElement="TextAnnotation_0wcncz1">
+        <dc:Bounds x="5476" y="1580" width="426" height="46" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
