@@ -11,6 +11,6 @@ export const APPLICATION_DATA_SINGLE_INDEPENDENT = {
   hasDependents: YesNoOptions.No,
   livingWithParents: YesNoOptions.No,
   youthInCare: YesNoOptions.No,
-  applicationPDPPDStatus: ApplicationDisabilityStatus.noIDoNotHaveADisability,
+  applicationPDPPDStatus: ApplicationDisabilityStatus.no,
   selectedOffering: null,
 };

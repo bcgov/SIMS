@@ -3,6 +3,5 @@
  */
 export enum ApplicationDisabilityStatus {
   yes = "yes",
-  noIWantToAccessOtherFundingTypes = "noIWantToAccessOtherFundingTypes",
-  noIDoNotHaveADisability = "noIDoNotHaveADisability",
+  no = "no",
 }

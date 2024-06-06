@@ -96,8 +96,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
     );
     application.data = {
       workflowName: "test",
-      applicationPDPPDStatus:
-        ApplicationDisabilityStatus.noIDoNotHaveADisability,
+      applicationPDPPDStatus: ApplicationDisabilityStatus.no,
     };
     await db.application.save(application);
     // Adjust offering values for maxTuitionRemittanceAllowed.
@@ -153,8 +152,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
         maxTuitionRemittanceAllowed: 900,
         hasOverawardBalance: false,
         disabilityProfileStatus: DisabilityStatus.NotRequested,
-        disabilityApplicationStatus:
-          ApplicationDisabilityStatus.noIDoNotHaveADisability,
+        disabilityApplicationStatus: ApplicationDisabilityStatus.no,
       });
   });
 
