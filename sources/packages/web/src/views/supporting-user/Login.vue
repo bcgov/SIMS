@@ -8,17 +8,17 @@
               Welcome to StudentAid BC
             </h1>
             <p class="mb-5">
-              Login or sign up to submit supporting information for student
-              applications.
+              We help with the cost of post-secondary education through student
+              loans, grants and other financial assistance programs.
             </p>
           </v-card-text>
           <content-group>
             <h2 class="category-header-medium primary-color">
-              Login or sign up
+              Log in or Register
             </h2>
             <p class="sign-in-description">
-              Whether you are a new or returning user—login or sign up here
-              using your BC Services Card.
+              Whether you are a new or returning user—log in or register using
+              the BC Services Card account.
             </p>
             <div class="pb-2">
               <v-btn
@@ -26,7 +26,7 @@
                 @click="login"
                 prepend-icon="fa:fa fa-user"
               >
-                Login / Sign up with BCSC
+                Log in/Register
               </v-btn>
             </div>
           </content-group>
