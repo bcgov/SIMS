@@ -59,6 +59,7 @@ export interface FormIOChangeEvent {
 
 export interface FormIOChangedObject {
   component: FormIOComponent;
+  value: string;
 }
 
 /**

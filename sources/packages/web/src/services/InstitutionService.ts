@@ -165,4 +165,13 @@ export class InstitutionService {
   async getMyInstitutionLocationsDetails() {
     return ApiClient.InstitutionLocation.getMyInstitutionLocationsDetails();
   }
+
+  /**
+   * Get the list os all institutions names to be returned in an option
+   * list (key/value pair) schema.
+   * @returns institutions names in an option list (key/value pair) schema.
+   */
+  async getInstitutionNameOptions(): Promise<OptionItemAPIOutDTO[]> {
+    return ApiClient.Institution.getInstitutionNameOptions();
+  }
 }

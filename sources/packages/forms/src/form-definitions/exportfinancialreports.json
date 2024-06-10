@@ -308,6 +308,53 @@
               "isNew": false
             },
             {
+              "autofocus": false,
+              "input": true,
+              "tableView": true,
+              "label": "Institution Name",
+              "key": "institutionName",
+              "placeholder": "Select Institution Name",
+              "data": {
+                "values": [
+                  {
+                    "value": "",
+                    "label": ""
+                  }
+                ],
+                "json": "",
+                "url": "",
+                "resource": "",
+                "custom": ""
+              },
+              "dataSrc": "values",
+              "valueProperty": "",
+              "defaultValue": "",
+              "refreshOn": "",
+              "filter": "",
+              "authenticate": false,
+              "template": "<span>{{ item.label }}</span>",
+              "multiple": false,
+              "protected": false,
+              "unique": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
+              "validate": {
+                "required": true
+              },
+              "type": "select",
+              "labelPosition": "top",
+              "tags": [],
+              "conditional": {
+                "show": "true",
+                "when": "reportName",
+                "eq": "Program_And_Offering_Status"
+              },
+              "properties": {},
+              "lockKey": true,
+              "isNew": false
+            },
+            {
               "label": "Columns",
               "labelWidth": "",
               "labelMargin": "",
@@ -560,7 +607,7 @@
                 "eq": "",
                 "json": ""
               },
-              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Data_Inventory_Report'\n    || data.reportName === 'Institution_Designation_Report'\n    || data.reportName === 'ECert_Errors_Report'",
+              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Data_Inventory_Report'\n    || data.reportName === 'Institution_Designation_Report'\n    || data.reportName === 'ECert_Errors_Report'\n    || data.reportName === 'Program_And_Offering_Status'",
               "logic": [],
               "attributes": {},
               "overlay": {
@@ -618,6 +665,48 @@
               "id": "ecn2x9",
               "hideLabel": true,
               "isNew": false
+            },
+            {
+              "autofocus": false,
+              "input": true,
+              "tableView": true,
+              "inputType": "text",
+              "inputMask": "",
+              "label": "SABC Program Code",
+              "key": "sabcProgramCode",
+              "placeholder": "",
+              "prefix": "",
+              "suffix": "",
+              "multiple": false,
+              "defaultValue": "",
+              "protected": false,
+              "unique": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
+              "spellcheck": true,
+              "validate": {
+                "required": false,
+                "minLength": "",
+                "maxLength": 4,
+                "pattern": "",
+                "custom": "",
+                "customPrivate": false,
+                "customMessage": "Maximum 4 characters is allowed."
+              },
+              "conditional": {
+                "show": "true",
+                "when": "reportName",
+                "eq": "Program_And_Offering_Status"
+              },
+              "type": "textfield",
+              "labelPosition": "top",
+              "inputFormat": "plain",
+              "tags": [],
+              "properties": {},
+              "lockKey": true,
+              "customConditional": "",
+              "tooltip": "If it is entered, retrieve records that match. If it is left blank, show all records."
             },
             {
               "label": "Intensity",
@@ -688,7 +777,7 @@
                 "eq": "",
                 "json": ""
               },
-              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Data_Inventory_Report'    || data.reportName === 'ECert_Errors_Report'",
+              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Data_Inventory_Report' \n    || data.reportName === 'ECert_Errors_Report' \n    || data.reportName === 'Program_And_Offering_Status'",
               "logic": [],
               "attributes": {},
               "overlay": {
@@ -716,8 +805,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "fieldSet": false,
-              "id": "enqlwsq",
-              "isNew": false
+              "id": "enqlwsq"
             }
           ],
           "placeholder": "",
@@ -738,8 +826,7 @@
           "addons": [],
           "tree": true,
           "lazyLoad": false,
-          "id": "ekcfpz",
-          "isNew": false
+          "id": "ekcfpz"
         }
       ],
       "id": "eouyt8n",
@@ -889,7 +976,8 @@
       "allowMultipleMasks": false,
       "addons": [],
       "inputType": "hidden",
-      "id": "epgtnmh"
+      "id": "epgtnmh",
+      "isNew": false
     }
   ]
 }

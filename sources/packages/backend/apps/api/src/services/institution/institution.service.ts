@@ -996,4 +996,12 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     });
     return !!institutionStudentDataAccess;
   }
+
+  /**
+   * Get all institutions.
+   * @returns all institutions.
+   */
+  async getAllInstitutions(): Promise<Partial<Institution>[]> {
+    return this.repo.find();
+  }
 }

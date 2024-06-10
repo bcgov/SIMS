@@ -86,4 +86,17 @@ export class InstitutionControllerService {
       description: institutionType.name,
     }));
   }
+
+  /**
+   * Get the list of all institutions names to be returned in an option
+   * list (key/value pair) schema.
+   * @returns institutions names in an option list (key/value pair) schema.
+   */
+  async getInstitutionNameOptions(): Promise<OptionItemAPIOutDTO[]> {
+    const institutions = await this.institutionService.getAllInstitutions();
+    return institutions.map((institution) => ({
+      id: institution.id,
+      description: institution.legalOperatingName,
+    }));
+  }
 }
