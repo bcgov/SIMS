@@ -1,4 +1,4 @@
-udent loans<template>
+<template>
   <v-card elevation="2" class="mx-auto mt-15" max-width="730px">
     <v-card-text>
       <v-row class="pt-2 pb-4 px-2">
@@ -9,7 +9,7 @@ udent loans<template>
             </h1>
             <p class="mb-5">
               We help with the cost of post-secondary education through student
-              loans, grants, and other financial assistance programs.
+              loans, grants and other financial assistance programs.
             </p>
           </v-card-text>
           <content-group>
@@ -26,7 +26,7 @@ udent loans<template>
                 @click="login"
                 prepend-icon="fa:fa fa-user"
               >
-                Log in / Register
+                Log in/Register
               </v-btn>
             </div>
           </content-group>
