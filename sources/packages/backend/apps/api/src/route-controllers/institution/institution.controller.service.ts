@@ -93,7 +93,7 @@ export class InstitutionControllerService {
    * @returns institutions names in an option list (key/value pair) schema.
    */
   async getInstitutionNameOptions(): Promise<OptionItemAPIOutDTO[]> {
-    const institutions = await this.institutionService.getAllInstitutions();
+    const institutions = await this.institutionService.getAllInstitutionNames();
     return institutions.map((institution) => ({
       id: institution.id,
       description: institution.legalOperatingName,

@@ -706,7 +706,7 @@
               "properties": {},
               "lockKey": true,
               "customConditional": "",
-              "tooltip": "If it is entered, retrieve records that match. If it is left blank, show all records."
+              "tooltip": ""
             },
             {
               "label": "Intensity",

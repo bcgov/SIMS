@@ -215,7 +215,7 @@ export class InstitutionAESTController extends BaseController {
    * @returns institutions names in an option list (key/value pair) schema.
    */
   @Get("name/options-list")
-  async getAllInstitutionNameOptions(): Promise<OptionItemAPIOutDTO[]> {
+  async getInstitutionNameOptions(): Promise<OptionItemAPIOutDTO[]> {
     return this.institutionControllerService.getInstitutionNameOptions();
   }
 }

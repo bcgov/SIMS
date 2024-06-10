@@ -998,10 +998,10 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   }
 
   /**
-   * Get all institutions.
-   * @returns all institutions.
+   * Get all institution legal operating names.
+   * @returns all institution legal operating names.
    */
-  async getAllInstitutions(): Promise<Partial<Institution>[]> {
-    return this.repo.find();
+  async getAllInstitutionNames(): Promise<Partial<Institution>[]> {
+    return this.repo.find({ select: { id: true, legalOperatingName: true } });
   }
 }
