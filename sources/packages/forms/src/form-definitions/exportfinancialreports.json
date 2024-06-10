@@ -200,8 +200,7 @@
           },
           "id": "epfngcm",
           "defaultValue": "",
-          "lockKey": true,
-          "isNew": false
+          "lockKey": true
         },
         {
           "label": "Container",
@@ -304,8 +303,7 @@
                 "eq": "Offering_Details_Report"
               },
               "properties": {},
-              "lockKey": true,
-              "isNew": false
+              "lockKey": true
             },
             {
               "autofocus": false,
@@ -351,8 +349,7 @@
                 "eq": "Program_And_Offering_Status"
               },
               "properties": {},
-              "lockKey": true,
-              "isNew": false
+              "lockKey": true
             },
             {
               "label": "Columns",
@@ -663,50 +660,7 @@
               "tree": false,
               "lazyLoad": false,
               "id": "ecn2x9",
-              "hideLabel": true,
-              "isNew": false
-            },
-            {
-              "autofocus": false,
-              "input": true,
-              "tableView": true,
-              "inputType": "text",
-              "inputMask": "",
-              "label": "SABC Program Code",
-              "key": "sabcProgramCode",
-              "placeholder": "",
-              "prefix": "",
-              "suffix": "",
-              "multiple": false,
-              "defaultValue": "",
-              "protected": false,
-              "unique": false,
-              "persistent": true,
-              "hidden": false,
-              "clearOnHide": true,
-              "spellcheck": true,
-              "validate": {
-                "required": false,
-                "minLength": "",
-                "maxLength": 4,
-                "pattern": "",
-                "custom": "",
-                "customPrivate": false,
-                "customMessage": "Maximum 4 characters is allowed."
-              },
-              "conditional": {
-                "show": "true",
-                "when": "reportName",
-                "eq": "Program_And_Offering_Status"
-              },
-              "type": "textfield",
-              "labelPosition": "top",
-              "inputFormat": "plain",
-              "tags": [],
-              "properties": {},
-              "lockKey": true,
-              "customConditional": "",
-              "tooltip": ""
+              "hideLabel": true
             },
             {
               "label": "Intensity",
@@ -806,6 +760,48 @@
               "addons": [],
               "fieldSet": false,
               "id": "enqlwsq"
+            },
+            {
+              "autofocus": false,
+              "input": true,
+              "tableView": true,
+              "inputType": "text",
+              "inputMask": "",
+              "label": "SABC Program Code",
+              "key": "sabcProgramCode",
+              "placeholder": "",
+              "prefix": "",
+              "suffix": "",
+              "multiple": false,
+              "defaultValue": "",
+              "protected": false,
+              "unique": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
+              "spellcheck": true,
+              "validate": {
+                "required": false,
+                "minLength": "",
+                "maxLength": 4,
+                "pattern": "",
+                "custom": "",
+                "customPrivate": false,
+                "customMessage": "Maximum 4 characters is allowed."
+              },
+              "conditional": {
+                "show": "true",
+                "when": "reportName",
+                "eq": "Program_And_Offering_Status"
+              },
+              "type": "textfield",
+              "labelPosition": "top",
+              "inputFormat": "plain",
+              "tags": [],
+              "properties": {},
+              "lockKey": true,
+              "customConditional": "",
+              "tooltip": ""
             }
           ],
           "placeholder": "",
@@ -829,8 +825,7 @@
           "id": "ekcfpz"
         }
       ],
-      "id": "eouyt8n",
-      "isNew": false
+      "id": "eouyt8n"
     },
     {
       "label": "applicationId",
@@ -976,8 +971,7 @@
       "allowMultipleMasks": false,
       "addons": [],
       "inputType": "hidden",
-      "id": "epgtnmh",
-      "isNew": false
+      "id": "epgtnmh"
     }
   ]
 }
