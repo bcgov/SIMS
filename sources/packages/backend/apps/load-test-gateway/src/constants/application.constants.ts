@@ -1,4 +1,4 @@
-import { ApplicationDisabilityStatus, RelationshipStatus } from "@sims/sims-db";
+import { RelationshipStatus } from "@sims/sims-db";
 import { YesNoOptions } from "@sims/test-utils";
 
 export const APPLICATION_DATA_SINGLE_INDEPENDENT = {
