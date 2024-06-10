@@ -46,7 +46,7 @@ export function createFakeAssessmentConsolidatedData(
     offeringMandatoryFees: 500,
     offeringExceptionalExpenses: 500,
     offeringWeeks: 16,
-    studentDataApplicationPDPPDStatus: "noIDoNotHaveADisability",
+    studentDataApplicationPDPPDStatus: "no",
     applicationStatus: ApplicationStatus.Assessment,
     applicationHasNOAApproval: false,
   };
@@ -87,7 +87,7 @@ export function createFakePartTimeAssessmentConsolidatedData(
     offeringMandatoryFees: 501,
     offeringExceptionalExpenses: 501,
     offeringWeeks: 15,
-    studentDataApplicationPDPPDStatus: "noIDoNotHaveADisability",
+    studentDataApplicationPDPPDStatus: "no",
     offeringCourseLoad: 40,
     studentDataCRAReportedIncome: 10001,
     partner1CRAReportedIncome: 15001,
