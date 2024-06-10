@@ -51,6 +51,7 @@ export default defineComponent({
     const REPORT_TYPE_DROPDOWN_KEY = "reportName";
     const loading = ref(false);
     const PROGRAM_YEAR_DROPDOWN_KEY = "programYear";
+    const INSTITUTION_NAME_DROPDOWN_KEY = "institutionName";
     let formData: FormIOForm;
     const formLoaded = async (form: FormIOForm) => {
       formData = form;
@@ -76,6 +77,21 @@ export default defineComponent({
           await formioDataLoader.loadProgramYear(
             form,
             PROGRAM_YEAR_DROPDOWN_KEY,
+          );
+        }
+        const institutionSelect = getFirstComponent(
+          form,
+          INSTITUTION_NAME_DROPDOWN_KEY,
+        );
+        if (
+          institutionSelect._visible &&
+          !institutionSelect.selectOptions.length
+        ) {
+          // Load institution data if the select is visible and
+          // its items are not populated yet.
+          await formioDataLoader.loadInstitutionName(
+            form,
+            INSTITUTION_NAME_DROPDOWN_KEY,
           );
         }
       }

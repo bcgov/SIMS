@@ -204,6 +204,19 @@ export function useFormioDropdownLoader() {
     );
   };
 
+  const loadInstitutionName = async (
+    form: FormIOForm,
+    dropdownName: string,
+  ) => {
+    // Find the dropdown to be populated with the locations.
+    const dropdown = formioUtils.getFirstComponent(form, dropdownName);
+    return loadDropdown(
+      form,
+      dropdown,
+      InstitutionService.shared.getInstitutionNameOptions(),
+    );
+  };
+
   return {
     loadLocations,
     loadProgramsForLocation,
@@ -215,5 +228,6 @@ export function useFormioDropdownLoader() {
     loadProgramYear,
     loadProgramIntensityDetails,
     loadDropdown,
+    loadInstitutionName,
   };
 }
