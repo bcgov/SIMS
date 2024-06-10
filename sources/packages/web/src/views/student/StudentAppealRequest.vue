@@ -35,7 +35,11 @@
             >Back
           </v-btn>
 
-          <v-btn color="primary" class="ml-2 float-right" @click="submit"
+          <v-btn
+            color="primary"
+            class="ml-2 float-right"
+            @click="submit"
+            :loading="processing"
             >Submit for review</v-btn
           >
         </template>
@@ -68,6 +72,7 @@ export default defineComponent({
   },
   setup() {
     const snackBar = useSnackBar();
+    const processing = ref(false);
     const appealRequestsForms = ref([] as StudentAppealRequest[]);
     let applicationId: number;
     const showRequestForAppeal = computed(
@@ -108,6 +113,7 @@ export default defineComponent({
 
     const submitAppeal = async (appealRequests: StudentAppealRequest[]) => {
       try {
+        processing.value = true;
         await StudentAppealService.shared.submitStudentAppeal(
           applicationId,
           appealRequests,
@@ -132,6 +138,8 @@ export default defineComponent({
             snackBar.error(`${error.message}`);
           }
         }
+      } finally {
+        processing.value = false;
       }
     };
 
@@ -141,6 +149,7 @@ export default defineComponent({
       showRequestForAppeal,
       backToRequestForm,
       submitAppeal,
+      processing,
     };
   },
 });
