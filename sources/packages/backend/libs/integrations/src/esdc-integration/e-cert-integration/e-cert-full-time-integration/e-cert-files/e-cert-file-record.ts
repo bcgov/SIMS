@@ -147,7 +147,7 @@ export class ECertFullTimeFileRecord extends ECertFileRecord {
    */
   postalCode?: string;
   /**
-   * Student gender M=Male F=Female.
+   * Gender (M=man, F=woman, X=nonBinary empty=preferNotToAnswer).
    */
   gender: string;
   /**

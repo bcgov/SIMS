@@ -24,10 +24,14 @@ export function getMaritalStatusCode(
  * Gets the gender code conversion for the ESDC request files.
  */
 export function getGenderCode(gender: string): string {
-  if (gender === "male") {
+  if (gender === "man") {
     return "M";
+  } else if (gender === "woman") {
+    return "M";
+  } else if (gender === "nonBinary") {
+    return "X";
   }
-  return gender === "female" ? "F" : "O";
+  return "";
 }
 
 /**

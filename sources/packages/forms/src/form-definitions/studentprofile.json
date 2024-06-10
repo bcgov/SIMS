@@ -1502,20 +1502,20 @@
           "data": {
             "values": [
               {
-                "label": "Male",
-                "value": "male"
+                "label": "Man",
+                "value": "man"
               },
               {
-                "label": "Female",
-                "value": "female"
+                "label": "Non-Binary",
+                "value": "nonBinary"
               },
               {
-                "label": "Unknown",
-                "value": "unknown"
+                "label": "Woman",
+                "value": "woman"
               },
               {
-                "value": "diverse",
-                "label": "Diverse"
+                "label": "Prefer not to answer",
+                "value": "preferNotToAnswer"
               }
             ],
             "json": "",
