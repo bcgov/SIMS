@@ -186,22 +186,3 @@ export enum SuccessWaitingStatus {
   Success = "Success",
   Waiting = "Waiting",
 }
-
-/**
- * Application disability status.
- */
-export enum ApplicationDisabilityStatus {
-  yes = "yes",
-  no = "no",
-}
-
-/**
- * Application disability status description.
- */
-export const ApplicationDisabilityStatusDescription: Record<
-  ApplicationDisabilityStatus,
-  string
-> = {
-  [ApplicationDisabilityStatus.yes]: "Yes",
-  [ApplicationDisabilityStatus.no]: "No",
-};

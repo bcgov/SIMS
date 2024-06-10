@@ -16,12 +16,12 @@ import {
   createFakeInstitutionLocation,
   E2EDataSources,
   saveFakeApplicationDisbursements,
+  YesNoOptions,
 } from "@sims/test-utils";
 import { getDateOnlyFormat } from "@sims/utilities";
 import { deliveryMethod, getUserFullName } from "../../../../utilities";
 import { COEApprovalPeriodStatus } from "../../../../services";
 import {
-  ApplicationDisabilityStatus,
   ApplicationStatus,
   COEStatus,
   DisabilityStatus,
@@ -96,7 +96,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
     );
     application.data = {
       workflowName: "test",
-      applicationPDPPDStatus: ApplicationDisabilityStatus.no,
+      applicationPDPPDStatus: YesNoOptions.No,
     };
     await db.application.save(application);
     // Adjust offering values for maxTuitionRemittanceAllowed.
@@ -152,7 +152,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
         maxTuitionRemittanceAllowed: 900,
         hasOverawardBalance: false,
         disabilityProfileStatus: DisabilityStatus.NotRequested,
-        disabilityApplicationStatus: ApplicationDisabilityStatus.no,
+        disabilityApplicationStatus: YesNoOptions.No,
       });
   });
 

@@ -5,7 +5,6 @@ import {
 import { SINValidStatus } from "@/store/modules/student/student";
 import {
   Address,
-  ApplicationDisabilityStatus,
   DisabilityStatus,
   DisabilityStatusViewType,
   InstitutionUserRoles,
@@ -371,9 +370,9 @@ export function useFormatters() {
    * @returns user friendly application disability status.
    */
   const applicationDisabilityStatusToDisplay = (
-    applicationDisabilityStatus: ApplicationDisabilityStatus,
+    applicationDisabilityStatus: string,
   ): string => {
-    if (applicationDisabilityStatus === ApplicationDisabilityStatus.yes) {
+    if (applicationDisabilityStatus.toLowerCase() === "yes") {
       return "Assessment includes disability funding types.";
     }
     return "No disability funding types included on assessment.";
