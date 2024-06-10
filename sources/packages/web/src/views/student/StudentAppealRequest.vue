@@ -52,6 +52,7 @@ import AppealRequestsForm from "@/components/common/AppealRequestsForm.vue";
 import { useSnackBar } from "@/composables";
 import {
   APPLICATION_CHANGE_NOT_ELIGIBLE,
+  APPLICATION_HAS_PENDING_APPEAL,
   INVALID_APPLICATION_NUMBER,
 } from "@/constants";
 
@@ -127,8 +128,10 @@ export default defineComponent({
             snackBar.warn(`Not able to submit. ${error.message}`);
             return;
           }
+          if (error.errorType === APPLICATION_HAS_PENDING_APPEAL) {
+            snackBar.error(`${error.message}`);
+          }
         }
-        snackBar.error("An unexpected error happened during the submission.");
       }
     };
 

@@ -210,9 +210,9 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
         .auth(studentToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.UNPROCESSABLE_ENTITY)
         .expect({
-          statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-          message: "There is already a pending appeal for this student.",
-          error: "Unprocessable Entity",
+          message:
+            "Only one change request can be submitted at a time for each application. When your current request is approved or denied by StudentAid BC, you will be able to submit a new one.",
+          errorType: "APPLICATION_HAS_PENDING_APPEAL",
         });
     },
   );

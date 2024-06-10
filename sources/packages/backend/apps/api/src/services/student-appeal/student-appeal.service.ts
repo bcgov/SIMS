@@ -129,19 +129,17 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
   }
 
   /**
-   * Find any pending appeal for a student if exists.
-   * @param userId of student.
+   * Find any pending appeal for the application if exists.
+   * @param applicationId application id related to the appeal.
    * @returns exist status
    */
-  async hasExistingAppeal(userId: number): Promise<boolean> {
+  async hasExistingAppeal(applicationId: number): Promise<boolean> {
     const existingAppeal = await this.repo
       .createQueryBuilder("appeal")
       .select("1")
       .innerJoin("appeal.appealRequests", "appealRequests")
       .innerJoin("appeal.application", "application")
-      .innerJoin("application.student", "student")
-      .innerJoin("student.user", "user")
-      .where("user.id = :userId", { userId })
+      .andWhere("application.id = :applicationId", { applicationId })
       .andWhere("appealRequests.appealStatus = :pending", {
         pending: StudentAppealStatus.Pending,
       })
