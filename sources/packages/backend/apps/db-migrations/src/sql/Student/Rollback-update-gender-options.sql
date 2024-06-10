@@ -24,4 +24,4 @@ UPDATE
 SET
   gender = preferNotToAnswer
 WHERE
-  gender = NULL;
+  gender IS NULL;
