@@ -372,7 +372,7 @@ export function useFormatters() {
   const applicationDisabilityStatusToDisplay = (
     applicationDisabilityStatus: string,
   ): string => {
-    if (applicationDisabilityStatus.toLowerCase() === "yes") {
+    if (applicationDisabilityStatus === "yes") {
       return "Assessment includes disability funding types.";
     }
     return "No disability funding types included on assessment.";
