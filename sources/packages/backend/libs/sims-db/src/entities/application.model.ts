@@ -9,7 +9,6 @@ import {
   RelationId,
 } from "typeorm";
 import {
-  ApplicationDisabilityStatus,
   ApplicationOfferingChangeRequest,
   CRAIncomeVerification,
   EducationProgram,
