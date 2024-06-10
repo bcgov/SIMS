@@ -9,7 +9,7 @@
             </h1>
             <p class="mb-5">
               We help with the cost of post-secondary education through student
-              loans, grants and other financial assistance programs.
+              loans, grants, and other financial assistance programs.
             </p>
           </v-card-text>
           <content-group>
