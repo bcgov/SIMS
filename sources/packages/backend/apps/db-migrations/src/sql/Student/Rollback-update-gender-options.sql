@@ -22,6 +22,6 @@ WHERE
 UPDATE
   sims.students
 SET
-  gender = preferNotToAnswer
+  gender = 'preferNA'
 WHERE
-  gender IS NULL;
+  gender = '';

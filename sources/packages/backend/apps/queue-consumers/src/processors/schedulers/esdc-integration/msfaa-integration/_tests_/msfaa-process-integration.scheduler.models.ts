@@ -56,7 +56,7 @@ export const MSFAA_PART_TIME_OTHER_COUNTRY: MSFAATestInputData = {
   birthDate: "2000-01-01",
   surname: "Other Doe",
   givenName: "Jane",
-  gender: "nonBinary",
+  gender: "preferNA",
   maritalStatus: RelationshipStatus.Single,
   addressLine1: "Address Line 1",
   addressLine2: undefined,

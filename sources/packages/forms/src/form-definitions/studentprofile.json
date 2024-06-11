@@ -1515,7 +1515,7 @@
               },
               {
                 "label": "Prefer not to answer",
-                "value": "preferNotToAnswer"
+                "value": "preferNA"
               }
             ],
             "json": "",

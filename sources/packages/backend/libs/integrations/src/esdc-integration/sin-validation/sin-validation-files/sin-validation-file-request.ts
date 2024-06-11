@@ -29,7 +29,7 @@ export class SINValidationFileRequest implements FixedFormatFileLine {
    */
   lastName: string;
   /**
-   * Gender (M=man, F=woman, X=nonBinary empty=preferNotToAnswer).
+   * Gender (M=man, F=woman, X=nonBinary empty=preferNA).
    */
   gender: string;
   /**
