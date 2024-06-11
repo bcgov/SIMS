@@ -298,58 +298,13 @@
               "labelPosition": "top",
               "tags": [],
               "conditional": {
-                "show": "true",
-                "when": "reportName",
-                "eq": "Offering_Details_Report"
+                "show": "",
+                "when": null,
+                "eq": ""
               },
               "properties": {},
-              "lockKey": true
-            },
-            {
-              "autofocus": false,
-              "input": true,
-              "tableView": true,
-              "label": "Institution Name",
-              "key": "institutionName",
-              "placeholder": "Select Institution Name",
-              "data": {
-                "values": [
-                  {
-                    "value": "",
-                    "label": ""
-                  }
-                ],
-                "json": "",
-                "url": "",
-                "resource": "",
-                "custom": ""
-              },
-              "dataSrc": "values",
-              "valueProperty": "",
-              "defaultValue": "",
-              "refreshOn": "",
-              "filter": "",
-              "authenticate": false,
-              "template": "<span>{{ item.label }}</span>",
-              "multiple": false,
-              "protected": false,
-              "unique": false,
-              "persistent": true,
-              "hidden": false,
-              "clearOnHide": true,
-              "validate": {
-                "required": true
-              },
-              "type": "select",
-              "labelPosition": "top",
-              "tags": [],
-              "conditional": {
-                "show": "true",
-                "when": "reportName",
-                "eq": "Program_And_Offering_Status"
-              },
-              "properties": {},
-              "lockKey": true
+              "lockKey": true,
+              "customConditional": "show = \n    data.reportName === 'Offering_Details_Report'  \n    || data.reportName === 'Student_Unmet_Need_Report'"
             },
             {
               "label": "Columns",
@@ -604,7 +559,7 @@
                 "eq": "",
                 "json": ""
               },
-              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Data_Inventory_Report'\n    || data.reportName === 'Institution_Designation_Report'\n    || data.reportName === 'ECert_Errors_Report'\n    || data.reportName === 'Program_And_Offering_Status'",
+              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Data_Inventory_Report'\n    || data.reportName === 'Institution_Designation_Report'\n    || data.reportName === 'ECert_Errors_Report'",
               "logic": [],
               "attributes": {},
               "overlay": {
@@ -731,7 +686,7 @@
                 "eq": "",
                 "json": ""
               },
-              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Data_Inventory_Report' \n    || data.reportName === 'ECert_Errors_Report' \n    || data.reportName === 'Program_And_Offering_Status'",
+              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Data_Inventory_Report' \n    || data.reportName === 'ECert_Errors_Report'\n    || data.reportName === 'Student_Unmet_Need_Report'",
               "logic": [],
               "attributes": {},
               "overlay": {
@@ -759,49 +714,8 @@
               "allowMultipleMasks": false,
               "addons": [],
               "fieldSet": false,
-              "id": "enqlwsq"
-            },
-            {
-              "autofocus": false,
-              "input": true,
-              "tableView": true,
-              "inputType": "text",
-              "inputMask": "",
-              "label": "SABC Program Code",
-              "key": "sabcProgramCode",
-              "placeholder": "",
-              "prefix": "",
-              "suffix": "",
-              "multiple": false,
-              "defaultValue": "",
-              "protected": false,
-              "unique": false,
-              "persistent": true,
-              "hidden": false,
-              "clearOnHide": true,
-              "spellcheck": true,
-              "validate": {
-                "required": false,
-                "minLength": "",
-                "maxLength": 4,
-                "pattern": "",
-                "custom": "",
-                "customPrivate": false,
-                "customMessage": "Maximum 4 characters is allowed."
-              },
-              "conditional": {
-                "show": "true",
-                "when": "reportName",
-                "eq": "Program_And_Offering_Status"
-              },
-              "type": "textfield",
-              "labelPosition": "top",
-              "inputFormat": "plain",
-              "tags": [],
-              "properties": {},
-              "lockKey": true,
-              "customConditional": "",
-              "tooltip": ""
+              "id": "enqlwsq",
+              "isNew": false
             }
           ],
           "placeholder": "",
