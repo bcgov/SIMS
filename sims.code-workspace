@@ -117,7 +117,8 @@
       "SFAS",
       "timestamptz",
       "typeorm",
-      "unparse"
+      "unparse",
+      "Zeebe"
     ],
     "[json]": {
       "editor.defaultFormatter": "vscode.json-language-features"

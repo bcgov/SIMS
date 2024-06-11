@@ -2,12 +2,6 @@ import "../../env-setup";
 import * as fs from "fs";
 import * as path from "path";
 import {
-  DecisionDeployment,
-  DecisionRequirementsDeployment,
-  Deployment,
-  ZBClient,
-} from "zeebe-node";
-import {
   DecisionDeploymentResult,
   DECISIONS_EXTENSION,
   DEPLOYMENT_METADATA_PROPERTY_NAME,
@@ -15,6 +9,12 @@ import {
   ProcessDeploymentResult,
   PROCESSES_EXTENSION,
 } from "./deploy.models";
+import { Camunda8 } from "@camunda8/sdk";
+import {
+  DecisionDeployment,
+  DecisionRequirementsDeployment,
+  Deployment,
+} from "@camunda8/sdk/dist/zeebe/types";
 
 /**
  * Script main execution method.
@@ -37,7 +37,8 @@ import {
   console.info(`\nFiles found:`);
   console.table(fileNames);
 
-  const zeebeClient = new ZBClient();
+  const camunda8 = new Camunda8();
+  const zeebeClient = camunda8.getZeebeGrpcApiClient();
   try {
     // Deploy all decision files (BPMNs).
     const decisionDeploymentResults: DecisionDeploymentResult[] = [];
