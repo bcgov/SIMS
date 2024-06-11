@@ -27,7 +27,7 @@ export function getGenderCode(gender: string): string {
   if (gender === "man") {
     return "M";
   } else if (gender === "woman") {
-    return "M";
+    return "F";
   } else if (gender === "nonBinary") {
     return "X";
   }
