@@ -18,10 +18,3 @@ SET
   gender = 'woman'
 WHERE
   gender = 'female';
-
-UPDATE
-  sims.students
-SET
-  gender = ''
-WHERE
-  gender = 'preferNA';
