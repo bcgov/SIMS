@@ -125,17 +125,14 @@ export default defineComponent({
         backToRequestForm();
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
-          if (
-            [
-              INVALID_APPLICATION_NUMBER,
-              APPLICATION_CHANGE_NOT_ELIGIBLE,
-            ].includes(error.errorType)
-          ) {
-            snackBar.warn(`Not able to submit. ${error.message}`);
-            return;
-          }
-          if (error.errorType === APPLICATION_HAS_PENDING_APPEAL) {
-            snackBar.error(`${error.message}`);
+          switch (error.errorType) {
+            case INVALID_APPLICATION_NUMBER:
+            case APPLICATION_CHANGE_NOT_ELIGIBLE:
+              snackBar.warn(`Not able to submit. ${error.message}`);
+              break;
+            case APPLICATION_HAS_PENDING_APPEAL:
+              snackBar.error(`${error.message}`);
+              break;
           }
         }
       } finally {

@@ -139,7 +139,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       .select("1")
       .innerJoin("appeal.appealRequests", "appealRequests")
       .innerJoin("appeal.application", "application")
-      .andWhere("application.id = :applicationId", { applicationId })
+      .where("application.id = :applicationId", { applicationId })
       .andWhere("appealRequests.appealStatus = :pending", {
         pending: StudentAppealStatus.Pending,
       })

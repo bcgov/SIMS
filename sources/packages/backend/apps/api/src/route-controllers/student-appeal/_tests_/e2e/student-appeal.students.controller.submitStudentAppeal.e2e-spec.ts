@@ -33,6 +33,7 @@ import { AppStudentsModule } from "../../../../app.students.module";
 import { FormService } from "../../../../services";
 import {
   APPLICATION_CHANGE_NOT_ELIGIBLE,
+  APPLICATION_HAS_PENDING_APPEAL,
   INVALID_APPLICATION_NUMBER,
 } from "../../../../constants";
 
@@ -212,7 +213,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
         .expect({
           message:
             "Only one change request can be submitted at a time for each application. When your current request is approved or denied by StudentAid BC, you will be able to submit a new one.",
-          errorType: "APPLICATION_HAS_PENDING_APPEAL",
+          errorType: APPLICATION_HAS_PENDING_APPEAL,
         });
     },
   );
