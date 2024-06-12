@@ -230,7 +230,6 @@ calculatedDataPartner1TotalIncome</bpmn:text>
         <bpmn:flowNodeRef>Event_105ptqe</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0zn13zd</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_03c2fh6</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_047c16g</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:intermediateThrowEvent id="Event_0jsq5je" name="awardEligibilityCSLP">
@@ -840,7 +839,7 @@ calculatedDataPartner1TotalIncome</bpmn:text>
     <bpmn:sequenceFlow id="Flow_1p7fyev" sourceRef="Gateway_03c2fh6" targetRef="Activity_0pvobml" />
     <bpmn:scriptTask id="Activity_01bf5sp" name="Partner Information and Income">
       <bpmn:extensionElements>
-        <zeebe:script expression="={&#10;  calculatedDataRelationshipStatus: appealsPartnerInformationAndIncomeAppealData.relationshipStatus,&#10;  calculatedDataPartner1TotalIncome: (&#10;  if appealsPartnerInformationAndIncomeAppealData.relationshipStatus = &#34;married&#34; then &#10;    appealsPartnerInformationAndIncomeAppealData.partnerEstimatedIncome&#10;  else &#10;  (if applicationPartnerIncome = null then null else applicationPartnerIncome) &#10;  )&#10;}" resultVariable="calculatedDataStudentPartnerInformationAndIncome" />
+        <zeebe:script expression="={&#10;  calculatedDataRelationshipStatus: appealsPartnerInformationAndIncomeAppealData.relationshipStatus,&#10;  calculatedDataPartner1TotalIncome: (if appealsPartnerInformationAndIncomeAppealData.relationshipStatus = &#34;married&#34; then appealsPartnerInformationAndIncomeAppealData.partnerEstimatedIncome else null)&#10;}" resultVariable="calculatedDataStudentPartnerInformationAndIncome" />
         <zeebe:ioMapping>
           <zeebe:output source="=calculatedDataStudentPartnerInformationAndIncome.calculatedDataRelationshipStatus" target="calculatedDataRelationshipStatus" />
           <zeebe:output source="=calculatedDataStudentPartnerInformationAndIncome.calculatedDataPartner1TotalIncome" target="calculatedDataPartner1TotalIncome" />
@@ -861,7 +860,7 @@ calculatedDataPartner1TotalIncome</bpmn:text>
     </bpmn:exclusiveGateway>
     <bpmn:scriptTask id="Activity_002ms16" name="Partner Information and Income">
       <bpmn:extensionElements>
-        <zeebe:script expression="={&#10;  calculatedDataRelationshipStatus: studentDataRelationshipStatus,&#10;  calculatedDataPartner1TotalIncome: (if applicationPartnerIncome = null then null else applicationPartnerIncome)&#10;}" resultVariable="calculatedDataStudentPartnerInformationAndIncome" />
+        <zeebe:script expression="={&#10;  calculatedDataRelationshipStatus: studentDataRelationshipStatus,&#10;  calculatedDataPartner1TotalIncome: (&#10;    if partner1TotalIncome = null then (&#10;      if studentDataEstimatedSpouseIncome = null then &#10;       null &#10;      else studentDataEstimatedSpouseIncome&#10;    ) &#10;    else partner1TotalIncome&#10;  )&#10;}" resultVariable="calculatedDataStudentPartnerInformationAndIncome" />
         <zeebe:ioMapping>
           <zeebe:output source="=calculatedDataStudentPartnerInformationAndIncome.calculatedDataRelationshipStatus" target="calculatedDataRelationshipStatus" />
           <zeebe:output source="=calculatedDataStudentPartnerInformationAndIncome.calculatedDataPartner1TotalIncome" target="calculatedDataPartner1TotalIncome" />
@@ -978,7 +977,7 @@ calculatedDataPartner1TotalIncome</bpmn:text>
       <bpmn:outgoing>Flow_1tcyqyg</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:parallelGateway id="Gateway_0wuxqll">
-      <bpmn:incoming>Flow_03x4i1c</bpmn:incoming>
+      <bpmn:incoming>Flow_15xhu93</bpmn:incoming>
       <bpmn:outgoing>Flow_01eben1</bpmn:outgoing>
       <bpmn:outgoing>Flow_1qbu3xc</bpmn:outgoing>
       <bpmn:outgoing>Flow_13hzh8q</bpmn:outgoing>
@@ -1050,15 +1049,6 @@ calculatedDataPartner1TotalIncome</bpmn:text>
       <bpmn:incoming>Flow_191hsl9</bpmn:incoming>
       <bpmn:outgoing>Flow_1p7fyev</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:intermediateThrowEvent id="Event_047c16g" name="Define Application Partner Income">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=if&#10;  partner1TotalIncome = null&#10;then&#10;  studentDataEstimatedSpouseIncome&#10;else&#10;  partner1TotalIncome" target="applicationPartnerIncome" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_15xhu93</bpmn:incoming>
-      <bpmn:outgoing>Flow_03x4i1c</bpmn:outgoing>
-    </bpmn:intermediateThrowEvent>
     <bpmn:sequenceFlow id="Flow_12qremx" name="Use appeal data" sourceRef="Gateway_0gpyasy" targetRef="Activity_01bf5sp">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=appealsPartnerInformationAndIncomeAppealData != null </bpmn:conditionExpression>
     </bpmn:sequenceFlow>
@@ -1085,8 +1075,7 @@ calculatedDataPartner1TotalIncome</bpmn:text>
     <bpmn:sequenceFlow id="Flow_13hzh8q" sourceRef="Gateway_0wuxqll" targetRef="Activity_1vwijyc" />
     <bpmn:sequenceFlow id="Flow_0xi2yp3" sourceRef="Activity_1vwijyc" targetRef="Gateway_08rr1xe" />
     <bpmn:sequenceFlow id="Flow_1tcyqyg" sourceRef="StartEvent_1" targetRef="Event_0rpww4j" />
-    <bpmn:sequenceFlow id="Flow_15xhu93" sourceRef="Event_0rpww4j" targetRef="Event_047c16g" />
-    <bpmn:sequenceFlow id="Flow_03x4i1c" sourceRef="Event_047c16g" targetRef="Gateway_0wuxqll" />
+    <bpmn:sequenceFlow id="Flow_15xhu93" sourceRef="Event_0rpww4j" targetRef="Gateway_0wuxqll" />
     <bpmn:sequenceFlow id="Flow_1tm6vti" sourceRef="Event_12o98iq" targetRef="Gateway_0um3yvb" />
     <bpmn:sequenceFlow id="Flow_142ei9l" name="single" sourceRef="Gateway_0um3yvb" targetRef="Event_0bdny14" />
     <bpmn:sequenceFlow id="Flow_1ekiozl" name="married / common-law" sourceRef="Gateway_0um3yvb" targetRef="Event_1k4n9fq">
@@ -1510,12 +1499,6 @@ calculatedDataPartner1TotalIncome</bpmn:text>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_03c2fh6_di" bpmnElement="Gateway_03c2fh6" isMarkerVisible="true">
         <dc:Bounds x="2631" y="1145" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1w6m0wo" bpmnElement="Event_047c16g">
-        <dc:Bounds x="938" y="1152" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="919" y="1196" width="76" height="40" />
-        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1vkmf8w_di" bpmnElement="Flow_1vkmf8w">
         <di:waypoint x="5640" y="1815" />
@@ -2029,10 +2012,6 @@ calculatedDataPartner1TotalIncome</bpmn:text>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_15xhu93_di" bpmnElement="Flow_15xhu93">
         <di:waypoint x="848" y="1170" />
-        <di:waypoint x="938" y="1170" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_03x4i1c_di" bpmnElement="Flow_03x4i1c">
-        <di:waypoint x="974" y="1170" />
         <di:waypoint x="1151" y="1170" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1tm6vti_di" bpmnElement="Flow_1tm6vti">
@@ -2140,7 +2119,7 @@ calculatedDataPartner1TotalIncome</bpmn:text>
         <dc:Bounds x="4100" y="1560" width="290" height="420" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_1myp6tg_di" bpmnElement="TextAnnotation_1myp6tg">
-        <dc:Bounds x="1855" y="1010" width="200" height="68" />
+        <dc:Bounds x="1855" y="1010" width="215" height="68" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0wcncz1_di" bpmnElement="TextAnnotation_0wcncz1">
