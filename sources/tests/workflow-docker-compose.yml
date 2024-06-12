@@ -2,11 +2,24 @@ services:
   zeebe:
     image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION}
     container_name: zeebe-test
+    ports:
+      - "26500:26500"
+      - "9600:9600"
     environment:
       - ZEEBE_BROKER_DATA_DISKUSAGECOMMANDWATERMARK=0.998
       - ZEEBE_BROKER_DATA_DISKUSAGEREPLICATIONWATERMARK=0.999
       - "JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m"
-    restart: always
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "timeout 10s bash -c ':> /dev/tcp/127.0.0.1/9600' || exit 1",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
   workflow:
     image: workflow-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
     container_name: workers-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
