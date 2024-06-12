@@ -1,4 +1,0 @@
-FROM clamav/clamav:1.2
-RUN freshclam
-COPY "./apps/clamav/scripts/docker-entrypoint-unprivileged.sh" "/init"
-RUN chmod +x /init

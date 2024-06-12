@@ -11,9 +11,9 @@ objects:
     metadata:
       name: ${NAME}
       labels:
-        app.kubernetes.io/name: clamav
+        app.kubernetes.io/name: ${NAME}
         helm.sh/chart: clamav-0.1.0
-        app.kubernetes.io/instance: clamav
+        app.kubernetes.io/instance: ${NAME}
         app.kubernetes.io/version: "0.1.0"
         app.kubernetes.io/managed-by: Helm
     spec:
@@ -24,8 +24,8 @@ objects:
           protocol: TCP
           name: http
       selector:
-        app.kubernetes.io/name: clamav
-        app.kubernetes.io/instance: clamav
+        app.kubernetes.io/name: ${NAME}
+        app.kubernetes.io/instance: ${NAME}
   - apiVersion: apps/v1
     kind: StatefulSet
     metadata:

@@ -208,8 +208,8 @@ services:
   clamav:
     container_name: clamav
     build:
-      context: ./packages/backend/
-      dockerfile: ./apps/clamav/Dockerfile.dev
+      context: ./packages/
+      dockerfile: clamav/Dockerfile
     restart: always
     stdin_open: true
     environment:
