@@ -42,7 +42,13 @@ import {
   console.info(`\nFiles found:`);
   console.table(fileNames);
 
-  const camunda8 = new Camunda8();
+  const camunda8 = new Camunda8({
+    zeebeGrpcSettings: {
+      ZEEBE_GRPC_CLIENT_RETRY: true,
+      ZEEBE_GRPC_CLIENT_MAX_RETRIES: 20,
+      ZEEBE_GRPC_CLIENT_MAX_RETRY_TIMEOUT_SECONDS: 10,
+    },
+  });
   const zeebeClient = camunda8.getZeebeGrpcApiClient();
   try {
     // Deploy all decision files (BPMNs).
