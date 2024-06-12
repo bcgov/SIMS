@@ -1,6 +1,5 @@
 import { ASSESSMENT_ID } from "@sims/services/workflow/variables/assessment-gateway";
 import { ApplicationStatus, AssessmentTriggerType } from "@sims/sims-db";
-import { ZBClient } from "zeebe-node";
 import { AssessmentConsolidatedData } from "../../models";
 import {
   createFakeConsolidatedFulltimeData,
@@ -28,9 +27,10 @@ import {
   PROGRAM_YEAR_BASE_ID,
 } from "../constants/program-year.constants";
 import { AssessmentDataType, YesNoOptions } from "@sims/test-utils";
+import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 
 describe(`E2E Test Workflow assessment gateway on original assessment for ${PROGRAM_YEAR}`, () => {
-  let zeebeClientProvider: ZBClient;
+  let zeebeClientProvider: ZeebeGrpcClient;
   let assessmentId = PROGRAM_YEAR_BASE_ID;
   let supportingUserId = PROGRAM_YEAR_BASE_ID;
   let incomeVerificationId = PROGRAM_YEAR_BASE_ID;

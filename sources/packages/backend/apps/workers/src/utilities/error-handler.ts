@@ -1,6 +1,12 @@
+import {
+  ICustomHeaders,
+  IInputVariables,
+  IOutputVariables,
+  MustReturnJobActionAcknowledgement,
+  ZeebeJob,
+} from "@camunda8/sdk/dist/zeebe/types";
 import { Logger } from "@nestjs/common";
 import { parseJSONError } from "@sims/utilities";
-import { ZeebeJob, MustReturnJobActionAcknowledgement } from "zeebe-node";
 
 /**
  * Takes care of log and will acknowledge worker,
@@ -14,7 +20,7 @@ import { ZeebeJob, MustReturnJobActionAcknowledgement } from "zeebe-node";
  */
 export function createUnexpectedJobFail(
   error: unknown,
-  job: ZeebeJob,
+  job: ZeebeJob<unknown, unknown, unknown>,
   options?: {
     logger?: Logger;
   },

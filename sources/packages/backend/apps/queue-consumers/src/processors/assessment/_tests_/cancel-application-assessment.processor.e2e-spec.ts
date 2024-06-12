@@ -1,4 +1,3 @@
-import { ZBClient } from "zeebe-node";
 import { Job } from "bull";
 import { createMock } from "@golevelup/ts-jest";
 import { INestApplication } from "@nestjs/common";
@@ -36,6 +35,7 @@ import * as faker from "faker";
 import { AssessmentSequentialProcessingService } from "@sims/services";
 import { TestingModule } from "@nestjs/testing";
 import { QueueConsumersModule } from "../../../../src/queue-consumers.module";
+import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 
 describe(
   describeProcessorRootTest(QueueNames.CancelApplicationAssessment),
@@ -43,7 +43,7 @@ describe(
     let app: INestApplication;
     let db: E2EDataSources;
     let processor: CancelApplicationAssessmentProcessor;
-    let zbClientMock: ZBClient;
+    let zbClientMock: ZeebeGrpcClient;
     let appDataSource: DataSource;
     let studentAssessmentRepo: Repository<StudentAssessment>;
     let disbursementOverawardRepo: Repository<DisbursementOveraward>;

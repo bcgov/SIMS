@@ -1,8 +1,12 @@
 import { DisbursementValueType } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
 import { createFakeWorkerJob } from "../../../../../test/utils/worker-job-mock";
-import { ICustomHeaders, IOutputVariables, ZeebeJob } from "zeebe-node";
 import { SaveDisbursementSchedulesJobInDTO } from "../../disbursement.dto";
+import {
+  ICustomHeaders,
+  IOutputVariables,
+  ZeebeJob,
+} from "@camunda8/sdk/dist/zeebe/types";
 
 export function createFakeSaveDisbursementSchedulesPayload(
   assessmentId: number,

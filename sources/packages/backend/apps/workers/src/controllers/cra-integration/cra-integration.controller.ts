@@ -1,11 +1,5 @@
 import { Controller, Logger } from "@nestjs/common";
 import { ZeebeWorker } from "../../zeebe";
-import {
-  ZeebeJob,
-  MustReturnJobActionAcknowledgement,
-  IOutputVariables,
-  ICustomHeaders,
-} from "zeebe-node";
 import { CRAIncomeVerificationService } from "../../services";
 import {
   CheckIncomeRequestJobInDTO,
@@ -23,6 +17,11 @@ import {
 import { MaxJobsToActivate } from "../../types";
 import { Workers } from "@sims/services/constants";
 import { createUnexpectedJobFail } from "../../utilities";
+import {
+  ICustomHeaders,
+  MustReturnJobActionAcknowledgement,
+  ZeebeJob,
+} from "@camunda8/sdk/dist/zeebe/types";
 
 @Controller()
 export class CRAIntegrationController {
@@ -47,7 +46,7 @@ export class CRAIntegrationController {
     job: Readonly<
       ZeebeJob<
         CreateIncomeRequestJobInDTO,
-        IOutputVariables,
+        ICustomHeaders,
         CreateIncomeRequestJobOutDTO
       >
     >,

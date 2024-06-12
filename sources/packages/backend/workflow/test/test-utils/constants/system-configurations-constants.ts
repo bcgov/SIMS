@@ -1,4 +1,4 @@
-import { Duration } from "zeebe-node";
+import { Duration } from "@camunda8/sdk/dist/zeebe";
 
 /**
  * Timeout in milliseconds for the zeebe client to create process instance

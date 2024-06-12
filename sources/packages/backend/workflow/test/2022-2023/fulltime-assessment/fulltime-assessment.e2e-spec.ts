@@ -4,16 +4,16 @@ import {
   AssessmentModel,
   CalculatedAssessmentModel,
 } from "../../models";
-import { ZBClient } from "zeebe-node";
 import {
   createFakeAssessmentConsolidatedData,
   PROCESS_INSTANCE_CREATE_TIMEOUT,
   ZeebeMockedClient,
 } from "../../test-utils";
 import { PROGRAM_YEAR } from "../constants/program-year.constants";
+import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}.`, () => {
-  let zeebeClientProvider: ZBClient;
+  let zeebeClientProvider: ZeebeGrpcClient;
   beforeAll(async () => {
     zeebeClientProvider = ZeebeMockedClient.getMockedZeebeInstance();
   });

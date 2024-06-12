@@ -11,12 +11,6 @@
 import { Controller, Logger } from "@nestjs/common";
 import { ZeebeWorker } from "../../zeebe";
 import {
-  ZeebeJob,
-  ICustomHeaders,
-  MustReturnJobActionAcknowledgement,
-  IOutputVariables,
-} from "zeebe-node";
-import {
   ApplicationAssessmentJobOutDTO,
   AssessmentDataJobInDTO,
   AssociateWorkflowInstanceJobInDTO,
@@ -64,6 +58,12 @@ import {
 } from "@sims/services";
 import { DataSource, EntityManager } from "typeorm";
 import { StudentLoanBalanceSharedService } from "@sims/services/student-loan-balance/student-loan-balance-shared.service";
+import {
+  ICustomHeaders,
+  IOutputVariables,
+  MustReturnJobActionAcknowledgement,
+  ZeebeJob,
+} from "@camunda8/sdk/dist/zeebe/types";
 
 @Controller()
 export class AssessmentController {

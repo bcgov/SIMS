@@ -1,4 +1,3 @@
-import { ZBClient, ZeebeJob } from "zeebe-node";
 import { Workers } from "@sims/services/constants";
 import {
   JOB_COMPLETED_RESULT_SUFFIX,
@@ -6,6 +5,9 @@ import {
   PARENT_SUBPROCESSES_VARIABLE,
 } from "../constants/mock-constants";
 import { getNormalizedServiceTaskId, getPassthroughTaskId } from "./mock.utils";
+import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
+import { ZeebeJob } from "@camunda8/sdk/dist/zeebe/types";
+import { Camunda8 } from "@camunda8/sdk";
 
 /**
  * Mock task handler which returns job complete
@@ -48,7 +50,7 @@ async function mockTaskHandler(job: ZeebeJob<unknown>) {
  * Zeebe client with mocked worker implementations.
  */
 export class ZeebeMockedClient {
-  private static mockedZeebeClient: ZBClient;
+  private static mockedZeebeClient: ZeebeGrpcClient;
 
   static getMockedZeebeInstance() {
     if (!ZeebeMockedClient.mockedZeebeClient) {
@@ -56,7 +58,8 @@ export class ZeebeMockedClient {
         taskType,
         taskHandler: mockTaskHandler,
       }));
-      ZeebeMockedClient.mockedZeebeClient = new ZBClient({ loglevel: "ERROR" });
+      const camunda8 = new Camunda8();
+      ZeebeMockedClient.mockedZeebeClient = camunda8.getZeebeGrpcApiClient();
       fakeWorkers.forEach((fakeWorker) =>
         ZeebeMockedClient.mockedZeebeClient.createWorker(fakeWorker),
       );
