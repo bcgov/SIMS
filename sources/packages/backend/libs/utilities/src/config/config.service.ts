@@ -273,4 +273,14 @@ export class ConfigService {
   get apiVersion(): string {
     return this.getCachedConfig("apiVersionConfig", process.env.VERSION);
   }
+
+  /**
+   * Clamav port.
+   */
+  get clamavPort(): number {
+    return this.getCachedConfig(
+      "clamavPortConfig",
+      +process.env.CLAMAV_PORT || 3310,
+    );
+  }
 }

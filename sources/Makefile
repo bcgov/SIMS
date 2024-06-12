@@ -10,6 +10,7 @@ export QUEUE_CONSUMERS_PORT := $(or $(QUEUE_CONSUMERS_PORT), 3001)
 export LOAD_TEST_API_PORT := $(or $(LOAD_TEST_API_PORT), 3005)
 export APP_PORT := $(or $(APP_PORT), 8080)
 export WORKERS_PORT := $(or $(WORKERS_PORT), 3020)
+export CLAMAV_PORT := $(or $(CLAMAV_PORT), 3310)
 # Database
 export POSTGRES_PORT := $(or $(POSTGRES_PORT), 5432)
 export POSTGRES_USER := $(or $(POSTGRES_USER), admin)
@@ -204,6 +205,12 @@ queue-consumers:
 	@echo "+\n++ Make: Queue only"
 	@docker-compose -f docker-compose.yml build queue-consumers
 	@docker-compose -f docker-compose.yml up -d queue-consumers
+
+# Runs clamav
+clamav:
+	@echo "+\n++ Make: Clamav only"
+	@docker-compose -f docker-compose.yml build clamav
+	@docker-compose -f docker-compose.yml up -d clamav
 
 # Runs load test gateway application
 load-test-gateway:

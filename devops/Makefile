@@ -33,6 +33,7 @@ export DB_NAME := $(or ${DB_NAME}, SIMSDB)
 export DB_MIGRATIONS_BUILD_REF := $(or ${DB_MIGRATIONS_BUILD_REF}, db-migrations-${APP_NAME})
 export API_BUILD_REF := $(or ${API_BUILD_REF}, api-${APP_NAME})
 export WORKERS_BUILD_REF := $(or ${WORKERS_BUILD_REF}, workers-${APP_NAME})
+export CLAMAV_PORT := $(or ${CLAMAV_PORT}, 3310)
 export QUEUE_CONSUMERS_BUILD_REF := $(or ${QUEUE_CONSUMERS_BUILD_REF}, queue-consumers-${APP_NAME})
 export LOAD_TEST_GATEWAY_BUILD_REF := $(or ${LOAD_TEST_GATEWAY_BUILD_REF}, load-test-gateway-${APP_NAME})
 export WEB_BUILD_REF := $(or ${WEB_BUILD_REF}, web-${APP_NAME})
@@ -58,6 +59,10 @@ endef
 
 define WORKERS
 "$(HOST_PREFIX)workers-$(APP_NAME)"
+endef
+
+define CLAMAV
+"$(HOST_PREFIX)clamav-$(APP_NAME)"
 endef
 
 define WEB
@@ -617,3 +622,14 @@ db-backup-deploy-patroni-delete:
 delete-redis:
 	@echo "+\n++ Removing redis and resources on $(NAMESPACE)\n+"
 	@oc delete -n $(NAMESPACE) all,rc,svc,dc,route,pvc,secret,configmap,sa -l app=redis
+
+deploy-clamav:
+	test -n "$(NAMESPACE)"
+	test -n "$(CLAMAV)"
+	test -n "$(CLAMAV_PORT)"
+	@echo "+\n++ Deploying Clamav\n+"
+	@oc -n $(NAMESPACE) process -f openshift/clamav-deploy.yml \
+		-p NAME=$(CLAMAV) \
+		-p PORT=$(CLAMAV_PORT) \
+		-p HOST_NAME=$(HOST) \
+		| oc -n $(NAMESPACE) apply -f -

@@ -138,6 +138,7 @@ QUEUE_PREFIX={sims-local}
 
 #Workers properties
 WORKERS_PORT=
+CLAMAV_PORT=
 
 #Load test gateway
 LOAD_TEST_API_PORT=
