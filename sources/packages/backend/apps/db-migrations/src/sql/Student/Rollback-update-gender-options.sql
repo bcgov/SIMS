@@ -18,3 +18,15 @@ SET
   gender = 'female'
 WHERE
   gender = 'woman';
+
+UPDATE
+  sims.students
+SET
+  gender = 'unknown'
+WHERE
+  gender = 'preferNotToAnswer';
+
+ALTER TABLE
+  sims.students
+ALTER COLUMN
+  gender TYPE varchar(10);
