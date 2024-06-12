@@ -22,6 +22,11 @@ import {
 (async () => {
   console.info(`**** Deploying to Camunda ****\n`);
   console.info(`Deploying to Zeebe address ${process.env.ZEEBE_ADDRESS}`);
+  console.info(`CAMUNDA_OAUTH_DISABLED ${process.env.CAMUNDA_OAUTH_DISABLED}`);
+  console.info(
+    `CAMUNDA_SECURE_CONNECTION ${process.env.CAMUNDA_SECURE_CONNECTION}`,
+  );
+  console.info(process.env);
 
   const directory = path.resolve(__dirname, `./workflow-definitions`);
   console.info(`Getting resources from ${directory}`);
