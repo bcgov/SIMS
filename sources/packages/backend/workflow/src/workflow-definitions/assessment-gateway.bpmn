@@ -316,7 +316,7 @@
     <bpmn:serviceTask id="save-assessment-data-task" name="Save assessment output">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:input source="={&#10;  weeks: offeringWeeks,&#10;  tuitionCost: calculatedDataTotalTutionCost,&#10;  childcareCost: calculatedDataChildCareCost,&#10;  livingAllowance: calculatedDataTotalMSOLAllowance,&#10;  totalAssessedCost: calculatedDataTotalCosts,&#10;  totalFamilyIncome: calculatedDataTotalFamilyIncome,&#10;  totalFederalAward: awardNetFederalTotalAward,&#10;  otherAllowableCost: calculatedDataChildCareCost,&#10;  transportationCost: calculatedDataTotalTransportationCost,&#10;  secondResidenceCost: calculatedDataTotalSecondResidence,&#10;  totalAssessmentNeed: caclulatedDataTotalAssessedNeed,&#10;  booksAndSuppliesCost: calculatedDataTotalBookCost,&#10;  totalProvincialAward: awardNetProvincialTotalAward,&#10;  alimonyOrChildSupport: calculatedDataTotalChildSpousalSupport,&#10;  federalAssessmentNeed: calculatedDataFederalAssessedNeed,&#10;  exceptionalEducationCost: offeringExceptionalExpenses,&#10;  provincialAssessmentNeed: calculatedDataProvincialAssessedNeed,&#10;  totalFederalContribution:  calculatedDataTotalFederalFSC + calculatedDataTotalSpouseContribution + calculatedDataTotalParentalContribution,&#10;  parentAssessedContribution: calculatedDataTotalParentalContribution,&#10;  partnerAssessedContribution: calculatedDataTotalSpouseContribution,&#10;  totalProvincialContribution: calculatedDataTotalProvincialFSC + calculatedDataTotalSpouseContribution + calculatedDataTotalParentalContribution,&#10;  studentTotalFederalContribution: calculatedDataTotalFederalFSC,&#10;  studentTotalProvincialContribution: calculatedDataTotalProvincialFSC&#10;}" target="assessmentData" />
+          <zeebe:input source="={&#10;  weeks: offeringWeeks,&#10;  tuitionCost: calculatedDataTotalTutionCost,&#10;  childcareCost: calculatedDataChildCareCost,&#10;  livingAllowance: calculatedDataTotalMSOLAllowance,&#10;  totalAssessedCost: calculatedDataTotalCosts,&#10;  totalFamilyIncome: calculatedDataTotalFamilyIncome,&#10;  totalFederalAward: awardNetFederalTotalAward,&#10;  otherAllowableCost: calculatedDataChildCareCost,&#10;  transportationCost: calculatedDataTotalTransportationCost,&#10;  secondResidenceCost: calculatedDataTotalSecondResidence,&#10;  totalAssessmentNeed: caclulatedDataTotalAssessedNeed,&#10;  booksAndSuppliesCost: calculatedDataTotalBookCost,&#10;  totalProvincialAward: awardNetProvincialTotalAward,&#10;  alimonyOrChildSupport: calculatedDataTotalChildSpousalSupport,&#10;  federalAssessmentNeed: calculatedDataFederalAssessedNeed,&#10;  exceptionalEducationCost: offeringExceptionalExpenses,&#10;  provincialAssessmentNeed: calculatedDataProvincialAssessedNeed,&#10;  totalFederalContribution:  calculatedDataTotalFederalFSC + calculatedDataTotalSpouseContribution + calculatedDataTotalParentalContribution,&#10;  parentAssessedContribution: calculatedDataTotalParentalContribution,&#10;  partnerAssessedContribution: calculatedDataTotalSpouseContribution,&#10;  totalProvincialContribution: calculatedDataTotalProvincialFSC + calculatedDataTotalSpouseContribution + calculatedDataTotalParentalContribution,&#10;  studentTotalFederalContribution: calculatedDataTotalFederalFSC,&#10;  totalFederalAssessedResources: parentAssessedContribution + partnerAssessedContribution + calculatedDataTargetedResources + calculatedDataTotalFederalFSC,&#10;  studentTotalProvincialContribution: calculatedDataTotalProvincialFSC&#10;}" target="assessmentData" />
         </zeebe:ioMapping>
         <zeebe:taskDefinition type="save-assessment-data" />
       </bpmn:extensionElements>
@@ -1577,10 +1577,6 @@
         <di:waypoint x="561" y="601" />
         <di:waypoint x="595" y="601" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1ek1rle_di" bpmnElement="Association_1ek1rle">
-        <di:waypoint x="1960" y="1634" />
-        <di:waypoint x="1928" y="1643" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1cb5fpw_di" bpmnElement="Flow_1cb5fpw">
         <di:waypoint x="3365" y="1620" />
         <di:waypoint x="3425" y="1620" />
@@ -1626,6 +1622,10 @@
         <di:waypoint x="3770" y="1780" />
         <di:waypoint x="3920" y="1780" />
         <di:waypoint x="3920" y="1635" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1ek1rle_di" bpmnElement="Association_1ek1rle">
+        <di:waypoint x="1960" y="1634" />
+        <di:waypoint x="1928" y="1643" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_1k2osho_di" bpmnElement="Group_1k2osho">
         <dc:Bounds x="1430" y="150" width="750" height="340" />
