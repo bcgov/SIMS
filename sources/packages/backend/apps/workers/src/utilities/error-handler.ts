@@ -1,7 +1,4 @@
 import {
-  ICustomHeaders,
-  IInputVariables,
-  IOutputVariables,
   MustReturnJobActionAcknowledgement,
   ZeebeJob,
 } from "@camunda8/sdk/dist/zeebe/types";

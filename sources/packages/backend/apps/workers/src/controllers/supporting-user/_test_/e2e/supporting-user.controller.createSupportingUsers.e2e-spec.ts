@@ -17,10 +17,7 @@ import {
   CreateSupportingUsersJobOutDTO,
 } from "../../supporting-user.dto";
 import { createFakeCreateSupportingUsersPayload } from "./create-supporting-users";
-import {
-  ICustomHeaders,
-  IOutputVariables,
-} from "@camunda8/sdk/dist/zeebe/types";
+import { ICustomHeaders } from "@camunda8/sdk/dist/zeebe/types";
 
 describe("SupportingUserController(e2e)-createSupportingUsers", () => {
   let db: E2EDataSources;
