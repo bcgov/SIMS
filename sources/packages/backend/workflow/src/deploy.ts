@@ -44,6 +44,7 @@ import {
   console.table("Waiting...");
   const camunda8 = new Camunda8({
     zeebeGrpcSettings: {
+      ZEEBE_GRPC_CLIENT_EAGER_CONNECT: true,
       ZEEBE_GRPC_CLIENT_CONNECTION_TOLERANCE_MS: 10000,
       ZEEBE_GRPC_CLIENT_RETRY: true,
       ZEEBE_GRPC_CLIENT_MAX_RETRIES: 20,
