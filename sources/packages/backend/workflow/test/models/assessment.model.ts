@@ -33,9 +33,11 @@ export interface StudentAdditionalTransportationAppealData extends JSONDoc {
   additionalTransportPlacement?: YesNoOptions;
 }
 
+type relationshipStatusType = "single" | "other" | "married";
+
 export interface PartnerInformationAndIncomeAppealData extends JSONDoc {
   partnerAuthorized?: boolean;
-  relationshipStatus: "single" | "other" | "married";
+  relationshipStatus: relationshipStatusType;
   partnerEstimatedIncome?: number;
 }
 
@@ -77,7 +79,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataDependantstatus: "dependant" | "independant";
   programYear: string;
   programYearStartDate: string;
-  studentDataRelationshipStatus: "single" | "other" | "married";
+  studentDataRelationshipStatus: relationshipStatusType;
   studentDataTaxReturnIncome: number;
   studentDataWhenDidYouGraduateOrLeaveHighSchool: string;
   studentDataIndigenousStatus: YesNoOptions;
@@ -220,7 +222,7 @@ export interface AssessmentModel {
 }
 
 export interface CalculatedAssessmentModel {
-  calculatedDataRelationshipStatus: "single" | "other" | "married";
+  calculatedDataRelationshipStatus: relationshipStatusType;
   calculatedDataPartner1TotalIncome: number;
   calculatedDataEligibleForAnAdditionalTransportationAllowance: YesNoOptions;
   calculatedDataAdditionalTransportKm: number;
