@@ -24,9 +24,9 @@ In Development with some functionality available to Ministry and Institution use
 
 High, new features released every sprint (3 week cadence). 
 
-## Draft-Architecture
+## Architecture
 
-![Draft Architecture] (.docs/assets/SIMS Architecture Jun10.24 v4.png)
+![Architecture] (./docs/assets/SIMS_Architecture_Jun10.24_v4.png)
 
 ## Continue Reading
 
