@@ -1,6 +1,6 @@
 services:
   zeebe:
-    image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION:-8.5.0}
+    image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION}
     container_name: zeebe-test
     environment:
       - ZEEBE_BROKER_DATA_DISKUSAGECOMMANDWATERMARK=0.998
@@ -16,8 +16,8 @@ services:
     environment:
       - NODE_ENV=docker
       - ZEEBE_ADDRESS=zeebe:26500
-      - CAMUNDA_OAUTH_DISABLED=true
-      - CAMUNDA_SECURE_CONNECTION=false
+      - CAMUNDA_OAUTH_DISABLED=${CAMUNDA_OAUTH_DISABLED}
+      - CAMUNDA_SECURE_CONNECTION=${CAMUNDA_SECURE_CONNECTION}
       - ZEEBE_CLIENT_MAX_RETRIES=20
     restart: always
     depends_on:

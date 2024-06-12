@@ -131,4 +131,8 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}.`, () => {
       calculatedAssessment.variables.calculatedDataTotalProvincialFSC,
     ).toBe(expectedAssessmentData.studentTotalProvincialContribution);
   });
+
+  afterAll(async () => {
+    await zeebeClientProvider?.close();
+  });
 });

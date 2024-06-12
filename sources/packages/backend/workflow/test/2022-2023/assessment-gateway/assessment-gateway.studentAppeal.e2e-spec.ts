@@ -64,4 +64,8 @@ describe(`E2E Test Workflow assessment gateway on student appeal for ${PROGRAM_Y
       WorkflowServiceTasks.UpdateApplicationStatusToInProgress,
     );
   });
+
+  afterAll(async () => {
+    await zeebeClientProvider?.close();
+  });
 });

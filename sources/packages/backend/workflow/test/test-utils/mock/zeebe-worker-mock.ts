@@ -6,7 +6,12 @@ import {
 } from "../constants/mock-constants";
 import { getNormalizedServiceTaskId, getPassthroughTaskId } from "./mock.utils";
 import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
-import { ZeebeJob } from "@camunda8/sdk/dist/zeebe/types";
+import {
+  ICustomHeaders,
+  IInputVariables,
+  IOutputVariables,
+  ZeebeJob,
+} from "@camunda8/sdk/dist/zeebe/types";
 import { Camunda8 } from "@camunda8/sdk";
 
 /**
@@ -16,12 +21,14 @@ import { Camunda8 } from "@camunda8/sdk";
  * @param job worker job.
  * @returns mock task handler response.
  */
-async function mockTaskHandler(job: ZeebeJob<unknown>) {
+async function mockTaskHandler(
+  job: ZeebeJob<IInputVariables, ICustomHeaders, IOutputVariables>,
+) {
   const serviceTaskId = getNormalizedServiceTaskId(job.elementId);
   const serviceTaskMock = job.variables[serviceTaskId] ?? {};
   // Check if the service task id is in a sub-process.
   const subprocesses: string[] =
-    job.variables[PARENT_SUBPROCESSES_VARIABLE] ?? [];
+    (job.variables[PARENT_SUBPROCESSES_VARIABLE] as string[]) ?? [];
   let mockedData = serviceTaskMock;
   for (const subprocessMock of subprocesses) {
     const subprocessMockId = getNormalizedServiceTaskId(subprocessMock);
@@ -58,7 +65,9 @@ export class ZeebeMockedClient {
         taskType,
         taskHandler: mockTaskHandler,
       }));
-      const camunda8 = new Camunda8();
+      const camunda8 = new Camunda8({
+        zeebeGrpcSettings: { ZEEBE_CLIENT_LOG_LEVEL: "ERROR" },
+      });
       ZeebeMockedClient.mockedZeebeClient = camunda8.getZeebeGrpcApiClient();
       fakeWorkers.forEach((fakeWorker) =>
         ZeebeMockedClient.mockedZeebeClient.createWorker(fakeWorker),
