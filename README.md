@@ -26,7 +26,7 @@ High, new features released every sprint (3 week cadence).
 
 ## Architecture
 
-![Architecture] (./docs/assets/SIMS_Architecture_Jun10.24_v4.png)
+![Architecture] (./docs/assets/SIMSArchitecture2024.jpg)
 
 ## Continue Reading
 
