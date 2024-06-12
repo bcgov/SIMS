@@ -584,7 +584,7 @@
       "breadcrumb": "default",
       "id": "erae6ji",
       "tags": [],
-      "hideLabel": false
+      "hideLabel": true
     },
     {
       "label": "Program Year",
