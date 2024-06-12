@@ -42,9 +42,9 @@ import {
   console.info(`\nFiles found:`);
   console.table(fileNames);
   console.table("Waiting...");
-  await new Promise((f) => setTimeout(f, 30000));
   const camunda8 = new Camunda8({
     zeebeGrpcSettings: {
+      ZEEBE_GRPC_CLIENT_CONNECTION_TOLERANCE_MS: 10000,
       ZEEBE_GRPC_CLIENT_RETRY: true,
       ZEEBE_GRPC_CLIENT_MAX_RETRIES: 20,
       ZEEBE_GRPC_CLIENT_MAX_RETRY_TIMEOUT_SECONDS: 10,
