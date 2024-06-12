@@ -41,17 +41,22 @@ import {
 
   console.info(`\nFiles found:`);
   console.table(fileNames);
-  console.table("Waiting...");
-  const camunda8 = new Camunda8({
-    zeebeGrpcSettings: {
-      ZEEBE_GRPC_CLIENT_EAGER_CONNECT: true,
-      ZEEBE_GRPC_CLIENT_CONNECTION_TOLERANCE_MS: 10000,
-      ZEEBE_GRPC_CLIENT_RETRY: true,
-      ZEEBE_GRPC_CLIENT_MAX_RETRIES: 20,
-      ZEEBE_GRPC_CLIENT_MAX_RETRY_TIMEOUT_SECONDS: 10,
-    },
-  });
+
+  const camunda8 = new Camunda8();
   const zeebeClient = camunda8.getZeebeGrpcApiClient();
+
+  let attempts = 10;
+  let zeebeReady = false;
+  while (attempts >= 0 && !zeebeReady) {
+    try {
+      console.log("Attempt: " + attempts);
+      await zeebeClient.topology();
+      zeebeReady = true;
+    } catch {
+      attempts--;
+    }
+  }
+
   try {
     // Deploy all decision files (BPMNs).
     const decisionDeploymentResults: DecisionDeploymentResult[] = [];
