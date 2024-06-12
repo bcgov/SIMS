@@ -8,7 +8,7 @@ WHERE
 UPDATE
   sims.students
 SET
-  gender = 'X'
+  gender = 'diverse'
 WHERE
   gender = 'nonBinary';
 

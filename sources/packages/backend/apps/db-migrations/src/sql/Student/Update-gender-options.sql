@@ -20,6 +20,13 @@ WHERE
 UPDATE
   sims.students
 SET
+  gender = 'nonBinary'
+WHERE
+  gender = 'diverse';
+
+UPDATE
+  sims.students
+SET
   gender = 'woman'
 WHERE
   gender = 'female';
