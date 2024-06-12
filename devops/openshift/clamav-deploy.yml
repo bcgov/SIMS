@@ -9,7 +9,7 @@ objects:
   - apiVersion: v1
     kind: Service
     metadata:
-      name: clamav
+      name: ${NAME}
       labels:
         app.kubernetes.io/name: clamav
         helm.sh/chart: clamav-0.1.0
@@ -19,7 +19,7 @@ objects:
     spec:
       type: ClusterIP
       ports:
-        - port: 3310
+        - port: ${{PORT}}
           targetPort: http
           protocol: TCP
           name: http
@@ -29,7 +29,7 @@ objects:
   - apiVersion: apps/v1
     kind: StatefulSet
     metadata:
-      name: clamav
+      name: ${NAME}
       labels:
         app.kubernetes.io/name: clamav
         helm.sh/chart: clamav-0.1.0
@@ -37,20 +37,20 @@ objects:
         app.kubernetes.io/version: "0.1.0"
         app.kubernetes.io/managed-by: Helm
     spec:
-      replicas: 1
-      serviceName: clamav
+      replicas: "${{REPLICAS}}"
+      serviceName: ${NAME}
       selector:
         matchLabels:
-          app.kubernetes.io/name: clamav
-          app.kubernetes.io/instance: clamav
+          app.kubernetes.io/name: ${NAME}
+          app.kubernetes.io/instance: ${NAME}
       template:
         metadata:
           annotations:
             checksum/config1: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
             checksum/config2: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
           labels:
-            app.kubernetes.io/name: clamav
-            app.kubernetes.io/instance: clamav
+            app.kubernetes.io/name: ${NAME}
+            app.kubernetes.io/instance: ${NAME}
         spec:
           securityContext: null
           initContainers:
@@ -68,8 +68,8 @@ objects:
                 - name: database
                   mountPath: /var/lib/clamav
           containers:
-            - name: clamav
-              image: "ghcr.io/bcgov/clamav-unprivileged:ca3d42f3dde3c5aa9bcab636f752119bbe6a67e8"
+            - name: ${NAME}
+              image: ${IMAGE_REGISTRY}/${IMAGE_STREAM_NAMESPACE}/${IMAGE_NAME}:${IMAGE_TAG}
               imagePullPolicy: IfNotPresent
               securityContext: null
               env:
@@ -128,11 +128,11 @@ objects:
                 timeoutSeconds: 600
               resources:
                 limits:
-                  cpu: 1000m
-                  memory: 2Gi
+                  cpu: ${CPU_LIMIT}
+                  memory: ${MEMORY_LIMIT}
                 requests:
-                  cpu: 300m
-                  memory: 2Gi
+                  cpu: ${CPU_REQUEST}
+                  memory: ${MEMORY_REQUEST}
           affinity:
             podAntiAffinity:
               preferredDuringSchedulingIgnoredDuringExecution:
@@ -141,20 +141,19 @@ objects:
                     topologyKey: "kubernetes.io/hostname"
                     labelSelector:
                       matchLabels:
-                        app.kubernetes.io/name: clamav
-                        app.kubernetes.io/instance: clamav
-
+                        app.kubernetes.io/name: ${NAME}
+                        app.kubernetes.io/instance: ${NAME}
           volumes:
             - name: config-volume
               configMap:
-                name: clamav
+                name: ${NAME}
       volumeClaimTemplates:
         - metadata:
             name: logs
             labels:
-              app.kubernetes.io/name: clamav
+              app.kubernetes.io/name: ${NAME}
               helm.sh/chart: clamav-0.1.0
-              app.kubernetes.io/instance: clamav
+              app.kubernetes.io/instance: ${NAME}
               app.kubernetes.io/version: "0.1.0"
               app.kubernetes.io/managed-by: Helm-logs
           spec:
@@ -166,9 +165,9 @@ objects:
         - metadata:
             name: database
             labels:
-              app.kubernetes.io/name: clamav
+              app.kubernetes.io/name: ${NAME}
               helm.sh/chart: clamav-0.1.0
-              app.kubernetes.io/instance: clamav
+              app.kubernetes.io/instance: ${NAME}
               app.kubernetes.io/version: "0.1.0"
               app.kubernetes.io/managed-by: Helm
           spec:
@@ -181,13 +180,13 @@ objects:
   - apiVersion: autoscaling/v2
     kind: HorizontalPodAutoscaler
     metadata:
-      name: clamav
+      name: ${NAME}
     spec:
       scaleTargetRef:
         apiVersion: apps/v1
         kind: StatefulSet
-        name: clamav
-      minReplicas: 1
+        name: ${NAME}
+      minReplicas: "${{REPLICAS}}"
       maxReplicas: 5
       metrics:
         - type: Resource
@@ -199,28 +198,27 @@ objects:
   - apiVersion: policy/v1
     kind: PodDisruptionBudget
     metadata:
-      name: clamav
+      name: ${NAME}
       labels:
-        app.kubernetes.io/name: clamav
+        app.kubernetes.io/name: ${NAME}
         helm.sh/chart: clamav-0.1.0
-        app.kubernetes.io/instance: clamav
+        app.kubernetes.io/instance: ${NAME}
         app.kubernetes.io/version: "0.1.0"
         app.kubernetes.io/managed-by: Helm
     spec:
-      minAvailable: 1
-      maxUnavailable: 1
+      minAvailable: ${{REPLICAS}}
       selector:
         matchLabels:
-          app.kubernetes.io/name: clamav
-          app.kubernetes.io/instance: clamav
+          app.kubernetes.io/name: ${NAME}
+          app.kubernetes.io/instance: ${NAME}
   - apiVersion: v1
     kind: ConfigMap
     metadata:
-      name: clamav
+      name: ${NAME}
       labels:
-        app.kubernetes.io/name: clamav
+        app.kubernetes.io/name: ${NAME}
         helm.sh/chart: clamav-0.1.0
-        app.kubernetes.io/instance: clamav
+        app.kubernetes.io/instance: ${NAME}
         app.kubernetes.io/version: "0.1.0"
         app.kubernetes.io/managed-by: Helm
     data:
@@ -1246,3 +1244,40 @@ objects:
         # This option can be used multiple times.
         #ExcludeDatabase dbname1
         #ExcludeDatabase dbname2
+parameters:
+  - name: NAME
+    required: true
+  - name: PROJECT
+    value: sims
+  - name: SERVICE_NAME
+    value: clamav
+  - name: CPU_LIMIT
+    value: "1000m"
+  - name: MEMORY_LIMIT
+    value: "2Gi"
+  - name: CPU_REQUEST
+    value: "300m"
+  - name: MEMORY_REQUEST
+    value: "2Gi"
+  - name: REPLICAS
+    value: "2"
+  - name: PORT
+    required: true
+  - name: HOST_NAME
+    required: true
+  - name: IMAGE_REGISTRY
+    value: ghcr.io
+  - name: IMAGE_STREAM_NAMESPACE
+    description: |
+      The OpenShift Namespace where the clamav
+      ImageStream resides.
+    displayName: ImageStream Namespace
+    value: bcgov
+  - name: IMAGE_NAME
+    description: |
+      The Clamav image stream name
+    value: clamav-unprivileged
+  - name: IMAGE_TAG
+    description: |
+      The image tag used to specify which image you would like deployed.
+    value: "ca3d42f3dde3c5aa9bcab636f752119bbe6a67e8"
