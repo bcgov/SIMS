@@ -1,6 +1,7 @@
 # SIMS [![img](https://img.shields.io/badge/Lifecycle-Experimental-339999)](https://github.com/bcgov/repomountie/blob/master/doc/lifecycle-badges.md)
 
-Student Information Management System. Post-Secondary Student Financial Aid System.
+Student Information Management System. This project will replace existing provincial student financial aid information systems and provide a modern application for students, post-secondary institution and ministry employees to manage post-secondary student loans. The project includes implementation of a business rules engine that can accommodate regular changes in alignment with policy. 
+ 
 
 ## Problem Statements
 
