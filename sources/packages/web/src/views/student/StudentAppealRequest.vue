@@ -35,7 +35,11 @@
             >Back
           </v-btn>
 
-          <v-btn color="primary" class="ml-2 float-right" @click="submit"
+          <v-btn
+            color="primary"
+            class="ml-2 float-right"
+            @click="submit"
+            :loading="processing"
             >Submit for review</v-btn
           >
         </template>
@@ -52,6 +56,7 @@ import AppealRequestsForm from "@/components/common/AppealRequestsForm.vue";
 import { useSnackBar } from "@/composables";
 import {
   APPLICATION_CHANGE_NOT_ELIGIBLE,
+  APPLICATION_HAS_PENDING_APPEAL,
   INVALID_APPLICATION_NUMBER,
 } from "@/constants";
 
@@ -67,6 +72,7 @@ export default defineComponent({
   },
   setup() {
     const snackBar = useSnackBar();
+    const processing = ref(false);
     const appealRequestsForms = ref([] as StudentAppealRequest[]);
     let applicationId: number;
     const showRequestForAppeal = computed(
@@ -107,6 +113,7 @@ export default defineComponent({
 
     const submitAppeal = async (appealRequests: StudentAppealRequest[]) => {
       try {
+        processing.value = true;
         await StudentAppealService.shared.submitStudentAppeal(
           applicationId,
           appealRequests,
@@ -118,17 +125,18 @@ export default defineComponent({
         backToRequestForm();
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
-          if (
-            [
-              INVALID_APPLICATION_NUMBER,
-              APPLICATION_CHANGE_NOT_ELIGIBLE,
-            ].includes(error.errorType)
-          ) {
-            snackBar.warn(`Not able to submit. ${error.message}`);
-            return;
+          switch (error.errorType) {
+            case INVALID_APPLICATION_NUMBER:
+            case APPLICATION_CHANGE_NOT_ELIGIBLE:
+              snackBar.warn(`Not able to submit. ${error.message}`);
+              break;
+            case APPLICATION_HAS_PENDING_APPEAL:
+              snackBar.error(`${error.message}`);
+              break;
           }
         }
-        snackBar.error("An unexpected error happened during the submission.");
+      } finally {
+        processing.value = false;
       }
     };
 
@@ -138,6 +146,7 @@ export default defineComponent({
       showRequestForAppeal,
       backToRequestForm,
       submitAppeal,
+      processing,
     };
   },
 });

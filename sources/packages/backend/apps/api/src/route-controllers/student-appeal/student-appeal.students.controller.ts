@@ -42,6 +42,7 @@ import {
 } from "../../types";
 import {
   APPLICATION_CHANGE_NOT_ELIGIBLE,
+  APPLICATION_HAS_PENDING_APPEAL,
   INVALID_APPLICATION_NUMBER,
 } from "../../constants";
 import { StudentAppealRequestModel } from "../../services/student-appeal/student-appeal.model";
@@ -74,7 +75,7 @@ export class StudentAppealStudentsController extends BaseController {
   })
   @ApiUnprocessableEntityResponse({
     description:
-      "There is either an existing appeal for this student or this application is no longer eligible to request changes.",
+      "There is either an existing appeal for this application or this application is no longer eligible to request changes.",
   })
   @ApiBadRequestResponse({
     description: "Not able to submit student appeal due to invalid request.",
@@ -108,11 +109,14 @@ export class StudentAppealStudentsController extends BaseController {
         ),
       );
     }
-    const existingStudentAppeal =
-      await this.studentAppealService.hasExistingAppeal(userToken.userId);
-    if (existingStudentAppeal) {
+    const existingApplicationAppeal =
+      await this.studentAppealService.hasExistingAppeal(applicationId);
+    if (existingApplicationAppeal) {
       throw new UnprocessableEntityException(
-        "There is already a pending appeal for this student.",
+        new ApiProcessError(
+          "Only one change request can be submitted at a time for each application. When your current request is approved or denied by StudentAid BC, you will be able to submit a new one.",
+          APPLICATION_HAS_PENDING_APPEAL,
+        ),
       );
     }
     let dryRunSubmissionResults: DryRunSubmissionResult[] = [];
