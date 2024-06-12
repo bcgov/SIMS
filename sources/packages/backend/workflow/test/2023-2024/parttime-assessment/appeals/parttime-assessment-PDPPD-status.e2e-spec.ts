@@ -28,8 +28,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-PDPPD-status.`, 
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataApplicationPDPPDStatus =
-        "noIWantToAccessOtherFundingTypes";
+      assessmentConsolidatedData.studentDataApplicationPDPPDStatus = "no";
       assessmentConsolidatedData.appealsStudentDisabilityAppealData = {
         studentNewPDPPDStatus: "yes",
       };
@@ -55,8 +54,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-PDPPD-status.`, 
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataApplicationPDPPDStatus =
-        "noIDoNotHaveADisability";
+      assessmentConsolidatedData.studentDataApplicationPDPPDStatus = "no";
       assessmentConsolidatedData.appealsStudentDisabilityAppealData = {
         studentNewPDPPDStatus: "yes",
       };
@@ -84,7 +82,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-PDPPD-status.`, 
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataApplicationPDPPDStatus = "yes";
       assessmentConsolidatedData.appealsStudentDisabilityAppealData = {
-        studentNewPDPPDStatus: "noIWantToAccessOtherFundingTypes",
+        studentNewPDPPDStatus: "no",
       };
 
       // Act
@@ -110,7 +108,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-PDPPD-status.`, 
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataApplicationPDPPDStatus = "yes";
       assessmentConsolidatedData.appealsStudentDisabilityAppealData = {
-        studentNewPDPPDStatus: "noIDoNotHaveADisability",
+        studentNewPDPPDStatus: "no",
       };
 
       // Act

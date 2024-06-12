@@ -996,4 +996,15 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     });
     return !!institutionStudentDataAccess;
   }
+
+  /**
+   * Get all institution legal operating names.
+   * @returns all institution legal operating names.
+   */
+  async getAllInstitutionNames(): Promise<Partial<Institution>[]> {
+    return this.repo.find({
+      select: { id: true, legalOperatingName: true },
+      order: { legalOperatingName: "ASC" },
+    });
+  }
 }

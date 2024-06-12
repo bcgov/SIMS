@@ -159,7 +159,7 @@
                               "value": ""
                             }
                           ],
-                          "content": "Start your application to receive a student loan or grant. \nYour application will be assessed for how much money you can get.\n<br><br>\n<strong>Before you begin, you may need to gather the following:</strong>\n<ul>\n  <li>Your citizenship documentation</li>\n  <li>Your institution and program details</li>\n  <li>Your dependent details and costs</li>\n  <li>Your tax return information</li>\n</ul>\n\n\n",
+                          "content": "Get started on your application to explore your funding options. Your completed application will be assessed to determine your loan and grant eligibility.\n<br><br>\n<strong>Before you begin, you may need to gather the following:</strong>\n<ul>\n  <li>Your institution and program information</li>\n  <li>Your previous years tax return information</li>\n  <li>Your spouse/dependent information, if applicable</li>\n  <li>Your citizenship documentation, if applicable</li>\n</ul>",
                           "refreshOnChange": false,
                           "customClass": "align-bullets",
                           "hidden": false,
@@ -10608,22 +10608,17 @@
               "input": true,
               "tableView": true,
               "inputType": "radio",
-              "label": "Are you a student who has verified your Disability Status with StudentAid BC as a Permanent Disability (PD) or a Persistent or Prolonged Disability (PPD)?<br><span style=\"font-weight: normal\"> If so, choose option 1.<br> If you have not verified your Disability Status as PD or PPD before, and wish to receive other funding types, choose option 2, complete and submit an Appendix 8 form to StudentAid BC. This may allow you to receive some funding while StudentAid BC verifies your Disability Status. <br> You can find PD and PPD definitions, available disability type funding, eligibility requirements and how to submit your form on <a href=\"https://studentaidbc.ca/sites/all/files/form-library/appendix_8.pdf\" target=\"_blank\" class=\"formio-href\" rel=\"noopener noreferrer\">Appendix 8.</a></span>",
+              "label": "Are you a student with a permanent disability, or a persistent or prolonged disability, and applying for disability grants?",
               "key": "applicationPDPPDStatus",
               "values": [
                 {
                   "value": "yes",
-                  "label": "Yes, I identify as a student with a disability and have verified my Disability Status with StudentAid BC before. I want this application to be assessed for all funding types (including disability type funding).",
+                  "label": "Yes",
                   "shortcut": ""
                 },
                 {
-                  "value": "noIWantToAccessOtherFundingTypes",
-                  "label": "No, I have not verified my Disability Status with StudentAid BC and do not identify as a student with a disability at this time. I want this application to be assessed for other funding types while my Appendix 8 form is being processed to verify my Disability Status.",
-                  "shortcut": ""
-                },
-                {
-                  "value": "noIDoNotHaveADisability",
-                  "label": "No, I will not verify my Disability Status with StudentAid BC. I want this application to be assessed for other funding types only (no disability type funding).",
+                  "value": "no",
+                  "label": "No",
                   "shortcut": ""
                 }
               ],
@@ -10651,7 +10646,8 @@
               "properties": {},
               "lockKey": true,
               "hideLabel": false,
-              "errorLabel": "Disability Information"
+              "errorLabel": "Disability Information",
+              "tooltip": "If you are a student with a permanent disability, or a persistent or prolonged disability, as defined below, you may be eligible for additional student financial assistance.\n\nPermanent Disability:\nAny impairment, including a physical, mental, intellectual, cognitive, learning, communication or sensory impairment - or a functional limitation - that restricts the ability of a person to perform the daily activities necessary to pursue studies at a postsecondary school level or to participate in the labour force and that is expected to remain with the person for the person’s expected life.\n\nPersistent or Prolonged Disability:\nAny impairment, including a physical, mental, intellectual, cognitive, learning, communication or sensory impairment - or a functional limitation - that restricts the ability of a person to perform the daily activities necessary to pursue studies at a postsecondary school level or to participate in the labour force and has lasted, or is expected to last, for a period of at least 12 months but is not expected to remain with the person for the person’s expected life."
             },
             {
               "label": "HTML",
@@ -10665,7 +10661,7 @@
                   "value": ""
                 }
               ],
-              "content": "<strong> Your account status indicates you have been approved for Disability status.</strong>\n <br /> If you answer no to this question you will not be assessed or receive disability funding.",
+              "content": "<strong> Your account status indicates you have been approved for Disability status.</strong>\n <br /> If you answer 'no' to this question, you will not be assessed for, or receive, disability funding.",
               "refreshOnChange": false,
               "customClass": "banner-warning",
               "hidden": false,
@@ -10679,7 +10675,7 @@
                 "eq": "",
                 "json": ""
               },
-              "customConditional": "show = (!data.readOnly && (data.applicationPDPPDStatus === 'noIDoNotHaveADisability' || data.applicationPDPPDStatus === 'noIWantToAccessOtherFundingTypes') && (data.studentProfileDisabilityStatusValue === 'PD' || data.studentProfileDisabilityStatusValue === 'PPD'));",
+              "customConditional": "show = (!data.readOnly && data.applicationPDPPDStatus === 'no' && (data.studentProfileDisabilityStatusValue === 'PD' || data.studentProfileDisabilityStatusValue === 'PPD'));",
               "logic": [],
               "attributes": {},
               "overlay": {
@@ -10747,7 +10743,7 @@
                 }
               ],
               "className": "alert alert-info fa fa-info-circle",
-              "content": "<strong> Info!</strong><br /> If you have not verified your Disability Status with StudentAid BC as PD or PPD and wish to receive disability type funding, you must first complete and submit an Appendix 8 form. Once StudentAid BC verifies your Disability Status, you must Request a Change on your student financial assistance application to receive disability type funding.<br>An applicant who identifies as a student with a disability and does not have their Disability Status verified with StudentAid BC will not receive any funding type (other or disability) until their Disability Status has been verified. If you wish to receive other type funding while StudentAid BC verifies your Disability Status, please choose option 2.",
+              "content": "<strong> Info!</strong><br /> Please note you must have your disability status verified by StudentAid BC to receive disability funding. If your disability status has already been verified, no further action is required.\n<br/><br/>\nIf your disability status has not yet been verified by StudentAid BC, you must complete an <a class=\"formio-href\" href=\"https://studentaidbc.ca/sites/all/files/form-library/appendix_8.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">\nAppendix 8 - Disability Programs Application</a> to verify your permanent, or persistent or prolonged disability, and have your disability approved.\n<br/><br/>\nStudents with a permanent disability, or a persistent or prolonged disability may qualify for other programs. Contact the Accessibility Services Coordinator or financial aid office at your school, or visit <a class=\"formio-href\" href=\"https://studentaidbc.ca/\"target=\"_blank\" rel=\"noopener noreferrer\">\nwww.StudentAidBC.ca</a>",
               "type": "htmlelement",
               "hideLabel": false,
               "tags": [],
@@ -23757,7 +23753,7 @@
               "id": "eo4yj69"
             },
             {
-              "label": "I give the Canadian Revenue Agency consent to verify the data I have provided in my application.",
+              "label": "I give the Canada Revenue Agency consent to verify the data I have provided in my application.",
               "customClass": "font-weight-bold",
               "tableView": true,
               "defaultValue": false,
@@ -23769,7 +23765,7 @@
                 "multiple": false,
                 "unique": false
               },
-              "errorLabel": "Canadian Revenue Agency consent",
+              "errorLabel": "Canada Revenue Agency consent",
               "key": "craConsent",
               "type": "checkbox",
               "input": true,
@@ -23924,7 +23920,7 @@
                   "value": ""
                 }
               ],
-              "content": "Award Types",
+              "content": "Award types",
               "refreshOnChange": false,
               "customClass": "",
               "hidden": false,
@@ -24050,7 +24046,7 @@
                 }
               ],
               "className": "alert alert-info fa fa-info-circle",
-              "content": "<strong> Info!</strong><br /> I am required to start making payments on the first day of the seventh month after leaving studies; my payments are made up of principal and any accrued interest, if applicable.",
+              "content": "<strong> Info!</strong><br /> You have six months from your study period end date before you must start paying back your loans.",
               "type": "htmlelement",
               "hideLabel": false,
               "tags": [],
@@ -30893,7 +30889,7 @@
                   "value": ""
                 }
               ],
-              "content": "You may be eligible for an additional transportation allowance if there is limited or no local public transit where you live, or if you have special circumstances that require extra travel. ",
+              "content": "You may be eligible for an additional transportation allowance if you are the primary operator of your vehicle and there is limited or no local transit where you live, or if you have special circumstances that require extra travel.",
               "refreshOnChange": false,
               "customClass": "",
               "hidden": false,
@@ -31172,7 +31168,7 @@
                   "tableView": false,
                   "values": [
                     {
-                      "label": "There is limited or no public transit where I live",
+                      "label": "Public transit takes more than two hours from your neighborhood to your school and back by the quickest/most direct route.",
                       "value": "noLimit",
                       "shortcut": ""
                     },
@@ -31293,7 +31289,7 @@
                   "input": true,
                   "tableView": false,
                   "inputType": "number",
-                  "label": "Please estimate your weekly travel distance in kilometers:",
+                  "label": "Please estimate your weekly travel distance from home to school in kilometers:",
                   "key": "additionalTransportKm",
                   "placeholder": "",
                   "prefix": "",
@@ -31504,7 +31500,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "Please upload supporting documents so that StudentAid BC can assess your request.",
+                      "content": "Please provide all of the applicable documents below.",
                       "refreshOnChange": false,
                       "key": "html105",
                       "type": "htmlelement",
@@ -31580,7 +31576,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "<h4 class=\"category-header-medium-small\">Documents Required</h4>\n<ul>\n  <li>A letter describing your situation to indicate why an exception should be made (including why you cannot move closer to your school)</li>\n<li>A copy of your vehicle insurance</li>\n<li>All relevant supporting documentation (work schedule, clinical or practicum information, etc.)</li>\n</ul>",
+                      "content": "<h4 class=\"category-header-medium-small\">Documents Required</h4>\n<ul>\n  <li>Copy of your vehicle insurance and</li>\n<li>Work, clinical, or practicum location and schedule with a letter of explanation and</li>\n<li>Statement that outlines the family responsibilities that require additional travel (e.g. driving children to and\nfrom school or daycare) and</li>\n<li>Statement why you can’t move closer to your school</li>\n</ul>",
                       "refreshOnChange": false,
                       "customClass": "align-bullets",
                       "key": "html28",

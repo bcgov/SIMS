@@ -81,6 +81,15 @@ export class InstitutionApi extends HttpBaseClient {
     return this.getCall(this.addClientRoot("institution/type/options-list"));
   }
 
+  /**
+   * Get the list os all institutions names to be returned in an option
+   * list (key/value pair) schema.
+   * @returns institutions names in an option list (key/value pair) schema.
+   */
+  async getInstitutionNameOptions(): Promise<OptionItemAPIOutDTO[]> {
+    return this.getCall(this.addClientRoot("institution/name/options-list"));
+  }
+
   async allInstitutionLocations(
     institutionId?: number,
   ): Promise<InstitutionLocationAPIOutDTO[]> {

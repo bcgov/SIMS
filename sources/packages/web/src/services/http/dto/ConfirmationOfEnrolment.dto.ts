@@ -1,6 +1,5 @@
 import { StatusChipTypes } from "@/types/contracts/StatusChip";
 import {
-  ApplicationDisabilityStatus,
   COEApprovalPeriodStatus,
   COEStatus,
   DisabilityStatus,
@@ -57,7 +56,7 @@ export interface ApplicationDetailsForCOEAPIOutDTO {
   hasOverawardBalance: boolean;
   disabilityProfileStatus: DisabilityStatus;
   disabilityProfileStatusDescription: string;
-  disabilityApplicationStatus: ApplicationDisabilityStatus;
+  disabilityApplicationStatus: string;
   disabilityApplicationStatusDescription: string;
 }
 

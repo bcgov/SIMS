@@ -33,8 +33,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGP
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataApplicationPDPPDStatus =
-      "noIDoNotHaveADisability";
+    assessmentConsolidatedData.studentDataApplicationPDPPDStatus = "no";
 
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(

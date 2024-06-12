@@ -5,6 +5,7 @@ import {
   createFakeDisbursementFeedbackError,
   getProviderInstanceForModule,
   saveFakeApplicationDisbursements,
+  saveFakeDesignationAgreementLocation,
 } from "@sims/test-utils";
 import {
   AESTGroups,
@@ -23,7 +24,7 @@ import {
   DisbursementScheduleStatus,
   OfferingIntensity,
 } from "@sims/sims-db";
-import { getISODateOnlyString } from "@sims/utilities";
+import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { DataSource } from "typeorm";
 
 describe("ReportAestController(e2e)-exportReport", () => {
@@ -142,6 +143,107 @@ describe("ReportAestController(e2e)-exportReport", () => {
                 fakeDisbursementFeedbackError.dateReceived,
               ),
               "Error Codes": eCertFeedbackError.errorCode,
+            },
+          ]),
+        );
+      });
+  });
+
+  it("Should generate the Institution Designation report when a report generation request is made with the appropriate date range filters.", async () => {
+    // Arrange
+    const designationAgreement = await saveFakeDesignationAgreementLocation(
+      db,
+      {
+        numberOfLocations: 2,
+        initialValues: {
+          endDate: getISODateOnlyString(addDays(30, new Date())),
+        },
+      },
+    );
+    const [
+      approvedDesignationAgreementLocation,
+      declinedDesignationAgreementLocation,
+    ] = designationAgreement.designationAgreementLocations;
+    declinedDesignationAgreementLocation.approved = false;
+    await db.designationAgreementLocation.save(
+      declinedDesignationAgreementLocation,
+    );
+    const designatedInstitutionLocation =
+      approvedDesignationAgreementLocation.institutionLocation;
+    const nonDesignatedInstitutionLocation =
+      declinedDesignationAgreementLocation.institutionLocation;
+    const designatedPrimaryContact =
+      designatedInstitutionLocation.primaryContact;
+    const nonDesignatedPrimaryContact =
+      nonDesignatedInstitutionLocation.primaryContact;
+    const payload = {
+      reportName: "Institution_Designation_Report",
+      params: {
+        startDate: new Date(),
+        endDate: addDays(31, new Date()),
+      },
+    };
+    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+      valid: true,
+      formName: FormNames.ExportFinancialReports,
+      data: { data: payload },
+    });
+    formService.dryRunSubmission = dryRunSubmissionMock;
+    const endpoint = "/aest/report";
+    const ministryUserToken = await getAESTToken(
+      AESTGroups.BusinessAdministrators,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(ministryUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        const fileContent = response.request.res["text"];
+        const parsedResult = parse(fileContent, {
+          header: true,
+        });
+        expect(parsedResult.data).toEqual(
+          expect.arrayContaining([
+            {
+              "Institution Operating Name":
+                designatedInstitutionLocation.institution.operatingName,
+              "Location Name": designatedInstitutionLocation.name,
+              "Location Code": designatedInstitutionLocation.institutionCode,
+              "Institution Type": "BC Private",
+              "Designation Status": designationAgreement.designationStatus,
+              "Assessed Date": "",
+              "Expiry Date": designationAgreement.endDate,
+              "Request for designation":
+                approvedDesignationAgreementLocation.requested.toString(),
+              "Approved for designation":
+                approvedDesignationAgreementLocation.approved.toString(),
+              "Location Contact":
+                designatedPrimaryContact.firstName +
+                " " +
+                designatedPrimaryContact.lastName,
+              "Contact Email": designatedPrimaryContact.email,
+            },
+            {
+              "Institution Operating Name":
+                nonDesignatedInstitutionLocation.institution.operatingName,
+              "Location Name": nonDesignatedInstitutionLocation.name,
+              "Location Code": nonDesignatedInstitutionLocation.institutionCode,
+              "Institution Type": "BC Private",
+              "Designation Status": designationAgreement.designationStatus,
+              "Assessed Date": "",
+              "Expiry Date": designationAgreement.endDate,
+              "Request for designation":
+                declinedDesignationAgreementLocation.requested.toString(),
+              "Approved for designation":
+                declinedDesignationAgreementLocation.approved.toString(),
+              "Location Contact":
+                nonDesignatedPrimaryContact.firstName +
+                " " +
+                nonDesignatedPrimaryContact.lastName,
+              "Contact Email": nonDesignatedPrimaryContact.email,
             },
           ]),
         );
