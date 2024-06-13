@@ -1,5 +1,5 @@
-name: Clamav - Install/Upgrade/Remove
-run-name: Clamav -  ${{ inputs.environment }} Clamav in ${{ inputs.environment }} using ${{ inputs.gitRef }}
+name: ClamAV - Install/Upgrade/Remove
+run-name: ClamAV -  ${{ inputs.environment }} ClamAV in ${{ inputs.environment }} using ${{ inputs.gitRef }}
 
 on:
   workflow_dispatch:
@@ -17,7 +17,7 @@ on:
           - upgrade
           - uninstall
       clamavImageTag:
-        description: "Clamav Image Tag"
+        description: "ClamAV Image Tag"
         required: true
         default: "main"
       gitRef:
@@ -27,7 +27,7 @@ on:
 
 jobs:
   manageClamav:
-    name: ${{ inputs.environment }} Clamav in ${{ inputs.environment }}
+    name: ${{ inputs.environment }} ClamAV in ${{ inputs.environment }}
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     env:
@@ -40,7 +40,7 @@ jobs:
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
-      - name: Manage Clamav
+      - name: Manage ClamAV
         working-directory: "./devops/helm/clamav/main/"
         run: |
           make ${{ inputs.action }} NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }} IMAGE_TAG=${{ inputs.clamavImageTag }}
