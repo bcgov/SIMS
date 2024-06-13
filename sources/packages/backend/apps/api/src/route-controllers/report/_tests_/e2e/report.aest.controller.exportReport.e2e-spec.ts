@@ -3,6 +3,9 @@ import {
   E2EDataSources,
   createE2EDataSources,
   createFakeDisbursementFeedbackError,
+  createFakeEducationProgramOffering,
+  createFakeInstitutionLocation,
+  createFakeUser,
   getProviderInstanceForModule,
   saveFakeApplicationDisbursements,
   saveFakeDesignationAgreementLocation,
@@ -22,17 +25,19 @@ import {
   ApplicationStatus,
   COEStatus,
   DisbursementScheduleStatus,
+  EducationProgramOffering,
   OfferingIntensity,
+  ProgramIntensity,
 } from "@sims/sims-db";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { DataSource } from "typeorm";
+import { createFakeEducationProgram } from "@sims/test-utils/factories/education-program";
 
 describe("ReportAestController(e2e)-exportReport", () => {
   let app: INestApplication;
   let appModule: TestingModule;
   let db: E2EDataSources;
   let appDataSource: DataSource;
-
   let formService: FormService;
 
   beforeAll(async () => {
@@ -249,4 +254,405 @@ describe("ReportAestController(e2e)-exportReport", () => {
         );
       });
   });
+
+  it(
+    "Should generate the Program and Offering Status report when a report generation is made with the appropriate date range filters for " +
+      "for an institution with one location and without any education program or offering.",
+    async () => {
+      // Arrange
+      const institutionLocation = createFakeInstitutionLocation();
+
+      // Payload with both full time and part time options being checked
+      const payload = {
+        reportName: "Program_And_Offering_Status_Report",
+        params: {
+          institution: institutionLocation.institution.id,
+          startDate: getISODateOnlyString(new Date()),
+          endDate: getISODateOnlyString(new Date()),
+          offeringIntensity: {
+            "Full Time": true,
+            "Part Time": true,
+          },
+          sabcProgramCode: "",
+        },
+      };
+      const dryRunSubmissionMockFullTimeOnly = jest.fn().mockResolvedValue({
+        valid: true,
+        formName: FormNames.ExportFinancialReports,
+        data: { data: payload },
+      });
+      formService.dryRunSubmission = dryRunSubmissionMockFullTimeOnly;
+      const endpoint = "/aest/report";
+      const ministryUserToken = await getAESTToken(
+        AESTGroups.BusinessAdministrators,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(ministryUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED)
+        .then((response) => {
+          const fileContent = response.request.res["text"];
+          const parsedResult = parse(fileContent, {
+            header: true,
+          });
+          expect(parsedResult.data).toEqual([]);
+        });
+    },
+  );
+
+  it(
+    "Should generate the Program and Offering Status report when a report generation is made with the appropriate date range filters and all selections are considered " +
+      "for an institution with one location and three education programs of different program intensities having offerings of different intensities and one program without offerings.",
+    async () => {
+      // Arrange
+      const auditUser = await db.user.save(createFakeUser());
+      const institutionLocation = createFakeInstitutionLocation();
+      // Create an education program with full time program intensity
+      // and one full time offering associated with the program.
+      const fakeOfferingFullTime1 = createFakeEducationProgramOffering(
+        { auditUser, institutionLocation },
+        {
+          initialValues: { offeringIntensity: OfferingIntensity.fullTime },
+          programInitialValues: {
+            programIntensity: ProgramIntensity.fullTime,
+            deliveredOnSite: true,
+          },
+        },
+      );
+
+      // Create an education program with full time and part time program intensity
+      // and one full time offering and two part time offerings.
+      const fakeOfferingFullTime2 = createFakeEducationProgramOffering(
+        {
+          auditUser,
+          institutionLocation,
+        },
+        {
+          initialValues: {
+            offeringIntensity: OfferingIntensity.fullTime,
+            studyStartDate: getISODateOnlyString(
+              addDays(1, fakeOfferingFullTime1.studyStartDate),
+            ),
+            studyEndDate: getISODateOnlyString(
+              addDays(1, fakeOfferingFullTime1.studyEndDate),
+            ),
+          },
+          programInitialValues: {
+            programIntensity: ProgramIntensity.fullTimePartTime,
+            deliveredOnSite: true,
+          },
+        },
+      );
+      const fakeOfferingPartTime1 = createFakeEducationProgramOffering(
+        {
+          auditUser,
+          institutionLocation,
+          program: fakeOfferingFullTime2.educationProgram,
+        },
+        {
+          initialValues: {
+            offeringIntensity: OfferingIntensity.partTime,
+            studyStartDate: getISODateOnlyString(
+              addDays(1, fakeOfferingFullTime2.studyStartDate),
+            ),
+            studyEndDate: getISODateOnlyString(
+              addDays(1, fakeOfferingFullTime2.studyEndDate),
+            ),
+          },
+        },
+      );
+      const fakeOfferingPartTime2 = createFakeEducationProgramOffering(
+        {
+          auditUser,
+          institutionLocation,
+          program: fakeOfferingFullTime2.educationProgram,
+        },
+        {
+          initialValues: {
+            offeringIntensity: OfferingIntensity.partTime,
+            studyStartDate: getISODateOnlyString(
+              addDays(1, fakeOfferingPartTime1.studyStartDate),
+            ),
+            studyEndDate: getISODateOnlyString(
+              addDays(1, fakeOfferingPartTime1.studyEndDate),
+            ),
+          },
+        },
+      );
+
+      // Create an education program with full time and part time program intensity
+      // and designated SABC code and one part time offering.
+      const fakeOfferingPartTime3 = createFakeEducationProgramOffering(
+        {
+          auditUser,
+          institutionLocation,
+        },
+        {
+          initialValues: {
+            offeringIntensity: OfferingIntensity.partTime,
+            studyStartDate: getISODateOnlyString(
+              addDays(1, fakeOfferingPartTime2.studyStartDate),
+            ),
+            studyEndDate: getISODateOnlyString(
+              addDays(1, fakeOfferingPartTime2.studyEndDate),
+            ),
+          },
+          programInitialValues: {
+            programIntensity: ProgramIntensity.fullTimePartTime,
+            deliveredOnSite: true,
+            sabcCode: "ABCD",
+          },
+        },
+      );
+
+      // Create an education program with full time and designated SABC code
+      // and part time program intensity without any offering.
+      const fakeProgram = createFakeEducationProgram(
+        {
+          auditUser,
+          institution: institutionLocation.institution,
+        },
+        {
+          initialValues: {
+            programIntensity: ProgramIntensity.fullTimePartTime,
+            deliveredOnSite: true,
+            sabcCode: "ABCD",
+          },
+        },
+      );
+      await db.educationProgram.save(fakeProgram);
+      await db.educationProgramOffering.save([
+        fakeOfferingFullTime1,
+        fakeOfferingFullTime2,
+        fakeOfferingPartTime1,
+        fakeOfferingPartTime2,
+        fakeOfferingPartTime3,
+      ]);
+
+      const fakeProgramResponseData = {
+        "Institution Location Name": institutionLocation.name,
+        "Program Name": fakeProgram.name,
+        "SABC Program Code": fakeProgram.sabcCode ?? "",
+        "Regulatory Body": fakeProgram.regulatoryBody,
+        "Credential Type": fakeProgram.credentialType,
+        "Program Length": fakeProgram.completionYears,
+        Delivery: "On-site",
+        "Credit or Hours": fakeProgram.courseLoadCalculation,
+        "Program Status": fakeProgram.programStatus,
+        "Program Deactivated?": "False",
+        "Program Expiry Date": fakeProgram.effectiveEndDate ?? "",
+        "Offering Name": "",
+        "Study Start Date": "",
+        "Study End Date": "",
+        "Year of Study": "",
+        "Offering Type": "",
+        "Offering Status": "",
+        "Offering Intensity": "",
+      };
+
+      const ProgramAndOfferingStatusReport =
+        "Program_And_Offering_Status_Report";
+      const endpoint = "/aest/report";
+      const ministryUserToken = await getAESTToken(
+        AESTGroups.BusinessAdministrators,
+      );
+
+      // Payload with only full time option being checked.
+      const payloadFullTimeOnly = {
+        reportName: ProgramAndOfferingStatusReport,
+        params: {
+          institution: institutionLocation.institution.id,
+          startDate: fakeOfferingFullTime1.studyStartDate,
+          endDate: getISODateOnlyString(fakeOfferingPartTime3.studyEndDate),
+          offeringIntensity: {
+            "Full Time": true,
+            "Part Time": false,
+          },
+          sabcProgramCode: "",
+        },
+      };
+      const dryRunSubmissionMockFullTimeOnly = jest.fn().mockResolvedValue({
+        valid: true,
+        formName: FormNames.ExportFinancialReports,
+        data: { data: payloadFullTimeOnly },
+      });
+      formService.dryRunSubmission = dryRunSubmissionMockFullTimeOnly;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payloadFullTimeOnly)
+        .auth(ministryUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED)
+        .then((response) => {
+          const fileContent = response.request.res["text"];
+          const parsedResult = parse(fileContent, {
+            header: true,
+          });
+          expect(parsedResult.data).toEqual(
+            expect.arrayContaining([objectToResultData(fakeOfferingFullTime1)]),
+          );
+        });
+
+      // Payload with only part time option being checked.
+      const payloadPartTimeOnly = {
+        reportName: ProgramAndOfferingStatusReport,
+        params: {
+          institution: institutionLocation.institution.id,
+          startDate: fakeOfferingFullTime1.studyStartDate,
+          endDate: getISODateOnlyString(fakeOfferingPartTime3.studyEndDate),
+          offeringIntensity: {
+            "Full Time": false,
+            "Part Time": true,
+          },
+          sabcProgramCode: "",
+        },
+      };
+      const dryRunSubmissionMockPartTimeOnly = jest.fn().mockResolvedValue({
+        valid: true,
+        formName: FormNames.ExportFinancialReports,
+        data: { data: payloadPartTimeOnly },
+      });
+      formService.dryRunSubmission = dryRunSubmissionMockPartTimeOnly;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payloadPartTimeOnly)
+        .auth(ministryUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED)
+        .then((response) => {
+          const fileContent = response.request.res["text"];
+          const parsedResult = parse(fileContent, {
+            header: true,
+          });
+          expect(parsedResult.data).toEqual(
+            expect.arrayContaining([
+              objectToResultData(fakeOfferingPartTime1),
+              objectToResultData(fakeOfferingPartTime2),
+              objectToResultData(fakeOfferingPartTime3),
+              fakeProgramResponseData,
+            ]),
+          );
+        });
+
+      // Payload with part time option being checked and SABC code entered.
+      const payloadPartTimeOnlySABC = {
+        reportName: ProgramAndOfferingStatusReport,
+        params: {
+          institution: institutionLocation.institution.id,
+          startDate: fakeOfferingFullTime1.studyStartDate,
+          endDate: getISODateOnlyString(fakeOfferingPartTime3.studyEndDate),
+          offeringIntensity: {
+            "Full Time": false,
+            "Part Time": true,
+          },
+          sabcProgramCode: "ABCD",
+        },
+      };
+      const dryRunSubmissionMockPartTimeOnlySABC = jest.fn().mockResolvedValue({
+        valid: true,
+        formName: FormNames.ExportFinancialReports,
+        data: { data: payloadPartTimeOnlySABC },
+      });
+      formService.dryRunSubmission = dryRunSubmissionMockPartTimeOnlySABC;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payloadPartTimeOnlySABC)
+        .auth(ministryUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED)
+        .then((response) => {
+          const fileContent = response.request.res["text"];
+          const parsedResult = parse(fileContent, {
+            header: true,
+          });
+          expect(parsedResult.data).toEqual(
+            expect.arrayContaining([
+              objectToResultData(fakeOfferingPartTime3),
+              fakeProgramResponseData,
+            ]),
+          );
+        });
+
+      // Payload with both full time and part time options being checked.
+      const payloadFullTimePartTime = {
+        reportName: ProgramAndOfferingStatusReport,
+        params: {
+          institution: institutionLocation.institution.id,
+          startDate: fakeOfferingFullTime1.studyStartDate,
+          endDate: getISODateOnlyString(fakeOfferingPartTime3.studyEndDate),
+          offeringIntensity: {
+            "Full Time": true,
+            "Part Time": true,
+          },
+          sabcProgramCode: "",
+        },
+      };
+      const dryRunSubmissionMockFullTimePartTime = jest.fn().mockResolvedValue({
+        valid: true,
+        formName: FormNames.ExportFinancialReports,
+        data: { data: payloadFullTimePartTime },
+      });
+      formService.dryRunSubmission = dryRunSubmissionMockFullTimePartTime;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payloadFullTimePartTime)
+        .auth(ministryUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED)
+        .then((response) => {
+          const fileContent = response.request.res["text"];
+          const parsedResult = parse(fileContent, {
+            header: true,
+          });
+          expect(parsedResult.data).toEqual(
+            expect.arrayContaining([
+              objectToResultData(fakeOfferingFullTime1),
+              objectToResultData(fakeOfferingFullTime2),
+              objectToResultData(fakeOfferingPartTime1),
+              objectToResultData(fakeOfferingPartTime2),
+              objectToResultData(fakeOfferingPartTime3),
+              fakeProgramResponseData,
+            ]),
+          );
+        });
+    },
+  );
+
+  /**
+   * Converts education program offering object into a key-value pair object matching the result data.
+   * @param fakeOffering an education program offering record.
+   * @returns a key-value pair object matching the result data.
+   */
+  function objectToResultData(fakeOffering: EducationProgramOffering): {
+    [key: string]: string;
+  } {
+    return {
+      "Institution Location Name": fakeOffering.institutionLocation.name,
+      "Program Name": fakeOffering.educationProgram.name,
+      "SABC Program Code": fakeOffering.educationProgram.sabcCode ?? "",
+      "Regulatory Body": fakeOffering.educationProgram.regulatoryBody,
+      "Credential Type": fakeOffering.educationProgram.credentialType,
+      "Program Length": fakeOffering.educationProgram.completionYears,
+      Delivery: "On-site",
+      "Credit or Hours": fakeOffering.educationProgram.courseLoadCalculation,
+      "Program Status": fakeOffering.educationProgram.programStatus,
+      "Program Deactivated?": "False",
+      "Program Expiry Date":
+        fakeOffering.educationProgram.effectiveEndDate ?? "",
+      "Offering Name": fakeOffering.name,
+      "Study Start Date": fakeOffering.studyStartDate,
+      "Study End Date": fakeOffering.studyEndDate,
+      "Year of Study": fakeOffering.yearOfStudy.toString(),
+      "Offering Type": fakeOffering.offeringType,
+      "Offering Status": fakeOffering.offeringStatus,
+      "Offering Intensity": fakeOffering.offeringIntensity,
+    };
+  }
 });

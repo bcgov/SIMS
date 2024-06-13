@@ -30,7 +30,7 @@ export default defineComponent({
       },
       {
         description: "Program and Offering Status",
-        id: "Program_And_Offering_Status",
+        id: "Program_And_Offering_Status_Report",
       },
     ];
     return { reportList };
