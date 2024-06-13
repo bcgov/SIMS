@@ -265,7 +265,7 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
       mode: "aest-account-approval",
       identityProvider: "bceidboth",
       sinConsent: true,
-      gender: "X",
+      gender: "nonBinary",
       addressLine1: "address 1",
       city: "Victoria",
       country: "Canada",
