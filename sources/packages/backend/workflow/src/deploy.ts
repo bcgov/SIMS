@@ -14,6 +14,7 @@ import {
   DecisionDeployment,
   DecisionRequirementsDeployment,
   Deployment,
+  PartitionBrokerHealth,
 } from "@camunda8/sdk/dist/zeebe/types";
 
 /**
@@ -22,11 +23,6 @@ import {
 (async () => {
   console.info(`**** Deploying to Camunda ****\n`);
   console.info(`Deploying to Zeebe address ${process.env.ZEEBE_ADDRESS}`);
-  console.info(`CAMUNDA_OAUTH_DISABLED ${process.env.CAMUNDA_OAUTH_DISABLED}`);
-  console.info(
-    `CAMUNDA_SECURE_CONNECTION ${process.env.CAMUNDA_SECURE_CONNECTION}`,
-  );
-  console.info(process.env);
 
   const directory = path.resolve(__dirname, `./workflow-definitions`);
   console.info(`Getting resources from ${directory}`);
@@ -44,8 +40,19 @@ import {
 
   const camunda8 = new Camunda8();
   const zeebeClient = camunda8.getZeebeGrpcApiClient();
-  const topology = await zeebeClient.topology();
-  console.log(topology);
+  // Wait till Zeebe is ready to receive commands.
+  let isHealthy = false;
+  while (!isHealthy) {
+    const topology = await zeebeClient.topology();
+    console.log(JSON.stringify(topology, null, 4));
+    isHealthy = topology.brokers.every((broker) =>
+      broker.partitions.every(
+        (partition) => partition.health.toString() === "HEALTHY",
+      ),
+    );
+    // Wait one second before trying again.
+    await new Promise((f) => setTimeout(f, 1000));
+  }
 
   try {
     // Deploy all decision files (BPMNs).
