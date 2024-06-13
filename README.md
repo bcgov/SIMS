@@ -1,22 +1,32 @@
-# SIMS [![img](https://img.shields.io/badge/Lifecycle-Experimental-339999)](https://github.com/bcgov/repomountie/blob/master/doc/lifecycle-badges.md)
+# SIMS [![img](https://img.shields.io/badge/Lifecycle-Maturing-007EC6)](https://github.com/bcgov/repomountie/blob/master/doc/lifecycle-badges.md)
 
-Student Information Management System. Post-Secondary Student Financial Aid System.
+Student Information Management System. This project will replace existing provincial student financial aid information systems and provide a modern application for students, post-secondary institution and ministry employees to manage post-secondary student loans. The project includes implementation of a business rules engine that can accommodate regular changes in alignment with policy. 
 
-## Problem Statements
+## Vision
 
-Align Student Aid BC Technology, Policies and Processes to the Student Experience
+To empower students to be engaged in their financial aid journey. 
+
+## Objectives
+
+- Provide an intuitive modernized application with more interactive components to Ministry, Institution and Student users 
+- Improve business process and operations
+- Automation of assessments and other workflows to reduce manual processing
+- Self-serve for students with built-in guidance and more detailed assessment information 
+
+## Problem Statement
+StudentAidBC technology, processes and policy need to be aligned so that students have streamlined, equitable and transparent access to student financial aid. 
 
 ## Project Status
 
-In Development
+In Development with some functionality available to Ministry and Institution users in production environments. 
 
 ## Development Activity
 
-High, new features released weekly
+High, new features released every sprint (3 week cadence). 
 
-## Draft-Architecture
+## Architecture
 
-![Draft Architecture](./docs/assets/DraftArchitecture.jpg)
+![Architecture](./docs/assets/SIMSArchitecture2024.jpg)
 
 ## Continue Reading
 
