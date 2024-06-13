@@ -91,7 +91,7 @@
       "hideLabel": true
     },
     {
-      "label": "<strong>On my first day of class, I'll be:</strong>",
+      "label": "On my first day of class, I'll be:",
       "optionsLabelPosition": "right",
       "inline": false,
       "tableView": true,
