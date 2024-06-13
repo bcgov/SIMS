@@ -10609,22 +10609,17 @@
               "input": true,
               "tableView": true,
               "inputType": "radio",
-              "label": "Are you a student who has verified your Disability Status with StudentAid BC as a Permanent Disability (PD) or a Persistent or Prolonged Disability (PPD)?<br><span style=\"font-weight: normal\"> If so, choose option 1.<br> If you have not verified your Disability Status as PD or PPD before, and wish to receive other funding types, choose option 2, complete and submit an Appendix 8 form to StudentAid BC. This may allow you to receive some funding while StudentAid BC verifies your Disability Status. <br> You can find PD and PPD definitions, available disability type funding, eligibility requirements and how to submit your form on <a href=\"https://studentaidbc.ca/sites/all/files/form-library/appendix_8.pdf\" target=\"_blank\" class=\"formio-href\" rel=\"noopener noreferrer\">Appendix 8.</a></span>",
+              "label": "Are you a student with a permanent disability, or a persistent or prolonged disability, and applying for disability grants?",
               "key": "applicationPDPPDStatus",
               "values": [
                 {
                   "value": "yes",
-                  "label": "Yes, I identify as a student with a disability and have verified my Disability Status with StudentAid BC before. I want this application to be assessed for all funding types (including disability type funding).",
+                  "label": "Yes",
                   "shortcut": ""
                 },
                 {
-                  "value": "noIWantToAccessOtherFundingTypes",
-                  "label": "No, I have not verified my Disability Status with StudentAid BC and do not identify as a student with a disability at this time. I want this application to be assessed for other funding types while my Appendix 8 form is being processed to verify my Disability Status.",
-                  "shortcut": ""
-                },
-                {
-                  "value": "noIDoNotHaveADisability",
-                  "label": "No, I will not verify my Disability Status with StudentAid BC. I want this application to be assessed for other funding types only (no disability type funding).",
+                  "value": "no",
+                  "label": "No",
                   "shortcut": ""
                 }
               ],
@@ -10652,7 +10647,8 @@
               "properties": {},
               "lockKey": true,
               "hideLabel": false,
-              "errorLabel": "Disability Information"
+              "errorLabel": "Disability Information",
+              "tooltip": "If you are a student with a permanent disability, or a persistent or prolonged disability, as defined below, you may be eligible for additional student financial assistance.\n\nPermanent Disability:\nAny impairment, including a physical, mental, intellectual, cognitive, learning, communication or sensory impairment - or a functional limitation - that restricts the ability of a person to perform the daily activities necessary to pursue studies at a postsecondary school level or to participate in the labour force and that is expected to remain with the person for the person’s expected life.\n\nPersistent or Prolonged Disability:\nAny impairment, including a physical, mental, intellectual, cognitive, learning, communication or sensory impairment - or a functional limitation - that restricts the ability of a person to perform the daily activities necessary to pursue studies at a postsecondary school level or to participate in the labour force and has lasted, or is expected to last, for a period of at least 12 months but is not expected to remain with the person for the person’s expected life."
             },
             {
               "label": "HTML",
@@ -10666,7 +10662,7 @@
                   "value": ""
                 }
               ],
-              "content": "<strong> Your account status indicates you have been approved for Disability status.</strong>\n <br /> If you answer no to this question you will not be assessed or receive disability funding.",
+              "content": "<strong> Your account status indicates you have been approved for Disability status.</strong>\n <br /> If you answer 'no' to this question, you will not be assessed for, or receive, disability funding.",
               "refreshOnChange": false,
               "customClass": "banner-warning",
               "hidden": false,
@@ -10680,7 +10676,7 @@
                 "eq": "",
                 "json": ""
               },
-              "customConditional": "show = (!data.readOnly && (data.applicationPDPPDStatus === 'noIDoNotHaveADisability' || data.applicationPDPPDStatus === 'noIWantToAccessOtherFundingTypes') && (data.studentProfileDisabilityStatusValue === 'PD' || data.studentProfileDisabilityStatusValue === 'PPD'));",
+              "customConditional": "show = (!data.readOnly && data.applicationPDPPDStatus === 'no' && (data.studentProfileDisabilityStatusValue === 'PD' || data.studentProfileDisabilityStatusValue === 'PPD'));",
               "logic": [],
               "attributes": {},
               "overlay": {
@@ -10748,7 +10744,7 @@
                 }
               ],
               "className": "alert alert-info fa fa-info-circle",
-              "content": "<strong> Info!</strong><br /> If you have not verified your Disability Status with StudentAid BC as PD or PPD and wish to receive disability type funding, you must first complete and submit an Appendix 8 form. Once StudentAid BC verifies your Disability Status, you must Request a Change on your student financial assistance application to receive disability type funding.<br>An applicant who identifies as a student with a disability and does not have their Disability Status verified with StudentAid BC will not receive any funding type (other or disability) until their Disability Status has been verified. If you wish to receive other type funding while StudentAid BC verifies your Disability Status, please choose option 2.",
+              "content": "<strong> Info!</strong><br /> Please note you must have your disability status verified by StudentAid BC to receive disability funding. If your disability status has already been verified, no further action is required.\n<br/><br/>\nIf your disability status has not yet been verified by StudentAid BC, you must complete an <a class=\"formio-href\" href=\"https://studentaidbc.ca/sites/all/files/form-library/appendix_8.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">\nAppendix 8 - Disability Programs Application</a> to verify your permanent, or persistent or prolonged disability, and have your disability approved.\n<br/><br/>\nStudents with a permanent disability, or a persistent or prolonged disability may qualify for other programs. Contact the Accessibility Services Coordinator or financial aid office at your school, or visit <a class=\"formio-href\" href=\"https://studentaidbc.ca/\"target=\"_blank\" rel=\"noopener noreferrer\">\nwww.StudentAidBC.ca</a>",
               "type": "htmlelement",
               "hideLabel": false,
               "tags": [],

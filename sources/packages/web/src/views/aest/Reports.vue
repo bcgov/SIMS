@@ -28,6 +28,10 @@ export default defineComponent({
         description: "Institution Designation",
         id: "Institution_Designation_Report",
       },
+      {
+        description: "Program and Offering Status",
+        id: "Program_And_Offering_Status",
+      },
     ];
     return { reportList };
   },

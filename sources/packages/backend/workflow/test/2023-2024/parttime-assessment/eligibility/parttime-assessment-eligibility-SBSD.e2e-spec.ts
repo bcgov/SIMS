@@ -91,12 +91,11 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-SBSD
     }
   });
 
-  it("Should determine SBSD as not eligible when application PD/PPD status is 'noIDoNotHaveADisability'.", async () => {
+  it("Should determine SBSD as not eligible when application PD/PPD status is 'no'.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataApplicationPDPPDStatus =
-      "noIDoNotHaveADisability";
+    assessmentConsolidatedData.studentDataApplicationPDPPDStatus = "no";
 
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(

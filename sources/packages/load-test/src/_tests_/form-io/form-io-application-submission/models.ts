@@ -25,7 +25,7 @@ export const APPLICATION_SUBMISSION_PAYLOAD = {
     studentHomeAddress: "123 Humboldt St, Victoria, BC, V9V1V1, canada",
     studentEmail: "simsfive@test.ca",
     studentLastName: "FRANKY",
-    studentGender: "male",
+    studentGender: "man",
     studentPhoneNumber: "7789221234",
     disabilityStatus: "Requested",
     studentInfoConfirmed: true,
@@ -97,6 +97,6 @@ export const APPLICATION_SUBMISSION_PAYLOAD = {
       },
     ],
     supportnocustodyDependants: "no",
-    applicationPDPPDStatus: "noIDoNotHaveADisability",
+    applicationPDPPDStatus: "no",
   },
 };
