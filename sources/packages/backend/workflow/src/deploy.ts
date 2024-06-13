@@ -52,11 +52,13 @@ const JSON_LOG_INDENTATION = 4;
     const topology = await zeebeClient.topology();
     console.info(`\nTopology`);
     console.info(JSON.stringify(topology, null, JSON_LOG_INDENTATION));
-    isHealthy = topology.brokers.every((broker) =>
-      broker.partitions.every(
-        (partition) =>
-          partition.health.toString() === ZEEBE_PARTITION_HEALTH_STATUS,
-      ),
+    isHealthy = topology.brokers.every(
+      (broker) =>
+        broker.partitions.length > 0 &&
+        broker.partitions.every(
+          (partition) =>
+            partition.health.toString() === ZEEBE_PARTITION_HEALTH_STATUS,
+        ),
     );
     if (isHealthy) {
       console.info("Zeebe is ready.");
