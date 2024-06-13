@@ -14,8 +14,12 @@ import {
   DecisionDeployment,
   DecisionRequirementsDeployment,
   Deployment,
-  PartitionBrokerHealth,
 } from "@camunda8/sdk/dist/zeebe/types";
+
+const ZEEBE_PARTITION_HEALTH_STATUS = "HEALTHY";
+const ZEEBE_PARTITION_HEALTH_MAX_ATTEMPTS = 20;
+const ZEEBE_HEALTH_CHECK_ATTEMPTS_INTERVAL = 1000;
+const JSON_LOG_INDENTATION = 4;
 
 /**
  * Script main execution method.
@@ -42,16 +46,33 @@ import {
   const zeebeClient = camunda8.getZeebeGrpcApiClient();
   // Wait till Zeebe is ready to receive commands.
   let isHealthy = false;
+  let attempts = 0;
   while (!isHealthy) {
+    console.info(`\nChecking if Zeebe is ready to accept commands.`);
     const topology = await zeebeClient.topology();
-    console.log(JSON.stringify(topology, null, 4));
+    console.info(`\nTopology`);
+    console.info(JSON.stringify(topology, null, JSON_LOG_INDENTATION));
     isHealthy = topology.brokers.every((broker) =>
       broker.partitions.every(
-        (partition) => partition.health.toString() === "HEALTHY",
+        (partition) =>
+          partition.health.toString() === ZEEBE_PARTITION_HEALTH_STATUS,
       ),
     );
-    // Wait one second before trying again.
-    await new Promise((f) => setTimeout(f, 1000));
+    if (isHealthy) {
+      console.info("Zeebe is ready.");
+    } else if (++attempts < ZEEBE_PARTITION_HEALTH_MAX_ATTEMPTS) {
+      console.warn(
+        `Waiting for Zeebe to be ready. Attempt ${attempts} of ${ZEEBE_PARTITION_HEALTH_MAX_ATTEMPTS}.`,
+      );
+      // Wait one second before trying again.
+      await new Promise((f) =>
+        setTimeout(f, ZEEBE_HEALTH_CHECK_ATTEMPTS_INTERVAL),
+      );
+    } else {
+      throw new Error(
+        "Zeebe was not able to be ready to accept the deployment.",
+      );
+    }
   }
 
   try {
