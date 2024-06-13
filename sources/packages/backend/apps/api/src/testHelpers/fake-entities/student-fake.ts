@@ -9,7 +9,7 @@ export function createFakeStudent(user?: User): Student {
   const student = new Student();
   student.user = user ?? createFakeUser();
   student.birthDate = faker.date.past(18).toISOString();
-  student.gender = "X";
+  student.gender = "nonBinary";
   student.contactInfo = {
     address: {
       addressLine1: faker.address.streetAddress(),

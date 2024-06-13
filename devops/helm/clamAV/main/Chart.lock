@@ -1,0 +1,6 @@
+dependencies:
+- name: clamav
+  repository: file://../_clamav
+  version: 0.1.0
+digest: sha256:45e70d9bc8cbdec51ca28b98f01259e288e1028a8d291bd2721af23d466cbc09
+generated: "2023-11-07T00:02:51.71063681-08:00"

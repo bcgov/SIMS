@@ -65,7 +65,7 @@ describe("ECertPartTimeIntegrationService-createRequestContent", () => {
         provinceState: "BC",
         postalCode: "V1V1V1",
         email: "simsthree@test.ca",
-        gender: "male",
+        gender: "man",
         calculatedPDPPDStatus: true,
         maritalStatus: RelationshipStatus.Other,
         studentNumber: "",

@@ -1,0 +1,162 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "clamav.fullname" . }}
+  labels:
+    {{- include "clamav.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  serviceName: {{ include "clamav.fullname" . }}
+  selector:
+    matchLabels:
+      {{- include "clamav.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config1: {{ .Files.Get "configurations/clamd.conf" | sha256sum }}
+        checksum/config2: {{ .Files.Get "configurations/freshclam.conf" | sha256sum }}
+      labels:
+        {{- include "clamav.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- if .Values.priorityClassName }}
+      priorityClassName: "{{ .Values.priorityClassName }}"
+      {{- end }}
+      {{- $imagePullSecrets := concat (.Values.imagePullSecrets | default list) (.Values.global.imagePullSecrets | default list) -}}
+      {{- with $imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: init-database
+          image: alpine:3.18
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              mkdir -p /var/lib/clamav/tmp
+              wget -O /var/lib/clamav/main.cvd https://clamav-mirror.apps.silver.devops.gov.bc.ca/main.cvd;
+              wget -O /var/lib/clamav/daily.cvd https://clamav-mirror.apps.silver.devops.gov.bc.ca/daily.cvd;
+              wget -O /var/lib/clamav/bytecode.cvd https://clamav-mirror.apps.silver.devops.gov.bc.ca/bytecode.cvd;
+          volumeMounts:
+          - name: database
+            mountPath: /var/lib/clamav
+      containers:
+        - name: {{ include "clamav.fullname" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          env:
+            - name: CLAMAV_NO_CLAMD
+              value: 'false'
+            - name: CLAMAV_NO_FRESHCLAMD
+              value: 'false'
+            - name: CLAMAV_NO_MILTERD
+              value: 'true'
+            - name: CLAMD_STARTUP_TIMEOUT
+              value: '1800'
+            - name: FRESHCLAM_CHECKS
+              value: '1'
+          volumeMounts:
+          # clamd.conf file
+          - mountPath: /etc/clamav/clamd.conf
+            name: config-volume
+            readOnly: true
+            subPath: clamd.conf
+          # freshclam.conf file
+          - mountPath: /etc/clamav/freshclam.conf
+            name: config-volume
+            readOnly: true
+            subPath: freshclam.conf
+          - name: database
+            mountPath: /var/lib/clamav
+          - name: logs
+            mountPath: /var/log
+          ports:
+            - name: http
+              containerPort: 3310
+              protocol: TCP
+          startupProbe:
+            exec:
+              command:
+              - /usr/local/bin/clamdcheck.sh
+            initialDelaySeconds: {{ .Values.startupProbe.initialDelaySeconds }}
+            failureThreshold: {{ .Values.startupProbe.failureThreshold }}
+            periodSeconds: {{ .Values.startupProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.startupProbe.timeoutSeconds }}
+          livenessProbe:
+            exec:
+              command:
+              - /usr/local/bin/clamdcheck.sh
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+          readinessProbe:
+            exec:
+              command:
+              - /usr/local/bin/clamdcheck.sh
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.affinity }}
+      affinity: {{ .Values.affinity | toYaml | nindent 8 }}
+      {{- else if .Values.affinityTemplate }}
+      affinity: {{ tpl .Values.affinityTemplate . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+      - name: config-volume
+        configMap:
+          name: {{ include "clamav.fullname" . }}
+  {{- if not .Values.persistentVolume.enabled }}
+      - name: database
+        emptyDir: {}
+  {{- else }}
+  volumeClaimTemplates:
+    - metadata:
+        name: logs
+        labels:
+          {{- include "clamav.labels" . | nindent 10 }}-logs
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 50Mi
+    - metadata:
+        name: database
+        labels:
+          {{- include "clamav.labels" . | nindent 10 }}
+        {{- if .Values.persistentVolume.annotations }}
+        annotations:
+          {{- .Values.persistentVolume.annotations | toYaml | nindent 10 }}
+        {{- end }}
+      spec:
+        accessModes:
+        {{- range .Values.persistentVolume.accessModes }}
+          - {{ . | quote }}
+        {{- end }}
+        {{- if .Values.persistentVolume.storageClass }}
+        {{- if (eq "-" .Values.persistentVolume.storageClass) }}
+        storageClassName: ""
+        {{- else }}
+        storageClassName: "{{ .Values.persistentVolume.storageClass }}"
+        {{- end }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.persistentVolume.size | quote }}
+  {{- end }}
