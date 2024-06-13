@@ -261,6 +261,24 @@ export function useFormatters() {
   };
 
   /**
+   * Converts the saved gender to the capitalized display version.
+   * @param gender value to be converted to be displayed.
+   * @returns formatted gender string.
+   */
+  const genderDisplayFormat = (gender: string): string | undefined => {
+    switch (gender) {
+      case "man":
+        return "Man";
+      case "woman":
+        return "Woman";
+      case "nonBinary":
+        return "Non-Binary";
+      default:
+        return "Prefer Not To Answer";
+    }
+  };
+
+  /**
    * Converts a SIN to the format 999 999 999.
    * @param sin value to be converted to be displayed.
    * @returns SIN formatted as 999 999 999.
@@ -385,6 +403,7 @@ export function useFormatters() {
     getDatesDiff,
     getFormattedAddress,
     getFormattedAddressList,
+    genderDisplayFormat,
     timeOnlyInHoursAndMinutes,
     parseSINValidStatus,
     yesNoFlagDescription,

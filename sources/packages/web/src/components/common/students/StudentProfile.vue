@@ -28,7 +28,7 @@
         <v-col
           ><title-value
             propertyTitle="Gender"
-            :propertyValue="studentDetail.gender"
+            :propertyValue="genderDisplayFormat(studentDetail.gender)"
           />
         </v-col>
         <v-col
@@ -128,7 +128,7 @@ export default defineComponent({
   setup(props) {
     const studentDetail = ref({} as SharedStudentProfile);
     const address = ref({} as AddressAPIOutDTO);
-    const { sinDisplayFormat, emptyStringFiller } = useFormatters();
+    const { genderDisplayFormat, sinDisplayFormat, emptyStringFiller } = useFormatters();
 
     const loadStudentProfile = async () => {
       studentDetail.value = (await StudentService.shared.getStudentProfile(
@@ -142,6 +142,7 @@ export default defineComponent({
       studentDetail,
       address,
       sinDisplayFormat,
+      genderDisplayFormat,
       emptyStringFiller,
       loadStudentProfile,
     };
