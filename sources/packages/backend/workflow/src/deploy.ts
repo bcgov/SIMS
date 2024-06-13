@@ -44,18 +44,8 @@ import {
 
   const camunda8 = new Camunda8();
   const zeebeClient = camunda8.getZeebeGrpcApiClient();
-
-  let attempts = 10;
-  let zeebeReady = false;
-  while (attempts >= 0 && !zeebeReady) {
-    try {
-      console.log("Attempt: " + attempts);
-      await zeebeClient.topology();
-      zeebeReady = true;
-    } catch {
-      attempts--;
-    }
-  }
+  const topology = await zeebeClient.topology();
+  console.log(topology);
 
   try {
     // Deploy all decision files (BPMNs).
