@@ -265,7 +265,7 @@ export function useFormatters() {
    * @param gender value to be converted to be displayed.
    * @returns formatted gender string.
    */
-  const genderDisplayFormat = (gender: string): string | undefined => {
+  const genderDisplayFormat = (gender: string): string => {
     switch (gender) {
       case "man":
         return "Man";

@@ -96,7 +96,11 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { getFormattedAddress, disabilityStatusToDisplay } = useFormatters();
+    const {
+      genderDisplayFormat,
+      getFormattedAddress,
+      disabilityStatusToDisplay,
+    } = useFormatters();
     const router = useRouter();
     const initialData = ref({});
     const formioUtils = useFormioUtils();
@@ -151,7 +155,7 @@ export default defineComponent({
       const studentFormData = {
         studentGivenNames: studentInfo.firstName,
         studentLastName: studentInfo.lastName,
-        studentGender: studentInfo.gender,
+        studentGender: genderDisplayFormat(studentInfo.gender),
         studentDateOfBirth: studentInfo.birthDateFormatted,
         studentPhoneNumber: studentInfo.contact.phone,
         studentHomeAddress: formattedAddress,
