@@ -2048,7 +2048,7 @@
           "value": ""
         }
       ],
-      "content": "Your contact information",
+      "content": "Contact Information",
       "refreshOnChange": false,
       "customClass": "category-header-medium primary-color",
       "hidden": false,
