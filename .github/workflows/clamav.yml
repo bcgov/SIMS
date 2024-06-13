@@ -1,4 +1,4 @@
-name: Clamav - Install/ Upgrade/ Remove
+name: Clamav - Install/Upgrade/Remove
 run-name: Clamav -  ${{ inputs.environment }} Clamav in ${{ inputs.environment }} using ${{ inputs.gitRef }}
 
 on:
