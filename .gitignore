@@ -18,3 +18,8 @@ testing/**/report/
 videos/
 cypress.env.json
 
+charts/
+template.yaml
+*.secret.yaml
+
+
