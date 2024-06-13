@@ -19,7 +19,7 @@ import {
 const ZEEBE_PARTITION_HEALTH_STATUS = "HEALTHY";
 const ZEEBE_PARTITION_HEALTH_MAX_ATTEMPTS = 20;
 const ZEEBE_HEALTH_CHECK_ATTEMPTS_INTERVAL = 1000;
-const JSON_LOG_INDENTATION = 4;
+const JSON_LOG_INDENTATION = 2;
 
 /**
  * Script main execution method.
@@ -50,8 +50,6 @@ const JSON_LOG_INDENTATION = 4;
   while (!isHealthy) {
     console.info(`\nChecking if Zeebe is ready to accept commands.`);
     const topology = await zeebeClient.topology();
-    console.info(`\nTopology`);
-    console.info(JSON.stringify(topology, null, JSON_LOG_INDENTATION));
     isHealthy = topology.brokers.every(
       (broker) =>
         broker.partitions.length > 0 &&
@@ -64,8 +62,10 @@ const JSON_LOG_INDENTATION = 4;
       console.info("Zeebe is ready.");
     } else if (++attempts < ZEEBE_PARTITION_HEALTH_MAX_ATTEMPTS) {
       console.warn(
-        `Waiting for Zeebe to be ready. Attempt ${attempts} of ${ZEEBE_PARTITION_HEALTH_MAX_ATTEMPTS}.`,
+        `Zeebe is not ready. Waiting for Zeebe to be ready, attempt ${attempts} of ${ZEEBE_PARTITION_HEALTH_MAX_ATTEMPTS}.`,
       );
+      console.debug(`Current topology:`);
+      console.debug(JSON.stringify(topology, null, JSON_LOG_INDENTATION));
       // Wait one second before trying again.
       await new Promise((f) =>
         setTimeout(f, ZEEBE_HEALTH_CHECK_ATTEMPTS_INTERVAL),
