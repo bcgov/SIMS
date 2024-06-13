@@ -21,7 +21,20 @@
       <body-header
         title="Fill in the field(s) below"
         subTitle="StudentAid BC will review your application change after you submit the fields below."
-      ></body-header>
+      >
+      </body-header>
+      <p>Please note:</p>
+      <ul>
+        <li>You must complete all fields of the change request form.</li>
+        <li>
+          All information that has not changed should match what was entered on
+          your application.
+        </li>
+        <li>
+          Information from previously approved Change Requests attached to this
+          application must be re-entered here.
+        </li>
+      </ul>
       <appeal-requests-form
         :student-appeal-requests="appealRequestsForms"
         @submitted="submitAppeal"
