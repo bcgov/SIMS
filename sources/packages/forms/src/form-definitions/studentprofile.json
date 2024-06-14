@@ -1506,12 +1506,12 @@
                 "value": "man"
               },
               {
-                "label": "Non-Binary",
-                "value": "nonBinary"
-              },
-              {
                 "label": "Woman",
                 "value": "woman"
+              },
+              {
+                "label": "Non-Binary",
+                "value": "nonBinary"
               },
               {
                 "label": "Prefer not to answer",
