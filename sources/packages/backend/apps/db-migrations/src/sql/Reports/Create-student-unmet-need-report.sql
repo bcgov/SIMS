@@ -36,7 +36,7 @@ VALUES
       applications.data ->> ''citizenship'' AS "Citizenship Status",
       applications.data ->> ''youthInCare'' AS "Youth in Care Flag",
       applications.data ->> ''custodyOfChildWelfare'' AS "Youth in Care beyond age 19",
-      student_assessments.workflow_data -> ''studentData'' ->> ''relationshipStatus'' AS "Marital Status",
+      applications.relationship_status AS "Marital Status",
       applications.data ->> ''dependantstatus'' AS "Independant/Dependant",
       student_assessments.workflow_data -> ''calculatedData'' ->> ''totalEligibleDependents'' AS "Number of Eligible Dependants Total",
       CASE
