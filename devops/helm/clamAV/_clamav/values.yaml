@@ -62,7 +62,7 @@ readinessProbe:
   timeoutSeconds: 600
 
 hpa:
-  enabled: false
+  enabled: true
   maxReplicas: 5
   # average CPU usage utilization percentage per pod (1-100)
   cpu: 80
@@ -72,9 +72,8 @@ hpa:
   # requests: 1k
 
 podDisruptionBudget:
-  enabled: false
-  # minAvailable: 1
-  # maxUnavailable: 1
+  enabled: true
+  minAvailable: 2
 
 ## Clamav data dir persistence
 persistentVolume:
@@ -84,7 +83,7 @@ persistentVolume:
 
   annotations: {}
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   size: 1Gi
   storageClass: netapp-block-standard
 
