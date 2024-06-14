@@ -62,6 +62,8 @@ const JSON_LOG_INDENTATION = 2;
   while (!isHealthy) {
     console.info(`\nChecking if Zeebe is ready to accept commands.`);
     const topology = await zeebeClient.topology();
+    console.debug(`Current topology:`);
+    console.debug(JSON.stringify(topology, null, JSON_LOG_INDENTATION));
     isHealthy = topology.brokers.every(
       (broker) =>
         broker.partitions.length > 0 &&
@@ -76,8 +78,6 @@ const JSON_LOG_INDENTATION = 2;
       console.warn(
         `Zeebe is not ready. Waiting for Zeebe to be ready, attempt ${attempts} of ${ZEEBE_PARTITION_HEALTH_MAX_ATTEMPTS}.`,
       );
-      console.debug(`Current topology:`);
-      console.debug(JSON.stringify(topology, null, JSON_LOG_INDENTATION));
       // Wait one second before trying again.
       await new Promise((f) =>
         setTimeout(f, ZEEBE_HEALTH_CHECK_ATTEMPTS_INTERVAL),
