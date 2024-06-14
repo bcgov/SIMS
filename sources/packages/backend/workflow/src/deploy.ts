@@ -50,7 +50,6 @@ const JSON_LOG_INDENTATION = 2;
   while (!isHealthy) {
     console.info(`\nChecking if Zeebe is ready to accept commands.`);
     const topology = await zeebeClient.topology();
-    console.log(topology);
     isHealthy = topology.brokers.every(
       (broker) =>
         broker.partitions.length > 0 &&
