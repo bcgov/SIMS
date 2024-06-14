@@ -16,9 +16,21 @@ import {
   Deployment,
 } from "@camunda8/sdk/dist/zeebe/types";
 
+/**
+ * Partition status value to define it as ready to accept Zeebe commands.
+ */
 const ZEEBE_PARTITION_HEALTH_STATUS = "HEALTHY";
+/**
+ * Attempts to verify it Zeebe is ready to accept commands.
+ */
 const ZEEBE_PARTITION_HEALTH_MAX_ATTEMPTS = 20;
+/**
+ * Interval between each health check.
+ */
 const ZEEBE_HEALTH_CHECK_ATTEMPTS_INTERVAL = 1000;
+/**
+ * Indentation do log JSON objects in a user friendly way.
+ */
 const JSON_LOG_INDENTATION = 2;
 
 /**
