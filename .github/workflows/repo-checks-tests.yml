@@ -10,6 +10,17 @@ on: [pull_request]
 
 env:
   PROJECT_NAME: aest-sims
+  BUILD_ID: ${{ github.event.number }}
+  POSTGRES_PASSWORD: bcgov!
+  BUILD_REF: ${{ github.base_ref }}
+  POSTGRES_DB: sims
+  POSTGRES_PORT: 5432
+  POSTGRES_USER: admin
+  DB_SCHEMA: sims
+  REDIS_PORT: 6379
+  REDIS_PASSWORD: redis
+  REDIS_STANDALONE_MODE: "true"
+  QUEUE_PREFIX: "{sims-local}"
   CAMUNDA_OAUTH_DISABLED: true
   CAMUNDA_SECURE_CONNECTION: false
   CAMUNDA_PLATFORM_VERSION: 8.5.0
@@ -19,19 +30,8 @@ jobs:
     name: SIMS API E2E Tests
     runs-on: ubuntu-latest
     env:
-      BUILD_ID: ${{ github.event.number }}
-      POSTGRES_PASSWORD: bcgov!
-      BUILD_REF: ${{ github.base_ref }}
-      POSTGRES_DB: sims
-      POSTGRES_PORT: 5432
-      POSTGRES_USER: admin
-      REDIS_PORT: 6379
-      REDIS_PASSWORD: redis
-      REDIS_STANDALONE_MODE: "true"
-      QUEUE_PREFIX: "{sims-local}"
       API_PORT: 3000
       QUEUE_CONSUMERS_PORT: 3001
-      DB_SCHEMA: sims
       DISABLE_ORM_CACHE: "true"
       IS_FULLTIME_ALLOWED: ${{ vars.IS_FULLTIME_ALLOWED }}
       KEYCLOAK_REALM: ${{ vars.KEYCLOAK_REALM }}
@@ -70,18 +70,7 @@ jobs:
     name: Workflow Workers E2E Tests
     runs-on: ubuntu-latest
     env:
-      BUILD_ID: ${{ github.event.number }}
-      POSTGRES_PASSWORD: bcgov!
-      BUILD_REF: ${{ github.base_ref }}
-      POSTGRES_DB: sims
-      POSTGRES_PORT: 5432
-      POSTGRES_USER: admin
-      REDIS_PORT: 6379
-      REDIS_PASSWORD: redis
-      REDIS_STANDALONE_MODE: "true"
       WORKERS_PORT: 3020
-      QUEUE_PREFIX: "{sims-local}"
-      DB_SCHEMA: sims
       DISABLE_ORM_CACHE: "true"
     steps:
       # Checkout the PR branch.
@@ -107,9 +96,6 @@ jobs:
   workflow-e2e-tests:
     name: Workflow E2E Tests
     runs-on: ubuntu-latest
-    env:
-      BUILD_ID: ${{ github.event.number }}
-      BUILD_REF: ${{ github.base_ref }}
     steps:
       # Checkout the PR branch.
       - name: Checkout Target Branch
@@ -123,18 +109,7 @@ jobs:
     name: Queue Consumers E2E Tests
     runs-on: ubuntu-latest
     env:
-      BUILD_ID: ${{ github.event.number }}
-      POSTGRES_PASSWORD: bcgov!
-      BUILD_REF: ${{ github.base_ref }}
-      POSTGRES_DB: sims
-      POSTGRES_PORT: 5432
-      POSTGRES_USER: admin
-      REDIS_PORT: 6379
-      REDIS_PASSWORD: redis
-      REDIS_STANDALONE_MODE: "true"
-      QUEUE_PREFIX: "{sims-local}"
       QUEUE_CONSUMERS_PORT: 3001
-      DB_SCHEMA: sims
       DISABLE_ORM_CACHE: "true"
       ESDC_REQUEST_FOLDER: MSFT-Request
       ESDC_RESPONSE_FOLDER: MSFT-Response
