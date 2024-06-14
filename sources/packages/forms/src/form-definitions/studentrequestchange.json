@@ -467,6 +467,10 @@
               {
                 "label": "Partners Income",
                 "value": "partnerincomeappeal"
+              },
+              {
+                "label": "Partner Information and Income",
+                "value": "partnerinformationandincomeappeal"
               }
             ],
             "resource": "",
