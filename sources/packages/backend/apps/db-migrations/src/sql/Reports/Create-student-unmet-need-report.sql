@@ -9,7 +9,7 @@ VALUES
   sin_validations.sin AS "SIN",
   applications.student_number AS "Student Number",
   users.email AS "Student Email Address",
-  students.contact_info ->> ' phone ' AS "Student Phone Number",
+  students.contact_info ->> ''phone'' AS "Student Phone Number",
   institution_locations.institution_code AS "Institution Location Code",
   institution_locations.name AS "Institution Location Name",
   applications.application_number AS "Application Number",
