@@ -1,5 +1,5 @@
 name: ClamAV - Install/Upgrade/Remove
-run-name: ClamAV -  ${{ inputs.environment }} ClamAV in ${{ inputs.environment }} using ${{ inputs.gitRef }}
+run-name: ClamAV -  ${{ inputs.environment }} ClamAV in ${{ inputs.environment }} using ${{ github.ref_name }}
 
 on:
   workflow_dispatch:
@@ -20,10 +20,6 @@ on:
         description: "ClamAV Image Tag"
         required: true
         default: "main"
-      gitRef:
-        description: "Git Ref"
-        required: true
-        default: "main"
 
 jobs:
   manageClamav:
@@ -36,7 +32,7 @@ jobs:
       - name: Checkout Target Branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.gitRef }}
+          ref: ${{ github.ref_name }}
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
