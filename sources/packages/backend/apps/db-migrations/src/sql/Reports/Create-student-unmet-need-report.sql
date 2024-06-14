@@ -19,8 +19,12 @@ VALUES
   education_programs_offerings.offering_intensity AS "Study Intensity (PT or FT)",
   students.disability_status AS "Profile Disability Status",
   student_assessments.workflow_data -> ''calculatedData'' ->> ''pdppdStatus'' AS "Application Disability Status",
-  education_programs_offerings.study_start_date AS "Study Start Date",
-  education_programs_offerings.study_end_date AS "Study End Date",
+  CAST(
+    education_programs_offerings.study_start_date AS varchar
+  ) AS "Study Start Date",
+  CAST(
+    education_programs_offerings.study_end_date AS varchar
+  ) AS "Study End Date",
   education_programs.program_name AS "Program Name",
   education_programs.credential_type AS "Program Credential Type",
   education_programs.cip_code AS "CIP Code",
