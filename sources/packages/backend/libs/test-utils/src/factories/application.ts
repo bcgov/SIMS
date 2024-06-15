@@ -126,7 +126,6 @@ export async function saveFakeApplicationDisbursements(
   // the application has the disbursement already generated.
   savedApplication.applicationStatus =
     options?.applicationStatus ?? ApplicationStatus.Assessment;
-  savedApplication.data = options?.applicationData;
   await applicationRepo.save(savedApplication);
   const disbursementSchedules: DisbursementSchedule[] = [];
   // Original assessment - first disbursement.
