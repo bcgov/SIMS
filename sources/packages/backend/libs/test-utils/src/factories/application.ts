@@ -79,8 +79,10 @@ export function createFakeApplication(
  * - `student` related student.
  * - `msfaaNumber` related MSFAA number.
  * - `program` related education program.
+ * - `programYear` related program year.
  * @param options additional options:
  * - `applicationStatus` if provided sets the application status of the application or else defaults to Assessment status.
+ * - `applicationData` application related data.
  * - `offeringIntensity` if provided sets the offering intensity for the created fakeApplication.
  * - `createSecondDisbursement` if provided and true creates a second disbursement,
  * - `currentAssessmentInitialValues` if provided set the current application initial values.
@@ -101,9 +103,11 @@ export async function saveFakeApplicationDisbursements(
     student?: Student;
     msfaaNumber?: MSFAANumber;
     program?: EducationProgram;
+    programYear?: ProgramYear;
   },
   options?: {
     applicationStatus?: ApplicationStatus;
+    applicationData?: ApplicationData;
     offeringIntensity?: OfferingIntensity;
     createSecondDisbursement?: boolean;
     currentAssessmentInitialValues?: Partial<StudentAssessment>;
@@ -122,6 +126,7 @@ export async function saveFakeApplicationDisbursements(
   // the application has the disbursement already generated.
   savedApplication.applicationStatus =
     options?.applicationStatus ?? ApplicationStatus.Assessment;
+  savedApplication.data = options?.applicationData;
   await applicationRepo.save(savedApplication);
   const disbursementSchedules: DisbursementSchedule[] = [];
   // Original assessment - first disbursement.
@@ -196,6 +201,8 @@ export async function saveFakeApplicationDisbursements(
         ? { lifetimeMaximumCSLP: 10000 }
         : undefined,
   };
+  savedApplication.currentAssessment.assessmentData =
+    options?.currentAssessmentInitialValues?.assessmentData;
   savedApplication.currentAssessment.disbursementSchedules =
     disbursementSchedules;
   savedApplication.currentAssessment.assessmentData =

@@ -1,10 +1,13 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
+  ApplicationData,
   ApplicationStatus,
+  Assessment,
   Institution,
   InstitutionLocation,
   ProgramYear,
   User,
+  WorkflowData,
 } from "@sims/sims-db";
 import {
   E2EDataSources,
@@ -14,6 +17,7 @@ import {
   ensureProgramYearExists,
   getProviderInstanceForModule,
   saveFakeApplication,
+  saveFakeApplicationDisbursements,
   saveFakeStudent,
 } from "@sims/test-utils";
 import {
@@ -29,6 +33,7 @@ import * as request from "supertest";
 import { AppInstitutionsModule } from "../../../../app.institutions.module";
 import { FormNames, FormService } from "../../../../services";
 import { TestingModule } from "@nestjs/testing";
+import { getISODateOnlyString } from "@sims/utilities";
 
 describe("ReportInstitutionsController(e2e)-exportReport", () => {
   let app: INestApplication;
@@ -251,6 +256,214 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
               "Institution Location Code": collegeCLocation.institutionCode,
               "Offering Name": thirdSavedOffering.name,
             }),
+          ]),
+        );
+      });
+  });
+
+  it.only("Should generate the Student Unmet Need Report when a report generation request is made with the appropriate filters.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+    const savedApplication = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        student,
+        institution: collegeF,
+        institutionLocation: collegeFLocation,
+        programYear,
+      },
+      {
+        currentAssessmentInitialValues: {
+          workflowData: {
+            calculatedData: {
+              totalEligibleDependents: 2,
+              pdppdStatus: false,
+            },
+          } as WorkflowData,
+          assessmentDate: new Date(),
+          assessmentData: {
+            totalFederalAssessedResources: 10,
+            federalAssessmentNeed: 3,
+            totalProvincialAssessedResources: 5,
+            provincialAssessmentNeed: 11,
+            finalAwardTotal: 20,
+            finalFederalAwardNetCSGPAmount: 13,
+            finalFederalAwardNetCSGDAmount: 14,
+            finalProvincialAwardNetBCAGAmount: 15,
+            finalProvincialAwardNetSBSDAmount: 16,
+            finalProvincialAwardNetBCSLAmount: 17,
+            finalFederalAwardNetCSGFAmount: 18,
+            finalProvincialAwardNetBGPDAmount: 19,
+            totalAssessedCost: 50,
+          } as Assessment,
+        },
+        applicationData: {
+          indigenousStatus: "no",
+          citizenship: "canadianCitizen",
+          youthInCare: "no",
+          dependantstatus: "independant",
+        } as ApplicationData,
+      },
+    );
+    const payload = {
+      reportName: "Student_Unmet_Need_Report",
+      params: {
+        offeringIntensity: {
+          "Full Time": true,
+          "Part Time": true,
+        },
+        programYear: programYear.id,
+      },
+    };
+    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+      valid: true,
+      formName: FormNames.ExportFinancialReports,
+      data: { data: payload },
+    });
+    formService.dryRunSubmission = dryRunSubmissionMock;
+    const endpoint = "/institutions/report";
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        const fileContent = response.request.res["text"];
+        const parsedResult = parse(fileContent, {
+          header: true,
+        });
+        expect(parsedResult.data).toEqual(
+          expect.arrayContaining([
+            {
+              "Application Disability Status": String(
+                savedApplication.currentAssessment.workflowData.calculatedData
+                  .pdppdStatus,
+              ),
+              "Application Number": savedApplication.applicationNumber,
+              "Assessment Date": getISODateOnlyString(
+                savedApplication.currentAssessment.assessmentDate,
+              ),
+              "CIP Code":
+                savedApplication.currentAssessment.offering.educationProgram
+                  .cipCode,
+              "Citizenship Status":
+                savedApplication.currentAssessment.application.data.citizenship,
+              "Estimated BCAG": String(
+                savedApplication.currentAssessment.assessmentData
+                  .finalProvincialAwardNetBCAGAmount,
+              ),
+              "Estimated BCSL": String(
+                savedApplication.currentAssessment.assessmentData[
+                  "finalProvincialAwardNetBCSLAmount"
+                ],
+              ),
+              "Estimated BGPD": String(
+                savedApplication.currentAssessment.assessmentData[
+                  "finalProvincialAwardNetBGPDAmount"
+                ],
+              ),
+              "Estimated CSGD": String(
+                savedApplication.currentAssessment.assessmentData
+                  .finalFederalAwardNetCSGDAmount,
+              ),
+              "Estimated CSGF": String(
+                savedApplication.currentAssessment.assessmentData[
+                  "finalFederalAwardNetCSGFAmount"
+                ],
+              ),
+              "Estimated CSGP": String(
+                savedApplication.currentAssessment.assessmentData
+                  .finalFederalAwardNetCSGPAmount,
+              ),
+              "Estimated CSLP": "",
+              "Estimated CSPT": "",
+              "Estimated SBSD": String(
+                savedApplication.currentAssessment.assessmentData
+                  .finalProvincialAwardNetSBSDAmount,
+              ),
+              "Federal Assessed Resources": String(
+                savedApplication.currentAssessment.assessmentData[
+                  "totalFederalAssessedResources"
+                ],
+              ),
+              "Federal assessed need": String(
+                savedApplication.currentAssessment.assessmentData[
+                  "federalAssessmentNeed"
+                ],
+              ),
+              "Federal/Provincial Assessed Costs": String(
+                savedApplication.currentAssessment.assessmentData[
+                  "totalAssessedCost"
+                ],
+              ),
+              "Independant/Dependant":
+                savedApplication.currentAssessment.application.data
+                  .dependantstatus,
+              "Indigenous person status":
+                savedApplication.currentAssessment.application.data
+                  .indigenousStatus,
+              "Institution Location Code":
+                savedApplication.location.institutionCode,
+              "Institution Location Name": savedApplication.location.name,
+              "Marital Status":
+                savedApplication.currentAssessment.application
+                  .relationshipStatus,
+              "Number of Eligible Dependants Total": String(
+                savedApplication.currentAssessment.workflowData.calculatedData
+                  .totalEligibleDependents,
+              ),
+              "Offering Name": savedApplication.currentAssessment.offering.name,
+              "Profile Disability Status":
+                savedApplication.student.disabilityStatus,
+              "Program Credential Type":
+                savedApplication.currentAssessment.offering.educationProgram
+                  .credentialType,
+              "Program Length":
+                savedApplication.currentAssessment.offering.educationProgram
+                  .completionYears,
+              "Program Name":
+                savedApplication.currentAssessment.offering.educationProgram
+                  .name,
+              "Provincial Assessed Resources": String(
+                savedApplication.currentAssessment.assessmentData[
+                  "totalProvincialAssessedResources"
+                ],
+              ),
+              "Provincial assessed need": String(
+                savedApplication.currentAssessment.assessmentData[
+                  "provincialAssessmentNeed"
+                ],
+              ),
+              "SABC Program Code": "",
+              SIN: savedApplication.student.sinValidation.sin,
+              "Student Email Address": savedApplication.student.user.email,
+              "Student First Name": savedApplication.student.user.firstName,
+              "Student Last Name": savedApplication.student.user.lastName,
+              "Student Number": "",
+              "Student Phone Number":
+                savedApplication.student.contactInfo.phone,
+              "Study End Date":
+                savedApplication.currentAssessment.offering.studyEndDate,
+              "Study Intensity (PT or FT)":
+                savedApplication.currentAssessment.offering.offeringIntensity,
+              "Study Start Date":
+                savedApplication.currentAssessment.offering.studyStartDate,
+              "Total assistance": String(
+                savedApplication.currentAssessment.assessmentData
+                  .finalAwardTotal,
+              ),
+              "Year of Study": String(
+                savedApplication.currentAssessment.offering.yearOfStudy,
+              ),
+              "Youth in Care Flag":
+                savedApplication.currentAssessment.application.data.youthInCare,
+              "Youth in Care beyond age 19": "",
+            },
           ]),
         );
       });
