@@ -200,8 +200,6 @@ export async function saveFakeApplicationDisbursements(
         ? { lifetimeMaximumCSLP: 10000 }
         : undefined,
   };
-  savedApplication.currentAssessment.assessmentData =
-    options?.currentAssessmentInitialValues?.assessmentData;
   savedApplication.currentAssessment.disbursementSchedules =
     disbursementSchedules;
   savedApplication.currentAssessment.assessmentData =
@@ -236,6 +234,7 @@ export async function saveFakeApplicationDisbursements(
  * - `applicationStatus` application status for the application.
  * - `offeringIntensity` if provided sets the offering intensity for the created fakeApplication, otherwise sets it to fulltime by default.
  * - `applicationData` related application data.
+ * - `currentAssessmentInitialValues` initial values related to the current assessment.
  * @returns the created application.
  */
 export async function saveFakeApplication(
@@ -252,6 +251,7 @@ export async function saveFakeApplication(
     applicationStatus?: ApplicationStatus;
     offeringIntensity?: OfferingIntensity;
     applicationData?: ApplicationData;
+    currentAssessmentInitialValues?: Partial<StudentAssessment>;
   },
 ): Promise<Application> {
   const userRepo = dataSource.getRepository(User);
@@ -302,11 +302,19 @@ export async function saveFakeApplication(
   }
   if (savedApplication.applicationStatus !== ApplicationStatus.Draft) {
     // Original assessment.
-    const fakeOriginalAssessment = createFakeStudentAssessment({
-      application: savedApplication,
-      offering: savedOffering,
-      auditUser: savedUser,
-    });
+    const fakeOriginalAssessment = createFakeStudentAssessment(
+      {
+        application: savedApplication,
+        offering: savedOffering,
+        auditUser: savedUser,
+      },
+      {
+        initialValue: {
+          assessmentData:
+            options?.currentAssessmentInitialValues?.assessmentData,
+        },
+      },
+    );
     const savedOriginalAssessment = await studentAssessmentRepo.save(
       fakeOriginalAssessment,
     );
