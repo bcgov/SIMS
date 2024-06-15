@@ -261,7 +261,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
       });
   });
 
-  it.only("Should generate the Student Unmet Need Report when a report generation request is made with the appropriate filters.", async () => {
+  it("Should generate the Student Unmet Need Report when a report generation request is made with the appropriate filters.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     const savedApplication = await saveFakeApplicationDisbursements(
@@ -340,10 +340,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
         expect(parsedResult.data).toEqual(
           expect.arrayContaining([
             {
-              "Application Disability Status": String(
-                savedApplication.currentAssessment.workflowData.calculatedData
-                  .pdppdStatus,
-              ),
+              "Application Disability Status": "no",
               "Application Number": savedApplication.applicationNumber,
               "Assessment Date": getISODateOnlyString(
                 savedApplication.currentAssessment.assessmentDate,
