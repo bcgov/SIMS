@@ -557,7 +557,7 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_084hvhv" name="awardEligibilityCSGP">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if (calculatedDataTotalAssessedNeed &#62;= 1)&#10;  and calculatedDataPDPPDStatus = true&#10;then true&#10;else false" target="awardEligibilityCSGP" />
+          <zeebe:output source="=if (calculatedDataTotalAssessedNeed &#62;= 1)&#10;  and calculatedDataPDPPDStatus = true&#10;  and (calculatedDataTotalFamilyIncome &#60; dmnPartTimeAwardFamilySizeVariables.limitAwardCSGPThresholdIncome)&#10;then true&#10;else false&#10;" target="awardEligibilityCSGP" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0qivez3</bpmn:incoming>
@@ -2097,10 +2097,6 @@ dmnX (comes from dmn)</bpmn:text>
         <di:waypoint x="998" y="1170" />
         <di:waypoint x="1151" y="1170" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0cp4qvu_di" bpmnElement="Association_0cp4qvu">
-        <di:waypoint x="980" y="1035" />
-        <di:waypoint x="980" y="1152" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="BPMNShape_0hjhvfj" bpmnElement="TextAnnotation_15vd5py">
         <dc:Bounds x="7429" y="3000" width="100" height="30" />
         <bpmndi:BPMNLabel />
@@ -2181,6 +2177,10 @@ dmnX (comes from dmn)</bpmn:text>
         <dc:Bounds x="2350" y="1330" width="215" height="30" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1e81eq9" bpmnElement="TextAnnotation_0y3el2u">
+        <dc:Bounds x="900" y="1005" width="160" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_1gi7mg0_di" bpmnElement="Association_1gi7mg0">
         <di:waypoint x="7451" y="3056" />
         <di:waypoint x="7471" y="3030" />
@@ -2245,10 +2245,10 @@ dmnX (comes from dmn)</bpmn:text>
         <di:waypoint x="2457" y="1330" />
         <di:waypoint x="2452" y="1271" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="BPMNShape_1e81eq9" bpmnElement="TextAnnotation_0y3el2u">
-        <dc:Bounds x="900" y="1005" width="160" height="30" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0cp4qvu_di" bpmnElement="Association_0cp4qvu">
+        <di:waypoint x="980" y="1035" />
+        <di:waypoint x="980" y="1152" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
