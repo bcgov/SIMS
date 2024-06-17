@@ -22,7 +22,7 @@
       <bpmn:text>Step 1</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_1lzmhpu">
-      <bpmn:text>Financial need min $1 AND calculatedDataPDPPDStatus is true, then csgpEligibility is YES</bpmn:text>
+      <bpmn:text>Financial need min $1 AND calculatedDataPDPPDStatus is true, and income is less than threshold then csgpEligibility is YES</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_06i946l">
       <bpmn:text>Financial need min $1 AND calculatedDataPDPPDStatus is true and income is less than threshold, then sbsdEligibility is YES</bpmn:text>
@@ -557,7 +557,7 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_084hvhv" name="awardEligibilityCSGP">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if (calculatedDataTotalAssessedNeed &#62;= 1)&#10;  and calculatedDataPDPPDStatus = true&#10;  and (calculatedDataTotalFamilyIncome &#60; dmnPartTimeAwardFamilySizeVariables.limitAwardCSGPThresholdIncome)&#10;then true&#10;else false&#10;" target="awardEligibilityCSGP" />
+          <zeebe:output source="=if (calculatedDataTotalAssessedNeed &#62;= 1)&#10;  and (calculatedDataPDPPDStatus = true)&#10;  and (calculatedDataTotalFamilyIncome &#60; dmnPartTimeAwardFamilySizeVariables.limitAwardCSGPThresholdIncome)&#10;then true&#10;else false&#10;" target="awardEligibilityCSGP" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0qivez3</bpmn:incoming>
@@ -2122,7 +2122,7 @@ dmnX (comes from dmn)</bpmn:text>
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_1lzmhpu_di" bpmnElement="TextAnnotation_1lzmhpu">
-        <dc:Bounds x="5846" y="1900" width="458" height="30" />
+        <dc:Bounds x="5846" y="1900" width="458" height="41" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_06i946l_di" bpmnElement="TextAnnotation_06i946l">
@@ -2206,8 +2206,8 @@ dmnX (comes from dmn)</bpmn:text>
         <di:waypoint x="6557" y="2870" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_01prvbh_di" bpmnElement="Association_01prvbh">
-        <di:waypoint x="5748" y="1929" />
-        <di:waypoint x="5846" y="1911" />
+        <di:waypoint x="5748" y="1928" />
+        <di:waypoint x="5846" y="1907" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_1ledsf9_di" bpmnElement="Association_1ledsf9">
         <di:waypoint x="5747" y="2173" />
