@@ -73,7 +73,7 @@ hpa:
 
 podDisruptionBudget:
   enabled: true
-  minAvailable: 2
+  minAvailable: 1
 
 ## Clamav data dir persistence
 persistentVolume:

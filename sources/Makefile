@@ -208,7 +208,7 @@ queue-consumers:
 
 # Runs clamav
 clamav:
-	@echo "+\n++ Make: Clamav only"
+	@echo "+\n++ Make: ClamAV only"
 	@docker-compose -f docker-compose.yml build clamav
 	@docker-compose -f docker-compose.yml up -d clamav
 
