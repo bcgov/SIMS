@@ -32,6 +32,10 @@ export default defineComponent({
         description: "Program and Offering Status",
         id: "Program_And_Offering_Status",
       },
+      {
+        description: "Student Unmet Need",
+        id: "Ministry_Student_Unmet_Need_Report",
+      },
     ];
     return { reportList };
   },

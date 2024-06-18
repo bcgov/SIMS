@@ -11,7 +11,10 @@ import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import { ReportControllerService } from "./report.controller.service";
 import { Role } from "../../auth";
-import { MinistryReportsFilterAPIInDTO } from "./models/report.dto";
+import {
+  MinistryReportNames,
+  MinistryReportsFilterAPIInDTO,
+} from "./models/report.dto";
 import { Response } from "express";
 
 /**
@@ -47,6 +50,12 @@ export class ReportAESTController extends BaseController {
     @Body() payload: MinistryReportsFilterAPIInDTO,
     @Res() response: Response,
   ): Promise<void> {
+    if (
+      payload.reportName === MinistryReportNames.StudentUnmetNeed &&
+      payload.params["institutionId"] === ""
+    ) {
+      payload.params["institutionId"] = -1;
+    }
     await this.reportControllerService.generateReport(payload, response);
   }
 }

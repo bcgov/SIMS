@@ -310,9 +310,9 @@
               "autofocus": false,
               "input": true,
               "tableView": true,
-              "label": "Institution Name",
+              "label": "Institution",
               "key": "institutionName",
-              "placeholder": "Select Institution Name",
+              "placeholder": "Select Institution",
               "data": {
                 "values": [
                   {
@@ -345,12 +345,60 @@
               "labelPosition": "top",
               "tags": [],
               "conditional": {
-                "show": "true",
-                "when": "reportName",
-                "eq": "Program_And_Offering_Status"
+                "show": "",
+                "when": null,
+                "eq": ""
               },
               "properties": {},
               "lockKey": true,
+              "customConditional": "show = \n    data.reportName === 'Program_And_Offering_Status'"
+            },
+            {
+              "autofocus": false,
+              "input": true,
+              "tableView": true,
+              "label": "Institution Name",
+              "key": "institutionId",
+              "placeholder": "Select Institution Name",
+              "data": {
+                "values": [
+                  {
+                    "value": "",
+                    "label": ""
+                  }
+                ],
+                "json": "",
+                "url": "",
+                "resource": "",
+                "custom": ""
+              },
+              "dataSrc": "values",
+              "valueProperty": "",
+              "defaultValue": "",
+              "refreshOn": "",
+              "filter": "",
+              "authenticate": false,
+              "template": "<span>{{ item.label }}</span>",
+              "multiple": false,
+              "protected": false,
+              "unique": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
+              "validate": {
+                "required": false
+              },
+              "type": "select",
+              "labelPosition": "top",
+              "tags": [],
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+              },
+              "properties": {},
+              "lockKey": true,
+              "customConditional": "show = data.reportName === 'Ministry_Student_Unmet_Need_Report'",
               "isNew": false
             },
             {
@@ -465,7 +513,8 @@
                       "addons": [],
                       "inputType": "text",
                       "id": "e7m8fsr",
-                      "defaultValue": ""
+                      "defaultValue": "",
+                      "lockKey": true
                     }
                   ],
                   "width": 6,
@@ -582,7 +631,8 @@
                       "addons": [],
                       "inputType": "text",
                       "id": "ewc1f6",
-                      "defaultValue": ""
+                      "defaultValue": "",
+                      "lockKey": true
                     }
                   ],
                   "width": 6,
@@ -606,7 +656,7 @@
                 "eq": "",
                 "json": ""
               },
-              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Data_Inventory_Report'\n    || data.reportName === 'Institution_Designation_Report'\n    || data.reportName === 'ECert_Errors_Report'\n    || data.reportName === 'Program_And_Offering_Status'",
+              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Data_Inventory_Report'\n    || data.reportName === 'Institution_Designation_Report'\n    || data.reportName === 'ECert_Errors_Report'\n    || data.reportName === 'Program_And_Offering_Status'\n    || data.reportName === 'Ministry_Student_Unmet_Need_Report'",
               "logic": [],
               "attributes": {},
               "overlay": {
@@ -733,7 +783,7 @@
                 "eq": "",
                 "json": ""
               },
-              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Data_Inventory_Report' \n    || data.reportName === 'ECert_Errors_Report' \n    || data.reportName === 'Program_And_Offering_Status'\n    || data.reportName === 'Student_Unmet_Need_Report'",
+              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Data_Inventory_Report' \n    || data.reportName === 'ECert_Errors_Report' \n    || data.reportName === 'Program_And_Offering_Status'\n    || data.reportName === 'Student_Unmet_Need_Report'\n    || data.reportName === 'Ministry_Student_Unmet_Need_Report'",
               "logic": [],
               "attributes": {},
               "overlay": {
@@ -792,9 +842,9 @@
                 "customMessage": "Maximum 4 characters is allowed."
               },
               "conditional": {
-                "show": "true",
-                "when": "reportName",
-                "eq": "Program_And_Offering_Status"
+                "show": "",
+                "when": "",
+                "eq": ""
               },
               "type": "textfield",
               "labelPosition": "top",
@@ -802,9 +852,8 @@
               "tags": [],
               "properties": {},
               "lockKey": true,
-              "customConditional": "",
-              "tooltip": "",
-              "isNew": false
+              "customConditional": "show = \n    data.reportName === 'Program_And_Offering_Status'\n    || data.reportName === 'Ministry_Student_Unmet_Need_Report'",
+              "tooltip": ""
             }
           ],
           "placeholder": "",
