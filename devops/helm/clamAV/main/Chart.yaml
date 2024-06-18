@@ -1,0 +1,11 @@
+apiVersion: v2
+name: main
+description: A Helm chart for ClamAV Service
+type: application
+version: 0.1.0
+appVersion: '0.1.0'
+dependencies:
+  - name: clamav
+    version: '0.1.0'
+    repository: 'file://../_clamav'
+    condition: clamav.enabled

@@ -33,6 +33,13 @@ export interface StudentAdditionalTransportationAppealData extends JSONDoc {
   additionalTransportPlacement?: YesNoOptions;
 }
 
+export type RelationshipStatusType = "single" | "other" | "married";
+
+export interface PartnerInformationAndIncomeAppealData extends JSONDoc {
+  relationshipStatus: RelationshipStatusType;
+  partnerEstimatedIncome?: number;
+}
+
 export enum CredentialType {
   UnderGraduateCertificate = "undergraduateCertificate",
   UnderGraduateCitation = "undergraduateCitation",
@@ -71,7 +78,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataDependantstatus: "dependant" | "independant";
   programYear: string;
   programYearStartDate: string;
-  studentDataRelationshipStatus: "single" | "other" | "married";
+  studentDataRelationshipStatus: RelationshipStatusType;
   studentDataTaxReturnIncome: number;
   studentDataWhenDidYouGraduateOrLeaveHighSchool: string;
   studentDataIndigenousStatus: YesNoOptions;
@@ -99,6 +106,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   appealsStudentDisabilityAppealData?: JSONDoc;
   appealsStudentFinancialInformationAppealData?: StudentFinancialInformationAppealData;
   appealsStudentAdditionalTransportationAppealData?: StudentAdditionalTransportationAppealData;
+  appealsPartnerInformationAndIncomeAppealData?: PartnerInformationAndIncomeAppealData;
   studentDataIsYourPartnerAbleToReport?: YesNoOptions;
   studentDataParentValidSinNumber?: YesNoOptions;
   studentDataNumberOfParents?: 1 | 2;
@@ -213,6 +221,8 @@ export interface AssessmentModel {
 }
 
 export interface CalculatedAssessmentModel {
+  calculatedDataRelationshipStatus: RelationshipStatusType;
+  calculatedDataPartner1TotalIncome: number;
   calculatedDataEligibleForAnAdditionalTransportationAllowance: YesNoOptions;
   calculatedDataAdditionalTransportKm: number;
   calculatedDataAdditionalTransportCost: number;

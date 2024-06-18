@@ -1,0 +1,16 @@
+clamav:
+  enabled: true
+  replicaCount: 2
+
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 3Gi
+    requests:
+      cpu: 300m
+      memory: 2Gi
+
+  persistentVolume:
+    size: 2Gi
+
+  configVersion: "1.0"

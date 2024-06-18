@@ -20,7 +20,7 @@
           "value": ""
         }
       ],
-      "content": "Your profile info",
+      "content": "Profile Information",
       "refreshOnChange": false,
       "customClass": "",
       "hidden": false,
@@ -642,7 +642,7 @@
                 {
                   "components": [
                     {
-                      "label": "Verified email",
+                      "label": "Email address",
                       "labelPosition": "top",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -1506,12 +1506,12 @@
                 "value": "man"
               },
               {
-                "label": "Non-Binary",
-                "value": "nonBinary"
-              },
-              {
                 "label": "Woman",
                 "value": "woman"
+              },
+              {
+                "label": "Non-Binary",
+                "value": "nonBinary"
               },
               {
                 "label": "Prefer not to answer",
@@ -1706,7 +1706,7 @@
           "lockKey": true
         },
         {
-          "label": "Apply for Disability Status",
+          "label": "Apply for disability status",
           "labelWidth": "",
           "labelMargin": "",
           "action": "event",
@@ -2048,7 +2048,7 @@
           "value": ""
         }
       ],
-      "content": "Your contact info",
+      "content": "Contact Information",
       "refreshOnChange": false,
       "customClass": "category-header-medium primary-color",
       "hidden": false,

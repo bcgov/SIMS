@@ -1,0 +1,19 @@
+nameOverride: clamav
+fullnameOverride: clamav
+
+clamav:
+  enabled: false
+  replicaCount: 1
+
+  resources:
+    limits:
+      cpu: 500m
+      memory: 3Gi
+    requests:
+      cpu: 100m
+      memory: 2Gi
+
+  persistentVolume:
+    size: 2Gi
+
+  configVersion: "1.0"
