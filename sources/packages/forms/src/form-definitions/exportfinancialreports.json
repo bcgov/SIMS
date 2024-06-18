@@ -311,7 +311,7 @@
               "input": true,
               "tableView": true,
               "label": "Institution Name",
-              "key": "institutionName",
+              "key": "institution",
               "placeholder": "Select Institution Name",
               "data": {
                 "values": [
@@ -733,11 +733,7 @@
                 "eq": "",
                 "json": ""
               },
-<<<<<<< HEAD
               "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Data_Inventory_Report' \n    || data.reportName === 'ECert_Errors_Report' \n    || data.reportName === 'Program_And_Offering_Status'\n    || data.reportName === 'Student_Unmet_Need_Report'",
-=======
-              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Data_Inventory_Report' \n    || data.reportName === 'ECert_Errors_Report' \n    || data.reportName === 'Program_And_Offering_Status_Report'",
->>>>>>> 32ac0b1e (initial commit)
               "logic": [],
               "attributes": {},
               "overlay": {

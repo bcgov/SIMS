@@ -18,16 +18,16 @@ describe("InstitutionAESTController(e2e)-getInstitutionNameOptions", () => {
     db = createE2EDataSources(dataSource);
   });
 
-  it("Should return an array of institutions when there are in institutions in the database.", async () => {
+  it("Should return an array of institutions when there are institutions in the database.", async () => {
     // Arrange
     const institutions = await db.institution.find({
-      select: { id: true, legalOperatingName: true },
-      order: { legalOperatingName: "asc" },
+      select: { id: true, operatingName: true },
+      order: { operatingName: "asc" },
     });
 
     const responseData = institutions.map((institution) => ({
       id: institution.id,
-      description: institution.legalOperatingName,
+      description: institution.operatingName,
     }));
 
     const endpoint = "/aest/institution/name/options-list";

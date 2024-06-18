@@ -25,7 +25,9 @@ import {
   ApplicationStatus,
   COEStatus,
   DisbursementScheduleStatus,
+  EducationProgram,
   EducationProgramOffering,
+  InstitutionLocation,
   OfferingIntensity,
   ProgramIntensity,
 } from "@sims/sims-db";
@@ -303,7 +305,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
     },
   );
 
-  it(
+  it.only(
     "Should generate the Program and Offering Status report when a report generation is made with the appropriate date range filters and all selections are considered " +
       "for an institution with one location and three education programs of different program intensities having offerings of different intensities and one program without offerings.",
     async () => {
@@ -324,7 +326,8 @@ describe("ReportAestController(e2e)-exportReport", () => {
       );
 
       // Create an education program with full time and part time program intensity
-      // and one full time offering and two part time offerings.
+      // and one full time offering and two part time offerings whose study start date
+      // and end date are within the search date range.
       const fakeOfferingFullTime2 = createFakeEducationProgramOffering(
         {
           auditUser,
@@ -384,7 +387,8 @@ describe("ReportAestController(e2e)-exportReport", () => {
       );
 
       // Create an education program with full time and part time program intensity
-      // and designated SABC code and one part time offering.
+      // and designated SABC code and one part time offering whose study start date
+      // and end date are within the search date range.
       const fakeOfferingPartTime3 = createFakeEducationProgramOffering(
         {
           auditUser,
@@ -404,6 +408,31 @@ describe("ReportAestController(e2e)-exportReport", () => {
             programIntensity: ProgramIntensity.fullTimePartTime,
             deliveredOnSite: true,
             sabcCode: "ABCD",
+          },
+        },
+      );
+
+      // Create an education program with full time and part time program intensity
+      // and one part time offering whose study start date and end date are outside
+      // the search date range.
+      const fakeOfferingPartTime4 = createFakeEducationProgramOffering(
+        {
+          auditUser,
+          institutionLocation,
+        },
+        {
+          initialValues: {
+            offeringIntensity: OfferingIntensity.partTime,
+            studyStartDate: getISODateOnlyString(
+              addDays(30, fakeOfferingPartTime3.studyStartDate),
+            ),
+            studyEndDate: getISODateOnlyString(
+              addDays(60, fakeOfferingPartTime3.studyEndDate),
+            ),
+          },
+          programInitialValues: {
+            programIntensity: ProgramIntensity.fullTimePartTime,
+            deliveredOnSite: true,
           },
         },
       );
@@ -430,28 +459,8 @@ describe("ReportAestController(e2e)-exportReport", () => {
         fakeOfferingPartTime1,
         fakeOfferingPartTime2,
         fakeOfferingPartTime3,
+        fakeOfferingPartTime4,
       ]);
-
-      const fakeProgramResponseData = {
-        "Institution Location Name": institutionLocation.name,
-        "Program Name": fakeProgram.name,
-        "SABC Program Code": fakeProgram.sabcCode ?? "",
-        "Regulatory Body": fakeProgram.regulatoryBody,
-        "Credential Type": fakeProgram.credentialType,
-        "Program Length": fakeProgram.completionYears,
-        Delivery: "On-site",
-        "Credit or Hours": fakeProgram.courseLoadCalculation,
-        "Program Status": fakeProgram.programStatus,
-        "Program Deactivated?": "False",
-        "Program Expiry Date": fakeProgram.effectiveEndDate ?? "",
-        "Offering Name": "",
-        "Study Start Date": "",
-        "Study End Date": "",
-        "Year of Study": "",
-        "Offering Type": "",
-        "Offering Status": "",
-        "Offering Intensity": "",
-      };
 
       const ProgramAndOfferingStatusReport =
         "Program_And_Offering_Status_Report";
@@ -493,7 +502,9 @@ describe("ReportAestController(e2e)-exportReport", () => {
             header: true,
           });
           expect(parsedResult.data).toEqual(
-            expect.arrayContaining([objectToResultData(fakeOfferingFullTime1)]),
+            expect.arrayContaining([
+              offeringToResultData(fakeOfferingFullTime1),
+            ]),
           );
         });
 
@@ -531,10 +542,14 @@ describe("ReportAestController(e2e)-exportReport", () => {
           });
           expect(parsedResult.data).toEqual(
             expect.arrayContaining([
-              objectToResultData(fakeOfferingPartTime1),
-              objectToResultData(fakeOfferingPartTime2),
-              objectToResultData(fakeOfferingPartTime3),
-              fakeProgramResponseData,
+              offeringToResultData(fakeOfferingPartTime1),
+              offeringToResultData(fakeOfferingPartTime2),
+              offeringToResultData(fakeOfferingPartTime3),
+              programToResultData(fakeProgram, institutionLocation),
+              programToResultData(
+                fakeOfferingPartTime4.educationProgram,
+                institutionLocation,
+              ),
             ]),
           );
         });
@@ -573,8 +588,8 @@ describe("ReportAestController(e2e)-exportReport", () => {
           });
           expect(parsedResult.data).toEqual(
             expect.arrayContaining([
-              objectToResultData(fakeOfferingPartTime3),
-              fakeProgramResponseData,
+              offeringToResultData(fakeOfferingPartTime3),
+              programToResultData(fakeProgram, institutionLocation),
             ]),
           );
         });
@@ -613,12 +628,16 @@ describe("ReportAestController(e2e)-exportReport", () => {
           });
           expect(parsedResult.data).toEqual(
             expect.arrayContaining([
-              objectToResultData(fakeOfferingFullTime1),
-              objectToResultData(fakeOfferingFullTime2),
-              objectToResultData(fakeOfferingPartTime1),
-              objectToResultData(fakeOfferingPartTime2),
-              objectToResultData(fakeOfferingPartTime3),
-              fakeProgramResponseData,
+              offeringToResultData(fakeOfferingFullTime1),
+              offeringToResultData(fakeOfferingFullTime2),
+              offeringToResultData(fakeOfferingPartTime1),
+              offeringToResultData(fakeOfferingPartTime2),
+              offeringToResultData(fakeOfferingPartTime3),
+              programToResultData(fakeProgram, institutionLocation),
+              programToResultData(
+                fakeOfferingPartTime4.educationProgram,
+                institutionLocation,
+              ),
             ]),
           );
         });
@@ -630,8 +649,8 @@ describe("ReportAestController(e2e)-exportReport", () => {
    * @param fakeOffering an education program offering record.
    * @returns a key-value pair object matching the result data.
    */
-  function objectToResultData(fakeOffering: EducationProgramOffering): {
-    [key: string]: string;
+  function offeringToResultData(fakeOffering: EducationProgramOffering): {
+    [key: string]: string | boolean;
   } {
     return {
       "Institution Location Name": fakeOffering.institutionLocation.name,
@@ -643,7 +662,8 @@ describe("ReportAestController(e2e)-exportReport", () => {
       Delivery: "On-site",
       "Credit or Hours": fakeOffering.educationProgram.courseLoadCalculation,
       "Program Status": fakeOffering.educationProgram.programStatus,
-      "Program Deactivated?": "False",
+      "Program Deactivated?": (!fakeOffering.educationProgram
+        .isActive).toString(),
       "Program Expiry Date":
         fakeOffering.educationProgram.effectiveEndDate ?? "",
       "Offering Name": fakeOffering.name,
@@ -653,6 +673,41 @@ describe("ReportAestController(e2e)-exportReport", () => {
       "Offering Type": fakeOffering.offeringType,
       "Offering Status": fakeOffering.offeringStatus,
       "Offering Intensity": fakeOffering.offeringIntensity,
+    };
+  }
+
+  /**
+   * Converts education program object into a key-value pair object matching the result data
+   * for programs that have offerings outside the date range or don't have offerings.
+   * @param fakeOffering an education program record.
+   * @param fakeLocation an institution location record.
+   * @returns a key-value pair object matching the result data.
+   */
+  function programToResultData(
+    fakeProgram: EducationProgram,
+    fakeLocation: InstitutionLocation,
+  ): {
+    [key: string]: string | boolean;
+  } {
+    return {
+      "Institution Location Name": fakeLocation.name,
+      "Program Name": fakeProgram.name,
+      "SABC Program Code": fakeProgram.sabcCode ?? "",
+      "Regulatory Body": fakeProgram.regulatoryBody,
+      "Credential Type": fakeProgram.credentialType,
+      "Program Length": fakeProgram.completionYears,
+      Delivery: "On-site",
+      "Credit or Hours": fakeProgram.courseLoadCalculation,
+      "Program Status": fakeProgram.programStatus,
+      "Program Deactivated?": (!fakeProgram.isActive).toString(),
+      "Program Expiry Date": fakeProgram.effectiveEndDate ?? "",
+      "Offering Name": "",
+      "Study Start Date": "",
+      "Study End Date": "",
+      "Year of Study": "",
+      "Offering Type": "",
+      "Offering Status": "",
+      "Offering Intensity": "",
     };
   }
 });
