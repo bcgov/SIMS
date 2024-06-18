@@ -152,4 +152,38 @@ describe("ConfirmationOfEnrollmentService-getMaxTuitionRemittance", () => {
     // Assert
     expect(total).toBe(115);
   });
+
+  it("Should discount previous tuition remittance value when there is a previous tuition remittance.", () => {
+    // Arrange
+    const awards = [
+      {
+        valueType: DisbursementValueType.CanadaLoan,
+        valueAmount: 100,
+        disbursedAmountSubtracted: 50,
+      },
+      {
+        valueType: DisbursementValueType.BCLoan,
+        valueAmount: 200,
+      },
+      {
+        valueType: DisbursementValueType.CanadaGrant,
+        valueAmount: 300,
+        disbursedAmountSubtracted: 100,
+      },
+    ];
+    const offeringCosts = {
+      actualTuitionCosts: Number.MAX_SAFE_INTEGER,
+      programRelatedCosts: Number.MAX_SAFE_INTEGER,
+      mandatoryFees: Number.MAX_SAFE_INTEGER,
+    };
+    // Act
+    const total = service.getMaxTuitionRemittance(
+      awards,
+      offeringCosts,
+      MaxTuitionRemittanceTypes.Estimated,
+      300,
+    );
+    // Assert
+    expect(total).toBe(150);
+  });
 });

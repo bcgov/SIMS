@@ -9,7 +9,13 @@ import {
   DisbursementValueType,
   User,
 } from "@sims/sims-db";
-import { DataSource, EntityManager, Repository, UpdateResult } from "typeorm";
+import {
+  DataSource,
+  EntityManager,
+  LessThan,
+  Repository,
+  UpdateResult,
+} from "typeorm";
 import {
   Award,
   COEApprovalPeriodStatus,
@@ -103,10 +109,28 @@ export class ConfirmationOfEnrollmentService {
     if (!maxTuitionRemittanceData) {
       return null;
     }
+
+    const previousTuitionRemittanceData =
+      await this.disbursementScheduleRepo.findOne({
+        select: {
+          id: true,
+          tuitionRemittanceEffectiveAmount: true,
+          tuitionRemittanceRequestedAmount: true,
+        },
+        where: {
+          id: LessThan(disbursementId),
+          studentAssessment: {
+            id: maxTuitionRemittanceData.studentAssessment.id,
+          },
+        },
+      });
+
     return this.getMaxTuitionRemittance(
       maxTuitionRemittanceData.disbursementValues,
       maxTuitionRemittanceData.studentAssessment.offering,
       MaxTuitionRemittanceTypes.Estimated,
+      previousTuitionRemittanceData.tuitionRemittanceEffectiveAmount ??
+        previousTuitionRemittanceData.tuitionRemittanceRequestedAmount,
     );
   }
 
@@ -127,6 +151,7 @@ export class ConfirmationOfEnrollmentService {
     awards: Award[],
     offeringCosts: OfferingCosts,
     calculationType: MaxTuitionRemittanceTypes,
+    previousTuitionRemittance?: number,
   ): number {
     let totalAwards = 0;
     const tuitionAwards = awards.filter((award) =>
@@ -150,7 +175,10 @@ export class ConfirmationOfEnrollmentService {
       offeringCosts.actualTuitionCosts +
       offeringCosts.programRelatedCosts +
       offeringCosts.mandatoryFees;
-    return Math.min(offeringTotalCosts, totalAwards);
+    return (
+      Math.min(offeringTotalCosts, totalAwards) -
+      (previousTuitionRemittance ?? 0)
+    );
   }
 
   /**
