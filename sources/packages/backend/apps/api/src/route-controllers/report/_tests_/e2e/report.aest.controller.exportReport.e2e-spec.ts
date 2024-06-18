@@ -306,7 +306,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
   );
 
   it(
-    "Should generate the Program and Offering Status report when a report generation is made with the appropriate date range filters and all selections are considered " +
+    "Should generate the Program and Offering Status report when a report generation is made with the appropriate date range filters and only the full time option is considered " +
       "for an institution with one location and three education programs of different program intensities having offerings of different intensities and one program without offerings.",
     async () => {
       // Arrange
@@ -367,11 +367,14 @@ describe("ReportAestController(e2e)-exportReport", () => {
           },
         },
       );
+
+      // Create an education program with full time and part time program intensity
+      // and one part time offering whose study start date and end date are outside
+      // the search date range.
       const fakeOfferingPartTime2 = createFakeEducationProgramOffering(
         {
           auditUser,
           institutionLocation,
-          program: fakeOfferingFullTime2.educationProgram,
         },
         {
           initialValues: {
@@ -383,53 +386,6 @@ describe("ReportAestController(e2e)-exportReport", () => {
               addDays(1, fakeOfferingPartTime1.studyEndDate),
             ),
           },
-        },
-      );
-
-      // Create an education program with full time and part time program intensity
-      // and designated SABC code and one part time offering whose study start date
-      // and end date are within the search date range.
-      const fakeOfferingPartTime3 = createFakeEducationProgramOffering(
-        {
-          auditUser,
-          institutionLocation,
-        },
-        {
-          initialValues: {
-            offeringIntensity: OfferingIntensity.partTime,
-            studyStartDate: getISODateOnlyString(
-              addDays(1, fakeOfferingPartTime2.studyStartDate),
-            ),
-            studyEndDate: getISODateOnlyString(
-              addDays(1, fakeOfferingPartTime2.studyEndDate),
-            ),
-          },
-          programInitialValues: {
-            programIntensity: ProgramIntensity.fullTimePartTime,
-            deliveredOnSite: true,
-            sabcCode: "ABCD",
-          },
-        },
-      );
-
-      // Create an education program with full time and part time program intensity
-      // and one part time offering whose study start date and end date are outside
-      // the search date range.
-      const fakeOfferingPartTime4 = createFakeEducationProgramOffering(
-        {
-          auditUser,
-          institutionLocation,
-        },
-        {
-          initialValues: {
-            offeringIntensity: OfferingIntensity.partTime,
-            studyStartDate: getISODateOnlyString(
-              addDays(30, fakeOfferingPartTime3.studyStartDate),
-            ),
-            studyEndDate: getISODateOnlyString(
-              addDays(60, fakeOfferingPartTime3.studyEndDate),
-            ),
-          },
           programInitialValues: {
             programIntensity: ProgramIntensity.fullTimePartTime,
             deliveredOnSite: true,
@@ -437,8 +393,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
         },
       );
 
-      // Create an education program with full time and designated SABC code
-      // and part time program intensity without any offering.
+      // Create an education program with full time program intensity without any offering.
       const fakeProgram = createFakeEducationProgram(
         {
           auditUser,
@@ -446,9 +401,8 @@ describe("ReportAestController(e2e)-exportReport", () => {
         },
         {
           initialValues: {
-            programIntensity: ProgramIntensity.fullTimePartTime,
+            programIntensity: ProgramIntensity.fullTime,
             deliveredOnSite: true,
-            sabcCode: "ABCD",
           },
         },
       );
@@ -458,8 +412,6 @@ describe("ReportAestController(e2e)-exportReport", () => {
         fakeOfferingFullTime2,
         fakeOfferingPartTime1,
         fakeOfferingPartTime2,
-        fakeOfferingPartTime3,
-        fakeOfferingPartTime4,
       ]);
 
       const ProgramAndOfferingStatusReport =
@@ -475,7 +427,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
         params: {
           institution: institutionLocation.institution.id,
           startDate: fakeOfferingFullTime1.studyStartDate,
-          endDate: getISODateOnlyString(fakeOfferingPartTime3.studyEndDate),
+          endDate: getISODateOnlyString(fakeOfferingPartTime2.studyEndDate),
           offeringIntensity: {
             "Full Time": true,
             "Part Time": false,
@@ -504,9 +456,128 @@ describe("ReportAestController(e2e)-exportReport", () => {
           expect(parsedResult.data).toEqual(
             expect.arrayContaining([
               offeringToResultData(fakeOfferingFullTime1),
+              programToResultData(fakeProgram, institutionLocation),
             ]),
           );
         });
+    },
+  );
+
+  it(
+    "Should generate the Program and Offering Status report when a report generation is made with the appropriate date range filters and only the part time option is considered " +
+      "for an institution with one location and three education programs of different program intensities having offerings of different intensities and one program without offerings.",
+    async () => {
+      // Arrange
+      const auditUser = await db.user.save(createFakeUser());
+      const institutionLocation = createFakeInstitutionLocation();
+      // Create an education program with full time program intensity
+      // and one full time offering associated with the program.
+      const fakeOfferingFullTime1 = createFakeEducationProgramOffering(
+        { auditUser, institutionLocation },
+        {
+          initialValues: { offeringIntensity: OfferingIntensity.fullTime },
+          programInitialValues: {
+            programIntensity: ProgramIntensity.fullTime,
+            deliveredOnSite: true,
+          },
+        },
+      );
+
+      // Create an education program with full time and part time program intensity
+      // and one full time offering and two part time offerings whose study start date
+      // and end date are within the search date range.
+      const fakeOfferingFullTime2 = createFakeEducationProgramOffering(
+        {
+          auditUser,
+          institutionLocation,
+        },
+        {
+          initialValues: {
+            offeringIntensity: OfferingIntensity.fullTime,
+            studyStartDate: getISODateOnlyString(
+              addDays(1, fakeOfferingFullTime1.studyStartDate),
+            ),
+            studyEndDate: getISODateOnlyString(
+              addDays(1, fakeOfferingFullTime1.studyEndDate),
+            ),
+          },
+          programInitialValues: {
+            programIntensity: ProgramIntensity.fullTimePartTime,
+            deliveredOnSite: true,
+          },
+        },
+      );
+      const fakeOfferingPartTime1 = createFakeEducationProgramOffering(
+        {
+          auditUser,
+          institutionLocation,
+          program: fakeOfferingFullTime2.educationProgram,
+        },
+        {
+          initialValues: {
+            offeringIntensity: OfferingIntensity.partTime,
+            studyStartDate: getISODateOnlyString(
+              addDays(1, fakeOfferingFullTime2.studyStartDate),
+            ),
+            studyEndDate: getISODateOnlyString(
+              addDays(1, fakeOfferingFullTime2.studyEndDate),
+            ),
+          },
+        },
+      );
+
+      // Create an education program with full time and part time program intensity
+      // and one part time offering whose study start date and end date are outside
+      // the search date range.
+      const fakeOfferingPartTime2 = createFakeEducationProgramOffering(
+        {
+          auditUser,
+          institutionLocation,
+        },
+        {
+          initialValues: {
+            offeringIntensity: OfferingIntensity.partTime,
+            studyStartDate: getISODateOnlyString(
+              addDays(30, fakeOfferingPartTime1.studyStartDate),
+            ),
+            studyEndDate: getISODateOnlyString(
+              addDays(60, fakeOfferingPartTime1.studyEndDate),
+            ),
+          },
+          programInitialValues: {
+            programIntensity: ProgramIntensity.fullTimePartTime,
+            deliveredOnSite: true,
+          },
+        },
+      );
+
+      // Create an education program with full time and part time program intensity without any offering.
+      const fakeProgram = createFakeEducationProgram(
+        {
+          auditUser,
+          institution: institutionLocation.institution,
+        },
+        {
+          initialValues: {
+            programIntensity: ProgramIntensity.fullTimePartTime,
+            deliveredOnSite: true,
+          },
+        },
+      );
+      await db.educationProgram.save(fakeProgram);
+      await db.educationProgramOffering.save([
+        fakeOfferingFullTime1,
+        fakeOfferingFullTime2,
+        fakeOfferingPartTime1,
+        fakeOfferingPartTime2,
+      ]);
+
+      const ProgramAndOfferingStatusReport =
+        "Program_And_Offering_Status_Report";
+      const endpoint = "/aest/report";
+      const ministryUserToken = await getAESTToken(
+        AESTGroups.BusinessAdministrators,
+      );
 
       // Payload with only part time option being checked.
       const payloadPartTimeOnly = {
@@ -514,7 +585,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
         params: {
           institution: institutionLocation.institution.id,
           startDate: fakeOfferingFullTime1.studyStartDate,
-          endDate: getISODateOnlyString(fakeOfferingPartTime3.studyEndDate),
+          endDate: getISODateOnlyString(fakeOfferingPartTime1.studyEndDate),
           offeringIntensity: {
             "Full Time": false,
             "Part Time": true,
@@ -543,56 +614,156 @@ describe("ReportAestController(e2e)-exportReport", () => {
           expect(parsedResult.data).toEqual(
             expect.arrayContaining([
               offeringToResultData(fakeOfferingPartTime1),
-              offeringToResultData(fakeOfferingPartTime2),
-              offeringToResultData(fakeOfferingPartTime3),
               programToResultData(fakeProgram, institutionLocation),
               programToResultData(
-                fakeOfferingPartTime4.educationProgram,
+                fakeOfferingPartTime2.educationProgram,
                 institutionLocation,
               ),
             ]),
           );
         });
+    },
+  );
 
-      // Payload with part time option being checked and SABC code entered.
-      const payloadPartTimeOnlySABC = {
-        reportName: ProgramAndOfferingStatusReport,
-        params: {
-          institution: institutionLocation.institution.id,
-          startDate: fakeOfferingFullTime1.studyStartDate,
-          endDate: getISODateOnlyString(fakeOfferingPartTime3.studyEndDate),
-          offeringIntensity: {
-            "Full Time": false,
-            "Part Time": true,
+  it(
+    "Should generate the Program and Offering Status report when a report generation is made with the appropriate date range filters and both full time and part time options are considered " +
+      "for an institution with one location and three education programs of different program intensities having offerings of different intensities and one program without offerings.",
+    async () => {
+      // Arrange
+      const auditUser = await db.user.save(createFakeUser());
+      const institutionLocation = createFakeInstitutionLocation();
+      // Create an education program with full time program intensity
+      // and one full time offering associated with the program.
+      const fakeOfferingFullTime1 = createFakeEducationProgramOffering(
+        { auditUser, institutionLocation },
+        {
+          initialValues: { offeringIntensity: OfferingIntensity.fullTime },
+          programInitialValues: {
+            programIntensity: ProgramIntensity.fullTime,
+            deliveredOnSite: true,
           },
-          sabcProgramCode: "ABCD",
         },
-      };
-      const dryRunSubmissionMockPartTimeOnlySABC = jest.fn().mockResolvedValue({
-        valid: true,
-        formName: FormNames.ExportFinancialReports,
-        data: { data: payloadPartTimeOnlySABC },
-      });
-      formService.dryRunSubmission = dryRunSubmissionMockPartTimeOnlySABC;
+      );
 
-      // Act/Assert
-      await request(app.getHttpServer())
-        .post(endpoint)
-        .send(payloadPartTimeOnlySABC)
-        .auth(ministryUserToken, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.CREATED)
-        .then((response) => {
-          const fileContent = response.request.res["text"];
-          const parsedResult = parse(fileContent, {
-            header: true,
-          });
-          expect(parsedResult.data).toEqual(
-            expect.arrayContaining([
-              offeringToResultData(fakeOfferingPartTime3),
-              programToResultData(fakeProgram, institutionLocation),
-            ]),
-          );
-        });
+      // Create an education program with full time and part time program intensity
+      // and one full time offering and two part time offerings whose study start date
+      // and end date are within the search date range.
+      const fakeOfferingFullTime2 = createFakeEducationProgramOffering(
+        {
+          auditUser,
+          institutionLocation,
+        },
+        {
+          initialValues: {
+            offeringIntensity: OfferingIntensity.fullTime,
+            studyStartDate: getISODateOnlyString(
+              addDays(1, fakeOfferingFullTime1.studyStartDate),
+            ),
+            studyEndDate: getISODateOnlyString(
+              addDays(1, fakeOfferingFullTime1.studyEndDate),
+            ),
+          },
+          programInitialValues: {
+            programIntensity: ProgramIntensity.fullTimePartTime,
+            deliveredOnSite: true,
+          },
+        },
+      );
+      const fakeOfferingPartTime1 = createFakeEducationProgramOffering(
+        {
+          auditUser,
+          institutionLocation,
+          program: fakeOfferingFullTime2.educationProgram,
+        },
+        {
+          initialValues: {
+            offeringIntensity: OfferingIntensity.partTime,
+            studyStartDate: getISODateOnlyString(
+              addDays(1, fakeOfferingFullTime2.studyStartDate),
+            ),
+            studyEndDate: getISODateOnlyString(
+              addDays(1, fakeOfferingFullTime2.studyEndDate),
+            ),
+          },
+        },
+      );
+
+      // Create an education program with full time and part time program intensity and one
+      // part time offering whose study start date and end date are within the search date range.
+      const fakeOfferingPartTime2 = createFakeEducationProgramOffering(
+        {
+          auditUser,
+          institutionLocation,
+        },
+        {
+          initialValues: {
+            offeringIntensity: OfferingIntensity.partTime,
+            studyStartDate: getISODateOnlyString(
+              addDays(1, fakeOfferingPartTime1.studyStartDate),
+            ),
+            studyEndDate: getISODateOnlyString(
+              addDays(1, fakeOfferingPartTime1.studyEndDate),
+            ),
+          },
+          programInitialValues: {
+            programIntensity: ProgramIntensity.fullTimePartTime,
+            deliveredOnSite: true,
+          },
+        },
+      );
+
+      // Create an education program with full time and part time program intensity and one
+      // part time offering whose study start date and end date are outside the search date range.
+      const fakeOfferingPartTime3 = createFakeEducationProgramOffering(
+        {
+          auditUser,
+          institutionLocation,
+        },
+        {
+          initialValues: {
+            offeringIntensity: OfferingIntensity.partTime,
+            studyStartDate: getISODateOnlyString(
+              addDays(30, fakeOfferingPartTime2.studyStartDate),
+            ),
+            studyEndDate: getISODateOnlyString(
+              addDays(60, fakeOfferingPartTime2.studyEndDate),
+            ),
+          },
+          programInitialValues: {
+            programIntensity: ProgramIntensity.fullTimePartTime,
+            deliveredOnSite: true,
+          },
+        },
+      );
+
+      // Create an education program with full time and part time program intensity without any offering.
+      const fakeProgram = createFakeEducationProgram(
+        {
+          auditUser,
+          institution: institutionLocation.institution,
+        },
+        {
+          initialValues: {
+            programIntensity: ProgramIntensity.fullTimePartTime,
+            deliveredOnSite: true,
+          },
+        },
+      );
+      await db.educationProgram.save(fakeProgram);
+      await db.educationProgramOffering.save([
+        fakeOfferingFullTime1,
+        fakeOfferingFullTime2,
+        fakeOfferingPartTime1,
+        fakeOfferingPartTime2,
+        fakeOfferingPartTime3,
+      ]);
+
+      const ProgramAndOfferingStatusReport =
+        "Program_And_Offering_Status_Report";
+      const endpoint = "/aest/report";
+      const ministryUserToken = await getAESTToken(
+        AESTGroups.BusinessAdministrators,
+      );
 
       // Payload with both full time and part time options being checked.
       const payloadFullTimePartTime = {
@@ -600,7 +771,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
         params: {
           institution: institutionLocation.institution.id,
           startDate: fakeOfferingFullTime1.studyStartDate,
-          endDate: getISODateOnlyString(fakeOfferingPartTime3.studyEndDate),
+          endDate: getISODateOnlyString(fakeOfferingPartTime2.studyEndDate),
           offeringIntensity: {
             "Full Time": true,
             "Part Time": true,
@@ -632,10 +803,231 @@ describe("ReportAestController(e2e)-exportReport", () => {
               offeringToResultData(fakeOfferingFullTime2),
               offeringToResultData(fakeOfferingPartTime1),
               offeringToResultData(fakeOfferingPartTime2),
-              offeringToResultData(fakeOfferingPartTime3),
               programToResultData(fakeProgram, institutionLocation),
               programToResultData(
-                fakeOfferingPartTime4.educationProgram,
+                fakeOfferingPartTime3.educationProgram,
+                institutionLocation,
+              ),
+            ]),
+          );
+        });
+    },
+  );
+
+  it(
+    "Should generate the Program and Offering Status report when a report generation is made with the appropriate date range filters and only the part time option is considered " +
+      "and the SABC code is entered for an institution with one location and three education programs of different program intensities having offerings of different intensities and " +
+      "one program without offerings.",
+    async () => {
+      // Arrange
+      const auditUser = await db.user.save(createFakeUser());
+      const institutionLocation = createFakeInstitutionLocation();
+      // Create an education program with full time program intensity
+      // and one full time offering associated with the program.
+      const fakeOfferingFullTime1 = createFakeEducationProgramOffering(
+        { auditUser, institutionLocation },
+        {
+          initialValues: { offeringIntensity: OfferingIntensity.fullTime },
+          programInitialValues: {
+            programIntensity: ProgramIntensity.fullTime,
+            deliveredOnSite: true,
+            sabcCode: "ABCD",
+          },
+        },
+      );
+
+      // Create an education program with full time and part time program intensity
+      // and designated SABC code and one full time offering and two part time offerings
+      // whose study start date and end date are within the search date range.
+      const fakeOfferingFullTime2 = createFakeEducationProgramOffering(
+        {
+          auditUser,
+          institutionLocation,
+        },
+        {
+          initialValues: {
+            offeringIntensity: OfferingIntensity.fullTime,
+            studyStartDate: getISODateOnlyString(
+              addDays(1, fakeOfferingFullTime1.studyStartDate),
+            ),
+            studyEndDate: getISODateOnlyString(
+              addDays(1, fakeOfferingFullTime1.studyEndDate),
+            ),
+          },
+          programInitialValues: {
+            programIntensity: ProgramIntensity.fullTimePartTime,
+            deliveredOnSite: true,
+            sabcCode: "ABCD",
+          },
+        },
+      );
+      const fakeOfferingPartTime1 = createFakeEducationProgramOffering(
+        {
+          auditUser,
+          institutionLocation,
+          program: fakeOfferingFullTime2.educationProgram,
+        },
+        {
+          initialValues: {
+            offeringIntensity: OfferingIntensity.partTime,
+            studyStartDate: getISODateOnlyString(
+              addDays(1, fakeOfferingFullTime2.studyStartDate),
+            ),
+            studyEndDate: getISODateOnlyString(
+              addDays(1, fakeOfferingFullTime2.studyEndDate),
+            ),
+          },
+        },
+      );
+
+      // Create an education program with full time and part time program intensity
+      // and one part time offering whose study start date and end date are within
+      // the search date range.
+      const fakeOfferingPartTime2 = createFakeEducationProgramOffering(
+        {
+          auditUser,
+          institutionLocation,
+        },
+        {
+          initialValues: {
+            offeringIntensity: OfferingIntensity.partTime,
+            studyStartDate: getISODateOnlyString(
+              addDays(1, fakeOfferingPartTime1.studyStartDate),
+            ),
+            studyEndDate: getISODateOnlyString(
+              addDays(1, fakeOfferingPartTime1.studyEndDate),
+            ),
+          },
+          programInitialValues: {
+            programIntensity: ProgramIntensity.fullTimePartTime,
+            deliveredOnSite: true,
+          },
+        },
+      );
+
+      // Create an education program with full time and part time program intensity
+      // and designated SABC code and one part time offering whose study start date
+      // and end date are outside the search date range.
+      const fakeOfferingPartTime3 = createFakeEducationProgramOffering(
+        {
+          auditUser,
+          institutionLocation,
+        },
+        {
+          initialValues: {
+            offeringIntensity: OfferingIntensity.partTime,
+            studyStartDate: getISODateOnlyString(
+              addDays(30, fakeOfferingPartTime2.studyStartDate),
+            ),
+            studyEndDate: getISODateOnlyString(
+              addDays(60, fakeOfferingPartTime2.studyEndDate),
+            ),
+          },
+          programInitialValues: {
+            programIntensity: ProgramIntensity.fullTimePartTime,
+            deliveredOnSite: true,
+            sabcCode: "ABCD",
+          },
+        },
+      );
+
+      // Create an education program with full time and part time program intensity
+      // and one part time offering whose study start date and end date are outside
+      // the search date range.
+      const fakeOfferingPartTime4 = createFakeEducationProgramOffering(
+        {
+          auditUser,
+          institutionLocation,
+        },
+        {
+          initialValues: {
+            offeringIntensity: OfferingIntensity.partTime,
+            studyStartDate: getISODateOnlyString(
+              addDays(1, fakeOfferingPartTime2.studyStartDate),
+            ),
+            studyEndDate: getISODateOnlyString(
+              addDays(1, fakeOfferingPartTime2.studyEndDate),
+            ),
+          },
+          programInitialValues: {
+            programIntensity: ProgramIntensity.fullTimePartTime,
+            deliveredOnSite: true,
+          },
+        },
+      );
+
+      // Create an education program with full time and part time program intensity
+      // and designated SABC code without any offering.
+      const fakeProgram = createFakeEducationProgram(
+        {
+          auditUser,
+          institution: institutionLocation.institution,
+        },
+        {
+          initialValues: {
+            programIntensity: ProgramIntensity.fullTimePartTime,
+            deliveredOnSite: true,
+            sabcCode: "ABCD",
+          },
+        },
+      );
+      await db.educationProgram.save(fakeProgram);
+      await db.educationProgramOffering.save([
+        fakeOfferingFullTime1,
+        fakeOfferingFullTime2,
+        fakeOfferingPartTime1,
+        fakeOfferingPartTime2,
+        fakeOfferingPartTime3,
+        fakeOfferingPartTime4,
+      ]);
+
+      const ProgramAndOfferingStatusReport =
+        "Program_And_Offering_Status_Report";
+      const endpoint = "/aest/report";
+      const ministryUserToken = await getAESTToken(
+        AESTGroups.BusinessAdministrators,
+      );
+
+      // Payload with both full time and part time option being checked and SABC code entered.
+      const payloadPartTimeOnlySABC = {
+        reportName: ProgramAndOfferingStatusReport,
+        params: {
+          institution: institutionLocation.institution.id,
+          startDate: fakeOfferingFullTime1.studyStartDate,
+          endDate: getISODateOnlyString(fakeOfferingPartTime2.studyEndDate),
+          offeringIntensity: {
+            "Full Time": true,
+            "Part Time": true,
+          },
+          sabcProgramCode: "ABCD",
+        },
+      };
+      const dryRunSubmissionMockPartTimeOnlySABC = jest.fn().mockResolvedValue({
+        valid: true,
+        formName: FormNames.ExportFinancialReports,
+        data: { data: payloadPartTimeOnlySABC },
+      });
+      formService.dryRunSubmission = dryRunSubmissionMockPartTimeOnlySABC;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payloadPartTimeOnlySABC)
+        .auth(ministryUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED)
+        .then((response) => {
+          const fileContent = response.request.res["text"];
+          const parsedResult = parse(fileContent, {
+            header: true,
+          });
+          expect(parsedResult.data).toEqual(
+            expect.arrayContaining([
+              offeringToResultData(fakeOfferingFullTime1),
+              offeringToResultData(fakeOfferingFullTime2),
+              offeringToResultData(fakeOfferingPartTime1),
+              programToResultData(fakeProgram, institutionLocation),
+              programToResultData(
+                fakeOfferingPartTime3.educationProgram,
                 institutionLocation,
               ),
             ]),
