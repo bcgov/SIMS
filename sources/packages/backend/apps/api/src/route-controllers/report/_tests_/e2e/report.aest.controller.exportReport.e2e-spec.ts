@@ -305,7 +305,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
     },
   );
 
-  it.only(
+  it(
     "Should generate the Program and Offering Status report when a report generation is made with the appropriate date range filters and all selections are considered " +
       "for an institution with one location and three education programs of different program intensities having offerings of different intensities and one program without offerings.",
     async () => {
