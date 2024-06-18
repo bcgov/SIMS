@@ -29,7 +29,9 @@ export function createCreateSupportingUsersParentsTaskMock(options: {
     serviceTaskId: WorkflowServiceTasks.CreateSupportingUsersParentsTask,
     options: {
       jobCompleteMock: {
-        createdSupportingUsersIds: options.supportingUserIds,
+        createdSupportingUsersIds: options.supportingUserIds.map(
+          (supportingUserId) => supportingUserId.toString(),
+        ),
       },
       jobMessageMocks,
     },

@@ -45,6 +45,7 @@
     "@bull-board/api": "^5.15.1",
     "@bull-board/express": "^5.15.1",
     "@bull-board/ui": "^5.15.1",
+    "@camunda8/sdk": "^8.6.1",
     "@golevelup/nestjs-discovery": "^4.0.0",
     "@nestjs/axios": "^3.0.2",
     "@nestjs/bull": "^10.1.0",
@@ -82,8 +83,7 @@
     "soap": "^1.0.0",
     "ssh2-sftp-client": "^9.1.0",
     "swagger-ui-express": "^5.0.0",
-    "typeorm": "^0.3.17",
-    "zeebe-node": "^8.2.3"
+    "typeorm": "^0.3.17"
   },
   "devDependencies": {
     "@golevelup/ts-jest": "^0.4.0",

@@ -1,13 +1,13 @@
 import { Controller, Param, ParseIntPipe, Post } from "@nestjs/common";
 import { WorkflowDataLoadService } from "../../services";
-import { ZBClient } from "zeebe-node";
 import { ZEEBE_PROCESS_INSTANCE_COMPLETE_TIMEOUT } from "../../constants/system-configurations-constants";
+import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 
 @Controller("workflow-assessment-submission")
 export class WorkflowAssessmentSubmissionController {
   constructor(
     private readonly workflowDataLoadService: WorkflowDataLoadService,
-    private readonly zeebeClient: ZBClient,
+    private readonly zeebeClient: ZeebeGrpcClient,
   ) {}
 
   /**

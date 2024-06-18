@@ -1,5 +1,5 @@
+import { ZBWorkerOptions } from "@camunda8/sdk/dist/zeebe/types";
 import { MessagePattern } from "@nestjs/microservices";
-import { ZBWorkerOptions } from "zeebe-node/interfaces";
 
 /**
  * Marks a method inside a controller as a Zeebe job worker to execute some workflow task.

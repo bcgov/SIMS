@@ -2,7 +2,6 @@ import { INestApplication } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { DataSource } from "typeorm";
 import { QueueConsumersModule } from "../../../src/queue-consumers.module";
-import { ZBClient } from "zeebe-node";
 import { SshService } from "@sims/integrations/services";
 import { overrideImportsMetadata } from "@sims/test-utils";
 import {
@@ -15,6 +14,7 @@ import { DeepMocked, createMock } from "@golevelup/ts-jest";
 import { DiscoveryModule } from "@golevelup/nestjs-discovery";
 import { QueueModule } from "@sims/services/queue";
 import { SystemUsersService, ZeebeModule } from "@sims/services";
+import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 
 /**
  * Result from a createTestingModule to support E2E tests creation.
@@ -23,7 +23,7 @@ export class CreateTestingModuleResult {
   nestApplication: INestApplication;
   module: TestingModule;
   dataSource: DataSource;
-  zbClient: ZBClient;
+  zbClient: ZeebeGrpcClient;
   sshClientMock: DeepMocked<Client>;
 }
 
@@ -55,7 +55,7 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
   await nestApplication.init();
 
   const dataSource = module.get(DataSource);
-  const zbClient = nestApplication.get(ZBClient);
+  const zbClient = nestApplication.get(ZeebeGrpcClient);
 
   // Load system user.
   const systemUsersService = nestApplication.get(SystemUsersService);

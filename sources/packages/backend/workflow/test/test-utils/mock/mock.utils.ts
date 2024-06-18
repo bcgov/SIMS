@@ -1,4 +1,4 @@
-import { PublishMessageRequest } from "zeebe-node";
+import { PublishMessageRequest } from "@camunda8/sdk/dist/zeebe/types";
 import {
   JOB_COMPLETED_RESULT_SUFFIX,
   JOB_MESSAGE_RESULT_SUFFIX,

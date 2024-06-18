@@ -1,5 +1,6 @@
 import { Module, DynamicModule, Provider } from "@nestjs/common";
-import { ZBClient } from "zeebe-node";
+import { Camunda8 } from "@camunda8/sdk";
+import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 
 /**
  * Zeebe module to allow the Zeebe client
@@ -8,9 +9,10 @@ import { ZBClient } from "zeebe-node";
 @Module({})
 export class ZeebeModule {
   static forRoot(): DynamicModule {
+    const camunda8 = new Camunda8();
     const zeebeClientProvider: Provider = {
-      provide: ZBClient,
-      useValue: new ZBClient(),
+      provide: ZeebeGrpcClient,
+      useValue: camunda8.getZeebeGrpcApiClient(),
     };
     return {
       global: true,

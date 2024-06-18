@@ -14,13 +14,13 @@ import {
 } from "@sims/sims-db";
 import * as faker from "faker";
 import { saveFakeApplicationWithApplicationException } from "../application-exception-helper";
-import { ZBClient } from "zeebe-node";
 import { createE2EDataSources, E2EDataSources } from "@sims/test-utils";
+import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 
 describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
   let app: INestApplication;
   let appDataSource: DataSource;
-  let zbClient: ZBClient;
+  let zbClient: ZeebeGrpcClient;
   let applicationExceptionRepo: Repository<ApplicationException>;
   let db: E2EDataSources;
 
@@ -28,7 +28,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     appDataSource = dataSource;
-    zbClient = app.get(ZBClient);
+    zbClient = app.get(ZeebeGrpcClient);
     applicationExceptionRepo = dataSource.getRepository(ApplicationException);
     db = createE2EDataSources(dataSource);
   });

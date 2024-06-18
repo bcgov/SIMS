@@ -1,4 +1,4 @@
-import { Duration } from "zeebe-node";
+import { Duration } from "@camunda8/sdk/dist/zeebe";
 
 /**
  * Default time that a message can wait, once it is delivery to the broker,

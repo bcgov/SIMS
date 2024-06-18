@@ -1,5 +1,9 @@
+import {
+  ICustomHeaders,
+  IOutputVariables,
+  ZeebeJob,
+} from "@camunda8/sdk/dist/zeebe/types";
 import { createFakeWorkerJob } from "../../../../../test/utils/worker-job-mock";
-import { ICustomHeaders, IOutputVariables, ZeebeJob } from "zeebe-node";
 import { SaveAssessmentDataJobInDTO } from "../../assessment.dto";
 
 /**

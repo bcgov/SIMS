@@ -64,6 +64,13 @@ export CRA_REQUEST_FOLDER := $(or $(CRA_REQUEST_FOLDER), CRA-Request)
 export CRA_RESPONSE_FOLDER := $(or $(CRA_RESPONSE_FOLDER), CRA-Response)
 export CRA_PROGRAM_AREA_CODE := $(or $(CRA_PROGRAM_AREA_CODE), )
 export CRA_ENVIRONMENT_CODE := $(or $(CRA_ENVIRONMENT_CODE), )
+# Versions used by camunda-docker-compose-core.yml during the make camunda.
+export CAMUNDA_CONNECTORS_VERSION := $(or $(CAMUNDA_CONNECTORS_VERSION), 8.5.3)
+export CAMUNDA_PLATFORM_VERSION := $(or $(CAMUNDA_PLATFORM_VERSION), 8.5.0)
+export ELASTIC_VERSION := $(or $(ELASTIC_VERSION), 8.14.0)
+# Camunda default values for local development.
+export CAMUNDA_OAUTH_DISABLED := $(or $(CAMUNDA_OAUTH_DISABLED), true)
+export CAMUNDA_SECURE_CONNECTION := $(or $(CAMUNDA_SECURE_CONNECTION), false)
 
 # Starts all applications: SIMS application (Web Portals, SIMS Api, Workers, Queue Consumers), 
 # and also Form.io server, and Camunda releated services.

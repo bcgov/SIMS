@@ -1,6 +1,5 @@
 import { ASSESSMENT_ID } from "@sims/services/workflow/variables/assessment-gateway";
 import { AssessmentTriggerType } from "@sims/sims-db";
-import { ZBClient } from "zeebe-node";
 import { AssessmentConsolidatedData } from "../../models";
 import {
   createFakeConsolidatedFulltimeData,
@@ -17,9 +16,10 @@ import {
   createLoadAssessmentDataTaskMock,
   createVerifyAssessmentCalculationOrderTaskMock,
 } from "../../test-utils/mock";
+import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 
 describe(`E2E Test Workflow assessment gateway on student appeal for ${PROGRAM_YEAR}`, () => {
-  let zeebeClientProvider: ZBClient;
+  let zeebeClientProvider: ZeebeGrpcClient;
   beforeAll(async () => {
     zeebeClientProvider = ZeebeMockedClient.getMockedZeebeInstance();
   });
@@ -62,5 +62,9 @@ describe(`E2E Test Workflow assessment gateway on student appeal for ${PROGRAM_Y
       assessmentGatewayResponse.variables,
       WorkflowServiceTasks.UpdateApplicationStatusToInProgress,
     );
+  });
+
+  afterAll(async () => {
+    await zeebeClientProvider?.close();
   });
 });

@@ -3,7 +3,7 @@ import {
   IInputVariables,
   IOutputVariables,
   ZeebeJob,
-} from "zeebe-node";
+} from "@camunda8/sdk/dist/zeebe/types";
 
 export enum MockedZeebeJobResult {
   Complete = "complete",

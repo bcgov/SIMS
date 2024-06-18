@@ -117,11 +117,13 @@ IS_FULLTIME_ALLOWED=true
 FILE_NAME= cypress.env.json
 FILE_PATH= SIMS\testing\functional\tests\cypress.env.json
 
-# Zeebe
+# Zeebe (only the 3 below are neeed for local development)
 ZEEBE_ADDRESS=localhost:26500
+CAMUNDA_OAUTH_DISABLED=true
+CAMUNDA_SECURE_CONNECTION=false
 ZEEBE_CLIENT_ID=
 ZEEBE_CLIENT_SECRET=
-ZEEBE_AUTHORIZATION_SERVER_URL=
+CAMUNDA_OAUTH_URL=
 # Max retries ensures that if the grpc connection cannot be established within maximum
 # number of retry then the process with terminate.
 ZEEBE_CLIENT_MAX_RETRIES=20
