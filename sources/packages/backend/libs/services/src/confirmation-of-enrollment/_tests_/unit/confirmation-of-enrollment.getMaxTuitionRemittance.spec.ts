@@ -67,6 +67,7 @@ describe("ConfirmationOfEnrollmentService-getMaxTuitionRemittance", () => {
       awards,
       offeringCosts,
       MaxTuitionRemittanceTypes.Estimated,
+      0,
     );
     // Assert
     expect(total).toBe(450);
@@ -90,6 +91,7 @@ describe("ConfirmationOfEnrollmentService-getMaxTuitionRemittance", () => {
       awards,
       offeringCosts,
       MaxTuitionRemittanceTypes.Estimated,
+      0,
     );
     // Assert
     expect(total).toBe(450);
@@ -124,6 +126,7 @@ describe("ConfirmationOfEnrollmentService-getMaxTuitionRemittance", () => {
       awards,
       offeringCosts,
       MaxTuitionRemittanceTypes.Effective,
+      0,
     );
     // Assert
     expect(total).toBe(600);
@@ -148,6 +151,7 @@ describe("ConfirmationOfEnrollmentService-getMaxTuitionRemittance", () => {
       awards,
       offeringCosts,
       MaxTuitionRemittanceTypes.Effective,
+      0,
     );
     // Assert
     expect(total).toBe(115);

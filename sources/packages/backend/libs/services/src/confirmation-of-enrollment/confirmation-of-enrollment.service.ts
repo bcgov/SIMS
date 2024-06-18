@@ -110,6 +110,29 @@ export class ConfirmationOfEnrollmentService {
       return null;
     }
 
+    const previousTuitionRemittance = await this.getPreviousTuitionRemittance(
+      maxTuitionRemittanceData.studentAssessment.id,
+      disbursementId,
+    );
+
+    return this.getMaxTuitionRemittance(
+      maxTuitionRemittanceData.disbursementValues,
+      maxTuitionRemittanceData.studentAssessment.offering,
+      MaxTuitionRemittanceTypes.Estimated,
+      previousTuitionRemittance,
+    );
+  }
+
+  /**
+   *
+   * @param studentAssessmentId
+   * @param disbursementId
+   * @returns
+   */
+  async getPreviousTuitionRemittance(
+    studentAssessmentId: number,
+    disbursementId: number,
+  ): Promise<number> {
     const previousTuitionRemittanceData =
       await this.disbursementScheduleRepo.findOne({
         select: {
@@ -120,18 +143,14 @@ export class ConfirmationOfEnrollmentService {
         where: {
           id: LessThan(disbursementId),
           studentAssessment: {
-            id: maxTuitionRemittanceData.studentAssessment.id,
+            id: studentAssessmentId,
           },
         },
       });
-
-    return this.getMaxTuitionRemittance(
-      maxTuitionRemittanceData.disbursementValues,
-      maxTuitionRemittanceData.studentAssessment.offering,
-      MaxTuitionRemittanceTypes.Estimated,
-      previousTuitionRemittanceData.tuitionRemittanceEffectiveAmount ??
-        previousTuitionRemittanceData.tuitionRemittanceRequestedAmount,
-    );
+    return previousTuitionRemittanceData
+      ? previousTuitionRemittanceData.tuitionRemittanceEffectiveAmount ??
+          previousTuitionRemittanceData.tuitionRemittanceRequestedAmount
+      : 0;
   }
 
   /**
@@ -151,7 +170,7 @@ export class ConfirmationOfEnrollmentService {
     awards: Award[],
     offeringCosts: OfferingCosts,
     calculationType: MaxTuitionRemittanceTypes,
-    previousTuitionRemittance?: number,
+    previousTuitionRemittance: number,
   ): number {
     let totalAwards = 0;
     const tuitionAwards = awards.filter((award) =>
@@ -176,8 +195,7 @@ export class ConfirmationOfEnrollmentService {
       offeringCosts.programRelatedCosts +
       offeringCosts.mandatoryFees;
     return (
-      Math.min(offeringTotalCosts, totalAwards) -
-      (previousTuitionRemittance ?? 0)
+      Math.min(offeringTotalCosts, totalAwards) - previousTuitionRemittance
     );
   }
 
