@@ -51,7 +51,6 @@ export default defineComponent({
     const REPORT_TYPE_DROPDOWN_KEY = "reportName";
     const loading = ref(false);
     const PROGRAM_YEAR_DROPDOWN_KEY = "programYear";
-    const INSTITUTION_NAME_DROPDOWN_KEY = "institutionName";
     const INSTITUTION_DROPDOWN_KEY = "institutionId";
     let formData: FormIOForm;
     const formLoaded = async (form: FormIOForm) => {
@@ -63,8 +62,20 @@ export default defineComponent({
       );
     };
     const formChanged = async (form: FormIOForm, event: FormIOChangeEvent) => {
-      // Populates the program year select component if required.
-      if (event.changed.component.key === REPORT_TYPE_DROPDOWN_KEY) {
+      // Populates the program year select component, institution select component if required.
+      if (event.changed?.component.key === REPORT_TYPE_DROPDOWN_KEY) {
+        if (event.changed["value"] === "Ministry_Student_Unmet_Need_Report") {
+          form["root"].getComponent(
+            "institutionId",
+          ).component.validate.required = false;
+          form["root"].getComponent("institutionId").triggerRedraw();
+        }
+        if (event.changed["value"] === "Program_And_Offering_Status_Report") {
+          form["root"].getComponent(
+            "institutionId",
+          ).component.validate.required = true;
+          form["root"].getComponent("institutionId").triggerRedraw();
+        }
         const programYearSelect = getFirstComponent(
           form,
           PROGRAM_YEAR_DROPDOWN_KEY,
@@ -78,21 +89,6 @@ export default defineComponent({
           await formioDataLoader.loadProgramYear(
             form,
             PROGRAM_YEAR_DROPDOWN_KEY,
-          );
-        }
-        const institutionNameSelect = getFirstComponent(
-          form,
-          INSTITUTION_NAME_DROPDOWN_KEY,
-        );
-        if (
-          institutionNameSelect._visible &&
-          !institutionNameSelect.selectOptions.length
-        ) {
-          // Load institution data if the select is visible and
-          // its items are not populated yet.
-          await formioDataLoader.loadInstitutionName(
-            form,
-            INSTITUTION_NAME_DROPDOWN_KEY,
           );
         }
         const institutionSelect = getFirstComponent(
