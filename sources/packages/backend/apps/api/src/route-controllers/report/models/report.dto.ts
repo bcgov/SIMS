@@ -20,6 +20,7 @@ enum MinistryReportNames {
   DataInventory = "Data_Inventory_Report",
   ECertErrors = "ECert_Errors_Report",
   InstitutionDesignation = "Institution_Designation_Report",
+  ProgramAndOfferingStatus = "Program_And_Offering_Status_Report",
 }
 
 /**

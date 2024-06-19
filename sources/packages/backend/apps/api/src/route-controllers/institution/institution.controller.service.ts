@@ -96,7 +96,7 @@ export class InstitutionControllerService {
     const institutions = await this.institutionService.getAllInstitutionNames();
     return institutions.map((institution) => ({
       id: institution.id,
-      description: institution.legalOperatingName,
+      description: institution.operatingName,
     }));
   }
 }
