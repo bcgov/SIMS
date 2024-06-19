@@ -1,5 +1,6 @@
 import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 import {
+  ZeebeMockedClient,
   createFakeConsolidatedPartTimeData,
   executePartTimeAssessmentForProgramYear,
 } from "../../../test-utils";
@@ -31,4 +32,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-total-academic-e
       ).toBe(1630);
     },
   );
+
+  afterAll(async () => {
+    // Closes the singleton instance created during test executions.
+    await ZeebeMockedClient.getMockedZeebeInstance().close();
+  });
 });

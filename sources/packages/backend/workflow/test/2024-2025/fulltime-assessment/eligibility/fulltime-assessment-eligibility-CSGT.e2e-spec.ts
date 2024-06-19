@@ -1,4 +1,5 @@
 import {
+  ZeebeMockedClient,
   createFakeConsolidatedFulltimeData,
   executeFullTimeAssessmentForProgramYear,
 } from "../../../test-utils";
@@ -40,5 +41,10 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGT
     );
     // Assert
     expect(calculatedAssessment.variables.awardEligibilityCSGT).toBe(false);
+  });
+
+  afterAll(async () => {
+    // Closes the singleton instance created during test executions.
+    await ZeebeMockedClient.getMockedZeebeInstance().close();
   });
 });

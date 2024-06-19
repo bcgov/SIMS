@@ -1,4 +1,4 @@
-import { CreateProcessInstanceWithResultResponse } from "zeebe-node";
+import { CreateProcessInstanceWithResultResponse } from "@camunda8/sdk/dist/zeebe/types";
 import { ZeebeMockedClient } from "./mock";
 import {
   AssessmentConsolidatedData,

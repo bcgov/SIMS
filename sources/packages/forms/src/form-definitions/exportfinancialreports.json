@@ -311,7 +311,7 @@
               "input": true,
               "tableView": true,
               "label": "Institution Name",
-              "key": "institutionName",
+              "key": "institution",
               "placeholder": "Select Institution Name",
               "data": {
                 "values": [
@@ -347,7 +347,7 @@
               "conditional": {
                 "show": "true",
                 "when": "reportName",
-                "eq": "Program_And_Offering_Status"
+                "eq": "Program_And_Offering_Status_Report"
               },
               "properties": {},
               "lockKey": true
@@ -605,7 +605,7 @@
                 "eq": "",
                 "json": ""
               },
-              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Data_Inventory_Report'\n    || data.reportName === 'Institution_Designation_Report'\n    || data.reportName === 'ECert_Errors_Report'\n    || data.reportName === 'Program_And_Offering_Status'",
+              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Data_Inventory_Report'\n    || data.reportName === 'Institution_Designation_Report'\n    || data.reportName === 'ECert_Errors_Report'\n    || data.reportName === 'Program_And_Offering_Status_Report'",
               "logic": [],
               "attributes": {},
               "overlay": {
@@ -732,7 +732,7 @@
                 "eq": "",
                 "json": ""
               },
-              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Data_Inventory_Report' \n    || data.reportName === 'ECert_Errors_Report' \n    || data.reportName === 'Program_And_Offering_Status'\n    || data.reportName === 'Student_Unmet_Need_Report'\n    || data.reportName === 'Offering_Details_Report'",
+              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Data_Inventory_Report' \n    || data.reportName === 'ECert_Errors_Report' \n    || data.reportName === 'Program_And_Offering_Status_Report'\n    || data.reportName === 'Student_Unmet_Need_Report'\n    || data.reportName === 'Offering_Details_Report'",
               "logic": [],
               "attributes": {},
               "overlay": {
@@ -793,7 +793,7 @@
               "conditional": {
                 "show": "true",
                 "when": "reportName",
-                "eq": "Program_And_Offering_Status"
+                "eq": "Program_And_Offering_Status_Report"
               },
               "type": "textfield",
               "labelPosition": "top",

@@ -1,4 +1,3 @@
-import { ZBClient, ZeebeJob } from "zeebe-node";
 import { Workers } from "@sims/services/constants";
 import {
   JOB_COMPLETED_RESULT_SUFFIX,
@@ -6,6 +5,14 @@ import {
   PARENT_SUBPROCESSES_VARIABLE,
 } from "../constants/mock-constants";
 import { getNormalizedServiceTaskId, getPassthroughTaskId } from "./mock.utils";
+import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
+import {
+  ICustomHeaders,
+  IInputVariables,
+  IOutputVariables,
+  ZeebeJob,
+} from "@camunda8/sdk/dist/zeebe/types";
+import { Camunda8 } from "@camunda8/sdk";
 
 /**
  * Mock task handler which returns job complete
@@ -14,12 +21,14 @@ import { getNormalizedServiceTaskId, getPassthroughTaskId } from "./mock.utils";
  * @param job worker job.
  * @returns mock task handler response.
  */
-async function mockTaskHandler(job: ZeebeJob<unknown>) {
+async function mockTaskHandler(
+  job: ZeebeJob<IInputVariables, ICustomHeaders, IOutputVariables>,
+) {
   const serviceTaskId = getNormalizedServiceTaskId(job.elementId);
   const serviceTaskMock = job.variables[serviceTaskId] ?? {};
   // Check if the service task id is in a sub-process.
   const subprocesses: string[] =
-    job.variables[PARENT_SUBPROCESSES_VARIABLE] ?? [];
+    (job.variables[PARENT_SUBPROCESSES_VARIABLE] as string[]) ?? [];
   let mockedData = serviceTaskMock;
   for (const subprocessMock of subprocesses) {
     const subprocessMockId = getNormalizedServiceTaskId(subprocessMock);
@@ -48,7 +57,7 @@ async function mockTaskHandler(job: ZeebeJob<unknown>) {
  * Zeebe client with mocked worker implementations.
  */
 export class ZeebeMockedClient {
-  private static mockedZeebeClient: ZBClient;
+  private static mockedZeebeClient: ZeebeGrpcClient;
 
   static getMockedZeebeInstance() {
     if (!ZeebeMockedClient.mockedZeebeClient) {
@@ -56,7 +65,10 @@ export class ZeebeMockedClient {
         taskType,
         taskHandler: mockTaskHandler,
       }));
-      ZeebeMockedClient.mockedZeebeClient = new ZBClient({ loglevel: "ERROR" });
+      const camunda8 = new Camunda8({
+        zeebeGrpcSettings: { ZEEBE_CLIENT_LOG_LEVEL: "ERROR" },
+      });
+      ZeebeMockedClient.mockedZeebeClient = camunda8.getZeebeGrpcApiClient();
       fakeWorkers.forEach((fakeWorker) =>
         ZeebeMockedClient.mockedZeebeClient.createWorker(fakeWorker),
       );

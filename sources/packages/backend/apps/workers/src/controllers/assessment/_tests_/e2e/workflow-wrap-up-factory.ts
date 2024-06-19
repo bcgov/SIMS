@@ -1,7 +1,11 @@
 import { WorkflowData } from "@sims/sims-db";
 import { createFakeWorkerJob } from "../../../../../test/utils/worker-job-mock";
-import { ICustomHeaders, IOutputVariables, ZeebeJob } from "zeebe-node";
 import { WorkflowWrapUpJobInDTO } from "../../assessment.dto";
+import {
+  ICustomHeaders,
+  IOutputVariables,
+  ZeebeJob,
+} from "@camunda8/sdk/dist/zeebe/types";
 
 /**
  * Creates a fake workflow wrap up payload.

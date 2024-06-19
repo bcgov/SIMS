@@ -23,7 +23,7 @@ export function createFakeEducationProgram(
   program.nocCode = "nocCode";
   program.fieldOfStudyCode = 99;
   program.regulatoryBody = "regulatoryBody";
-  program.deliveredOnSite = false;
+  program.deliveredOnSite = options?.initialValues?.deliveredOnSite ?? false;
   program.deliveredOnline = false;
   program.courseLoadCalculation = "courseLoadCalculation";
   program.completionYears = "completionYears";
@@ -36,9 +36,11 @@ export function createFakeEducationProgram(
   program.hasIntlExchange = "yes";
   program.programDeclaration = true;
   program.institution = relations?.institution ?? createFakeInstitution();
-  program.programIntensity = ProgramIntensity.fullTime;
+  program.programIntensity =
+    options?.initialValues?.programIntensity ?? ProgramIntensity.fullTime;
   program.submittedBy = relations.auditUser;
   program.isActive = options?.initialValues?.isActive ?? true;
   program.effectiveEndDate = options?.initialValues?.effectiveEndDate ?? null;
+  program.sabcCode = options?.initialValues?.sabcCode ?? null;
   return program;
 }

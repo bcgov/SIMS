@@ -7,7 +7,6 @@ import {
   E2EDataSources,
   saveFakeApplication,
 } from "@sims/test-utils";
-import { ICustomHeaders } from "zeebe-node";
 import {
   createFakeWorkerJob,
   FAKE_WORKER_JOB_ERROR_CODE_PROPERTY,
@@ -22,6 +21,7 @@ import {
   ApplicationExceptionsJobOutDTO,
 } from "../../application.dto";
 import { createFakeVerifyApplicationExceptionsPayload } from "./verify-application-exceptions";
+import { ICustomHeaders } from "@camunda8/sdk/dist/zeebe/types";
 
 describe("ApplicationController(e2e)-verifyApplicationExceptions", () => {
   let db: E2EDataSources;

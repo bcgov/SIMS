@@ -1,11 +1,5 @@
 import { Controller, Logger } from "@nestjs/common";
 import { ZeebeWorker } from "../../zeebe";
-import {
-  ZeebeJob,
-  ICustomHeaders,
-  MustReturnJobActionAcknowledgement,
-  IOutputVariables,
-} from "zeebe-node";
 // TODO: In the upcoming tasks, either DisbursementScheduleService will be renamed at shared library
 // or MSFAA related methods will move to shared library.
 import { DisbursementScheduleSharedService } from "@sims/services";
@@ -33,6 +27,12 @@ import {
   DISBURSEMENT_NOT_FOUND,
 } from "../../constants";
 import { createUnexpectedJobFail } from "../../utilities";
+import {
+  ICustomHeaders,
+  IOutputVariables,
+  MustReturnJobActionAcknowledgement,
+  ZeebeJob,
+} from "@camunda8/sdk/dist/zeebe/types";
 
 @Controller()
 export class DisbursementController {

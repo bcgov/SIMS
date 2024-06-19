@@ -4,7 +4,7 @@ import {
   YesNoOptions,
   OfferingDeliveryOptions,
 } from "@sims/test-utils";
-import { JSONDoc } from "zeebe-node";
+import { JSONDoc } from "@camunda8/sdk/dist/zeebe/types";
 
 export interface StudentDependent extends JSONDoc {
   dateOfBirth: string;

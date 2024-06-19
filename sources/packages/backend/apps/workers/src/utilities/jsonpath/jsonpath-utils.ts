@@ -1,3 +1,7 @@
+import {
+  ICustomHeaders,
+  IOutputVariables,
+} from "@camunda8/sdk/dist/zeebe/types";
 import * as JSONPath from "jsonpath";
 
 /**
@@ -116,8 +120,8 @@ function getJsonPathNodeValue(
  */
 export function filterObjectProperties(
   object: unknown,
-  filter: Record<string, string>,
-): unknown {
+  filter: ICustomHeaders,
+): IOutputVariables {
   const resultObject = {} as Record<string, unknown>;
   Object.keys(filter).forEach((filterKey: string) => {
     if (object) {
@@ -125,10 +129,10 @@ export function filterObjectProperties(
       // This method is mostly used to return values to the Workflow and if the property
       // is set as undefined it will prevent the variable from being created on Camunda.
       resultObject[filterKey] =
-        getJsonPathNodeValue(object, filter[filterKey]) ?? null;
+        getJsonPathNodeValue(object, filter[filterKey].toString()) ?? null;
     } else {
       resultObject[filterKey] = null;
     }
   });
-  return resultObject;
+  return resultObject as IOutputVariables;
 }

@@ -1,18 +1,19 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ApplicationExceptionStatus, ProgramInfoStatus } from "@sims/sims-db";
-import { CreateProcessInstanceResponse, ZBClient } from "zeebe-node";
 import { ZEEBE_PUBLISH_MESSAGE_DEFAULT_TIME_TO_LEAVE } from "../constants";
 import { ZeebeGRPCError } from "../zeebe/zeebe.models";
 import {
   APPLICATION_EXCEPTION_STATUS,
   PROGRAM_INFO_STATUS,
 } from "./variables/assessment-gateway";
+import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
+import { CreateProcessInstanceResponse } from "@camunda8/sdk/dist/zeebe/types";
 
 @Injectable()
 export class WorkflowClientService {
   private readonly logger = new Logger(WorkflowClientService.name);
 
-  constructor(private readonly zeebeClient: ZBClient) {}
+  constructor(private readonly zeebeClient: ZeebeGrpcClient) {}
 
   /**
    * Starts application assessment.

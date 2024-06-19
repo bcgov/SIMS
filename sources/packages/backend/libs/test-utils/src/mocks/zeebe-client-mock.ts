@@ -1,6 +1,6 @@
+import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 import { DynamicModule, Provider } from "@nestjs/common";
 import { ZeebeModule } from "@sims/services";
-import { ZBClient } from "zeebe-node";
 
 /**
  * Creates a mocked {@link ZeebeModule} that uses a mocked {@link ZBClient}
@@ -9,12 +9,12 @@ import { ZBClient } from "zeebe-node";
  * @returns mocked {@link ZeebeModule}.
  */
 export function createZeebeModuleMock(): DynamicModule {
-  const mockedZBClient = {} as ZBClient;
+  const mockedZBClient = {} as ZeebeGrpcClient;
   mockedZBClient.createProcessInstance = jest.fn();
   mockedZBClient.publishMessage = jest.fn();
   mockedZBClient.cancelProcessInstance = jest.fn();
   const zeebeClientProvider: Provider = {
-    provide: ZBClient,
+    provide: ZeebeGrpcClient,
     useValue: mockedZBClient,
   };
   return {

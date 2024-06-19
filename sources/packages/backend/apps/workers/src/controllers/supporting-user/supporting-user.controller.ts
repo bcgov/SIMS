@@ -1,11 +1,5 @@
 import { Controller, Logger } from "@nestjs/common";
 import { ZeebeWorker } from "../../zeebe";
-import {
-  ZeebeJob,
-  MustReturnJobActionAcknowledgement,
-  IOutputVariables,
-  ICustomHeaders,
-} from "zeebe-node";
 import { SupportingUserService } from "../../services";
 import {
   CheckSupportingUserResponseJobInDTO,
@@ -24,6 +18,12 @@ import {
 } from "@sims/services/workflow/variables/supporting-user-information-request";
 import { MaxJobsToActivate } from "../../types";
 import { Workers } from "@sims/services/constants";
+import {
+  ICustomHeaders,
+  IOutputVariables,
+  MustReturnJobActionAcknowledgement,
+  ZeebeJob,
+} from "@camunda8/sdk/dist/zeebe/types";
 
 @Controller()
 export class SupportingUserController {
@@ -37,7 +37,7 @@ export class SupportingUserController {
     job: Readonly<
       ZeebeJob<
         CreateSupportingUsersJobInDTO,
-        IOutputVariables,
+        ICustomHeaders,
         CreateSupportingUsersJobOutDTO
       >
     >,

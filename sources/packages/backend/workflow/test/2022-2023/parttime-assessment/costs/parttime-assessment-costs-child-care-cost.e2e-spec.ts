@@ -1,4 +1,5 @@
 import {
+  ZeebeMockedClient,
   createFakeConsolidatedPartTimeData,
   executePartTimeAssessmentForProgramYear,
 } from "../../../test-utils";
@@ -246,5 +247,10 @@ describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-child-car
     expect(
       calculatedAssessment.variables.calculatedDataTotalChildCareCost,
     ).toBe(0);
+  });
+
+  afterAll(async () => {
+    // Closes the singleton instance created during test executions.
+    await ZeebeMockedClient.getMockedZeebeInstance().close();
   });
 });

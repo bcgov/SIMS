@@ -1003,8 +1003,8 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    */
   async getAllInstitutionNames(): Promise<Partial<Institution>[]> {
     return this.repo.find({
-      select: { id: true, legalOperatingName: true },
-      order: { legalOperatingName: "ASC" },
+      select: { id: true, operatingName: true },
+      order: { operatingName: "ASC" },
     });
   }
 }

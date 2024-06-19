@@ -5,7 +5,6 @@ import {
   saveFakeApplication,
 } from "@sims/test-utils";
 import { APPLICATION_STATUS_NOT_UPDATED } from "../../../../constants";
-import { IOutputVariables } from "zeebe-node";
 import {
   createFakeWorkerJob,
   FAKE_WORKER_JOB_ERROR_CODE_PROPERTY,
@@ -20,6 +19,7 @@ import {
   ApplicationUpdateStatusJobInDTO,
 } from "../../application.dto";
 import { createFakeUpdateApplicationStatusPayload } from "./update-application-status";
+import { IOutputVariables } from "@camunda8/sdk/dist/zeebe/types";
 
 describe("ApplicationController(e2e)-updateStatus", () => {
   let db: E2EDataSources;
