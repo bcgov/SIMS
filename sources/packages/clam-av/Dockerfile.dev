@@ -1,0 +1,6 @@
+FROM clamav/clamav:1.2
+RUN freshclam
+# Copy the clamd.conf file into the container
+COPY clam-av/clamd.conf /etc/clamav/clamd.conf
+COPY "clam-av/scripts/docker-entrypoint-unprivileged.sh" "/init"
+RUN chmod +x /init

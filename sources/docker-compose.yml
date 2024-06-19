@@ -170,6 +170,7 @@ services:
     depends_on:
       - postgres
       - redis
+      - clamav
   # - Queue consumers
   # Load test gateway
   load-test-gateway:
@@ -200,6 +201,29 @@ services:
     depends_on:
       - postgres
   # - Load test gateway
+  # - ClamAV
+  clamav:
+    container_name: clamav
+    build:
+      context: ./packages/
+      dockerfile: clam-av/Dockerfile.dev
+    restart: always
+    stdin_open: true
+    environment:
+      - CLAMAV_NO_CLAMD="false"
+      - CLAMAV_NO_FRESHCLAMD="false"
+      - CLAMAV_NO_MILTERD="true"
+      - FRESHCLAM_CHECKS=1
+      - CLAMAV_PORT=${CLAMAV_PORT}
+      - CLAMD_STARTUP_TIMEOUT=1800
+    ports:
+      - ${CLAMAV_PORT}:${CLAMAV_PORT}
+    healthcheck:
+      test: [CMD-SHELL, /usr/local/bin/clamdcheck.sh]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  # - ClamAV
   # Web
   web:
     image: web-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
