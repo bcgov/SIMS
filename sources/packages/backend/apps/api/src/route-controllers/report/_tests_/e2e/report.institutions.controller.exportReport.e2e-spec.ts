@@ -3,6 +3,7 @@ import {
   ApplicationData,
   ApplicationStatus,
   Assessment,
+  FullTimeAssessment,
   Institution,
   InstitutionLocation,
   ProgramYear,
@@ -325,7 +326,14 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
-
+    const assessmentData = savedApplication.currentAssessment
+      .assessmentData as FullTimeAssessment;
+    const applicationData = savedApplication.currentAssessment.application.data;
+    const savedOffering = savedApplication.currentAssessment.offering;
+    const savedEducationProgram = savedOffering.educationProgram;
+    const savedLocation = savedApplication.location;
+    const savedStudent = savedApplication.student;
+    const savedUser = savedStudent.user;
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
@@ -345,120 +353,61 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
               "Assessment Date": getISODateOnlyString(
                 savedApplication.currentAssessment.assessmentDate,
               ),
-              "CIP Code":
-                savedApplication.currentAssessment.offering.educationProgram
-                  .cipCode,
-              "Citizenship Status":
-                savedApplication.currentAssessment.application.data.citizenship,
-              "Estimated BCAG": String(
-                savedApplication.currentAssessment.assessmentData
-                  .finalProvincialAwardNetBCAGAmount,
-              ),
-              "Estimated BCSL": String(
-                savedApplication.currentAssessment.assessmentData[
-                  "finalProvincialAwardNetBCSLAmount"
-                ],
-              ),
-              "Estimated BGPD": String(
-                savedApplication.currentAssessment.assessmentData[
-                  "finalProvincialAwardNetBGPDAmount"
-                ],
-              ),
-              "Estimated CSGD": String(
-                savedApplication.currentAssessment.assessmentData
-                  .finalFederalAwardNetCSGDAmount,
-              ),
-              "Estimated CSGF": String(
-                savedApplication.currentAssessment.assessmentData[
-                  "finalFederalAwardNetCSGFAmount"
-                ],
-              ),
-              "Estimated CSGP": String(
-                savedApplication.currentAssessment.assessmentData
-                  .finalFederalAwardNetCSGPAmount,
-              ),
+              "CIP Code": savedEducationProgram.cipCode,
+              "Citizenship Status": applicationData.citizenship,
+              "Estimated BCAG":
+                assessmentData.finalProvincialAwardNetBCAGAmount.toString(),
+              "Estimated BCSL":
+                assessmentData.finalProvincialAwardNetBCSLAmount.toString(),
+              "Estimated BGPD":
+                assessmentData.finalProvincialAwardNetBGPDAmount.toString(),
+              "Estimated CSGD":
+                assessmentData.finalFederalAwardNetCSGDAmount.toString(),
+              "Estimated CSGF":
+                assessmentData.finalFederalAwardNetCSGFAmount.toString(),
+              "Estimated CSGP":
+                assessmentData.finalFederalAwardNetCSGPAmount.toString(),
               "Estimated CSLP": "",
               "Estimated CSPT": "",
-              "Estimated SBSD": String(
-                savedApplication.currentAssessment.assessmentData
-                  .finalProvincialAwardNetSBSDAmount,
-              ),
-              "Federal Assessed Resources": String(
-                savedApplication.currentAssessment.assessmentData[
-                  "totalFederalAssessedResources"
-                ],
-              ),
-              "Federal assessed need": String(
-                savedApplication.currentAssessment.assessmentData[
-                  "federalAssessmentNeed"
-                ],
-              ),
-              "Federal/Provincial Assessed Costs": String(
-                savedApplication.currentAssessment.assessmentData[
-                  "totalAssessedCost"
-                ],
-              ),
-              "Independant/Dependant":
-                savedApplication.currentAssessment.application.data
-                  .dependantstatus,
-              "Indigenous person status":
-                savedApplication.currentAssessment.application.data
-                  .indigenousStatus,
-              "Institution Location Code":
-                savedApplication.location.institutionCode,
-              "Institution Location Name": savedApplication.location.name,
+              "Estimated SBSD":
+                assessmentData.finalProvincialAwardNetSBSDAmount.toString(),
+              "Federal Assessed Resources":
+                assessmentData.totalFederalAssessedResources.toString(),
+              "Federal assessed need":
+                assessmentData.federalAssessmentNeed.toString(),
+              "Federal/Provincial Assessed Costs":
+                assessmentData.totalAssessedCost.toString(),
+              "Independant/Dependant": applicationData.dependantstatus,
+              "Indigenous person status": applicationData.indigenousStatus,
+              "Institution Location Code": savedLocation.institutionCode,
+              "Institution Location Name": savedLocation.name,
               "Marital Status":
                 savedApplication.currentAssessment.application
                   .relationshipStatus,
-              "Number of Eligible Dependants Total": String(
-                savedApplication.currentAssessment.workflowData.calculatedData
-                  .totalEligibleDependents,
-              ),
-              "Offering Name": savedApplication.currentAssessment.offering.name,
-              "Profile Disability Status":
-                savedApplication.student.disabilityStatus,
-              "Program Credential Type":
-                savedApplication.currentAssessment.offering.educationProgram
-                  .credentialType,
-              "Program Length":
-                savedApplication.currentAssessment.offering.educationProgram
-                  .completionYears,
-              "Program Name":
-                savedApplication.currentAssessment.offering.educationProgram
-                  .name,
-              "Provincial Assessed Resources": String(
-                savedApplication.currentAssessment.assessmentData[
-                  "totalProvincialAssessedResources"
-                ],
-              ),
-              "Provincial assessed need": String(
-                savedApplication.currentAssessment.assessmentData[
-                  "provincialAssessmentNeed"
-                ],
-              ),
+              "Number of Eligible Dependants Total":
+                savedApplication.currentAssessment.workflowData.calculatedData.totalEligibleDependents.toString(),
+              "Offering Name": savedOffering.name,
+              "Profile Disability Status": savedStudent.disabilityStatus,
+              "Program Credential Type": savedEducationProgram.credentialType,
+              "Program Length": savedEducationProgram.completionYears,
+              "Program Name": savedEducationProgram.name,
+              "Provincial Assessed Resources":
+                assessmentData.totalProvincialAssessedResources.toString(),
+              "Provincial assessed need":
+                assessmentData.provincialAssessmentNeed.toString(),
               "SABC Program Code": "",
-              SIN: savedApplication.student.sinValidation.sin,
-              "Student Email Address": savedApplication.student.user.email,
-              "Student First Name": savedApplication.student.user.firstName,
-              "Student Last Name": savedApplication.student.user.lastName,
+              SIN: savedStudent.sinValidation.sin,
+              "Student Email Address": savedUser.email,
+              "Student First Name": savedUser.firstName,
+              "Student Last Name": savedUser.lastName,
               "Student Number": "",
-              "Student Phone Number":
-                savedApplication.student.contactInfo.phone,
-              "Study End Date":
-                savedApplication.currentAssessment.offering.studyEndDate,
-              "Study Intensity (PT or FT)":
-                savedApplication.currentAssessment.offering.offeringIntensity,
-              "Study Start Date":
-                savedApplication.currentAssessment.offering.studyStartDate,
-              "Total assistance": String(
-                savedApplication.currentAssessment.assessmentData
-                  .finalAwardTotal,
-              ),
-              "Year of Study": String(
-                savedApplication.currentAssessment.offering.yearOfStudy,
-              ),
-              "Youth in Care Flag":
-                savedApplication.currentAssessment.application.data.youthInCare,
+              "Student Phone Number": savedStudent.contactInfo.phone,
+              "Study End Date": savedOffering.studyEndDate,
+              "Study Intensity (PT or FT)": savedOffering.offeringIntensity,
+              "Study Start Date": savedOffering.studyStartDate,
+              "Total assistance": assessmentData.finalAwardTotal.toString(),
+              "Year of Study": savedOffering.yearOfStudy.toString(),
+              "Youth in Care Flag": applicationData.youthInCare,
               "Youth in Care beyond age 19": "",
             },
           ]),
