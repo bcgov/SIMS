@@ -5905,7 +5905,7 @@
                   "attr": ""
                 }
               ],
-              "content": "This information was provided by you and B.C. \nServices Card when you first signed into your account. \nIf this information is out of date, please <a href=\"/student/student-profile/edit\">update your profile</a>.",
+              "content": "Because your profile information is used across your application(s), it's important to keep your information accurate and up to date. If this information is out of date, please <a href=\"/student/student-profile/edit\">update your profile</a>.",
               "refreshOnChange": false,
               "customClass": "",
               "hidden": false,
@@ -5914,7 +5914,7 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": "",
                 "json": ""
@@ -7410,7 +7410,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "<h4 class=\"category-header-medium-small\">Documents accepted:</h4>\n<ul>\n  <li>Valid record of landing (<a href=\"https://www.cic.gc.ca/english/helpcentre/answer.asp?qnum=1446&amp;top=14#record\">IMM1000)</a> <strong>or</strong></li>\n  <li>Valid confirmation of permanent residence (<a href=\"https://www.cic.gc.ca/english/helpcentre/answer.asp?qnum=1446&amp;top=14#confirmation\">IMM5292)</a> <strong>or</strong></li>\n  <li>Valid <a href=\"https://www.cic.gc.ca/english/helpcentre/answer.asp?qnum=1446&amp;top=14#pr-card\">permanent resident card</a></li>\n</ul>",
+                      "content": "<h4 class=\"category-header-medium-small\">Documents accepted:</h4>\n<ul>\n  <li>Permanent Resident Card (IMM5445) or</li>\n  <li>Record of Landing (IMM1000) or</li>\n  <li>Confirmation of Permanent Residence (IMM5292 or IMM5688) or</li>\n  <li>Verification of Status document (IMM5009).</li>\n</ul>",
                       "refreshOnChange": false,
                       "customClass": "align-bullets",
                       "hidden": false,
@@ -7419,7 +7419,7 @@
                       "tags": [],
                       "properties": {},
                       "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": "",
                         "json": ""
@@ -7727,7 +7727,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "<h4 class=\"category-header-medium-small\">Documents accepted:</h4>\n<ul>\n  <li>Valid confirmation of permanent residence (<a href=\"https://www.cic.gc.ca/english/helpcentre/answer.asp?qnum=1446&amp;top=14#confirmation\">IMM5292)</a> <strong>or</strong></li>\n  <li>Valid <a href=\"https://www.cic.gc.ca/english/helpcentre/answer.asp?qnum=1446&amp;top=14#pr-card\">permanent resident card</a> <strong>or</strong></li>\n  <li>Valid verification of status document</li>\n</ul>\n",
+                      "content": "<h4 class=\"category-header-medium-small\">Documents accepted:</h4>\n<ul>\n  <li>Valid Confirmation of SIN document ; and</li>\n  <li>Notice of Decision (issued by Immigration and Refugee Board) or</li>\n  <li>Verification of Status document (IMM5009) or</li>\n  <li>Confirmation of Protected Persons Status document (IMM5292)</li>\n</ul>",
                       "refreshOnChange": false,
                       "customClass": "align-bullets",
                       "hidden": false,
@@ -7736,7 +7736,7 @@
                       "tags": [],
                       "properties": {},
                       "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": "",
                         "json": ""
@@ -8328,7 +8328,7 @@
               "labelMargin": "",
               "optionsLabelPosition": "right",
               "description": "",
-              "tooltip": "you have lived in BC all your life\r\nBC is the province where you last lived for 12 continuous months, as of your study start date, not including months  of full-time post-secondary study\r\nyou arrived in BC as a permanent resident or protect person, and will attend school in BC and you have not lived in any other province for 12 continuous  months",
+              "tooltip": "As a student you are a considered to be a resident of B.C. if one of the following criteria are met:\n\nB.C. is the province where you last lived for 12 continuous months, as of your study start date, not including months of full-time post-secondary study; or\n\nYou are an independent permanent resident, or designated as a protected person, living in B.C. at the time of application and will spend the study period in B.C. but have not lived in any one province for at least 12 continuous months. For example, if an independent student arrived in Canada as a permanent resident less than 12 months before the start date of classes, and intends to study in B.C., the student would be considered a resident of B.C. for student financial assistance purposes.",
               "customClass": "",
               "tabindex": "",
               "inline": false,
@@ -8378,7 +8378,7 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": "",
                 "json": ""
@@ -9153,7 +9153,9 @@
                       "addons": [],
                       "tag": "p",
                       "id": "exvzcx",
-                      "className": ""
+                      "className": "",
+                      "isNew": false,
+                      "tags": []
                     },
                     {
                       "label": "HTML",
@@ -9167,7 +9169,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "<h4 class=\"category-header-medium-small\">Documents Accepted:</h4>\n<ul>\n  <li>Lease agreements and utility receipts</li>\n  <li>Official post-secondary transcripts</li>\n  <li>A statement outlining your spouse/partners’ place and dates of employment in B.C.</li>\n  <li>A student financial aid denial letter from your previous province of residency</li>\n</ul>",
+                      "content": "<h4 class=\"category-header-medium-small\">Documents Accepted:</h4>\n<ul><li>Lease agreement and utility receipts</li>\n<li>A minimum of 4 years of unofficial transcripts to show attendance at a BC post-secondary institution</li>\n<li>A spouse/partner employer letter</li>\n<li>A student financial aid denial letter from your previous province of residency</li>\n</ul>",
                       "refreshOnChange": false,
                       "customClass": "align-bullets",
                       "hidden": false,
@@ -9176,7 +9178,7 @@
                       "tags": [],
                       "properties": {},
                       "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": "",
                         "json": ""
@@ -11120,82 +11122,7 @@
               "id": "eklgmng"
             },
             {
-              "label": "HTML",
-              "attrs": [
-                {
-                  "attr": "",
-                  "value": ""
-                }
-              ],
-              "content": "Do you want allow another person to be able to contact StudentAid BC and inquire about the status of your application or provide additional information on your behalf? (A parent/guardian for example.)",
-              "refreshOnChange": false,
-              "key": "html56",
-              "type": "htmlelement",
-              "input": false,
-              "tableView": false,
-              "placeholder": "",
-              "prefix": "",
-              "customClass": "",
-              "suffix": "",
-              "multiple": false,
-              "defaultValue": null,
-              "protected": false,
-              "unique": false,
-              "persistent": false,
-              "hidden": false,
-              "clearOnHide": true,
-              "refreshOn": "",
-              "redrawOn": "",
-              "modalEdit": false,
-              "dataGridLabel": false,
-              "labelPosition": "top",
-              "description": "",
-              "errorLabel": "",
-              "tooltip": "",
-              "hideLabel": false,
-              "tabindex": "",
-              "disabled": false,
-              "autofocus": false,
-              "dbIndex": false,
-              "customDefaultValue": "",
-              "calculateValue": "",
-              "calculateServer": false,
-              "widget": null,
-              "attributes": {},
-              "validateOn": "change",
-              "validate": {
-                "required": false,
-                "custom": "",
-                "customPrivate": false,
-                "strictDateValidation": false,
-                "multiple": false,
-                "unique": false
-              },
-              "conditional": {
-                "show": null,
-                "when": null,
-                "eq": ""
-              },
-              "overlay": {
-                "style": "",
-                "left": "",
-                "top": "",
-                "width": "",
-                "height": ""
-              },
-              "allowCalculateOverride": false,
-              "encrypted": false,
-              "showCharCount": false,
-              "showWordCount": false,
-              "properties": {},
-              "allowMultipleMasks": false,
-              "addons": [],
-              "tag": "p",
-              "id": "eqr6a1n",
-              "className": ""
-            },
-            {
-              "label": "<strong>Do you want to allow a trusted contact to interact with StudentAid BC on your behalf?</strong>",
+              "label": "<strong>Do you want to authorize a trusted contact to access information about this application on your behalf?</strong>",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -11256,7 +11183,7 @@
               "widget": null,
               "validateOn": "change",
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": ""
               },
@@ -11276,7 +11203,8 @@
               "addons": [],
               "inputType": "radio",
               "fieldSet": false,
-              "id": "e4lwkh"
+              "id": "e4lwkh",
+              "tags": []
             },
             {
               "title": "Trusted contact panel",
@@ -11310,7 +11238,7 @@
                       "value": ""
                     }
                   ],
-                  "content": "Add trusted contact",
+                  "content": "Add a trusted contact",
                   "refreshOnChange": false,
                   "key": "html57",
                   "type": "htmlelement",
@@ -11355,7 +11283,7 @@
                     "unique": false
                   },
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": ""
                   },
@@ -11373,7 +11301,8 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "e1t8cjsi"
+                  "id": "e1t8cjsi",
+                  "tags": []
                 },
                 {
                   "label": "HTML",
@@ -11383,7 +11312,7 @@
                       "value": ""
                     }
                   ],
-                  "content": "Enter the information of the contact(s) you would like to add to your profile as a trusted contact who can contact StudentAid BC on your behalf. You give access multiple contacts if needed.",
+                  "content": "Enter the information of the trusted contact(s) you would like to add to this application. This is for information sharing purposes only.",
                   "refreshOnChange": false,
                   "key": "html58",
                   "type": "htmlelement",
@@ -11428,7 +11357,7 @@
                     "unique": false
                   },
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": ""
                   },
@@ -11448,10 +11377,11 @@
                   "addons": [],
                   "tag": "p",
                   "id": "ed9vh5c",
-                  "className": ""
+                  "className": "",
+                  "tags": []
                 },
                 {
-                  "label": "<h4 class='category-header-medium-small'>ROI information</h4",
+                  "label": "<h4 class='category-header-medium-small'></h4>",
                   "labelPosition": "top",
                   "labelWidth": "",
                   "labelMargin": "",
@@ -11473,18 +11403,7 @@
                   "disabled": false,
                   "tableView": false,
                   "modalEdit": false,
-                  "defaultValue": [
-                    {
-                      "fullNmae": "",
-                      "relationshipToYou": "",
-                      "fullName": "",
-                      "firstName": "",
-                      "lastName": "",
-                      "strongWhatIsYourRelationshipWithThisContactStrong": "",
-                      "strongHowLongDoYouWantToGiveThisPersonAccessToYourStudentAidBcAccountStrong": "",
-                      "selectTheDateYouWouldLikeThisPersonsAccessToYourStudentAidBcAccountToExpire": ""
-                    }
-                  ],
+                  "defaultValue": [],
                   "persistent": true,
                   "protected": false,
                   "dbIndex": false,
@@ -11514,7 +11433,7 @@
                   "tags": [],
                   "properties": {},
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": "",
                     "json": ""
@@ -11720,7 +11639,7 @@
                           "shortcut": ""
                         },
                         {
-                          "label": "Other relative",
+                          "label": "Relative",
                           "value": "otherRelative",
                           "shortcut": ""
                         },
@@ -11758,7 +11677,7 @@
                       "tags": [],
                       "properties": {},
                       "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": "",
                         "json": ""
