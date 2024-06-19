@@ -258,7 +258,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
   });
 
   it(
-    "Should generate the Program and Offering Status report when a report generation is made with the appropriate date range filters for " +
+    "Should generate the Program and Offering Status report when a report generation is made with the appropriate date range filters " +
       "for an institution with one location and without any education program or offering.",
     async () => {
       // Arrange
@@ -815,7 +815,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
   );
 
   it(
-    "Should generate the Program and Offering Status report when a report generation is made with the appropriate date range filters and only the part time option is considered " +
+    "Should generate the Program and Offering Status report when a report generation is made with the appropriate date range filters and both full time and part time options are considered " +
       "and the SABC code is entered for an institution with one location and three education programs of different program intensities having offerings of different intensities and " +
       "one program without offerings.",
     async () => {
