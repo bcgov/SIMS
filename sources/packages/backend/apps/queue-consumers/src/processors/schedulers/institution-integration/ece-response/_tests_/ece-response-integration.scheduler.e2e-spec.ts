@@ -1,6 +1,12 @@
 import { DeepMocked, createMock } from "@golevelup/ts-jest";
 import { INestApplication } from "@nestjs/common";
-import { COE_WINDOW, QueueNames, addDays, formatDate } from "@sims/utilities";
+import {
+  COE_WINDOW,
+  QueueNames,
+  addDays,
+  formatDate,
+  getISODateOnlyString,
+} from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
@@ -12,7 +18,11 @@ import {
   createFakeDisbursementValue,
   saveFakeApplicationDisbursements,
 } from "@sims/test-utils";
-import { mockDownloadFiles } from "@sims/test-utils/mocks";
+import {
+  createFileFromStructuredRecords,
+  getStructuredRecords,
+  mockDownloadFiles,
+} from "@sims/test-utils/mocks";
 import * as Client from "ssh2-sftp-client";
 import { Job } from "bull";
 import * as path from "path";
@@ -21,6 +31,7 @@ import { ProcessSummaryResult } from "@sims/integrations/models";
 import {
   ApplicationStatus,
   COEStatus,
+  DisbursementScheduleStatus,
   DisbursementValueType,
   InstitutionLocation,
 } from "@sims/sims-db";
@@ -46,6 +57,7 @@ describe(
     let locationFAIL: InstitutionLocation;
     // Institution location to test disbursement with multiple detail records.
     let locationMULT: InstitutionLocation;
+    let locationVALD: InstitutionLocation;
 
     beforeAll(async () => {
       eceResponseMockDownloadFolder = path.join(
@@ -67,12 +79,14 @@ describe(
         institutionLocationSKIP,
         institutionLocationFAIL,
         institutionLocationMULT,
+        institutionLocationVALD,
       } = await createInstitutionLocations(db);
       locationCONF = institutionLocationCONF;
       locationDECL = institutionLocationDECL;
       locationSKIP = institutionLocationSKIP;
       locationFAIL = institutionLocationFAIL;
       locationMULT = institutionLocationMULT;
+      locationVALD = institutionLocationVALD;
     });
 
     beforeEach(async () => {
@@ -274,6 +288,117 @@ describe(
       // 2 out of 3 detail records have enrolment confirmation flag as Y.
       // Hence 20 is the expected value.
       expect(updatedDisbursement.tuitionRemittanceRequestedAmount).toBe(20);
+    });
+
+    it("Should validate when tuition remittance is greater than the max tuition remittance considering previous tuition remittance.", async () => {
+      // Arrange
+      // Enable integration for institution location
+      // used for test.
+      await enableIntegration(locationVALD, db);
+      const confirmEnrolmentResponseFile = path.join(
+        process.env.INSTITUTION_RESPONSE_FOLDER,
+        locationVALD.institutionCode,
+        ECE_RESPONSE_FILE_NAME,
+      );
+
+      // Create disbursement to confirm enrolment.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          // Save disbursement with custom award value to validate tuition remittance.
+          disbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLF",
+              1000,
+            ),
+          ],
+          secondDisbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLF",
+              1000,
+            ),
+          ],
+        },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+          createSecondDisbursement: true,
+          firstDisbursementInitialValues: {
+            tuitionRemittanceRequestedAmount: 500,
+            tuitionRemittanceEffectiveAmount: 500,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+          secondDisbursementInitialValues: {
+            disbursementDate: getISODateOnlyString(new Date()),
+          },
+        },
+      );
+      // Adjust offering values for maxTuitionRemittanceAllowed.
+      application.currentAssessment.offering.actualTuitionCosts = 500;
+      application.currentAssessment.offering.programRelatedCosts = 500;
+      application.currentAssessment.offering.mandatoryFees = 100;
+      await db.educationProgramOffering.save(
+        application.currentAssessment.offering,
+      );
+      const [_, secondDisbursement] =
+        application.currentAssessment.disbursementSchedules;
+
+      // Queued job.
+      const job = createMock<Job<void>>();
+
+      const disbursementId = secondDisbursement.id.toString().padStart(10, "0");
+      const applicationNumber = application.applicationNumber;
+      const currentDate = formatDate(new Date(), "YYYYMMDD");
+
+      // Modify the data in mock file to have the correct values for
+      // disbursement and application number.
+      mockDownloadFiles(
+        sftpClientMock,
+        [ECE_RESPONSE_FILE_NAME],
+        (fileContent: string) => {
+          const file = getStructuredRecords(fileContent);
+          // Force the error code to be wrong in the first record.
+          const [record] = file.records;
+          file.records = [
+            record
+              .replace("DISBNUMB01", disbursementId)
+              .replace("APPLNUMB01", applicationNumber)
+              .replace("ENRLDT01", currentDate),
+          ];
+          return createFileFromStructuredRecords(file);
+        },
+      );
+
+      // Act
+      const processResult = await processor.processECEResponse(job);
+
+      // Assert
+      const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
+      expectedResult.summary = [
+        `Starting download of file ${confirmEnrolmentResponseFile}.`,
+        `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        "Notification has been created to send email to integration contacts.",
+        "Total file parsing errors: 0",
+        "Total detail records found: 1",
+        "Total disbursements found: 1",
+        "Disbursements successfully updated: 0",
+        "Disbursements skipped to be processed: 0",
+        "Disbursements considered duplicate and skipped: 0",
+        "Disbursements failed to process: 1",
+      ];
+      expectedResult.errors = [
+        `Disbursement ${secondDisbursement.id}, record failed to process due to reason: Tuition amount provided should be lesser than both (Actual tuition + Program related costs + Mandatory fees - Previous tuition remittance) and (Canada grants + Canada Loan + BC Loan).`,
+      ];
+
+      expect(processResult).toStrictEqual([expectedResult]);
+      // Expect the delete method to be called.
+      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the notifications to be created.
+      const notifications = await getUnsentECEResponseNotifications(db);
+      expect(notifications).toHaveLength(
+        locationVALD.integrationContacts.length,
+      );
     });
 
     it("Should process an ECE response file and decline the enrolment and create notification when the disbursement and application is valid.", async () => {

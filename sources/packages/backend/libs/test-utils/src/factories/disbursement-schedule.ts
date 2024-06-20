@@ -50,6 +50,8 @@ export function createFakeDisbursementSchedule(
   schedule.studentAssessment = relations?.studentAssessment;
   schedule.tuitionRemittanceRequestedAmount =
     options?.initialValues?.tuitionRemittanceRequestedAmount ?? 0;
+  schedule.tuitionRemittanceEffectiveAmount =
+    options?.initialValues?.tuitionRemittanceEffectiveAmount ?? 0;
   schedule.disbursementScheduleStatus =
     options?.initialValues?.disbursementScheduleStatus ??
     DisbursementScheduleStatus.Pending;

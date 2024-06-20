@@ -124,10 +124,11 @@ export class ConfirmationOfEnrollmentService {
   }
 
   /**
-   *
-   * @param studentAssessmentId
-   * @param disbursementId
-   * @returns
+   * Gets the previous disbursement schedule remittance value.
+   * Returns tuition remittance effective amount if present or tuition remittance requested amount if present, otherwise 0.
+   * @param studentAssessmentId for the disbursement schedule.
+   * @param disbursementId disbursement id.
+   * @returns previous disbursement schedule remittance value.
    */
   async getPreviousTuitionRemittance(
     studentAssessmentId: number,
@@ -194,9 +195,13 @@ export class ConfirmationOfEnrollmentService {
       offeringCosts.actualTuitionCosts +
       offeringCosts.programRelatedCosts +
       offeringCosts.mandatoryFees;
-    return (
-      Math.min(offeringTotalCosts, totalAwards) - previousTuitionRemittance
+
+    const maxTuitionRemittance = Math.min(
+      offeringTotalCosts - previousTuitionRemittance,
+      totalAwards,
     );
+
+    return maxTuitionRemittance > 0 ? maxTuitionRemittance : 0;
   }
 
   /**
@@ -742,7 +747,7 @@ export class ConfirmationOfEnrollmentService {
 
     if (tuitionRemittanceAmount > maxTuitionAllowed) {
       throw new CustomNamedError(
-        "Tuition amount provided should be lesser than both (Actual tuition + Program related costs + Mandatory fees) and (Canada grants + Canada Loan + BC Loan).",
+        "Tuition amount provided should be lesser than both (Actual tuition + Program related costs + Mandatory fees - Previous tuition remittance) and (Canada grants + Canada Loan + BC Loan).",
         INVALID_TUITION_REMITTANCE_AMOUNT,
       );
     }
