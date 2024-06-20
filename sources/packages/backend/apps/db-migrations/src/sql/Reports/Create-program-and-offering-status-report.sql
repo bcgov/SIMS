@@ -26,9 +26,7 @@ VALUES
           WHEN education_programs.is_active = true THEN false
           WHEN education_programs.is_active = false THEN true
         END AS "Program Deactivated?",
-        CAST(
-          education_programs.effective_end_date AS varchar
-        ) AS "Program Expiry Date",
+        education_programs.effective_end_date AS "Program Expiry Date",
         education_programs_offerings.offering_name AS "Offering Name",
         CAST(
           education_programs_offerings.study_start_date AS varchar
@@ -106,9 +104,7 @@ VALUES
         WHEN education_programs.is_active = true THEN false
         WHEN education_programs.is_active = false THEN true
       END AS "Program Deactivated?",
-      CAST(
-        education_programs.effective_end_date AS varchar
-      ) AS "Program Expiry Date",
+      education_programs.effective_end_date AS "Program Expiry Date",
       NULL AS "Offering Name",
       NULL AS "Study Start Date",
       NULL AS "Study End Date",
