@@ -293,6 +293,11 @@ interface BaseAssessment {
   totalProvincialAward: number;
   totalFamilyIncome: number;
   totalAssessmentNeed: number;
+  finalProvincialAwardNetSBSDAmount: number;
+  finalAwardTotal: number;
+  finalFederalAwardNetCSGPAmount: number;
+  finalFederalAwardNetCSGDAmount: number;
+  finalProvincialAwardNetBCAGAmount: number;
 }
 
 /**
@@ -314,6 +319,11 @@ export interface FullTimeAssessment extends BaseAssessment {
   totalFederalContribution: number;
   totalProvincialContribution: number;
   otherAllowableCost: number;
+  totalFederalAssessedResources: number;
+  totalProvincialAssessedResources: number;
+  finalProvincialAwardNetBCSLAmount: number;
+  finalFederalAwardNetCSGFAmount: number;
+  finalProvincialAwardNetBGPDAmount: number;
 }
 
 /**
@@ -324,6 +334,8 @@ export interface PartTimeAssessment extends BaseAssessment {
   totalAcademicExpenses: number;
   // TODO: Mandatory fees could be potentially part of base assessment.
   mandatoryFees: number;
+  finalFederalAwardNetCSPTAmount: number;
+  finalFederalAwardNetCSLPAmount: number;
 }
 
 /**
