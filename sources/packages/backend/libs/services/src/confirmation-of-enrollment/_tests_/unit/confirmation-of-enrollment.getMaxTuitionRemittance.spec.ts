@@ -176,9 +176,9 @@ describe("ConfirmationOfEnrollmentService-getMaxTuitionRemittance", () => {
       },
     ];
     const offeringCosts = {
-      actualTuitionCosts: Number.MAX_SAFE_INTEGER,
-      programRelatedCosts: Number.MAX_SAFE_INTEGER,
-      mandatoryFees: Number.MAX_SAFE_INTEGER,
+      actualTuitionCosts: 200,
+      programRelatedCosts: 150,
+      mandatoryFees: 100,
     };
     // Act
     const total = service.getMaxTuitionRemittance(

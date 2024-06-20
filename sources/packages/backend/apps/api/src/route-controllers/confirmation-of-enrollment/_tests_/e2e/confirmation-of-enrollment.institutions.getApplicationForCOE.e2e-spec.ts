@@ -215,7 +215,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
         applicationStatus: ApplicationStatus.Enrolment,
         createSecondDisbursement: true,
         firstDisbursementInitialValues: {
-          tuitionRemittanceRequestedAmount: 100,
+          tuitionRemittanceRequestedAmount: 300,
         },
       },
     );
@@ -238,7 +238,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
       )
       .expect(HttpStatus.OK)
       .expect((response) => {
-        expect(response.body.maxTuitionRemittanceAllowed).toBe(900);
+        expect(response.body.maxTuitionRemittanceAllowed).toBe(800);
       });
   });
 
@@ -291,7 +291,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
       )
       .expect(HttpStatus.OK)
       .expect((response) => {
-        expect(response.body.maxTuitionRemittanceAllowed).toBe(800);
+        expect(response.body.maxTuitionRemittanceAllowed).toBe(900);
       });
   });
 
