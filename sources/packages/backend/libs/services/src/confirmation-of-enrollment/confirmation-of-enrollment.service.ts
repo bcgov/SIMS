@@ -128,7 +128,7 @@ export class ConfirmationOfEnrollmentService {
    * Gets the previous disbursement schedule remittance value.
    * Returns tuition remittance effective amount if present or tuition remittance requested amount if present, otherwise 0.
    * @param studentAssessmentId for the disbursement schedule.
-   * @param disbursementId disbursement id.
+   * @param disbursementDate disbursement date.
    * @returns previous disbursement schedule remittance value.
    */
   async getPreviousTuitionRemittance(
