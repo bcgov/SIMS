@@ -328,6 +328,7 @@ describe(
             tuitionRemittanceRequestedAmount: 500,
             tuitionRemittanceEffectiveAmount: 500,
             disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+            disbursementDate: getISODateOnlyString(addDays(-30)),
           },
           secondDisbursementInitialValues: {
             disbursementDate: getISODateOnlyString(new Date()),
