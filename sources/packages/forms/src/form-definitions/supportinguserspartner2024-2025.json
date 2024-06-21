@@ -1918,7 +1918,7 @@
         "height": ""
       },
       "type": "panel",
-      "label": "Supporting Information",
+      "label": "Supporting information",
       "tabindex": "",
       "input": false,
       "tableView": false,
@@ -1942,7 +1942,7 @@
                   "value": ""
                 }
               ],
-              "content": "Supporting Information",
+              "content": "Supporting information",
               "refreshOnChange": false,
               "customClass": "category-header-large primary-color",
               "hidden": false,
