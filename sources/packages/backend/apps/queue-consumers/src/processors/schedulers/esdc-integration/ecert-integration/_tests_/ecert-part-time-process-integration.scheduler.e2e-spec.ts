@@ -381,6 +381,7 @@ describe(
             dateSent: new Date(),
             readyToSendDate: new Date(),
             disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+            disbursementDate: getISODateOnlyString(addDays(-30)),
           },
           secondDisbursementInitialValues: {
             coeStatus: COEStatus.completed,
