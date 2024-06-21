@@ -196,12 +196,10 @@ export class ConfirmationOfEnrollmentService {
       offeringCosts.programRelatedCosts +
       offeringCosts.mandatoryFees;
 
-    const maxTuitionRemittance = Math.min(
-      offeringTotalCosts - previousTuitionRemittance,
-      totalAwards,
+    return Math.max(
+      Math.min(offeringTotalCosts - previousTuitionRemittance, totalAwards),
+      0,
     );
-
-    return maxTuitionRemittance > 0 ? maxTuitionRemittance : 0;
   }
 
   /**
