@@ -376,7 +376,7 @@ describe(
           },
           firstDisbursementInitialValues: {
             coeStatus: COEStatus.completed,
-            tuitionRemittanceRequestedAmount: 500,
+            tuitionRemittanceRequestedAmount: 600,
             tuitionRemittanceEffectiveAmount: 500,
             dateSent: new Date(),
             readyToSendDate: new Date(),
@@ -392,8 +392,8 @@ describe(
       );
       // Adjust offering values for maxTuitionRemittanceAllowed.
       application.currentAssessment.offering.actualTuitionCosts = 500;
-      application.currentAssessment.offering.programRelatedCosts = 500;
-      application.currentAssessment.offering.mandatoryFees = 100;
+      application.currentAssessment.offering.programRelatedCosts = 400;
+      application.currentAssessment.offering.mandatoryFees = 200;
       await db.educationProgramOffering.save(
         application.currentAssessment.offering,
       );

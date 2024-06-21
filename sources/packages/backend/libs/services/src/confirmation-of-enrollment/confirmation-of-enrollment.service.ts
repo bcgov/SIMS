@@ -95,6 +95,7 @@ export class ConfirmationOfEnrollmentService {
               mandatoryFees: true,
             },
           },
+          disbursementDate: true,
         },
         relations: {
           disbursementValues: true,
@@ -112,7 +113,7 @@ export class ConfirmationOfEnrollmentService {
 
     const previousTuitionRemittance = await this.getPreviousTuitionRemittance(
       maxTuitionRemittanceData.studentAssessment.id,
-      disbursementId,
+      maxTuitionRemittanceData.disbursementDate,
     );
 
     return this.getMaxTuitionRemittance(
@@ -132,7 +133,7 @@ export class ConfirmationOfEnrollmentService {
    */
   async getPreviousTuitionRemittance(
     studentAssessmentId: number,
-    disbursementId: number,
+    disbursementDate: string,
   ): Promise<number> {
     const previousTuitionRemittanceData =
       await this.disbursementScheduleRepo.findOne({
@@ -142,7 +143,7 @@ export class ConfirmationOfEnrollmentService {
           tuitionRemittanceRequestedAmount: true,
         },
         where: {
-          id: LessThan(disbursementId),
+          disbursementDate: LessThan(disbursementDate),
           studentAssessment: {
             id: studentAssessmentId,
           },
@@ -159,6 +160,7 @@ export class ConfirmationOfEnrollmentService {
    * @param awards awards that will be disbursed.
    * @param offeringCosts offering costs to be considered.
    * @param calculationType effective or estimated calculation.
+   * @param previousTuitionRemittance previous disbursement schedule tuition remittance.
    * Before the disbursement happen, the value for the max tuition
    * remittance can only be estimated. It is because the real values,
    * with all possible deductions, will be known only upon e-Cert
