@@ -39,7 +39,7 @@ export class CalculateTuitionRemittanceEffectiveAmountStep
     const previousTuitionRemittance =
       await this.confirmationOfEnrollmentService.getPreviousTuitionRemittance(
         eCertDisbursement.assessmentId,
-        eCertDisbursement.disbursement.id,
+        eCertDisbursement.disbursement.disbursementDate,
       );
 
     const maxTuitionRemittance =
