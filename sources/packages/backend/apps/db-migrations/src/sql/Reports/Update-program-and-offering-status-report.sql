@@ -46,8 +46,10 @@ SET
         INNER JOIN sims.institutions institutions ON institution_locations.institution_id = institutions.id
       WHERE
         institutions.id = :institution
-        AND education_programs_offerings.study_start_date >= :startDate
-        AND education_programs_offerings.study_start_date <= :endDate
+        AND (
+          education_programs_offerings.study_start_date BETWEEN :startDate
+          AND :endDate
+        )
         AND education_programs_offerings.offering_intensity = ANY(:offeringIntensity)
         AND (
           :sabcProgramCode = ''''
