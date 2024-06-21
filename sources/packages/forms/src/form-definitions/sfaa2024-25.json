@@ -12757,7 +12757,7 @@
               "id": "eamewph"
             },
             {
-              "label": "<strong>On my first day of class, I'll be:</strong>",
+              "label": "<strong>What is your marital status?</strong>",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": true,
@@ -12768,13 +12768,13 @@
                   "shortcut": ""
                 },
                 {
-                  "label": "Separated/divorced/widowed",
-                  "value": "other",
+                  "value": "married",
+                  "label": "Married/common-law",
                   "shortcut": ""
                 },
                 {
-                  "value": "married",
-                  "label": "Married/common-law",
+                  "value": "other",
+                  "label": "Separated/divorced/widowed",
                   "shortcut": ""
                 }
               ],
@@ -12813,7 +12813,7 @@
               "dataGridLabel": false,
               "labelPosition": "top",
               "description": "",
-              "tooltip": "The student is considered married if they will be married before their first day of classes. The student is considered common-law if they have co-habited with a person in a marriage-like relationship for at least 12 months prior to their first day of classes.\nIf they have been in a marriage-like relationship for less than 12 months by their first day of classes, they should report themselves as single.",
+              "tooltip": "Marital status is defined below. Please read the definitions carefully.  \n<strong>Single</strong>: If you are not married or in a common-law relationship  \n<strong>Married</strong>: If you are married as of the first day of classes  \n<strong>Common-Law</strong>: You and your partner are considered to be common-law if you meet both of the following:\n- you are currently living together in a marriage-like relationship; and\n- you will have been living together for at least 12 consecutive months before the first day of classes.  \n<strong>Separated/Divorced/Widowed</strong>: If you are separated, divorced or widowed before the first day of classes.",
               "hideLabel": false,
               "tabindex": "",
               "disabled": false,
@@ -12849,7 +12849,7 @@
               "tags": []
             },
             {
-              "label": "<strong>Do you have any dependants?</strong>",
+              "label": "<strong>Do you have any eligible dependants?</strong>",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": true,
@@ -12900,7 +12900,7 @@
               "dataGridLabel": false,
               "labelPosition": "top",
               "description": "",
-              "tooltip": "Dependants represent anyone who you support financially.",
+              "tooltip": "For StudentAid BC purposes, eligible dependents/dependants are any dependents for whom the Canada Child Tax Benefit is claimed, or for whom a benefit is claimed on the applicant’s income tax return. Eligible dependents/dependants must meet one of the following criteria:\n\n- For the student’s or spouse/common-law partner’s children who are 18 years of age and under, the student and/or spouse/common-law partner must be guardians of the children who must live with the student or spouse/common-law partner at least two full days per week; or\n\n- The student’s or spouse/common-law partner’s children aged 19 to 22 are full-time dependent students in study; or\n\n- The student’s or spouse/common-law partner’s children are permanently disabled, are 19 years of age or over, are fully supported by the student or spouse/common-law partner and are claimed on the student’s or spouse/common-law partner’s income tax return; or\n\n- The children are the student’s foster children and foster-parent income is claimed on the application; or\n\n- The dependents are the student’s or spouse/common-law partner’s elderly relatives who are fully supported by the student and claimed on the student’s or spouse’s income tax.",
               "hideLabel": false,
               "tabindex": "",
               "disabled": false,
@@ -13038,88 +13038,6 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "id": "e170v1"
-                },
-                {
-                  "label": "HTML",
-                  "labelWidth": "",
-                  "labelMargin": "",
-                  "tag": "p",
-                  "className": "",
-                  "attrs": [
-                    {
-                      "attr": "",
-                      "value": ""
-                    }
-                  ],
-                  "content": "We use this information to ensure that we take into account your eligibility for certain benefits.",
-                  "refreshOnChange": false,
-                  "customClass": "",
-                  "hidden": false,
-                  "modalEdit": false,
-                  "key": "html62",
-                  "tags": [],
-                  "properties": {},
-                  "conditional": {
-                    "show": null,
-                    "when": null,
-                    "eq": "",
-                    "json": ""
-                  },
-                  "customConditional": "",
-                  "logic": [],
-                  "attributes": {},
-                  "overlay": {
-                    "style": "",
-                    "page": "",
-                    "left": "",
-                    "top": "",
-                    "width": "",
-                    "height": ""
-                  },
-                  "type": "htmlelement",
-                  "input": false,
-                  "tableView": false,
-                  "placeholder": "",
-                  "prefix": "",
-                  "suffix": "",
-                  "multiple": false,
-                  "defaultValue": null,
-                  "protected": false,
-                  "unique": false,
-                  "persistent": false,
-                  "clearOnHide": true,
-                  "refreshOn": "",
-                  "redrawOn": "",
-                  "dataGridLabel": false,
-                  "labelPosition": "top",
-                  "description": "",
-                  "errorLabel": "",
-                  "tooltip": "",
-                  "hideLabel": false,
-                  "tabindex": "",
-                  "disabled": false,
-                  "autofocus": false,
-                  "dbIndex": false,
-                  "customDefaultValue": "",
-                  "calculateValue": "",
-                  "calculateServer": false,
-                  "widget": null,
-                  "validateOn": "change",
-                  "validate": {
-                    "required": false,
-                    "custom": "",
-                    "customPrivate": false,
-                    "strictDateValidation": false,
-                    "multiple": false,
-                    "unique": false
-                  },
-                  "allowCalculateOverride": false,
-                  "encrypted": false,
-                  "showCharCount": false,
-                  "showWordCount": false,
-                  "allowMultipleMasks": false,
-                  "addons": [],
-                  "id": "ergvdq"
                 },
                 {
                   "label": "<strong>Dependants</strong>",
@@ -13428,7 +13346,7 @@
                           "id": "e2m404f"
                         },
                         {
-                          "label": "<strong>Attending post secondary institution</strong>",
+                          "label": "<strong>Is dependant attending post-secondary?</strong>",
                           "labelPosition": "top",
                           "labelWidth": "",
                           "labelMargin": "",
@@ -13484,7 +13402,7 @@
                           "tags": [],
                           "properties": {},
                           "conditional": {
-                            "show": null,
+                            "show": "",
                             "when": null,
                             "eq": "",
                             "json": ""
@@ -13790,7 +13708,7 @@
                                   "value": ""
                                 }
                               ],
-                              "content": "Please provide one proof that your dependant has been approved for federal or provincial disability benefits.",
+                              "content": "Please provide proof that your dependant has been approved for federal disability tax benefits",
                               "refreshOnChange": false,
                               "customClass": "",
                               "hidden": false,
@@ -13799,7 +13717,7 @@
                               "tags": [],
                               "properties": {},
                               "conditional": {
-                                "show": null,
+                                "show": "",
                                 "when": null,
                                 "eq": "",
                                 "json": ""
@@ -13872,7 +13790,7 @@
                                   "value": ""
                                 }
                               ],
-                              "content": "<h4 class=\"category-header-medium-small\">Documents Accepted</h4>\r\n<ul>\r\n  <li>Notice of Determination <strong>or</strong></li>\r\n  <li>Disability Tax Credit statement  <strong>or</strong></li>\r\n  <li>Other documents that shows receipt of Disability Tax Credits or benefits from Canada Revenue Agency (CRA)</li>\r\n</ul>",
+                              "content": "<h4 class=\"category-header-medium-small\">Documents Accepted</h4>\n<ul>\n  <li>Notice of Determination <strong>or</strong></li>\n  <li>Disability Tax Credit statement  <strong>or</strong></li>\n  <li>Other documents that shows receipt of Disability Tax Credit from Canada Revenue Agency (CRA)</li>\n</ul>",
                               "refreshOnChange": false,
                               "customClass": "align-bullets",
                               "hidden": false,
@@ -13881,7 +13799,7 @@
                               "tags": [],
                               "properties": {},
                               "conditional": {
-                                "show": null,
+                                "show": "",
                                 "when": null,
                                 "eq": "",
                                 "json": ""
@@ -14022,7 +13940,8 @@
                               "showWordCount": false,
                               "allowMultipleMasks": false,
                               "addons": [],
-                              "id": "eni5dnf"
+                              "id": "eni5dnf",
+                              "isNew": false
                             },
                             {
                               "label": "PD Dependent",
@@ -14962,7 +14881,7 @@
                       "value": ""
                     }
                   ],
-                  "content": "You can be assessed as a single parent if you have shared custody of your children for an average of at least 8 days each month.",
+                  "content": "You can also be assessed as a single parent if you have shared custody of your children for an average of at least 8 days each month.",
                   "refreshOnChange": false,
                   "key": "html64",
                   "type": "htmlelement",
@@ -15007,7 +14926,7 @@
                     "unique": false
                   },
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": ""
                   },
@@ -15027,7 +14946,8 @@
                   "addons": [],
                   "tag": "p",
                   "id": "eyw4xqx",
-                  "className": ""
+                  "className": "",
+                  "tags": []
                 },
                 {
                   "label": "HTML",
@@ -15041,7 +14961,7 @@
                       "value": ""
                     }
                   ],
-                  "content": "<h4 class=\"category-header-medium-small\">Documents Accepted</h4>\r\n<ul>\r\n  <li>Proof of shared custody Instructions</li>\r\n</ul>",
+                  "content": "<h4 class=\"category-header-medium-small\">Documents Accepted</h4>\nA letter of explanation and one of the following:\n<ul>\n<li>Child custody agreement;</li>\n<li>Court Order;</li>\n<li>A notarized statement from the children's other parent detailing the custody agreement</li>\n</ul>",
                   "refreshOnChange": false,
                   "customClass": "align-bullets",
                   "hidden": false,
@@ -15050,7 +14970,7 @@
                   "tags": [],
                   "properties": {},
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": "",
                     "json": ""
