@@ -83,6 +83,7 @@ export class ECertGenerationService {
         "offering.offeringIntensity",
         "offering.actualTuitionCosts",
         "offering.programRelatedCosts",
+        "offering.mandatoryFees",
         "student.id",
         "student.disabilityStatus",
         "sinValidation.id",

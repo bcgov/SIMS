@@ -328,6 +328,120 @@ describe(
       expect(scheduleIsSent).toBe(true);
     });
 
+    it.only("Should adjust tuition remittance when requested tuition remittance is greater than the max tuition remittance.", async () => {
+      // Arrange
+
+      // Student with valid SIN.
+      const student = await saveFakeStudent(db.dataSource);
+      // Valid MSFAA Number.
+      const msfaaNumber = await db.msfaaNumber.save(
+        createFakeMSFAANumber(
+          { student },
+          {
+            msfaaState: MSFAAStates.Signed,
+            msfaaInitialValues: {
+              offeringIntensity: OfferingIntensity.partTime,
+            },
+          },
+        ),
+      );
+      // Student application eligible for e-Cert.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          student,
+          msfaaNumber,
+          disbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLP",
+              1000,
+            ),
+          ],
+          secondDisbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLP",
+              1000,
+            ),
+          ],
+        },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+          createSecondDisbursement: true,
+          currentAssessmentInitialValues: {
+            assessmentData: { weeks: 5 } as Assessment,
+            assessmentDate: new Date(),
+          },
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            tuitionRemittanceRequestedAmount: 500,
+            tuitionRemittanceEffectiveAmount: 500,
+            dateSent: new Date(),
+            readyToSendDate: new Date(),
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+          secondDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            tuitionRemittanceRequestedAmount: 700,
+            readyToSendDate: new Date(),
+            disbursementDate: getISODateOnlyString(new Date()),
+          },
+        },
+      );
+      // Adjust offering values for maxTuitionRemittanceAllowed.
+      application.currentAssessment.offering.actualTuitionCosts = 500;
+      application.currentAssessment.offering.programRelatedCosts = 500;
+      application.currentAssessment.offering.mandatoryFees = 100;
+      await db.educationProgramOffering.save(
+        application.currentAssessment.offering,
+      );
+
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processECert(mockedJob.job);
+
+      // Assert
+      // Assert uploaded file.
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const fileDate = dayjs().format("YYYYMMDD");
+      const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
+      expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+      expect(result).toStrictEqual([
+        "Process finalized with success.",
+        `Generated file: ${uploadedFileName}`,
+        "Uploaded records: 1",
+      ]);
+
+      expect(
+        mockedJob.containLogMessages([
+          "The tuition remittance was adjusted because exceeded the maximum allowed of 600.",
+        ]),
+      ).toBe(true);
+
+      const [_, secondDisbursementSchedule] =
+        application.currentAssessment.disbursementSchedules;
+
+      const updatedSecondDisbursementSchedule =
+        await db.disbursementSchedule.findOne({
+          select: {
+            tuitionRemittanceRequestedAmount: true,
+            tuitionRemittanceEffectiveAmount: true,
+          },
+          where: { id: secondDisbursementSchedule.id },
+        });
+
+      expect(
+        updatedSecondDisbursementSchedule.tuitionRemittanceRequestedAmount,
+      ).toBe(700);
+      expect(
+        updatedSecondDisbursementSchedule.tuitionRemittanceEffectiveAmount,
+      ).toBe(600);
+    });
+
     it("Should create an e-Cert with three disbursements for two different students with two disbursements each where three records are eligible.", async () => {
       // Arrange
 
