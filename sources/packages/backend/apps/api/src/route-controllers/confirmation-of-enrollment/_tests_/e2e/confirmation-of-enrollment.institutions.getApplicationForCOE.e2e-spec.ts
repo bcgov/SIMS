@@ -219,7 +219,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
         },
       },
     );
-    const [_, secondDisbursementSchedule] =
+    const [, secondDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
     // Adjust offering values for maxTuitionRemittanceAllowed.
     application.currentAssessment.offering.actualTuitionCosts = 500;
@@ -268,11 +268,12 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
         applicationStatus: ApplicationStatus.Enrolment,
         createSecondDisbursement: true,
         firstDisbursementInitialValues: {
+          tuitionRemittanceRequestedAmount: 300,
           tuitionRemittanceEffectiveAmount: 200,
         },
       },
     );
-    const [_, secondDisbursementSchedule] =
+    const [, secondDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
     // Adjust offering values for maxTuitionRemittanceAllowed.
     application.currentAssessment.offering.actualTuitionCosts = 500;

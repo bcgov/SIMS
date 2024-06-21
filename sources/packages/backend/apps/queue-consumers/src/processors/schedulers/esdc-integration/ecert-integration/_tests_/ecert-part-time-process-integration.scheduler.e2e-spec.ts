@@ -422,7 +422,7 @@ describe(
         ]),
       ).toBe(true);
 
-      const [_, secondDisbursementSchedule] =
+      const [, secondDisbursementSchedule] =
         application.currentAssessment.disbursementSchedules;
 
       const updatedSecondDisbursementSchedule =

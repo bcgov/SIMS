@@ -341,7 +341,7 @@ describe(
       await db.educationProgramOffering.save(
         application.currentAssessment.offering,
       );
-      const [_, secondDisbursement] =
+      const [, secondDisbursement] =
         application.currentAssessment.disbursementSchedules;
 
       // Queued job.
