@@ -25,6 +25,7 @@ export async function createInstitutionLocations(
   institutionLocationSKIP: InstitutionLocation;
   institutionLocationFAIL: InstitutionLocation;
   institutionLocationMULT: InstitutionLocation;
+  institutionLocationVALD: InstitutionLocation;
 }> {
   const institution = await e2eDataSources.institution.save(
     createFakeInstitution(),
@@ -49,6 +50,11 @@ export async function createInstitutionLocations(
     "FAIL",
     e2eDataSources,
   );
+  const institutionLocationVALD = await findOrCreateInstitutionLocation(
+    institution,
+    "VALD",
+    e2eDataSources,
+  );
   // Institution location to test disbursement with multiple detail records.
   const institutionLocationMULT = await findOrCreateInstitutionLocation(
     institution,
@@ -68,6 +74,7 @@ export async function createInstitutionLocations(
     institutionLocationSKIP,
     institutionLocationFAIL,
     institutionLocationMULT,
+    institutionLocationVALD,
   };
 }
 

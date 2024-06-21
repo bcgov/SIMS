@@ -189,6 +189,113 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
       });
   });
 
+  it("Should discount previous tuition remittance amount when there is a previous tuition remittance requested amount.", async () => {
+    // Arrange
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+        disbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLF",
+            1000,
+          ),
+        ],
+        secondDisbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLF",
+            1000,
+          ),
+        ],
+      },
+      {
+        applicationStatus: ApplicationStatus.Enrolment,
+        createSecondDisbursement: true,
+        firstDisbursementInitialValues: {
+          tuitionRemittanceRequestedAmount: 300,
+        },
+      },
+    );
+    const [, secondDisbursementSchedule] =
+      application.currentAssessment.disbursementSchedules;
+    // Adjust offering values for maxTuitionRemittanceAllowed.
+    application.currentAssessment.offering.actualTuitionCosts = 500;
+    application.currentAssessment.offering.programRelatedCosts = 500;
+    application.currentAssessment.offering.mandatoryFees = 100;
+    await db.educationProgramOffering.save(
+      application.currentAssessment.offering,
+    );
+    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${secondDisbursementSchedule.id}`;
+    // Act/Assert
+    return request(app.getHttpServer())
+      .get(endpoint)
+      .auth(
+        await getInstitutionToken(InstitutionTokenTypes.CollegeCUser),
+        BEARER_AUTH_TYPE,
+      )
+      .expect(HttpStatus.OK)
+      .expect((response) => {
+        expect(response.body.maxTuitionRemittanceAllowed).toBe(800);
+      });
+  });
+
+  it("Should discount previous tuition remittance amount when there is a previous tuition remittance effective amount.", async () => {
+    // Arrange
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+        disbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLF",
+            1000,
+          ),
+        ],
+        secondDisbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLF",
+            1000,
+          ),
+        ],
+      },
+      {
+        applicationStatus: ApplicationStatus.Enrolment,
+        createSecondDisbursement: true,
+        firstDisbursementInitialValues: {
+          tuitionRemittanceRequestedAmount: 300,
+          tuitionRemittanceEffectiveAmount: 200,
+        },
+      },
+    );
+    const [, secondDisbursementSchedule] =
+      application.currentAssessment.disbursementSchedules;
+    // Adjust offering values for maxTuitionRemittanceAllowed.
+    application.currentAssessment.offering.actualTuitionCosts = 500;
+    application.currentAssessment.offering.programRelatedCosts = 500;
+    application.currentAssessment.offering.mandatoryFees = 100;
+    await db.educationProgramOffering.save(
+      application.currentAssessment.offering,
+    );
+    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${secondDisbursementSchedule.id}`;
+    // Act/Assert
+    return request(app.getHttpServer())
+      .get(endpoint)
+      .auth(
+        await getInstitutionToken(InstitutionTokenTypes.CollegeCUser),
+        BEARER_AUTH_TYPE,
+      )
+      .expect(HttpStatus.OK)
+      .expect((response) => {
+        expect(response.body.maxTuitionRemittanceAllowed).toBe(900);
+      });
+  });
+
   afterAll(async () => {
     await app?.close();
   });
