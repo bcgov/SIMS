@@ -328,7 +328,7 @@ describe(
       expect(scheduleIsSent).toBe(true);
     });
 
-    it.only("Should adjust tuition remittance when requested tuition remittance is greater than the max tuition remittance.", async () => {
+    it("Should adjust tuition remittance when requested tuition remittance is greater than the max tuition remittance.", async () => {
       // Arrange
 
       // Student with valid SIN.
