@@ -1,0 +1,136 @@
+fullnameOverride: crunchy-postgres
+
+crunchyImage: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
+#crunchyImage: artifacts.developer.gov.bc.ca/bcgov-docker-local/crunchy-postgres-gis:ubi8-15.2-3.3-0 # use this image for POSTGIS
+postgresVersion: 15
+#postGISVersion: '3.3' # use this version of POSTGIS. both crunchyImage and this property needs to have valid values for POSTGIS to be enabled.
+imagePullPolicy: IfNotPresent
+
+# enable to bootstrap a standby cluster from backup. Then disable to promote this standby to primary
+standby:
+  enabled: false
+  # If you want to recover from PVC, use repo1. If you want to recover from S3, use repo2
+  repoName: repo2
+
+instances:
+  name: ha # high availability
+  replicas: 2
+  dataVolumeClaimSpec:
+    storage: 480Mi
+    storageClassName: netapp-block-standard
+  requests:
+    cpu: 1m
+    memory: 256Mi
+  limits:
+    cpu: 100m
+    memory: 512Mi
+  replicaCertCopy:
+    requests:
+      cpu: 1m
+      memory: 32Mi
+    limits:
+      cpu: 50m
+      memory: 64Mi
+
+# If we need to restore the cluster from a backup, we need to set the following values
+# assuming restore from repo2 (s3), adjust as needed if your S3 repo is different
+dataSource:
+  enabled: false
+  # should have the same name and contain the same keys as the pgbackrest secret
+  secretName: s3-pgbackrest
+  repo:
+    name: repo2
+    path: "/habackup"
+    s3:
+      bucket: "bucketName"
+      endpoint: "s3.ca-central-1.amazonaws.com"
+      region: "ca-central-1"
+    stanza: db
+
+pgBackRest:
+  image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
+  retention: "2" # Ideally a larger number such as 30 backups/days
+  # If retention-full-type set to 'count' then the oldest backups will expire when the number of backups reach the number defined in retention
+  # If retention-full-type set to 'time' then the number defined in retention will take that many days worth of full backups before expiration
+  retentionFullType: count
+  repos:
+    schedules:
+      full: 0 8 * * *
+      incremental: 0 0,4,12,16,20 * * *
+    volume:
+      accessModes: "ReadWriteOnce"
+      storage: 64Mi
+      storageClassName: netapp-file-backup
+  repoHost:
+    requests:
+      cpu: 1m
+      memory: 64Mi
+    limits:
+      cpu: 50m
+      memory: 128Mi
+  sidecars:
+    requests:
+      cpu: 1m
+      memory: 64Mi
+    limits:
+      cpu: 50m
+      memory: 128Mi
+  s3:
+    enabled: false
+    createS3Secret: true
+    # the s3 secret name
+    s3Secret: s3-pgbackrest
+    # the path start with /, it will be created under bucket if it doesn't exist
+    s3Path: "/habackup"
+    # s3UriStyle is host or path
+    s3UriStyle: path
+    # bucket specifies the S3 bucket to use,
+    bucket: "bucketName"
+    # endpoint specifies the S3 endpoint to use.
+    endpoint: "endpointName"
+    # region specifies the S3 region to use. If your S3 storage system does not
+    # use "region", fill this in with a random value.
+    region: "ca-central-1"
+    # key is the S3 key. This is stored in a Secret.
+    # Please DO NOT push this value to GitHub
+    key: "s3keyValue"
+    # keySecret is the S3 key secret. This is stored in a Secret.
+    # Please DO NOT push this value to GitHub
+    keySecret: "s3SecretValue"
+    # setting the below to be one plus of the default schedule
+    # to avoid conflicts
+    fullSchedule: "0 9 * * *"
+    incrementalSchedule: "0 1,5,13,17,21 * * *"
+
+patroni:
+  postgresql:
+    pg_hba: "host all all 0.0.0.0/0 md5"
+    parameters:
+      shared_buffers: 16MB # default is 128MB; a good tuned default for shared_buffers is 25% of the memory allocated to the pod
+      wal_buffers: "64kB" # this can be set to -1 to automatically set as 1/32 of shared_buffers or 64kB, whichever is larger
+      min_wal_size: 32MB
+      max_wal_size: 64MB # default is 1GB
+      max_slot_wal_keep_size: 128MB # default is -1, allowing unlimited wal growth when replicas fall behind
+
+proxy:
+  pgBouncer:
+    image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
+    replicas: 2
+    requests:
+      cpu: 1m
+      memory: 64Mi
+    limits:
+      cpu: 50m
+      memory: 128Mi
+
+# Postgres Cluster resource values:
+pgmonitor:
+  enabled: false
+  exporter:
+    image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
+    requests:
+      cpu: 1m
+      memory: 64Mi
+    limits:
+      cpu: 50m
+      memory: 128Mi
