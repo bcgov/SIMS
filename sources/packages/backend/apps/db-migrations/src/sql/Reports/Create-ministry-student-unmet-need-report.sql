@@ -63,7 +63,7 @@ VALUES
     FROM
       sims.applications applications
       INNER JOIN sims.students students ON students.id = applications.student_id
-      INNER JOIN sims.sin_validations sin_validations ON sin_validations.student_id = students.id
+      INNER JOIN sims.sin_validations sin_validations ON sin_validations.id = students.sin_validation_id
       INNER JOIN sims.users users ON users.id = students.user_id
       INNER JOIN sims.student_assessments student_assessments ON student_assessments.id = applications.current_assessment_id
       INNER JOIN sims.education_programs_offerings education_programs_offerings ON education_programs_offerings.id = student_assessments.offering_id
