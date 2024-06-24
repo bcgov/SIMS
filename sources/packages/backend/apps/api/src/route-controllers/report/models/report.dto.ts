@@ -21,6 +21,7 @@ export enum MinistryReportNames {
   ECertErrors = "ECert_Errors_Report",
   InstitutionDesignation = "Institution_Designation_Report",
   StudentUnmetNeed = "Ministry_Student_Unmet_Need_Report",
+  ProgramAndOfferingStatus = "Program_And_Offering_Status_Report",
 }
 
 /**

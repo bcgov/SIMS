@@ -51,6 +51,19 @@ export function useFormioUtils() {
   };
 
   /**
+   * Gets the formio component, sets its required field
+   * and then redraws the component.
+   * @param form form.
+   * @param componentKey component api/id from formio.
+   * @param value boolean value that needs to be set to the required field.
+   */
+  const setRequired = (form: any, componentKey: string, value: boolean) => {
+    const component = getFirstComponent(form, componentKey);
+    component.component.validate.required = value;
+    component.redraw();
+  };
+
+  /**
    * Iterates recursively in all components checking for
    * a matchCondition provided as a parameter.
    * @param components components to iterate through.
@@ -229,5 +242,6 @@ export function useFormioUtils() {
     resetCheckBox,
     checkFormioValidity,
     excludeExtraneousValues,
+    setRequired,
   };
 }
