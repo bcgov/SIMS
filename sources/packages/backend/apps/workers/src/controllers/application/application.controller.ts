@@ -1,12 +1,6 @@
 import { Controller, Logger } from "@nestjs/common";
 import { ZeebeWorker } from "../../zeebe";
 import {
-  ZeebeJob,
-  MustReturnJobActionAcknowledgement,
-  IOutputVariables,
-  ICustomHeaders,
-} from "zeebe-node";
-import {
   ApplicationExceptionService,
   ApplicationService,
 } from "../../services";
@@ -30,6 +24,12 @@ import {
   NotificationActionsService,
 } from "@sims/services";
 import { DataSource } from "typeorm";
+import {
+  ICustomHeaders,
+  IOutputVariables,
+  MustReturnJobActionAcknowledgement,
+  ZeebeJob,
+} from "@camunda8/sdk/dist/zeebe/types";
 
 @Controller()
 export class ApplicationController {

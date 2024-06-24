@@ -1,4 +1,3 @@
-import { ZBClient } from "zeebe-node";
 import { Job } from "bull";
 import { createMock } from "@golevelup/ts-jest";
 import { INestApplication } from "@nestjs/common";
@@ -17,6 +16,7 @@ import {
 } from "@sims/test-utils";
 import { StudentAssessmentStatus } from "@sims/sims-db";
 import { Not } from "typeorm";
+import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 
 describe(
   describeProcessorRootTest(QueueNames.StartApplicationAssessment),
@@ -24,7 +24,7 @@ describe(
     let app: INestApplication;
     let db: E2EDataSources;
     let processor: StartApplicationAssessmentProcessor;
-    let zbClientMock: ZBClient;
+    let zbClientMock: ZeebeGrpcClient;
 
     beforeAll(async () => {
       const { nestApplication, zbClient, dataSource } =

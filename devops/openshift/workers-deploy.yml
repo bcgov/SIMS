@@ -69,10 +69,10 @@ objects:
                     secretKeyRef:
                       key: ${ZEEBE_CLIENT_SECRET_KEY}
                       name: ${WORKERS_SECRET_NAME}
-                - name: ZEEBE_AUTHORIZATION_SERVER_URL
+                - name: CAMUNDA_OAUTH_URL
                   valueFrom:
                     secretKeyRef:
-                      key: ${ZEEBE_AUTHORIZATION_SERVER_URL_KEY}
+                      key: ${CAMUNDA_OAUTH_URL_KEY}
                       name: ${WORKERS_SECRET_NAME}
                 - name: BYPASS_CRA_INCOME_VERIFICATION
                   value: ${BYPASS_CRA_INCOME_VERIFICATION}
@@ -188,8 +188,8 @@ parameters:
   - name: ZEEBE_CLIENT_SECRET_KEY
     value: zeebe-client-secret
     require: true
-  - name: ZEEBE_AUTHORIZATION_SERVER_URL_KEY
-    value: zeebe-authorization-server-url
+  - name: CAMUNDA_OAUTH_URL_KEY
+    value: camunda-oauth-url
     require: true
   - name: BYPASS_CRA_INCOME_VERIFICATION
     value: "false"

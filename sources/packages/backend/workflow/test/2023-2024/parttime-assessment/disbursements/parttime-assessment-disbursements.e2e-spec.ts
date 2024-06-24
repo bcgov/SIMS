@@ -1,5 +1,8 @@
 import { PROGRAM_YEAR } from "../../constants/program-year.constants";
-import { executePartTimeConfigureDisbursement } from "../../../test-utils";
+import {
+  ZeebeMockedClient,
+  executePartTimeConfigureDisbursement,
+} from "../../../test-utils";
 import { addDays, getISODateOnlyString, getUTCNow } from "@sims/utilities";
 import { createFakeConfigureDisbursementPartTimeData } from "../../../test-utils/factories";
 
@@ -242,4 +245,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-disbursements`, 
       ]);
     },
   );
+
+  afterAll(async () => {
+    // Closes the singleton instance created during test executions.
+    await ZeebeMockedClient.getMockedZeebeInstance().close();
+  });
 });

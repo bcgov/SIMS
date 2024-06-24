@@ -2,12 +2,6 @@ import "../../env-setup";
 import * as fs from "fs";
 import * as path from "path";
 import {
-  DecisionDeployment,
-  DecisionRequirementsDeployment,
-  Deployment,
-  ZBClient,
-} from "zeebe-node";
-import {
   DecisionDeploymentResult,
   DECISIONS_EXTENSION,
   DEPLOYMENT_METADATA_PROPERTY_NAME,
@@ -15,6 +9,29 @@ import {
   ProcessDeploymentResult,
   PROCESSES_EXTENSION,
 } from "./deploy.models";
+import { Camunda8 } from "@camunda8/sdk";
+import {
+  DecisionDeployment,
+  DecisionRequirementsDeployment,
+  Deployment,
+} from "@camunda8/sdk/dist/zeebe/types";
+
+/**
+ * Partition status value to define it as ready to accept Zeebe commands.
+ */
+const ZEEBE_PARTITION_HEALTH_STATUS = "HEALTHY";
+/**
+ * Attempts to verify it Zeebe is ready to accept commands.
+ */
+const ZEEBE_PARTITION_HEALTH_MAX_ATTEMPTS = 20;
+/**
+ * Interval between each health check.
+ */
+const ZEEBE_HEALTH_CHECK_ATTEMPTS_INTERVAL = 1000;
+/**
+ * Indentation do log JSON objects in a user friendly way.
+ */
+const JSON_LOG_INDENTATION = 2;
 
 /**
  * Script main execution method.
@@ -37,7 +54,39 @@ import {
   console.info(`\nFiles found:`);
   console.table(fileNames);
 
-  const zeebeClient = new ZBClient();
+  const camunda8 = new Camunda8();
+  const zeebeClient = camunda8.getZeebeGrpcApiClient();
+  // Wait till Zeebe is ready to receive commands.
+  let isHealthy = false;
+  let attempts = 0;
+  while (!isHealthy) {
+    console.info(`\nChecking if Zeebe is ready to accept commands.`);
+    const topology = await zeebeClient.topology();
+    console.debug(`Current topology:`);
+    console.debug(JSON.stringify(topology, null, JSON_LOG_INDENTATION));
+    isHealthy = topology.brokers.some((broker) =>
+      broker.partitions.some(
+        (partition) =>
+          partition.health.toString() === ZEEBE_PARTITION_HEALTH_STATUS,
+      ),
+    );
+    if (isHealthy) {
+      console.info("Zeebe is ready.");
+    } else if (++attempts < ZEEBE_PARTITION_HEALTH_MAX_ATTEMPTS) {
+      console.warn(
+        `Zeebe is not ready. Waiting for Zeebe to be ready, attempt ${attempts} of ${ZEEBE_PARTITION_HEALTH_MAX_ATTEMPTS}.`,
+      );
+      // Wait one second before trying again.
+      await new Promise((f) =>
+        setTimeout(f, ZEEBE_HEALTH_CHECK_ATTEMPTS_INTERVAL),
+      );
+    } else {
+      throw new Error(
+        "Zeebe was not able to be ready to accept the deployment.",
+      );
+    }
+  }
+
   try {
     // Deploy all decision files (BPMNs).
     const decisionDeploymentResults: DecisionDeploymentResult[] = [];

@@ -1,10 +1,10 @@
 import { createFakeWorkerJob } from "../../../../../test/utils/worker-job-mock";
-import { IOutputVariables, ZeebeJob } from "zeebe-node";
 import { ApplicationStatus } from "@sims/sims-db";
 import {
   ApplicationUpdateStatusJobHeaderDTO,
   ApplicationUpdateStatusJobInDTO,
 } from "../../application.dto";
+import { IOutputVariables, ZeebeJob } from "@camunda8/sdk/dist/zeebe/types";
 
 /**
  * Creates a fake update application status payload.

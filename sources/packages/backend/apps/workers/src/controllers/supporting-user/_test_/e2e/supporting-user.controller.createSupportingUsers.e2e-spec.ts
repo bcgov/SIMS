@@ -5,7 +5,6 @@ import {
   saveFakeApplication,
 } from "@sims/test-utils";
 import { createFakeSupportingUser } from "@sims/test-utils/factories/supporting-user";
-import { IOutputVariables } from "zeebe-node";
 import {
   createFakeWorkerJob,
   FAKE_WORKER_JOB_RESULT_PROPERTY,
@@ -18,6 +17,7 @@ import {
   CreateSupportingUsersJobOutDTO,
 } from "../../supporting-user.dto";
 import { createFakeCreateSupportingUsersPayload } from "./create-supporting-users";
+import { ICustomHeaders } from "@camunda8/sdk/dist/zeebe/types";
 
 describe("SupportingUserController(e2e)-createSupportingUsers", () => {
   let db: E2EDataSources;
@@ -42,7 +42,7 @@ describe("SupportingUserController(e2e)-createSupportingUsers", () => {
     const result = await supportingUserController.createSupportingUsers(
       createFakeWorkerJob<
         CreateSupportingUsersJobInDTO,
-        IOutputVariables,
+        ICustomHeaders,
         CreateSupportingUsersJobOutDTO
       >(fakeCreateSupportingUsersPayload),
     );
@@ -84,7 +84,7 @@ describe("SupportingUserController(e2e)-createSupportingUsers", () => {
     const result = await supportingUserController.createSupportingUsers(
       createFakeWorkerJob<
         CreateSupportingUsersJobInDTO,
-        IOutputVariables,
+        ICustomHeaders,
         CreateSupportingUsersJobOutDTO
       >(fakeCreateSupportingUsersPayload),
     );
@@ -129,7 +129,7 @@ describe("SupportingUserController(e2e)-createSupportingUsers", () => {
     const result = await supportingUserController.createSupportingUsers(
       createFakeWorkerJob<
         CreateSupportingUsersJobInDTO,
-        IOutputVariables,
+        ICustomHeaders,
         CreateSupportingUsersJobOutDTO
       >(fakeCreateSupportingUsersPayload),
     );

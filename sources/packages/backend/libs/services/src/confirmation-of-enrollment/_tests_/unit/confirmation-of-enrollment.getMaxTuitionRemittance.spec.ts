@@ -67,6 +67,7 @@ describe("ConfirmationOfEnrollmentService-getMaxTuitionRemittance", () => {
       awards,
       offeringCosts,
       MaxTuitionRemittanceTypes.Estimated,
+      0,
     );
     // Assert
     expect(total).toBe(450);
@@ -90,6 +91,7 @@ describe("ConfirmationOfEnrollmentService-getMaxTuitionRemittance", () => {
       awards,
       offeringCosts,
       MaxTuitionRemittanceTypes.Estimated,
+      0,
     );
     // Assert
     expect(total).toBe(450);
@@ -124,6 +126,7 @@ describe("ConfirmationOfEnrollmentService-getMaxTuitionRemittance", () => {
       awards,
       offeringCosts,
       MaxTuitionRemittanceTypes.Effective,
+      0,
     );
     // Assert
     expect(total).toBe(600);
@@ -148,8 +151,43 @@ describe("ConfirmationOfEnrollmentService-getMaxTuitionRemittance", () => {
       awards,
       offeringCosts,
       MaxTuitionRemittanceTypes.Effective,
+      0,
     );
     // Assert
     expect(total).toBe(115);
+  });
+
+  it("Should discount previous tuition remittance value when there is a previous tuition remittance.", () => {
+    // Arrange
+    const awards = [
+      {
+        valueType: DisbursementValueType.CanadaLoan,
+        valueAmount: 100,
+        disbursedAmountSubtracted: 50,
+      },
+      {
+        valueType: DisbursementValueType.BCLoan,
+        valueAmount: 200,
+      },
+      {
+        valueType: DisbursementValueType.CanadaGrant,
+        valueAmount: 300,
+        disbursedAmountSubtracted: 100,
+      },
+    ];
+    const offeringCosts = {
+      actualTuitionCosts: 200,
+      programRelatedCosts: 150,
+      mandatoryFees: 100,
+    };
+    // Act
+    const total = service.getMaxTuitionRemittance(
+      awards,
+      offeringCosts,
+      MaxTuitionRemittanceTypes.Estimated,
+      300,
+    );
+    // Assert
+    expect(total).toBe(150);
   });
 });

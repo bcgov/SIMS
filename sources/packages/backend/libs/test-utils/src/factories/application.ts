@@ -79,8 +79,10 @@ export function createFakeApplication(
  * - `student` related student.
  * - `msfaaNumber` related MSFAA number.
  * - `program` related education program.
+ * - `programYear` related program year.
  * @param options additional options:
  * - `applicationStatus` if provided sets the application status of the application or else defaults to Assessment status.
+ * - `applicationData` application related data.
  * - `offeringIntensity` if provided sets the offering intensity for the created fakeApplication.
  * - `createSecondDisbursement` if provided and true creates a second disbursement,
  * - `currentAssessmentInitialValues` if provided set the current application initial values.
@@ -101,9 +103,11 @@ export async function saveFakeApplicationDisbursements(
     student?: Student;
     msfaaNumber?: MSFAANumber;
     program?: EducationProgram;
+    programYear?: ProgramYear;
   },
   options?: {
     applicationStatus?: ApplicationStatus;
+    applicationData?: ApplicationData;
     offeringIntensity?: OfferingIntensity;
     createSecondDisbursement?: boolean;
     currentAssessmentInitialValues?: Partial<StudentAssessment>;
@@ -230,6 +234,7 @@ export async function saveFakeApplicationDisbursements(
  * - `applicationStatus` application status for the application.
  * - `offeringIntensity` if provided sets the offering intensity for the created fakeApplication, otherwise sets it to fulltime by default.
  * - `applicationData` related application data.
+ * - `currentAssessmentInitialValues` initial values related to the current assessment.
  * @returns the created application.
  */
 export async function saveFakeApplication(
@@ -246,6 +251,7 @@ export async function saveFakeApplication(
     applicationStatus?: ApplicationStatus;
     offeringIntensity?: OfferingIntensity;
     applicationData?: ApplicationData;
+    currentAssessmentInitialValues?: Partial<StudentAssessment>;
   },
 ): Promise<Application> {
   const userRepo = dataSource.getRepository(User);
@@ -296,11 +302,19 @@ export async function saveFakeApplication(
   }
   if (savedApplication.applicationStatus !== ApplicationStatus.Draft) {
     // Original assessment.
-    const fakeOriginalAssessment = createFakeStudentAssessment({
-      application: savedApplication,
-      offering: savedOffering,
-      auditUser: savedUser,
-    });
+    const fakeOriginalAssessment = createFakeStudentAssessment(
+      {
+        application: savedApplication,
+        offering: savedOffering,
+        auditUser: savedUser,
+      },
+      {
+        initialValue: {
+          assessmentData:
+            options?.currentAssessmentInitialValues?.assessmentData,
+        },
+      },
+    );
     const savedOriginalAssessment = await studentAssessmentRepo.save(
       fakeOriginalAssessment,
     );

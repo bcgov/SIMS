@@ -9,7 +9,13 @@ import {
   DisbursementValueType,
   User,
 } from "@sims/sims-db";
-import { DataSource, EntityManager, Repository, UpdateResult } from "typeorm";
+import {
+  DataSource,
+  EntityManager,
+  LessThan,
+  Repository,
+  UpdateResult,
+} from "typeorm";
 import {
   Award,
   COEApprovalPeriodStatus,
@@ -89,6 +95,7 @@ export class ConfirmationOfEnrollmentService {
               mandatoryFees: true,
             },
           },
+          disbursementDate: true,
         },
         relations: {
           disbursementValues: true,
@@ -103,11 +110,49 @@ export class ConfirmationOfEnrollmentService {
     if (!maxTuitionRemittanceData) {
       return null;
     }
+
+    const previousTuitionRemittance = await this.getPreviousTuitionRemittance(
+      maxTuitionRemittanceData.studentAssessment.id,
+      maxTuitionRemittanceData.disbursementDate,
+    );
+
     return this.getMaxTuitionRemittance(
       maxTuitionRemittanceData.disbursementValues,
       maxTuitionRemittanceData.studentAssessment.offering,
       MaxTuitionRemittanceTypes.Estimated,
+      previousTuitionRemittance,
     );
+  }
+
+  /**
+   * Gets the previous disbursement schedule remittance value.
+   * Returns tuition remittance effective amount if present or tuition remittance requested amount if present, otherwise 0.
+   * @param studentAssessmentId for the disbursement schedule.
+   * @param disbursementDate disbursement date.
+   * @returns previous disbursement schedule remittance value.
+   */
+  async getPreviousTuitionRemittance(
+    studentAssessmentId: number,
+    disbursementDate: string,
+  ): Promise<number> {
+    const previousTuitionRemittanceData =
+      await this.disbursementScheduleRepo.findOne({
+        select: {
+          id: true,
+          tuitionRemittanceEffectiveAmount: true,
+          tuitionRemittanceRequestedAmount: true,
+        },
+        where: {
+          disbursementDate: LessThan(disbursementDate),
+          studentAssessment: {
+            id: studentAssessmentId,
+          },
+        },
+      });
+    return previousTuitionRemittanceData
+      ? previousTuitionRemittanceData.tuitionRemittanceEffectiveAmount ??
+          previousTuitionRemittanceData.tuitionRemittanceRequestedAmount
+      : 0;
   }
 
   /**
@@ -115,6 +160,7 @@ export class ConfirmationOfEnrollmentService {
    * @param awards awards that will be disbursed.
    * @param offeringCosts offering costs to be considered.
    * @param calculationType effective or estimated calculation.
+   * @param previousTuitionRemittance previous disbursement schedule tuition remittance.
    * Before the disbursement happen, the value for the max tuition
    * remittance can only be estimated. It is because the real values,
    * with all possible deductions, will be known only upon e-Cert
@@ -127,6 +173,7 @@ export class ConfirmationOfEnrollmentService {
     awards: Award[],
     offeringCosts: OfferingCosts,
     calculationType: MaxTuitionRemittanceTypes,
+    previousTuitionRemittance: number,
   ): number {
     let totalAwards = 0;
     const tuitionAwards = awards.filter((award) =>
@@ -150,7 +197,11 @@ export class ConfirmationOfEnrollmentService {
       offeringCosts.actualTuitionCosts +
       offeringCosts.programRelatedCosts +
       offeringCosts.mandatoryFees;
-    return Math.min(offeringTotalCosts, totalAwards);
+
+    return Math.max(
+      Math.min(offeringTotalCosts - previousTuitionRemittance, totalAwards),
+      0,
+    );
   }
 
   /**
@@ -696,7 +747,7 @@ export class ConfirmationOfEnrollmentService {
 
     if (tuitionRemittanceAmount > maxTuitionAllowed) {
       throw new CustomNamedError(
-        "Tuition amount provided should be lesser than both (Actual tuition + Program related costs + Mandatory fees) and (Canada grants + Canada Loan + BC Loan).",
+        "Tuition amount provided should be lesser than both (Actual tuition + Program related costs + Mandatory fees - Previous tuition remittance) and (Canada grants + Canada Loan + BC Loan).",
         INVALID_TUITION_REMITTANCE_AMOUNT,
       );
     }

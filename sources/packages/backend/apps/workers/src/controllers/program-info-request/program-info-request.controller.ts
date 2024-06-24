@@ -1,6 +1,5 @@
 import { Controller, Logger } from "@nestjs/common";
 import { ZeebeWorker } from "../../zeebe";
-import { ZeebeJob, MustReturnJobActionAcknowledgement } from "zeebe-node";
 import { ApplicationService } from "../../services";
 import {
   ProgramInfoRequestJobInDTO,
@@ -15,6 +14,10 @@ import {
 import { MaxJobsToActivate } from "../../types";
 import { Workers } from "@sims/services/constants";
 import { createUnexpectedJobFail } from "../../utilities";
+import {
+  MustReturnJobActionAcknowledgement,
+  ZeebeJob,
+} from "@camunda8/sdk/dist/zeebe/types";
 
 @Controller()
 export class ProgramInfoRequestController {

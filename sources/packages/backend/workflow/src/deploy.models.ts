@@ -10,11 +10,11 @@ export enum DeploymentMetadataTypes {
 export interface DecisionDeploymentResult {
   requirementsId: string;
   requirementsName: string;
-  requirementsKey: number;
+  requirementsKey: string;
   resourceName: string | undefined;
   metadata: string;
   version: number;
-  deploymentKey: number;
+  deploymentKey: string;
 }
 
 export interface ProcessDeploymentResult {
@@ -22,5 +22,5 @@ export interface ProcessDeploymentResult {
   processDefinitionKey: string;
   resourceName: string;
   version: number;
-  deploymentKey: number;
+  deploymentKey: string;
 }

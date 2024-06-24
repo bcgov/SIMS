@@ -5,16 +5,15 @@ import {
   MessageHandler,
 } from "@nestjs/microservices";
 import { isObservable, lastValueFrom } from "rxjs";
+import { ZeebeHealthIndicator } from "./zeebe-health-indicator";
+import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 import {
   ICustomHeaders,
-  IInputVariables,
   IOutputVariables,
   MustReturnJobActionAcknowledgement,
-  ZBClient,
   ZBWorkerOptions,
   ZeebeJob,
-} from "zeebe-node";
-import { ZeebeHealthIndicator } from "./zeebe-health-indicator";
+} from "@camunda8/sdk/dist/zeebe/types";
 
 /**
  * Zeebe strategy to stablish the connectivity and create all workers.
@@ -26,7 +25,7 @@ export class ZeebeTransportStrategy
   implements CustomTransportStrategy
 {
   constructor(
-    private readonly zeebeClient: ZBClient,
+    private readonly zeebeClient: ZeebeGrpcClient,
     private readonly zeebeHealthIndicator: ZeebeHealthIndicator,
   ) {
     super();
@@ -72,7 +71,9 @@ export class ZeebeTransportStrategy
    */
   private async workerHandlerWrapper(
     jobHandler: MessageHandler,
-    job: Readonly<ZeebeJob<IInputVariables, ICustomHeaders, IOutputVariables>>,
+    job: Readonly<
+      ZeebeJob<{ [x: string]: unknown }, ICustomHeaders, IOutputVariables>
+    >,
   ): Promise<MustReturnJobActionAcknowledgement> {
     const jobLogger = new Logger(job.type);
     jobLogger.log(

@@ -407,6 +407,26 @@ export interface ApplicationData {
    * Application PD/PPD Status.
    */
   applicationPDPPDStatus?: YesNoOptions;
+  /**
+   * Indigenous person status.
+   */
+  indigenousStatus?: string;
+  /**
+   * Citizenship Status.
+   */
+  citizenship?: string;
+  /**
+   * Youth in care.
+   */
+  youthInCare?: string;
+  /**
+   * Custody of child welfare.
+   */
+  custodyOfChildWelfare?: string;
+  /**
+   * Dependant Status.
+   */
+  dependantstatus?: string;
 }
 
 /**

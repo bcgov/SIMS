@@ -83,10 +83,10 @@ objects:
                     secretKeyRef:
                       key: ${ZEEBE_CLIENT_SECRET_KEY}
                       name: ${QUEUE_CONSUMERS_SECRET_NAME}
-                - name: ZEEBE_AUTHORIZATION_SERVER_URL
+                - name: CAMUNDA_OAUTH_URL
                   valueFrom:
                     secretKeyRef:
-                      key: ${ZEEBE_AUTHORIZATION_SERVER_URL_KEY}
+                      key: ${CAMUNDA_OAUTH_URL_KEY}
                       name: ${QUEUE_CONSUMERS_SECRET_NAME}
                 - name: INSTITUTION_REQUEST_FOLDER
                   valueFrom:
@@ -333,8 +333,8 @@ parameters:
   - name: ZEEBE_CLIENT_SECRET_KEY
     value: zeebe-client-secret
     required: true
-  - name: ZEEBE_AUTHORIZATION_SERVER_URL_KEY
-    value: zeebe-authorization-server-url
+  - name: CAMUNDA_OAUTH_URL_KEY
+    value: camunda-oauth-url
     required: true
   - name: INSTITUTION_REQUEST_FOLDER_NAME_KEY
     value: institution-request-folder

@@ -23,11 +23,11 @@ on:
     secrets:
       ZEEBE_ADDRESS:
         required: true
-      ZEEBE_AUTHORIZATION_SERVER_URL:
-        required: true
       ZEEBE_CLIENT_ID:
         required: true
       ZEEBE_CLIENT_SECRET:
+        required: true
+      CAMUNDA_OAUTH_URL:
         required: true
 
 jobs:
@@ -37,9 +37,9 @@ jobs:
     environment: ${{ inputs.environment }}
     env:
       ZEEBE_ADDRESS: ${{ secrets.ZEEBE_ADDRESS }}
-      ZEEBE_AUTHORIZATION_SERVER_URL: ${{ secrets.ZEEBE_AUTHORIZATION_SERVER_URL }}
       ZEEBE_CLIENT_ID: ${{ secrets.ZEEBE_CLIENT_ID }}
       ZEEBE_CLIENT_SECRET: ${{ secrets.ZEEBE_CLIENT_SECRET }}
+      CAMUNDA_OAUTH_URL: ${{ secrets.CAMUNDA_OAUTH_URL }}
     steps:
       - name: Print env variables
         run: |

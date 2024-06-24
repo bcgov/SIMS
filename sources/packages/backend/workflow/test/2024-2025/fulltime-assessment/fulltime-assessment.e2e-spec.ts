@@ -1,6 +1,7 @@
 import { OfferingIntensity } from "@sims/sims-db";
 import { AssessmentModel } from "../../models";
 import {
+  ZeebeMockedClient,
   createFakeAssessmentConsolidatedData,
   executeFullTimeAssessmentForProgramYear,
 } from "../../test-utils";
@@ -112,5 +113,10 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}.`, () => {
     expect(
       calculatedAssessment.variables.calculatedDataTotalProvincialFSC,
     ).toBe(expectedAssessmentData.studentTotalProvincialContribution);
+  });
+
+  afterAll(async () => {
+    // Closes the singleton instance created during test executions.
+    await ZeebeMockedClient.getMockedZeebeInstance().close();
   });
 });

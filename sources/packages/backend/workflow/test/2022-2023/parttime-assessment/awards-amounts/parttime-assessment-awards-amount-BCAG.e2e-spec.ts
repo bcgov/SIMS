@@ -1,5 +1,6 @@
 import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 import {
+  ZeebeMockedClient,
   createFakeConsolidatedPartTimeData,
   executePartTimeAssessmentForProgramYear,
 } from "../../../test-utils";
@@ -182,5 +183,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
     expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(true);
     expect(calculatedAssessment.variables.limitAwardBCAGRemaining).toBe(99);
     expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(0);
+  });
+
+  afterAll(async () => {
+    // Closes the singleton instance created during test executions.
+    await ZeebeMockedClient.getMockedZeebeInstance().close();
   });
 });

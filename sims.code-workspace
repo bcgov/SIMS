@@ -91,6 +91,7 @@
     "cSpell.words": [
       "AEST",
       "bcag",
+      "BCSC",
       "BCSG",
       "bcsl",
       "bgpd",
@@ -118,7 +119,8 @@
       "SFAS",
       "timestamptz",
       "typeorm",
-      "unparse"
+      "unparse",
+      "Zeebe"
     ],
     "[json]": {
       "editor.defaultFormatter": "vscode.json-language-features"
