@@ -975,7 +975,7 @@
               "value": ""
             }
           ],
-          "content": "Your contact information",
+          "content": "Contact information",
           "refreshOnChange": false,
           "customClass": "category-header-large primary-color",
           "hidden": false,
