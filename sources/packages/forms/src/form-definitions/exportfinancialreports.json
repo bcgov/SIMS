@@ -235,17 +235,17 @@
               "customConditional": "show = \n    data.reportName === 'Program_And_Offering_Status_Report'\n    || data.reportName === 'Ministry_Student_Unmet_Need_Report'"
             }
           ]
+        },
+        {
+          "label": "institutionNames",
+          "persistent": false,
+          "key": "institutionNames",
+          "type": "hidden",
+          "input": true,
+          "tableView": false,
+          "lockKey": true
         }
       ]
-    },
-    {
-      "label": "institutionNames",
-      "persistent": false,
-      "key": "institutionNames",
-      "type": "hidden",
-      "input": true,
-      "tableView": false,
-      "lockKey": true
     }
   ]
 }
