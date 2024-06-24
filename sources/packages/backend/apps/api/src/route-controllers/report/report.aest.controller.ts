@@ -50,15 +50,6 @@ export class ReportAESTController extends BaseController {
     @Body() payload: MinistryReportsFilterAPIInDTO,
     @Res() response: Response,
   ): Promise<void> {
-    // If the institution id received as a part of the payload is an empty string,
-    // then convert it to the appropriate number type before passing it to the SQL
-    // as parameter.
-    if (
-      payload.reportName === MinistryReportNames.StudentUnmetNeed &&
-      payload.params["institutionId"] === ""
-    ) {
-      payload.params["institutionId"] = -1;
-    }
     await this.reportControllerService.generateReport(payload, response);
   }
 }

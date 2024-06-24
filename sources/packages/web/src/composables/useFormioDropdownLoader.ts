@@ -204,17 +204,14 @@ export function useFormioDropdownLoader() {
     );
   };
 
-  const loadInstitutionName = async (
-    form: FormIOForm,
-    dropdownName: string,
-  ) => {
-    // Find the dropdown to be populated with the locations.
-    const dropdown = formioUtils.getFirstComponent(form, dropdownName);
-    return loadDropdown(
-      form,
-      dropdown,
-      InstitutionService.shared.getInstitutionNameOptions(),
-    );
+  const loadInstitutionNames = async (form: FormIOForm, apiKey: string) => {
+    const institutionNames =
+      await InstitutionService.shared.getInstitutionNameOptions();
+    const mappedInstitutionNames = institutionNames.map((institution) => ({
+      value: institution.id,
+      label: institution.description,
+    }));
+    formioUtils.setComponentValue(form, apiKey, mappedInstitutionNames);
   };
 
   return {
@@ -228,6 +225,6 @@ export function useFormioDropdownLoader() {
     loadProgramYear,
     loadProgramIntensityDetails,
     loadDropdown,
-    loadInstitutionName,
+    loadInstitutionNames,
   };
 }

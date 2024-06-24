@@ -50,6 +50,9 @@ export class ReportControllerService {
         "Not able to export report due to an invalid request.",
       );
     }
+    if (payload.params["institution"] === "") {
+      payload.params["institution"] = 0;
+    }
     const programYearExists = await this.programYearService.programYearExists(
       payload.params.programYear as number,
     );

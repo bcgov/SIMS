@@ -47,10 +47,11 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const { downloadReports } = useFileUtils();
     const formioDataLoader = useFormioDropdownLoader();
-    const { getFirstComponent, setRequired } = useFormioUtils();
+    const { getFirstComponent } = useFormioUtils();
     const REPORT_TYPE_DROPDOWN_KEY = "reportName";
     const loading = ref(false);
     const PROGRAM_YEAR_DROPDOWN_KEY = "programYear";
+    const INSTITUTIONS_LIST = "institutionNames";
     const INSTITUTION_DROPDOWN_KEY = "institution";
     let formData: FormIOForm;
     const formLoaded = async (form: FormIOForm) => {
@@ -64,12 +65,6 @@ export default defineComponent({
     const formChanged = async (form: FormIOForm, event: FormIOChangeEvent) => {
       // Populates the program year select component, institution select component if required.
       if (event.changed?.component.key === REPORT_TYPE_DROPDOWN_KEY) {
-        if (event.changed.value === "Ministry_Student_Unmet_Need_Report") {
-          setRequired(form, INSTITUTION_DROPDOWN_KEY, false);
-        }
-        if (event.changed.value === "Program_And_Offering_Status_Report") {
-          setRequired(form, INSTITUTION_DROPDOWN_KEY, true);
-        }
         const programYearSelect = getFirstComponent(
           form,
           PROGRAM_YEAR_DROPDOWN_KEY,
@@ -95,10 +90,7 @@ export default defineComponent({
         ) {
           // Load institution data if the select is visible and
           // its items are not populated yet.
-          await formioDataLoader.loadInstitutionName(
-            form,
-            INSTITUTION_DROPDOWN_KEY,
-          );
+          await formioDataLoader.loadInstitutionNames(form, INSTITUTIONS_LIST);
         }
       }
     };

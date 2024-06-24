@@ -63,7 +63,7 @@ VALUES
     FROM
       sims.applications applications
       INNER JOIN sims.students students ON students.id = applications.student_id
-      INNER JOIN sims.sin_validations sin_validations ON sin_validations.id = students.sin_validation_id
+      INNER JOIN sims.sin_validations sin_validations ON sin_validations.student_id = students.id
       INNER JOIN sims.users users ON users.id = students.user_id
       INNER JOIN sims.student_assessments student_assessments ON student_assessments.id = applications.current_assessment_id
       INNER JOIN sims.education_programs_offerings education_programs_offerings ON education_programs_offerings.id = student_assessments.offering_id
@@ -73,20 +73,14 @@ VALUES
       applications.application_status IN (''Assessment'', ''Enrolment'', ''Completed'')
       AND education_programs_offerings.offering_intensity = ANY(:offeringIntensity)
       AND applications.is_archived = FALSE
-      AND CASE
-        WHEN :sabcProgramCode = '''' THEN (
-          education_programs.sabc_code IS NULL
-          OR education_programs.sabc_code IS NOT NULL
-        )
-        WHEN :sabcProgramCode != '''' THEN education_programs.sabc_code = :sabcProgramCode
-      END
-      AND CASE
-        WHEN :institutionId = -1 THEN (
-          institution_locations.institution_id IS NULL
-          OR institution_locations.institution_id IS NOT NULL
-        )
-        WHEN :institutionId != -1 THEN institution_locations.institution_id = :institutionId
-      END
+      AND (
+        :sabcProgramCode = ''''
+        OR education_programs.sabc_code = :sabcProgramCode
+      )
+      AND (
+        :institution = 0
+        OR institution_locations.institution_id = :institution
+      )
       AND education_programs_offerings.study_start_date BETWEEN :startDate
       AND :endDate;'
   );
