@@ -100,12 +100,13 @@
 
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { computed, ref, defineComponent } from "vue";
+import { computed, ref, defineComponent, onMounted } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { ClientIdType, MenuItemModel } from "@/types";
 import { useAuth, useStudentStore } from "@/composables";
 import BCLogo from "@/components/generic/BCLogo.vue";
 import IdleTimeChecker from "@/components/common/IdleTimeChecker.vue";
+import { AppConfigService } from "@/services/AppConfigService";
 
 export default defineComponent({
   components: { BCLogo, IdleTimeChecker },
@@ -151,14 +152,6 @@ export default defineComponent({
               },
             },
           },
-          {
-            title: "Overawards Balance",
-            props: {
-              to: {
-                name: StudentRoutesConst.STUDENT_OVERAWARDS,
-              },
-            },
-          },
         );
       }
 
@@ -171,6 +164,24 @@ export default defineComponent({
       return items;
     });
 
+    onMounted(async () => {
+      const { isFulltimeAllowed } = await AppConfigService.shared.config();
+      if (isFulltimeAllowed) {
+        const logoutElement: MenuItemModel =
+          menuItems.value.pop() as MenuItemModel;
+        menuItems.value.push(
+          {
+            title: "Overawards Balance",
+            props: {
+              to: {
+                name: StudentRoutesConst.STUDENT_OVERAWARDS,
+              },
+            },
+          },
+          logoutElement,
+        );
+      }
+    });
     return {
       logoClick,
       menuItems,
