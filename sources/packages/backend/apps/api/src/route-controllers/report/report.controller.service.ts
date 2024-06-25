@@ -62,7 +62,7 @@ export class ReportControllerService {
       );
     }
     if (options?.institutionId) {
-      submissionResult.data.data.params.institution = options.institutionId;
+      submissionResult.data.data.params.institutionId = options.institutionId;
     }
     try {
       const reportData = await this.reportService.getReportDataAsCSV(
