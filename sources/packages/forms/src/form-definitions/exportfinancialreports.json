@@ -61,6 +61,7 @@
               "data": {
                 "custom": "values = data.institutionNames;"
               },
+              "valueProperty": "value",
               "refreshOn": "institutionsList",
               "key": "institution",
               "customConditional": "show = data.reportName === 'Ministry_Student_Unmet_Need_Report'\n       || data.reportName === 'Program_And_Offering_Status_Report'",

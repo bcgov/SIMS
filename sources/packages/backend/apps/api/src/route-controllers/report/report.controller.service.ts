@@ -50,8 +50,8 @@ export class ReportControllerService {
         "Not able to export report due to an invalid request.",
       );
     }
-    if (payload.params["institution"] === "") {
-      payload.params["institution"] = 0;
+    if (submissionResult.data.data.params["institution"] === "") {
+      submissionResult.data.data.params["institution"] = 0;
     }
     const programYearExists = await this.programYearService.programYearExists(
       payload.params.programYear as number,
@@ -62,7 +62,7 @@ export class ReportControllerService {
       );
     }
     if (options?.institutionId) {
-      submissionResult.data.data.params.institutionId = options.institutionId;
+      submissionResult.data.data.params.institution = options.institutionId;
     }
     try {
       const reportData = await this.reportService.getReportDataAsCSV(
