@@ -1056,7 +1056,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
               pdppdStatus: false,
             },
           } as WorkflowData,
-          assessmentDate: new Date(),
+          assessmentDate: now,
           assessmentData: {
             totalFederalAssessedResources: 10,
             federalAssessmentNeed: 3,
