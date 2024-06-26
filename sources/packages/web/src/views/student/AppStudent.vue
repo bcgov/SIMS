@@ -152,6 +152,14 @@ export default defineComponent({
               },
             },
           },
+          {
+            title: "Overawards Balance",
+            props: {
+              to: {
+                name: StudentRoutesConst.STUDENT_OVERAWARDS,
+              },
+            },
+          },
         );
       }
 
@@ -166,20 +174,12 @@ export default defineComponent({
 
     onMounted(async () => {
       const { isFulltimeAllowed } = await AppConfigService.shared.config();
-      if (isFulltimeAllowed) {
-        const logoutElement: MenuItemModel =
-          menuItems.value.pop() as MenuItemModel;
-        menuItems.value.push(
-          {
-            title: "Overawards Balance",
-            props: {
-              to: {
-                name: StudentRoutesConst.STUDENT_OVERAWARDS,
-              },
-            },
-          },
-          logoutElement,
-        );
+      if (!isFulltimeAllowed) {
+        menuItems.value.forEach((item, index) => {
+          if (item.title === "Overawards Balance") {
+            menuItems.value.splice(index, 1);
+          }
+        });
       }
     });
     return {
