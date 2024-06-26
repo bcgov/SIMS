@@ -51,6 +51,7 @@ export default defineComponent({
     const REPORT_TYPE_DROPDOWN_KEY = "reportName";
     const loading = ref(false);
     const PROGRAM_YEAR_DROPDOWN_KEY = "programYear";
+    const INSTITUTION_NAMES = "institutionNames";
     const INSTITUTION_DROPDOWN_KEY = "institution";
     let formData: FormIOForm;
     const formLoaded = async (form: FormIOForm) => {
@@ -62,8 +63,8 @@ export default defineComponent({
       );
     };
     const formChanged = async (form: FormIOForm, event: FormIOChangeEvent) => {
-      // Populates the program year select component if required.
-      if (event.changed.component.key === REPORT_TYPE_DROPDOWN_KEY) {
+      // Populates the program year select component, institution select component if required.
+      if (event.changed?.component.key === REPORT_TYPE_DROPDOWN_KEY) {
         const programYearSelect = getFirstComponent(
           form,
           PROGRAM_YEAR_DROPDOWN_KEY,
@@ -89,10 +90,7 @@ export default defineComponent({
         ) {
           // Load institution data if the select is visible and
           // its items are not populated yet.
-          await formioDataLoader.loadInstitutionName(
-            form,
-            INSTITUTION_DROPDOWN_KEY,
-          );
+          await formioDataLoader.loadInstitutionNames(form, INSTITUTION_NAMES);
         }
       }
     };
@@ -102,6 +100,7 @@ export default defineComponent({
     const exportReport = async (data: ReportsFilterAPIInDTO) => {
       try {
         loading.value = true;
+        delete data[INSTITUTION_NAMES];
         await downloadReports(data);
       } catch {
         snackBar.error("Unexpected error while downloading the report.");

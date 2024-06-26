@@ -50,6 +50,11 @@ export class ReportControllerService {
         "Not able to export report due to an invalid request.",
       );
     }
+    // In case the `institution` is present as optional in the submission it will be sent as an empty string (in case it is not provided)
+    // or as a number (in case one institution was selected). To ensure the dynamic parameter will always be sent with the same type, the default 0 is used.
+    if (submissionResult.data.data.params["institution"] === "") {
+      submissionResult.data.data.params["institution"] = 0;
+    }
     const programYearExists = await this.programYearService.programYearExists(
       payload.params.programYear as number,
     );
