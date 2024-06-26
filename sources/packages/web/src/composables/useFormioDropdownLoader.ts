@@ -204,14 +204,17 @@ export function useFormioDropdownLoader() {
     );
   };
 
-  const loadInstitutionNames = async (form: FormIOForm, apiKey: string) => {
+  const loadInstitutionNames = async (
+    form: FormIOForm,
+    componentKey: string,
+  ) => {
     const institutionNames =
       await InstitutionService.shared.getInstitutionNameOptions();
     const mappedInstitutionNames = institutionNames.map((institution) => ({
       value: institution.id,
       label: institution.description,
     }));
-    formioUtils.setComponentValue(form, apiKey, mappedInstitutionNames);
+    formioUtils.setComponentValue(form, componentKey, mappedInstitutionNames);
   };
 
   return {
