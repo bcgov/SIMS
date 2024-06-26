@@ -11,10 +11,7 @@ import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import { ReportControllerService } from "./report.controller.service";
 import { Role } from "../../auth";
-import {
-  MinistryReportNames,
-  MinistryReportsFilterAPIInDTO,
-} from "./models/report.dto";
+import { MinistryReportsFilterAPIInDTO } from "./models/report.dto";
 import { Response } from "express";
 
 /**

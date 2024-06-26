@@ -14,7 +14,7 @@ enum InstitutionReportNames {
   StudentUnmetNeed = "Student_Unmet_Need_Report",
 }
 
-export enum MinistryReportNames {
+enum MinistryReportNames {
   ForecastDisbursements = "Disbursement_Forecast_Report",
   Disbursements = "Disbursement_Report",
   DataInventory = "Data_Inventory_Report",

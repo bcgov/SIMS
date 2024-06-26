@@ -54,7 +54,7 @@ export interface FormIOCustomEvent {
 }
 
 export interface FormIOChangeEvent {
-  changed: FormIOChangedObject;
+  changed?: FormIOChangedObject;
 }
 
 export interface FormIOChangedObject {
