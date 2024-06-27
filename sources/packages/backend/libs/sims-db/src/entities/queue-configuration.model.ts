@@ -3,6 +3,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { TableNames } from "../constant";
 import { QueueConfigurationDetails } from "./queue-configuration.type";
 import { RecordDataModel } from "./record.model";
+import { QueueSettings } from "@sims/sims-db/entities/queue-settings.type";
 
 const QUEUE_NAME_MAX_LENGTH = 100;
 
@@ -30,6 +31,16 @@ export class QueueConfiguration extends RecordDataModel {
     type: "jsonb",
   })
   queueConfiguration: QueueConfigurationDetails;
+
+  /**
+   * Represents advanced settings to control additional queue behavior.
+   */
+  @Column({
+    name: "queue_settings",
+    nullable: false,
+    type: "jsonb",
+  })
+  queueSetting: QueueSettings;
 
   /**
    * Active flag which decides if the Queue is active
