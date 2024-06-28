@@ -1,2 +1,2 @@
 ALTER TABLE
-  students DROP COLUMN cas_supplier_id;
+  sims.students DROP COLUMN cas_supplier_id;

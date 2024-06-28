@@ -1,5 +1,7 @@
 export * from "./base.model";
 export * from "./record.model";
+export * from "./supplier-status.type";
+export * from "./cas-supplier.model";
 export * from "./user.model";
 export * from "./student.model";
 export * from "./institution.model";
@@ -88,5 +90,3 @@ export * from "./application-offering-change-request.model";
 export * from "./student-disability-status.type";
 export * from "./student-loan-balance.model";
 export * from "./ecert-feedback-error.model";
-export * from "./supplier-status.type";
-export * from "./cas-supplier.model";
