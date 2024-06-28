@@ -77,7 +77,7 @@ pgBackRest:
       memory: 128Mi
   s3:
     enabled: false
-    createS3Secret: true
+    createS3Secret: false
     # the s3 secret name
     s3Secret: s3-pgbackrest
     # the path start with /, it will be created under bucket if it doesn't exist
