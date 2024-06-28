@@ -1,0 +1,112 @@
+import { TableNames } from "@sims/sims-db/constant";
+import { RecordDataModel } from "@sims/sims-db/entities/record.model";
+import { SupplierStatus } from "@sims/sims-db/entities/supplier-status.type";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+
+/**
+ * Student supplier information data from the integration with Corporate Accounting System (CAS).
+ */
+@Entity({ name: TableNames.CASSuppliers })
+export class CASSupplier extends RecordDataModel {
+  @PrimaryGeneratedColumn()
+  id: number;
+  /**
+   * Supplier number received from CAS. null when no data was ever retrieved from CAS.
+   */
+  @Column({
+    name: "supplier_number",
+    type: "string",
+  })
+  supplier_number: string;
+
+  /**
+   * Supplier name received from CAS. null when no data was ever retrieved from CAS.
+   */
+  @Column({
+    name: "supplier_name",
+    type: "string",
+  })
+  supplier_name: string;
+
+  /**
+   * Supplier status received from CAS. null when no data was ever retrieved from CAS.
+   */
+  @Column({
+    name: "status",
+    type: "string",
+  })
+  status: string;
+
+  /**
+   * Protected flag received from CAS which means the student profile was created by SFAS and
+   * therefore no system other than SFAS can change it. null when no data was ever retrieved from CAS.
+   */
+  @Column({
+    name: "supplier_protected",
+    type: "boolean",
+  })
+  supplierProtected: boolean;
+
+  /**
+   * Date and time of the last update. null when no data was ever retrieved from CAS.
+   */
+  @Column({
+    name: "last_updated",
+    type: "timestamptz",
+    nullable: true,
+  })
+  lastUpdated?: Date;
+
+  /**
+   * Supplier address from the CAS integrations.
+   */
+  @Column({
+    name: "supplier_address",
+    type: "jsonb",
+    nullable: false,
+  })
+  supplierAddress: SupplierAddress;
+
+  /**
+   * Indicates if the system should execute verification in the record calling some of the CAS integrations;
+   * if the record represents manual entry and no actions are needed; or if no further verifications are needed.
+   */
+  @Column({
+    name: "supplier_status",
+    type: "enum",
+    enum: SupplierStatus,
+    enumName: "SupplierStatus",
+  })
+  supplierStatus: SupplierStatus;
+
+  /**
+   * Date when the column supplier_status was updated.
+   */
+  @Column({
+    name: "supplier_status_updated_on",
+    type: "timestamptz",
+    nullable: true,
+  })
+  supplierStatusUpdatedOn?: Date;
+
+  /**
+   * Indicates when the supplier is considered valid and an invoice can be generated using the information.
+   */
+  @Column({
+    name: "is_valid",
+    type: "boolean",
+  })
+  isValid: boolean;
+}
+
+export interface SupplierAddress {
+  supplierSiteCode: string;
+  addressLine1: string;
+  city: string;
+  provinceState: string;
+  country: string;
+  postalCode: string;
+  status: string;
+  siteProtected: string;
+  lastUpdated: Date;
+}

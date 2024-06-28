@@ -88,3 +88,5 @@ export * from "./application-offering-change-request.model";
 export * from "./student-disability-status.type";
 export * from "./student-loan-balance.model";
 export * from "./ecert-feedback-error.model";
+export * from "./supplier-status.type";
+export * from "./cas-supplier.model";
