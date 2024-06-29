@@ -15,27 +15,27 @@ export class CASSupplier extends RecordDataModel {
    */
   @Column({
     name: "supplier_number",
-    type: "string",
+    nullable: true,
   })
-  supplier_number: string;
+  supplierNumber?: string;
 
   /**
    * Supplier name received from CAS. null when no data was ever retrieved from CAS.
    */
   @Column({
     name: "supplier_name",
-    type: "string",
+    nullable: true,
   })
-  supplier_name: string;
+  supplierName?: string;
 
   /**
    * Supplier status received from CAS. null when no data was ever retrieved from CAS.
    */
   @Column({
     name: "status",
-    type: "string",
+    nullable: true,
   })
-  status: string;
+  status?: string;
 
   /**
    * Protected flag received from CAS which means the student profile was created by SFAS and
@@ -43,9 +43,9 @@ export class CASSupplier extends RecordDataModel {
    */
   @Column({
     name: "supplier_protected",
-    type: "boolean",
+    nullable: true,
   })
-  supplierProtected: boolean;
+  supplierProtected?: boolean;
 
   /**
    * Date and time of the last update. null when no data was ever retrieved from CAS.
