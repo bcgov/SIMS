@@ -1,4 +1,4 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get, Param, ParseIntPipe } from "@nestjs/common";
 import { RedisOptions, Transport } from "@nestjs/microservices";
 import {
   HealthCheck,
@@ -23,16 +23,18 @@ export class HealthController {
    * Check the health of the Queues.
    * @returns the status of the health for Queues, with info or error and details.
    */
-  @Get()
+  @Get("timeout/:timeout")
   @HealthCheck()
-  async check() {
+  async check(@Param("timeout", ParseIntPipe) timeout: number) {
     return this.healthCheckService.check([
       () =>
         this.typeOrmHealthIndicator.pingCheck("sims-db", {
+          timeout,
           connection: this.dataSource,
         }),
       () =>
         this.microservice.pingCheck<RedisOptions>("redis", {
+          timeout,
           transport: Transport.REDIS,
           options: {
             host: this.configService.redis.redisHost,
