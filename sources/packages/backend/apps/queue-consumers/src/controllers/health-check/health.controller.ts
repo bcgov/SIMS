@@ -21,6 +21,7 @@ export class HealthController {
 
   /**
    * Check the health of the Queues.
+   * @param timeout amount of milliseconds for the health checks.
    * @returns the status of the health for Queues, with info or error and details.
    */
   @Get("timeout/:timeout")
