@@ -54,6 +54,7 @@ import {
   ApplicationOfferingChangeRequest,
   StudentLoanBalance,
   ECertFeedbackError,
+  CASSupplier,
 } from "./entities";
 import { ClusterNode, ClusterOptions, RedisOptions } from "ioredis";
 import {
@@ -206,4 +207,5 @@ export const DBEntities = [
   ApplicationOfferingChangeRequest,
   StudentLoanBalance,
   ECertFeedbackError,
+  CASSupplier,
 ];
