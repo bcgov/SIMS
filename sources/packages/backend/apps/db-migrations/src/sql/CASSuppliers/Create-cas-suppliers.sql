@@ -22,6 +22,8 @@ COMMENT ON TABLE sims.cas_suppliers IS 'Student supplier information data from t
 
 COMMENT ON COLUMN sims.cas_suppliers.id IS 'Auto-generated sequential primary key column.';
 
+COMMENT ON COLUMN sims.cas_suppliers.student_id IS 'Reference to student id in students table.';
+
 COMMENT ON COLUMN sims.cas_suppliers.supplier_number IS 'Supplier number received from CAS. null when no data was ever retrieved from CAS.';
 
 COMMENT ON COLUMN sims.cas_suppliers.supplier_name IS 'Supplier name received from CAS. null when no data was ever retrieved from CAS.';
