@@ -8,8 +8,12 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
  */
 @Entity({ name: TableNames.CASSuppliers })
 export class CASSupplier extends RecordDataModel {
+  /**
+   * Auto-generated sequential primary key column.
+   */
   @PrimaryGeneratedColumn()
   id: number;
+
   /**
    * Supplier number received from CAS. null when no data was ever retrieved from CAS.
    */

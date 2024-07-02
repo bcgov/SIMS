@@ -120,10 +120,14 @@ export class Student extends RecordDataModel {
   /**
    * Student supplier information data from the integration with Corporate Accounting System (CAS).
    */
-  @OneToOne(() => CASSupplier, { eager: false, cascade: true, nullable: true })
+  @OneToOne(() => CASSupplier, {
+    eager: false,
+    cascade: ["insert", "update"],
+    nullable: true,
+  })
   @JoinColumn({
     name: "cas_supplier_id",
     referencedColumnName: ColumnNames.ID,
   })
-  casSupplierId?: CASSupplier;
+  casSupplier?: CASSupplier;
 }
