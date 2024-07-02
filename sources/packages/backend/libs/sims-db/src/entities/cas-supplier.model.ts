@@ -67,9 +67,9 @@ export class CASSupplier extends RecordDataModel {
   @Column({
     name: "supplier_address",
     type: "jsonb",
-    nullable: false,
+    nullable: true,
   })
-  supplierAddress: SupplierAddress;
+  supplierAddress?: SupplierAddress;
 
   /**
    * Indicates if the system should execute verification in the record calling some of the CAS integrations;
