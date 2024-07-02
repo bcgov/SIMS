@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { QueueConfiguration } from "@sims/sims-db";
 import { QueueNames } from "@sims/utilities";
-import Bull from "bull";
+import Bull, { AdvancedSettings } from "bull";
 import { Repository } from "typeorm";
 import { QueueModel } from "./model/queue.model";
 
@@ -26,6 +26,7 @@ export class QueueService {
       select: {
         queueName: true,
         queueConfiguration: true as unknown,
+        queueSetting: true as unknown,
         isActive: true,
       },
     });
@@ -60,7 +61,7 @@ export class QueueService {
 
   /**
    * Get queue configuration for the requested queue name.
-   * @param queueName queue name
+   * @param queueName queue name.
    * @returns queue configuration.
    */
   async getQueueConfiguration(queueName: QueueNames): Promise<Bull.JobOptions> {
@@ -77,6 +78,16 @@ export class QueueService {
       };
     }
     return config;
+  }
+
+  /**
+   * Get the advanced queue settings.
+   * @param queueName queue name.
+   * @returns queue advanced settings.
+   */
+  async getQueueSetting(queueName: QueueNames): Promise<AdvancedSettings> {
+    const queueConfig = await this.queueConfigurationDetails(queueName);
+    return queueConfig.queueSetting;
   }
 
   /**
