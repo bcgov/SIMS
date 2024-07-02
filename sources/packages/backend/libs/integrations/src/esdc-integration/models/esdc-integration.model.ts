@@ -21,4 +21,8 @@ export class ProcessSFTPResponseResult {
    * Errors found during the processing.
    */
   errorsSummary: string[] = [];
+  /**
+   * Batch run date from the file.
+   */
+  batchRunDate: Date = null;
 }

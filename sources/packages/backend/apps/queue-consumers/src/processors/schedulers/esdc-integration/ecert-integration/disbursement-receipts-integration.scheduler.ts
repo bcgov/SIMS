@@ -8,10 +8,10 @@ import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
 import { ESDCFileResponse } from "../models/esdc.models";
 
-@Processor(QueueNames.FullTimeDisbursementReceiptsFileIntegration)
-export class FullTimeDisbursementReceiptsFileIntegrationScheduler extends BaseScheduler<void> {
+@Processor(QueueNames.DisbursementReceiptsFileIntegration)
+export class DisbursementReceiptsFileIntegrationScheduler extends BaseScheduler<void> {
   constructor(
-    @InjectQueue(QueueNames.FullTimeDisbursementReceiptsFileIntegration)
+    @InjectQueue(QueueNames.DisbursementReceiptsFileIntegration)
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly disbursementReceiptProcessingService: DisbursementReceiptProcessingService,
@@ -34,14 +34,20 @@ export class FullTimeDisbursementReceiptsFileIntegrationScheduler extends BaseSc
       jobLogger: job,
     });
     await summary.info(
-      `Processing full time disbursement receipts integration job ${job.id} of type ${job.name}.`,
+      `Processing disbursement receipts integration job ${job.id} of type ${job.name}.`,
     );
     const auditUser = this.systemUsersService.systemUser;
     const processResponse =
       await this.disbursementReceiptProcessingService.process(auditUser.id);
+    const batchRunDate = processResponse[0].batchRunDate;
+    await summary.info(
+      await this.disbursementReceiptProcessingService.processProvincialDailyDisbursements(
+        batchRunDate,
+      ),
+    );
     await this.cleanSchedulerQueueHistory();
     await summary.info(
-      `Completed full time disbursement receipts integration job ${job.id} of type ${job.name}.`,
+      `Completed disbursement receipts integration job ${job.id} of type ${job.name}.`,
     );
     return processResponse.map((response) => ({
       processSummary: response.processSummary,

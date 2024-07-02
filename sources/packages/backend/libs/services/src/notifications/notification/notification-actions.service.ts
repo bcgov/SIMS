@@ -1115,6 +1115,46 @@ export class NotificationActionsService {
   }
 
   /**
+   * Creates Provincial Daily Disbursement Report file processing notifications.
+   * Currently multiple notifications are created as integration contacts
+   * can be multiple.
+   * @param fileName file name for the daily disbursement report file.
+   */
+  async saveProvincialDailyDisbursementReportProcessingNotification(
+    fileName: string,
+    filePath: string,
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const { templateId, emailContacts } =
+      await this.assertNotificationMessageDetails(
+        NotificationMessageType.MinistryNotificationProvincialDailyDisbursementReceipt,
+      );
+    if (!emailContacts?.length) {
+      return;
+    }
+
+    const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
+      userId: auditUser.id,
+      messageType:
+        NotificationMessageType.MinistryNotificationProvincialDailyDisbursementReceipt,
+      messagePayload: {
+        email_address: emailContact,
+        template_id: templateId,
+        application_file: {
+          file: filePath,
+          filename: fileName,
+          sending_method: "attach",
+        },
+      },
+    }));
+    // Save notifications to be sent to the ministry into the notification table.
+    await this.notificationService.saveNotifications(
+      ministryNotificationsToSend,
+      auditUser.id,
+    );
+  }
+
+  /**
    * Asserts the notification message details of a notification message.
    * @param notificationMessageTypeId id of the user who will receive the message.
    * @returns notification details of the notification message.

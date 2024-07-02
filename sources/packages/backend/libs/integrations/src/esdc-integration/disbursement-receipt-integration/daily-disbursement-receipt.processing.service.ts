@@ -1,9 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { DisbursementReceiptIntegrationService } from "./disbursement-receipt.integration.service";
-import { DAILY_DISBURSEMENT_REPORT_NAME } from "@sims/services/constants";
+import { PROVINCIAL_DAILY_DISBURSEMENT_REPORT_NAME } from "@sims/services/constants";
 import { DisbursementReceiptService } from "@sims/integrations/services";
-import { ReportService, ReportsFilterModel } from "@sims/services";
+import {
+  NotificationActionsService,
+  ReportService,
+  ReportsFilterModel,
+} from "@sims/services";
 
 @Injectable()
 export class DailyDisbursementReceiptProcessingService {
@@ -11,6 +15,7 @@ export class DailyDisbursementReceiptProcessingService {
     private readonly reportService: ReportService,
     private readonly disbursementReceiptService: DisbursementReceiptService,
     private readonly integrationService: DisbursementReceiptIntegrationService,
+    private readonly notificationActionsService: NotificationActionsService,
   ) {}
 
   /**
@@ -19,7 +24,7 @@ export class DailyDisbursementReceiptProcessingService {
    * 2. Create a csv file of the total records sent on the process date.
    * 3. Upload the content to the zoneB SFTP server.
    * @param batchRunDate Date in which the daily disbursement records needs to be fetched.
-   * @returns Processing Daily Disbursement request result.
+   * @returns Processing Provincial Daily Disbursement request result.
    */
   async processProvincialDailyDisbursements(
     batchRunDate?: Date,
@@ -38,7 +43,7 @@ export class DailyDisbursementReceiptProcessingService {
 
     // Populate the reportName and batchRunDate to the reportsFilterMode.
     const reportFilterModel: ReportsFilterModel = {
-      reportName: DAILY_DISBURSEMENT_REPORT_NAME,
+      reportName: PROVINCIAL_DAILY_DISBURSEMENT_REPORT_NAME,
       params: { batchRunDate },
     };
 
@@ -48,8 +53,22 @@ export class DailyDisbursementReceiptProcessingService {
 
     // Create requestFilename with the reportName.
     const remoteFilePath = this.integrationService.createRequestFileName(
-      DAILY_DISBURSEMENT_REPORT_NAME,
+      PROVINCIAL_DAILY_DISBURSEMENT_REPORT_NAME,
     );
+
+    const successMessage =
+      "Completed sending daily disbursement report via email.";
+    try {
+      // Send the Daily Disbursement Report content and file via email.
+      await this.notificationActionsService.saveProvincialDailyDisbursementReportProcessingNotification(
+        remoteFilePath.fileName,
+        remoteFilePath.filePath,
+      );
+    } catch (error: unknown) {
+      this.logger.error(error);
+      return "Failed to send daily disbursement report via email.";
+    }
+    return successMessage;
 
     // Upload the Daily disbursement report content in the SFTP server.
     return this.integrationService.uploadRawContent(

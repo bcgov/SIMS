@@ -4,7 +4,8 @@ import {
   DisbursementReceiptValue,
   OfferingIntensity,
   RECEIPT_FUNDING_TYPE_FEDERAL,
-  RECEIPT_FUNDING_TYPE_PROVINCIAL,
+  RECEIPT_FUNDING_TYPE_PROVINCIAL_FULL_TIME,
+  RECEIPT_FUNDING_TYPE_PROVINCIAL_PART_TIME,
 } from "@sims/sims-db";
 import {
   E2EDataSources,
@@ -25,21 +26,21 @@ import { INestApplication } from "@nestjs/common";
 import { QueueNames } from "@sims/utilities";
 import { DeepMocked } from "@golevelup/ts-jest";
 import * as Client from "ssh2-sftp-client";
-import { FullTimeDisbursementReceiptsFileIntegrationScheduler } from "../full-time-disbursement-receipts-integration.scheduler";
+import { DisbursementReceiptsFileIntegrationScheduler } from "../disbursement-receipts-integration.scheduler";
 import * as path from "path";
 
-const FEDERAL_PROVINCIAL_FULL_TIME_FILE =
-  "EDU.PBC.DIS-federal-provincial-full-time.txt";
+const FEDERAL_PROVINCIAL_DISBURSEMENT_FILE =
+  "EDU.PBC.DIS-federal-provincial-disbursement.txt";
 const FEDERAL_ONLY_FULL_TIME_FILE = "EDU.PBC.DIS-federal-only-full-time.txt";
 const SHARED_DOCUMENT_NUMBER = 989898;
 
 describe(
   describeQueueProcessorRootTest(
-    QueueNames.FullTimeDisbursementReceiptsFileIntegration,
+    QueueNames.DisbursementReceiptsFileIntegration,
   ),
   () => {
     let app: INestApplication;
-    let processor: FullTimeDisbursementReceiptsFileIntegrationScheduler;
+    let processor: DisbursementReceiptsFileIntegrationScheduler;
     let db: E2EDataSources;
     let sftpClientMock: DeepMocked<Client>;
 
@@ -55,7 +56,7 @@ describe(
       db = createE2EDataSources(dataSource);
       sftpClientMock = sshClientMock;
       // Processor under test.
-      processor = app.get(FullTimeDisbursementReceiptsFileIntegrationScheduler);
+      processor = app.get(DisbursementReceiptsFileIntegrationScheduler);
     });
 
     beforeEach(async () => {
@@ -167,7 +168,7 @@ describe(
           },
         },
       );
-      mockDownloadFiles(sftpClientMock, [FEDERAL_PROVINCIAL_FULL_TIME_FILE]);
+      mockDownloadFiles(sftpClientMock, [FEDERAL_PROVINCIAL_DISBURSEMENT_FILE]);
       // Queued job.
       const { job } = mockBullJob<void>();
 
@@ -177,7 +178,7 @@ describe(
       // Assert
       const downloadedFile = path.join(
         process.env.ESDC_RESPONSE_FOLDER,
-        FEDERAL_PROVINCIAL_FULL_TIME_FILE,
+        FEDERAL_PROVINCIAL_DISBURSEMENT_FILE,
       );
       expect(result).toStrictEqual([
         {
@@ -185,6 +186,7 @@ describe(
             `Processing file ${downloadedFile}.`,
             `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 2 inserted successfully.`,
             `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 3 inserted successfully.`,
+            `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 4 inserted successfully.`,
             `Processing file ${downloadedFile} completed.`,
           ],
           errorsSummary: [],
@@ -193,7 +195,7 @@ describe(
       // Assert imported receipts.
       const [firstDisbursement] =
         application.currentAssessment.disbursementSchedules;
-      const { bcReceipt, feReceipt } = await getReceiptsForAssert(
+      const { feReceipt, ftReceipt, ptReceipt } = await getReceiptsForAssert(
         firstDisbursement.id,
       );
       // Assert federal receipt.
@@ -223,9 +225,9 @@ describe(
         CSGP: 499,
         XYZ: 444,
       });
-      // Assert provincial receipt.
+      // Assert provincial full time receipt.
       // Header details.
-      expect(bcReceipt).toEqual(
+      expect(ftReceipt).toEqual(
         expect.objectContaining({
           batchRunDate: "2024-01-30",
           fileDate: "2024-01-31",
@@ -233,17 +235,39 @@ describe(
         }),
       );
       // Document number.
-      expect(bcReceipt.disbursementSchedule.documentNumber).toBe(
+      expect(ftReceipt.disbursementSchedule.documentNumber).toBe(
         SHARED_DOCUMENT_NUMBER,
       );
       // Disbursed loan amount.
-      expect(bcReceipt.totalDisbursedAmount).toBe(123);
-      const bdReceiptAwards = getExpectedAwardsFromReceiptValues(
-        bcReceipt.disbursementReceiptValues,
+      expect(ftReceipt.totalDisbursedAmount).toBe(123);
+      const ftReceiptAwards = getExpectedAwardsFromReceiptValues(
+        ftReceipt.disbursementReceiptValues,
       );
       // Disbursed grants.
-      expect(bdReceiptAwards).toStrictEqual({
+      expect(ftReceiptAwards).toStrictEqual({
         BCSG: 599,
+      });
+      // Assert provincial full time receipt.
+      // Header details.
+      expect(ptReceipt).toEqual(
+        expect.objectContaining({
+          batchRunDate: "2024-01-30",
+          fileDate: "2024-01-31",
+          sequenceNumber: 3228,
+        }),
+      );
+      // Document number.
+      expect(ptReceipt.disbursementSchedule.documentNumber).toBe(
+        SHARED_DOCUMENT_NUMBER,
+      );
+      // Disbursed loan amount.
+      expect(ptReceipt.totalDisbursedAmount).toBe(132);
+      const ptReceiptAwards = getExpectedAwardsFromReceiptValues(
+        ptReceipt.disbursementReceiptValues,
+      );
+      // Disbursed grants.
+      expect(ptReceiptAwards).toStrictEqual({
+        BCSG: 600,
       });
     });
 
@@ -285,11 +309,11 @@ describe(
       // Assert imported receipts.
       const [firstDisbursement] =
         application.currentAssessment.disbursementSchedules;
-      const { feReceipt, bcReceipt } = await getReceiptsForAssert(
+      const { feReceipt, ftReceipt } = await getReceiptsForAssert(
         firstDisbursement.id,
       );
       // BC receipt should not be present.
-      expect(bcReceipt).not.toBeDefined();
+      expect(ftReceipt).not.toBeDefined();
       // Assert federal receipt.
       // Document number.
       expect(feReceipt.disbursementSchedule.documentNumber).toBe(
@@ -320,7 +344,8 @@ describe(
       disbursementScheduleId: number,
     ): Promise<{
       feReceipt?: DisbursementReceipt;
-      bcReceipt?: DisbursementReceipt;
+      ftReceipt?: DisbursementReceipt;
+      ptReceipt?: DisbursementReceipt;
     }> {
       const receipts = await db.disbursementReceipt.find({
         select: {
@@ -350,15 +375,21 @@ describe(
           },
         },
       });
-      const bcReceipt = receipts.find(
-        (receipt) => receipt.fundingType === RECEIPT_FUNDING_TYPE_PROVINCIAL,
+      const ftReceipt = receipts.find(
+        (receipt) =>
+          receipt.fundingType === RECEIPT_FUNDING_TYPE_PROVINCIAL_FULL_TIME,
+      );
+      const ptReceipt = receipts.find(
+        (receipt) =>
+          receipt.fundingType === RECEIPT_FUNDING_TYPE_PROVINCIAL_PART_TIME,
       );
       const feReceipt = receipts.find(
         (receipt) => receipt.fundingType === RECEIPT_FUNDING_TYPE_FEDERAL,
       );
       return {
         feReceipt,
-        bcReceipt,
+        ftReceipt,
+        ptReceipt,
       };
     }
 

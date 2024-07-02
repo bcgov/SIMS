@@ -16,9 +16,13 @@ import { RecordDataModel } from "./record.model";
  */
 export const RECEIPT_FUNDING_TYPE_FEDERAL = "FE";
 /**
- * Known code for the provincial receipt funding type.
+ * Known code for the provincial full time receipt funding type.
  */
-export const RECEIPT_FUNDING_TYPE_PROVINCIAL = "BC";
+export const RECEIPT_FUNDING_TYPE_PROVINCIAL_FULL_TIME = "BC";
+/**
+ * Known code for the provincial part time receipt funding type.
+ */
+export const RECEIPT_FUNDING_TYPE_PROVINCIAL_PART_TIME = "BP";
 
 /**
  * Disbursement receipts received from ESDC for the disbursements sent.
@@ -57,7 +61,8 @@ export class DisbursementReceipt extends RecordDataModel {
   disbursementSchedule: DisbursementSchedule;
 
   /**
-   * Indicates the funding type of the disbursement receipt item. Values can have FE(Federal) or BC(Provincial).
+   * Indicates the funding type of the disbursement receipt item.
+   * Values can have FE(Federal), BC(Provincial Full Time) or BP(Provincial Part Time).
    */
   @Column({
     name: "funding_type",
@@ -66,7 +71,7 @@ export class DisbursementReceipt extends RecordDataModel {
   fundingType: string;
 
   /**
-   * Total entitled loan disbursed amount for either FE(Federal) or BC(Provincial).
+   * Total entitled loan disbursed amount for either FE(Federal), BC(Provincial Full Time) or BP(Provincial Part Time).
    */
   @Column({
     name: "total_entitled_disbursed_amount",
@@ -77,7 +82,7 @@ export class DisbursementReceipt extends RecordDataModel {
   totalEntitledDisbursedAmount: number;
 
   /**
-   * Total loan disbursed amount for either FE(Federal) or BC(Provincial).
+   * Total loan disbursed amount for either FE(Federal), BC(Provincial Full Time) or BP(Provincial Part Time).
    */
   @Column({
     name: "total_disbursed_amount",
