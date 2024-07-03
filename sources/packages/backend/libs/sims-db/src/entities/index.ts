@@ -1,5 +1,7 @@
 export * from "./base.model";
 export * from "./record.model";
+export * from "./supplier-status.type";
+export * from "./cas-supplier.model";
 export * from "./user.model";
 export * from "./student.model";
 export * from "./institution.model";
