@@ -1,0 +1,1 @@
+DROP TYPE sims.virus_scan_status;
