@@ -1,7 +1,9 @@
 import { Process, Processor } from "@nestjs/bull";
 import { QueueNames } from "@sims/utilities";
 import { StudentFileService } from "apps/queue-consumers/src/services";
-import { QueueProcessSummary } from "../models/processors.models";
+import { Job } from "bull";
+import { VirusScanQueueInDTO } from "@sims/services/queue/dto/virus-scan.dto";
+import { ProcessSummary } from "@sims/utilities/logger";
 
 @Processor(QueueNames.VirusScan)
 export class VirusScan {
@@ -11,10 +13,10 @@ export class VirusScan {
    * Perform virus scanning for all the files having pending scan status.
    */
   @Process()
-  async performVirusScan() {
-    const summary = new QueueProcessSummary();
-    await summary.info("Starting virus scan.");
-    await this.studentFileService.scanFiles();
-    await summary.info("Completed virus scanning for all the pending files.");
+  async performVirusScanj(job: Job<VirusScanQueueInDTO>) {
+    const processSummary = new ProcessSummary();
+    processSummary.info("Starting virus scan.");
+    await this.studentFileService.scanFile(job.data.uniqueFileName);
+    processSummary.info("Completed virus scanning for all the pending files.");
   }
 }

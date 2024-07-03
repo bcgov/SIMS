@@ -3,6 +3,7 @@ import { DataSource } from "typeorm";
 import { RecordDataModelService, StudentFile } from "@sims/sims-db";
 import { VirusScanStatus } from "@sims/sims-db/entities/virus-scan-status-type";
 import { ClamAVService } from "../clamav/clamav.service";
+import { Readable } from "stream";
 
 @Injectable()
 export class StudentFileService extends RecordDataModelService<StudentFile> {
@@ -14,27 +15,25 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
   }
 
   /**
-   * Scans all the files with pending scan status for viruses.
+   * Scans the file with the provided unique filename
+   * for any viruses.
+   * @param uniqueFileName unique filename of the file to perform the virus scan.
    */
-  async scanFiles(): Promise<void> {
-    const studentFiles = await this.getStudentFiles({
-      virusScanStatus: VirusScanStatus.Pending,
-    });
-    await this.clamAVService.scanFiles(studentFiles);
+  async scanFile(uniqueFileName: string): Promise<void> {
+    const studentFile = await this.getStudentFile(uniqueFileName);
+    const stream = Readable.from(studentFile.fileContent);
+    await this.clamAVService.scanFile(stream);
   }
 
   /**
-   * Gets the student files.
-   * @param options related options.
-   * - `virusScanStatus` virus scan status of the files.
-   * @returns the student files.
+   * Gets the student file to perform the virus scan.
+   * @param uniqueFileName unique filename of the file to perform the virus scan.
+   * @returns the student file.
    */
-  private async getStudentFiles(options?: {
-    virusScanStatus?: VirusScanStatus;
-  }): Promise<StudentFile[]> {
-    return this.repo.find({
+  private async getStudentFile(uniqueFileName: string): Promise<StudentFile> {
+    return this.repo.findOne({
       select: { uniqueFileName: true, fileContent: true },
-      where: { virusScanStatus: options?.virusScanStatus },
+      where: { uniqueFileName, virusScanStatus: VirusScanStatus.Pending },
     });
   }
 }

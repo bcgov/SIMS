@@ -9,15 +9,25 @@ import {
   FileOriginType,
 } from "@sims/sims-db";
 import { CreateFile, FileUploadOptions } from "./student-file.model";
+import { InjectQueue } from "@nestjs/bull";
+import { QueueNames } from "@sims/utilities";
+import { Queue } from "bull";
+import { VirusScanQueueInDTO } from "@sims/services/queue/dto/virus-scan.dto";
 
 @Injectable()
 export class StudentFileService extends RecordDataModelService<StudentFile> {
-  constructor(private readonly dataSource: DataSource) {
+  constructor(
+    private readonly dataSource: DataSource,
+    @InjectQueue(QueueNames.StartApplicationAssessment)
+    private readonly virusScanQueue: Queue<VirusScanQueueInDTO>,
+  ) {
     super(dataSource.getRepository(StudentFile));
   }
 
   /**
    * Creates a file and associates it with a student.
+   * Subsequently, adds the file to the virus scan queue
+   * to scan for any viruses.
    * @param createFile file to be created.
    * @param studentId student that will have the file associated.
    * @param auditUserId user that should be considered the one that is
@@ -37,6 +47,12 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     newFile.fileContent = createFile.fileContent;
     newFile.student = { id: studentId } as Student;
     newFile.creator = { id: auditUserId } as User;
+
+    // Add to the virus scan queue.
+    await this.virusScanQueue.add({
+      uniqueFileName: createFile.uniqueFileName,
+    });
+
     return this.repo.save(newFile);
   }
 
