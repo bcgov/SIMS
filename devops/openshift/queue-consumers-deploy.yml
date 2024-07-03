@@ -353,7 +353,7 @@ parameters:
   - name: DASHBOARD_USER_KEY
     value: queue-dashboard-user
   - name: PATH
-    value: "/fed-admin/queues/"
+    value: "/admin/queues/"
   - name: PORT
     required: true
   - name: HOST_NAME
