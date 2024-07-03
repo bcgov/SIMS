@@ -201,8 +201,4 @@ export enum NotificationMessageType {
    * A partial match for a new student account was found.
    */
   PartialStudentMatchNotification = 26,
-  /**
-   * Ministry Provincial Daily Disbursement Receipt.
-   */
-  MinistryNotificationProvincialDailyDisbursementReceipt = 27,
 }

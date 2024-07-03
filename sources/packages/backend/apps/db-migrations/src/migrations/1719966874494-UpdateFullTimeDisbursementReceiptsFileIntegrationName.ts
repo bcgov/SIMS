@@ -1,18 +1,24 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../utilities/sqlLoader";
 
-export class UpdateDailyDisbursementFile1719622633261
+export class UpdateFullTimeDisbursementReceiptsFileIntegrationName1719966874494
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Update-daily-disbursement-file.sql", "Queue"),
+      getSQLFileData(
+        "Update-full-time-disbursement-receipts-file-integration-name.sql",
+        "Queue",
+      ),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Rollback-update-daily-disbursement-file.sql", "Queue"),
+      getSQLFileData(
+        "Rollback-update-full-time-disbursement-receipts-file-integration-name.sql",
+        "Queue",
+      ),
     );
   }
 }

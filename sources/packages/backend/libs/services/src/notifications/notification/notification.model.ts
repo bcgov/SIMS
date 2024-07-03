@@ -164,7 +164,3 @@ export interface InstitutionAddsPendingOfferingNotification {
   offeringName: string;
   institutionPrimaryEmail: string;
 }
-
-export interface DailyDisbursementReportProcessingNotification {
-  attachmentFileContent: string;
-}

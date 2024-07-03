@@ -39,12 +39,6 @@ export class DisbursementReceiptsFileIntegrationScheduler extends BaseScheduler<
     const auditUser = this.systemUsersService.systemUser;
     const processResponse =
       await this.disbursementReceiptProcessingService.process(auditUser.id);
-    const batchRunDate = processResponse[0].batchRunDate;
-    await summary.info(
-      await this.disbursementReceiptProcessingService.processProvincialDailyDisbursements(
-        batchRunDate,
-      ),
-    );
     await this.cleanSchedulerQueueHistory();
     await summary.info(
       `Completed disbursement receipts integration job ${job.id} of type ${job.name}.`,

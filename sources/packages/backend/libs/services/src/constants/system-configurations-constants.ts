@@ -10,8 +10,7 @@ export const ZEEBE_PUBLISH_MESSAGE_DEFAULT_TIME_TO_LEAVE =
 /**
  * Daily disbursement report name.
  */
-export const PROVINCIAL_DAILY_DISBURSEMENT_REPORT_NAME =
-  "Provincial_Daily_Disbursement_File";
+export const DAILY_DISBURSEMENT_REPORT_NAME = "Daily_Disbursement_File";
 
 /**
  * These constants are used to specify the filename code
