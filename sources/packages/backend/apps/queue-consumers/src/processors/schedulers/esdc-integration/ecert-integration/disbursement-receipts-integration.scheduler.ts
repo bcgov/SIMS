@@ -8,10 +8,10 @@ import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
 import { ESDCFileResponse } from "../models/esdc.models";
 
-@Processor(QueueNames.FullTimeDisbursementReceiptsFileIntegration)
-export class FullTimeDisbursementReceiptsFileIntegrationScheduler extends BaseScheduler<void> {
+@Processor(QueueNames.DisbursementReceiptsFileIntegration)
+export class DisbursementReceiptsFileIntegrationScheduler extends BaseScheduler<void> {
   constructor(
-    @InjectQueue(QueueNames.FullTimeDisbursementReceiptsFileIntegration)
+    @InjectQueue(QueueNames.DisbursementReceiptsFileIntegration)
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly disbursementReceiptProcessingService: DisbursementReceiptProcessingService,
