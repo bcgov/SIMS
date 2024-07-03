@@ -65,7 +65,6 @@ export class QueueService {
    * @returns queue configuration.
    */
   async getQueueConfiguration(queueName: QueueNames): Promise<Bull.JobOptions> {
-    console.log("queueName:" + queueName);
     const queueConfig = await this.queueConfigurationDetails(queueName);
     const config = {} as Bull.JobOptions;
     const queueConfiguration = queueConfig.queueConfiguration;

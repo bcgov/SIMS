@@ -19,7 +19,7 @@ import { StudentRestrictionSharedService } from "@sims/services";
  * Used to limit the number of asynchronous operations that will
  * start at the same time while inserting the records.
  */
-const FEDERAL_RESTRICTION_BULK_INSERT_MAX_PARALLELISM = 4;
+const FEDERAL_RESTRICTION_BULK_INSERT_MAX_PARALLELISM = 2;
 
 /**
  * Manages the process to import the entire snapshot of federal
