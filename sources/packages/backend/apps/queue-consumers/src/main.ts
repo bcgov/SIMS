@@ -28,7 +28,7 @@ import { SystemUsersService } from "@sims/services";
   const queues = await queueService.queueConfigurationModel();
   // Create bull board UI dashboard for queue management.
   const serverAdapter = new ExpressAdapter();
-  serverAdapter.setBasePath("/fed-admin/queues");
+  serverAdapter.setBasePath("/admin/queues");
   const bullBoardQueues: BullAdapter[] = [];
   queues.forEach((queue) => {
     if (!queue.isActive && queue.isScheduler) {
@@ -50,7 +50,7 @@ import { SystemUsersService } from "@sims/services";
   queueDashboardUsers[config.queueDashboardCredential.userName] =
     config.queueDashboardCredential.password;
   app.use(
-    "/fed-admin/queues",
+    "/admin/queues",
     basicAuth({
       users: queueDashboardUsers,
       challenge: true,
