@@ -1,6 +1,13 @@
 <template>
   <student-page-container>
     <template #header>
+      <banner
+        v-if="warningText.length > 0"
+        class="mb-2"
+        :type="BannerTypes.Warning"
+        header="Warning"
+        :summary="warningText.join('\n')"
+      />
       <header-navigator
         title="View assessment"
         subTitle="Assessment"
@@ -25,6 +32,7 @@
               color="primary"
               data-cy="AcceptAssessment"
               @click="confirmAssessment()"
+              :disabled="warningText.length > 0"
               >Accept assessment</v-btn
             >
           </v-row>
@@ -46,8 +54,14 @@ import { ModalDialog, useSnackBar } from "@/composables";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { AssessmentNOAAPIOutDTO } from "@/services/http/dto";
-import { defineComponent, ref } from "vue";
-import { ApplicationStatus, AssessmentStatus, ClientIdType } from "@/types";
+import { defineComponent, onMounted, ref } from "vue";
+import {
+  ApplicationStatus,
+  AssessmentStatus,
+  ClientIdType,
+  BannerTypes,
+  ECertFailedValidation,
+} from "@/types";
 import CancelApplication from "@/components/students/modals/CancelApplication.vue";
 import { useRouter } from "vue-router";
 
@@ -73,6 +87,7 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const viewOnly = ref(true);
     const currentAssessmentId = ref(0);
+    const warningText = ref([] as string[]);
 
     const assessmentDataLoaded = (
       applicationStatus: ApplicationStatus,
@@ -108,8 +123,43 @@ export default defineComponent({
         });
       }
     };
+    onMounted(async () => {
+      const warnings =
+        await StudentAssessmentsService.shared.getApplicationWarnings(
+          props.applicationId,
+        );
+
+      warnings.forEach((warning) => {
+        switch (warning) {
+          case ECertFailedValidation.DisabilityStatusNotConfirmed:
+            warningText.value.push(
+              `Your account has not been approved for disability funding. 
+              You will not be able to accept this application until the account disability status has been approved. 
+              If you would like to receive all non disability funding please edit your application.`,
+            );
+            break;
+          case ECertFailedValidation.MSFAACanceled:
+          case ECertFailedValidation.MSFAANotSigned:
+            warningText.value.push(
+              `Your MSFAA is not valid. 
+              Please complete your MSFAA with the National Student Loans Centre to move forward with your application. 
+              Please note, there is a one day delay between signing your MSFAA and being able to accept your assessment.`,
+            );
+            break;
+          case ECertFailedValidation.HasStopDisbursementRestriction:
+            warningText.value.push(
+              `You have restrictions that block funding on your account. 
+              Please resolve them in order to move forward with your application.`,
+            );
+            break;
+          default:
+            break;
+        }
+      });
+    });
 
     return {
+      BannerTypes,
       confirmAssessment,
       StudentRoutesConst,
       assessment,
@@ -121,6 +171,7 @@ export default defineComponent({
       confirmCancelApplication,
       cancelApplicationModal,
       assessmentDataLoaded,
+      warningText,
     };
   },
 });

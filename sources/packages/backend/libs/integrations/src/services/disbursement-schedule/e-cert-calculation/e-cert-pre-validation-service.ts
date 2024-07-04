@@ -36,15 +36,18 @@ export class ECertPreValidationService {
    * time in an attempt to advise students that the disbursement will be blocked if no action is taken.
    * The validations are executed in the next pending disbursement.
    * @param applicationId applications to have its disbursements validated. If no disbursement is pending
+   * @param allowNonCompleted: only select completed applications or allow any status.
    * no validations will be executed.
    * @returns validation result for the next pending disbursement for the applications current's assessment.
    */
   async executePreValidations(
     applicationId: number,
+    allowNonCompleted?: boolean,
   ): Promise<ECertFailedValidation[]> {
     const [firstEligibleDisbursement] =
       await this.eCertGenerationService.getEligibleDisbursements({
         applicationId,
+        allowNonCompleted: allowNonCompleted ?? false,
       });
     if (!firstEligibleDisbursement) {
       return [];

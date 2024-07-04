@@ -7,6 +7,7 @@ import {
   ManualReassessmentAPIInDTO,
   PrimaryIdentifierAPIOutDTO,
 } from "@/services/http/dto";
+import { ECertFailedValidation } from "@/types";
 
 /**
  * Http API client for Student Assessments.
@@ -80,6 +81,18 @@ export class StudentAssessmentApi extends HttpBaseClient {
     await this.patchCall(
       this.addClientRoot(`assessment/${assessmentId}/confirm-assessment`),
       null,
+    );
+  }
+
+  /**
+   * Get any warnings for the current application.
+   * @param applicationId application id.
+   */
+  async getApplicationWarnings(applicationId: number): Promise<string[]> {
+    return this.getCall<ECertFailedValidation[]>(
+      this.addClientRoot(
+        `application/${applicationId}/get-application-warnings`,
+      ),
     );
   }
 

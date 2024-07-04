@@ -117,4 +117,13 @@ export class StudentAssessmentsService {
       payload,
     );
   }
+
+  /**
+   * Get the warnings applicable to the application.
+   * @param applicationId application id.
+   * @returns list of warnings.
+   */
+  async getApplicationWarnings(applicationId: number) {
+    return ApiClient.StudentAssessmentApi.getApplicationWarnings(applicationId);
+  }
 }
