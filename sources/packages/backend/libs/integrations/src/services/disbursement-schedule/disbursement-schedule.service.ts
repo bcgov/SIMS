@@ -26,7 +26,22 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     documentNumber: number,
   ): Promise<DisbursementSchedule> {
     return this.repo.findOne({
-      select: { id: true },
+      select: {
+        id: true,
+        studentAssessment: {
+          id: true,
+          application: {
+            id: true,
+            student: {
+              id: true,
+              user: { id: true, firstName: true, lastName: true },
+            },
+          },
+        },
+      },
+      relations: {
+        studentAssessment: { application: { student: { user: true } } },
+      },
       where: { documentNumber },
     });
   }

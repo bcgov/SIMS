@@ -117,6 +117,11 @@ export interface StudentRequestsBasicBCeIDAccountNotification {
   birthDate: string;
 }
 
+export interface ECertFeedbackFileErrorNotification {
+  givenNames: string;
+  lastName: string;
+}
+
 export interface ApplicationOfferingChangeRequestApprovedByStudentNotification {
   givenNames: string;
   lastName: string;

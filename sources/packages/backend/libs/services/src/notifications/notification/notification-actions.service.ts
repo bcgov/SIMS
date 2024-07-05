@@ -28,6 +28,7 @@ import {
   InstitutionAddsPendingProgramNotification,
   ApplicationOfferingChangeRequestApprovedByStudentNotification,
   PartialStudentMatchNotification,
+  ECertFeedbackFileErrorNotification,
 } from "..";
 import { NotificationService } from "./notification.service";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
@@ -1103,6 +1104,43 @@ export class NotificationActionsService {
           offeringName: notification.offeringName,
           institutionPrimaryEmail: notification.institutionPrimaryEmail,
           dateTime: this.getDateTimeOnPSTTimeZone(),
+        },
+      },
+    }));
+    // Save notifications to be sent to the ministry into the notification table.
+    await this.notificationService.saveNotifications(
+      ministryNotificationsToSend,
+      auditUser.id,
+      { entityManager },
+    );
+  }
+
+  /**
+   * Saves eCert Feedback File Error notification for ministry.
+   * @param notification notification details.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveEcertFeedbackFileErrorNotification(
+    notification: ECertFeedbackFileErrorNotification,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const { templateId, emailContacts } =
+      await this.assertNotificationMessageDetails(
+        NotificationMessageType.ECertFeedbackFileErrorNotification,
+      );
+    if (!emailContacts?.length) {
+      return;
+    }
+    const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
+      userId: auditUser.id,
+      messageType: NotificationMessageType.ECertFeedbackFileErrorNotification,
+      messagePayload: {
+        email_address: emailContact,
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
         },
       },
     }));

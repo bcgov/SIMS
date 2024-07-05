@@ -1,11 +1,15 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, InsertResult } from "typeorm";
+import { DataSource, EntityManager, InsertResult } from "typeorm";
 import {
   RecordDataModelService,
   DisbursementFeedbackErrors,
   ECertFeedbackError,
 } from "@sims/sims-db";
-import { SystemUsersService } from "@sims/services";
+import {
+  ECertFeedbackFileErrorNotification,
+  NotificationActionsService,
+  SystemUsersService,
+} from "@sims/services";
 import { DisbursementScheduleService } from "../disbursement-schedule/disbursement-schedule.service";
 import { CustomNamedError } from "@sims/utilities";
 import { DOCUMENT_NUMBER_NOT_FOUND } from "@sims/integrations/constants";
@@ -19,7 +23,8 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
   constructor(
     private readonly systemUsersService: SystemUsersService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
-    dataSource: DataSource,
+    private readonly notificationActionsService: NotificationActionsService,
+    private readonly dataSource: DataSource,
   ) {
     super(dataSource.getRepository(DisbursementFeedbackErrors));
   }
@@ -61,12 +66,27 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
       disbursementFeedbackError.creator = auditUser;
       return disbursementFeedbackError;
     });
-    return this.repo
-      .createQueryBuilder()
-      .insert()
-      .into(DisbursementFeedbackErrors)
-      .values(disbursementFeedbackErrors)
-      .orIgnore()
-      .execute();
+    const user =
+      disbursementSchedule.studentAssessment.application.student.user;
+    const ministryNotification: ECertFeedbackFileErrorNotification = {
+      givenNames: user.firstName,
+      lastName: user.lastName,
+    };
+    return this.dataSource.transaction(
+      async (transactionalEntityManager: EntityManager) => {
+        await this.notificationActionsService.saveEcertFeedbackFileErrorNotification(
+          ministryNotification,
+          transactionalEntityManager,
+        );
+        return transactionalEntityManager
+          .getRepository(DisbursementFeedbackErrors)
+          .createQueryBuilder()
+          .insert()
+          .into(DisbursementFeedbackErrors)
+          .values(disbursementFeedbackErrors)
+          .orIgnore()
+          .execute();
+      },
+    );
   }
 }
