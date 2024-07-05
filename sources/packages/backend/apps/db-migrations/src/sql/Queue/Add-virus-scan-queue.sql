@@ -1,5 +1,5 @@
 INSERT INTO
-  queue_configurations(queue_name, queue_configuration)
+  queue_configurations(queue_name, queue_configuration, queue_settings)
 VALUES
   (
     'virus-scan',
@@ -8,5 +8,6 @@ VALUES
         "retryInterval": 180000,
         "dashboardReadonly": false,
         "cleanUpPeriod": 604800000
-      }' :: json
+      }' :: json,
+    '{ "maxStalledCount": 0, "lockDuration": 60000, "lockRenewTime": 5000 }'
   );
