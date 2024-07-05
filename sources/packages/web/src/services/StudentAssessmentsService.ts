@@ -7,6 +7,7 @@ import {
   ManualReassessmentAPIInDTO,
   PrimaryIdentifierAPIOutDTO,
 } from "@/services/http/dto";
+import { ECertFailedValidation } from "@/types";
 
 /**
  * Client service layer for Student Assessments.
@@ -123,7 +124,7 @@ export class StudentAssessmentsService {
    * @param applicationId application id.
    * @returns list of warnings.
    */
-  async getApplicationWarnings(applicationId: number) {
+  async getApplicationWarnings(applicationId: number): Promise<ECertFailedValidation[]> {
     return ApiClient.StudentAssessmentApi.getApplicationWarnings(applicationId);
   }
 }
