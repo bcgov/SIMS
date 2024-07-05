@@ -31,7 +31,7 @@ import {
 import { getISODateOnlyString } from "@sims/utilities";
 import { ECertFailedValidation } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
 
-describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", () => {
+describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
   let app: INestApplication;
   let appModule: TestingModule;
   let appDataSource: DataSource;

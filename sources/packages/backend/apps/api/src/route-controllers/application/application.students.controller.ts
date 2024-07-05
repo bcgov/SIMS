@@ -226,9 +226,6 @@ export class ApplicationStudentsController extends BaseController {
    * @param applicationId application id.
    * @returns application warnings.
    */
-  @ApiNotFoundResponse({
-    description: "Not able to find the application for the student.",
-  })
   @Get(":applicationId/get-application-warnings")
   async getApplicationWarnings(
     @Param("applicationId", ParseIntPipe) applicationId: number,
