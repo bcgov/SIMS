@@ -1,6 +1,6 @@
 import { Process, Processor } from "@nestjs/bull";
 import { CustomNamedError, QueueNames } from "@sims/utilities";
-import { StudentFileService } from "apps/queue-consumers/src/services";
+import { StudentFileService } from "../../services";
 import { Job } from "bull";
 import { VirusScanQueueInDTO } from "@sims/services/queue/dto/virus-scan.dto";
 import {
