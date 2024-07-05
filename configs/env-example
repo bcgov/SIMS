@@ -138,6 +138,10 @@ QUEUE_DASHBOARD_PASSWORD=
 QUEUE_DASHBOARD_USER=
 QUEUE_PREFIX={sims-local}
 
+#ClamAV Properties
+CLAMAV_HOST=localhost
+CLAMAV_PORT=3310
+
 #Workers properties
 WORKERS_PORT=
 

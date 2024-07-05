@@ -1,6 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource, EntityManager, In, UpdateResult } from "typeorm";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import {
+  LoggerService,
+  InjectLogger,
+  ProcessSummary,
+} from "@sims/utilities/logger";
 import {
   RecordDataModelService,
   StudentFile,
@@ -11,14 +15,15 @@ import {
 import { CreateFile, FileUploadOptions } from "./student-file.model";
 import { InjectQueue } from "@nestjs/bull";
 import { QueueNames } from "@sims/utilities";
-import { Queue } from "bull";
+import Bull, { Queue } from "bull";
 import { VirusScanQueueInDTO } from "@sims/services/queue/dto/virus-scan.dto";
+import { VirusScanStatus } from "@sims/sims-db/entities/virus-scan-status-type";
 
 @Injectable()
 export class StudentFileService extends RecordDataModelService<StudentFile> {
   constructor(
     private readonly dataSource: DataSource,
-    @InjectQueue(QueueNames.StartApplicationAssessment)
+    @InjectQueue(QueueNames.VirusScanProcessor)
     private readonly virusScanQueue: Queue<VirusScanQueueInDTO>,
   ) {
     super(dataSource.getRepository(StudentFile));
@@ -48,12 +53,37 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     newFile.student = { id: studentId } as Student;
     newFile.creator = { id: auditUserId } as User;
 
-    // Add to the virus scan queue.
-    await this.virusScanQueue.add({
-      uniqueFileName: createFile.uniqueFileName,
-    });
-
-    return this.repo.save(newFile);
+    const summary = new ProcessSummary();
+    let savedFile: StudentFile;
+    // Save the file to db.
+    try {
+      savedFile = await this.repo.save(newFile);
+    } catch (error: unknown) {
+      this.logger.error(`Error saving the file: ${error}`);
+      return;
+    }
+    // Add to the virus scan queue only if the file is successfully saved to the database.
+    try {
+      summary.info(`Adding virus scan for the file: ${newFile.fileName}.`);
+      await this.virusScanQueue.add({
+        uniqueFileName: createFile.uniqueFileName,
+      });
+      await this.repo.update(
+        { uniqueFileName: newFile.uniqueFileName },
+        { virusScanStatus: VirusScanStatus.InProgress },
+      );
+      summary.info(
+        `File ${newFile.fileName} has been added to the virus scan queue.`,
+      );
+      return savedFile;
+    } catch (error: unknown) {
+      summary.error(
+        `Error while enqueueing the file ${newFile.fileName} for virus scanning.`,
+        error,
+      );
+    } finally {
+      this.logger.logProcessSummary(summary);
+    }
   }
 
   /**

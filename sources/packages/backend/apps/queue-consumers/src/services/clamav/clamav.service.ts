@@ -7,20 +7,19 @@ export class ClamAVService {
   private logger = new Logger(ClamAVService.name);
   private scanner: NodeClam;
 
-  constructor() {
-    this.initClam();
-  }
-
   private async initClam() {
     this.scanner = await new NodeClam().init({
       clamdscan: {
-        host: "localhost",
-        port: 3310,
+        host: process.env.CLAMAV_HOST,
+        port: Number(process.env.CLAMAV_PORT),
       },
     });
   }
 
   async scanFile(stream: Readable): Promise<boolean> {
+    if (!this.scanner) {
+      this.initClam();
+    }
     try {
       const { isInfected } = await this.scanner.scanStream(stream);
       return isInfected;

@@ -4,7 +4,7 @@
 export enum QueueNames {
   StartApplicationAssessment = "start-application-assessment",
   CancelApplicationAssessment = "cancel-application-assessment",
-  VirusScan = "virus-scan",
+  VirusScanProcessor = "virus-scan",
   IER12Integration = "ier12-integration",
   CRAProcessIntegration = "cra-process-integration",
   CRAResponseIntegration = "cra-response-integration",
