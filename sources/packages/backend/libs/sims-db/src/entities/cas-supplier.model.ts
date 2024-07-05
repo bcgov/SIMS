@@ -1,7 +1,14 @@
-import { TableNames } from "@sims/sims-db/constant";
+import { ColumnNames, TableNames } from "@sims/sims-db/constant";
 import { RecordDataModel } from "@sims/sims-db/entities/record.model";
+import { Student } from "@sims/sims-db/entities/student.model";
 import { SupplierStatus } from "@sims/sims-db/entities/supplier-status.type";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 
 /**
  * Student supplier information data from the integration with Corporate Accounting System (CAS).
@@ -13,6 +20,20 @@ export class CASSupplier extends RecordDataModel {
    */
   @PrimaryGeneratedColumn()
   id: number;
+
+  /**
+   * Reference to student id in students table.
+   */
+  @OneToOne(() => Student, {
+    eager: false,
+    cascade: ["insert", "update"],
+    nullable: false,
+  })
+  @JoinColumn({
+    name: "student_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  student: Student;
 
   /**
    * Supplier number received from CAS. null when no data was ever retrieved from CAS.
@@ -89,7 +110,7 @@ export class CASSupplier extends RecordDataModel {
   @Column({
     name: "supplier_status_updated_on",
     type: "timestamptz",
-    nullable: true,
+    nullable: false,
   })
   supplierStatusUpdatedOn?: Date;
 

@@ -26,6 +26,7 @@ import {
   ECEResponseIntegrationScheduler,
   AssessmentWorkflowEnqueuerScheduler,
   WorkflowQueueRetryScheduler,
+  CASSupplierIntegrationScheduler,
 } from "./processors";
 import {
   DisbursementScheduleSharedService,
@@ -63,6 +64,7 @@ import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
 import { ECEIntegrationModule } from "@sims/integrations/institution-integration/ece-integration";
 import { HealthController } from "./controllers";
 import { MicroserviceHealthIndicator, TerminusModule } from "@nestjs/terminus";
+import { CASSupplierIntegrationService } from "apps/queue-consumers/src/services/cas-supplier/cas-supplier.service";
 // TODO: Removed ATBCResponseIntegrationScheduler in providers, the queuename from enum and the decorators of the processor as part of #2539.
 @Module({
   imports: [
@@ -127,6 +129,8 @@ import { MicroserviceHealthIndicator, TerminusModule } from "@nestjs/terminus";
     WorkflowQueueRetryScheduler,
     MicroserviceHealthIndicator,
     AssessmentSequentialProcessingService,
+    CASSupplierIntegrationScheduler,
+    CASSupplierIntegrationService,
   ],
   controllers: [HealthController],
 })

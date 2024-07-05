@@ -17,6 +17,8 @@ import {
   DisabilityStatus,
   SFASIndividual,
   SFASRestriction,
+  CASSupplier,
+  SupplierStatus,
 } from "@sims/sims-db";
 import { DataSource, EntityManager, UpdateResult } from "typeorm";
 import { StudentUserToken } from "../../auth/userToken.interface";
@@ -261,8 +263,24 @@ export class StudentService extends RecordDataModelService<Student> {
         id: studentAccountApplicationId,
       } as StudentAccountApplication;
       await entityManager.getRepository(StudentUser).save(studentUser);
+
+      const casSupplier = new CASSupplier();
+      casSupplier.status = SupplierStatus.PendingSupplierVerification;
+      casSupplier.isValid = false;
+      casSupplier.creator = auditUser;
+      casSupplier.student = savedStudent;
+      casSupplier.supplierStatusUpdatedOn = new Date();
+      const savedCASSupplier = await entityManager
+        .getRepository(CASSupplier)
+        .save(casSupplier);
+
+      savedStudent.casSupplier = savedCASSupplier;
+      const updatedStudent = await entityManager
+        .getRepository(Student)
+        .save(savedStudent);
+
       // Returns the newly created student.
-      return savedStudent;
+      return updatedStudent;
     });
   }
 
