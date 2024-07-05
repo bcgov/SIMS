@@ -15,7 +15,7 @@ import {
 import { CreateFile, FileUploadOptions } from "./student-file.model";
 import { InjectQueue } from "@nestjs/bull";
 import { QueueNames } from "@sims/utilities";
-import Bull, { Queue } from "bull";
+import { Queue } from "bull";
 import { VirusScanQueueInDTO } from "@sims/services/queue/dto/virus-scan.dto";
 import { VirusScanStatus } from "@sims/sims-db/entities/virus-scan-status-type";
 
