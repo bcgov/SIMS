@@ -20,7 +20,6 @@ export enum QueueNames {
   FullTimeDisbursementReceiptsFileIntegration = "full-time-disbursement-receipts-file-integration",
   ECEProcessIntegration = "ece-process-integration",
   ECEProcessResponseIntegration = "ece-process-response-integration",
-  FINProcessProvincialDailyDisbursementsIntegration = "fin-process-provincial-daily-disbursements-integration",
   PartTimeMSFAAProcessResponseIntegration = "part-time-msfaa-process-response-integration",
   FullTimeMSFAAProcessResponseIntegration = "full-time-msfaa-process-response-integration",
   SFASIntegration = "sfas-integration",
