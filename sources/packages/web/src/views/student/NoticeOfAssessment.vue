@@ -152,8 +152,6 @@ export default defineComponent({
               Please resolve them in order to move forward with your application.`,
             );
             break;
-          default:
-            break;
         }
       });
     });
