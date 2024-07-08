@@ -204,7 +204,6 @@ export default defineComponent({
     });
 
     const applicationSearch = async () => {
-      showNav.value = false;
       const validationResult = await searchApplicationsForm.value.validate();
       if (!validationResult.valid) {
         return;
@@ -222,6 +221,7 @@ export default defineComponent({
         );
         formName.value = searchResult.formName;
       } catch (error: unknown) {
+        showNav.value = false;
         formName.value = null;
         if (error instanceof ApiProcessError) {
           switch (error.errorType) {
@@ -237,6 +237,7 @@ export default defineComponent({
               break;
           }
         } else {
+          showNav.value = false;
           snackBar.error(
             "An unexpected error happened while searching for the application.",
           );
