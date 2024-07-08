@@ -7,6 +7,9 @@ export class ClamAVService {
   private logger = new Logger(ClamAVService.name);
   private scanner: NodeClam;
 
+  /**
+   * Initialize the scanner.
+   */
   private async initClam() {
     this.scanner = await new NodeClam().init({
       clamdscan: {
@@ -16,6 +19,13 @@ export class ClamAVService {
     });
   }
 
+  /**
+   * Scans the file for viruses.
+   * @param stream stream to be scanned.
+   * @returns boolean true if the stream is virus infected,
+   * false if the stream is not virus infected, and
+   * null if the stream could not be scanned for viruses.
+   */
   async scanFile(stream: Readable): Promise<boolean> {
     if (!this.scanner) {
       this.initClam();
