@@ -58,8 +58,8 @@ export class VirusScanProcessor {
     } finally {
       this.logger.logProcessSummary(processSummary);
       await logProcessSummaryToJobLogger(processSummary, job);
-      return { fileProcessed: job.data.fileName, isInfected };
     }
+    return { fileProcessed: job.data.fileName, isInfected };
   }
 
   @InjectLogger()
