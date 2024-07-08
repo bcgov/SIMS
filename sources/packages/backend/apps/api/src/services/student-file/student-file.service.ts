@@ -67,6 +67,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
       summary.info(`Adding virus scan for the file: ${newFile.fileName}.`);
       await this.virusScanQueue.add({
         uniqueFileName: createFile.uniqueFileName,
+        fileName: createFile.fileName,
       });
       await this.repo.update(
         { uniqueFileName: newFile.uniqueFileName },

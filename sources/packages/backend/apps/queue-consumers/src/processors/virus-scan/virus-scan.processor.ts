@@ -2,7 +2,10 @@ import { Process, Processor } from "@nestjs/bull";
 import { CustomNamedError, QueueNames } from "@sims/utilities";
 import { StudentFileService } from "../../services";
 import { Job } from "bull";
-import { VirusScanQueueInDTO } from "@sims/services/queue/dto/virus-scan.dto";
+import {
+  VirusScanQueueInDTO,
+  VirusScanResult,
+} from "@sims/services/queue/dto/virus-scan.dto";
 import {
   InjectLogger,
   LoggerService,
@@ -18,13 +21,20 @@ export class VirusScanProcessor {
 
   /**
    * Perform virus scanning for all the files having pending scan status.
+   * @param job information to perform the process.
+   * @returns VirusScanResult virus scan result log.
    */
   @Process()
-  async performVirusScan(job: Job<VirusScanQueueInDTO>) {
+  async performVirusScan(
+    job: Job<VirusScanQueueInDTO>,
+  ): Promise<VirusScanResult> {
     const processSummary = new ProcessSummary();
+    let isInfected: boolean;
     processSummary.info("Starting virus scan.");
     try {
-      await this.studentFileService.scanFile(job.data.uniqueFileName);
+      isInfected = await this.studentFileService.scanFile(
+        job.data.uniqueFileName,
+      );
       processSummary.info("Completed virus scanning for the file.");
     } catch (error: unknown) {
       if (error instanceof NotFoundException) {
@@ -48,6 +58,7 @@ export class VirusScanProcessor {
     } finally {
       this.logger.logProcessSummary(processSummary);
       await logProcessSummaryToJobLogger(processSummary, job);
+      return { fileProcessed: job.data.fileName, isInfected };
     }
   }
 

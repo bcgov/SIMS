@@ -20,8 +20,9 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
    * Scans the file with the provided unique filename
    * for any viruses.
    * @param uniqueFileName unique filename of the file to perform the virus scan.
+   * @returns boolean true if the file is virus infected, false otherwise.
    */
-  async scanFile(uniqueFileName: string): Promise<void> {
+  async scanFile(uniqueFileName: string): Promise<boolean> {
     const studentFile = await this.getStudentFile(uniqueFileName);
     if (!studentFile) {
       throw new NotFoundException(`Student file ${uniqueFileName} not found.`);
@@ -37,6 +38,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
       );
     }
     await this.updateFileScanStatus(studentFile.uniqueFileName, isInfected);
+    return isInfected;
   }
 
   /**
