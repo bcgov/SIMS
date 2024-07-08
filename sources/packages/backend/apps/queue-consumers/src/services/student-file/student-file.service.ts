@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { DataSource } from "typeorm";
+import { DataSource, UpdateResult } from "typeorm";
 import { RecordDataModelService, StudentFile } from "@sims/sims-db";
 import { VirusScanStatus } from "@sims/sims-db/entities/virus-scan-status-type";
 import { ClamAVService } from "../clamav/clamav.service";
 import { Readable } from "stream";
 import { CustomNamedError } from "@sims/utilities";
 import { UNABLE_TO_SCAN_FILE } from "../../constants/error-code.constants";
+import { ProcessSummary } from "@sims/utilities/logger";
 
 @Injectable()
 export class StudentFileService extends RecordDataModelService<StudentFile> {
@@ -20,9 +21,13 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
    * Scans the file with the provided unique filename
    * for any viruses.
    * @param uniqueFileName unique filename of the file to perform the virus scan.
+   * @param processSummary process summary logs.
    * @returns boolean true if the file is virus infected, false otherwise.
    */
-  async scanFile(uniqueFileName: string): Promise<boolean> {
+  async scanFile(
+    uniqueFileName: string,
+    processSummary: ProcessSummary,
+  ): Promise<boolean> {
     const studentFile = await this.getStudentFile(uniqueFileName);
     if (!studentFile) {
       throw new NotFoundException(`Student file ${uniqueFileName} not found.`);
@@ -30,10 +35,17 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     const stream = new Readable();
     stream.push(studentFile.fileContent);
     stream.push(null);
-    const isInfected = await this.clamAVService.scanFile(stream);
-    if (isInfected === null) {
+    const isInfected = await this.clamAVService.scanFile(
+      stream,
+      processSummary,
+    );
+    if (isInfected == null) {
+      // If the file could not be scanned for any reason,
+      // update the file scan status to Pending to keep a
+      // track of the files that haven't been scanned yet.
+      await this.updateFileScanStatus(studentFile.uniqueFileName, isInfected);
       throw new CustomNamedError(
-        "Unable to scan the file.",
+        `Unable to scan the file ${studentFile.uniqueFileName}`,
         UNABLE_TO_SCAN_FILE,
       );
     }
@@ -57,21 +69,29 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
    * Update the virus scan status of the file.
    * @param uniqueFileName unique file name of the file to update the virus scan status.
    * @param isInfected true if the file is virus infected, false otherwise.
+   * @returns the update result.
    */
   private async updateFileScanStatus(
     uniqueFileName: string,
     isInfected: boolean,
-  ): Promise<void> {
-    if (isInfected) {
-      await this.repo.update(
-        { uniqueFileName },
-        { virusScanStatus: VirusScanStatus.VirusDetected },
-      );
-      return;
+  ): Promise<UpdateResult> {
+    switch (isInfected) {
+      case null:
+      case undefined:
+        return this.repo.update(
+          { uniqueFileName },
+          { virusScanStatus: VirusScanStatus.Pending },
+        );
+      case true:
+        return this.repo.update(
+          { uniqueFileName },
+          { virusScanStatus: VirusScanStatus.VirusDetected },
+        );
+      case false:
+        return this.repo.update(
+          { uniqueFileName },
+          { virusScanStatus: VirusScanStatus.FileIsClean },
+        );
     }
-    await this.repo.update(
-      { uniqueFileName },
-      { virusScanStatus: VirusScanStatus.FileIsClean },
-    );
   }
 }

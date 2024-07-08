@@ -52,6 +52,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     newFile.fileContent = createFile.fileContent;
     newFile.student = { id: studentId } as Student;
     newFile.creator = { id: auditUserId } as User;
+    newFile.virusScanStatus = VirusScanStatus.InProgress;
 
     const summary = new ProcessSummary();
     let savedFile: StudentFile;
@@ -64,23 +65,27 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     }
     // Add to the virus scan queue only if the file is successfully saved to the database.
     try {
-      summary.info(`Adding virus scan for the file: ${newFile.fileName}.`);
+      summary.info(
+        `Adding the file: ${newFile.fileName} to the virus scan queue.`,
+      );
       await this.virusScanQueue.add({
         uniqueFileName: createFile.uniqueFileName,
         fileName: createFile.fileName,
       });
-      await this.repo.update(
-        { uniqueFileName: newFile.uniqueFileName },
-        { virusScanStatus: VirusScanStatus.InProgress },
-      );
       summary.info(
         `File ${newFile.fileName} has been added to the virus scan queue.`,
       );
       return savedFile;
     } catch (error: unknown) {
+      // If adding the file to the virus scanning queue fails,
+      // then revert the file virus scan status in the database to pending.
       summary.error(
         `Error while enqueueing the file ${newFile.fileName} for virus scanning.`,
         error,
+      );
+      await this.repo.update(
+        { uniqueFileName: newFile.uniqueFileName },
+        { virusScanStatus: VirusScanStatus.Pending },
       );
     } finally {
       this.logger.logProcessSummary(summary);

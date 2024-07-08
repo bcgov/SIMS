@@ -34,8 +34,13 @@ export class VirusScanProcessor {
     try {
       isInfected = await this.studentFileService.scanFile(
         job.data.uniqueFileName,
+        processSummary,
       );
-      processSummary.info("Completed virus scanning for the file.");
+      isInfected
+        ? processSummary.warn("Virus found.")
+        : processSummary.info("No virus found.");
+
+      processSummary.info("Completed virus scanning for the file. ");
     } catch (error: unknown) {
       if (error instanceof NotFoundException) {
         // If the file is not present in the database,
