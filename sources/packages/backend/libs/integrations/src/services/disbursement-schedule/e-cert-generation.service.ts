@@ -127,7 +127,7 @@ export class ECertGenerationService {
       .orderBy("disbursementSchedule.disbursementDate", "ASC")
       .addOrderBy("disbursementSchedule.createdAt", "ASC");
     // Add optional constraints as needed.
-    if (!options?.allowNonCompleted) {
+    if (!options.allowNonCompleted) {
       eligibleApplicationsQuery.andWhere(
         "application.applicationStatus = :applicationStatus",
         {
