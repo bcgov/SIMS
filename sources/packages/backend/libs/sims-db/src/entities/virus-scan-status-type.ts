@@ -3,7 +3,7 @@
  */
 export enum VirusScanStatus {
   Pending = "Pending",
-  InProgress = "In-progress",
+  InProgress = "In progress",
   VirusDetected = "Virus detected",
   FileIsClean = "File is clean",
 }
