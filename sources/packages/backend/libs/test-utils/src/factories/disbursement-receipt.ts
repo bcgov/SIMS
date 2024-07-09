@@ -6,7 +6,7 @@ import {
   DisbursementValueType,
   InstitutionLocation,
   RECEIPT_FUNDING_TYPE_FEDERAL,
-  RECEIPT_FUNDING_TYPE_PROVINCIAL,
+  RECEIPT_FUNDING_TYPE_PROVINCIAL_FULL_TIME,
 } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
 import * as faker from "faker";
@@ -96,7 +96,8 @@ export async function saveFakeDisbursementReceiptsFromDisbursementSchedule(
     disbursementSchedule.disbursementValues.find(
       (award) => award.valueType === DisbursementValueType.BCLoan,
     )?.valueAmount ?? 0;
-  provincialDisbursementReceipt.fundingType = RECEIPT_FUNDING_TYPE_PROVINCIAL;
+  provincialDisbursementReceipt.fundingType =
+    RECEIPT_FUNDING_TYPE_PROVINCIAL_FULL_TIME;
 
   // Generate receipts for every federal grant part of the disbursement.
   const federalGrantsReceipts = createReceiptValuesFromDisbursementValues(

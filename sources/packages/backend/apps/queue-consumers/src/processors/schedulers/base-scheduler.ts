@@ -75,7 +75,7 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
         QueueNames.FullTimeMSFAAIntegration,
         QueueNames.FullTimeECertIntegration,
         QueueNames.FullTimeFeedbackIntegration,
-        QueueNames.FullTimeDisbursementReceiptsFileIntegration,
+        QueueNames.DisbursementReceiptsFileIntegration,
         QueueNames.FullTimeMSFAAProcessResponseIntegration,
         QueueNames.IER12Integration,
         QueueNames.ECEProcessIntegration,
