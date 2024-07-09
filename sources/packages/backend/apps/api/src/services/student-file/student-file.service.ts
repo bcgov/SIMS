@@ -23,7 +23,7 @@ import { VirusScanStatus } from "@sims/sims-db/entities/virus-scan-status-type";
 export class StudentFileService extends RecordDataModelService<StudentFile> {
   constructor(
     private readonly dataSource: DataSource,
-    @InjectQueue(QueueNames.VirusScanProcessor)
+    @InjectQueue(QueueNames.FileVirusScanProcessor)
     private readonly virusScanQueue: Queue<VirusScanQueueInDTO>,
   ) {
     super(dataSource.getRepository(StudentFile));

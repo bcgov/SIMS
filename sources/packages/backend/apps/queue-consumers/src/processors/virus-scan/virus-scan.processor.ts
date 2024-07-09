@@ -15,7 +15,7 @@ import { NotFoundException } from "@nestjs/common";
 import { logProcessSummaryToJobLogger } from "../../utilities";
 import { UNABLE_TO_SCAN_FILE } from "../../constants/error-code.constants";
 
-@Processor(QueueNames.VirusScanProcessor)
+@Processor(QueueNames.FileVirusScanProcessor)
 export class VirusScanProcessor {
   constructor(private readonly studentFileService: StudentFileService) {}
 
