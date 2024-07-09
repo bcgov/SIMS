@@ -33,3 +33,6 @@ export * from "./global-http/global-http.module";
 export * from "./application/application-shared.service";
 export * from "./students-assessments/assessment-sequential-processing.service.models";
 export * from "./student-loan-balance/student-loan-balance-shared.service";
+export * from "./clamav/services/clamav.service";
+export * from "./clamav/models/clamav.models";
+export * from "./clamav/clam-antivirus.module";

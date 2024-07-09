@@ -2,16 +2,16 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { DataSource, UpdateResult } from "typeorm";
 import { RecordDataModelService, StudentFile } from "@sims/sims-db";
 import { VirusScanStatus } from "@sims/sims-db/entities/virus-scan-status-type";
-import { ClamAVService } from "../clamav/clamav.service";
 import { Readable } from "stream";
 import { CustomNamedError } from "@sims/utilities";
 import { UNABLE_TO_SCAN_FILE } from "../../constants/error-code.constants";
 import { ProcessSummary } from "@sims/utilities/logger";
+import { ClamAVService } from "@sims/services";
 
 @Injectable()
 export class StudentFileService extends RecordDataModelService<StudentFile> {
   constructor(
-    private readonly dataSource: DataSource,
+    dataSource: DataSource,
     private readonly clamAVService: ClamAVService,
   ) {
     super(dataSource.getRepository(StudentFile));

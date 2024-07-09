@@ -1,11 +1,10 @@
-import { Injectable, Logger } from "@nestjs/common";
 import { ProcessSummary } from "@sims/utilities/logger";
+import { Injectable } from "@nestjs/common";
 import * as NodeClam from "clamscan";
 import { Readable } from "stream";
 
 @Injectable()
 export class ClamAVService {
-  private logger = new Logger(ClamAVService.name);
   private scanner: NodeClam;
 
   /**
@@ -36,7 +35,7 @@ export class ClamAVService {
       if (!this.scanner) {
         await this.initClam();
       }
-      const { isInfected } = await this.scanner.scanStream(stream);
+      const { file, isInfected } = await this.scanner.scanStream(stream);
       return isInfected;
     } catch (err) {
       if (err.code === "ECONNREFUSED") {
