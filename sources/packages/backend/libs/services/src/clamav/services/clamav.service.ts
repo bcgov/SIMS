@@ -35,7 +35,7 @@ export class ClamAVService {
       if (!this.scanner) {
         await this.initClam();
       }
-      const { file, isInfected } = await this.scanner.scanStream(stream);
+      const { isInfected } = await this.scanner.scanStream(stream);
       return isInfected;
     } catch (err) {
       if (err.code === "ECONNREFUSED") {
