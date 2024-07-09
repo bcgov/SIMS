@@ -237,7 +237,6 @@ export default defineComponent({
               break;
           }
         } else {
-          showNav.value = false;
           snackBar.error(
             "An unexpected error happened while searching for the application.",
           );
