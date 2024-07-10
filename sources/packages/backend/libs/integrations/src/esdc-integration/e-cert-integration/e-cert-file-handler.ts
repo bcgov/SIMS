@@ -37,10 +37,19 @@ const ECERT_GENERATION_NO_RECORDS_AVAILABLE =
   "ECERT_GENERATION_NO_RECORDS_AVAILABLE";
 
 /**
- * ECert feedback error map with error code and
- * e-Cert feedback error id.
+ * Error details: error id and block funding info
+ * for each error code.
  */
-type ECertFeedbackCodeMap = Record<string, number>;
+interface ErrorDetails {
+  id: number;
+  blockFunding: boolean;
+}
+
+/**
+ * ECert feedback error map with error code and
+ * e-Cert feedback error details.
+ */
+type ECertFeedbackCodeMap = Record<string, ErrorDetails>;
 
 export abstract class ECertFileHandler extends ESDCFileHandler {
   esdcConfig: ESDCIntegrationConfig;
@@ -388,8 +397,10 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
   }
 
   /**
-   * Create disbursement feedback errors
-   * for the errors received in a response record.
+   * Create disbursement feedback errors for the errors received
+   * in a response record and sends a ministry notification if
+   * at least one of the error codes in the eCert feedback response
+   * record for a disbursement blocks funding.
    * @param processSummary process summary of record processing.
    * @param eCertFeedbackResponseRecord e-Cert feedback response record.
    * @param eCertFeedbackErrorCodeMap e-Cert feedback error map
@@ -413,13 +424,23 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
         eCertFeedbackResponseRecord.errorCode5,
       ]
         .filter((errorCode) => errorCode)
-        .map((errorCode) => eCertFeedbackErrorCodeMap[errorCode]);
-
+        .map((errorCode) => eCertFeedbackErrorCodeMap[errorCode].id);
+      const blockFundingErrorIds = [
+        eCertFeedbackResponseRecord.errorCode1,
+        eCertFeedbackResponseRecord.errorCode2,
+        eCertFeedbackResponseRecord.errorCode3,
+        eCertFeedbackResponseRecord.errorCode4,
+        eCertFeedbackResponseRecord.errorCode5,
+      ].filter(
+        (errorCode) => eCertFeedbackErrorCodeMap[errorCode]?.blockFunding,
+      );
+      const sendNotification = blockFundingErrorIds.length > 0;
       await this.disbursementScheduleErrorsService.createECertErrorRecord(
         eCertFeedbackResponseRecord.documentNumber,
         feedbackFileName,
         receivedErrorIds,
         dateReceived,
+        sendNotification,
       );
       processSummary.info(
         `Disbursement feedback error created for document number ${eCertFeedbackResponseRecord.documentNumber} at line ${eCertFeedbackResponseRecord.lineNumber}.`,
@@ -448,8 +469,10 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
       );
     const eCertFeedbackErrorCodeMap: ECertFeedbackCodeMap = {};
     for (const eCertFeedbackError of eCertFeedbackErrors) {
-      eCertFeedbackErrorCodeMap[eCertFeedbackError.errorCode] =
-        eCertFeedbackError.id;
+      eCertFeedbackErrorCodeMap[eCertFeedbackError.errorCode] = {
+        id: eCertFeedbackError.id,
+        blockFunding: eCertFeedbackError.blockFunding,
+      };
     }
     return eCertFeedbackErrorCodeMap;
   }

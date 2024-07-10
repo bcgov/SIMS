@@ -30,12 +30,19 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
   }
 
   /**
-   * Save Error codes from the E-Cert feedback file.
+   * Save Error codes from the E-Cert feedback file and
+   * sends a ministry notification if at least one of the
+   * error codes in the eCert feedback response
+   * record for a disbursement blocks funding.
    * @param documentNumber disbursement document number.
    * @param feedbackFileName feedback integration file name.
    * @param errorCodeIds e-Cert feedback error ids
    * of error codes received.
    * @param dateReceived Date Received.
+   * @param sendNotification boolean true if a notification has
+   * to be sent for this eCert feedback response record. This
+   * boolean will be true if the eCert feedback response record
+   * has at least one error code that is blocking funding.
    * @returns Created E-Cert Error record.
    */
   async createECertErrorRecord(
@@ -43,6 +50,7 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
     feedbackFileName: string,
     errorCodeIds: number[],
     dateReceived: Date,
+    sendNotification: boolean,
   ): Promise<InsertResult> {
     const disbursementSchedule =
       await this.disbursementScheduleService.getDisbursementScheduleByDocumentNumber(
@@ -74,10 +82,12 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
     };
     return this.dataSource.transaction(
       async (transactionalEntityManager: EntityManager) => {
-        await this.notificationActionsService.saveEcertFeedbackFileErrorNotification(
-          ministryNotification,
-          transactionalEntityManager,
-        );
+        sendNotification
+          ? await this.notificationActionsService.saveEcertFeedbackFileErrorNotification(
+              ministryNotification,
+              transactionalEntityManager,
+            )
+          : null;
         return transactionalEntityManager
           .getRepository(DisbursementFeedbackErrors)
           .createQueryBuilder()
