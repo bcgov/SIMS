@@ -15,7 +15,11 @@ import { AppInstitutionsModule } from "./app.institutions.module";
 import { ClientTypeBaseRoute } from "./types";
 import { AppStudentsModule } from "./app.students.module";
 import { AppSupportingUsersModule } from "./app.supporting-users.module";
-import { GlobalHttpModule, ZeebeModule } from "@sims/services";
+import {
+  ClamAntivirusModule,
+  GlobalHttpModule,
+  ZeebeModule,
+} from "@sims/services";
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
 import { DatabaseModule } from "@sims/sims-db";
@@ -36,6 +40,7 @@ import { QueueModule } from "@sims/services/queue";
     AppStudentsModule,
     AppSupportingUsersModule,
     QueueModule,
+    ClamAntivirusModule,
     RouterModule.register([
       {
         path: ClientTypeBaseRoute.Institution,

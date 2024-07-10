@@ -36,6 +36,10 @@ objects:
                   value: "${DB_SERVICE}"
                 - name: REDIS_HOST
                   value: "${REDIS_SERVICE}"
+                - name: CLAMAV_HOST
+                  value: "${CLAMAV_SERVICE}"
+                - name: CLAMAV_PORT
+                  value: "${CLAMAV_PORT}"
                 - name: POSTGRES_USER
                   valueFrom:
                     secretKeyRef:
@@ -344,6 +348,10 @@ parameters:
     value: "false"
   - name: REDIS_SERVICE
     value: redis
+  - name: CLAMAV_SERVICE
+    value: clamav
+  - name: CLAMAV_PORT
+    value: 3310
   - name: REDIS_SECRET_NAME
     value: redis-creds
   - name: REDIS_PASSWORD_KEY
