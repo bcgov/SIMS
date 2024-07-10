@@ -12,6 +12,13 @@
       <v-col>
         <div class="label-value-normal">
           <slot name="content">{{ summary }}</slot>
+          <slot name="content-list" v-if="summaryList">
+            <ul>
+              <li v-for="item in summaryList" :key="item">
+                {{ item }}
+              </li>
+            </ul>
+          </slot>
         </div>
       </v-col>
       <v-col cols="auto"> <slot name="actions"></slot></v-col>
@@ -33,6 +40,9 @@ export default defineComponent({
     },
     summary: {
       type: String,
+    },
+    summaryList: {
+      type: Array<string>,
     },
   },
   setup(props) {
