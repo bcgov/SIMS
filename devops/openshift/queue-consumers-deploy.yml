@@ -351,7 +351,7 @@ parameters:
   - name: CLAMAV_SERVICE
     value: clamav
   - name: CLAMAV_PORT
-    value: 3310
+    required: true
   - name: REDIS_SECRET_NAME
     value: redis-creds
   - name: REDIS_PASSWORD_KEY
