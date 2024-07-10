@@ -4,7 +4,8 @@ import {
   DisbursementReceiptValue,
   OfferingIntensity,
   RECEIPT_FUNDING_TYPE_FEDERAL,
-  RECEIPT_FUNDING_TYPE_PROVINCIAL,
+  RECEIPT_FUNDING_TYPE_PROVINCIAL_FULL_TIME,
+  RECEIPT_FUNDING_TYPE_PROVINCIAL_PART_TIME,
 } from "@sims/sims-db";
 import {
   E2EDataSources,
@@ -25,21 +26,23 @@ import { INestApplication } from "@nestjs/common";
 import { QueueNames } from "@sims/utilities";
 import { DeepMocked } from "@golevelup/ts-jest";
 import * as Client from "ssh2-sftp-client";
-import { FullTimeDisbursementReceiptsFileIntegrationScheduler } from "../full-time-disbursement-receipts-integration.scheduler";
+import { DisbursementReceiptsFileIntegrationScheduler } from "../disbursement-receipts-integration.scheduler";
 import * as path from "path";
 
 const FEDERAL_PROVINCIAL_FULL_TIME_FILE =
   "EDU.PBC.DIS-federal-provincial-full-time.txt";
+const FEDERAL_PROVINCIAL_PART_TIME_FILE =
+  "EDU.PBC.DIS-federal-provincial-part-time.txt";
 const FEDERAL_ONLY_FULL_TIME_FILE = "EDU.PBC.DIS-federal-only-full-time.txt";
 const SHARED_DOCUMENT_NUMBER = 989898;
 
 describe(
   describeQueueProcessorRootTest(
-    QueueNames.FullTimeDisbursementReceiptsFileIntegration,
+    QueueNames.DisbursementReceiptsFileIntegration,
   ),
   () => {
     let app: INestApplication;
-    let processor: FullTimeDisbursementReceiptsFileIntegrationScheduler;
+    let processor: DisbursementReceiptsFileIntegrationScheduler;
     let db: E2EDataSources;
     let sftpClientMock: DeepMocked<Client>;
 
@@ -55,7 +58,7 @@ describe(
       db = createE2EDataSources(dataSource);
       sftpClientMock = sshClientMock;
       // Processor under test.
-      processor = app.get(FullTimeDisbursementReceiptsFileIntegrationScheduler);
+      processor = app.get(DisbursementReceiptsFileIntegrationScheduler);
     });
 
     beforeEach(async () => {
@@ -311,6 +314,99 @@ describe(
       });
     });
 
+    it("Should import disbursement receipt file and create federal and provincial awards receipts with proper awards code mappings for a part-time application when the file contains federal and provincial receipts.", async () => {
+      // Arrange
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        undefined,
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+          firstDisbursementInitialValues: {
+            documentNumber: SHARED_DOCUMENT_NUMBER,
+          },
+        },
+      );
+      mockDownloadFiles(sftpClientMock, [FEDERAL_PROVINCIAL_PART_TIME_FILE]);
+      // Queued job.
+      const { job } = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processDisbursementReceipts(job);
+
+      // Assert
+      const downloadedFile = path.join(
+        process.env.ESDC_RESPONSE_FOLDER,
+        FEDERAL_PROVINCIAL_PART_TIME_FILE,
+      );
+      expect(result).toStrictEqual([
+        {
+          processSummary: [
+            `Processing file ${downloadedFile}.`,
+            `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 2 inserted successfully.`,
+            `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 3 inserted successfully.`,
+            `Processing file ${downloadedFile} completed.`,
+          ],
+          errorsSummary: [],
+        },
+      ]);
+      // Assert imported receipts.
+      const [firstDisbursement] =
+        application.currentAssessment.disbursementSchedules;
+      const { bpReceipt, feReceipt } = await getReceiptsForAssert(
+        firstDisbursement.id,
+      );
+      // Assert federal receipt.
+      // Header details.
+      expect(feReceipt).toEqual(
+        expect.objectContaining({
+          batchRunDate: "2024-01-30",
+          fileDate: "2024-01-31",
+          sequenceNumber: 3228,
+        }),
+      );
+      // Document number.
+      expect(feReceipt.disbursementSchedule.documentNumber).toBe(
+        SHARED_DOCUMENT_NUMBER,
+      );
+      // Disbursed loan amount.
+      expect(feReceipt.totalDisbursedAmount).toBe(3673);
+      const feReceiptAwards = getExpectedAwardsFromReceiptValues(
+        feReceipt.disbursementReceiptValues,
+      );
+      // Disbursed grants.
+      // XYZ is a non-translated code that must be imported as it is.
+      expect(feReceiptAwards).toStrictEqual({
+        CSGF: 199,
+        CSGT: 299,
+        CSGD: 399,
+        CSGP: 499,
+        XYZ: 444,
+      });
+      // Assert provincial receipt.
+      // Header details.
+      expect(bpReceipt).toEqual(
+        expect.objectContaining({
+          batchRunDate: "2024-01-30",
+          fileDate: "2024-01-31",
+          sequenceNumber: 3228,
+        }),
+      );
+      // Document number.
+      expect(bpReceipt.disbursementSchedule.documentNumber).toBe(
+        SHARED_DOCUMENT_NUMBER,
+      );
+      // Disbursed loan amount.
+      expect(bpReceipt.totalDisbursedAmount).toBe(132);
+      const bdReceiptAwards = getExpectedAwardsFromReceiptValues(
+        bpReceipt.disbursementReceiptValues,
+      );
+      // Disbursed grants.
+      expect(bdReceiptAwards).toStrictEqual({
+        BCSG: 600,
+      });
+    });
+
     /**
      * Get federal and provincial receipts to execute the asserts verifications.
      * @param disbursementScheduleId schedule id.
@@ -321,6 +417,7 @@ describe(
     ): Promise<{
       feReceipt?: DisbursementReceipt;
       bcReceipt?: DisbursementReceipt;
+      bpReceipt?: DisbursementReceipt;
     }> {
       const receipts = await db.disbursementReceipt.find({
         select: {
@@ -351,7 +448,12 @@ describe(
         },
       });
       const bcReceipt = receipts.find(
-        (receipt) => receipt.fundingType === RECEIPT_FUNDING_TYPE_PROVINCIAL,
+        (receipt) =>
+          receipt.fundingType === RECEIPT_FUNDING_TYPE_PROVINCIAL_FULL_TIME,
+      );
+      const bpReceipt = receipts.find(
+        (receipt) =>
+          receipt.fundingType === RECEIPT_FUNDING_TYPE_PROVINCIAL_PART_TIME,
       );
       const feReceipt = receipts.find(
         (receipt) => receipt.fundingType === RECEIPT_FUNDING_TYPE_FEDERAL,
@@ -359,6 +461,7 @@ describe(
       return {
         feReceipt,
         bcReceipt,
+        bpReceipt,
       };
     }
 
