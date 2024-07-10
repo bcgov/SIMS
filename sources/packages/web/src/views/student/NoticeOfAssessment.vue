@@ -2,11 +2,11 @@
   <student-page-container>
     <template #header>
       <banner
-        v-if="warningText.length > 0"
+        v-if="warningList.length > 0"
         class="mb-2"
         :type="BannerTypes.Warning"
         header="Warning"
-        :summaryList="warningText"
+        :summaryList="warningList"
     />
       <header-navigator
         title="View assessment"
@@ -32,7 +32,7 @@
               color="primary"
               data-cy="AcceptAssessment"
               @click="confirmAssessment()"
-              :disabled="warningText.length > 0"
+              :disabled="warningList.length > 0"
               >Accept assessment</v-btn
             >
           </v-row>
@@ -87,7 +87,7 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const viewOnly = ref(true);
     const currentAssessmentId = ref(0);
-    const warningText = ref([] as string[]);
+    const warningList = ref([] as string[]);
 
     const assessmentDataLoaded = (
       applicationStatus: ApplicationStatus,
@@ -135,7 +135,7 @@ export default defineComponent({
       warnings.forEach((warning) => {
         switch (warning) {
           case ECertFailedValidation.DisabilityStatusNotConfirmed:
-            warningText.value.push(
+            warningList.value.push(
               `Your account has not been approved for disability funding. 
               You will not be able to accept this application until the account disability status has been approved. 
               If you would like to receive all non disability funding please edit your application.`,
@@ -143,14 +143,14 @@ export default defineComponent({
             break;
           case ECertFailedValidation.MSFAACanceled:
           case ECertFailedValidation.MSFAANotSigned:
-            if (!warningText.value.includes(MSFAAWarning)) {
-              warningText.value.push(
+            if (!warningList.value.includes(MSFAAWarning)) {
+              warningList.value.push(
                 MSFAAWarning,
               );
             }
             break;
           case ECertFailedValidation.HasStopDisbursementRestriction:
-            warningText.value.push(
+            warningList.value.push(
               `You have restrictions that block funding on your account. 
               Please resolve them in order to move forward with your application.`,
             );
@@ -172,7 +172,7 @@ export default defineComponent({
       confirmCancelApplication,
       cancelApplicationModal,
       assessmentDataLoaded,
-      warningText,
+      warningList,
     };
   },
 });

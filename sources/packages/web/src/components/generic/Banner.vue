@@ -14,7 +14,7 @@
           <slot name="content">{{ summary }}</slot>
           <slot name="content-list" v-if="summaryList">
             <ul>
-              <li v-for="item in summaryList" :key="item">
+              <li v-for="(item, index) in summaryList" :key="index">
                 {{ item }}
               </li>
             </ul>
