@@ -82,12 +82,12 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
     };
     return this.dataSource.transaction(
       async (transactionalEntityManager: EntityManager) => {
-        sendNotification
-          ? await this.notificationActionsService.saveEcertFeedbackFileErrorNotification(
-              ministryNotification,
-              transactionalEntityManager,
-            )
-          : null;
+        if (sendNotification) {
+          await this.notificationActionsService.saveEcertFeedbackFileErrorNotification(
+            ministryNotification,
+            transactionalEntityManager,
+          );
+        }
         return transactionalEntityManager
           .getRepository(DisbursementFeedbackErrors)
           .createQueryBuilder()
