@@ -129,6 +129,7 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
       fakeInstitutionLocations: [collegeCLocation,],
       fakeUser: fakeInstitutionUser,
     });
+    fakeDesignationAgreement.designationStatus = DesignationAgreementStatus.Pending
     await db.designationAgreement.save(fakeDesignationAgreement);
 
     const payload = {
