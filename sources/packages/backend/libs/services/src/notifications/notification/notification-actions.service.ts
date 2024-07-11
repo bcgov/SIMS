@@ -34,6 +34,7 @@ import { NotificationService } from "./notification.service";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { ECE_RESPONSE_ATTACHMENT_FILE_NAME } from "@sims/integrations/constants";
 import { SystemUsersService } from "@sims/services/system-users";
+import { NotificationMetadata } from "@sims/sims-db/entities/notification-metadata.type";
 
 @Injectable()
 export class NotificationActionsService {
@@ -1118,10 +1119,12 @@ export class NotificationActionsService {
   /**
    * Saves eCert Feedback File Error notification for ministry.
    * @param notification notification details.
+   * @param metadata metadata related to the notification to be saved.
    * @param entityManager entity manager to execute in transaction.
    */
   async saveEcertFeedbackFileErrorNotification(
     notification: ECertFeedbackFileErrorNotification,
+    metadata: NotificationMetadata,
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
@@ -1145,6 +1148,7 @@ export class NotificationActionsService {
           errorCodes: notification.errorCodes,
         },
       },
+      metadata,
     }));
     // Save notifications to be sent to the ministry into the notification table.
     await this.notificationService.saveNotifications(

@@ -82,11 +82,19 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
         disbursementSchedule.studentAssessment.application.applicationNumber,
       errorCodes: blockFundingErrorIds,
     };
+    const metadata = {
+      disbursementId: disbursementSchedule.id,
+      documentNumber: disbursementSchedule.documentNumber,
+      applicationNumber:
+        disbursementSchedule.studentAssessment.application.applicationNumber,
+      errorCodes: blockFundingErrorIds,
+    };
     return this.dataSource.transaction(
       async (transactionalEntityManager: EntityManager) => {
         if (blockFundingErrorIds.length) {
           await this.notificationActionsService.saveEcertFeedbackFileErrorNotification(
             ministryNotification,
+            metadata,
             transactionalEntityManager,
           );
         }
