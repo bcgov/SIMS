@@ -37,17 +37,17 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
       await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
-    let { institution } = await getAuthRelatedEntities(
+    const { institution } = await getAuthRelatedEntities(
       db.dataSource,
       InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
     );
     collegeF = institution;
 
-    ({ institution } = await getAuthRelatedEntities(
+    const responseC = await getAuthRelatedEntities(
       db.dataSource,
       InstitutionTokenTypes.CollegeCAdminLegalSigningUser,
-    ));
-    collegeC = institution;
+    );
+    collegeC = responseC.institution;
 
     collegeFLocation = createFakeInstitutionLocation({ institution: collegeF });
     await authorizeUserTokenForLocation(
@@ -151,7 +151,6 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
     const endpoint = "/institutions/designation-agreement";
 
     // Act/Assert
-    let designationAgreementId: number;
     await request(app.getHttpServer())
       .post(endpoint)
       .send(payload)
@@ -159,7 +158,6 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
       .expect(HttpStatus.CREATED)
       .then((response) => {
         expect(response.body.id).toBeGreaterThan(0);
-        designationAgreementId = response.body.id;
       });
 
     await request(app.getHttpServer())
