@@ -1115,6 +1115,56 @@ export class NotificationActionsService {
   }
 
   /**
+   * Creates Provincial Daily Disbursement Report file processing notifications.
+   * Currently multiple notifications are created as integration contacts
+   * can be multiple.
+   * @param attachmentFileContent file content for the daily disbursement report file.
+   * @param fileName file name for the daily disbursement report file.
+   */
+  async saveProvincialDailyDisbursementReportProcessingNotification(
+    attachmentFileContent: string,
+    fileName: string,
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const { templateId, emailContacts } =
+      await this.assertNotificationMessageDetails(
+        NotificationMessageType.MinistryNotificationProvincialDailyDisbursementReceipt,
+      );
+    if (!emailContacts?.length) {
+      return;
+    }
+    const provincialDailyDisbursementReportProcessingNotifications = [];
+
+    for (const emailContact of emailContacts) {
+      const messagePayload: NotificationEmailMessage = {
+        email_address: emailContact,
+        template_id: templateId,
+        personalisation: {
+          application_file: {
+            file: base64Encode(attachmentFileContent),
+            filename: fileName,
+            sending_method: "attach",
+          },
+        },
+      };
+      const provincialDailyDisbursementReportProcessingNotification = {
+        userId: auditUser.id,
+        messageType:
+          NotificationMessageType.MinistryNotificationProvincialDailyDisbursementReceipt,
+        messagePayload: messagePayload,
+      };
+      provincialDailyDisbursementReportProcessingNotifications.push(
+        provincialDailyDisbursementReportProcessingNotification,
+      );
+    }
+
+    await this.notificationService.saveNotifications(
+      provincialDailyDisbursementReportProcessingNotifications,
+      auditUser.id,
+    );
+  }
+
+  /**
    * Asserts the notification message details of a notification message.
    * @param notificationMessageTypeId id of the user who will receive the message.
    * @returns notification details of the notification message.

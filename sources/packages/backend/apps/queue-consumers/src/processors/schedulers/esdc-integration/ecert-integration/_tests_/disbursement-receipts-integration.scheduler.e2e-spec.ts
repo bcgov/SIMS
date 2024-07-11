@@ -2,6 +2,7 @@ import {
   ApplicationStatus,
   DisbursementReceipt,
   DisbursementReceiptValue,
+  NotificationMessageType,
   OfferingIntensity,
   RECEIPT_FUNDING_TYPE_FEDERAL,
   RECEIPT_FUNDING_TYPE_PROVINCIAL_FULL_TIME,
@@ -28,6 +29,7 @@ import { DeepMocked } from "@golevelup/ts-jest";
 import * as Client from "ssh2-sftp-client";
 import { DisbursementReceiptsFileIntegrationScheduler } from "../disbursement-receipts-integration.scheduler";
 import * as path from "path";
+import { MoreThan } from "typeorm";
 
 const FEDERAL_PROVINCIAL_FULL_TIME_FILE =
   "EDU.PBC.DIS-federal-provincial-full-time.txt";
@@ -45,6 +47,8 @@ describe(
     let processor: DisbursementReceiptsFileIntegrationScheduler;
     let db: E2EDataSources;
     let sftpClientMock: DeepMocked<Client>;
+    const batchRunDate = "2024-01-30";
+    const fileDate = "2024-01-31";
 
     beforeAll(async () => {
       // Set the ESDC response folder to the mock folder.
@@ -59,6 +63,13 @@ describe(
       sftpClientMock = sshClientMock;
       // Processor under test.
       processor = app.get(DisbursementReceiptsFileIntegrationScheduler);
+      // Insert fake email contact to send ministry email.
+      await db.notificationMessage.update(
+        {
+          id: NotificationMessageType.MinistryNotificationProvincialDailyDisbursementReceipt,
+        },
+        { emailContacts: ["dummy@some.domain"] },
+      );
     });
 
     beforeEach(async () => {
@@ -170,6 +181,7 @@ describe(
           },
         },
       );
+      const currentTestTime = new Date();
       mockDownloadFiles(sftpClientMock, [FEDERAL_PROVINCIAL_FULL_TIME_FILE]);
       // Queued job.
       const { job } = mockBullJob<void>();
@@ -189,6 +201,8 @@ describe(
             `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 2 inserted successfully.`,
             `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 3 inserted successfully.`,
             `Processing file ${downloadedFile} completed.`,
+            `Processing provincial daily disbursement CSV file which are not sent on ${batchRunDate}.`,
+            `Provincial daily disbursement CSV report file has been sent successfully via email.`,
           ],
           errorsSummary: [],
         },
@@ -203,8 +217,8 @@ describe(
       // Header details.
       expect(feReceipt).toEqual(
         expect.objectContaining({
-          batchRunDate: "2024-01-30",
-          fileDate: "2024-01-31",
+          batchRunDate: batchRunDate,
+          fileDate: fileDate,
           sequenceNumber: 3228,
         }),
       );
@@ -230,8 +244,8 @@ describe(
       // Header details.
       expect(bcReceipt).toEqual(
         expect.objectContaining({
-          batchRunDate: "2024-01-30",
-          fileDate: "2024-01-31",
+          batchRunDate: batchRunDate,
+          fileDate: fileDate,
           sequenceNumber: 3228,
         }),
       );
@@ -248,6 +262,26 @@ describe(
       expect(bdReceiptAwards).toStrictEqual({
         BCSG: 599,
       });
+      // Notification record.
+      const notification = await db.notification.findOne({
+        select: {
+          messagePayload: true,
+          createdAt: true,
+        },
+        where: {
+          createdAt: MoreThan(currentTestTime),
+        },
+      });
+      const emailContact = notification.messagePayload["email_address"];
+      const file =
+        notification.messagePayload["personalisation"]["application_file"][
+          "file"
+        ];
+      const fileContent = Buffer.from(file, "base64").toString("ascii");
+      expect(emailContact).toBe("dummy@some.domain");
+      expect(fileContent).toContain(
+        "Total Records,File Date,Batch Run Date,Sequence Number",
+      );
     });
 
     it("Should import disbursement receipt file and create only federal awards receipt with proper awards code mappings for a full-time application when the file contains only federal receipt.", async () => {
@@ -263,6 +297,7 @@ describe(
           },
         },
       );
+      const currentTestTime = new Date();
       mockDownloadFiles(sftpClientMock, [FEDERAL_ONLY_FULL_TIME_FILE]);
       // Queued job.
       const { job } = mockBullJob<void>();
@@ -281,6 +316,8 @@ describe(
             `Processing file ${downloadedFile}.`,
             `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 2 inserted successfully.`,
             `Processing file ${downloadedFile} completed.`,
+            `Processing provincial daily disbursement CSV file which are not sent on ${batchRunDate}.`,
+            `Provincial daily disbursement CSV report file has been sent successfully via email.`,
           ],
           errorsSummary: [],
         },
@@ -312,6 +349,26 @@ describe(
         CSGP: 499,
         XYZ: 444,
       });
+      // Notification record.
+      const notification = await db.notification.findOne({
+        select: {
+          messagePayload: true,
+          createdAt: true,
+        },
+        where: {
+          createdAt: MoreThan(currentTestTime),
+        },
+      });
+      const emailContact = notification.messagePayload["email_address"];
+      const file =
+        notification.messagePayload["personalisation"]["application_file"][
+          "file"
+        ];
+      const fileContent = Buffer.from(file, "base64").toString("ascii");
+      expect(emailContact).toBe("dummy@some.domain");
+      expect(fileContent).toContain(
+        "Total Records,File Date,Batch Run Date,Sequence Number",
+      );
     });
 
     it("Should import disbursement receipt file and create federal and provincial awards receipts with proper awards code mappings for a part-time application when the file contains federal and provincial receipts.", async () => {
@@ -327,6 +384,7 @@ describe(
           },
         },
       );
+      const currentTestTime = new Date();
       mockDownloadFiles(sftpClientMock, [FEDERAL_PROVINCIAL_PART_TIME_FILE]);
       // Queued job.
       const { job } = mockBullJob<void>();
@@ -346,6 +404,8 @@ describe(
             `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 2 inserted successfully.`,
             `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 3 inserted successfully.`,
             `Processing file ${downloadedFile} completed.`,
+            `Processing provincial daily disbursement CSV file which are not sent on ${batchRunDate}.`,
+            `Provincial daily disbursement CSV report file has been sent successfully via email.`,
           ],
           errorsSummary: [],
         },
@@ -360,8 +420,8 @@ describe(
       // Header details.
       expect(feReceipt).toEqual(
         expect.objectContaining({
-          batchRunDate: "2024-01-30",
-          fileDate: "2024-01-31",
+          batchRunDate: batchRunDate,
+          fileDate: fileDate,
           sequenceNumber: 3228,
         }),
       );
@@ -387,8 +447,8 @@ describe(
       // Header details.
       expect(bpReceipt).toEqual(
         expect.objectContaining({
-          batchRunDate: "2024-01-30",
-          fileDate: "2024-01-31",
+          batchRunDate: batchRunDate,
+          fileDate: fileDate,
           sequenceNumber: 3228,
         }),
       );
@@ -405,6 +465,26 @@ describe(
       expect(bdReceiptAwards).toStrictEqual({
         BCSG: 600,
       });
+      // Notification record.
+      const notification = await db.notification.findOne({
+        select: {
+          messagePayload: true,
+          createdAt: true,
+        },
+        where: {
+          createdAt: MoreThan(currentTestTime),
+        },
+      });
+      const emailContact = notification.messagePayload["email_address"];
+      const file =
+        notification.messagePayload["personalisation"]["application_file"][
+          "file"
+        ];
+      const fileContent = Buffer.from(file, "base64").toString("ascii");
+      expect(emailContact).toBe("dummy@some.domain");
+      expect(fileContent).toContain(
+        "Total Records,File Date,Batch Run Date,Sequence Number",
+      );
     });
 
     /**

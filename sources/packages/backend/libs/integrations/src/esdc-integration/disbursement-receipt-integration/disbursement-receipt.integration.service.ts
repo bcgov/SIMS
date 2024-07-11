@@ -7,7 +7,7 @@ import {
 import { DisbursementReceiptHeader } from "./disbursement-receipt-files/disbursement-receipt-file-header";
 import { DisbursementReceiptFooter } from "./disbursement-receipt-files/disbursement-receipt-file-footer";
 import { DisbursementReceiptDetail } from "./disbursement-receipt-files/disbursement-receipt-file-detail";
-import { getFileNameAsCurrentTimestamp } from "@sims/utilities";
+import { getISODateOnlyString } from "@sims/utilities";
 import { SFTPIntegrationBase, SshService } from "@sims/integrations/services";
 
 @Injectable()
@@ -63,20 +63,13 @@ export class DisbursementReceiptIntegrationService extends SFTPIntegrationBase<D
   }
 
   /**
-   * Create file name of the daily disbursements records file.
+   * Create file name for the daily disbursements report file.
    * @param reportName Report name to be a part of filename.
-   * @returns Full file path of the file to be saved on the SFTP.
+   * @returns Full file path of the file to be sent via emails.
    */
-  createRequestFileName(reportName: string): {
-    fileName: string;
-    filePath: string;
-  } {
-    const timestamp = getFileNameAsCurrentTimestamp();
+  createDisbursementFileName(reportName: string): string {
+    const timestamp = getISODateOnlyString(new Date());
     const fileName = `${reportName}_${timestamp}.csv`;
-    const filePath = `${this.esdcConfig.ftpRequestFolder}\\${fileName}`;
-    return {
-      fileName,
-      filePath,
-    };
+    return fileName;
   }
 }

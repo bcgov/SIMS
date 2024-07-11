@@ -8,6 +8,13 @@ import {
   DisbursementReceiptService,
   DisbursementScheduleService,
 } from "@sims/integrations/services";
+import {
+  NotificationActionsService,
+  ReportService,
+  ReportsFilterModel,
+} from "@sims/services";
+import { DAILY_DISBURSEMENT_REPORT_NAME } from "@sims/services/constants";
+import { getISODateOnlyString } from "@sims/utilities";
 
 /**
  * Disbursement schedule map which consists of disbursement schedule id for a document number.
@@ -28,6 +35,8 @@ export class DisbursementReceiptProcessingService {
     private readonly integrationService: DisbursementReceiptIntegrationService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
     private readonly disbursementReceiptService: DisbursementReceiptService,
+    private readonly reportService: ReportService,
+    private readonly notificationActionsService: NotificationActionsService,
   ) {
     this.esdcConfig = config.esdcIntegration;
   }
@@ -141,6 +150,51 @@ export class DisbursementReceiptProcessingService {
       }
     }
     result.processSummary.push(`Processing file ${remoteFilePath} completed.`);
+    const batchRunDate = responseData.header.batchRunDate;
+    result.processSummary.push(
+      `Processing provincial daily disbursement CSV file which are not sent on ${getISODateOnlyString(
+        batchRunDate,
+      )}.`,
+    );
+
+    // Create a CSV file of the total records sent on the process date and
+    // email the content to the ministry users.
+    try {
+      // Populate the reportName and batchRunDate to the reportsFilterMode.
+      const reportFilterModel: ReportsFilterModel = {
+        reportName: DAILY_DISBURSEMENT_REPORT_NAME,
+        params: { batchRunDate },
+      };
+
+      // Fetch the reports data and convert them into CSV.
+      const dailyDisbursementsRecordsInCSV =
+        await this.reportService.getReportDataAsCSV(reportFilterModel);
+
+      // Create the file name for the daily disbursement report.
+      const disbursementFileName =
+        this.integrationService.createDisbursementFileName(
+          DAILY_DISBURSEMENT_REPORT_NAME,
+        );
+
+      // Send the Daily Disbursement Report content and file via email.
+      await this.notificationActionsService.saveProvincialDailyDisbursementReportProcessingNotification(
+        dailyDisbursementsRecordsInCSV,
+        disbursementFileName,
+      );
+      result.processSummary.push(
+        `Provincial daily disbursement CSV report file has been sent successfully via email.`,
+      );
+      this.logger.log(
+        "Completed sending provincial daily disbursement report emails.",
+      );
+    } catch (error) {
+      this.logger.error(error);
+      result.errorsSummary.push(
+        `Error while sending provincial daily disbursement CSV report file.`,
+      );
+      result.errorsSummary.push(error);
+    }
+
     try {
       //Deleting the file once it has been processed.
       await this.integrationService.deleteFile(remoteFilePath);
