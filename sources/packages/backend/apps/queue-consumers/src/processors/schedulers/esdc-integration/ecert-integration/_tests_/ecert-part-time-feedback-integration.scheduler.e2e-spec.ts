@@ -2,6 +2,7 @@ import {
   ApplicationStatus,
   COEStatus,
   DisbursementScheduleStatus,
+  NotificationMessageType,
   OfferingIntensity,
 } from "@sims/sims-db";
 import {
@@ -25,11 +26,14 @@ import { DeepMocked } from "@golevelup/ts-jest";
 import * as Client from "ssh2-sftp-client";
 import * as path from "path";
 import { PartTimeECertFeedbackIntegrationScheduler } from "../ecert-part-time-feedback-integration.scheduler";
+import { IsNull } from "typeorm";
 
 const FEEDBACK_ERROR_FILE_SINGLE_RECORD =
   "EDU.PBC.NEW.ECERTSFB.PT.SINGLERECORD";
 const FEEDBACK_ERROR_FILE_MULTIPLE_RECORDS =
   "EDU.PBC.NEW.ECERTSFB.PT.MULTIPLERECORDS";
+const FEEDBACK_ERROR_NON_NOTIFICATION_FILE =
+  "EDU.PBC.NEW.ECERTSFB.PT.ERRORNONNOTIFICATION";
 const SHARED_DOCUMENT_NUMBER = 7777;
 const SHARED_ERROR_CODE = "EDU-00128";
 
@@ -386,5 +390,56 @@ describe(
         });
       },
     );
+
+    it("Should not generate a notification to the ministry when there are ecert feedback errors but none of them block funding for the disbursement.", async () => {
+      // Arrange
+      const notificationMessageType =
+        NotificationMessageType.ECertFeedbackFileErrorNotification;
+      // Remove all the eCert feedback file error notification records before
+      // the run of the test, so that it doesn't interfere with the test data.
+      await db.notification.delete({
+        notificationMessage: {
+          id: notificationMessageType,
+        },
+      });
+      await saveFakeApplicationDisbursements(db.dataSource, undefined, {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.Completed,
+        firstDisbursementInitialValues: {
+          coeStatus: COEStatus.completed,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          documentNumber: SHARED_DOCUMENT_NUMBER,
+        },
+      });
+      mockDownloadFiles(sftpClientMock, [FEEDBACK_ERROR_NON_NOTIFICATION_FILE]);
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processPartTimeResponses(mockedJob.job);
+
+      // Assert
+      expect(result.length).toBe(1);
+      expect(result).toContain("Process finalized with success.");
+      expect(
+        mockedJob.containLogMessages([
+          "File contains 1 records.",
+          `Disbursement feedback error created for document number ${SHARED_DOCUMENT_NUMBER} at line 2.`,
+        ]),
+      ).toBe(true);
+      // When all the records are processed successfully, expect the file to be deleted from SFTP.
+      expect(sftpClientMock.delete).toHaveBeenCalled();
+
+      // Assert
+      const notificationCount = await db.notification.count({
+        where: {
+          notificationMessage: {
+            id: notificationMessageType,
+          },
+          dateSent: IsNull(),
+        },
+      });
+      expect(notificationCount).toBe(0);
+    });
   },
 );
