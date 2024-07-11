@@ -2,7 +2,7 @@ UPDATE
     sims.report_configs
 SET
     report_sql = (
-        'WITH disbursement_receipts_dataset AS (
+        'WITH disbursement_receipt_dataset AS (
             SELECT
                 *
             FROM
@@ -50,10 +50,9 @@ SET
                     full_time_disbursement_receipts.batch_run_date AS "Batch Run Date",
                     full_time_disbursement_receipts.sequence_number AS "Sequence Number"
                 FROM
-                    disbursement_receipts_dataset full_time_disbursement_receipts
+                    disbursement_receipt_dataset full_time_disbursement_receipts
                 WHERE
                     full_time_disbursement_receipts.funding_type = ''BC''
-                    AND full_time_disbursement_receipts.batch_run_date = :batchRunDate
                 GROUP BY
                     "File Date",
                     "Batch Run Date",
@@ -75,10 +74,9 @@ SET
                     part_time_disbursement_receipts.batch_run_date as "Batch Run Date",
                     part_time_disbursement_receipts.sequence_number as "Sequence Number"
                 FROM
-                    disbursement_receipts_dataset part_time_disbursement_receipts
+                    disbursement_receipt_dataset part_time_disbursement_receipts
                 WHERE
                     part_time_disbursement_receipts.funding_type = ''BP''
-                    AND part_time_disbursement_receipts.batch_run_date = :batchRunDate
                 GROUP BY
                     "File Date",
                     "Batch Run Date",
