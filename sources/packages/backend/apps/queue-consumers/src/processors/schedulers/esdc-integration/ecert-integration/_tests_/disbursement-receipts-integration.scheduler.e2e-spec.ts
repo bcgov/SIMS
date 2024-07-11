@@ -37,6 +37,9 @@ const FEDERAL_PROVINCIAL_PART_TIME_FILE =
   "EDU.PBC.DIS-federal-provincial-part-time.txt";
 const FEDERAL_ONLY_FULL_TIME_FILE = "EDU.PBC.DIS-federal-only-full-time.txt";
 const SHARED_DOCUMENT_NUMBER = 989898;
+const BATCH_RUN_DATE = "2024-01-30";
+const FILE_DATE = "2024-01-31";
+const TEST_EMAIL = "dummy@some.domain";
 
 describe(
   describeQueueProcessorRootTest(
@@ -47,8 +50,6 @@ describe(
     let processor: DisbursementReceiptsFileIntegrationScheduler;
     let db: E2EDataSources;
     let sftpClientMock: DeepMocked<Client>;
-    const batchRunDate = "2024-01-30";
-    const fileDate = "2024-01-31";
 
     beforeAll(async () => {
       // Set the ESDC response folder to the mock folder.
@@ -68,7 +69,7 @@ describe(
         {
           id: NotificationMessageType.MinistryNotificationProvincialDailyDisbursementReceipt,
         },
-        { emailContacts: ["dummy@some.domain"] },
+        { emailContacts: [TEST_EMAIL] },
       );
     });
 
@@ -201,7 +202,7 @@ describe(
             `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 2 inserted successfully.`,
             `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 3 inserted successfully.`,
             `Processing file ${downloadedFile} completed.`,
-            `Processing provincial daily disbursement CSV file which are not sent on ${batchRunDate}.`,
+            `Processing provincial daily disbursement CSV file which are not sent on ${BATCH_RUN_DATE}.`,
             `Provincial daily disbursement CSV report file has been sent successfully via email.`,
           ],
           errorsSummary: [],
@@ -217,8 +218,8 @@ describe(
       // Header details.
       expect(feReceipt).toEqual(
         expect.objectContaining({
-          batchRunDate: batchRunDate,
-          fileDate: fileDate,
+          batchRunDate: BATCH_RUN_DATE,
+          fileDate: FILE_DATE,
           sequenceNumber: 3228,
         }),
       );
@@ -244,8 +245,8 @@ describe(
       // Header details.
       expect(bcReceipt).toEqual(
         expect.objectContaining({
-          batchRunDate: batchRunDate,
-          fileDate: fileDate,
+          batchRunDate: BATCH_RUN_DATE,
+          fileDate: FILE_DATE,
           sequenceNumber: 3228,
         }),
       );
@@ -278,9 +279,9 @@ describe(
           "file"
         ];
       const fileContent = Buffer.from(file, "base64").toString("ascii");
-      expect(emailContact).toBe("dummy@some.domain");
+      expect(emailContact).toBe(TEST_EMAIL);
       expect(fileContent).toContain(
-        "Total Records,File Date,Batch Run Date,Sequence Number",
+        "BC Total,Total Records,File Date,Batch Run Date,Sequence Number",
       );
     });
 
@@ -316,7 +317,7 @@ describe(
             `Processing file ${downloadedFile}.`,
             `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 2 inserted successfully.`,
             `Processing file ${downloadedFile} completed.`,
-            `Processing provincial daily disbursement CSV file which are not sent on ${batchRunDate}.`,
+            `Processing provincial daily disbursement CSV file which are not sent on ${BATCH_RUN_DATE}.`,
             `Provincial daily disbursement CSV report file has been sent successfully via email.`,
           ],
           errorsSummary: [],
@@ -365,9 +366,9 @@ describe(
           "file"
         ];
       const fileContent = Buffer.from(file, "base64").toString("ascii");
-      expect(emailContact).toBe("dummy@some.domain");
+      expect(emailContact).toBe(TEST_EMAIL);
       expect(fileContent).toContain(
-        "Total Records,File Date,Batch Run Date,Sequence Number",
+        "BC Total,Total Records,File Date,Batch Run Date,Sequence Number",
       );
     });
 
@@ -404,7 +405,7 @@ describe(
             `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 2 inserted successfully.`,
             `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 3 inserted successfully.`,
             `Processing file ${downloadedFile} completed.`,
-            `Processing provincial daily disbursement CSV file which are not sent on ${batchRunDate}.`,
+            `Processing provincial daily disbursement CSV file which are not sent on ${BATCH_RUN_DATE}.`,
             `Provincial daily disbursement CSV report file has been sent successfully via email.`,
           ],
           errorsSummary: [],
@@ -420,8 +421,8 @@ describe(
       // Header details.
       expect(feReceipt).toEqual(
         expect.objectContaining({
-          batchRunDate: batchRunDate,
-          fileDate: fileDate,
+          batchRunDate: BATCH_RUN_DATE,
+          fileDate: FILE_DATE,
           sequenceNumber: 3228,
         }),
       );
@@ -447,8 +448,8 @@ describe(
       // Header details.
       expect(bpReceipt).toEqual(
         expect.objectContaining({
-          batchRunDate: batchRunDate,
-          fileDate: fileDate,
+          batchRunDate: BATCH_RUN_DATE,
+          fileDate: FILE_DATE,
           sequenceNumber: 3228,
         }),
       );
@@ -481,9 +482,9 @@ describe(
           "file"
         ];
       const fileContent = Buffer.from(file, "base64").toString("ascii");
-      expect(emailContact).toBe("dummy@some.domain");
+      expect(emailContact).toBe(TEST_EMAIL);
       expect(fileContent).toContain(
-        "Total Records,File Date,Batch Run Date,Sequence Number",
+        "BC Total,Total Records,File Date,Batch Run Date,Sequence Number",
       );
     });
 

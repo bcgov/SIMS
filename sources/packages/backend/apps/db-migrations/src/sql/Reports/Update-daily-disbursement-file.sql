@@ -23,6 +23,7 @@ SET
                 disbursement_receipts."Part Time BC Student Grant"
             ) AS "Part Time BC Student Grant",
             SUM(disbursement_receipts."Part Time BC Total") AS "Part Time BC Total",
+            SUM(disbursement_receipts."BC Total") as "BC Total",
             SUM(disbursement_receipts."Total Records") AS "Total Records",
             CAST(
                 disbursement_receipts."File Date" AS varchar
@@ -45,6 +46,9 @@ SET
                     ) AS "Full Time BC Total",
                     0 AS "Part Time BC Student Grant",
                     0 AS "Part Time BC Total",
+                    SUM(
+                        full_time_disbursement_receipts.total_disbursed_amount
+                    ) AS "BC Total",
                     COUNT(full_time_disbursement_receipts.id) AS "Total Records",
                     full_time_disbursement_receipts.file_date AS "File Date",
                     full_time_disbursement_receipts.batch_run_date AS "Batch Run Date",
@@ -69,6 +73,9 @@ SET
                     SUM(
                         part_time_disbursement_receipts.total_disbursed_amount
                     ) AS "Part Time BC Total",
+                    SUM(
+                        part_time_disbursement_receipts.total_disbursed_amount
+                    ) AS "BC Total",
                     COUNT(part_time_disbursement_receipts.id) AS "Total Records",
                     part_time_disbursement_receipts.file_date as "File Date",
                     part_time_disbursement_receipts.batch_run_date as "Batch Run Date",
