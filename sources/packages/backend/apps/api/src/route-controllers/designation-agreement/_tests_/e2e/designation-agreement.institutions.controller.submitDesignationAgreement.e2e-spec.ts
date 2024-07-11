@@ -7,7 +7,9 @@ import {
 import {
   E2EDataSources,
   createE2EDataSources,
+  createFakeDesignationAgreement,
   createFakeInstitutionLocation,
+  createFakeUser,
   getProviderInstanceForModule,
 } from "@sims/test-utils";
 import {
@@ -119,6 +121,16 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
 
   it("Should return an unprocessable entity when a new designation is requested and there is already a pending designation agreement.", async () => {
     // Arrange
+    const fakeInstitutionUser = await db.user.save(createFakeUser());
+
+    // Create fake designation agreement.
+    const fakeDesignationAgreement = createFakeDesignationAgreement({
+      fakeInstitution: collegeC,
+      fakeInstitutionLocations: [collegeCLocation,],
+      fakeUser: fakeInstitutionUser,
+    });
+    await db.designationAgreement.save(fakeDesignationAgreement);
+
     const payload = {
       dynamicData: {
         eligibilityOfficers: [],
@@ -151,15 +163,6 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
     const endpoint = "/institutions/designation-agreement";
 
     // Act/Assert
-    await request(app.getHttpServer())
-      .post(endpoint)
-      .send(payload)
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.CREATED)
-      .then((response) => {
-        expect(response.body.id).toBeGreaterThan(0);
-      });
-
     await request(app.getHttpServer())
       .post(endpoint)
       .send(payload)
