@@ -3,13 +3,13 @@ UPDATE
 SET
     report_sql = (
         'WITH disbursement_receipts_dataset AS (
-        SELECT
-            *
-        FROM
-            sims.disbursement_receipts disbursement_receipts
-        WHERE
-            disbursement_receipts.funding_type IN (''BC'', ''BP'')
-            AND disbursement_receipts.batch_run_date = :batchRunDate
+            SELECT
+                *
+            FROM
+                sims.disbursement_receipts disbursement_receipts
+            WHERE
+                disbursement_receipts.funding_type IN (''BC'', ''BP'')
+                AND disbursement_receipts.batch_run_date = :batchRunDate
         )
         SELECT
             SUM(
