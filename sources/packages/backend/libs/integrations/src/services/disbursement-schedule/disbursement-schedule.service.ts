@@ -32,6 +32,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           id: true,
           application: {
             id: true,
+            applicationNumber: true,
             student: {
               id: true,
               user: { id: true, firstName: true, lastName: true },

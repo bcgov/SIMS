@@ -434,13 +434,12 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
       ].filter(
         (errorCode) => eCertFeedbackErrorCodeMap[errorCode]?.blockFunding,
       );
-      const sendNotification = blockFundingErrorIds.length > 0;
       await this.disbursementScheduleErrorsService.createECertErrorRecord(
         eCertFeedbackResponseRecord.documentNumber,
         feedbackFileName,
         receivedErrorIds,
         dateReceived,
-        sendNotification,
+        blockFundingErrorIds,
       );
       processSummary.info(
         `Disbursement feedback error created for document number ${eCertFeedbackResponseRecord.documentNumber} at line ${eCertFeedbackResponseRecord.lineNumber}.`,

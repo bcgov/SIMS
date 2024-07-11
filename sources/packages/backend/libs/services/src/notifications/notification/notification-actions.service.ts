@@ -1141,6 +1141,8 @@ export class NotificationActionsService {
         personalisation: {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
+          applicationNumber: notification.applicationNumber,
+          errorCodes: notification.errorCodes,
         },
       },
     }));

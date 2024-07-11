@@ -39,10 +39,9 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
    * @param errorCodeIds e-Cert feedback error ids
    * of error codes received.
    * @param dateReceived Date Received.
-   * @param sendNotification boolean true if a notification has
-   * to be sent for this eCert feedback response record. This
-   * boolean will be true if the eCert feedback response record
-   * has at least one error code that is blocking funding.
+   * @param blockFundingErrorIds e-Cert feedback error ids
+   * of error codes received that block funding and as a result
+   * cause a notification to be sent out to the ministry.
    * @returns Created E-Cert Error record.
    */
   async createECertErrorRecord(
@@ -50,7 +49,7 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
     feedbackFileName: string,
     errorCodeIds: number[],
     dateReceived: Date,
-    sendNotification: boolean,
+    blockFundingErrorIds: string[],
   ): Promise<InsertResult> {
     const disbursementSchedule =
       await this.disbursementScheduleService.getDisbursementScheduleByDocumentNumber(
@@ -79,10 +78,13 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
     const ministryNotification: ECertFeedbackFileErrorNotification = {
       givenNames: user.firstName,
       lastName: user.lastName,
+      applicationNumber:
+        disbursementSchedule.studentAssessment.application.applicationNumber,
+      errorCodes: blockFundingErrorIds,
     };
     return this.dataSource.transaction(
       async (transactionalEntityManager: EntityManager) => {
-        if (sendNotification) {
+        if (blockFundingErrorIds.length) {
           await this.notificationActionsService.saveEcertFeedbackFileErrorNotification(
             ministryNotification,
             transactionalEntityManager,
