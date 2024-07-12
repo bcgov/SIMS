@@ -20,7 +20,7 @@
           "value": ""
         }
       ],
-      "content": "When to request change",
+      "content": "When to request a change",
       "refreshOnChange": false,
       "customClass": "",
       "hidden": false,
@@ -29,7 +29,7 @@
       "tags": [],
       "properties": {},
       "conditional": {
-        "show": null,
+        "show": "",
         "when": null,
         "eq": "",
         "json": ""
@@ -102,7 +102,7 @@
           "value": ""
         }
       ],
-      "content": "You can request StudentAid BC to review your application if your personal or financial situation changed or would like us to reconsider your application for more money.",
+      "content": "After your school has confirmed your enrolment, you must inform StudentAid BC of any changes to the information you provided in your application.",
       "refreshOnChange": false,
       "customClass": "mt-n2",
       "hidden": false,
@@ -111,7 +111,7 @@
       "tags": [],
       "properties": {},
       "conditional": {
-        "show": null,
+        "show": "",
         "when": null,
         "eq": "",
         "json": ""
@@ -184,7 +184,7 @@
           "value": ""
         }
       ],
-      "content": "<strong>Request a change if </strong>\n<br>\n<ul>\n  <li>Your financial or personal situation changed</li>\n  <li>You do not agree with the decision on your assessment</li>\n  <li>You believe your circumstances are unique and warrant special consideration</li>\n  <li>You need to report changes to information originally provided in your application</li>\n</ul>",
+      "content": "<strong>Instructions:</strong>\n<br>\n<ul>\n  <li>You must complete all fields on the change request form.</li>\n  <li>All information that has not changed should match what was entered on your application.</li>\n  <li>Information from previously approved changes requests attached to an application must be re-entered here.</li>\n</ul>",
       "refreshOnChange": false,
       "customClass": "align-bullets",
       "hidden": false,
@@ -193,7 +193,7 @@
       "tags": [],
       "properties": {},
       "conditional": {
-        "show": null,
+        "show": "",
         "when": null,
         "eq": "",
         "json": ""
@@ -332,7 +332,7 @@
       "lazyLoad": false,
       "components": [
         {
-          "label": "Application #",
+          "label": "Application number:",
           "labelPosition": "top",
           "labelWidth": "",
           "labelMargin": "",
@@ -397,7 +397,7 @@
           "tags": [],
           "properties": {},
           "conditional": {
-            "show": null,
+            "show": "",
             "when": null,
             "eq": "",
             "json": ""
@@ -423,7 +423,7 @@
           "defaultValue": ""
         },
         {
-          "label": "Request a change to",
+          "label": "Request a change to:",
           "labelPosition": "top",
           "widget": "choicesjs",
           "labelWidth": "",
