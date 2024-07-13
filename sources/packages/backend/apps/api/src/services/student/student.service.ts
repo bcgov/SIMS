@@ -265,11 +265,11 @@ export class StudentService extends RecordDataModelService<Student> {
       await entityManager.getRepository(StudentUser).save(studentUser);
 
       const casSupplier = new CASSupplier();
-      casSupplier.status = SupplierStatus.PendingSupplierVerification;
+      casSupplier.supplierStatus = SupplierStatus.PendingSupplierVerification;
+      casSupplier.supplierStatusUpdatedOn = new Date();
       casSupplier.isValid = false;
       casSupplier.creator = auditUser;
       casSupplier.student = savedStudent;
-      casSupplier.supplierStatusUpdatedOn = new Date();
       const savedCASSupplier = await entityManager
         .getRepository(CASSupplier)
         .save(casSupplier);

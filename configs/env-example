@@ -143,3 +143,8 @@ WORKERS_PORT=
 
 #Load test gateway
 LOAD_TEST_API_PORT=
+
+# CAS integration configuration
+CAS_BASE_URL=
+CAS_CLIENT_ID=
+CAS_CLIENT_SECRET=

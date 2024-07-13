@@ -213,6 +213,9 @@ init-secrets:
 		-p ZEEBE_CLIENT_ID=$(ZEEBE_CLIENT_ID) \
 		-p ZEEBE_CLIENT_SECRET=$(ZEEBE_CLIENT_SECRET) \
 		-p CAMUNDA_OAUTH_URL=$(CAMUNDA_OAUTH_URL) \
+    -p CAS_BASE_URL=$(CAS_BASE_URL) \
+    -p CAS_CLIENT_ID=$(CAS_CLIENT_ID) \
+    -p CAS_CLIENT_SECRET=$(CAS_CLIENT_SECRET) \
 		| oc -n $(NAMESPACE) apply -f -
 
 init-zone-b-sftp-secret:
@@ -454,6 +457,9 @@ deploy-queue-consumers:
 		-p ATBC_ENDPOINT=$(ATBC_ENDPOINT) \
 		-p APPLICATION_ARCHIVE_DAYS=$(APPLICATION_ARCHIVE_DAYS) \
 		-p IS_FULLTIME_ALLOWED=$(IS_FULLTIME_ALLOWED) \
+    -p CAS_BASE_URL=$(CAS_BASE_URL) \
+    -p CAS_CLIENT_ID=$(CAS_CLIENT_ID) \
+    -p CAS_CLIENT_SECRET=$(CAS_CLIENT_SECRET) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(QUEUE_CONSUMERS))
 
