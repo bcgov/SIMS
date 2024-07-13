@@ -107,6 +107,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   appealsStudentFinancialInformationAppealData?: StudentFinancialInformationAppealData;
   appealsStudentAdditionalTransportationAppealData?: StudentAdditionalTransportationAppealData;
   appealsPartnerInformationAndIncomeAppealData?: PartnerInformationAndIncomeAppealData;
+  appealsStudentDependantsData?: StudentDependent[];
   studentDataIsYourPartnerAbleToReport?: YesNoOptions;
   studentDataParentValidSinNumber?: YesNoOptions;
   studentDataNumberOfParents?: 1 | 2;
@@ -252,6 +253,9 @@ export interface CalculatedAssessmentModel {
   calculatedDataTotalFederalFSC: number;
   calculatedDataTotalProvincialFSC: number;
   calculatedDataTotalEligibleDependants: number;
+  calculatedDataDependants11YearsOrUnder: number;
+  calculatedDataDependants12YearsOverOnTaxes: number;
+  calculatedDataTotalEligibleDependentsForChildCare: number;
   calculatedDataFamilySize: number;
   totalFederalContribution: number;
   totalProvincialContribution: number;
