@@ -19,11 +19,12 @@
     </div>
     <div v-else>
       <body-header
-        title="Fill in the field(s) below"
-        subTitle="StudentAid BC will review your application change after you submit the fields below."
+        title="Complete all question(s) below"
+        subTitle="All requested changes will be reviewed by StudentAid BC after you submit for review."
       >
       </body-header>
-      <p>Please note:</p>
+      <br>
+      <p><b>Instructions:</b></p>
       <ul>
         <li>You must complete all fields of the change request form.</li>
         <li>

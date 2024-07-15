@@ -4,14 +4,14 @@ import { QueueService } from "@sims/services/queue";
 import { SystemUsersService } from "@sims/services/system-users";
 import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
-import { QueueProcessSummary } from "../../../models/processors.models";
+import { ProcessSummary } from "@sims/utilities/logger";
 import { BaseScheduler } from "../../base-scheduler";
 import { ESDCFileResponse } from "../models/esdc.models";
 
-@Processor(QueueNames.FullTimeDisbursementReceiptsFileIntegration)
-export class FullTimeDisbursementReceiptsFileIntegrationScheduler extends BaseScheduler<void> {
+@Processor(QueueNames.DisbursementReceiptsFileIntegration)
+export class DisbursementReceiptsFileIntegrationScheduler extends BaseScheduler<void> {
   constructor(
-    @InjectQueue(QueueNames.FullTimeDisbursementReceiptsFileIntegration)
+    @InjectQueue(QueueNames.DisbursementReceiptsFileIntegration)
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly disbursementReceiptProcessingService: DisbursementReceiptProcessingService,
@@ -29,18 +29,15 @@ export class FullTimeDisbursementReceiptsFileIntegrationScheduler extends BaseSc
   async processDisbursementReceipts(
     job: Job<void>,
   ): Promise<ESDCFileResponse[]> {
-    const summary = new QueueProcessSummary({
-      appLogger: this.logger,
-      jobLogger: job,
-    });
-    await summary.info(
+    const processSummary = new ProcessSummary();
+    processSummary.info(
       `Processing full time disbursement receipts integration job ${job.id} of type ${job.name}.`,
     );
     const auditUser = this.systemUsersService.systemUser;
     const processResponse =
       await this.disbursementReceiptProcessingService.process(auditUser.id);
     await this.cleanSchedulerQueueHistory();
-    await summary.info(
+    processSummary.info(
       `Completed full time disbursement receipts integration job ${job.id} of type ${job.name}.`,
     );
     return processResponse.map((response) => ({

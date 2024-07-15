@@ -16,7 +16,7 @@ import {
   FullTimeECertProcessIntegrationScheduler,
   FullTimeECertFeedbackIntegrationScheduler,
   PartTimeECertFeedbackIntegrationScheduler,
-  FullTimeDisbursementReceiptsFileIntegrationScheduler,
+  DisbursementReceiptsFileIntegrationScheduler,
   FederalRestrictionsIntegrationScheduler,
   FullTimeMSFAAProcessResponseIntegrationScheduler,
   PartTimeMSFAAProcessResponseIntegrationScheduler,
@@ -39,6 +39,7 @@ import {
   MSFAANumberSharedService,
   GlobalHttpModule,
   AssessmentSequentialProcessingService,
+  ClamAVService,
 } from "@sims/services";
 import { DatabaseModule } from "@sims/sims-db";
 import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier12-integration";
@@ -59,6 +60,7 @@ import {
   ApplicationService,
   WorkflowEnqueuerService,
   CASService,
+  StudentFileService,
 } from "./services";
 import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
@@ -66,6 +68,8 @@ import { ECEIntegrationModule } from "@sims/integrations/institution-integration
 import { HealthController } from "./controllers";
 import { MicroserviceHealthIndicator, TerminusModule } from "@nestjs/terminus";
 import { CASSupplierIntegrationService } from "./services/cas-supplier/cas-supplier.service";
+import { VirusScanProcessor } from "./processors/virus-scan/virus-scan.processor";
+
 // TODO: Removed ATBCResponseIntegrationScheduler in providers, the queuename from enum and the decorators of the processor as part of #2539.
 @Module({
   imports: [
@@ -89,6 +93,7 @@ import { CASSupplierIntegrationService } from "./services/cas-supplier/cas-suppl
     TerminusModule,
   ],
   providers: [
+    VirusScanProcessor,
     StartApplicationAssessmentProcessor,
     CancelApplicationAssessmentProcessor,
     WorkflowClientService,
@@ -97,6 +102,8 @@ import { CASSupplierIntegrationService } from "./services/cas-supplier/cas-suppl
     ProcessNotificationScheduler,
     SFASIntegrationScheduler,
     StudentAssessmentService,
+    StudentFileService,
+    ClamAVService,
     SshService,
     QueueService,
     CRAResponseIntegrationScheduler,
@@ -116,7 +123,7 @@ import { CASSupplierIntegrationService } from "./services/cas-supplier/cas-suppl
     FullTimeECertProcessIntegrationScheduler,
     FullTimeECertFeedbackIntegrationScheduler,
     PartTimeECertFeedbackIntegrationScheduler,
-    FullTimeDisbursementReceiptsFileIntegrationScheduler,
+    DisbursementReceiptsFileIntegrationScheduler,
     FederalRestrictionsIntegrationScheduler,
     FullTimeMSFAAProcessResponseIntegrationScheduler,
     PartTimeMSFAAProcessResponseIntegrationScheduler,

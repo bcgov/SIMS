@@ -49,12 +49,14 @@ export class ECertGenerationService {
    * - `applicationId`: restricts the query to a specific application.
    * - `checkDisbursementMinDate`: check only for disbursements that are close
    * to the date to be disbursed and can already be part of an e-Cert.
+   * - `allowNonCompleted`: only select completed applications or allow any status.
    * @returns eligible disbursements to be potentially added to an e-Cert.
    */
   async getEligibleDisbursements(options: {
     offeringIntensity?: OfferingIntensity;
     applicationId?: number;
     checkDisbursementMinDate?: boolean;
+    allowNonCompleted?: boolean;
   }): Promise<EligibleECertDisbursement[]> {
     // Applications with offerings end dates beyond the archive limit will no longer be disbursed.
     const offeringEndDateMinDate = addDays(
@@ -115,22 +117,30 @@ export class ECertGenerationService {
         "studentRestriction.isActive = true",
       )
       .leftJoin("studentRestriction.restriction", "restriction")
-      .where("application.applicationStatus = :applicationStatus", {
-        applicationStatus: ApplicationStatus.Completed,
-      })
-      .andWhere(
+      .where(
         "disbursementSchedule.disbursementScheduleStatus = :disbursementScheduleStatus",
         { disbursementScheduleStatus: DisbursementScheduleStatus.Pending },
       )
       .andWhere("disbursementSchedule.coeStatus != :coeStatus", {
         coeStatus: COEStatus.declined,
       })
-      .andWhere("offering.studyEndDate >= :offeringEndDateMinDate", {
-        offeringEndDateMinDate,
-      })
       .orderBy("disbursementSchedule.disbursementDate", "ASC")
       .addOrderBy("disbursementSchedule.createdAt", "ASC");
     // Add optional constraints as needed.
+    if (!options.allowNonCompleted) {
+      eligibleApplicationsQuery.andWhere(
+        "application.applicationStatus = :applicationStatus",
+        {
+          applicationStatus: ApplicationStatus.Completed,
+        },
+      );
+      eligibleApplicationsQuery.andWhere(
+        "offering.studyEndDate >= :offeringEndDateMinDate",
+        {
+          offeringEndDateMinDate,
+        },
+      );
+    }
     if (options.applicationId) {
       eligibleApplicationsQuery.andWhere("application.id = :applicationId", {
         applicationId: options.applicationId,

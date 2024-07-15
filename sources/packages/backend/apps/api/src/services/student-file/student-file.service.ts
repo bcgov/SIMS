@@ -1,6 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource, EntityManager, In, UpdateResult } from "typeorm";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import {
+  LoggerService,
+  InjectLogger,
+  ProcessSummary,
+} from "@sims/utilities/logger";
 import {
   RecordDataModelService,
   StudentFile,
@@ -9,15 +13,26 @@ import {
   FileOriginType,
 } from "@sims/sims-db";
 import { CreateFile, FileUploadOptions } from "./student-file.model";
+import { InjectQueue } from "@nestjs/bull";
+import { QueueNames } from "@sims/utilities";
+import { Queue } from "bull";
+import { VirusScanQueueInDTO } from "@sims/services/queue/dto/virus-scan.dto";
+import { VirusScanStatus } from "@sims/sims-db/entities/virus-scan-status-type";
 
 @Injectable()
 export class StudentFileService extends RecordDataModelService<StudentFile> {
-  constructor(private readonly dataSource: DataSource) {
+  constructor(
+    private readonly dataSource: DataSource,
+    @InjectQueue(QueueNames.FileVirusScanProcessor)
+    private readonly virusScanQueue: Queue<VirusScanQueueInDTO>,
+  ) {
     super(dataSource.getRepository(StudentFile));
   }
 
   /**
    * Creates a file and associates it with a student.
+   * Subsequently, adds the file to the virus scan queue
+   * to scan for any viruses.
    * @param createFile file to be created.
    * @param studentId student that will have the file associated.
    * @param auditUserId user that should be considered the one that is
@@ -37,7 +52,44 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     newFile.fileContent = createFile.fileContent;
     newFile.student = { id: studentId } as Student;
     newFile.creator = { id: auditUserId } as User;
-    return this.repo.save(newFile);
+    newFile.virusScanStatus = VirusScanStatus.InProgress;
+
+    const summary = new ProcessSummary();
+    let savedFile: StudentFile;
+    // Save the file to db.
+    try {
+      savedFile = await this.repo.save(newFile);
+    } catch (error: unknown) {
+      this.logger.error(`Error saving the file: ${error}`);
+      return;
+    }
+    // Add to the virus scan queue only if the file is successfully saved to the database.
+    try {
+      summary.info(
+        `Adding the file: ${newFile.fileName} to the virus scan queue.`,
+      );
+      await this.virusScanQueue.add({
+        uniqueFileName: createFile.uniqueFileName,
+        fileName: createFile.fileName,
+      });
+      summary.info(
+        `File ${newFile.fileName} has been added to the virus scan queue.`,
+      );
+      return savedFile;
+    } catch (error: unknown) {
+      // If adding the file to the virus scanning queue fails,
+      // then revert the file virus scan status in the database to pending.
+      summary.error(
+        `Error while enqueueing the file ${newFile.fileName} for virus scanning.`,
+        error,
+      );
+      await this.repo.update(
+        { uniqueFileName: newFile.uniqueFileName },
+        { virusScanStatus: VirusScanStatus.Pending },
+      );
+    } finally {
+      this.logger.logProcessSummary(summary);
+    }
   }
 
   /**

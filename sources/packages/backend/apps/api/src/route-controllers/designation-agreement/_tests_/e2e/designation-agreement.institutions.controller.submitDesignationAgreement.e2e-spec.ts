@@ -7,7 +7,9 @@ import {
 import {
   E2EDataSources,
   createE2EDataSources,
+  createFakeDesignationAgreement,
   createFakeInstitutionLocation,
+  createFakeUser,
   getProviderInstanceForModule,
 } from "@sims/test-utils";
 import {
@@ -27,7 +29,9 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
   let app: INestApplication;
   let db: E2EDataSources;
   let collegeF: Institution;
+  let collegeC: Institution;
   let collegeFLocation: InstitutionLocation;
+  let collegeCLocation: InstitutionLocation;
   let testingModule: TestingModule;
 
   beforeAll(async () => {
@@ -40,11 +44,25 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
       InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
     );
     collegeF = institution;
+
+    const responseC = await getAuthRelatedEntities(
+      db.dataSource,
+      InstitutionTokenTypes.CollegeCAdminLegalSigningUser,
+    );
+    collegeC = responseC.institution;
+
     collegeFLocation = createFakeInstitutionLocation({ institution: collegeF });
     await authorizeUserTokenForLocation(
       db.dataSource,
       InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
       collegeFLocation,
+    );
+
+    collegeCLocation = createFakeInstitutionLocation({ institution: collegeC });
+    await authorizeUserTokenForLocation(
+      db.dataSource,
+      InstitutionTokenTypes.CollegeCAdminLegalSigningUser,
+      collegeCLocation,
     );
     testingModule = module;
   });
@@ -99,6 +117,58 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
     expect(designationAgreement.designationStatus).toBe(
       DesignationAgreementStatus.Pending,
     );
+  });
+
+  it("Should return an unprocessable entity when a new designation is requested and there is already a pending designation agreement.", async () => {
+    // Arrange
+    const fakeInstitutionUser = await db.user.save(createFakeUser());
+
+    // Create fake designation agreement.
+    const fakeDesignationAgreement = createFakeDesignationAgreement({
+      fakeInstitution: collegeC,
+      fakeInstitutionLocations: [collegeCLocation,],
+      fakeUser: fakeInstitutionUser,
+    });
+    fakeDesignationAgreement.designationStatus = DesignationAgreementStatus.Pending
+    await db.designationAgreement.save(fakeDesignationAgreement);
+
+    const payload = {
+      dynamicData: {
+        eligibilityOfficers: [],
+        enrolmentOfficers: [],
+        scheduleA: false,
+        scheduleB: false,
+        scheduleD: false,
+        legalAuthorityName: "SIMS COLLC",
+        legalAuthorityEmailAddress: "test@gov.bc.ca",
+        agreementAccepted: false,
+      },
+      locations: [
+        {
+          locationId: collegeCLocation.id,
+          requestForDesignation: true,
+        },
+      ],
+    };
+    const formService = await getProviderInstanceForModule(
+      testingModule,
+      AppInstitutionsModule,
+      FormService,
+    );
+    formService.dryRunSubmission = jest
+      .fn()
+      .mockResolvedValue({ valid: true, data: { data: payload } });
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeCAdminLegalSigningUser,
+    );
+    const endpoint = "/institutions/designation-agreement";
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
   });
 
   afterAll(async () => {

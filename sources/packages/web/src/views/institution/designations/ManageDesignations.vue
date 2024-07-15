@@ -72,7 +72,7 @@ export default defineComponent({
           name: InstitutionRoutesConst.DESIGNATION_REQUEST,
         });
       } else {
-        snackBar.warn("There is already a pending designation agreement.");
+        snackBar.warn("Your institution already has one pending designation request; you cannot submit another one until the first has been approved or denied.");
       }
     };
 
