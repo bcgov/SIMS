@@ -1,4 +1,3 @@
-import { HttpService } from "@nestjs/axios";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { SystemUsersService } from "@sims/services";
@@ -20,7 +19,6 @@ export class CASSupplierIntegrationService {
   constructor(
     config: ConfigService,
     private readonly casService: CASService,
-    private readonly httpService: HttpService,
     private readonly systemUsersService: SystemUsersService,
     @InjectRepository(CASSupplier)
     private readonly casSupplierRepo: Repository<CASSupplier>,
