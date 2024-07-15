@@ -238,9 +238,9 @@ dmnX (comes from dmn)</bpmn:text>
         <bpmn:flowNodeRef>Gateway_0onhjqp</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1vwijyc</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_12t6hmq</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_1lcb5eh</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_04weine</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_17xl9w5</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1lcb5eh</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0wq9olz</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:intermediateThrowEvent id="Event_0jsq5je" name="awardEligibilityCSLP">
@@ -1108,27 +1108,11 @@ dmnX (comes from dmn)</bpmn:text>
       <bpmn:outgoing>Flow_1miv7kk</bpmn:outgoing>
       <bpmn:outgoing>Flow_0sj9cld</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:exclusiveGateway id="Gateway_1lcb5eh">
-      <bpmn:incoming>Flow_02flqys</bpmn:incoming>
-      <bpmn:incoming>Flow_0r4m4l9</bpmn:incoming>
-      <bpmn:outgoing>Flow_0bconxm</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:scriptTask id="Activity_04weine" name="Dependants">
-      <bpmn:extensionElements>
-        <zeebe:script expression="=// Consider only dependants who were born on or before the study end date.&#10;inputDataDependants[date(item.dateOfBirth) &#60;= date(offeringStudyEndDate)]" resultVariable="calculatedDataDependants" />
-        <zeebe:ioMapping>
-          <zeebe:input source="=//TODO: Student appeal variable needs to be considered here.&#10;if appealsStudentDependantsData = null &#10;then []&#10;else appealsStudentDependantsData" target="inputDataDependants" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0sj9cld</bpmn:incoming>
-      <bpmn:outgoing>Flow_0r4m4l9</bpmn:outgoing>
-    </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_1miv7kk" name="Use application data" sourceRef="Gateway_12t6hmq" targetRef="Activity_1vwijyc" />
     <bpmn:sequenceFlow id="Flow_02flqys" sourceRef="Activity_1vwijyc" targetRef="Gateway_1lcb5eh" />
-    <bpmn:sequenceFlow id="Flow_0sj9cld" name="Use appeal data" sourceRef="Gateway_12t6hmq" targetRef="Activity_04weine">
+    <bpmn:sequenceFlow id="Flow_0sj9cld" name="Use appeal data" sourceRef="Gateway_12t6hmq" targetRef="Activity_0wq9olz">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=appealsStudentDependantsData != null</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0r4m4l9" sourceRef="Activity_04weine" targetRef="Gateway_1lcb5eh" />
     <bpmn:sequenceFlow id="Flow_1tltr6v" sourceRef="Gateway_0wuxqll" targetRef="Gateway_12t6hmq" />
     <bpmn:sequenceFlow id="Flow_0bconxm" sourceRef="Gateway_1lcb5eh" targetRef="Gateway_08rr1xe" />
     <bpmn:scriptTask id="Activity_17xl9w5" name="PD/PPD Status">
@@ -1140,6 +1124,19 @@ dmnX (comes from dmn)</bpmn:text>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_01eben1</bpmn:incoming>
       <bpmn:outgoing>Flow_15qt0nm</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1qefaq7" sourceRef="Activity_0wq9olz" targetRef="Gateway_1lcb5eh" />
+    <bpmn:exclusiveGateway id="Gateway_1lcb5eh">
+      <bpmn:incoming>Flow_02flqys</bpmn:incoming>
+      <bpmn:incoming>Flow_1qefaq7</bpmn:incoming>
+      <bpmn:outgoing>Flow_0bconxm</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:scriptTask id="Activity_0wq9olz" name="Dependants">
+      <bpmn:extensionElements>
+        <zeebe:script expression="=// Consider only dependents who were born on or before the study end date.&#10;appealsStudentDependantsData[date(item.dateOfBirth) &#60;= date(offeringStudyEndDate)]" resultVariable="calculatedDataDependants" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0sj9cld</bpmn:incoming>
+      <bpmn:outgoing>Flow_1qefaq7</bpmn:outgoing>
     </bpmn:scriptTask>
   </bpmn:process>
   <bpmn:category id="Category_0appz4m">
@@ -1567,16 +1564,15 @@ dmnX (comes from dmn)</bpmn:text>
       <bpmndi:BPMNShape id="Gateway_12t6hmq_di" bpmnElement="Gateway_12t6hmq" isMarkerVisible="true">
         <dc:Bounds x="1231" y="1145" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1lcb5eh_di" bpmnElement="Gateway_1lcb5eh" isMarkerVisible="true">
-        <dc:Bounds x="1451" y="1145" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_164tiva_di" bpmnElement="Activity_04weine">
-        <dc:Bounds x="1326" y="1060" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_17xl9w5_di" bpmnElement="Activity_17xl9w5">
         <dc:Bounds x="1326" y="940" width="100" height="80" />
         <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1lcb5eh_di" bpmnElement="Gateway_1lcb5eh" isMarkerVisible="true">
+        <dc:Bounds x="1469" y="1145" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_09sd2zb_di" bpmnElement="Activity_0wq9olz">
+        <dc:Bounds x="1326" y="1050" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1vkmf8w_di" bpmnElement="Flow_1vkmf8w">
         <di:waypoint x="5640" y="1815" />
@@ -2136,29 +2132,29 @@ dmnX (comes from dmn)</bpmn:text>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_02flqys_di" bpmnElement="Flow_02flqys">
         <di:waypoint x="1426" y="1240" />
-        <di:waypoint x="1476" y="1240" />
-        <di:waypoint x="1476" y="1195" />
+        <di:waypoint x="1494" y="1240" />
+        <di:waypoint x="1494" y="1195" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0sj9cld_di" bpmnElement="Flow_0sj9cld">
         <di:waypoint x="1256" y="1145" />
-        <di:waypoint x="1256" y="1100" />
-        <di:waypoint x="1326" y="1100" />
+        <di:waypoint x="1256" y="1090" />
+        <di:waypoint x="1320" y="1090" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1231" y="1073" width="81" height="14" />
+          <dc:Bounds x="1238" y="1071" width="81" height="14" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0r4m4l9_di" bpmnElement="Flow_0r4m4l9">
-        <di:waypoint x="1426" y="1100" />
-        <di:waypoint x="1476" y="1100" />
-        <di:waypoint x="1476" y="1145" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1tltr6v_di" bpmnElement="Flow_1tltr6v">
         <di:waypoint x="1201" y="1170" />
         <di:waypoint x="1231" y="1170" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0bconxm_di" bpmnElement="Flow_0bconxm">
-        <di:waypoint x="1501" y="1170" />
+        <di:waypoint x="1519" y="1170" />
         <di:waypoint x="1537" y="1170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1qefaq7_di" bpmnElement="Flow_1qefaq7">
+        <di:waypoint x="1426" y="1090" />
+        <di:waypoint x="1494" y="1090" />
+        <di:waypoint x="1494" y="1145" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="BPMNShape_0hjhvfj" bpmnElement="TextAnnotation_15vd5py">
         <dc:Bounds x="7429" y="3000" width="100" height="30" />
