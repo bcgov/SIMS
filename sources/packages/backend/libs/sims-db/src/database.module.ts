@@ -7,7 +7,7 @@ import { DBEntities, ormConfig } from "./data-source";
   imports: [
     TypeOrmModule.forRoot({
       ...ormConfig,
-      logging: ["error", "warn", "query"],
+      logging: ["error", "warn"],
       entities: DBEntities,
     }),
     TypeOrmModule.forFeature(DBEntities),

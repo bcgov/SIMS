@@ -5,7 +5,6 @@ import { END_OF_LINE } from "@sims/utilities";
 import { readFileSync } from "fs";
 import { FILE_DEFAULT_ENCODING } from "@sims/services/constants";
 import { LINE_BREAK_SPLIT_REGEX } from "@sims/integrations/constants";
-import { CASService } from "apps/queue-consumers/src/services";
 
 // MSFAA received files mocks.
 export const MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD =
@@ -38,8 +37,8 @@ export function createSSHServiceMock(
   sshClientMock: DeepMocked<Client>,
 ): SshService {
   const sshServiceMock = new SshService();
-  SshService.closeQuietly = jest.fn();
   sshServiceMock.createClient = jest.fn().mockResolvedValue(sshClientMock);
+  SshService.closeQuietly = jest.fn();
   return sshServiceMock;
 }
 

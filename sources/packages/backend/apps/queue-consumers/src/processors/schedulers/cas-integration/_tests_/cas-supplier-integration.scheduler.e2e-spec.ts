@@ -45,7 +45,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     jest.clearAllMocks();
   });
 
-  it("Should finish CAS supplier process when no supplier found.", async () => {
+  it("Should finalize CAS supplier process with success when no supplier found.", async () => {
     // Queued job.
     const mockedJob = mockBullJob<void>();
 
