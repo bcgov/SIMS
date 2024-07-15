@@ -4,7 +4,10 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { SystemUsersService } from "@sims/services";
 import { CASSupplier, SupplierAddress, SupplierStatus } from "@sims/sims-db";
 import { ProcessSummary } from "@sims/utilities/logger";
-import { CASSupplierResponseItem } from "../../processors/schedulers/cas-integration/models/cas-supplier-response.dto";
+import {
+  CASAuthDetails,
+  CASSupplierResponseItem,
+} from "../../processors/schedulers/cas-integration/models/cas-supplier-response.dto";
 import { Not, Repository, UpdateResult } from "typeorm";
 import { CASIntegrationConfig, ConfigService } from "@sims/utilities/config";
 import { CASService } from "./cas.service";
@@ -44,44 +47,63 @@ export class CASSupplierIntegrationService {
       const auth = await this.casService.casLogon();
       if (auth.access_token) {
         summary.info("Logon successful.");
-        for (const casSupplier of casSuppliers) {
-          summary.info(
-            `Requesting info for CAS supplier id ${casSupplier.id}.`,
-          );
-          let supplierResponse = null;
-          try {
-            supplierResponse = await this.casService.getSupplierInfoFromCAS(
-              auth.access_token,
-              casSupplier.student.sinValidation.sin,
-              casSupplier.student.user.lastName.toUpperCase(),
-            );
-          } catch (error: unknown) {
-            summary.error("Unexpected error while requesting supplier.", error);
-          }
-          if (supplierResponse.items.length > 0) {
-            const [supplierInfo] = supplierResponse.items;
-            summary.info("Updating CAS supplier table.");
-            try {
-              const updateResult = await this.updateCASSupplier(
-                casSupplier,
-                supplierInfo,
-                SupplierStatus.Verified,
-              );
-              if (updateResult.affected) {
-                suppliersUpdated++;
-              }
-            } catch (error: unknown) {
-              summary.error("Unexpected error.", error);
-            }
-          } else {
-            summary.info("No supplier found on CAS.");
-          }
-        }
+        suppliersUpdated = await this.requestCASAndUpdateSuppliers(
+          casSuppliers,
+          summary,
+          auth,
+        );
       } else {
         summary.info("Could not authenticate on CAS.");
       }
     } catch (error: unknown) {
       summary.error("Unexpected error.", error);
+    }
+    return suppliersUpdated;
+  }
+
+  /**
+   * For each pending CAS supplier, request supplier information to CAS API and update local table.
+   * @param casSuppliers pending CAS suppliers.
+   * @param summary log summary.
+   * @param auth CAS auth details.
+   * @returns a number of update records.
+   */
+  private async requestCASAndUpdateSuppliers(
+    casSuppliers: CASSupplier[],
+    summary: ProcessSummary,
+    auth: CASAuthDetails,
+  ) {
+    let suppliersUpdated = 0;
+    for (const casSupplier of casSuppliers) {
+      summary.info(`Requesting info for CAS supplier id ${casSupplier.id}.`);
+      let supplierResponse = null;
+      try {
+        supplierResponse = await this.casService.getSupplierInfoFromCAS(
+          auth.access_token,
+          casSupplier.student.sinValidation.sin,
+          casSupplier.student.user.lastName.toUpperCase(),
+        );
+      } catch (error: unknown) {
+        summary.error("Unexpected error while requesting supplier.", error);
+      }
+      if (supplierResponse.items.length > 0) {
+        const [supplierInfo] = supplierResponse.items;
+        summary.info("Updating CAS supplier table.");
+        try {
+          const updateResult = await this.updateCASSupplier(
+            casSupplier,
+            supplierInfo,
+            SupplierStatus.Verified,
+          );
+          if (updateResult.affected) {
+            suppliersUpdated++;
+          }
+        } catch (error: unknown) {
+          summary.error("Unexpected error.", error);
+        }
+      } else {
+        summary.info("No supplier found on CAS.");
+      }
     }
     return suppliersUpdated;
   }
