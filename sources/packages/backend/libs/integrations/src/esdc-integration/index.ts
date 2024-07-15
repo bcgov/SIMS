@@ -5,7 +5,6 @@ export * from "./disbursement-receipt-integration/disbursement-receipt-files/dis
 export * from "./disbursement-receipt-integration/disbursement-receipt.integration.service";
 export * from "./disbursement-receipt-integration/disbursement-receipt-integration.module";
 export * from "./disbursement-receipt-integration/disbursement-receipt.processing.service";
-export * from "./disbursement-receipt-integration/daily-disbursement-receipt.processing.service";
 export * from "./disbursement-receipt-integration/models/disbursement-receipt-integration.model";
 export * from "./e-cert-integration/e-cert-file-handler";
 export * from "./e-cert-integration/full-time-e-cert-file-handler";

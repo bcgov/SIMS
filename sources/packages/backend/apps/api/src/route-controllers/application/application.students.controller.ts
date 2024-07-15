@@ -83,6 +83,7 @@ import {
 } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
 import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
+import { ECertFailedValidation } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -218,6 +219,20 @@ export class ApplicationStudentsController extends BaseController {
       payload.data.selectedOfferingDate = studyStartDate;
       payload.data.selectedOfferingEndDate = studyEndDate;
     }
+  }
+
+  /**
+   * Get any warnings for the application.
+   * @param applicationId application id.
+   * @returns application warnings.
+   */
+  @Get(":applicationId/get-application-warnings")
+  async getApplicationWarnings(
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+  ): Promise<ECertFailedValidation[]> {
+    const eCertFailedValidationsPromise =
+      this.eCertPreValidationService.executePreValidations(applicationId, true);
+    return eCertFailedValidationsPromise;
   }
 
   /**

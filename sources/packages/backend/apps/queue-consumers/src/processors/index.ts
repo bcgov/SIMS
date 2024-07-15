@@ -10,7 +10,7 @@ export * from "./schedulers/esdc-integration/ecert-integration/ecert-full-time-f
 export * from "./schedulers/esdc-integration/ecert-integration/ecert-full-time-process-integration.scheduler";
 export * from "./schedulers/esdc-integration/ecert-integration/ecert-part-time-feedback-integration.scheduler";
 export * from "./schedulers/esdc-integration/ecert-integration/ecert-part-time-process-integration.scheduler";
-export * from "./schedulers/esdc-integration/ecert-integration/full-time-disbursement-receipts-integration.scheduler";
+export * from "./schedulers/esdc-integration/ecert-integration/disbursement-receipts-integration.scheduler";
 export * from "./schedulers/esdc-integration/federal-restrictions-integration/federal-restrictions-integration.scheduler";
 export * from "./schedulers/esdc-integration/models/esdc.models";
 export * from "./schedulers/esdc-integration/models/msfaa-file-result.models";

@@ -4,6 +4,7 @@
 export enum QueueNames {
   StartApplicationAssessment = "start-application-assessment",
   CancelApplicationAssessment = "cancel-application-assessment",
+  FileVirusScanProcessor = "virus-scan",
   IER12Integration = "ier12-integration",
   CRAProcessIntegration = "cra-process-integration",
   CRAResponseIntegration = "cra-response-integration",
@@ -16,7 +17,7 @@ export enum QueueNames {
   FullTimeECertIntegration = "full-time-e-cert-integration",
   FullTimeFeedbackIntegration = "full-time-feedback-integration",
   FederalRestrictionsIntegration = "federal-restrictions-integration",
-  FullTimeDisbursementReceiptsFileIntegration = "full-time-disbursement-receipts-file-integration",
+  DisbursementReceiptsFileIntegration = "disbursement-receipts-file-integration",
   ECEProcessIntegration = "ece-process-integration",
   ECEProcessResponseIntegration = "ece-process-response-integration",
   PartTimeMSFAAProcessResponseIntegration = "part-time-msfaa-process-response-integration",

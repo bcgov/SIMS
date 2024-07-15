@@ -32,18 +32,6 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
   }
 
   /**
-   * Gets the latest batch run date in the disbursement receipt table.
-   * @returns latest batch run date.
-   */
-  async getMaxDisbursementReceiptDate(): Promise<Date> {
-    const batchRunDate = await this.repo
-      .createQueryBuilder("disbursementReceipt")
-      .select("MAX(disbursementReceipt.batchRunDate)")
-      .getRawOne();
-    return batchRunDate?.max ?? new Date();
-  }
-
-  /**
    * Insert disbursement receipt record.
    ** On insertion ignore duplicate records(identified by constraint disbursement_schedule_id_funding_type_unique).
    * @param disbursementReceipt
