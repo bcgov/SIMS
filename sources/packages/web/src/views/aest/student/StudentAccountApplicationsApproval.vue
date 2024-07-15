@@ -24,7 +24,7 @@
                   color="primary"
                   @click="createStudentAccount"
                   :disabled="notAllowed"
-                  >Create account for student</v-btn
+                  >Create student account</v-btn
                 >
               </template>
             </check-permission-role>
@@ -42,8 +42,8 @@
   <check-permission-role :role="Role.StudentApproveDeclineAccountRequests">
     <template #="{ notAllowed }">
       <confirm-modal
-        title="Create account for student"
-        text="This will allow the student to access the system using a Basic BCeID account instead of a BC Services Card. Please note that their SIN will be validated with ESDC (Employment and Social Development Canada)."
+        title="Create student account"
+        text="Attention: Approved account requests are final and cannot be deactivated. Please ensure all supporting documentation has been carefully reviewed prior to approval."
         okLabel="Create account now"
         ref="createStudentAccountModal"
         :disablePrimaryButton="notAllowed"
