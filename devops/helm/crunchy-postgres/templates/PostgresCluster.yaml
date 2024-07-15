@@ -2,10 +2,14 @@ apiVersion: postgres-operator.crunchydata.com/v1beta1
 kind: PostgresCluster
 metadata:
   name: {{ template "crunchy-postgres.fullname" . }}
-  labels: {{ include "crunchy-postgres.labels" . | nindent 4 }}
+  labels: 
+    {{ include "crunchy-postgres.labels" . | nindent 4 }}
+    app.kubernetes.io/part-of: {{ template "crunchy-postgres.fullname" . }}
 spec:
   metadata:
-    labels: {{ include "crunchy-postgres.labels" . | nindent 6 }}
+    labels: 
+      {{ include "crunchy-postgres.labels" . | nindent 6 }}
+      app.kubernetes.io/part-of: {{ template "crunchy-postgres.fullname" . }}
   {{ if .Values.crunchyImage }}  
   image: {{ .Values.crunchyImage }}
   {{ end }}
@@ -17,7 +21,6 @@ spec:
   postgresVersion: {{ .Values.postgresVersion }}
 
   {{ if .Values.pgmonitor.enabled }}
-
   monitoring:
     pgmonitor:
       # this stuff is for the "exporter" container in the "postgres-cluster-ha" set of pods
@@ -32,12 +35,14 @@ spec:
           limits:
             cpu: {{ .Values.pgmonitor.exporter.limits.cpu }}
             memory: {{ .Values.pgmonitor.exporter.limits.memory }}
-
   {{ end }}
 
   instances:
     - name: {{ .Values.instances.name }}
       replicas: {{ .Values.instances.replicas }}
+      metadata:
+        labels:
+          app.kubernetes.io/part-of: {{ template "crunchy-postgres.fullname" . }}
       resources:
         requests:
           cpu: {{ .Values.instances.requests.cpu }}
@@ -74,7 +79,7 @@ spec:
                     postgres-operator.crunchydata.com/instance-set: {{ .Values.instances.name }}-ha
   
   users:
-    - name: {{ template "crunchy-postgres.fullname" . }}
+    - name: {{ .Values.appuser }}
       databases:
         - {{ template "crunchy-postgres.fullname" . }}
       options: "CREATEROLE"
