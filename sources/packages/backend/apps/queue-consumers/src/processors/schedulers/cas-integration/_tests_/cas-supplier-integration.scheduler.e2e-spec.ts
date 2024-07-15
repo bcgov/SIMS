@@ -45,7 +45,31 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     jest.clearAllMocks();
   });
 
-  it("Should update CAS supplier table when found supplier", async () => {
+  it("Should finish CAS supplier process when no supplier found.", async () => {
+    // Queued job.
+    const mockedJob = mockBullJob<void>();
+
+    // Act
+    const result = await processor.processCASSupplierInformation(mockedJob.job);
+
+    // Assert
+    expect(result).toStrictEqual([
+      "Process finalized with success.",
+      "Pending suppliers to update found: 0.",
+      "Records updated: 0.",
+    ]);
+    expect(
+      mockedJob.containLogMessages([
+        "Found 0 records to be updated.",
+        "CAS supplier integration executed.",
+      ]),
+    ).toBe(true);
+
+    expect(casServiceMock.casLogon).not.toHaveBeenCalled();
+    expect(casServiceMock.getSupplierInfoFromCAS).not.toHaveBeenCalled();
+  });
+
+  it("Should update CAS supplier table when found pending supplier information to be updated.", async () => {
     const student = await saveFakeStudent(db.dataSource);
 
     const casSupplier = new CASSupplier();

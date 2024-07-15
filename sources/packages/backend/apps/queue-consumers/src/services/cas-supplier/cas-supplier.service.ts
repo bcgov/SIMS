@@ -26,7 +26,11 @@ export class CASSupplierIntegrationService {
   }
 
   /**
-   * TODO add logs
+   * CAS integration process.
+   * Logs on CAS supplier API and request the supplier information for the students with pending supplier information.
+   * @param parentProcessSummary parent process summary.
+   * @param casSuppliers pending CAS suppliers.
+   * @returns a number of update records.
    */
   async executeCASIntegrationProcess(
     parentProcessSummary: ProcessSummary,
@@ -83,10 +87,11 @@ export class CASSupplierIntegrationService {
   }
 
   /**
-   * TODO comments
-   * @param casSupplier
-   * @param casSupplierResponseItem
-   * @param supplierStatus
+   * Updates CAS supplier table.
+   * @param casSupplier CAS supplier to be updated.
+   * @param casSupplierResponseItem CAS supplier response item from CAS request.
+   * @param supplierStatus CAS supplier status to be updated.
+   * @returns update result.
    */
   async updateCASSupplier(
     casSupplier: CASSupplier,
@@ -135,8 +140,8 @@ export class CASSupplierIntegrationService {
   }
 
   /**
-   * TODO comments
-   * @returns
+   * Gets a list of CAS suppliers to be updated from CAS supplier table.
+   * @returns a list of CAS suppliers to be updated.
    */
   async getStudentsToUpdateSupplierInformation(): Promise<CASSupplier[]> {
     return this.casSupplierRepo.find({

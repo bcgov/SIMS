@@ -1,5 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import { CASAuthDetails, CASSupplierResponse } from "../../processors/schedulers/cas-integration/models/cas-supplier-response.dto";
+import {
+  CASAuthDetails,
+  CASSupplierResponse,
+} from "../../processors/schedulers/cas-integration/models/cas-supplier-response.dto";
 import { AxiosRequestConfig } from "axios";
 import { HttpService } from "@nestjs/axios";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -19,9 +22,8 @@ export class CASService {
     this.casIntegrationConfig = config.casIntegration;
   }
   /**
-   * TODO comments
-   * TODO return type
-   * @returns
+   * Request to login on CAS API and return CAS auth details with the token used for authentication in all other requests.
+   * @returns CAS auth details.
    */
   public async casLogon(): Promise<CASAuthDetails> {
     const url = `${this.casIntegrationConfig.baseUrl}/oauth/token`;
@@ -46,18 +48,18 @@ export class CASService {
   }
 
   /**
-   * TODO comments
-   * @param token
-   * @param sin
-   * @param surname
-   * @returns
+   * Requests supplier information from CAS API.
+   * @param token auth token.
+   * @param sin student's sin.
+   * @param lastName student's last name.
+   * @returns CAS supplier response.
    */
   public async getSupplierInfoFromCAS(
     token: string,
     sin: string,
-    surname: string,
+    lastName: string,
   ): Promise<CASSupplierResponse> {
-    const url = `${this.casIntegrationConfig.baseUrl}/cfs/supplier/${surname}/lastname/${sin}/sin`;
+    const url = `${this.casIntegrationConfig.baseUrl}/cfs/supplier/${lastName}/lastname/${sin}/sin`;
     const headers = {
       Authorization: `Bearer ${token}`,
     };
