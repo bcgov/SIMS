@@ -87,43 +87,15 @@ spec:
       databases:
         - {{ template "crunchy-postgres.fullname" . }}
 
-  {{ if .Values.dataSource.enabled }}
-  dataSource:
-    pgbackrest:
-      configuration:
-        - secret:
-            name: {{ .Values.dataSource.secretName }}
-      global:
-        repo2-path: {{ .Values.dataSource.repo.path }}
-      repo:
-        name: {{ .Values.dataSource.repo.name }}
-        s3:
-          bucket: {{ .Values.dataSource.repo.s3.bucket }}
-          endpoint: {{ .Values.dataSource.repo.s3.endpoint }}
-          region: {{ .Values.dataSource.repo.s3.region }}
-      stanza: {{ .Values.dataSource.stanza }}
-  {{ end }}
-  
   backups:
     pgbackrest:
       {{ if .Values.pgBackRest.image }}
       image: {{ .Values.pgBackRest.image }}
       {{ end }}
-      {{- if .Values.pgBackRest.s3.enabled }}
-      configuration:
-      - secret:
-          name: {{ .Values.pgBackRest.s3.s3Secret }}
-      {{- end }}
       global:
-        # Support both PVC and s3 backups
+        # Support both PVC
         repo1-retention-full: {{ .Values.pgBackRest.retention | quote }}
         repo1-retention-full-type: {{ .Values.pgBackRest.retentionFullType }}
-        {{- if .Values.pgBackRest.s3.enabled }}
-        repo2-retention-full: {{ .Values.pgBackRest.retention | quote }}
-        repo2-retention-full-type: {{ .Values.pgBackRest.retentionFullType }}
-        repo2-path: {{ .Values.pgBackRest.s3.s3Path }}
-        repo2-s3-uri-style: {{ .Values.pgBackRest.s3.s3UriStyle }}
-        {{- end }}
       repos:
         # hardcoding repo1 until we solution allowing multiple repos
         - name: repo1
@@ -138,16 +110,6 @@ spec:
                 requests:
                   storage: {{ .Values.pgBackRest.repos.volume.storage }}
               storageClassName: {{ .Values.pgBackRest.repos.volume.storageClassName }}
-        {{- if .Values.pgBackRest.s3.enabled }}
-        - name: repo2
-          schedules:
-            full: {{ if .Values.pgBackRest.s3.fullSchedule }}{{ .Values.pgBackRest.s3.fullSchedule }}{{ else }}{{ .Values.pgBackRest.repos.schedules.full }}{{ end }}
-            incremental: {{ if .Values.pgBackRest.s3.incrementalSchedule }}{{ .Values.pgBackRest.s3.incrementalSchedule }}{{ else }}{{ .Values.pgBackRest.repos.schedules.incremental }}{{ end }}
-          s3:
-            bucket: {{ .Values.pgBackRest.s3.bucket }}
-            endpoint: {{ .Values.pgBackRest.s3.endpoint }}
-            region: {{ .Values.pgBackRest.s3.region }}
-        {{- end }}
       # this stuff is for the "pgbackrest" container (the only non-init container) in the "postgres-crunchy-repo-host" pod
       repoHost:
         resources:
