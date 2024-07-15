@@ -254,7 +254,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
       "Enrolment already completed and can neither be confirmed nor declined " +
       "or enrolment cannot be confirmed as application is not in a valid status " +
       "or enrolment cannot be confirmed as enrolment confirmation date is not within the valid approval period " +
-      "or tuition amount provided should be lesser than both (actual tuition + program related costs + mandatory fees) and (Canada grants + Canada Loan + BC Loan) " +
+      "or tuition amount provided should be lesser than both (actual tuition + program related costs + mandatory fees - previous tuition remittance) and (Canada grants + Canada Loan + BC Loan) " +
       "or first disbursement(COE) is not completed and it must be completed.",
   })
   @Patch(

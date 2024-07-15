@@ -11,7 +11,13 @@ import {
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { User } from "./user.model";
-import { ContactInfo, Note, DisabilityStatus, StudentRestriction } from ".";
+import {
+  ContactInfo,
+  Note,
+  DisabilityStatus,
+  StudentRestriction,
+  CASSupplier,
+} from ".";
 import { SINValidation } from "./sin-validation.model";
 
 @Entity({ name: TableNames.Student })
@@ -110,4 +116,18 @@ export class Student extends RecordDataModel {
     nullable: true,
   })
   disabilityStatusEffectiveDate?: Date;
+
+  /**
+   * Student supplier information data from the integration with Corporate Accounting System (CAS).
+   */
+  @OneToOne(() => CASSupplier, {
+    eager: false,
+    cascade: ["insert", "update"],
+    nullable: true,
+  })
+  @JoinColumn({
+    name: "cas_supplier_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  casSupplier?: CASSupplier;
 }

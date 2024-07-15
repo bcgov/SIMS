@@ -45,7 +45,7 @@
           "input": true,
           "tableView": true,
           "inputType": "radio",
-          "label": "Do you have any dependants?",
+          "label": "Do you have any eligible dependants?",
           "key": "hasDependents",
           "values": [
             {
@@ -81,7 +81,7 @@
             "eq": ""
           },
           "properties": {},
-          "tooltip": "Dependants represent anyone who you support financially.",
+          "tooltip": "For StudentAid BC purposes, eligible dependents/dependants are any dependents for whom the\nCanada Child Tax Benefit is claimed, or for whom a benefit is claimed on the applicant’s income tax\nreturn. Eligible dependents/dependants must meet one of the following criteria:\n\n  - For the student’s or spouse/common-law partner’s children who are 18 years of age and under, the student and/or spouse/common-law partner must be guardians of the children\nwho must live with the student or spouse/common-law partner at least two full days per week; or\n  - The student’s or spouse/common-law partner’s children aged 19 to 22 are full-time dependent students in study; or\n  - The student’s or spouse/common-law partner’s children are permanently disabled, are 19\nyears of age or over, are fully supported by the student or spouse/common-law partner and\nare claimed on the student’s or spouse/common-law partner’s income tax return; or\n  - The children are the student’s foster children and foster-parent income is claimed on the\napplication; or\n  - The dependents are the student’s or spouse/common-law partner’s elderly relatives who\nare fully supported by the student and claimed on the student’s or spouse’s income tax.",
           "errorLabel": "",
           "lockKey": true,
           "customClass": "\"customClass\": \"label-bold\""
@@ -107,30 +107,6 @@
               ],
               "className": "category-header-medium primary-color",
               "content": "Add dependants",
-              "type": "htmlelement",
-              "hideLabel": true,
-              "tags": [],
-              "conditional": {
-                "show": "",
-                "when": null,
-                "eq": ""
-              },
-              "properties": {},
-              "lockKey": true
-            },
-            {
-              "key": "addDependantsHtml2",
-              "label": "HTML",
-              "input": false,
-              "tag": "p",
-              "attrs": [
-                {
-                  "value": "",
-                  "attr": ""
-                }
-              ],
-              "className": "",
-              "content": "We use this information to ensure that we take into account your eligibility for certain benefits.",
               "type": "htmlelement",
               "hideLabel": true,
               "tags": [],
@@ -291,7 +267,7 @@
                       "input": true,
                       "tableView": false,
                       "inputType": "radio",
-                      "label": "Attending post secondary institution",
+                      "label": "Is dependant attending post-secondary?",
                       "key": "attendingPostSecondarySchool",
                       "values": [
                         {
@@ -419,7 +395,7 @@
                             }
                           ],
                           "className": "",
-                          "content": "Please provide one proof that your dependant has been approved for federal or provincial disability benefits.",
+                          "content": "Please provide proof that your dependant has been approved for federal disability tax credits.",
                           "type": "htmlelement",
                           "hideLabel": false,
                           "tags": [],
@@ -443,7 +419,7 @@
                             }
                           ],
                           "className": "",
-                          "content": "<h4 class=\"category-header-medium-small\">Documents Accepted</h4>\n<ul>\n  <li>Notice of Determination <strong>or</strong></li>\n  <li>Disability Tax Credit statement  <strong>or</strong></li>\n  <li>Other documents that shows receipt of Disability Tax Credits or benefits from Canada Revenue Agency (CRA)</li>\n</ul>",
+                          "content": "<h4 class=\"category-header-medium-small\">Documents Accepted</h4>\n<ul>\n  <li>Notice of Determination <strong>or</strong></li>\n  <li>Disability Tax Credit statement  <strong>or</strong></li>\n  <li>Other documents that shows receipt of Disability Tax credits from Canada Revenue Agency (CRA)</li>\n</ul>",
                           "type": "htmlelement",
                           "hideLabel": false,
                           "tags": [],
@@ -728,7 +704,7 @@
                 }
               ],
               "className": "",
-              "content": "You can be assessed as a single parent if you have shared custody of your children for an average of at least 8 days each month.",
+              "content": "You can also be assessed as a single parent if you have shared custody of your children for an average of at least 8 days each month.",
               "type": "htmlelement",
               "hideLabel": false,
               "tags": [],
@@ -752,7 +728,7 @@
                 }
               ],
               "className": "",
-              "content": "<h4 class=\"category-header-medium-small\">Documents Accepted</h4>\n<ul>\n  <li>Proof of shared custody Instructions</li>\n</ul>",
+              "content": "<h4 class=\"category-header-medium-small\">Documents Accepted</h4>\n<ul>\n  <li>A letter of explanation and one of the following:</li>\n    <ul>\n      <li>Child custody agreement;</li>\n      <li>Court order;</li>\n      <li>A notarized statement from the children's other parent detailing the custody agreement</li>\n    </ul>  \n</ul>",
               "type": "htmlelement",
               "hideLabel": false,
               "tags": [],

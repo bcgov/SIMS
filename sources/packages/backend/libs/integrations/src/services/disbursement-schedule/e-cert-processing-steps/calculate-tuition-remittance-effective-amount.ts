@@ -35,11 +35,19 @@ export class CalculateTuitionRemittanceEffectiveAmountStep
     log: ProcessSummary,
   ): Promise<boolean> {
     log.info("Checking the limit for the tuition remittance.");
+
+    const previousTuitionRemittance =
+      await this.confirmationOfEnrollmentService.getPreviousTuitionRemittance(
+        eCertDisbursement.assessmentId,
+        eCertDisbursement.disbursement.disbursementDate,
+      );
+
     const maxTuitionRemittance =
       this.confirmationOfEnrollmentService.getMaxTuitionRemittance(
         eCertDisbursement.disbursement.disbursementValues,
         eCertDisbursement.offering,
         MaxTuitionRemittanceTypes.Effective,
+        previousTuitionRemittance,
       );
     if (
       eCertDisbursement.disbursement.tuitionRemittanceRequestedAmount >

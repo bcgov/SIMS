@@ -89,6 +89,7 @@ export function createFakeApplication(
  * otherwise only one disbursement will be created.
  * - `firstDisbursementInitialValues` if provided sets the disbursement schedule status for the first disbursement otherwise sets to pending status by default.
  * - `secondDisbursementInitialValues` if provided sets the disbursement schedule status for the second disbursement otherwise sets to pending status by default.
+ * - `offeringInitialValues` initial values related to the offering for the original assessment.
  * @returns the created application and its dependencies including the disbursement
  * with the confirmation of enrollment data.
  */
@@ -113,6 +114,7 @@ export async function saveFakeApplicationDisbursements(
     currentAssessmentInitialValues?: Partial<StudentAssessment>;
     firstDisbursementInitialValues?: Partial<DisbursementSchedule>;
     secondDisbursementInitialValues?: Partial<DisbursementSchedule>;
+    offeringInitialValues?: Partial<EducationProgramOffering>;
   },
 ): Promise<Application> {
   const applicationRepo = dataSource.getRepository(Application);
@@ -235,6 +237,7 @@ export async function saveFakeApplicationDisbursements(
  * - `offeringIntensity` if provided sets the offering intensity for the created fakeApplication, otherwise sets it to fulltime by default.
  * - `applicationData` related application data.
  * - `currentAssessmentInitialValues` initial values related to the current assessment.
+ * - `offeringInitialValues` initial values related to the offering for the original assessment.
  * @returns the created application.
  */
 export async function saveFakeApplication(
@@ -252,6 +255,7 @@ export async function saveFakeApplication(
     offeringIntensity?: OfferingIntensity;
     applicationData?: ApplicationData;
     currentAssessmentInitialValues?: Partial<StudentAssessment>;
+    offeringInitialValues?: Partial<EducationProgramOffering>;
   },
 ): Promise<Application> {
   const userRepo = dataSource.getRepository(User);
@@ -289,12 +293,15 @@ export async function saveFakeApplication(
   // Offering.
   let savedOffering = relations?.offering;
   if (!savedOffering) {
-    const fakeOffering = createFakeEducationProgramOffering({
-      institution: relations?.institution,
-      institutionLocation: relations?.institutionLocation,
-      program: relations?.program,
-      auditUser: savedUser,
-    });
+    const fakeOffering = createFakeEducationProgramOffering(
+      {
+        institution: relations?.institution,
+        institutionLocation: relations?.institutionLocation,
+        program: relations?.program,
+        auditUser: savedUser,
+      },
+      { initialValues: options?.offeringInitialValues },
+    );
     fakeOffering.offeringIntensity =
       options?.offeringIntensity ?? OfferingIntensity.fullTime;
     fakeOffering.parentOffering = fakeOffering;

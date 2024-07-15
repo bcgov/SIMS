@@ -9,6 +9,7 @@ import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { FileOriginType, StudentFileMetadata } from "./student-file.type";
 import { Student } from "./student.model";
+import { VirusScanStatus } from "./virus-scan-status-type";
 
 export const FILE_NAME_MAX_LENGTH = 500;
 
@@ -95,4 +96,24 @@ export class StudentFile extends RecordDataModel {
     nullable: true,
   })
   metadata?: StudentFileMetadata;
+  /**
+   * Virus scan status of the file.
+   */
+  @Column({
+    name: "virus_scan_status",
+    nullable: false,
+    type: "enum",
+    enum: VirusScanStatus,
+    enumName: "VirusScanStatus",
+  })
+  virusScanStatus: VirusScanStatus;
+  /**
+   * Date and time when the virus scan status of the file was updated.
+   */
+  @Column({
+    name: "virus_scan_status_updated_on",
+    type: "timestamptz",
+    nullable: false,
+  })
+  virusScanStatusUpdatedOn: Date;
 }
