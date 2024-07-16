@@ -189,6 +189,7 @@ export class CASSupplierIntegrationService {
       supplierAddressToUpdate = {
         supplierSiteCode: activeSupplierAddress.suppliersitecode,
         addressLine1: activeSupplierAddress.addressline1,
+        addressLine2: activeSupplierAddress.addressline2,
         city: activeSupplierAddress.city,
         provinceState: activeSupplierAddress.province,
         country: activeSupplierAddress.country,

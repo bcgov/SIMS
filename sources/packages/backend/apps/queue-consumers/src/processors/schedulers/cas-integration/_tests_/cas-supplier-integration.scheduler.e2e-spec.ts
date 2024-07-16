@@ -116,6 +116,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     expect(updateCASSupplier.supplierAddress).toStrictEqual({
       supplierSiteCode: "001",
       addressLine1: "3350 DOUGLAS ST",
+      addressLine2: null,
       city: "VICTORIA",
       provinceState: "BC",
       country: "CA",
