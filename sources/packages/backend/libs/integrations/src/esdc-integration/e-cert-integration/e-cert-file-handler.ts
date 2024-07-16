@@ -425,7 +425,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
       ]
         .filter((errorCode) => errorCode)
         .map((errorCode) => eCertFeedbackErrorCodeMap[errorCode].id);
-      const blockFundingErrorIds = [
+      const blockFundingErrorCodes = [
         eCertFeedbackResponseRecord.errorCode1,
         eCertFeedbackResponseRecord.errorCode2,
         eCertFeedbackResponseRecord.errorCode3,
@@ -439,7 +439,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
         feedbackFileName,
         receivedErrorIds,
         dateReceived,
-        blockFundingErrorIds,
+        blockFundingErrorCodes,
       );
       processSummary.info(
         `Disbursement feedback error created for document number ${eCertFeedbackResponseRecord.documentNumber} at line ${eCertFeedbackResponseRecord.lineNumber}.`,

@@ -1122,7 +1122,7 @@ export class NotificationActionsService {
    * @param metadata metadata related to the notification to be saved.
    * @param entityManager entity manager to execute in transaction.
    */
-  async saveEcertFeedbackFileErrorNotification(
+  async saveeCertFeedbackFileErrorNotification(
     notification: ECertFeedbackFileErrorNotification,
     metadata: NotificationMetadata,
     entityManager: EntityManager,

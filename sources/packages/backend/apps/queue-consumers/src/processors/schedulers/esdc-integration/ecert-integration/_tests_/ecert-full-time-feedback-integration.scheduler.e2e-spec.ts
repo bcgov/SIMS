@@ -398,15 +398,11 @@ describe(
 
     it("Should generate a notification to the ministry when there are ecert feedback errors that block funding for a disbursement.", async () => {
       // Arrange
-      const notificationMessageType =
-        NotificationMessageType.ECertFeedbackFileErrorNotification;
-      // Remove all the eCert feedback file error notification records before
-      // the run of the test, so that it doesn't interfere with the test data.
-      await db.notification.delete({
-        notificationMessage: {
-          id: notificationMessageType,
-        },
-      });
+      // Update the date sent for the notifications to current date where the date sent is null.
+      await db.notification.update(
+        { dateSent: IsNull() },
+        { dateSent: new Date() },
+      );
       const application = await saveFakeApplicationDisbursements(
         db.dataSource,
         undefined,
@@ -420,7 +416,19 @@ describe(
           },
         },
       );
-      mockDownloadFiles(sftpClientMock, [FEEDBACK_ERROR_NOTIFICATION_FILE]);
+      mockDownloadFiles(
+        sftpClientMock,
+        [FEEDBACK_ERROR_FILE_SINGLE_RECORD],
+        (fileContent: string) => {
+          const file = getStructuredRecords(fileContent);
+          // Force the error code to be wrong in the first record.
+          const [record] = file.records;
+          file.records = [
+            record.replace("EDU-00099          ", "EDU-00033 EDU-00034"),
+          ];
+          return createFileFromStructuredRecords(file);
+        },
+      );
       // Queued job.
       const mockedJob = mockBullJob<void>();
 
@@ -449,19 +457,15 @@ describe(
             templateId: true,
             emailContacts: true,
           },
-          metadata: { documentNumber: true, errorCodes: true },
         },
         relations: { notificationMessage: true },
         where: {
           notificationMessage: {
-            id: notificationMessageType,
+            id: NotificationMessageType.ECertFeedbackFileErrorNotification,
           },
           dateSent: IsNull(),
         },
       });
-      expect(notification.metadata?.documentNumber).toBe(
-        SHARED_DOCUMENT_NUMBER,
-      );
       expect(notification.messagePayload).toStrictEqual({
         email_address: notification.notificationMessage.emailContacts[0],
         template_id: notification.notificationMessage.templateId,
@@ -469,7 +473,7 @@ describe(
           lastName: application.student.user.lastName,
           givenNames: application.student.user.firstName,
           applicationNumber: application.applicationNumber,
-          errorCodes: notification.metadata?.errorCodes,
+          errorCodes: ["EDU-00033", "EDU-00034"],
         },
       });
     });

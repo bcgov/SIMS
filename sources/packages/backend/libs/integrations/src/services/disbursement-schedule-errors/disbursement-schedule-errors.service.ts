@@ -39,9 +39,9 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
    * @param errorCodeIds e-Cert feedback error ids
    * of error codes received.
    * @param dateReceived Date Received.
-   * @param blockFundingErrorIds e-Cert feedback error ids
-   * of error codes received that block funding and as a result
-   * cause a notification to be sent out to the ministry.
+   * @param blockingErrorCodes e-Cert feedback error codes
+   * received that block funding and as a result cause a
+   * notification to be sent out to the ministry.
    * @returns Created E-Cert Error record.
    */
   async createECertErrorRecord(
@@ -49,7 +49,7 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
     feedbackFileName: string,
     errorCodeIds: number[],
     dateReceived: Date,
-    blockFundingErrorIds: string[],
+    blockingErrorCodes: string[],
   ): Promise<InsertResult> {
     const disbursementSchedule =
       await this.disbursementScheduleService.getDisbursementScheduleByDocumentNumber(
@@ -75,24 +75,21 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
     });
     const user =
       disbursementSchedule.studentAssessment.application.student.user;
-    const ministryNotification: ECertFeedbackFileErrorNotification = {
-      givenNames: user.firstName,
-      lastName: user.lastName,
-      applicationNumber:
-        disbursementSchedule.studentAssessment.application.applicationNumber,
-      errorCodes: blockFundingErrorIds,
-    };
     const metadata = {
       disbursementId: disbursementSchedule.id,
-      documentNumber: disbursementSchedule.documentNumber,
-      applicationNumber:
-        disbursementSchedule.studentAssessment.application.applicationNumber,
-      errorCodes: blockFundingErrorIds,
     };
     return this.dataSource.transaction(
       async (transactionalEntityManager: EntityManager) => {
-        if (blockFundingErrorIds.length) {
-          await this.notificationActionsService.saveEcertFeedbackFileErrorNotification(
+        if (blockingErrorCodes.length) {
+          const ministryNotification: ECertFeedbackFileErrorNotification = {
+            givenNames: user.firstName,
+            lastName: user.lastName,
+            applicationNumber:
+              disbursementSchedule.studentAssessment.application
+                .applicationNumber,
+            errorCodes: blockingErrorCodes,
+          };
+          await this.notificationActionsService.saveeCertFeedbackFileErrorNotification(
             ministryNotification,
             metadata,
             transactionalEntityManager,

@@ -393,15 +393,11 @@ describe(
 
     it("Should not generate a notification to the ministry when there are ecert feedback errors but none of them block funding for the disbursement.", async () => {
       // Arrange
-      const notificationMessageType =
-        NotificationMessageType.ECertFeedbackFileErrorNotification;
-      // Remove all the eCert feedback file error notification records before
-      // the run of the test, so that it doesn't interfere with the test data.
-      await db.notification.delete({
-        notificationMessage: {
-          id: notificationMessageType,
-        },
-      });
+      // Update the date sent for the notifications to current date where the date sent is null.
+      await db.notification.update(
+        { dateSent: IsNull() },
+        { dateSent: new Date() },
+      );
       await saveFakeApplicationDisbursements(db.dataSource, undefined, {
         offeringIntensity: OfferingIntensity.partTime,
         applicationStatus: ApplicationStatus.Completed,
@@ -434,7 +430,7 @@ describe(
       const notificationCount = await db.notification.count({
         where: {
           notificationMessage: {
-            id: notificationMessageType,
+            id: NotificationMessageType.ECertFeedbackFileErrorNotification,
           },
           dateSent: IsNull(),
         },
