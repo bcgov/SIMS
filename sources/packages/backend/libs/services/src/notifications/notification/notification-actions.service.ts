@@ -1136,7 +1136,6 @@ export class NotificationActionsService {
       return;
     }
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
-      userId: auditUser.id,
       messageType: NotificationMessageType.ECertFeedbackFileErrorNotification,
       messagePayload: {
         email_address: emailContact,
