@@ -9,6 +9,7 @@ import { CustomNamedError } from "@sims/utilities";
 import { CAS_AUTH_ERROR } from "../../constants/error-code.constants";
 import {
   CASAuthDetails,
+  CASSupplierResponse,
   CASSupplierResponseItem,
   CASSupplierResponseItemAddress,
 } from "@sims/integrations/cas/models/cas-supplier-response.model";
@@ -89,33 +90,12 @@ export class CASSupplierIntegrationService {
         } catch (error: unknown) {
           throw new Error("Unexpected error while requesting supplier.", error);
         }
-        if (supplierResponse.items.length) {
-          const [supplierInfo] = supplierResponse.items;
-          const isThereAnActiveSupplierAddress =
-            this.getActiveSupplier(supplierInfo);
-          if (isThereAnActiveSupplierAddress) {
-            summary.info("Updating CAS supplier table.");
-            try {
-              const updateResult = await this.updateCASSupplier(
-                casSupplier.id,
-                supplierInfo,
-                SupplierStatus.Verified,
-              );
-              if (updateResult.affected) {
-                suppliersUpdated++;
-              }
-            } catch (error: unknown) {
-              throw new Error(
-                "Unexpected error while updating CAS supplier table.",
-                error,
-              );
-            }
-          } else {
-            summary.info("No active supplier address found on CAS.");
-          }
-        } else {
-          summary.info("No supplier found on CAS.");
-        }
+        suppliersUpdated = await this.updateActiveAddress(
+          supplierResponse,
+          summary,
+          casSupplier,
+          suppliersUpdated,
+        );
       } catch (error: unknown) {
         if (error instanceof Error) {
           summary.error(error.message);
@@ -130,6 +110,55 @@ export class CASSupplierIntegrationService {
     return suppliersUpdated;
   }
 
+  /**
+   * Updates supplier if finds an item from the response with an active address.
+   * @param supplierResponse CAS supplier response.
+   * @param summary log summary.
+   * @param casSuppliers pending CAS suppliers.
+   * @param suppliersUpdated
+   * @returns a number of update records.
+   */
+  private async updateActiveAddress(
+    supplierResponse: CASSupplierResponse,
+    summary: ProcessSummary,
+    casSupplier: CASSupplier,
+    suppliersUpdated: number,
+  ) {
+    if (supplierResponse.items.length) {
+      const [supplierInfo] = supplierResponse.items;
+      const isThereAnActiveSupplierAddress =
+        this.getActiveSupplier(supplierInfo);
+      if (isThereAnActiveSupplierAddress) {
+        summary.info("Updating CAS supplier table.");
+        try {
+          const updateResult = await this.updateCASSupplier(
+            casSupplier.id,
+            supplierInfo,
+            SupplierStatus.Verified,
+          );
+          if (updateResult.affected) {
+            suppliersUpdated++;
+          }
+        } catch (error: unknown) {
+          throw new Error(
+            "Unexpected error while updating CAS supplier table.",
+            error,
+          );
+        }
+      } else {
+        summary.info("No active supplier address found on CAS.");
+      }
+    } else {
+      summary.info("No supplier found on CAS.");
+    }
+    return suppliersUpdated;
+  }
+
+  /**
+   * Gets the first active supplier address from a list supplier response item.
+   * @param casSupplierResponseItem CAS supplier response item.
+   * @returns CAS supplier response item address.
+   */
   private getActiveSupplier(
     casSupplierResponseItem: CASSupplierResponseItem,
   ): CASSupplierResponseItemAddress {
