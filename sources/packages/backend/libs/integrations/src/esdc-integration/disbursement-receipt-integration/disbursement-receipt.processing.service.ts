@@ -150,50 +150,12 @@ export class DisbursementReceiptProcessingService {
       }
     }
     result.processSummary.push(`Processing file ${remoteFilePath} completed.`);
-    const batchRunDate = responseData.header.batchRunDate;
-    result.processSummary.push(
-      `Processing provincial daily disbursement CSV file which are not sent on ${getISODateOnlyString(
-        batchRunDate,
-      )}.`,
+
+    await this.processSendingFile(
+      result,
+      responseData.header.fileDate,
+      responseData.header.sequenceNumber,
     );
-
-    // Create a CSV file of the total records sent on the process date and
-    // email the content to the ministry users.
-    try {
-      // Populate the reportName and batchRunDate to the reportsFilterMode.
-      const reportFilterModel: ReportsFilterModel = {
-        reportName: DAILY_DISBURSEMENT_REPORT_NAME,
-        params: { batchRunDate },
-      };
-
-      // Fetch the reports data and convert them into CSV.
-      const dailyDisbursementsRecordsInCSV =
-        await this.reportService.getReportDataAsCSV(reportFilterModel);
-
-      // Create the file name for the daily disbursement report.
-      const disbursementFileName =
-        this.integrationService.createDisbursementFileName(
-          DAILY_DISBURSEMENT_REPORT_NAME,
-        );
-
-      // Send the Daily Disbursement Report content and file via email.
-      await this.notificationActionsService.saveProvincialDailyDisbursementReportProcessingNotification(
-        dailyDisbursementsRecordsInCSV,
-        disbursementFileName,
-      );
-      result.processSummary.push(
-        `Provincial daily disbursement CSV report file has been sent successfully via email.`,
-      );
-      this.logger.log(
-        "Completed sending provincial daily disbursement report emails.",
-      );
-    } catch (error) {
-      this.logger.error(error);
-      result.errorsSummary.push(
-        `Error while sending provincial daily disbursement CSV report file.`,
-      );
-      result.errorsSummary.push(error);
-    }
 
     try {
       //Deleting the file once it has been processed.
@@ -205,6 +167,72 @@ export class DisbursementReceiptProcessingService {
       result.errorsSummary.push(error);
     }
     return result;
+  }
+
+  /**
+   * Create a provincial daily disbursement CSV file and
+   * email the content to the ministry users.
+   * @param result output of the processing steps.
+   * @param fileDate File date to be a part of filename.
+   * @param sequenceNumber Sequence number to be a part of filename.
+   */
+  private async processSendingFile(
+    result: ProcessSFTPResponseResult,
+    fileDate: Date,
+    sequenceNumber: number,
+  ): Promise<void> {
+    result.processSummary.push(
+      `Processing provincial daily disbursement CSV file on ${getISODateOnlyString(
+        fileDate,
+      )}.`,
+    );
+
+    try {
+      // Populate the reportName and fileDate and sequenceNumber to the reportsFilterMode.
+      const reportFilterModel: ReportsFilterModel = {
+        reportName: DAILY_DISBURSEMENT_REPORT_NAME,
+        params: {
+          fileDate,
+          sequenceNumber,
+        },
+      };
+
+      // Fetch the reports data and convert them into CSV.
+      const dailyDisbursementsRecordsInCSV =
+        await this.reportService.getReportDataAsCSV(reportFilterModel);
+
+      if (dailyDisbursementsRecordsInCSV === "") {
+        return;
+      }
+
+      // Create the file name for the daily disbursement report.
+      const disbursementFileName =
+        this.integrationService.createDisbursementFileName(
+          DAILY_DISBURSEMENT_REPORT_NAME,
+          fileDate,
+          sequenceNumber,
+        );
+
+      // Send the Daily Disbursement Report content and file via email.
+      await this.notificationActionsService.saveProvincialDailyDisbursementReportProcessingNotification(
+        {
+          attachmentFileContent: dailyDisbursementsRecordsInCSV,
+          fileName: disbursementFileName,
+        },
+      );
+      result.processSummary.push(
+        `Provincial daily disbursement CSV report generated.`,
+      );
+      this.logger.log(
+        "Completed provincial daily disbursement report generation.",
+      );
+    } catch (error) {
+      this.logger.error(error);
+      result.errorsSummary.push(
+        "Error while generating provincial daily disbursement CSV report file.",
+      );
+      result.errorsSummary.push(error);
+    }
   }
 
   @InjectLogger()

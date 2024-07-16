@@ -29,7 +29,7 @@ import { DeepMocked } from "@golevelup/ts-jest";
 import * as Client from "ssh2-sftp-client";
 import { DisbursementReceiptsFileIntegrationScheduler } from "../disbursement-receipts-integration.scheduler";
 import * as path from "path";
-import { MoreThan } from "typeorm";
+import { In, MoreThan } from "typeorm";
 
 const FEDERAL_PROVINCIAL_FULL_TIME_FILE =
   "EDU.PBC.DIS-federal-provincial-full-time.txt";
@@ -39,6 +39,7 @@ const FEDERAL_ONLY_FULL_TIME_FILE = "EDU.PBC.DIS-federal-only-full-time.txt";
 const SHARED_DOCUMENT_NUMBER = 989898;
 const BATCH_RUN_DATE = "2024-01-30";
 const FILE_DATE = "2024-01-31";
+const SEQUENCE_NUMBER = 3228;
 const TEST_EMAIL = "dummy@some.domain";
 
 describe(
@@ -80,6 +81,36 @@ describe(
         { documentNumber: SHARED_DOCUMENT_NUMBER },
         { documentNumber: 0 },
       );
+      // Remove disbursement receipt records associated with FILE_DATE
+      // and related disbursement receipt values records.
+      const disbursementReceipts = await db.disbursementReceipt.find({
+        select: { id: true, disbursementReceiptValues: { id: true } },
+        relations: { disbursementReceiptValues: true },
+        where: { fileDate: FILE_DATE, sequenceNumber: SEQUENCE_NUMBER },
+      });
+      const disbursementReceiptValues = await db.disbursementReceiptValue.find({
+        select: { id: true, disbursementReceipt: { id: true } },
+        relations: { disbursementReceipt: true },
+        where: {
+          disbursementReceipt: {
+            id: In(
+              disbursementReceipts.map(
+                (disbursementReceipt) => disbursementReceipt.id,
+              ),
+            ),
+          },
+        },
+      });
+      await db.disbursementReceiptValue.delete({
+        id: In(
+          disbursementReceiptValues.map(
+            (disbursementReceiptValue) => disbursementReceiptValue.id,
+          ),
+        ),
+      });
+      await db.disbursementReceipt.delete({
+        fileDate: FILE_DATE,
+      });
     });
 
     it("Should log 'Invalid file header' error when the header has a record code different than 'F'.", async () => {
@@ -202,8 +233,8 @@ describe(
             `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 2 inserted successfully.`,
             `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 3 inserted successfully.`,
             `Processing file ${downloadedFile} completed.`,
-            `Processing provincial daily disbursement CSV file which are not sent on ${BATCH_RUN_DATE}.`,
-            `Provincial daily disbursement CSV report file has been sent successfully via email.`,
+            `Processing provincial daily disbursement CSV file on ${FILE_DATE}.`,
+            `Provincial daily disbursement CSV report generated.`,
           ],
           errorsSummary: [],
         },
@@ -264,25 +295,29 @@ describe(
         BCSG: 599,
       });
       // Notification record.
-      const notification = await db.notification.findOne({
+      const createdNotification = await db.notification.findOne({
         select: {
+          id: true,
+          notificationMessage: { id: true, templateId: true },
           messagePayload: true,
           createdAt: true,
         },
+        relations: { notificationMessage: true },
         where: {
           createdAt: MoreThan(currentTestTime),
         },
       });
-      const emailContact = notification.messagePayload["email_address"];
-      const file =
-        notification.messagePayload["personalisation"]["application_file"][
-          "file"
-        ];
-      const fileContent = Buffer.from(file, "base64").toString("ascii");
-      expect(emailContact).toBe(TEST_EMAIL);
-      expect(fileContent).toContain(
-        "BC Total,Total Records,File Date,Batch Run Date,Sequence Number",
-      );
+      expect(createdNotification.messagePayload).toStrictEqual({
+        template_id: createdNotification.notificationMessage.templateId,
+        email_address: TEST_EMAIL,
+        personalisation: {
+          application_file: {
+            file: "c3VtLEZpbGUgRGF0ZSxCYXRjaCBSdW4gRGF0ZSxTZXF1ZW5jZSBOdW1iZXINCjEsMjAyNC0wMS0zMSwyMDI0LTAxLTMwLDMyMjg=",
+            filename: `Daily_Disbursement_File_${FILE_DATE}_${SEQUENCE_NUMBER}.csv`,
+            sending_method: "attach",
+          },
+        },
+      });
     });
 
     it("Should import disbursement receipt file and create only federal awards receipt with proper awards code mappings for a full-time application when the file contains only federal receipt.", async () => {
@@ -317,8 +352,7 @@ describe(
             `Processing file ${downloadedFile}.`,
             `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 2 inserted successfully.`,
             `Processing file ${downloadedFile} completed.`,
-            `Processing provincial daily disbursement CSV file which are not sent on ${BATCH_RUN_DATE}.`,
-            `Provincial daily disbursement CSV report file has been sent successfully via email.`,
+            `Processing provincial daily disbursement CSV file on ${FILE_DATE}.`,
           ],
           errorsSummary: [],
         },
@@ -353,6 +387,7 @@ describe(
       // Notification record.
       const notification = await db.notification.findOne({
         select: {
+          id: true,
           messagePayload: true,
           createdAt: true,
         },
@@ -360,16 +395,7 @@ describe(
           createdAt: MoreThan(currentTestTime),
         },
       });
-      const emailContact = notification.messagePayload["email_address"];
-      const file =
-        notification.messagePayload["personalisation"]["application_file"][
-          "file"
-        ];
-      const fileContent = Buffer.from(file, "base64").toString("ascii");
-      expect(emailContact).toBe(TEST_EMAIL);
-      expect(fileContent).toContain(
-        "BC Total,Total Records,File Date,Batch Run Date,Sequence Number",
-      );
+      expect(notification).toBe(null);
     });
 
     it("Should import disbursement receipt file and create federal and provincial awards receipts with proper awards code mappings for a part-time application when the file contains federal and provincial receipts.", async () => {
@@ -405,8 +431,8 @@ describe(
             `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 2 inserted successfully.`,
             `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 3 inserted successfully.`,
             `Processing file ${downloadedFile} completed.`,
-            `Processing provincial daily disbursement CSV file which are not sent on ${BATCH_RUN_DATE}.`,
-            `Provincial daily disbursement CSV report file has been sent successfully via email.`,
+            `Processing provincial daily disbursement CSV file on ${FILE_DATE}.`,
+            `Provincial daily disbursement CSV report generated.`,
           ],
           errorsSummary: [],
         },
@@ -467,25 +493,29 @@ describe(
         BCSG: 600,
       });
       // Notification record.
-      const notification = await db.notification.findOne({
+      const createdNotification = await db.notification.findOne({
         select: {
+          id: true,
+          notificationMessage: { id: true, templateId: true },
           messagePayload: true,
           createdAt: true,
         },
+        relations: { notificationMessage: true },
         where: {
           createdAt: MoreThan(currentTestTime),
         },
       });
-      const emailContact = notification.messagePayload["email_address"];
-      const file =
-        notification.messagePayload["personalisation"]["application_file"][
-          "file"
-        ];
-      const fileContent = Buffer.from(file, "base64").toString("ascii");
-      expect(emailContact).toBe(TEST_EMAIL);
-      expect(fileContent).toContain(
-        "BC Total,Total Records,File Date,Batch Run Date,Sequence Number",
-      );
+      expect(createdNotification.messagePayload).toStrictEqual({
+        template_id: createdNotification.notificationMessage.templateId,
+        email_address: TEST_EMAIL,
+        personalisation: {
+          application_file: {
+            file: "c3VtLEZpbGUgRGF0ZSxCYXRjaCBSdW4gRGF0ZSxTZXF1ZW5jZSBOdW1iZXINCjEsMjAyNC0wMS0zMSwyMDI0LTAxLTMwLDMyMjg=",
+            filename: "Daily_Disbursement_File_2024-01-31_3228.csv",
+            sending_method: "attach",
+          },
+        },
+      });
     });
 
     /**

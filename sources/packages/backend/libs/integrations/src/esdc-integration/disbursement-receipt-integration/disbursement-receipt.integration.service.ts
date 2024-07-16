@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
+import { ConfigService } from "@sims/utilities/config";
 import {
   DisbursementReceiptDownloadResponse,
   DisbursementReceiptRecordType,
@@ -12,10 +12,8 @@ import { SFTPIntegrationBase, SshService } from "@sims/integrations/services";
 
 @Injectable()
 export class DisbursementReceiptIntegrationService extends SFTPIntegrationBase<DisbursementReceiptDownloadResponse> {
-  private readonly esdcConfig: ESDCIntegrationConfig;
   constructor(config: ConfigService, sshService: SshService) {
     super(config.zoneBSFTP, sshService);
-    this.esdcConfig = config.esdcIntegration;
   }
 
   /**
@@ -65,11 +63,17 @@ export class DisbursementReceiptIntegrationService extends SFTPIntegrationBase<D
   /**
    * Create file name for the daily disbursements report file.
    * @param reportName Report name to be a part of filename.
-   * @returns Full file path of the file to be sent via emails.
+   * @param fileDate File date to be a part of filename.
+   * @param sequenceNumber Sequence number to be a part of filename.
+   * @returns File name of the file to be sent via emails.
    */
-  createDisbursementFileName(reportName: string): string {
-    const timestamp = getISODateOnlyString(new Date());
-    const fileName = `${reportName}_${timestamp}.csv`;
+  createDisbursementFileName(
+    reportName: string,
+    fileDate: Date,
+    sequenceNumber: number,
+  ): string {
+    const timestamp = getISODateOnlyString(fileDate);
+    const fileName = `${reportName}_${timestamp}_${sequenceNumber}.csv`;
     return fileName;
   }
 }

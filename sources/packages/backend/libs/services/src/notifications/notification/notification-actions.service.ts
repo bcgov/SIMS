@@ -28,6 +28,7 @@ import {
   InstitutionAddsPendingProgramNotification,
   ApplicationOfferingChangeRequestApprovedByStudentNotification,
   PartialStudentMatchNotification,
+  DailyDisbursementReportProcessingNotification,
 } from "..";
 import { NotificationService } from "./notification.service";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
@@ -1118,12 +1119,10 @@ export class NotificationActionsService {
    * Creates Provincial Daily Disbursement Report file processing notifications.
    * Currently multiple notifications are created as integration contacts
    * can be multiple.
-   * @param attachmentFileContent file content for the daily disbursement report file.
-   * @param fileName file name for the daily disbursement report file.
+   * @param notification notification details.
    */
   async saveProvincialDailyDisbursementReportProcessingNotification(
-    attachmentFileContent: string,
-    fileName: string,
+    notification: DailyDisbursementReportProcessingNotification,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     const { templateId, emailContacts } =
@@ -1133,33 +1132,26 @@ export class NotificationActionsService {
     if (!emailContacts?.length) {
       return;
     }
-    const provincialDailyDisbursementReportProcessingNotifications = [];
 
-    for (const emailContact of emailContacts) {
-      const messagePayload: NotificationEmailMessage = {
+    const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
+      userId: auditUser.id,
+      messageType:
+        NotificationMessageType.MinistryNotificationProvincialDailyDisbursementReceipt,
+      messagePayload: {
         email_address: emailContact,
         template_id: templateId,
         personalisation: {
           application_file: {
-            file: base64Encode(attachmentFileContent),
-            filename: fileName,
+            file: base64Encode(notification.attachmentFileContent),
+            filename: notification.fileName,
             sending_method: "attach",
           },
         },
-      };
-      const provincialDailyDisbursementReportProcessingNotification = {
-        userId: auditUser.id,
-        messageType:
-          NotificationMessageType.MinistryNotificationProvincialDailyDisbursementReceipt,
-        messagePayload: messagePayload,
-      };
-      provincialDailyDisbursementReportProcessingNotifications.push(
-        provincialDailyDisbursementReportProcessingNotification,
-      );
-    }
+      } as NotificationEmailMessage,
+    }));
 
     await this.notificationService.saveNotifications(
-      provincialDailyDisbursementReportProcessingNotifications,
+      ministryNotificationsToSend,
       auditUser.id,
     );
   }

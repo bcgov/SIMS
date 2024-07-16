@@ -9,28 +9,29 @@ SET
                 sims.disbursement_receipts disbursement_receipts
             WHERE
                 disbursement_receipts.funding_type IN (''BC'', ''BP'')
-                AND disbursement_receipts.batch_run_date = :batchRunDate
+                AND disbursement_receipts.file_date = :fileDate
+                AND disbursement_receipts.sequence_number = :sequenceNumber
         )
         SELECT
             SUM(
                 disbursement_receipts."Full Time BC Student Loan"
-            ) AS "Full Time BC Student Loan",
+            ),
             SUM(
                 disbursement_receipts."Full Time BC Student Grant"
-            ) AS "Full Time BC Student Grant",
-            SUM(disbursement_receipts."Full Time BC Total") AS "Full Time BC Total",
+            ),
+            SUM(disbursement_receipts."Full Time BC Total"),
             SUM(
                 disbursement_receipts."Part Time BC Student Grant"
-            ) AS "Part Time BC Student Grant",
-            SUM(disbursement_receipts."Part Time BC Total") AS "Part Time BC Total",
-            SUM(disbursement_receipts."BC Total") as "BC Total",
-            SUM(disbursement_receipts."Total Records") AS "Total Records",
+            ),
+            SUM(disbursement_receipts."Part Time BC Total"),
+            SUM(disbursement_receipts."BC Total"),
+            SUM(disbursement_receipts."Total Records"),
             CAST(
                 disbursement_receipts."File Date" AS varchar
-            ) AS "File Date",
+            ),
             CAST(
                 disbursement_receipts."Batch Run Date" AS varchar
-            ) AS "Batch Run Date",
+            ),
             disbursement_receipts."Sequence Number"
         FROM
             (
