@@ -1,4 +1,4 @@
-import { CASService } from "../../../src/services/cas-supplier/cas.service";
+import { CASService } from "@sims/integrations/cas/cas.service";
 
 export const casLogonMockedResult = {
   access_token: "token123",
@@ -60,9 +60,7 @@ export const getSupplierInfoFromCASMockedResult = {
 
 export function createCASServiceMock(): CASService {
   const mockedCASService = {} as CASService;
-  mockedCASService.casLogon = jest.fn(() =>
-    Promise.resolve(casLogonMockedResult),
-  );
+  mockedCASService.logon = jest.fn(() => Promise.resolve(casLogonMockedResult));
 
   mockedCASService.getSupplierInfoFromCAS = jest.fn(() =>
     Promise.resolve(getSupplierInfoFromCASMockedResult),

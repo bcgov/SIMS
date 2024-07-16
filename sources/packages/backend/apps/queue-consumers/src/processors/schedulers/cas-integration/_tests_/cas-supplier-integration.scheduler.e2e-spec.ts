@@ -65,7 +65,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       ]),
     ).toBe(true);
 
-    expect(casServiceMock.casLogon).not.toHaveBeenCalled();
+    expect(casServiceMock.logon).not.toHaveBeenCalled();
     expect(casServiceMock.getSupplierInfoFromCAS).not.toHaveBeenCalled();
   });
 
@@ -102,7 +102,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       ]),
     ).toBe(true);
 
-    expect(casServiceMock.casLogon).toHaveBeenCalled();
+    expect(casServiceMock.logon).toHaveBeenCalled();
     expect(casServiceMock.getSupplierInfoFromCAS).toHaveBeenCalledWith(
       casLogonMockedResult.access_token,
       student.sinValidation.sin,

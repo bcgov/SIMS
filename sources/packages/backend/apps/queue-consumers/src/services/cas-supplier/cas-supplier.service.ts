@@ -3,13 +3,13 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { SystemUsersService } from "@sims/services";
 import { CASSupplier, SupplierAddress, SupplierStatus } from "@sims/sims-db";
 import { ProcessSummary } from "@sims/utilities/logger";
+import { Not, Repository, UpdateResult } from "typeorm";
+import { CASIntegrationConfig, ConfigService } from "@sims/utilities/config";
+import { CASService } from "@sims/integrations/cas/cas.service";
 import {
   CASAuthDetails,
   CASSupplierResponseItem,
-} from "../../processors/schedulers/cas-integration/models/cas-supplier-response.dto";
-import { Not, Repository, UpdateResult } from "typeorm";
-import { CASIntegrationConfig, ConfigService } from "@sims/utilities/config";
-import { CASService } from "./cas.service";
+} from "@sims/integrations/cas/models/cas-supplier-response.dto";
 
 const CAS_SUPPLIER_ADDRESS_ACTIVE_STATUS = "ACTIVE";
 
@@ -42,7 +42,7 @@ export class CASSupplierIntegrationService {
     parentProcessSummary.children(summary);
     try {
       summary.info("Logging on CAS...");
-      const auth = await this.casService.casLogon();
+      const auth = await this.casService.logon();
       if (auth.access_token) {
         summary.info("Logon successful.");
         suppliersUpdated = await this.requestCASAndUpdateSuppliers(

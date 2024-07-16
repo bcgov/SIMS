@@ -113,6 +113,5 @@ export interface RedisConfiguration {
 
 export interface CASIntegrationConfig {
   baseUrl: string;
-  clientId: string;
-  clientSecret: string;
+  clientCredential: ClientCredential;
 }

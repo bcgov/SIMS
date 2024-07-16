@@ -252,8 +252,10 @@ export class ConfigService {
   get casIntegration(): CASIntegrationConfig {
     return this.getCachedConfig("casIntegrationConfig", {
       baseUrl: process.env.CAS_BASE_URL,
-      clientId: process.env.CAS_CLIENT_ID,
-      clientSecret: process.env.CAS_CLIENT_SECRET,
+      clientCredential: {
+        clientId: process.env.CAS_CLIENT_ID,
+        clientSecret: process.env.CAS_CLIENT_SECRET,
+      },
     });
   }
 

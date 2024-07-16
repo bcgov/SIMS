@@ -200,6 +200,12 @@ objects:
                       name: ${QUEUE_CONSUMERS_SECRET_NAME}
                 - name: APPLICATION_ARCHIVE_DAYS
                   value: ${APPLICATION_ARCHIVE_DAYS}
+                - name: CAS_BASE_URL
+                  value: "${CAS_BASE_URL}"
+                - name: CAS_CLIENT_ID
+                  value: "${CAS_CLIENT_ID}"
+                - name: CAS_CLIENT_SECRET
+                  value: "${CAS_CLIENT_SECRET}"
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}

@@ -1,7 +1,6 @@
 import { ColumnNames, TableNames } from "@sims/sims-db/constant";
 import { RecordDataModel } from "@sims/sims-db/entities/record.model";
-import { Student } from "@sims/sims-db/entities/student.model";
-import { SupplierStatus } from "@sims/sims-db/entities/supplier-status.type";
+import { Student, SupplierStatus } from "@sims/sims-db/entities";
 import {
   Column,
   Entity,
@@ -26,7 +25,7 @@ export class CASSupplier extends RecordDataModel {
    */
   @OneToOne(() => Student, {
     eager: false,
-    cascade: ["insert", "update"],
+    cascade: ["update"],
     nullable: false,
   })
   @JoinColumn({
@@ -112,7 +111,7 @@ export class CASSupplier extends RecordDataModel {
     type: "timestamptz",
     nullable: false,
   })
-  supplierStatusUpdatedOn?: Date;
+  supplierStatusUpdatedOn: Date;
 
   /**
    * Indicates when the supplier is considered valid and an invoice can be generated using the information.

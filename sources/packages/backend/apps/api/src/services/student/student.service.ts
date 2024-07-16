@@ -222,6 +222,18 @@ export class StudentService extends RecordDataModelService<Student> {
         sinValidation.sin = studentSIN;
         sinValidation.student = student;
         student.sinValidation = sinValidation;
+
+        const casSupplier = new CASSupplier();
+        casSupplier.supplierStatus = SupplierStatus.PendingSupplierVerification;
+        casSupplier.supplierStatusUpdatedOn = new Date();
+        casSupplier.isValid = false;
+        casSupplier.creator = auditUser;
+        casSupplier.student = savedStudent;
+        const savedCASSupplier = await entityManager
+          .getRepository(CASSupplier)
+          .save(casSupplier);
+
+        savedStudent.casSupplier = savedCASSupplier;
         await entityManager.getRepository(Student).save(student);
       }
 
@@ -264,23 +276,8 @@ export class StudentService extends RecordDataModelService<Student> {
       } as StudentAccountApplication;
       await entityManager.getRepository(StudentUser).save(studentUser);
 
-      const casSupplier = new CASSupplier();
-      casSupplier.supplierStatus = SupplierStatus.PendingSupplierVerification;
-      casSupplier.supplierStatusUpdatedOn = new Date();
-      casSupplier.isValid = false;
-      casSupplier.creator = auditUser;
-      casSupplier.student = savedStudent;
-      const savedCASSupplier = await entityManager
-        .getRepository(CASSupplier)
-        .save(casSupplier);
-
-      savedStudent.casSupplier = savedCASSupplier;
-      const updatedStudent = await entityManager
-        .getRepository(Student)
-        .save(savedStudent);
-
       // Returns the newly created student.
-      return updatedStudent;
+      return savedStudent;
     });
   }
 
