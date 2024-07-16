@@ -518,6 +518,16 @@ describe(
       });
     });
 
+    afterAll(async () => {
+      // Set email contact to null for provincial daily disbursement receipt notification message.
+      await db.notificationMessage.update(
+        {
+          id: NotificationMessageType.MinistryNotificationProvincialDailyDisbursementReceipt,
+        },
+        { emailContacts: null },
+      );
+    });
+
     /**
      * Get federal and provincial receipts to execute the asserts verifications.
      * @param disbursementScheduleId schedule id.
