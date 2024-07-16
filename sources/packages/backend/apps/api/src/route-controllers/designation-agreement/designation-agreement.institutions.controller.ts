@@ -72,7 +72,7 @@ export class DesignationAgreementInstitutionsController extends BaseController {
       "Not able to create a designation agreement due to an invalid request.",
   })
   @ApiUnprocessableEntityResponse({
-    description: "Institution already has a pending designation agreement.",
+    description: "Your institution already has one pending designation request; you cannot submit another one until the first has been approved or denied.",
   })
   async submitDesignationAgreement(
     @UserToken() userToken: IInstitutionUserToken,
@@ -112,7 +112,7 @@ export class DesignationAgreementInstitutionsController extends BaseController {
       );
     if (hasPendingDesignation) {
       throw new UnprocessableEntityException(
-        "Institution already has a pending designation agreement.",
+        "Your institution already has one pending designation request; you cannot submit another one until the first has been approved or denied.",
       );
     }
 

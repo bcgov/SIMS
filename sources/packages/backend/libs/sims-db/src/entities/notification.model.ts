@@ -202,6 +202,10 @@ export enum NotificationMessageType {
    */
   PartialStudentMatchNotification = 26,
   /**
+   * eCert Feedback File has errors.
+   */
+  ECertFeedbackFileErrorNotification = 27,
+  /**
    * Ministry Provincial Daily Disbursement Receipt.
    */
   MinistryNotificationProvincialDailyDisbursementReceipt = 28,
