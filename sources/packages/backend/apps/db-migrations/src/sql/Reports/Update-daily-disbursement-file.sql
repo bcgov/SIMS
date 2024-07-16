@@ -4,7 +4,13 @@ SET
     report_sql = (
         'WITH disbursement_receipt_dataset AS (
             SELECT
-                *
+                disbursement_receipts.id,
+                disbursement_receipts.total_disbursed_amount,
+                disbursement_receipts.total_disbursed_grant_amount,
+                disbursement_receipts.funding_type,
+                disbursement_receipts.file_date,
+                disbursement_receipts.batch_run_date,
+                disbursement_receipts.sequence_number
             FROM
                 sims.disbursement_receipts disbursement_receipts
             WHERE

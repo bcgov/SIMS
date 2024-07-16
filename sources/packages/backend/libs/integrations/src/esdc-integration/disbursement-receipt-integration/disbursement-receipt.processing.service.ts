@@ -221,7 +221,7 @@ export class DisbursementReceiptProcessingService {
         },
       );
       result.processSummary.push(
-        `Provincial daily disbursement CSV report generated.`,
+        "Provincial daily disbursement CSV report generated.",
       );
       this.logger.log(
         "Completed provincial daily disbursement report generation.",

@@ -29,7 +29,7 @@ import { DeepMocked } from "@golevelup/ts-jest";
 import * as Client from "ssh2-sftp-client";
 import { DisbursementReceiptsFileIntegrationScheduler } from "../disbursement-receipts-integration.scheduler";
 import * as path from "path";
-import { In, MoreThan } from "typeorm";
+import { In, IsNull } from "typeorm";
 
 const FEDERAL_PROVINCIAL_FULL_TIME_FILE =
   "EDU.PBC.DIS-federal-provincial-full-time.txt";
@@ -111,6 +111,15 @@ describe(
       await db.disbursementReceipt.delete({
         fileDate: FILE_DATE,
       });
+      // Update dateSent to new Date for notification records.
+      await db.notification.update(
+        {
+          notificationMessage: {
+            id: NotificationMessageType.MinistryNotificationProvincialDailyDisbursementReceipt,
+          },
+        },
+        { dateSent: new Date() },
+      );
     });
 
     it("Should log 'Invalid file header' error when the header has a record code different than 'F'.", async () => {
@@ -213,7 +222,6 @@ describe(
           },
         },
       );
-      const currentTestTime = new Date();
       mockDownloadFiles(sftpClientMock, [FEDERAL_PROVINCIAL_FULL_TIME_FILE]);
       // Queued job.
       const { job } = mockBullJob<void>();
@@ -234,7 +242,7 @@ describe(
             `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 3 inserted successfully.`,
             `Processing file ${downloadedFile} completed.`,
             `Processing provincial daily disbursement CSV file on ${FILE_DATE}.`,
-            `Provincial daily disbursement CSV report generated.`,
+            "Provincial daily disbursement CSV report generated.",
           ],
           errorsSummary: [],
         },
@@ -298,13 +306,16 @@ describe(
       const createdNotification = await db.notification.findOne({
         select: {
           id: true,
-          notificationMessage: { id: true, templateId: true },
+          dateSent: true,
           messagePayload: true,
-          createdAt: true,
+          notificationMessage: { id: true, templateId: true },
         },
         relations: { notificationMessage: true },
         where: {
-          createdAt: MoreThan(currentTestTime),
+          dateSent: IsNull(),
+          notificationMessage: {
+            id: NotificationMessageType.MinistryNotificationProvincialDailyDisbursementReceipt,
+          },
         },
       });
       expect(createdNotification.messagePayload).toStrictEqual({
@@ -347,7 +358,6 @@ describe(
           },
         },
       );
-      const currentTestTime = new Date();
       mockDownloadFiles(sftpClientMock, [FEDERAL_ONLY_FULL_TIME_FILE]);
       // Queued job.
       const { job } = mockBullJob<void>();
@@ -402,11 +412,16 @@ describe(
       const notification = await db.notification.findOne({
         select: {
           id: true,
+          dateSent: true,
           messagePayload: true,
-          createdAt: true,
+          notificationMessage: { id: true, templateId: true },
         },
+        relations: { notificationMessage: true },
         where: {
-          createdAt: MoreThan(currentTestTime),
+          dateSent: IsNull(),
+          notificationMessage: {
+            id: NotificationMessageType.MinistryNotificationProvincialDailyDisbursementReceipt,
+          },
         },
       });
       expect(notification).toBe(null);
@@ -425,7 +440,6 @@ describe(
           },
         },
       );
-      const currentTestTime = new Date();
       mockDownloadFiles(sftpClientMock, [FEDERAL_PROVINCIAL_PART_TIME_FILE]);
       // Queued job.
       const { job } = mockBullJob<void>();
@@ -446,7 +460,7 @@ describe(
             `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 3 inserted successfully.`,
             `Processing file ${downloadedFile} completed.`,
             `Processing provincial daily disbursement CSV file on ${FILE_DATE}.`,
-            `Provincial daily disbursement CSV report generated.`,
+            "Provincial daily disbursement CSV report generated.",
           ],
           errorsSummary: [],
         },
@@ -510,13 +524,16 @@ describe(
       const createdNotification = await db.notification.findOne({
         select: {
           id: true,
-          notificationMessage: { id: true, templateId: true },
+          dateSent: true,
           messagePayload: true,
-          createdAt: true,
+          notificationMessage: { id: true, templateId: true },
         },
         relations: { notificationMessage: true },
         where: {
-          createdAt: MoreThan(currentTestTime),
+          dateSent: IsNull(),
+          notificationMessage: {
+            id: NotificationMessageType.MinistryNotificationProvincialDailyDisbursementReceipt,
+          },
         },
       });
       expect(createdNotification.messagePayload).toStrictEqual({
