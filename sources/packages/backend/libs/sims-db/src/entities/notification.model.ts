@@ -205,4 +205,8 @@ export enum NotificationMessageType {
    * eCert Feedback File has errors.
    */
   ECertFeedbackFileErrorNotification = 27,
+  /**
+   * Ministry Provincial Daily Disbursement Receipt.
+   */
+  MinistryNotificationProvincialDailyDisbursementReceipt = 28,
 }

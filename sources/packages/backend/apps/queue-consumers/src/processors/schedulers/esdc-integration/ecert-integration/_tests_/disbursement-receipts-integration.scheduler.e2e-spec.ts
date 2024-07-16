@@ -2,6 +2,7 @@ import {
   ApplicationStatus,
   DisbursementReceipt,
   DisbursementReceiptValue,
+  NotificationMessageType,
   OfferingIntensity,
   RECEIPT_FUNDING_TYPE_FEDERAL,
   RECEIPT_FUNDING_TYPE_PROVINCIAL_FULL_TIME,
@@ -28,6 +29,7 @@ import { DeepMocked } from "@golevelup/ts-jest";
 import * as Client from "ssh2-sftp-client";
 import { DisbursementReceiptsFileIntegrationScheduler } from "../disbursement-receipts-integration.scheduler";
 import * as path from "path";
+import { In, IsNull } from "typeorm";
 
 const FEDERAL_PROVINCIAL_FULL_TIME_FILE =
   "EDU.PBC.DIS-federal-provincial-full-time.txt";
@@ -35,6 +37,10 @@ const FEDERAL_PROVINCIAL_PART_TIME_FILE =
   "EDU.PBC.DIS-federal-provincial-part-time.txt";
 const FEDERAL_ONLY_FULL_TIME_FILE = "EDU.PBC.DIS-federal-only-full-time.txt";
 const SHARED_DOCUMENT_NUMBER = 989898;
+const BATCH_RUN_DATE = "2024-01-30";
+const FILE_DATE = "2024-01-31";
+const SEQUENCE_NUMBER = 3228;
+const TEST_EMAIL = "dummy@some.domain";
 
 describe(
   describeQueueProcessorRootTest(
@@ -59,6 +65,13 @@ describe(
       sftpClientMock = sshClientMock;
       // Processor under test.
       processor = app.get(DisbursementReceiptsFileIntegrationScheduler);
+      // Insert fake email contact to send ministry email.
+      await db.notificationMessage.update(
+        {
+          id: NotificationMessageType.MinistryNotificationProvincialDailyDisbursementReceipt,
+        },
+        { emailContacts: [TEST_EMAIL] },
+      );
     });
 
     beforeEach(async () => {
@@ -67,6 +80,45 @@ describe(
       await db.disbursementSchedule.update(
         { documentNumber: SHARED_DOCUMENT_NUMBER },
         { documentNumber: 0 },
+      );
+      // Remove disbursement receipt records associated with FILE_DATE
+      // and related disbursement receipt values records.
+      const disbursementReceipts = await db.disbursementReceipt.find({
+        select: { id: true, disbursementReceiptValues: { id: true } },
+        relations: { disbursementReceiptValues: true },
+        where: { fileDate: FILE_DATE, sequenceNumber: SEQUENCE_NUMBER },
+      });
+      const disbursementReceiptValues = await db.disbursementReceiptValue.find({
+        select: { id: true, disbursementReceipt: { id: true } },
+        relations: { disbursementReceipt: true },
+        where: {
+          disbursementReceipt: {
+            id: In(
+              disbursementReceipts.map(
+                (disbursementReceipt) => disbursementReceipt.id,
+              ),
+            ),
+          },
+        },
+      });
+      await db.disbursementReceiptValue.delete({
+        id: In(
+          disbursementReceiptValues.map(
+            (disbursementReceiptValue) => disbursementReceiptValue.id,
+          ),
+        ),
+      });
+      await db.disbursementReceipt.delete({
+        fileDate: FILE_DATE,
+      });
+      // Update dateSent to new Date for notification records.
+      await db.notification.update(
+        {
+          notificationMessage: {
+            id: NotificationMessageType.MinistryNotificationProvincialDailyDisbursementReceipt,
+          },
+        },
+        { dateSent: new Date() },
       );
     });
 
@@ -189,6 +241,8 @@ describe(
             `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 2 inserted successfully.`,
             `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 3 inserted successfully.`,
             `Processing file ${downloadedFile} completed.`,
+            `Processing provincial daily disbursement CSV file on ${FILE_DATE}.`,
+            "Provincial daily disbursement CSV report generated.",
           ],
           errorsSummary: [],
         },
@@ -203,8 +257,8 @@ describe(
       // Header details.
       expect(feReceipt).toEqual(
         expect.objectContaining({
-          batchRunDate: "2024-01-30",
-          fileDate: "2024-01-31",
+          batchRunDate: BATCH_RUN_DATE,
+          fileDate: FILE_DATE,
           sequenceNumber: 3228,
         }),
       );
@@ -230,8 +284,8 @@ describe(
       // Header details.
       expect(bcReceipt).toEqual(
         expect.objectContaining({
-          batchRunDate: "2024-01-30",
-          fileDate: "2024-01-31",
+          batchRunDate: BATCH_RUN_DATE,
+          fileDate: FILE_DATE,
           sequenceNumber: 3228,
         }),
       );
@@ -248,6 +302,47 @@ describe(
       expect(bdReceiptAwards).toStrictEqual({
         BCSG: 599,
       });
+      // Notification record.
+      const createdNotification = await db.notification.findOne({
+        select: {
+          id: true,
+          dateSent: true,
+          messagePayload: true,
+          notificationMessage: { id: true, templateId: true },
+        },
+        relations: { notificationMessage: true },
+        where: {
+          dateSent: IsNull(),
+          notificationMessage: {
+            id: NotificationMessageType.MinistryNotificationProvincialDailyDisbursementReceipt,
+          },
+        },
+      });
+      expect(createdNotification.messagePayload).toStrictEqual({
+        template_id: createdNotification.notificationMessage.templateId,
+        email_address: TEST_EMAIL,
+        personalisation: {
+          application_file: {
+            file:
+              "RnVsbCBUaW1lIEJDIFN0dWRlbnQgTG9hbixGdWxsIFRpbWUgQkMgU3R1ZGVudCBHcmFudCxGdWxsIFRpbWUgQkMgVG90YWwsUGFydCBUaW1lIEJDIFN0dWRlbnQgR3JhbnQsUGFydCBUaW1lIEJDIFRvdGFsLEJDIFRvdGFsLFRvdGFsIFJlY29yZHMsRmlsZSBEYXR" +
+              "lLEJhdGNoIFJ1biBEYXRlLFNlcXVlbmNlIE51bWJlcg0KMTIzLjAwLDc2MC4wMCwxMjMuMDAsMCwwLDEyMy4wMCwxLDIwMjQtMDEtMzEsMjAyNC0wMS0zMCwzMjI4",
+            filename: `Daily_Disbursement_File_${FILE_DATE}_${SEQUENCE_NUMBER}.csv`,
+            sending_method: "attach",
+          },
+        },
+      });
+      // Verify the file content as expected.
+      const file =
+        createdNotification.messagePayload["personalisation"][
+          "application_file"
+        ]["file"];
+      const fileContent = Buffer.from(file, "base64").toString("ascii");
+      expect(fileContent).toContain(
+        "Full Time BC Student Loan,Full Time BC Student Grant,Full Time BC Total,Part Time BC Student Grant,Part Time BC Total,BC Total,Total Records,File Date,Batch Run Date,Sequence Number",
+      );
+      expect(fileContent).toContain(
+        "123.00,760.00,123.00,0,0,123.00,1,2024-01-31,2024-01-30,3228",
+      );
     });
 
     it("Should import disbursement receipt file and create only federal awards receipt with proper awards code mappings for a full-time application when the file contains only federal receipt.", async () => {
@@ -281,6 +376,7 @@ describe(
             `Processing file ${downloadedFile}.`,
             `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 2 inserted successfully.`,
             `Processing file ${downloadedFile} completed.`,
+            `Processing provincial daily disbursement CSV file on ${FILE_DATE}.`,
           ],
           errorsSummary: [],
         },
@@ -312,6 +408,23 @@ describe(
         CSGP: 499,
         XYZ: 444,
       });
+      // Notification record.
+      const notification = await db.notification.findOne({
+        select: {
+          id: true,
+          dateSent: true,
+          messagePayload: true,
+          notificationMessage: { id: true, templateId: true },
+        },
+        relations: { notificationMessage: true },
+        where: {
+          dateSent: IsNull(),
+          notificationMessage: {
+            id: NotificationMessageType.MinistryNotificationProvincialDailyDisbursementReceipt,
+          },
+        },
+      });
+      expect(notification).toBe(null);
     });
 
     it("Should import disbursement receipt file and create federal and provincial awards receipts with proper awards code mappings for a part-time application when the file contains federal and provincial receipts.", async () => {
@@ -346,6 +459,8 @@ describe(
             `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 2 inserted successfully.`,
             `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 3 inserted successfully.`,
             `Processing file ${downloadedFile} completed.`,
+            `Processing provincial daily disbursement CSV file on ${FILE_DATE}.`,
+            "Provincial daily disbursement CSV report generated.",
           ],
           errorsSummary: [],
         },
@@ -360,8 +475,8 @@ describe(
       // Header details.
       expect(feReceipt).toEqual(
         expect.objectContaining({
-          batchRunDate: "2024-01-30",
-          fileDate: "2024-01-31",
+          batchRunDate: BATCH_RUN_DATE,
+          fileDate: FILE_DATE,
           sequenceNumber: 3228,
         }),
       );
@@ -387,8 +502,8 @@ describe(
       // Header details.
       expect(bpReceipt).toEqual(
         expect.objectContaining({
-          batchRunDate: "2024-01-30",
-          fileDate: "2024-01-31",
+          batchRunDate: BATCH_RUN_DATE,
+          fileDate: FILE_DATE,
           sequenceNumber: 3228,
         }),
       );
@@ -405,6 +520,57 @@ describe(
       expect(bdReceiptAwards).toStrictEqual({
         BCSG: 600,
       });
+      // Notification record.
+      const createdNotification = await db.notification.findOne({
+        select: {
+          id: true,
+          dateSent: true,
+          messagePayload: true,
+          notificationMessage: { id: true, templateId: true },
+        },
+        relations: { notificationMessage: true },
+        where: {
+          dateSent: IsNull(),
+          notificationMessage: {
+            id: NotificationMessageType.MinistryNotificationProvincialDailyDisbursementReceipt,
+          },
+        },
+      });
+      expect(createdNotification.messagePayload).toStrictEqual({
+        template_id: createdNotification.notificationMessage.templateId,
+        email_address: TEST_EMAIL,
+        personalisation: {
+          application_file: {
+            file:
+              "RnVsbCBUaW1lIEJDIFN0dWRlbnQgTG9hbixGdWxsIFRpbWUgQkMgU3R1ZGVudCBHcmFudCxGdWxsIFRpbWUgQkMgVG90YWwsUGFydCBUaW1lIEJDIFN0dWRlbnQgR3JhbnQsUGFydCBUaW1lIEJDIFRvdGFsLEJDIFRvdGFsLFRvdGFsIFJlY29yZHMsRmlsZSBE" +
+              "YXRlLEJhdGNoIFJ1biBEYXRlLFNlcXVlbmNlIE51bWJlcg0KMCwwLDAsNzYwLjAwLDEzMi4wMCwxMzIuMDAsMSwyMDI0LTAxLTMxLDIwMjQtMDEtMzAsMzIyOA==",
+            filename: "Daily_Disbursement_File_2024-01-31_3228.csv",
+            sending_method: "attach",
+          },
+        },
+      });
+      // Verify the file content as expected.
+      const file =
+        createdNotification.messagePayload["personalisation"][
+          "application_file"
+        ]["file"];
+      const fileContent = Buffer.from(file, "base64").toString("ascii");
+      expect(fileContent).toContain(
+        "Full Time BC Student Loan,Full Time BC Student Grant,Full Time BC Total,Part Time BC Student Grant,Part Time BC Total,BC Total,Total Records,File Date,Batch Run Date,Sequence Number",
+      );
+      expect(fileContent).toContain(
+        "0,0,0,760.00,132.00,132.00,1,2024-01-31,2024-01-30,3228",
+      );
+    });
+
+    afterAll(async () => {
+      // Set email contact to null for provincial daily disbursement receipt notification message.
+      await db.notificationMessage.update(
+        {
+          id: NotificationMessageType.MinistryNotificationProvincialDailyDisbursementReceipt,
+        },
+        { emailContacts: null },
+      );
     });
 
     /**

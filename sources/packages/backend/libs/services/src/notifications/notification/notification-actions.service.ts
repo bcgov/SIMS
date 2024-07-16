@@ -29,6 +29,7 @@ import {
   ApplicationOfferingChangeRequestApprovedByStudentNotification,
   PartialStudentMatchNotification,
   ECertFeedbackFileErrorNotification,
+  DailyDisbursementReportProcessingNotification,
 } from "..";
 import { NotificationService } from "./notification.service";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
@@ -1154,6 +1155,47 @@ export class NotificationActionsService {
       ministryNotificationsToSend,
       auditUser.id,
       { entityManager },
+    );
+  }
+
+  /**
+   * Creates Provincial Daily Disbursement Report file processing notifications.
+   * Currently multiple notifications are created as integration contacts
+   * can be multiple.
+   * @param notification notification details.
+   */
+  async saveProvincialDailyDisbursementReportProcessingNotification(
+    notification: DailyDisbursementReportProcessingNotification,
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const { templateId, emailContacts } =
+      await this.assertNotificationMessageDetails(
+        NotificationMessageType.MinistryNotificationProvincialDailyDisbursementReceipt,
+      );
+    if (!emailContacts?.length) {
+      return;
+    }
+
+    const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
+      userId: auditUser.id,
+      messageType:
+        NotificationMessageType.MinistryNotificationProvincialDailyDisbursementReceipt,
+      messagePayload: {
+        email_address: emailContact,
+        template_id: templateId,
+        personalisation: {
+          application_file: {
+            file: base64Encode(notification.attachmentFileContent),
+            filename: notification.fileName,
+            sending_method: "attach",
+          },
+        },
+      } as NotificationEmailMessage,
+    }));
+
+    await this.notificationService.saveNotifications(
+      ministryNotificationsToSend,
+      auditUser.id,
     );
   }
 

@@ -8,6 +8,13 @@ import {
   DisbursementReceiptService,
   DisbursementScheduleService,
 } from "@sims/integrations/services";
+import {
+  NotificationActionsService,
+  ReportService,
+  ReportsFilterModel,
+} from "@sims/services";
+import { DAILY_DISBURSEMENT_REPORT_NAME } from "@sims/services/constants";
+import { getISODateOnlyString } from "@sims/utilities";
 
 /**
  * Disbursement schedule map which consists of disbursement schedule id for a document number.
@@ -28,6 +35,8 @@ export class DisbursementReceiptProcessingService {
     private readonly integrationService: DisbursementReceiptIntegrationService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
     private readonly disbursementReceiptService: DisbursementReceiptService,
+    private readonly reportService: ReportService,
+    private readonly notificationActionsService: NotificationActionsService,
   ) {
     this.esdcConfig = config.esdcIntegration;
   }
@@ -141,6 +150,13 @@ export class DisbursementReceiptProcessingService {
       }
     }
     result.processSummary.push(`Processing file ${remoteFilePath} completed.`);
+
+    await this.processSendingFile(
+      result,
+      responseData.header.fileDate,
+      responseData.header.sequenceNumber,
+    );
+
     try {
       //Deleting the file once it has been processed.
       await this.integrationService.deleteFile(remoteFilePath);
@@ -151,6 +167,72 @@ export class DisbursementReceiptProcessingService {
       result.errorsSummary.push(error);
     }
     return result;
+  }
+
+  /**
+   * Create a provincial daily disbursement CSV file and
+   * email the content to the ministry users.
+   * @param result output of the processing steps.
+   * @param fileDate File date to be a part of filename.
+   * @param sequenceNumber Sequence number to be a part of filename.
+   */
+  private async processSendingFile(
+    result: ProcessSFTPResponseResult,
+    fileDate: Date,
+    sequenceNumber: number,
+  ): Promise<void> {
+    result.processSummary.push(
+      `Processing provincial daily disbursement CSV file on ${getISODateOnlyString(
+        fileDate,
+      )}.`,
+    );
+
+    try {
+      // Populate the reportName and fileDate and sequenceNumber to the reportsFilterMode.
+      const reportFilterModel: ReportsFilterModel = {
+        reportName: DAILY_DISBURSEMENT_REPORT_NAME,
+        params: {
+          fileDate,
+          sequenceNumber,
+        },
+      };
+
+      // Fetch the reports data and convert them into CSV.
+      const dailyDisbursementsRecordsInCSV =
+        await this.reportService.getReportDataAsCSV(reportFilterModel);
+
+      if (dailyDisbursementsRecordsInCSV === "") {
+        return;
+      }
+
+      // Create the file name for the daily disbursement report.
+      const disbursementFileName =
+        this.integrationService.createDisbursementFileName(
+          DAILY_DISBURSEMENT_REPORT_NAME,
+          fileDate,
+          sequenceNumber,
+        );
+
+      // Send the Daily Disbursement Report content and file via email.
+      await this.notificationActionsService.saveProvincialDailyDisbursementReportProcessingNotification(
+        {
+          attachmentFileContent: dailyDisbursementsRecordsInCSV,
+          fileName: disbursementFileName,
+        },
+      );
+      result.processSummary.push(
+        "Provincial daily disbursement CSV report generated.",
+      );
+      this.logger.log(
+        "Completed provincial daily disbursement report generation.",
+      );
+    } catch (error) {
+      this.logger.error(error);
+      result.errorsSummary.push(
+        "Error while generating provincial daily disbursement CSV report file.",
+      );
+      result.errorsSummary.push(error);
+    }
   }
 
   @InjectLogger()
