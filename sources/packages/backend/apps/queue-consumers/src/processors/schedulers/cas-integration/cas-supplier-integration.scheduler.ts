@@ -13,7 +13,7 @@ import {
   logProcessSummaryToJobLogger,
   getSuccessMessageWithAttentionCheck,
 } from "../../../utilities";
-import { UNABLE_TO_SCAN_FILE } from "apps/queue-consumers/src/constants/error-code.constants";
+import { CAS_AUTH_ERROR } from "../../../constants/error-code.constants";
 
 @Processor(QueueNames.CASSupplierIntegration)
 export class CASSupplierIntegrationScheduler extends BaseScheduler<void> {
@@ -66,7 +66,7 @@ export class CASSupplierIntegrationScheduler extends BaseScheduler<void> {
       );
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
-        if (error.name === UNABLE_TO_SCAN_FILE) {
+        if (error.name === CAS_AUTH_ERROR) {
           processSummary.error(
             `Unable to request data to CAS due to an authentication error.`,
           );

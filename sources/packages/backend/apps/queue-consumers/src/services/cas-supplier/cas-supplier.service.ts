@@ -10,6 +10,7 @@ import { CAS_AUTH_ERROR } from "../../constants/error-code.constants";
 import {
   CASAuthDetails,
   CASSupplierResponseItem,
+  CASSupplierResponseItemAddress,
 } from "@sims/integrations/cas/models/cas-supplier-response.model";
 
 const CAS_SUPPLIER_ADDRESS_ACTIVE_STATUS = "ACTIVE";
@@ -91,10 +92,7 @@ export class CASSupplierIntegrationService {
         if (supplierResponse.items.length) {
           const [supplierInfo] = supplierResponse.items;
           const isThereAnActiveSupplierAddress =
-            supplierInfo.supplieraddress.find(
-              (address) =>
-                address.status === CAS_SUPPLIER_ADDRESS_ACTIVE_STATUS,
-            );
+            this.getActiveSupplier(supplierInfo);
           if (isThereAnActiveSupplierAddress) {
             summary.info("Updating CAS supplier table.");
             try {
@@ -132,6 +130,14 @@ export class CASSupplierIntegrationService {
     return suppliersUpdated;
   }
 
+  private getActiveSupplier(
+    casSupplierResponseItem: CASSupplierResponseItem,
+  ): CASSupplierResponseItemAddress {
+    return casSupplierResponseItem.supplieraddress.find(
+      (address) => address.status === CAS_SUPPLIER_ADDRESS_ACTIVE_STATUS,
+    );
+  }
+
   /**
    * Updates CAS supplier table.
    * @param casSupplier CAS supplier to be updated.
@@ -146,8 +152,8 @@ export class CASSupplierIntegrationService {
   ): Promise<UpdateResult> {
     // When multiple exists, only the active one should be saved.
     // We will not be saving the array received at this moment, only a single entry from the received list should be persisted as JSONB.
-    const activeSupplierAddress = casSupplierResponseItem.supplieraddress.find(
-      (address) => address.status === CAS_SUPPLIER_ADDRESS_ACTIVE_STATUS,
+    const activeSupplierAddress = this.getActiveSupplier(
+      casSupplierResponseItem,
     );
     let supplierAddressToUpdate: SupplierAddress = null;
     if (activeSupplierAddress) {
