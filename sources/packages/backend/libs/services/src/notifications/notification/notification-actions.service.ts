@@ -28,11 +28,13 @@ import {
   InstitutionAddsPendingProgramNotification,
   ApplicationOfferingChangeRequestApprovedByStudentNotification,
   PartialStudentMatchNotification,
+  ECertFeedbackFileErrorNotification,
 } from "..";
 import { NotificationService } from "./notification.service";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { ECE_RESPONSE_ATTACHMENT_FILE_NAME } from "@sims/integrations/constants";
 import { SystemUsersService } from "@sims/services/system-users";
+import { NotificationMetadata } from "@sims/sims-db/entities/notification-metadata.type";
 
 @Injectable()
 export class NotificationActionsService {
@@ -1105,6 +1107,47 @@ export class NotificationActionsService {
           dateTime: this.getDateTimeOnPSTTimeZone(),
         },
       },
+    }));
+    // Save notifications to be sent to the ministry into the notification table.
+    await this.notificationService.saveNotifications(
+      ministryNotificationsToSend,
+      auditUser.id,
+      { entityManager },
+    );
+  }
+
+  /**
+   * Saves eCert Feedback File Error notification for ministry.
+   * @param notification notification details.
+   * @param metadata metadata related to the notification to be saved.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveECertFeedbackFileErrorNotification(
+    notification: ECertFeedbackFileErrorNotification,
+    metadata: NotificationMetadata,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const { templateId, emailContacts } =
+      await this.assertNotificationMessageDetails(
+        NotificationMessageType.ECertFeedbackFileErrorNotification,
+      );
+    if (!emailContacts?.length) {
+      return;
+    }
+    const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
+      messageType: NotificationMessageType.ECertFeedbackFileErrorNotification,
+      messagePayload: {
+        email_address: emailContact,
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
+          applicationNumber: notification.applicationNumber,
+          errorCodes: notification.errorCodes,
+        },
+      },
+      metadata,
     }));
     // Save notifications to be sent to the ministry into the notification table.
     await this.notificationService.saveNotifications(

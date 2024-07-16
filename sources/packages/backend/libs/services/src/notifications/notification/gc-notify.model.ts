@@ -51,6 +51,7 @@ export interface NotificationEmailMessage {
   personalisation?: {
     [key: string]:
       | string
+      | string[]
       | number
       | {
           file: string;

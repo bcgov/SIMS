@@ -2,6 +2,7 @@ import {
   ApplicationStatus,
   COEStatus,
   DisbursementScheduleStatus,
+  NotificationMessageType,
   OfferingIntensity,
 } from "@sims/sims-db";
 import {
@@ -25,8 +26,10 @@ import { DeepMocked } from "@golevelup/ts-jest";
 import * as Client from "ssh2-sftp-client";
 import * as path from "path";
 import { FullTimeECertFeedbackIntegrationScheduler } from "../ecert-full-time-feedback-integration.scheduler";
+import { IsNull } from "typeorm";
 
 const FEEDBACK_ERROR_FILE_SINGLE_RECORD = "EDU.PBC.FTECERTSFB.SINGLERECORD";
+const FEEDBACK_ERROR_NOTIFICATION_FILE = "EDU.PBC.FTECERTSFB.ERRORNOTIFICATION";
 const FEEDBACK_ERROR_FILE_MULTIPLE_RECORDS =
   "EDU.PBC.FTECERTSFB.MULTIPLERECORDS";
 const SHARED_DOCUMENT_NUMBER = 6666;
@@ -53,6 +56,13 @@ describe(
       sftpClientMock = sshClientMock;
       // Processor under test.
       processor = app.get(FullTimeECertFeedbackIntegrationScheduler);
+      // Insert fake email contact to send ministry email.
+      await db.notificationMessage.update(
+        {
+          id: NotificationMessageType.ECertFeedbackFileErrorNotification,
+        },
+        { emailContacts: ["dummy@some.domain"] },
+      );
     });
 
     beforeEach(async () => {
@@ -385,5 +395,87 @@ describe(
         });
       },
     );
+
+    it("Should generate a notification to the ministry when there are ecert feedback errors that block funding for a disbursement.", async () => {
+      // Arrange
+      // Update the date sent for the notifications to current date where the date sent is null.
+      await db.notification.update(
+        { dateSent: IsNull() },
+        { dateSent: new Date() },
+      );
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        undefined,
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          applicationStatus: ApplicationStatus.Completed,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+            documentNumber: SHARED_DOCUMENT_NUMBER,
+          },
+        },
+      );
+      mockDownloadFiles(
+        sftpClientMock,
+        [FEEDBACK_ERROR_FILE_SINGLE_RECORD],
+        (fileContent: string) => {
+          const file = getStructuredRecords(fileContent);
+          // Force the error code to be wrong in the first record.
+          const [record] = file.records;
+          file.records = [
+            record.replace("EDU-00099          ", "EDU-00033 EDU-00034"),
+          ];
+          return createFileFromStructuredRecords(file);
+        },
+      );
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processFullTimeResponses(mockedJob.job);
+
+      // Assert
+      expect(result.length).toBe(1);
+      expect(result).toContain("Process finalized with success.");
+      expect(
+        mockedJob.containLogMessages([
+          "File contains 1 records.",
+          `Disbursement feedback error created for document number ${SHARED_DOCUMENT_NUMBER} at line 2.`,
+        ]),
+      ).toBe(true);
+      // When all the records are processed successfully, expect the file to be deleted from SFTP.
+      expect(sftpClientMock.delete).toHaveBeenCalled();
+
+      // Assert
+      const notification = await db.notification.findOne({
+        select: {
+          id: true,
+          messagePayload: true,
+          notificationMessage: {
+            id: true,
+            templateId: true,
+            emailContacts: true,
+          },
+        },
+        relations: { notificationMessage: true },
+        where: {
+          notificationMessage: {
+            id: NotificationMessageType.ECertFeedbackFileErrorNotification,
+          },
+          dateSent: IsNull(),
+        },
+      });
+      expect(notification.messagePayload).toStrictEqual({
+        email_address: notification.notificationMessage.emailContacts[0],
+        template_id: notification.notificationMessage.templateId,
+        personalisation: {
+          lastName: application.student.user.lastName,
+          givenNames: application.student.user.firstName,
+          applicationNumber: application.applicationNumber,
+          errorCodes: ["EDU-00033", "EDU-00034"],
+        },
+      });
+    });
   },
 );

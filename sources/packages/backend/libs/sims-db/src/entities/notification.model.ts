@@ -201,4 +201,8 @@ export enum NotificationMessageType {
    * A partial match for a new student account was found.
    */
   PartialStudentMatchNotification = 26,
+  /**
+   * eCert Feedback File has errors.
+   */
+  ECertFeedbackFileErrorNotification = 27,
 }
