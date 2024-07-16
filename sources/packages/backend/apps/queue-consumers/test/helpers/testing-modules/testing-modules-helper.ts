@@ -15,8 +15,8 @@ import { DiscoveryModule } from "@golevelup/nestjs-discovery";
 import { QueueModule } from "@sims/services/queue";
 import { SystemUsersService, ZeebeModule } from "@sims/services";
 import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
-import { CASService } from "../../../src/services";
 import { createCASServiceMock } from "../mock-utils/cas-service.mock";
+import { CASService } from "@sims/integrations/cas/cas.service";
 
 /**
  * Result from a createTestingModule to support E2E tests creation.
