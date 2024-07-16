@@ -12,12 +12,13 @@ import {
   describeProcessorRootTest,
   mockBullJob,
 } from "../../../../../test/helpers";
-import { CASSupplier, SupplierStatus } from "@sims/sims-db";
+import { SupplierStatus } from "@sims/sims-db";
 import {
   CAS_LOGON_MOCKED_RESULT,
   SUPPLIER_INFO_FROM_CAS_MOCKED_RESULT,
 } from "../../../../../test/helpers/mock-utils/cas-service.mock";
 import { CASService } from "@sims/integrations/cas/cas.service";
+import { saveFakeCASSupplier } from "./cas-supplier.factory";
 
 describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
   let app: INestApplication;
@@ -72,13 +73,11 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
   it("Should update CAS supplier table when found pending supplier information to be updated.", async () => {
     const student = await saveFakeStudent(db.dataSource);
 
-    const casSupplier = new CASSupplier();
-    casSupplier.supplierStatus = SupplierStatus.PendingSupplierVerification;
-    casSupplier.supplierStatusUpdatedOn = new Date();
-    casSupplier.isValid = false;
-    casSupplier.creator = systemUsersService.systemUser;
-    casSupplier.student = student;
-    const savedCASSupplier = await db.casSupplier.save(casSupplier);
+    const savedCASSupplier = await saveFakeCASSupplier(
+      db,
+      systemUsersService.systemUser,
+      student,
+    );
 
     // Queued job.
     const mockedJob = mockBullJob<void>();
