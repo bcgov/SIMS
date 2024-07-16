@@ -312,12 +312,26 @@ describe(
         email_address: TEST_EMAIL,
         personalisation: {
           application_file: {
-            file: "c3VtLEZpbGUgRGF0ZSxCYXRjaCBSdW4gRGF0ZSxTZXF1ZW5jZSBOdW1iZXINCjEsMjAyNC0wMS0zMSwyMDI0LTAxLTMwLDMyMjg=",
+            file:
+              "RnVsbCBUaW1lIEJDIFN0dWRlbnQgTG9hbixGdWxsIFRpbWUgQkMgU3R1ZGVudCBHcmFudCxGdWxsIFRpbWUgQkMgVG90YWwsUGFydCBUaW1lIEJDIFN0dWRlbnQgR3JhbnQsUGFydCBUaW1lIEJDIFRvdGFsLEJDIFRvdGFsLFRvdGFsIFJlY29yZHMsRmlsZSBEYXR" +
+              "lLEJhdGNoIFJ1biBEYXRlLFNlcXVlbmNlIE51bWJlcg0KMTIzLjAwLDc2MC4wMCwxMjMuMDAsMCwwLDEyMy4wMCwxLDIwMjQtMDEtMzEsMjAyNC0wMS0zMCwzMjI4",
             filename: `Daily_Disbursement_File_${FILE_DATE}_${SEQUENCE_NUMBER}.csv`,
             sending_method: "attach",
           },
         },
       });
+      // Verify the file content as expected.
+      const file =
+        createdNotification.messagePayload["personalisation"][
+          "application_file"
+        ]["file"];
+      const fileContent = Buffer.from(file, "base64").toString("ascii");
+      expect(fileContent).toContain(
+        "Full Time BC Student Loan,Full Time BC Student Grant,Full Time BC Total,Part Time BC Student Grant,Part Time BC Total,BC Total,Total Records,File Date,Batch Run Date,Sequence Number",
+      );
+      expect(fileContent).toContain(
+        "123.00,760.00,123.00,0,0,123.00,1,2024-01-31,2024-01-30,3228",
+      );
     });
 
     it("Should import disbursement receipt file and create only federal awards receipt with proper awards code mappings for a full-time application when the file contains only federal receipt.", async () => {
@@ -510,12 +524,26 @@ describe(
         email_address: TEST_EMAIL,
         personalisation: {
           application_file: {
-            file: "c3VtLEZpbGUgRGF0ZSxCYXRjaCBSdW4gRGF0ZSxTZXF1ZW5jZSBOdW1iZXINCjEsMjAyNC0wMS0zMSwyMDI0LTAxLTMwLDMyMjg=",
+            file:
+              "RnVsbCBUaW1lIEJDIFN0dWRlbnQgTG9hbixGdWxsIFRpbWUgQkMgU3R1ZGVudCBHcmFudCxGdWxsIFRpbWUgQkMgVG90YWwsUGFydCBUaW1lIEJDIFN0dWRlbnQgR3JhbnQsUGFydCBUaW1lIEJDIFRvdGFsLEJDIFRvdGFsLFRvdGFsIFJlY29yZHMsRmlsZSBE" +
+              "YXRlLEJhdGNoIFJ1biBEYXRlLFNlcXVlbmNlIE51bWJlcg0KMCwwLDAsNzYwLjAwLDEzMi4wMCwxMzIuMDAsMSwyMDI0LTAxLTMxLDIwMjQtMDEtMzAsMzIyOA==",
             filename: "Daily_Disbursement_File_2024-01-31_3228.csv",
             sending_method: "attach",
           },
         },
       });
+      // Verify the file content as expected.
+      const file =
+        createdNotification.messagePayload["personalisation"][
+          "application_file"
+        ]["file"];
+      const fileContent = Buffer.from(file, "base64").toString("ascii");
+      expect(fileContent).toContain(
+        "Full Time BC Student Loan,Full Time BC Student Grant,Full Time BC Total,Part Time BC Student Grant,Part Time BC Total,BC Total,Total Records,File Date,Batch Run Date,Sequence Number",
+      );
+      expect(fileContent).toContain(
+        "0,0,0,760.00,132.00,132.00,1,2024-01-31,2024-01-30,3228",
+      );
     });
 
     afterAll(async () => {
