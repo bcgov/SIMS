@@ -13,11 +13,11 @@ import {
   mockBullJob,
 } from "../../../../../test/helpers";
 import { CASSupplier, SupplierStatus } from "@sims/sims-db";
-import { CASService } from "../../../../services";
 import {
   casLogonMockedResult,
   getSupplierInfoFromCASMockedResult,
 } from "../../../../../test/helpers/mock-utils/cas-service.mock";
+import { CASService } from "@sims/integrations/cas/cas.service";
 
 describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
   let app: INestApplication;
