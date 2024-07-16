@@ -1119,7 +1119,7 @@ dmnX (comes from dmn)</bpmn:text>
       <bpmn:extensionElements>
         <zeebe:script expression="=// Consider only dependants who were born on or before the study end date.&#10;inputDataDependants[date(item.dateOfBirth) &#60;= date(offeringStudyEndDate)]" resultVariable="calculatedDataDependants" />
         <zeebe:ioMapping>
-          <zeebe:input source="=//TODO: Student appeal variable needs to be considered here.&#10;if studentDataDependants = null &#10;then []&#10;else studentDataDependants" target="inputDataDependents" />
+          <zeebe:input source="=//TODO: Student appeal variable needs to be considered here.&#10;if studentDataDependants = null &#10;then []&#10;else studentDataDependants" target="inputDataDependants" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_12lq3bf</bpmn:incoming>
