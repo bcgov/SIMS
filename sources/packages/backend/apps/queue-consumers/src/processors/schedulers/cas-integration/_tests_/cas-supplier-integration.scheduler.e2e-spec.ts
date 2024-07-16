@@ -14,8 +14,8 @@ import {
 } from "../../../../../test/helpers";
 import { CASSupplier, SupplierStatus } from "@sims/sims-db";
 import {
-  casLogonMockedResult,
-  getSupplierInfoFromCASMockedResult,
+  CAS_LOGON_MOCKED_RESULT,
+  SUPPLIER_INFO_FROM_CAS_MOCKED_RESULT,
 } from "../../../../../test/helpers/mock-utils/cas-service.mock";
 import { CASService } from "@sims/integrations/cas/cas.service";
 
@@ -25,7 +25,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
   let db: E2EDataSources;
   let systemUsersService: SystemUsersService;
   let casServiceMock: CASService;
-  const [supplierMockedResult] = getSupplierInfoFromCASMockedResult.items;
+  const [supplierMockedResult] = SUPPLIER_INFO_FROM_CAS_MOCKED_RESULT.items;
 
   beforeAll(async () => {
     const {
@@ -104,7 +104,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
 
     expect(casServiceMock.logon).toHaveBeenCalled();
     expect(casServiceMock.getSupplierInfoFromCAS).toHaveBeenCalledWith(
-      casLogonMockedResult.access_token,
+      CAS_LOGON_MOCKED_RESULT.access_token,
       student.sinValidation.sin,
       student.user.lastName.toUpperCase(),
     );

@@ -1,6 +1,6 @@
 import { InjectQueue, Process, Processor } from "@nestjs/bull";
 import { QueueService } from "@sims/services/queue";
-import { QueueNames } from "@sims/utilities";
+import { CustomNamedError, QueueNames } from "@sims/utilities";
 import {
   InjectLogger,
   LoggerService,
@@ -13,6 +13,7 @@ import {
   logProcessSummaryToJobLogger,
   getSuccessMessageWithAttentionCheck,
 } from "../../../utilities";
+import { UNABLE_TO_SCAN_FILE } from "apps/queue-consumers/src/constants/error-code.constants";
 
 @Processor(QueueNames.CASSupplierIntegration)
 export class CASSupplierIntegrationScheduler extends BaseScheduler<void> {
@@ -41,12 +42,12 @@ export class CASSupplierIntegrationScheduler extends BaseScheduler<void> {
       processSummary.info("Executing CAS supplier integration...");
       const pendingCASSuppliers =
         await this.casSupplierIntegrationService.getStudentsToUpdateSupplierInformation();
-      const serviceProcessSummary = new ProcessSummary();
       processSummary.info(
         `Found ${pendingCASSuppliers.length} records to be updated.`,
       );
       let suppliersUpdated = 0;
       if (pendingCASSuppliers.length) {
+        const serviceProcessSummary = new ProcessSummary();
         processSummary.children(serviceProcessSummary);
         suppliersUpdated =
           await this.casSupplierIntegrationService.executeCASIntegrationProcess(
@@ -55,7 +56,6 @@ export class CASSupplierIntegrationScheduler extends BaseScheduler<void> {
           );
       }
       processSummary.info("CAS supplier integration executed.");
-      await this.cleanSchedulerQueueHistory();
       return getSuccessMessageWithAttentionCheck(
         [
           "Process finalized with success.",
@@ -65,9 +65,17 @@ export class CASSupplierIntegrationScheduler extends BaseScheduler<void> {
         processSummary,
       );
     } catch (error: unknown) {
-      const errorMessage = "Unexpected error while executing the job.";
-      processSummary.error(errorMessage, error);
-      return [errorMessage];
+      if (error instanceof CustomNamedError) {
+        if (error.name === UNABLE_TO_SCAN_FILE) {
+          processSummary.error(
+            `Unable to request data to CAS due to an authentication error.`,
+          );
+        }
+      } else {
+        const errorMessage = "Unexpected error while executing the job.";
+        processSummary.error(errorMessage, error);
+        return [errorMessage];
+      }
     } finally {
       this.logger.logProcessSummary(processSummary);
       await logProcessSummaryToJobLogger(processSummary, job);

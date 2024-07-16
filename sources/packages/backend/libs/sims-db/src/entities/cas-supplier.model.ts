@@ -59,7 +59,7 @@ export class CASSupplier extends RecordDataModel {
     name: "status",
     nullable: true,
   })
-  status?: string;
+  status?: "ACTIVE" | "INACTIVE" | undefined;
 
   /**
    * Protected flag received from CAS which means the student profile was created by SFAS and

@@ -2,10 +2,11 @@ import { Injectable } from "@nestjs/common";
 import {
   CASAuthDetails,
   CASSupplierResponse,
-} from "./models/cas-supplier-response.dto";
+} from "./models/cas-supplier-response.model";
 import { AxiosRequestConfig } from "axios";
 import { HttpService } from "@nestjs/axios";
 import { CASIntegrationConfig, ConfigService } from "@sims/utilities/config";
+import { stringify } from "querystring";
 
 @Injectable()
 export class CASService {
@@ -30,16 +31,12 @@ export class CASService {
       "Content-Type": "application/x-www-form-urlencoded",
       Authorization: `Basic ${auth}`,
     };
-    const body = new URLSearchParams();
-    body.append("grant_type", "client_credentials");
+    const body = { grant_type: "client_credentials" };
     const config: AxiosRequestConfig = {
       headers,
     };
-    const response = await this.httpService.axiosRef.post(
-      url,
-      body.toString(),
-      config,
-    );
+    const data = stringify(body);
+    const response = await this.httpService.axiosRef.post(url, data, config);
     return response.data;
   }
 
@@ -50,7 +47,7 @@ export class CASService {
    * @param lastName student's last name.
    * @returns CAS supplier response.
    */
-  public async getSupplierInfoFromCAS(
+  async getSupplierInfoFromCAS(
     token: string,
     sin: string,
     lastName: string,

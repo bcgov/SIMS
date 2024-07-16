@@ -3,28 +3,25 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { SystemUsersService } from "@sims/services";
 import { CASSupplier, SupplierAddress, SupplierStatus } from "@sims/sims-db";
 import { ProcessSummary } from "@sims/utilities/logger";
-import { Not, Repository, UpdateResult } from "typeorm";
-import { CASIntegrationConfig, ConfigService } from "@sims/utilities/config";
+import { Repository, UpdateResult } from "typeorm";
 import { CASService } from "@sims/integrations/cas/cas.service";
+import { CustomNamedError } from "@sims/utilities";
+import { CAS_AUTH_ERROR } from "apps/queue-consumers/src/constants/error-code.constants";
 import {
   CASAuthDetails,
   CASSupplierResponseItem,
-} from "@sims/integrations/cas/models/cas-supplier-response.dto";
+} from "@sims/integrations/cas/models/cas-supplier-response.model";
 
 const CAS_SUPPLIER_ADDRESS_ACTIVE_STATUS = "ACTIVE";
 
 @Injectable()
 export class CASSupplierIntegrationService {
-  private readonly casIntegrationConfig: CASIntegrationConfig;
   constructor(
-    config: ConfigService,
     private readonly casService: CASService,
     private readonly systemUsersService: SystemUsersService,
     @InjectRepository(CASSupplier)
     private readonly casSupplierRepo: Repository<CASSupplier>,
-  ) {
-    this.casIntegrationConfig = config.casIntegration;
-  }
+  ) {}
 
   /**
    * CAS integration process.
@@ -52,6 +49,10 @@ export class CASSupplierIntegrationService {
         );
       } else {
         summary.info("Could not authenticate on CAS.");
+        throw new CustomNamedError(
+          "Could not authenticate on CAS.",
+          CAS_AUTH_ERROR,
+        );
       }
     } catch (error: unknown) {
       summary.error("Unexpected error.", error);
@@ -68,39 +69,64 @@ export class CASSupplierIntegrationService {
    */
   private async requestCASAndUpdateSuppliers(
     casSuppliers: CASSupplier[],
-    summary: ProcessSummary,
+    parentProcessSummary: ProcessSummary,
     auth: CASAuthDetails,
-  ) {
+  ): Promise<number> {
     let suppliersUpdated = 0;
     for (const casSupplier of casSuppliers) {
+      const summary = new ProcessSummary();
+      parentProcessSummary.children(summary);
       summary.info(`Requesting info for CAS supplier id ${casSupplier.id}.`);
       let supplierResponse = null;
       try {
-        supplierResponse = await this.casService.getSupplierInfoFromCAS(
-          auth.access_token,
-          casSupplier.student.sinValidation.sin,
-          casSupplier.student.user.lastName.toUpperCase(),
-        );
-      } catch (error: unknown) {
-        summary.error("Unexpected error while requesting supplier.", error);
-      }
-      if (supplierResponse.items.length > 0) {
-        const [supplierInfo] = supplierResponse.items;
-        summary.info("Updating CAS supplier table.");
         try {
-          const updateResult = await this.updateCASSupplier(
-            casSupplier,
-            supplierInfo,
-            SupplierStatus.Verified,
+          supplierResponse = await this.casService.getSupplierInfoFromCAS(
+            auth.access_token,
+            casSupplier.student.sinValidation.sin,
+            casSupplier.student.user.lastName.toUpperCase(),
           );
-          if (updateResult.affected) {
-            suppliersUpdated++;
-          }
         } catch (error: unknown) {
-          summary.error("Unexpected error.", error);
+          throw new Error("Unexpected error while requesting supplier.", error);
         }
-      } else {
-        summary.info("No supplier found on CAS.");
+        if (supplierResponse.items.length) {
+          const [supplierInfo] = supplierResponse.items;
+          const isThereAnActiveSupplierAddress =
+            supplierInfo.supplieraddress.find(
+              (address) =>
+                address.status === CAS_SUPPLIER_ADDRESS_ACTIVE_STATUS,
+            );
+          if (isThereAnActiveSupplierAddress) {
+            summary.info("Updating CAS supplier table.");
+            try {
+              const updateResult = await this.updateCASSupplier(
+                casSupplier.id,
+                supplierInfo,
+                SupplierStatus.Verified,
+              );
+              if (updateResult.affected) {
+                suppliersUpdated++;
+              }
+            } catch (error: unknown) {
+              throw new Error(
+                "Unexpected error while updating CAS supplier table.",
+                error,
+              );
+            }
+          } else {
+            summary.info("No active supplier address found on CAS.");
+          }
+        } else {
+          summary.info("No supplier found on CAS.");
+        }
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          summary.error(error.message);
+        } else {
+          summary.error(
+            "Error while requesting or updating CAS suppliers.",
+            error,
+          );
+        }
       }
     }
     return suppliersUpdated;
@@ -114,7 +140,7 @@ export class CASSupplierIntegrationService {
    * @returns update result.
    */
   async updateCASSupplier(
-    casSupplier: CASSupplier,
+    casSupplierId: number,
     casSupplierResponseItem: CASSupplierResponseItem,
     supplierStatus: SupplierStatus,
   ): Promise<UpdateResult> {
@@ -141,12 +167,12 @@ export class CASSupplierIntegrationService {
     const systemUser = this.systemUsersService.systemUser;
     return this.casSupplierRepo.update(
       {
-        id: casSupplier.id,
+        id: casSupplierId,
       },
       {
         supplierNumber: casSupplierResponseItem.suppliernumber,
         supplierName: casSupplierResponseItem.suppliername,
-        status: casSupplierResponseItem.status,
+        status: CAS_SUPPLIER_ADDRESS_ACTIVE_STATUS,
         supplierProtected: casSupplierResponseItem.supplierprotected === "Y",
         lastUpdated: new Date(casSupplierResponseItem.lastupdated),
         supplierAddress: supplierAddressToUpdate,
@@ -169,7 +195,7 @@ export class CASSupplierIntegrationService {
         id: true,
         student: {
           id: true,
-          sinValidation: { sin: true, isValidSIN: true },
+          sinValidation: { sin: true },
           user: { lastName: true },
         },
       },
@@ -177,7 +203,7 @@ export class CASSupplierIntegrationService {
         student: { sinValidation: true, user: true },
       },
       where: {
-        isValid: Not(true),
+        isValid: false,
         supplierStatus: SupplierStatus.PendingSupplierVerification,
         student: { sinValidation: { isValidSIN: true } },
       },

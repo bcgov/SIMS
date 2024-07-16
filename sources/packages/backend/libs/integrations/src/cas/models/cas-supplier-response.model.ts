@@ -4,7 +4,6 @@ export class CASSupplierResponse {
   limit: number;
   offset: number;
   count: number;
-  links: CASSupplierResponseItemLink[];
 }
 export class CASSupplierResponseItem {
   suppliernumber: string;
@@ -14,7 +13,7 @@ export class CASSupplierResponseItem {
   providerid?: string;
   businessnumber?: null;
   status: string;
-  supplierprotected?: string | null;
+  supplierprotected?: "Y" | "N" | null;
   standardindustryclassification?: string;
   lastupdated: string;
   supplieraddress: CASSupplierResponseItemAddress[];

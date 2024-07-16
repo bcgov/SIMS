@@ -1,12 +1,12 @@
 import { CASService } from "@sims/integrations/cas/cas.service";
 
-export const casLogonMockedResult = {
+export const CAS_LOGON_MOCKED_RESULT = {
   access_token: "token123",
   token_type: "123456789",
   expires_in: 3600,
 };
 
-export const getSupplierInfoFromCASMockedResult = {
+export const SUPPLIER_INFO_FROM_CAS_MOCKED_RESULT = {
   items: [
     {
       suppliernumber: "2006124",
@@ -46,24 +46,20 @@ export const getSupplierInfoFromCASMockedResult = {
   limit: 0,
   offset: 0,
   count: 1,
-  links: [
-    {
-      rel: "self",
-      href: "https://localhost:8080/ords/cas/cfs/supplier/SMITH/lastname/123456789/sin",
-    },
-    {
-      rel: "describedby",
-      href: "https://localhost:8080/ords/cas/metadata-catalog/cfs/supplier/SMITH/lastname/123456789/item",
-    },
-  ],
 };
 
+/**
+ * Creates a CAS service mock.
+ * @returns a CAS service mock.
+ */
 export function createCASServiceMock(): CASService {
   const mockedCASService = {} as CASService;
-  mockedCASService.logon = jest.fn(() => Promise.resolve(casLogonMockedResult));
+  mockedCASService.logon = jest.fn(() =>
+    Promise.resolve(CAS_LOGON_MOCKED_RESULT),
+  );
 
   mockedCASService.getSupplierInfoFromCAS = jest.fn(() =>
-    Promise.resolve(getSupplierInfoFromCASMockedResult),
+    Promise.resolve(SUPPLIER_INFO_FROM_CAS_MOCKED_RESULT),
   );
 
   return mockedCASService;
