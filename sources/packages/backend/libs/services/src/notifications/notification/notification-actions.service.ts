@@ -1127,7 +1127,6 @@ export class NotificationActionsService {
     metadata: NotificationMetadata,
     entityManager: EntityManager,
   ): Promise<void> {
-    const auditUser = this.systemUsersService.systemUser;
     const { templateId, emailContacts } =
       await this.assertNotificationMessageDetails(
         NotificationMessageType.ECertFeedbackFileErrorNotification,
@@ -1136,7 +1135,6 @@ export class NotificationActionsService {
       return;
     }
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
-      userId: auditUser.id,
       messageType: NotificationMessageType.ECertFeedbackFileErrorNotification,
       messagePayload: {
         email_address: emailContact,
