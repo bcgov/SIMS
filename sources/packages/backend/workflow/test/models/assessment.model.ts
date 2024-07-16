@@ -12,6 +12,10 @@ export interface StudentDependent extends JSONDoc {
   declaredOnTaxes: YesNoOptions;
 }
 
+export interface StudentDependantAppealData extends JSONDoc {
+  hasDependents: YesNoOptions;
+  dependants: StudentDependent[];
+}
 export interface StudentFinancialInformationAppealData extends JSONDoc {
   taxReturnIncome: number;
   daycareCosts12YearsOrOver?: number;
@@ -107,7 +111,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   appealsStudentFinancialInformationAppealData?: StudentFinancialInformationAppealData;
   appealsStudentAdditionalTransportationAppealData?: StudentAdditionalTransportationAppealData;
   appealsPartnerInformationAndIncomeAppealData?: PartnerInformationAndIncomeAppealData;
-  appealsStudentDependantsData?: StudentDependent[];
+  appealsStudentDependantsData?: StudentDependantAppealData;
   studentDataIsYourPartnerAbleToReport?: YesNoOptions;
   studentDataParentValidSinNumber?: YesNoOptions;
   studentDataNumberOfParents?: 1 | 2;

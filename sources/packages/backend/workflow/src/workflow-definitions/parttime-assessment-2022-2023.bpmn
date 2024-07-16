@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_0ihicdz" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.23.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.4.0" camunda:diagramRelationId="7a75e87a-6774-4e60-9a94-5dbbe3be143a">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_0ihicdz" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.25.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.4.0" camunda:diagramRelationId="7a75e87a-6774-4e60-9a94-5dbbe3be143a">
   <bpmn:message id="Message_3q4oc02" name="Message_3q4oc02" />
   <bpmn:collaboration id="Collaboration_1cf99un">
     <bpmn:participant id="Participant_1mct69m" name="parttime-assessment-2022-2023" processRef="parttime-assessment-2022-2023" />
@@ -915,9 +915,10 @@ dmnX (comes from dmn)</bpmn:text>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_1vwijyc" name="Dependants">
       <bpmn:extensionElements>
-        <zeebe:script expression="=// Consider only dependents who were born on or before the study end date.&#10;inputDataDependants[date(item.dateOfBirth) &#60;= date(offeringStudyEndDate)]" resultVariable="calculatedDataDependants" />
+        <zeebe:script expression="={&#10;  calculatedDataHasDependents: studentDatahasDependents,&#10;  calculatedDataDependants: if(studentDataDependants = null) then null else studentDataDependants&#10;}" resultVariable="calculatedDataDependantDetails" />
         <zeebe:ioMapping>
-          <zeebe:input source="=//TODO: Student appeal variable needs to be considered here.&#10;if studentDataDependants = null &#10;then []&#10;else studentDataDependants" target="inputDataDependants" />
+          <zeebe:output source="=calculatedDataDependantDetails.calculatedDataHasDependents" target="calculatedDataHasDependents" />
+          <zeebe:output source="=calculatedDataDependantDetails.calculatedDataDependants" target="calculatedDataDependants" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0zfe5t5</bpmn:incoming>
@@ -1117,7 +1118,11 @@ dmnX (comes from dmn)</bpmn:text>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_0ayxjmh" name="Dependants">
       <bpmn:extensionElements>
-        <zeebe:script expression="=// Consider only dependents who were born on or before the study end date.&#10;appealsStudentDependantsData[date(item.dateOfBirth) &#60;= date(offeringStudyEndDate)]" resultVariable="calculatedDataDependants" />
+        <zeebe:script expression="={&#10;  calculatedDataHasDependents: appealsStudentDependantsData.hasDependents,&#10;  calculatedDataDependants: if(appealsStudentDependantsData.dependants = null) then null else appealsStudentDependantsData.dependants&#10;}" resultVariable="calculatedDataDependantDetails" />
+        <zeebe:ioMapping>
+          <zeebe:output source="=calculatedDataDependantDetails.calculatedDataHasDependents" target="calculatedDataHasDependents" />
+          <zeebe:output source="=calculatedDataDependantDetails.calculatedDataDependants" target="calculatedDataDependants" />
+        </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1dgj9d7</bpmn:incoming>
       <bpmn:outgoing>Flow_1su3k2o</bpmn:outgoing>
