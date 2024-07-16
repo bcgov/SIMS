@@ -6,7 +6,7 @@ import { ProcessSummary } from "@sims/utilities/logger";
 import { Repository, UpdateResult } from "typeorm";
 import { CASService } from "@sims/integrations/cas/cas.service";
 import { CustomNamedError } from "@sims/utilities";
-import { CAS_AUTH_ERROR } from "apps/queue-consumers/src/constants/error-code.constants";
+import { CAS_AUTH_ERROR } from "../../constants/error-code.constants";
 import {
   CASAuthDetails,
   CASSupplierResponseItem,
