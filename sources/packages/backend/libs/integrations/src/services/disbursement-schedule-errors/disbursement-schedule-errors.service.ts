@@ -89,7 +89,7 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
                 .applicationNumber,
             errorCodes: blockingErrorCodes,
           };
-          await this.notificationActionsService.saveeCertFeedbackFileErrorNotification(
+          await this.notificationActionsService.saveECertFeedbackFileErrorNotification(
             ministryNotification,
             metadata,
             transactionalEntityManager,

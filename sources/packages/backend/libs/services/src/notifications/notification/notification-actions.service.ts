@@ -1122,11 +1122,12 @@ export class NotificationActionsService {
    * @param metadata metadata related to the notification to be saved.
    * @param entityManager entity manager to execute in transaction.
    */
-  async saveeCertFeedbackFileErrorNotification(
+  async saveECertFeedbackFileErrorNotification(
     notification: ECertFeedbackFileErrorNotification,
     metadata: NotificationMetadata,
     entityManager: EntityManager,
   ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
     const { templateId, emailContacts } =
       await this.assertNotificationMessageDetails(
         NotificationMessageType.ECertFeedbackFileErrorNotification,
@@ -1135,6 +1136,7 @@ export class NotificationActionsService {
       return;
     }
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
+      userId: auditUser.id,
       messageType: NotificationMessageType.ECertFeedbackFileErrorNotification,
       messagePayload: {
         email_address: emailContact,
