@@ -97,14 +97,10 @@ export class CASSupplierIntegrationService {
           suppliersUpdated,
         );
       } catch (error: unknown) {
-        if (error instanceof Error) {
-          summary.error(error.message);
-        } else {
-          summary.error(
-            "Error while requesting or updating CAS suppliers.",
-            error,
-          );
-        }
+        summary.error(
+          "Error while requesting or updating CAS suppliers.",
+          error,
+        );
       }
     }
     return suppliersUpdated;
