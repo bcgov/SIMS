@@ -19,7 +19,7 @@ export async function saveFakeCASSupplier(
   },
 ): Promise<CASSupplier> {
   const auditUser = await db.user.save(createFakeUser());
-  let student;
+  let student: Student;
   if (relations?.student) {
     student = relations.student;
   } else {
