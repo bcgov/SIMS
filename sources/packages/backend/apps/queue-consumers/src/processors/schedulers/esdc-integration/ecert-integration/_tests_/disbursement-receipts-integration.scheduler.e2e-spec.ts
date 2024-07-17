@@ -542,8 +542,8 @@ describe(
         personalisation: {
           application_file: {
             file:
-              "RnVsbCBUaW1lIEJDIFN0dWRlbnQgTG9hbixGdWxsIFRpbWUgQkMgU3R1ZGVudCBHcmFudCxGdWxsIFRpbWUgQkMgVG90YWwsUGFydCBUaW1lIEJDIFN0dWRlbnQgR3JhbnQsUGFydCBUaW1lIEJDIFRvdGFsLEJDIFRvdGFsLFRvdGFsIFJlY29yZHMsRmlsZSBE" +
-              "YXRlLEJhdGNoIFJ1biBEYXRlLFNlcXVlbmNlIE51bWJlcg0KMCwwLDAsNzYwLjAwLDEzMi4wMCwxMzIuMDAsMSwyMDI0LTAxLTMxLDIwMjQtMDEtMzAsMzIyOA==",
+              "RnVsbCBUaW1lIEJDIFN0dWRlbnQgTG9hbixGdWxsIFRpbWUgQkMgU3R1ZGVudCBHcmFudCxGdWxsIFRpbWUgQkMgVG90YWwsUGFydCBUaW1lIEJDIFN0dWRlbnQgR3JhbnQsUGFydCBUaW1lIEJDIFRvdGFsLEJDIFRvdGFsLFRvdGFsIFJlY29yZHMsRmlsZSBEYXRlLEJhdG" +
+              "NoIFJ1biBEYXRlLFNlcXVlbmNlIE51bWJlcg0KMCwwLDAsNzYwLjAwLDc2MC4wMCw3NjAuMDAsMSwyMDI0LTAxLTMxLDIwMjQtMDEtMzAsMzIyOA==",
             filename: "Daily_Disbursement_File_2024-01-31_3228.csv",
             sending_method: "attach",
           },
@@ -559,7 +559,7 @@ describe(
         "Full Time BC Student Loan,Full Time BC Student Grant,Full Time BC Total,Part Time BC Student Grant,Part Time BC Total,BC Total,Total Records,File Date,Batch Run Date,Sequence Number",
       );
       expect(fileContent).toContain(
-        "0,0,0,760.00,132.00,132.00,1,2024-01-31,2024-01-30,3228",
+        "0,0,0,760.00,760.00,760.00,1,2024-01-31,2024-01-30,3228",
       );
     });
 
