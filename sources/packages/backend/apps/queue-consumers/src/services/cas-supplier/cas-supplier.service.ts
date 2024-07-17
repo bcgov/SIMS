@@ -152,11 +152,11 @@ export class CASSupplierIntegrationService {
   private getActiveSupplierItemAddress(
     casSupplierResponseItem: CASSupplierResponseItem,
   ): CASSupplierResponseItemAddress {
-    if (casSupplierResponseItem.status !== CAS_SUPPLIER_RESPONSE_ITEM_STATUS) {
+    if (casSupplierResponseItem.status !== "ACTIVE") {
       return undefined;
     }
     return casSupplierResponseItem.supplieraddress.find(
-      (address) => address.status === CAS_SUPPLIER_ADDRESS_ACTIVE_STATUS,
+      (address) => address.status === "ACTIVE",
     );
   }
 
@@ -201,7 +201,7 @@ export class CASSupplierIntegrationService {
       {
         supplierNumber: casSupplierResponseItem.suppliernumber,
         supplierName: casSupplierResponseItem.suppliername,
-        status: CAS_SUPPLIER_ADDRESS_ACTIVE_STATUS,
+        status: casSupplierResponseItem.status,
         supplierProtected: casSupplierResponseItem.supplierprotected === "Y",
         lastUpdated: new Date(casSupplierResponseItem.lastupdated),
         supplierAddress: supplierAddressToUpdate,

@@ -131,7 +131,7 @@ export interface SupplierAddress {
   provinceState: string;
   country: string;
   postalCode: string;
-  status: string;
+  status: "ACTIVE" | "INACTIVE";
   siteProtected: string;
   lastUpdated: Date;
 }

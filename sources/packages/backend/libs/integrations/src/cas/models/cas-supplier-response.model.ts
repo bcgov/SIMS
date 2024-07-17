@@ -12,7 +12,7 @@ export class CASSupplierResponseItem {
   sin: string;
   providerid?: string;
   businessnumber?: null;
-  status: string;
+  status: "ACTIVE" | "INACTIVE";
   supplierprotected?: "Y" | "N" | null;
   standardindustryclassification?: string;
   lastupdated: string;
@@ -34,7 +34,7 @@ export class CASSupplierResponseItemAddress {
   banknumber?: string;
   eftadvicepref?: string;
   providerid?: string;
-  status: string;
+  status: "ACTIVE" | "INACTIVE";
   siteprotected?: string;
   lastupdated: string;
 }
