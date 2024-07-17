@@ -201,11 +201,20 @@ objects:
                 - name: APPLICATION_ARCHIVE_DAYS
                   value: ${APPLICATION_ARCHIVE_DAYS}
                 - name: CAS_BASE_URL
-                  value: "${CAS_BASE_URL}"
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${CAS_BASE_URL_NAME_KEY}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
                 - name: CAS_CLIENT_ID
-                  value: "${CAS_CLIENT_ID}"
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${CAS_CLIENT_ID_NAME_KEY}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
                 - name: CAS_CLIENT_SECRET
-                  value: "${CAS_CLIENT_SECRET}"
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${CAS_CLIENT_SECRET_NAME_KEY}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
@@ -420,3 +429,9 @@ parameters:
     value: esdc-environment-code
   - name: APPLICATION_ARCHIVE_DAYS
     require: true
+  - name: CAS_BASE_URL
+    required: true
+  - name: CAS_CLIENT_ID
+    required: true
+  - name: CAS_CLIENT_SECRET
+    required: true
