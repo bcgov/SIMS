@@ -1,5 +1,9 @@
 import { CASSupplierResponse } from "@sims/integrations/cas/models/cas-supplier-response.model";
 
+/**
+ * Creates a fake CAS supplier response.
+ * @returns a fake CAS supplier response.
+ */
 export function createFakeCASSupplierResponse(): CASSupplierResponse {
   return {
     items: [
