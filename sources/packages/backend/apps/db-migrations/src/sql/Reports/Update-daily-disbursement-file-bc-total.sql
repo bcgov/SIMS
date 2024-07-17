@@ -49,12 +49,14 @@ SET
                         full_time_disbursement_receipts.total_disbursed_grant_amount
                     ) AS "Full Time BC Student Grant",
                     SUM(
-                        full_time_disbursement_receipts.total_disbursed_amount
+                        full_time_disbursement_receipts.total_disbursed_amount +
+                        full_time_disbursement_receipts.total_disbursed_grant_amount
                     ) AS "Full Time BC Total",
                     0 AS "Part Time BC Student Grant",
                     0 AS "Part Time BC Total",
                     SUM(
-                        full_time_disbursement_receipts.total_disbursed_amount
+                        full_time_disbursement_receipts.total_disbursed_amount +
+                        full_time_disbursement_receipts.total_disbursed_grant_amount
                     ) AS "BC Total",
                     COUNT(full_time_disbursement_receipts.id) AS "Total Records",
                     full_time_disbursement_receipts.file_date AS "File Date",
