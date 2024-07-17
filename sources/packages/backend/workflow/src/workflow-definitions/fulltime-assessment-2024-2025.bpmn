@@ -2125,7 +2125,7 @@ studentCalculatedTotalIncome</bpmn:text>
     <bpmn:textAnnotation id="TextAnnotation_0mz1bk7">
       <bpmn:text>IN
 studentDataRelationshipStatus
-studentDataHasDependents
+studentDataHasDependants
 studentDataLivingWithParents
 studentDataLivingathomeRent
 
