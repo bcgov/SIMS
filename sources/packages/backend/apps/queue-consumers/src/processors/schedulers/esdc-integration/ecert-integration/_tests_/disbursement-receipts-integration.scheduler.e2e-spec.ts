@@ -550,7 +550,7 @@ describe(
       );
     });
 
-    it("Should import disbursement receipt files and create federal and provincial awards receipts with proper awards code mappings for full-time and part-time applications when the files contain federal and provincial receipts.", async () => {
+    it("Should import disbursement receipt file and create federal and provincial full-time and part-time awards receipts with proper awards code mappings when the file contains federal and provincial receipts.", async () => {
       // Arrange
       await saveFakeApplicationDisbursements(db.dataSource, undefined, {
         offeringIntensity: OfferingIntensity.partTime,
