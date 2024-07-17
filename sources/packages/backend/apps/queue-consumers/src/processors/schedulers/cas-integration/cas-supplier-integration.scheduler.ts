@@ -13,7 +13,7 @@ import {
   logProcessSummaryToJobLogger,
   getSuccessMessageWithAttentionCheck,
 } from "../../../utilities";
-import { CAS_AUTH_ERROR } from "../../../constants/error-code.constants";
+import { CAS_AUTH_ERROR } from "@sims/integrations/constants";
 
 @Processor(QueueNames.CASSupplierIntegration)
 export class CASSupplierIntegrationScheduler extends BaseScheduler<void> {

@@ -7,6 +7,8 @@ import { AxiosRequestConfig } from "axios";
 import { HttpService } from "@nestjs/axios";
 import { CASIntegrationConfig, ConfigService } from "@sims/utilities/config";
 import { stringify } from "querystring";
+import { CustomNamedError } from "@sims/utilities";
+import { CAS_AUTH_ERROR } from "@sims/integrations/constants";
 
 @Injectable()
 export class CASService {
@@ -36,8 +38,22 @@ export class CASService {
       headers,
     };
     const data = stringify(body);
-    const response = await this.httpService.axiosRef.post(url, data, config);
-    return response.data;
+    let response;
+    try {
+      response = await this.httpService.axiosRef.post(url, data, config);
+    } catch (error: unknown) {
+      throw new CustomNamedError(
+        "Could not authenticate on CAS.",
+        CAS_AUTH_ERROR,
+      );
+    }
+    if (!response?.data.access_token) {
+      throw new CustomNamedError(
+        "Could not authenticate on CAS.",
+        CAS_AUTH_ERROR,
+      );
+    }
+    return response?.data;
   }
 
   /**
@@ -53,13 +69,18 @@ export class CASService {
     lastName: string,
   ): Promise<CASSupplierResponse> {
     const url = `${this.casIntegrationConfig.baseUrl}/cfs/supplier/${lastName}/lastname/${sin}/sin`;
-    const headers = {
-      Authorization: `Bearer ${token}`,
-    };
-    const config: AxiosRequestConfig = {
-      headers,
-    };
-    const response = await this.httpService.axiosRef.get(url, config);
-    return response.data;
+    let response;
+    try {
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
+      const config: AxiosRequestConfig = {
+        headers,
+      };
+      response = await this.httpService.axiosRef.get(url, config);
+    } catch (error: unknown) {
+      throw new Error("Unexpected error while requesting supplier.", error);
+    }
+    return response?.data;
   }
 }

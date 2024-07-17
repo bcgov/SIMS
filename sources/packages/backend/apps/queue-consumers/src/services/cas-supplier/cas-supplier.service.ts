@@ -6,13 +6,13 @@ import { ProcessSummary } from "@sims/utilities/logger";
 import { Repository, UpdateResult } from "typeorm";
 import { CASService } from "@sims/integrations/cas/cas.service";
 import { CustomNamedError } from "@sims/utilities";
-import { CAS_AUTH_ERROR } from "../../constants/error-code.constants";
 import {
   CASAuthDetails,
   CASSupplierResponse,
   CASSupplierResponseItem,
   CASSupplierResponseItemAddress,
 } from "@sims/integrations/cas/models/cas-supplier-response.model";
+import { CAS_AUTH_ERROR } from "@sims/integrations/constants";
 
 const CAS_SUPPLIER_ADDRESS_ACTIVE_STATUS = "ACTIVE";
 
@@ -42,22 +42,18 @@ export class CASSupplierIntegrationService {
     try {
       summary.info("Logging on CAS...");
       const auth = await this.casService.logon();
-      if (auth.access_token) {
-        summary.info("Logon successful.");
-        suppliersUpdated = await this.requestCASAndUpdateSuppliers(
-          casSuppliers,
-          summary,
-          auth,
-        );
-      } else {
-        summary.info("Could not authenticate on CAS.");
-        throw new CustomNamedError(
-          "Could not authenticate on CAS.",
-          CAS_AUTH_ERROR,
-        );
-      }
+      summary.info("Logon successful.");
+      suppliersUpdated = await this.requestCASAndUpdateSuppliers(
+        casSuppliers,
+        summary,
+        auth,
+      );
     } catch (error: unknown) {
-      summary.error("Unexpected error.", error);
+      if (error instanceof CustomNamedError && error.name === CAS_AUTH_ERROR) {
+        summary.error(error.message);
+      } else {
+        summary.error("Unexpected error.", error);
+      }
     }
     return suppliersUpdated;
   }
@@ -81,15 +77,11 @@ export class CASSupplierIntegrationService {
       summary.info(`Requesting info for CAS supplier id ${casSupplier.id}.`);
       let supplierResponse = null;
       try {
-        try {
-          supplierResponse = await this.casService.getSupplierInfoFromCAS(
-            auth.access_token,
-            casSupplier.student.sinValidation.sin,
-            casSupplier.student.user.lastName.toUpperCase(),
-          );
-        } catch (error: unknown) {
-          throw new Error("Unexpected error while requesting supplier.", error);
-        }
+        supplierResponse = await this.casService.getSupplierInfoFromCAS(
+          auth.access_token,
+          casSupplier.student.sinValidation.sin,
+          casSupplier.student.user.lastName.toUpperCase(),
+        );
         suppliersUpdated = await this.updateActiveAddress(
           supplierResponse,
           summary,

@@ -1,10 +1,5 @@
 import { INestApplication } from "@nestjs/common";
-import { SystemUsersService } from "@sims/services";
-import {
-  createE2EDataSources,
-  E2EDataSources,
-  saveFakeStudent,
-} from "@sims/test-utils";
+import { createE2EDataSources, E2EDataSources } from "@sims/test-utils";
 import { QueueNames } from "@sims/utilities";
 import { CASSupplierIntegrationScheduler } from "../cas-supplier-integration.scheduler";
 import {
@@ -24,7 +19,6 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
   let app: INestApplication;
   let processor: CASSupplierIntegrationScheduler;
   let db: E2EDataSources;
-  let systemUsersService: SystemUsersService;
   let casServiceMock: CASService;
   const [supplierMockedResult] = SUPPLIER_INFO_FROM_CAS_MOCKED_RESULT.items;
 
@@ -39,7 +33,6 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     casServiceMock = casServiceMockFromAppModule;
     // Processor under test.
     processor = app.get(CASSupplierIntegrationScheduler);
-    systemUsersService = app.get(SystemUsersService);
   });
 
   beforeEach(async () => {
@@ -71,13 +64,8 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
   });
 
   it("Should update CAS supplier table when found pending supplier information to be updated.", async () => {
-    const student = await saveFakeStudent(db.dataSource);
-
-    const savedCASSupplier = await saveFakeCASSupplier(
-      db,
-      systemUsersService.systemUser,
-      student,
-    );
+    const savedCASSupplier = await saveFakeCASSupplier(db);
+    const student = savedCASSupplier.student;
 
     // Queued job.
     const mockedJob = mockBullJob<void>();

@@ -44,8 +44,3 @@ export class CASAuthDetails {
   token_type: string;
   expires_in: number;
 }
-
-export class CASSupplierResponseItemLink {
-  rel: string;
-  href: string;
-}
