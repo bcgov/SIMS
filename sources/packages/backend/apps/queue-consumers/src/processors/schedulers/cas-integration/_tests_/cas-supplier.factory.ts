@@ -39,7 +39,7 @@ export async function saveFakeCASSupplier(
 export function createFakeCASSupplier(relations: {
   student: Student;
   auditUser: User;
-}) {
+}): CASSupplier {
   const casSupplier = new CASSupplier();
   casSupplier.supplierStatus = SupplierStatus.PendingSupplierVerification;
   casSupplier.supplierStatusUpdatedOn = new Date();
