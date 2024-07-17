@@ -1,5 +1,5 @@
 import { CASService } from "@sims/integrations/cas/cas.service";
-import { createFakeCASSupplierResponse } from "../../../src/processors/schedulers/cas-integration/_tests_/cas-response.factory";
+import { createFakeCASSupplierResponse } from "./cas-response.factory";
 
 export const CAS_LOGON_MOCKED_RESULT = {
   access_token: "token123",

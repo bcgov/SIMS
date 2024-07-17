@@ -15,6 +15,7 @@ import {
 import { CAS_AUTH_ERROR } from "@sims/integrations/constants";
 
 const CAS_SUPPLIER_ADDRESS_ACTIVE_STATUS = "ACTIVE";
+const CAS_SUPPLIER_RESPONSE_ITEM_STATUS = "ACTIVE";
 
 @Injectable()
 export class CASSupplierIntegrationService {
@@ -61,7 +62,7 @@ export class CASSupplierIntegrationService {
   /**
    * For each pending CAS supplier, request supplier information to CAS API and update local table.
    * @param casSuppliers pending CAS suppliers.
-   * @param summary log summary.
+   * @param parentProcessSummary parent log summary.
    * @param auth CAS auth details.
    * @returns a number of update records.
    */
@@ -82,7 +83,7 @@ export class CASSupplierIntegrationService {
           casSupplier.student.sinValidation.sin,
           casSupplier.student.user.lastName.toUpperCase(),
         );
-        suppliersUpdated = await this.updateActiveAddress(
+        suppliersUpdated = await this.updateSupplier(
           supplierResponse,
           summary,
           casSupplier,
@@ -106,17 +107,20 @@ export class CASSupplierIntegrationService {
    * @param suppliersUpdated
    * @returns a number of update records.
    */
-  private async updateActiveAddress(
+  private async updateSupplier(
     supplierResponse: CASSupplierResponse,
     summary: ProcessSummary,
     casSupplier: CASSupplier,
     suppliersUpdated: number,
-  ) {
-    if (supplierResponse.items.length) {
+  ): Promise<number> {
+    if (!supplierResponse.items.length) {
+      summary.info("No supplier found on CAS.");
+      return;
+    } else {
       const [supplierInfo] = supplierResponse.items;
-      const isThereAnActiveSupplierAddress =
-        this.getActiveSupplier(supplierInfo);
-      if (isThereAnActiveSupplierAddress) {
+      const activeSupplierItemAddress =
+        this.getActiveSupplierItemAddress(supplierInfo);
+      if (activeSupplierItemAddress) {
         summary.info("Updating CAS supplier table.");
         try {
           const updateResult = await this.updateCASSupplier(
@@ -136,8 +140,6 @@ export class CASSupplierIntegrationService {
       } else {
         summary.info("No active supplier address found on CAS.");
       }
-    } else {
-      summary.info("No supplier found on CAS.");
     }
     return suppliersUpdated;
   }
@@ -147,9 +149,12 @@ export class CASSupplierIntegrationService {
    * @param casSupplierResponseItem CAS supplier response item.
    * @returns CAS supplier response item address.
    */
-  private getActiveSupplier(
+  private getActiveSupplierItemAddress(
     casSupplierResponseItem: CASSupplierResponseItem,
   ): CASSupplierResponseItemAddress {
+    if (casSupplierResponseItem.status !== CAS_SUPPLIER_RESPONSE_ITEM_STATUS) {
+      return undefined;
+    }
     return casSupplierResponseItem.supplieraddress.find(
       (address) => address.status === CAS_SUPPLIER_ADDRESS_ACTIVE_STATUS,
     );
@@ -157,7 +162,7 @@ export class CASSupplierIntegrationService {
 
   /**
    * Updates CAS supplier table.
-   * @param casSupplier CAS supplier to be updated.
+   * @param casSupplierId CAS supplier id to be updated.
    * @param casSupplierResponseItem CAS supplier response item from CAS request.
    * @param supplierStatus CAS supplier status to be updated.
    * @returns update result.
@@ -169,7 +174,7 @@ export class CASSupplierIntegrationService {
   ): Promise<UpdateResult> {
     // When multiple exists, only the active one should be saved.
     // We will not be saving the array received at this moment, only a single entry from the received list should be persisted as JSONB.
-    const activeSupplierAddress = this.getActiveSupplier(
+    const activeSupplierAddress = this.getActiveSupplierItemAddress(
       casSupplierResponseItem,
     );
     let supplierAddressToUpdate: SupplierAddress = null;
