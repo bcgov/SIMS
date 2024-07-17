@@ -64,7 +64,7 @@ export class CASSupplierIntegrationService {
    * @param casSuppliers pending CAS suppliers.
    * @param parentProcessSummary parent log summary.
    * @param auth CAS auth details.
-   * @returns a number of update records.
+   * @returns true if updated a record.
    */
   private async requestCASAndUpdateSuppliers(
     casSuppliers: CASSupplier[],
@@ -83,12 +83,9 @@ export class CASSupplierIntegrationService {
           casSupplier.student.sinValidation.sin,
           casSupplier.student.user.lastName.toUpperCase(),
         );
-        suppliersUpdated = await this.updateSupplier(
-          supplierResponse,
-          summary,
-          casSupplier,
-          suppliersUpdated,
-        );
+        if (await this.updateSupplier(supplierResponse, summary, casSupplier)) {
+          suppliersUpdated++;
+        }
       } catch (error: unknown) {
         summary.error(
           "Error while requesting or updating CAS suppliers.",
@@ -104,18 +101,15 @@ export class CASSupplierIntegrationService {
    * @param supplierResponse CAS supplier response.
    * @param summary log summary.
    * @param casSuppliers pending CAS suppliers.
-   * @param suppliersUpdated
-   * @returns a number of update records.
+   * @returns true if updated a record.
    */
   private async updateSupplier(
     supplierResponse: CASSupplierResponse,
     summary: ProcessSummary,
     casSupplier: CASSupplier,
-    suppliersUpdated: number,
-  ): Promise<number> {
+  ): Promise<boolean> {
     if (!supplierResponse.items.length) {
       summary.info("No supplier found on CAS.");
-      return;
     } else {
       const [supplierInfo] = supplierResponse.items;
       const activeSupplierItemAddress =
@@ -129,7 +123,7 @@ export class CASSupplierIntegrationService {
             SupplierStatus.Verified,
           );
           if (updateResult.affected) {
-            suppliersUpdated++;
+            return true;
           }
         } catch (error: unknown) {
           throw new Error(
@@ -141,7 +135,7 @@ export class CASSupplierIntegrationService {
         summary.info("No active supplier address found on CAS.");
       }
     }
-    return suppliersUpdated;
+    return false;
   }
 
   /**
