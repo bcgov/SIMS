@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, LoggerService } from "@nestjs/common";
 import {
   CASAuthDetails,
   CASSupplierResponse,
@@ -9,6 +9,7 @@ import { CASIntegrationConfig, ConfigService } from "@sims/utilities/config";
 import { stringify } from "querystring";
 import { CustomNamedError } from "@sims/utilities";
 import { CAS_AUTH_ERROR } from "@sims/integrations/constants";
+import { InjectLogger } from "@sims/utilities/logger";
 
 @Injectable()
 export class CASService {
@@ -41,6 +42,7 @@ export class CASService {
     try {
       return await this.httpService.axiosRef.post(url, data, config);
     } catch (error: unknown) {
+      this.logger.error(`Error while logging on CAS API. ${error}`);
       throw new CustomNamedError(
         "Could not authenticate on CAS.",
         CAS_AUTH_ERROR,
@@ -71,8 +73,12 @@ export class CASService {
       };
       response = await this.httpService.axiosRef.get(url, config);
     } catch (error: unknown) {
-      throw new Error("Unexpected error while requesting supplier.", error);
+      throw new Error("Unexpected error while requesting supplier.", {
+        cause: error,
+      });
     }
     return response?.data;
   }
+  @InjectLogger()
+  logger: LoggerService;
 }

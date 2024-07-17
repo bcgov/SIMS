@@ -76,9 +76,8 @@ export class CASSupplierIntegrationService {
       const summary = new ProcessSummary();
       parentProcessSummary.children(summary);
       summary.info(`Requesting info for CAS supplier id ${casSupplier.id}.`);
-      let supplierResponse = null;
       try {
-        supplierResponse = await this.casService.getSupplierInfoFromCAS(
+        const supplierResponse = await this.casService.getSupplierInfoFromCAS(
           auth.access_token,
           casSupplier.student.sinValidation.sin,
           casSupplier.student.user.lastName.toUpperCase(),

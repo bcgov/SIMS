@@ -67,11 +67,11 @@ export class CASSupplierIntegrationScheduler extends BaseScheduler<void> {
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         if (error.name === CAS_AUTH_ERROR) {
-          processSummary.error(
+          // Throw an error to force the queue to retry.
+          throw new Error(
             `Unable to request data to CAS due to an authentication error.`,
           );
         }
-      } else {
         const errorMessage = "Unexpected error while executing the job.";
         processSummary.error(errorMessage, error);
         return [errorMessage];
