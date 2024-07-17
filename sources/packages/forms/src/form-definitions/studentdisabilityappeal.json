@@ -136,22 +136,17 @@
           "input": true,
           "tableView": true,
           "inputType": "radio",
-          "label": "Are you a student with disabilities and wish to be assessed for disability funding?",
+          "label": "Are you a student with a permanent disability, or a persistent or prolonged disability, and applying for disability grants?",
           "key": "studentNewPDPPDStatus",
           "values": [
             {
               "value": "yes",
-              "label": "Yes, I have disability and want this application to be assessed for disability funding.",
-              "shortcut": ""
-            },
-            {
-              "value": "noIWantToAccessOtherFundingTypes",
-              "label": "No, I want to access other funding types while I wait for a verification decision.",
+              "label": "Yes",
               "shortcut": ""
             },
             {
               "value": "no",
-              "label": "No, I do not have a disability.",
+              "label": "No",
               "shortcut": ""
             }
           ],
@@ -177,7 +172,32 @@
             "eq": ""
           },
           "properties": {},
-          "lockKey": true
+          "lockKey": true,
+          "tooltip": "If you are a student with a permanent disability, or a persistent or prolonged disability, as defined below, you may be eligible for additional student financial assistance.\n\n    Permanent Disability:\n    Any impairment, including a physical, mental, intellectual, cognitive, learning, communication or sensory impairment - or a functional limitation - that restricts the ability of a person to perform the daily activities necessary to pursue studies at a postsecondary school level or to participate in the labour force and that is expected to remain with the person for the person’s expected life.\n\n    Persistent or Prolonged Disability:\n    Any impairment, including a physical, mental, intellectual, cognitive, learning, communication or sensory impairment - or a\n    functional limitation - that restricts the ability of a person to perform the daily activities necessary to pursue studies at a postsecondary school level or to participate in the labour force and has lasted, or is expected to last, for a period of at least 12 months but is not expected to remain with the person for the person’s expected life."
+        },
+        {
+          "key": "disabilityInformationPanelContent",
+          "label": "Content",
+          "input": false,
+          "tag": "p",
+          "attrs": [
+            {
+              "value": "",
+              "attr": ""
+            }
+          ],
+          "className": "alert alert-info fa fa-info-circle",
+          "content": "<strong> Info!</strong><br /> Please note you must have your disability status verified by StudentAid BC to receive disability funding. If your disability status has already been verified, no further action is required.\n<br/><br/>\nIf your disability status has not yet been verified by StudentAid BC, you must complete an <a class=\"formio-href\" href=\"https://studentaidbc.ca/sites/all/files/form-library/appendix_8.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">\nAppendix 8 - Disability Programs Application</a> to verify your permanent, or persistent or prolonged disability, and have your disability approved.\n<br/><br/>\nStudents with a permanent disability, or a persistent or prolonged disability may qualify for other programs. Contact the Accessibility Services Coordinator or financial aid office at your school, or visit <a class=\"formio-href\" href=\"https://studentaidbc.ca/\"target=\"_blank\" rel=\"noopener noreferrer\">\nwww.StudentAidBC.ca</a>",
+          "type": "htmlelement",
+          "hideLabel": false,
+          "tags": [],
+          "conditional": {
+            "show": "true",
+            "when": "studentNewPDPPDStatus",
+            "eq": "yes"
+          },
+          "properties": {},
+          "customClass": "banner-info"
         }
       ],
       "placeholder": "",
