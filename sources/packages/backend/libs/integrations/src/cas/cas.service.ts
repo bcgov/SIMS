@@ -38,22 +38,14 @@ export class CASService {
       headers,
     };
     const data = stringify(body);
-    let response;
     try {
-      response = await this.httpService.axiosRef.post(url, data, config);
+      return await this.httpService.axiosRef.post(url, data, config);
     } catch (error: unknown) {
       throw new CustomNamedError(
         "Could not authenticate on CAS.",
         CAS_AUTH_ERROR,
       );
     }
-    if (!response?.data.access_token) {
-      throw new CustomNamedError(
-        "Could not authenticate on CAS.",
-        CAS_AUTH_ERROR,
-      );
-    }
-    return response?.data;
   }
 
   /**
@@ -69,7 +61,7 @@ export class CASService {
     lastName: string,
   ): Promise<CASSupplierResponse> {
     const url = `${this.casIntegrationConfig.baseUrl}/cfs/supplier/${lastName}/lastname/${sin}/sin`;
-    let response;
+    let response: { data: CASSupplierResponse };
     try {
       const headers = {
         Authorization: `Bearer ${token}`,
