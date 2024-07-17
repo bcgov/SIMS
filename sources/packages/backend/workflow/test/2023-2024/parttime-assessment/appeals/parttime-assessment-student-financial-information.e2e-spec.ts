@@ -8,6 +8,7 @@ import {
   createFakeStudentDependentEligibleForChildcareCost,
   DependentChildCareEligibility,
 } from "../../../test-utils/factories";
+import { YesNoOptions } from "@sims/test-utils";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-financial-information.`, () => {
   it(
@@ -17,6 +18,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-financia
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataHasDependants = YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentEligibleForChildcareCost(
           DependentChildCareEligibility.Eligible0To11YearsOld,
@@ -64,6 +66,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-financia
       assessmentConsolidatedData.studentDataDaycareCosts11YearsOrUnder = 1000;
       assessmentConsolidatedData.studentDataDaycareCosts12YearsOrOver = 1000;
 
+      assessmentConsolidatedData.studentDataHasDependants = YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentEligibleForChildcareCost(
           DependentChildCareEligibility.Eligible0To11YearsOld,

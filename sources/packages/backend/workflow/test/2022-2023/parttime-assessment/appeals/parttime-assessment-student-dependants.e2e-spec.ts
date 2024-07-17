@@ -11,42 +11,42 @@ import {
 import { YesNoOptions } from "@sims/test-utils";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-dependants.`, () => {
-  it.only(
+  it(
     "Should have calculated student dependants variables assigned with request a change values " +
       "when there is a request a change for student dependants.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.appealsStudentDependantsData = {
-        hasDependents: YesNoOptions.Yes,
-        dependants: [
-          createFakeStudentDependentEligible(
-            DependentEligibility.Eligible0To18YearsOld,
-            {
-              referenceDate: assessmentConsolidatedData.offeringStudyStartDate,
-            },
-          ),
-          createFakeStudentDependentEligible(
-            DependentEligibility.Eligible18To22YearsOldAttendingHighSchool,
-            {
-              referenceDate: assessmentConsolidatedData.offeringStudyStartDate,
-            },
-          ),
-          createFakeStudentDependentEligible(
-            DependentEligibility.Eligible18To22YearsOldDeclaredOnTaxes,
-            {
-              referenceDate: assessmentConsolidatedData.offeringStudyStartDate,
-            },
-          ),
-          createFakeStudentDependentEligible(
-            DependentEligibility.EligibleOver22YearsOld,
-            {
-              referenceDate: assessmentConsolidatedData.offeringStudyStartDate,
-            },
-          ),
-        ],
-      };
+      assessmentConsolidatedData.studentDataHasDependants = null;
+      assessmentConsolidatedData.appealsStudentHasDependantsData =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.appealsStudentDependantsData = [
+        createFakeStudentDependentEligible(
+          DependentEligibility.Eligible0To18YearsOld,
+          {
+            referenceDate: assessmentConsolidatedData.offeringStudyStartDate,
+          },
+        ),
+        createFakeStudentDependentEligible(
+          DependentEligibility.Eligible18To22YearsOldAttendingHighSchool,
+          {
+            referenceDate: assessmentConsolidatedData.offeringStudyStartDate,
+          },
+        ),
+        createFakeStudentDependentEligible(
+          DependentEligibility.Eligible18To22YearsOldDeclaredOnTaxes,
+          {
+            referenceDate: assessmentConsolidatedData.offeringStudyStartDate,
+          },
+        ),
+        createFakeStudentDependentEligible(
+          DependentEligibility.EligibleOver22YearsOld,
+          {
+            referenceDate: assessmentConsolidatedData.offeringStudyStartDate,
+          },
+        ),
+      ];
       // Act
       const calculatedAssessment =
         await executePartTimeAssessmentForProgramYear(
@@ -78,6 +78,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-dependan
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.appealsStudentHasDependantsData = null;
+      assessmentConsolidatedData.studentDataHasDependants = YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentEligible(
           DependentEligibility.Eligible0To18YearsOld,
