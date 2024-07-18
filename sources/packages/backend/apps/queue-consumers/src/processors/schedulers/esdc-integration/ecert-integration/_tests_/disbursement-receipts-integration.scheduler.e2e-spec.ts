@@ -35,6 +35,8 @@ const FEDERAL_PROVINCIAL_FULL_TIME_FILE =
   "EDU.PBC.DIS-federal-provincial-full-time.txt";
 const FEDERAL_PROVINCIAL_PART_TIME_FILE =
   "EDU.PBC.DIS-federal-provincial-part-time.txt";
+const FEDERAL_PROVINCIAL_FULL_TIME_PART_TIME_FILE =
+  "EDU.PBC.DIS-federal-provincial-full-time-part-time.txt";
 const FEDERAL_ONLY_FULL_TIME_FILE = "EDU.PBC.DIS-federal-only-full-time.txt";
 const SHARED_DOCUMENT_NUMBER = 989898;
 const BATCH_RUN_DATE = "2024-01-30";
@@ -211,17 +213,13 @@ describe(
 
     it("Should import disbursement receipt file and create federal and provincial awards receipts with proper awards code mappings for a full-time application when the file contains federal and provincial receipts.", async () => {
       // Arrange
-      const application = await saveFakeApplicationDisbursements(
-        db.dataSource,
-        undefined,
-        {
-          offeringIntensity: OfferingIntensity.fullTime,
-          applicationStatus: ApplicationStatus.Completed,
-          firstDisbursementInitialValues: {
-            documentNumber: SHARED_DOCUMENT_NUMBER,
-          },
+      await saveFakeApplicationDisbursements(db.dataSource, undefined, {
+        offeringIntensity: OfferingIntensity.fullTime,
+        applicationStatus: ApplicationStatus.Completed,
+        firstDisbursementInitialValues: {
+          documentNumber: SHARED_DOCUMENT_NUMBER,
         },
-      );
+      });
       mockDownloadFiles(sftpClientMock, [FEDERAL_PROVINCIAL_FULL_TIME_FILE]);
       // Queued job.
       const { job } = mockBullJob<void>();
@@ -248,10 +246,9 @@ describe(
         },
       ]);
       // Assert imported receipts.
-      const [firstDisbursement] =
-        application.currentAssessment.disbursementSchedules;
       const { bcReceipt, feReceipt } = await getReceiptsForAssert(
-        firstDisbursement.id,
+        FILE_DATE,
+        SEQUENCE_NUMBER,
       );
       // Assert federal receipt.
       // Header details.
@@ -295,11 +292,11 @@ describe(
       );
       // Disbursed loan amount.
       expect(bcReceipt.totalDisbursedAmount).toBe(123);
-      const bdReceiptAwards = getExpectedAwardsFromReceiptValues(
+      const bcReceiptAwards = getExpectedAwardsFromReceiptValues(
         bcReceipt.disbursementReceiptValues,
       );
       // Disbursed grants.
-      expect(bdReceiptAwards).toStrictEqual({
+      expect(bcReceiptAwards).toStrictEqual({
         BCSG: 599,
       });
       // Notification record.
@@ -324,8 +321,8 @@ describe(
         personalisation: {
           application_file: {
             file:
-              "RnVsbCBUaW1lIEJDIFN0dWRlbnQgTG9hbixGdWxsIFRpbWUgQkMgU3R1ZGVudCBHcmFudCxGdWxsIFRpbWUgQkMgVG90YWwsUGFydCBUaW1lIEJDIFN0dWRlbnQgR3JhbnQsUGFydCBUaW1lIEJDIFRvdGFsLEJDIFRvdGFsLFRvdGFsIFJlY29yZHMsRmlsZSBEYXR" +
-              "lLEJhdGNoIFJ1biBEYXRlLFNlcXVlbmNlIE51bWJlcg0KMTIzLjAwLDc2MC4wMCwxMjMuMDAsMCwwLDEyMy4wMCwxLDIwMjQtMDEtMzEsMjAyNC0wMS0zMCwzMjI4",
+              "RnVsbCBUaW1lIEJDIFN0dWRlbnQgTG9hbixGdWxsIFRpbWUgQkMgU3R1ZGVudCBHcmFudCxGdWxsIFRpbWUgQkMgVG90YWwsUGFydCBUaW1lIEJDIFN0dWRlbnQgR3JhbnQsUGFydCBUaW1lIEJDIFRvdGFsLEJDIFRvdGFsLFRvdGFsIFJlY29yZHMsRmlsZSBEYXRlLEJhd" +
+              "GNoIFJ1biBEYXRlLFNlcXVlbmNlIE51bWJlcg0KMTIzLjAwLDc2MC4wMCw4ODMuMDAsMCwwLDg4My4wMCwxLDIwMjQtMDEtMzEsMjAyNC0wMS0zMCwzMjI4",
             filename: `Daily_Disbursement_File_${FILE_DATE}_${SEQUENCE_NUMBER}.csv`,
             sending_method: "attach",
           },
@@ -341,23 +338,19 @@ describe(
         "Full Time BC Student Loan,Full Time BC Student Grant,Full Time BC Total,Part Time BC Student Grant,Part Time BC Total,BC Total,Total Records,File Date,Batch Run Date,Sequence Number",
       );
       expect(fileContent).toContain(
-        "123.00,760.00,123.00,0,0,123.00,1,2024-01-31,2024-01-30,3228",
+        "123.00,760.00,883.00,0,0,883.00,1,2024-01-31,2024-01-30,3228",
       );
     });
 
     it("Should import disbursement receipt file and create only federal awards receipt with proper awards code mappings for a full-time application when the file contains only federal receipt.", async () => {
       // Arrange
-      const application = await saveFakeApplicationDisbursements(
-        db.dataSource,
-        undefined,
-        {
-          offeringIntensity: OfferingIntensity.fullTime,
-          applicationStatus: ApplicationStatus.Completed,
-          firstDisbursementInitialValues: {
-            documentNumber: SHARED_DOCUMENT_NUMBER,
-          },
+      await saveFakeApplicationDisbursements(db.dataSource, undefined, {
+        offeringIntensity: OfferingIntensity.fullTime,
+        applicationStatus: ApplicationStatus.Completed,
+        firstDisbursementInitialValues: {
+          documentNumber: SHARED_DOCUMENT_NUMBER,
         },
-      );
+      });
       mockDownloadFiles(sftpClientMock, [FEDERAL_ONLY_FULL_TIME_FILE]);
       // Queued job.
       const { job } = mockBullJob<void>();
@@ -382,10 +375,9 @@ describe(
         },
       ]);
       // Assert imported receipts.
-      const [firstDisbursement] =
-        application.currentAssessment.disbursementSchedules;
       const { feReceipt, bcReceipt } = await getReceiptsForAssert(
-        firstDisbursement.id,
+        FILE_DATE,
+        SEQUENCE_NUMBER,
       );
       // BC receipt should not be present.
       expect(bcReceipt).not.toBeDefined();
@@ -429,17 +421,13 @@ describe(
 
     it("Should import disbursement receipt file and create federal and provincial awards receipts with proper awards code mappings for a part-time application when the file contains federal and provincial receipts.", async () => {
       // Arrange
-      const application = await saveFakeApplicationDisbursements(
-        db.dataSource,
-        undefined,
-        {
-          offeringIntensity: OfferingIntensity.partTime,
-          applicationStatus: ApplicationStatus.Completed,
-          firstDisbursementInitialValues: {
-            documentNumber: SHARED_DOCUMENT_NUMBER,
-          },
+      await saveFakeApplicationDisbursements(db.dataSource, undefined, {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.Completed,
+        firstDisbursementInitialValues: {
+          documentNumber: SHARED_DOCUMENT_NUMBER,
         },
-      );
+      });
       mockDownloadFiles(sftpClientMock, [FEDERAL_PROVINCIAL_PART_TIME_FILE]);
       // Queued job.
       const { job } = mockBullJob<void>();
@@ -466,10 +454,9 @@ describe(
         },
       ]);
       // Assert imported receipts.
-      const [firstDisbursement] =
-        application.currentAssessment.disbursementSchedules;
       const { bpReceipt, feReceipt } = await getReceiptsForAssert(
-        firstDisbursement.id,
+        FILE_DATE,
+        SEQUENCE_NUMBER,
       );
       // Assert federal receipt.
       // Header details.
@@ -512,12 +499,12 @@ describe(
         SHARED_DOCUMENT_NUMBER,
       );
       // Disbursed loan amount.
-      expect(bpReceipt.totalDisbursedAmount).toBe(132);
-      const bdReceiptAwards = getExpectedAwardsFromReceiptValues(
+      expect(bpReceipt.totalDisbursedAmount).toBe(0);
+      const bpReceiptAwards = getExpectedAwardsFromReceiptValues(
         bpReceipt.disbursementReceiptValues,
       );
       // Disbursed grants.
-      expect(bdReceiptAwards).toStrictEqual({
+      expect(bpReceiptAwards).toStrictEqual({
         BCSG: 600,
       });
       // Notification record.
@@ -542,8 +529,8 @@ describe(
         personalisation: {
           application_file: {
             file:
-              "RnVsbCBUaW1lIEJDIFN0dWRlbnQgTG9hbixGdWxsIFRpbWUgQkMgU3R1ZGVudCBHcmFudCxGdWxsIFRpbWUgQkMgVG90YWwsUGFydCBUaW1lIEJDIFN0dWRlbnQgR3JhbnQsUGFydCBUaW1lIEJDIFRvdGFsLEJDIFRvdGFsLFRvdGFsIFJlY29yZHMsRmlsZSBE" +
-              "YXRlLEJhdGNoIFJ1biBEYXRlLFNlcXVlbmNlIE51bWJlcg0KMCwwLDAsNzYwLjAwLDEzMi4wMCwxMzIuMDAsMSwyMDI0LTAxLTMxLDIwMjQtMDEtMzAsMzIyOA==",
+              "RnVsbCBUaW1lIEJDIFN0dWRlbnQgTG9hbixGdWxsIFRpbWUgQkMgU3R1ZGVudCBHcmFudCxGdWxsIFRpbWUgQkMgVG90YWwsUGFydCBUaW1lIEJDIFN0dWRlbnQgR3JhbnQsUGFydCBUaW1lIEJDIFRvdGFsLEJDIFRvdGFsLFRvdGFsIFJlY29yZHMsRmlsZSBEYXRlLEJhdG" +
+              "NoIFJ1biBEYXRlLFNlcXVlbmNlIE51bWJlcg0KMCwwLDAsNzYwLjAwLDc2MC4wMCw3NjAuMDAsMSwyMDI0LTAxLTMxLDIwMjQtMDEtMzAsMzIyOA==",
             filename: "Daily_Disbursement_File_2024-01-31_3228.csv",
             sending_method: "attach",
           },
@@ -559,7 +546,163 @@ describe(
         "Full Time BC Student Loan,Full Time BC Student Grant,Full Time BC Total,Part Time BC Student Grant,Part Time BC Total,BC Total,Total Records,File Date,Batch Run Date,Sequence Number",
       );
       expect(fileContent).toContain(
-        "0,0,0,760.00,132.00,132.00,1,2024-01-31,2024-01-30,3228",
+        "0,0,0,760.00,760.00,760.00,1,2024-01-31,2024-01-30,3228",
+      );
+    });
+
+    it("Should import disbursement receipt file and create federal and provincial full-time and part-time awards receipts with proper awards code mappings when the file contains federal and provincial receipts.", async () => {
+      // Arrange
+      await saveFakeApplicationDisbursements(db.dataSource, undefined, {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.Completed,
+        firstDisbursementInitialValues: {
+          documentNumber: SHARED_DOCUMENT_NUMBER,
+        },
+      });
+      mockDownloadFiles(sftpClientMock, [
+        FEDERAL_PROVINCIAL_FULL_TIME_PART_TIME_FILE,
+      ]);
+      // Queued job.
+      const { job } = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processDisbursementReceipts(job);
+
+      // Assert
+      const downloadedFile = path.join(
+        process.env.ESDC_RESPONSE_FOLDER,
+        FEDERAL_PROVINCIAL_FULL_TIME_PART_TIME_FILE,
+      );
+      expect(result).toEqual([
+        {
+          processSummary: [
+            `Processing file ${downloadedFile}.`,
+            `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 2 inserted successfully.`,
+            `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 3 inserted successfully.`,
+            `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 4 inserted successfully.`,
+            `Processing file ${downloadedFile} completed.`,
+            `Processing provincial daily disbursement CSV file on ${FILE_DATE}.`,
+            "Provincial daily disbursement CSV report generated.",
+          ],
+          errorsSummary: [],
+        },
+      ]);
+      // Assert imported receipts.
+      const { feReceipt, bcReceipt, bpReceipt } = await getReceiptsForAssert(
+        FILE_DATE,
+        SEQUENCE_NUMBER,
+      );
+      // Assert federal receipt.
+      // Header details.
+      expect(feReceipt).toEqual(
+        expect.objectContaining({
+          batchRunDate: BATCH_RUN_DATE,
+          fileDate: FILE_DATE,
+          sequenceNumber: 3228,
+        }),
+      );
+      // Document number.
+      expect(feReceipt.disbursementSchedule.documentNumber).toBe(
+        SHARED_DOCUMENT_NUMBER,
+      );
+      // Disbursed loan amount.
+      expect(feReceipt.totalDisbursedAmount).toBe(3673);
+      const feReceiptAwards = getExpectedAwardsFromReceiptValues(
+        feReceipt.disbursementReceiptValues,
+      );
+      // Disbursed grants.
+      // XYZ is a non-translated code that must be imported as it is.
+      expect(feReceiptAwards).toStrictEqual({
+        CSGF: 199,
+        CSGT: 299,
+        CSGD: 399,
+        CSGP: 499,
+        XYZ: 444,
+      });
+      // Assert provincial full-time receipt.
+      // Header details.
+      expect(bcReceipt).toEqual(
+        expect.objectContaining({
+          batchRunDate: BATCH_RUN_DATE,
+          fileDate: FILE_DATE,
+          sequenceNumber: 3228,
+        }),
+      );
+      // Document number.
+      expect(bcReceipt.disbursementSchedule.documentNumber).toBe(
+        SHARED_DOCUMENT_NUMBER,
+      );
+      // Disbursed loan amount.
+      expect(bcReceipt.totalDisbursedAmount).toBe(123);
+      const bcReceiptAwards = getExpectedAwardsFromReceiptValues(
+        bcReceipt.disbursementReceiptValues,
+      );
+      // Disbursed grants.
+      expect(bcReceiptAwards).toStrictEqual({
+        BCSG: 599,
+      });
+      // Assert provincial part-time receipt.
+      // Header details.
+      expect(bpReceipt).toEqual(
+        expect.objectContaining({
+          batchRunDate: BATCH_RUN_DATE,
+          fileDate: FILE_DATE,
+          sequenceNumber: 3228,
+        }),
+      );
+      // Document number.
+      expect(bpReceipt.disbursementSchedule.documentNumber).toBe(
+        SHARED_DOCUMENT_NUMBER,
+      );
+      // Disbursed loan amount.
+      expect(bpReceipt.totalDisbursedAmount).toBe(0);
+      const bpReceiptAwards = getExpectedAwardsFromReceiptValues(
+        bpReceipt.disbursementReceiptValues,
+      );
+      // Disbursed grants.
+      expect(bpReceiptAwards).toStrictEqual({
+        BCSG: 600,
+      });
+      // Notification record.
+      const createdNotification = await db.notification.findOne({
+        select: {
+          id: true,
+          dateSent: true,
+          messagePayload: true,
+          notificationMessage: { id: true, templateId: true },
+        },
+        relations: { notificationMessage: true },
+        where: {
+          dateSent: IsNull(),
+          notificationMessage: {
+            id: NotificationMessageType.MinistryNotificationProvincialDailyDisbursementReceipt,
+          },
+        },
+      });
+      expect(createdNotification.messagePayload).toStrictEqual({
+        template_id: createdNotification.notificationMessage.templateId,
+        email_address: TEST_EMAIL,
+        personalisation: {
+          application_file: {
+            file:
+              "RnVsbCBUaW1lIEJDIFN0dWRlbnQgTG9hbixGdWxsIFRpbWUgQkMgU3R1ZGVudCBHcmFudCxGdWxsIFRpbWUgQkMgVG90YWwsUGFydCBUaW1lIEJDIFN0dWRlbnQgR3JhbnQsUGFydCBUaW1lIEJDIFRvdGFsLEJDIFRvdGFsLFRvdGFsIFJlY29yZHMsRmlsZSBEYXRlLEJhdGNoIFJ1biBEYXR" +
+              "lLFNlcXVlbmNlIE51bWJlcg0KMTIzLjAwLDc2MC4wMCw4ODMuMDAsNzYwLjAwLDc2MC4wMCwxNjQzLjAwLDIsMjAyNC0wMS0zMSwyMDI0LTAxLTMwLDMyMjg=",
+            filename: "Daily_Disbursement_File_2024-01-31_3228.csv",
+            sending_method: "attach",
+          },
+        },
+      });
+      // Verify the file content as expected.
+      const file =
+        createdNotification.messagePayload["personalisation"][
+          "application_file"
+        ]["file"];
+      const fileContent = Buffer.from(file, "base64").toString("ascii");
+      expect(fileContent).toContain(
+        "Full Time BC Student Loan,Full Time BC Student Grant,Full Time BC Total,Part Time BC Student Grant,Part Time BC Total,BC Total,Total Records,File Date,Batch Run Date,Sequence Number",
+      );
+      expect(fileContent).toContain(
+        "123.00,760.00,883.00,760.00,760.00,1643.00,2,2024-01-31,2024-01-30,3228",
       );
     });
 
@@ -575,11 +718,13 @@ describe(
 
     /**
      * Get federal and provincial receipts to execute the asserts verifications.
-     * @param disbursementScheduleId schedule id.
+     * @param fileDate File date to be a part of filename.
+     * @param sequenceNumber Sequence number to be a part of filename.
      * @returns receipts and receipts awards to execute the asserts verifications.
      */
     async function getReceiptsForAssert(
-      disbursementScheduleId: number,
+      fileDate: string,
+      sequenceNumber: number,
     ): Promise<{
       feReceipt?: DisbursementReceipt;
       bcReceipt?: DisbursementReceipt;
@@ -608,9 +753,8 @@ describe(
           disbursementReceiptValues: true,
         },
         where: {
-          disbursementSchedule: {
-            id: disbursementScheduleId,
-          },
+          fileDate: fileDate,
+          sequenceNumber: sequenceNumber,
         },
       });
       const bcReceipt = receipts.find(
