@@ -1108,7 +1108,7 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:sequenceFlow id="Flow_1lpq0lj" sourceRef="Event_07l2szk" targetRef="Event_0zn13zd" />
     <bpmn:scriptTask id="Activity_0v4suzm" name="Dependants">
       <bpmn:extensionElements>
-        <zeebe:script expression="=calculatedDataDependants[date(item.dateOfBirth) &#60;= date(offeringStudyEndDate)]" resultVariable="calculatedDataDependants" />
+        <zeebe:script expression="=// Consider only dependents who were born on or before the study end date.&#10;calculatedDataDependants[date(item.dateOfBirth) &#60;= date(offeringStudyEndDate)]" resultVariable="calculatedDataDependants" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1xpxz73</bpmn:incoming>
       <bpmn:outgoing>Flow_1dy9nx0</bpmn:outgoing>
@@ -2238,14 +2238,6 @@ dmnX (comes from dmn)</bpmn:text>
         <di:waypoint x="1519" y="1170" />
         <di:waypoint x="1537" y="1170" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0yc2t6b_di" bpmnElement="Association_0yc2t6b">
-        <di:waypoint x="2010" y="1152" />
-        <di:waypoint x="2010" y="1040" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0jm8vsl_di" bpmnElement="Association_0jm8vsl">
-        <di:waypoint x="2561" y="1330" />
-        <di:waypoint x="2556" y="1271" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="BPMNShape_0hjhvfj" bpmnElement="TextAnnotation_15vd5py">
         <dc:Bounds x="7429" y="3000" width="100" height="30" />
         <bpmndi:BPMNLabel />
@@ -2314,8 +2306,16 @@ dmnX (comes from dmn)</bpmn:text>
       <bpmndi:BPMNShape id="Group_081xfok_di" bpmnElement="Group_081xfok">
         <dc:Bounds x="4100" y="1560" width="290" height="420" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1myp6tg_di" bpmnElement="TextAnnotation_1myp6tg">
+        <dc:Bounds x="1959" y="1010" width="215" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0wcncz1_di" bpmnElement="TextAnnotation_0wcncz1">
         <dc:Bounds x="5846" y="2210" width="426" height="46" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1mlngwq" bpmnElement="TextAnnotation_1kucuom">
+        <dc:Bounds x="2454" y="1330" width="215" height="30" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1e81eq9" bpmnElement="TextAnnotation_0y3el2u">
@@ -2382,14 +2382,14 @@ dmnX (comes from dmn)</bpmn:text>
         <di:waypoint x="980" y="1035" />
         <di:waypoint x="980" y="1152" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="TextAnnotation_1myp6tg_di" bpmnElement="TextAnnotation_1myp6tg">
-        <dc:Bounds x="1959" y="1010" width="215" height="30" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1mlngwq" bpmnElement="TextAnnotation_1kucuom">
-        <dc:Bounds x="2454" y="1330" width="215" height="30" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0yc2t6b_di" bpmnElement="Association_0yc2t6b">
+        <di:waypoint x="2010" y="1152" />
+        <di:waypoint x="2010" y="1040" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0jm8vsl_di" bpmnElement="Association_0jm8vsl">
+        <di:waypoint x="2561" y="1330" />
+        <di:waypoint x="2556" y="1271" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
