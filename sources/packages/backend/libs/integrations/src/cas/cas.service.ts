@@ -40,7 +40,8 @@ export class CASService {
     };
     const data = stringify(body);
     try {
-      return await this.httpService.axiosRef.post(url, data, config);
+      const response = await this.httpService.axiosRef.post(url, data, config);
+      return response.data;
     } catch (error: unknown) {
       this.logger.error(`Error while logging on CAS API. ${error}`);
       throw new CustomNamedError(
