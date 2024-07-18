@@ -18,7 +18,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-financia
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataHasDependants = YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentEligibleForChildcareCost(
           DependentChildCareEligibility.Eligible0To11YearsOld,
@@ -66,7 +66,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-financia
       assessmentConsolidatedData.studentDataDaycareCosts11YearsOrUnder = 1000;
       assessmentConsolidatedData.studentDataDaycareCosts12YearsOrOver = 1000;
 
-      assessmentConsolidatedData.studentDataHasDependants = YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentEligibleForChildcareCost(
           DependentChildCareEligibility.Eligible0To11YearsOld,

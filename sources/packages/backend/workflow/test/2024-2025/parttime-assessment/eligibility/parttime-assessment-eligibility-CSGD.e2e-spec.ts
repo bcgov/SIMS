@@ -19,7 +19,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataHasDependants = YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentEligible(
           DependentEligibility.Eligible0To18YearsOld,
@@ -46,7 +46,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataHasDependants = YesNoOptions.Yes;
+    assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
@@ -93,7 +93,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
     // Dependent(s) born after study end date are not considered
     // as eligible for any calculation.
-    assessmentConsolidatedData.studentDataHasDependants = YesNoOptions.Yes;
+    assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentBornAfterStudyEndDate(
         assessmentConsolidatedData.offeringStudyEndDate,

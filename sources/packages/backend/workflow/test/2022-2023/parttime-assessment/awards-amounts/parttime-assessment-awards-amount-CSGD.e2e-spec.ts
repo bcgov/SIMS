@@ -21,7 +21,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport =
       YesNoOptions.Yes;
     assessmentConsolidatedData.partner1CRAReportedIncome = 20000;
-    assessmentConsolidatedData.studentDataHasDependants = YesNoOptions.Yes;
+    assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
@@ -36,7 +36,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
         { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
     ];
-    assessmentConsolidatedData.studentDataHasDependants = YesNoOptions.Yes;
+    assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
@@ -63,7 +63,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport =
       YesNoOptions.Yes;
     assessmentConsolidatedData.partner1CRAReportedIncome = 42000;
-    assessmentConsolidatedData.studentDataHasDependants = YesNoOptions.Yes;
+    assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
@@ -78,7 +78,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
         { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
     ];
-    assessmentConsolidatedData.studentDataHasDependants = YesNoOptions.Yes;
+    assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
@@ -142,7 +142,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport =
       YesNoOptions.Yes;
     assessmentConsolidatedData.partner1CRAReportedIncome = 20000;
-    assessmentConsolidatedData.studentDataHasDependants = YesNoOptions.Yes;
+    assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
@@ -187,7 +187,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport =
       YesNoOptions.Yes;
     assessmentConsolidatedData.partner1CRAReportedIncome = 35000;
-    assessmentConsolidatedData.studentDataHasDependants = YesNoOptions.Yes;
+    assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
@@ -257,7 +257,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport =
       YesNoOptions.Yes;
     assessmentConsolidatedData.partner1CRAReportedIncome = 35000;
-    assessmentConsolidatedData.studentDataHasDependants = YesNoOptions.Yes;
+    assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,

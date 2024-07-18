@@ -854,7 +854,7 @@ dmnX (comes from dmn)</bpmn:text>
     </bpmn:intermediateThrowEvent>
     <bpmn:sequenceFlow id="Flow_1su3k2o" sourceRef="Activity_0ayxjmh" targetRef="Gateway_057mnqo" />
     <bpmn:sequenceFlow id="Flow_1dgj9d7" name="Use appeal data" sourceRef="Gateway_1rlewmq" targetRef="Activity_0ayxjmh">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=appealsStudentHasDependantsData != null</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=appealsStudentHasDependantsAppealData != null</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0r21s9o" name="Use appeal data" sourceRef="Gateway_0onhjqp" targetRef="Activity_1rh2jry">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=appealsStudentAdditionalTransportationAppealData != null </bpmn:conditionExpression>
@@ -895,9 +895,9 @@ dmnX (comes from dmn)</bpmn:text>
     </bpmn:exclusiveGateway>
     <bpmn:scriptTask id="Activity_0ayxjmh" name="Dependants">
       <bpmn:extensionElements>
-        <zeebe:script expression="={&#10;  calculatedDataHasDependants: appealsStudentHasDependantsData,&#10;  calculatedDataDependants: (if appealsStudentDependantsData = null then null else appealsStudentDependantsData)&#10;}" resultVariable="calculatedDataDependantDetails" />
+        <zeebe:script expression="={&#10;  calculatedDataHasDependents: appealsStudentHasDependantsAppealData,&#10;  calculatedDataDependants: (if appealsStudentDependantsAppealData = null then null else appealsStudentDependantsAppealData)&#10;}" resultVariable="calculatedDataDependantDetails" />
         <zeebe:ioMapping>
-          <zeebe:output source="=calculatedDataDependantDetails.calculatedDataHasDependants" target="calculatedDataHasDependants" />
+          <zeebe:output source="=calculatedDataDependantDetails.calculatedDataHasDependents" target="calculatedDataHasDependents" />
           <zeebe:output source="=calculatedDataDependantDetails.calculatedDataDependants" target="calculatedDataDependants" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
@@ -994,9 +994,9 @@ dmnX (comes from dmn)</bpmn:text>
     </bpmn:intermediateThrowEvent>
     <bpmn:scriptTask id="Activity_1vwijyc" name="Dependants">
       <bpmn:extensionElements>
-        <zeebe:script expression="={&#10;  calculatedDataHasDependants: studentDataHasDependants,&#10;  calculatedDataDependants: (if studentDataDependants = null then null else studentDataDependants)&#10;}" resultVariable="calculatedDataDependantDetails" />
+        <zeebe:script expression="={&#10;  calculatedDataHasDependents: studentDataHasDependents,&#10;  calculatedDataDependants: (if studentDataDependants = null then null else studentDataDependants)&#10;}" resultVariable="calculatedDataDependantDetails" />
         <zeebe:ioMapping>
-          <zeebe:output source="=calculatedDataDependantDetails.calculatedDataHasDependants" target="calculatedDataHasDependants" />
+          <zeebe:output source="=calculatedDataDependantDetails.calculatedDataHasDependents" target="calculatedDataHasDependents" />
           <zeebe:output source="=calculatedDataDependantDetails.calculatedDataDependants" target="calculatedDataDependants" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
@@ -1169,7 +1169,7 @@ dmnX (comes from dmn)</bpmn:text>
       <bpmn:outgoing>Flow_0hgiad0</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_1xpxz73" name="Has Dependants" sourceRef="Gateway_0m9brpo" targetRef="Activity_0v4suzm">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=calculatedDataHasDependants = "yes"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=calculatedDataHasDependents = "yes"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0hgiad0" name="Has No Dependants" sourceRef="Gateway_0m9brpo" targetRef="Activity_1r39i7t" />
     <bpmn:sequenceFlow id="Flow_1w7reve" sourceRef="Gateway_08rr1xe" targetRef="Gateway_0m9brpo" />

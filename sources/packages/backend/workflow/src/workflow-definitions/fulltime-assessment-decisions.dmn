@@ -291,9 +291,9 @@
           <text>studentDataDependantstatus</text>
         </inputExpression>
       </input>
-      <input id="InputClause_04jj8xv" label="studentDataHasDependants">
+      <input id="InputClause_04jj8xv" label="studentDataHasDependents">
         <inputExpression id="LiteralExpression_04rhdqi" typeRef="string">
-          <text>studentDataHasDependants</text>
+          <text>studentDataHasDependents</text>
         </inputExpression>
       </input>
       <input id="InputClause_070kjf4" label="studentDataLivingWithParents">

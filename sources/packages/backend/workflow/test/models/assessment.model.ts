@@ -86,7 +86,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataTaxReturnIncome: number;
   studentDataWhenDidYouGraduateOrLeaveHighSchool: string;
   studentDataIndigenousStatus: YesNoOptions;
-  studentDataHasDependants: YesNoOptions;
+  studentDataHasDependents: YesNoOptions;
   studentDataLivingWithParents: YesNoOptions;
   studentDataYouthInCare: YesNoOptions;
   studentTaxYear: number;
@@ -111,8 +111,8 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   appealsStudentFinancialInformationAppealData?: StudentFinancialInformationAppealData;
   appealsStudentAdditionalTransportationAppealData?: StudentAdditionalTransportationAppealData;
   appealsPartnerInformationAndIncomeAppealData?: PartnerInformationAndIncomeAppealData;
-  appealsStudentDependantsData?: StudentDependent[];
-  appealsStudentHasDependantsData?: YesNoOptions;
+  appealsStudentDependantsAppealData?: StudentDependent[];
+  appealsStudentHasDependantsAppealData?: YesNoOptions;
   studentDataIsYourPartnerAbleToReport?: YesNoOptions;
   studentDataParentValidSinNumber?: YesNoOptions;
   studentDataNumberOfParents?: 1 | 2;

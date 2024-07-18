@@ -28,7 +28,7 @@
           <zeebe:header key="studentDataLivingathomeRent" value="$.data.livingathomeRent" />
           <zeebe:header key="studentDataTransportationCost" value="$.data.transportationCost" />
           <zeebe:header key="studentDataIndigenousStatus" value="$.data.indigenousStatus" />
-          <zeebe:header key="studentDataHasDependants" value="$.data.hasDependents" />
+          <zeebe:header key="studentDataHasDependents" value="$.data.hasDependents" />
           <zeebe:header key="studentDataLivingWithParents" value="$.data.livingWithParents" />
           <zeebe:header key="studentDataDaycareCosts12YearsOrOver" value="$.data.daycareCosts12YearsOrOver" />
           <zeebe:header key="studentDataDaycareCosts11YearsOrUnder" value="$.data.daycareCosts11YearsOrUnder" />
@@ -90,8 +90,8 @@
           <zeebe:header key="appealsStudentFinancialInformationAppealData" value="$.appeals.studentFinancialInformationAppeal.submittedData" />
           <zeebe:header key="appealsStudentAdditionalTransportationAppealData" value="$.appeals.studentAdditionalTransportationAppeal.submittedData" />
           <zeebe:header key="appealsPartnerInformationAndIncomeAppealData" value="$.appeals.partnerInformationAndIncomeAppeal.submittedData" />
-          <zeebe:header key="appealsStudentDependantsData" value="$.appeals.studentDependantsAppeal.submittedData.dependants[*][&#39;dateOfBirth&#39;,&#39;declaredOnTaxes&#39;,&#39;attendingPostSecondarySchool&#39;]" />
-          <zeebe:header key="appealsStudentHasDependantsData" value="$.appeals.studentDependantsAppeal.submittedData.hasDependents" />
+          <zeebe:header key="appealsStudentDependantsAppealData" value="$.appeals.studentDependantsAppeal.submittedData.dependants[*][&#39;dateOfBirth&#39;,&#39;declaredOnTaxes&#39;,&#39;attendingPostSecondarySchool&#39;]" />
+          <zeebe:header key="appealsStudentHasDependantsAppealData" value="$.appeals.studentDependantsAppeal.submittedData.hasDependents" />
           <zeebe:header key="offeringCourseLoad" value="$.offering.courseLoad" />
           <zeebe:header key="offeringWeeks" value="$.offering.studyBreaks.totalFundedWeeks" />
           <zeebe:header key="studentDataDependants" value="$.data.dependants[*][&#39;dateOfBirth&#39;,&#39;declaredOnTaxes&#39;,&#39;attendingPostSecondarySchool&#39;]" />
