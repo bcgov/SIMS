@@ -185,6 +185,42 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
     expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(0);
   });
 
+  it(
+    "Should determine federalAwardBCAGAmount to be 1000, provincialAwardNetBCAGAmount to be 700 when " +
+      "student's current year income is 20001 and their relationship status is single.",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataCurrentYearIncome = 20001;
+      assessmentConsolidatedData.studentDataRelationshipStatus = "single";
+      // Act
+      const calculatedAssessment =
+        await executePartTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+      // Assert
+      expect(
+        calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
+      ).toBeLessThan(
+        calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
+          .limitAwardBCAGIncomeCap,
+      );
+      expect(
+        calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
+      ).toBe(20001);
+      expect(calculatedAssessment.variables.federalAwardBCAGAmount).toBe(
+        calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
+          .limitAwardBCAGAmount,
+      );
+      expect(calculatedAssessment.variables.federalAwardBCAGAmount).toBe(1000);
+      expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(
+        700,
+      );
+    },
+  );
+
   afterAll(async () => {
     // Closes the singleton instance created during test executions.
     await ZeebeMockedClient.getMockedZeebeInstance().close();
