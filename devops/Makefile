@@ -41,9 +41,6 @@ export FORMS_BUILD_REF := $(or ${FORMS_BUILD_REF}, forms)
 export FORMIO_ROOT_EMAIL := $(or ${FORMIO_ROOT_EMAIL}, dev_sabc@gov.bc.ca)
 export MONGODB_URI := $(or ${MONGODB_URI}, $$MONGODB_URI)
 export QUEUE_PREFIX := $(or $(QUEUE_PREFIX), {sims-local})
-export CAS_BASE_URL := $(or $(CAS_BASE_URL), )
-export CAS_CLIENT_ID := $(or $(CAS_CLIENT_ID), )
-export CAS_CLIENT_SECRET := $(or $(CAS_CLIENT_SECRET), )
 
 export MAX_WAIT=300 # Maximum wait time in seconds.
 export WAIT_TIME=0  # Initialize wait time to zero.
@@ -217,9 +214,6 @@ init-secrets:
 		-p ZEEBE_CLIENT_ID=$(ZEEBE_CLIENT_ID) \
 		-p ZEEBE_CLIENT_SECRET=$(ZEEBE_CLIENT_SECRET) \
 		-p CAMUNDA_OAUTH_URL=$(CAMUNDA_OAUTH_URL) \
-    -p CAS_BASE_URL=$(CAS_BASE_URL) \
-    -p CAS_CLIENT_ID=$(CAS_CLIENT_ID) \
-    -p CAS_CLIENT_SECRET=$(CAS_CLIENT_SECRET) \
 		| oc -n $(NAMESPACE) apply -f -
 
 init-zone-b-sftp-secret:
