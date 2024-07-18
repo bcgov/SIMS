@@ -79,6 +79,7 @@ export class CASService {
     }
     return response?.data;
   }
+
   @InjectLogger()
   logger: LoggerService;
 }
