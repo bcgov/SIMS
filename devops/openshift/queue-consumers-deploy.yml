@@ -429,9 +429,9 @@ parameters:
     value: esdc-environment-code
   - name: APPLICATION_ARCHIVE_DAYS
     require: true
-  - name: CAS_BASE_URL_KEY
+  - name: CAS_BASE_URL_NAME_KEY
     value: cas-base-url
-  - name: CAS_CLIENT_ID_KEY
+  - name: CAS_CLIENT_ID_NAME_KEY
     value: cas-client-id
-  - name: CAS_CLIENT_SECRET_KEY
+  - name: CAS_CLIENT_SECRET_NAME_KEY
     value: cas-client-secret
