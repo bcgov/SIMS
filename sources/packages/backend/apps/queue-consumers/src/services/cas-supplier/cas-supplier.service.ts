@@ -14,9 +14,6 @@ import {
 } from "@sims/integrations/cas/models/cas-supplier-response.model";
 import { CAS_AUTH_ERROR } from "@sims/integrations/constants";
 
-const CAS_SUPPLIER_ADDRESS_ACTIVE_STATUS = "ACTIVE";
-const CAS_SUPPLIER_RESPONSE_ITEM_STATUS = "ACTIVE";
-
 @Injectable()
 export class CASSupplierIntegrationService {
   constructor(
@@ -109,6 +106,7 @@ export class CASSupplierIntegrationService {
   ): Promise<boolean> {
     if (!supplierResponse.items.length) {
       summary.info("No supplier found on CAS.");
+      return false;
     } else {
       const [supplierInfo] = supplierResponse.items;
       const activeSupplierItemAddress =
