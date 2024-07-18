@@ -889,7 +889,7 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_0hxxmu9" name="Define Student Total Income">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if &#10;studentDataCurrentYearIncome = null&#10;then&#10;	if &#10;        studentDataCRAReportingIncome = null&#10;	then&#10;		calculatedDataTaxReturnIncome&#10;	else&#10;		studentDataCRAReportingIncome&#10;&#10;else&#10;studentDataCurrentYearIncome" target="calculatedDataStudentTotalIncome" />
+          <zeebe:output source="=if &#10;studentDataCurrentYearIncome = null&#10;then&#10;	if &#10;    studentDataCRAReportedIncome = null&#10;	then&#10;		calculatedDataTaxReturnIncome&#10;	else&#10;		studentDataCRAReportedIncome&#10;else&#10;studentDataCurrentYearIncome" target="calculatedDataStudentTotalIncome" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1gf8xyd</bpmn:incoming>
