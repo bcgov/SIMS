@@ -1,7 +1,13 @@
-import { TableNames } from "@sims/sims-db/constant";
+import { ColumnNames, TableNames } from "@sims/sims-db/constant";
 import { RecordDataModel } from "@sims/sims-db/entities/record.model";
-import { SupplierStatus } from "@sims/sims-db/entities/supplier-status.type";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Student, SupplierStatus } from "@sims/sims-db/entities";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 
 /**
  * Student supplier information data from the integration with Corporate Accounting System (CAS).
@@ -13,6 +19,20 @@ export class CASSupplier extends RecordDataModel {
    */
   @PrimaryGeneratedColumn()
   id: number;
+
+  /**
+   * Reference to student id in students table.
+   */
+  @OneToOne(() => Student, {
+    eager: false,
+    cascade: ["update"],
+    nullable: false,
+  })
+  @JoinColumn({
+    name: "student_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  student: Student;
 
   /**
    * Supplier number received from CAS. null when no data was ever retrieved from CAS.
@@ -39,7 +59,7 @@ export class CASSupplier extends RecordDataModel {
     name: "status",
     nullable: true,
   })
-  status?: string;
+  status?: "ACTIVE" | "INACTIVE";
 
   /**
    * Protected flag received from CAS which means the student profile was created by SFAS and
@@ -89,9 +109,9 @@ export class CASSupplier extends RecordDataModel {
   @Column({
     name: "supplier_status_updated_on",
     type: "timestamptz",
-    nullable: true,
+    nullable: false,
   })
-  supplierStatusUpdatedOn?: Date;
+  supplierStatusUpdatedOn: Date;
 
   /**
    * Indicates when the supplier is considered valid and an invoice can be generated using the information.
@@ -106,11 +126,12 @@ export class CASSupplier extends RecordDataModel {
 export interface SupplierAddress {
   supplierSiteCode: string;
   addressLine1: string;
+  addressLine2: string;
   city: string;
   provinceState: string;
   country: string;
   postalCode: string;
-  status: string;
+  status: "ACTIVE" | "INACTIVE";
   siteProtected: string;
   lastUpdated: Date;
 }

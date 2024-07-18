@@ -52,6 +52,7 @@ import {
   StudentLoanBalance,
   NotificationMessage,
   ECertFeedbackError,
+  CASSupplier,
 } from "@sims/sims-db";
 import { DataSource, Repository } from "typeorm";
 
@@ -70,6 +71,7 @@ export function createE2EDataSources(dataSource: DataSource): E2EDataSources {
     ),
     applicationException: dataSource.getRepository(ApplicationException),
     applicationStudentFile: dataSource.getRepository(ApplicationStudentFile),
+    casSupplier: dataSource.getRepository(CASSupplier),
     coeDeniedReason: dataSource.getRepository(COEDeniedReason),
     craIncomeVerification: dataSource.getRepository(CRAIncomeVerification),
     designationAgreement: dataSource.getRepository(DesignationAgreement),
@@ -151,6 +153,7 @@ export interface E2EDataSources {
   applicationExceptionRequest: Repository<ApplicationExceptionRequest>;
   applicationException: Repository<ApplicationException>;
   applicationStudentFile: Repository<ApplicationStudentFile>;
+  casSupplier: Repository<CASSupplier>;
   coeDeniedReason: Repository<COEDeniedReason>;
   craIncomeVerification: Repository<CRAIncomeVerification>;
   designationAgreement: Repository<DesignationAgreement>;
