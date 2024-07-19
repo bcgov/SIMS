@@ -339,9 +339,7 @@ export class OfferingValidationModel {
    * Actual tuition costs.
    */
   @ValidateIf(
-    (offering: OfferingValidationModel) => {
-      return offering.actualTuitionCosts !== undefined
-    }
+    (offering: OfferingValidationModel) => offering.actualTuitionCosts !== undefined
   )
   @Min(0, {
     message: getMinFormatMessage(userFriendlyNames.actualTuitionCosts),
@@ -369,9 +367,7 @@ export class OfferingValidationModel {
    * Program related costs.
    */
   @ValidateIf(
-    (offering: OfferingValidationModel) => {
-      return offering.programRelatedCosts !== undefined
-    }
+    (offering: OfferingValidationModel) => offering.programRelatedCosts !== undefined
   )
   @Min(0, {
     message: getMinFormatMessage(userFriendlyNames.programRelatedCosts),
@@ -399,9 +395,7 @@ export class OfferingValidationModel {
    * Mandatory fees.
    */
   @ValidateIf(
-    (offering: OfferingValidationModel) => {
-      return offering.mandatoryFees !== undefined
-    }
+    (offering: OfferingValidationModel) => offering.mandatoryFees !== undefined
   )
   @Min(0, {
     message: getMinFormatMessage(userFriendlyNames.mandatoryFees),
@@ -429,9 +423,7 @@ export class OfferingValidationModel {
    * Exceptional expenses.
    */
   @ValidateIf(
-    (offering: OfferingValidationModel) => {
-      return offering.exceptionalExpenses !== undefined
-    }
+    (offering: OfferingValidationModel) => offering.exceptionalExpenses !== undefined
   )
   @Min(0, {
     message: getMinFormatMessage(userFriendlyNames.exceptionalExpenses),
