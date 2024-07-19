@@ -74,6 +74,11 @@ objects:
                     secretKeyRef:
                       key: ${CAMUNDA_OAUTH_URL_KEY}
                       name: ${WORKERS_SECRET_NAME}
+                - name: ZEEBE_GRPC_WORKER_LONGPOLL_SECONDS
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ZEEBE_GRPC_WORKER_LONGPOLL_SECONDS_KEY}
+                      name: ${WORKERS_SECRET_NAME}
                 - name: BYPASS_CRA_INCOME_VERIFICATION
                   value: ${BYPASS_CRA_INCOME_VERIFICATION}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
@@ -190,6 +195,9 @@ parameters:
     require: true
   - name: CAMUNDA_OAUTH_URL_KEY
     value: camunda-oauth-url
+    require: true
+  - name: ZEEBE_GRPC_WORKER_LONGPOLL_SECONDS_KEY
+    value: zeebe-grpc-worker-longpoll-seconds
     require: true
   - name: BYPASS_CRA_INCOME_VERIFICATION
     value: "false"
