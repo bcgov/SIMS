@@ -114,7 +114,7 @@ function getDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
     appealsStudentAdditionalTransportationAppealData: null,
     appealsPartnerInformationAndIncomeAppealData: null,
     appealsStudentFinancialInformationAppealData: null,
-    appealsStudentHasDependantsAppealData: null,
+    appealsStudentHasDependentsAppealData: null,
     appealsStudentDependantsAppealData: null,
     studentDataIsYourPartnerAbleToReport: null,
     studentDataParentValidSinNumber: null,

@@ -1151,7 +1151,7 @@ dmnX (comes from dmn)</bpmn:text>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_0ayxjmh" name="Dependants">
       <bpmn:extensionElements>
-        <zeebe:script expression="={&#10;  calculatedDataHasDependents: appealsStudentHasDependantsAppealData,&#10;  calculatedDataDependants: (if appealsStudentDependantsAppealData = null then null else appealsStudentDependantsAppealData)&#10;}" resultVariable="calculatedDataDependantDetails" />
+        <zeebe:script expression="={&#10;  calculatedDataHasDependents: appealsStudentHasDependentsAppealData,&#10;  calculatedDataDependants: (if appealsStudentDependantsAppealData = null then null else appealsStudentDependantsAppealData)&#10;}" resultVariable="calculatedDataDependantDetails" />
         <zeebe:ioMapping>
           <zeebe:output source="=calculatedDataDependantDetails.calculatedDataHasDependents" target="calculatedDataHasDependents" />
           <zeebe:output source="=calculatedDataDependantDetails.calculatedDataDependants" target="calculatedDataDependants" />
@@ -1173,7 +1173,7 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:sequenceFlow id="Flow_0zfe5t5" name="Use application data" sourceRef="Gateway_1rlewmq" targetRef="Activity_1vwijyc" />
     <bpmn:sequenceFlow id="Flow_0xi2yp3" sourceRef="Activity_1vwijyc" targetRef="Gateway_057mnqo" />
     <bpmn:sequenceFlow id="Flow_1dgj9d7" name="Use appeal data" sourceRef="Gateway_1rlewmq" targetRef="Activity_0ayxjmh">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=appealsStudentHasDependantsAppealData != null</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=appealsStudentHasDependentsAppealData != null</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1su3k2o" sourceRef="Activity_0ayxjmh" targetRef="Gateway_057mnqo" />
     <bpmn:sequenceFlow id="Flow_1ohcvel" sourceRef="Gateway_0wuxqll" targetRef="Gateway_1rlewmq" />
