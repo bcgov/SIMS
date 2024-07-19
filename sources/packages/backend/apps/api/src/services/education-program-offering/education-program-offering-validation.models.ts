@@ -338,6 +338,13 @@ export class OfferingValidationModel {
   /**
    * Actual tuition costs.
    */
+  @ValidateIf(
+    (offering: OfferingValidationModel) =>
+      !!offering.actualTuitionCosts &&
+      !!offering.programRelatedCosts &&
+      !!offering.mandatoryFees &&
+      !!offering.exceptionalExpenses,
+  )
   @Min(0, {
     message: getMinFormatMessage(userFriendlyNames.actualTuitionCosts),
   })
@@ -363,6 +370,13 @@ export class OfferingValidationModel {
   /**
    * Program related costs.
    */
+  @ValidateIf(
+    (offering: OfferingValidationModel) =>
+      !!offering.actualTuitionCosts &&
+      !!offering.programRelatedCosts &&
+      !!offering.mandatoryFees &&
+      !!offering.exceptionalExpenses,
+  )
   @Min(0, {
     message: getMinFormatMessage(userFriendlyNames.programRelatedCosts),
   })
@@ -388,6 +402,13 @@ export class OfferingValidationModel {
   /**
    * Mandatory fees.
    */
+  @ValidateIf(
+    (offering: OfferingValidationModel) =>
+      !!offering.actualTuitionCosts &&
+      !!offering.programRelatedCosts &&
+      !!offering.mandatoryFees &&
+      !!offering.exceptionalExpenses,
+  )
   @Min(0, {
     message: getMinFormatMessage(userFriendlyNames.mandatoryFees),
   })
@@ -413,6 +434,13 @@ export class OfferingValidationModel {
   /**
    * Exceptional expenses.
    */
+  @ValidateIf(
+    (offering: OfferingValidationModel) =>
+      !!offering.actualTuitionCosts &&
+      !!offering.programRelatedCosts &&
+      !!offering.mandatoryFees &&
+      !!offering.exceptionalExpenses,
+  )
   @Min(0, {
     message: getMinFormatMessage(userFriendlyNames.exceptionalExpenses),
   })
