@@ -21,6 +21,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport =
       YesNoOptions.Yes;
     assessmentConsolidatedData.partner1CRAReportedIncome = 20000;
+    assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
@@ -62,6 +63,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport =
       YesNoOptions.Yes;
     assessmentConsolidatedData.partner1CRAReportedIncome = 42000;
+    assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
@@ -140,6 +142,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport =
       YesNoOptions.Yes;
     assessmentConsolidatedData.partner1CRAReportedIncome = 20000;
+    assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
@@ -184,6 +187,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport =
       YesNoOptions.Yes;
     assessmentConsolidatedData.partner1CRAReportedIncome = 35000;
+    assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
@@ -253,6 +257,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport =
       YesNoOptions.Yes;
     assessmentConsolidatedData.partner1CRAReportedIncome = 35000;
+    assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,

@@ -10,6 +10,7 @@ import {
   createFakeStudentDependentEligibleForChildcareCost,
   createFakeStudentDependentNotEligibleForChildcareCost,
 } from "../../../test-utils/factories";
+import { YesNoOptions } from "@sims/test-utils";
 
 describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-child-care-costs.`, () => {
   it(
@@ -27,6 +28,7 @@ describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-child-car
       assessmentConsolidatedData.offeringWeeks = 18;
       assessmentConsolidatedData.offeringCourseLoad = 20;
       // Creates 2 eligible dependents.
+      assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentEligibleForChildcareCost(
           DependentChildCareEligibility.Eligible0To11YearsOld,
@@ -83,6 +85,7 @@ describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-child-car
       assessmentConsolidatedData.offeringWeeks = 17;
       assessmentConsolidatedData.offeringCourseLoad = 20;
       // Creates 2 eligible dependents.
+      assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentEligibleForChildcareCost(
           DependentChildCareEligibility.Eligible0To11YearsOld,
@@ -140,6 +143,7 @@ describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-child-car
       assessmentConsolidatedData.offeringWeeks = 8;
       assessmentConsolidatedData.offeringCourseLoad = 20;
       // Creates 4 eligible and 4 not eligible dependents.
+      assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentEligibleForChildcareCost(
           DependentChildCareEligibility.Eligible0To11YearsOld,
@@ -179,6 +183,7 @@ describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-child-car
       assessmentConsolidatedData.offeringWeeks = 8;
       assessmentConsolidatedData.offeringCourseLoad = 20;
       // Creates 1 not eligible dependant.
+      assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentNotEligibleForChildcareCost(
           assessmentConsolidatedData.offeringStudyStartDate,
@@ -221,6 +226,7 @@ describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-child-car
     assessmentConsolidatedData.offeringCourseLoad = 20;
     // Dependent(s) born after study end date are not considered
     // as eligible for any calculation.
+    assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentBornAfterStudyEndDate(
         assessmentConsolidatedData.offeringStudyEndDate,
