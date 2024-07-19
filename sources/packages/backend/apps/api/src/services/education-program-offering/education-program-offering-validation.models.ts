@@ -340,7 +340,7 @@ export class OfferingValidationModel {
    */
   @ValidateIf(
     (offering: OfferingValidationModel) => {
-      return typeof offering.actualTuitionCosts !== 'undefined'
+      return offering.actualTuitionCosts !== undefined
     }
   )
   @Min(0, {
@@ -370,7 +370,7 @@ export class OfferingValidationModel {
    */
   @ValidateIf(
     (offering: OfferingValidationModel) => {
-      return typeof offering.programRelatedCosts !== 'undefined'
+      return offering.programRelatedCosts !== undefined
     }
   )
   @Min(0, {
@@ -400,7 +400,7 @@ export class OfferingValidationModel {
    */
   @ValidateIf(
     (offering: OfferingValidationModel) => {
-      return typeof offering.mandatoryFees !== 'undefined'
+      return offering.mandatoryFees !== undefined
     }
   )
   @Min(0, {
@@ -430,7 +430,7 @@ export class OfferingValidationModel {
    */
   @ValidateIf(
     (offering: OfferingValidationModel) => {
-      return typeof offering.exceptionalExpenses !== 'undefined'
+      return offering.exceptionalExpenses !== undefined
     }
   )
   @Min(0, {
