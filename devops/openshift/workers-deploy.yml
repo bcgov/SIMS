@@ -91,15 +91,6 @@ objects:
                 requests:
                   cpu: ${CPU_REQUEST}
                   memory: ${MEMORY_REQUEST}
-              readinessProbe:
-                failureThreshold: 3
-                successThreshold: 1
-                httpGet:
-                  path: /health/
-                  port: "${{PORT}}"
-                initialDelaySeconds: 20
-                periodSeconds: 10
-                timeoutSeconds: 1
               livenessProbe:
                 failureThreshold: 3
                 successThreshold: 1
