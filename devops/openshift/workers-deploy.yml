@@ -175,19 +175,14 @@ parameters:
     required: true
   - name: ZEEBE_ADDRESS_KEY
     value: zeebe-address
-    required: true
   - name: ZEEBE_CLIENT_ID_KEY
     value: zeebe-client-id
-    required: true
   - name: ZEEBE_CLIENT_SECRET_KEY
     value: zeebe-client-secret
-    required: true
   - name: CAMUNDA_OAUTH_URL_KEY
     value: camunda-oauth-url
-    required: true
   - name: ZEEBE_GRPC_WORKER_LONGPOLL_SECONDS_KEY
     value: zeebe-grpc-worker-longpoll-seconds
-    required: true
   - name: BYPASS_CRA_INCOME_VERIFICATION
     value: "false"
   - name: REDIS_SERVICE
