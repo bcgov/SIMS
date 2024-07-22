@@ -55,7 +55,7 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:group id="Group_0hnsgkk" />
     <bpmn:group id="Group_081xfok" />
     <bpmn:textAnnotation id="TextAnnotation_1myp6tg">
-      <bpmn:text>Use Current Year Income if provided</bpmn:text>
+      <bpmn:text>Use CRA Income if provided</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_0wcncz1">
       <bpmn:text>Financial need min $1 AND and income is less than threshold, then cslpEligibility is YES</bpmn:text>
@@ -1131,7 +1131,7 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_0hxxmu9" name="Define Student Total Income">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if &#10;studentDataCurrentYearIncome = null&#10;then&#10;	if &#10;    studentDataCRAReportedIncome = null&#10;	then&#10;		calculatedDataTaxReturnIncome&#10;	else&#10;		studentDataCRAReportedIncome&#10;else&#10;studentDataCurrentYearIncome" target="calculatedDataStudentTotalIncome" />
+          <zeebe:output source="=if&#10;  studentDataCRAReportedIncome = null&#10;then&#10;  calculatedDataTaxReturnIncome&#10;else&#10;  studentDataCRAReportedIncome" target="calculatedDataStudentTotalIncome" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0c8ou5a</bpmn:incoming>
@@ -2310,7 +2310,7 @@ dmnX (comes from dmn)</bpmn:text>
         <dc:Bounds x="4100" y="1560" width="290" height="420" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_1myp6tg_di" bpmnElement="TextAnnotation_1myp6tg">
-        <dc:Bounds x="1939" y="1010" width="214.99952788136977" height="26.713124274099883" />
+        <dc:Bounds x="1939" y="1010" width="215" height="30" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0wcncz1_di" bpmnElement="TextAnnotation_0wcncz1">
@@ -2391,7 +2391,7 @@ dmnX (comes from dmn)</bpmn:text>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_0yc2t6b_di" bpmnElement="Association_0yc2t6b">
         <di:waypoint x="1990" y="1152" />
-        <di:waypoint x="1990" y="1037" />
+        <di:waypoint x="1990" y="1040" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
