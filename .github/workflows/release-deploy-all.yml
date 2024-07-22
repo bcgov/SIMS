@@ -148,6 +148,8 @@ jobs:
   deploy-workers:
     name: Deploy Workers
     environment: ${{ inputs.environment }}
+    env:
+      DISABLE_ORM_CACHE: true
     runs-on: ubuntu-latest
     needs: run-db-migrations
     steps:

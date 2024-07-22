@@ -97,6 +97,7 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_STANDALONE_MODE=${REDIS_STANDALONE_MODE}
       - WORKERS_PORT=${WORKERS_PORT}
+      - DISABLE_ORM_CACHE=true
     ports:
       - ${WORKERS_PORT}:${WORKERS_PORT}
     volumes:
