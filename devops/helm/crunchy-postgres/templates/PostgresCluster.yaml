@@ -20,23 +20,6 @@ spec:
   {{ end }}
   postgresVersion: {{ .Values.postgresVersion }}
 
-  {{ if .Values.pgmonitor.enabled }}
-  monitoring:
-    pgmonitor:
-      # this stuff is for the "exporter" container in the "postgres-cluster-ha" set of pods
-      exporter:
-        {{ if .Values.pgmonitor.exporter.image}}
-        image: {{ .Values.pgmonitor.exporter.image}}
-        {{ end }}
-        resources:
-          requests:
-            cpu: {{ .Values.pgmonitor.exporter.requests.cpu }}
-            memory: {{ .Values.pgmonitor.exporter.requests.memory }}
-          limits:
-            cpu: {{ .Values.pgmonitor.exporter.limits.cpu }}
-            memory: {{ .Values.pgmonitor.exporter.limits.memory }}
-  {{ end }}
-
   instances:
     - name: {{ .Values.instances.name }}
       replicas: {{ .Values.instances.replicas }}
