@@ -72,21 +72,26 @@
     <content-group>
       <toggle-content :toggled="!students?.length">
         <DataTable :value="students">
-          <Column field="firstName" header="First Name" :sortable="true">
+          <Column field="sin" header="SIN" :sortable="true">
+            <template #body="slotProps">
+              {{ slotProps.data.sin }}
+            </template>
+          </Column>
+          <Column field="firstName" header="Given name" :sortable="true">
             <template #body="slotProps">
               <div class="p-text-capitalize">
                 {{ slotProps.data.firstName }}
               </div>
             </template>
           </Column>
-          <Column field="lastName" header="Last Name" :sortable="true">
+          <Column field="lastName" header="Last name" :sortable="true">
             <template #body="slotProps">
               <div class="p-text-capitalize">
                 {{ slotProps.data.lastName }}
               </div>
             </template>
           </Column>
-          <Column field="birthDate" header="Date of Birth">
+          <Column field="birthDate" header="Date of birth">
             <template #body="slotProps">
               <div class="p-text-capitalize">
                 {{ dateOnlyLongString(slotProps.data.birthDate) }}
