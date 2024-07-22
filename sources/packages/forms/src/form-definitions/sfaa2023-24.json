@@ -22325,7 +22325,7 @@
           "id": "egkzqq8"
         },
         {
-          "title": "{{data.programYear}} Tax return income panel",
+          "title": "2020 Tax return income panel",
           "theme": "default",
           "breadcrumb": "default",
           "breadcrumbClickable": false,
@@ -22461,7 +22461,7 @@
                   "value": ""
                 }
               ],
-              "content": "Enter your reported total income from line 15000 of your {{data.programYear}} income tax return. This income will be matched with Canada Revenue Agency records, which may affect your assessment of need and/or grant eligibility.  \n\nIf you did not file a 2020 income tax return, enter your total income from all sources both inside and outside of Canada.",
+              "content": "Enter your reported total income from line 15000 of your {{data.programYear}} income tax return. This income will be matched with Canada Revenue Agency records, which may affect your assessment of need and/or grant eligibility.  \n\nIf you did not file a {{data.programYear}} income tax return, enter your total income from all sources both inside and outside of Canada.",
               "refreshOnChange": false,
               "customClass": "",
               "hidden": false,
@@ -22532,7 +22532,7 @@
               "hideLabel": true
             },
             {
-              "label": "My total income in 2020 was:",
+              "label": "My total income in {{data.programYear}} was:",
               "prefix": "$",
               "customClass": "font-weight-bold",
               "mask": false,
