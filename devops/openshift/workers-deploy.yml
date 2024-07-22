@@ -173,8 +173,6 @@ parameters:
     value: "0"
   - name: WORKERS_SECRET_NAME
     required: true
-  - name: ATBC_LOGIN_ENDPOINT
-    required: true
   - name: ZEEBE_ADDRESS_KEY
     value: zeebe-address
     required: true
