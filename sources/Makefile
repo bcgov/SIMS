@@ -73,6 +73,7 @@ export ELASTIC_VERSION := $(or $(ELASTIC_VERSION), 8.14.3)
 # Camunda default values for local development.
 export CAMUNDA_OAUTH_DISABLED := $(or $(CAMUNDA_OAUTH_DISABLED), true)
 export CAMUNDA_SECURE_CONNECTION := $(or $(CAMUNDA_SECURE_CONNECTION), false)
+export ZEEBE_GRPC_WORKER_LONGPOLL_SECONDS := $(or $(ZEEBE_GRPC_WORKER_LONGPOLL_SECONDS), 45)
 # CAS
 export CAS_BASE_URL := $(or $(CAS_BASE_URL), )
 export CAS_CLIENT_ID := $(or $(CAS_CLIENT_ID), )

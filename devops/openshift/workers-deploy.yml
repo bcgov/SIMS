@@ -74,6 +74,11 @@ objects:
                     secretKeyRef:
                       key: ${CAMUNDA_OAUTH_URL_KEY}
                       name: ${WORKERS_SECRET_NAME}
+                - name: ZEEBE_GRPC_WORKER_LONGPOLL_SECONDS
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ZEEBE_GRPC_WORKER_LONGPOLL_SECONDS_KEY}
+                      name: ${WORKERS_SECRET_NAME}
                 - name: BYPASS_CRA_INCOME_VERIFICATION
                   value: ${BYPASS_CRA_INCOME_VERIFICATION}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
@@ -86,15 +91,6 @@ objects:
                 requests:
                   cpu: ${CPU_REQUEST}
                   memory: ${MEMORY_REQUEST}
-              readinessProbe:
-                failureThreshold: 3
-                successThreshold: 1
-                httpGet:
-                  path: /health/
-                  port: "${{PORT}}"
-                initialDelaySeconds: 10
-                periodSeconds: 10
-                timeoutSeconds: 1
               livenessProbe:
                 failureThreshold: 3
                 successThreshold: 1
@@ -176,21 +172,24 @@ parameters:
   - name: BUILD_TAG
     value: "0"
   - name: WORKERS_SECRET_NAME
-    require: true
+    required: true
   - name: ATBC_LOGIN_ENDPOINT
-    require: true
+    required: true
   - name: ZEEBE_ADDRESS_KEY
     value: zeebe-address
-    require: true
+    required: true
   - name: ZEEBE_CLIENT_ID_KEY
     value: zeebe-client-id
-    require: true
+    required: true
   - name: ZEEBE_CLIENT_SECRET_KEY
     value: zeebe-client-secret
-    require: true
+    required: true
   - name: CAMUNDA_OAUTH_URL_KEY
     value: camunda-oauth-url
-    require: true
+    required: true
+  - name: ZEEBE_GRPC_WORKER_LONGPOLL_SECONDS_KEY
+    value: zeebe-grpc-worker-longpoll-seconds
+    required: true
   - name: BYPASS_CRA_INCOME_VERIFICATION
     value: "false"
   - name: REDIS_SERVICE

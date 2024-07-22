@@ -124,6 +124,7 @@ CAMUNDA_SECURE_CONNECTION=false
 ZEEBE_CLIENT_ID=
 ZEEBE_CLIENT_SECRET=
 CAMUNDA_OAUTH_URL=
+ZEEBE_GRPC_WORKER_LONGPOLL_SECONDS=45
 # Max retries ensures that if the grpc connection cannot be established within maximum
 # number of retry then the process with terminate.
 ZEEBE_CLIENT_MAX_RETRIES=20
