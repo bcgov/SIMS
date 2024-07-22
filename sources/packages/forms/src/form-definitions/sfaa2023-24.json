@@ -5153,7 +5153,27 @@
           "addons": [],
           "inputType": "hidden",
           "id": "eu8tkf",
-          "tags": []
+          "tags": [],
+          "lockKey": true
+        },
+        {
+          "input": true,
+          "tableView": false,
+          "key": "programYear",
+          "label": "programYear",
+          "protected": false,
+          "unique": false,
+          "persistent": true,
+          "type": "hidden",
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "calculateValue": "const [programYear] = data.programYearStartDate ? data.programYearStartDate.split(\"-\"):[];\nvalue = programYear ? programYear:\"\";",
+          "lockKey": true
         },
         {
           "label": "programYearEndDate",
@@ -8254,7 +8274,8 @@
               "breadcrumb": "default",
               "id": "efawj5",
               "addons": [],
-              "lazyLoad": false
+              "lazyLoad": false,
+              "tags": []
             },
             {
               "label": "<strong>Are you a resident of B.C.?</strong>",
@@ -9013,7 +9034,8 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "eawr0fg"
+                      "id": "eawr0fg",
+                      "tags": []
                     },
                     {
                       "label": "HTML",
@@ -9335,7 +9357,8 @@
                       "imageSize": "200",
                       "fileMinSize": "0KB",
                       "uploadOnly": false,
-                      "id": "e15yoie"
+                      "id": "e15yoie",
+                      "tags": []
                     },
                     {
                       "label": "Columns",
@@ -9408,7 +9431,8 @@
                               "properties": {},
                               "allowMultipleMasks": false,
                               "addons": [],
-                              "id": "euomj5"
+                              "id": "euomj5",
+                              "tags": []
                             }
                           ],
                           "width": 6,
@@ -9486,7 +9510,8 @@
                               "properties": {},
                               "allowMultipleMasks": false,
                               "addons": [],
-                              "id": "edp1zrf"
+                              "id": "edp1zrf",
+                              "tags": []
                             }
                           ],
                           "width": 6,
@@ -9562,7 +9587,8 @@
                       "tree": false,
                       "lazyLoad": false,
                       "autoAdjust": false,
-                      "id": "eh0xn99"
+                      "id": "eh0xn99",
+                      "tags": []
                     }
                   ],
                   "placeholder": "",
@@ -22257,7 +22283,7 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": null,
+            "show": "",
             "when": null,
             "eq": ""
           },
@@ -22290,7 +22316,7 @@
                   "value": ""
                 }
               ],
-              "content": "2020 Income tax return",
+              "content": "{{data.programYear}} Income tax return",
               "refreshOnChange": false,
               "customClass": "",
               "hidden": false,
@@ -22299,7 +22325,7 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": "",
                 "json": ""
@@ -22370,7 +22396,7 @@
                   "value": ""
                 }
               ],
-              "content": "Enter your reported total income from line 15000 of your 2020 income tax return. This income will be matched with Canada Revenue Agency records, which may affect your assessment of need and/or grant eligibility.  \n\nIf you did not file a 2020 income tax return, enter your total income from all sources both inside and outside of Canada.",
+              "content": "Enter your reported total income from line 15000 of your {{data.programYear}} income tax return. This income will be matched with Canada Revenue Agency records, which may affect your assessment of need and/or grant eligibility.  \n\nIf you did not file a {{data.programYear}} income tax return, enter your total income from all sources both inside and outside of Canada.",
               "refreshOnChange": false,
               "customClass": "",
               "hidden": false,
@@ -22379,7 +22405,7 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": "",
                 "json": ""
@@ -22414,7 +22440,6 @@
               "description": "",
               "errorLabel": "",
               "tooltip": "",
-              "hideLabel": false,
               "tabindex": "",
               "disabled": false,
               "autofocus": false,
@@ -22438,10 +22463,11 @@
               "showWordCount": false,
               "allowMultipleMasks": false,
               "id": "ezaww3",
-              "addons": []
+              "addons": [],
+              "hideLabel": true
             },
             {
-              "label": "My total income in 2020 was:",
+              "label": "My total income in {{data.programYear}} was:",
               "prefix": "$",
               "customClass": "font-weight-bold",
               "mask": false,
@@ -23125,9 +23151,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": "true",
-            "when": "howWillYouBeAttendingTheProgram",
-            "eq": "Full Time"
+            "show": "",
+            "when": "",
+            "eq": ""
           },
           "logic": [],
           "attributes": {},
@@ -23238,7 +23264,7 @@
                   "value": ""
                 }
               ],
-              "content": "If you have had, or anticipate having a significant decrease in income for 2021, you may request to be assessed using this year's estimated income.",
+              "content": "If you have had, or anticipate having a significant decrease in income for {{data.programYear}}, you may request to be assessed using this year's estimated income.",
               "refreshOnChange": false,
               "customClass": "",
               "hidden": false,
@@ -23247,7 +23273,7 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": "",
                 "json": ""
@@ -23450,6 +23476,26 @@
               "allowPrevious": false,
               "components": [
                 {
+                  "input": true,
+                  "tableView": false,
+                  "key": "currentYearIncomeApplicationException",
+                  "label": "Application Exception - Current Year Income",
+                  "protected": false,
+                  "unique": false,
+                  "persistent": true,
+                  "type": "hidden",
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "calculateValue": "value = \"studentApplicationException\";",
+                  "calculateServer": true,
+                  "lockKey": true
+                },
+                {
                   "label": "HTML",
                   "labelWidth": "",
                   "labelMargin": "",
@@ -23632,7 +23678,7 @@
                     "step": "any",
                     "integer": ""
                   },
-                  "key": "myTotalCurrentYearIncomeIs",
+                  "key": "currentYearIncome",
                   "conditional": {
                     "show": "true",
                     "when": "hasSignificantDegreeOfIncome",
@@ -23690,7 +23736,8 @@
                   "inputMask": "",
                   "decimalLimit": 0,
                   "requireDecimal": false,
-                  "tags": []
+                  "tags": [],
+                  "lockKey": true
                 },
                 {
                   "label": "<strong>Select the reason for your significant decrease in income.</strong>",
@@ -23753,7 +23800,7 @@
                   "calculateServer": false,
                   "allowCalculateOverride": false,
                   "validate": {
-                    "required": false,
+                    "required": true,
                     "onlyAvailableItems": true,
                     "customMessage": "",
                     "custom": "",
@@ -23769,7 +23816,7 @@
                   "tags": [],
                   "properties": {},
                   "conditional": {
-                    "show": true,
+                    "show": "true",
                     "when": "hasSignificantDegreeOfIncome",
                     "eq": "yes",
                     "json": ""
@@ -23977,6 +24024,197 @@
                   "id": "ermw1li",
                   "addons": [],
                   "lazyLoad": false
+                },
+                {
+                  "key": "decreaseInIncomePanelContent",
+                  "label": "Content",
+                  "input": false,
+                  "tag": "h3",
+                  "attrs": [
+                    {
+                      "value": "",
+                      "attr": ""
+                    }
+                  ],
+                  "className": "category-header-medium primary-color",
+                  "content": "Upload supporting documents for current year estimated income.",
+                  "type": "htmlelement",
+                  "hideLabel": false,
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "customClass": "header-md"
+                },
+                {
+                  "key": "decreaseInIncomePanelContent2",
+                  "label": "Content",
+                  "input": false,
+                  "tag": "p",
+                  "attrs": [
+                    {
+                      "value": "",
+                      "attr": ""
+                    }
+                  ],
+                  "className": "",
+                  "content": "Please provide supporting documentation for your request to use your current year estimated income.",
+                  "type": "htmlelement",
+                  "hideLabel": false,
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {}
+                },
+                {
+                  "key": "decreaseInIncomePanelContent3",
+                  "label": "Content",
+                  "input": false,
+                  "tag": "p",
+                  "attrs": [
+                    {
+                      "value": "",
+                      "attr": ""
+                    }
+                  ],
+                  "className": "",
+                  "content": "<h4 class=\"category-header-medium-small\">Provide the following:</h4>\n<ul><li>A letter explaining the circumstances that meet one or more of the Criteria (see above)</li></ul>",
+                  "type": "htmlelement",
+                  "hideLabel": true,
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "customClass": "align-bullets"
+                },
+                {
+                  "key": "decreaseInIncomePanelContent4",
+                  "label": "Content",
+                  "input": false,
+                  "tag": "p",
+                  "attrs": [
+                    {
+                      "value": "",
+                      "attr": ""
+                    }
+                  ],
+                  "className": "",
+                  "content": "<h4 class=\"category-header-medium-small\">Provide at least one of the following:</h4>\n<ul><li>All relevant supporting documentation of the circumstance(s) (medical records, letter from the physician, record of employment, layoff or strike, invoices from damages, etc.).</li>\n<li>The more recent CRA Income Tax Return and income information for the year matching the student financial assistance application number (with relevant supporting documentation to show the decrease in income), if available.</li>\n<li>All relevant supporting documentation of estimated total income for the year matching the student financial assistance application number, if applicable (pay stubs, invoices, bank statements, Employment Insurance benefit statements, Record of Employment, etc.).</li>\n</ul>",
+                  "type": "htmlelement",
+                  "hideLabel": true,
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "customClass": "align-bullets"
+                },
+                {
+                  "autofocus": false,
+                  "input": true,
+                  "tableView": false,
+                  "label": "Upload supporting documents:",
+                  "key": "decreaseInIncomePanelUploadsupportingdocuments",
+                  "image": false,
+                  "imageSize": "200",
+                  "placeholder": "",
+                  "multiple": true,
+                  "defaultValue": "",
+                  "protected": false,
+                  "persistent": true,
+                  "hidden": false,
+                  "clearOnHide": true,
+                  "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
+                  "fileMinSize": "0KB",
+                  "fileMaxSize": "4MB",
+                  "type": "file",
+                  "labelPosition": "top",
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "hideLabel": true,
+                  "storage": "url",
+                  "url": "student/files",
+                  "dir": "Current Year Income - Supporting Documents",
+                  "customClass": "font-weight-bold",
+                  "validate": {
+                    "required": true
+                  }
+                },
+                {
+                  "clearOnHide": false,
+                  "label": "Columns",
+                  "input": false,
+                  "tableView": false,
+                  "key": "decreaseInIncomePanelColumns",
+                  "columns": [
+                    {
+                      "components": [
+                        {
+                          "key": "decreaseInIncomePanelColumnsContent",
+                          "input": false,
+                          "html": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>\n",
+                          "type": "content",
+                          "tags": [],
+                          "conditional": {
+                            "show": "",
+                            "when": null,
+                            "eq": ""
+                          },
+                          "properties": {}
+                        }
+                      ],
+                      "width": 6,
+                      "offset": 0,
+                      "push": 0,
+                      "pull": 0
+                    },
+                    {
+                      "components": [
+                        {
+                          "key": "decreaseInIncomePanelColumnsContent2",
+                          "input": false,
+                          "html": "<p style=\"text-align: right;\">4MB file limit each</p>\n",
+                          "type": "content",
+                          "tags": [],
+                          "conditional": {
+                            "show": "",
+                            "when": null,
+                            "eq": ""
+                          },
+                          "properties": {}
+                        }
+                      ],
+                      "width": 6,
+                      "offset": 0,
+                      "push": 0,
+                      "pull": 0
+                    }
+                  ],
+                  "type": "columns",
+                  "hideLabel": false,
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {}
                 }
               ],
               "placeholder": "",
@@ -24421,7 +24659,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "inputType": "hidden",
-                  "id": "e78m1ow"
+                  "id": "e78m1ow",
+                  "tags": []
                 },
                 {
                   "label": "HTML",
@@ -24839,7 +25078,8 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "eo1cjdj"
+                  "id": "eo1cjdj",
+                  "tags": []
                 },
                 {
                   "label": "HTML",
@@ -24914,7 +25154,8 @@
                   "addons": [],
                   "tag": "p",
                   "id": "eq7e38",
-                  "className": ""
+                  "className": "",
+                  "tags": []
                 },
                 {
                   "label": "HTML",
@@ -24989,7 +25230,8 @@
                   "addons": [],
                   "tag": "p",
                   "id": "evksdr7",
-                  "className": ""
+                  "className": "",
+                  "tags": []
                 },
                 {
                   "label": "HTML",
@@ -25064,7 +25306,8 @@
                   "addons": [],
                   "tag": "p",
                   "id": "e99y2i9",
-                  "className": ""
+                  "className": "",
+                  "tags": []
                 },
                 {
                   "label": "ExceptionalExpenseFile",
@@ -25146,7 +25389,8 @@
                   "imageSize": "200",
                   "fileMinSize": "0KB",
                   "uploadOnly": false,
-                  "id": "ea87f6w"
+                  "id": "ea87f6w",
+                  "tags": []
                 },
                 {
                   "label": "Columns",
@@ -25219,7 +25463,8 @@
                           "properties": {},
                           "allowMultipleMasks": false,
                           "addons": [],
-                          "id": "egdox9m"
+                          "id": "egdox9m",
+                          "tags": []
                         }
                       ],
                       "width": 6,
@@ -25297,7 +25542,8 @@
                           "properties": {},
                           "allowMultipleMasks": false,
                           "addons": [],
-                          "id": "ecwx4udn"
+                          "id": "ecwx4udn",
+                          "tags": []
                         }
                       ],
                       "width": 6,
@@ -25373,7 +25619,8 @@
                   "tree": false,
                   "lazyLoad": false,
                   "autoAdjust": false,
-                  "id": "eajxvgi"
+                  "id": "eajxvgi",
+                  "tags": []
                 }
               ],
               "allowPrevious": false,

@@ -406,7 +406,8 @@
               "showWordCount": false,
               "allowMultipleMasks": false,
               "addons": [],
-              "id": "ei7yz6e"
+              "id": "ei7yz6e",
+              "isNew": false
             }
           ],
           "placeholder": "",
@@ -449,7 +450,8 @@
           "addons": [],
           "tree": false,
           "lazyLoad": false,
-          "id": "ebfi1ca"
+          "id": "ebfi1ca",
+          "isNew": false
         },
         {
           "label": "Citizenship for protected persons",
@@ -1901,7 +1903,52 @@
           },
           "properties": {},
           "lockKey": true,
-          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;"
+          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
+          "isNew": false
+        },
+        {
+          "clearOnHide": false,
+          "key": "currentYearIncomeApplicationException",
+          "input": false,
+          "components": [
+            {
+              "key": "currentYearIncomeApplicationExceptionContent",
+              "label": "Content",
+              "input": false,
+              "tag": "strong",
+              "attrs": [
+                {
+                  "value": "",
+                  "attr": ""
+                }
+              ],
+              "className": "",
+              "content": "Current Year Income",
+              "type": "htmlelement",
+              "hideLabel": false,
+              "tags": [],
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+              },
+              "properties": {},
+              "isNew": false
+            }
+          ],
+          "tableView": false,
+          "type": "well",
+          "hideLabel": true,
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
+          "lockKey": true,
+          "isNew": false
         }
       ],
       "placeholder": "",
