@@ -992,7 +992,7 @@
               "id": "ek4vzp"
             },
             {
-              "label": "The institution I will be attending is:",
+              "label": "Select your institution:",
               "widget": "choicesjs",
               "placeholder": "<i class='fa fa-search'></i> search for your school",
               "customClass": "font-weight-bold",
@@ -1040,7 +1040,7 @@
               "attributes": {},
               "validateOn": "change",
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": ""
               },
@@ -1101,7 +1101,7 @@
               "tags": []
             },
             {
-              "label": "The institution I will be attending is:",
+              "label": "Select your institution:",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -1166,7 +1166,7 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": "",
                 "json": ""
@@ -1192,7 +1192,7 @@
               "defaultValue": ""
             },
             {
-              "label": "My institution isn't listed",
+              "label": "Your institution is not listed.",
               "labelWidth": "",
               "labelMargin": "",
               "description": "",
@@ -1234,7 +1234,7 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": "",
                 "json": ""
@@ -1323,7 +1323,7 @@
               "value": ""
             }
           ],
-          "content": "<strong> Your institution is not designated by StudentAid BC</strong><br />\r\n<span>If your institution is not in the list, it means that your institution is not designated. \r\nPlease contact your institution so that they can persue a designation status with us. \r\nIf your institution is not designated, you will be unable to complete your application at this time.</span>",
+          "content": "<strong> Your institution is not designated by StudentAid BC</strong><br />\n<span>If your institution is not designated, please contact your institution and request they apply for designation. To initiate the designation process, please ask your institution to complete the <a class=\"formio-href\" href=\"https://studentaidbc.ca/designation-application\" target=\"_blank\" rel=\"noopener noreferrer\">Designation Application</a>. Please note your institution must be designated before you can apply.</span>",
           "refreshOnChange": false,
           "customClass": "banner-alert",
           "hidden": false,
@@ -1332,7 +1332,7 @@
           "tags": [],
           "properties": {},
           "conditional": {
-            "show": true,
+            "show": "true",
             "when": "mySchoolIsNotListed",
             "eq": "true",
             "json": ""
@@ -1522,7 +1522,7 @@
               "labelMargin": "",
               "placeholder": "Select how will you be attending the program",
               "description": "",
-              "tooltip": "A part time program has a course load between 20 and 59%. \nA full time program must have a course load of: 60% or greater or\n40 and 60% for students with a permanent disability.\nIf you are unsure, please contact your institution’s financial aid officer.",
+              "tooltip": "A student is considered to be in part-time studies when taking between 20% and 59% of a full-time course load in a course or continuous period of study.",
               "customClass": "font-weight-bold",
               "tabindex": "",
               "hidden": false,
@@ -1535,7 +1535,12 @@
               "multiple": false,
               "dataSrc": "values",
               "data": {
-                "values": [],
+                "values": [
+                  {
+                    "value": "",
+                    "label": ""
+                  }
+                ],
                 "resource": "",
                 "json": "",
                 "url": "",
@@ -1668,7 +1673,7 @@
               "tableView": false,
               "components": [
                 {
-                  "label": "The program I will be attending:",
+                  "label": "Select your program of study:",
                   "labelPosition": "top",
                   "widget": "choicesjs",
                   "labelWidth": "",
@@ -1740,7 +1745,7 @@
                   "tags": [],
                   "properties": {},
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": "",
                     "json": ""
@@ -1787,7 +1792,7 @@
                   "defaultValue": ""
                 },
                 {
-                  "label": "The program I will be attending:",
+                  "label": "Select your program of study:",
                   "disabled": true,
                   "tableView": true,
                   "persistent": false,
@@ -1837,7 +1842,7 @@
                     "pattern": ""
                   },
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": ""
                   },
@@ -1862,10 +1867,11 @@
                   "displayMask": "",
                   "spellcheck": true,
                   "truncateMultipleSpaces": false,
-                  "id": "easelit"
+                  "id": "easelit",
+                  "tags": []
                 },
                 {
-                  "label": "My program is not listed",
+                  "label": "Your program is not listed",
                   "optionsLabelPosition": "right",
                   "hideLabel": true,
                   "tableView": false,
@@ -1875,7 +1881,7 @@
                   },
                   "values": [
                     {
-                      "label": "My program is not listed",
+                      "label": "Your program is not listed",
                       "value": "programnotListed",
                       "shortcut": ""
                     }
@@ -1923,7 +1929,7 @@
                     "onlyAvailableItems": false
                   },
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": ""
                   },
@@ -1973,7 +1979,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "<strong> Info!</strong><br /> We have determined you are special and require additional information to process your request. Please fill out the below information as much as you can and your institution will complete and verify the required information. ",
+                      "content": "<strong> Information required!</strong><br /> Please provide information about your program and study dates. This information will be sent to your institution to confirm your program details.",
                       "refreshOnChange": false,
                       "customClass": "banner-info",
                       "key": "html12",
@@ -2051,11 +2057,11 @@
                           "value": ""
                         }
                       ],
-                      "content": " Please provide additional information about your program",
+                      "content": "Program information",
                       "refreshOnChange": false,
                       "key": "html42",
                       "conditional": {
-                        "show": true,
+                        "show": "true",
                         "when": "programnotListed",
                         "eq": "true"
                       },
@@ -2114,82 +2120,8 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "euzaplc"
-                    },
-                    {
-                      "label": "HTML",
-                      "attrs": [
-                        {
-                          "attr": "",
-                          "value": ""
-                        }
-                      ],
-                      "content": "This information will be sent to your institution to complete so that you can carry on with your application.",
-                      "refreshOnChange": false,
-                      "key": "html43",
-                      "conditional": {
-                        "show": true,
-                        "when": "programnotListed",
-                        "eq": "true"
-                      },
-                      "type": "htmlelement",
-                      "input": false,
-                      "tableView": false,
-                      "placeholder": "",
-                      "prefix": "",
-                      "customClass": "",
-                      "suffix": "",
-                      "multiple": false,
-                      "defaultValue": null,
-                      "protected": false,
-                      "unique": false,
-                      "persistent": false,
-                      "hidden": false,
-                      "clearOnHide": true,
-                      "refreshOn": "",
-                      "redrawOn": "",
-                      "modalEdit": false,
-                      "dataGridLabel": false,
-                      "labelPosition": "top",
-                      "description": "",
-                      "errorLabel": "",
-                      "tooltip": "",
-                      "hideLabel": false,
-                      "tabindex": "",
-                      "disabled": false,
-                      "autofocus": false,
-                      "dbIndex": false,
-                      "customDefaultValue": "",
-                      "calculateValue": "",
-                      "calculateServer": false,
-                      "widget": null,
-                      "attributes": {},
-                      "validateOn": "change",
-                      "validate": {
-                        "required": false,
-                        "custom": "",
-                        "customPrivate": false,
-                        "strictDateValidation": false,
-                        "multiple": false,
-                        "unique": false
-                      },
-                      "overlay": {
-                        "style": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
-                      "allowCalculateOverride": false,
-                      "encrypted": false,
-                      "showCharCount": false,
-                      "showWordCount": false,
-                      "properties": {},
-                      "allowMultipleMasks": false,
-                      "addons": [],
-                      "tag": "p",
-                      "id": "ebo8vbh",
-                      "className": ""
+                      "id": "euzaplc",
+                      "tags": []
                     },
                     {
                       "label": "Program name",
@@ -2806,7 +2738,7 @@
                         }
                       ],
                       "className": "alert alert-warning fa fa-exclamation-triangle w-100",
-                      "content": "<span class=\"font-bold ml-2\">This study end date has past</span>\n<br>\n<span>The selected study period has past and you can no longer receive funding. Continuing your application will require StudentAid BC approval to be eligible for funding.</span>",
+                      "content": "<span class=\"font-bold ml-2\">Study period not eligible for funding</span>\n<br>\n<span>The study period you selected has already concluded and will need additional review from StudentAid BC to be considered for funding. Once you have submitted your application, please use the following link for information on the <a class=\"formio-href\" href=\"https://studentaidbc.ca/sites/all/files/form-library/appeal_fundingafterenddate.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">funding after end date appeal</a>.</span>",
                       "type": "htmlelement",
                       "hideLabel": true,
                       "tags": [],
@@ -3604,7 +3536,7 @@
                   "id": "eezaqos"
                 },
                 {
-                  "label": "When will you be taking this program?",
+                  "label": "Select your study dates",
                   "widget": "choicesjs",
                   "placeholder": "<i class='fa fa-search'></i> search for your program offering",
                   "customClass": "font-weight-bold",
@@ -3652,7 +3584,7 @@
                   "attributes": {},
                   "validateOn": "change",
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": ""
                   },
@@ -3708,10 +3640,11 @@
                   },
                   "customOptions": {},
                   "useExactSearch": false,
-                  "id": "em1sitc"
+                  "id": "em1sitc",
+                  "tags": []
                 },
                 {
-                  "label": "When will you be taking this program?",
+                  "label": "Select your study dates",
                   "disabled": true,
                   "tableView": true,
                   "persistent": false,
@@ -3761,7 +3694,7 @@
                     "pattern": ""
                   },
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": ""
                   },
@@ -3786,16 +3719,17 @@
                   "displayMask": "",
                   "spellcheck": true,
                   "truncateMultipleSpaces": false,
-                  "id": "e9w4l3n"
+                  "id": "e9w4l3n",
+                  "tags": []
                 },
                 {
-                  "label": "My study period isn’t listed",
+                  "label": "Your study dates are not listed",
                   "optionsLabelPosition": "right",
                   "hideLabel": true,
                   "tableView": false,
                   "values": [
                     {
-                      "label": "My study period isn’t listed",
+                      "label": "Your study dates are not listed",
                       "value": "offeringnotListed",
                       "shortcut": ""
                     }
@@ -3846,7 +3780,7 @@
                     "onlyAvailableItems": false
                   },
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": ""
                   },
@@ -3881,7 +3815,7 @@
                     }
                   ],
                   "className": "alert alert-warning fa fa-exclamation-triangle w-100",
-                  "content": "<span class=\"font-bold ml-2\">This study end date has past</span>\n<br>\n<span>The selected study period has past and you can no longer receive funding. Continuing your application will require StudentAid BC approval to be eligible for funding.</span>",
+                  "content": "<span class=\"font-bold ml-2\">Study period not eligible for funding</span>\n<br>\n<span>The study period you selected has already concluded and will need additional review from StudentAid BC to be considered for funding. Once you have submitted your application, please use the following link for information on the <a class=\"formio-href\" href=\"https://studentaidbc.ca/sites/all/files/form-library/appeal_fundingafterenddate.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">funding after end date appeal</a>.</span>",
                   "type": "htmlelement",
                   "tags": [],
                   "conditional": {
@@ -4119,7 +4053,7 @@
                   "value": ""
                 }
               ],
-              "content": "Please add your courses that you plan on taking during your study period.",
+              "content": "Please provide information about the courses you will be taking during this study period.",
               "refreshOnChange": false,
               "key": "html113",
               "type": "htmlelement",
@@ -4164,7 +4098,7 @@
                 "unique": false
               },
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": ""
               },
@@ -4184,7 +4118,8 @@
               "addons": [],
               "tag": "p",
               "id": "emh3t8f",
-              "className": ""
+              "className": "",
+              "tags": []
             },
             {
               "label": "Course information",
@@ -5994,7 +5929,8 @@
               "showWordCount": false,
               "allowMultipleMasks": false,
               "addons": [],
-              "id": "eglhsig"
+              "id": "eglhsig",
+              "isNew": false
             },
             {
               "label": "Columns",
@@ -10667,7 +10603,7 @@
               "lockKey": true,
               "hideLabel": false,
               "errorLabel": "Disability Information",
-              "tooltip": "If you are a student with a permanent disability, or a persistent or prolonged disability, as defined below, you may be eligible for additional student financial assistance.\n\nPermanent Disability:\nAny impairment, including a physical, mental, intellectual, cognitive, learning, communication or sensory impairment - or a functional limitation - that restricts the ability of a person to perform the daily activities necessary to pursue studies at a postsecondary school level or to participate in the labour force and that is expected to remain with the person for the person’s expected life.\n\nPersistent or Prolonged Disability:\nAny impairment, including a physical, mental, intellectual, cognitive, learning, communication or sensory impairment - or a functional limitation - that restricts the ability of a person to perform the daily activities necessary to pursue studies at a postsecondary school level or to participate in the labour force and has lasted, or is expected to last, for a period of at least 12 months but is not expected to remain with the person for the person’s expected life."
+              "tooltip": "If you are a student with a permanent disability, or a persistent or prolonged disability, as defined below, you may be eligible for additional student financial assistance.\n\nPermanent Disability:\nAny impairment, including a physical, mental, intellectual, cognitive, learning, communication or sensory impairment - or a functional limitation - that restricts the ability of a person to perform the daily activities necessary to pursue studies at a post secondary school level or to participate in the labour force and that is expected to remain with the person for the person’s expected life.\n\nPersistent or Prolonged Disability:\nAny impairment, including a physical, mental, intellectual, cognitive, learning, communication or sensory impairment - or a functional limitation - that restricts the ability of a person to perform the daily activities necessary to pursue studies at a post secondary school level or to participate in the labour force and has lasted, or is expected to last, for a period of at least 12 months but is not expected to remain with the person for the person’s expected life."
             },
             {
               "label": "HTML",
@@ -10773,7 +10709,8 @@
                 "eq": "yes"
               },
               "properties": {},
-              "customClass": "banner-info"
+              "customClass": "banner-info",
+              "isNew": false
             }
           ],
           "id": "erpkbb",

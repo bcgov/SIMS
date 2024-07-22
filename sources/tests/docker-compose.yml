@@ -156,6 +156,9 @@ services:
       - QUEUE_CONSUMERS_PORT=${QUEUE_CONSUMERS_PORT}
       - DISABLE_ORM_CACHE=${DISABLE_ORM_CACHE}
       - IS_FULLTIME_ALLOWED=${IS_FULLTIME_ALLOWED}
+      - CAS_BASE_URL=${CAS_BASE_URL}
+      - CAS_CLIENT_ID=${CAS_CLIENT_ID}
+      - CAS_CLIENT_SECRET=${CAS_CLIENT_SECRET}
     networks:
       - local-network-tests
     restart: always

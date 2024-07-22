@@ -117,6 +117,13 @@ export interface StudentRequestsBasicBCeIDAccountNotification {
   birthDate: string;
 }
 
+export interface ECertFeedbackFileErrorNotification {
+  givenNames: string;
+  lastName: string;
+  applicationNumber: string;
+  errorCodes: string[];
+}
+
 export interface ApplicationOfferingChangeRequestApprovedByStudentNotification {
   givenNames: string;
   lastName: string;
@@ -163,4 +170,9 @@ export interface InstitutionAddsPendingOfferingNotification {
   programName: string;
   offeringName: string;
   institutionPrimaryEmail: string;
+}
+
+export interface DailyDisbursementReportProcessingNotification {
+  attachmentFileContent: string;
+  fileName: string;
 }

@@ -19,6 +19,7 @@ import {
   getUserFullNameLikeSearch,
   transformToApplicationEntitySortField,
   StudentAssessmentStatus,
+  FileOriginType,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
@@ -487,6 +488,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       const fileAssociation = new ApplicationStudentFile();
       fileAssociation.studentFile = {
         id: studentStoredFile.id,
+        fileOrigin: FileOriginType.Application,
       } as StudentFile;
       return fileAssociation;
     });

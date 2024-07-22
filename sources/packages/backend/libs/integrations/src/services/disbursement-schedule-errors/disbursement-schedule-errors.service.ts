@@ -1,11 +1,15 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, InsertResult } from "typeorm";
+import { DataSource, EntityManager, InsertResult } from "typeorm";
 import {
   RecordDataModelService,
   DisbursementFeedbackErrors,
   ECertFeedbackError,
 } from "@sims/sims-db";
-import { SystemUsersService } from "@sims/services";
+import {
+  ECertFeedbackFileErrorNotification,
+  NotificationActionsService,
+  SystemUsersService,
+} from "@sims/services";
 import { DisbursementScheduleService } from "../disbursement-schedule/disbursement-schedule.service";
 import { CustomNamedError } from "@sims/utilities";
 import { DOCUMENT_NUMBER_NOT_FOUND } from "@sims/integrations/constants";
@@ -19,18 +23,25 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
   constructor(
     private readonly systemUsersService: SystemUsersService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
-    dataSource: DataSource,
+    private readonly notificationActionsService: NotificationActionsService,
+    private readonly dataSource: DataSource,
   ) {
     super(dataSource.getRepository(DisbursementFeedbackErrors));
   }
 
   /**
-   * Save Error codes from the E-Cert feedback file.
+   * Save Error codes from the E-Cert feedback file and
+   * sends a ministry notification if at least one of the
+   * error codes in the eCert feedback response
+   * record for a disbursement blocks funding.
    * @param documentNumber disbursement document number.
    * @param feedbackFileName feedback integration file name.
    * @param errorCodeIds e-Cert feedback error ids
    * of error codes received.
    * @param dateReceived Date Received.
+   * @param blockingErrorCodes e-Cert feedback error codes
+   * received that block funding and as a result cause a
+   * notification to be sent out to the ministry.
    * @returns Created E-Cert Error record.
    */
   async createECertErrorRecord(
@@ -38,6 +49,7 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
     feedbackFileName: string,
     errorCodeIds: number[],
     dateReceived: Date,
+    blockingErrorCodes: string[],
   ): Promise<InsertResult> {
     const disbursementSchedule =
       await this.disbursementScheduleService.getDisbursementScheduleByDocumentNumber(
@@ -61,12 +73,37 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
       disbursementFeedbackError.creator = auditUser;
       return disbursementFeedbackError;
     });
-    return this.repo
-      .createQueryBuilder()
-      .insert()
-      .into(DisbursementFeedbackErrors)
-      .values(disbursementFeedbackErrors)
-      .orIgnore()
-      .execute();
+    const user =
+      disbursementSchedule.studentAssessment.application.student.user;
+    const metadata = {
+      disbursementId: disbursementSchedule.id,
+    };
+    return this.dataSource.transaction(
+      async (transactionalEntityManager: EntityManager) => {
+        if (blockingErrorCodes.length) {
+          const ministryNotification: ECertFeedbackFileErrorNotification = {
+            givenNames: user.firstName,
+            lastName: user.lastName,
+            applicationNumber:
+              disbursementSchedule.studentAssessment.application
+                .applicationNumber,
+            errorCodes: blockingErrorCodes,
+          };
+          await this.notificationActionsService.saveECertFeedbackFileErrorNotification(
+            ministryNotification,
+            metadata,
+            transactionalEntityManager,
+          );
+        }
+        return transactionalEntityManager
+          .getRepository(DisbursementFeedbackErrors)
+          .createQueryBuilder()
+          .insert()
+          .into(DisbursementFeedbackErrors)
+          .values(disbursementFeedbackErrors)
+          .orIgnore()
+          .execute();
+      },
+    );
   }
 }

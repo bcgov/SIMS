@@ -15,6 +15,8 @@ import { DiscoveryModule } from "@golevelup/nestjs-discovery";
 import { QueueModule } from "@sims/services/queue";
 import { SystemUsersService, ZeebeModule } from "@sims/services";
 import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
+import { createCASServiceMock } from "../mock-utils/cas-service.mock";
+import { CASService } from "@sims/integrations/cas/cas.service";
 
 /**
  * Result from a createTestingModule to support E2E tests creation.
@@ -25,6 +27,7 @@ export class CreateTestingModuleResult {
   dataSource: DataSource;
   zbClient: ZeebeGrpcClient;
   sshClientMock: DeepMocked<Client>;
+  casServiceMock: CASService;
 }
 
 /**
@@ -44,11 +47,14 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
     },
   );
   const sshClientMock = createMock<Client>();
+  const casServiceMock = createCASServiceMock();
   const module: TestingModule = await Test.createTestingModule({
     imports: [QueueConsumersModule, DiscoveryModule],
   })
     .overrideProvider(SshService)
     .useValue(createSSHServiceMock(sshClientMock))
+    .overrideProvider(CASService)
+    .useValue(casServiceMock)
     .compile();
 
   const nestApplication = module.createNestApplication();
@@ -67,5 +73,6 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
     dataSource,
     zbClient,
     sshClientMock,
+    casServiceMock,
   };
 }

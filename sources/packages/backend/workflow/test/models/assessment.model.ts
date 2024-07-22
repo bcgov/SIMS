@@ -12,6 +12,10 @@ export interface StudentDependent extends JSONDoc {
   declaredOnTaxes: YesNoOptions;
 }
 
+export interface StudentDependantAppealData extends JSONDoc {
+  hasDependents: YesNoOptions;
+  dependants: StudentDependent[];
+}
 export interface StudentFinancialInformationAppealData extends JSONDoc {
   taxReturnIncome: number;
   daycareCosts12YearsOrOver?: number;
@@ -107,6 +111,8 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   appealsStudentFinancialInformationAppealData?: StudentFinancialInformationAppealData;
   appealsStudentAdditionalTransportationAppealData?: StudentAdditionalTransportationAppealData;
   appealsPartnerInformationAndIncomeAppealData?: PartnerInformationAndIncomeAppealData;
+  appealsStudentDependantsAppealData?: StudentDependent[];
+  appealsStudentHasDependentsAppealData?: YesNoOptions;
   studentDataIsYourPartnerAbleToReport?: YesNoOptions;
   studentDataParentValidSinNumber?: YesNoOptions;
   studentDataNumberOfParents?: 1 | 2;
@@ -253,6 +259,9 @@ export interface CalculatedAssessmentModel {
   calculatedDataTotalFederalFSC: number;
   calculatedDataTotalProvincialFSC: number;
   calculatedDataTotalEligibleDependants: number;
+  calculatedDataDependants11YearsOrUnder: number;
+  calculatedDataDependants12YearsOverOnTaxes: number;
+  calculatedDataTotalEligibleDependentsForChildCare: number;
   calculatedDataFamilySize: number;
   totalFederalContribution: number;
   totalProvincialContribution: number;

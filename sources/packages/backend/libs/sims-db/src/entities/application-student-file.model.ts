@@ -27,6 +27,7 @@ export class ApplicationStudentFile extends RecordDataModel {
 
   @ManyToOne(() => StudentFile, {
     eager: false,
+    cascade: ["update"],
   })
   @JoinColumn({
     name: "student_file_id",

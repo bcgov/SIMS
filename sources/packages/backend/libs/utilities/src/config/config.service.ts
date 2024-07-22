@@ -13,6 +13,7 @@ import {
   DatabaseConfiguration,
   RedisConfiguration,
   UserPasswordCredential,
+  CASIntegrationConfig,
 } from "./config.models";
 
 @Injectable()
@@ -243,6 +244,19 @@ export class ConfigService {
    */
   get queuePrefix(): string {
     return this.getCachedConfig("queuePrefixConfig", process.env.QUEUE_PREFIX);
+  }
+
+  /**
+   * CAS configuration.
+   */
+  get casIntegration(): CASIntegrationConfig {
+    return this.getCachedConfig("casIntegrationConfig", {
+      baseUrl: process.env.CAS_BASE_URL,
+      clientCredential: {
+        clientId: process.env.CAS_CLIENT_ID,
+        clientSecret: process.env.CAS_CLIENT_SECRET,
+      },
+    });
   }
 
   /**
