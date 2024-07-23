@@ -317,6 +317,8 @@ parameters:
     value: user
   - name: DB_PASSWORD_KEY
     value: password
+  - name: SIMS_DB_NAME
+    value: sims-db-name
   - name: IMAGE_STREAM_TAG
     required: true
   - name: BUILD_NAMESPACE
