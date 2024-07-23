@@ -44,11 +44,11 @@ describe("StudentMinistryController(e2e)-searchStudents", () => {
       ApplicationStatus.Submitted,
     );
     student.user.firstName =
-      "first name 77b83122-35a9-4492-8a27-c1e5cf4514cf ilike test";
+      "first name 77b83122-35a9-4492-8a27-c1e5cf4587dq ilike test";
     await studentRepo.save(student);
     const searchPayload = {
       appNumber: "",
-      firstName: "77B83122-35A9-4492-8A27-C1E5CF4514CF",
+      firstName: "77B83122-35A9-4492-8A27-C1E5CF4587DQ",
       lastName: "",
       sin: "",
     };
