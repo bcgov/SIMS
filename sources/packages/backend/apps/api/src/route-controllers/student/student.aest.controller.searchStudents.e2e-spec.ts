@@ -1,18 +1,8 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { DataSource, Repository } from "typeorm";
-import {
-  createFakeInstitutionLocation,
-  saveFakeApplication,
-  saveFakeStudent,
-} from "@sims/test-utils";
-import {
-  Application,
-  ApplicationStatus,
-  Institution,
-  InstitutionLocation,
-  Student,
-} from "@sims/sims-db";
+import { saveFakeStudent } from "@sims/test-utils";
+import { Student } from "@sims/sims-db";
 import {
   createTestingAppModule,
   BEARER_AUTH_TYPE,
@@ -45,15 +35,13 @@ describe("StudentMinistryController(e2e)-searchStudents", () => {
       lastName: "",
       sin: "",
     };
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
       .send(searchPayload)
-      .auth(
-        await getAESTToken(AESTGroups.BusinessAdministrators),
-        BEARER_AUTH_TYPE,
-      )
+      .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect([
         {
@@ -75,15 +63,13 @@ describe("StudentMinistryController(e2e)-searchStudents", () => {
       lastName: "",
       sin: student.sinValidation.sin,
     };
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
       .send(searchPayload)
-      .auth(
-        await getAESTToken(AESTGroups.BusinessAdministrators),
-        BEARER_AUTH_TYPE,
-      )
+      .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect([
         {
