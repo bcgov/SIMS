@@ -1,6 +1,6 @@
 import { Controller, Logger } from "@nestjs/common";
 import { ZeebeWorker } from "../../zeebe";
-import { SupportingUserService } from "../../services";
+import { ApplicationService, SupportingUserService } from "../../services";
 import {
   CheckSupportingUserResponseJobInDTO,
   CreateSupportingUsersJobInDTO,
@@ -24,10 +24,16 @@ import {
   MustReturnJobActionAcknowledgement,
   ZeebeJob,
 } from "@camunda8/sdk/dist/zeebe/types";
+import { NotificationActionsService } from "@sims/services";
+import { SupportingUserType } from "@sims/sims-db";
 
 @Controller()
 export class SupportingUserController {
-  constructor(private readonly supportingUserService: SupportingUserService) {}
+  constructor(
+    private readonly supportingUserService: SupportingUserService,
+    private readonly applicationService: ApplicationService,
+    private readonly notificationActionsService: NotificationActionsService,
+  ) {}
 
   @ZeebeWorker(Workers.CreateSupportingUsers, {
     fetchVariable: [APPLICATION_ID, SUPPORTING_USERS_TYPES],
@@ -61,6 +67,24 @@ export class SupportingUserController {
         (supportingUser) => supportingUser.id,
       );
       jobLogger.log("Created supporting users.");
+      const application = await this.applicationService.getApplicationById(
+        job.variables.applicationId,
+      );
+      const supportingUserType =
+        job.variables.supportingUsersTypes.length > 1
+          ? `${SupportingUserType.Parent}s`
+          : job.variables.supportingUsersTypes[0];
+      await this.notificationActionsService.saveSupportingUserInformationNotification(
+        {
+          givenNames: application.student.user.firstName,
+          lastName: application.student.user.lastName,
+          toAddress: application.student.user.email,
+          userId: application.student.user.id,
+          supportingUserType: supportingUserType,
+        },
+        application.student.user.id,
+      );
+      jobLogger.log("Emails have been sent to supporting users.");
       return job.complete({ createdSupportingUsersIds });
     } catch (error: unknown) {
       return createUnexpectedJobFail(error, job, {

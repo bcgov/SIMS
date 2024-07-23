@@ -176,3 +176,11 @@ export interface DailyDisbursementReportProcessingNotification {
   attachmentFileContent: string;
   fileName: string;
 }
+
+export interface SupportingUserInformationNotification {
+  givenNames: string;
+  lastName: string;
+  toAddress: string;
+  userId: number;
+  supportingUserType: string;
+}
