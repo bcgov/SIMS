@@ -1,4 +1,3 @@
-import { StudentUploadFileAPIOutDTO } from "@/services/http/dto/Student.dto";
 import { ReportsFilterAPIInDTO } from "@/services/http/dto";
 import { StudentService } from "@/services/StudentService";
 import { ReportService } from "@/services/ReportService";

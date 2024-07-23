@@ -1,4 +1,4 @@
-import { FileOriginType, FormUploadFileInfo } from "@/types";
+import { FormUploadFileInfo } from "@/types";
 import { AxiosRequestConfig } from "axios";
 import ApiClient from "../services/http/ApiClient";
 import { useFileUtils } from "@/composables";
