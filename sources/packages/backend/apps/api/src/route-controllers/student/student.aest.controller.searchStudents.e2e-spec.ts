@@ -23,10 +23,7 @@ import {
 describe("StudentMinistryController(e2e)-searchStudents", () => {
   let app: INestApplication;
   let appDataSource: DataSource;
-  let collegeF: Institution;
-  let collegeFLocation: InstitutionLocation;
   let studentRepo: Repository<Student>;
-  let applicationRepo: Repository<Application>;
   const endpoint = "/aest/student/search";
 
   beforeAll(async () => {
@@ -34,17 +31,13 @@ describe("StudentMinistryController(e2e)-searchStudents", () => {
     app = nestApplication;
     appDataSource = dataSource;
     studentRepo = dataSource.getRepository(Student);
-    applicationRepo = dataSource.getRepository(Application);
-    collegeFLocation = createFakeInstitutionLocation({ institution: collegeF });
   });
 
   it("Should find the student by part of first name.", async () => {
     // Arrange
-    const { student } = await saveStudentWithApplicationForCollegeF(
-      ApplicationStatus.Submitted,
-    );
+    const student = await saveFakeStudent(appDataSource);
     student.user.firstName =
-      "first name 77b83122-35a9-4492-8a27-c1e5cf4587dq ilike test";
+      "first name 77b83122-35a9-4492-8a27-c1e5cf4587dq test";
     await studentRepo.save(student);
     const searchPayload = {
       appNumber: "",
@@ -73,11 +66,9 @@ describe("StudentMinistryController(e2e)-searchStudents", () => {
       ]);
   });
 
-  it("Should find the student by sin when student.", async () => {
+  it("Should find the student by sin.", async () => {
     // Arrange
-    const { student } = await saveStudentWithApplicationForCollegeF(
-      ApplicationStatus.Submitted,
-    );
+    const student = await saveFakeStudent(appDataSource);
     const searchPayload = {
       appNumber: "",
       firstName: "",
@@ -104,33 +95,6 @@ describe("StudentMinistryController(e2e)-searchStudents", () => {
         },
       ]);
   });
-
-  /**
-   * Saves a student and an application for the student for College F.
-   * @param applicationStatus application status.
-   * @returns an object with student and application persisted in the database.
-   */
-  const saveStudentWithApplicationForCollegeF = async (
-    applicationStatus: ApplicationStatus,
-  ) => {
-    const student = await saveFakeStudent(appDataSource);
-    const application = await saveFakeApplication(
-      appDataSource,
-      {
-        institution: collegeF,
-        institutionLocation: collegeFLocation,
-        student,
-      },
-      {
-        applicationStatus,
-      },
-    );
-
-    return {
-      student,
-      application,
-    };
-  };
 
   afterAll(async () => {
     await app?.close();
