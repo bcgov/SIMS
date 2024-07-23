@@ -7,7 +7,7 @@
         :type="BannerTypes.Warning"
         header="Warning"
         :summaryList="warningList"
-    />
+      />
       <header-navigator
         title="View assessment"
         subTitle="Assessment"
@@ -131,7 +131,7 @@ export default defineComponent({
 
       const MSFAAWarning = `Your MSFAA is not valid. 
               Please complete your MSFAA with the National Student Loans Centre to move forward with your application. 
-              Please note, there is a one day delay between signing your MSFAA and being able to accept your assessment.`
+              Please note, there is a one day delay between signing your MSFAA and being able to accept your assessment.`;
       warnings.forEach((warning) => {
         switch (warning) {
           case ECertFailedValidation.DisabilityStatusNotConfirmed:
@@ -144,9 +144,7 @@ export default defineComponent({
           case ECertFailedValidation.MSFAACanceled:
           case ECertFailedValidation.MSFAANotSigned:
             if (!warningList.value.includes(MSFAAWarning)) {
-              warningList.value.push(
-                MSFAAWarning,
-              );
+              warningList.value.push(MSFAAWarning);
             }
             break;
           case ECertFailedValidation.HasStopDisbursementRestriction:
