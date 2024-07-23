@@ -48,12 +48,9 @@ export default class FormUploadService {
   public async downloadFile(fileInfo: FormUploadFileInfo) {
     try {
       const fileUtils = useFileUtils();
-      const studentDocumentDetails = {
-        fileName: fileInfo.originalName,
+      await fileUtils.downloadStudentDocument({
         uniqueFileName: fileInfo.name,
-        fileOrigin: FileOriginType.Temporary,
-      };
-      await fileUtils.downloadStudentDocument(studentDocumentDetails);
+      });
     } catch {
       throw new Error(
         "There was an unexpected error while downloading the file.",
