@@ -74,7 +74,7 @@
         <DataTable :value="students">
           <Column field="sin" header="SIN" :sortable="true">
             <template #body="slotProps">
-              {{ slotProps.data.sin }}
+              {{ sinDisplayFormat(slotProps.data.sin) }}
             </template>
           </Column>
           <Column field="firstName" header="Given name" :sortable="true">
@@ -129,7 +129,7 @@ export default defineComponent({
   setup() {
     const searchStudentsForm = ref({} as VForm);
     const snackBar = useSnackBar();
-    const { dateOnlyLongString } = useFormatters();
+    const { dateOnlyLongString, sinDisplayFormat } = useFormatters();
     const { isSINValid } = useValidators();
     const appNumber = ref("");
     const firstName = ref("");
@@ -176,6 +176,7 @@ export default defineComponent({
       searchStudents,
       students,
       dateOnlyLongString,
+      sinDisplayFormat,
       isSINValid,
       searchStudentsForm,
       isValidSearch,
