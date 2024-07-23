@@ -13,8 +13,8 @@ objects:
     metadata:
       name: ${JOB_NAME}
     spec:
-      activeDeadlineSeconds: 300  # The maximum duration the job can run.
-      backoffLimit: 5  # The number of retries for a job.
+      activeDeadlineSeconds: 300 # The maximum duration the job can run.
+      backoffLimit: 5 # The number of retries for a job.
       template:
         metadata:
           name: ${JOB_NAME}
@@ -74,13 +74,13 @@ parameters:
   - name: IMAGE_REGISTRY
     value: image-registry.openshift-image-registry.svc:5000
   - name: DB_SERVICE
-    value: patroni-master
+    value: host
   - name: DB_SECRET_NAME
-    value: patroni-creds
+    value: simsdb-pguser-app-database-user
   - name: DB_USERNAME_KEY
-    value: superuser-username
+    value: user
   - name: DB_PASSWORD_KEY
-    value: superuser-password
+    value: password
   - name: CPU_LIMIT
     value: "1.0"
   - name: MEMORY_LIMIT

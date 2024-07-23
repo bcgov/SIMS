@@ -128,13 +128,13 @@ parameters:
   - name: REPLICAS
     value: "1"
   - name: DB_SERVICE
-    value: patroni-master
+    value: host
   - name: DB_SECRET_NAME
-    value: patroni-creds
+    value: simsdb-pguser-app-database-user
   - name: DB_USERNAME_KEY
-    value: database-user
+    value: user
   - name: DB_PASSWORD_KEY
-    value: database-password
+    value: password
   - name: SIMS_DB_NAME
     value: sims-db-name
   - name: DISABLE_ORM_CACHE
