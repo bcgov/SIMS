@@ -81,6 +81,8 @@ objects:
                       name: ${WORKERS_SECRET_NAME}
                 - name: BYPASS_CRA_INCOME_VERIFICATION
                   value: ${BYPASS_CRA_INCOME_VERIFICATION}
+                - name: DISABLE_ORM_CACHE
+                  value: ${DISABLE_ORM_CACHE}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
@@ -192,4 +194,6 @@ parameters:
   - name: REDIS_PASSWORD_KEY
     value: password
   - name: PORT
+    required: true
+  - name: DISABLE_ORM_CACHE
     required: true
