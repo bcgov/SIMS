@@ -122,7 +122,6 @@ jobs:
     name: Deploy SIMS-API
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
-    needs: run-db-migrations
     steps:
       - name: Print env
         run: |
@@ -149,7 +148,6 @@ jobs:
     name: Deploy Workers
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
-    needs: run-db-migrations
     steps:
       - name: Print env
         run: |
@@ -175,7 +173,6 @@ jobs:
     name: Deploy Queue Consumers
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
-    needs: run-db-migrations
     steps:
       - name: Print env
         run: |
@@ -202,7 +199,6 @@ jobs:
     name: Deploy Web/Frontend
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
-    needs: run-db-migrations
     steps:
       - name: Print env
         run: |
