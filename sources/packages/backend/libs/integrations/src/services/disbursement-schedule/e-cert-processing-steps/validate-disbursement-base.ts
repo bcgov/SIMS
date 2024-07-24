@@ -52,6 +52,19 @@ export abstract class ValidateDisbursementBase {
         ECertFailedValidation.DisabilityStatusNotConfirmed,
       );
     }
+    // No estimated awards amounts to be disbursed.
+    const totalEstimatedAwards =
+      eCertDisbursement.disbursement.disbursementValues.reduce(
+        (totalEstimatedAward, currentAward) =>
+          totalEstimatedAward + currentAward.valueAmount,
+        0,
+      );
+    if (!totalEstimatedAwards) {
+      log.info(
+        "Disbursement estimated awards do not contain any amount to be disbursed.",
+      );
+      validationResults.push(ECertFailedValidation.NoEstimatedAwardAmounts);
+    }
     return validationResults;
   }
 }
