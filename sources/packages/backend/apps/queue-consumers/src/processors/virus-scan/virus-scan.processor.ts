@@ -36,10 +36,6 @@ export class VirusScanProcessor {
         job.data.uniqueFileName,
         processSummary,
       );
-      isInfected
-        ? processSummary.warn("Virus found.")
-        : processSummary.info("No virus found.");
-
       processSummary.info("Completed virus scanning for the file. ");
     } catch (error: unknown) {
       if (error instanceof NotFoundException) {

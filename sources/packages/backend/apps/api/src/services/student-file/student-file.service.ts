@@ -109,6 +109,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         "studentFile.fileName",
         "studentFile.mimeType",
         "studentFile.fileContent",
+        "studentFile.virusScanStatus",
       ])
       .where("studentFile.uniqueFileName = :uniqueFileName", {
         uniqueFileName,
@@ -117,8 +118,13 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     if (studentId) {
       query.andWhere("studentFile.student.id = :studentId", { studentId });
     }
+    const studentFile = await query.getOne();
 
-    return query.getOne();
+    // Block users to download file contents that are not scanned or infected.
+    if (studentFile.virusScanStatus !== VirusScanStatus.FileIsClean) {
+      studentFile.fileContent = null;
+    }
+    return studentFile;
   }
 
   /**

@@ -7,6 +7,9 @@ import { CustomNamedError } from "@sims/utilities";
 import { UNABLE_TO_SCAN_FILE } from "../../constants/error-code.constants";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { ClamAVService } from "@sims/services";
+import path from "path";
+
+const INFECTED_FILENAME_SUFFIX = "-OriginalFileError";
 
 @Injectable()
 export class StudentFileService extends RecordDataModelService<StudentFile> {
@@ -49,7 +52,13 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         UNABLE_TO_SCAN_FILE,
       );
     }
-    await this.updateFileScanStatus(studentFile.uniqueFileName, isInfected);
+    if (isInfected) {
+      processSummary.warn("Virus found.");
+      processSummary.info("Updating infected file name and status.");
+      await this.updateInfectedFile(studentFile);
+    } else {
+      processSummary.info("No virus found.");
+    }
     return isInfected;
   }
 
@@ -60,7 +69,12 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
    */
   private async getStudentFile(uniqueFileName: string): Promise<StudentFile> {
     return this.repo.findOne({
-      select: { uniqueFileName: true, fileContent: true },
+      select: {
+        id: true,
+        fileName: true,
+        uniqueFileName: true,
+        fileContent: true,
+      },
       where: { uniqueFileName, virusScanStatus: VirusScanStatus.InProgress },
     });
   }
@@ -93,5 +107,25 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
           { virusScanStatus: VirusScanStatus.FileIsClean },
         );
     }
+  }
+
+  /**
+   * Update the infected file status and rename file to describe an error with the file.
+   * @param studentFile student infected file to be updated.
+   * @returns the update result.
+   */
+  private async updateInfectedFile(
+    studentFile: StudentFile,
+  ): Promise<UpdateResult> {
+    const fileName = path.parse(studentFile.fileName).name;
+    const fileExtension = path.parse(studentFile.fileName).ext;
+
+    return this.repo.update(
+      { id: studentFile.id },
+      {
+        fileName: `${fileName}${INFECTED_FILENAME_SUFFIX}${fileExtension}`,
+        virusScanStatus: VirusScanStatus.VirusDetected,
+      },
+    );
   }
 }

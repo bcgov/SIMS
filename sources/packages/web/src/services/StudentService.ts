@@ -1,6 +1,6 @@
 import ApiClient from "@/services/http/ApiClient";
-import { StudentProfile, SINValidations } from "@/types";
-import { useFormatters } from "@/composables";
+import { StudentProfile, SINValidations, ApiProcessError } from "@/types";
+import { useFormatters, useSnackBar } from "@/composables";
 import {
   AESTFileUploadToStudentAPIInDTO,
   StudentFileDetailsAPIOutDTO,
@@ -15,6 +15,7 @@ import {
   UpdateDisabilityStatusAPIInDTO,
 } from "@/services/http/dto";
 import { AxiosResponse } from "axios";
+import { FILE_HAS_NOT_BEEN_SCANNED_YET, VIRUS_DETECTED } from "@/constants";
 
 export class StudentService {
   // Share Instance
@@ -146,7 +147,23 @@ export class StudentService {
   async downloadStudentFile(
     uniqueFileName: string,
   ): Promise<AxiosResponse<any>> {
-    return ApiClient.FileUpload.download(`student/files/${uniqueFileName}`);
+    try {
+      return await ApiClient.FileUpload.download(
+        `student/files/${uniqueFileName}`,
+      );
+    } catch (error: unknown) {
+      if (
+        error instanceof ApiProcessError &&
+        (error.errorType === FILE_HAS_NOT_BEEN_SCANNED_YET ||
+          error.errorType === VIRUS_DETECTED)
+      ) {
+        const snackBar = useSnackBar();
+        snackBar.warn(error.message);
+      }
+      throw new Error(
+        "There was an unexpected error while downloading the file.",
+      );
+    }
   }
 
   /**
