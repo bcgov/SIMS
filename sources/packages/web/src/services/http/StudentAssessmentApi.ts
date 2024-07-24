@@ -89,7 +89,9 @@ export class StudentAssessmentApi extends HttpBaseClient {
    * @param applicationId application id.
    * @returns list of warnings.
    */
-  async getApplicationWarnings(applicationId: number): Promise<ECertFailedValidation[]> {
+  async getApplicationWarnings(
+    applicationId: number,
+  ): Promise<ECertFailedValidation[]> {
     return this.getCall<ECertFailedValidation[]>(
       this.addClientRoot(
         `application/${applicationId}/get-application-warnings`,

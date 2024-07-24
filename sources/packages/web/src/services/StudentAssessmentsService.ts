@@ -124,7 +124,9 @@ export class StudentAssessmentsService {
    * @param applicationId application id.
    * @returns list of warnings.
    */
-  async getApplicationWarnings(applicationId: number): Promise<ECertFailedValidation[]> {
+  async getApplicationWarnings(
+    applicationId: number,
+  ): Promise<ECertFailedValidation[]> {
     return ApiClient.StudentAssessmentApi.getApplicationWarnings(applicationId);
   }
 }
