@@ -72,21 +72,26 @@
     <content-group>
       <toggle-content :toggled="!students?.length">
         <DataTable :value="students">
-          <Column field="firstName" header="First Name" :sortable="true">
+          <Column field="sin" header="SIN" :sortable="true">
+            <template #body="slotProps">
+              {{ sinDisplayFormat(slotProps.data.sin) }}
+            </template>
+          </Column>
+          <Column field="firstName" header="Given name" :sortable="true">
             <template #body="slotProps">
               <div class="p-text-capitalize">
                 {{ slotProps.data.firstName }}
               </div>
             </template>
           </Column>
-          <Column field="lastName" header="Last Name" :sortable="true">
+          <Column field="lastName" header="Last name" :sortable="true">
             <template #body="slotProps">
               <div class="p-text-capitalize">
                 {{ slotProps.data.lastName }}
               </div>
             </template>
           </Column>
-          <Column field="birthDate" header="Date of Birth">
+          <Column field="birthDate" header="Date of birth">
             <template #body="slotProps">
               <div class="p-text-capitalize">
                 {{ dateOnlyLongString(slotProps.data.birthDate) }}
@@ -124,7 +129,7 @@ export default defineComponent({
   setup() {
     const searchStudentsForm = ref({} as VForm);
     const snackBar = useSnackBar();
-    const { dateOnlyLongString } = useFormatters();
+    const { dateOnlyLongString, sinDisplayFormat } = useFormatters();
     const { isSINValid } = useValidators();
     const appNumber = ref("");
     const firstName = ref("");
@@ -171,6 +176,7 @@ export default defineComponent({
       searchStudents,
       students,
       dateOnlyLongString,
+      sinDisplayFormat,
       isSINValid,
       searchStudentsForm,
       isValidSearch,

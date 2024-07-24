@@ -23,7 +23,7 @@
         subTitle="All requested changes will be reviewed by StudentAid BC after you submit for review."
       >
       </body-header>
-      <br>
+      <br />
       <p><b>Instructions:</b></p>
       <ul>
         <li>You must complete all fields of the change request form.</li>

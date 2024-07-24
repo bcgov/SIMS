@@ -1,9 +1,11 @@
-import { StudentUploadFileAPIOutDTO } from "@/services/http/dto/Student.dto";
 import { ReportsFilterAPIInDTO } from "@/services/http/dto";
 import { StudentService } from "@/services/StudentService";
 import { ReportService } from "@/services/ReportService";
 import { AxiosResponse } from "axios";
 
+interface StudentDocument {
+  uniqueFileName: string;
+}
 /**
  * File helper methods.
  */
@@ -12,9 +14,7 @@ export function useFileUtils() {
    * Used to download the document or file uploaded.
    * @param studentDocument
    */
-  const downloadStudentDocument = async (
-    studentDocument: StudentUploadFileAPIOutDTO,
-  ) => {
+  const downloadStudentDocument = async (studentDocument: StudentDocument) => {
     const response = await StudentService.shared.downloadStudentFile(
       studentDocument.uniqueFileName,
     );
