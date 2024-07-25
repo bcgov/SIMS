@@ -30575,9 +30575,9 @@
                   "tags": [],
                   "properties": {},
                   "conditional": {
-                    "show": "true",
-                    "when": "additionalTransportListedDriver",
-                    "eq": "yes",
+                    "show": "",
+                    "when": "",
+                    "eq": "",
                     "json": ""
                   },
                   "customConditional": "",
@@ -30612,7 +30612,8 @@
                   "fieldSet": false,
                   "id": "e26wllo",
                   "defaultValue": "",
-                  "lockKey": true
+                  "lockKey": true,
+                  "isNew": false
                 },
                 {
                   "label": "<strong>Which of the following best describes your situation?</strong>",
@@ -30638,9 +30639,9 @@
                   ],
                   "key": "transportationcostsituation",
                   "conditional": {
-                    "show": "true",
-                    "when": "additionalTransportListedDriver",
-                    "eq": "yes"
+                    "show": "",
+                    "when": "",
+                    "eq": ""
                   },
                   "type": "radio",
                   "input": true,
@@ -30700,7 +30701,8 @@
                   "inputType": "radio",
                   "fieldSet": false,
                   "id": "efqfe2q",
-                  "tags": []
+                  "tags": [],
+                  "isNew": false
                 },
                 {
                   "autofocus": false,
@@ -30730,13 +30732,14 @@
                   "labelPosition": "top",
                   "tags": [],
                   "conditional": {
-                    "show": "true",
-                    "when": "additionalTransportListedDriver",
-                    "eq": "yes"
+                    "show": "",
+                    "when": "",
+                    "eq": ""
                   },
                   "properties": {},
                   "decimalLimit": 0,
-                  "lockKey": true
+                  "lockKey": true,
+                  "isNew": false
                 },
                 {
                   "autofocus": false,
@@ -30766,13 +30769,14 @@
                   "labelPosition": "top",
                   "tags": [],
                   "conditional": {
-                    "show": "true",
-                    "when": "additionalTransportListedDriver",
-                    "eq": "yes"
+                    "show": "",
+                    "when": "",
+                    "eq": ""
                   },
                   "properties": {},
                   "decimalLimit": 0,
-                  "lockKey": true
+                  "lockKey": true,
+                  "isNew": false
                 },
                 {
                   "autofocus": false,
@@ -30810,9 +30814,9 @@
                   "optionsLabelPosition": "right",
                   "tags": [],
                   "conditional": {
-                    "show": "true",
-                    "when": "additionalTransportListedDriver",
-                    "eq": "yes"
+                    "show": "",
+                    "when": "",
+                    "eq": ""
                   },
                   "properties": {},
                   "lockKey": true

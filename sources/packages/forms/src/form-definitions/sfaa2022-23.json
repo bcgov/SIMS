@@ -10684,8 +10684,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "id": "evyzdwp",
-              "hideLabel": true,
-              "isNew": false
+              "hideLabel": true
             },
             {
               "key": "disabilityInformationPanelContent",
@@ -30386,8 +30385,7 @@
               "fieldSet": false,
               "id": "e26wllo",
               "defaultValue": "",
-              "lockKey": true,
-              "isNew": false
+              "lockKey": true
             },
             {
               "key": "additionalTransportationCostContent",
@@ -30576,9 +30574,9 @@
                   "tags": [],
                   "properties": {},
                   "conditional": {
-                    "show": "true",
-                    "when": "additionalTransportListedDriver",
-                    "eq": "yes",
+                    "show": "",
+                    "when": "",
+                    "eq": "",
                     "json": ""
                   },
                   "customConditional": "",
@@ -30639,9 +30637,9 @@
                   ],
                   "key": "transportationcostsituation",
                   "conditional": {
-                    "show": "true",
-                    "when": "additionalTransportListedDriver",
-                    "eq": "yes"
+                    "show": "",
+                    "when": "",
+                    "eq": ""
                   },
                   "type": "radio",
                   "input": true,
@@ -30731,9 +30729,9 @@
                   "labelPosition": "top",
                   "tags": [],
                   "conditional": {
-                    "show": "true",
-                    "when": "additionalTransportListedDriver",
-                    "eq": "yes"
+                    "show": "",
+                    "when": "",
+                    "eq": ""
                   },
                   "properties": {},
                   "decimalLimit": 0,
@@ -30767,9 +30765,9 @@
                   "labelPosition": "top",
                   "tags": [],
                   "conditional": {
-                    "show": "true",
-                    "when": "additionalTransportListedDriver",
-                    "eq": "yes"
+                    "show": "",
+                    "when": "",
+                    "eq": ""
                   },
                   "properties": {},
                   "decimalLimit": 0,
@@ -30811,9 +30809,9 @@
                   "optionsLabelPosition": "right",
                   "tags": [],
                   "conditional": {
-                    "show": "true",
-                    "when": "additionalTransportListedDriver",
-                    "eq": "yes"
+                    "show": "",
+                    "when": "",
+                    "eq": ""
                   },
                   "properties": {},
                   "lockKey": true
@@ -31553,7 +31551,8 @@
               "addons": [],
               "tree": false,
               "lazyLoad": false,
-              "id": "ev5rghf"
+              "id": "ev5rghf",
+              "isNew": false
             }
           ],
           "id": "emvzoox",

@@ -252,9 +252,9 @@
                   "optionsLabelPosition": "right",
                   "tags": [],
                   "conditional": {
-                    "show": "true",
-                    "when": "additionalTransportListedDriver",
-                    "eq": "yes"
+                    "show": "",
+                    "when": "",
+                    "eq": ""
                   },
                   "properties": {},
                   "lockKey": true
@@ -283,9 +283,9 @@
                   ],
                   "key": "transportationCostSituation",
                   "conditional": {
-                    "show": "true",
-                    "when": "additionalTransportListedDriver",
-                    "eq": "yes"
+                    "show": "",
+                    "when": "",
+                    "eq": ""
                   },
                   "type": "radio",
                   "input": true,
@@ -375,9 +375,9 @@
                   "labelPosition": "top",
                   "tags": [],
                   "conditional": {
-                    "show": "true",
-                    "when": "additionalTransportListedDriver",
-                    "eq": "yes"
+                    "show": "",
+                    "when": "",
+                    "eq": ""
                   },
                   "properties": {},
                   "decimalLimit": 0,
@@ -412,14 +412,15 @@
                   "labelPosition": "top",
                   "tags": [],
                   "conditional": {
-                    "show": "true",
-                    "when": "additionalTransportListedDriver",
-                    "eq": "yes"
+                    "show": "",
+                    "when": "",
+                    "eq": ""
                   },
                   "properties": {},
                   "decimalLimit": 0,
                   "lockKey": true,
-                  "customConditional": ""
+                  "customConditional": "",
+                  "isNew": false
                 },
                 {
                   "autofocus": false,
@@ -457,9 +458,9 @@
                   "optionsLabelPosition": "right",
                   "tags": [],
                   "conditional": {
-                    "show": "true",
-                    "when": "additionalTransportListedDriver",
-                    "eq": "yes"
+                    "show": "",
+                    "when": "",
+                    "eq": ""
                   },
                   "properties": {},
                   "lockKey": true,

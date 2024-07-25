@@ -30590,9 +30590,9 @@
                   "tags": [],
                   "properties": {},
                   "conditional": {
-                    "show": "true",
-                    "when": "additionalTransportListedDriver",
-                    "eq": "yes",
+                    "show": "",
+                    "when": "",
+                    "eq": "",
                     "json": ""
                   },
                   "customConditional": "",
@@ -30653,9 +30653,9 @@
                   ],
                   "key": "transportationcostsituation",
                   "conditional": {
-                    "show": "true",
-                    "when": "additionalTransportListedDriver",
-                    "eq": "yes"
+                    "show": "",
+                    "when": "",
+                    "eq": ""
                   },
                   "type": "radio",
                   "input": true,
@@ -30745,9 +30745,9 @@
                   "labelPosition": "top",
                   "tags": [],
                   "conditional": {
-                    "show": "true",
-                    "when": "additionalTransportListedDriver",
-                    "eq": "yes"
+                    "show": "",
+                    "when": "",
+                    "eq": ""
                   },
                   "properties": {},
                   "decimalLimit": 0,
@@ -30781,9 +30781,9 @@
                   "labelPosition": "top",
                   "tags": [],
                   "conditional": {
-                    "show": "true",
-                    "when": "additionalTransportListedDriver",
-                    "eq": "yes"
+                    "show": "",
+                    "when": "",
+                    "eq": ""
                   },
                   "properties": {},
                   "decimalLimit": 0,
@@ -30825,12 +30825,13 @@
                   "optionsLabelPosition": "right",
                   "tags": [],
                   "conditional": {
-                    "show": "true",
-                    "when": "additionalTransportListedDriver",
-                    "eq": "yes"
+                    "show": "",
+                    "when": "",
+                    "eq": ""
                   },
                   "properties": {},
-                  "lockKey": true
+                  "lockKey": true,
+                  "isNew": false
                 },
                 {
                   "title": "Addition Transportation Panel",
