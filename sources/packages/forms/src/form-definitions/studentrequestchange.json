@@ -461,14 +461,6 @@
                 "label": "Financial Information"
               },
               {
-                "label": "Income",
-                "value": "studentincomeappeal"
-              },
-              {
-                "label": "Partners Income",
-                "value": "partnerincomeappeal"
-              },
-              {
                 "label": "Partner Information and Income",
                 "value": "partnerinformationandincomeappeal"
               }
