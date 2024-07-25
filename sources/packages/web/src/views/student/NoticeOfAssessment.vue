@@ -35,6 +35,7 @@
     <template #alerts>
       <banner
         class="mb-2"
+        header="Your assessment has warnings preventing it from being accepted"
         :type="BannerTypes.Warning"
         v-if="hasFailedECertValidation"
       >
