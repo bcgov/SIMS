@@ -105,7 +105,7 @@ export class ECertGenerationService {
         "currentAssessment.disbursementSchedules",
         "disbursementSchedule",
       )
-      .innerJoin("disbursementSchedule.disbursementValues", "disbursementValue")
+      .leftJoin("disbursementSchedule.disbursementValues", "disbursementValue")
       .innerJoin("disbursementSchedule.msfaaNumber", "msfaaNumber")
       .innerJoin("currentAssessment.offering", "offering")
       .innerJoin("application.programYear", "programYear")

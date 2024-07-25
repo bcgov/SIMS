@@ -9,6 +9,7 @@
     <template #alerts>
       <restriction-banner v-if="!hideRestriction" />
       <check-valid-s-i-n-banner />
+      <slot name="alerts"></slot>
     </template>
     <slot></slot>
   </full-page-container>
