@@ -2,6 +2,7 @@ import * as faker from "faker";
 import { FileOriginType, Student, StudentFile, User } from "@sims/sims-db";
 import { DataSource } from "typeorm";
 import { createFakeStudent } from "./student";
+import { VirusScanStatus } from "@sims/sims-db/entities/virus-scan-status-type";
 
 /**
  * Create fake student file upload object.
@@ -34,6 +35,7 @@ export function createFakeStudentFileUpload(
   studentFile.student = relations?.student ?? createFakeStudent();
   studentFile.creator = relations?.creator;
   studentFile.fileOrigin = options?.fileOrigin ?? FileOriginType.Ministry;
+  studentFile.virusScanStatus = VirusScanStatus.Pending;
   return studentFile;
 }
 

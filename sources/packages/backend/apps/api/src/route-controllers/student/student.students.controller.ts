@@ -195,11 +195,17 @@ export class StudentStudentsController extends BaseController {
     description:
       "Requested file was not found or the user does not have access to it.",
   })
+  @ApiForbiddenResponse({
+    description:
+      "Warning: This file has not been scanned and will be available to download once it is determined to be safe or " +
+      "Due to our security rules, the original file, [fileName], was deleted. Please re-check your file and attempt to re-upload.",
+  })
   async getUploadedFile(
     @UserToken() studentUserToken: StudentUserToken,
     @Param() uniqueFileNameParam: UniqueFileNameParamAPIInDTO,
     @Res() response: Response,
   ): Promise<void> {
+    console.log("test");
     await this.studentControllerService.writeFileToResponse(
       response,
       uniqueFileNameParam.uniqueFileName,

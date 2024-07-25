@@ -121,7 +121,10 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     const studentFile = await query.getOne();
 
     // Block users to download file contents that are not scanned or infected.
-    if (studentFile.virusScanStatus !== VirusScanStatus.FileIsClean) {
+    if (
+      studentFile &&
+      studentFile.virusScanStatus !== VirusScanStatus.FileIsClean
+    ) {
       studentFile.fileContent = null;
     }
     return studentFile;
