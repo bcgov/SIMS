@@ -30275,9 +30275,7 @@
               },
               "customConditional": "",
               "logic": [],
-              "attributes": {
-                "data-cy": "eligibleForAnAdditionalTransportationAllowance"
-              },
+              "attributes": {},
               "overlay": {
                 "style": "",
                 "page": "",
@@ -30371,9 +30369,7 @@
               },
               "customConditional": "",
               "logic": [],
-              "attributes": {
-                "data-cy": "eligibleForAnAdditionalTransportationAllowance"
-              },
+              "attributes": {},
               "overlay": {
                 "style": "",
                 "page": "",
@@ -30597,9 +30593,7 @@
                   },
                   "customConditional": "",
                   "logic": [],
-                  "attributes": {
-                    "data-cy": "eligibleForAnAdditionalTransportationAllowance"
-                  },
+                  "attributes": {},
                   "overlay": {
                     "style": "",
                     "page": "",
