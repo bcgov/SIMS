@@ -704,24 +704,24 @@ export class ApplicationStudentsController extends BaseController {
         );
       const feedbackErrorPromise =
         this.applicationService.hasFeedbackErrorBlockingFunds(applicationId);
-      const eCertFailedValidationsPromise =
+      const eCertValidationResultPromise =
         this.eCertPreValidationService.executePreValidations(applicationId);
       const [
         [appeal],
         applicationOfferingChangeRequest,
         feedbackError,
-        eCertFailedValidations,
+        eCertValidationResult,
       ] = await Promise.all([
         appealPromise,
         applicationOfferingChangeRequestPromise,
         feedbackErrorPromise,
-        eCertFailedValidationsPromise,
+        eCertValidationResultPromise,
       ]);
       appealStatus = appeal?.status;
       applicationOfferingChangeRequestStatus =
         applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus;
       hasBlockFundingFeedbackError = feedbackError;
-      hasECertFailedValidations = !!eCertFailedValidations.length;
+      hasECertFailedValidations = !eCertValidationResult.canGenerateECert;
     }
 
     const assessmentTriggerType = application.currentAssessment?.triggerType;
@@ -814,20 +814,20 @@ export class ApplicationStudentsController extends BaseController {
       );
     const hasBlockFundingFeedbackErrorPromise =
       this.applicationService.hasFeedbackErrorBlockingFunds(applicationId);
-    const eCertFailedValidationsPromise =
+    const eCertValidationResultPromise =
       this.eCertPreValidationService.executePreValidations(applicationId);
     const [
       application,
       [appeal],
       applicationOfferingChangeRequest,
       hasBlockFundingFeedbackError,
-      eCertFailedValidations,
+      eCertValidationResult,
     ] = await Promise.all([
       getApplicationPromise,
       appealPromise,
       applicationOfferingChangeRequestPromise,
       hasBlockFundingFeedbackErrorPromise,
-      eCertFailedValidationsPromise,
+      eCertValidationResultPromise,
     ]);
     if (!application) {
       throw new NotFoundException(
@@ -850,7 +850,7 @@ export class ApplicationStudentsController extends BaseController {
       applicationOfferingChangeRequestStatus:
         applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus,
       hasBlockFundingFeedbackError,
-      eCertFailedValidations,
+      eCertFailedValidations: [...eCertValidationResult.failedValidations],
     };
   }
 }

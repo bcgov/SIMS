@@ -19,6 +19,7 @@ import {
   MSFAAStates,
   saveFakeStudent,
   createFakeDisbursementValue,
+  saveFakeApplication,
 } from "@sims/test-utils";
 import {
   ApplicationStatus,
@@ -53,6 +54,10 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
     );
   });
 
+  beforeEach(async () => {
+    jest.resetAllMocks();
+  });
+
   it("Should still return when application is not in 'Completed' status.", async () => {
     // Arrange
     const application = await saveFakeApplicationDisbursements(
@@ -69,7 +74,10 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect([]);
+      .expect({
+        eCertFailedValidations: [],
+        canAcceptAssessment: true,
+      });
   });
 
   it(
@@ -125,7 +133,12 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
         .get(endpoint)
         .auth(token, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
-        .expect([ECertFailedValidation.DisabilityStatusNotConfirmed]);
+        .expect({
+          eCertFailedValidations: [
+            ECertFailedValidation.DisabilityStatusNotConfirmed,
+          ],
+          canAcceptAssessment: false,
+        });
     },
   );
 
@@ -174,15 +187,18 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
         .get(endpoint)
         .auth(token, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
-        .expect([
-          ECertFailedValidation.MSFAACanceled,
-          ECertFailedValidation.MSFAANotSigned,
-        ]);
+        .expect({
+          eCertFailedValidations: [
+            ECertFailedValidation.MSFAACanceled,
+            ECertFailedValidation.MSFAANotSigned,
+          ],
+          canAcceptAssessment: false,
+        });
     },
   );
 
   it(
-    "Should return a failed ecert validations array with stop disbursement restriction when " +
+    `Should return a failed ecert validations array with stop disbursement restriction when ` +
       "there are restrictions associated with the current student and the offering intensity is part time.",
     async () => {
       // Arrange
@@ -236,11 +252,16 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
         .get(endpoint)
         .auth(token, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
-        .expect([ECertFailedValidation.HasStopDisbursementRestriction]);
+        .expect({
+          eCertFailedValidations: [
+            ECertFailedValidation.HasStopDisbursementRestriction,
+          ],
+          canAcceptAssessment: false,
+        });
     },
   );
 
-  it(`Should return a failed ecert validations array with ${ECertFailedValidation.NoEstimatedAwardAmounts} when no disbursements values are present.`, async () => {
+  it(`Should return a failed ecert validations array with no estimated awardAmounts when no disbursements values are present.`, async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     const msfaaNumber = createFakeMSFAANumber(
@@ -269,7 +290,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
       },
     );
 
-    const endpoint = `/students/application/${application.id}/get-application-warnings`;
+    const endpoint = `/students/application/${application.id}/warnings`;
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
@@ -279,11 +300,14 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect([ECertFailedValidation.NoEstimatedAwardAmounts]);
+      .expect({
+        eCertFailedValidations: [ECertFailedValidation.NoEstimatedAwardAmounts],
+        canAcceptAssessment: false,
+      });
   });
 
   it(
-    `Should return a failed ecert validations array with ${ECertFailedValidation.NoEstimatedAwardAmounts} when ` +
+    `Should return a failed ecert validations array with with no estimated awardAmounts when ` +
       "disbursement values are present but the total amount t be disbursed is 0(zero).",
     async () => {
       // Arrange
@@ -329,7 +353,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
         },
       );
 
-      const endpoint = `/students/application/${application.id}/get-application-warnings`;
+      const endpoint = `/students/application/${application.id}/warnings`;
       const token = await getStudentToken(
         FakeStudentUsersTypes.FakeStudentUserType1,
       );
@@ -339,9 +363,35 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
         .get(endpoint)
         .auth(token, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
-        .expect([ECertFailedValidation.NoEstimatedAwardAmounts]);
+        .expect({
+          eCertFailedValidations: [
+            ECertFailedValidation.NoEstimatedAwardAmounts,
+          ],
+          canAcceptAssessment: false,
+        });
     },
   );
+
+  it("Should throw a not found error when the application is not associated with the student.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(appDataSource);
+    const endpoint = `/students/application/${application.id}/warnings`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        statusCode: HttpStatus.NOT_FOUND,
+        message:
+          "Applications does not exists or the student does not have access to it.",
+        error: "Not Found",
+      });
+  });
 
   afterAll(async () => {
     await app?.close();
