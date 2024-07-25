@@ -1,8 +1,7 @@
-import { ApiProcessError, FormUploadFileInfo } from "@/types";
+import { FormUploadFileInfo } from "@/types";
 import { AxiosRequestConfig } from "axios";
 import ApiClient from "../services/http/ApiClient";
-import { useSnackBar } from "@/composables";
-import { FILE_HAS_NOT_BEEN_SCANNED_YET, VIRUS_DETECTED } from "@/constants";
+import { useFileUtils } from "@/composables";
 
 /**
  * Implements the methods and signatures that are necessaries
@@ -62,15 +61,7 @@ export default class FormUploadService {
         size: fileContent.data.size,
       };
     } catch (error: unknown) {
-      if (
-        error instanceof ApiProcessError &&
-        (error.errorType === FILE_HAS_NOT_BEEN_SCANNED_YET ||
-          error.errorType === VIRUS_DETECTED)
-      ) {
-        const snackBar = useSnackBar();
-        snackBar.warn(error.message);
-        return;
-      }
+      useFileUtils().handleFileApiProcessError(error);
       throw new Error(
         "There was an unexpected error while downloading the file.",
       );

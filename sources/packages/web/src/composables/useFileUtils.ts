@@ -2,6 +2,9 @@ import { ReportsFilterAPIInDTO } from "@/services/http/dto";
 import { StudentService } from "@/services/StudentService";
 import { ReportService } from "@/services/ReportService";
 import { AxiosResponse } from "axios";
+import { useSnackBar } from "@/composables/useSnackBar";
+import { FILE_HAS_NOT_BEEN_SCANNED_YET, VIRUS_DETECTED } from "@/constants";
+import { ApiProcessError } from "@/types";
 
 interface StudentDocument {
   uniqueFileName: string;
@@ -47,8 +50,25 @@ export function useFileUtils() {
     link.remove();
   };
 
+  /**
+   * Handles the file api process errors that may be thrown.
+   * A warn message is displayed to the user.
+   * @param error error to handled.
+   */
+  const handleFileApiProcessError = (error: unknown) => {
+    if (
+      error instanceof ApiProcessError &&
+      (error.errorType === FILE_HAS_NOT_BEEN_SCANNED_YET ||
+        error.errorType === VIRUS_DETECTED)
+    ) {
+      const snackBar = useSnackBar();
+      snackBar.warn(error.message);
+    }
+  };
+
   return {
     downloadStudentDocument,
     downloadReports,
+    handleFileApiProcessError,
   };
 }

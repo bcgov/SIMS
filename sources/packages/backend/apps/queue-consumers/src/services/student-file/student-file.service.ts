@@ -110,7 +110,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
   }
 
   /**
-   * Update the infected file status and rename file to describe an error with the file.
+   * Updates the infected file status and rename file to describe an error with the file.
    * @param studentFile student infected file to be updated.
    * @returns the update result.
    */
