@@ -6,6 +6,7 @@ import {
   AwardDetailsAPIOutDTO,
   ManualReassessmentAPIInDTO,
   PrimaryIdentifierAPIOutDTO,
+  ApplicationWarningsAPIOutDTO,
 } from "@/services/http/dto";
 import { ECertFailedValidation } from "@/types";
 
@@ -91,11 +92,9 @@ export class StudentAssessmentApi extends HttpBaseClient {
    */
   async getApplicationWarnings(
     applicationId: number,
-  ): Promise<ECertFailedValidation[]> {
-    return this.getCall<ECertFailedValidation[]>(
-      this.addClientRoot(
-        `application/${applicationId}/get-application-warnings`,
-      ),
+  ): Promise<ApplicationWarningsAPIOutDTO> {
+    return this.getCall(
+      this.addClientRoot(`application/${applicationId}/warnings`),
     );
   }
 

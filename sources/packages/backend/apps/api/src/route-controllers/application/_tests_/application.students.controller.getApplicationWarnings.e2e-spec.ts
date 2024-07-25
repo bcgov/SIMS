@@ -60,7 +60,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
       { student },
       { createSecondDisbursement: true },
     );
-    const endpoint = `/students/application/${application.id}/get-application-warnings`;
+    const endpoint = `/students/application/${application.id}/warnings`;
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
@@ -115,7 +115,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
         true;
       await db.studentAssessment.save(application.currentAssessment);
 
-      const endpoint = `/students/application/${application.id}/get-application-warnings`;
+      const endpoint = `/students/application/${application.id}/warnings`;
       const token = await getStudentToken(
         FakeStudentUsersTypes.FakeStudentUserType1,
       );
@@ -164,7 +164,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
       msfaaNumber.cancelledDate = getISODateOnlyString(new Date());
       await db.msfaaNumber.save(msfaaNumber);
 
-      const endpoint = `/students/application/${application.id}/get-application-warnings`;
+      const endpoint = `/students/application/${application.id}/warnings`;
       const token = await getStudentToken(
         FakeStudentUsersTypes.FakeStudentUserType1,
       );
@@ -226,7 +226,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
         restriction,
       });
 
-      const endpoint = `/students/application/${application.id}/get-application-warnings`;
+      const endpoint = `/students/application/${application.id}/warnings`;
       const token = await getStudentToken(
         FakeStudentUsersTypes.FakeStudentUserType1,
       );

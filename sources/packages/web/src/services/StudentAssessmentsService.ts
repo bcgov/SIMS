@@ -6,6 +6,7 @@ import {
   AwardDetailsAPIOutDTO,
   ManualReassessmentAPIInDTO,
   PrimaryIdentifierAPIOutDTO,
+  ApplicationWarningsAPIOutDTO,
 } from "@/services/http/dto";
 import { ECertFailedValidation } from "@/types";
 
@@ -126,7 +127,7 @@ export class StudentAssessmentsService {
    */
   async getApplicationWarnings(
     applicationId: number,
-  ): Promise<ECertFailedValidation[]> {
+  ): Promise<ApplicationWarningsAPIOutDTO> {
     return ApiClient.StudentAssessmentApi.getApplicationWarnings(applicationId);
   }
 }

@@ -125,6 +125,7 @@ export default defineComponent({
       hasStopDisbursementRestriction: false,
       noEstimatedAwardAmounts: false,
     });
+    // Check it at least one warning will be displayed.
     const hasFailedECertValidation = computed(() =>
       Object.values(eCertValidation.value).some((value) => !!value),
     );
@@ -164,21 +165,26 @@ export default defineComponent({
       }
     };
     onMounted(async () => {
-      const activeWarnings =
+      const warnings =
         await StudentAssessmentsService.shared.getApplicationWarnings(
           props.applicationId,
         );
       eCertValidation.value = {
-        disabilityStatusNotConfirmed: activeWarnings.includes(
+        disabilityStatusNotConfirmed: warnings.eCertFailedValidations.includes(
           ECertFailedValidation.DisabilityStatusNotConfirmed,
         ),
         msfaaInvalid:
-          activeWarnings.includes(ECertFailedValidation.MSFAACanceled) ||
-          activeWarnings.includes(ECertFailedValidation.MSFAANotSigned),
-        hasStopDisbursementRestriction: activeWarnings.includes(
-          ECertFailedValidation.HasStopDisbursementRestriction,
-        ),
-        noEstimatedAwardAmounts: activeWarnings.includes(
+          warnings.eCertFailedValidations.includes(
+            ECertFailedValidation.MSFAACanceled,
+          ) ||
+          warnings.eCertFailedValidations.includes(
+            ECertFailedValidation.MSFAANotSigned,
+          ),
+        hasStopDisbursementRestriction:
+          warnings.eCertFailedValidations.includes(
+            ECertFailedValidation.HasStopDisbursementRestriction,
+          ),
+        noEstimatedAwardAmounts: warnings.eCertFailedValidations.includes(
           ECertFailedValidation.NoEstimatedAwardAmounts,
         ),
       };

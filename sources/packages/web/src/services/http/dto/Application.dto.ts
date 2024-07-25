@@ -145,3 +145,7 @@ export interface ApplicationAssessmentStatusDetailsAPIOutDTO {
   isApplicationArchived: boolean;
   applicationStatus: ApplicationStatus;
 }
+
+export interface ApplicationWarningsAPIOutDTO {
+  eCertFailedValidations: ECertFailedValidation[];
+}
