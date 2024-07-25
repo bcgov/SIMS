@@ -233,10 +233,12 @@ export class ApplicationStudentsController extends BaseController {
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() userToken: StudentUserToken,
   ): Promise<ApplicationWarningsAPIOutDTO> {
-    const applicationExist = this.applicationService.doesApplicationExist({
-      applicationId,
-      studentId: userToken.studentId,
-    });
+    const applicationExist = await this.applicationService.doesApplicationExist(
+      {
+        applicationId,
+        studentId: userToken.studentId,
+      },
+    );
     if (!applicationExist) {
       throw new NotFoundException(
         "Applications does not exists or the student does not have access to it.",
