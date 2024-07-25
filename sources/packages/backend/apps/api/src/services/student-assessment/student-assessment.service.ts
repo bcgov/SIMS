@@ -23,6 +23,7 @@ import {
 } from "@sims/services/constants";
 import { NoteSharedService } from "@sims/services";
 import { ApplicationService } from "../../services";
+import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
 
 /**
  * Manages the student assessment related operations.
@@ -33,6 +34,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     private readonly dataSource: DataSource,
     private readonly noteSharedService: NoteSharedService,
     private readonly applicationService: ApplicationService,
+    private readonly eCertPreValidationService: ECertPreValidationService,
   ) {
     super(dataSource.getRepository(StudentAssessment));
   }
@@ -184,7 +186,19 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
 
     if (assessment.application.currentAssessment.id !== assessment.id) {
       throw new CustomNamedError(
-        `An assessment other than the current one may not be approved.`,
+        "An assessment other than the current one may not be approved.",
+        ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
+      );
+    }
+
+    const validationResult =
+      await this.eCertPreValidationService.executePreValidations(
+        assessment.application.id,
+        true,
+      );
+    if (!validationResult.canAcceptAssessment) {
+      throw new CustomNamedError(
+        "There are at least one e-Cert validation failed preventing the assessment from being accepted.",
         ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
       );
     }

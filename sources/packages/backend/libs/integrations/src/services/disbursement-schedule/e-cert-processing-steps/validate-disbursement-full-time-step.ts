@@ -8,7 +8,10 @@ import {
   EligibleECertDisbursement,
 } from "../disbursement-schedule.models";
 import { getRestrictionByActionType } from "./e-cert-steps-utils";
-import { ECertPreValidator } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
+import {
+  ECertPreValidator,
+  ECertPreValidatorResult,
+} from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
 
 /**
  * Specific e-Cert validations for full-time.
@@ -29,12 +32,12 @@ export class ValidateDisbursementFullTimeStep
     _entityManager: EntityManager,
     log: ProcessSummary,
   ): Promise<boolean> {
-    const validations = await this.executePreValidations(
+    const validationResult = await this.executePreValidations(
       eCertDisbursement,
       _entityManager,
       log,
     );
-    return !validations.length;
+    return validationResult.canGenerateECert;
   }
 
   /**
@@ -54,7 +57,7 @@ export class ValidateDisbursementFullTimeStep
     eCertDisbursement: EligibleECertDisbursement,
     _entityManager: EntityManager,
     log: ProcessSummary,
-  ): Promise<ECertFailedValidation[]> {
+  ): Promise<ECertPreValidatorResult> {
     log.info("Executing full-time disbursement validations.");
     const validationResults = super.validate(eCertDisbursement, log);
     // Validate stop full-time disbursement restrictions.
@@ -70,6 +73,6 @@ export class ValidateDisbursementFullTimeStep
         ECertFailedValidation.HasStopDisbursementRestriction,
       );
     }
-    return validationResults;
+    return new ECertPreValidatorResult(validationResults);
   }
 }

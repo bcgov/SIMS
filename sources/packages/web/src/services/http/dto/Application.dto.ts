@@ -148,4 +148,5 @@ export interface ApplicationAssessmentStatusDetailsAPIOutDTO {
 
 export interface ApplicationWarningsAPIOutDTO {
   eCertFailedValidations: ECertFailedValidation[];
+  canAcceptAssessment: boolean;
 }

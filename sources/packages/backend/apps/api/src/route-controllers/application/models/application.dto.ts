@@ -201,4 +201,5 @@ export class ApplicationAssessmentStatusDetailsAPIOutDTO {
 
 export class ApplicationWarningsAPIOutDTO {
   eCertFailedValidations: ECertFailedValidation[];
+  canAcceptAssessment: boolean;
 }

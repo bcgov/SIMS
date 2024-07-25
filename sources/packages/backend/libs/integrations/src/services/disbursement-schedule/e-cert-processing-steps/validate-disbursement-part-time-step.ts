@@ -11,7 +11,10 @@ import { getRestrictionByActionType } from "./e-cert-steps-utils";
 import { CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE } from "@sims/services/constants";
 import { ECertGenerationService } from "../e-cert-generation.service";
 import { StudentLoanBalanceSharedService } from "@sims/services";
-import { ECertPreValidator } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
+import {
+  ECertPreValidator,
+  ECertPreValidatorResult,
+} from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
 
 /**
  * Specific e-Cert validations for part-time.
@@ -38,12 +41,12 @@ export class ValidateDisbursementPartTimeStep
     entityManager: EntityManager,
     log: ProcessSummary,
   ): Promise<boolean> {
-    const validations = await this.executePreValidations(
+    const validationResult = await this.executePreValidations(
       eCertDisbursement,
       entityManager,
       log,
     );
-    return !validations.length;
+    return validationResult.canGenerateECert;
   }
 
   /**
@@ -64,7 +67,7 @@ export class ValidateDisbursementPartTimeStep
     eCertDisbursement: EligibleECertDisbursement,
     entityManager: EntityManager,
     log: ProcessSummary,
-  ): Promise<ECertFailedValidation[]> {
+  ): Promise<ECertPreValidatorResult> {
     log.info("Executing part-time disbursement validations.");
     const validationResults = super.validate(eCertDisbursement, log);
     // Validate stop part-time disbursement restrictions.
@@ -88,7 +91,7 @@ export class ValidateDisbursementPartTimeStep
     if (!validateLifetimeMaximumCSLP) {
       validationResults.push(ECertFailedValidation.LifetimeMaximumCSLP);
     }
-    return validationResults;
+    return new ECertPreValidatorResult(validationResults);
   }
 
   /**

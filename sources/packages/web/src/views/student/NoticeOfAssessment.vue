@@ -25,7 +25,7 @@
               color="primary"
               data-cy="AcceptAssessment"
               @click="confirmAssessment()"
-              :disabled="hasFailedECertValidation"
+              :disabled="!canAcceptAssessment"
               >Accept assessment</v-btn
             >
           </v-row>
@@ -37,7 +37,7 @@
         class="mb-2"
         header="Your assessment has warnings preventing it from being accepted"
         :type="BannerTypes.Warning"
-        v-if="hasFailedECertValidation"
+        v-if="!canAcceptAssessment"
       >
         <template #content>
           <ul>
@@ -86,7 +86,7 @@ import { ModalDialog, useSnackBar } from "@/composables";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { AssessmentNOAAPIOutDTO } from "@/services/http/dto";
-import { computed, defineComponent, onMounted, ref } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import {
   ApplicationStatus,
   AssessmentStatus,
@@ -119,16 +119,13 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const viewOnly = ref(true);
     const currentAssessmentId = ref(0);
+    const canAcceptAssessment = ref(false);
     const eCertValidation = ref({
       disabilityStatusNotConfirmed: false,
       msfaaInvalid: false,
       hasStopDisbursementRestriction: false,
       noEstimatedAwardAmounts: false,
     });
-    // Check it at least one warning will be displayed.
-    const hasFailedECertValidation = computed(() =>
-      Object.values(eCertValidation.value).some((value) => !!value),
-    );
 
     const assessmentDataLoaded = (
       applicationStatus: ApplicationStatus,
@@ -169,6 +166,7 @@ export default defineComponent({
         await StudentAssessmentsService.shared.getApplicationWarnings(
           props.applicationId,
         );
+      canAcceptAssessment.value = warnings.canAcceptAssessment;
       eCertValidation.value = {
         disabilityStatusNotConfirmed: warnings.eCertFailedValidations.includes(
           ECertFailedValidation.DisabilityStatusNotConfirmed,
@@ -204,7 +202,7 @@ export default defineComponent({
       cancelApplicationModal,
       assessmentDataLoaded,
       eCertValidation,
-      hasFailedECertValidation,
+      canAcceptAssessment,
     };
   },
 });

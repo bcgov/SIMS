@@ -244,12 +244,15 @@ export class ApplicationStudentsController extends BaseController {
         "Applications does not exists or the student does not have access to it.",
       );
     }
-    const eCertFailedValidations =
+    const validationResult =
       await this.eCertPreValidationService.executePreValidations(
         applicationId,
         true,
       );
-    return { eCertFailedValidations };
+    return {
+      eCertFailedValidations: [...validationResult.failedValidations],
+      canAcceptAssessment: validationResult.canAcceptAssessment,
+    };
   }
 
   /**

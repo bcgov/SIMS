@@ -8,7 +8,6 @@ import {
   PrimaryIdentifierAPIOutDTO,
   ApplicationWarningsAPIOutDTO,
 } from "@/services/http/dto";
-import { ECertFailedValidation } from "@/types";
 
 /**
  * Http API client for Student Assessments.
