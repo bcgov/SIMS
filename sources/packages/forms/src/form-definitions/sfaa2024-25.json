@@ -30249,11 +30249,11 @@
               },
               "errorLabel": "",
               "errors": "",
-              "key": "eligibleForAnAdditionalTransportationAllowance",
+              "key": "additionalTransportRequested",
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": "",
                 "json": ""
@@ -30289,7 +30289,128 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "e26wllo",
-              "defaultValue": ""
+              "defaultValue": "",
+              "lockKey": true
+            },
+            {
+              "label": "<strong>Are you listed as a driver on the insurance for the vehicle you will be using?</strong>",
+              "labelPosition": "top",
+              "labelWidth": "",
+              "labelMargin": "",
+              "optionsLabelPosition": "right",
+              "description": "",
+              "tooltip": "",
+              "customClass": "",
+              "tabindex": "",
+              "inline": false,
+              "hidden": false,
+              "hideLabel": false,
+              "autofocus": false,
+              "disabled": false,
+              "tableView": false,
+              "modalEdit": false,
+              "values": [
+                {
+                  "label": "Yes",
+                  "value": "yes",
+                  "shortcut": ""
+                },
+                {
+                  "label": "No",
+                  "value": "no",
+                  "shortcut": ""
+                }
+              ],
+              "dataType": "",
+              "persistent": true,
+              "protected": false,
+              "dbIndex": false,
+              "encrypted": false,
+              "redrawOn": "",
+              "clearOnHide": true,
+              "customDefaultValue": "",
+              "calculateValue": "",
+              "calculateServer": false,
+              "allowCalculateOverride": false,
+              "validate": {
+                "required": true,
+                "onlyAvailableItems": true,
+                "customMessage": "",
+                "custom": "",
+                "customPrivate": false,
+                "json": "",
+                "strictDateValidation": false,
+                "multiple": false,
+                "unique": false
+              },
+              "errorLabel": "",
+              "errors": "",
+              "key": "additionalTransportListedDriver",
+              "tags": [],
+              "properties": {},
+              "conditional": {
+                "show": "true",
+                "when": "additionalTransportRequested",
+                "eq": "yes",
+                "json": ""
+              },
+              "customConditional": "",
+              "logic": [],
+              "attributes": {
+                "data-cy": "eligibleForAnAdditionalTransportationAllowance"
+              },
+              "overlay": {
+                "style": "",
+                "page": "",
+                "left": "",
+                "top": "",
+                "width": "",
+                "height": ""
+              },
+              "type": "radio",
+              "input": true,
+              "placeholder": "",
+              "prefix": "",
+              "suffix": "",
+              "multiple": false,
+              "unique": false,
+              "refreshOn": "",
+              "dataGridLabel": false,
+              "widget": null,
+              "validateOn": "change",
+              "showCharCount": false,
+              "showWordCount": false,
+              "allowMultipleMasks": false,
+              "addons": [],
+              "inputType": "radio",
+              "fieldSet": false,
+              "id": "e26wllo",
+              "defaultValue": "",
+              "lockKey": true
+            },
+            {
+              "key": "additionalTransportationCostContent",
+              "label": "Content",
+              "input": false,
+              "tag": "p",
+              "attrs": [
+                {
+                  "value": "",
+                  "attr": ""
+                }
+              ],
+              "className": "alert alert-danger fa fa-ban w-100",
+              "content": "<strong> You must be a listed driver on the insurance of the vehicle you will be using to qualify for additional transportation funding.</strong>",
+              "type": "htmlelement",
+              "hideLabel": true,
+              "tags": [],
+              "conditional": {
+                "show": "true",
+                "when": "additionalTransportListedDriver",
+                "eq": "no"
+              },
+              "properties": {},
+              "customClass": "banner-alert"
             },
             {
               "title": "Transportation Exception Content",
@@ -30309,8 +30430,8 @@
               "customConditional": "",
               "conditional": {
                 "json": "",
-                "show": true,
-                "when": "eligibleForAnAdditionalTransportationAllowance",
+                "show": "true",
+                "when": "additionalTransportListedDriver",
                 "eq": "yes"
               },
               "logic": [],
@@ -30399,6 +30520,101 @@
                   "id": "ebhurj"
                 },
                 {
+                  "label": "<strong>Are you the owner of the vehicle?</strong>",
+                  "labelPosition": "top",
+                  "labelWidth": "",
+                  "labelMargin": "",
+                  "optionsLabelPosition": "right",
+                  "description": "",
+                  "tooltip": "",
+                  "customClass": "",
+                  "tabindex": "",
+                  "inline": false,
+                  "hidden": false,
+                  "autofocus": false,
+                  "disabled": false,
+                  "tableView": false,
+                  "modalEdit": false,
+                  "values": [
+                    {
+                      "label": "Yes",
+                      "value": "yes",
+                      "shortcut": ""
+                    },
+                    {
+                      "label": "No",
+                      "value": "no",
+                      "shortcut": ""
+                    }
+                  ],
+                  "dataType": "",
+                  "persistent": true,
+                  "protected": false,
+                  "dbIndex": false,
+                  "encrypted": false,
+                  "redrawOn": "",
+                  "clearOnHide": true,
+                  "customDefaultValue": "",
+                  "calculateValue": "",
+                  "calculateServer": false,
+                  "allowCalculateOverride": false,
+                  "validate": {
+                    "required": true,
+                    "onlyAvailableItems": true,
+                    "customMessage": "",
+                    "custom": "",
+                    "customPrivate": false,
+                    "json": "",
+                    "strictDateValidation": false,
+                    "multiple": false,
+                    "unique": false
+                  },
+                  "errorLabel": "",
+                  "errors": "",
+                  "key": "additionalTransportOwner",
+                  "tags": [],
+                  "properties": {},
+                  "conditional": {
+                    "show": "true",
+                    "when": "additionalTransportListedDriver",
+                    "eq": "yes",
+                    "json": ""
+                  },
+                  "customConditional": "",
+                  "logic": [],
+                  "attributes": {
+                    "data-cy": "eligibleForAnAdditionalTransportationAllowance"
+                  },
+                  "overlay": {
+                    "style": "",
+                    "page": "",
+                    "left": "",
+                    "top": "",
+                    "width": "",
+                    "height": ""
+                  },
+                  "type": "radio",
+                  "input": true,
+                  "placeholder": "",
+                  "prefix": "",
+                  "suffix": "",
+                  "multiple": false,
+                  "unique": false,
+                  "refreshOn": "",
+                  "dataGridLabel": false,
+                  "widget": null,
+                  "validateOn": "change",
+                  "showCharCount": false,
+                  "showWordCount": false,
+                  "allowMultipleMasks": false,
+                  "addons": [],
+                  "inputType": "radio",
+                  "fieldSet": false,
+                  "id": "e26wllo",
+                  "defaultValue": "",
+                  "lockKey": true
+                },
+                {
                   "label": "<strong>Which of the following best describes your situation?</strong>",
                   "optionsLabelPosition": "right",
                   "inline": false,
@@ -30423,7 +30639,7 @@
                   "key": "transportationcostsituation",
                   "conditional": {
                     "show": "true",
-                    "when": "eligibleForAnAdditionalTransportationAllowance",
+                    "when": "additionalTransportListedDriver",
                     "eq": "yes"
                   },
                   "type": "radio",
@@ -30490,41 +30706,6 @@
                   "autofocus": false,
                   "input": true,
                   "tableView": false,
-                  "inputType": "text",
-                  "inputMask": "",
-                  "label": "Please estimate your weekly transportation costs.",
-                  "key": "additionalTransportCost",
-                  "placeholder": "",
-                  "prefix": "$",
-                  "suffix": "",
-                  "defaultValue": "",
-                  "protected": false,
-                  "persistent": true,
-                  "hidden": false,
-                  "clearOnHide": true,
-                  "delimiter": true,
-                  "decimalLimit": 2,
-                  "requireDecimal": true,
-                  "validate": {
-                    "required": true,
-                    "multiple": "",
-                    "custom": "valid = (input >= 0 && input <= 9999) ? true : 'The number you have entered is outside the expected range.';"
-                  },
-                  "conditional": {
-                    "show": "true",
-                    "when": "eligibleForAnAdditionalTransportationAllowance",
-                    "eq": "yes"
-                  },
-                  "type": "currency",
-                  "labelPosition": "top",
-                  "tags": [],
-                  "properties": {},
-                  "lockKey": true
-                },
-                {
-                  "autofocus": false,
-                  "input": true,
-                  "tableView": false,
                   "inputType": "number",
                   "label": "Please estimate your weekly travel distance from home to school in kilometers:",
                   "key": "additionalTransportKm",
@@ -30550,7 +30731,7 @@
                   "tags": [],
                   "conditional": {
                     "show": "true",
-                    "when": "eligibleForAnAdditionalTransportationAllowance",
+                    "when": "additionalTransportListedDriver",
                     "eq": "yes"
                   },
                   "properties": {},
@@ -30586,7 +30767,7 @@
                   "tags": [],
                   "conditional": {
                     "show": "true",
-                    "when": "eligibleForAnAdditionalTransportationAllowance",
+                    "when": "additionalTransportListedDriver",
                     "eq": "yes"
                   },
                   "properties": {},
@@ -30630,7 +30811,7 @@
                   "tags": [],
                   "conditional": {
                     "show": "true",
-                    "when": "eligibleForAnAdditionalTransportationAllowance",
+                    "when": "additionalTransportListedDriver",
                     "eq": "yes"
                   },
                   "properties": {},
