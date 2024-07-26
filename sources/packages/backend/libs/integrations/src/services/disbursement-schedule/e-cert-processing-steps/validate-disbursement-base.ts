@@ -30,13 +30,15 @@ export abstract class ValidateDisbursementBase {
       validationResults.push(ECertFailedValidation.InvalidSIN);
     }
     // MSFAA cancelation.
-    if (eCertDisbursement.disbursement.msfaaNumber.cancelledDate) {
-      log.info(`Student MSFAA associated with the disbursement is cancelled.`);
+    if (eCertDisbursement.disbursement.msfaaNumber?.cancelledDate) {
+      log.info("Student MSFAA associated with the disbursement is cancelled.");
       validationResults.push(ECertFailedValidation.MSFAACanceled);
     }
     // MSFAA signed.
-    if (!eCertDisbursement.disbursement.msfaaNumber.dateSigned) {
-      log.info(`Student MSFAA associated with the disbursement is not signed.`);
+    if (!eCertDisbursement.disbursement.msfaaNumber?.dateSigned) {
+      log.info(
+        "Student MSFAA associated with the disbursement is not signed or there is no MSFAA associated with the application.",
+      );
       validationResults.push(ECertFailedValidation.MSFAANotSigned);
     }
     // Disability Status PD/PPD Verified.

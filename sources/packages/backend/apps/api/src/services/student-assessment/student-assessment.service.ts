@@ -198,7 +198,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       );
     if (!validationResult.canAcceptAssessment) {
       throw new CustomNamedError(
-        "There are at least one e-Cert validation failed preventing the assessment from being accepted.",
+        "There is at least one e-Cert validation failed preventing the assessment from being accepted.",
         ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
       );
     }

@@ -19,8 +19,11 @@ import {
   MSFAAStates,
 } from "@sims/test-utils";
 import {
+  ApplicationStatus,
   AssessmentStatus,
   AssessmentTriggerType,
+  COEStatus,
+  DisbursementScheduleStatus,
   DisbursementValueType,
   OfferingIntensity,
   WorkflowData,
@@ -81,6 +84,40 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
       .patch(oldEndpoint)
       .auth(studentUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY);
+  });
+
+  it("Should not allow NOA approval when the current assessment has some e-Cert blocking validations(invalid MSFAA).", async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+    // Mock user services to return the saved student.
+    await mockUserLoginInfo(appModule, student);
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      { student },
+      {
+        applicationStatus: ApplicationStatus.Assessment,
+        offeringIntensity: OfferingIntensity.partTime,
+        firstDisbursementInitialValues: {
+          coeStatus: COEStatus.required,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+        },
+      },
+    );
+    const studentUserToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    const endpoint = `/students/assessment/${application.currentAssessment.id}/confirm-assessment`;
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .auth(studentUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        message:
+          "There is at least one e-Cert validation failed preventing the assessment from being accepted.",
+        error: "Unprocessable Entity",
+      });
   });
 
   /**
