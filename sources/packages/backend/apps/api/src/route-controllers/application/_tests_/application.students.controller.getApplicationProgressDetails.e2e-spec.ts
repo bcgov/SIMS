@@ -5,7 +5,6 @@ import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   FakeStudentUsersTypes,
-  getStudentByFakeStudentUserType,
   getStudentToken,
   mockUserLoginInfo,
 } from "../../../testHelpers";

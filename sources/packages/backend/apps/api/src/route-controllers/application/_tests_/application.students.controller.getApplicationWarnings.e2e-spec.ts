@@ -189,7 +189,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
   );
 
   it(
-    `Should return a failed ecert validations array with stop disbursement restriction when ` +
+    "Should return a failed ecert validations array with stop disbursement restriction when " +
       "there are restrictions associated with the current student and the offering intensity is part time.",
     async () => {
       // Arrange
@@ -252,7 +252,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
     },
   );
 
-  it(`Should return a failed ecert validations array with no estimated awardAmounts when no disbursements values are present.`, async () => {
+  it("Should return a failed ecert validations array with no estimated awardAmounts when no disbursements values are present.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     const msfaaNumber = createFakeMSFAANumber(
@@ -298,7 +298,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
   });
 
   it(
-    `Should return a failed ecert validations array with with no estimated awardAmounts when ` +
+    `Should return a failed ecert validations array with no estimated awardAmounts when ` +
       "disbursement values are present but the total amount t be disbursed is 0(zero).",
     async () => {
       // Arrange
@@ -366,13 +366,10 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
   it("Should throw a not found error when the application is not associated with the student.", async () => {
     // Arrange
     const application = await saveFakeApplication(appDataSource);
-    const anotherStudent = await saveFakeStudent(appDataSource);
     const endpoint = `/students/application/${application.id}/warnings`;
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
-    // Mock user services to return the saved student.
-    await mockUserLoginInfo(appModule, anotherStudent);
 
     // Act/Assert
     await request(app.getHttpServer())
