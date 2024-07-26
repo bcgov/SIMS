@@ -36,7 +36,7 @@ export class VirusScanProcessor {
         job.data.uniqueFileName,
         processSummary,
       );
-      processSummary.info("Completed virus scanning for the file. ");
+      processSummary.info("Completed virus scanning for the file.");
     } catch (error: unknown) {
       if (error instanceof NotFoundException) {
         // If the file is not present in the database,

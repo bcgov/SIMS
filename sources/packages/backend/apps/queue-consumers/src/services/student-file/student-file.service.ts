@@ -7,9 +7,9 @@ import { CustomNamedError } from "@sims/utilities";
 import { UNABLE_TO_SCAN_FILE } from "../../constants/error-code.constants";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { ClamAVService } from "@sims/services";
-import path from "path";
+import * as path from "path";
 
-const INFECTED_FILENAME_SUFFIX = "-OriginalFileError";
+export const INFECTED_FILENAME_SUFFIX = "-OriginalFileError";
 
 @Injectable()
 export class StudentFileService extends RecordDataModelService<StudentFile> {
@@ -58,6 +58,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
       await this.updateInfectedFile(studentFile);
     } else {
       processSummary.info("No virus found.");
+      await this.updateFileScanStatus(studentFile.uniqueFileName, isInfected);
     }
     return isInfected;
   }

@@ -1,6 +1,6 @@
 import ApiClient from "@/services/http/ApiClient";
 import { StudentProfile, SINValidations } from "@/types";
-import { useFileUtils, useFormatters } from "@/composables";
+import { useFormatters } from "@/composables";
 import {
   AESTFileUploadToStudentAPIInDTO,
   StudentFileDetailsAPIOutDTO,
@@ -146,16 +146,9 @@ export class StudentService {
   async downloadStudentFile(
     uniqueFileName: string,
   ): Promise<AxiosResponse<any>> {
-    try {
-      return await ApiClient.FileUpload.download(
-        `student/files/${uniqueFileName}`,
-      );
-    } catch (error: unknown) {
-      useFileUtils().handleFileApiProcessError(error);
-      throw new Error(
-        "There was an unexpected error while downloading the file.",
-      );
-    }
+    return await ApiClient.FileUpload.download(
+      `student/files/${uniqueFileName}`,
+    );
   }
 
   /**

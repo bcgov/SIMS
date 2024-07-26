@@ -24,7 +24,6 @@ export default abstract class HttpBaseClient {
   }
 
   protected handleRequestError(error: unknown) {
-    console.log(error);
     this.handleAPICustomError(error);
   }
 

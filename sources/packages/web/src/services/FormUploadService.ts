@@ -61,10 +61,11 @@ export default class FormUploadService {
         size: fileContent.data.size,
       };
     } catch (error: unknown) {
-      useFileUtils().handleFileApiProcessError(error);
-      throw new Error(
-        "There was an unexpected error while downloading the file.",
-      );
+      if (!useFileUtils().handleFileScanProcessError(error)) {
+        throw new Error(
+          "There was an unexpected error while downloading the file.",
+        );
+      }
     }
   }
 }
