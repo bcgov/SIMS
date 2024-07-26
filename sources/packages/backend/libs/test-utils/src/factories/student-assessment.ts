@@ -52,5 +52,6 @@ export function createFakeStudentAssessment(
   assessment.previousDateChangedReportedAssessment =
     relations?.previousDateChangedReportedAssessment ?? null;
   assessment.reportedDate = options?.initialValue?.reportedDate ?? null;
+  assessment.workflowData = options?.initialValue?.workflowData ?? null;
   return assessment;
 }

@@ -23,6 +23,7 @@ import {
   AssessmentTriggerType,
   DisbursementValueType,
   OfferingIntensity,
+  WorkflowData,
 } from "@sims/sims-db";
 import { TestingModule } from "@nestjs/testing";
 
@@ -41,11 +42,8 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
 
   it("Should allow NOA approval for the current application assessment when the application has multiple assessments.", async () => {
     // Arrange
-    const assessmentIDS = await createApplicationAndAssessments();
-    const newAssessmentID = assessmentIDS["currentAssessmentId"];
-
-    const currentEndpoint = `/students/assessment/${newAssessmentID}/confirm-assessment`;
-
+    const { currentAssessmentId } = await createApplicationAndAssessments();
+    const currentEndpoint = `/students/assessment/${currentAssessmentId}/confirm-assessment`;
     const studentUserToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
@@ -61,22 +59,19 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
         id: true,
         noaApprovalStatus: true,
       },
-      where: { id: newAssessmentID },
+      where: { id: currentAssessmentId },
     });
 
     expect(updatedAssessment).toEqual({
-      id: newAssessmentID,
+      id: currentAssessmentId,
       noaApprovalStatus: AssessmentStatus.completed,
     });
   });
 
   it("Should not allow NOA approval for old application assessments when the application has multiple assessments.", async () => {
     // Arrange
-    const assessmentIDS = await createApplicationAndAssessments();
-    const oldAssessmentID = assessmentIDS["oldAssessmentId"];
-
-    const oldEndpoint = `/students/assessment/${oldAssessmentID}/confirm-assessment`;
-
+    const { oldAssessmentId } = await createApplicationAndAssessments();
+    const oldEndpoint = `/students/assessment/${oldAssessmentId}/confirm-assessment`;
     const studentUserToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
@@ -132,6 +127,7 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
         {
           initialValue: {
             triggerType: AssessmentTriggerType.RelatedApplicationChanged,
+            workflowData: { calculatedData: {} } as WorkflowData,
           },
         },
       ),

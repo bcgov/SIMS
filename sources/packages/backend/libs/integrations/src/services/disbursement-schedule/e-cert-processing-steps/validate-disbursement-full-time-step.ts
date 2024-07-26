@@ -8,10 +8,8 @@ import {
   EligibleECertDisbursement,
 } from "../disbursement-schedule.models";
 import { getRestrictionByActionType } from "./e-cert-steps-utils";
-import {
-  ECertPreValidator,
-  ECertPreValidatorResult,
-} from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
+import { ECertPreValidator } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation/e-cert-pre-validation-service-models";
+import { ECertPreValidatorResult } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation/e-cert-pre-validation-service-models";
 
 /**
  * Specific e-Cert validations for full-time.
