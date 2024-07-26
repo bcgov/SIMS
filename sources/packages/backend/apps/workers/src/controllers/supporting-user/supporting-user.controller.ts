@@ -25,7 +25,10 @@ import {
   ZeebeJob,
 } from "@camunda8/sdk/dist/zeebe/types";
 import { NotificationActionsService } from "@sims/services";
-import { SupportingUserType } from "@sims/sims-db";
+import {
+  NotificationSupportingUserType,
+  SupportingUserType,
+} from "@sims/sims-db";
 import { DataSource, EntityManager } from "typeorm";
 
 @Controller()
@@ -60,26 +63,23 @@ export class SupportingUserController {
         jobLogger.log("Supporting users already exists.");
         return job.complete();
       }
-      const supportingUsers =
-        await this.supportingUserService.createSupportingUsers(
-          job.variables.applicationId,
-          job.variables.supportingUsersTypes,
-        );
-      const createdSupportingUsersIds = supportingUsers.map(
-        (supportingUser) => supportingUser.id,
+      const application = await this.applicationService.getApplicationById(
+        job.variables.applicationId,
       );
-      jobLogger.log("Created supporting users.");
       return this.dataSource.transaction(
         async (transactionalEntityManager: EntityManager) => {
-          const application = await this.applicationService.getApplicationById(
-            job.variables.applicationId,
+          const supportingUsers =
+            await this.supportingUserService.createSupportingUsers(
+              job.variables.applicationId,
+              job.variables.supportingUsersTypes,
+            );
+          const createdSupportingUsersIds = supportingUsers.map(
+            (supportingUser) => supportingUser.id,
           );
-          const supportingUserType =
-            job.variables.supportingUsersTypes[0] === SupportingUserType.Partner
-              ? "partner"
-              : job.variables.supportingUsersTypes.length > 1
-              ? "parents"
-              : "parent";
+          jobLogger.log("Created supporting users.");
+          const supportingUserType = this.getNotificationSupportingUserType(
+            job.variables.supportingUsersTypes,
+          );
           await this.notificationActionsService.saveSupportingUserInformationNotification(
             {
               givenNames: application.student.user.firstName,
@@ -139,5 +139,23 @@ export class SupportingUserController {
         logger: jobLogger,
       });
     }
+  }
+
+  /**
+   * Get notification supporting user type from an array of supporting user type.
+   * @param supportingUsers an array of supporting user type.
+   * @returns notification supporting user type.
+   */
+  private getNotificationSupportingUserType(
+    supportingUsers: SupportingUserType[],
+  ): NotificationSupportingUserType {
+    const [supportingUser1, supportingUser2] = supportingUsers;
+    // If the supporting user is partner, only one supporting user can be present.
+    if (supportingUser1 === SupportingUserType.Partner) {
+      return NotificationSupportingUserType.Partner;
+    }
+    return supportingUser2
+      ? NotificationSupportingUserType.Parents
+      : NotificationSupportingUserType.Parent;
   }
 }

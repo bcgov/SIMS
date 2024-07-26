@@ -72,7 +72,9 @@ describe("SupportingUserController(e2e)-createSupportingUsers", () => {
       SupportingUserType.Parent,
     );
     // Notification record.
-    const createdNotification = await getCreatedNotification();
+    const createdNotification = await getCreatedNotification(
+      savedApplication.student.user.id,
+    );
     expect(createdNotification.messagePayload).toStrictEqual({
       template_id: SUPPORTING_USER_INFO_TEMPLATE_ID,
       email_address: savedApplication.student.user.email,
@@ -121,7 +123,9 @@ describe("SupportingUserController(e2e)-createSupportingUsers", () => {
       SupportingUserType.Parent,
     );
     // Notification record.
-    const createdNotification = await getCreatedNotification();
+    const createdNotification = await getCreatedNotification(
+      savedApplication.student.user.id,
+    );
     expect(createdNotification.messagePayload).toStrictEqual({
       template_id: SUPPORTING_USER_INFO_TEMPLATE_ID,
       email_address: savedApplication.student.user.email,
@@ -170,7 +174,9 @@ describe("SupportingUserController(e2e)-createSupportingUsers", () => {
       SupportingUserType.Partner,
     );
     // Notification record.
-    const createdNotification = await getCreatedNotification();
+    const createdNotification = await getCreatedNotification(
+      savedApplication.student.user.id,
+    );
     expect(createdNotification.messagePayload).toStrictEqual({
       template_id: SUPPORTING_USER_INFO_TEMPLATE_ID,
       email_address: savedApplication.student.user.email,
@@ -229,21 +235,20 @@ describe("SupportingUserController(e2e)-createSupportingUsers", () => {
 
   /**
    * Get a notification record for supporting user information notification message.
+   * @param userId Id of the user.
    * @returns notification record.
    */
-  async function getCreatedNotification(): Promise<Notification> {
-    const notifications = await db.notification.find({
+  async function getCreatedNotification(userId: number): Promise<Notification> {
+    return await db.notification.findOne({
       select: {
         id: true,
+        user: { id: true },
         messagePayload: true,
       },
+      relations: { user: true },
       where: {
-        notificationMessage: {
-          id: 29,
-        },
+        user: { id: userId },
       },
-      order: { id: "DESC" },
     });
-    return notifications[0];
   }
 });

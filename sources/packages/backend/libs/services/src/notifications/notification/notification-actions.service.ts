@@ -1215,7 +1215,7 @@ export class NotificationActionsService {
         NotificationMessageType.SupportingUserInformationNotification,
       );
     const supportingUserInformationNotification = {
-      userId: auditUser.id,
+      userId: notification.userId,
       messageType:
         NotificationMessageType.SupportingUserInformationNotification,
       messagePayload: {

@@ -1,4 +1,7 @@
-import { NotificationMessageType } from "@sims/sims-db";
+import {
+  NotificationMessageType,
+  NotificationSupportingUserType,
+} from "@sims/sims-db";
 import { NotificationEmailMessage } from "./gc-notify.model";
 import { NotificationMetadata } from "@sims/sims-db/entities/notification-metadata.type";
 
@@ -182,5 +185,5 @@ export interface SupportingUserInformationNotification {
   lastName: string;
   toAddress: string;
   userId: number;
-  supportingUserType: "parents" | "partner" | "parent";
+  supportingUserType: NotificationSupportingUserType;
 }
