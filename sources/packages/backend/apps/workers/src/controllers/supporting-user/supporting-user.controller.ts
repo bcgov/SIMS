@@ -24,11 +24,11 @@ import {
   MustReturnJobActionAcknowledgement,
   ZeebeJob,
 } from "@camunda8/sdk/dist/zeebe/types";
-import { NotificationActionsService } from "@sims/services";
 import {
+  NotificationActionsService,
   NotificationSupportingUserType,
-  SupportingUserType,
-} from "@sims/sims-db";
+} from "@sims/services";
+import { SupportingUserType } from "@sims/sims-db";
 import { DataSource, EntityManager } from "typeorm";
 
 @Controller()
@@ -152,10 +152,8 @@ export class SupportingUserController {
     const [supportingUser1, supportingUser2] = supportingUsers;
     // If the supporting user is partner, only one supporting user can be present.
     if (supportingUser1 === SupportingUserType.Partner) {
-      return NotificationSupportingUserType.Partner;
+      return "partner";
     }
-    return supportingUser2
-      ? NotificationSupportingUserType.Parents
-      : NotificationSupportingUserType.Parent;
+    return supportingUser2 ? "parents" : "parent";
   }
 }

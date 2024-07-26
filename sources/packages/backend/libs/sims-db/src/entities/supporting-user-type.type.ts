@@ -12,21 +12,3 @@ export enum SupportingUserType {
    */
   Partner = "Partner",
 }
-
-/**
- * Types of users that appear in supporting information notifications.
- */
-export enum NotificationSupportingUserType {
-  /**
-   * Single parent to appear in the notification.
-   */
-  Parent = "parent",
-  /**
-   * Plural parents to appear in the notification.
-   */
-  Parents = "parents",
-  /**
-   * Partner to appear in the notification.
-   */
-  Partner = "partner",
-}

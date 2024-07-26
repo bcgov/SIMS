@@ -1,7 +1,4 @@
-import {
-  NotificationMessageType,
-  NotificationSupportingUserType,
-} from "@sims/sims-db";
+import { NotificationMessageType } from "@sims/sims-db";
 import { NotificationEmailMessage } from "./gc-notify.model";
 import { NotificationMetadata } from "@sims/sims-db/entities/notification-metadata.type";
 
@@ -179,6 +176,8 @@ export interface DailyDisbursementReportProcessingNotification {
   attachmentFileContent: string;
   fileName: string;
 }
+
+export type NotificationSupportingUserType = "parents" | "partner" | "parent";
 
 export interface SupportingUserInformationNotification {
   givenNames: string;
