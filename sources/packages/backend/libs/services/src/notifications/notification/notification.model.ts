@@ -182,5 +182,5 @@ export interface SupportingUserInformationNotification {
   lastName: string;
   toAddress: string;
   userId: number;
-  supportingUserType: string;
+  supportingUserType: "parents" | "partner" | "parent";
 }

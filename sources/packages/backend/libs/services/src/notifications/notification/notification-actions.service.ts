@@ -1203,18 +1203,19 @@ export class NotificationActionsService {
   /**
    * Create supporting user information notification for student.
    * @param notification notification details.
-   * @param auditUserId user who sends the notification.
+   * @param entityManager entity manager to execute in transaction.
    */
   async saveSupportingUserInformationNotification(
     notification: SupportingUserInformationNotification,
-    auditUserId: number,
+    entityManager: EntityManager,
   ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
     const { templateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.SupportingUserInformationNotification,
       );
     const supportingUserInformationNotification = {
-      userId: notification.userId,
+      userId: auditUser.id,
       messageType:
         NotificationMessageType.SupportingUserInformationNotification,
       messagePayload: {
@@ -1229,7 +1230,8 @@ export class NotificationActionsService {
     };
     await this.notificationService.saveNotifications(
       [supportingUserInformationNotification],
-      auditUserId,
+      auditUser.id,
+      { entityManager },
     );
   }
 

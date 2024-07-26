@@ -26,6 +26,7 @@ import {
 } from "@camunda8/sdk/dist/zeebe/types";
 import { NotificationActionsService } from "@sims/services";
 import { SupportingUserType } from "@sims/sims-db";
+import { DataSource, EntityManager } from "typeorm";
 
 @Controller()
 export class SupportingUserController {
@@ -33,6 +34,7 @@ export class SupportingUserController {
     private readonly supportingUserService: SupportingUserService,
     private readonly applicationService: ApplicationService,
     private readonly notificationActionsService: NotificationActionsService,
+    private readonly dataSource: DataSource,
   ) {}
 
   @ZeebeWorker(Workers.CreateSupportingUsers, {
@@ -67,25 +69,33 @@ export class SupportingUserController {
         (supportingUser) => supportingUser.id,
       );
       jobLogger.log("Created supporting users.");
-      const application = await this.applicationService.getApplicationById(
-        job.variables.applicationId,
-      );
-      const supportingUserType =
-        job.variables.supportingUsersTypes.length > 1
-          ? `${SupportingUserType.Parent}s`
-          : job.variables.supportingUsersTypes[0];
-      await this.notificationActionsService.saveSupportingUserInformationNotification(
-        {
-          givenNames: application.student.user.firstName,
-          lastName: application.student.user.lastName,
-          toAddress: application.student.user.email,
-          userId: application.student.user.id,
-          supportingUserType: supportingUserType,
+      return this.dataSource.transaction(
+        async (transactionalEntityManager: EntityManager) => {
+          const application = await this.applicationService.getApplicationById(
+            job.variables.applicationId,
+          );
+          const supportingUserType =
+            job.variables.supportingUsersTypes[0] === SupportingUserType.Partner
+              ? "partner"
+              : job.variables.supportingUsersTypes.length > 1
+              ? "parents"
+              : "parent";
+          await this.notificationActionsService.saveSupportingUserInformationNotification(
+            {
+              givenNames: application.student.user.firstName,
+              lastName: application.student.user.lastName,
+              toAddress: application.student.user.email,
+              userId: application.student.user.id,
+              supportingUserType: supportingUserType,
+            },
+            transactionalEntityManager,
+          );
+          jobLogger.log(
+            "Supporting user notification has been created for the student.",
+          );
+          return job.complete({ createdSupportingUsersIds });
         },
-        application.student.user.id,
       );
-      jobLogger.log("Emails have been sent to supporting users.");
-      return job.complete({ createdSupportingUsersIds });
     } catch (error: unknown) {
       return createUnexpectedJobFail(error, job, {
         logger: jobLogger,
