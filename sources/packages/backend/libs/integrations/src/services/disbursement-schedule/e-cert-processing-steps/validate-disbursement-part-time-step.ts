@@ -11,8 +11,10 @@ import { getRestrictionByActionType } from "./e-cert-steps-utils";
 import { CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE } from "@sims/services/constants";
 import { ECertGenerationService } from "../e-cert-generation.service";
 import { StudentLoanBalanceSharedService } from "@sims/services";
-import { ECertPreValidator } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation/e-cert-pre-validation-service-models";
-import { ECertPreValidatorResult } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation/e-cert-pre-validation-service-models";
+import {
+  ECertPreValidator,
+  ECertPreValidatorResult,
+} from "@sims/integrations/services/disbursement-schedule/e-cert-calculation/e-cert-pre-validation-service-models";
 
 /**
  * Specific e-Cert validations for part-time.
