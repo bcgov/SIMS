@@ -72,6 +72,7 @@ export class SupportingUserController {
             await this.supportingUserService.createSupportingUsers(
               job.variables.applicationId,
               job.variables.supportingUsersTypes,
+              transactionalEntityManager,
             );
           const createdSupportingUsersIds = supportingUsers.map(
             (supportingUser) => supportingUser.id,
