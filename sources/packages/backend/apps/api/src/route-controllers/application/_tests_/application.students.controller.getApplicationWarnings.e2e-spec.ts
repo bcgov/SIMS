@@ -7,7 +7,6 @@ import {
   createTestingAppModule,
   FakeStudentUsersTypes,
   getStudentToken,
-  getStudentByFakeStudentUserType,
   mockUserLoginInfo,
 } from "../../../testHelpers";
 import {
@@ -29,7 +28,6 @@ import {
   DisbursementValueType,
   OfferingIntensity,
   RestrictionActionType,
-  Student,
 } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
 import { ECertFailedValidation } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
@@ -38,7 +36,6 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
   let app: INestApplication;
   let appModule: TestingModule;
   let appDataSource: DataSource;
-  let student: Student;
   let db: E2EDataSources;
 
   beforeAll(async () => {
@@ -48,23 +45,17 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
     appModule = module;
     appDataSource = dataSource;
     db = createE2EDataSources(dataSource);
-    student = await getStudentByFakeStudentUserType(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-      dataSource,
-    );
-  });
-
-  beforeEach(async () => {
-    jest.resetAllMocks();
   });
 
   it("Should still return when application is not in 'Completed' status.", async () => {
     // Arrange
     const application = await saveFakeApplicationDisbursements(
       appDataSource,
-      { student },
+      undefined,
       { createSecondDisbursement: true },
     );
+    // Mock user services to return the saved student.
+    await mockUserLoginInfo(appModule, application.student);
     const endpoint = `/students/application/${application.id}/warnings`;
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -375,10 +366,13 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
   it("Should throw a not found error when the application is not associated with the student.", async () => {
     // Arrange
     const application = await saveFakeApplication(appDataSource);
+    const anotherStudent = await saveFakeStudent(appDataSource);
     const endpoint = `/students/application/${application.id}/warnings`;
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
+    // Mock user services to return the saved student.
+    await mockUserLoginInfo(appModule, anotherStudent);
 
     // Act/Assert
     await request(app.getHttpServer())
