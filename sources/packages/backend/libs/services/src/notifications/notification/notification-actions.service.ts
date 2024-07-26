@@ -30,6 +30,7 @@ import {
   PartialStudentMatchNotification,
   ECertFeedbackFileErrorNotification,
   DailyDisbursementReportProcessingNotification,
+  SupportingUserInformationNotification,
 } from "..";
 import { NotificationService } from "./notification.service";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
@@ -1196,6 +1197,41 @@ export class NotificationActionsService {
     await this.notificationService.saveNotifications(
       ministryNotificationsToSend,
       auditUser.id,
+    );
+  }
+
+  /**
+   * Create supporting user information notification for student.
+   * @param notification notification details.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveSupportingUserInformationNotification(
+    notification: SupportingUserInformationNotification,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const { templateId } =
+      await this.notificationMessageService.getNotificationMessageDetails(
+        NotificationMessageType.SupportingUserInformationNotification,
+      );
+    const supportingUserInformationNotification = {
+      userId: notification.userId,
+      messageType:
+        NotificationMessageType.SupportingUserInformationNotification,
+      messagePayload: {
+        email_address: notification.toAddress,
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
+          supportingUserType: notification.supportingUserType,
+        },
+      },
+    };
+    await this.notificationService.saveNotifications(
+      [supportingUserInformationNotification],
+      auditUser.id,
+      { entityManager },
     );
   }
 
