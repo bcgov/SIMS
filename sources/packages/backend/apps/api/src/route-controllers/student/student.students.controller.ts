@@ -205,7 +205,6 @@ export class StudentStudentsController extends BaseController {
     @Param() uniqueFileNameParam: UniqueFileNameParamAPIInDTO,
     @Res() response: Response,
   ): Promise<void> {
-    console.log("test");
     await this.studentControllerService.writeFileToResponse(
       response,
       uniqueFileNameParam.uniqueFileName,
