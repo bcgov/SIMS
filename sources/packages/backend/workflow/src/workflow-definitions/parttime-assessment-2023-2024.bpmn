@@ -52,8 +52,6 @@ partner1X (comes from partner form)
 dmnX (comes from dmn)</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:group id="Group_1s445fk" categoryValueRef="CategoryValue_0m7wcdu" />
-    <bpmn:group id="Group_0hnsgkk" />
-    <bpmn:group id="Group_081xfok" />
     <bpmn:textAnnotation id="TextAnnotation_1myp6tg">
       <bpmn:text>Use CRA Income if provided</bpmn:text>
     </bpmn:textAnnotation>
@@ -83,29 +81,16 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:association id="Association_0cp4qvu" associationDirection="None" sourceRef="TextAnnotation_0y3el2u" targetRef="Event_0gp899b" />
     <bpmn:association id="Association_0yc2t6b" sourceRef="Event_0hxxmu9" targetRef="TextAnnotation_1myp6tg" />
     <bpmn:association id="Association_0jm8vsl" associationDirection="None" sourceRef="TextAnnotation_1kucuom" targetRef="Event_07l2szk" />
+    <bpmn:textAnnotation id="TextAnnotation_093olqu">
+      <bpmn:text>Additional transportation weeks cannot be greater than offering weeks.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1p9iqwc" associationDirection="None" sourceRef="Event_1qui2nz" targetRef="TextAnnotation_093olqu" />
   </bpmn:collaboration>
   <bpmn:process id="parttime-assessment-2023-2024" isExecutable="true">
     <bpmn:laneSet id="LaneSet_0i75wz3">
       <bpmn:lane id="Lane_0ejpwa7" name="Primary Assessed Need and Award Configuration">
         <bpmn:flowNodeRef>Event_0jsq5je</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_1sg75ph</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_1ofk363</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_14myy0o</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_1q1wdvs</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_032sxqf</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_00onlgh</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_0pwuwm3</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_18b64lz</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_0zr6bmw</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_1nyle6e</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_1sdvd13</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_15d88qb</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_07s4lhn</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_0jlptxy</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_04t8szp</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_0i3t204</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_1s6xlgt</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_1f7q2sz</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_0pzv80g</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0wg31nu</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_10tndoy</bpmn:flowNodeRef>
@@ -128,7 +113,6 @@ dmnX (comes from dmn)</bpmn:text>
         <bpmn:flowNodeRef>Event_084hvhv</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1bplh1d</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1g0qy1m</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_0oywejd</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0jmbywn</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_14d0375</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_12swz45</bpmn:flowNodeRef>
@@ -145,27 +129,15 @@ dmnX (comes from dmn)</bpmn:text>
         <bpmn:flowNodeRef>Event_19hr2p7</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1xl9u43</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_04hunux</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_10lg4rt</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1sg75ph</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1ofk363</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1qui2nz</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1uj6ty4</bpmn:flowNodeRef>
         <bpmn:childLaneSet id="LaneSet_0v6vyq5">
           <bpmn:lane id="Lane_0pbg2l1" name="Primary Assessed Need and Award Eligibility">
             <bpmn:flowNodeRef>Event_0jsq5je</bpmn:flowNodeRef>
-            <bpmn:flowNodeRef>Event_1sg75ph</bpmn:flowNodeRef>
-            <bpmn:flowNodeRef>Gateway_1ofk363</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Gateway_14myy0o</bpmn:flowNodeRef>
-            <bpmn:flowNodeRef>Activity_1q1wdvs</bpmn:flowNodeRef>
-            <bpmn:flowNodeRef>Activity_032sxqf</bpmn:flowNodeRef>
-            <bpmn:flowNodeRef>Event_00onlgh</bpmn:flowNodeRef>
-            <bpmn:flowNodeRef>Event_0pwuwm3</bpmn:flowNodeRef>
-            <bpmn:flowNodeRef>Gateway_18b64lz</bpmn:flowNodeRef>
-            <bpmn:flowNodeRef>Event_0zr6bmw</bpmn:flowNodeRef>
-            <bpmn:flowNodeRef>Gateway_1nyle6e</bpmn:flowNodeRef>
-            <bpmn:flowNodeRef>Activity_1sdvd13</bpmn:flowNodeRef>
-            <bpmn:flowNodeRef>Event_15d88qb</bpmn:flowNodeRef>
-            <bpmn:flowNodeRef>Event_07s4lhn</bpmn:flowNodeRef>
-            <bpmn:flowNodeRef>Activity_0jlptxy</bpmn:flowNodeRef>
-            <bpmn:flowNodeRef>Event_04t8szp</bpmn:flowNodeRef>
-            <bpmn:flowNodeRef>Gateway_0i3t204</bpmn:flowNodeRef>
-            <bpmn:flowNodeRef>Gateway_1s6xlgt</bpmn:flowNodeRef>
-            <bpmn:flowNodeRef>Gateway_1f7q2sz</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Gateway_0pzv80g</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_0wg31nu</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_10tndoy</bpmn:flowNodeRef>
@@ -188,7 +160,11 @@ dmnX (comes from dmn)</bpmn:text>
             <bpmn:flowNodeRef>Event_084hvhv</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_1bplh1d</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Gateway_1g0qy1m</bpmn:flowNodeRef>
-            <bpmn:flowNodeRef>Gateway_0oywejd</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Event_10lg4rt</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Event_1sg75ph</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Gateway_1ofk363</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Event_1qui2nz</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Gateway_1uj6ty4</bpmn:flowNodeRef>
           </bpmn:lane>
           <bpmn:lane id="Lane_0l32w49" name="Award Calculation">
             <bpmn:flowNodeRef>Event_0jmbywn</bpmn:flowNodeRef>
@@ -256,156 +232,13 @@ dmnX (comes from dmn)</bpmn:text>
       <bpmn:incoming>Flow_1vkmf8w</bpmn:incoming>
       <bpmn:outgoing>Flow_0kra8re</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateThrowEvent id="Event_1sg75ph" name="Calculate Course Load Tuition Totals">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=offeringActualTuitionCosts" target="calculatedDataActualTuitionCosts" />
-          <zeebe:output source="=offeringMandatoryFees" target="calculatedDataMandatoryFees" />
-          <zeebe:output source="=offeringProgramRelatedCosts" target="calculatedDataProgramRelatedCosts" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_08xi7o2</bpmn:incoming>
-      <bpmn:outgoing>Flow_1dkitnr</bpmn:outgoing>
-    </bpmn:intermediateThrowEvent>
-    <bpmn:exclusiveGateway id="Gateway_1ofk363">
-      <bpmn:incoming>Flow_13678dh</bpmn:incoming>
-      <bpmn:incoming>Flow_1me1lzd</bpmn:incoming>
-      <bpmn:outgoing>Flow_0mhps79</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
     <bpmn:exclusiveGateway id="Gateway_14myy0o" default="Flow_1mtcoea">
       <bpmn:incoming>Flow_1dkitnr</bpmn:incoming>
       <bpmn:outgoing>Flow_1mtcoea</bpmn:outgoing>
       <bpmn:outgoing>Flow_0btwcpj</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:scriptTask id="Activity_1q1wdvs" name="Additional Transportation">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=calculatedDataStudentAddtionalTransportation.calculatedDataAdditionalTransportKm" target="calculatedDataAdditionalTransportKm" />
-          <zeebe:output source="=calculatedDataStudentAddtionalTransportation.calculatedDataAdditionalTransportCost" target="calculatedDataAdditionalTransportCost" />
-          <zeebe:output source="=calculatedDataStudentAddtionalTransportation.calculatedDataAdditionalTransportWeeks" target="calculatedDataAdditionalTransportWeeks" />
-          <zeebe:output source="=calculatedDataStudentAddtionalTransportation.calculatedDataAdditionalTransportPlacement" target="calculatedDataAdditionalTransportPlacement" />
-        </zeebe:ioMapping>
-        <zeebe:script expression="={&#10;  calculatedDataAdditionalTransportKm: calculatedDataAdditionalTransportKm,&#10;  calculatedDataAdditionalTransportCost: calculatedDataAdditionalTransportCost,&#10;  calculatedDataAdditionalTransportWeeks: calculatedDataAdditionalTransportWeeks,&#10;  calculatedDataAdditionalTransportPlacement: (calculatedDataAdditionalTransportPlacement = &#34;yes&#34;)&#10;} &#10;  " resultVariable="calculatedDataStudentAddtionalTransportation" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0btwcpj</bpmn:incoming>
-      <bpmn:outgoing>Flow_13678dh</bpmn:outgoing>
-    </bpmn:scriptTask>
-    <bpmn:scriptTask id="Activity_032sxqf" name="Additional Transportation">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=calculatedDataStudentAddtionalTransportation.calculatedDataAdditionalTransportKm" target="calculatedDataAdditionalTransportKm" />
-          <zeebe:output source="=calculatedDataStudentAddtionalTransportation.calculatedDataAdditionalTransportCost" target="calculatedDataAdditionalTransportCost" />
-          <zeebe:output source="=calculatedDataStudentAddtionalTransportation.calculatedDataAdditionalTransportWeeks" target="calculatedDataAdditionalTransportWeeks" />
-          <zeebe:output source="=calculatedDataStudentAddtionalTransportation.calculatedDataAdditionalTransportPlacement" target="calculatedDataAdditionalTransportPlacement" />
-        </zeebe:ioMapping>
-        <zeebe:script expression="={&#10;  calculatedDataAdditionalTransportKm: 0 ,&#10;  calculatedDataAdditionalTransportCost: 0,&#10;  calculatedDataAdditionalTransportWeeks: 0,&#10;  calculatedDataAdditionalTransportPlacement: false&#10;}" resultVariable="calculatedDataStudentAddtionalTransportation" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1mtcoea</bpmn:incoming>
-      <bpmn:outgoing>Flow_1me1lzd</bpmn:outgoing>
-    </bpmn:scriptTask>
-    <bpmn:intermediateThrowEvent id="Event_00onlgh" name="Limit Additional Transport Weeks">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=min(offeringWeeks, calculatedDataAdditionalTransportWeeks)" target="calculatedDataAdditionalTransportWeeks" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0mhps79</bpmn:incoming>
-      <bpmn:outgoing>Flow_0i2zwae</bpmn:outgoing>
-    </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateThrowEvent id="Event_0pwuwm3" name="Calculate KM Reduction">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=dmnPartTimeProgramYearMaximums.limitAdditionalTransportationKMReduction" target="calculatedDataAdditionalTransportKMReduction" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0bvtt9p</bpmn:incoming>
-      <bpmn:outgoing>Flow_0ov206q</bpmn:outgoing>
-    </bpmn:intermediateThrowEvent>
-    <bpmn:exclusiveGateway id="Gateway_18b64lz" default="Flow_0bvtt9p">
-      <bpmn:incoming>Flow_1q9cwdm</bpmn:incoming>
-      <bpmn:outgoing>Flow_1vgknfm</bpmn:outgoing>
-      <bpmn:outgoing>Flow_0bvtt9p</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:intermediateThrowEvent id="Event_0zr6bmw" name="Calculate KM Reduction">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=1" target="calculatedDataAdditionalTransportKMReduction" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1vgknfm</bpmn:incoming>
-      <bpmn:outgoing>Flow_009d25b</bpmn:outgoing>
-    </bpmn:intermediateThrowEvent>
-    <bpmn:exclusiveGateway id="Gateway_1nyle6e">
-      <bpmn:incoming>Flow_0ov206q</bpmn:incoming>
-      <bpmn:incoming>Flow_009d25b</bpmn:incoming>
-      <bpmn:outgoing>Flow_0xhunsr</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:scriptTask id="Activity_1sdvd13" name="Calculate additional transportation weekly cost">
-      <bpmn:extensionElements>
-        <zeebe:script expression="=// Weekly additional transportation cost is calculated in 2 different ways.&#10;// 1. Weekly cost based on estimated amount provided by student.&#10;// 2. Weekly cost based on additional transport km.&#10;min(inputDataAdditionalTransportationWeeklyEstimatedCost,inputDataAdditionalTransportationWeeklyKMCost)" resultVariable="calculatedDataAdditionalTransportationWeeklyCost" />
-        <zeebe:ioMapping>
-          <zeebe:input source="=// If the student is receiving weekly transportation allowance from the institution for clinical or practicum placement&#10;// then their limit for additional transportation weekly allowance must be reduced.&#10;if (calculatedDataAdditionalTransportPlacement = true)&#10;then&#10;  // The maximum weekly additional transportation cost cannot be greater than student entered weekly cost.&#10;min((dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance - dmnPartTimeProgramYearMaximums.limitAdditionalTransportationPlacement), calculatedDataAdditionalTransportCost)&#10;  else&#10;// The maximum weekly additional transportation cost cannot be greater than student entered weekly cost.&#10;min(dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance, calculatedDataAdditionalTransportCost)" target="inputDataAdditionalTransportationWeeklyEstimatedCost" />
-          <zeebe:input source="=calculatedDataAdditionalTransportKm * calculatedDataAdditionalTransportKMReduction" target="inputDataAdditionalTransportationWeeklyKMCost" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0xhunsr</bpmn:incoming>
-      <bpmn:outgoing>Flow_08k878p</bpmn:outgoing>
-    </bpmn:scriptTask>
-    <bpmn:intermediateThrowEvent id="Event_15d88qb" name="Calculate additional transportation allowance">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=0" target="calculatedDataAdditionalTransportationAllowance" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0x59561</bpmn:incoming>
-      <bpmn:outgoing>Flow_17p7duv</bpmn:outgoing>
-    </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateThrowEvent id="Event_07s4lhn" name="Calculate additional transportation allowance">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=calculatedDataAdditionalTransportationWeeklyCost * calculatedDataAdditionalTransportWeeks" target="calculatedDataAdditionalTransportationAllowance" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_08k878p</bpmn:incoming>
-      <bpmn:outgoing>Flow_1i635oj</bpmn:outgoing>
-    </bpmn:intermediateThrowEvent>
-    <bpmn:scriptTask id="Activity_0jlptxy" name="Calculate total transportation allowance">
-      <bpmn:extensionElements>
-        <zeebe:script expression="=if(calculatedDataAdditionalTransportationAllowance &#62; 0)&#10;then&#10;max(inputDataMinimumTotalTransportationAllowance,inputDataEstimatedTotalTransportAllowance)&#10;else&#10;  inputDataMinimumTotalTransportationAllowance" resultVariable="calculatedDataTotalTransportationAllowance" />
-        <zeebe:ioMapping>
-          <zeebe:input source="=// Minimum transportation allowance eligible for an onsite offering.&#10;// This allowance is calculated as the allowance that a student will receive for an onsite offering with no additional transportation involved.&#10;dmnPartTimeProgramYearMaximums.limitTransportationAllowance * offeringWeeks" target="inputDataMinimumTotalTransportationAllowance" />
-          <zeebe:input source="=(offeringWeeks - calculatedDataAdditionalTransportWeeks) * dmnPartTimeProgramYearMaximums.limitTransportationAllowance + calculatedDataAdditionalTransportationAllowance" target="inputDataEstimatedTotalTransportAllowance" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_049nq15</bpmn:incoming>
-      <bpmn:outgoing>Flow_0iugroz</bpmn:outgoing>
-    </bpmn:scriptTask>
-    <bpmn:intermediateThrowEvent id="Event_04t8szp" name="Calculate total transportation allowance">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=calculatedDataAdditionalTransportationAllowance" target="calculatedDataTotalTransportationAllowance" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1b65sga</bpmn:incoming>
-      <bpmn:outgoing>Flow_1bqpfnb</bpmn:outgoing>
-    </bpmn:intermediateThrowEvent>
-    <bpmn:exclusiveGateway id="Gateway_0i3t204">
-      <bpmn:incoming>Flow_0iugroz</bpmn:incoming>
-      <bpmn:incoming>Flow_1bqpfnb</bpmn:incoming>
-      <bpmn:outgoing>Flow_1l17c5s</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:exclusiveGateway id="Gateway_1s6xlgt">
-      <bpmn:incoming>Flow_0bjtjo9</bpmn:incoming>
-      <bpmn:outgoing>Flow_049nq15</bpmn:outgoing>
-      <bpmn:outgoing>Flow_1b65sga</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:exclusiveGateway id="Gateway_1f7q2sz">
-      <bpmn:incoming>Flow_17p7duv</bpmn:incoming>
-      <bpmn:incoming>Flow_1i635oj</bpmn:incoming>
-      <bpmn:outgoing>Flow_0bjtjo9</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
     <bpmn:exclusiveGateway id="Gateway_0pzv80g">
-      <bpmn:incoming>Flow_1l17c5s</bpmn:incoming>
+      <bpmn:incoming>Flow_0essn0m</bpmn:incoming>
       <bpmn:outgoing>Flow_1v46bg2</bpmn:outgoing>
       <bpmn:outgoing>Flow_1lq8ab4</bpmn:outgoing>
     </bpmn:exclusiveGateway>
@@ -590,11 +423,6 @@ dmnX (comes from dmn)</bpmn:text>
       <bpmn:incoming>Flow_0kra8re</bpmn:incoming>
       <bpmn:outgoing>Flow_0j9exwg</bpmn:outgoing>
     </bpmn:parallelGateway>
-    <bpmn:exclusiveGateway id="Gateway_0oywejd">
-      <bpmn:incoming>Flow_0i2zwae</bpmn:incoming>
-      <bpmn:outgoing>Flow_0x59561</bpmn:outgoing>
-      <bpmn:outgoing>Flow_1q9cwdm</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
     <bpmn:intermediateThrowEvent id="Event_0jmbywn" name="calculate CSPT">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
@@ -751,40 +579,10 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:sequenceFlow id="Flow_0kra8re" sourceRef="Event_0jsq5je" targetRef="Gateway_1g0qy1m" />
     <bpmn:sequenceFlow id="Flow_08xi7o2" sourceRef="Activity_0pvobml" targetRef="Event_1sg75ph" />
     <bpmn:sequenceFlow id="Flow_1dkitnr" sourceRef="Event_1sg75ph" targetRef="Gateway_14myy0o" />
-    <bpmn:sequenceFlow id="Flow_13678dh" sourceRef="Activity_1q1wdvs" targetRef="Gateway_1ofk363" />
-    <bpmn:sequenceFlow id="Flow_1me1lzd" sourceRef="Activity_032sxqf" targetRef="Gateway_1ofk363" />
-    <bpmn:sequenceFlow id="Flow_0mhps79" sourceRef="Gateway_1ofk363" targetRef="Event_00onlgh" />
-    <bpmn:sequenceFlow id="Flow_0btwcpj" name="Eligible for additional transportation" sourceRef="Gateway_14myy0o" targetRef="Activity_1q1wdvs">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=calculatedDataEligibleForAnAdditionalTransportationAllowance = "yes"</bpmn:conditionExpression>
+    <bpmn:sequenceFlow id="Flow_0btwcpj" name="Eligible for additional transportation" sourceRef="Gateway_14myy0o" targetRef="Event_1qui2nz">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=calculatedDataAdditionalTransportRequested = "yes" and calculatedDataAdditionalTransportListedDriver ="yes"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1mtcoea" name="Not eligible for additional transportation" sourceRef="Gateway_14myy0o" targetRef="Activity_032sxqf" />
-    <bpmn:sequenceFlow id="Flow_0i2zwae" sourceRef="Event_00onlgh" targetRef="Gateway_0oywejd" />
-    <bpmn:sequenceFlow id="Flow_0bvtt9p" name="Additional transportation not greater than 280 km" sourceRef="Gateway_18b64lz" targetRef="Event_0pwuwm3" />
-    <bpmn:sequenceFlow id="Flow_0ov206q" sourceRef="Event_0pwuwm3" targetRef="Gateway_1nyle6e" />
-    <bpmn:sequenceFlow id="Flow_1q9cwdm" name="Additional Transportation More Than 0km" sourceRef="Gateway_0oywejd" targetRef="Gateway_18b64lz">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=calculatedDataAdditionalTransportKm &gt; 0</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1vgknfm" name="Additional transport greater than 280 km" sourceRef="Gateway_18b64lz" targetRef="Event_0zr6bmw">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=calculatedDataAdditionalTransportKm &gt; 280</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_009d25b" sourceRef="Event_0zr6bmw" targetRef="Gateway_1nyle6e" />
-    <bpmn:sequenceFlow id="Flow_0xhunsr" sourceRef="Gateway_1nyle6e" targetRef="Activity_1sdvd13" />
-    <bpmn:sequenceFlow id="Flow_08k878p" sourceRef="Activity_1sdvd13" targetRef="Event_07s4lhn" />
-    <bpmn:sequenceFlow id="Flow_0x59561" name="Additional Transportation is 0km" sourceRef="Gateway_0oywejd" targetRef="Event_15d88qb">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=calculatedDataAdditionalTransportKm = 0</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_17p7duv" sourceRef="Event_15d88qb" targetRef="Gateway_1f7q2sz" />
-    <bpmn:sequenceFlow id="Flow_1i635oj" sourceRef="Event_07s4lhn" targetRef="Gateway_1f7q2sz" />
-    <bpmn:sequenceFlow id="Flow_049nq15" name="Offering delivery type onsite" sourceRef="Gateway_1s6xlgt" targetRef="Activity_0jlptxy">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=offeringDelivered = "onsite"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0iugroz" sourceRef="Activity_0jlptxy" targetRef="Gateway_0i3t204" />
-    <bpmn:sequenceFlow id="Flow_1b65sga" name="Offering delivery type NOT onsite" sourceRef="Gateway_1s6xlgt" targetRef="Event_04t8szp">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=offeringDelivered != "onsite"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1bqpfnb" sourceRef="Event_04t8szp" targetRef="Gateway_0i3t204" />
-    <bpmn:sequenceFlow id="Flow_1l17c5s" sourceRef="Gateway_0i3t204" targetRef="Gateway_0pzv80g" />
-    <bpmn:sequenceFlow id="Flow_0bjtjo9" sourceRef="Gateway_1f7q2sz" targetRef="Gateway_1s6xlgt" />
+    <bpmn:sequenceFlow id="Flow_1mtcoea" name="Not eligible for additional transportation" sourceRef="Gateway_14myy0o" targetRef="Event_10lg4rt" />
     <bpmn:sequenceFlow id="Flow_1lq8ab4" name="Course Load 35 And Up" sourceRef="Gateway_0pzv80g" targetRef="Event_0wg31nu">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=offeringCourseLoad &gt; 34</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
@@ -964,12 +762,13 @@ dmnX (comes from dmn)</bpmn:text>
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=calculatedDataStudentAddtionalTransportation.calculatedDataAdditionalTransportKm" target="calculatedDataAdditionalTransportKm" />
-          <zeebe:output source="=calculatedDataStudentAddtionalTransportation.calculatedDataAdditionalTransportCost" target="calculatedDataAdditionalTransportCost" />
           <zeebe:output source="=calculatedDataStudentAddtionalTransportation.calculatedDataAdditionalTransportWeeks" target="calculatedDataAdditionalTransportWeeks" />
           <zeebe:output source="=calculatedDataStudentAddtionalTransportation.calculatedDataAdditionalTransportPlacement" target="calculatedDataAdditionalTransportPlacement" />
-          <zeebe:output source="=calculatedDataStudentAddtionalTransportation.calculatedDataEligibleForAnAdditionalTransportationAllowance" target="calculatedDataEligibleForAnAdditionalTransportationAllowance" />
+          <zeebe:output source="=calculatedDataStudentAddtionalTransportation.calculatedDataAdditionalTransportRequested" target="calculatedDataAdditionalTransportRequested" />
+          <zeebe:output source="=calculatedDataStudentAddtionalTransportation.calculatedDataAdditionalTransportListedDriver" target="calculatedDataAdditionalTransportListedDriver" />
+          <zeebe:output source="=calculatedDataStudentAddtionalTransportation.calculatedDataAdditionalTransportOwner" target="calculatedDataAdditionalTransportOwner" />
         </zeebe:ioMapping>
-        <zeebe:script expression="={&#10; calculatedDataEligibleForAnAdditionalTransportationAllowance: studentDataEligibleForAnAdditionalTransportationAllowance,&#10; calculatedDataAdditionalTransportKm: (if studentDataAdditionalTransportKm = null then null else studentDataAdditionalTransportKm),&#10; calculatedDataAdditionalTransportCost: (if studentDataAdditionalTransportCost = null then null else studentDataAdditionalTransportCost),&#10; calculatedDataAdditionalTransportWeeks: (if studentDataAdditionalTransportWeeks = null then null else studentDataAdditionalTransportWeeks),&#10; calculatedDataAdditionalTransportPlacement: (if studentDataAdditionalTransportPlacement = null then null else studentDataAdditionalTransportPlacement)&#10;}" resultVariable="calculatedDataStudentAddtionalTransportation" />
+        <zeebe:script expression="={&#10; calculatedDataAdditionalTransportRequested: studentDataAdditionalTransportRequested,&#10; calculatedDataAdditionalTransportListedDriver: if(studentDataAdditionalTransportListedDriver = null) then null else studentDataAdditionalTransportListedDriver,&#10; calculatedDataAdditionalTransportOwner: if(studentDataAdditionalTransportOwner = null) then null else studentDataAdditionalTransportOwner,&#10; calculatedDataAdditionalTransportKm: (if studentDataAdditionalTransportKm = null then null else studentDataAdditionalTransportKm),&#10; calculatedDataAdditionalTransportWeeks: (if studentDataAdditionalTransportWeeks = null then null else studentDataAdditionalTransportWeeks),&#10; calculatedDataAdditionalTransportPlacement: (if studentDataAdditionalTransportPlacement = null then null else studentDataAdditionalTransportPlacement)&#10;}" resultVariable="calculatedDataStudentAddtionalTransportation" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1wgupji</bpmn:incoming>
       <bpmn:outgoing>Flow_08t1oyp</bpmn:outgoing>
@@ -1179,6 +978,43 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:sequenceFlow id="Flow_1su3k2o" sourceRef="Activity_0ayxjmh" targetRef="Gateway_057mnqo" />
     <bpmn:sequenceFlow id="Flow_0cxbj5p" sourceRef="Gateway_0wuxqll" targetRef="Gateway_1rlewmq" />
     <bpmn:sequenceFlow id="Flow_1nvaat9" sourceRef="Gateway_057mnqo" targetRef="Gateway_08rr1xe" />
+    <bpmn:sequenceFlow id="Flow_0onzs1l" sourceRef="Event_1qui2nz" targetRef="Gateway_1uj6ty4" />
+    <bpmn:sequenceFlow id="Flow_0x6e20t" sourceRef="Event_10lg4rt" targetRef="Gateway_1ofk363" />
+    <bpmn:intermediateThrowEvent id="Event_10lg4rt">
+      <bpmn:incoming>Flow_1mtcoea</bpmn:incoming>
+      <bpmn:outgoing>Flow_0x6e20t</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:intermediateThrowEvent id="Event_1sg75ph" name="Calculate Course Load Tuition Totals">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=offeringActualTuitionCosts" target="calculatedDataActualTuitionCosts" />
+          <zeebe:output source="=offeringMandatoryFees" target="calculatedDataMandatoryFees" />
+          <zeebe:output source="=offeringProgramRelatedCosts" target="calculatedDataProgramRelatedCosts" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_08xi7o2</bpmn:incoming>
+      <bpmn:outgoing>Flow_1dkitnr</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_0essn0m" sourceRef="Gateway_1ofk363" targetRef="Gateway_0pzv80g" />
+    <bpmn:exclusiveGateway id="Gateway_1ofk363">
+      <bpmn:incoming>Flow_0x6e20t</bpmn:incoming>
+      <bpmn:incoming>Flow_11wfdl2</bpmn:incoming>
+      <bpmn:outgoing>Flow_0essn0m</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:intermediateThrowEvent id="Event_1qui2nz" name="Limit Additional Transport Weeks">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=min(offeringWeeks, calculatedDataAdditionalTransportWeeks)" target="calculatedDataAdditionalTransportWeeks" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0btwcpj</bpmn:incoming>
+      <bpmn:outgoing>Flow_0onzs1l</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_11wfdl2" sourceRef="Gateway_1uj6ty4" targetRef="Gateway_1ofk363" />
+    <bpmn:exclusiveGateway id="Gateway_1uj6ty4" name="Is the the student owner of the vehicle">
+      <bpmn:incoming>Flow_0onzs1l</bpmn:incoming>
+      <bpmn:outgoing>Flow_11wfdl2</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
   </bpmn:process>
   <bpmn:category id="Category_0appz4m">
     <bpmn:categoryValue id="CategoryValue_0m7wcdu" value="Appeals" />
@@ -1211,84 +1047,8 @@ dmnX (comes from dmn)</bpmn:text>
           <dc:Bounds x="5690" y="2285" width="81" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1sg75ph_di" bpmnElement="Event_1sg75ph">
-        <dc:Bounds x="3042" y="1774" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="3018" y="1817" width="85" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1ofk363_di" bpmnElement="Gateway_1ofk363" isMarkerVisible="true">
-        <dc:Bounds x="3385" y="1765" width="50" height="50" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0qyot8e" bpmnElement="Gateway_14myy0o" isMarkerVisible="true">
         <dc:Bounds x="3136" y="1767" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0nlainr" bpmnElement="Activity_1q1wdvs">
-        <dc:Bounds x="3250" y="1700" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_05bb4i2" bpmnElement="Activity_032sxqf">
-        <dc:Bounds x="3251" y="1802" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_00onlgh_di" bpmnElement="Event_00onlgh">
-        <dc:Bounds x="3472" y="1772" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="3450" y="1815" width="83" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0pwuwm3_di" bpmnElement="Event_0pwuwm3">
-        <dc:Bounds x="3742" y="1692" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="3729" y="1735" width="66" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_18b64lz_di" bpmnElement="Gateway_18b64lz" isMarkerVisible="true">
-        <dc:Bounds x="3675" y="1625" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0zr6bmw_di" bpmnElement="Event_0zr6bmw">
-        <dc:Bounds x="3742" y="1572" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="3728" y="1615" width="66" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1nyle6e_di" bpmnElement="Gateway_1nyle6e" isMarkerVisible="true">
-        <dc:Bounds x="3785" y="1625" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_10el9hq_di" bpmnElement="Activity_1sdvd13">
-        <dc:Bounds x="3860" y="1610" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_15d88qb_di" bpmnElement="Event_15d88qb">
-        <dc:Bounds x="3992" y="1872" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="3979" y="1915" width="67" height="53" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_07s4lhn_di" bpmnElement="Event_07s4lhn">
-        <dc:Bounds x="3992" y="1632" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="3980" y="1675" width="67" height="53" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0y8thmk_di" bpmnElement="Activity_0jlptxy">
-        <dc:Bounds x="4200" y="1610" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_04t8szp_di" bpmnElement="Event_04t8szp">
-        <dc:Bounds x="4232" y="1872" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="4218" y="1915" width="71" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0i3t204_di" bpmnElement="Gateway_0i3t204" isMarkerVisible="true">
-        <dc:Bounds x="4315" y="1765" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1s6xlgt_di" bpmnElement="Gateway_1s6xlgt" isMarkerVisible="true">
-        <dc:Bounds x="4125" y="1765" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1f7q2sz_di" bpmnElement="Gateway_1f7q2sz" isMarkerVisible="true">
-        <dc:Bounds x="4025" y="1765" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0pzv80g_di" bpmnElement="Gateway_0pzv80g" isMarkerVisible="true">
         <dc:Bounds x="4415" y="1765" width="50" height="50" />
@@ -1399,9 +1159,6 @@ dmnX (comes from dmn)</bpmn:text>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1t7zxtt_di" bpmnElement="Gateway_1g0qy1m">
         <dc:Bounds x="5805" y="1765" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0oywejd_di" bpmnElement="Gateway_0oywejd" isMarkerVisible="true">
-        <dc:Bounds x="3565" y="1765" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0jmbywn_di" bpmnElement="Event_0jmbywn">
         <dc:Bounds x="6612" y="2922" width="36" height="36" />
@@ -1627,6 +1384,30 @@ dmnX (comes from dmn)</bpmn:text>
       <bpmndi:BPMNShape id="BPMNShape_0814vbf" bpmnElement="Gateway_057mnqo" isMarkerVisible="true">
         <dc:Bounds x="1469" y="1145" width="50" height="50" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_10lg4rt_di" bpmnElement="Event_10lg4rt">
+        <dc:Bounds x="3272" y="1842" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1sg75ph_di" bpmnElement="Event_1sg75ph">
+        <dc:Bounds x="2982" y="1774" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2958" y="1817" width="85" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1ofk363_di" bpmnElement="Gateway_1ofk363" isMarkerVisible="true">
+        <dc:Bounds x="4245" y="1765" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_13mkub9" bpmnElement="Event_1qui2nz">
+        <dc:Bounds x="3232" y="1652" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3210" y="1695" width="83" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1uj6ty4_di" bpmnElement="Gateway_1uj6ty4" isMarkerVisible="true">
+        <dc:Bounds x="3335" y="1645" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3319" y="1702" width="86" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1vkmf8w_di" bpmnElement="Flow_1vkmf8w">
         <di:waypoint x="5640" y="1815" />
         <di:waypoint x="5640" y="2260" />
@@ -1640,139 +1421,27 @@ dmnX (comes from dmn)</bpmn:text>
       <bpmndi:BPMNEdge id="Flow_08xi7o2_di" bpmnElement="Flow_08xi7o2">
         <di:waypoint x="2880" y="1210" />
         <di:waypoint x="2880" y="1792" />
-        <di:waypoint x="3042" y="1792" />
+        <di:waypoint x="2982" y="1792" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1dkitnr_di" bpmnElement="Flow_1dkitnr">
-        <di:waypoint x="3078" y="1792" />
+        <di:waypoint x="3018" y="1792" />
         <di:waypoint x="3136" y="1792" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_13678dh_di" bpmnElement="Flow_13678dh">
-        <di:waypoint x="3350" y="1740" />
-        <di:waypoint x="3410" y="1740" />
-        <di:waypoint x="3410" y="1765" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1me1lzd_di" bpmnElement="Flow_1me1lzd">
-        <di:waypoint x="3351" y="1842" />
-        <di:waypoint x="3410" y="1842" />
-        <di:waypoint x="3410" y="1815" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0mhps79_di" bpmnElement="Flow_0mhps79">
-        <di:waypoint x="3435" y="1790" />
-        <di:waypoint x="3472" y="1790" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_0cx2yax" bpmnElement="Flow_0btwcpj">
         <di:waypoint x="3161" y="1767" />
-        <di:waypoint x="3161" y="1740" />
-        <di:waypoint x="3250" y="1740" />
+        <di:waypoint x="3161" y="1670" />
+        <di:waypoint x="3232" y="1670" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="3150" y="1696" width="67" height="40" />
+          <dc:Bounds x="3086" y="1701" width="67" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_1o6jw4z" bpmnElement="Flow_1mtcoea">
         <di:waypoint x="3161" y="1817" />
-        <di:waypoint x="3161" y="1842" />
-        <di:waypoint x="3251" y="1842" />
+        <di:waypoint x="3161" y="1860" />
+        <di:waypoint x="3272" y="1860" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="3148" y="1849" width="72" height="40" />
+          <dc:Bounds x="3084" y="1830" width="72" height="40" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0i2zwae_di" bpmnElement="Flow_0i2zwae">
-        <di:waypoint x="3508" y="1790" />
-        <di:waypoint x="3565" y="1790" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0bvtt9p_di" bpmnElement="Flow_0bvtt9p">
-        <di:waypoint x="3700" y="1675" />
-        <di:waypoint x="3700" y="1710" />
-        <di:waypoint x="3742" y="1710" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="3607" y="1669" width="86" height="53" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0ov206q_di" bpmnElement="Flow_0ov206q">
-        <di:waypoint x="3778" y="1710" />
-        <di:waypoint x="3810" y="1710" />
-        <di:waypoint x="3810" y="1675" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1q9cwdm_di" bpmnElement="Flow_1q9cwdm">
-        <di:waypoint x="3590" y="1765" />
-        <di:waypoint x="3590" y="1650" />
-        <di:waypoint x="3675" y="1650" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="3601" y="1730" width="77" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1vgknfm_di" bpmnElement="Flow_1vgknfm">
-        <di:waypoint x="3700" y="1625" />
-        <di:waypoint x="3700" y="1590" />
-        <di:waypoint x="3742" y="1590" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="3609" y="1590" width="82" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_009d25b_di" bpmnElement="Flow_009d25b">
-        <di:waypoint x="3778" y="1590" />
-        <di:waypoint x="3810" y="1590" />
-        <di:waypoint x="3810" y="1625" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0xhunsr_di" bpmnElement="Flow_0xhunsr">
-        <di:waypoint x="3835" y="1650" />
-        <di:waypoint x="3860" y="1650" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_08k878p_di" bpmnElement="Flow_08k878p">
-        <di:waypoint x="3960" y="1650" />
-        <di:waypoint x="3992" y="1650" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0x59561_di" bpmnElement="Flow_0x59561">
-        <di:waypoint x="3590" y="1815" />
-        <di:waypoint x="3590" y="1890" />
-        <di:waypoint x="3992" y="1890" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="3599" y="1800" width="82" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_17p7duv_di" bpmnElement="Flow_17p7duv">
-        <di:waypoint x="4028" y="1890" />
-        <di:waypoint x="4050" y="1890" />
-        <di:waypoint x="4050" y="1815" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1i635oj_di" bpmnElement="Flow_1i635oj">
-        <di:waypoint x="4028" y="1650" />
-        <di:waypoint x="4050" y="1650" />
-        <di:waypoint x="4050" y="1765" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_049nq15_di" bpmnElement="Flow_049nq15">
-        <di:waypoint x="4150" y="1765" />
-        <di:waypoint x="4150" y="1650" />
-        <di:waypoint x="4200" y="1650" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="4160" y="1742" width="81" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0iugroz_di" bpmnElement="Flow_0iugroz">
-        <di:waypoint x="4300" y="1650" />
-        <di:waypoint x="4340" y="1650" />
-        <di:waypoint x="4340" y="1765" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1b65sga_di" bpmnElement="Flow_1b65sga">
-        <di:waypoint x="4150" y="1815" />
-        <di:waypoint x="4150" y="1890" />
-        <di:waypoint x="4232" y="1890" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="4160" y="1826" width="81" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1bqpfnb_di" bpmnElement="Flow_1bqpfnb">
-        <di:waypoint x="4268" y="1890" />
-        <di:waypoint x="4340" y="1890" />
-        <di:waypoint x="4340" y="1815" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1l17c5s_di" bpmnElement="Flow_1l17c5s">
-        <di:waypoint x="4365" y="1790" />
-        <di:waypoint x="4415" y="1790" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0bjtjo9_di" bpmnElement="Flow_0bjtjo9">
-        <di:waypoint x="4075" y="1790" />
-        <di:waypoint x="4125" y="1790" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1lq8ab4_di" bpmnElement="Flow_1lq8ab4">
         <di:waypoint x="4440" y="1815" />
@@ -2239,6 +1908,28 @@ dmnX (comes from dmn)</bpmn:text>
         <di:waypoint x="1519" y="1170" />
         <di:waypoint x="1537" y="1170" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0onzs1l_di" bpmnElement="Flow_0onzs1l">
+        <di:waypoint x="3268" y="1670" />
+        <di:waypoint x="3335" y="1670" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0x6e20t_di" bpmnElement="Flow_0x6e20t">
+        <di:waypoint x="3308" y="1858" />
+        <di:waypoint x="4270" y="1858" />
+        <di:waypoint x="4270" y="1815" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0essn0m_di" bpmnElement="Flow_0essn0m">
+        <di:waypoint x="4295" y="1790" />
+        <di:waypoint x="4415" y="1790" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11wfdl2_di" bpmnElement="Flow_11wfdl2">
+        <di:waypoint x="3385" y="1670" />
+        <di:waypoint x="4270" y="1670" />
+        <di:waypoint x="4270" y="1765" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1p9iqwc_di" bpmnElement="Association_1p9iqwc">
+        <di:waypoint x="3250" y="1652" />
+        <di:waypoint x="3250" y="1624" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="BPMNShape_0hjhvfj" bpmnElement="TextAnnotation_15vd5py">
         <dc:Bounds x="7429" y="3000" width="100" height="30" />
         <bpmndi:BPMNLabel />
@@ -2300,12 +1991,6 @@ dmnX (comes from dmn)</bpmn:text>
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1342" y="187" width="40" height="14" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Group_0hnsgkk_di" bpmnElement="Group_0hnsgkk">
-        <dc:Bounds x="3560" y="1560" width="530" height="420" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Group_081xfok_di" bpmnElement="Group_081xfok">
-        <dc:Bounds x="4100" y="1560" width="290" height="420" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_1myp6tg_di" bpmnElement="TextAnnotation_1myp6tg">
         <dc:Bounds x="1959" y="1010" width="215" height="30" />
@@ -2391,6 +2076,10 @@ dmnX (comes from dmn)</bpmn:text>
         <di:waypoint x="2561" y="1330" />
         <di:waypoint x="2556" y="1271" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_093olqu_di" bpmnElement="TextAnnotation_093olqu">
+        <dc:Bounds x="3200" y="1540" width="100" height="84" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

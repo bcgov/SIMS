@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="dmnPartTimeAssessmentDecisions" name="dmnPartTimeAssessmentDecisions" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.24.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0" camunda:diagramRelationId="1a575ead-1e6d-468c-901a-766a35569b38">
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="dmnPartTimeAssessmentDecisions" name="dmnPartTimeAssessmentDecisions" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.22.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0" camunda:diagramRelationId="1a575ead-1e6d-468c-901a-766a35569b38">
   <decision id="dmnPartTimeProgramYearMaximums" name="dmnPartTimeProgramYearMaximums">
     <decisionTable id="DecisionTable_1oyvbif" hitPolicy="FIRST">
       <input id="InputClause_02zjhj9" label="programYear">
@@ -15,6 +15,7 @@
       <output id="OutputClause_1o17873" label="limitAdditionalTransportationAllowance" name="limitAdditionalTransportationAllowance" typeRef="string" />
       <output id="OutputClause_13hw5pm" label="limitAdditionalTransportationPlacement" name="limitAdditionalTransportationPlacement" typeRef="string" />
       <output id="OutputClause_063ippa" label="limitAdditionalTransportationKMReduction" name="limitAdditionalTransportationKMReduction" typeRef="string" />
+      <output id="OutputClause_1bvdo70" name="limitAdditionalTransportationNonOwner" typeRef="string" />
       <rule id="DecisionRule_0bfepni">
         <inputEntry id="UnaryTests_1s74yiy">
           <text>"2022-2023"</text>
@@ -42,6 +43,9 @@
         </outputEntry>
         <outputEntry id="LiteralExpression_04739bf">
           <text>0.34</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_00fe5q2">
+          <text>69</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_1176l6s">
@@ -72,6 +76,9 @@
         <outputEntry id="LiteralExpression_0tjqma9">
           <text>0.34</text>
         </outputEntry>
+        <outputEntry id="LiteralExpression_06qc618">
+          <text>69</text>
+        </outputEntry>
       </rule>
       <rule id="DecisionRule_132jsxw">
         <inputEntry id="UnaryTests_1vimth4">
@@ -100,6 +107,9 @@
         </outputEntry>
         <outputEntry id="LiteralExpression_0daloqu">
           <text>0.34</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0m35hdb">
+          <text>69</text>
         </outputEntry>
       </rule>
     </decisionTable>
