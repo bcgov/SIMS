@@ -64,7 +64,6 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
         "Log details",
         "Starting virus scan.",
         "Virus found.",
-        "Updating infected file name and status.",
         "Completed virus scanning for the file.",
       ]),
     ).toBe(true);

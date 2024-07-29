@@ -57,7 +57,7 @@ describe("StudentAESTController(e2e)-getUploadedFile", () => {
       .expect(HttpStatus.FORBIDDEN)
       .expect({
         message:
-          "Warning: This file has not been scanned and will be available to download once it is determined to be safe.",
+          "This file has not been scanned and will be available to download once it is determined to be safe.",
         errorType: FILE_HAS_NOT_BEEN_SCANNED_YET,
       });
   });
@@ -76,7 +76,7 @@ describe("StudentAESTController(e2e)-getUploadedFile", () => {
       .expect(HttpStatus.FORBIDDEN)
       .expect({
         message:
-          "Warning: This file has not been scanned and will be available to download once it is determined to be safe.",
+          "This file has not been scanned and will be available to download once it is determined to be safe.",
         errorType: FILE_HAS_NOT_BEEN_SCANNED_YET,
       });
   });
@@ -95,7 +95,7 @@ describe("StudentAESTController(e2e)-getUploadedFile", () => {
       .expect(HttpStatus.FORBIDDEN)
       .expect({
         message:
-          "Error: The original file was deleted due to security rules. Please re-check file and attempt to upload again.",
+          "The original file was deleted due to security rules. Please re-check file and attempt to upload again.",
         errorType: VIRUS_DETECTED,
       });
   });

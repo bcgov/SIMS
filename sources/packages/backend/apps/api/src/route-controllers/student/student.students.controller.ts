@@ -197,8 +197,8 @@ export class StudentStudentsController extends BaseController {
   })
   @ApiForbiddenResponse({
     description:
-      "Warning: This file has not been scanned and will be available to download once it is determined to be safe or " +
-      "Error: The original file was deleted due to security rules. Please re-check file and attempt to upload again.",
+      "This file has not been scanned and will be available to download once it is determined to be safe or " +
+      "the original file was deleted due to security rules.",
   })
   async getUploadedFile(
     @UserToken() studentUserToken: StudentUserToken,

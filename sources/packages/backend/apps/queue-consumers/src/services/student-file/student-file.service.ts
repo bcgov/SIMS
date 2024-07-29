@@ -9,7 +9,7 @@ import { Readable } from "stream";
 import { CustomNamedError } from "@sims/utilities";
 import { UNABLE_TO_SCAN_FILE } from "../../constants/error-code.constants";
 import { ProcessSummary } from "@sims/utilities/logger";
-import { ClamAVService } from "@sims/services";
+import { ClamAVService, SystemUsersService } from "@sims/services";
 import * as path from "path";
 
 export const INFECTED_FILENAME_SUFFIX = "-OriginalFileError";
@@ -19,6 +19,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
   constructor(
     dataSource: DataSource,
     private readonly clamAVService: ClamAVService,
+    private readonly systemUsersService: SystemUsersService,
   ) {
     super(dataSource.getRepository(StudentFile));
   }
@@ -57,12 +58,17 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     }
     if (isInfected) {
       processSummary.warn("Virus found.");
-      processSummary.info("Updating infected file name and status.");
-      await this.updateInfectedFile(studentFile);
+      const fileNameWithoutExtension = path.parse(studentFile.fileName).name;
+      const fileExtension = path.parse(studentFile.fileName).ext;
+      studentFile.fileName = `${fileNameWithoutExtension}${INFECTED_FILENAME_SUFFIX}${fileExtension}`;
     } else {
       processSummary.info("No virus found.");
-      await this.updateFileScanStatus(studentFile.uniqueFileName, isInfected);
     }
+    await this.updateFileScanStatus(
+      studentFile.uniqueFileName,
+      isInfected,
+      studentFile.fileName,
+    );
     return isInfected;
   }
 
@@ -86,49 +92,38 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
   /**
    * Update the virus scan status of the file.
    * @param uniqueFileName unique file name of the file to update the virus scan status.
-   * @param isInfected true if the file is virus infected, false otherwise.
+   * @param isInfected true if the file is virus infected, false for a clean file and null or undefined when it was not possible to scan.
+   * @param fileName filename to be updated if defined.
    * @returns the update result.
    */
   private async updateFileScanStatus(
     uniqueFileName: string,
-    isInfected: boolean,
+    isInfected?: boolean,
+    fileName?: string,
   ): Promise<UpdateResult> {
+    const now = new Date();
+    const auditUser = this.systemUsersService.systemUser;
+    let virusScanStatus: VirusScanStatus;
     switch (isInfected) {
       case null:
       case undefined:
-        return this.repo.update(
-          { uniqueFileName },
-          { virusScanStatus: VirusScanStatus.Pending },
-        );
+        virusScanStatus = VirusScanStatus.Pending;
+        break;
       case true:
-        return this.repo.update(
-          { uniqueFileName },
-          { virusScanStatus: VirusScanStatus.VirusDetected },
-        );
+        virusScanStatus = VirusScanStatus.VirusDetected;
+        break;
       case false:
-        return this.repo.update(
-          { uniqueFileName },
-          { virusScanStatus: VirusScanStatus.FileIsClean },
-        );
+        virusScanStatus = VirusScanStatus.FileIsClean;
+        break;
     }
-  }
-
-  /**
-   * Updates the infected file status and renames file to describe an error with the file.
-   * @param studentFile student infected file to be updated.
-   * @returns the update result.
-   */
-  private async updateInfectedFile(
-    studentFile: StudentFile,
-  ): Promise<UpdateResult> {
-    const fileName = path.parse(studentFile.fileName).name;
-    const fileExtension = path.parse(studentFile.fileName).ext;
-
     return this.repo.update(
-      { id: studentFile.id },
+      { uniqueFileName },
       {
-        fileName: `${fileName}${INFECTED_FILENAME_SUFFIX}${fileExtension}`,
-        virusScanStatus: VirusScanStatus.VirusDetected,
+        fileName,
+        virusScanStatus,
+        modifier: auditUser,
+        updatedAt: now,
+        virusScanStatusUpdatedOn: now,
       },
     );
   }

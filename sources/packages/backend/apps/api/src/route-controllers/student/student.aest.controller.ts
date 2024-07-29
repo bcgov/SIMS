@@ -123,8 +123,8 @@ export class StudentAESTController extends BaseController {
   })
   @ApiForbiddenResponse({
     description:
-      "Warning: This file has not been scanned and will be available to download once it is determined to be safe or " +
-      "Due to our security rules, the original file, [fileName], was deleted. Please re-check your file and attempt to re-upload.",
+      "This file has not been scanned and will be available to download once it is determined to be safe or " +
+      "the original file was deleted due to security rules.",
   })
   async getUploadedFile(
     @Param() uniqueFileNameParam: UniqueFileNameParamAPIInDTO,
