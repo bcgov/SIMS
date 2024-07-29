@@ -16,7 +16,7 @@ import {
   FILE_HAS_NOT_BEEN_SCANNED_YET,
   VIRUS_DETECTED,
 } from "../../../../constants";
-import { VirusScanStatus } from "@sims/sims-db/entities/virus-scan-status-type";
+import { VirusScanStatus } from "@sims/sims-db";
 
 describe("StudentAESTController(e2e)-getUploadedFile", () => {
   let app: INestApplication;
@@ -94,7 +94,8 @@ describe("StudentAESTController(e2e)-getUploadedFile", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
       .expect({
-        message: `Due to our security rules, the original file, ${studentFile.fileName}, was deleted. Please re-check your file and attempt to re-upload.`,
+        message:
+          "Error: The original file was deleted due to security rules. Please re-check file and attempt to upload again.",
         errorType: VIRUS_DETECTED,
       });
   });

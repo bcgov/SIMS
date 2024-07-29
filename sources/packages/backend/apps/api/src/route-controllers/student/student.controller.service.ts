@@ -104,7 +104,7 @@ export class StudentControllerService {
     if (studentFile.virusScanStatus === VirusScanStatus.VirusDetected) {
       throw new ForbiddenException(
         new ApiProcessError(
-          `Due to our security rules, the original file, ${studentFile.fileName}, was deleted. Please re-check your file and attempt to re-upload.`,
+          "Error: The original file was deleted due to security rules. Please re-check file and attempt to upload again.",
           VIRUS_DETECTED,
         ),
       );
