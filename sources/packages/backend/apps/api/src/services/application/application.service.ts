@@ -1352,13 +1352,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationNumber?: string;
     studentId?: number;
   }): Promise<boolean> {
-    if (
-      !options.applicationId &&
-      !options.applicationNumber &&
-      !options.studentId
-    ) {
+    if (!options.applicationId && !options.applicationNumber) {
       throw new Error(
-        "At least one parameter is required while checking if an applications exists.",
+        "At least one application identifier is required while checking if an applications exists.",
       );
     }
     return this.repo.exists({
