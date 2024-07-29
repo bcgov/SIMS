@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource } from "typeorm";
+import { DataSource, EntityManager } from "typeorm";
 import {
   RecordDataModelService,
   Application,
@@ -51,11 +51,13 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
    * - ['Parent', 'Parent', 'Partner', 'Partner']: multiple parents and multiples partners.
    * These examples represent what this method can do and are not necessarily
    * the current business logic.
+   * @param entityManager entity manager to execute in transaction.
    * @returns created supporting users.
    */
   async createSupportingUsers(
     applicationId: number,
     supportingUserTypes: SupportingUserType[],
+    entityManager: EntityManager,
   ): Promise<SupportingUser[]> {
     const application = { id: applicationId } as Application;
     const newSupportingUsers = supportingUserTypes.map((supportingUserType) => {
@@ -64,6 +66,6 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
       newSupportingUser.supportingUserType = supportingUserType;
       return newSupportingUser;
     });
-    return this.repo.save(newSupportingUsers);
+    return entityManager.getRepository(SupportingUser).save(newSupportingUsers);
   }
 }

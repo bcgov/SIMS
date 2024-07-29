@@ -1806,7 +1806,9 @@
                   "tag": "p",
                   "id": "epofo98",
                   "className": "",
-                  "hideLabel": true
+                  "hideLabel": true,
+                  "isNew": false,
+                  "tags": []
                 },
                 {
                   "html": "<ul>\n\t<li>Completing the Confirmation of Enrolment process to confirm the student&rsquo;s enrolment and attendance status</li>\n\t<li>Documenting the student&rsquo;s tuition payments to your institution</li>\n\t<li>Reporting changes to the student&rsquo;s scholastic standing (withdrawals, unsuccessful completion, or early completion)</li>\n\t<li>Reporting changes to course load</li>\n</ul>\n",
@@ -2285,7 +2287,9 @@
                   "addons": [],
                   "tree": true,
                   "lazyLoad": false,
-                  "id": "el5dx7m"
+                  "id": "el5dx7m",
+                  "isNew": false,
+                  "lockKey": true
                 }
               ],
               "placeholder": "",
@@ -2478,7 +2482,8 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "id": "ebj504c",
-                  "addons": []
+                  "addons": [],
+                  "tags": []
                 },
                 {
                   "label": "Enrolment Officers Data Grid",
@@ -2945,7 +2950,8 @@
                   "addons": [],
                   "tree": true,
                   "lazyLoad": false,
-                  "id": "edvekqq"
+                  "id": "edvekqq",
+                  "lockKey": true
                 }
               ],
               "placeholder": "",
@@ -3011,6 +3017,32 @@
               "lazyLoad": false,
               "hideLabel": true,
               "tags": []
+            },
+            {
+              "key": "officerDuplicateWarningHtml",
+              "label": "HTML",
+              "input": false,
+              "tag": "p",
+              "attrs": [
+                {
+                  "value": "",
+                  "attr": ""
+                }
+              ],
+              "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+              "content": "You have the same official listed as both an Eligibility Officer and an Enrolment Officer. StudentAid BC policy is that these roles must be effectively segregated such that no employee is appointed to perform both duties. An exemption may be granted upon written request and subject to Ministry approval, if a designated institution had fewer than 10 student borrowers who received a combined total of under $50,000 in student financial assistance in the previous program year.\n<br>Please email <a href=mailto:DESIGNAT@gov.bc.ca>DESIGNAT@gov.bc.ca</a> if you want to request an exemption.",
+              "type": "htmlelement",
+              "hideLabel": false,
+              "tags": [],
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+              },
+              "properties": {},
+              "customClass": "banner-warning",
+              "lockKey": true,
+              "customConditional": "show = false;\ndata.dynamicData.enrolmentOfficers.forEach(enrolment => {\n    if (enrolment.name !== \"\") {\n        data.dynamicData.eligibilityOfficers.forEach(eligibility => {\n      if (enrolment.name.toLowerCase() === eligibility.name.toLowerCase()) {\n        show = true;\n        return;\n            }\n        });\n    }\n});"
             },
             {
               "label": "HTML",
@@ -4785,7 +4817,8 @@
       "tree": true,
       "id": "eu5weci",
       "addons": [],
-      "lazyLoad": false
+      "lazyLoad": false,
+      "isNew": false
     },
     {
       "label": "View Mode (submission or viewOnly)",
@@ -4927,7 +4960,8 @@
       "allowMultipleMasks": false,
       "inputType": "hidden",
       "id": "ep9xps7",
-      "addons": []
+      "addons": [],
+      "lockKey": true
     },
     {
       "label": "applicationId",

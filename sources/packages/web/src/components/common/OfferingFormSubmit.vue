@@ -144,9 +144,12 @@ export default defineComponent({
         );
         // Avoid updating the validation fields if the validation was never manually requested.
         if (allowValidation()) {
-          const warningsTypes = validationResult.warnings.map(
-            (warning) => warning.typeCode,
-          );
+          let warningsTypes: string[] = [];
+          if (!validationResult.errors.length) {
+            warningsTypes = validationResult.warnings.map(
+              (warning) => warning.typeCode,
+            );
+          }
           setComponentValue(
             offeringForm,
             FORMIO_WARNINGS_HIDDEN_FIELD_KEY,
