@@ -1,7 +1,10 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { DataSource, UpdateResult } from "typeorm";
-import { RecordDataModelService, StudentFile } from "@sims/sims-db";
-import { VirusScanStatus } from "@sims/sims-db";
+import {
+  RecordDataModelService,
+  StudentFile,
+  VirusScanStatus,
+} from "@sims/sims-db";
 import { Readable } from "stream";
 import { CustomNamedError } from "@sims/utilities";
 import { UNABLE_TO_SCAN_FILE } from "../../constants/error-code.constants";
