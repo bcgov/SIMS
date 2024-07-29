@@ -13,7 +13,7 @@ import {
 import { ClamAVService } from "@sims/services";
 import { VirusScanQueueInDTO } from "@sims/services/queue/dto/virus-scan.dto";
 import { VirusScanProcessor } from "../virus-scan.processor";
-import { VirusScanStatus } from "@sims/sims-db/entities/virus-scan-status-type";
+import { VirusScanStatus } from "@sims/sims-db";
 import * as path from "path";
 import { INFECTED_FILENAME_SUFFIX } from "../../../services";
 
