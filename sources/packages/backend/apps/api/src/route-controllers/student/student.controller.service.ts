@@ -27,7 +27,7 @@ import {
   InstitutionStudentProfileAPIOutDTO,
 } from "./models/student.dto";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
-import { VirusScanStatus } from "@sims/sims-db/entities/virus-scan-status-type";
+import { VirusScanStatus } from "@sims/sims-db";
 import { ApiProcessError } from "../../types";
 import { FILE_HAS_NOT_BEEN_SCANNED_YET, VIRUS_DETECTED } from "../../constants";
 

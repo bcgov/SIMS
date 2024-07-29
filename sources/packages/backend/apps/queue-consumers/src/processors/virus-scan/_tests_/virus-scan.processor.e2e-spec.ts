@@ -11,7 +11,7 @@ import {
   E2EDataSources,
 } from "@sims/test-utils";
 import { ClamAVService } from "@sims/services";
-import { VirusScanQueueInDTO } from "@sims/services/queue/dto/virus-scan.dto";
+import { VirusScanQueueInDTO } from "@sims/services/queue";
 import { VirusScanProcessor } from "../virus-scan.processor";
 import { VirusScanStatus } from "@sims/sims-db";
 import * as path from "path";
