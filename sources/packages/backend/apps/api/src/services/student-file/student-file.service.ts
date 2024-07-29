@@ -11,13 +11,13 @@ import {
   Student,
   User,
   FileOriginType,
+  VirusScanStatus,
 } from "@sims/sims-db";
 import { CreateFile, FileUploadOptions } from "./student-file.model";
 import { InjectQueue } from "@nestjs/bull";
 import { QueueNames } from "@sims/utilities";
 import { Queue } from "bull";
 import { VirusScanQueueInDTO } from "@sims/services/queue";
-import { VirusScanStatus } from "@sims/sims-db";
 
 @Injectable()
 export class StudentFileService extends RecordDataModelService<StudentFile> {
