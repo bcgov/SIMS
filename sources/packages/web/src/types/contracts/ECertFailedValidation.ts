@@ -35,4 +35,9 @@ export enum ECertFailedValidation {
    * Affects only part-time disbursements.
    */
   LifetimeMaximumCSLP = "LifetimeMaximumCSLP",
+  /**
+   * Awards values are not present or the sum of all
+   * the estimated awards is $0.
+   */
+  NoEstimatedAwardAmounts = "NoEstimatedAwardAmounts",
 }

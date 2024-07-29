@@ -1,6 +1,6 @@
 <template>
   <banner
-    class="mb-6"
+    class="mb-2"
     v-if="showBanner"
     :type="bannerType"
     :summary="sinValidStatus.message"

@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { ECertGenerationService } from "@sims/integrations/services";
+import { EligibleECertDisbursement } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
 import {
-  ECertFailedValidation,
-  EligibleECertDisbursement,
-} from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
-import { ECertPreValidator } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
+  ECertPreValidator,
+  ECertPreValidatorResult,
+} from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
 import {
   ValidateDisbursementFullTimeStep,
   ValidateDisbursementPartTimeStep,
@@ -43,14 +43,14 @@ export class ECertPreValidationService {
   async executePreValidations(
     applicationId: number,
     allowNonCompleted?: boolean,
-  ): Promise<ECertFailedValidation[]> {
+  ): Promise<ECertPreValidatorResult> {
     const [firstEligibleDisbursement] =
       await this.eCertGenerationService.getEligibleDisbursements({
         applicationId,
         allowNonCompleted: allowNonCompleted ?? false,
       });
     if (!firstEligibleDisbursement) {
-      return [];
+      return new ECertPreValidatorResult([]);
     }
     const eCertPreValidator = this.getECertPreValidator(
       firstEligibleDisbursement,

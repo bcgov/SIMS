@@ -7,7 +7,6 @@ import {
   createTestingAppModule,
   FakeStudentUsersTypes,
   getStudentToken,
-  getStudentByFakeStudentUserType,
   mockUserLoginInfo,
 } from "../../../testHelpers";
 import {
@@ -36,6 +35,7 @@ import {
   DisbursementSchedule,
   DisbursementScheduleStatus,
   DisbursementValueType,
+  MSFAANumber,
   OfferingIntensity,
   RestrictionActionType,
   Student,
@@ -58,7 +58,8 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
   let studentScholasticStandingRepo: Repository<StudentScholasticStanding>;
   let studentAppealRepo: Repository<StudentAppeal>;
   let submittedByInstitutionUser: User;
-  let student: Student;
+  let sharedStudent: Student;
+  let sharedSignedMSFAANumber: MSFAANumber;
   let db: E2EDataSources;
 
   beforeAll(async () => {
@@ -76,10 +77,19 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
     );
     studentAppealRepo = dataSource.getRepository(StudentAppeal);
     submittedByInstitutionUser = await userRepo.save(createFakeUser());
-    student = await getStudentByFakeStudentUserType(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-      dataSource,
+    // Create a student with valid SIN and valid MSFAA number.
+    sharedStudent = await saveFakeStudent(db.dataSource);
+    sharedSignedMSFAANumber = createFakeMSFAANumber(
+      { student: sharedStudent },
+      {
+        msfaaState: MSFAAStates.Signed,
+      },
     );
+    await db.msfaaNumber.save(sharedSignedMSFAANumber);
+  });
+
+  beforeEach(async () => {
+    await mockUserLoginInfo(appModule, sharedStudent);
   });
 
   it("Should throw NotFoundException when the application is not associated with the authenticated student.", async () => {
@@ -110,7 +120,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
     // Arrange
     const application = await saveFakeApplicationDisbursements(
       appDataSource,
-      { student },
+      { student: sharedStudent, msfaaNumber: sharedSignedMSFAANumber },
       { createSecondDisbursement: true },
     );
     const endpoint = `/students/application/${application.id}/completed`;
@@ -133,7 +143,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
     // Arrange
     const application = await saveFakeApplicationDisbursements(
       appDataSource,
-      { student },
+      { student: sharedStudent, msfaaNumber: sharedSignedMSFAANumber },
       {
         createSecondDisbursement: true,
         firstDisbursementInitialValues: { coeStatus: COEStatus.completed },
@@ -174,9 +184,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
     // Arrange
     const application = await saveFakeApplicationDisbursements(
       appDataSource,
-      {
-        student,
-      },
+      { student: sharedStudent, msfaaNumber: sharedSignedMSFAANumber },
       { applicationStatus: ApplicationStatus.Completed },
     );
     const [firstDisbursement] =
@@ -219,7 +227,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
     // Arrange
     const application = await saveFakeApplicationDisbursements(
       appDataSource,
-      { student },
+      { student: sharedStudent, msfaaNumber: sharedSignedMSFAANumber },
       { applicationStatus: ApplicationStatus.Completed },
     );
     const [firstDisbursement] =
@@ -299,7 +307,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
     // Arrange
     const application = await saveFakeApplicationDisbursements(
       appDataSource,
-      { student },
+      { student: sharedStudent, msfaaNumber: sharedSignedMSFAANumber },
       {
         applicationStatus: ApplicationStatus.Completed,
         createSecondDisbursement: true,
@@ -349,7 +357,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
       // Arrange
       const application = await saveFakeApplicationDisbursements(
         appDataSource,
-        { student },
+        { student: sharedStudent, msfaaNumber: sharedSignedMSFAANumber },
         {
           applicationStatus: ApplicationStatus.Completed,
           offeringIntensity: OfferingIntensity.partTime,
@@ -403,7 +411,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
       // Arrange
       const application = await saveFakeApplicationDisbursements(
         appDataSource,
-        { student },
+        { student: sharedStudent, msfaaNumber: sharedSignedMSFAANumber },
         {
           applicationStatus: ApplicationStatus.Completed,
           offeringIntensity: OfferingIntensity.partTime,
@@ -457,7 +465,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
       // Arrange
       const application = await saveFakeApplicationDisbursements(
         appDataSource,
-        { student },
+        { student: sharedStudent, msfaaNumber: sharedSignedMSFAANumber },
         {
           createSecondDisbursement: true,
           applicationStatus: ApplicationStatus.Completed,
@@ -520,7 +528,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
       // Arrange
       const application = await saveFakeApplicationDisbursements(
         appDataSource,
-        { student },
+        { student: sharedStudent, msfaaNumber: sharedSignedMSFAANumber },
         {
           applicationStatus: ApplicationStatus.Completed,
           offeringIntensity: OfferingIntensity.fullTime,

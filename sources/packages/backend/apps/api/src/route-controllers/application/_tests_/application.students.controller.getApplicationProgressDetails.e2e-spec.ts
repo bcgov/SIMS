@@ -6,7 +6,6 @@ import {
   createTestingAppModule,
   FakeStudentUsersTypes,
   getStudentToken,
-  getStudentByFakeStudentUserType,
   mockUserLoginInfo,
 } from "../../../testHelpers";
 import {
@@ -27,6 +26,7 @@ import {
   AssessmentTriggerType,
   COEStatus,
   DisbursementScheduleStatus,
+  MSFAANumber,
   OfferingIntensity,
   Student,
   StudentAppealStatus,
@@ -35,7 +35,8 @@ import {
 describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () => {
   let app: INestApplication;
   let appModule: TestingModule;
-  let student: Student;
+  let sharedStudent: Student;
+  let sharedSignedMSFAANumber: MSFAANumber;
   let db: E2EDataSources;
 
   beforeAll(async () => {
@@ -44,10 +45,19 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
     app = nestApplication;
     appModule = module;
     db = createE2EDataSources(dataSource);
-    student = await getStudentByFakeStudentUserType(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-      dataSource,
+    // Create a student with valid SIN and valid MSFAA number.
+    sharedStudent = await saveFakeStudent(db.dataSource);
+    sharedSignedMSFAANumber = createFakeMSFAANumber(
+      { student: sharedStudent },
+      {
+        msfaaState: MSFAAStates.Signed,
+      },
     );
+    await db.msfaaNumber.save(sharedSignedMSFAANumber);
+  });
+
+  beforeEach(async () => {
+    await mockUserLoginInfo(appModule, sharedStudent);
   });
 
   it("Should throw not found error when application is not found.", async () => {
@@ -69,7 +79,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
     // Arrange
     const application = await saveFakeApplicationDisbursements(
       db.dataSource,
-      { student },
+      { student: sharedStudent, msfaaNumber: sharedSignedMSFAANumber },
       {
         applicationStatus: ApplicationStatus.Completed,
         createSecondDisbursement: true,
@@ -156,10 +166,9 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
 
   it("Should get application progress details when the current assessment is impacted and the trigger type is 'Related application changed'.", async () => {
     // Arrange
-
     const application = await saveFakeApplicationDisbursements(
       db.dataSource,
-      { student },
+      { student: sharedStudent, msfaaNumber: sharedSignedMSFAANumber },
       {
         applicationStatus: ApplicationStatus.Completed,
         createSecondDisbursement: true,
@@ -203,7 +212,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
       // Arrange
       const application = await saveFakeApplicationDisbursements(
         db.dataSource,
-        { student },
+        { student: sharedStudent },
         {
           applicationStatus: ApplicationStatus.Completed,
           offeringIntensity: OfferingIntensity.partTime,
@@ -258,7 +267,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
       // Arrange
       const application = await saveFakeApplicationDisbursements(
         db.dataSource,
-        { student },
+        { student: sharedStudent },
         {
           applicationStatus: ApplicationStatus.Completed,
           offeringIntensity: OfferingIntensity.partTime,
