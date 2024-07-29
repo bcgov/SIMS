@@ -35,7 +35,7 @@
     <template #alerts>
       <banner
         class="mb-2"
-        header="Your assessment has warnings preventing it from being accepted"
+        header="Your assessment cannot be accepted yet"
         :type="BannerTypes.Warning"
         v-if="showAcceptAssessmentWarnings"
       >
