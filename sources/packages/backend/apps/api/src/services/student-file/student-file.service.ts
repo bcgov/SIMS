@@ -10,8 +10,8 @@ import {
   StudentFile,
   Student,
   User,
-  FileOriginType,
   VirusScanStatus,
+  FileOriginType,
 } from "@sims/sims-db";
 import { CreateFile, FileUploadOptions } from "./student-file.model";
 import { InjectQueue } from "@nestjs/bull";
