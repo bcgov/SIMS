@@ -298,8 +298,8 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
   });
 
   it(
-    `Should return a failed ecert validations array with no estimated awardAmounts when ` +
-      "disbursement values are present but the total amount t be disbursed is 0(zero).",
+    "Should return a failed ecert validations array with no estimated awardAmounts when " +
+      "disbursement values are present but the total amount to be disbursed is 0(zero).",
     async () => {
       // Arrange
       const student = await saveFakeStudent(db.dataSource);

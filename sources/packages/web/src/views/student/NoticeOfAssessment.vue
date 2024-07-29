@@ -37,7 +37,7 @@
         class="mb-2"
         header="Your assessment has warnings preventing it from being accepted"
         :type="BannerTypes.Warning"
-        v-if="!canAcceptAssessment"
+        v-if="showAcceptAssessmentWarnings"
       >
         <template #content>
           <ul>
@@ -86,7 +86,7 @@ import { ModalDialog, useSnackBar } from "@/composables";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { AssessmentNOAAPIOutDTO } from "@/services/http/dto";
-import { defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import {
   ApplicationStatus,
   AssessmentStatus,
@@ -125,6 +125,21 @@ export default defineComponent({
       msfaaInvalid: false,
       hasStopDisbursementRestriction: false,
       noEstimatedAwardAmounts: false,
+    });
+
+    /**
+     * Checks if the conditions to display the 'Accept assessment' button were
+     * satisfied but the button will be disabled due to some e-Cert warning.
+     */
+    const showAcceptAssessmentWarnings = computed(() => {
+      return (
+        // Is the current assessment.
+        props.assessmentId === currentAssessmentId.value &&
+        // Should display the 'Accept assessment' button.
+        !viewOnly.value &&
+        // Has some e-Cert warning preventing to accept the assessment.
+        !canAcceptAssessment.value
+      );
     });
 
     const assessmentDataLoaded = (
@@ -203,7 +218,9 @@ export default defineComponent({
       assessmentDataLoaded,
       eCertValidation,
       canAcceptAssessment,
+      showAcceptAssessmentWarnings,
     };
   },
 });
 </script>
+computed,

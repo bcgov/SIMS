@@ -122,7 +122,7 @@ export class StudentAssessmentsService {
   /**
    * Get the warnings applicable to the application.
    * @param applicationId application id.
-   * @returns list of warnings.
+   * @returns warnings information.
    */
   async getApplicationWarnings(
     applicationId: number,

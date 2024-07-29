@@ -222,7 +222,7 @@ export class ApplicationStudentsController extends BaseController {
   /**
    * Get any warnings for the application.
    * @param applicationId application id.
-   * @returns application warnings.
+   * @returns warnings information.
    */
   @Get(":applicationId/warnings")
   @ApiNotFoundResponse({

@@ -87,7 +87,7 @@ export class StudentAssessmentApi extends HttpBaseClient {
   /**
    * Get any warnings for the current application.
    * @param applicationId application id.
-   * @returns list of warnings.
+   * @returns warnings information.
    */
   async getApplicationWarnings(
     applicationId: number,
