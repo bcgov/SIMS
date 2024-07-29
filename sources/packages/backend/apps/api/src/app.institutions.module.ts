@@ -91,9 +91,10 @@ import {
   SFASApplicationService,
   SFASPartTimeApplicationsService,
 } from "@sims/services/sfas";
+import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
 
 @Module({
-  imports: [AuthModule],
+  imports: [AuthModule, ECertIntegrationModule],
   controllers: [
     DesignationAgreementInstitutionsController,
     InstitutionInstitutionsController,

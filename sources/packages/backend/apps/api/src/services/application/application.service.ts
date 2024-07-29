@@ -1338,17 +1338,32 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .getOne();
   }
 
-  async doesApplicationExist(
-    applicationNumber: string,
-    studentId: number,
-  ): Promise<boolean> {
-    return !!(await this.repo.findOne({
+  /**
+   * Check if a Student Application exists.
+   * @param options query options.
+   * - `applicationId` application id.
+   * - `applicationNumber` application number.
+   * - `studentId` student id, useful for authorization to ensure
+   * the student has access to the application.
+   * @returns true if the application exists, otherwise false.
+   */
+  async doesApplicationExist(options: {
+    applicationId?: number;
+    applicationNumber?: string;
+    studentId?: number;
+  }): Promise<boolean> {
+    if (!options.applicationId && !options.applicationNumber) {
+      throw new Error(
+        "At least one application identifier is required while checking if an applications exists.",
+      );
+    }
+    return this.repo.exists({
       where: {
-        applicationNumber: applicationNumber,
-        student: { id: studentId },
+        id: options.applicationId,
+        applicationNumber: options.applicationNumber,
+        student: { id: options.studentId },
       },
-      select: { id: true },
-    }));
+    });
   }
 
   /**

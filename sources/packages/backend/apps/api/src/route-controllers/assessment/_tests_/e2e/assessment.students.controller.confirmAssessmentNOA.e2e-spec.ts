@@ -19,10 +19,14 @@ import {
   MSFAAStates,
 } from "@sims/test-utils";
 import {
+  ApplicationStatus,
   AssessmentStatus,
   AssessmentTriggerType,
+  COEStatus,
+  DisbursementScheduleStatus,
   DisbursementValueType,
   OfferingIntensity,
+  WorkflowData,
 } from "@sims/sims-db";
 import { TestingModule } from "@nestjs/testing";
 
@@ -41,11 +45,8 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
 
   it("Should allow NOA approval for the current application assessment when the application has multiple assessments.", async () => {
     // Arrange
-    const assessmentIDS = await createApplicationAndAssessments();
-    const newAssessmentID = assessmentIDS["currentAssessmentId"];
-
-    const currentEndpoint = `/students/assessment/${newAssessmentID}/confirm-assessment`;
-
+    const { currentAssessmentId } = await createApplicationAndAssessments();
+    const currentEndpoint = `/students/assessment/${currentAssessmentId}/confirm-assessment`;
     const studentUserToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
@@ -61,22 +62,19 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
         id: true,
         noaApprovalStatus: true,
       },
-      where: { id: newAssessmentID },
+      where: { id: currentAssessmentId },
     });
 
     expect(updatedAssessment).toEqual({
-      id: newAssessmentID,
+      id: currentAssessmentId,
       noaApprovalStatus: AssessmentStatus.completed,
     });
   });
 
   it("Should not allow NOA approval for old application assessments when the application has multiple assessments.", async () => {
     // Arrange
-    const assessmentIDS = await createApplicationAndAssessments();
-    const oldAssessmentID = assessmentIDS["oldAssessmentId"];
-
-    const oldEndpoint = `/students/assessment/${oldAssessmentID}/confirm-assessment`;
-
+    const { oldAssessmentId } = await createApplicationAndAssessments();
+    const oldEndpoint = `/students/assessment/${oldAssessmentId}/confirm-assessment`;
     const studentUserToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
@@ -86,6 +84,40 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
       .patch(oldEndpoint)
       .auth(studentUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY);
+  });
+
+  it("Should not allow NOA approval when the current assessment has some e-Cert blocking validations(invalid MSFAA).", async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+    // Mock user services to return the saved student.
+    await mockUserLoginInfo(appModule, student);
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      { student },
+      {
+        applicationStatus: ApplicationStatus.Assessment,
+        offeringIntensity: OfferingIntensity.partTime,
+        firstDisbursementInitialValues: {
+          coeStatus: COEStatus.required,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+        },
+      },
+    );
+    const studentUserToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    const endpoint = `/students/assessment/${application.currentAssessment.id}/confirm-assessment`;
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .auth(studentUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        message:
+          "There is at least one e-Cert validation failed preventing the assessment from being accepted.",
+        error: "Unprocessable Entity",
+      });
   });
 
   /**
@@ -132,6 +164,7 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
         {
           initialValue: {
             triggerType: AssessmentTriggerType.RelatedApplicationChanged,
+            workflowData: { calculatedData: {} } as WorkflowData,
           },
         },
       ),
