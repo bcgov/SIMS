@@ -1,9 +1,9 @@
 {
   "title": "Student Welcome Page",
-  "display": "form",
-  "type": "form",
   "name": "studentwelcomepage",
   "path": "studentwelcomepage",
+  "type": "form",
+  "display": "form",
   "tags": [
     "common"
   ],
@@ -66,7 +66,7 @@
                       "value": ""
                     }
                   ],
-                  "content": "Hello {{ data.firstName }}!",
+                  "content": "Hello {{ data.firstName }}",
                   "refreshOnChange": true,
                   "customClass": "",
                   "hidden": false,
@@ -75,7 +75,7 @@
                   "tags": [],
                   "properties": {},
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": "",
                     "json": ""
@@ -148,7 +148,7 @@
                       "value": ""
                     }
                   ],
-                  "content": "Your welcome page features helpful links which will allow you to start an application or manage your loan.",
+                  "content": "Welcome to your Student Account!\n<br><br>\nStudentAid BC helps eligible students with the cost of post-secondary education through student loans, grants, and other financial assistance programs. From this page you can:\n<ul>\n<li>Apply for student financial assistance.</li>\n<li>View your current and past applications and assessments</li>\n<li>Track your application status</li>\n<li>Upload and view documents</li>\n<li>Request a change to an active application</li>\n<li>Manage your StudentAid BC profile</li>\n<li>View your account activity</li>\n</ul>",
                   "refreshOnChange": false,
                   "customClass": "",
                   "hidden": false,
@@ -157,7 +157,7 @@
                   "tags": [],
                   "properties": {},
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": "",
                     "json": ""
@@ -503,7 +503,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "Start an application",
+                      "content": "Apply for funding",
                       "refreshOnChange": false,
                       "customClass": "",
                       "hidden": false,
@@ -512,7 +512,7 @@
                       "tags": [],
                       "properties": {},
                       "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": "",
                         "json": ""
@@ -585,7 +585,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "Apply early so that you have time to figure out your finances.",
+                      "content": "Ready to apply? Click below to start your application.",
                       "refreshOnChange": false,
                       "customClass": "",
                       "hidden": false,
@@ -594,7 +594,7 @@
                       "tags": [],
                       "properties": {},
                       "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": "",
                         "json": ""
@@ -986,7 +986,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "In order to manage your loan, please visit the National Student Loan Service Centre (NSLSC).",
+                      "content": "For information about your loan balance, managing your loan, and the repayment of your loan, visit the National Student Loan Service Centre (NSLSC) website.",
                       "refreshOnChange": false,
                       "customClass": "",
                       "hidden": false,
@@ -995,7 +995,7 @@
                       "tags": [],
                       "properties": {},
                       "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": "",
                         "json": ""
@@ -1057,7 +1057,7 @@
                       "id": "ev2qycg"
                     },
                     {
-                      "label": "Manage loan",
+                      "label": "Visit NSLSC",
                       "action": "custom",
                       "showValidations": false,
                       "leftIcon": "fa fa-external-link",
@@ -1107,7 +1107,7 @@
                         "unique": false
                       },
                       "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": ""
                       },
@@ -1130,7 +1130,8 @@
                       "block": false,
                       "disableOnInvalid": false,
                       "theme": "primary",
-                      "id": "eel1ngo"
+                      "id": "eel1ngo",
+                      "tags": []
                     }
                   ],
                   "placeholder": "",
@@ -1495,7 +1496,7 @@
                       "value": ""
                     }
                   ],
-                  "content": " <p>\r\n      For further information, please refer to the\r\n        <a\r\n          href=\"https://studentaidbc.ca/help-centre\"\r\n          target=\"_blank\"\r\n          class=\"formio-href\"\r\n          rel=\"noopener noreferrer\"\r\n          >StudentAid BC Help Centre.</a\r\n        >\r\n    </p>\r\n    <p>\r\n      Or refer to the\r\n        <a\r\n          href=\"https://www.csnpe-nslsc.canada.ca/en/home\"\r\n          target=\"_blank\"\r\n           class=\"formio-href\"\r\n          rel=\"noopener noreferrer\"\r\n          >National Student Loans Service Centre</a\r\n        >\r\n      for help.\r\n    </p>",
+                  "content": "<p>\n      For more information, visit the \n        <a\n          href=\"https://studentaidbc.ca/sabc-home-page\"\n          target=\"_blank\"\n          class=\"formio-href\"\n          rel=\"noopener noreferrer\"\n          >StudentAid BC website</a\n        >.\n    </p>",
                   "refreshOnChange": false,
                   "customClass": "",
                   "hidden": false,
@@ -1504,7 +1505,7 @@
                   "tags": [],
                   "properties": {},
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": "",
                     "json": ""
