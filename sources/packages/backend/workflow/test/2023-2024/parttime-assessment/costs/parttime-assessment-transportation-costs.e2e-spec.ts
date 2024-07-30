@@ -161,7 +161,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
 
   for (const additionalTransportTest of additionalTransportTestData) {
     it(
-      `Should determine weekly additional transportation cost as ${additionalTransportTest.expectedWeeklyAdditionalTransportCost} when offering is delivered ${additionalTransportTest.offeringDelivered}` +
+      `Should determine weekly additional transportation cost as ${additionalTransportTest.expectedWeeklyAdditionalTransportCost} when offering is delivered ${additionalTransportTest.offeringDelivered} ` +
         `and offering weeks is ${additionalTransportTest.offeringWeeks} and student being the owner of vehicle is ${additionalTransportTest.additionalTransportOwner} ` +
         `and additional transport KM is ${additionalTransportTest.additionalTransportKm} and additional transport weeks is ${additionalTransportTest.additionalTransportWeeks} ` +
         `and student receive practicum placement is ${additionalTransportTest.additionalTransportPlacement}.`,
