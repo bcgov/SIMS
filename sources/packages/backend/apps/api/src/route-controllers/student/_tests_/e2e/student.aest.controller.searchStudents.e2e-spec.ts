@@ -8,7 +8,7 @@ import {
   BEARER_AUTH_TYPE,
   AESTGroups,
   getAESTToken,
-} from "../../testHelpers";
+} from "../../../../testHelpers";
 
 describe("StudentMinistryController(e2e)-searchStudents", () => {
   let app: INestApplication;

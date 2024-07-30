@@ -2,6 +2,9 @@ import { ReportsFilterAPIInDTO } from "@/services/http/dto";
 import { StudentService } from "@/services/StudentService";
 import { ReportService } from "@/services/ReportService";
 import { AxiosResponse } from "axios";
+import { useSnackBar } from "@/composables/useSnackBar";
+import { FILE_HAS_NOT_BEEN_SCANNED_YET, VIRUS_DETECTED } from "@/constants";
+import { ApiProcessError } from "@/types";
 
 interface StudentDocument {
   uniqueFileName: string;
@@ -14,11 +17,21 @@ export function useFileUtils() {
    * Used to download the document or file uploaded.
    * @param studentDocument
    */
-  const downloadStudentDocument = async (studentDocument: StudentDocument) => {
-    const response = await StudentService.shared.downloadStudentFile(
-      studentDocument.uniqueFileName,
-    );
-    downloadFileAsBlob(response);
+  const downloadStudentDocument = async (
+    studentDocument: StudentDocument,
+  ): Promise<void> => {
+    try {
+      const response = await StudentService.shared.downloadStudentFile(
+        studentDocument.uniqueFileName,
+      );
+      downloadFileAsBlob(response);
+    } catch (error: unknown) {
+      if (!useFileUtils().handleFileScanProcessError(error)) {
+        throw new Error(
+          "There was an unexpected error while downloading the file.",
+        );
+      }
+    }
   };
 
   /**
@@ -47,8 +60,28 @@ export function useFileUtils() {
     link.remove();
   };
 
+  /**
+   * Handles the file api process errors that may be thrown.
+   * A warn message is displayed to the user.
+   * @param error error to handled.
+   * @returns true in case error is an expected API process error.
+   */
+  const handleFileScanProcessError = (error: unknown): boolean => {
+    if (
+      error instanceof ApiProcessError &&
+      (error.errorType === FILE_HAS_NOT_BEEN_SCANNED_YET ||
+        error.errorType === VIRUS_DETECTED)
+    ) {
+      const snackBar = useSnackBar();
+      snackBar.warn(error.message);
+      return true;
+    }
+    return false;
+  };
+
   return {
     downloadStudentDocument,
     downloadReports,
+    handleFileScanProcessError,
   };
 }

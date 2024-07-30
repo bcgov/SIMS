@@ -195,6 +195,11 @@ export class StudentStudentsController extends BaseController {
     description:
       "Requested file was not found or the user does not have access to it.",
   })
+  @ApiForbiddenResponse({
+    description:
+      "This file has not been scanned and will be available to download once it is determined to be safe or " +
+      "the original file was deleted due to security rules.",
+  })
   async getUploadedFile(
     @UserToken() studentUserToken: StudentUserToken,
     @Param() uniqueFileNameParam: UniqueFileNameParamAPIInDTO,

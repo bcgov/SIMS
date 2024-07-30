@@ -1,6 +1,7 @@
 import { FormUploadFileInfo } from "@/types";
 import { AxiosRequestConfig } from "axios";
 import ApiClient from "../services/http/ApiClient";
+import { useFileUtils } from "@/composables";
 
 /**
  * Implements the methods and signatures that are necessaries
@@ -59,10 +60,12 @@ export default class FormUploadService {
         type: fileInfo.type,
         size: fileContent.data.size,
       };
-    } catch {
-      throw new Error(
-        "There was an unexpected error while downloading the file.",
-      );
+    } catch (error: unknown) {
+      if (!useFileUtils().handleFileScanProcessError(error)) {
+        throw new Error(
+          "There was an unexpected error while downloading the file.",
+        );
+      }
     }
   }
 }
