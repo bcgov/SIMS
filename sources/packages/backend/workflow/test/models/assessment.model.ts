@@ -29,7 +29,7 @@ export enum TransportationCostSituation {
 }
 
 export interface StudentAdditionalTransportationAppealData extends JSONDoc {
-  eligibleForAnAdditionalTransportationAllowance: YesNoOptions;
+  additionalTransportRequested: YesNoOptions;
   transportationCostSituation?: TransportationCostSituation;
   additionalTransportCost?: number;
   additionalTransportKm?: number;
@@ -168,7 +168,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   assessmentId?: number;
   studentDataSelectedOffering: number;
   studentDataApplicationPDPPDStatus: string;
-  studentDataEligibleForAnAdditionalTransportationAllowance: YesNoOptions;
+  studentDataAdditionalTransportRequested: YesNoOptions;
   studentDataAdditionalTransportKm: number;
   studentDataAdditionalTransportCost: number;
   studentDataAdditionalTransportWeeks: number;
@@ -230,7 +230,7 @@ export interface AssessmentModel {
 export interface CalculatedAssessmentModel {
   calculatedDataRelationshipStatus: RelationshipStatusType;
   calculatedDataPartner1TotalIncome: number;
-  calculatedDataEligibleForAnAdditionalTransportationAllowance: YesNoOptions;
+  calculatedDataAdditionalTransportRequested: YesNoOptions;
   calculatedDataAdditionalTransportKm: number;
   calculatedDataAdditionalTransportCost: number;
   calculatedDataAdditionalTransportWeeks: number;

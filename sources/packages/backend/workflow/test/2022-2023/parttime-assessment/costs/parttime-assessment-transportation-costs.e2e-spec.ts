@@ -77,7 +77,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataEligibleForAnAdditionalTransportationAllowance =
+      assessmentConsolidatedData.studentDataAdditionalTransportRequested =
         YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataAdditionalTransportKm = 30;
       assessmentConsolidatedData.offeringWeeks = 20;
@@ -115,7 +115,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataEligibleForAnAdditionalTransportationAllowance =
+      assessmentConsolidatedData.studentDataAdditionalTransportRequested =
         YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataAdditionalTransportKm = 100;
       assessmentConsolidatedData.offeringWeeks = 30;
@@ -152,7 +152,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataEligibleForAnAdditionalTransportationAllowance =
+      assessmentConsolidatedData.studentDataAdditionalTransportRequested =
         YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataAdditionalTransportKm = 100;
       assessmentConsolidatedData.offeringWeeks = 30;
@@ -189,7 +189,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataEligibleForAnAdditionalTransportationAllowance =
+      assessmentConsolidatedData.studentDataAdditionalTransportRequested =
         YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataAdditionalTransportKm = 100;
       assessmentConsolidatedData.offeringWeeks = 30;
@@ -226,7 +226,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataEligibleForAnAdditionalTransportationAllowance =
+      assessmentConsolidatedData.studentDataAdditionalTransportRequested =
         YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataAdditionalTransportKm = 100;
       assessmentConsolidatedData.offeringWeeks = 30;
@@ -263,7 +263,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataEligibleForAnAdditionalTransportationAllowance =
+      assessmentConsolidatedData.studentDataAdditionalTransportRequested =
         YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataAdditionalTransportKm = 300;
       assessmentConsolidatedData.offeringWeeks = 30;
@@ -300,7 +300,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataEligibleForAnAdditionalTransportationAllowance =
+      assessmentConsolidatedData.studentDataAdditionalTransportRequested =
         YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataAdditionalTransportKm = 300;
       assessmentConsolidatedData.offeringWeeks = 30;
@@ -337,7 +337,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataEligibleForAnAdditionalTransportationAllowance =
+      assessmentConsolidatedData.studentDataAdditionalTransportRequested =
         YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataAdditionalTransportKm = 300;
       assessmentConsolidatedData.offeringWeeks = 30;
@@ -374,7 +374,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataEligibleForAnAdditionalTransportationAllowance =
+      assessmentConsolidatedData.studentDataAdditionalTransportRequested =
         YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataAdditionalTransportKm = 300;
       assessmentConsolidatedData.offeringWeeks = 30;
@@ -412,7 +412,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataEligibleForAnAdditionalTransportationAllowance =
+      assessmentConsolidatedData.studentDataAdditionalTransportRequested =
         YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataAdditionalTransportKm = 300;
       assessmentConsolidatedData.offeringWeeks = 20;
