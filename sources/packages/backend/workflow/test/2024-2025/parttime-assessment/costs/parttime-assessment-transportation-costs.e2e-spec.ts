@@ -66,12 +66,12 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
   );
 
   // Test scenarios for transport allowance involving additional transportation.
+  // Common assumption to all these scenarios is that student require additional transportation
+  // and student is one of the listed drivers in the insurance.
   const additionalTransportTestData = [
     {
       offeringWeeks: 16,
       offeringDelivered: OfferingDeliveryOptions.Onsite,
-      additionalTransportRequested: YesNoOptions.Yes,
-      additionalTransportListedDriver: YesNoOptions.Yes,
       additionalTransportOwner: YesNoOptions.Yes,
       additionalTransportKm: 5,
       additionalTransportWeeks: 10,
@@ -83,8 +83,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
     {
       offeringWeeks: 16,
       offeringDelivered: OfferingDeliveryOptions.Onsite,
-      additionalTransportRequested: YesNoOptions.Yes,
-      additionalTransportListedDriver: YesNoOptions.Yes,
       additionalTransportOwner: YesNoOptions.Yes,
       additionalTransportKm: 100,
       additionalTransportWeeks: 10,
@@ -96,8 +94,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
     {
       offeringWeeks: 16,
       offeringDelivered: OfferingDeliveryOptions.Onsite,
-      additionalTransportRequested: YesNoOptions.Yes,
-      additionalTransportListedDriver: YesNoOptions.Yes,
       additionalTransportOwner: YesNoOptions.Yes,
       additionalTransportKm: 100,
       additionalTransportWeeks: 10,
@@ -109,8 +105,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
     {
       offeringWeeks: 16,
       offeringDelivered: OfferingDeliveryOptions.Onsite,
-      additionalTransportRequested: YesNoOptions.Yes,
-      additionalTransportListedDriver: YesNoOptions.Yes,
       additionalTransportOwner: YesNoOptions.No,
       additionalTransportKm: 240,
       additionalTransportWeeks: 10,
@@ -122,8 +116,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
     {
       offeringWeeks: 16,
       offeringDelivered: OfferingDeliveryOptions.Onsite,
-      additionalTransportRequested: YesNoOptions.Yes,
-      additionalTransportListedDriver: YesNoOptions.Yes,
       additionalTransportOwner: YesNoOptions.Yes,
       additionalTransportKm: 240,
       additionalTransportWeeks: 10,
@@ -135,8 +127,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
     {
       offeringWeeks: 16,
       offeringDelivered: OfferingDeliveryOptions.Onsite,
-      additionalTransportRequested: YesNoOptions.Yes,
-      additionalTransportListedDriver: YesNoOptions.Yes,
       additionalTransportOwner: YesNoOptions.No,
       additionalTransportKm: 240,
       additionalTransportWeeks: 10,
@@ -148,8 +138,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
     {
       offeringWeeks: 16,
       offeringDelivered: OfferingDeliveryOptions.Onsite,
-      additionalTransportRequested: YesNoOptions.Yes,
-      additionalTransportListedDriver: YesNoOptions.Yes,
       additionalTransportOwner: YesNoOptions.Yes,
       additionalTransportKm: 300,
       additionalTransportWeeks: 10,
@@ -161,8 +149,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
     {
       offeringWeeks: 16,
       offeringDelivered: OfferingDeliveryOptions.Online,
-      additionalTransportRequested: YesNoOptions.Yes,
-      additionalTransportListedDriver: YesNoOptions.Yes,
       additionalTransportOwner: YesNoOptions.Yes,
       additionalTransportKm: 280,
       additionalTransportWeeks: 10,
@@ -184,9 +170,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
         const assessmentConsolidatedData =
           createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
         assessmentConsolidatedData.studentDataAdditionalTransportRequested =
-          additionalTransportTest.additionalTransportRequested;
+          YesNoOptions.Yes;
         assessmentConsolidatedData.studentDataAdditionalTransportListedDriver =
-          additionalTransportTest.additionalTransportListedDriver;
+          YesNoOptions.Yes;
         assessmentConsolidatedData.studentDataAdditionalTransportOwner =
           additionalTransportTest.additionalTransportOwner;
         assessmentConsolidatedData.studentDataAdditionalTransportKm =
