@@ -56,17 +56,18 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         UNABLE_TO_SCAN_FILE,
       );
     }
+    let fileName = studentFile.fileName;
     if (isInfected) {
       processSummary.warn("Virus found.");
       const fileInfo = path.parse(studentFile.fileName);
-      studentFile.fileName = `${fileInfo.name}${INFECTED_FILENAME_SUFFIX}${fileInfo.ext}`;
+      fileName = `${fileInfo.name}${INFECTED_FILENAME_SUFFIX}${fileInfo.ext}`;
     } else {
       processSummary.info("No virus found.");
     }
     await this.updateFileScanStatus(
       studentFile.uniqueFileName,
       isInfected,
-      studentFile.fileName,
+      fileName,
     );
     return isInfected;
   }
