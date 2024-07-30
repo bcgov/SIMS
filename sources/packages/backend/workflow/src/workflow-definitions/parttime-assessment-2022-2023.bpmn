@@ -591,7 +591,7 @@ dmnX (comes from dmn)</bpmn:text>
           <zeebe:output source="=calculatedDataStudentAddtionalTransportation.calculatedDataAdditionalTransportPlacement" target="calculatedDataAdditionalTransportPlacement" />
           <zeebe:output source="=calculatedDataStudentAddtionalTransportation.calculatedDataAdditionalTransportRequested" target="calculatedDataAdditionalTransportRequested" />
           <zeebe:output source="=calculatedDataStudentAddtionalTransportation.calculatedDataAdditionalTransportListedDriver" target="calculatedDataAdditionalTransportListedDriver" />
-          <zeebe:output source="=calculatedDataStudentAddtionalTransportation.additionalTransportOwner" target="calculatedDataAdditionalTransportOwner" />
+          <zeebe:output source="=calculatedDataStudentAddtionalTransportation.calculatedDataAdditionalTransportOwner" target="calculatedDataAdditionalTransportOwner" />
         </zeebe:ioMapping>
         <zeebe:script expression="={&#10;  calculatedDataAdditionalTransportRequested: appealsStudentAdditionalTransportationAppealData.additionalTransportRequested,&#10;  calculatedDataAdditionalTransportListedDriver: if(appealsStudentAdditionalTransportationAppealData.additionalTransportListedDriver = null) then null else appealsStudentAdditionalTransportationAppealData.additionalTransportListedDriver,&#10;  calculatedDataAdditionalTransportOwner: if(appealsStudentAdditionalTransportationAppealData.additionalTransportOwner = null) then null else appealsStudentAdditionalTransportationAppealData.additionalTransportOwner,&#10;  calculatedDataAdditionalTransportKm: (if appealsStudentAdditionalTransportationAppealData.additionalTransportKm = null then null else appealsStudentAdditionalTransportationAppealData.additionalTransportKm),&#10;  calculatedDataAdditionalTransportWeeks: (if appealsStudentAdditionalTransportationAppealData.additionalTransportWeeks = null then null else appealsStudentAdditionalTransportationAppealData.additionalTransportWeeks),&#10;  calculatedDataAdditionalTransportPlacement: (if appealsStudentAdditionalTransportationAppealData.additionalTransportPlacement = null then null else appealsStudentAdditionalTransportationAppealData.additionalTransportPlacement)&#10;} &#10;  " resultVariable="calculatedDataStudentAddtionalTransportation" />
       </bpmn:extensionElements>
@@ -1086,7 +1086,7 @@ dmnX (comes from dmn)</bpmn:text>
       <bpmn:incoming>Flow_0onzs1l</bpmn:incoming>
       <bpmn:outgoing>Flow_0uvmsmj</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:exclusiveGateway id="Gateway_1uj6ty4" name="Is the the student owner of the vehicle" default="Flow_1sppueb">
+    <bpmn:exclusiveGateway id="Gateway_1uj6ty4" name="Is student owner of the vehicle" default="Flow_1sppueb">
       <bpmn:incoming>Flow_0uvmsmj</bpmn:incoming>
       <bpmn:outgoing>Flow_0s3ga70</bpmn:outgoing>
       <bpmn:outgoing>Flow_1sppueb</bpmn:outgoing>
@@ -1126,10 +1126,10 @@ dmnX (comes from dmn)</bpmn:text>
     </bpmn:exclusiveGateway>
     <bpmn:scriptTask id="Activity_09tc09c" name="Calculate Additional Transportation Allowance">
       <bpmn:extensionElements>
-        <zeebe:script expression="=// Calculated weekly additional transport cost based on student request(student input).&#10;(calculatedDataAdditionalTransportKm * dmnPartTimeProgramYearMaximums.limitAdditionalTransportationKMReduction) - calculatedDataPlacementReduction" resultVariable="calculatedDataWeeklyAdditionalTransportRequested" />
+        <zeebe:script expression="=// Calculated weekly additional transport cost based on student request(student input).&#10;(calculatedDataAdditionalTransportKm * dmnPartTimeProgramYearMaximums.limitAdditionalTransportationKMReduction)" resultVariable="calculatedDataWeeklyAdditionalTransportRequested" />
         <zeebe:ioMapping>
           <zeebe:output source="=// Limit the student requested additional transport to weekly allowed maximum.&#10;min(calculatedDataWeeklyMaxAdditionalTransport, calculatedDataWeeklyAdditionalTransportRequested)" target="calculatedDataWeeklyAdditionalTransportCost" />
-          <zeebe:output source="=// Ensure that additional transport weekly allowance is not less than the minimum weekly transport allowance that the student is entitled to be given.&#10;max(calculatedDataWeeklyAdditionalTransportCost,calculatedDataWeeklyMinTransport)" target="calculatedDataNetWeeklyAdditionalTransportCost" />
+          <zeebe:output source="=// Ensure that additional transport weekly allowance after practicum placement reduction is not less than the minimum weekly transport allowance that the student is entitled to be given.&#10;max((calculatedDataWeeklyAdditionalTransportCost - calculatedDataPlacementReduction),calculatedDataWeeklyMinTransport)" target="calculatedDataNetWeeklyAdditionalTransportCost" />
           <zeebe:output source="=calculatedDataNetWeeklyAdditionalTransportCost * calculatedDataAdditionalTransportWeeks" target="calculatedDataTotalAdditionalTransportationAllowance" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
@@ -1560,7 +1560,7 @@ dmnX (comes from dmn)</bpmn:text>
       <bpmndi:BPMNShape id="Gateway_1uj6ty4_di" bpmnElement="Gateway_1uj6ty4" isMarkerVisible="true">
         <dc:Bounds x="3355" y="1665" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="3339" y="1722" width="86" height="40" />
+          <dc:Bounds x="3341" y="1722" width="83" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1qxhhtn_di" bpmnElement="Event_1qxhhtn">
@@ -2180,18 +2180,6 @@ dmnX (comes from dmn)</bpmn:text>
         <di:waypoint x="3298" y="1690" />
         <di:waypoint x="3355" y="1690" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0hybcza_di" bpmnElement="Association_0hybcza">
-        <di:waypoint x="3610" y="1938" />
-        <di:waypoint x="3610" y="1970" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1skh123_di" bpmnElement="Association_1skh123">
-        <di:waypoint x="4070" y="1650" />
-        <di:waypoint x="4070" y="1614" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0hwwkv8_di" bpmnElement="Association_0hwwkv8">
-        <di:waypoint x="3930" y="1650" />
-        <di:waypoint x="3930" y="1614" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="BPMNShape_0hjhvfj" bpmnElement="TextAnnotation_15vd5py">
         <dc:Bounds x="7429" y="3000" width="100" height="30" />
         <bpmndi:BPMNLabel />
@@ -2278,6 +2266,18 @@ dmnX (comes from dmn)</bpmn:text>
         <dc:Bounds x="3225" y="1540" width="110" height="111" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0uct9av_di" bpmnElement="TextAnnotation_0uct9av">
+        <dc:Bounds x="3870" y="1530" width="150" height="84" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1gpnc2e_di" bpmnElement="TextAnnotation_1gpnc2e">
+        <dc:Bounds x="3560" y="1970" width="230" height="70" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1dvuf8z_di" bpmnElement="TextAnnotation_1dvuf8z">
+        <dc:Bounds x="4020" y="1542" width="180" height="72" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_0jm8vsl_di" bpmnElement="Association_0jm8vsl">
         <di:waypoint x="2561" y="1330" />
         <di:waypoint x="2556" y="1271" />
@@ -2354,18 +2354,18 @@ dmnX (comes from dmn)</bpmn:text>
         <di:waypoint x="3180" y="1672" />
         <di:waypoint x="3180" y="1624" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="TextAnnotation_1gpnc2e_di" bpmnElement="TextAnnotation_1gpnc2e">
-        <dc:Bounds x="3560" y="1970" width="230" height="70" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1dvuf8z_di" bpmnElement="TextAnnotation_1dvuf8z">
-        <dc:Bounds x="4020" y="1542" width="180" height="72" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0uct9av_di" bpmnElement="TextAnnotation_0uct9av">
-        <dc:Bounds x="3870" y="1530" width="150" height="84" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0hwwkv8_di" bpmnElement="Association_0hwwkv8">
+        <di:waypoint x="3930" y="1650" />
+        <di:waypoint x="3930" y="1614" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0hybcza_di" bpmnElement="Association_0hybcza">
+        <di:waypoint x="3610" y="1938" />
+        <di:waypoint x="3610" y="1970" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1skh123_di" bpmnElement="Association_1skh123">
+        <di:waypoint x="4070" y="1650" />
+        <di:waypoint x="4070" y="1614" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

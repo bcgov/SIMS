@@ -30,8 +30,9 @@ export enum TransportationCostSituation {
 
 export interface StudentAdditionalTransportationAppealData extends JSONDoc {
   additionalTransportRequested: YesNoOptions;
+  additionalTransportListedDriver?: YesNoOptions;
   transportationCostSituation?: TransportationCostSituation;
-  additionalTransportCost?: number;
+  additionalTransportOwner?: YesNoOptions;
   additionalTransportKm?: number;
   additionalTransportWeeks?: number;
   additionalTransportPlacement?: YesNoOptions;
@@ -169,8 +170,9 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataSelectedOffering: number;
   studentDataApplicationPDPPDStatus: string;
   studentDataAdditionalTransportRequested: YesNoOptions;
+  studentDataAdditionalTransportListedDriver: YesNoOptions;
+  studentDataAdditionalTransportOwner: YesNoOptions;
   studentDataAdditionalTransportKm: number;
-  studentDataAdditionalTransportCost: number;
   studentDataAdditionalTransportWeeks: number;
   studentDataAdditionalTransportPlacement: YesNoOptions;
   programYearTotalPartTimeCSGD: number;
@@ -231,10 +233,11 @@ export interface CalculatedAssessmentModel {
   calculatedDataRelationshipStatus: RelationshipStatusType;
   calculatedDataPartner1TotalIncome: number;
   calculatedDataAdditionalTransportRequested: YesNoOptions;
+  calculatedDataAdditionalTransportListedDriver: YesNoOptions;
+  calculatedDataAdditionalTransportOwner: YesNoOptions;
   calculatedDataAdditionalTransportKm: number;
-  calculatedDataAdditionalTransportCost: number;
   calculatedDataAdditionalTransportWeeks: number;
-  calculatedDataAdditionalTransportPlacement: boolean;
+  calculatedDataAdditionalTransportPlacement: YesNoOptions;
   offeringWeeks: number;
   calculatedDataTotalTutionCost: number;
   calculatedDataDaycareCosts11YearsOrUnder: number;
