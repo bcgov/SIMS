@@ -74,9 +74,8 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     expect(scannedStudentFile.virusScanStatus).toBe(
       VirusScanStatus.VirusDetected,
     );
-    const fileName = path.parse(studentFile.fileName).name;
-    const fileExtension = path.parse(studentFile.fileName).ext;
-    const infectedFileName = `${fileName}${INFECTED_FILENAME_SUFFIX}${fileExtension}`;
+    const fileInfo = path.parse(studentFile.fileName);
+    const infectedFileName = `${fileInfo.name}${INFECTED_FILENAME_SUFFIX}${fileInfo.ext}`;
     expect(scannedStudentFile.fileName).toBe(infectedFileName);
   });
 

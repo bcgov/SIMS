@@ -58,9 +58,8 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     }
     if (isInfected) {
       processSummary.warn("Virus found.");
-      const fileNameWithoutExtension = path.parse(studentFile.fileName).name;
-      const fileExtension = path.parse(studentFile.fileName).ext;
-      studentFile.fileName = `${fileNameWithoutExtension}${INFECTED_FILENAME_SUFFIX}${fileExtension}`;
+      const fileInfo = path.parse(studentFile.fileName);
+      studentFile.fileName = `${fileInfo.name}${INFECTED_FILENAME_SUFFIX}${fileInfo.ext}`;
     } else {
       processSummary.info("No virus found.");
     }
