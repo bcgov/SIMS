@@ -65,48 +65,164 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
     },
   );
 
-  it(
-    "Should determine transportation allowance for an offering delivered onsite " +
-      "when there is additional transportation needed and the student is owner of the vehicle " +
-      "and the student receive practicum placement allowance.",
-    async () => {
-      // Arrange
-      const assessmentConsolidatedData =
-        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataAdditionalTransportRequested =
-        YesNoOptions.Yes;
-      assessmentConsolidatedData.studentDataAdditionalTransportListedDriver =
-        YesNoOptions.Yes;
-      assessmentConsolidatedData.studentDataAdditionalTransportOwner =
-        YesNoOptions.Yes;
-      assessmentConsolidatedData.studentDataAdditionalTransportKm = 5;
-      assessmentConsolidatedData.offeringWeeks = 16;
-      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 10;
-      assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
-        YesNoOptions.Yes;
-      assessmentConsolidatedData.offeringDelivered =
-        OfferingDeliveryOptions.Onsite;
-      // Act
-      const calculatedAssessment =
-        await executePartTimeAssessmentForProgramYear(
-          PROGRAM_YEAR,
-          assessmentConsolidatedData,
-        );
-      // Assert
-      expect(
-        calculatedAssessment.variables
-          .calculatedDataNetWeeklyAdditionalTransportCost,
-      ).toBe(13);
-      expect(
-        calculatedAssessment.variables
-          .calculatedDataTotalAdditionalTransportationAllowance,
-      ).toBe(130);
-      expect(
-        calculatedAssessment.variables
-          .calculatedDataTotalTransportationAllowance,
-      ).toBe(208);
+  // Test scenarios for transport allowance involving additional transportation.
+  const additionalTransportTestData = [
+    {
+      offeringWeeks: 16,
+      offeringDelivered: OfferingDeliveryOptions.Onsite,
+      additionalTransportRequested: YesNoOptions.Yes,
+      additionalTransportListedDriver: YesNoOptions.Yes,
+      additionalTransportOwner: YesNoOptions.Yes,
+      additionalTransportKm: 5,
+      additionalTransportWeeks: 10,
+      additionalTransportPlacement: YesNoOptions.Yes,
+      expectedWeeklyAdditionalTransportCost: 13,
+      expectedTotalAdditionalTransportAllowance: 130,
+      expectedTotalTransportAllowance: 208,
     },
-  );
+    {
+      offeringWeeks: 16,
+      offeringDelivered: OfferingDeliveryOptions.Onsite,
+      additionalTransportRequested: YesNoOptions.Yes,
+      additionalTransportListedDriver: YesNoOptions.Yes,
+      additionalTransportOwner: YesNoOptions.Yes,
+      additionalTransportKm: 100,
+      additionalTransportWeeks: 10,
+      additionalTransportPlacement: YesNoOptions.Yes,
+      expectedWeeklyAdditionalTransportCost: 13,
+      expectedTotalAdditionalTransportAllowance: 130,
+      expectedTotalTransportAllowance: 208,
+    },
+    {
+      offeringWeeks: 16,
+      offeringDelivered: OfferingDeliveryOptions.Onsite,
+      additionalTransportRequested: YesNoOptions.Yes,
+      additionalTransportListedDriver: YesNoOptions.Yes,
+      additionalTransportOwner: YesNoOptions.Yes,
+      additionalTransportKm: 100,
+      additionalTransportWeeks: 10,
+      additionalTransportPlacement: YesNoOptions.No,
+      expectedWeeklyAdditionalTransportCost: 34,
+      expectedTotalAdditionalTransportAllowance: 340,
+      expectedTotalTransportAllowance: 418,
+    },
+    {
+      offeringWeeks: 16,
+      offeringDelivered: OfferingDeliveryOptions.Onsite,
+      additionalTransportRequested: YesNoOptions.Yes,
+      additionalTransportListedDriver: YesNoOptions.Yes,
+      additionalTransportOwner: YesNoOptions.No,
+      additionalTransportKm: 240,
+      additionalTransportWeeks: 10,
+      additionalTransportPlacement: YesNoOptions.No,
+      expectedWeeklyAdditionalTransportCost: 69,
+      expectedTotalAdditionalTransportAllowance: 690,
+      expectedTotalTransportAllowance: 768,
+    },
+    {
+      offeringWeeks: 16,
+      offeringDelivered: OfferingDeliveryOptions.Onsite,
+      additionalTransportRequested: YesNoOptions.Yes,
+      additionalTransportListedDriver: YesNoOptions.Yes,
+      additionalTransportOwner: YesNoOptions.Yes,
+      additionalTransportKm: 240,
+      additionalTransportWeeks: 10,
+      additionalTransportPlacement: YesNoOptions.Yes,
+      expectedWeeklyAdditionalTransportCost: 56.6,
+      expectedTotalAdditionalTransportAllowance: 566,
+      expectedTotalTransportAllowance: 644,
+    },
+    {
+      offeringWeeks: 16,
+      offeringDelivered: OfferingDeliveryOptions.Onsite,
+      additionalTransportRequested: YesNoOptions.Yes,
+      additionalTransportListedDriver: YesNoOptions.Yes,
+      additionalTransportOwner: YesNoOptions.No,
+      additionalTransportKm: 240,
+      additionalTransportWeeks: 10,
+      additionalTransportPlacement: YesNoOptions.Yes,
+      expectedWeeklyAdditionalTransportCost: 44,
+      expectedTotalAdditionalTransportAllowance: 440,
+      expectedTotalTransportAllowance: 518,
+    },
+    {
+      offeringWeeks: 16,
+      offeringDelivered: OfferingDeliveryOptions.Onsite,
+      additionalTransportRequested: YesNoOptions.Yes,
+      additionalTransportListedDriver: YesNoOptions.Yes,
+      additionalTransportOwner: YesNoOptions.Yes,
+      additionalTransportKm: 300,
+      additionalTransportWeeks: 10,
+      additionalTransportPlacement: YesNoOptions.No,
+      expectedWeeklyAdditionalTransportCost: 94,
+      expectedTotalAdditionalTransportAllowance: 940,
+      expectedTotalTransportAllowance: 1018,
+    },
+    {
+      offeringWeeks: 16,
+      offeringDelivered: OfferingDeliveryOptions.Online,
+      additionalTransportRequested: YesNoOptions.Yes,
+      additionalTransportListedDriver: YesNoOptions.Yes,
+      additionalTransportOwner: YesNoOptions.Yes,
+      additionalTransportKm: 280,
+      additionalTransportWeeks: 10,
+      additionalTransportPlacement: YesNoOptions.No,
+      expectedWeeklyAdditionalTransportCost: 94,
+      expectedTotalAdditionalTransportAllowance: 940,
+      expectedTotalTransportAllowance: 940,
+    },
+  ];
+
+  for (const additionalTransportTest of additionalTransportTestData) {
+    it(
+      `Should determine weekly additional transportation cost as ${additionalTransportTest.expectedWeeklyAdditionalTransportCost} when offering is delivered ${additionalTransportTest.offeringDelivered}` +
+        `and offering weeks is ${additionalTransportTest.offeringWeeks} and student being the owner of vehicle is ${additionalTransportTest.additionalTransportOwner} ` +
+        `and additional transport KM is ${additionalTransportTest.additionalTransportKm} and additional transport weeks is ${additionalTransportTest.additionalTransportWeeks} ` +
+        `and student receive practicum placement is ${additionalTransportTest.additionalTransportPlacement}.`,
+      async () => {
+        // Arrange
+        const assessmentConsolidatedData =
+          createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+        assessmentConsolidatedData.studentDataAdditionalTransportRequested =
+          additionalTransportTest.additionalTransportRequested;
+        assessmentConsolidatedData.studentDataAdditionalTransportListedDriver =
+          additionalTransportTest.additionalTransportListedDriver;
+        assessmentConsolidatedData.studentDataAdditionalTransportOwner =
+          additionalTransportTest.additionalTransportOwner;
+        assessmentConsolidatedData.studentDataAdditionalTransportKm =
+          additionalTransportTest.additionalTransportKm;
+        assessmentConsolidatedData.offeringWeeks =
+          additionalTransportTest.offeringWeeks;
+        assessmentConsolidatedData.studentDataAdditionalTransportWeeks =
+          additionalTransportTest.additionalTransportWeeks;
+        assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
+          additionalTransportTest.additionalTransportPlacement;
+        assessmentConsolidatedData.offeringDelivered =
+          additionalTransportTest.offeringDelivered;
+        // Act
+        const calculatedAssessment =
+          await executePartTimeAssessmentForProgramYear(
+            PROGRAM_YEAR,
+            assessmentConsolidatedData,
+          );
+        // Assert
+        expect(
+          calculatedAssessment.variables
+            .calculatedDataNetWeeklyAdditionalTransportCost,
+        ).toBe(additionalTransportTest.expectedWeeklyAdditionalTransportCost);
+        expect(
+          calculatedAssessment.variables
+            .calculatedDataTotalAdditionalTransportationAllowance,
+        ).toBe(
+          additionalTransportTest.expectedTotalAdditionalTransportAllowance,
+        );
+        expect(
+          calculatedAssessment.variables
+            .calculatedDataTotalTransportationAllowance,
+        ).toBe(additionalTransportTest.expectedTotalTransportAllowance);
+      },
+    );
+  }
 
   afterAll(async () => {
     // Closes the singleton instance created during test executions.
