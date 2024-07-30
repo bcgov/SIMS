@@ -1,7 +1,4 @@
-import {
-  PROGRAM_YEAR,
-  ADDITIONAL_TRANSPORTATION_ONSITE_DISTANCE_LIMIT,
-} from "../../constants/program-year.constants";
+import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 import {
   ZeebeMockedClient,
   createFakeConsolidatedPartTimeData,
@@ -30,7 +27,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
       // Expect the additional transportation allowance to be 0.
       expect(
         calculatedAssessment.variables
-          .calculatedDataAdditionalTransportationAllowance,
+          .calculatedDataTotalAdditionalTransportationAllowance,
       ).toBe(0);
       // Expect the transportation allowance to be calculated.
       expect(
@@ -59,7 +56,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
       // Assert
       expect(
         calculatedAssessment.variables
-          .calculatedDataAdditionalTransportationAllowance,
+          .calculatedDataTotalAdditionalTransportationAllowance,
       ).toBe(0);
       expect(
         calculatedAssessment.variables
@@ -69,22 +66,24 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
   );
 
   it(
-    "Should determine transportation allowance as minimum allowance for an offering delivered onsite " +
-      `when there is additional transportation needed and additional transport is less than ${ADDITIONAL_TRANSPORTATION_ONSITE_DISTANCE_LIMIT} KM ` +
-      "and including the additional transportation allowance " +
-      "make total transportation allowance go less than minimum allowance required for an offering delivered onsite.",
+    "Should determine transportation allowance for an offering delivered onsite " +
+      "when there is additional transportation needed and the student is owner of the vehicle " +
+      "and the student receive practicum placement allowance and calculated additional transport cost.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataAdditionalTransportRequested =
         YesNoOptions.Yes;
-      assessmentConsolidatedData.studentDataAdditionalTransportKm = 30;
-      assessmentConsolidatedData.offeringWeeks = 20;
-      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 15;
-      assessmentConsolidatedData.studentDataAdditionalTransportCost = 30;
+      assessmentConsolidatedData.studentDataAdditionalTransportListedDriver =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportOwner =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportKm = 5;
+      assessmentConsolidatedData.offeringWeeks = 16;
+      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 10;
       assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
-        YesNoOptions.No;
+        YesNoOptions.Yes;
       assessmentConsolidatedData.offeringDelivered =
         OfferingDeliveryOptions.Onsite;
       // Act
@@ -96,31 +95,36 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
       // Assert
       expect(
         calculatedAssessment.variables
-          .calculatedDataAdditionalTransportationAllowance,
-      ).toBe(153);
-      // Expect the transportation allowance to be minimum allowance for an onsite offering.
+          .calculatedDataNetWeeklyAdditionalTransportCost,
+      ).toBe(13);
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataTotalAdditionalTransportationAllowance,
+      ).toBe(130);
       expect(
         calculatedAssessment.variables
           .calculatedDataTotalTransportationAllowance,
-      ).toBe(260);
+      ).toBe(208);
     },
   );
 
   it(
-    "Should determine transportation allowance when there is additional transport needed and additional transport is " +
-      `less than ${ADDITIONAL_TRANSPORTATION_ONSITE_DISTANCE_LIMIT} KM ` +
-      "and student receive allowance from institution for clinical or practicum placement " +
-      "for an offering delivered onsite.",
+    "Should determine transportation allowance for an offering delivered onsite " +
+      "when there is additional transportation needed and the student is owner of the vehicle " +
+      "and the student receive practicum placement allowance.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataAdditionalTransportRequested =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportListedDriver =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportOwner =
         YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataAdditionalTransportKm = 100;
-      assessmentConsolidatedData.offeringWeeks = 30;
-      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 20;
-      assessmentConsolidatedData.studentDataAdditionalTransportCost = 80;
+      assessmentConsolidatedData.offeringWeeks = 16;
+      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 10;
       assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
         YesNoOptions.Yes;
       assessmentConsolidatedData.offeringDelivered =
@@ -134,67 +138,36 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
       // Assert
       expect(
         calculatedAssessment.variables
-          .calculatedDataAdditionalTransportationAllowance,
-      ).toBe(680);
+          .calculatedDataNetWeeklyAdditionalTransportCost,
+      ).toBe(13);
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataTotalAdditionalTransportationAllowance,
+      ).toBe(130);
       expect(
         calculatedAssessment.variables
           .calculatedDataTotalTransportationAllowance,
-      ).toBe(810);
+      ).toBe(208);
     },
   );
 
   it(
-    "Should determine transportation allowance when there is additional transport needed and additional transport is " +
-      `less than ${ADDITIONAL_TRANSPORTATION_ONSITE_DISTANCE_LIMIT} KM ` +
-      "and student receive allowance from institution for clinical or practicum placement " +
-      "for an offering delivered online.",
+    "Should determine transportation allowance for an offering delivered onsite " +
+      "when there is additional transportation needed and the student is owner of the vehicle " +
+      "and the student does not receive practicum placement allowance.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataAdditionalTransportRequested =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportListedDriver =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportOwner =
         YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataAdditionalTransportKm = 100;
-      assessmentConsolidatedData.offeringWeeks = 30;
-      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 20;
-      assessmentConsolidatedData.studentDataAdditionalTransportCost = 80;
-      assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
-        YesNoOptions.Yes;
-      assessmentConsolidatedData.offeringDelivered =
-        OfferingDeliveryOptions.Online;
-      // Act
-      const calculatedAssessment =
-        await executePartTimeAssessmentForProgramYear(
-          PROGRAM_YEAR,
-          assessmentConsolidatedData,
-        );
-      // Assert
-      expect(
-        calculatedAssessment.variables
-          .calculatedDataAdditionalTransportationAllowance,
-      ).toBe(680);
-      expect(
-        calculatedAssessment.variables
-          .calculatedDataTotalTransportationAllowance,
-      ).toBe(680);
-    },
-  );
-
-  it(
-    "Should determine transportation allowance when there is additional transport needed and additional transport is " +
-      `less than ${ADDITIONAL_TRANSPORTATION_ONSITE_DISTANCE_LIMIT} KM ` +
-      "and student does not receive clinical or practicum placement allowance. " +
-      "for an offering delivered onsite.",
-    async () => {
-      // Arrange
-      const assessmentConsolidatedData =
-        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataAdditionalTransportRequested =
-        YesNoOptions.Yes;
-      assessmentConsolidatedData.studentDataAdditionalTransportKm = 100;
-      assessmentConsolidatedData.offeringWeeks = 30;
-      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 20;
-      assessmentConsolidatedData.studentDataAdditionalTransportCost = 80;
+      assessmentConsolidatedData.offeringWeeks = 16;
+      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 10;
       assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
         YesNoOptions.No;
       assessmentConsolidatedData.offeringDelivered =
@@ -208,141 +181,36 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
       // Assert
       expect(
         calculatedAssessment.variables
-          .calculatedDataAdditionalTransportationAllowance,
-      ).toBe(680);
+          .calculatedDataNetWeeklyAdditionalTransportCost,
+      ).toBe(34);
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataTotalAdditionalTransportationAllowance,
+      ).toBe(340);
       expect(
         calculatedAssessment.variables
           .calculatedDataTotalTransportationAllowance,
-      ).toBe(810);
+      ).toBe(418);
     },
   );
 
   it(
-    "Should determine transportation allowance when there is additional transport needed and additional transport is " +
-      `less than ${ADDITIONAL_TRANSPORTATION_ONSITE_DISTANCE_LIMIT} KM ` +
-      "and student does not receive clinical or practicum placement allowance. " +
-      "for an offering delivered online.",
+    "Should determine transportation allowance for an offering delivered onsite " +
+      "when there is additional transportation needed and the student is not owner of the vehicle " +
+      "and the student does not receive practicum placement allowance.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataAdditionalTransportRequested =
         YesNoOptions.Yes;
-      assessmentConsolidatedData.studentDataAdditionalTransportKm = 100;
-      assessmentConsolidatedData.offeringWeeks = 30;
-      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 20;
-      assessmentConsolidatedData.studentDataAdditionalTransportCost = 80;
-      assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
+      assessmentConsolidatedData.studentDataAdditionalTransportListedDriver =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportOwner =
         YesNoOptions.No;
-      assessmentConsolidatedData.offeringDelivered =
-        OfferingDeliveryOptions.Online;
-      // Act
-      const calculatedAssessment =
-        await executePartTimeAssessmentForProgramYear(
-          PROGRAM_YEAR,
-          assessmentConsolidatedData,
-        );
-      // Assert
-      expect(
-        calculatedAssessment.variables
-          .calculatedDataAdditionalTransportationAllowance,
-      ).toBe(680);
-      expect(
-        calculatedAssessment.variables
-          .calculatedDataTotalTransportationAllowance,
-      ).toBe(680);
-    },
-  );
-
-  it(
-    "Should determine transportation allowance when there is additional transport needed and additional transport is " +
-      `more than ${ADDITIONAL_TRANSPORTATION_ONSITE_DISTANCE_LIMIT} KM` +
-      "and student receive allowance from institution for clinical or practicum placement " +
-      "for an offering delivered onsite.",
-    async () => {
-      // Arrange
-      const assessmentConsolidatedData =
-        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataAdditionalTransportRequested =
-        YesNoOptions.Yes;
-      assessmentConsolidatedData.studentDataAdditionalTransportKm = 300;
-      assessmentConsolidatedData.offeringWeeks = 30;
-      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 20;
-      assessmentConsolidatedData.studentDataAdditionalTransportCost = 80;
-      assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
-        YesNoOptions.Yes;
-      assessmentConsolidatedData.offeringDelivered =
-        OfferingDeliveryOptions.Onsite;
-      // Act
-      const calculatedAssessment =
-        await executePartTimeAssessmentForProgramYear(
-          PROGRAM_YEAR,
-          assessmentConsolidatedData,
-        );
-      // Assert
-      expect(
-        calculatedAssessment.variables
-          .calculatedDataAdditionalTransportationAllowance,
-      ).toBe(1380);
-      expect(
-        calculatedAssessment.variables
-          .calculatedDataTotalTransportationAllowance,
-      ).toBe(1510);
-    },
-  );
-
-  it(
-    "Should determine transportation allowance when there is additional transport needed and additional transport is " +
-      `more than ${ADDITIONAL_TRANSPORTATION_ONSITE_DISTANCE_LIMIT} KM` +
-      "and student receive allowance from institution for clinical or practicum placement " +
-      "for an offering delivered online.",
-    async () => {
-      // Arrange
-      const assessmentConsolidatedData =
-        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataAdditionalTransportRequested =
-        YesNoOptions.Yes;
-      assessmentConsolidatedData.studentDataAdditionalTransportKm = 300;
-      assessmentConsolidatedData.offeringWeeks = 30;
-      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 20;
-      assessmentConsolidatedData.studentDataAdditionalTransportCost = 80;
-      assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
-        YesNoOptions.Yes;
-      assessmentConsolidatedData.offeringDelivered =
-        OfferingDeliveryOptions.Online;
-      // Act
-      const calculatedAssessment =
-        await executePartTimeAssessmentForProgramYear(
-          PROGRAM_YEAR,
-          assessmentConsolidatedData,
-        );
-      // Assert
-      expect(
-        calculatedAssessment.variables
-          .calculatedDataAdditionalTransportationAllowance,
-      ).toBe(1380);
-      expect(
-        calculatedAssessment.variables
-          .calculatedDataTotalTransportationAllowance,
-      ).toBe(1380);
-    },
-  );
-
-  it(
-    "Should determine transportation allowance when there is additional transport needed and additional transport is " +
-      `more than ${ADDITIONAL_TRANSPORTATION_ONSITE_DISTANCE_LIMIT} KM` +
-      "and student dos not receive clinical or practicum placement allowance " +
-      "for an offering delivered onsite.",
-    async () => {
-      // Arrange
-      const assessmentConsolidatedData =
-        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataAdditionalTransportRequested =
-        YesNoOptions.Yes;
-      assessmentConsolidatedData.studentDataAdditionalTransportKm = 300;
-      assessmentConsolidatedData.offeringWeeks = 30;
-      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 20;
-      assessmentConsolidatedData.studentDataAdditionalTransportCost = 80;
+      assessmentConsolidatedData.studentDataAdditionalTransportKm = 240;
+      assessmentConsolidatedData.offeringWeeks = 16;
+      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 10;
       assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
         YesNoOptions.No;
       assessmentConsolidatedData.offeringDelivered =
@@ -356,34 +224,40 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
       // Assert
       expect(
         calculatedAssessment.variables
-          .calculatedDataAdditionalTransportationAllowance,
-      ).toBe(1600);
+          .calculatedDataNetWeeklyAdditionalTransportCost,
+      ).toBe(69);
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataTotalAdditionalTransportationAllowance,
+      ).toBe(690);
       expect(
         calculatedAssessment.variables
           .calculatedDataTotalTransportationAllowance,
-      ).toBe(1730);
+      ).toBe(768);
     },
   );
 
   it(
-    "Should determine transportation allowance when there is additional transport needed and additional transport is " +
-      `more than ${ADDITIONAL_TRANSPORTATION_ONSITE_DISTANCE_LIMIT} KM` +
-      "and student dos not receive clinical or practicum placement allowance " +
-      "for an offering delivered online.",
+    "Should determine transportation allowance for an offering delivered onsite " +
+      "when there is additional transportation needed and the student is owner of the vehicle " +
+      "and the student receive practicum placement allowance.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataAdditionalTransportRequested =
         YesNoOptions.Yes;
-      assessmentConsolidatedData.studentDataAdditionalTransportKm = 300;
-      assessmentConsolidatedData.offeringWeeks = 30;
-      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 20;
-      assessmentConsolidatedData.studentDataAdditionalTransportCost = 80;
+      assessmentConsolidatedData.studentDataAdditionalTransportListedDriver =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportOwner =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportKm = 240;
+      assessmentConsolidatedData.offeringWeeks = 16;
+      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 10;
       assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
-        YesNoOptions.No;
+        YesNoOptions.Yes;
       assessmentConsolidatedData.offeringDelivered =
-        OfferingDeliveryOptions.Online;
+        OfferingDeliveryOptions.Onsite;
       // Act
       const calculatedAssessment =
         await executePartTimeAssessmentForProgramYear(
@@ -393,31 +267,79 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
       // Assert
       expect(
         calculatedAssessment.variables
-          .calculatedDataAdditionalTransportationAllowance,
-      ).toBe(1600);
+          .calculatedDataNetWeeklyAdditionalTransportCost,
+      ).toBe(56.6);
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataTotalAdditionalTransportationAllowance,
+      ).toBe(566);
       expect(
         calculatedAssessment.variables
           .calculatedDataTotalTransportationAllowance,
-      ).toBe(1600);
+      ).toBe(644);
     },
   );
 
   it(
-    "Should determine transportation allowance when there is additional transport needed and additional transport is " +
-      `more than ${ADDITIONAL_TRANSPORTATION_ONSITE_DISTANCE_LIMIT} KM` +
-      "and student dos not receive clinical or practicum placement allowance " +
-      "for an offering delivered onsite " +
-      "and offeringWeeks is less than studentDataAdditionalTransportWeeks.",
+    "Should determine transportation allowance for an offering delivered onsite " +
+      "when there is additional transportation needed and the student is not owner of the vehicle " +
+      "and the student receive practicum placement allowance.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataAdditionalTransportRequested =
         YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportListedDriver =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportOwner =
+        YesNoOptions.No;
+      assessmentConsolidatedData.studentDataAdditionalTransportKm = 240;
+      assessmentConsolidatedData.offeringWeeks = 16;
+      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 10;
+      assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.offeringDelivered =
+        OfferingDeliveryOptions.Onsite;
+      // Act
+      const calculatedAssessment =
+        await executePartTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+      // Assert
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataNetWeeklyAdditionalTransportCost,
+      ).toBe(44);
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataTotalAdditionalTransportationAllowance,
+      ).toBe(440);
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataTotalTransportationAllowance,
+      ).toBe(518);
+    },
+  );
+
+  it(
+    "Should determine transportation allowance for an offering delivered onsite " +
+      "when there is additional transportation needed and the student is owner of the vehicle " +
+      "and the student does not receive practicum placement allowance.",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataAdditionalTransportRequested =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportListedDriver =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportOwner =
+        YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataAdditionalTransportKm = 300;
-      assessmentConsolidatedData.offeringWeeks = 20;
-      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 30;
-      assessmentConsolidatedData.studentDataAdditionalTransportCost = 80;
+      assessmentConsolidatedData.offeringWeeks = 16;
+      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 10;
       assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
         YesNoOptions.No;
       assessmentConsolidatedData.offeringDelivered =
@@ -431,12 +353,59 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
       // Assert
       expect(
         calculatedAssessment.variables
-          .calculatedDataAdditionalTransportationAllowance,
-      ).toBe(1600);
+          .calculatedDataNetWeeklyAdditionalTransportCost,
+      ).toBe(94);
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataTotalAdditionalTransportationAllowance,
+      ).toBe(940);
       expect(
         calculatedAssessment.variables
           .calculatedDataTotalTransportationAllowance,
-      ).toBe(1600);
+      ).toBe(1018);
+    },
+  );
+
+  it(
+    "Should determine transportation allowance for an offering delivered online " +
+      "when there is additional transportation needed and the student is owner of the vehicle " +
+      "and the student does not receive practicum placement allowance.",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataAdditionalTransportRequested =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportListedDriver =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportOwner =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportKm = 300;
+      assessmentConsolidatedData.offeringWeeks = 16;
+      assessmentConsolidatedData.offeringDelivered =
+        OfferingDeliveryOptions.Online;
+      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 10;
+      assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
+        YesNoOptions.No;
+      // Act
+      const calculatedAssessment =
+        await executePartTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+      // Assert
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataNetWeeklyAdditionalTransportCost,
+      ).toBe(94);
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataTotalAdditionalTransportationAllowance,
+      ).toBe(940);
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataTotalTransportationAllowance,
+      ).toBe(940);
     },
   );
 

@@ -96,11 +96,11 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:textAnnotation id="TextAnnotation_1gpnc2e">
       <bpmn:text>Students who have not requested Additional Transportation may still be eligible for regular transportation allowance.</bpmn:text>
     </bpmn:textAnnotation>
-    <bpmn:association id="Association_0hybcza" associationDirection="None" sourceRef="Event_10lg4rt" targetRef="TextAnnotation_1gpnc2e" />
     <bpmn:textAnnotation id="TextAnnotation_1dvuf8z">
       <bpmn:text>Combining additional transportation allowance with any regular transportation allowance if eligible.</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_1skh123" associationDirection="None" sourceRef="Activity_0twtlpj" targetRef="TextAnnotation_1dvuf8z" />
+    <bpmn:association id="Association_0hybcza" associationDirection="None" sourceRef="Event_10lg4rt" targetRef="TextAnnotation_1gpnc2e" />
   </bpmn:collaboration>
   <bpmn:process id="parttime-assessment-2024-2025" isExecutable="true">
     <bpmn:laneSet id="LaneSet_0i75wz3">
@@ -149,7 +149,6 @@ dmnX (comes from dmn)</bpmn:text>
         <bpmn:flowNodeRef>Event_0pswj5u</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1sg75ph</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_14myy0o</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_10lg4rt</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0tjlor6</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1uj6ty4</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1qxhhtn</bpmn:flowNodeRef>
@@ -160,6 +159,8 @@ dmnX (comes from dmn)</bpmn:text>
         <bpmn:flowNodeRef>Activity_09tc09c</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_0twtlpj</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1qui2nz</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_10lg4rt</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_0ip2nw4</bpmn:flowNodeRef>
         <bpmn:childLaneSet id="LaneSet_0v6vyq5">
           <bpmn:lane id="Lane_0pbg2l1" name="Primary Assessed Need and Award Eligibility">
             <bpmn:flowNodeRef>Event_0jsq5je</bpmn:flowNodeRef>
@@ -190,7 +191,6 @@ dmnX (comes from dmn)</bpmn:text>
             <bpmn:flowNodeRef>Event_0pswj5u</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_1sg75ph</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Gateway_14myy0o</bpmn:flowNodeRef>
-            <bpmn:flowNodeRef>Event_10lg4rt</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_0tjlor6</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Gateway_1uj6ty4</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_1qxhhtn</bpmn:flowNodeRef>
@@ -201,6 +201,8 @@ dmnX (comes from dmn)</bpmn:text>
             <bpmn:flowNodeRef>Activity_09tc09c</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Activity_0twtlpj</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_1qui2nz</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Event_10lg4rt</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Event_0ip2nw4</bpmn:flowNodeRef>
           </bpmn:lane>
           <bpmn:lane id="Lane_0l32w49" name="Award Calculation">
             <bpmn:flowNodeRef>Event_0jmbywn</bpmn:flowNodeRef>
@@ -259,7 +261,7 @@ dmnX (comes from dmn)</bpmn:text>
         <bpmn:flowNodeRef>Gateway_057mnqo</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
-    <bpmn:sequenceFlow id="Flow_1mtcoea" name="Not eligible for additional transportation" sourceRef="Gateway_14myy0o" targetRef="Event_10lg4rt" />
+    <bpmn:sequenceFlow id="Flow_1mtcoea" name="Not eligible for additional transportation" sourceRef="Gateway_14myy0o" targetRef="Event_0ip2nw4" />
     <bpmn:sequenceFlow id="Flow_1dkitnr" sourceRef="Event_1sg75ph" targetRef="Gateway_14myy0o" />
     <bpmn:sequenceFlow id="Flow_0s3ga70" name="Yes" sourceRef="Gateway_1uj6ty4" targetRef="Event_0pswj5u">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=calculatedDataAdditionalTransportOwner = "yes"</bpmn:conditionExpression>
@@ -1068,15 +1070,6 @@ dmnX (comes from dmn)</bpmn:text>
       <bpmn:outgoing>Flow_1mtcoea</bpmn:outgoing>
       <bpmn:outgoing>Flow_0btwcpj</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:intermediateThrowEvent id="Event_10lg4rt" name="Total Transportation Allowance">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=if(offeringDelivered = &#34;onsite&#34;)&#10;then &#10;  offeringWeeks *  dmnPartTimeProgramYearMaximums.limitTransportationAllowance&#10;else&#10;  0" target="calculatedDataTotalTransportationAllowance" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1mtcoea</bpmn:incoming>
-      <bpmn:outgoing>Flow_0x6e20t</bpmn:outgoing>
-    </bpmn:intermediateThrowEvent>
     <bpmn:intermediateThrowEvent id="Event_0tjlor6" name="Define minimum transport weekly limit">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
@@ -1154,6 +1147,25 @@ dmnX (comes from dmn)</bpmn:text>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0btwcpj</bpmn:incoming>
       <bpmn:outgoing>Flow_0onzs1l</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_0ra2rum" sourceRef="Event_0ip2nw4" targetRef="Event_10lg4rt" />
+    <bpmn:intermediateThrowEvent id="Event_10lg4rt" name="Calculate total transportation Allowance">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=if(offeringDelivered = &#34;onsite&#34;)&#10;then &#10;  offeringWeeks *  dmnPartTimeProgramYearMaximums.limitTransportationAllowance&#10;else&#10;  0" target="calculatedDataTotalTransportationAllowance" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ra2rum</bpmn:incoming>
+      <bpmn:outgoing>Flow_0x6e20t</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:intermediateThrowEvent id="Event_0ip2nw4" name="Calculate Additional Transportation Allowance">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=0" target="calculatedDataTotalAdditionalTransportationAllowance" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1mtcoea</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ra2rum</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
   </bpmn:process>
   <bpmn:category id="Category_0appz4m">
@@ -1545,12 +1557,6 @@ dmnX (comes from dmn)</bpmn:text>
       <bpmndi:BPMNShape id="BPMNShape_0qyot8e" bpmnElement="Gateway_14myy0o" isMarkerVisible="true">
         <dc:Bounds x="3095" y="1767" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_10lg4rt_di" bpmnElement="Event_10lg4rt">
-        <dc:Bounds x="3592" y="1902" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="3575" y="1860" width="70" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0tjlor6_di" bpmnElement="Event_0tjlor6">
         <dc:Bounds x="3262" y="1672" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -1598,10 +1604,22 @@ dmnX (comes from dmn)</bpmn:text>
           <dc:Bounds x="3140" y="1715" width="83" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_10lg4rt_di" bpmnElement="Event_10lg4rt">
+        <dc:Bounds x="3722" y="1902" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3705" y="1952" width="71" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ip2nw4_di" bpmnElement="Event_0ip2nw4">
+        <dc:Bounds x="3552" y="1902" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3535" y="1945" width="70" height="53" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_1o6jw4z" bpmnElement="Flow_1mtcoea">
         <di:waypoint x="3120" y="1817" />
         <di:waypoint x="3120" y="1920" />
-        <di:waypoint x="3592" y="1920" />
+        <di:waypoint x="3552" y="1920" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="3043" y="1875" width="72" height="40" />
         </bpmndi:BPMNLabel>
@@ -1676,7 +1694,7 @@ dmnX (comes from dmn)</bpmn:text>
         <di:waypoint x="4150" y="1765" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0x6e20t_di" bpmnElement="Flow_0x6e20t">
-        <di:waypoint x="3628" y="1918" />
+        <di:waypoint x="3758" y="1918" />
         <di:waypoint x="4150" y="1918" />
         <di:waypoint x="4150" y="1815" />
       </bpmndi:BPMNEdge>
@@ -2180,6 +2198,14 @@ dmnX (comes from dmn)</bpmn:text>
         <di:waypoint x="3298" y="1690" />
         <di:waypoint x="3355" y="1690" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ra2rum_di" bpmnElement="Flow_0ra2rum">
+        <di:waypoint x="3588" y="1920" />
+        <di:waypoint x="3722" y="1920" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0hybcza_di" bpmnElement="Association_0hybcza">
+        <di:waypoint x="3754" y="1908" />
+        <di:waypoint x="3799" y="1870" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="BPMNShape_0hjhvfj" bpmnElement="TextAnnotation_15vd5py">
         <dc:Bounds x="7429" y="3000" width="100" height="30" />
         <bpmndi:BPMNLabel />
@@ -2270,10 +2296,6 @@ dmnX (comes from dmn)</bpmn:text>
         <dc:Bounds x="3870" y="1530" width="150" height="84" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1gpnc2e_di" bpmnElement="TextAnnotation_1gpnc2e">
-        <dc:Bounds x="3560" y="1970" width="230" height="70" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_1dvuf8z_di" bpmnElement="TextAnnotation_1dvuf8z">
         <dc:Bounds x="4020" y="1542" width="180" height="72" />
         <bpmndi:BPMNLabel />
@@ -2358,14 +2380,14 @@ dmnX (comes from dmn)</bpmn:text>
         <di:waypoint x="3930" y="1650" />
         <di:waypoint x="3930" y="1614" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0hybcza_di" bpmnElement="Association_0hybcza">
-        <di:waypoint x="3610" y="1938" />
-        <di:waypoint x="3610" y="1970" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_1skh123_di" bpmnElement="Association_1skh123">
         <di:waypoint x="4070" y="1650" />
         <di:waypoint x="4070" y="1614" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_1gpnc2e_di" bpmnElement="TextAnnotation_1gpnc2e">
+        <dc:Bounds x="3790" y="1800" width="230" height="70" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

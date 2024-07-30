@@ -117,9 +117,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-addition
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataAdditionalTransportRequested =
         YesNoOptions.Yes;
-      assessmentConsolidatedData.studentDataAdditionalTransportRequested =
-        YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataAdditionalTransportListedDriver =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportOwner =
         YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataAdditionalTransportKm = 30;
       assessmentConsolidatedData.offeringWeeks = 20;
@@ -139,6 +139,13 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-addition
       expect(
         calculatedAssessment.variables
           .calculatedDataAdditionalTransportRequested,
+      ).toBe(YesNoOptions.Yes);
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataAdditionalTransportListedDriver,
+      ).toBe(YesNoOptions.Yes);
+      expect(
+        calculatedAssessment.variables.calculatedDataAdditionalTransportOwner,
       ).toBe(YesNoOptions.Yes);
       expect(
         calculatedAssessment.variables.calculatedDataAdditionalTransportKm,
