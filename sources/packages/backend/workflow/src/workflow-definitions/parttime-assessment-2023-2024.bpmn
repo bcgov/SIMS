@@ -1073,7 +1073,7 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_0tjlor6" name="Define minimum transport weekly limit">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=//If student is in onsite courses they get a minimum per study week, otherwise 0&#10;if(offeringDelivered = &#34;onsite&#34;)&#10;then &#10; dmnPartTimeProgramYearMaximums.limitTransportationAllowance&#10;else&#10;  0" target="calculatedDataWeeklyMinTransport" />
+          <zeebe:output source="=// If student is in onsite courses they get a minimum per study week, otherwise 0&#10;if(offeringDelivered = &#34;onsite&#34;)&#10;then &#10; dmnPartTimeProgramYearMaximums.limitTransportationAllowance&#10;else&#10;  0" target="calculatedDataWeeklyMinTransport" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0onzs1l</bpmn:incoming>
@@ -1152,7 +1152,7 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_10lg4rt" name="Calculate total transportation Allowance">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if(offeringDelivered = &#34;onsite&#34;)&#10;then &#10;  offeringWeeks *  dmnPartTimeProgramYearMaximums.limitTransportationAllowance&#10;else&#10;  0" target="calculatedDataTotalTransportationAllowance" />
+          <zeebe:output source="=if(offeringDelivered = &#34;onsite&#34;)&#10;then &#10;  offeringWeeks * dmnPartTimeProgramYearMaximums.limitTransportationAllowance&#10;else&#10;  0" target="calculatedDataTotalTransportationAllowance" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0ra2rum</bpmn:incoming>

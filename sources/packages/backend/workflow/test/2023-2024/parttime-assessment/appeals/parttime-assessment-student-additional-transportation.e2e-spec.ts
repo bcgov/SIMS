@@ -33,7 +33,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-addition
           additionalTransportListedDriver: YesNoOptions.Yes,
           additionalTransportOwner: YesNoOptions.Yes,
           additionalTransportKm: 12,
-          additionalTransportCost: 111,
           additionalTransportWeeks: 1,
           transportationCostSituation: TransportationCostSituation.NoLimit,
           additionalTransportPlacement: YesNoOptions.Yes,
@@ -71,7 +70,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-addition
   );
 
   it(
-    "Should have calculated student additional transportation variables assigned with 0 " +
+    "Should have calculated student additional transportation allowance to 0 " +
       "when there is a request a change for not eligible for transportation allowance.",
     async () => {
       // Arrange
@@ -105,6 +104,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-addition
         calculatedAssessment.variables
           .calculatedDataAdditionalTransportRequested,
       ).toBe(YesNoOptions.No);
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataTotalAdditionalTransportationAllowance,
+      ).toBe(0);
     },
   );
 
@@ -124,7 +127,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-addition
       assessmentConsolidatedData.studentDataAdditionalTransportKm = 30;
       assessmentConsolidatedData.offeringWeeks = 20;
       assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 15;
-      assessmentConsolidatedData.studentDataAdditionalTransportCost = 10;
       assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
         YesNoOptions.Yes;
 
