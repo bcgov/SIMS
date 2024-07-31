@@ -5153,7 +5153,8 @@
           "addons": [],
           "inputType": "hidden",
           "id": "eu8tkf",
-          "tags": []
+          "tags": [],
+          "lockKey": true
         },
         {
           "input": true,
@@ -5172,6 +5173,7 @@
           },
           "properties": {},
           "calculateValue": "const [programYear] = data.programYearStartDate ? data.programYearStartDate.split(\"-\"):[];\nvalue = programYear ? programYear:\"\";",
+          "calculateServer": true,
           "lockKey": true
         },
         {
@@ -6415,8 +6417,7 @@
                       "id": "el67mt",
                       "addons": [],
                       "displayMask": "",
-                      "truncateMultipleSpaces": false,
-                      "tags": []
+                      "truncateMultipleSpaces": false
                     },
                     {
                       "label": "Phone number",
@@ -9905,17 +9906,16 @@
               "id": "ef3gfa",
               "addons": [],
               "lazyLoad": false,
-              "tags": [],
-              "isNew": false
+              "tags": []
             },
             {
-              "label": "<strong>Were you ever considered a child or youth under government care?</strong>",
+              "label": "<strong>Are you, or were you ever considered a child or youth under government care?</strong>",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
               "optionsLabelPosition": "right",
               "description": "",
-              "tooltip": "Ministry of Children and Family Development (MCFD) or Indigenous Child and Family Service Agency [ICFSA] care, care through the Ministry of Social Development and Poverty Reduction [SDPR] Child in the Home of Relative Program or government care through a Canadian province or territory outside of B.C.",
+              "tooltip": "For a variety of reasons, the government may provide care or guardianship for a child or youth. Answer ‘YES’ to this question if you were ever considered a child or youth in the care of the Ministry of Children and Family Development (MCFD) or an Indigenous Child and Family Service Agency (ICFSA), in the Ministry of Social Development and Poverty Reduction [SDPR] Child in the Home of Relative Program, or in government care through a Canadian province or territory outside of B.C., This includes out of care and temporary care statuses, as well as continuing custody orders both in B.C. and in Canadian provinces or territories outside of B.C.",
               "customClass": "",
               "tabindex": "",
               "inline": false,
@@ -9933,6 +9933,11 @@
                 {
                   "value": "no",
                   "label": "No",
+                  "shortcut": ""
+                },
+                {
+                  "value": "preferNotToAnswer",
+                  "label": "Prefer not to answer",
                   "shortcut": ""
                 }
               ],
@@ -10004,6 +10009,88 @@
               "defaultValue": ""
             },
             {
+              "label": "HTML",
+              "labelWidth": "",
+              "labelMargin": "",
+              "tag": "p",
+              "className": "alert alert-info fa fa-info-circle",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<strong> Based on your response, you may be eligible for the Provincial Tuition Waiver Program and the Learning for Future Grant.</strong>\n <br />This means you could have your tuition and eligible fees paid for, and you could also receive an annual grant of $3,500 to cover additional education-related costs (e.g., textbooks, computers, supplies, etc.).\n<br/>To learn more about these financial supports, please visit the StudentAid BC website or contact the Financial Aid Office at your post-secondary institution.",
+              "refreshOnChange": false,
+              "customClass": "banner-info",
+              "hidden": false,
+              "modalEdit": false,
+              "key": "html43",
+              "tags": [],
+              "properties": {},
+              "conditional": {
+                "show": "true",
+                "when": "youthInCare",
+                "eq": "preferNotToAnswer",
+                "json": ""
+              },
+              "customConditional": "",
+              "logic": [],
+              "attributes": {},
+              "overlay": {
+                "style": "",
+                "page": "",
+                "left": "",
+                "top": "",
+                "width": "",
+                "height": ""
+              },
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false,
+              "placeholder": "",
+              "prefix": "",
+              "suffix": "",
+              "multiple": false,
+              "defaultValue": null,
+              "protected": false,
+              "unique": false,
+              "persistent": false,
+              "clearOnHide": true,
+              "refreshOn": "",
+              "redrawOn": "",
+              "dataGridLabel": false,
+              "labelPosition": "top",
+              "description": "",
+              "errorLabel": "",
+              "tooltip": "",
+              "tabindex": "",
+              "disabled": false,
+              "autofocus": false,
+              "dbIndex": false,
+              "customDefaultValue": "",
+              "calculateValue": "",
+              "calculateServer": false,
+              "widget": null,
+              "validateOn": "change",
+              "validate": {
+                "required": false,
+                "custom": "",
+                "customPrivate": false,
+                "strictDateValidation": false,
+                "multiple": false,
+                "unique": false
+              },
+              "allowCalculateOverride": false,
+              "encrypted": false,
+              "showCharCount": false,
+              "showWordCount": false,
+              "allowMultipleMasks": false,
+              "addons": [],
+              "id": "evyzdwa",
+              "hideLabel": true
+            },
+            {
               "clearOnHide": false,
               "key": "custodyOfChildWelfareInformationPanel",
               "input": false,
@@ -10047,13 +10134,13 @@
                   "optionsLabelPosition": "right",
                   "tags": [],
                   "conditional": {
-                    "show": "true",
-                    "when": "youthInCare",
-                    "eq": "yes"
+                    "show": "",
+                    "when": null,
+                    "eq": ""
                   },
                   "properties": {},
                   "lockKey": true,
-                  "tooltip": "This means that the provincial government is currently your legal guardian if you are younger than 19 or was your legal guardian at the time of your 19th birthday."
+                  "tooltip": "This means that the provincial government is currently your legal guardian if you are younger than 19 or was your legal guardian at the time of your 19th birthday.",
                 }
               ],
               "type": "panel",
@@ -10066,7 +10153,8 @@
                 "eq": "yes"
               },
               "properties": {},
-              "lockKey": true
+              "lockKey": true,
+              "customConditional": "show = (data.howWillYouBeAttendingTheProgram !== \"Part Time\" \n       && data.youthInCare === \"yes\");"
             },
             {
               "label": "<strong>At the time of your course study start date, will you have been out of high school for 4 years?</strong>",
@@ -22255,7 +22343,7 @@
                   "value": ""
                 }
               ],
-              "content": "Enter your reported total income from line 15000 of your {{data.programYear}} income tax return. This income will be matched with Canada Revenue Agency records, which may affect your assessment of need and/or grant eligibility.  \n\nIf you did not file a {data.programYear}} income tax return, enter your total income from all sources both inside and outside of Canada.",
+              "content": "Enter your reported total income from line 15000 of your {{data.programYear}} income tax return. This income will be matched with Canada Revenue Agency records, which may affect your assessment of need and/or grant eligibility.  \n\nIf you did not file a {{data.programYear}} income tax return, enter your total income from all sources both inside and outside of Canada.",
               "refreshOnChange": false,
               "customClass": "",
               "hidden": false,
@@ -22326,7 +22414,7 @@
               "addons": []
             },
             {
-              "label": "My total income in {data.programYear}} was:",
+              "label": "My total income in {{data.programYear}} was:",
               "prefix": "$",
               "customClass": "font-weight-bold",
               "mask": false,
@@ -23659,7 +23747,7 @@
                   "calculateServer": false,
                   "allowCalculateOverride": false,
                   "validate": {
-                    "required": true,
+                    "required": false,
                     "onlyAvailableItems": true,
                     "customMessage": "",
                     "custom": "",
@@ -23675,7 +23763,7 @@
                   "tags": [],
                   "properties": {},
                   "conditional": {
-                    "show": "true",
+                    "show": true,
                     "when": "hasSignificantDegreeOfIncome",
                     "eq": "yes",
                     "json": ""
@@ -24518,8 +24606,7 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "inputType": "hidden",
-                  "id": "e78m1ow",
-                  "tags": []
+                  "id": "e78m1ow"
                 },
                 {
                   "label": "HTML",
@@ -30261,7 +30348,7 @@
                   "attr": ""
                 }
               ],
-              "className": "alert alert-danger fa fa-ban w-100",
+              "className": "alert alert-danger fa fa-ban w-100 w-100",
               "content": "<strong> You must be a listed driver on the insurance of the vehicle you will be using to qualify for additional transportation funding.</strong>",
               "type": "htmlelement",
               "hideLabel": true,
@@ -30768,8 +30855,7 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "esmabhd",
-                      "tags": []
+                      "id": "esmabhd"
                     },
                     {
                       "label": "HTML",
@@ -31416,7 +31502,8 @@
               "id": "ev5rghf"
             }
           ],
-          "id": "emvzoox"
+          "id": "emvzoox",
+          "lockKey": true
         },
         {
           "input": true,
