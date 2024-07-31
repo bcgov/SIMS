@@ -6416,8 +6416,7 @@
                       "addons": [],
                       "displayMask": "",
                       "truncateMultipleSpaces": false,
-                      "tags": [],
-                      "isNew": false
+                      "tags": []
                     },
                     {
                       "label": "Phone number",
@@ -8275,8 +8274,7 @@
               "breadcrumb": "default",
               "id": "efawj5",
               "addons": [],
-              "lazyLoad": false,
-              "tags": []
+              "lazyLoad": false
             },
             {
               "label": "<strong>Are you a resident of B.C.?</strong>",
@@ -9035,8 +9033,7 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "eawr0fg",
-                      "tags": []
+                      "id": "eawr0fg"
                     },
                     {
                       "label": "HTML",
@@ -9111,8 +9108,7 @@
                       "addons": [],
                       "tag": "p",
                       "id": "exvzcx",
-                      "className": "",
-                      "tags": []
+                      "className": ""
                     },
                     {
                       "label": "HTML",
@@ -9358,8 +9354,7 @@
                       "imageSize": "200",
                       "fileMinSize": "0KB",
                       "uploadOnly": false,
-                      "id": "e15yoie",
-                      "tags": []
+                      "id": "e15yoie"
                     },
                     {
                       "label": "Columns",
@@ -9432,8 +9427,7 @@
                               "properties": {},
                               "allowMultipleMasks": false,
                               "addons": [],
-                              "id": "euomj5",
-                              "tags": []
+                              "id": "euomj5"
                             }
                           ],
                           "width": 6,
@@ -9511,8 +9505,7 @@
                               "properties": {},
                               "allowMultipleMasks": false,
                               "addons": [],
-                              "id": "edp1zrf",
-                              "tags": []
+                              "id": "edp1zrf"
                             }
                           ],
                           "width": 6,
@@ -9588,8 +9581,7 @@
                       "tree": false,
                       "lazyLoad": false,
                       "autoAdjust": false,
-                      "id": "eh0xn99",
-                      "tags": []
+                      "id": "eh0xn99"
                     }
                   ],
                   "placeholder": "",
@@ -9913,7 +9905,8 @@
               "id": "ef3gfa",
               "addons": [],
               "lazyLoad": false,
-              "tags": []
+              "tags": [],
+              "isNew": false
             },
             {
               "label": "<strong>Are you, or were you ever considered a child or youth under government care?</strong>",
