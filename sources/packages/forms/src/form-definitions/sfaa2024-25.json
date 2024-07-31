@@ -22410,8 +22410,7 @@
               "showWordCount": false,
               "allowMultipleMasks": false,
               "id": "ezaww3",
-              "addons": [],
-              "hideLabel": true
+              "addons": []
             },
             {
               "label": "My total income in {data.programYear}} was:",
@@ -25025,8 +25024,7 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "eo1cjdj",
-                  "tags": []
+                  "id": "eo1cjdj"
                 },
                 {
                   "label": "HTML",
@@ -25101,8 +25099,7 @@
                   "addons": [],
                   "tag": "p",
                   "id": "eq7e38",
-                  "className": "",
-                  "tags": []
+                  "className": ""
                 },
                 {
                   "label": "HTML",
@@ -25177,8 +25174,7 @@
                   "addons": [],
                   "tag": "p",
                   "id": "evksdr7",
-                  "className": "",
-                  "tags": []
+                  "className": ""
                 },
                 {
                   "label": "HTML",
@@ -25253,8 +25249,7 @@
                   "addons": [],
                   "tag": "p",
                   "id": "e99y2i9",
-                  "className": "",
-                  "tags": []
+                  "className": ""
                 },
                 {
                   "label": "ExceptionalExpenseFile",
@@ -25336,8 +25331,7 @@
                   "imageSize": "200",
                   "fileMinSize": "0KB",
                   "uploadOnly": false,
-                  "id": "ea87f6w",
-                  "tags": []
+                  "id": "ea87f6w"
                 },
                 {
                   "label": "Columns",
@@ -25410,8 +25404,7 @@
                           "properties": {},
                           "allowMultipleMasks": false,
                           "addons": [],
-                          "id": "egdox9m",
-                          "tags": []
+                          "id": "egdox9m"
                         }
                       ],
                       "width": 6,
@@ -25489,8 +25482,7 @@
                           "properties": {},
                           "allowMultipleMasks": false,
                           "addons": [],
-                          "id": "ecwx4udn",
-                          "tags": []
+                          "id": "ecwx4udn"
                         }
                       ],
                       "width": 6,
@@ -25566,8 +25558,7 @@
                   "tree": false,
                   "lazyLoad": false,
                   "autoAdjust": false,
-                  "id": "eajxvgi",
-                  "tags": []
+                  "id": "eajxvgi"
                 }
               ],
               "allowPrevious": false,
