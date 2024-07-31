@@ -80,7 +80,7 @@ export const APPLICATION_SUBMISSION_PAYLOAD = {
     livingWithParents: "no",
     strongIfYouMustRelocateToADifferentCityToAttendSchoolDoYouWantToProvideACostToBeConsideredStrong:
       "no",
-    eligibleForAnAdditionalTransportationAllowance: "no",
+    additionalTransportRequested: "no",
     selectedProgram: 211,
     selectedOffering: 425,
     myStudyPeriodIsntListed: {
