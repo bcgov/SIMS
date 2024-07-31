@@ -1,12 +1,15 @@
 <template>
   <modal-dialog-base title="Edit application" :showDialog="showDialog">
     <template #content>
-      Editing your application will result in a new assessment, which could
-      delay your application. <strong>Are you sure you want to proceed?</strong>
+      Any edits made to your application may require the resubmission of
+      supporting information, potentially delaying your application. Are you
+      sure you want to proceed?
     </template>
     <template #footer>
       <footer-buttons
-        primaryLabel="Edit application now"
+        :primaryLabel="
+          $props.confirmationText ? $props.confirmationText : 'Edit application'
+        "
         secondaryLabel="No"
         @primaryClick="editApplication"
         @secondaryClick="dialogClosed"
@@ -21,6 +24,12 @@ import { useModalDialog } from "@/composables";
 import { defineComponent } from "vue";
 
 export default defineComponent({
+  props: {
+    confirmationText: {
+      type: String,
+      required: false,
+    },
+  },
   components: {
     ModalDialogBase,
   },

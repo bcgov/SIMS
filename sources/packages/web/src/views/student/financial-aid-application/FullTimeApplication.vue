@@ -43,6 +43,7 @@
   <ConfirmEditApplication
     ref="editApplicationModal"
     @confirmEditApplication="editApplication"
+    confirmationText="Submit"
   />
 </template>
 
