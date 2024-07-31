@@ -5173,7 +5173,6 @@
           },
           "properties": {},
           "calculateValue": "const [programYear] = data.programYearStartDate ? data.programYearStartDate.split(\"-\"):[];\nvalue = programYear ? programYear:\"\";",
-          "calculateServer": true,
           "lockKey": true
         },
         {
@@ -8275,7 +8274,8 @@
               "breadcrumb": "default",
               "id": "efawj5",
               "addons": [],
-              "lazyLoad": false
+              "lazyLoad": false,
+              "tags": []
             },
             {
               "label": "<strong>Are you a resident of B.C.?</strong>",
@@ -9034,7 +9034,8 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "eawr0fg"
+                      "id": "eawr0fg",
+                      "tags": []
                     },
                     {
                       "label": "HTML",
@@ -9109,7 +9110,8 @@
                       "addons": [],
                       "tag": "p",
                       "id": "exvzcx",
-                      "className": ""
+                      "className": "",
+                      "tags": []
                     },
                     {
                       "label": "HTML",
@@ -9355,7 +9357,8 @@
                       "imageSize": "200",
                       "fileMinSize": "0KB",
                       "uploadOnly": false,
-                      "id": "e15yoie"
+                      "id": "e15yoie",
+                      "tags": []
                     },
                     {
                       "label": "Columns",
@@ -9428,7 +9431,8 @@
                               "properties": {},
                               "allowMultipleMasks": false,
                               "addons": [],
-                              "id": "euomj5"
+                              "id": "euomj5",
+                              "tags": []
                             }
                           ],
                           "width": 6,
@@ -9506,7 +9510,8 @@
                               "properties": {},
                               "allowMultipleMasks": false,
                               "addons": [],
-                              "id": "edp1zrf"
+                              "id": "edp1zrf",
+                              "tags": []
                             }
                           ],
                           "width": 6,
@@ -9582,7 +9587,8 @@
                       "tree": false,
                       "lazyLoad": false,
                       "autoAdjust": false,
-                      "id": "eh0xn99"
+                      "id": "eh0xn99",
+                      "tags": []
                     }
                   ],
                   "placeholder": "",
