@@ -5,6 +5,49 @@ import {
 import { ProcessSummary } from "@sims/utilities/logger";
 import { EntityManager } from "typeorm";
 
+const ACCEPT_ASSESSMENT_BLOCKING_VALIDATIONS = [
+  ECertFailedValidation.DisabilityStatusNotConfirmed,
+  ECertFailedValidation.MSFAACanceled,
+  ECertFailedValidation.MSFAANotSigned,
+  ECertFailedValidation.HasStopDisbursementRestriction,
+  ECertFailedValidation.NoEstimatedAwardAmounts,
+];
+
+/**
+ * Result of validations for a e-Cert generation.
+ */
+export class ECertPreValidatorResult {
+  private readonly hasBlockingValidations: boolean;
+
+  constructor(private eCertFailedValidations: ECertFailedValidation[]) {
+    this.hasBlockingValidations = eCertFailedValidations.some((validation) =>
+      ACCEPT_ASSESSMENT_BLOCKING_VALIDATIONS.includes(validation),
+    );
+  }
+
+  /**
+   * List of all failed e-Cert validations.
+   */
+  get failedValidations(): ReadonlyArray<ECertFailedValidation> {
+    return this.eCertFailedValidations;
+  }
+
+  /**
+   * Indicates if a Student Assessment can be accepted by the student
+   * based in the e-Cert blocking conditions.
+   */
+  get canAcceptAssessment(): boolean {
+    return !this.hasBlockingValidations;
+  }
+
+  /**
+   * Indicates if the e-Cert can be generated.
+   */
+  get canGenerateECert(): boolean {
+    return !this.eCertFailedValidations.length;
+  }
+}
+
 /**
  * Allow validations to be executed before the e-Cert disbursement time.
  */
@@ -27,5 +70,5 @@ export interface ECertPreValidator {
     eCertDisbursement: EligibleECertDisbursement,
     entityManager: EntityManager,
     log: ProcessSummary,
-  ): Promise<ECertFailedValidation[]>;
+  ): Promise<ECertPreValidatorResult>;
 }

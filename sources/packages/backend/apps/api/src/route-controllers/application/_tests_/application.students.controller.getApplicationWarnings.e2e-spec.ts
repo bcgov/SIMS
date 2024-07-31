@@ -7,7 +7,6 @@ import {
   createTestingAppModule,
   FakeStudentUsersTypes,
   getStudentToken,
-  getStudentByFakeStudentUserType,
   mockUserLoginInfo,
 } from "../../../testHelpers";
 import {
@@ -18,15 +17,17 @@ import {
   createFakeMSFAANumber,
   MSFAAStates,
   saveFakeStudent,
+  createFakeDisbursementValue,
+  saveFakeApplication,
 } from "@sims/test-utils";
 import {
   ApplicationStatus,
   COEStatus,
   DisabilityStatus,
   DisbursementScheduleStatus,
+  DisbursementValueType,
   OfferingIntensity,
   RestrictionActionType,
-  Student,
 } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
 import { ECertFailedValidation } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
@@ -35,7 +36,6 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
   let app: INestApplication;
   let appModule: TestingModule;
   let appDataSource: DataSource;
-  let student: Student;
   let db: E2EDataSources;
 
   beforeAll(async () => {
@@ -45,20 +45,18 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
     appModule = module;
     appDataSource = dataSource;
     db = createE2EDataSources(dataSource);
-    student = await getStudentByFakeStudentUserType(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-      dataSource,
-    );
   });
 
   it("Should still return when application is not in 'Completed' status.", async () => {
     // Arrange
     const application = await saveFakeApplicationDisbursements(
       appDataSource,
-      { student },
+      undefined,
       { createSecondDisbursement: true },
     );
-    const endpoint = `/students/application/${application.id}/get-application-warnings`;
+    // Mock user services to return the saved student.
+    await mockUserLoginInfo(appModule, application.student);
+    const endpoint = `/students/application/${application.id}/warnings`;
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
@@ -67,7 +65,10 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect([]);
+      .expect({
+        eCertFailedValidations: [],
+        canAcceptAssessment: true,
+      });
   });
 
   it(
@@ -113,7 +114,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
         true;
       await db.studentAssessment.save(application.currentAssessment);
 
-      const endpoint = `/students/application/${application.id}/get-application-warnings`;
+      const endpoint = `/students/application/${application.id}/warnings`;
       const token = await getStudentToken(
         FakeStudentUsersTypes.FakeStudentUserType1,
       );
@@ -123,7 +124,12 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
         .get(endpoint)
         .auth(token, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
-        .expect([ECertFailedValidation.DisabilityStatusNotConfirmed]);
+        .expect({
+          eCertFailedValidations: [
+            ECertFailedValidation.DisabilityStatusNotConfirmed,
+          ],
+          canAcceptAssessment: false,
+        });
     },
   );
 
@@ -162,7 +168,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
       msfaaNumber.cancelledDate = getISODateOnlyString(new Date());
       await db.msfaaNumber.save(msfaaNumber);
 
-      const endpoint = `/students/application/${application.id}/get-application-warnings`;
+      const endpoint = `/students/application/${application.id}/warnings`;
       const token = await getStudentToken(
         FakeStudentUsersTypes.FakeStudentUserType1,
       );
@@ -172,10 +178,13 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
         .get(endpoint)
         .auth(token, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
-        .expect([
-          ECertFailedValidation.MSFAACanceled,
-          ECertFailedValidation.MSFAANotSigned,
-        ]);
+        .expect({
+          eCertFailedValidations: [
+            ECertFailedValidation.MSFAACanceled,
+            ECertFailedValidation.MSFAANotSigned,
+          ],
+          canAcceptAssessment: false,
+        });
     },
   );
 
@@ -224,7 +233,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
         restriction,
       });
 
-      const endpoint = `/students/application/${application.id}/get-application-warnings`;
+      const endpoint = `/students/application/${application.id}/warnings`;
       const token = await getStudentToken(
         FakeStudentUsersTypes.FakeStudentUserType1,
       );
@@ -234,9 +243,146 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
         .get(endpoint)
         .auth(token, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
-        .expect([ECertFailedValidation.HasStopDisbursementRestriction]);
+        .expect({
+          eCertFailedValidations: [
+            ECertFailedValidation.HasStopDisbursementRestriction,
+          ],
+          canAcceptAssessment: false,
+        });
     },
   );
+
+  it("Should return a failed ecert validations array with no estimated awardAmounts when no disbursements values are present.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+    const msfaaNumber = createFakeMSFAANumber(
+      {
+        student,
+      },
+      {
+        msfaaState: MSFAAStates.Signed,
+      },
+    );
+    await db.msfaaNumber.save(msfaaNumber);
+
+    // Mock user services to return the saved student.
+    await mockUserLoginInfo(appModule, student);
+
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      { student, msfaaNumber, firstDisbursementValues: [] },
+      {
+        applicationStatus: ApplicationStatus.Completed,
+        offeringIntensity: OfferingIntensity.partTime,
+        firstDisbursementInitialValues: {
+          coeStatus: COEStatus.completed,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+        },
+      },
+    );
+
+    const endpoint = `/students/application/${application.id}/warnings`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        eCertFailedValidations: [ECertFailedValidation.NoEstimatedAwardAmounts],
+        canAcceptAssessment: false,
+      });
+  });
+
+  it(
+    "Should return a failed ecert validations array with no estimated awardAmounts when " +
+      "disbursement values are present but the total amount to be disbursed is 0(zero).",
+    async () => {
+      // Arrange
+      const student = await saveFakeStudent(db.dataSource);
+      const msfaaNumber = createFakeMSFAANumber(
+        {
+          student,
+        },
+        {
+          msfaaState: MSFAAStates.Signed,
+        },
+      );
+      await db.msfaaNumber.save(msfaaNumber);
+
+      // Mock user services to return the saved student.
+      await mockUserLoginInfo(appModule, student);
+
+      const application = await saveFakeApplicationDisbursements(
+        appDataSource,
+        {
+          student,
+          msfaaNumber,
+          firstDisbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLP",
+              0,
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.BCGrant,
+              "BCAG",
+              0,
+            ),
+          ],
+        },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+          offeringIntensity: OfferingIntensity.partTime,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+          },
+        },
+      );
+
+      const endpoint = `/students/application/${application.id}/warnings`;
+      const token = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          eCertFailedValidations: [
+            ECertFailedValidation.NoEstimatedAwardAmounts,
+          ],
+          canAcceptAssessment: false,
+        });
+    },
+  );
+
+  it("Should throw a not found error when the application is not associated with the student.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(appDataSource);
+    const endpoint = `/students/application/${application.id}/warnings`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        statusCode: HttpStatus.NOT_FOUND,
+        message:
+          "Applications does not exists or the student does not have access to it.",
+        error: "Not Found",
+      });
+  });
 
   afterAll(async () => {
     await app?.close();

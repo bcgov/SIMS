@@ -30,13 +30,15 @@ export abstract class ValidateDisbursementBase {
       validationResults.push(ECertFailedValidation.InvalidSIN);
     }
     // MSFAA cancelation.
-    if (eCertDisbursement.disbursement.msfaaNumber.cancelledDate) {
-      log.info(`Student MSFAA associated with the disbursement is cancelled.`);
+    if (eCertDisbursement.disbursement.msfaaNumber?.cancelledDate) {
+      log.info("Student MSFAA associated with the disbursement is cancelled.");
       validationResults.push(ECertFailedValidation.MSFAACanceled);
     }
     // MSFAA signed.
-    if (!eCertDisbursement.disbursement.msfaaNumber.dateSigned) {
-      log.info(`Student MSFAA associated with the disbursement is not signed.`);
+    if (!eCertDisbursement.disbursement.msfaaNumber?.dateSigned) {
+      log.info(
+        "Student MSFAA associated with the disbursement is not signed or there is no MSFAA associated with the application.",
+      );
       validationResults.push(ECertFailedValidation.MSFAANotSigned);
     }
     // Disability Status PD/PPD Verified.
@@ -51,6 +53,19 @@ export abstract class ValidateDisbursementBase {
       validationResults.push(
         ECertFailedValidation.DisabilityStatusNotConfirmed,
       );
+    }
+    // No estimated awards amounts to be disbursed.
+    const totalEstimatedAwards =
+      eCertDisbursement.disbursement.disbursementValues.reduce(
+        (totalEstimatedAward, currentAward) =>
+          totalEstimatedAward + currentAward.valueAmount,
+        0,
+      );
+    if (!totalEstimatedAwards) {
+      log.info(
+        "Disbursement estimated awards do not contain any amount to be disbursed.",
+      );
+      validationResults.push(ECertFailedValidation.NoEstimatedAwardAmounts);
     }
     return validationResults;
   }

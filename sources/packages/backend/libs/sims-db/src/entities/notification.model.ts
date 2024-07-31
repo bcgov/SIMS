@@ -209,4 +209,8 @@ export enum NotificationMessageType {
    * Ministry Provincial Daily Disbursement Receipt.
    */
   MinistryNotificationProvincialDailyDisbursementReceipt = 28,
+  /**
+   * Supporting User Information Notification.
+   */
+  SupportingUserInformationNotification = 29,
 }

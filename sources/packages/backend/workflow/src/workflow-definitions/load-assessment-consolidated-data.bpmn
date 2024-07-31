@@ -84,8 +84,6 @@
           <zeebe:header key="parent1CRAReportedIncome" value="$.supportingUsers.Parent1.craReportedIncome" />
           <zeebe:header key="parent2CRAReportedIncome" value="$.supportingUsers.Parent2.craReportedIncome" />
           <zeebe:header key="partner1CRAReportedIncome" value="$.supportingUsers.Partner1.craReportedIncome" />
-          <zeebe:header key="appealsStudentIncomeAppealData" value="$.appeals.studentIncomeAppeal.submittedData" />
-          <zeebe:header key="appealsPartnerIncomeAppealData" value="$.appeals.partnerIncomeAppeal.submittedData" />
           <zeebe:header key="appealsStudentDisabilityAppealData" value="$.appeals.studentDisabilityAppeal.submittedData" />
           <zeebe:header key="appealsStudentFinancialInformationAppealData" value="$.appeals.studentFinancialInformationAppeal.submittedData" />
           <zeebe:header key="appealsStudentAdditionalTransportationAppealData" value="$.appeals.studentAdditionalTransportationAppeal.submittedData" />

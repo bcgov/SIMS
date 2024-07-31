@@ -92,9 +92,10 @@ import {
   MSFAANumberSharedService,
   AssessmentSequentialProcessingService,
 } from "@sims/services";
+import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
 
 @Module({
-  imports: [AuthModule],
+  imports: [AuthModule, ECertIntegrationModule],
   controllers: [
     SupportingUserAESTController,
     DesignationAgreementAESTController,

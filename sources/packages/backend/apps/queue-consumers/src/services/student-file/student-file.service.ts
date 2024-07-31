@@ -1,18 +1,25 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { DataSource, UpdateResult } from "typeorm";
-import { RecordDataModelService, StudentFile } from "@sims/sims-db";
-import { VirusScanStatus } from "@sims/sims-db/entities/virus-scan-status-type";
+import {
+  RecordDataModelService,
+  StudentFile,
+  VirusScanStatus,
+} from "@sims/sims-db";
 import { Readable } from "stream";
 import { CustomNamedError } from "@sims/utilities";
 import { UNABLE_TO_SCAN_FILE } from "../../constants/error-code.constants";
 import { ProcessSummary } from "@sims/utilities/logger";
-import { ClamAVService } from "@sims/services";
+import { ClamAVService, SystemUsersService } from "@sims/services";
+import * as path from "path";
+
+export const INFECTED_FILENAME_SUFFIX = "-OriginalFileError";
 
 @Injectable()
 export class StudentFileService extends RecordDataModelService<StudentFile> {
   constructor(
     dataSource: DataSource,
     private readonly clamAVService: ClamAVService,
+    private readonly systemUsersService: SystemUsersService,
   ) {
     super(dataSource.getRepository(StudentFile));
   }
@@ -49,7 +56,19 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         UNABLE_TO_SCAN_FILE,
       );
     }
-    await this.updateFileScanStatus(studentFile.uniqueFileName, isInfected);
+    let fileName = studentFile.fileName;
+    if (isInfected) {
+      processSummary.warn("Virus found.");
+      const fileInfo = path.parse(studentFile.fileName);
+      fileName = `${fileInfo.name}${INFECTED_FILENAME_SUFFIX}${fileInfo.ext}`;
+    } else {
+      processSummary.info("No virus found.");
+    }
+    await this.updateFileScanStatus(
+      studentFile.uniqueFileName,
+      isInfected,
+      fileName,
+    );
     return isInfected;
   }
 
@@ -60,7 +79,12 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
    */
   private async getStudentFile(uniqueFileName: string): Promise<StudentFile> {
     return this.repo.findOne({
-      select: { uniqueFileName: true, fileContent: true },
+      select: {
+        id: true,
+        fileName: true,
+        uniqueFileName: true,
+        fileContent: true,
+      },
       where: { uniqueFileName, virusScanStatus: VirusScanStatus.InProgress },
     });
   }
@@ -68,30 +92,39 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
   /**
    * Update the virus scan status of the file.
    * @param uniqueFileName unique file name of the file to update the virus scan status.
-   * @param isInfected true if the file is virus infected, false otherwise.
+   * @param isInfected true if the file is virus infected, false for a clean file and null or undefined when it was not possible to scan.
+   * @param fileName filename to be updated if defined.
    * @returns the update result.
    */
   private async updateFileScanStatus(
     uniqueFileName: string,
-    isInfected: boolean,
+    isInfected?: boolean,
+    fileName?: string,
   ): Promise<UpdateResult> {
+    const now = new Date();
+    const auditUser = this.systemUsersService.systemUser;
+    let virusScanStatus: VirusScanStatus;
     switch (isInfected) {
       case null:
       case undefined:
-        return this.repo.update(
-          { uniqueFileName },
-          { virusScanStatus: VirusScanStatus.Pending },
-        );
+        virusScanStatus = VirusScanStatus.Pending;
+        break;
       case true:
-        return this.repo.update(
-          { uniqueFileName },
-          { virusScanStatus: VirusScanStatus.VirusDetected },
-        );
+        virusScanStatus = VirusScanStatus.VirusDetected;
+        break;
       case false:
-        return this.repo.update(
-          { uniqueFileName },
-          { virusScanStatus: VirusScanStatus.FileIsClean },
-        );
+        virusScanStatus = VirusScanStatus.FileIsClean;
+        break;
     }
+    return this.repo.update(
+      { uniqueFileName },
+      {
+        fileName,
+        virusScanStatus,
+        modifier: auditUser,
+        updatedAt: now,
+        virusScanStatusUpdatedOn: now,
+      },
+    );
   }
 }

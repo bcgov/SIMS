@@ -30,7 +30,6 @@ import {
   SupportingUserService,
   StudentAppealService,
   ApplicationOfferingChangeRequestService,
-  EducationProgramService,
 } from "../../services";
 import { IUserToken, StudentUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -45,6 +44,7 @@ import {
   EnrolmentApplicationDetailsAPIOutDTO,
   CompletedApplicationDetailsAPIOutDTO,
   SuccessWaitingStatus,
+  ApplicationWarningsAPIOutDTO,
 } from "./models/application.dto";
 import {
   AllowAuthorizedParty,
@@ -83,7 +83,6 @@ import {
 } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
 import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
-import { ECertFailedValidation } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -95,7 +94,6 @@ export class ApplicationStudentsController extends BaseController {
     private readonly formService: FormService,
     private readonly studentService: StudentService,
     private readonly programYearService: ProgramYearService,
-    private readonly educationProgramService: EducationProgramService,
     private readonly offeringService: EducationProgramOfferingService,
     private readonly confirmationOfEnrollmentService: ConfirmationOfEnrollmentService,
     private readonly applicationControllerService: ApplicationControllerService,
@@ -224,15 +222,37 @@ export class ApplicationStudentsController extends BaseController {
   /**
    * Get any warnings for the application.
    * @param applicationId application id.
-   * @returns application warnings.
+   * @returns warnings information.
    */
-  @Get(":applicationId/get-application-warnings")
+  @Get(":applicationId/warnings")
+  @ApiNotFoundResponse({
+    description:
+      "Applications does not exists or the student does not have access to it.",
+  })
   async getApplicationWarnings(
     @Param("applicationId", ParseIntPipe) applicationId: number,
-  ): Promise<ECertFailedValidation[]> {
-    const eCertFailedValidationsPromise =
-      this.eCertPreValidationService.executePreValidations(applicationId, true);
-    return eCertFailedValidationsPromise;
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<ApplicationWarningsAPIOutDTO> {
+    const applicationExist = await this.applicationService.doesApplicationExist(
+      {
+        applicationId,
+        studentId: userToken.studentId,
+      },
+    );
+    if (!applicationExist) {
+      throw new NotFoundException(
+        "Applications does not exists or the student does not have access to it.",
+      );
+    }
+    const validationResult =
+      await this.eCertPreValidationService.executePreValidations(
+        applicationId,
+        true,
+      );
+    return {
+      eCertFailedValidations: [...validationResult.failedValidations],
+      canAcceptAssessment: validationResult.canAcceptAssessment,
+    };
   }
 
   /**
@@ -684,24 +704,24 @@ export class ApplicationStudentsController extends BaseController {
         );
       const feedbackErrorPromise =
         this.applicationService.hasFeedbackErrorBlockingFunds(applicationId);
-      const eCertFailedValidationsPromise =
+      const eCertValidationResultPromise =
         this.eCertPreValidationService.executePreValidations(applicationId);
       const [
         [appeal],
         applicationOfferingChangeRequest,
         feedbackError,
-        eCertFailedValidations,
+        eCertValidationResult,
       ] = await Promise.all([
         appealPromise,
         applicationOfferingChangeRequestPromise,
         feedbackErrorPromise,
-        eCertFailedValidationsPromise,
+        eCertValidationResultPromise,
       ]);
       appealStatus = appeal?.status;
       applicationOfferingChangeRequestStatus =
         applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus;
       hasBlockFundingFeedbackError = feedbackError;
-      hasECertFailedValidations = !!eCertFailedValidations.length;
+      hasECertFailedValidations = !eCertValidationResult.canGenerateECert;
     }
 
     const assessmentTriggerType = application.currentAssessment?.triggerType;
@@ -794,20 +814,20 @@ export class ApplicationStudentsController extends BaseController {
       );
     const hasBlockFundingFeedbackErrorPromise =
       this.applicationService.hasFeedbackErrorBlockingFunds(applicationId);
-    const eCertFailedValidationsPromise =
+    const eCertValidationResultPromise =
       this.eCertPreValidationService.executePreValidations(applicationId);
     const [
       application,
       [appeal],
       applicationOfferingChangeRequest,
       hasBlockFundingFeedbackError,
-      eCertFailedValidations,
+      eCertValidationResult,
     ] = await Promise.all([
       getApplicationPromise,
       appealPromise,
       applicationOfferingChangeRequestPromise,
       hasBlockFundingFeedbackErrorPromise,
-      eCertFailedValidationsPromise,
+      eCertValidationResultPromise,
     ]);
     if (!application) {
       throw new NotFoundException(
@@ -830,7 +850,7 @@ export class ApplicationStudentsController extends BaseController {
       applicationOfferingChangeRequestStatus:
         applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus,
       hasBlockFundingFeedbackError,
-      eCertFailedValidations,
+      eCertFailedValidations: [...eCertValidationResult.failedValidations],
     };
   }
 }

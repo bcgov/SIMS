@@ -36,6 +36,9 @@ export async function getStudentToken(
 
 /**
  * Get a student by one of the {@link FakeStudentUsersTypes}.
+ * !Do not use this method to get the student if the intention is to modify its data.
+ * !To perform E2E tests targeting the student client API, please create a new student
+ * !and use the method mockUserLoginInfo.
  * @param fakeStudentUserType a fake student user type.
  * @param dataSource the application data source.
  * @returns a student.
