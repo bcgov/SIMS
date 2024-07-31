@@ -5153,8 +5153,7 @@
           "addons": [],
           "inputType": "hidden",
           "id": "eu8tkf",
-          "tags": [],
-          "lockKey": true
+          "tags": []
         },
         {
           "input": true,
@@ -5173,7 +5172,6 @@
           },
           "properties": {},
           "calculateValue": "const [programYear] = data.programYearStartDate ? data.programYearStartDate.split(\"-\"):[];\nvalue = programYear ? programYear:\"\";",
-          "calculateServer": true,
           "lockKey": true
         },
         {
@@ -6417,7 +6415,9 @@
                       "id": "el67mt",
                       "addons": [],
                       "displayMask": "",
-                      "truncateMultipleSpaces": false
+                      "truncateMultipleSpaces": false,
+                      "tags": [],
+                      "isNew": false
                     },
                     {
                       "label": "Phone number",
@@ -8275,7 +8275,8 @@
               "breadcrumb": "default",
               "id": "efawj5",
               "addons": [],
-              "lazyLoad": false
+              "lazyLoad": false,
+              "tags": []
             },
             {
               "label": "<strong>Are you a resident of B.C.?</strong>",
@@ -9034,7 +9035,8 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "eawr0fg"
+                      "id": "eawr0fg",
+                      "tags": []
                     },
                     {
                       "label": "HTML",
@@ -9109,7 +9111,8 @@
                       "addons": [],
                       "tag": "p",
                       "id": "exvzcx",
-                      "className": ""
+                      "className": "",
+                      "tags": []
                     },
                     {
                       "label": "HTML",
@@ -9355,7 +9358,8 @@
                       "imageSize": "200",
                       "fileMinSize": "0KB",
                       "uploadOnly": false,
-                      "id": "e15yoie"
+                      "id": "e15yoie",
+                      "tags": []
                     },
                     {
                       "label": "Columns",
@@ -9428,7 +9432,8 @@
                               "properties": {},
                               "allowMultipleMasks": false,
                               "addons": [],
-                              "id": "euomj5"
+                              "id": "euomj5",
+                              "tags": []
                             }
                           ],
                           "width": 6,
@@ -9506,7 +9511,8 @@
                               "properties": {},
                               "allowMultipleMasks": false,
                               "addons": [],
-                              "id": "edp1zrf"
+                              "id": "edp1zrf",
+                              "tags": []
                             }
                           ],
                           "width": 6,
@@ -9582,7 +9588,8 @@
                       "tree": false,
                       "lazyLoad": false,
                       "autoAdjust": false,
-                      "id": "eh0xn99"
+                      "id": "eh0xn99",
+                      "tags": []
                     }
                   ],
                   "placeholder": "",
@@ -22387,7 +22394,6 @@
               "description": "",
               "errorLabel": "",
               "tooltip": "",
-              "hideLabel": false,
               "tabindex": "",
               "disabled": false,
               "autofocus": false,
@@ -22411,10 +22417,11 @@
               "showWordCount": false,
               "allowMultipleMasks": false,
               "id": "ezaww3",
-              "addons": []
+              "addons": [],
+              "hideLabel": true
             },
             {
-              "label": "My total income in {{data.programYear}} was:",
+              "label": "My total income in {data.programYear}} was:",
               "prefix": "$",
               "customClass": "font-weight-bold",
               "mask": false,
@@ -23747,7 +23754,7 @@
                   "calculateServer": false,
                   "allowCalculateOverride": false,
                   "validate": {
-                    "required": false,
+                    "required": true,
                     "onlyAvailableItems": true,
                     "customMessage": "",
                     "custom": "",
@@ -23763,7 +23770,7 @@
                   "tags": [],
                   "properties": {},
                   "conditional": {
-                    "show": true,
+                    "show": "true",
                     "when": "hasSignificantDegreeOfIncome",
                     "eq": "yes",
                     "json": ""
@@ -24606,7 +24613,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "inputType": "hidden",
-                  "id": "e78m1ow"
+                  "id": "e78m1ow",
+                  "tags": []
                 },
                 {
                   "label": "HTML",
@@ -25024,7 +25032,8 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "eo1cjdj"
+                  "id": "eo1cjdj",
+                  "tags": []
                 },
                 {
                   "label": "HTML",
@@ -25099,7 +25108,8 @@
                   "addons": [],
                   "tag": "p",
                   "id": "eq7e38",
-                  "className": ""
+                  "className": "",
+                  "tags": []
                 },
                 {
                   "label": "HTML",
@@ -25174,7 +25184,8 @@
                   "addons": [],
                   "tag": "p",
                   "id": "evksdr7",
-                  "className": ""
+                  "className": "",
+                  "tags": []
                 },
                 {
                   "label": "HTML",
@@ -25249,7 +25260,8 @@
                   "addons": [],
                   "tag": "p",
                   "id": "e99y2i9",
-                  "className": ""
+                  "className": "",
+                  "tags": []
                 },
                 {
                   "label": "ExceptionalExpenseFile",
@@ -25331,7 +25343,8 @@
                   "imageSize": "200",
                   "fileMinSize": "0KB",
                   "uploadOnly": false,
-                  "id": "ea87f6w"
+                  "id": "ea87f6w",
+                  "tags": []
                 },
                 {
                   "label": "Columns",
@@ -25404,7 +25417,8 @@
                           "properties": {},
                           "allowMultipleMasks": false,
                           "addons": [],
-                          "id": "egdox9m"
+                          "id": "egdox9m",
+                          "tags": []
                         }
                       ],
                       "width": 6,
@@ -25482,7 +25496,8 @@
                           "properties": {},
                           "allowMultipleMasks": false,
                           "addons": [],
-                          "id": "ecwx4udn"
+                          "id": "ecwx4udn",
+                          "tags": []
                         }
                       ],
                       "width": 6,
@@ -25558,7 +25573,8 @@
                   "tree": false,
                   "lazyLoad": false,
                   "autoAdjust": false,
-                  "id": "eajxvgi"
+                  "id": "eajxvgi",
+                  "tags": []
                 }
               ],
               "allowPrevious": false,
@@ -30348,7 +30364,7 @@
                   "attr": ""
                 }
               ],
-              "className": "alert alert-danger fa fa-ban w-100 w-100",
+              "className": "alert alert-danger fa fa-ban w-100",
               "content": "<strong> You must be a listed driver on the insurance of the vehicle you will be using to qualify for additional transportation funding.</strong>",
               "type": "htmlelement",
               "hideLabel": true,
@@ -30855,7 +30871,8 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "esmabhd"
+                      "id": "esmabhd",
+                      "tags": []
                     },
                     {
                       "label": "HTML",
@@ -31502,8 +31519,7 @@
               "id": "ev5rghf"
             }
           ],
-          "id": "emvzoox",
-          "lockKey": true
+          "id": "emvzoox"
         },
         {
           "input": true,
