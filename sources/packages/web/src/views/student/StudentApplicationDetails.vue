@@ -57,7 +57,10 @@
     <student-assessment-details :applicationId="id" v-if="showViewAssessment" />
   </student-page-container>
 
-  <confirm-edit-application ref="editApplicationModal" :beforeEdit="true" />
+  <confirm-edit-application
+    ref="editApplicationModal"
+    :is-before-application-edit="true"
+  />
   <cancel-application ref="cancelApplicationModal" />
 
   <!-- Submitted date footer. -->
