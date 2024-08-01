@@ -1,11 +1,20 @@
 <template>
   <modal-dialog-base title="Edit application" :showDialog="showDialog">
     <template #content>
-      {{ warningText }}
+      {{
+        props.isBeforeApplicationEdit
+          ? "Any edits made to your application may require the resubmission of " +
+            "supporting information, potentially delaying your application. Are you " +
+            "sure you want to proceed?"
+          : "Any edits made to your application may result in a new assessment, " +
+            "potentially delaying your application. Are you sure you want to proceed?"
+      }}
     </template>
     <template #footer>
       <footer-buttons
-        :primaryLabel="confirmationText"
+        :primaryLabel="
+          props.isBeforeApplicationEdit ? 'Edit application' : 'Submit'
+        "
         secondaryLabel="No"
         @primaryClick="editApplication"
         @secondaryClick="dialogClosed"
@@ -17,13 +26,14 @@
 <script lang="ts">
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog } from "@/composables";
-import { computed, defineComponent } from "vue";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   props: {
     isBeforeApplicationEdit: {
       type: Boolean,
       required: false,
+      default: false,
     },
   },
   components: {
@@ -38,25 +48,12 @@ export default defineComponent({
       resolvePromise(true);
     };
 
-    const confirmationText = computed(() =>
-      props.isBeforeApplicationEdit ? "Edit application" : "Submit",
-    );
-    const warningText = computed(() =>
-      props.isBeforeApplicationEdit
-        ? `Any edits made to your application may require the resubmission of
-        supporting information, potentially delaying your application. Are you
-        sure you want to proceed?`
-        : `Any edits made to your application may result in a new assessment, 
-        potentially delaying your application. Are you sure you want to proceed?`,
-    );
-
     return {
       showDialog,
       showModal,
       dialogClosed,
       editApplication,
-      confirmationText,
-      warningText,
+      props,
     };
   },
 });

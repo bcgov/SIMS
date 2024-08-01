@@ -43,7 +43,6 @@
   <ConfirmEditApplication
     ref="editApplicationModal"
     @confirmEditApplication="editApplication"
-    :is-before-application-edit="false"
   />
 </template>
 
