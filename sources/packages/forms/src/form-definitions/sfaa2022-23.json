@@ -9908,13 +9908,13 @@
               "tags": []
             },
             {
-              "label": "<strong>Are you, or were you ever considered a child or youth under government care?</strong>",
+              "label": "Are you, or were you ever considered a child or youth under government care?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
               "optionsLabelPosition": "right",
               "description": "",
-              "tooltip": "For a variety of reasons, the government may provide care or guardianship for a child or youth. Answer ‘YES’ to this question if you were ever considered a child or youth in the care of the Ministry of Children and Family Development (MCFD) or an Indigenous Child and Family Service Agency (ICFSA), in the Ministry of Social Development and Poverty Reduction [SDPR] Child in the Home of Relative Program, or in government care through a Canadian province or territory outside of B.C., This includes out of care and temporary care statuses, as well as continuing custody orders both in B.C. and in Canadian provinces or territories outside of B.C.",
+              "tooltip": "For a variety of reasons, the government may provide care or guardianship for a child or youth. Answer 'YES' to this question if you were ever considered a child or youth in the care of the Ministry of Children and Family Development (MCFD) or an Indigenous Child and Family Service Agency (ICFSA), in the Ministry of Social Development and Poverty Reduction [SDPR] Child in the Home of Relative Program, or in government care through a Canadian province or territory outside of B.C., This includes out of care and temporary care statuses, as well as continuing custody orders both in B.C. and in Canadian provinces or territories outside of B.C.",
               "customClass": "",
               "tabindex": "",
               "inline": false,
@@ -10019,7 +10019,7 @@
                   "value": ""
                 }
               ],
-              "content": "<strong> Based on your response, you may be eligible for the Provincial Tuition Waiver Program and the Learning for Future Grant.</strong>\n <br />This means you could have your tuition and eligible fees paid for, and you could also receive an annual grant of $3,500 to cover additional education-related costs (e.g., textbooks, computers, supplies, etc.).\n<br/>To learn more about these financial supports, please visit the StudentAid BC website or contact the Financial Aid Office at your post-secondary institution.",
+              "content": "<strong>Based on your response, you may be eligible for the Provincial Tuition Waiver Program and the Learning for Future Grant.</strong>\n<br />This means you could have your tuition and eligible fees paid for, and you could also receive an annual grant of $3,500 to cover additional education-related costs (e.g., textbooks, computers, supplies, etc.).\n<br/>To learn more about these financial supports, please visit the StudentAid BC website or contact the Financial Aid Office at your post-secondary institution.",
               "refreshOnChange": false,
               "customClass": "banner-info",
               "hidden": false,
@@ -22386,7 +22386,7 @@
               "description": "",
               "errorLabel": "",
               "tooltip": "",
-              "hideLabel": false,
+              "hideLabel": true,
               "tabindex": "",
               "disabled": false,
               "autofocus": false,
@@ -23746,7 +23746,7 @@
                   "calculateServer": false,
                   "allowCalculateOverride": false,
                   "validate": {
-                    "required": false,
+                    "required": true,
                     "onlyAvailableItems": true,
                     "customMessage": "",
                     "custom": "",
@@ -23762,7 +23762,7 @@
                   "tags": [],
                   "properties": {},
                   "conditional": {
-                    "show": true,
+                    "show": "true",
                     "when": "hasSignificantDegreeOfIncome",
                     "eq": "yes",
                     "json": ""
@@ -30347,7 +30347,7 @@
                   "attr": ""
                 }
               ],
-              "className": "alert alert-danger fa fa-ban w-100 w-100",
+              "className": "alert alert-danger fa fa-ban w-100",
               "content": "<strong> You must be a listed driver on the insurance of the vehicle you will be using to qualify for additional transportation funding.</strong>",
               "type": "htmlelement",
               "hideLabel": true,
