@@ -384,6 +384,22 @@ export interface ApplicationData {
    */
   selectedOffering?: number;
   /**
+   * Offering start date.
+   */
+  selectedOfferingDate: string;
+  /**
+   * Offering end date.
+   */
+  selectedOfferingEndDate: string;
+  /**
+   * Study start date provided in case of PIR.
+   */
+  studyStartDate: string;
+  /**
+   * Study end date provided in case of PIR.
+   */
+  studyEndDate: string;
+  /**
    * Relationship status declared by the student.
    */
   relationshipStatus?: RelationshipStatus;

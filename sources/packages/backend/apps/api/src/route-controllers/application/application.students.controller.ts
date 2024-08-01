@@ -322,12 +322,14 @@ export class ApplicationStudentsController extends BaseController {
       studentToken.studentId,
     );
     // If offering is present, the selected offering's start and end dates will be used.
-    let referenceStudyStartDate = payload.data.selectedOfferingDate;
-    let referencedStudyEndDate = payload.data.selectedOfferingEndDate;
+    let referenceStudyStartDate =
+      submissionResult.data.data.selectedOfferingDate;
+    let referencedStudyEndDate =
+      submissionResult.data.data.selectedOfferingEndDate;
     if (!payload.data.selectedOffering) {
       // If offering is not present, the PIR provided study start and end dates will be used instead.
-      referenceStudyStartDate = payload.data.studyStartDate;
-      referencedStudyEndDate = payload.data.studyEndDate;
+      referenceStudyStartDate = submissionResult.data.data.studyStartDate;
+      referencedStudyEndDate = submissionResult.data.data.studyEndDate;
     }
     try {
       await this.applicationService.validateOverlappingDates(

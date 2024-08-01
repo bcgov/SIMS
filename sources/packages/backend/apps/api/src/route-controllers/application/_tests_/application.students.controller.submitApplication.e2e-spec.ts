@@ -67,15 +67,13 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     process.env.BYPASS_APPLICATION_SUBMIT_VALIDATIONS = "false";
   });
 
-  beforeEach(async () => {
-    await mockUserLoginInfo(appModule, sharedStudent);
-  });
-
   it("Should throw study dates overlap error when an application submitted for a student via the SIMS system has overlapping study start or study end dates with another application.", async () => {
     // Arrange
+    // First offering created with start date 10 days prior to the
+    // current date and end date 10 days ahead of the current date.
     const firstApplicationOfferingInitialValues = {
-      studyStartDate: getISODateOnlyString(addDays(10090)),
-      studyEndDate: getISODateOnlyString(addDays(10110)),
+      studyStartDate: getISODateOnlyString(addDays(-10)),
+      studyEndDate: getISODateOnlyString(addDays(10)),
       offeringIntensity: OfferingIntensity.partTime,
     } as EducationProgramOffering;
     await saveFakeApplication(
@@ -86,9 +84,13 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       },
       { offeringInitialValues: firstApplicationOfferingInitialValues },
     );
+    // Second offering created with start date as the current
+    // date and the end date 20 days ahead of the current date.
+    // This will result in the offering start date of this offering
+    // overlap with the first offering's start and end dates.
     const secondApplicationOfferingInitialValues = {
-      studyStartDate: getISODateOnlyString(addDays(10100)),
-      studyEndDate: getISODateOnlyString(addDays(10120)),
+      studyStartDate: getISODateOnlyString(new Date()),
+      studyEndDate: getISODateOnlyString(addDays(20)),
       offeringIntensity: OfferingIntensity.partTime,
     };
     const secondApplication = createFakeApplication(
@@ -115,11 +117,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
           institutionLocation: secondApplication.location,
         },
         {
-          initialValues: {
-            studyStartDate:
-              secondApplicationOfferingInitialValues.studyStartDate,
-            studyEndDate: secondApplicationOfferingInitialValues.studyEndDate,
-          },
+          initialValues: secondApplicationOfferingInitialValues,
         },
       ),
     );
@@ -152,6 +150,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       data: { data: applicationData },
     });
     formService.dryRunSubmission = dryRunSubmissionMock;
+    await mockUserLoginInfo(appModule, sharedStudent);
     // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)
@@ -174,21 +173,27 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         sin: sharedStudent.sinValidation.sin,
       },
     });
+    // First offering created with start date 30 days ahead of the
+    // current date and end date 50 days ahead of the current date.
     const firstFakeSFASPartTimeApplication = createFakeSFASPartTimeApplication(
       { individual: sfasIndividual },
       {
         initialValues: {
-          startDate: getISODateOnlyString(addDays(9990)),
-          endDate: getISODateOnlyString(addDays(10010)),
+          startDate: getISODateOnlyString(addDays(30)),
+          endDate: getISODateOnlyString(addDays(50)),
         },
       },
     );
     await db.sfasPartTimeApplications.save(firstFakeSFASPartTimeApplication);
     // Create a fake offering for the second application.
     const auditUser = await db.user.save(createFakeUser());
+    // Second offering created with start date 40 days ahead of the
+    // current date and the end date 60 days ahead of the current date.
+    // This will result in the offering start date of this offering
+    // overlap with the first offering's start and end dates.
     const secondApplicationOfferingInitialValues = {
-      studyStartDate: getISODateOnlyString(addDays(10000)),
-      studyEndDate: getISODateOnlyString(addDays(10020)),
+      studyStartDate: getISODateOnlyString(addDays(40)),
+      studyEndDate: getISODateOnlyString(addDays(60)),
       offeringIntensity: OfferingIntensity.partTime,
     };
     const fakeOffering = createFakeEducationProgramOffering(
@@ -196,10 +201,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         auditUser,
       },
       {
-        initialValues: {
-          studyStartDate: secondApplicationOfferingInitialValues.studyStartDate,
-          studyEndDate: secondApplicationOfferingInitialValues.studyEndDate,
-        },
+        initialValues: secondApplicationOfferingInitialValues,
       },
     );
     const savedOffering = await db.educationProgramOffering.save(fakeOffering);
@@ -248,6 +250,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       data: { data: applicationData },
     });
     formService.dryRunSubmission = dryRunSubmissionMock;
+    await mockUserLoginInfo(appModule, sharedStudent);
     // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)
@@ -263,9 +266,11 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
 
   it("Should submit an application for a student when the application study dates do not have any overlap with the study dates of any existing application.", async () => {
     // Arrange
+    // First offering created with start date 70 days ahead of the
+    // current date and end date 90 days ahead of the current date.
     const firstApplicationOfferingInitialValues = {
-      studyStartDate: getISODateOnlyString(addDays(20090)),
-      studyEndDate: getISODateOnlyString(addDays(20099)),
+      studyStartDate: getISODateOnlyString(addDays(70)),
+      studyEndDate: getISODateOnlyString(addDays(90)),
       offeringIntensity: OfferingIntensity.partTime,
     } as EducationProgramOffering;
     await saveFakeApplication(
@@ -276,9 +281,13 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       },
       { offeringInitialValues: firstApplicationOfferingInitialValues },
     );
+    // Second offering created with start date 91 days ahead of the
+    // current date and the end date 99 days ahead of the current date.
+    // This will ensure that there are no date overlaps between the
+    // first and the second offerings.
     const secondApplicationOfferingInitialValues = {
-      studyStartDate: getISODateOnlyString(addDays(20100)),
-      studyEndDate: getISODateOnlyString(addDays(20120)),
+      studyStartDate: getISODateOnlyString(addDays(91)),
+      studyEndDate: getISODateOnlyString(addDays(99)),
       offeringIntensity: OfferingIntensity.partTime,
     };
     const secondApplication = createFakeApplication(
@@ -305,11 +314,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
           institutionLocation: secondApplication.location,
         },
         {
-          initialValues: {
-            studyStartDate:
-              secondApplicationOfferingInitialValues.studyStartDate,
-            studyEndDate: secondApplicationOfferingInitialValues.studyEndDate,
-          },
+          initialValues: secondApplicationOfferingInitialValues,
         },
       ),
     );
@@ -343,6 +348,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       data: { data: applicationData },
     });
     formService.dryRunSubmission = dryRunSubmissionMock;
+    await mockUserLoginInfo(appModule, sharedStudent);
     // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)
