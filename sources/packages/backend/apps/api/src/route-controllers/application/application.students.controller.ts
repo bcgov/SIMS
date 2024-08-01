@@ -328,8 +328,8 @@ export class ApplicationStudentsController extends BaseController {
       submissionResult.data.data.selectedOfferingEndDate;
     if (!payload.data.selectedOffering) {
       // If offering is not present, the PIR provided study start and end dates will be used instead.
-      referenceStudyStartDate = submissionResult.data.data.studyStartDate;
-      referencedStudyEndDate = submissionResult.data.data.studyEndDate;
+      referenceStudyStartDate = submissionResult.data.data.studystartDate;
+      referencedStudyEndDate = submissionResult.data.data.studyendDate;
     }
     try {
       await this.applicationService.validateOverlappingDates(

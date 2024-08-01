@@ -386,19 +386,11 @@ export interface ApplicationData {
   /**
    * Offering start date.
    */
-  selectedOfferingDate: string;
+  selectedOfferingDate?: string;
   /**
    * Offering end date.
    */
-  selectedOfferingEndDate: string;
-  /**
-   * Study start date provided in case of PIR.
-   */
-  studyStartDate: string;
-  /**
-   * Study end date provided in case of PIR.
-   */
-  studyEndDate: string;
+  selectedOfferingEndDate?: string;
   /**
    * Relationship status declared by the student.
    */
