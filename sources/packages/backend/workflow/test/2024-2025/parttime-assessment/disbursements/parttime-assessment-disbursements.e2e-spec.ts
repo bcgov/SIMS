@@ -280,7 +280,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-disbursements`, 
     },
   );
 
-  describe("Should generate 1 disbursement when offering weeks is greater than 17 weeks and ", () => {
+  describe("Should round down the values for the disbursement when only one disbursement is expected and ", () => {
     for (const testFinalAwardNetAmount of TEST_FINAL_AWARD_NET_AMOUNTS) {
       it(`the final award of each type is ${testFinalAwardNetAmount.finalAwardNetAmount}.`, async () => {
         // Arrange
@@ -359,215 +359,127 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-disbursements`, 
     }
   });
 
-  describe(
-    "Should generate 1 disbursement when offering weeks is greater than 17 weeks " +
-      "but potential disbursement schedule date 2 is no greater than today and ",
-    () => {
-      for (const testFinalAwardNetAmount of TEST_FINAL_AWARD_NET_AMOUNTS) {
-        it(`the final award of each type is ${testFinalAwardNetAmount.finalAwardNetAmount}.`, async () => {
-          // Arrange
-          const configureDisbursementData =
-            createFakeConfigureDisbursementPartTimeData(PROGRAM_YEAR);
-          configureDisbursementData.offeringWeeks = 18;
-          configureDisbursementData.offeringStudyStartDate =
-            getISODateOnlyString(addDays(-30));
-          configureDisbursementData.offeringStudyEndDate = getISODateOnlyString(
-            addDays(30),
-          );
-          configureDisbursementData.finalFederalAwardNetCSLPAmount =
-            testFinalAwardNetAmount.finalAwardNetAmount;
-          configureDisbursementData.finalFederalAwardNetCSGPAmount =
-            testFinalAwardNetAmount.finalAwardNetAmount;
-          configureDisbursementData.finalFederalAwardNetCSGDAmount =
-            testFinalAwardNetAmount.finalAwardNetAmount;
-          configureDisbursementData.finalFederalAwardNetCSPTAmount =
-            testFinalAwardNetAmount.finalAwardNetAmount;
-          configureDisbursementData.finalProvincialAwardNetBCAGAmount =
-            testFinalAwardNetAmount.finalAwardNetAmount;
-          configureDisbursementData.finalProvincialAwardNetSBSDAmount =
-            testFinalAwardNetAmount.finalAwardNetAmount;
-          // Act
-          const calculatedAssessment =
-            await executePartTimeConfigureDisbursement(
-              configureDisbursementData,
-            );
-          // Assert
-          expect(
-            calculatedAssessment.variables.disbursementSchedules,
-          ).toStrictEqual([
-            {
-              disbursementDate: getISODateOnlyString(getUTCNow()),
-              negotiatedExpiryDate: getISODateOnlyString(getUTCNow()),
-              disbursements: [
-                {
-                  awardEligibility: true,
-                  valueAmount: testFinalAwardNetAmount.roundDownAwardNetAmount,
-                  valueCode: "CSLP",
-                  valueType: "Canada Loan",
-                },
-                {
-                  awardEligibility: true,
-                  valueAmount: testFinalAwardNetAmount.roundDownAwardNetAmount,
-                  valueCode: "CSGP",
-                  valueType: "Canada Grant",
-                },
-                {
-                  awardEligibility: true,
-                  valueAmount: testFinalAwardNetAmount.roundDownAwardNetAmount,
-                  valueCode: "CSGD",
-                  valueType: "Canada Grant",
-                },
-                {
-                  awardEligibility: true,
-                  valueAmount: testFinalAwardNetAmount.roundDownAwardNetAmount,
-                  valueCode: "CSPT",
-                  valueType: "Canada Grant",
-                },
-                {
-                  awardEligibility: true,
-                  valueAmount: testFinalAwardNetAmount.roundDownAwardNetAmount,
-                  valueCode: "BCAG",
-                  valueType: "BC Grant",
-                },
-                {
-                  awardEligibility: true,
-                  valueAmount: testFinalAwardNetAmount.roundDownAwardNetAmount,
-                  valueCode: "SBSD",
-                  valueType: "BC Grant",
-                },
-              ],
-            },
-          ]);
-        });
-      }
-    },
-  );
-
-  describe(
-    "Should generate 2 disbursements when offering weeks is greater than 17 weeks " +
-      "and potential disbursement schedule date 2 is greater than today and ",
-    () => {
-      for (const testFinalAwardNetAmount of TEST_FINAL_AWARD_NET_AMOUNTS) {
-        it(`the final award of each type is ${testFinalAwardNetAmount.finalAwardNetAmount}.`, async () => {
-          // Arrange
-          const configureDisbursementData =
-            createFakeConfigureDisbursementPartTimeData(PROGRAM_YEAR);
-          configureDisbursementData.offeringWeeks = 18;
-          configureDisbursementData.offeringStudyStartDate =
-            getISODateOnlyString(addDays(30));
-          configureDisbursementData.offeringStudyEndDate = getISODateOnlyString(
-            addDays(240),
-          );
-          configureDisbursementData.finalFederalAwardNetCSLPAmount =
-            testFinalAwardNetAmount.finalAwardNetAmount;
-          configureDisbursementData.finalFederalAwardNetCSGPAmount =
-            testFinalAwardNetAmount.finalAwardNetAmount;
-          configureDisbursementData.finalFederalAwardNetCSGDAmount =
-            testFinalAwardNetAmount.finalAwardNetAmount;
-          configureDisbursementData.finalFederalAwardNetCSPTAmount =
-            testFinalAwardNetAmount.finalAwardNetAmount;
-          configureDisbursementData.finalProvincialAwardNetBCAGAmount =
-            testFinalAwardNetAmount.finalAwardNetAmount;
-          configureDisbursementData.finalProvincialAwardNetSBSDAmount =
-            testFinalAwardNetAmount.finalAwardNetAmount;
-          // Act
-          const calculatedAssessment =
-            await executePartTimeConfigureDisbursement(
-              configureDisbursementData,
-            );
-          // Assert
-          expect(
-            calculatedAssessment.variables.disbursementSchedules,
-          ).toStrictEqual([
-            {
-              disbursementDate: getISODateOnlyString(getUTCNow()),
-              negotiatedExpiryDate: getISODateOnlyString(getUTCNow()),
-              disbursements: [
-                {
-                  awardEligibility: true,
-                  valueAmount: testFinalAwardNetAmount.firstDisbursementAmount,
-                  valueCode: "CSLP",
-                  valueType: "Canada Loan",
-                },
-                {
-                  awardEligibility: true,
-                  valueAmount: testFinalAwardNetAmount.firstDisbursementAmount,
-                  valueCode: "CSGP",
-                  valueType: "Canada Grant",
-                },
-                {
-                  awardEligibility: true,
-                  valueAmount: testFinalAwardNetAmount.firstDisbursementAmount,
-                  valueCode: "CSGD",
-                  valueType: "Canada Grant",
-                },
-                {
-                  awardEligibility: true,
-                  valueAmount: testFinalAwardNetAmount.firstDisbursementAmount,
-                  valueCode: "CSPT",
-                  valueType: "Canada Grant",
-                },
-                {
-                  awardEligibility: true,
-                  valueAmount: testFinalAwardNetAmount.firstDisbursementAmount,
-                  valueCode: "BCAG",
-                  valueType: "BC Grant",
-                },
-                {
-                  awardEligibility: true,
-                  valueAmount: testFinalAwardNetAmount.firstDisbursementAmount,
-                  valueCode: "SBSD",
-                  valueType: "BC Grant",
-                },
-              ],
-            },
-            {
-              disbursementDate: getISODateOnlyString(addDays(135)),
-              negotiatedExpiryDate: getISODateOnlyString(addDays(135)),
-              disbursements: [
-                {
-                  awardEligibility: true,
-                  valueAmount: testFinalAwardNetAmount.secondDisbursementAmount,
-                  valueCode: "CSLP",
-                  valueType: "Canada Loan",
-                },
-                {
-                  awardEligibility: true,
-                  valueAmount: testFinalAwardNetAmount.secondDisbursementAmount,
-                  valueCode: "CSGP",
-                  valueType: "Canada Grant",
-                },
-                {
-                  awardEligibility: true,
-                  valueAmount: testFinalAwardNetAmount.secondDisbursementAmount,
-                  valueCode: "CSGD",
-                  valueType: "Canada Grant",
-                },
-                {
-                  awardEligibility: true,
-                  valueAmount: testFinalAwardNetAmount.secondDisbursementAmount,
-                  valueCode: "CSPT",
-                  valueType: "Canada Grant",
-                },
-                {
-                  awardEligibility: true,
-                  valueAmount: testFinalAwardNetAmount.secondDisbursementAmount,
-                  valueCode: "BCAG",
-                  valueType: "BC Grant",
-                },
-                {
-                  awardEligibility: true,
-                  valueAmount: testFinalAwardNetAmount.secondDisbursementAmount,
-                  valueCode: "SBSD",
-                  valueType: "BC Grant",
-                },
-              ],
-            },
-          ]);
-        });
-      }
-    },
-  );
+  describe("Should round down the values for the disbursement when two disbursements are expected and ", () => {
+    for (const testFinalAwardNetAmount of TEST_FINAL_AWARD_NET_AMOUNTS) {
+      it(`the final award of each type is ${testFinalAwardNetAmount.finalAwardNetAmount}.`, async () => {
+        // Arrange
+        const configureDisbursementData =
+          createFakeConfigureDisbursementPartTimeData(PROGRAM_YEAR);
+        configureDisbursementData.offeringWeeks = 18;
+        configureDisbursementData.offeringStudyStartDate = getISODateOnlyString(
+          addDays(30),
+        );
+        configureDisbursementData.offeringStudyEndDate = getISODateOnlyString(
+          addDays(240),
+        );
+        configureDisbursementData.finalFederalAwardNetCSLPAmount =
+          testFinalAwardNetAmount.finalAwardNetAmount;
+        configureDisbursementData.finalFederalAwardNetCSGPAmount =
+          testFinalAwardNetAmount.finalAwardNetAmount;
+        configureDisbursementData.finalFederalAwardNetCSGDAmount =
+          testFinalAwardNetAmount.finalAwardNetAmount;
+        configureDisbursementData.finalFederalAwardNetCSPTAmount =
+          testFinalAwardNetAmount.finalAwardNetAmount;
+        configureDisbursementData.finalProvincialAwardNetBCAGAmount =
+          testFinalAwardNetAmount.finalAwardNetAmount;
+        configureDisbursementData.finalProvincialAwardNetSBSDAmount =
+          testFinalAwardNetAmount.finalAwardNetAmount;
+        // Act
+        const calculatedAssessment = await executePartTimeConfigureDisbursement(
+          configureDisbursementData,
+        );
+        // Assert
+        expect(
+          calculatedAssessment.variables.disbursementSchedules,
+        ).toStrictEqual([
+          {
+            disbursementDate: getISODateOnlyString(getUTCNow()),
+            negotiatedExpiryDate: getISODateOnlyString(getUTCNow()),
+            disbursements: [
+              {
+                awardEligibility: true,
+                valueAmount: testFinalAwardNetAmount.firstDisbursementAmount,
+                valueCode: "CSLP",
+                valueType: "Canada Loan",
+              },
+              {
+                awardEligibility: true,
+                valueAmount: testFinalAwardNetAmount.firstDisbursementAmount,
+                valueCode: "CSGP",
+                valueType: "Canada Grant",
+              },
+              {
+                awardEligibility: true,
+                valueAmount: testFinalAwardNetAmount.firstDisbursementAmount,
+                valueCode: "CSGD",
+                valueType: "Canada Grant",
+              },
+              {
+                awardEligibility: true,
+                valueAmount: testFinalAwardNetAmount.firstDisbursementAmount,
+                valueCode: "CSPT",
+                valueType: "Canada Grant",
+              },
+              {
+                awardEligibility: true,
+                valueAmount: testFinalAwardNetAmount.firstDisbursementAmount,
+                valueCode: "BCAG",
+                valueType: "BC Grant",
+              },
+              {
+                awardEligibility: true,
+                valueAmount: testFinalAwardNetAmount.firstDisbursementAmount,
+                valueCode: "SBSD",
+                valueType: "BC Grant",
+              },
+            ],
+          },
+          {
+            disbursementDate: getISODateOnlyString(addDays(135)),
+            negotiatedExpiryDate: getISODateOnlyString(addDays(135)),
+            disbursements: [
+              {
+                awardEligibility: true,
+                valueAmount: testFinalAwardNetAmount.secondDisbursementAmount,
+                valueCode: "CSLP",
+                valueType: "Canada Loan",
+              },
+              {
+                awardEligibility: true,
+                valueAmount: testFinalAwardNetAmount.secondDisbursementAmount,
+                valueCode: "CSGP",
+                valueType: "Canada Grant",
+              },
+              {
+                awardEligibility: true,
+                valueAmount: testFinalAwardNetAmount.secondDisbursementAmount,
+                valueCode: "CSGD",
+                valueType: "Canada Grant",
+              },
+              {
+                awardEligibility: true,
+                valueAmount: testFinalAwardNetAmount.secondDisbursementAmount,
+                valueCode: "CSPT",
+                valueType: "Canada Grant",
+              },
+              {
+                awardEligibility: true,
+                valueAmount: testFinalAwardNetAmount.secondDisbursementAmount,
+                valueCode: "BCAG",
+                valueType: "BC Grant",
+              },
+              {
+                awardEligibility: true,
+                valueAmount: testFinalAwardNetAmount.secondDisbursementAmount,
+                valueCode: "SBSD",
+                valueType: "BC Grant",
+              },
+            ],
+          },
+        ]);
+      });
+    }
+  });
 
   afterAll(async () => {
     // Closes the singleton instance created during test executions.
