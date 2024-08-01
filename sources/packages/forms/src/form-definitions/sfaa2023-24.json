@@ -10019,7 +10019,7 @@
                   "value": ""
                 }
               ],
-              "content": "<strong>Based on your response, you may be eligible for the Provincial Tuition Waiver Program and the Learning for Future Grant.</strong>\n<br />This means you could have your tuition and eligible fees paid for, and you could also receive an annual grant of $3,500 to cover additional education-related costs (e.g., textbooks, computers, supplies, etc.).\n<br/>To learn more about these financial supports, please visit the StudentAid BC website or contact the Financial Aid Office at your post-secondary institution.",
+              "content": "<strong>Based on your response, you may be eligible for the Provincial Tuition Waiver Program and the Learning for Future Grant.</strong>\n<br />This means you could have your tuition and eligible fees paid for, and you could also receive an annual grant of $3,500 to cover additional education-related costs (e.g., textbooks, computers, supplies, etc.).\n<br/>To learn more about these financial supports, please visit the <a class=\"formio-href\" href=\"https://studentaidbc.ca/explore/grants-scholarships\" target=\"_blank\" rel=\"noopener noreferrer\">StudentAid BC website</a> or contact the Financial Aid Office at your post-secondary institution.",
               "refreshOnChange": false,
               "customClass": "banner-info",
               "hidden": false,
@@ -10028,12 +10028,12 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": "true",
-                "when": "youthInCare",
-                "eq": "preferNotToAnswer",
+                "show": "",
+                "when": null,
+                "eq": "",
                 "json": ""
               },
-              "customConditional": "",
+              "customConditional": "show = (data.youthInCare === \"yes\" || data.youthInCare === \"preferNotToAnswer\");",
               "logic": [],
               "attributes": {},
               "overlay": {
