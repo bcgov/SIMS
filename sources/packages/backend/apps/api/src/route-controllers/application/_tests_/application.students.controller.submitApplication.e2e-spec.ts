@@ -112,6 +112,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       createFakeEducationProgramOffering(
         {
           auditUser,
+          institutionLocation: secondApplication.location,
         },
         {
           initialValues: {
@@ -206,6 +207,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       {
         student: sharedStudent,
         programYear,
+        location: fakeOffering.institutionLocation,
       },
       {
         initialValue: {
@@ -257,6 +259,97 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
           "There is an existing application already with overlapping study period or a pending PIR.",
         errorType: "STUDY_DATE_OVERLAP_ERROR",
       });
+  });
+
+  it("Should submit an application for a student when the application study dates do not have any overlap with the study dates of any existing application.", async () => {
+    // Arrange
+    const firstApplicationOfferingInitialValues = {
+      studyStartDate: getISODateOnlyString(addDays(20090)),
+      studyEndDate: getISODateOnlyString(addDays(20099)),
+      offeringIntensity: OfferingIntensity.partTime,
+    } as EducationProgramOffering;
+    await saveFakeApplication(
+      appDataSource,
+      {
+        student: sharedStudent,
+        programYear,
+      },
+      { offeringInitialValues: firstApplicationOfferingInitialValues },
+    );
+    const secondApplicationOfferingInitialValues = {
+      studyStartDate: getISODateOnlyString(addDays(20100)),
+      studyEndDate: getISODateOnlyString(addDays(20120)),
+      offeringIntensity: OfferingIntensity.partTime,
+    };
+    const secondApplication = createFakeApplication(
+      {
+        student: sharedStudent,
+        programYear,
+      },
+      {
+        initialValue: {
+          data: {},
+          applicationStatus: ApplicationStatus.Draft,
+          applicationStatusUpdatedOn: new Date(),
+          creator: systemUsersService.systemUser,
+          createdAt: new Date(),
+        } as Application,
+      },
+    );
+    const secondDraftApplication = await db.application.save(secondApplication);
+    const auditUser = await db.user.save(createFakeUser());
+    const secondApplicationOffering = await db.educationProgramOffering.save(
+      createFakeEducationProgramOffering(
+        {
+          auditUser,
+          institutionLocation: secondApplication.location,
+        },
+        {
+          initialValues: {
+            studyStartDate:
+              secondApplicationOfferingInitialValues.studyStartDate,
+            studyEndDate: secondApplicationOfferingInitialValues.studyEndDate,
+          },
+        },
+      ),
+    );
+    const secondApplicationProgram = secondApplicationOffering.educationProgram;
+    const applicationData = {
+      programYear,
+      selectedOfferingDate:
+        secondApplicationOfferingInitialValues.studyStartDate,
+      selectedOfferingEndDate:
+        secondApplicationOfferingInitialValues.studyEndDate,
+      programYearStartDate: programYear.startDate,
+      programYearEndDate: programYear.endDate,
+      howWillYouBeAttendingTheProgram:
+        secondApplicationOfferingInitialValues.offeringIntensity,
+      selectedProgram: secondApplicationProgram.id,
+      selectedOffering: secondApplicationOffering.id,
+      selectedLocation: secondApplication.location.id,
+    };
+    const payload = {
+      associatedFiles: [],
+      data: applicationData,
+      programYearId: programYear.id,
+    } as SaveApplicationAPIInDTO;
+    const endpoint = `/students/application/${secondDraftApplication.id}/submit`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+      valid: true,
+      formName: FormNames.Application,
+      data: { data: applicationData },
+    });
+    formService.dryRunSubmission = dryRunSubmissionMock;
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({});
   });
 
   afterAll(async () => {

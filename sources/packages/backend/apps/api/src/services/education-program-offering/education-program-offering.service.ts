@@ -453,7 +453,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .innerJoin("offerings.institutionLocation", "institutionLocation")
       .innerJoin("institutionLocation.institution", "institution")
       .leftJoin("offerings.assessedBy", "assessedBy")
-      .innerJoin("offerings.parentOffering", "parentOffering")
+      .leftJoin("offerings.parentOffering", "parentOffering")
       .andWhere("offerings.id= :offeringId", {
         offeringId: offeringId,
       })
