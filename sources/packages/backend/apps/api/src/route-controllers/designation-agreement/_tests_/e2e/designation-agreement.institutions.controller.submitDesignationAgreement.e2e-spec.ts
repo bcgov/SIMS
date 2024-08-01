@@ -126,10 +126,11 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
     // Create fake designation agreement.
     const fakeDesignationAgreement = createFakeDesignationAgreement({
       fakeInstitution: collegeC,
-      fakeInstitutionLocations: [collegeCLocation,],
+      fakeInstitutionLocations: [collegeCLocation],
       fakeUser: fakeInstitutionUser,
     });
-    fakeDesignationAgreement.designationStatus = DesignationAgreementStatus.Pending
+    fakeDesignationAgreement.designationStatus =
+      DesignationAgreementStatus.Pending;
     await db.designationAgreement.save(fakeDesignationAgreement);
 
     const payload = {
@@ -168,7 +169,7 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
       .post(endpoint)
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY);
   });
 
   afterAll(async () => {

@@ -182,7 +182,7 @@ export class ApplicationStudentsController extends BaseController {
     if (payload.data.selectedOffering) {
       const offering = await this.offeringService.getOfferingById(
         payload.data.selectedOffering,
-        payload.data.selectedProgram,
+        { programId: payload.data.selectedProgram },
       );
       if (!offering) {
         throw new UnprocessableEntityException(
@@ -321,6 +321,14 @@ export class ApplicationStudentsController extends BaseController {
     const student = await this.studentService.getStudentById(
       studentToken.studentId,
     );
+    // If offering is present, the selected offering's start and end dates will be used.
+    let referenceStudyStartDate = payload.data.selectedOfferingDate;
+    let referencedStudyEndDate = payload.data.selectedOfferingEndDate;
+    if (!payload.data.selectedOffering) {
+      // If offering is not present, the PIR provided study start and end dates will be used instead.
+      referenceStudyStartDate = payload.data.studyStartDate;
+      referencedStudyEndDate = payload.data.studyEndDate;
+    }
     try {
       await this.applicationService.validateOverlappingDates(
         applicationId,
@@ -328,8 +336,8 @@ export class ApplicationStudentsController extends BaseController {
         studentToken.userId,
         student.sinValidation.sin,
         student.birthDate,
-        payload.data.studystartDate,
-        payload.data.studyendDate,
+        referenceStudyStartDate,
+        referencedStudyEndDate,
       );
       await this.applicationService.submitApplication(
         applicationId,
