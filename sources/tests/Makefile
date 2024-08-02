@@ -13,29 +13,29 @@ backend-unit-tests:
 
 e2e-tests-api:
 	@echo "+\n++ Make: Starting containers for API E2E tests \n+"
-	@docker-compose run --name api-e2e-$(BUILD_REF) api npm run test:e2e:api
+	@docker compose run --name api-e2e-$(BUILD_REF) api npm run test:e2e:api
 	@mkdir -p coverage/api
 	@docker cp api-e2e-$(BUILD_REF):app/apps/api/coverage/clover.xml coverage/api
 	@docker rm api-e2e-$(BUILD_REF)
-	@docker-compose down --rmi all -v
+	@docker compose down --rmi all -v
 
 e2e-tests-workers:
 	@echo "+\n++ Make: Starting containers for Workers E2E tests \n+"
-	@docker-compose run --name workers-e2e-$(BUILD_REF) workers npm run test:e2e:workers
+	@docker compose run --name workers-e2e-$(BUILD_REF) workers npm run test:e2e:workers
 	@mkdir -p coverage/workers
 	@docker cp workers-e2e-$(BUILD_REF):app/apps/workers/coverage/clover.xml coverage/workers
 	@docker rm workers-e2e-$(BUILD_REF)
-	@docker-compose down --rmi all -v
+	@docker compose down --rmi all -v
 	
 e2e-tests-queue-consumers:
 	@echo "+\n++ Make: Starting containers for Queue Consumers E2E tests \n+"
-	@docker-compose run --name queue-consumers-e2e-$(BUILD_REF) queue-consumers npm run test:e2e:queue-consumers
+	@docker compose run --name queue-consumers-e2e-$(BUILD_REF) queue-consumers npm run test:e2e:queue-consumers
 	@mkdir -p coverage/queue-consumers
 	@docker cp queue-consumers-e2e-$(BUILD_REF):app/apps/queue-consumers/coverage/clover.xml coverage/queue-consumers
 	@docker rm queue-consumers-e2e-$(BUILD_REF)
-	@docker-compose down --rmi all -v
+	@docker compose down --rmi all -v
 
 e2e-tests-workflow:
 	@echo "+\n++ Make: Starting containers for camunda workflow E2E tests \n+"
-	@docker-compose -f workflow-docker-compose.yml run --name workflow-e2e --rm workflow npm run test:e2e:workflow
-	@docker-compose -f workflow-docker-compose.yml down
+	@docker compose -f workflow-docker-compose.yml run --name workflow-e2e --rm workflow npm run test:e2e:workflow
+	@docker compose -f workflow-docker-compose.yml down
