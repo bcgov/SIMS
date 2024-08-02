@@ -19,7 +19,10 @@
       </v-col>
     </v-row>
   </student-page-container>
-  <confirm-edit-application ref="editApplicationModal" />
+  <confirm-edit-application
+    ref="editApplicationModal"
+    :isBeforeApplicationEdit="true"
+  />
   <cancel-application ref="cancelApplicationModal" />
 </template>
 <script lang="ts">
