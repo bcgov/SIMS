@@ -1,14 +1,13 @@
 <template>
   <modal-dialog-base title="Edit application" :showDialog="showDialog">
-    <template #content>
-      {{
-        props.isBeforeApplicationEdit
-          ? "Any edits made to your application may require the resubmission of " +
-            "supporting information, potentially delaying your application. Are you " +
-            "sure you want to proceed?"
-          : "Any edits made to your application may result in a new assessment, " +
-            "potentially delaying your application. Are you sure you want to proceed?"
-      }}
+    <template #content v-if="props.isBeforeApplicationEdit">
+      Any edits made to your application may require the resubmission of
+      supporting information, potentially delaying your application. Are you
+      sure you want to proceed?
+    </template>
+    <template #content v-else>
+      Any edits made to your application may result in a new assessment,
+      potentially delaying your application. Are you sure you want to proceed?
     </template>
     <template #footer>
       <footer-buttons
