@@ -129,22 +129,22 @@ print-status:
 # Build locally
 local-build:
 	@echo "+\n++ Make: Building locally ...\n+"
-	@docker compose -f docker compose.yml build
+	@docker compose -f docker-compose.yml build
 
 # Run locally
 local-run:
 	@echo "+\n++ Make: Run locally ...\n+"
-	@docker compose -f docker compose.yml up
+	@docker compose -f docker-compose.yml up
 
 # Build and run locally
 local-build-run:
 	@echo "+\n++ Make: Build / Run locally ...\n+"
-	@docker compose -f docker compose.yml up --build
+	@docker compose -f docker-compose.yml up --build
 
 # Stop locally
 local-stop:
 	@echo "+\n++ Make: Stop local app ...\n+"
-	@docker compose -f docker compose.yml down
+	@docker compose -f docker-compose.yml down
 
 # Clean locally
 local-clean:
