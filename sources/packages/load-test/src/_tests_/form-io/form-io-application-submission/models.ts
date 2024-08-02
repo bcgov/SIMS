@@ -1,6 +1,5 @@
 export const APPLICATION_SUBMISSION_PAYLOAD = {
   data: {
-    applicationId1: "",
     workflowName: "assessment-gateway",
     selectedLocation: 14,
     mySchoolIsNotListed: false,
