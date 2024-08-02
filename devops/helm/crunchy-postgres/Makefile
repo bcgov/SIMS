@@ -16,6 +16,11 @@ install: helm-dep
 install:
 	@helm install ${NAME} . -n ${NAMESPACE} -f values.yaml
 
+.PHONY: upgrade
+upgrade: helm-dep
+upgrade:
+	@helm upgrade --install ${NAME} . -n ${NAMESPACE} -f values.yaml
+
 .PHONY: uninstall
 uninstall: helm-dep
 uninstall:
