@@ -132,6 +132,8 @@ export class StudentControllerService {
       `attachment; filename=${studentFile.fileName}`,
     );
 
+    // Temporary code to be change in the upcoming effort
+    // when the the files will no longer be saved on DB.
     const stopwatchLabel = `S3 downloaded file ${uniqueFileName}`;
     console.time(stopwatchLabel);
     try {

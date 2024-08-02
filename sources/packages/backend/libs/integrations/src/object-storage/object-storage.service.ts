@@ -6,8 +6,10 @@ import {
 } from "@aws-sdk/client-s3";
 import { ConfigService } from "@sims/utilities/config";
 import { GetObjectResult, StorageObject } from "./models/object-storage.models";
-import { Readable } from "stream";
 
+/**
+ * Manages the operation for object storage.
+ */
 @Injectable()
 export class ObjectStorageService {
   private readonly s3Client: S3Client;
@@ -27,47 +29,43 @@ export class ObjectStorageService {
     });
   }
 
+  /**
+   * Saves an object to the storage.
+   * @param object object details to be stored.
+   * @throws S3ServiceException base exception class for all service exceptions from S3 service.
+   * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/s3/command/PutObjectCommand/
+   */
   async putObject(object: StorageObject): Promise<void> {
-    try {
-      await this.s3Client.send(
-        new PutObjectCommand({
-          Bucket: this.defaultBucket,
-          Key: object.key,
-          Body: object.body,
-          ContentLength: object.body.length,
-          ContentType: object.contentType,
-        }),
-      );
-    } catch (error: unknown) {
-      throw new Error(
-        `Error while sending object key ${object.key} to the storage.`,
-        {
-          cause: error,
-        },
-      );
-    }
+    await this.s3Client.send(
+      new PutObjectCommand({
+        Bucket: this.defaultBucket,
+        Key: object.key,
+        Body: object.body,
+        ContentLength: object.body.length,
+        ContentType: object.contentType,
+      }),
+    );
   }
 
+  /**
+   * Get an object from the storage.
+   * @returns object information.
+   * @throws InvalidObjectState object is archived and inaccessible until restored.
+   * @throws NoSuchKey the specified key does not exist.
+   * @throws S3ServiceException base exception class for all service exceptions from S3 service.
+   * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/s3/command/GetObjectCommand/
+   */
   async getObject(objectKey: string): Promise<GetObjectResult> {
-    try {
-      const response = await this.s3Client.send(
-        new GetObjectCommand({
-          Bucket: this.defaultBucket,
-          Key: objectKey,
-        }),
-      );
-      return {
-        contentLength: response.ContentLength,
-        contentType: response.ContentType,
-        body: response.Body,
-      };
-    } catch (error: unknown) {
-      throw new Error(
-        `Error while retrieving object key ${objectKey} from the storage.`,
-        {
-          cause: error,
-        },
-      );
-    }
+    const response = await this.s3Client.send(
+      new GetObjectCommand({
+        Bucket: this.defaultBucket,
+        Key: objectKey,
+      }),
+    );
+    return {
+      contentLength: response.ContentLength,
+      contentType: response.ContentType,
+      body: response.Body,
+    };
   }
 }

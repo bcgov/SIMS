@@ -264,7 +264,7 @@ export class ConfigService {
    * S3 storage configuration.
    */
   get s3Configuration(): S3Configuration {
-    return {
+    return this.getCachedConfig("s3ConfigurationConfig", {
       endpoint: process.env.S3_ENDPOINT,
       clientCredential: {
         clientId: process.env.S3_ACCESS_KEY_ID,
@@ -272,7 +272,7 @@ export class ConfigService {
       },
       region: process.env.S3_REGION,
       defaultBucket: process.env.S3_DEFAULT_BUCKET,
-    };
+    });
   }
 
   /**

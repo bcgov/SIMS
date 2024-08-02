@@ -236,6 +236,8 @@ export class StudentStudentsController extends BaseController {
     @Body("uniqueFileName") uniqueFileName: string,
     @Body("group") groupName: string,
   ): Promise<FileCreateAPIOutDTO> {
+    // Temporary code to be changed in the upcoming effort
+    // when the the files will no longer be saved on DB.
     const stopwatchLabel = `S3 uploaded File ${uniqueFileName}`;
     console.time(stopwatchLabel);
     try {
