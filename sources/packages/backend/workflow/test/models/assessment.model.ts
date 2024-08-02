@@ -29,9 +29,10 @@ export enum TransportationCostSituation {
 }
 
 export interface StudentAdditionalTransportationAppealData extends JSONDoc {
-  eligibleForAnAdditionalTransportationAllowance: YesNoOptions;
+  additionalTransportRequested: YesNoOptions;
+  additionalTransportListedDriver?: YesNoOptions;
   transportationCostSituation?: TransportationCostSituation;
-  additionalTransportCost?: number;
+  additionalTransportOwner?: YesNoOptions;
   additionalTransportKm?: number;
   additionalTransportWeeks?: number;
   additionalTransportPlacement?: YesNoOptions;
@@ -88,7 +89,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataIndigenousStatus: YesNoOptions;
   studentDataHasDependents: YesNoOptions;
   studentDataLivingWithParents: YesNoOptions;
-  studentDataYouthInCare: YesNoOptions;
+  studentDataYouthInCare: YesNoOptions | "preferNotToAnswer";
   studentTaxYear: number;
   programLocation: Provinces;
   institutionLocationProvince: Provinces;
@@ -168,9 +169,10 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   assessmentId?: number;
   studentDataSelectedOffering: number;
   studentDataApplicationPDPPDStatus: string;
-  studentDataEligibleForAnAdditionalTransportationAllowance: YesNoOptions;
+  studentDataAdditionalTransportRequested: YesNoOptions;
+  studentDataAdditionalTransportListedDriver: YesNoOptions;
+  studentDataAdditionalTransportOwner: YesNoOptions;
   studentDataAdditionalTransportKm: number;
-  studentDataAdditionalTransportCost: number;
   studentDataAdditionalTransportWeeks: number;
   studentDataAdditionalTransportPlacement: YesNoOptions;
   programYearTotalPartTimeCSGD: number;
@@ -230,11 +232,12 @@ export interface AssessmentModel {
 export interface CalculatedAssessmentModel {
   calculatedDataRelationshipStatus: RelationshipStatusType;
   calculatedDataPartner1TotalIncome: number;
-  calculatedDataEligibleForAnAdditionalTransportationAllowance: YesNoOptions;
+  calculatedDataAdditionalTransportRequested: YesNoOptions;
+  calculatedDataAdditionalTransportListedDriver: YesNoOptions;
+  calculatedDataAdditionalTransportOwner: YesNoOptions;
   calculatedDataAdditionalTransportKm: number;
-  calculatedDataAdditionalTransportCost: number;
   calculatedDataAdditionalTransportWeeks: number;
-  calculatedDataAdditionalTransportPlacement: boolean;
+  calculatedDataAdditionalTransportPlacement: YesNoOptions;
   offeringWeeks: number;
   calculatedDataTotalTutionCost: number;
   calculatedDataDaycareCosts11YearsOrUnder: number;
@@ -339,7 +342,8 @@ export interface CalculatedAssessmentModel {
   calculatedDataTotalRemainingNeed3: number;
   calculatedDataTotalRemainingNeed4: number;
   calculatedDataAdditionalTransportationMax: number;
-  calculatedDataAdditionalTransportationAllowance: number;
+  calculatedDataNetWeeklyAdditionalTransportCost: number;
+  calculatedDataTotalAdditionalTransportationAllowance: number;
   calculatedDataTotalTransportationAllowance: number;
   // DMN Part Time Award Allowable Limits
   dmnPartTimeAwardAllowableLimits?: {

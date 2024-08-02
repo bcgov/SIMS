@@ -15,20 +15,24 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-addition
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataEligibleForAnAdditionalTransportationAllowance =
+      assessmentConsolidatedData.studentDataAdditionalTransportRequested =
         YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportListedDriver =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportOwner =
+        YesNoOptions.No;
       assessmentConsolidatedData.studentDataAdditionalTransportKm = 30;
       assessmentConsolidatedData.offeringWeeks = 20;
       assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 15;
-      assessmentConsolidatedData.studentDataAdditionalTransportCost = 30;
       assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
         YesNoOptions.No;
 
       assessmentConsolidatedData.appealsStudentAdditionalTransportationAppealData =
         {
-          eligibleForAnAdditionalTransportationAllowance: YesNoOptions.Yes,
+          additionalTransportRequested: YesNoOptions.Yes,
+          additionalTransportListedDriver: YesNoOptions.Yes,
+          additionalTransportOwner: YesNoOptions.Yes,
           additionalTransportKm: 12,
-          additionalTransportCost: 111,
           additionalTransportWeeks: 1,
           transportationCostSituation: TransportationCostSituation.NoLimit,
           additionalTransportPlacement: YesNoOptions.Yes,
@@ -43,43 +47,50 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-addition
       // Assert
       expect(
         calculatedAssessment.variables
-          .calculatedDataEligibleForAnAdditionalTransportationAllowance,
-      ).toBe("yes");
+          .calculatedDataAdditionalTransportRequested,
+      ).toBe(YesNoOptions.Yes);
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataAdditionalTransportListedDriver,
+      ).toBe(YesNoOptions.Yes);
+      expect(
+        calculatedAssessment.variables.calculatedDataAdditionalTransportOwner,
+      ).toBe(YesNoOptions.Yes);
       expect(
         calculatedAssessment.variables.calculatedDataAdditionalTransportKm,
       ).toBe(12);
-      expect(
-        calculatedAssessment.variables.calculatedDataAdditionalTransportCost,
-      ).toBe(111);
       expect(
         calculatedAssessment.variables.calculatedDataAdditionalTransportWeeks,
       ).toBe(1);
       expect(
         calculatedAssessment.variables
           .calculatedDataAdditionalTransportPlacement,
-      ).toBe(true);
+      ).toBe(YesNoOptions.Yes);
     },
   );
 
   it(
-    "Should have calculated student additional transportation variables assigned with 0 " +
+    "Should have calculated student additional transportation allowance to 0 " +
       "when there is a request a change for not eligible for transportation allowance.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataEligibleForAnAdditionalTransportationAllowance =
+      assessmentConsolidatedData.studentDataAdditionalTransportRequested =
         YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportListedDriver =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportOwner =
+        YesNoOptions.No;
       assessmentConsolidatedData.studentDataAdditionalTransportKm = 30;
       assessmentConsolidatedData.offeringWeeks = 20;
       assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 15;
-      assessmentConsolidatedData.studentDataAdditionalTransportCost = 30;
       assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
         YesNoOptions.Yes;
 
       assessmentConsolidatedData.appealsStudentAdditionalTransportationAppealData =
         {
-          eligibleForAnAdditionalTransportationAllowance: YesNoOptions.No,
+          additionalTransportRequested: YesNoOptions.No,
         };
       // Act
       const calculatedAssessment =
@@ -91,21 +102,12 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-addition
       // Assert
       expect(
         calculatedAssessment.variables
-          .calculatedDataEligibleForAnAdditionalTransportationAllowance,
-      ).toBe("no");
-      expect(
-        calculatedAssessment.variables.calculatedDataAdditionalTransportKm,
-      ).toBe(0);
-      expect(
-        calculatedAssessment.variables.calculatedDataAdditionalTransportCost,
-      ).toBe(0);
-      expect(
-        calculatedAssessment.variables.calculatedDataAdditionalTransportWeeks,
-      ).toBe(0);
+          .calculatedDataAdditionalTransportRequested,
+      ).toBe(YesNoOptions.No);
       expect(
         calculatedAssessment.variables
-          .calculatedDataAdditionalTransportPlacement,
-      ).toBe(false);
+          .calculatedDataTotalAdditionalTransportationAllowance,
+      ).toBe(0);
     },
   );
 
@@ -116,12 +118,15 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-addition
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataEligibleForAnAdditionalTransportationAllowance =
+      assessmentConsolidatedData.studentDataAdditionalTransportRequested =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportListedDriver =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportOwner =
         YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataAdditionalTransportKm = 30;
       assessmentConsolidatedData.offeringWeeks = 20;
       assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 15;
-      assessmentConsolidatedData.studentDataAdditionalTransportCost = 10;
       assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
         YesNoOptions.Yes;
 
@@ -135,21 +140,25 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-addition
       // Assert
       expect(
         calculatedAssessment.variables
-          .calculatedDataEligibleForAnAdditionalTransportationAllowance,
-      ).toBe("yes");
+          .calculatedDataAdditionalTransportRequested,
+      ).toBe(YesNoOptions.Yes);
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataAdditionalTransportListedDriver,
+      ).toBe(YesNoOptions.Yes);
+      expect(
+        calculatedAssessment.variables.calculatedDataAdditionalTransportOwner,
+      ).toBe(YesNoOptions.Yes);
       expect(
         calculatedAssessment.variables.calculatedDataAdditionalTransportKm,
       ).toBe(30);
-      expect(
-        calculatedAssessment.variables.calculatedDataAdditionalTransportCost,
-      ).toBe(10);
       expect(
         calculatedAssessment.variables.calculatedDataAdditionalTransportWeeks,
       ).toBe(15);
       expect(
         calculatedAssessment.variables
           .calculatedDataAdditionalTransportPlacement,
-      ).toBe(true);
+      ).toBe(YesNoOptions.Yes);
     },
   );
 
