@@ -236,7 +236,7 @@ export class StudentStudentsController extends BaseController {
     @Body("uniqueFileName") uniqueFileName: string,
     @Body("group") groupName: string,
   ): Promise<FileCreateAPIOutDTO> {
-    const stopwatchLabel = `Upload File ${uniqueFileName}`;
+    const stopwatchLabel = `S3 uploaded File ${uniqueFileName}`;
     console.time(stopwatchLabel);
     try {
       await this.objectStorageService.putObject({

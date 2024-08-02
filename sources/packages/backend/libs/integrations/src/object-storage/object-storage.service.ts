@@ -5,7 +5,7 @@ import {
   GetObjectCommand,
 } from "@aws-sdk/client-s3";
 import { ConfigService } from "@sims/utilities/config";
-import { StorageObject } from "./models/object-storage.models";
+import { GetObjectResult, StorageObject } from "./models/object-storage.models";
 import { Readable } from "stream";
 
 @Injectable()
@@ -48,7 +48,7 @@ export class ObjectStorageService {
     }
   }
 
-  async getObject(objectKey: string): Promise<Readable> {
+  async getObject(objectKey: string): Promise<GetObjectResult> {
     try {
       const response = await this.s3Client.send(
         new GetObjectCommand({
@@ -56,7 +56,11 @@ export class ObjectStorageService {
           Key: objectKey,
         }),
       );
-      return response.Body;
+      return {
+        contentLength: response.ContentLength,
+        contentType: response.ContentType,
+        body: response.Body,
+      };
     } catch (error: unknown) {
       throw new Error(
         `Error while retrieving object key ${objectKey} from the storage.`,

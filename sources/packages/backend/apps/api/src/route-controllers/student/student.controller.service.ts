@@ -131,21 +131,26 @@ export class StudentControllerService {
       "Content-Disposition",
       `attachment; filename=${studentFile.fileName}`,
     );
-    response.setHeader("Content-Type", studentFile.mimeType);
-    response.setHeader("Content-Length", studentFile.fileContent.length);
 
-    const stopwatchLabel = `Download file: ${uniqueFileName}`;
+    const stopwatchLabel = `S3 downloaded file ${uniqueFileName}`;
     console.time(stopwatchLabel);
     try {
       const fileContent = await this.objectStorageService.getObject(
         uniqueFileName,
       );
       console.timeEnd(stopwatchLabel);
-      fileContent.pipe(response);
+      // Populate file information received from S3 storage.
+      response.setHeader("Content-Type", fileContent.contentType);
+      response.setHeader("Content-Length", fileContent.contentLength);
+      fileContent.body.pipe(response);
     } catch (error: unknown) {
       console.error(parseJSONError(error));
       // Fallback to use the DB file in case the object storage failed
       // or the file or never uploaded to S3.
+      // Populate fil information from DB.
+      console.info("File not present on S3 storage. Retrieving from DB.");
+      response.setHeader("Content-Type", studentFile.mimeType);
+      response.setHeader("Content-Length", studentFile.fileContent.length);
       const stream = new Readable();
       stream.push(studentFile.fileContent);
       stream.push(null);
