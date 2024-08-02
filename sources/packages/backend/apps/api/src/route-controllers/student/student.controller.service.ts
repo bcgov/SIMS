@@ -16,7 +16,7 @@ import {
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
 import { getUserFullName } from "../../utilities";
-import { getISODateOnlyString } from "@sims/utilities";
+import { getISODateOnlyString, parseJSONError } from "@sims/utilities";
 import {
   AddressInfo,
   Application,
@@ -34,6 +34,7 @@ import {
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 import { ApiProcessError } from "../../types";
 import { FILE_HAS_NOT_BEEN_SCANNED_YET, VIRUS_DETECTED } from "../../constants";
+import { ObjectStorageService } from "@sims/integrations/object-storage";
 
 @Injectable()
 export class StudentControllerService {
@@ -41,6 +42,7 @@ export class StudentControllerService {
     private readonly fileService: StudentFileService,
     private readonly studentService: StudentService,
     private readonly applicationService: ApplicationService,
+    private readonly objectStorageService: ObjectStorageService,
   ) {}
 
   /**
@@ -132,11 +134,23 @@ export class StudentControllerService {
     response.setHeader("Content-Type", studentFile.mimeType);
     response.setHeader("Content-Length", studentFile.fileContent.length);
 
-    const stream = new Readable();
-    stream.push(studentFile.fileContent);
-    stream.push(null);
-
-    stream.pipe(response);
+    const stopwatchLabel = `Download file: ${uniqueFileName}`;
+    console.time(stopwatchLabel);
+    try {
+      const fileContent = await this.objectStorageService.getObject(
+        uniqueFileName,
+      );
+      console.timeEnd(stopwatchLabel);
+      fileContent.pipe(response);
+    } catch (error: unknown) {
+      console.error(parseJSONError(error));
+      // Fallback to use the DB file in case the object storage failed
+      // or the file or never uploaded to S3.
+      const stream = new Readable();
+      stream.push(studentFile.fileContent);
+      stream.push(null);
+      stream.pipe(response);
+    }
   }
 
   /**

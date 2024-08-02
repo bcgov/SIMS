@@ -57,7 +57,7 @@ import {
   PaginatedResults,
   uploadLimits,
 } from "../../utilities";
-import { CustomNamedError } from "@sims/utilities";
+import { CustomNamedError, parseJSONError } from "@sims/utilities";
 import { FileOriginType, IdentityProviders } from "@sims/sims-db";
 import { FileCreateAPIOutDTO } from "../models/common.dto";
 import { ApplicationPaginationOptionsAPIInDTO } from "../models/pagination.dto";
@@ -69,6 +69,7 @@ import {
 } from "../../constants";
 import { EntityManager } from "typeorm";
 import { StudentInfo } from "../../services/student/student.service.models";
+import { ObjectStorageService } from "@sims/integrations/object-storage";
 
 /**
  * Student controller for Student Client.
@@ -86,6 +87,7 @@ export class StudentStudentsController extends BaseController {
     private readonly applicationService: ApplicationService,
     private readonly studentService: StudentService,
     private readonly formService: FormService,
+    private readonly objectStorageService: ObjectStorageService,
   ) {
     super();
   }
@@ -234,6 +236,20 @@ export class StudentStudentsController extends BaseController {
     @Body("uniqueFileName") uniqueFileName: string,
     @Body("group") groupName: string,
   ): Promise<FileCreateAPIOutDTO> {
+    const stopwatchLabel = `Upload File ${uniqueFileName}`;
+    console.time(stopwatchLabel);
+    try {
+      await this.objectStorageService.putObject({
+        key: uniqueFileName,
+        contentType: file.mimetype,
+        body: file.buffer,
+      });
+    } catch (error: unknown) {
+      console.error(parseJSONError(error));
+    } finally {
+      console.timeEnd(stopwatchLabel);
+    }
+
     return this.studentControllerService.uploadFile(
       studentUserToken.studentId,
       file,

@@ -71,6 +71,7 @@ import {
 } from "@sims/services/sfas";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
 import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
+import { ObjectStorageModule } from "@sims/integrations/object-storage";
 
 @Module({
   imports: [
@@ -78,6 +79,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     ConfigModule,
     ATBCIntegrationModule,
     ECertIntegrationModule,
+    ObjectStorageModule,
   ],
   controllers: [
     ApplicationStudentsController,
