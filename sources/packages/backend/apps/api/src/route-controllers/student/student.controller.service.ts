@@ -35,6 +35,7 @@ import { transformAddressDetailsForAddressBlockForm } from "../utils/address-uti
 import { ApiProcessError } from "../../types";
 import { FILE_HAS_NOT_BEEN_SCANNED_YET, VIRUS_DETECTED } from "../../constants";
 import { ObjectStorageService } from "@sims/integrations/object-storage";
+import { NoSuchKey } from "@aws-sdk/client-s3";
 
 @Injectable()
 export class StudentControllerService {
@@ -132,31 +133,37 @@ export class StudentControllerService {
       `attachment; filename=${studentFile.fileName}`,
     );
 
-    // Temporary code to be change in the upcoming effort
+    // Temporary code to be changed in the upcoming effort
     // when the the files will no longer be saved on DB.
-    const stopwatchLabel = `S3 downloaded file ${uniqueFileName}`;
+    const stopwatchLabel = `Downloaded file ${uniqueFileName}`;
     console.time(stopwatchLabel);
     try {
       const fileContent = await this.objectStorageService.getObject(
         uniqueFileName,
       );
-      console.timeEnd(stopwatchLabel);
+      console.info("Downloaded file using S3 storage.");
       // Populate file information received from S3 storage.
       response.setHeader("Content-Type", fileContent.contentType);
       response.setHeader("Content-Length", fileContent.contentLength);
       fileContent.body.pipe(response);
     } catch (error: unknown) {
-      console.error(parseJSONError(error));
+      if (error instanceof NoSuchKey) {
+        console.info("File not present on S3 storage.");
+      } else {
+        console.error(parseJSONError(error));
+      }
       // Fallback to use the DB file in case the object storage failed
       // or the file or never uploaded to S3.
       // Populate fil information from DB.
-      console.info("File not present on S3 storage. Retrieving from DB.");
+      console.info("Retrieving from DB.");
       response.setHeader("Content-Type", studentFile.mimeType);
       response.setHeader("Content-Length", studentFile.fileContent.length);
       const stream = new Readable();
       stream.push(studentFile.fileContent);
       stream.push(null);
       stream.pipe(response);
+    } finally {
+      console.timeEnd(stopwatchLabel);
     }
   }
 

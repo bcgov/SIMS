@@ -8,7 +8,7 @@ import { ConfigService } from "@sims/utilities/config";
 import { GetObjectResult, StorageObject } from "./models/object-storage.models";
 
 /**
- * Manages the operation for object storage.
+ * Manages the operations for the object storage.
  */
 @Injectable()
 export class ObjectStorageService {
