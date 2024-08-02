@@ -10,14 +10,14 @@ import {
   StudentFile,
   Student,
   User,
+  VirusScanStatus,
   FileOriginType,
 } from "@sims/sims-db";
 import { CreateFile, FileUploadOptions } from "./student-file.model";
 import { InjectQueue } from "@nestjs/bull";
 import { QueueNames } from "@sims/utilities";
 import { Queue } from "bull";
-import { VirusScanQueueInDTO } from "@sims/services/queue/dto/virus-scan.dto";
-import { VirusScanStatus } from "@sims/sims-db/entities/virus-scan-status-type";
+import { VirusScanQueueInDTO } from "@sims/services/queue";
 
 @Injectable()
 export class StudentFileService extends RecordDataModelService<StudentFile> {
@@ -109,6 +109,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         "studentFile.fileName",
         "studentFile.mimeType",
         "studentFile.fileContent",
+        "studentFile.virusScanStatus",
       ])
       .where("studentFile.uniqueFileName = :uniqueFileName", {
         uniqueFileName,
@@ -117,8 +118,16 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     if (studentId) {
       query.andWhere("studentFile.student.id = :studentId", { studentId });
     }
+    const studentFile = await query.getOne();
 
-    return query.getOne();
+    // Block users to download file contents that are not scanned or infected.
+    if (
+      studentFile &&
+      studentFile.virusScanStatus !== VirusScanStatus.FileIsClean
+    ) {
+      studentFile.fileContent = null;
+    }
+    return studentFile;
   }
 
   /**

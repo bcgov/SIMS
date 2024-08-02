@@ -107,7 +107,7 @@
               "tableView": true,
               "inputType": "radio",
               "label": "Do you want to be assessed for additional transportation costs",
-              "key": "eligibleForAnAdditionalTransportationAllowance",
+              "key": "additionalTransportRequested",
               "values": [
                 {
                   "value": "yes",
@@ -128,6 +128,7 @@
               "clearOnHide": true,
               "validate": {
                 "required": true,
+                "onlyAvailableItems": true,
                 "custom": "",
                 "customPrivate": false
               },
@@ -144,6 +145,73 @@
               "lockKey": true
             },
             {
+              "autofocus": false,
+              "input": true,
+              "tableView": true,
+              "inputType": "radio",
+              "label": "Are you listed as a driver on the insurance for the vehicle you will be using?",
+              "key": "additionalTransportListedDriver",
+              "values": [
+                {
+                  "value": "yes",
+                  "label": "Yes",
+                  "shortcut": ""
+                },
+                {
+                  "value": "no",
+                  "label": "No",
+                  "shortcut": ""
+                }
+              ],
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
+              "validate": {
+                "required": true,
+                "onlyAvailableItems": true,
+                "custom": "",
+                "customPrivate": false
+              },
+              "type": "radio",
+              "labelPosition": "top",
+              "optionsLabelPosition": "right",
+              "tags": [],
+              "conditional": {
+                "show": "true",
+                "when": "additionalTransportRequested",
+                "eq": "yes"
+              },
+              "properties": {},
+              "lockKey": true
+            },
+            {
+              "key": "panelContent",
+              "label": "Content",
+              "input": false,
+              "tag": "p",
+              "attrs": [
+                {
+                  "value": "",
+                  "attr": ""
+                }
+              ],
+              "className": "alert alert-danger fa fa-ban w-100",
+              "content": "<strong> You must be a listed driver on the insurance of the vehicle you will be using to qualify for additional transportation funding.</strong>",
+              "type": "htmlelement",
+              "hideLabel": true,
+              "tags": [],
+              "conditional": {
+                "show": "true",
+                "when": "additionalTransportListedDriver",
+                "eq": "no"
+              },
+              "properties": {},
+              "customClass": "banner-alert"
+            },
+            {
               "clearOnHide": false,
               "key": "panelPanel",
               "input": false,
@@ -151,6 +219,49 @@
               "theme": "default",
               "tableView": false,
               "components": [
+                {
+                  "autofocus": false,
+                  "input": true,
+                  "tableView": true,
+                  "inputType": "radio",
+                  "label": "Are you the owner of the vehicle?",
+                  "key": "additionalTransportOwner",
+                  "values": [
+                    {
+                      "value": "yes",
+                      "label": "Yes",
+                      "shortcut": ""
+                    },
+                    {
+                      "value": "no",
+                      "label": "No",
+                      "shortcut": ""
+                    }
+                  ],
+                  "defaultValue": "",
+                  "protected": false,
+                  "fieldSet": false,
+                  "persistent": true,
+                  "hidden": false,
+                  "clearOnHide": true,
+                  "validate": {
+                    "required": true,
+                    "onlyAvailableItems": true,
+                    "custom": "",
+                    "customPrivate": false
+                  },
+                  "type": "radio",
+                  "labelPosition": "top",
+                  "optionsLabelPosition": "right",
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": "",
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "lockKey": true
+                },
                 {
                   "label": "Which of the following best describes your situation?",
                   "optionsLabelPosition": "right",
@@ -176,7 +287,7 @@
                   "key": "transportationCostSituation",
                   "conditional": {
                     "show": "",
-                    "when": null,
+                    "when": "",
                     "eq": ""
                   },
                   "type": "radio",
@@ -243,42 +354,6 @@
                   "autofocus": false,
                   "input": true,
                   "tableView": false,
-                  "inputType": "text",
-                  "inputMask": "",
-                  "label": "Please estimate your weekly transportation costs.",
-                  "key": "additionalTransportCost",
-                  "placeholder": "",
-                  "prefix": "$",
-                  "suffix": "",
-                  "defaultValue": "",
-                  "protected": false,
-                  "persistent": true,
-                  "hidden": false,
-                  "clearOnHide": true,
-                  "delimiter": true,
-                  "decimalLimit": 2,
-                  "requireDecimal": true,
-                  "validate": {
-                    "required": true,
-                    "multiple": "",
-                    "custom": "valid = (input >= 0 && input <= 9999) ? true : 'The number you have entered is outside the expected range.';"
-                  },
-                  "conditional": {
-                    "show": "",
-                    "when": null,
-                    "eq": ""
-                  },
-                  "type": "currency",
-                  "labelPosition": "top",
-                  "tags": [],
-                  "properties": {},
-                  "lockKey": true,
-                  "customConditional": ""
-                },
-                {
-                  "autofocus": false,
-                  "input": true,
-                  "tableView": false,
                   "inputType": "number",
                   "label": "Please estimate your weekly travel distance in kilometers:",
                   "key": "additionalTransportKm",
@@ -304,7 +379,7 @@
                   "tags": [],
                   "conditional": {
                     "show": "",
-                    "when": null,
+                    "when": "",
                     "eq": ""
                   },
                   "properties": {},
@@ -341,7 +416,7 @@
                   "tags": [],
                   "conditional": {
                     "show": "",
-                    "when": null,
+                    "when": "",
                     "eq": ""
                   },
                   "properties": {},
@@ -387,13 +462,12 @@
                   "tags": [],
                   "conditional": {
                     "show": "",
-                    "when": null,
+                    "when": "",
                     "eq": ""
                   },
                   "properties": {},
                   "lockKey": true,
-                  "customConditional": "",
-                  "isNew": false
+                  "customConditional": ""
                 },
                 {
                   "title": "Addition Transportation Panel",
@@ -1090,7 +1164,7 @@
                   "breadcrumb": "default",
                   "id": "ew7bwiw",
                   "tags": [],
-                  "hideLabel": false
+                  "hideLabel": true
                 }
               ],
               "type": "panel",
@@ -1099,12 +1173,11 @@
               "tags": [],
               "conditional": {
                 "show": "true",
-                "when": "eligibleForAnAdditionalTransportationAllowance",
+                "when": "additionalTransportListedDriver",
                 "eq": "yes"
               },
               "properties": {},
-              "customClass": "formio-panel-unset",
-              "isNew": false
+              "customClass": "formio-panel-unset"
             }
           ],
           "placeholder": "",

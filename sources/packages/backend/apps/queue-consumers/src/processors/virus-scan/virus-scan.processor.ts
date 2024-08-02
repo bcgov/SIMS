@@ -2,10 +2,7 @@ import { Process, Processor } from "@nestjs/bull";
 import { CustomNamedError, QueueNames } from "@sims/utilities";
 import { StudentFileService } from "../../services";
 import { Job } from "bull";
-import {
-  VirusScanQueueInDTO,
-  VirusScanResult,
-} from "@sims/services/queue/dto/virus-scan.dto";
+import { VirusScanQueueInDTO, VirusScanResult } from "@sims/services/queue";
 import {
   InjectLogger,
   LoggerService,
@@ -36,11 +33,7 @@ export class VirusScanProcessor {
         job.data.uniqueFileName,
         processSummary,
       );
-      isInfected
-        ? processSummary.warn("Virus found.")
-        : processSummary.info("No virus found.");
-
-      processSummary.info("Completed virus scanning for the file. ");
+      processSummary.info("Completed virus scanning for the file.");
     } catch (error: unknown) {
       if (error instanceof NotFoundException) {
         // If the file is not present in the database,

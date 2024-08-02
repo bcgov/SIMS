@@ -6,6 +6,11 @@ import {
 } from "@nestjs/terminus";
 import { Workers } from "@sims/services/constants";
 
+/**
+ * List of all workers names to be monitored.
+ */
+const EXPECTED_WORKERS = Object.values(Workers);
+
 @Injectable()
 export class ZeebeHealthIndicator extends HealthIndicator {
   private readonly workersConnectionStatus: Record<string, boolean> = {};
@@ -20,42 +25,47 @@ export class ZeebeHealthIndicator extends HealthIndicator {
   }
 
   /**
-   * Checks if all workers are connected.
-   * @returns True if all workers are connected, false otherwise.
-   */
-  allConnected(): boolean {
-    const statuses = Object.values(this.workersConnectionStatus);
-    const totalWorkersCount = Object.keys(Workers).length;
-    if (statuses.length !== totalWorkersCount) {
-      // Check if the amount of reported statuses matches
-      // with the amount of expected workers.
-      return false;
-    }
-    // Check if all status are reported as successful.
-    return statuses.every((status) => status === true);
-  }
-
-  /**
    * Performs a health check for the Zeebe connection.
    * @param key identifier for the health check.
    * @throws HealthCheckError if the Zeebe connection check fails.
    * @returns The result of the Zeebe health check.
    */
   async check(key: string): Promise<HealthIndicatorResult> {
-    // Check if the Zeebe connection is healthy.
-    const isHealthy = this.allConnected();
-    if (isHealthy) {
-      // Return a successful health status if Zeebe connection is up.
-      return super.getStatus(key, isHealthy, {
-        message: "Zeebe connection is up and running.",
-      });
+    const nonReportedWorkers: string[] = [];
+    const notReadyWorkers: string[] = [];
+    EXPECTED_WORKERS.forEach((workerName) => {
+      const workerStatus = this.workersConnectionStatus[workerName];
+      // Check if the worker reported its status.
+      if (workerStatus === undefined) {
+        nonReportedWorkers.push(workerName);
+        return;
+      }
+      // Check if the worker status is connected.
+      if (workerStatus === false) {
+        notReadyWorkers.push(workerName);
+      }
+    });
+    if (nonReportedWorkers.length) {
+      throw new HealthCheckError(
+        `${key} check failed`,
+        this.getStatus(key, false, {
+          message: `Some workers did not report their status: ${nonReportedWorkers.join(
+            ", ",
+          )}`,
+        }),
+      );
     }
-    // Throw an error if Zeebe connection check fails.
-    throw new HealthCheckError(
-      `${key} check failed`,
-      this.getStatus(key, isHealthy, {
-        message: "Cannot connect to zeebe.",
-      }),
-    );
+    if (notReadyWorkers.length) {
+      throw new HealthCheckError(
+        `${key} check failed`,
+        this.getStatus(key, false, {
+          message: `Some workers are not ready: ${notReadyWorkers.join(", ")}`,
+        }),
+      );
+    }
+    // Return a successful health status if Zeebe connection is up.
+    return super.getStatus(key, true, {
+      message: "Zeebe workers connections states are ready.",
+    });
   }
 }

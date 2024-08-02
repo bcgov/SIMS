@@ -198,3 +198,8 @@ export class ApplicationAssessmentStatusDetailsAPIOutDTO {
   isApplicationArchived: boolean;
   applicationStatus: ApplicationStatus;
 }
+
+export class ApplicationWarningsAPIOutDTO {
+  eCertFailedValidations: ECertFailedValidation[];
+  canAcceptAssessment: boolean;
+}

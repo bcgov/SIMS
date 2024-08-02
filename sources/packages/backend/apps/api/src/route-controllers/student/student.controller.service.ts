@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { Response } from "express";
 import {
   ApplicationService,
@@ -13,7 +17,12 @@ import {
 } from "../models/pagination.dto";
 import { getUserFullName } from "../../utilities";
 import { getISODateOnlyString } from "@sims/utilities";
-import { AddressInfo, Application, Student } from "@sims/sims-db";
+import {
+  AddressInfo,
+  Application,
+  Student,
+  VirusScanStatus,
+} from "@sims/sims-db";
 import {
   ApplicationSummaryAPIOutDTO,
   SearchStudentAPIOutDTO,
@@ -23,6 +32,8 @@ import {
   InstitutionStudentProfileAPIOutDTO,
 } from "./models/student.dto";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
+import { ApiProcessError } from "../../types";
+import { FILE_HAS_NOT_BEEN_SCANNED_YET, VIRUS_DETECTED } from "../../constants";
 
 @Injectable()
 export class StudentControllerService {
@@ -92,6 +103,25 @@ export class StudentControllerService {
     if (!studentFile) {
       throw new NotFoundException(
         "Requested file was not found or the user does not have access to it.",
+      );
+    }
+    if (studentFile.virusScanStatus === VirusScanStatus.VirusDetected) {
+      throw new ForbiddenException(
+        new ApiProcessError(
+          "The original file was deleted due to security rules. Please re-check file and attempt to upload again.",
+          VIRUS_DETECTED,
+        ),
+      );
+    }
+    if (
+      studentFile.virusScanStatus === VirusScanStatus.Pending ||
+      studentFile.virusScanStatus === VirusScanStatus.InProgress
+    ) {
+      throw new ForbiddenException(
+        new ApiProcessError(
+          "This file has not been scanned and will be available to download once it is determined to be safe.",
+          FILE_HAS_NOT_BEEN_SCANNED_YET,
+        ),
       );
     }
 

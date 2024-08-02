@@ -68,6 +68,7 @@ export default defineComponent({
     },
     loaded: null,
     cancel: null,
+    changed: null,
   },
   props: {
     offeringId: {

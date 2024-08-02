@@ -110,3 +110,8 @@ export interface RedisConfiguration {
   redisPassword: string;
   redisStandaloneMode: boolean;
 }
+
+export interface CASIntegrationConfig {
+  baseUrl: string;
+  clientCredential: ClientCredential;
+}

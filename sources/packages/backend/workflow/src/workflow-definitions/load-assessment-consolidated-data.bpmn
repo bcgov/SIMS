@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0yotgp9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.23.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0yotgp9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.25.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0">
   <bpmn:process id="load-assessment-consolidated-data" name="Load Assessment Consolidated Data" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:extensionElements />
@@ -84,12 +84,12 @@
           <zeebe:header key="parent1CRAReportedIncome" value="$.supportingUsers.Parent1.craReportedIncome" />
           <zeebe:header key="parent2CRAReportedIncome" value="$.supportingUsers.Parent2.craReportedIncome" />
           <zeebe:header key="partner1CRAReportedIncome" value="$.supportingUsers.Partner1.craReportedIncome" />
-          <zeebe:header key="appealsStudentIncomeAppealData" value="$.appeals.studentIncomeAppeal.submittedData" />
-          <zeebe:header key="appealsPartnerIncomeAppealData" value="$.appeals.partnerIncomeAppeal.submittedData" />
           <zeebe:header key="appealsStudentDisabilityAppealData" value="$.appeals.studentDisabilityAppeal.submittedData" />
           <zeebe:header key="appealsStudentFinancialInformationAppealData" value="$.appeals.studentFinancialInformationAppeal.submittedData" />
           <zeebe:header key="appealsStudentAdditionalTransportationAppealData" value="$.appeals.studentAdditionalTransportationAppeal.submittedData" />
           <zeebe:header key="appealsPartnerInformationAndIncomeAppealData" value="$.appeals.partnerInformationAndIncomeAppeal.submittedData" />
+          <zeebe:header key="appealsStudentDependantsAppealData" value="$.appeals.studentDependantsAppeal.submittedData.dependants[*][&#39;dateOfBirth&#39;,&#39;declaredOnTaxes&#39;,&#39;attendingPostSecondarySchool&#39;]" />
+          <zeebe:header key="appealsStudentHasDependentsAppealData" value="$.appeals.studentDependantsAppeal.submittedData.hasDependents" />
           <zeebe:header key="offeringCourseLoad" value="$.offering.courseLoad" />
           <zeebe:header key="offeringWeeks" value="$.offering.studyBreaks.totalFundedWeeks" />
           <zeebe:header key="studentDataDependants" value="$.data.dependants[*][&#39;dateOfBirth&#39;,&#39;declaredOnTaxes&#39;,&#39;attendingPostSecondarySchool&#39;]" />
@@ -104,13 +104,15 @@
           <zeebe:header key="studentDataStudentParentNetContribution" value="$.data.studentParentNetContribution" />
           <zeebe:header key="studentDataPartnerTotalIncomeAssistance" value="$.data.partnertotalincomeAssistance" />
           <zeebe:header key="studentDataPartTimeAwardTypesToBeConsidered" value="$.data.partTimeAwardTypesToBeConsidered" />
-          <zeebe:header key="studentDataEligibleForAnAdditionalTransportationAllowance" value="$.data.eligibleForAnAdditionalTransportationAllowance" />
+          <zeebe:header key="studentDataAdditionalTransportRequested" value="$.data.additionalTransportRequested" />
+          <zeebe:header key="studentDataAdditionalTransportListedDriver" value="$.data.additionalTransportListedDriver" />
+          <zeebe:header key="studentDataAdditionalTransportOwner" value="$.data.additionalTransportOwner" />
           <zeebe:header key="studentDataAdditionalTransportKm" value="$.data.additionalTransportKm" />
-          <zeebe:header key="studentDataAdditionalTransportCost" value="$.data.additionalTransportCost" />
           <zeebe:header key="studentDataAdditionalTransportWeeks" value="$.data.additionalTransportWeeks" />
           <zeebe:header key="studentDataAdditionalTransportPlacement" value="$.data.additionalTransportPlacement" />
           <zeebe:header key="applicationStatus" value="$.applicationStatus" />
           <zeebe:header key="applicationHasNOAApproval" value="$.hasNOAApproval" />
+          <zeebe:header key="studentDataCurrentYearIncome" value="$.data.currentYearIncome" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1jdhbms</bpmn:incoming>

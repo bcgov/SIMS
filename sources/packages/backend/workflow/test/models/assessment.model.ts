@@ -12,6 +12,10 @@ export interface StudentDependent extends JSONDoc {
   declaredOnTaxes: YesNoOptions;
 }
 
+export interface StudentDependantAppealData extends JSONDoc {
+  hasDependents: YesNoOptions;
+  dependants: StudentDependent[];
+}
 export interface StudentFinancialInformationAppealData extends JSONDoc {
   taxReturnIncome: number;
   daycareCosts12YearsOrOver?: number;
@@ -25,9 +29,10 @@ export enum TransportationCostSituation {
 }
 
 export interface StudentAdditionalTransportationAppealData extends JSONDoc {
-  eligibleForAnAdditionalTransportationAllowance: YesNoOptions;
+  additionalTransportRequested: YesNoOptions;
+  additionalTransportListedDriver?: YesNoOptions;
   transportationCostSituation?: TransportationCostSituation;
-  additionalTransportCost?: number;
+  additionalTransportOwner?: YesNoOptions;
   additionalTransportKm?: number;
   additionalTransportWeeks?: number;
   additionalTransportPlacement?: YesNoOptions;
@@ -84,7 +89,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataIndigenousStatus: YesNoOptions;
   studentDataHasDependents: YesNoOptions;
   studentDataLivingWithParents: YesNoOptions;
-  studentDataYouthInCare: YesNoOptions;
+  studentDataYouthInCare: YesNoOptions | "preferNotToAnswer";
   studentTaxYear: number;
   programLocation: Provinces;
   institutionLocationProvince: Provinces;
@@ -107,6 +112,8 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   appealsStudentFinancialInformationAppealData?: StudentFinancialInformationAppealData;
   appealsStudentAdditionalTransportationAppealData?: StudentAdditionalTransportationAppealData;
   appealsPartnerInformationAndIncomeAppealData?: PartnerInformationAndIncomeAppealData;
+  appealsStudentDependantsAppealData?: StudentDependent[];
+  appealsStudentHasDependentsAppealData?: YesNoOptions;
   studentDataIsYourPartnerAbleToReport?: YesNoOptions;
   studentDataParentValidSinNumber?: YesNoOptions;
   studentDataNumberOfParents?: 1 | 2;
@@ -132,6 +139,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataDaycareCosts12YearsOrOver?: number;
   studentDataLivingathomeRent?: number;
   studentDataTransportationCost?: number;
+  studentDataCurrentYearIncome?: number;
   offeringCourseLoad?: number;
   parent1Contributions?: number;
   parent1Ei?: number;
@@ -161,9 +169,10 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   assessmentId?: number;
   studentDataSelectedOffering: number;
   studentDataApplicationPDPPDStatus: string;
-  studentDataEligibleForAnAdditionalTransportationAllowance: YesNoOptions;
+  studentDataAdditionalTransportRequested: YesNoOptions;
+  studentDataAdditionalTransportListedDriver: YesNoOptions;
+  studentDataAdditionalTransportOwner: YesNoOptions;
   studentDataAdditionalTransportKm: number;
-  studentDataAdditionalTransportCost: number;
   studentDataAdditionalTransportWeeks: number;
   studentDataAdditionalTransportPlacement: YesNoOptions;
   programYearTotalPartTimeCSGD: number;
@@ -223,11 +232,12 @@ export interface AssessmentModel {
 export interface CalculatedAssessmentModel {
   calculatedDataRelationshipStatus: RelationshipStatusType;
   calculatedDataPartner1TotalIncome: number;
-  calculatedDataEligibleForAnAdditionalTransportationAllowance: YesNoOptions;
+  calculatedDataAdditionalTransportRequested: YesNoOptions;
+  calculatedDataAdditionalTransportListedDriver: YesNoOptions;
+  calculatedDataAdditionalTransportOwner: YesNoOptions;
   calculatedDataAdditionalTransportKm: number;
-  calculatedDataAdditionalTransportCost: number;
   calculatedDataAdditionalTransportWeeks: number;
-  calculatedDataAdditionalTransportPlacement: boolean;
+  calculatedDataAdditionalTransportPlacement: YesNoOptions;
   offeringWeeks: number;
   calculatedDataTotalTutionCost: number;
   calculatedDataDaycareCosts11YearsOrUnder: number;
@@ -252,6 +262,9 @@ export interface CalculatedAssessmentModel {
   calculatedDataTotalFederalFSC: number;
   calculatedDataTotalProvincialFSC: number;
   calculatedDataTotalEligibleDependants: number;
+  calculatedDataDependants11YearsOrUnder: number;
+  calculatedDataDependants12YearsOverOnTaxes: number;
+  calculatedDataTotalEligibleDependentsForChildCare: number;
   calculatedDataFamilySize: number;
   totalFederalContribution: number;
   totalProvincialContribution: number;
@@ -329,7 +342,8 @@ export interface CalculatedAssessmentModel {
   calculatedDataTotalRemainingNeed3: number;
   calculatedDataTotalRemainingNeed4: number;
   calculatedDataAdditionalTransportationMax: number;
-  calculatedDataAdditionalTransportationAllowance: number;
+  calculatedDataNetWeeklyAdditionalTransportCost: number;
+  calculatedDataTotalAdditionalTransportationAllowance: number;
   calculatedDataTotalTransportationAllowance: number;
   // DMN Part Time Award Allowable Limits
   dmnPartTimeAwardAllowableLimits?: {

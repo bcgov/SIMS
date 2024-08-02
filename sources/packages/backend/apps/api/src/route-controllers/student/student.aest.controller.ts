@@ -16,6 +16,7 @@ import {
   UseInterceptors,
 } from "@nestjs/common";
 import {
+  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
@@ -116,7 +117,15 @@ export class StudentAESTController extends BaseController {
    * @param response file content.
    */
   @Get("files/:uniqueFileName")
-  @ApiNotFoundResponse({ description: "Requested file was not found." })
+  @ApiNotFoundResponse({
+    description:
+      "Requested file was not found or the user does not have access to it.",
+  })
+  @ApiForbiddenResponse({
+    description:
+      "This file has not been scanned and will be available to download once it is determined to be safe or " +
+      "the original file was deleted due to security rules.",
+  })
   async getUploadedFile(
     @Param() uniqueFileNameParam: UniqueFileNameParamAPIInDTO,
     @Res() response: Response,

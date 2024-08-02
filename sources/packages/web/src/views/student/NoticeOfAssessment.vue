@@ -1,13 +1,6 @@
 <template>
   <student-page-container>
     <template #header>
-      <banner
-        v-if="warningList.length > 0"
-        class="mb-2"
-        :type="BannerTypes.Warning"
-        header="Warning"
-        :summaryList="warningList"
-    />
       <header-navigator
         title="View assessment"
         subTitle="Assessment"
@@ -32,18 +25,57 @@
               color="primary"
               data-cy="AcceptAssessment"
               @click="confirmAssessment()"
-              :disabled="warningList.length > 0"
+              :disabled="!canAcceptAssessment"
               >Accept assessment</v-btn
             >
           </v-row>
         </template>
       </header-navigator>
     </template>
+    <template #alerts>
+      <banner
+        class="mb-2"
+        header="Your assessment cannot be accepted yet"
+        :type="BannerTypes.Warning"
+        v-if="showAcceptAssessmentWarnings"
+      >
+        <template #content>
+          <ul>
+            <li v-if="eCertValidation.disabilityStatusNotConfirmed">
+              Your account has not been approved for disability funding. You
+              will not be able to accept this application until the account
+              disability status has been approved. If you would like to receive
+              all non disability funding please edit your application.
+            </li>
+            <li v-if="eCertValidation.msfaaInvalid">
+              Your MSFAA is not valid. Please complete your MSFAA with the
+              National Student Loans Centre to move forward with your
+              application. Please note, there is a one day delay between signing
+              your MSFAA and being able to accept your assessment.
+            </li>
+            <li v-if="eCertValidation.hasStopDisbursementRestriction">
+              You have restrictions that block funding on your account. Please
+              resolve them in order to move forward with your application.
+            </li>
+            <li v-if="eCertValidation.noEstimatedAwardAmounts">
+              Your application has been assessed and no funding has been
+              awarded. If you believe this is an error, please review your
+              application to ensure it is accurate or contact
+              <a
+                href="mailto:studentaidbc@gov.bc.ca"
+                rel="noopener"
+                target="_blank"
+                >StudentAid BC</a
+              >.
+            </li>
+          </ul>
+        </template>
+      </banner>
+    </template>
     <notice-of-assessment-form-view
       :assessmentId="assessmentId"
       @assessmentDataLoaded="assessmentDataLoaded"
     />
-
     <cancel-application ref="cancelApplicationModal" />
   </student-page-container>
 </template>
@@ -54,7 +86,7 @@ import { ModalDialog, useSnackBar } from "@/composables";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { AssessmentNOAAPIOutDTO } from "@/services/http/dto";
-import { defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import {
   ApplicationStatus,
   AssessmentStatus,
@@ -87,7 +119,28 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const viewOnly = ref(true);
     const currentAssessmentId = ref(0);
-    const warningList = ref([] as string[]);
+    const canAcceptAssessment = ref(false);
+    const eCertValidation = ref({
+      disabilityStatusNotConfirmed: false,
+      msfaaInvalid: false,
+      hasStopDisbursementRestriction: false,
+      noEstimatedAwardAmounts: false,
+    });
+
+    /**
+     * Checks if the conditions to display the 'Accept assessment' button were
+     * satisfied but the button will be disabled due to some e-Cert warning.
+     */
+    const showAcceptAssessmentWarnings = computed(() => {
+      return (
+        // Is the current assessment.
+        props.assessmentId === currentAssessmentId.value &&
+        // Should display the 'Accept assessment' button.
+        !viewOnly.value &&
+        // Has some e-Cert warning preventing to accept the assessment.
+        !canAcceptAssessment.value
+      );
+    });
 
     const assessmentDataLoaded = (
       applicationStatus: ApplicationStatus,
@@ -128,35 +181,26 @@ export default defineComponent({
         await StudentAssessmentsService.shared.getApplicationWarnings(
           props.applicationId,
         );
-
-      const MSFAAWarning = `Your MSFAA is not valid. 
-              Please complete your MSFAA with the National Student Loans Centre to move forward with your application. 
-              Please note, there is a one day delay between signing your MSFAA and being able to accept your assessment.`
-      warnings.forEach((warning) => {
-        switch (warning) {
-          case ECertFailedValidation.DisabilityStatusNotConfirmed:
-            warningList.value.push(
-              `Your account has not been approved for disability funding. 
-              You will not be able to accept this application until the account disability status has been approved. 
-              If you would like to receive all non disability funding please edit your application.`,
-            );
-            break;
-          case ECertFailedValidation.MSFAACanceled:
-          case ECertFailedValidation.MSFAANotSigned:
-            if (!warningList.value.includes(MSFAAWarning)) {
-              warningList.value.push(
-                MSFAAWarning,
-              );
-            }
-            break;
-          case ECertFailedValidation.HasStopDisbursementRestriction:
-            warningList.value.push(
-              `You have restrictions that block funding on your account. 
-              Please resolve them in order to move forward with your application.`,
-            );
-            break;
-        }
-      });
+      canAcceptAssessment.value = warnings.canAcceptAssessment;
+      eCertValidation.value = {
+        disabilityStatusNotConfirmed: warnings.eCertFailedValidations.includes(
+          ECertFailedValidation.DisabilityStatusNotConfirmed,
+        ),
+        msfaaInvalid:
+          warnings.eCertFailedValidations.includes(
+            ECertFailedValidation.MSFAACanceled,
+          ) ||
+          warnings.eCertFailedValidations.includes(
+            ECertFailedValidation.MSFAANotSigned,
+          ),
+        hasStopDisbursementRestriction:
+          warnings.eCertFailedValidations.includes(
+            ECertFailedValidation.HasStopDisbursementRestriction,
+          ),
+        noEstimatedAwardAmounts: warnings.eCertFailedValidations.includes(
+          ECertFailedValidation.NoEstimatedAwardAmounts,
+        ),
+      };
     });
 
     return {
@@ -172,8 +216,11 @@ export default defineComponent({
       confirmCancelApplication,
       cancelApplicationModal,
       assessmentDataLoaded,
-      warningList,
+      eCertValidation,
+      canAcceptAssessment,
+      showAcceptAssessmentWarnings,
     };
   },
 });
 </script>
+computed,

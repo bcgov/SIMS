@@ -81,7 +81,7 @@
     "editor.formatOnSave": true,
     "editor.guides.bracketPairs": true,
     "[vue][typescript][javascript]": {
-      "editor.formatOnSave": false,
+      "editor.formatOnSave": true,
       "editor.codeActionsOnSave": {
         "source.addMissingImports": "explicit",
         "source.fixAll.eslint": "explicit"
@@ -110,6 +110,7 @@
       "golevelup",
       "MBAL",
       "MSFAA",
+      "NOAAPI",
       "NSLSC",
       "Overaward",
       "overawards",

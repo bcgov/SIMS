@@ -66,18 +66,24 @@ export CRA_RESPONSE_FOLDER := $(or $(CRA_RESPONSE_FOLDER), CRA-Response)
 export CRA_PROGRAM_AREA_CODE := $(or $(CRA_PROGRAM_AREA_CODE), )
 export CRA_ENVIRONMENT_CODE := $(or $(CRA_ENVIRONMENT_CODE), )
 # Versions used by camunda-docker-compose-core.yml during the make camunda.
+# Versions upgraded following the conbination available on https://github.com/camunda/camunda-platform/blob/main/.env
 export CAMUNDA_CONNECTORS_VERSION := $(or $(CAMUNDA_CONNECTORS_VERSION), 8.5.3)
-export CAMUNDA_PLATFORM_VERSION := $(or $(CAMUNDA_PLATFORM_VERSION), 8.5.0)
-export ELASTIC_VERSION := $(or $(ELASTIC_VERSION), 8.14.0)
+export CAMUNDA_PLATFORM_VERSION := $(or $(CAMUNDA_PLATFORM_VERSION), 8.5.2)
+export ELASTIC_VERSION := $(or $(ELASTIC_VERSION), 8.14.3)
 # Camunda default values for local development.
 export CAMUNDA_OAUTH_DISABLED := $(or $(CAMUNDA_OAUTH_DISABLED), true)
 export CAMUNDA_SECURE_CONNECTION := $(or $(CAMUNDA_SECURE_CONNECTION), false)
+export ZEEBE_GRPC_WORKER_LONGPOLL_SECONDS := $(or $(ZEEBE_GRPC_WORKER_LONGPOLL_SECONDS), 45)
+# CAS
+export CAS_BASE_URL := $(or $(CAS_BASE_URL), )
+export CAS_CLIENT_ID := $(or $(CAS_CLIENT_ID), )
+export CAS_CLIENT_SECRET := $(or $(CAS_CLIENT_SECRET), )
 
-# Starts all applications: SIMS application (Web Portals, SIMS Api, Workers, Queue Consumers), 
+# Starts all applications: SIMS application (Web Portals, SIMS Api, Workers, Queue Consumers),
 # and also Form.io server, and Camunda releated services.
 # Use make deploy-camunda-definitions to deploy all workflow definitions.
 # Use make deploy-form-definitions to deploy all form.io definitions.
-local-all: | print-status forms camunda local-build-run 
+local-all: | print-status forms camunda local-build-run
 
 local:	| print-status local-build-run
 local-api: | print-status local-build api-only
@@ -117,7 +123,7 @@ print-status:
 	@echo " +---------------------------------------------------------+ "
 
 #################################################################
-## Local Build/Run 
+## Local Build/Run
 #################################################################
 
 # Build locally
@@ -206,7 +212,7 @@ deploy-form-definitions:
 forms-stop:
 	@echo "+\n++ Stopping formio forms locally...\n+"
 	@docker-compose -f forms-docker-compose.yml down
-	
+
 # Runs queue consumer application
 queue-consumers:
 	@echo "+\n++ Make: Queue only"
@@ -236,13 +242,13 @@ connect-dev-db:
 	@echo "Forward local port 5454 to Openshift Patroni-master default port."
 	@echo "Use your prefered DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5454."
 	@oc project 0c27fb-dev
-	@oc port-forward services/patroni-master 5454:5432 
+	@oc port-forward services/patroni-master 5454:5432
 
 connect-test-db:
 	@echo "Forward local port 5555 to Openshift Patroni-master default port."
 	@echo "Use your prefered DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5555."
 	@oc project 0c27fb-test
-	@oc port-forward services/patroni-master 5555:5432 
+	@oc port-forward services/patroni-master 5555:5432
 
 connect-qa-db:
 	@echo "Forward local port 5656 to Openshift Patroni-master default port."

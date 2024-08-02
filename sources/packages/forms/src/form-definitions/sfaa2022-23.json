@@ -992,7 +992,7 @@
               "id": "ek4vzp"
             },
             {
-              "label": "The institution I will be attending is:",
+              "label": "Select your institution:",
               "widget": "choicesjs",
               "placeholder": "<i class='fa fa-search'></i> search for your school",
               "customClass": "font-weight-bold",
@@ -1040,7 +1040,7 @@
               "attributes": {},
               "validateOn": "change",
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": ""
               },
@@ -1101,7 +1101,7 @@
               "tags": []
             },
             {
-              "label": "The institution I will be attending is:",
+              "label": "Select your institution:",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -1166,7 +1166,7 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": "",
                 "json": ""
@@ -1192,7 +1192,7 @@
               "defaultValue": ""
             },
             {
-              "label": "My institution isn't listed",
+              "label": "Your institution is not listed.",
               "labelWidth": "",
               "labelMargin": "",
               "description": "",
@@ -1234,7 +1234,7 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": "",
                 "json": ""
@@ -1323,7 +1323,7 @@
               "value": ""
             }
           ],
-          "content": "<strong> Your institution is not designated by StudentAid BC</strong><br />\r\n<span>If your institution is not in the list, it means that your institution is not designated. \r\nPlease contact your institution so that they can persue a designation status with us. \r\nIf your institution is not designated, you will be unable to complete your application at this time.</span>",
+          "content": "<strong> Your institution is not designated by StudentAid BC</strong><br />\n<span>If your institution is not designated, please contact your institution and request they apply for designation. To initiate the designation process, please ask your institution to complete the <a class=\"formio-href\" href=\"https://studentaidbc.ca/designation-application\" target=\"_blank\" rel=\"noopener noreferrer\">Designation Application</a>. Please note your institution must be designated before you can apply.</span>",
           "refreshOnChange": false,
           "customClass": "banner-alert",
           "hidden": false,
@@ -1332,7 +1332,7 @@
           "tags": [],
           "properties": {},
           "conditional": {
-            "show": true,
+            "show": "true",
             "when": "mySchoolIsNotListed",
             "eq": "true",
             "json": ""
@@ -1522,7 +1522,7 @@
               "labelMargin": "",
               "placeholder": "Select how will you be attending the program",
               "description": "",
-              "tooltip": "A part time program has a course load between 20 and 59%. \nA full time program must have a course load of: 60% or greater or\n40 and 60% for students with a permanent disability.\nIf you are unsure, please contact your institution’s financial aid officer.",
+              "tooltip": "A student is considered to be in part-time studies when taking between 20% and 59% of a full-time course load in a course or continuous period of study.",
               "customClass": "font-weight-bold",
               "tabindex": "",
               "hidden": false,
@@ -1535,7 +1535,12 @@
               "multiple": false,
               "dataSrc": "values",
               "data": {
-                "values": [],
+                "values": [
+                  {
+                    "value": "",
+                    "label": ""
+                  }
+                ],
                 "resource": "",
                 "json": "",
                 "url": "",
@@ -1668,7 +1673,7 @@
               "tableView": false,
               "components": [
                 {
-                  "label": "The program I will be attending:",
+                  "label": "Select your program of study:",
                   "labelPosition": "top",
                   "widget": "choicesjs",
                   "labelWidth": "",
@@ -1740,7 +1745,7 @@
                   "tags": [],
                   "properties": {},
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": "",
                     "json": ""
@@ -1787,7 +1792,7 @@
                   "defaultValue": ""
                 },
                 {
-                  "label": "The program I will be attending:",
+                  "label": "Select your program of study:",
                   "disabled": true,
                   "tableView": true,
                   "persistent": false,
@@ -1837,7 +1842,7 @@
                     "pattern": ""
                   },
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": ""
                   },
@@ -1862,10 +1867,11 @@
                   "displayMask": "",
                   "spellcheck": true,
                   "truncateMultipleSpaces": false,
-                  "id": "easelit"
+                  "id": "easelit",
+                  "tags": []
                 },
                 {
-                  "label": "My program is not listed",
+                  "label": "Your program is not listed",
                   "optionsLabelPosition": "right",
                   "hideLabel": true,
                   "tableView": false,
@@ -1875,7 +1881,7 @@
                   },
                   "values": [
                     {
-                      "label": "My program is not listed",
+                      "label": "Your program is not listed",
                       "value": "programnotListed",
                       "shortcut": ""
                     }
@@ -1923,7 +1929,7 @@
                     "onlyAvailableItems": false
                   },
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": ""
                   },
@@ -1973,7 +1979,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "<strong> Info!</strong><br /> We have determined you are special and require additional information to process your request. Please fill out the below information as much as you can and your institution will complete and verify the required information. ",
+                      "content": "<strong> Information required!</strong><br /> Please provide information about your program and study dates. This information will be sent to your institution to confirm your program details.",
                       "refreshOnChange": false,
                       "customClass": "banner-info",
                       "key": "html12",
@@ -2051,11 +2057,11 @@
                           "value": ""
                         }
                       ],
-                      "content": " Please provide additional information about your program",
+                      "content": "Program information",
                       "refreshOnChange": false,
                       "key": "html42",
                       "conditional": {
-                        "show": true,
+                        "show": "true",
                         "when": "programnotListed",
                         "eq": "true"
                       },
@@ -2114,82 +2120,8 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "euzaplc"
-                    },
-                    {
-                      "label": "HTML",
-                      "attrs": [
-                        {
-                          "attr": "",
-                          "value": ""
-                        }
-                      ],
-                      "content": "This information will be sent to your institution to complete so that you can carry on with your application.",
-                      "refreshOnChange": false,
-                      "key": "html43",
-                      "conditional": {
-                        "show": true,
-                        "when": "programnotListed",
-                        "eq": "true"
-                      },
-                      "type": "htmlelement",
-                      "input": false,
-                      "tableView": false,
-                      "placeholder": "",
-                      "prefix": "",
-                      "customClass": "",
-                      "suffix": "",
-                      "multiple": false,
-                      "defaultValue": null,
-                      "protected": false,
-                      "unique": false,
-                      "persistent": false,
-                      "hidden": false,
-                      "clearOnHide": true,
-                      "refreshOn": "",
-                      "redrawOn": "",
-                      "modalEdit": false,
-                      "dataGridLabel": false,
-                      "labelPosition": "top",
-                      "description": "",
-                      "errorLabel": "",
-                      "tooltip": "",
-                      "hideLabel": false,
-                      "tabindex": "",
-                      "disabled": false,
-                      "autofocus": false,
-                      "dbIndex": false,
-                      "customDefaultValue": "",
-                      "calculateValue": "",
-                      "calculateServer": false,
-                      "widget": null,
-                      "attributes": {},
-                      "validateOn": "change",
-                      "validate": {
-                        "required": false,
-                        "custom": "",
-                        "customPrivate": false,
-                        "strictDateValidation": false,
-                        "multiple": false,
-                        "unique": false
-                      },
-                      "overlay": {
-                        "style": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
-                      "allowCalculateOverride": false,
-                      "encrypted": false,
-                      "showCharCount": false,
-                      "showWordCount": false,
-                      "properties": {},
-                      "allowMultipleMasks": false,
-                      "addons": [],
-                      "tag": "p",
-                      "id": "ebo8vbh",
-                      "className": ""
+                      "id": "euzaplc",
+                      "tags": []
                     },
                     {
                       "label": "Program name",
@@ -2806,7 +2738,7 @@
                         }
                       ],
                       "className": "alert alert-warning fa fa-exclamation-triangle w-100",
-                      "content": "<span class=\"font-bold ml-2\">This study end date has past</span>\n<br>\n<span>The selected study period has past and you can no longer receive funding. Continuing your application will require StudentAid BC approval to be eligible for funding.</span>",
+                      "content": "<span class=\"font-bold ml-2\">Study period not eligible for funding</span>\n<br>\n<span>The study period you selected has already concluded and will need additional review from StudentAid BC to be considered for funding. Once you have submitted your application, please use the following link for information on the <a class=\"formio-href\" href=\"https://studentaidbc.ca/sites/all/files/form-library/appeal_fundingafterenddate.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">funding after end date appeal</a>.</span>",
                       "type": "htmlelement",
                       "hideLabel": true,
                       "tags": [],
@@ -3604,7 +3536,7 @@
                   "id": "eezaqos"
                 },
                 {
-                  "label": "When will you be taking this program?",
+                  "label": "Select your study dates",
                   "widget": "choicesjs",
                   "placeholder": "<i class='fa fa-search'></i> search for your program offering",
                   "customClass": "font-weight-bold",
@@ -3652,7 +3584,7 @@
                   "attributes": {},
                   "validateOn": "change",
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": ""
                   },
@@ -3708,10 +3640,11 @@
                   },
                   "customOptions": {},
                   "useExactSearch": false,
-                  "id": "em1sitc"
+                  "id": "em1sitc",
+                  "tags": []
                 },
                 {
-                  "label": "When will you be taking this program?",
+                  "label": "Select your study dates",
                   "disabled": true,
                   "tableView": true,
                   "persistent": false,
@@ -3761,7 +3694,7 @@
                     "pattern": ""
                   },
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": ""
                   },
@@ -3786,16 +3719,17 @@
                   "displayMask": "",
                   "spellcheck": true,
                   "truncateMultipleSpaces": false,
-                  "id": "e9w4l3n"
+                  "id": "e9w4l3n",
+                  "tags": []
                 },
                 {
-                  "label": "My study period isn’t listed",
+                  "label": "Your study dates are not listed",
                   "optionsLabelPosition": "right",
                   "hideLabel": true,
                   "tableView": false,
                   "values": [
                     {
-                      "label": "My study period isn’t listed",
+                      "label": "Your study dates are not listed",
                       "value": "offeringnotListed",
                       "shortcut": ""
                     }
@@ -3846,7 +3780,7 @@
                     "onlyAvailableItems": false
                   },
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": ""
                   },
@@ -3881,7 +3815,7 @@
                     }
                   ],
                   "className": "alert alert-warning fa fa-exclamation-triangle w-100",
-                  "content": "<span class=\"font-bold ml-2\">This study end date has past</span>\n<br>\n<span>The selected study period has past and you can no longer receive funding. Continuing your application will require StudentAid BC approval to be eligible for funding.</span>",
+                  "content": "<span class=\"font-bold ml-2\">Study period not eligible for funding</span>\n<br>\n<span>The study period you selected has already concluded and will need additional review from StudentAid BC to be considered for funding. Once you have submitted your application, please use the following link for information on the <a class=\"formio-href\" href=\"https://studentaidbc.ca/sites/all/files/form-library/appeal_fundingafterenddate.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">funding after end date appeal</a>.</span>",
                   "type": "htmlelement",
                   "tags": [],
                   "conditional": {
@@ -4119,7 +4053,7 @@
                   "value": ""
                 }
               ],
-              "content": "Please add your courses that you plan on taking during your study period.",
+              "content": "Please provide information about the courses you will be taking during this study period.",
               "refreshOnChange": false,
               "key": "html113",
               "type": "htmlelement",
@@ -4164,7 +4098,7 @@
                 "unique": false
               },
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": ""
               },
@@ -4184,7 +4118,8 @@
               "addons": [],
               "tag": "p",
               "id": "emh3t8f",
-              "className": ""
+              "className": "",
+              "tags": []
             },
             {
               "label": "Course information",
@@ -5219,6 +5154,26 @@
           "inputType": "hidden",
           "id": "eu8tkf",
           "tags": []
+        },
+        {
+          "input": true,
+          "tableView": false,
+          "key": "programYear",
+          "label": "programYear",
+          "protected": false,
+          "unique": false,
+          "persistent": true,
+          "type": "hidden",
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "calculateValue": "const [programYear] = data.programYearStartDate ? data.programYearStartDate.split(\"-\"):[];\nvalue = programYear ? programYear:\"\";",
+          "calculateServer": true,
+          "lockKey": true
         },
         {
           "label": "programYearEndDate",
@@ -9729,7 +9684,7 @@
               "lazyLoad": false
             },
             {
-              "label": "<strong>Do you identify as an Indigenous person?</strong>",
+              "label": "<strong>Do you identify as an Indigenous person; that is, First Nations, Métis or Inuit?</strong>",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -9754,6 +9709,11 @@
                 {
                   "value": "no",
                   "label": "No",
+                  "shortcut": ""
+                },
+                {
+                  "value": "preferNotToAnswer",
+                  "label": "Prefer not to answer",
                   "shortcut": ""
                 }
               ],
@@ -9785,7 +9745,7 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": "",
                 "json": ""
@@ -9846,186 +9806,46 @@
               "tableView": false,
               "components": [
                 {
-                  "label": "HTML",
-                  "labelWidth": "",
-                  "labelMargin": "",
-                  "tag": "h3",
-                  "className": "category-header-medium primary-color",
-                  "attrs": [
-                    {
-                      "attr": "",
-                      "value": ""
-                    }
-                  ],
-                  "content": "Aboriginal heritage",
-                  "refreshOnChange": false,
-                  "customClass": "",
-                  "hidden": false,
-                  "modalEdit": false,
-                  "key": "html53",
-                  "tags": [],
-                  "properties": {},
-                  "conditional": {
-                    "show": null,
-                    "when": null,
-                    "eq": "",
-                    "json": ""
-                  },
-                  "customConditional": "",
-                  "logic": [],
-                  "attributes": {},
-                  "overlay": {
-                    "style": "",
-                    "page": "",
-                    "left": "",
-                    "top": "",
-                    "width": "",
-                    "height": ""
-                  },
-                  "type": "htmlelement",
-                  "input": false,
-                  "tableView": false,
-                  "placeholder": "",
-                  "prefix": "",
-                  "suffix": "",
-                  "multiple": false,
-                  "defaultValue": null,
-                  "protected": false,
-                  "unique": false,
-                  "persistent": false,
-                  "clearOnHide": true,
-                  "refreshOn": "",
-                  "redrawOn": "",
-                  "dataGridLabel": false,
-                  "labelPosition": "top",
-                  "description": "",
-                  "errorLabel": "",
-                  "tooltip": "",
-                  "hideLabel": false,
-                  "tabindex": "",
-                  "disabled": false,
                   "autofocus": false,
-                  "dbIndex": false,
-                  "customDefaultValue": "",
-                  "calculateValue": "",
-                  "calculateServer": false,
-                  "widget": null,
-                  "validateOn": "change",
-                  "validate": {
-                    "required": false,
-                    "custom": "",
-                    "customPrivate": false,
-                    "strictDateValidation": false,
-                    "multiple": false,
-                    "unique": false
-                  },
-                  "allowCalculateOverride": false,
-                  "encrypted": false,
-                  "showCharCount": false,
-                  "showWordCount": false,
-                  "allowMultipleMasks": false,
-                  "addons": [],
-                  "id": "eqku8sb"
-                },
-                {
-                  "label": "<strong>I am:</strong>",
-                  "labelPosition": "top",
-                  "labelWidth": "",
-                  "labelMargin": "",
-                  "optionsLabelPosition": "right",
-                  "description": "",
-                  "tooltip": "",
-                  "customClass": "",
-                  "tabindex": "",
-                  "inline": false,
-                  "hidden": false,
-                  "hideLabel": false,
-                  "autofocus": false,
-                  "disabled": false,
-                  "tableView": false,
-                  "modalEdit": false,
+                  "input": true,
+                  "tableView": true,
+                  "label": "<strong>If you identify as an Indigenous person, are you: (select all that apply)</strong>",
+                  "key": "aboriginalHeritage",
                   "values": [
                     {
-                      "label": "First Nations",
                       "value": "firstNations",
+                      "label": "First Nations",
                       "shortcut": ""
                     },
                     {
-                      "label": "Metis",
                       "value": "metis",
+                      "label": "Metis",
                       "shortcut": ""
                     },
                     {
-                      "label": "Inuit",
                       "value": "inuit",
+                      "label": "Inuit",
                       "shortcut": ""
                     }
                   ],
-                  "dataType": "",
-                  "persistent": true,
+                  "inline": false,
                   "protected": false,
-                  "dbIndex": false,
-                  "encrypted": false,
-                  "redrawOn": "",
+                  "persistent": true,
+                  "hidden": false,
                   "clearOnHide": true,
-                  "customDefaultValue": "",
-                  "calculateValue": "",
-                  "calculateServer": false,
-                  "allowCalculateOverride": false,
                   "validate": {
-                    "required": true,
-                    "onlyAvailableItems": true,
-                    "customMessage": "",
-                    "custom": "",
-                    "customPrivate": false,
-                    "json": "",
-                    "strictDateValidation": false,
-                    "multiple": false,
-                    "unique": false
+                    "required": true
                   },
-                  "errorLabel": "",
-                  "errors": "",
-                  "key": "aboriginalHeritage",
-                  "tags": [],
-                  "properties": {},
+                  "type": "selectboxes",
+                  "labelPosition": "top",
+                  "optionsLabelPosition": "right",
                   "conditional": {
-                    "show": true,
-                    "when": "indigenousStatus",
-                    "eq": "yes",
-                    "json": ""
+                    "show": "",
+                    "when": null,
+                    "eq": ""
                   },
-                  "customConditional": "",
-                  "logic": [],
-                  "attributes": {
-                    "data-cy": "aboriginalHeritage"
-                  },
-                  "overlay": {
-                    "style": "",
-                    "page": "",
-                    "left": "",
-                    "top": "",
-                    "width": "",
-                    "height": ""
-                  },
-                  "type": "radio",
-                  "input": true,
-                  "placeholder": "",
-                  "prefix": "",
-                  "suffix": "",
-                  "multiple": false,
-                  "unique": false,
-                  "refreshOn": "",
-                  "dataGridLabel": false,
-                  "widget": null,
-                  "validateOn": "change",
-                  "showCharCount": false,
-                  "showWordCount": false,
-                  "allowMultipleMasks": false,
-                  "addons": [],
-                  "inputType": "radio",
-                  "fieldSet": false,
-                  "id": "eomlfzp",
-                  "defaultValue": ""
+                  "properties": {},
+                  "lockKey": true
                 }
               ],
               "allowPrevious": false,
@@ -10088,13 +9908,13 @@
               "tags": []
             },
             {
-              "label": "<strong>Were you ever considered a child or youth under government care?</strong>",
+              "label": "Are you, or were you ever considered a child or youth under government care?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
               "optionsLabelPosition": "right",
               "description": "",
-              "tooltip": "Ministry of Children and Family Development (MCFD) or Indigenous Child and Family Service Agency [ICFSA] care, care through the Ministry of Social Development and Poverty Reduction [SDPR] Child in the Home of Relative Program or government care through a Canadian province or territory outside of B.C.",
+              "tooltip": "For a variety of reasons, the government may provide care or guardianship for a child or youth. Answer 'YES' to this question if you were ever considered a child or youth in the care of the Ministry of Children and Family Development (MCFD) or an Indigenous Child and Family Service Agency (ICFSA), in the Ministry of Social Development and Poverty Reduction [SDPR] Child in the Home of Relative Program, or in government care through a Canadian province or territory outside of B.C., This includes out of care and temporary care statuses, as well as continuing custody orders both in B.C. and in Canadian provinces or territories outside of B.C.",
               "customClass": "",
               "tabindex": "",
               "inline": false,
@@ -10112,6 +9932,11 @@
                 {
                   "value": "no",
                   "label": "No",
+                  "shortcut": ""
+                },
+                {
+                  "value": "preferNotToAnswer",
+                  "label": "Prefer not to answer",
                   "shortcut": ""
                 }
               ],
@@ -10183,6 +10008,88 @@
               "defaultValue": ""
             },
             {
+              "label": "HTML",
+              "labelWidth": "",
+              "labelMargin": "",
+              "tag": "p",
+              "className": "alert alert-info fa fa-info-circle",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<strong>Based on your response, you may be eligible for the Provincial Tuition Waiver Program and the Learning for Future Grant.</strong>\n<br />This means you could have your tuition and eligible fees paid for, and you could also receive an annual grant of $3,500 to cover additional education-related costs (e.g., textbooks, computers, supplies, etc.).\n<br/>To learn more about these financial supports, please visit the <a class=\"formio-href\" href=\"https://studentaidbc.ca/explore/grants-scholarships\" target=\"_blank\" rel=\"noopener noreferrer\">StudentAid BC website</a> or contact the Financial Aid Office at your post-secondary institution.",
+              "refreshOnChange": false,
+              "customClass": "banner-info",
+              "hidden": false,
+              "modalEdit": false,
+              "key": "html43",
+              "tags": [],
+              "properties": {},
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": "",
+                "json": ""
+              },
+              "customConditional": "show = (data.youthInCare === \"yes\" || data.youthInCare === \"preferNotToAnswer\");",
+              "logic": [],
+              "attributes": {},
+              "overlay": {
+                "style": "",
+                "page": "",
+                "left": "",
+                "top": "",
+                "width": "",
+                "height": ""
+              },
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false,
+              "placeholder": "",
+              "prefix": "",
+              "suffix": "",
+              "multiple": false,
+              "defaultValue": null,
+              "protected": false,
+              "unique": false,
+              "persistent": false,
+              "clearOnHide": true,
+              "refreshOn": "",
+              "redrawOn": "",
+              "dataGridLabel": false,
+              "labelPosition": "top",
+              "description": "",
+              "errorLabel": "",
+              "tooltip": "",
+              "tabindex": "",
+              "disabled": false,
+              "autofocus": false,
+              "dbIndex": false,
+              "customDefaultValue": "",
+              "calculateValue": "",
+              "calculateServer": false,
+              "widget": null,
+              "validateOn": "change",
+              "validate": {
+                "required": false,
+                "custom": "",
+                "customPrivate": false,
+                "strictDateValidation": false,
+                "multiple": false,
+                "unique": false
+              },
+              "allowCalculateOverride": false,
+              "encrypted": false,
+              "showCharCount": false,
+              "showWordCount": false,
+              "allowMultipleMasks": false,
+              "addons": [],
+              "id": "evyzdwa",
+              "hideLabel": true
+            },
+            {
               "clearOnHide": false,
               "key": "custodyOfChildWelfareInformationPanel",
               "input": false,
@@ -10226,9 +10133,9 @@
                   "optionsLabelPosition": "right",
                   "tags": [],
                   "conditional": {
-                    "show": "true",
-                    "when": "youthInCare",
-                    "eq": "yes"
+                    "show": "",
+                    "when": null,
+                    "eq": ""
                   },
                   "properties": {},
                   "lockKey": true,
@@ -10245,7 +10152,8 @@
                 "eq": "yes"
               },
               "properties": {},
-              "lockKey": true
+              "lockKey": true,
+              "customConditional": "show = (data.howWillYouBeAttendingTheProgram !== \"Part Time\" \n       && data.youthInCare === \"yes\");"
             },
             {
               "label": "<strong>At the time of your course study start date, will you have been out of high school for 4 years?</strong>",
@@ -10647,7 +10555,7 @@
               "lockKey": true,
               "hideLabel": false,
               "errorLabel": "Disability Information",
-              "tooltip": "If you are a student with a permanent disability, or a persistent or prolonged disability, as defined below, you may be eligible for additional student financial assistance.\n\nPermanent Disability:\nAny impairment, including a physical, mental, intellectual, cognitive, learning, communication or sensory impairment - or a functional limitation - that restricts the ability of a person to perform the daily activities necessary to pursue studies at a postsecondary school level or to participate in the labour force and that is expected to remain with the person for the person’s expected life.\n\nPersistent or Prolonged Disability:\nAny impairment, including a physical, mental, intellectual, cognitive, learning, communication or sensory impairment - or a functional limitation - that restricts the ability of a person to perform the daily activities necessary to pursue studies at a postsecondary school level or to participate in the labour force and has lasted, or is expected to last, for a period of at least 12 months but is not expected to remain with the person for the person’s expected life."
+              "tooltip": "If you are a student with a permanent disability, or a persistent or prolonged disability, as defined below, you may be eligible for additional student financial assistance.\n\nPermanent Disability:\nAny impairment, including a physical, mental, intellectual, cognitive, learning, communication or sensory impairment - or a functional limitation - that restricts the ability of a person to perform the daily activities necessary to pursue studies at a post secondary school level or to participate in the labour force and that is expected to remain with the person for the person’s expected life.\n\nPersistent or Prolonged Disability:\nAny impairment, including a physical, mental, intellectual, cognitive, learning, communication or sensory impairment - or a functional limitation - that restricts the ability of a person to perform the daily activities necessary to pursue studies at a post secondary school level or to participate in the labour force and has lasted, or is expected to last, for a period of at least 12 months but is not expected to remain with the person for the person’s expected life."
             },
             {
               "label": "HTML",
@@ -22321,7 +22229,7 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": null,
+            "show": "",
             "when": null,
             "eq": ""
           },
@@ -22354,7 +22262,7 @@
                   "value": ""
                 }
               ],
-              "content": "2020 Income tax return",
+              "content": "{{data.programYear}} Income tax return",
               "refreshOnChange": false,
               "customClass": "",
               "hidden": false,
@@ -22363,7 +22271,7 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": "",
                 "json": ""
@@ -22434,7 +22342,7 @@
                   "value": ""
                 }
               ],
-              "content": "Enter your reported total income from line 15000 of your 2020 income tax return. This income will be matched with Canada Revenue Agency records, which may affect your assessment of need and/or grant eligibility.  \n\nIf you did not file a 2020 income tax return, enter your total income from all sources both inside and outside of Canada.",
+              "content": "Enter your reported total income from line 15000 of your {{data.programYear}} income tax return. This income will be matched with Canada Revenue Agency records, which may affect your assessment of need and/or grant eligibility.  \n\nIf you did not file a {{data.programYear}} income tax return, enter your total income from all sources both inside and outside of Canada.",
               "refreshOnChange": false,
               "customClass": "",
               "hidden": false,
@@ -22443,7 +22351,7 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": "",
                 "json": ""
@@ -22478,7 +22386,7 @@
               "description": "",
               "errorLabel": "",
               "tooltip": "",
-              "hideLabel": false,
+              "hideLabel": true,
               "tabindex": "",
               "disabled": false,
               "autofocus": false,
@@ -22505,7 +22413,7 @@
               "addons": []
             },
             {
-              "label": "My total income in 2020 was:",
+              "label": "My total income in {{data.programYear}} was:",
               "prefix": "$",
               "customClass": "font-weight-bold",
               "mask": false,
@@ -23189,9 +23097,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": "true",
-            "when": "howWillYouBeAttendingTheProgram",
-            "eq": "Full Time"
+            "show": "",
+            "when": "",
+            "eq": ""
           },
           "logic": [],
           "attributes": {},
@@ -23302,7 +23210,7 @@
                   "value": ""
                 }
               ],
-              "content": "If you have had, or anticipate having a significant decrease in income for 2021, you may request to be assessed using this year's estimated income.",
+              "content": "If you have had, or anticipate having a significant decrease in income for {{data.programYear}}, you may request to be assessed using this year's estimated income.",
               "refreshOnChange": false,
               "customClass": "",
               "hidden": false,
@@ -23311,7 +23219,7 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": "",
                 "json": ""
@@ -23514,6 +23422,26 @@
               "allowPrevious": false,
               "components": [
                 {
+                  "input": true,
+                  "tableView": false,
+                  "key": "currentYearIncomeApplicationException",
+                  "label": "Application Exception - Current Year Income",
+                  "protected": false,
+                  "unique": false,
+                  "persistent": true,
+                  "type": "hidden",
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "calculateValue": "value = \"studentApplicationException\";",
+                  "calculateServer": true,
+                  "lockKey": true
+                },
+                {
                   "label": "HTML",
                   "labelWidth": "",
                   "labelMargin": "",
@@ -23696,7 +23624,7 @@
                     "step": "any",
                     "integer": ""
                   },
-                  "key": "myTotalCurrentYearIncomeIs",
+                  "key": "currentYearIncome",
                   "conditional": {
                     "show": "true",
                     "when": "hasSignificantDegreeOfIncome",
@@ -23754,7 +23682,8 @@
                   "inputMask": "",
                   "decimalLimit": 0,
                   "requireDecimal": false,
-                  "tags": []
+                  "tags": [],
+                  "lockKey": true
                 },
                 {
                   "label": "<strong>Select the reason for your significant decrease in income.</strong>",
@@ -23817,7 +23746,7 @@
                   "calculateServer": false,
                   "allowCalculateOverride": false,
                   "validate": {
-                    "required": false,
+                    "required": true,
                     "onlyAvailableItems": true,
                     "customMessage": "",
                     "custom": "",
@@ -23833,7 +23762,7 @@
                   "tags": [],
                   "properties": {},
                   "conditional": {
-                    "show": true,
+                    "show": "true",
                     "when": "hasSignificantDegreeOfIncome",
                     "eq": "yes",
                     "json": ""
@@ -24041,6 +23970,197 @@
                   "id": "ermw1li",
                   "addons": [],
                   "lazyLoad": false
+                },
+                {
+                  "key": "decreaseInIncomePanelContent",
+                  "label": "Content",
+                  "input": false,
+                  "tag": "h3",
+                  "attrs": [
+                    {
+                      "value": "",
+                      "attr": ""
+                    }
+                  ],
+                  "className": "category-header-medium primary-color",
+                  "content": "Upload supporting documents for current year estimated income.",
+                  "type": "htmlelement",
+                  "hideLabel": false,
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "customClass": "header-md"
+                },
+                {
+                  "key": "decreaseInIncomePanelContent2",
+                  "label": "Content",
+                  "input": false,
+                  "tag": "p",
+                  "attrs": [
+                    {
+                      "value": "",
+                      "attr": ""
+                    }
+                  ],
+                  "className": "",
+                  "content": "Please provide supporting documentation for your request to use your current year estimated income.",
+                  "type": "htmlelement",
+                  "hideLabel": false,
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {}
+                },
+                {
+                  "key": "decreaseInIncomePanelContent3",
+                  "label": "Content",
+                  "input": false,
+                  "tag": "p",
+                  "attrs": [
+                    {
+                      "value": "",
+                      "attr": ""
+                    }
+                  ],
+                  "className": "",
+                  "content": "<h4 class=\"category-header-medium-small\">Provide the following:</h4>\n<ul><li>A letter explaining the circumstances that meet one or more of the Criteria (see above)</li></ul>",
+                  "type": "htmlelement",
+                  "hideLabel": true,
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "customClass": "align-bullets"
+                },
+                {
+                  "key": "decreaseInIncomePanelContent4",
+                  "label": "Content",
+                  "input": false,
+                  "tag": "p",
+                  "attrs": [
+                    {
+                      "value": "",
+                      "attr": ""
+                    }
+                  ],
+                  "className": "",
+                  "content": "<h4 class=\"category-header-medium-small\">Provide at least one of the following:</h4>\n<ul><li>All relevant supporting documentation of the circumstance(s) (medical records, letter from the physician, record of employment, layoff or strike, invoices from damages, etc.).</li>\n<li>The more recent CRA Income Tax Return and income information for the year matching the student financial assistance application number (with relevant supporting documentation to show the decrease in income), if available.</li>\n<li>All relevant supporting documentation of estimated total income for the year matching the student financial assistance application number, if applicable (pay stubs, invoices, bank statements, Employment Insurance benefit statements, Record of Employment, etc.).</li>\n</ul>",
+                  "type": "htmlelement",
+                  "hideLabel": true,
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "customClass": "align-bullets"
+                },
+                {
+                  "autofocus": false,
+                  "input": true,
+                  "tableView": false,
+                  "label": "Upload supporting documents:",
+                  "key": "decreaseInIncomePanelUploadsupportingdocuments",
+                  "image": false,
+                  "imageSize": "200",
+                  "placeholder": "",
+                  "multiple": true,
+                  "defaultValue": "",
+                  "protected": false,
+                  "persistent": true,
+                  "hidden": false,
+                  "clearOnHide": true,
+                  "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
+                  "fileMinSize": "0KB",
+                  "fileMaxSize": "4MB",
+                  "type": "file",
+                  "labelPosition": "top",
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "hideLabel": true,
+                  "storage": "url",
+                  "url": "student/files",
+                  "dir": "Current Year Income - Supporting Documents",
+                  "customClass": "font-weight-bold",
+                  "validate": {
+                    "required": true
+                  }
+                },
+                {
+                  "clearOnHide": false,
+                  "label": "Columns",
+                  "input": false,
+                  "tableView": false,
+                  "key": "decreaseInIncomePanelColumns",
+                  "columns": [
+                    {
+                      "components": [
+                        {
+                          "key": "decreaseInIncomePanelColumnsContent",
+                          "input": false,
+                          "html": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>\n",
+                          "type": "content",
+                          "tags": [],
+                          "conditional": {
+                            "show": "",
+                            "when": null,
+                            "eq": ""
+                          },
+                          "properties": {}
+                        }
+                      ],
+                      "width": 6,
+                      "offset": 0,
+                      "push": 0,
+                      "pull": 0
+                    },
+                    {
+                      "components": [
+                        {
+                          "key": "decreaseInIncomePanelColumnsContent2",
+                          "input": false,
+                          "html": "<p style=\"text-align: right;\">4MB file limit each</p>\n",
+                          "type": "content",
+                          "tags": [],
+                          "conditional": {
+                            "show": "",
+                            "when": null,
+                            "eq": ""
+                          },
+                          "properties": {}
+                        }
+                      ],
+                      "width": 6,
+                      "offset": 0,
+                      "push": 0,
+                      "pull": 0
+                    }
+                  ],
+                  "type": "columns",
+                  "hideLabel": false,
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {}
                 }
               ],
               "placeholder": "",
@@ -30081,20 +30201,18 @@
               },
               "errorLabel": "",
               "errors": "",
-              "key": "eligibleForAnAdditionalTransportationAllowance",
+              "key": "additionalTransportRequested",
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": "",
                 "json": ""
               },
               "customConditional": "",
               "logic": [],
-              "attributes": {
-                "data-cy": "eligibleForAnAdditionalTransportationAllowance"
-              },
+              "attributes": {},
               "overlay": {
                 "style": "",
                 "page": "",
@@ -30121,7 +30239,126 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "e26wllo",
-              "defaultValue": ""
+              "defaultValue": "",
+              "lockKey": true
+            },
+            {
+              "label": "<strong>Are you listed as a driver on the insurance for the vehicle you will be using?</strong>",
+              "labelPosition": "top",
+              "labelWidth": "",
+              "labelMargin": "",
+              "optionsLabelPosition": "right",
+              "description": "",
+              "tooltip": "",
+              "customClass": "",
+              "tabindex": "",
+              "inline": false,
+              "hidden": false,
+              "hideLabel": false,
+              "autofocus": false,
+              "disabled": false,
+              "tableView": false,
+              "modalEdit": false,
+              "values": [
+                {
+                  "label": "Yes",
+                  "value": "yes",
+                  "shortcut": ""
+                },
+                {
+                  "label": "No",
+                  "value": "no",
+                  "shortcut": ""
+                }
+              ],
+              "dataType": "",
+              "persistent": true,
+              "protected": false,
+              "dbIndex": false,
+              "encrypted": false,
+              "redrawOn": "",
+              "clearOnHide": true,
+              "customDefaultValue": "",
+              "calculateValue": "",
+              "calculateServer": false,
+              "allowCalculateOverride": false,
+              "validate": {
+                "required": true,
+                "onlyAvailableItems": true,
+                "customMessage": "",
+                "custom": "",
+                "customPrivate": false,
+                "json": "",
+                "strictDateValidation": false,
+                "multiple": false,
+                "unique": false
+              },
+              "errorLabel": "",
+              "errors": "",
+              "key": "additionalTransportListedDriver",
+              "tags": [],
+              "properties": {},
+              "conditional": {
+                "show": "true",
+                "when": "additionalTransportRequested",
+                "eq": "yes",
+                "json": ""
+              },
+              "customConditional": "",
+              "logic": [],
+              "attributes": {},
+              "overlay": {
+                "style": "",
+                "page": "",
+                "left": "",
+                "top": "",
+                "width": "",
+                "height": ""
+              },
+              "type": "radio",
+              "input": true,
+              "placeholder": "",
+              "prefix": "",
+              "suffix": "",
+              "multiple": false,
+              "unique": false,
+              "refreshOn": "",
+              "dataGridLabel": false,
+              "widget": null,
+              "validateOn": "change",
+              "showCharCount": false,
+              "showWordCount": false,
+              "allowMultipleMasks": false,
+              "addons": [],
+              "inputType": "radio",
+              "fieldSet": false,
+              "id": "e26wllo",
+              "defaultValue": "",
+              "lockKey": true
+            },
+            {
+              "key": "additionalTransportationCostContent",
+              "label": "Content",
+              "input": false,
+              "tag": "p",
+              "attrs": [
+                {
+                  "value": "",
+                  "attr": ""
+                }
+              ],
+              "className": "alert alert-danger fa fa-ban w-100",
+              "content": "<strong> You must be a listed driver on the insurance of the vehicle you will be using to qualify for additional transportation funding.</strong>",
+              "type": "htmlelement",
+              "hideLabel": true,
+              "tags": [],
+              "conditional": {
+                "show": "true",
+                "when": "additionalTransportListedDriver",
+                "eq": "no"
+              },
+              "properties": {},
+              "customClass": "banner-alert"
             },
             {
               "title": "Transportation Exception Content",
@@ -30141,8 +30378,8 @@
               "customConditional": "",
               "conditional": {
                 "json": "",
-                "show": true,
-                "when": "eligibleForAnAdditionalTransportationAllowance",
+                "show": "true",
+                "when": "additionalTransportListedDriver",
                 "eq": "yes"
               },
               "logic": [],
@@ -30231,6 +30468,99 @@
                   "id": "ebhurj"
                 },
                 {
+                  "label": "<strong>Are you the owner of the vehicle?</strong>",
+                  "labelPosition": "top",
+                  "labelWidth": "",
+                  "labelMargin": "",
+                  "optionsLabelPosition": "right",
+                  "description": "",
+                  "tooltip": "",
+                  "customClass": "",
+                  "tabindex": "",
+                  "inline": false,
+                  "hidden": false,
+                  "autofocus": false,
+                  "disabled": false,
+                  "tableView": false,
+                  "modalEdit": false,
+                  "values": [
+                    {
+                      "label": "Yes",
+                      "value": "yes",
+                      "shortcut": ""
+                    },
+                    {
+                      "label": "No",
+                      "value": "no",
+                      "shortcut": ""
+                    }
+                  ],
+                  "dataType": "",
+                  "persistent": true,
+                  "protected": false,
+                  "dbIndex": false,
+                  "encrypted": false,
+                  "redrawOn": "",
+                  "clearOnHide": true,
+                  "customDefaultValue": "",
+                  "calculateValue": "",
+                  "calculateServer": false,
+                  "allowCalculateOverride": false,
+                  "validate": {
+                    "required": true,
+                    "onlyAvailableItems": true,
+                    "customMessage": "",
+                    "custom": "",
+                    "customPrivate": false,
+                    "json": "",
+                    "strictDateValidation": false,
+                    "multiple": false,
+                    "unique": false
+                  },
+                  "errorLabel": "",
+                  "errors": "",
+                  "key": "additionalTransportOwner",
+                  "tags": [],
+                  "properties": {},
+                  "conditional": {
+                    "show": "",
+                    "when": "",
+                    "eq": "",
+                    "json": ""
+                  },
+                  "customConditional": "",
+                  "logic": [],
+                  "attributes": {},
+                  "overlay": {
+                    "style": "",
+                    "page": "",
+                    "left": "",
+                    "top": "",
+                    "width": "",
+                    "height": ""
+                  },
+                  "type": "radio",
+                  "input": true,
+                  "placeholder": "",
+                  "prefix": "",
+                  "suffix": "",
+                  "multiple": false,
+                  "unique": false,
+                  "refreshOn": "",
+                  "dataGridLabel": false,
+                  "widget": null,
+                  "validateOn": "change",
+                  "showCharCount": false,
+                  "showWordCount": false,
+                  "allowMultipleMasks": false,
+                  "addons": [],
+                  "inputType": "radio",
+                  "fieldSet": false,
+                  "id": "e26wllo",
+                  "defaultValue": "",
+                  "lockKey": true
+                },
+                {
                   "label": "<strong>Which of the following best describes your situation?</strong>",
                   "optionsLabelPosition": "right",
                   "inline": false,
@@ -30254,9 +30584,9 @@
                   ],
                   "key": "transportationcostsituation",
                   "conditional": {
-                    "show": "true",
-                    "when": "eligibleForAnAdditionalTransportationAllowance",
-                    "eq": "yes"
+                    "show": "",
+                    "when": "",
+                    "eq": ""
                   },
                   "type": "radio",
                   "input": true,
@@ -30322,41 +30652,6 @@
                   "autofocus": false,
                   "input": true,
                   "tableView": false,
-                  "inputType": "text",
-                  "inputMask": "",
-                  "label": "Please estimate your weekly transportation costs.",
-                  "key": "additionalTransportCost",
-                  "placeholder": "",
-                  "prefix": "$",
-                  "suffix": "",
-                  "defaultValue": "",
-                  "protected": false,
-                  "persistent": true,
-                  "hidden": false,
-                  "clearOnHide": true,
-                  "delimiter": true,
-                  "decimalLimit": 2,
-                  "requireDecimal": true,
-                  "validate": {
-                    "required": true,
-                    "multiple": "",
-                    "custom": "valid = (input >= 0 && input <= 9999) ? true : 'The number you have entered is outside the expected range.';"
-                  },
-                  "conditional": {
-                    "show": "true",
-                    "when": "eligibleForAnAdditionalTransportationAllowance",
-                    "eq": "yes"
-                  },
-                  "type": "currency",
-                  "labelPosition": "top",
-                  "tags": [],
-                  "properties": {},
-                  "lockKey": true
-                },
-                {
-                  "autofocus": false,
-                  "input": true,
-                  "tableView": false,
                   "inputType": "number",
                   "label": "Please estimate your weekly travel distance from home to school in kilometers:",
                   "key": "additionalTransportKm",
@@ -30381,9 +30676,9 @@
                   "labelPosition": "top",
                   "tags": [],
                   "conditional": {
-                    "show": "true",
-                    "when": "eligibleForAnAdditionalTransportationAllowance",
-                    "eq": "yes"
+                    "show": "",
+                    "when": "",
+                    "eq": ""
                   },
                   "properties": {},
                   "decimalLimit": 0,
@@ -30417,9 +30712,9 @@
                   "labelPosition": "top",
                   "tags": [],
                   "conditional": {
-                    "show": "true",
-                    "when": "eligibleForAnAdditionalTransportationAllowance",
-                    "eq": "yes"
+                    "show": "",
+                    "when": "",
+                    "eq": ""
                   },
                   "properties": {},
                   "decimalLimit": 0,
@@ -30461,9 +30756,9 @@
                   "optionsLabelPosition": "right",
                   "tags": [],
                   "conditional": {
-                    "show": "true",
-                    "when": "eligibleForAnAdditionalTransportationAllowance",
-                    "eq": "yes"
+                    "show": "",
+                    "when": "",
+                    "eq": ""
                   },
                   "properties": {},
                   "lockKey": true
@@ -31161,7 +31456,8 @@
                   "lazyLoad": false,
                   "theme": "default",
                   "breadcrumb": "default",
-                  "id": "ew7bwiw"
+                  "id": "ew7bwiw",
+                  "tags": []
                 }
               ],
               "placeholder": "",
@@ -31205,7 +31501,8 @@
               "id": "ev5rghf"
             }
           ],
-          "id": "emvzoox"
+          "id": "emvzoox",
+          "lockKey": true
         },
         {
           "input": true,

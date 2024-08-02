@@ -22,7 +22,7 @@ export class ECertFeedbackErrorService {
     offeringIntensity: OfferingIntensity,
   ): Promise<ECertFeedbackError[]> {
     return this.eCertFeedbackErrorRepo.find({
-      select: { id: true, errorCode: true },
+      select: { id: true, errorCode: true, blockFunding: true },
       where: { offeringIntensity },
     });
   }

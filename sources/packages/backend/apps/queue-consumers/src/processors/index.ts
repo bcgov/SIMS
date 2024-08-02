@@ -27,3 +27,4 @@ export * from "./schedulers/institution-integration/ece-response/ece-response-in
 export * from "./schedulers/workflow/assessment-workflow-enqueuer.scheduler";
 export * from "./schedulers/workflow/assessment-workflow-queue-retry.scheduler";
 export * from "./schedulers/esdc-integration/student-loan-balances/student-loan-balances-part-time-integration.scheduler";
+export * from "./schedulers/cas-integration/cas-supplier-integration.scheduler";

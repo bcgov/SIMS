@@ -13,8 +13,10 @@ import * as Client from "ssh2-sftp-client";
 import { DeepMocked, createMock } from "@golevelup/ts-jest";
 import { DiscoveryModule } from "@golevelup/nestjs-discovery";
 import { QueueModule } from "@sims/services/queue";
-import { SystemUsersService, ZeebeModule } from "@sims/services";
+import { ClamAVService, SystemUsersService, ZeebeModule } from "@sims/services";
 import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
+import { createCASServiceMock } from "../mock-utils/cas-service.mock";
+import { CASService } from "@sims/integrations/cas/cas.service";
 
 /**
  * Result from a createTestingModule to support E2E tests creation.
@@ -25,6 +27,8 @@ export class CreateTestingModuleResult {
   dataSource: DataSource;
   zbClient: ZeebeGrpcClient;
   sshClientMock: DeepMocked<Client>;
+  casServiceMock: CASService;
+  clamAVServiceMock: ClamAVService;
 }
 
 /**
@@ -44,11 +48,18 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
     },
   );
   const sshClientMock = createMock<Client>();
+  const casServiceMock = createCASServiceMock();
+  const clamAVServiceMock = createClamAVServiceMock();
+
   const module: TestingModule = await Test.createTestingModule({
     imports: [QueueConsumersModule, DiscoveryModule],
   })
     .overrideProvider(SshService)
     .useValue(createSSHServiceMock(sshClientMock))
+    .overrideProvider(CASService)
+    .useValue(casServiceMock)
+    .overrideProvider(ClamAVService)
+    .useValue(clamAVServiceMock)
     .compile();
 
   const nestApplication = module.createNestApplication();
@@ -67,5 +78,17 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
     dataSource,
     zbClient,
     sshClientMock,
+    casServiceMock,
+    clamAVServiceMock,
   };
+}
+
+/**
+ * Creates a mocked Clam anti-virus service.
+ * @returns a mocked Clam anti-virus service.
+ */
+function createClamAVServiceMock(): ClamAVService {
+  const mockedClamAVService = {} as ClamAVService;
+  mockedClamAVService.scanFile = jest.fn(() => Promise.resolve(false));
+  return mockedClamAVService;
 }

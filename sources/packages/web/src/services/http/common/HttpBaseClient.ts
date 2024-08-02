@@ -24,7 +24,6 @@ export default abstract class HttpBaseClient {
   }
 
   protected handleRequestError(error: unknown) {
-    console.log(error);
     this.handleAPICustomError(error);
   }
 
@@ -109,8 +108,12 @@ export default abstract class HttpBaseClient {
           requestConfig,
         );
       }
-      return this.apiClient.get(this.addClientRoot(url), requestConfig);
+      return await this.apiClient.get(this.addClientRoot(url), requestConfig);
     } catch (error: unknown) {
+      if (error instanceof AxiosError && error.response?.data) {
+        // Parse error response data that was requested as blob.
+        error.response.data = JSON.parse(await error.response.data.text());
+      }
       this.handleRequestError(error);
       throw error;
     }

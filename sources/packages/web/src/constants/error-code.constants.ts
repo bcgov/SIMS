@@ -103,3 +103,13 @@ export const APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR =
  */
 export const APPLICATION_WITHDRAWAL_VALIDATION_ERROR =
   "APPLICATION_WITHDRAWAL_VALIDATION_ERROR";
+
+/**
+ * File has not been scanned yet and cannot be downloaded.
+ */
+export const FILE_HAS_NOT_BEEN_SCANNED_YET = "FILE_HAS_NOT_BEEN_SCANNED_YET";
+
+/**
+ * File has been scanned and a virus was detected.
+ */
+export const VIRUS_DETECTED = "VIRUS_DETECTED";

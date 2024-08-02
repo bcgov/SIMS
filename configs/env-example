@@ -124,6 +124,7 @@ CAMUNDA_SECURE_CONNECTION=false
 ZEEBE_CLIENT_ID=
 ZEEBE_CLIENT_SECRET=
 CAMUNDA_OAUTH_URL=
+ZEEBE_GRPC_WORKER_LONGPOLL_SECONDS=45
 # Max retries ensures that if the grpc connection cannot be established within maximum
 # number of retry then the process with terminate.
 ZEEBE_CLIENT_MAX_RETRIES=20
@@ -147,3 +148,8 @@ WORKERS_PORT=
 
 #Load test gateway
 LOAD_TEST_API_PORT=
+
+# CAS integration configuration
+CAS_BASE_URL=
+CAS_CLIENT_ID=
+CAS_CLIENT_SECRET=
