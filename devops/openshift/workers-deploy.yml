@@ -29,10 +29,7 @@ objects:
                 - name: NODE_ENV
                   value: ${NODE_ENV}
                 - name: POSTGRES_HOST
-                  valueFrom:
-                    secretKeyRef:
-                      key: ${DB_SERVICE}
-                      name: ${DB_SECRET_NAME}
+                  value: "${DB_SERVICE}"
                 - name: REDIS_HOST
                   value: "${REDIS_SERVICE}"
                 - name: WORKERS_PORT
@@ -77,8 +74,15 @@ objects:
                     secretKeyRef:
                       key: ${CAMUNDA_OAUTH_URL_KEY}
                       name: ${WORKERS_SECRET_NAME}
+                - name: ZEEBE_GRPC_WORKER_LONGPOLL_SECONDS
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ZEEBE_GRPC_WORKER_LONGPOLL_SECONDS_KEY}
+                      name: ${WORKERS_SECRET_NAME}
                 - name: BYPASS_CRA_INCOME_VERIFICATION
                   value: ${BYPASS_CRA_INCOME_VERIFICATION}
+                - name: DISABLE_ORM_CACHE
+                  value: ${DISABLE_ORM_CACHE}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
@@ -89,15 +93,6 @@ objects:
                 requests:
                   cpu: ${CPU_REQUEST}
                   memory: ${MEMORY_REQUEST}
-              readinessProbe:
-                failureThreshold: 3
-                successThreshold: 1
-                httpGet:
-                  path: /health/
-                  port: "${{PORT}}"
-                initialDelaySeconds: 10
-                periodSeconds: 10
-                timeoutSeconds: 1
               livenessProbe:
                 failureThreshold: 3
                 successThreshold: 1
@@ -159,13 +154,13 @@ parameters:
   - name: REPLICAS
     value: "2"
   - name: DB_SERVICE
-    value: pgbouncer-host
+    value: patroni-master
   - name: DB_SECRET_NAME
-    value: simsdb-pguser-app-database-user
+    value: patroni-creds
   - name: DB_USERNAME_KEY
-    value: user
+    value: database-user
   - name: DB_PASSWORD_KEY
-    value: password
+    value: database-password
   - name: SIMS_DB_NAME
     value: sims-db-name
   - name: IMAGE_STREAM_TAG
@@ -179,21 +174,17 @@ parameters:
   - name: BUILD_TAG
     value: "0"
   - name: WORKERS_SECRET_NAME
-    require: true
-  - name: ATBC_LOGIN_ENDPOINT
-    require: true
+    required: true
   - name: ZEEBE_ADDRESS_KEY
     value: zeebe-address
-    require: true
   - name: ZEEBE_CLIENT_ID_KEY
     value: zeebe-client-id
-    require: true
   - name: ZEEBE_CLIENT_SECRET_KEY
     value: zeebe-client-secret
-    require: true
   - name: CAMUNDA_OAUTH_URL_KEY
     value: camunda-oauth-url
-    require: true
+  - name: ZEEBE_GRPC_WORKER_LONGPOLL_SECONDS_KEY
+    value: zeebe-grpc-worker-longpoll-seconds
   - name: BYPASS_CRA_INCOME_VERIFICATION
     value: "false"
   - name: REDIS_SERVICE
@@ -203,4 +194,6 @@ parameters:
   - name: REDIS_PASSWORD_KEY
     value: password
   - name: PORT
+    required: true
+  - name: DISABLE_ORM_CACHE
     required: true

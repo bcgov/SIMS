@@ -26,10 +26,7 @@ objects:
                 - name: VERSION
                   value: ${BUILD_TAG}
                 - name: POSTGRES_HOST
-                  valueFrom:
-                    secretKeyRef:
-                      key: ${DB_SERVICE}
-                      name: ${DB_SECRET_NAME}
+                  value: "${DB_SERVICE}"
                 - name: POSTGRES_USER
                   valueFrom:
                     secretKeyRef:
@@ -77,13 +74,13 @@ parameters:
   - name: IMAGE_REGISTRY
     value: image-registry.openshift-image-registry.svc:5000
   - name: DB_SERVICE
-    value: pgbouncer-host
+    value: patroni-master
   - name: DB_SECRET_NAME
-    value: simsdb-pguser-app-database-user
+    value: patroni-creds
   - name: DB_USERNAME_KEY
-    value: user
+    value: superuser-username
   - name: DB_PASSWORD_KEY
-    value: password
+    value: superuser-password
   - name: CPU_LIMIT
     value: "1.0"
   - name: MEMORY_LIMIT
