@@ -1,6 +1,6 @@
 <template>
   <modal-dialog-base title="Edit application" :showDialog="showDialog">
-    <template #content v-if="props.isBeforeApplicationEdit">
+    <template #content v-if="isBeforeApplicationEdit">
       Any edits made to your application may require the resubmission of
       supporting information, potentially delaying your application. Are you
       sure you want to proceed?
@@ -11,9 +11,7 @@
     </template>
     <template #footer>
       <footer-buttons
-        :primaryLabel="
-          props.isBeforeApplicationEdit ? 'Edit application' : 'Submit'
-        "
+        :primaryLabel="isBeforeApplicationEdit ? 'Edit application' : 'Submit'"
         secondaryLabel="No"
         @primaryClick="editApplication"
         @secondaryClick="dialogClosed"
@@ -38,7 +36,7 @@ export default defineComponent({
   components: {
     ModalDialogBase,
   },
-  setup(props) {
+  setup() {
     const { showDialog, resolvePromise, showModal } = useModalDialog<boolean>();
     const dialogClosed = () => {
       resolvePromise(false);
@@ -52,7 +50,6 @@ export default defineComponent({
       showModal,
       dialogClosed,
       editApplication,
-      props,
     };
   },
 });
