@@ -29,7 +29,7 @@ uninstall:
 .PHONY: template
 template: helm-dep
 template:
-	@helm template ${NAME} -n ${NAMESPACE} -f values.yaml > template.yaml
+	@helm template . -f values.yaml > template.yaml
 
 .PHONY: force-install
 force-install: uninstall

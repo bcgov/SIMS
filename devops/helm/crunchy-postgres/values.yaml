@@ -13,6 +13,10 @@ standby:
   # If you want to recover from PVC, use repo1. If you want to recover from S3, use repo2
   repoName: repo1
 
+restore:
+  enabled: true
+  repoName: repo1
+
 instances:
   name: ha # high availability
   replicas: 3

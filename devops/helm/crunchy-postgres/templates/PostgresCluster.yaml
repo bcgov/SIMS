@@ -72,6 +72,13 @@ spec:
 
   backups:
     pgbackrest:
+      restore:
+        enabled: {{ .Values.restore.enabled }}
+        repoName: repo1
+        options:
+        - --type=time
+        - --target="2024-08-02 22:56:42-04"
+      
       {{ if .Values.pgBackRest.image }}
       image: {{ .Values.pgBackRest.image }}
       {{ end }}
