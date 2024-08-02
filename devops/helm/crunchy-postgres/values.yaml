@@ -15,7 +15,7 @@ standby:
 
 instances:
   name: ha # high availability
-  replicas: 2
+  replicas: 3
   dataVolumeClaimSpec:
     storage: 10Gi
     storageClassName: netapp-block-standard
@@ -82,7 +82,7 @@ patroni:
 proxy:
   pgBouncer:
     image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
-    replicas: 2
+    replicas: 3
     requests:
       cpu: 50m
       memory: 128Mi

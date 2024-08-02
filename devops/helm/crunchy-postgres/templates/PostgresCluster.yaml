@@ -157,7 +157,7 @@ spec:
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 1
+            - weight: 2
               podAffinityTerm:
                 topologyKey: topology.kubernetes.io/zone
                 labelSelector:
