@@ -74,10 +74,11 @@ spec:
     pgbackrest:
       restore:
         enabled: {{ .Values.restore.enabled }}
-        repoName: repo1
+        repoName: {{ .Values.restore.repoName }}
         options:
+        - --db-include=simsdb
         - --type=time
-        - --target="2024-08-02 22:56:42-04"
+        - --target="2024-08-03 00:48:29"
       
       {{ if .Values.pgBackRest.image }}
       image: {{ .Values.pgBackRest.image }}
