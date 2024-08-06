@@ -8,10 +8,7 @@
       class="mt-3"
     ></v-progress-linear>
   </div>
-  <div
-    class="ff-form-container overflow-visible"
-    ref="formioContainerRef"
-  ></div>
+  <div class="ff-form-container" ref="formioContainerRef"></div>
 </template>
 
 <script lang="ts">
