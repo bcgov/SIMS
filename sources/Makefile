@@ -65,7 +65,7 @@ export CRA_REQUEST_FOLDER := $(or $(CRA_REQUEST_FOLDER), CRA-Request)
 export CRA_RESPONSE_FOLDER := $(or $(CRA_RESPONSE_FOLDER), CRA-Response)
 export CRA_PROGRAM_AREA_CODE := $(or $(CRA_PROGRAM_AREA_CODE), )
 export CRA_ENVIRONMENT_CODE := $(or $(CRA_ENVIRONMENT_CODE), )
-# Versions used by camunda-docker-compose-core.yml during the make camunda.
+# Versions used by camunda-docker compose-core.yml during the make camunda.
 # Versions upgraded following the conbination available on https://github.com/camunda/camunda-platform/blob/main/.env
 export CAMUNDA_CONNECTORS_VERSION := $(or $(CAMUNDA_CONNECTORS_VERSION), 8.5.3)
 export CAMUNDA_PLATFORM_VERSION := $(or $(CAMUNDA_PLATFORM_VERSION), 8.5.2)
@@ -129,56 +129,56 @@ print-status:
 # Build locally
 local-build:
 	@echo "+\n++ Make: Building locally ...\n+"
-	@docker-compose -f docker-compose.yml build
+	@docker compose -f docker-compose.yml build
 
 # Run locally
 local-run:
 	@echo "+\n++ Make: Run locally ...\n+"
-	@docker-compose -f docker-compose.yml up
+	@docker compose -f docker-compose.yml up
 
 # Build and run locally
 local-build-run:
 	@echo "+\n++ Make: Build / Run locally ...\n+"
-	@docker-compose -f docker-compose.yml up --build
+	@docker compose -f docker-compose.yml up --build
 
 # Stop locally
 local-stop:
 	@echo "+\n++ Make: Stop local app ...\n+"
-	@docker-compose -f docker-compose.yml down
+	@docker compose -f docker-compose.yml down
 
 # Clean locally
 local-clean:
 	@echo "+\n++ Make: Clean local app ...\n+"
-	@docker-compose -f docker-compose.yml down -v
+	@docker compose -f docker-compose.yml down -v
 
 # Local DB
 postgres:
 	@echo "+\n++ Make: Run local db.\n+"
-	@docker-compose -f docker-compose.yml up postgres
+	@docker compose -f docker-compose.yml up postgres
 
 # Local Queue
 redis:
 	@echo "+\n++ Make: Run local queue.\n+"
-	@docker-compose -f docker-compose.yml up redis
+	@docker compose -f docker-compose.yml up redis
 
 # Local API only
 api-only:
 	@echo "+\n++ Make: Building and running API only"
-	@docker-compose -f docker-compose.yml up api
+	@docker compose -f docker-compose.yml up api
 
 # Local App
 api: ## <Helper> :: Executes into the workspace container.
 	@echo "+\n++Shelling into local workspace ...++\n+"
-	@docker-compose exec api bash
+	@docker compose exec api bash
 
 # Local Web (nginx)
 web-local:
 	@echo "+\n++ Make: Run local web (nginx).\n+"
-	@docker-compose -f docker-compose.yml up web
+	@docker compose -f docker-compose.yml up web
 
 local-db:
 	@echo "Make: Shelling into database workspace ..."
-	@docker-compose -f docker-compose.yml exec postgres psql -U $(POSTGRESQL_USER) -W $(POSTGRES_DB)
+	@docker compose -f docker-compose.yml exec postgres psql -U $(POSTGRESQL_USER) -W $(POSTGRES_DB)
 
 # Build and run Camunda locally.
 camunda:
@@ -186,12 +186,12 @@ camunda:
 	@echo "- Use user and password as 'demo' to login to Operate."
 	@echo "- Use Zeebe address env variable as 'ZEEBE_ADDRESS=localhost:26500' to connect to the local environment."
 	@echo "- Use endpoint http://localhost:26500 to deploy to the local environment from the desktop modeler."
-	@docker-compose -f camunda-docker-compose-core.yml up -d
+	@docker compose -f camunda-docker-compose-core.yml up -d
 
 # Stops Camunda locally.
 camunda-stop:
 	@echo "Stopping Camunda locally..."
-	@docker-compose -f camunda-docker-compose-core.yml down
+	@docker compose -f camunda-docker-compose-core.yml down
 
 # Deploy Camunda defitions locally
 deploy-camunda-definitions:
@@ -202,7 +202,7 @@ forms:
 	@echo "Build, deploy forms and deploy form-definitions locally... \n+"
 	@echo "Login to http://localhost:3001 \n+"
 	@echo "Default user/password as admin@example.com/CHANGEME \n+"
-	@docker-compose -f forms-docker-compose.yml up --build -d
+	@docker compose -f forms-docker-compose.yml up --build -d
 
 # Deploy form-definitions locally
 deploy-form-definitions:
@@ -211,31 +211,31 @@ deploy-form-definitions:
 # Stop locally
 forms-stop:
 	@echo "+\n++ Stopping formio forms locally...\n+"
-	@docker-compose -f forms-docker-compose.yml down
+	@docker compose -f forms-docker-compose.yml down
 
 # Runs queue consumer application
 queue-consumers:
 	@echo "+\n++ Make: Queue only"
-	@docker-compose -f docker-compose.yml build queue-consumers
-	@docker-compose -f docker-compose.yml up -d queue-consumers
+	@docker compose -f docker-compose.yml build queue-consumers
+	@docker compose -f docker-compose.yml up -d queue-consumers
 
 # Runs clamav
 clamav:
 	@echo "+\n++ Make: ClamAV only"
-	@docker-compose -f docker-compose.yml build clamav
-	@docker-compose -f docker-compose.yml up -d clamav
+	@docker compose -f docker-compose.yml build clamav
+	@docker compose -f docker-compose.yml up -d clamav
 
 # Runs load test gateway application
 load-test-gateway:
 	@echo "+\n++ Make: Load test gateway only"
-	@docker-compose -f docker-compose.yml build load-test-gateway
-	@docker-compose -f docker-compose.yml up -d load-test-gateway
+	@docker compose -f docker-compose.yml build load-test-gateway
+	@docker compose -f docker-compose.yml up -d load-test-gateway
 
 # Runs workers application
 workers:
 	@echo "+\n++ Make: Camunda workers only"
-	@docker-compose -f docker-compose.yml build workers
-	@docker-compose -f docker-compose.yml up -d workers
+	@docker compose -f docker-compose.yml build workers
+	@docker compose -f docker-compose.yml up -d workers
 
 # Enable local DB connection to Openshift DEV/TEST/QA
 connect-dev-db:

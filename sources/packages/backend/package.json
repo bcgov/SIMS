@@ -42,6 +42,7 @@
     "deploy:camunda:definitions": "ts-node ./workflow/src/deploy.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.621.0",
     "@bull-board/api": "^5.15.1",
     "@bull-board/express": "^5.15.1",
     "@bull-board/ui": "^5.15.1",
@@ -87,6 +88,7 @@
     "typeorm": "^0.3.17"
   },
   "devDependencies": {
+    "@aws-sdk/types": "^3.609.0",
     "@golevelup/ts-jest": "^0.4.0",
     "@nestjs/cli": "^10.3.2",
     "@nestjs/schematics": "^10.1.1",
