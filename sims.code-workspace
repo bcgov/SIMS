@@ -78,7 +78,7 @@
       "**/node_modules": true
     },
     "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": false,
+    "editor.formatOnSave": true,
     "editor.guides.bracketPairs": true,
     "[vue][typescript][javascript]": {
       "editor.formatOnSave": true,
