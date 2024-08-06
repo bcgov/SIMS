@@ -17,11 +17,9 @@ on:
           - upgrade
       restore_enabled:
         description: "Enable restore"
-        required: true
-        type: choice
-        options:
-          - "true"
-          - "false"
+        required: false
+        type: boolean
+        default: false
       restore_target:
         description: "Restore target date and time in 'YYYY-MM-DD HH:MM:SS'format "
         required: false
@@ -43,9 +41,8 @@ jobs:
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
-
       - name: Validate Date Time Format
-        if: ${{ inputs.restore_enabled == 'true' }}
+        if: ${{ inputs.action == 'upgrade' && inputs.restore_enabled}}
         run: |
           # Define the date-time format regex pattern
           DATE_TIME_REGEX='^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$'
@@ -53,7 +50,11 @@ jobs:
             echo "Error: RESTORE_TARGET must be in the format 'YYYY-MM-DD HH:MM:SS'."
             exit 1
           fi
+      - name: Display Restore Warning
+        if: ${{ inputs.action == 'upgrade' && inputs.restore_enabled }}
+        run: |
+          echo "Warning: Only the helm is updated. The restore is not run until kubectl commands are run as per the restore wiki documentation and approvals."
       - name: Manage Crunchy DB
         working-directory: "./devops/helm/crunchy-postgres/"
         run: |
-          make ${{ inputs.action }} NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }} RESTORE_ENABLED=${{ inputs.restore_enabled }} RESTORE_TARGET=${{ inputs.restore_target }}
+          make ${{ inputs.action }} NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }} RESTORE_ENABLED=${{ inputs.restore_enabled }} RESTORE_TARGET="${{ inputs.restore_target }}"
