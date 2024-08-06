@@ -2,6 +2,7 @@
   <full-page-container
     :layout-template="layoutTemplate"
     :full-width="fullWidth"
+    class="overflow-visible"
   >
     <template #header>
       <slot name="header"></slot>

@@ -9819,7 +9819,7 @@
                     },
                     {
                       "value": "metis",
-                      "label": "Metis",
+                      "label": "Métis",
                       "shortcut": ""
                     },
                     {
@@ -30149,7 +30149,7 @@
               "addons": []
             },
             {
-              "label": "<strong>Do you want to be assessed for additional transportation costs</strong>",
+              "label": "<strong>Do you want to be assessed for additional transportation costs?</strong>",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -30572,7 +30572,7 @@
                       "shortcut": ""
                     },
                     {
-                      "label": "I am in a clinical or practicum placement that requires additional travel",
+                      "label": "I am in a clinical or practicum placement that requires additional travel.",
                       "value": "educationPlacement",
                       "shortcut": ""
                     },
@@ -30940,7 +30940,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "<h4 class=\"category-header-medium-small\">Documents Required</h4>\n<ul>\n  <li>Copy of your vehicle insurance and</li>\n<li>Work, clinical, or practicum location and schedule with a letter of explanation and</li>\n<li>Statement that outlines the family responsibilities that require additional travel (e.g. driving children to and\nfrom school or daycare) and</li>\n<li>Statement why you can’t move closer to your school</li>\n</ul>",
+                      "content": "<h4 class=\"category-header-medium-small\">Documents Required</h4>\n<ul>\n  <li>Copy of your vehicle insurance <b>and</b></li>\n<li>Work, clinical, or practicum location and schedule with a letter of explanation <b>and</b></li>\n<li>Statement that outlines the family responsibilities that require additional travel (e.g. driving children to and\nfrom school or daycare) <b>and</b></li>\n<li>Statement why you can’t move closer to your school</li>\n</ul>",
                       "refreshOnChange": false,
                       "customClass": "align-bullets",
                       "key": "html28",
