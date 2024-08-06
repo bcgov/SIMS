@@ -629,3 +629,4 @@ db-backup-deploy-patroni-delete:
 delete-redis:
 	@echo "+\n++ Removing redis and resources on $(NAMESPACE)\n+"
 	@oc delete -n $(NAMESPACE) all,rc,svc,dc,route,pvc,secret,configmap,sa -l app=redis
+	
