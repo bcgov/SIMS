@@ -14,8 +14,10 @@ standby:
   repoName: repo1
 
 restore:
-  enabled: false
+  enabled: "${RESTORE_ENABLED}"
   repoName: repo1
+  options:
+    target: "${RESTORE_TARGET}"
 
 instances:
   name: ha # high availability

@@ -18,8 +18,15 @@ install:
 
 .PHONY: upgrade
 upgrade: helm-dep
-upgrade:
-	@helm upgrade --install ${NAME} . -n ${NAMESPACE} -f values.yaml
+	@if [ "${RESTORE_ENABLED}" = "true" ]; then \
+		if [ -z "${RESTORE_TARGET}" ]; then \
+			echo "Error: RESTORE_TARGET is required when RESTORE_ENABLED is true."; \
+			exit 1; \
+		fi; \
+		helm upgrade --install ${NAME} . -n ${NAMESPACE} --set restore.enabled=true --set restore.options.target="${RESTORE_TARGET}" -f values.yaml; \
+	else \
+		helm upgrade --install ${NAME} . -n ${NAMESPACE} --set restore.enabled=false -f values.yaml; \
+	fi
 
 .PHONY: uninstall
 uninstall: helm-dep

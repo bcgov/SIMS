@@ -78,7 +78,7 @@ spec:
         options:
         - --db-include=simsdb
         - --type=time
-        - --target="2024-08-03 00:48:29"
+        - --target="{{ .Values.restore.options.target }}"
       
       {{ if .Values.pgBackRest.image }}
       image: {{ .Values.pgBackRest.image }}
