@@ -13,8 +13,8 @@ objects:
     metadata:
       name: ${JOB_NAME}
     spec:
-      activeDeadlineSeconds: 300 # The maximum duration the job can run.
-      backoffLimit: 5 # The number of retries for a job.
+      activeDeadlineSeconds: 300  # The maximum duration the job can run.
+      backoffLimit: 5  # The number of retries for a job.
       template:
         metadata:
           name: ${JOB_NAME}
