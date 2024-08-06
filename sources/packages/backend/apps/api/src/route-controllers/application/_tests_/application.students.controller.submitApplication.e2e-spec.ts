@@ -12,22 +12,19 @@ import {
 import {
   createE2EDataSources,
   E2EDataSources,
-  saveFakeStudent,
   saveFakeApplication,
-  ensureProgramYearExists,
   createFakeApplication,
   getProviderInstanceForModule,
-  saveFakeSFASIndividual,
   createFakeEducationProgramOffering,
   createFakeUser,
+  saveFakeStudent,
+  saveFakeSFASIndividual,
 } from "@sims/test-utils";
 import {
   Application,
   ApplicationStatus,
   EducationProgramOffering,
   OfferingIntensity,
-  ProgramYear,
-  Student,
 } from "@sims/sims-db";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { SaveApplicationAPIInDTO } from "../models/application.dto";
@@ -40,12 +37,9 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
   let app: INestApplication;
   let appModule: TestingModule;
   let appDataSource: DataSource;
-  let sharedStudent: Student;
   let db: E2EDataSources;
-  let programYear: ProgramYear;
   let systemUsersService: SystemUsersService;
   let formService: FormService;
-  const PROGRAM_YEAR_PREFIX = 1990;
 
   beforeAll(async () => {
     const { nestApplication, module, dataSource } =
@@ -54,10 +48,8 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     appModule = module;
     appDataSource = dataSource;
     db = createE2EDataSources(dataSource);
-    sharedStudent = await saveFakeStudent(db.dataSource);
     systemUsersService = nestApplication.get(SystemUsersService);
     // Program Year for the following tests.
-    programYear = await ensureProgramYearExists(db, PROGRAM_YEAR_PREFIX);
     formService = await getProviderInstanceForModule(
       appModule,
       AppStudentsModule,
@@ -69,8 +61,9 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
 
   it("Should throw study dates overlap error when an application submitted for a student via the SIMS system has overlapping study start or study end dates with another application.", async () => {
     // Arrange
+    const student = await saveFakeStudent(db.dataSource);
     // First offering created with start date 10 days prior to the
-    // current date and end date 10 days ahead of the current date.
+    // current date and end date 10 days after the current date.
     const firstApplicationOfferingInitialValues = {
       studyStartDate: getISODateOnlyString(addDays(-10)),
       studyEndDate: getISODateOnlyString(addDays(10)),
@@ -79,13 +72,14 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     await saveFakeApplication(
       appDataSource,
       {
-        student: sharedStudent,
-        programYear,
+        student,
       },
-      { offeringInitialValues: firstApplicationOfferingInitialValues },
+      {
+        offeringInitialValues: firstApplicationOfferingInitialValues,
+      },
     );
     // Second offering created with start date as the current
-    // date and the end date 20 days ahead of the current date.
+    // date and the end date 20 days after the current date.
     // This will result in the offering start date of this offering
     // overlap with the first offering's start and end dates.
     const secondApplicationOfferingInitialValues = {
@@ -95,8 +89,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     };
     const secondApplication = createFakeApplication(
       {
-        student: sharedStudent,
-        programYear,
+        student,
       },
       {
         initialValue: {
@@ -123,13 +116,10 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     );
     const secondApplicationProgram = secondApplicationOffering.educationProgram;
     const applicationData = {
-      programYear,
       selectedOfferingDate:
         secondApplicationOfferingInitialValues.studyStartDate,
       selectedOfferingEndDate:
         secondApplicationOfferingInitialValues.studyEndDate,
-      programYearStartDate: programYear.startDate,
-      programYearEndDate: programYear.endDate,
       howWillYouBeAttendingTheProgram:
         secondApplicationOfferingInitialValues.offeringIntensity,
       selectedProgram: secondApplicationProgram.id,
@@ -138,7 +128,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     const payload = {
       associatedFiles: [],
       data: applicationData,
-      programYearId: programYear.id,
+      programYearId: secondApplication.programYear.id,
     } as SaveApplicationAPIInDTO;
     const endpoint = `/students/application/${secondDraftApplication.id}/submit`;
     const token = await getStudentToken(
@@ -150,7 +140,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       data: { data: applicationData },
     });
     formService.dryRunSubmission = dryRunSubmissionMock;
-    await mockUserLoginInfo(appModule, sharedStudent);
+    await mockUserLoginInfo(appModule, student);
     // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)
@@ -166,15 +156,16 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
 
   it("Should throw study dates overlap error when an application submitted for a student via the SFAS system has overlapping study start or study end dates with another application.", async () => {
     // Arrange
+    const student = await saveFakeStudent(db.dataSource);
     const sfasIndividual = await saveFakeSFASIndividual(db.dataSource, {
       initialValues: {
-        lastName: sharedStudent.user.lastName,
-        birthDate: sharedStudent.birthDate,
-        sin: sharedStudent.sinValidation.sin,
+        lastName: student.user.lastName,
+        birthDate: student.birthDate,
+        sin: student.sinValidation.sin,
       },
     });
-    // First offering created with start date 30 days ahead of the
-    // current date and end date 50 days ahead of the current date.
+    // First offering created with start date 30 days after the
+    // current date and end date 50 days after the current date.
     const firstFakeSFASPartTimeApplication = createFakeSFASPartTimeApplication(
       { individual: sfasIndividual },
       {
@@ -187,8 +178,8 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     await db.sfasPartTimeApplications.save(firstFakeSFASPartTimeApplication);
     // Create a fake offering for the second application.
     const auditUser = await db.user.save(createFakeUser());
-    // Second offering created with start date 40 days ahead of the
-    // current date and the end date 60 days ahead of the current date.
+    // Second offering created with start date 40 days after the
+    // current date and the end date 60 days after the current date.
     // This will result in the offering start date of this offering
     // overlap with the first offering's start and end dates.
     const secondApplicationOfferingInitialValues = {
@@ -207,8 +198,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     const savedOffering = await db.educationProgramOffering.save(fakeOffering);
     const secondApplication = createFakeApplication(
       {
-        student: sharedStudent,
-        programYear,
+        student,
         location: fakeOffering.institutionLocation,
       },
       {
@@ -223,13 +213,10 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     );
     const secondDraftApplication = await db.application.save(secondApplication);
     const applicationData = {
-      programYear,
       selectedOfferingDate:
         secondApplicationOfferingInitialValues.studyStartDate,
       selectedOfferingEndDate:
         secondApplicationOfferingInitialValues.studyEndDate,
-      programYearStartDate: programYear.startDate,
-      programYearEndDate: programYear.endDate,
       howWillYouBeAttendingTheProgram:
         secondApplicationOfferingInitialValues.offeringIntensity,
       selectedProgram: savedOffering.educationProgram.id,
@@ -238,7 +225,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     const payload = {
       associatedFiles: [],
       data: applicationData,
-      programYearId: programYear.id,
+      programYearId: secondApplication.programYear.id,
     } as SaveApplicationAPIInDTO;
     const endpoint = `/students/application/${secondDraftApplication.id}/submit`;
     const token = await getStudentToken(
@@ -250,7 +237,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       data: { data: applicationData },
     });
     formService.dryRunSubmission = dryRunSubmissionMock;
-    await mockUserLoginInfo(appModule, sharedStudent);
+    await mockUserLoginInfo(appModule, student);
     // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)
@@ -266,8 +253,9 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
 
   it("Should submit an application for a student when the application study dates do not have any overlap with the study dates of any existing application.", async () => {
     // Arrange
-    // First offering created with start date 70 days ahead of the
-    // current date and end date 90 days ahead of the current date.
+    const student = await saveFakeStudent(db.dataSource);
+    // First offering created with start date 70 days after the
+    // current date and end date 90 days after the current date.
     const firstApplicationOfferingInitialValues = {
       studyStartDate: getISODateOnlyString(addDays(70)),
       studyEndDate: getISODateOnlyString(addDays(90)),
@@ -276,13 +264,12 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     await saveFakeApplication(
       appDataSource,
       {
-        student: sharedStudent,
-        programYear,
+        student,
       },
       { offeringInitialValues: firstApplicationOfferingInitialValues },
     );
-    // Second offering created with start date 91 days ahead of the
-    // current date and the end date 99 days ahead of the current date.
+    // Second offering created with start date 91 days after the
+    // current date and the end date 99 days after the current date.
     // This will ensure that there are no date overlaps between the
     // first and the second offerings.
     const secondApplicationOfferingInitialValues = {
@@ -292,8 +279,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     };
     const secondApplication = createFakeApplication(
       {
-        student: sharedStudent,
-        programYear,
+        student,
       },
       {
         initialValue: {
@@ -320,13 +306,10 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     );
     const secondApplicationProgram = secondApplicationOffering.educationProgram;
     const applicationData = {
-      programYear,
       selectedOfferingDate:
         secondApplicationOfferingInitialValues.studyStartDate,
       selectedOfferingEndDate:
         secondApplicationOfferingInitialValues.studyEndDate,
-      programYearStartDate: programYear.startDate,
-      programYearEndDate: programYear.endDate,
       howWillYouBeAttendingTheProgram:
         secondApplicationOfferingInitialValues.offeringIntensity,
       selectedProgram: secondApplicationProgram.id,
@@ -336,7 +319,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     const payload = {
       associatedFiles: [],
       data: applicationData,
-      programYearId: programYear.id,
+      programYearId: secondApplication.programYear.id,
     } as SaveApplicationAPIInDTO;
     const endpoint = `/students/application/${secondDraftApplication.id}/submit`;
     const token = await getStudentToken(
@@ -348,7 +331,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       data: { data: applicationData },
     });
     formService.dryRunSubmission = dryRunSubmissionMock;
-    await mockUserLoginInfo(appModule, sharedStudent);
+    await mockUserLoginInfo(appModule, student);
     // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)
