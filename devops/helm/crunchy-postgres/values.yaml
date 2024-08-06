@@ -14,7 +14,7 @@ standby:
   repoName: repo1
 
 restore:
-  enabled: true
+  enabled: false
   repoName: repo1
 
 instances:
