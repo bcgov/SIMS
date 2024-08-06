@@ -13,7 +13,7 @@ spec:
   {{ if .Values.crunchyImage }}  
   image: {{ .Values.crunchyImage }}
   {{ end }}
-  imagePullPolicy: {{.Values.imagePullPolicy}}
+  imagePullPolicy: {{ .Values.imagePullPolicy }}
   postgresVersion: {{ .Values.postgresVersion }}
   {{ if .Values.postGISVersion }}
   postGISVersion: {{ .Values.postGISVersion | quote }}
@@ -136,7 +136,7 @@ spec:
     dynamicConfiguration:
       postgresql:
         pg_hba:
-          - {{ .Values.patroni.postgresql.pg_hba}}
+          - {{ .Values.patroni.postgresql.pg_hba }}
         parameters:
           shared_buffers: {{ .Values.patroni.postgresql.parameters.shared_buffers }}
           wal_buffers: {{ .Values.patroni.postgresql.parameters.wal_buffers }}
