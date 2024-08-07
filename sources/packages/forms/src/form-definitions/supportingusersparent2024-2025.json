@@ -4265,7 +4265,7 @@
                     "multiple": false,
                     "unique": false
                   },
-                  "key": "iAgreeToTheAboveCraConsent",
+                  "key": "iAgreeToTheAboveCRAConsent",
                   "type": "checkbox",
                   "input": true,
                   "placeholder": "",
