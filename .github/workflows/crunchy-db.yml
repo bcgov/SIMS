@@ -57,4 +57,8 @@ jobs:
       - name: Manage Crunchy DB
         working-directory: "./devops/helm/crunchy-postgres/"
         run: |
-          make ${{ inputs.action }} NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }} RESTORE_ENABLED=${{ inputs.restore_enabled }} RESTORE_TARGET="${{ inputs.restore_target }}"
+          if [ "${{ inputs.action }}" == "install" ]; then
+            make install NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
+          elif [ "${{ inputs.action }}" == "upgrade" ]; then
+            make upgrade NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }} RESTORE_ENABLED=${{ inputs.restore_enabled }} RESTORE_TARGET="${{ inputs.restore_target }}"
+          fi
