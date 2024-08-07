@@ -1,5 +1,5 @@
 <template>
-  <student-page-container>
+  <student-page-container class="overflow-visible">
     <template #header>
       <header-navigator
         title="Applications"
