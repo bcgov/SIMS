@@ -14,7 +14,7 @@ helm-dep:
 .PHONY: install
 install: helm-dep
 install:
-	@helm install ${NAME} . -n ${NAMESPACE} -f values.yaml
+	@helm install ${NAME} . -n ${NAMESPACE} --set restore.enabled=false -f values.yaml
 
 .PHONY: upgrade
 upgrade: helm-dep
