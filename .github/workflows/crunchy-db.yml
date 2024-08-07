@@ -21,7 +21,7 @@ on:
         type: boolean
         default: false
       restore_target:
-        description: "Restore target date and time in 'YYYY-MM-DD HH:MM:SS'format "
+        description: "Restore target date and time in 'YYYY-MM-DD HH:MM:SS' format "
         required: false
         type: string
         default: ""
