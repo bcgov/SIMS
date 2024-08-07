@@ -236,7 +236,8 @@
                       "displayMask": "",
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
-                      "id": "e2ze9rh"
+                      "id": "e2ze9rh",
+                      "tags": []
                     },
                     {
                       "label": "Date of birth",
@@ -314,7 +315,8 @@
                       "displayMask": "",
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
-                      "id": "el85p1q"
+                      "id": "el85p1q",
+                      "tags": []
                     }
                   ],
                   "width": 6,
@@ -402,7 +404,8 @@
                       "displayMask": "",
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
-                      "id": "eg4wir"
+                      "id": "eg4wir",
+                      "tags": []
                     },
                     {
                       "label": "Email address",
@@ -1138,7 +1141,8 @@
               "displayMask": "",
               "spellcheck": true,
               "truncateMultipleSpaces": false,
-              "id": "e0r43gi"
+              "id": "e0r43gi",
+              "tags": []
             },
             {
               "label": "Address line 2",
@@ -1216,7 +1220,8 @@
               "displayMask": "",
               "spellcheck": true,
               "truncateMultipleSpaces": false,
-              "id": "e3oe7yf"
+              "id": "e3oe7yf",
+              "tags": []
             },
             {
               "label": "Columns",
@@ -1299,7 +1304,8 @@
                       "displayMask": "",
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
-                      "id": "eyq0e3z"
+                      "id": "eyq0e3z",
+                      "tags": []
                     },
                     {
                       "label": "City",
@@ -1377,7 +1383,8 @@
                       "displayMask": "",
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
-                      "id": "evcu90e"
+                      "id": "evcu90e",
+                      "tags": []
                     },
                     {
                       "label": "Phone number",
@@ -1455,7 +1462,8 @@
                       "displayMask": "",
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
-                      "id": "ebwpxb9"
+                      "id": "ebwpxb9",
+                      "tags": []
                     }
                   ],
                   "width": 6,
@@ -1543,7 +1551,8 @@
                       "displayMask": "",
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
-                      "id": "ej5p2sc"
+                      "id": "ej5p2sc",
+                      "tags": []
                     },
                     {
                       "label": "Postal/Zip code",
@@ -1621,7 +1630,8 @@
                       "displayMask": "",
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
-                      "id": "eikm3se"
+                      "id": "eikm3se",
+                      "tags": []
                     }
                   ],
                   "width": 6,
@@ -2823,7 +2833,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "id": "ezmubec",
-                      "inputType": "number"
+                      "inputType": "number",
+                      "tags": []
                     }
                   ],
                   "placeholder": "",
@@ -3139,7 +3150,7 @@
                     "unique": false,
                     "onlyAvailableItems": true
                   },
-                  "key": "strongDurringYourStudyPeriodWillYourPartnerBeTakingCareOfEligibleDependantsStrong",
+                  "key": "isPartnerTakingCareOfEligibleDependents",
                   "type": "radio",
                   "input": true,
                   "placeholder": "",
@@ -3194,7 +3205,8 @@
                   "inputType": "radio",
                   "fieldSet": false,
                   "id": "emhjo7h",
-                  "tags": []
+                  "tags": [],
+                  "lockKey": true
                 },
                 {
                   "label": "HTML",
@@ -3775,7 +3787,7 @@
                     "multiple": false,
                     "unique": false
                   },
-                  "key": "iAgreeToTheTermsAndConditionsOfTheStudentAidBcDeclarationForm",
+                  "key": "iAgreeToAboveStudentAidBCConsent",
                   "type": "checkbox",
                   "input": true,
                   "placeholder": "",
@@ -3808,7 +3820,7 @@
                   "attributes": {},
                   "validateOn": "change",
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": ""
                   },
@@ -3829,7 +3841,9 @@
                   "inputType": "checkbox",
                   "value": "",
                   "name": "",
-                  "id": "es82j8c"
+                  "id": "es82j8c",
+                  "tags": [],
+                  "lockKey": true
                 },
                 {
                   "title": "CRA Consent",
@@ -4140,7 +4154,7 @@
                     "multiple": false,
                     "unique": false
                   },
-                  "key": "iAgreeToTheTermsAndUseAsNoted",
+                  "key": "iAgreeToTheAboveCraConsent",
                   "type": "checkbox",
                   "input": true,
                   "placeholder": "",
@@ -4173,7 +4187,7 @@
                   "attributes": {},
                   "validateOn": "change",
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": ""
                   },
@@ -4194,7 +4208,9 @@
                   "inputType": "checkbox",
                   "value": "",
                   "name": "",
-                  "id": "e30u8k5"
+                  "id": "e30u8k5",
+                  "tags": [],
+                  "lockKey": true
                 }
               ],
               "placeholder": "",

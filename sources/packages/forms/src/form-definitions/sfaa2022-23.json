@@ -19396,7 +19396,7 @@
                             "unique": false,
                             "onlyAvailableItems": true
                           },
-                          "key": "willAttendHighSchoolOrPostSecondaryAtStudyStartDate",
+                          "key": "attendingPostSecondarySchool",
                           "attributes": {
                             "data-cy": "willThisDependantBeAttendingHighSchoolOrFullTimePostSecondarySchoolAtTheStartOfYourStudyPeriod"
                           },
@@ -19483,7 +19483,7 @@
                             "unique": false,
                             "onlyAvailableItems": true
                           },
-                          "key": "declaredOnTaxesDueToDisability",
+                          "key": "declaredOnTaxes",
                           "attributes": {
                             "data-cy": "didYouParentSClaimThisDependantOnTheir20XxIncomeTaxReturnDueToADisability"
                           },
