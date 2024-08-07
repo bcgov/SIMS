@@ -1,6 +1,6 @@
 <template>
   <modal-dialog-base
-    title="Apply for a Disability Status"
+    title="Apply for disability status"
     :showDialog="showDialog"
   >
     <template v-slot:content>

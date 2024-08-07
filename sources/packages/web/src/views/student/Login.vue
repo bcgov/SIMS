@@ -95,10 +95,16 @@
               <strong>What you need to do:</strong>
             </p>
             <p>
-              Please email a request to StudentAidBC@gov.bc.ca and provide a
-              detailed explanation why you are not eligible for a BC Services
-              Card account. StudentAid BC will review your request and provide
-              further instructions via email.
+              Please email a request to
+              <a
+                href="mailto:StudentAidBC@gov.bc.ca"
+                rel="noopener"
+                target="_blank"
+                >StudentAidBC@gov.bc.ca</a
+              >
+              and provide a detailed explanation why you are not eligible for a
+              BC Services Card account. StudentAid BC will review your request
+              and provide further instructions via email.
             </p>
             <v-btn
               color="primary"

@@ -106,7 +106,7 @@
               "input": true,
               "tableView": true,
               "inputType": "radio",
-              "label": "Do you want to be assessed for additional transportation costs",
+              "label": "Do you want to be assessed for additional transportation costs?",
               "key": "additionalTransportRequested",
               "values": [
                 {
