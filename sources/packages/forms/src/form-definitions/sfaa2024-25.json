@@ -11532,9 +11532,7 @@
                       },
                       "customConditional": "",
                       "logic": [],
-                      "attributes": {
-                        "data-cy": "strongWhatIsYourRelationshipWithThisContactStrong"
-                      },
+                      "attributes": {},
                       "overlay": {
                         "style": "",
                         "page": "",
@@ -12911,9 +12909,7 @@
                       "dateOfBirth": "",
                       "attendingPostSecondarySchool": "",
                       "declaredOnTaxes": "",
-                      "validDependent": null,
-                      "age": null,
-                      "isavalidDependant": ""
+                      "age": null
                     }
                   ],
                   "validate": {
@@ -17451,9 +17447,7 @@
               },
               "customConditional": "",
               "logic": [],
-              "attributes": {
-                "data-cy": "durringYourStudyPeriodWillYourPartnerBeTakingCareOfEligibleDependants"
-              },
+              "attributes": {},
               "overlay": {
                 "style": "",
                 "page": "",
@@ -19034,9 +19028,7 @@
                     "onlyAvailableItems": true
                   },
                   "key": "doesStudentParentHaveOtherDependents",
-                  "attributes": {
-                    "data-cy": "doYourParentsHaveDependantsOtherThanYourself"
-                  },
+                  "attributes": {},
                   "type": "radio",
                   "input": true,
                   "placeholder": "",
@@ -19275,15 +19267,15 @@
                       "tableView": false,
                       "defaultValue": [
                         {
-                          "willThisDependantBeAttendingHighSchoolOrFullTimePostSecondarySchoolAtTheStartOfYourStudyPeriod": "",
-                          "didYouParentSClaimThisDependantOnTheir20XxIncomeTaxReturnDueToADisability": "",
-                          "ageAtStartOfYourStudyPeriod": ""
+                          "attendingPostSecondarySchool": "",
+                          "declaredOnTaxes": "",
+                          "ageAtStudyStartDate": ""
                         }
                       ],
                       "key": "parentDependentTable",
                       "conditional": {
-                        "show": true,
-                        "when": "doYourParentsHaveDependantsOtherThanYourself",
+                        "show": "true",
+                        "when": "doesStudentParentHaveOtherDependents",
                         "eq": "yes"
                       },
                       "type": "datagrid",
@@ -19397,9 +19389,7 @@
                             "onlyAvailableItems": true
                           },
                           "key": "attendingPostSecondarySchool",
-                          "attributes": {
-                            "data-cy": "willThisDependantBeAttendingHighSchoolOrFullTimePostSecondarySchoolAtTheStartOfYourStudyPeriod"
-                          },
+                          "attributes": {},
                           "type": "radio",
                           "input": true,
                           "id": "eyib08",
@@ -19484,9 +19474,7 @@
                             "onlyAvailableItems": true
                           },
                           "key": "declaredOnTaxes",
-                          "attributes": {
-                            "data-cy": "didYouParentSClaimThisDependantOnTheir20XxIncomeTaxReturnDueToADisability"
-                          },
+                          "attributes": {},
                           "type": "radio",
                           "input": true,
                           "id": "ezhtbqcj",
@@ -19660,7 +19648,8 @@
                   "theme": "default",
                   "breadcrumb": "default",
                   "id": "evmmjfh",
-                  "tags": []
+                  "tags": [],
+                  "isNew": false
                 }
               ],
               "allowPrevious": false,
@@ -24643,9 +24632,7 @@
                     }
                   ],
                   "key": "reasonForExceptionalExpense",
-                  "attributes": {
-                    "data-cy": "strongSelectTheReasonForYourSignificantDecreaseInIncomeStrong"
-                  },
+                  "attributes": {},
                   "type": "radio",
                   "input": true,
                   "placeholder": "",
@@ -29574,9 +29561,7 @@
               },
               "customConditional": "",
               "logic": [],
-              "attributes": {
-                "data-cy": "strongIfYouMustRelocateToADifferentCityToAttendSchoolDoYouWantToProvideACostToBeConsideredStrong"
-              },
+              "attributes": {},
               "overlay": {
                 "style": "",
                 "page": "",

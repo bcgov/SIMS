@@ -2920,8 +2920,6 @@
                   "modalEdit": false,
                   "defaultValue": [
                     {
-                      "strongWillThisDependantBeAttendingHighSchoolOrFullTimePostSecondarySchoolAtTheStartOfYourStudyPeriodStrong": "",
-                      "strongDidYouParentSClaimThisDependantOnTheir20XxIncomeTaxReturnDueToADisabilityStrong": "",
                       "fullName": "",
                       "dateOfBirth": "",
                       "attendingPostSecondarySchool": "",
