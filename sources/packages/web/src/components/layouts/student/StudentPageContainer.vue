@@ -2,7 +2,6 @@
   <full-page-container
     :layout-template="layoutTemplate"
     :full-width="fullWidth"
-    v-bind="$attrs"
   >
     <template #header>
       <slot name="header"></slot>
