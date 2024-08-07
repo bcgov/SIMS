@@ -43,7 +43,7 @@ jobs:
           result-encoding: string
       # Checkout the code to apply the tag.
       - name: Checkout the code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
       # Create tag.
@@ -69,7 +69,7 @@ jobs:
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: ${{ needs.createTag.outputs.newTag }}
       - name: Checkout Target Branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ needs.createTag.outputs.newTag }}
       - name: Log in to OpenShift
@@ -93,7 +93,7 @@ jobs:
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: ${{ needs.createTag.outputs.newTag }}
       - name: Checkout Target Branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ needs.createTag.outputs.newTag }}
       - name: Log in to OpenShift
@@ -117,7 +117,7 @@ jobs:
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: ${{ needs.createTag.outputs.newTag }}
       - name: Checkout Target Branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ needs.createTag.outputs.newTag }}
       - name: Log in to OpenShift
@@ -141,7 +141,7 @@ jobs:
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: ${{ needs.createTag.outputs.newTag }}
       - name: Checkout Target Branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ needs.createTag.outputs.newTag }}
       - name: Log in to OpenShift
@@ -165,7 +165,7 @@ jobs:
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: ${{ needs.createTag.outputs.newTag }}
       - name: Checkout Target Branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ needs.createTag.outputs.newTag }}
       - name: Log in to OpenShift
