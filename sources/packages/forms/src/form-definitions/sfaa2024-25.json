@@ -19648,8 +19648,7 @@
                   "theme": "default",
                   "breadcrumb": "default",
                   "id": "evmmjfh",
-                  "tags": [],
-                  "isNew": false
+                  "tags": []
                 }
               ],
               "allowPrevious": false,
@@ -29604,8 +29603,8 @@
               "hideLabel": true,
               "key": "ifYouMustRelocateToADifferentCityToAttendSchoolAndYouWillReturnHomeAtLeastOnceDuringYourStudyPeriodWhatIsTheCostOfOneReturnTripHomePanel",
               "conditional": {
-                "show": true,
-                "when": "strongIfYouMustRelocateToADifferentCityToAttendSchoolDoYouWantToProvideACostToBeConsideredStrong",
+                "show": "true",
+                "when": "considerCostToRelocateToDifferentCity",
                 "eq": "yes"
               },
               "type": "panel",
@@ -29635,8 +29634,8 @@
                   },
                   "key": "returntriphomeCost",
                   "conditional": {
-                    "show": true,
-                    "when": "strongIfYouMustRelocateToADifferentCityToAttendSchoolDoYouWantToProvideACostToBeConsideredStrong",
+                    "show": "true",
+                    "when": "considerCostToRelocateToDifferentCity",
                     "eq": "yes"
                   },
                   "type": "currency",
@@ -29751,7 +29750,8 @@
               "breadcrumb": "default",
               "id": "e0mlhmb",
               "addons": [],
-              "lazyLoad": false
+              "lazyLoad": false,
+              "tags": []
             }
           ],
           "id": "enu5jl9"
@@ -30313,7 +30313,6 @@
                   "addons": [],
                   "inputType": "hidden",
                   "id": "ebhurj",
-                  "isNew": false,
                   "tags": []
                 },
                 {
@@ -30495,8 +30494,7 @@
                   "inputType": "radio",
                   "fieldSet": false,
                   "id": "efqfe2q",
-                  "tags": [],
-                  "isNew": false
+                  "tags": []
                 },
                 {
                   "autofocus": false,
@@ -31016,7 +31014,6 @@
                       "fileMinSize": "0KB",
                       "uploadOnly": false,
                       "id": "e9ybwvl",
-                      "isNew": false,
                       "tags": []
                     },
                     {
