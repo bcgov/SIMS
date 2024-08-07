@@ -160,6 +160,31 @@ objects:
                       name: ${API_SECRET_NAME}
                 - name: APPLICATION_ARCHIVE_DAYS
                   value: ${APPLICATION_ARCHIVE_DAYS}
+                - name: S3_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${S3_ACCESS_KEY_ID_KEY}
+                      name: ${API_SECRET_NAME}
+                - name: S3_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${S3_SECRET_ACCESS_KEY_KEY}
+                      name: ${API_SECRET_NAME}
+                - name: S3_ENDPOINT
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${S3_ENDPOINT_KEY}
+                      name: ${API_SECRET_NAME}
+                - name: S3_DEFAULT_BUCKET
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${S3_DEFAULT_BUCKET_KEY}
+                      name: ${API_SECRET_NAME}
+                - name: S3_REGION
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${S3_REGION_KEY}
+                      name: ${API_SECRET_NAME}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
@@ -396,3 +421,13 @@ parameters:
     required: true
   - name: APPLICATION_ARCHIVE_DAYS
     require: true
+  - name: S3_ACCESS_KEY_ID_KEY
+    value: s3-access-key-id
+  - name: S3_SECRET_ACCESS_KEY_KEY
+    value: s3-secret-access-key
+  - name: S3_ENDPOINT_KEY
+    value: s3-endpoint
+  - name: S3_DEFAULT_BUCKET_KEY
+    value: s3-default-bucket
+  - name: S3_REGION_KEY
+    value: s3-region

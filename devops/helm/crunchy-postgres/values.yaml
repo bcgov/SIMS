@@ -1,0 +1,101 @@
+fullnameOverride: simsdb
+appuser: app-database-user
+
+crunchyImage: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
+#crunchyImage: artifacts.developer.gov.bc.ca/bcgov-docker-local/crunchy-postgres-gis:ubi8-15.2-3.3-0 # use this image for POSTGIS
+postgresVersion: 15
+#postGISVersion: '3.3' # use this version of POSTGIS. both crunchyImage and this property needs to have valid values for POSTGIS to be enabled.
+imagePullPolicy: IfNotPresent
+
+# enable to bootstrap a standby cluster from backup. Then disable to promote this standby to primary
+standby:
+  enabled: false
+  # If you want to recover from PVC, use repo1. If you want to recover from S3, use repo2
+  repoName: repo1
+
+restore:
+  enabled: "${RESTORE_ENABLED}"
+  repoName: repo1
+  options:
+    target: "${RESTORE_TARGET}"
+
+instances:
+  name: ha # high availability
+  replicas: 3
+  dataVolumeClaimSpec:
+    storage: 10Gi
+    storageClassName: netapp-block-standard
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: "1"
+    memory: 1Gi
+  replicaCertCopy:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 512Mi
+
+# If we need to restore the cluster from a backup, we need to set the following values
+# assuming restore from repo2 (s3), adjust as needed if your S3 repo is different
+dataSource:
+  enabled: false
+
+pgBackRest:
+  image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
+  retention: "30" # Ideally a larger number such as 30 backups/days
+  # If retention-full-type set to 'count' then the oldest backups will expire when the number of backups reach the number defined in retention
+  # If retention-full-type set to 'time' then the number defined in retention will take that many days worth of full backups before expiration
+  retentionFullType: count
+  repos:
+    schedules:
+      full: 0 8 * * *
+      incremental: 0 0,4,12,16,20 * * *
+    volume:
+      accessModes: "ReadWriteOnce"
+      storage: 10Gi
+      storageClassName: netapp-file-backup
+  repoHost:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+  sidecars:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+  s3:
+    enabled: false
+
+patroni:
+  postgresql:
+    pg_hba: "host all all all md5"
+    parameters:
+      shared_buffers: 128MB # default is 128MB; a good tuned default for shared_buffers is 25% of the memory allocated to the pod
+      wal_buffers: "-1" # this can be set to -1 to automatically set as 1/32 of shared_buffers or 64kB, whichever is larger
+      min_wal_size: 128MB
+      max_wal_size: 1GB # default is 1GB
+      max_slot_wal_keep_size: 128MB # default is -1, allowing unlimited wal growth when replicas fall behind
+
+proxy:
+  pgBouncer:
+    image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
+    replicas: 3
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+# Postgres Cluster resource values:
+pgmonitor:
+  enabled: false

@@ -446,22 +446,22 @@
             "values": [
               {
                 "value": "studentdependantsappeal",
-                "label": "Add/Remove Dependants"
+                "label": "Add/remove dependants"
               },
               {
-                "label": "Additional Transportation",
+                "label": "Additional transportation",
                 "value": "studentadditionaltransportationappeal"
               },
               {
                 "value": "studentdisabilityappeal",
-                "label": "Disability Information"
+                "label": "Disability information"
               },
               {
                 "value": "studentfinancialinformationappeal",
-                "label": "Financial Information"
+                "label": "Financial information"
               },
               {
-                "label": "Partner Information and Income",
+                "label": "Partner information and income",
                 "value": "partnerinformationandincomeappeal"
               }
             ],

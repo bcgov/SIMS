@@ -218,6 +218,11 @@ init-secrets:
 		-p CAS_BASE_URL=$(CAS_BASE_URL) \
 		-p CAS_CLIENT_ID=$(CAS_CLIENT_ID) \
 		-p CAS_CLIENT_SECRET=$(CAS_CLIENT_SECRET) \
+		-p S3_ACCESS_KEY_ID=$(S3_ACCESS_KEY_ID) \
+		-p S3_SECRET_ACCESS_KEY=$(S3_SECRET_ACCESS_KEY) \
+		-p S3_ENDPOINT=$(S3_ENDPOINT) \
+		-p S3_DEFAULT_BUCKET=$(S3_DEFAULT_BUCKET) \
+		-p S3_REGION=$(S3_REGION) \
 		| oc -n $(NAMESPACE) apply -f -
 
 init-zone-b-sftp-secret:

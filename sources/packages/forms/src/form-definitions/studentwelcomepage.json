@@ -148,7 +148,7 @@
                       "value": ""
                     }
                   ],
-                  "content": "Welcome to your Student Account!\n<br><br>\nStudentAid BC helps eligible students with the cost of post-secondary education through student loans, grants, and other financial assistance programs. From this page you can:\n<ul>\n<li>Apply for student financial assistance.</li>\n<li>View your current and past applications and assessments</li>\n<li>Track your application status</li>\n<li>Upload and view documents</li>\n<li>Request a change to an active application</li>\n<li>Manage your StudentAid BC profile</li>\n<li>View your account activity</li>\n</ul>",
+                  "content": "Welcome to your Student Account!\n<br><br>\nStudentAid BC helps eligible students with the cost of post-secondary education through student loans, grants, and other financial assistance programs. From this page you can:\n<ul>\n<li>Apply for student financial assistance</li>\n<li>View your current and past applications and assessments</li>\n<li>Track your application status</li>\n<li>Upload and view documents</li>\n<li>Request a change to an active application</li>\n<li>Manage your StudentAid BC profile</li>\n<li>View your account activity</li>\n</ul>",
                   "refreshOnChange": false,
                   "customClass": "align-bullets",
                   "hidden": false,

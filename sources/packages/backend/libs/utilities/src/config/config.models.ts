@@ -115,3 +115,10 @@ export interface CASIntegrationConfig {
   baseUrl: string;
   clientCredential: ClientCredential;
 }
+
+export interface S3Configuration {
+  endpoint: string;
+  clientCredential: ClientCredential;
+  region: string;
+  defaultBucket: string;
+}

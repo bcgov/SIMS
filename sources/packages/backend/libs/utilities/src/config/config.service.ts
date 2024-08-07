@@ -14,6 +14,7 @@ import {
   RedisConfiguration,
   UserPasswordCredential,
   CASIntegrationConfig,
+  S3Configuration,
 } from "./config.models";
 
 @Injectable()
@@ -256,6 +257,21 @@ export class ConfigService {
         clientId: process.env.CAS_CLIENT_ID,
         clientSecret: process.env.CAS_CLIENT_SECRET,
       },
+    });
+  }
+
+  /**
+   * S3 storage configuration.
+   */
+  get s3Configuration(): S3Configuration {
+    return this.getCachedConfig("s3ConfigurationConfig", {
+      endpoint: process.env.S3_ENDPOINT,
+      clientCredential: {
+        clientId: process.env.S3_ACCESS_KEY_ID,
+        clientSecret: process.env.S3_SECRET_ACCESS_KEY,
+      },
+      region: process.env.S3_REGION,
+      defaultBucket: process.env.S3_DEFAULT_BUCKET,
     });
   }
 
