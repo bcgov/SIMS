@@ -135,7 +135,7 @@ function getDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
     studentDataPartnerTotalIncomeAssistance: null,
     studentDataVoluntaryContributions: null,
     studentDataScholarshipAmount: null,
-    studentDataPleaseProvideAnEstimationOfYourParentsIncome: null,
+    studentDataStudentParentsTotalIncome: null,
     studentDataChildSupportAndOrSpousalSupport: null,
     studentDataDaycareCosts11YearsOrUnder: null,
     studentDataDaycareCosts12YearsOrOver: null,
@@ -252,7 +252,7 @@ export function createParentsData(options?: {
   // Set additional information when parents are not able to provide
   // their income using the supporting users portal.
   if (validSinNumber === YesNoOptions.No) {
-    parentsData.studentDataPleaseProvideAnEstimationOfYourParentsIncome = 150000;
+    parentsData.studentDataStudentParentsTotalIncome = 150000;
   }
   parentsData.studentDataParentValidSinNumber = validSinNumber;
   if (dataType === AssessmentDataType.Submit) {

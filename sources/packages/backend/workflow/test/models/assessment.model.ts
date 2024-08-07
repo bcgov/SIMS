@@ -133,7 +133,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataPartnerTotalIncomeAssistance?: number;
   studentDataVoluntaryContributions?: number;
   studentDataScholarshipAmount?: number;
-  studentDataPleaseProvideAnEstimationOfYourParentsIncome?: number;
+  studentDataStudentParentsTotalIncome?: number;
   studentDataChildSupportAndOrSpousalSupport?: number;
   studentDataDaycareCosts11YearsOrUnder?: number;
   studentDataDaycareCosts12YearsOrOver?: number;
@@ -331,7 +331,7 @@ export interface CalculatedAssessmentModel {
   // CSGD
   finalFederalAwardNetCSGDAmount: number;
   // BCAG
-  federalAwardBCAGAmount: number;
+  provincialAwardBCAGAmount: number;
   limitAwardBCAGRemaining: number;
   finalProvincialAwardNetBCAGAmount: number;
   // SBSD

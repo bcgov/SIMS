@@ -1,6 +1,5 @@
 export const APPLICATION_SUBMISSION_PAYLOAD = {
   data: {
-    applicationId1: "",
     workflowName: "assessment-gateway",
     selectedLocation: 14,
     mySchoolIsNotListed: false,
@@ -15,7 +14,6 @@ export const APPLICATION_SUBMISSION_PAYLOAD = {
     },
     selectedOfferingDate: "2023-09-11",
     selectedOfferingEndDate: "2023-11-28",
-    maximumAllowedDaysAfterStudyEndDate: 42,
     studyEndDateBeforeToday: false,
     selectedStudyEndDateBeforeToday: false,
     studyPeriodMinDays: 84,
@@ -41,11 +39,7 @@ export const APPLICATION_SUBMISSION_PAYLOAD = {
         fullName: "",
         firstName: "",
         lastName: "",
-        strongWhatIsYourRelationshipWithThisContactStrong: "",
-        strongHowLongDoYouWantToGiveThisPersonAccessToYourStudentAidBcAccountStrong:
-          "",
-        selectTheDateYouWouldLikeThisPersonsAccessToYourStudentAidBcAccountToExpire:
-          "",
+        relationshipWithThisContact: "",
       },
     ],
     relationshipStatus: "single",
@@ -78,8 +72,7 @@ export const APPLICATION_SUBMISSION_PAYLOAD = {
     scholarshipsReceived: "no",
     bcIncomeassistanceforDisabilities: "no",
     livingWithParents: "no",
-    strongIfYouMustRelocateToADifferentCityToAttendSchoolDoYouWantToProvideACostToBeConsideredStrong:
-      "no",
+    considerCostToRelocateToDifferentCity: "no",
     additionalTransportRequested: "no",
     selectedProgram: 211,
     selectedOffering: 425,
@@ -92,8 +85,6 @@ export const APPLICATION_SUBMISSION_PAYLOAD = {
         dateOfBirth: "2023-10-03",
         attendingPostSecondarySchool: "no",
         declaredOnTaxes: "no",
-        validDependent: 0,
-        isavalidDependant: true,
       },
     ],
     supportnocustodyDependants: "no",

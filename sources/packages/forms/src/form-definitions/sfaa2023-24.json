@@ -486,74 +486,6 @@
           "lazyLoad": false
         },
         {
-          "label": "applicationId",
-          "key": "applicationId1",
-          "type": "hidden",
-          "input": true,
-          "tableView": false,
-          "placeholder": "",
-          "prefix": "",
-          "customClass": "",
-          "suffix": "",
-          "multiple": false,
-          "defaultValue": null,
-          "protected": false,
-          "unique": false,
-          "persistent": true,
-          "hidden": false,
-          "clearOnHide": true,
-          "refreshOn": "",
-          "redrawOn": "",
-          "modalEdit": false,
-          "dataGridLabel": false,
-          "labelPosition": "top",
-          "description": "",
-          "errorLabel": "",
-          "tooltip": "",
-          "hideLabel": false,
-          "tabindex": "",
-          "disabled": false,
-          "autofocus": false,
-          "dbIndex": false,
-          "customDefaultValue": "",
-          "calculateValue": "",
-          "calculateServer": false,
-          "widget": {
-            "type": "input"
-          },
-          "attributes": {},
-          "validateOn": "change",
-          "validate": {
-            "required": false,
-            "custom": "",
-            "customPrivate": false,
-            "strictDateValidation": false,
-            "multiple": false,
-            "unique": false
-          },
-          "conditional": {
-            "show": null,
-            "when": null,
-            "eq": ""
-          },
-          "overlay": {
-            "style": "",
-            "left": "",
-            "top": "",
-            "width": "",
-            "height": ""
-          },
-          "allowCalculateOverride": false,
-          "encrypted": false,
-          "showCharCount": false,
-          "showWordCount": false,
-          "properties": {},
-          "allowMultipleMasks": false,
-          "inputType": "hidden",
-          "id": "elknlor",
-          "addons": []
-        },
-        {
           "label": "workflowName",
           "calculateValue": "value = \"assessment-gateway\"",
           "calculateServer": true,
@@ -619,7 +551,8 @@
           "allowMultipleMasks": false,
           "inputType": "hidden",
           "id": "ebsh4es",
-          "addons": []
+          "addons": [],
+          "tags": []
         }
       ],
       "input": false,
@@ -2198,7 +2131,8 @@
                       "displayMask": "",
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
-                      "id": "ejhdok9"
+                      "id": "ejhdok9",
+                      "tags": []
                     },
                     {
                       "label": "Program description",
@@ -2282,7 +2216,8 @@
                       "wysiwyg": false,
                       "editor": "",
                       "fixedSize": true,
-                      "id": "efzyprr"
+                      "id": "efzyprr",
+                      "tags": []
                     },
                     {
                       "label": "HTML",
@@ -2908,7 +2843,8 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "e7m0jxv"
+                      "id": "e7m0jxv",
+                      "tags": []
                     },
                     {
                       "label": "HTML",
@@ -3065,7 +3001,8 @@
                               "allowMultipleMasks": false,
                               "addons": [],
                               "tag": "p",
-                              "id": "e9qep33r"
+                              "id": "e9qep33r",
+                              "tags": []
                             }
                           ],
                           "width": 6,
@@ -3151,7 +3088,8 @@
                               "addons": [],
                               "tag": "p",
                               "id": "eovpl3k",
-                              "className": ""
+                              "className": "",
+                              "tags": []
                             }
                           ],
                           "width": 6,
@@ -3308,7 +3246,8 @@
                               "addons": [],
                               "tag": "p",
                               "id": "eueqprv",
-                              "className": ""
+                              "className": "",
+                              "tags": []
                             }
                           ],
                           "width": 6,
@@ -3394,7 +3333,8 @@
                               "addons": [],
                               "tag": "p",
                               "id": "etilmiw",
-                              "className": ""
+                              "className": "",
+                              "tags": []
                             }
                           ],
                           "width": 6,
@@ -4230,7 +4170,8 @@
                               "displayMask": "",
                               "spellcheck": true,
                               "truncateMultipleSpaces": false,
-                              "id": "e6uctnl"
+                              "id": "e6uctnl",
+                              "tags": []
                             }
                           ],
                           "width": 6,
@@ -4318,7 +4259,8 @@
                               "displayMask": "",
                               "spellcheck": true,
                               "truncateMultipleSpaces": false,
-                              "id": "eqkr5x"
+                              "id": "eqkr5x",
+                              "tags": []
                             }
                           ],
                           "size": "md",
@@ -4490,7 +4432,8 @@
                               "displayMask": "",
                               "spellcheck": true,
                               "truncateMultipleSpaces": false,
-                              "id": "ehhui5b"
+                              "id": "ehhui5b",
+                              "tags": []
                             }
                           ],
                           "width": 6,
@@ -4591,7 +4534,8 @@
                               "displayMask": "",
                               "spellcheck": true,
                               "truncateMultipleSpaces": false,
-                              "id": "epcwxa"
+                              "id": "epcwxa",
+                              "tags": []
                             }
                           ],
                           "size": "md",
@@ -5002,7 +4946,8 @@
               "displayMask": "",
               "spellcheck": true,
               "truncateMultipleSpaces": false,
-              "id": "egjry98"
+              "id": "egjry98",
+              "tags": []
             }
           ],
           "placeholder": "",
@@ -5311,7 +5256,9 @@
           "allowMultipleMasks": false,
           "addons": [],
           "inputType": "hidden",
-          "id": "ewu7omd"
+          "id": "ewu7omd",
+          "tags": [],
+          "lockKey": true
         },
         {
           "label": "selectedOfferingDate",
@@ -5400,26 +5347,6 @@
           },
           "properties": {},
           "lockKey": true
-        },
-        {
-          "input": true,
-          "tableView": false,
-          "key": "maximumAllowedDaysAfterStudyEndDate",
-          "label": "Maximum allowed days after study end date",
-          "protected": false,
-          "unique": false,
-          "persistent": true,
-          "type": "hidden",
-          "tags": [],
-          "conditional": {
-            "show": "",
-            "when": null,
-            "eq": ""
-          },
-          "properties": {},
-          "lockKey": true,
-          "calculateValue": "/**\n * Maximum number of days past the study period end date\n * beyond when an application will require StudentAid BC\n * approval for funding.\n */\n \nvalue = 42;",
-          "calculateServer": true
         },
         {
           "input": true,
@@ -6013,7 +5940,8 @@
                       "id": "eollo8c",
                       "addons": [],
                       "displayMask": "",
-                      "truncateMultipleSpaces": false
+                      "truncateMultipleSpaces": false,
+                      "tags": []
                     },
                     {
                       "label": "Date of birth",
@@ -6092,7 +6020,8 @@
                       "id": "eiro1mh",
                       "addons": [],
                       "displayMask": "",
-                      "truncateMultipleSpaces": false
+                      "truncateMultipleSpaces": false,
+                      "tags": []
                     },
                     {
                       "label": "Home address",
@@ -6171,7 +6100,8 @@
                       "id": "eppxei",
                       "addons": [],
                       "displayMask": "",
-                      "truncateMultipleSpaces": false
+                      "truncateMultipleSpaces": false,
+                      "tags": []
                     },
                     {
                       "label": "Email",
@@ -6249,7 +6179,8 @@
                       "id": "ey8k2yp",
                       "addons": [],
                       "displayMask": "",
-                      "truncateMultipleSpaces": false
+                      "truncateMultipleSpaces": false,
+                      "tags": []
                     }
                   ],
                   "width": 6,
@@ -6337,7 +6268,8 @@
                       "id": "eug619a",
                       "addons": [],
                       "displayMask": "",
-                      "truncateMultipleSpaces": false
+                      "truncateMultipleSpaces": false,
+                      "tags": []
                     },
                     {
                       "label": "Gender",
@@ -6416,7 +6348,8 @@
                       "id": "el67mt",
                       "addons": [],
                       "displayMask": "",
-                      "truncateMultipleSpaces": false
+                      "truncateMultipleSpaces": false,
+                      "tags": []
                     },
                     {
                       "label": "Phone number",
@@ -6495,7 +6428,8 @@
                       "id": "egglzja",
                       "addons": [],
                       "displayMask": "",
-                      "truncateMultipleSpaces": false
+                      "truncateMultipleSpaces": false,
+                      "tags": []
                     },
                     {
                       "label": "Disability status",
@@ -9354,7 +9288,8 @@
                       "imageSize": "200",
                       "fileMinSize": "0KB",
                       "uploadOnly": false,
-                      "id": "e15yoie"
+                      "id": "e15yoie",
+                      "tags": []
                     },
                     {
                       "label": "Columns",
@@ -9427,7 +9362,8 @@
                               "properties": {},
                               "allowMultipleMasks": false,
                               "addons": [],
-                              "id": "euomj5"
+                              "id": "euomj5",
+                              "tags": []
                             }
                           ],
                           "width": 6,
@@ -9505,7 +9441,8 @@
                               "properties": {},
                               "allowMultipleMasks": false,
                               "addons": [],
-                              "id": "edp1zrf"
+                              "id": "edp1zrf",
+                              "tags": []
                             }
                           ],
                           "width": 6,
@@ -9681,7 +9618,8 @@
               "breadcrumb": "default",
               "id": "eo7yj4f",
               "addons": [],
-              "lazyLoad": false
+              "lazyLoad": false,
+              "tags": []
             },
             {
               "label": "<strong>Do you identify as an Indigenous person; that is, First Nations, Métis or Inuit?</strong>",
@@ -10348,7 +10286,8 @@
               "addons": [],
               "inputType": "text",
               "id": "ep2gj8",
-              "defaultValue": ""
+              "defaultValue": "",
+              "lockKey": true
             }
           ],
           "id": "etmjo4"
@@ -10908,7 +10847,8 @@
               "fieldSet": false,
               "id": "eqf8qus",
               "addons": [],
-              "tags": []
+              "tags": [],
+              "lockKey": true
             }
           ],
           "id": "erpkbb"
@@ -11435,7 +11375,8 @@
                       "displayMask": "",
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
-                      "inDataGrid": true
+                      "inDataGrid": true,
+                      "tags": []
                     },
                     {
                       "label": "Last name",
@@ -11513,7 +11454,8 @@
                       "displayMask": "",
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
-                      "inDataGrid": true
+                      "inDataGrid": true,
+                      "tags": []
                     },
                     {
                       "label": "<strong>What is your relationship with this contact?</strong>",
@@ -11579,7 +11521,7 @@
                       },
                       "errorLabel": "",
                       "errors": "",
-                      "key": "strongWhatIsYourRelationshipWithThisContactStrong",
+                      "key": "relationshipWithThisContact",
                       "tags": [],
                       "properties": {},
                       "conditional": {
@@ -11590,9 +11532,7 @@
                       },
                       "customConditional": "",
                       "logic": [],
-                      "attributes": {
-                        "data-cy": "strongWhatIsYourRelationshipWithThisContactStrong"
-                      },
+                      "attributes": {},
                       "overlay": {
                         "style": "",
                         "page": "",
@@ -11619,7 +11559,8 @@
                       "fieldSet": false,
                       "id": "ego9ype0000000000000000000000000000000000",
                       "defaultValue": "",
-                      "inDataGrid": true
+                      "inDataGrid": true,
+                      "lockKey": true
                     }
                   ],
                   "placeholder": "",
@@ -11750,7 +11691,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "e2x6dd"
+                      "id": "e2x6dd",
+                      "tags": []
                     },
                     {
                       "label": "HTML",
@@ -11825,7 +11767,8 @@
                       "addons": [],
                       "tag": "p",
                       "id": "esnordm",
-                      "className": ""
+                      "className": "",
+                      "tags": []
                     },
                     {
                       "label": "HTML",
@@ -12050,7 +11993,8 @@
                       "addons": [],
                       "tag": "p",
                       "id": "eds51he",
-                      "className": ""
+                      "className": "",
+                      "tags": []
                     }
                   ],
                   "placeholder": "",
@@ -12170,7 +12114,8 @@
                   "showWordCount": false,
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "ezrjvqr"
+                  "id": "ezrjvqr",
+                  "lockKey": true
                 }
               ],
               "allowPrevious": false,
@@ -12229,7 +12174,8 @@
               "lazyLoad": false,
               "theme": "default",
               "breadcrumb": "default",
-              "id": "eksx7j"
+              "id": "eksx7j",
+              "tags": []
             }
           ],
           "placeholder": "",
@@ -12962,10 +12908,7 @@
                       "fullName": "",
                       "dateOfBirth": "",
                       "attendingPostSecondarySchool": "",
-                      "declaredOnTaxes": "",
-                      "validDependent": null,
-                      "age": null,
-                      "isavalidDependant": ""
+                      "declaredOnTaxes": ""
                     }
                   ],
                   "validate": {
@@ -13073,7 +13016,8 @@
                                   "displayMask": "",
                                   "spellcheck": true,
                                   "truncateMultipleSpaces": false,
-                                  "id": "eb4ko98"
+                                  "id": "eb4ko98",
+                                  "tags": []
                                 }
                               ],
                               "width": 6,
@@ -13174,7 +13118,8 @@
                                   "displayMask": "",
                                   "spellcheck": true,
                                   "truncateMultipleSpaces": false,
-                                  "id": "eqxpkn"
+                                  "id": "eqxpkn",
+                                  "tags": []
                                 }
                               ],
                               "width": 4,
@@ -13429,7 +13374,8 @@
                           "addons": [],
                           "inputType": "radio",
                           "fieldSet": false,
-                          "id": "ea0vyrg"
+                          "id": "ea0vyrg",
+                          "tags": []
                         },
                         {
                           "title": "Upload panel",
@@ -13519,7 +13465,8 @@
                               "allowMultipleMasks": false,
                               "addons": [],
                               "inputType": "hidden",
-                              "id": "e52khib"
+                              "id": "e52khib",
+                              "tags": []
                             },
                             {
                               "label": "HTML",
@@ -13929,7 +13876,8 @@
                               "imageSize": "200",
                               "fileMinSize": "0KB",
                               "uploadOnly": false,
-                              "id": "evdve9"
+                              "id": "evdve9",
+                              "tags": []
                             },
                             {
                               "input": false,
@@ -14215,142 +14163,6 @@
                           "theme": "default",
                           "breadcrumb": "default",
                           "id": "ec900o"
-                        },
-                        {
-                          "label": "IsAValidDependant",
-                          "calculateValue": "value = (((row.validDependent <= 18) && (row.validDependent >= 0)) || \n(row.validDependent >= 19 && row.validDependent <= 22 && row.attendingPostSecondarySchool === \"yes\") || \n(row.declaredOnTaxes === \"yes\"));",
-                          "key": "isavalidDependant",
-                          "type": "hidden",
-                          "input": true,
-                          "tableView": false,
-                          "placeholder": "",
-                          "prefix": "",
-                          "customClass": "",
-                          "suffix": "",
-                          "multiple": false,
-                          "defaultValue": null,
-                          "protected": false,
-                          "unique": false,
-                          "persistent": true,
-                          "hidden": false,
-                          "clearOnHide": true,
-                          "refreshOn": "",
-                          "redrawOn": "",
-                          "modalEdit": false,
-                          "dataGridLabel": false,
-                          "labelPosition": "top",
-                          "description": "",
-                          "errorLabel": "",
-                          "tooltip": "",
-                          "hideLabel": false,
-                          "tabindex": "",
-                          "disabled": false,
-                          "autofocus": false,
-                          "dbIndex": false,
-                          "customDefaultValue": "",
-                          "calculateServer": false,
-                          "widget": {
-                            "type": "input"
-                          },
-                          "attributes": {},
-                          "validateOn": "change",
-                          "validate": {
-                            "required": false,
-                            "custom": "",
-                            "customPrivate": false,
-                            "strictDateValidation": false,
-                            "multiple": false,
-                            "unique": false
-                          },
-                          "conditional": {
-                            "show": null,
-                            "when": null,
-                            "eq": ""
-                          },
-                          "overlay": {
-                            "style": "",
-                            "left": "",
-                            "top": "",
-                            "width": "",
-                            "height": ""
-                          },
-                          "allowCalculateOverride": false,
-                          "encrypted": false,
-                          "showCharCount": false,
-                          "showWordCount": false,
-                          "properties": {},
-                          "allowMultipleMasks": false,
-                          "addons": [],
-                          "inputType": "hidden",
-                          "id": "ex4d8je"
-                        },
-                        {
-                          "label": "ValidDependent",
-                          "calculateValue": "//value =-1 is connected , to Will you have a child age 11 years or under in daycare?, pls check the logic, before you change the -1\r\nvalue = -1;\r\nconst studyTime = data.studystartDate\r\n  ? new Date(data.studystartDate).getTime()\r\n  : data.selectedOfferingDate\r\n  ? new Date(data.selectedOfferingDate).getTime()\r\n  : null;\r\nif (studyTime) {\r\n  const birthDateTime = new Date(row.dateOfBirth).getTime();\r\n  const difference = studyTime - birthDateTime;\r\n  const age = difference / (1000 * 60 * 60 * 24 * 365);\r\n  value = parseInt(age);\r\n}",
-                          "key": "validDependent",
-                          "type": "hidden",
-                          "input": true,
-                          "tableView": false,
-                          "placeholder": "",
-                          "prefix": "",
-                          "customClass": "",
-                          "suffix": "",
-                          "multiple": false,
-                          "defaultValue": null,
-                          "protected": false,
-                          "unique": false,
-                          "persistent": true,
-                          "hidden": false,
-                          "clearOnHide": true,
-                          "refreshOn": "",
-                          "redrawOn": "",
-                          "modalEdit": false,
-                          "dataGridLabel": false,
-                          "labelPosition": "top",
-                          "description": "",
-                          "errorLabel": "",
-                          "tooltip": "",
-                          "hideLabel": false,
-                          "tabindex": "",
-                          "disabled": false,
-                          "autofocus": false,
-                          "dbIndex": false,
-                          "customDefaultValue": "",
-                          "calculateServer": false,
-                          "widget": {
-                            "type": "input"
-                          },
-                          "attributes": {},
-                          "validateOn": "change",
-                          "validate": {
-                            "required": false,
-                            "custom": "",
-                            "customPrivate": false,
-                            "strictDateValidation": false,
-                            "multiple": false,
-                            "unique": false
-                          },
-                          "conditional": {
-                            "show": null,
-                            "when": null,
-                            "eq": ""
-                          },
-                          "overlay": {
-                            "style": "",
-                            "left": "",
-                            "top": "",
-                            "width": "",
-                            "height": ""
-                          },
-                          "allowCalculateOverride": false,
-                          "encrypted": false,
-                          "showCharCount": false,
-                          "showWordCount": false,
-                          "properties": {},
-                          "allowMultipleMasks": false,
-                          "addons": [],
-                          "inputType": "hidden",
-                          "id": "ewllvk"
                         }
                       ],
                       "id": "eja9nnp000000000000000000",
@@ -14462,7 +14274,8 @@
                   "tree": true,
                   "lazyLoad": false,
                   "disableAddingRemovingRows": false,
-                  "id": "eloofid"
+                  "id": "eloofid",
+                  "tags": []
                 }
               ],
               "placeholder": "",
@@ -15966,7 +15779,8 @@
               "addons": [],
               "inputType": "radio",
               "fieldSet": false,
-              "id": "ebhbans"
+              "id": "ebhbans",
+              "tags": []
             },
             {
               "label": "Additional information required",
@@ -16962,11 +16776,11 @@
                   },
                   "errorLabel": "",
                   "errors": "",
-                  "key": "ifYourPartnerWillBeAFullTimeStudentHowManyWeeksOfYourStudyPeriodWillTheyAlsoBeInStudies",
+                  "key": "partnerStudyWeeks",
                   "tags": [],
                   "properties": {},
                   "conditional": {
-                    "show": true,
+                    "show": "true",
                     "when": "partnerfulltimeStudent",
                     "eq": "yes",
                     "json": ""
@@ -16994,7 +16808,8 @@
                   "addons": [],
                   "id": "euxcw9w",
                   "defaultValue": null,
-                  "inputType": "number"
+                  "inputType": "number",
+                  "lockKey": true
                 }
               ],
               "allowPrevious": false,
@@ -17249,7 +17064,8 @@
                   "inputType": "text",
                   "inputMask": "",
                   "decimalLimit": 2,
-                  "requireDecimal": true
+                  "requireDecimal": true,
+                  "tags": []
                 }
               ],
               "allowPrevious": false,
@@ -17504,7 +17320,8 @@
                   "inputType": "text",
                   "inputMask": "",
                   "decimalLimit": 2,
-                  "requireDecimal": true
+                  "requireDecimal": true,
+                  "tags": []
                 }
               ],
               "allowPrevious": false,
@@ -17618,7 +17435,7 @@
               },
               "errorLabel": "",
               "errors": "",
-              "key": "durringYourStudyPeriodWillYourPartnerBeTakingCareOfEligibleDependants",
+              "key": "isPartnerTakingCareOfEligibleDependents",
               "tags": [],
               "properties": {},
               "conditional": {
@@ -17629,9 +17446,7 @@
               },
               "customConditional": "",
               "logic": [],
-              "attributes": {
-                "data-cy": "durringYourStudyPeriodWillYourPartnerBeTakingCareOfEligibleDependants"
-              },
+              "attributes": {},
               "overlay": {
                 "style": "",
                 "page": "",
@@ -17658,7 +17473,8 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "ec3fha",
-              "defaultValue": ""
+              "defaultValue": "",
+              "lockKey": true
             }
           ],
           "allowPrevious": false,
@@ -18708,7 +18524,8 @@
                   "inputType": "checkbox",
                   "value": "",
                   "name": "",
-                  "id": "ej0o81d"
+                  "id": "ej0o81d",
+                  "tags": []
                 },
                 {
                   "label": "Please provide an estimation of your parents income",
@@ -18731,7 +18548,7 @@
                     "step": "any",
                     "integer": ""
                   },
-                  "key": "pleaseProvideAnEstimationOfYourParentsIncome",
+                  "key": "studentParentsTotalIncome",
                   "type": "currency",
                   "input": true,
                   "delimiter": true,
@@ -18790,7 +18607,8 @@
                   "inputMask": "",
                   "decimalLimit": 0,
                   "requireDecimal": false,
-                  "tags": []
+                  "tags": [],
+                  "lockKey": true
                 },
                 {
                   "label": "Enter the total net value of all your parents Canadian and foreign assets (do not include RRSPs, principal residence or business). Enter ‘0’ if none.",
@@ -18871,7 +18689,8 @@
                   "inputType": "text",
                   "inputMask": "",
                   "decimalLimit": 2,
-                  "requireDecimal": true
+                  "requireDecimal": true,
+                  "tags": []
                 },
                 {
                   "label": "How much will your parents be giving the student to help meet their specific educational costs during this study period? Enter ‘0’ if none.",
@@ -18952,7 +18771,8 @@
                   "inputType": "text",
                   "inputMask": "",
                   "decimalLimit": 2,
-                  "requireDecimal": true
+                  "requireDecimal": true,
+                  "tags": []
                 },
                 {
                   "label": "HTML",
@@ -19206,10 +19026,8 @@
                     "unique": false,
                     "onlyAvailableItems": true
                   },
-                  "key": "doYourParentsHaveDependantsOtherThanYourself",
-                  "attributes": {
-                    "data-cy": "doYourParentsHaveDependantsOtherThanYourself"
-                  },
+                  "key": "doesStudentParentHaveOtherDependents",
+                  "attributes": {},
                   "type": "radio",
                   "input": true,
                   "placeholder": "",
@@ -19241,7 +19059,7 @@
                   "widget": null,
                   "validateOn": "change",
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": ""
                   },
@@ -19261,7 +19079,9 @@
                   "addons": [],
                   "inputType": "radio",
                   "fieldSet": false,
-                  "id": "ec5ince"
+                  "id": "ec5ince",
+                  "tags": [],
+                  "lockKey": true
                 },
                 {
                   "title": "Your siblings and other dependents panel",
@@ -19276,8 +19096,8 @@
                   "hideLabel": true,
                   "key": "yourSiblingsAndOtherDependentsPanel",
                   "conditional": {
-                    "show": true,
-                    "when": "doYourParentsHaveDependantsOtherThanYourself",
+                    "show": "true",
+                    "when": "doesStudentParentHaveOtherDependents",
                     "eq": "yes"
                   },
                   "type": "panel",
@@ -19446,15 +19266,15 @@
                       "tableView": false,
                       "defaultValue": [
                         {
-                          "willThisDependantBeAttendingHighSchoolOrFullTimePostSecondarySchoolAtTheStartOfYourStudyPeriod": "",
-                          "didYouParentSClaimThisDependantOnTheir20XxIncomeTaxReturnDueToADisability": "",
-                          "ageAtStartOfYourStudyPeriod": ""
+                          "attendingPostSecondarySchool": "",
+                          "declaredOnTaxes": "",
+                          "ageAtStudyStartDate": ""
                         }
                       ],
                       "key": "parentDependentTable",
                       "conditional": {
-                        "show": true,
-                        "when": "doYourParentsHaveDependantsOtherThanYourself",
+                        "show": "true",
+                        "when": "doesStudentParentHaveOtherDependents",
                         "eq": "yes"
                       },
                       "type": "datagrid",
@@ -19481,7 +19301,7 @@
                             "step": "any",
                             "integer": ""
                           },
-                          "key": "ageAtStartOfYourStudyPeriod",
+                          "key": "ageAtStudyStartDate",
                           "type": "number",
                           "input": true,
                           "id": "er24b4x",
@@ -19518,7 +19338,7 @@
                           "attributes": {},
                           "validateOn": "change",
                           "conditional": {
-                            "show": null,
+                            "show": "",
                             "when": null,
                             "eq": ""
                           },
@@ -19537,7 +19357,9 @@
                           "allowMultipleMasks": false,
                           "addons": [],
                           "inDataGrid": true,
-                          "inputType": "number"
+                          "inputType": "number",
+                          "tags": [],
+                          "lockKey": true
                         },
                         {
                           "label": "<strong>Will this dependant be attending high school or full-time post-secondary school at the start of your study period?</strong>",
@@ -19565,10 +19387,8 @@
                             "unique": false,
                             "onlyAvailableItems": true
                           },
-                          "key": "willThisDependantBeAttendingHighSchoolOrFullTimePostSecondarySchoolAtTheStartOfYourStudyPeriod",
-                          "attributes": {
-                            "data-cy": "willThisDependantBeAttendingHighSchoolOrFullTimePostSecondarySchoolAtTheStartOfYourStudyPeriod"
-                          },
+                          "key": "attendingPostSecondarySchool",
+                          "attributes": {},
                           "type": "radio",
                           "input": true,
                           "id": "eyib08",
@@ -19602,7 +19422,7 @@
                           "widget": null,
                           "validateOn": "change",
                           "conditional": {
-                            "show": null,
+                            "show": "",
                             "when": null,
                             "eq": ""
                           },
@@ -19622,7 +19442,9 @@
                           "addons": [],
                           "inputType": "radio",
                           "fieldSet": false,
-                          "inDataGrid": true
+                          "inDataGrid": true,
+                          "tags": [],
+                          "lockKey": true
                         },
                         {
                           "label": "<strong>Did you parent(s) claim this dependant on their 20xx Income Tax Return due to a disability?</strong>",
@@ -19650,10 +19472,8 @@
                             "unique": false,
                             "onlyAvailableItems": true
                           },
-                          "key": "didYouParentSClaimThisDependantOnTheir20XxIncomeTaxReturnDueToADisability",
-                          "attributes": {
-                            "data-cy": "didYouParentSClaimThisDependantOnTheir20XxIncomeTaxReturnDueToADisability"
-                          },
+                          "key": "declaredOnTaxes",
+                          "attributes": {},
                           "type": "radio",
                           "input": true,
                           "id": "ezhtbqcj",
@@ -19687,7 +19507,7 @@
                           "widget": null,
                           "validateOn": "change",
                           "conditional": {
-                            "show": null,
+                            "show": "",
                             "when": null,
                             "eq": ""
                           },
@@ -19707,7 +19527,9 @@
                           "addons": [],
                           "inputType": "radio",
                           "fieldSet": false,
-                          "inDataGrid": true
+                          "inDataGrid": true,
+                          "tags": [],
+                          "lockKey": true
                         }
                       ],
                       "placeholder": "",
@@ -19764,7 +19586,8 @@
                       "tree": true,
                       "lazyLoad": false,
                       "disableAddingRemovingRows": false,
-                      "id": "e43w5za"
+                      "id": "e43w5za",
+                      "tags": []
                     }
                   ],
                   "allowPrevious": false,
@@ -19823,7 +19646,8 @@
                   "lazyLoad": false,
                   "theme": "default",
                   "breadcrumb": "default",
-                  "id": "evmmjfh"
+                  "id": "evmmjfh",
+                  "tags": []
                 }
               ],
               "allowPrevious": false,
@@ -21611,7 +21435,9 @@
                   "imageSize": "200",
                   "fileMinSize": "0KB",
                   "uploadOnly": false,
-                  "id": "egjvujk"
+                  "id": "egjvujk",
+                  "tags": [],
+                  "lockKey": true
                 },
                 {
                   "label": "Columns",
@@ -22796,7 +22622,8 @@
               "value": "",
               "name": "",
               "id": "eqxobp2",
-              "addons": []
+              "addons": [],
+              "tags": []
             }
           ],
           "allowPrevious": false,
@@ -23863,9 +23690,9 @@
                         "minWords": "",
                         "maxWords": ""
                       },
-                      "key": "pleaseExplainYourExceptionalCircumstance",
+                      "key": "otherExceptionalCircumstance",
                       "conditional": {
-                        "show": true,
+                        "show": "true",
                         "when": "reasonsignificantdecreaseInIncome",
                         "eq": "other"
                       },
@@ -23927,7 +23754,9 @@
                       "id": "ezeo4r",
                       "addons": [],
                       "displayMask": "",
-                      "truncateMultipleSpaces": false
+                      "truncateMultipleSpaces": false,
+                      "tags": [],
+                      "lockKey": true
                     }
                   ],
                   "allowPrevious": false,
@@ -24071,7 +23900,7 @@
                   "input": true,
                   "tableView": false,
                   "label": "Upload supporting documents:",
-                  "key": "decreaseInIncomePanelUploadsupportingdocuments",
+                  "key": "decreaseInIncomeSupportingDocuments",
                   "image": false,
                   "imageSize": "200",
                   "placeholder": "",
@@ -24100,7 +23929,8 @@
                   "customClass": "font-weight-bold",
                   "validate": {
                     "required": true
-                  }
+                  },
+                  "lockKey": true
                 },
                 {
                   "clearOnHide": false,
@@ -24799,10 +24629,8 @@
                       "shortcut": ""
                     }
                   ],
-                  "key": "strongSelectTheReasonForYourSignificantDecreaseInIncomeStrong",
-                  "attributes": {
-                    "data-cy": "strongSelectTheReasonForYourSignificantDecreaseInIncomeStrong"
-                  },
+                  "key": "reasonForExceptionalExpense",
+                  "attributes": {},
                   "type": "radio",
                   "input": true,
                   "placeholder": "",
@@ -24844,7 +24672,7 @@
                     "onlyAvailableItems": true
                   },
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": ""
                   },
@@ -24864,13 +24692,15 @@
                   "addons": [],
                   "inputType": "radio",
                   "fieldSet": false,
-                  "id": "euojgnj"
+                  "id": "euojgnj",
+                  "tags": [],
+                  "lockKey": true
                 },
                 {
                   "label": "<h4 class='category-header-medium-small'>Please explain your situation:</h4><li>Type of expense and</li><li>When expenses occurred and</li><li>Amount</li>",
                   "autoExpand": false,
                   "tableView": true,
-                  "key": "strongPleaseExplainYourSituationStrong",
+                  "key": "otherExceptionalExpenseReason",
                   "type": "textarea",
                   "input": true,
                   "placeholder": "",
@@ -24919,7 +24749,7 @@
                     "maxWords": ""
                   },
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": ""
                   },
@@ -24948,7 +24778,9 @@
                   "wysiwyg": false,
                   "editor": "",
                   "fixedSize": true,
-                  "id": "ekefms8"
+                  "id": "ekefms8",
+                  "tags": [],
+                  "lockKey": true
                 },
                 {
                   "label": "HTML",
@@ -25330,7 +25162,8 @@
                   "imageSize": "200",
                   "fileMinSize": "0KB",
                   "uploadOnly": false,
-                  "id": "ea87f6w"
+                  "id": "ea87f6w",
+                  "tags": []
                 },
                 {
                   "label": "Columns",
@@ -25911,7 +25744,8 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "evwiagm",
-              "defaultValue": ""
+              "defaultValue": "",
+              "lockKey": true
             },
             {
               "title": "Daycare costs that you incur for your child(ren) age 11 years or under Panel",
@@ -27015,7 +26849,8 @@
                   "inputType": "text",
                   "inputMask": "",
                   "decimalLimit": 2,
-                  "requireDecimal": true
+                  "requireDecimal": true,
+                  "tags": []
                 }
               ],
               "placeholder": "",
@@ -27271,7 +27106,8 @@
                   "inputType": "text",
                   "inputMask": "",
                   "decimalLimit": 2,
-                  "requireDecimal": true
+                  "requireDecimal": true,
+                  "tags": []
                 }
               ],
               "placeholder": "",
@@ -27783,7 +27619,8 @@
                   "inputType": "text",
                   "inputMask": "",
                   "decimalLimit": 2,
-                  "requireDecimal": true
+                  "requireDecimal": true,
+                  "tags": []
                 }
               ],
               "placeholder": "",
@@ -28039,7 +27876,8 @@
                   "inputType": "text",
                   "inputMask": "",
                   "decimalLimit": 2,
-                  "requireDecimal": true
+                  "requireDecimal": true,
+                  "tags": []
                 }
               ],
               "placeholder": "",
@@ -28282,7 +28120,8 @@
               "addons": [],
               "inputType": "radio",
               "fieldSet": false,
-              "id": "eo9gian"
+              "id": "eo9gian",
+              "tags": []
             },
             {
               "title": "Room and board rent panel",
@@ -28381,7 +28220,8 @@
                   "addons": [],
                   "inputType": "radio",
                   "fieldSet": false,
-                  "id": "e3w53xm"
+                  "id": "e3w53xm",
+                  "tags": []
                 },
                 {
                   "title": "Your parent(s)/step-parent/sponsor/legal guardian situation Panel",
@@ -28470,7 +28310,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "inputType": "hidden",
-                      "id": "e535uwp"
+                      "id": "e535uwp",
+                      "tags": []
                     },
                     {
                       "label": "HTML",
@@ -28714,15 +28555,17 @@
                       "addons": [],
                       "inputType": "radio",
                       "fieldSet": false,
-                      "id": "el21rfa"
+                      "id": "el21rfa",
+                      "tags": [],
+                      "lockKey": true
                     },
                     {
                       "label": "<strong>Please explain your situation:</strong>",
                       "autoExpand": false,
                       "tableView": true,
-                      "key": "textArea",
+                      "key": "livingAtHomeRentOtherDescription",
                       "conditional": {
-                        "show": true,
+                        "show": "true",
                         "when": "livingathomerentDescription",
                         "eq": "other"
                       },
@@ -28798,7 +28641,9 @@
                       "wysiwyg": false,
                       "editor": "",
                       "fixedSize": true,
-                      "id": "etnpur"
+                      "id": "etnpur",
+                      "tags": [],
+                      "lockKey": true
                     },
                     {
                       "label": "HTML",
@@ -29105,7 +28950,8 @@
                       "imageSize": "200",
                       "fileMinSize": "0KB",
                       "uploadOnly": false,
-                      "id": "evwba29"
+                      "id": "evwba29",
+                      "tags": []
                     },
                     {
                       "label": "Columns",
@@ -29702,20 +29548,18 @@
               },
               "errorLabel": "",
               "errors": "",
-              "key": "strongIfYouMustRelocateToADifferentCityToAttendSchoolDoYouWantToProvideACostToBeConsideredStrong",
+              "key": "considerCostToRelocateToDifferentCity",
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": "",
                 "json": ""
               },
               "customConditional": "",
               "logic": [],
-              "attributes": {
-                "data-cy": "strongIfYouMustRelocateToADifferentCityToAttendSchoolDoYouWantToProvideACostToBeConsideredStrong"
-              },
+              "attributes": {},
               "overlay": {
                 "style": "",
                 "page": "",
@@ -29742,7 +29586,8 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "enxmjyj",
-              "defaultValue": ""
+              "defaultValue": "",
+              "lockKey": true
             },
             {
               "title": "If you must relocate to a different city to attend school and you will return home at least once during your study period, what is the cost of one return trip home Panel",
@@ -29757,8 +29602,8 @@
               "hideLabel": true,
               "key": "ifYouMustRelocateToADifferentCityToAttendSchoolAndYouWillReturnHomeAtLeastOnceDuringYourStudyPeriodWhatIsTheCostOfOneReturnTripHomePanel",
               "conditional": {
-                "show": true,
-                "when": "strongIfYouMustRelocateToADifferentCityToAttendSchoolDoYouWantToProvideACostToBeConsideredStrong",
+                "show": "true",
+                "when": "considerCostToRelocateToDifferentCity",
                 "eq": "yes"
               },
               "type": "panel",
@@ -29788,8 +29633,8 @@
                   },
                   "key": "returntriphomeCost",
                   "conditional": {
-                    "show": true,
-                    "when": "strongIfYouMustRelocateToADifferentCityToAttendSchoolDoYouWantToProvideACostToBeConsideredStrong",
+                    "show": "true",
+                    "when": "considerCostToRelocateToDifferentCity",
                     "eq": "yes"
                   },
                   "type": "currency",
@@ -29904,7 +29749,8 @@
               "breadcrumb": "default",
               "id": "e0mlhmb",
               "addons": [],
-              "lazyLoad": false
+              "lazyLoad": false,
+              "tags": []
             }
           ],
           "id": "enu5jl9"
@@ -30465,7 +30311,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "inputType": "hidden",
-                  "id": "ebhurj"
+                  "id": "ebhurj",
+                  "tags": []
                 },
                 {
                   "label": "<strong>Are you the owner of the vehicle?</strong>",
@@ -31165,7 +31012,8 @@
                       "imageSize": "200",
                       "fileMinSize": "0KB",
                       "uploadOnly": false,
-                      "id": "e9ybwvl"
+                      "id": "e9ybwvl",
+                      "tags": []
                     },
                     {
                       "label": "Columns",

@@ -1144,7 +1144,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
     <bpmn:intermediateThrowEvent id="Event_0jry7fc" name="calculatedDataTotalParentNetIncome">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=studentDataPleaseProvideAnEstimationOfYourParentsIncome" target="calculatedDataTotalParentNetIncome" />
+          <zeebe:output source="=studentDataStudentParentsTotalIncome" target="calculatedDataTotalParentNetIncome" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0g6wvij</bpmn:incoming>
