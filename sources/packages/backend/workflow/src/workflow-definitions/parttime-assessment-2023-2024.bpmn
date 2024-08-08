@@ -768,9 +768,9 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_13hierd" name="calculate BCAG">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=  if (calculatedDataTotalFamilyIncome &#60;= dmnPartTimeAwardFamilySizeVariables.limitAwardBCAGIncomeCap)&#10;then dmnPartTimeAwardAllowableLimits.limitAwardBCAGAmount&#10;else&#10;  max(dmnPartTimeAwardAllowableLimits.limitAwardBCAGAmount - ((calculatedDataTotalFamilyIncome - dmnPartTimeAwardFamilySizeVariables.limitAwardBCAGIncomeCap) * dmnPartTimeAwardFamilySizeVariables.limitAwardBCAGSlope),&#10;     100&#10;  )" target="federalAwardBCAGAmount" />
+          <zeebe:output source="=  if (calculatedDataTotalFamilyIncome &#60;= dmnPartTimeAwardFamilySizeVariables.limitAwardBCAGIncomeCap)&#10;then dmnPartTimeAwardAllowableLimits.limitAwardBCAGAmount&#10;else&#10;  max(dmnPartTimeAwardAllowableLimits.limitAwardBCAGAmount - ((calculatedDataTotalFamilyIncome - dmnPartTimeAwardFamilySizeVariables.limitAwardBCAGIncomeCap) * dmnPartTimeAwardFamilySizeVariables.limitAwardBCAGSlope),&#10;     100&#10;  )" target="provincialAwardBCAGAmount" />
           <zeebe:output source="=dmnPartTimeAwardAllowableLimits.limitAwardBCAGAmount - programYearTotalPartTimeBCAG" target="limitAwardBCAGRemaining" />
-          <zeebe:output source="=if (awardEligibilityBCAG = true and federalAwardBCAGAmount &#62;= 100 and limitAwardBCAGRemaining &#62;= 100)&#10;then&#10;  min(calculatedDataTotalRemainingNeed3, limitAwardBCAGRemaining, federalAwardBCAGAmount)&#10;else&#10;0" target="provincialAwardNetBCAGAmount" />
+          <zeebe:output source="=if (awardEligibilityBCAG = true and provincialAwardBCAGAmount &#62;= 100 and limitAwardBCAGRemaining &#62;= 100)&#10;then&#10;  min(calculatedDataTotalRemainingNeed3, limitAwardBCAGRemaining, provincialAwardBCAGAmount)&#10;else&#10;0" target="provincialAwardNetBCAGAmount" />
           <zeebe:output source="=calculatedDataTotalRemainingNeed3 - provincialAwardNetBCAGAmount" target="calculatedDataTotalRemainingNeed4" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>

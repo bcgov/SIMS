@@ -27,7 +27,7 @@ jobs:
     steps:
       # Create the branch.
       - name: Create branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ inputs.gitRef }}
       - run: |

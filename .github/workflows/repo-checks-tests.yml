@@ -48,7 +48,7 @@ jobs:
     steps:
       # Checkout the PR branch.
       - name: Checkout Target Branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       # Generate the coverage report for API
       - name: Run Tests
         working-directory: "./sources/tests/"
@@ -75,7 +75,7 @@ jobs:
     steps:
       # Checkout the PR branch.
       - name: Checkout Target Branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       # Generate the coverage report for Workflow Workers
       - name: Run Tests
         working-directory: "./sources/tests/"
@@ -99,7 +99,7 @@ jobs:
     steps:
       # Checkout the PR branch.
       - name: Checkout Target Branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       # Run e2e tests for workflow.
       - name: Run Tests
         working-directory: "./sources/tests/"
@@ -118,7 +118,7 @@ jobs:
     steps:
       # Checkout the PR branch.
       - name: Checkout Target Branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       # Generate the coverage report for Queue Consumers
       - name: Run Tests
         working-directory: "./sources/tests/"
@@ -142,7 +142,7 @@ jobs:
     steps:
       # Checkout the PR branch.
       - name: Checkout Target Branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup Nodejs
         uses: actions/setup-node@v3
         with:

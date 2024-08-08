@@ -37,7 +37,7 @@ jobs:
           echo HOST_PREFIX: $HOST_PREFIX
       # Checkout the PR branch
       - name: Checkout Target Branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ inputs.gitRef }}
       # Log in to OpenShift.

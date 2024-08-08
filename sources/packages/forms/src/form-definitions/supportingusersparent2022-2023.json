@@ -236,7 +236,9 @@
                       "displayMask": "",
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
-                      "id": "eb0xogs"
+                      "id": "eb0xogs",
+                      "isNew": false,
+                      "tags": []
                     },
                     {
                       "label": "Date of birth",
@@ -314,7 +316,9 @@
                       "displayMask": "",
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
-                      "id": "e106vzy"
+                      "id": "e106vzy",
+                      "isNew": false,
+                      "tags": []
                     }
                   ],
                   "width": 6,
@@ -402,7 +406,9 @@
                       "displayMask": "",
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
-                      "id": "ec48u3n"
+                      "id": "ec48u3n",
+                      "isNew": false,
+                      "tags": []
                     },
                     {
                       "label": "Verified email",
@@ -479,7 +485,9 @@
                       "displayMask": "",
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
-                      "id": "e863irs"
+                      "id": "e863irs",
+                      "isNew": false,
+                      "tags": []
                     }
                   ],
                   "width": 6,
@@ -811,7 +819,8 @@
                       "inputType": "text",
                       "id": "ebbtcss",
                       "defaultValue": "",
-                      "customError": false
+                      "customError": false,
+                      "isNew": false
                     }
                   ],
                   "width": 6,
@@ -1137,7 +1146,9 @@
               "displayMask": "",
               "spellcheck": true,
               "truncateMultipleSpaces": false,
-              "id": "ej3fi7k"
+              "id": "ej3fi7k",
+              "isNew": false,
+              "tags": []
             },
             {
               "label": "Address line 2",
@@ -1215,7 +1226,9 @@
               "displayMask": "",
               "spellcheck": true,
               "truncateMultipleSpaces": false,
-              "id": "ew9htha"
+              "id": "ew9htha",
+              "isNew": false,
+              "tags": []
             },
             {
               "label": "Columns",
@@ -1298,7 +1311,9 @@
                       "displayMask": "",
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
-                      "id": "edf0pxa"
+                      "id": "edf0pxa",
+                      "isNew": false,
+                      "tags": []
                     },
                     {
                       "label": "City",
@@ -1376,7 +1391,9 @@
                       "displayMask": "",
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
-                      "id": "erj9yup"
+                      "id": "erj9yup",
+                      "isNew": false,
+                      "tags": []
                     },
                     {
                       "label": "Phone number",
@@ -1454,7 +1471,9 @@
                       "displayMask": "",
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
-                      "id": "enedlf"
+                      "id": "enedlf",
+                      "isNew": false,
+                      "tags": []
                     }
                   ],
                   "width": 6,
@@ -1542,7 +1561,9 @@
                       "displayMask": "",
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
-                      "id": "eerjeeq"
+                      "id": "eerjeeq",
+                      "isNew": false,
+                      "tags": []
                     },
                     {
                       "label": "Postal/Zip code",
@@ -1620,7 +1641,9 @@
                       "displayMask": "",
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
-                      "id": "edgq4sx"
+                      "id": "edgq4sx",
+                      "isNew": false,
+                      "tags": []
                     }
                   ],
                   "width": 6,
@@ -2063,7 +2086,7 @@
                     "multiple": false,
                     "unique": false
                   },
-                  "key": "whatIsYourRelationshipToAStudent",
+                  "key": "relationshipToStudent",
                   "type": "radio",
                   "input": true,
                   "hideOnChildrenHidden": false,
@@ -2098,7 +2121,7 @@
                   "attributes": {},
                   "validateOn": "change",
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": ""
                   },
@@ -2118,7 +2141,10 @@
                   "addons": [],
                   "inputType": "radio",
                   "fieldSet": false,
-                  "id": "eg8xw9r"
+                  "id": "eg8xw9r",
+                  "tags": [],
+                  "lockKey": true,
+                  "isNew": false
                 },
                 {
                   "label": "How much will you and your spouse/common-law partner be giving the student to help meet their specific educational costs during this study period?",
@@ -2201,7 +2227,9 @@
                   "inputType": "text",
                   "inputMask": "",
                   "decimalLimit": 2,
-                  "requireDecimal": true
+                  "requireDecimal": true,
+                  "isNew": false,
+                  "tags": []
                 },
                 {
                   "label": "Enter your reported total income from line 15000 of your {{data.calculatedTaxYear}} income tax return. If you did not file a {{data.calculatedTaxYear}} income tax return, enter your total income from all sources both inside and outside of Canada",
@@ -2283,7 +2311,8 @@
                   "inputMask": "",
                   "decimalLimit": 0,
                   "requireDecimal": false,
-                  "tags": []
+                  "tags": [],
+                  "isNew": false
                 },
                 {
                   "label": "Canada Pension Plan contributions (CPP) from line 30800 (contributions through employment). Enter ‘0’ if none.",
@@ -2364,7 +2393,9 @@
                   "inputType": "text",
                   "inputMask": "",
                   "decimalLimit": 2,
-                  "requireDecimal": true
+                  "requireDecimal": true,
+                  "isNew": false,
+                  "tags": []
                 },
                 {
                   "label": "Enter the total net value of all Canadian and foreign assets (do not include RRSPs, principal residence or business). Enter ‘0’ if none.",
@@ -2445,7 +2476,9 @@
                   "inputType": "text",
                   "inputMask": "",
                   "decimalLimit": 2,
-                  "requireDecimal": true
+                  "requireDecimal": true,
+                  "isNew": false,
+                  "tags": []
                 },
                 {
                   "label": "Canada Pension Plan contributions (CPP) from line 31000 (contributions payable on self-employment and other earnings). Enter ‘0’ if none.",
@@ -2526,7 +2559,9 @@
                   "inputType": "text",
                   "inputMask": "",
                   "decimalLimit": 2,
-                  "requireDecimal": true
+                  "requireDecimal": true,
+                  "isNew": false,
+                  "tags": []
                 },
                 {
                   "label": "Total income tax from line 43500. Enter ‘0’ if none",
@@ -2607,7 +2642,9 @@
                   "inputType": "text",
                   "inputMask": "",
                   "decimalLimit": 2,
-                  "requireDecimal": true
+                  "requireDecimal": true,
+                  "isNew": false,
+                  "tags": []
                 },
                 {
                   "label": "Employment insurance (EI) from line 31200. Enter ‘0’ if none.",
@@ -2688,7 +2725,9 @@
                   "inputType": "text",
                   "inputMask": "",
                   "decimalLimit": 2,
-                  "requireDecimal": true
+                  "requireDecimal": true,
+                  "isNew": false,
+                  "tags": []
                 },
                 {
                   "label": "Do you have any dependant(s) other than the Student?",
@@ -2770,7 +2809,9 @@
                   "addons": [],
                   "inputType": "radio",
                   "fieldSet": false,
-                  "id": "eobs59k"
+                  "id": "eobs59k",
+                  "isNew": false,
+                  "tags": []
                 },
                 {
                   "label": "HTML",
@@ -2879,8 +2920,6 @@
                   "modalEdit": false,
                   "defaultValue": [
                     {
-                      "strongWillThisDependantBeAttendingHighSchoolOrFullTimePostSecondarySchoolAtTheStartOfYourStudyPeriodStrong": "",
-                      "strongDidYouParentSClaimThisDependantOnTheir20XxIncomeTaxReturnDueToADisabilityStrong": "",
                       "fullName": "",
                       "dateOfBirth": "",
                       "attendingPostSecondarySchool": "",
@@ -3023,7 +3062,9 @@
                                   "displayMask": "",
                                   "spellcheck": true,
                                   "truncateMultipleSpaces": false,
-                                  "id": "e1aazy"
+                                  "id": "e1aazy",
+                                  "isNew": false,
+                                  "tags": []
                                 }
                               ],
                               "width": 6,
@@ -3126,7 +3167,9 @@
                                   "displayMask": "",
                                   "spellcheck": true,
                                   "truncateMultipleSpaces": false,
-                                  "id": "e8jfngh"
+                                  "id": "e8jfngh",
+                                  "isNew": false,
+                                  "tags": []
                                 }
                               ],
                               "width": 6,
@@ -3284,7 +3327,9 @@
                           "addons": [],
                           "inputType": "radio",
                           "fieldSet": false,
-                          "id": "eg1bd8n"
+                          "id": "eg1bd8n",
+                          "isNew": false,
+                          "tags": []
                         },
                         {
                           "label": "<strong>Did you claim this dependant on their 20xx Income Tax Return due to a disability?</strong>",
@@ -3366,7 +3411,9 @@
                           "addons": [],
                           "inputType": "radio",
                           "fieldSet": false,
-                          "id": "eaj2hu7"
+                          "id": "eaj2hu7",
+                          "isNew": false,
+                          "tags": []
                         }
                       ],
                       "id": "ejsbng9000000000000000000000000",
@@ -3695,7 +3742,9 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "eh65mef"
+                      "id": "eh65mef",
+                      "isNew": false,
+                      "tags": []
                     },
                     {
                       "label": "Collection and use of information",
@@ -3847,7 +3896,7 @@
                     "multiple": false,
                     "unique": false
                   },
-                  "key": "i",
+                  "key": "iAgreeToAboveStudentAidBCConsent",
                   "type": "checkbox",
                   "input": true,
                   "placeholder": "",
@@ -3880,7 +3929,7 @@
                   "attributes": {},
                   "validateOn": "change",
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": ""
                   },
@@ -3901,7 +3950,9 @@
                   "inputType": "checkbox",
                   "value": "",
                   "name": "",
-                  "id": "eux9nk65"
+                  "id": "eux9nk65",
+                  "tags": [],
+                  "lockKey": true
                 },
                 {
                   "title": "CRA Consent",
@@ -4060,7 +4111,9 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "eqckolp"
+                      "id": "eqckolp",
+                      "isNew": false,
+                      "tags": []
                     },
                     {
                       "label": "Collection and use of information",
@@ -4212,7 +4265,7 @@
                     "multiple": false,
                     "unique": false
                   },
-                  "key": "iAgreeToTheAboveCraConsent",
+                  "key": "iAgreeToTheAboveCRAConsent",
                   "type": "checkbox",
                   "input": true,
                   "placeholder": "",
@@ -4266,7 +4319,9 @@
                   "inputType": "checkbox",
                   "value": "",
                   "name": "",
-                  "id": "e75fvnh"
+                  "id": "e75fvnh",
+                  "isNew": false,
+                  "tags": []
                 }
               ],
               "placeholder": "",

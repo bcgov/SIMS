@@ -3,10 +3,6 @@
     <template #header>
       <div class="text-center">
         <p class="category-header-x-large">Create Your Profile</p>
-        <p>
-          Use your most up-to-date personal information.<br />
-          We'll use the same information to help you apply for financial aid.
-        </p>
       </div>
     </template>
     <student-profile-form

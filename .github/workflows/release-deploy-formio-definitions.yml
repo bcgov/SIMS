@@ -39,7 +39,7 @@ jobs:
       FORMS_SA_PASSWORD: ${{ secrets.FORMS_SA_PASSWORD }}
     steps:
       - name: Checkout Target Branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ inputs.gitRef }}
       - name: Setup Nodejs
