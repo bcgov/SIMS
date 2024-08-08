@@ -198,7 +198,7 @@
         "eq": "",
         "json": ""
       },
-      "customConditional": "show = data.identityProvider === \"bcsc\" && data.mode !== \"student-edit\";",
+      "customConditional": "show = data.identityProvider === \"bcsc\";",
       "logic": [],
       "attributes": {},
       "overlay": {
