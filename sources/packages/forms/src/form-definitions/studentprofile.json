@@ -20,7 +20,7 @@
           "value": ""
         }
       ],
-      "content": "Profile Information",
+      "content": "Profile information",
       "refreshOnChange": false,
       "customClass": "",
       "hidden": false,
@@ -29,7 +29,7 @@
       "tags": [],
       "properties": {},
       "conditional": {
-        "show": null,
+        "show": "",
         "when": null,
         "eq": "",
         "json": ""
@@ -102,7 +102,7 @@
           "value": ""
         }
       ],
-      "content": "Please ensure your information below matches your identity verification form.",
+      "content": "Please ensure your profile information exactly matches the information you provided on the identity verification form issued to you by StudentAid BC.",
       "refreshOnChange": true,
       "customClass": "",
       "hidden": false,
@@ -112,7 +112,7 @@
       "properties": {},
       "conditional": {
         "show": "",
-        "when": "",
+        "when": null,
         "eq": "",
         "json": ""
       },
@@ -193,12 +193,12 @@
       "tags": [],
       "properties": {},
       "conditional": {
-        "show": null,
+        "show": "",
         "when": null,
         "eq": "",
         "json": ""
       },
-      "customConditional": "",
+      "customConditional": "show = data.identityProvider === \"bcsc\";",
       "logic": [],
       "attributes": {},
       "overlay": {
@@ -252,7 +252,8 @@
       "showWordCount": false,
       "allowMultipleMasks": false,
       "addons": [],
-      "id": "egsreye"
+      "id": "egsreye",
+      "isNew": false
     },
     {
       "title": "Student Information",
@@ -1192,7 +1193,7 @@
                 {
                   "components": [
                     {
-                      "label": "Email",
+                      "label": "Email address",
                       "tableView": true,
                       "validate": {
                         "required": true,
@@ -1245,7 +1246,7 @@
                       },
                       "validateOn": "change",
                       "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": ""
                       },
@@ -1270,7 +1271,8 @@
                       "displayMask": "",
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
-                      "id": "e8p07ds"
+                      "id": "e8p07ds",
+                      "tags": []
                     }
                   ],
                   "size": "md",
@@ -2048,7 +2050,7 @@
           "value": ""
         }
       ],
-      "content": "Contact Information",
+      "content": "Contact information",
       "refreshOnChange": false,
       "customClass": "category-header-medium primary-color",
       "hidden": false,
@@ -2057,7 +2059,7 @@
       "tags": [],
       "properties": {},
       "conditional": {
-        "show": null,
+        "show": "",
         "when": null,
         "eq": "",
         "json": ""
@@ -3419,7 +3421,7 @@
           "value": ""
         }
       ],
-      "content": "Your consent",
+      "content": "Declaration",
       "refreshOnChange": false,
       "customClass": "",
       "hidden": false,
@@ -3428,7 +3430,7 @@
       "tags": [],
       "properties": {},
       "conditional": {
-        "show": false,
+        "show": "",
         "when": "mode",
         "eq": "student-edit",
         "json": ""
