@@ -29,7 +29,10 @@ objects:
                 - name: NODE_ENV
                   value: ${NODE_ENV}
                 - name: POSTGRES_HOST
-                  value: "${DB_SERVICE}"
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${DB_SERVICE}
+                      name: ${DB_SECRET_NAME}
                 - name: REDIS_HOST
                   value: "${REDIS_SERVICE}"
                 - name: WORKERS_PORT
@@ -154,13 +157,13 @@ parameters:
   - name: REPLICAS
     value: "2"
   - name: DB_SERVICE
-    value: patroni-master
+    value: pgbouncer-host
   - name: DB_SECRET_NAME
-    value: patroni-creds
+    value: simsdb-pguser-app-database-user
   - name: DB_USERNAME_KEY
-    value: database-user
+    value: user
   - name: DB_PASSWORD_KEY
-    value: database-password
+    value: password
   - name: SIMS_DB_NAME
     value: sims-db-name
   - name: IMAGE_STREAM_TAG
