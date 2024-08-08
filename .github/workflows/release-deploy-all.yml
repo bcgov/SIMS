@@ -104,7 +104,7 @@ jobs:
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
 
       - name: Checkout Target Branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ inputs.gitRef }}
 
@@ -131,7 +131,7 @@ jobs:
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
 
       - name: Checkout Target Branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ inputs.gitRef }}
 
@@ -159,7 +159,7 @@ jobs:
           echo GIT REF: ${{ inputs.gitRef }}
 
       - name: Checkout Target Branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ inputs.gitRef }}
 
@@ -186,7 +186,7 @@ jobs:
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
 
       - name: Checkout Target Branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ inputs.gitRef }}
 
@@ -213,7 +213,7 @@ jobs:
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
 
       - name: Checkout Target Branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ inputs.gitRef }}
 

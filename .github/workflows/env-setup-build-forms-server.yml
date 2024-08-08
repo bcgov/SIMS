@@ -29,7 +29,7 @@ jobs:
           echo BRANCH: $BUILD_REF
       # Checkout the PR branch
       - name: Checkout Target Branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ inputs.gitRef }}
       # Log in to OpenShift.
