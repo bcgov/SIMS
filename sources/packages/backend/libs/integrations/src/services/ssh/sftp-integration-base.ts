@@ -73,10 +73,10 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    */
   convertRawContent(rawContent: string) {
     const content = Buffer.from(rawContent, FILE_DEFAULT_ENCODING);
-    for (const [index, b] of content.entries()) {
-      if (b > 127) {
+    for (const [index, char] of content.entries()) {
+      if (char > 127) {
         // if extended ascii
-        switch (b) {
+        switch (char) {
           case 192:
           case 193:
           case 194:
