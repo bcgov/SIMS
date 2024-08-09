@@ -1,6 +1,7 @@
 -- Table to keep historical data.
 -- Columns history_timestamp and history_operation should be default columns for all the history tables.
 -- Columns other than the above-mentioned should reflect the columns from the original table without constraints and relationships.
+-- The order of the columns below follow the exact same order from the existing table.
 CREATE TABLE sims.users_history (
   history_timestamp TIMESTAMP WITH TIME ZONE NOT NULL,
   history_operation varchar(20) NOT NULL,
