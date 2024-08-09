@@ -4,7 +4,7 @@
 -- The order of the columns below follow the exact same order from the existing table.
 CREATE TABLE sims.users_history (
   history_timestamp TIMESTAMP WITH TIME ZONE NOT NULL,
-  history_operation varchar(20) NOT NULL,
+  history_operation VARCHAR(20) NOT NULL,
   id INT,
   user_name VARCHAR(300),
   email VARCHAR(300),
@@ -12,7 +12,7 @@ CREATE TABLE sims.users_history (
   last_name VARCHAR(100),
   created_at TIMESTAMP WITH TIME ZONE,
   updated_at TIMESTAMP WITH TIME ZONE,
-  is_active bool,
+  is_active BOOLEAN,
   creator INT,
   modifier INT,
   identity_provider_type sims."identity_provider_types"

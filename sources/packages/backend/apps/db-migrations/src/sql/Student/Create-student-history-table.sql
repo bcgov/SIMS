@@ -4,7 +4,7 @@
 -- The order of the columns below follow the exact same order from the existing table.
 CREATE TABLE sims.students_history (
   history_timestamp TIMESTAMP WITH TIME ZONE NOT NULL,
-  history_operation varchar(20) NOT NULL,
+  history_operation VARCHAR(20) NOT NULL,
   id INT,
   contact_info JSONB,
   user_id INT,
@@ -12,8 +12,8 @@ CREATE TABLE sims.students_history (
   updated_at TIMESTAMP WITHOUT TIME ZONE,
   creator INT,
   modifier INT,
-  birth_date date,
-  gender varchar(50),
+  birth_date DATE,
+  gender VARCHAR(50),
   pd_date_sent TIMESTAMP WITHOUT TIME ZONE,
   pd_date_update TIMESTAMP WITHOUT TIME ZONE,
   sin_validation_id INT,
