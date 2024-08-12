@@ -1,0 +1,1 @@
+DROP FUNCTION sims.create_history_entry();
