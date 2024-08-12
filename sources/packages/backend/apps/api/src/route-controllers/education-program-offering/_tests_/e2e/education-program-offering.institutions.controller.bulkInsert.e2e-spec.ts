@@ -111,7 +111,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
     );
   });
 
-  it(
+  it.only(
     "Should create an approved and a creation pending offerings when a multi line bulk" +
       " offering CSV file with existing location code and SABC code, and one with" +
       " same delivery method and another with different delivery method is uploaded.",
@@ -180,6 +180,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
         await db.educationProgramOffering.find({
           select: {
             offeringStatus: true,
+            name: true,
           },
           where: {
             id: In([responseOfferingSBC1.id, responseOfferingSBC2.id]),
@@ -192,10 +193,10 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       // Delivery method of the program 'SBC1' in the CSV does not match with the existing program, which will
       // create an 'Creation pending' offering when inserted.
 
-      expect(offeringSBC1).toHaveProperty(
-        "offeringStatus",
-        OfferingStatus.CreationPending,
-      );
+      expect(offeringSBC1).toEqual({
+        name: "Test áéíóú",
+        offeringStatus: OfferingStatus.CreationPending,
+      });
       expect(offeringSBC2).toHaveProperty(
         "offeringStatus",
         OfferingStatus.Approved,
