@@ -39,7 +39,7 @@ export const MSFAA_PART_TIME_MARRIED: MSFAATestInputData = {
   gender: "man",
   maritalStatus: RelationshipStatus.Married,
   addressLine1: "ÑÒÓÔÕÖ Address Line 1",
-  addressLine2: "ÙÚÛÜß Address Line 2",
+  addressLine2: "ÙÚÛÜ Address Line 2",
   city: "Calgary",
   provinceState: "AB",
   postalCode: "H1H 1H1",

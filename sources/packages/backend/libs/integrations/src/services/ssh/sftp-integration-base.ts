@@ -71,7 +71,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    * @param rawContent Raw content in string format.
    * @returns a buffer of the input with extended ASCII accented characters converted to unaccented characters.
    */
-  convertRawContent(rawContent: string) {
+  private convertRawContent(rawContent: string): Buffer {
     const content = Buffer.from(rawContent, FILE_DEFAULT_ENCODING);
     for (const [index, char] of content.entries()) {
       if (char > 127) {
@@ -115,9 +115,6 @@ export abstract class SFTPIntegrationBase<DownloadType> {
           case 219:
           case 220: // ÙÚÛÜ
             content[index] = 85; // replace with U
-            break;
-          case 223: // ß
-            content[index] = 115; // replace with s
             break;
           case 224:
           case 225:
