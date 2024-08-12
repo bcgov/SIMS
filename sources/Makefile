@@ -79,6 +79,12 @@ export CAS_BASE_URL := $(or $(CAS_BASE_URL), )
 export CAS_CLIENT_ID := $(or $(CAS_CLIENT_ID), )
 export CAS_CLIENT_SECRET := $(or $(CAS_CLIENT_SECRET), )
 
+# Logged Out due to inactivity
+export MAXIMUM_IDLE_TIME_FOR_WARNING_STUDENT := $(MAXIMUM_IDLE_TIME_FOR_WARNING_STUDENT)
+export MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER := $(MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER)
+export MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION :=$(MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION)
+export MAXIMUM_IDLE_TIME_FOR_WARNING_AEST := $(MAXIMUM_IDLE_TIME_FOR_WARNING_AEST)
+
 # Starts all applications: SIMS application (Web Portals, SIMS Api, Workers, Queue Consumers),
 # and also Form.io server, and Camunda releated services.
 # Use make deploy-camunda-definitions to deploy all workflow definitions.

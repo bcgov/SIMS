@@ -31,10 +31,6 @@ import {
   useFormatters,
 } from "@/composables";
 import {
-  MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER,
-  MAXIMUM_IDLE_TIME_FOR_WARNING_STUDENT,
-  MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION,
-  MAXIMUM_IDLE_TIME_FOR_WARNING_AEST,
   COUNT_DOWN_TIMER_FOR_LOGOUT,
 } from "@/constants/system-constants";
 import ConfirmExtendTime from "@/components/common/modals/ConfirmExtendTime.vue";

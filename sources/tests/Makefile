@@ -8,6 +8,12 @@ export $(shell sed 's/=.*//' .env-e2e-tests)
 # Fulltime Allowed
 export IS_FULLTIME_ALLOWED := $(or $(IS_FULLTIME_ALLOWED), true)
 
+# Logged Out due to inactivity
+export MAXIMUM_IDLE_TIME_FOR_WARNING_STUDENT := $(MAXIMUM_IDLE_TIME_FOR_WARNING_STUDENT)
+export MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER := $(MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER)
+export MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION :=$(MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION)
+export MAXIMUM_IDLE_TIME_FOR_WARNING_AEST := $(MAXIMUM_IDLE_TIME_FOR_WARNING_AEST)
+
 backend-unit-tests:
 	@cd ../packages/backend && npm i && npm run test:cov
 
