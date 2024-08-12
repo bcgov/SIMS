@@ -111,7 +111,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
     );
   });
 
-  it.only(
+  it(
     "Should create an approved and a creation pending offerings when a multi line bulk" +
       " offering CSV file with existing location code and SABC code, and one with" +
       " same delivery method and another with different delivery method is uploaded.",
