@@ -16,7 +16,7 @@ CREATE TABLE sims.institution_locations_history (
   institution_code CHAR(4),
   primary_contact JSONB,
   has_integration BOOLEAN,
-  integration_contacts VARCHAR
+  integration_contacts VARCHAR(300) []
 );
 
 CREATE INDEX institution_locations_history_timestamp ON sims.institution_locations_history(history_timestamp);
