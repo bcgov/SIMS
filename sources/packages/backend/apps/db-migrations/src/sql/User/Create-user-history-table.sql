@@ -15,7 +15,7 @@ CREATE TABLE sims.users_history (
   is_active BOOLEAN,
   creator INT,
   modifier INT,
-  identity_provider_type sims."identity_provider_types"
+  identity_provider_type sims.identity_provider_types
 );
 
 CREATE INDEX users_history_timestamp ON sims.users_history(history_timestamp);
