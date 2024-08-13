@@ -6,10 +6,14 @@ import {
   SupportingUser,
   SupportingUserType,
 } from "@sims/sims-db";
+import { SystemUsersService } from "@sims/services";
 
 @Injectable()
 export class SupportingUserService extends RecordDataModelService<SupportingUser> {
-  constructor(dataSource: DataSource) {
+  constructor(
+    dataSource: DataSource,
+    private readonly systemUserService: SystemUsersService,
+  ) {
     super(dataSource.getRepository(SupportingUser));
   }
 
@@ -64,6 +68,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
       const newSupportingUser = new SupportingUser();
       newSupportingUser.application = application;
       newSupportingUser.supportingUserType = supportingUserType;
+      newSupportingUser.creator = this.systemUserService.systemUser;
       return newSupportingUser;
     });
     return entityManager.getRepository(SupportingUser).save(newSupportingUsers);
