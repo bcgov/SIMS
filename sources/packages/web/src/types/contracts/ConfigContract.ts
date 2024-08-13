@@ -19,4 +19,8 @@ export interface AppConfig {
   updateTime: Date;
   version: string;
   isFulltimeAllowed: boolean;
+  maximumIdleTimeForWarningStudent: number;
+  maximumIdleTimeForWarningSupportingUser: number;
+  maximumIdleTimeForWarningInstitution: number;
+  maximumIdleTimeForWarningAest: number;
 }

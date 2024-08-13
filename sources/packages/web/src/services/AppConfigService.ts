@@ -61,6 +61,10 @@ export class AppConfigService {
       updateTime: new Date(),
       version: config.version,
       isFulltimeAllowed: config.isFulltimeAllowed,
+      maximumIdleTimeForWarningStudent: config.maximumIdleTimeForWarningStudent,
+      maximumIdleTimeForWarningSupportingUser: config.maximumIdleTimeForWarningSupportingUser,
+      maximumIdleTimeForWarningInstitution: config.maximumIdleTimeForWarningInstitution,
+      maximumIdleTimeForWarningAest: config.maximumIdleTimeForWarningAest,
     };
     return appConfig;
   }
