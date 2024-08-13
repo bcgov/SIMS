@@ -34,6 +34,7 @@ import {
   COUNT_DOWN_TIMER_FOR_LOGOUT,
 } from "@/constants/system-constants";
 import ConfirmExtendTime from "@/components/common/modals/ConfirmExtendTime.vue";
+import { AppConfigService } from "@/services/AppConfigService";
 
 export default defineComponent({
   components: { ConfirmExtendTime },
@@ -56,11 +57,26 @@ export default defineComponent({
     const LAST_ACTIVITY_TIME_LOCAL_STORAGE_ITEM = "lastActivityTime";
     let countdownInterval = 0;
     let idleTimeInSeconds = 0;
+    let MAXIMUM_IDLE_TIME_FOR_WARNING_STUDENT,
+      MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION,
+      MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER,
+      MAXIMUM_IDLE_TIME_FOR_WARNING_AEST;
 
     onMounted(async () => {
       setLastActivityTime();
       resetIdleCheckerTimer();
       resetLoggedOut();
+      const {
+        maximumIdleTimeForWarningAest,
+        maximumIdleTimeForWarningInstitution,
+        maximumIdleTimeForWarningStudent,
+        maximumIdleTimeForWarningSupportingUser,
+      } = await AppConfigService.shared.config();
+      MAXIMUM_IDLE_TIME_FOR_WARNING_STUDENT = maximumIdleTimeForWarningStudent;
+      MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION = maximumIdleTimeForWarningInstitution;
+      MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER = maximumIdleTimeForWarningSupportingUser;
+      MAXIMUM_IDLE_TIME_FOR_WARNING_AEST = maximumIdleTimeForWarningAest;
+    
     });
 
     const logoff = async () => {
