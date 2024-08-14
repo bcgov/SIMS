@@ -12,6 +12,18 @@ FROM
 WHERE
   false;
 
+-- Set history columns as NOT NULL.
+ALTER TABLE
+  sims.users_history
+ALTER COLUMN
+  history_timestamp
+SET
+  NOT NULL,
+ALTER COLUMN
+  history_operation
+SET
+  NOT NULL;
+
 CREATE INDEX users_history_timestamp ON sims.users_history(history_timestamp);
 
 COMMENT ON INDEX sims.users_history_timestamp IS 'Historical data index to improve point-in-time data retrieval.';
