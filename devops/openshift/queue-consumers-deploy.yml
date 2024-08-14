@@ -39,7 +39,7 @@ objects:
                 - name: CLAMAV_HOST
                   value: "${CLAMAV_SERVICE}"
                 - name: CLAMAV_PORT
-                  value: "${CLAMAV_PORT}"   
+                  value: "${CLAMAV_PORT}"
                 - name: POSTGRES_USER
                   valueFrom:
                     secretKeyRef:
