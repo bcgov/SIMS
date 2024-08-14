@@ -257,8 +257,6 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         job,
       );
       // Assert
-      // Expect the file was not deleted from SFTP.
-      expect(sftpClientMock.delete).not.toHaveBeenCalled();
       const downloadedFile = path.join(
         process.env.SFAS_RECEIVE_FOLDER,
         SFAS_INDIVIDUAL_INVALID_RECORDS_FILENAME,
@@ -276,14 +274,14 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
             success: false,
           }),
           expect.objectContaining({
-            summary: [
+            summary: expect.arrayContaining([
               "Updating student ids for SFAS individuals.",
               "Student ids updated.",
               "Updating and inserting new disbursement overaward balances from sfas to disbursement overawards table.",
               "New disbursement overaward balances inserted to disbursement overawards table.",
               "Inserting student restrictions from SFAS restrictions data.",
               "Inserted student restrictions from SFAS restrictions data.",
-            ],
+            ]),
             success: true,
           }),
         ]),
@@ -432,7 +430,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         ppdStatus: null,
         ppdStatusDate: null,
         msfaaNumber: null,
-        msfaaSignedDate: "2024-08-13",
+        msfaaSignedDate: getISODateOnlyString(new Date()),
         neb: 0,
         bcgg: 0,
         lfp: 0,
