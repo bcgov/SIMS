@@ -1,16 +1,7 @@
 <template>
-  <div
-    class="v-main body-background"
-    @mouseover="setLastActivityTime"
-    @click="setLastActivityTime"
-    @keyup="setLastActivityTime"
-  >
+  <div class="v-main body-background" @mouseover="setLastActivityTime" @click="setLastActivityTime" @keyup="setLastActivityTime">
     <slot></slot>
-    <confirm-extend-time
-      ref="extendTimeModal"
-      :countdown="countdown"
-      @dialogClosedEvent="extendUserSessionTime"
-    />
+    <confirm-extend-time ref="extendTimeModal" :countdown="countdown" @dialogClosedEvent="extendUserSessionTime" />
   </div>
 </template>
 
@@ -55,10 +46,8 @@ export default defineComponent({
     const LAST_ACTIVITY_TIME_LOCAL_STORAGE_ITEM = "lastActivityTime";
     let countdownInterval = 0;
     let idleTimeInSeconds = 0;
-    let MAXIMUM_IDLE_TIME_FOR_WARNING_STUDENT,
-      MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION,
-      MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER,
-      MAXIMUM_IDLE_TIME_FOR_WARNING_AEST;
+
+    const maximumIdleTime = ref(0);
 
     onMounted(async () => {
       setLastActivityTime();
@@ -70,33 +59,29 @@ export default defineComponent({
         maximumIdleTimeForWarningStudent,
         maximumIdleTimeForWarningSupportingUser,
       } = await AppConfigService.shared.config();
-      MAXIMUM_IDLE_TIME_FOR_WARNING_STUDENT = maximumIdleTimeForWarningStudent;
-      MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION =
-        maximumIdleTimeForWarningInstitution;
-      MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER =
-        maximumIdleTimeForWarningSupportingUser;
-      MAXIMUM_IDLE_TIME_FOR_WARNING_AEST = maximumIdleTimeForWarningAest;
+
+      switch (props.clientIdType) {
+        case ClientIdType.Student:
+          maximumIdleTime.value = maximumIdleTimeForWarningStudent;
+          break;
+        case ClientIdType.Institution:
+          maximumIdleTime.value = maximumIdleTimeForWarningInstitution;
+          break;
+        case ClientIdType.SupportingUsers:
+          maximumIdleTime.value = maximumIdleTimeForWarningSupportingUser;
+          break;
+        case ClientIdType.AEST:
+          maximumIdleTime.value = maximumIdleTimeForWarningAest;
+          break;
+        default:
+          console.error("Invalid Client type");
+          break;
+      }
     });
 
     const logoff = async () => {
       await executeLogout(props.clientIdType);
     };
-
-    const maximumIdleTime = computed(() => {
-      switch (props.clientIdType) {
-        case ClientIdType.Student:
-          return MAXIMUM_IDLE_TIME_FOR_WARNING_STUDENT;
-        case ClientIdType.Institution:
-          return MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION;
-        case ClientIdType.SupportingUsers:
-          return MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER;
-        case ClientIdType.AEST:
-          return MAXIMUM_IDLE_TIME_FOR_WARNING_AEST;
-        default:
-          console.error("Invalid Client type");
-          return 0;
-      }
-    });
 
     const resetIdleCheckerTimer = () => {
       clearInterval(interval.value);
