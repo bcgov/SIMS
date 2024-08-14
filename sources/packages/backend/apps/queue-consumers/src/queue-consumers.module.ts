@@ -27,6 +27,7 @@ import {
   AssessmentWorkflowEnqueuerScheduler,
   WorkflowQueueRetryScheduler,
   CASSupplierIntegrationScheduler,
+  ApplicationChangesReportIntegrationScheduler,
 } from "./processors";
 import {
   DisbursementScheduleSharedService,
@@ -140,6 +141,7 @@ import { CASService } from "@sims/integrations/cas/cas.service";
     CASSupplierIntegrationScheduler,
     CASSupplierIntegrationService,
     CASService,
+    ApplicationChangesReportIntegrationScheduler,
   ],
   controllers: [HealthController],
 })
