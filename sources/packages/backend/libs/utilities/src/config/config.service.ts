@@ -155,8 +155,8 @@ export class ConfigService {
   }
 
   /**
-   * MAXIMUM IDLE TIME FOR WARNING STUDENT Configuration.
-   * @returns maximum Idle Time For Warning Student number.
+   * Maximum idle time for warning student Configuration.
+   * @returns maximum idle time for warning student number.
    */
   get maximumIdleTimeForWarningStudent(): number {
     return this.getCachedConfig(
@@ -166,8 +166,8 @@ export class ConfigService {
   }
 
   /**
-   * MAXIMUM IDLE TIME FOR WARNING STUDENT Configuration.
-   * @returns maximum Idle Time For Warning Student number.
+   * Maximum idle time for warning student Configuration.
+   * @returns maximum idle time for warning student number.
    */
   get maximumIdleTimeForWarningSupportingUser(): number {
     return this.getCachedConfig(
@@ -191,7 +191,7 @@ export class ConfigService {
    * MAXIMUM IDLE TIME FOR WARNING STUDENT Configuration.
    * @returns maximum Idle Time For Warning Student number.
    */
-  get maximumIdleTimeForWarningAest(): number {
+  get maximumIdleTimeForWarningAEST(): number {
     return this.getCachedConfig(
       "maximumIdleTimeForWarningAestConfig",
       +process.env.maximumIdleTimeForWarningAest,
