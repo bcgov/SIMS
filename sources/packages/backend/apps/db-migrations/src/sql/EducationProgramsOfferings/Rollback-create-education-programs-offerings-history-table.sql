@@ -1,3 +1,0 @@
-DROP TABLE sims.education_programs_offerings_history;
-
-DROP TRIGGER education_programs_offerings_history_trigger ON sims.education_programs_offerings;
