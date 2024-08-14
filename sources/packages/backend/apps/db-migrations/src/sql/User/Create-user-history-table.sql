@@ -4,7 +4,7 @@
 -- The order of the columns below follow the exact same order from the existing table.
 CREATE TABLE sims.users_history AS
 SELECT
-  CURRENT_TIMESTAMP AS history_date,
+  CURRENT_TIMESTAMP AS history_timestamp,
   '' :: varchar(50) AS history_operation,
   *
 FROM
