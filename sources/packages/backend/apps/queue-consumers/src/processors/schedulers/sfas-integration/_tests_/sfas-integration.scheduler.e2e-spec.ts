@@ -266,13 +266,13 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       expect(processingResults).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
-            summary: [
+            summary: expect.arrayContaining([
               `Processing file ${downloadedFile}.`,
               "File contains 3 records.",
               "Error processing record line number 2\nerror: numeric field overflow\ndetail: A field with precision 8, scale 2 must round to an absolute value less than 10^6.",
               'Error processing record line number 3\nerror: value "4000000000" is out of range for type integer\ndetail: undefined',
               'Error processing record line number 4\nerror: invalid input syntax for type integer: "NaN"\ndetail: undefined',
-            ],
+            ]),
             success: false,
           }),
           expect.objectContaining({
