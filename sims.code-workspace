@@ -128,9 +128,6 @@
     },
     "[sql]": {
       "editor.defaultFormatter": "adpyke.vscode-sql-formatter"
-    },
-    "[vue]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
     }
   }
 }
