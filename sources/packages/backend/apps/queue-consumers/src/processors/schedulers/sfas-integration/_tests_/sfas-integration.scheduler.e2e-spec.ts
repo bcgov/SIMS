@@ -29,9 +29,9 @@ const SFAS_ALL_RESTRICTIONS_FILENAME =
 const SFAS_SAIL_DATA_FILENAME =
   "SFAS-TO-SIMS-2024MAR21-PT-APPLICATION-DATA-IMPORT.txt";
 const SFAS_INDIVIDUAL_INVALID_RECORDS_FILENAME =
-  "SFAS-TO-SIMS-2024JUL09-INVALID-INDIVIDUAL-RECORDS.txt";
+  "SFAS-TO-SIMS-INVALID-INDIVIDUAL-RECORDS.txt";
 const SFAS_INDIVIDUAL_VALID_RECORDS_FILENAME =
-  "SFAS-TO-SIMS-2024JUL09-VALID-INDIVIDUAL-RECORDS.txt";
+  "SFAS-TO-SIMS-VALID-INDIVIDUAL-RECORDS.txt";
 
 describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
   let app: INestApplication;
@@ -370,10 +370,6 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       expect(sfasIndividualRecords.length).toBe(3);
       const [firstSFASIndividual, secondSFASIndividual, thirdSFASIndividual] =
         sfasIndividualRecords;
-      console.log(
-        "firstSFASIndividual: ",
-        typeof firstSFASIndividual.bcslOveraward,
-      );
       expect(firstSFASIndividual).toEqual({
         id: 83540,
         firstName: "000000000083540 GIOVANNI",
