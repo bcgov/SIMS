@@ -58,13 +58,13 @@ describe("ConfigController(e2e)-getConfig", () => {
         },
         isFulltimeAllowed: fakeEnvVariables.IS_FULLTIME_ALLOWED === "true",
         maximumIdleTimeForWarningStudent:
-          fakeEnvVariables.MAXIMUM_IDLE_TIME_FOR_WARNING_STUDENT,
+          +fakeEnvVariables.MAXIMUM_IDLE_TIME_FOR_WARNING_STUDENT,
         maximumIdleTimeForWarningSupportingUser:
-          fakeEnvVariables.MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER,
+          +fakeEnvVariables.MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER,
         maximumIdleTimeForWarningInstitution:
-          fakeEnvVariables.MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION,
+          +fakeEnvVariables.MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION,
         maximumIdleTimeForWarningAEST:
-          fakeEnvVariables.MAXIMUM_IDLE_TIME_FOR_WARNING_AEST,
+          +fakeEnvVariables.MAXIMUM_IDLE_TIME_FOR_WARNING_AEST,
       });
   });
 
