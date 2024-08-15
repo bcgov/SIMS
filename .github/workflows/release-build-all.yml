@@ -37,7 +37,7 @@ jobs:
       # Define tag name (e.g. v1.0.0-123).
       - name: Define tag name
         id: defineTagName
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: return "${{ github.ref_name }}".replace("release/", "").replace("hotfix/", "") + "-" + "${{ github.run_number }}";
           result-encoding: string

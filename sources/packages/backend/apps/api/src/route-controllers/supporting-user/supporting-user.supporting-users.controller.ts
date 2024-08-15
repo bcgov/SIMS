@@ -237,7 +237,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
       const updatedUser = await this.supportingUserService.updateSupportingUser(
         application.id,
         supportingUserType,
-        userToken.userId,
+        user.id,
         {
           contactInfo,
           sin: submissionResult.data.data.sin,

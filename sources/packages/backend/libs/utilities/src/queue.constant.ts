@@ -29,4 +29,5 @@ export enum QueueNames {
   AssessmentWorkflowQueueRetry = "assessment-workflow-queue-retry",
   StudentLoanBalancesPartTimeIntegration = "student-loan-balances-part-time-integration",
   CASSupplierIntegration = "cas-supplier-integration",
+  ApplicationChangesReportIntegration = "application-changes-report-integration",
 }

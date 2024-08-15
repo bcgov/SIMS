@@ -144,9 +144,9 @@ jobs:
       - name: Checkout Target Branch
         uses: actions/checkout@v4
       - name: Setup Nodejs
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: "16.x"
+          node-version: "18.x"
       # Run units tests and generate the coverage report.
       - name: Run Tests
         working-directory: "./sources/tests/"

@@ -77,9 +77,9 @@ export const SFAS_IMPORT_RECORDS_PROGRESS_REPORT_PACE = 1000;
 export const HTTP_SERVICE_TIMEOUT = 30000;
 
 /**
- * ASCII default encoding for files.
+ * latin1 default encoding for files.
  */
-export const FILE_DEFAULT_ENCODING = "ascii";
+export const FILE_DEFAULT_ENCODING = "latin1";
 
 /**
  * Represents the minimum number of days before another notification for a blocked disbursement will be sent out.

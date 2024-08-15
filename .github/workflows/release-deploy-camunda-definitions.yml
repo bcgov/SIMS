@@ -50,9 +50,9 @@ jobs:
         with:
           ref: ${{ inputs.gitRef }}
       - name: Setup Nodejs
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: "16.x"
+          node-version: "18.x"
       - name: Downloading packages
         working-directory: "./sources/packages/backend"
         run: npm ci
