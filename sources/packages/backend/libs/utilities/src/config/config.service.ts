@@ -193,7 +193,7 @@ export class ConfigService {
    */
   get maximumIdleTimeForWarningAEST(): number {
     return this.getCachedConfig(
-      "maximumIdleTimeForWarningAestConfig",
+      "maximumIdleTimeForWarningAESTConfig",
       +process.env.MAXIMUM_IDLE_TIME_FOR_WARNING_AEST,
     );
   }

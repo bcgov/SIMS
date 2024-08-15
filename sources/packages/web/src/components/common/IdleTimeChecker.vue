@@ -1,19 +1,21 @@
 <template>
-  <div class="v-main body-background" @mouseover="setLastActivityTime" @click="setLastActivityTime" @keyup="setLastActivityTime">
+  <div
+    class="v-main body-background"
+    @mouseover="setLastActivityTime"
+    @click="setLastActivityTime"
+    @keyup="setLastActivityTime"
+  >
     <slot></slot>
-    <confirm-extend-time ref="extendTimeModal" :countdown="countdown" @dialogClosedEvent="extendUserSessionTime" />
+    <confirm-extend-time
+      ref="extendTimeModal"
+      :countdown="countdown"
+      @dialogClosedEvent="extendUserSessionTime"
+    />
   </div>
 </template>
 
 <script lang="ts">
-import {
-  onMounted,
-  ref,
-  computed,
-  watch,
-  defineComponent,
-  PropType,
-} from "vue";
+import { onMounted, ref, watch, defineComponent, PropType } from "vue";
 import { ClientIdType } from "@/types";
 import {
   ModalDialog,
