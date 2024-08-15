@@ -50,6 +50,14 @@ objects:
                   value: ${IS_FULLTIME_ALLOWED}
                 - name: POSTGRES_HOST
                   value: "${DB_SERVICE}"
+                - name: MAXIMUM_IDLE_TIME_FOR_WARNING_STUDENT
+                  value: "${MAXIMUM_IDLE_TIME_FOR_WARNING_STUDENT}"
+                - name: MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER
+                  value: "${MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER}"
+                - name: MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION
+                  value: "${MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION}"
+                - name: MAXIMUM_IDLE_TIME_FOR_WARNING_AEST
+                  value: "${MAXIMUM_IDLE_TIME_FOR_WARNING_AEST}"
                 - name: POSTGRES_USER
                   valueFrom:
                     secretKeyRef:
@@ -431,3 +439,11 @@ parameters:
     value: s3-default-bucket
   - name: S3_REGION_KEY
     value: s3-region
+  - name: MAXIMUM_IDLE_TIME_FOR_WARNING_STUDENT
+    required: true
+  - name: MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER
+    required: true
+  - name: MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION
+    required: true
+  - name: MAXIMUM_IDLE_TIME_FOR_WARNING_AEST
+    required: true
