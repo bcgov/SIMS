@@ -49,7 +49,10 @@ objects:
                 - name: IS_FULLTIME_ALLOWED
                   value: ${IS_FULLTIME_ALLOWED}
                 - name: POSTGRES_HOST
-                  value: "${DB_SERVICE}"
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${DB_SERVICE}
+                      name: ${DB_SECRET_NAME}
                 - name: POSTGRES_USER
                   valueFrom:
                     secretKeyRef:
@@ -315,13 +318,13 @@ parameters:
   - name: PORT
     required: true
   - name: DB_SERVICE
-    value: patroni-master
+    value: pgbouncer-host
   - name: DB_SECRET_NAME
-    value: patroni-creds
+    value: simsdb-pguser-app-database-user
   - name: DB_USERNAME_KEY
-    value: database-user
+    value: user
   - name: DB_PASSWORD_KEY
-    value: database-password
+    value: password
   - name: IMAGE_STREAM_TAG
     required: true
   - name: BUILD_NAMESPACE
