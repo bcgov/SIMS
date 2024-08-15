@@ -22,5 +22,5 @@ export interface AppConfig {
   maximumIdleTimeForWarningStudent: number;
   maximumIdleTimeForWarningSupportingUser: number;
   maximumIdleTimeForWarningInstitution: number;
-  maximumIdleTimeForWarningAest: number;
+  maximumIdleTimeForWarningAEST: number;
 }

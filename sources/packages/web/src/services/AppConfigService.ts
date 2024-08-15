@@ -66,7 +66,7 @@ export class AppConfigService {
         config.maximumIdleTimeForWarningSupportingUser,
       maximumIdleTimeForWarningInstitution:
         config.maximumIdleTimeForWarningInstitution,
-      maximumIdleTimeForWarningAest: config.maximumIdleTimeForWarningAest,
+      maximumIdleTimeForWarningAEST: config.maximumIdleTimeForWarningAEST,
     };
     return appConfig;
   }

@@ -63,7 +63,7 @@ describe("ConfigController(e2e)-getConfig", () => {
           fakeEnvVariables.MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER,
         maximumIdleTimeForWarningInstitution:
           fakeEnvVariables.MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION,
-        maximumIdleTimeForWarningAest:
+        maximumIdleTimeForWarningAEST:
           fakeEnvVariables.MAXIMUM_IDLE_TIME_FOR_WARNING_AEST,
       });
   });

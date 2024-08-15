@@ -54,7 +54,7 @@ export default defineComponent({
       resetIdleCheckerTimer();
       resetLoggedOut();
       const {
-        maximumIdleTimeForWarningAest,
+        maximumIdleTimeForWarningAEST,
         maximumIdleTimeForWarningInstitution,
         maximumIdleTimeForWarningStudent,
         maximumIdleTimeForWarningSupportingUser,
@@ -71,7 +71,7 @@ export default defineComponent({
           maximumIdleTime.value = maximumIdleTimeForWarningSupportingUser;
           break;
         case ClientIdType.AEST:
-          maximumIdleTime.value = maximumIdleTimeForWarningAest;
+          maximumIdleTime.value = maximumIdleTimeForWarningAEST;
           break;
         default:
           console.error("Invalid Client type");
