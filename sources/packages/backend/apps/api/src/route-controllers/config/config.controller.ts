@@ -29,6 +29,14 @@ export class ConfigController extends BaseController {
       },
       version: this.configService.apiVersion,
       isFulltimeAllowed: this.configService.isFulltimeAllowed,
+      maximumIdleTimeForWarningStudent:
+        this.configService.maximumIdleTimeForWarningStudent,
+      maximumIdleTimeForWarningSupportingUser:
+        this.configService.maximumIdleTimeForWarningSupportingUser,
+      maximumIdleTimeForWarningInstitution:
+        this.configService.maximumIdleTimeForWarningInstitution,
+      maximumIdleTimeForWarningAEST:
+        this.configService.maximumIdleTimeForWarningAEST,
     };
   }
 }

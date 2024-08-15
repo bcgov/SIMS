@@ -155,6 +155,50 @@ export class ConfigService {
   }
 
   /**
+   * Maximum idle time for warning student Configuration.
+   * @returns maximum idle time for warning student number.
+   */
+  get maximumIdleTimeForWarningStudent(): number {
+    return this.getCachedConfig(
+      "maximumIdleTimeForWarningStudentConfig",
+      +process.env.MAXIMUM_IDLE_TIME_FOR_WARNING_STUDENT,
+    );
+  }
+
+  /**
+   * Maximum idle time for warning supporting user Configuration.
+   * @returns maximum idle time for warning supporting user number.
+   */
+  get maximumIdleTimeForWarningSupportingUser(): number {
+    return this.getCachedConfig(
+      "maximumIdleTimeForWarningSupportingUserConfig",
+      +process.env.MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER,
+    );
+  }
+
+  /**
+   * Maximum idle time for warning institution Configuration.
+   * @returns maximum idle time for warning institution number.
+   */
+  get maximumIdleTimeForWarningInstitution(): number {
+    return this.getCachedConfig(
+      "maximumIdleTimeForWarningInstitutionConfig",
+      +process.env.MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION,
+    );
+  }
+
+  /**
+   * Maximum idle time for warning AEST Configuration.
+   * @returns maximum idle time for warning AEST number.
+   */
+  get maximumIdleTimeForWarningAEST(): number {
+    return this.getCachedConfig(
+      "maximumIdleTimeForWarningAESTConfig",
+      +process.env.MAXIMUM_IDLE_TIME_FOR_WARNING_AEST,
+    );
+  }
+
+  /**
    * When defined as true, allows the simulation of a complete cycle of the
    * CRA send/response process that allows the workflow to proceed without
    * the need for the actual CRA verification happens. By default, it should be
