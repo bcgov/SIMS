@@ -12,6 +12,7 @@ import {
   logProcessSummaryToJobLogger,
 } from "../../../../utilities";
 import { QueueNames } from "@sims/utilities";
+import { ApplicationService } from "../../../../services/application/application.service";
 
 @Processor(QueueNames.ApplicationChangesReportIntegration)
 export class ApplicationChangesReportIntegrationScheduler extends BaseScheduler<void> {
@@ -19,6 +20,7 @@ export class ApplicationChangesReportIntegrationScheduler extends BaseScheduler<
     @InjectQueue(QueueNames.ApplicationChangesReportIntegration)
     schedulerQueue: Queue<void>,
     queueService: QueueService,
+    private readonly applicationService: ApplicationService,
   ) {
     super(schedulerQueue, queueService);
   }
@@ -39,7 +41,9 @@ export class ApplicationChangesReportIntegrationScheduler extends BaseScheduler<
       this.logger.log(
         `Processing application changes report integration job. Job id: ${job.id} and Job name: ${job.name}.`,
       );
-      // TODO: Processing implementation of application changes report.
+      const applications =
+        await this.applicationService.getDateChangeNotReportedApplication();
+      console.log(applications);
       return getSuccessMessageWithAttentionCheck(
         ["Process finalized with success."],
         processSummary,

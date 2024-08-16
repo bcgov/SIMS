@@ -6,6 +6,7 @@ import {
   User,
   StudentAssessment,
   StudentAssessmentStatus,
+  OfferingIntensity,
 } from "@sims/sims-db";
 import { ConfigService } from "@sims/utilities/config";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -151,6 +152,49 @@ export class ApplicationService {
         ])
         .orderBy("studentAssessment.createdAt")
         .getMany()
+    );
+  }
+
+  async getDateChangeNotReportedApplication(): Promise<any> {
+    return (
+      this.applicationRepo
+        .createQueryBuilder("application")
+        .select("application.applicationNumber", "Application Number")
+        .addSelect("sinValidation.sin", "Student SIN")
+        .addSelect("user.firstName", "Student First Name")
+        .addSelect("user.lastName", "Student Last Name")
+        .addSelect(
+          `CASE WHEN currentOffering.offeringIntensity = '${OfferingIntensity.fullTime}' 
+           THEN 'FT' ELSE 'PT' END`,
+          "Loan Type",
+        )
+        .addSelect("", "Education Institution Code")
+        // .addSelect("", "Original Study Start Date")
+        // .addSelect("", "Original Study End Date")
+        // .addSelect("", "Activity")
+        // .addSelect("", "Activity Time")
+        // .addSelect("", "New Study Start Date")
+        // .addSelect("", "New Study End Date")
+        .innerJoin("application.student", "student")
+        .innerJoin("student.user", "user")
+        .innerJoin("student.sinValidation", "sinValidation")
+        .innerJoin("application.currentAssessment", "currentAssessment")
+        .innerJoin(
+          "currentAssessment.previousDateChangedReportedAssessment",
+          "previousDateChangedReportedAssessment",
+        )
+        .leftJoin(
+          "currentAssessment.studentScholasticStanding",
+          "studentScholasticStanding",
+        )
+        .innerJoin("currentAssessment.offering", "currentOffering")
+        .innerJoin(
+          "previousDateChangedReportedAssessment.offering",
+          "previousOffering",
+        )
+        .innerJoin("currentOffering.institutionLocation", "institutionLocation")
+        .where("currentAssessment.reportedDate IS NULL")
+        .getRawAndEntities()
     );
   }
 }
