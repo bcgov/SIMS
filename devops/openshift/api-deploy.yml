@@ -59,7 +59,7 @@ objects:
                 - name: POSTGRES_HOST
                   valueFrom:
                     secretKeyRef:
-                      key: ${DB_SERVICE}
+                      key: ${DB_SERVICE_KEY}
                       name: ${DB_SECRET_NAME}
                 - name: POSTGRES_USER
                   valueFrom:
@@ -325,7 +325,7 @@ parameters:
     value: "2"
   - name: PORT
     required: true
-  - name: DB_SERVICE
+  - name: DB_SERVICE_KEY
     value: pgbouncer-host
   - name: DB_SECRET_NAME
     value: simsdb-pguser-app-database-user

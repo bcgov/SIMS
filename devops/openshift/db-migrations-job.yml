@@ -28,7 +28,7 @@ objects:
                 - name: POSTGRES_HOST
                   valueFrom:
                     secretKeyRef:
-                      key: ${DB_SERVICE}
+                      key: ${DB_SERVICE_KEY}
                       name: ${DB_SECRET_NAME}
                 - name: POSTGRES_USER
                   valueFrom:
@@ -76,7 +76,7 @@ parameters:
     required: true
   - name: IMAGE_REGISTRY
     value: image-registry.openshift-image-registry.svc:5000
-  - name: DB_SERVICE
+  - name: DB_SERVICE_KEY
     value: pgbouncer-host
   - name: DB_SECRET_NAME
     value: simsdb-pguser-non-super-user
