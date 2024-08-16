@@ -79,7 +79,7 @@ parameters:
   - name: DB_SERVICE_KEY
     value: pgbouncer-host
   - name: DB_SECRET_NAME
-    value: simsdb-pguser-app-database-user
+    value: simsdb-pguser-non-super-user
   - name: DB_USERNAME_KEY
     value: user
   - name: DB_PASSWORD_KEY
