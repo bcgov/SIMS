@@ -65,6 +65,10 @@ spec:
     - name: {{ .Values.appuser }}
       databases:
         - {{ template "crunchy-postgres.fullname" . }}
+      options: "CREATEDB"
+    - name: {{ .Values.nonsuperuser }}
+      databases:
+        - {{ template "crunchy-postgres.fullname" . }}
       options: "CREATEROLE"
     - name: postgres
       databases:
