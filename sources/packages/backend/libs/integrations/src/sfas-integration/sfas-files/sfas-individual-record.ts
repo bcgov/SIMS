@@ -79,12 +79,6 @@ export class SFASIndividualRecord extends SFASRecordIdentification {
     }
   }
   /**
-   * The date when a PD status is effective (individual.pd_status_dte).
-   */
-  get pdStatusDate(): Date | null {
-    return parseDate(this.line.substring(86, 94));
-  }
-  /**
    * Persistent or Prolonged Disability Flag (individual.ppd_flg) .
    */
   get ppdStatus(): boolean | null {
@@ -114,18 +108,6 @@ export class SFASIndividualRecord extends SFASRecordIdentification {
    */
   get msfaaSignedDate(): Date | null {
     return parseDate(this.line.substring(113, 121));
-  }
-  /**
-   * Vendor/supplier number assigned to an individual by CAS	(individual.supplier_no).
-   */
-  get supplierNumber(): Date | null {
-    return parseDate(this.line.substring(121, 128));
-  }
-  /**
-   * Site number assigned to an individual by CAS (individual.site_no).
-   */
-  get siteNumber(): Date | null {
-    return parseDate(this.line.substring(128, 131));
   }
   /**
    * Total Nurses Education Bursary (special_program_award.program_awd_cents, award_cde = "SP04").

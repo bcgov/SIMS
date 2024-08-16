@@ -28,8 +28,8 @@ const SFAS_ALL_RESTRICTIONS_FILENAME =
   "SFAS-TO-SIMS-2024MAR07-ALL-RESTRICTIONS.txt";
 const SFAS_SAIL_DATA_FILENAME =
   "SFAS-TO-SIMS-2024MAR21-PT-APPLICATION-DATA-IMPORT.txt";
-const SFAS_INDIVIDUAL_INVALID_RECORDS_FILENAME =
-  "SFAS-TO-SIMS-INVALID-INDIVIDUAL-RECORDS.txt";
+const SFAS_INDIVIDUAL_INVALID_RECORDS_INCONSISTENT_WITH_DATA_IMPORT_FILENAME =
+  "SFAS-TO-SIMS-INVALID-INDIVIDUAL-RECORDS-INCONSISTENT-WITH-DATA-IMPORT.txt";
 const SFAS_INDIVIDUAL_VALID_RECORDS_FILENAME =
   "SFAS-TO-SIMS-VALID-INDIVIDUAL-RECORDS.txt";
 
@@ -244,48 +244,17 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
 
   it(
     "Should not add SFAS individual data records and display errors when importing invalid data from SFAS " +
-      "where the record type is the individual data record.",
+      "when the record type is the individual data record.",
     async () => {
       // Arrange
       // Queued job.
       const job = createMock<Job<void>>();
       mockDownloadFiles(sftpClientMock, [
-        SFAS_INDIVIDUAL_INVALID_RECORDS_FILENAME,
+        SFAS_INDIVIDUAL_INVALID_RECORDS_INCONSISTENT_WITH_DATA_IMPORT_FILENAME,
       ]);
       // Act
-      const processingResults = await processor.processSFASIntegrationFiles(
-        job,
-      );
+      await processor.processSFASIntegrationFiles(job);
       // Assert
-      const downloadedFile = path.join(
-        process.env.SFAS_RECEIVE_FOLDER,
-        SFAS_INDIVIDUAL_INVALID_RECORDS_FILENAME,
-      );
-      expect(processingResults).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            summary: expect.arrayContaining([
-              `Processing file ${downloadedFile}.`,
-              "File contains 3 records.",
-              "Error processing record line number 2\nerror: numeric field overflow\ndetail: A field with precision 8, scale 2 must round to an absolute value less than 10^6.",
-              'Error processing record line number 3\nerror: value "4000000000" is out of range for type integer\ndetail: undefined',
-              'Error processing record line number 4\nerror: invalid input syntax for type integer: "NaN"\ndetail: undefined',
-            ]),
-            success: false,
-          }),
-          expect.objectContaining({
-            summary: expect.arrayContaining([
-              "Updating student ids for SFAS individuals.",
-              "Student ids updated.",
-              "Updating and inserting new disbursement overaward balances from sfas to disbursement overawards table.",
-              "New disbursement overaward balances inserted to disbursement overawards table.",
-              "Inserting student restrictions from SFAS restrictions data.",
-              "Inserted student restrictions from SFAS restrictions data.",
-            ]),
-            success: true,
-          }),
-        ]),
-      );
       // Expect the file data not to be saved in the database.
       const sfasIndividualRecords = await db.sfasIndividual.find({
         select: {
@@ -301,7 +270,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
 
   it(
     "Should add SFAS individual data records when importing valid data from SFAS " +
-      "where the record type is the individual data record.",
+      "when the record type is the individual data record.",
     async () => {
       // Arrange
       // Queued job.

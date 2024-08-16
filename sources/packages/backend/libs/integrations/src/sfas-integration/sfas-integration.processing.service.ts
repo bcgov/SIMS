@@ -115,10 +115,7 @@ export class SFASIntegrationProcessingService {
               const errorDescription = `Error processing record line number ${record.lineNumber}`;
               this.logger.error(errorDescription);
               this.logger.error(error);
-              this.logger.error(error.detail);
-              result.summary.push(
-                `${errorDescription}\nerror: ${error.message}\ndetail: ${error.detail}`,
-              );
+              result.summary.push(`${errorDescription}. Error: ${error}`);
               result.success = false;
             });
           promises.push(processPromise);
