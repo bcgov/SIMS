@@ -148,7 +148,9 @@ export class DisbursementSchedule extends RecordDataModel {
    */
   @Column({
     name: "tuition_remittance_requested_amount",
+    type: "numeric",
     nullable: false,
+    transformer: numericTransformer,
   })
   tuitionRemittanceRequestedAmount: number;
   /**

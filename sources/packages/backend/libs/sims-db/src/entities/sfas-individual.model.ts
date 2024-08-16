@@ -1,6 +1,7 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
 import { BaseModel } from ".";
 import { TableNames } from "../constant";
+import { numericTransformer } from "@sims/sims-db/transformers/numeric.transformer";
 
 /**
  * Data related to an individual/student in SFAS.
@@ -92,7 +93,9 @@ export class SFASIndividual extends BaseModel {
    */
   @Column({
     name: "neb",
+    type: "numeric",
     nullable: false,
+    transformer: numericTransformer,
   })
   neb: number;
   /**
@@ -100,7 +103,9 @@ export class SFASIndividual extends BaseModel {
    */
   @Column({
     name: "bcgg",
+    type: "numeric",
     nullable: false,
+    transformer: numericTransformer,
   })
   bcgg: number;
   /**
@@ -108,7 +113,9 @@ export class SFASIndividual extends BaseModel {
    */
   @Column({
     name: "lfp",
+    type: "numeric",
     nullable: false,
+    transformer: numericTransformer,
   })
   lfp: number;
   /**
@@ -116,7 +123,9 @@ export class SFASIndividual extends BaseModel {
    */
   @Column({
     name: "pal",
+    type: "numeric",
     nullable: false,
+    transformer: numericTransformer,
   })
   pal: number;
   /**
@@ -124,7 +133,9 @@ export class SFASIndividual extends BaseModel {
    */
   @Column({
     name: "csl_overaward",
+    type: "numeric",
     nullable: false,
+    transformer: numericTransformer,
   })
   cslOveraward: number;
   /**
@@ -132,7 +143,9 @@ export class SFASIndividual extends BaseModel {
    */
   @Column({
     name: "bcsl_overaward",
+    type: "numeric",
     nullable: false,
+    transformer: numericTransformer,
   })
   bcslOveraward: number;
   /**
@@ -140,7 +153,9 @@ export class SFASIndividual extends BaseModel {
    */
   @Column({
     name: "cms_overaward",
+    type: "numeric",
     nullable: false,
+    transformer: numericTransformer,
   })
   cmsOveraward: number;
   /**
@@ -148,7 +163,9 @@ export class SFASIndividual extends BaseModel {
    */
   @Column({
     name: "grant_overaward",
+    type: "numeric",
     nullable: false,
+    transformer: numericTransformer,
   })
   grantOveraward: number;
   /**
@@ -156,7 +173,9 @@ export class SFASIndividual extends BaseModel {
    */
   @Column({
     name: "withdrawals",
+    type: "numeric",
     nullable: false,
+    transformer: numericTransformer,
   })
   withdrawals: number;
   /**

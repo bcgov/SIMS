@@ -9,6 +9,7 @@ import {
 import { Application, SupportingUser } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
+import { numericTransformer } from "@sims/sims-db/transformers/numeric.transformer";
 
 /**
  * Income verifications that must be performed with CRA.
@@ -31,7 +32,9 @@ export class CRAIncomeVerification extends RecordDataModel {
    */
   @Column({
     name: "reported_income",
+    type: "numeric",
     nullable: false,
+    transformer: numericTransformer,
   })
   reportedIncome: number;
   /**
@@ -40,7 +43,9 @@ export class CRAIncomeVerification extends RecordDataModel {
    */
   @Column({
     name: "cra_reported_income",
+    type: "numeric",
     nullable: true,
+    transformer: numericTransformer,
   })
   craReportedIncome?: number;
   /**
