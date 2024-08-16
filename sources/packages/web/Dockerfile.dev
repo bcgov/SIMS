@@ -32,12 +32,12 @@ RUN mkdir /etc/nginx/templates
 COPY --from=builder /app/dist /opt/app-root/src
 
 # Copying the main configuration file.
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY nginx/nginx.conf /etc/nginx/nginx.conf
 
 # Copying the configuration template file to templates dir. 
 # It will be processed to transform the vars in the template files into 
 # evaluated values and save the resulting files into /etc/nginx/conf.d/ dir.
-COPY default.conf.template /etc/nginx/templates/
+COPY nginx/default.conf.dev.template /etc/nginx/templates/default.conf.template
 
 # Changing ownwership of some nginx directories as it will run as nginx user.
 RUN chown nginx /var/cache/nginx/ -R
