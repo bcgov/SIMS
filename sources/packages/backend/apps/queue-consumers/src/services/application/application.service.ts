@@ -7,6 +7,7 @@ import {
   StudentAssessment,
   StudentAssessmentStatus,
   OfferingIntensity,
+  StudentScholasticStandingChangeType,
 } from "@sims/sims-db";
 import { ConfigService } from "@sims/utilities/config";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -168,11 +169,21 @@ export class ApplicationService {
            THEN 'FT' ELSE 'PT' END`,
           "Loan Type",
         )
-        .addSelect("", "Education Institution Code")
-        // .addSelect("", "Original Study Start Date")
-        // .addSelect("", "Original Study End Date")
-        // .addSelect("", "Activity")
-        // .addSelect("", "Activity Time")
+        .addSelect(
+          "institutionLocation.institutionCode",
+          "Education Institution Code",
+        )
+        .addSelect(
+          "previousOffering.studyStartDate",
+          "Original Study Start Date",
+        )
+        .addSelect("previousOffering.studyEndDate", "Original Study End Date")
+        .addSelect(
+          `CASE WHEN studentScholasticStanding.changeType IS NOT NULL AND studentScholasticStanding.changeType = '${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}'
+           THEN 'Early Withdrawal' ELSE 'Reassessment' END`,
+          "Activity",
+        )
+        .addSelect("", "Activity Time")
         // .addSelect("", "New Study Start Date")
         // .addSelect("", "New Study End Date")
         .innerJoin("application.student", "student")
