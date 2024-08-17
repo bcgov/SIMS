@@ -243,7 +243,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
   );
 
   it(
-    "Should not add SFAS individual data records and display errors when importing invalid data from SFAS " +
+    "Should not add SFAS individual data records when importing invalid data from SFAS " +
       "when the record type is the individual data record.",
     async () => {
       // Arrange
