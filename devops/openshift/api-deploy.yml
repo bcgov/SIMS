@@ -240,12 +240,20 @@ objects:
     kind: Route
     metadata:
       name: ${NAME}
+      annotations:
+        haproxy.router.openshift.io/balance: leastconn
+        haproxy.router.openshift.io/disable_cookies: "true"
+        haproxy.router.openshift.io/hsts_header: max-age=31536000;includeSubDomains;preload
+        haproxy.router.openshift.io/timeout: 30s
     spec:
       host: ${HOST_NAME}
       path: ${PATH}
       tls:
         insecureEdgeTerminationPolicy: Redirect
         termination: edge
+        certificate: ${TLS_CERTIFICATE}
+        key: ${TLS_KEY}
+        caCertificate: ${TLS_CA_CERTIFICATE}
       to:
         kind: Service
         name: ${NAME}
@@ -253,6 +261,11 @@ objects:
     kind: Route
     metadata:
       name: ${SWAGGER_NAME}
+      annotations:
+        haproxy.router.openshift.io/balance: leastconn
+        haproxy.router.openshift.io/disable_cookies: "true"
+        haproxy.router.openshift.io/hsts_header: max-age=31536000;includeSubDomains;preload
+        haproxy.router.openshift.io/timeout: 30s
     spec:
       host: ${HOST_NAME}
       path: ${SWAGGER_PATH}
@@ -261,6 +274,9 @@ objects:
       tls:
         insecureEdgeTerminationPolicy: Redirect
         termination: edge
+        certificate: ${TLS_CERTIFICATE}
+        key: ${TLS_KEY}
+        caCertificate: ${TLS_CA_CERTIFICATE}
       to:
         kind: Service
         name: ${NAME}
@@ -446,4 +462,10 @@ parameters:
   - name: MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION
     required: true
   - name: MAXIMUM_IDLE_TIME_FOR_WARNING_AEST
+    required: true
+  - name: TLS_CERTIFICATE
+    required: true
+  - name: TLS_KEY
+    required: true
+  - name: TLS_CA_CERTIFICATE
     required: true

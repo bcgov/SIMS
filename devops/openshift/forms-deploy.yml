@@ -13,7 +13,7 @@ objects:
       FORMIO_ROOT_PASSWORD: "${FORMIO_ROOT_PASSWORD}"
       MONGODB_URI: "${MONGODB_URI}"
       NODE_CONFIG: '{"mongo": "${MONGODB_URI}"}'
-      FORMS_URL: "https://${FORMS_URL}"
+      FORMS_URL: "https://${HOST_NAME}/${PATH}/"
     type: Opaque
 
   - apiVersion: apps.openshift.io/v1
@@ -145,8 +145,14 @@ objects:
       labels:
         app: ${NAME}
       name: ${NAME}
+      annotations:
+        haproxy.router.openshift.io/balance: leastconn
+        haproxy.router.openshift.io/disable_cookies: "true"
+        haproxy.router.openshift.io/hsts_header: max-age=31536000;includeSubDomains;preload
+        haproxy.router.openshift.io/timeout: 30s
     spec:
-      host: ${FORMS_URL}
+      host: ${HOST_NAME}
+      path: ${PATH}
       to:
         kind: Service
         name: ${NAME}
@@ -156,6 +162,9 @@ objects:
       tls:
         termination: edge
         insecureEdgeTerminationPolicy: Redirect
+        certificate: ${TLS_CERTIFICATE}
+        key: ${TLS_KEY}
+        caCertificate: ${TLS_CA_CERTIFICATE}
       wildcardPolicy: None
   - apiVersion: autoscaling/v2
     kind: HorizontalPodAutoscaler
@@ -171,18 +180,18 @@ objects:
       minReplicas: "${{REPLICAS}}"
       maxReplicas: 6
       metrics:
-          - type: Resource
-            resource:
-              name: cpu
-              target:
-                type: Utilization
-                averageUtilization: 50
-          - type: Resource
-            resource:
-              name: memory
-              target:
-                type: AverageValue
-                averageValue: "1Gi"
+        - type: Resource
+          resource:
+            name: cpu
+            target:
+              type: Utilization
+              averageUtilization: 50
+        - type: Resource
+          resource:
+            name: memory
+            target:
+              type: AverageValue
+              averageValue: "1Gi"
   - apiVersion: policy/v1
     kind: PodDisruptionBudget
     metadata:
@@ -219,10 +228,10 @@ parameters:
   - name: HOST_PREFIX
     description: Host in which the container is deployed.
     required: true
-  - name: FORMS_URL
-    displayName: FORMS_URL
+  - name: HOST_NAME
     required: true
-    description: Forms URL
+  - name: PATH
+    value: "/forms/"
   - name: IMAGE_REGISTRY
     value: image-registry.openshift-image-registry.svc:5000
   - name: IMAGE_STREAM_TAG
@@ -252,3 +261,9 @@ parameters:
     description: The resources Memory limit (in Mi, Gi, etc) for this build.
     required: true
     value: 2Gi
+  - name: TLS_CERTIFICATE
+    required: true
+  - name: TLS_KEY
+    required: true
+  - name: TLS_CA_CERTIFICATE
+    required: true

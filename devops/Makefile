@@ -8,7 +8,7 @@ export APP_NAME := $(or $(PROJECT_NAME), sims)
 export TEMPLATE_FILE_NAME := $(or $(TEMPLATE_FILE_NAME), $$FILE)
 export BUILD_REF := $(or $(BUILD_REF), $(GIT_LOCAL_BRANCH))
 export BUILD_NAMESPACE := $(or $(BUILD_NAMESPACE), 0c27fb-tools)
-export DOMAIN := $(or $(DOMAIN), apps.silver.devops.gov.bc.ca)
+export DOMAIN := $(or $(DOMAIN), sims.studentaidbc.ca)
 export HOST_PREFIX := $(or $(HOST_PREFIX), $$HOST_PREFIX)
 export NEW_DB := $(or $(NEW_DB), $$NEW_DB)
 export JOB_NAME := $(or $(JOB_NAME), $$JN)
@@ -46,35 +46,35 @@ export MAX_WAIT=300 # Maximum wait time in seconds.
 export WAIT_TIME=0  # Initialize wait time to zero.
 
 define DB_MIGRATIONS
-"$(HOST_PREFIX)db-migrations-$(APP_NAME)"
+"$(HOST_PREFIX)-db-migrations-$(APP_NAME)"
 endef
 
 define DB_MIGRATIONS_JOB_NAME
-"$(HOST_PREFIX)db.migrations"
+"$(HOST_PREFIX)-db.migrations"
 endef
 
 define API
-"$(HOST_PREFIX)api-$(APP_NAME)"
+"$(HOST_PREFIX)-api-$(APP_NAME)"
 endef
 
 define WORKERS
-"$(HOST_PREFIX)workers-$(APP_NAME)"
+"$(HOST_PREFIX)-workers-$(APP_NAME)"
 endef
 
 define WEB
-"$(HOST_PREFIX)web-$(APP_NAME)"
+"$(HOST_PREFIX)-web-$(APP_NAME)"
 endef
 
 define QUEUE_CONSUMERS
-"$(HOST_PREFIX)queue-consumers-$(APP_NAME)"
+"$(HOST_PREFIX)-queue-consumers-$(APP_NAME)"
 endef
 
 define LOAD_TEST_GATEWAY
-"$(HOST_PREFIX)load-test-gateway-$(APP_NAME)"
+"$(HOST_PREFIX)-load-test-gateway-$(APP_NAME)"
 endef
 
 define SWAGGER_NAME
-"$(HOST_PREFIX)swagger"
+"$(HOST_PREFIX)-swagger"
 endef
 
 define QA_DB_NAME
@@ -86,7 +86,7 @@ define BUILD_TEMPLATE_PATH
 endef
 
 define HOST
-"$(HOST_PREFIX)aest-sims.$(DOMAIN)"
+"$(HOST_PREFIX).$(DOMAIN)"
 endef
 
 define DB_SERVICE_NAME
@@ -94,7 +94,7 @@ define DB_SERVICE_NAME
 endef
 
 define FORMS_NAME
-"$(HOST_PREFIX)forms"
+"$(HOST_PREFIX)-forms"
 endef
 
 define HAMONGO_DB_TEMPLATE_PATH
@@ -103,10 +103,6 @@ endef
 
 define HAMONGO_DB_PARAM_PATH
 "openshift/database/mongo-ha-param.yml"
-endef
-
-define FORMS_URL
-"$(HOST_PREFIX)aest-forms.$(DOMAIN)"
 endef
 
 define SOURCE_REPOSITORY_URL
@@ -387,6 +383,9 @@ deploy-api:
 	test -n "$(API_PORT)"
 	test -n "$(IS_FULLTIME_ALLOWED)"
 	test -n "$(APPLICATION_ARCHIVE_DAYS)"
+	test -n "$(TLS_CERTIFICATE)"
+	test -n "$(TLS_KEY)"
+	test -n "$(TLS_CA_CERTIFICATE)"
 	@echo "+\n++ Deploying API with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml \
 		-p NAME=$(API) \
@@ -414,6 +413,9 @@ deploy-api:
 		-p MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER=$(MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER) \
 		-p MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION=$(MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION) \
 		-p MAXIMUM_IDLE_TIME_FOR_WARNING_AEST=$(MAXIMUM_IDLE_TIME_FOR_WARNING_AEST) \
+		-p TLS_CERTIFICATE=$(TLS_CERTIFICATE) \
+		-p TLS_KEY=$(TLS_KEY) \
+		-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(API))
 
@@ -454,6 +456,9 @@ deploy-queue-consumers:
 	test -n "$(ATBC_LOGIN_ENDPOINT)"
 	test -n "$(ATBC_ENDPOINT)"
 	test -n "$(APPLICATION_ARCHIVE_DAYS)"
+	test -n "$(TLS_CERTIFICATE)"
+	test -n "$(TLS_KEY)"
+	test -n "$(TLS_CA_CERTIFICATE)"
 	@echo "+\n++ Deploying Queues with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/queue-consumers-deploy.yml \
 		-p NAME=$(QUEUE_CONSUMERS) \
@@ -470,6 +475,9 @@ deploy-queue-consumers:
 		-p ATBC_ENDPOINT=$(ATBC_ENDPOINT) \
 		-p APPLICATION_ARCHIVE_DAYS=$(APPLICATION_ARCHIVE_DAYS) \
 		-p IS_FULLTIME_ALLOWED=$(IS_FULLTIME_ALLOWED) \
+		-p TLS_CERTIFICATE=$(TLS_CERTIFICATE) \
+		-p TLS_KEY=$(TLS_KEY) \
+		-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(QUEUE_CONSUMERS))
 
@@ -484,6 +492,9 @@ deploy-load-test-gateway:
 	test -n "$(LOAD_TEST_GATEWAY_PORT)"
 	test -n "$(KEYCLOAK_AUTH_URL)"
 	test -n "$(KEYCLOAK_REALM)"
+	test -n "$(TLS_CERTIFICATE)"
+	test -n "$(TLS_KEY)"
+	test -n "$(TLS_CA_CERTIFICATE)"
 	@echo "+\n++ Deploying Load test gateway with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/load-test-gateway-deploy.yml \
 		-p NAME=$(LOAD_TEST_GATEWAY) \
@@ -496,6 +507,9 @@ deploy-load-test-gateway:
 		-p HOST_NAME=$(HOST) \
 		-p KEYCLOAK_AUTH_URL=$(KEYCLOAK_AUTH_URL) \
 		-p KEYCLOAK_REALM=$(KEYCLOAK_REALM) \
+		-p TLS_CERTIFICATE=$(TLS_CERTIFICATE) \
+		-p TLS_KEY=$(TLS_KEY) \
+		-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(LOAD_TEST_GATEWAY))
 
@@ -506,6 +520,9 @@ deploy-web:
 	test -n "$(WEB_BUILD_REF)"
 	test -n "$(BUILD_REF)"
 	test -n "$(WEB_PORT)"
+	test -n "$(TLS_CERTIFICATE)"
+	test -n "$(TLS_KEY)"
+	test -n "$(TLS_CA_CERTIFICATE)"
 	@echo "+\n++ Deploying WEB with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/web-deploy.yml \
 	-p NAME=$(WEB) \
@@ -513,6 +530,9 @@ deploy-web:
 	-p HOST_NAME=$(HOST) \
 	-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
 	-p IMAGE_STREAM_TAG="$(WEB_BUILD_REF):$(BUILD_REF)"  \
+	-p TLS_CERTIFICATE=$(TLS_CERTIFICATE) \
+	-p TLS_KEY=$(TLS_KEY) \
+	-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
 	| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(WEB))
 
@@ -541,21 +561,27 @@ build-forms:
 deploy-forms:
 	test -n "$(NAMESPACE)"
 	test -n "$(FORMS_NAME)"
-	test -n "$(FORMS_URL)"
+	test -n "$(HOST)"
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_REF)"
 	test -n "$(HOST_PREFIX)"
 	test -n "$(FORMIO_ROOT_EMAIL)"
 	test -n "$(MONGODB_URI)"
+	test -n "$(TLS_CERTIFICATE)"
+	test -n "$(TLS_KEY)"
+	test -n "$(TLS_CA_CERTIFICATE)"
 	@echo "+\n++ Deploying forms with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/forms-deploy.yml \
 	-p NAME=$(FORMS_NAME) \
-	-p FORMS_URL=$(FORMS_URL) \
+	-p HOST_NAME=$(HOST) \
 	-p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) \
 	-p IMAGE_STREAM_TAG="$(FORMS_BUILD_REF):$(BUILD_REF)" \
 	-p HOST_PREFIX=$(HOST_PREFIX) \
 	-p FORMIO_ROOT_EMAIL=$(FORMIO_ROOT_EMAIL) \
 	-p MONGODB_URI=$(MONGODB_URI) \
+	-p TLS_CERTIFICATE=$(TLS_CERTIFICATE) \
+	-p TLS_KEY=$(TLS_KEY) \
+	-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
 	| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(FORMS_NAME))
 
