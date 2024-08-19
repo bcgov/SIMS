@@ -1,0 +1,26 @@
+# nginx default configuration.
+
+log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                  '$status $body_bytes_sent "$http_referer" '
+                  '"$http_user_agent" "$http_x_forwarded_for"';
+
+server {
+  # Log to stdout
+  set $loggable 1;
+  if ($http_user_agent ~* "^kube-probe/") {
+        set $loggable 0;
+  }
+  access_log /dev/stdout main if=$loggable;
+  
+  listen       ${PORT};
+  location / {
+    root   /opt/app-root/src;
+    index  index.html;
+    try_files $uri $uri/ /index.html;
+  }
+  add_header 'X-Content-Type-Options' "nosniff";
+  add_header 'Content-Security-Policy' "default-src 'self'; connect-src 'self' *.gov.bc.ca http://localhost:*; script-src 'self' 'unsafe-eval' https://cdn.form.io/flatpickr/flatpickr.min.js; style-src 'self' 'unsafe-inline' https://stackpath.bootstrapcdn.com/bootstrap/ https://cdn.form.io/flatpickr/flatpickr.min.css; font-src 'self' data:; img-src 'self' data:"; 
+  add_header 'Strict-Transport-Security' "max-age=31536000; includeSubDomains; preload";
+  add_header 'Referrer-Policy' "same-origin";
+  add_header 'X-Frame-Options' "sameorigin";
+}
