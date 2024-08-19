@@ -366,7 +366,7 @@
           "id": "eoar7nv"
         },
         {
-          "label": "I have been authorized by my spouse/common-law partner to submit their financial information, including their total reported income from their {{data.programYear}} tax return.",
+          "label": "I have been authorized by my spouse/common-law partner to submit their financial information, including their total reported income from their {{data.program}} tax return.",
           "labelWidth": "",
           "labelMargin": "",
           "description": "",
@@ -445,7 +445,7 @@
           "id": "es4nl35"
         },
         {
-          "label": "Enter your spouse/common-law partners reported total income from line 15000 of their {{data.programYear}} income tax return. If they did not file a {{data.programYear}} income tax return, enter their total income from all sources both inside and outside of Canada.",
+          "label": "Enter your spouse/common-law partners reported total income from line 15000 of their insert year income tax return. If they did not file a insert year income tax return, enter their total income from all sources both inside and outside of Canada.",
           "prefix": "$",
           "customClass": "font-weight-bold",
           "mask": false,
