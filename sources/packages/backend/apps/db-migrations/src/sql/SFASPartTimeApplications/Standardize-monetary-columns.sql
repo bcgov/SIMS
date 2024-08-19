@@ -1,29 +1,29 @@
 ALTER TABLE
     sims.sfas_part_time_applications
-alter COLUMN
-    csgp_award type NUMERIC(8, 2);
+ALTER COLUMN
+    csgp_award TYPE NUMERIC(8, 2);
 
 ALTER TABLE
     sims.sfas_part_time_applications
-alter COLUMN
-    sbsd_award type NUMERIC(8, 2);
+ALTER COLUMN
+    sbsd_award TYPE NUMERIC(8, 2);
 
 ALTER TABLE
     sims.sfas_part_time_applications
-alter COLUMN
-    cspt_award type NUMERIC(8, 2);
+ALTER COLUMN
+    cspt_award TYPE NUMERIC(8, 2);
 
 ALTER TABLE
     sims.sfas_part_time_applications
-alter COLUMN
-    csgd_award type NUMERIC(8, 2);
+ALTER COLUMN
+    csgd_award TYPE NUMERIC(8, 2);
 
 ALTER TABLE
     sims.sfas_part_time_applications
-alter COLUMN
-    bcag_award type NUMERIC(8, 2);
+ALTER COLUMN
+    bcag_award TYPE NUMERIC(8, 2);
 
 ALTER TABLE
     sims.sfas_part_time_applications
-alter COLUMN
-    cslp_award type NUMERIC(8, 2);
+ALTER COLUMN
+    cslp_award TYPE NUMERIC(8, 2);

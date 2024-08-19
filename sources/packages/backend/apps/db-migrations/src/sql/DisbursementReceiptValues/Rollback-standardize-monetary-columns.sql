@@ -1,4 +1,4 @@
 ALTER TABLE
     sims.disbursement_receipt_values
-alter COLUMN
-    grant_amount type NUMERIC(7, 2);
+ALTER COLUMN
+    grant_amount TYPE NUMERIC(7, 2);

@@ -1,19 +1,19 @@
 ALTER TABLE
     sims.education_programs_offerings
-alter COLUMN
-    actual_tuition_costs type int4;
+ALTER COLUMN
+    actual_tuition_costs TYPE INT;
 
 ALTER TABLE
     sims.education_programs_offerings
-alter COLUMN
-    program_related_costs type int4;
+ALTER COLUMN
+    program_related_costs TYPE INT;
 
 ALTER TABLE
     sims.education_programs_offerings
-alter COLUMN
-    mandatory_fees type int4;
+ALTER COLUMN
+    mandatory_fees TYPE INT;
 
 ALTER TABLE
     sims.education_programs_offerings
-alter COLUMN
-    exceptional_expenses type int4;
+ALTER COLUMN
+    exceptional_expenses TYPE INT;

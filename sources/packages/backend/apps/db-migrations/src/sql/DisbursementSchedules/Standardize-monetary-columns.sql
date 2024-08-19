@@ -1,4 +1,4 @@
 ALTER TABLE
     sims.disbursement_schedules
-alter COLUMN
-    tuition_remittance_requested_amount type NUMERIC(8, 2);
+ALTER COLUMN
+    tuition_remittance_requested_amount TYPE NUMERIC(8, 2);

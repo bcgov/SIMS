@@ -213,31 +213,12 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
               "Has Study Breaks":
                 (!secondSavedOffering.lacksStudyBreaks).toString(),
               "Actual Tuition":
-                secondSavedOffering.actualTuitionCosts.toLocaleString("en-US", {
-                  maximumFractionDigits: 2,
-                  minimumFractionDigits: 2,
-                }),
+                secondSavedOffering.actualTuitionCosts.toFixed(2),
               "Program Related Costs":
-                secondSavedOffering.programRelatedCosts.toLocaleString(
-                  "en-US",
-                  {
-                    maximumFractionDigits: 2,
-                    minimumFractionDigits: 2,
-                  },
-                ),
-              "Mandatory Fees":
-                secondSavedOffering.mandatoryFees.toLocaleString("en-US", {
-                  maximumFractionDigits: 2,
-                  minimumFractionDigits: 2,
-                }),
+                secondSavedOffering.programRelatedCosts.toFixed(2),
+              "Mandatory Fees": secondSavedOffering.mandatoryFees.toFixed(2),
               "Exceptional Expenses":
-                secondSavedOffering.exceptionalExpenses.toLocaleString(
-                  "en-US",
-                  {
-                    maximumFractionDigits: 2,
-                    minimumFractionDigits: 2,
-                  },
-                ),
+                secondSavedOffering.exceptionalExpenses.toFixed(2),
               "Offering Type": secondSavedOffering.offeringType,
               Status: secondSavedOffering.offeringStatus,
               "Funded Weeks":
@@ -260,27 +241,12 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
               "Has Study Breaks":
                 (!firstSavedOffering.lacksStudyBreaks).toString(),
               "Actual Tuition":
-                firstSavedOffering.actualTuitionCosts.toLocaleString("en-US", {
-                  maximumFractionDigits: 2,
-                  minimumFractionDigits: 2,
-                }),
+                firstSavedOffering.actualTuitionCosts.toFixed(2),
               "Program Related Costs":
-                firstSavedOffering.programRelatedCosts.toLocaleString("en-US", {
-                  maximumFractionDigits: 2,
-                  minimumFractionDigits: 2,
-                }),
-              "Mandatory Fees": firstSavedOffering.mandatoryFees.toLocaleString(
-                "en-US",
-                {
-                  maximumFractionDigits: 2,
-                  minimumFractionDigits: 2,
-                },
-              ),
+                firstSavedOffering.programRelatedCosts.toFixed(2),
+              "Mandatory Fees": firstSavedOffering.mandatoryFees.toFixed(2),
               "Exceptional Expenses":
-                firstSavedOffering.exceptionalExpenses.toLocaleString("en-US", {
-                  maximumFractionDigits: 2,
-                  minimumFractionDigits: 2,
-                }),
+                firstSavedOffering.exceptionalExpenses.toFixed(2),
               "Offering Type": firstSavedOffering.offeringType,
               Status: firstSavedOffering.offeringStatus,
               "Funded Weeks":
