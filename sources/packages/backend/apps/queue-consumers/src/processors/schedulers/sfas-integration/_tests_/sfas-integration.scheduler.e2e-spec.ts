@@ -28,6 +28,10 @@ const SFAS_ALL_RESTRICTIONS_FILENAME =
   "SFAS-TO-SIMS-2024MAR07-ALL-RESTRICTIONS.txt";
 const SFAS_SAIL_DATA_FILENAME =
   "SFAS-TO-SIMS-2024MAR21-PT-APPLICATION-DATA-IMPORT.txt";
+const SFAS_INDIVIDUAL_INVALID_RECORDS_INCONSISTENT_WITH_DATA_IMPORT_FILENAME =
+  "SFAS-TO-SIMS-INVALID-INDIVIDUAL-RECORDS-INCONSISTENT-WITH-DATA-IMPORT.txt";
+const SFAS_INDIVIDUAL_VALID_RECORDS_FILENAME =
+  "SFAS-TO-SIMS-VALID-INDIVIDUAL-RECORDS.txt";
 
 describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
   let app: INestApplication;
@@ -234,6 +238,172 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         bcagAward: 26,
         cslpAward: 700,
         programYearId: null,
+      });
+    },
+  );
+
+  it(
+    "Should not add SFAS individual data records when importing invalid data from SFAS " +
+      "when the record type is the individual data record.",
+    async () => {
+      // Arrange
+      // Queued job.
+      const job = createMock<Job<void>>();
+      mockDownloadFiles(sftpClientMock, [
+        SFAS_INDIVIDUAL_INVALID_RECORDS_INCONSISTENT_WITH_DATA_IMPORT_FILENAME,
+      ]);
+      // Act
+      await processor.processSFASIntegrationFiles(job);
+      // Assert
+      // Expect the file data not to be saved in the database.
+      const sfasIndividualRecords = await db.sfasIndividual.find({
+        select: {
+          id: true,
+        },
+        where: {
+          id: In([75085, 75086, 75087]),
+        },
+      });
+      expect(sfasIndividualRecords.length).toBe(0);
+    },
+  );
+
+  it(
+    "Should add SFAS individual data records when importing valid data from SFAS " +
+      "when the record type is the individual data record.",
+    async () => {
+      // Arrange
+      // Queued job.
+      const job = createMock<Job<void>>();
+      mockDownloadFiles(sftpClientMock, [
+        SFAS_INDIVIDUAL_VALID_RECORDS_FILENAME,
+      ]);
+      // Act
+      const processingResults = await processor.processSFASIntegrationFiles(
+        job,
+      );
+      // Assert
+      const downloadedFile = path.join(
+        process.env.SFAS_RECEIVE_FOLDER,
+        SFAS_INDIVIDUAL_VALID_RECORDS_FILENAME,
+      );
+      expect(processingResults).toStrictEqual([
+        {
+          summary: [
+            `Processing file ${downloadedFile}.`,
+            "File contains 3 records.",
+          ],
+          success: true,
+        },
+        {
+          success: true,
+          summary: [
+            "Updating student ids for SFAS individuals.",
+            "Student ids updated.",
+            "Updating and inserting new disbursement overaward balances from sfas to disbursement overawards table.",
+            "New disbursement overaward balances inserted to disbursement overawards table.",
+            "Inserting student restrictions from SFAS restrictions data.",
+            "Inserted student restrictions from SFAS restrictions data.",
+          ],
+        },
+      ]);
+      // Expect the database data to be the same as the file data.
+      const sfasIndividualRecords = await db.sfasIndividual.find({
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          birthDate: true,
+          sin: true,
+          pdStatus: true,
+          ppdStatus: true,
+          ppdStatusDate: true,
+          msfaaNumber: true,
+          msfaaSignedDate: true,
+          neb: true,
+          bcgg: true,
+          lfp: true,
+          pal: true,
+          cslOveraward: true,
+          bcslOveraward: true,
+          cmsOveraward: true,
+          grantOveraward: true,
+          withdrawals: true,
+          unsuccessfulCompletion: true,
+        },
+        where: {
+          id: In([83540, 83541, 83542]),
+        },
+        order: { id: "ASC" },
+      });
+      expect(sfasIndividualRecords.length).toBe(3);
+      const [firstSFASIndividual, secondSFASIndividual, thirdSFASIndividual] =
+        sfasIndividualRecords;
+      expect(firstSFASIndividual).toEqual({
+        id: 83540,
+        firstName: "000000000083540 GIOVANNI",
+        lastName: "GIORGIO",
+        birthDate: "1966-07-21",
+        sin: "121380174",
+        pdStatus: true,
+        ppdStatus: true,
+        ppdStatusDate: "1967-07-22",
+        msfaaNumber: 9876543210,
+        msfaaSignedDate: "2024-07-12",
+        neb: 5000,
+        bcgg: 5000,
+        lfp: 7560,
+        pal: 7560,
+        cslOveraward: 741,
+        bcslOveraward: 741,
+        cmsOveraward: 741,
+        grantOveraward: 741,
+        withdrawals: 2,
+        unsuccessfulCompletion: 17,
+      });
+      expect(secondSFASIndividual).toEqual({
+        id: 83541,
+        firstName: "000000000083541 GIOVANNI",
+        lastName: "GIORGIO",
+        birthDate: "1949-11-16",
+        sin: "108796293",
+        pdStatus: false,
+        ppdStatus: false,
+        ppdStatusDate: null,
+        msfaaNumber: 9876543211,
+        msfaaSignedDate: "2024-07-13",
+        neb: 5000,
+        bcgg: 5000,
+        lfp: 11040,
+        pal: 11040,
+        cslOveraward: 11040,
+        bcslOveraward: 11040,
+        cmsOveraward: 11040,
+        grantOveraward: 11040,
+        withdrawals: 2,
+        unsuccessfulCompletion: 2,
+      });
+      expect(thirdSFASIndividual).toEqual({
+        id: 83542,
+        firstName: "000000000083542 GIOVANNI",
+        lastName: "GIORGIO",
+        birthDate: "1970-07-02",
+        sin: "122886591",
+        pdStatus: null,
+        ppdStatus: null,
+        ppdStatusDate: null,
+        msfaaNumber: null,
+        msfaaSignedDate: getISODateOnlyString(new Date()),
+        neb: 0,
+        bcgg: 0,
+        lfp: 0,
+        pal: 0,
+        cslOveraward: 0,
+        bcslOveraward: 11039,
+        cmsOveraward: 0,
+        grantOveraward: 0,
+        withdrawals: 0,
+        unsuccessfulCompletion: 0,
       });
     },
   );

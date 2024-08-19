@@ -180,7 +180,7 @@ api: ## <Helper> :: Executes into the workspace container.
 # Local Web (nginx)
 web-local:
 	@echo "+\n++ Make: Run local web (nginx).\n+"
-	@docker compose -f docker-compose.yml up web
+	@docker compose -f docker-compose.yml up --build -d web
 
 local-db:
 	@echo "Make: Shelling into database workspace ..."
