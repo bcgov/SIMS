@@ -8,12 +8,6 @@ export class StandardizeMonetaryColumnTypes1723759729845
     await queryRunner.query(
       getSQLFileData(
         "Standardize-monetary-columns.sql",
-        "CRAIncomeVerifications",
-      ),
-    );
-    await queryRunner.query(
-      getSQLFileData(
-        "Standardize-monetary-columns.sql",
         "DisbursementReceipts",
       ),
     );
@@ -47,12 +41,6 @@ export class StandardizeMonetaryColumnTypes1723759729845
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      getSQLFileData(
-        "Rollback-standardize-monetary-columns.sql",
-        "CRAIncomeVerifications",
-      ),
-    );
     await queryRunner.query(
       getSQLFileData(
         "Rollback-standardize-monetary-columns.sql",
