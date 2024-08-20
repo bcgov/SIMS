@@ -6,6 +6,7 @@ import "primevue/resources/themes/md-light-indigo/theme.css";
 import "primevue/resources/primevue.min.css";
 import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
+import "formiojs/dist/formio.full.min.css";
 
 import "reflect-metadata";
 import { createApp } from "vue";

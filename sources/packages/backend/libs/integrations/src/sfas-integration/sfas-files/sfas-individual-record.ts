@@ -82,7 +82,7 @@ export class SFASIndividualRecord extends SFASRecordIdentification {
    * Persistent or Prolonged Disability Flag (individual.ppd_flg) .
    */
   get ppdStatus(): boolean | null {
-    switch (this.line.substring(86, 87)) {
+    switch (this.line.substring(94, 95)) {
       case "Y":
         return true;
       case "N":
@@ -95,78 +95,78 @@ export class SFASIndividualRecord extends SFASRecordIdentification {
    * The date when a PPD status is effective (individual.ppd_status_dte).
    */
   get ppdStatusDate(): Date | null {
-    return parseDate(this.line.substring(87, 95));
+    return parseDate(this.line.substring(95, 103));
   }
   /**
    * The most recent, active Master Student Loan Agreement Number (loan_agreement_request.msfaa_agreement_number).
    */
   get msfaaNumber(): number | null {
-    return +this.line.substring(95, 105) || null;
+    return +this.line.substring(103, 113) || null;
   }
   /**
    * The most recent, active Master Student Loan Agreement signed date (loan_agreement_request.loan_agreement_signed_dte).
    */
   get msfaaSignedDate(): Date | null {
-    return parseDate(this.line.substring(105, 113));
+    return parseDate(this.line.substring(113, 121));
   }
   /**
    * Total Nurses Education Bursary (special_program_award.program_awd_cents, award_cde = "SP04").
    */
   get neb(): number {
-    return +this.line.substring(113, 123);
+    return +this.line.substring(131, 141);
   }
   /**
    * BC Completion Grant for Graduates (individual_award.award_dlr, award_cde = "BCGG").
    */
   get bcgg(): number {
-    return +this.line.substring(123, 133);
+    return +this.line.substring(141, 151);
   }
   /**
    * Nurses/Medical Loan Forgiveness.
    */
   get lfp(): number {
-    return parseDecimal(this.line.substring(133, 143));
+    return parseDecimal(this.line.substring(151, 161));
   }
   /**
    * Pacific Leaders Loan Forgiveness.
    */
   get pal(): number {
-    return parseDecimal(this.line.substring(143, 153));
+    return parseDecimal(this.line.substring(161, 171));
   }
   /**
    * BC Student Loan total overaward balance (overaward_balance.overaward_balance_amt, overaward_balance_cde = "CSL").
    */
   get cslOveraward(): number {
-    return parseDecimal(this.line.substring(153, 163));
+    return parseDecimal(this.line.substring(171, 181));
   }
   /**
    * Canada Student Loan total overaward balance (overaward_balance.overaward_balance_amt, overaward_balance_cde = "BCSL").
    */
   get bcslOveraward(): number {
-    return parseDecimal(this.line.substring(163, 173));
+    return parseDecimal(this.line.substring(181, 191));
   }
   /**
    * Canada Millennium Grant total overaward balance (overaward_balance.overaward_balance_amt, overaward_balance_cde = "GRNT").
    */
   get cmsOveraward(): number {
-    return parseDecimal(this.line.substring(173, 183));
+    return parseDecimal(this.line.substring(191, 201));
   }
   /**
    * BC Grant total overaward balance (overaward_balance.overaward_balance_amt, overaward_balance_cde = "EGRT").
    */
   get grantOveraward(): number {
-    return parseDecimal(this.line.substring(183, 193));
+    return parseDecimal(this.line.substring(201, 211));
   }
   /**
    * Total number of non-punitive withdrawals (either in funded or non-funded periods). BCSLWTHD count.
    */
   get withdrawals(): number {
-    return +this.line.substring(193, 203);
+    return +this.line.substring(211, 221);
   }
   /**
    * Total of unsuccessful completion weeks (unsuccessful_completion.uc_weeks_qty).
    */
   get unsuccessfulCompletion(): number {
-    return +this.line.substring(203, 213);
+    return +this.line.substring(221, 231);
   }
 }
