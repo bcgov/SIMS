@@ -26,3 +26,7 @@ export const ECE_RESPONSE_ATTACHMENT_FILE_NAME =
  * Regex to split a file content string with line breaks.
  */
 export const LINE_BREAK_SPLIT_REGEX = /\r\n|\n\r|\n|\r/;
+/**
+ * Application changes report file name prefix.
+ */
+export const APPLICATION_CHANGES_REPORT_PREFIX = "PBC.EDU.APPCHANGES";

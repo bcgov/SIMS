@@ -7,6 +7,9 @@ import {
 } from "@sims/sims-db";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DATE_ONLY_ISO_FORMAT, PST_TIMEZONE } from "@sims/utilities";
+import { ApplicationChangesReport } from "./models/application.model";
+
+const ISO_DATE_TIME_FORMAT = 'YYYY-MM-DD"T"HH24:mm:ss';
 
 /**
  * Consists of all application services which are specific to the integration.
@@ -18,23 +21,10 @@ export class ApplicationService {
     private readonly applicationRepo: Repository<Application>,
   ) {}
 
-  async getDateChangeNotReportedApplication(): Promise<
-    {
-      "Application Number": string;
-      "Student SIN": string;
-      "Student First Name": string;
-      "Student Last Name": string;
-      "Loan Type": "FT" | "PT";
-      "Education Institution Code": string;
-      "Original Study Start Date": string;
-      "Original Study End Date": string;
-      Activity: "Early Withdrawal" | "Reassessment";
-      "Activity Time": Date;
-      "New Study Start Date": string;
-      "New Study End Date": string;
-    }[]
+  async getDateChangeNotReportedApplications(): Promise<
+    ApplicationChangesReport[]
   > {
-    return this.applicationRepo
+    const sql = this.applicationRepo
       .createQueryBuilder("application")
       .select("application.applicationNumber", "Application Number")
       .addSelect("sinValidation.sin", "Student SIN")
@@ -63,7 +53,7 @@ export class ApplicationService {
         "Activity",
       )
       .addSelect(
-        `currentAssessment.createdAt AT TIME ZONE '${PST_TIMEZONE}'`,
+        `TO_CHAR((currentAssessment.createdAt AT TIME ZONE '${PST_TIMEZONE}'), '${ISO_DATE_TIME_FORMAT}')`,
         "Activity Time",
       )
       .addSelect(
@@ -92,20 +82,8 @@ export class ApplicationService {
         "previousOffering",
       )
       .innerJoin("currentOffering.institutionLocation", "institutionLocation")
-      .where("currentAssessment.reportedDate IS NULL")
-      .getRawMany<{
-        "Application Number": string;
-        "Student SIN": string;
-        "Student First Name": string;
-        "Student Last Name": string;
-        "Loan Type": "FT" | "PT";
-        "Education Institution Code": string;
-        "Original Study Start Date": string;
-        "Original Study End Date": string;
-        Activity: "Early Withdrawal" | "Reassessment";
-        "Activity Time": Date;
-        "New Study Start Date": string;
-        "New Study End Date": string;
-      }>();
+      .where("currentAssessment.reportedDate IS NULL");
+    console.log(sql.getSql());
+    return sql.getRawMany<ApplicationChangesReport>();
   }
 }

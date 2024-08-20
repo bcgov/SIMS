@@ -54,5 +54,7 @@ export * from "./student-loan-balances/student-loan-balances-files/student-loan-
 export * from "./student-loan-balances/student-loan-balances.processing.service";
 export * from "./student-loan-balances/student-loan-balances.integration.service";
 export * from "./student-loan-balances/student-loan-balances-integration.module";
+export * from "./application-changes-report/models/application-changes-report-integration.model";
+export * from "./application-changes-report/application-changes-report.integration.service";
 export * from "./application-changes-report/application-changes-report.processing.service";
 export * from "./application-changes-report/application-changes-report-integration.module";
