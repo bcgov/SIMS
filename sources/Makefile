@@ -36,7 +36,7 @@ export E2E_TEST_BCeID_USERNAME := $(or $(E2E_TEST_BCeID_USERNAME), SIMS_E2ETests
 # BCeID Web Service
 export BCeID_WEB_SERVICE_WSDL := $(or $(BCeID_WEB_SERVICE_WSDL), https://gws1.test.bceid.ca/webservices/Client/V10/BCeIDService.asmx?wsdl)
 # File Upload Global Config
-export FILE_UPLOAD_MAX_FILE_SIZE := $(or $(FILE_UPLOAD_MAX_FILE_SIZE), 4194304)
+export FILE_UPLOAD_MAX_FILE_SIZE := $(or $(FILE_UPLOAD_MAX_FILE_SIZE), 15728640)
 export FILE_UPLOAD_ALLOWED_EXTENSIONS := $(or $(FILE_UPLOAD_ALLOWED_EXTENSIONS), .pdf,.doc,.docx,.jpg,.png)
 #SFAS Integration
 export SFAS_RECEIVE_FOLDER := $(or $(SFAS_RECEIVE_FOLDER), SFAS-Receive)
