@@ -105,6 +105,10 @@ define HAMONGO_DB_PARAM_PATH
 "openshift/database/mongo-ha-param.yml"
 endef
 
+define FORMS_URL
+"$(HOST_PREFIX)-forms.$(DOMAIN)"
+endef
+
 define SOURCE_REPOSITORY_URL
 "https://github.com/bcgov/SIMS.git"
 endef
@@ -549,6 +553,7 @@ build-forms:
 deploy-forms:
 	test -n "$(NAMESPACE)"
 	test -n "$(FORMS_NAME)"
+	test -n "$(FORMS_URL)"
 	test -n "$(HOST)"
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_REF)"
@@ -557,6 +562,7 @@ deploy-forms:
 	@echo "+\n++ Deploying forms with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/forms-deploy.yml \
 	-p NAME=$(FORMS_NAME) \
+	-p FORMS_URL=$(FORMS_URL) \
 	-p HOST_NAME=$(HOST) \
 	-p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) \
 	-p IMAGE_STREAM_TAG="$(FORMS_BUILD_REF):$(BUILD_REF)" \

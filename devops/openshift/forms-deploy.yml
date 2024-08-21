@@ -13,7 +13,7 @@ objects:
       FORMIO_ROOT_PASSWORD: "${FORMIO_ROOT_PASSWORD}"
       MONGODB_URI: "${MONGODB_URI}"
       NODE_CONFIG: '{"mongo": "${MONGODB_URI}"}'
-      FORMS_URL: "https://${HOST_NAME}/${PATH}/"
+      FORMS_URL: "https://${FORMS_URL}"
     type: Opaque
 
   - apiVersion: apps.openshift.io/v1
@@ -144,15 +144,14 @@ objects:
     metadata:
       labels:
         app: ${NAME}
-      name: ${NAME}
+      name: ${NAME}-route
       annotations:
         haproxy.router.openshift.io/balance: leastconn
         haproxy.router.openshift.io/disable_cookies: "true"
         haproxy.router.openshift.io/hsts_header: max-age=31536000;includeSubDomains;preload
         haproxy.router.openshift.io/timeout: 30s
     spec:
-      host: ${HOST_NAME}
-      path: ${PATH}
+      host: ${FORMS_URL}
       to:
         kind: Service
         name: ${NAME}
@@ -236,8 +235,10 @@ parameters:
     from: "[a-zA-Z0-9]{16}"
   - name: HOST_NAME
     required: true
-  - name: PATH
-    value: "/forms/"
+  - name: FORMS_URL
+    displayName: FORMS_URL
+    required: true
+    description: Forms URL
   - name: IMAGE_REGISTRY
     value: image-registry.openshift-image-registry.svc:5000
   - name: IMAGE_STREAM_TAG
