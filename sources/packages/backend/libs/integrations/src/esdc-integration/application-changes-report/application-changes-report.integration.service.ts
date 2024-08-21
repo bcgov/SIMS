@@ -2,7 +2,7 @@ import { SFTPIntegrationBase, SshService } from "@sims/integrations/services";
 import { ConfigService } from "@sims/utilities/config";
 import { Injectable } from "@nestjs/common";
 import { unparse } from "papaparse";
-import { END_OF_LINE, getPSTPDTDateTime } from "@sims/utilities";
+import { END_OF_LINE, formatDate } from "@sims/utilities";
 import {
   Application,
   OfferingIntensity,
@@ -75,9 +75,10 @@ export class ApplicationChangesReportIntegrationService extends SFTPIntegrationB
         StudentScholasticStandingChangeType.StudentWithdrewFromProgram
           ? "Early Withdrawal"
           : "Reassessment",
-      "Activity Time": getPSTPDTDateTime(currentAssessment.createdAt, {
-        dateTimeFormat: APPLICATION_CHANGES_DATE_TIME_FORMAT,
-      }),
+      "Activity Time": formatDate(
+        currentAssessment.createdAt,
+        APPLICATION_CHANGES_DATE_TIME_FORMAT,
+      ),
       "New Study Start Date": currentOffering.studyStartDate,
       "New Study End Date": currentOffering.studyEndDate,
     };

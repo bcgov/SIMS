@@ -6,7 +6,7 @@ import {
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { ApplicationChangesReportIntegrationService } from "./application-changes-report.integration.service";
-import { getPSTPDTDateTime, StringBuilder } from "@sims/utilities";
+import { formatDate, StringBuilder } from "@sims/utilities";
 import { APPLICATION_CHANGES_REPORT_PREFIX } from "@sims/integrations/constants";
 import {
   ApplicationChangesReportProcessingResult,
@@ -54,7 +54,9 @@ export class ApplicationChangesReportProcessingService {
         applicationChanges,
       );
     // Create file name and build file path.
-    const { fileName, remoteFilePath } = this.createRequestFileName();
+    const reportedDate = new Date();
+    const { fileName, remoteFilePath } =
+      this.createRequestFileName(reportedDate);
     // Upload the file to SFTP location.
     try {
       await this.applicationChangesReportIntegrationService.uploadRawContent(
@@ -74,14 +76,13 @@ export class ApplicationChangesReportProcessingService {
       const reportedAssessmentIds = applicationChanges.map(
         (applicationChange) => applicationChange.currentAssessment.id,
       );
-      const reportedDate = new Date();
       await this.studentAssessmentService.updateReportedDate(
         reportedAssessmentIds,
         reportedDate,
         this.systemUsersService.systemUser.id,
       );
       processSummary.info(
-        `Reported date ${reportedDate} has been successfully updated for reported application assessments.`,
+        `Reported date: ${reportedDate} has been successfully updated for reported application assessments.`,
       );
     } else {
       processSummary.info(
@@ -97,9 +98,10 @@ export class ApplicationChangesReportProcessingService {
 
   /**
    * Create application changes report file name in expected format.
+   * @param reportedDate reported date.
    * @returns application changes report file name and remote file path.
    */
-  private createRequestFileName(): {
+  private createRequestFileName(reportedDate: Date): {
     fileName: string;
     remoteFilePath: string;
   } {
@@ -108,9 +110,7 @@ export class ApplicationChangesReportProcessingService {
     fileNameBuilder.append(APPLICATION_CHANGES_REPORT_PREFIX);
     fileNameBuilder.append(".");
     fileNameBuilder.append(
-      getPSTPDTDateTime(new Date(), {
-        dateTimeFormat: APPLICATION_CHANGES_FILE_NAME_TIMESTAMP_FORMAT,
-      }),
+      formatDate(reportedDate, APPLICATION_CHANGES_FILE_NAME_TIMESTAMP_FORMAT),
     );
     fileNameBuilder.append(".csv");
     const fileName = fileNameBuilder.toString();

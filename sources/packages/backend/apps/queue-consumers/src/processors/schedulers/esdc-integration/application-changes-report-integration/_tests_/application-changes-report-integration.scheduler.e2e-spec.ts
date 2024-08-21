@@ -3,8 +3,8 @@ import { INestApplication } from "@nestjs/common";
 import {
   QueueNames,
   addDays,
+  formatDate,
   getISODateOnlyString,
-  getPSTPDTDateTime,
 } from "@sims/utilities";
 import {
   createTestingAppModule,
@@ -373,9 +373,9 @@ describe(
     ): string {
       const sin = application.student.sinValidation.sin;
       const user = application.student.user;
-      const newAssessmentDate = getPSTPDTDateTime(
+      const newAssessmentDate = formatDate(
         application.currentAssessment.createdAt,
-        { dateTimeFormat: APPLICATION_CHANGES_DATE_TIME_FORMAT },
+        APPLICATION_CHANGES_DATE_TIME_FORMAT,
       );
       const originalOffering =
         application.currentAssessment.previousDateChangedReportedAssessment
