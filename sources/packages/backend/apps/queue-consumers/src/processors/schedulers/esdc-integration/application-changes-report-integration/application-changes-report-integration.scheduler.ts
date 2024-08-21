@@ -57,6 +57,7 @@ export class ApplicationChangesReportIntegrationScheduler extends BaseScheduler<
         processSummary,
       );
     } catch (error: unknown) {
+      // Translate to friendly error message.
       const errorMessage =
         "Unexpected error while executing the job to process application changes.";
       processSummary.error(errorMessage, error);

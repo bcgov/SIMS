@@ -377,7 +377,7 @@ describe(
           .offering;
       const newOffering = application.currentAssessment.offering;
       const institutionCode = newOffering.institutionLocation.institutionCode;
-      return `${application.applicationNumber},${sin},${user.firstName},${user.lastName},${loanType},${institutionCode},${originalOffering.studyStartDate},${originalOffering.studyEndDate},${activity},${newAssessmentDate},${newOffering.studyStartDate},${newOffering.studyEndDate}`;
+      return `${sin},${user.firstName},${user.lastName},${application.applicationNumber},${loanType},${institutionCode},${originalOffering.studyStartDate},${originalOffering.studyEndDate},${activity},${newAssessmentDate},${newOffering.studyStartDate},${newOffering.studyEndDate}`;
     }
   },
 );

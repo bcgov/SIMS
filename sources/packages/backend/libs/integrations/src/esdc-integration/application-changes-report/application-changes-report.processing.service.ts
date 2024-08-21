@@ -62,7 +62,7 @@ export class ApplicationChangesReportProcessingService {
         remoteFilePath,
       );
     } catch (error: unknown) {
-      // Translate to user friendly error message.
+      // Translate to friendly error message.
       const errorDescription = `Unexpected error uploading the file: ${remoteFilePath} to SFTP.`;
       processSummary.error(errorDescription, error);
       throw new Error(errorDescription, { cause: error });

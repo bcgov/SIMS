@@ -4,10 +4,10 @@ export interface ApplicationChangesReportProcessingResult {
 }
 
 export enum ApplicationChangesReportHeaders {
-  ApplicationNumber = "Application Number",
   StudentSIN = "Student SIN",
   StudentFirstName = "Student First Name",
   StudentLastName = "Student Last Name",
+  ApplicationNumber = "Application Number",
   LoanType = "Loan Type",
   EducationInstitutionCode = "Education Institution Code",
   OriginalStudyStartDate = "Original Study Start Date",

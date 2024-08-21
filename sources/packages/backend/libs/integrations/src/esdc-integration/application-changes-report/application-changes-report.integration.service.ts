@@ -58,10 +58,10 @@ export class ApplicationChangesReportIntegrationService extends SFTPIntegrationB
     const scholasticStandingChange =
       currentAssessment.studentScholasticStanding;
     return {
-      "Application Number": application.applicationNumber,
       "Student SIN": student.sinValidation.sin,
       "Student First Name": student.user.firstName,
       "Student Last Name": student.user.lastName,
+      "Application Number": application.applicationNumber,
       "Loan Type":
         currentOffering.offeringIntensity === OfferingIntensity.fullTime
           ? "FT"
