@@ -74,13 +74,14 @@ export class ApplicationChangesReportProcessingService {
       const reportedAssessmentIds = applicationChanges.map(
         (applicationChange) => applicationChange.currentAssessment.id,
       );
+      const reportedDate = new Date();
       await this.studentAssessmentService.updateReportedDate(
         reportedAssessmentIds,
-        new Date(),
+        reportedDate,
         this.systemUsersService.systemUser.id,
       );
       processSummary.info(
-        "Reported date has been successfully updated for reported application assessments.",
+        `Reported date ${reportedDate} has been successfully updated for reported application assessments.`,
       );
     } else {
       processSummary.info(

@@ -16,7 +16,6 @@ import {
   E2EDataSources,
   createE2EDataSources,
   createFakeEducationProgramOffering,
-  createFakeStudent,
   createFakeStudentAssessment,
   createFakeUser,
   saveFakeApplicationDisbursements,
@@ -24,7 +23,6 @@ import {
 } from "@sims/test-utils";
 import { getUploadedFile } from "@sims/test-utils/mocks";
 import * as Client from "ssh2-sftp-client";
-
 import {
   Application,
   ApplicationStatus,
@@ -36,7 +34,6 @@ import {
   Student,
   User,
 } from "@sims/sims-db";
-import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
 import { In, IsNull, Not } from "typeorm";
 import {
   ApplicationChangesReportHeaders,
@@ -60,11 +57,7 @@ describe(
       db = createE2EDataSources(dataSource);
       sftpClientMock = sshClientMock;
       auditUser = await db.user.save(createFakeUser());
-      const fakeStudent = createFakeStudent();
-      sharedStudent = await saveFakeStudent(db.dataSource, {
-        student: fakeStudent,
-        sinValidation: createFakeSINValidation({ student: fakeStudent }),
-      });
+      sharedStudent = await saveFakeStudent(db.dataSource);
       // Processor under test.
       processor = app.get(ApplicationChangesReportIntegrationScheduler);
     });
@@ -84,15 +77,13 @@ describe(
       // Preparing 2 applications which has application changes to be reported.
       const firstApplication = await createApplicationChangesData(
         sharedStudent,
-        1,
-        -1,
         AssessmentTriggerType.OfferingChange,
+        { offeringStartDateDifference: 1, offeringEndDateDifference: -1 },
       );
       const secondApplication = await createApplicationChangesData(
         sharedStudent,
-        1,
-        -1,
         AssessmentTriggerType.OfferingChange,
+        { offeringStartDateDifference: 1, offeringEndDateDifference: -1 },
       );
       // Queued job.
       const mockedJob = mockBullJob<void>();
@@ -106,10 +97,7 @@ describe(
       expect(processingResult).toContain("Process finalized with success.");
       expect(processingResult).toContain("Applications reported: 2");
       expect(
-        mockedJob.containLogMessages([
-          "Found 2 application changes.",
-          "Reported date has been successfully updated for reported application assessments.",
-        ]),
+        mockedJob.containLogMessages(["Found 2 application changes."]),
       ).toBe(true);
       const uploadedFile = getUploadedFile(sftpClientMock);
       const expectedFirstRecord = getExpectedApplicationChangesCSVRecord(
@@ -151,16 +139,17 @@ describe(
       // Preparing application which has application changes to be reported.
       const application = await createApplicationChangesData(
         sharedStudent,
-        1,
-        -1,
         AssessmentTriggerType.OfferingChange,
-        true,
+        {
+          offeringStartDateDifference: 1,
+          offeringEndDateDifference: -1,
+          isReported: true,
+        },
       );
 
       const newOffering = await createNewOfferingWithDifferentStudyDates(
         application.currentAssessment.offering,
-        1,
-        -1,
+        { offeringStartDateDifference: 1, offeringEndDateDifference: -1 },
       );
 
       // Recent application change after previous report generation.
@@ -195,10 +184,7 @@ describe(
       expect(processingResult).toContain("Process finalized with success.");
       expect(processingResult).toContain("Applications reported: 1");
       expect(
-        mockedJob.containLogMessages([
-          "Found 1 application changes.",
-          "Reported date has been successfully updated for reported application assessments.",
-        ]),
+        mockedJob.containLogMessages(["Found 1 application changes."]),
       ).toBe(true);
       const uploadedFile = getUploadedFile(sftpClientMock);
       const expectedFirstRecord = getExpectedApplicationChangesCSVRecord(
@@ -228,10 +214,12 @@ describe(
       // Preparing application which has no application changes to be reported as the reported date is set.
       await createApplicationChangesData(
         sharedStudent,
-        1,
-        -1,
         AssessmentTriggerType.OfferingChange,
-        true,
+        {
+          offeringStartDateDifference: 1,
+          offeringEndDateDifference: -1,
+          isReported: true,
+        },
       );
 
       // Queued job.
@@ -265,19 +253,23 @@ describe(
     /**
      * Create data for application changes report.
      * @param student student
-     * @param offeringStartDateDifference difference in days
+     * @param triggerType assessment trigger type.
+     * @param options options
+     * - `offeringStartDateDifference` difference in days
      * from original offering start date.
-     * @param offeringEndDateDifference difference in days
+     * - `offeringEndDateDifference` difference in days
      * from original offering end date.
-     * @param isReported indicates if the application change is already reported.
+     * - `isReported` indicates if the application change is already reported.
      * @returns application.
      */
     async function createApplicationChangesData(
       student: Student,
-      offeringStartDateDifference: number,
-      offeringEndDateDifference: number,
       triggerType: AssessmentTriggerType,
-      isReported = false,
+      options: {
+        offeringStartDateDifference: number;
+        offeringEndDateDifference: number;
+        isReported?: boolean;
+      },
     ): Promise<Application> {
       const application = await saveFakeApplicationDisbursements(
         db.dataSource,
@@ -295,8 +287,10 @@ describe(
       const originalOffering = application.currentAssessment.offering;
       const newOffering = await createNewOfferingWithDifferentStudyDates(
         originalOffering,
-        offeringStartDateDifference,
-        offeringEndDateDifference,
+        {
+          offeringStartDateDifference: options.offeringStartDateDifference,
+          offeringEndDateDifference: options.offeringEndDateDifference,
+        },
       );
 
       const newAssessment = await db.studentAssessment.save(
@@ -310,7 +304,7 @@ describe(
           {
             initialValue: {
               triggerType,
-              reportedDate: isReported ? new Date() : null,
+              reportedDate: options.isReported ? new Date() : null,
             },
           },
         ),
@@ -318,25 +312,35 @@ describe(
       application.currentAssessment = newAssessment;
       return db.application.save(application);
     }
+
     /**
      * Create a new offering with different study dates for application changes.
      * @param originalOffering original offering.
-     * @param offeringStartDateDifference difference in days
+     * @param options options
+     * - `offeringStartDateDifference` difference in days
      * from original offering start date.
-     * @param offeringEndDateDifference difference in days
-     * from original offering end date.
+     * - `offeringEndDateDifference` difference in days
+     * from original offering start date.
      * @returns new offering.
      */
     async function createNewOfferingWithDifferentStudyDates(
       originalOffering: EducationProgramOffering,
-      offeringStartDateDifference: number,
-      offeringEndDateDifference: number,
+      options: {
+        offeringStartDateDifference: number;
+        offeringEndDateDifference: number;
+      },
     ): Promise<EducationProgramOffering> {
       const newOfferingStartDate = getISODateOnlyString(
-        addDays(offeringStartDateDifference, originalOffering.studyStartDate),
+        addDays(
+          options.offeringStartDateDifference,
+          originalOffering.studyStartDate,
+        ),
       );
       const newOfferingEndDate = getISODateOnlyString(
-        addDays(offeringEndDateDifference, originalOffering.studyEndDate),
+        addDays(
+          options.offeringEndDateDifference,
+          originalOffering.studyEndDate,
+        ),
       );
       return db.educationProgramOffering.save(
         createFakeEducationProgramOffering(
@@ -354,6 +358,7 @@ describe(
         ),
       );
     }
+
     /**
      * Get application changes CSV file record.
      * @param application application.
@@ -377,7 +382,20 @@ describe(
           .offering;
       const newOffering = application.currentAssessment.offering;
       const institutionCode = newOffering.institutionLocation.institutionCode;
-      return `${sin},${user.firstName},${user.lastName},${application.applicationNumber},${loanType},${institutionCode},${originalOffering.studyStartDate},${originalOffering.studyEndDate},${activity},${newAssessmentDate},${newOffering.studyStartDate},${newOffering.studyEndDate}`;
+      return [
+        sin,
+        user.firstName,
+        user.lastName,
+        application.applicationNumber,
+        loanType,
+        institutionCode,
+        originalOffering.studyStartDate,
+        originalOffering.studyEndDate,
+        activity,
+        newAssessmentDate,
+        newOffering.studyStartDate,
+        newOffering.studyEndDate,
+      ].join(",");
     }
   },
 );
