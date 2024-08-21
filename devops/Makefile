@@ -554,7 +554,6 @@ deploy-forms:
 	test -n "$(NAMESPACE)"
 	test -n "$(FORMS_NAME)"
 	test -n "$(FORMS_URL)"
-	test -n "$(HOST)"
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_REF)"
 	test -n "$(FORMIO_ROOT_EMAIL)"
