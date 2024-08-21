@@ -239,7 +239,7 @@ objects:
   - apiVersion: route.openshift.io/v1
     kind: Route
     metadata:
-      name: ${NAME}
+      name: ${NAME}-route
       annotations:
         haproxy.router.openshift.io/balance: leastconn
         haproxy.router.openshift.io/disable_cookies: "true"
@@ -269,7 +269,7 @@ objects:
   - apiVersion: route.openshift.io/v1
     kind: Route
     metadata:
-      name: ${SWAGGER_NAME}
+      name: ${SWAGGER_NAME}-route
       annotations:
         haproxy.router.openshift.io/balance: leastconn
         haproxy.router.openshift.io/disable_cookies: "true"
