@@ -4,7 +4,7 @@ import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { DataSource } from "typeorm";
 import { ApplicationChangesReportIntegrationService } from "./application-changes-report.integration.service";
-import { getFileNameAsCurrentTimestamp, StringBuilder } from "@sims/utilities";
+import { getPSTPDTDateTime, StringBuilder } from "@sims/utilities";
 import { APPLICATION_CHANGES_REPORT_PREFIX } from "@sims/integrations/constants";
 import { ApplicationChangesReportProcessingResult } from "./models/application-changes-report-integration.model";
 
@@ -37,19 +37,22 @@ export class ApplicationChangesReportProcessingService {
     );
     const applicationChanges =
       await this.applicationService.getDateChangeNotReportedApplications();
-    processSummary.info(
-      `Found ${applicationChanges.length} application changes.`,
-    );
+    const applicationsReported = applicationChanges.length;
+    processSummary.info(`Found ${applicationsReported} application changes.`);
+    const fileContent =
+      this.applicationChangesReportIntegrationService.createApplicationChangesReportFileContent(
+        applicationChanges,
+      );
     const { fileName, remoteFilePath } = this.createRequestFileName();
-    await this.applicationChangesReportIntegrationService.uploadApplicationChangesReport(
-      applicationChanges,
+    await this.applicationChangesReportIntegrationService.uploadRawContent(
+      fileContent,
       remoteFilePath,
     );
     processSummary.info(
       `Application changes report with file name: ${fileName} has been uploaded successfully.`,
     );
     return {
-      applicationsReported: applicationChanges.length,
+      applicationsReported,
       uploadedFileName: fileName,
     };
   }
@@ -66,7 +69,9 @@ export class ApplicationChangesReportProcessingService {
     fileNameBuilder.append(this.esdcConfig.environmentCode);
     fileNameBuilder.append(APPLICATION_CHANGES_REPORT_PREFIX);
     fileNameBuilder.append(".");
-    fileNameBuilder.append(getFileNameAsCurrentTimestamp());
+    fileNameBuilder.append(
+      getPSTPDTDateTime(new Date(), { dateTimeFormat: "YYYY-MM-DD.HH.mm.ss" }),
+    );
     fileNameBuilder.append(".csv");
     const fileName = fileNameBuilder.toString();
     const remoteFilePath = `${this.esdcConfig.ftpRequestFolder}\\${fileName}`;
