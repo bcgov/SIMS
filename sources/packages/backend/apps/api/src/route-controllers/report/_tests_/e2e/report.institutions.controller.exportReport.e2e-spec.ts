@@ -213,12 +213,12 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
               "Has Study Breaks":
                 (!secondSavedOffering.lacksStudyBreaks).toString(),
               "Actual Tuition":
-                secondSavedOffering.actualTuitionCosts.toFixed(2),
+                secondSavedOffering.actualTuitionCosts.toString(),
               "Program Related Costs":
-                secondSavedOffering.programRelatedCosts.toFixed(2),
-              "Mandatory Fees": secondSavedOffering.mandatoryFees.toFixed(2),
+                secondSavedOffering.programRelatedCosts.toString(),
+              "Mandatory Fees": secondSavedOffering.mandatoryFees.toString(),
               "Exceptional Expenses":
-                secondSavedOffering.exceptionalExpenses.toFixed(2),
+                secondSavedOffering.exceptionalExpenses.toString(),
               "Offering Type": secondSavedOffering.offeringType,
               Status: secondSavedOffering.offeringStatus,
               "Funded Weeks":
@@ -241,12 +241,12 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
               "Has Study Breaks":
                 (!firstSavedOffering.lacksStudyBreaks).toString(),
               "Actual Tuition":
-                firstSavedOffering.actualTuitionCosts.toFixed(2),
+                firstSavedOffering.actualTuitionCosts.toString(),
               "Program Related Costs":
-                firstSavedOffering.programRelatedCosts.toFixed(2),
-              "Mandatory Fees": firstSavedOffering.mandatoryFees.toFixed(2),
+                firstSavedOffering.programRelatedCosts.toString(),
+              "Mandatory Fees": firstSavedOffering.mandatoryFees.toString(),
               "Exceptional Expenses":
-                firstSavedOffering.exceptionalExpenses.toFixed(2),
+                firstSavedOffering.exceptionalExpenses.toString(),
               "Offering Type": firstSavedOffering.offeringType,
               Status: firstSavedOffering.offeringStatus,
               "Funded Weeks":
