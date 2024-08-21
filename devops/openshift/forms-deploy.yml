@@ -160,11 +160,20 @@ objects:
       port:
         targetPort: "3001"
       tls:
-        termination: edge
         insecureEdgeTerminationPolicy: Redirect
-        certificate: ${TLS_CERTIFICATE}
-        key: ${TLS_KEY}
-        caCertificate: ${TLS_CA_CERTIFICATE}
+        termination: edge
+        certificate: |
+          -----BEGIN CERTIFICATE-----
+          ${TLS_CERTIFICATE}
+          -----END CERTIFICATE-----
+        key: |
+          -----BEGIN PRIVATE KEY-----
+          ${TLS_KEY}
+          -----END PRIVATE KEY-----
+        caCertificate: |
+          -----BEGIN CERTIFICATE-----
+          ${TLS_CA_CERTIFICATE}
+          -----END CERTIFICATE-----
       wildcardPolicy: None
   - apiVersion: autoscaling/v2
     kind: HorizontalPodAutoscaler

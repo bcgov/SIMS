@@ -219,9 +219,6 @@ init-secrets:
 		-p S3_ENDPOINT=$(S3_ENDPOINT) \
 		-p S3_DEFAULT_BUCKET=$(S3_DEFAULT_BUCKET) \
 		-p S3_REGION=$(S3_REGION) \
-		-p TLS_CERTIFICATE=$(TLS_CERTIFICATE) \
-		-p TLS_KEY=$(TLS_KEY) \
-		-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
 		| oc -n $(NAMESPACE) apply -f -
 
 init-zone-b-sftp-secret:
@@ -386,9 +383,6 @@ deploy-api:
 	test -n "$(API_PORT)"
 	test -n "$(IS_FULLTIME_ALLOWED)"
 	test -n "$(APPLICATION_ARCHIVE_DAYS)"
-	test -n "$(TLS_CERTIFICATE)"
-	test -n "$(TLS_KEY)"
-	test -n "$(TLS_CA_CERTIFICATE)"
 	@echo "+\n++ Deploying API with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml \
 		-p NAME=$(API) \
@@ -459,9 +453,6 @@ deploy-queue-consumers:
 	test -n "$(ATBC_LOGIN_ENDPOINT)"
 	test -n "$(ATBC_ENDPOINT)"
 	test -n "$(APPLICATION_ARCHIVE_DAYS)"
-	test -n "$(TLS_CERTIFICATE)"
-	test -n "$(TLS_KEY)"
-	test -n "$(TLS_CA_CERTIFICATE)"
 	@echo "+\n++ Deploying Queues with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/queue-consumers-deploy.yml \
 		-p NAME=$(QUEUE_CONSUMERS) \
@@ -495,9 +486,6 @@ deploy-load-test-gateway:
 	test -n "$(LOAD_TEST_GATEWAY_PORT)"
 	test -n "$(KEYCLOAK_AUTH_URL)"
 	test -n "$(KEYCLOAK_REALM)"
-	test -n "$(TLS_CERTIFICATE)"
-	test -n "$(TLS_KEY)"
-	test -n "$(TLS_CA_CERTIFICATE)"
 	@echo "+\n++ Deploying Load test gateway with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/load-test-gateway-deploy.yml \
 		-p NAME=$(LOAD_TEST_GATEWAY) \
@@ -523,9 +511,6 @@ deploy-web:
 	test -n "$(WEB_BUILD_REF)"
 	test -n "$(BUILD_REF)"
 	test -n "$(WEB_PORT)"
-	test -n "$(TLS_CERTIFICATE)"
-	test -n "$(TLS_KEY)"
-	test -n "$(TLS_CA_CERTIFICATE)"
 	@echo "+\n++ Deploying WEB with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/web-deploy.yml \
 	-p NAME=$(WEB) \
@@ -570,9 +555,6 @@ deploy-forms:
 	test -n "$(HOST_PREFIX)"
 	test -n "$(FORMIO_ROOT_EMAIL)"
 	test -n "$(MONGODB_URI)"
-	test -n "$(TLS_CERTIFICATE)"
-	test -n "$(TLS_KEY)"
-	test -n "$(TLS_CA_CERTIFICATE)"
 	@echo "+\n++ Deploying forms with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/forms-deploy.yml \
 	-p NAME=$(FORMS_NAME) \
