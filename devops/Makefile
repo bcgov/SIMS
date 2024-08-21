@@ -552,7 +552,6 @@ deploy-forms:
 	test -n "$(HOST)"
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_REF)"
-	test -n "$(HOST_PREFIX)"
 	test -n "$(FORMIO_ROOT_EMAIL)"
 	test -n "$(MONGODB_URI)"
 	@echo "+\n++ Deploying forms with tag: $(BUILD_REF)\n+"
@@ -561,7 +560,6 @@ deploy-forms:
 	-p HOST_NAME=$(HOST) \
 	-p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) \
 	-p IMAGE_STREAM_TAG="$(FORMS_BUILD_REF):$(BUILD_REF)" \
-	-p HOST_PREFIX=$(HOST_PREFIX) \
 	-p FORMIO_ROOT_EMAIL=$(FORMIO_ROOT_EMAIL) \
 	-p MONGODB_URI=$(MONGODB_URI) \
 	-p TLS_CERTIFICATE=$(TLS_CERTIFICATE) \

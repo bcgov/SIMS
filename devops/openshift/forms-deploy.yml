@@ -234,9 +234,6 @@ parameters:
     description: FORMIO_ROOT_PASSWORD
     generate: expression
     from: "[a-zA-Z0-9]{16}"
-  - name: HOST_PREFIX
-    description: Host in which the container is deployed.
-    required: true
   - name: HOST_NAME
     required: true
   - name: PATH
