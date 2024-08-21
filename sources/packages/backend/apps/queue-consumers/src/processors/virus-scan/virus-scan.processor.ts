@@ -8,9 +8,12 @@ import {
   LoggerService,
   ProcessSummary,
 } from "@sims/utilities/logger";
-import { NotFoundException } from "@nestjs/common";
 import { logProcessSummaryToJobLogger } from "../../utilities";
-import { UNABLE_TO_SCAN_FILE } from "../../constants/error-code.constants";
+import {
+  CONNECTION_FAILED,
+  FILE_NOT_FOUND,
+  SERVER_UNAVAILABLE,
+} from "@sims/services/constants";
 
 @Processor(QueueNames.FileVirusScanProcessor)
 export class VirusScanProcessor {
@@ -26,38 +29,45 @@ export class VirusScanProcessor {
     job: Job<VirusScanQueueInDTO>,
   ): Promise<VirusScanResult> {
     const processSummary = new ProcessSummary();
-    let isInfected: boolean;
+    let isInfected: boolean = null;
+    let isServerAvailable = true;
     processSummary.info("Starting virus scan.");
     try {
       isInfected = await this.studentFileService.scanFile(
-        job.data.uniqueFileName,
+        job.data,
         processSummary,
       );
       processSummary.info("Completed virus scanning for the file.");
     } catch (error: unknown) {
-      if (error instanceof NotFoundException) {
-        // If the file is not present in the database,
-        // remove the file from the virus scan queue.
-        await job.discard();
-        processSummary.warn(
-          `File ${job.data.uniqueFileName} not found or has already been scanned for viruses. Scanning the file for viruses is aborted.`,
-        );
-      } else if (error instanceof CustomNamedError) {
-        if (error.name === UNABLE_TO_SCAN_FILE) {
-          processSummary.error(
-            `Unable to scan the file ${job.data.uniqueFileName} for viruses.`,
+      if (error instanceof CustomNamedError) {
+        const errorMessage = `Unable to scan the file ${job.data.uniqueFileName} for viruses.`;
+        if (error.name === FILE_NOT_FOUND) {
+          // If the file is not present in the database,
+          // remove the file from the virus scan queue.
+          await job.discard();
+          processSummary.warn(
+            `File ${job.data.uniqueFileName} is not found or has already been scanned for viruses. Scanning the file for viruses is aborted.`,
           );
+        } else if (error.name === CONNECTION_FAILED) {
+          processSummary.error(
+            `${errorMessage} Connection to ClamAV server failed.`,
+          );
+        } else if (error.name === SERVER_UNAVAILABLE) {
+          isServerAvailable = false;
+          processSummary.error(`${errorMessage} ClamAV server is unavailable.`);
+        } else {
+          processSummary.error(`${errorMessage} Unknown error.`);
         }
-      } else {
-        processSummary.error(
-          `Error while scanning the file ${job.data.uniqueFileName} for viruses.`,
-        );
       }
     } finally {
       this.logger.logProcessSummary(processSummary);
       await logProcessSummaryToJobLogger(processSummary, job);
     }
-    return { fileProcessed: job.data.fileName, isInfected };
+    return {
+      fileProcessed: job.data.fileName,
+      isInfected,
+      isServerAvailable,
+    };
   }
 
   @InjectLogger()

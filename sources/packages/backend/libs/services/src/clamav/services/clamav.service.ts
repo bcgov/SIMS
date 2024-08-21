@@ -1,7 +1,12 @@
-import { ProcessSummary } from "@sims/utilities/logger";
 import { Injectable } from "@nestjs/common";
 import * as NodeClam from "clamscan";
 import { Readable } from "stream";
+import { VirusScanCode } from "@sims/services/queue";
+import {
+  CONNECTION_FAILED,
+  SERVER_UNAVAILABLE,
+  UNKNOWN_ERROR,
+} from "@sims/services/constants";
 
 @Injectable()
 export class ClamAVService {
@@ -22,27 +27,29 @@ export class ClamAVService {
   /**
    * Scans the file for viruses.
    * @param stream stream to be scanned.
-   * @param processSummary process summary logs.
    * @returns boolean true if the stream is virus infected,
    * false if the stream is not virus infected, and
    * null if the stream could not be scanned for viruses.
    */
-  async scanFile(
-    stream: Readable,
-    processSummary: ProcessSummary,
-  ): Promise<boolean> {
+  async scanFile(stream: Readable): Promise<VirusScanCode> {
+    const virusScanResult = {
+      isInfected: null,
+      errorCode: "",
+    };
     try {
       if (!this.scanner) {
         await this.initClam();
       }
       const { isInfected } = await this.scanner.scanStream(stream);
-      return isInfected;
+      return { ...virusScanResult, isInfected };
     } catch (err) {
       if (err.code === "ECONNREFUSED") {
-        processSummary.error("Connection to ClamAV server failed.");
-        return;
+        return { ...virusScanResult, errorCode: CONNECTION_FAILED };
       }
-      processSummary.error(err);
+      if (err.code === "ENOTFOUND") {
+        return { ...virusScanResult, errorCode: SERVER_UNAVAILABLE };
+      }
+      return { ...virusScanResult, errorCode: UNKNOWN_ERROR };
     }
   }
 }

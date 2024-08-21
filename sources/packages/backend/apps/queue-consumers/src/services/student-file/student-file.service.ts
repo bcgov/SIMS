@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { DataSource, UpdateResult } from "typeorm";
 import {
   RecordDataModelService,
@@ -6,11 +6,12 @@ import {
   VirusScanStatus,
 } from "@sims/sims-db";
 import { Readable } from "stream";
-import { CustomNamedError } from "@sims/utilities";
-import { UNABLE_TO_SCAN_FILE } from "../../constants/error-code.constants";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { ClamAVService, SystemUsersService } from "@sims/services";
 import * as path from "path";
+import { VirusScanQueueInDTO } from "@sims/services/queue";
+import { CustomNamedError } from "@sims/utilities";
+import { FILE_NOT_FOUND } from "@sims/services/constants";
 
 export const INFECTED_FILENAME_SUFFIX = "-OriginalFileError";
 
@@ -27,49 +28,52 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
   /**
    * Scans the file with the provided unique filename
    * for any viruses.
-   * @param uniqueFileName unique filename of the file to perform the virus scan.
+   * @param jobData virus scan job data.
    * @param processSummary process summary logs.
    * @returns boolean true if the file is virus infected, false otherwise.
    */
   async scanFile(
-    uniqueFileName: string,
+    jobData: VirusScanQueueInDTO,
     processSummary: ProcessSummary,
   ): Promise<boolean> {
-    const studentFile = await this.getStudentFile(uniqueFileName);
+    const studentFile = await this.getStudentFile(jobData.uniqueFileName);
     if (!studentFile) {
-      throw new NotFoundException(`Student file ${uniqueFileName} not found.`);
+      throw new CustomNamedError(
+        `Student file ${jobData.uniqueFileName} not found.`,
+        FILE_NOT_FOUND,
+      );
     }
     const stream = new Readable();
     stream.push(studentFile.fileContent);
     stream.push(null);
-    const isInfected = await this.clamAVService.scanFile(
-      stream,
-      processSummary,
-    );
-    if (isInfected == null) {
+    const virusScanCode = await this.clamAVService.scanFile(stream);
+    if (virusScanCode.isInfected == null) {
       // If the file could not be scanned for any reason,
       // update the file scan status to Pending to keep a
       // track of the files that haven't been scanned yet.
-      await this.updateFileScanStatus(studentFile.uniqueFileName, isInfected);
+      await this.updateFileScanStatus(
+        studentFile.uniqueFileName,
+        virusScanCode.isInfected,
+      );
       throw new CustomNamedError(
         `Unable to scan the file ${studentFile.uniqueFileName}`,
-        UNABLE_TO_SCAN_FILE,
+        virusScanCode.errorCode,
       );
     }
     let fileName = studentFile.fileName;
-    if (isInfected) {
+    if (virusScanCode.isInfected) {
       processSummary.warn("Virus found.");
       const fileInfo = path.parse(studentFile.fileName);
       fileName = `${fileInfo.name}${INFECTED_FILENAME_SUFFIX}${fileInfo.ext}`;
-    } else {
+    } else if (virusScanCode.isInfected !== null) {
       processSummary.info("No virus found.");
     }
     await this.updateFileScanStatus(
       studentFile.uniqueFileName,
-      isInfected,
+      virusScanCode.isInfected,
       fileName,
     );
-    return isInfected;
+    return virusScanCode.isInfected;
   }
 
   /**

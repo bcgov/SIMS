@@ -32,3 +32,9 @@ export const UNEXPECTED_ERROR_DOWNLOADING_FILE =
 export const ECE_DISBURSEMENT_DATA_NOT_VALID =
   "ECE_DISBURSEMENT_DATA_NOT_VALID";
 export const FILE_PARSING_ERROR = "FILE_PARSING_ERROR";
+// Error code used when file virus scanning failed for some reason.
+// One possible reason could be the ClamAV server is unavailable.
+export const FILE_NOT_FOUND = "FILE_NOT_FOUND";
+export const CONNECTION_FAILED = "CONNECTION_FAILED";
+export const SERVER_UNAVAILABLE = "SERVER_UNAVAILABLE";
+export const UNKNOWN_ERROR = "UNKNOWN_ERROR";
