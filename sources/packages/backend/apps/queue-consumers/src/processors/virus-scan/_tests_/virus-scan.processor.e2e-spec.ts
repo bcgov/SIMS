@@ -46,7 +46,7 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     jest.resetAllMocks();
   });
 
-  it("Should throw an error when the connection to the virus scan server failed.", async () => {
+  it("Should throw an error when the student file is not found during scanning process.", async () => {
     // Arrange
     const studentFile = createFakeStudentFileUpload();
     studentFile.virusScanStatus = VirusScanStatus.InProgress;
