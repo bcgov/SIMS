@@ -11,7 +11,7 @@ import {
 import {
   ApplicationChangesReport,
   ApplicationChangesReportHeaders,
-  DATE_TIME_FORMAT,
+  APPLICATION_CHANGES_DATE_TIME_FORMAT,
 } from "./models/application-changes-report-integration.model";
 
 @Injectable()
@@ -23,7 +23,6 @@ export class ApplicationChangesReportIntegrationService extends SFTPIntegrationB
   /**
    * Create application changes report file content.
    * @param applicationChanges application changes.
-   * @param remoteFilePath remote file path.
    * @returns application changes report file content.
    */
   createApplicationChangesReportFileContent(
@@ -77,7 +76,7 @@ export class ApplicationChangesReportIntegrationService extends SFTPIntegrationB
           ? "Early Withdrawal"
           : "Reassessment",
       "Activity Time": getPSTPDTDateTime(currentAssessment.createdAt, {
-        dateTimeFormat: DATE_TIME_FORMAT,
+        dateTimeFormat: APPLICATION_CHANGES_DATE_TIME_FORMAT,
       }),
       "New Study Start Date": currentOffering.studyStartDate,
       "New Study End Date": currentOffering.studyEndDate,

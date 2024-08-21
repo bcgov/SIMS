@@ -13,6 +13,12 @@ export class ApplicationService {
     private readonly applicationRepo: Repository<Application>,
   ) {}
 
+  /**
+   * Get all applications which has current assessment where the current assessment
+   * has changed the study dates from a previous assessment and the previous assessment
+   * was not reported.
+   * @returns changed applications.
+   */
   async getDateChangeNotReportedApplications(): Promise<Application[]> {
     return this.applicationRepo.find({
       select: {

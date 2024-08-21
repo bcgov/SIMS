@@ -40,7 +40,7 @@ import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validati
 import { In, IsNull, Not } from "typeorm";
 import {
   ApplicationChangesReportHeaders,
-  DATE_TIME_FORMAT,
+  APPLICATION_CHANGES_DATE_TIME_FORMAT,
 } from "@sims/integrations/esdc-integration";
 
 describe(
@@ -246,7 +246,10 @@ describe(
       expect(processingResult).toContain("Process finalized with success.");
       expect(processingResult).toContain("Applications reported: 0");
       expect(
-        mockedJob.containLogMessages(["Found 0 application changes."]),
+        mockedJob.containLogMessages([
+          "Found 0 application changes.",
+          "Report date update not required as no application changes are reported.",
+        ]),
       ).toBe(true);
       const uploadedFile = getUploadedFile(sftpClientMock);
       // Assert file output.
@@ -367,7 +370,7 @@ describe(
       const user = application.student.user;
       const newAssessmentDate = getPSTPDTDateTime(
         application.currentAssessment.createdAt,
-        { dateTimeFormat: DATE_TIME_FORMAT },
+        { dateTimeFormat: APPLICATION_CHANGES_DATE_TIME_FORMAT },
       );
       const originalOffering =
         application.currentAssessment.previousDateChangedReportedAssessment

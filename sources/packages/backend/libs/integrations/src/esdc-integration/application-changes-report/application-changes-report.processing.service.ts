@@ -10,7 +10,7 @@ import { getPSTPDTDateTime, StringBuilder } from "@sims/utilities";
 import { APPLICATION_CHANGES_REPORT_PREFIX } from "@sims/integrations/constants";
 import {
   ApplicationChangesReportProcessingResult,
-  FILE_NAME_TIMESTAMP_FORMAT,
+  APPLICATION_CHANGES_FILE_NAME_TIMESTAMP_FORMAT,
 } from "./models/application-changes-report-integration.model";
 import { SystemUsersService } from "@sims/services";
 
@@ -48,11 +48,14 @@ export class ApplicationChangesReportProcessingService {
     processSummary.info(
       `Found ${applicationChangesCount} application changes.`,
     );
+    // Build application changes report CSV file content.
     const fileContent =
       this.applicationChangesReportIntegrationService.createApplicationChangesReportFileContent(
         applicationChanges,
       );
+    // Create file name and build file path.
     const { fileName, remoteFilePath } = this.createRequestFileName();
+    // Upload the file to SFTP location.
     await this.applicationChangesReportIntegrationService.uploadRawContent(
       fileContent,
       remoteFilePath,
@@ -72,6 +75,10 @@ export class ApplicationChangesReportProcessingService {
       processSummary.info(
         "Reported date has been successfully updated for reported application assessments.",
       );
+    } else {
+      processSummary.info(
+        "Report date update not required as no application changes are reported.",
+      );
     }
 
     return {
@@ -81,8 +88,8 @@ export class ApplicationChangesReportProcessingService {
   }
 
   /**
-   * Create application changes report file name.
-   * @returns
+   * Create application changes report file name in expected format.
+   * @returns application changes report file name and remote file path.
    */
   private createRequestFileName(): {
     fileName: string;
@@ -94,7 +101,7 @@ export class ApplicationChangesReportProcessingService {
     fileNameBuilder.append(".");
     fileNameBuilder.append(
       getPSTPDTDateTime(new Date(), {
-        dateTimeFormat: FILE_NAME_TIMESTAMP_FORMAT,
+        dateTimeFormat: APPLICATION_CHANGES_FILE_NAME_TIMESTAMP_FORMAT,
       }),
     );
     fileNameBuilder.append(".csv");
