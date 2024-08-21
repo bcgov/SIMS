@@ -24,12 +24,6 @@ export class StandardizeMonetaryColumnTypes1723759729845
       ),
     );
     await queryRunner.query(
-      getSQLFileData(
-        "Standardize-monetary-columns.sql",
-        "EducationProgramsOfferings",
-      ),
-    );
-    await queryRunner.query(
       getSQLFileData("Standardize-monetary-columns.sql", "SFASIndividuals"),
     );
     await queryRunner.query(
@@ -57,12 +51,6 @@ export class StandardizeMonetaryColumnTypes1723759729845
       getSQLFileData(
         "Rollback-standardize-monetary-columns.sql",
         "DisbursementSchedules",
-      ),
-    );
-    await queryRunner.query(
-      getSQLFileData(
-        "Rollback-standardize-monetary-columns.sql",
-        "EducationProgramsOfferings",
       ),
     );
     await queryRunner.query(
