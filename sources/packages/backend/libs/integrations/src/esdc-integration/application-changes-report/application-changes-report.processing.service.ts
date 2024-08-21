@@ -56,10 +56,17 @@ export class ApplicationChangesReportProcessingService {
     // Create file name and build file path.
     const { fileName, remoteFilePath } = this.createRequestFileName();
     // Upload the file to SFTP location.
-    await this.applicationChangesReportIntegrationService.uploadRawContent(
-      fileContent,
-      remoteFilePath,
-    );
+    try {
+      await this.applicationChangesReportIntegrationService.uploadRawContent(
+        fileContent,
+        remoteFilePath,
+      );
+    } catch (error: unknown) {
+      // Translate to user friendly error message.
+      const errorDescription = `Unexpected error uploading the file: ${remoteFilePath} to SFTP.`;
+      processSummary.error(errorDescription, error);
+      throw new Error(errorDescription, { cause: error });
+    }
     processSummary.info(
       `Application changes report with file name: ${fileName} has been uploaded successfully.`,
     );
