@@ -91,7 +91,7 @@
       "hideLabel": true
     },
     {
-      "label": "On my first day of class, I'll be:",
+      "label": "What is your marital status?",
       "optionsLabelPosition": "right",
       "inline": false,
       "tableView": true,
@@ -102,13 +102,13 @@
           "shortcut": ""
         },
         {
-          "label": "Separated/divorced/widowed",
-          "value": "other",
+          "value": "married",
+          "label": "Married/common-law",
           "shortcut": ""
         },
         {
-          "value": "married",
-          "label": "Married/common-law",
+          "label": "Separated/divorced/widowed",
+          "value": "other",
           "shortcut": ""
         }
       ],
@@ -147,7 +147,7 @@
       "dataGridLabel": false,
       "labelPosition": "top",
       "description": "",
-      "tooltip": "The student is considered married if they will be married before their first day of classes. The student is considered common-law if they have co-habited with a person in a marriage-like relationship for at least 12 months prior to their first day of classes.\nIf they have been in a marriage-like relationship for less than 12 months by their first day of classes, they should report themselves as single.",
+      "tooltip": "Marital status is defined below. Please read the definitions carefully.  \n<strong>Single</strong>: If you are not married or in a common-law relationship  \n<strong>Married</strong>: If you are married as of the first day of classes  \n<strong>Common-Law</strong>: You and your partner are considered to be common-law if you meet both of the following:\n- you are currently living together in a marriage-like relationship; and\n- you will have been living together for at least 12 consecutive months before the first day of classes.  \n<strong>Separated/Divorced/Widowed</strong>: If you are separated, divorced or widowed before the first day of classes.",
       "tabindex": "",
       "disabled": false,
       "autofocus": false,

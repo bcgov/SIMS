@@ -474,7 +474,7 @@
                           "clearOnHide": true,
                           "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
                           "fileMinSize": "0KB",
-                          "fileMaxSize": "4MB",
+                          "fileMaxSize": "15MB",
                           "type": "file",
                           "labelPosition": "top",
                           "tags": [],
@@ -526,7 +526,7 @@
                                 {
                                   "key": "addDependantsUploadColumnsContent2",
                                   "input": false,
-                                  "html": "<p style=\"text-align: right;\">4MB file limit each</p>\n",
+                                  "html": "<p style=\"text-align: right;\">15MB file limit each</p>\n",
                                   "type": "content",
                                   "tags": [],
                                   "conditional": {
@@ -783,7 +783,7 @@
               "clearOnHide": true,
               "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
               "fileMinSize": "0KB",
-              "fileMaxSize": "4MB",
+              "fileMaxSize": "15MB",
               "type": "file",
               "labelPosition": "top",
               "tags": [],
@@ -836,7 +836,7 @@
                     {
                       "key": "dependantsCustodyColumnsContent2",
                       "input": false,
-                      "html": "<p style=\"text-align: right;\">4MB file limit each</p>\n",
+                      "html": "<p style=\"text-align: right;\">15MB file limit each</p>\n",
                       "type": "content",
                       "tags": [],
                       "conditional": {

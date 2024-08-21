@@ -171,7 +171,7 @@ import { ScholasticStandingService } from "@/services/ScholasticStandingService"
 import { AxiosProgressEvent } from "axios";
 
 const ACCEPTED_FILE_TYPE = "text/plain";
-const MAX_APPLICATION_WITHDRAWAL_UPLOAD_SIZE = 4194304;
+const MAX_APPLICATION_WITHDRAWAL_UPLOAD_SIZE = 15728640;
 
 export default defineComponent({
   setup() {
@@ -253,7 +253,7 @@ export default defineComponent({
       }
       const [file] = files;
       if (file.size > MAX_APPLICATION_WITHDRAWAL_UPLOAD_SIZE) {
-        return "Text file size should not be greater than 4MB";
+        return "Text file size should not be greater than 15MB";
       }
       if (file.type !== ACCEPTED_FILE_TYPE) {
         return `The expected file type is ${ACCEPTED_FILE_TYPE}.`;

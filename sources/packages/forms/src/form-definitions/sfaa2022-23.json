@@ -7838,7 +7838,7 @@
                   ],
                   "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
                   "fileMinSize": "0KB",
-                  "fileMaxSize": "4MB",
+                  "fileMaxSize": "15MB",
                   "multiple": true,
                   "persistent": true,
                   "protected": false,
@@ -7993,7 +7993,7 @@
                     {
                       "components": [
                         {
-                          "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
+                          "html": "<p style=\"text-align:right;\">15MB file limit each</p>\n",
                           "label": "Content",
                           "customClass": "",
                           "refreshOnChange": false,
@@ -9223,7 +9223,7 @@
                         }
                       ],
                       "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                      "fileMaxSize": "4MB",
+                      "fileMaxSize": "15MB",
                       "multiple": true,
                       "key": "otherLivingSituationDocs",
                       "type": "file",
@@ -9376,7 +9376,7 @@
                         {
                           "components": [
                             {
-                              "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
+                              "html": "<p style=\"text-align:right;\">15MB file limit each</p>\n",
                               "label": "Content",
                               "refreshOnChange": false,
                               "key": "content47",
@@ -13967,7 +13967,7 @@
                                 {
                                   "components": [
                                     {
-                                      "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
+                                      "html": "<p style=\"text-align:right;\">15MB file limit each</p>\n",
                                       "label": "Content",
                                       "refreshOnChange": false,
                                       "key": "content48",
@@ -14861,7 +14861,7 @@
                   ],
                   "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
                   "fileMinSize": "0KB",
-                  "fileMaxSize": "4MB",
+                  "fileMaxSize": "15MB",
                   "multiple": true,
                   "persistent": true,
                   "protected": false,
@@ -15009,7 +15009,7 @@
                     {
                       "components": [
                         {
-                          "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
+                          "html": "<p style=\"text-align:right;\">15MB file limit each</p>\n",
                           "label": "Content",
                           "refreshOnChange": false,
                           "key": "content49",
@@ -15698,7 +15698,7 @@
               "id": "ez14edi"
             },
             {
-              "label": "<strong>Is your partner eligible for a BC Services Card account?</strong>",
+              "label": "Is your spouse/common-law partner eligible for a BC Services Card account?",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -20357,7 +20357,7 @@
               ],
               "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
               "fileMinSize": "0KB",
-              "fileMaxSize": "4MB",
+              "fileMaxSize": "15MB",
               "multiple": true,
               "persistent": true,
               "protected": false,
@@ -20507,7 +20507,7 @@
                 {
                   "components": [
                     {
-                      "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
+                      "html": "<p style=\"text-align:right;\">15MB file limit each</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content51",
@@ -21370,7 +21370,7 @@
                     }
                   ],
                   "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                  "fileMaxSize": "4MB",
+                  "fileMaxSize": "15MB",
                   "key": "parentNotBCResidentFileUpload",
                   "type": "file",
                   "input": true,
@@ -21523,7 +21523,7 @@
                     {
                       "components": [
                         {
-                          "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
+                          "html": "<p style=\"text-align:right;\">15MB file limit each</p>\n",
                           "label": "Content",
                           "refreshOnChange": false,
                           "key": "content53",
@@ -23912,7 +23912,7 @@
                   "clearOnHide": true,
                   "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
                   "fileMinSize": "0KB",
-                  "fileMaxSize": "4MB",
+                  "fileMaxSize": "15MB",
                   "type": "file",
                   "labelPosition": "top",
                   "tags": [],
@@ -23965,7 +23965,7 @@
                         {
                           "key": "decreaseInIncomePanelColumnsContent2",
                           "input": false,
-                          "html": "<p style=\"text-align: right;\">4MB file limit each</p>\n",
+                          "html": "<p style=\"text-align: right;\">15MB file limit each</p>\n",
                           "type": "content",
                           "tags": [],
                           "conditional": {
@@ -25096,7 +25096,7 @@
                     }
                   ],
                   "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                  "fileMaxSize": "4MB",
+                  "fileMaxSize": "15MB",
                   "multiple": true,
                   "key": "exceptionalExpenseFile",
                   "conditional": {
@@ -25249,7 +25249,7 @@
                     {
                       "components": [
                         {
-                          "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
+                          "html": "<p style=\"text-align:right;\">15MB file limit each</p>\n",
                           "label": "Content",
                           "refreshOnChange": false,
                           "key": "content55",
@@ -28884,7 +28884,7 @@
                         }
                       ],
                       "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                      "fileMaxSize": "4MB",
+                      "fileMaxSize": "15MB",
                       "multiple": true,
                       "key": "parentLivingSituationFile",
                       "type": "file",
@@ -29037,7 +29037,7 @@
                         {
                           "components": [
                             {
-                              "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
+                              "html": "<p style=\"text-align:right;\">15MB file limit each</p>\n",
                               "label": "Content",
                               "refreshOnChange": false,
                               "key": "content57",
@@ -30946,7 +30946,7 @@
                         }
                       ],
                       "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                      "fileMaxSize": "4MB",
+                      "fileMaxSize": "15MB",
                       "multiple": true,
                       "key": "transportationCostsFile",
                       "customConditional": "show = (data.transportationcostsituation === 'noLimit' || data.transportationcostsituation === 'special' || data.transportationcostsituation === 'educationPlacement');",
@@ -31099,7 +31099,7 @@
                         {
                           "components": [
                             {
-                              "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
+                              "html": "<p style=\"text-align:right;\">15MB file limit each</p>\n",
                               "label": "Content",
                               "refreshOnChange": false,
                               "key": "content59",
@@ -32137,7 +32137,7 @@
             {
               "key": "declarationsPanelContentPartTime2",
               "input": false,
-              "html": "<p>I am applying for funding to assist with my education under one or all of the following programs: British Columbia Access Grant for Part-Time Studies, Canada Student Loan for Part-time Students, Canada Student Grant for Students with Disabilities, the B.C. Supplemental Bursary for Students with Disabilities, Canada Student Grant for Part-time Studies, and if eligible, Canada Student Grant for Part-time Students with Dependents.</p>\n\n<p><strong>I. I understand that:</strong></p>\n\n<ol>\n\t<li><strong>It is against the law</strong> to make false or misleading statements on this application or all documents related to it.</li>\n\t<li>It is my responsibility to make sure the information on this application, and/or all the documents forming part of it are accurate.</li>\n\t<li><strong>All information is subject to audit and verification.</strong></li>\n\t<li>If I do not provide complete, accurate information or if I obtain or attempt to access financial assistance by fraudulent means, I may be denied any further federal or provincial student financial assistance, including full- and part-time Canada Student Loans and Grants, now or in the future.</li>\n\t<li>If I receive money (loan or grant) and then it is discovered that this application, or documents forming a part of it, are not accurate, I will be required to repay all or part of the money, with interest. I will be required to do this if my spouse or common law partner, post-secondary institution, StudentAid BC or I made the mistake.</li>\n</ol>\n\n<p><strong>II. I understand that by signing my name on this application form means:</strong></p>\n\n<ol>\n\t<li>I certify that all information is complete and accurate and I have not altered or added to any of the StudentAid BC application and/or questions;</li>\n\t<li>I will use the money I receive to pay my academic fees first.</li>\n\t<li>None of the courses used to meet the minimum 20 per cent course load requirements are repeats/duplicates of courses for which I previously received credits.</li>\n\t<li>I must successfully complete all courses for which my Canada Student Financial Assistance Program funding was issued or my eligibility for student financial assistance in future years of part-time studies will be affected.</li>\n\t<li>I will immediately notify the financial aid office of any changes to the information initially submitted by myself or my spouse/common-law partner. This includes my or my partners financial information (including income), changes to address, academic status, marital status, number of dependents, or any other information captured on the application form.&nbsp;</li>\n\t<li>I consent to the exchange of information between StudentAid BC, the post-secondary institution and/or other appropriate financial aid office about my academic standing, awards, program of study, course load, attendance, living arrangements, marital status and financial status. This consent takes effect when I sign this declaration.</li>\n\t<li>I consent to the verification of my Social Insurance Number, name, date of birth and gender, with information contained in Employment and Social Development Canada Social Insurance Registry. This information will be disclosed to Employment and Social Development Canada for the purpose of confirming the accuracy of my identification in the context of this application for a Canada Student Loans and Grants for part-time studies. This consent takes effect when I sign this declaration.</li>\n\t<li>For the purpose of verifying and/or investigating information pertaining to this application, related documents, and the eventual repayment of my loan awards, whether defaulted or not and any other money repayable, I consent to the collection, use and disclosure of my personal information between the BC Ministry of Post-Secondary Education and Future Skills, the BC Ministry of Finance, National Student Loans Service Centre, and any of their contractors, subcontractors or agents, each with each other, and with the following: financial institutions, educational institutions, &nbsp;employers, credit bureaus, credit reporting agencies, indigenous organizations, federal and provincial Crown corporations, and federal, provincial, municipal ministries/departments/agencies, including but not limited to: BC Ministry of Social Development and Poverty Reduction, BC Ministry of Children and Family Development, BC Ministry of Health, BC Ministry of Attorney General, BC Ministry of Education and Child Care, BC Public Service Agency, RoadSafety BC, Insurance Corporation of BC (and Service BC acting in the role of ICBC), BC Hydro, BC Assessment Authority, Land Title and Survey Authority of BC, BC Registry Services, WorkSafeBC, BC Vital Statistics Agency, the Office of the Superintendent of Bankruptcy Canada, Employment and Social Development Canada, Canada Revenue Agency, Immigration, Refugees and Citizenship Canada. This consent takes effect on the date that I submit this Application to StudentAid BC.</li>\n\t<li>I have not applied nor will I apply to or receive government funded student loans, grants or bursaries from another province or territory or government funded loans outside of Canada during the study period stated in this application.</li>\n</ol>\n\n<p><strong>Collection and use of information</strong>. The information included in this form and authorized above is collected under ss. 26(c) and 26(e) of the Freedom of Information and Protection of Privacy Act, R.S.B.C. 1996, c. 165, and under the authority of the Canada Student Financial Assistance Act, R.S.C. 1994, Chapter C-28. The information provided will be used to determine eligibility for a benefit through StudentAid BC and for research, statistical and evaluation purposes. If you have any questions about the collection and use of this information, contact the Executive Director, StudentAid BC, Ministry of Post-Secondary Education and Future Skills, PO Box 9173, Stn Prov Govt, Victoria BC, V8W 9H7, telephone 1-800-561-1818 (toll-free in Canada/U.S.) or 1-778-309-4621 from outside North America.</p>\n",
+              "html": "<p>I am applying for funding to assist with my education under one or all of the following programs: British Columbia Access Grant for Part-Time Studies, Canada Student Loan for Part-time Students, Canada Student Grant for Students with Disabilities, the B.C. Supplemental Bursary for Students with Disabilities, Canada Student Grant for Part-time Studies, and if eligible, Canada Student Grant for Part-time Students with Dependents.</p>\n\n<p><strong>I. I understand that:</strong></p>\n\n<ol>\n\t<li><strong>It is against the law</strong> to make false or misleading statements on this application or all documents related to it.</li>\n\t<li>It is my responsibility to make sure the information on this application, and/or all the documents forming part of it are accurate.</li>\n\t<li><strong>All information is subject to audit and verification.</strong></li>\n\t<li>If I do not provide complete, accurate information or if I obtain or attempt to access financial assistance by fraudulent means, I may be denied any further federal or provincial student financial assistance, including full- and part-time Canada Student Loans and Grants, now or in the future.</li>\n\t<li>If I receive money (loan or grant) and then it is discovered that this application, or documents forming a part of it, are not accurate, I will be required to repay all or part of the money, with interest. I will be required to do this if my spouse/common-law partner, post-secondary institution, StudentAid BC or I made the mistake.</li>\n</ol>\n\n<p><strong>II. I understand that by signing my name on this application form means:</strong></p>\n\n<ol>\n\t<li>I certify that all information is complete and accurate and I have not altered or added to any of the StudentAid BC application and/or questions;</li>\n\t<li>I will use the money I receive to pay my academic fees first.</li>\n\t<li>None of the courses used to meet the minimum 20 per cent course load requirements are repeats/duplicates of courses for which I previously received credits.</li>\n\t<li>I must successfully complete all courses for which my Canada Student Financial Assistance Program funding was issued or my eligibility for student financial assistance in future years of part-time studies will be affected.</li>\n\t<li>I will immediately notify the financial aid office of any changes to the information initially submitted by myself or my spouse/common-law partner. This includes my or my spouse/common-law partner's financial information (including income), changes to address, academic status, marital status, number of dependents, or any other information captured on the application form.&nbsp;</li>\n\t<li>I consent to the exchange of information between StudentAid BC, the post-secondary institution and/or other appropriate financial aid office about my academic standing, awards, program of study, course load, attendance, living arrangements, marital status and financial status. This consent takes effect when I sign this declaration.</li>\n\t<li>I consent to the verification of my Social Insurance Number, name, date of birth and gender, with information contained in Employment and Social Development Canada Social Insurance Registry. This information will be disclosed to Employment and Social Development Canada for the purpose of confirming the accuracy of my identification in the context of this application for a Canada Student Loans and Grants for part-time studies. This consent takes effect when I sign this declaration.</li>\n\t<li>For the purpose of verifying and/or investigating information pertaining to this application, related documents, and the eventual repayment of my loan awards, whether defaulted or not and any other money repayable, I consent to the collection, use and disclosure of my personal information between the BC Ministry of Post-Secondary Education and Future Skills, the BC Ministry of Finance, National Student Loans Service Centre, and any of their contractors, subcontractors or agents, each with each other, and with the following: financial institutions, educational institutions, &nbsp;employers, credit bureaus, credit reporting agencies, indigenous organizations, federal and provincial Crown corporations, and federal, provincial, municipal ministries/departments/agencies, including but not limited to: BC Ministry of Social Development and Poverty Reduction, BC Ministry of Children and Family Development, BC Ministry of Health, BC Ministry of Attorney General, BC Ministry of Education and Child Care, BC Public Service Agency, RoadSafety BC, Insurance Corporation of BC (and Service BC acting in the role of ICBC), BC Hydro, BC Assessment Authority, Land Title and Survey Authority of BC, BC Registry Services, WorkSafeBC, BC Vital Statistics Agency, the Office of the Superintendent of Bankruptcy Canada, Employment and Social Development Canada, Canada Revenue Agency, Immigration, Refugees and Citizenship Canada. This consent takes effect on the date that I submit this Application to StudentAid BC.</li>\n\t<li>I have not applied nor will I apply to or receive government funded student loans, grants or bursaries from another province or territory or government funded loans outside of Canada during the study period stated in this application.</li>\n</ol>\n\n<p><strong>Collection and use of information</strong>. The information included in this form and authorized above is collected under ss. 26(c) and 26(e) of the Freedom of Information and Protection of Privacy Act, R.S.B.C. 1996, c. 165, and under the authority of the Canada Student Financial Assistance Act, R.S.C. 1994, Chapter C-28. The information provided will be used to determine eligibility for a benefit through StudentAid BC and for research, statistical and evaluation purposes. If you have any questions about the collection and use of this information, contact the Executive Director, StudentAid BC, Ministry of Post-Secondary Education and Future Skills, PO Box 9173, Stn Prov Govt, Victoria BC, V8W 9H7, telephone 1-800-561-1818 (toll-free in Canada/U.S.) or 1-778-309-4621 from outside North America.</p>\n",
               "type": "content",
               "tags": [],
               "conditional": {

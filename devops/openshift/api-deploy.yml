@@ -393,7 +393,7 @@ parameters:
   - name: IS_FULLTIME_ALLOWED
     required: true
   - name: FILE_UPLOAD_MAX_FILE_SIZE
-    value: "4194304"
+    value: "15728640"
   - name: FILE_UPLOAD_ALLOWED_EXTENSIONS
     value: ".pdf,.doc,.docx,.jpg,.png,.txt"
   - name: ATBC_LOGIN_ENDPOINT

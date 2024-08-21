@@ -83,7 +83,7 @@ export const OFFERING_BULK_UPLOAD_MAX_UPLOAD_PARTS = 2;
 /**
  * Max upload file size for an offering bulk upload (in bytes).
  */
-export const OFFERING_BULK_UPLOAD_MAX_FILE_SIZE = 4194304;
+export const OFFERING_BULK_UPLOAD_MAX_FILE_SIZE = 15728640;
 /**
  * Max number of parts (fields + files) allowed for a application bulk withdrawal.
  */
@@ -91,7 +91,7 @@ export const APPLICATION_BULK_WITHDRAWAL_MAX_UPLOAD_PARTS = 2;
 /**
  * Max upload file size for an application bulk withdrawal (in bytes).
  */
-export const APPLICATION_BULK_WITHDRAWAL_UPLOAD_MAX_FILE_SIZE = 4194304;
+export const APPLICATION_BULK_WITHDRAWAL_UPLOAD_MAX_FILE_SIZE = 15728640;
 /**
  * Expected length of the award value code.
  */
