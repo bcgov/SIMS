@@ -366,7 +366,7 @@
           "id": "eoar7nv"
         },
         {
-          "label": "I have been authorized by my spouse/common-law partner to submit their financial information, including their total reported income (previous tax return.",
+          "label": "I have been authorized by my partner to submit their financial information including their net income (previous tax year's return's Line 15000 information)",
           "labelWidth": "",
           "labelMargin": "",
           "description": "",
@@ -445,7 +445,7 @@
           "id": "es4nl35"
         },
         {
-          "label": "Enter your spouse/common-law partners reported total income from line 15000 of previous year income tax return. If they did not file taxes, enter their total income from all sources both inside and outside of Canada.",
+          "label": "What was your partner’s income (as shown on line 15000 of previous year’s Canada Revenue Agency tax return)? If they didn’t file taxes, enter total income from all sources in and outside of Canada.",
           "prefix": "$",
           "customClass": "font-weight-bold",
           "mask": false,
