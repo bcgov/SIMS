@@ -54,6 +54,9 @@ export class ApplicationService {
           reportedDate: IsNull(),
         },
       },
+      order: {
+        currentAssessment: { createdAt: "ASC" },
+      },
     });
   }
 }

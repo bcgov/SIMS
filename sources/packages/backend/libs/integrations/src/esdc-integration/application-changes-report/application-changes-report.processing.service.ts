@@ -69,10 +69,11 @@ export class ApplicationChangesReportProcessingService {
         new Date(),
         this.systemUsersService.systemUser.id,
       );
+      processSummary.info(
+        "Reported date has been successfully updated for reported application assessments.",
+      );
     }
-    processSummary.info(
-      "Reported date has been successfully updated for reported application assessments.",
-    );
+
     return {
       applicationsReported: applicationChangesCount,
       uploadedFileName: fileName,
