@@ -215,7 +215,7 @@ import { OFFERING_VALIDATION_CSV_PARSE_ERROR } from "@/constants";
 import { AxiosProgressEvent } from "axios";
 
 const ACCEPTED_FILE_TYPE = "text/csv";
-const MAX_OFFERING_UPLOAD_SIZE = 4194304;
+const MAX_OFFERING_UPLOAD_SIZE = 15728640;
 
 export default defineComponent({
   components: {
@@ -308,7 +308,7 @@ export default defineComponent({
       }
       const [file] = files;
       if (file.size > MAX_OFFERING_UPLOAD_SIZE) {
-        return "CSV file size should not be greater than 4MB";
+        return "CSV file size should not be greater than 15MB";
       }
       if (file.type !== ACCEPTED_FILE_TYPE) {
         return `The expected file type is ${ACCEPTED_FILE_TYPE}.`;

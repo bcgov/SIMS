@@ -805,7 +805,7 @@
                         }
                       ],
                       "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                      "fileMaxSize": "4MB",
+                      "fileMaxSize": "15MB",
                       "multiple": true,
                       "key": "transportationCostsFile",
                       "customConditional": "",
@@ -957,7 +957,7 @@
                         {
                           "components": [
                             {
-                              "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
+                              "html": "<p style=\"text-align:right;\">15MB file limit each</p>\n",
                               "label": "Content",
                               "refreshOnChange": false,
                               "key": "content59",

@@ -7838,7 +7838,7 @@
                   ],
                   "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
                   "fileMinSize": "0KB",
-                  "fileMaxSize": "4MB",
+                  "fileMaxSize": "15MB",
                   "multiple": true,
                   "persistent": true,
                   "protected": false,
@@ -7993,7 +7993,7 @@
                     {
                       "components": [
                         {
-                          "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
+                          "html": "<p style=\"text-align:right;\">15MB file limit each</p>\n",
                           "label": "Content",
                           "customClass": "",
                           "refreshOnChange": false,
@@ -9223,7 +9223,7 @@
                         }
                       ],
                       "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                      "fileMaxSize": "4MB",
+                      "fileMaxSize": "15MB",
                       "multiple": true,
                       "key": "otherLivingSituationDocs",
                       "type": "file",
@@ -9376,7 +9376,7 @@
                         {
                           "components": [
                             {
-                              "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
+                              "html": "<p style=\"text-align:right;\">15MB file limit each</p>\n",
                               "label": "Content",
                               "refreshOnChange": false,
                               "key": "content47",
@@ -13967,7 +13967,7 @@
                                 {
                                   "components": [
                                     {
-                                      "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
+                                      "html": "<p style=\"text-align:right;\">15MB file limit each</p>\n",
                                       "label": "Content",
                                       "refreshOnChange": false,
                                       "key": "content48",
@@ -14861,7 +14861,7 @@
                   ],
                   "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
                   "fileMinSize": "0KB",
-                  "fileMaxSize": "4MB",
+                  "fileMaxSize": "15MB",
                   "multiple": true,
                   "persistent": true,
                   "protected": false,
@@ -15009,7 +15009,7 @@
                     {
                       "components": [
                         {
-                          "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
+                          "html": "<p style=\"text-align:right;\">15MB file limit each</p>\n",
                           "label": "Content",
                           "refreshOnChange": false,
                           "key": "content49",
@@ -20357,7 +20357,7 @@
               ],
               "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
               "fileMinSize": "0KB",
-              "fileMaxSize": "4MB",
+              "fileMaxSize": "15MB",
               "multiple": true,
               "persistent": true,
               "protected": false,
@@ -20507,7 +20507,7 @@
                 {
                   "components": [
                     {
-                      "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
+                      "html": "<p style=\"text-align:right;\">15MB file limit each</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content51",
@@ -21370,7 +21370,7 @@
                     }
                   ],
                   "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                  "fileMaxSize": "4MB",
+                  "fileMaxSize": "15MB",
                   "key": "parentNotBCResidentFileUpload",
                   "type": "file",
                   "input": true,
@@ -21523,7 +21523,7 @@
                     {
                       "components": [
                         {
-                          "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
+                          "html": "<p style=\"text-align:right;\">15MB file limit each</p>\n",
                           "label": "Content",
                           "refreshOnChange": false,
                           "key": "content53",
@@ -23912,7 +23912,7 @@
                   "clearOnHide": true,
                   "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
                   "fileMinSize": "0KB",
-                  "fileMaxSize": "4MB",
+                  "fileMaxSize": "15MB",
                   "type": "file",
                   "labelPosition": "top",
                   "tags": [],
@@ -23965,7 +23965,7 @@
                         {
                           "key": "decreaseInIncomePanelColumnsContent2",
                           "input": false,
-                          "html": "<p style=\"text-align: right;\">4MB file limit each</p>\n",
+                          "html": "<p style=\"text-align: right;\">15MB file limit each</p>\n",
                           "type": "content",
                           "tags": [],
                           "conditional": {
@@ -25096,7 +25096,7 @@
                     }
                   ],
                   "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                  "fileMaxSize": "4MB",
+                  "fileMaxSize": "15MB",
                   "multiple": true,
                   "key": "exceptionalExpenseFile",
                   "conditional": {
@@ -25249,7 +25249,7 @@
                     {
                       "components": [
                         {
-                          "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
+                          "html": "<p style=\"text-align:right;\">15MB file limit each</p>\n",
                           "label": "Content",
                           "refreshOnChange": false,
                           "key": "content55",
@@ -28884,7 +28884,7 @@
                         }
                       ],
                       "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                      "fileMaxSize": "4MB",
+                      "fileMaxSize": "15MB",
                       "multiple": true,
                       "key": "parentLivingSituationFile",
                       "type": "file",
@@ -29037,7 +29037,7 @@
                         {
                           "components": [
                             {
-                              "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
+                              "html": "<p style=\"text-align:right;\">15MB file limit each</p>\n",
                               "label": "Content",
                               "refreshOnChange": false,
                               "key": "content57",
@@ -30946,7 +30946,7 @@
                         }
                       ],
                       "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                      "fileMaxSize": "4MB",
+                      "fileMaxSize": "15MB",
                       "multiple": true,
                       "key": "transportationCostsFile",
                       "customConditional": "show = (data.transportationcostsituation === 'noLimit' || data.transportationcostsituation === 'special' || data.transportationcostsituation === 'educationPlacement');",
@@ -31099,7 +31099,7 @@
                         {
                           "components": [
                             {
-                              "html": "<p style=\"text-align:right;\">4MB file limit each</p>\n",
+                              "html": "<p style=\"text-align:right;\">15MB file limit each</p>\n",
                               "label": "Content",
                               "refreshOnChange": false,
                               "key": "content59",
