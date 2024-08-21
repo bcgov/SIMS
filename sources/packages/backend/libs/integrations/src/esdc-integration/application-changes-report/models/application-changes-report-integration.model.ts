@@ -22,3 +22,5 @@ export type ApplicationChangesReport = Record<
   ApplicationChangesReportHeaders,
   string
 >;
+export const DATE_TIME_FORMAT = "YYYY-MM-DDTHH:mm:ss";
+export const FILE_NAME_TIMESTAMP_FORMAT = "YYYY-MM-DD.HH.mm.ss";

@@ -11,8 +11,9 @@ import {
 import {
   ApplicationChangesReport,
   ApplicationChangesReportHeaders,
+  DATE_TIME_FORMAT,
 } from "./models/application-changes-report-integration.model";
-const ISO_DATE_TIME_FORMAT = "YYYY-MM-DDTHH:mm:ss";
+
 @Injectable()
 export class ApplicationChangesReportIntegrationService extends SFTPIntegrationBase<void> {
   constructor(config: ConfigService, sshService: SshService) {
@@ -39,7 +40,6 @@ export class ApplicationChangesReportIntegrationService extends SFTPIntegrationB
     const fileContent = reportCSVContent
       .concat(END_OF_LINE)
       .concat(`Number of records: ${applicationChanges.length}`);
-    console.log(fileContent);
     return fileContent;
   }
 
@@ -77,7 +77,7 @@ export class ApplicationChangesReportIntegrationService extends SFTPIntegrationB
           ? "Early Withdrawal"
           : "Reassessment",
       "Activity Time": getPSTPDTDateTime(currentAssessment.createdAt, {
-        dateTimeFormat: ISO_DATE_TIME_FORMAT,
+        dateTimeFormat: DATE_TIME_FORMAT,
       }),
       "New Study Start Date": currentOffering.studyStartDate,
       "New Study End Date": currentOffering.studyEndDate,

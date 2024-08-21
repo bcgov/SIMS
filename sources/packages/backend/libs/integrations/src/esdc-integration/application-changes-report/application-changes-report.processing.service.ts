@@ -1,20 +1,27 @@
 import { Injectable } from "@nestjs/common";
-import { ApplicationService } from "@sims/integrations/services";
+import {
+  ApplicationService,
+  StudentAssessmentService,
+} from "@sims/integrations/services";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { ProcessSummary } from "@sims/utilities/logger";
-import { DataSource } from "typeorm";
 import { ApplicationChangesReportIntegrationService } from "./application-changes-report.integration.service";
 import { getPSTPDTDateTime, StringBuilder } from "@sims/utilities";
 import { APPLICATION_CHANGES_REPORT_PREFIX } from "@sims/integrations/constants";
-import { ApplicationChangesReportProcessingResult } from "./models/application-changes-report-integration.model";
+import {
+  ApplicationChangesReportProcessingResult,
+  FILE_NAME_TIMESTAMP_FORMAT,
+} from "./models/application-changes-report-integration.model";
+import { SystemUsersService } from "@sims/services";
 
 @Injectable()
 export class ApplicationChangesReportProcessingService {
   private readonly esdcConfig: ESDCIntegrationConfig;
   constructor(
-    private readonly dataSource: DataSource,
     private readonly applicationService: ApplicationService,
     private readonly applicationChangesReportIntegrationService: ApplicationChangesReportIntegrationService,
+    private readonly systemUsersService: SystemUsersService,
+    private readonly studentAssessmentService: StudentAssessmentService,
     config: ConfigService,
   ) {
     this.esdcConfig = config.esdcIntegration;
@@ -37,8 +44,10 @@ export class ApplicationChangesReportProcessingService {
     );
     const applicationChanges =
       await this.applicationService.getDateChangeNotReportedApplications();
-    const applicationsReported = applicationChanges.length;
-    processSummary.info(`Found ${applicationsReported} application changes.`);
+    const applicationChangesCount = applicationChanges.length;
+    processSummary.info(
+      `Found ${applicationChangesCount} application changes.`,
+    );
     const fileContent =
       this.applicationChangesReportIntegrationService.createApplicationChangesReportFileContent(
         applicationChanges,
@@ -51,8 +60,21 @@ export class ApplicationChangesReportProcessingService {
     processSummary.info(
       `Application changes report with file name: ${fileName} has been uploaded successfully.`,
     );
+    if (applicationChangesCount) {
+      const reportedAssessmentIds = applicationChanges.map(
+        (applicationChange) => applicationChange.currentAssessment.id,
+      );
+      await this.studentAssessmentService.updateReportedDate(
+        reportedAssessmentIds,
+        new Date(),
+        this.systemUsersService.systemUser.id,
+      );
+    }
+    processSummary.info(
+      "Reported date has been successfully updated for reported application assessments.",
+    );
     return {
-      applicationsReported,
+      applicationsReported: applicationChangesCount,
       uploadedFileName: fileName,
     };
   }
@@ -70,7 +92,9 @@ export class ApplicationChangesReportProcessingService {
     fileNameBuilder.append(APPLICATION_CHANGES_REPORT_PREFIX);
     fileNameBuilder.append(".");
     fileNameBuilder.append(
-      getPSTPDTDateTime(new Date(), { dateTimeFormat: "YYYY-MM-DD.HH.mm.ss" }),
+      getPSTPDTDateTime(new Date(), {
+        dateTimeFormat: FILE_NAME_TIMESTAMP_FORMAT,
+      }),
     );
     fileNameBuilder.append(".csv");
     const fileName = fileNameBuilder.toString();

@@ -3,8 +3,9 @@ import {
   ApplicationStatus,
   RecordDataModelService,
   StudentAssessment,
+  User,
 } from "@sims/sims-db";
-import { DataSource, Not } from "typeorm";
+import { DataSource, In, Not, UpdateResult } from "typeorm";
 import { addDays, dateEqualTo } from "@sims/utilities";
 
 /**
@@ -169,5 +170,26 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         disbursementSchedules: { disbursementDate: "ASC" },
       },
     });
+  }
+
+  /**
+   * Update reported date of the given student assessments.
+   * @param assessmentIds assessments to be updated.
+   * @param reportedDate reported date.
+   * @param auditUserId user updating the reported date.
+   * @returns update result.
+   */
+  async updateReportedDate(
+    assessmentIds: number[],
+    reportedDate: Date,
+    auditUserId: number,
+  ): Promise<UpdateResult> {
+    return this.repo.update(
+      { id: In(assessmentIds) },
+      {
+        reportedDate: reportedDate,
+        modifier: { id: auditUserId } as User,
+      },
+    );
   }
 }
