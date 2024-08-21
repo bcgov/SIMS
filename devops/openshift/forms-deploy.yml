@@ -233,8 +233,6 @@ parameters:
     description: FORMIO_ROOT_PASSWORD
     generate: expression
     from: "[a-zA-Z0-9]{16}"
-  - name: HOST_NAME
-    required: true
   - name: FORMS_URL
     displayName: FORMS_URL
     required: true
