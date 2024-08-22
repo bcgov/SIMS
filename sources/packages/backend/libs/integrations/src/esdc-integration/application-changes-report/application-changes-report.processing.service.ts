@@ -65,12 +65,12 @@ export class ApplicationChangesReportProcessingService {
       );
     } catch (error: unknown) {
       // Translate to friendly error message.
-      const errorDescription = `Unexpected error uploading the file: ${remoteFilePath} to SFTP.`;
+      const errorDescription = `Unexpected error uploading the file ${remoteFilePath} to SFTP.`;
       processSummary.error(errorDescription, error);
       throw new Error(errorDescription, { cause: error });
     }
     processSummary.info(
-      `Application changes report with file name: ${fileName} has been uploaded successfully.`,
+      `Application changes report with file name ${fileName} has been uploaded successfully.`,
     );
     if (applicationChangesCount) {
       const reportedAssessmentIds = applicationChanges.map(
@@ -82,7 +82,7 @@ export class ApplicationChangesReportProcessingService {
         this.systemUsersService.systemUser.id,
       );
       processSummary.info(
-        `Reported date: ${reportedDate} has been successfully updated for reported application assessments.`,
+        `Reported date ${reportedDate} has been successfully updated for reported application assessments.`,
       );
     } else {
       processSummary.info(
