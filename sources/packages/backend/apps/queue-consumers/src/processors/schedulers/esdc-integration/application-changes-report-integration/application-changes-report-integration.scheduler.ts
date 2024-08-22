@@ -12,6 +12,7 @@ import {
   logProcessSummaryToJobLogger,
 } from "../../../../utilities";
 import { QueueNames } from "@sims/utilities";
+import { ApplicationChangesReportProcessingService } from "@sims/integrations/esdc-integration";
 
 @Processor(QueueNames.ApplicationChangesReportIntegration)
 export class ApplicationChangesReportIntegrationScheduler extends BaseScheduler<void> {
@@ -19,6 +20,7 @@ export class ApplicationChangesReportIntegrationScheduler extends BaseScheduler<
     @InjectQueue(QueueNames.ApplicationChangesReportIntegration)
     schedulerQueue: Queue<void>,
     queueService: QueueService,
+    private readonly applicationChangesReportProcessingService: ApplicationChangesReportProcessingService,
   ) {
     super(schedulerQueue, queueService);
   }
@@ -27,27 +29,39 @@ export class ApplicationChangesReportIntegrationScheduler extends BaseScheduler<
    * Generate application changes report for the applications which has at least one e-Cert sent
    * and the application study dates have changed after the first e-Cert
    * or after the last time the application was reported for study dates change
-   * through application changes report.
+   * through application changes report. Once generated upload the report to the ESDC directory
+   * in SFTP server.
    * @param job job.
    * @returns process summary.
    */
   @Process()
-  async generateApplicationChangesReport(job: Job<void>): Promise<string[]> {
+  async processApplicationChanges(job: Job<void>): Promise<string[]> {
     const processSummary = new ProcessSummary();
 
     try {
-      this.logger.log(
+      processSummary.info(
         `Processing application changes report integration job. Job id: ${job.id} and Job name: ${job.name}.`,
       );
-      // TODO: Processing implementation of application changes report.
+      const integrationProcessSummary = new ProcessSummary();
+      processSummary.children(integrationProcessSummary);
+      const { applicationsReported, uploadedFileName } =
+        await this.applicationChangesReportProcessingService.processApplicationChanges(
+          integrationProcessSummary,
+        );
       return getSuccessMessageWithAttentionCheck(
-        ["Process finalized with success."],
+        [
+          "Process finalized with success.",
+          `Applications reported: ${applicationsReported}`,
+          `Uploaded file name: ${uploadedFileName}`,
+        ],
         processSummary,
       );
     } catch (error: unknown) {
-      const errorMessage = "Unexpected error while executing the job.";
+      // Translate to friendly error message.
+      const errorMessage =
+        "Unexpected error while executing the job to process application changes.";
       processSummary.error(errorMessage, error);
-      return [errorMessage];
+      throw new Error(errorMessage, { cause: error });
     } finally {
       this.logger.logProcessSummary(processSummary);
       await logProcessSummaryToJobLogger(processSummary, job);

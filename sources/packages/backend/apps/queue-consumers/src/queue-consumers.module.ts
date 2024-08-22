@@ -48,6 +48,7 @@ import { NotificationsModule } from "@sims/services/notifications";
 import { SystemUserModule } from "@sims/services/system-users";
 import { MSFAANumberService, SshService } from "@sims/integrations/services";
 import {
+  ApplicationChangesReportIntegrationModule,
   DisbursementReceiptIntegrationModule,
   ECertIntegrationModule,
   FedRestrictionIntegrationModule,
@@ -92,6 +93,7 @@ import { CASService } from "@sims/integrations/cas/cas.service";
     SINValidationModule,
     StudentLoanBalancesIntegrationModule,
     TerminusModule,
+    ApplicationChangesReportIntegrationModule,
   ],
   providers: [
     VirusScanProcessor,
