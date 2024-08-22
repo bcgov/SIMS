@@ -1,6 +1,7 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
 import { BaseSFASApplicationModel } from "./base-sfas-application.model";
 import { TableNames } from "../constant";
+import { numericTransformer } from "@sims/sims-db/transformers/numeric.transformer";
 
 /**
  * Data related to a Part Time Student Application on SFAS that came from SAIL
@@ -36,7 +37,9 @@ export class SFASPartTimeApplications extends BaseSFASApplicationModel {
    */
   @Column({
     name: "csgp_award",
+    type: "numeric",
     nullable: true,
+    transformer: numericTransformer,
   })
   csgpAward?: number;
   /**
@@ -44,7 +47,9 @@ export class SFASPartTimeApplications extends BaseSFASApplicationModel {
    */
   @Column({
     name: "sbsd_award",
+    type: "numeric",
     nullable: true,
+    transformer: numericTransformer,
   })
   sbsdAward?: number;
   /**
@@ -61,7 +66,9 @@ export class SFASPartTimeApplications extends BaseSFASApplicationModel {
    */
   @Column({
     name: "cspt_award",
+    type: "numeric",
     nullable: true,
+    transformer: numericTransformer,
   })
   csptAward?: number;
   /**
@@ -69,7 +76,9 @@ export class SFASPartTimeApplications extends BaseSFASApplicationModel {
    */
   @Column({
     name: "csgd_award",
+    type: "numeric",
     nullable: true,
+    transformer: numericTransformer,
   })
   csgdAward?: number;
   /**
@@ -77,7 +86,9 @@ export class SFASPartTimeApplications extends BaseSFASApplicationModel {
    */
   @Column({
     name: "bcag_award",
+    type: "numeric",
     nullable: true,
+    transformer: numericTransformer,
   })
   bcagAward?: number;
   /**
@@ -85,7 +96,9 @@ export class SFASPartTimeApplications extends BaseSFASApplicationModel {
    */
   @Column({
     name: "cslp_award",
+    type: "numeric",
     nullable: true,
+    transformer: numericTransformer,
   })
   cslpAward?: number;
   /**

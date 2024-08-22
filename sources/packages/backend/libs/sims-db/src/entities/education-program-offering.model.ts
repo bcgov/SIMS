@@ -12,6 +12,7 @@ import { EducationProgram } from "./education-program.model";
 import { InstitutionLocation } from "./institution-location.model";
 import { OfferingTypes, User, OfferingStatus, Note } from ".";
 import { OfferingIntensity } from "./offering-intensity.type";
+import { numericTransformer } from "@sims/sims-db/transformers/numeric.transformer";
 
 /**
  * Max value the offering name can have. By DB definition it is defined as
@@ -61,7 +62,9 @@ export class EducationProgramOffering extends RecordDataModel {
    */
   @Column({
     name: "actual_tuition_costs",
+    type: "numeric",
     nullable: true,
+    transformer: numericTransformer,
   })
   actualTuitionCosts: number;
   /**
@@ -69,7 +72,9 @@ export class EducationProgramOffering extends RecordDataModel {
    */
   @Column({
     name: "program_related_costs",
+    type: "numeric",
     nullable: true,
+    transformer: numericTransformer,
   })
   programRelatedCosts: number;
   /**
@@ -77,7 +82,9 @@ export class EducationProgramOffering extends RecordDataModel {
    */
   @Column({
     name: "mandatory_fees",
+    type: "numeric",
     nullable: true,
+    transformer: numericTransformer,
   })
   mandatoryFees: number;
   /**
@@ -85,7 +92,9 @@ export class EducationProgramOffering extends RecordDataModel {
    */
   @Column({
     name: "exceptional_expenses",
+    type: "numeric",
     nullable: true,
+    transformer: numericTransformer,
   })
   exceptionalExpenses: number;
   /**
