@@ -46,35 +46,35 @@ export MAX_WAIT=300 # Maximum wait time in seconds.
 export WAIT_TIME=0  # Initialize wait time to zero.
 
 define DB_MIGRATIONS
-"$(HOST_PREFIX)-db-migrations-$(APP_NAME)"
+"$(HOST_PREFIX)db-migrations-$(APP_NAME)"
 endef
 
 define DB_MIGRATIONS_JOB_NAME
-"$(HOST_PREFIX)-db.migrations"
+"$(HOST_PREFIX)db.migrations"
 endef
 
 define API
-"$(HOST_PREFIX)-api-$(APP_NAME)"
+"$(HOST_PREFIX)api-$(APP_NAME)"
 endef
 
 define WORKERS
-"$(HOST_PREFIX)-workers-$(APP_NAME)"
+"$(HOST_PREFIX)workers-$(APP_NAME)"
 endef
 
 define WEB
-"$(HOST_PREFIX)-web-$(APP_NAME)"
+"$(HOST_PREFIX)web-$(APP_NAME)"
 endef
 
 define QUEUE_CONSUMERS
-"$(HOST_PREFIX)-queue-consumers-$(APP_NAME)"
+"$(HOST_PREFIX)queue-consumers-$(APP_NAME)"
 endef
 
 define LOAD_TEST_GATEWAY
-"$(HOST_PREFIX)-load-test-gateway-$(APP_NAME)"
+"$(HOST_PREFIX)load-test-gateway-$(APP_NAME)"
 endef
 
 define SWAGGER_NAME
-"$(HOST_PREFIX)-swagger"
+"$(HOST_PREFIX)swagger"
 endef
 
 define QA_DB_NAME
@@ -86,7 +86,7 @@ define BUILD_TEMPLATE_PATH
 endef
 
 define HOST
-"$(HOST_PREFIX).$(DOMAIN)"
+"$(DOMAIN_PREFIX)$(DOMAIN)"
 endef
 
 define DB_SERVICE_NAME
@@ -94,7 +94,7 @@ define DB_SERVICE_NAME
 endef
 
 define FORMS_NAME
-"$(HOST_PREFIX)-forms"
+"$(HOST_PREFIX)forms"
 endef
 
 define HAMONGO_DB_TEMPLATE_PATH
@@ -106,7 +106,7 @@ define HAMONGO_DB_PARAM_PATH
 endef
 
 define FORMS_URL
-"$(HOST_PREFIX)-forms.$(DOMAIN)"
+"$(DOMAIN_PREFIX)forms.$(DOMAIN)"
 endef
 
 define SOURCE_REPOSITORY_URL
