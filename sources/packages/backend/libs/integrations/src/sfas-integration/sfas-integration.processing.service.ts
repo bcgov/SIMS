@@ -143,10 +143,10 @@ export class SFASIntegrationProcessingService {
       this.logger.log("Records imported.");
       if (result.success) {
         /**
-         * Delete the file only if it was processed with success.
+         * Archive the file only if it was processed with success.
          */
         try {
-          await this.sfasService.deleteFile(remoteFilePath);
+          await this.sfasService.archiveFile(remoteFilePath);
         } catch (error) {
           throw new Error(
             `Error while deleting SFAS integration file: ${remoteFilePath}`,

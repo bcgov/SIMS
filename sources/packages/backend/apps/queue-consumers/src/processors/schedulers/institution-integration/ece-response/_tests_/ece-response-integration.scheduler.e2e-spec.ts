@@ -152,7 +152,7 @@ describe(
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `Disbursement ${disbursement.id}, enrolment confirmed.`,
-        `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
         "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 2",
@@ -166,8 +166,8 @@ describe(
         "Disbursement 1119353191, record skipped due to reason: Enrolment not found.",
       ];
       expect(processResult).toStrictEqual([expectedResult]);
-      // Expect the delete method to be called.
-      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the archive method to be called.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
       // TODO: When bulk send email is implemented, we must always expect 1 notification
@@ -254,7 +254,7 @@ describe(
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `Disbursement ${disbursement.id}, enrolment confirmed.`,
-        `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
         "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 4",
@@ -268,8 +268,8 @@ describe(
         "Disbursement 1119353191, record skipped due to reason: Enrolment not found.",
       ];
       expect(processResult).toStrictEqual([expectedResult]);
-      // Expect the delete method to be called.
-      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the archive method to be called.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
       expect(notifications).toHaveLength(
@@ -378,7 +378,7 @@ describe(
       const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
-        `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
         "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 1",
@@ -393,8 +393,8 @@ describe(
       ];
 
       expect(processResult).toStrictEqual([expectedResult]);
-      // Expect the delete method to be called.
-      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the archive method to be called.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
       expect(notifications).toHaveLength(
@@ -447,7 +447,7 @@ describe(
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `Disbursement ${disbursement.id}, enrolment declined.`,
-        `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
         "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 2",
@@ -461,8 +461,8 @@ describe(
         "Disbursement 1119353191, record skipped due to reason: Enrolment not found.",
       ];
       expect(processResult).toStrictEqual([expectedResult]);
-      // Expect the delete method to be called.
-      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the archive method to be called.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
       expect(notifications).toHaveLength(
@@ -522,7 +522,7 @@ describe(
       const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
-        `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
         "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 1",
@@ -536,8 +536,8 @@ describe(
         `Disbursement ${disbursement.id}, record is considered as duplicate and skipped due to reason: Enrolment already completed and can neither be confirmed nor declined`,
       ];
       expect(processResult).toStrictEqual([expectedResult]);
-      // Expect the delete method to be called.
-      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the archive method to be called.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
       expect(notifications).toHaveLength(
@@ -580,7 +580,7 @@ describe(
       const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
-        `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
         "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 1",
@@ -594,8 +594,8 @@ describe(
         `Disbursement ${fakeDisbursementId}, record skipped due to reason: Enrolment not found.`,
       ];
       expect(processResult).toStrictEqual([expectedResult]);
-      // Expect the delete method to be called.
-      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the archive method to be called.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
       expect(notifications).toHaveLength(
@@ -650,7 +650,7 @@ describe(
       const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
-        `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
         "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 1",
@@ -664,8 +664,8 @@ describe(
         `Disbursement ${disbursement.id}, record skipped due to reason: Enrolment for the given application not found.`,
       ];
       expect(processResult).toStrictEqual([expectedResult]);
-      // Expect the delete method to be called.
-      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the archive method to be called.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
       expect(notifications).toHaveLength(
@@ -703,7 +703,7 @@ describe(
       const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
-        `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
         "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 1",
         "Total detail records found: 0",
@@ -718,8 +718,8 @@ describe(
         "File processing aborted.",
       ];
       expect(processResult).toStrictEqual([expectedResult]);
-      // Expect the delete method to be called.
-      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the archive method to be called.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
       expect(notifications).toHaveLength(
@@ -757,7 +757,7 @@ describe(
       const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
-        `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
         "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 1",
         "Total detail records found: 1",
@@ -773,8 +773,8 @@ describe(
         "File processing aborted.",
       ];
       expect(processResult).toStrictEqual([expectedResult]);
-      // Expect the delete method to be called.
-      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the archive method to be called.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
       expect(notifications).toHaveLength(
@@ -812,7 +812,7 @@ describe(
       const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
-        `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
         "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 1",
         "Total detail records found: 0",
@@ -827,8 +827,8 @@ describe(
         "File processing aborted.",
       ];
       expect(processResult).toStrictEqual([expectedResult]);
-      // Expect the delete method to be called.
-      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the archive method to be called.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
       expect(notifications).toHaveLength(
@@ -866,7 +866,7 @@ describe(
       const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
-        `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
         "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 1",
         "Total detail records found: 0",
@@ -881,8 +881,8 @@ describe(
         "File processing aborted.",
       ];
       expect(processResult).toStrictEqual([expectedResult]);
-      // Expect the delete method to be called.
-      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the archive method to be called.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
       expect(notifications).toHaveLength(
@@ -922,7 +922,7 @@ describe(
       const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
-        `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
         "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 1",
         "Total detail records found: 1",
@@ -938,8 +938,8 @@ describe(
         "File processing aborted.",
       ];
       expect(processResult).toStrictEqual([expectedResult]);
-      // Expect the delete method to be called.
-      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the archive method to be called.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
       expect(notifications).toHaveLength(
@@ -1004,7 +1004,7 @@ describe(
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `Disbursement ${disbursement.id}, enrolment confirmed.`,
-        `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
         "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 2",
@@ -1018,8 +1018,8 @@ describe(
         "Disbursement 1119353191, record failed to process due to reason: Invalid enrolment confirmation flag.",
       ];
       expect(processResult).toStrictEqual([expectedResult]);
-      // Expect the delete method to be called.
-      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the archive method to be called.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
       expect(notifications).toHaveLength(
@@ -1084,7 +1084,7 @@ describe(
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
         `Disbursement ${disbursement.id}, enrolment confirmed.`,
-        `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
         "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 2",
@@ -1098,8 +1098,8 @@ describe(
         "Disbursement 1119353191, record failed to process due to reason: Invalid enrolment confirmation date, Invalid pay to school amount.",
       ];
       expect(processResult).toStrictEqual([expectedResult]);
-      // Expect the delete method to be called.
-      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the archive method to be called.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
       expect(notifications).toHaveLength(
@@ -1161,7 +1161,7 @@ describe(
       const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
-        `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
         "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 2",
@@ -1178,8 +1178,8 @@ describe(
         `Disbursement ${disbursement.id}, record failed to process due to reason: The enrolment cannot be confirmed as enrolment confirmation date is not within the valid approval period.`,
       ];
       expect(processResult).toStrictEqual([expectedResult]);
-      // Expect the delete method to be called.
-      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the archive method to be called.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
       expect(notifications).toHaveLength(
@@ -1239,7 +1239,7 @@ describe(
       const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
-        `The file ${confirmEnrolmentResponseFile} has been deleted after processing.`,
+        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
         "Notification has been created to send email to integration contacts.",
         "Total file parsing errors: 0",
         "Total detail records found: 2",
@@ -1256,8 +1256,8 @@ describe(
         `Disbursement ${disbursement.id}, record failed to process due to reason: The enrolment cannot be confirmed as enrolment confirmation date is not within the valid approval period.`,
       ];
       expect(processResult).toStrictEqual([expectedResult]);
-      // Expect the delete method to be called.
-      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the archive method to be called.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
       expect(notifications).toHaveLength(

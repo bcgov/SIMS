@@ -210,7 +210,7 @@ export class SINValidationProcessingService {
     }
 
     try {
-      await this.sinValidationIntegrationService.deleteFile(remoteFilePath);
+      await this.sinValidationIntegrationService.archiveFile(remoteFilePath);
     } catch (error) {
       // Log the error but allow the process to continue.
       // If there was an issue only during the file removal, it will be

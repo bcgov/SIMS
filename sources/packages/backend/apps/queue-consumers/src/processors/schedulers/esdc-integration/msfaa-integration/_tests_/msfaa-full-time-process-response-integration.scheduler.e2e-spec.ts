@@ -160,8 +160,8 @@ describe(
           errorsSummary: [],
         },
       ]);
-      // Assert that the file was deleted from SFTP.
-      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Assert that the file was archived from SFTP.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
       // Find the updated MSFAA records previously created.
       const msfaaReactivatedRecord = await db.msfaaNumber.findOne({
         select: {

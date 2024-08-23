@@ -101,8 +101,8 @@ describe(
           `Error downloading and parsing the file ${downloadedFile}. The E-Cert file has an invalid record type code on header.`,
         ]),
       ).toBe(true);
-      // The file is not expected to be deleted from SFTP.
-      expect(sftpClientMock.delete).not.toHaveBeenCalled();
+      // The file is not expected to be archived on SFTP.
+      expect(sftpClientMock.rename).not.toHaveBeenCalled();
     });
 
     it("Should log 'Invalid record type' error when the record type of footer is invalid.", async () => {
@@ -137,8 +137,8 @@ describe(
           `Error downloading and parsing the file ${downloadedFile}. The E-Cert file has an invalid record type code on trailer.`,
         ]),
       ).toBe(true);
-      // The file is not expected to be deleted from SFTP.
-      expect(sftpClientMock.delete).not.toHaveBeenCalled();
+      // The file is not expected to be archived on SFTP.
+      expect(sftpClientMock.rename).not.toHaveBeenCalled();
     });
 
     it("Should log 'Invalid number of records' error when the number of records in footer is invalid.", async () => {
@@ -173,8 +173,8 @@ describe(
           `Error downloading and parsing the file ${downloadedFile}. The E-Cert file has invalid number of records.`,
         ]),
       ).toBe(true);
-      // The file is not expected to be deleted from SFTP.
-      expect(sftpClientMock.delete).not.toHaveBeenCalled();
+      // The file is not expected to be archived on SFTP.
+      expect(sftpClientMock.rename).not.toHaveBeenCalled();
     });
 
     it("Should log 'SIN Hash validation failed' error when the footer has an invalid SIN total hash.", async () => {
@@ -209,8 +209,8 @@ describe(
           `Error downloading and parsing the file ${downloadedFile}. The E-Cert file has TotalSINHash inconsistent with the total sum of sin in the records.`,
         ]),
       ).toBe(true);
-      // The file is not expected to be deleted from SFTP.
-      expect(sftpClientMock.delete).not.toHaveBeenCalled();
+      // The file is not expected to be archived on SFTP.
+      expect(sftpClientMock.rename).not.toHaveBeenCalled();
     });
 
     it("Should log 'Unknown error code' error when one or more error codes received is not in the system.", async () => {
@@ -242,8 +242,8 @@ describe(
           "The following error codes are unknown to the system: UKN-00200.",
         ]),
       ).toBe(true);
-      // The file is not expected to be deleted from SFTP.
-      expect(sftpClientMock.delete).not.toHaveBeenCalled();
+      // The file is not expected to be archived on SFTP.
+      expect(sftpClientMock.rename).not.toHaveBeenCalled();
     });
 
     it("Should import the feedback error file and create disbursement feedback error when the document number is valid and all the error codes received are present in the system.", async () => {
@@ -277,8 +277,8 @@ describe(
           `Disbursement feedback error created for document number ${SHARED_DOCUMENT_NUMBER} at line 2.`,
         ]),
       ).toBe(true);
-      // When all the records are processed successfully, expect the file to be deleted from SFTP.
-      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // When all the records are processed successfully, expect the file to be archived on SFTP.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
 
       // Assert imported feedback errors.
       const [disbursementSchedule] =
@@ -353,8 +353,8 @@ describe(
             "Error processing the record for document number 8888 at line 3. Disbursement for document number 8888 not found.",
           ]),
         ).toBe(true);
-        // The file is not expected to be deleted from SFTP.
-        expect(sftpClientMock.delete).not.toHaveBeenCalled();
+        // The file is not expected to be archived on SFTP.
+        expect(sftpClientMock.rename).not.toHaveBeenCalled();
 
         // Assert imported feedback errors.
         const [disbursementSchedule] =
@@ -423,8 +423,8 @@ describe(
           `Disbursement feedback error created for document number ${SHARED_DOCUMENT_NUMBER} at line 2.`,
         ]),
       ).toBe(true);
-      // When all the records are processed successfully, expect the file to be deleted from SFTP.
-      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // When all the records are processed successfully, expect the file to be archived on SFTP.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
 
       // Assert
       const notificationCount = await db.notification.count({

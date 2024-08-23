@@ -9,6 +9,11 @@ import { FILE_DEFAULT_ENCODING } from "@sims/services/constants";
 import { LINE_BREAK_SPLIT_REGEX } from "@sims/integrations/constants";
 
 /**
+ * Archive directory.
+ */
+const ARCHIVE_DIRECTORY = "\\Archive\\";
+
+/**
  * Provides the basic features to enable the SFTP integration.
  */
 export abstract class SFTPIntegrationBase<DownloadType> {
@@ -262,13 +267,15 @@ export abstract class SFTPIntegrationBase<DownloadType> {
   }
 
   /**
-   * Delete a file from SFTP.
+   * Archive a file on SFTP to the "Archive\" directory in the original file folder.
    * @param remoteFilePath full remote file path with file name.
    */
-  async deleteFile(remoteFilePath: string): Promise<void> {
+  async archiveFile(remoteFilePath: string): Promise<void> {
     const client = await this.getClient();
     try {
-      await client.delete(remoteFilePath);
+      // Extract the directory from the file path.
+      const directoryPath = path.dirname(remoteFilePath);
+      await client.rename(remoteFilePath, directoryPath + ARCHIVE_DIRECTORY);
     } finally {
       await SshService.closeQuietly(client);
     }

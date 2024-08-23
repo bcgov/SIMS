@@ -159,7 +159,7 @@ export class DisbursementReceiptProcessingService {
 
     try {
       //Deleting the file once it has been processed.
-      await this.integrationService.deleteFile(remoteFilePath);
+      await this.integrationService.archiveFile(remoteFilePath);
     } catch (error) {
       result.errorsSummary.push(
         `Error while deleting disbursement receipt file: ${remoteFilePath}`,

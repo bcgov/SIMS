@@ -89,8 +89,8 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     // Act
     await processor.processSFASIntegrationFiles(job);
     // Assert
-    // Expect the file was deleted from SFTP.
-    expect(sftpClientMock.delete).toHaveBeenCalled();
+    // Expect the file was archived on SFTP.
+    expect(sftpClientMock.rename).toHaveBeenCalled();
     const studentRestrictionsCount = await db.studentRestriction.count({
       where: {
         student: { id: sharedStudent.id },
@@ -133,8 +133,8 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       // Act
       await processor.processSFASIntegrationFiles(job);
       // Assert
-      // Expect the file was deleted from SFTP.
-      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the file was archived on SFTP.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect a total of 5 restrictions to be inserted.
       // Two originally inserted restrictions (LGCY & B6B) from before the file processing and then two AF restrictions and one SSR restriction added from the file import.
       const studentRestrictions = await db.studentRestriction.find({
@@ -176,8 +176,8 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         job,
       );
       // Assert
-      // Expect the file was deleted from SFTP.
-      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the file was archived on SFTP.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the file contains 3 records.
       expect(processingResults[0].summary[1]).toBe("File contains 3 records.");
       const startDate = getISODateOnlyString("2023-08-01");

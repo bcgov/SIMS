@@ -93,12 +93,12 @@ export class MSFAAResponseProcessingService {
       }
     }
     try {
-      await this.msfaaService.deleteFile(responseFile.filePath);
+      await this.msfaaService.archiveFile(responseFile.filePath);
     } catch (error) {
       // Log the error but allow the process to continue.
-      // If there was an issue only during the file removal, it will be
-      // processed again and could be deleted in the second attempt.
-      const logMessage = `Error while deleting MSFAA response file: ${responseFile.filePath}`;
+      // If there was an issue only during the file archiving, it will be
+      // processed again and could be archived in the second attempt.
+      const logMessage = `Error while archiving MSFAA response file: ${responseFile.filePath}`;
       this.logger.error(logMessage);
       result.errorsSummary.push(logMessage);
     }

@@ -151,7 +151,7 @@ export class StudentLoanBalancesProcessingService {
       }
     } finally {
       try {
-        await this.studentLoanBalancesIntegrationService.deleteFile(
+        await this.studentLoanBalancesIntegrationService.archiveFile(
           remoteFilePath,
         );
       } catch (error: unknown) {

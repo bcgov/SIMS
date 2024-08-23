@@ -25,6 +25,7 @@ import {
 import { OfferingIntensity } from "@sims/sims-db";
 import { FILE_DEFAULT_ENCODING } from "@sims/services/constants";
 import { LINE_BREAK_SPLIT_REGEX } from "@sims/integrations/constants";
+import path from "path";
 
 /**
  * Manages the creation of the content files that needs to be sent
@@ -236,19 +237,6 @@ export class MSFAAIntegrationService extends SFTPIntegrationBase<MSFAASFTPRespon
         receivedRecords,
         cancelledRecords,
       };
-    } finally {
-      await SshService.closeQuietly(client);
-    }
-  }
-
-  /**
-   * Delete a file from SFTP.
-   * @param filePath Full path of the file to be deleted.
-   */
-  async deleteFile(filePath: string): Promise<void> {
-    const client = await this.getClient();
-    try {
-      await client.delete(filePath);
     } finally {
       await SshService.closeQuietly(client);
     }

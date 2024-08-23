@@ -76,7 +76,7 @@ export class FedRestrictionProcessingService {
       // Only the most updated file matters because it represents the entire data snapshot.
       for (const remoteFilePath of filePaths) {
         try {
-          await this.integrationService.deleteFile(remoteFilePath);
+          await this.integrationService.archiveFile(remoteFilePath);
         } catch (error) {
           result.errorsSummary.push(
             `Error while deleting federal restrictions file: ${remoteFilePath}`,

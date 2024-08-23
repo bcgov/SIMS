@@ -284,7 +284,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
   /**
    * Download all files from E-Cert Response folder on SFTP and process them all.
    * @param processSummary process summary of all files processed.
-   * @param eCertIntegrationService Integration service to read and delete the files.
+   * @param eCertIntegrationService Integration service to read and archive the files.
    * @param fileCode ECert response file code to be processed.
    * @param offeringIntensity offering intensity.
    */
@@ -387,7 +387,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
       processSummary.error(`Error processing the file ${filePath}.`, error);
     } finally {
       if (!processSummary.getLogLevelSum().error) {
-        await this.deleteFile(
+        await this.archiveFile(
           eCertIntegrationService,
           filePath,
           processSummary,
@@ -509,24 +509,24 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
   }
 
   /**
-   * Delete the feedback file after processing.
+   * Archives the feedback file after processing.
    * @param eCertIntegrationService integration service.
    * @param filePath file path.
    * @param processSummary process summary.
    */
-  private async deleteFile(
+  private async archiveFile(
     eCertIntegrationService: ECertIntegrationService,
     filePath: string,
     processSummary: ProcessSummary,
   ) {
     try {
-      await eCertIntegrationService.deleteFile(filePath);
+      await eCertIntegrationService.archiveFile(filePath);
     } catch (error) {
       // Log the error but allow the process to continue.
-      // If there was an issue only during the file removal, it will be
-      // processed again and could be deleted in the second attempt.
+      // If there was an issue only during the file archiving, it will be
+      // processed again and could be archived in the second attempt.
       processSummary.error(
-        `Error while deleting E-Cert response file: ${filePath}.`,
+        `Error while archiving E-Cert response file: ${filePath}.`,
         error,
       );
     }
