@@ -32,24 +32,20 @@ export class ClamAVService {
    * null if the stream could not be scanned for viruses.
    */
   async scanFile(stream: Readable): Promise<VirusScanCode> {
-    const virusScanResult = {
-      isInfected: null,
-      errorCode: "",
-    };
     try {
       if (!this.scanner) {
         await this.initClam();
       }
       const { isInfected } = await this.scanner.scanStream(stream);
-      return { ...virusScanResult, isInfected };
+      return { isInfected };
     } catch (err) {
       if (err.code === "ECONNREFUSED") {
-        return { ...virusScanResult, errorCode: CONNECTION_FAILED };
+        return { errorCode: CONNECTION_FAILED };
       }
       if (err.code === "ENOTFOUND") {
-        return { ...virusScanResult, errorCode: SERVER_UNAVAILABLE };
+        return { errorCode: SERVER_UNAVAILABLE };
       }
-      return { ...virusScanResult, errorCode: UNKNOWN_ERROR };
+      return { errorCode: UNKNOWN_ERROR };
     }
   }
 }

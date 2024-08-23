@@ -30,34 +30,39 @@ export class VirusScanProcessor {
   ): Promise<VirusScanResult> {
     const processSummary = new ProcessSummary();
     let isInfected: boolean = null;
-    let isServerAvailable = true;
+    let serverAvailability = "uncertain";
     processSummary.info("Starting virus scan.");
     try {
       isInfected = await this.studentFileService.scanFile(
         job.data,
+        job.attemptsMade,
         processSummary,
       );
+      serverAvailability = "available";
       processSummary.info("Completed virus scanning for the file.");
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
-        const errorMessage = `Unable to scan the file ${job.data.uniqueFileName} for viruses.`;
+        const unableToScanMessage = `Unable to scan the file ${job.data.uniqueFileName} for viruses.`;
+        let errorMessage = "";
         if (error.name === FILE_NOT_FOUND) {
-          // If the file is not present in the database,
-          // remove the file from the virus scan queue.
+          // If the file is not present in the database, remove the file from the virus scan queue.
           await job.discard();
-          processSummary.warn(
-            `File ${job.data.uniqueFileName} is not found or has already been scanned for viruses. Scanning the file for viruses is aborted.`,
-          );
+          errorMessage = `File ${job.data.uniqueFileName} is not found or has already been scanned for viruses. Scanning the file for viruses is aborted.`;
         } else if (error.name === CONNECTION_FAILED) {
-          processSummary.error(
-            `${errorMessage} Connection to ClamAV server failed.`,
-          );
+          serverAvailability = "available";
+          errorMessage = `${unableToScanMessage} Connection to ClamAV server failed.`;
         } else if (error.name === SERVER_UNAVAILABLE) {
-          isServerAvailable = false;
-          processSummary.error(`${errorMessage} ClamAV server is unavailable.`);
+          serverAvailability = "unavailable";
+          errorMessage = `${unableToScanMessage} ClamAV server is unavailable.`;
         } else {
-          processSummary.error(`${errorMessage} Unknown error.`);
+          errorMessage = `${unableToScanMessage} Unknown error.`;
         }
+        processSummary.info(`Server availability: ${serverAvailability}.`);
+        processSummary.info(
+          `Number of attempts made: ${job.attemptsMade + 1}.`,
+        );
+        processSummary.error(errorMessage);
+        throw new Error(errorMessage);
       }
     } finally {
       this.logger.logProcessSummary(processSummary);
@@ -66,7 +71,7 @@ export class VirusScanProcessor {
     return {
       fileProcessed: job.data.fileName,
       isInfected,
-      isServerAvailable,
+      serverAvailability,
     };
   }
 

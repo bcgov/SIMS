@@ -29,11 +29,13 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
    * Scans the file with the provided unique filename
    * for any viruses.
    * @param jobData virus scan job data.
+   * @param attemptsMade number of attempts made to run this job.
    * @param processSummary process summary logs.
    * @returns boolean true if the file is virus infected, false otherwise.
    */
   async scanFile(
     jobData: VirusScanQueueInDTO,
+    attemptsMade: number,
     processSummary: ProcessSummary,
   ): Promise<boolean> {
     const studentFile = await this.getStudentFile(jobData.uniqueFileName);
@@ -43,29 +45,31 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         FILE_NOT_FOUND,
       );
     }
+
     const stream = new Readable();
     stream.push(studentFile.fileContent);
     stream.push(null);
     const virusScanCode = await this.clamAVService.scanFile(stream);
     if (virusScanCode.isInfected == null) {
-      // If the file could not be scanned for any reason,
-      // update the file scan status to Pending to keep a
-      // track of the files that haven't been scanned yet.
-      await this.updateFileScanStatus(
-        studentFile.uniqueFileName,
-        virusScanCode.isInfected,
-      );
+      if (attemptsMade === 11) {
+        await this.updateFileScanStatus(
+          studentFile.uniqueFileName,
+          virusScanCode.isInfected,
+          studentFile.fileName,
+        );
+      }
       throw new CustomNamedError(
         `Unable to scan the file ${studentFile.uniqueFileName}`,
         virusScanCode.errorCode,
       );
     }
+
     let fileName = studentFile.fileName;
     if (virusScanCode.isInfected) {
       processSummary.warn("Virus found.");
       const fileInfo = path.parse(studentFile.fileName);
       fileName = `${fileInfo.name}${INFECTED_FILENAME_SUFFIX}${fileInfo.ext}`;
-    } else if (virusScanCode.isInfected !== null) {
+    } else {
       processSummary.info("No virus found.");
     }
     await this.updateFileScanStatus(

@@ -6,10 +6,10 @@ export interface VirusScanQueueInDTO {
 export interface VirusScanResult {
   fileProcessed: string;
   isInfected: boolean;
-  isServerAvailable: boolean;
+  serverAvailability: string;
 }
 
 export interface VirusScanCode {
-  isInfected: boolean;
-  errorCode: string;
+  isInfected?: boolean;
+  errorCode?: string;
 }

@@ -46,7 +46,7 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     jest.resetAllMocks();
   });
 
-  it("Should throw an error when the student file is not found during scanning process.", async () => {
+  it("Should throw an error when the student file is not found during virus scanning.", async () => {
     // Arrange
     const studentFile = createFakeStudentFileUpload();
     studentFile.virusScanStatus = VirusScanStatus.InProgress;
@@ -63,18 +63,19 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     });
 
     // Act
-    const result = await processor.performVirusScan(mockedJob.job);
-
-    expect(result).toStrictEqual({
-      fileProcessed: studentFile.fileName,
-      isInfected: null,
-      isServerAvailable: true,
-    });
+    await expect(
+      processor.performVirusScan(mockedJob.job),
+    ).rejects.toStrictEqual(
+      new Error(
+        "File file.random is not found or has already been scanned for viruses. Scanning the file for viruses is aborted.",
+      ),
+    );
     expect(
       mockedJob.containLogMessages([
         "Log details",
         "Starting virus scan.",
-        `File file.random is not found or has already been scanned for viruses. Scanning the file for viruses is aborted.`,
+        "Server availability: uncertain.",
+        "File file.random is not found or has already been scanned for viruses. Scanning the file for viruses is aborted.",
       ]),
     ).toBe(true);
   });
@@ -96,17 +97,18 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     });
 
     // Act
-    const result = await processor.performVirusScan(mockedJob.job);
-
-    expect(result).toStrictEqual({
-      fileProcessed: studentFile.fileName,
-      isInfected: null,
-      isServerAvailable: true,
-    });
+    await expect(
+      processor.performVirusScan(mockedJob.job),
+    ).rejects.toStrictEqual(
+      new Error(
+        `Unable to scan the file ${studentFile.uniqueFileName} for viruses. Connection to ClamAV server failed.`,
+      ),
+    );
     expect(
       mockedJob.containLogMessages([
         "Log details",
         "Starting virus scan.",
+        "Server availability: available.",
         `Unable to scan the file ${studentFile.uniqueFileName} for viruses. Connection to ClamAV server failed.`,
       ]),
     ).toBe(true);
@@ -129,17 +131,18 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     });
 
     // Act
-    const result = await processor.performVirusScan(mockedJob.job);
-
-    expect(result).toStrictEqual({
-      fileProcessed: studentFile.fileName,
-      isInfected: null,
-      isServerAvailable: false,
-    });
+    await expect(
+      processor.performVirusScan(mockedJob.job),
+    ).rejects.toStrictEqual(
+      new Error(
+        `Unable to scan the file ${studentFile.uniqueFileName} for viruses. ClamAV server is unavailable.`,
+      ),
+    );
     expect(
       mockedJob.containLogMessages([
         "Log details",
         "Starting virus scan.",
+        "Server availability: unavailable.",
         `Unable to scan the file ${studentFile.uniqueFileName} for viruses. ClamAV server is unavailable.`,
       ]),
     ).toBe(true);
@@ -152,7 +155,7 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     await db.studentFile.save(studentFile);
     clamAVServiceMock.scanFile = jest.fn(() =>
       Promise.resolve({
-        isInfected: null,
+        isInfected: undefined,
         errorCode: UNKNOWN_ERROR,
       }),
     ); // Queued job.
@@ -162,20 +165,26 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     });
 
     // Act
-    const result = await processor.performVirusScan(mockedJob.job);
-
-    expect(result).toStrictEqual({
-      fileProcessed: studentFile.fileName,
-      isInfected: null,
-      isServerAvailable: true,
-    });
+    await expect(
+      processor.performVirusScan(mockedJob.job),
+    ).rejects.toStrictEqual(
+      new Error(
+        `Unable to scan the file ${studentFile.uniqueFileName} for viruses. Unknown error.`,
+      ),
+    );
     expect(
       mockedJob.containLogMessages([
         "Log details",
         "Starting virus scan.",
+        "Server availability: uncertain.",
         `Unable to scan the file ${studentFile.uniqueFileName} for viruses. Unknown error.`,
       ]),
     ).toBe(true);
+    const scannedStudentFile = await db.studentFile.findOneBy({
+      id: studentFile.id,
+    });
+    expect(scannedStudentFile.virusScanStatus).toBe(VirusScanStatus.InProgress);
+    expect(scannedStudentFile.fileName).toBe(studentFile.fileName);
   });
 
   it("Should update the file name and status when virus is detected.", async () => {
@@ -201,7 +210,7 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     expect(result).toStrictEqual({
       fileProcessed: studentFile.fileName,
       isInfected: true,
-      isServerAvailable: true,
+      serverAvailability: "available",
     });
     expect(
       mockedJob.containLogMessages([
@@ -246,7 +255,7 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     expect(result).toStrictEqual({
       fileProcessed: studentFile.fileName,
       isInfected: false,
-      isServerAvailable: true,
+      serverAvailability: "available",
     });
     expect(
       mockedJob.containLogMessages([
