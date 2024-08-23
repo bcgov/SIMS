@@ -134,8 +134,8 @@ describe(
           errorsSummary: [],
         },
       ]);
-      // Assert that the file was deleted from SFTP.
-      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Assert that the file was archived on SFTP.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
       // Find the updated MSFAA records previously created.
       const msfaaIDs = createdMSFAARecords.map((msfaa) => msfaa.id);
       const msfaaUpdatedRecords = await db.msfaaNumber.find({
@@ -277,8 +277,8 @@ describe(
           errorsSummary: [],
         },
       ]);
-      // Assert that the file was deleted from SFTP.
-      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Assert that the file was archived on SFTP.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
       // Find the updated MSFAA records previously created.
       const msfaaReactivatedRecord = await db.msfaaNumber.findOne({
         select: {
@@ -403,8 +403,8 @@ describe(
           ],
         },
       ]);
-      // Assert that the file was deleted from SFTP.
-      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Assert that the file was archived on SFTP.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
       // Find the updated MSFAA records previously created.
       const msfaaIDs = createdMSFAARecords.map((msfaa) => msfaa.id);
       const msfaaUpdatedRecords = await db.msfaaNumber.find({
@@ -455,8 +455,8 @@ describe(
           ],
         },
       ]);
-      // Assert that the file was not deleted from SFTP.
-      expect(sftpClientMock.delete).not.toHaveBeenCalled();
+      // Assert that the file was not archived on SFTP.
+      expect(sftpClientMock.rename).not.toHaveBeenCalled();
     });
 
     it("Should throw an error when the MSFAA file contains an invalid record count.", async () => {
@@ -482,8 +482,8 @@ describe(
           ],
         },
       ]);
-      // Assert that the file was not deleted from SFTP.
-      expect(sftpClientMock.delete).not.toHaveBeenCalled();
+      // Assert that the file was not archived on SFTP.
+      expect(sftpClientMock.rename).not.toHaveBeenCalled();
     });
 
     it("Should throw an error when the MSFAA file contains an invalid header code.", async () => {
@@ -514,8 +514,8 @@ describe(
           ],
         },
       ]);
-      // Assert that the file was not deleted from SFTP.
-      expect(sftpClientMock.delete).not.toHaveBeenCalled();
+      // Assert that the file was not archived on SFTP.
+      expect(sftpClientMock.rename).not.toHaveBeenCalled();
     });
 
     it("Should throw an error when the MSFAA file contains an invalid footer code.", async () => {
@@ -548,8 +548,8 @@ describe(
           ],
         },
       ]);
-      // Assert that the file was not deleted from SFTP.
-      expect(sftpClientMock.delete).not.toHaveBeenCalled();
+      // Assert that the file was not archived on SFTP.
+      expect(sftpClientMock.rename).not.toHaveBeenCalled();
     });
   },
 );

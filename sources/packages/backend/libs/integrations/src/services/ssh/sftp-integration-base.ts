@@ -267,7 +267,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
   }
 
   /**
-   * Archive a file on SFTP to the "Archive\" directory in the original file folder.
+   * Archives a file on SFTP to the "Archive\" directory in the original file folder.
    * @param remoteFilePath full remote file path with file name.
    */
   async archiveFile(remoteFilePath: string): Promise<void> {
@@ -275,7 +275,11 @@ export abstract class SFTPIntegrationBase<DownloadType> {
     try {
       // Extract the directory from the file path.
       const directoryPath = path.dirname(remoteFilePath);
-      await client.rename(remoteFilePath, directoryPath + ARCHIVE_DIRECTORY);
+      const fileBaseName = path.basename(remoteFilePath);
+      await client.rename(
+        remoteFilePath,
+        directoryPath + ARCHIVE_DIRECTORY + fileBaseName,
+      );
     } finally {
       await SshService.closeQuietly(client);
     }
