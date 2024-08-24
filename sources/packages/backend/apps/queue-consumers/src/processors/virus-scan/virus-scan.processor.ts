@@ -42,7 +42,6 @@ export class VirusScanProcessor {
       processSummary.info("Completed virus scanning for the file.");
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
-        const unableToScanMessage = `Unable to scan the file ${job.data.uniqueFileName} for viruses.`;
         let errorMessage = "";
         if (error.name === FILE_NOT_FOUND) {
           // If the file is not present in the database, remove the file from the virus scan queue.
@@ -50,14 +49,16 @@ export class VirusScanProcessor {
           errorMessage = `File ${job.data.uniqueFileName} is not found or has already been scanned for viruses. Scanning the file for viruses is aborted.`;
         } else if (error.name === CONNECTION_FAILED) {
           serverAvailability = "available";
-          errorMessage = `${unableToScanMessage} Connection to ClamAV server failed.`;
+          errorMessage = `${error.message} Connection to ClamAV server failed.`;
         } else if (error.name === SERVER_UNAVAILABLE) {
           serverAvailability = "unavailable";
-          errorMessage = `${unableToScanMessage} ClamAV server is unavailable.`;
+          errorMessage = `${error.message} ClamAV server is unavailable.`;
         } else {
-          errorMessage = `${unableToScanMessage} Unknown error.`;
+          errorMessage = `${error.message} Unknown error.`;
         }
-        processSummary.info(`Server availability: ${serverAvailability}.`);
+        processSummary.info(
+          `ClamAV server availability: ${serverAvailability}.`,
+        );
         processSummary.info(
           `Number of attempts made: ${job.attemptsMade + 1}.`,
         );

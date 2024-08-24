@@ -50,7 +50,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     stream.push(studentFile.fileContent);
     stream.push(null);
     const virusScanCode = await this.clamAVService.scanFile(stream);
-    if (virusScanCode.isInfected == null) {
+    if (virusScanCode.errorCode || virusScanCode.isInfected === null) {
       if (attemptsMade === 11) {
         await this.updateFileScanStatus(
           studentFile.uniqueFileName,
@@ -59,7 +59,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         );
       }
       throw new CustomNamedError(
-        `Unable to scan the file ${studentFile.uniqueFileName}`,
+        `Unable to scan the file ${studentFile.uniqueFileName}.`,
         virusScanCode.errorCode,
       );
     }
