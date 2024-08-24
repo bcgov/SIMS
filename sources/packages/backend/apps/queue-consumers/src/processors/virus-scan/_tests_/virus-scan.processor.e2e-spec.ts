@@ -63,19 +63,17 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     });
 
     // Act
+    const errorMessage =
+      "File file.random is not found or has already been scanned for viruses. Scanning the file for viruses is aborted.";
     await expect(
       processor.performVirusScan(mockedJob.job),
-    ).rejects.toStrictEqual(
-      new Error(
-        "File file.random is not found or has already been scanned for viruses. Scanning the file for viruses is aborted.",
-      ),
-    );
+    ).rejects.toStrictEqual(new Error(errorMessage));
     expect(
       mockedJob.containLogMessages([
         "Log details",
         "Starting virus scan.",
-        "Server availability: uncertain.",
-        "File file.random is not found or has already been scanned for viruses. Scanning the file for viruses is aborted.",
+        "ClamAV server availability: uncertain.",
+        errorMessage,
       ]),
     ).toBe(true);
   });
@@ -97,19 +95,16 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     });
 
     // Act
+    const errorMessage = `Unable to scan the file ${studentFile.uniqueFileName} for viruses. Connection to ClamAV server failed.`;
     await expect(
       processor.performVirusScan(mockedJob.job),
-    ).rejects.toStrictEqual(
-      new Error(
-        `Unable to scan the file ${studentFile.uniqueFileName} for viruses. Connection to ClamAV server failed.`,
-      ),
-    );
+    ).rejects.toStrictEqual(new Error(errorMessage));
     expect(
       mockedJob.containLogMessages([
         "Log details",
         "Starting virus scan.",
-        "Server availability: available.",
-        `Unable to scan the file ${studentFile.uniqueFileName} for viruses. Connection to ClamAV server failed.`,
+        "ClamAV server availability: available.",
+        errorMessage,
       ]),
     ).toBe(true);
   });
@@ -131,19 +126,16 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     });
 
     // Act
+    const errorMessage = `Unable to scan the file ${studentFile.uniqueFileName} for viruses. ClamAV server is unavailable.`;
     await expect(
       processor.performVirusScan(mockedJob.job),
-    ).rejects.toStrictEqual(
-      new Error(
-        `Unable to scan the file ${studentFile.uniqueFileName} for viruses. ClamAV server is unavailable.`,
-      ),
-    );
+    ).rejects.toStrictEqual(new Error(errorMessage));
     expect(
       mockedJob.containLogMessages([
         "Log details",
         "Starting virus scan.",
-        "Server availability: unavailable.",
-        `Unable to scan the file ${studentFile.uniqueFileName} for viruses. ClamAV server is unavailable.`,
+        "ClamAV server availability: unavailable.",
+        errorMessage,
       ]),
     ).toBe(true);
   });
@@ -165,19 +157,16 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     });
 
     // Act
+    const errorMessage = `Unable to scan the file ${studentFile.uniqueFileName} for viruses. Unknown error.`;
     await expect(
       processor.performVirusScan(mockedJob.job),
-    ).rejects.toStrictEqual(
-      new Error(
-        `Unable to scan the file ${studentFile.uniqueFileName} for viruses. Unknown error.`,
-      ),
-    );
+    ).rejects.toStrictEqual(new Error(errorMessage));
     expect(
       mockedJob.containLogMessages([
         "Log details",
         "Starting virus scan.",
-        "Server availability: uncertain.",
-        `Unable to scan the file ${studentFile.uniqueFileName} for viruses. Unknown error.`,
+        "ClamAV server availability: uncertain.",
+        errorMessage,
       ]),
     ).toBe(true);
     const scannedStudentFile = await db.studentFile.findOneBy({

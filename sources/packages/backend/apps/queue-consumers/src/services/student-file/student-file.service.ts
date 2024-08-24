@@ -59,7 +59,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         );
       }
       throw new CustomNamedError(
-        `Unable to scan the file ${studentFile.uniqueFileName}.`,
+        `Unable to scan the file ${studentFile.uniqueFileName} for viruses.`,
         virusScanCode.errorCode,
       );
     }
