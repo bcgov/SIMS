@@ -56,7 +56,7 @@ export default defineComponent({
     const relatedParentPartners = ref([] as MenuModel[]);
     const studentMenu = ref<StudentApplicationMenu>({
       studentApplication: {
-        label: "Student",
+        label: "Application",
         icon: "mdi-school-outline",
         command: () => {
           router.push({

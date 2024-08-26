@@ -2,9 +2,9 @@
   <v-card>
     <v-container>
       <body-header
-        title="History"
+        title="Completed changes"
         class="m-1"
-        subTitle="A history of applications"
+        subTitle="Any events that resulted in a change to the students assessment."
         :recordsCount="assessmentHistory.length"
       >
       </body-header>
