@@ -29,6 +29,8 @@ jobs:
       BUILD_REF: ${{ inputs.formioTag }}
       HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
+      FORMIO_ROOT_EMAIL: ${{ secrets.FORMS_SA_USER_NAME }}
+      FORMIO_ROOT_PASSWORD: ${{ secrets.FORMS_SA_PASSWORD }}
     steps:
       - name: Print env
         run: |

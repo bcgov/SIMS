@@ -8,7 +8,7 @@ export APP_NAME := $(or $(PROJECT_NAME), sims)
 export TEMPLATE_FILE_NAME := $(or $(TEMPLATE_FILE_NAME), $$FILE)
 export BUILD_REF := $(or $(BUILD_REF), $(GIT_LOCAL_BRANCH))
 export BUILD_NAMESPACE := $(or $(BUILD_NAMESPACE), 0c27fb-tools)
-export DOMAIN := $(or $(DOMAIN), apps.silver.devops.gov.bc.ca)
+export DOMAIN := $(or $(DOMAIN), sims.studentaidbc.ca)
 export HOST_PREFIX := $(or $(HOST_PREFIX), $$HOST_PREFIX)
 export NEW_DB := $(or $(NEW_DB), $$NEW_DB)
 export JOB_NAME := $(or $(JOB_NAME), $$JN)
@@ -86,7 +86,7 @@ define BUILD_TEMPLATE_PATH
 endef
 
 define HOST
-"$(HOST_PREFIX)aest-sims.$(DOMAIN)"
+"$(DOMAIN_PREFIX)$(DOMAIN)"
 endef
 
 define DB_SERVICE_NAME
@@ -106,7 +106,7 @@ define HAMONGO_DB_PARAM_PATH
 endef
 
 define FORMS_URL
-"$(HOST_PREFIX)aest-forms.$(DOMAIN)"
+"$(DOMAIN_PREFIX)forms.$(DOMAIN)"
 endef
 
 define SOURCE_REPOSITORY_URL
@@ -414,6 +414,9 @@ deploy-api:
 		-p MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER=$(MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER) \
 		-p MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION=$(MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION) \
 		-p MAXIMUM_IDLE_TIME_FOR_WARNING_AEST=$(MAXIMUM_IDLE_TIME_FOR_WARNING_AEST) \
+		-p TLS_CERTIFICATE=$(TLS_CERTIFICATE) \
+		-p TLS_KEY=$(TLS_KEY) \
+		-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(API))
 
@@ -470,6 +473,9 @@ deploy-queue-consumers:
 		-p ATBC_ENDPOINT=$(ATBC_ENDPOINT) \
 		-p APPLICATION_ARCHIVE_DAYS=$(APPLICATION_ARCHIVE_DAYS) \
 		-p IS_FULLTIME_ALLOWED=$(IS_FULLTIME_ALLOWED) \
+		-p TLS_CERTIFICATE=$(TLS_CERTIFICATE) \
+		-p TLS_KEY=$(TLS_KEY) \
+		-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(QUEUE_CONSUMERS))
 
@@ -496,6 +502,9 @@ deploy-load-test-gateway:
 		-p HOST_NAME=$(HOST) \
 		-p KEYCLOAK_AUTH_URL=$(KEYCLOAK_AUTH_URL) \
 		-p KEYCLOAK_REALM=$(KEYCLOAK_REALM) \
+		-p TLS_CERTIFICATE=$(TLS_CERTIFICATE) \
+		-p TLS_KEY=$(TLS_KEY) \
+		-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(LOAD_TEST_GATEWAY))
 
@@ -513,6 +522,9 @@ deploy-web:
 	-p HOST_NAME=$(HOST) \
 	-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
 	-p IMAGE_STREAM_TAG="$(WEB_BUILD_REF):$(BUILD_REF)"  \
+	-p TLS_CERTIFICATE=$(TLS_CERTIFICATE) \
+	-p TLS_KEY=$(TLS_KEY) \
+	-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
 	| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(WEB))
 
@@ -544,7 +556,6 @@ deploy-forms:
 	test -n "$(FORMS_URL)"
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_REF)"
-	test -n "$(HOST_PREFIX)"
 	test -n "$(FORMIO_ROOT_EMAIL)"
 	test -n "$(MONGODB_URI)"
 	@echo "+\n++ Deploying forms with tag: $(BUILD_REF)\n+"
@@ -553,9 +564,12 @@ deploy-forms:
 	-p FORMS_URL=$(FORMS_URL) \
 	-p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) \
 	-p IMAGE_STREAM_TAG="$(FORMS_BUILD_REF):$(BUILD_REF)" \
-	-p HOST_PREFIX=$(HOST_PREFIX) \
 	-p FORMIO_ROOT_EMAIL=$(FORMIO_ROOT_EMAIL) \
+	-p FORMIO_ROOT_PASSWORD=$(FORMIO_ROOT_PASSWORD)
 	-p MONGODB_URI=$(MONGODB_URI) \
+	-p TLS_CERTIFICATE=$(TLS_CERTIFICATE) \
+	-p TLS_KEY=$(TLS_KEY) \
+	-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
 	| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(FORMS_NAME))
 

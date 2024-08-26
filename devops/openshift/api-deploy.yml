@@ -239,20 +239,42 @@ objects:
   - apiVersion: route.openshift.io/v1
     kind: Route
     metadata:
-      name: ${NAME}
+      name: ${NAME}-route
+      annotations:
+        haproxy.router.openshift.io/balance: leastconn
+        haproxy.router.openshift.io/disable_cookies: "true"
+        haproxy.router.openshift.io/hsts_header: max-age=31536000;includeSubDomains;preload
+        haproxy.router.openshift.io/timeout: 30s
     spec:
       host: ${HOST_NAME}
       path: ${PATH}
       tls:
         insecureEdgeTerminationPolicy: Redirect
         termination: edge
+        certificate: |
+          -----BEGIN CERTIFICATE-----
+          ${TLS_CERTIFICATE}
+          -----END CERTIFICATE-----
+        key: |
+          -----BEGIN PRIVATE KEY-----
+          ${TLS_KEY}
+          -----END PRIVATE KEY-----
+        caCertificate: |
+          -----BEGIN CERTIFICATE-----
+          ${TLS_CA_CERTIFICATE}
+          -----END CERTIFICATE-----
       to:
         kind: Service
         name: ${NAME}
   - apiVersion: route.openshift.io/v1
     kind: Route
     metadata:
-      name: ${SWAGGER_NAME}
+      name: ${SWAGGER_NAME}-route
+      annotations:
+        haproxy.router.openshift.io/balance: leastconn
+        haproxy.router.openshift.io/disable_cookies: "true"
+        haproxy.router.openshift.io/hsts_header: max-age=31536000;includeSubDomains;preload
+        haproxy.router.openshift.io/timeout: 30s
     spec:
       host: ${HOST_NAME}
       path: ${SWAGGER_PATH}
@@ -261,6 +283,18 @@ objects:
       tls:
         insecureEdgeTerminationPolicy: Redirect
         termination: edge
+        certificate: |
+          -----BEGIN CERTIFICATE-----
+          ${TLS_CERTIFICATE}
+          -----END CERTIFICATE-----
+        key: |
+          -----BEGIN PRIVATE KEY-----
+          ${TLS_KEY}
+          -----END PRIVATE KEY-----
+        caCertificate: |
+          -----BEGIN CERTIFICATE-----
+          ${TLS_CA_CERTIFICATE}
+          -----END CERTIFICATE-----
       to:
         kind: Service
         name: ${NAME}
@@ -446,4 +480,10 @@ parameters:
   - name: MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION
     required: true
   - name: MAXIMUM_IDLE_TIME_FOR_WARNING_AEST
+    required: true
+  - name: TLS_CERTIFICATE
+    required: true
+  - name: TLS_KEY
+    required: true
+  - name: TLS_CA_CERTIFICATE
     required: true
