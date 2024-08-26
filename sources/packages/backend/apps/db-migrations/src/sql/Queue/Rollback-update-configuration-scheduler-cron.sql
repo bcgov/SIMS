@@ -4,7 +4,7 @@ set
     queue_configuration = jsonb_set(
         queue_configuration,
         '{cron}',
-        '"15/30 * * * *"',
+        '"0 14 * * *"',
         false
     )
 where
@@ -16,7 +16,7 @@ set
     queue_configuration = jsonb_set(
         queue_configuration,
         '{cron}',
-        '"0 5 * * *"',
+        '"0 2,8,14,20 * * *"',
         false
     )
 where
@@ -28,7 +28,7 @@ set
     queue_configuration = jsonb_set(
         queue_configuration,
         '{cron}',
-        '"0 16 * * *"',
+        '"0 5,11,17,23 * * *"',
         false
     )
 where
@@ -40,7 +40,7 @@ set
     queue_configuration = jsonb_set(
         queue_configuration,
         '{cron}',
-        '"0 14 * * *"',
+        '"0 17 * * *"',
         false
     )
 where
@@ -52,7 +52,7 @@ set
     queue_configuration = jsonb_set(
         queue_configuration,
         '{cron}',
-        '"0 14 * * *"',
+        '"0 17 * * *"',
         false
     )
 where
@@ -64,7 +64,7 @@ set
     queue_configuration = jsonb_set(
         queue_configuration,
         '{cron}',
-        '"0 8 * * *"',
+        '"0 14 * * *"',
         false
     )
 where
@@ -76,7 +76,7 @@ set
     queue_configuration = jsonb_set(
         queue_configuration,
         '{cron}',
-        '"0 8 * * *"',
+        '"0 14 * * *"',
         false
     )
 where
@@ -88,7 +88,7 @@ set
     queue_configuration = jsonb_set(
         queue_configuration,
         '{cron}',
-        '"0 12 * * *"',
+        '"0 17 * * *"',
         false
     )
 where
@@ -100,7 +100,7 @@ set
     queue_configuration = jsonb_set(
         queue_configuration,
         '{cron}',
-        '"0 9 * * *"',
+        '"0 14 * * *"',
         false
     )
 where
@@ -112,7 +112,7 @@ set
     queue_configuration = jsonb_set(
         queue_configuration,
         '{cron}',
-        '"0 6 * * *"',
+        '"0 14 * * *"',
         false
     )
 where
@@ -124,7 +124,7 @@ set
     queue_configuration = jsonb_set(
         queue_configuration,
         '{cron}',
-        '"0 20 * * *"',
+        '"0 17 * * *"',
         false
     )
 where
@@ -136,7 +136,7 @@ set
     queue_configuration = jsonb_set(
         queue_configuration,
         '{cron}',
-        '"0 13 * * *"',
+        '"0 11 * * *"',
         false
     )
 where
@@ -148,7 +148,7 @@ set
     queue_configuration = jsonb_set(
         queue_configuration,
         '{cron}',
-        '"30 18 * * *"',
+        '"0 17 * * *"',
         false
     )
 where
@@ -160,7 +160,7 @@ set
     queue_configuration = jsonb_set(
         queue_configuration,
         '{cron}',
-        '"0 6 * * *"',
+        '"0 14 * * *"',
         false
     )
 where
@@ -172,7 +172,7 @@ set
     queue_configuration = jsonb_set(
         queue_configuration,
         '{cron}',
-        '"45 09 * * *"',
+        '"0 14 * * *"',
         false
     )
 where
@@ -184,7 +184,7 @@ set
     queue_configuration = jsonb_set(
         queue_configuration,
         '{cron}',
-        '"0 12 * * *"',
+        '"0 17 * * *"',
         false
     )
 where
@@ -196,7 +196,7 @@ set
     queue_configuration = jsonb_set(
         queue_configuration,
         '{cron}',
-        '"15 17 * * *"',
+        '"0 17 * * *"',
         false
     )
 where
@@ -208,7 +208,7 @@ set
     queue_configuration = jsonb_set(
         queue_configuration,
         '{cron}',
-        '"30 6 * * *"',
+        '"0 17 * * *"',
         false
     )
 where
@@ -220,7 +220,7 @@ set
     queue_configuration = jsonb_set(
         queue_configuration,
         '{cron}',
-        '"15/30 * * * *"',
+        '"0 12 * * *"',
         false
     )
 where
