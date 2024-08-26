@@ -159,7 +159,7 @@ export class DisbursementReceiptProcessingService {
     );
 
     try {
-      //Archiving the file once it has been processed.
+      // Archiving the file once it has been processed.
       const directoryPath = path.dirname(remoteFilePath);
       const fileBaseName = path.basename(remoteFilePath);
       await this.integrationService.renameFile(
