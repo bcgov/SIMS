@@ -213,9 +213,9 @@ export class SINValidationProcessingService {
       await this.sinValidationIntegrationService.archiveFile(remoteFilePath);
     } catch (error) {
       // Log the error but allow the process to continue.
-      // If there was an issue only during the file removal, it will be
-      // processed again and could be deleted in the second attempt.
-      const logMessage = `Error while deleting ESDC SIN validation response file: ${remoteFilePath}`;
+      // If there was an issue only during the file archiving, it will be
+      // processed again and could be archived in the second attempt.
+      const logMessage = `Error while archiving ESDC SIN validation response file: ${remoteFilePath}`;
       this.logger.error(logMessage);
       result.errorsSummary.push(logMessage);
     }

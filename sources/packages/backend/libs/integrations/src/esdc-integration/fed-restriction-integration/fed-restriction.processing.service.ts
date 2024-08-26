@@ -72,14 +72,14 @@ export class FedRestrictionProcessingService {
         filePaths[filePaths.length - 1],
         auditUser.id,
       );
-      // If there are more than one file, delete it.
+      // If there are more than one file, archive it.
       // Only the most updated file matters because it represents the entire data snapshot.
       for (const remoteFilePath of filePaths) {
         try {
           await this.integrationService.archiveFile(remoteFilePath);
         } catch (error) {
           result.errorsSummary.push(
-            `Error while deleting federal restrictions file: ${remoteFilePath}`,
+            `Error while archiving federal restrictions file: ${remoteFilePath}`,
           );
           result.errorsSummary.push(error);
         }

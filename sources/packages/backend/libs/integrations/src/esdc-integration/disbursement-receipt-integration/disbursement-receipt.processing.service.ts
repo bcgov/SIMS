@@ -43,7 +43,7 @@ export class DisbursementReceiptProcessingService {
 
   /**
    * Process all the available disbursement receipt files in SFTP location.
-   * Once the file is processed, it gets deleted.
+   * Once the file is processed, it gets archived.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @returns Summary details of the processing.
    */
@@ -158,11 +158,11 @@ export class DisbursementReceiptProcessingService {
     );
 
     try {
-      //Deleting the file once it has been processed.
+      //Archiving the file once it has been processed.
       await this.integrationService.archiveFile(remoteFilePath);
     } catch (error) {
       result.errorsSummary.push(
-        `Error while deleting disbursement receipt file: ${remoteFilePath}`,
+        `Error while archiving disbursement receipt file: ${remoteFilePath}`,
       );
       result.errorsSummary.push(error);
     }

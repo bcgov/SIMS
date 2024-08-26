@@ -156,9 +156,9 @@ export class StudentLoanBalancesProcessingService {
         );
       } catch (error: unknown) {
         // Log the error but allow the process to continue.
-        // If there was an issue only during the file removal, it will be
-        // processed again and could be deleted in the second attempt.
-        const logMessage = `Error while deleting Student Loan Balances response file: ${remoteFilePath}`;
+        // If there was an issue only during the file archiving, it will be
+        // processed again and could be archived in the second attempt.
+        const logMessage = `Error while archiving Student Loan Balances response file: ${remoteFilePath}`;
         childrenProcessSummary.error(logMessage);
       }
     }

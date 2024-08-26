@@ -149,7 +149,7 @@ export class SFASIntegrationProcessingService {
           await this.sfasService.archiveFile(remoteFilePath);
         } catch (error) {
           throw new Error(
-            `Error while deleting SFAS integration file: ${remoteFilePath}`,
+            `Error while archiving SFAS integration file: ${remoteFilePath}`,
             {
               cause: error,
             },
