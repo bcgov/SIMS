@@ -14,6 +14,7 @@ import {
   getISODateOnlyString,
   parseJSONError,
   processInParallel,
+  SFTP_ARCHIVE_DIRECTORY,
 } from "@sims/utilities";
 import { EntityManager } from "typeorm";
 import { ESDCFileHandler } from "../esdc-file-handler";
@@ -520,7 +521,12 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     processSummary: ProcessSummary,
   ) {
     try {
-      await eCertIntegrationService.archiveFile(filePath);
+      const directoryPath = path.dirname(filePath);
+      const fileBaseName = path.basename(filePath);
+      await eCertIntegrationService.renameFile(
+        filePath,
+        path.join(directoryPath, SFTP_ARCHIVE_DIRECTORY, fileBaseName),
+      );
     } catch (error) {
       // Log the error but allow the process to continue.
       // If there was an issue only during the file archiving, it will be

@@ -8,7 +8,11 @@ import {
 } from "@sims/integrations/services";
 import * as path from "path";
 import { ProcessSummary } from "@sims/utilities/logger";
-import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
+import {
+  CustomNamedError,
+  getISODateOnlyString,
+  SFTP_ARCHIVE_DIRECTORY,
+} from "@sims/utilities";
 import { DataSource } from "typeorm";
 import {
   DatabaseConstraintNames,
@@ -151,8 +155,12 @@ export class StudentLoanBalancesProcessingService {
       }
     } finally {
       try {
-        await this.studentLoanBalancesIntegrationService.archiveFile(
+        // Archive file.
+        const directoryPath = path.dirname(remoteFilePath);
+        const fileBaseName = path.basename(remoteFilePath);
+        await this.studentLoanBalancesIntegrationService.renameFile(
           remoteFilePath,
+          path.join(directoryPath, SFTP_ARCHIVE_DIRECTORY, fileBaseName),
         );
       } catch (error: unknown) {
         // Log the error but allow the process to continue.

@@ -16,6 +16,7 @@ import {
   COE_DENIED_REASON_OTHER_ID,
   CustomNamedError,
   END_OF_LINE,
+  SFTP_ARCHIVE_DIRECTORY,
   StringBuilder,
   processInParallel,
 } from "@sims/utilities";
@@ -508,7 +509,12 @@ export class ECEResponseProcessingService {
   ): Promise<void> {
     try {
       // Archiving the file once it has been processed.
-      await this.integrationService.archiveFile(remoteFilePath);
+      const directoryPath = path.dirname(remoteFilePath);
+      const fileBaseName = path.basename(remoteFilePath);
+      await this.integrationService.renameFile(
+        remoteFilePath,
+        path.join(directoryPath, SFTP_ARCHIVE_DIRECTORY, fileBaseName),
+      );
       processSummary.summary.push(
         `The file ${remoteFilePath} has been archived after processing.`,
       );

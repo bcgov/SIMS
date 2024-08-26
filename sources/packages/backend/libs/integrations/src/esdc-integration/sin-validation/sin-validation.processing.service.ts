@@ -17,6 +17,7 @@ import {
   SINValidationService,
   StudentService,
 } from "@sims/integrations/services";
+import { SFTP_ARCHIVE_DIRECTORY } from "@sims/utilities";
 
 /**
  * Manages the process to generate SIN validations requests to ESDC and allow
@@ -210,7 +211,13 @@ export class SINValidationProcessingService {
     }
 
     try {
-      await this.sinValidationIntegrationService.archiveFile(remoteFilePath);
+      // Archive file.
+      const directoryPath = path.dirname(remoteFilePath);
+      const fileBaseName = path.basename(remoteFilePath);
+      await this.sinValidationIntegrationService.renameFile(
+        remoteFilePath,
+        path.join(directoryPath, SFTP_ARCHIVE_DIRECTORY, fileBaseName),
+      );
     } catch (error) {
       // Log the error but allow the process to continue.
       // If there was an issue only during the file archiving, it will be

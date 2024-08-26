@@ -10,6 +10,8 @@ import {
 import { MSFAAResponseCancelledRecord } from "./msfaa-files/msfaa-response-cancelled-record";
 import { MSFAAResponseReceivedRecord } from "./msfaa-files/msfaa-response-received-record";
 import { MSFAAIntegrationService } from "./msfaa.integration.service";
+import { SFTP_ARCHIVE_DIRECTORY } from "@sims/utilities";
+import * as path from "path";
 
 @Injectable()
 export class MSFAAResponseProcessingService {
@@ -93,7 +95,13 @@ export class MSFAAResponseProcessingService {
       }
     }
     try {
-      await this.msfaaService.archiveFile(responseFile.filePath);
+      // Archive file.
+      const directoryPath = path.dirname(responseFile.filePath);
+      const fileBaseName = path.basename(responseFile.filePath);
+      await this.msfaaService.renameFile(
+        responseFile.filePath,
+        path.join(directoryPath, SFTP_ARCHIVE_DIRECTORY, fileBaseName),
+      );
     } catch (error) {
       // Log the error but allow the process to continue.
       // If there was an issue only during the file archiving, it will be

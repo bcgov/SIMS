@@ -13,7 +13,7 @@ import {
   CRASFTPResponseFile,
   ProcessSftpResponseResult,
 } from "./cra-integration.models";
-import { getUTCNow } from "@sims/utilities";
+import { getUTCNow, SFTP_ARCHIVE_DIRECTORY } from "@sims/utilities";
 import * as path from "path";
 import { ConfigService } from "@sims/utilities/config";
 import { CRAIntegrationService } from "./cra.integration.service";
@@ -270,7 +270,13 @@ export class CRAIncomeVerificationProcessingService {
     }
 
     try {
-      await this.craService.archiveFile(remoteFilePath);
+      // Archive file.
+      const directoryPath = path.dirname(remoteFilePath);
+      const fileBaseName = path.basename(remoteFilePath);
+      await this.craService.renameFile(
+        remoteFilePath,
+        path.join(directoryPath, SFTP_ARCHIVE_DIRECTORY, fileBaseName),
+      );
     } catch (error) {
       // Log the error but allow the process to continue.
       // If there was an issue only during the file archiving, it will be

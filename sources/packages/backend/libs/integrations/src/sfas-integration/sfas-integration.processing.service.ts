@@ -16,6 +16,8 @@ import {
 import { SFAS_IMPORT_RECORDS_PROGRESS_REPORT_PACE } from "@sims/services/constants";
 import * as os from "os";
 import { ConfigService } from "@sims/utilities/config";
+import * as path from "path";
+import { SFTP_ARCHIVE_DIRECTORY } from "@sims/utilities";
 
 @Injectable()
 export class SFASIntegrationProcessingService {
@@ -146,7 +148,12 @@ export class SFASIntegrationProcessingService {
          * Archive the file only if it was processed with success.
          */
         try {
-          await this.sfasService.archiveFile(remoteFilePath);
+          const directoryPath = path.dirname(remoteFilePath);
+          const fileBaseName = path.basename(remoteFilePath);
+          await this.sfasService.renameFile(
+            remoteFilePath,
+            path.join(directoryPath, SFTP_ARCHIVE_DIRECTORY, fileBaseName),
+          );
         } catch (error) {
           throw new Error(
             `Error while archiving SFAS integration file: ${remoteFilePath}`,
