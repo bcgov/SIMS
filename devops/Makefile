@@ -9,6 +9,7 @@ export TEMPLATE_FILE_NAME := $(or $(TEMPLATE_FILE_NAME), $$FILE)
 export BUILD_REF := $(or $(BUILD_REF), $(GIT_LOCAL_BRANCH))
 export BUILD_NAMESPACE := $(or $(BUILD_NAMESPACE), 0c27fb-tools)
 export DOMAIN := $(or $(DOMAIN), sims.studentaidbc.ca)
+export DOMAIN_PREFIX := $(or $(DOMAIN_PREFIX),)
 export HOST_PREFIX := $(or $(HOST_PREFIX), $$HOST_PREFIX)
 export NEW_DB := $(or $(NEW_DB), $$NEW_DB)
 export JOB_NAME := $(or $(JOB_NAME), $$JN)
@@ -105,8 +106,10 @@ define HAMONGO_DB_PARAM_PATH
 "openshift/database/mongo-ha-param.yml"
 endef
 
+# Ensure DOMAIN_PREFIX do not have any ".", which would create a subdomain
+# since forms has it own custom prefix appended.
 define FORMS_URL
-"$(DOMAIN_PREFIX)forms.$(DOMAIN)"
+$(subst .,-,$(DOMAIN_PREFIX))forms.$(DOMAIN)
 endef
 
 define SOURCE_REPOSITORY_URL
