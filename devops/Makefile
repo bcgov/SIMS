@@ -90,10 +90,6 @@ define HOST
 "$(DOMAIN_PREFIX)$(DOMAIN)"
 endef
 
-define DB_SERVICE_NAME
-"patroni-master"
-endef
-
 define FORMS_NAME
 "$(HOST_PREFIX)forms"
 endef
@@ -344,7 +340,6 @@ create-new-db:
 run-db-migrations:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(DB_SERVICE_NAME)"
 	test -n "$(API_SECRET_NAME)"
 	test -n "$(DB_MIGRATIONS_BUILD_REF)"
 	test -n "$(BUILD_REF)"
@@ -352,7 +347,6 @@ run-db-migrations:
 	@echo "+\n++ Deploying DB_MIGRATIONS with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/db-migrations-job.yml \
 		-p NAME=$(DB_MIGRATIONS) \
-		-p DB_SERVICE=$(DB_SERVICE_NAME) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
 		-p API_SECRET_NAME=$(API_SECRET_NAME) \
 		-p IMAGE_STREAM_TAG="$(DB_MIGRATIONS_BUILD_REF):$(BUILD_REF)" \
@@ -396,7 +390,6 @@ deploy-api:
 		-p API_SECRET_NAME=$(API_SECRET_NAME) \
 		-p HOST_NAME=$(HOST) \
 		-p PORT=$(API_PORT) \
-		-p DB_SERVICE=$(DB_SERVICE_NAME) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
 		-p IMAGE_STREAM_TAG="$(API_BUILD_REF):$(BUILD_REF)" \
 		-p KEYCLOAK_REALM=$(KEYCLOAK_REALM) \
@@ -428,7 +421,6 @@ deploy-workers:
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_REF)"
 	test -n "$(WORKERS_BUILD_REF)"
-	test -n "$(DB_SERVICE_NAME)"
 	test -n "$(WORKERS_SECRET_NAME)"
 	test -n "$(WORKERS)"
 	test -n "$(WORKERS_PORT)"
@@ -438,7 +430,6 @@ deploy-workers:
 		-p NAME=$(WORKERS) \
 		-p WORKERS_SECRET_NAME=$(WORKERS_SECRET_NAME) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
-		-p DB_SERVICE=$(DB_SERVICE_NAME) \
 		-p PORT=$(WORKERS_PORT) \
 		-p IMAGE_STREAM_TAG="$(WORKERS_BUILD_REF):$(BUILD_REF)" \
 		-p BUILD_TAG=$(BUILD_REF) \
@@ -452,7 +443,6 @@ deploy-queue-consumers:
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_REF)"
 	test -n "$(QUEUE_CONSUMERS_BUILD_REF)"
-	test -n "$(DB_SERVICE_NAME)"
 	test -n "$(QUEUE_CONSUMERS_SECRET_NAME)"
 	test -n "$(QUEUE_CONSUMERS)"
 	test -n "$(QUEUE_CONSUMERS_PORT)"
@@ -465,7 +455,6 @@ deploy-queue-consumers:
 		-p NAME=$(QUEUE_CONSUMERS) \
 		-p QUEUE_CONSUMERS_SECRET_NAME=$(QUEUE_CONSUMERS_SECRET_NAME) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
-		-p DB_SERVICE=$(DB_SERVICE_NAME) \
 		-p IMAGE_STREAM_TAG="$(QUEUE_CONSUMERS_BUILD_REF):$(BUILD_REF)" \
 		-p BUILD_TAG=$(BUILD_REF) \
 		-p PORT=$(QUEUE_CONSUMERS_PORT) \
@@ -487,7 +476,6 @@ deploy-load-test-gateway:
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_REF)"
 	test -n "$(LOAD_TEST_GATEWAY_BUILD_REF)"
-	test -n "$(DB_SERVICE_NAME)"
 	test -n "$(LOAD_TEST_GATEWAY_SECRET_NAME)"
 	test -n "$(LOAD_TEST_GATEWAY)"
 	test -n "$(LOAD_TEST_GATEWAY_PORT)"
@@ -498,7 +486,6 @@ deploy-load-test-gateway:
 		-p NAME=$(LOAD_TEST_GATEWAY) \
 		-p LOAD_TEST_GATEWAY_SECRET_NAME=$(LOAD_TEST_GATEWAY_SECRET_NAME) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
-		-p DB_SERVICE=$(DB_SERVICE_NAME) \
 		-p IMAGE_STREAM_TAG="$(LOAD_TEST_GATEWAY_BUILD_REF):$(BUILD_REF)" \
 		-p BUILD_TAG=$(BUILD_REF) \
 		-p PORT=$(LOAD_TEST_GATEWAY_PORT) \
