@@ -212,11 +212,10 @@ export class SINValidationProcessingService {
 
     try {
       // Archive file.
-      const directoryPath = path.dirname(remoteFilePath);
-      const fileBaseName = path.basename(remoteFilePath);
+      const newRemoteFilePath = this.getArchiveFilePath(remoteFilePath);
       await this.sinValidationIntegrationService.renameFile(
         remoteFilePath,
-        path.join(directoryPath, SFTP_ARCHIVE_DIRECTORY, fileBaseName),
+        newRemoteFilePath,
       );
     } catch (error) {
       // Log the error but allow the process to continue.
@@ -228,6 +227,22 @@ export class SINValidationProcessingService {
     }
 
     return result;
+  }
+
+  /**
+   * Gets a new file path to archive the file.
+   * @param remoteFilePath full file path with a file name.
+   * @returns new full file path with a file name.
+   */
+  private getArchiveFilePath(remoteFilePath: string) {
+    const directoryPath = path.dirname(remoteFilePath);
+    const fileBaseName = path.basename(remoteFilePath);
+    const newRemoteFilePath = path.join(
+      directoryPath,
+      SFTP_ARCHIVE_DIRECTORY,
+      fileBaseName,
+    );
+    return newRemoteFilePath;
   }
 
   @InjectLogger()

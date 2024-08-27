@@ -521,12 +521,8 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     processSummary: ProcessSummary,
   ) {
     try {
-      const directoryPath = path.dirname(filePath);
-      const fileBaseName = path.basename(filePath);
-      await eCertIntegrationService.renameFile(
-        filePath,
-        path.join(directoryPath, SFTP_ARCHIVE_DIRECTORY, fileBaseName),
-      );
+      const newRemoteFilePath = this.getArchiveFilePath(filePath);
+      await eCertIntegrationService.renameFile(filePath, newRemoteFilePath);
     } catch (error) {
       // Log the error but allow the process to continue.
       // If there was an issue only during the file archiving, it will be
@@ -536,5 +532,21 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
         error,
       );
     }
+  }
+
+  /**
+   * Gets a new file path to archive the file.
+   * @param remoteFilePath full file path with a file name.
+   * @returns new full file path with a file name.
+   */
+  private getArchiveFilePath(remoteFilePath: string) {
+    const directoryPath = path.dirname(remoteFilePath);
+    const fileBaseName = path.basename(remoteFilePath);
+    const newRemoteFilePath = path.join(
+      directoryPath,
+      SFTP_ARCHIVE_DIRECTORY,
+      fileBaseName,
+    );
+    return newRemoteFilePath;
   }
 }

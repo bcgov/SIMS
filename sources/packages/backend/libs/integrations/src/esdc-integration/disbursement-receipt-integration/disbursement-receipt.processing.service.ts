@@ -160,11 +160,10 @@ export class DisbursementReceiptProcessingService {
 
     try {
       // Archiving the file once it has been processed.
-      const directoryPath = path.dirname(remoteFilePath);
-      const fileBaseName = path.basename(remoteFilePath);
+      const newRemoteFilePath = this.getArchiveFilePath(remoteFilePath);
       await this.integrationService.renameFile(
         remoteFilePath,
-        path.join(directoryPath, SFTP_ARCHIVE_DIRECTORY, fileBaseName),
+        newRemoteFilePath,
       );
     } catch (error) {
       result.errorsSummary.push(
@@ -173,6 +172,22 @@ export class DisbursementReceiptProcessingService {
       result.errorsSummary.push(error);
     }
     return result;
+  }
+
+  /**
+   * Gets a new file path to archive the file.
+   * @param remoteFilePath full file path with a file name.
+   * @returns new full file path with a file name.
+   */
+  private getArchiveFilePath(remoteFilePath: string) {
+    const directoryPath = path.dirname(remoteFilePath);
+    const fileBaseName = path.basename(remoteFilePath);
+    const newRemoteFilePath = path.join(
+      directoryPath,
+      SFTP_ARCHIVE_DIRECTORY,
+      fileBaseName,
+    );
+    return newRemoteFilePath;
   }
 
   /**
