@@ -17,7 +17,10 @@ import {
   SINValidationService,
   StudentService,
 } from "@sims/integrations/services";
-import { SFTP_ARCHIVE_DIRECTORY } from "@sims/utilities";
+import {
+  getFileNameAsExtendedCurrentTimestamp,
+  SFTP_ARCHIVE_DIRECTORY,
+} from "@sims/utilities";
 
 /**
  * Manages the process to generate SIN validations requests to ESDC and allow
@@ -235,10 +238,11 @@ export class SINValidationProcessingService {
    * @returns new full file path with a file name.
    */
   private getArchiveFilePath(remoteFilePath: string) {
-    const directoryPath = path.dirname(remoteFilePath);
-    const fileBaseName = path.basename(remoteFilePath);
+    const fileInfo = path.parse(remoteFilePath);
+    const timestamp = getFileNameAsExtendedCurrentTimestamp();
+    const fileBaseName = `${fileInfo.name}_${timestamp}${fileInfo.ext}`;
     const newRemoteFilePath = path.join(
-      directoryPath,
+      fileInfo.dir,
       SFTP_ARCHIVE_DIRECTORY,
       fileBaseName,
     );

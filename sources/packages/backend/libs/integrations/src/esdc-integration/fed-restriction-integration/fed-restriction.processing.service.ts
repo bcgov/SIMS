@@ -3,7 +3,11 @@ import { Injectable } from "@nestjs/common";
 import { FedRestrictionIntegrationService } from "./fed-restriction.integration.service";
 import { DataSource, InsertResult } from "typeorm";
 import { FederalRestriction, Restriction } from "@sims/sims-db";
-import { getISODateOnlyString, SFTP_ARCHIVE_DIRECTORY } from "@sims/utilities";
+import {
+  getFileNameAsExtendedCurrentTimestamp,
+  getISODateOnlyString,
+  SFTP_ARCHIVE_DIRECTORY,
+} from "@sims/utilities";
 import { FedRestrictionFileRecord } from "./fed-restriction-files/fed-restriction-file-record";
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
@@ -105,10 +109,11 @@ export class FedRestrictionProcessingService {
    * @returns new full file path with a file name.
    */
   private getArchiveFilePath(remoteFilePath: string) {
-    const directoryPath = path.dirname(remoteFilePath);
-    const fileBaseName = path.basename(remoteFilePath);
+    const fileInfo = path.parse(remoteFilePath);
+    const timestamp = getFileNameAsExtendedCurrentTimestamp();
+    const fileBaseName = `${fileInfo.name}_${timestamp}${fileInfo.ext}`;
     const newRemoteFilePath = path.join(
-      directoryPath,
+      fileInfo.dir,
       SFTP_ARCHIVE_DIRECTORY,
       fileBaseName,
     );

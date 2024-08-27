@@ -18,6 +18,7 @@ import {
   END_OF_LINE,
   SFTP_ARCHIVE_DIRECTORY,
   StringBuilder,
+  getFileNameAsExtendedCurrentTimestamp,
   processInParallel,
 } from "@sims/utilities";
 import { ECEResponseFileDetail } from "./ece-files/ece-response-file-detail";
@@ -530,10 +531,11 @@ export class ECEResponseProcessingService {
    * @returns new full file path with a file name.
    */
   private getArchiveFilePath(remoteFilePath: string) {
-    const directoryPath = path.dirname(remoteFilePath);
-    const fileBaseName = path.basename(remoteFilePath);
+    const fileInfo = path.parse(remoteFilePath);
+    const timestamp = getFileNameAsExtendedCurrentTimestamp();
+    const fileBaseName = `${fileInfo.name}_${timestamp}${fileInfo.ext}`;
     const newRemoteFilePath = path.join(
-      directoryPath,
+      fileInfo.dir,
       SFTP_ARCHIVE_DIRECTORY,
       fileBaseName,
     );

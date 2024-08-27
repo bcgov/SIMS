@@ -10,6 +10,7 @@ import * as path from "path";
 import { ProcessSummary } from "@sims/utilities/logger";
 import {
   CustomNamedError,
+  getFileNameAsExtendedCurrentTimestamp,
   getISODateOnlyString,
   SFTP_ARCHIVE_DIRECTORY,
 } from "@sims/utilities";
@@ -176,10 +177,11 @@ export class StudentLoanBalancesProcessingService {
    * @returns new full file path with a file name.
    */
   private getArchiveFilePath(remoteFilePath: string) {
-    const directoryPath = path.dirname(remoteFilePath);
-    const fileBaseName = path.basename(remoteFilePath);
+    const fileInfo = path.parse(remoteFilePath);
+    const timestamp = getFileNameAsExtendedCurrentTimestamp();
+    const fileBaseName = `${fileInfo.name}_${timestamp}${fileInfo.ext}`;
     const newRemoteFilePath = path.join(
-      directoryPath,
+      fileInfo.dir,
       SFTP_ARCHIVE_DIRECTORY,
       fileBaseName,
     );

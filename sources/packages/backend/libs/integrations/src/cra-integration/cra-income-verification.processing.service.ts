@@ -13,7 +13,11 @@ import {
   CRASFTPResponseFile,
   ProcessSftpResponseResult,
 } from "./cra-integration.models";
-import { getUTCNow, SFTP_ARCHIVE_DIRECTORY } from "@sims/utilities";
+import {
+  getFileNameAsExtendedCurrentTimestamp,
+  getUTCNow,
+  SFTP_ARCHIVE_DIRECTORY,
+} from "@sims/utilities";
 import * as path from "path";
 import { ConfigService } from "@sims/utilities/config";
 import { CRAIntegrationService } from "./cra.integration.service";
@@ -291,10 +295,11 @@ export class CRAIncomeVerificationProcessingService {
    * @returns new full file path with a file name.
    */
   private getArchiveFilePath(remoteFilePath: string) {
-    const directoryPath = path.dirname(remoteFilePath);
-    const fileBaseName = path.basename(remoteFilePath);
+    const fileInfo = path.parse(remoteFilePath);
+    const timestamp = getFileNameAsExtendedCurrentTimestamp();
+    const fileBaseName = `${fileInfo.name}_${timestamp}${fileInfo.ext}`;
     const newRemoteFilePath = path.join(
-      directoryPath,
+      fileInfo.dir,
       SFTP_ARCHIVE_DIRECTORY,
       fileBaseName,
     );

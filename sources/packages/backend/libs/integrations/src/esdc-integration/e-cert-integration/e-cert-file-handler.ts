@@ -11,6 +11,7 @@ import {
 import { SequenceControlService, SystemUsersService } from "@sims/services";
 import {
   CustomNamedError,
+  getFileNameAsExtendedCurrentTimestamp,
   getISODateOnlyString,
   parseJSONError,
   processInParallel,
@@ -540,10 +541,11 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
    * @returns new full file path with a file name.
    */
   private getArchiveFilePath(remoteFilePath: string) {
-    const directoryPath = path.dirname(remoteFilePath);
-    const fileBaseName = path.basename(remoteFilePath);
+    const fileInfo = path.parse(remoteFilePath);
+    const timestamp = getFileNameAsExtendedCurrentTimestamp();
+    const fileBaseName = `${fileInfo.name}_${timestamp}${fileInfo.ext}`;
     const newRemoteFilePath = path.join(
-      directoryPath,
+      fileInfo.dir,
       SFTP_ARCHIVE_DIRECTORY,
       fileBaseName,
     );

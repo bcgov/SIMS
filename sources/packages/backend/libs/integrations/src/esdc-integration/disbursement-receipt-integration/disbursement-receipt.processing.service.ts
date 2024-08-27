@@ -14,7 +14,11 @@ import {
   ReportsFilterModel,
 } from "@sims/services";
 import { DAILY_DISBURSEMENT_REPORT_NAME } from "@sims/services/constants";
-import { getISODateOnlyString, SFTP_ARCHIVE_DIRECTORY } from "@sims/utilities";
+import {
+  getFileNameAsExtendedCurrentTimestamp,
+  getISODateOnlyString,
+  SFTP_ARCHIVE_DIRECTORY,
+} from "@sims/utilities";
 import * as path from "path";
 
 /**
@@ -180,10 +184,11 @@ export class DisbursementReceiptProcessingService {
    * @returns new full file path with a file name.
    */
   private getArchiveFilePath(remoteFilePath: string) {
-    const directoryPath = path.dirname(remoteFilePath);
-    const fileBaseName = path.basename(remoteFilePath);
+    const fileInfo = path.parse(remoteFilePath);
+    const timestamp = getFileNameAsExtendedCurrentTimestamp();
+    const fileBaseName = `${fileInfo.name}_${timestamp}${fileInfo.ext}`;
     const newRemoteFilePath = path.join(
-      directoryPath,
+      fileInfo.dir,
       SFTP_ARCHIVE_DIRECTORY,
       fileBaseName,
     );
