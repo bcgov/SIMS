@@ -9,7 +9,7 @@ export enum QueueNames {
   CRAProcessIntegration = "cra-process-integration",
   CRAResponseIntegration = "cra-response-integration",
   SINValidationProcessIntegration = "sin-validation-process-integration",
-  SINValidationRequestIntegration = "sin-validation-request-integration",
+  SINValidationResponseIntegration = "sin-validation-response-integration",
   PartTimeMSFAAProcessIntegration = "part-time-msfaa-process-integration",
   PartTimeECertIntegration = "part-time-e-cert-integration",
   PartTimeFeedbackIntegration = "part-time-feedback-integration",
