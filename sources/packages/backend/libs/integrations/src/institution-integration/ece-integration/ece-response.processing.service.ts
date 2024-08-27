@@ -10,13 +10,13 @@ import { ProcessSummaryResult } from "@sims/integrations/models";
 import {
   ECE_RESPONSE_COE_DECLINED_REASON,
   ECE_RESPONSE_FILE_NAME,
+  SFTP_ARCHIVE_DIRECTORY,
 } from "@sims/integrations/constants";
 import { InstitutionLocationService } from "@sims/integrations/services";
 import {
   COE_DENIED_REASON_OTHER_ID,
   CustomNamedError,
   END_OF_LINE,
-  SFTP_ARCHIVE_DIRECTORY,
   StringBuilder,
   getFileNameAsExtendedCurrentTimestamp,
   processInParallel,

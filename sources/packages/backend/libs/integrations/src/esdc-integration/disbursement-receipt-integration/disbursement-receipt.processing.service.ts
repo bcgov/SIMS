@@ -17,9 +17,9 @@ import { DAILY_DISBURSEMENT_REPORT_NAME } from "@sims/services/constants";
 import {
   getFileNameAsExtendedCurrentTimestamp,
   getISODateOnlyString,
-  SFTP_ARCHIVE_DIRECTORY,
 } from "@sims/utilities";
 import * as path from "path";
+import { SFTP_ARCHIVE_DIRECTORY } from "@sims/integrations/constants";
 
 /**
  * Disbursement schedule map which consists of disbursement schedule id for a document number.

@@ -12,7 +12,6 @@ import {
   CustomNamedError,
   getFileNameAsExtendedCurrentTimestamp,
   getISODateOnlyString,
-  SFTP_ARCHIVE_DIRECTORY,
 } from "@sims/utilities";
 import { DataSource } from "typeorm";
 import {
@@ -21,6 +20,7 @@ import {
   User,
   isDatabaseConstraintError,
 } from "@sims/sims-db";
+import { SFTP_ARCHIVE_DIRECTORY } from "@sims/integrations/constants";
 
 /**
  * Manages to process the Student Loan Balances files

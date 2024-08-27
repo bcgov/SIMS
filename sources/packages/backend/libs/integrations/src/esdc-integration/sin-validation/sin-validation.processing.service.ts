@@ -17,10 +17,8 @@ import {
   SINValidationService,
   StudentService,
 } from "@sims/integrations/services";
-import {
-  getFileNameAsExtendedCurrentTimestamp,
-  SFTP_ARCHIVE_DIRECTORY,
-} from "@sims/utilities";
+import { getFileNameAsExtendedCurrentTimestamp } from "@sims/utilities";
+import { SFTP_ARCHIVE_DIRECTORY } from "@sims/integrations/constants";
 
 /**
  * Manages the process to generate SIN validations requests to ESDC and allow

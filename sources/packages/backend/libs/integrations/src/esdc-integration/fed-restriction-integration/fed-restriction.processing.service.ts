@@ -6,7 +6,6 @@ import { FederalRestriction, Restriction } from "@sims/sims-db";
 import {
   getFileNameAsExtendedCurrentTimestamp,
   getISODateOnlyString,
-  SFTP_ARCHIVE_DIRECTORY,
 } from "@sims/utilities";
 import { FedRestrictionFileRecord } from "./fed-restriction-files/fed-restriction-file-record";
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
@@ -19,6 +18,7 @@ import {
 import { SystemUsersService } from "@sims/services/system-users";
 import { StudentRestrictionSharedService } from "@sims/services";
 import * as path from "path";
+import { SFTP_ARCHIVE_DIRECTORY } from "@sims/integrations/constants";
 
 /**
  * Used to limit the number of asynchronous operations that will

@@ -17,10 +17,8 @@ import { SFAS_IMPORT_RECORDS_PROGRESS_REPORT_PACE } from "@sims/services/constan
 import * as os from "os";
 import { ConfigService } from "@sims/utilities/config";
 import * as path from "path";
-import {
-  getFileNameAsExtendedCurrentTimestamp,
-  SFTP_ARCHIVE_DIRECTORY,
-} from "@sims/utilities";
+import { getFileNameAsExtendedCurrentTimestamp } from "@sims/utilities";
+import { SFTP_ARCHIVE_DIRECTORY } from "@sims/integrations/constants";
 
 @Injectable()
 export class SFASIntegrationProcessingService {

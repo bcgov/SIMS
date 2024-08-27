@@ -15,7 +15,6 @@ import {
   getISODateOnlyString,
   parseJSONError,
   processInParallel,
-  SFTP_ARCHIVE_DIRECTORY,
 } from "@sims/utilities";
 import { EntityManager } from "typeorm";
 import { ESDCFileHandler } from "../esdc-file-handler";
@@ -29,6 +28,7 @@ import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { ECertGenerationService } from "@sims/integrations/services";
 import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
 import * as path from "path";
+import { SFTP_ARCHIVE_DIRECTORY } from "@sims/integrations/constants";
 
 /**
  * Used to abort the e-Cert generation process, cancel the current transaction,

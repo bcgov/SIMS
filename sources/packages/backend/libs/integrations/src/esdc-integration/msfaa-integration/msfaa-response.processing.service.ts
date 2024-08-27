@@ -10,11 +10,9 @@ import {
 import { MSFAAResponseCancelledRecord } from "./msfaa-files/msfaa-response-cancelled-record";
 import { MSFAAResponseReceivedRecord } from "./msfaa-files/msfaa-response-received-record";
 import { MSFAAIntegrationService } from "./msfaa.integration.service";
-import {
-  getFileNameAsExtendedCurrentTimestamp,
-  SFTP_ARCHIVE_DIRECTORY,
-} from "@sims/utilities";
+import { getFileNameAsExtendedCurrentTimestamp } from "@sims/utilities";
 import * as path from "path";
+import { SFTP_ARCHIVE_DIRECTORY } from "@sims/integrations/constants";
 
 @Injectable()
 export class MSFAAResponseProcessingService {

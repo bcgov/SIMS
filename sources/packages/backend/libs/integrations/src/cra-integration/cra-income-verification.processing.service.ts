@@ -16,12 +16,12 @@ import {
 import {
   getFileNameAsExtendedCurrentTimestamp,
   getUTCNow,
-  SFTP_ARCHIVE_DIRECTORY,
 } from "@sims/utilities";
 import * as path from "path";
 import { ConfigService } from "@sims/utilities/config";
 import { CRAIntegrationService } from "./cra.integration.service";
 import { CRAIncomeVerificationsService } from "../services";
+import { SFTP_ARCHIVE_DIRECTORY } from "@sims/integrations/constants";
 
 const INCOME_VERIFICATION_TAG = "VERIFICATION_ID";
 
