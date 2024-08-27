@@ -2,12 +2,12 @@
   <full-page-container layout-template="centered">
     <template #header>
       <header-navigator
-        title="Student applications"
+        title="Application history"
         :routeLocation="{
           name: AESTRoutesConst.STUDENT_APPLICATIONS,
           params: { studentId },
         }"
-        subTitle="Assessment"
+        subTitle="Assessments"
       />
     </template>
     <request-assessment
