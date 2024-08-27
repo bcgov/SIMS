@@ -8,7 +8,7 @@ import {
 import { Readable } from "stream";
 import { CustomNamedError } from "@sims/utilities";
 import { ProcessSummary } from "@sims/utilities/logger";
-import { ClamAVService, SystemUsersService } from "@sims/services";
+import { ClamAVError, ClamAVService, SystemUsersService } from "@sims/services";
 import * as path from "path";
 import {
   CONNECTION_FAILED,
@@ -35,7 +35,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
    * for any viruses.
    * @param uniqueFileName unique filename of the file to perform the virus scan.
    * @param processSummary process summary logs.
-   * @returns boolean true if the file is virus infected, false not infected or null otherwise.
+   * @returns boolean true if the file is virus infected, false otherwise.
    */
   async scanFile(
     uniqueFileName: string,
@@ -52,30 +52,32 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     const stream = new Readable();
     stream.push(studentFile.fileContent);
     stream.push(null);
-    let isInfected: boolean;
+    let isInfected: boolean | null;
+    let errorName: string;
     let errorMessage = `Unable to scan the file ${uniqueFileName} for viruses.`;
-    let errorName = "";
     try {
       isInfected = await this.clamAVService.scanFile(stream);
       if (isInfected === null) {
-        errorMessage = `${errorMessage} File scanning has failed due to unknown error.`;
+        errorMessage = `${errorMessage} File scanning failed due to unknown error.`;
         errorName = FILE_SCANNING_FAILED;
       }
-    } catch (err) {
-      if (err.code === "ECONNREFUSED") {
+    } catch (err: unknown) {
+      const virusError = err as ClamAVError;
+      if (virusError.code === "ECONNREFUSED") {
         errorMessage = `${errorMessage} Connection to ClamAV server failed.`;
         errorName = CONNECTION_FAILED;
-      } else if (err.code === "ENOTFOUND") {
+      } else if (virusError.code === "ENOTFOUND") {
         errorMessage = `${errorMessage} ClamAV server is unavailable.`;
         errorName = SERVER_UNAVAILABLE;
       } else {
         errorMessage = `${errorMessage} Unknown error.`;
         errorName = UNKNOWN_ERROR;
+        processSummary.error(errorMessage, err);
       }
     }
 
     // If the file scanning failed or an error occurred, throw a CustomNamedError.
-    if (isInfected === null || errorName !== "") {
+    if (errorName) {
       await this.updateFileScanStatus(
         studentFile.uniqueFileName,
         isInfected,

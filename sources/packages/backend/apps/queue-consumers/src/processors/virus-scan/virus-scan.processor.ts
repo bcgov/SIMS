@@ -25,7 +25,7 @@ export class VirusScanProcessor {
     job: Job<VirusScanQueueInDTO>,
   ): Promise<VirusScanResult> {
     const processSummary = new ProcessSummary();
-    let isInfected: boolean = null;
+    let isInfected: boolean | null = null;
     processSummary.info("Starting virus scan.");
     try {
       isInfected = await this.studentFileService.scanFile(
@@ -41,8 +41,12 @@ export class VirusScanProcessor {
           await job.discard();
         }
         processSummary.error(errorMessage);
-        throw new Error(errorMessage, { cause: error.name });
+        throw new Error(errorMessage, { cause: error });
       }
+      throw new Error(
+        "Unexpected error while executing the job, check logs for further details.",
+        { cause: error },
+      );
     } finally {
       this.logger.logProcessSummary(processSummary);
       await logProcessSummaryToJobLogger(processSummary, job);

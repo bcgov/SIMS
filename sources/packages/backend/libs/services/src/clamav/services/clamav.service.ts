@@ -25,7 +25,7 @@ export class ClamAVService {
    * false if the stream is not virus infected, and
    * null if the stream could not be scanned for viruses.
    */
-  async scanFile(stream: Readable): Promise<boolean> {
+  async scanFile(stream: Readable): Promise<boolean | null> {
     if (!this.scanner) {
       await this.initClam();
     }

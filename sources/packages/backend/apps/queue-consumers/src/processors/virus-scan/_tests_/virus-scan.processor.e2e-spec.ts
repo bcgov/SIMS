@@ -152,6 +152,7 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
         "Log details",
         "Starting virus scan.",
         errorMessage,
+        errorMessage,
       ]),
     ).toBe(true);
     const scannedStudentFile = await db.studentFile.findOneBy({
@@ -173,7 +174,7 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     });
 
     // Act
-    const errorMessage = `Unable to scan the file ${studentFile.uniqueFileName} for viruses. File scanning has failed due to unknown error.`;
+    const errorMessage = `Unable to scan the file ${studentFile.uniqueFileName} for viruses. File scanning failed due to unknown error.`;
     await expect(
       processor.performVirusScan(mockedJob.job),
     ).rejects.toStrictEqual(new Error(errorMessage));
