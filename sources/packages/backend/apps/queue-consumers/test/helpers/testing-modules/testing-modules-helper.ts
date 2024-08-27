@@ -89,11 +89,6 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
  */
 function createClamAVServiceMock(): ClamAVService {
   const mockedClamAVService = {} as ClamAVService;
-  mockedClamAVService.scanFile = jest.fn(() =>
-    Promise.resolve({
-      isInfected: null,
-      errorCode: "",
-    }),
-  );
+  mockedClamAVService.scanFile = jest.fn(() => Promise.resolve(null));
   return mockedClamAVService;
 }

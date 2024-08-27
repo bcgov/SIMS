@@ -9,11 +9,7 @@ import {
   ProcessSummary,
 } from "@sims/utilities/logger";
 import { logProcessSummaryToJobLogger } from "../../utilities";
-import {
-  CONNECTION_FAILED,
-  FILE_NOT_FOUND,
-  SERVER_UNAVAILABLE,
-} from "@sims/services/constants";
+import { FILE_NOT_FOUND } from "../../constants/error-code.constants";
 
 @Processor(QueueNames.FileVirusScanProcessor)
 export class VirusScanProcessor {
@@ -30,40 +26,22 @@ export class VirusScanProcessor {
   ): Promise<VirusScanResult> {
     const processSummary = new ProcessSummary();
     let isInfected: boolean = null;
-    let serverAvailability = "uncertain";
     processSummary.info("Starting virus scan.");
     try {
       isInfected = await this.studentFileService.scanFile(
-        job.data,
-        job.attemptsMade,
+        job.data.uniqueFileName,
         processSummary,
       );
-      serverAvailability = "available";
       processSummary.info("Completed virus scanning for the file.");
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
-        let errorMessage = "";
+        const errorMessage = error.message;
         if (error.name === FILE_NOT_FOUND) {
           // If the file is not present in the database, remove the file from the virus scan queue.
           await job.discard();
-          errorMessage = `File ${job.data.uniqueFileName} is not found or has already been scanned for viruses. Scanning the file for viruses is aborted.`;
-        } else if (error.name === CONNECTION_FAILED) {
-          serverAvailability = "available";
-          errorMessage = `${error.message} Connection to ClamAV server failed.`;
-        } else if (error.name === SERVER_UNAVAILABLE) {
-          serverAvailability = "unavailable";
-          errorMessage = `${error.message} ClamAV server is unavailable.`;
-        } else {
-          errorMessage = `${error.message} Unknown error.`;
         }
-        processSummary.info(
-          `ClamAV server availability: ${serverAvailability}.`,
-        );
-        processSummary.info(
-          `Number of attempts made: ${job.attemptsMade + 1}.`,
-        );
         processSummary.error(errorMessage);
-        throw new Error(errorMessage);
+        throw new Error(errorMessage, { cause: error.name });
       }
     } finally {
       this.logger.logProcessSummary(processSummary);
@@ -72,7 +50,6 @@ export class VirusScanProcessor {
     return {
       fileProcessed: job.data.fileName,
       isInfected,
-      serverAvailability,
     };
   }
 

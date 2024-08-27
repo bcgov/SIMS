@@ -1,11 +1,11 @@
-update
+UPDATE
     sims.queue_configurations
-set
+SET
     queue_configuration = '{
         "retry": 12,
         "retryInterval": 900000,
         "dashboardReadonly": false,
         "cleanUpPeriod": 604800000
     }' :: json
-where
+WHERE
     queue_name = 'virus-scan';

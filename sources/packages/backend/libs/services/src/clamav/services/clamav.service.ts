@@ -1,12 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import * as NodeClam from "clamscan";
 import { Readable } from "stream";
-import { VirusScanCode } from "@sims/services/queue";
-import {
-  CONNECTION_FAILED,
-  SERVER_UNAVAILABLE,
-  UNKNOWN_ERROR,
-} from "@sims/services/constants";
 
 @Injectable()
 export class ClamAVService {
@@ -31,21 +25,11 @@ export class ClamAVService {
    * false if the stream is not virus infected, and
    * null if the stream could not be scanned for viruses.
    */
-  async scanFile(stream: Readable): Promise<VirusScanCode> {
-    try {
-      if (!this.scanner) {
-        await this.initClam();
-      }
-      const { isInfected } = await this.scanner.scanStream(stream);
-      return { isInfected };
-    } catch (err) {
-      if (err.code === "ECONNREFUSED") {
-        return { errorCode: CONNECTION_FAILED };
-      }
-      if (err.code === "ENOTFOUND") {
-        return { errorCode: SERVER_UNAVAILABLE };
-      }
-      return { errorCode: UNKNOWN_ERROR };
+  async scanFile(stream: Readable): Promise<boolean> {
+    if (!this.scanner) {
+      await this.initClam();
     }
+    const { isInfected } = await this.scanner.scanStream(stream);
+    return isInfected;
   }
 }
