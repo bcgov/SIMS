@@ -10,8 +10,6 @@ import {
 import { MSFAAResponseCancelledRecord } from "./msfaa-files/msfaa-response-cancelled-record";
 import { MSFAAResponseReceivedRecord } from "./msfaa-files/msfaa-response-received-record";
 import { MSFAAIntegrationService } from "./msfaa.integration.service";
-import { getFileNameAsExtendedCurrentTimestamp } from "@sims/utilities";
-import * as path from "path";
 import { SFTP_ARCHIVE_DIRECTORY } from "@sims/integrations/constants";
 
 @Injectable()
@@ -97,10 +95,9 @@ export class MSFAAResponseProcessingService {
     }
     try {
       // Archive file.
-      const newRemoteFilePath = this.getArchiveFilePath(responseFile.filePath);
-      await this.msfaaService.renameFile(
+      await this.msfaaService.archiveFile(
         responseFile.filePath,
-        newRemoteFilePath,
+        SFTP_ARCHIVE_DIRECTORY,
       );
     } catch (error) {
       // Log the error but allow the process to continue.
@@ -112,23 +109,6 @@ export class MSFAAResponseProcessingService {
     }
 
     return result;
-  }
-
-  /**
-   * Gets a new file path to archive the file.
-   * @param remoteFilePath full file path with a file name.
-   * @returns new full file path with a file name.
-   */
-  private getArchiveFilePath(remoteFilePath: string) {
-    const fileInfo = path.parse(remoteFilePath);
-    const timestamp = getFileNameAsExtendedCurrentTimestamp();
-    const fileBaseName = `${fileInfo.name}_${timestamp}${fileInfo.ext}`;
-    const newRemoteFilePath = path.join(
-      fileInfo.dir,
-      SFTP_ARCHIVE_DIRECTORY,
-      fileBaseName,
-    );
-    return newRemoteFilePath;
   }
 
   /**

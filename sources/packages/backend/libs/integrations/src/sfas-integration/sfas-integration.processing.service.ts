@@ -16,8 +16,6 @@ import {
 import { SFAS_IMPORT_RECORDS_PROGRESS_REPORT_PACE } from "@sims/services/constants";
 import * as os from "os";
 import { ConfigService } from "@sims/utilities/config";
-import * as path from "path";
-import { getFileNameAsExtendedCurrentTimestamp } from "@sims/utilities";
 import { SFTP_ARCHIVE_DIRECTORY } from "@sims/integrations/constants";
 
 @Injectable()
@@ -149,8 +147,10 @@ export class SFASIntegrationProcessingService {
          * Archive the file only if it was processed with success.
          */
         try {
-          const newRemoteFilePath = this.getArchiveFilePath(remoteFilePath);
-          await this.sfasService.renameFile(remoteFilePath, newRemoteFilePath);
+          await this.sfasService.archiveFile(
+            remoteFilePath,
+            SFTP_ARCHIVE_DIRECTORY,
+          );
         } catch (error) {
           throw new Error(
             `Error while archiving SFAS integration file: ${remoteFilePath}`,
@@ -171,22 +171,6 @@ export class SFASIntegrationProcessingService {
     return result;
   }
 
-  /**
-   * Gets a new file path to archive the file.
-   * @param remoteFilePath full file path with a file name.
-   * @returns new full file path with a file name.
-   */
-  private getArchiveFilePath(remoteFilePath: string) {
-    const fileInfo = path.parse(remoteFilePath);
-    const timestamp = getFileNameAsExtendedCurrentTimestamp();
-    const fileBaseName = `${fileInfo.name}_${timestamp}${fileInfo.ext}`;
-    const newRemoteFilePath = path.join(
-      fileInfo.dir,
-      SFTP_ARCHIVE_DIRECTORY,
-      fileBaseName,
-    );
-    return newRemoteFilePath;
-  }
   /**
    * Responsible for completing the post file import operations.
    * These include updating the student ids, disbursement overawards

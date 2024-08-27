@@ -11,7 +11,6 @@ import {
 import { SequenceControlService, SystemUsersService } from "@sims/services";
 import {
   CustomNamedError,
-  getFileNameAsExtendedCurrentTimestamp,
   getISODateOnlyString,
   parseJSONError,
   processInParallel,
@@ -522,8 +521,10 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     processSummary: ProcessSummary,
   ) {
     try {
-      const newRemoteFilePath = this.getArchiveFilePath(filePath);
-      await eCertIntegrationService.renameFile(filePath, newRemoteFilePath);
+      await eCertIntegrationService.archiveFile(
+        filePath,
+        SFTP_ARCHIVE_DIRECTORY,
+      );
     } catch (error) {
       // Log the error but allow the process to continue.
       // If there was an issue only during the file archiving, it will be
@@ -533,22 +534,5 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
         error,
       );
     }
-  }
-
-  /**
-   * Gets a new file path to archive the file.
-   * @param remoteFilePath full file path with a file name.
-   * @returns new full file path with a file name.
-   */
-  private getArchiveFilePath(remoteFilePath: string) {
-    const fileInfo = path.parse(remoteFilePath);
-    const timestamp = getFileNameAsExtendedCurrentTimestamp();
-    const fileBaseName = `${fileInfo.name}_${timestamp}${fileInfo.ext}`;
-    const newRemoteFilePath = path.join(
-      fileInfo.dir,
-      SFTP_ARCHIVE_DIRECTORY,
-      fileBaseName,
-    );
-    return newRemoteFilePath;
   }
 }

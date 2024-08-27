@@ -8,11 +8,7 @@ import {
 } from "@sims/integrations/services";
 import * as path from "path";
 import { ProcessSummary } from "@sims/utilities/logger";
-import {
-  CustomNamedError,
-  getFileNameAsExtendedCurrentTimestamp,
-  getISODateOnlyString,
-} from "@sims/utilities";
+import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
 import { DataSource } from "typeorm";
 import {
   DatabaseConstraintNames,
@@ -157,10 +153,9 @@ export class StudentLoanBalancesProcessingService {
     } finally {
       try {
         // Archive file.
-        const newRemoteFilePath = this.getArchiveFilePath(remoteFilePath);
-        await this.studentLoanBalancesIntegrationService.renameFile(
+        await this.studentLoanBalancesIntegrationService.archiveFile(
           remoteFilePath,
-          newRemoteFilePath,
+          SFTP_ARCHIVE_DIRECTORY,
         );
       } catch (error: unknown) {
         // Log the error but allow the process to continue.
@@ -170,21 +165,5 @@ export class StudentLoanBalancesProcessingService {
         childrenProcessSummary.error(logMessage);
       }
     }
-  }
-  /**
-   * Gets a new file path to archive the file.
-   * @param remoteFilePath full file path with a file name.
-   * @returns new full file path with a file name.
-   */
-  private getArchiveFilePath(remoteFilePath: string) {
-    const fileInfo = path.parse(remoteFilePath);
-    const timestamp = getFileNameAsExtendedCurrentTimestamp();
-    const fileBaseName = `${fileInfo.name}_${timestamp}${fileInfo.ext}`;
-    const newRemoteFilePath = path.join(
-      fileInfo.dir,
-      SFTP_ARCHIVE_DIRECTORY,
-      fileBaseName,
-    );
-    return newRemoteFilePath;
   }
 }

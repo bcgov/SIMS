@@ -4,7 +4,10 @@ import * as Client from "ssh2-sftp-client";
 import * as path from "path";
 import { SFTPConfig } from "@sims/utilities/config";
 import { FixedFormatFileLine } from "./sftp-integration-base.models";
-import { END_OF_LINE } from "@sims/utilities";
+import {
+  END_OF_LINE,
+  getFileNameAsExtendedCurrentTimestamp,
+} from "@sims/utilities";
 import { FILE_DEFAULT_ENCODING } from "@sims/services/constants";
 import { LINE_BREAK_SPLIT_REGEX } from "@sims/integrations/constants";
 
@@ -276,6 +279,26 @@ export abstract class SFTPIntegrationBase<DownloadType> {
     } finally {
       await SshService.closeQuietly(client);
     }
+  }
+
+  /**
+   * Archives a file on SFTP .
+   * @param remoteFilePath full remote file path with file name.
+   * @param archiveDirectory directory name to archive the file.
+   */
+  async archiveFile(
+    remoteFilePath: string,
+    archiveDirectory: string,
+  ): Promise<void> {
+    const fileInfo = path.parse(remoteFilePath);
+    const timestamp = getFileNameAsExtendedCurrentTimestamp();
+    const fileBaseName = `${fileInfo.name}_${timestamp}${fileInfo.ext}`;
+    const newRemoteFilePath = path.join(
+      fileInfo.dir,
+      archiveDirectory,
+      fileBaseName,
+    );
+    this.renameFile(remoteFilePath, newRemoteFilePath);
   }
 
   /**

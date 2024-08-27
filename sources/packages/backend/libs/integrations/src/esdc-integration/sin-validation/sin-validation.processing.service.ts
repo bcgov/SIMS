@@ -17,7 +17,6 @@ import {
   SINValidationService,
   StudentService,
 } from "@sims/integrations/services";
-import { getFileNameAsExtendedCurrentTimestamp } from "@sims/utilities";
 import { SFTP_ARCHIVE_DIRECTORY } from "@sims/integrations/constants";
 
 /**
@@ -213,10 +212,9 @@ export class SINValidationProcessingService {
 
     try {
       // Archive file.
-      const newRemoteFilePath = this.getArchiveFilePath(remoteFilePath);
-      await this.sinValidationIntegrationService.renameFile(
+      await this.sinValidationIntegrationService.archiveFile(
         remoteFilePath,
-        newRemoteFilePath,
+        SFTP_ARCHIVE_DIRECTORY,
       );
     } catch (error) {
       // Log the error but allow the process to continue.
@@ -228,23 +226,6 @@ export class SINValidationProcessingService {
     }
 
     return result;
-  }
-
-  /**
-   * Gets a new file path to archive the file.
-   * @param remoteFilePath full file path with a file name.
-   * @returns new full file path with a file name.
-   */
-  private getArchiveFilePath(remoteFilePath: string) {
-    const fileInfo = path.parse(remoteFilePath);
-    const timestamp = getFileNameAsExtendedCurrentTimestamp();
-    const fileBaseName = `${fileInfo.name}_${timestamp}${fileInfo.ext}`;
-    const newRemoteFilePath = path.join(
-      fileInfo.dir,
-      SFTP_ARCHIVE_DIRECTORY,
-      fileBaseName,
-    );
-    return newRemoteFilePath;
   }
 
   @InjectLogger()

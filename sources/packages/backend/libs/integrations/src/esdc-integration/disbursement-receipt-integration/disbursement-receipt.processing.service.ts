@@ -14,11 +14,7 @@ import {
   ReportsFilterModel,
 } from "@sims/services";
 import { DAILY_DISBURSEMENT_REPORT_NAME } from "@sims/services/constants";
-import {
-  getFileNameAsExtendedCurrentTimestamp,
-  getISODateOnlyString,
-} from "@sims/utilities";
-import * as path from "path";
+import { getISODateOnlyString } from "@sims/utilities";
 import { SFTP_ARCHIVE_DIRECTORY } from "@sims/integrations/constants";
 
 /**
@@ -164,10 +160,9 @@ export class DisbursementReceiptProcessingService {
 
     try {
       // Archiving the file once it has been processed.
-      const newRemoteFilePath = this.getArchiveFilePath(remoteFilePath);
-      await this.integrationService.renameFile(
+      await this.integrationService.archiveFile(
         remoteFilePath,
-        newRemoteFilePath,
+        SFTP_ARCHIVE_DIRECTORY,
       );
     } catch (error) {
       result.errorsSummary.push(
@@ -176,23 +171,6 @@ export class DisbursementReceiptProcessingService {
       result.errorsSummary.push(error);
     }
     return result;
-  }
-
-  /**
-   * Gets a new file path to archive the file.
-   * @param remoteFilePath full file path with a file name.
-   * @returns new full file path with a file name.
-   */
-  private getArchiveFilePath(remoteFilePath: string) {
-    const fileInfo = path.parse(remoteFilePath);
-    const timestamp = getFileNameAsExtendedCurrentTimestamp();
-    const fileBaseName = `${fileInfo.name}_${timestamp}${fileInfo.ext}`;
-    const newRemoteFilePath = path.join(
-      fileInfo.dir,
-      SFTP_ARCHIVE_DIRECTORY,
-      fileBaseName,
-    );
-    return newRemoteFilePath;
   }
 
   /**

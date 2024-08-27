@@ -18,7 +18,6 @@ import {
   CustomNamedError,
   END_OF_LINE,
   StringBuilder,
-  getFileNameAsExtendedCurrentTimestamp,
   processInParallel,
 } from "@sims/utilities";
 import { ECEResponseFileDetail } from "./ece-files/ece-response-file-detail";
@@ -510,10 +509,9 @@ export class ECEResponseProcessingService {
   ): Promise<void> {
     try {
       // Archiving the file once it has been processed.
-      const newRemoteFilePath = this.getArchiveFilePath(remoteFilePath);
-      await this.integrationService.renameFile(
+      await this.integrationService.archiveFile(
         remoteFilePath,
-        newRemoteFilePath,
+        SFTP_ARCHIVE_DIRECTORY,
       );
       processSummary.summary.push(
         `The file ${remoteFilePath} has been archived after processing.`,
@@ -523,23 +521,6 @@ export class ECEResponseProcessingService {
         `Error while archiving the file: ${remoteFilePath}. ${error}`,
       );
     }
-  }
-
-  /**
-   * Gets a new file path to archive the file.
-   * @param remoteFilePath full file path with a file name.
-   * @returns new full file path with a file name.
-   */
-  private getArchiveFilePath(remoteFilePath: string) {
-    const fileInfo = path.parse(remoteFilePath);
-    const timestamp = getFileNameAsExtendedCurrentTimestamp();
-    const fileBaseName = `${fileInfo.name}_${timestamp}${fileInfo.ext}`;
-    const newRemoteFilePath = path.join(
-      fileInfo.dir,
-      SFTP_ARCHIVE_DIRECTORY,
-      fileBaseName,
-    );
-    return newRemoteFilePath;
   }
 
   @InjectLogger()
