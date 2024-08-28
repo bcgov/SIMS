@@ -18,6 +18,13 @@ import {
   UNKNOWN_ERROR,
 } from "../../constants/error-code.constants";
 import { ObjectStorageService } from "@sims/integrations/object-storage";
+import {
+  CONNECTION_FAILED,
+  FILE_NOT_FOUND,
+  FILE_SCANNING_FAILED,
+  SERVER_UNAVAILABLE,
+  UNKNOWN_ERROR,
+} from "../../constants/error-code.constants";
 
 export const INFECTED_FILENAME_SUFFIX = "-OriginalFileError";
 
