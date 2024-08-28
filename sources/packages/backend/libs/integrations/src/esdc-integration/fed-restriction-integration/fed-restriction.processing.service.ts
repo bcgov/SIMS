@@ -14,6 +14,7 @@ import {
 } from "@sims/integrations/services";
 import { SystemUsersService } from "@sims/services/system-users";
 import { StudentRestrictionSharedService } from "@sims/services";
+import { SFTP_ARCHIVE_DIRECTORY } from "@sims/integrations/constants";
 
 /**
  * Used to limit the number of asynchronous operations that will
@@ -72,14 +73,17 @@ export class FedRestrictionProcessingService {
         filePaths[filePaths.length - 1],
         auditUser.id,
       );
-      // If there are more than one file, delete it.
+      // If there are more than one file, archive it.
       // Only the most updated file matters because it represents the entire data snapshot.
       for (const remoteFilePath of filePaths) {
         try {
-          await this.integrationService.deleteFile(remoteFilePath);
+          await this.integrationService.archiveFile(
+            remoteFilePath,
+            SFTP_ARCHIVE_DIRECTORY,
+          );
         } catch (error) {
           result.errorsSummary.push(
-            `Error while deleting federal restrictions file: ${remoteFilePath}`,
+            `Error while archiving federal restrictions file: ${remoteFilePath}`,
           );
           result.errorsSummary.push(error);
         }

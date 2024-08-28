@@ -241,19 +241,6 @@ export class MSFAAIntegrationService extends SFTPIntegrationBase<MSFAASFTPRespon
     }
   }
 
-  /**
-   * Delete a file from SFTP.
-   * @param filePath Full path of the file to be deleted.
-   */
-  async deleteFile(filePath: string): Promise<void> {
-    const client = await this.getClient();
-    try {
-      await client.delete(filePath);
-    } finally {
-      await SshService.closeQuietly(client);
-    }
-  }
-
   @InjectLogger()
   logger: LoggerService;
 }

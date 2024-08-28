@@ -17,6 +17,7 @@ import {
   SINValidationService,
   StudentService,
 } from "@sims/integrations/services";
+import { SFTP_ARCHIVE_DIRECTORY } from "@sims/integrations/constants";
 
 /**
  * Manages the process to generate SIN validations requests to ESDC and allow
@@ -210,12 +211,16 @@ export class SINValidationProcessingService {
     }
 
     try {
-      await this.sinValidationIntegrationService.deleteFile(remoteFilePath);
+      // Archive file.
+      await this.sinValidationIntegrationService.archiveFile(
+        remoteFilePath,
+        SFTP_ARCHIVE_DIRECTORY,
+      );
     } catch (error) {
       // Log the error but allow the process to continue.
-      // If there was an issue only during the file removal, it will be
-      // processed again and could be deleted in the second attempt.
-      const logMessage = `Error while deleting ESDC SIN validation response file: ${remoteFilePath}`;
+      // If there was an issue only during the file archiving, it will be
+      // processed again and could be archived in the second attempt.
+      const logMessage = `Error while archiving ESDC SIN validation response file: ${remoteFilePath}`;
       this.logger.error(logMessage);
       result.errorsSummary.push(logMessage);
     }

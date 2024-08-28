@@ -10,6 +10,7 @@ import { ProcessSummaryResult } from "@sims/integrations/models";
 import {
   ECE_RESPONSE_COE_DECLINED_REASON,
   ECE_RESPONSE_FILE_NAME,
+  SFTP_ARCHIVE_DIRECTORY,
 } from "@sims/integrations/constants";
 import { InstitutionLocationService } from "@sims/integrations/services";
 import {
@@ -69,7 +70,7 @@ export class ECEResponseProcessingService {
 
   /**
    * Process all the available ECE response files in SFTP location.
-   * Once the file is processed, it gets deleted.
+   * Once the file is processed, it is archived.
    * @returns Process summary result.
    */
   async process(): Promise<ProcessSummaryResult[]> {
@@ -111,7 +112,7 @@ export class ECEResponseProcessingService {
     // Setting the default value to true because, in the event of error
     // thrown from downloadResponseFile due to any data validation in the file
     // the value of isECEResponseFileExist will remain false which will be inaccurate as the file exist
-    // and file deletion will not happen.
+    // and file archiving will not happen.
     // In the event of runtime error during downloading the file, it is handled with custom error
     // and taken care that isECEResponseFileExist is set to false when this error happens.
     let isECEResponseFileExist = true;
@@ -173,9 +174,9 @@ export class ECEResponseProcessingService {
       );
       processSummary.errors.push("File processing aborted.");
     } finally {
-      // Delete the ECE response file, if the file exist in remote server.
+      // Archive the ECE response file, if the file exist in remote server.
       if (isECEResponseFileExist) {
-        await this.deleteProcessedFile(remoteFilePath, processSummary);
+        await this.archiveProcessedFile(remoteFilePath, processSummary);
 
         // Create notification email which gets sent to
         // the integration contacts of the institution
@@ -498,23 +499,26 @@ export class ECEResponseProcessingService {
   }
 
   /**
-   * Delete the ece response file.
+   * Archive the ece response file.
    * @param remoteFilePath file path.
    * @param processSummary process summary.
    */
-  private async deleteProcessedFile(
+  private async archiveProcessedFile(
     remoteFilePath: string,
     processSummary: ProcessSummaryResult,
   ): Promise<void> {
     try {
-      // Deleting the file once it has been processed.
-      await this.integrationService.deleteFile(remoteFilePath);
+      // Archiving the file once it has been processed.
+      await this.integrationService.archiveFile(
+        remoteFilePath,
+        SFTP_ARCHIVE_DIRECTORY,
+      );
       processSummary.summary.push(
-        `The file ${remoteFilePath} has been deleted after processing.`,
+        `The file ${remoteFilePath} has been archived after processing.`,
       );
     } catch (error: unknown) {
       processSummary.errors.push(
-        `Error while deleting the file: ${remoteFilePath}. ${error}`,
+        `Error while archiving the file: ${remoteFilePath}. ${error}`,
       );
     }
   }
