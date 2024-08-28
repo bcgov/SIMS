@@ -16,23 +16,30 @@ import { VirusScanProcessor } from "../virus-scan.processor";
 import { VirusScanStatus } from "@sims/sims-db";
 import * as path from "path";
 import { INFECTED_FILENAME_SUFFIX } from "../../../services";
+import { ObjectStorageService } from "@sims/integrations/object-storage";
+import { Readable } from "stream";
+
+const DUMMY_FILE_CONTENT = "Some dummy file content.";
 
 describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let processor: VirusScanProcessor;
   let clamAVServiceMock: ClamAVService;
+  let objectStorageServiceMock: ObjectStorageService;
 
   beforeAll(async () => {
     const {
       nestApplication,
       dataSource,
       clamAVServiceMock: clamAVServiceFromAppModule,
+      objectStorageServiceMock: objectStorageServiceFromAppModule,
     } = await createTestingAppModule();
     app = nestApplication;
     // Processor under test.
     processor = app.get(VirusScanProcessor);
     clamAVServiceMock = clamAVServiceFromAppModule;
+    objectStorageServiceMock = objectStorageServiceFromAppModule;
     db = createE2EDataSources(dataSource);
   });
 
@@ -45,6 +52,15 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     const studentFile = createFakeStudentFileUpload();
     studentFile.virusScanStatus = VirusScanStatus.InProgress;
     await db.studentFile.save(studentFile);
+    const buffer = Buffer.from(DUMMY_FILE_CONTENT);
+    const stream = Readable.from(buffer);
+    objectStorageServiceMock.getObject = jest.fn(() => {
+      return Promise.resolve({
+        contentLength: 10,
+        contentType: "text/html; charset=utf-8",
+        body: stream,
+      });
+    });
     const fakeUniqueFileName = "file.random";
     const mockedJob = mockBullJob<VirusScanQueueInDTO>({
       uniqueFileName: fakeUniqueFileName,
@@ -70,6 +86,15 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     const studentFile = createFakeStudentFileUpload();
     studentFile.virusScanStatus = VirusScanStatus.InProgress;
     await db.studentFile.save(studentFile);
+    const buffer = Buffer.from(DUMMY_FILE_CONTENT);
+    const stream = Readable.from(buffer);
+    objectStorageServiceMock.getObject = jest.fn(() => {
+      return Promise.resolve({
+        contentLength: 10,
+        contentType: "text/html; charset=utf-8",
+        body: stream,
+      });
+    });
     clamAVServiceMock.scanFile = jest.fn(() => {
       throw new ClamAVError("Connection refused", "ECONNREFUSED");
     }); // Queued job.
@@ -102,6 +127,15 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     const studentFile = createFakeStudentFileUpload();
     studentFile.virusScanStatus = VirusScanStatus.InProgress;
     await db.studentFile.save(studentFile);
+    const buffer = Buffer.from(DUMMY_FILE_CONTENT);
+    const stream = Readable.from(buffer);
+    objectStorageServiceMock.getObject = jest.fn(() => {
+      return Promise.resolve({
+        contentLength: 10,
+        contentType: "text/html; charset=utf-8",
+        body: stream,
+      });
+    });
     clamAVServiceMock.scanFile = jest.fn(() => {
       throw new ClamAVError("Server not found", "ENOTFOUND");
     }); // Queued job.
@@ -134,6 +168,15 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     const studentFile = createFakeStudentFileUpload();
     studentFile.virusScanStatus = VirusScanStatus.InProgress;
     await db.studentFile.save(studentFile);
+    const buffer = Buffer.from(DUMMY_FILE_CONTENT);
+    const stream = Readable.from(buffer);
+    objectStorageServiceMock.getObject = jest.fn(() => {
+      return Promise.resolve({
+        contentLength: 10,
+        contentType: "text/html; charset=utf-8",
+        body: stream,
+      });
+    });
     clamAVServiceMock.scanFile = jest.fn(() => {
       throw new ClamAVError("Unknown error", undefined);
     }); // Queued job.
@@ -197,6 +240,15 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     const studentFile = createFakeStudentFileUpload();
     studentFile.virusScanStatus = VirusScanStatus.InProgress;
     await db.studentFile.save(studentFile);
+    const buffer = Buffer.from(DUMMY_FILE_CONTENT);
+    const stream = Readable.from(buffer);
+    objectStorageServiceMock.getObject = jest.fn(() => {
+      return Promise.resolve({
+        contentLength: 10,
+        contentType: "text/html; charset=utf-8",
+        body: stream,
+      });
+    });
     clamAVServiceMock.scanFile = jest.fn(() => Promise.resolve(true));
     // Queued job.
     const mockedJob = mockBullJob<VirusScanQueueInDTO>({
@@ -236,6 +288,15 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     const studentFile = createFakeStudentFileUpload();
     studentFile.virusScanStatus = VirusScanStatus.InProgress;
     await db.studentFile.save(studentFile);
+    const buffer = Buffer.from(DUMMY_FILE_CONTENT);
+    const stream = Readable.from(buffer);
+    objectStorageServiceMock.getObject = jest.fn(() => {
+      return Promise.resolve({
+        contentLength: 10,
+        contentType: "text/html; charset=utf-8",
+        body: stream,
+      });
+    });
     clamAVServiceMock.scanFile = jest.fn(() => Promise.resolve(false));
     // Queued job.
     const mockedJob = mockBullJob<VirusScanQueueInDTO>({
