@@ -298,7 +298,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
       archiveDirectory,
       fileBaseName,
     );
-    this.renameFile(remoteFilePath, newRemoteFilePath);
+    await this.renameFile(remoteFilePath, newRemoteFilePath);
   }
 
   /**
