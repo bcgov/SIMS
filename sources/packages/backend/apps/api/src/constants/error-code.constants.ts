@@ -191,3 +191,9 @@ export const FILE_HAS_NOT_BEEN_SCANNED_YET = "FILE_HAS_NOT_BEEN_SCANNED_YET";
  * File has been scanned and a virus was detected.
  */
 export const VIRUS_DETECTED = "VIRUS_DETECTED";
+
+/**
+ * File upload service unavailable.
+ */
+export const FILE_UPLOAD_SERVICE_UNAVAILABLE =
+  "FILE_UPLOAD_SERVICE_IS_CURRENTLY_UNAVAILABLE";

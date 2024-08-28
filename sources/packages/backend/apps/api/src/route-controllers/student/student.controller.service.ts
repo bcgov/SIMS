@@ -1,7 +1,9 @@
 import {
   ForbiddenException,
+  HttpStatus,
   Injectable,
   NotFoundException,
+  ServiceUnavailableException,
 } from "@nestjs/common";
 import { Response } from "express";
 import {
@@ -9,7 +11,6 @@ import {
   StudentFileService,
   StudentService,
 } from "../../services";
-import { Readable } from "stream";
 import { FileCreateAPIOutDTO } from "../models/common.dto";
 import {
   ApplicationPaginationOptionsAPIInDTO,
@@ -33,7 +34,11 @@ import {
 } from "./models/student.dto";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 import { ApiProcessError } from "../../types";
-import { FILE_HAS_NOT_BEEN_SCANNED_YET, VIRUS_DETECTED } from "../../constants";
+import {
+  FILE_HAS_NOT_BEEN_SCANNED_YET,
+  FILE_UPLOAD_SERVICE_UNAVAILABLE,
+  VIRUS_DETECTED,
+} from "../../constants";
 import { ObjectStorageService } from "@sims/integrations/object-storage";
 import { NoSuchKey } from "@aws-sdk/client-s3";
 
@@ -64,25 +69,50 @@ export class StudentControllerService {
     groupName: string,
     auditUserId: number,
   ): Promise<FileCreateAPIOutDTO> {
-    const createdFile = await this.fileService.createFile(
-      {
-        fileName: file.originalname,
-        uniqueFileName: uniqueFileName,
-        groupName: groupName,
-        mimeType: file.mimetype,
-        fileContent: file.buffer,
-      },
-      studentId,
-      auditUserId,
-    );
-
-    return {
-      fileName: createdFile.fileName,
-      uniqueFileName: createdFile.uniqueFileName,
-      url: `student/files/${createdFile.uniqueFileName}`,
-      size: createdFile.fileContent.length,
-      mimetype: createdFile.mimeType,
-    };
+    let uploadStatus: number;
+    try {
+      console.info("Uploading file to S3 storage.");
+      uploadStatus = await this.objectStorageService.putObject({
+        key: uniqueFileName,
+        contentType: file.mimetype,
+        body: file.buffer,
+      });
+    } catch (error: unknown) {
+      console.error(parseJSONError(error));
+    }
+    if (uploadStatus === HttpStatus.OK) {
+      const createdFile = await this.fileService.createFile(
+        {
+          fileName: file.originalname,
+          uniqueFileName: uniqueFileName,
+          groupName: groupName,
+        },
+        studentId,
+        auditUserId,
+      );
+      if (createdFile) {
+        return {
+          fileName: createdFile.fileName,
+          uniqueFileName: createdFile.uniqueFileName,
+          url: `student/files/${createdFile.uniqueFileName}`,
+          size: file.size,
+          mimetype: file.mimetype,
+        };
+      } else {
+        // If the file details persistence to the database fails,
+        // remove the file from the s3 storage.
+        await this.objectStorageService.deleteObject(uniqueFileName);
+        throw new ServiceUnavailableException(
+          "The file upload service (database) is currently unavailable. There was an unexpected error while uploading the file.",
+          FILE_UPLOAD_SERVICE_UNAVAILABLE,
+        );
+      }
+    } else {
+      throw new ServiceUnavailableException(
+        "The file upload service (s3 storage) is currently unavailable. There was an unexpected error while uploading the file.",
+        FILE_UPLOAD_SERVICE_UNAVAILABLE,
+      );
+    }
   }
 
   /**
@@ -133,10 +163,6 @@ export class StudentControllerService {
       `attachment; filename=${studentFile.fileName}`,
     );
 
-    // Temporary code to be changed in the upcoming effort
-    // when the the files will no longer be saved on DB.
-    const stopwatchLabel = `Downloaded file ${uniqueFileName}`;
-    console.time(stopwatchLabel);
     try {
       const fileContent = await this.objectStorageService.getObject(
         uniqueFileName,
@@ -152,18 +178,6 @@ export class StudentControllerService {
       } else {
         console.error(parseJSONError(error));
       }
-      // Fallback to use the DB file in case the object storage failed
-      // or the file or never uploaded to S3.
-      // Populate fil information from DB.
-      console.info("Retrieving from DB.");
-      response.setHeader("Content-Type", studentFile.mimeType);
-      response.setHeader("Content-Length", studentFile.fileContent.length);
-      const stream = new Readable();
-      stream.push(studentFile.fileContent);
-      stream.push(null);
-      stream.pipe(response);
-    } finally {
-      console.timeEnd(stopwatchLabel);
     }
   }
 

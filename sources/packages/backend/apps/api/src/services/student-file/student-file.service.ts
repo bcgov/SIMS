@@ -48,15 +48,12 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     newFile.fileName = createFile.fileName;
     newFile.uniqueFileName = createFile.uniqueFileName;
     newFile.groupName = createFile.groupName;
-    newFile.mimeType = createFile.mimeType;
-    newFile.fileContent = createFile.fileContent;
     newFile.student = { id: studentId } as Student;
     newFile.creator = { id: auditUserId } as User;
     newFile.virusScanStatus = VirusScanStatus.InProgress;
 
     const summary = new ProcessSummary();
     let savedFile: StudentFile;
-    // Save the file to db.
     try {
       savedFile = await this.repo.save(newFile);
     } catch (error: unknown) {
@@ -107,8 +104,6 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
       .select([
         "studentFile.id",
         "studentFile.fileName",
-        "studentFile.mimeType",
-        "studentFile.fileContent",
         "studentFile.virusScanStatus",
       ])
       .where("studentFile.uniqueFileName = :uniqueFileName", {
@@ -119,14 +114,6 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
       query.andWhere("studentFile.student.id = :studentId", { studentId });
     }
     const studentFile = await query.getOne();
-
-    // Block users to download file contents that are not scanned or infected.
-    if (
-      studentFile &&
-      studentFile.virusScanStatus !== VirusScanStatus.FileIsClean
-    ) {
-      studentFile.fileContent = null;
-    }
     return studentFile;
   }
 

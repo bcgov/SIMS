@@ -18,6 +18,7 @@ import {
   ApiBadRequestResponse,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
+  ApiServiceUnavailableResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
@@ -57,7 +58,7 @@ import {
   PaginatedResults,
   uploadLimits,
 } from "../../utilities";
-import { CustomNamedError, parseJSONError } from "@sims/utilities";
+import { CustomNamedError } from "@sims/utilities";
 import { FileOriginType, IdentityProviders } from "@sims/sims-db";
 import { FileCreateAPIOutDTO } from "../models/common.dto";
 import { ApplicationPaginationOptionsAPIInDTO } from "../models/pagination.dto";
@@ -69,7 +70,6 @@ import {
 } from "../../constants";
 import { EntityManager } from "typeorm";
 import { StudentInfo } from "../../services/student/student.service.models";
-import { ObjectStorageService } from "@sims/integrations/object-storage";
 
 /**
  * Student controller for Student Client.
@@ -87,7 +87,6 @@ export class StudentStudentsController extends BaseController {
     private readonly applicationService: ApplicationService,
     private readonly studentService: StudentService,
     private readonly formService: FormService,
-    private readonly objectStorageService: ObjectStorageService,
   ) {
     super();
   }
@@ -224,6 +223,11 @@ export class StudentStudentsController extends BaseController {
    * @returns created file information.
    */
   @Post("files")
+  @ApiServiceUnavailableResponse({
+    description:
+      "The file upload service is currently unavailable." +
+      " There was an unexpected error while uploading the file.",
+  })
   @UseInterceptors(
     FileInterceptor("file", {
       limits: uploadLimits(MAX_UPLOAD_FILES, MAX_UPLOAD_PARTS),
@@ -236,22 +240,6 @@ export class StudentStudentsController extends BaseController {
     @Body("uniqueFileName") uniqueFileName: string,
     @Body("group") groupName: string,
   ): Promise<FileCreateAPIOutDTO> {
-    // Temporary code to be changed in the upcoming effort
-    // when the the files will no longer be saved on DB.
-    const stopwatchLabel = `S3 uploaded File ${uniqueFileName}`;
-    console.time(stopwatchLabel);
-    try {
-      await this.objectStorageService.putObject({
-        key: uniqueFileName,
-        contentType: file.mimetype,
-        body: file.buffer,
-      });
-    } catch (error: unknown) {
-      console.error(parseJSONError(error));
-    } finally {
-      console.timeEnd(stopwatchLabel);
-    }
-
     return this.studentControllerService.uploadFile(
       studentUserToken.studentId,
       file,

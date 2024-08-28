@@ -11,6 +11,7 @@ import { UNABLE_TO_SCAN_FILE } from "../../constants/error-code.constants";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { ClamAVService, SystemUsersService } from "@sims/services";
 import * as path from "path";
+import { ObjectStorageService } from "@sims/integrations/object-storage";
 
 export const INFECTED_FILENAME_SUFFIX = "-OriginalFileError";
 
@@ -20,6 +21,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     dataSource: DataSource,
     private readonly clamAVService: ClamAVService,
     private readonly systemUsersService: SystemUsersService,
+    private readonly objectStorageService: ObjectStorageService,
   ) {
     super(dataSource.getRepository(StudentFile));
   }
@@ -40,7 +42,11 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
       throw new NotFoundException(`Student file ${uniqueFileName} not found.`);
     }
     const stream = new Readable();
-    stream.push(studentFile.fileContent);
+    // Retrieve the file from the object storage.
+    const { body } = await this.objectStorageService.getObject(
+      studentFile.uniqueFileName,
+    );
+    stream.push(body);
     stream.push(null);
     const isInfected = await this.clamAVService.scanFile(
       stream,
@@ -83,7 +89,6 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         id: true,
         fileName: true,
         uniqueFileName: true,
-        fileContent: true,
       },
       where: { uniqueFileName, virusScanStatus: VirusScanStatus.InProgress },
     });

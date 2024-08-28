@@ -3,6 +3,7 @@ import {
   S3Client,
   PutObjectCommand,
   GetObjectCommand,
+  DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
 import { ConfigService } from "@sims/utilities/config";
 import { GetObjectResult, StorageObject } from "./models/object-storage.models";
@@ -32,17 +33,34 @@ export class ObjectStorageService {
   /**
    * Saves an object to the storage.
    * @param object object details to be stored.
+   * @returns httpStatusCode http status code.
    * @throws S3ServiceException base exception class for all service exceptions from S3 service.
    * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/s3/command/PutObjectCommand/
    */
-  async putObject(object: StorageObject): Promise<void> {
-    await this.s3Client.send(
+  async putObject(object: StorageObject): Promise<number> {
+    const response = await this.s3Client.send(
       new PutObjectCommand({
         Bucket: this.defaultBucket,
         Key: object.key,
         Body: object.body,
         ContentLength: object.body.length,
         ContentType: object.contentType,
+      }),
+    );
+    return response.$metadata.httpStatusCode;
+  }
+
+  /**
+   * Deletes an object from the storage.
+   * @param objectKey object key to be deleted.
+   * @throws S3ServiceException base exception class for all service exceptions from S3 service.
+   * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/s3/command/PutObjectCommand/
+   */
+  async deleteObject(objectKey: string): Promise<void> {
+    await this.s3Client.send(
+      new DeleteObjectCommand({
+        Bucket: this.defaultBucket,
+        Key: objectKey,
       }),
     );
   }
