@@ -61,8 +61,8 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         errorMessage = `${errorMessage} File scanning failed due to unknown error.`;
         errorName = FILE_SCANNING_FAILED;
       }
-    } catch (err: unknown) {
-      const virusError = err as ClamAVError;
+    } catch (error: unknown) {
+      const virusError = error as ClamAVError;
       if (virusError.code === "ECONNREFUSED") {
         errorMessage = `${errorMessage} Connection to ClamAV server failed.`;
         errorName = CONNECTION_FAILED;
@@ -72,7 +72,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
       } else {
         errorMessage = `${errorMessage} Unknown error.`;
         errorName = UNKNOWN_ERROR;
-        processSummary.error(errorMessage, err);
+        processSummary.error(errorMessage, error);
       }
     }
 
