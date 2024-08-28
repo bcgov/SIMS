@@ -43,9 +43,12 @@
           <ul>
             <li v-if="eCertValidation.disabilityStatusNotConfirmed">
               Your account has not been approved for disability funding. You
-              will not be able to accept this application until the account
-              disability status has been approved. If you would like to receive
-              all non disability funding please edit your application.
+              will not be able to accept this assessment until your disability
+              status is approved. If you would like to receive all
+              non-disability funding, please edit the disability question on
+              your application. Please note that once you have received funding
+              for this application, additional changes to the disability
+              question may not be considered.
             </li>
             <li v-if="eCertValidation.msfaaInvalid">
               Your MSFAA is not valid. Please complete your MSFAA with the

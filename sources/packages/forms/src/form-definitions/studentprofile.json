@@ -1621,7 +1621,7 @@
           "labelMargin": "",
           "placeholder": "",
           "description": "",
-          "tooltip": "If you wish to identify as a student with a disability and receive disability-related financial assistance as part of your Student Loan award, you will need to have your disability verified by StudentAid BC.",
+          "tooltip": "If you are a student with a permanent disability, or a persistent or prolonged disability, as defined below, you may be eligible for additional student financial assistance.\n\nPermanent Disability:\nAny impairment, including a physical, mental, intellectual, cognitive, learning, communication or sensory impairment - or a functional limitation - that restricts the ability of a person to perform the daily activities necessary to pursue studies at a postsecondary school level or to participate in the labour force and that is expected to remain with the person for the person’s expected life.\n\nPersistent or Prolonged Disability:\nAny impairment, including a physical, mental, intellectual, cognitive, learning, communication or sensory impairment - or a functional limitation - that restricts the ability of a person to perform the daily activities necessary to pursue studies at a postsecondary school level or to participate in the labour force and has lasted, or is expected to last, for a period of at least 12 months but is not expected to remain with the person for the person’s expected life.",
           "prefix": "",
           "suffix": "",
           "widget": {
