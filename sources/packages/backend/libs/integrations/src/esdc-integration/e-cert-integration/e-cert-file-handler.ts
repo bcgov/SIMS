@@ -387,13 +387,8 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
       // Any error caught here will abort the file processing.
       processSummary.error(`Error processing the file ${filePath}.`, error);
     } finally {
-      if (!processSummary.getLogLevelSum().error) {
-        await this.archiveFile(
-          eCertIntegrationService,
-          filePath,
-          processSummary,
-        );
-      }
+      // Archive the file anyways.
+      await this.archiveFile(eCertIntegrationService, filePath, processSummary);
     }
   }
 
