@@ -355,6 +355,8 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
         `Error downloading and parsing the file ${filePath}.`,
         error,
       );
+      // Archive the file.
+      await this.archiveFile(eCertIntegrationService, filePath, processSummary);
       return;
     }
     // Processing the records.
@@ -387,7 +389,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
       // Any error caught here will abort the file processing.
       processSummary.error(`Error processing the file ${filePath}.`, error);
     } finally {
-      // Archive the file anyways.
+      // Archive the file.
       await this.archiveFile(eCertIntegrationService, filePath, processSummary);
     }
   }

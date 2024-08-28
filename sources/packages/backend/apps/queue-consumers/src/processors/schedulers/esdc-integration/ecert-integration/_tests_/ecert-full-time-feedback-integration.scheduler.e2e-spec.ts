@@ -282,7 +282,6 @@ describe(
           `Disbursement feedback error created for document number ${SHARED_DOCUMENT_NUMBER} at line 2.`,
         ]),
       ).toBe(true);
-      // When all the records are processed successfully, expect the file to be archived on SFTP.
       expect(sftpClientMock.rename).toHaveBeenCalled();
 
       // Assert imported feedback errors.
@@ -444,7 +443,6 @@ describe(
           `Disbursement feedback error created for document number ${SHARED_DOCUMENT_NUMBER} at line 2.`,
         ]),
       ).toBe(true);
-      // When all the records are processed successfully, expect the file to be archived on SFTP.
       expect(sftpClientMock.rename).toHaveBeenCalled();
 
       // Assert
