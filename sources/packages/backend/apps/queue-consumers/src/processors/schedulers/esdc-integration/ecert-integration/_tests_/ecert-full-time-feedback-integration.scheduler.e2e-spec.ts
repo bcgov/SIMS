@@ -247,8 +247,8 @@ describe(
           "The following error codes are unknown to the system: UKN-00200.",
         ]),
       ).toBe(true);
-      // The file is not expected to be archived on SFTP.
-      expect(sftpClientMock.rename).not.toHaveBeenCalled();
+      // The file is expected to be archived on SFTP.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
     });
 
     it("Should import the feedback error file and create disbursement feedback error when the document number is valid and all the error codes received are present in the system.", async () => {

@@ -209,8 +209,8 @@ describe(
           `Error downloading and parsing the file ${downloadedFile}. The E-Cert file has TotalSINHash inconsistent with the total sum of sin in the records.`,
         ]),
       ).toBe(true);
-      // The file is not expected to be archived on SFTP.
-      expect(sftpClientMock.rename).not.toHaveBeenCalled();
+      // The file is expected to be archived on SFTP.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
     });
 
     it("Should log 'Unknown error code' error when one or more error codes received is not in the system.", async () => {
