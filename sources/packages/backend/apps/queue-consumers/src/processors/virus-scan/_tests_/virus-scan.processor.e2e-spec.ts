@@ -136,7 +136,7 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     await db.studentFile.save(studentFile);
     const errorMessage = `Unable to scan the file ${studentFile.uniqueFileName} for viruses. Unknown error.`;
     clamAVServiceMock.scanFile = jest.fn(() => {
-      throw new ClamAVError(errorMessage, "");
+      throw new ClamAVError(errorMessage, undefined);
     }); // Queued job.
     const mockedJob = mockBullJob<VirusScanQueueInDTO>({
       uniqueFileName: studentFile.uniqueFileName,
