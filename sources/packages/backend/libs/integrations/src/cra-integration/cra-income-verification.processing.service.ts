@@ -18,6 +18,7 @@ import * as path from "path";
 import { ConfigService } from "@sims/utilities/config";
 import { CRAIntegrationService } from "./cra.integration.service";
 import { CRAIncomeVerificationsService } from "../services";
+import { SFTP_ARCHIVE_DIRECTORY } from "@sims/integrations/constants";
 
 const INCOME_VERIFICATION_TAG = "VERIFICATION_ID";
 
@@ -270,12 +271,13 @@ export class CRAIncomeVerificationProcessingService {
     }
 
     try {
-      await this.craService.deleteFile(remoteFilePath);
+      // Archive file.
+      await this.craService.archiveFile(remoteFilePath, SFTP_ARCHIVE_DIRECTORY);
     } catch (error) {
       // Log the error but allow the process to continue.
-      // If there was an issue only during the file removal, it will be
-      // processed again and could be deleted in the second attempt.
-      const logMessage = `Error while deleting CRA response file: ${remoteFilePath}`;
+      // If there was an issue only during the file archiving, it will be
+      // processed again and could be archived in the second attempt.
+      const logMessage = `Error while archiving CRA response file: ${remoteFilePath}`;
       this.logger.error(logMessage);
       result.errorsSummary.push(logMessage);
     }

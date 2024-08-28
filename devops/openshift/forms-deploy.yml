@@ -144,7 +144,12 @@ objects:
     metadata:
       labels:
         app: ${NAME}
-      name: ${NAME}
+      name: ${NAME}-route
+      annotations:
+        haproxy.router.openshift.io/balance: leastconn
+        haproxy.router.openshift.io/disable_cookies: "true"
+        haproxy.router.openshift.io/hsts_header: max-age=31536000;includeSubDomains;preload
+        haproxy.router.openshift.io/timeout: 30s
     spec:
       host: ${FORMS_URL}
       to:
@@ -154,8 +159,20 @@ objects:
       port:
         targetPort: "3001"
       tls:
-        termination: edge
         insecureEdgeTerminationPolicy: Redirect
+        termination: edge
+        certificate: |
+          -----BEGIN CERTIFICATE-----
+          ${TLS_CERTIFICATE}
+          -----END CERTIFICATE-----
+        key: |
+          -----BEGIN PRIVATE KEY-----
+          ${TLS_KEY}
+          -----END PRIVATE KEY-----
+        caCertificate: |
+          -----BEGIN CERTIFICATE-----
+          ${TLS_CA_CERTIFICATE}
+          -----END CERTIFICATE-----
       wildcardPolicy: None
   - apiVersion: autoscaling/v2
     kind: HorizontalPodAutoscaler
@@ -171,18 +188,18 @@ objects:
       minReplicas: "${{REPLICAS}}"
       maxReplicas: 6
       metrics:
-          - type: Resource
-            resource:
-              name: cpu
-              target:
-                type: Utilization
-                averageUtilization: 50
-          - type: Resource
-            resource:
-              name: memory
-              target:
-                type: AverageValue
-                averageValue: "1Gi"
+        - type: Resource
+          resource:
+            name: cpu
+            target:
+              type: Utilization
+              averageUtilization: 50
+        - type: Resource
+          resource:
+            name: memory
+            target:
+              type: AverageValue
+              averageValue: "1Gi"
   - apiVersion: policy/v1
     kind: PodDisruptionBudget
     metadata:
@@ -214,10 +231,6 @@ parameters:
     required: true
   - name: FORMIO_ROOT_PASSWORD
     description: FORMIO_ROOT_PASSWORD
-    generate: expression
-    from: "[a-zA-Z0-9]{16}"
-  - name: HOST_PREFIX
-    description: Host in which the container is deployed.
     required: true
   - name: FORMS_URL
     displayName: FORMS_URL
@@ -252,3 +265,9 @@ parameters:
     description: The resources Memory limit (in Mi, Gi, etc) for this build.
     required: true
     value: 2Gi
+  - name: TLS_CERTIFICATE
+    required: true
+  - name: TLS_KEY
+    required: true
+  - name: TLS_CA_CERTIFICATE
+    required: true

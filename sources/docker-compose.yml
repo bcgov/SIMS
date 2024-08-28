@@ -240,6 +240,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - local-network
   # - ClamAV
   # Web
   web:

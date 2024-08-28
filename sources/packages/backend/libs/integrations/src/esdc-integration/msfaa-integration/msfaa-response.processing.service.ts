@@ -10,6 +10,7 @@ import {
 import { MSFAAResponseCancelledRecord } from "./msfaa-files/msfaa-response-cancelled-record";
 import { MSFAAResponseReceivedRecord } from "./msfaa-files/msfaa-response-received-record";
 import { MSFAAIntegrationService } from "./msfaa.integration.service";
+import { SFTP_ARCHIVE_DIRECTORY } from "@sims/integrations/constants";
 
 @Injectable()
 export class MSFAAResponseProcessingService {
@@ -93,12 +94,16 @@ export class MSFAAResponseProcessingService {
       }
     }
     try {
-      await this.msfaaService.deleteFile(responseFile.filePath);
+      // Archive file.
+      await this.msfaaService.archiveFile(
+        responseFile.filePath,
+        SFTP_ARCHIVE_DIRECTORY,
+      );
     } catch (error) {
       // Log the error but allow the process to continue.
-      // If there was an issue only during the file removal, it will be
-      // processed again and could be deleted in the second attempt.
-      const logMessage = `Error while deleting MSFAA response file: ${responseFile.filePath}`;
+      // If there was an issue only during the file archiving, it will be
+      // processed again and could be archived in the second attempt.
+      const logMessage = `Error while archiving MSFAA response file: ${responseFile.filePath}`;
       this.logger.error(logMessage);
       result.errorsSummary.push(logMessage);
     }

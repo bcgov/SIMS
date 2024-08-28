@@ -16,6 +16,7 @@ import {
 import { SFAS_IMPORT_RECORDS_PROGRESS_REPORT_PACE } from "@sims/services/constants";
 import * as os from "os";
 import { ConfigService } from "@sims/utilities/config";
+import { SFTP_ARCHIVE_DIRECTORY } from "@sims/integrations/constants";
 
 @Injectable()
 export class SFASIntegrationProcessingService {
@@ -143,13 +144,16 @@ export class SFASIntegrationProcessingService {
       this.logger.log("Records imported.");
       if (result.success) {
         /**
-         * Delete the file only if it was processed with success.
+         * Archive the file only if it was processed with success.
          */
         try {
-          await this.sfasService.deleteFile(remoteFilePath);
+          await this.sfasService.archiveFile(
+            remoteFilePath,
+            SFTP_ARCHIVE_DIRECTORY,
+          );
         } catch (error) {
           throw new Error(
-            `Error while deleting SFAS integration file: ${remoteFilePath}`,
+            `Error while archiving SFAS integration file: ${remoteFilePath}`,
             {
               cause: error,
             },

@@ -35,7 +35,10 @@ objects:
                 - name: KEYCLOAK_AUTH_URL
                   value: ${KEYCLOAK_AUTH_URL}
                 - name: POSTGRES_HOST
-                  value: "${DB_SERVICE}"
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${DB_SERVICE_KEY}
+                      name: ${DB_SECRET_NAME}
                 - name: POSTGRES_USER
                   valueFrom:
                     secretKeyRef:
@@ -100,13 +103,30 @@ objects:
   - apiVersion: route.openshift.io/v1
     kind: Route
     metadata:
-      name: ${NAME}
+      name: ${NAME}-route
+      annotations:
+        haproxy.router.openshift.io/balance: leastconn
+        haproxy.router.openshift.io/disable_cookies: "true"
+        haproxy.router.openshift.io/hsts_header: max-age=31536000;includeSubDomains;preload
+        haproxy.router.openshift.io/timeout: 30s
     spec:
       host: ${HOST_NAME}
       path: ${PATH}
       tls:
         insecureEdgeTerminationPolicy: Redirect
         termination: edge
+        certificate: |
+          -----BEGIN CERTIFICATE-----
+          ${TLS_CERTIFICATE}
+          -----END CERTIFICATE-----
+        key: |
+          -----BEGIN PRIVATE KEY-----
+          ${TLS_KEY}
+          -----END PRIVATE KEY-----
+        caCertificate: |
+          -----BEGIN CERTIFICATE-----
+          ${TLS_CA_CERTIFICATE}
+          -----END CERTIFICATE-----
       to:
         kind: Service
         name: ${NAME}
@@ -127,14 +147,14 @@ parameters:
     value: "256M"
   - name: REPLICAS
     value: "1"
-  - name: DB_SERVICE
-    value: patroni-master
+  - name: DB_SERVICE_KEY
+    value: pgbouncer-host
   - name: DB_SECRET_NAME
-    value: patroni-creds
+    value: simsdb-pguser-app-database-user
   - name: DB_USERNAME_KEY
-    value: database-user
+    value: user
   - name: DB_PASSWORD_KEY
-    value: database-password
+    value: password
   - name: SIMS_DB_NAME
     value: sims-db-name
   - name: DISABLE_ORM_CACHE
@@ -172,4 +192,10 @@ parameters:
   - name: KEYCLOAK_AUTH_URL
     required: true
   - name: KEYCLOAK_REALM
+    required: true
+  - name: TLS_CERTIFICATE
+    required: true
+  - name: TLS_KEY
+    required: true
+  - name: TLS_CA_CERTIFICATE
     required: true

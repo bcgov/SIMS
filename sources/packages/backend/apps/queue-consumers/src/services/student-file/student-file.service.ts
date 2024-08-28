@@ -1,5 +1,5 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { DataSource, UpdateResult } from "typeorm";
+import { Injectable } from "@nestjs/common";
+import { DataSource, In, UpdateResult } from "typeorm";
 import {
   RecordDataModelService,
   StudentFile,
@@ -7,10 +7,16 @@ import {
 } from "@sims/sims-db";
 import { Readable } from "stream";
 import { CustomNamedError } from "@sims/utilities";
-import { UNABLE_TO_SCAN_FILE } from "../../constants/error-code.constants";
 import { ProcessSummary } from "@sims/utilities/logger";
-import { ClamAVService, SystemUsersService } from "@sims/services";
+import { ClamAVError, ClamAVService, SystemUsersService } from "@sims/services";
 import * as path from "path";
+import {
+  CONNECTION_FAILED,
+  FILE_NOT_FOUND,
+  FILE_SCANNING_FAILED,
+  SERVER_UNAVAILABLE,
+  UNKNOWN_ERROR,
+} from "../../constants/error-code.constants";
 import { ObjectStorageService } from "@sims/integrations/object-storage";
 
 export const INFECTED_FILENAME_SUFFIX = "-OriginalFileError";
@@ -39,8 +45,12 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
   ): Promise<boolean> {
     const studentFile = await this.getStudentFile(uniqueFileName);
     if (!studentFile) {
-      throw new NotFoundException(`Student file ${uniqueFileName} not found.`);
+      throw new CustomNamedError(
+        `File ${uniqueFileName} is not found or has already been scanned for viruses. Scanning the file for viruses is aborted.`,
+        FILE_NOT_FOUND,
+      );
     }
+
     const stream = new Readable();
     // Retrieve the file from the object storage.
     const { body } = await this.objectStorageService.getObject(
@@ -48,20 +58,40 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     );
     stream.push(body);
     stream.push(null);
-    const isInfected = await this.clamAVService.scanFile(
-      stream,
-      processSummary,
-    );
-    if (isInfected == null) {
-      // If the file could not be scanned for any reason,
-      // update the file scan status to Pending to keep a
-      // track of the files that haven't been scanned yet.
-      await this.updateFileScanStatus(studentFile.uniqueFileName, isInfected);
-      throw new CustomNamedError(
-        `Unable to scan the file ${studentFile.uniqueFileName}`,
-        UNABLE_TO_SCAN_FILE,
-      );
+    let isInfected: boolean | null;
+    let errorName: string;
+    let errorMessage = `Unable to scan the file ${uniqueFileName} for viruses.`;
+    try {
+      isInfected = await this.clamAVService.scanFile(stream);
+      if (isInfected === null) {
+        errorMessage = `${errorMessage} File scanning failed due to unknown error.`;
+        errorName = FILE_SCANNING_FAILED;
+      }
+    } catch (error: unknown) {
+      const virusError = error as ClamAVError;
+      if (virusError.code === "ECONNREFUSED") {
+        errorMessage = `${errorMessage} Connection to ClamAV server failed.`;
+        errorName = CONNECTION_FAILED;
+      } else if (virusError.code === "ENOTFOUND") {
+        errorMessage = `${errorMessage} ClamAV server is unavailable.`;
+        errorName = SERVER_UNAVAILABLE;
+      } else {
+        errorMessage = `${errorMessage} Unknown error.`;
+        errorName = UNKNOWN_ERROR;
+        processSummary.error(errorMessage, error);
+      }
     }
+
+    // If the file scanning failed or an error occurred, throw a CustomNamedError.
+    if (errorName) {
+      await this.updateFileScanStatus(
+        studentFile.uniqueFileName,
+        isInfected,
+        studentFile.fileName,
+      );
+      throw new CustomNamedError(errorMessage, errorName);
+    }
+
     let fileName = studentFile.fileName;
     if (isInfected) {
       processSummary.warn("Virus found.");
@@ -90,7 +120,13 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         fileName: true,
         uniqueFileName: true,
       },
-      where: { uniqueFileName, virusScanStatus: VirusScanStatus.InProgress },
+      where: {
+        uniqueFileName,
+        virusScanStatus: In([
+          VirusScanStatus.InProgress,
+          VirusScanStatus.Pending,
+        ]),
+      },
     });
   }
 

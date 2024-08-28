@@ -33,7 +33,10 @@ objects:
                 - name: IS_FULLTIME_ALLOWED
                   value: "${IS_FULLTIME_ALLOWED}"
                 - name: POSTGRES_HOST
-                  value: "${DB_SERVICE}"
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${DB_SERVICE_KEY}
+                      name: ${DB_SECRET_NAME}
                 - name: REDIS_HOST
                   value: "${REDIS_SERVICE}"
                 - name: CLAMAV_HOST
@@ -286,13 +289,30 @@ objects:
   - apiVersion: route.openshift.io/v1
     kind: Route
     metadata:
-      name: ${NAME}
+      name: ${NAME}-route
+      annotations:
+        haproxy.router.openshift.io/balance: leastconn
+        haproxy.router.openshift.io/disable_cookies: "true"
+        haproxy.router.openshift.io/hsts_header: max-age=31536000;includeSubDomains;preload
+        haproxy.router.openshift.io/timeout: 30s
     spec:
       host: ${HOST_NAME}
       path: ${PATH}
       tls:
         insecureEdgeTerminationPolicy: Redirect
         termination: edge
+        certificate: |
+          -----BEGIN CERTIFICATE-----
+          ${TLS_CERTIFICATE}
+          -----END CERTIFICATE-----
+        key: |
+          -----BEGIN PRIVATE KEY-----
+          ${TLS_KEY}
+          -----END PRIVATE KEY-----
+        caCertificate: |
+          -----BEGIN CERTIFICATE-----
+          ${TLS_CA_CERTIFICATE}
+          -----END CERTIFICATE-----
       to:
         kind: Service
         name: ${NAME}
@@ -346,14 +366,14 @@ parameters:
     value: "512M"
   - name: REPLICAS
     value: "2"
-  - name: DB_SERVICE
-    value: patroni-master
+  - name: DB_SERVICE_KEY
+    value: pgbouncer-host
   - name: DB_SECRET_NAME
-    value: patroni-creds
+    value: simsdb-pguser-app-database-user
   - name: DB_USERNAME_KEY
-    value: database-user
+    value: user
   - name: DB_PASSWORD_KEY
-    value: database-password
+    value: password
   - name: SIMS_DB_NAME
     value: sims-db-name
   - name: IMAGE_STREAM_TAG
@@ -470,3 +490,9 @@ parameters:
     value: s3-default-bucket
   - name: S3_REGION_KEY
     value: s3-region
+  - name: TLS_CERTIFICATE
+    required: true
+  - name: TLS_KEY
+    required: true
+  - name: TLS_CA_CERTIFICATE
+    required: true

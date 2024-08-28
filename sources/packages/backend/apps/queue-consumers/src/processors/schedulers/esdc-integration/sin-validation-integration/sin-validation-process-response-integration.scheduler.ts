@@ -8,10 +8,10 @@ import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
 import { ProcessResponseQueue } from "../models/esdc.models";
 
-@Processor(QueueNames.SINValidationRequestIntegration)
-export class SINValidationRequestIntegrationScheduler extends BaseScheduler<void> {
+@Processor(QueueNames.SINValidationResponseIntegration)
+export class SINValidationResponseIntegrationScheduler extends BaseScheduler<void> {
   constructor(
-    @InjectQueue(QueueNames.SINValidationRequestIntegration)
+    @InjectQueue(QueueNames.SINValidationResponseIntegration)
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly sinValidationProcessingService: SINValidationProcessingService,

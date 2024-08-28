@@ -30,3 +30,8 @@ export const LINE_BREAK_SPLIT_REGEX = /\r\n|\n\r|\n|\r/;
  * Application changes report file name prefix.
  */
 export const APPLICATION_CHANGES_REPORT_PREFIX = "PBC.EDU.APPCHANGES";
+
+/**
+ * SFTP directory name used to archive files.
+ */
+export const SFTP_ARCHIVE_DIRECTORY = "Archive";

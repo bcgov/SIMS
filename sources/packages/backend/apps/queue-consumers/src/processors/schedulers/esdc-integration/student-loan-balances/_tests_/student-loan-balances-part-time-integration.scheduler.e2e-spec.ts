@@ -90,8 +90,8 @@ describe(
         ]),
       ).toBe(true);
       expect(result).toContain("Process finalized with success.");
-      // Expect the file was deleted from SFTP.
-      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the file was archived on SFTP.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
       const studentLoanBalance = await db.studentLoanBalance.find({
         select: {
           balanceDate: true,
@@ -129,8 +129,8 @@ describe(
       expect(
         mockedJob.containLogMessages(["Student not found for line 2."]),
       ).toBe(true);
-      // Expect the file was deleted from SFTP.
-      expect(sftpClientMock.delete).toHaveBeenCalled();
+      // Expect the file was archived on SFTP.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
       const studentLoanBalancesCount = await db.studentLoanBalance.count({
         where: {
           student: { id: student.id },

@@ -2,9 +2,9 @@
   <v-card v-if="requestedAssessment.length || showWhenEmpty">
     <v-container>
       <body-header
-        title="Requests"
+        title="Unapproved changes"
         class="m-1"
-        subTitle="Requests for application changes that may require reassessments"
+        subTitle="Pending or declined requests submitted by the student or institution."
         :recordsCount="requestedAssessment.length"
       >
       </body-header>

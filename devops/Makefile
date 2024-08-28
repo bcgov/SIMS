@@ -8,7 +8,8 @@ export APP_NAME := $(or $(PROJECT_NAME), sims)
 export TEMPLATE_FILE_NAME := $(or $(TEMPLATE_FILE_NAME), $$FILE)
 export BUILD_REF := $(or $(BUILD_REF), $(GIT_LOCAL_BRANCH))
 export BUILD_NAMESPACE := $(or $(BUILD_NAMESPACE), 0c27fb-tools)
-export DOMAIN := $(or $(DOMAIN), apps.silver.devops.gov.bc.ca)
+export DOMAIN := $(or $(DOMAIN), sims.studentaidbc.ca)
+export DOMAIN_PREFIX := $(or $(DOMAIN_PREFIX),)
 export HOST_PREFIX := $(or $(HOST_PREFIX), $$HOST_PREFIX)
 export NEW_DB := $(or $(NEW_DB), $$NEW_DB)
 export JOB_NAME := $(or $(JOB_NAME), $$JN)
@@ -86,11 +87,7 @@ define BUILD_TEMPLATE_PATH
 endef
 
 define HOST
-"$(HOST_PREFIX)aest-sims.$(DOMAIN)"
-endef
-
-define DB_SERVICE_NAME
-"patroni-master"
+"$(DOMAIN_PREFIX)$(DOMAIN)"
 endef
 
 define FORMS_NAME
@@ -105,8 +102,10 @@ define HAMONGO_DB_PARAM_PATH
 "openshift/database/mongo-ha-param.yml"
 endef
 
+# Ensure DOMAIN_PREFIX do not have any ".", which would create a subdomain
+# since forms has it own custom prefix appended.
 define FORMS_URL
-"$(HOST_PREFIX)aest-forms.$(DOMAIN)"
+$(subst .,-,$(DOMAIN_PREFIX))forms.$(DOMAIN)
 endef
 
 define SOURCE_REPOSITORY_URL
@@ -341,7 +340,6 @@ create-new-db:
 run-db-migrations:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(DB_SERVICE_NAME)"
 	test -n "$(API_SECRET_NAME)"
 	test -n "$(DB_MIGRATIONS_BUILD_REF)"
 	test -n "$(BUILD_REF)"
@@ -349,7 +347,6 @@ run-db-migrations:
 	@echo "+\n++ Deploying DB_MIGRATIONS with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/db-migrations-job.yml \
 		-p NAME=$(DB_MIGRATIONS) \
-		-p DB_SERVICE=$(DB_SERVICE_NAME) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
 		-p API_SECRET_NAME=$(API_SECRET_NAME) \
 		-p IMAGE_STREAM_TAG="$(DB_MIGRATIONS_BUILD_REF):$(BUILD_REF)" \
@@ -393,7 +390,6 @@ deploy-api:
 		-p API_SECRET_NAME=$(API_SECRET_NAME) \
 		-p HOST_NAME=$(HOST) \
 		-p PORT=$(API_PORT) \
-		-p DB_SERVICE=$(DB_SERVICE_NAME) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
 		-p IMAGE_STREAM_TAG="$(API_BUILD_REF):$(BUILD_REF)" \
 		-p KEYCLOAK_REALM=$(KEYCLOAK_REALM) \
@@ -414,6 +410,9 @@ deploy-api:
 		-p MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER=$(MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER) \
 		-p MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION=$(MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION) \
 		-p MAXIMUM_IDLE_TIME_FOR_WARNING_AEST=$(MAXIMUM_IDLE_TIME_FOR_WARNING_AEST) \
+		-p TLS_CERTIFICATE=$(TLS_CERTIFICATE) \
+		-p TLS_KEY=$(TLS_KEY) \
+		-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(API))
 
@@ -422,7 +421,6 @@ deploy-workers:
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_REF)"
 	test -n "$(WORKERS_BUILD_REF)"
-	test -n "$(DB_SERVICE_NAME)"
 	test -n "$(WORKERS_SECRET_NAME)"
 	test -n "$(WORKERS)"
 	test -n "$(WORKERS_PORT)"
@@ -432,7 +430,6 @@ deploy-workers:
 		-p NAME=$(WORKERS) \
 		-p WORKERS_SECRET_NAME=$(WORKERS_SECRET_NAME) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
-		-p DB_SERVICE=$(DB_SERVICE_NAME) \
 		-p PORT=$(WORKERS_PORT) \
 		-p IMAGE_STREAM_TAG="$(WORKERS_BUILD_REF):$(BUILD_REF)" \
 		-p BUILD_TAG=$(BUILD_REF) \
@@ -446,7 +443,6 @@ deploy-queue-consumers:
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_REF)"
 	test -n "$(QUEUE_CONSUMERS_BUILD_REF)"
-	test -n "$(DB_SERVICE_NAME)"
 	test -n "$(QUEUE_CONSUMERS_SECRET_NAME)"
 	test -n "$(QUEUE_CONSUMERS)"
 	test -n "$(QUEUE_CONSUMERS_PORT)"
@@ -459,7 +455,6 @@ deploy-queue-consumers:
 		-p NAME=$(QUEUE_CONSUMERS) \
 		-p QUEUE_CONSUMERS_SECRET_NAME=$(QUEUE_CONSUMERS_SECRET_NAME) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
-		-p DB_SERVICE=$(DB_SERVICE_NAME) \
 		-p IMAGE_STREAM_TAG="$(QUEUE_CONSUMERS_BUILD_REF):$(BUILD_REF)" \
 		-p BUILD_TAG=$(BUILD_REF) \
 		-p PORT=$(QUEUE_CONSUMERS_PORT) \
@@ -470,6 +465,9 @@ deploy-queue-consumers:
 		-p ATBC_ENDPOINT=$(ATBC_ENDPOINT) \
 		-p APPLICATION_ARCHIVE_DAYS=$(APPLICATION_ARCHIVE_DAYS) \
 		-p IS_FULLTIME_ALLOWED=$(IS_FULLTIME_ALLOWED) \
+		-p TLS_CERTIFICATE=$(TLS_CERTIFICATE) \
+		-p TLS_KEY=$(TLS_KEY) \
+		-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(QUEUE_CONSUMERS))
 
@@ -478,7 +476,6 @@ deploy-load-test-gateway:
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_REF)"
 	test -n "$(LOAD_TEST_GATEWAY_BUILD_REF)"
-	test -n "$(DB_SERVICE_NAME)"
 	test -n "$(LOAD_TEST_GATEWAY_SECRET_NAME)"
 	test -n "$(LOAD_TEST_GATEWAY)"
 	test -n "$(LOAD_TEST_GATEWAY_PORT)"
@@ -489,13 +486,15 @@ deploy-load-test-gateway:
 		-p NAME=$(LOAD_TEST_GATEWAY) \
 		-p LOAD_TEST_GATEWAY_SECRET_NAME=$(LOAD_TEST_GATEWAY_SECRET_NAME) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
-		-p DB_SERVICE=$(DB_SERVICE_NAME) \
 		-p IMAGE_STREAM_TAG="$(LOAD_TEST_GATEWAY_BUILD_REF):$(BUILD_REF)" \
 		-p BUILD_TAG=$(BUILD_REF) \
 		-p PORT=$(LOAD_TEST_GATEWAY_PORT) \
 		-p HOST_NAME=$(HOST) \
 		-p KEYCLOAK_AUTH_URL=$(KEYCLOAK_AUTH_URL) \
 		-p KEYCLOAK_REALM=$(KEYCLOAK_REALM) \
+		-p TLS_CERTIFICATE=$(TLS_CERTIFICATE) \
+		-p TLS_KEY=$(TLS_KEY) \
+		-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(LOAD_TEST_GATEWAY))
 
@@ -513,6 +512,9 @@ deploy-web:
 	-p HOST_NAME=$(HOST) \
 	-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
 	-p IMAGE_STREAM_TAG="$(WEB_BUILD_REF):$(BUILD_REF)"  \
+	-p TLS_CERTIFICATE=$(TLS_CERTIFICATE) \
+	-p TLS_KEY=$(TLS_KEY) \
+	-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
 	| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(WEB))
 
@@ -544,7 +546,6 @@ deploy-forms:
 	test -n "$(FORMS_URL)"
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_REF)"
-	test -n "$(HOST_PREFIX)"
 	test -n "$(FORMIO_ROOT_EMAIL)"
 	test -n "$(MONGODB_URI)"
 	@echo "+\n++ Deploying forms with tag: $(BUILD_REF)\n+"
@@ -553,9 +554,12 @@ deploy-forms:
 	-p FORMS_URL=$(FORMS_URL) \
 	-p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) \
 	-p IMAGE_STREAM_TAG="$(FORMS_BUILD_REF):$(BUILD_REF)" \
-	-p HOST_PREFIX=$(HOST_PREFIX) \
 	-p FORMIO_ROOT_EMAIL=$(FORMIO_ROOT_EMAIL) \
+	-p FORMIO_ROOT_PASSWORD=$(FORMIO_ROOT_PASSWORD) \
 	-p MONGODB_URI=$(MONGODB_URI) \
+	-p TLS_CERTIFICATE=$(TLS_CERTIFICATE) \
+	-p TLS_KEY=$(TLS_KEY) \
+	-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
 	| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(FORMS_NAME))
 

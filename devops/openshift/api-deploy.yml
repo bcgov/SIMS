@@ -48,8 +48,6 @@ objects:
                   value: "${PORT}"
                 - name: IS_FULLTIME_ALLOWED
                   value: ${IS_FULLTIME_ALLOWED}
-                - name: POSTGRES_HOST
-                  value: "${DB_SERVICE}"
                 - name: MAXIMUM_IDLE_TIME_FOR_WARNING_STUDENT
                   value: "${MAXIMUM_IDLE_TIME_FOR_WARNING_STUDENT}"
                 - name: MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER
@@ -58,6 +56,11 @@ objects:
                   value: "${MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION}"
                 - name: MAXIMUM_IDLE_TIME_FOR_WARNING_AEST
                   value: "${MAXIMUM_IDLE_TIME_FOR_WARNING_AEST}"
+                - name: POSTGRES_HOST
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${DB_SERVICE_KEY}
+                      name: ${DB_SECRET_NAME}
                 - name: POSTGRES_USER
                   valueFrom:
                     secretKeyRef:
@@ -239,20 +242,42 @@ objects:
   - apiVersion: route.openshift.io/v1
     kind: Route
     metadata:
-      name: ${NAME}
+      name: ${NAME}-route
+      annotations:
+        haproxy.router.openshift.io/balance: leastconn
+        haproxy.router.openshift.io/disable_cookies: "true"
+        haproxy.router.openshift.io/hsts_header: max-age=31536000;includeSubDomains;preload
+        haproxy.router.openshift.io/timeout: 30s
     spec:
       host: ${HOST_NAME}
       path: ${PATH}
       tls:
         insecureEdgeTerminationPolicy: Redirect
         termination: edge
+        certificate: |
+          -----BEGIN CERTIFICATE-----
+          ${TLS_CERTIFICATE}
+          -----END CERTIFICATE-----
+        key: |
+          -----BEGIN PRIVATE KEY-----
+          ${TLS_KEY}
+          -----END PRIVATE KEY-----
+        caCertificate: |
+          -----BEGIN CERTIFICATE-----
+          ${TLS_CA_CERTIFICATE}
+          -----END CERTIFICATE-----
       to:
         kind: Service
         name: ${NAME}
   - apiVersion: route.openshift.io/v1
     kind: Route
     metadata:
-      name: ${SWAGGER_NAME}
+      name: ${SWAGGER_NAME}-route
+      annotations:
+        haproxy.router.openshift.io/balance: leastconn
+        haproxy.router.openshift.io/disable_cookies: "true"
+        haproxy.router.openshift.io/hsts_header: max-age=31536000;includeSubDomains;preload
+        haproxy.router.openshift.io/timeout: 30s
     spec:
       host: ${HOST_NAME}
       path: ${SWAGGER_PATH}
@@ -261,6 +286,18 @@ objects:
       tls:
         insecureEdgeTerminationPolicy: Redirect
         termination: edge
+        certificate: |
+          -----BEGIN CERTIFICATE-----
+          ${TLS_CERTIFICATE}
+          -----END CERTIFICATE-----
+        key: |
+          -----BEGIN PRIVATE KEY-----
+          ${TLS_KEY}
+          -----END PRIVATE KEY-----
+        caCertificate: |
+          -----BEGIN CERTIFICATE-----
+          ${TLS_CA_CERTIFICATE}
+          -----END CERTIFICATE-----
       to:
         kind: Service
         name: ${NAME}
@@ -322,14 +359,14 @@ parameters:
     value: "2"
   - name: PORT
     required: true
-  - name: DB_SERVICE
-    value: patroni-master
+  - name: DB_SERVICE_KEY
+    value: pgbouncer-host
   - name: DB_SECRET_NAME
-    value: patroni-creds
+    value: simsdb-pguser-app-database-user
   - name: DB_USERNAME_KEY
-    value: database-user
+    value: user
   - name: DB_PASSWORD_KEY
-    value: database-password
+    value: password
   - name: IMAGE_STREAM_TAG
     required: true
   - name: BUILD_NAMESPACE
@@ -446,4 +483,10 @@ parameters:
   - name: MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION
     required: true
   - name: MAXIMUM_IDLE_TIME_FOR_WARNING_AEST
+    required: true
+  - name: TLS_CERTIFICATE
+    required: true
+  - name: TLS_KEY
+    required: true
+  - name: TLS_CA_CERTIFICATE
     required: true
