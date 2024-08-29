@@ -6,6 +6,7 @@ import { SshService } from "@sims/integrations/services";
 import { overrideImportsMetadata } from "@sims/test-utils";
 import {
   QueueModuleMock,
+  createObjectStorageServiceMock,
   createSSHServiceMock,
   createZeebeModuleMock,
 } from "@sims/test-utils/mocks";
@@ -17,7 +18,6 @@ import { ClamAVService, SystemUsersService, ZeebeModule } from "@sims/services";
 import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 import { createCASServiceMock } from "../mock-utils/cas-service.mock";
 import { CASService } from "@sims/integrations/cas/cas.service";
-import { createObjectStorageServiceMock } from "../mock-utils/object-storage-service-mock";
 import { ObjectStorageService } from "@sims/integrations/object-storage";
 
 /**

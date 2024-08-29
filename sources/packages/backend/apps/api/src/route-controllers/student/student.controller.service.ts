@@ -41,6 +41,7 @@ import {
 } from "../../constants";
 import { ObjectStorageService } from "@sims/integrations/object-storage";
 import { NoSuchKey } from "@aws-sdk/client-s3";
+import { Readable } from "stream";
 
 @Injectable()
 export class StudentControllerService {
@@ -167,11 +168,19 @@ export class StudentControllerService {
       const fileContent = await this.objectStorageService.getObject(
         uniqueFileName,
       );
+      const chunks = [];
+      for await (const chunk of fileContent.body) {
+        chunks.push(chunk);
+      }
+      const fileData = Buffer.concat(chunks).toString();
       console.info("Downloaded file using S3 storage.");
       // Populate file information received from S3 storage.
       response.setHeader("Content-Type", fileContent.contentType);
       response.setHeader("Content-Length", fileContent.contentLength);
-      fileContent.body.pipe(response);
+      const stream = new Readable();
+      stream.push(fileData);
+      stream.push(null);
+      stream.pipe(response);
     } catch (error: unknown) {
       if (error instanceof NoSuchKey) {
         console.info("File not present on S3 storage.");
