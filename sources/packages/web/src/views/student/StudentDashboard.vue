@@ -1,5 +1,6 @@
 <template>
   <student-page-container layout-template="centered">
+    <announcement-banner location="StudentDashboard" />
     <formio-container
       formName="studentWelcomePage"
       :formData="studentDetails"
@@ -12,8 +13,10 @@ import { defineComponent } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import { useStudentStore } from "@/composables";
+import AnnouncementBanner from "@/components/common/AnnouncementBanner.vue";
 
 export default defineComponent({
+  components: { AnnouncementBanner },
   setup() {
     const { studentDetails } = useStudentStore();
     const router = useRouter();
