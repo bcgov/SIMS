@@ -1,0 +1,1 @@
+DROP TYPE sims.restriction_bypass_behaviors;
