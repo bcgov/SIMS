@@ -44,3 +44,4 @@ export * from "./application-bulk-withdrawal/application-bulk-withdrawal-import-
 export * from "./application-bulk-withdrawal/application-bulk-withdrawal-validation.models";
 export * from "./application-bulk-withdrawal/application-bulk-withdrawal-import-text.models";
 export * from "./student-loan-balance/student-loan-balance.service";
+export * from "./announcements/announcements.service";

@@ -1,14 +1,35 @@
 <template>
-  <banner
-    class="mb-2"
+  <v-alert
     :type="BannerTypes.Warning"
-    header="Announcement"
-    :summary="location"
-  ></banner>
+    variant="outlined"
+    icon="fa:fa fa-triangle-exclamation"
+    class="sims-banner"
+  >
+    <template #title>
+      <div class="mb-5">System Announcements</div>
+    </template>
+    <v-row>
+      <v-col>
+        <div
+          v-for="(announcement, index) in relevantAnnouncements"
+          :key="index"
+        >
+          <div class="label-value-normal">
+            <b>{{ announcement.messageTitle }}</b> -
+            <i>added {{ announcement.startDate }}</i>
+            <p>{{ announcement.message }}</p>
+          </div>
+        </div>
+      </v-col>
+      <v-col cols="auto"> <slot name="actions"></slot></v-col>
+    </v-row>
+  </v-alert>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import { BannerTypes } from "@/types/contracts/Banner";
+import { AnnouncementsService } from "@/services/AnnouncementsService";
+
 export default defineComponent({
   props: {
     location: {
@@ -16,9 +37,21 @@ export default defineComponent({
       required: true,
     },
   },
-  setup() {
+  setup(props) {
+    // Data-bind
+    const relevantAnnouncements = ref();
+    // Hooks
+    onMounted(async () => {
+      let announcements = await AnnouncementsService.shared.getAnnouncements();
+      relevantAnnouncements.value = announcements.filter((announcement) => {
+        return announcement.target
+          .toLowerCase()
+          .includes(props.location.toLowerCase());
+      });
+    });
     return {
       BannerTypes,
+      relevantAnnouncements,
     };
   },
 });
