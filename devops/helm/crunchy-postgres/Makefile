@@ -32,10 +32,10 @@ upgrade: helm-dep
 		helm upgrade --install $(call arguments) --set restore.enabled=${RESTORE_ENABLED}; \
 	fi
 
-.PHONY: uninstall
-uninstall: helm-dep
-uninstall:
-	@helm uninstall ${NAME} . -n ${NAMESPACE}
+#.PHONY: uninstall
+#uninstall: helm-dep
+#uninstall:
+#	@helm uninstall ${NAME} . -n ${NAMESPACE}
 
 .PHONY: template
 template: helm-dep

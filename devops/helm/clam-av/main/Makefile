@@ -36,10 +36,10 @@ lint: helm-dep
 lint:
 	@helm upgrade --dry-run --install $(call arguments)
 
-.PHONY: uninstall
-uninstall: helm-dep
-uninstall:
-	@helm uninstall ${NAME} -n ${NAMESPACE}
+#.PHONY: uninstall
+#uninstall: helm-dep
+#uninstall:
+#	@helm uninstall ${NAME} -n ${NAMESPACE}
 
 .PHONY: template
 template: helm-dep
