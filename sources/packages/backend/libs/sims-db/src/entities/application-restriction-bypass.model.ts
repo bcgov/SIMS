@@ -7,14 +7,12 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
-import {
-  User,
-  Note,
-  RecordDataModel,
-  Application,
-  StudentRestriction,
-  RestrictionBypassBehaviors,
-} from "@sims/sims-db";
+import { RecordDataModel } from "./record.model";
+import { Application } from "./application.model";
+import { User } from "./user.model";
+import { Note } from "./note.model";
+import { StudentRestriction } from "@sims/sims-db";
+import { RestrictionBypassBehaviors } from "@sims/sims-db";
 
 /**
  * Restrictions bypass that allow awards to be disbursed ignoring
@@ -97,7 +95,7 @@ export class ApplicationRestrictionBypass extends RecordDataModel {
    * Date and time the bypass was created.
    */
   @Column({
-    name: "assessed_date",
+    name: "bypass_created_date",
     type: "timestamptz",
   })
   bypassCreatedDate: Date;
