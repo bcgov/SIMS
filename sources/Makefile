@@ -257,13 +257,13 @@ connect-test-db:
 	@oc port-forward services/simsdb-pgbouncer 5555:5432
 
 connect-stg-db:
-	@echo "Forward local port 5757 to Openshift simsdb-pgbouncer default port."
-	@echo "Use your prefered DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5757."
+	@echo "Forward local port 5656 to Openshift simsdb-pgbouncer default port."
+	@echo "Use your prefered DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5656."
 	@oc project a6ef19-test
-	@oc port-forward services/simsdb-pgbouncer 5757:5432
+	@oc port-forward services/simsdb-pgbouncer 5656:5432
 
 connect-prod-db:
-	@echo "Forward local port 5858 to Openshift simsdb-pgbouncer default port."
-	@echo "Use your prefered DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5858."
+	@echo "Forward local port 5757 to Openshift simsdb-pgbouncer default port."
+	@echo "Use your prefered DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5757."
 	@oc project 0c27fb-prod
-	@oc port-forward services/simsdb-pgbouncer 5858:5432
+	@oc port-forward services/simsdb-pgbouncer 5757:5432
