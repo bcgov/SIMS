@@ -36,6 +36,7 @@ lint: helm-dep
 lint:
 	@helm upgrade --dry-run --install $(call arguments)
 
+# Uninstall is used to completely remove the helm and its installed object from the openshift environment.
 #.PHONY: uninstall
 #uninstall: helm-dep
 #uninstall:

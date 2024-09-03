@@ -32,6 +32,7 @@ upgrade: helm-dep
 		helm upgrade --install $(call arguments) --set restore.enabled=${RESTORE_ENABLED}; \
 	fi
 
+# Uninstall is used to completely remove the helm and its installed object from the openshift environment.
 #.PHONY: uninstall
 #uninstall: helm-dep
 #uninstall:
