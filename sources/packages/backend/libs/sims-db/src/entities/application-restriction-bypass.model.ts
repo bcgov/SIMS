@@ -8,11 +8,13 @@ import {
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
-import { Application } from "./application.model";
-import { User } from "./user.model";
-import { Note } from "./note.model";
-import { StudentRestriction } from "@sims/sims-db";
-import { RestrictionBypassBehaviors } from "@sims/sims-db";
+import {
+  User,
+  Note,
+  StudentRestriction,
+  RestrictionBypassBehaviors,
+  Application,
+} from "@sims/sims-db";
 
 /**
  * Restrictions bypass that allow awards to be disbursed ignoring
