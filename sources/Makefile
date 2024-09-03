@@ -243,21 +243,33 @@ workers:
 	@docker compose -f docker-compose.yml build workers
 	@docker compose -f docker-compose.yml up -d workers
 
-# Enable local DB connection to Openshift DEV/TEST/QA
+# Enable local DB connection to Openshift DEV/TEST/QA/STG/PROD
 connect-dev-db:
-	@echo "Forward local port 5454 to Openshift Patroni-master default port."
+	@echo "Forward local port 5454 to Openshift simsdb-pgbouncer default port."
 	@echo "Use your prefered DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5454."
 	@oc project 0c27fb-dev
-	@oc port-forward services/patroni-master 5454:5432
+	@oc port-forward services/simsdb-pgbouncer 5454:5432
 
 connect-test-db:
-	@echo "Forward local port 5555 to Openshift Patroni-master default port."
+	@echo "Forward local port 5555 to Openshift simsdb-pgbouncer default port."
 	@echo "Use your prefered DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5555."
 	@oc project 0c27fb-test
-	@oc port-forward services/patroni-master 5555:5432
+	@oc port-forward services/simsdb-pgbouncer 5555:5432
 
 connect-qa-db:
-	@echo "Forward local port 5656 to Openshift Patroni-master default port."
+	@echo "Forward local port 5656 to Openshift simsdb-pgbouncer default port."
 	@echo "Use your prefered DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5656."
 	@oc project 0c27fb-test
-	@oc port-forward services/patroni-master 5656:5432
+	@oc port-forward services/simsdb-pgbouncer 5656:5432
+
+connect-stg-db:
+	@echo "Forward local port 5757 to Openshift simsdb-pgbouncer default port."
+	@echo "Use your prefered DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5757."
+	@oc project a6ef19-test
+	@oc port-forward services/simsdb-pgbouncer 5757:5432
+
+connect-prod-db:
+	@echo "Forward local port 5858 to Openshift simsdb-pgbouncer default port."
+	@echo "Use your prefered DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5858."
+	@oc project 0c27fb-prod
+	@oc port-forward services/simsdb-pgbouncer 5858:5432
