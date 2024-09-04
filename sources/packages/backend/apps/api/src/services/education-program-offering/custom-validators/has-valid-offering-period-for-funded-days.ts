@@ -44,11 +44,8 @@ class HasValidOfferingPeriodForFundedDaysConstraint
    * @returns minimum allowed weeks.
    */
   private getOfferingMinAllowedWeeks(args: ValidationArguments): number {
-    const [, , offeringMinDaysAllowed] = args.constraints;
-    const offeringMinDaysAllowedValue = offeringMinDaysAllowed(
-      args.object,
-    ) as number;
-    return offeringMinDaysAllowedValue / 7;
+    const [, , offeringMinWeeksAllowed] = args.constraints;
+    return offeringMinWeeksAllowed(args.object) as number;
   }
 }
 
@@ -58,14 +55,14 @@ class HasValidOfferingPeriodForFundedDaysConstraint
  * allowed study period amount of days.
  * @param startPeriodProperty property of the model that identifies the offering start date.
  * @param endPeriodProperty property of the model that identifies the offering end date.
- * @param offeringMinDaysAllowed study period minimum length in number of days.
+ * @param offeringMinWeeksAllowed study period minimum length in number of weeks.
  * @param validationOptions validations options.
  * @returns true if the study period is valid, otherwise, false.
  */
 export function HasValidOfferingPeriodForFundedDays(
   startPeriodProperty: (targetObject: unknown) => Date | string,
   endPeriodProperty: (targetObject: unknown) => Date | string,
-  offeringMinDaysAllowed: (targetObject: unknown) => number,
+  offeringMinWeeksAllowed: (targetObject: unknown) => number,
   validationOptions?: ValidationOptions,
 ) {
   return (object: unknown, propertyName: string) => {
@@ -77,7 +74,7 @@ export function HasValidOfferingPeriodForFundedDays(
       constraints: [
         startPeriodProperty,
         endPeriodProperty,
-        offeringMinDaysAllowed,
+        offeringMinWeeksAllowed,
       ],
       validator: HasValidOfferingPeriodForFundedDaysConstraint,
     });

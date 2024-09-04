@@ -112,3 +112,12 @@ export const MAXIMUM_ESSENTIAL_LOAN_BALANCE_RECORDS = 12;
  * Represents the count of the number of times an application is edited to trigger a notification to be sent to the ministry.
  */
 export const APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION = 5;
+/**
+ * Minimum amount of weeks required for a full time offering study period.
+ */
+export const OFFERING_STUDY_PERIOD_MIN_WEEKS_FULL_TIME = 12;
+
+/**
+ * Minimum amount of weeks required for a part time offering study period.
+ */
+export const OFFERING_STUDY_PERIOD_MIN_WEEKS_PART_TIME = 6;

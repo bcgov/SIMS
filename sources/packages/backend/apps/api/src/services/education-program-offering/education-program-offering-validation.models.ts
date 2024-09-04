@@ -52,6 +52,8 @@ import {
   OFFERING_STUDY_PERIOD_MAX_DAYS,
   OFFERING_STUDY_PERIOD_MIN_DAYS_FULL_TIME,
   OFFERING_STUDY_PERIOD_MIN_DAYS_PART_TIME,
+  OFFERING_STUDY_PERIOD_MIN_WEEKS_FULL_TIME,
+  OFFERING_STUDY_PERIOD_MIN_WEEKS_PART_TIME,
   OFFERING_YEAR_OF_STUDY_MAX_VALUE,
   OFFERING_YEAR_OF_STUDY_MIN_VALUE,
 } from "../../utilities";
@@ -280,6 +282,18 @@ const studyPeriodMinLength = (offering: OfferingValidationModel) => {
     return OFFERING_STUDY_PERIOD_MIN_DAYS_FULL_TIME;
   }
   return OFFERING_STUDY_PERIOD_MIN_DAYS_PART_TIME;
+};
+
+/**
+ * Get study period minimum weeks based on offering intensity.
+ * @param offering offering.
+ * @returns minimum study period length in number of weeks.
+ */
+const studyPeriodMinWeeks = (offering: OfferingValidationModel) => {
+  if (offering.offeringIntensity === OfferingIntensity.fullTime) {
+    return OFFERING_STUDY_PERIOD_MIN_WEEKS_FULL_TIME;
+  }
+  return OFFERING_STUDY_PERIOD_MIN_WEEKS_PART_TIME;
 };
 
 /**
@@ -587,7 +601,7 @@ export class OfferingValidationModel {
   @HasValidOfferingPeriodForFundedDays(
     studyStartDateProperty,
     studyEndDateProperty,
-    studyPeriodMinLength,
+    studyPeriodMinWeeks,
     {
       context: ValidationContext.CreateWarning(
         OfferingValidationWarnings.InvalidStudyDatesPeriodLength,
