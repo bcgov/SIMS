@@ -11,8 +11,8 @@ import {
 import { RestrictionCode } from "@sims/services";
 
 /**
- * Check active student restrictions by its action type
- * in an eligible disbursement.
+ * Check active student restrictions by its action type in an eligible disbursement.
+ * An active bypassed restriction will not be included in the result.
  * @param eCertDisbursement student disbursement to check student restrictions.
  * @param actionType action type.
  * @returns the first restriction of the requested action type.
@@ -21,9 +21,9 @@ export function getRestrictionByActionType(
   eCertDisbursement: EligibleECertDisbursement,
   actionType: RestrictionActionType,
 ): StudentActiveRestriction {
-  return eCertDisbursement.activeRestrictions?.find((restriction) =>
-    restriction.actions.includes(actionType),
-  );
+  return eCertDisbursement
+    .getEffectiveRestrictions()
+    .find((restriction) => restriction.actions.includes(actionType));
 }
 
 /**

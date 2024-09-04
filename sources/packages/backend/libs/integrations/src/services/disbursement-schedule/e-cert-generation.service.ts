@@ -14,6 +14,7 @@ import {
 } from "@sims/sims-db";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
+  ApplicationActiveRestrictionBypass,
   DisabilityDetails,
   EligibleECertDisbursement,
   StudentActiveRestriction,
@@ -97,6 +98,9 @@ export class ECertGenerationService {
         "restriction.id",
         "restriction.restrictionCode",
         "restriction.actionType",
+        "restrictionBypass.id",
+        "restrictionBypass.bypassBehavior",
+        "restrictionBypassStudentRestriction.id",
         "programYear.id",
         "programYear.maxLifetimeBCLoanAmount",
       ])
@@ -117,6 +121,15 @@ export class ECertGenerationService {
         "studentRestriction.isActive = true",
       )
       .leftJoin("studentRestriction.restriction", "restriction")
+      .leftJoin(
+        "application.restrictionBypasses",
+        "restrictionBypass",
+        "restrictionBypass.isActive = true",
+      )
+      .leftJoin(
+        "restrictionBypass.studentRestriction",
+        "restrictionBypassStudentRestriction",
+      )
       .where(
         "disbursementSchedule.disbursementScheduleStatus = :disbursementScheduleStatus",
         { disbursementScheduleStatus: DisbursementScheduleStatus.Pending },
@@ -186,6 +199,14 @@ export class ECertGenerationService {
                   .pdppdStatus,
               studentProfileDisabilityStatus: student.disabilityStatus,
             };
+            const restrictionBypasses =
+              application.restrictionBypasses.map<ApplicationActiveRestrictionBypass>(
+                (bypass) => ({
+                  id: bypass.id,
+                  studentRestrictionId: bypass.studentRestriction.id,
+                  bypassBehavior: bypass.bypassBehavior,
+                }),
+              );
             return new EligibleECertDisbursement(
               student.id,
               !!student.sinValidation.isValidSIN,
@@ -197,6 +218,7 @@ export class ECertGenerationService {
               application.programYear.maxLifetimeBCLoanAmount,
               disabilityDetails,
               groupedStudentRestrictions[student.id],
+              restrictionBypasses,
             );
           },
         );

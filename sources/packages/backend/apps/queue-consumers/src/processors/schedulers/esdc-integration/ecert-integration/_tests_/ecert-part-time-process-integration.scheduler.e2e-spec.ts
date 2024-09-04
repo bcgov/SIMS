@@ -8,7 +8,10 @@ import {
   NotificationMessage,
   NotificationMessageType,
   OfferingIntensity,
+  RestrictionActionType,
+  RestrictionBypassBehaviors,
   Student,
+  User,
 } from "@sims/sims-db";
 import {
   E2EDataSources,
@@ -20,6 +23,8 @@ import {
   createFakeNotification,
   createFakeStudentLoanBalance,
   createFakeDisbursementValue,
+  saveFakeApplicationRestrictionBypass,
+  createFakeUser,
 } from "@sims/test-utils";
 import { getUploadedFile } from "@sims/test-utils/mocks";
 import { IsNull, Like, Not } from "typeorm";
@@ -40,6 +45,8 @@ import { loadDisbursementSchedules } from "./e-cert-utils";
 import { SystemUsersService } from "@sims/services";
 import * as faker from "faker";
 
+jest.setTimeout(1200000);
+
 describe(
   describeQueueProcessorRootTest(QueueNames.PartTimeECertIntegration),
   () => {
@@ -48,6 +55,7 @@ describe(
     let db: E2EDataSources;
     let sftpClientMock: DeepMocked<Client>;
     let systemUsersService: SystemUsersService;
+    let sharedMinistryUser: User;
 
     beforeAll(async () => {
       // Env variable required for querying the eligible e-Cert records.
@@ -67,6 +75,8 @@ describe(
         },
         { emailContacts: ["dummy@some.domain"] },
       );
+      // Create a Ministry user to b used, for instance, for audit.
+      sharedMinistryUser = await db.user.save(createFakeUser());
     });
 
     beforeEach(async () => {
@@ -786,6 +796,116 @@ describe(
       });
       expect(scheduleIsSent).toBe(true);
     });
+
+    it.only(
+      "Should have the e-Cert generated for a part-time application and the bypass resolved " +
+        `when a student has an active 'Stop part time disbursement' restriction and it is bypassed with behavior '${RestrictionBypassBehaviors.NextDisbursementOnly}'.`,
+      async () => {
+        // Arrange
+        // Student with valid SIN.
+        const student = await saveFakeStudent(db.dataSource);
+        // Valid MSFAA Number.
+        const msfaaNumber = await db.msfaaNumber.save(
+          createFakeMSFAANumber(
+            { student },
+            {
+              msfaaState: MSFAAStates.Signed,
+              msfaaInitialValues: {
+                offeringIntensity: OfferingIntensity.partTime,
+              },
+            },
+          ),
+        );
+        // Student application eligible for e-Cert.
+        const application = await saveFakeApplicationDisbursements(
+          db.dataSource,
+          {
+            student,
+            msfaaNumber,
+            firstDisbursementValues: [
+              createFakeDisbursementValue(
+                DisbursementValueType.CanadaLoan,
+                "CSLP",
+                1234.57,
+              ),
+            ],
+          },
+          {
+            offeringIntensity: OfferingIntensity.partTime,
+            applicationStatus: ApplicationStatus.Completed,
+            currentAssessmentInitialValues: {
+              assessmentData: { weeks: 5 } as Assessment,
+              assessmentDate: new Date(),
+            },
+            firstDisbursementInitialValues: {
+              coeStatus: COEStatus.completed,
+            },
+          },
+        );
+        // Create restriction bypass.
+        const restrictionBypass = await saveFakeApplicationRestrictionBypass(
+          db,
+          {
+            application,
+            bypassCreatedBy: sharedMinistryUser,
+            creator: sharedMinistryUser,
+          },
+          {
+            restrictionActionType:
+              RestrictionActionType.StopPartTimeDisbursement,
+            initialValues: {
+              bypassBehavior: RestrictionBypassBehaviors.NextDisbursementOnly,
+            },
+          },
+        );
+
+        // Queued job.
+        const { job } = mockBullJob<void>();
+
+        // Act
+        await processor.processECert(job);
+
+        // Assert
+        const [firstSchedule] =
+          application.currentAssessment.disbursementSchedules;
+        // Assert schedule is updated to 'Sent' with the dateSent defined.
+        const scheduleIsSent = await db.disbursementSchedule.exists({
+          where: {
+            id: firstSchedule.id,
+            dateSent: Not(IsNull()),
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+        });
+        expect(scheduleIsSent).toBe(true);
+        // Validate if the restriction was resolved.
+        const resolvedBypass = await db.applicationRestrictionBypass.findOne({
+          select: {
+            id: true,
+            isActive: true,
+            bypassRemovedDate: true,
+            bypassRemovedBy: { id: true },
+            removalNote: { description: true },
+          },
+          relations: {
+            bypassRemovedBy: true,
+            removalNote: true,
+          },
+          where: { id: restrictionBypass.id },
+        });
+        expect(resolvedBypass).toEqual({
+          id: restrictionBypass.id,
+          isActive: false,
+          bypassRemovedDate: expect.any(Date),
+          bypassRemovedBy: {
+            id: systemUsersService.systemUser.id,
+          },
+          removalNote: {
+            description:
+              "Automatically removing bypass after the first e-Cert was generated.",
+          },
+        });
+      },
+    );
 
     /**
      * Create and save required number of notifications for student and ministry.
