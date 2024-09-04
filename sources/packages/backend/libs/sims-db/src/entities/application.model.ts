@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 import {
   ApplicationOfferingChangeRequest,
+  ApplicationRestrictionBypass,
   CRAIncomeVerification,
   EducationProgram,
   InstitutionLocation,
@@ -336,6 +337,20 @@ export class Application extends RecordDataModel {
     },
   )
   applicationOfferingChangeRequest?: ApplicationOfferingChangeRequest[];
+  /**
+   * Restrictions bypasses that allow awards to be disbursed ignoring
+   * restrictions at the student application level.
+   */
+  @OneToMany(
+    () => ApplicationRestrictionBypass,
+    (applicationRestrictionBypass) => applicationRestrictionBypass.application,
+    {
+      eager: false,
+      cascade: false,
+      nullable: true,
+    },
+  )
+  restrictionBypasses?: ApplicationRestrictionBypass[];
 }
 
 /**
