@@ -33,7 +33,7 @@ export class ApplicationRestrictionBypass extends RecordDataModel {
    */
   @ManyToOne(() => Application, {
     eager: false,
-    cascade: ["update"],
+    cascade: false,
   })
   @JoinColumn({
     name: "application_id",
@@ -46,7 +46,7 @@ export class ApplicationRestrictionBypass extends RecordDataModel {
    */
   @ManyToOne(() => StudentRestriction, {
     eager: false,
-    cascade: ["update"],
+    cascade: false,
   })
   @JoinColumn({
     name: "student_restriction_id",
