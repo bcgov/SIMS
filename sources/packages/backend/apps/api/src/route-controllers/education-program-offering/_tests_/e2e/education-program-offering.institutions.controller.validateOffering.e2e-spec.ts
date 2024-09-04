@@ -6,6 +6,7 @@ import {
   OfferingIntensity,
   OfferingStatus,
   OfferingTypes,
+  ProgramIntensity,
   User,
 } from "@sims/sims-db";
 import {
@@ -25,7 +26,10 @@ import {
 } from "../../../../testHelpers";
 import * as request from "supertest";
 import * as faker from "faker";
-import { OfferingValidationWarnings } from "../../../../services";
+import {
+  OfferingValidationInfos,
+  OfferingValidationWarnings,
+} from "../../../../services";
 import {
   MAX_ALLOWED_OFFERING_AMOUNT,
   MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
@@ -37,7 +41,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
   let collegeF: Institution;
   let collegeFLocation: InstitutionLocation;
   let collegeFUser: User;
-  let collegeFEducationProgram: EducationProgram;
+  let collegeFFullTimeProgram: EducationProgram;
+  let collegeFPartTimeProgram: EducationProgram;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -55,77 +60,42 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
     );
-    const fakeEducationProgram = createFakeEducationProgram({
+    const fakeFullTimeEducationProgram = createFakeEducationProgram({
       institution: collegeF,
       user: collegeFUser,
     });
-    fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
-    fakeEducationProgram.deliveredOnline = true;
-    collegeFEducationProgram = await db.educationProgram.save(
-      fakeEducationProgram,
-    );
-  });
-
-  it("Should validate an offering when passed valid data.", async () => {
-    // Arrange
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
-
-    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${collegeFEducationProgram.id}/validation`;
-    const payload = {
-      offeringName: "Offering validation",
-      yearOfStudy: 1,
-      offeringIntensity: OfferingIntensity.fullTime,
-      offeringDelivered: OfferingDeliveryOptions.Online,
-      hasOfferingWILComponent: "no",
-      studyStartDate: "2023-09-01",
-      studyEndDate: "2024-06-30",
-      lacksStudyBreaks: false,
-      studyBreaks: [
-        {
-          breakStartDate: "2023-12-01",
-          breakEndDate: "2023-12-18",
+    const fakePartTimeEducationProgram = createFakeEducationProgram(
+      {
+        institution: collegeF,
+        user: collegeFUser,
+      },
+      {
+        initialValue: {
+          programIntensity: ProgramIntensity.fullTimePartTime,
+          deliveredOnSite: true,
         },
-      ],
-      offeringType: OfferingTypes.Public,
-      offeringDeclaration: true,
-      actualTuitionCosts: 1234,
-      programRelatedCosts: 3211,
-      mandatoryFees: 456,
-      exceptionalExpenses: 555,
-    };
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .post(endpoint)
-      .send(payload)
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK)
-      .expect({
-        offeringStatus: "Approved",
-        errors: [],
-        infos: [],
-        warnings: [],
-        studyPeriodBreakdown: {
-          fundedStudyPeriodDays: 304,
-          totalDays: 304,
-          totalFundedWeeks: 44,
-          unfundedStudyPeriodDays: 0,
-        },
-      });
+      },
+    );
+    fakeFullTimeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
+    fakeFullTimeEducationProgram.deliveredOnline = true;
+    collegeFFullTimeProgram = await db.educationProgram.save(
+      fakeFullTimeEducationProgram,
+    );
+    collegeFPartTimeProgram = await db.educationProgram.save(
+      fakePartTimeEducationProgram,
+    );
   });
 
   it(
     `Should validate an offering with offering status ${OfferingStatus.CreationPending} and warning when data with actualTuitionCosts ` +
-      `greater than ${MAX_ALLOWED_OFFERING_AMOUNT} less than ${MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE} is passed.`,
+      `greater than ${MAX_ALLOWED_OFFERING_AMOUNT} less than ${MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE} is passed in for a full-time program.`,
     async () => {
       // Arrange
       const institutionUserToken = await getInstitutionToken(
         InstitutionTokenTypes.CollegeFUser,
       );
 
-      const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${collegeFEducationProgram.id}/validation`;
+      const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${collegeFFullTimeProgram.id}/validation`;
       const payload = {
         offeringName: "Offering validation test 1",
         yearOfStudy: 1,
@@ -175,13 +145,13 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
     },
   );
 
-  it(`Should return error and warning when data with programRelatedCosts greater than ${MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE} is passed.`, async () => {
+  it(`Should return error and warning when data with programRelatedCosts greater than ${MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE} is passed in for a full-time program.`, async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
 
-    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${collegeFEducationProgram.id}/validation`;
+    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${collegeFFullTimeProgram.id}/validation`;
     const payload = {
       offeringName: "Offering validation test 2",
       yearOfStudy: 1,
@@ -227,6 +197,440 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
           totalDays: 304,
           totalFundedWeeks: 44,
           unfundedStudyPeriodDays: 0,
+        },
+      });
+  });
+
+  it("Should validate an offering when valid data without study breaks is passed in for a full-time education program.", async () => {
+    // Arrange
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${collegeFFullTimeProgram.id}/validation`;
+    const payload = {
+      offeringName: "Offering validation",
+      yearOfStudy: 1,
+      offeringIntensity: OfferingIntensity.fullTime,
+      offeringDelivered: OfferingDeliveryOptions.Online,
+      hasOfferingWILComponent: "no",
+      studyStartDate: "2024-05-23",
+      studyEndDate: "2024-08-16",
+      lacksStudyBreaks: true,
+      studyBreaks: [],
+      offeringType: OfferingTypes.Public,
+      offeringDeclaration: true,
+      actualTuitionCosts: 1234,
+      programRelatedCosts: 3211,
+      mandatoryFees: 456,
+      exceptionalExpenses: 555,
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        offeringStatus: "Approved",
+        errors: [],
+        infos: [],
+        warnings: [],
+        studyPeriodBreakdown: {
+          fundedStudyPeriodDays: 86,
+          totalDays: 86,
+          totalFundedWeeks: 13,
+          unfundedStudyPeriodDays: 0,
+        },
+      });
+  });
+
+  it("Should validate an offering without info or error when valid data with study breaks is passed in for a full-time education program.", async () => {
+    // Arrange
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${collegeFFullTimeProgram.id}/validation`;
+    const payload = {
+      offeringName: "Offering validation",
+      yearOfStudy: 1,
+      offeringIntensity: OfferingIntensity.fullTime,
+      offeringDelivered: OfferingDeliveryOptions.Online,
+      hasOfferingWILComponent: "no",
+      studyStartDate: "2024-01-01",
+      studyEndDate: "2024-08-16",
+      lacksStudyBreaks: false,
+      studyBreaks: [
+        {
+          breakStartDate: "2024-08-05",
+          breakEndDate: "2024-08-16",
+        },
+      ],
+      offeringType: OfferingTypes.Public,
+      offeringDeclaration: true,
+      actualTuitionCosts: 1234,
+      programRelatedCosts: 3211,
+      mandatoryFees: 456,
+      exceptionalExpenses: 555,
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        offeringStatus: "Approved",
+        errors: [],
+        infos: [],
+        warnings: [],
+        studyPeriodBreakdown: {
+          fundedStudyPeriodDays: 229,
+          totalDays: 229,
+          totalFundedWeeks: 33,
+          unfundedStudyPeriodDays: 0,
+        },
+      });
+  });
+
+  it("Should validate an offering with info when valid data with study breaks is passed in for a full-time education program.", async () => {
+    // Arrange
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${collegeFFullTimeProgram.id}/validation`;
+    const payload = {
+      offeringName: "Offering validation",
+      yearOfStudy: 1,
+      offeringIntensity: OfferingIntensity.fullTime,
+      offeringDelivered: OfferingDeliveryOptions.Online,
+      hasOfferingWILComponent: "no",
+      studyStartDate: "2024-05-23",
+      studyEndDate: "2024-08-16",
+      lacksStudyBreaks: false,
+      studyBreaks: [
+        {
+          breakStartDate: "2024-08-05",
+          breakEndDate: "2024-08-16",
+        },
+      ],
+      offeringType: OfferingTypes.Public,
+      offeringDeclaration: true,
+      actualTuitionCosts: 1234,
+      programRelatedCosts: 3211,
+      mandatoryFees: 456,
+      exceptionalExpenses: 555,
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        offeringStatus: "Approved",
+        errors: [],
+        infos: [
+          {
+            typeCode:
+              OfferingValidationInfos.InvalidStudyBreaksCombinedThresholdPercentage,
+            message:
+              "The combined study breaks exceed the 10% threshold as outlined in StudentAid BC policy.",
+          },
+        ],
+        warnings: [],
+        studyPeriodBreakdown: {
+          fundedStudyPeriodDays: 82.6,
+          totalDays: 86,
+          totalFundedWeeks: 12,
+          unfundedStudyPeriodDays: 3.4,
+        },
+      });
+  });
+
+  it("Should return error and warning when data with total funded weeks less than minimum allowed weeks and study breaks is passed in for a full-time education program.", async () => {
+    // Arrange
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${collegeFFullTimeProgram.id}/validation`;
+    const payload = {
+      offeringName: "Offering validation",
+      yearOfStudy: 1,
+      offeringIntensity: OfferingIntensity.fullTime,
+      offeringDelivered: OfferingDeliveryOptions.Online,
+      hasOfferingWILComponent: "no",
+      studyStartDate: "2024-05-23",
+      studyEndDate: "2024-08-16",
+      lacksStudyBreaks: false,
+      studyBreaks: [
+        {
+          breakStartDate: "2024-07-29",
+          breakEndDate: "2024-08-16",
+        },
+      ],
+      offeringType: OfferingTypes.Public,
+      offeringDeclaration: true,
+      actualTuitionCosts: 1234,
+      programRelatedCosts: 3211,
+      mandatoryFees: 456,
+      exceptionalExpenses: 555,
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        offeringStatus: "Creation pending",
+        errors: [],
+        infos: [
+          {
+            typeCode:
+              OfferingValidationInfos.InvalidStudyBreaksCombinedThresholdPercentage,
+            message:
+              "The combined study breaks exceed the 10% threshold as outlined in StudentAid BC policy.",
+          },
+        ],
+        warnings: [
+          {
+            typeCode: OfferingValidationWarnings.InvalidStudyDatesPeriodLength,
+            message:
+              "The funded study amount of days is ineligible for StudentAid BC funding. Your offering must be at least 12 weeks of study or longer to be eligible.",
+          },
+        ],
+        studyPeriodBreakdown: {
+          fundedStudyPeriodDays: 75.6,
+          totalDays: 86,
+          totalFundedWeeks: 11,
+          unfundedStudyPeriodDays: 10.4,
+        },
+      });
+  });
+
+  it("Should validate an offering when valid data without study breaks is passed in for a part-time education program.", async () => {
+    // Arrange
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${collegeFPartTimeProgram.id}/validation`;
+    const payload = {
+      offeringName: "Offering validation",
+      yearOfStudy: 1,
+      offeringIntensity: OfferingIntensity.partTime,
+      offeringDelivered: OfferingDeliveryOptions.Onsite,
+      hasOfferingWILComponent: "no",
+      studyStartDate: "2024-07-01",
+      studyEndDate: "2024-08-16",
+      lacksStudyBreaks: true,
+      studyBreaks: [],
+      offeringType: OfferingTypes.Public,
+      offeringDeclaration: true,
+      actualTuitionCosts: 1234,
+      programRelatedCosts: 3211,
+      mandatoryFees: 456,
+      exceptionalExpenses: 555,
+      courseLoad: 50,
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        offeringStatus: "Approved",
+        errors: [],
+        infos: [],
+        warnings: [],
+        studyPeriodBreakdown: {
+          fundedStudyPeriodDays: 47,
+          totalDays: 47,
+          totalFundedWeeks: 7,
+          unfundedStudyPeriodDays: 0,
+        },
+      });
+  });
+
+  it("Should validate an offering without info or error when valid data with study breaks is passed in for a part-time education program.", async () => {
+    // Arrange
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${collegeFPartTimeProgram.id}/validation`;
+    const payload = {
+      offeringName: "Offering validation",
+      yearOfStudy: 1,
+      offeringIntensity: OfferingIntensity.partTime,
+      offeringDelivered: OfferingDeliveryOptions.Onsite,
+      hasOfferingWILComponent: "no",
+      studyStartDate: "2024-01-01",
+      studyEndDate: "2024-08-16",
+      lacksStudyBreaks: false,
+      studyBreaks: [
+        {
+          breakStartDate: "2024-08-05",
+          breakEndDate: "2024-08-16",
+        },
+      ],
+      offeringType: OfferingTypes.Public,
+      offeringDeclaration: true,
+      actualTuitionCosts: 1234,
+      programRelatedCosts: 3211,
+      mandatoryFees: 456,
+      exceptionalExpenses: 555,
+      courseLoad: 30,
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        offeringStatus: "Approved",
+        errors: [],
+        infos: [],
+        warnings: [],
+        studyPeriodBreakdown: {
+          fundedStudyPeriodDays: 229,
+          totalDays: 229,
+          totalFundedWeeks: 33,
+          unfundedStudyPeriodDays: 0,
+        },
+      });
+  });
+
+  it("Should validate an offering with info when valid data with study breaks is passed in for a part-time education program.", async () => {
+    // Arrange
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${collegeFPartTimeProgram.id}/validation`;
+    const payload = {
+      offeringName: "Offering validation",
+      yearOfStudy: 1,
+      offeringIntensity: OfferingIntensity.partTime,
+      offeringDelivered: OfferingDeliveryOptions.Onsite,
+      hasOfferingWILComponent: "no",
+      studyStartDate: "2024-07-01",
+      studyEndDate: "2024-08-16",
+      lacksStudyBreaks: false,
+      studyBreaks: [
+        {
+          breakStartDate: "2024-08-05",
+          breakEndDate: "2024-08-16",
+        },
+      ],
+      offeringType: OfferingTypes.Public,
+      offeringDeclaration: true,
+      actualTuitionCosts: 1234,
+      programRelatedCosts: 3211,
+      mandatoryFees: 456,
+      exceptionalExpenses: 555,
+      courseLoad: 30,
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        offeringStatus: "Approved",
+        errors: [],
+        infos: [
+          {
+            typeCode:
+              OfferingValidationInfos.InvalidStudyBreaksCombinedThresholdPercentage,
+            message:
+              "The combined study breaks exceed the 10% threshold as outlined in StudentAid BC policy.",
+          },
+        ],
+        warnings: [],
+        studyPeriodBreakdown: {
+          fundedStudyPeriodDays: 39.7,
+          totalDays: 47,
+          totalFundedWeeks: 6,
+          unfundedStudyPeriodDays: 7.3,
+        },
+      });
+  });
+
+  it("Should return error and warning when data with total funded weeks less than minimum allowed weeks and study breaks is passed in for a part-time education program.", async () => {
+    // Arrange
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${collegeFPartTimeProgram.id}/validation`;
+    const payload = {
+      offeringName: "Offering validation",
+      yearOfStudy: 1,
+      offeringIntensity: OfferingIntensity.partTime,
+      offeringDelivered: OfferingDeliveryOptions.Onsite,
+      hasOfferingWILComponent: "no",
+      studyStartDate: "2024-07-01",
+      studyEndDate: "2024-08-16",
+      lacksStudyBreaks: false,
+      studyBreaks: [
+        {
+          breakStartDate: "2024-07-29",
+          breakEndDate: "2024-08-16",
+        },
+      ],
+      offeringType: OfferingTypes.Public,
+      offeringDeclaration: true,
+      actualTuitionCosts: 1234,
+      programRelatedCosts: 3211,
+      mandatoryFees: 456,
+      exceptionalExpenses: 555,
+      courseLoad: 30,
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        offeringStatus: "Creation pending",
+        errors: [],
+        infos: [
+          {
+            typeCode:
+              OfferingValidationInfos.InvalidStudyBreaksCombinedThresholdPercentage,
+            message:
+              "The combined study breaks exceed the 10% threshold as outlined in StudentAid BC policy.",
+          },
+        ],
+        warnings: [
+          {
+            typeCode: OfferingValidationWarnings.InvalidStudyDatesPeriodLength,
+            message:
+              "The funded study amount of days is ineligible for StudentAid BC funding. Your offering must be at least 6 weeks of study or longer to be eligible.",
+          },
+        ],
+        studyPeriodBreakdown: {
+          fundedStudyPeriodDays: 32.7,
+          totalDays: 47,
+          totalFundedWeeks: 5,
+          unfundedStudyPeriodDays: 14.3,
         },
       });
   });

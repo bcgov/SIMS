@@ -20,32 +20,35 @@ class HasValidOfferingPeriodForFundedDaysConstraint
   implements ValidatorConstraintInterface
 {
   validate(studyBreaks: StudyBreak[], args: ValidationArguments): boolean {
-    const offeringMinDaysAllowedValue = this.getOfferingMinAllowedDays(args);
+    const offeringMinWeeksAllowedValue = this.getOfferingMinAllowedWeeks(args);
     const calculatedStudyBreaksAndWeeks = this.getCalculatedStudyBreaks(
       studyBreaks,
       args,
     );
     return (
-      calculatedStudyBreaksAndWeeks.fundedStudyPeriodDays >=
-        offeringMinDaysAllowedValue &&
+      calculatedStudyBreaksAndWeeks.totalFundedWeeks >=
+        offeringMinWeeksAllowedValue &&
       calculatedStudyBreaksAndWeeks.fundedStudyPeriodDays <=
         OFFERING_STUDY_PERIOD_MAX_DAYS
     );
   }
 
   defaultMessage(args: ValidationArguments) {
-    const offeringMinDaysAllowedValue = this.getOfferingMinAllowedDays(args);
-    return `The funded study amount of days is ineligible for StudentAid BC funding. Your dates must be between ${offeringMinDaysAllowedValue} to ${OFFERING_STUDY_PERIOD_MAX_DAYS} days.`;
+    const offeringMinWeeksAllowedValue = this.getOfferingMinAllowedWeeks(args);
+    return `The funded study amount of days is ineligible for StudentAid BC funding. Your offering must be at least ${offeringMinWeeksAllowedValue} weeks of study or longer to be eligible.`;
   }
 
   /**
-   * Get offering minimum allowed days from args.
+   * Get offering minimum allowed weeks from args.
    * @param args validation arguments.
-   * @returns minimum allowed days.
+   * @returns minimum allowed weeks.
    */
-  private getOfferingMinAllowedDays(args: ValidationArguments): number {
+  private getOfferingMinAllowedWeeks(args: ValidationArguments): number {
     const [, , offeringMinDaysAllowed] = args.constraints;
-    return offeringMinDaysAllowed(args.object) as number;
+    const offeringMinDaysAllowedValue = offeringMinDaysAllowed(
+      args.object,
+    ) as number;
+    return offeringMinDaysAllowedValue / 7;
   }
 }
 

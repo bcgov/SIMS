@@ -2018,7 +2018,7 @@
                       "value": ""
                     }
                   ],
-                  "content": "<strong class=\"ml-2\">This study period is ineligible for StudentAid BC funding</strong>\n<br>\n<span>Your dates must be between {{data.studyPeriodMinDays}} to {{data.studyPeriodMaxDays}} days.</span>",
+                  "content": "<strong class=\"ml-2\">This study period is ineligible for StudentAid BC funding</strong>\n<br>\n<span>{{data.offeringIntensityText}} offerings must be at least {{data.studyPeriodMinWeeks}} weeks of study or longer to be eligible. Any shorter offerings can be submitted but will require SABC review.</span>",
                   "refreshOnChange": true,
                   "customClass": "banner-warning ",
                   "hidden": false,
@@ -2087,6 +2087,7 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "id": "ebhbfou",
+                  "lockKey": true,
                   "isNew": false
                 }
               ],
@@ -5568,7 +5569,8 @@
       "allowMultipleMasks": false,
       "addons": [],
       "inputType": "hidden",
-      "id": "e1t0135"
+      "id": "e1t0135",
+      "lockKey": true
     },
     {
       "label": "applicationId",
@@ -5719,8 +5721,8 @@
     {
       "input": true,
       "tableView": true,
-      "key": "studyPeriodMinDays",
-      "label": "Study period minimum days",
+      "key": "studyPeriodMinWeeks",
+      "label": "Study period minimum weeks",
       "protected": false,
       "unique": false,
       "persistent": true,
@@ -5734,13 +5736,14 @@
       "properties": {},
       "lockKey": true,
       "customDefaultValue": "",
-      "calculateValue": "value = data.offeringIntensity === 'Full Time' ? 84 : 42;"
+      "calculateValue": "value = data.offeringIntensity === 'Full Time' ? 12 : 6;",
+      "isNew": false
     },
     {
       "input": true,
       "tableView": true,
-      "key": "studyPeriodMaxDays",
-      "label": "Study period maximum days",
+      "key": "offeringIntensityText",
+      "label": "Offering intensity text",
       "protected": false,
       "unique": false,
       "persistent": true,
@@ -5753,7 +5756,8 @@
       },
       "properties": {},
       "defaultValue": "365",
-      "lockKey": true
+      "lockKey": true,
+      "calculateValue": "value = data.offeringIntensity === 'Full Time' ? 'Full-time': 'Part-time';"
     }
   ]
 }
