@@ -36,12 +36,12 @@ export class ReportControllerService {
    * @param options related options.
    * - `institutionId` related institution id.
    */
-  async generateReport(
-    payload: ReportsFilterAPIInDTO,
+  async generateReport<T extends ReportsFilterAPIInDTO>(
+    payload: T,
     response: Response,
     options?: { institutionId?: number },
   ): Promise<void> {
-    const submissionResult = await this.formService.dryRunSubmission(
+    const submissionResult = await this.formService.dryRunSubmission<T>(
       FormNames.ExportFinancialReports,
       payload,
     );
