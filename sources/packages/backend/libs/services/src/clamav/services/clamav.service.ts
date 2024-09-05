@@ -1,7 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import * as NodeClam from "clamscan";
-import { error } from "console";
-import { Readable } from "stream";
 
 @Injectable()
 export class ClamAVService {
@@ -35,11 +33,11 @@ export class ClamAVService {
       passthroughStream.on("scan-complete", (result) => {
         resolve(result.isInfected);
       });
-      passthroughStream.on("error", (error: unknown) => {
+      passthroughStream.on("error", (error) => {
         reject(error);
       });
       passthroughStream.on("timeout", () => {
-        reject("Connection timed out.");
+        reject(new Error("Connection timed out."));
       });
       stream.pipe(passthroughStream);
     });

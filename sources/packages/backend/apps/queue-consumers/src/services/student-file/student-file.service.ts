@@ -5,7 +5,6 @@ import {
   StudentFile,
   VirusScanStatus,
 } from "@sims/sims-db";
-import { Readable } from "stream";
 import { CustomNamedError } from "@sims/utilities";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { ClamAVError, ClamAVService, SystemUsersService } from "@sims/services";
