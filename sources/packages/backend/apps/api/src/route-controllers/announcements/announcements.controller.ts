@@ -1,16 +1,10 @@
 import { Controller, Get } from "@nestjs/common";
 import BaseController from "../BaseController";
-import { AllowAuthorizedParty } from "../../auth/decorators";
-import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiTags } from "@nestjs/swagger";
-import { AnnouncementsService } from "apps/api/src/services/announcements/announcements.service";
+import { Announcements } from "@sims/sims-db";
+import { AnnouncementsService } from "../../services";
+import { Public } from "../../auth/decorators/public.decorator";
 
-@AllowAuthorizedParty(
-  AuthorizedParties.institution,
-  AuthorizedParties.student,
-  AuthorizedParties.supportingUsers,
-  AuthorizedParties.aest,
-)
 @Controller("announcements")
 @ApiTags("announcements")
 export class AnnouncementsController extends BaseController {
@@ -18,8 +12,9 @@ export class AnnouncementsController extends BaseController {
     super();
   }
 
+  @Public()
   @Get()
-  async list(): Promise<any> {
+  async getAnnouncements(): Promise<Announcements[]> {
     return this.announcementsService.getAnnouncements();
   }
 }

@@ -6,8 +6,14 @@ CREATE TABLE IF NOT EXISTS sims.announcements (
     end_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW (),
     target VARCHAR(200) NOT NULL,
     -- Audit columns
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW (),
-    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW ()
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    creator INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE
+    SET
+        NULL,
+        modifier INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE
+    SET
+        NULL
 );
 
 -- ## Comments
