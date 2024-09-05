@@ -3,6 +3,7 @@ import {
   ApplicationRestrictionBypass,
   Note,
   NoteType,
+  Restriction,
   RestrictionActionType,
   RestrictionBypassBehaviors,
   StudentRestriction,
@@ -11,7 +12,7 @@ import {
 import { E2EDataSources } from "@sims/test-utils/data-source/e2e-data-source";
 import { createFakeNote } from "@sims/test-utils/factories/note";
 import { saveFakeStudentRestriction } from "@sims/test-utils/factories/student-restriction";
-import { ArrayContains } from "typeorm";
+import { ArrayContains, FindOneOptions } from "typeorm";
 
 /**
  * Create a fake application restrictions bypass.
@@ -49,7 +50,7 @@ export function createFakeApplicationRestrictionBypass(relations: {
 }
 
 /**
- *
+ * Creates the necessary entities to have a student active restriction in place with an associated bypass.
  * @param db data source helper.
  * @param relations bypass relations.
  * - `application`: mandatory for bypass creation. Requires student and user to also be loaded.
@@ -57,12 +58,16 @@ export function createFakeApplicationRestrictionBypass(relations: {
  * - `creationNote`: optional creation note. If not provided, one will be created.
  * - `bypassCreatedBy`:
  * - `removalNote`: optional removal note. If not provided, one will be created only if the
- * {@link options.isRemoved} is set as true.
- * - `bypassRemovedBy`: optional removal user. Should be provided if {@link options.isRemoved} is set as true.
+ * {@link isRemoved} is set as true.
+ * - `bypassRemovedBy`: optional removal user. Should be provided if {@link isRemoved} is set as true.
  * - `creator`: optional user to be se as record creator.
  * @param options bypass save options.
- * - `restrictionActionType`: when {@link relations.studentRestriction} is not provided, a restriction will be
+ * - `restrictionActionType`: when {@link studentRestriction} is not provided, a restriction will be
  * created and associated with the bypass using this parameter to define the restriction action.
+ * - `restrictionCode`: when {@link studentRestriction} is not provided, a restriction will be
+ * created and associated with the bypass using this parameter to define the restriction code.
+ * {@link restrictionActionType} and {@link restrictionCode} are mutually exclusive and this one
+ * take precedence since it will uniquely identify a restriction.
  * - `isRemoved`: if true, set the columns related to the bypass removal.
  * - `initialValues`: initial values to set to the {@link ApplicationRestrictionBypass} before saving it.
  * @returns the saved {@link ApplicationRestrictionBypass}.
@@ -80,6 +85,7 @@ export async function saveFakeApplicationRestrictionBypass(
   },
   options?: {
     restrictionActionType?: RestrictionActionType;
+    restrictionCode?: string;
     isRemoved?: boolean;
     initialValues?: Partial<ApplicationRestrictionBypass>;
   },
@@ -95,12 +101,16 @@ export async function saveFakeApplicationRestrictionBypass(
   bypass.createdAt = now;
   // Define studentRestriction.
   if (!relations.studentRestriction) {
+    // Find the restriction to ne associated with the student.
+    const findOptions: FindOneOptions<Restriction> = options?.restrictionCode
+      ? { where: { restrictionCode: options.restrictionCode } }
+      : {
+          where: {
+            actionType: ArrayContains([options.restrictionActionType]),
+          },
+        };
+    const restriction = await db.restriction.findOne(findOptions);
     // Create student restriction to stop disbursement.
-    const restriction = await db.restriction.findOne({
-      where: {
-        actionType: ArrayContains([options.restrictionActionType]),
-      },
-    });
     bypass.studentRestriction = await saveFakeStudentRestriction(
       db.dataSource,
       {

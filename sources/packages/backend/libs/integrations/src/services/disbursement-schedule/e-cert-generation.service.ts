@@ -101,6 +101,8 @@ export class ECertGenerationService {
         "restrictionBypass.id",
         "restrictionBypass.bypassBehavior",
         "restrictionBypassStudentRestriction.id",
+        "restrictionBypassStudentRestrictionRestriction.id",
+        "restrictionBypassStudentRestrictionRestriction.restrictionCode",
         "programYear.id",
         "programYear.maxLifetimeBCLoanAmount",
       ])
@@ -129,6 +131,10 @@ export class ECertGenerationService {
       .leftJoin(
         "restrictionBypass.studentRestriction",
         "restrictionBypassStudentRestriction",
+      )
+      .leftJoin(
+        "restrictionBypassStudentRestriction.restriction",
+        "restrictionBypassStudentRestrictionRestriction",
       )
       .where(
         "disbursementSchedule.disbursementScheduleStatus = :disbursementScheduleStatus",
@@ -203,6 +209,8 @@ export class ECertGenerationService {
               application.restrictionBypasses.map<ApplicationActiveRestrictionBypass>(
                 (bypass) => ({
                   id: bypass.id,
+                  restrictionCode:
+                    bypass.studentRestriction.restriction.restrictionCode,
                   studentRestrictionId: bypass.studentRestriction.id,
                   bypassBehavior: bypass.bypassBehavior,
                 }),

@@ -797,7 +797,7 @@ describe(
       expect(scheduleIsSent).toBe(true);
     });
 
-    it.only(
+    it(
       "Should have the e-Cert generated for a part-time application and the bypass resolved " +
         `when a student has an active 'Stop part time disbursement' restriction and it is bypassed with behavior '${RestrictionBypassBehaviors.NextDisbursementOnly}'.`,
       async () => {
@@ -860,12 +860,23 @@ describe(
         );
 
         // Queued job.
-        const { job } = mockBullJob<void>();
+        const mockedJob = mockBullJob<void>();
 
         // Act
-        await processor.processECert(job);
+        await processor.processECert(mockedJob.job);
 
         // Assert
+        expect(
+          mockedJob.containLogMessage(
+            `Current active restriction bypasses [Restriction Code(Student Restriction ID)]: ${restrictionBypass.studentRestriction.restriction.restrictionCode}(${restrictionBypass.studentRestriction.id}).`,
+          ),
+        ).toBe(true);
+        expect(
+          mockedJob.containLogMessage(
+            "There are not active restriction bypasses.",
+          ),
+        ).toBe(false);
+
         const [firstSchedule] =
           application.currentAssessment.disbursementSchedules;
         // Assert schedule is updated to 'Sent' with the dateSent defined.

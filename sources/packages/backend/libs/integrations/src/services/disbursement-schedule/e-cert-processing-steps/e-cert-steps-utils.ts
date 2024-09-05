@@ -5,10 +5,12 @@ import {
   RestrictionActionType,
 } from "@sims/sims-db";
 import {
+  ApplicationActiveRestrictionBypass,
   EligibleECertDisbursement,
   StudentActiveRestriction,
 } from "../disbursement-schedule.models";
 import { RestrictionCode } from "@sims/services";
+import { ProcessSummary } from "@sims/utilities/logger";
 
 /**
  * Check active student restrictions by its action type in an eligible disbursement.
@@ -24,6 +26,29 @@ export function getRestrictionByActionType(
   return eCertDisbursement
     .getEffectiveRestrictions()
     .find((restriction) => restriction.actions.includes(actionType));
+}
+
+/**
+ * Adds to the log the lists of all restriction bypasses active.
+ * @param bypasses active bypasses.
+ * @param log log to receive the list.
+ */
+export function logActiveRestrictionsBypasses(
+  bypasses: ReadonlyArray<ApplicationActiveRestrictionBypass>,
+  log: ProcessSummary,
+): void {
+  if (!bypasses.length) {
+    log.info("There are not active restriction bypasses.");
+    return;
+  }
+  const bypassLogInfo = bypasses.map(
+    (bypass) => `${bypass.restrictionCode}(${bypass.studentRestrictionId})`,
+  );
+  log.info(
+    `Current active restriction bypasses [Restriction Code(Student Restriction ID)]: ${bypassLogInfo.join(
+      ", ",
+    )}.`,
+  );
 }
 
 /**

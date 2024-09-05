@@ -176,6 +176,10 @@ export interface ApplicationActiveRestrictionBypass {
    */
   id: number;
   /**
+   * Restriction code being bypassed.
+   */
+  restrictionCode: string;
+  /**
    * Student restriction bypassed.
    */
   studentRestrictionId: number;

@@ -10,6 +10,8 @@ import {
   FormYesNoOptions,
   OfferingIntensity,
   RelationshipStatus,
+  RestrictionBypassBehaviors,
+  User,
 } from "@sims/sims-db";
 import {
   E2EDataSources,
@@ -18,7 +20,9 @@ import {
   createFakeDisbursementOveraward,
   createFakeDisbursementValue,
   createFakeMSFAANumber,
+  createFakeUser,
   saveFakeApplicationDisbursements,
+  saveFakeApplicationRestrictionBypass,
   saveFakeStudent,
 } from "@sims/test-utils";
 import { getUploadedFile } from "@sims/test-utils/mocks";
@@ -41,6 +45,7 @@ import * as Client from "ssh2-sftp-client";
 import * as dayjs from "dayjs";
 import { FullTimeCertRecordParser } from "./parsers/full-time-e-cert-record-parser";
 import { awardAssert, loadAwardValues } from "./e-cert-utils";
+import { RestrictionCode, SystemUsersService } from "@sims/services";
 
 describe(
   describeQueueProcessorRootTest(QueueNames.FullTimeECertIntegration),
@@ -49,6 +54,8 @@ describe(
     let processor: FullTimeECertProcessIntegrationScheduler;
     let db: E2EDataSources;
     let sftpClientMock: DeepMocked<Client>;
+    let systemUsersService: SystemUsersService;
+    let sharedMinistryUser: User;
 
     beforeAll(async () => {
       // Env variable required for querying the eligible e-Cert records.
@@ -60,6 +67,9 @@ describe(
       sftpClientMock = sshClientMock;
       // Processor under test.
       processor = app.get(FullTimeECertProcessIntegrationScheduler);
+      systemUsersService = app.get(SystemUsersService);
+      // Create a Ministry user to b used, for instance, for audit.
+      sharedMinistryUser = await db.user.save(createFakeUser());
     });
 
     beforeEach(async () => {
@@ -766,7 +776,7 @@ describe(
       ]);
       const [disbursement] =
         application.currentAssessment.disbursementSchedules;
-      const isScheduleSent = await db.disbursementSchedule.exist({
+      const isScheduleSent = await db.disbursementSchedule.exists({
         where: {
           id: disbursement.id,
           dateSent: Not(IsNull()),
@@ -774,6 +784,135 @@ describe(
         },
       });
       expect(isScheduleSent).toBe(true);
+    });
+
+    it("Should generate BC awards amounts with no restriction deductions when a student has an active 'Stop full time BC funding' restriction and it is bypassed.", async () => {
+      // Arrange
+      // Student with valid SIN.
+      const student = await saveFakeStudent(db.dataSource);
+      // Valid MSFAA Number.
+      const msfaaNumber = await db.msfaaNumber.save(
+        createFakeMSFAANumber(
+          { student },
+          {
+            msfaaState: MSFAAStates.Signed,
+            msfaaInitialValues: {
+              offeringIntensity: OfferingIntensity.fullTime,
+            },
+          },
+        ),
+      );
+      // Student application eligible for e-Cert.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          student,
+          msfaaNumber,
+          firstDisbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLF",
+              1234,
+            ),
+            // This loan would be reduced if BCLM is active in the student account.
+            createFakeDisbursementValue(
+              DisbursementValueType.BCLoan,
+              "BCSL",
+              1000,
+            ),
+            // This grant would be reduced if BCLM is active in the student account.
+            createFakeDisbursementValue(
+              DisbursementValueType.BCGrant,
+              "BCAG",
+              750,
+            ),
+          ],
+        },
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            assessmentData: { weeks: 5 } as Assessment,
+            assessmentDate: new Date(),
+          },
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+          },
+        },
+      );
+      // Create restriction bypass.
+      const restrictionBypass = await saveFakeApplicationRestrictionBypass(
+        db,
+        {
+          application,
+          bypassCreatedBy: sharedMinistryUser,
+          creator: sharedMinistryUser,
+        },
+        {
+          restrictionCode: RestrictionCode.BCLM,
+          initialValues: {
+            bypassBehavior: RestrictionBypassBehaviors.NextDisbursementOnly,
+          },
+        },
+      );
+
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      await processor.processECert(mockedJob.job);
+
+      // Assert
+      // TODO: assert values were not reduced by restriction.
+      expect(
+        mockedJob.containLogMessage(
+          `Current active restriction bypasses [Restriction Code(Student Restriction ID)]: ${restrictionBypass.studentRestriction.restriction.restrictionCode}(${restrictionBypass.studentRestriction.id}).`,
+        ),
+      ).toBe(true);
+      expect(
+        mockedJob.containLogMessage(
+          "There are not active restriction bypasses.",
+        ),
+      ).toBe(false);
+
+      const [firstSchedule] =
+        application.currentAssessment.disbursementSchedules;
+      // Assert schedule is updated to 'Sent' with the dateSent defined.
+      const scheduleIsSent = await db.disbursementSchedule.exists({
+        where: {
+          id: firstSchedule.id,
+          dateSent: Not(IsNull()),
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        },
+      });
+      expect(scheduleIsSent).toBe(true);
+      // Validate if the restriction was resolved.
+      const resolvedBypass = await db.applicationRestrictionBypass.findOne({
+        select: {
+          id: true,
+          isActive: true,
+          bypassRemovedDate: true,
+          bypassRemovedBy: { id: true },
+          removalNote: { description: true },
+        },
+        relations: {
+          bypassRemovedBy: true,
+          removalNote: true,
+        },
+        where: { id: restrictionBypass.id },
+      });
+      expect(resolvedBypass).toEqual({
+        id: restrictionBypass.id,
+        isActive: false,
+        bypassRemovedDate: expect.any(Date),
+        bypassRemovedBy: {
+          id: systemUsersService.systemUser.id,
+        },
+        removalNote: {
+          description:
+            "Automatically removing bypass after the first e-Cert was generated.",
+        },
+      });
     });
   },
 );
