@@ -34,7 +34,13 @@
               {{ item.supplierNumber }}
             </template>
             <template #[`item.supplierProtected`]="{ item }">
-              {{ item.supplierProtected ? "Yes" : "No" }}
+              {{
+                item.supplierProtected
+                  ? "Yes"
+                  : item.supplierProtected === false
+                  ? "No"
+                  : "-"
+              }}
             </template>
             <template #[`item.supplierStatus`]="{ item }">
               <status-chip-supplier :status="item.supplierStatus" />
@@ -49,7 +55,7 @@
               {{ item.addressLine1 || "-" }}
             </template>
             <template #[`item.siteStatus`]="{ item }">
-              {{ item.siteStatus }}
+              {{ item.siteStatus || "-" }}
             </template>
             <template #[`item.siteProtected`]="{ item }">
               {{ item.siteProtected || "-" }}

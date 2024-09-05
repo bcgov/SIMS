@@ -125,13 +125,13 @@ export class CASSupplier extends RecordDataModel {
 
 export interface SupplierAddress {
   supplierSiteCode: string;
-  addressLine1: string;
-  addressLine2: string;
-  city: string;
-  provinceState: string;
-  country: string;
-  postalCode: string;
-  status: "ACTIVE" | "INACTIVE";
-  siteProtected: string;
+  addressLine1?: string;
+  addressLine2?: string;
+  city?: string;
+  provinceState?: string;
+  country?: string;
+  postalCode?: string;
+  status?: "ACTIVE" | "INACTIVE";
+  siteProtected?: string;
   lastUpdated: Date;
 }

@@ -23,13 +23,16 @@ export class CASSupplierService {
     return await ApiClient.CASSupplier.getCASSupplierInfo(studentId);
   }
 
+  /**
+   * Adds CAS Supplier info.
+   * @param studentId student id.
+   * @param casSupplierInfo CAS supplier info.
+
+   */
   async addCASSupplier(
     studentId: number,
-    addCASSupplierAPIInDTO: AddCASSupplierAPIInDTO,
+    casSupplierInfo: AddCASSupplierAPIInDTO,
   ) {
-    return await ApiClient.CASSupplier.addCASSupplierInfo(
-      studentId,
-      addCASSupplierAPIInDTO,
-    );
+    await ApiClient.CASSupplier.addCASSupplierInfo(studentId, casSupplierInfo);
   }
 }
