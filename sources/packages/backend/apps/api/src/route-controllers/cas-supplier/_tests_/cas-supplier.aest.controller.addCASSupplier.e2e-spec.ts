@@ -24,7 +24,6 @@ describe("CASSupplierAESTController(e2e)-addCASSupplier", () => {
 
   it("Should add a new CAS supplier manually when provided supplier info for a student.", async () => {
     // Arrange
-
     const student = await saveFakeStudent(db.dataSource);
     const payload = {
       supplierNumber: "0001234",

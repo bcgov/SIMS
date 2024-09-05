@@ -27,7 +27,7 @@
 
         <v-text-field
           hide-details="auto"
-          label="Supplier site code"
+          label="Site code"
           v-model="formModel.supplierSiteCode"
           variant="outlined"
           :rules="[supplierSiteCodeValidationRule]"
@@ -58,7 +58,6 @@ import { useModalDialog, useRules } from "@/composables";
 import { Role, VForm } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { AddCASSupplierAPIInDTO } from "@/services/http/dto";
-import { BannerTypes } from "@/types/contracts/Banner";
 
 export default defineComponent({
   components: { ModalDialogBase, CheckPermissionRole, ErrorSummary },
@@ -69,7 +68,6 @@ export default defineComponent({
     },
   },
   setup() {
-    const { sinValidationRule, checkNotesLengthRule } = useRules();
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       AddCASSupplierAPIInDTO | boolean
     >();
@@ -138,9 +136,6 @@ export default defineComponent({
       submit,
       addCASSupplierForm,
       formModel,
-      BannerTypes,
-      sinValidationRule,
-      checkNotesLengthRule,
       supplierNumberValidationRule,
       supplierSiteCodeValidationRule,
       formatSupplierNumber,

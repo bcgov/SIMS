@@ -2,7 +2,10 @@
   <tab-container>
     <body-header-container>
       <template #header>
-        <body-header title="CAS Supplier Information">
+        <body-header
+          title="CAS Supplier Information"
+          subTitle="The top row in the table below is the most current CAS information for the student."
+        >
           <template #actions>
             <check-permission-role :role="Role.AESTEditCASSupplierInfo">
               <template #="{ notAllowed }">
@@ -75,16 +78,10 @@
 import { ref, watch, defineComponent } from "vue";
 import {
   DEFAULT_PAGE_LIMIT,
-  LayoutTemplates,
   Role,
   CASSupplierInformationHeaders,
 } from "@/types";
-import {
-  useFileUtils,
-  ModalDialog,
-  useSnackBar,
-  useFormatters,
-} from "@/composables";
+import { ModalDialog, useSnackBar, useFormatters } from "@/composables";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import EditCASSupplierInfoModal from "@/components/aest/students/EditCASSupplierInfoModal.vue";
 import { CASSupplierInformation } from "@/types/contracts/student/CASSupplierInformation";
@@ -115,9 +112,7 @@ export default defineComponent({
       {} as ModalDialog<AddCASSupplierAPIInDTO | boolean>,
     );
     const snackBar = useSnackBar();
-    const fileUtils = useFileUtils();
     const initialData = ref({ studentId: props.studentId });
-    const processingAddCASSupplierInfo = ref(false);
     const casSupplierResults = ref([] as CASSupplierInformation[]);
     const loadCASSuppliers = async () => {
       casSuppliers.value =
@@ -147,10 +142,8 @@ export default defineComponent({
 
     return {
       casSuppliers,
-      fileUtils,
       DEFAULT_PAGE_LIMIT,
       initialData,
-      processingEditExpiryDate: processingAddCASSupplierInfo,
       LayoutTemplates,
       Role,
       showModal,

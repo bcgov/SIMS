@@ -41,7 +41,7 @@ export class CASSupplierService {
    * @param supplierNumber supplier number.
    * @param supplierSiteCode supplier site code.
    * @param creatorUserId user id for the record creation.
-   * @returns
+   * @returns the saved CAS supplier.
    */
   async addCASSupplier(
     studentId: number,
