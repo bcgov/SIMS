@@ -16,7 +16,7 @@
         >
           <div class="label-value-normal">
             <b>{{ announcement.messageTitle }}</b> -
-            <i>added {{ announcement.startDate }}</i>
+            <i>added {{ dateOnlyLongString(announcement.startDate) }}</i>
             <p>{{ announcement.message }}</p>
           </div>
         </div>
@@ -29,6 +29,7 @@
 import { defineComponent, onMounted, ref } from "vue";
 import { BannerTypes } from "@/types/contracts/Banner";
 import { AnnouncementsService } from "@/services/AnnouncementsService";
+import { useFormatters } from "@/composables";
 
 export default defineComponent({
   props: {
@@ -38,6 +39,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { dateOnlyLongString } = useFormatters();
     // Data-bind
     const relevantAnnouncements = ref();
     // Hooks
@@ -52,6 +54,7 @@ export default defineComponent({
     return {
       BannerTypes,
       relevantAnnouncements,
+      dateOnlyLongString,
     };
   },
 });
