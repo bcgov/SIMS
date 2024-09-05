@@ -1,4 +1,4 @@
-import { SupplierStatus } from "@sims/sims-db";
+import { CASSupplierSiteStatus, SupplierStatus } from "@sims/sims-db";
 
 export class CASSupplierInfoAPIOutDTO {
   dateCreated: Date;
@@ -8,7 +8,7 @@ export class CASSupplierInfoAPIOutDTO {
   isValid: boolean;
   supplierSiteCode?: string;
   addressLine1?: string;
-  siteStatus?: "ACTIVE" | "INACTIVE";
+  siteStatus?: CASSupplierSiteStatus;
   siteProtected?: string;
 }
 

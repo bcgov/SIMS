@@ -6,10 +6,11 @@ export class CASSupplierInfoAPIOutDTO {
   isValid: boolean;
   supplierSiteCode?: string;
   addressLine1?: string;
-  siteStatus?: "ACTIVE" | "INACTIVE";
+  siteStatus?: CASSupplierSiteStatus;
   siteProtected?: string;
 }
 
+export type CASSupplierSiteStatus = "ACTIVE" | "INACTIVE";
 export interface AddCASSupplierAPIInDTO {
   supplierNumber: string;
   supplierSiteCode: string;

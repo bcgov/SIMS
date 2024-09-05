@@ -59,7 +59,7 @@ export class CASSupplier extends RecordDataModel {
     name: "status",
     nullable: true,
   })
-  status?: "ACTIVE" | "INACTIVE";
+  status?: CASSupplierRecordStatus;
 
   /**
    * Protected flag received from CAS which means the student profile was created by SFAS and
@@ -123,6 +123,8 @@ export class CASSupplier extends RecordDataModel {
   isValid: boolean;
 }
 
+export type CASSupplierRecordStatus = "ACTIVE" | "INACTIVE";
+export type CASSupplierSiteStatus = "ACTIVE" | "INACTIVE";
 export interface SupplierAddress {
   supplierSiteCode: string;
   addressLine1?: string;
@@ -131,7 +133,7 @@ export interface SupplierAddress {
   provinceState?: string;
   country?: string;
   postalCode?: string;
-  status?: "ACTIVE" | "INACTIVE";
+  status?: CASSupplierSiteStatus;
   siteProtected?: string;
   lastUpdated: Date;
 }

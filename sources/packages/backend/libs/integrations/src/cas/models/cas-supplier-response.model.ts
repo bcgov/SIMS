@@ -1,3 +1,5 @@
+import { CASSupplierRecordStatus, CASSupplierSiteStatus } from "@sims/sims-db";
+
 export class CASSupplierResponse {
   items: CASSupplierResponseItem[];
   hasMore: boolean;
@@ -12,7 +14,7 @@ export class CASSupplierResponseItem {
   sin: string;
   providerid?: string;
   businessnumber?: null;
-  status: "ACTIVE" | "INACTIVE";
+  status: CASSupplierRecordStatus;
   supplierprotected?: "Y" | "N" | null;
   standardindustryclassification?: string;
   lastupdated: string;
@@ -34,7 +36,7 @@ export class CASSupplierResponseItemAddress {
   banknumber?: string;
   eftadvicepref?: string;
   providerid?: string;
-  status: "ACTIVE" | "INACTIVE";
+  status: CASSupplierSiteStatus;
   siteprotected?: string;
   lastupdated: string;
 }

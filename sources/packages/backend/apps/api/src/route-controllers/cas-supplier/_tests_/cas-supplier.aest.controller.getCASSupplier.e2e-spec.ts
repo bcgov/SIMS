@@ -11,7 +11,7 @@ import {
   createE2EDataSources,
   saveFakeCASSupplier,
 } from "@sims/test-utils";
-import { SupplierStatus } from "@sims/sims-db";
+import { CASSupplierSiteStatus, SupplierStatus } from "@sims/sims-db";
 
 describe("CASSupplierAESTController(e2e)-getCASSuppliers", () => {
   let app: INestApplication;
@@ -39,7 +39,7 @@ describe("CASSupplierAESTController(e2e)-getCASSuppliers", () => {
       supplierAddress: {
         supplierSiteCode: "001",
         lastUpdated: now,
-        status: "ACTIVE" as "ACTIVE" | "INACTIVE",
+        status: "ACTIVE" as CASSupplierSiteStatus,
         addressLine1: "3350 Douglas St, Victoria BC",
         siteProtected: "YES",
       },

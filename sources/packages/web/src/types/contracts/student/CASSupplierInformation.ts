@@ -1,4 +1,7 @@
-import { SupplierStatus } from "@/services/http/dto/CASSupplier.dto";
+import {
+  CASSupplierSiteStatus,
+  SupplierStatus,
+} from "@/services/http/dto/CASSupplier.dto";
 
 /**
  * Student supplier information data from the integration with Corporate Accounting System (CAS).
@@ -11,6 +14,6 @@ export interface CASSupplierInformation {
   isValid: boolean;
   supplierSiteCode?: string;
   addressLine1?: string;
-  siteStatus?: "ACTIVE" | "INACTIVE";
+  siteStatus?: CASSupplierSiteStatus;
   siteProtected?: string;
 }
