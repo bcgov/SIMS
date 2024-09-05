@@ -42,6 +42,7 @@ import {
 import { ObjectStorageService } from "@sims/integrations/object-storage";
 import { NoSuchKey } from "@aws-sdk/client-s3";
 import { Readable } from "stream";
+import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 
 @Injectable()
 export class StudentControllerService {
@@ -72,14 +73,14 @@ export class StudentControllerService {
   ): Promise<FileCreateAPIOutDTO> {
     let uploadStatus: number;
     try {
-      console.info("Uploading file to S3 storage.");
+      this.logger.log(`Uploading file ${file.originalname} to S3 storage.`);
       uploadStatus = await this.objectStorageService.putObject({
         key: uniqueFileName,
         contentType: file.mimetype,
         body: file.buffer,
       });
     } catch (error: unknown) {
-      console.error(parseJSONError(error));
+      this.logger.error(parseJSONError(error));
     }
     if (uploadStatus === HttpStatus.OK) {
       const createdFile = await this.fileService.createFile(
@@ -92,6 +93,7 @@ export class StudentControllerService {
         auditUserId,
       );
       if (createdFile) {
+        this.logger.log(`Uploaded file ${file.originalname} to S3 storage.`);
         return {
           fileName: createdFile.fileName,
           uniqueFileName: createdFile.uniqueFileName,
@@ -103,14 +105,20 @@ export class StudentControllerService {
         // If the file details persistence to the database fails,
         // remove the file from the s3 storage.
         await this.objectStorageService.deleteObject(uniqueFileName);
+        this.logger.log(
+          `Uploading file ${file.originalname} to S3 storage failed. Error persisting the file details to the database.`,
+        );
         throw new ServiceUnavailableException(
-          "The file upload service (database) is currently unavailable. There was an unexpected error while uploading the file.",
+          `The file upload service (database) is currently unavailable. There was an unexpected error while uploading the file ${file.originalname}.`,
           FILE_UPLOAD_SERVICE_UNAVAILABLE,
         );
       }
     } else {
+      this.logger.log(
+        `Uploading file ${file.originalname} to S3 storage failed. S3 storage failure.`,
+      );
       throw new ServiceUnavailableException(
-        "The file upload service (s3 storage) is currently unavailable. There was an unexpected error while uploading the file.",
+        `The file upload service (s3 storage) is currently unavailable. There was an unexpected error while uploading the file ${file.originalname}.`,
         FILE_UPLOAD_SERVICE_UNAVAILABLE,
       );
     }
@@ -165,6 +173,9 @@ export class StudentControllerService {
     );
 
     try {
+      this.logger.log(
+        `Downloading the file ${studentFile.fileName} from S3 storage.`,
+      );
       const fileContent = await this.objectStorageService.getObject(
         uniqueFileName,
       );
@@ -173,7 +184,9 @@ export class StudentControllerService {
         chunks.push(chunk);
       }
       const fileData = Buffer.concat(chunks).toString();
-      console.info("Downloaded file using S3 storage.");
+      this.logger.log(
+        `Downloaded the file ${studentFile.fileName} from S3 storage.`,
+      );
       // Populate file information received from S3 storage.
       response.setHeader("Content-Type", fileContent.contentType);
       response.setHeader("Content-Length", fileContent.contentLength);
@@ -183,9 +196,11 @@ export class StudentControllerService {
       stream.pipe(response);
     } catch (error: unknown) {
       if (error instanceof NoSuchKey) {
-        console.info("File not present on S3 storage.");
+        this.logger.log(
+          `File ${studentFile.fileName} is not present on S3 storage.`,
+        );
       } else {
-        console.error(parseJSONError(error));
+        this.logger.error(parseJSONError(error));
       }
     }
   }
@@ -338,4 +353,7 @@ export class StudentControllerService {
       sin: eachStudent.sinValidation.sin,
     }));
   }
+
+  @InjectLogger()
+  logger: LoggerService;
 }
