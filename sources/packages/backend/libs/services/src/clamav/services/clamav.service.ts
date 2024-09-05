@@ -33,7 +33,7 @@ export class ClamAVService {
       passthroughStream.on("scan-complete", (result) => {
         resolve(result.isInfected);
       });
-      passthroughStream.on("error", (error) => {
+      passthroughStream.on("error", (error: Error) => {
         reject(error);
       });
       passthroughStream.on("timeout", () => {
