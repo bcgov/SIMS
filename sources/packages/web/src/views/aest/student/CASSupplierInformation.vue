@@ -144,7 +144,6 @@ export default defineComponent({
       casSuppliers,
       DEFAULT_PAGE_LIMIT,
       initialData,
-      LayoutTemplates,
       Role,
       showModal,
       CASSupplierInformationHeaders,
