@@ -55,12 +55,11 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     const { body } = await this.objectStorageService.getObject(
       studentFile.uniqueFileName,
     );
-    const fileData = new Readable().wrap(body);
     let isInfected: boolean | null;
     let errorName: string;
     let errorMessage = `Unable to scan the file ${uniqueFileName} for viruses.`;
     try {
-      isInfected = await this.clamAVService.scanFile(fileData);
+      isInfected = await this.clamAVService.scanFile(body);
       if (isInfected === null) {
         errorMessage = `${errorMessage} File scanning failed due to unknown error.`;
         errorName = FILE_SCANNING_FAILED;
