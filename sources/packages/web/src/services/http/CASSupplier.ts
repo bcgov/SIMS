@@ -4,7 +4,15 @@ import {
   CASSupplierInfoAPIOutDTO,
 } from "@/services/http/dto/CASSupplier.dto";
 
+/**
+ * Http API client for CAS suppliers.
+ */
 export class CASSupplierApi extends HttpBaseClient {
+  /**
+   * Gets CAS supplier info for a student.
+   * @param studentId student id.
+   * @returns a list of CAS supplier info.
+   */
   async getCASSupplierInfo(
     studentId: number,
   ): Promise<CASSupplierInfoAPIOutDTO[]> {
@@ -13,6 +21,11 @@ export class CASSupplierApi extends HttpBaseClient {
     );
   }
 
+  /**
+   * Adds CAS supplier info for a student.
+   * @param studentId student id.
+   * @param payload payload with the CAS supplier info.
+   */
   async addCASSupplierInfo(
     studentId: number,
     payload: AddCASSupplierAPIInDTO,

@@ -17,11 +17,11 @@ import {
  * @param relations dependencies:
  * - `student` student for the CAS supplier record.
  * @param options optional params.
- * - `supplierStatus`
- * - `isValid`
- * - `supplierAddress`
- * - `supplierNumber`
- * - `supplierProtected`
+ * - `supplierStatus` supplier status.
+ * - `isValid` valid flag.
+ * - `supplierAddress` supplier address.
+ * - `supplierNumber` supplier number.
+ * - `supplierProtected` supplier protected.
  * @returns a saved fake CAS supplier.
  */
 export async function saveFakeCASSupplier(
@@ -54,11 +54,11 @@ export async function saveFakeCASSupplier(
  * - `student` related student.
  * - `auditUser` audit user for the record.
  * @param options optional params.
- * - `supplierStatus`
- * - `isValid`
- * - `supplierAddress`
- * - `supplierNumber`
- * - `supplierProtected`
+ * - `supplierStatus` supplier status.
+ * - `isValid` valid flag.
+ * - `supplierAddress` supplier address.
+ * - `supplierNumber` supplier number.
+ * - `supplierProtected` supplier protected.
  * @returns a fake CAS supplier.
  */
 export function createFakeCASSupplier(
