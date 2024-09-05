@@ -61,6 +61,7 @@ export const TableNames = {
   StudentLoanBalances: "student_loan_balances",
   ECertFeedbackErrors: "ecert_feedback_errors",
   CASSuppliers: "cas_suppliers",
+  ApplicationRestrictionBypasses: "application_restriction_bypasses",
 };
 
 export const INSTITUTION_TYPE_BC_PUBLIC = 1;
