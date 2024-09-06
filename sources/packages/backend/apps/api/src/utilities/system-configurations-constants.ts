@@ -63,16 +63,6 @@ export const OFFERING_COURSE_LOAD_MIN_VALUE = 20;
  */
 export const OFFERING_COURSE_LOAD_MAX_VALUE = 59;
 /**
- * Minimum amount of days required for a full time offering study period.
- */
-export const OFFERING_STUDY_PERIOD_MIN_DAYS_FULL_TIME = 84;
-
-/**
- * Minimum amount of days required for a part time offering study period.
- */
-export const OFFERING_STUDY_PERIOD_MIN_DAYS_PART_TIME = 42;
-
-/**
  * Maximum amount of days to an offering study period.
  */
 export const OFFERING_STUDY_PERIOD_MAX_DAYS = 365;
@@ -115,9 +105,8 @@ export const APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION = 5;
 /**
  * Minimum amount of weeks required for a full time offering study period.
  */
-export const OFFERING_STUDY_PERIOD_MIN_WEEKS_FULL_TIME = 12;
-
+export const OFFERING_STUDY_PERIOD_MIN_FUNDED_WEEKS_FULL_TIME = 12;
 /**
  * Minimum amount of weeks required for a part time offering study period.
  */
-export const OFFERING_STUDY_PERIOD_MIN_WEEKS_PART_TIME = 6;
+export const OFFERING_STUDY_PERIOD_MIN_FUNDED_WEEKS_PART_TIME = 6;

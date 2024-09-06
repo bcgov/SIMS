@@ -413,6 +413,99 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
     },
   );
 
+  it(
+    `Should update a new offering with offering status ${OfferingStatus.CreationPending} and warning when data with total funded ` +
+      `weeks less than minimum allowed weeks and without study breaks is passed.`,
+    async () => {
+      // Arrange
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+      const fakeEducationProgram = createFakeEducationProgram({
+        institution: collegeF,
+        user: collegeFUser,
+      });
+      const savedFakeEducationProgram = await db.educationProgram.save(
+        fakeEducationProgram,
+      );
+      const newOffering = createFakeEducationProgramOffering(
+        savedFakeEducationProgram,
+        collegeFLocation,
+      );
+
+      newOffering.parentOffering = newOffering;
+      const savedEducationProgramOffering =
+        await db.educationProgramOffering.save(newOffering);
+      const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}/offering/${savedEducationProgramOffering.id}`;
+      const studyPeriodBreakdown = {
+        totalDays: 2,
+        totalFundedWeeks: 1,
+        fundedStudyPeriodDays: 2,
+        unfundedStudyPeriodDays: 0,
+      };
+      const payload = {
+        offeringName: "Updated offering name test 1",
+        yearOfStudy: 1,
+        offeringIntensity: OfferingIntensity.fullTime,
+        offeringDelivered: OfferingDeliveryOptions.Onsite,
+        hasOfferingWILComponent: "no",
+        studyStartDate: "2023-09-01",
+        studyEndDate: "2023-09-02",
+        lacksStudyBreaks: true,
+        studyBreaks: [],
+        offeringType: OfferingTypes.Public,
+        offeringDeclaration: true,
+        actualTuitionCosts: 1234,
+        programRelatedCosts: 3211,
+        mandatoryFees: 100001,
+        exceptionalExpenses: 555,
+      };
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .patch(endpoint)
+        .send(payload)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({});
+      const updatedEducationProgramOffering =
+        await db.educationProgramOffering.findOne({
+          where: { id: savedEducationProgramOffering.id },
+        });
+      expect(updatedEducationProgramOffering).toEqual({
+        createdAt: expect.any(Date),
+        updatedAt: expect.any(Date),
+        id: expect.any(Number),
+        name: payload.offeringName,
+        studyStartDate: payload.studyStartDate,
+        studyEndDate: payload.studyEndDate,
+        actualTuitionCosts: payload.actualTuitionCosts,
+        programRelatedCosts: payload.programRelatedCosts,
+        mandatoryFees: payload.mandatoryFees,
+        exceptionalExpenses: payload.exceptionalExpenses,
+        offeringDelivered: payload.offeringDelivered,
+        lacksStudyBreaks: payload.lacksStudyBreaks,
+        offeringType: payload.offeringType,
+        offeringIntensity: payload.offeringIntensity,
+        yearOfStudy: payload.yearOfStudy,
+        hasOfferingWILComponent: payload.hasOfferingWILComponent,
+        offeringWILType: null,
+        studyBreaks: {
+          totalDays: studyPeriodBreakdown.totalDays,
+          studyBreaks: [],
+          totalFundedWeeks: studyPeriodBreakdown.totalFundedWeeks,
+          fundedStudyPeriodDays: studyPeriodBreakdown.fundedStudyPeriodDays,
+          unfundedStudyPeriodDays: studyPeriodBreakdown.unfundedStudyPeriodDays,
+        },
+        offeringDeclaration: payload.offeringDeclaration,
+        assessedDate: null,
+        offeringStatus: OfferingStatus.CreationPending,
+        submittedDate: expect.any(Date),
+        courseLoad: expect.any(Number),
+      });
+    },
+  );
+
   it(`Should return error when trying to update a new offering with exceptionalExpenses greater than ${MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE} is passed.`, async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(

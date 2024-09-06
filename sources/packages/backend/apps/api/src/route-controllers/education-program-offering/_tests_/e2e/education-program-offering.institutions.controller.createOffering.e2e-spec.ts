@@ -405,6 +405,77 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     },
   );
 
+  it(
+    `Should create a new offering with offering status ${OfferingStatus.CreationPending} and warning when data with total funded ` +
+      `weeks less than minimum allowed weeks and without study breaks is passed.`,
+    async () => {
+      // Arrange
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+      const fakeEducationProgram = createFakeEducationProgram({
+        institution: collegeF,
+        user: collegeFUser,
+      });
+      const savedFakeEducationProgram = await db.educationProgram.save(
+        fakeEducationProgram,
+      );
+      const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}`;
+      payload.studyStartDate = "2024-05-23";
+      payload.studyEndDate = "2024-05-24";
+      payload.lacksStudyBreaks = true;
+      payload.studyBreaks = [];
+
+      // Act/Assert
+      let educationProgramOfferingId: number;
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED)
+        .then((response) => {
+          expect(response.body.id).toBeGreaterThan(0);
+          educationProgramOfferingId = response.body.id;
+        });
+      const createdEducationProgramOffering =
+        await db.educationProgramOffering.findOne({
+          where: { id: educationProgramOfferingId },
+        });
+
+      expect(createdEducationProgramOffering).toEqual({
+        createdAt: expect.any(Date),
+        updatedAt: expect.any(Date),
+        id: expect.any(Number),
+        name: payload.offeringName,
+        studyStartDate: payload.studyStartDate,
+        studyEndDate: payload.studyEndDate,
+        actualTuitionCosts: payload.actualTuitionCosts,
+        programRelatedCosts: payload.programRelatedCosts,
+        mandatoryFees: payload.mandatoryFees,
+        exceptionalExpenses: payload.exceptionalExpenses,
+        offeringDelivered: payload.offeringDelivered,
+        lacksStudyBreaks: payload.lacksStudyBreaks,
+        offeringType: payload.offeringType,
+        offeringIntensity: payload.offeringIntensity,
+        yearOfStudy: payload.yearOfStudy,
+        hasOfferingWILComponent: payload.hasOfferingWILComponent,
+        offeringWILType: null,
+        studyBreaks: {
+          totalDays: 2,
+          studyBreaks: [],
+          totalFundedWeeks: 1,
+          fundedStudyPeriodDays: 2,
+          unfundedStudyPeriodDays: 0,
+        },
+        offeringDeclaration: payload.offeringDeclaration,
+        assessedDate: null,
+        offeringStatus: OfferingStatus.CreationPending,
+        submittedDate: expect.any(Date),
+        courseLoad: null,
+      });
+    },
+  );
+
   it(`Should return error when trying to create a new offering with mandatoryFees greater than ${MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE} is passed.`, async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(

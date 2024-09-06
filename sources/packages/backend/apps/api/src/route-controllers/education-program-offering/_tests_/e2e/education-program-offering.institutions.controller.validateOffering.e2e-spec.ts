@@ -246,7 +246,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       });
   });
 
-  it("Should validate an offering without info or error when valid data with study breaks is passed in for a full-time education program.", async () => {
+  it("Should validate an offering when valid data with study breaks is passed in for a full-time education program.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -353,7 +353,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       });
   });
 
-  it("Should return error and warning when data with total funded weeks less than minimum allowed weeks and study breaks is passed in for a full-time education program.", async () => {
+  it("Should validate an offering with info and warning when data with total funded weeks less than minimum allowed weeks and study breaks is passed in for a full-time education program.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -390,7 +390,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect({
-        offeringStatus: "Creation pending",
+        offeringStatus: OfferingStatus.CreationPending,
         errors: [],
         infos: [
           {
@@ -402,7 +402,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
         ],
         warnings: [
           {
-            typeCode: OfferingValidationWarnings.InvalidStudyDatesPeriodLength,
+            typeCode: OfferingValidationWarnings.InvalidFundedStudyPeriodLength,
             message:
               "The funded study amount of days is ineligible for StudentAid BC funding. Your offering must be at least 12 weeks of study or longer to be eligible.",
           },
@@ -412,6 +412,57 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
           totalDays: 86,
           totalFundedWeeks: 11,
           unfundedStudyPeriodDays: 10.4,
+        },
+      });
+  });
+
+  it("Should validate an offering with warning when data with total funded weeks less than minimum allowed weeks and without study breaks is passed in for a full-time education program.", async () => {
+    // Arrange
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${collegeFFullTimeProgram.id}/validation`;
+    const payload = {
+      offeringName: "Offering validation",
+      yearOfStudy: 1,
+      offeringIntensity: OfferingIntensity.fullTime,
+      offeringDelivered: OfferingDeliveryOptions.Online,
+      hasOfferingWILComponent: "no",
+      studyStartDate: "2024-05-23",
+      studyEndDate: "2024-05-24",
+      lacksStudyBreaks: true,
+      studyBreaks: [],
+      offeringType: OfferingTypes.Public,
+      offeringDeclaration: true,
+      actualTuitionCosts: 1234,
+      programRelatedCosts: 3211,
+      mandatoryFees: 456,
+      exceptionalExpenses: 555,
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        offeringStatus: OfferingStatus.CreationPending,
+        errors: [],
+        infos: [],
+        warnings: [
+          {
+            typeCode: OfferingValidationWarnings.InvalidFundedStudyPeriodLength,
+            message:
+              "The funded study amount of days is ineligible for StudentAid BC funding. Your offering must be at least 12 weeks of study or longer to be eligible.",
+          },
+        ],
+        studyPeriodBreakdown: {
+          fundedStudyPeriodDays: 2,
+          totalDays: 2,
+          totalFundedWeeks: 1,
+          unfundedStudyPeriodDays: 0,
         },
       });
   });
@@ -462,7 +513,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       });
   });
 
-  it("Should validate an offering without info or error when valid data with study breaks is passed in for a part-time education program.", async () => {
+  it("Should validate an offering when valid data with study breaks is passed in for a part-time education program.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -571,7 +622,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       });
   });
 
-  it("Should return error and warning when data with total funded weeks less than minimum allowed weeks and study breaks is passed in for a part-time education program.", async () => {
+  it("Should validate an offering with info and warning when data with total funded weeks less than minimum allowed weeks and study breaks is passed in for a part-time education program.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -609,7 +660,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect({
-        offeringStatus: "Creation pending",
+        offeringStatus: OfferingStatus.CreationPending,
         errors: [],
         infos: [
           {
@@ -621,7 +672,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
         ],
         warnings: [
           {
-            typeCode: OfferingValidationWarnings.InvalidStudyDatesPeriodLength,
+            typeCode: OfferingValidationWarnings.InvalidFundedStudyPeriodLength,
             message:
               "The funded study amount of days is ineligible for StudentAid BC funding. Your offering must be at least 6 weeks of study or longer to be eligible.",
           },
@@ -631,6 +682,58 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
           totalDays: 47,
           totalFundedWeeks: 5,
           unfundedStudyPeriodDays: 14.3,
+        },
+      });
+  });
+
+  it("Should validate an offering with warning when data with total funded weeks less than minimum allowed weeks and without study breaks is passed in for a part-time education program.", async () => {
+    // Arrange
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${collegeFPartTimeProgram.id}/validation`;
+    const payload = {
+      offeringName: "Offering validation",
+      yearOfStudy: 1,
+      offeringIntensity: OfferingIntensity.partTime,
+      offeringDelivered: OfferingDeliveryOptions.Onsite,
+      hasOfferingWILComponent: "no",
+      studyStartDate: "2024-07-01",
+      studyEndDate: "2024-07-02",
+      lacksStudyBreaks: true,
+      studyBreaks: [],
+      offeringType: OfferingTypes.Public,
+      offeringDeclaration: true,
+      actualTuitionCosts: 1234,
+      programRelatedCosts: 3211,
+      mandatoryFees: 456,
+      exceptionalExpenses: 555,
+      courseLoad: 30,
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        offeringStatus: OfferingStatus.CreationPending,
+        errors: [],
+        infos: [],
+        warnings: [
+          {
+            typeCode: OfferingValidationWarnings.InvalidFundedStudyPeriodLength,
+            message:
+              "The funded study amount of days is ineligible for StudentAid BC funding. Your offering must be at least 6 weeks of study or longer to be eligible.",
+          },
+        ],
+        studyPeriodBreakdown: {
+          fundedStudyPeriodDays: 2,
+          totalDays: 2,
+          totalFundedWeeks: 1,
+          unfundedStudyPeriodDays: 0,
         },
       });
   });
