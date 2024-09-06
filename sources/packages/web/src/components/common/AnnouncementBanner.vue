@@ -1,5 +1,6 @@
 <template>
   <v-alert
+    v-if="relevantAnnouncements.length > 0"
     :type="BannerTypes.Warning"
     variant="outlined"
     icon="fa:fa fa-triangle-exclamation"

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { Announcements, RecordDataModelService } from "@sims/sims-db";
-import { DataSource } from "typeorm";
+import { DataSource, LessThanOrEqual, MoreThanOrEqual } from "typeorm";
 
 @Injectable()
 export class AnnouncementsService extends RecordDataModelService<Announcements> {
@@ -13,6 +13,7 @@ export class AnnouncementsService extends RecordDataModelService<Announcements> 
    * @returns system announcements list.
    */
   async getAnnouncements(): Promise<Announcements[]> {
+    const now = new Date();
     return this.repo.find({
       select: {
         id: true,
@@ -23,6 +24,10 @@ export class AnnouncementsService extends RecordDataModelService<Announcements> 
         endDate: true,
       },
       order: { startDate: "ASC" },
+      where: {
+        startDate: LessThanOrEqual(now.toDateString()),
+        endDate: MoreThanOrEqual(now.toDateString()),
+      },
     });
   }
 }
