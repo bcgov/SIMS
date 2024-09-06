@@ -1,0 +1,1 @@
+CREATE TYPE sims.restriction_bypass_behaviors AS ENUM ('All disbursements', 'Next disbursement only');
