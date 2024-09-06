@@ -168,7 +168,7 @@ export interface StudentActiveRestriction {
 }
 
 /**
- * Active restriction bypass active for the application.
+ * Restriction bypass active for the application.
  */
 export interface ApplicationActiveRestrictionBypass {
   /**
@@ -232,7 +232,7 @@ export class EligibleECertDisbursement {
    * If a particular step generates or resolves an active restriction this array should
    * be updated using the method {@link refreshActiveStudentRestrictions} to allow all
    * steps to have access to the most updated data.
-   * @param restrictionBypass all active restrictions bypasses applied the student application.
+   * @param restrictionBypass all active restrictions bypasses applied to the student application.
    */
   constructor(
     public readonly studentId: number,
