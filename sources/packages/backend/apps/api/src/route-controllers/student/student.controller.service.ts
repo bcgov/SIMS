@@ -179,21 +179,19 @@ export class StudentControllerService {
       const fileContent = await this.objectStorageService.getObject(
         uniqueFileName,
       );
-      const chunks = [];
-      for await (const chunk of fileContent.body) {
-        chunks.push(chunk);
-      }
-      const fileData = Buffer.concat(chunks).toString();
       this.logger.log(
         `Downloaded the file ${studentFile.fileName} from S3 storage.`,
       );
       // Populate file information received from S3 storage.
       response.setHeader("Content-Type", fileContent.contentType);
       response.setHeader("Content-Length", fileContent.contentLength);
-      const stream = new Readable();
-      stream.push(fileData);
-      stream.push(null);
-      stream.pipe(response);
+      // The readable stream is piped to the response as and when the
+      // the bytes are received so as to avoid it from getting accumulated
+      // in the memory (flow mode). This is in contrast to writing the
+      // bytes to the response collectively after accumulating them in memory
+      // as would be the case if reading the stream in the paused mode
+      // using the read method.
+      fileContent.body.pipe(response);
     } catch (error: unknown) {
       if (error instanceof NoSuchKey) {
         this.logger.log(
