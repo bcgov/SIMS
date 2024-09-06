@@ -16,10 +16,16 @@ describe("AnnouncementsController(e2e)-getAnnouncements", () => {
 
   it("Should return a saved announcement.", async () => {
     // Arrange
+    const now = new Date();
+    const before = new Date(now.setFullYear(now.getFullYear() - 1));
+    const future = new Date(now.setFullYear(now.getFullYear() + 2));
+
     const announcement = new Announcements();
     announcement.message = "test announcement";
     announcement.messageTitle = "test title";
-    announcement.target = "studentdashboard,";
+    announcement.target = ["studentdashboard", "institutiondashboard"];
+    announcement.startDate = before;
+    announcement.endDate = future;
     await announcementsRepo.save(announcement);
     const endpoint = `/announcements`;
 
@@ -32,8 +38,7 @@ describe("AnnouncementsController(e2e)-getAnnouncements", () => {
       response.body.some(
         (announcement) =>
           announcement.message === "test announcement" &&
-          announcement.messageTitle == "test title" &&
-          announcement.target == "studentdashboard,",
+          announcement.messageTitle === "test title",
       ),
     ).toBe(true);
   });

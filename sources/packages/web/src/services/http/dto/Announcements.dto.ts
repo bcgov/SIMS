@@ -6,5 +6,5 @@ export interface AnnouncementsAPIOutDTO {
   message: string;
   start_date: Date;
   end_date: Date;
-  target: string;
+  target: string[];
 }

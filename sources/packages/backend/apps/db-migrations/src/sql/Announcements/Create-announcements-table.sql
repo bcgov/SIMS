@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS sims.announcements (
     message VARCHAR(200) NOT NULL,
     start_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW (),
     end_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW (),
-    target VARCHAR(200) NOT NULL,
+    target text [],
     -- Audit columns
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),

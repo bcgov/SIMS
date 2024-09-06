@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS sims.announcements;
+DROP TABLE sims.announcements;

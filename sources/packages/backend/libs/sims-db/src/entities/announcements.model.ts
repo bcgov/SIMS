@@ -28,11 +28,13 @@ export class Announcements extends RecordDataModel {
   /**
    * Target areas for the announcement.
    */
-  @Column({
+
+  @Column("text", {
     name: "target",
     nullable: false,
+    array: true,
   })
-  target: string;
+  target: string[];
   /**
    * Date when the announcement starts.
    */
@@ -41,7 +43,7 @@ export class Announcements extends RecordDataModel {
     type: "date",
     nullable: false,
   })
-  startDate: string;
+  startDate: Date;
   /**
    * Date when the announcement ends.
    */
@@ -50,5 +52,5 @@ export class Announcements extends RecordDataModel {
     type: "date",
     nullable: false,
   })
-  endDate: string;
+  endDate: Date;
 }

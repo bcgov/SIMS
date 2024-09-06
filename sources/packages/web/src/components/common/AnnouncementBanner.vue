@@ -1,6 +1,6 @@
 <template>
   <v-alert
-    v-if="relevantAnnouncements.length > 0"
+    v-if="relevantAnnouncements && relevantAnnouncements.length > 0"
     :type="BannerTypes.Warning"
     variant="outlined"
     icon="fa:fa fa-triangle-exclamation"
@@ -47,9 +47,9 @@ export default defineComponent({
     onMounted(async () => {
       let announcements = await AnnouncementsService.shared.getAnnouncements();
       relevantAnnouncements.value = announcements.filter((announcement) => {
-        return announcement.target
-          .toLowerCase()
-          .includes(props.location.toLowerCase());
+        return announcement.target.some(
+          (tar: string) => tar.toLowerCase() === props.location.toLowerCase(),
+        );
       });
     });
     return {
