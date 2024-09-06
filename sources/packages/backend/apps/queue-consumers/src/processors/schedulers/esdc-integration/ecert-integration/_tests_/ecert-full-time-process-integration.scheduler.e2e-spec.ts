@@ -10,6 +10,7 @@ import {
   FormYesNoOptions,
   OfferingIntensity,
   RelationshipStatus,
+  RestrictionActionType,
   RestrictionBypassBehaviors,
   User,
 } from "@sims/sims-db";
@@ -788,7 +789,7 @@ describe(
 
     it(
       "Should generate BC awards amounts with no restriction deductions and resolve the restriction bypass " +
-        `when a student has an active 'Stop full time BC funding' restriction and it is bypassed with behavior '${RestrictionBypassBehaviors.NextDisbursementOnly}.`,
+        `when a student has an active '${RestrictionCode.BCLM}' restriction and it is bypassed with behavior '${RestrictionBypassBehaviors.NextDisbursementOnly}.`,
       async () => {
         // Arrange
         // Student with valid SIN.
@@ -947,6 +948,100 @@ describe(
               "Automatically removing bypass after the first e-Cert was generated.",
           },
         });
+      },
+    );
+
+    it(
+      "Should have the e-Cert generated for a full-time application and the bypass active when " +
+        `a student has an active '${RestrictionActionType.StopFullTimeDisbursement}' restriction and it is bypassed with behavior '${RestrictionBypassBehaviors.AllDisbursements}'.`,
+      async () => {
+        // Arrange
+        // Student with valid SIN.
+        const student = await saveFakeStudent(db.dataSource);
+        // Valid MSFAA Number.
+        const msfaaNumber = await db.msfaaNumber.save(
+          createFakeMSFAANumber(
+            { student },
+            {
+              msfaaState: MSFAAStates.Signed,
+              msfaaInitialValues: {
+                offeringIntensity: OfferingIntensity.fullTime,
+              },
+            },
+          ),
+        );
+        // Student application eligible for e-Cert.
+        const application = await saveFakeApplicationDisbursements(
+          db.dataSource,
+          {
+            student,
+            msfaaNumber,
+            firstDisbursementValues: [
+              createFakeDisbursementValue(
+                DisbursementValueType.CanadaLoan,
+                "CSLF",
+                9999,
+              ),
+            ],
+          },
+          {
+            offeringIntensity: OfferingIntensity.fullTime,
+            applicationStatus: ApplicationStatus.Completed,
+            currentAssessmentInitialValues: {
+              assessmentData: { weeks: 5 } as Assessment,
+              assessmentDate: new Date(),
+            },
+            firstDisbursementInitialValues: {
+              coeStatus: COEStatus.completed,
+            },
+          },
+        );
+        // Create restriction bypass.
+        const restrictionBypass = await saveFakeApplicationRestrictionBypass(
+          db,
+          {
+            application,
+            bypassCreatedBy: sharedMinistryUser,
+            creator: sharedMinistryUser,
+          },
+          {
+            restrictionActionType:
+              RestrictionActionType.StopFullTimeDisbursement,
+            initialValues: {
+              bypassBehavior: RestrictionBypassBehaviors.AllDisbursements,
+            },
+          },
+        );
+
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Act
+        await processor.processECert(mockedJob.job);
+
+        // Assert
+        expect(
+          mockedJob.containLogMessages([
+            `Current active restriction bypasses [Restriction Code(Student Restriction ID)]: ${restrictionBypass.studentRestriction.restriction.restrictionCode}(${restrictionBypass.studentRestriction.id}).`,
+          ]),
+        ).toBe(true);
+
+        const [firstSchedule] =
+          application.currentAssessment.disbursementSchedules;
+        // Check if the disbursement was sent.
+        const isScheduleSent = await db.disbursementSchedule.exists({
+          where: {
+            id: firstSchedule.id,
+            dateSent: Not(IsNull()),
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+        });
+        expect(isScheduleSent).toBe(true);
+        // Validate if the bypass is still active.
+        const isBypassActive = await db.applicationRestrictionBypass.exists({
+          where: { id: restrictionBypass.id, isActive: true },
+        });
+        expect(isBypassActive).toBe(true);
       },
     );
   },
