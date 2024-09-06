@@ -1,12 +1,9 @@
 import { ObjectStorageService } from "@sims/integrations/object-storage";
-import { HttpStatusCode } from "axios";
 import { Readable } from "stream";
 
 export function createObjectStorageServiceMock(): ObjectStorageService {
   const mockedObjectStorageService = {} as ObjectStorageService;
-  mockedObjectStorageService.putObject = jest.fn(() =>
-    Promise.resolve(HttpStatusCode.Ok),
-  );
+  mockedObjectStorageService.putObject = jest.fn(() => Promise.resolve());
   mockedObjectStorageService.getObject = jest.fn(() => {
     const buffer = Buffer.from("Dummy Text");
     const stream = Readable.from(buffer);

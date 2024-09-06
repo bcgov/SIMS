@@ -41,7 +41,6 @@ import {
 } from "../../constants";
 import { ObjectStorageService } from "@sims/integrations/object-storage";
 import { NoSuchKey } from "@aws-sdk/client-s3";
-import { Readable } from "stream";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 
 @Injectable()
@@ -71,54 +70,50 @@ export class StudentControllerService {
     groupName: string,
     auditUserId: number,
   ): Promise<FileCreateAPIOutDTO> {
-    let uploadStatus: number;
     try {
       this.logger.log(`Uploading file ${file.originalname} to S3 storage.`);
-      uploadStatus = await this.objectStorageService.putObject({
+      await this.objectStorageService.putObject({
         key: uniqueFileName,
         contentType: file.mimetype,
         body: file.buffer,
       });
     } catch (error: unknown) {
       this.logger.error(parseJSONError(error));
-    }
-    if (uploadStatus === HttpStatus.OK) {
-      const createdFile = await this.fileService.createFile(
-        {
-          fileName: file.originalname,
-          uniqueFileName: uniqueFileName,
-          groupName: groupName,
-        },
-        studentId,
-        auditUserId,
-      );
-      if (createdFile) {
-        this.logger.log(`Uploaded file ${file.originalname} to S3 storage.`);
-        return {
-          fileName: createdFile.fileName,
-          uniqueFileName: createdFile.uniqueFileName,
-          url: `student/files/${createdFile.uniqueFileName}`,
-          size: file.size,
-          mimetype: file.mimetype,
-        };
-      } else {
-        // If the file details persistence to the database fails,
-        // remove the file from the s3 storage.
-        await this.objectStorageService.deleteObject(uniqueFileName);
-        this.logger.log(
-          `Uploading file ${file.originalname} to S3 storage failed. Error persisting the file details to the database.`,
-        );
-        throw new ServiceUnavailableException(
-          `The file upload service (database) is currently unavailable. There was an unexpected error while uploading the file ${file.originalname}.`,
-          FILE_UPLOAD_SERVICE_UNAVAILABLE,
-        );
-      }
-    } else {
-      this.logger.log(
+      this.logger.error(
         `Uploading file ${file.originalname} to S3 storage failed. S3 storage failure.`,
       );
       throw new ServiceUnavailableException(
         `The file upload service (s3 storage) is currently unavailable. There was an unexpected error while uploading the file ${file.originalname}.`,
+        FILE_UPLOAD_SERVICE_UNAVAILABLE,
+      );
+    }
+    const createdFile = await this.fileService.createFile(
+      {
+        fileName: file.originalname,
+        uniqueFileName: uniqueFileName,
+        groupName: groupName,
+      },
+      studentId,
+      auditUserId,
+    );
+    if (createdFile) {
+      this.logger.log(`Uploaded file ${file.originalname} to S3 storage.`);
+      return {
+        fileName: createdFile.fileName,
+        uniqueFileName: createdFile.uniqueFileName,
+        url: `student/files/${createdFile.uniqueFileName}`,
+        size: file.size,
+        mimetype: file.mimetype,
+      };
+    } else {
+      // If the file details persistence to the database fails,
+      // remove the file from the s3 storage.
+      await this.objectStorageService.deleteObject(uniqueFileName);
+      this.logger.error(
+        `Uploading file ${file.originalname} to S3 storage failed. Error persisting the file details to the database.`,
+      );
+      throw new ServiceUnavailableException(
+        `The file upload service (database) is currently unavailable. There was an unexpected error while uploading the file ${file.originalname}.`,
         FILE_UPLOAD_SERVICE_UNAVAILABLE,
       );
     }

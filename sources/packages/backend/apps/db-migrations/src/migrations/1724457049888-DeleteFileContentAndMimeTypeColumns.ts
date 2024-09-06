@@ -13,7 +13,12 @@ export class DeleteFileContentAndMimeTypeColumns1724457049888
     );
   }
 
-  public async down(): Promise<void> {
-    return;
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      getSQLFileData(
+        "Rollback-delete-file-content-and-mime-type-columns.sql",
+        "StudentFiles",
+      ),
+    );
   }
 }
