@@ -10,6 +10,6 @@ export class AnnouncementsApi extends HttpBaseClient {
    * @returns list of announcements.
    */
   async getAnnouncements(): Promise<AnnouncementsAPIOutDTO[]> {
-    return this.getCall<AnnouncementsAPIOutDTO[]>(`announcements`);
+    return this.getCall<AnnouncementsAPIOutDTO[]>("announcements");
   }
 }

@@ -6,8 +6,8 @@ CREATE TABLE IF NOT EXISTS sims.announcements (
     end_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW (),
     target text [],
     -- Audit columns
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL,
     creator INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE
     SET
         NULL,
@@ -23,9 +23,9 @@ COMMENT ON COLUMN sims.announcements.message_title IS 'Title for the announcemen
 
 COMMENT ON COLUMN sims.announcements.message IS 'Message text for the announcement.';
 
-COMMENT ON COLUMN sims.announcements.start_date IS 'When the message starts.';
+COMMENT ON COLUMN sims.announcements.start_date IS 'Timestamp for when the system announcement starts.';
 
-COMMENT ON COLUMN sims.announcements.end_date IS 'When the message finishes.';
+COMMENT ON COLUMN sims.announcements.end_date IS 'Timestamp for when the system announcement finishes.';
 
 COMMENT ON COLUMN sims.announcements.target IS 'Represents the screens the message should appear on, in a CSV list.';
 

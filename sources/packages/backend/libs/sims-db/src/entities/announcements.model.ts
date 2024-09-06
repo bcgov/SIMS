@@ -40,7 +40,7 @@ export class Announcements extends RecordDataModel {
    */
   @Column({
     name: "start_date",
-    type: "date",
+    type: "timestamptz",
     nullable: false,
   })
   startDate: Date;
@@ -49,7 +49,7 @@ export class Announcements extends RecordDataModel {
    */
   @Column({
     name: "end_date",
-    type: "date",
+    type: "timestamptz",
     nullable: false,
   })
   endDate: Date;
