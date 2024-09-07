@@ -24,10 +24,10 @@
         </body-header>
       </template>
       <content-group>
-        <toggle-content :toggled="!casSuppliers?.length">
+        <toggle-content :toggled="!casSupplierInfo?.items?.length">
           <v-data-table
             :headers="CASSupplierInformationHeaders"
-            :items="casSuppliers"
+            :items="casSupplierInfo.items"
             :items-per-page="DEFAULT_PAGE_LIMIT"
           >
             <template #[`item.dateCreated`]="{ item }">
@@ -37,31 +37,25 @@
               {{ item.supplierNumber }}
             </template>
             <template #[`item.supplierProtected`]="{ item }">
-              {{
-                item.supplierProtected
-                  ? "Yes"
-                  : item.supplierProtected === false
-                  ? "No"
-                  : "-"
-              }}
+              {{ booleanToYesNo(item.supplierProtected) }}
             </template>
             <template #[`item.supplierStatus`]="{ item }">
               <status-chip-supplier :status="item.supplierStatus" />
             </template>
             <template #[`item.isValid`]="{ item }">
-              {{ item.isValid ? "Yes" : "No" }}
+              {{ booleanToYesNo(item.isValid) }}
             </template>
             <template #[`item.supplierSiteCode`]="{ item }">
               {{ item.supplierSiteCode }}
             </template>
             <template #[`item.addressLine1`]="{ item }">
-              {{ item.addressLine1 || "-" }}
+              {{ emptyStringFiller(item.addressLine1) }}
             </template>
             <template #[`item.siteStatus`]="{ item }">
-              {{ item.siteStatus || "-" }}
+              {{ emptyStringFiller(item.siteStatus) }}
             </template>
             <template #[`item.siteProtected`]="{ item }">
-              {{ item.siteProtected || "-" }}
+              {{ emptyStringFiller(item.siteProtected) }}
             </template>
           </v-data-table>
         </toggle-content>
@@ -75,7 +69,7 @@
 </template>
 
 <script lang="ts">
-import { ref, watch, defineComponent } from "vue";
+import { ref, defineComponent, watchEffect } from "vue";
 import {
   DEFAULT_PAGE_LIMIT,
   Role,
@@ -84,7 +78,6 @@ import {
 import { ModalDialog, useSnackBar, useFormatters } from "@/composables";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import EditCASSupplierInfoModal from "@/components/aest/students/EditCASSupplierInfoModal.vue";
-import { CASSupplierInformation } from "@/types/contracts/student/CASSupplierInformation";
 import {
   AddCASSupplierAPIInDTO,
   CASSupplierInfoAPIOutDTO,
@@ -105,22 +98,19 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { dateOnlyLongString } = useFormatters();
+    const { dateOnlyLongString, emptyStringFiller } = useFormatters();
+    const { booleanToYesNo } = useFormatters();
     const showModal = ref(false);
-    const casSuppliers = ref([] as CASSupplierInfoAPIOutDTO[]);
+    const casSupplierInfo = ref({} as CASSupplierInfoAPIOutDTO);
     const addCASSupplierModal = ref(
       {} as ModalDialog<AddCASSupplierAPIInDTO | boolean>,
     );
     const snackBar = useSnackBar();
-    const initialData = ref({ studentId: props.studentId });
-    const casSupplierResults = ref([] as CASSupplierInformation[]);
-    const loadCASSuppliers = async () => {
-      casSuppliers.value =
-        await CASSupplierService.shared.getSupplierInfoByStudentId(
-          props.studentId,
-        );
+    const loadCASSuppliers = async (studentId: number) => {
+      casSupplierInfo.value =
+        await CASSupplierService.shared.getSupplierInfoByStudentId(studentId);
     };
-    watch(() => props.studentId, loadCASSuppliers, { immediate: true });
+    watchEffect(() => loadCASSuppliers(props.studentId));
 
     const addCASSupplierInfo = async () => {
       const addCASSupplierData = await addCASSupplierModal.value.showModal();
@@ -131,7 +121,7 @@ export default defineComponent({
             addCASSupplierData as AddCASSupplierAPIInDTO,
           );
           snackBar.success("CAS supplier information has been updated.");
-          await loadCASSuppliers();
+          await loadCASSuppliers(props.studentId);
         } catch {
           snackBar.error(
             "Unexpected error while updating CAS supplier information.",
@@ -141,16 +131,16 @@ export default defineComponent({
     };
 
     return {
-      casSuppliers,
+      casSupplierInfo,
       DEFAULT_PAGE_LIMIT,
-      initialData,
       Role,
       showModal,
       CASSupplierInformationHeaders,
-      casSupplierResults,
       addCASSupplierInfo,
       dateOnlyLongString,
       addCASSupplierModal,
+      booleanToYesNo,
+      emptyStringFiller,
     };
   },
 });

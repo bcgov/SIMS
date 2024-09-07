@@ -19,20 +19,19 @@ export class CASSupplierService {
    */
   async getSupplierInfoByStudentId(
     studentId: number,
-  ): Promise<CASSupplierInfoAPIOutDTO[]> {
-    return await ApiClient.CASSupplier.getCASSupplierInfo(studentId);
+  ): Promise<CASSupplierInfoAPIOutDTO> {
+    return ApiClient.CASSupplier.getCASSupplierInfo(studentId);
   }
 
   /**
    * Adds CAS Supplier info.
    * @param studentId student id.
    * @param casSupplierInfo CAS supplier info.
-
    */
   async addCASSupplier(
     studentId: number,
     casSupplierInfo: AddCASSupplierAPIInDTO,
-  ) {
-    await ApiClient.CASSupplier.addCASSupplierInfo(studentId, casSupplierInfo);
+  ): Promise<void> {
+    return ApiClient.CASSupplier.addCASSupplierInfo(studentId, casSupplierInfo);
   }
 }

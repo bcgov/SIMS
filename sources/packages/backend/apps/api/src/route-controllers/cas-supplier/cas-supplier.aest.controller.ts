@@ -2,11 +2,12 @@ import {
   Body,
   Controller,
   Get,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Post,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { AuthorizedParties, IUserToken, Role, UserGroups } from "../../auth";
 import {
   AllowAuthorizedParty,
@@ -18,9 +19,11 @@ import BaseController from "../BaseController";
 import {
   AddCASSupplierAPIInDTO,
   CASSupplierInfoAPIOutDTO,
+  CASSupplierInfoItemAPIOutDTO,
 } from "./models/cas-supplier.dto";
-import { CASSupplierService } from "../../services";
+import { CASSupplierService, StudentService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
+import { PrimaryIdentifierAPIOutDTO } from "apps/api/src/route-controllers/models/primary.identifier.dto";
 
 /**
  * CAS supplier controller.
@@ -30,7 +33,10 @@ import { ClientTypeBaseRoute } from "../../types";
 @Controller("cas-supplier")
 @ApiTags(`${ClientTypeBaseRoute.AEST}-cas-supplier`)
 export class CASSupplierAESTController extends BaseController {
-  constructor(private readonly casSupplierService: CASSupplierService) {
+  constructor(
+    private readonly casSupplierService: CASSupplierService,
+    private readonly studentService: StudentService,
+  ) {
     super();
   }
 
@@ -40,30 +46,31 @@ export class CASSupplierAESTController extends BaseController {
    * @return a list of CAS supplier info.
    */
   @Get("student/:studentId")
+  @ApiNotFoundResponse({
+    description: "Student not found.",
+  })
   async getCASSuppliers(
     @Param("studentId", ParseIntPipe) studentId: number,
-  ): Promise<CASSupplierInfoAPIOutDTO[]> {
+  ): Promise<CASSupplierInfoAPIOutDTO> {
+    const studentExist = await this.studentService.studentExists(studentId);
+    if (!studentExist) {
+      throw new NotFoundException("Student not found.");
+    }
     const casSuppliers = await this.casSupplierService.getCASSuppliers(
       studentId,
     );
-    const casSupplierInfoDTOList = [];
-    for (const casSupplier of casSuppliers) {
-      const casSupplierAPIOutDTO = new CASSupplierInfoAPIOutDTO();
-      casSupplierAPIOutDTO.dateCreated = casSupplier.createdAt;
-      casSupplierAPIOutDTO.supplierNumber = casSupplier.supplierNumber;
-      casSupplierAPIOutDTO.supplierProtected = casSupplier.supplierProtected;
-      casSupplierAPIOutDTO.supplierStatus = casSupplier.supplierStatus;
-      casSupplierAPIOutDTO.isValid = casSupplier.isValid;
-      casSupplierAPIOutDTO.supplierSiteCode =
-        casSupplier.supplierAddress?.supplierSiteCode;
-      casSupplierAPIOutDTO.addressLine1 =
-        casSupplier.supplierAddress?.addressLine1;
-      casSupplierAPIOutDTO.siteStatus = casSupplier.supplierAddress?.status;
-      casSupplierAPIOutDTO.siteProtected =
-        casSupplier.supplierAddress?.siteProtected;
-      casSupplierInfoDTOList.push(casSupplierAPIOutDTO);
-    }
-    return casSupplierInfoDTOList;
+    const casSupplierInfoDTOList = casSuppliers.map((casSupplier) => ({
+      dateCreated: casSupplier.createdAt,
+      supplierNumber: casSupplier.supplierNumber,
+      supplierProtected: casSupplier.supplierProtected,
+      supplierStatus: casSupplier.supplierStatus,
+      isValid: casSupplier.isValid,
+      supplierSiteCode: casSupplier.supplierAddress?.supplierSiteCode,
+      addressLine1: casSupplier.supplierAddress?.addressLine1,
+      siteStatus: casSupplier.supplierAddress?.status,
+      siteProtected: casSupplier.supplierAddress?.siteProtected,
+    }));
+    return { items: casSupplierInfoDTOList };
   }
 
   /**
@@ -73,16 +80,24 @@ export class CASSupplierAESTController extends BaseController {
    */
   @Roles(Role.AESTEditCASSupplierInfo)
   @Post("student/:studentId")
+  @ApiNotFoundResponse({
+    description: "Student not found.",
+  })
   async addCASSupplier(
     @Body() payload: AddCASSupplierAPIInDTO,
     @Param("studentId", ParseIntPipe) studentId: number,
     @UserToken() userToken: IUserToken,
-  ): Promise<void> {
-    await this.casSupplierService.addCASSupplier(
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    const studentExist = await this.studentService.studentExists(studentId);
+    if (!studentExist) {
+      throw new NotFoundException("Student not found.");
+    }
+    const casSupplier = await this.casSupplierService.addCASSupplier(
       studentId,
       payload.supplierNumber,
       payload.supplierSiteCode,
       userToken.userId,
     );
+    return { id: casSupplier.id };
   }
 }

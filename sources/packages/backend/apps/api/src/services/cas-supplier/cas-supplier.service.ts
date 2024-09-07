@@ -1,12 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CASSupplier, SupplierStatus } from "@sims/sims-db";
-import { DataSource, Repository } from "typeorm";
+import { Repository } from "typeorm";
 
 Injectable();
 export class CASSupplierService {
   constructor(
-    private readonly dataSource: DataSource,
     @InjectRepository(CASSupplier)
     private readonly casSupplierRepo: Repository<CASSupplier>,
   ) {}
@@ -56,7 +55,6 @@ export class CASSupplierService {
       lastUpdated: now,
       supplierAddress: {
         supplierSiteCode: supplierSiteCode,
-        lastUpdated: now,
       },
       supplierStatus: SupplierStatus.VerifiedManually,
       supplierStatusUpdatedOn: now,

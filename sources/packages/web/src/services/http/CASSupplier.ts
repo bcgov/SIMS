@@ -11,12 +11,12 @@ export class CASSupplierApi extends HttpBaseClient {
   /**
    * Gets CAS supplier info for a student.
    * @param studentId student id.
-   * @returns a list of CAS supplier info.
+   * @returns CAS supplier info.
    */
   async getCASSupplierInfo(
     studentId: number,
-  ): Promise<CASSupplierInfoAPIOutDTO[]> {
-    return this.getCall<CASSupplierInfoAPIOutDTO[]>(
+  ): Promise<CASSupplierInfoAPIOutDTO> {
+    return this.getCall<CASSupplierInfoAPIOutDTO>(
       this.addClientRoot(`cas-supplier/student/${studentId}`),
     );
   }

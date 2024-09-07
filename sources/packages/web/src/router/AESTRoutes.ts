@@ -163,9 +163,11 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             },
           },
           {
-            path: AppRoutes.CASSupplierInformation,
-            name: AESTRoutesConst.CAS_SUPPLIER_INFORMATION,
-            props: true,
+            path: AppRoutes.CASSupplierManagement,
+            name: AESTRoutesConst.CAS_SUPPLIER_MANAGEMENT,
+            props: (route) => ({
+              studentId: parseInt(route.params.studentId as string),
+            }),
             component: CASSupplierInformation,
             meta: {
               clientType: ClientIdType.AEST,

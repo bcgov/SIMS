@@ -5,7 +5,7 @@
 import { computed, defineComponent, PropType } from "vue";
 import ChipStatus from "@/components/generic/ChipStatus.vue";
 import { SupplierStatus } from "@/services/http/dto";
-import { useSupplier } from "@/composables/useSupplierStatus";
+import { useSupplier } from "@/composables";
 export default defineComponent({
   components: { ChipStatus },
   props: {

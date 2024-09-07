@@ -1,17 +1,13 @@
 <template>
   <v-form ref="addCASSupplierForm">
     <modal-dialog-base
-      title="Update supplier/Site information"
+      title="Update supplier/site information"
+      sub-title="Enter new supplier number and site number for this student to maintain
+          consistency with CAS validations."
       :showDialog="showDialog"
     >
       <template #content>
         <error-summary :errors="addCASSupplierForm.errors" />
-        <div class="pb-5">
-          <span class="label-value"
-            >Enter new supplier number and/or site number for this student to
-            maintain consistency with CAS validations.</span
-          >
-        </div>
         <v-text-field
           hide-details="auto"
           label="Supplier number"
@@ -22,9 +18,7 @@
           required
           class="mb-4"
         />
-
         <v-spacer />
-
         <v-text-field
           hide-details="auto"
           label="Site code"
@@ -36,16 +30,12 @@
         />
       </template>
       <template #footer>
-        <check-permission-role :role="allowedRole">
-          <template #="{ notAllowed }">
-            <footer-buttons
-              primaryLabel="Update info"
-              @secondaryClick="cancel"
-              @primaryClick="submit"
-              :disablePrimaryButton="notAllowed"
-            />
-          </template>
-        </check-permission-role>
+        <footer-buttons
+          :processing="loading"
+          primaryLabel="Update info"
+          @secondaryClick="cancel"
+          @primaryClick="submit"
+        />
       </template>
     </modal-dialog-base>
   </v-form>
@@ -56,11 +46,10 @@ import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { useModalDialog, useRules } from "@/composables";
 import { Role, VForm } from "@/types";
-import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { AddCASSupplierAPIInDTO } from "@/services/http/dto";
 
 export default defineComponent({
-  components: { ModalDialogBase, CheckPermissionRole, ErrorSummary },
+  components: { ModalDialogBase, ErrorSummary },
   props: {
     allowedRole: {
       type: String as PropType<Role>,
@@ -68,7 +57,17 @@ export default defineComponent({
     },
   },
   setup() {
-    const { showDialog, showModal, resolvePromise } = useModalDialog<
+    const SUPPLIER_NUMBER_INPUT_FIELD_NAME = "Supplier number";
+    const SUPPLIER_NUMBER_INPUT_FIELD_MAX_LENGTH = 30;
+    const SUPPLIER_NUMBER_PAD_NUMBER_OF_CHARS = 7;
+    const SUPPLIER_SITE_CODE_INPUT_FIELD_NAME = "Site code";
+    const SUPPLIER_SITE_CODE_INPUT_FIELD_MAX_LENGTH = 3;
+    const SUPPLIER_SITE_CODE_PAD_NUMBER_OF_CHARS = 3;
+    const PADDING_CHAR = "0";
+
+    const { checkOnlyDigitsRule, checkLengthRule, checkNullOrEmptyRule } =
+      useRules();
+    const { showDialog, showModal, resolvePromise, loading } = useModalDialog<
       AddCASSupplierAPIInDTO | boolean
     >();
     const addCASSupplierForm = ref({} as VForm);
@@ -91,41 +90,72 @@ export default defineComponent({
       resolvePromise(false);
     };
 
-    const supplierNumberValidationRule = (value) => {
-      if (!value) {
-        return "Supplier number is mandatory.";
-      } else if (value.length > 30) {
-        return "Supplier number max length is 30.";
-      } else if (!value.match(/^\d+$/)) {
-        return "Only numbers allowed.";
+    const supplierNumberValidationRule = (value: string) => {
+      const checkNullOrEmptyRuleResult = checkNullOrEmptyRule(
+        value,
+        SUPPLIER_NUMBER_INPUT_FIELD_NAME,
+      );
+      if (checkNullOrEmptyRuleResult !== true) {
+        return checkNullOrEmptyRuleResult;
+      } else {
+        const checkLengthRuleResult = checkLengthRule(
+          value,
+          SUPPLIER_NUMBER_INPUT_FIELD_MAX_LENGTH,
+          SUPPLIER_NUMBER_INPUT_FIELD_NAME,
+        );
+        if (checkLengthRuleResult !== true) {
+          return checkLengthRuleResult;
+        } else {
+          {
+            return checkOnlyDigitsRule(value, SUPPLIER_NUMBER_INPUT_FIELD_NAME);
+          }
+        }
       }
-      return true;
     };
 
-    const supplierSiteCodeValidationRule = (value) => {
-      if (!value) {
-        return "Supplier site code is mandatory.";
-      } else if (value.length > 3) {
-        return "Supplier site code max length is 3.";
-      } else if (!value.match(/^\d+$/)) {
-        return "Only numbers allowed.";
+    const supplierSiteCodeValidationRule = (value: string) => {
+      const checkNullOrEmptyRuleResult = checkNullOrEmptyRule(
+        value,
+        SUPPLIER_SITE_CODE_INPUT_FIELD_NAME,
+      );
+      if (checkNullOrEmptyRuleResult !== true) {
+        return checkNullOrEmptyRuleResult;
+      } else {
+        const checkLengthRuleResult = checkLengthRule(
+          value,
+          SUPPLIER_SITE_CODE_INPUT_FIELD_MAX_LENGTH,
+          SUPPLIER_SITE_CODE_INPUT_FIELD_NAME,
+        );
+        if (checkLengthRuleResult !== true) {
+          return checkLengthRuleResult;
+        } else {
+          {
+            return checkOnlyDigitsRule(
+              value,
+              SUPPLIER_SITE_CODE_INPUT_FIELD_NAME,
+            );
+          }
+        }
       }
-      return true;
     };
 
-    const formatSupplierNumber = (event) => {
+    const formatSupplierNumber = (event: { target: { value: string } }) => {
       if (supplierNumberValidationRule(formModel.supplierNumber) === true) {
-        const numberOfChars = 7;
         const currentValue = event.target.value;
-        formModel.supplierNumber = currentValue.padStart(numberOfChars, "0");
+        formModel.supplierNumber = currentValue.padStart(
+          SUPPLIER_NUMBER_PAD_NUMBER_OF_CHARS,
+          PADDING_CHAR,
+        );
       }
     };
 
-    const formatSupplierSiteCode = (event) => {
+    const formatSupplierSiteCode = (event: { target: { value: string } }) => {
       if (supplierSiteCodeValidationRule(formModel.supplierSiteCode) === true) {
-        const numberOfChars = 3;
         const currentValue = event.target.value;
-        formModel.supplierSiteCode = currentValue.padStart(numberOfChars, "0");
+        formModel.supplierSiteCode = currentValue.padStart(
+          SUPPLIER_SITE_CODE_PAD_NUMBER_OF_CHARS,
+          PADDING_CHAR,
+        );
       }
     };
 
@@ -140,6 +170,7 @@ export default defineComponent({
       supplierSiteCodeValidationRule,
       formatSupplierNumber,
       formatSupplierSiteCode,
+      loading,
     };
   },
 });
