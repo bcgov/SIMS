@@ -23,9 +23,9 @@ describe("CASSupplierAESTController(e2e)-getCASSuppliers", () => {
     db = createE2EDataSources(dataSource);
   });
 
-  it("Should get all the CAS suppliers for a student when requested given a student id.", async () => {
+  it("Should get all the CAS suppliers for a student when CAS suppliers info is requested for a student.", async () => {
     // Arrange
-    const savedCASSupplier1 = await saveFakeCASSupplier(db, {});
+    const savedCASSupplier1 = await saveFakeCASSupplier(db);
     const student = savedCASSupplier1.student;
     const savedCASSupplier2 = await saveFakeCASSupplier(
       db,

@@ -2,7 +2,7 @@ import HttpBaseClient from "./common/HttpBaseClient";
 import {
   AddCASSupplierAPIInDTO,
   CASSupplierInfoAPIOutDTO,
-} from "@/services/http/dto/CASSupplier.dto";
+} from "@/services/http/dto";
 
 /**
  * Http API client for CAS suppliers.

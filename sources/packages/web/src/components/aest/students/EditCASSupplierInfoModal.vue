@@ -41,21 +41,15 @@
   </v-form>
 </template>
 <script lang="ts">
-import { PropType, ref, reactive, defineComponent } from "vue";
+import { ref, reactive, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { useModalDialog, useRules } from "@/composables";
-import { Role, VForm, Event } from "@/types";
+import { VForm, Event } from "@/types";
 import { AddCASSupplierAPIInDTO } from "@/services/http/dto";
 
 export default defineComponent({
   components: { ModalDialogBase, ErrorSummary },
-  props: {
-    allowedRole: {
-      type: String as PropType<Role>,
-      required: true,
-    },
-  },
   setup() {
     const SUPPLIER_NUMBER_INPUT_FIELD_NAME = "Supplier number";
     const SUPPLIER_NUMBER_INPUT_FIELD_MAX_LENGTH = 30;
@@ -97,20 +91,16 @@ export default defineComponent({
       );
       if (checkNullOrEmptyRuleResult !== true) {
         return checkNullOrEmptyRuleResult;
-      } else {
-        const checkLengthRuleResult = checkLengthRule(
-          value,
-          SUPPLIER_NUMBER_INPUT_FIELD_MAX_LENGTH,
-          SUPPLIER_NUMBER_INPUT_FIELD_NAME,
-        );
-        if (checkLengthRuleResult !== true) {
-          return checkLengthRuleResult;
-        } else {
-          {
-            return checkOnlyDigitsRule(value, SUPPLIER_NUMBER_INPUT_FIELD_NAME);
-          }
-        }
       }
+      const checkLengthRuleResult = checkLengthRule(
+        value,
+        SUPPLIER_NUMBER_INPUT_FIELD_MAX_LENGTH,
+        SUPPLIER_NUMBER_INPUT_FIELD_NAME,
+      );
+      if (checkLengthRuleResult !== true) {
+        return checkLengthRuleResult;
+      }
+      return checkOnlyDigitsRule(value, SUPPLIER_NUMBER_INPUT_FIELD_NAME);
     };
 
     const supplierSiteCodeValidationRule = (value: string) => {
@@ -120,23 +110,16 @@ export default defineComponent({
       );
       if (checkNullOrEmptyRuleResult !== true) {
         return checkNullOrEmptyRuleResult;
-      } else {
-        const checkLengthRuleResult = checkLengthRule(
-          value,
-          SUPPLIER_SITE_CODE_INPUT_FIELD_MAX_LENGTH,
-          SUPPLIER_SITE_CODE_INPUT_FIELD_NAME,
-        );
-        if (checkLengthRuleResult !== true) {
-          return checkLengthRuleResult;
-        } else {
-          {
-            return checkOnlyDigitsRule(
-              value,
-              SUPPLIER_SITE_CODE_INPUT_FIELD_NAME,
-            );
-          }
-        }
       }
+      const checkLengthRuleResult = checkLengthRule(
+        value,
+        SUPPLIER_SITE_CODE_INPUT_FIELD_MAX_LENGTH,
+        SUPPLIER_SITE_CODE_INPUT_FIELD_NAME,
+      );
+      if (checkLengthRuleResult !== true) {
+        return checkLengthRuleResult;
+      }
+      return checkOnlyDigitsRule(value, SUPPLIER_SITE_CODE_INPUT_FIELD_NAME);
     };
 
     const formatSupplierNumber = (event: Event) => {

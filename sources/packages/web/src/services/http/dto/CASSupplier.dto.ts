@@ -1,8 +1,8 @@
-export class CASSupplierInfoAPIOutDTO {
+export interface CASSupplierInfoAPIOutDTO {
   items: CASSupplierInfoItemAPIOutDTO[];
 }
 
-export class CASSupplierInfoItemAPIOutDTO {
+export interface CASSupplierInfoItemAPIOutDTO {
   dateCreated: Date;
   supplierNumber?: string;
   supplierProtected?: boolean;

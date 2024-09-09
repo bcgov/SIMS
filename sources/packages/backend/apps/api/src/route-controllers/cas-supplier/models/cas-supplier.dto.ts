@@ -1,5 +1,5 @@
 import { CASSupplierSiteStatus, SupplierStatus } from "@sims/sims-db";
-import { IsNotEmpty, IsNumberString, MaxLength } from "class-validator";
+import { IsNumberString, MaxLength, MinLength } from "class-validator";
 
 export class CASSupplierInfoAPIOutDTO {
   items: CASSupplierInfoItemAPIOutDTO[];
@@ -18,22 +18,12 @@ export class CASSupplierInfoItemAPIOutDTO {
 }
 
 export class AddCASSupplierAPIInDTO {
-  @IsNotEmpty()
   @MaxLength(30)
-  @IsNumberString(
-    { no_symbols: true },
-    {
-      message: "supplierNumber must contain only digits.",
-    },
-  )
+  @MinLength(6)
+  @IsNumberString({ no_symbols: true })
   supplierNumber: string;
-  @IsNotEmpty()
   @MaxLength(3)
-  @IsNumberString(
-    { no_symbols: true },
-    {
-      message: "supplierSiteCode must contain only digits.",
-    },
-  )
+  @MinLength(3)
+  @IsNumberString({ no_symbols: true })
   supplierSiteCode: string;
 }

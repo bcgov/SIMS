@@ -19,11 +19,10 @@ import BaseController from "../BaseController";
 import {
   AddCASSupplierAPIInDTO,
   CASSupplierInfoAPIOutDTO,
-  CASSupplierInfoItemAPIOutDTO,
 } from "./models/cas-supplier.dto";
 import { CASSupplierService, StudentService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
-import { PrimaryIdentifierAPIOutDTO } from "apps/api/src/route-controllers/models/primary.identifier.dto";
+import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 
 /**
  * CAS supplier controller.

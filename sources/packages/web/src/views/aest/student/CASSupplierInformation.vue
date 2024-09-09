@@ -107,8 +107,14 @@ export default defineComponent({
     );
     const snackBar = useSnackBar();
     const loadCASSuppliers = async (studentId: number) => {
-      casSupplierInfo.value =
-        await CASSupplierService.shared.getSupplierInfoByStudentId(studentId);
+      try {
+        casSupplierInfo.value =
+          await CASSupplierService.shared.getSupplierInfoByStudentId(studentId);
+      } catch {
+        snackBar.error(
+          "Unexpected error while loading CAS supplier information.",
+        );
+      }
     };
     watchEffect(() => loadCASSuppliers(props.studentId));
 
@@ -126,6 +132,7 @@ export default defineComponent({
           snackBar.error(
             "Unexpected error while updating CAS supplier information.",
           );
+          addCASSupplierModal.value.loading = false;
         }
       }
     };
