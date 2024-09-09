@@ -184,7 +184,7 @@
           "value": ""
         }
       ],
-      "content": "Because your profile information is used across your application(s), it’s important to keep your information accurate and up-to-date here.",
+      "content": "Because your profile information is used across your application(s), it’s important to keep your information accurate and up-to-date.",
       "refreshOnChange": false,
       "customClass": "",
       "hidden": false,
@@ -1402,7 +1402,7 @@
               "value": ""
             }
           ],
-          "content": "<strong class=\"ml-2\">How to update your information</strong>\r\n<br />\r\n<span>\r\n  Your information above is taken from your B.C. Services Card. If the\r\n  information is incorrect, please update your information with\r\n  <a\r\n    class=\"primary-color\"\r\n    href=\"https://www2.gov.bc.ca/gov/content/governments/government-id/bc-services-card/your-card/change-personal-information\"\r\n    target=\"_blank\"\r\n  >\r\n    B.C. Services Card</a\r\n  >\r\n  first.\r\n</span>",
+          "content": "<strong class=\"ml-2\">How to update your Information</strong>\n<br />\n<span>\n  Your information above is taken from your BC Services Card account. If the\n  information is incorrect, please update your information with\n  <a\n    class=\"formio-href\"\n    href=\"https://www2.gov.bc.ca/gov/content/governments/government-id/bc-services-card/your-card/change-personal-information\"\n    target=\"_blank\"\n    rel=\"noopener noreferrer\"\n  >\n    BC Services Card account.</a></span>",
           "refreshOnChange": false,
           "customClass": "banner-info",
           "hidden": false,

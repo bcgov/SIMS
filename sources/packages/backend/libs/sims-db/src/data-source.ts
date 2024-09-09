@@ -55,6 +55,7 @@ import {
   StudentLoanBalance,
   ECertFeedbackError,
   CASSupplier,
+  ApplicationRestrictionBypass,
 } from "./entities";
 import { ClusterNode, ClusterOptions, RedisOptions } from "ioredis";
 import {
@@ -157,6 +158,7 @@ export const DBEntities = [
   ApplicationExceptionRequest,
   ApplicationException,
   ApplicationStudentFile,
+  ApplicationRestrictionBypass,
   Application,
   COEDeniedReason,
   CRAIncomeVerification,
