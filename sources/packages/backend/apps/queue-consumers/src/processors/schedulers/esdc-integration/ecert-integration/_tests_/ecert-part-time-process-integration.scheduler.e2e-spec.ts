@@ -46,8 +46,6 @@ import { loadDisbursementSchedules } from "./e-cert-utils";
 import { SystemUsersService } from "@sims/services";
 import * as faker from "faker";
 
-jest.setTimeout(1200000);
-
 describe(
   describeQueueProcessorRootTest(QueueNames.PartTimeECertIntegration),
   () => {
