@@ -2,9 +2,9 @@
  * Announcements details.
  */
 export interface AnnouncementAPIOutDTO {
-  message_title: string;
+  messageTitle: string;
   message: string;
-  start_date: Date;
-  end_date: Date;
+  startDate: Date;
+  endDate: Date;
   target: string[];
 }

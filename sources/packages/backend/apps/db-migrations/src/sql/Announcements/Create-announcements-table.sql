@@ -27,7 +27,7 @@ COMMENT ON COLUMN sims.announcements.start_date IS 'Timestamp for when the syste
 
 COMMENT ON COLUMN sims.announcements.end_date IS 'Timestamp for when the system announcement finishes.';
 
-COMMENT ON COLUMN sims.announcements.target IS 'Represents the screens the message should appear on, in a CSV list.';
+COMMENT ON COLUMN sims.announcements.target IS 'Represents the screens the message should appear on.';
 
 COMMENT ON COLUMN sims.announcements.created_at IS 'Record creation timestamp.';
 
