@@ -29,7 +29,7 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref } from "vue";
 import { BannerTypes } from "@/types/contracts/Banner";
-import { AnnouncementsService } from "@/services/AnnouncementsService";
+import { AnnouncementService } from "@/services/AnnouncementService";
 import { useFormatters } from "@/composables";
 
 export default defineComponent({
@@ -45,7 +45,7 @@ export default defineComponent({
     const relevantAnnouncements = ref();
     // Hooks
     onMounted(async () => {
-      let announcements = await AnnouncementsService.shared.getAnnouncements();
+      let announcements = await AnnouncementService.shared.getAnnouncements();
       relevantAnnouncements.value = announcements.filter((announcement) => {
         return announcement.target.some(
           (tar: string) => tar.toLowerCase() === props.location.toLowerCase(),

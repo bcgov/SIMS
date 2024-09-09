@@ -1,7 +1,7 @@
 /**
- * Announcements detail DTO. This is used for view only purpose.
+ * Announcements details.
  */
-export class AnnouncementsAPIOutDTO {
+export interface AnnouncementAPIOutDTO {
   message_title: string;
   message: string;
   start_date: Date;

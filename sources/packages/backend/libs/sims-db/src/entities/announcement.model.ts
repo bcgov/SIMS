@@ -6,7 +6,7 @@ import { RecordDataModel } from "./record.model";
  * System Announcements.
  */
 @Entity({ name: TableNames.Announcements })
-export class Announcements extends RecordDataModel {
+export class Announcement extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
   /**
@@ -28,7 +28,6 @@ export class Announcements extends RecordDataModel {
   /**
    * Target areas for the announcement.
    */
-
   @Column("text", {
     name: "target",
     nullable: false,

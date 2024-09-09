@@ -16,7 +16,7 @@ import {
   InstitutionService,
   BCeIDService,
   InstitutionUserAuthService,
-  AnnouncementsService,
+  AnnouncementService,
 } from "./services";
 import {
   DisbursementOverawardService,
@@ -45,7 +45,7 @@ import { AuthModule } from "./auth/auth.module";
     BCeIDService,
     UserService,
     FormService,
-    AnnouncementsService,
+    AnnouncementService,
     SequenceControlService,
     StudentFileService,
     RestrictionService,

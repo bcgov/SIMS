@@ -1,18 +1,18 @@
 import { Injectable } from "@nestjs/common";
-import { Announcements, RecordDataModelService } from "@sims/sims-db";
+import { Announcement, RecordDataModelService } from "@sims/sims-db";
 import { DataSource, LessThanOrEqual, MoreThanOrEqual } from "typeorm";
 
 @Injectable()
-export class AnnouncementsService extends RecordDataModelService<Announcements> {
+export class AnnouncementService extends RecordDataModelService<Announcement> {
   constructor(dataSource: DataSource) {
-    super(dataSource.getRepository(Announcements));
+    super(dataSource.getRepository(Announcement));
   }
 
   /**
    * Get system announcements.
    * @returns system announcements list.
    */
-  async getAnnouncements(): Promise<Announcements[]> {
+  async getAnnouncements(): Promise<Announcement[]> {
     const now = new Date();
     return this.repo.find({
       order: { startDate: "ASC" },

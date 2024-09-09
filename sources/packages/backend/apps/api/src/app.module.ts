@@ -7,10 +7,10 @@ import {
   BCeIDServiceProvider,
   FormService,
   ProgramYearService,
-  AnnouncementsService,
+  AnnouncementService,
 } from "./services";
 import {
-  AnnouncementsController,
+  AnnouncementController,
   ConfigController,
   DynamicFormController,
 } from "./route-controllers";
@@ -69,14 +69,14 @@ import { QueueModule } from "@sims/services/queue";
     AppController,
     ConfigController,
     DynamicFormController,
-    AnnouncementsController,
+    AnnouncementController,
   ],
   providers: [
     AppService,
     UserService,
     BCeIDServiceProvider,
     FormService,
-    AnnouncementsService,
+    AnnouncementService,
     ProgramYearService,
   ],
 })

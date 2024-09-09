@@ -1,17 +1,17 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { Repository } from "typeorm";
-import { Announcements } from "@sims/sims-db";
+import { Announcement } from "@sims/sims-db";
 import { createTestingAppModule } from "../../../../testHelpers";
 
-describe("AnnouncementsController(e2e)-getAnnouncements", () => {
+describe("AnnouncementController(e2e)-getAnnouncements", () => {
   let app: INestApplication;
-  let announcementsRepo: Repository<Announcements>;
+  let announcementsRepo: Repository<Announcement>;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
-    announcementsRepo = dataSource.getRepository(Announcements);
+    announcementsRepo = dataSource.getRepository(Announcement);
   });
 
   it("Should return a saved announcement.", async () => {
@@ -20,7 +20,7 @@ describe("AnnouncementsController(e2e)-getAnnouncements", () => {
     const before = new Date(now.setFullYear(now.getFullYear() - 1));
     const future = new Date(now.setFullYear(now.getFullYear() + 2));
 
-    const announcement = new Announcements();
+    const announcement = new Announcement();
     announcement.message = "test announcement";
     announcement.messageTitle = "test title";
     announcement.target = ["studentdashboard", "institutiondashboard"];

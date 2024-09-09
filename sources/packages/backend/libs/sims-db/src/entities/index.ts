@@ -95,6 +95,6 @@ export * from "./ecert-feedback-error.model";
 export * from "./cas-supplier.model";
 export * from "./supplier-status.type";
 export * from "./virus-scan-status-type";
-export * from "./announcements.model";
+export * from "./announcement.model";
 export * from "./application-restriction-bypass.model";
 export * from "./restriction-bypass-behaviors.type";
