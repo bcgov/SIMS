@@ -22,7 +22,7 @@ export class RestrictionBypassesResolutionStep implements ECertProcessStep {
   ) {}
 
   /**
-   * Removed restrictions active bypasses configured as {@link RestrictionBypassBehaviors.NextDisbursementOnly}.
+   * Remove restrictions active bypasses configured as {@link RestrictionBypassBehaviors.NextDisbursementOnly}.
    * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
    * @param entityManager used to execute the commands in the same transaction.
    * @param log cumulative log summary.

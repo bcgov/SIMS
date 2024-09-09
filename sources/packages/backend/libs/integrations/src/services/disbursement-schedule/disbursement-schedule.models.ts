@@ -282,6 +282,9 @@ export class EligibleECertDisbursement {
    * List of restrictions not bypassed that will be applied to the application.
    */
   getEffectiveRestrictions(): ReadonlyArray<StudentActiveRestriction> {
+    // The restrictions list can be updated as the e-Cert is calculated.
+    // That is why the effective list should be calculated using the most
+    // recent values.
     return this.restrictions.filter(
       (restriction) =>
         !this.studentRestrictionsBypassedIds.includes(
