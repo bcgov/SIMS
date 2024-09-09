@@ -52,3 +52,5 @@ export interface SelectItemType {
   title: string;
   value: string | number;
 }
+
+export type Event = { target: { value: string } };

@@ -45,7 +45,7 @@ import { PropType, ref, reactive, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { useModalDialog, useRules } from "@/composables";
-import { Role, VForm } from "@/types";
+import { Role, VForm, Event } from "@/types";
 import { AddCASSupplierAPIInDTO } from "@/services/http/dto";
 
 export default defineComponent({
@@ -139,7 +139,7 @@ export default defineComponent({
       }
     };
 
-    const formatSupplierNumber = (event: { target: { value: string } }) => {
+    const formatSupplierNumber = (event: Event) => {
       if (supplierNumberValidationRule(formModel.supplierNumber) === true) {
         const currentValue = event.target.value;
         formModel.supplierNumber = currentValue.padStart(
@@ -149,7 +149,7 @@ export default defineComponent({
       }
     };
 
-    const formatSupplierSiteCode = (event: { target: { value: string } }) => {
+    const formatSupplierSiteCode = (event: Event) => {
       if (supplierSiteCodeValidationRule(formModel.supplierSiteCode) === true) {
         const currentValue = event.target.value;
         formModel.supplierSiteCode = currentValue.padStart(
