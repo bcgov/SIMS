@@ -53,4 +53,6 @@ export interface SelectItemType {
   value: string | number;
 }
 
-export type Event = { target: { value: string } };
+export interface Event {
+  target: { value: string };
+}
