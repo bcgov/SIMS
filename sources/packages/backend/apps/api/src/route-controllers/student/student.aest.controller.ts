@@ -17,8 +17,8 @@ import {
 } from "@nestjs/common";
 import {
   ApiForbiddenResponse,
+  ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
-  ApiServiceUnavailableResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
@@ -150,7 +150,7 @@ export class StudentAESTController extends BaseController {
   @Roles(Role.StudentUploadFile)
   @Post(":studentId/files")
   @ApiNotFoundResponse({ description: "Student was not found." })
-  @ApiServiceUnavailableResponse({
+  @ApiInternalServerErrorResponse({
     description:
       "The file upload service is currently unavailable." +
       " There was an unexpected error while uploading the file.",

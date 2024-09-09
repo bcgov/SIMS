@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { ScanResult } from "@sims/services/clamav/models/clamav.models";
 import * as NodeClam from "clamscan";
 
 @Injectable()
@@ -30,7 +31,7 @@ export class ClamAVService {
     }
     const promise = new Promise<boolean | null>((resolve, reject) => {
       const passthroughStream = this.scanner.passthrough();
-      passthroughStream.on("scan-complete", (result) => {
+      passthroughStream.on("scan-complete", (result: ScanResult) => {
         resolve(result.isInfected);
       });
       passthroughStream.on("error", (error: Error) => {

@@ -17,8 +17,8 @@ import {
 import {
   ApiBadRequestResponse,
   ApiForbiddenResponse,
+  ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
-  ApiServiceUnavailableResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
@@ -223,7 +223,7 @@ export class StudentStudentsController extends BaseController {
    * @returns created file information.
    */
   @Post("files")
-  @ApiServiceUnavailableResponse({
+  @ApiInternalServerErrorResponse({
     description:
       "The file upload service is currently unavailable." +
       " There was an unexpected error while uploading the file.",

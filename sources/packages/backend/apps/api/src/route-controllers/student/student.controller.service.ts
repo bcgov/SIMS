@@ -1,9 +1,8 @@
 import {
   ForbiddenException,
-  HttpStatus,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
-  ServiceUnavailableException,
 } from "@nestjs/common";
 import { Response } from "express";
 import {
@@ -17,7 +16,11 @@ import {
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
 import { getUserFullName } from "../../utilities";
-import { getISODateOnlyString, parseJSONError } from "@sims/utilities";
+import {
+  CustomNamedError,
+  getISODateOnlyString,
+  parseJSONError,
+} from "@sims/utilities";
 import {
   AddressInfo,
   Application,
@@ -36,6 +39,7 @@ import { transformAddressDetailsForAddressBlockForm } from "../utils/address-uti
 import { ApiProcessError } from "../../types";
 import {
   FILE_HAS_NOT_BEEN_SCANNED_YET,
+  FILE_SAVE_ERROR,
   FILE_UPLOAD_SERVICE_UNAVAILABLE,
   VIRUS_DETECTED,
 } from "../../constants";
@@ -77,46 +81,43 @@ export class StudentControllerService {
         contentType: file.mimetype,
         body: file.buffer,
       });
+      this.logger.log(`Uploaded file ${file.originalname} to S3 storage.`);
     } catch (error: unknown) {
-      this.logger.error(parseJSONError(error));
       this.logger.error(
         `Uploading file ${file.originalname} to S3 storage failed. S3 storage failure.`,
       );
-      throw new ServiceUnavailableException(
-        `The file upload service (s3 storage) is currently unavailable. There was an unexpected error while uploading the file ${file.originalname}.`,
+      this.logger.error(parseJSONError(error));
+      throw new InternalServerErrorException(
+        `Unexpected error while uploading the file ${file.originalname}.`,
         FILE_UPLOAD_SERVICE_UNAVAILABLE,
       );
     }
-    const createdFile = await this.fileService.createFile(
-      {
-        fileName: file.originalname,
-        uniqueFileName: uniqueFileName,
-        groupName: groupName,
-      },
-      studentId,
-      auditUserId,
-    );
-    if (createdFile) {
-      this.logger.log(`Uploaded file ${file.originalname} to S3 storage.`);
-      return {
-        fileName: createdFile.fileName,
-        uniqueFileName: createdFile.uniqueFileName,
-        url: `student/files/${createdFile.uniqueFileName}`,
-        size: file.size,
-        mimetype: file.mimetype,
-      };
-    } else {
-      // If the file details persistence to the database fails,
-      // remove the file from the s3 storage.
-      await this.objectStorageService.deleteObject(uniqueFileName);
-      this.logger.error(
-        `Uploading file ${file.originalname} to S3 storage failed. Error persisting the file details to the database.`,
+    try {
+      await this.fileService.createFile(
+        {
+          fileName: file.originalname,
+          uniqueFileName: uniqueFileName,
+          groupName: groupName,
+        },
+        studentId,
+        auditUserId,
       );
-      throw new ServiceUnavailableException(
-        `The file upload service (database) is currently unavailable. There was an unexpected error while uploading the file ${file.originalname}.`,
-        FILE_UPLOAD_SERVICE_UNAVAILABLE,
-      );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        if (error.name === FILE_SAVE_ERROR) {
+          throw new InternalServerErrorException(error.message, {
+            cause: error,
+          });
+        }
+      }
     }
+    return {
+      fileName: file.originalname,
+      uniqueFileName,
+      url: `student/files/${uniqueFileName}`,
+      size: file.size,
+      mimetype: file.mimetype,
+    };
   }
 
   /**

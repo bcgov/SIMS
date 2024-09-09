@@ -16,44 +16,28 @@ import { VirusScanProcessor } from "../virus-scan.processor";
 import { VirusScanStatus } from "@sims/sims-db";
 import * as path from "path";
 import { INFECTED_FILENAME_SUFFIX } from "../../../services";
-import { ObjectStorageService } from "@sims/integrations/object-storage";
-import { Readable } from "stream";
-
-const DUMMY_FILE_CONTENT = "Some dummy file content.";
 
 describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let processor: VirusScanProcessor;
   let clamAVServiceMock: ClamAVService;
-  let objectStorageServiceMock: ObjectStorageService;
 
   beforeAll(async () => {
     const {
       nestApplication,
       dataSource,
       clamAVServiceMock: clamAVServiceFromAppModule,
-      objectStorageServiceMock: objectStorageServiceFromAppModule,
     } = await createTestingAppModule();
     app = nestApplication;
     // Processor under test.
     processor = app.get(VirusScanProcessor);
     clamAVServiceMock = clamAVServiceFromAppModule;
-    objectStorageServiceMock = objectStorageServiceFromAppModule;
     db = createE2EDataSources(dataSource);
   });
 
   beforeEach(() => {
-    jest.resetAllMocks();
-    const buffer = Buffer.from(DUMMY_FILE_CONTENT);
-    const stream = Readable.from(buffer);
-    objectStorageServiceMock.getObject = jest.fn(() => {
-      return Promise.resolve({
-        contentLength: DUMMY_FILE_CONTENT.length,
-        contentType: "text/html; charset=utf-8",
-        body: stream,
-      });
-    });
+    jest.clearAllMocks();
   });
 
   it("Should throw an error when the student file is not found during virus scanning.", async () => {

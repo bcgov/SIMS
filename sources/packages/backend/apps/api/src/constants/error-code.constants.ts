@@ -197,3 +197,8 @@ export const VIRUS_DETECTED = "VIRUS_DETECTED";
  */
 export const FILE_UPLOAD_SERVICE_UNAVAILABLE =
   "FILE_UPLOAD_SERVICE_IS_CURRENTLY_UNAVAILABLE";
+
+/**
+ * Unable to save file.
+ */
+export const FILE_SAVE_ERROR = "FILE_SAVE_ERROR";

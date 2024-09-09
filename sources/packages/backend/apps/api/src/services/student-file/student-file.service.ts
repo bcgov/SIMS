@@ -15,9 +15,10 @@ import {
 } from "@sims/sims-db";
 import { CreateFile, FileUploadOptions } from "./student-file.model";
 import { InjectQueue } from "@nestjs/bull";
-import { QueueNames } from "@sims/utilities";
+import { CustomNamedError, QueueNames } from "@sims/utilities";
 import { Queue } from "bull";
 import { VirusScanQueueInDTO } from "@sims/services/queue";
+import { FILE_SAVE_ERROR } from "../../constants";
 
 @Injectable()
 export class StudentFileService extends RecordDataModelService<StudentFile> {
@@ -58,7 +59,13 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
       savedFile = await this.repo.save(newFile);
     } catch (error: unknown) {
       this.logger.error(`Error saving the file: ${error}`);
-      return;
+      this.logger.error(
+        `Uploading file ${newFile.fileName} to S3 storage failed. Error persisting the file details to the database.`,
+      );
+      throw new CustomNamedError(
+        `Unexpected error while uploading the file ${newFile.fileName}.`,
+        FILE_SAVE_ERROR,
+      );
     }
     // Add to the virus scan queue only if the file is successfully saved to the database.
     try {

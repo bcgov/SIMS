@@ -20,26 +20,17 @@ import {
 } from "../../../../constants";
 import { VirusScanStatus } from "@sims/sims-db";
 import { TestingModule } from "@nestjs/testing";
-import { Readable } from "stream";
-import { ObjectStorageService } from "@sims/integrations/object-storage";
-
-const DUMMY_FILE_CONTENT = "Some dummy file content.";
+import { DUMMY_FILE_CONTENT } from "@sims/test-utils/mocks";
 
 describe("StudentStudentsController(e2e)-getUploadedFile", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let appModule: TestingModule;
-  let objectStorageServiceMock: ObjectStorageService;
 
   beforeAll(async () => {
-    const {
-      nestApplication,
-      dataSource,
-      module,
-      objectStorageServiceMock: objectStorageServiceFromAppModule,
-    } = await createTestingAppModule();
+    const { nestApplication, dataSource, module } =
+      await createTestingAppModule();
     app = nestApplication;
-    objectStorageServiceMock = objectStorageServiceFromAppModule;
     db = createE2EDataSources(dataSource);
     appModule = module;
   });
@@ -168,15 +159,6 @@ describe("StudentStudentsController(e2e)-getUploadedFile", () => {
     studentFile.virusScanStatus = VirusScanStatus.FileIsClean;
     studentFile.fileName = "test.jpeg";
     await db.studentFile.save(studentFile);
-    const buffer = Buffer.from(DUMMY_FILE_CONTENT);
-    const stream = Readable.from(buffer);
-    objectStorageServiceMock.getObject = jest.fn(() => {
-      return Promise.resolve({
-        contentLength: DUMMY_FILE_CONTENT.length,
-        contentType: "text/html; charset=utf-8",
-        body: stream,
-      });
-    });
     const endpoint = `/students/student/files/${studentFile.uniqueFileName}`;
     // Act/Assert
     await request(app.getHttpServer())
