@@ -1,13 +1,13 @@
-CREATE TABLE IF NOT EXISTS sims.announcements (
+CREATE TABLE sims.announcements (
     id SERIAL PRIMARY KEY,
     message_title VARCHAR(100) NOT NULL,
     message VARCHAR(200) NOT NULL,
-    start_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW (),
-    end_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW (),
+    start_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    end_date TIMESTAMP WITH TIME ZONE NOT NULL,
     target text [],
     -- Audit columns
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
-    updated_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW (),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW (),
     creator INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE
     SET
         NULL,
