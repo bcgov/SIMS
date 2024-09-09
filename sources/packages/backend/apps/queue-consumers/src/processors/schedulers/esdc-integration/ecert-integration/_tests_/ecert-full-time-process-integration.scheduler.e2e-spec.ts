@@ -790,7 +790,7 @@ describe(
 
     it(
       "Should generate BC awards amounts with no restriction deductions and resolve the restriction bypass " +
-        `when a student has an active '${RestrictionCode.BCLM}' restriction and it is bypassed with behavior '${RestrictionBypassBehaviors.NextDisbursementOnly}.`,
+        `when a student has an active '${RestrictionCode.BCLM}' restriction and it is bypassed with behavior '${RestrictionBypassBehaviors.NextDisbursementOnly}'.`,
       async () => {
         // Arrange
         // Student with valid SIN.
