@@ -25,9 +25,10 @@ import {
   createFakeDisbursementValue,
   saveFakeApplicationRestrictionBypass,
   createFakeUser,
+  saveFakeStudentRestriction,
 } from "@sims/test-utils";
 import { getUploadedFile } from "@sims/test-utils/mocks";
-import { IsNull, Like, Not } from "typeorm";
+import { ArrayContains, IsNull, Like, Not } from "typeorm";
 import {
   createTestingAppModule,
   describeQueueProcessorRootTest,
@@ -915,6 +916,116 @@ describe(
               "Automatically removing bypass after the first e-Cert was generated.",
           },
         });
+      },
+    );
+
+    it(
+      "Should prevent an e-Cert generation and keep the bypass active when " +
+        `multiple '${RestrictionActionType.StopPartTimeDisbursement}' restrictions exist and only one is bypassed and it is bypassed with behavior '${RestrictionBypassBehaviors.NextDisbursementOnly}'.`,
+      async () => {
+        // Arrange
+        // Student with valid SIN.
+        const student = await saveFakeStudent(db.dataSource);
+        // Valid MSFAA Number.
+        const msfaaNumber = await db.msfaaNumber.save(
+          createFakeMSFAANumber(
+            { student },
+            {
+              msfaaState: MSFAAStates.Signed,
+              msfaaInitialValues: {
+                offeringIntensity: OfferingIntensity.partTime,
+              },
+            },
+          ),
+        );
+        // Student application eligible for e-Cert.
+        const application = await saveFakeApplicationDisbursements(
+          db.dataSource,
+          {
+            student,
+            msfaaNumber,
+            firstDisbursementValues: [
+              createFakeDisbursementValue(
+                DisbursementValueType.CanadaLoan,
+                "CSLP",
+                9999,
+              ),
+            ],
+          },
+          {
+            offeringIntensity: OfferingIntensity.partTime,
+            applicationStatus: ApplicationStatus.Completed,
+            currentAssessmentInitialValues: {
+              assessmentData: { weeks: 5 } as Assessment,
+              assessmentDate: new Date(),
+            },
+            firstDisbursementInitialValues: {
+              coeStatus: COEStatus.completed,
+            },
+          },
+        );
+        // Create restriction bypass.
+        const restrictionBypass = await saveFakeApplicationRestrictionBypass(
+          db,
+          {
+            application,
+            bypassCreatedBy: sharedMinistryUser,
+            creator: sharedMinistryUser,
+          },
+          {
+            restrictionActionType:
+              RestrictionActionType.StopPartTimeDisbursement,
+            initialValues: {
+              bypassBehavior: RestrictionBypassBehaviors.NextDisbursementOnly,
+            },
+          },
+        );
+        // Find another restriction to be associated with the student.
+        // This restriction will not be bypassed and should block the disbursement,
+        // making the bypass not be resolved.
+        const restriction = await db.restriction.findOne({
+          where: {
+            actionType: ArrayContains([
+              RestrictionActionType.StopPartTimeDisbursement,
+            ]),
+          },
+        });
+        // Create a non-bypassed student restriction to stop disbursement.
+        await saveFakeStudentRestriction(db.dataSource, {
+          student: application.student,
+          restriction,
+        });
+
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Act
+        await processor.processECert(mockedJob.job);
+
+        // Assert
+        expect(
+          mockedJob.containLogMessages([
+            `Current active restriction bypasses [Restriction Code(Student Restriction ID)]: ${restrictionBypass.studentRestriction.restriction.restrictionCode}(${restrictionBypass.studentRestriction.id}).`,
+            `Student has an active '${RestrictionActionType.StopPartTimeDisbursement}' restriction and the disbursement calculation will not proceed.`,
+          ]),
+        ).toBe(true);
+
+        const [firstSchedule] =
+          application.currentAssessment.disbursementSchedules;
+        // Check if the disbursement is still pending.
+        const isSchedulePending = await db.disbursementSchedule.exists({
+          where: {
+            id: firstSchedule.id,
+            dateSent: IsNull(),
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+          },
+        });
+        expect(isSchedulePending).toBe(true);
+        // Validate if the bypass is still active.
+        const isBypassActive = await db.applicationRestrictionBypass.exists({
+          where: { id: restrictionBypass.id, isActive: true },
+        });
+        expect(isBypassActive).toBe(true);
       },
     );
 

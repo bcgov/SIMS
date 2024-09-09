@@ -101,7 +101,7 @@ export async function saveFakeApplicationRestrictionBypass(
   bypass.createdAt = now;
   // Define studentRestriction.
   if (!relations.studentRestriction) {
-    // Find the restriction to ne associated with the student.
+    // Find the restriction to be associated with the student.
     const findOptions: FindOneOptions<Restriction> = options?.restrictionCode
       ? { where: { restrictionCode: options.restrictionCode } }
       : {
