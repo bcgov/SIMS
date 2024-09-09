@@ -51,7 +51,7 @@ export class RestrictionBypassesResolutionStep implements ECertProcessStep {
     const studentNote = await this.noteSharedService.createStudentNote(
       eCertDisbursement.studentId,
       NoteType.Application,
-      "Automatically removing bypass after the first e-Cert was generated.",
+      `Automatically removing bypass from application number ${eCertDisbursement.applicationNumber} after the first e-Cert was generated.`,
       this.systemUsersService.systemUser.id,
       entityManager,
     );

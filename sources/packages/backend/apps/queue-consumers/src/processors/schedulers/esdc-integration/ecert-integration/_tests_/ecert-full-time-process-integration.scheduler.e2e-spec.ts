@@ -945,8 +945,7 @@ describe(
             id: systemUsersService.systemUser.id,
           },
           removalNote: {
-            description:
-              "Automatically removing bypass after the first e-Cert was generated.",
+            description: `Automatically removing bypass from application number ${application.applicationNumber} after the first e-Cert was generated.`,
           },
         });
       },
