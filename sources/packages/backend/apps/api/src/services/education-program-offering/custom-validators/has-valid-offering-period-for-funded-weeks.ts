@@ -45,7 +45,6 @@ class HasValidOfferingPeriodForFundedWeeksConstraint
       `${offeringIntensity} offerings must be at least ${offeringMinWeeksAllowedValue} funded weeks of study or longer to be eligible. ` +
       "Any shorter offerings can be submitted but will require SABC review."
     );
-    // return `The funded study amount of days is ineligible for StudentAid BC funding. Your offering must be at least ${offeringMinWeeksAllowedValue} weeks of study or longer to be eligible.`;
   }
 
   /**
