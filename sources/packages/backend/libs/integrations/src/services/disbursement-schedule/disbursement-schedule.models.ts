@@ -244,8 +244,8 @@ export class EligibleECertDisbursement {
     public readonly offering: EligibleECertOffering,
     public readonly maxLifetimeBCLoanAmount: number,
     public readonly disabilityDetails: DisabilityDetails,
-    readonly restrictions: StudentActiveRestriction[],
-    readonly restrictionBypass: ApplicationActiveRestrictionBypass[],
+    private readonly restrictions: StudentActiveRestriction[],
+    private readonly restrictionBypass: ApplicationActiveRestrictionBypass[],
   ) {
     this.studentRestrictionsBypassedIds = this.restrictionBypass.map(
       (bypass) => bypass.studentRestrictionId,
