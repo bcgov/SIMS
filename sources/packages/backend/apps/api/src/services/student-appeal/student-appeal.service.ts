@@ -497,6 +497,9 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         `EXISTS(${this.studentAppealRequestsService
           .appealsByStatusQueryObject(status)
           .getSql()})`,
+      )
+      .groupBy(
+        "studentAppeal.id, " + "application.id, " + "user.id, " + "student.id",
       );
     if (paginationOptions.searchCriteria) {
       studentAppealsQuery
