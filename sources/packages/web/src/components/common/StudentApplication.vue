@@ -19,6 +19,29 @@
     secondaryLabel="Previous section"
     class="mx-0"
   >
+    <template #primary-buttons v-if="isLastPage">
+      <span>
+        <v-btn
+          :disabled="processing || submittingApplication"
+          color="primary"
+          variant="outlined"
+          class="mr-2"
+          @click="handleSaveDraft"
+          :loading="savingDraft"
+        >
+          {{ savingDraft ? "Saving..." : "Save draft" }}
+        </v-btn>
+        <v-btn
+          :disabled="processing || savingDraft"
+          color="primary"
+          variant="elevated"
+          @click="handleSubmitApplication"
+          :loading="submittingApplication"
+        >
+          {{ submittingApplication ? "Submitting..." : "Submit application" }}
+        </v-btn>
+      </span>
+    </template>
   </footer-buttons>
 </template>
 
@@ -42,6 +65,7 @@ export default defineComponent({
     "submitApplication",
     "customEventCallback",
     "pageChanged",
+    "saveDraft",
   ],
   props: {
     initialData: {
@@ -63,6 +87,18 @@ export default defineComponent({
     processing: {
       type: Boolean,
       required: false,
+    },
+    notDraft: {
+      type: Boolean,
+      default: false,
+    },
+    savingDraft: {
+      type: Boolean,
+      default: false,
+    },
+    submittingApplication: {
+      type: Boolean,
+      default: false,
     },
   },
   setup(props, context) {
@@ -306,6 +342,16 @@ export default defineComponent({
       context.emit("customEventCallback", form, event);
     };
 
+    const handleSaveDraft = () => {
+      context.emit('saveDraft', formInstance.submission.data, formInstance);
+    };
+
+    const handleSubmitApplication = () => {
+      if (formInstance) {
+       context.emit('submitApplication', formInstance.submission.data, formInstance);
+      }
+    };
+
     watch(
       () => props.initialData,
       async () => {
@@ -322,6 +368,8 @@ export default defineComponent({
       submitted,
       customEvent,
       showNav,
+      handleSaveDraft,
+      handleSubmitApplication,
     };
   },
 });
