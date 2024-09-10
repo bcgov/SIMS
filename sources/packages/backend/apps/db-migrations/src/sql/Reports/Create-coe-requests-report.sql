@@ -11,7 +11,7 @@ VALUES
             student_user.email AS "Student Email Address",
             student.contact_info ->> ''phone'' AS "Student Phone Number",
             application.application_number AS "Application Number",
-            TO_CHAR(assessment.assessment_date, ''YYYY-MM-DD HH24:MI:SS'') AS "Assessment Date",
+            TO_CHAR((assessment.assessment_date AT TIME ZONE ''America/Vancouver''), ''YYYY-MM-DD HH24:MI:SS'') AS "Assessment Date",
             program.program_name AS "Program Name",
             offering.offering_name AS "Offering Name",
             offering.offering_intensity AS "Study Intensity",
@@ -33,8 +33,8 @@ VALUES
                     AND disbursement_value.value_code != ''BCSG''
             ) AS "Estimated Disbursement Amount",
             CASE
-                WHEN disbursement.disbursement_schedule_status IN (''Sent'', ''Ready to send'') THEN CAST(disbursement.date_sent AS VARCHAR)
-                ELSE CAST(disbursement.disbursement_date AS VARCHAR)
+                WHEN disbursement.disbursement_schedule_status IN (''Sent'', ''Ready to send'') THEN TO_CHAR(disbursement.date_sent, ''YYYY-MM-DD'')
+                ELSE TO_CHAR(disbursement.disbursement_date, ''YYYY-MM-DD'')
             END AS "Disbursement Date"
         FROM
             sims.disbursement_schedules disbursement
