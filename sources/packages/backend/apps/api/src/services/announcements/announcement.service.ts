@@ -15,11 +15,11 @@ export class AnnouncementService extends RecordDataModelService<Announcement> {
   async getAnnouncements(): Promise<Announcement[]> {
     const now = new Date();
     return this.repo.find({
-      order: { startDate: "ASC" },
       where: {
         startDate: LessThanOrEqual(now),
         endDate: MoreThanOrEqual(now),
       },
+      order: { startDate: "ASC" },
     });
   }
 }
