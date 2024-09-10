@@ -1,0 +1,1 @@
+DROP TABLE sims.application_restriction_bypasses;

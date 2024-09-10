@@ -26,3 +26,4 @@ export * from "@/services/http/dto/Overaward.dto";
 export * from "@/services/http/dto/StudentAppeal.dto";
 export * from "@/services/http/dto/ApplicationOfferingChangeRequest.dto";
 export * from "@/services/http/dto/StudentLoanBalance.dto";
+export * from "@/services/http/dto/CASSupplier.dto";
