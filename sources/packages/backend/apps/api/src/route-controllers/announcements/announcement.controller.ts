@@ -12,6 +12,10 @@ export class AnnouncementController extends BaseController {
     super();
   }
 
+  /**
+   * Get system announcements.
+   * @returns system announcements list.
+   */
   @Public()
   @Get()
   async getAnnouncements(): Promise<Announcement[]> {
