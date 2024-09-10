@@ -60,10 +60,18 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
     );
-    const fakeFullTimeEducationProgram = createFakeEducationProgram({
-      institution: collegeF,
-      user: collegeFUser,
-    });
+    const fakeFullTimeEducationProgram = createFakeEducationProgram(
+      {
+        institution: collegeF,
+        user: collegeFUser,
+      },
+      {
+        initialValue: {
+          sabcCode: faker.random.alpha({ count: 4 }),
+          deliveredOnline: true,
+        },
+      },
+    );
     const fakePartTimeEducationProgram = createFakeEducationProgram(
       {
         institution: collegeF,
@@ -76,8 +84,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
         },
       },
     );
-    fakeFullTimeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
-    fakeFullTimeEducationProgram.deliveredOnline = true;
     collegeFFullTimeProgram = await db.educationProgram.save(
       fakeFullTimeEducationProgram,
     );
@@ -201,7 +207,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       });
   });
 
-  it("Should validate an offering when valid data without study breaks is passed in for a full-time education program.", async () => {
+  it("Should validate an offering when valid data without study breaks is passed in for a full-time education program offering.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -246,7 +252,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       });
   });
 
-  it("Should validate an offering when valid data with study breaks is passed in for a full-time education program.", async () => {
+  it("Should validate an offering when valid data with study breaks is passed in for a full-time education program offering.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -296,7 +302,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       });
   });
 
-  it("Should validate an offering with info when valid data with study breaks is passed in for a full-time education program.", async () => {
+  it("Should validate an offering with info when valid data with study breaks is passed in for a full-time education program offering.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -353,7 +359,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       });
   });
 
-  it("Should validate an offering with info and warning when data with total funded weeks less than minimum allowed weeks and study breaks is passed in for a full-time education program.", async () => {
+  it("Should validate an offering with info and warning when data with total funded weeks less than minimum allowed weeks and study breaks is passed in for a full-time education program offering.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -404,7 +410,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
           {
             typeCode: OfferingValidationWarnings.InvalidFundedStudyPeriodLength,
             message:
-              "The funded study amount of days is ineligible for StudentAid BC funding. Your offering must be at least 12 weeks of study or longer to be eligible.",
+              "Full-time offerings must be at least 12 funded weeks of study or longer to be eligible. Any shorter offerings can be submitted but will require SABC review.",
           },
         ],
         studyPeriodBreakdown: {
@@ -416,7 +422,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       });
   });
 
-  it("Should validate an offering with warning when data with total funded weeks less than minimum allowed weeks and without study breaks is passed in for a full-time education program.", async () => {
+  it("Should validate an offering with warning when data with total funded weeks less than minimum allowed weeks and without study breaks is passed in for a full-time education program offering.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -455,7 +461,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
           {
             typeCode: OfferingValidationWarnings.InvalidFundedStudyPeriodLength,
             message:
-              "The funded study amount of days is ineligible for StudentAid BC funding. Your offering must be at least 12 weeks of study or longer to be eligible.",
+              "Full-time offerings must be at least 12 funded weeks of study or longer to be eligible. Any shorter offerings can be submitted but will require SABC review.",
           },
         ],
         studyPeriodBreakdown: {
@@ -467,7 +473,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       });
   });
 
-  it("Should validate an offering when valid data without study breaks is passed in for a part-time education program.", async () => {
+  it("Should validate an offering when valid data without study breaks is passed in for a part-time education program offering.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -513,7 +519,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       });
   });
 
-  it("Should validate an offering when valid data with study breaks is passed in for a part-time education program.", async () => {
+  it("Should validate an offering when valid data with study breaks is passed in for a part-time education program offering.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -564,7 +570,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       });
   });
 
-  it("Should validate an offering with info when valid data with study breaks is passed in for a part-time education program.", async () => {
+  it("Should validate an offering with info when valid data with study breaks is passed in for a part-time education program offering.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -622,7 +628,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       });
   });
 
-  it("Should validate an offering with info and warning when data with total funded weeks less than minimum allowed weeks and study breaks is passed in for a part-time education program.", async () => {
+  it("Should validate an offering with info and warning when data with total funded weeks less than minimum allowed weeks and study breaks is passed in for a part-time education program offering.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -674,7 +680,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
           {
             typeCode: OfferingValidationWarnings.InvalidFundedStudyPeriodLength,
             message:
-              "The funded study amount of days is ineligible for StudentAid BC funding. Your offering must be at least 6 weeks of study or longer to be eligible.",
+              "Part-time offerings must be at least 6 funded weeks of study or longer to be eligible. Any shorter offerings can be submitted but will require SABC review.",
           },
         ],
         studyPeriodBreakdown: {
@@ -686,7 +692,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       });
   });
 
-  it("Should validate an offering with warning when data with total funded weeks less than minimum allowed weeks and without study breaks is passed in for a part-time education program.", async () => {
+  it("Should validate an offering with warning when data with total funded weeks less than minimum allowed weeks and without study breaks is passed in for a part-time education program offering.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -726,7 +732,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
           {
             typeCode: OfferingValidationWarnings.InvalidFundedStudyPeriodLength,
             message:
-              "The funded study amount of days is ineligible for StudentAid BC funding. Your offering must be at least 6 weeks of study or longer to be eligible.",
+              "Part-time offerings must be at least 6 funded weeks of study or longer to be eligible. Any shorter offerings can be submitted but will require SABC review.",
           },
         ],
         studyPeriodBreakdown: {

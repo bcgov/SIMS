@@ -406,7 +406,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
   );
 
   it(
-    `Should create a new offering with offering status ${OfferingStatus.CreationPending} and warning when data with total funded ` +
+    `Should create a new full-time offering with offering status ${OfferingStatus.CreationPending} and warning when data with total funded ` +
       `weeks less than minimum allowed weeks and without study breaks is passed.`,
     async () => {
       // Arrange

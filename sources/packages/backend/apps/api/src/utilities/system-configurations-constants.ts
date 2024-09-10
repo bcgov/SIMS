@@ -103,10 +103,10 @@ export const MAXIMUM_ESSENTIAL_LOAN_BALANCE_RECORDS = 12;
  */
 export const APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION = 5;
 /**
- * Minimum amount of weeks required for a full time offering study period.
+ * Minimum amount of funded weeks required for a full time offering study period.
  */
 export const OFFERING_STUDY_PERIOD_MIN_FUNDED_WEEKS_FULL_TIME = 12;
 /**
- * Minimum amount of weeks required for a part time offering study period.
+ * Minimum amount of funded weeks required for a part time offering study period.
  */
 export const OFFERING_STUDY_PERIOD_MIN_FUNDED_WEEKS_PART_TIME = 6;

@@ -29,6 +29,7 @@ import {
   MAX_ALLOWED_OFFERING_AMOUNT,
   MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
 } from "../../../../utilities";
+import { PrimaryIdentifierAPIOutDTO } from "apps/api/src/route-controllers/models/primary.identifier.dto";
 
 describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () => {
   let app: INestApplication;
@@ -222,7 +223,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
         .auth(institutionUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.UNPROCESSABLE_ENTITY)
         .expect((response) => {
-          console.log("response.body: ", response.body);
           expect(response.body).toEqual({
             message: "An offering has invalid data.",
             errorType: OFFERING_VALIDATION_CRITICAL_ERROR,
@@ -241,7 +241,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
                     typeCode:
                       OfferingValidationWarnings.InvalidFundedStudyPeriodLength,
                     message:
-                      "The funded study amount of days is ineligible for StudentAid BC funding. Your offering must be at least 12 weeks of study or longer to be eligible.",
+                      "Full-time offerings must be at least 12 funded weeks of study or longer to be eligible. Any shorter offerings can be submitted but will require SABC review.",
                   }),
                   expect.objectContaining({
                     typeCode:
@@ -483,14 +483,14 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
 
       // Creating an institution location with same location code as that of the
       // second row in the CSV file.
-      const collegeFLocationSEYk = createFakeInstitutionLocation(
+      const collegeFLocationSEYK = createFakeInstitutionLocation(
         {
           institution: collegeF,
         },
         {
           initialValue: {
             institutionCode: csvLocationCodeSEYK,
-          } as Partial<InstitutionLocation>,
+          },
         },
       );
       // Create a program for the institution with the same SABC code as that of the
@@ -511,7 +511,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       await authorizeUserTokenForLocation(
         db.dataSource,
         InstitutionTokenTypes.CollegeFUser,
-        collegeFLocationSEYk,
+        collegeFLocationSEYK,
       );
 
       const multipleOfferingFilePath = path.join(
@@ -519,8 +519,10 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
         "bulk-insert/multiple-upload-with-total-funded-weeks-less-than-minimum-allowed-weeks.csv",
       );
 
-      let responseOfferingSBC1: EducationProgram,
-        responseOfferingSBC2: EducationProgram;
+      let [
+        responseOfferingSBC1,
+        responseOfferingSBC2,
+      ]: PrimaryIdentifierAPIOutDTO[] = [];
 
       // Act/Assert
       await request(app.getHttpServer())
@@ -530,8 +532,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
         .expect(HttpStatus.CREATED)
         .expect((response) => {
           [responseOfferingSBC1, responseOfferingSBC2] = response.body;
-          expect(responseOfferingSBC1).toHaveProperty("id");
-          expect(responseOfferingSBC2).toHaveProperty("id");
+          expect(responseOfferingSBC1.id).toBeGreaterThan(0);
+          expect(responseOfferingSBC2.id).toBeGreaterThan(0);
         });
 
       // Checking the created offering statuses.
@@ -555,7 +557,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       // The total funded weeks for the programs 'SBC4' in the CSV are less than the minimum allowed weeks,
       // offering status with 'Creation pending' will be created when inserted.
       expect(offeringSBC1).toEqual({
-        name: "Test program 41",
+        name: "Test offering 41",
         offeringStatus: OfferingStatus.CreationPending,
         studyStartDate: "2024-05-23",
         studyEndDate: "2024-08-07",
@@ -567,7 +569,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
         },
       });
       expect(offeringSBC2).toEqual({
-        name: "Test program 42",
+        name: "Test offering 42",
         offeringStatus: OfferingStatus.CreationPending,
         studyStartDate: "2024-05-23",
         studyEndDate: "2024-08-16",

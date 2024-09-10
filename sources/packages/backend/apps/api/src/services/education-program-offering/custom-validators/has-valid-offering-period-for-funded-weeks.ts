@@ -5,13 +5,17 @@ import {
   ValidationOptions,
   ValidationArguments,
 } from "class-validator";
-import { StudyBreak } from "../education-program-offering-validation.models";
+import {
+  OfferingValidationModel,
+  StudyBreak,
+} from "../education-program-offering-validation.models";
 import { OfferingCalculationValidationBaseConstraint } from "./offering-calculation-validation-base-constraint";
+import { OfferingIntensity } from "@sims/sims-db";
 
 /**
  * For an offering that contains study breaks, execute the calculation
  * of the funded study period to validate if it matches the minimum
- * allowed study period amount of weeks.
+ * allowed study period amount of funded weeks.
  */
 @ValidatorConstraint()
 class HasValidOfferingPeriodForFundedWeeksConstraint
@@ -32,7 +36,16 @@ class HasValidOfferingPeriodForFundedWeeksConstraint
 
   defaultMessage(args: ValidationArguments) {
     const offeringMinWeeksAllowedValue = this.getOfferingMinAllowedWeeks(args);
-    return `The funded study amount of days is ineligible for StudentAid BC funding. Your offering must be at least ${offeringMinWeeksAllowedValue} weeks of study or longer to be eligible.`;
+    const validationObject = args.object as OfferingValidationModel;
+    const offeringIntensity =
+      validationObject.offeringIntensity === OfferingIntensity.fullTime
+        ? "Full-time"
+        : "Part-time";
+    return (
+      `${offeringIntensity} offerings must be at least ${offeringMinWeeksAllowedValue} funded weeks of study or longer to be eligible. ` +
+      "Any shorter offerings can be submitted but will require SABC review."
+    );
+    // return `The funded study amount of days is ineligible for StudentAid BC funding. Your offering must be at least ${offeringMinWeeksAllowedValue} weeks of study or longer to be eligible.`;
   }
 
   /**
@@ -49,17 +62,17 @@ class HasValidOfferingPeriodForFundedWeeksConstraint
 /**
  * For an offering that contains study breaks, execute the calculation
  * of the funded study period to validate if it matches the minimum
- * allowed study period amount of weeks.
+ * allowed study period amount of funded weeks.
  * @param startPeriodProperty property of the model that identifies the offering start date.
  * @param endPeriodProperty property of the model that identifies the offering end date.
- * @param offeringMinWeeksAllowed study period minimum length in number of weeks.
+ * @param offeringMinFundedWeeksAllowed study period minimum funded length in number of weeks.
  * @param validationOptions validations options.
  * @returns true if the study period is valid, otherwise, false.
  */
 export function HasValidOfferingPeriodForFundedWeeks(
   startPeriodProperty: (targetObject: unknown) => Date | string,
   endPeriodProperty: (targetObject: unknown) => Date | string,
-  offeringMinWeeksAllowed: (targetObject: unknown) => number,
+  offeringMinFundedWeeksAllowed: (targetObject: unknown) => number,
   validationOptions?: ValidationOptions,
 ) {
   return (object: unknown, propertyName: string) => {
@@ -71,7 +84,7 @@ export function HasValidOfferingPeriodForFundedWeeks(
       constraints: [
         startPeriodProperty,
         endPeriodProperty,
-        offeringMinWeeksAllowed,
+        offeringMinFundedWeeksAllowed,
       ],
       validator: HasValidOfferingPeriodForFundedWeeksConstraint,
     });
