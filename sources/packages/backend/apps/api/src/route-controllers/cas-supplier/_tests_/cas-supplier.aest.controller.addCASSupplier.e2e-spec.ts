@@ -35,7 +35,7 @@ describe("CASSupplierAESTController(e2e)-addCASSupplier", () => {
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
-    let casSupplierId;
+    let casSupplierId: number;
     await request(app.getHttpServer())
       .post(endpoint)
       .send(payload)
