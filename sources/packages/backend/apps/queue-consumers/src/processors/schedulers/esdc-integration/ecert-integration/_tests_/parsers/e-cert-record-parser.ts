@@ -1,6 +1,17 @@
 import { User } from "@sims/sims-db";
 
 /**
+ * e-Cert max allowed first name length.
+ * Part-time and full-time uses the same max length.
+ */
+const MAX_FIRST_NAME_LENGTH = 15;
+/**
+ * e-Cert max allowed last name length.
+ * Part-time and full-time uses the same max length.
+ */
+const MAX_LAST_NAME_LENGTH = 25;
+
+/**
  * Parses e-Cert record information.
  */
 export abstract class ECertRecordParser {
@@ -26,6 +37,9 @@ export abstract class ECertRecordParser {
    * @returns true if the users first name and last name matches.
    */
   hasUser(user: Pick<User, "firstName" | "lastName">): boolean {
-    return user.lastName === this.lastName && user.firstName === this.firstName;
+    return (
+      user.lastName.substring(0, MAX_LAST_NAME_LENGTH - 1) === this.lastName &&
+      user.firstName?.substring(0, MAX_FIRST_NAME_LENGTH - 1) === this.firstName
+    );
   }
 }
