@@ -23,26 +23,28 @@ class HasValidOfferingPeriodForFundedWeeksConstraint
   implements ValidatorConstraintInterface
 {
   validate(studyBreaks: StudyBreak[], args: ValidationArguments): boolean {
-    const offeringMinWeeksAllowedValue = this.getOfferingMinAllowedWeeks(args);
+    const offeringMinFundedWeeksAllowedValue =
+      this.getOfferingMinAllowedWeeks(args);
     const calculatedStudyBreaksAndWeeks = this.getCalculatedStudyBreaks(
       studyBreaks,
       args,
     );
     return (
       calculatedStudyBreaksAndWeeks.totalFundedWeeks >=
-      offeringMinWeeksAllowedValue
+      offeringMinFundedWeeksAllowedValue
     );
   }
 
   defaultMessage(args: ValidationArguments) {
-    const offeringMinWeeksAllowedValue = this.getOfferingMinAllowedWeeks(args);
+    const offeringMinFundedWeeksAllowedValue =
+      this.getOfferingMinAllowedWeeks(args);
     const validationObject = args.object as OfferingValidationModel;
     const offeringIntensity =
       validationObject.offeringIntensity === OfferingIntensity.fullTime
         ? "Full-time"
         : "Part-time";
     return (
-      `${offeringIntensity} offerings must be at least ${offeringMinWeeksAllowedValue} funded weeks of study or longer to be eligible. ` +
+      `${offeringIntensity} offerings must be at least ${offeringMinFundedWeeksAllowedValue} funded weeks of study or longer to be eligible. ` +
       "Any shorter offerings can be submitted but will require SABC review."
     );
   }
