@@ -84,10 +84,10 @@ export function createFakeCASSupplier(
     casSupplier.isValid = false;
   }
   casSupplier.supplierNumber = faker.datatype
-    .number({ min: 6, max: 30 })
+    .number({ min: 100000, max: 9999999999 })
     .toString();
   casSupplier.supplierAddress.supplierSiteCode = faker.datatype
-    .number({ min: 3, max: 3 })
+    .number({ min: 100, max: 999 })
     .toString();
   casSupplier.supplierStatusUpdatedOn = new Date();
   casSupplier.creator = relations.auditUser;

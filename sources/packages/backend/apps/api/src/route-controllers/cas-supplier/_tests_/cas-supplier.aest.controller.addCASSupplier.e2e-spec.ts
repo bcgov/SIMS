@@ -35,43 +35,44 @@ describe("CASSupplierAESTController(e2e)-addCASSupplier", () => {
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
+    let casSupplierId;
     await request(app.getHttpServer())
       .post(endpoint)
       .send(payload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED)
       .then(async (response) => {
-        const casSupplier = response.body;
-        const savedCASSupplier = await db.casSupplier.findOne({
-          select: {
-            id: true,
-            createdAt: true,
-            supplierNumber: true,
-            supplierProtected: true,
-            supplierStatus: true,
-            isValid: true,
-            lastUpdated: true,
-            supplierStatusUpdatedOn: true,
-            supplierAddress: true as unknown,
-          },
-          where: {
-            student: { id: student.id },
-          },
-        });
-        expect(savedCASSupplier).toEqual({
-          id: casSupplier.id,
-          createdAt: expect.any(Date),
-          supplierNumber: payload.supplierNumber,
-          supplierProtected: null,
-          supplierStatus: SupplierStatus.VerifiedManually,
-          isValid: true,
-          lastUpdated: expect.any(Date),
-          supplierStatusUpdatedOn: expect.any(Date),
-          supplierAddress: {
-            supplierSiteCode: payload.supplierSiteCode,
-          },
-        });
+        casSupplierId = response.body.id;
       });
+    const savedCASSupplier = await db.casSupplier.findOne({
+      select: {
+        id: true,
+        createdAt: true,
+        supplierNumber: true,
+        supplierProtected: true,
+        supplierStatus: true,
+        isValid: true,
+        lastUpdated: true,
+        supplierStatusUpdatedOn: true,
+        supplierAddress: true as unknown,
+      },
+      where: {
+        student: { id: student.id },
+      },
+    });
+    expect(savedCASSupplier).toEqual({
+      id: casSupplierId,
+      createdAt: expect.any(Date),
+      supplierNumber: payload.supplierNumber,
+      supplierProtected: null,
+      supplierStatus: SupplierStatus.VerifiedManually,
+      isValid: true,
+      lastUpdated: expect.any(Date),
+      supplierStatusUpdatedOn: expect.any(Date),
+      supplierAddress: {
+        supplierSiteCode: payload.supplierSiteCode,
+      },
+    });
   });
 
   it("Should validate site code length when value is greater then max length.", async () => {
