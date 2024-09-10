@@ -37,7 +37,6 @@ export class ReportService extends RecordDataModelService<ReportConfig> {
     //Search for params sent from payload in the query. They must be available in the query in :<param_name> pattern.
     //If a param is not found throw error as filter params payload is expected to match the query.
     Object.keys(filterParams).forEach((key, index) => {
-      console.log("Param", key);
       const doesParamExist = reportQuery.includes(`:${key}`);
       if (!doesParamExist) {
         throw new CustomNamedError(

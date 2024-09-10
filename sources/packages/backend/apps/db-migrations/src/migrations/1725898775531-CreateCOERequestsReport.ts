@@ -12,7 +12,7 @@ export class CreateCOERequestsReport1725898775531
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Rollback-coe-requests-report.sql", "Reports"),
+      getSQLFileData("Rollback-create-coe-requests-report.sql", "Reports"),
     );
   }
 }
