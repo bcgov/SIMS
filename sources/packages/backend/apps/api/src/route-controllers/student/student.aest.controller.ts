@@ -152,8 +152,8 @@ export class StudentAESTController extends BaseController {
   @ApiNotFoundResponse({ description: "Student was not found." })
   @ApiInternalServerErrorResponse({
     description:
-      "The file upload service is currently unavailable." +
-      " There was an unexpected error while uploading the file.",
+      "The file upload service is currently unavailable " +
+      "or there was an unexpected error while uploading the file.",
   })
   @UseInterceptors(
     FileInterceptor("file", {

@@ -110,6 +110,10 @@ export class StudentControllerService {
           });
         }
       }
+      this.logger.error(parseJSONError(error));
+      throw new Error("Unexpected error while saving the file.", {
+        cause: error,
+      });
     }
     return {
       fileName: file.originalname,

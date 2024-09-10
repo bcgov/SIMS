@@ -59,9 +59,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
       savedFile = await this.repo.save(newFile);
     } catch (error: unknown) {
       this.logger.error(`Error saving the file: ${error}`);
-      this.logger.error(
-        `Uploading file ${newFile.fileName} to S3 storage failed. Error persisting the file details to the database.`,
-      );
+      this.logger.error("Error persisting the file details to the database.");
       throw new CustomNamedError(
         `Unexpected error while uploading the file ${newFile.fileName}.`,
         FILE_SAVE_ERROR,
