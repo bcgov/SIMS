@@ -46,6 +46,7 @@ import NoticeOfAssessment from "@/views/aest/student/applicationDetails/NoticeOf
 import ApplicationExceptionsApproval from "@/views/aest/student/applicationDetails/ApplicationExceptionsApproval.vue";
 import ViewScholasticStanding from "@/views/aest/student/ViewScholasticStanding.vue";
 import SINManagement from "@/views/aest/student/SINManagement.vue";
+import CASSupplierInformation from "@/views/aest/student/CASSupplierInformation.vue";
 import Balances from "@/views/aest/student/Balances.vue";
 import StudentApplicationExceptions from "@/views/aest/student/StudentApplicationExceptions.vue";
 import OfferingChangeRequests from "@/views/aest/institution/OfferingChangeRequests.vue";
@@ -157,6 +158,17 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             name: AESTRoutesConst.SIN_MANAGEMENT,
             props: true,
             component: SINManagement,
+            meta: {
+              clientType: ClientIdType.AEST,
+            },
+          },
+          {
+            path: AppRoutes.CASSupplierManagement,
+            name: AESTRoutesConst.CAS_SUPPLIER_MANAGEMENT,
+            props: (route) => ({
+              studentId: parseInt(route.params.studentId as string),
+            }),
+            component: CASSupplierInformation,
             meta: {
               clientType: ClientIdType.AEST,
             },

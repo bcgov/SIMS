@@ -25,9 +25,11 @@ import { StudentAccountApplicationApi } from "@/services/http/StudentAccountAppl
 import { OverawardApi } from "@/services/http/OverawardApi";
 import { ApplicationOfferingChangeRequestApi } from "./ApplicationOfferingChangeRequestApi";
 import { StudentLoanBalanceApi } from "./StudentLoanBalanceApi";
+import { CASSupplierApi } from "@/services/http/CASSupplier";
 
 const ApiClient = {
   Configs: new ConfigApi(),
+  CASSupplier: new CASSupplierApi(),
   Students: new StudentApi(),
   ProgramYear: new ProgramYearApi(),
   User: new UserApi(),
