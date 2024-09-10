@@ -872,7 +872,7 @@ describe(
         ).toBe(true);
         expect(
           mockedJob.containLogMessage(
-            "There are not active restriction bypasses.",
+            "There are no active restriction bypasses.",
           ),
         ).toBe(false);
 

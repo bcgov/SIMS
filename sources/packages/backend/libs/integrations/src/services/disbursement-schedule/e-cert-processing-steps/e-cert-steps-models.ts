@@ -15,6 +15,7 @@ export interface ECertProcessStep {
    * For steps that are not directly accessing or changing the database this
    * parameter will be provided as part of this common method but can be ignored.
    * @param log cumulative log summary.
+   * @returns true if the steps execution can proceed, otherwise, false.
    */
   executeStep(
     eCertDisbursement: EligibleECertDisbursement,

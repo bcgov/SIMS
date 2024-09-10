@@ -38,7 +38,7 @@ export function logActiveRestrictionsBypasses(
   log: ProcessSummary,
 ): void {
   if (!bypasses.length) {
-    log.info("There are not active restriction bypasses.");
+    log.info("There are no active restriction bypasses.");
     return;
   }
   const bypassLogInfo = bypasses.map(

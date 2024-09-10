@@ -26,6 +26,7 @@ export class RestrictionBypassesResolutionStep implements ECertProcessStep {
    * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
    * @param entityManager used to execute the commands in the same transaction.
    * @param log cumulative log summary.
+   * @returns true if the steps execution can proceed, otherwise, false.
    */
   async executeStep(
     eCertDisbursement: EligibleECertDisbursement,
