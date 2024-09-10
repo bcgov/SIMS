@@ -17,6 +17,7 @@ class PeriodsAreBetweenLimitsConstraint
   implements ValidatorConstraintInterface
 {
   validate(values: unknown[], args: ValidationArguments): boolean {
+    if (!values) return true;
     const period = this.getPeriodFromArguments(args);
     const [refTarget] = values;
     const periodStartDateProperty = getPeriodStartDateProperty(refTarget);
