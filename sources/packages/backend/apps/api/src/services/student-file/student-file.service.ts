@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { DataSource, EntityManager, In, UpdateResult } from "typeorm";
 import {
   LoggerService,
@@ -15,15 +15,17 @@ import {
 } from "@sims/sims-db";
 import { CreateFile, FileUploadOptions } from "./student-file.model";
 import { InjectQueue } from "@nestjs/bull";
-import { CustomNamedError, QueueNames } from "@sims/utilities";
+import { CustomNamedError, parseJSONError, QueueNames } from "@sims/utilities";
 import { Queue } from "bull";
 import { VirusScanQueueInDTO } from "@sims/services/queue";
 import { FILE_SAVE_ERROR } from "../../constants";
+import { ObjectStorageService } from "@sims/integrations/object-storage";
 
 @Injectable()
 export class StudentFileService extends RecordDataModelService<StudentFile> {
   constructor(
     private readonly dataSource: DataSource,
+    private readonly objectStorageService: ObjectStorageService,
     @InjectQueue(QueueNames.FileVirusScanProcessor)
     private readonly virusScanQueue: Queue<VirusScanQueueInDTO>,
   ) {
@@ -31,7 +33,8 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
   }
 
   /**
-   * Creates a file and associates it with a student.
+   * Saves the file metadata to db and the file contents
+   * to the S3 file storage and associates it with the student.
    * Subsequently, adds the file to the virus scan queue
    * to scan for any viruses.
    * @param createFile file to be created.
@@ -45,6 +48,16 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     studentId: number,
     auditUserId: number,
   ): Promise<StudentFile> {
+    try {
+      // File upload to the S3 file storage.
+      await this.uploadFileToStorage(createFile);
+    } catch (error: unknown) {
+      throw new CustomNamedError(
+        `Unexpected error while uploading the file ${createFile.fileName}.`,
+        FILE_SAVE_ERROR,
+        error,
+      );
+    }
     const newFile = new StudentFile();
     newFile.fileName = createFile.fileName;
     newFile.uniqueFileName = createFile.uniqueFileName;
@@ -201,6 +214,31 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
   }
 
   /**
+   * Gets a list of student files from the student account
+   * (i.e, fileOrigin is FileOriginType.Student or FileOriginType.Ministry).
+   * @param studentId student id.
+   * @returns student files from the student account.
+   */
+  async getStudentUploadedFiles(studentId: number): Promise<StudentFile[]> {
+    return this.repo
+      .createQueryBuilder("studentFile")
+      .select([
+        "studentFile.uniqueFileName",
+        "studentFile.fileName",
+        "studentFile.metadata",
+        "studentFile.groupName",
+        "studentFile.updatedAt",
+        "studentFile.fileOrigin",
+      ])
+      .where("studentFile.student.id = :studentId", { studentId })
+      .andWhere("studentFile.fileOrigin IN (:...fileOrigin)", {
+        fileOrigin: [FileOriginType.Student, FileOriginType.Ministry],
+      })
+      .orderBy("studentFile.createdAt", "DESC")
+      .getMany();
+  }
+
+  /**
    * Update the files submitted by the student
    * with proper data.
    * @param entityManager entity manager for a given transaction.
@@ -238,29 +276,31 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
   }
 
   /**
-   * Gets a list of student files from the student account
-   * (i.e, fileOrigin is FileOriginType.Student or FileOriginType.Ministry).
-   * @param studentId student id.
-   * @returns student files from the student account.
+   * Uploads the file to the S3 file storage.
+   * @params file the file to be uploaded to the file storage.
    */
-  async getStudentUploadedFiles(studentId: number): Promise<StudentFile[]> {
-    return this.repo
-      .createQueryBuilder("studentFile")
-      .select([
-        "studentFile.uniqueFileName",
-        "studentFile.fileName",
-        "studentFile.metadata",
-        "studentFile.groupName",
-        "studentFile.updatedAt",
-        "studentFile.fileOrigin",
-      ])
-      .where("studentFile.student.id = :studentId", { studentId })
-      .andWhere("studentFile.fileOrigin IN (:...fileOrigin)", {
-        fileOrigin: [FileOriginType.Student, FileOriginType.Ministry],
-      })
-      .orderBy("studentFile.createdAt", "DESC")
-      .getMany();
+  private async uploadFileToStorage(file: CreateFile): Promise<void> {
+    try {
+      this.logger.log(`Uploading file ${file.fileName} to S3 storage.`);
+      await this.objectStorageService.putObject({
+        key: file.uniqueFileName,
+        contentType: file.mimeType,
+        body: file.fileContent,
+      });
+      this.logger.log(`Uploaded file ${file.fileName} to S3 storage.`);
+    } catch (error: unknown) {
+      this.logger.error(parseJSONError(error));
+      this.logger.error(
+        `Uploading file ${file.fileName} to S3 storage failed.`,
+      );
+      throw new CustomNamedError(
+        `Unexpected error while uploading the file ${file.fileName}.`,
+        FILE_SAVE_ERROR,
+        error,
+      );
+    }
   }
+
   @InjectLogger()
   logger: LoggerService;
 }

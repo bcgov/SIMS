@@ -13,3 +13,11 @@ ADD
   COLUMN file_content bytea NOT NULL DEFAULT 'Deleted';
 
 COMMENT ON COLUMN sims.student_files.file_content IS 'File Content.';
+
+-- drop the default on both the columns
+ALTER TABLE
+  sims.student_files
+ALTER COLUMN
+  mime_type DROP DEFAULT,
+ALTER COLUMN
+  file_content DROP DEFAULT;

@@ -75,45 +75,27 @@ export class StudentControllerService {
     auditUserId: number,
   ): Promise<FileCreateAPIOutDTO> {
     try {
-      this.logger.log(`Uploading file ${file.originalname} to S3 storage.`);
-      await this.objectStorageService.putObject({
-        key: uniqueFileName,
-        contentType: file.mimetype,
-        body: file.buffer,
-      });
-      this.logger.log(`Uploaded file ${file.originalname} to S3 storage.`);
-    } catch (error: unknown) {
-      this.logger.error(
-        `Uploading file ${file.originalname} to S3 storage failed. S3 storage failure.`,
-      );
-      this.logger.error(parseJSONError(error));
-      throw new InternalServerErrorException(
-        `Unexpected error while uploading the file ${file.originalname}.`,
-        FILE_UPLOAD_SERVICE_UNAVAILABLE,
-      );
-    }
-    try {
       await this.fileService.createFile(
         {
           fileName: file.originalname,
           uniqueFileName: uniqueFileName,
+          mimeType: file.mimetype,
+          fileContent: file.buffer,
           groupName: groupName,
         },
         studentId,
         auditUserId,
       );
     } catch (error: unknown) {
-      if (error instanceof CustomNamedError) {
-        if (error.name === FILE_SAVE_ERROR) {
-          throw new InternalServerErrorException(error.message, {
-            cause: error,
-          });
-        }
-      }
       this.logger.error(parseJSONError(error));
-      throw new Error("Unexpected error while saving the file.", {
-        cause: error,
-      });
+      if (error instanceof CustomNamedError) {
+        throw new InternalServerErrorException(error.message, {
+          cause: error.objectInfo,
+        });
+      }
+      throw new InternalServerErrorException(
+        "Unexpected error while saving the file.",
+      );
     }
     return {
       fileName: file.originalname,
@@ -185,12 +167,6 @@ export class StudentControllerService {
       // Populate file information received from S3 storage.
       response.setHeader("Content-Type", fileContent.contentType);
       response.setHeader("Content-Length", fileContent.contentLength);
-      // The readable stream is piped to the response as and when the
-      // the bytes are received so as to avoid it from getting accumulated
-      // in the memory (flow mode). This is in contrast to writing the
-      // bytes to the response collectively after accumulating them in memory
-      // as would be the case if reading the stream in the paused mode
-      // using the read method.
       fileContent.body.pipe(response);
     } catch (error: unknown) {
       if (error instanceof NoSuchKey) {
@@ -200,6 +176,9 @@ export class StudentControllerService {
       } else {
         this.logger.error(parseJSONError(error));
       }
+      throw new InternalServerErrorException(
+        "Error while downloading the file.",
+      );
     }
   }
 
