@@ -40,7 +40,12 @@ import { ApiProcessError } from "../../types";
 import { FILE_HAS_NOT_BEEN_SCANNED_YET, VIRUS_DETECTED } from "../../constants";
 import { ObjectStorageService } from "@sims/integrations/object-storage";
 import { NoSuchKey } from "@aws-sdk/client-s3";
-import { InjectLogger, LoggerService } from "@sims/utilities/logger";
+import {
+  InjectLogger,
+  LoggerService,
+  ProcessSummary,
+} from "@sims/utilities/logger";
+import { error } from "console";
 
 @Injectable()
 export class StudentControllerService {
@@ -69,6 +74,7 @@ export class StudentControllerService {
     groupName: string,
     auditUserId: number,
   ): Promise<FileCreateAPIOutDTO> {
+    const summary = new ProcessSummary();
     try {
       await this.fileService.createFile(
         {
@@ -80,17 +86,18 @@ export class StudentControllerService {
         },
         studentId,
         auditUserId,
+        summary,
       );
     } catch (error: unknown) {
-      this.logger.error(parseJSONError(error));
+      summary.error(`File ${file.originalname} saving failed.`, error);
       if (error instanceof CustomNamedError) {
-        throw new InternalServerErrorException(error.message, {
-          cause: error.objectInfo,
-        });
+        throw new InternalServerErrorException(error.message);
       }
       throw new InternalServerErrorException(
         "Unexpected error while saving the file.",
       );
+    } finally {
+      this.logger.logProcessSummary(summary);
     }
     return {
       fileName: file.originalname,

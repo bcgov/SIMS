@@ -41,21 +41,28 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
    * @param studentId student that will have the file associated.
    * @param auditUserId user that should be considered the one that is
    * causing the changes.
+   * @param summary process summary logger.
    * @returns saved student file record.
    */
   async createFile(
     createFile: CreateFile,
     studentId: number,
     auditUserId: number,
+    summary: ProcessSummary,
   ): Promise<StudentFile> {
     try {
-      // File upload to the S3 file storage.
-      await this.uploadFileToStorage(createFile);
+      summary.info(`Uploading file ${createFile.fileName} to S3 storage.`);
+      await this.objectStorageService.putObject({
+        key: createFile.uniqueFileName,
+        contentType: createFile.mimeType,
+        body: createFile.fileContent,
+      });
+      summary.info(`File ${createFile.fileName} uploaded to S3 storage.`);
     } catch (error: unknown) {
+      summary.error(`Error while uploading ${createFile.fileName}.`, error);
       throw new CustomNamedError(
         `Unexpected error while uploading the file ${createFile.fileName}.`,
         FILE_SAVE_ERROR,
-        error,
       );
     }
     const newFile = new StudentFile();
@@ -66,13 +73,12 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     newFile.creator = { id: auditUserId } as User;
     newFile.virusScanStatus = VirusScanStatus.InProgress;
 
-    const summary = new ProcessSummary();
+    summary.info(`Saving the file ${createFile.fileName} to database.`);
     let savedFile: StudentFile;
     try {
       savedFile = await this.repo.save(newFile);
     } catch (error: unknown) {
-      this.logger.error(`Error saving the file: ${error}`);
-      this.logger.error("Error persisting the file details to the database.");
+      summary.error("Error saving the file.", error);
       throw new CustomNamedError(
         `Unexpected error while uploading the file ${newFile.fileName}.`,
         FILE_SAVE_ERROR,
@@ -102,8 +108,6 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         { uniqueFileName: newFile.uniqueFileName },
         { virusScanStatus: VirusScanStatus.Pending },
       );
-    } finally {
-      this.logger.logProcessSummary(summary);
     }
   }
 
@@ -273,32 +277,6 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         modifier: { id: auditUserId } as User,
       },
     );
-  }
-
-  /**
-   * Uploads the file to the S3 file storage.
-   * @params file the file to be uploaded to the file storage.
-   */
-  private async uploadFileToStorage(file: CreateFile): Promise<void> {
-    try {
-      this.logger.log(`Uploading file ${file.fileName} to S3 storage.`);
-      await this.objectStorageService.putObject({
-        key: file.uniqueFileName,
-        contentType: file.mimeType,
-        body: file.fileContent,
-      });
-      this.logger.log(`Uploaded file ${file.fileName} to S3 storage.`);
-    } catch (error: unknown) {
-      this.logger.error(parseJSONError(error));
-      this.logger.error(
-        `Uploading file ${file.fileName} to S3 storage failed.`,
-      );
-      throw new CustomNamedError(
-        `Unexpected error while uploading the file ${file.fileName}.`,
-        FILE_SAVE_ERROR,
-        error,
-      );
-    }
   }
 
   @InjectLogger()
