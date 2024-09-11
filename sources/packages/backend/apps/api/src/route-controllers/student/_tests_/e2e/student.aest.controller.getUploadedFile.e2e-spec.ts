@@ -17,7 +17,7 @@ import {
   VIRUS_DETECTED,
 } from "../../../../constants";
 import { VirusScanStatus } from "@sims/sims-db";
-import { DUMMY_FILE_CONTENT } from "@sims/test-utils/mocks";
+import { S3_DEFAULT_MOCKED_FILE_CONTENT } from "@sims/test-utils/mocks";
 
 describe("StudentAESTController(e2e)-getUploadedFile", () => {
   let app: INestApplication;
@@ -118,7 +118,7 @@ describe("StudentAESTController(e2e)-getUploadedFile", () => {
         expect(response.headers["content-disposition"]).toBe(
           `attachment; filename=${studentFile.fileName}`,
         );
-        expect(response.text).toStrictEqual(DUMMY_FILE_CONTENT);
+        expect(response.text).toStrictEqual(S3_DEFAULT_MOCKED_FILE_CONTENT);
       });
   });
 
