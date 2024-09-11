@@ -22,23 +22,23 @@
     <template #primary-buttons v-if="isLastPage">
       <span>
         <v-btn
-          :disabled="processing || submittingApplication"
           color="primary"
+          v-if="!notDraft && !isFirstPage && !processing"
           variant="outlined"
-          class="mr-2"
-          @click="handleSaveDraft"
           :loading="savingDraft"
+          @click="handleSaveDraft()"
         >
           {{ savingDraft ? "Saving..." : "Save draft" }}
         </v-btn>
         <v-btn
-          :disabled="processing || savingDraft"
+          v-if="!isReadOnly && !isFirstPage"
+          class="ml-2"
+          :disabled="processing"
           color="primary"
-          variant="elevated"
-          @click="handleSubmitApplication"
-          :loading="submittingApplication"
+          @click="handleWizardSubmit()"
+          :loading="processing"
         >
-          {{ submittingApplication ? "Submitting..." : "Submit application" }}
+          {{ processing ? "Submitting..." : "Submit application" }}
         </v-btn>
       </span>
     </template>
@@ -66,6 +66,7 @@ export default defineComponent({
     "customEventCallback",
     "pageChanged",
     "saveDraft",
+    "wizardSubmit",
   ],
   props: {
     initialData: {
@@ -93,10 +94,6 @@ export default defineComponent({
       default: false,
     },
     savingDraft: {
-      type: Boolean,
-      default: false,
-    },
-    submittingApplication: {
       type: Boolean,
       default: false,
     },
@@ -343,13 +340,11 @@ export default defineComponent({
     };
 
     const handleSaveDraft = () => {
-      context.emit('saveDraft', formInstance.submission.data, formInstance);
+      context.emit("saveDraft");
     };
 
-    const handleSubmitApplication = () => {
-      if (formInstance) {
-       context.emit('submitApplication', formInstance.submission.data, formInstance);
-      }
+    const handleWizardSubmit = () => {
+      context.emit("wizardSubmit");
     };
 
     watch(
@@ -369,7 +364,7 @@ export default defineComponent({
       customEvent,
       showNav,
       handleSaveDraft,
-      handleSubmitApplication,
+      handleWizardSubmit,
     };
   },
 });

@@ -38,9 +38,9 @@
       @saveDraft="saveDraft"
       @customEventCallback="customEventCallback"
       @pageChanged="pageChanged"
+      @wizardSubmit="wizardSubmit"
       :processing="submittingApplication"
       :savingDraft="savingDraft"
-      :submittingApplication="submittingApplication"
     />
   </student-page-container>
   <ConfirmEditApplication
