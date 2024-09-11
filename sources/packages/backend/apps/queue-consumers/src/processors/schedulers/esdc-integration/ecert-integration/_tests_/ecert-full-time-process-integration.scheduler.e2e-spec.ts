@@ -922,7 +922,7 @@ describe(
             },
           ]),
         });
-        // Validate if the restriction was resolved.
+        // Validate if bypass was removed/disabled.
         const resolvedBypass = await db.applicationRestrictionBypass.findOne({
           select: {
             id: true,
