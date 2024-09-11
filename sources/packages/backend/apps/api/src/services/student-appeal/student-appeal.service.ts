@@ -492,14 +492,10 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       .innerJoin("studentAppeal.application", "application")
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
-      .innerJoin("studentAppeal.appealRequests", "appealRequests")
       .where(
         `EXISTS(${this.studentAppealRequestsService
           .appealsByStatusQueryObject(status)
           .getSql()})`,
-      )
-      .groupBy(
-        "studentAppeal.id, " + "application.id, " + "user.id, " + "student.id",
       );
     if (paginationOptions.searchCriteria) {
       studentAppealsQuery
