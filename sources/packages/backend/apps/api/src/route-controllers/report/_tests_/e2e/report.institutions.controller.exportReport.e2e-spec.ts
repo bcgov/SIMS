@@ -5,6 +5,7 @@ import {
   Assessment,
   COEStatus,
   DisbursementSchedule,
+  DisbursementScheduleStatus,
   DisbursementValueType,
   FullTimeAssessment,
   Institution,
@@ -32,6 +33,7 @@ import {
 } from "@sims/test-utils";
 import {
   BEARER_AUTH_TYPE,
+  INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
   InstitutionTokenTypes,
   authorizeUserTokenForLocation,
   createTestingAppModule,
@@ -431,17 +433,16 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
       });
   });
 
-  it.only(
+  it(
     `Should generate the COE Requests report for both ${OfferingIntensity.fullTime} and ${OfferingIntensity.partTime} application disbursements` +
-      ` and for the given program year when one or more applications which are not in ${ApplicationStatus.Completed} or ${ApplicationStatus.Enrolment} status` +
+      ` and for the given program year when one or more applications which are neither in ${ApplicationStatus.Completed} or ${ApplicationStatus.Enrolment} status` +
       ` exist for the given institution.`,
     async () => {
       // Arrange
       const institution = await db.institution.save(
         createFakeInstitution({ institutionType: bcPublicInstitutionType }),
       );
-      const assessmentDate = new Date();
-      const coeUpdatedDate = new Date();
+
       // Application in completed status with disbursements.
       const completedApplication = await saveFakeApplicationDisbursements(
         db.dataSource,
@@ -463,13 +464,16 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
                 pdppdStatus: false,
               },
             } as WorkflowData,
-            assessmentDate: assessmentDate,
+            assessmentDate: new Date(),
           },
+          offeringIntensity: OfferingIntensity.fullTime,
           applicationStatus: ApplicationStatus.Completed,
           firstDisbursementInitialValues: {
             coeStatus: COEStatus.completed,
-            coeUpdatedAt: coeUpdatedDate,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+            coeUpdatedAt: new Date(),
             tuitionRemittanceRequestedAmount: 100,
+            dateSent: new Date(),
           },
         },
       );
@@ -494,12 +498,14 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
                 pdppdStatus: false,
               },
             } as WorkflowData,
-            assessmentDate: assessmentDate,
+            assessmentDate: new Date(),
           },
+          offeringIntensity: OfferingIntensity.partTime,
           applicationStatus: ApplicationStatus.Enrolment,
           firstDisbursementInitialValues: {
             coeStatus: COEStatus.required,
-            coeUpdatedAt: coeUpdatedDate,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+            coeUpdatedAt: new Date(),
             tuitionRemittanceRequestedAmount: 100,
           },
         },
@@ -526,16 +532,18 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
                 pdppdStatus: false,
               },
             } as WorkflowData,
-            assessmentDate: assessmentDate,
+            assessmentDate: new Date(),
           },
+          offeringIntensity: OfferingIntensity.partTime,
           applicationStatus: ApplicationStatus.Assessment,
           firstDisbursementInitialValues: {
             coeStatus: COEStatus.required,
-            coeUpdatedAt: coeUpdatedDate,
+            coeUpdatedAt: new Date(),
             tuitionRemittanceRequestedAmount: 100,
           },
         },
       );
+
       const programYearDefault = completedApplication.programYear;
       const payload = {
         reportName: "COE_Requests",
@@ -547,6 +555,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
           programYear: programYearDefault.id,
         },
       };
+
       const dryRunSubmissionMock = jest.fn().mockResolvedValue({
         valid: true,
         formName: FormNames.ExportFinancialReports,
@@ -557,6 +566,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
       const institutionUserToken = await getInstitutionToken(
         InstitutionTokenTypes.CollegeFUser,
       );
+
       // Mock institution user authorization so that the user token will return the fake institution id and mocked roles.
       await mockInstitutionUserAuthorization(appModule, {
         institutionId: institution.id,
@@ -568,6 +578,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
           },
         ],
       });
+
       // Act/Assert
       await request(app.getHttpServer())
         .post(endpoint)
@@ -579,7 +590,6 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
           const parsedResult = parse(fileContent, {
             header: true,
           });
-          console.log(parsedResult.data);
           // Build expected result.
           const [firstReportDisbursement] =
             enrolmentApplication.currentAssessment.disbursementSchedules;
@@ -593,8 +603,9 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
           const secondReportDisbursementData = buildCOERequestsReportData(
             secondReportDisbursement,
             "1000.00",
-            secondReportDisbursement.disbursementDate,
+            getISODateOnlyString(secondReportDisbursement.dateSent),
           );
+          // Expect the disbursement for the application in `Assessment` status is not included in the report.
           expect(parsedResult.data.length).toBe(2);
           expect(parsedResult.data).toStrictEqual([
             firstReportDisbursementData,
@@ -603,6 +614,167 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
         });
     },
   );
+
+  it(
+    `Should generate the COE Requests report without including application(s) that are archived` +
+      ` when one or more applications which are archived exist for the given institution.`,
+    async () => {
+      // Arrange
+      const institution = await db.institution.save(
+        createFakeInstitution({ institutionType: bcPublicInstitutionType }),
+      );
+
+      // Application in completed status with disbursements and not archived.
+      const notArchivedApplication = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          student: sharedStudent,
+          institution,
+          disbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLF",
+              1000,
+            ),
+          ],
+        },
+        {
+          currentAssessmentInitialValues: {
+            workflowData: {
+              calculatedData: {
+                pdppdStatus: false,
+              },
+            } as WorkflowData,
+            assessmentDate: new Date(),
+          },
+          applicationStatus: ApplicationStatus.Completed,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+            coeUpdatedAt: new Date(),
+            tuitionRemittanceRequestedAmount: 100,
+            dateSent: new Date(),
+          },
+        },
+      );
+      // Application to be archived.
+      const archivedApplication = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          student: sharedStudent,
+          institution,
+          disbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLF",
+              1000,
+            ),
+          ],
+        },
+        {
+          currentAssessmentInitialValues: {
+            workflowData: {
+              calculatedData: {
+                pdppdStatus: false,
+              },
+            } as WorkflowData,
+            assessmentDate: new Date(),
+          },
+          applicationStatus: ApplicationStatus.Enrolment,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.required,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+            coeUpdatedAt: new Date(),
+            tuitionRemittanceRequestedAmount: 100,
+          },
+        },
+      );
+      archivedApplication.isArchived = true;
+      db.application.save(archivedApplication);
+
+      const programYearDefault = notArchivedApplication.programYear;
+      const payload = {
+        reportName: "COE_Requests",
+        params: {
+          offeringIntensity: {
+            "Full Time": true,
+            "Part Time": true,
+          },
+          programYear: programYearDefault.id,
+        },
+      };
+
+      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+        valid: true,
+        formName: FormNames.ExportFinancialReports,
+        data: { data: payload },
+      });
+      formService.dryRunSubmission = dryRunSubmissionMock;
+      const endpoint = "/institutions/report";
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+
+      // Mock institution user authorization so that the user token will return the fake institution id and mocked roles.
+      await mockInstitutionUserAuthorization(appModule, {
+        institutionId: institution.id,
+        authorizations: [
+          {
+            locationId: null,
+            userRole: null,
+            userType: InstitutionUserTypes.admin,
+          },
+        ],
+      });
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED)
+        .then((response) => {
+          const fileContent = response.request.res["text"];
+          const parsedResult = parse(fileContent, {
+            header: true,
+          });
+          // Build expected result.
+          const [firstReportDisbursement] =
+            notArchivedApplication.currentAssessment.disbursementSchedules;
+          const firstReportDisbursementData = buildCOERequestsReportData(
+            firstReportDisbursement,
+            "1000.00",
+            getISODateOnlyString(firstReportDisbursement.dateSent),
+          );
+
+          // Expect the disbursement for the application which is not archived.
+          expect(parsedResult.data.length).toBe(1);
+          expect(parsedResult.data).toStrictEqual([
+            firstReportDisbursementData,
+          ]);
+        });
+    },
+  );
+
+  it(`Should throw forbidden error when the institution type is not BC Public.`, async () => {
+    // Arrange
+    const endpoint = "/institutions/report";
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeCUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send({})
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
+        error: "Forbidden",
+      });
+  });
 
   /**
    * Build COE Requests report data.
