@@ -37,12 +37,7 @@ import {
 } from "./models/student.dto";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 import { ApiProcessError } from "../../types";
-import {
-  FILE_HAS_NOT_BEEN_SCANNED_YET,
-  FILE_SAVE_ERROR,
-  FILE_UPLOAD_SERVICE_UNAVAILABLE,
-  VIRUS_DETECTED,
-} from "../../constants";
+import { FILE_HAS_NOT_BEEN_SCANNED_YET, VIRUS_DETECTED } from "../../constants";
 import { ObjectStorageService } from "@sims/integrations/object-storage";
 import { NoSuchKey } from "@aws-sdk/client-s3";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
