@@ -18,7 +18,9 @@ export async function mockInstitutionUserAuthorization(
     AuthModule,
     InstitutionUserAuthService,
   );
-  institutionUserAuthService.getAuthorizationsByUserName = jest
-    .fn()
-    .mockResolvedValue(institutionUserAuthorizations);
+  jest
+    .spyOn(institutionUserAuthService, "getAuthorizationsByUserName")
+    .mockImplementation(() => {
+      return Promise.resolve(institutionUserAuthorizations);
+    });
 }

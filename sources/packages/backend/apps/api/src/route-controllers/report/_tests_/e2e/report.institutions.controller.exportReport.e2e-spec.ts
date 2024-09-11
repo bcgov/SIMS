@@ -107,6 +107,10 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
     sharedStudent = await saveFakeStudent(db.dataSource);
   });
 
+  beforeEach(async () => {
+    jest.restoreAllMocks();
+  });
+
   it("Should generate the offering details report when a report generation request is made with the appropriate program year and offering intensity.", async () => {
     // Arrange
 
