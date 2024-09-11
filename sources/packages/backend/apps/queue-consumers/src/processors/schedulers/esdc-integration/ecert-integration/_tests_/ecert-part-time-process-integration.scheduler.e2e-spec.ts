@@ -318,8 +318,7 @@ describe(
       // Validate record.
       const recordParsed = new PartTimeCertRecordParser(record);
       expect(recordParsed.recordType).toBe("02");
-      expect(recordParsed.firstName).toBe(student.user.firstName);
-      expect(recordParsed.lastName).toBe(student.user.lastName);
+      expect(recordParsed.hasUser(student.user)).toBe(true);
       expect(recordParsed.disbursementAmount).toBe("000123500");
       // TODO include other fields as needed.
 
