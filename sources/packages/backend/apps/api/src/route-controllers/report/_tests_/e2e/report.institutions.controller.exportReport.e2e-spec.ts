@@ -106,6 +106,10 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
     sharedStudent = await saveFakeStudent(db.dataSource);
   });
 
+  beforeEach(async () => {
+    jest.clearAllMocks();
+  });
+
   it("Should generate the offering details report when a report generation request is made with the appropriate program year and offering intensity.", async () => {
     // Arrange
 
@@ -433,6 +437,26 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
       });
   });
 
+  it(`Should throw forbidden error when the institution type is not BC Public.`, async () => {
+    // Arrange
+    const endpoint = "/institutions/report";
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeCUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send({})
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
+        error: "Forbidden",
+      });
+  });
+
   it(
     `Should generate the COE Requests report for both ${OfferingIntensity.fullTime} and ${OfferingIntensity.partTime} application disbursements` +
       ` and for the given program year when one or more applications which are neither in ${ApplicationStatus.Completed} or ${ApplicationStatus.Enrolment} status` +
@@ -690,7 +714,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
         },
       );
       archivedApplication.isArchived = true;
-      db.application.save(archivedApplication);
+      await db.application.save(archivedApplication);
 
       const programYearDefault = notArchivedApplication.programYear;
       const payload = {
@@ -755,26 +779,6 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
         });
     },
   );
-
-  it(`Should throw forbidden error when the institution type is not BC Public.`, async () => {
-    // Arrange
-    const endpoint = "/institutions/report";
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeCUser,
-    );
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .post(endpoint)
-      .send({})
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.FORBIDDEN)
-      .expect({
-        statusCode: HttpStatus.FORBIDDEN,
-        message: INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
-        error: "Forbidden",
-      });
-  });
 
   /**
    * Build COE Requests report data.
