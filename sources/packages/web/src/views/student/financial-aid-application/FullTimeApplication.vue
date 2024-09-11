@@ -35,12 +35,13 @@
       :programYearId="programYearId"
       @formLoadedCallback="loadForm"
       @submitApplication="submitApplication"
-      @saveDraft="saveDraft"
       @customEventCallback="customEventCallback"
       @pageChanged="pageChanged"
       @wizardSubmit="wizardSubmit"
+      @saveDraft="saveDraft"
       :processing="submittingApplication"
       :savingDraft="savingDraft"
+      :notDraft="notDraft"
     />
   </student-page-container>
   <ConfirmEditApplication
