@@ -11249,7 +11249,13 @@
                   "disabled": false,
                   "tableView": false,
                   "modalEdit": false,
-                  "defaultValue": [],
+                  "defaultValue": [
+                    {
+                      "firstName": "",
+                      "lastName": "",
+                      "relationshipWithThisContact": ""
+                    }
+                  ],
                   "persistent": true,
                   "protected": false,
                   "dbIndex": false,
