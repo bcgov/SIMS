@@ -15,7 +15,7 @@ import {
 } from "@sims/sims-db";
 import { CreateFile, FileUploadOptions } from "./student-file.model";
 import { InjectQueue } from "@nestjs/bull";
-import { CustomNamedError, parseJSONError, QueueNames } from "@sims/utilities";
+import { CustomNamedError, QueueNames } from "@sims/utilities";
 import { Queue } from "bull";
 import { VirusScanQueueInDTO } from "@sims/services/queue";
 import { FILE_SAVE_ERROR } from "../../constants";

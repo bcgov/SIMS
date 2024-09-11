@@ -45,7 +45,6 @@ import {
   LoggerService,
   ProcessSummary,
 } from "@sims/utilities/logger";
-import { error } from "console";
 
 @Injectable()
 export class StudentControllerService {
