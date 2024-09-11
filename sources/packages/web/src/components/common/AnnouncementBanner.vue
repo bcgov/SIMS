@@ -1,30 +1,17 @@
 <template>
-  <v-alert
-    v-if="relevantAnnouncements && relevantAnnouncements.length > 0"
+  <banner
+    header="System Announcements"
     :type="BannerTypes.Warning"
-    variant="outlined"
-    icon="fa:fa fa-triangle-exclamation"
-    class="sims-banner"
+    v-if="relevantAnnouncements && relevantAnnouncements.length > 0"
   >
-    <template #title>
-      <div class="mb-5">System Announcements</div>
+    <template #content>
+      <div v-for="(announcement, index) in relevantAnnouncements" :key="index">
+        <b>{{ announcement.messageTitle }}</b> -
+        <i>added {{ dateOnlyLongString(announcement.startDate) }}</i>
+        <p>{{ announcement.message }}</p>
+      </div>
     </template>
-    <v-row>
-      <v-col>
-        <div
-          v-for="(announcement, index) in relevantAnnouncements"
-          :key="index"
-        >
-          <div class="label-value-normal">
-            <b>{{ announcement.messageTitle }}</b> -
-            <i>added {{ dateOnlyLongString(announcement.startDate) }}</i>
-            <p>{{ announcement.message }}</p>
-          </div>
-        </div>
-      </v-col>
-      <v-col cols="auto"> <slot name="actions"></slot></v-col>
-    </v-row>
-  </v-alert>
+  </banner>
 </template>
 <script lang="ts">
 import { defineComponent, onMounted, ref } from "vue";
@@ -34,7 +21,7 @@ import { useFormatters } from "@/composables";
 
 export default defineComponent({
   props: {
-    location: {
+    dashboard: {
       type: String,
       required: true,
     },
@@ -48,7 +35,7 @@ export default defineComponent({
       let announcements = await AnnouncementService.shared.getAnnouncements();
       relevantAnnouncements.value = announcements.filter((announcement) => {
         return announcement.target.some(
-          (tar: string) => tar.toLowerCase() === props.location.toLowerCase(),
+          (tar: string) => tar.toLowerCase() === props.dashboard.toLowerCase(),
         );
       });
     });

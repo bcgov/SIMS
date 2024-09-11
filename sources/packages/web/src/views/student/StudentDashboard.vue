@@ -1,6 +1,8 @@
 <template>
   <student-page-container layout-template="centered">
-    <announcement-banner location="StudentDashboard" />
+    <template #alerts>
+      <announcement-banner dashboard="StudentDashboard"
+    /></template>
     <formio-container
       formName="studentWelcomePage"
       :formData="studentDetails"

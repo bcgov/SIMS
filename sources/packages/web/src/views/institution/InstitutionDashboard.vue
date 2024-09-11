@@ -4,7 +4,9 @@
     layout-template="centered"
     data-cy="institutionWelcomePage"
   >
-    <announcement-banner location="InstitutionDashboard" />
+    <template #alerts>
+      <announcement-banner dashboard="InstitutionDashboard" />
+    </template>
     <formio-container formName="institutionWelcomePage" />
   </full-page-container>
 </template>
