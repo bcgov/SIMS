@@ -2514,7 +2514,7 @@
                               "tableView": true,
                               "validate": {
                                 "required": true,
-                                "custom": "// To calculate the time difference of two dates\r\nconst Difference_In_Time =\r\n  new Date(data.studyendDate).getTime() -\r\n  new Date(data.studystartDate).getTime();\r\n\r\n// To calculate the no. of days between two dates\r\nconst Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);\r\nvalid = data.studystartDate\r\n  ? Difference_In_Days >= data.studyPeriodMinDays &&\r\n    Difference_In_Days <= data.studyPeriodMaxDays\r\n    ? true\r\n    : `Invalid Study Period, Dates must be between ${data.studyPeriodMinDays} and ${data.studyPeriodMaxDays} days`\r\n  : \"Please provide Study Start date\";",
+                                "custom": "// To calculate the time difference of two dates\r\nconst Difference_In_Time =\r\n  new Date(data.studyendDate).getTime() -\r\n  new Date(data.studystartDate).getTime();\r\n\r\n// To calculate the no. of days between two dates\r\nconst Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);\r\nvalid = data.studystartDate\r\n  ? Difference_In_Days <= data.studyPeriodMaxDays\r\n    ? true\r\n    : `Invalid Study Period, Dates must not be greater than ${data.studyPeriodMaxDays} days`\r\n  : \"Please provide Study Start date\";",
                                 "customPrivate": false,
                                 "strictDateValidation": false,
                                 "multiple": false,
@@ -5391,25 +5391,6 @@
         {
           "input": true,
           "tableView": true,
-          "key": "studyPeriodMinDays",
-          "label": "Study period minimum days",
-          "protected": false,
-          "unique": false,
-          "persistent": true,
-          "type": "hidden",
-          "tags": [],
-          "conditional": {
-            "show": "",
-            "when": null,
-            "eq": ""
-          },
-          "properties": {},
-          "lockKey": true,
-          "calculateValue": "value = data.howWillYouBeAttendingTheProgram === \"Full Time\" ? 84 : 42;"
-        },
-        {
-          "input": true,
-          "tableView": true,
           "key": "studyPeriodMaxDays",
           "label": "Study period maximum days",
           "protected": false,
@@ -5424,7 +5405,8 @@
           },
           "properties": {},
           "lockKey": true,
-          "defaultValue": "365"
+          "defaultValue": "365",
+          "isNew": false
         }
       ],
       "input": false,

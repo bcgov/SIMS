@@ -1,5 +1,9 @@
 import { INestApplication } from "@nestjs/common";
-import { createE2EDataSources, E2EDataSources } from "@sims/test-utils";
+import {
+  createE2EDataSources,
+  E2EDataSources,
+  saveFakeCASSupplier,
+} from "@sims/test-utils";
 import { QueueNames } from "@sims/utilities";
 import { CASSupplierIntegrationScheduler } from "../cas-supplier-integration.scheduler";
 import {
@@ -13,7 +17,6 @@ import {
   SUPPLIER_INFO_FROM_CAS_MOCKED_RESULT,
 } from "../../../../../test/helpers/mock-utils/cas-service.mock";
 import { CASService } from "@sims/integrations/cas/cas.service";
-import { saveFakeCASSupplier } from "./cas-supplier.factory";
 
 describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
   let app: INestApplication;

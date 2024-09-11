@@ -10,6 +10,7 @@ import {
   CalculateTuitionRemittanceEffectiveAmountStep,
   CreateBCTotalGrantsStep,
   PersistCalculationsStep,
+  RestrictionBypassesResolutionStep,
   ValidateDisbursementFullTimeStep,
 } from "../e-cert-processing-steps";
 import { ECertGenerationService } from "../e-cert-generation.service";
@@ -34,6 +35,7 @@ export class FullTimeCalculationProcess extends ECertCalculationProcess {
     private readonly calculateTuitionRemittanceEffectiveAmountStep: CalculateTuitionRemittanceEffectiveAmountStep,
     private readonly createBCTotalGrantsStep: CreateBCTotalGrantsStep,
     private readonly persistCalculationsStep: PersistCalculationsStep,
+    private readonly restrictionBypassesResolutionStep: RestrictionBypassesResolutionStep,
   ) {
     super(dataSource, eCertNotificationService);
   }
@@ -67,6 +69,7 @@ export class FullTimeCalculationProcess extends ECertCalculationProcess {
       this.calculateTuitionRemittanceEffectiveAmountStep,
       this.createBCTotalGrantsStep,
       this.persistCalculationsStep,
+      this.restrictionBypassesResolutionStep,
     ];
   }
 }

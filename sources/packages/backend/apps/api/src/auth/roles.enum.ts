@@ -8,6 +8,7 @@ export enum Role {
   AESTManualTriggerReassessment = "aest-manual-trigger-reassessment",
   AESTReports = "aest-reports",
   AESTCreateInstitution = "aest-create-institution",
+  AESTEditCASSupplierInfo = "aest-edit-cas-supplier-info",
   StudentAddRestriction = "student-add-restriction",
   StudentResolveRestriction = "student-resolve-restriction",
   StudentUploadFile = "student-upload-file",

@@ -7,7 +7,10 @@ import {
   ECertFailedValidation,
   EligibleECertDisbursement,
 } from "../disbursement-schedule.models";
-import { getRestrictionByActionType } from "./e-cert-steps-utils";
+import {
+  getRestrictionByActionType,
+  logActiveRestrictionsBypasses,
+} from "./e-cert-steps-utils";
 import {
   ECertPreValidator,
   ECertPreValidatorResult,
@@ -73,6 +76,10 @@ export class ValidateDisbursementFullTimeStep
         ECertFailedValidation.HasStopDisbursementRestriction,
       );
     }
+    logActiveRestrictionsBypasses(
+      eCertDisbursement.activeRestrictionBypasses,
+      log,
+    );
     return new ECertPreValidatorResult(validationResults);
   }
 }

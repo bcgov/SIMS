@@ -88,6 +88,7 @@ export enum AppRoutes {
   Users = "users",
   Designation = "designation",
   SINManagement = "sin-management",
+  CASSupplierManagement = "cas-supplier-management",
   ApplicationDetail = "student/:studentId/application/:applicationId",
   SupportingUserDetail = "supporting-user/:supportingUserId",
   // Supporting Users

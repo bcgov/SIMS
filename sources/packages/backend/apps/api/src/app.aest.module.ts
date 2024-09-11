@@ -31,6 +31,7 @@ import {
   ApplicationOfferingChangeRequestService,
   StudentLoanBalanceService,
   ProgramYearService,
+  CASSupplierService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -73,6 +74,7 @@ import {
   ApplicationOfferingChangeRequestAESTController,
   ApplicationOfferingChangeRequestControllerService,
   StudentLoanBalanceAESTController,
+  CASSupplierAESTController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -119,6 +121,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     OverawardAESTController,
     ApplicationOfferingChangeRequestAESTController,
     StudentLoanBalanceAESTController,
+    CASSupplierAESTController,
   ],
   providers: [
     ApplicationExceptionControllerService,
@@ -183,6 +186,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     AssessmentSequentialProcessingService,
     StudentLoanBalanceService,
     ProgramYearService,
+    CASSupplierService,
   ],
 })
 export class AppAESTModule {}

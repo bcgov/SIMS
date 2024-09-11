@@ -1,5 +1,4 @@
 import {
-  ArrayMinSize,
   IsBoolean,
   IsDateString,
   IsEnum,
@@ -13,7 +12,6 @@ import {
   MaxLength,
   Min,
   ValidateIf,
-  ValidateNested,
 } from "class-validator";
 import {
   EducationProgram,
@@ -41,7 +39,7 @@ import { ProgramAllowsOfferingIntensity } from "./custom-validators/program-allo
 import { ProgramAllowsOfferingDelivery } from "./custom-validators/program-allows-offering-delivery";
 import { ProgramAllowsOfferingWIL } from "./custom-validators/program-allows-offering-wil";
 import { StudyBreaksCombinedMustNotExceedsThreshold } from "./custom-validators/study-break-has-valid-consecutive-threshold";
-import { HasValidOfferingPeriodForFundedDays } from "./custom-validators/has-valid-offering-period-for-funded-days";
+import { HasValidOfferingPeriodForFundedWeeks } from "./custom-validators/has-valid-offering-period-for-funded-weeks";
 import {
   MAX_ALLOWED_OFFERING_AMOUNT,
   MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
@@ -50,8 +48,8 @@ import {
   OFFERING_STUDY_BREAK_MAX_DAYS,
   OFFERING_STUDY_BREAK_MIN_DAYS,
   OFFERING_STUDY_PERIOD_MAX_DAYS,
-  OFFERING_STUDY_PERIOD_MIN_DAYS_FULL_TIME,
-  OFFERING_STUDY_PERIOD_MIN_DAYS_PART_TIME,
+  OFFERING_STUDY_PERIOD_MIN_FUNDED_WEEKS_FULL_TIME,
+  OFFERING_STUDY_PERIOD_MIN_FUNDED_WEEKS_PART_TIME,
   OFFERING_YEAR_OF_STUDY_MAX_VALUE,
   OFFERING_YEAR_OF_STUDY_MIN_VALUE,
 } from "../../utilities";
@@ -193,6 +191,7 @@ export enum OfferingValidationWarnings {
   ProgramOfferingDeliveryMismatch = "programOfferingDeliveryMismatch",
   ProgramOfferingWILMismatch = "programOfferingWILMismatch",
   InvalidStudyDatesPeriodLength = "invalidStudyDatesPeriodLength",
+  InvalidFundedStudyPeriodLength = "invalidFundedStudyPeriodLength",
   OfferingCostExceedMaximum = "offeringCostExceedMaximum",
 }
 
@@ -271,15 +270,15 @@ const studyEndDateProperty = (offering: OfferingValidationModel) =>
   offering.studyEndDate;
 
 /**
- * Get study period minimum length based on offering intensity.
+ * Get study period minimum funded weeks based on offering intensity.
  * @param offering offering.
- * @returns minimum study period length in number of days.
+ * @returns minimum study period length in number of weeks.
  */
-const studyPeriodMinLength = (offering: OfferingValidationModel) => {
+const studyPeriodMinFundedWeeks = (offering: OfferingValidationModel) => {
   if (offering.offeringIntensity === OfferingIntensity.fullTime) {
-    return OFFERING_STUDY_PERIOD_MIN_DAYS_FULL_TIME;
+    return OFFERING_STUDY_PERIOD_MIN_FUNDED_WEEKS_FULL_TIME;
   }
-  return OFFERING_STUDY_PERIOD_MIN_DAYS_PART_TIME;
+  return OFFERING_STUDY_PERIOD_MIN_FUNDED_WEEKS_PART_TIME;
 };
 
 /**
@@ -314,16 +313,6 @@ export class OfferingValidationModel {
     message: getDateFormatMessage(userFriendlyNames.studyEndDate),
   })
   @IsDateAfter(studyStartDateProperty, userFriendlyNames.studyEndDate)
-  @PeriodMinLength(
-    studyStartDateProperty,
-    studyPeriodMinLength,
-    userFriendlyNames.studyEndDate,
-    {
-      context: ValidationContext.CreateWarning(
-        OfferingValidationWarnings.InvalidStudyDatesPeriodLength,
-      ),
-    },
-  )
   @PeriodMaxLength(
     studyStartDateProperty,
     OFFERING_STUDY_PERIOD_MAX_DAYS,
@@ -560,15 +549,8 @@ export class OfferingValidationModel {
   @Type(() => StudyBreak)
   @ValidateIf(
     (offering: OfferingValidationModel) =>
-      !offering.lacksStudyBreaks &&
-      !!offering.studyStartDate &&
-      !!offering.studyEndDate,
+      !!offering.studyStartDate && !!offering.studyEndDate,
   )
-  @ArrayMinSize(1, {
-    message:
-      "An offering with study breaks must contain at least one complete study break.",
-  })
-  @ValidateNested({ each: true })
   @HasNoPeriodOverlap(userFriendlyNames.studyBreaks)
   @PeriodsAreBetweenLimits(
     studyStartDateProperty,
@@ -584,13 +566,13 @@ export class OfferingValidationModel {
       ),
     },
   )
-  @HasValidOfferingPeriodForFundedDays(
+  @HasValidOfferingPeriodForFundedWeeks(
     studyStartDateProperty,
     studyEndDateProperty,
-    studyPeriodMinLength,
+    studyPeriodMinFundedWeeks,
     {
       context: ValidationContext.CreateWarning(
-        OfferingValidationWarnings.InvalidStudyDatesPeriodLength,
+        OfferingValidationWarnings.InvalidFundedStudyPeriodLength,
       ),
     },
   )

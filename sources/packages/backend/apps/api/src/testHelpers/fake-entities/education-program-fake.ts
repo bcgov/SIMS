@@ -47,7 +47,8 @@ export function createFakeEducationProgram(
   program.hasIntlExchange = "yes";
   program.programDeclaration = true;
   program.institution = relations?.institution ?? createFakeInstitution();
-  program.programIntensity = ProgramIntensity.fullTime;
+  program.programIntensity =
+    options?.initialValue?.programIntensity ?? ProgramIntensity.fullTime;
   program.submittedBy = relations?.user;
   program.fieldOfStudyCode = 1;
   program.isActive = options?.initialValue?.isActive ?? true;

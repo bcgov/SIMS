@@ -9,3 +9,4 @@ export * from "./persist-calculations-step";
 export * from "./validate-disbursement-base";
 export * from "./validate-disbursement-full-time-step";
 export * from "./validate-disbursement-part-time-step";
+export * from "./restriction-bypasses-resolution-step";

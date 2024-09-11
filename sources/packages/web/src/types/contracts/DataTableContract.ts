@@ -300,3 +300,54 @@ export const ApplicationWithdrawalUploadHeaders = [
     key: "validations",
   },
 ];
+
+/**
+ * CAS Supplier information header.
+ */
+export const CASSupplierInformationHeaders = [
+  {
+    title: "Date created",
+    sortable: false,
+    key: "dateCreated",
+  },
+  {
+    title: "Supplier number",
+    sortable: false,
+    key: "supplierNumber",
+  },
+  {
+    title: "Supplier protected",
+    sortable: false,
+    key: "supplierProtected",
+  },
+  {
+    title: "Supplier status",
+    sortable: false,
+    key: "supplierStatus",
+  },
+  {
+    title: "Supplier valid",
+    sortable: false,
+    key: "isValid",
+  },
+  {
+    title: "Site code",
+    sortable: false,
+    key: "supplierSiteCode",
+  },
+  {
+    title: "Address line 1",
+    sortable: false,
+    key: "addressLine1",
+  },
+  {
+    title: "Site status",
+    sortable: false,
+    key: "siteStatus",
+  },
+  {
+    title: "Site protected",
+    sortable: false,
+    key: "siteProtected",
+  },
+];

@@ -34,3 +34,5 @@ export * from "./factories/student-loan-balance";
 export * from "./factories/student-account-application";
 export * from "./factories/cra-income-verification";
 export * from "./factories/supporting-user";
+export * from "./factories/application-restriction-bypass";
+export * from "./factories/cas-supplier";
