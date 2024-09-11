@@ -32,22 +32,18 @@ VALUES
                     disbursement_value.disbursement_schedule_id = disbursement.id
                     AND disbursement_value.value_code != ''BCSG''
             ) AS "Estimated Disbursement Amount",
-            CASE
-                WHEN disbursement.disbursement_schedule_status IN (''Sent'', ''Ready to send'') THEN TO_CHAR(disbursement.date_sent, ''YYYY-MM-DD'')
-                ELSE TO_CHAR(disbursement.disbursement_date, ''YYYY-MM-DD'')
-            END AS "Disbursement Date"
+            TO_CHAR(COALESCE(disbursement.date_sent, disbursement.disbursement_date), ''YYYY-MM-DD'') AS "Disbursement Date"
         FROM
             sims.disbursement_schedules disbursement
             INNER JOIN sims.student_assessments assessment ON disbursement.student_assessment_id = assessment.id
             INNER JOIN sims.education_programs_offerings offering ON assessment.offering_id = offering.id
             INNER JOIN sims.education_programs program ON offering.program_id = program.id
-            INNER JOIN sims.applications application ON assessment.application_id = application.id
+            INNER JOIN sims.applications application ON application.current_assessment_id = assessment.id
             INNER JOIN sims.students student ON application.student_id = student.id
             INNER JOIN sims.users student_user ON student.user_id = student_user.id
             INNER JOIN sims.sin_validations sin_validation ON student.sin_validation_id = sin_validation.id
         WHERE
-            application.current_assessment_id = assessment.id
-            AND application.application_status IN (''Enrolment'', ''Completed'')
+            application.application_status IN (''Enrolment'', ''Completed'')
             AND application.is_archived = FALSE
             AND application.program_year_id = :programYear
             AND offering.offering_intensity = ANY(:offeringIntensity)

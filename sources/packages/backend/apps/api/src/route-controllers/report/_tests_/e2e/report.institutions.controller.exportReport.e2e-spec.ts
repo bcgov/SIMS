@@ -44,11 +44,14 @@ import {
 import { parse } from "papaparse";
 import * as request from "supertest";
 import { AppInstitutionsModule } from "../../../../app.institutions.module";
-import { FormNames, FormService } from "../../../../services";
+import {
+  FormNames,
+  FormService,
+  InstitutionUserAuthorizations,
+} from "../../../../services";
 import { TestingModule } from "@nestjs/testing";
 import { getISODateOnlyString, getPSTPDTDateTime } from "@sims/utilities";
 import { INSTITUTION_TYPE_BC_PUBLIC } from "@sims/sims-db/constant";
-import { InstitutionUserAuthorizations } from "../../../../services/institution-user-auth/institution-user-auth.models";
 
 describe("ReportInstitutionsController(e2e)-exportReport", () => {
   let app: INestApplication;
@@ -438,7 +441,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
       });
   });
 
-  it(`Should throw forbidden error when the institution type is not BC Public.`, async () => {
+  it("Should throw forbidden error when the institution type is not BC Public.", async () => {
     // Arrange
     const endpoint = "/institutions/report";
     const institutionUserToken = await getInstitutionToken(
@@ -461,7 +464,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
   it(
     `Should generate the COE Requests report for both ${OfferingIntensity.fullTime} and ${OfferingIntensity.partTime} application disbursements` +
       ` and for the given program year when one or more applications which are neither in ${ApplicationStatus.Completed} or ${ApplicationStatus.Enrolment} status` +
-      ` exist for the given institution.`,
+      " exist for the given institution.",
     async () => {
       // Arrange
       const institution = await db.institution.save(
@@ -530,7 +533,6 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
           firstDisbursementInitialValues: {
             coeStatus: COEStatus.required,
             disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
-            coeUpdatedAt: new Date(),
             tuitionRemittanceRequestedAmount: 100,
           },
         },
@@ -641,8 +643,8 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
   );
 
   it(
-    `Should generate the COE Requests report without including application(s) that are archived` +
-      ` when one or more applications which are archived exist for the given institution.`,
+    "Should generate the COE Requests report without including application(s) that are archived" +
+      " when one or more applications which are archived exist for the given institution.",
     async () => {
       // Arrange
       const institution = await db.institution.save(

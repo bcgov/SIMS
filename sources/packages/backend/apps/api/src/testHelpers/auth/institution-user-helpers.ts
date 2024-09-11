@@ -1,8 +1,10 @@
 import { TestingModule } from "@nestjs/testing";
 import { getProviderInstanceForModule } from "@sims/test-utils";
 import { AuthModule } from "../../auth/auth.module";
-import { InstitutionUserAuthService } from "../../services";
-import { InstitutionUserAuthorizations } from "../../services/institution-user-auth/institution-user-auth.models";
+import {
+  InstitutionUserAuthService,
+  InstitutionUserAuthorizations,
+} from "../../services";
 
 /**
  * Mocks institution user authorizations that will be required to authorize the token.
