@@ -48,6 +48,7 @@ import { FormNames, FormService } from "../../../../services";
 import { TestingModule } from "@nestjs/testing";
 import { getISODateOnlyString, getPSTPDTDateTime } from "@sims/utilities";
 import { INSTITUTION_TYPE_BC_PUBLIC } from "@sims/sims-db/constant";
+import { InstitutionUserAuthorizations } from "../../../../services/institution-user-auth/institution-user-auth.models";
 
 describe("ReportInstitutionsController(e2e)-exportReport", () => {
   let app: INestApplication;
@@ -104,10 +105,6 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
     // Program Year for the following tests.
     programYear = await ensureProgramYearExists(db, PROGRAM_YEAR_PREFIX);
     sharedStudent = await saveFakeStudent(db.dataSource);
-  });
-
-  beforeEach(async () => {
-    jest.clearAllMocks();
   });
 
   it("Should generate the offering details report when a report generation request is made with the appropriate program year and offering intensity.", async () => {
@@ -592,16 +589,16 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
       );
 
       // Mock institution user authorization so that the user token will return the fake institution id and mocked roles.
-      await mockInstitutionUserAuthorization(appModule, {
-        institutionId: institution.id,
-        authorizations: [
+      await mockInstitutionUserAuthorization(
+        appModule,
+        new InstitutionUserAuthorizations(institution.id, [
           {
             locationId: null,
             userRole: null,
             userType: InstitutionUserTypes.admin,
           },
-        ],
-      });
+        ]),
+      );
 
       // Act/Assert
       await request(app.getHttpServer())
@@ -740,16 +737,16 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
       );
 
       // Mock institution user authorization so that the user token will return the fake institution id and mocked roles.
-      await mockInstitutionUserAuthorization(appModule, {
-        institutionId: institution.id,
-        authorizations: [
+      await mockInstitutionUserAuthorization(
+        appModule,
+        new InstitutionUserAuthorizations(institution.id, [
           {
             locationId: null,
             userRole: null,
             userType: InstitutionUserTypes.admin,
           },
-        ],
-      });
+        ]),
+      );
 
       // Act/Assert
       await request(app.getHttpServer())

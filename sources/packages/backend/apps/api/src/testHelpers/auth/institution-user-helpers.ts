@@ -1,8 +1,8 @@
 import { TestingModule } from "@nestjs/testing";
-import { InstitutionUserRoles, InstitutionUserTypes } from "@sims/sims-db";
 import { getProviderInstanceForModule } from "@sims/test-utils";
 import { AuthModule } from "../../auth/auth.module";
 import { InstitutionUserAuthService } from "../../services";
+import { InstitutionUserAuthorizations } from "../../services/institution-user-auth/institution-user-auth.models";
 
 /**
  * Mocks user log info for institutions.
@@ -11,16 +11,7 @@ import { InstitutionUserAuthService } from "../../services";
  */
 export async function mockInstitutionUserAuthorization(
   testingModule: TestingModule,
-  institutionUserAuthorizations: {
-    institutionId: number;
-    authorizations: [
-      {
-        locationId?: number;
-        userType: InstitutionUserTypes;
-        userRole: InstitutionUserRoles;
-      },
-    ];
-  },
+  institutionUserAuthorizations: InstitutionUserAuthorizations,
 ) {
   const institutionUserAuthService = await getProviderInstanceForModule(
     testingModule,
