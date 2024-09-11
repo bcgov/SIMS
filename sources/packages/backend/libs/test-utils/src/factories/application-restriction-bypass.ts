@@ -144,6 +144,7 @@ export async function saveFakeApplicationRestrictionBypass(
     }
     bypass.bypassRemovedBy = relations?.bypassRemovedBy;
     bypass.bypassRemovedDate = options?.initialValues.bypassRemovedDate ?? now;
+    bypass.isActive = false;
   }
   return db.applicationRestrictionBypass.save(bypass);
 }
