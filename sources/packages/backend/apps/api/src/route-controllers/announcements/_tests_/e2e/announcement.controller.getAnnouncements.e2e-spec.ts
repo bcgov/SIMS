@@ -15,7 +15,7 @@ describe("AnnouncementController(e2e)-getAnnouncements", () => {
     announcementsRepo = dataSource.getRepository(Announcement);
   });
 
-  it("Should return a saved announcement.", async () => {
+  it("Should return a current announcement.", async () => {
     // Arrange
     const now = new Date();
     const before = addDays(-10, now);

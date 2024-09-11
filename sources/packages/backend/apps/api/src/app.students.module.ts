@@ -27,7 +27,6 @@ import {
   BCeIDService,
   InstitutionUserAuthService,
   UserService,
-  AnnouncementService,
 } from "./services";
 import {
   ApplicationStudentsController,
@@ -101,7 +100,6 @@ import { ObjectStorageModule } from "@sims/integrations/object-storage";
     WorkflowClientService,
     ApplicationService,
     FormService,
-    AnnouncementService,
     StudentService,
     ProgramYearControllerService,
     ProgramYearService,

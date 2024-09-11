@@ -18,6 +18,7 @@ import { defineComponent, onMounted, ref } from "vue";
 import { BannerTypes } from "@/types/contracts/Banner";
 import { AnnouncementService } from "@/services/AnnouncementService";
 import { useFormatters } from "@/composables";
+import { AnnouncementAPIOutDTO } from "@/services/http/dto/Announcement.dto";
 
 export default defineComponent({
   props: {
@@ -29,7 +30,7 @@ export default defineComponent({
   setup(props) {
     const { dateOnlyLongString } = useFormatters();
     // Data-bind
-    const relevantAnnouncements = ref();
+    const relevantAnnouncements = ref([] as AnnouncementAPIOutDTO[]);
     // Hooks
     onMounted(async () => {
       let announcements = await AnnouncementService.shared.getAnnouncements();

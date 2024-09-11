@@ -31,7 +31,6 @@ import {
   ApplicationWithdrawalImportTextService,
   ApplicationBulkWithdrawalImportValidationService,
   ProgramYearService,
-  AnnouncementService,
 } from "./services";
 import {
   ApplicationControllerService,
@@ -124,7 +123,6 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     ApplicationControllerService,
     WorkflowClientService,
     FormService,
-    AnnouncementService,
     DesignationAgreementService,
     DesignationAgreementControllerService,
     InstitutionService,

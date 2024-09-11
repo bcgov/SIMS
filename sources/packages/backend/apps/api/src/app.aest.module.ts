@@ -31,7 +31,6 @@ import {
   ApplicationOfferingChangeRequestService,
   StudentLoanBalanceService,
   ProgramYearService,
-  AnnouncementService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -133,7 +132,6 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     DesignationAgreementService,
     DesignationAgreementControllerService,
     FormService,
-    AnnouncementService,
     InstitutionLocationService,
     DesignationAgreementLocationService,
     EducationProgramOfferingService,

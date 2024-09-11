@@ -1,12 +1,10 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { TableNames } from "../constant";
-import { RecordDataModel } from "./record.model";
-
 /**
  * System Announcements.
  */
 @Entity({ name: TableNames.Announcements })
-export class Announcement extends RecordDataModel {
+export class Announcement {
   @PrimaryGeneratedColumn()
   id: number;
   /**
