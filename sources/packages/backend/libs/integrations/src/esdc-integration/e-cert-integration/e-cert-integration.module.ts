@@ -35,6 +35,7 @@ import {
   CalculateTuitionRemittanceEffectiveAmountStep,
   CreateBCTotalGrantsStep,
   PersistCalculationsStep,
+  RestrictionBypassesResolutionStep,
   ValidateDisbursementFullTimeStep,
   ValidateDisbursementPartTimeStep,
 } from "@sims/integrations/services/disbursement-schedule/e-cert-processing-steps";
@@ -80,6 +81,7 @@ import { PartTimeECertFileHandler } from "./part-time-e-cert-file-handler";
     CalculateTuitionRemittanceEffectiveAmountStep,
     CreateBCTotalGrantsStep,
     PersistCalculationsStep,
+    RestrictionBypassesResolutionStep,
     FullTimeCalculationProcess,
     PartTimeCalculationProcess,
     AssessmentSequentialProcessingService,

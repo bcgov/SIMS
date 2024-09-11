@@ -7,7 +7,10 @@ import {
   ECertFailedValidation,
   EligibleECertDisbursement,
 } from "../disbursement-schedule.models";
-import { getRestrictionByActionType } from "./e-cert-steps-utils";
+import {
+  getRestrictionByActionType,
+  logActiveRestrictionsBypasses,
+} from "./e-cert-steps-utils";
 import { CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE } from "@sims/services/constants";
 import { ECertGenerationService } from "../e-cert-generation.service";
 import { StudentLoanBalanceSharedService } from "@sims/services";
@@ -83,6 +86,11 @@ export class ValidateDisbursementPartTimeStep
         ECertFailedValidation.HasStopDisbursementRestriction,
       );
     }
+    logActiveRestrictionsBypasses(
+      eCertDisbursement.activeRestrictionBypasses,
+      log,
+    );
+    // Validate CSLP.
     const validateLifetimeMaximumCSLP = await this.validateCSLPLifetimeMaximum(
       eCertDisbursement,
       entityManager,

@@ -5,14 +5,16 @@ import {
   RestrictionActionType,
 } from "@sims/sims-db";
 import {
+  ApplicationActiveRestrictionBypass,
   EligibleECertDisbursement,
   StudentActiveRestriction,
 } from "../disbursement-schedule.models";
 import { RestrictionCode } from "@sims/services";
+import { ProcessSummary } from "@sims/utilities/logger";
 
 /**
- * Check active student restrictions by its action type
- * in an eligible disbursement.
+ * Check active student restrictions by its action type in an eligible disbursement.
+ * An active bypassed restriction will not be included in the result.
  * @param eCertDisbursement student disbursement to check student restrictions.
  * @param actionType action type.
  * @returns the first restriction of the requested action type.
@@ -21,8 +23,31 @@ export function getRestrictionByActionType(
   eCertDisbursement: EligibleECertDisbursement,
   actionType: RestrictionActionType,
 ): StudentActiveRestriction {
-  return eCertDisbursement.activeRestrictions?.find((restriction) =>
-    restriction.actions.includes(actionType),
+  return eCertDisbursement
+    .getEffectiveRestrictions()
+    .find((restriction) => restriction.actions.includes(actionType));
+}
+
+/**
+ * Adds to the log the lists of all restriction bypasses active.
+ * @param bypasses active bypasses.
+ * @param log log to receive the list.
+ */
+export function logActiveRestrictionsBypasses(
+  bypasses: ReadonlyArray<ApplicationActiveRestrictionBypass>,
+  log: ProcessSummary,
+): void {
+  if (!bypasses.length) {
+    log.info("There are no active restriction bypasses.");
+    return;
+  }
+  const bypassLogInfo = bypasses.map(
+    (bypass) => `${bypass.restrictionCode}(${bypass.studentRestrictionId})`,
+  );
+  log.info(
+    `Current active restriction bypasses [Restriction Code(Student Restriction ID)]: ${bypassLogInfo.join(
+      ", ",
+    )}.`,
   );
 }
 
