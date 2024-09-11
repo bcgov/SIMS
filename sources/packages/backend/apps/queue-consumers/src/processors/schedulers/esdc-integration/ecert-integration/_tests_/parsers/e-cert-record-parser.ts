@@ -38,8 +38,8 @@ export abstract class ECertRecordParser {
    */
   hasUser(user: Pick<User, "firstName" | "lastName">): boolean {
     return (
-      user.lastName.substring(0, MAX_LAST_NAME_LENGTH - 1) === this.lastName &&
-      user.firstName?.substring(0, MAX_FIRST_NAME_LENGTH - 1) === this.firstName
+      user.lastName.substring(0, MAX_LAST_NAME_LENGTH) === this.lastName &&
+      user.firstName?.substring(0, MAX_FIRST_NAME_LENGTH) === this.firstName
     );
   }
 }
