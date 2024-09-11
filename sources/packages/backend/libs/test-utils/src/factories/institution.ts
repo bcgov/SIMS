@@ -3,7 +3,7 @@ import { Institution, InstitutionType } from "@sims/sims-db";
 import { INSTITUTION_TYPE_BC_PRIVATE } from "@sims/sims-db/constant";
 
 /**
- * Create fake institution
+ * Create fake institution.
  * @param relations institution relations.
  * - `institutionType` institution type.
  * @returns institution.
