@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { DataSource, EntityManager, In, UpdateResult } from "typeorm";
 import {
   LoggerService,
