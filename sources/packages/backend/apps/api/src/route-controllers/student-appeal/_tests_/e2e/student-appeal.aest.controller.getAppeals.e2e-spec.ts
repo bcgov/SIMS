@@ -2,15 +2,16 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { DataSource, Repository } from "typeorm";
 import {
+  AESTGroups,
   BEARER_AUTH_TYPE,
-  FakeStudentUsersTypes,
   createTestingAppModule,
-  getStudentToken,
-  mockUserLoginInfo,
+  getAESTToken,
 } from "../../../../testHelpers";
 import {
   E2EDataSources,
   createE2EDataSources,
+  createFakeStudentAppeal,
+  createFakeStudentAppealRequest,
   getProviderInstanceForModule,
   saveFakeApplicationDisbursements,
   saveFakeStudent,
@@ -20,11 +21,10 @@ import {
   Application,
   ApplicationStatus,
   StudentAppealRequest,
+  StudentAppealStatus,
   StudentFile,
 } from "@sims/sims-db";
-import { AppStudentsModule } from "apps/api/src/app.students.module";
-import { StudentAppealAPIInDTO } from "apps/api/src/route-controllers/student-appeal/models/student-appeal.dto";
-import { FormService } from "apps/api/src/services";
+import { getUserFullName } from "../../../../utilities";
 
 describe("StudentAppealAESTController(e2e)-getAppeals", () => {
   let app: INestApplication;
@@ -34,8 +34,6 @@ describe("StudentAppealAESTController(e2e)-getAppeals", () => {
   let applicationRepo: Repository<Application>;
   let studentAppealRequestRepo: Repository<StudentAppealRequest>;
   let studentFileRepo: Repository<StudentFile>;
-  const FINANCIAL_INFORMATION_FORM_NAME = "studentfinancialinformationappeal";
-  const STUDENT_DISABILITY_FORM_NAME = "studentDisabilityAppeal";
 
   beforeAll(async () => {
     const { nestApplication, module, dataSource } =
@@ -48,81 +46,53 @@ describe("StudentAppealAESTController(e2e)-getAppeals", () => {
     studentAppealRequestRepo = dataSource.getRepository(StudentAppealRequest);
     studentFileRepo = dataSource.getRepository(StudentFile);
   });
-  it(
-    "Should create 2 student appeal for a student one financial information change and disability change " +
-      "on fetching from the ministry appeals dashboard only one row and count should be displayed.",
-    async () => {
-      // Arrange
-      // Create student to submit application.
-      const student = await saveFakeStudent(appDataSource);
-      // Create application to request change.
-      const application = await saveFakeApplicationDisbursements(
-        db.dataSource,
-        {
-          student,
-        },
-        { applicationStatus: ApplicationStatus.Completed },
-      );
-      // Prepare the data to request a change of disability information.
-      const disabilityData = {
-        programYear: application.programYear.programYear,
-        studentNewPDPPDStatus: "no",
-      };
-      // Prepare the data to request a change of financial information.
-      const financialInformationData = {
-        programYear: application.programYear.programYear,
-        taxReturnIncome: 8000,
-        haveDaycareCosts12YearsOrOver: "no",
-        haveDaycareCosts11YearsOrUnder: "no",
-      };
-      const payload: StudentAppealAPIInDTO = {
-        studentAppealRequests: [
-          {
-            formName: STUDENT_DISABILITY_FORM_NAME,
-            formData: disabilityData,
-            files: [],
-          },
-          {
-            formName: FINANCIAL_INFORMATION_FORM_NAME,
-            formData: financialInformationData,
-            files: [],
-          },
-        ],
-      };
-      // Mock user service to return the saved student.
-      await mockUserLoginInfo(appModule, student);
-      // Get any student user token.
-      const studentToken = await getStudentToken(
-        FakeStudentUsersTypes.FakeStudentUserType1,
-      );
-      const formService = await getProviderInstanceForModule(
-        appModule,
-        AppStudentsModule,
-        FormService,
-      );
-      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-        valid: true,
-        formName: FINANCIAL_INFORMATION_FORM_NAME,
-        data: { data: financialInformationData },
-      });
+  it("Should return only one row in the ministry appeals dashboard when a one student creates an appeal.", async () => {
+    // Arrange
+    // Create student to submit application.
+    const student = await saveFakeStudent(appDataSource);
+    // Create application to request change.
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        student,
+      },
+      { applicationStatus: ApplicationStatus.Completed },
+    );
+    // Create approved student appeal.
+    const appealRequest = createFakeStudentAppealRequest(
+      {},
+      { initialValues: { appealStatus: StudentAppealStatus.Pending } },
+    );
+    const appeal = createFakeStudentAppeal({
+      application,
+      appealRequests: [appealRequest],
+    });
+    await db.studentAppeal.save(appeal);
 
-      formService.dryRunSubmission = dryRunSubmissionMock;
+    const endpoint = `/aest/appeal/pending?page=0&pageLimit=10&sortField=submittedDate&sortOrder=ASC&searchCriteria=${application.applicationNumber}`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
-      const endpoint = `/students/appeal/application/${application.id}`;
-
-      // Act/Assert
-      let createdAppealId: number;
-      await request(app.getHttpServer())
-        .post(endpoint)
-        .send(payload)
-        .auth(studentToken, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.CREATED)
-        .then((response) => {
-          expect(response.body.id).toBeGreaterThan(0);
-          createdAppealId = +response.body.id;
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .then((response) => {
+        expect(response.body).toEqual({
+          count: 1,
+          results: [
+            {
+              appealId: appeal.id,
+              applicationId: application.id,
+              applicationNumber: application.applicationNumber,
+              fullName: getUserFullName(student.user),
+              studentId: student.id,
+              submittedDate: appeal.submittedDate.toISOString(),
+            },
+          ],
         });
-    },
-  );
+      });
+  });
 
   afterAll(async () => {
     await app?.close();
