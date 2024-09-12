@@ -1,6 +1,6 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { DataSource, Repository } from "typeorm";
+import { DataSource } from "typeorm";
 import {
   AESTGroups,
   BEARER_AUTH_TYPE,
@@ -12,39 +12,23 @@ import {
   createE2EDataSources,
   createFakeStudentAppeal,
   createFakeStudentAppealRequest,
-  getProviderInstanceForModule,
   saveFakeApplicationDisbursements,
   saveFakeStudent,
 } from "@sims/test-utils";
-import { TestingModule } from "@nestjs/testing";
-import {
-  Application,
-  ApplicationStatus,
-  StudentAppealRequest,
-  StudentAppealStatus,
-  StudentFile,
-} from "@sims/sims-db";
+import { ApplicationStatus, StudentAppealStatus } from "@sims/sims-db";
 import { getUserFullName } from "../../../../utilities";
 
 describe("StudentAppealAESTController(e2e)-getAppeals", () => {
   let app: INestApplication;
   let appDataSource: DataSource;
-  let appModule: TestingModule;
   let db: E2EDataSources;
-  let applicationRepo: Repository<Application>;
-  let studentAppealRequestRepo: Repository<StudentAppealRequest>;
-  let studentFileRepo: Repository<StudentFile>;
 
   beforeAll(async () => {
     const { nestApplication, module, dataSource } =
       await createTestingAppModule();
     app = nestApplication;
     appDataSource = dataSource;
-    appModule = module;
     db = createE2EDataSources(dataSource);
-    applicationRepo = dataSource.getRepository(Application);
-    studentAppealRequestRepo = dataSource.getRepository(StudentAppealRequest);
-    studentFileRepo = dataSource.getRepository(StudentFile);
   });
   it("Should return only one row in the ministry appeals dashboard when a one student creates an appeal.", async () => {
     // Arrange
