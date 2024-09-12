@@ -4,9 +4,9 @@ import { EntityManager } from "typeorm";
 export interface CreateFile {
   fileName: string;
   uniqueFileName: string;
-  groupName: string;
   mimeType: string;
   fileContent: Buffer;
+  groupName: string;
 }
 
 export interface FileUploadOptions {

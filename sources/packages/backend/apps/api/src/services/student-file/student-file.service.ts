@@ -15,14 +15,17 @@ import {
 } from "@sims/sims-db";
 import { CreateFile, FileUploadOptions } from "./student-file.model";
 import { InjectQueue } from "@nestjs/bull";
-import { QueueNames } from "@sims/utilities";
+import { CustomNamedError, QueueNames } from "@sims/utilities";
 import { Queue } from "bull";
 import { VirusScanQueueInDTO } from "@sims/services/queue";
+import { FILE_SAVE_ERROR } from "../../constants";
+import { ObjectStorageService } from "@sims/integrations/object-storage";
 
 @Injectable()
 export class StudentFileService extends RecordDataModelService<StudentFile> {
   constructor(
     private readonly dataSource: DataSource,
+    private readonly objectStorageService: ObjectStorageService,
     @InjectQueue(QueueNames.FileVirusScanProcessor)
     private readonly virusScanQueue: Queue<VirusScanQueueInDTO>,
   ) {
@@ -30,38 +33,56 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
   }
 
   /**
-   * Creates a file and associates it with a student.
+   * Saves the file metadata to db and the file contents
+   * to the S3 file storage and associates it with the student.
    * Subsequently, adds the file to the virus scan queue
    * to scan for any viruses.
    * @param createFile file to be created.
    * @param studentId student that will have the file associated.
    * @param auditUserId user that should be considered the one that is
    * causing the changes.
+   * @param summary process summary logger.
    * @returns saved student file record.
    */
   async createFile(
     createFile: CreateFile,
     studentId: number,
     auditUserId: number,
+    summary: ProcessSummary,
   ): Promise<StudentFile> {
+    try {
+      summary.info(`Uploading file ${createFile.fileName} to S3 storage.`);
+      await this.objectStorageService.putObject({
+        key: createFile.uniqueFileName,
+        contentType: createFile.mimeType,
+        body: createFile.fileContent,
+      });
+      summary.info(`File ${createFile.fileName} uploaded to S3 storage.`);
+    } catch (error: unknown) {
+      summary.error(`Error while uploading ${createFile.fileName}.`, error);
+      throw new CustomNamedError(
+        `Unexpected error while uploading the file ${createFile.fileName}.`,
+        FILE_SAVE_ERROR,
+      );
+    }
     const newFile = new StudentFile();
     newFile.fileName = createFile.fileName;
     newFile.uniqueFileName = createFile.uniqueFileName;
     newFile.groupName = createFile.groupName;
-    newFile.mimeType = createFile.mimeType;
-    newFile.fileContent = createFile.fileContent;
     newFile.student = { id: studentId } as Student;
     newFile.creator = { id: auditUserId } as User;
     newFile.virusScanStatus = VirusScanStatus.InProgress;
 
-    const summary = new ProcessSummary();
+    summary.info(`Saving the file ${createFile.fileName} to database.`);
     let savedFile: StudentFile;
-    // Save the file to db.
     try {
       savedFile = await this.repo.save(newFile);
     } catch (error: unknown) {
-      this.logger.error(`Error saving the file: ${error}`);
-      return;
+      summary.error("Error saving the file.", error);
+      throw new CustomNamedError(
+        `Unexpected error while uploading the file ${newFile.fileName}.`,
+        FILE_SAVE_ERROR,
+      );
     }
     // Add to the virus scan queue only if the file is successfully saved to the database.
     try {
@@ -87,8 +108,6 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         { uniqueFileName: newFile.uniqueFileName },
         { virusScanStatus: VirusScanStatus.Pending },
       );
-    } finally {
-      this.logger.logProcessSummary(summary);
     }
   }
 
@@ -107,8 +126,6 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
       .select([
         "studentFile.id",
         "studentFile.fileName",
-        "studentFile.mimeType",
-        "studentFile.fileContent",
         "studentFile.virusScanStatus",
       ])
       .where("studentFile.uniqueFileName = :uniqueFileName", {
@@ -119,14 +136,6 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
       query.andWhere("studentFile.student.id = :studentId", { studentId });
     }
     const studentFile = await query.getOne();
-
-    // Block users to download file contents that are not scanned or infected.
-    if (
-      studentFile &&
-      studentFile.virusScanStatus !== VirusScanStatus.FileIsClean
-    ) {
-      studentFile.fileContent = null;
-    }
     return studentFile;
   }
 
@@ -209,6 +218,31 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
   }
 
   /**
+   * Gets a list of student files from the student account
+   * (i.e, fileOrigin is FileOriginType.Student or FileOriginType.Ministry).
+   * @param studentId student id.
+   * @returns student files from the student account.
+   */
+  async getStudentUploadedFiles(studentId: number): Promise<StudentFile[]> {
+    return this.repo
+      .createQueryBuilder("studentFile")
+      .select([
+        "studentFile.uniqueFileName",
+        "studentFile.fileName",
+        "studentFile.metadata",
+        "studentFile.groupName",
+        "studentFile.updatedAt",
+        "studentFile.fileOrigin",
+      ])
+      .where("studentFile.student.id = :studentId", { studentId })
+      .andWhere("studentFile.fileOrigin IN (:...fileOrigin)", {
+        fileOrigin: [FileOriginType.Student, FileOriginType.Ministry],
+      })
+      .orderBy("studentFile.createdAt", "DESC")
+      .getMany();
+  }
+
+  /**
    * Update the files submitted by the student
    * with proper data.
    * @param entityManager entity manager for a given transaction.
@@ -245,30 +279,6 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     );
   }
 
-  /**
-   * Gets a list of student files from the student account
-   * (i.e, fileOrigin is FileOriginType.Student or FileOriginType.Ministry).
-   * @param studentId student id.
-   * @returns student files from the student account.
-   */
-  async getStudentUploadedFiles(studentId: number): Promise<StudentFile[]> {
-    return this.repo
-      .createQueryBuilder("studentFile")
-      .select([
-        "studentFile.uniqueFileName",
-        "studentFile.fileName",
-        "studentFile.metadata",
-        "studentFile.groupName",
-        "studentFile.updatedAt",
-        "studentFile.fileOrigin",
-      ])
-      .where("studentFile.student.id = :studentId", { studentId })
-      .andWhere("studentFile.fileOrigin IN (:...fileOrigin)", {
-        fileOrigin: [FileOriginType.Student, FileOriginType.Ministry],
-      })
-      .orderBy("studentFile.createdAt", "DESC")
-      .getMany();
-  }
   @InjectLogger()
   logger: LoggerService;
 }

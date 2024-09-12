@@ -45,21 +45,6 @@ export class StudentFile extends RecordDataModel {
   })
   groupName: string;
   /**
-   * File MIME type.
-   */
-  @Column({
-    name: "mime_type",
-  })
-  mimeType: string;
-  /**
-   * File bytes.
-   */
-  @Column({
-    name: "file_content",
-    type: "bytea",
-  })
-  fileContent: Buffer;
-  /**
    * Student associated with this file.
    */
   @OneToOne(() => Student, { eager: false, cascade: true })

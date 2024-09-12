@@ -37,7 +37,7 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
   });
 
   beforeEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
   it("Should throw an error when the student file is not found during virus scanning.", async () => {

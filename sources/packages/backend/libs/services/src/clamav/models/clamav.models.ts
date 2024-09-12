@@ -1,6 +1,6 @@
-export interface ScannedFileInfo {
-  uniqueFileName: string;
-  virusScanStatus: boolean;
+export interface ScanResult {
+  file: string;
+  isInfected?: boolean;
 }
 
 /**
