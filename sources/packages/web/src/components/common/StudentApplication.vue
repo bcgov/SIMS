@@ -19,23 +19,24 @@
     secondaryLabel="Previous section"
     class="mx-0"
   >
-    <template #primary-buttons v-if="isLastPage">
+    <template #primary-buttons v-if="!readonly && isLastPage">
+      <!-- This section is loaded only for editable forms -->
       <span>
         <v-btn
           color="primary"
-          v-if="!notDraft && !isFirstPage && !processing"
+          v-if="isSaveDraftAllowed"
           variant="outlined"
           :loading="savingDraft"
-          @click="handleSaveDraft()"
+          @click="$emit('saveDraft')"
         >
           {{ savingDraft ? "Saving..." : "Save draft" }}
         </v-btn>
         <v-btn
-          v-if="!isReadOnly && !isFirstPage"
+          v-if="!isFirstPage"
           class="ml-2"
           :disabled="processing"
           color="primary"
-          @click="handleWizardSubmit()"
+          @click="$emit('wizardSubmit')"
           :loading="processing"
         >
           {{ processing ? "Submitting..." : "Submit application" }}
@@ -52,7 +53,7 @@ import {
   FormIOCustomEvent,
   FormIOForm,
 } from "@/types";
-import { ref, watch, defineComponent } from "vue";
+import { ref, watch, defineComponent, computed } from "vue";
 import {
   useFormioComponentLoader,
   useFormioDropdownLoader,
@@ -117,6 +118,10 @@ export default defineComponent({
     const isFirstPage = ref(true);
     const isLastPage = ref(false);
     const showNav = ref(false);
+
+    const isSaveDraftAllowed = computed(
+      () => !props.notDraft && !isFirstPage.value && !props.processing,
+    );
 
     const getSelectedId = (form: any) => {
       return formioUtils.getComponentValueByKey(form, LOCATIONS_DROPDOWN_KEY);
@@ -339,14 +344,6 @@ export default defineComponent({
       context.emit("customEventCallback", form, event);
     };
 
-    const handleSaveDraft = () => {
-      context.emit("saveDraft");
-    };
-
-    const handleWizardSubmit = () => {
-      context.emit("wizardSubmit");
-    };
-
     watch(
       () => props.initialData,
       async () => {
@@ -363,8 +360,7 @@ export default defineComponent({
       submitted,
       customEvent,
       showNav,
-      handleSaveDraft,
-      handleWizardSubmit,
+      isSaveDraftAllowed,
     };
   },
 });
