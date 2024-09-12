@@ -19,7 +19,7 @@
     secondaryLabel="Previous section"
     class="mx-0"
   >
-    <template #primary-buttons v-if="!readonly && isLastPage">
+    <template #primary-buttons v-if="!isReadOnly && isLastPage">
       <!-- This section is loaded only for editable forms -->
       <span>
         <v-btn
