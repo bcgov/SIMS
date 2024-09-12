@@ -72,8 +72,8 @@
   line-height: $line-height-header-lg;
 }
 
-/** 
-*  Inline header to avoid mandatory sign (asterisk) 
+/**
+*  Inline header to avoid mandatory sign (asterisk)
 *  to be just after the header and not break the line.
 */
 .inline-header {
@@ -157,7 +157,7 @@
 
 /**
 * Adjust the alignment for the bullet list on
-* the error summary displayed on the top 
+* the error summary displayed on the top
 * of the Form.IO forms.
 */
 .ff-form-container [id^="error-list"] ul {
@@ -236,9 +236,9 @@
   color: $brand-blue;
 }
 
-/** 
-* This to apply the font awesome as font family to the first child only 
-* so that captions doesn't follow the font-awesome font-family. 
+/**
+* This to apply the font awesome as font family to the first child only
+* so that captions doesn't follow the font-awesome font-family.
 **/
 .formio-component .fa::before {
   font-family: "FontAwesome", "BCSans", sans-serif;
@@ -331,21 +331,21 @@
 * When columns are displayed side by side and the labels
 * are long enough the columns have different heights.
 * This style, when applied to the columns component on Form.IO,
-* will force the components to be  aligned to the bottom. 
+* will force the components to be  aligned to the bottom.
 */
 .align-column-content-bottom div {
   margin-top: auto !important;
 }
 
 /**
-* TODO: This style has been added as v-dialog is not being responsive. 
+* TODO: This style has been added as v-dialog is not being responsive.
 * Once This bug is resolved in Vuetify3, this style can be removed.
 */
 .min-width-modal {
   min-width: 500px;
 }
 /**
-* TODO: This style has been added as v-dialog is not being responsive. 
+* TODO: This style has been added as v-dialog is not being responsive.
 * Once This bug is resolved in Vuetify3, this style can be removed.
 */
 .temporary-modal {
@@ -704,4 +704,14 @@
 // Forcing the default formio style for smaller breakpoints.
 .formio-component-file ul li.list-group-item {
   border: 1px solid rgba(0, 0, 0, 0.125) !important;
+}
+
+// Removes the required sign from the input fields with .no-required-field-sign.
+.no-required-field-sign label.field-required:after {
+  content: none;
+}
+
+// Removes the required field sign from the radio components with .no-required-field-sign.
+.no-required-field-sign label.form-check-label:before {
+  content: none !important;
 }

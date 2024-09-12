@@ -11231,7 +11231,13 @@
                   "disabled": false,
                   "tableView": false,
                   "modalEdit": false,
-                  "defaultValue": [],
+                  "defaultValue": [
+                    {
+                      "firstName": "",
+                      "lastName": "",
+                      "relationshipWithThisContact": ""
+                    }
+                  ],
                   "persistent": true,
                   "protected": false,
                   "dbIndex": false,
@@ -11244,7 +11250,7 @@
                   "allowCalculateOverride": false,
                   "validateOn": "change",
                   "validate": {
-                    "required": true,
+                    "required": false,
                     "minLength": "",
                     "maxLength": "",
                     "customMessage": "",
@@ -11283,7 +11289,7 @@
                   "components": [
                     {
                       "label": "First name",
-                      "customClass": "font-weight-bold",
+                      "customClass": "font-weight-bold no-required-field-sign",
                       "tableView": true,
                       "validate": {
                         "required": true,
@@ -11362,7 +11368,7 @@
                     },
                     {
                       "label": "Last name",
-                      "customClass": "font-weight-bold",
+                      "customClass": "font-weight-bold no-required-field-sign",
                       "tableView": true,
                       "validate": {
                         "required": true,
@@ -11447,7 +11453,7 @@
                       "optionsLabelPosition": "right",
                       "description": "",
                       "tooltip": "",
-                      "customClass": "",
+                      "customClass": "no-required-field-sign",
                       "tabindex": "",
                       "inline": false,
                       "hidden": false,
