@@ -1,7 +1,7 @@
 CREATE TABLE sims.announcements (
     id SERIAL PRIMARY KEY,
     message_title VARCHAR(100) NOT NULL,
-    message VARCHAR(200) NOT NULL,
+    message VARCHAR(500) NOT NULL,
     start_date TIMESTAMP WITH TIME ZONE NOT NULL,
     end_date TIMESTAMP WITH TIME ZONE NOT NULL,
     target text [] NOT NULL
@@ -9,6 +9,8 @@ CREATE TABLE sims.announcements (
 
 -- ## Comments
 COMMENT ON TABLE sims.announcements IS 'The table for storing system announcements.';
+
+COMMENT ON COLUMN sims.announcements.id IS 'Auto-generated sequential primary key column.';
 
 COMMENT ON COLUMN sims.announcements.message_title IS 'Title for the announcement.';
 

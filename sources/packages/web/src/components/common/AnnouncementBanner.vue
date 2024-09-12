@@ -2,7 +2,7 @@
   <banner
     header="System Announcements"
     :type="BannerTypes.Warning"
-    v-if="relevantAnnouncements && relevantAnnouncements.length > 0"
+    v-if="relevantAnnouncements.length"
   >
     <template #content>
       <div v-for="(announcement, index) in relevantAnnouncements" :key="index">
