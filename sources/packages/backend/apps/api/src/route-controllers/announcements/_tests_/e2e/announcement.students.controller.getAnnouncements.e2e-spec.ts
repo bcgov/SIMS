@@ -77,7 +77,9 @@ describe("AnnouncementStudentsController(e2e)-getAnnouncements", () => {
       response.body.some(
         (announcement) =>
           announcement.message === "test announcement" &&
-          announcement.messageTitle === "test title",
+          announcement.messageTitle === "test title" &&
+          announcement.startDate === before.toISOString() &&
+          announcement.endDate === future.toISOString(),
       ),
     ).toBe(true);
   });
@@ -108,7 +110,9 @@ describe("AnnouncementStudentsController(e2e)-getAnnouncements", () => {
       response.body.some(
         (announcement) =>
           announcement.message === "already done" &&
-          announcement.messageTitle === "already done",
+          announcement.messageTitle === "already done" &&
+          announcement.startDate === before.toISOString() &&
+          announcement.endDate === before.toISOString(),
       ),
     ).toBe(false);
   });
@@ -139,7 +143,9 @@ describe("AnnouncementStudentsController(e2e)-getAnnouncements", () => {
       response.body.some(
         (announcement) =>
           announcement.message === "far off future announcement test" &&
-          announcement.messageTitle === "far off future announcement test",
+          announcement.messageTitle === "far off future announcement test" &&
+          announcement.startDate === future.toISOString() &&
+          announcement.endDate === future.toISOString(),
       ),
     ).toBe(false);
   });
