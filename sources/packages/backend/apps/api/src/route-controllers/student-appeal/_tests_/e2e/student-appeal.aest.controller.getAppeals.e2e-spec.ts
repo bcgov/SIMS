@@ -24,8 +24,7 @@ describe("StudentAppealAESTController(e2e)-getAppeals", () => {
   let db: E2EDataSources;
 
   beforeAll(async () => {
-    const { nestApplication, module, dataSource } =
-      await createTestingAppModule();
+    const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     appDataSource = dataSource;
     db = createE2EDataSources(dataSource);
