@@ -3,12 +3,13 @@
     <template #header
       ><header-navigator title="Institution" subTitle="Reports" />
     </template>
-    <reports :report-list="reportList" />
+    <reports :report-list="INSTITUTION_REPORTS" />
   </full-page-container>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { INSTITUTION_REPORTS } from "@/constants";
 import Reports from "@/components/common/Reports.vue";
 
 export default defineComponent({
@@ -16,15 +17,8 @@ export default defineComponent({
     Reports,
   },
   setup() {
-    const reportList = [
-      {
-        description: "Offering Details",
-        id: "Offering_Details_Report",
-      },
-      { description: "Student Unmet Need", id: "Student_Unmet_Need_Report" },
-    ];
     return {
-      reportList,
+      INSTITUTION_REPORTS,
     };
   },
 });

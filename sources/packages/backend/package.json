@@ -26,7 +26,7 @@
     "test:cov": "cross-env ENVIRONMENT=test jest --coverage --forceExit",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e:api": "npm run db:seed:test filter=CreateInstitutionsAndAuthenticationUsers,CreateAESTUsers,CreateStudentUsers && cross-env ENVIRONMENT=test jest --collect-coverage --verbose --config ./apps/api/test/jest-e2e.json --forceExit",
-    "test:e2e:api:local": "cross-env ENVIRONMENT=test jest --config ./apps/api/test/jest-e2e.json --forceExit",
+    "test:e2e:api:local": "cross-env ENVIRONMENT=test TZ=UTC jest --config ./apps/api/test/jest-e2e.json --forceExit",
     "test:e2e:workers": "npm run migration:run && cross-env ENVIRONMENT=test jest --collect-coverage --verbose --config ./apps/workers/test/jest-e2e.json --forceExit",
     "test:e2e:workers:local": "cross-env ENVIRONMENT=test jest --collect-coverage --verbose --config ./apps/workers/test/jest-e2e.json --forceExit",
     "test:e2e:workflow": "npm run deploy:camunda:definitions && cross-env ENVIRONMENT=test jest --verbose --config ./workflow/test/jest-e2e.json --forceExit",
