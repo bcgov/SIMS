@@ -19,6 +19,30 @@
     secondaryLabel="Previous section"
     class="mx-0"
   >
+    <template #primary-buttons v-if="!isReadOnly && isLastPage">
+      <!-- This section is loaded only for editable forms -->
+      <span>
+        <v-btn
+          color="primary"
+          v-if="isSaveDraftAllowed"
+          variant="outlined"
+          :loading="savingDraft"
+          @click="$emit('saveDraft')"
+        >
+          {{ savingDraft ? "Saving..." : "Save draft" }}
+        </v-btn>
+        <v-btn
+          v-if="!isFirstPage"
+          class="ml-2"
+          :disabled="processing"
+          color="primary"
+          @click="$emit('wizardSubmit')"
+          :loading="processing"
+        >
+          {{ processing ? "Submitting..." : "Submit application" }}
+        </v-btn>
+      </span>
+    </template>
   </footer-buttons>
 </template>
 
@@ -29,7 +53,7 @@ import {
   FormIOCustomEvent,
   FormIOForm,
 } from "@/types";
-import { ref, watch, defineComponent } from "vue";
+import { ref, watch, defineComponent, computed } from "vue";
 import {
   useFormioComponentLoader,
   useFormioDropdownLoader,
@@ -42,6 +66,8 @@ export default defineComponent({
     "submitApplication",
     "customEventCallback",
     "pageChanged",
+    "saveDraft",
+    "wizardSubmit",
   ],
   props: {
     initialData: {
@@ -64,6 +90,14 @@ export default defineComponent({
       type: Boolean,
       required: false,
     },
+    notDraft: {
+      type: Boolean,
+      default: false,
+    },
+    savingDraft: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, context) {
     // Component's names on Form.IO definition that will be manipulated.
@@ -84,6 +118,10 @@ export default defineComponent({
     const isFirstPage = ref(true);
     const isLastPage = ref(false);
     const showNav = ref(false);
+
+    const isSaveDraftAllowed = computed(
+      () => !props.notDraft && !isFirstPage.value && !props.processing,
+    );
 
     const getSelectedId = (form: any) => {
       return formioUtils.getComponentValueByKey(form, LOCATIONS_DROPDOWN_KEY);
@@ -322,6 +360,7 @@ export default defineComponent({
       submitted,
       customEvent,
       showNav,
+      isSaveDraftAllowed,
     };
   },
 });

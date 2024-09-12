@@ -37,7 +37,11 @@
       @submitApplication="submitApplication"
       @customEventCallback="customEventCallback"
       @pageChanged="pageChanged"
+      @wizardSubmit="wizardSubmit"
+      @saveDraft="saveDraft"
       :processing="submittingApplication"
+      :savingDraft="savingDraft"
+      :notDraft="notDraft"
     />
   </student-page-container>
   <ConfirmEditApplication
