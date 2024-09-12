@@ -7,9 +7,12 @@ import { AnnouncementAPIOutDTO } from "@/services/http/dto/Announcement.dto";
 export class AnnouncementApi extends HttpBaseClient {
   /**
    * Get the list of announcements.
+   * @param target the targeted area for the announcements.
    * @returns list of announcements.
    */
-  async getAnnouncements(): Promise<AnnouncementAPIOutDTO[]> {
-    return this.getCall<AnnouncementAPIOutDTO[]>("announcements");
+  async getAnnouncements(target: string): Promise<AnnouncementAPIOutDTO[]> {
+    return this.getCall<AnnouncementAPIOutDTO[]>(
+      this.addClientRoot(`announcements?target=${target}`),
+    );
   }
 }

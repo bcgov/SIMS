@@ -1,7 +1,7 @@
 <template>
   <student-page-container layout-template="centered">
     <template #alerts>
-      <announcement-banner dashboard="StudentDashboard"
+      <announcement-banner dashboard="student-dashboard"
     /></template>
     <formio-container
       formName="studentWelcomePage"

@@ -14,9 +14,10 @@ export class AnnouncementService {
 
   /**
    * Get system announcements.
+   * @param target the targeted area for the announcements.
    * @returns system announcements list.
    */
-  async getAnnouncements(): Promise<AnnouncementAPIOutDTO[]> {
-    return ApiClient.AnnouncementApi.getAnnouncements();
+  async getAnnouncements(target: string): Promise<AnnouncementAPIOutDTO[]> {
+    return ApiClient.AnnouncementApi.getAnnouncements(target);
   }
 }

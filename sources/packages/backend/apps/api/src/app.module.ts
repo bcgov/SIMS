@@ -7,13 +7,8 @@ import {
   BCeIDServiceProvider,
   FormService,
   ProgramYearService,
-  AnnouncementService,
 } from "./services";
-import {
-  AnnouncementController,
-  ConfigController,
-  DynamicFormController,
-} from "./route-controllers";
+import { ConfigController, DynamicFormController } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { AppAESTModule } from "./app.aest.module";
 import { AppInstitutionsModule } from "./app.institutions.module";
@@ -65,18 +60,12 @@ import { QueueModule } from "@sims/services/queue";
       },
     ]),
   ],
-  controllers: [
-    AppController,
-    ConfigController,
-    DynamicFormController,
-    AnnouncementController,
-  ],
+  controllers: [AppController, ConfigController, DynamicFormController],
   providers: [
     AppService,
     UserService,
     BCeIDServiceProvider,
     FormService,
-    AnnouncementService,
     ProgramYearService,
   ],
 })

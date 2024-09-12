@@ -2,12 +2,18 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { Repository } from "typeorm";
 import { Announcement } from "@sims/sims-db";
-import { createTestingAppModule } from "../../../../testHelpers";
 import { addDays } from "@sims/utilities";
+import {
+  BEARER_AUTH_TYPE,
+  createTestingAppModule,
+  getInstitutionToken,
+  InstitutionTokenTypes,
+} from "../../../../testHelpers";
 
-describe("AnnouncementController(e2e)-getAnnouncements", () => {
+describe("AnnouncementInstitutionsController(e2e)-getAnnouncements", () => {
   let app: INestApplication;
   let announcementsRepo: Repository<Announcement>;
+  const endpoint = `/institutions/announcements?target=institution-dashboard`;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -24,15 +30,18 @@ describe("AnnouncementController(e2e)-getAnnouncements", () => {
     const announcement = new Announcement();
     announcement.message = "test announcement";
     announcement.messageTitle = "test title";
-    announcement.target = ["studentdashboard", "institutiondashboard"];
+    announcement.target = ["student-dashboard", "institution-dashboard"];
     announcement.startDate = before;
     announcement.endDate = future;
     await announcementsRepo.save(announcement);
-    const endpoint = `/announcements`;
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
 
     // Act/Assert
     const response = await request(app.getHttpServer())
       .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
 
     expect(
@@ -52,15 +61,18 @@ describe("AnnouncementController(e2e)-getAnnouncements", () => {
     const announcement = new Announcement();
     announcement.message = "already done";
     announcement.messageTitle = "already done";
-    announcement.target = ["studentdashboard", "institutiondashboard"];
+    announcement.target = ["student-dashboard", "institution-dashboard"];
     announcement.startDate = before;
     announcement.endDate = before;
     await announcementsRepo.save(announcement);
-    const endpoint = `/announcements`;
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
 
     // Act/Assert
     const response = await request(app.getHttpServer())
       .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
 
     expect(
@@ -80,15 +92,18 @@ describe("AnnouncementController(e2e)-getAnnouncements", () => {
     const announcement = new Announcement();
     announcement.message = "far off future announcement test";
     announcement.messageTitle = "far off future announcement test";
-    announcement.target = ["studentdashboard", "institutiondashboard"];
+    announcement.target = ["student-dashboard", "institution-dashboard"];
     announcement.startDate = future;
     announcement.endDate = future;
     await announcementsRepo.save(announcement);
-    const endpoint = `/announcements`;
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
 
     // Act/Assert
     const response = await request(app.getHttpServer())
       .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
 
     expect(

@@ -5,7 +5,7 @@
     data-cy="institutionWelcomePage"
   >
     <template #alerts>
-      <announcement-banner dashboard="InstitutionDashboard" />
+      <announcement-banner dashboard="institution-dashboard" />
     </template>
     <formio-container formName="institutionWelcomePage" />
   </full-page-container>

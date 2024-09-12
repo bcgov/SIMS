@@ -27,6 +27,7 @@ import {
   BCeIDService,
   InstitutionUserAuthService,
   UserService,
+  AnnouncementService,
 } from "./services";
 import {
   ApplicationStudentsController,
@@ -51,6 +52,7 @@ import {
   ScholasticStandingControllerService,
   ScholasticStandingStudentsController,
   ProgramYearControllerService,
+  AnnouncementStudentsController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { ConfigModule } from "@sims/utilities/config";
@@ -95,8 +97,10 @@ import { ObjectStorageModule } from "@sims/integrations/object-storage";
     OverawardStudentsController,
     ApplicationOfferingChangeRequestStudentsController,
     ScholasticStandingStudentsController,
+    AnnouncementStudentsController,
   ],
   providers: [
+    AnnouncementService,
     WorkflowClientService,
     ApplicationService,
     FormService,
