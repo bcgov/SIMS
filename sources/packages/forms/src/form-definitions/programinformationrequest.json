@@ -2012,7 +2012,7 @@
           "tags": [],
           "conditional": {
             "show": "true",
-            "when": "selectedStudyEndDateBeforeToday",
+            "when": "selectedStudyEndDateBeforeSixWeeksFromToday",
             "eq": "true"
           },
           "properties": {},
@@ -2699,14 +2699,13 @@
         "eq": ""
       },
       "properties": {},
-      "lockKey": true,
-      "isNew": false
+      "lockKey": true
     },
     {
       "input": true,
       "tableView": false,
-      "key": "selectedStudyEndDateBeforeToday",
-      "label": "Selected study end date before today",
+      "key": "selectedStudyEndDateBeforeSixWeeksFromToday",
+      "label": "Selected study end date before six weeks from today",
       "protected": false,
       "unique": false,
       "persistent": true,
@@ -2718,7 +2717,7 @@
         "eq": ""
       },
       "properties": {},
-      "calculateValue": "/**\r\n * Validates if the date provided is before today.\r\n *\r\n * The same validation exists on all the student application\r\n * forms and also on the server side.\r\n *\r\n * When there is an update to this logic make sure to update in all the above.\r\n */\r\n\r\nfunction isGivenDateBeforeToday(givenDate) {\r\n  return moment\r\n    .utc(givenDate)\r\n    .isBefore(moment.utc(new Date()).format(\"YYYY-MM-DD\"), \"day\");\r\n}\r\n\r\nvalue =\r\n  !!data.selectedOfferingEndDate &&\r\n  isGivenDateBeforeToday(data.selectedOfferingEndDate);\r\n",
+      "calculateValue": "/**\r\n * Validates if the date provided is before six weeks from today.\r\n *\r\n * The same validation exists on all the student application\r\n * forms and also on the server side.\r\n *\r\n * When there is an update to this logic make sure to update in all the above.\r\n */\r\n\r\nfunction isGivenDateBeforeSixWeeksFromToday(givenDate) {\r\n  const sixWeeksFromToday = new Date(Date.now() + 42*24*60*60*1000);\r\n  return moment\r\n    .utc(givenDate)\r\n    .isBefore(moment.utc(sixWeeksFromToday).format(\"YYYY-MM-DD\"), \"day\");\r\n}\r\n\r\n// If a study period is selected, validate its study end date to be before six weeks from today.\r\nvalue =\r\n  !!data.selectedOfferingEndDate &&\r\n  isGivenDateBeforeSixWeeksFromToday(data.selectedOfferingEndDate);",
       "calculateServer": true,
       "lockKey": true
     }
