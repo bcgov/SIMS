@@ -101,10 +101,10 @@ export class ReportControllerService {
       `attachment; filename=${filename}`,
     );
     response.setHeader("Content-Type", "text/csv");
-    response.setHeader("Content-Length", fileContent.toString().length);
+    response.setHeader("Content-Length", Buffer.from(fileContent).byteLength);
 
     const stream = new Readable();
-    stream.push(fileContent.toString());
+    stream.push(fileContent);
     stream.push(null);
     stream.pipe(response);
   }
