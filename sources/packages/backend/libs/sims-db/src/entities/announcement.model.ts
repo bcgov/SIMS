@@ -26,10 +26,11 @@ export class Announcement {
   /**
    * Target areas for the announcement.
    */
-  @Column("text", {
+  @Column({
     name: "target",
     nullable: false,
     array: true,
+    type: "varchar",
   })
   target: string[];
   /**

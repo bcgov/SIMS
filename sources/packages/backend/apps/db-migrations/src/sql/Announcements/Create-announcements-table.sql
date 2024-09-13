@@ -4,7 +4,7 @@ CREATE TABLE sims.announcements (
     message VARCHAR(500) NOT NULL,
     start_date TIMESTAMP WITH TIME ZONE NOT NULL,
     end_date TIMESTAMP WITH TIME ZONE NOT NULL,
-    target text [] NOT NULL
+    target VARCHAR(100) [] NOT NULL
 );
 
 -- ## Comments
