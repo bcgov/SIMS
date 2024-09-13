@@ -9,6 +9,7 @@ import {
   getInstitutionToken,
   InstitutionTokenTypes,
 } from "../../../../testHelpers";
+import { createFakeAnnouncement } from "@sims/test-utils/factories/announcement";
 
 describe("AnnouncementInstitutionsController(e2e)-getAnnouncements", () => {
   let app: INestApplication;
@@ -27,12 +28,7 @@ describe("AnnouncementInstitutionsController(e2e)-getAnnouncements", () => {
     const before = addDays(-10, now);
     const future = addDays(30, now);
 
-    const announcement = new Announcement();
-    announcement.message = "test announcement";
-    announcement.messageTitle = "test title";
-    announcement.target = ["student-dashboard", "institution-dashboard"];
-    announcement.startDate = before;
-    announcement.endDate = future;
+    const announcement = createFakeAnnouncement(before, future);
     await announcementsRepo.save(announcement);
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -46,11 +42,13 @@ describe("AnnouncementInstitutionsController(e2e)-getAnnouncements", () => {
 
     expect(
       response.body.announcements.some(
-        (announcement) =>
-          announcement.message === "test announcement" &&
-          announcement.messageTitle === "test title" &&
-          announcement.startDate === before.toISOString() &&
-          announcement.endDate === future.toISOString(),
+        (responseAnnouncement) =>
+          responseAnnouncement.message === announcement.message &&
+          responseAnnouncement.messageTitle === announcement.messageTitle &&
+          responseAnnouncement.startDate ===
+            new Date(announcement.startDate).toISOString() &&
+          responseAnnouncement.endDate ===
+            new Date(announcement.endDate).toISOString(),
       ),
     ).toBe(true);
   });
@@ -60,12 +58,7 @@ describe("AnnouncementInstitutionsController(e2e)-getAnnouncements", () => {
     const now = new Date();
     const before = addDays(-20, now);
 
-    const announcement = new Announcement();
-    announcement.message = "already done";
-    announcement.messageTitle = "already done";
-    announcement.target = ["student-dashboard", "institution-dashboard"];
-    announcement.startDate = before;
-    announcement.endDate = before;
+    const announcement = createFakeAnnouncement(before, before);
     await announcementsRepo.save(announcement);
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -79,11 +72,13 @@ describe("AnnouncementInstitutionsController(e2e)-getAnnouncements", () => {
 
     expect(
       response.body.announcements.some(
-        (announcement) =>
-          announcement.message === "already done" &&
-          announcement.messageTitle === "already done" &&
-          announcement.startDate === before.toISOString() &&
-          announcement.endDate === before.toISOString(),
+        (responseAnnouncement) =>
+          responseAnnouncement.message === announcement.message &&
+          responseAnnouncement.messageTitle === announcement.messageTitle &&
+          responseAnnouncement.startDate ===
+            new Date(announcement.startDate).toISOString() &&
+          responseAnnouncement.endDate ===
+            new Date(announcement.endDate).toISOString(),
       ),
     ).toBe(false);
   });
@@ -93,12 +88,7 @@ describe("AnnouncementInstitutionsController(e2e)-getAnnouncements", () => {
     const now = new Date();
     const future = addDays(90, now);
 
-    const announcement = new Announcement();
-    announcement.message = "far off future announcement test";
-    announcement.messageTitle = "far off future announcement test";
-    announcement.target = ["student-dashboard", "institution-dashboard"];
-    announcement.startDate = future;
-    announcement.endDate = future;
+    const announcement = createFakeAnnouncement(future, future);
     await announcementsRepo.save(announcement);
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -112,11 +102,13 @@ describe("AnnouncementInstitutionsController(e2e)-getAnnouncements", () => {
 
     expect(
       response.body.announcements.some(
-        (announcement) =>
-          announcement.message === "far off future announcement test" &&
-          announcement.messageTitle === "far off future announcement test" &&
-          announcement.startDate === future.toISOString() &&
-          announcement.endDate === future.toISOString(),
+        (responseAnnouncement) =>
+          responseAnnouncement.message === announcement.message &&
+          responseAnnouncement.messageTitle === announcement.messageTitle &&
+          responseAnnouncement.startDate ===
+            new Date(announcement.startDate).toISOString() &&
+          responseAnnouncement.endDate ===
+            new Date(announcement.endDate).toISOString(),
       ),
     ).toBe(false);
   });
