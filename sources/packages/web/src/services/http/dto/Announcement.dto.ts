@@ -8,3 +8,7 @@ export interface AnnouncementAPIOutDTO {
   endDate: Date;
   target: string[];
 }
+
+export interface AnnouncementsAPIOutDTO {
+  announcements: AnnouncementAPIOutDTO[];
+}

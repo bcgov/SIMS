@@ -3,7 +3,10 @@ import BaseController from "../BaseController";
 import { ApiTags } from "@nestjs/swagger";
 import { Announcement } from "@sims/sims-db";
 import { AnnouncementService } from "../../services";
-import { InstitutionAnnouncementsAPIInDTO } from "../../route-controllers/announcements/models/announcement.dto";
+import {
+  AnnouncementsAPIOutDTO,
+  InstitutionAnnouncementsAPIInDTO,
+} from "../../route-controllers/announcements/models/announcement.dto";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth";
 import { ClientTypeBaseRoute } from "../../types";
@@ -24,7 +27,18 @@ export class AnnouncementInstitutionsController extends BaseController {
   @Get()
   async getAnnouncements(
     @Query() queryString: InstitutionAnnouncementsAPIInDTO,
-  ): Promise<Announcement[]> {
-    return this.announcementService.getAnnouncements(queryString.target);
+  ): Promise<AnnouncementsAPIOutDTO> {
+    const announcements = await this.announcementService.getAnnouncements(
+      queryString.target,
+    );
+    const announcementsResponse = announcements.map((announcement) => ({
+      messageTitle: announcement.messageTitle,
+      message: announcement.message,
+      startDate: announcement.startDate,
+      endDate: announcement.endDate,
+      target: announcement.target,
+    }));
+
+    return { announcements: announcementsResponse };
   }
 }

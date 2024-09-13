@@ -74,7 +74,7 @@ describe("AnnouncementStudentsController(e2e)-getAnnouncements", () => {
       .expect(HttpStatus.OK);
 
     expect(
-      response.body.some(
+      response.body.announcements.some(
         (announcement) =>
           announcement.message === "test announcement" &&
           announcement.messageTitle === "test title" &&
@@ -107,7 +107,7 @@ describe("AnnouncementStudentsController(e2e)-getAnnouncements", () => {
       .expect(HttpStatus.OK);
 
     expect(
-      response.body.some(
+      response.body.announcements.some(
         (announcement) =>
           announcement.message === "already done" &&
           announcement.messageTitle === "already done" &&
@@ -140,7 +140,7 @@ describe("AnnouncementStudentsController(e2e)-getAnnouncements", () => {
       .expect(HttpStatus.OK);
 
     expect(
-      response.body.some(
+      response.body.announcements.some(
         (announcement) =>
           announcement.message === "far off future announcement test" &&
           announcement.messageTitle === "far off future announcement test" &&

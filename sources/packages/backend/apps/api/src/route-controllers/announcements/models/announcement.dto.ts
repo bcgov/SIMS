@@ -11,6 +11,10 @@ export class AnnouncementAPIOutDTO {
   target: string[];
 }
 
+export class AnnouncementsAPIOutDTO {
+  announcements: AnnouncementAPIOutDTO[];
+}
+
 export class StudentAnnouncementsAPIInDTO {
   @IsIn(["student-dashboard"])
   target: string;

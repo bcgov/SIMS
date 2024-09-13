@@ -33,8 +33,9 @@ export default defineComponent({
     const relevantAnnouncements = ref([] as AnnouncementAPIOutDTO[]);
     // Hooks
     onMounted(async () => {
-      relevantAnnouncements.value =
+      const announcementList =
         await AnnouncementService.shared.getAnnouncements(props.dashboard);
+      relevantAnnouncements.value = announcementList.announcements;
     });
     return {
       BannerTypes,

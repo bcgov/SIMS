@@ -1,5 +1,5 @@
 import ApiClient from "@/services/http/ApiClient";
-import { AnnouncementAPIOutDTO } from "@/services/http/dto/Announcement.dto";
+import { AnnouncementsAPIOutDTO } from "@/services/http/dto/Announcement.dto";
 
 /**
  * Client service layer for announcements.
@@ -17,7 +17,7 @@ export class AnnouncementService {
    * @param target the targeted area for the announcements.
    * @returns system announcements list.
    */
-  async getAnnouncements(target: string): Promise<AnnouncementAPIOutDTO[]> {
+  async getAnnouncements(target: string): Promise<AnnouncementsAPIOutDTO> {
     return ApiClient.AnnouncementApi.getAnnouncements(target);
   }
 }
