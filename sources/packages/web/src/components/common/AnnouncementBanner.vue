@@ -6,7 +6,7 @@
   >
     <template #content>
       <div v-for="(announcement, index) in relevantAnnouncements" :key="index">
-        <b>{{ announcement.messageTitle }}</b> -
+        <span class="font-bold">{{ announcement.messageTitle }}</span> -
         <i>added {{ dateOnlyLongString(announcement.startDate) }}</i>
         <p>{{ announcement.message }}</p>
       </div>
