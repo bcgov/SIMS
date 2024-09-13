@@ -1,22 +1,26 @@
 import { Announcement } from "@sims/sims-db";
 import * as faker from "faker";
 
-export function createFakeAnnouncement(
-  startDate: Date,
-  endDate: Date,
-  messageTitle?: string,
-  message?: string,
-  target?: string[],
-): Announcement {
+/**
+ * Creates an Announcement ready to be saved to the database.
+ * @param options announcement options.
+ * - `initialValues` Announcement values.
+ * @returns an Announcement ready to be saved to the database.
+ */
+export function createFakeAnnouncement(options?: {
+  initialValues?: Partial<Announcement>;
+}): Announcement {
   const announcement = new Announcement();
-  announcement.message = message ?? faker.random.words(3);
-  announcement.messageTitle = messageTitle ?? faker.random.words(10);
-  announcement.target = target ?? [
+  announcement.message =
+    options?.initialValues?.message ?? faker.random.words(3);
+  announcement.messageTitle =
+    options?.initialValues?.messageTitle ?? faker.random.words(10);
+  announcement.target = options?.initialValues?.target ?? [
     "student-dashboard",
     "institution-dashboard",
   ];
-  announcement.startDate = startDate;
-  announcement.endDate = endDate;
+  announcement.startDate = options?.initialValues?.startDate;
+  announcement.endDate = options?.initialValues?.endDate;
 
   return announcement;
 }

@@ -28,7 +28,9 @@ describe("AnnouncementInstitutionsController(e2e)-getAnnouncements", () => {
     const before = addDays(-10, now);
     const future = addDays(30, now);
 
-    const announcement = createFakeAnnouncement(before, future);
+    const announcement = createFakeAnnouncement({
+      initialValues: { startDate: before, endDate: future },
+    });
     await announcementsRepo.save(announcement);
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -58,7 +60,9 @@ describe("AnnouncementInstitutionsController(e2e)-getAnnouncements", () => {
     const now = new Date();
     const before = addDays(-20, now);
 
-    const announcement = createFakeAnnouncement(before, before);
+    const announcement = createFakeAnnouncement({
+      initialValues: { startDate: before, endDate: before },
+    });
     await announcementsRepo.save(announcement);
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -88,7 +92,9 @@ describe("AnnouncementInstitutionsController(e2e)-getAnnouncements", () => {
     const now = new Date();
     const future = addDays(90, now);
 
-    const announcement = createFakeAnnouncement(future, future);
+    const announcement = createFakeAnnouncement({
+      initialValues: { startDate: future, endDate: future },
+    });
     await announcementsRepo.save(announcement);
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
