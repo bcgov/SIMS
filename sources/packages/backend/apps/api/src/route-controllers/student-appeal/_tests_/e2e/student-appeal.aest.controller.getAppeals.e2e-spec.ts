@@ -29,7 +29,7 @@ describe("StudentAppealAESTController(e2e)-getAppeals", () => {
     appDataSource = dataSource;
     db = createE2EDataSources(dataSource);
   });
-  it("Should return only one row in the ministry appeals dashboard when a one student creates an appeal.", async () => {
+  it("Should return only one row in the ministry appeals dashboard when a one searched for a student application that has an appeal.", async () => {
     // Arrange
     // Create student to submit application.
     const student = await saveFakeStudent(appDataSource);
