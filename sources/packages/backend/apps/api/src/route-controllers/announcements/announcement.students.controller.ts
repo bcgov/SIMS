@@ -1,7 +1,6 @@
 import { Controller, Get, Query } from "@nestjs/common";
 import BaseController from "../BaseController";
 import { ApiTags } from "@nestjs/swagger";
-import { Announcement } from "@sims/sims-db";
 import { AnnouncementService } from "../../services";
 import {
   AnnouncementsAPIOutDTO,
@@ -25,15 +24,15 @@ export class AnnouncementStudentsController extends BaseController {
 
   /**
    * Get system announcements.
-   * @param target location for the announcement.
+   * @param systemAnnouncementOptions target for the announcement.
    * @returns system announcements list.
    */
   @Get()
   async getAnnouncements(
-    @Query() queryString: StudentAnnouncementsAPIInDTO,
+    @Query() systemAnnouncementOptions: StudentAnnouncementsAPIInDTO,
   ): Promise<AnnouncementsAPIOutDTO> {
     const announcements = await this.announcementService.getAnnouncements(
-      queryString.target,
+      systemAnnouncementOptions.target,
     );
     const announcementsResponse = announcements.map((announcement) => ({
       messageTitle: announcement.messageTitle,
