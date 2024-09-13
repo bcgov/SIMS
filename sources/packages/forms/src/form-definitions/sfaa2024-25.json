@@ -5366,7 +5366,7 @@
           "properties": {},
           "lockKey": true,
           "calculateServer": true,
-          "calculateValue": "/**\r\n * Validates if the date provided is before six weeks from today.\r\n *\r\n * The same validation exists on calculating selectedStudyEndDateBeforeSixWeeksFromToday,\r\n * other student application forms, program information request form\r\n * and also on the server side.\r\n *\r\n * When there is an update to this logic make sure to update in all the above.\r\n *\r\n */\r\n\r\nfunction isGivenDateBeforeSixWeeksFromToday(givenDate) {\r\n  const sixWeeksFromToday = new Date(Date.now() + 42*24*60*60*1000);\r\n  return moment\r\n    .utc(givenDate)\r\n    .isBefore(moment.utc(sixWeeksFromToday).format(\"YYYY-MM-DD\"), \"day\");\r\n}\r\n\r\n// If program/study period not listed is selected, validate the study end date to be after given days before now.\r\nvalue = !!data.studyendDate && isGivenDateBeforeSixWeeksFromToday(data.studyendDate);"
+          "calculateValue": "/**\r\n * Validates if the date provided is before six weeks from today.\r\n *\r\n * The same validation exists on calculating selectedStudyEndDateBeforeSixWeeksFromToday,\r\n * other student application forms, program information request form\r\n * and also on the server side.\r\n *\r\n * When there is an update to this logic make sure to update in all the above.\r\n *\r\n */\r\n\r\n// If program/study period not listed is selected, validate the study end date to be after given days before six weeks from today.\r\nvalue = !!data.studyendDate && moment(data.studyendDate).isBefore(moment().add(6, 'week'));"
         },
         {
           "input": true,
@@ -5386,7 +5386,7 @@
           "properties": {},
           "lockKey": true,
           "calculateServer": true,
-          "calculateValue": "/**\r\n * Validates if the date provided is before six weeks from today.\r\n *\r\n * The same validation exists on calculating studyEndDateBeforeSixWeeksFromToday,\r\n * other student application forms, program information request form\r\n * and also on the server side.\r\n *\r\n * When there is an update to this logic make sure to update in all the above.\r\n *\r\n */\r\n\r\nfunction isGivenDateBeforeSixWeeksFromToday(givenDate) {\r\n  const sixWeeksFromToday = new Date(Date.now() + 42*24*60*60*1000);\r\n  return moment\r\n    .utc(givenDate)\r\n    .isBefore(moment.utc(sixWeeksFromToday).format(\"YYYY-MM-DD\"), \"day\");\r\n}\r\n\r\n// If a study period is selected, validate its study end date to be before six weeks from today.\r\nvalue =\r\n  !!data.selectedOfferingEndDate &&\r\n  isGivenDateBeforeSixWeeksFromToday(data.selectedOfferingEndDate);"
+          "calculateValue": "/**\r\n * Validates if the date provided is before six weeks from today.\r\n *\r\n * The same validation exists on calculating studyEndDateBeforeSixWeeksFromToday,\r\n * other student application forms, program information request form\r\n * and also on the server side.\r\n *\r\n * When there is an update to this logic make sure to update in all the above.\r\n *\r\n */\r\n\r\n// If a study period is selected, validate its study end date to be before six weeks from today.\r\nvalue =\r\n  !!data.selectedOfferingEndDate && moment(data.selectedOfferingEndDate).isBefore(moment().add(6, 'week'));"
         },
         {
           "input": true,
