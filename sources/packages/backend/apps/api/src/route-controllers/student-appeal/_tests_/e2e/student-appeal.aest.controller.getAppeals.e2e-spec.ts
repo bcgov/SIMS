@@ -41,14 +41,18 @@ describe("StudentAppealAESTController(e2e)-getAppeals", () => {
       },
       { applicationStatus: ApplicationStatus.Completed },
     );
-    // Create approved student appeal.
+    // Create pending student appeal.
     const appealRequest = createFakeStudentAppealRequest(
+      {},
+      { initialValues: { appealStatus: StudentAppealStatus.Pending } },
+    );
+    const secondAppealRequest = createFakeStudentAppealRequest(
       {},
       { initialValues: { appealStatus: StudentAppealStatus.Pending } },
     );
     const appeal = createFakeStudentAppeal({
       application,
-      appealRequests: [appealRequest],
+      appealRequests: [appealRequest, secondAppealRequest],
     });
     await db.studentAppeal.save(appeal);
 
