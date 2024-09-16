@@ -37,7 +37,7 @@ WHERE
 UPDATE
     sims.restrictions
 SET
-    description = 'For reinstatment of your BC funding eligibility please complete an appeal.',
+    description = 'For reinstatement of your BC funding eligibility please complete an appeal.',
     action_type = ARRAY ['Stop full time BC funding', 'Stop part time BC funding'] :: sims.restriction_action_types []
 WHERE
     restriction_code = 'B6A';
