@@ -1,24 +1,41 @@
 import { DisbursementValueType } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
 import { createFakeWorkerJob } from "../../../../../test/utils/worker-job-mock";
-import { SaveDisbursementSchedulesJobInDTO } from "../../disbursement.dto";
+import {
+  DisbursementSchedule,
+  DisbursementValue,
+  SaveDisbursementSchedulesJobInDTO,
+} from "../../disbursement.dto";
 import {
   ICustomHeaders,
   IOutputVariables,
   ZeebeJob,
 } from "@camunda8/sdk/dist/zeebe/types";
 
-export function createFakeSaveDisbursementSchedulesPayload(
-  assessmentId: number,
-): Readonly<
+/**
+ * Create the disbursement schedule payload expected to be received from the workflow.
+ * @param options creation options.
+ * - `assessmentId`: assessment to save the schedules.
+ * - `createSecondDisbursement`: indicates if the second schedule should be created. Default false.
+ * - `firstDisbursementAwards`: optional values to be used. If not provided, default values will be used.
+ * - `secondDisbursementAwards`: optional values to be used. If not provided, default values will be used.
+ * @returns disbursement schedule payload.
+ */
+export function createFakeSaveDisbursementSchedulesPayload(options: {
+  assessmentId: number;
+  createSecondDisbursement?: boolean;
+  firstDisbursementAwards?: DisbursementValue[];
+  secondDisbursementAwards?: DisbursementValue[];
+}): Readonly<
   ZeebeJob<SaveDisbursementSchedulesJobInDTO, ICustomHeaders, IOutputVariables>
 > {
   const nowString = getISODateOnlyString(new Date());
-  const disbursementSchedules = [
+  const createSecondDisbursement = options?.createSecondDisbursement ?? false;
+  const disbursementSchedules: DisbursementSchedule[] = [
     {
       disbursementDate: nowString,
       negotiatedExpiryDate: nowString,
-      disbursements: [
+      disbursements: options?.firstDisbursementAwards ?? [
         {
           valueCode: "CSLF",
           valueType: DisbursementValueType.CanadaLoan,
@@ -31,10 +48,13 @@ export function createFakeSaveDisbursementSchedulesPayload(
         },
       ],
     },
-    {
+  ];
+  // Optionally creates the second disbursement.
+  if (createSecondDisbursement) {
+    const secondDisbursementAwards = {
       disbursementDate: nowString,
       negotiatedExpiryDate: nowString,
-      disbursements: [
+      disbursements: options?.secondDisbursementAwards ?? [
         {
           valueCode: "BCSL",
           valueType: DisbursementValueType.BCLoan,
@@ -46,11 +66,11 @@ export function createFakeSaveDisbursementSchedulesPayload(
           valueAmount: 1200,
         },
       ],
-    },
-  ];
-
+    };
+    disbursementSchedules.push(secondDisbursementAwards);
+  }
   const variables = {
-    assessmentId,
+    assessmentId: options.assessmentId,
     disbursementSchedules,
   };
   return createFakeWorkerJob<SaveDisbursementSchedulesJobInDTO>({ variables });

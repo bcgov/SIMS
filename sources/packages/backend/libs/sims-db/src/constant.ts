@@ -16,6 +16,7 @@ export const TableNames = {
   StudentAccountApplications: "student_account_applications",
   Institution: "institutions",
   Applications: "applications",
+  Announcements: "announcements",
   StudentsFiles: "student_files",
   ApplicationStudentFiles: "application_student_files",
   EducationPrograms: "education_programs",

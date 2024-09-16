@@ -2012,7 +2012,7 @@
           "tags": [],
           "conditional": {
             "show": "true",
-            "when": "selectedStudyEndDateBeforeSixWeeksFromToday",
+            "when": "selectedStudyEndDateBeforeToday",
             "eq": "true"
           },
           "properties": {},
@@ -2699,13 +2699,14 @@
         "eq": ""
       },
       "properties": {},
-      "lockKey": true
+      "lockKey": true,
+      "isNew": false
     },
     {
       "input": true,
       "tableView": false,
-      "key": "selectedStudyEndDateBeforeSixWeeksFromToday",
-      "label": "Selected study end date before six weeks from today",
+      "key": "selectedStudyEndDateBeforeToday",
+      "label": "Selected study end date before today",
       "protected": false,
       "unique": false,
       "persistent": true,
@@ -2717,7 +2718,7 @@
         "eq": ""
       },
       "properties": {},
-      "calculateValue": "/**\r\n * Validates if the date provided is before six weeks from today.\r\n *\r\n * The same validation exists on all the student application\r\n * forms and also on the server side.\r\n *\r\n * When there is an update to this logic make sure to update in all the above.\r\n */\r\n\r\n// If a study period is selected, validate its study end date to be before six weeks from today.\r\nvalue =\r\n  !!data.selectedOfferingEndDate && moment(data.selectedOfferingEndDate).isBefore(moment().add(6, 'week'));",
+      "calculateValue": "/**\r\n * Validates if the date provided is before today.\r\n *\r\n * The same validation exists on all the student application\r\n * forms and also on the server side.\r\n *\r\n * When there is an update to this logic make sure to update in all the above.\r\n */\r\n\r\nfunction isGivenDateBeforeToday(givenDate) {\r\n  return moment\r\n    .utc(givenDate)\r\n    .isBefore(moment.utc(new Date()).format(\"YYYY-MM-DD\"), \"day\");\r\n}\r\n\r\nvalue =\r\n  !!data.selectedOfferingEndDate &&\r\n  isGivenDateBeforeToday(data.selectedOfferingEndDate);\r\n",
       "calculateServer": true,
       "lockKey": true
     }

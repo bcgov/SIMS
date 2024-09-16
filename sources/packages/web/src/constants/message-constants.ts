@@ -2,13 +2,13 @@
  * SIN Validation Message
  */
 export const PENDING_SIN_MESSAGE =
-  "StudentAid BC is currently validating your account information with CRA. This process normally takes up to 3 hours. If you have not heard from us please contact us.";
+  "StudentAid BC is currently validating your profile information with Employment and Social Development Canada (ESDC). This process may take up to 72 hours.";
 
 /**
  * SIN Validation Message
  */
 export const INVALID_SIN_MESSAGE =
-  "StudentAid BC has found an issue with your account information. Please ensure your account information matches CRA and log back in. If you have further issues please contact us.";
+  "The SIN information provided on your profile does not match the identifying data verified with Employment and Social Development Canada (ESDC). For more information, please contact StudentAid BC at 1-800-561-1818.";
 
 /**
  * Ministry Name

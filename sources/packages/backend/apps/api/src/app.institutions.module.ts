@@ -31,6 +31,7 @@ import {
   ApplicationWithdrawalImportTextService,
   ApplicationBulkWithdrawalImportValidationService,
   ProgramYearService,
+  AnnouncementService,
 } from "./services";
 import {
   ApplicationControllerService,
@@ -73,6 +74,7 @@ import {
   ReportInstitutionsController,
   ProgramYearControllerService,
   ReportControllerService,
+  AnnouncementInstitutionsController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -101,6 +103,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     InstitutionUserInstitutionsController,
     InstitutionLocationInstitutionsController,
     ApplicationInstitutionsController,
+    AnnouncementInstitutionsController,
     ScholasticStandingInstitutionsController,
     ConfirmationOfEnrollmentInstitutionsController,
     EducationProgramInstitutionsController,
@@ -120,6 +123,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     ReportInstitutionsController,
   ],
   providers: [
+    AnnouncementService,
     ApplicationControllerService,
     WorkflowClientService,
     FormService,
