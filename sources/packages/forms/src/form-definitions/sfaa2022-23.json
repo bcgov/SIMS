@@ -5405,8 +5405,7 @@
           },
           "properties": {},
           "lockKey": true,
-          "defaultValue": "365",
-          "isNew": false
+          "defaultValue": "365"
         }
       ],
       "input": false,
@@ -8576,8 +8575,8 @@
                       "shortcut": ""
                     },
                     {
-                      "label": "you will have finished 4 years of full-time, postsecondary study in B.C. before the first day of your study period.",
-                      "value": "youWillHaveFinished4YearsOfFullTimePostsecondaryStudyInBCBeforeTheFirstDayOfYourStudyPeriod",
+                      "label": "You will have completed 4 years of full-time post-secondary study in B.C. before the first day of your study period.",
+                      "value": "youWillHaveCompleted4YearsOfFullTimePostSecondaryStudyInBCBeforeTheFirstDayOfYourStudyPeriod",
                       "shortcut": ""
                     },
                     {
@@ -8614,7 +8613,7 @@
                   "tags": [],
                   "properties": {},
                   "conditional": {
-                    "show": true,
+                    "show": "true",
                     "when": "bcResident",
                     "eq": "no",
                     "json": ""
@@ -8845,12 +8844,12 @@
                   "key": "uploadSupportingDocuments",
                   "tags": [],
                   "properties": {},
-                  "customConditional": "",
+                  "customConditional": "show = data['bclivingSituation'];",
                   "conditional": {
                     "json": "",
-                    "show": true,
-                    "when": "bclivingSituation",
-                    "eq": "other"
+                    "show": "",
+                    "when": "",
+                    "eq": ""
                   },
                   "logic": [],
                   "attributes": {},
