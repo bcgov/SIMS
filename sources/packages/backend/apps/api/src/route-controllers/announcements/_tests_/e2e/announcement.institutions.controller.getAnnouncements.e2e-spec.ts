@@ -35,7 +35,11 @@ describe("AnnouncementInstitutionsController(e2e)-getAnnouncements", () => {
     const future = addDays(30, now);
 
     const announcement = createFakeAnnouncement({
-      initialValues: { startDate: before, endDate: future },
+      initialValues: {
+        startDate: before,
+        endDate: future,
+        target: ["institution-dashboard"],
+      },
     });
     await announcementsRepo.save(announcement);
     const institutionUserToken = await getInstitutionToken(
@@ -65,7 +69,11 @@ describe("AnnouncementInstitutionsController(e2e)-getAnnouncements", () => {
     const before = addDays(-20, now);
 
     const announcement = createFakeAnnouncement({
-      initialValues: { startDate: before, endDate: before },
+      initialValues: {
+        startDate: before,
+        endDate: before,
+        target: ["institution-dashboard"],
+      },
     });
     await announcementsRepo.save(announcement);
     const institutionUserToken = await getInstitutionToken(
@@ -87,7 +95,11 @@ describe("AnnouncementInstitutionsController(e2e)-getAnnouncements", () => {
     const future = addDays(90, now);
 
     const announcement = createFakeAnnouncement({
-      initialValues: { startDate: future, endDate: future },
+      initialValues: {
+        startDate: future,
+        endDate: future,
+        target: ["institution-dashboard"],
+      },
     });
     await announcementsRepo.save(announcement);
     const institutionUserToken = await getInstitutionToken(
