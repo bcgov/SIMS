@@ -1,11 +1,13 @@
 import {
   ApplicationStatus,
   AssessmentTriggerType,
+  COEStatus,
   DisbursementOveraward,
   DisbursementOverawardOriginType,
   DisbursementSchedule,
   DisbursementScheduleStatus,
   DisbursementValueType,
+  OfferingIntensity,
 } from "@sims/sims-db";
 import {
   createE2EDataSources,
@@ -16,6 +18,7 @@ import {
   createFakeStudentAssessment,
   createFakeUser,
   E2EDataSources,
+  saveFakeApplicationDisbursements,
 } from "@sims/test-utils";
 import { createFakeDisbursementSchedule } from "@sims/test-utils/factories/disbursement-schedule";
 import { createFakeDisbursementValue } from "@sims/test-utils/factories/disbursement-value";
@@ -118,7 +121,10 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
 
     // Act
     const saveDisbursementSchedulesPayload =
-      createFakeSaveDisbursementSchedulesPayload(savedReassessment.id);
+      createFakeSaveDisbursementSchedulesPayload({
+        assessmentId: savedReassessment.id,
+        createSecondDisbursement: true,
+      });
     const saveResult = await disbursementController.saveDisbursementSchedules(
       saveDisbursementSchedulesPayload,
     );
@@ -198,6 +204,144 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     expect(grantOveraward).toBeUndefined();
     // Assert overaward creation.
     assertOveraward(overawards, "BCSL", 150);
+  });
+
+  it("Should generate an overaward and deduct grants already paid for a part-time application when a reassessment happens and the student is entitled to less money.", async () => {
+    // Arrange
+
+    // Save the application with the original disbursement sent.
+    const savedApplication = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        firstDisbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLP",
+            5000,
+            { effectiveAmount: 5000 },
+          ),
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaGrant,
+            "CSGP",
+            4000,
+            { effectiveAmount: 4000 },
+          ),
+          createFakeDisbursementValue(
+            DisbursementValueType.BCGrant,
+            "BCAG",
+            3000,
+            { effectiveAmount: 3000 },
+          ),
+        ],
+      },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.Completed,
+        firstDisbursementInitialValues: {
+          coeStatus: COEStatus.completed,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        },
+      },
+    );
+    // Create the reassessment.
+    savedApplication.currentAssessment = createFakeStudentAssessment(
+      {
+        auditUser: savedApplication.student.user,
+        application: savedApplication,
+        offering: savedApplication.currentAssessment.offering,
+      },
+      {
+        initialValue: { triggerType: AssessmentTriggerType.ManualReassessment },
+      },
+    );
+    await db.application.save(savedApplication);
+    const reassessment = savedApplication.currentAssessment;
+    // Schedules to be saved to the reassessment.
+    const saveDisbursementSchedulesPayload =
+      createFakeSaveDisbursementSchedulesPayload({
+        assessmentId: reassessment.id,
+        firstDisbursementAwards: [
+          {
+            // Expected 300 overaward generated.
+            valueCode: "CSLP",
+            valueType: DisbursementValueType.CanadaLoan,
+            valueAmount: 4700,
+          },
+          {
+            // Expected 500 grant to be paid since 4000 was already sent.
+            valueCode: "CSGP",
+            valueType: DisbursementValueType.CanadaGrant,
+            valueAmount: 4500,
+          },
+          {
+            // No value expected because it was already sent 3000.
+            valueCode: "BCAG",
+            valueType: DisbursementValueType.BCGrant,
+            valueAmount: 2000,
+          },
+        ],
+      });
+
+    // Act
+    const saveResult = await disbursementController.saveDisbursementSchedules(
+      saveDisbursementSchedulesPayload,
+    );
+
+    // Asserts
+    expect(saveResult).toHaveProperty(
+      FAKE_WORKER_JOB_RESULT_PROPERTY,
+      MockedZeebeJobResult.Complete,
+    );
+
+    // Assert disbursement already paid subtracted.
+    const createdDisbursements = await db.disbursementSchedule.find({
+      select: {
+        id: true,
+        disbursementValues: {
+          id: true,
+          valueType: true,
+          valueAmount: true,
+          disbursedAmountSubtracted: true,
+        },
+      },
+      relations: {
+        disbursementValues: true,
+      },
+      where: {
+        studentAssessment: { id: reassessment.id },
+      },
+    });
+    expect(createdDisbursements).toBeDefined();
+    expect(createdDisbursements).toHaveLength(1);
+    const [firstDisbursement] = createdDisbursements;
+    // Expected 300 overaward generated since 5000 was already sent.
+    assertAwardDeduction(firstDisbursement, DisbursementValueType.CanadaLoan, {
+      valueAmount: 4700,
+      disbursedAmountSubtracted: 4700,
+    });
+    // Expected 500 grant to be paid since 4000 was already sent.
+    assertAwardDeduction(firstDisbursement, DisbursementValueType.CanadaGrant, {
+      valueAmount: 4500,
+      disbursedAmountSubtracted: 4000,
+    });
+    // No value expected because it was already sent 3000.
+    assertAwardDeduction(firstDisbursement, DisbursementValueType.BCGrant, {
+      valueAmount: 2000,
+      disbursedAmountSubtracted: 2000,
+    });
+    // Overaward asserts.
+    const overawards = await db.disbursementOveraward.find({
+      select: {
+        id: true,
+        disbursementValueCode: true,
+        overawardValue: true,
+        originType: true,
+      },
+      where: { student: { id: savedApplication.student.id } },
+    });
+    // Assert overaward creation.
+    // Part-time overawards are created but are not deducted during e-Cert generation.
+    assertOveraward(overawards, "CSLP", 300);
   });
 
   function assertAwardDeduction(

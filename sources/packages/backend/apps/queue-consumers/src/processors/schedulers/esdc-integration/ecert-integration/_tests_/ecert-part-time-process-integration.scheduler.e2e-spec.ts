@@ -26,6 +26,7 @@ import {
   saveFakeApplicationRestrictionBypass,
   createFakeUser,
   saveFakeStudentRestriction,
+  createFakeDisbursementOveraward,
 } from "@sims/test-utils";
 import { getUploadedFile } from "@sims/test-utils/mocks";
 import { ArrayContains, IsNull, Like, Not } from "typeorm";
@@ -322,7 +323,6 @@ describe(
       expect(recordParsed.disbursementAmount).toBe("000123500");
       // TODO include other fields as needed.
 
-      // Assert Canada Loan overawards were deducted.
       const [firstSchedule] =
         application.currentAssessment.disbursementSchedules;
       // Assert schedule is updated to 'sent' with the dateSent defined.
@@ -1101,6 +1101,104 @@ describe(
       }
       await db.notification.save(notifications);
     }
+
+    it("Should create an e-Cert with no overaward deductions when the student has overawards.", async () => {
+      // Overawards deductions should not be considered at this time for part-time applications.
+
+      // Arrange
+      // Student with valid SIN.
+      const student = await saveFakeStudent(db.dataSource);
+      // Valid MSFAA Number.
+      const msfaaNumber = await db.msfaaNumber.save(
+        createFakeMSFAANumber(
+          { student },
+          {
+            msfaaState: MSFAAStates.Signed,
+            msfaaInitialValues: {
+              offeringIntensity: OfferingIntensity.partTime,
+            },
+          },
+        ),
+      );
+      // Student application eligible for e-Cert.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          student,
+          msfaaNumber,
+          firstDisbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLP",
+              1000,
+            ),
+          ],
+        },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            assessmentData: { weeks: 5 } as Assessment,
+            assessmentDate: new Date(),
+          },
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+          },
+        },
+      );
+      // Create fake overawards.
+      const fakeCanadaLoanOverawardBalance = createFakeDisbursementOveraward({
+        student,
+      });
+      fakeCanadaLoanOverawardBalance.disbursementValueCode = "CSLP";
+      fakeCanadaLoanOverawardBalance.overawardValue = 750;
+      const cslpOveraward = await db.disbursementOveraward.save(
+        fakeCanadaLoanOverawardBalance,
+      );
+      // Queued job.
+      const { job } = mockBullJob<void>();
+
+      // Act
+      await processor.processECert(job);
+
+      // Assert
+      const [firstSchedule] =
+        application.currentAssessment.disbursementSchedules;
+      // Assert schedule is updated to 'Sent' and effectiveAmount
+      // was not impacted by the existing overaward.
+      const schedule = await db.disbursementSchedule.findOne({
+        select: {
+          id: true,
+          disbursementScheduleStatus: true,
+          disbursementValues: { effectiveAmount: true },
+        },
+        relations: {
+          disbursementValues: true,
+        },
+        where: {
+          id: firstSchedule.id,
+          dateSent: Not(IsNull()),
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          disbursementValues: {
+            valueCode: "CSLP",
+          },
+        },
+      });
+      expect(schedule.disbursementScheduleStatus).toBe(
+        DisbursementScheduleStatus.Sent,
+      );
+      const [cslpDisbursementValue] = schedule.disbursementValues;
+      expect(cslpDisbursementValue.effectiveAmount).toEqual(1000);
+      // Validate if overaward was not impacted.
+      const nonUpdatedCSLPOveraward = await db.disbursementOveraward.exists({
+        where: {
+          id: cslpOveraward.id,
+          disbursementValueCode: "CSLP",
+          overawardValue: 750,
+        },
+      });
+      expect(nonUpdatedCSLPOveraward).toBe(true);
+    });
 
     /**
      * Creates the test data required for the individual tests.

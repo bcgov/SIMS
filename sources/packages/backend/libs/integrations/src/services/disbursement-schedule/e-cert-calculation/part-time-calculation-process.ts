@@ -3,7 +3,6 @@ import { ECertProcessStep } from "../e-cert-processing-steps/e-cert-steps-models
 import { ECertCalculationProcess } from "./e-cert-calculation-process";
 import { DataSource } from "typeorm";
 import {
-  ApplyOverawardsDeductionsStep,
   CalculateEffectiveValueStep,
   CalculateTuitionRemittanceEffectiveAmountStep,
   CreateBCTotalGrantsStep,
@@ -26,7 +25,6 @@ export class PartTimeCalculationProcess extends ECertCalculationProcess {
     eCertNotificationService: ECertNotificationService,
     private readonly eCertGenerationService: ECertGenerationService,
     private readonly validateDisbursementPartTimeStep: ValidateDisbursementPartTimeStep,
-    private readonly applyOverawardsDeductionsStep: ApplyOverawardsDeductionsStep,
     private readonly calculateEffectiveValueStep: CalculateEffectiveValueStep,
     private readonly calculateTuitionRemittanceEffectiveAmountStep: CalculateTuitionRemittanceEffectiveAmountStep,
     private readonly createBCTotalGrantsStep: CreateBCTotalGrantsStep,
@@ -58,7 +56,6 @@ export class PartTimeCalculationProcess extends ECertCalculationProcess {
   protected calculationSteps(): ECertProcessStep[] {
     return [
       this.validateDisbursementPartTimeStep,
-      this.applyOverawardsDeductionsStep,
       this.calculateEffectiveValueStep,
       this.calculateTuitionRemittanceEffectiveAmountStep,
       this.createBCTotalGrantsStep,
