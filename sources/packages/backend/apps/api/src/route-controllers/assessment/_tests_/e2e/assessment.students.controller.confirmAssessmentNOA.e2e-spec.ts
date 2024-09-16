@@ -17,8 +17,11 @@ import {
   createFakeDisbursementValue,
   createFakeMSFAANumber,
   MSFAAStates,
+  saveFakeApplicationRestrictionBypass,
+  createFakeUser,
 } from "@sims/test-utils";
 import {
+  Application,
   ApplicationStatus,
   AssessmentStatus,
   AssessmentTriggerType,
@@ -26,6 +29,9 @@ import {
   DisbursementScheduleStatus,
   DisbursementValueType,
   OfferingIntensity,
+  RestrictionActionType,
+  RestrictionBypassBehaviors,
+  User,
   WorkflowData,
 } from "@sims/sims-db";
 import { TestingModule } from "@nestjs/testing";
@@ -34,6 +40,7 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let appModule: TestingModule;
+  let sharedMinistryUser: User;
 
   beforeAll(async () => {
     const { nestApplication, dataSource, module } =
@@ -41,6 +48,8 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
     app = nestApplication;
     appModule = module;
     db = createE2EDataSources(dataSource);
+    // Create a Ministry user to b used, for instance, for audit.
+    sharedMinistryUser = await db.user.save(createFakeUser());
   });
 
   it("Should allow NOA approval for the current application assessment when the application has multiple assessments.", async () => {
@@ -120,6 +129,36 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
       });
   });
 
+  it(`Should allow NOA approval when the current assessment is blocked by a '${RestrictionActionType.StopPartTimeDisbursement}' restriction but the application has a restriction bypass.`, async () => {
+    // Arrange
+    const { application } = await createApplicationAndAssessments();
+    // Create a student restriction and a bypass to allow the NOA to be accepted.
+    await saveFakeApplicationRestrictionBypass(
+      db,
+      {
+        application,
+        bypassCreatedBy: sharedMinistryUser,
+        creator: sharedMinistryUser,
+      },
+      {
+        restrictionActionType: RestrictionActionType.StopPartTimeDisbursement,
+        initialValues: {
+          bypassBehavior: RestrictionBypassBehaviors.NextDisbursementOnly,
+        },
+      },
+    );
+    const studentUserToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    const endpoint = `/students/assessment/${application.currentAssessment.id}/confirm-assessment`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .auth(studentUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+  });
+
   /**
    * Creates an application with two assessments.
    * @returns Old and new Assessment ID.
@@ -127,6 +166,7 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
   async function createApplicationAndAssessments(): Promise<{
     currentAssessmentId: number;
     oldAssessmentId: number;
+    application: Application;
   }> {
     // Create the new student to be mocked as the authenticated one.
     const student = await saveFakeStudent(db.dataSource);
@@ -192,6 +232,7 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
     return {
       currentAssessmentId: newCurrentAssessment.id,
       oldAssessmentId: oldAssessment.id,
+      application,
     };
   }
 

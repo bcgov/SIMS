@@ -1,6 +1,7 @@
 import {
   ForbiddenException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from "@nestjs/common";
 import { Response } from "express";
@@ -9,14 +10,17 @@ import {
   StudentFileService,
   StudentService,
 } from "../../services";
-import { Readable } from "stream";
 import { FileCreateAPIOutDTO } from "../models/common.dto";
 import {
   ApplicationPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
 import { getUserFullName } from "../../utilities";
-import { getISODateOnlyString, parseJSONError } from "@sims/utilities";
+import {
+  CustomNamedError,
+  getISODateOnlyString,
+  parseJSONError,
+} from "@sims/utilities";
 import {
   AddressInfo,
   Application,
@@ -36,6 +40,11 @@ import { ApiProcessError } from "../../types";
 import { FILE_HAS_NOT_BEEN_SCANNED_YET, VIRUS_DETECTED } from "../../constants";
 import { ObjectStorageService } from "@sims/integrations/object-storage";
 import { NoSuchKey } from "@aws-sdk/client-s3";
+import {
+  InjectLogger,
+  LoggerService,
+  ProcessSummary,
+} from "@sims/utilities/logger";
 
 @Injectable()
 export class StudentControllerService {
@@ -64,24 +73,37 @@ export class StudentControllerService {
     groupName: string,
     auditUserId: number,
   ): Promise<FileCreateAPIOutDTO> {
-    const createdFile = await this.fileService.createFile(
-      {
-        fileName: file.originalname,
-        uniqueFileName: uniqueFileName,
-        groupName: groupName,
-        mimeType: file.mimetype,
-        fileContent: file.buffer,
-      },
-      studentId,
-      auditUserId,
-    );
-
+    const summary = new ProcessSummary();
+    try {
+      await this.fileService.createFile(
+        {
+          fileName: file.originalname,
+          uniqueFileName: uniqueFileName,
+          mimeType: file.mimetype,
+          fileContent: file.buffer,
+          groupName: groupName,
+        },
+        studentId,
+        auditUserId,
+        summary,
+      );
+    } catch (error: unknown) {
+      summary.error(`File ${file.originalname} saving failed.`, error);
+      if (error instanceof CustomNamedError) {
+        throw new InternalServerErrorException(error.message);
+      }
+      throw new InternalServerErrorException(
+        "Unexpected error while saving the file.",
+      );
+    } finally {
+      this.logger.logProcessSummary(summary);
+    }
     return {
-      fileName: createdFile.fileName,
-      uniqueFileName: createdFile.uniqueFileName,
-      url: `student/files/${createdFile.uniqueFileName}`,
-      size: createdFile.fileContent.length,
-      mimetype: createdFile.mimeType,
+      fileName: file.originalname,
+      uniqueFileName,
+      url: `student/files/${uniqueFileName}`,
+      size: file.size,
+      mimetype: file.mimetype,
     };
   }
 
@@ -133,37 +155,31 @@ export class StudentControllerService {
       `attachment; filename=${studentFile.fileName}`,
     );
 
-    // Temporary code to be changed in the upcoming effort
-    // when the the files will no longer be saved on DB.
-    const stopwatchLabel = `Downloaded file ${uniqueFileName}`;
-    console.time(stopwatchLabel);
     try {
+      this.logger.log(
+        `Downloading the file ${studentFile.fileName} from S3 storage.`,
+      );
       const fileContent = await this.objectStorageService.getObject(
         uniqueFileName,
       );
-      console.info("Downloaded file using S3 storage.");
+      this.logger.log(
+        `Downloaded the file ${studentFile.fileName} from S3 storage.`,
+      );
       // Populate file information received from S3 storage.
       response.setHeader("Content-Type", fileContent.contentType);
       response.setHeader("Content-Length", fileContent.contentLength);
       fileContent.body.pipe(response);
     } catch (error: unknown) {
       if (error instanceof NoSuchKey) {
-        console.info("File not present on S3 storage.");
+        this.logger.log(
+          `File ${studentFile.fileName} is not present on S3 storage.`,
+        );
       } else {
-        console.error(parseJSONError(error));
+        this.logger.error(parseJSONError(error));
       }
-      // Fallback to use the DB file in case the object storage failed
-      // or the file or never uploaded to S3.
-      // Populate fil information from DB.
-      console.info("Retrieving from DB.");
-      response.setHeader("Content-Type", studentFile.mimeType);
-      response.setHeader("Content-Length", studentFile.fileContent.length);
-      const stream = new Readable();
-      stream.push(studentFile.fileContent);
-      stream.push(null);
-      stream.pipe(response);
-    } finally {
-      console.timeEnd(stopwatchLabel);
+      throw new InternalServerErrorException(
+        "Error while downloading the file.",
+      );
     }
   }
 
@@ -315,4 +331,7 @@ export class StudentControllerService {
       sin: eachStudent.sinValidation.sin,
     }));
   }
+
+  @InjectLogger()
+  logger: LoggerService;
 }

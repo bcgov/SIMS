@@ -20,6 +20,7 @@ import {
 } from "../../../../constants";
 import { VirusScanStatus } from "@sims/sims-db";
 import { TestingModule } from "@nestjs/testing";
+import { S3_DEFAULT_MOCKED_FILE_CONTENT } from "@sims/test-utils/mocks";
 
 describe("StudentStudentsController(e2e)-getUploadedFile", () => {
   let app: INestApplication;
@@ -157,7 +158,6 @@ describe("StudentStudentsController(e2e)-getUploadedFile", () => {
     const studentFile = createFakeStudentFileUpload({ student });
     studentFile.virusScanStatus = VirusScanStatus.FileIsClean;
     studentFile.fileName = "test.jpeg";
-    studentFile.mimeType = "image/jpeg";
     await db.studentFile.save(studentFile);
     const endpoint = `/students/student/files/${studentFile.uniqueFileName}`;
     // Act/Assert
@@ -169,7 +169,7 @@ describe("StudentStudentsController(e2e)-getUploadedFile", () => {
         expect(response.headers["content-disposition"]).toBe(
           `attachment; filename=${studentFile.fileName}`,
         );
-        expect(response.body).toStrictEqual(studentFile.fileContent);
+        expect(response.text).toStrictEqual(S3_DEFAULT_MOCKED_FILE_CONTENT);
       });
   });
 

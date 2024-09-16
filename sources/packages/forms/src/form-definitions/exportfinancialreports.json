@@ -29,7 +29,28 @@
           "key": "reportName",
           "type": "select",
           "input": true,
-          "lockKey": true
+          "lockKey": true,
+          "autofocus": false,
+          "placeholder": "",
+          "data": {
+            "values": [],
+            "json": "",
+            "url": "",
+            "resource": "",
+            "custom": ""
+          },
+          "dataSrc": "values",
+          "valueProperty": "",
+          "defaultValue": "",
+          "filter": "",
+          "authenticate": false,
+          "template": "<span>{{ item.label }}</span>",
+          "multiple": false,
+          "protected": false,
+          "unique": false,
+          "persistent": true,
+          "hidden": false,
+          "clearOnHide": true
         },
         {
           "label": "Container",
@@ -49,7 +70,41 @@
               },
               "type": "select",
               "lockKey": true,
-              "customConditional": "show = data.reportName === 'Offering_Details_Report' || data.reportName === 'Student_Unmet_Need_Report'",
+              "customConditional": "show =\r\n  data.reportName === \"Offering_Details_Report\" ||\r\n  data.reportName === \"Student_Unmet_Need_Report\" ||\r\n  data.reportName === \"COE_Requests\";",
+              "autofocus": false,
+              "data": {
+                "values": [
+                  {
+                    "value": "",
+                    "label": ""
+                  }
+                ],
+                "json": "",
+                "url": "",
+                "resource": "",
+                "custom": ""
+              },
+              "dataSrc": "values",
+              "valueProperty": "",
+              "defaultValue": "",
+              "refreshOn": "",
+              "filter": "",
+              "authenticate": false,
+              "template": "<span>{{ item.label }}</span>",
+              "multiple": false,
+              "protected": false,
+              "unique": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
+              "labelPosition": "top",
+              "tags": [],
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+              },
+              "properties": {},
               "isNew": false
             },
             {
@@ -93,7 +148,21 @@
               "type": "select",
               "input": true,
               "lockKey": true,
-              "isNew": false
+              "isNew": false,
+              "autofocus": false,
+              "defaultValue": "",
+              "filter": "",
+              "authenticate": false,
+              "template": "<span>{{ item.label }}</span>",
+              "multiple": false,
+              "protected": false,
+              "unique": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
+              "validate": {
+                "required": false
+              }
             },
             {
               "label": "Columns",
@@ -131,7 +200,25 @@
                       },
                       "type": "textfield",
                       "input": true,
-                      "lockKey": true
+                      "lockKey": true,
+                      "autofocus": false,
+                      "inputType": "text",
+                      "inputMask": "",
+                      "prefix": "",
+                      "suffix": "",
+                      "multiple": false,
+                      "defaultValue": "",
+                      "protected": false,
+                      "unique": false,
+                      "persistent": true,
+                      "hidden": false,
+                      "clearOnHide": true,
+                      "spellcheck": true,
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      }
                     }
                   ],
                   "width": 6,
@@ -175,7 +262,25 @@
                       },
                       "type": "textfield",
                       "input": true,
-                      "lockKey": true
+                      "lockKey": true,
+                      "autofocus": false,
+                      "inputType": "text",
+                      "inputMask": "",
+                      "prefix": "",
+                      "suffix": "",
+                      "multiple": false,
+                      "defaultValue": "",
+                      "protected": false,
+                      "unique": false,
+                      "persistent": true,
+                      "hidden": false,
+                      "clearOnHide": true,
+                      "spellcheck": true,
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      }
                     }
                   ],
                   "width": 6,
@@ -191,7 +296,8 @@
               "type": "columns",
               "input": false,
               "tableView": false,
-              "hideLabel": true
+              "hideLabel": true,
+              "clearOnHide": false
             },
             {
               "label": "Intensity",
@@ -217,10 +323,23 @@
                 "required": true
               },
               "key": "offeringIntensity",
-              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Data_Inventory_Report' \n    || data.reportName === 'ECert_Errors_Report' \n    || data.reportName === 'Program_And_Offering_Status_Report'\n    || data.reportName === 'Student_Unmet_Need_Report'\n    || data.reportName === 'Ministry_Student_Unmet_Need_Report'\n    || data.reportName === 'Offering_Details_Report'",
+              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Data_Inventory_Report' \n    || data.reportName === 'ECert_Errors_Report' \n    || data.reportName === 'Program_And_Offering_Status_Report'\n    || data.reportName === 'Student_Unmet_Need_Report'\n    || data.reportName === 'Ministry_Student_Unmet_Need_Report'\n    || data.reportName === 'Offering_Details_Report'\n    || data.reportName === 'COE_Requests';",
               "type": "selectboxes",
               "input": true,
-              "inputType": "checkbox"
+              "inputType": "checkbox",
+              "autofocus": false,
+              "inline": false,
+              "protected": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
+              "labelPosition": "top",
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+              },
+              "properties": {}
             },
             {
               "input": true,
@@ -233,9 +352,32 @@
               },
               "type": "textfield",
               "lockKey": true,
-              "customConditional": "show = \n    data.reportName === 'Program_And_Offering_Status_Report'\n    || data.reportName === 'Ministry_Student_Unmet_Need_Report'"
+              "customConditional": "show = \n    data.reportName === 'Program_And_Offering_Status_Report'\n    || data.reportName === 'Ministry_Student_Unmet_Need_Report'",
+              "autofocus": false,
+              "inputType": "text",
+              "inputMask": "",
+              "placeholder": "",
+              "prefix": "",
+              "suffix": "",
+              "multiple": false,
+              "defaultValue": "",
+              "protected": false,
+              "unique": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
+              "spellcheck": true,
+              "conditional": {
+                "show": null,
+                "when": null,
+                "eq": ""
+              }
             }
-          ]
+          ],
+          "tree": true,
+          "protected": false,
+          "persistent": true,
+          "clearOnHide": true
         },
         {
           "label": "institutionNames",
@@ -244,9 +386,13 @@
           "type": "hidden",
           "input": true,
           "tableView": false,
-          "lockKey": true
+          "lockKey": true,
+          "protected": false,
+          "unique": false
         }
-      ]
+      ],
+      "clearOnHide": false,
+      "theme": "default"
     }
   ]
 }

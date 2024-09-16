@@ -8,6 +8,7 @@ export * from "./form/form.service";
 export * from "./form/constants";
 export * from "./institution-location/institution-location.service";
 export * from "./cra-income-verification/cra-income-verification.service";
+export * from "./institution-user-auth/institution-user-auth.models";
 export * from "./institution-user-auth/institution-user-auth.service";
 export * from "./education-program-offering/education-program-offering.service";
 export * from "./education-program/education-program.service";
@@ -45,3 +46,4 @@ export * from "./application-bulk-withdrawal/application-bulk-withdrawal-validat
 export * from "./application-bulk-withdrawal/application-bulk-withdrawal-import-text.models";
 export * from "./student-loan-balance/student-loan-balance.service";
 export * from "./announcements/announcement.service";
+export * from "./cas-supplier/cas-supplier.service";

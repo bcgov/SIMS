@@ -17,6 +17,7 @@ import {
   VIRUS_DETECTED,
 } from "../../../../constants";
 import { VirusScanStatus } from "@sims/sims-db";
+import { S3_DEFAULT_MOCKED_FILE_CONTENT } from "@sims/test-utils/mocks";
 
 describe("StudentAESTController(e2e)-getUploadedFile", () => {
   let app: INestApplication;
@@ -105,7 +106,6 @@ describe("StudentAESTController(e2e)-getUploadedFile", () => {
     const studentFile = createFakeStudentFileUpload();
     studentFile.virusScanStatus = VirusScanStatus.FileIsClean;
     studentFile.fileName = "test.jpeg";
-    studentFile.mimeType = "image/jpeg";
     await db.studentFile.save(studentFile);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     const endpoint = `/aest/student/files/${studentFile.uniqueFileName}`;
@@ -118,7 +118,7 @@ describe("StudentAESTController(e2e)-getUploadedFile", () => {
         expect(response.headers["content-disposition"]).toBe(
           `attachment; filename=${studentFile.fileName}`,
         );
-        expect(response.body).toStrictEqual(studentFile.fileContent);
+        expect(response.text).toStrictEqual(S3_DEFAULT_MOCKED_FILE_CONTENT);
       });
   });
 

@@ -2,7 +2,15 @@ import * as faker from "faker";
 import { Institution, InstitutionType } from "@sims/sims-db";
 import { INSTITUTION_TYPE_BC_PRIVATE } from "@sims/sims-db/constant";
 
-export function createFakeInstitution(): Institution {
+/**
+ * Create fake institution.
+ * @param relations institution relations.
+ * - `institutionType` institution type.
+ * @returns institution.
+ */
+export function createFakeInstitution(relations?: {
+  institutionType?: InstitutionType;
+}): Institution {
   const institution = new Institution();
   institution.businessGuid = faker.datatype.uuid();
   institution.legalOperatingName = faker.company.companyName();
@@ -12,9 +20,11 @@ export function createFakeInstitution(): Institution {
   institution.website = faker.internet.url();
   institution.regulatingBody = "icbc";
   institution.establishedDate = faker.date.past(20).toISOString();
-  institution.institutionType = {
-    id: INSTITUTION_TYPE_BC_PRIVATE,
-  } as InstitutionType;
+  institution.institutionType =
+    relations?.institutionType ??
+    ({
+      id: INSTITUTION_TYPE_BC_PRIVATE,
+    } as InstitutionType);
   institution.institutionPrimaryContact = {
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),

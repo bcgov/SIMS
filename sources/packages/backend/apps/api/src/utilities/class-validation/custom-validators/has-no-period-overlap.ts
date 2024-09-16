@@ -15,6 +15,7 @@ import { getPeriodEndDateProperty, getPeriodStartDateProperty } from "..";
 @ValidatorConstraint()
 class HasNoPeriodOverlapConstraint implements ValidatorConstraintInterface {
   validate(values: unknown[]): boolean {
+    if (!values) return true;
     const [refTarget] = values;
     const periodStartDateProperty = getPeriodStartDateProperty(refTarget);
     const periodEndDateProperty = getPeriodEndDateProperty(refTarget);
