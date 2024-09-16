@@ -1103,10 +1103,9 @@ describe(
     }
 
     it("Should create an e-Cert with no overaward deductions when the student has overawards.", async () => {
-      // Overawards deductions should not be considered at this time.
+      // Overawards deductions should not be considered at this time for part-time applications.
 
       // Arrange
-
       // Student with valid SIN.
       const student = await saveFakeStudent(db.dataSource);
       // Valid MSFAA Number.
@@ -1163,10 +1162,10 @@ describe(
       await processor.processECert(job);
 
       // Assert
-      // Assert uploaded file.
       const [firstSchedule] =
         application.currentAssessment.disbursementSchedules;
-      // Assert schedule is updated to 'sent' with the dateSent defined.
+      // Assert schedule is updated to 'Sent' and effectiveAmount
+      // was not impacted by the existing overaward.
       const schedule = await db.disbursementSchedule.findOne({
         select: {
           id: true,
@@ -1191,18 +1190,14 @@ describe(
       const [cslpDisbursementValue] = schedule.disbursementValues;
       expect(cslpDisbursementValue.effectiveAmount).toEqual(1000);
       // Validate if overaward was not impacted.
-      const nonUpdatedCSLPOveraward = await db.disbursementOveraward.findOne({
-        select: {
-          id: true,
-          overawardValue: true,
-        },
+      const nonUpdatedCSLPOveraward = await db.disbursementOveraward.exists({
         where: {
           id: cslpOveraward.id,
           disbursementValueCode: "CSLP",
-          overawardValue: 1000,
+          overawardValue: 750,
         },
       });
-      expect(nonUpdatedCSLPOveraward.overawardValue).toBe(true);
+      expect(nonUpdatedCSLPOveraward).toBe(true);
     });
 
     /**
