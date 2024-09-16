@@ -57,3 +57,5 @@ export const ORM_CACHE_REDIS_RETRY_INTERVAL = 60 * 1000;
 export const COE_WINDOW = 21;
 
 export const COE_DENIED_REASON_OTHER_ID = 1;
+
+export const UTF8_BYTE_ORDER_MARK = [239, 187, 191];

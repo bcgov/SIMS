@@ -11,6 +11,7 @@ import {
 import {
   getFileNameAsCurrentTimestamp,
   CustomNamedError,
+  UTF8_BYTE_ORDER_MARK,
 } from "@sims/utilities";
 import { Response } from "express";
 import { Readable } from "stream";
@@ -36,12 +37,12 @@ export class ReportControllerService {
    * @param options related options.
    * - `institutionId` related institution id.
    */
-  async generateReport(
-    payload: ReportsFilterAPIInDTO,
+  async generateReport<T extends ReportsFilterAPIInDTO>(
+    payload: T,
     response: Response,
     options?: { institutionId?: number },
   ): Promise<void> {
-    const submissionResult = await this.formService.dryRunSubmission(
+    const submissionResult = await this.formService.dryRunSubmission<T>(
       FormNames.ExportFinancialReports,
       payload,
     );
@@ -96,15 +97,23 @@ export class ReportControllerService {
   ) {
     const timestamp = getFileNameAsCurrentTimestamp();
     const filename = `${reportName}_${timestamp}.csv`;
+    // Adding byte order mark characters to the original file content as applications
+    // like excel would look for BOM characters to view the file as UTF8 encoded.
+    const byteOrderMarkBuffer = Buffer.from(UTF8_BYTE_ORDER_MARK);
+    const fileContentBuffer = Buffer.from(fileContent);
+    const responseBuffer = Buffer.concat([
+      byteOrderMarkBuffer,
+      fileContentBuffer,
+    ]);
     response.setHeader(
       "Content-Disposition",
       `attachment; filename=${filename}`,
     );
     response.setHeader("Content-Type", "text/csv");
-    response.setHeader("Content-Length", fileContent.toString().length);
+    response.setHeader("Content-Length", responseBuffer.byteLength);
 
     const stream = new Readable();
-    stream.push(fileContent.toString());
+    stream.push(responseBuffer);
     stream.push(null);
     stream.pipe(response);
   }

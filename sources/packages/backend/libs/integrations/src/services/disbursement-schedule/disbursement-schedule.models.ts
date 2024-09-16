@@ -5,6 +5,7 @@ import {
   DisbursementValueType,
   EducationProgramOffering,
   RestrictionActionType,
+  RestrictionBypassBehaviors,
   StudentRestriction,
 } from "@sims/sims-db";
 
@@ -152,6 +153,11 @@ export interface StudentActiveRestriction {
    */
   id: number;
   /**
+   * Association between the student and
+   * the active restriction on his account.
+   */
+  studentRestrictionId: number;
+  /**
    * Restriction code.
    */
   code: RestrictionCode;
@@ -159,6 +165,28 @@ export interface StudentActiveRestriction {
    * Actions associated with the restriction.
    */
   actions: RestrictionActionType[];
+}
+
+/**
+ * Restriction bypass active for the application.
+ */
+export interface ApplicationActiveRestrictionBypass {
+  /**
+   * Bypass ID.
+   */
+  id: number;
+  /**
+   * Restriction code being bypassed.
+   */
+  restrictionCode: string;
+  /**
+   * Student restriction bypassed.
+   */
+  studentRestrictionId: number;
+  /**
+   * Bypass behavior.
+   */
+  bypassBehavior: RestrictionBypassBehaviors;
 }
 
 /**
@@ -179,6 +207,7 @@ export type EligibleECertOffering = Pick<
  * while the other properties are supporting information.
  */
 export class EligibleECertDisbursement {
+  private readonly studentRestrictionsBypassedIds: number[];
   /**
    * Creates a new instance of a eligible e-Cert to be calculated.
    * @param studentId student id.
@@ -196,13 +225,14 @@ export class EligibleECertDisbursement {
    * program year.
    * @param disabilityDetails students Disability status both from application submitted
    * and the student profile disability status verification.
-   * @param restrictions All active student restrictions actions. These actions can
+   * @param restrictions all active student restrictions actions. These actions can
    * impact the e-Cert calculations.
    * This is a shared array reference between all the disbursements of a single student.
    * Changes to this array should be available for all disbursements of the student.
    * If a particular step generates or resolves an active restriction this array should
    * be updated using the method {@link refreshActiveStudentRestrictions} to allow all
    * steps to have access to the most updated data.
+   * @param restrictionBypass all active restrictions bypasses applied to the student application.
    */
   constructor(
     public readonly studentId: number,
@@ -214,8 +244,13 @@ export class EligibleECertDisbursement {
     public readonly offering: EligibleECertOffering,
     public readonly maxLifetimeBCLoanAmount: number,
     public readonly disabilityDetails: DisabilityDetails,
-    readonly restrictions: StudentActiveRestriction[],
-  ) {}
+    private readonly restrictions: StudentActiveRestriction[],
+    private readonly restrictionBypass: ApplicationActiveRestrictionBypass[],
+  ) {
+    this.studentRestrictionsBypassedIds = this.restrictionBypass.map(
+      (bypass) => bypass.studentRestrictionId,
+    );
+  }
 
   /**
    * Refresh the complete list of student restrictions.
@@ -235,6 +270,28 @@ export class EligibleECertDisbursement {
   get activeRestrictions(): ReadonlyArray<StudentActiveRestriction> {
     return this.restrictions;
   }
+
+  /**
+   * All application active restrictions bypasses.
+   */
+  get activeRestrictionBypasses(): ReadonlyArray<ApplicationActiveRestrictionBypass> {
+    return this.restrictionBypass;
+  }
+
+  /**
+   * List of restrictions not bypassed that will be applied to the application.
+   */
+  getEffectiveRestrictions(): ReadonlyArray<StudentActiveRestriction> {
+    // The restrictions list can be updated as the e-Cert is calculated.
+    // That is why the effective list should be calculated using the most
+    // recent values.
+    return this.restrictions.filter(
+      (restriction) =>
+        !this.studentRestrictionsBypassedIds.includes(
+          restriction.studentRestrictionId,
+        ),
+    );
+  }
 }
 
 /**
@@ -246,11 +303,14 @@ export class EligibleECertDisbursement {
 export function mapStudentActiveRestrictions(
   studentRestrictions: StudentRestriction[],
 ): StudentActiveRestriction[] {
-  return studentRestrictions.map((studentRestriction) => ({
-    id: studentRestriction.restriction.id,
-    code: studentRestriction.restriction.restrictionCode as RestrictionCode,
-    actions: studentRestriction.restriction.actionType,
-  }));
+  return studentRestrictions.map<StudentActiveRestriction>(
+    (studentRestriction) => ({
+      studentRestrictionId: studentRestriction.id,
+      id: studentRestriction.restriction.id,
+      code: studentRestriction.restriction.restrictionCode as RestrictionCode,
+      actions: studentRestriction.restriction.actionType,
+    }),
+  );
 }
 
 /**

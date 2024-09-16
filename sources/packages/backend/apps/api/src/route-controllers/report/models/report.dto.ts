@@ -12,6 +12,7 @@ export class ReportFilterParamAPIInDTO {
 enum InstitutionReportNames {
   OfferingDetails = "Offering_Details_Report",
   StudentUnmetNeed = "Student_Unmet_Need_Report",
+  COERequests = "COE_Requests",
 }
 
 enum MinistryReportNames {

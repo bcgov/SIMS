@@ -84,13 +84,15 @@
       "editor.formatOnSave": true,
       "editor.codeActionsOnSave": {
         "source.addMissingImports": "explicit",
-        "source.fixAll.eslint": "explicit"
+        "source.fixAll.eslint": "explicit",
+        "source.removeUnusedImports": "always"
       }
     },
     "typescript.preferences.importModuleSpecifier": "non-relative",
     "cSpell.words": [
       "AEST",
       "bcag",
+      "BCLM",
       "BCSC",
       "BCSG",
       "bcsl",

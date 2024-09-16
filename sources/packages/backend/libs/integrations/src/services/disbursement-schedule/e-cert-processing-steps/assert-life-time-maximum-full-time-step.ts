@@ -45,6 +45,17 @@ export class AssertLifeTimeMaximumFullTimeStep implements ECertProcessStep {
     log: ProcessSummary,
   ): Promise<boolean> {
     log.info("Checking life time maximums for BC loans.");
+    // Check restriction bypasses. If a bypass is enabled for BCLM the awards
+    // should not be reduced and no further verifications are needed.
+    const hasBCLMBypass = eCertDisbursement.activeRestrictionBypasses.some(
+      (activeBypass) => activeBypass.restrictionCode === RestrictionCode.BCLM,
+    );
+    if (hasBCLMBypass) {
+      log.info(
+        `The application has an active bypass for ${RestrictionCode.BCLM}. The verification will be ignored.`,
+      );
+      return true;
+    }
     if (getRestrictionByCode(eCertDisbursement, RestrictionCode.BCLM)) {
       log.info(
         `Student already has a ${RestrictionCode.BCLM} restriction, hence skipping the check.`,

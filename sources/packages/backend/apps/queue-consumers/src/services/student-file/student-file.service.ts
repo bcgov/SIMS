@@ -5,7 +5,6 @@ import {
   StudentFile,
   VirusScanStatus,
 } from "@sims/sims-db";
-import { Readable } from "stream";
 import { CustomNamedError } from "@sims/utilities";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { ClamAVError, ClamAVService, SystemUsersService } from "@sims/services";
@@ -17,6 +16,7 @@ import {
   SERVER_UNAVAILABLE,
   UNKNOWN_ERROR,
 } from "../../constants/error-code.constants";
+import { ObjectStorageService } from "@sims/integrations/object-storage";
 
 export const INFECTED_FILENAME_SUFFIX = "-OriginalFileError";
 
@@ -26,6 +26,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     dataSource: DataSource,
     private readonly clamAVService: ClamAVService,
     private readonly systemUsersService: SystemUsersService,
+    private readonly objectStorageService: ObjectStorageService,
   ) {
     super(dataSource.getRepository(StudentFile));
   }
@@ -49,14 +50,15 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
       );
     }
 
-    const stream = new Readable();
-    stream.push(studentFile.fileContent);
-    stream.push(null);
+    // Retrieve the file from the object storage.
+    const { body } = await this.objectStorageService.getObject(
+      studentFile.uniqueFileName,
+    );
     let isInfected: boolean | null;
     let errorName: string;
     let errorMessage = `Unable to scan the file ${uniqueFileName} for viruses.`;
     try {
-      isInfected = await this.clamAVService.scanFile(stream);
+      isInfected = await this.clamAVService.scanFile(body);
       if (isInfected === null) {
         errorMessage = `${errorMessage} File scanning failed due to unknown error.`;
         errorName = FILE_SCANNING_FAILED;
@@ -113,7 +115,6 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         id: true,
         fileName: true,
         uniqueFileName: true,
-        fileContent: true,
       },
       where: {
         uniqueFileName,

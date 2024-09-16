@@ -35,8 +35,6 @@ export function createFakeStudentFileUpload(
     "." +
     faker.system.fileType();
   studentFile.groupName = "Ministry communications";
-  studentFile.mimeType = faker.system.mimeType();
-  studentFile.fileContent = Buffer.from(faker.random.words(50), "utf-8");
   studentFile.student = relations?.student ?? createFakeStudent();
   studentFile.creator = relations?.creator;
   studentFile.fileOrigin = options?.fileOrigin ?? FileOriginType.Ministry;

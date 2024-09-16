@@ -40,14 +40,14 @@ export class FullTimeCertRecordParser extends ECertRecordParser {
    * Student's first name.
    */
   get firstName(): string {
-    return this.record.substring(176, 190).trim();
+    return this.record.substring(176, 191).trim();
   }
 
   /**
    * Student's last name.
    */
   get lastName(): string {
-    return this.record.substring(151, 175).trim();
+    return this.record.substring(151, 176).trim();
   }
 
   /**

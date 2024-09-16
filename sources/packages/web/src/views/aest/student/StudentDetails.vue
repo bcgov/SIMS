@@ -95,6 +95,14 @@ export default defineComponent({
         }),
       },
       {
+        label: "CAS Supplier Information",
+        icon: "fa:fa fa-calculator",
+        command: () => ({
+          name: AESTRoutesConst.CAS_SUPPLIER_MANAGEMENT,
+          params: { studentId: props.studentId },
+        }),
+      },
+      {
         label: "Balances",
         icon: "fa:fa fa-circle-dollar-to-slot",
         command: () => ({

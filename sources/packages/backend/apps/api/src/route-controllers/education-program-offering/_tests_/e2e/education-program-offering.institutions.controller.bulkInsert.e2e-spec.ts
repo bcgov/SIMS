@@ -29,6 +29,7 @@ import {
   MAX_ALLOWED_OFFERING_AMOUNT,
   MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
 } from "../../../../utilities";
+import { PrimaryIdentifierAPIOutDTO } from "apps/api/src/route-controllers/models/primary.identifier.dto";
 
 describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () => {
   let app: INestApplication;
@@ -221,35 +222,37 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
         .attach("file", singleOfferingWithValidationErrorsFilePath)
         .auth(institutionUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.UNPROCESSABLE_ENTITY)
-        .expect({
-          message: "An offering has invalid data.",
-          errorType: OFFERING_VALIDATION_CRITICAL_ERROR,
-          objectInfo: [
-            {
-              recordIndex: 0,
-              locationCode: csvLocationCodeYESK,
-              sabcProgramCode: csvProgramSABCCodeSBC1,
-              startDate: "2023-09-05",
-              endDate: "2023-10-14",
-              offeringStatus: OfferingStatus.CreationPending,
-              errors: [],
-              infos: [],
-              warnings: [
-                {
-                  typeCode:
-                    OfferingValidationWarnings.InvalidStudyDatesPeriodLength,
-                  message:
-                    "End date, the number of day(s) between Sep 05 2023 and Oct 14 2023 must be at least 84.",
-                },
-                {
-                  typeCode:
-                    OfferingValidationWarnings.ProgramOfferingDeliveryMismatch,
-                  message:
-                    "Delivery type has an offering delivery that is not allowed by its program.",
-                },
-              ],
-            },
-          ],
+        .expect((response) => {
+          expect(response.body).toEqual({
+            message: "An offering has invalid data.",
+            errorType: OFFERING_VALIDATION_CRITICAL_ERROR,
+            objectInfo: [
+              {
+                recordIndex: 0,
+                locationCode: csvLocationCodeYESK,
+                sabcProgramCode: csvProgramSABCCodeSBC1,
+                startDate: "2023-09-05",
+                endDate: "2023-10-14",
+                offeringStatus: OfferingStatus.CreationPending,
+                errors: [],
+                infos: [],
+                warnings: expect.arrayContaining([
+                  expect.objectContaining({
+                    typeCode:
+                      OfferingValidationWarnings.InvalidFundedStudyPeriodLength,
+                    message:
+                      "Full-time offerings must be at least 12 funded weeks of study or longer to be eligible. Any shorter offerings can be submitted but will require SABC review.",
+                  }),
+                  expect.objectContaining({
+                    typeCode:
+                      OfferingValidationWarnings.ProgramOfferingDeliveryMismatch,
+                    message:
+                      "Delivery type has an offering delivery that is not allowed by its program.",
+                  }),
+                ]),
+              },
+            ],
+          });
         });
     },
   );
@@ -466,6 +469,128 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
         ],
       });
   });
+
+  it(
+    `Should create offerings with offering status ${OfferingStatus.CreationPending} when a multi line bulk offering CSV file with` +
+      " existing location code and SABC code, and total funded weeks less than minimum allowed weeks where one program offering" +
+      " without study breaks and another with study breaks is uploaded.",
+    async () => {
+      // Arrange
+      // Second location code in the multiple CSV.
+      const csvLocationCodeSEYK = "SEYK";
+      // SABC code in the second row of the multiple CSV.
+      const csvProgramSABCCodeSBC4 = "SBC4";
+
+      // Creating an institution location with same location code as that of the
+      // second row in the CSV file.
+      const collegeFLocationSEYK = createFakeInstitutionLocation(
+        {
+          institution: collegeF,
+        },
+        {
+          initialValue: {
+            institutionCode: csvLocationCodeSEYK,
+          },
+        },
+      );
+      // Create a program for the institution with the same SABC code as that of the
+      // second row of the multiple CSV file.
+      // Setting deliveredOnSite as true, as that of the CSV, so that it will create an approved offering.
+      const educationProgramSBC4 = createFakeEducationProgram(
+        { institution: collegeF, user: collegeFUser },
+        {
+          initialValue: {
+            sabcCode: csvProgramSABCCodeSBC4,
+            deliveredOnSite: true,
+          } as Partial<EducationProgram>,
+        },
+      );
+
+      await db.educationProgram.save(educationProgramSBC4);
+
+      await authorizeUserTokenForLocation(
+        db.dataSource,
+        InstitutionTokenTypes.CollegeFUser,
+        collegeFLocationSEYK,
+      );
+
+      const multipleOfferingFilePath = path.join(
+        __dirname,
+        "bulk-insert/multiple-upload-with-total-funded-weeks-less-than-minimum-allowed-weeks.csv",
+      );
+
+      let [
+        responseOfferingSBC1,
+        responseOfferingSBC2,
+      ]: PrimaryIdentifierAPIOutDTO[] = [];
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .attach("file", multipleOfferingFilePath)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED)
+        .expect((response) => {
+          [responseOfferingSBC1, responseOfferingSBC2] = response.body;
+          expect(responseOfferingSBC1.id).toBeGreaterThan(0);
+          expect(responseOfferingSBC2.id).toBeGreaterThan(0);
+        });
+
+      // Checking the created offering statuses.
+      const [offeringSBC1, offeringSBC2] =
+        await db.educationProgramOffering.find({
+          select: {
+            offeringStatus: true,
+            name: true,
+            studyStartDate: true,
+            studyEndDate: true,
+            studyBreaks: true as unknown,
+          },
+          where: {
+            id: In([responseOfferingSBC1.id, responseOfferingSBC2.id]),
+          },
+          order: {
+            name: "ASC",
+          },
+        });
+
+      // The total funded weeks for the programs 'SBC4' in the CSV are less than the minimum allowed weeks,
+      // offering status with 'Creation pending' will be created when inserted.
+      expect(offeringSBC1).toEqual({
+        name: "Test offering 41",
+        offeringStatus: OfferingStatus.CreationPending,
+        studyStartDate: "2024-05-23",
+        studyEndDate: "2024-08-07",
+        studyBreaks: {
+          totalDays: 77,
+          totalFundedWeeks: 11,
+          fundedStudyPeriodDays: 77,
+          unfundedStudyPeriodDays: 0,
+        },
+      });
+      expect(offeringSBC2).toEqual({
+        name: "Test offering 42",
+        offeringStatus: OfferingStatus.CreationPending,
+        studyStartDate: "2024-05-23",
+        studyEndDate: "2024-08-16",
+        studyBreaks: {
+          totalDays: 86,
+          totalFundedWeeks: 11,
+          fundedStudyPeriodDays: 75.6,
+          unfundedStudyPeriodDays: 10.4,
+          studyBreaks: [
+            {
+              breakDays: 19,
+              breakStartDate: "2024-07-29",
+              breakEndDate: "2024-08-16",
+              eligibleBreakDays: 19,
+              ineligibleBreakDays: 0,
+            },
+          ],
+        },
+      });
+    },
+  );
 
   afterAll(async () => {
     await app?.close();

@@ -4,11 +4,16 @@ import { DataSource } from "typeorm";
 import { AppModule } from "../../app.module";
 import { setGlobalPipes } from "../../utilities";
 import { overrideImportsMetadata } from "@sims/test-utils";
-import { createZeebeModuleMock, QueueModuleMock } from "@sims/test-utils/mocks";
+import {
+  createObjectStorageServiceMock,
+  createZeebeModuleMock,
+  QueueModuleMock,
+} from "@sims/test-utils/mocks";
 import { QueueModule } from "@sims/services/queue";
 import { SystemUsersService, ZeebeModule } from "@sims/services";
 import { DiscoveryModule } from "@golevelup/nestjs-discovery";
 import { KeycloakConfig } from "@sims/auth/config";
+import { ObjectStorageService } from "@sims/integrations/object-storage";
 
 /**
  * Result from a createTestingModule to support E2E tests creation.
@@ -17,6 +22,7 @@ export class CreateTestingModuleResult {
   nestApplication: INestApplication;
   module: TestingModule;
   dataSource: DataSource;
+  objectStorageServiceMock: ObjectStorageService;
 }
 
 /**
@@ -36,9 +42,13 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
     },
   );
   await KeycloakConfig.load();
+  const objectStorageServiceMock = createObjectStorageServiceMock();
   const module: TestingModule = await Test.createTestingModule({
     imports: [AppModule, DiscoveryModule],
-  }).compile();
+  })
+    .overrideProvider(ObjectStorageService)
+    .useValue(objectStorageServiceMock)
+    .compile();
   const nestApplication = module.createNestApplication();
   setGlobalPipes(nestApplication);
   await nestApplication.init();
@@ -52,5 +62,6 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
     nestApplication,
     module,
     dataSource,
+    objectStorageServiceMock,
   };
 }

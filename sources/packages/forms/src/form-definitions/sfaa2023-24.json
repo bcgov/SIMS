@@ -2514,7 +2514,7 @@
                               "tableView": true,
                               "validate": {
                                 "required": true,
-                                "custom": "// To calculate the time difference of two dates\r\nconst Difference_In_Time =\r\n  new Date(data.studyendDate).getTime() -\r\n  new Date(data.studystartDate).getTime();\r\n\r\n// To calculate the no. of days between two dates\r\nconst Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);\r\nvalid = data.studystartDate\r\n  ? Difference_In_Days >= data.studyPeriodMinDays &&\r\n    Difference_In_Days <= data.studyPeriodMaxDays\r\n    ? true\r\n    : `Invalid Study Period, Dates must be between ${data.studyPeriodMinDays} and ${data.studyPeriodMaxDays} days`\r\n  : \"Please provide Study Start date\";",
+                                "custom": "// To calculate the time difference of two dates\r\nconst Difference_In_Time =\r\n  new Date(data.studyendDate).getTime() -\r\n  new Date(data.studystartDate).getTime();\r\n\r\n// To calculate the no. of days between two dates\r\nconst Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);\r\nvalid = data.studystartDate\r\n  ? Difference_In_Days <= data.studyPeriodMaxDays\r\n    ? true\r\n    : `Invalid Study Period, Dates must not be greater than ${data.studyPeriodMaxDays} days`\r\n  : \"Please provide Study Start date\";",
                                 "customPrivate": false,
                                 "strictDateValidation": false,
                                 "multiple": false,
@@ -2673,13 +2673,13 @@
                         }
                       ],
                       "className": "alert alert-warning fa fa-exclamation-triangle w-100",
-                      "content": "<span class=\"font-bold ml-2\">Study period not eligible for funding</span>\n<br>\n<span>The study period you selected has already concluded and will need additional review from StudentAid BC to be considered for funding. Once you have submitted your application, please use the following link for information on the <a class=\"formio-href\" href=\"https://studentaidbc.ca/sites/all/files/form-library/appeal_fundingafterenddate.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">funding after end date appeal</a>.</span>",
+                      "content": "<span class=\"font-bold ml-2\">Study period not eligible for funding</span>\n<br>\n<span>The dates you have entered are no longer eligible for funding. To receive funding for this study period, you will need to seek approval from StudentAid BC. Once you have submitted your application, please use the following link for information on the <a class=\"formio-href\" href=\"https://studentaidbc.ca/sites/all/files/form-library/appeal_fundingafterenddate.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">funding after end date appeal</a>.</span>",
                       "type": "htmlelement",
                       "hideLabel": true,
                       "tags": [],
                       "conditional": {
                         "show": "true",
-                        "when": "studyEndDateBeforeToday",
+                        "when": "studyEndDateBeforeSixWeeksFromToday",
                         "eq": "true"
                       },
                       "properties": {},
@@ -3755,12 +3755,12 @@
                     }
                   ],
                   "className": "alert alert-warning fa fa-exclamation-triangle w-100",
-                  "content": "<span class=\"font-bold ml-2\">Study period not eligible for funding</span>\n<br>\n<span>The study period you selected has already concluded and will need additional review from StudentAid BC to be considered for funding. Once you have submitted your application, please use the following link for information on the <a class=\"formio-href\" href=\"https://studentaidbc.ca/sites/all/files/form-library/appeal_fundingafterenddate.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">funding after end date appeal</a>.</span>",
+                  "content": "<span class=\"font-bold ml-2\">Study period not eligible for funding</span>\n<br>\n<span>The dates you have entered are no longer eligible for funding. To receive funding for this study period, you will need to seek approval from StudentAid BC. Once you have submitted your application, please use the following link for information on the <a class=\"formio-href\" href=\"https://studentaidbc.ca/sites/all/files/form-library/appeal_fundingafterenddate.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">funding after end date appeal</a>.</span>",
                   "type": "htmlelement",
                   "tags": [],
                   "conditional": {
                     "show": "true",
-                    "when": "selectedStudyEndDateBeforeToday",
+                    "when": "selectedStudyEndDateBeforeSixWeeksFromToday",
                     "eq": "true"
                   },
                   "properties": {},
@@ -3786,7 +3786,7 @@
                   "properties": {},
                   "calculateValue": "value = \"studentApplicationException\";",
                   "lockKey": true,
-                  "customConditional": "show = data.studyEndDateBeforeToday || data.selectedStudyEndDateBeforeToday;",
+                  "customConditional": "show = data.studyEndDateBeforeSixWeeksFromToday || data.selectedStudyEndDateBeforeSixWeeksFromToday;",
                   "calculateServer": true
                 }
               ],
@@ -5351,8 +5351,8 @@
         {
           "input": true,
           "tableView": false,
-          "key": "studyEndDateBeforeToday",
-          "label": "Study end date before today",
+          "key": "studyEndDateBeforeSixWeeksFromToday",
+          "label": "Study end date before six weeks from today",
           "protected": false,
           "unique": false,
           "persistent": true,
@@ -5366,13 +5366,13 @@
           "properties": {},
           "lockKey": true,
           "calculateServer": true,
-          "calculateValue": "/**\r\n * Validates if the date provided is before today.\r\n *\r\n * The same validation exists on calculating selectedStudyEndDateBeforeToday,\r\n * other student application forms, program information request form\r\n * and also on the server side.\r\n *\r\n * When there is an update to this logic make sure to update in all the above.\r\n *\r\n */\r\n\r\nfunction isGivenDateBeforeToday(givenDate) {\r\n  return moment\r\n    .utc(givenDate)\r\n    .isBefore(moment.utc(new Date()).format(\"YYYY-MM-DD\"), \"day\");\r\n}\r\n\r\n// If program/study period not listed is selected, validate the study end date to be after given days before now.\r\nvalue = !!data.studyendDate && isGivenDateBeforeToday(data.studyendDate);\r\n"
+          "calculateValue": "/**\r\n * Validates if the date provided is before six weeks from today.\r\n *\r\n * The same validation exists on calculating selectedStudyEndDateBeforeSixWeeksFromToday,\r\n * other student application forms, program information request form\r\n * and also on the server side.\r\n *\r\n * When there is an update to this logic make sure to update in all the above.\r\n *\r\n */\r\n\r\n// If program/study period not listed is selected, validate the study end date to be after given days before six weeks from today.\r\nvalue = !!data.studyendDate && moment(data.studyendDate).isBefore(moment().add(6, 'week'));"
         },
         {
           "input": true,
           "tableView": false,
-          "key": "selectedStudyEndDateBeforeToday",
-          "label": "Selected study end date before today",
+          "key": "selectedStudyEndDateBeforeSixWeeksFromToday",
+          "label": "Selected study end date before six weeks from today",
           "protected": false,
           "unique": false,
           "persistent": true,
@@ -5386,26 +5386,7 @@
           "properties": {},
           "lockKey": true,
           "calculateServer": true,
-          "calculateValue": "/**\r\n * Validates if the date provided is before today.\r\n *\r\n * The same validation exists on calculating studyEndDateBeforeToday,\r\n * other student application forms, program information request form\r\n * and also on the server side.\r\n *\r\n * When there is an update to this logic make sure to update in all the above.\r\n *\r\n */\r\n\r\nfunction isGivenDateBeforeToday(givenDate) {\r\n  return moment\r\n    .utc(givenDate)\r\n    .isBefore(moment.utc(new Date()).format(\"YYYY-MM-DD\"), \"day\");\r\n}\r\n\r\n// If a study period is selected, validate its study end date to be after given days before now.\r\nvalue =\r\n  !!data.selectedOfferingEndDate &&\r\n  isGivenDateBeforeToday(data.selectedOfferingEndDate);\r\n"
-        },
-        {
-          "input": true,
-          "tableView": true,
-          "key": "studyPeriodMinDays",
-          "label": "Study period minimum days",
-          "protected": false,
-          "unique": false,
-          "persistent": true,
-          "type": "hidden",
-          "tags": [],
-          "conditional": {
-            "show": "",
-            "when": null,
-            "eq": ""
-          },
-          "properties": {},
-          "lockKey": true,
-          "calculateValue": "value = data.howWillYouBeAttendingTheProgram === \"Full Time\" ? 84 : 42;"
+          "calculateValue": "/**\r\n * Validates if the date provided is before six weeks from today.\r\n *\r\n * The same validation exists on calculating studyEndDateBeforeSixWeeksFromToday,\r\n * other student application forms, program information request form\r\n * and also on the server side.\r\n *\r\n * When there is an update to this logic make sure to update in all the above.\r\n *\r\n */\r\n\r\n// If a study period is selected, validate its study end date to be before six weeks from today.\r\nvalue =\r\n  !!data.selectedOfferingEndDate && moment(data.selectedOfferingEndDate).isBefore(moment().add(6, 'week'));"
         },
         {
           "input": true,
@@ -11249,7 +11230,13 @@
                   "disabled": false,
                   "tableView": false,
                   "modalEdit": false,
-                  "defaultValue": [],
+                  "defaultValue": [
+                    {
+                      "firstName": "",
+                      "lastName": "",
+                      "relationshipWithThisContact": ""
+                    }
+                  ],
                   "persistent": true,
                   "protected": false,
                   "dbIndex": false,
@@ -11262,7 +11249,7 @@
                   "allowCalculateOverride": false,
                   "validateOn": "change",
                   "validate": {
-                    "required": true,
+                    "required": false,
                     "minLength": "",
                     "maxLength": "",
                     "customMessage": "",
@@ -11301,7 +11288,7 @@
                   "components": [
                     {
                       "label": "First name",
-                      "customClass": "font-weight-bold",
+                      "customClass": "font-weight-bold no-required-field-sign",
                       "tableView": true,
                       "validate": {
                         "required": true,
@@ -11380,7 +11367,7 @@
                     },
                     {
                       "label": "Last name",
-                      "customClass": "font-weight-bold",
+                      "customClass": "font-weight-bold no-required-field-sign",
                       "tableView": true,
                       "validate": {
                         "required": true,
@@ -11465,7 +11452,7 @@
                       "optionsLabelPosition": "right",
                       "description": "",
                       "tooltip": "",
-                      "customClass": "",
+                      "customClass": "no-required-field-sign",
                       "tabindex": "",
                       "inline": false,
                       "hidden": false,

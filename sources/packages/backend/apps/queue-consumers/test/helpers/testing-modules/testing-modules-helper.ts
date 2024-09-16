@@ -6,6 +6,7 @@ import { SshService } from "@sims/integrations/services";
 import { overrideImportsMetadata } from "@sims/test-utils";
 import {
   QueueModuleMock,
+  createObjectStorageServiceMock,
   createSSHServiceMock,
   createZeebeModuleMock,
 } from "@sims/test-utils/mocks";
@@ -17,6 +18,7 @@ import { ClamAVService, SystemUsersService, ZeebeModule } from "@sims/services";
 import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 import { createCASServiceMock } from "../mock-utils/cas-service.mock";
 import { CASService } from "@sims/integrations/cas/cas.service";
+import { ObjectStorageService } from "@sims/integrations/object-storage";
 
 /**
  * Result from a createTestingModule to support E2E tests creation.
@@ -29,6 +31,7 @@ export class CreateTestingModuleResult {
   sshClientMock: DeepMocked<Client>;
   casServiceMock: CASService;
   clamAVServiceMock: ClamAVService;
+  objectStorageServiceMock: ObjectStorageService;
 }
 
 /**
@@ -50,6 +53,7 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
   const sshClientMock = createMock<Client>();
   const casServiceMock = createCASServiceMock();
   const clamAVServiceMock = createClamAVServiceMock();
+  const objectStorageServiceMock = createObjectStorageServiceMock();
 
   const module: TestingModule = await Test.createTestingModule({
     imports: [QueueConsumersModule, DiscoveryModule],
@@ -60,6 +64,8 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
     .useValue(casServiceMock)
     .overrideProvider(ClamAVService)
     .useValue(clamAVServiceMock)
+    .overrideProvider(ObjectStorageService)
+    .useValue(objectStorageServiceMock)
     .compile();
 
   const nestApplication = module.createNestApplication();
@@ -80,6 +86,7 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
     sshClientMock,
     casServiceMock,
     clamAVServiceMock,
+    objectStorageServiceMock,
   };
 }
 
