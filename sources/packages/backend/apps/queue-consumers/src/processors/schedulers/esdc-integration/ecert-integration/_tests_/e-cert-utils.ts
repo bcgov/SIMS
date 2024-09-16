@@ -165,7 +165,7 @@ export async function createBlockedDisbursementTestData(
       {
         msfaaState,
         msfaaInitialValues: {
-          offeringIntensity: offeringIntensity,
+          offeringIntensity,
         },
       },
     ),
