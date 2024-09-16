@@ -3,6 +3,7 @@ import {
   Assessment,
   COEStatus,
   DisbursementScheduleStatus,
+  DisbursementValue,
   DisbursementValueType,
   Notification,
   NotificationMessage,
@@ -97,7 +98,8 @@ describe(
 
     it("Should create a notification for the ministry and student for a blocked disbursement when there are no previously existing notifications for the disbursement.", async () => {
       // Arrange
-      const { student, disbursementId } = await createTestData();
+      const { student, disbursementId } =
+        await createBlockedDisbursementTestData();
       // Queued job.
       const mockedJob = mockBullJob<void>();
 
@@ -151,7 +153,8 @@ describe(
 
     it("Should not create a notification for the student for a disbursement when there are already 3 notifications created.", async () => {
       // Arrange
-      const { student, disbursementId } = await createTestData();
+      const { student, disbursementId } =
+        await createBlockedDisbursementTestData();
       // Create pre-existing notificationsToCreate notifications for the student and ministry for the above created disbursement.
       const notificationsToCreate = 3;
       await saveNotifications(notificationsToCreate, student, disbursementId);
@@ -180,7 +183,8 @@ describe(
 
     it("Should not create a notification for the student for a disbursement when an attempt is made to create the 2nd notification before 7 days from the first notification.", async () => {
       // Arrange
-      const { student, disbursementId } = await createTestData();
+      const { student, disbursementId } =
+        await createBlockedDisbursementTestData();
       // Create 1 pre-existing notification for the student and the ministry 6 days before the current date for the above created disbursement.
       await saveNotifications(1, student, disbursementId, -6);
       // Queued job.
@@ -211,7 +215,8 @@ describe(
 
     it("Should create a notification for the student for a disbursement when an attempt is made to create the 2nd notification on or after 7 days from the first notification.", async () => {
       // Arrange
-      const { student, disbursementId } = await createTestData();
+      const { student, disbursementId } =
+        await createBlockedDisbursementTestData();
       // Create 1 pre-existing notification for the above created disbursement.
       await saveNotifications(1, student, disbursementId, -7);
       // Queued job.
@@ -1106,14 +1111,29 @@ describe(
      * Creates the test data required for the individual tests.
      * @returns the required test data.
      */
-    async function createTestData(): Promise<{
+    async function createBlockedDisbursementTestData(options?: {
+      offeringIntensity?: OfferingIntensity;
+      isValidSIN?: boolean;
+      disbursementValues?: DisbursementValue[];
+    }): Promise<{
       student: Student;
       disbursementId: number;
     }> {
+      const offeringIntensity =
+        options?.offeringIntensity ?? OfferingIntensity.partTime;
+      const isValidSIN = options?.isValidSIN ?? false;
+      const disbursementValues = options?.disbursementValues ?? [
+        createFakeDisbursementValue(
+          DisbursementValueType.CanadaLoan,
+          "CSLP",
+          300,
+        ),
+      ];
+
       // Student with invalid SIN to block the disbursement.
       const student = await saveFakeStudent(db.dataSource, undefined, {
         sinValidationInitialValue: {
-          isValidSIN: false,
+          isValidSIN,
         },
       });
       // Valid MSFAA Number.
@@ -1123,7 +1143,7 @@ describe(
           {
             msfaaState: MSFAAStates.Signed,
             msfaaInitialValues: {
-              offeringIntensity: OfferingIntensity.partTime,
+              offeringIntensity: offeringIntensity,
             },
           },
         ),
@@ -1134,16 +1154,10 @@ describe(
         {
           student,
           msfaaNumber,
-          disbursementValues: [
-            createFakeDisbursementValue(
-              DisbursementValueType.CanadaLoan,
-              "CSLP",
-              300,
-            ),
-          ],
+          disbursementValues,
         },
         {
-          offeringIntensity: OfferingIntensity.partTime,
+          offeringIntensity: offeringIntensity,
           applicationStatus: ApplicationStatus.Completed,
           firstDisbursementInitialValues: {
             coeStatus: COEStatus.completed,
