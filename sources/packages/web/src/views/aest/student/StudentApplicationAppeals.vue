@@ -5,7 +5,7 @@
     </template>
     <body-header
       title="Requested appeals"
-      :recordsCount="applicationAppeals.results?.length"
+      :recordsCount="applicationAppeals.count"
       subTitle="Make a determination on requested change(s) that may require a reassessment"
     >
       <template #actions>
