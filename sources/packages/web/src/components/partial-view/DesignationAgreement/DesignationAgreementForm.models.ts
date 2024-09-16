@@ -45,6 +45,7 @@ export interface DesignationModel {
   isBCPrivate: boolean;
   designationStatus?: DesignationAgreementStatus;
   designationStatusClass?: string;
+  disableLinkNavigation?: boolean;
 }
 
 /**

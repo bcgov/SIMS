@@ -587,7 +587,8 @@
               "showWordCount": false,
               "allowMultipleMasks": false,
               "addons": [],
-              "id": "ed906k"
+              "id": "ed906k",
+              "isNew": false
             }
           ],
           "size": "md",
@@ -668,7 +669,8 @@
       "tree": false,
       "id": "ebkmuam",
       "addons": [],
-      "lazyLoad": false
+      "lazyLoad": false,
+      "isNew": false
     },
     {
       "label": "HTML",
@@ -842,7 +844,7 @@
           "value": ""
         }
       ],
-      "content": "Request your location(s) be designated. To add locations, go to <a href=\"#\" id=\"goToManageLocations\">manage locations</a>.",
+      "content": "Requested location(s) to be designated.",
       "refreshOnChange": false,
       "customClass": "",
       "hidden": false,
@@ -851,9 +853,89 @@
       "tags": [],
       "properties": {},
       "conditional": {
-        "show": null,
-        "when": null,
-        "eq": "",
+        "show": "true",
+        "when": "disableLinkNavigation",
+        "eq": "true",
+        "json": ""
+      },
+      "customConditional": "",
+      "logic": [],
+      "attributes": {},
+      "overlay": {
+        "style": "",
+        "page": "",
+        "left": "",
+        "top": "",
+        "width": "",
+        "height": ""
+      },
+      "type": "htmlelement",
+      "input": false,
+      "tableView": false,
+      "placeholder": "",
+      "prefix": "",
+      "suffix": "",
+      "multiple": false,
+      "defaultValue": null,
+      "protected": false,
+      "unique": false,
+      "persistent": false,
+      "clearOnHide": true,
+      "refreshOn": "",
+      "redrawOn": "",
+      "dataGridLabel": false,
+      "labelPosition": "top",
+      "description": "",
+      "errorLabel": "",
+      "tooltip": "",
+      "hideLabel": false,
+      "tabindex": "",
+      "disabled": false,
+      "autofocus": false,
+      "dbIndex": false,
+      "customDefaultValue": "",
+      "calculateValue": "",
+      "calculateServer": false,
+      "widget": null,
+      "validateOn": "change",
+      "validate": {
+        "required": false,
+        "custom": "",
+        "customPrivate": false,
+        "strictDateValidation": false,
+        "multiple": false,
+        "unique": false
+      },
+      "allowCalculateOverride": false,
+      "encrypted": false,
+      "showCharCount": false,
+      "showWordCount": false,
+      "allowMultipleMasks": false,
+      "id": "ewffbj",
+      "addons": []
+    },
+    {
+      "label": "HTML",
+      "tag": "p",
+      "className": "",
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
+      "content": "Request your location(s) to be designated. To add locations, go to <a href=\"#\" id=\"goToManageLocations\">manage locations</a>.",
+      "refreshOnChange": false,
+      "customClass": "",
+      "hidden": false,
+      "modalEdit": false,
+      "key": "html23",
+      "tags": [],
+      "properties": {},
+      "conditional": {
+        "show": "true",
+        "when": "disableLinkNavigation",
+        "eq": "false",
         "json": ""
       },
       "customConditional": "",
@@ -1528,7 +1610,8 @@
           "allowMultipleMasks": false,
           "addons": [],
           "id": "efc6pfc",
-          "hideLabel": true
+          "hideLabel": true,
+          "isNew": false
         },
         {
           "clearOnHide": false,
@@ -1807,7 +1890,6 @@
                   "id": "epofo98",
                   "className": "",
                   "hideLabel": true,
-                  "isNew": false,
                   "tags": []
                 },
                 {
@@ -2288,7 +2370,6 @@
                   "tree": true,
                   "lazyLoad": false,
                   "id": "el5dx7m",
-                  "isNew": false,
                   "lockKey": true
                 }
               ],
@@ -4715,7 +4796,8 @@
             "when": null,
             "eq": ""
           },
-          "properties": {}
+          "properties": {},
+          "isNew": false
         },
         {
           "label": "By clicking the box, you confirm that you are legally authorized by the Institution to enter into an agreement on behalf of the Institution and that the Institution agrees to the terms and conditions of the Agreement.",
@@ -4821,6 +4903,78 @@
       "isNew": false
     },
     {
+      "label": "Disable Manage Locations Link (true or false)",
+      "customClass": "",
+      "modalEdit": false,
+      "defaultValue": "false",
+      "persistent": true,
+      "protected": false,
+      "dbIndex": false,
+      "encrypted": false,
+      "redrawOn": "",
+      "customDefaultValue": "",
+      "calculateValue": "",
+      "calculateServer": false,
+      "key": "disableLinkNavigation",
+      "tags": [],
+      "properties": {},
+      "logic": [],
+      "attributes": {},
+      "overlay": {
+        "style": "",
+        "page": "",
+        "left": "",
+        "top": "",
+        "width": "",
+        "height": ""
+      },
+      "type": "hidden",
+      "input": true,
+      "tableView": false,
+      "placeholder": "",
+      "prefix": "",
+      "suffix": "",
+      "multiple": false,
+      "unique": false,
+      "hidden": false,
+      "clearOnHide": true,
+      "refreshOn": "",
+      "dataGridLabel": false,
+      "labelPosition": "top",
+      "description": "",
+      "errorLabel": "",
+      "tooltip": "",
+      "hideLabel": false,
+      "tabindex": "",
+      "disabled": false,
+      "autofocus": false,
+      "widget": {
+        "type": "input"
+      },
+      "validateOn": "change",
+      "validate": {
+        "required": false,
+        "custom": "",
+        "customPrivate": false,
+        "strictDateValidation": false,
+        "multiple": false,
+        "unique": false
+      },
+      "conditional": {
+        "show": "",
+        "when": null,
+        "eq": ""
+      },
+      "allowCalculateOverride": false,
+      "showCharCount": false,
+      "showWordCount": false,
+      "allowMultipleMasks": false,
+      "inputType": "hidden",
+      "id": "e52l51s",
+      "addons": [],
+      "lockKey": true
+    },
+    {
       "label": "View Mode (submission or viewOnly)",
       "customClass": "",
       "modalEdit": false,
@@ -4833,7 +4987,7 @@
       "customDefaultValue": "",
       "calculateValue": "",
       "calculateServer": false,
-      "key": "viewMode",
+      "key": "viewMode2",
       "tags": [],
       "properties": {},
       "logic": [],
@@ -4889,7 +5043,8 @@
       "allowMultipleMasks": false,
       "inputType": "hidden",
       "id": "e52l51s",
-      "addons": []
+      "addons": [],
+      "isNew": false
     },
     {
       "label": "isBCPrivate (true or false)",
@@ -4961,7 +5116,8 @@
       "inputType": "hidden",
       "id": "ep9xps7",
       "addons": [],
-      "lockKey": true
+      "lockKey": true,
+      "isNew": false
     },
     {
       "label": "applicationId",
@@ -5032,7 +5188,8 @@
       "id": "em1y8gd",
       "defaultValue": "",
       "dataGridLabel": false,
-      "addons": []
+      "addons": [],
+      "isNew": false
     },
     {
       "label": "applicationStatus",

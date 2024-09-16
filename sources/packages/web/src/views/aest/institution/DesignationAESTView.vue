@@ -134,6 +134,7 @@ export default defineComponent({
         designationStatusClass: mapDesignationChipStatus(
           designationAgreement.value.designationStatus,
         ),
+        disableLinkNavigation: true,
         dynamicData: designationAgreement.value.submittedData,
         locations: designationAgreement.value.locationsDesignations.map(
           (location) => ({
