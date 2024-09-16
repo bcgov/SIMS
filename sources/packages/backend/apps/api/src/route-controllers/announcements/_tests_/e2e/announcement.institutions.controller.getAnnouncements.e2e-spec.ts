@@ -1,6 +1,6 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { Repository } from "typeorm";
+import { ArrayOverlap, Repository } from "typeorm";
 import { Announcement } from "@sims/sims-db";
 import { addDays } from "@sims/utilities";
 import {
@@ -20,6 +20,12 @@ describe("AnnouncementInstitutionsController(e2e)-getAnnouncements", () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     announcementsRepo = dataSource.getRepository(Announcement);
+  });
+
+  beforeEach(async () => {
+    await announcementsRepo.delete({
+      target: ArrayOverlap(["institution-dashboard"]),
+    });
   });
 
   it("Should return a current announcement.", async () => {
@@ -42,17 +48,15 @@ describe("AnnouncementInstitutionsController(e2e)-getAnnouncements", () => {
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
 
-    expect(
-      response.body.announcements.some(
-        (responseAnnouncement) =>
-          responseAnnouncement.message === announcement.message &&
-          responseAnnouncement.messageTitle === announcement.messageTitle &&
-          responseAnnouncement.startDate ===
-            new Date(announcement.startDate).toISOString() &&
-          responseAnnouncement.endDate ===
-            new Date(announcement.endDate).toISOString(),
-      ),
-    ).toBe(true);
+    expect(response.body.announcements).toStrictEqual([
+      {
+        messageTitle: announcement.messageTitle,
+        message: announcement.message,
+        startDate: announcement.startDate.toISOString(),
+        endDate: announcement.endDate.toISOString(),
+        target: announcement.target,
+      },
+    ]);
   });
 
   it("Should not return an outdated announcement.", async () => {
@@ -74,17 +78,7 @@ describe("AnnouncementInstitutionsController(e2e)-getAnnouncements", () => {
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
 
-    expect(
-      response.body.announcements.some(
-        (responseAnnouncement) =>
-          responseAnnouncement.message === announcement.message &&
-          responseAnnouncement.messageTitle === announcement.messageTitle &&
-          responseAnnouncement.startDate ===
-            new Date(announcement.startDate).toISOString() &&
-          responseAnnouncement.endDate ===
-            new Date(announcement.endDate).toISOString(),
-      ),
-    ).toBe(false);
+    expect(response.body.announcements).toStrictEqual([]);
   });
 
   it("Should not return a future announcement.", async () => {
@@ -106,17 +100,7 @@ describe("AnnouncementInstitutionsController(e2e)-getAnnouncements", () => {
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
 
-    expect(
-      response.body.announcements.some(
-        (responseAnnouncement) =>
-          responseAnnouncement.message === announcement.message &&
-          responseAnnouncement.messageTitle === announcement.messageTitle &&
-          responseAnnouncement.startDate ===
-            new Date(announcement.startDate).toISOString() &&
-          responseAnnouncement.endDate ===
-            new Date(announcement.endDate).toISOString(),
-      ),
-    ).toBe(false);
+    expect(response.body.announcements).toStrictEqual([]);
   });
 
   afterAll(async () => {

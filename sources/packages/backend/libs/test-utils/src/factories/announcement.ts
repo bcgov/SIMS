@@ -12,7 +12,7 @@ export function createFakeAnnouncement(options?: {
 }): Announcement {
   const announcement = new Announcement();
   announcement.message =
-    options?.initialValues?.message ?? faker.random.words(3);
+    options?.initialValues?.message ?? faker.random.words(2);
   announcement.messageTitle =
     options?.initialValues?.messageTitle ?? faker.random.words(10);
   announcement.target = options?.initialValues?.target ?? [
