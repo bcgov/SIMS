@@ -8,6 +8,7 @@ import {
   DisbursementScheduleStatus,
   DisbursementValueType,
   FormYesNoOptions,
+  NotificationMessageType,
   OfferingIntensity,
   RelationshipStatus,
   RestrictionActionType,
@@ -46,7 +47,11 @@ import { DeepMocked } from "@golevelup/ts-jest";
 import * as Client from "ssh2-sftp-client";
 import * as dayjs from "dayjs";
 import { FullTimeCertRecordParser } from "./parsers/full-time-e-cert-record-parser";
-import { awardAssert, loadAwardValues } from "./e-cert-utils";
+import {
+  awardAssert,
+  createBlockedDisbursementTestData,
+  loadAwardValues,
+} from "./e-cert-utils";
 import { RestrictionCode, SystemUsersService } from "@sims/services";
 
 describe(
@@ -1152,6 +1157,70 @@ describe(
           where: { id: restrictionBypass.id, isActive: true },
         });
         expect(isBypassActive).toBe(true);
+      },
+    );
+
+    it(
+      "Should create a notification for the ministry and student for a blocked disbursement when the total assessed award is 0" +
+        " and there are no previously existing notifications for the disbursement.",
+      async () => {
+        // Arrange
+        const { student, disbursementId } =
+          await createBlockedDisbursementTestData(db, {
+            offeringIntensity: OfferingIntensity.fullTime,
+            isValidSIN: true,
+            disbursementValues: [],
+          });
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Act
+        const result = await processor.processECert(mockedJob.job);
+
+        // Assert
+        expect(result).toStrictEqual([
+          "Process finalized with success.",
+          "Generated file: none",
+          "Uploaded records: 0",
+        ]);
+        expect(
+          mockedJob.containLogMessages([
+            "Disbursement estimated awards do not contain any amount to be disbursed.",
+            `Creating notifications for disbursement id: ${disbursementId} for student and ministry.`,
+            `Completed creating notifications for disbursement id: ${disbursementId} for student and ministry.`,
+          ]),
+        ).toBe(true);
+        const notifications = await db.notification.find({
+          select: {
+            id: true,
+            user: { id: true },
+            notificationMessage: { id: true },
+          },
+          relations: { user: true, notificationMessage: true },
+          where: {
+            metadata: {
+              disbursementId,
+            },
+            dateSent: IsNull(),
+          },
+          order: { notificationMessage: { id: "ASC" } },
+        });
+        expect(notifications).toEqual([
+          {
+            id: expect.any(Number),
+            notificationMessage: {
+              id: NotificationMessageType.StudentNotificationDisbursementBlocked,
+            },
+            user: { id: student.user.id },
+          },
+          {
+            id: expect.any(Number),
+            notificationMessage: {
+              id: NotificationMessageType.MinistryNotificationDisbursementBlocked,
+            },
+            user: { id: systemUsersService.systemUser.id },
+          },
+        ]);
       },
     );
   },
