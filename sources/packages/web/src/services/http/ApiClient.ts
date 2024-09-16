@@ -25,6 +25,7 @@ import { StudentAccountApplicationApi } from "@/services/http/StudentAccountAppl
 import { OverawardApi } from "@/services/http/OverawardApi";
 import { ApplicationOfferingChangeRequestApi } from "./ApplicationOfferingChangeRequestApi";
 import { StudentLoanBalanceApi } from "./StudentLoanBalanceApi";
+import { AnnouncementApi } from "@/services/http/AnnouncementApi";
 import { CASSupplierApi } from "@/services/http/CASSupplier";
 
 const ApiClient = {
@@ -57,6 +58,7 @@ const ApiClient = {
   ApplicationOfferingChangeRequestApi:
     new ApplicationOfferingChangeRequestApi(),
   StudentLoanBalanceApi: new StudentLoanBalanceApi(),
+  AnnouncementApi: new AnnouncementApi(),
 };
 
 export default ApiClient;

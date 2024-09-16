@@ -1,6 +1,7 @@
 import { DataSource } from "typeorm";
 import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 import {
+  Announcement,
   ApplicationExceptionRequest,
   ApplicationException,
   ApplicationStudentFile,
@@ -155,6 +156,7 @@ export const simsDataSource = new DataSource({
 });
 
 export const DBEntities = [
+  Announcement,
   ApplicationExceptionRequest,
   ApplicationException,
   ApplicationStudentFile,
