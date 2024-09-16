@@ -36,4 +36,9 @@ export const ECERT_FAILED_MESSAGES: EcertFailedValidationDetail[] = [
     failedMessage:
       "Your current funding assessment would exceed your allowable lifetime limit for Part-Time Canada Student Loan. Your assessment must be adjusted to stay within your lifetime limit. Contact StudentAid BC for assistance.",
   },
+  {
+    failedType: ECertFailedValidation.NoEstimatedAwardAmounts,
+    failedMessage:
+      "Your disbursement has been blocked as there is no amount to be disbursed.",
+  },
 ];
