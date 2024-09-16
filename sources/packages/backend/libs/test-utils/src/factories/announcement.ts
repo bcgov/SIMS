@@ -12,9 +12,9 @@ export function createFakeAnnouncement(options?: {
 }): Announcement {
   const announcement = new Announcement();
   announcement.message =
-    options?.initialValues?.message ?? faker.random.words(1);
+    options?.initialValues?.message ?? faker.random.alpha({ count: 200 });
   announcement.messageTitle =
-    options?.initialValues?.messageTitle ?? faker.random.words(10);
+    options?.initialValues?.messageTitle ?? faker.random.alpha({ count: 50 });
   announcement.target = options?.initialValues?.target ?? [
     "student-dashboard",
     "institution-dashboard",
