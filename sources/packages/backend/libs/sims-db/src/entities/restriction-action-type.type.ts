@@ -11,6 +11,10 @@ export enum RestrictionActionType {
    */
   StopFullTimeBCFunding = "Stop full time BC funding",
   /**
+   * Stop part time BC funding.
+   */
+  StopPartTimeBCFunding = "Stop part time BC funding",
+  /**
    * Stop student from applying part time applications.
    */
   StopPartTimeApply = "Stop part time apply",
