@@ -123,6 +123,7 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     const saveDisbursementSchedulesPayload =
       createFakeSaveDisbursementSchedulesPayload({
         assessmentId: savedReassessment.id,
+        createSecondDisbursement: true,
       });
     const saveResult = await disbursementController.saveDisbursementSchedules(
       saveDisbursementSchedulesPayload,
