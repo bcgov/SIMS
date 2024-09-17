@@ -371,7 +371,7 @@
                             }
                           ],
                           "className": "category-header-medium primary-color",
-                          "content": "Upload proof of your dependants income tax return for 20[XX]",
+                          "content": "Upload proof of your dependants income tax return for {{data.calculatedTaxYear}}",
                           "type": "htmlelement",
                           "hideLabel": false,
                           "tags": [],
@@ -894,6 +894,26 @@
             "eq": ""
           },
           "properties": {},
+          "lockKey": true
+        },
+        {
+          "input": true,
+          "tableView": false,
+          "key": "calculatedTaxYear",
+          "label": "calculatedTaxYear",
+          "protected": false,
+          "unique": false,
+          "persistent": true,
+          "type": "hidden",
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "calculateValue": "const [programYear] = data.programYear ? data.programYear.split(\"-\") : [];\nvalue = programYear ? programYear -1: \"\";",
+          "calculateServer": true,
           "lockKey": true
         }
       ],
