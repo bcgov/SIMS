@@ -46,7 +46,7 @@ export interface StudentAppealPendingSummaryAPIOutDTO {
   applicationId: number;
   studentId: number;
   submittedDate: Date;
-  firstName: string;
+  firstName?: string;
   lastName: string;
   applicationNumber: string;
 }
