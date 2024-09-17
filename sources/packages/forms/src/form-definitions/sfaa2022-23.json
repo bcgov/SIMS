@@ -1,7 +1,7 @@
 {
   "title": "SFAA2022-23",
   "name": "SFAA2022-23",
-  "path": "sfaa2022-23",
+  "path": "sfaa2023-23",
   "type": "form",
   "display": "wizard",
   "tags": [
@@ -5121,6 +5121,27 @@
           "lockKey": true
         },
         {
+          "input": true,
+          "tableView": false,
+          "key": "calculatedTaxYear",
+          "label": "calculatedTaxYear",
+          "protected": false,
+          "unique": false,
+          "persistent": true,
+          "redrawOn": "programYear",
+          "type": "hidden",
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "calculateValue": "value = data.programYear ? data.programYear -1: \"\";",
+          "calculateServer": true,
+          "lockKey": true
+        },
+        {
           "label": "programYearEndDate",
           "customDefaultValue": "value = data.programYearEndDate;",
           "key": "programYearEndDate",
@@ -5405,8 +5426,7 @@
           },
           "properties": {},
           "lockKey": true,
-          "defaultValue": "365",
-          "isNew": false
+          "defaultValue": "365"
         }
       ],
       "input": false,
@@ -22076,7 +22096,7 @@
                   "value": ""
                 }
               ],
-              "content": "{{data.programYear}} Income tax return",
+              "content": "{{data.calculatedTaxYear}} Income tax return",
               "refreshOnChange": false,
               "customClass": "",
               "hidden": false,
@@ -22156,7 +22176,7 @@
                   "value": ""
                 }
               ],
-              "content": "Enter your reported total income from line 15000 of your {{data.programYear}} income tax return. This income will be matched with Canada Revenue Agency records, which may affect your assessment of need and/or grant eligibility.  \n\nIf you did not file a {{data.programYear}} income tax return, enter your total income from all sources both inside and outside of Canada.",
+              "content": "Enter your reported total income from line 15000 of your {{data.calculatedTaxYear}} income tax return. This income will be matched with Canada Revenue Agency records, which may affect your assessment of need and/or grant eligibility.  \n\nIf you did not file a {{data.calculatedTaxYear}} income tax return, enter your total income from all sources both inside and outside of Canada.",
               "refreshOnChange": false,
               "customClass": "",
               "hidden": false,
@@ -22227,7 +22247,7 @@
               "addons": []
             },
             {
-              "label": "My total income in {{data.programYear}} was:",
+              "label": "My total income in {{data.calculatedTaxYear}} was:",
               "prefix": "$",
               "customClass": "font-weight-bold",
               "mask": false,
@@ -23025,7 +23045,7 @@
                   "value": ""
                 }
               ],
-              "content": "If you have had, or anticipate having a significant decrease in income for {{data.programYear}}, you may request to be assessed using this year's estimated income.",
+              "content": "If you have had, or anticipate having a significant decrease in income for {{data.calculatedTaxYear}}, you may request to be assessed using this year's estimated income.",
               "refreshOnChange": false,
               "customClass": "",
               "hidden": false,

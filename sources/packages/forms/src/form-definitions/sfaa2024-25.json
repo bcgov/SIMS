@@ -5128,6 +5128,7 @@
           "protected": false,
           "unique": false,
           "persistent": true,
+          "redrawOn": "programYear",
           "type": "hidden",
           "tags": [],
           "conditional": {
