@@ -541,15 +541,10 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     sortOrder = FieldSortOrder.ASC,
   ): OrderByCondition {
     const orderByCondition = {};
-    if (sortField === "fullName") {
-      orderByCondition["user.firstName"] = sortOrder;
-      orderByCondition["user.lastName"] = sortOrder;
-      return orderByCondition;
-    }
-
     const fieldSortOptions = {
       applicationNumber: "application.applicationNumber",
       submittedDate: "studentAppeal.submittedDate",
+      lastName: "user.lastName",
     };
 
     const dbColumnName = fieldSortOptions[sortField];

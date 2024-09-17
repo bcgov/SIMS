@@ -69,7 +69,7 @@ export class ConfirmationOfEnrollmentPaginationOptionsAPIInDTO extends Paginatio
 
 export class StudentAppealPendingPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
   @IsOptional()
-  @IsIn(["submittedDate", "applicationNumber", "fullName"])
+  @IsIn(["submittedDate", "applicationNumber", "lastName"])
   sortField?: string;
 }
 

@@ -1,12 +1,12 @@
 <template>
   <full-page-container :full-width="true">
     <template #header>
-      <header-navigator title="Student requests" subTitle="Appeals" />
+      <header-navigator title="Student requests" subTitle="Change requests" />
     </template>
     <body-header
-      title="Requested appeals"
+      title="Pending change requests"
       :recordsCount="applicationAppeals.count"
-      subTitle="Make a determination on requested change(s) that may require a reassessment"
+      subTitle="Change requests that require ministry review."
     >
       <template #actions>
         <v-text-field
@@ -45,7 +45,13 @@
               </span>
             </template>
           </Column>
-          <Column field="fullName" header="Name" :sortable="true"> </Column>
+          <Column field="firstName" header="Given names">
+            <template #body="slotProps">
+              <span>{{ slotProps.data.firstName || "" }}</span>
+            </template>
+          </Column>
+          <Column field="lastName" header="Last name" :sortable="true">
+          </Column>
           <Column
             field="applicationNumber"
             :sortable="true"
