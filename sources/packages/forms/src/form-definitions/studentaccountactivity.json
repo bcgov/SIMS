@@ -1449,154 +1449,6 @@
                   "id": "ebacun6"
                 },
                 {
-                  "title": "Code 12 - Denied from poor scholastic standing",
-                  "labelWidth": "",
-                  "labelMargin": "",
-                  "theme": "default",
-                  "tooltip": "",
-                  "customClass": "collapsible",
-                  "collapsible": true,
-                  "hidden": false,
-                  "disabled": false,
-                  "modalEdit": false,
-                  "key": "code12StudentOnScholasticStandingDenial",
-                  "tags": [],
-                  "properties": {},
-                  "customConditional": "",
-                  "conditional": {
-                    "json": "",
-                    "show": null,
-                    "when": null,
-                    "eq": ""
-                  },
-                  "logic": [],
-                  "attributes": {},
-                  "overlay": {
-                    "style": "",
-                    "page": "",
-                    "left": "",
-                    "top": "",
-                    "width": "",
-                    "height": ""
-                  },
-                  "type": "panel",
-                  "label": "Panel",
-                  "breadcrumb": "default",
-                  "tabindex": "",
-                  "input": false,
-                  "tableView": false,
-                  "components": [
-                    {
-                      "html": "<p>Your application has been denied due to poor scholastic standing. You are no longer eligible to receive student financial assistance. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
-                      "label": "Content",
-                      "refreshOnChange": false,
-                      "key": "content3",
-                      "type": "content",
-                      "input": false,
-                      "tableView": false,
-                      "placeholder": "",
-                      "prefix": "",
-                      "customClass": "",
-                      "suffix": "",
-                      "multiple": false,
-                      "defaultValue": null,
-                      "protected": false,
-                      "unique": false,
-                      "persistent": true,
-                      "hidden": false,
-                      "clearOnHide": true,
-                      "refreshOn": "",
-                      "redrawOn": "",
-                      "modalEdit": false,
-                      "dataGridLabel": false,
-                      "labelPosition": "top",
-                      "description": "",
-                      "errorLabel": "",
-                      "tooltip": "",
-                      "hideLabel": false,
-                      "tabindex": "",
-                      "disabled": false,
-                      "autofocus": false,
-                      "dbIndex": false,
-                      "customDefaultValue": "",
-                      "calculateValue": "",
-                      "calculateServer": false,
-                      "widget": null,
-                      "attributes": {},
-                      "validateOn": "change",
-                      "validate": {
-                        "required": false,
-                        "custom": "",
-                        "customPrivate": false,
-                        "strictDateValidation": false,
-                        "multiple": false,
-                        "unique": false
-                      },
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": ""
-                      },
-                      "overlay": {
-                        "style": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
-                      "allowCalculateOverride": false,
-                      "encrypted": false,
-                      "showCharCount": false,
-                      "showWordCount": false,
-                      "properties": {},
-                      "allowMultipleMasks": false,
-                      "addons": [],
-                      "id": "eo43uij"
-                    }
-                  ],
-                  "collapsed": true,
-                  "placeholder": "",
-                  "prefix": "",
-                  "suffix": "",
-                  "multiple": false,
-                  "defaultValue": null,
-                  "protected": false,
-                  "unique": false,
-                  "persistent": false,
-                  "clearOnHide": false,
-                  "refreshOn": "",
-                  "redrawOn": "",
-                  "dataGridLabel": false,
-                  "labelPosition": "top",
-                  "description": "",
-                  "errorLabel": "",
-                  "autofocus": false,
-                  "dbIndex": false,
-                  "customDefaultValue": "",
-                  "calculateValue": "",
-                  "calculateServer": false,
-                  "widget": null,
-                  "validateOn": "change",
-                  "validate": {
-                    "required": false,
-                    "custom": "",
-                    "customPrivate": false,
-                    "strictDateValidation": false,
-                    "multiple": false,
-                    "unique": false
-                  },
-                  "allowCalculateOverride": false,
-                  "encrypted": false,
-                  "showCharCount": false,
-                  "showWordCount": false,
-                  "allowMultipleMasks": false,
-                  "addons": [],
-                  "tree": false,
-                  "lazyLoad": false,
-                  "id": "e4ppj5l",
-                  "hideLabel": false
-                },
-                {
                   "title": "Code B3D - B.C. loan in default",
                   "labelWidth": "",
                   "labelMargin": "",
@@ -1636,7 +1488,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note your loan is in default and you are not eligible for additional funding. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
+                      "html": "<p>Your B.C. loan is in default and has been transferred to the Revenue Services of British Columbia for further collection activity. You are restricted from further StudentAid BC funding. Please contact Revenue Services of British Columbia immediately before your credit rating is further impacted: 1-866-361-5050 (Toll free within North America) or 250-387-6093 (outside North America).</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content46",
@@ -1742,7 +1594,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "earwu9c"
+                  "id": "earwu9c",
+                  "isNew": false
                 },
                 {
                   "title": "Code B6A - Bankruptcy",
@@ -1784,7 +1637,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note that your account is still under a hold due to bankruptcy. We have been notified that the hold with <strong>Canada Student Financial Assistance Program (CSFA)</strong> has been removed. Please complete a &quot;B.C. Student Loan Rehabilitation Due to Bankruptcy&quot; appeal. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
+                      "html": "<p>According to the information on file, you have declared bankruptcy involving student loans. As your bankruptcy involves student loans, you are not eligible for funding through StudentAid BC and your application is currently restricted.</p>\n\n<p>If you have declared bankruptcy in which Canada student loan or British Columbia student loan funds were involved, you cease to be eligible for both federal and provincial assistance. You may be considered for further student financial assistance if federal and/or provincial authorities approve of the steps taken to meet rehabilitation criteria on your outstanding debt(s). For further information regarding rehabilitation with respect to Canada student loan funds, please contact the Canada Student Financial Assistance Program at 1-888-815-4514 to speak with a Case Review Officer. For further information regarding rehabilitation with respect to BC student loan funds, please contact StudentAid BC at 1-800-561-1818 (within North America) 250-387-6100 (outside North America).</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content47",
@@ -1890,7 +1743,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "esg4vu"
+                  "id": "esg4vu",
+                  "isNew": false
                 },
                 {
                   "title": "Code ECRS - Early completion",
@@ -1932,7 +1786,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note that your institution has reported that you completed your studies early. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
+                      "html": "<p>We have been advised that you completed your part-time program of study early. Therefore, the change in your study period end date has been recorded at StudentAid BC. For further information please contact StudentAid BC at 1-800-561-1818 (within North America) 250-387-6100 (outside North America).</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content48",
@@ -2038,7 +1892,157 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "eratsbh"
+                  "id": "eratsbh",
+                  "isNew": false
+                },
+                {
+                  "title": "Code PTSSR - Poor scholastic standing",
+                  "labelWidth": "",
+                  "labelMargin": "",
+                  "theme": "default",
+                  "tooltip": "",
+                  "customClass": "collapsible",
+                  "collapsible": true,
+                  "hidden": false,
+                  "hideLabel": false,
+                  "disabled": false,
+                  "modalEdit": false,
+                  "key": "codePtssrPoorScholasticStanding",
+                  "tags": [],
+                  "properties": {},
+                  "customConditional": "",
+                  "conditional": {
+                    "json": "",
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "logic": [],
+                  "attributes": {},
+                  "overlay": {
+                    "style": "",
+                    "page": "",
+                    "left": "",
+                    "top": "",
+                    "width": "",
+                    "height": ""
+                  },
+                  "type": "panel",
+                  "label": "Panel",
+                  "breadcrumb": "default",
+                  "tabindex": "",
+                  "input": false,
+                  "tableView": false,
+                  "components": [
+                    {
+                      "html": "<p>Your account is restricted from future part-time funding due to poor scholastic standing. You are no longer eligible to receive student financial assistance. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
+                      "label": "Content",
+                      "refreshOnChange": false,
+                      "key": "content49",
+                      "type": "content",
+                      "input": false,
+                      "tableView": false,
+                      "placeholder": "",
+                      "prefix": "",
+                      "customClass": "",
+                      "suffix": "",
+                      "multiple": false,
+                      "defaultValue": null,
+                      "protected": false,
+                      "unique": false,
+                      "persistent": true,
+                      "hidden": false,
+                      "clearOnHide": true,
+                      "refreshOn": "",
+                      "redrawOn": "",
+                      "modalEdit": false,
+                      "dataGridLabel": false,
+                      "labelPosition": "top",
+                      "description": "",
+                      "errorLabel": "",
+                      "tooltip": "",
+                      "hideLabel": false,
+                      "tabindex": "",
+                      "disabled": false,
+                      "autofocus": false,
+                      "dbIndex": false,
+                      "customDefaultValue": "",
+                      "calculateValue": "",
+                      "calculateServer": false,
+                      "widget": null,
+                      "attributes": {},
+                      "validateOn": "change",
+                      "validate": {
+                        "required": false,
+                        "custom": "",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false
+                      },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
+                      "allowCalculateOverride": false,
+                      "encrypted": false,
+                      "showCharCount": false,
+                      "showWordCount": false,
+                      "properties": {},
+                      "allowMultipleMasks": false,
+                      "addons": [],
+                      "id": "e0qd9ur"
+                    }
+                  ],
+                  "collapsed": true,
+                  "placeholder": "",
+                  "prefix": "",
+                  "suffix": "",
+                  "multiple": false,
+                  "defaultValue": null,
+                  "protected": false,
+                  "unique": false,
+                  "persistent": false,
+                  "clearOnHide": false,
+                  "refreshOn": "",
+                  "redrawOn": "",
+                  "dataGridLabel": false,
+                  "labelPosition": "top",
+                  "description": "",
+                  "errorLabel": "",
+                  "autofocus": false,
+                  "dbIndex": false,
+                  "customDefaultValue": "",
+                  "calculateValue": "",
+                  "calculateServer": false,
+                  "widget": null,
+                  "validateOn": "change",
+                  "validate": {
+                    "required": false,
+                    "custom": "",
+                    "customPrivate": false,
+                    "strictDateValidation": false,
+                    "multiple": false,
+                    "unique": false
+                  },
+                  "allowCalculateOverride": false,
+                  "encrypted": false,
+                  "showCharCount": false,
+                  "showWordCount": false,
+                  "allowMultipleMasks": false,
+                  "addons": [],
+                  "tree": false,
+                  "lazyLoad": false,
+                  "id": "e3be0q",
+                  "lockKey": true
                 },
                 {
                   "title": "Code SSR - Poor scholastic standing",
@@ -2052,7 +2056,7 @@
                   "hideLabel": false,
                   "disabled": false,
                   "modalEdit": false,
-                  "key": "codeSsrPoorScholasticStanding",
+                  "key": "codeSsrPoorScholasticStanding2",
                   "tags": [],
                   "properties": {},
                   "customConditional": "",
@@ -2080,10 +2084,10 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Your account is restricted from future funding due to poor scholastic standing. You are no longer eligible to receive student financial assistance. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
+                      "html": "<p>A review of your scholastic standing while receiving student financial assistance indicates that you have withdrawn on two occasions or have failed to successfully complete 68 weeks of funded post-secondary study. By policy, this disqualifies you from further funding and a restriction has been placed on your file.</p>\n\n<p>Although you are not eligible for funding, you may apply to continue, or rehabilitate, your in-study payment-free status whenever you are enrolled in at least 60 per cent of a full-time course load of post-secondary study (40 per cent for students with a permanent disability, or a persistent or prolonged disability, who have been approved by StudentAid BC to study at the reduced course load) by submitting an in-study payment-free status application to the financial aid office at your school. For further information please contact StudentAid BC at 1-800-561-1818 (within North America) 250-387-6100 (outside North America).</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
-                      "key": "content49",
+                      "key": "content58",
                       "type": "content",
                       "input": false,
                       "tableView": false,
@@ -2523,7 +2527,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>You are denied funding as you are no longer eligible due to reaching your lifetime maximum of unclassified funding. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
+                      "html": "<p>Students enrolled in &#39;unclassified studies&#39; may be eligible for a maximum of 52 weeks of funding through StudentAid BC. You have exceeded the maximum allowable funded weeks for unclassified studies. For further information please contact StudentAid BC at 1-800-561-1818 (within North America) 250-387-6100 (outside North America).</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content52",
@@ -2587,7 +2591,9 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "e80rsrb"
+                      "id": "e80rsrb",
+                      "isNew": false,
+                      "tags": []
                     }
                   ],
                   "collapsed": true,
@@ -2630,7 +2636,8 @@
                   "tree": false,
                   "lazyLoad": false,
                   "id": "e2x834b",
-                  "hideLabel": false
+                  "hideLabel": false,
+                  "isNew": false
                 },
                 {
                   "title": "Code APLE - Pending appeal",
@@ -2820,7 +2827,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note that your loan is delinquent and you are not eligible for additional funding. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
+                      "html": "<p>Our records indicate you are delinquent on your British Columbia student loan payments which disqualifies you for further funding through StudentAid BC. For information regarding your delinquency status, please contact your lender.<br />\nTo be considered for further funding through StudentAid BC, please contact StudentAid BC at 1-800-561-1818 (within North America) 250-387-6100 (outside North America).</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content54",
@@ -2968,7 +2975,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note that your loan is delinquent and you are not eligible for additional funding. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
+                      "html": "<p>Our records indicate you are delinquent on your British Columbia student loan payments which disqualifies you for further funding through StudentAid BC. For information regarding your delinquency status, please contact your lender.<br />\nTo be considered for further funding through StudentAid BC, please contact StudentAid BC at 1-800-561-1818 (within North America) 250-387-6100 (outside North America).</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content55",
@@ -3116,7 +3123,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Your SIN number is currently expired for your application or we are missing the expiry date of your SIN number. Your application will not be disbursed until this is resolved. You may upload the appropriate documentation using the &quot;file uploader&quot; located in the top right of your account and we will work to resolve your issue. For more information please contact StudentAid BC.</p>\n",
+                      "html": "<p>Our records indicate that your temporary Social Insurance Number (SIN) has either expired or is not valid for the entirety of your study period. For further information, please contact StudentAid BC at 1-800-561-1818 (within North America) or 250-387-6100 (outside North America).</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content56",
@@ -3264,7 +3271,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>This restriction is added to you when you reach the BC lifetime maximum reached. BC lifetime maximum is&nbsp;your cumulative full-time BCSL awards received over&nbsp;a lifetime.</p>\n",
+                      "html": "<p>Our records indicate that you have reached your B.C. Lifetime loan maximum, which disqualifies you for further provincial funding through StudentAid BC, For further information, please contact StudentAid BC at 1-800-561-1818 (within North America) or 250-387-6100 (outside North America).</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -3393,7 +3400,7 @@
                     {
                       "key": "codeLGCYRestrictionPanelContent",
                       "input": false,
-                      "html": "<p>You have a historical restriction on your account. Please contact StudentAid BC for additional assistance.</p>\n",
+                      "html": "<p>Our records indicate you have a restriction on your account from a past student loan that is preventing your application from moving forward. For further information please contact StudentAid BC at 1-800-561-1818 (within North America) 250-387-6100 (outside North America).</p>\n",
                       "type": "content",
                       "tags": [],
                       "conditional": {
@@ -3542,7 +3549,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>You are approaching your Canada-B.C integrated student loan maximum lifetime number of weeks allowable for your current level of study. This is information only and no action is required. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>You are approaching your Canada-B.C. integrated student loan maximum lifetime number of weeks allowable for funding for your current level of study.</p>\n\n<p>Canada-B.C. integrated student loan lifetime maximums are as follows:</p>\n\n<p>340 weeks of study for loans and/or payment-free status for first time borrowers on August 1, 1995 or later;<br />\n400 weeks of study for student enrolled in a doctoral program;<br />\n520 weeks of study for loans and/or payment-free status for students who received assistance prior to August 1, 1995; and<br />\n520 weeks of study including loans/payment-free status, for students with a permanent disability, or a persistent or prolonged disability, providing the disability status has been approved by the Canada Student Financial Assistance Program.<br />\nIf you reach the lifetime maximum during your study period, your funding will be continued to the end of the study period in which you are enrolled. If you have any questions, please contact the Canada Student Financial Assistance Program at 1-888-815-4514 to speak with a Case Review Officer.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -3697,7 +3704,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>You have reached your Canada-B.C intergrated student loan maximim lifetime number of weeks allowable for your current level of study. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>You have exhausted the Canada-B.C. integrated student loan maximum lifetime number of weeks allowable for funding for your current level of study. We are unable to issue further assistance through StudentAid BC while this restriction is in effect.</p>\n\n<p>Canada-B.C. integrated student loan lifetime maximums are as follows:</p>\n\n<p>340 weeks of study for loans and/or payment-free status for first time borrowers on August 1, 1995 or later;<br />\n400 weeks of study for students enrolled in a doctoral program;<br />\n520 weeks of study for loans and/or payment-free status for students who received assistance prior to August 1, 1995; and<br />\n520 weeks of study including loans and/or payment-free status, for students with a permanent disability, or a persistent or prolonged disability, providing the disability status has been approved by the Canada Student Financial Assistance Program.<br />\nIf you reach the lifetime maximum during your study period, your funding will be continued to the end of the study period on your application. If you have any questions, please contact the Canada Student Financial Assistance Program at 1-888-815-4514 to speak with a Case Review Officer.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content2",
@@ -3845,7 +3852,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>You are approaching your Canada-B.C intergrated student loan maximim lifetime number of weeks allowable for your current level of study. This is information only and no action is required. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>You are approaching your Canada-B.C. integrated student loan maximum lifetime number of weeks allowable for funding for your current level of study.</p>\n\n<p>Canada-B.C. integrated student loan lifetime maximums are as follows:</p>\n\n<p>340 weeks of study for loans and/or payment-free status for first time borrowers on August 1, 1995 or later;<br />\n400 weeks of study for student enrolled in a doctoral program;<br />\n520 weeks of study for loans and/or payment-free status for students who received assistance prior to August 1, 1995; and<br />\n520 weeks of study including loans/payment-free status, for students with a permanent disability, or a persistent or prolonged disability, providing the disability status has been approved by the Canada Student Financial Assistance Program.<br />\nIf you reach the lifetime maximum during your study period, your funding will be continued to the end of the study period in which you are enrolled. If you have any questions, please contact the Canada Student Financial Assistance Program at 1-888-815-4514 to speak with a Case Review Officer.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content4",
@@ -3993,7 +4000,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>You have reached your Canada-B.C intergrated student loan maximim lifetime number of weeks allowable for your current level of study. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>You have exhausted the Canada-B.C. integrated student loan maximum lifetime number of weeks allowable for funding for your current level of study. We are unable to issue further assistance through StudentAid BC while this restriction is in effect.</p>\n\n<p>Canada-B.C. integrated student loan lifetime maximums are as follows:</p>\n\n<p>340 weeks of study for loans and/or payment-free status for first time borrowers on August 1, 1995 or later;<br />\n400 weeks of study for students enrolled in a doctoral program;<br />\n520 weeks of study for loans and/or payment-free status for students who received assistance prior to August 1, 1995; and<br />\n520 weeks of study including loans and/or payment-free status, for students with a permanent disability, or a persistent or prolonged disability, providing the disability status has been approved by the Canada Student Financial Assistance Program.<br />\nIf you reach the lifetime maximum during your study period, your funding will be continued to the end of the study period on your application. If you have any questions, please contact the Canada Student Financial Assistance Program at 1-888-815-4514 to speak with a Case Review Officer.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content5",
@@ -4141,7 +4148,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>You are approaching your Canada-B.C integrated student loan maximum lifetime number of weeks allowable for your current level of study. This is information only and no action is required. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>You are approaching your Canada-B.C. integrated student loan maximum lifetime number of weeks allowable for funding for your current level of study.</p>\n\n<p>Canada-B.C. integrated student loan lifetime maximums are as follows:</p>\n\n<p>340 weeks of study for loans and/or payment-free status for first time borrowers on August 1, 1995 or later;<br />\n400 weeks of study for student enrolled in a doctoral program;<br />\n520 weeks of study for loans and/or payment-free status for students who received assistance prior to August 1, 1995; and<br />\n520 weeks of study including loans/payment-free status, for students with a permanent disability, or a persistent or prolonged disability, providing the disability status has been approved by the Canada Student Financial Assistance Program.<br />\nIf you reach the lifetime maximum during your study period, your funding will be continued to the end of the study period in which you are enrolled. If you have any questions, please contact the Canada Student Financial Assistance Program at 1-888-815-4514 to speak with a Case Review Officer.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content6",
@@ -4289,7 +4296,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>You have reached your Canada-B.C integrated student loan maximum lifetime number of weeks allowable for your current level of study. For more information, contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>You have exhausted the Canada-B.C. integrated student loan maximum lifetime number of weeks allowable for funding for your current level of study. We are unable to issue further assistance through StudentAid BC while this restriction is in effect.</p>\n\n<p>Canada-B.C. integrated student loan lifetime maximums are as follows:</p>\n\n<p>340 weeks of study for loans and/or payment-free status for first time borrowers on August 1, 1995 or later;<br />\n400 weeks of study for students enrolled in a doctoral program;<br />\n520 weeks of study for loans and/or payment-free status for students who received assistance prior to August 1, 1995; and<br />\n520 weeks of study including loans and/or payment-free status, for students with a permanent disability, or a persistent or prolonged disability, providing the disability status has been approved by the Canada Student Financial Assistance Program.<br />\nIf you reach the lifetime maximum during your study period, your funding will be continued to the end of the study period on your application. If you have any questions, please contact the Canada Student Financial Assistance Program at 1-888-815-4514 to speak with a Case Review Officer.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -4444,7 +4451,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note you have reached the 17 week maximum for an aviation program. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
+                      "html": "<p>Your application for assistance through StudentAid BC has been denied. You have been issued your maximum entitlement to funding through StudentAid BC for aviation programs. For further information please contact StudentAid BC at 1-800-561-1818 (within North America) 250-387-6100 (outside North America).</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content8",
@@ -4592,7 +4599,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note that your account is under a hold due to bankruptcy where student financial assistance was included. Your first step will be to remove the hold with <strong>Canada Student Financial Assistance Program </strong>(CSFA Program) and then complete an appeal with StudentAid BC. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>According to the information on file, you have declared bankruptcy involving student loans. As your bankruptcy involves student loans, you are not eligible for funding through StudentAid BC and your application is currently restricted.<br />\nYou should note the following:</p>\n\n<p>Rehabilitation Through StudentAid BC<br />\nIf you have declared bankruptcy in which Canada student loan or British Columbia student loan funds were involved, you cease to be eligible for both federal and provincial assistance. You may be considered for further student financial assistance if federal and/or provincial authorities approve of the steps taken to meet rehabilitation criteria on your outstanding debt(s).</p>\n\n<p>If you have any questions, please contact the Canada Student Financial Assistance Program at 1-888-815-4514 to speak with a Case Review Officer. For further information regarding rehabilitation with respect to BC student loan funds, please contact StudentAid BC at 1-800-561-1818 (within North America) 250-387-6100 (outside North America).</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content9",
@@ -4740,7 +4747,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note that your account is under a hold due to risk guaranteed portfolio being frozen. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -4895,7 +4902,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note the Canada Student Financial Assistance Program (CSFA Program) has placed a restriction on your file. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -5050,7 +5057,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note the Canada Student Finanacial Assistance Program (CSFA Program) has placed a restriction on your file. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content12",
@@ -5198,7 +5205,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note that your application indicated that you have reported bankruptcy in the past. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
+                      "html": "<p>According to the information on file, you have declared bankruptcy involving student loans. As your bankruptcy involves student loans, you are not eligible for funding through StudentAid BC and your application is currently restricted.<br />\nYou should note the following:</p>\n\n<p>Rehabilitation Through StudentAid BC<br />\nIf you have declared bankruptcy in which Canada student loan or British Columbia student loan funds were involved, you cease to be eligible for both federal and provincial assistance. You may be considered for further student financial assistance if federal and/or provincial authorities approve of the steps taken to meet rehabilitation criteria on your outstanding debt(s).</p>\n\n<p>For further information regarding rehabilitation with respect to Canada student loan funds, please contact:<br />\nCanada Student Financial Assistance Program at 1-888-815-4514<br />\nFor further information regarding rehabilitation with respect to BC student loan funds, please contact StudentAid BC at 1-800-561-1818 (within North America) 250-387-6100 (outside North America).</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content13",
@@ -5455,7 +5462,7 @@
                   "id": "ewlpgyc"
                 },
                 {
-                  "title": "Code O - Overaward",
+                  "title": "Code O - Overawards Changed to no effect",
                   "labelWidth": "",
                   "labelMargin": "",
                   "theme": "default",
@@ -5472,7 +5479,7 @@
                   "customConditional": "",
                   "conditional": {
                     "json": "",
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": ""
                   },
@@ -5494,7 +5501,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note that there are overawards attached to your account. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
+                      "html": "<p>Due to an outstanding grant overaward from a previous student assistance application, you are not eligible for StudentAid BC funding at this time. This grant overaward must be repaid in full before further provincial funding can be considered. To arrange payment of your grant overaward, please contact Revenue Services of British Columbia at 1-866-361-5050 or (250) 387-6093. Once this overaward has been repaid in full, please forward proof of payment to this office.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content15",
@@ -5558,7 +5565,9 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "ew493co"
+                      "id": "ew493co",
+                      "isNew": false,
+                      "tags": []
                     }
                   ],
                   "collapsed": true,
@@ -5600,7 +5609,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "ejan6vt"
+                  "id": "ejan6vt",
+                  "isNew": false
                 },
                 {
                   "title": "Code P - Offense related to Canada student loans",
@@ -5642,7 +5652,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note that a hold has been placed on your account based on an reported issue from the Canada Student Financial Assistance Program (CSFA Program). If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -5755,7 +5765,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "eay5kc"
+                  "id": "eay5kc",
+                  "isNew": false
                 },
                 {
                   "title": "Code R - Risk-shared loan  collection",
@@ -5797,7 +5808,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note that a hold has been placed on your account based on an reported issue from the Canada Student Financial Assistance Program (CSFA Program). If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -5910,7 +5921,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "eiuilxh"
+                  "id": "eiuilxh",
+                  "isNew": false
                 },
                 {
                   "title": "Code RB - Bankruptcy",
@@ -5952,7 +5964,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note that it has been reported to us that you account is on hold due to bankruptcy. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>According to the information on file, you have declared bankruptcy involving student loans. As your bankruptcy involves student loans, you are not eligible for funding through StudentAid BC and your application is currently restricted.<br />\nYou should note the following:</p>\n\n<p>Rehabilitation Through StudentAid BC<br />\nIf you have declared bankruptcy in which Canada student loan or British Columbia student loan funds were involved, you cease to be eligible for both federal and provincial assistance. You may be considered for further student financial assistance if federal and/or provincial authorities approve of the steps taken to meet rehabilitation criteria on your outstanding debt(s).</p>\n\n<p>For further information regarding rehabilitation with respect to Canada student loan funds, please contact Canada Student Financial Assistance Program at 1-888-815-4514. For further information regarding rehabilitation with respect to BC student loan funds, please contact StudentAid BC at 1-800-561-1818 (within North America) 250-387-6100 (outside North America).</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content18",
@@ -6058,7 +6070,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "esw1fqe"
+                  "id": "esw1fqe",
+                  "isNew": false
                 },
                 {
                   "title": "Code RJ - Ineligible for funding",
@@ -6100,7 +6113,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A judgement has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -6213,7 +6226,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "e2fydis"
+                  "id": "e2fydis",
+                  "isNew": false
                 },
                 {
                   "title": "Code RP - Offense related to Canada student loans",
@@ -6255,7 +6269,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note that a hold has been placed on your account based on an reported issue from the Canada Student Financial Assistance Program (CSFA Program). If you need more information or have concerns, please contact StudentAid BC.</p>\n",
+                      "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content21",
@@ -6361,7 +6375,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "eh5n31g"
+                  "id": "eh5n31g",
+                  "isNew": false
                 },
                 {
                   "title": "Code RP - Ineligible for funding",
@@ -6403,7 +6418,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A judgement has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
+                      "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content20",
@@ -6509,7 +6524,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "ery45u"
+                  "id": "ery45u",
+                  "isNew": false
                 },
                 {
                   "title": "Code T - Claim for loss",
@@ -6551,7 +6567,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>The Canada Student Financial Assistance Program (CSFA Program) has reported that they have received a claim for loss request but it has not yet been or is in the process of being audited/assessed. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -6664,7 +6680,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "e8z089m"
+                  "id": "e8z089m",
+                  "isNew": false
                 },
                 {
                   "title": "Code W - Repayment assistance program",
@@ -6706,7 +6723,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>The Canada Student Financial Assistance Program (CSFA Program) has reported an issue with your repayment assistance program. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -6819,7 +6836,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "e7aqtjs"
+                  "id": "e7aqtjs",
+                  "isNew": false
                 },
                 {
                   "title": "Code X Risk-shared or direct loan in arrears",
@@ -6861,7 +6879,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note due to your risk shared or direct loan being in arrears for more then 90 days you are no eligible for additional financial aid. If you need more information, please contact the National Student Loan Service Centre for next steps and repayment.</p>\n",
+                      "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content23",
@@ -6967,7 +6985,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "er32b2"
+                  "id": "er32b2",
+                  "isNew": false
                 },
                 {
                   "title": "Code Z3 - Repayment assistance program",
@@ -7009,7 +7028,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>The Canada Student Financial Assistance Program (CSFA Program) has reported an issue with your repayment assistance program. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -7122,7 +7141,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "eto3a3a"
+                  "id": "eto3a3a",
+                  "isNew": false
                 },
                 {
                   "title": "Code ZR - Repayment assistance program",
@@ -7164,7 +7184,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>The Canada Student Financial Assistance Program (CSFA Program) has reported an issue with your repayment assistance program. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -7277,7 +7297,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "enzzzg"
+                  "id": "enzzzg",
+                  "isNew": false
                 },
                 {
                   "title": "Code B7 - Reached lifetime maximum",
@@ -7319,7 +7340,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>StudentAid BC funding limit is 520 weeks. You have received 520 weeks of funding and are at the limit. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
+                      "html": "<p>As you have been advised per previous correspondence, you have exhausted the BC student loans (BCSL) maximum number weeks of funding. There is no appeal process for obtaining further BC funding through StudentAid BC, after reaching the maximum number of weeks. You may still be eligible for funding or in-study payment-free status under the Canada Student Financial Assistance Program. For further information please contact StudentAid BC at 1-800-561-1818 (within North America) 250-387-6100 (outside North America).</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content27",
@@ -7425,7 +7446,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "e2wp6qi"
+                  "id": "e2wp6qi",
+                  "isNew": false
                 },
                 {
                   "title": "Code BO - Nearing lifetime maximum",
@@ -7467,7 +7489,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>You are approaching your Canada-B.C. integrated student loan maximum lifetime number of weeks allowable for your current level of study. This is information only and no action is required. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>You are approaching your BC student loans (BCSL) maximum number of weeks of funding. For further information please contact StudentAid BC at 1-800-561-1818 (within North America) 250-387-6100 (outside North America).</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content28",
@@ -7573,7 +7595,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "eyutth96"
+                  "id": "eyutth96",
+                  "isNew": false
                 },
                 {
                   "title": "Code RD - Ineligible for funding",
@@ -7615,7 +7638,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A judgement has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -7728,7 +7751,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "e9j8j2e"
+                  "id": "e9j8j2e",
+                  "isNew": false
                 },
                 {
                   "title": "Code XB - Altered date",
@@ -7770,7 +7794,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -7883,7 +7907,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "eumqnp"
+                  "id": "eumqnp",
+                  "isNew": false
                 },
                 {
                   "title": "Code XD - Altered date for direct lend",
@@ -7925,7 +7950,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -8038,7 +8063,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "e2rene"
+                  "id": "e2rene",
+                  "isNew": false
                 },
                 {
                   "title": "Code XJ - Canada Student Financial Assistance Program restriction",
@@ -8080,7 +8106,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -8193,7 +8219,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "ef6246m"
+                  "id": "ef6246m",
+                  "isNew": false
                 },
                 {
                   "title": "Code XP - Canada Student Financial Assistance Program restriction",
@@ -8235,7 +8262,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>\n",
+                      "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -8348,7 +8375,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "e23amz2"
+                  "id": "e23amz2",
+                  "isNew": false
                 },
                 {
                   "title": "Code SA - Canada Student Financial Assistance Program restriction",
@@ -8390,7 +8418,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -8503,7 +8531,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "er0l6jp8"
+                  "id": "er0l6jp8",
+                  "isNew": false
                 },
                 {
                   "title": "Code SO - Canada Student Financial Assistance Program restriction",
@@ -8545,7 +8574,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -8658,7 +8687,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "ekh5ck8"
+                  "id": "ekh5ck8",
+                  "isNew": false
                 },
                 {
                   "title": "Code IC - Canada Student Financial Assistance Program restriction",
@@ -8700,7 +8730,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -8813,7 +8843,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "eo9ugh4"
+                  "id": "eo9ugh4",
+                  "isNew": false
                 },
                 {
                   "title": "Code IS -  Canada Student Financial Assistance Program restriction",
@@ -8855,7 +8886,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -8968,7 +8999,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "e41qv2"
+                  "id": "e41qv2",
+                  "isNew": false
                 },
                 {
                   "title": "Code F3 - Fraud",
@@ -9010,7 +9042,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -9123,7 +9155,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "ec3qs6n"
+                  "id": "ec3qs6n",
+                  "isNew": false
                 },
                 {
                   "title": "Code F4 - Fraud",
@@ -9165,7 +9198,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -9278,7 +9311,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "ez7vk7i"
+                  "id": "ez7vk7i",
+                  "isNew": false
                 },
                 {
                   "title": "Code F5 - Fraud",
@@ -9320,7 +9354,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -9433,7 +9467,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "ew95yrg"
+                  "id": "ew95yrg",
+                  "isNew": false
                 },
                 {
                   "title": "Code DR - Canada Student Financial Assistance Program restriction",
@@ -9475,7 +9510,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -9588,10 +9623,11 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "erznaau"
+                  "id": "erznaau",
+                  "isNew": false
                 },
                 {
-                  "title": "Code B5 - Lifetime maximum for permeant disability",
+                  "title": "Code B5 - Lifetime maximum for permanent disability",
                   "labelWidth": "",
                   "labelMargin": "",
                   "theme": "default",
@@ -9602,13 +9638,13 @@
                   "hideLabel": false,
                   "disabled": false,
                   "modalEdit": false,
-                  "key": "codeB5LifetimeMaximumForPermeantDisability",
+                  "key": "codeB5LifetimeMaximumForPermanentDisability",
                   "tags": [],
                   "properties": {},
                   "customConditional": "",
                   "conditional": {
                     "json": "",
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": ""
                   },
@@ -9630,7 +9666,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>As you have been advised per previous correspondence, you have exhausted the BC student loans (BCSL) maximum number weeks of funding for student with a permanent disability. . For further information please contact StudentAid BC at 1-800-561-1818 (within North America) 250-387-6100 (outside North America).</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -9743,7 +9779,9 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "enk0ii"
+                  "id": "enk0ii",
+                  "lockKey": true,
+                  "isNew": false
                 },
                 {
                   "title": "Code A - Canada Student Financial Assistance Program restriction",
@@ -9785,7 +9823,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -9898,7 +9936,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "eazeybl"
+                  "id": "eazeybl",
+                  "isNew": false
                 },
                 {
                   "title": "Code Z1 - Overaward",
@@ -9940,7 +9979,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -10053,7 +10092,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "eeun81i"
+                  "id": "eeun81i",
+                  "isNew": false
                 },
                 {
                   "title": "Code Z2 - Canada student financial aid restriction",
@@ -10095,7 +10135,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>\n",
+                      "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -10208,7 +10248,8 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "e49h62j"
+                  "id": "e49h62j",
+                  "isNew": false
                 }
               ],
               "id": "et7zun"
