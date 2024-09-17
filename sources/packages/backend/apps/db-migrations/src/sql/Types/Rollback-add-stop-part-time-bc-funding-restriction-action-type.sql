@@ -1,5 +1,5 @@
---Removing the value Application from sims.note_types for the rollback.
---As postgres does not support removal of an Enum Value, we create a temporary enum and rename it.
+-- Removing the value 'Stop part time BC funding' from sims.restriction_action_types for the rollback.
+-- As postgres does not support removal of an Enum Value, we create a temporary enum and rename it.
 CREATE TYPE sims.restriction_action_types_to_rollback AS ENUM (
   'No effect',
   'Stop full time BC funding',
