@@ -47,7 +47,9 @@
           </Column>
           <Column field="firstName" header="Given names">
             <template #body="slotProps">
-              <span>{{ slotProps.data.firstName || "" }}</span>
+              <span>
+                {{ emptyStringFiller(slotProps.data.firstName) }}
+              </span>
             </template>
           </Column>
           <Column field="lastName" header="Last name" :sortable="true">
@@ -103,7 +105,7 @@ export default defineComponent({
     const sortField = ref(DEFAULT_SORT_FIELD);
     const sortOrder = ref(DataTableSortOrder.ASC);
     const searchCriteria = ref();
-    const { dateOnlyLongString } = useFormatters();
+    const { dateOnlyLongString, emptyStringFiller } = useFormatters();
     const applicationAppeals = ref(
       {} as PaginatedResults<StudentAppealPendingSummaryAPIOutDTO>,
     );
@@ -166,6 +168,7 @@ export default defineComponent({
       pageLimit,
       searchCriteria,
       PAGINATION_LIST,
+      emptyStringFiller,
     };
   },
 });
