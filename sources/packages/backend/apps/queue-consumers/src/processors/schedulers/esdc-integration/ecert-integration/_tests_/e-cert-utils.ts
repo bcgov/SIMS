@@ -130,7 +130,7 @@ export async function loadDisbursementSchedules(
  * - `isValidSIN` is student SIN valid.
  * - `disbursementValues` disbursement values.
  * - `msfaaState` MSFAA number approval state.
- * @returns student and disbursement id.
+ * @returns student and disbursement.
  */
 export async function createBlockedDisbursementTestData(
   db: E2EDataSources,
@@ -142,7 +142,7 @@ export async function createBlockedDisbursementTestData(
   },
 ): Promise<{
   student: Student;
-  disbursementId: number;
+  disbursement: DisbursementSchedule;
 }> {
   const offeringIntensity =
     options?.offeringIntensity ?? OfferingIntensity.partTime;
@@ -152,13 +152,13 @@ export async function createBlockedDisbursementTestData(
   ];
   const msfaaState = options?.msfaaState ?? MSFAAStates.Signed;
 
-  // Student with invalid SIN to block the disbursement.
+  // Create a student.
   const student = await saveFakeStudent(db.dataSource, undefined, {
     sinValidationInitialValue: {
       isValidSIN,
     },
   });
-  // Valid MSFAA Number.
+  // Create MSFAA for the student.
   const msfaaNumber = await db.msfaaNumber.save(
     createFakeMSFAANumber(
       { student },
@@ -186,8 +186,9 @@ export async function createBlockedDisbursementTestData(
       },
     },
   );
+  const [disbursement] = application.currentAssessment.disbursementSchedules;
   return {
     student,
-    disbursementId: application.currentAssessment.disbursementSchedules[0].id,
+    disbursement,
   };
 }

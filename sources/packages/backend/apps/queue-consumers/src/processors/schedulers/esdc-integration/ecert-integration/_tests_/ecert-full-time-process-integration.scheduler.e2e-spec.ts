@@ -1165,7 +1165,7 @@ describe(
         " and there are no previously existing notifications for the disbursement.",
       async () => {
         // Arrange
-        const { student, disbursementId } =
+        const { student, disbursement } =
           await createBlockedDisbursementTestData(db, {
             offeringIntensity: OfferingIntensity.fullTime,
             isValidSIN: true,
@@ -1186,8 +1186,8 @@ describe(
         expect(
           mockedJob.containLogMessages([
             "Disbursement estimated awards do not contain any amount to be disbursed.",
-            `Creating notifications for disbursement id: ${disbursementId} for student and ministry.`,
-            `Completed creating notifications for disbursement id: ${disbursementId} for student and ministry.`,
+            `Creating notifications for disbursement id: ${disbursement.id} for student and ministry.`,
+            `Completed creating notifications for disbursement id: ${disbursement.id} for student and ministry.`,
           ]),
         ).toBe(true);
         const notifications = await db.notification.find({
@@ -1199,7 +1199,7 @@ describe(
           relations: { user: true, notificationMessage: true },
           where: {
             metadata: {
-              disbursementId,
+              disbursementId: disbursement.id,
             },
             dateSent: IsNull(),
           },
