@@ -1,5 +1,20 @@
-import { DisbursementSchedule, DisbursementValue } from "@sims/sims-db";
-import { E2EDataSources } from "@sims/test-utils";
+import {
+  ApplicationStatus,
+  COEStatus,
+  DisbursementSchedule,
+  DisbursementValue,
+  DisbursementValueType,
+  OfferingIntensity,
+  Student,
+} from "@sims/sims-db";
+import {
+  createFakeDisbursementValue,
+  createFakeMSFAANumber,
+  E2EDataSources,
+  MSFAAStates,
+  saveFakeApplicationDisbursements,
+  saveFakeStudent,
+} from "@sims/test-utils";
 import { In } from "typeorm";
 
 /**
@@ -105,4 +120,75 @@ export async function loadDisbursementSchedules(
     },
     order: { disbursementDate: "ASC" },
   });
+}
+
+/**
+ * Creates the test data required for blocked disbursement.
+ * @param db e2e data sources.
+ * @param options options.
+ * - `offeringIntensity` offering intensity.
+ * - `isValidSIN` is student SIN valid.
+ * - `disbursementValues` disbursement values.
+ * - `msfaaState` MSFAA number approval state.
+ * @returns student and disbursement.
+ */
+export async function createBlockedDisbursementTestData(
+  db: E2EDataSources,
+  options?: {
+    offeringIntensity?: OfferingIntensity;
+    isValidSIN?: boolean;
+    disbursementValues?: DisbursementValue[];
+    msfaaState?: MSFAAStates;
+  },
+): Promise<{
+  student: Student;
+  disbursement: DisbursementSchedule;
+}> {
+  const offeringIntensity =
+    options?.offeringIntensity ?? OfferingIntensity.partTime;
+  const isValidSIN = options?.isValidSIN ?? false;
+  const disbursementValues = options?.disbursementValues ?? [
+    createFakeDisbursementValue(DisbursementValueType.CanadaLoan, "CSLP", 300),
+  ];
+  const msfaaState = options?.msfaaState ?? MSFAAStates.Signed;
+
+  // Create a student.
+  const student = await saveFakeStudent(db.dataSource, undefined, {
+    sinValidationInitialValue: {
+      isValidSIN,
+    },
+  });
+  // Create MSFAA for the student.
+  const msfaaNumber = await db.msfaaNumber.save(
+    createFakeMSFAANumber(
+      { student },
+      {
+        msfaaState,
+        msfaaInitialValues: {
+          offeringIntensity,
+        },
+      },
+    ),
+  );
+  // Student application.
+  const application = await saveFakeApplicationDisbursements(
+    db.dataSource,
+    {
+      student,
+      msfaaNumber,
+      disbursementValues,
+    },
+    {
+      offeringIntensity: offeringIntensity,
+      applicationStatus: ApplicationStatus.Completed,
+      firstDisbursementInitialValues: {
+        coeStatus: COEStatus.completed,
+      },
+    },
+  );
+  const [disbursement] = application.currentAssessment.disbursementSchedules;
+  return {
+    student,
+    disbursement,
+  };
 }
