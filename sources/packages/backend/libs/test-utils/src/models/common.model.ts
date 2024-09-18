@@ -77,11 +77,11 @@ export enum RestrictionCode {
    */
   AF = "AF",
   /**
-   * Part time scholastic standing restrictions - Student withdrew or was unsuccesful from Part Time studies.
+   * Part-time scholastic standing restrictions - Student withdrew or was unsuccesful from Part Time studies.
    */
   PTWTHD = "PTWTHD",
   /**
-   * Part time scholastic standing restrictions - Not eligible for part time funding due to scholastic standing must self fund or appeal.
+   * Part-time scholastic standing restrictions - Not eligible for part time funding due to scholastic standing must self fund or appeal.
    */
   PTSSR = "PTSSR",
 }
