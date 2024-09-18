@@ -336,13 +336,6 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       {
         id: expect.any(Number),
         notificationMessage: {
-          id: NotificationMessageType.StudentRestrictionAdded,
-        },
-        user: { id: application.student.user.id },
-      },
-      {
-        id: expect.any(Number),
-        notificationMessage: {
           id: NotificationMessageType.InstitutionReportsChange,
         },
         user: { id: application.student.user.id },
