@@ -26,7 +26,10 @@ import {
 } from "./student-scholastic-standings.models";
 import { StudentRestrictionService } from "../restriction/student-restriction.service";
 import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../constants";
-import { SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS } from "../../utilities";
+import {
+  PART_TIME_SCHOLASTIC_STANDING_RESTRICTIONS,
+  SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS,
+} from "../../utilities";
 import {
   NotificationActionsService,
   RestrictionCode,
@@ -164,10 +167,10 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         auditUserId,
         application.id,
       );
-      let createdRestriction: StudentRestriction | undefined = undefined;
+      let createdRestrictions: StudentRestriction[] | undefined = undefined;
       if (studentRestriction) {
         // Used later to send the notification at the end of the process.
-        createdRestriction = await transactionalEntityManager
+        createdRestrictions = await transactionalEntityManager
           .getRepository(StudentRestriction)
           .save(studentRestriction);
       }
@@ -291,13 +294,13 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       // Case a restriction was created, send a notification to the student.
       // Left as the last step to ensure that everything else was processed with
       // success and the notification will not be generated otherwise.
-      if (createdRestriction) {
+      createdRestrictions.forEach(async (restriction) => {
         await this.studentRestrictionSharedService.createNotifications(
-          [createdRestriction.id],
+          [restriction.id],
           auditUserId,
           transactionalEntityManager,
         );
-      }
+      });
 
       // Create a student notification when institution reports a change.
       await this.notificationActionsService.saveInstitutionReportChangeNotification(
@@ -324,7 +327,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
    * @param auditUserId user that should be considered the one that is
    * causing the changes.
    * @param applicationId application id.
-   * @returns a new student restriction object, that need to be saved.
+   * @returns a new student restriction object(s), that need to be saved.
    */
   async getScholasticStandingRestrictions(
     scholasticStandingData: ScholasticStanding,
@@ -332,7 +335,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     studentId: number,
     auditUserId: number,
     applicationId: number,
-  ): Promise<StudentRestriction | undefined> {
+  ): Promise<StudentRestriction[] | undefined> {
     if (offeringIntensity === OfferingIntensity.fullTime) {
       return this.getFullTimeStudentRestrictions(
         scholasticStandingData,
@@ -372,14 +375,15 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
    * @param auditUserId user that should be considered the one that is
    * causing the changes.
    * @param applicationId application id.
-   * @returns a new student restriction object, that need to be saved.
+   * @returns a new student restriction objects, that need to be saved.
    */
   async getFullTimeStudentRestrictions(
     scholasticStandingData: ScholasticStanding,
     studentId: number,
     auditUserId: number,
     applicationId: number,
-  ): Promise<StudentRestriction | undefined> {
+  ): Promise<StudentRestriction[] | undefined> {
+    const studentRestriction: StudentRestriction[] = [];
     if (
       scholasticStandingData.scholasticStandingChangeType ===
       StudentScholasticStandingChangeType.StudentDidNotCompleteProgram
@@ -396,11 +400,13 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
           scholasticStandingData.numberOfUnsuccessfulWeeks >=
         SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS
       ) {
-        return this.studentRestrictionSharedService.createRestrictionToSave(
-          studentId,
-          RestrictionCode.SSR,
-          auditUserId,
-          applicationId,
+        studentRestriction.push(
+          await this.studentRestrictionSharedService.createRestrictionToSave(
+            studentId,
+            RestrictionCode.SSR,
+            auditUserId,
+            applicationId,
+          ),
         );
       }
     }
@@ -420,13 +426,16 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         ? RestrictionCode.SSR
         : RestrictionCode.WTHD;
 
-      return this.studentRestrictionSharedService.createRestrictionToSave(
-        studentId,
-        restrictionCode,
-        auditUserId,
-        applicationId,
+      studentRestriction.push(
+        await this.studentRestrictionSharedService.createRestrictionToSave(
+          studentId,
+          restrictionCode,
+          auditUserId,
+          applicationId,
+        ),
       );
     }
+    return studentRestriction;
   }
 
   /**
@@ -442,27 +451,38 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
    * @param auditUserId user that should be considered the one that is
    * causing the changes.
    * @param applicationId application id.
-   * @returns a new student restriction object, that need to be saved.
+   * @returns a new student restriction objects, that need to be saved.
    */
   async getPartTimeStudentRestrictions(
     scholasticStandingData: ScholasticStanding,
     studentId: number,
     auditUserId: number,
     applicationId: number,
-  ): Promise<StudentRestriction | undefined> {
+  ): Promise<StudentRestriction[] | undefined> {
+    const studentRestriction: StudentRestriction[] = [];
     if (
       [
         StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
         StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
       ].includes(scholasticStandingData.scholasticStandingChangeType)
     ) {
-      return this.studentRestrictionSharedService.createRestrictionToSave(
-        studentId,
-        RestrictionCode.PTSSR,
-        auditUserId,
-        applicationId,
+      // Create an array to hold the restriction promises.
+      const restrictionPromises: Promise<StudentRestriction>[] = [];
+      PART_TIME_SCHOLASTIC_STANDING_RESTRICTIONS.forEach(
+        (partTimeScholasticStandingRestriction) => {
+          restrictionPromises.push(
+            this.studentRestrictionSharedService.createRestrictionToSave(
+              studentId,
+              partTimeScholasticStandingRestriction,
+              auditUserId,
+              applicationId,
+            ),
+          );
+        },
       );
+      studentRestriction.push(...(await Promise.all(restrictionPromises)));
     }
+    return studentRestriction;
   }
 
   /**

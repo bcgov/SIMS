@@ -1,3 +1,5 @@
+import { RestrictionCode } from "@sims/services";
+
 export const PIR_DENIED_REASON_OTHER_ID = 1;
 // Timeout to handle the worst-case scenario where the commit/rollback
 // was not executed due to a possible catastrophic failure.
@@ -110,3 +112,11 @@ export const OFFERING_STUDY_PERIOD_MIN_FUNDED_WEEKS_FULL_TIME = 12;
  * Minimum amount of funded weeks required for a part time offering study period.
  */
 export const OFFERING_STUDY_PERIOD_MIN_FUNDED_WEEKS_PART_TIME = 6;
+
+/**
+ * Part time scholastic standing restrictions.
+ */
+export const PART_TIME_SCHOLASTIC_STANDING_RESTRICTIONS: RestrictionCode[] = [
+  RestrictionCode.PTSSR,
+  RestrictionCode.PTWTHD,
+];

@@ -23,6 +23,11 @@ export enum RestrictionCode {
    */
   PTSSR = "PTSSR",
   /**
+   * when an institution report withdrawal or unsuccessful weeks
+   * for a PT course application, "PTWTHD" restriction is added to the student account.
+   */
+  PTWTHD = "PTWTHD",
+  /**
    * When a student has a temporary SIN and applies for a full-time/part-time application
    * this restriction is applied case the SIN expiry date is before the offering end date.
    */
