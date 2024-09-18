@@ -34,7 +34,6 @@ import {
   StudentAppealApprovalAPIInDTO,
   StudentAppealPendingSummaryAPIOutDTO,
 } from "./models/student-appeal.dto";
-import { getUserFullName } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import { IUserToken } from "../../auth/userToken.interface";
 import {
@@ -148,7 +147,8 @@ export class StudentAppealAESTController extends BaseController {
         studentId: eachAppeal.application.student.id,
         applicationNumber: eachAppeal.application.applicationNumber,
         submittedDate: eachAppeal.submittedDate,
-        fullName: getUserFullName(eachAppeal.application.student.user),
+        firstName: eachAppeal.application.student.user.firstName,
+        lastName: eachAppeal.application.student.user.lastName,
       })),
       count: studentAppeals.count,
     };

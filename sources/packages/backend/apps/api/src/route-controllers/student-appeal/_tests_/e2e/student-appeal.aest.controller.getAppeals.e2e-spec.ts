@@ -16,7 +16,6 @@ import {
   saveFakeStudent,
 } from "@sims/test-utils";
 import { ApplicationStatus, StudentAppealStatus } from "@sims/sims-db";
-import { getUserFullName } from "../../../../utilities";
 
 describe("StudentAppealAESTController(e2e)-getAppeals", () => {
   let app: INestApplication;
@@ -73,7 +72,8 @@ describe("StudentAppealAESTController(e2e)-getAppeals", () => {
               appealId: appeal.id,
               applicationId: application.id,
               applicationNumber: application.applicationNumber,
-              fullName: getUserFullName(student.user),
+              firstName: student.user.firstName,
+              lastName: student.user.lastName,
               studentId: student.id,
               submittedDate: appeal.submittedDate.toISOString(),
             },
