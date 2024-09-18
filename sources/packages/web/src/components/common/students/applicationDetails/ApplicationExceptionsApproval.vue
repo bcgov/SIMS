@@ -3,7 +3,7 @@
     <template #header>
       <header-navigator
         title="Assessments"
-        subTitle="View Submission"
+        subTitle="View request(s)"
         :routeLocation="backRouteLocation"
       />
     </template>

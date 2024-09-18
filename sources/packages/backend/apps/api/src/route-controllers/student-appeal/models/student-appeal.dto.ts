@@ -79,6 +79,7 @@ export class StudentAppealPendingSummaryAPIOutDTO {
   applicationId: number;
   studentId: number;
   submittedDate: Date;
-  fullName: string;
+  firstName?: string;
+  lastName: string;
   applicationNumber: string;
 }

@@ -20,7 +20,7 @@
           "value": ""
         }
       ],
-      "content": "<span class=\"category-header-large primary-color mr-2\" role=\"heading\" aria-level=\"2\">Student exceptions</span> \n<span class=\"fa fa-circle formio-status-chip {{ data.exceptionStatusClass }} mt-2\">\n  {{ data.exceptionStatusOnLoad }}\n</span>",
+      "content": "<span class=\"category-header-large primary-color mr-2\" role=\"heading\" aria-level=\"2\">Student exception requests</span> \n<span class=\"fa fa-circle formio-status-chip {{ data.exceptionStatusClass }} mt-2\">\n  {{ data.exceptionStatusOnLoad }}\n</span>",
       "refreshOnChange": true,
       "customClass": "",
       "hidden": false,
@@ -102,7 +102,7 @@
           "value": ""
         }
       ],
-      "content": "Review the student application and supporting documents on the previous page. Then approve or decline the student’s exception request below.",
+      "content": "View the exception request and any supporting documentation on the student application. When the review is complete, come back to this page to approve or deny the request.",
       "refreshOnChange": false,
       "customClass": "",
       "hidden": false,
@@ -2051,7 +2051,7 @@
       "tableView": false,
       "components": [
         {
-          "label": "Staff area",
+          "label": "Decision",
           "tag": "h3",
           "className": "category-header-medium primary-color",
           "attrs": [
@@ -2060,7 +2060,7 @@
               "value": ""
             }
           ],
-          "content": "Staff area",
+          "content": "Decision",
           "refreshOnChange": false,
           "key": "html",
           "type": "htmlelement",

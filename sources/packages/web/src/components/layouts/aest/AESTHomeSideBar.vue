@@ -91,7 +91,7 @@ export default defineComponent({
         },
       },
       {
-        title: "Appeals",
+        title: "Change requests",
         props: {
           prependIcon: "mdi-folder-open-outline",
           to: {
