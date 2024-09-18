@@ -1935,7 +1935,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Your account is restricted from future part-time funding due to poor scholastic standing. You are no longer eligible to receive student financial assistance. If you need more information or have concerns, please contact StudentAid BC.</p>\n",
+                      "html": "<p>Your account is restricted from future part-time funding due to poor scholastic standing. You are no longer eligible to receive student financial assistance. Students who have not successfully completed courses funded through student financial assistance may be reinstated to receive further part-time funding either by submitting a successful appeal or by successfully completing one semester funded through their own resources. For further information please contact StudentAid BC at 1-800-561-1818 (within North America) 250-387-6100 (outside North America).</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content49",
@@ -3271,7 +3271,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Our records indicate that you have reached your B.C. Lifetime loan maximum, which disqualifies you for further provincial funding through StudentAid BC, For further information, please contact StudentAid BC at 1-800-561-1818 (within North America) or 250-387-6100 (outside North America).</p>\n",
+                      "html": "<p>Our records indicate that you have reached your B.C. Lifetime loan maximum, which disqualifies you for further provincial funding through StudentAid BC. For further information, please contact StudentAid BC at 1-800-561-1818 (within North America) or 250-387-6100 (outside North America).</p>\n",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -5462,7 +5462,7 @@
                   "id": "ewlpgyc"
                 },
                 {
-                  "title": "Code O - Overawards Changed to no effect",
+                  "title": "Code O - Grant overawards",
                   "labelWidth": "",
                   "labelMargin": "",
                   "theme": "default",
