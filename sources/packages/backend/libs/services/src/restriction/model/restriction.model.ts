@@ -23,7 +23,7 @@ export enum RestrictionCode {
    */
   PTSSR = "PTSSR",
   /**
-   * when an institution report withdrawal or unsuccessful weeks
+   * When an institution report withdrawal or unsuccessful weeks
    * for a PT course application, "PTWTHD" restriction is added to the student account.
    */
   PTWTHD = "PTWTHD",

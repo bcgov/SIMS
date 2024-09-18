@@ -340,12 +340,14 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     applicationId: number,
   ): Promise<StudentRestriction[]> {
     if (offeringIntensity === OfferingIntensity.fullTime) {
-      return this.getFullTimeStudentRestrictions(
-        scholasticStandingData,
-        studentId,
-        auditUserId,
-        applicationId,
-      );
+      return [
+        await this.getFullTimeStudentRestrictions(
+          scholasticStandingData,
+          studentId,
+          auditUserId,
+          applicationId,
+        ),
+      ];
     }
     if (offeringIntensity === OfferingIntensity.partTime) {
       return this.getPartTimeStudentRestrictions(
@@ -385,8 +387,8 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     studentId: number,
     auditUserId: number,
     applicationId: number,
-  ): Promise<StudentRestriction[]> {
-    const studentRestriction: StudentRestriction[] = [];
+  ): Promise<StudentRestriction | undefined> {
+    //const studentRestriction: StudentRestriction[] = [];
     if (
       scholasticStandingData.scholasticStandingChangeType ===
       StudentScholasticStandingChangeType.StudentDidNotCompleteProgram
@@ -403,13 +405,11 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
           scholasticStandingData.numberOfUnsuccessfulWeeks >=
         SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS
       ) {
-        studentRestriction.push(
-          await this.studentRestrictionSharedService.createRestrictionToSave(
-            studentId,
-            RestrictionCode.SSR,
-            auditUserId,
-            applicationId,
-          ),
+        return this.studentRestrictionSharedService.createRestrictionToSave(
+          studentId,
+          RestrictionCode.SSR,
+          auditUserId,
+          applicationId,
         );
       }
     }
@@ -429,16 +429,13 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         ? RestrictionCode.SSR
         : RestrictionCode.WTHD;
 
-      studentRestriction.push(
-        await this.studentRestrictionSharedService.createRestrictionToSave(
-          studentId,
-          restrictionCode,
-          auditUserId,
-          applicationId,
-        ),
+      return this.studentRestrictionSharedService.createRestrictionToSave(
+        studentId,
+        restrictionCode,
+        auditUserId,
+        applicationId,
       );
     }
-    return studentRestriction;
   }
 
   /**
@@ -470,20 +467,17 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       ].includes(scholasticStandingData.scholasticStandingChangeType)
     ) {
       // Create an array to hold the restriction promises.
-      const restrictionPromises: Promise<StudentRestriction>[] = [];
-      PART_TIME_SCHOLASTIC_STANDING_RESTRICTIONS.forEach(
-        (partTimeScholasticStandingRestriction) => {
-          restrictionPromises.push(
-            this.studentRestrictionSharedService.createRestrictionToSave(
-              studentId,
-              partTimeScholasticStandingRestriction,
-              auditUserId,
-              applicationId,
-            ),
-          );
-        },
-      );
-      studentRestriction.push(...(await Promise.all(restrictionPromises)));
+      const restrictionPromises =
+        PART_TIME_SCHOLASTIC_STANDING_RESTRICTIONS.map((restrictionCode) =>
+          this.studentRestrictionSharedService.createRestrictionToSave(
+            studentId,
+            restrictionCode,
+            auditUserId,
+            applicationId,
+          ),
+        );
+      const restrictions = await Promise.all(restrictionPromises);
+      studentRestriction.push(...restrictions);
     }
     return studentRestriction;
   }
