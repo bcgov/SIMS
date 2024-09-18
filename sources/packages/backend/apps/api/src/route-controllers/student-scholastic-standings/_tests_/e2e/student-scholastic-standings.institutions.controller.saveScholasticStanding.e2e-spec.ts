@@ -185,7 +185,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       });
   });
 
-  it.only("Should create a new scholastic standing when the institution user requests it and keep the existent student appeal.", async () => {
+  it("Should create a new scholastic standing when the institution user requests it and keep the existent student appeal.", async () => {
     // Arrange
     const application = await saveFakeApplication(
       db.dataSource,
