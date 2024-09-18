@@ -160,19 +160,19 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         .getOne();
 
       // Check for restrictions and apply if any.
-      const studentRestriction = await this.getScholasticStandingRestrictions(
+      const studentRestrictions = await this.getScholasticStandingRestrictions(
         scholasticStandingData,
         existingOffering.offeringIntensity,
         application.studentId,
         auditUserId,
         application.id,
       );
-      let createdRestrictions: StudentRestriction[] | undefined = undefined;
-      if (studentRestriction) {
+      let createdRestrictions: StudentRestriction[];
+      if (studentRestrictions.length) {
         // Used later to send the notification at the end of the process.
         createdRestrictions = await transactionalEntityManager
           .getRepository(StudentRestriction)
-          .save(studentRestriction);
+          .save(studentRestrictions);
       }
 
       // Create StudentScholasticStanding.
@@ -295,10 +295,11 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       // Left as the last step to ensure that everything else was processed with
       // success and the notification will not be generated otherwise.
       if (createdRestrictions.length) {
+        const restrictionIds = createdRestrictions.map(
+          (createdRestriction) => createdRestriction.id,
+        );
         await this.studentRestrictionSharedService.createNotifications(
-          createdRestrictions.map(
-            (createdRestriction) => createdRestriction.id,
-          ),
+          restrictionIds,
           auditUserId,
           transactionalEntityManager,
         );
@@ -337,7 +338,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     studentId: number,
     auditUserId: number,
     applicationId: number,
-  ): Promise<StudentRestriction[] | undefined> {
+  ): Promise<StudentRestriction[]> {
     if (offeringIntensity === OfferingIntensity.fullTime) {
       return this.getFullTimeStudentRestrictions(
         scholasticStandingData,
@@ -384,7 +385,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     studentId: number,
     auditUserId: number,
     applicationId: number,
-  ): Promise<StudentRestriction[] | undefined> {
+  ): Promise<StudentRestriction[]> {
     const studentRestriction: StudentRestriction[] = [];
     if (
       scholasticStandingData.scholasticStandingChangeType ===
@@ -460,7 +461,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     studentId: number,
     auditUserId: number,
     applicationId: number,
-  ): Promise<StudentRestriction[] | undefined> {
+  ): Promise<StudentRestriction[]> {
     const studentRestriction: StudentRestriction[] = [];
     if (
       [

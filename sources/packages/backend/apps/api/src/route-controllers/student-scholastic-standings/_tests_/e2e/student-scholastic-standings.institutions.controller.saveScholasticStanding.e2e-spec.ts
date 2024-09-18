@@ -253,12 +253,12 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     ).toBe(createdScholasticStandingId);
   });
 
-  it("Should create a new scholastic standing for a Part time application when the institution user requests.", async () => {
+  it("Should create a new scholastic standing for a part-time application when the institution user requests.", async () => {
+    // Arrange
     mockFormioDryRun({
       studentScholasticStandingChangeType:
         StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
     });
-    // Arrange
     const application = await saveFakeApplication(
       db.dataSource,
       {
