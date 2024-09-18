@@ -77,6 +77,11 @@ export enum RestrictionCode {
    */
   AF = "AF",
   /**
-   * Verification restriction on file. Set up call back for Student case review verification team.
+   * Part-time scholastic standing restrictions - Student withdrew or was unsuccesful from Part Time studies.
    */
+  PTWTHD = "PTWTHD",
+  /**
+   * Part-time scholastic standing restrictions - Not eligible for part time funding due to scholastic standing must self fund or appeal.
+   */
+  PTSSR = "PTSSR",
 }

@@ -26,7 +26,10 @@ import {
 } from "./student-scholastic-standings.models";
 import { StudentRestrictionService } from "../restriction/student-restriction.service";
 import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../constants";
-import { SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS } from "../../utilities";
+import {
+  PART_TIME_SCHOLASTIC_STANDING_RESTRICTIONS,
+  SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS,
+} from "../../utilities";
 import {
   NotificationActionsService,
   RestrictionCode,
@@ -157,19 +160,19 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         .getOne();
 
       // Check for restrictions and apply if any.
-      const studentRestriction = await this.getScholasticStandingRestrictions(
+      const studentRestrictions = await this.getScholasticStandingRestrictions(
         scholasticStandingData,
         existingOffering.offeringIntensity,
         application.studentId,
         auditUserId,
         application.id,
       );
-      let createdRestriction: StudentRestriction | undefined = undefined;
-      if (studentRestriction) {
+      let createdRestrictions: StudentRestriction[];
+      if (studentRestrictions.length) {
         // Used later to send the notification at the end of the process.
-        createdRestriction = await transactionalEntityManager
+        createdRestrictions = await transactionalEntityManager
           .getRepository(StudentRestriction)
-          .save(studentRestriction);
+          .save(studentRestrictions);
       }
 
       // Create StudentScholasticStanding.
@@ -291,9 +294,12 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       // Case a restriction was created, send a notification to the student.
       // Left as the last step to ensure that everything else was processed with
       // success and the notification will not be generated otherwise.
-      if (createdRestriction) {
+      if (createdRestrictions?.length) {
+        const restrictionIds = createdRestrictions.map(
+          (createdRestriction) => createdRestriction.id,
+        );
         await this.studentRestrictionSharedService.createNotifications(
-          [createdRestriction.id],
+          restrictionIds,
           auditUserId,
           transactionalEntityManager,
         );
@@ -324,7 +330,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
    * @param auditUserId user that should be considered the one that is
    * causing the changes.
    * @param applicationId application id.
-   * @returns a new student restriction object, that need to be saved.
+   * @returns a new student restriction object(s), that need to be saved.
    */
   async getScholasticStandingRestrictions(
     scholasticStandingData: ScholasticStanding,
@@ -332,14 +338,15 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     studentId: number,
     auditUserId: number,
     applicationId: number,
-  ): Promise<StudentRestriction | undefined> {
+  ): Promise<StudentRestriction[]> {
     if (offeringIntensity === OfferingIntensity.fullTime) {
-      return this.getFullTimeStudentRestrictions(
+      const fullTimeRestriction = await this.getFullTimeStudentRestrictions(
         scholasticStandingData,
         studentId,
         auditUserId,
         applicationId,
       );
+      return fullTimeRestriction ? [fullTimeRestriction] : [];
     }
     if (offeringIntensity === OfferingIntensity.partTime) {
       return this.getPartTimeStudentRestrictions(
@@ -442,27 +449,35 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
    * @param auditUserId user that should be considered the one that is
    * causing the changes.
    * @param applicationId application id.
-   * @returns a new student restriction object, that need to be saved.
+   * @returns a new student restriction objects, that need to be saved.
    */
   async getPartTimeStudentRestrictions(
     scholasticStandingData: ScholasticStanding,
     studentId: number,
     auditUserId: number,
     applicationId: number,
-  ): Promise<StudentRestriction | undefined> {
+  ): Promise<StudentRestriction[]> {
+    const studentRestriction: StudentRestriction[] = [];
     if (
       [
         StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
         StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
       ].includes(scholasticStandingData.scholasticStandingChangeType)
     ) {
-      return this.studentRestrictionSharedService.createRestrictionToSave(
-        studentId,
-        RestrictionCode.PTSSR,
-        auditUserId,
-        applicationId,
-      );
+      // Create an array to hold the restriction promises.
+      const restrictionPromises =
+        PART_TIME_SCHOLASTIC_STANDING_RESTRICTIONS.map((restrictionCode) =>
+          this.studentRestrictionSharedService.createRestrictionToSave(
+            studentId,
+            restrictionCode,
+            auditUserId,
+            applicationId,
+          ),
+        );
+      const restrictions = await Promise.all(restrictionPromises);
+      studentRestriction.push(...restrictions);
     }
+    return studentRestriction;
   }
 
   /**
