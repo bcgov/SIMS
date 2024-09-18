@@ -1,6 +1,7 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
   E2EDataSources,
+  RestrictionCode,
   createE2EDataSources,
   createFakeInstitutionLocation,
   createFakeStudentAppeal,
@@ -20,6 +21,8 @@ import {
   ApplicationStatus,
   AssessmentTriggerType,
   InstitutionLocation,
+  NotificationMessageType,
+  OfferingIntensity,
   StudentScholasticStandingChangeType,
 } from "@sims/sims-db";
 import {
@@ -250,18 +253,121 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     ).toBe(createdScholasticStandingId);
   });
 
+  it("Should create a new scholastic standing for a Part time application when the institution user requests.", async () => {
+    mockFormioDryRun({
+      studentScholasticStandingChangeType:
+        StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+    });
+    // Arrange
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {
+        institutionLocation: collegeFLocation,
+      },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.Completed,
+      },
+    );
+    await db.application.save(application);
+    // Institution token.
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
+
+    // Act/Assert
+    let createdScholasticStandingId: number;
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .expect((response) => {
+        expect(response.body.id).toBeGreaterThan(0);
+        createdScholasticStandingId = +response.body.id;
+      });
+    const restriction = await db.studentRestriction.find({
+      select: {
+        id: true,
+        restriction: {
+          id: true,
+          restrictionCode: true,
+        },
+      },
+      relations: {
+        restriction: true,
+      },
+      where: { application: { id: application.id } },
+    });
+    expect(restriction).toEqual([
+      {
+        id: expect.any(Number),
+        restriction: {
+          id: expect.any(Number),
+          restrictionCode: RestrictionCode.PTSSR,
+        },
+      },
+      {
+        id: expect.any(Number),
+        restriction: {
+          id: expect.any(Number),
+          restrictionCode: RestrictionCode.PTWTHD,
+        },
+      },
+    ]);
+    const notifications = await db.notification.find({
+      select: {
+        id: true,
+        user: { id: true },
+        notificationMessage: { id: true },
+      },
+      relations: { user: true, notificationMessage: true },
+      where: { user: { id: application.student.user.id } },
+      order: { notificationMessage: { id: "ASC" } },
+    });
+    expect(notifications).toEqual([
+      {
+        id: expect.any(Number),
+        notificationMessage: {
+          id: NotificationMessageType.StudentRestrictionAdded,
+        },
+        user: { id: application.student.user.id },
+      },
+      {
+        id: expect.any(Number),
+        notificationMessage: {
+          id: NotificationMessageType.StudentRestrictionAdded,
+        },
+        user: { id: application.student.user.id },
+      },
+      {
+        id: expect.any(Number),
+        notificationMessage: {
+          id: NotificationMessageType.InstitutionReportsChange,
+        },
+        user: { id: application.student.user.id },
+      },
+    ]);
+  });
+
   /**
    * Centralized method to handle the form.io mock.
    * @param options method options:
    * - `validDryRun`: boolean false indicates that the form mock resolved value is invalid. Default value is true.
    */
-  function mockFormioDryRun(options?: { validDryRun?: boolean }): void {
+  function mockFormioDryRun(options?: {
+    validDryRun?: boolean;
+    studentScholasticStandingChangeType?: StudentScholasticStandingChangeType;
+  }): void {
     const validDryRun = options?.validDryRun ?? true;
     payload = {
       data: {
         dateOfChange: getISODateOnlyString(new Date()),
         scholasticStandingChangeType:
-          StudentScholasticStandingChangeType.SchoolTransfer,
+          options?.studentScholasticStandingChangeType
+            ? options.studentScholasticStandingChangeType
+            : StudentScholasticStandingChangeType.SchoolTransfer,
       },
     };
     formService.dryRunSubmission = jest.fn().mockResolvedValue({

@@ -79,4 +79,9 @@ export enum RestrictionCode {
   /**
    * Verification restriction on file. Set up call back for Student case review verification team.
    */
+  /**
+   * Part time scholastic standing restrictions.
+   */
+  PTWTHD = "PTWTHD",
+  PTSSR = "PTSSR",
 }
