@@ -294,13 +294,15 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       // Case a restriction was created, send a notification to the student.
       // Left as the last step to ensure that everything else was processed with
       // success and the notification will not be generated otherwise.
-      createdRestrictions.forEach(async (restriction) => {
+      if (createdRestrictions.length) {
         await this.studentRestrictionSharedService.createNotifications(
-          [restriction.id],
+          createdRestrictions.map(
+            (createdRestriction) => createdRestriction.id,
+          ),
           auditUserId,
           transactionalEntityManager,
         );
-      });
+      }
 
       // Create a student notification when institution reports a change.
       await this.notificationActionsService.saveInstitutionReportChangeNotification(

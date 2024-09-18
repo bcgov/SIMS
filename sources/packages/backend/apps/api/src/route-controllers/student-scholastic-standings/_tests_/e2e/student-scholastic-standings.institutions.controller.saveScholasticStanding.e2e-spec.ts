@@ -269,7 +269,6 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
         applicationStatus: ApplicationStatus.Completed,
       },
     );
-    await db.application.save(application);
     // Institution token.
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
