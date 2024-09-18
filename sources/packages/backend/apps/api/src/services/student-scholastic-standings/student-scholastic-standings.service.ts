@@ -380,7 +380,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
    * @param auditUserId user that should be considered the one that is
    * causing the changes.
    * @param applicationId application id.
-   * @returns a new student restriction objects, that need to be saved.
+   * @returns a new student restriction object, that need to be saved.
    */
   async getFullTimeStudentRestrictions(
     scholasticStandingData: ScholasticStanding,
@@ -388,7 +388,6 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     auditUserId: number,
     applicationId: number,
   ): Promise<StudentRestriction | undefined> {
-    //const studentRestriction: StudentRestriction[] = [];
     if (
       scholasticStandingData.scholasticStandingChangeType ===
       StudentScholasticStandingChangeType.StudentDidNotCompleteProgram
