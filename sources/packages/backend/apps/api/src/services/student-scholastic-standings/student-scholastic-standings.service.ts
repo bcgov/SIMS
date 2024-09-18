@@ -294,7 +294,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       // Case a restriction was created, send a notification to the student.
       // Left as the last step to ensure that everything else was processed with
       // success and the notification will not be generated otherwise.
-      if (createdRestrictions.length) {
+      if (createdRestrictions?.length) {
         const restrictionIds = createdRestrictions.map(
           (createdRestriction) => createdRestriction.id,
         );
@@ -340,14 +340,13 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     applicationId: number,
   ): Promise<StudentRestriction[]> {
     if (offeringIntensity === OfferingIntensity.fullTime) {
-      return [
-        await this.getFullTimeStudentRestrictions(
-          scholasticStandingData,
-          studentId,
-          auditUserId,
-          applicationId,
-        ),
-      ];
+      const fullTimeRestriction = await this.getFullTimeStudentRestrictions(
+        scholasticStandingData,
+        studentId,
+        auditUserId,
+        applicationId,
+      );
+      return fullTimeRestriction ? [fullTimeRestriction] : [];
     }
     if (offeringIntensity === OfferingIntensity.partTime) {
       return this.getPartTimeStudentRestrictions(
