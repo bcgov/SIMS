@@ -276,7 +276,6 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
 
     // Act/Assert
-    let createdScholasticStandingId: number;
     await request(app.getHttpServer())
       .post(endpoint)
       .send(payload)
@@ -284,7 +283,6 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       .expect(HttpStatus.CREATED)
       .expect((response) => {
         expect(response.body.id).toBeGreaterThan(0);
-        createdScholasticStandingId = +response.body.id;
       });
     const restriction = await db.studentRestriction.find({
       select: {
