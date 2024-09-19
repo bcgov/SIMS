@@ -6,7 +6,6 @@
 # hub.docker.com/r/_/node/
 FROM artifacts.developer.gov.bc.ca/docker-remote/node:20-alpine3.19
 
-WORKDIR /app
 ARG FORMIO_SOURCE_REPO_URL
 ARG FORMIO_SOURCE_REPO_TAG
 
@@ -19,7 +18,9 @@ RUN apk update && \
   apk add git
 
 # Clone code
-RUN git clone ${FORMIO_SOURCE_REPO_URL} -b ${FORMIO_SOURCE_REPO_TAG} --single-branch /app/
+RUN git clone ${FORMIO_SOURCE_REPO_URL} -b ${FORMIO_SOURCE_REPO_TAG} --single-branch
+
+WORKDIR formio
 
 # Use install as-is from package.json
 RUN npm i
@@ -30,7 +31,7 @@ RUN npm i
 ENV DEBUG=""
 
 RUN set -x \
-  && chmod -R 770 /app/
+  && chmod -R 770 ./
 
 # This will initialize the application based on
 # some questions to the user (login email, password, etc.)
