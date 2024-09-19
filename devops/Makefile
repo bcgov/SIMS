@@ -117,7 +117,7 @@ define FORMIO_SOURCE_REPO_URL
 endef
 
 define FORMIO_SOURCE_REPO_TAG
-"v4.2.4"
+"v4.2.0"
 endef
 
 define SOURCE_CONTEXT_DIR
