@@ -8,7 +8,7 @@ on:
         description: "Formio tag, please refer https://github.com/formio/formio/tags to deploy the appropriate tag."
         type: string
         required: true
-        default: "v2.5.3"
+        default: "v4.2.4"
       gitRef:
         description: "Git Ref"
         required: true

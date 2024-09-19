@@ -4,7 +4,7 @@
 
 # Use Node image, maintained by Docker:
 # hub.docker.com/r/_/node/
-FROM docker.io/node:19.2-alpine
+FROM docker.io/node:20-alpine3.19
 
 # set working directory
 WORKDIR /formio
