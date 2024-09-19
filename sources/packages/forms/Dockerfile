@@ -13,10 +13,11 @@ ARG FORMIO_SOURCE_REPO_TAG
 # "bcrypt" requires python/make/g++, all must be installed in alpine
 # (note: using pinned versions to ensure immutable build environment)
 RUN apk update && \
-  apk upgrade && \
-  apk add make=4.2.1-r2 && \
-  apk add g++=8.3.0-r0 && \
-  apk add git
+    apk upgrade && \
+    apk add make && \
+    apk add python3 && \
+    apk add g++ && \
+    apk add git
 
 # Clone code
 RUN git clone ${FORMIO_SOURCE_REPO_URL} -b ${FORMIO_SOURCE_REPO_TAG} --single-branch /app/
