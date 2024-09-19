@@ -1,5 +1,5 @@
 name: Env Setup - Build Forms Server
-run-name: Env Setup - Build forms server from ${{ inputs.gitRef }}(form.io tag ${{ inputs.formioTag }})
+run-name: Env Setup - Build forms server from ${{ github.ref_name }}(form.io tag ${{ inputs.formioTag }})
 
 on:
   workflow_dispatch:
@@ -9,10 +9,6 @@ on:
         type: string
         required: true
         default: "v4.2.4"
-      gitRef:
-        description: "Git Ref"
-        required: true
-        default: ""
 
 jobs:
   build:
@@ -31,7 +27,7 @@ jobs:
       - name: Checkout Target Branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.gitRef }}
+          ref: ${{ github.ref_name }}
       # Log in to OpenShift.
       - name: Log in to OpenShift
         run: |
