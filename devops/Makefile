@@ -39,6 +39,7 @@ export QUEUE_CONSUMERS_BUILD_REF := $(or ${QUEUE_CONSUMERS_BUILD_REF}, queue-con
 export LOAD_TEST_GATEWAY_BUILD_REF := $(or ${LOAD_TEST_GATEWAY_BUILD_REF}, load-test-gateway-${APP_NAME})
 export WEB_BUILD_REF := $(or ${WEB_BUILD_REF}, web-${APP_NAME})
 export FORMS_BUILD_REF := $(or ${FORMS_BUILD_REF}, forms)
+export FORMIO_SOURCE_REPO_TAG := $(or $(FORMIO_SOURCE_REPO_TAG), v4.2.4)
 export FORMIO_ROOT_EMAIL := $(or ${FORMIO_ROOT_EMAIL}, dev_sabc@gov.bc.ca)
 export MONGODB_URI := $(or ${MONGODB_URI}, $$MONGODB_URI)
 export QUEUE_PREFIX := $(or $(QUEUE_PREFIX), {sims-local})
@@ -112,16 +113,8 @@ define SOURCE_REPOSITORY_URL
 "https://github.com/bcgov/SIMS.git"
 endef
 
-define SOURCE_REPOSITORY_REF
-"main"
-endef
-
 define FORMIO_SOURCE_REPO_URL
 "https://github.com/formio/formio.git"
-endef
-
-define FORMIO_SOURCE_REPO_TAG
-"v2.5.4"
 endef
 
 define SOURCE_CONTEXT_DIR
@@ -533,11 +526,10 @@ build-forms:
 	test -n "$(BUILD_REF)"
 	test -n "$(SOURCE_CONTEXT_DIR)"
 	test -n "$(SOURCE_REPOSITORY_URL)"
-	test -n "$(SOURCE_REPOSITORY_REF)"
 	test -n "$(FORMIO_SOURCE_REPO_URL)"
 	test -n "$(FORMIO_SOURCE_REPO_TAG)"
-	@echo "+\n++ BUILDING $(FORMS_BUILD_REF) DIR: $(SOURCE_CONTEXT_DIR)forms BUILD_TAG:$(BUILD_REF)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f openshift/forms-build.yml -p NAME=$(FORMS_BUILD_REF) -p TAG=$(BUILD_REF) -p FORMIO_SOURCE_REPO_URL=$(FORMIO_SOURCE_REPO_URL) -p FORMIO_SOURCE_REPO_TAG=$(FORMIO_SOURCE_REPO_TAG) -p SOURCE_REPOSITORY_URL=$(SOURCE_REPOSITORY_URL) -p SOURCE_REPOSITORY_REF=$(SOURCE_REPOSITORY_REF) -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)forms| oc -n $(BUILD_NAMESPACE) apply -f -
+	@echo "+\n++ BUILDING $(FORMS_BUILD_REF) DIR: $(SOURCE_CONTEXT_DIR)forms BUILD_TAG:$(FORMIO_SOURCE_REPO_TAG)\n+"
+	@oc -n $(BUILD_NAMESPACE) process -f openshift/forms-build.yml -p NAME=$(FORMS_BUILD_REF) -p TAG=$(FORMIO_SOURCE_REPO_TAG) -p FORMIO_SOURCE_REPO_URL=$(FORMIO_SOURCE_REPO_URL) -p FORMIO_SOURCE_REPO_TAG=$(FORMIO_SOURCE_REPO_TAG) -p SOURCE_REPOSITORY_URL=$(SOURCE_REPOSITORY_URL) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)forms| oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(FORMS_BUILD_REF) --wait
 
 deploy-forms:
@@ -545,15 +537,15 @@ deploy-forms:
 	test -n "$(FORMS_NAME)"
 	test -n "$(FORMS_URL)"
 	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(BUILD_REF)"
+	test -n "$(FORMIO_SOURCE_REPO_TAG)"
 	test -n "$(FORMIO_ROOT_EMAIL)"
 	test -n "$(MONGODB_URI)"
-	@echo "+\n++ Deploying forms with tag: $(BUILD_REF)\n+"
+	@echo "+\n++ Deploying forms with tag: $(FORMIO_SOURCE_REPO_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/forms-deploy.yml \
 	-p NAME=$(FORMS_NAME) \
 	-p FORMS_URL=$(FORMS_URL) \
 	-p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) \
-	-p IMAGE_STREAM_TAG="$(FORMS_BUILD_REF):$(BUILD_REF)" \
+	-p IMAGE_STREAM_TAG="$(FORMS_BUILD_REF):$(FORMIO_SOURCE_REPO_TAG)" \
 	-p FORMIO_ROOT_EMAIL=$(FORMIO_ROOT_EMAIL) \
 	-p FORMIO_ROOT_PASSWORD=$(FORMIO_ROOT_PASSWORD) \
 	-p MONGODB_URI=$(MONGODB_URI) \
