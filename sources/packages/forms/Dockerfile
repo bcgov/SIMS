@@ -26,13 +26,15 @@ WORKDIR formio
 # Use install as-is from package.json
 RUN npm i
 
+RUN apk del git
+
 # Set this to inspect more from the application. Examples:
 #   DEBUG=formio:db (see index.js for more)
 #   DEBUG=formio:*
 ENV DEBUG=""
 
 RUN set -x \
-  && chmod -R 770 ./
+  && chmod -R 770 ./node_modules
 
 # This will initialize the application based on
 # some questions to the user (login email, password, etc.)
