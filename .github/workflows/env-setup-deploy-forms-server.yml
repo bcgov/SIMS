@@ -12,11 +12,7 @@ on:
         description: "Formio tag, please refer https://github.com/formio/formio/tags to deploy the appropriate tag."
         type: string
         required: true
-        default: "v2.5.3"
-      gitRef:
-        description: "Git Ref"
-        required: true
-        default: ""
+        default: "v4.2.4"
 
 jobs:
   deploy:
@@ -26,7 +22,7 @@ jobs:
     env:
       FORMS_NAME: forms
       NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
-      BUILD_REF: ${{ inputs.formioTag }}
+      FORMIO_SOURCE_REPO_TAG: ${{ inputs.formioTag }}
       HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
       FORMIO_ROOT_EMAIL: ${{ secrets.FORMS_SA_USER_NAME }}
@@ -45,7 +41,7 @@ jobs:
       - name: Checkout Target Branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.gitRef }}
+          ref: ${{ github.ref_name }}
       # Log in to OpenShift.
       - name: Log in to OpenShift
         run: |

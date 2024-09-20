@@ -15,10 +15,8 @@ jobs:
     name: Build Forms Server
     runs-on: ubuntu-latest
     env:
-      FORMIO_SOURCE_REPO_TAG: ${{ inputs.formioTag }}
-      SOURCE_REPOSITORY_REF: ${{ github.ref_name }}
-      BUILD_REF: ${{ inputs.formioTag }}
       BUILD_NAMESPACE: ${{ vars.BUILD_NAMESPACE }}
+      FORMIO_SOURCE_REPO_TAG: ${{ inputs.formioTag }}
     steps:
       - name: Print env
         run: |
