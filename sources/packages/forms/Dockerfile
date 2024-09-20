@@ -34,7 +34,7 @@ RUN apk del git
 ENV DEBUG=""
 
 RUN set -x \
-  && chmod -R 770 ./node_modules
+  && chmod -R 770 ./
 
 # This will initialize the application based on
 # some questions to the user (login email, password, etc.)
