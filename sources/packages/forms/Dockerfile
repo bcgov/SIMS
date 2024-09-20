@@ -10,13 +10,16 @@ RUN apk update && \
   apk upgrade && \
   apk add make=4.4.1-r2 && \
   apk add python3=3.12.6-r0 && \
-  apk add g++=13.2.1_git20240309-r0 &&\
-  apk add git=2.45.2-r0
+  apk add g++=13.2.1_git20240309-r0 && \
+  apk add git=2.45.2-r0 && \
+  apk cache clean
 
 # Clone code into formio folder, by default.
 RUN git clone ${FORMIO_SOURCE_REPO_URL} -b ${FORMIO_SOURCE_REPO_TAG} --single-branch
 
-WORKDIR formio
+RUN apk del git
+
+WORKDIR /formio
 
 # Use install as-is from package.json.
 RUN npm i
