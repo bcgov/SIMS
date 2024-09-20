@@ -39,9 +39,11 @@ export QUEUE_CONSUMERS_BUILD_REF := $(or ${QUEUE_CONSUMERS_BUILD_REF}, queue-con
 export LOAD_TEST_GATEWAY_BUILD_REF := $(or ${LOAD_TEST_GATEWAY_BUILD_REF}, load-test-gateway-${APP_NAME})
 export WEB_BUILD_REF := $(or ${WEB_BUILD_REF}, web-${APP_NAME})
 export FORMS_BUILD_REF := $(or ${FORMS_BUILD_REF}, forms)
+export FORMIO_SOURCE_REPO_TAG := $(or $(FORMIO_SOURCE_REPO_TAG), v4.2.4)
 export FORMIO_ROOT_EMAIL := $(or ${FORMIO_ROOT_EMAIL}, dev_sabc@gov.bc.ca)
 export MONGODB_URI := $(or ${MONGODB_URI}, $$MONGODB_URI)
 export QUEUE_PREFIX := $(or $(QUEUE_PREFIX), {sims-local})
+
 export MAX_WAIT=300 # Maximum wait time in seconds.
 export WAIT_TIME=0  # Initialize wait time to zero.
 
@@ -113,10 +115,6 @@ endef
 
 define FORMIO_SOURCE_REPO_URL
 "https://github.com/formio/formio.git"
-endef
-
-define FORMIO_SOURCE_REPO_TAG
-"v4.2.0"
 endef
 
 define SOURCE_CONTEXT_DIR
