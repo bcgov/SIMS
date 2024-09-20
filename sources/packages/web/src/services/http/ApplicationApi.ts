@@ -20,6 +20,7 @@ import {
   EnrolmentApplicationDetailsAPIOutDTO,
   CompletedApplicationDetailsAPIOutDTO,
   ApplicationAssessmentStatusDetailsAPIOutDTO,
+  ApplicationSupplementalDataAPIOutDTO,
 } from "@/services/http/dto";
 
 export class ApplicationApi extends HttpBaseClient {
@@ -27,6 +28,14 @@ export class ApplicationApi extends HttpBaseClient {
     applicationId: number,
   ): Promise<ApplicationDataAPIOutDTO> {
     return this.getCall<ApplicationDataAPIOutDTO>(
+      this.addClientRoot(`application/${applicationId}`),
+    );
+  }
+
+  async getApplication(
+    applicationId: number,
+  ): Promise<ApplicationSupplementalDataAPIOutDTO> {
+    return this.getCall<ApplicationSupplementalDataAPIOutDTO>(
       this.addClientRoot(`application/${applicationId}`),
     );
   }

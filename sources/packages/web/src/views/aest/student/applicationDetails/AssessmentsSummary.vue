@@ -9,6 +9,9 @@
         }"
         subTitle="Assessments"
       />
+      <application-header-title :application-id="applicationId" />
+      3
+      <!--TODO: UPDATE SCREEN 3-->
     </template>
     <request-assessment
       class="mb-5"
@@ -50,12 +53,14 @@ import { AssessmentTriggerType } from "@/types";
 import RequestAssessment from "@/components/aest/students/assessment/Request.vue";
 import HistoryAssessment from "@/components/aest/students/assessment/History.vue";
 import ManualReassessment from "@/components/aest/students/assessment/ManualReassessment.vue";
+import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
 
 export default defineComponent({
   components: {
     RequestAssessment,
     HistoryAssessment,
     ManualReassessment,
+    ApplicationHeaderTitle,
   },
   props: {
     studentId: {

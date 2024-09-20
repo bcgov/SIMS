@@ -10,6 +10,10 @@
         }"
       />
     </template>
+    <application-header-title :application-id="applicationId" />
+    2
+    <!--TODO: UPDATE SCREEN 2-->
+
     <notice-of-assessment-form-view
       :assessment-id="assessmentId"
       :can-reissue-m-s-f-a-a="hasStudentReissueMSFAARole"
@@ -25,10 +29,12 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { ApplicationService } from "@/services/ApplicationService";
 import { useAuth, useSnackBar } from "@/composables";
 import { Role } from "@/types";
+import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
 
 export default defineComponent({
   components: {
     NoticeOfAssessmentFormView,
+    ApplicationHeaderTitle,
   },
   props: {
     studentId: {

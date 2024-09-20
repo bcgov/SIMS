@@ -13,8 +13,8 @@ import {
 import { ApplicationService } from "../../services";
 import BaseController from "../BaseController";
 import {
-  ApplicationAPIOutDTO,
   ApplicationAssessmentStatusDetailsAPIOutDTO,
+  ApplicationSupplementalDataAPIOutDTO,
 } from "./models/application.dto";
 import {
   AllowAuthorizedParty,
@@ -66,7 +66,7 @@ export class ApplicationAESTController extends BaseController {
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @Query("loadDynamicData", new DefaultValuePipe(true), ParseBoolPipe)
     loadDynamicData: boolean,
-  ): Promise<ApplicationAPIOutDTO> {
+  ): Promise<ApplicationSupplementalDataAPIOutDTO> {
     const application = await this.applicationService.getApplicationById(
       applicationId,
       { loadDynamicData },

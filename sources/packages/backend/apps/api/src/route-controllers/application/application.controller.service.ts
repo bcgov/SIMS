@@ -12,7 +12,7 @@ import {
   ApplicationIncomeVerification,
   ApplicationSupportingUserDetails,
   EnrolmentApplicationDetailsAPIOutDTO,
-  ApplicationAPIOutDTO,
+  ApplicationSupplementalDataAPIOutDTO,
 } from "./models/application.dto";
 import {
   credentialTypeToDisplay,
@@ -169,7 +169,7 @@ export class ApplicationControllerService {
    */
   async transformToApplicationDTO(
     application: Application,
-  ): Promise<ApplicationAPIOutDTO> {
+  ): Promise<ApplicationSupplementalDataAPIOutDTO> {
     return {
       data: application.data,
       id: application.id,

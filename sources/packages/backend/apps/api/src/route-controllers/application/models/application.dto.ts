@@ -113,7 +113,7 @@ export class ApplicationDataAPIOutDTO extends ApplicationBaseAPIOutDTO {
   submittedDate?: Date;
 }
 
-export class ApplicationAPIOutDTO extends ApplicationBaseAPIOutDTO {
+export class ApplicationSupplementalDataAPIOutDTO extends ApplicationBaseAPIOutDTO {
   studentFullName: string;
   applicationOfferingIntensity?: OfferingIntensity;
   applicationStartDate?: string;

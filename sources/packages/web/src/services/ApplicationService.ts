@@ -19,6 +19,7 @@ import {
   EnrolmentApplicationDetailsAPIOutDTO,
   CompletedApplicationDetailsAPIOutDTO,
   ApplicationAssessmentStatusDetailsAPIOutDTO,
+  ApplicationSupplementalDataAPIOutDTO,
 } from "@/services/http/dto";
 
 export class ApplicationService {
@@ -37,6 +38,12 @@ export class ApplicationService {
     applicationId: number,
   ): Promise<ApplicationDataAPIOutDTO> {
     return ApiClient.Application.getApplicationData(applicationId);
+  }
+
+  async getApplication(
+    applicationId: number,
+  ): Promise<ApplicationSupplementalDataAPIOutDTO> {
+    return ApiClient.Application.getApplication(applicationId);
   }
 
   async createApplicationDraft(

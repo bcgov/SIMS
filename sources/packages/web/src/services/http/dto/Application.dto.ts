@@ -87,6 +87,18 @@ export interface ApplicationDataAPIOutDTO extends ApplicationBaseAPIOutDTO {
 }
 
 /**
+ * DTO for application data
+ */
+export interface ApplicationSupplementalDataAPIOutDTO
+  extends ApplicationBaseAPIOutDTO {
+  studentFullName: string;
+  applicationOfferingIntensity: OfferingIntensity;
+  applicationStartDate: string;
+  applicationEndDate: string;
+  applicationInstitutionName: string;
+}
+
+/**
  * Interface for application summary
  */
 export interface ApplicationSummaryDTO {

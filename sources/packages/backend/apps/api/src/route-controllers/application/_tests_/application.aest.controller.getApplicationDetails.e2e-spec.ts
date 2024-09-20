@@ -32,7 +32,6 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
 
   it("Should get the student application details.", async () => {
     // Arrange
-
     const offeringInitialValues = {
       studyStartDate: getISODateOnlyString(addDays(-10)),
       studyEndDate: getISODateOnlyString(addDays(10)),
@@ -80,9 +79,8 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
       });
   });
 
-  it("Should get the student application details.", async () => {
+  it("Should get the student application details without dynamic data when loadDynamicData is false.", async () => {
     // Arrange
-
     const offeringInitialValues = {
       studyStartDate: getISODateOnlyString(addDays(-10)),
       studyEndDate: getISODateOnlyString(addDays(10)),
