@@ -35,7 +35,6 @@ jobs:
       - name: Print env
         run: |
           echo NAMESPACE: $NAMESPACE
-          echo BRANCH: $BUILD_REF
           echo HOST_PREFIX: $HOST_PREFIX
       # Checkout the PR branch
       - name: Checkout Target Branch
