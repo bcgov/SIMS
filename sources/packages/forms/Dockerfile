@@ -1,9 +1,4 @@
-# Used by docker-compose.yml to deploy the formio application
-# (When modified, you must include `--build` )
-# -----------------------------------------------------------
-
-# Use Node image, maintained by Docker:
-# hub.docker.com/r/_/node/
+# Use Node image, maintained by Docker: hub.docker.com/r/_/node/
 FROM artifacts.developer.gov.bc.ca/docker-remote/node:20-alpine3.19
 
 ARG FORMIO_SOURCE_REPO_URL
