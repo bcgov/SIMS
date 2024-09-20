@@ -621,6 +621,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
         location: {
           id: true,
           name: true,
+          institution: {
+            legalOperatingName: true,
+          },
         },
         pirDeniedReasonId: {
           id: true,
@@ -632,13 +635,22 @@ export class ApplicationService extends RecordDataModelService<Application> {
           startDate: true,
           endDate: true,
         },
+        student: {
+          id: true,
+          user: {
+            id: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
       },
       relations: {
         applicationException: true,
         currentAssessment: { offering: true },
-        location: true,
+        location: { institution: true },
         pirDeniedReasonId: true,
         programYear: true,
+        student: { user: true },
       },
       where: {
         id: applicationId,

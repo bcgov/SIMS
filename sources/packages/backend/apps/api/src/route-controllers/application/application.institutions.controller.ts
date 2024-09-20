@@ -1,7 +1,7 @@
 import { Controller, Get, Param, ParseIntPipe } from "@nestjs/common";
 import { ApplicationService } from "../../services";
 import BaseController from "../BaseController";
-import { ApplicationBaseAPIOutDTO } from "./models/application.dto";
+import { ApplicationAPIOutDTO } from "./models/application.dto";
 import {
   AllowAuthorizedParty,
   HasStudentDataAccess,
@@ -38,7 +38,7 @@ export class ApplicationInstitutionsController extends BaseController {
     @UserToken() userToken: IInstitutionUserToken,
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @Param("studentId", ParseIntPipe) studentId: number,
-  ): Promise<ApplicationBaseAPIOutDTO> {
+  ): Promise<ApplicationAPIOutDTO> {
     const application = await this.applicationService.getApplicationById(
       applicationId,
       {

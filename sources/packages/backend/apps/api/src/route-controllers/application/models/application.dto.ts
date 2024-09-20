@@ -113,6 +113,14 @@ export class ApplicationDataAPIOutDTO extends ApplicationBaseAPIOutDTO {
   submittedDate?: Date;
 }
 
+export class ApplicationAPIOutDTO extends ApplicationBaseAPIOutDTO {
+  studentFullName: string;
+  applicationOfferingIntensity?: OfferingIntensity;
+  applicationStartDate?: string;
+  applicationEndDate?: string;
+  applicationInstitutionName?: string;
+}
+
 export class ApplicationWithProgramYearAPIOutDTO {
   applicationId: number;
   formName: string;
