@@ -31,7 +31,8 @@
       :prepend-icon="studentMenu.restrictionsManagement.icon"
       :title="studentMenu.restrictionsManagement.label"
       @click="studentMenu.restrictionsManagement.command"
-      :hidden="isDraftApplication"
+      :hidden="isBCPublicInstitution"
+      :disabled="isDraftApplication"
     />
   </v-navigation-drawer>
 </template>
@@ -43,6 +44,7 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { ApplicationStatus, MenuModel, SupportingUserType } from "@/types";
 import { SupportingUsersService } from "@/services/SupportingUserService";
 import { ApplicationService } from "@/services/ApplicationService";
+import { InstitutionService } from "@/services/InstitutionService";
 
 export interface StudentApplicationMenu {
   studentApplication: MenuModel;
@@ -106,6 +108,7 @@ export default defineComponent({
       },
     });
     const isDraftApplication = ref(true as boolean);
+    const isBCPublicInstitution = ref(true as boolean);
 
     const goToSupportingUser = (supportingUserId: number) => {
       router.push({
@@ -145,12 +148,19 @@ export default defineComponent({
         );
       isDraftApplication.value =
         applicationDetail.applicationStatus === ApplicationStatus.Draft;
+      const institutionLocationDetail =
+        await InstitutionService.shared.getInstitutionLocation(
+          applicationDetail.data.selectedLocation,
+        );
+      isBCPublicInstitution.value =
+        institutionLocationDetail.isBCPublicInstitution;
     });
 
     return {
       studentMenu,
       relatedParentPartners,
       isDraftApplication,
+      isBCPublicInstitution,
     };
   },
 });

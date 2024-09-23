@@ -33,7 +33,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
     sharedMinistryUser = await db.user.save(createFakeUser());
   });
 
-  it("Should get application restriction bypasses for a submitted part-time application when there is no restriction bypass associated with it.", async () => {
+  it("Should get a list of application restriction bypasses for a submitted part-time application when there is no restriction bypass associated with it.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource, undefined, {
       offeringIntensity: OfferingIntensity.partTime,
@@ -91,7 +91,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
       });
   });
 
-  it("Should get application restriction bypasses for a submitted part-time application when there is restriction bypass associated with it.", async () => {
+  it("Should get a list of application restriction bypasses for a submitted part-time application when there is restriction bypass associated with it.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource, undefined, {
       offeringIntensity: OfferingIntensity.partTime,

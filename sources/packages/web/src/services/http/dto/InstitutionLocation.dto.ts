@@ -84,6 +84,7 @@ export interface InstitutionLocationFormAPIOutDTO
   primaryContactLastName: string;
   primaryContactEmail: string;
   primaryContactPhone: string;
+  isBCPublicInstitution: boolean;
 }
 
 export interface InstitutionLocationAPIOutDTO {

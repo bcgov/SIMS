@@ -52,6 +52,7 @@ import { transformAddressDetailsForAddressBlockForm } from "../utils/address-uti
 import { PaginatedResultsAPIOutDTO } from "../models/pagination.dto";
 import { DUPLICATE_INSTITUTION_LOCATION_CODE } from "../../constants";
 import { InstitutionLocationModel } from "../../services/institution-location/institution-location.models";
+import { INSTITUTION_TYPE_BC_PUBLIC } from "@sims/sims-db/constant";
 
 /**
  * Institution location controller for institutions Client.
@@ -211,6 +212,9 @@ export class InstitutionLocationInstitutionsController extends BaseController {
       ...transformAddressDetailsForAddressBlockForm(
         institutionLocation.data.address,
       ),
+      isBCPublicInstitution:
+        institutionLocation.institution.institutionType.id ===
+        INSTITUTION_TYPE_BC_PUBLIC,
     };
   }
 
