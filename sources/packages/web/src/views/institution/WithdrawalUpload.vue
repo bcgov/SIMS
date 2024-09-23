@@ -115,6 +115,7 @@
             :items="validationResults"
             :loading="loading"
             :items-per-page="DEFAULT_PAGE_LIMIT"
+            :items-per-page-options="ITEMS_PER_PAGE"
           >
             <template #[`item.recordLineNumber`]="{ item }">
               {{ numberEmptyFiller(item.recordLineNumber) }}
@@ -159,6 +160,7 @@
 import { ref, computed, defineComponent } from "vue";
 import {
   DEFAULT_PAGE_LIMIT,
+  ITEMS_PER_PAGE,
   PAGINATION_LIST,
   BannerTypes,
   VForm,
@@ -275,6 +277,7 @@ export default defineComponent({
       validationProcessing,
       creationProcessing,
       DEFAULT_PAGE_LIMIT,
+      ITEMS_PER_PAGE,
       PAGINATION_LIST,
       withdrawalFiles,
       uploadFile,

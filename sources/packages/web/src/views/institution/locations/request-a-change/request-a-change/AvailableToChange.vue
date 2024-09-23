@@ -30,6 +30,7 @@
             v-if="applications?.count"
             :headers="AvailableToChangeOfferingChangeSummaryHeaders"
             :items="applications?.results"
+            :items-per-page-options="ITEMS_PER_PAGE"
             :items-length="applications?.count"
             :loading="loading"
             item-value="applicationId"
@@ -63,6 +64,7 @@
 import { ref, watch, defineComponent } from "vue";
 import {
   DEFAULT_PAGE_LIMIT,
+  ITEMS_PER_PAGE,
   DataTableOptions,
   PaginatedResults,
   AvailableToChangeOfferingChangeSummaryHeaders,
@@ -171,6 +173,7 @@ export default defineComponent({
 
     return {
       DEFAULT_PAGE_LIMIT,
+      ITEMS_PER_PAGE,
       applications,
       dateOnlyLongString,
       paginationAndSortEvent,

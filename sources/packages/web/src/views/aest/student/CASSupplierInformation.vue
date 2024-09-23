@@ -29,6 +29,7 @@
             :headers="CASSupplierInformationHeaders"
             :items="casSupplierInfo.items"
             :items-per-page="DEFAULT_PAGE_LIMIT"
+            :items-per-page-options="ITEMS_PER_PAGE"
           >
             <template #[`item.dateCreated`]="{ item }">
               {{ dateOnlyLongString(item.dateCreated) }}
@@ -72,6 +73,7 @@
 import { ref, defineComponent, watchEffect } from "vue";
 import {
   DEFAULT_PAGE_LIMIT,
+  ITEMS_PER_PAGE,
   Role,
   CASSupplierInformationHeaders,
 } from "@/types";
@@ -140,6 +142,7 @@ export default defineComponent({
     return {
       casSupplierInfo,
       DEFAULT_PAGE_LIMIT,
+      ITEMS_PER_PAGE,
       Role,
       showModal,
       CASSupplierInformationHeaders,

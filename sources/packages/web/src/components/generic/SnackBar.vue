@@ -6,7 +6,7 @@
     location="top right"
     :timeout="snackBarChoices.displayTime"
     :class="snackBarClass"
-    class="mt-16 mr-8"
+    class="mr-8"
   >
     <div class="mt-2">
       <v-row>
