@@ -15,7 +15,17 @@ import {
   createFakeInstitutionLocation,
   saveFakeApplication,
 } from "@sims/test-utils";
-import { InstitutionLocation } from "@sims/sims-db";
+import {
+  EducationProgramOffering,
+  InstitutionLocation,
+  OfferingIntensity,
+} from "@sims/sims-db";
+import {
+  addDays,
+  getDateOnlyFormat,
+  getISODateOnlyString,
+} from "@sims/utilities";
+import { getUserFullName } from "../../../utilities";
 
 describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
   let app: INestApplication;
@@ -53,10 +63,22 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
 
   it("Should get the student application details when student has a submitted application for the institution.", async () => {
     // Arrange
+    const offeringInitialValues = {
+      studyStartDate: getISODateOnlyString(addDays(-10)),
+      studyEndDate: getISODateOnlyString(addDays(10)),
+      offeringIntensity: OfferingIntensity.fullTime,
+    } as EducationProgramOffering;
+
     // Create new application.
-    const savedApplication = await saveFakeApplication(appDataSource, {
-      institutionLocation: collegeFLocation,
-    });
+    const savedApplication = await saveFakeApplication(
+      appDataSource,
+      {
+        institutionLocation: collegeFLocation,
+      },
+      {
+        offeringInitialValues: offeringInitialValues,
+      },
+    );
 
     const student = savedApplication.student;
     const endpoint = `/institutions/application/student/${student.id}/application/${savedApplication.id}`;
@@ -76,6 +98,16 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
         applicationNumber: savedApplication.applicationNumber,
         applicationFormName: "SFAA2022-23",
         applicationProgramYearID: savedApplication.programYearId,
+        studentFullName: getUserFullName(savedApplication.student.user),
+        applicationOfferingIntensity: offeringInitialValues.offeringIntensity,
+        applicationStartDate: getDateOnlyFormat(
+          offeringInitialValues.studyStartDate,
+        ),
+        applicationEndDate: getDateOnlyFormat(
+          offeringInitialValues.studyEndDate,
+        ),
+        applicationInstitutionName:
+          savedApplication.location.institution.legalOperatingName,
       });
   });
 
