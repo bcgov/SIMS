@@ -44,6 +44,7 @@
           :items-length="programAndCount?.count"
           :loading="loading"
           :items-per-page="DEFAULT_PAGE_LIMIT"
+          :items-per-page-options="ITEMS_PER_PAGE"
           @update:options="paginationAndSortEvent"
         >
           <template #item="{ item }">
@@ -85,6 +86,7 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import {
   DEFAULT_PAGE_LIMIT,
+  ITEMS_PER_PAGE,
   DEFAULT_DATATABLE_PAGE_NUMBER,
   PAGINATION_LIST,
   ProgramSummaryFields,
@@ -218,6 +220,7 @@ export default defineComponent({
       locationDetails,
       DEFAULT_PAGE_LIMIT,
       DEFAULT_DATATABLE_PAGE_NUMBER,
+      ITEMS_PER_PAGE,
       PAGINATION_LIST,
       paginationAndSortEvent,
       searchProgramTable,

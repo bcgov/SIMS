@@ -34,6 +34,7 @@
           :loading="loading"
           item-value="applicationId"
           v-model:items-per-page="DEFAULT_PAGE_LIMIT"
+          :items-per-page-options="ITEMS_PER_PAGE"
           @update:options="paginationAndSortEvent"
         >
           <template #[`item.dateSubmitted`]="{ item }">
@@ -60,6 +61,7 @@
 import { ref, defineComponent, onMounted } from "vue";
 import {
   DEFAULT_PAGE_LIMIT,
+  ITEMS_PER_PAGE,
   DataTableOptions,
   PaginatedResults,
   AllInProgressOfferingChangeSummaryHeaders,
@@ -156,6 +158,7 @@ export default defineComponent({
 
     return {
       DEFAULT_PAGE_LIMIT,
+      ITEMS_PER_PAGE,
       applications,
       dateOnlyLongString,
       paginationAndSortEvent,

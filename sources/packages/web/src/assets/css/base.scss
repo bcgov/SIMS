@@ -247,8 +247,7 @@ strong {
 
 // Btn toggle groups for nav bar adjustment.
 .navigation-btn.v-btn-group {
-  min-width: inherit;
-  overflow: inherit;
+  min-width: fit-content;
 }
 
 // Active sidebar class to match with Figma.
