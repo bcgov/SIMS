@@ -78,14 +78,14 @@
                           ],
                           "content": "Get started on your application",
                           "refreshOnChange": false,
-                          "customClass": "header-lg",
+                          "customClass": "category-header-large primary-color",
                           "hidden": false,
                           "modalEdit": false,
                           "key": "html109",
                           "tags": [],
                           "properties": {},
                           "conditional": {
-                            "show": null,
+                            "show": "",
                             "when": null,
                             "eq": "",
                             "json": ""
@@ -151,7 +151,7 @@
                           "label": "HTML",
                           "labelWidth": "",
                           "labelMargin": "",
-                          "tag": "p",
+                          "tag": "div",
                           "className": "",
                           "attrs": [
                             {
@@ -159,7 +159,7 @@
                               "value": ""
                             }
                           ],
-                          "content": "Get started on your application to explore your funding options. Your completed application will be assessed to determine your loan and grant eligibility.\n<br><br>\n<strong>Before you begin, you may need to gather the following:</strong>\n<ul>\n  <li>Your institution and program information</li>\n  <li>Your previous years tax return information</li>\n  <li>Your spouse/dependent information, if applicable</li>\n  <li>Your citizenship documentation, if applicable</li>\n</ul>",
+                          "content": "<p>\nGet started on your application to explore your funding options. Your completed application will be assessed to determine your loan and grant eligibility.\n</p>\n<strong>Before you begin, you may need to gather the following:</strong>\n<ul>\n  <li>Your institution and program information</li>\n  <li>Your previous years tax return information</li>\n  <li>Your spouse/dependent information, if applicable</li>\n  <li>Your citizenship documentation, if applicable</li>\n</ul>",
                           "refreshOnChange": false,
                           "customClass": "align-bullets",
                           "hidden": false,
@@ -168,7 +168,7 @@
                           "tags": [],
                           "properties": {},
                           "conditional": {
-                            "show": null,
+                            "show": "",
                             "when": null,
                             "eq": "",
                             "json": ""
@@ -652,14 +652,14 @@
           ],
           "content": "Select your program",
           "refreshOnChange": false,
-          "customClass": "header-lg",
+          "customClass": "category-header-large primary-color",
           "hidden": false,
           "modalEdit": false,
           "key": "html9",
           "tags": [],
           "properties": {},
           "conditional": {
-            "show": null,
+            "show": "",
             "when": null,
             "eq": "",
             "json": ""
@@ -5594,7 +5594,8 @@
           "showWordCount": false,
           "allowMultipleMasks": false,
           "addons": [],
-          "id": "eh0veaa"
+          "id": "eh0veaa",
+          "isNew": false
         },
         {
           "label": "HTML",
