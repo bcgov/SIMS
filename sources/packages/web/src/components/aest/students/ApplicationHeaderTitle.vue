@@ -23,12 +23,23 @@ export default defineComponent({
     const mapApplicationHeader = (
       application: ApplicationSupplementalDataAPIOutDTO,
     ): Record<string, string> => {
+      if (
+        application.applicationStartDate &&
+        application.applicationEndDate &&
+        application.applicationOfferingIntensity
+      ) {
+        return {
+          Name: application.studentFullName,
+          "Application #": application.applicationNumber,
+          Institution: application.applicationInstitutionName,
+          "Study dates": `${application.applicationStartDate} - ${application.applicationEndDate}`,
+          Type: application.applicationOfferingIntensity,
+        };
+      }
       return {
         Name: application.studentFullName,
         "Application #": application.applicationNumber,
         Institution: application.applicationInstitutionName,
-        "Study dates": `${application.applicationStartDate} - ${application.applicationEndDate}`,
-        Type: application.applicationOfferingIntensity,
       };
     };
 

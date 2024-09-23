@@ -9,11 +9,8 @@
           params: { applicationId, studentId, assessmentId },
         }"
       />
+      <application-header-title :application-id="applicationId" />
     </template>
-    <application-header-title :application-id="applicationId" />
-    2
-    <!--TODO: UPDATE SCREEN 2-->
-
     <notice-of-assessment-form-view
       :assessment-id="assessmentId"
       :can-reissue-m-s-f-a-a="hasStudentReissueMSFAARole"

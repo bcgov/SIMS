@@ -10,8 +10,6 @@
         subTitle="Assessments"
       />
       <application-header-title :application-id="applicationId" />
-      3
-      <!--TODO: UPDATE SCREEN 3-->
     </template>
     <request-assessment
       class="mb-5"
