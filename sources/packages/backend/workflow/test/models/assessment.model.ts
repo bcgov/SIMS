@@ -18,6 +18,7 @@ export interface StudentDependantAppealData extends JSONDoc {
 }
 export interface StudentFinancialInformationAppealData extends JSONDoc {
   taxReturnIncome: number;
+  currentYearIncome?: number;
   daycareCosts12YearsOrOver?: number;
   daycareCosts11YearsOrUnder?: number;
 }

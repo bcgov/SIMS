@@ -706,6 +706,7 @@ dmnX (comes from dmn)</bpmn:text>
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:input source="=if appealsStudentFinancialInformationAppealData = null&#10;  then studentDataTaxReturnIncome &#10;  else appealsStudentFinancialInformationAppealData.taxReturnIncome" target="inputDataTaxReturnIncome" />
+          <zeebe:input source="=if appealsStudentFinancialInformationAppealData = null&#10;  then studentDataCurrentYearIncome &#10;  else appealsStudentFinancialInformationAppealData.currentYearIncome" target="inputDataCurrentYearIncome" />
           <zeebe:input source="=if appealsStudentFinancialInformationAppealData = null &#10;  then studentDataDaycareCosts12YearsOrOver &#10;  else &#10;    if appealsStudentFinancialInformationAppealData.daycareCosts12YearsOrOver = null&#10;      then null&#10;      else appealsStudentFinancialInformationAppealData.daycareCosts12YearsOrOver" target="inputDataDaycareCosts12YearsOrOver" />
           <zeebe:input source="=if appealsStudentFinancialInformationAppealData = null&#10;  then studentDataDaycareCosts11YearsOrUnder &#10;  else &#10;    if appealsStudentFinancialInformationAppealData.daycareCosts11YearsOrUnder = null&#10;      then null&#10;      else appealsStudentFinancialInformationAppealData.daycareCosts11YearsOrUnder" target="inputDataDaycareCosts11YearsOrUnder" />
           <zeebe:output source="=calculatedDataStudentFinancialInformation.calculatedDataTaxReturnIncome" target="calculatedDataTaxReturnIncome" />
