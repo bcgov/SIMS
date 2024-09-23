@@ -904,7 +904,7 @@
               "value": ""
             }
           ],
-          "content": "<p>Report a change</p>",
+          "content": "Report a change",
           "refreshOnChange": false,
           "customClass": "category-header-large primary-color",
           "key": "reportAChangeInStudentCircumstance",
@@ -913,7 +913,14 @@
           "tableView": false,
           "hideLabel": true,
           "tag": "p",
-          "className": ""
+          "className": "",
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {}
         },
         {
           "key": "panelPanel",

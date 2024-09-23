@@ -140,7 +140,7 @@
                   "label": "HTML",
                   "labelWidth": "",
                   "labelMargin": "",
-                  "tag": "p",
+                  "tag": "div",
                   "className": "",
                   "attrs": [
                     {
@@ -148,7 +148,7 @@
                       "value": ""
                     }
                   ],
-                  "content": "Welcome to your Student Account!\n<br><br>\nStudentAid BC helps eligible students with the cost of post-secondary education through student loans, grants, and other financial assistance programs. From this page you can:\n<ul>\n<li>Apply for student financial assistance</li>\n<li>View your current and past applications and assessments</li>\n<li>Track your application status</li>\n<li>Upload and view documents</li>\n<li>Request a change to an active application</li>\n<li>Manage your StudentAid BC profile</li>\n<li>View your account activity</li>\n</ul>",
+                  "content": "<p>Welcome to your Student Account!</p>\n<p>\nStudentAid BC helps eligible students with the cost of post-secondary education through student loans, grants, and other financial assistance programs. From this page you can:\n</p>\n<ul>\n<li>Apply for student financial assistance</li>\n<li>View your current and past applications and assessments</li>\n<li>Track your application status</li>\n<li>Upload and view documents</li>\n<li>Request a change to an active application</li>\n<li>Manage your StudentAid BC profile</li>\n<li>View your account activity</li>\n</ul>",
                   "refreshOnChange": false,
                   "customClass": "align-bullets",
                   "hidden": false,
@@ -1482,13 +1482,14 @@
                   "showWordCount": false,
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "epf72is"
+                  "id": "epf72is",
+                  "isNew": false
                 },
                 {
                   "label": "HTML",
                   "labelWidth": "",
                   "labelMargin": "",
-                  "tag": "p",
+                  "tag": "div",
                   "className": "",
                   "attrs": [
                     {
@@ -1744,148 +1745,8 @@
         }
       ],
       "id": "evy8d96"
-    },
-    {
-      "label": "applicationId",
-      "customClass": "",
-      "modalEdit": false,
-      "persistent": true,
-      "protected": false,
-      "dbIndex": false,
-      "encrypted": false,
-      "redrawOn": "",
-      "customDefaultValue": "",
-      "calculateValue": "",
-      "calculateServer": false,
-      "key": "applicationId",
-      "tags": [],
-      "properties": {},
-      "logic": [],
-      "attributes": {},
-      "overlay": {
-        "style": "",
-        "page": "",
-        "left": "",
-        "top": "",
-        "width": "",
-        "height": ""
-      },
-      "type": "hidden",
-      "input": true,
-      "placeholder": "",
-      "prefix": "",
-      "suffix": "",
-      "multiple": false,
-      "unique": false,
-      "hidden": false,
-      "clearOnHide": true,
-      "refreshOn": "",
-      "tableView": false,
-      "labelPosition": "top",
-      "description": "",
-      "errorLabel": "",
-      "tooltip": "",
-      "hideLabel": false,
-      "tabindex": "",
-      "disabled": false,
-      "autofocus": false,
-      "widget": {
-        "type": "input"
-      },
-      "validateOn": "change",
-      "validate": {
-        "required": false,
-        "custom": "",
-        "customPrivate": false,
-        "strictDateValidation": false,
-        "multiple": false,
-        "unique": false
-      },
-      "conditional": {
-        "show": null,
-        "when": null,
-        "eq": ""
-      },
-      "allowCalculateOverride": false,
-      "showCharCount": false,
-      "showWordCount": false,
-      "allowMultipleMasks": false,
-      "inputType": "hidden",
-      "id": "em1y8gd",
-      "defaultValue": "",
-      "dataGridLabel": false,
-      "addons": []
-    },
-    {
-      "label": "applicationStatus",
-      "customClass": "",
-      "modalEdit": false,
-      "defaultValue": null,
-      "persistent": true,
-      "protected": false,
-      "dbIndex": false,
-      "encrypted": false,
-      "redrawOn": "",
-      "customDefaultValue": "",
-      "calculateValue": "",
-      "calculateServer": false,
-      "key": "applicationStatus",
-      "tags": [],
-      "properties": {},
-      "logic": [],
-      "attributes": {},
-      "overlay": {
-        "style": "",
-        "page": "",
-        "left": "",
-        "top": "",
-        "width": "",
-        "height": ""
-      },
-      "type": "hidden",
-      "input": true,
-      "tableView": false,
-      "placeholder": "",
-      "prefix": "",
-      "suffix": "",
-      "multiple": false,
-      "unique": false,
-      "hidden": false,
-      "clearOnHide": true,
-      "refreshOn": "",
-      "dataGridLabel": false,
-      "labelPosition": "top",
-      "description": "",
-      "errorLabel": "",
-      "tooltip": "",
-      "hideLabel": false,
-      "tabindex": "",
-      "disabled": false,
-      "autofocus": false,
-      "widget": {
-        "type": "input"
-      },
-      "validateOn": "change",
-      "validate": {
-        "required": false,
-        "custom": "",
-        "customPrivate": false,
-        "strictDateValidation": false,
-        "multiple": false,
-        "unique": false
-      },
-      "conditional": {
-        "show": null,
-        "when": null,
-        "eq": ""
-      },
-      "allowCalculateOverride": false,
-      "showCharCount": false,
-      "showWordCount": false,
-      "allowMultipleMasks": false,
-      "inputType": "hidden",
-      "id": "e6z1qd9",
-      "addons": []
     }
-  ]
+  ],
+  "pdfComponents": [],
+  "machineName": "studentwelcomepage"
 }
