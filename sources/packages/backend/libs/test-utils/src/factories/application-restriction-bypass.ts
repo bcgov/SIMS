@@ -12,6 +12,7 @@ import {
 import { E2EDataSources } from "@sims/test-utils/data-source/e2e-data-source";
 import { createFakeNote } from "@sims/test-utils/factories/note";
 import { saveFakeStudentRestriction } from "@sims/test-utils/factories/student-restriction";
+import { createFakeUser } from "@sims/test-utils/factories/user";
 import { ArrayContains, FindOneOptions } from "typeorm";
 
 /**
@@ -94,9 +95,9 @@ export async function saveFakeApplicationRestrictionBypass(
   const bypass = new ApplicationRestrictionBypass();
   bypass.application = relations.application;
   bypass.bypassBehavior =
-    options.initialValues?.bypassBehavior ??
+    options?.initialValues?.bypassBehavior ??
     RestrictionBypassBehaviors.AllDisbursements;
-  bypass.isActive = options.initialValues?.isActive ?? true;
+  bypass.isActive = options?.initialValues?.isActive ?? true;
   bypass.creator = relations?.creator;
   bypass.createdAt = now;
   // Define studentRestriction.
@@ -130,7 +131,12 @@ export async function saveFakeApplicationRestrictionBypass(
       }),
     );
   }
-  bypass.bypassCreatedBy = relations.bypassCreatedBy;
+  const user = createFakeUser();
+  if (!relations?.bypassCreatedBy) {
+    await db.user.save(user);
+  }
+  const bypassCreatedBy = relations?.bypassCreatedBy ?? user;
+  bypass.bypassCreatedBy = bypassCreatedBy;
   bypass.bypassCreatedDate = now;
   if (options?.isRemoved) {
     // Define columns to set the bypass as removed.

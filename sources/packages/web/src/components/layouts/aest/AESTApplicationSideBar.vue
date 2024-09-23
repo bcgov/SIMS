@@ -25,6 +25,14 @@
       :title="studentMenu.assessments.label"
       @click="studentMenu.assessments.command"
     />
+    <v-list-item
+      density="compact"
+      nav
+      :prepend-icon="studentMenu.restrictionsManagement.icon"
+      :title="studentMenu.restrictionsManagement.label"
+      @click="studentMenu.restrictionsManagement.command"
+      :hidden="isDraftApplication"
+    />
   </v-navigation-drawer>
 </template>
 
@@ -32,12 +40,14 @@
 import { useRouter } from "vue-router";
 import { ref, onMounted, defineComponent } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { MenuModel, SupportingUserType } from "@/types";
+import { ApplicationStatus, MenuModel, SupportingUserType } from "@/types";
 import { SupportingUsersService } from "@/services/SupportingUserService";
+import { ApplicationService } from "@/services/ApplicationService";
 
 export interface StudentApplicationMenu {
   studentApplication: MenuModel;
   assessments: MenuModel;
+  restrictionsManagement: MenuModel;
 }
 
 export default defineComponent({
@@ -81,7 +91,21 @@ export default defineComponent({
           });
         },
       },
+      restrictionsManagement: {
+        label: "Restrictions Management",
+        icon: "mdi-close-circle-outline",
+        command: () => {
+          router.push({
+            name: AESTRoutesConst.RESTRICTIONS_MANAGEMENT,
+            params: {
+              applicationId: props.applicationId,
+              studentId: props.studentId,
+            },
+          });
+        },
+      },
     });
+    const isDraftApplication = ref(true as boolean);
 
     const goToSupportingUser = (supportingUserId: number) => {
       router.push({
@@ -115,11 +139,18 @@ export default defineComponent({
           });
         }
       });
+      const applicationDetail =
+        await ApplicationService.shared.getApplicationDetail(
+          props.applicationId,
+        );
+      isDraftApplication.value =
+        applicationDetail.applicationStatus === ApplicationStatus.Draft;
     });
 
     return {
       studentMenu,
       relatedParentPartners,
+      isDraftApplication,
     };
   },
 });
