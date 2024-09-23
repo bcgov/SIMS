@@ -1,15 +1,27 @@
-import { Test, TestingModule } from "@nestjs/testing";
+import { TestingModule } from "@nestjs/testing";
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { AppModule } from "../src/app.module";
-import { AuthTestController } from "../src/testHelpers/controllers/auth-test/auth-test.controller";
-import { createZeebeModuleMock } from "@sims/test-utils/mocks";
 import { KeycloakConfig } from "@sims/auth/config";
 import { KeycloakService } from "@sims/auth/services";
 import {
   PEM_BEGIN_HEADER,
   PEM_END_HEADER,
 } from "@sims/auth/utilities/certificate-utils";
+import {
+  createE2EDataSources,
+  E2EDataSources,
+  getProviderInstanceForModule,
+  saveFakeStudent,
+} from "@sims/test-utils";
+import {
+  BEARER_AUTH_TYPE,
+  createTestingAppModule,
+  FakeStudentUsersTypes,
+  getStudentToken,
+  mockUserLoginInfo,
+} from "../src/testHelpers";
+import { JwtService } from "@nestjs/jwt";
+import { ConfigModule, ConfigService } from "@sims/utilities/config";
 
 describe("Authentication (e2e)", () => {
   // Nest application to be shared for all e2e tests
@@ -23,8 +35,17 @@ describe("Authentication (e2e)", () => {
   // the authentication endpoints.
   // This token is retrieved from KeyCloak.
   let aestAccessToken: string;
+  let appModule: TestingModule;
+  let db: E2EDataSources;
+  let configService: ConfigService;
 
   beforeAll(async () => {
+    const { nestApplication, module, dataSource } =
+      await createTestingAppModule();
+    app = nestApplication;
+    appModule = module;
+    db = createE2EDataSources(dataSource);
+
     await KeycloakConfig.load();
     const studentToken = await KeycloakService.shared.getToken(
       process.env.E2E_TEST_STUDENT_USERNAME,
@@ -40,14 +61,20 @@ describe("Authentication (e2e)", () => {
     studentAccessToken = studentToken.access_token;
     aestAccessToken = aestToken.access_token;
 
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule, createZeebeModuleMock()],
-      // AuthTestController is used only for e2e tests and could be
-      // changed as needed to implement more test scenarios.
-      controllers: [AuthTestController],
-    }).compile();
-    app = moduleFixture.createNestApplication();
+    // const moduleFixture: TestingModule = await Test.createTestingModule({
+    //   imports: [AppModule, createZeebeModuleMock()],
+    //   // AuthTestController is used only for e2e tests and could be
+    //   // changed as needed to implement more test scenarios.
+    //   controllers: [AuthTestController],
+    // }).compile();
+    // app = moduleFixture.createNestApplication();
     await app.init();
+
+    configService = await getProviderInstanceForModule(
+      appModule,
+      ConfigModule,
+      ConfigService,
+    );
   });
 
   it("Load publicKey from Keycloak", async () => {
@@ -67,6 +94,91 @@ describe("Authentication (e2e)", () => {
     expect(KeycloakConfig.PEM_PublicKey.length).toBeGreaterThan(
       headerAndFooterLength,
     );
+  });
+
+  it(
+    "Should allow BCSC user to access the application when user is not registered in beta users authorizations table " +
+      "and config allows any user to access the application.",
+    async () => {
+      // Arrange
+      Object.defineProperty(configService, "allowBetaUsersOnly", {
+        value: false,
+        writable: true,
+      });
+      const student = await saveFakeStudent(db.dataSource);
+
+      // Mock user services for a BCSC user.
+      await mockUserLoginInfo(appModule, student);
+
+      const endpoint = "/students/student";
+      const token = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+
+      // Act/Assert
+      const response = await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK);
+    },
+  );
+
+  it(
+    "Should not allow BCSC beta user to access the application when user is not registered in beta users authorizations table " +
+      "and config allows only beta users to access the application.",
+    async () => {
+      // Arrange
+      Object.defineProperty(configService, "allowBetaUsersOnly", {
+        value: true,
+        writable: true,
+      });
+      const student = await saveFakeStudent(db.dataSource);
+
+      // Mock user services for a BCSC user.
+      await mockUserLoginInfo(appModule, student);
+
+      const endpoint = "/students/student";
+      const token = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+
+      // Act/Assert
+      const response = await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.UNAUTHORIZED);
+    },
+  );
+
+  it("Should allow BCSC beta user to access the application when user is registered in beta users authorizations table.", async () => {
+    // Arrange
+    Object.defineProperty(configService, "allowBetaUsersOnly", {
+      value: true,
+      writable: true,
+    });
+    const student = await saveFakeStudent(db.dataSource);
+
+    // Mock user services for a BCSC user.
+    await mockUserLoginInfo(appModule, student);
+
+    const endpoint = "/students/student";
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    const jwtService = new JwtService();
+    const decodedToken = jwtService.decode(token);
+
+    // Register user in beta users authorizations table.
+    await db.betaUsersAuthorizations.save({
+      givenNames: decodedToken.givenNames,
+      lastName: decodedToken.lastName,
+    });
+
+    // Act/Assert
+    const response = await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
   });
 
   it("Endpoint with Public decorator should allow access when the bearer token is not present", () => {

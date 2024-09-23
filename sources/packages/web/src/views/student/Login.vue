@@ -127,22 +127,46 @@
           >
         </v-expansion-panel>
       </v-expansion-panels>
+      <v-row>
+        <v-col>
+          <banner
+            v-if="errorMessage"
+            class="mt-2"
+            :type="BannerTypes.Error"
+            :summary="errorMessage"
+          />
+        </v-col>
+      </v-row>
     </v-card-text>
   </v-card>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { computed, defineComponent } from "vue";
 import { useAuth } from "@/composables";
 import { IdentityProviders, ClientIdType } from "@/types";
+import { BannerTypes } from "@/types/contracts/Banner";
 
 export default defineComponent({
-  setup() {
+  props: {
+    showInvalidBetaUserMessage: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+  },
+  setup(props) {
     const { executeLogin } = useAuth();
     const login = async (idp: IdentityProviders) => {
       await executeLogin(ClientIdType.Student, idp);
     };
-    return { IdentityProviders, login };
+    const errorMessage = computed(() => {
+      if (props.showInvalidBetaUserMessage) {
+        return "The user was validated successfully but is not currently allowed to have access to this application. Please contact the Administrator for more information.";
+      }
+      return false;
+    });
+    return { IdentityProviders, login, errorMessage, BannerTypes };
   },
 });
 </script>

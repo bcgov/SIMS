@@ -98,3 +98,4 @@ export * from "./virus-scan-status-type";
 export * from "./announcement.model";
 export * from "./application-restriction-bypass.model";
 export * from "./restriction-bypass-behaviors.type";
+export * from "./beta-users-authorizations.model";

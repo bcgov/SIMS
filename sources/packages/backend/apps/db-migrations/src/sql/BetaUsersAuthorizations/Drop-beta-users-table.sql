@@ -1,0 +1,1 @@
+DROP TABLE sims.beta_users_authorizations;

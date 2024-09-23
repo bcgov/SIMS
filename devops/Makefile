@@ -413,6 +413,7 @@ deploy-api:
 		-p TLS_CERTIFICATE=$(TLS_CERTIFICATE) \
 		-p TLS_KEY=$(TLS_KEY) \
 		-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
+    -p ALLOW_BETA_USERS_ONLY=$(ALLOW_BETA_USERS_ONLY) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(API))
 

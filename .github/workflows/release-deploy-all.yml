@@ -97,6 +97,7 @@ env:
   TLS_CERTIFICATE: ${{ secrets.TLS_CERTIFICATE }}
   TLS_KEY: ${{ secrets.TLS_KEY }}
   TLS_CA_CERTIFICATE: ${{ secrets.TLS_CA_CERTIFICATE }}
+  ALLOW_BETA_USERS_ONLY: ${{ secrets.ALLOW_BETA_USERS_ONLY }}
 
 jobs:
   # Run DB migrations.
