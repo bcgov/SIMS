@@ -97,6 +97,53 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-financia
     },
   );
 
+  it(
+    "Should have calculated student total income from the current year income and not from the the application data or the tax return income" +
+      "when there is a request a change for student financial information with current year income values.",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataDependants = [
+        createFakeStudentDependentEligibleForChildcareCost(
+          DependentChildCareEligibility.Eligible0To11YearsOld,
+          assessmentConsolidatedData.offeringStudyStartDate,
+        ),
+        createFakeStudentDependentEligibleForChildcareCost(
+          DependentChildCareEligibility.Eligible12YearsAndOver,
+          assessmentConsolidatedData.offeringStudyStartDate,
+        ),
+      ];
+      assessmentConsolidatedData.appealsStudentFinancialInformationAppealData =
+        {
+          taxReturnIncome: 1234,
+          currentYearIncome: 500,
+        };
+
+      // Act
+      const calculatedAssessment =
+        await executePartTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+
+      // Assert
+      expect(
+        calculatedAssessment.variables.calculatedDataCurrentYearIncome,
+      ).toBe(500);
+      expect(
+        calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
+      ).toBe(500);
+      expect(
+        calculatedAssessment.variables.calculatedDataStudentTotalIncome,
+      ).toBe(500);
+      expect(
+        calculatedAssessment.variables.calculatedDataStudentTotalIncome,
+      ).not.toBe(1234);
+    },
+  );
+
   afterAll(async () => {
     // Closes the singleton instance created during test executions.
     await ZeebeMockedClient.getMockedZeebeInstance().close();

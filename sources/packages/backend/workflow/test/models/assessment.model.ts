@@ -271,6 +271,8 @@ export interface CalculatedAssessmentModel {
   totalProvincialContribution: number;
   calculatedDataPDPPDStatus: boolean;
   calculatedDataTaxReturnIncome: number;
+  calculatedDataCurrentYearIncome: number;
+  calculatedDataStudentTotalIncome: number;
 
   // Common variables used in both full-time and part-time.
   // CSGP
