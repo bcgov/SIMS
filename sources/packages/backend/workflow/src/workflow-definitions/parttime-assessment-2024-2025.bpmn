@@ -1205,7 +1205,7 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:sequenceFlow id="Flow_0mwxcx5" sourceRef="Activity_1nk1n97" targetRef="Gateway_1k2cpjq" />
     <bpmn:scriptTask id="Activity_09h0zn7" name="Define Student Total Income">
       <bpmn:extensionElements>
-        <zeebe:script expression="=studentDataCurrentYearIncome" resultVariable="calculatedDataStudentTotalIncome" />
+        <zeebe:script expression="=calculatedDataCurrentYearIncome" resultVariable="calculatedDataStudentTotalIncome" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1h81jv6</bpmn:incoming>
       <bpmn:outgoing>Flow_1bytmzm</bpmn:outgoing>
