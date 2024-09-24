@@ -170,7 +170,7 @@ redis:
 # Local API only
 api:
 	@echo "+\n++ Make: Building and running API only"
-	@docker compose -f docker-compose.yml up api --build -d web
+	@docker compose -f docker-compose.yml up --build -d api
 
 # Local Web (nginx)
 web:
