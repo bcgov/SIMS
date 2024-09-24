@@ -23,7 +23,7 @@ export class BetaUsersAuthorizations {
   givenNames: string;
 
   /**
-   * Beta user given names.
+   * Beta user last name.
    */
   @Column({
     name: "last_name",
@@ -32,7 +32,7 @@ export class BetaUsersAuthorizations {
   lastName: string;
 
   /**
-   * Date and time from the beta user is allowed to log on to the system.
+   * Starting date and time to enable beta user to access the system.
    */
   @Column({
     name: "enabled_from",

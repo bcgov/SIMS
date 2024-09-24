@@ -199,8 +199,8 @@ export class ConfigService {
   }
 
   /**
-   * When defined as true, allows only BCSC users registered in Beta Users
-   * Authorizations table to login on the system.
+   * When defined as true, allows only BCSC users registered in beta users
+   * authorizations table to login on the system.
    */
   get allowBetaUsersOnly(): boolean {
     return this.getCachedConfig(

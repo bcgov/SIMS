@@ -90,7 +90,7 @@ export class AuthTestController {
   }
 
   /**
-   * Only student accounts are allowed to are authorized to have access to this endpoint.
+   * Only student accounts are authorized to have access to this endpoint.
    */
   @RequiresStudentAccount()
   @Get("/authenticated-student")
