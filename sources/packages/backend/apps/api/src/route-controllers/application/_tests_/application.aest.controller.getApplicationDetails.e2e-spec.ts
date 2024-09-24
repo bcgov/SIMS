@@ -10,7 +10,6 @@ import {
   createE2EDataSources,
   E2EDataSources,
   saveFakeApplication,
-  saveFakeStudent,
 } from "@sims/test-utils";
 import { EducationProgramOffering, OfferingIntensity } from "@sims/sims-db";
 import { getUserFullName } from "../../../utilities";
@@ -30,7 +29,7 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
     db = createE2EDataSources(dataSource);
   });
 
-  it("Should get the student application details.", async () => {
+  it("Should get the student application details when the optional query parameter to load dynamic data is not passed.", async () => {
     // Arrange
     const offeringInitialValues = {
       studyStartDate: getISODateOnlyString(addDays(-10)),
@@ -38,11 +37,9 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
       offeringIntensity: OfferingIntensity.fullTime,
     } as EducationProgramOffering;
 
-    const student = await saveFakeStudent(db.dataSource);
-
     const application = await saveFakeApplication(
       db.dataSource,
-      { student: student },
+      {},
       {
         offeringInitialValues: offeringInitialValues,
       },
@@ -79,7 +76,7 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
       });
   });
 
-  it("Should get the student application details without dynamic data when loadDynamicData is false.", async () => {
+  it("Should get the student application details without dynamic data when the optional query parameter to load dynamic data is set to false.", async () => {
     // Arrange
     const offeringInitialValues = {
       studyStartDate: getISODateOnlyString(addDays(-10)),
@@ -87,11 +84,9 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
       offeringIntensity: OfferingIntensity.fullTime,
     } as EducationProgramOffering;
 
-    const student = await saveFakeStudent(db.dataSource);
-
     const application = await saveFakeApplication(
       db.dataSource,
-      { student: student },
+      {},
       {
         offeringInitialValues: offeringInitialValues,
       },

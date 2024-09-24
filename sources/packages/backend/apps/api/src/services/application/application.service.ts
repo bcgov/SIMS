@@ -622,6 +622,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
           id: true,
           name: true,
           institution: {
+            id: true,
             legalOperatingName: true,
           },
         },

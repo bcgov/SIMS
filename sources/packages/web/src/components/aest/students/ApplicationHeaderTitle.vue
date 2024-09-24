@@ -1,12 +1,11 @@
 <template>
-  <detail-header :headerMap="headerMap" />
+  <detail-header :header-map="headerMap" />
 </template>
 
 <script lang="ts">
 import { defineComponent, onMounted, ref } from "vue";
 import { ApplicationSupplementalDataAPIOutDTO } from "@/services/http/dto";
 import { ApplicationService } from "@/services/ApplicationService";
-
 import DetailHeader from "@/components/generic/DetailHeader.vue";
 
 export default defineComponent({
@@ -19,6 +18,7 @@ export default defineComponent({
   },
   setup(props) {
     const applicationData = ref<ApplicationSupplementalDataAPIOutDTO>();
+    const headerMap = ref<Record<string, string>>({});
 
     const mapApplicationHeader = (
       application: ApplicationSupplementalDataAPIOutDTO,
@@ -30,7 +30,7 @@ export default defineComponent({
       ) {
         return {
           Name: application.studentFullName,
-          "Application #": application.applicationNumber,
+          "Application number": application.applicationNumber,
           Institution: application.applicationInstitutionName,
           "Study dates": `${application.applicationStartDate} - ${application.applicationEndDate}`,
           Type: application.applicationOfferingIntensity,
@@ -38,16 +38,15 @@ export default defineComponent({
       }
       return {
         Name: application.studentFullName,
-        "Application #": application.applicationNumber,
+        "Application number": application.applicationNumber,
         Institution: application.applicationInstitutionName,
       };
     };
 
-    const headerMap = ref<Record<string, string>>({});
-
     const loadApplicationValues = async () => {
       applicationData.value = await ApplicationService.shared.getApplication(
         props.applicationId,
+        false,
       );
 
       headerMap.value = mapApplicationHeader(applicationData.value);

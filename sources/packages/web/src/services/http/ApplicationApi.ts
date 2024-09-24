@@ -34,10 +34,13 @@ export class ApplicationApi extends HttpBaseClient {
 
   async getApplication(
     applicationId: number,
+    loadDynamicData?: boolean,
   ): Promise<ApplicationSupplementalDataAPIOutDTO> {
-    return this.getCall<ApplicationSupplementalDataAPIOutDTO>(
-      this.addClientRoot(`application/${applicationId}`),
-    );
+    let url = this.addClientRoot(`application/${applicationId}`);
+    if (loadDynamicData) {
+      url = `${url}?loadDynamicData=${loadDynamicData}`;
+    }
+    return this.getCall<ApplicationSupplementalDataAPIOutDTO>(url);
   }
 
   async cancelStudentApplication(applicationId: number): Promise<void> {
