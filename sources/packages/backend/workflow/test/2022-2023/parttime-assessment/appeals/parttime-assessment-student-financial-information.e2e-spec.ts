@@ -153,7 +153,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-financia
         );
 
       // Assert
-      //Application data tax return income submitted by the student.
+      // Application data tax return income submitted by the student.
       expect(assessmentConsolidatedData.studentDataTaxReturnIncome).toBe(40001);
       expect(
         calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
