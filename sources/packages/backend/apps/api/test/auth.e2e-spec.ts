@@ -21,6 +21,7 @@ import { DataSource } from "typeorm";
 import { JwtService } from "@nestjs/jwt";
 import { INVALID_BETA_USER } from "../src/constants";
 import { BEARER_AUTH_TYPE } from "../src/testHelpers";
+import * as dayjs from "dayjs";
 
 describe("Authentication (e2e)", () => {
   // Nest application to be shared for all e2e tests
@@ -71,6 +72,14 @@ describe("Authentication (e2e)", () => {
     );
   });
 
+  beforeEach(async () => {
+    // By default all users will be allowed to access the system.
+    Object.defineProperty(configService, "allowBetaUsersOnly", {
+      value: false,
+      writable: true,
+    });
+  });
+
   it("Load publicKey from Keycloak", async () => {
     // Arrange
     const headerAndFooterLength =
@@ -94,11 +103,6 @@ describe("Authentication (e2e)", () => {
     "Should allow BCSC user to access the application when user is not registered in beta users authorizations table but " +
       "config allows any user to access the application.",
     async () => {
-      // Arrange
-      Object.defineProperty(configService, "allowBetaUsersOnly", {
-        value: false,
-        writable: true,
-      });
       return request(app.getHttpServer())
         .get("/auth-test/authenticated-student")
         .auth(studentAccessToken, BEARER_AUTH_TYPE)
@@ -115,6 +119,7 @@ describe("Authentication (e2e)", () => {
         value: true,
         writable: true,
       });
+      // Act/Assert
       return request(app.getHttpServer())
         .get("/auth-test/authenticated-student")
         .auth(studentAccessToken, BEARER_AUTH_TYPE)
@@ -139,15 +144,52 @@ describe("Authentication (e2e)", () => {
       const jwtService = new JwtService();
       const decodedToken = jwtService.decode(studentAccessToken);
 
-      // Add user to beta users authorizations table.
+      // Add user to beta users authorizations table in upper case to test the query.
       await db.betaUsersAuthorizations.save({
-        givenNames: decodedToken.givenNames,
-        lastName: decodedToken.lastName,
+        givenNames: decodedToken.givenNames.toUpperCase(),
+        lastName: decodedToken.lastName.toUpperCase(),
       });
+
+      // Act/Assert
       return request(app.getHttpServer())
         .get("/auth-test/authenticated-student")
         .auth(studentAccessToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK);
+    },
+  );
+
+  it(
+    "Should not allow BCSC beta user to access the application when config allows only beta users to access the application and " +
+      "user is registered in beta users authorizations table with a future date to be enabled.",
+    async () => {
+      // Arrange
+      Object.defineProperty(configService, "allowBetaUsersOnly", {
+        value: true,
+        writable: true,
+      });
+
+      const jwtService = new JwtService();
+      const decodedToken = jwtService.decode(studentAccessToken);
+
+      const tomorrow = dayjs().add(1, "day");
+      const betaUsersAuthorizations =
+        await db.betaUsersAuthorizations.findOneBy({
+          givenNames: decodedToken.givenNames.toUpperCase(),
+          lastName: decodedToken.lastName.toUpperCase(),
+        });
+      betaUsersAuthorizations.enabledFrom = tomorrow.toDate();
+      // Save beta users authorizations with tomorrow's date.
+      await db.betaUsersAuthorizations.save(betaUsersAuthorizations);
+
+      // Act/Assert
+      return request(app.getHttpServer())
+        .get("/auth-test/authenticated-student")
+        .auth(studentAccessToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.UNAUTHORIZED)
+        .expect({
+          message: "The student is not registered as a beta user.",
+          errorType: INVALID_BETA_USER,
+        });
     },
   );
 
