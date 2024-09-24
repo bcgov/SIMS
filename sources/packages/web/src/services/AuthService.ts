@@ -136,34 +136,34 @@ export class AuthService {
       await studentStore.updateProfileData();
     } catch (error: unknown) {
       if (error instanceof ApiProcessError) {
-        if (error.errorType === INVALID_BETA_USER) {
-          await this.logout(ClientIdType.Student, {
-            invalidBetaUser: true,
-          });
-          return;
-        }
-        if (error.errorType === MISSING_STUDENT_ACCOUNT) {
-          if (
-            this.userToken?.identityProvider === IdentityProviders.BCeIDBoth
-          ) {
-            const hasPendingAccountApplication =
-              await StudentAccountApplicationService.shared.hasPendingAccountApplication();
-            if (hasPendingAccountApplication) {
-              // The BCeID student account application is in progress.
-              // The student must be redirected to the below page and
-              // have access only to the below page.
-              this.priorityRedirect = {
-                name: StudentRoutesConst.STUDENT_ACCOUNT_APPLICATION_IN_PROGRESS,
-              };
-              return;
+        switch (error.errorType) {
+          case INVALID_BETA_USER:
+            await this.logout(ClientIdType.Student, {
+              invalidBetaUser: true,
+            });
+            return;
+          case MISSING_STUDENT_ACCOUNT:
+            if (
+              this.userToken?.identityProvider === IdentityProviders.BCeIDBoth
+            ) {
+              const hasPendingAccountApplication =
+                await StudentAccountApplicationService.shared.hasPendingAccountApplication();
+              if (hasPendingAccountApplication) {
+                // The BCeID student account application is in progress.
+                // The student must be redirected to the below page and
+                // have access only to the below page.
+                this.priorityRedirect = {
+                  name: StudentRoutesConst.STUDENT_ACCOUNT_APPLICATION_IN_PROGRESS,
+                };
+                return;
+              }
             }
-          }
-          // If the student is not present, redirect to
-          // student profile for account creation.
-          this.priorityRedirect = {
-            name: StudentRoutesConst.STUDENT_PROFILE_CREATE,
-          };
-          return;
+            // If the student is not present, redirect to
+            // student profile for account creation.
+            this.priorityRedirect = {
+              name: StudentRoutesConst.STUDENT_PROFILE_CREATE,
+            };
+            return;
         }
       }
       throw error;
