@@ -144,6 +144,39 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-financia
     },
   );
 
+  it(
+    "Should have calculated student total income from the tax return income and not from the the application data tax return income " +
+      "when there is a request a change for student financial information with tax return income values.",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataCRAReportedIncome = null;
+      assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.No;
+      assessmentConsolidatedData.appealsStudentFinancialInformationAppealData =
+        {
+          taxReturnIncome: 1234,
+        };
+
+      // Act
+      const calculatedAssessment =
+        await executePartTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+
+      // Assert
+      // Application data tax return income submitted by the student.
+      expect(assessmentConsolidatedData.studentDataTaxReturnIncome).toBe(40001);
+      expect(
+        calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
+      ).toBe(1234);
+      expect(
+        calculatedAssessment.variables.calculatedDataStudentTotalIncome,
+      ).toBe(1234);
+    },
+  );
+
   afterAll(async () => {
     // Closes the singleton instance created during test executions.
     await ZeebeMockedClient.getMockedZeebeInstance().close();
