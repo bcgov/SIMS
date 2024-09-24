@@ -14,13 +14,13 @@ import {
 } from "@sims/test-utils";
 import { ConfigModule, ConfigService } from "@sims/utilities/config";
 import { createZeebeModuleMock } from "@sims/test-utils/mocks";
-import { AppModule } from "../src/app.module";
-import { AuthTestController } from "../src/testHelpers/controllers/auth-test/auth-test.controller";
+import { AppModule } from "../../../app.module";
+import { AuthTestController } from "../../../testHelpers/controllers/auth-test/auth-test.controller";
 import { DiscoveryModule } from "@golevelup/nestjs-discovery";
 import { DataSource } from "typeorm";
 import { JwtService } from "@nestjs/jwt";
-import { INVALID_BETA_USER } from "../src/constants";
-import { BEARER_AUTH_TYPE } from "../src/testHelpers";
+import { INVALID_BETA_USER } from "../../../constants";
+import { BEARER_AUTH_TYPE } from "../../../testHelpers";
 import * as dayjs from "dayjs";
 
 describe("Authentication (e2e)", () => {
@@ -37,6 +37,7 @@ describe("Authentication (e2e)", () => {
   let aestAccessToken: string;
   let configService: ConfigService;
   let db: E2EDataSources;
+  let studentDecodedToken: any;
 
   beforeAll(async () => {
     await KeycloakConfig.load();
@@ -45,13 +46,15 @@ describe("Authentication (e2e)", () => {
       process.env.E2E_TEST_STUDENT_PASSWORD,
       "student",
     );
+    studentAccessToken = studentToken.access_token;
+    const jwtService = new JwtService();
+    studentDecodedToken = jwtService.decode(studentAccessToken);
 
     const aestToken = await KeycloakService.shared.getToken(
       process.env.E2E_TEST_STUDENT_USERNAME,
       process.env.E2E_TEST_STUDENT_PASSWORD,
       "aest",
     );
-    studentAccessToken = studentToken.access_token;
     aestAccessToken = aestToken.access_token;
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -74,10 +77,9 @@ describe("Authentication (e2e)", () => {
 
   beforeEach(async () => {
     // By default all users will be allowed to access the system.
-    Object.defineProperty(configService, "allowBetaUsersOnly", {
-      value: false,
-      writable: true,
-    });
+    jest
+      .spyOn(configService, "allowBetaUsersOnly", "get")
+      .mockReturnValue(false);
   });
 
   it("Load publicKey from Keycloak", async () => {
@@ -115,10 +117,9 @@ describe("Authentication (e2e)", () => {
       "user is not registered in beta users authorizations table.",
     async () => {
       // Arrange
-      Object.defineProperty(configService, "allowBetaUsersOnly", {
-        value: true,
-        writable: true,
-      });
+      jest
+        .spyOn(configService, "allowBetaUsersOnly", "get")
+        .mockReturnValue(true);
       // Act/Assert
       return request(app.getHttpServer())
         .get("/auth-test/authenticated-student")
@@ -136,18 +137,14 @@ describe("Authentication (e2e)", () => {
       "user is registered in beta users authorizations table.",
     async () => {
       // Arrange
-      Object.defineProperty(configService, "allowBetaUsersOnly", {
-        value: true,
-        writable: true,
-      });
-
-      const jwtService = new JwtService();
-      const decodedToken = jwtService.decode(studentAccessToken);
+      jest
+        .spyOn(configService, "allowBetaUsersOnly", "get")
+        .mockReturnValue(true);
 
       // Add user to beta users authorizations table in upper case to test the query.
       await db.betaUsersAuthorizations.save({
-        givenNames: decodedToken.givenNames.toUpperCase(),
-        lastName: decodedToken.lastName.toUpperCase(),
+        givenNames: studentDecodedToken.givenNames.toUpperCase(),
+        lastName: studentDecodedToken.lastName.toUpperCase(),
       });
 
       // Act/Assert
@@ -163,19 +160,15 @@ describe("Authentication (e2e)", () => {
       "user is registered in beta users authorizations table with a future date to be enabled.",
     async () => {
       // Arrange
-      Object.defineProperty(configService, "allowBetaUsersOnly", {
-        value: true,
-        writable: true,
-      });
-
-      const jwtService = new JwtService();
-      const decodedToken = jwtService.decode(studentAccessToken);
+      jest
+        .spyOn(configService, "allowBetaUsersOnly", "get")
+        .mockReturnValue(true);
 
       const tomorrow = dayjs().add(1, "day");
       const betaUsersAuthorizations =
         await db.betaUsersAuthorizations.findOneBy({
-          givenNames: decodedToken.givenNames.toUpperCase(),
-          lastName: decodedToken.lastName.toUpperCase(),
+          givenNames: studentDecodedToken.givenNames.toUpperCase(),
+          lastName: studentDecodedToken.lastName.toUpperCase(),
         });
       betaUsersAuthorizations.enabledFrom = tomorrow.toDate();
       // Save beta users authorizations with tomorrow's date.

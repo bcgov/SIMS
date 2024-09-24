@@ -14,7 +14,7 @@ import {
   User,
 } from "@sims/sims-db";
 import { UserLoginInfo } from "./user.model";
-import { BetaUsersAuthorizations } from "@sims/sims-db/entities/beta-users-authorizations.model";
+import { BetaUsersAuthorizations } from "@sims/sims-db/entities";
 import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()

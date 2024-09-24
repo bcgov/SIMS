@@ -20,16 +20,12 @@
                   Whether you are a new or returning user—log in or register
                   using the BC Services Card account.
                 </p>
-                <v-row>
-                  <v-col>
-                    <banner
-                      v-if="errorMessage"
-                      class="my-2"
-                      :type="BannerTypes.Error"
-                      :summary="errorMessage"
-                    />
-                  </v-col>
-                </v-row>
+                <banner
+                  v-if="errorMessage"
+                  class="mb-2 mt-n3"
+                  :type="BannerTypes.Error"
+                  :summary="errorMessage"
+                />
                 <v-btn
                   color="primary"
                   @click="login(IdentityProviders.BCSC)"
