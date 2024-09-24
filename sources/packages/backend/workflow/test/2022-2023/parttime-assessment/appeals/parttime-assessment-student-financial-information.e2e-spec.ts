@@ -138,6 +138,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-financia
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataCRAReportedIncome = null;
       assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.No;
       assessmentConsolidatedData.appealsStudentFinancialInformationAppealData =
         {
@@ -152,9 +153,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-financia
         );
 
       // Assert
-      expect(
-        calculatedAssessment.variables.calculatedDataCurrentYearIncome,
-      ).toBe(1234);
+      //Application data tax return income submitted by the student.
+      expect(assessmentConsolidatedData.studentDataTaxReturnIncome).toBe(40001);
       expect(
         calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
       ).toBe(1234);
