@@ -20,6 +20,16 @@
                   Whether you are a new or returning user—log in or register
                   using the BC Services Card account.
                 </p>
+                <v-row>
+                  <v-col>
+                    <banner
+                      v-if="errorMessage"
+                      class="my-2"
+                      :type="BannerTypes.Error"
+                      :summary="errorMessage"
+                    />
+                  </v-col>
+                </v-row>
                 <v-btn
                   color="primary"
                   @click="login(IdentityProviders.BCSC)"
@@ -127,16 +137,6 @@
           >
         </v-expansion-panel>
       </v-expansion-panels>
-      <v-row>
-        <v-col>
-          <banner
-            v-if="errorMessage"
-            class="mt-2"
-            :type="BannerTypes.Error"
-            :summary="errorMessage"
-          />
-        </v-col>
-      </v-row>
     </v-card-text>
   </v-card>
 </template>
@@ -162,7 +162,7 @@ export default defineComponent({
     };
     const errorMessage = computed(() => {
       if (props.showInvalidBetaUserMessage) {
-        return "The user was validated successfully but is not currently allowed to have access to this application. Please contact the Administrator for more information.";
+        return "Unable to login as the system is not yet available.";
       }
       return false;
     });
