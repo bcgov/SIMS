@@ -164,6 +164,34 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-financia
     },
   );
 
+  it(
+    "Should have calculated student total income from the CRA income " +
+      "when there is an appeal but the current year's income is not provided.",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataCRAReportedIncome = 999;
+      assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.No;
+      assessmentConsolidatedData.appealsStudentFinancialInformationAppealData =
+        {
+          taxReturnIncome: 1234,
+        };
+
+      // Act
+      const calculatedAssessment =
+        await executePartTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+
+      // Assert
+      expect(
+        calculatedAssessment.variables.calculatedDataStudentTotalIncome,
+      ).toBe(999);
+    },
+  );
+
   afterAll(async () => {
     // Closes the singleton instance created during test executions.
     await ZeebeMockedClient.getMockedZeebeInstance().close();
