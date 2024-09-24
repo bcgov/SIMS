@@ -291,7 +291,7 @@
                     "addons": []
                 },
                 {
-                    "label": "<strong>Do you want to be assessed with this year's estimated income?</strong>",
+                    "label": "Do you want to be assessed with this year's estimated income?",
                     "labelPosition": "top",
                     "labelWidth": "",
                     "labelMargin": "",
@@ -696,7 +696,7 @@
                             "lockKey": true
                         },
                         {
-                            "label": "<strong>Select the reason for your significant decrease in income.</strong>",
+                            "label": "Select the reason for your significant decrease in income.",
                             "labelPosition": "top",
                             "labelWidth": "",
                             "labelMargin": "",
@@ -856,7 +856,7 @@
                             "tableView": false,
                             "components": [
                                 {
-                                    "label": "<strong>Please explain your situation:</strong>",
+                                    "label": "Please explain your situation:",
                                     "placeholder": "Type of expense, when expenses occurred and amount",
                                     "autoExpand": false,
                                     "tableView": true,
@@ -1127,7 +1127,7 @@
                                         {
                                             "key": "decreaseInIncomePanelColumnsContent",
                                             "input": false,
-                                            "html": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>\n",
+                                            "html": "<p>We accept JPG, PNG, DOC, DOCX, PDF, TXT</p>\n",
                                             "type": "content",
                                             "tags": [],
                                             "conditional": {

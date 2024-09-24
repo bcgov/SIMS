@@ -98,23 +98,13 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-financia
   );
 
   it(
-    "Should have calculated student total income from the current year income and not from the the application data or the tax return income" +
+    "Should have calculated student total income from the current year income and not from the the application data or the tax return income " +
       "when there is a request a change for student financial information with current year income values.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
-      assessmentConsolidatedData.studentDataDependants = [
-        createFakeStudentDependentEligibleForChildcareCost(
-          DependentChildCareEligibility.Eligible0To11YearsOld,
-          assessmentConsolidatedData.offeringStudyStartDate,
-        ),
-        createFakeStudentDependentEligibleForChildcareCost(
-          DependentChildCareEligibility.Eligible12YearsAndOver,
-          assessmentConsolidatedData.offeringStudyStartDate,
-        ),
-      ];
+      assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.No;
       assessmentConsolidatedData.appealsStudentFinancialInformationAppealData =
         {
           taxReturnIncome: 1234,
@@ -138,9 +128,39 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-financia
       expect(
         calculatedAssessment.variables.calculatedDataStudentTotalIncome,
       ).toBe(500);
+    },
+  );
+
+  it(
+    "Should have calculated student total income from the tax return income and not from the the application data tax return income " +
+      "when there is a request a change for student financial information with tax return income values.",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.No;
+      assessmentConsolidatedData.appealsStudentFinancialInformationAppealData =
+        {
+          taxReturnIncome: 1234,
+        };
+
+      // Act
+      const calculatedAssessment =
+        await executePartTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+
+      // Assert
+      expect(
+        calculatedAssessment.variables.calculatedDataCurrentYearIncome,
+      ).toBe(1234);
+      expect(
+        calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
+      ).toBe(1234);
       expect(
         calculatedAssessment.variables.calculatedDataStudentTotalIncome,
-      ).not.toBe(1234);
+      ).toBe(1234);
     },
   );
 
