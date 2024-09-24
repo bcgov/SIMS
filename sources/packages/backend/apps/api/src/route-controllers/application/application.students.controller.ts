@@ -43,7 +43,6 @@ import {
   ApplicationProgressDetailsAPIOutDTO,
   EnrolmentApplicationDetailsAPIOutDTO,
   CompletedApplicationDetailsAPIOutDTO,
-  SuccessWaitingStatus,
   ApplicationWarningsAPIOutDTO,
 } from "./models/application.dto";
 import {
@@ -54,7 +53,7 @@ import {
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
-import { getPIRDeniedReason, STUDY_DATE_OVERLAP_ERROR } from "../../utilities";
+import { STUDY_DATE_OVERLAP_ERROR } from "../../utilities";
 import {
   INSTITUTION_LOCATION_NOT_VALID,
   INVALID_APPLICATION_NUMBER,
@@ -71,12 +70,7 @@ import { ApplicationControllerService } from "./application.controller.service";
 import { CustomNamedError } from "@sims/utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { ApplicationData } from "@sims/sims-db/entities/application.model";
-import {
-  ApplicationOfferingChangeRequestStatus,
-  ApplicationStatus,
-  OfferingIntensity,
-  StudentAppealStatus,
-} from "@sims/sims-db";
+import { ApplicationStatus, OfferingIntensity } from "@sims/sims-db";
 import {
   AssessmentSequentialProcessingService,
   ConfirmationOfEnrollmentService,
@@ -619,59 +613,10 @@ export class ApplicationStudentsController extends BaseController {
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<InProgressApplicationDetailsAPIOutDTO> {
-    const application = await this.applicationService.getApplicationDetails(
+    return this.applicationControllerService.getInProgressApplicationDetails(
       applicationId,
-      studentToken.studentId,
+      { studentId: studentToken.studentId },
     );
-    if (!application) {
-      throw new NotFoundException(
-        `Application id ${applicationId} was not found.`,
-      );
-    }
-    const incomeVerificationDetails =
-      await this.craIncomeVerificationService.getAllIncomeVerificationsForAnApplication(
-        applicationId,
-      );
-    const incomeVerification =
-      this.applicationControllerService.processApplicationIncomeVerificationDetails(
-        incomeVerificationDetails,
-      );
-
-    const supportingUserDetails =
-      await this.supportingUserService.getSupportingUsersByApplicationId(
-        applicationId,
-      );
-
-    const supportingUser =
-      this.applicationControllerService.processApplicationSupportingUserDetails(
-        supportingUserDetails,
-      );
-
-    // Get the first outstanding assessment waiting for calculation as per the sequence.
-    const firstOutstandingStudentAssessment =
-      await this.assessmentSequentialProcessingService.getOutstandingAssessmentsForStudentInSequence(
-        studentToken.studentId,
-        application.programYear.id,
-      );
-
-    // If first outstanding assessment returns a value and its Id is different
-    // from the current assessment Id, then assessmentInCalculationStep is Waiting.
-    const outstandingAssessmentStatus =
-      firstOutstandingStudentAssessment &&
-      firstOutstandingStudentAssessment.id !== application.currentAssessment.id
-        ? SuccessWaitingStatus.Waiting
-        : SuccessWaitingStatus.Success;
-
-    return {
-      id: application.id,
-      applicationStatus: application.applicationStatus,
-      pirStatus: application.pirStatus,
-      pirDeniedReason: getPIRDeniedReason(application),
-      exceptionStatus: application.applicationException?.exceptionStatus,
-      outstandingAssessmentStatus: outstandingAssessmentStatus,
-      ...incomeVerification,
-      ...supportingUser,
-    };
   }
 
   /**
@@ -687,78 +632,10 @@ export class ApplicationStudentsController extends BaseController {
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() userToken: StudentUserToken,
   ): Promise<ApplicationProgressDetailsAPIOutDTO> {
-    const application = await this.applicationService.getApplicationDetails(
+    return this.applicationControllerService.getApplicationProgressDetails(
       applicationId,
-      userToken.studentId,
+      { studentId: userToken.studentId },
     );
-    if (!application) {
-      throw new NotFoundException(
-        `Application id ${applicationId} was not found.`,
-      );
-    }
-
-    let appealStatus: StudentAppealStatus;
-    let applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus;
-    let hasBlockFundingFeedbackError = false;
-    let hasECertFailedValidations = false;
-    if (application.applicationStatus === ApplicationStatus.Completed) {
-      const appealPromise = this.studentAppealService.getAppealsForApplication(
-        applicationId,
-        userToken.studentId,
-        { limit: 1 },
-      );
-      const applicationOfferingChangeRequestPromise =
-        this.applicationOfferingChangeRequestService.getApplicationOfferingChangeRequest(
-          applicationId,
-          userToken.studentId,
-        );
-      const feedbackErrorPromise =
-        this.applicationService.hasFeedbackErrorBlockingFunds(applicationId);
-      const eCertValidationResultPromise =
-        this.eCertPreValidationService.executePreValidations(applicationId);
-      const [
-        [appeal],
-        applicationOfferingChangeRequest,
-        feedbackError,
-        eCertValidationResult,
-      ] = await Promise.all([
-        appealPromise,
-        applicationOfferingChangeRequestPromise,
-        feedbackErrorPromise,
-        eCertValidationResultPromise,
-      ]);
-      appealStatus = appeal?.status;
-      applicationOfferingChangeRequestStatus =
-        applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus;
-      hasBlockFundingFeedbackError = feedbackError;
-      hasECertFailedValidations = !eCertValidationResult.canGenerateECert;
-    }
-
-    const assessmentTriggerType = application.currentAssessment?.triggerType;
-
-    const disbursements =
-      application.currentAssessment?.disbursementSchedules ?? [];
-
-    disbursements.sort((a, b) =>
-      a.disbursementDate < b.disbursementDate ? -1 : 1,
-    );
-    const [firstDisbursement, secondDisbursement] = disbursements;
-    const [scholasticStandingChange] = application.studentScholasticStandings;
-
-    return {
-      applicationStatus: application.applicationStatus,
-      applicationStatusUpdatedOn: application.applicationStatusUpdatedOn,
-      pirStatus: application.pirStatus,
-      firstCOEStatus: firstDisbursement?.coeStatus,
-      secondCOEStatus: secondDisbursement?.coeStatus,
-      exceptionStatus: application.applicationException?.exceptionStatus,
-      appealStatus,
-      scholasticStandingChangeType: scholasticStandingChange?.changeType,
-      applicationOfferingChangeRequestStatus,
-      assessmentTriggerType,
-      hasBlockFundingFeedbackError,
-      hasECertFailedValidations,
-    };
   }
 
   /**
@@ -775,23 +652,10 @@ export class ApplicationStudentsController extends BaseController {
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() userToken: StudentUserToken,
   ): Promise<EnrolmentApplicationDetailsAPIOutDTO> {
-    const application =
-      await this.applicationService.getApplicationAssessmentDetails(
-        applicationId,
-        { studentId: userToken.studentId },
-      );
-    if (!application) {
-      throw new NotFoundException(
-        `Application id ${applicationId} not found or not in relevant status to get enrolment details.`,
-      );
-    }
-
-    return {
-      ...this.applicationControllerService.transformToEnrolmentApplicationDetailsAPIOutDTO(
-        application.currentAssessment.disbursementSchedules,
-      ),
-      assessmentTriggerType: application.currentAssessment.triggerType,
-    };
+    return this.applicationControllerService.getEnrolmentApplicationDetails(
+      applicationId,
+      { studentId: userToken.studentId },
+    );
   }
 
   /**
@@ -807,60 +671,11 @@ export class ApplicationStudentsController extends BaseController {
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() userToken: StudentUserToken,
   ): Promise<CompletedApplicationDetailsAPIOutDTO> {
-    const getApplicationPromise =
-      this.applicationService.getApplicationAssessmentDetails(applicationId, {
-        studentId: userToken.studentId,
-        applicationStatus: [ApplicationStatus.Completed],
-      });
-    const appealPromise = this.studentAppealService.getAppealsForApplication(
+    return this.applicationControllerService.getCompletedApplicationDetails(
       applicationId,
-      userToken.studentId,
-      { limit: 1 },
+      {
+        studentId: userToken.studentId,
+      },
     );
-    const applicationOfferingChangeRequestPromise =
-      this.applicationOfferingChangeRequestService.getApplicationOfferingChangeRequest(
-        applicationId,
-        userToken.studentId,
-      );
-    const hasBlockFundingFeedbackErrorPromise =
-      this.applicationService.hasFeedbackErrorBlockingFunds(applicationId);
-    const eCertValidationResultPromise =
-      this.eCertPreValidationService.executePreValidations(applicationId);
-    const [
-      application,
-      [appeal],
-      applicationOfferingChangeRequest,
-      hasBlockFundingFeedbackError,
-      eCertValidationResult,
-    ] = await Promise.all([
-      getApplicationPromise,
-      appealPromise,
-      applicationOfferingChangeRequestPromise,
-      hasBlockFundingFeedbackErrorPromise,
-      eCertValidationResultPromise,
-    ]);
-    if (!application) {
-      throw new NotFoundException(
-        `Application not found or not on ${ApplicationStatus.Completed} status.`,
-      );
-    }
-    const enrolmentDetails =
-      this.applicationControllerService.transformToEnrolmentApplicationDetailsAPIOutDTO(
-        application.currentAssessment.disbursementSchedules,
-      );
-    const [scholasticStandingChange] = application.studentScholasticStandings;
-
-    return {
-      firstDisbursement: enrolmentDetails.firstDisbursement,
-      secondDisbursement: enrolmentDetails.secondDisbursement,
-      assessmentTriggerType: application.currentAssessment.triggerType,
-      appealStatus: appeal?.status,
-      scholasticStandingChangeType: scholasticStandingChange?.changeType,
-      applicationOfferingChangeRequestId: applicationOfferingChangeRequest?.id,
-      applicationOfferingChangeRequestStatus:
-        applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus,
-      hasBlockFundingFeedbackError,
-      eCertFailedValidations: [...eCertValidationResult.failedValidations],
-    };
   }
 }

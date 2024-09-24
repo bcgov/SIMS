@@ -1468,18 +1468,22 @@ export class ApplicationService extends RecordDataModelService<Application> {
   /**
    * Fetches application by applicationId and studentId.
    * @param applicationId application id.
-   * @param studentId student id (optional parameter.).
+   * @param options options
+   * - `studentId` student id.
    * @returns application details
    */
   async getApplicationDetails(
     applicationId: number,
-    studentId?: number,
+    options?: { studentId?: number },
   ): Promise<Application> {
     return this.repo.findOne({
       select: {
         id: true,
         applicationStatus: true,
         applicationNumber: true,
+        student: {
+          id: true,
+        },
         location: {
           id: true,
           name: true,
@@ -1527,6 +1531,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         programYear: { id: true },
       },
       relations: {
+        student: true,
         pirDeniedReasonId: true,
         currentAssessment: { offering: true, disbursementSchedules: true },
         applicationException: true,
@@ -1538,7 +1543,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         id: applicationId,
         applicationStatus: Not(ApplicationStatus.Overwritten),
         student: {
-          id: studentId,
+          id: options?.studentId,
         },
       },
     });
