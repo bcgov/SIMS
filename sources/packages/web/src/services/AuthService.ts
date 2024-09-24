@@ -136,6 +136,12 @@ export class AuthService {
       await studentStore.updateProfileData();
     } catch (error: unknown) {
       if (error instanceof ApiProcessError) {
+        if (error.errorType === INVALID_BETA_USER) {
+          await this.logout(ClientIdType.Student, {
+            invalidBetaUser: true,
+          });
+          return;
+        }
         if (error.errorType === MISSING_STUDENT_ACCOUNT) {
           if (
             this.userToken?.identityProvider === IdentityProviders.BCeIDBoth
@@ -157,11 +163,6 @@ export class AuthService {
           this.priorityRedirect = {
             name: StudentRoutesConst.STUDENT_PROFILE_CREATE,
           };
-          return;
-        } else if (error.errorType === INVALID_BETA_USER) {
-          await this.logout(ClientIdType.Student, {
-            invalidBetaUser: true,
-          });
           return;
         }
       }
