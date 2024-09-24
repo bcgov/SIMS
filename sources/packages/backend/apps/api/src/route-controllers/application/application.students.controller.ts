@@ -26,10 +26,6 @@ import {
   EducationProgramOfferingService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
-  CRAIncomeVerificationService,
-  SupportingUserService,
-  StudentAppealService,
-  ApplicationOfferingChangeRequestService,
 } from "../../services";
 import { IUserToken, StudentUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -71,10 +67,7 @@ import { CustomNamedError } from "@sims/utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { ApplicationData } from "@sims/sims-db/entities/application.model";
 import { ApplicationStatus, OfferingIntensity } from "@sims/sims-db";
-import {
-  AssessmentSequentialProcessingService,
-  ConfirmationOfEnrollmentService,
-} from "@sims/services";
+import { ConfirmationOfEnrollmentService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
 import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
 
@@ -91,12 +84,7 @@ export class ApplicationStudentsController extends BaseController {
     private readonly offeringService: EducationProgramOfferingService,
     private readonly confirmationOfEnrollmentService: ConfirmationOfEnrollmentService,
     private readonly applicationControllerService: ApplicationControllerService,
-    private readonly craIncomeVerificationService: CRAIncomeVerificationService,
-    private readonly supportingUserService: SupportingUserService,
-    private readonly studentAppealService: StudentAppealService,
-    private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
     private readonly configService: ConfigService,
-    private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
     private readonly eCertPreValidationService: ECertPreValidationService,
   ) {
     super();
