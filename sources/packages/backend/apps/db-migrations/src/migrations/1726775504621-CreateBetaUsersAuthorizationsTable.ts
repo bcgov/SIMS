@@ -16,7 +16,7 @@ export class CreateBetaUsersAuthorizationsTable1726775504621
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Drop-beta-users-authorizations-table.sql",
+        "Rollback-beta-users-authorizations-table.sql",
         "BetaUsersAuthorizations",
       ),
     );

@@ -47,8 +47,6 @@ export class UserService extends DataModelService<User> {
       .addSelect("user.isActive", "isActive")
       .addSelect("student.id", "studentId")
       .addSelect("user.identityProviderType", "identityProviderType")
-      .addSelect("user.firstName")
-      .addSelect("user.lastName")
       .leftJoin(Student, "student", "student.user.id = user.id")
       .where("user.userName = :userName", { userName })
       .getRawOne();
@@ -65,8 +63,6 @@ export class UserService extends DataModelService<User> {
       isActive: user.isActive,
       studentId: user.studentId,
       identityProviderType: user.identityProviderType,
-      firstName: user.firstName,
-      lastName: user.lastName,
     };
   }
 
@@ -181,6 +177,6 @@ export class UserService extends DataModelService<User> {
     if (!givenNames) {
       where.givenNames = IsNull();
     }
-    return await this.betaUsersAuthorizationsRepo.exists({ where });
+    return this.betaUsersAuthorizationsRepo.exists({ where });
   }
 }

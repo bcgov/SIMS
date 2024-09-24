@@ -5,6 +5,4 @@ export interface UserLoginInfo {
   isActive: boolean;
   studentId?: number;
   identityProviderType?: IdentityProviders;
-  firstName?: string;
-  lastName: string;
 }
