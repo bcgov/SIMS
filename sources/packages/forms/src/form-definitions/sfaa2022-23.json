@@ -69,7 +69,7 @@
                           "labelWidth": "",
                           "labelMargin": "",
                           "tag": "h2",
-                          "className": "",
+                          "className": "category-header-large primary-color",
                           "attrs": [
                             {
                               "attr": "",
@@ -78,7 +78,7 @@
                           ],
                           "content": "Get started on your application",
                           "refreshOnChange": false,
-                          "customClass": "category-header-large primary-color",
+                          "customClass": "",
                           "hidden": false,
                           "modalEdit": false,
                           "key": "html109",
@@ -643,7 +643,7 @@
         {
           "label": "HTML",
           "tag": "h2",
-          "className": "",
+          "className": "category-header-large primary-color",
           "attrs": [
             {
               "attr": "",
@@ -652,7 +652,7 @@
           ],
           "content": "Select your program",
           "refreshOnChange": false,
-          "customClass": "category-header-large primary-color",
+          "customClass": "",
           "hidden": false,
           "modalEdit": false,
           "key": "html9",
@@ -12920,7 +12920,7 @@
                     }
                   ],
                   "validate": {
-                    "required": true,
+                    "required": false,
                     "custom": "",
                     "customPrivate": false,
                     "strictDateValidation": false,
