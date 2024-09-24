@@ -98,7 +98,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-financia
   );
 
   it(
-    "Should have calculated student total income from the current year income and not from the the application data or the tax return income" +
+    "Should have calculated student total income from the current year income and not from the the application data or the tax return income " +
       "when there is a request a change for student financial information with current year income values.",
     async () => {
       // Arrange
