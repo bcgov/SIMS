@@ -69,8 +69,8 @@ export class AuthorizedPartiesGuard implements CanActivate {
     switch (authorizedParty) {
       case AuthorizedParties.student:
         if (
-          this.configService.allowBetaUsersOnly &&
-          identityProvider === IdentityProviders.BCeIDBoth
+          identityProvider === IdentityProviders.BCeIDBoth &&
+          this.configService.allowBetaUsersOnly
         ) {
           throw new UnauthorizedException(
             new ApiProcessError(
@@ -78,9 +78,10 @@ export class AuthorizedPartiesGuard implements CanActivate {
               INVALID_BETA_USER,
             ),
           );
-        } else {
-          return IdentityProviders.BCSC === identityProvider;
         }
+        return [IdentityProviders.BCeIDBoth, IdentityProviders.BCSC].includes(
+          identityProvider,
+        );
       case AuthorizedParties.supportingUsers:
         return identityProvider === IdentityProviders.BCSC;
       case AuthorizedParties.institution:
