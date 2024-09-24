@@ -270,7 +270,9 @@ export class AuthService {
         if (options?.invalidBetaUser) {
           redirectUri += "/login/invalid-beta-user";
         }
-        await this.executeSiteminderLogoff(redirectUri);
+        if (this.userToken?.identityProvider === IdentityProviders.BCeIDBoth) {
+          await this.executeSiteminderLogoff(redirectUri);
+        }
         break;
       }
       default:
