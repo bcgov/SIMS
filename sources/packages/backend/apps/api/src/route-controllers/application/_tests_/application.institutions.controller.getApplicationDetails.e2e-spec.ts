@@ -20,11 +20,7 @@ import {
   InstitutionLocation,
   OfferingIntensity,
 } from "@sims/sims-db";
-import {
-  addDays,
-  getDateOnlyFormat,
-  getISODateOnlyString,
-} from "@sims/utilities";
+import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { getUserFullName } from "../../../utilities";
 
 describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
@@ -100,12 +96,8 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
         applicationProgramYearID: savedApplication.programYearId,
         studentFullName: getUserFullName(savedApplication.student.user),
         applicationOfferingIntensity: offeringInitialValues.offeringIntensity,
-        applicationStartDate: getDateOnlyFormat(
-          offeringInitialValues.studyStartDate,
-        ),
-        applicationEndDate: getDateOnlyFormat(
-          offeringInitialValues.studyEndDate,
-        ),
+        applicationStartDate: offeringInitialValues.studyStartDate,
+        applicationEndDate: offeringInitialValues.studyEndDate,
         applicationInstitutionName:
           savedApplication.location.institution.legalOperatingName,
       });

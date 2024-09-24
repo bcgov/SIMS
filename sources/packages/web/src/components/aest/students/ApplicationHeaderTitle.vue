@@ -7,6 +7,7 @@ import { defineComponent, onMounted, ref } from "vue";
 import { ApplicationSupplementalDataAPIOutDTO } from "@/services/http/dto";
 import { ApplicationService } from "@/services/ApplicationService";
 import DetailHeader from "@/components/generic/DetailHeader.vue";
+import { useFormatters } from "@/composables";
 
 export default defineComponent({
   components: { DetailHeader },
@@ -19,6 +20,7 @@ export default defineComponent({
   setup(props) {
     const applicationData = ref<ApplicationSupplementalDataAPIOutDTO>();
     const headerMap = ref<Record<string, string>>({});
+    const { dateOnlyLongString } = useFormatters();
 
     const mapApplicationHeader = (
       application: ApplicationSupplementalDataAPIOutDTO,
@@ -32,7 +34,9 @@ export default defineComponent({
           Name: application.studentFullName,
           "Application number": application.applicationNumber,
           Institution: application.applicationInstitutionName,
-          "Study dates": `${application.applicationStartDate} - ${application.applicationEndDate}`,
+          "Study dates": `${dateOnlyLongString(
+            application.applicationStartDate,
+          )} - ${dateOnlyLongString(application.applicationEndDate)}`,
           Type: application.applicationOfferingIntensity,
         };
       }

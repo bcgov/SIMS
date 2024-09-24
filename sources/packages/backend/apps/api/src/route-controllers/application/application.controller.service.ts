@@ -180,12 +180,9 @@ export class ApplicationControllerService {
       studentFullName: getUserFullName(application.student.user),
       applicationOfferingIntensity:
         application.currentAssessment.offering?.offeringIntensity,
-      applicationStartDate: getDateOnlyFormat(
+      applicationStartDate:
         application.currentAssessment.offering?.studyStartDate,
-      ),
-      applicationEndDate: getDateOnlyFormat(
-        application.currentAssessment.offering?.studyEndDate,
-      ),
+      applicationEndDate: application.currentAssessment.offering?.studyEndDate,
       applicationInstitutionName:
         application.location?.institution.legalOperatingName,
     };

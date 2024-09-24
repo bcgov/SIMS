@@ -13,11 +13,7 @@ import {
 } from "@sims/test-utils";
 import { EducationProgramOffering, OfferingIntensity } from "@sims/sims-db";
 import { getUserFullName } from "../../../utilities";
-import {
-  addDays,
-  getDateOnlyFormat,
-  getISODateOnlyString,
-} from "@sims/utilities";
+import { addDays, getISODateOnlyString } from "@sims/utilities";
 
 describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
   let app: INestApplication;
@@ -65,12 +61,8 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
         applicationProgramYearID: application.programYearId,
         studentFullName: getUserFullName(application.student.user),
         applicationOfferingIntensity: offeringInitialValues.offeringIntensity,
-        applicationStartDate: getDateOnlyFormat(
-          offeringInitialValues.studyStartDate,
-        ),
-        applicationEndDate: getDateOnlyFormat(
-          offeringInitialValues.studyEndDate,
-        ),
+        applicationStartDate: offeringInitialValues.studyStartDate,
+        applicationEndDate: offeringInitialValues.studyEndDate,
         applicationInstitutionName:
           application.location.institution.legalOperatingName,
       });
@@ -111,12 +103,8 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
         applicationProgramYearID: application.programYearId,
         studentFullName: getUserFullName(application.student.user),
         applicationOfferingIntensity: offeringInitialValues.offeringIntensity,
-        applicationStartDate: getDateOnlyFormat(
-          offeringInitialValues.studyStartDate,
-        ),
-        applicationEndDate: getDateOnlyFormat(
-          offeringInitialValues.studyEndDate,
-        ),
+        applicationStartDate: offeringInitialValues.studyStartDate,
+        applicationEndDate: offeringInitialValues.studyEndDate,
         applicationInstitutionName:
           application.location.institution.legalOperatingName,
       });
