@@ -14,6 +14,7 @@ import {
   InstitutionLocation,
   MSFAANumber,
   OfferingIntensity,
+  ProgramInfoStatus,
   ProgramYear,
   RelationshipStatus,
   Student,
@@ -64,6 +65,8 @@ export function createFakeApplication(
     faker.datatype.number({ max: 9999999999, min: 1000000000 }).toString();
   application.applicationException = relations?.applicationException;
   application.location = relations?.location ?? createFakeInstitutionLocation();
+  application.pirStatus =
+    options?.initialValue?.pirStatus ?? ProgramInfoStatus.notRequired;
   return application;
 }
 

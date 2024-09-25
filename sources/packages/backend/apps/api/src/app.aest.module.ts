@@ -32,6 +32,7 @@ import {
   StudentLoanBalanceService,
   ProgramYearService,
   CASSupplierService,
+  CRAIncomeVerificationService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -187,6 +188,8 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     StudentLoanBalanceService,
     ProgramYearService,
     CASSupplierService,
+    CRAIncomeVerificationService,
+    SupportingUserService,
   ],
 })
 export class AppAESTModule {}

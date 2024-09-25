@@ -32,6 +32,8 @@ import {
   ApplicationBulkWithdrawalImportValidationService,
   ProgramYearService,
   AnnouncementService,
+  CRAIncomeVerificationService,
+  SupportingUserService,
 } from "./services";
 import {
   ApplicationControllerService,
@@ -186,6 +188,8 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     ProgramYearService,
     ReportControllerService,
     ReportService,
+    CRAIncomeVerificationService,
+    SupportingUserService,
   ],
 })
 export class AppInstitutionsModule {}
