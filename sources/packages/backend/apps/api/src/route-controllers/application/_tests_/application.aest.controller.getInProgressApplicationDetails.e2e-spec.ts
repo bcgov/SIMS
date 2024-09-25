@@ -24,7 +24,7 @@ describe("ApplicationAESTController(e2e)-getInProgressApplicationDetails", () =>
     db = createE2EDataSources(dataSource);
   });
 
-  it("Should get assessment status for an application when requested for an application id.", async () => {
+  it("Should get application in-progress details of a single independent student application with no PIR.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource, undefined, {
       applicationStatus: ApplicationStatus.InProgress,
