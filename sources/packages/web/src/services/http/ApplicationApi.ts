@@ -38,7 +38,7 @@ export class ApplicationApi extends HttpBaseClient {
     loadDynamicData?: boolean,
   ): Promise<ApplicationDataAPIOutDTO | ApplicationSupplementalDataAPIOutDTO> {
     let url = this.addClientRoot(`application/${applicationId}`);
-    if (loadDynamicData) {
+    if (loadDynamicData !== undefined) {
       url = `${url}?loadDynamicData=${loadDynamicData}`;
     }
     return this.getCall<
