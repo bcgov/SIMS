@@ -1,4 +1,3 @@
-version: '3.7'
 services:
   mongo:
     image: mongo:4.1
@@ -10,7 +9,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD:
     networks:
       - local-network
-  
+
   formio:
     build:
       context: ./packages/forms
@@ -34,8 +33,8 @@ services:
       NODE_CONFIG: '{"mongo": "mongodb://mongo:27017/formio"}'
       ROOT_EMAIL: admin@example.com
       ROOT_PASSWORD: CHANGEME
-    stdin_open: true  # -i
-    tty: true         # -t
+    stdin_open: true # -i
+    tty: true # -t
 
 # Networks
 networks:
