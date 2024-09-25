@@ -7,7 +7,6 @@ import {
   InstitutionLocationDetailsAPIOutDTO,
 } from "./models/institution-location.dto";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
-import { INSTITUTION_TYPE_BC_PUBLIC } from "@sims/sims-db/constant";
 
 /**
  * Controller service for institution location.
@@ -106,9 +105,6 @@ export class InstitutionLocationControllerService {
       ...transformAddressDetailsForAddressBlockForm(
         institutionLocation.data.address,
       ),
-      isBCPublicInstitution:
-        institutionLocation.institution.institutionType.id ===
-        INSTITUTION_TYPE_BC_PUBLIC,
     };
   }
 }

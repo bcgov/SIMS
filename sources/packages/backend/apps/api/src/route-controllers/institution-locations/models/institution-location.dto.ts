@@ -61,7 +61,6 @@ export class InstitutionLocationDetailsAPIOutDTO extends AddressDetailsAPIOutDTO
   primaryContactLastName: string;
   primaryContactEmail: string;
   primaryContactPhone: string;
-  isBCPublicInstitution: boolean;
 }
 
 export class InstitutionPrimaryContactAPIOutDTO {

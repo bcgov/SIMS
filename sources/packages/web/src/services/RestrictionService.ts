@@ -109,16 +109,4 @@ export class RestrictionService {
   async getStudentRestriction(): Promise<StudentRestrictionAPIOutDTO[]> {
     return ApiClient.RestrictionApi.getStudentRestriction();
   }
-
-  /**
-   * Get history of bypassed restrictions for an application that is not a draft.
-   * @param applicationId, application id.
-   * @param studentId, student id.
-   * @returns summary of the bypassed restriction history for a student application.
-   */
-  async getBypassedRestrictionHistory(
-    applicationId: number,
-  ): Promise<RestrictionSummaryAPIOutDTO[]> {
-    return ApiClient.RestrictionApi.getStudentRestrictions(applicationId);
-  }
 }

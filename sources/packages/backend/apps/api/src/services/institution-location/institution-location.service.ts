@@ -181,10 +181,8 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         "institution.operatingName",
         "institution.legalOperatingName",
         "institution.primaryEmail",
-        "institutionType.id",
       ])
       .innerJoin("institutionLocation.institution", "institution")
-      .innerJoin("institution.institutionType", "institutionType")
       .where("institutionLocation.id = :locationId", {
         locationId: locationId,
       });

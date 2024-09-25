@@ -1,19 +1,19 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
-import { BypassedRestrictionSummaryAPIOutDTO } from "@/services/http/dto";
+import { ApplicationRestrictionBypassHistoryAPIOutDTO } from "@/services/http/dto";
 
 /**
  * Http API client for Bypassed Restrictions.
  */
-export class BypassedRestrictionApi extends HttpBaseClient {
+export class ApplicationRestrictionBypassApi extends HttpBaseClient {
   /**
    * API client to call the application bypassed restrictions rest API.
    * @param applicationId application Id.
    * @returns application bypassed restriction (wrapped by promise).
    */
-  async getBypassedRestrictions(
+  async getApplicationRestrictionBypasses(
     applicationId: number,
-  ): Promise<BypassedRestrictionSummaryAPIOutDTO[]> {
-    return this.getCall<BypassedRestrictionSummaryAPIOutDTO[]>(
+  ): Promise<ApplicationRestrictionBypassHistoryAPIOutDTO> {
+    return this.getCall<ApplicationRestrictionBypassHistoryAPIOutDTO>(
       this.addClientRoot(
         `application-restriction-bypass/application/${applicationId}`,
       ),

@@ -1,84 +1,79 @@
+<!-- eslint-disable vue/valid-v-slot -->
 <template>
+  <v-card class="mb-6">
+    <v-container>
+      <p class="label-bold-normal mb-0">
+        This feature can be used to ignore specific restrictions for specific
+        applications. Restrictions can be ignored for one, or all, disbursements
+        associated with an application. If a restriction is ignored, it's effect
+        will be suspended. For example, if a restriction typically prevents an
+        eCert from getting produced and sent to NSLSC 5 days prior to study
+        start dates, then ignoring that restriction will enable the eCert to get
+        produced and sent to NSLSC, thereby 'bypassing' the restriction. Please
+        see training material for additional information.
+      </p>
+    </v-container>
+  </v-card>
   <v-card>
     <v-container>
-      <body-header title="History of Bypassed Restrictions" class="m-1">
-        <template #actions>
-          <check-permission-role :role="Role.StudentAddRestriction">
-            <template #="{ notAllowed }">
-              <v-btn
-                @click="addBypassedRestriction"
-                class="float-right"
-                color="primary"
-                data-cy="addRestrictionButton"
-                prepend-icon="fa:fa fa-plus-circle"
-                :disabled="notAllowed"
-                >Bypass A Restriction</v-btn
-              >
-            </template>
-          </check-permission-role>
-        </template>
-      </body-header>
+      <body-header title="History of Bypassed Restrictions" class="m-1" />
       <content-group class="mt-4">
         <toggle-content
-          :toggled="!bypassedRestrictions.length"
+          :toggled="!bypassedRestrictions.bypasses.length"
           message="No bypassed restrictions found."
         >
-          <DataTable
-            :value="bypassedRestrictions"
-            :paginator="true"
-            :rows="DEFAULT_PAGE_LIMIT"
-            :rowsPerPageOptions="PAGINATION_LIST"
-            :totalRecords="bypassedRestrictions.length"
+          <v-data-table
+            :headers="RestrictionManagementHeaders"
+            :items="bypassedRestrictions.bypasses"
+            :items-per-page="DEFAULT_PAGE_LIMIT"
           >
-            <template #empty>
-              <p class="text-center font-weight-bold">No records found.</p>
+            <template #[`item.restrictionType`]="{ item }">
+              {{ item.restrictionType }}
             </template>
-            <Column
-              field="restrictionType"
-              header="Restriction Type"
-              :sortable="true"
-            ></Column>
-            <Column field="restrictionCode" header="Restriction Code"></Column>
-            <Column header="View Details">
-              <template #body="{ data }">
-                <v-btn
-                  @click="$emit('viewBypassDetails', data.id)"
-                  color="primary"
-                  variant="text"
-                  class="text-decoration-underline"
-                  prepend-icon="fa:far fa-file-alt"
-                >
-                  View Details</v-btn
-                >
-              </template></Column
-            ><Column header="Remove Bypass Rule?">
-              <template #body="{ data }">
-                <v-btn
-                  @click="$emit('viewRemoveBypass', data.id)"
-                  :color="getRemoveBypassColor(data)"
-                  :disabled="!data.isActive"
-                >
-                  {{ getRemoveBypassLabel(data) }}</v-btn
-                >
-              </template>
-            </Column>
-          </DataTable>
+            <template #[`item.restrictionCode`]="{ item }">
+              {{ item.restrictionCode }}
+            </template>
+            <template #[`item.isActive`]="{ item }">
+              <status-chip-bypass :is-active="item.isActive" />
+            </template>
+            <template #[`item.id`]>
+              <v-btn
+                color="primary"
+                variant="text"
+                class="text-decoration-underline"
+                prepend-icon="fa:far fa-file-alt"
+              >
+                View Details</v-btn
+              >
+            </template>
+            <template #[`item.isBypassActive`]="{ item }">
+              <v-btn
+                :color="getRemoveBypassColor(item.isBypassActive)"
+                :disabled="!item.isBypassActive"
+              >
+                {{ getRemoveBypassLabel(item.isBypassActive) }}</v-btn
+              >
+            </template>
+          </v-data-table>
         </toggle-content>
       </content-group>
     </v-container>
   </v-card>
 </template>
 <script lang="ts">
-import { DEFAULT_PAGE_LIMIT, PAGINATION_LIST, Role } from "@/types";
+import {
+  DEFAULT_PAGE_LIMIT,
+  PAGINATION_LIST,
+  RestrictionManagementHeaders,
+} from "@/types";
 import { ref, onMounted, defineComponent } from "vue";
-import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
-import { BypassedRestrictionSummaryAPIOutDTO } from "@/services/http/dto/BypassedRestriction.dto";
-import { BypassedRestrictionService } from "@/services/BypassedRestrictionService";
+import { ApplicationRestrictionBypassHistoryAPIOutDTO } from "@/services/http/dto/ApplicationRestrictionBypass.dto";
+import StatusChipBypass from "@/components/generic/StatusChipBypass.vue";
+import { ApplicationRestrictionBypassService } from "@/services/ApplicationRestrictionBypassService";
 
 export default defineComponent({
-  emits: ["viewBypassDetails", "viewRemoveBypass"],
   components: {
-    CheckPermissionRole,
+    StatusChipBypass,
   },
   props: {
     applicationId: {
@@ -87,40 +82,31 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const bypassedRestrictions = ref(
-      [] as BypassedRestrictionSummaryAPIOutDTO[],
-    );
+    const bypassedRestrictions = ref({
+      bypasses: [],
+    } as ApplicationRestrictionBypassHistoryAPIOutDTO);
     onMounted(async () => {
       bypassedRestrictions.value =
-        await BypassedRestrictionService.shared.getBypassedRestrictionHistory(
+        await ApplicationRestrictionBypassService.shared.getApplicationRestrictionBypassesHistory(
           props.applicationId,
         );
     });
 
-    const getRemoveBypassLabel = (
-      data: BypassedRestrictionSummaryAPIOutDTO,
-    ): string => {
-      return data.isActive ? "Remove Bypass" : "Bypass Removed";
+    const getRemoveBypassLabel = (isActive: boolean): string => {
+      return isActive ? "Remove Bypass" : "Bypass Removed";
     };
 
-    const getRemoveBypassColor = (
-      data: BypassedRestrictionSummaryAPIOutDTO,
-    ): string => {
-      return data.isActive ? "primary" : "secondary";
-    };
-
-    const addBypassedRestriction = async () => {
-      // ToDo: Add bypassed restriction
+    const getRemoveBypassColor = (isBypassActive: boolean): string => {
+      return isBypassActive ? "primary" : "secondary";
     };
 
     return {
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
-      Role,
       bypassedRestrictions,
       getRemoveBypassLabel,
       getRemoveBypassColor,
-      addBypassedRestriction,
+      RestrictionManagementHeaders,
     };
   },
 });

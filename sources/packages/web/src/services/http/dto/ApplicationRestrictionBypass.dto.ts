@@ -1,4 +1,4 @@
-import { RestrictionType } from "@sims/sims-db";
+import { RestrictionType } from "@/types";
 
 /**
  * DTO class for AEST application restriction bypass summary.
@@ -16,4 +16,18 @@ export class ApplicationRestrictionBypassSummary {
  */
 export class ApplicationRestrictionBypassHistoryAPIOutDTO {
   bypasses: ApplicationRestrictionBypassSummary[];
+}
+
+/**
+ * Indicates if the bypassed restriction is active or removed.
+ */
+export enum ApplicationRestrictionBypassStatus {
+  /**
+   * Bypassed restriction is active.
+   */
+  Active = "Active",
+  /**
+   * Bypassed restriction is removed.
+   */
+  Removed = "Removed",
 }

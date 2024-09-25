@@ -57,7 +57,7 @@ import ApplicationOfferingChangeRequestForm from "@/views/aest/institution/Appli
 import StudentAccountApplications from "@/views/aest/student/StudentAccountApplications.vue";
 import StudentAccountApplicationsApproval from "@/views/aest/student/StudentAccountApplicationsApproval.vue";
 import AssessmentAward from "@/views/aest/student/applicationDetails/AssessmentAward.vue";
-import RestrictionsManagement from "@/views/aest/student/applicationDetails/RestrictionsManagement.vue";
+import ApplicationRestrictionsManagement from "@/views/aest/student/applicationDetails/ApplicationRestrictionsManagement.vue";
 
 export const aestRoutes: Array<RouteRecordRaw> = [
   {
@@ -285,10 +285,10 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             },
           },
           {
-            path: AppRoutes.RestrictionsManagement,
-            name: AESTRoutesConst.RESTRICTIONS_MANAGEMENT,
+            path: AppRoutes.ApplicationRestrictionsManagement,
+            name: AESTRoutesConst.APPLICATION_RESTRICTIONS_MANAGEMENT,
             props: true,
-            component: RestrictionsManagement,
+            component: ApplicationRestrictionsManagement,
             meta: {
               clientType: ClientIdType.AEST,
             },
