@@ -199,6 +199,17 @@ export class ConfigService {
   }
 
   /**
+   * When defined as true, allows only BCSC users registered in beta users
+   * authorizations table to login on the system.
+   */
+  get allowBetaUsersOnly(): boolean {
+    return this.getCachedConfig(
+      "allowBetaUsersOnlyConfig",
+      process.env.ALLOW_BETA_USERS_ONLY === "true",
+    );
+  }
+
+  /**
    * When defined as true, allows the simulation of a complete cycle of the
    * CRA send/response process that allows the workflow to proceed without
    * the need for the actual CRA verification happens. By default, it should be
