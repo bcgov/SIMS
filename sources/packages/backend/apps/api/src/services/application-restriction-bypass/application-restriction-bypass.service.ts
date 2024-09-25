@@ -25,6 +25,7 @@ export class ApplicationRestrictionBypassService extends RecordDataModelService<
     return this.repo.find({
       select: {
         id: true,
+        isActive: true,
         application: { id: true },
         studentRestriction: {
           id: true,
