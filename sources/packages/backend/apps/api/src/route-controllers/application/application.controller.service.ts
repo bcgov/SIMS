@@ -179,10 +179,10 @@ export class ApplicationControllerService {
       applicationProgramYearID: application.programYear.id,
       studentFullName: getUserFullName(application.student.user),
       applicationOfferingIntensity:
-        application.currentAssessment.offering?.offeringIntensity,
+        application.currentAssessment?.offering?.offeringIntensity,
       applicationStartDate:
-        application.currentAssessment.offering?.studyStartDate,
-      applicationEndDate: application.currentAssessment.offering?.studyEndDate,
+        application.currentAssessment?.offering?.studyStartDate,
+      applicationEndDate: application.currentAssessment?.offering?.studyEndDate,
       applicationInstitutionName:
         application.location?.institution.legalOperatingName,
     };

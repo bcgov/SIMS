@@ -26,24 +26,33 @@ export default defineComponent({
       application: ApplicationSupplementalDataAPIOutDTO,
     ): Record<string, string> => {
       if (
-        application.applicationStartDate &&
-        application.applicationEndDate &&
-        application.applicationOfferingIntensity
+        application.applicationNumber &&
+        application.applicationInstitutionName
       ) {
+        if (
+          application.applicationStartDate &&
+          application.applicationEndDate &&
+          application.applicationOfferingIntensity
+        ) {
+          return {
+            Name: application.studentFullName,
+            "Application number": application.applicationNumber,
+            Institution: application.applicationInstitutionName,
+            "Study dates": `${dateOnlyLongString(
+              application.applicationStartDate,
+            )} - ${dateOnlyLongString(application.applicationEndDate)}`,
+            Type: application.applicationOfferingIntensity,
+          };
+        }
+
         return {
           Name: application.studentFullName,
           "Application number": application.applicationNumber,
           Institution: application.applicationInstitutionName,
-          "Study dates": `${dateOnlyLongString(
-            application.applicationStartDate,
-          )} - ${dateOnlyLongString(application.applicationEndDate)}`,
-          Type: application.applicationOfferingIntensity,
         };
       }
       return {
         Name: application.studentFullName,
-        "Application number": application.applicationNumber,
-        Institution: application.applicationInstitutionName,
       };
     };
 
