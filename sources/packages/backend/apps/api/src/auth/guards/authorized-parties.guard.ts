@@ -3,11 +3,15 @@ import {
   CanActivate,
   ExecutionContext,
   ForbiddenException,
+  UnauthorizedException,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { AuthorizedParties, IUserToken } from "..";
 import { AUTHORIZED_PARTY_KEY } from "../decorators/authorized-party.decorator";
 import { IdentityProviders } from "@sims/sims-db";
+import { ConfigService } from "@sims/utilities/config";
+import { ApiProcessError } from "../../types";
+import { INVALID_BETA_USER } from "../../constants";
 
 /**
  * Inspect the token to check if the correct authorized party
@@ -15,7 +19,10 @@ import { IdentityProviders } from "@sims/sims-db";
  */
 @Injectable()
 export class AuthorizedPartiesGuard implements CanActivate {
-  constructor(private readonly reflector: Reflector) {}
+  constructor(
+    private readonly reflector: Reflector,
+    private readonly configService: ConfigService,
+  ) {}
 
   canActivate(context: ExecutionContext): boolean {
     const authorizedParties = this.reflector.getAllAndOverride<
@@ -61,6 +68,17 @@ export class AuthorizedPartiesGuard implements CanActivate {
   ): boolean {
     switch (authorizedParty) {
       case AuthorizedParties.student:
+        if (
+          identityProvider === IdentityProviders.BCeIDBoth &&
+          this.configService.allowBetaUsersOnly
+        ) {
+          throw new UnauthorizedException(
+            new ApiProcessError(
+              "The student authentication provider is not allowed at this moment.",
+              INVALID_BETA_USER,
+            ),
+          );
+        }
         return [IdentityProviders.BCeIDBoth, IdentityProviders.BCSC].includes(
           identityProvider,
         );

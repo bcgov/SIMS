@@ -62,6 +62,7 @@ export const TableNames = {
   ECertFeedbackErrors: "ecert_feedback_errors",
   CASSuppliers: "cas_suppliers",
   ApplicationRestrictionBypasses: "application_restriction_bypasses",
+  BetaUsersAuthorizations: "beta_users_authorizations",
 };
 
 export const INSTITUTION_TYPE_BC_PUBLIC = 1;

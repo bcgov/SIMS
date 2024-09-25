@@ -31,6 +31,7 @@
             :loading="loading"
             item-value="id"
             :items-per-page="DEFAULT_PAGE_LIMIT"
+            :items-per-page-options="ITEMS_PER_PAGE"
             @update:options="paginationAndSortEvent"
           >
             <template #[`item.fullName`]="{ item }">
@@ -62,6 +63,7 @@
 import { ref, watch, defineComponent } from "vue";
 import {
   DEFAULT_PAGE_LIMIT,
+  ITEMS_PER_PAGE,
   DataTableOptions,
   PaginatedResults,
   InProgressOfferingChangeSummaryHeaders,
@@ -175,6 +177,7 @@ export default defineComponent({
 
     return {
       DEFAULT_PAGE_LIMIT,
+      ITEMS_PER_PAGE,
       applications,
       dateOnlyLongString,
       paginationAndSortEvent,

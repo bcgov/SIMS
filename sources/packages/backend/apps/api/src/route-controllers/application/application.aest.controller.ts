@@ -1,18 +1,21 @@
 import {
   Controller,
+  DefaultValuePipe,
   Get,
   NotFoundException,
   Param,
+  ParseBoolPipe,
   ParseIntPipe,
   Post,
+  Query,
   UnprocessableEntityException,
 } from "@nestjs/common";
 import { ApplicationService } from "../../services";
 import BaseController from "../BaseController";
 import {
   ApplicationAssessmentStatusDetailsAPIOutDTO,
-  ApplicationBaseAPIOutDTO,
   ApplicationHeaderAPIOutDTO,
+  ApplicationSupplementalDataAPIOutDTO,
 } from "./models/application.dto";
 import {
   AllowAuthorizedParty,
@@ -62,10 +65,12 @@ export class ApplicationAESTController extends BaseController {
   @ApiNotFoundResponse({ description: "Application not found." })
   async getApplication(
     @Param("applicationId", ParseIntPipe) applicationId: number,
-  ): Promise<ApplicationBaseAPIOutDTO> {
+    @Query("loadDynamicData", new DefaultValuePipe(true), ParseBoolPipe)
+    loadDynamicData: boolean,
+  ): Promise<ApplicationSupplementalDataAPIOutDTO> {
     const application = await this.applicationService.getApplicationById(
       applicationId,
-      { loadDynamicData: true },
+      { loadDynamicData },
     );
     if (!application) {
       throw new NotFoundException(
@@ -73,10 +78,13 @@ export class ApplicationAESTController extends BaseController {
       );
     }
 
-    application.data =
-      await this.applicationControllerService.generateApplicationFormData(
-        application.data,
-      );
+    if (loadDynamicData) {
+      application.data =
+        await this.applicationControllerService.generateApplicationFormData(
+          application.data,
+        );
+    }
+
     return this.applicationControllerService.transformToApplicationDTO(
       application,
     );

@@ -49,7 +49,7 @@ export SWAGGER_ENABLED := $(or ${SWAGGER_ENABLED}, true)
 export APPLICATION_ARCHIVE_DAYS := $(or ${APPLICATION_ARCHIVE_DAYS}, 43)
 #Formio forms integration
 export FORMIO_SOURCE_REPO_URL := $(or ${FORMIO_SOURCE_REPO_URL}, https://github.com/formio/formio.git)
-export FORMIO_SOURCE_REPO_TAG := $(or ${FORMIO_SOURCE_REPO_TAG}, v2.5.3)
+export FORMIO_SOURCE_REPO_TAG := $(or ${FORMIO_SOURCE_REPO_TAG}, v4.2.4)
 #ATBC Integration
 export ATBC_USERNAME := $(or $(ATBC_USERNAME), )
 export ATBC_PASSWORD := $(or $(ATBC_PASSWORD), )
@@ -85,6 +85,9 @@ export MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER :=  $(or $(MAXIMUM_IDLE_TIM
 export MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION := $(or $(MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION), 3600)
 export MAXIMUM_IDLE_TIME_FOR_WARNING_AEST :=  $(or $(MAXIMUM_IDLE_TIME_FOR_WARNING_AEST), 3600)
 
+# Allow beta users only to access the system if true.
+export ALLOW_BETA_USERS_ONLY := $(or $(ALLOW_BETA_USERS_ONLY), false)
+
 # Starts all applications: SIMS application (Web Portals, SIMS Api, Workers, Queue Consumers),
 # and also Form.io server, and Camunda releated services.
 # Use make deploy-camunda-definitions to deploy all workflow definitions.
@@ -92,7 +95,7 @@ export MAXIMUM_IDLE_TIME_FOR_WARNING_AEST :=  $(or $(MAXIMUM_IDLE_TIME_FOR_WARNI
 local-all: | print-status forms camunda local-build-run
 
 local:	| print-status local-build-run
-local-api: | print-status local-build api-only
+local-api: | print-status local-build api
 db: | print-status postgres
 local-redis: | print-status redis
 
@@ -160,7 +163,7 @@ local-clean:
 # Local DB
 postgres:
 	@echo "+\n++ Make: Run local db.\n+"
-	@docker compose -f docker-compose.yml up postgres
+	@docker compose -f docker-compose.yml up -d postgres
 
 # Local Queue
 redis:
@@ -168,23 +171,14 @@ redis:
 	@docker compose -f docker-compose.yml up redis
 
 # Local API only
-api-only:
+api:
 	@echo "+\n++ Make: Building and running API only"
-	@docker compose -f docker-compose.yml up api
-
-# Local App
-api: ## <Helper> :: Executes into the workspace container.
-	@echo "+\n++Shelling into local workspace ...++\n+"
-	@docker compose exec api bash
+	@docker compose -f docker-compose.yml up --build -d api
 
 # Local Web (nginx)
-web-local:
+web:
 	@echo "+\n++ Make: Run local web (nginx).\n+"
 	@docker compose -f docker-compose.yml up --build -d web
-
-local-db:
-	@echo "Make: Shelling into database workspace ..."
-	@docker compose -f docker-compose.yml exec postgres psql -U $(POSTGRESQL_USER) -W $(POSTGRES_DB)
 
 # Build and run Camunda locally.
 camunda:
@@ -243,7 +237,7 @@ workers:
 	@docker compose -f docker-compose.yml build workers
 	@docker compose -f docker-compose.yml up -d workers
 
-# Enable local DB connection to Openshift DEV/TEST/QA/STG/PROD
+# Enable local DB connection to Openshift DEV/TEST/STG/PROD
 connect-dev-db:
 	@echo "Forward local port 5454 to Openshift simsdb-pgbouncer default port."
 	@echo "Use your prefered DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5454."

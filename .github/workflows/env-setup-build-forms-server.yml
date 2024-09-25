@@ -1,5 +1,5 @@
 name: Env Setup - Build Forms Server
-run-name: Env Setup - Build forms server from ${{ inputs.gitRef }}(form.io tag ${{ inputs.formioTag }})
+run-name: Env Setup - Build forms server from ${{ github.ref_name }}(form.io tag ${{ inputs.formioTag }})
 
 on:
   workflow_dispatch:
@@ -8,20 +8,15 @@ on:
         description: "Formio tag, please refer https://github.com/formio/formio/tags to deploy the appropriate tag."
         type: string
         required: true
-        default: "v2.5.3"
-      gitRef:
-        description: "Git Ref"
-        required: true
-        default: ""
+        default: "v4.2.4"
 
 jobs:
   build:
     name: Build Forms Server
     runs-on: ubuntu-latest
     env:
-      FORMIO_SOURCE_REPO_TAG: ${{ inputs.formioTag }}
-      BUILD_REF: ${{ inputs.formioTag }}
       BUILD_NAMESPACE: ${{ vars.BUILD_NAMESPACE }}
+      FORMIO_SOURCE_REPO_TAG: ${{ inputs.formioTag }}
     steps:
       - name: Print env
         run: |
@@ -31,7 +26,7 @@ jobs:
       - name: Checkout Target Branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.gitRef }}
+          ref: ${{ github.ref_name }}
       # Log in to OpenShift.
       - name: Log in to OpenShift
         run: |

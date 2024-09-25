@@ -20,6 +20,7 @@ import {
   CompletedApplicationDetailsAPIOutDTO,
   ApplicationAssessmentStatusDetailsAPIOutDTO,
   ApplicationHeaderAPIOutDTO,
+  ApplicationSupplementalDataAPIOutDTO,
 } from "@/services/http/dto";
 
 export class ApplicationService {
@@ -38,6 +39,22 @@ export class ApplicationService {
     applicationId: number,
   ): Promise<ApplicationDataAPIOutDTO> {
     return ApiClient.Application.getApplicationData(applicationId);
+  }
+
+  /**
+   * Get application information for a specified application.
+   * @param applicationId the ID of the application to fetch.
+   * @param loadDynamicData flag for if dynamic data should be loaded.
+   * @returns application information.
+   */
+  async getApplication(
+    applicationId: number,
+    loadDynamicData?: boolean,
+  ): Promise<ApplicationSupplementalDataAPIOutDTO> {
+    return ApiClient.Application.getApplicationData(
+      applicationId,
+      loadDynamicData,
+    );
   }
 
   async createApplicationDraft(

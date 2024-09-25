@@ -2119,7 +2119,7 @@
                   "tags": []
                 },
                 {
-                  "label": "<strong>Will you be employed full-time or part-time during your Partner's study period</strong>",
+                  "label": "Will you be employed full-time or part-time during your Partner's study period",
                   "optionsLabelPosition": "right",
                   "inline": false,
                   "tableView": false,
@@ -2202,7 +2202,7 @@
                   "tags": []
                 },
                 {
-                  "label": "<strong>Will you be at home caring for eligible dependant children on a full-time basis during your Partner's entire study period? </strong>",
+                  "label": "Will you be at home caring for eligible dependant children on a full-time basis during your Partner's entire study period?",
                   "labelPosition": "top",
                   "labelWidth": "",
                   "labelMargin": "",
@@ -2295,7 +2295,7 @@
                   "defaultValue": ""
                 },
                 {
-                  "label": "<strong>Will you be living with your Partner during your Partner's study period?</strong>",
+                  "label": "Will you be living with your Partner during your Partner's study period?",
                   "optionsLabelPosition": "right",
                   "inline": false,
                   "tableView": false,
@@ -2378,7 +2378,7 @@
                   "tags": []
                 },
                 {
-                  "label": "<strong>Will you be a full-time post-secondary student for some or all of your Partner's study period?</strong>",
+                  "label": "Will you be a full-time post-secondary student for some or all of your Partner's study period?",
                   "optionsLabelPosition": "right",
                   "inline": false,
                   "tableView": false,
@@ -2483,7 +2483,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "label": "<strong>How many weeks will you be a full-time post-secondary student during your Partner's study period?</strong>",
+                      "label": "How many weeks will you be a full-time post-secondary student during your Partner's study period?",
                       "prefix": "Number of Weeks",
                       "mask": false,
                       "spellcheck": true,
@@ -2620,7 +2620,7 @@
                   "tags": []
                 },
                 {
-                  "label": "<strong>Will you be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during your Partner's study period?</strong>",
+                  "label": "Will you be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during your Partner's study period?",
                   "labelPosition": "top",
                   "labelWidth": "",
                   "labelMargin": "",
@@ -2745,7 +2745,7 @@
                     "height": ""
                   },
                   "type": "panel",
-                  "label": "<strong>Will you be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during the your Partner's study period?</strong>",
+                  "label": "Will you be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during the your Partner's study period?",
                   "breadcrumb": "default",
                   "buttonSettings": {
                     "previous": true,
@@ -2759,7 +2759,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "label": "<strong>Enter amount that you will pay during your Partner's study period.</strong>",
+                      "label": "Enter amount that you will pay during your Partner's study period.",
                       "prefix": "$",
                       "mask": false,
                       "spellcheck": true,
@@ -2878,7 +2878,7 @@
                   "id": "e1cacbl"
                 },
                 {
-                  "label": "<strong>Will you be paying for child support and/or spousal support during your Partner's study period?</strong>",
+                  "label": "Will you be paying for child support and/or spousal support during your Partner's study period?",
                   "optionsLabelPosition": "right",
                   "inline": false,
                   "tableView": false,
@@ -3007,7 +3007,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "label": "<strong>Enter amount that you will pay during your Partner's study period.</strong>",
+                      "label": "Enter amount that you will pay during your Partner's study period.",
                       "prefix": "$",
                       "mask": false,
                       "spellcheck": true,
@@ -3125,7 +3125,7 @@
                   "id": "e86cscg"
                 },
                 {
-                  "label": "<strong>Will you be taking care of eligible dependants during your Partner's Study Period? </strong>",
+                  "label": "Will you be taking care of eligible dependants during your Partner's Study Period?",
                   "optionsLabelPosition": "right",
                   "inline": false,
                   "tableView": false,

@@ -7,13 +7,13 @@ import {
 } from "../../services";
 import {
   ApplicationFormData,
-  ApplicationBaseAPIOutDTO,
   ApplicationDataAPIOutDTO,
   SuccessWaitingStatus,
   ApplicationIncomeVerification,
   ApplicationSupportingUserDetails,
   EnrolmentApplicationDetailsAPIOutDTO,
   ApplicationHeaderAPIOutDTO,
+  ApplicationSupplementalDataAPIOutDTO,
 } from "./models/application.dto";
 import {
   credentialTypeToDisplay,
@@ -21,6 +21,7 @@ import {
   getCOEDeniedReason,
   getOfferingNameAndPeriod,
   getPIRDeniedReason,
+  getUserFullName,
 } from "../../utilities";
 import { getDateOnlyFormat } from "@sims/utilities";
 import {
@@ -169,7 +170,7 @@ export class ApplicationControllerService {
    */
   async transformToApplicationDTO(
     application: Application,
-  ): Promise<ApplicationBaseAPIOutDTO> {
+  ): Promise<ApplicationSupplementalDataAPIOutDTO> {
     return {
       data: application.data,
       id: application.id,
@@ -177,6 +178,14 @@ export class ApplicationControllerService {
       applicationNumber: application.applicationNumber,
       applicationFormName: application.programYear.formName,
       applicationProgramYearID: application.programYear.id,
+      studentFullName: getUserFullName(application.student.user),
+      applicationOfferingIntensity:
+        application.currentAssessment?.offering?.offeringIntensity,
+      applicationStartDate:
+        application.currentAssessment?.offering?.studyStartDate,
+      applicationEndDate: application.currentAssessment?.offering?.studyEndDate,
+      applicationInstitutionName:
+        application.location?.institution.legalOperatingName,
     };
   }
 

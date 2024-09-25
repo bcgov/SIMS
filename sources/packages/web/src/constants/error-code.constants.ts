@@ -113,3 +113,8 @@ export const FILE_HAS_NOT_BEEN_SCANNED_YET = "FILE_HAS_NOT_BEEN_SCANNED_YET";
  * File has been scanned and a virus was detected.
  */
 export const VIRUS_DETECTED = "VIRUS_DETECTED";
+
+/**
+ * Invalid beta user.
+ */
+export const INVALID_BETA_USER = "INVALID_BETA_USER";
