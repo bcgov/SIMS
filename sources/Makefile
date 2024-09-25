@@ -92,7 +92,7 @@ export MAXIMUM_IDLE_TIME_FOR_WARNING_AEST :=  $(or $(MAXIMUM_IDLE_TIME_FOR_WARNI
 local-all: | print-status forms camunda local-build-run
 
 local:	| print-status local-build-run
-local-api: | print-status local-build api-only
+local-api: | print-status local-build api
 db: | print-status postgres
 local-redis: | print-status redis
 
