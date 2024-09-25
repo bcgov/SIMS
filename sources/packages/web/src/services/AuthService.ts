@@ -267,14 +267,13 @@ export class AuthService {
         break;
       }
       case ClientIdType.Student: {
-        // Send the user to login page with invalid beta user message instead of dashboard.
-        this.priorityRedirect = {
-          name: StudentRoutesConst.INVALID_BETA_USER,
-        };
-        // Allow the application detect it is not an authenticated user and redirect user to login page.
-        this.keycloak.authenticated = false;
-
         if (options?.invalidBetaUser) {
+          // Send the user to login page with invalid beta user message instead of dashboard.
+          this.priorityRedirect = {
+            name: StudentRoutesConst.INVALID_BETA_USER,
+          };
+          // Allow the application detect it is not an authenticated user and redirect user to login page.
+          this.keycloak.authenticated = false;
           redirectUri += "/login/invalid-beta-user";
         }
         // BCeIDBoth user.
