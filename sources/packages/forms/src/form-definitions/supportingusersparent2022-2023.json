@@ -3248,7 +3248,7 @@
                           "id": "ehv8bb"
                         },
                         {
-                          "label": "<strong>Will this dependant be attending high school or full-time post-secondary school at the start of the Student's study period?</strong>",
+                          "label": "Will this dependant be attending high school or full-time post-secondary school at the start of the Student's study period?",
                           "optionsLabelPosition": "right",
                           "inline": false,
                           "tableView": false,
@@ -3332,7 +3332,7 @@
                           "tags": []
                         },
                         {
-                          "label": "<strong>Did you claim this dependant on their 20xx Income Tax Return due to a disability?</strong>",
+                          "label": "Did you claim this dependant on their 20xx Income Tax Return due to a disability?",
                           "optionsLabelPosition": "right",
                           "inline": false,
                           "tableView": false,

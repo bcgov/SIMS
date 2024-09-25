@@ -583,7 +583,7 @@
                 }
               ],
               "tableView": false,
-              "label": "<strong>Dependants</strong>",
+              "label": "Dependants",
               "key": "dependants",
               "protected": false,
               "persistent": true,
