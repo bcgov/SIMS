@@ -9,40 +9,39 @@
         }"
         subTitle="Application Restriction Management"
       />
-      <p>
+      <div v-if="applicationDetail.applicationNumber">
         <span class="label-bold-normal">Application #: </span>
         <span
           >{{ emptyStringFiller(applicationDetail.applicationNumber) }} |
         </span>
         <span class="label-bold-normal">Institution: </span>
-        <span>{{ applicationDetail.data.selectedLocationName }} | </span>
+        <span>{{ applicationDetail.applicationInstitutionName }} | </span>
         <span class="label-bold-normal">Study Dates: </span>
         <span
-          >{{ dateOnlyLongString(applicationDetail.data.selectedOfferingDate) }}
+          >{{ dateOnlyLongString(applicationDetail.applicationStartDate) }}
           -
-          {{
-            dateOnlyLongString(applicationDetail.data.selectedOfferingEndDate)
-          }}
+          {{ dateOnlyLongString(applicationDetail.applicationEndDate) }}
           |
         </span>
         <span class="label-bold-normal">Type: </span>
         <span
           >{{
-            getOfferingIntensity(
-              applicationDetail.data.howWillYouBeAttendingTheProgram,
-            )
+            getOfferingIntensity(applicationDetail.applicationOfferingIntensity)
           }}
         </span>
-      </p>
+      </div>
     </template>
     <history-bypassed-restrictions
       class="mb-5"
       :applicationId="applicationId"
+      :applicationStatus="applicationDetail.applicationStatus"
       :key="historyKey"
     />
-    <div class="text-center my-3 muted-content">
+    <div class="text-center mt-6">
       <span class="header-text-small">Date submitted: </span
-      ><span class="value-text-small">Date</span>
+      ><span class="value-text-small">{{
+        dateOnlyLongString(applicationDetail.submittedDate)
+      }}</span>
     </div>
   </full-page-container>
 </template>
@@ -52,7 +51,7 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { defineComponent, onMounted, ref } from "vue";
 import HistoryBypassedRestrictions from "@/components/aest/students/bypassedRestrictions/HistoryBypassedRestrictions.vue";
 import { ApplicationService } from "@/services/ApplicationService";
-import { ApplicationBaseAPIOutDTO } from "@/services/http/dto";
+import { ApplicationHeaderAPIOutDTO } from "@/services/http/dto";
 import { useFormatters } from "@/composables";
 
 export default defineComponent({
@@ -72,19 +71,11 @@ export default defineComponent({
   setup(props) {
     const { dateOnlyLongString, emptyStringFiller } = useFormatters();
     const historyKey = ref(0);
-    const applicationDetail = ref({
-      applicationNumber: "-",
-      data: {
-        selectedLocationName: "",
-        selectedOfferingDate: "",
-        selectedOfferingEndDate: "",
-        howWillYouBeAttendingTheProgram: "",
-      },
-    } as ApplicationBaseAPIOutDTO);
+    const applicationDetail = ref({} as ApplicationHeaderAPIOutDTO);
 
     onMounted(async () => {
       applicationDetail.value =
-        await ApplicationService.shared.getApplicationDetail(
+        await ApplicationService.shared.getApplicationHeaderInformation(
           props.applicationId,
         );
     });

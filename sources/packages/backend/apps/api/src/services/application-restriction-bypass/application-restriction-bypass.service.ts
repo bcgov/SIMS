@@ -15,7 +15,7 @@ export class ApplicationRestrictionBypassService extends RecordDataModelService<
   }
 
   /**
-   * Returns all restriction bypasses for a given application.
+   * Returns all application restriction bypasses for a given application.
    * @param applicationId id of the application to retrieve restriction bypasses.
    * @returns application restriction bypasses.
    */

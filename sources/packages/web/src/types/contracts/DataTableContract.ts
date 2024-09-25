@@ -353,9 +353,9 @@ export const CASSupplierInformationHeaders = [
 ];
 
 /**
- * Restriction Management header.
+ * Application Restriction Management header.
  */
-export const RestrictionManagementHeaders = [
+export const ApplicationRestrictionManagementHeaders = [
   {
     title: "Restriction Type",
     sortable: false,

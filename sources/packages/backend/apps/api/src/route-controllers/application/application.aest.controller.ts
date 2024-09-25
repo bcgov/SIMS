@@ -12,6 +12,7 @@ import BaseController from "../BaseController";
 import {
   ApplicationAssessmentStatusDetailsAPIOutDTO,
   ApplicationBaseAPIOutDTO,
+  ApplicationHeaderAPIOutDTO,
 } from "./models/application.dto";
 import {
   AllowAuthorizedParty,
@@ -77,6 +78,32 @@ export class ApplicationAESTController extends BaseController {
         application.data,
       );
     return this.applicationControllerService.transformToApplicationDTO(
+      application,
+    );
+  }
+
+  /**
+   * API to fetch application header information by applicationId.
+   * This API will be used by ministry users.
+   * @param applicationId
+   * @returns Application header information
+   */
+  @Get(":applicationId/header")
+  @ApiNotFoundResponse({ description: "Application not found." })
+  async getApplicationHeaderInformation(
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+  ): Promise<ApplicationHeaderAPIOutDTO> {
+    const application = await this.applicationService.getApplicationById(
+      applicationId,
+      { loadDynamicData: true },
+    );
+    if (!application) {
+      throw new NotFoundException(
+        `Application id ${applicationId} was not found.`,
+      );
+    }
+
+    return this.applicationControllerService.transformToApplicationHeaderForAESTDTO(
       application,
     );
   }

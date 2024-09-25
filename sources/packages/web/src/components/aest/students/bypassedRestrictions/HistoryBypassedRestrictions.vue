@@ -1,8 +1,8 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <template>
-  <v-card class="mb-6">
+  <v-card class="mb-3">
     <v-container>
-      <p class="label-bold-normal mb-0">
+      <p class="label-bold-normal mb-0 text-body-2">
         This feature can be used to ignore specific restrictions for specific
         applications. Restrictions can be ignored for one, or all, disbursements
         associated with an application. If a restriction is ignored, it's effect
@@ -19,11 +19,11 @@
       <body-header title="History of Bypassed Restrictions" class="m-1" />
       <content-group class="mt-4">
         <toggle-content
-          :toggled="!bypassedRestrictions.bypasses.length"
-          message="No bypassed restrictions found."
+          :toggled="!bypassedRestrictions.bypasses.length || isDraftApplication"
+          :message="getToggleContentMessage()"
         >
           <v-data-table
-            :headers="RestrictionManagementHeaders"
+            :headers="ApplicationRestrictionManagementHeaders"
             :items="bypassedRestrictions.bypasses"
             :items-per-page="DEFAULT_PAGE_LIMIT"
           >
@@ -62,11 +62,12 @@
 </template>
 <script lang="ts">
 import {
+  ApplicationStatus,
   DEFAULT_PAGE_LIMIT,
   PAGINATION_LIST,
-  RestrictionManagementHeaders,
+  ApplicationRestrictionManagementHeaders,
 } from "@/types";
-import { ref, onMounted, defineComponent } from "vue";
+import { ref, onMounted, defineComponent, PropType } from "vue";
 import { ApplicationRestrictionBypassHistoryAPIOutDTO } from "@/services/http/dto/ApplicationRestrictionBypass.dto";
 import StatusChipBypass from "@/components/generic/StatusChipBypass.vue";
 import { ApplicationRestrictionBypassService } from "@/services/ApplicationRestrictionBypassService";
@@ -80,16 +81,24 @@ export default defineComponent({
       type: Number,
       required: true,
     },
+    applicationStatus: {
+      type: String as PropType<ApplicationStatus>,
+      required: true,
+    },
   },
   setup(props) {
+    const isDraftApplication =
+      props.applicationStatus === ApplicationStatus.Draft;
     const bypassedRestrictions = ref({
       bypasses: [],
     } as ApplicationRestrictionBypassHistoryAPIOutDTO);
     onMounted(async () => {
-      bypassedRestrictions.value =
-        await ApplicationRestrictionBypassService.shared.getApplicationRestrictionBypassesHistory(
-          props.applicationId,
-        );
+      if (!isDraftApplication) {
+        bypassedRestrictions.value =
+          await ApplicationRestrictionBypassService.shared.getApplicationRestrictionBypassesHistory(
+            props.applicationId,
+          );
+      }
     });
 
     const getRemoveBypassLabel = (isActive: boolean): string => {
@@ -100,13 +109,24 @@ export default defineComponent({
       return isBypassActive ? "primary" : "secondary";
     };
 
+    const getToggleContentMessage = (): string => {
+      if (props.applicationStatus === ApplicationStatus.Draft) {
+        return "Bypass restriction disabled for draft applications.";
+      } else if (!bypassedRestrictions.value.bypasses.length) {
+        return "No bypassed restrictions found.";
+      }
+      return "";
+    };
+
     return {
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
+      isDraftApplication,
       bypassedRestrictions,
       getRemoveBypassLabel,
       getRemoveBypassColor,
-      RestrictionManagementHeaders,
+      getToggleContentMessage,
+      ApplicationRestrictionManagementHeaders,
     };
   },
 });
