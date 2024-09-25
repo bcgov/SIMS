@@ -14,6 +14,8 @@ export MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER := $(or $(MAXIMUM_IDLE_TIME
 export MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION :=$(or $(MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION), 3600)
 export MAXIMUM_IDLE_TIME_FOR_WARNING_AEST := $(or $(MAXIMUM_IDLE_TIME_FOR_WARNING_AEST), 3600)
 
+export ALLOW_BETA_USERS_ONLY :=$(or $(ALLOW_BETA_USERS_ONLY), false)
+
 backend-unit-tests:
 	@cd ../packages/backend && npm i && npm run test:cov
 
@@ -32,7 +34,7 @@ e2e-tests-workers:
 	@docker cp workers-e2e-$(BUILD_REF):app/apps/workers/coverage/clover.xml coverage/workers
 	@docker rm workers-e2e-$(BUILD_REF)
 	@docker compose down --rmi all -v
-	
+
 e2e-tests-queue-consumers:
 	@echo "+\n++ Make: Starting containers for Queue Consumers E2E tests \n+"
 	@docker compose run --name queue-consumers-e2e-$(BUILD_REF) queue-consumers npm run test:e2e:queue-consumers

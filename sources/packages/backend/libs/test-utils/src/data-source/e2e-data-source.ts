@@ -54,6 +54,7 @@ import {
   ECertFeedbackError,
   CASSupplier,
   ApplicationRestrictionBypass,
+  BetaUsersAuthorizations,
 } from "@sims/sims-db";
 import { DataSource, Repository } from "typeorm";
 
@@ -75,6 +76,7 @@ export function createE2EDataSources(dataSource: DataSource): E2EDataSources {
     applicationRestrictionBypass: dataSource.getRepository(
       ApplicationRestrictionBypass,
     ),
+    betaUsersAuthorizations: dataSource.getRepository(BetaUsersAuthorizations),
     casSupplier: dataSource.getRepository(CASSupplier),
     coeDeniedReason: dataSource.getRepository(COEDeniedReason),
     craIncomeVerification: dataSource.getRepository(CRAIncomeVerification),
@@ -158,6 +160,7 @@ export interface E2EDataSources {
   applicationException: Repository<ApplicationException>;
   applicationStudentFile: Repository<ApplicationStudentFile>;
   applicationRestrictionBypass: Repository<ApplicationRestrictionBypass>;
+  betaUsersAuthorizations: Repository<BetaUsersAuthorizations>;
   casSupplier: Repository<CASSupplier>;
   coeDeniedReason: Repository<COEDeniedReason>;
   craIncomeVerification: Repository<CRAIncomeVerification>;
