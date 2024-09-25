@@ -270,9 +270,15 @@ export class AuthService {
         if (options?.invalidBetaUser) {
           redirectUri += "/login/invalid-beta-user";
         }
+        // BCeIDBoth user.
         if (this.userToken?.identityProvider === IdentityProviders.BCeIDBoth) {
           await this.executeSiteminderLogoff(redirectUri);
+          break;
         }
+        // BCSC user.
+        await this.keycloak.logout({
+          redirectUri,
+        });
         break;
       }
       default:
