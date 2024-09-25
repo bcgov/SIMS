@@ -50,7 +50,10 @@ export class ApplicationService {
     applicationId: number,
     loadDynamicData?: boolean,
   ): Promise<ApplicationSupplementalDataAPIOutDTO> {
-    return ApiClient.Application.getApplication(applicationId, loadDynamicData);
+    return ApiClient.Application.getApplicationData(
+      applicationId,
+      loadDynamicData,
+    );
   }
 
   async createApplicationDraft(

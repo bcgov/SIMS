@@ -19,40 +19,22 @@ export default defineComponent({
   },
   setup(props) {
     const applicationData = ref<ApplicationSupplementalDataAPIOutDTO>();
-    const headerMap = ref<Record<string, string>>({});
+    const headerMap = ref<Record<string, string | undefined>>({});
     const { dateOnlyLongString } = useFormatters();
 
     const mapApplicationHeader = (
       application: ApplicationSupplementalDataAPIOutDTO,
-    ): Record<string, string> => {
-      if (
-        application.applicationNumber &&
-        application.applicationInstitutionName
-      ) {
-        if (
-          application.applicationStartDate &&
-          application.applicationEndDate &&
-          application.applicationOfferingIntensity
-        ) {
-          return {
-            Name: application.studentFullName,
-            "Application number": application.applicationNumber,
-            Institution: application.applicationInstitutionName,
-            "Study dates": `${dateOnlyLongString(
-              application.applicationStartDate,
-            )} - ${dateOnlyLongString(application.applicationEndDate)}`,
-            Type: application.applicationOfferingIntensity,
-          };
-        }
-
-        return {
-          Name: application.studentFullName,
-          "Application number": application.applicationNumber,
-          Institution: application.applicationInstitutionName,
-        };
-      }
+    ): Record<string, string | undefined> => {
       return {
         Name: application.studentFullName,
+        "Application number": application.applicationNumber,
+        Institution: application.applicationInstitutionName,
+        "Study dates": application.applicationOfferingIntensity
+          ? `${dateOnlyLongString(
+              application.applicationStartDate,
+            )} - ${dateOnlyLongString(application.applicationEndDate)}`
+          : undefined,
+        Type: application.applicationOfferingIntensity,
       };
     };
 

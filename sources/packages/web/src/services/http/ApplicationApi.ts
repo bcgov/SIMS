@@ -26,21 +26,24 @@ import {
 export class ApplicationApi extends HttpBaseClient {
   async getApplicationData(
     applicationId: number,
-  ): Promise<ApplicationDataAPIOutDTO> {
-    return this.getCall<ApplicationDataAPIOutDTO>(
-      this.addClientRoot(`application/${applicationId}`),
-    );
-  }
+  ): Promise<ApplicationDataAPIOutDTO>;
 
-  async getApplication(
+  async getApplicationData(
     applicationId: number,
     loadDynamicData?: boolean,
-  ): Promise<ApplicationSupplementalDataAPIOutDTO> {
+  ): Promise<ApplicationSupplementalDataAPIOutDTO>;
+
+  async getApplicationData(
+    applicationId: number,
+    loadDynamicData?: boolean,
+  ): Promise<ApplicationDataAPIOutDTO | ApplicationSupplementalDataAPIOutDTO> {
     let url = this.addClientRoot(`application/${applicationId}`);
     if (loadDynamicData) {
       url = `${url}?loadDynamicData=${loadDynamicData}`;
     }
-    return this.getCall<ApplicationSupplementalDataAPIOutDTO>(url);
+    return this.getCall<
+      ApplicationDataAPIOutDTO | ApplicationSupplementalDataAPIOutDTO
+    >(url);
   }
 
   async cancelStudentApplication(applicationId: number): Promise<void> {
