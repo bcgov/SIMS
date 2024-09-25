@@ -715,3 +715,8 @@
 .no-required-field-sign label.form-check-label:before {
   content: none !important;
 }
+
+// Add some spacing between the wizard navigation and wizard content.
+.wizard-page {
+  margin-top: 15px;
+}

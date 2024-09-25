@@ -68,8 +68,8 @@
                           "label": "HTML",
                           "labelWidth": "",
                           "labelMargin": "",
-                          "tag": "p",
-                          "className": "",
+                          "tag": "h2",
+                          "className": "category-header-large primary-color",
                           "attrs": [
                             {
                               "attr": "",
@@ -78,7 +78,7 @@
                           ],
                           "content": "Get started on your application",
                           "refreshOnChange": false,
-                          "customClass": "header-lg",
+                          "customClass": "",
                           "hidden": false,
                           "modalEdit": false,
                           "key": "html109",
@@ -642,8 +642,8 @@
       "components": [
         {
           "label": "HTML",
-          "tag": "p",
-          "className": "",
+          "tag": "h2",
+          "className": "category-header-large primary-color",
           "attrs": [
             {
               "attr": "",
@@ -652,7 +652,7 @@
           ],
           "content": "Select your program",
           "refreshOnChange": false,
-          "customClass": "header-lg",
+          "customClass": "",
           "hidden": false,
           "modalEdit": false,
           "key": "html9",
@@ -2377,7 +2377,7 @@
                         {
                           "components": [
                             {
-                              "label": "<strong>Start date</strong>",
+                              "label": "Start date",
                               "labelPosition": "top",
                               "labelWidth": "",
                               "labelMargin": "",
@@ -2492,7 +2492,7 @@
                         {
                           "components": [
                             {
-                              "label": "<strong>End date</strong>",
+                              "label": "End date",
                               "placeholder": "Select date",
                               "widget": {
                                 "type": "calendar",
@@ -6894,7 +6894,7 @@
               "id": "eopc569"
             },
             {
-              "label": "<strong>What is your citizenship status?</strong>",
+              "label": "What is your citizenship status?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -8213,7 +8213,7 @@
               "lazyLoad": false
             },
             {
-              "label": "<strong>Are you a resident of B.C.?</strong>",
+              "label": "Are you a resident of B.C.?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -9624,7 +9624,7 @@
               "tags": []
             },
             {
-              "label": "<strong>Do you identify as an Indigenous person; that is, First Nations, Métis or Inuit?</strong>",
+              "label": "Do you identify as an Indigenous person; that is, First Nations, Métis or Inuit?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -9749,7 +9749,7 @@
                   "autofocus": false,
                   "input": true,
                   "tableView": true,
-                  "label": "<strong>If you identify as an Indigenous person, are you: (select all that apply)</strong>",
+                  "label": "If you identify as an Indigenous person, are you: (select all that apply)",
                   "key": "aboriginalHeritage",
                   "values": [
                     {
@@ -10042,7 +10042,7 @@
                   "input": true,
                   "tableView": true,
                   "inputType": "radio",
-                  "label": "<strong>Are you, or were you at the time of your 19th birthday, in continuing care or custody of a director of child welfare in B.C.?</strong>",
+                  "label": "Are you, or were you at the time of your 19th birthday, in continuing care or custody of a director of child welfare in B.C.?",
                   "key": "custodyOfChildWelfare",
                   "values": [
                     {
@@ -10096,7 +10096,7 @@
               "customConditional": "show = (data.howWillYouBeAttendingTheProgram !== \"Part Time\" \n       && data.youthInCare === \"yes\");"
             },
             {
-              "label": "<strong>At the time of your course study start date, will you have been out of high school for 4 years?</strong>",
+              "label": "At the time of your course study start date, will you have been out of high school for 4 years?",
               "labelPosition": "top",
               "optionsLabelPosition": "right",
               "description": "",
@@ -10186,7 +10186,7 @@
               "addons": []
             },
             {
-              "label": "<strong>When did you graduate or leave high-school?</strong>",
+              "label": "When did you graduate or leave high-school?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -10769,7 +10769,7 @@
               "id": "e7vkza"
             },
             {
-              "label": "<strong>In the time since you left high school to your first day of classes, have you spent two periods of 12 consecutive months each, in the full time labour force?</strong>",
+              "label": "In the time since you left high school to your first day of classes, have you spent two periods of 12 consecutive months each, in the full time labour force?",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -10970,7 +10970,7 @@
               "id": "eklgmng"
             },
             {
-              "label": "<strong>Do you want to authorize a trusted contact to access information about this application on your behalf?</strong>",
+              "label": "Do you want to authorize a trusted contact to access information about this application on your behalf?",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -11466,7 +11466,7 @@
                       "tags": []
                     },
                     {
-                      "label": "<strong>What is your relationship with this contact?</strong>",
+                      "label": "What is your relationship with this contact?",
                       "labelPosition": "top",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -12618,7 +12618,7 @@
               "id": "eamewph"
             },
             {
-              "label": "<strong>What is your marital status?</strong>",
+              "label": "What is your marital status?",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": true,
@@ -12710,7 +12710,7 @@
               "tags": []
             },
             {
-              "label": "<strong>Do you have any eligible dependants?</strong>",
+              "label": "Do you have any eligible dependants?",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": true,
@@ -12901,7 +12901,7 @@
                   "id": "e170v1"
                 },
                 {
-                  "label": "<strong>Dependants</strong>",
+                  "label": "Dependants",
                   "reorder": false,
                   "addAnother": "Add Another Dependant",
                   "addAnotherPosition": "bottom",
@@ -12920,7 +12920,7 @@
                     }
                   ],
                   "validate": {
-                    "required": true,
+                    "required": false,
                     "custom": "",
                     "customPrivate": false,
                     "strictDateValidation": false,
@@ -13206,7 +13206,7 @@
                           "id": "e2m404f"
                         },
                         {
-                          "label": "<strong>Is dependant attending post-secondary?</strong>",
+                          "label": "Is dependant attending post-secondary?",
                           "labelPosition": "top",
                           "labelWidth": "",
                           "labelMargin": "",
@@ -13301,7 +13301,7 @@
                           "defaultValue": ""
                         },
                         {
-                          "label": "<strong>Declared on taxes due to a disability</strong>",
+                          "label": "Declared on taxes due to a disability",
                           "optionsLabelPosition": "right",
                           "inline": false,
                           "tableView": false,
@@ -14344,7 +14344,7 @@
               "id": "esww5zq"
             },
             {
-              "label": "<strong>Are any of the dependants listed above supported by you financially but not under your sole custody?</strong>",
+              "label": "Are any of the dependants listed above supported by you financially but not under your sole custody?",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -16327,7 +16327,7 @@
               "tags": []
             },
             {
-              "label": "<strong>Will your partner be employed full-time or part-time during your study period</strong>",
+              "label": "Will your partner be employed full-time or part-time during your study period",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -16422,7 +16422,7 @@
               "defaultValue": ""
             },
             {
-              "label": "<strong>Will your partner be at home caring for eligible dependent children on a full-time basis during your entire study period? </strong>",
+              "label": "Will your partner be at home caring for eligible dependent children on a full-time basis during your entire study period?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -16517,7 +16517,7 @@
               "defaultValue": ""
             },
             {
-              "label": "<strong>Will your partner be living with you during your study period?</strong>",
+              "label": "Will your partner be living with you during your study period?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -16612,7 +16612,7 @@
               "defaultValue": ""
             },
             {
-              "label": "<strong>Will your partner be a full-time post-secondary student for some or all of your study period?</strong>",
+              "label": "Will your partner be a full-time post-secondary student for some or all of your study period?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -16728,7 +16728,7 @@
               "tableView": false,
               "components": [
                 {
-                  "label": "<strong>If your partner will be a full-time student, how many weeks of your study period will they also be in studies?</strong>",
+                  "label": "If your partner will be a full-time student, how many weeks of your study period will they also be in studies?",
                   "labelPosition": "top",
                   "labelWidth": "",
                   "labelMargin": "",
@@ -16879,7 +16879,7 @@
               "id": "eum6wts"
             },
             {
-              "label": "<strong>Will your partner be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during your study period?</strong>",
+              "label": "Will your partner be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during your study period?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -16995,7 +16995,7 @@
               "tableView": false,
               "components": [
                 {
-                  "label": "<strong>Enter amount that your partner will pay during your study period.</strong>",
+                  "label": "Enter amount that your partner will pay during your study period.",
                   "prefix": "$",
                   "mask": false,
                   "spellcheck": true,
@@ -17135,7 +17135,7 @@
               "id": "e5j24i"
             },
             {
-              "label": "<strong>Will your partner be paying for child support and/or spousal support during your study period?</strong>",
+              "label": "Will your partner be paying for child support and/or spousal support during your study period?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -17251,7 +17251,7 @@
               "tableView": false,
               "components": [
                 {
-                  "label": "<strong>Enter amount that your partner will pay during your study period.</strong>",
+                  "label": "Enter amount that your partner will pay during your study period.",
                   "prefix": "$",
                   "mask": false,
                   "spellcheck": true,
@@ -17391,7 +17391,7 @@
               "id": "ei7pb6"
             },
             {
-              "label": "<strong>Durring your study period, will your partner be taking care of eligible dependants? </strong>",
+              "label": "Durring your study period, will your partner be taking care of eligible dependants?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -17910,7 +17910,7 @@
               "tags": []
             },
             {
-              "label": "<strong>Is your parent(s)/step-parent/sponsor/legal guardian a resident of B.C.?</strong>",
+              "label": "Is your parent(s)/step-parent/sponsor/legal guardian a resident of B.C.?",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -18006,7 +18006,7 @@
               "lockKey": true
             },
             {
-              "label": "<strong>Does your parent(s)/step-parent/sponsor/legal guardian have a valid Social Insurance Number?</strong>",
+              "label": "Does your parent(s)/step-parent/sponsor/legal guardian have a valid Social Insurance Number?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -18101,7 +18101,7 @@
               "defaultValue": ""
             },
             {
-              "label": "<strong>How many parents do you live with?</strong>",
+              "label": "How many parents do you live with?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -19290,7 +19290,7 @@
                       "input": true,
                       "components": [
                         {
-                          "label": "<strong>Age at start of your study period</strong>",
+                          "label": "Age at start of your study period",
                           "mask": false,
                           "spellcheck": true,
                           "tableView": false,
@@ -19370,7 +19370,7 @@
                           "lockKey": true
                         },
                         {
-                          "label": "<strong>Will this dependant be attending high school or full-time post-secondary school at the start of your study period?</strong>",
+                          "label": "Will this dependant be attending high school or full-time post-secondary school at the start of your study period?",
                           "optionsLabelPosition": "right",
                           "inline": false,
                           "tableView": false,
@@ -19455,7 +19455,7 @@
                           "lockKey": true
                         },
                         {
-                          "label": "<strong>Did you parent(s) claim this dependant on their 20xx Income Tax Return due to a disability?</strong>",
+                          "label": "Did you parent(s) claim this dependant on their 20xx Income Tax Return due to a disability?",
                           "optionsLabelPosition": "right",
                           "inline": false,
                           "tableView": false,
@@ -19993,7 +19993,7 @@
               "className": ""
             },
             {
-              "label": "<strong>Please select the date you were estranged from your parents</strong>",
+              "label": "Please select the date you were estranged from your parents",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -20911,7 +20911,7 @@
                   "id": "e9k29ch"
                 },
                 {
-                  "label": "<strong>Which of the following best describes your situation?</strong>",
+                  "label": "Which of the following best describes your situation?",
                   "labelPosition": "top",
                   "labelWidth": "",
                   "labelMargin": "",
@@ -22807,7 +22807,7 @@
               "input": true,
               "tableView": true,
               "inputType": "radio",
-              "label": "<strong>Do you want to receive loans and grants, or only grants?</strong>",
+              "label": "Do you want to receive loans and grants, or only grants?",
               "key": "partTimeAwardTypesToBeConsidered",
               "values": [
                 {
@@ -23116,7 +23116,7 @@
               "addons": []
             },
             {
-              "label": "<strong>Do you want to be assessed with this year's estimated income?</strong>",
+              "label": "Do you want to be assessed with this year's estimated income?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -23521,7 +23521,7 @@
                   "lockKey": true
                 },
                 {
-                  "label": "<strong>Select the reason for your significant decrease in income.</strong>",
+                  "label": "Select the reason for your significant decrease in income.",
                   "labelPosition": "top",
                   "labelWidth": "",
                   "labelMargin": "",
@@ -23681,7 +23681,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "label": "<strong>Please explain your situation:</strong>",
+                      "label": "Please explain your situation:",
                       "placeholder": "Type of expense, when expenses occurred and amount",
                       "autoExpand": false,
                       "tableView": true,
@@ -24272,7 +24272,7 @@
               "className": ""
             },
             {
-              "label": "<strong>Do you want to submit an exemption request for exceptional expenses?</strong>",
+              "label": "Do you want to submit an exemption request for exceptional expenses?",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -24596,7 +24596,7 @@
                   "className": ""
                 },
                 {
-                  "label": "<strong>Select the reason for your significant decrease in income:</strong>",
+                  "label": "Select the reason for your significant decrease in income:",
                   "optionsLabelPosition": "right",
                   "inline": false,
                   "tableView": false,
@@ -25660,7 +25660,7 @@
               "id": "elcakd"
             },
             {
-              "label": "<strong>Will you have a child age 11 years or under in daycare? </strong>",
+              "label": "Will you have a child age 11 years or under in daycare?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -25801,7 +25801,7 @@
               "tableView": false,
               "components": [
                 {
-                  "label": "<strong>What are the daycare costs that you incur for your child(ren) age 11 years or under?</strong>",
+                  "label": "What are the daycare costs that you incur for your child(ren) age 11 years or under?",
                   "labelPosition": "top",
                   "labelWidth": "",
                   "labelMargin": "",
@@ -25937,7 +25937,7 @@
               "lazyLoad": false
             },
             {
-              "label": "<strong>Will you have unsubsidized day-care costs during class hours for disabled/infirm dependants 12 years of age or older? </strong>",
+              "label": "Will you have unsubsidized day-care costs during class hours for disabled/infirm dependants 12 years of age or older?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -26077,7 +26077,7 @@
               "tableView": false,
               "components": [
                 {
-                  "label": "<strong>What are the total unsubsidized day-care costs during class hours for the proposed study period for disabled/infirm dependants 12 years of age and older?</strong>",
+                  "label": "What are the total unsubsidized day-care costs during class hours for the proposed study period for disabled/infirm dependants 12 years of age and older?",
                   "labelPosition": "top",
                   "labelWidth": "",
                   "labelMargin": "",
@@ -26213,7 +26213,7 @@
               "lazyLoad": false
             },
             {
-              "label": "<strong>Will you be paying child support and/or spousal support during your study period?</strong>",
+              "label": "Will you be paying child support and/or spousal support during your study period?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -26330,7 +26330,7 @@
               "tableView": false,
               "components": [
                 {
-                  "label": "<strong>Enter the amount that you will pay during your study period.</strong>",
+                  "label": "Enter the amount that you will pay during your study period.",
                   "labelPosition": "top",
                   "labelWidth": "",
                   "labelMargin": "",
@@ -26645,7 +26645,7 @@
               "id": "esfpv1r"
             },
             {
-              "label": "<strong>Will you have merit-based scholarships or need-based bursaries, including provincial government scholarships received during your study period?</strong>",
+              "label": "Will you have merit-based scholarships or need-based bursaries, including provincial government scholarships received during your study period?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -26902,7 +26902,7 @@
               "id": "e8zng0a"
             },
             {
-              "label": "<strong>Will you receive voluntary contributions from parent(s)/step-parent/sponsor/legal guardian?</strong>",
+              "label": "Will you receive voluntary contributions from parent(s)/step-parent/sponsor/legal guardian?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -27159,7 +27159,7 @@
               "id": "eghibs"
             },
             {
-              "label": "<strong>Will you have government funding (e.g., E.I. training allowance, social assistance payment intended to cover education -related costs) during your study period?</strong>",
+              "label": "Will you have government funding (e.g., E.I. training allowance, social assistance payment intended to cover education -related costs) during your study period?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -27415,7 +27415,7 @@
               "id": "eqfw6u"
             },
             {
-              "label": "<strong>Will you have non-government (private sector) funding (e.g., employer) during your study period?</strong>",
+              "label": "Will you have non-government (private sector) funding (e.g., employer) during your study period?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -27672,7 +27672,7 @@
               "id": "ekjho6l"
             },
             {
-              "label": "<strong>Will you have B.C. income assistance for persons with disabilities that you will be receiving under the Employment and Assistance for Persons with Disabilities Act during your study period?</strong>",
+              "label": "Will you have B.C. income assistance for persons with disabilities that you will be receiving under the Employment and Assistance for Persons with Disabilities Act during your study period?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -28046,7 +28046,7 @@
               "id": "eo59fct"
             },
             {
-              "label": "<strong>Will you be living in a home paid for by your parent(s)/step-parent/sponsor/legal guardian during your study period?</strong>",
+              "label": "Will you be living in a home paid for by your parent(s)/step-parent/sponsor/legal guardian during your study period?",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": true,
@@ -28147,7 +28147,7 @@
               "tableView": false,
               "components": [
                 {
-                  "label": "<strong>Will you be paying room and board (rent) to your parent(s)/step-parent/sponsor/legal guardian?</strong>",
+                  "label": "Will you be paying room and board (rent) to your parent(s)/step-parent/sponsor/legal guardian?",
                   "optionsLabelPosition": "right",
                   "inline": false,
                   "tableView": false,
@@ -28472,7 +28472,7 @@
                       "className": ""
                     },
                     {
-                      "label": "<strong>Which of the following best describes your parent(s)/step-parent/sponsor/legal guardian situation?</strong>",
+                      "label": "Which of the following best describes your parent(s)/step-parent/sponsor/legal guardian situation?",
                       "optionsLabelPosition": "right",
                       "inline": false,
                       "tableView": false,
@@ -28568,7 +28568,7 @@
                       "lockKey": true
                     },
                     {
-                      "label": "<strong>Please explain your situation:</strong>",
+                      "label": "Please explain your situation:",
                       "autoExpand": false,
                       "tableView": true,
                       "key": "livingAtHomeRentOtherDescription",
@@ -28879,7 +28879,7 @@
                       "className": ""
                     },
                     {
-                      "label": "<strong>Upload supporting documents (optional):</strong>",
+                      "label": "Upload supporting documents (optional):",
                       "hideLabel": true,
                       "tableView": false,
                       "storage": "url",
@@ -29504,7 +29504,7 @@
               "addons": []
             },
             {
-              "label": "<strong>If you must relocate to a different city to attend school, do you want to provide a cost to be considered?</strong>",
+              "label": "If you must relocate to a different city to attend school, do you want to provide a cost to be considered?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -29620,7 +29620,7 @@
               "tableView": false,
               "components": [
                 {
-                  "label": "<strong>If you must relocate to a different city to attend school and you will return home at least once during your study period, what is the cost of one return trip home?</strong>",
+                  "label": "If you must relocate to a different city to attend school and you will return home at least once during your study period, what is the cost of one return trip home?",
                   "prefix": "$",
                   "mask": false,
                   "spellcheck": true,
@@ -30003,7 +30003,7 @@
               "addons": []
             },
             {
-              "label": "<strong>Do you want to be assessed for additional transportation costs?</strong>",
+              "label": "Do you want to be assessed for additional transportation costs?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -30097,7 +30097,7 @@
               "lockKey": true
             },
             {
-              "label": "<strong>Are you listed as a driver on the insurance for the vehicle you will be using?</strong>",
+              "label": "Are you listed as a driver on the insurance for the vehicle you will be using?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -30323,7 +30323,7 @@
                   "tags": []
                 },
                 {
-                  "label": "<strong>Are you the owner of the vehicle?</strong>",
+                  "label": "Are you the owner of the vehicle?",
                   "labelPosition": "top",
                   "labelWidth": "",
                   "labelMargin": "",
@@ -30416,7 +30416,7 @@
                   "lockKey": true
                 },
                 {
-                  "label": "<strong>Which of the following best describes your situation?</strong>",
+                  "label": "Which of the following best describes your situation?",
                   "optionsLabelPosition": "right",
                   "inline": false,
                   "tableView": false,

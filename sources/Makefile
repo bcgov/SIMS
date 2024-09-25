@@ -95,7 +95,7 @@ export ALLOW_BETA_USERS_ONLY := $(or $(ALLOW_BETA_USERS_ONLY), false)
 local-all: | print-status forms camunda local-build-run
 
 local:	| print-status local-build-run
-local-api: | print-status local-build api-only
+local-api: | print-status local-build api
 db: | print-status postgres
 local-redis: | print-status redis
 
@@ -171,23 +171,14 @@ redis:
 	@docker compose -f docker-compose.yml up redis
 
 # Local API only
-api-only:
+api:
 	@echo "+\n++ Make: Building and running API only"
-	@docker compose -f docker-compose.yml up api
-
-# Local App
-api: ## <Helper> :: Executes into the workspace container.
-	@echo "+\n++Shelling into local workspace ...++\n+"
-	@docker compose exec api bash
+	@docker compose -f docker-compose.yml up --build -d api
 
 # Local Web (nginx)
-web-local:
+web:
 	@echo "+\n++ Make: Run local web (nginx).\n+"
 	@docker compose -f docker-compose.yml up --build -d web
-
-local-db:
-	@echo "Make: Shelling into database workspace ..."
-	@docker compose -f docker-compose.yml exec postgres psql -U $(POSTGRESQL_USER) -W $(POSTGRES_DB)
 
 # Build and run Camunda locally.
 camunda:
@@ -246,7 +237,7 @@ workers:
 	@docker compose -f docker-compose.yml build workers
 	@docker compose -f docker-compose.yml up -d workers
 
-# Enable local DB connection to Openshift DEV/TEST/QA/STG/PROD
+# Enable local DB connection to Openshift DEV/TEST/STG/PROD
 connect-dev-db:
 	@echo "Forward local port 5454 to Openshift simsdb-pgbouncer default port."
 	@echo "Use your prefered DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5454."
