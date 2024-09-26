@@ -3,7 +3,10 @@
 </template>
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
-import { useRestrictionBypass } from "@/composables";
+import {
+  useRestrictionBypassLabel,
+  useRestrictionBypassStatus,
+} from "@/composables";
 import ChipStatus from "@/components/generic/ChipStatus.vue";
 
 export default defineComponent({
@@ -15,7 +18,9 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { mapBypassStatus, mapBypassLabel } = useRestrictionBypass();
+    const { mapBypassStatus } = useRestrictionBypassStatus();
+    const { mapBypassLabel } = useRestrictionBypassLabel();
+
     const bypassStatus = computed(() =>
       mapBypassLabel(props.isRestrictionActive),
     );

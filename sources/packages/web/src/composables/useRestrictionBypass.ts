@@ -1,12 +1,16 @@
 import { BypassStatusChipLabelTypes, StatusChipTypes } from "@/types";
 
-export function useRestrictionBypass() {
+export function useRestrictionBypassStatus() {
   const mapBypassStatus = (isRestrictionActive: boolean): StatusChipTypes => {
     return isRestrictionActive
       ? StatusChipTypes.Warning
       : StatusChipTypes.Success;
   };
 
+  return { mapBypassStatus };
+}
+
+export function useRestrictionBypassLabel() {
   const mapBypassLabel = (
     isRestrictionActive: boolean,
   ): BypassStatusChipLabelTypes => {
@@ -14,5 +18,5 @@ export function useRestrictionBypass() {
       ? BypassStatusChipLabelTypes.Active
       : BypassStatusChipLabelTypes.Removed;
   };
-  return { mapBypassStatus, mapBypassLabel };
+  return { mapBypassLabel };
 }
