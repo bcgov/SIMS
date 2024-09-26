@@ -6,6 +6,7 @@ import {
   User,
   StudentAssessment,
   StudentAssessmentStatus,
+  DisabilityStatus,
 } from "@sims/sims-db";
 import { ConfigService } from "@sims/utilities/config";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -152,5 +153,31 @@ export class ApplicationService {
         .orderBy("studentAssessment.createdAt")
         .getMany()
     );
+  }
+
+  async getEligibleApplicationsForNotification(): Promise<Application[]> {
+    const eightWeeksFromNow = new Date();
+    eightWeeksFromNow.setDate(eightWeeksFromNow.getDate() + 56); // 8 weeks * 7 days
+
+    return this.applicationRepo
+      .createQueryBuilder("application")
+      .leftJoinAndSelect("application.currentAssessment", "currentAssessment")
+      .leftJoinAndSelect("application.studentAssessments", "studentAssessments")
+      .leftJoinAndSelect("application.disbursements", "disbursements")
+      .leftJoinAndSelect("application.student", "student")
+      .leftJoinAndSelect("student.disabilityStatus", "disabilityStatus")
+      .where("application.archiveDate IS NULL")
+      .andWhere("application.studyEndDate <= :eightWeeksFromNow", {
+        eightWeeksFromNow,
+      })
+      .andWhere("disbursements.disbursementDate IS NULL")
+      .andWhere("studentAssessments.notificationSentDate IS NULL")
+      .andWhere("currentAssessment.calculatedPDPPDStatus = :calculatedStatus", {
+        calculatedStatus: true,
+      })
+      .andWhere("disabilityStatus.status NOT IN (:...pdppdStatuses)", {
+        pdppdStatuses: [DisabilityStatus.PD, DisabilityStatus.PPD],
+      })
+      .getMany();
   }
 }

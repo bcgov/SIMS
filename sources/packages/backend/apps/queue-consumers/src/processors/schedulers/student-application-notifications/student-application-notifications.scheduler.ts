@@ -12,6 +12,9 @@ import {
   logProcessSummaryToJobLogger,
 } from "../../../utilities";
 import { QueueNames } from "@sims/utilities";
+import { ApplicationService } from "../../../services";
+import { DisabilityStatus } from "@sims/sims-db";
+import { NotificationService } from "@sims/services/notifications";
 
 @Processor(QueueNames.StudentApplicationNotifications)
 export class StudentApplicationNotificationsScheduler extends BaseScheduler<void> {
@@ -19,6 +22,8 @@ export class StudentApplicationNotificationsScheduler extends BaseScheduler<void
     @InjectQueue(QueueNames.StudentApplicationNotifications)
     schedulerQueue: Queue<void>,
     queueService: QueueService,
+    private readonly applicationService: ApplicationService,
+    private readonly notificationService: NotificationService,
   ) {
     super(schedulerQueue, queueService);
   }
@@ -29,9 +34,31 @@ export class StudentApplicationNotificationsScheduler extends BaseScheduler<void
 
     try {
       this.logger.log(
-        `Processing application changes report integration job. Job id: ${job.id} and Job name: ${job.name}.`,
+        `Processing student application notifications job. Job id: ${job.id} and Job name: ${job.name}.`,
       );
-      // TODO: Processing implementation of application changes report.
+
+      const eligibleApplications =
+        await this.applicationService.getEligibleApplicationsForNotification();
+
+      // for (const application of eligibleApplications) {
+      //   const disabilityStatusMismatch =
+      //     application.disabilityDetails.calculatedPDPPDStatus &&
+      //     ![DisabilityStatus.PD, DisabilityStatus.PPD].includes(
+      //       application.disabilityDetails.studentProfileDisabilityStatus,
+      //     );
+
+      //   if (disabilityStatusMismatch) {
+      //     await this.notificationService.sendDisabilityStatusMismatchNotification(
+      //       application,
+      //     );
+      //     await this.applicationService.markNotificationSent(application.id);
+      //   }
+      // }
+
+      processSummary.info(
+        `Processed ${eligibleApplications.length} applications.`,
+      );
+
       return getSuccessMessageWithAttentionCheck(
         ["Process finalized with success."],
         processSummary,
