@@ -1,33 +1,18 @@
-import { RestrictionType } from "@/types";
-
 /**
- * DTO class for AEST application restriction bypass summary.
+ * AEST application restriction bypass summary.
  */
-export class ApplicationRestrictionBypassSummary {
+export interface ApplicationRestrictionBypassSummary {
   id: number;
-  restrictionType: RestrictionType;
+  restrictionType: string;
   restrictionCode: string;
-  isActive: boolean;
+  restrictionCategory: boolean;
+  isRestrictionActive: boolean;
   isBypassActive: boolean;
 }
 
 /**
- * DTO class for AEST application restriction bypass history.
+ * AEST application restriction bypass history.
  */
-export class ApplicationRestrictionBypassHistoryAPIOutDTO {
+export interface ApplicationRestrictionBypassHistoryAPIOutDTO {
   bypasses: ApplicationRestrictionBypassSummary[];
-}
-
-/**
- * Indicates if the bypassed restriction is active or removed.
- */
-export enum ApplicationRestrictionBypassStatus {
-  /**
-   * Bypassed restriction is active.
-   */
-  Active = "Active",
-  /**
-   * Bypassed restriction is removed.
-   */
-  Removed = "Removed",
 }

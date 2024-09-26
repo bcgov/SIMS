@@ -365,7 +365,7 @@ export const ApplicationRestrictionManagementHeaders = [
   {
     title: "Restriction Type",
     sortable: false,
-    key: "restrictionType",
+    key: "restrictionCategory",
   },
   {
     title: "Restriction Code",
@@ -375,7 +375,7 @@ export const ApplicationRestrictionManagementHeaders = [
   {
     title: "Restriction Status",
     sortable: false,
-    key: "isActive",
+    key: "isRestrictionActive",
   },
   {
     title: "View Details",

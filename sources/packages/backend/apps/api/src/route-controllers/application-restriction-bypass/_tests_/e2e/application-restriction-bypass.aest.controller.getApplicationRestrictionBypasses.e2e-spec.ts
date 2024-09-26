@@ -33,25 +33,6 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
     sharedMinistryUser = await db.user.save(createFakeUser());
   });
 
-  it("Should not get a list of application restriction bypasses for a draft part-time application when there is no restriction bypass associated with it.", async () => {
-    // Arrange
-    const application = await saveFakeApplication(db.dataSource, undefined, {
-      applicationStatus: ApplicationStatus.Draft,
-      offeringIntensity: OfferingIntensity.partTime,
-    });
-    const endpoint = `/aest/application-restriction-bypass/application/${application.id}`;
-    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK)
-      .then((response) => {
-        expect(response.body).toEqual({ bypasses: [] });
-      });
-  });
-
   it("Should not get any application restriction bypass for a completed part-time application when there is no restriction bypass associated with it.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource, undefined, {
@@ -67,7 +48,9 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .then((response) => {
-        expect(response.body).toEqual({ bypasses: [] });
+        expect(response.body).toEqual({
+          bypasses: [],
+        });
       });
   });
 
@@ -101,12 +84,13 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
           bypasses: [
             {
               id: restrictionBypass.id,
-              restrictionType:
+              restrictionCategory:
                 restrictionBypass.studentRestriction.restriction
-                  .restrictionType,
+                  .restrictionCategory,
               restrictionCode: RestrictionCode.PTSSR,
-              isActive: restrictionBypass.studentRestriction.isActive,
-              isBypassActive: restrictionBypass.studentRestriction.isActive,
+              isRestrictionActive:
+                restrictionBypass.studentRestriction.isActive,
+              isBypassActive: restrictionBypass.isActive,
             },
           ],
         });

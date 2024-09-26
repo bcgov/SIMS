@@ -12,7 +12,6 @@ import {
   ApplicationIncomeVerification,
   ApplicationSupportingUserDetails,
   EnrolmentApplicationDetailsAPIOutDTO,
-  ApplicationHeaderAPIOutDTO,
   ApplicationSupplementalDataAPIOutDTO,
 } from "./models/application.dto";
 import {
@@ -217,26 +216,6 @@ export class ApplicationControllerService {
       }
     }
     return details;
-  }
-
-  /**
-   * Transformation util for application header information for AEST DTO.
-   * @param applicationDetail
-   * @returns application header DTO
-   */
-  async transformToApplicationHeaderForAESTDTO(
-    applicationDetail: Application,
-  ): Promise<ApplicationHeaderAPIOutDTO> {
-    const offering = applicationDetail.currentAssessment?.offering;
-    return {
-      applicationNumber: applicationDetail.applicationNumber,
-      applicationOfferingIntensity: offering?.offeringIntensity,
-      applicationStartDate: offering?.studyStartDate,
-      applicationEndDate: offering?.studyEndDate,
-      applicationInstitutionName: applicationDetail.location?.name,
-      applicationStatus: applicationDetail.applicationStatus,
-      submittedDate: applicationDetail.submittedDate,
-    };
   }
 
   /**

@@ -19,7 +19,6 @@ import {
   EnrolmentApplicationDetailsAPIOutDTO,
   CompletedApplicationDetailsAPIOutDTO,
   ApplicationAssessmentStatusDetailsAPIOutDTO,
-  ApplicationHeaderAPIOutDTO,
   ApplicationSupplementalDataAPIOutDTO,
 } from "@/services/http/dto";
 
@@ -201,17 +200,5 @@ export class ApplicationService {
     return ApiClient.Application.getApplicationAssessmentStatusDetails(
       applicationId,
     );
-  }
-
-  /**
-   * Get application header information of given application.
-   * @param applicationId for the application.
-   * @param studentId for the student.
-   * @returns application header information.
-   */
-  async getApplicationHeaderInformation(
-    applicationId: number,
-  ): Promise<ApplicationHeaderAPIOutDTO> {
-    return ApiClient.Application.getApplicationHeaderInformation(applicationId);
   }
 }

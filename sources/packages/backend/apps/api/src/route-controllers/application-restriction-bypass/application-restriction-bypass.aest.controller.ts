@@ -3,7 +3,10 @@ import BaseController from "../BaseController";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
-import { ApplicationRestrictionBypassHistoryAPIOutDTO } from "./models/application-restriction-bypass.dto";
+import {
+  ApplicationRestrictionBypassHistoryAPIOutDTO,
+  ApplicationRestrictionBypassSummary,
+} from "./models/application-restriction-bypass.dto";
 import { ClientTypeBaseRoute } from "../../types";
 import { ApiTags } from "@nestjs/swagger";
 import { ApplicationRestrictionBypassService } from "../../services";
@@ -33,19 +36,22 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
   async getApplicationRestrictionBypasses(
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<ApplicationRestrictionBypassHistoryAPIOutDTO> {
+    let bypasses: ApplicationRestrictionBypassSummary[] = [];
     const applicationRestrictionBypasses =
       await this.applicationRestrictionBypassService.getApplicationRestrictionBypasses(
         applicationId,
       );
-    const bypasses = applicationRestrictionBypasses.map(
+    bypasses = applicationRestrictionBypasses.map(
       (item: ApplicationRestrictionBypass) => ({
         id: item.id,
-        restrictionType: item.studentRestriction.restriction.restrictionType,
+        restrictionCategory:
+          item.studentRestriction.restriction.restrictionCategory,
         restrictionCode: item.studentRestriction.restriction.restrictionCode,
-        isActive: item.studentRestriction.isActive,
+        isRestrictionActive: item.studentRestriction.isActive,
         isBypassActive: item.isActive,
       }),
     );
+
     return { bypasses };
   }
 }

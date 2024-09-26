@@ -162,16 +162,3 @@ export interface ApplicationWarningsAPIOutDTO {
   eCertFailedValidations: ECertFailedValidation[];
   canAcceptAssessment: boolean;
 }
-
-/**
- * DTO for application header information.
- */
-export class ApplicationHeaderAPIOutDTO {
-  applicationNumber: string;
-  applicationInstitutionName: string;
-  applicationStartDate: string;
-  applicationEndDate: string;
-  applicationOfferingIntensity: OfferingIntensity;
-  applicationStatus: ApplicationStatus;
-  submittedDate: Date;
-}

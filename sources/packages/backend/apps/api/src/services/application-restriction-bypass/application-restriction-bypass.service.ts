@@ -1,9 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import {
   ApplicationRestrictionBypass,
+  ApplicationStatus,
   RecordDataModelService,
 } from "@sims/sims-db";
-import { DataSource } from "typeorm";
+import { DataSource, Not } from "typeorm";
 
 /**
  * Service layer for application restriction bypasses.
@@ -32,7 +33,7 @@ export class ApplicationRestrictionBypassService extends RecordDataModelService<
           isActive: true,
           restriction: {
             id: true,
-            restrictionType: true,
+            restrictionCategory: true,
             restrictionCode: true,
           },
         },
@@ -42,7 +43,10 @@ export class ApplicationRestrictionBypassService extends RecordDataModelService<
         studentRestriction: { restriction: true },
       },
       where: {
-        application: { id: applicationId },
+        application: {
+          id: applicationId,
+          applicationStatus: Not(ApplicationStatus.Draft),
+        },
       },
       order: { createdAt: "DESC" },
     });

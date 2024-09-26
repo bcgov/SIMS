@@ -3,24 +3,25 @@
 </template>
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
+import { useRestrictionBypass } from "@/composables";
 import ChipStatus from "@/components/generic/ChipStatus.vue";
-import { ApplicationRestrictionBypassStatus } from "@/services/http/dto";
-import { useBypassStatus } from "@/composables";
 
 export default defineComponent({
   components: { ChipStatus },
   props: {
-    isActive: {
+    isRestrictionActive: {
       type: Boolean as PropType<boolean>,
       required: true,
     },
   },
   setup(props) {
-    const { mapBypassStatus } = useBypassStatus();
-    const bypassStatus = props.isActive
-      ? ApplicationRestrictionBypassStatus.Active
-      : ApplicationRestrictionBypassStatus.Removed;
-    const chipStatus = computed(() => mapBypassStatus(bypassStatus));
+    const { mapBypassStatus, mapBypassLabel } = useRestrictionBypass();
+    const bypassStatus = computed(() =>
+      mapBypassLabel(props.isRestrictionActive),
+    );
+    const chipStatus = computed(() =>
+      mapBypassStatus(props.isRestrictionActive),
+    );
     return { chipStatus, bypassStatus };
   },
 });
