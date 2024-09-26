@@ -125,7 +125,7 @@ export class ApplicationControllerService {
       const applicationOfferingChangeRequestPromise =
         this.applicationOfferingChangeRequestService.getApplicationOfferingChangeRequest(
           applicationId,
-          { studentId: options.studentId },
+          { studentId: options?.studentId },
         );
       const feedbackErrorPromise =
         this.applicationService.hasFeedbackErrorBlockingFunds(applicationId);
