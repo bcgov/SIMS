@@ -51,6 +51,7 @@ import {
   UniqueFileNameParamAPIInDTO,
   UpdateSINValidationAPIInDTO,
   UpdateDisabilityStatusAPIInDTO,
+  UpdateStudentDetailsAPIInDTO,
 } from "./models/student.dto";
 import { Response } from "express";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -64,7 +65,7 @@ import {
 import { CustomNamedError } from "@sims/utilities";
 import { IUserToken } from "../../auth/userToken.interface";
 import { StudentControllerService } from "..";
-import { FileOriginType } from "@sims/sims-db";
+import { FileOriginType, IdentityProviders } from "@sims/sims-db";
 import { FileCreateAPIOutDTO } from "../models/common.dto";
 import {
   ApplicationPaginationOptionsAPIInDTO,
@@ -431,5 +432,36 @@ export class StudentAESTController extends BaseController {
       payload.noteDescription,
       userToken.userId,
     );
+  }
+
+  /**
+   * Updates the student info (lastname, givenNames, dob, email)
+   * for a basic BCeID student.
+   * @param studentId related student id.
+   * @param payload payload to be updated.
+   */
+  @Roles(Role.StudentEditProfile)
+  @Patch("student/:studentId")
+  @ApiNotFoundResponse({ description: "Student does not exist." })
+  async updateProfileInformation(
+    @Param("studentId", ParseIntPipe) studentId: number,
+    @Body() payload: UpdateStudentDetailsAPIInDTO,
+    @UserToken() userToken: IUserToken,
+  ): Promise<void> {
+    if (userToken.identityProvider === IdentityProviders.BCeIDBasic) {
+      const studentExists = await this.studentService.studentExists(studentId);
+      if (!studentExists) {
+        throw new NotFoundException("Student does not exist.");
+      }
+      await this.studentService.updateStudentUserData(
+        {
+          studentId,
+          ...payload,
+        },
+        { userId: userToken.userId },
+      );
+      return;
+    }
+    throw new NotFoundException("Student does not exist.");
   }
 }

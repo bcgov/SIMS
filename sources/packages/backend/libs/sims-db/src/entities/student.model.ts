@@ -20,6 +20,9 @@ import {
 } from ".";
 import { SINValidation } from "./sin-validation.model";
 
+export const GIVENNAMES_MAX_LENGTH = 100;
+export const LASTNAME_MAX_LENGTH = 100;
+
 @Entity({ name: TableNames.Student })
 export class Student extends RecordDataModel {
   @PrimaryGeneratedColumn()

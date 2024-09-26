@@ -5,6 +5,7 @@ import {
   IsBoolean,
   IsDateString,
   IsDefined,
+  IsEmail,
   IsEnum,
   IsNotEmpty,
   IsOptional,
@@ -19,6 +20,8 @@ import {
   NOTE_DESCRIPTION_MAX_LENGTH,
   FILE_NAME_MAX_LENGTH,
   DisabilityStatus,
+  LASTNAME_MAX_LENGTH,
+  GIVENNAMES_MAX_LENGTH,
 } from "@sims/sims-db";
 import {
   AddressAPIOutDTO,
@@ -271,4 +274,18 @@ export class UpdateDisabilityStatusAPIInDTO {
   @IsNotEmpty()
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   noteDescription: string;
+}
+
+/**
+ * Updates the student information.
+ */
+export class UpdateStudentDetailsAPIInDTO {
+  @MaxLength(LASTNAME_MAX_LENGTH)
+  lastName: string;
+  @MaxLength(GIVENNAMES_MAX_LENGTH)
+  givenNames: string;
+  @Allow()
+  birthdate: string;
+  @IsEmail()
+  email: string;
 }

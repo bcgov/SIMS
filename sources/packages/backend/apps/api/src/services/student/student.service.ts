@@ -21,13 +21,13 @@ import {
   SupplierStatus,
 } from "@sims/sims-db";
 import { DataSource, EntityManager, UpdateResult } from "typeorm";
-import { StudentUserToken } from "../../auth/userToken.interface";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { removeWhiteSpaces, transformAddressDetails } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import {
   CreateStudentUserInfo,
   StudentInfo,
+  StudentUserData,
   UserInfoMatchData,
 } from "./student.service.models";
 import { SFASIndividualService } from "@sims/services/sfas";
@@ -503,24 +503,35 @@ export class StudentService extends RecordDataModelService<Student> {
    * Use the information available in the authentication token to update
    * the user and student data currently on DB.
    * @param studentToken student authentication token.
+   * @param options method options:
+   * - `userId` user id provided in case the student data
+   * is updated by the ministry.
    * @returns updated student, if some data was changed.
    */
-  async synchronizeFromUserToken(
-    studentToken: StudentUserToken,
+  async updateStudentUserData(
+    studentUserData: StudentUserData,
+    options?: { userId?: number },
   ): Promise<Student> {
-    const studentToSync = await this.getStudentById(studentToken.studentId);
+    const userId = studentUserData.userId
+      ? studentUserData.userId
+      : options?.userId;
+    const studentToSync = await this.getStudentById(studentUserData.studentId);
     let mustSave = false;
-    if (studentToken.givenNames === undefined) {
-      studentToken.givenNames = null;
+    if (studentUserData.givenNames === undefined) {
+      studentUserData.givenNames = null;
     }
     if (
-      !dayjs(studentToken.birthdate).isSame(studentToSync.birthDate) ||
-      studentToken.lastName !== studentToSync.user.lastName ||
-      studentToken.givenNames !== studentToSync.user.firstName
+      !dayjs(studentUserData.birthdate.toLowerCase()).isSame(
+        studentToSync.birthDate.toLowerCase(),
+      ) ||
+      studentUserData.lastName.toLowerCase() !==
+        studentToSync.user.lastName.toLowerCase() ||
+      studentUserData.givenNames.toLowerCase() !==
+        studentToSync.user.firstName.toLowerCase()
     ) {
-      studentToSync.birthDate = studentToken.birthdate;
-      studentToSync.user.lastName = studentToken.lastName;
-      studentToSync.user.firstName = studentToken.givenNames;
+      studentToSync.birthDate = studentUserData.birthdate;
+      studentToSync.user.lastName = studentUserData.lastName;
+      studentToSync.user.firstName = studentUserData.givenNames;
       const sinValidation = new SINValidation();
       sinValidation.student = studentToSync;
       sinValidation.sin = studentToSync.sinValidation.sin;
@@ -528,14 +539,25 @@ export class StudentService extends RecordDataModelService<Student> {
       mustSave = true;
     }
     // This condition is not added above, as email does not trigger SIN validation request.
-    if (studentToken.email !== studentToSync.user.email) {
-      studentToSync.user.email = studentToken.email;
+    if (studentUserData.email !== studentToSync.user.email) {
+      studentToSync.user.email = studentUserData.email;
       mustSave = true;
     }
 
     if (mustSave) {
-      studentToSync.modifier = { id: studentToken.userId } as User;
-      return await this.save(studentToSync);
+      return this.dataSource.transaction(async (transactionalEntityManager) => {
+        await this.noteSharedService.createStudentNote(
+          studentToSync.id,
+          NoteType.General,
+          "Student information updated.",
+          userId,
+          transactionalEntityManager,
+        );
+        studentToSync.modifier = { id: userId } as User;
+        return transactionalEntityManager
+          .getRepository(Student)
+          .save(studentToSync);
+      });
     }
 
     // If information between token and SABC DB is same, then just returning without the database call.
