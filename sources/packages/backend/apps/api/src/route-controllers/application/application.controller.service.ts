@@ -2,6 +2,7 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import {
   EducationProgramOfferingService,
@@ -294,6 +295,11 @@ export class ApplicationControllerService {
     if (!application) {
       throw new NotFoundException(
         `Application id ${applicationId} was not found.`,
+      );
+    }
+    if (application.applicationStatus !== ApplicationStatus.InProgress) {
+      throw new UnprocessableEntityException(
+        `Application not in ${ApplicationStatus.InProgress} status.`,
       );
     }
     const incomeVerificationDetails =
