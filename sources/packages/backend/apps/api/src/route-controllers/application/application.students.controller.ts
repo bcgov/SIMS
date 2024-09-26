@@ -30,6 +30,7 @@ import {
   SupportingUserService,
   StudentAppealService,
   ApplicationOfferingChangeRequestService,
+  FormKnownProperties,
 } from "../../services";
 import { IUserToken, StudentUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -306,6 +307,9 @@ export class ApplicationStudentsController extends BaseController {
       await this.formService.dryRunSubmission<ApplicationData>(
         programYear.formName,
         payload.data,
+        {
+          setFormKnownProperties: [FormKnownProperties.MaxIncome],
+        },
       );
     if (!submissionResult.valid) {
       throw new BadRequestException(

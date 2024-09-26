@@ -1,11 +1,12 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
-import { DryRunSubmissionResult } from "../../types";
 import { ConfigService, FormsConfig } from "@sims/utilities/config";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { JwtService } from "@nestjs/jwt";
-import { TokenCacheService } from "..";
-import { TokenCacheResponse } from "../auth/token-cache.service.models";
+import { FormKnownProperties, TokenCacheService } from "..";
 import { HttpService } from "@nestjs/axios";
+import { MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE } from "../../utilities";
+import { TokenCacheResponse } from "apps/api/src/services/auth/token-cache.service.models";
+import { DryRunSubmissionResult } from "apps/api/src/types";
 
 // Expected header name to send the authorization token to formio API.
 const FORMIO_TOKEN_NAME = "x-jwt-token";
@@ -61,13 +62,24 @@ export class FormService {
    * Please note that the data will not be saved on formio database.
    * @param formName Name of the form to be validated.
    * @param data Data to be validated/processed.
+   * @param options dryRun options.
+   * - `setFormKnownProperties`: set known form properties.
    * @returns Status indicating if the data being submitted is valid or not
    * alongside with the data after formio processing.
    */
   async dryRunSubmission<T = any>(
     formName: string,
     data: unknown,
+    options?: {
+      setFormKnownProperties: FormKnownProperties[];
+    },
   ): Promise<DryRunSubmissionResult<T>> {
+    if (options?.setFormKnownProperties?.length) {
+      // Set form known properties, if any.
+      options?.setFormKnownProperties.forEach((knowProperty) =>
+        FormService.setFormValue(data, knowProperty),
+      );
+    }
     try {
       const authHeader = await this.createAuthHeader();
       const submissionResponse = await this.httpService.axiosRef.post(
@@ -158,6 +170,31 @@ export class FormService {
         )}`,
       );
       throw excp;
+    }
+  }
+
+  /**
+   * Set known form.io constants needed for sever operations.
+   * @param formPayload form.io payload to receive the value.
+   * @param propertyName name of the value to be set.
+   * @param value optional value to be set. If not provided and it
+   * is a known constant, the default value will be used.
+   */
+  static setFormValue(
+    formPayload: unknown,
+    propertyName: FormKnownProperties | string,
+    value?: unknown,
+  ): void {
+    if (value) {
+      formPayload[propertyName] = value;
+    }
+    switch (propertyName) {
+      case FormKnownProperties.MaxIncome:
+      case FormKnownProperties.MaxMoneyValue:
+        formPayload[propertyName] = MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE;
+        return;
+      default:
+        throw new Error("Not possible to define the Form.io property value.");
     }
   }
 

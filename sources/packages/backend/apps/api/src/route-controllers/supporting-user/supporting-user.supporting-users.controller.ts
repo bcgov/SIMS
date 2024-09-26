@@ -12,6 +12,7 @@ import {
 } from "@nestjs/common";
 import {
   ApplicationService,
+  FormKnownProperties,
   FormService,
   SupportingUserService,
   UserService,
@@ -183,7 +184,9 @@ export class SupportingUserSupportingUsersController extends BaseController {
     );
 
     const submissionResult: DryRunSubmissionResult =
-      await this.formService.dryRunSubmission(formName, payload);
+      await this.formService.dryRunSubmission(formName, payload, {
+        setFormKnownProperties: [FormKnownProperties.MaxIncome],
+      });
 
     if (!submissionResult.valid) {
       throw new BadRequestException(
