@@ -3,10 +3,8 @@
 </template>
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
-import {
-  useRestrictionBypassLabel,
-  useRestrictionBypassStatus,
-} from "@/composables";
+import { useRestrictionBypass } from "@/composables";
+import { StatusChipTypes } from "@/types";
 import ChipStatus from "@/components/generic/ChipStatus.vue";
 
 export default defineComponent({
@@ -18,12 +16,12 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { mapBypassStatus } = useRestrictionBypassStatus();
-    const { mapBypassLabel } = useRestrictionBypassLabel();
-
-    const bypassStatus = computed(() =>
-      mapBypassLabel(props.isRestrictionActive),
-    );
+    const { mapBypassStatus } = useRestrictionBypass();
+    const bypassStatus = computed(() => {
+      return props.isRestrictionActive
+        ? StatusChipTypes.Warning
+        : StatusChipTypes.Success;
+    });
     const chipStatus = computed(() =>
       mapBypassStatus(props.isRestrictionActive),
     );
