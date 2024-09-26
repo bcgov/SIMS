@@ -31,7 +31,7 @@ describe("ApplicationAESTController(e2e)-getInProgressApplicationDetails", () =>
     });
 
     const endpoint = `/aest/application/${application.id}/in-progress`;
-    // As the feature is accessible for all groups using a group other than business administrators.
+    // As the feature is accessible for all groups, using a group other than business administrators.
     const token = await getAESTToken(AESTGroups.Operations);
 
     // Act/Assert
