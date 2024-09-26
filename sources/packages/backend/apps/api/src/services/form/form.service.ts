@@ -1,12 +1,12 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
+import { DryRunSubmissionResult } from "../../types";
 import { ConfigService, FormsConfig } from "@sims/utilities/config";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { JwtService } from "@nestjs/jwt";
 import { FormKnownProperties, TokenCacheService } from "..";
 import { HttpService } from "@nestjs/axios";
 import { MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE } from "../../utilities";
-import { TokenCacheResponse } from "apps/api/src/services/auth/token-cache.service.models";
-import { DryRunSubmissionResult } from "apps/api/src/types";
+import { TokenCacheResponse } from "../auth/token-cache.service.models";
 
 // Expected header name to send the authorization token to formio API.
 const FORMIO_TOKEN_NAME = "x-jwt-token";
@@ -174,9 +174,9 @@ export class FormService {
   }
 
   /**
-   * Set known form.io constants needed for sever operations.
+   * Set form.io properties needed for server operations.
    * @param formPayload form.io payload to receive the value.
-   * @param propertyName name of the value to be set.
+   * @param propertyName name of the property to be set.
    * @param value optional value to be set. If not provided and it
    * is a known constant, the default value will be used.
    */
