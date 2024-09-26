@@ -93,6 +93,7 @@ export class ApplicationControllerService {
     await this.processSelectedOffering(data, additionalFormData);
     return { ...data, ...additionalFormData };
   }
+
   /**
    * Get status of all requests and confirmations in student application (Exception, PIR and COE).
    * @param applicationId application id.
@@ -121,12 +122,11 @@ export class ApplicationControllerService {
     if (application.applicationStatus === ApplicationStatus.Completed) {
       const appealPromise = this.studentAppealService.getAppealsForApplication(
         applicationId,
-        { studentId: options?.studentId, limit: 1 },
+        { limit: 1 },
       );
       const applicationOfferingChangeRequestPromise =
         this.applicationOfferingChangeRequestService.getApplicationOfferingChangeRequest(
           applicationId,
-          { studentId: options?.studentId },
         );
       const feedbackErrorPromise =
         this.applicationService.hasFeedbackErrorBlockingFunds(applicationId);
@@ -228,12 +228,11 @@ export class ApplicationControllerService {
       });
     const appealPromise = this.studentAppealService.getAppealsForApplication(
       applicationId,
-      { studentId: options?.studentId, limit: 1 },
+      { limit: 1 },
     );
     const applicationOfferingChangeRequestPromise =
       this.applicationOfferingChangeRequestService.getApplicationOfferingChangeRequest(
         applicationId,
-        { studentId: options?.studentId },
       );
     const hasBlockFundingFeedbackErrorPromise =
       this.applicationService.hasFeedbackErrorBlockingFunds(applicationId);
@@ -345,6 +344,7 @@ export class ApplicationControllerService {
       ...supportingUser,
     };
   }
+
   /**
    * Check whether the selected location is designated or not.
    * If selected location is not designated, then make the

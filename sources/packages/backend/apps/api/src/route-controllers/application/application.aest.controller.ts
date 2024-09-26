@@ -169,6 +169,9 @@ export class ApplicationAESTController extends BaseController {
   @ApiNotFoundResponse({
     description: "Application id not found.",
   })
+  @ApiUnprocessableEntityResponse({
+    description: `Application not in ${ApplicationStatus.InProgress} status.`,
+  })
   async getInProgressApplicationDetails(
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<InProgressApplicationDetailsAPIOutDTO> {
