@@ -65,8 +65,7 @@ export function createFakeApplication(
     faker.datatype.number({ max: 9999999999, min: 1000000000 }).toString();
   application.applicationException = relations?.applicationException;
   application.location = relations?.location ?? createFakeInstitutionLocation();
-  application.pirStatus =
-    options?.initialValue?.pirStatus ?? ProgramInfoStatus.notRequired;
+  application.pirStatus = options?.initialValue?.pirStatus;
   return application;
 }
 
@@ -112,6 +111,7 @@ export async function saveFakeApplicationDisbursements(
   options?: {
     applicationStatus?: ApplicationStatus;
     applicationData?: ApplicationData;
+    pirStatus?: ProgramInfoStatus;
     offeringIntensity?: OfferingIntensity;
     createSecondDisbursement?: boolean;
     currentAssessmentInitialValues?: Partial<StudentAssessment>;
@@ -257,6 +257,7 @@ export async function saveFakeApplication(
     applicationStatus?: ApplicationStatus;
     offeringIntensity?: OfferingIntensity;
     applicationData?: ApplicationData;
+    pirStatus?: ProgramInfoStatus;
     currentAssessmentInitialValues?: Partial<StudentAssessment>;
     offeringInitialValues?: Partial<EducationProgramOffering>;
   },
@@ -288,6 +289,7 @@ export async function saveFakeApplication(
     {
       initialValue: {
         data: options?.applicationData,
+        pirStatus: options?.pirStatus,
       },
     },
   );

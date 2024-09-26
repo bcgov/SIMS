@@ -61,6 +61,7 @@ describe("ApplicationAESTController(e2e)-getApplicationProgressDetails", () => {
         {
           offeringIntensity: OfferingIntensity.partTime,
           applicationStatus: ApplicationStatus.Completed,
+          pirStatus: ProgramInfoStatus.notRequired,
           firstDisbursementInitialValues: { coeStatus: COEStatus.completed },
         },
       );

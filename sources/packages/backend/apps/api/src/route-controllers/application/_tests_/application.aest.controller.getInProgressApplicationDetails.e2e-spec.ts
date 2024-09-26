@@ -24,10 +24,11 @@ describe("ApplicationAESTController(e2e)-getInProgressApplicationDetails", () =>
     db = createE2EDataSources(dataSource);
   });
 
-  it("Should get application in-progress details of a single independent student application with no PIR.", async () => {
+  it("Should get application in-progress details of a single independent student application with PIR required.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource, undefined, {
       applicationStatus: ApplicationStatus.InProgress,
+      pirStatus: ProgramInfoStatus.required,
     });
 
     const endpoint = `/aest/application/${application.id}/in-progress`;
@@ -42,7 +43,7 @@ describe("ApplicationAESTController(e2e)-getInProgressApplicationDetails", () =>
       .expect({
         id: application.id,
         applicationStatus: ApplicationStatus.InProgress,
-        pirStatus: ProgramInfoStatus.notRequired,
+        pirStatus: ProgramInfoStatus.required,
         outstandingAssessmentStatus: SuccessWaitingStatus.Success,
       });
   });
