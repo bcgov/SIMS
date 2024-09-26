@@ -90,7 +90,7 @@ export default defineComponent({
         },
       },
       applicationRestrictionsManagement: {
-        label: "Application Restrictions Management",
+        label: "Restrictions Management",
         icon: "mdi-close-circle-outline",
         command: () => {
           router.push({
