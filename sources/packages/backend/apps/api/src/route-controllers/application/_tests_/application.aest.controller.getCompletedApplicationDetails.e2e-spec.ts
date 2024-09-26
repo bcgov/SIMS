@@ -96,7 +96,7 @@ describe("ApplicationAESTController(e2e)-getCompletedApplicationDetails", () => 
       .expect(HttpStatus.NOT_FOUND)
       .expect({
         statusCode: HttpStatus.NOT_FOUND,
-        message: `Application not found or not on Completed status.`,
+        message: "Application not found or not on Completed status.",
         error: "Not Found",
       });
   });

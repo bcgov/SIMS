@@ -85,6 +85,7 @@ export function createFakeApplication(
  * @param options additional options:
  * - `applicationStatus` if provided sets the application status of the application or else defaults to Assessment status.
  * - `applicationData` application related data.
+ * - `pirStatus` program info status.
  * - `offeringIntensity` if provided sets the offering intensity for the created fakeApplication.
  * - `createSecondDisbursement` if provided and true creates a second disbursement,
  * - `currentAssessmentInitialValues` if provided set the current application initial values.
@@ -239,6 +240,7 @@ export async function saveFakeApplicationDisbursements(
  * - `applicationStatus` application status for the application.
  * - `offeringIntensity` if provided sets the offering intensity for the created fakeApplication, otherwise sets it to fulltime by default.
  * - `applicationData` related application data.
+ * - `pirStatus` program info status.
  * - `currentAssessmentInitialValues` initial values related to the current assessment.
  * - `offeringInitialValues` initial values related to the offering for the original assessment.
  * @returns the created application.
