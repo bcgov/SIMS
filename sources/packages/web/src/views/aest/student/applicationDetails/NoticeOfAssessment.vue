@@ -9,6 +9,7 @@
           params: { applicationId, studentId, assessmentId },
         }"
       />
+      <application-header-title :application-id="applicationId" />
     </template>
     <notice-of-assessment-form-view
       :assessment-id="assessmentId"
@@ -25,10 +26,12 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { ApplicationService } from "@/services/ApplicationService";
 import { useAuth, useSnackBar } from "@/composables";
 import { Role } from "@/types";
+import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
 
 export default defineComponent({
   components: {
     NoticeOfAssessmentFormView,
+    ApplicationHeaderTitle,
   },
   props: {
     studentId: {

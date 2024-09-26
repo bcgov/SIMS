@@ -196,3 +196,8 @@ export const VIRUS_DETECTED = "VIRUS_DETECTED";
  * Unable to save file.
  */
 export const FILE_SAVE_ERROR = "FILE_SAVE_ERROR";
+
+/**
+ * Beta user is invalid.
+ */
+export const INVALID_BETA_USER = "INVALID_BETA_USER";

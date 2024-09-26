@@ -1,15 +1,27 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { AppModule } from "../src/app.module";
-import { AuthTestController } from "../src/testHelpers/controllers/auth-test/auth-test.controller";
-import { createZeebeModuleMock } from "@sims/test-utils/mocks";
 import { KeycloakConfig } from "@sims/auth/config";
 import { KeycloakService } from "@sims/auth/services";
 import {
   PEM_BEGIN_HEADER,
   PEM_END_HEADER,
 } from "@sims/auth/utilities/certificate-utils";
+import {
+  createE2EDataSources,
+  E2EDataSources,
+  getProviderInstanceForModule,
+} from "@sims/test-utils";
+import { ConfigModule, ConfigService } from "@sims/utilities/config";
+import { createZeebeModuleMock } from "@sims/test-utils/mocks";
+import { AppModule } from "../../../app.module";
+import { AuthTestController } from "../../../testHelpers/controllers/auth-test/auth-test.controller";
+import { DiscoveryModule } from "@golevelup/nestjs-discovery";
+import { DataSource } from "typeorm";
+import { JwtService } from "@nestjs/jwt";
+import { INVALID_BETA_USER } from "../../../constants";
+import { BEARER_AUTH_TYPE } from "../../../testHelpers";
+import * as dayjs from "dayjs";
 
 describe("Authentication (e2e)", () => {
   // Nest application to be shared for all e2e tests
@@ -23,6 +35,9 @@ describe("Authentication (e2e)", () => {
   // the authentication endpoints.
   // This token is retrieved from KeyCloak.
   let aestAccessToken: string;
+  let configService: ConfigService;
+  let db: E2EDataSources;
+  let studentDecodedToken: any;
 
   beforeAll(async () => {
     await KeycloakConfig.load();
@@ -31,23 +46,40 @@ describe("Authentication (e2e)", () => {
       process.env.E2E_TEST_STUDENT_PASSWORD,
       "student",
     );
+    studentAccessToken = studentToken.access_token;
+    const jwtService = new JwtService();
+    studentDecodedToken = jwtService.decode(studentAccessToken);
 
     const aestToken = await KeycloakService.shared.getToken(
       process.env.E2E_TEST_STUDENT_USERNAME,
       process.env.E2E_TEST_STUDENT_PASSWORD,
       "aest",
     );
-    studentAccessToken = studentToken.access_token;
     aestAccessToken = aestToken.access_token;
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule, createZeebeModuleMock()],
+      imports: [AppModule, createZeebeModuleMock(), DiscoveryModule],
       // AuthTestController is used only for e2e tests and could be
       // changed as needed to implement more test scenarios.
       controllers: [AuthTestController],
     }).compile();
     app = moduleFixture.createNestApplication();
     await app.init();
+    const dataSource = moduleFixture.get(DataSource);
+    db = createE2EDataSources(dataSource);
+
+    configService = await getProviderInstanceForModule(
+      moduleFixture,
+      ConfigModule,
+      ConfigService,
+    );
+  });
+
+  beforeEach(async () => {
+    // By default all users will be allowed to access the system.
+    jest
+      .spyOn(configService, "allowBetaUsersOnly", "get")
+      .mockReturnValue(false);
   });
 
   it("Load publicKey from Keycloak", async () => {
@@ -68,6 +100,91 @@ describe("Authentication (e2e)", () => {
       headerAndFooterLength,
     );
   });
+
+  it(
+    "Should allow BCSC user to access the application when user is not registered in beta users authorizations table but " +
+      "config allows any user to access the application.",
+    async () => {
+      return request(app.getHttpServer())
+        .get("/auth-test/authenticated-student")
+        .auth(studentAccessToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK);
+    },
+  );
+
+  it(
+    "Should not allow BCSC beta user to access the application when config allows only beta users to access the application but " +
+      "user is not registered in beta users authorizations table.",
+    async () => {
+      // Arrange
+      jest
+        .spyOn(configService, "allowBetaUsersOnly", "get")
+        .mockReturnValue(true);
+      // Act/Assert
+      return request(app.getHttpServer())
+        .get("/auth-test/authenticated-student")
+        .auth(studentAccessToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.UNAUTHORIZED)
+        .expect({
+          message: "The student is not registered as a beta user.",
+          errorType: INVALID_BETA_USER,
+        });
+    },
+  );
+
+  it(
+    "Should allow BCSC beta user to access the application when config allows only beta users to access the application and " +
+      "user is registered in beta users authorizations table.",
+    async () => {
+      // Arrange
+      jest
+        .spyOn(configService, "allowBetaUsersOnly", "get")
+        .mockReturnValue(true);
+
+      // Add user to beta users authorizations table in upper case to test the query.
+      await db.betaUsersAuthorizations.save({
+        givenNames: studentDecodedToken.givenNames.toUpperCase(),
+        lastName: studentDecodedToken.lastName.toUpperCase(),
+      });
+
+      // Act/Assert
+      return request(app.getHttpServer())
+        .get("/auth-test/authenticated-student")
+        .auth(studentAccessToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK);
+    },
+  );
+
+  it(
+    "Should not allow BCSC beta user to access the application when config allows only beta users to access the application and " +
+      "user is registered in beta users authorizations table with a future date to be enabled.",
+    async () => {
+      // Arrange
+      jest
+        .spyOn(configService, "allowBetaUsersOnly", "get")
+        .mockReturnValue(true);
+
+      const tomorrow = dayjs().add(1, "day");
+      const betaUsersAuthorizations =
+        await db.betaUsersAuthorizations.findOneBy({
+          givenNames: studentDecodedToken.givenNames.toUpperCase(),
+          lastName: studentDecodedToken.lastName.toUpperCase(),
+        });
+      betaUsersAuthorizations.enabledFrom = tomorrow.toDate();
+      // Save beta users authorizations with tomorrow's date.
+      await db.betaUsersAuthorizations.save(betaUsersAuthorizations);
+
+      // Act/Assert
+      return request(app.getHttpServer())
+        .get("/auth-test/authenticated-student")
+        .auth(studentAccessToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.UNAUTHORIZED)
+        .expect({
+          message: "The student is not registered as a beta user.",
+          errorType: INVALID_BETA_USER,
+        });
+    },
+  );
 
   it("Endpoint with Public decorator should allow access when the bearer token is not present", () => {
     return request(app.getHttpServer())

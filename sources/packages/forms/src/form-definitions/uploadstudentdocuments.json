@@ -339,7 +339,7 @@
             {
               "components": [
                 {
-                  "label": "<strong>Document purpose</strong>",
+                  "label": "Document purpose",
                   "widget": "choicesjs",
                   "placeholder": "-- Select --",
                   "tableView": true,
@@ -466,7 +466,7 @@
             {
               "components": [
                 {
-                  "label": "<strong>Application # </strong>",
+                  "label": "Application #",
                   "tableView": true,
                   "key": "applicationNumber",
                   "type": "textfield",
