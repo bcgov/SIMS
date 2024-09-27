@@ -119,4 +119,5 @@ export enum AppRoutes {
   StudentAESTApplicationOfferingChangeRequest = "application-offering-change-request/:applicationOfferingChangeRequestId",
   NoticeOfAssessmentView = "assessment/:assessmentId/notice-of-assessment",
   Reports = "reports",
+  ApplicationRestrictionsManagement = "application-restrictions-management",
 }
