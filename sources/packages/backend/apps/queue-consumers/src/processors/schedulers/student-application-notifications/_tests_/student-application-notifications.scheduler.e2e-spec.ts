@@ -1,3 +1,7 @@
 describe("StudentApplicationNotificationsScheduler (e2e)", () => {
-  // TODO: Add tests
+  it("should pass a dummy test", () => {
+    expect(true).toBe(true);
+  });
+
+  // TODO: Add actual tests
 });
