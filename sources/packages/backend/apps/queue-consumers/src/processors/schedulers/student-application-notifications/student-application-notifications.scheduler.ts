@@ -13,7 +13,6 @@ import {
 } from "../../../utilities";
 import { QueueNames } from "@sims/utilities";
 import { ApplicationService } from "../../../services";
-import { DisabilityStatus } from "@sims/sims-db";
 import { NotificationService } from "@sims/services/notifications";
 
 @Processor(QueueNames.StudentApplicationNotifications)
@@ -39,23 +38,7 @@ export class StudentApplicationNotificationsScheduler extends BaseScheduler<void
 
       const eligibleApplications =
         await this.applicationService.getEligibleApplicationsForNotification();
-
-      // for (const application of eligibleApplications) {
-      //   const disabilityStatusMismatch =
-      //     application.disabilityDetails.calculatedPDPPDStatus &&
-      //     ![DisabilityStatus.PD, DisabilityStatus.PPD].includes(
-      //       application.disabilityDetails.studentProfileDisabilityStatus,
-      //     );
-
-      //   if (disabilityStatusMismatch) {
-      //     await this.notificationService.sendDisabilityStatusMismatchNotification(
-      //       application,
-      //     );
-      //     await this.applicationService.markNotificationSent(application.id);
-      //   }
-      // }
-
-      console.info(eligibleApplications);
+      // TODO: Add Usage
 
       processSummary.info(` ${eligibleApplications}`);
 

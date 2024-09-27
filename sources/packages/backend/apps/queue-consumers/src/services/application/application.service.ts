@@ -158,53 +158,10 @@ export class ApplicationService {
     const eightWeeksFromNow = new Date();
     eightWeeksFromNow.setDate(eightWeeksFromNow.getDate() + 56); // 8 weeks * 7 days
 
-    // return this.applicationRepo
-    //   .createQueryBuilder("application")
-    //   .innerJoin("application.currentAssessment", "currentAssessment")
-    //   .innerJoin(
-    //     "currentAssessment.disbursementSchedule",
-    //     "disbursementSchedule",
-    //   )
-    //   .innerJoin("currentAssessment.offering", "offering")
-    //   .where("application.archiveDate IS NULL")
-    //   .andWhere("application.studyEndDate <= :eightWeeksFromNow", {
-    //     eightWeeksFromNow,
-    //   })
-    //   .andWhere("disbursements.disbursementDate IS NULL")
-    //   .andWhere("studentAssessments.notificationSentDate IS NULL")
-    //   .andWhere("currentAssessment.calculatedPDPPDStatus = :calculatedStatus", {
-    //     calculatedStatus: true,
-    //   })
-    //   .andWhere("disabilityStatus.status NOT IN (:...pdppdStatuses)", {
-    //     pdppdStatuses: [DisabilityStatus.PD, DisabilityStatus.PPD],
-    //   })
-    //   .getMany();
-
-    return (
-      this.applicationRepo
-        .createQueryBuilder("application")
-        .select("application.applicationNumber", "applicationNumber")
-        .addSelect("user.lastName", "lastName")
-        .addSelect("user.firstName", "firstName")
-        .addSelect("currentAssessment.id", "assessmentId")
-        .addSelect("student.disabilityStatus", "studentDisabilityStatus")
-        .addSelect("currentAssessment.workflowData", "workflowData")
-        .innerJoin("application.student", "student")
-        .innerJoin("application.currentAssessment", "currentAssessment")
-        .innerJoin("student.user", "user")
-        .innerJoin("currentAssessment.offering", "offering")
-        .leftJoin("notification", "notification")
-        .leftJoin(
-          "currentAssessment.disbursementSchedules",
-          "disbursementSchedule",
-        )
-        // .leftJoin("currentAssessment.notifications", "notification")
-        .where("offering.studyEndDate <= '2025-05-06'")
-        .fullOuterJoin("user.notifications", "notification")
-        .andWhere("application.isArchived = false")
-        .andWhere("disbursementSchedule.disbursementScheduleStatus = 'Pending'")
-        // .andWhere("notification.id is NULL")
-        .getMany()
-    );
+    return this.applicationRepo
+      .createQueryBuilder("application")
+      .select("application.applicationNumber", "applicationNumber")
+      .addSelect("user.lastName", "lastName")
+      .getMany();
   }
 }
