@@ -44,9 +44,10 @@
       :notDraft="notDraft"
     />
   </student-page-container>
-  <ConfirmEditApplication
+  <confirm-edit-application
     ref="editApplicationModal"
     @confirmEditApplication="editApplication"
+    :endDate="endDate"
   />
 </template>
 
@@ -107,6 +108,7 @@ export default defineComponent({
     } = useFormatters();
     const router = useRouter();
     const initialData = ref({});
+    const endDate = ref("");
     const formioUtils = useFormioUtils();
     const snackBar = useSnackBar();
     const savingDraft = ref(false);
@@ -180,6 +182,7 @@ export default defineComponent({
         isReadOnly: isReadOnly.value,
         isFulltimeAllowed,
       };
+      endDate.value = programYear.programYearEndDate;
       existingApplication.value = applicationData;
     });
 
@@ -279,6 +282,7 @@ export default defineComponent({
     };
     return {
       initialData,
+      endDate,
       loadForm,
       wizardSubmit,
       saveDraft,
