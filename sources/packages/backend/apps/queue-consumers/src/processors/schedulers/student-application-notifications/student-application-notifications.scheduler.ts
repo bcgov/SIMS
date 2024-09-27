@@ -7,10 +7,7 @@ import {
   LoggerService,
   ProcessSummary,
 } from "@sims/utilities/logger";
-import {
-  getSuccessMessageWithAttentionCheck,
-  logProcessSummaryToJobLogger,
-} from "../../../utilities";
+import { logProcessSummaryToJobLogger } from "../../../utilities";
 import { QueueNames } from "@sims/utilities";
 import { ApplicationService } from "../../../services";
 import { NotificationService } from "@sims/services/notifications";
@@ -32,20 +29,7 @@ export class StudentApplicationNotificationsScheduler extends BaseScheduler<void
     const processSummary = new ProcessSummary();
 
     try {
-      this.logger.log(
-        `Processing student application notifications job. Job id: ${job.id} and Job name: ${job.name}.`,
-      );
-
-      const eligibleApplications =
-        await this.applicationService.getEligibleApplicationsForNotification();
       // TODO: Get applications that have a disability status mismatch  and check PDPPD status
-
-      processSummary.info(` ${eligibleApplications}`);
-
-      return getSuccessMessageWithAttentionCheck(
-        ["Process finalized with success."],
-        processSummary,
-      );
     } catch (error: unknown) {
       const errorMessage = "Unexpected error while executing the job.";
       processSummary.error(errorMessage, error);

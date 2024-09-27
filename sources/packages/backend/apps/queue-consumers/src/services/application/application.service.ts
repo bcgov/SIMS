@@ -153,16 +153,4 @@ export class ApplicationService {
         .getMany()
     );
   }
-
-  async getEligibleApplicationsForNotification(): Promise<Application[]> {
-    const eightWeeksFromNow = new Date();
-    eightWeeksFromNow.setDate(eightWeeksFromNow.getDate() + 56); // 8 weeks * 7 days
-
-    // TODO: Get applications that have a disability status mismatch
-    return this.applicationRepo
-      .createQueryBuilder("application")
-      .select("application.applicationNumber", "applicationNumber")
-      .addSelect("user.lastName", "lastName")
-      .getMany();
-  }
 }

@@ -10,7 +10,7 @@ VALUES
         "cron": "0 8 * * *",
         "cleanUpPeriod": 2592000000
       }' :: json,
-      '{ 
+    '{ 
           "maxStalledCount": 0,
           "lockDuration": 60000,
           "lockRenewTime": 5000

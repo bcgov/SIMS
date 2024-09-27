@@ -16,7 +16,7 @@ export class StudentApplicationNotifications1727119765682
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Remove-student-application-notifications-queue.sql",
+        "Rollback-add-student-application-notifications-queue.sql",
         "Queue",
       ),
     );
