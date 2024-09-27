@@ -27,7 +27,6 @@ export class ApplicationRestrictionBypassService extends RecordDataModelService<
       select: {
         id: true,
         isActive: true,
-        application: { id: true },
         studentRestriction: {
           id: true,
           isActive: true,
@@ -39,7 +38,6 @@ export class ApplicationRestrictionBypassService extends RecordDataModelService<
         },
       },
       relations: {
-        application: true,
         studentRestriction: { restriction: true },
       },
       where: {

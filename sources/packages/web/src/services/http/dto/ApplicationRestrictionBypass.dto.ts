@@ -1,5 +1,5 @@
 /**
- * AEST application restriction bypass summary.
+ * Application restriction bypass summary.
  */
 export interface ApplicationRestrictionBypassSummary {
   id: number;
@@ -11,7 +11,7 @@ export interface ApplicationRestrictionBypassSummary {
 }
 
 /**
- * AEST application restriction bypass history.
+ * Application restriction bypass history.
  */
 export interface ApplicationRestrictionBypassHistoryAPIOutDTO {
   bypasses: ApplicationRestrictionBypassSummary[];

@@ -4,7 +4,7 @@
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
 import { useRestrictionBypass } from "@/composables";
-import { StatusChipTypes } from "@/types";
+import { BypassStatusChipLabelTypes } from "@/types";
 import ChipStatus from "@/components/generic/ChipStatus.vue";
 
 export default defineComponent({
@@ -19,8 +19,8 @@ export default defineComponent({
     const { mapBypassStatus } = useRestrictionBypass();
     const bypassStatus = computed(() => {
       return props.isRestrictionActive
-        ? StatusChipTypes.Warning
-        : StatusChipTypes.Success;
+        ? BypassStatusChipLabelTypes.Active
+        : BypassStatusChipLabelTypes.Removed;
     });
     const chipStatus = computed(() =>
       mapBypassStatus(props.isRestrictionActive),

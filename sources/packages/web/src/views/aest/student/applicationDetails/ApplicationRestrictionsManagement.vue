@@ -12,7 +12,6 @@
       <application-header-title :application-id="applicationId" />
     </template>
     <history-bypassed-restrictions
-      class="mb-5"
       :applicationId="applicationId"
       :key="historyKey"
     />
