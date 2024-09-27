@@ -38,7 +38,7 @@ export class StudentApplicationNotificationsScheduler extends BaseScheduler<void
 
       const eligibleApplications =
         await this.applicationService.getEligibleApplicationsForNotification();
-      // TODO: Add Usage
+      // TODO: Get applications that have a disability status mismatch  and check PDPPD status
 
       processSummary.info(` ${eligibleApplications}`);
 
