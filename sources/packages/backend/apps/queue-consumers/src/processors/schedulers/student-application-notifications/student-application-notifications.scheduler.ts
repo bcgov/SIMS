@@ -55,9 +55,9 @@ export class StudentApplicationNotificationsScheduler extends BaseScheduler<void
       //   }
       // }
 
-      processSummary.info(
-        `Processed ${eligibleApplications.length} applications.`,
-      );
+      console.info(eligibleApplications);
+
+      processSummary.info(` ${eligibleApplications}`);
 
       return getSuccessMessageWithAttentionCheck(
         ["Process finalized with success."],
