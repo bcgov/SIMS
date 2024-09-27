@@ -11,16 +11,13 @@
       />
       <application-header-title :application-id="applicationId" />
     </template>
-    <history-bypassed-restrictions
-      :applicationId="applicationId"
-      :key="historyKey"
-    />
+    <history-bypassed-restrictions :applicationId="applicationId" />
   </full-page-container>
 </template>
 
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { defineComponent, ref } from "vue";
+import { defineComponent } from "vue";
 import { useFormatters } from "@/composables";
 import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
 import HistoryBypassedRestrictions from "@/components/aest/students/bypassedRestrictions/HistoryBypassedRestrictions.vue";
@@ -42,12 +39,10 @@ export default defineComponent({
   },
   setup() {
     const { emptyStringFiller } = useFormatters();
-    const historyKey = ref(0);
 
     return {
       AESTRoutesConst,
       emptyStringFiller,
-      historyKey,
     };
   },
 });
