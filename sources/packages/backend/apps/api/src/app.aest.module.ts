@@ -33,6 +33,7 @@ import {
   ProgramYearService,
   CASSupplierService,
   ApplicationRestrictionBypassService,
+  CRAIncomeVerificationService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -191,6 +192,8 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     ProgramYearService,
     CASSupplierService,
     ApplicationRestrictionBypassService,
+    CRAIncomeVerificationService,
+    SupportingUserService,
   ],
 })
 export class AppAESTModule {}

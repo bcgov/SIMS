@@ -15,6 +15,10 @@ import BaseController from "../BaseController";
 import {
   ApplicationAssessmentStatusDetailsAPIOutDTO,
   ApplicationSupplementalDataAPIOutDTO,
+  ApplicationProgressDetailsAPIOutDTO,
+  CompletedApplicationDetailsAPIOutDTO,
+  EnrolmentApplicationDetailsAPIOutDTO,
+  InProgressApplicationDetailsAPIOutDTO,
 } from "./models/application.dto";
 import {
   AllowAuthorizedParty,
@@ -40,6 +44,7 @@ import {
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "@sims/services/constants";
 import { IUserToken, Role } from "../../auth";
+import { ApplicationStatus } from "@sims/sims-db";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -153,5 +158,77 @@ export class ApplicationAESTController extends BaseController {
       isApplicationArchived: application.isArchived,
       applicationStatus: application.applicationStatus,
     };
+  }
+
+  /**
+   * Get details for an application at 'InProgress' status.
+   * @param applicationId application id.
+   * @returns application details.
+   */
+  @Get(":applicationId/in-progress")
+  @ApiNotFoundResponse({
+    description: "Application id not found.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description: `Application not in ${ApplicationStatus.InProgress} status.`,
+  })
+  async getInProgressApplicationDetails(
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+  ): Promise<InProgressApplicationDetailsAPIOutDTO> {
+    return this.applicationControllerService.getInProgressApplicationDetails(
+      applicationId,
+    );
+  }
+
+  /**
+   * Get status of all requests and confirmations in student application (Exception, PIR and COE).
+   * @param applicationId application id.
+   * @returns application progress details.
+   */
+  @ApiNotFoundResponse({
+    description: "Application not found.",
+  })
+  @Get(":applicationId/progress-details")
+  async getApplicationProgressDetails(
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+  ): Promise<ApplicationProgressDetailsAPIOutDTO> {
+    return this.applicationControllerService.getApplicationProgressDetails(
+      applicationId,
+    );
+  }
+
+  /**
+   * Get details for an application at 'Enrolment' status.
+   * @param applicationId student application id.
+   * @returns details for the application enrolment status.
+   */
+  @ApiNotFoundResponse({
+    description:
+      "Application not found or not in relevant status to get enrolment details.",
+  })
+  @Get(":applicationId/enrolment")
+  async getEnrolmentApplicationDetails(
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+  ): Promise<EnrolmentApplicationDetailsAPIOutDTO> {
+    return this.applicationControllerService.getEnrolmentApplicationDetails(
+      applicationId,
+    );
+  }
+
+  /**
+   * Get details for an application at 'Completed' status.
+   * @param applicationId application id.
+   * @returns details for an application on at completed status.
+   */
+  @ApiNotFoundResponse({
+    description: `Application not found or not on ${ApplicationStatus.Completed} status.`,
+  })
+  @Get(":applicationId/completed")
+  async getCompletedApplicationDetails(
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+  ): Promise<CompletedApplicationDetailsAPIOutDTO> {
+    return this.applicationControllerService.getCompletedApplicationDetails(
+      applicationId,
+    );
   }
 }
