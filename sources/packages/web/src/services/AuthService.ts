@@ -11,12 +11,18 @@ import {
   InstitutionRoutesConst,
   StudentRoutesConst,
 } from "@/constants/routes/RouteConstants";
-import { RENEW_AUTH_TOKEN_TIMER } from "@/constants/system-constants";
+import {
+  RENEW_AUTH_TOKEN_TIMER,
+  USER_CLOSED_BROWSER,
+  USER_LOGIN_TRIGGERED,
+} from "@/constants/system-constants";
 import { StudentService } from "@/services/StudentService";
 import { useStudentStore, useInstitutionState } from "@/composables";
 import { InstitutionUserService } from "@/services/InstitutionUserService";
 import { INVALID_BETA_USER, MISSING_STUDENT_ACCOUNT } from "@/constants";
 import { StudentAccountApplicationService } from "./StudentAccountApplicationService";
+import ApiClient from "@/services/http/ApiClient";
+import { AuditEvent } from "@/types/contracts/AuditEnum";
 
 /**
  * Manages the KeyCloak initialization and authentication methods.
@@ -68,6 +74,16 @@ export class AuthService {
   priorityRedirect?: LocationAsRelativeRaw = undefined;
 
   /**
+   * Function that makes a request to the API to log that the user has closed the browser/tab.
+   * @param event event received by the browser.
+   */
+  logUserClosedBrowser = async function (event: Event) {
+    event.preventDefault();
+    sessionStorage.setItem(USER_CLOSED_BROWSER, "true");
+    await ApiClient.AuditApi.audit(AuditEvent.BrowserClosed);
+  };
+
+  /**
    * Initializes the authentication service with the proper client type.
    * @param clientType Keycloak client type to be used.
    */
@@ -93,6 +109,20 @@ export class AuthService {
       });
 
       if (this.keycloak.authenticated) {
+        // In case of user closed browser without logout.
+        window.addEventListener("beforeunload", this.logUserClosedBrowser);
+        if (sessionStorage.getItem(USER_CLOSED_BROWSER) === "true") {
+          // In case of user reopened browser with an active session.
+          await ApiClient.AuditApi.audit(AuditEvent.BrowserReopened);
+          sessionStorage.removeItem(USER_CLOSED_BROWSER);
+        }
+        if (sessionStorage.getItem(USER_LOGIN_TRIGGERED) === "true") {
+          // Call audit api to log user logon.
+          ApiClient.AuditApi.audit(AuditEvent.LoggedIn);
+          sessionStorage.removeItem(USER_LOGIN_TRIGGERED);
+          sessionStorage.removeItem(USER_CLOSED_BROWSER);
+        }
+
         this.interval = setInterval(
           this.renewTokenIfExpired,
           RENEW_AUTH_TOKEN_TIMER,
@@ -245,6 +275,11 @@ export class AuthService {
       invalidBetaUser?: boolean;
     },
   ): Promise<void> {
+    // Remove event listener to not log on redirecting to the login page.
+    window.removeEventListener("beforeunload", this.logUserClosedBrowser);
+    // Call audit api to log user logout.
+    ApiClient.AuditApi.audit(AuditEvent.LoggedOut);
+
     if (!this.keycloak) {
       throw new Error("Keycloak not initialized.");
     }

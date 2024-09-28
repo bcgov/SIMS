@@ -18,3 +18,11 @@ export const COUNT_DOWN_TIMER_FOR_LOGOUT = 30;
  * High estimated value to defined a max money amount for inputs that does not have a constrain defined.
  */
 export const MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE = 100000000;
+/**
+ * Session storage var name to indicate that a login process has started for the user.
+ */
+export const USER_LOGIN_TRIGGERED = "useLoginTriggered";
+/**
+ * Session storage var name to indicate that a user closed the browser without logging out.
+ */
+export const USER_CLOSED_BROWSER = "userClosedBrowser";

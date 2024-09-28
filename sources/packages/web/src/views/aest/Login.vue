@@ -61,6 +61,7 @@ import { useAuth } from "@/composables";
 import { IdentityProviders, ClientIdType } from "@/types";
 import { BannerTypes } from "@/types/contracts/Banner";
 import { MINISTRY_SHORTNAME } from "@/constants/message-constants";
+import { USER_LOGIN_TRIGGERED } from "@/constants";
 
 export default defineComponent({
   props: {
@@ -71,6 +72,7 @@ export default defineComponent({
     },
   },
   setup() {
+    sessionStorage.setItem(USER_LOGIN_TRIGGERED, "true");
     const { executeLogin } = useAuth();
     const login = async () => {
       await executeLogin(ClientIdType.AEST, IdentityProviders.IDIR);

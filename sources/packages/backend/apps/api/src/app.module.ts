@@ -25,6 +25,8 @@ import { ConfigModule } from "@sims/utilities/config";
 import { DatabaseModule } from "@sims/sims-db";
 import { NotificationsModule } from "@sims/services/notifications";
 import { QueueModule } from "@sims/services/queue";
+import { AuditController } from "apps/api/src/route-controllers/audit/audit.controller";
+import { AuditService } from "apps/api/src/services/audit/audit.service";
 
 @Module({
   imports: [
@@ -60,8 +62,14 @@ import { QueueModule } from "@sims/services/queue";
       },
     ]),
   ],
-  controllers: [AppController, ConfigController, DynamicFormController],
+  controllers: [
+    AppController,
+    ConfigController,
+    DynamicFormController,
+    AuditController,
+  ],
   providers: [
+    AuditService,
     AppService,
     UserService,
     BCeIDServiceProvider,
