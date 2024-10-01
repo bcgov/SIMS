@@ -10,8 +10,3 @@ export const FormNames = {
   ExportFinancialReports: "exportfinancialreports",
   Application: "SFAA2023-24",
 };
-
-export enum FormKnownProperties {
-  MaxIncome = "maxIncome",
-  MaxMoneyValue = "maxMoneyValue",
-}
