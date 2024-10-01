@@ -17,8 +17,8 @@
   </application-status-tracker-banner>
 </template>
 <script lang="ts">
-import ApplicationStatusTrackerBanner from "@/components/students/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
-import RelatedApplicationChanged from "@/components/students/applicationTracker/RelatedApplicationChanged.vue";
+import ApplicationStatusTrackerBanner from "@/components/common/students/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
+import RelatedApplicationChanged from "@/components/common/students/applicationTracker/RelatedApplicationChanged.vue";
 import { AssessmentTriggerType } from "@/types";
 import { defineComponent, PropType } from "vue";
 

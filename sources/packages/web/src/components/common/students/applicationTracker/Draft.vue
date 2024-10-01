@@ -12,7 +12,7 @@
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
-import ApplicationStatusTrackerBanner from "@/components/students/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
+import ApplicationStatusTrackerBanner from "@/components/common/students/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
 export default defineComponent({
   emits: ["editApplication"],
   components: {

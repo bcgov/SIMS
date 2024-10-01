@@ -89,7 +89,7 @@ import {
 } from "@/composables";
 import { ApplicationStatus, MenuType } from "@/types";
 import { ApplicationDataAPIOutDTO } from "@/services/http/dto";
-import ApplicationProgressBar from "@/components/students/applicationTracker/ApplicationProgressBar.vue";
+import ApplicationProgressBar from "@/components/common/students/applicationTracker/ApplicationProgressBar.vue";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import DetailHeader from "@/components/generic/DetailHeader.vue";
 import StudentAssessmentDetails from "@/components/students/StudentAssessmentDetails.vue";

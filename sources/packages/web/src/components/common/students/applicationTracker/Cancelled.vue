@@ -17,7 +17,7 @@
   </application-status-tracker-banner>
 </template>
 <script lang="ts">
-import ApplicationStatusTrackerBanner from "@/components/students/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
+import ApplicationStatusTrackerBanner from "@/components/common/students/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
 import { useFormatters } from "@/composables";
 import { defineComponent } from "vue";
 

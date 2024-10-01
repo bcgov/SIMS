@@ -60,13 +60,13 @@ import { PropType, ref, defineComponent, computed, onMounted } from "vue";
 import { ApplicationProgressDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
 import { ApplicationService } from "@/services/ApplicationService";
 import StepperProgressBar from "@/components/common/StepperProgressBar.vue";
-import Draft from "@/components/students/applicationTracker/Draft.vue";
-import Submitted from "@/components/students/applicationTracker/Submitted.vue";
-import InProgress from "@/components/students/applicationTracker/InProgress.vue";
-import Cancelled from "@/components/students/applicationTracker/Cancelled.vue";
-import Assessment from "@/components/students/applicationTracker/Assessment.vue";
-import Enrolment from "@/components/students/applicationTracker/Enrolment.vue";
-import Completed from "@/components/students/applicationTracker/Completed.vue";
+import Draft from "@/components/common/students/applicationTracker/Draft.vue";
+import Submitted from "@/components/common/students/applicationTracker/Submitted.vue";
+import InProgress from "@/components/common/students/applicationTracker/InProgress.vue";
+import Cancelled from "@/components/common/students/applicationTracker/Cancelled.vue";
+import Assessment from "@/components/common/students/applicationTracker/Assessment.vue";
+import Enrolment from "@/components/common/students/applicationTracker/Enrolment.vue";
+import Completed from "@/components/common/students/applicationTracker/Completed.vue";
 
 interface StatusIconDetails {
   statusType: "success" | "warning" | "error";

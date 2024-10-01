@@ -22,9 +22,9 @@ import { COEStatus, AssessmentTriggerType } from "@/types";
 import { onMounted, ref, defineComponent } from "vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import { EnrolmentApplicationDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
-import DisbursementBanner from "@/components/students/applicationTracker/DisbursementBanner.vue";
-import MultipleDisbursementBanner from "@/components/students/applicationTracker/MultipleDisbursementBanner.vue";
-import RelatedApplicationChanged from "@/components/students/applicationTracker/RelatedApplicationChanged.vue";
+import DisbursementBanner from "@/components/common/students/applicationTracker/DisbursementBanner.vue";
+import MultipleDisbursementBanner from "@/components/common/students/applicationTracker/MultipleDisbursementBanner.vue";
+import RelatedApplicationChanged from "@/components/common/students/applicationTracker/RelatedApplicationChanged.vue";
 
 export default defineComponent({
   components: {
