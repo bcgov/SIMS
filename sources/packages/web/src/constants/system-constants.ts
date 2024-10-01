@@ -21,7 +21,7 @@ export const MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE = 100000000;
 /**
  * Session storage var name to indicate that a login process has started for the user.
  */
-export const USER_LOGIN_TRIGGERED = "useLoginTriggered";
+export const USER_LOGIN_TRIGGERED = "userLoginTriggered";
 /**
  * Session storage var name to indicate that a user closed the browser without logging out.
  */
