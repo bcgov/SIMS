@@ -61,7 +61,7 @@
   />
 </template>
 <script lang="ts">
-import ApplicationStatusTrackerBanner from "@/components/common/students/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
+import ApplicationStatusTrackerBanner from "@/components/common/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
 import { COEStatus, DisbursementScheduleStatus } from "@/types";
 import { defineComponent, PropType, computed } from "vue";
 
