@@ -44,10 +44,10 @@
       :notDraft="notDraft"
     />
   </student-page-container>
-  <confirm-edit-application
+  <confirm-change-application
     ref="editApplicationModal"
     @confirmEditApplication="editApplication"
-    :endDate="endDate"
+    :isStudentEndDateWithinDeadline="isStudentEndDateWithinDeadline"
   />
 </template>
 
@@ -70,7 +70,7 @@ import {
 } from "@/types";
 import { ApplicationDataAPIOutDTO } from "@/services/http/dto";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
+import ConfirmChangeApplication from "@/components/students/modals/ConfirmChangeApplication.vue";
 import {
   STUDY_DATE_OVERLAP_ERROR,
   ACTIVE_STUDENT_RESTRICTION,
@@ -81,7 +81,7 @@ import { AppConfigService } from "@/services/AppConfigService";
 export default defineComponent({
   components: {
     StudentApplication,
-    ConfirmEditApplication,
+    ConfirmChangeApplication,
   },
   props: {
     id: {
@@ -108,7 +108,7 @@ export default defineComponent({
     } = useFormatters();
     const router = useRouter();
     const initialData = ref({});
-    const endDate = ref("");
+    const isStudentEndDateWithinDeadline = ref(true);
     const formioUtils = useFormioUtils();
     const snackBar = useSnackBar();
     const savingDraft = ref(false);
@@ -182,7 +182,6 @@ export default defineComponent({
         isReadOnly: isReadOnly.value,
         isFulltimeAllowed,
       };
-      endDate.value = programYear.programYearEndDate;
       existingApplication.value = applicationData;
     });
 
@@ -275,6 +274,11 @@ export default defineComponent({
       if (
         existingApplication.value.applicationStatus !== ApplicationStatus.Draft
       ) {
+        isStudentEndDateWithinDeadline.value =
+          applicationWizard.submission.data
+            .studyEndDateBeforeSixWeeksFromToday ||
+          applicationWizard.submission.data
+            .selectedStudyEndDateBeforeSixWeeksFromToday;
         await confirmEditApplication();
       } else {
         applicationWizard.submit();
@@ -282,7 +286,7 @@ export default defineComponent({
     };
     return {
       initialData,
-      endDate,
+      isStudentEndDateWithinDeadline,
       loadForm,
       wizardSubmit,
       saveDraft,
