@@ -28,9 +28,8 @@ export class StudentApplicationNotificationsScheduler extends BaseScheduler<void
   }
 
   /**
-   * Process Student for Email notification - PD/PPD Student reminder email 8 weeks before end date
+   * Process Student for Email notification - PD/PPD Student reminder email 8 weeks before end date.
    */
-
   @Process()
   async studentApplicationNotifications(job: Job<void>): Promise<string[]> {
     const processSummary = new ProcessSummary();
