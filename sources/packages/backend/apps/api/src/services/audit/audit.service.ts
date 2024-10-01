@@ -1,7 +1,7 @@
 import { LoggerService } from "@nestjs/common";
 import { InjectLogger } from "@sims/utilities/logger";
 import { AuditEvent } from "./audit-event.enum";
-import { AuthorizedParties } from "apps/api/src/auth";
+import { AuthorizedParties } from "../../../src/auth";
 
 const SIMS_AUDIT_EVENT_PREFIX = "SIMS Audit Event";
 
@@ -20,9 +20,9 @@ export class AuditService {
     authorizedParty: AuthorizedParties,
   ): Promise<void> {
     const eventFriendlyName = this.getEventFriendlyName(event);
-    const portaFriendlyName = this.getPortalFriendlyName(authorizedParty);
+    const portalFriendlyName = this.getPortalFriendlyName(authorizedParty);
     this.logger.log(
-      `${SIMS_AUDIT_EVENT_PREFIX} From ${clientIp} | User GUID: ${tokenUserName}, Event: ${eventFriendlyName}, Portal: ${portaFriendlyName}.`,
+      `${SIMS_AUDIT_EVENT_PREFIX} From ${clientIp} | User GUID: ${tokenUserName}, Event: ${eventFriendlyName}, Portal: ${portalFriendlyName}.`,
     );
   }
 
