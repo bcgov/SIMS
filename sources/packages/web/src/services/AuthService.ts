@@ -15,6 +15,7 @@ import {
   RENEW_AUTH_TOKEN_TIMER,
   USER_CLOSED_BROWSER,
   USER_LOGIN_TRIGGERED,
+  USER_SESSION_TIMED_OUT,
 } from "@/constants/system-constants";
 import { StudentService } from "@/services/StudentService";
 import { useStudentStore, useInstitutionState } from "@/composables";
@@ -118,7 +119,7 @@ export class AuthService {
         }
         if (sessionStorage.getItem(USER_LOGIN_TRIGGERED) === "true") {
           // Call audit api to log user logon.
-          ApiClient.AuditApi.audit(AuditEvent.LoggedIn);
+          await ApiClient.AuditApi.audit(AuditEvent.LoggedIn);
           sessionStorage.removeItem(USER_LOGIN_TRIGGERED);
           sessionStorage.removeItem(USER_CLOSED_BROWSER);
         }
@@ -277,8 +278,15 @@ export class AuthService {
   ): Promise<void> {
     // Remove event listener to not log on redirecting to the login page.
     window.removeEventListener("beforeunload", this.logUserClosedBrowser);
-    // Call audit api to log user logout.
-    ApiClient.AuditApi.audit(AuditEvent.LoggedOut);
+
+    if (sessionStorage.getItem(USER_SESSION_TIMED_OUT) === "true") {
+      // Call audit api to log session timed out.
+      await ApiClient.AuditApi.audit(AuditEvent.SessionTimedOut);
+      sessionStorage.removeItem(USER_SESSION_TIMED_OUT);
+    } else {
+      // Call audit api to log user logout.
+      await ApiClient.AuditApi.audit(AuditEvent.LoggedOut);
+    }
 
     if (!this.keycloak) {
       throw new Error("Keycloak not initialized.");

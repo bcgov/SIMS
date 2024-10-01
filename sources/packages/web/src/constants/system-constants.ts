@@ -26,3 +26,7 @@ export const USER_LOGIN_TRIGGERED = "userLoginTriggered";
  * Session storage var name to indicate that a user closed the browser without logging out.
  */
 export const USER_CLOSED_BROWSER = "userClosedBrowser";
+/**
+ * Session storage var name to indicate that a user session has timed out.
+ */
+export const USER_SESSION_TIMED_OUT = "userSessionTimedOut";

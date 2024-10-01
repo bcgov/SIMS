@@ -23,7 +23,10 @@ import {
   useAuth,
   useFormatters,
 } from "@/composables";
-import { COUNT_DOWN_TIMER_FOR_LOGOUT } from "@/constants/system-constants";
+import {
+  COUNT_DOWN_TIMER_FOR_LOGOUT,
+  USER_SESSION_TIMED_OUT,
+} from "@/constants/system-constants";
 import ConfirmExtendTime from "@/components/common/modals/ConfirmExtendTime.vue";
 import { AppConfigService } from "@/services/AppConfigService";
 
@@ -82,6 +85,7 @@ export default defineComponent({
     });
 
     const logoff = async () => {
+      sessionStorage.setItem(USER_SESSION_TIMED_OUT, "true");
       await executeLogout(props.clientIdType);
     };
 
