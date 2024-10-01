@@ -23046,7 +23046,7 @@
                 }
               ],
               "content": "If you have had, or anticipate having a significant decrease in income for {{data.calculatedTaxYear}}, you may request to be assessed using this year's estimated income.",
-              "refreshOnChange": false,
+              "refreshOnChange": true,
               "customClass": "",
               "hidden": false,
               "modalEdit": false,

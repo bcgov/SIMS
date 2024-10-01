@@ -9,6 +9,66 @@
     ],
     "components": [
         {
+            "input": true,
+            "tableView": false,
+            "key": "maxMoneyValue",
+            "label": "Max Money Value",
+            "protected": false,
+            "unique": false,
+            "persistent": false,
+            "type": "hidden",
+            "lockKey": true,
+            "defaultValue": "",
+            "calculateValue": "value = \"100000000\";",
+            "calculateServer": true,
+            "allowCalculateOverride": false,
+            "tags": [],
+            "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+            },
+            "properties": {}
+        },
+        {
+            "input": true,
+            "tableView": true,
+            "key": "programYear",
+            "label": "Program Year",
+            "protected": false,
+            "unique": false,
+            "persistent": false,
+            "type": "hidden",
+            "tags": [],
+            "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+            },
+            "properties": {},
+            "calculateValue": "",
+            "defaultValue": ""
+        },
+        {
+            "input": true,
+            "tableView": true,
+            "key": "calculatedTaxYear",
+            "label": "Calculated Tax Year",
+            "protected": false,
+            "unique": false,
+            "persistent": false,
+            "type": "hidden",
+            "tags": [],
+            "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+            },
+            "properties": {},
+            "calculateValue": "// From the program year, get the calendar start year of the the program year.\r\n// e.g. program year  = 2022-2023, calendar start year is 2022. And tax year should be 2021.\r\nconst [startYear] = data.programYear ? data.programYear.split(\"-\"):[];\r\nconst taxYear = startYear ? (+startYear)-1 : \"\";\r\nvalue = taxYear;",
+            "lockKey": true
+        },
+        {
             "key": "financialInformation",
             "label": "Financial Information",
             "input": false,
@@ -74,8 +134,7 @@
                     "properties": {},
                     "redrawOn": "calculatedTaxYear",
                     "lockKey": true,
-                    "hideLabel": false,
-                    "isNew": false
+                    "hideLabel": false
                 }
             ],
             "type": "panel",
@@ -221,7 +280,7 @@
                         }
                     ],
                     "content": "If you have had, or anticipate having a significant decrease in income for {{data.calculatedTaxYear}}, you may request to be assessed using this year's estimated income.",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -1329,8 +1388,7 @@
                         "eq": ""
                     },
                     "properties": {},
-                    "lockKey": true,
-                    "isNew": false
+                    "lockKey": true
                 },
                 {
                     "clearOnHide": false,
@@ -1373,8 +1431,7 @@
                             "labelPosition": "top",
                             "tags": [],
                             "properties": {},
-                            "lockKey": true,
-                            "isNew": false
+                            "lockKey": true
                         }
                     ],
                     "type": "panel",
@@ -1386,8 +1443,7 @@
                         "when": "haveDaycareCosts11YearsOrUnder",
                         "eq": "yes"
                     },
-                    "properties": {},
-                    "isNew": false
+                    "properties": {}
                 },
                 {
                     "autofocus": false,
@@ -1430,8 +1486,7 @@
                         "eq": ""
                     },
                     "properties": {},
-                    "lockKey": true,
-                    "isNew": false
+                    "lockKey": true
                 },
                 {
                     "clearOnHide": false,
@@ -1474,8 +1529,7 @@
                             "labelPosition": "top",
                             "tags": [],
                             "properties": {},
-                            "lockKey": true,
-                            "isNew": false
+                            "lockKey": true
                         }
                     ],
                     "type": "panel",
@@ -1487,8 +1541,7 @@
                         "when": "haveDaycareCosts12YearsOrOver",
                         "eq": "yes"
                     },
-                    "properties": {},
-                    "isNew": false
+                    "properties": {}
                 }
             ],
             "type": "panel",
@@ -1500,65 +1553,7 @@
                 "when": null,
                 "eq": ""
             },
-            "properties": {},
-            "isNew": false
-        },
-        {
-            "input": true,
-            "tableView": true,
-            "key": "maxMoneyValue",
-            "label": "Max Money Value",
-            "protected": false,
-            "unique": false,
-            "persistent": true,
-            "type": "hidden",
-            "tags": [],
-            "conditional": {
-                "show": "",
-                "when": null,
-                "eq": ""
-            },
-            "properties": {},
-            "lockKey": true,
-            "defaultValue": "100000000"
-        },
-        {
-            "input": true,
-            "tableView": true,
-            "key": "programYear",
-            "label": "Program Year",
-            "protected": false,
-            "unique": false,
-            "persistent": false,
-            "type": "hidden",
-            "tags": [],
-            "conditional": {
-                "show": "",
-                "when": null,
-                "eq": ""
-            },
-            "properties": {},
-            "calculateValue": "",
-            "defaultValue": ""
-        },
-        {
-            "input": true,
-            "tableView": true,
-            "key": "calculatedTaxYear",
-            "label": "Calculated Tax Year",
-            "protected": false,
-            "unique": false,
-            "persistent": false,
-            "type": "hidden",
-            "tags": [],
-            "conditional": {
-                "show": "",
-                "when": null,
-                "eq": ""
-            },
-            "properties": {},
-            "calculateValue": "// From the program year, get the calendar start year of the the program year.\r\n// e.g. program year  = 2022-2023, calendar start year is 2022. And tax year should be 2021.\r\nconst [startYear] = data.programYear ? data.programYear.split(\"-\"):[];\r\nconst taxYear = startYear ? (+startYear)-1 : \"\";\r\nvalue = taxYear;",
-            "lockKey": true
+            "properties": {}
         }
     ]
 }
