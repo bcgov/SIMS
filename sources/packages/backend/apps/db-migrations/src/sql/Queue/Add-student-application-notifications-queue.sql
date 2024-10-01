@@ -1,3 +1,4 @@
+-- Inserting values to 'queue_configurations' table.
 INSERT INTO
   sims.queue_configurations(queue_name, queue_configuration, queue_settings)
 VALUES
