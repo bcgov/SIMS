@@ -59,7 +59,11 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
     // Mock user services to return the saved student.
     await mockUserLoginInfo(appModule, student);
 
-    const application = await saveFakeApplication(db.dataSource, { student });
+    const application = await saveFakeApplication(
+      db.dataSource,
+      { student },
+      { applicationStatus: ApplicationStatus.InProgress },
+    );
 
     // Create CRA income verifications for student.
     const studentCRAIncomeVerification = createFakeCRAIncomeVerification(
@@ -96,7 +100,11 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
     // Mock user services to return the saved student.
     await mockUserLoginInfo(appModule, student);
 
-    const application = await saveFakeApplication(db.dataSource, { student });
+    const application = await saveFakeApplication(
+      db.dataSource,
+      { student },
+      { applicationStatus: ApplicationStatus.InProgress },
+    );
 
     // Create supporting users.
     const parent1 = createFakeSupportingUser(
@@ -176,7 +184,11 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
     // Mock user services to return the saved student.
     await mockUserLoginInfo(appModule, student);
 
-    const application = await saveFakeApplication(db.dataSource, { student });
+    const application = await saveFakeApplication(
+      db.dataSource,
+      { student },
+      { applicationStatus: ApplicationStatus.InProgress },
+    );
 
     // Create supporting users.
     const partner = createFakeSupportingUser(
@@ -238,9 +250,13 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
     // Mock user services to return the saved student.
     await mockUserLoginInfo(appModule, student);
 
-    const currentApplication = await saveFakeApplication(db.dataSource, {
-      student,
-    });
+    const currentApplication = await saveFakeApplication(
+      db.dataSource,
+      {
+        student,
+      },
+      { applicationStatus: ApplicationStatus.InProgress },
+    );
 
     // Create a future application with an offering whose study start date and end date are much later
     // than the current offering ones.

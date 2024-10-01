@@ -357,3 +357,34 @@ export const CASSupplierInformationHeaders = [
     key: "siteProtected",
   },
 ];
+
+/**
+ * Application Restriction Management header.
+ */
+export const ApplicationRestrictionManagementHeaders = [
+  {
+    title: "Restriction Type",
+    sortable: false,
+    key: "restrictionCategory",
+  },
+  {
+    title: "Restriction Code",
+    sortable: false,
+    key: "restrictionCode",
+  },
+  {
+    title: "Restriction Status",
+    sortable: false,
+    key: "isRestrictionActive",
+  },
+  {
+    title: "View Details",
+    sortable: false,
+    key: "id",
+  },
+  {
+    title: "Remove Bypass Rule?",
+    sortable: false,
+    key: "isBypassActive",
+  },
+];

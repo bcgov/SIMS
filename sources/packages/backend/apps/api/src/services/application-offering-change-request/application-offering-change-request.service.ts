@@ -345,12 +345,13 @@ export class ApplicationOfferingChangeRequestService {
   /**
    * Get the Application Offering Change Request by the application id.
    * @param applicationId the application id.
-   * @param studentId the student id.
+   * @param options options.
+   * - `studentId` student id.
    * @returns application offering change request status.
    */
   async getApplicationOfferingChangeRequest(
     applicationId: number,
-    studentId: number,
+    options?: { studentId?: number },
   ): Promise<ApplicationOfferingChangeRequest> {
     const applicationOfferingChangeRequest =
       await this.applicationOfferingChangeRequestRepo.findOne({
@@ -360,7 +361,10 @@ export class ApplicationOfferingChangeRequestService {
           createdAt: true,
         },
         where: {
-          application: { id: applicationId, student: { id: studentId } },
+          application: {
+            id: applicationId,
+            student: { id: options?.studentId },
+          },
         },
         order: {
           createdAt: "DESC",

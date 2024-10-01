@@ -279,13 +279,14 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
    * @param applicationId application id.
    * @param studentId student id.
    * @param options query options
+   * - `studentId` student id.
    * - `limit` limit of records to be retrieved.
    * @returns student appeals and their status.
    */
   async getAppealsForApplication(
     applicationId: number,
-    studentId: number,
     options?: {
+      studentId?: number;
       limit?: number;
     },
   ): Promise<StudentAppealWithStatus[]> {
@@ -294,12 +295,20 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       .select(["studentAppeal.id"])
       .addSelect(this.buildStatusSelect(), "status")
       .innerJoin("studentAppeal.application", "application")
-      .where("application.id = :applicationId", { applicationId })
-      .andWhere("application.student.id = :studentId", { studentId })
-      .orderBy("studentAppeal.submittedDate", "DESC");
+      .where("application.id = :applicationId", { applicationId });
+
+    if (options?.studentId) {
+      query.andWhere("application.student.id = :studentId", {
+        studentId: options.studentId,
+      });
+    }
+
+    query.orderBy("studentAppeal.submittedDate", "DESC");
+
     if (options?.limit) {
       query.limit(options.limit);
     }
+
     const queryResult = await query.getRawAndEntities();
     return mapFromRawAndEntities<StudentAppealWithStatus>(
       queryResult,
