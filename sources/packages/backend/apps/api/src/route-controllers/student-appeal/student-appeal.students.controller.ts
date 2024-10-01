@@ -3,16 +3,15 @@ import {
   Param,
   Post,
   Body,
+  NotFoundException,
   UnprocessableEntityException,
   BadRequestException,
   InternalServerErrorException,
   Get,
   ParseIntPipe,
-  NotFoundException,
 } from "@nestjs/common";
 import {
   ApplicationService,
-  FormKnownProperties,
   FormService,
   StudentAppealService,
 } from "../../services";
@@ -134,7 +133,6 @@ export class StudentAppealStudentsController extends BaseController {
           return this.formService.dryRunSubmission(
             appeal.formName,
             appeal.formData,
-            { setFormKnownProperties: [FormKnownProperties.MaxMoneyValue] },
           );
         });
       dryRunSubmissionResults = await Promise.all(dryRunPromise);
