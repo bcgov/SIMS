@@ -4,7 +4,7 @@ import { AuthorizedParties, IUserToken } from "../../auth";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import BaseController from "../BaseController";
 import { Request } from "express";
-import { AuditService } from "../../services/audit/audit.service";
+import { AuditService } from "../../services";
 import { AuditEvent } from "../../services/audit/audit-event.enum";
 
 @AllowAuthorizedParty(

@@ -13,7 +13,7 @@ import {
 import { getProviderInstanceForModule } from "@sims/test-utils";
 import { AuditEvent } from "../../../services/audit/audit-event.enum";
 import { AppModule } from "../../../app.module";
-import { AuditService } from "../../../services/audit/audit.service";
+import { AuditService } from "../../../services";
 
 describe("AuditController(e2e)-audit", () => {
   let app: INestApplication;
