@@ -1,7 +1,7 @@
 import { LoggerService } from "@nestjs/common";
 import { InjectLogger } from "@sims/utilities/logger";
 import { AuditEvent } from "./audit-event.enum";
-import { AuthorizedParties } from "../../../src/auth";
+import { AuthorizedParties } from "../../auth";
 
 const SIMS_AUDIT_EVENT_PREFIX = "SIMS Audit Event";
 
