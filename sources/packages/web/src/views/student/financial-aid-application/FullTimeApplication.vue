@@ -47,7 +47,7 @@
   <confirm-change-application
     ref="editApplicationModal"
     @confirmEditApplication="editApplication"
-    :isStudentEndDateWithinDeadline="isStudentEndDateWithinDeadline"
+    :isStudyEndDateWithinDeadline="isStudyEndDateWithinDeadline"
   />
 </template>
 
@@ -108,7 +108,7 @@ export default defineComponent({
     } = useFormatters();
     const router = useRouter();
     const initialData = ref({});
-    const isStudentEndDateWithinDeadline = ref(true);
+    const isStudyEndDateWithinDeadline = ref(true);
     const formioUtils = useFormioUtils();
     const snackBar = useSnackBar();
     const savingDraft = ref(false);
@@ -274,7 +274,7 @@ export default defineComponent({
       if (
         existingApplication.value.applicationStatus !== ApplicationStatus.Draft
       ) {
-        isStudentEndDateWithinDeadline.value =
+        isStudyEndDateWithinDeadline.value =
           applicationWizard.submission.data
             .studyEndDateBeforeSixWeeksFromToday ||
           applicationWizard.submission.data
@@ -286,7 +286,7 @@ export default defineComponent({
     };
     return {
       initialData,
-      isStudentEndDateWithinDeadline,
+      isStudyEndDateWithinDeadline,
       loadForm,
       wizardSubmit,
       saveDraft,
