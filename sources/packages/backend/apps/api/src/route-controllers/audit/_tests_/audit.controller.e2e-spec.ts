@@ -27,9 +27,6 @@ describe("AuditController(e2e)-audit", () => {
       AppModule,
       AuditService,
     );
-  });
-
-  beforeAll(async () => {
     auditService.logger.log = jest.fn();
   });
 
