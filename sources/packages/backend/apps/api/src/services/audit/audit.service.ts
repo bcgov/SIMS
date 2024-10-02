@@ -8,7 +8,7 @@ const SIMS_AUDIT_EVENT_PREFIX = "SIMS Audit Event";
 export class AuditService {
   /**
    * Audit logging.
-   * @param clientIp ip client.
+   * @param clientIp client ip.
    * @param tokenUserName token user name.
    * @param event audit event.
    * @param authorizedParty authorized party.
