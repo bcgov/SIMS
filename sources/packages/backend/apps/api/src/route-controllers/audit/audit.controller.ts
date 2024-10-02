@@ -1,10 +1,10 @@
-import { Controller, Post, Param, Req } from "@nestjs/common";
+import { Controller, Post, Param, Req, ParseEnumPipe } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { AuthorizedParties, IUserToken } from "../../auth";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import BaseController from "../BaseController";
-import { Request } from "express";
 import { AuditEvent, AuditService } from "../../services";
+import { Request } from "express";
 
 @AllowAuthorizedParty(
   AuthorizedParties.institution,
@@ -26,11 +26,11 @@ export class AuditController extends BaseController {
    * @param request request object.
    */
   @Post(":event")
-  async audit(
-    @Param("event") event: AuditEvent,
+  audit(
+    @Param("event", new ParseEnumPipe(AuditEvent)) event: AuditEvent,
     @UserToken() userToken: IUserToken,
     @Req() request: Request,
-  ): Promise<void> {
+  ): void {
     const clientIp =
       request.headers["x-forwarded-for"] || request.socket.remoteAddress;
     this.auditService.audit(clientIp, userToken.userName, event, userToken.azp);

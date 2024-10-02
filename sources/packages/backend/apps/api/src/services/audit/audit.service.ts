@@ -1,10 +1,11 @@
-import { LoggerService } from "@nestjs/common";
+import { Injectable, LoggerService } from "@nestjs/common";
 import { InjectLogger } from "@sims/utilities/logger";
 import { AuditEvent } from "./audit-event.enum";
 import { AuthorizedParties } from "../../auth";
 
 const SIMS_AUDIT_EVENT_PREFIX = "SIMS Audit Event";
 
+@Injectable()
 export class AuditService {
   /**
    * Audit logging.
@@ -13,12 +14,12 @@ export class AuditService {
    * @param event audit event.
    * @param authorizedParty authorized party.
    */
-  async audit(
+  audit(
     clientIp: string | string[],
     tokenUserName: string,
     event: AuditEvent,
     authorizedParty: AuthorizedParties,
-  ): Promise<void> {
+  ): void {
     const eventFriendlyName = this.getEventFriendlyName(event);
     const portalFriendlyName = this.getPortalFriendlyName(authorizedParty);
     this.logger.log(
