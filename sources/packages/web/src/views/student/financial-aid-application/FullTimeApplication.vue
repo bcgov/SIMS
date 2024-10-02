@@ -44,11 +44,43 @@
       :notDraft="notDraft"
     />
   </student-page-container>
-  <confirm-change-application
+  <confirm-modal
+    title="Edit application"
     ref="editApplicationModal"
-    @confirmEditApplication="editApplication"
-    :isStudyEndDateWithinDeadline="isStudyEndDateWithinDeadline"
-  />
+    okLabel="Submit"
+    cancelLabel="No"
+    :disable-primary-button="!conditionsAccepted"
+    ><template #content>
+      <div class="m-4">
+        <v-checkbox
+          color="primary"
+          v-model="conditionsAccepted"
+          label="I acknowledge that by editing my application, I may be required to
+        resubmit previously approved exception requests. My institution may be
+        required to resubmit program information, and my parent or partner may be
+        required to resubmit supporting information."
+          hide-details="auto"
+        ></v-checkbox>
+      </div>
+      <div class="m-4">
+        <banner v-if="isStudyEndDateWithinDeadline" :type="BannerTypes.Warning">
+          <template #content
+            >Please note your application has now passed the six week deadline
+            for completed applications to be received by StudentAid BC. All
+            edits to your application will require additional review from
+            StudentAid BC to be considered for funding. Please see the following
+            link for information on the
+            <a
+              rel="noopener"
+              target="_blank"
+              href="https://studentaidbc.ca/sites/all/files/form-library/appeal_fundingafterenddate.pdf"
+              >funding after end date appeal</a
+            >.
+          </template>
+        </banner>
+      </div>
+    </template></confirm-modal
+  >
 </template>
 
 <script lang="ts">
@@ -70,18 +102,19 @@ import {
 } from "@/types";
 import { ApplicationDataAPIOutDTO } from "@/services/http/dto";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import ConfirmChangeApplication from "@/components/students/modals/ConfirmChangeApplication.vue";
 import {
   STUDY_DATE_OVERLAP_ERROR,
   ACTIVE_STUDENT_RESTRICTION,
 } from "@/constants";
 import StudentApplication from "@/components/common/StudentApplication.vue";
 import { AppConfigService } from "@/services/AppConfigService";
+import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
+import { BannerTypes } from "@/types";
 
 export default defineComponent({
   components: {
     StudentApplication,
-    ConfirmChangeApplication,
+    ConfirmModal,
   },
   props: {
     id: {
@@ -120,6 +153,7 @@ export default defineComponent({
     const notDraft = ref(false);
     const existingApplication = ref({} as ApplicationDataAPIOutDTO);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
+    const conditionsAccepted = ref(false);
 
     const checkProgramYear = async () => {
       // check program year, if not active allow only readonly mode with a snackBar
@@ -267,6 +301,8 @@ export default defineComponent({
     const confirmEditApplication = async () => {
       if (await editApplicationModal.value.showModal()) {
         editApplication();
+      } else {
+        conditionsAccepted.value = false;
       }
     };
 
@@ -302,6 +338,8 @@ export default defineComponent({
       pageChanged,
       isFirstPage,
       isLastPage,
+      conditionsAccepted,
+      BannerTypes,
     };
   },
 });
