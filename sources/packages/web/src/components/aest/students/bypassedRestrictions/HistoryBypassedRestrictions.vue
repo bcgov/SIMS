@@ -44,8 +44,13 @@
           </template>
           <template #[`item.removeBypassRule`]="{ item }">
             <v-btn
-              :color="getRemoveBypassColor(item.isBypassActive)"
-              :disabled="!item.isBypassActive"
+              :color="
+                getRemoveBypassColor(
+                  item.isBypassActive,
+                  item.isRestrictionActive,
+                )
+              "
+              :disabled="!item.isBypassActive || !item.isRestrictionActive"
             >
               {{ getRemoveBypassLabel(item.isBypassActive) }}</v-btn
             >
@@ -95,8 +100,11 @@ export default defineComponent({
       return isBypassActive ? "Remove Bypass" : "Bypass Removed";
     };
 
-    const getRemoveBypassColor = (isBypassActive: boolean): string => {
-      return isBypassActive ? "primary" : "secondary";
+    const getRemoveBypassColor = (
+      isBypassActive: boolean,
+      isRestrictionActive: boolean,
+    ): string => {
+      return !isBypassActive || !isRestrictionActive ? "secondary" : "primary";
     };
 
     return {
