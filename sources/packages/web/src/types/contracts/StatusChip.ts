@@ -17,3 +17,17 @@ export enum StatusChipLabelTypes {
   Declined = "Declined",
   Completed = "Completed",
 }
+
+/**
+ * Indicates if the bypassed restriction is active or removed.
+ */
+export enum BypassStatusChipLabelTypes {
+  /**
+   * Application restriction bypass is active.
+   */
+  Active = "Active",
+  /**
+   * Application restriction bypass is removed.
+   */
+  Removed = "Removed",
+}

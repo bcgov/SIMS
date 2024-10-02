@@ -14,6 +14,7 @@ import {
   InstitutionLocation,
   MSFAANumber,
   OfferingIntensity,
+  ProgramInfoStatus,
   ProgramYear,
   RelationshipStatus,
   Student,
@@ -64,6 +65,7 @@ export function createFakeApplication(
     faker.datatype.number({ max: 9999999999, min: 1000000000 }).toString();
   application.applicationException = relations?.applicationException;
   application.location = relations?.location ?? createFakeInstitutionLocation();
+  application.pirStatus = options?.initialValue?.pirStatus;
   return application;
 }
 
@@ -83,6 +85,7 @@ export function createFakeApplication(
  * @param options additional options:
  * - `applicationStatus` if provided sets the application status of the application or else defaults to Assessment status.
  * - `applicationData` application related data.
+ * - `pirStatus` program info status.
  * - `offeringIntensity` if provided sets the offering intensity for the created fakeApplication.
  * - `createSecondDisbursement` if provided and true creates a second disbursement,
  * - `currentAssessmentInitialValues` if provided set the current application initial values.
@@ -109,6 +112,7 @@ export async function saveFakeApplicationDisbursements(
   options?: {
     applicationStatus?: ApplicationStatus;
     applicationData?: ApplicationData;
+    pirStatus?: ProgramInfoStatus;
     offeringIntensity?: OfferingIntensity;
     createSecondDisbursement?: boolean;
     currentAssessmentInitialValues?: Partial<StudentAssessment>;
@@ -236,6 +240,7 @@ export async function saveFakeApplicationDisbursements(
  * - `applicationStatus` application status for the application.
  * - `offeringIntensity` if provided sets the offering intensity for the created fakeApplication, otherwise sets it to fulltime by default.
  * - `applicationData` related application data.
+ * - `pirStatus` program info status.
  * - `currentAssessmentInitialValues` initial values related to the current assessment.
  * - `offeringInitialValues` initial values related to the offering for the original assessment.
  * @returns the created application.
@@ -254,6 +259,7 @@ export async function saveFakeApplication(
     applicationStatus?: ApplicationStatus;
     offeringIntensity?: OfferingIntensity;
     applicationData?: ApplicationData;
+    pirStatus?: ProgramInfoStatus;
     currentAssessmentInitialValues?: Partial<StudentAssessment>;
     offeringInitialValues?: Partial<EducationProgramOffering>;
   },
@@ -285,6 +291,7 @@ export async function saveFakeApplication(
     {
       initialValue: {
         data: options?.applicationData,
+        pirStatus: options?.pirStatus,
       },
     },
   );

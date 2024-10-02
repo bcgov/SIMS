@@ -28,6 +28,7 @@ import { StudentLoanBalanceApi } from "./StudentLoanBalanceApi";
 import { AnnouncementApi } from "@/services/http/AnnouncementApi";
 import { CASSupplierApi } from "@/services/http/CASSupplier";
 import { AuditApi } from "@/services/http/AuditApi";
+import { ApplicationRestrictionBypassApi } from "@/services/http/ApplicationRestrictionBypassApi";
 
 const ApiClient = {
   AuditApi: new AuditApi(),
@@ -61,6 +62,7 @@ const ApiClient = {
     new ApplicationOfferingChangeRequestApi(),
   StudentLoanBalanceApi: new StudentLoanBalanceApi(),
   AnnouncementApi: new AnnouncementApi(),
+  ApplicationRestrictionBypassApi: new ApplicationRestrictionBypassApi(),
 };
 
 export default ApiClient;

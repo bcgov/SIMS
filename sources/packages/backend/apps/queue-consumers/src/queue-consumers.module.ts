@@ -28,6 +28,7 @@ import {
   WorkflowQueueRetryScheduler,
   CASSupplierIntegrationScheduler,
   ApplicationChangesReportIntegrationScheduler,
+  StudentApplicationNotificationsScheduler,
 } from "./processors";
 import {
   DisbursementScheduleSharedService,
@@ -146,6 +147,7 @@ import { ObjectStorageService } from "@sims/integrations/object-storage";
     CASSupplierIntegrationService,
     CASService,
     ApplicationChangesReportIntegrationScheduler,
+    StudentApplicationNotificationsScheduler,
   ],
   controllers: [HealthController],
 })

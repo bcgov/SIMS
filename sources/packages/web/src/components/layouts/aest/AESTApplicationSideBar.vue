@@ -25,6 +25,13 @@
       :title="studentMenu.assessments.label"
       @click="studentMenu.assessments.command"
     />
+    <v-list-item
+      density="compact"
+      nav
+      :prepend-icon="studentMenu.applicationRestrictionsManagement.icon"
+      :title="studentMenu.applicationRestrictionsManagement.label"
+      @click="studentMenu.applicationRestrictionsManagement.command"
+    />
   </v-navigation-drawer>
 </template>
 
@@ -38,6 +45,7 @@ import { SupportingUsersService } from "@/services/SupportingUserService";
 export interface StudentApplicationMenu {
   studentApplication: MenuModel;
   assessments: MenuModel;
+  applicationRestrictionsManagement: MenuModel;
 }
 
 export default defineComponent({
@@ -74,6 +82,19 @@ export default defineComponent({
         command: () => {
           router.push({
             name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
+            params: {
+              applicationId: props.applicationId,
+              studentId: props.studentId,
+            },
+          });
+        },
+      },
+      applicationRestrictionsManagement: {
+        label: "Restrictions Management",
+        icon: "mdi-close-circle-outline",
+        command: () => {
+          router.push({
+            name: AESTRoutesConst.APPLICATION_RESTRICTIONS_MANAGEMENT,
             params: {
               applicationId: props.applicationId,
               studentId: props.studentId,
