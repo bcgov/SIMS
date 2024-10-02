@@ -114,7 +114,7 @@ export default defineComponent({
       },
       applicationStatus: {
         title: "Application Status",
-        props: { prependIcon: "mdi-close-circle-outline" },
+        props: { prependIcon: "mdi-information-outline" },
         command: () => {
           router.push({
             name: AESTRoutesConst.APPLICATION_STATUS,
