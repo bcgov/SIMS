@@ -11,9 +11,8 @@ import {
   InstitutionTokenTypes,
 } from "../../../testHelpers";
 import { getProviderInstanceForModule } from "@sims/test-utils";
-import { AuditEvent } from "../../../services/audit/audit-event.enum";
 import { AppModule } from "../../../app.module";
-import { AuditService } from "../../../services";
+import { AuditEvent, AuditService } from "../../../services";
 
 describe("AuditController(e2e)-audit", () => {
   let app: INestApplication;
