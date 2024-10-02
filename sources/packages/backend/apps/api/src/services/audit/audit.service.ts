@@ -31,7 +31,7 @@ export class AuditService {
    * @param event audit event.
    * @returns audit event friendly name.
    */
-  private getEventFriendlyName(event: AuditEvent) {
+  private getEventFriendlyName(event: AuditEvent): string {
     let eventFriendlyName = "";
     switch (event) {
       case AuditEvent.LoggedIn: {
@@ -63,7 +63,7 @@ export class AuditService {
    * @param authorizedParty authorized party.
    * @returns portal friendly name.
    */
-  private getPortalFriendlyName(authorizedParty: AuthorizedParties) {
+  private getPortalFriendlyName(authorizedParty: AuthorizedParties): string {
     let portalFriendlyName = "";
     switch (authorizedParty) {
       case AuthorizedParties.aest: {
