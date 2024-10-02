@@ -153,4 +153,38 @@ export class ApplicationService {
         .getMany()
     );
   }
+
+  async getEligibleApplicationsForNotification(): Promise<Application[]> {
+    const eightWeeksFromNow = new Date();
+    eightWeeksFromNow.setDate(eightWeeksFromNow.getDate() + 56); // 8 weeks * 7 days
+
+    const query = this.applicationRepo
+      .createQueryBuilder("a")
+      .select("a.applicationNumber", "applicationNumber")
+      .addSelect("u.firstName", "givenNames")
+      .addSelect("u.lastName", "lastName")
+      .addSelect("sa.id", "assessmentId")
+      .addSelect("s.disabilityStatus", "disabilityStatus")
+      .addSelect("sa.workflowData", "workflowData")
+      .innerJoin("a.currentAssessment", "sa")
+      .innerJoin("a.student", "s")
+      .innerJoin("s.user", "u")
+      .innerJoin("sa.offering", "epo")
+      .innerJoin("sa.disbursementSchedules", "ds")
+      .where("epo.studyEndDate >= :eightWeeksFromNow", { eightWeeksFromNow })
+      .andWhere("s.disabilityStatus NOT IN (:...excludedStatuses)", {
+        excludedStatuses: ["PD", "PPD"],
+      })
+      .andWhere("a.isArchived = :isArchived", { isArchived: false })
+      .andWhere("ds.disbursementScheduleStatus = :status", {
+        status: "Pending",
+      });
+
+    // Log the generated SQL
+    console.log("Generated SQL:", query.getSql());
+    console.log("Query parameters:", query.getParameters());
+
+    // Execute the query and return the results
+    return query.getMany();
+  }
 }

@@ -40,6 +40,26 @@ export class StudentApplicationNotificationsScheduler extends BaseScheduler<void
       );
 
       // TODO: Get applications that have a disability status mismatch  and check PDPPD status
+      const eligibleApplications =
+        await this.applicationService.getEligibleApplicationsForNotification();
+
+      // for (const application of eligibleApplications) {
+      //   const disabilityStatusMismatch =
+      //     application.disabilityDetails.calculatedPDPPDStatus &&
+      //     ![DisabilityStatus.PD, DisabilityStatus.PPD].includes(
+      //       application.disabilityDetails.studentProfileDisabilityStatus,
+      //     );
+
+      //   if (disabilityStatusMismatch) {
+      //     await this.notificationService.sendDisabilityStatusMismatchNotification(
+      //       application,
+      //     );
+      //     await this.applicationService.markNotificationSent(application.id);
+      //   }
+      // }
+      console.log(eligibleApplications);
+      this.logger.log(JSON.stringify(eligibleApplications));
+      processSummary.info(`Eligible applications: ${eligibleApplications}`);
 
       return getSuccessMessageWithAttentionCheck(
         ["Process finalized with success."],
