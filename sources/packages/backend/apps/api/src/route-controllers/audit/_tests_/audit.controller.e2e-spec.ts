@@ -29,11 +29,15 @@ describe("AuditController(e2e)-audit", () => {
     );
   });
 
+  beforeAll(async () => {
+    auditService.logger.log = jest.fn();
+  });
+
   it(`Should log 'Logged In' message when ${AuditEvent.LoggedIn} is requested.`, async () => {
     // Arrange
     const endpoint = `/audit/${AuditEvent.LoggedIn}`;
     const token = await getAESTToken(AESTGroups.Operations);
-    auditService.logger.log = jest.fn();
+
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
@@ -49,7 +53,7 @@ describe("AuditController(e2e)-audit", () => {
     // Arrange
     const endpoint = `/audit/${AuditEvent.LoggedOut}`;
     const token = await getInstitutionToken(InstitutionTokenTypes.CollegeCUser);
-    auditService.logger.log = jest.fn();
+
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
@@ -67,7 +71,7 @@ describe("AuditController(e2e)-audit", () => {
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
-    auditService.logger.log = jest.fn();
+
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
@@ -83,7 +87,7 @@ describe("AuditController(e2e)-audit", () => {
     // Arrange
     const endpoint = `/audit/${AuditEvent.BrowserClosed}`;
     const token = await getAESTToken(AESTGroups.Operations);
-    auditService.logger.log = jest.fn();
+
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
@@ -99,7 +103,7 @@ describe("AuditController(e2e)-audit", () => {
     // Arrange
     const endpoint = `/audit/${AuditEvent.BrowserReopened}`;
     const token = await getAESTToken(AESTGroups.Operations);
-    auditService.logger.log = jest.fn();
+
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
