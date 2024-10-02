@@ -99,6 +99,7 @@ import {
   FormIOCustomEventTypes,
   ApplicationStatus,
   ApiProcessError,
+  BannerTypes,
 } from "@/types";
 import { ApplicationDataAPIOutDTO } from "@/services/http/dto";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
@@ -109,7 +110,6 @@ import {
 import StudentApplication from "@/components/common/StudentApplication.vue";
 import { AppConfigService } from "@/services/AppConfigService";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
-import { BannerTypes } from "@/types";
 
 export default defineComponent({
   components: {
