@@ -1,0 +1,47 @@
+<template>
+  <full-page-container>
+    <template #header>
+      <header-navigator
+        title="Application history"
+        :routeLocation="{
+          name: AESTRoutesConst.STUDENT_APPLICATIONS,
+          params: { studentId },
+        }"
+        subTitle="Application Status"
+      />
+      <application-header-title :application-id="applicationId" />
+    </template>
+    <application-progress-bar
+      :application-id="applicationId"
+    ></application-progress-bar>
+  </full-page-container>
+</template>
+
+<script lang="ts">
+import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
+import { defineComponent } from "vue";
+import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
+import ApplicationProgressBar from "@/components/common/applicationTracker/ApplicationProgressBar.vue";
+
+export default defineComponent({
+  components: {
+    ApplicationProgressBar,
+    ApplicationHeaderTitle,
+  },
+  props: {
+    studentId: {
+      type: Number,
+      required: true,
+    },
+    applicationId: {
+      type: Number,
+      required: true,
+    },
+  },
+  setup() {
+    return {
+      AESTRoutesConst,
+    };
+  },
+});
+</script>

@@ -51,8 +51,8 @@
     <application-progress-bar
       class="mb-5"
       :application-id="id"
+      :is-application-actions-allowed="false"
       @editApplication="editApplication"
-      :application-status="applicationDetails.applicationStatus"
     />
     <student-assessment-details :applicationId="id" v-if="showViewAssessment" />
   </student-page-container>

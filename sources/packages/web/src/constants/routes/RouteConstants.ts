@@ -150,6 +150,7 @@ export const AESTRoutesConst = {
   ASSESSMENT_AWARD_VIEW: Symbol(),
   REQUEST_CHANGE_OFFERINGS: Symbol(),
   APPLICATION_RESTRICTIONS_MANAGEMENT: Symbol(),
+  APPLICATION_STATUS: Symbol(),
 };
 
 /**

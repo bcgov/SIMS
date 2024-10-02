@@ -37,6 +37,7 @@
             assessmentDetails.applicationOfferingChangeRequestId,
           )
         "
+        :disabled="!isApplicationActionsAllowed"
         >Review changes</v-btn
       >
     </template>
@@ -241,6 +242,10 @@ export default defineComponent({
   props: {
     applicationId: {
       type: Number,
+      required: true,
+    },
+    isApplicationActionsAllowed: {
+      type: Boolean,
       required: true,
     },
   },

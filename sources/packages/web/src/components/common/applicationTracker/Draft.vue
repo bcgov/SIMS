@@ -4,7 +4,10 @@
     content="Your application has not been submitted to StudentAid BC yet. Please complete and submit your application when you are ready."
     icon="fa:fas fa-pencil-alt"
     ><template #actions>
-      <v-btn color="primary" @click="$emit('editApplication')"
+      <v-btn
+        color="primary"
+        @click="$emit('editApplication')"
+        :disabled="!isApplicationActionsAllowed"
         >Continue application
       </v-btn>
     </template>
@@ -17,6 +20,12 @@ export default defineComponent({
   emits: ["editApplication"],
   components: {
     ApplicationStatusTrackerBanner,
+  },
+  props: {
+    isApplicationActionsAllowed: {
+      type: Boolean,
+      required: true,
+    },
   },
 });
 </script>
