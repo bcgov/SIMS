@@ -1,5 +1,5 @@
 <template>
-  <full-page-container>
+  <full-page-container layout-template="centered">
     <template #header>
       <header-navigator
         title="Application history"
