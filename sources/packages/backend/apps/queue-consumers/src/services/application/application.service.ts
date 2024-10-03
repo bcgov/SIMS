@@ -171,17 +171,20 @@ export class ApplicationService {
 
     const query = this.applicationRepo
       .createQueryBuilder("application")
-      .select("application.applicationNumber", "applicationNumber")
-      .addSelect("users.firstName", "firstName")
-      .addSelect("users.lastName", "lastName")
-      .addSelect("student_assessments.id", "assessmentId")
-      .addSelect("students.disabilityStatus", "disabilityStatus")
+      .select([
+        "application.applicationNumber AS applicationNumber",
+        "users.firstName AS firstName",
+        "users.lastName AS lastName",
+        "student_assessments.id AS assessmentId",
+        "students.disabilityStatus AS disabilityStatus",
+      ])
       .innerJoin("application.currentAssessment", "student_assessments")
       .innerJoin("application.student", "students")
       .innerJoin("students.user", "users")
       .innerJoin("student_assessments.offering", "epo")
       .innerJoin("student_assessments.disbursementSchedules", "ds")
-      .where("epo.studyEndDate >= :eightWeeksFromNow", { eightWeeksFromNow })
+      .where("epo.studyEndDate >=  '2024-11-28T00:52:40.005Z'")
+      // .where("epo.studyEndDate >= :eightWeeksFromNow", { eightWeeksFromNow })
       .andWhere("students.disabilityStatus NOT IN ('PD', 'PPD')")
       .andWhere(
         "json_extract_path_text(student_assessments.workflow_data::json, 'calculatedData', 'pdppdStatus') = 'true'",
@@ -215,6 +218,8 @@ export class ApplicationService {
     console.log("Generated SQL:", query.getSql());
     console.log("Query parameters:", query.getParameters());
 
+    const results = await query.getMany();
+    console.log("Results:", results);
     // Execute the query and return the results
     return query.getMany();
   }
