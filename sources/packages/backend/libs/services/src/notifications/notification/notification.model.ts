@@ -78,6 +78,13 @@ export interface StudentNotification {
   userId: number;
 }
 
+export interface StudentPdPpdNotification {
+  givenNames: string;
+  lastName: string;
+  email: string;
+  applicationNumber: string;
+}
+
 export interface DisbursementBlockedNotification {
   givenNames: string;
   lastName: string;

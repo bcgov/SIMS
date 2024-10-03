@@ -16,6 +16,7 @@ import { ApplicationService } from "../../../services";
 import {
   NotificationService,
   StudentNotification,
+  StudentPdPpdNotification,
 } from "@sims/services/notifications";
 import { NotificationActionsService } from "@sims/services";
 
@@ -48,11 +49,11 @@ export class StudentApplicationNotificationsScheduler extends BaseScheduler<void
         await this.applicationService.getEligibleApplicationsForNotification();
 
       for (const application of eligibleApplications) {
-        const notification: StudentNotification = {
+        const notification: StudentPdPpdNotification = {
           givenNames: application.student.user.firstName,
           lastName: application.student.user.lastName,
-          toAddress: application.student.user.email,
-          userId: application.student.user.id,
+          email: application.student.user.email,
+          applicationNumber: application.applicationNumber,
         };
 
         console.log(notification);

@@ -31,6 +31,7 @@ import {
   ECertFeedbackFileErrorNotification,
   DailyDisbursementReportProcessingNotification,
   SupportingUserInformationNotification,
+  StudentPdPpdNotification,
 } from "..";
 import { NotificationService } from "./notification.service";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
@@ -1265,9 +1266,9 @@ export class NotificationActionsService {
    * @param entityManager entity manager to execute in transaction.
    */
   async saveStudentApplicationPdPpdNotification(
-    notification: StudentNotification,
+    notification: StudentPdPpdNotification,
     assessmentId: number,
-    entityManager: EntityManager,
+    entityManager?: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     const { templateId } =
@@ -1275,10 +1276,10 @@ export class NotificationActionsService {
         NotificationMessageType.StudentPdPpdApplicationNotification,
       );
     const notificationToSend = {
-      userId: notification.userId,
+      applicationNumber: notification.applicationNumber,
       messageType: NotificationMessageType.StudentPdPpdApplicationNotification,
       messagePayload: {
-        email_address: notification.toAddress,
+        email_address: notification.email,
         template_id: templateId,
         personalisation: {
           givenNames: notification.givenNames ?? "",
@@ -1287,6 +1288,7 @@ export class NotificationActionsService {
       },
       metadata: { assessmentId },
     };
+    console.log(notificationToSend);
     // Save notification to be sent to the student into the notification table.
     await this.notificationService.saveNotifications(
       [notificationToSend],
