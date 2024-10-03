@@ -30,7 +30,7 @@
             />
           </template>
           <template #[`item.bypassStatus`]="{ item }">
-            <status-chip-bypass :is-restriction-active="item.isBypassActive" />
+            <status-chip-bypass :is-bypass-active="item.isBypassActive" />
           </template>
           <template #[`item.id`]>
             <v-btn
