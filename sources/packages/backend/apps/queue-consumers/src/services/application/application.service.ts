@@ -154,31 +154,68 @@ export class ApplicationService {
     );
   }
 
+  /**
+   * Retrieves applications eligible for a specific notification (likely related to disability status and PD/PPD status).
+   * This method applies several criteria to filter eligible applications:
+   * - Study end date is at least 8 weeks in the future
+   * - Student's disability status is not 'PD' or 'PPD'
+   * - The assessment's workflow data indicates a positive PD/PPD status
+   * - The application is not archived
+   * - There's a pending disbursement schedule
+   * - No notification of this type (messageId 30) has been sent for this assessment
+   * @returns An array of eligible applications with relevant details for notification.
+   */
   async getEligibleApplicationsForNotification(): Promise<Application[]> {
     const eightWeeksFromNow = new Date();
     eightWeeksFromNow.setDate(eightWeeksFromNow.getDate() + 56); // 8 weeks * 7 days
 
     const query = this.applicationRepo
-      .createQueryBuilder("a")
-      .select("a.applicationNumber", "applicationNumber")
-      .addSelect("u.firstName", "givenNames")
-      .addSelect("u.lastName", "lastName")
-      .addSelect("sa.id", "assessmentId")
-      .addSelect("s.disabilityStatus", "disabilityStatus")
-      .addSelect("sa.workflowData", "workflowData")
-      .innerJoin("a.currentAssessment", "sa")
-      .innerJoin("a.student", "s")
-      .innerJoin("s.user", "u")
-      .innerJoin("sa.offering", "epo")
-      .innerJoin("sa.disbursementSchedules", "ds")
+      .createQueryBuilder("application")
+      .select("application.applicationNumber", "applicationNumber")
+      .addSelect("users.firstName", "firstName")
+      .addSelect("users.lastName", "lastName")
+      .addSelect("student_assessments.id", "assessmentId")
+      .addSelect("students.disabilityStatus", "disabilityStatus")
+      .innerJoin("application.currentAssessment", "student_assessments")
+      .innerJoin("application.student", "students")
+      .innerJoin("students.user", "users")
+      .innerJoin("student_assessments.offering", "epo")
+      .innerJoin("student_assessments.disbursementSchedules", "ds")
       .where("epo.studyEndDate >= :eightWeeksFromNow", { eightWeeksFromNow })
-      .andWhere("s.disabilityStatus NOT IN (:...excludedStatuses)", {
+      .andWhere("students.disabilityStatus NOT IN (:...excludedStatuses)", {
         excludedStatuses: ["PD", "PPD"],
       })
-      .andWhere("a.isArchived = :isArchived", { isArchived: false })
+      .andWhere(
+        "json_extract_path_text(student_assessments.workflow_data::json, 'calculatedData', 'pdppdStatus') = :pdppdStatus",
+        { pdppdStatus: "true" },
+      )
+      .andWhere("application.isArchived = :isArchived", { isArchived: false })
       .andWhere("ds.disbursementScheduleStatus = :status", {
         status: "Pending",
-      });
+      })
+      .andWhere((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select("1")
+          .from("notifications", "n")
+          .where("n.notification_message_id = :messageId")
+          .andWhere(
+            "json_extract_path_text(n.metadata::json, 'assessmentId') = CAST(student_assessments.id AS TEXT)",
+          )
+          .getQuery();
+        return "NOT EXISTS (" + subQuery + ")";
+      })
+      .andWhere((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select("1")
+          .from("disbursement_schedules", "ds2")
+          .where("ds2.studentAssessment = student_assessments.id")
+          .andWhere("ds2.disbursementDate < ds.disbursementDate")
+          .getQuery();
+        return "NOT EXISTS (" + subQuery + ")";
+      })
+      .setParameter("messageId", 30);
 
     // Log the generated SQL
     console.log("Generated SQL:", query.getSql());
