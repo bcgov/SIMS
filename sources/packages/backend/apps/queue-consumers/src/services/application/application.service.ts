@@ -169,58 +169,52 @@ export class ApplicationService {
     const eightWeeksFromNow = new Date();
     eightWeeksFromNow.setDate(eightWeeksFromNow.getDate() + 56); // 8 weeks * 7 days
 
-    const query = this.applicationRepo
-      .createQueryBuilder("application")
-      .select([
-        "application.applicationNumber AS applicationNumber",
-        "users.firstName AS firstName",
-        "users.lastName AS lastName",
-        "student_assessments.id AS assessmentId",
-        "students.disabilityStatus AS disabilityStatus",
-      ])
-      .innerJoin("application.currentAssessment", "student_assessments")
-      .innerJoin("application.student", "students")
-      .innerJoin("students.user", "users")
-      .innerJoin("student_assessments.offering", "epo")
-      .innerJoin("student_assessments.disbursementSchedules", "ds")
-      .where("epo.studyEndDate >=  '2024-11-28T00:52:40.005Z'")
-      // .where("epo.studyEndDate >= :eightWeeksFromNow", { eightWeeksFromNow })
-      .andWhere("students.disabilityStatus NOT IN ('PD', 'PPD')")
-      .andWhere(
-        "json_extract_path_text(student_assessments.workflow_data::json, 'calculatedData', 'pdppdStatus') = 'true'",
-      )
-      .andWhere("application.isArchived = false")
-      .andWhere("ds.disbursementScheduleStatus = 'Pending'")
-      .andWhere((qb) => {
-        const subQuery = qb
-          .subQuery()
-          .select("1")
-          .from("notifications", "n")
-          .where("n.notification_message_id = 30")
-          .andWhere(
-            "json_extract_path_text(n.metadata::json, 'assessmentId') = CAST(student_assessments.id AS TEXT)",
-          )
-          .getQuery();
-        return "NOT EXISTS (" + subQuery + ")";
-      })
-      .andWhere((qb) => {
-        const subQuery = qb
-          .subQuery()
-          .select("1")
-          .from("disbursement_schedules", "ds2")
-          .where("ds2.studentAssessment = student_assessments.id")
-          .andWhere("ds2.disbursementDate < ds.disbursementDate")
-          .getQuery();
-        return "NOT EXISTS (" + subQuery + ")";
-      });
-
-    // Log the generated SQL
-    console.log("Generated SQL:", query.getSql());
-    console.log("Query parameters:", query.getParameters());
-
-    const results = await query.getMany();
-    console.log("Results:", results);
-    // Execute the query and return the results
-    return query.getMany();
+    return (
+      this.applicationRepo
+        .createQueryBuilder("application")
+        .select([
+          "application.applicationNumber",
+          "users.firstName",
+          "users.lastName",
+          "student_assessments.id",
+          "students.disabilityStatus",
+        ])
+        .innerJoin("application.currentAssessment", "student_assessments")
+        .innerJoin("application.student", "students")
+        .innerJoin("students.user", "users")
+        .innerJoin("student_assessments.offering", "epo")
+        .innerJoin("student_assessments.disbursementSchedules", "ds")
+        // .where("epo.studyEndDate >=  '2024-11-28T00:52:40.005Z'")
+        .where("epo.studyEndDate >= :eightWeeksFromNow", { eightWeeksFromNow })
+        .andWhere("students.disabilityStatus NOT IN ('PD', 'PPD')")
+        .andWhere(
+          "json_extract_path_text(student_assessments.workflow_data::json, 'calculatedData', 'pdppdStatus') = 'true'",
+        )
+        .andWhere("application.isArchived = false")
+        .andWhere("ds.disbursementScheduleStatus = 'Pending'")
+        .andWhere((qb) => {
+          const subQuery = qb
+            .subQuery()
+            .select("1")
+            .from("notifications", "n")
+            .where("n.notification_message_id = 30")
+            .andWhere(
+              "json_extract_path_text(n.metadata::json, 'assessmentId') = CAST(student_assessments.id AS TEXT)",
+            )
+            .getQuery();
+          return "NOT EXISTS (" + subQuery + ")";
+        })
+        .andWhere((qb) => {
+          const subQuery = qb
+            .subQuery()
+            .select("1")
+            .from("disbursement_schedules", "ds2")
+            .where("ds2.studentAssessment = student_assessments.id")
+            .andWhere("ds2.disbursementDate < ds.disbursementDate")
+            .getQuery();
+          return "NOT EXISTS (" + subQuery + ")";
+        })
+        .getMany()
+    );
   }
 }
