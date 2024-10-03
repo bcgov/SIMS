@@ -117,7 +117,7 @@ export default defineComponent({
         props: { prependIcon: "mdi-information-outline" },
         command: () => {
           router.push({
-            name: AESTRoutesConst.APPLICATION_STATUS,
+            name: AESTRoutesConst.APPLICATION_STATUS_TRACKER,
             params: {
               applicationId: props.applicationId,
               studentId: props.studentId,

@@ -7,7 +7,7 @@
       <v-btn
         color="primary"
         @click="$emit('editApplication')"
-        :disabled="!isApplicationActionsAllowed"
+        :disabled="!areApplicationActionsAllowed"
         >Continue application
       </v-btn>
     </template>
@@ -22,9 +22,10 @@ export default defineComponent({
     ApplicationStatusTrackerBanner,
   },
   props: {
-    isApplicationActionsAllowed: {
+    areApplicationActionsAllowed: {
       type: Boolean,
-      required: true,
+      required: false,
+      default: false,
     },
   },
 });

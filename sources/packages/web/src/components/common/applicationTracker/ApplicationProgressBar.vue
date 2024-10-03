@@ -17,7 +17,7 @@
         :progressLabelIconColor="statusIconDetails.statusType"
       />
       <draft
-        :is-application-actions-allowed="isApplicationActionsAllowed"
+        :are-application-actions-allowed="areApplicationActionsAllowed"
         @editApplication="$emit('editApplication')"
         v-if="
           applicationProgressDetails.applicationStatus ===
@@ -55,7 +55,7 @@
         :applicationId="applicationId"
       />
       <completed
-        :is-application-actions-allowed="isApplicationActionsAllowed"
+        :are-application-actions-allowed="areApplicationActionsAllowed"
         v-else-if="
           applicationProgressDetails.applicationStatus ===
           ApplicationStatus.Completed
@@ -133,7 +133,7 @@ export default defineComponent({
       type: Number,
       required: true,
     },
-    isApplicationActionsAllowed: {
+    areApplicationActionsAllowed: {
       type: Boolean,
       required: false,
       default: false,
