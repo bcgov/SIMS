@@ -153,9 +153,9 @@ export default defineComponent({
     },
   },
   setup(props) {
-    sessionStorage.setItem(USER_LOGIN_TRIGGERED, "true");
     const { executeLogin } = useAuth();
     const login = async (idp: IdentityProviders) => {
+      sessionStorage.setItem(USER_LOGIN_TRIGGERED, "true");
       await executeLogin(ClientIdType.Student, idp);
     };
     const errorMessage = computed(() => {

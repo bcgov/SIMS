@@ -52,9 +52,9 @@ import { USER_LOGIN_TRIGGERED } from "@/constants";
 
 export default defineComponent({
   setup() {
-    sessionStorage.setItem(USER_LOGIN_TRIGGERED, "true");
     const { executeLogin } = useAuth();
     const login = async () => {
+      sessionStorage.setItem(USER_LOGIN_TRIGGERED, "true");
       await executeLogin(ClientIdType.SupportingUsers, IdentityProviders.BCSC);
     };
     return { login };

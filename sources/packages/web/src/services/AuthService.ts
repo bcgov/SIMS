@@ -76,17 +76,18 @@ export class AuthService {
 
   /**
    * Function that makes a request to the API to log that the user has closed the browser/tab.
-   * @param event event received by the browser.
    */
-  logUserClosedBrowser = async function (event: Event) {
-    event.preventDefault();
-    sessionStorage.setItem(USER_CLOSED_BROWSER, "true");
-    await ApiClient.AuditApi.audit(AuditEvent.BrowserClosed);
+  logUserClosedBrowser = function () {
+    localStorage.setItem(USER_CLOSED_BROWSER, "true");
+
+    // Please note that this call is not awaiting the request to finish by design.
+    // This runs on `beforeUnload` and with the `await` the browser cancels the request in order to prioritize closing the browser.
+    ApiClient.AuditApi.audit({ event: AuditEvent.BrowserClosed });
   };
 
   /**
    * Initializes the authentication service with the proper client type.
-   * @param clientType Keycloak client type to be used.
+   * @param clientType bKeycloak client type to be used.
    */
   async initialize(clientType: ClientIdType): Promise<void> {
     if (this.initialized) {
@@ -112,16 +113,16 @@ export class AuthService {
       if (this.keycloak.authenticated) {
         // In case of user closed browser without logout.
         window.addEventListener("beforeunload", this.logUserClosedBrowser);
-        if (sessionStorage.getItem(USER_CLOSED_BROWSER) === "true") {
+        if (localStorage.getItem(USER_CLOSED_BROWSER) === "true") {
           // In case of user reopened browser with an active session.
-          await ApiClient.AuditApi.audit(AuditEvent.BrowserReopened);
-          sessionStorage.removeItem(USER_CLOSED_BROWSER);
+          await ApiClient.AuditApi.audit({ event: AuditEvent.BrowserReopened });
+          localStorage.removeItem(USER_CLOSED_BROWSER);
         }
         if (sessionStorage.getItem(USER_LOGIN_TRIGGERED) === "true") {
           // Call audit api to log user logon.
-          await ApiClient.AuditApi.audit(AuditEvent.LoggedIn);
+          await ApiClient.AuditApi.audit({ event: AuditEvent.LoggedIn });
           sessionStorage.removeItem(USER_LOGIN_TRIGGERED);
-          sessionStorage.removeItem(USER_CLOSED_BROWSER);
+          localStorage.removeItem(USER_CLOSED_BROWSER);
         }
 
         this.interval = setInterval(
@@ -281,11 +282,11 @@ export class AuthService {
 
     if (sessionStorage.getItem(USER_SESSION_TIMED_OUT) === "true") {
       // Call audit api to log session timed out.
-      await ApiClient.AuditApi.audit(AuditEvent.SessionTimedOut);
+      await ApiClient.AuditApi.audit({ event: AuditEvent.SessionTimedOut });
       sessionStorage.removeItem(USER_SESSION_TIMED_OUT);
     } else {
       // Call audit api to log user logout.
-      await ApiClient.AuditApi.audit(AuditEvent.LoggedOut);
+      await ApiClient.AuditApi.audit({ event: AuditEvent.LoggedOut });
     }
 
     if (!this.keycloak) {

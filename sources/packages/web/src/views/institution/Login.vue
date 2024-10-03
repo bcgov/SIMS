@@ -75,9 +75,9 @@ export default defineComponent({
     },
   },
   setup(props) {
-    sessionStorage.setItem(USER_LOGIN_TRIGGERED, "true");
     const { executeLogin } = useAuth();
     const login = async () => {
+      sessionStorage.setItem(USER_LOGIN_TRIGGERED, "true");
       await executeLogin(ClientIdType.Institution, IdentityProviders.BCeIDBoth);
     };
     const errorMessage = computed(() => {

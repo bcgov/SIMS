@@ -26,6 +26,9 @@ describe("AuditController(e2e)-audit", () => {
       AppModule,
       AuditService,
     );
+  });
+
+  beforeEach(async () => {
     auditService.logger.log = jest.fn();
   });
 
@@ -113,5 +116,9 @@ describe("AuditController(e2e)-audit", () => {
 
   afterAll(async () => {
     await app.close();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 });

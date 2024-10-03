@@ -72,9 +72,9 @@ export default defineComponent({
     },
   },
   setup() {
-    sessionStorage.setItem(USER_LOGIN_TRIGGERED, "true");
     const { executeLogin } = useAuth();
     const login = async () => {
+      sessionStorage.setItem(USER_LOGIN_TRIGGERED, "true");
       await executeLogin(ClientIdType.AEST, IdentityProviders.IDIR);
     };
     return { login, BannerTypes, MINISTRY_SHORTNAME };

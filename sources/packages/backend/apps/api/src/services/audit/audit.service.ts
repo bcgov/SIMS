@@ -15,7 +15,7 @@ export class AuditService {
    * @param authorizedParty authorized party.
    */
   audit(
-    clientIp: string | string[],
+    clientIp: string,
     tokenUserName: string,
     event: AuditEvent,
     authorizedParty: AuthorizedParties,
