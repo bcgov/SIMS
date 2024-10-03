@@ -15,7 +15,6 @@ import { QueueNames } from "@sims/utilities";
 import { ApplicationService } from "../../../services";
 import {
   NotificationService,
-  StudentNotification,
   StudentPdPpdNotification,
 } from "@sims/services/notifications";
 import { NotificationActionsService } from "@sims/services";
@@ -50,6 +49,7 @@ export class StudentApplicationNotificationsScheduler extends BaseScheduler<void
 
       for (const application of eligibleApplications) {
         const notification: StudentPdPpdNotification = {
+          userId: application.student.user.id,
           givenNames: application.student.user.firstName,
           lastName: application.student.user.lastName,
           email: application.student.user.email,
@@ -64,9 +64,10 @@ export class StudentApplicationNotificationsScheduler extends BaseScheduler<void
         );
       }
 
-      console.log(eligibleApplications);
       this.logger.log(JSON.stringify(eligibleApplications));
-      processSummary.info(`Eligible applications: ${eligibleApplications}`);
+      processSummary.info(
+        `Eligible applications: ${JSON.stringify(eligibleApplications)}`,
+      );
 
       return getSuccessMessageWithAttentionCheck(
         ["Process finalized with success."],

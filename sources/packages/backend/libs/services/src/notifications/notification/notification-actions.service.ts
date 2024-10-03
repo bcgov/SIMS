@@ -1276,7 +1276,7 @@ export class NotificationActionsService {
         NotificationMessageType.StudentPdPpdApplicationNotification,
       );
     const notificationToSend = {
-      applicationNumber: notification.applicationNumber,
+      userId: notification.userId,
       messageType: NotificationMessageType.StudentPdPpdApplicationNotification,
       messagePayload: {
         email_address: notification.email,
@@ -1284,6 +1284,7 @@ export class NotificationActionsService {
         personalisation: {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
+          applicationNumber: notification.applicationNumber,
         },
       },
       metadata: { assessmentId },

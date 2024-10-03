@@ -176,6 +176,7 @@ export class ApplicationService {
         "users.firstName",
         "users.lastName",
         "users.email",
+        "users.id",
         "student_assessments.id",
         "students.disabilityStatus",
       ])

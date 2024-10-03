@@ -79,6 +79,7 @@ export interface StudentNotification {
 }
 
 export interface StudentPdPpdNotification {
+  userId: number;
   givenNames: string;
   lastName: string;
   email: string;
