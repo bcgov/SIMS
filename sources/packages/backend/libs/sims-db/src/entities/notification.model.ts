@@ -213,4 +213,8 @@ export enum NotificationMessageType {
    * Supporting User Information Notification.
    */
   SupportingUserInformationNotification = 29,
+  /**
+   * Student Application Notification.
+   */
+  StudentPdPpdApplicationNotification = 30,
 }

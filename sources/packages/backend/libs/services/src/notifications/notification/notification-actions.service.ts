@@ -1258,6 +1258,43 @@ export class NotificationActionsService {
     return { templateId, emailContacts };
   }
 
+  /**
+   * Creates student application notification for student.
+   * @param notification notification details.
+   * @param assessmentId assessment id.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveStudentApplicationPdPpdNotification(
+    notification: StudentNotification,
+    assessmentId: number,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const { templateId } =
+      await this.notificationMessageService.getNotificationMessageDetails(
+        NotificationMessageType.StudentPdPpdApplicationNotification,
+      );
+    const notificationToSend = {
+      userId: notification.userId,
+      messageType: NotificationMessageType.StudentPdPpdApplicationNotification,
+      messagePayload: {
+        email_address: notification.toAddress,
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
+        },
+      },
+      metadata: { assessmentId },
+    };
+    // Save notification to be sent to the student into the notification table.
+    await this.notificationService.saveNotifications(
+      [notificationToSend],
+      auditUser.id,
+      { entityManager },
+    );
+  }
+
   @InjectLogger()
   logger: LoggerService;
 }

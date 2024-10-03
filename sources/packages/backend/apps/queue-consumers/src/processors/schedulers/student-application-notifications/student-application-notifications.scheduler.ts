@@ -13,7 +13,11 @@ import {
 } from "../../../utilities";
 import { QueueNames } from "@sims/utilities";
 import { ApplicationService } from "../../../services";
-import { NotificationService } from "@sims/services/notifications";
+import {
+  NotificationService,
+  StudentNotification,
+} from "@sims/services/notifications";
+import { NotificationActionsService } from "@sims/services";
 
 @Processor(QueueNames.StudentApplicationNotifications)
 export class StudentApplicationNotificationsScheduler extends BaseScheduler<void> {
@@ -23,6 +27,7 @@ export class StudentApplicationNotificationsScheduler extends BaseScheduler<void
     queueService: QueueService,
     private readonly applicationService: ApplicationService,
     private readonly notificationService: NotificationService,
+    private readonly notificationActionsService: NotificationActionsService,
   ) {
     super(schedulerQueue, queueService);
   }
@@ -39,24 +44,25 @@ export class StudentApplicationNotificationsScheduler extends BaseScheduler<void
         `Processing student application notifications job. Job id: ${job.id} and Job name: ${job.name}.`,
       );
 
-      // TODO: Get applications that have a disability status mismatch  and check PDPPD status
       const eligibleApplications =
         await this.applicationService.getEligibleApplicationsForNotification();
 
-      // for (const application of eligibleApplications) {
-      //   const disabilityStatusMismatch =
-      //     application.disabilityDetails.calculatedPDPPDStatus &&
-      //     ![DisabilityStatus.PD, DisabilityStatus.PPD].includes(
-      //       application.disabilityDetails.studentProfileDisabilityStatus,
-      //     );
+      for (const application of eligibleApplications) {
+        const notification: StudentNotification = {
+          givenNames: application.student.user.firstName,
+          lastName: application.student.user.lastName,
+          toAddress: application.student.user.email,
+          userId: application.student.user.id,
+        };
 
-      //   if (disabilityStatusMismatch) {
-      //     await this.notificationService.sendDisabilityStatusMismatchNotification(
-      //       application,
-      //     );
-      //     await this.applicationService.markNotificationSent(application.id);
-      //   }
-      // }
+        console.log(notification);
+
+        await this.notificationActionsService.saveStudentApplicationPdPpdNotification(
+          notification,
+          application.currentAssessment.id,
+        );
+      }
+
       console.log(eligibleApplications);
       this.logger.log(JSON.stringify(eligibleApplications));
       processSummary.info(`Eligible applications: ${eligibleApplications}`);
