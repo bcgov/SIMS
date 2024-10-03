@@ -11,12 +11,7 @@ import {
   InstitutionRoutesConst,
   StudentRoutesConst,
 } from "@/constants/routes/RouteConstants";
-import {
-  RENEW_AUTH_TOKEN_TIMER,
-  USER_CLOSED_BROWSER,
-  USER_LOGIN_TRIGGERED,
-  USER_SESSION_TIMED_OUT,
-} from "@/constants/system-constants";
+import { RENEW_AUTH_TOKEN_TIMER } from "@/constants/system-constants";
 import { StudentService } from "@/services/StudentService";
 import { useStudentStore, useInstitutionState } from "@/composables";
 import { InstitutionUserService } from "@/services/InstitutionUserService";
@@ -24,6 +19,7 @@ import { INVALID_BETA_USER, MISSING_STUDENT_ACCOUNT } from "@/constants";
 import { StudentAccountApplicationService } from "./StudentAccountApplicationService";
 import ApiClient from "@/services/http/ApiClient";
 import { AuditEvent } from "@/types/contracts/AuditEnum";
+import { AuditService } from "@/services/AuditService";
 
 /**
  * Manages the KeyCloak initialization and authentication methods.
@@ -78,7 +74,7 @@ export class AuthService {
    * Function that makes a request to the API to log that the user has closed the browser/tab.
    */
   logUserClosedBrowser = function () {
-    localStorage.setItem(USER_CLOSED_BROWSER, "true");
+    AuditService.userClosedBrowser();
 
     // Please note that this call is not awaiting the request to finish by design.
     // This runs on `beforeUnload` and with the `await` the browser cancels the request in order to prioritize closing the browser.
@@ -113,16 +109,16 @@ export class AuthService {
       if (this.keycloak.authenticated) {
         // In case of user closed browser without logout.
         window.addEventListener("beforeunload", this.logUserClosedBrowser);
-        if (localStorage.getItem(USER_CLOSED_BROWSER) === "true") {
+        if (AuditService.hasUserClosedBrowser()) {
           // In case of user reopened browser with an active session.
           await ApiClient.AuditApi.audit({ event: AuditEvent.BrowserReopened });
-          localStorage.removeItem(USER_CLOSED_BROWSER);
+          AuditService.resetUserClosedBrowser();
         }
-        if (sessionStorage.getItem(USER_LOGIN_TRIGGERED) === "true") {
+        if (AuditService.wasUserLoginTriggered()) {
           // Call audit api to log user logon.
           await ApiClient.AuditApi.audit({ event: AuditEvent.LoggedIn });
-          sessionStorage.removeItem(USER_LOGIN_TRIGGERED);
-          localStorage.removeItem(USER_CLOSED_BROWSER);
+          AuditService.resetLoginTriggered();
+          AuditService.resetUserClosedBrowser();
         }
 
         this.interval = setInterval(
@@ -280,10 +276,10 @@ export class AuthService {
     // Remove event listener to not log on redirecting to the login page.
     window.removeEventListener("beforeunload", this.logUserClosedBrowser);
 
-    if (sessionStorage.getItem(USER_SESSION_TIMED_OUT) === "true") {
+    if (AuditService.hasUserSessionTimedOut()) {
       // Call audit api to log session timed out.
       await ApiClient.AuditApi.audit({ event: AuditEvent.SessionTimedOut });
-      sessionStorage.removeItem(USER_SESSION_TIMED_OUT);
+      AuditService.resetUserSessionTimedOut();
     } else {
       // Call audit api to log user logout.
       await ApiClient.AuditApi.audit({ event: AuditEvent.LoggedOut });
