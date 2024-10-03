@@ -216,5 +216,5 @@ export enum NotificationMessageType {
   /**
    * Student PD PPD Application Notification.
    */
-  StudentPdPpdApplicationNotification = 30,
+  StudentPDPPDApplicationNotification = 30,
 }

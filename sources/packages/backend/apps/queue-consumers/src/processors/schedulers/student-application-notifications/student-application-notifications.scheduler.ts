@@ -15,7 +15,7 @@ import { QueueNames } from "@sims/utilities";
 import { ApplicationService } from "../../../services";
 import {
   NotificationService,
-  StudentPdPpdNotification,
+  StudentPDPPDNotification,
 } from "@sims/services/notifications";
 import { NotificationActionsService } from "@sims/services";
 
@@ -48,7 +48,7 @@ export class StudentApplicationNotificationsScheduler extends BaseScheduler<void
         await this.applicationService.getEligibleApplicationsForNotification();
 
       for (const application of eligibleApplications) {
-        const notification: StudentPdPpdNotification = {
+        const notification: StudentPDPPDNotification = {
           userId: application.student.user.id,
           givenNames: application.student.user.firstName,
           lastName: application.student.user.lastName,
@@ -56,9 +56,7 @@ export class StudentApplicationNotificationsScheduler extends BaseScheduler<void
           applicationNumber: application.applicationNumber,
         };
 
-        console.log(notification);
-
-        await this.notificationActionsService.saveStudentApplicationPdPpdNotification(
+        await this.notificationActionsService.saveStudentApplicationPDPPDNotification(
           notification,
           application.currentAssessment.id,
         );

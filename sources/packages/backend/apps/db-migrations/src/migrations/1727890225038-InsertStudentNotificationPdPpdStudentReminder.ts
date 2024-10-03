@@ -16,7 +16,7 @@ export class InsertStudentNotificationPdPpdStudentReminder1727890225038
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Rollback-Insert-student-notification-pd-ppd-student-reminder.sql",
+        "Rollback-insert-student-notification-pd-ppd-student-reminder.sql",
         "NotificationMessages",
       ),
     );

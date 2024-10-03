@@ -78,14 +78,6 @@ export interface StudentNotification {
   userId: number;
 }
 
-export interface StudentPdPpdNotification {
-  userId: number;
-  givenNames: string;
-  lastName: string;
-  email: string;
-  applicationNumber: string;
-}
-
 export interface DisbursementBlockedNotification {
   givenNames: string;
   lastName: string;
@@ -193,4 +185,12 @@ export interface SupportingUserInformationNotification {
   toAddress: string;
   userId: number;
   supportingUserType: NotificationSupportingUserType;
+}
+
+export interface StudentPDPPDNotification {
+  userId: number;
+  givenNames: string;
+  lastName: string;
+  email: string;
+  applicationNumber: string;
 }
