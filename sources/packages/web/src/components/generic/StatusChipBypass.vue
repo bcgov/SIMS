@@ -10,7 +10,7 @@ import ChipStatus from "@/components/generic/ChipStatus.vue";
 export default defineComponent({
   components: { ChipStatus },
   props: {
-    isRestrictionActive: {
+    isBypassActive: {
       type: Boolean as PropType<boolean>,
       required: true,
     },
@@ -18,13 +18,11 @@ export default defineComponent({
   setup(props) {
     const { mapBypassStatus } = useRestrictionBypass();
     const bypassStatus = computed(() => {
-      return props.isRestrictionActive
+      return props.isBypassActive
         ? BypassStatusChipLabelTypes.Active
         : BypassStatusChipLabelTypes.Removed;
     });
-    const chipStatus = computed(() =>
-      mapBypassStatus(props.isRestrictionActive),
-    );
+    const chipStatus = computed(() => mapBypassStatus(props.isBypassActive));
     return { chipStatus, bypassStatus };
   },
 });

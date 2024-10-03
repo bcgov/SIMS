@@ -375,7 +375,12 @@ export const ApplicationRestrictionManagementHeaders = [
   {
     title: "Restriction Status",
     sortable: false,
-    key: "isRestrictionActive",
+    key: "restrictionStatus",
+  },
+  {
+    title: "Bypass Status",
+    sortable: false,
+    key: "bypassStatus",
   },
   {
     title: "View Details",
@@ -385,6 +390,6 @@ export const ApplicationRestrictionManagementHeaders = [
   {
     title: "Remove Bypass Rule?",
     sortable: false,
-    key: "isBypassActive",
+    key: "removeBypassRule",
   },
 ];
