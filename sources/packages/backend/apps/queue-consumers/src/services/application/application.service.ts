@@ -182,23 +182,18 @@ export class ApplicationService {
       .innerJoin("student_assessments.offering", "epo")
       .innerJoin("student_assessments.disbursementSchedules", "ds")
       .where("epo.studyEndDate >= :eightWeeksFromNow", { eightWeeksFromNow })
-      .andWhere("students.disabilityStatus NOT IN (:...excludedStatuses)", {
-        excludedStatuses: ["PD", "PPD"],
-      })
+      .andWhere("students.disabilityStatus NOT IN ('PD', 'PPD')")
       .andWhere(
-        "json_extract_path_text(student_assessments.workflow_data::json, 'calculatedData', 'pdppdStatus') = :pdppdStatus",
-        { pdppdStatus: "true" },
+        "json_extract_path_text(student_assessments.workflow_data::json, 'calculatedData', 'pdppdStatus') = 'true'",
       )
-      .andWhere("application.isArchived = :isArchived", { isArchived: false })
-      .andWhere("ds.disbursementScheduleStatus = :status", {
-        status: "Pending",
-      })
+      .andWhere("application.isArchived = false")
+      .andWhere("ds.disbursementScheduleStatus = 'Pending'")
       .andWhere((qb) => {
         const subQuery = qb
           .subQuery()
           .select("1")
           .from("notifications", "n")
-          .where("n.notification_message_id = :messageId")
+          .where("n.notification_message_id = 30")
           .andWhere(
             "json_extract_path_text(n.metadata::json, 'assessmentId') = CAST(student_assessments.id AS TEXT)",
           )
@@ -214,8 +209,7 @@ export class ApplicationService {
           .andWhere("ds2.disbursementDate < ds.disbursementDate")
           .getQuery();
         return "NOT EXISTS (" + subQuery + ")";
-      })
-      .setParameter("messageId", 30);
+      });
 
     // Log the generated SQL
     console.log("Generated SQL:", query.getSql());
