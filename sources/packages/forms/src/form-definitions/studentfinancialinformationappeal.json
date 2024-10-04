@@ -773,11 +773,6 @@
                             "modalEdit": false,
                             "values": [
                                 {
-                                    "label": "COVID-19",
-                                    "value": "covid19",
-                                    "shortcut": ""
-                                },
-                                {
                                     "label": "Medical illness or injury",
                                     "value": "medicalIllnessOrInjury",
                                     "shortcut": ""
