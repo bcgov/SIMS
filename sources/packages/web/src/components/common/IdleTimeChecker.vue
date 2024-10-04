@@ -26,6 +26,7 @@ import {
 import { COUNT_DOWN_TIMER_FOR_LOGOUT } from "@/constants/system-constants";
 import ConfirmExtendTime from "@/components/common/modals/ConfirmExtendTime.vue";
 import { AppConfigService } from "@/services/AppConfigService";
+import { AuditService } from "@/services/AuditService";
 
 export default defineComponent({
   components: { ConfirmExtendTime },
@@ -82,6 +83,7 @@ export default defineComponent({
     });
 
     const logoff = async () => {
+      AuditService.userSessionTimedOut();
       await executeLogout(props.clientIdType);
     };
 
