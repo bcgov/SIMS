@@ -21,7 +21,6 @@ import {
   StudentAssessmentStatus,
   FileOriginType,
 } from "@sims/sims-db";
-import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../constants";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
   ApplicationScholasticStandingStatus as ApplicationScholasticStandingStatus,
@@ -54,6 +53,7 @@ import {
   OFFERING_PROGRAM_YEAR_MISMATCH,
   EDUCATION_PROGRAM_IS_NOT_ACTIVE,
   EDUCATION_PROGRAM_IS_EXPIRED,
+  APPLICATION_CHANGE_NOT_ELIGIBLE,
 } from "../../constants";
 import { SequenceControlService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
