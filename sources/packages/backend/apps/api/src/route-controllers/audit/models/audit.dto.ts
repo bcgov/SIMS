@@ -1,4 +1,4 @@
-import { AuditEvent } from "apps/api/src/services";
+import { AuditEvent } from "../../../services";
 import { IsEnum } from "class-validator";
 
 export class AuditAPIInDTO {
