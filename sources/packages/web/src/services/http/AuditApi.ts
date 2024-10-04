@@ -1,5 +1,6 @@
 import HttpBaseClient from "./common/HttpBaseClient";
 import { AuditAPIInDTO } from "@/services/http/dto";
+
 /**
  * Audit API.
  */
@@ -9,6 +10,6 @@ export class AuditApi extends HttpBaseClient {
    * @param payload payload.
    */
   async audit(payload: AuditAPIInDTO): Promise<void> {
-    this.postCall("audit", payload);
+    await this.postCall("audit", payload);
   }
 }
