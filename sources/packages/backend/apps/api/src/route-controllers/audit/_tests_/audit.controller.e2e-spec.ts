@@ -17,6 +17,7 @@ import { AuditEvent, AuditService } from "../../../services";
 describe("AuditController(e2e)-audit", () => {
   let app: INestApplication;
   let auditService: AuditService;
+  const endpoint = "/audit";
 
   beforeAll(async () => {
     const { nestApplication, module } = await createTestingAppModule();
@@ -38,12 +39,13 @@ describe("AuditController(e2e)-audit", () => {
 
   it(`Should log 'Logged In' message when ${AuditEvent.LoggedIn} is requested.`, async () => {
     // Arrange
-    const endpoint = `/audit/${AuditEvent.LoggedIn}`;
+    const payload = { event: AuditEvent.LoggedIn };
     const token = await getAESTToken(AESTGroups.Operations);
 
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
+      .send(payload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED);
 
@@ -54,12 +56,13 @@ describe("AuditController(e2e)-audit", () => {
 
   it(`Should log 'Logged Out' message when ${AuditEvent.LoggedOut} is requested.`, async () => {
     // Arrange
-    const endpoint = `/audit/${AuditEvent.LoggedOut}`;
+    const payload = { event: AuditEvent.LoggedOut };
     const token = await getInstitutionToken(InstitutionTokenTypes.CollegeCUser);
 
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
+      .send(payload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED);
 
@@ -70,7 +73,7 @@ describe("AuditController(e2e)-audit", () => {
 
   it(`Should log 'Session Timed Out' message when ${AuditEvent.SessionTimedOut} is requested.`, async () => {
     // Arrange
-    const endpoint = `/audit/${AuditEvent.SessionTimedOut}`;
+    const payload = { event: AuditEvent.SessionTimedOut };
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
@@ -78,6 +81,7 @@ describe("AuditController(e2e)-audit", () => {
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
+      .send(payload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED);
 
@@ -88,12 +92,13 @@ describe("AuditController(e2e)-audit", () => {
 
   it(`Should log 'Browser Closed' message when ${AuditEvent.BrowserClosed} is requested.`, async () => {
     // Arrange
-    const endpoint = `/audit/${AuditEvent.BrowserClosed}`;
+    const payload = { event: AuditEvent.BrowserClosed };
     const token = await getAESTToken(AESTGroups.Operations);
 
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
+      .send(payload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED);
 
@@ -104,12 +109,13 @@ describe("AuditController(e2e)-audit", () => {
 
   it(`Should log 'Browser Reopened' message when ${AuditEvent.BrowserReopened} is requested.`, async () => {
     // Arrange
-    const endpoint = `/audit/${AuditEvent.BrowserReopened}`;
+    const payload = { event: AuditEvent.BrowserReopened };
     const token = await getAESTToken(AESTGroups.Operations);
 
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
+      .send(payload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED);
 
