@@ -78,9 +78,13 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
 
   it("Should throw bad request exception error when the payload is invalid for formIO dryRun test.", async () => {
     // Arrange
-    const application = await saveFakeApplication(db.dataSource, {
-      institutionLocation: collegeFLocation,
-    });
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {
+        institutionLocation: collegeFLocation,
+      },
+      { applicationStatus: ApplicationStatus.Completed },
+    );
     const invalidPayload = {
       data: {
         booksAndSupplies: 1000,
