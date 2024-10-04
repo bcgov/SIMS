@@ -6,9 +6,11 @@ import {
   User,
   StudentAssessment,
   StudentAssessmentStatus,
+  DisabilityStatus,
 } from "@sims/sims-db";
 import { ConfigService } from "@sims/utilities/config";
 import { InjectRepository } from "@nestjs/typeorm";
+import { addDays, DISABILITY_NOTIFICATION_DAYS_LIMIT } from "@sims/utilities";
 
 @Injectable()
 export class ApplicationService {
@@ -166,9 +168,9 @@ export class ApplicationService {
    * @returns An array of eligible applications with relevant details for notification.
    */
   async getEligibleApplicationsForNotification(): Promise<Application[]> {
-    const eightWeeksFromNow = new Date();
-    eightWeeksFromNow.setDate(eightWeeksFromNow.getDate() + 56); // 8 weeks * 7 days
-
+    const disabilityNotificationDateLimit = addDays(
+      DISABILITY_NOTIFICATION_DAYS_LIMIT,
+    );
     return this.applicationRepo
       .createQueryBuilder("application")
       .select([
@@ -178,15 +180,19 @@ export class ApplicationService {
         "users.email",
         "users.id",
         "student_assessments.id",
-        "students.disabilityStatus",
       ])
       .innerJoin("application.currentAssessment", "student_assessments")
       .innerJoin("application.student", "students")
       .innerJoin("students.user", "users")
       .innerJoin("student_assessments.offering", "epo")
       .innerJoin("student_assessments.disbursementSchedules", "ds")
-      .where("epo.studyEndDate >= :eightWeeksFromNow", { eightWeeksFromNow })
-      .andWhere("students.disabilityStatus NOT IN ('PD', 'PPD')")
+      .where("epo.studyEndDate >= :disabilityNotificationDateLimit", {
+        disabilityNotificationDateLimit,
+      })
+      .andWhere("students.disabilityStatus NOT IN (:pdStatus, :ppdStatus)", {
+        pdStatus: DisabilityStatus.PD,
+        ppdStatus: DisabilityStatus.PPD,
+      })
       .andWhere(
         "json_extract_path_text(student_assessments.workflow_data::json, 'calculatedData', 'pdppdStatus') = 'true'",
       )
