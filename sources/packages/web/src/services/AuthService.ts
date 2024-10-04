@@ -77,13 +77,16 @@ export class AuthService {
     AuditService.userClosedBrowser();
 
     // Please note that this call is not awaiting the request to finish by design.
-    // This runs on `beforeUnload` and with the `await` the browser cancels the request in order to prioritize closing the browser.
+    // This runs on 'beforeUnload' and without the 'await' it is more likely that
+    // the browser do not cancel the request in the process of closing the browser.
+    // It is not guaranteed that the 'browser closed' event is going to be always
+    // logged as we are making our best effort to make it through.
     ApiClient.AuditApi.audit({ event: AuditEvent.BrowserClosed });
   };
 
   /**
    * Initializes the authentication service with the proper client type.
-   * @param clientType bKeycloak client type to be used.
+   * @param clientType Keycloak client type to be used.
    */
   async initialize(clientType: ClientIdType): Promise<void> {
     if (this.initialized) {
@@ -112,14 +115,12 @@ export class AuthService {
         if (AuditService.hasUserClosedBrowser()) {
           // In case of user reopened browser with an active session.
           await ApiClient.AuditApi.audit({ event: AuditEvent.BrowserReopened });
-          AuditService.resetUserClosedBrowser();
-        }
-        if (AuditService.wasUserLoginTriggered()) {
+        } else if (AuditService.wasUserLoginTriggered()) {
           // Call audit api to log user logon.
           await ApiClient.AuditApi.audit({ event: AuditEvent.LoggedIn });
           AuditService.resetLoginTriggered();
-          AuditService.resetUserClosedBrowser();
         }
+        AuditService.resetUserClosedBrowser();
 
         this.interval = setInterval(
           this.renewTokenIfExpired,

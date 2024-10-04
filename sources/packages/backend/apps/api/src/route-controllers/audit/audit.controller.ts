@@ -22,7 +22,7 @@ export class AuditController extends BaseController {
 
   /**
    * Audit events log.
-   * @param event audit event.
+   * @param payload payload.
    * @param userToken user token.
    * @param request request object.
    */
@@ -32,11 +32,11 @@ export class AuditController extends BaseController {
     @UserToken() userToken: IUserToken,
     @Req() request: Request,
   ): void {
-    const clientIp =
+    const clientIP =
       (request.headers["x-forwarded-for"] as string) ||
       request.socket.remoteAddress;
     this.auditService.audit(
-      clientIp,
+      clientIP,
       userToken.userName,
       payload.event,
       userToken.azp,

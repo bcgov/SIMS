@@ -9,13 +9,13 @@ const SIMS_AUDIT_EVENT_PREFIX = "SIMS Audit Event";
 export class AuditService {
   /**
    * Audit logging.
-   * @param clientIp client ip.
+   * @param clientIP client ip.
    * @param tokenUserName token user name.
    * @param event audit event.
    * @param authorizedParty authorized party.
    */
   audit(
-    clientIp: string,
+    clientIP: string,
     tokenUserName: string,
     event: AuditEvent,
     authorizedParty: AuthorizedParties,
@@ -23,7 +23,7 @@ export class AuditService {
     const eventFriendlyName = this.getEventFriendlyName(event);
     const portalFriendlyName = this.getPortalFriendlyName(authorizedParty);
     this.logger.log(
-      `${SIMS_AUDIT_EVENT_PREFIX} From ${clientIp} | User GUID: ${tokenUserName}, Event: ${eventFriendlyName}, Portal: ${portalFriendlyName}.`,
+      `${SIMS_AUDIT_EVENT_PREFIX} From ${clientIP} | User GUID: ${tokenUserName}, Event: ${eventFriendlyName}, Portal: ${portalFriendlyName}.`,
     );
   }
 
@@ -33,7 +33,7 @@ export class AuditService {
    * @returns audit event friendly name.
    */
   private getEventFriendlyName(event: AuditEvent): string {
-    let eventFriendlyName = "";
+    let eventFriendlyName = event.toString();
     switch (event) {
       case AuditEvent.LoggedIn: {
         eventFriendlyName = "Logged In";
@@ -65,7 +65,7 @@ export class AuditService {
    * @returns portal friendly name.
    */
   private getPortalFriendlyName(authorizedParty: AuthorizedParties): string {
-    let portalFriendlyName = "";
+    let portalFriendlyName = authorizedParty.toString();
     switch (authorizedParty) {
       case AuthorizedParties.aest: {
         portalFriendlyName = "Ministry";

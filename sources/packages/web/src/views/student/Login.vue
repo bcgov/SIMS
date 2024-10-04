@@ -142,7 +142,7 @@ import { computed, defineComponent } from "vue";
 import { useAuth } from "@/composables";
 import { IdentityProviders, ClientIdType } from "@/types";
 import { BannerTypes } from "@/types/contracts/Banner";
-import { USER_LOGIN_TRIGGERED } from "@/constants";
+import { AuditService } from "@/services/AuditService";
 
 export default defineComponent({
   props: {
@@ -155,7 +155,7 @@ export default defineComponent({
   setup(props) {
     const { executeLogin } = useAuth();
     const login = async (idp: IdentityProviders) => {
-      sessionStorage.setItem(USER_LOGIN_TRIGGERED, "true");
+      AuditService.userLoginTriggered();
       await executeLogin(ClientIdType.Student, idp);
     };
     const errorMessage = computed(() => {
