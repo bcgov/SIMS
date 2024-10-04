@@ -9,6 +9,43 @@
   ],
   "components": [
     {
+      "input": true,
+      "tableView": true,
+      "key": "applicationOfferingUnformattedStartDate",
+      "label": "applicationOfferingUnformattedStartDate",
+      "protected": false,
+      "unique": false,
+      "persistent": true,
+      "type": "hidden",
+      "tags": [],
+      "conditional": {
+        "show": "",
+        "when": null,
+        "eq": ""
+      },
+      "properties": {},
+      "lockKey": true,
+      "isNew": false
+    },
+    {
+      "input": true,
+      "tableView": true,
+      "key": "applicationOfferingUnformattedEndDate",
+      "label": "applicationOfferingUnformattedEndDate",
+      "protected": false,
+      "unique": false,
+      "persistent": true,
+      "type": "hidden",
+      "tags": [],
+      "conditional": {
+        "show": "",
+        "when": null,
+        "eq": ""
+      },
+      "properties": {},
+      "lockKey": true
+    },
+    {
       "label": "Offering Intensity (Part Time or Full Time) - Used to define custom labels",
       "key": "applicationOfferingIntensity",
       "type": "hidden",
@@ -43,7 +80,8 @@
         "when": null,
         "eq": ""
       },
-      "properties": {}
+      "properties": {},
+      "isNew": false
     },
     {
       "label": "Student Name",
@@ -532,7 +570,14 @@
                   "hideOnChildrenHidden": false,
                   "hideLabel": true,
                   "tag": "p",
-                  "className": ""
+                  "className": "",
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {}
                 }
               ],
               "width": 6,
@@ -1032,7 +1077,15 @@
           "fieldSet": false,
           "persistent": true,
           "hidden": false,
-          "clearOnHide": true
+          "clearOnHide": true,
+          "labelPosition": "top",
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {}
         },
         {
           "title": "Student is transferring to a different institution or campus - Panel",
@@ -1076,7 +1129,8 @@
                       },
                       "tableView": true,
                       "validate": {
-                        "required": true
+                        "required": true,
+                        "custom": "valid = input >= data.applicationOfferingUnformattedStartDate && input <= data.applicationOfferingUnformattedEndDate ? true : 'Date should be between study start date and end date.';"
                       },
                       "key": "dateOfChange",
                       "attributes": {
@@ -1098,10 +1152,14 @@
                       "clearOnHide": true,
                       "spellcheck": true,
                       "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": ""
-                      }
+                      },
+                      "labelPosition": "top",
+                      "inputFormat": "plain",
+                      "tags": [],
+                      "properties": {}
                     }
                   ],
                   "width": 6,
@@ -1126,13 +1184,23 @@
               "input": false,
               "tableView": false,
               "hideLabel": true,
-              "clearOnHide": false
+              "clearOnHide": false,
+              "tags": [],
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+              },
+              "properties": {}
             }
           ],
           "lockKey": true,
           "hideLabel": true,
           "clearOnHide": false,
-          "theme": "default"
+          "theme": "default",
+          "breadcrumb": "default",
+          "tags": [],
+          "properties": {}
         },
         {
           "title": "Student completed funded study period offering early - Panel",
@@ -1176,7 +1244,8 @@
                       },
                       "tableView": true,
                       "validate": {
-                        "required": true
+                        "required": true,
+                        "custom": "valid = input >= data.applicationOfferingUnformattedStartDate && input <= data.applicationOfferingUnformattedEndDate ? true : 'Date should be between study start date and end date.';"
                       },
                       "key": "dateOfCompletion",
                       "attributes": {
@@ -1198,10 +1267,14 @@
                       "clearOnHide": true,
                       "spellcheck": true,
                       "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": ""
-                      }
+                      },
+                      "labelPosition": "top",
+                      "inputFormat": "plain",
+                      "tags": [],
+                      "properties": {}
                     }
                   ],
                   "width": 6,
@@ -1333,7 +1406,10 @@
                             "show": null,
                             "when": null,
                             "eq": ""
-                          }
+                          },
+                          "labelPosition": "top",
+                          "tags": [],
+                          "properties": {}
                         }
                       ],
                       "width": 6,
@@ -1393,7 +1469,14 @@
                   "input": false,
                   "tableView": false,
                   "hideLabel": true,
-                  "clearOnHide": false
+                  "clearOnHide": false,
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {}
                 },
                 {
                   "label": "Columns",
@@ -1550,7 +1633,16 @@
                       "protected": false,
                       "persistent": true,
                       "hidden": false,
-                      "clearOnHide": true
+                      "clearOnHide": true,
+                      "labelPosition": "top",
+                      "tags": [],
+                      "conditional": {
+                        "show": "",
+                        "when": null,
+                        "eq": ""
+                      },
+                      "properties": {},
+                      "isNew": false
                     }
                   ],
                   "width": 6,
@@ -1698,7 +1790,8 @@
                       },
                       "tableView": true,
                       "validate": {
-                        "required": true
+                        "required": true,
+                        "custom": "valid = input >= data.applicationOfferingUnformattedStartDate && input <= data.applicationOfferingUnformattedEndDate ? true : 'Date should be between study start date and end date.';"
                       },
                       "key": "dateOfWithdrawal",
                       "attributes": {
@@ -1720,10 +1813,14 @@
                       "clearOnHide": true,
                       "spellcheck": true,
                       "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": ""
-                      }
+                      },
+                      "labelPosition": "top",
+                      "inputFormat": "plain",
+                      "tags": [],
+                      "properties": {}
                     }
                   ],
                   "width": 6,

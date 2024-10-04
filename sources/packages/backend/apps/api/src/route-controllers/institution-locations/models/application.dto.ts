@@ -22,6 +22,8 @@ export class ActiveApplicationDataAPIOutDTO {
   applicationOfferingIntensity: string;
   applicationOfferingStartDate: string;
   applicationOfferingEndDate: string;
+  applicationOfferingUnformattedStartDate: string;
+  applicationOfferingUnformattedEndDate: string;
   applicationStudentName: string;
   applicationNumber: string;
   applicationLocationName: string;
@@ -72,6 +74,8 @@ export const transformToActiveApplicationDataAPIOutDTO = (
     applicationOfferingIntensity: offering.offeringIntensity,
     applicationOfferingStartDate: getISODateOnlyString(offering.studyStartDate),
     applicationOfferingEndDate: getISODateOnlyString(offering.studyEndDate),
+    applicationOfferingUnformattedStartDate: offering.studyStartDate,
+    applicationOfferingUnformattedEndDate: offering.studyEndDate,
     applicationLocationName: offering.institutionLocation.name,
     applicationStudentName: getUserFullName(application.student.user),
     applicationOfferingName: offering.name,

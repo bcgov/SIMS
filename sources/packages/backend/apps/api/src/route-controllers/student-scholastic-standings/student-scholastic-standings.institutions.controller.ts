@@ -38,6 +38,7 @@ import {
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   StudentScholasticStandingsService,
   BulkWithdrawalFileData,
+  ApplicationService,
 } from "../../services";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { CustomNamedError } from "@sims/utilities";
@@ -76,6 +77,7 @@ export class ScholasticStandingInstitutionsController extends BaseController {
   constructor(
     private readonly formService: FormService,
     private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
+    private readonly applicationService: ApplicationService,
     private readonly scholasticStandingControllerService: ScholasticStandingControllerService,
     private readonly applicationWithdrawalImportTextService: ApplicationWithdrawalImportTextService,
     private readonly applicationWithdrawalImportValidationService: ApplicationBulkWithdrawalImportValidationService,
@@ -105,6 +107,15 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     try {
+      const application =
+        await this.applicationService.processScholasticStanding(
+          locationId,
+          applicationId,
+        );
+      payload.data.applicationOfferingStartDate =
+        application.currentAssessment.offering.studyStartDate;
+      payload.data.applicationOfferingEndDate =
+        application.currentAssessment.offering.studyEndDate;
       const submissionResult =
         await this.formService.dryRunSubmission<ScholasticStanding>(
           FormNames.ReportScholasticStandingChange,
@@ -115,10 +126,9 @@ export class ScholasticStandingInstitutionsController extends BaseController {
         throw new BadRequestException("Invalid submission.");
       }
       const newStudentScholasticStanding =
-        await this.studentScholasticStandingsService.processScholasticStanding(
-          locationId,
-          applicationId,
+        await this.studentScholasticStandingsService.saveScholasticStandingCreateReassessment(
           userToken.userId,
+          application,
           submissionResult.data.data,
         );
       return { id: newStudentScholasticStanding.id };

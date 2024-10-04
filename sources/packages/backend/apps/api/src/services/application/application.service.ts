@@ -21,6 +21,7 @@ import {
   StudentAssessmentStatus,
   FileOriginType,
 } from "@sims/sims-db";
+import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../constants";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
   ApplicationScholasticStandingStatus as ApplicationScholasticStandingStatus,
@@ -1827,6 +1828,64 @@ export class ApplicationService extends RecordDataModelService<Application> {
         },
       },
     });
+  }
+
+  /**
+   * Return scholastic standing application
+   * @param locationId location id.
+   * @param applicationId application id.
+   * @returns Application.
+   */
+  async processScholasticStanding(
+    locationId: number,
+    applicationId: number,
+  ): Promise<Application> {
+    const application = await this.repo
+      .createQueryBuilder("application")
+      .select([
+        "application",
+        "currentAssessment.id",
+        "offering.id",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "student.id",
+        "user.id",
+        "user.firstName",
+        "user.lastName",
+        "user.email",
+        "studentAppeal.id",
+      ])
+      .innerJoin("application.currentAssessment", "currentAssessment")
+      .innerJoin("currentAssessment.offering", "offering")
+      .leftJoin("currentAssessment.studentAppeal", "studentAppeal")
+      .innerJoin("application.location", "location")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .where("application.id = :applicationId", { applicationId })
+      .andWhere("location.id = :locationId", { locationId })
+      .getOne();
+
+    if (!application) {
+      throw new CustomNamedError(
+        "Application Not found or invalid current assessment or offering.",
+        APPLICATION_NOT_FOUND,
+      );
+    }
+
+    if (application.isArchived) {
+      throw new CustomNamedError(
+        "This application is no longer eligible to request changes.",
+        APPLICATION_CHANGE_NOT_ELIGIBLE,
+      );
+    }
+
+    if (application.applicationStatus !== ApplicationStatus.Completed) {
+      throw new CustomNamedError(
+        "Cannot report a change for application with status other than completed.",
+        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+      );
+    }
+    return application;
   }
 
   @InjectLogger()

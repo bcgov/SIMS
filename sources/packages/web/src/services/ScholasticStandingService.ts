@@ -48,6 +48,10 @@ export class ScholasticStandingService {
       applicationOfferingEndDate: dateOnlyLongString(
         applicationDetails.applicationOfferingEndDate,
       ),
+      applicationOfferingUnformattedStartDate:
+        applicationDetails.applicationOfferingStartDate,
+      applicationOfferingUnformattedEndDate:
+        applicationDetails.applicationOfferingEndDate,
       applicationOfferingStudyBreak:
         applicationDetails.applicationOfferingStudyBreak?.map((studyBreak) => ({
           breakStartDate: dateOnlyLongString(studyBreak.breakStartDate),
