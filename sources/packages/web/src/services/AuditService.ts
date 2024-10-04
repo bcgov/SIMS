@@ -5,17 +5,17 @@ export class AuditService {
   /**
    * Session storage var name to indicate that a login process has started for the user.
    */
-  private static USER_LOGIN_TRIGGERED = "userLoginTriggered";
+  private static readonly USER_LOGIN_TRIGGERED = "userLoginTriggered";
 
   /**
    * Session storage var name to indicate that a user closed the browser without logging out.
    */
-  private static USER_CLOSED_BROWSER = "userClosedBrowser";
+  private static readonly USER_CLOSED_BROWSER = "userClosedBrowser";
 
   /**
    * Session storage var name to indicate that a user session has timed out.
    */
-  private static USER_SESSION_TIMED_OUT = "userSessionTimedOut";
+  private static readonly USER_SESSION_TIMED_OUT = "userSessionTimedOut";
 
   /**
    * Removes variable from session storage that indicates that user session has timed out.
