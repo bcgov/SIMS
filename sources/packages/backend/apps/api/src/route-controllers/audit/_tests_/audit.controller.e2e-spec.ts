@@ -30,11 +30,8 @@ describe("AuditController(e2e)-audit", () => {
   });
 
   beforeEach(async () => {
-    auditService.logger.log = jest.fn();
-  });
-
-  afterEach(() => {
     jest.clearAllMocks();
+    auditService.logger.log = jest.fn();
   });
 
   it(`Should log 'Logged In' message when ${AuditEvent.LoggedIn} is requested.`, async () => {
