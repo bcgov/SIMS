@@ -71,7 +71,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, watchEffect, PropType } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import TitleValue from "@/components/generic/TitleValue.vue";
 import { useFormatters, useModalDialog, useRules } from "@/composables";
@@ -80,8 +80,6 @@ import {
   UpdateStudentDetails,
 } from "@/services/http/dto";
 import { Role, VForm } from "@/types";
-import { watchEffect } from "vue";
-import { PropType } from "vue";
 
 export default defineComponent({
   components: {
