@@ -17,7 +17,7 @@ import {
 import { ApplicationStatus, InstitutionLocation } from "@sims/sims-db";
 import { getUserFullName } from "../../../../utilities";
 
-describe("InstitutionLocationStudentsController(e2e)-getActiveApplications", () => {
+describe("InstitutionLocationInstitutionsController(e2e)-getActiveApplications", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let collegeFLocation: InstitutionLocation;
@@ -40,7 +40,7 @@ describe("InstitutionLocationStudentsController(e2e)-getActiveApplications", () 
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
     );
-    // College E.
+    // College D.
     const { institution: collegeD } = await getAuthRelatedEntities(
       db.dataSource,
       InstitutionTokenTypes.CollegeDUser,

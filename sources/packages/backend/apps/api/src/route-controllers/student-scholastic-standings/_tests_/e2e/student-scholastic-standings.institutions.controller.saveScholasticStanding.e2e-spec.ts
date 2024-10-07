@@ -264,7 +264,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     ).toBe(createdScholasticStandingId);
   });
 
-  it("Should create a new scholastic standing School transfer for a part-time application when the institution user requests.", async () => {
+  it("Should create a new scholastic standing 'School transfer' for a part-time application when the institution user requests.", async () => {
     // Arrange
     mockFormioDryRun({
       studentScholasticStandingChangeType:
@@ -336,7 +336,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     ]);
   });
 
-  it("Should create a new scholastic standing Student withdrew from program for a part-time application when the institution user requests.", async () => {
+  it("Should create a new scholastic standing 'Student withdrew from program' for a part-time application when the institution user requests.", async () => {
     // Arrange
     mockFormioDryRun({
       studentScholasticStandingChangeType:
@@ -444,7 +444,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     ]);
   });
 
-  it("Should create a new scholastic standing Student did not complete program for a part-time application when the institution user requests.", async () => {
+  it("Should create a new scholastic standing 'Student did not complete program' for a part-time application when the institution user requests.", async () => {
     // Arrange
     mockFormioDryRun({
       studentScholasticStandingChangeType:
@@ -552,7 +552,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     ]);
   });
 
-  it("Should not create new scholastic standing Student did not complete program for a part-time application when date of change is not between study start date and end date.", async () => {
+  it("Should not create new scholastic standing 'Student did not complete program' for a part-time application when date of change is not between study start date and end date.", async () => {
     // Arrange
     mockFormioDryRun({
       validDryRun: false,
@@ -589,7 +589,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       });
   });
 
-  it("Should not create new scholastic standing Student withdrew from program for a part-time application when date of withdrawal is not between study start date and end date.", async () => {
+  it("Should not create new scholastic standing 'Student withdrew from program' for a part-time application when date of withdrawal is not between study start date and end date.", async () => {
     // Arrange
     mockFormioDryRun({
       validDryRun: false,
@@ -626,7 +626,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       });
   });
 
-  it("Should not create new scholastic standing Student completed program early for a part-time application when date of withdrawal is not between study start date and end date.", async () => {
+  it("Should not create new scholastic standing 'Student completed program early' for a part-time application when date of withdrawal is not between study start date and end date.", async () => {
     // Arrange
     mockFormioDryRun({
       validDryRun: false,
@@ -663,7 +663,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       });
   });
 
-  it("Should not create new scholastic standing Student did not complete program for a part-time application when date of change is greater than current date.", async () => {
+  it("Should not create new scholastic standing 'Student did not complete program' for a part-time application when date of change is greater than current date.", async () => {
     // Arrange
     mockFormioDryRun({
       validDryRun: false,
@@ -700,7 +700,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       });
   });
 
-  it("Should not create new scholastic standing Student withdrew from program for a part-time application when date of withdrawal is greater than current date.", async () => {
+  it("Should not create new scholastic standing 'Student withdrew from program' for a part-time application when date of withdrawal is greater than current date.", async () => {
     // Arrange
     mockFormioDryRun({
       validDryRun: false,
@@ -737,7 +737,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       });
   });
 
-  it("Should not create new scholastic standing Student completed program early for a part-time application when date of withdrawal is greater than current date.", async () => {
+  it("Should not create new scholastic standing 'Student completed program early' for a part-time application when date of withdrawal is greater than current date.", async () => {
     // Arrange
     mockFormioDryRun({
       validDryRun: false,
