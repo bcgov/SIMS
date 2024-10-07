@@ -85,6 +85,7 @@ export class StudentService extends RecordDataModelService<Student> {
         "user.firstName",
         "user.lastName",
         "user.email",
+        "user.identityProviderType",
       ])
       .innerJoin("student.user", "user")
       .leftJoin("student.sinValidation", "sinValidation")
@@ -521,9 +522,7 @@ export class StudentService extends RecordDataModelService<Student> {
       studentUserData.givenNames = null;
     }
     if (
-      !dayjs(studentUserData.birthdate.toLowerCase()).isSame(
-        studentToSync.birthDate.toLowerCase(),
-      ) ||
+      !dayjs(studentUserData.birthdate).isSame(studentToSync.birthDate) ||
       studentUserData.lastName.toLowerCase() !==
         studentToSync.user.lastName.toLowerCase() ||
       studentUserData.givenNames.toLowerCase() !==

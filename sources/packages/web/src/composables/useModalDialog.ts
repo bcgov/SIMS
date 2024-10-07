@@ -11,7 +11,7 @@ export function useModalDialog<T, TParameter = any>() {
     value: T,
     options?: { keepModalOpen?: boolean },
   ) => {
-    if (beforeResolvePromise) {
+    if (beforeResolvePromise && value) {
       loading.value = true;
       const success = await beforeResolvePromise(value);
       loading.value = false;

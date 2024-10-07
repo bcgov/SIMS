@@ -1,7 +1,10 @@
 import { useValidators } from "@/composables";
 
 const NOTES_MAX_CHARACTERS = 500;
-const { isSINValid, checkMaxCharacters } = useValidators();
+const GIVENNAMES_MAX_LENGTH = 100;
+const LASTNAME_MAX_LENGTH = 100;
+const EMAIL_MAX_LENGTH = 300;
+const { isSINValid, checkMaxCharacters, isEmailValid } = useValidators();
 
 export function useRules() {
   const sinValidationRule = (sin: string) => {
@@ -15,15 +18,40 @@ export function useRules() {
     return checkLengthRule(notes, NOTES_MAX_CHARACTERS, "Note");
   };
 
+  const checkGivenNameLengthRule = (givenName: string) => {
+    return checkLengthRule(
+      givenName,
+      GIVENNAMES_MAX_LENGTH,
+      "Given Names",
+      false,
+    );
+  };
+
+  const checkLastNameLengthRule = (lastName: string) => {
+    return checkLengthRule(lastName, LASTNAME_MAX_LENGTH, "Lastname");
+  };
+
+  const checkEmailLengthRule = (email: string) => {
+    return checkLengthRule(email, EMAIL_MAX_LENGTH, "Email");
+  };
+
+  const checkEmailValidationRule = (email: string) => {
+    return isEmailValid(email) ? true : "Email is invalid.";
+  };
+
   const checkLengthRule = (
     value: string,
     maxLength: number,
     fieldName?: string,
+    requiredValidation = true,
   ) => {
     if (value) {
       return (
         checkMaxCharacters(value, maxLength) || `Max ${maxLength} characters.`
       );
+    }
+    if (!requiredValidation) {
+      return true;
     }
     if (fieldName) {
       return `${fieldName} is required.`;
@@ -104,5 +132,9 @@ export function useRules() {
     checkOnlyDigitsRule,
     checkLengthRule,
     numberRangeRule,
+    checkGivenNameLengthRule,
+    checkLastNameLengthRule,
+    checkEmailLengthRule,
+    checkEmailValidationRule,
   };
 }

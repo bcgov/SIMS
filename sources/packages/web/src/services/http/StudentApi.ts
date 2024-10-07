@@ -15,6 +15,7 @@ import {
   InstitutionStudentProfileAPIOutDTO,
   AESTStudentProfileAPIOutDTO,
   UpdateDisabilityStatusAPIInDTO,
+  UpdateStudentDetailsAPIInDTO,
 } from "@/services/http/dto";
 
 export class StudentApi extends HttpBaseClient {
@@ -38,6 +39,21 @@ export class StudentApi extends HttpBaseClient {
     studentContact: UpdateStudentAPIInDTO,
   ): Promise<void> {
     await this.patchCall(this.addClientRoot("student"), studentContact);
+  }
+
+  /**
+   * Updates the student profile data for the provided student.
+   * @param studentId student id of the related student.
+   * @param profileData profile data to be updated.
+   */
+  async updateStudentProfileInfo(
+    studentId: number,
+    profileData: UpdateStudentDetailsAPIInDTO,
+  ): Promise<void> {
+    await this.patchCall(
+      this.addClientRoot(`student/${studentId}`),
+      profileData,
+    );
   }
 
   /**

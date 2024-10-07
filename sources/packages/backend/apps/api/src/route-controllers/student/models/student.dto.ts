@@ -22,6 +22,7 @@ import {
   DisabilityStatus,
   LASTNAME_MAX_LENGTH,
   GIVENNAMES_MAX_LENGTH,
+  IdentityProviders,
 } from "@sims/sims-db";
 import {
   AddressAPIOutDTO,
@@ -193,6 +194,7 @@ export class InstitutionStudentProfileAPIOutDTO extends StudentProfileAPIOutDTO 
 
 export class AESTStudentProfileAPIOutDTO extends InstitutionStudentProfileAPIOutDTO {
   hasRestriction: boolean;
+  identityProviderType: IdentityProviders;
 }
 
 export class AESTFileUploadToStudentAPIInDTO {
@@ -280,12 +282,14 @@ export class UpdateDisabilityStatusAPIInDTO {
  * Updates the student information.
  */
 export class UpdateStudentDetailsAPIInDTO {
+  @IsNotEmpty()
   @MaxLength(LASTNAME_MAX_LENGTH)
   lastName: string;
   @MaxLength(GIVENNAMES_MAX_LENGTH)
   givenNames: string;
-  @Allow()
+  @IsNotEmpty()
   birthdate: string;
+  @IsNotEmpty()
   @IsEmail()
   email: string;
 }

@@ -25,7 +25,6 @@ import {
 import {
   SINValidationService,
   StudentFileService,
-  StudentRestrictionService,
   StudentService,
 } from "../../services";
 import { NotificationActionsService } from "@sims/services/notifications";
@@ -92,7 +91,6 @@ export class StudentAESTController extends BaseController {
     private readonly studentService: StudentService,
     private readonly studentControllerService: StudentControllerService,
     private readonly notificationActionsService: NotificationActionsService,
-    private readonly studentRestrictionService: StudentRestrictionService,
     private readonly sinValidationService: SINValidationService,
   ) {
     super();
@@ -260,19 +258,10 @@ export class StudentAESTController extends BaseController {
   async getStudentProfile(
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<AESTStudentProfileAPIOutDTO> {
-    const [student, studentRestrictions] = await Promise.all([
-      this.studentControllerService.getStudentProfile(studentId, {
-        withSensitiveData: true,
-      }),
-      this.studentRestrictionService.getStudentRestrictionsById(studentId, {
-        onlyActive: true,
-      }),
-    ]);
-
-    return {
-      ...student,
-      hasRestriction: !!studentRestrictions.length,
-    };
+    return this.studentControllerService.getStudentProfile(studentId, {
+      withSensitiveData: true,
+      withAdditionalSpecificData: true,
+    });
   }
 
   /**
@@ -441,18 +430,18 @@ export class StudentAESTController extends BaseController {
    * @param payload payload to be updated.
    */
   @Roles(Role.StudentEditProfile)
-  @Patch("student/:studentId")
+  @Patch(":studentId")
   @ApiNotFoundResponse({ description: "Student does not exist." })
   async updateProfileInformation(
     @Param("studentId", ParseIntPipe) studentId: number,
     @Body() payload: UpdateStudentDetailsAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    if (userToken.identityProvider === IdentityProviders.BCeIDBasic) {
-      const studentExists = await this.studentService.studentExists(studentId);
-      if (!studentExists) {
-        throw new NotFoundException("Student does not exist.");
-      }
+    const student = await this.studentService.getStudentById(studentId);
+    if (!student) {
+      throw new NotFoundException("Student does not exist.");
+    }
+    if (student.user.identityProviderType === IdentityProviders.BCeIDBasic) {
       await this.studentService.updateStudentUserData(
         {
           studentId,

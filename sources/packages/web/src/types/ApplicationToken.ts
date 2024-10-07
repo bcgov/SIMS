@@ -4,6 +4,8 @@ export enum IdentityProviders {
   BCeIDBoth = "bceidboth",
   BCSC = "bcsc",
   IDIR = "idir",
+  BCeIDBasic = "bceidbasic",
+  BCeIDBusiness = "bceidbusiness",
 }
 
 export interface ApplicationToken extends KeycloakTokenParsed {
