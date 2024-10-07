@@ -175,7 +175,7 @@ export class ApplicationService {
    * - No notification of this type (messageId 30) has been sent for this assessment
    * @returns An array of eligible applications with relevant details for notification.
    */
-  async getEligibleApplicationsForNotification(): Promise<Application[]> {
+  async getApplicationWithPDPPStatusMismatch(): Promise<Application[]> {
     const disabilityNotificationDateLimit = addDays(
       DISABILITY_NOTIFICATION_DAYS_LIMIT,
     );
