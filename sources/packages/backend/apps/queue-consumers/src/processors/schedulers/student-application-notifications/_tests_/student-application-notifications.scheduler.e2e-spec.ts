@@ -30,7 +30,7 @@ describe(
     let db: E2EDataSources;
 
     beforeAll(async () => {
-      // Set the SFAS folder to the files mocks folders.
+      // Setup the app and data sources.
       const { nestApplication, dataSource } = await createTestingAppModule();
       app = nestApplication;
       db = createE2EDataSources(dataSource);
