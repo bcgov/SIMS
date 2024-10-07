@@ -134,12 +134,16 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       });
   });
 
-  it("Should throw unprocessable entity exception error when the application change is not eligible.", async () => {
+  it("Should throw unprocessable entity exception error when the application change is not eligible / Archived.", async () => {
     // Arrange
-    const application = await saveFakeApplication(db.dataSource, {
-      institutionLocation: collegeFLocation,
-    });
-    application.isArchived = true;
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {
+        institutionLocation: collegeFLocation,
+      },
+      { isArchived: true },
+    );
+
     await db.application.save(application);
     // Institution token.
     const institutionUserToken = await getInstitutionToken(
