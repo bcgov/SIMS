@@ -1261,13 +1261,11 @@ export class NotificationActionsService {
 
   /**
    * Creates student application notification for student.
-   * @param notification notification details.
-   * @param assessmentId assessment id.
+   * @param notifications notification details array.
    * @param entityManager entity manager to execute in transaction.
    */
   async saveStudentApplicationPDPPDNotification(
-    notification: StudentPDPPDNotification,
-    assessmentId: number,
+    notifications: StudentPDPPDNotification[],
     entityManager?: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
@@ -1275,7 +1273,7 @@ export class NotificationActionsService {
       await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.StudentPDPPDApplicationNotification,
       );
-    const notificationToSend = {
+    const notificationsToSend = notifications.map((notification) => ({
       userId: notification.userId,
       messageType: NotificationMessageType.StudentPDPPDApplicationNotification,
       messagePayload: {
@@ -1287,11 +1285,11 @@ export class NotificationActionsService {
           applicationNumber: notification.applicationNumber,
         },
       },
-      metadata: { assessmentId },
-    };
-    // Save notification to be sent to the student into the notification table.
+      metadata: { assessmentId: notification.assessmentId },
+    }));
+    // Save notifications to be sent to the students into the notification table.
     await this.notificationService.saveNotifications(
-      [notificationToSend],
+      notificationsToSend,
       auditUser.id,
       { entityManager },
     );

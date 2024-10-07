@@ -47,22 +47,21 @@ export class StudentApplicationNotificationsScheduler extends BaseScheduler<void
       const eligibleApplications =
         await this.applicationService.getEligibleApplicationsForNotification();
 
-      for (const application of eligibleApplications) {
-        const notification: StudentPDPPDNotification = {
+      const notifications = eligibleApplications.map<StudentPDPPDNotification>(
+        (application) => ({
           userId: application.student.user.id,
           givenNames: application.student.user.firstName,
           lastName: application.student.user.lastName,
           email: application.student.user.email,
           applicationNumber: application.applicationNumber,
-        };
+          assessmentId: application.currentAssessment.id,
+        }),
+      );
 
-        await this.notificationActionsService.saveStudentApplicationPDPPDNotification(
-          notification,
-          application.currentAssessment.id,
-        );
-      }
+      await this.notificationActionsService.saveStudentApplicationPDPPDNotification(
+        notifications,
+      );
 
-      this.logger.log(JSON.stringify(eligibleApplications));
       processSummary.info(
         `Eligible applications: ${JSON.stringify(eligibleApplications)}`,
       );

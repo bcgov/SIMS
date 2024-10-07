@@ -7,6 +7,10 @@ import {
   StudentAssessment,
   StudentAssessmentStatus,
   DisabilityStatus,
+  DisbursementScheduleStatus,
+  NotificationMessageType,
+  Notification,
+  DisbursementSchedule,
 } from "@sims/sims-db";
 import { ConfigService } from "@sims/utilities/config";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -20,6 +24,10 @@ export class ApplicationService {
     private readonly applicationRepo: Repository<Application>,
     @InjectRepository(StudentAssessment)
     private readonly studentAssessmentRepo: Repository<StudentAssessment>,
+    @InjectRepository(Notification)
+    private readonly notificationRepo: Repository<Notification>,
+    @InjectRepository(DisbursementSchedule)
+    private readonly disbursementScheduleRepo: Repository<DisbursementSchedule>,
   ) {}
 
   /**
@@ -171,54 +179,59 @@ export class ApplicationService {
     const disabilityNotificationDateLimit = addDays(
       DISABILITY_NOTIFICATION_DAYS_LIMIT,
     );
+    // Sub query to defined if a notification was already sent to the current assessment.
+    const notificationExistsQuery = this.notificationRepo
+      .createQueryBuilder("notification")
+      .select("1")
+      .where("notification.notificationMessage.id = :messageId")
+      .andWhere(
+        "notification.metadata->>'assessmentId' = currentAssessment.id :: text",
+      )
+      .getQuery();
+    // Sub query to defined if there is at least on disbursement pending to be sent.
+    const pendingDisbursementExistsQuery = this.disbursementScheduleRepo
+      .createQueryBuilder("disbursement")
+      .select("1")
+      .where("disbursement.studentAssessment.id = currentAssessment.id")
+      .andWhere(
+        "disbursement.disbursementScheduleStatus = :disbursementScheduleStatusPending",
+      )
+      .getQuery();
     return this.applicationRepo
       .createQueryBuilder("application")
       .select([
+        "application.id",
         "application.applicationNumber",
-        "users.firstName",
-        "users.lastName",
-        "users.email",
-        "users.id",
-        "student_assessments.id",
+        "student.id",
+        "user.id",
+        "user.firstName",
+        "user.lastName",
+        "user.email",
+        "currentAssessment.id",
       ])
-      .innerJoin("application.currentAssessment", "student_assessments")
-      .innerJoin("application.student", "students")
-      .innerJoin("students.user", "users")
-      .innerJoin("student_assessments.offering", "epo")
-      .innerJoin("student_assessments.disbursementSchedules", "ds")
-      .where("epo.studyEndDate >= :disabilityNotificationDateLimit", {
+      .innerJoin("application.currentAssessment", "currentAssessment")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .innerJoin("currentAssessment.offering", "offering")
+      .where("application.applicationStatus = :applicationStatus", {
+        applicationStatus: ApplicationStatus.Completed,
+      })
+      .andWhere("offering.studyEndDate <= :disabilityNotificationDateLimit", {
         disabilityNotificationDateLimit,
       })
-      .andWhere("students.disabilityStatus NOT IN (:pdStatus, :ppdStatus)", {
+      .andWhere("student.disabilityStatus NOT IN (:pdStatus, :ppdStatus)", {
         pdStatus: DisabilityStatus.PD,
         ppdStatus: DisabilityStatus.PPD,
       })
       .andWhere(
-        "json_extract_path_text(student_assessments.workflow_data::json, 'calculatedData', 'pdppdStatus') = 'true'",
+        'currentAssessment.workflow_data @> \'{ "calculatedData": { "pdppdStatus": true}}\'',
       )
       .andWhere("application.isArchived = false")
-      .andWhere("ds.disbursementScheduleStatus = 'Pending'")
-      .andWhere((qb) => {
-        const subQuery = qb
-          .subQuery()
-          .select("1")
-          .from("notifications", "n")
-          .where("n.notification_message_id = 30")
-          .andWhere(
-            "json_extract_path_text(n.metadata::json, 'assessmentId') = CAST(student_assessments.id AS TEXT)",
-          )
-          .getQuery();
-        return "NOT EXISTS (" + subQuery + ")";
-      })
-      .andWhere((qb) => {
-        const subQuery = qb
-          .subQuery()
-          .select("1")
-          .from("disbursement_schedules", "ds2")
-          .where("ds2.studentAssessment = student_assessments.id")
-          .andWhere("ds2.disbursementDate < ds.disbursementDate")
-          .getQuery();
-        return "NOT EXISTS (" + subQuery + ")";
+      .andWhere(`EXISTS (${pendingDisbursementExistsQuery})`)
+      .andWhere(`NOT EXISTS (${notificationExistsQuery})`)
+      .setParameters({
+        messageId: NotificationMessageType.StudentPDPPDApplicationNotification,
+        disbursementScheduleStatusPending: DisbursementScheduleStatus.Pending,
       })
       .getMany();
   }

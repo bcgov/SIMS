@@ -189,6 +189,7 @@ export interface SupportingUserInformationNotification {
 
 export interface StudentPDPPDNotification {
   userId: number;
+  assessmentId: number;
   givenNames: string;
   lastName: string;
   email: string;
