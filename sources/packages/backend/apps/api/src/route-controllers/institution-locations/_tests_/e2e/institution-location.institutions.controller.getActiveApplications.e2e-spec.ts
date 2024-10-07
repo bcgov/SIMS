@@ -21,6 +21,7 @@ describe("InstitutionLocationStudentsController(e2e)-getActiveApplications", () 
   let app: INestApplication;
   let db: E2EDataSources;
   let collegeFLocation: InstitutionLocation;
+  let collegeDLocation: InstitutionLocation;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -39,9 +40,22 @@ describe("InstitutionLocationStudentsController(e2e)-getActiveApplications", () 
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
     );
+    // College E.
+    const { institution: collegeD } = await getAuthRelatedEntities(
+      db.dataSource,
+      InstitutionTokenTypes.CollegeDUser,
+    );
+    collegeDLocation = createFakeInstitutionLocation({
+      institution: collegeD,
+    });
+    await authorizeUserTokenForLocation(
+      db.dataSource,
+      InstitutionTokenTypes.CollegeDUser,
+      collegeDLocation,
+    );
   });
 
-  it("Should get the list of all applications which are not archived when requested for Active applications", async () => {
+  it("Should get the list of all applications which are not archived when requested for 'Available to Report' tab in Report a Change", async () => {
     // Arrange
     const completedApplication = await saveFakeApplication(
       db.dataSource,
@@ -56,7 +70,7 @@ describe("InstitutionLocationStudentsController(e2e)-getActiveApplications", () 
       {
         institutionLocation: collegeFLocation,
       },
-      { isArchived: true },
+      { isArchived: true, applicationStatus: ApplicationStatus.Completed },
     );
 
     // Institution token.
@@ -83,6 +97,55 @@ describe("InstitutionLocationStudentsController(e2e)-getActiveApplications", () 
                 completedApplication.currentAssessment.offering.studyEndDate,
               studyStartPeriod:
                 completedApplication.currentAssessment.offering.studyStartDate,
+            },
+          ],
+        });
+      });
+  });
+
+  it("Should get the list of all applications which are archived when requested for 'Unavailable to Report' tab in Report a Change", async () => {
+    // Arrange
+    const archivedApplication = await saveFakeApplication(
+      db.dataSource,
+      {
+        institutionLocation: collegeDLocation,
+      },
+
+      { isArchived: true, applicationStatus: ApplicationStatus.Completed },
+    );
+
+    await saveFakeApplication(
+      db.dataSource,
+      {
+        institutionLocation: collegeDLocation,
+      },
+      { applicationStatus: ApplicationStatus.Completed },
+    );
+
+    // Institution token.
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeDUser,
+    );
+    const endpoint = `/institutions/location/${collegeDLocation.id}/active-applications?archived=true&page=0&pageLimit=10&sortField=applicationNumber&sortOrder=ASC`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect((response) => {
+        expect(response.body).toEqual({
+          count: 1,
+          results: [
+            {
+              applicationId: archivedApplication.id,
+              applicationNumber: archivedApplication.applicationNumber,
+              applicationScholasticStandingStatus: "Unavailable",
+              fullName: getUserFullName(archivedApplication.student.user),
+              studyEndPeriod:
+                archivedApplication.currentAssessment.offering.studyEndDate,
+              studyStartPeriod:
+                archivedApplication.currentAssessment.offering.studyStartDate,
             },
           ],
         });
