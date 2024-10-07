@@ -348,6 +348,15 @@ export interface CalculatedAssessmentModel {
   calculatedDataNetWeeklyAdditionalTransportCost: number;
   calculatedDataTotalAdditionalTransportationAllowance: number;
   calculatedDataTotalTransportationAllowance: number;
+  // DMN Full Time Award Allowable Limits
+  dmnFullTimeAwardAllowableLimits?: {
+    limitAwardCSGFWeeklyRate: number;
+  };
+  // DMN Part Time Award Family Size Variables
+  dmnFullTimeAwardFamilySizeVariables?: {
+    limitAwardCSGFWeeklyPhaseoutRate: number;
+    limitAwardCSGFIncomeCap: number;
+  };
   // DMN Part Time Award Allowable Limits
   dmnPartTimeAwardAllowableLimits?: {
     limitAwardBCAGAmount: number;

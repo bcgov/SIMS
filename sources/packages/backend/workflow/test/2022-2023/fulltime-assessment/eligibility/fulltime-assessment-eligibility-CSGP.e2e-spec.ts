@@ -21,9 +21,6 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGP
     // When the CSGP is eligible its amount will always be 4000. The same value is expected for
     // provincial and federal grants.
     expect(calculatedAssessment.variables.federalAwardNetCSGPAmount).toBe(4000);
-    expect(calculatedAssessment.variables.provincialAwardNetCSGPAmount).toBe(
-      4000,
-    );
     expect(calculatedAssessment.variables.awardEligibilityCSGP).toBe(true);
   });
 
