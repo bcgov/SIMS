@@ -63,7 +63,13 @@ export class StudentApplicationNotificationsScheduler extends BaseScheduler<void
       );
 
       processSummary.info(
-        `Eligible applications: ${JSON.stringify(eligibleApplications)}`,
+        `Eligible applications: ${JSON.stringify(
+          eligibleApplications.map((application) => ({
+            assessmentId: application.currentAssessment.id,
+            applicationNumber: application.applicationNumber,
+            userEmail: application.student.user.email,
+          })),
+        )}`,
       );
 
       return getSuccessMessageWithAttentionCheck(

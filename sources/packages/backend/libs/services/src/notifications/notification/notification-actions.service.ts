@@ -1260,7 +1260,7 @@ export class NotificationActionsService {
   }
 
   /**
-   * Creates student application notification for student.
+   * Creates student application notification for student for PDPPD assessment.
    * @param notifications notification details array.
    * @param entityManager entity manager to execute in transaction.
    */
