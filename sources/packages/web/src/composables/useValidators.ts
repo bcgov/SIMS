@@ -33,9 +33,11 @@ export function useValidators() {
   };
 
   const isEmailValid = (email: string) => {
-    const regexPattern = "/^[w-.]+@([w-]+.)+[w-]{2,4}$/";
-    const emailRegex = new RegExp(regexPattern, "i");
-    return emailRegex.exec(email.toLowerCase());
+    return String(email)
+      .toLowerCase()
+      .match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[\d]{1,3}\.[\d]{1,3}\.[\d]{1,3}\.[\d]{1,3}\])|(([a-zA-Z\-\d]+\.)+[a-zA-Z]{2,}))$/,
+      );
   };
 
   const checkMaxCharacters = (
