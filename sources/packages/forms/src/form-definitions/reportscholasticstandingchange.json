@@ -43,7 +43,8 @@
         "eq": ""
       },
       "properties": {},
-      "lockKey": true
+      "lockKey": true,
+      "isNew": false
     },
     {
       "label": "Offering Intensity (Part Time or Full Time) - Used to define custom labels",
@@ -1130,7 +1131,7 @@
                       "tableView": true,
                       "validate": {
                         "required": true,
-                        "custom": "valid = input >= data.applicationOfferingUnformattedStartDate && input <= data.applicationOfferingUnformattedEndDate ? true : 'Date should be between study start date and end date.';"
+                        "custom": "const currentDateFormatted = moment().format('YYYY-MM-DD');\nvalid = input >= data.applicationOfferingUnformattedStartDate && input <= data.applicationOfferingUnformattedEndDate && input <= currentDateFormatted ? true : 'Date should be between study start date, end date and current date.';"
                       },
                       "key": "dateOfChange",
                       "attributes": {
@@ -1245,7 +1246,7 @@
                       "tableView": true,
                       "validate": {
                         "required": true,
-                        "custom": "valid = input >= data.applicationOfferingUnformattedStartDate && input <= data.applicationOfferingUnformattedEndDate ? true : 'Date should be between study start date and end date.';"
+                        "custom": "const currentDateFormatted = moment().format('YYYY-MM-DD');\nvalid = input >= data.applicationOfferingUnformattedStartDate && input <= data.applicationOfferingUnformattedEndDate && input <= currentDateFormatted ? true : 'Date should be between study start date, end date and current date.';"
                       },
                       "key": "dateOfCompletion",
                       "attributes": {
@@ -1791,7 +1792,7 @@
                       "tableView": true,
                       "validate": {
                         "required": true,
-                        "custom": "valid = input >= data.applicationOfferingUnformattedStartDate && input <= data.applicationOfferingUnformattedEndDate ? true : 'Date should be between study start date and end date.';"
+                        "custom": "const currentDateFormatted = moment().format('YYYY-MM-DD');\nvalid = input >= data.applicationOfferingUnformattedStartDate && input <= data.applicationOfferingUnformattedEndDate && input <= currentDateFormatted ? true : 'Date should be between study start date, end date and current date.';"
                       },
                       "key": "dateOfWithdrawal",
                       "attributes": {
