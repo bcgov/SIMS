@@ -66,6 +66,7 @@ export function createFakeApplication(
   application.applicationException = relations?.applicationException;
   application.location = relations?.location ?? createFakeInstitutionLocation();
   application.pirStatus = options?.initialValue?.pirStatus;
+  application.isArchived = options?.initialValue?.isArchived;
   return application;
 }
 
