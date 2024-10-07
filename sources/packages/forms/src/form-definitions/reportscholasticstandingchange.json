@@ -11,8 +11,8 @@
     {
       "input": true,
       "tableView": true,
-      "key": "applicationOfferingUnformattedStartDate",
-      "label": "applicationOfferingUnformattedStartDate",
+      "key": "studyStartDate",
+      "label": "Study Start Date",
       "protected": false,
       "unique": false,
       "persistent": true,
@@ -30,8 +30,8 @@
     {
       "input": true,
       "tableView": true,
-      "key": "applicationOfferingUnformattedEndDate",
-      "label": "applicationOfferingUnformattedEndDate",
+      "key": "studyEndDate",
+      "label": "Study End Date",
       "protected": false,
       "unique": false,
       "persistent": true,
@@ -1131,7 +1131,7 @@
                       "tableView": true,
                       "validate": {
                         "required": true,
-                        "custom": "const currentDateFormatted = moment().format('YYYY-MM-DD');\nvalid = input >= data.applicationOfferingUnformattedStartDate && input <= data.applicationOfferingUnformattedEndDate && input <= currentDateFormatted ? true : 'Date should be between study start date, end date and current date.';"
+                        "custom": "const isDateValid= moment(input).isSameOrBefore(new Date()) &&\n    moment(input).isSameOrAfter(data.studyStartDate) &&\n    moment(input).isSameOrBefore(data.studyEndDate);\nvalid = isDateValid ? true :  'Date cannot be future-dated and must be during the study period.';"
                       },
                       "key": "dateOfChange",
                       "attributes": {
@@ -1246,7 +1246,7 @@
                       "tableView": true,
                       "validate": {
                         "required": true,
-                        "custom": "const currentDateFormatted = moment().format('YYYY-MM-DD');\nvalid = input >= data.applicationOfferingUnformattedStartDate && input <= data.applicationOfferingUnformattedEndDate && input <= currentDateFormatted ? true : 'Date should be between study start date, end date and current date.';"
+                        "custom": "const isDateValid= moment(input).isSameOrBefore(new Date()) &&\n    moment(input).isSameOrAfter(data.studyStartDate) &&\n    moment(input).isSameOrBefore(data.studyEndDate);\nvalid = isDateValid ? true :  'Date cannot be future-dated and must be during the study period.';"
                       },
                       "key": "dateOfCompletion",
                       "attributes": {
@@ -1792,7 +1792,7 @@
                       "tableView": true,
                       "validate": {
                         "required": true,
-                        "custom": "const currentDateFormatted = moment().format('YYYY-MM-DD');\nvalid = input >= data.applicationOfferingUnformattedStartDate && input <= data.applicationOfferingUnformattedEndDate && input <= currentDateFormatted ? true : 'Date should be between study start date, end date and current date.';"
+                        "custom": "const isDateValid= moment(input).isSameOrBefore(new Date()) &&\n    moment(input).isSameOrAfter(data.studyStartDate) &&\n    moment(input).isSameOrBefore(data.studyEndDate);\nvalid = isDateValid ? true :  'Date cannot be future-dated and must be during the study period.';"
                       },
                       "key": "dateOfWithdrawal",
                       "attributes": {

@@ -53,7 +53,6 @@ import {
   OFFERING_PROGRAM_YEAR_MISMATCH,
   EDUCATION_PROGRAM_IS_NOT_ACTIVE,
   EDUCATION_PROGRAM_IS_EXPIRED,
-  APPLICATION_CHANGE_NOT_ELIGIBLE,
 } from "../../constants";
 import { SequenceControlService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
@@ -1215,9 +1214,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return this.repo
       .createQueryBuilder("application")
       .select([
+        "application.id",
         "application.applicationStatus",
         "application.applicationNumber",
         "currentAssessment.id",
+        "offering.id",
         "offering.offeringIntensity",
         "offering.studyStartDate",
         "offering.studyEndDate",
@@ -1226,8 +1227,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "location.name",
         "offering.name",
         "student",
+        "user.id",
         "user.firstName",
         "user.lastName",
+        "user.email",
+        "studentAppeal.id",
         "educationProgram.credentialType",
         "educationProgram.deliveredOnline",
         "educationProgram.deliveredOnSite",
@@ -1240,6 +1244,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       ])
       .innerJoin("application.currentAssessment", "currentAssessment")
       .innerJoin("currentAssessment.offering", "offering")
+      .leftJoin("currentAssessment.studentAppeal", "studentAppeal")
       .innerJoin("offering.educationProgram", "educationProgram")
       .innerJoin("offering.institutionLocation", "location")
       .innerJoin("application.student", "student")
@@ -1828,64 +1833,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         },
       },
     });
-  }
-
-  /**
-   * Return scholastic standing application
-   * @param locationId location id.
-   * @param applicationId application id.
-   * @returns Application.
-   */
-  async processScholasticStanding(
-    locationId: number,
-    applicationId: number,
-  ): Promise<Application> {
-    const application = await this.repo
-      .createQueryBuilder("application")
-      .select([
-        "application",
-        "currentAssessment.id",
-        "offering.id",
-        "offering.studyStartDate",
-        "offering.studyEndDate",
-        "student.id",
-        "user.id",
-        "user.firstName",
-        "user.lastName",
-        "user.email",
-        "studentAppeal.id",
-      ])
-      .innerJoin("application.currentAssessment", "currentAssessment")
-      .innerJoin("currentAssessment.offering", "offering")
-      .leftJoin("currentAssessment.studentAppeal", "studentAppeal")
-      .innerJoin("application.location", "location")
-      .innerJoin("application.student", "student")
-      .innerJoin("student.user", "user")
-      .where("application.id = :applicationId", { applicationId })
-      .andWhere("location.id = :locationId", { locationId })
-      .getOne();
-
-    if (!application) {
-      throw new CustomNamedError(
-        "Application Not found or invalid current assessment or offering.",
-        APPLICATION_NOT_FOUND,
-      );
-    }
-
-    if (application.isArchived) {
-      throw new CustomNamedError(
-        "This application is no longer eligible to request changes.",
-        APPLICATION_CHANGE_NOT_ELIGIBLE,
-      );
-    }
-
-    if (application.applicationStatus !== ApplicationStatus.Completed) {
-      throw new CustomNamedError(
-        "Cannot report a change for application with status other than completed.",
-        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
-      );
-    }
-    return application;
   }
 
   @InjectLogger()
