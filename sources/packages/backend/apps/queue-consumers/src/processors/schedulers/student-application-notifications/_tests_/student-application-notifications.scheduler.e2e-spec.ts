@@ -110,5 +110,51 @@ describe(
         });
       },
     );
+
+    it("Should generate a notification for PD/PPD student mismatch only once for the same assessment", async () => {
+      // Arrange
+      const student = await saveFakeStudent(db.dataSource, undefined, {
+        initialValue: { disabilityStatus: DisabilityStatus.Requested },
+      });
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            workflowData: {
+              calculatedData: {
+                pdppdStatus: true,
+              },
+            } as WorkflowData,
+          },
+          createSecondDisbursement: true,
+          firstDisbursementInitialValues: {
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+          secondDisbursementInitialValues: {
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+          },
+        },
+      );
+      const job = createMock<Job<void>>();
+
+      // Act
+      await processor.studentApplicationNotifications(job);
+      // Run the processor again
+      await processor.studentApplicationNotifications(job);
+
+      // Assert
+      const notifications = await db.notification.find({
+        where: {
+          notificationMessage: {
+            id: NotificationMessageType.StudentPDPPDApplicationNotification,
+          },
+          dateSent: IsNull(),
+          user: { id: student.user.id },
+        },
+      });
+      expect(notifications).toHaveLength(1);
+    });
   },
 );
