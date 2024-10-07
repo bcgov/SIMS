@@ -55,7 +55,7 @@ describe("InstitutionLocationStudentsController(e2e)-getActiveApplications", () 
     );
   });
 
-  it("Should get the list of all applications which are not archived when requested for 'Available to Report' tab in Report a Change", async () => {
+  it("Should get the list of all applications which are not archived when requested for not archived application in Report a Change", async () => {
     // Arrange
     const completedApplication = await saveFakeApplication(
       db.dataSource,
@@ -84,26 +84,24 @@ describe("InstitutionLocationStudentsController(e2e)-getActiveApplications", () 
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect((response) => {
-        expect(response.body).toEqual({
-          count: 1,
-          results: [
-            {
-              applicationId: completedApplication.id,
-              applicationNumber: completedApplication.applicationNumber,
-              applicationScholasticStandingStatus: "Available",
-              fullName: getUserFullName(completedApplication.student.user),
-              studyEndPeriod:
-                completedApplication.currentAssessment.offering.studyEndDate,
-              studyStartPeriod:
-                completedApplication.currentAssessment.offering.studyStartDate,
-            },
-          ],
-        });
+      .expect({
+        count: 1,
+        results: [
+          {
+            applicationId: completedApplication.id,
+            applicationNumber: completedApplication.applicationNumber,
+            applicationScholasticStandingStatus: "Available",
+            fullName: getUserFullName(completedApplication.student.user),
+            studyEndPeriod:
+              completedApplication.currentAssessment.offering.studyEndDate,
+            studyStartPeriod:
+              completedApplication.currentAssessment.offering.studyStartDate,
+          },
+        ],
       });
   });
 
-  it("Should get the list of all applications which are archived when requested for 'Unavailable to Report' tab in Report a Change", async () => {
+  it("Should get the list of all applications which are archived when requested for archived applications in Report a Change", async () => {
     // Arrange
     const archivedApplication = await saveFakeApplication(
       db.dataSource,
@@ -133,22 +131,20 @@ describe("InstitutionLocationStudentsController(e2e)-getActiveApplications", () 
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect((response) => {
-        expect(response.body).toEqual({
-          count: 1,
-          results: [
-            {
-              applicationId: archivedApplication.id,
-              applicationNumber: archivedApplication.applicationNumber,
-              applicationScholasticStandingStatus: "Unavailable",
-              fullName: getUserFullName(archivedApplication.student.user),
-              studyEndPeriod:
-                archivedApplication.currentAssessment.offering.studyEndDate,
-              studyStartPeriod:
-                archivedApplication.currentAssessment.offering.studyStartDate,
-            },
-          ],
-        });
+      .expect({
+        count: 1,
+        results: [
+          {
+            applicationId: archivedApplication.id,
+            applicationNumber: archivedApplication.applicationNumber,
+            applicationScholasticStandingStatus: "Unavailable",
+            fullName: getUserFullName(archivedApplication.student.user),
+            studyEndPeriod:
+              archivedApplication.currentAssessment.offering.studyEndDate,
+            studyStartPeriod:
+              archivedApplication.currentAssessment.offering.studyStartDate,
+          },
+        ],
       });
   });
 

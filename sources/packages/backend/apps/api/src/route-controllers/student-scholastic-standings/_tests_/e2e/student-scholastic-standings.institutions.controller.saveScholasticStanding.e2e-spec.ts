@@ -32,7 +32,10 @@ import {
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "../../../../services";
 import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../../../constants";
-import { ScholasticStandingAPIInDTO } from "../../models/student-scholastic-standings.dto";
+import {
+  ScholasticStandingAPIInDTO,
+  ScholasticStandingData,
+} from "../../models/student-scholastic-standings.dto";
 import { addToDateOnlyString, getISODateOnlyString } from "@sims/utilities";
 import { AppInstitutionsModule } from "../../../../app.institutions.module";
 import { TestingModule } from "@nestjs/testing";
@@ -134,7 +137,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       });
   });
 
-  it("Should throw unprocessable entity exception error when the application change is not eligible / Archived.", async () => {
+  it("Should throw unprocessable entity exception error when the application change is Archived.", async () => {
     // Arrange
     const application = await saveFakeApplication(
       db.dataSource,
@@ -266,6 +269,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     mockFormioDryRun({
       studentScholasticStandingChangeType:
         StudentScholasticStandingChangeType.SchoolTransfer,
+      dateOfChange: getISODateOnlyString(new Date()),
     });
     const application = await saveFakeApplication(
       db.dataSource,
@@ -292,6 +296,25 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       .expect((response) => {
         expect(response.body.id).toBeGreaterThan(0);
       });
+
+    const studentScholasticStanding = await db.studentScholasticStanding.find({
+      select: {
+        id: true,
+        application: { id: true },
+      },
+      relations: {
+        application: true,
+      },
+      where: { application: { id: application.id } },
+    });
+
+    expect(studentScholasticStanding).toEqual([
+      {
+        id: expect.any(Number),
+        application: { id: application.id },
+      },
+    ]);
+
     const notifications = await db.notification.find({
       select: {
         id: true,
@@ -318,6 +341,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     mockFormioDryRun({
       studentScholasticStandingChangeType:
         StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+      dateOfWithdrawal: getISODateOnlyString(new Date()),
     });
     const application = await saveFakeApplication(
       db.dataSource,
@@ -344,6 +368,25 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       .expect((response) => {
         expect(response.body.id).toBeGreaterThan(0);
       });
+
+    const studentScholasticStanding = await db.studentScholasticStanding.find({
+      select: {
+        id: true,
+        application: { id: true },
+      },
+      relations: {
+        application: true,
+      },
+      where: { application: { id: application.id } },
+    });
+
+    expect(studentScholasticStanding).toEqual([
+      {
+        id: expect.any(Number),
+        application: { id: application.id },
+      },
+    ]);
+
     const restriction = await db.studentRestriction.find({
       select: {
         id: true,
@@ -406,6 +449,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     mockFormioDryRun({
       studentScholasticStandingChangeType:
         StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+      dateOfCompletion: getISODateOnlyString(new Date()),
     });
     const application = await saveFakeApplication(
       db.dataSource,
@@ -432,6 +476,25 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       .expect((response) => {
         expect(response.body.id).toBeGreaterThan(0);
       });
+
+    const studentScholasticStanding = await db.studentScholasticStanding.find({
+      select: {
+        id: true,
+        application: { id: true },
+      },
+      relations: {
+        application: true,
+      },
+      where: { application: { id: application.id } },
+    });
+
+    expect(studentScholasticStanding).toEqual([
+      {
+        id: expect.any(Number),
+        application: { id: application.id },
+      },
+    ]);
+
     const restriction = await db.studentRestriction.find({
       select: {
         id: true,
@@ -757,7 +820,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
           options?.studentScholasticStandingChangeType
             ? options.studentScholasticStandingChangeType
             : StudentScholasticStandingChangeType.SchoolTransfer,
-      },
+      } as ScholasticStandingData,
     };
 
     formService.dryRunSubmission = jest.fn().mockResolvedValue({
