@@ -78,7 +78,7 @@ export class SFASIndividual extends BaseModel {
     name: "msfaa_number",
     nullable: true,
   })
-  msfaaNumber?: number;
+  msfaaNumber?: string;
   /**
    * The most recent, active Master Student Loan Agreement signed date (loan_agreement_request.loan_agreement_signed_dte).
    */
@@ -194,4 +194,21 @@ export class SFASIndividual extends BaseModel {
     nullable: false,
   })
   extractedAt: Date;
+  /**
+   * The most recent Part-time Master Student Loan Agreement Number (agreement_num.sail_msfaa_numbers).
+   */
+  @Column({
+    name: "part_time_msfaa_number",
+    nullable: true,
+  })
+  partTimeMSFAANumber?: string;
+  /**
+   * The most recent Part-time Master Student Loan Agreement effective date (effective_date.sail_msfaa_numbers).
+   */
+  @Column({
+    name: "part_time_effective_date",
+    type: "date",
+    nullable: true,
+  })
+  partTimeEffectiveDate?: Date;
 }

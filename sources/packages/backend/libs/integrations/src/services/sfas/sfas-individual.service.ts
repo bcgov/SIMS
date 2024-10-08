@@ -72,7 +72,7 @@ export class SFASIndividualService
     individual.ppdStatusDate = getISODateOnlyString(
       sfasIndividual.ppdStatusDate,
     );
-    individual.msfaaNumber = sfasIndividual.msfaaNumber;
+    individual.msfaaNumber = sfasIndividual.msfaaNumber?.toString();
     individual.msfaaSignedDate = getISODateOnlyString(
       sfasIndividual.msfaaSignedDate,
     );
@@ -87,6 +87,9 @@ export class SFASIndividualService
     individual.withdrawals = sfasIndividual.withdrawals;
     individual.unsuccessfulCompletion = sfasIndividual.unsuccessfulCompletion;
     individual.extractedAt = getUTC(extractedDate);
+    individual.partTimeMSFAANumber =
+      sfasIndividual.partTimeMSFAANumber?.toString();
+    individual.partTimeEffectiveDate = sfasIndividual.partTimeEffectiveDate;
     await this.repo.save(individual, { reload: false, transaction: false });
   }
 
