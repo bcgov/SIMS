@@ -331,7 +331,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
           withdrawals: true,
           unsuccessfulCompletion: true,
           partTimeMSFAANumber: true,
-          partTimeEffectiveDate: true,
+          partTimeMSFAAEffectiveDate: true,
         },
         where: {
           id: In([83540, 83541, 83542]),
@@ -363,7 +363,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         withdrawals: 2,
         unsuccessfulCompletion: 17,
         partTimeMSFAANumber: null,
-        partTimeEffectiveDate: null,
+        partTimeMSFAAEffectiveDate: null,
       });
       expect(secondSFASIndividual).toEqual({
         id: 83541,
@@ -387,7 +387,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         withdrawals: 2,
         unsuccessfulCompletion: 2,
         partTimeMSFAANumber: "1234567890",
-        partTimeEffectiveDate: "2024-12-31",
+        partTimeMSFAAEffectiveDate: "2024-12-31",
       });
       expect(thirdSFASIndividual).toEqual({
         id: 83542,
@@ -411,7 +411,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         withdrawals: null,
         unsuccessfulCompletion: 0,
         partTimeMSFAANumber: null,
-        partTimeEffectiveDate: null,
+        partTimeMSFAAEffectiveDate: null,
       });
     },
   );

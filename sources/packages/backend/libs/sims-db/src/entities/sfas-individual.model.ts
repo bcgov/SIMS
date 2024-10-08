@@ -206,9 +206,9 @@ export class SFASIndividual extends BaseModel {
    * The most recent Part-time Master Student Loan Agreement effective date (effective_date.sail_msfaa_numbers).
    */
   @Column({
-    name: "part_time_effective_date",
+    name: "part_time_msfaa_effective_date",
     type: "date",
     nullable: true,
   })
-  partTimeEffectiveDate?: Date;
+  partTimeMSFAAEffectiveDate?: Date;
 }

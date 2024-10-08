@@ -89,7 +89,8 @@ export class SFASIndividualService
     individual.extractedAt = getUTC(extractedDate);
     individual.partTimeMSFAANumber =
       sfasIndividual.partTimeMSFAANumber?.toString();
-    individual.partTimeEffectiveDate = sfasIndividual.partTimeEffectiveDate;
+    individual.partTimeMSFAAEffectiveDate =
+      sfasIndividual.partTimeMSFAAEffectiveDate;
     await this.repo.save(individual, { reload: false, transaction: false });
   }
 
