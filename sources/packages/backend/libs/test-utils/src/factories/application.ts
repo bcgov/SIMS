@@ -99,6 +99,7 @@ export function createFakeApplication(
 export async function saveFakeApplicationDisbursements(
   dataSource: DataSource,
   relations?: {
+    application?: Application;
     institution?: Institution;
     institutionLocation?: InstitutionLocation;
     disbursementValues?: DisbursementValue[];
@@ -123,11 +124,16 @@ export async function saveFakeApplicationDisbursements(
 ): Promise<Application> {
   const applicationRepo = dataSource.getRepository(Application);
   const studentAssessmentRepo = dataSource.getRepository(StudentAssessment);
-  const savedApplication = await saveFakeApplication(
-    dataSource,
-    relations,
-    options,
-  );
+  let savedApplication: Application;
+  if (relations?.application) {
+    savedApplication = relations?.application;
+  } else {
+    savedApplication = await saveFakeApplication(
+      dataSource,
+      relations,
+      options,
+    );
+  }
   // Using Assessment as a default status since it the first status when
   // the application has the disbursement already generated.
   savedApplication.applicationStatus =
