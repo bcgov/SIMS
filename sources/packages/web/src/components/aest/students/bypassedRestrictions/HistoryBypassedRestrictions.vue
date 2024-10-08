@@ -20,10 +20,17 @@
           <template #[`item.restrictionCode`]="{ item }">
             {{ item.restrictionCode }}
           </template>
-          <template #[`item.isRestrictionActive`]="{ item }">
-            <status-chip-bypass
-              :is-restriction-active="item.isRestrictionActive"
+          <template #[`item.restrictionStatus`]="{ item }">
+            <status-chip-restriction
+              :status="
+                item.isRestrictionActive
+                  ? RestrictionStatus.Active
+                  : RestrictionStatus.Resolved
+              "
             />
+          </template>
+          <template #[`item.bypassStatus`]="{ item }">
+            <status-chip-bypass :is-bypass-active="item.isBypassActive" />
           </template>
           <template #[`item.id`]>
             <v-btn
@@ -35,10 +42,15 @@
               View Details</v-btn
             >
           </template>
-          <template #[`item.isBypassActive`]="{ item }">
+          <template #[`item.removeBypassRule`]="{ item }">
             <v-btn
-              :color="getRemoveBypassColor(item.isBypassActive)"
-              :disabled="!item.isBypassActive"
+              :color="
+                getRemoveBypassColor(
+                  item.isBypassActive,
+                  item.isRestrictionActive,
+                )
+              "
+              :disabled="!item.isBypassActive || !item.isRestrictionActive"
             >
               {{ getRemoveBypassLabel(item.isBypassActive) }}</v-btn
             >
@@ -54,15 +66,18 @@ import {
   PAGINATION_LIST,
   ITEMS_PER_PAGE,
   ApplicationRestrictionManagementHeaders,
+  RestrictionStatus,
 } from "@/types";
 import { ref, onMounted, defineComponent } from "vue";
 import StatusChipBypass from "@/components/generic/StatusChipBypass.vue";
 import { ApplicationRestrictionBypassService } from "@/services/ApplicationRestrictionBypassService";
 import { ApplicationRestrictionBypassHistoryAPIOutDTO } from "@/services/http/dto";
+import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
 
 export default defineComponent({
   components: {
     StatusChipBypass,
+    StatusChipRestriction,
   },
   props: {
     applicationId: {
@@ -85,14 +100,18 @@ export default defineComponent({
       return isBypassActive ? "Remove Bypass" : "Bypass Removed";
     };
 
-    const getRemoveBypassColor = (isBypassActive: boolean): string => {
-      return isBypassActive ? "primary" : "secondary";
+    const getRemoveBypassColor = (
+      isBypassActive: boolean,
+      isRestrictionActive: boolean,
+    ): string => {
+      return !isBypassActive || !isRestrictionActive ? "secondary" : "primary";
     };
 
     return {
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
       PAGINATION_LIST,
+      RestrictionStatus,
       bypassedRestrictions,
       getRemoveBypassLabel,
       getRemoveBypassColor,

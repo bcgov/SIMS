@@ -13,7 +13,7 @@
   </application-status-tracker-banner>
 </template>
 <script lang="ts">
-import ApplicationStatusTrackerBanner from "@/components/students/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
+import ApplicationStatusTrackerBanner from "@/components/common/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
 import { defineComponent } from "vue";
 
 export default defineComponent({

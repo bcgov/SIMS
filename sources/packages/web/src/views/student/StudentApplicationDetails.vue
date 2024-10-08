@@ -51,8 +51,8 @@
     <application-progress-bar
       class="mb-5"
       :application-id="id"
+      :are-application-actions-allowed="true"
       @editApplication="editApplication"
-      :application-status="applicationDetails.applicationStatus"
     />
     <student-assessment-details :applicationId="id" v-if="showViewAssessment" />
   </student-page-container>
@@ -86,7 +86,7 @@ import {
 } from "@/composables";
 import { ApplicationStatus, MenuType } from "@/types";
 import { ApplicationDataAPIOutDTO } from "@/services/http/dto";
-import ApplicationProgressBar from "@/components/students/applicationTracker/ApplicationProgressBar.vue";
+import ApplicationProgressBar from "@/components/common/applicationTracker/ApplicationProgressBar.vue";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import DetailHeader from "@/components/generic/DetailHeader.vue";
 import StudentAssessmentDetails from "@/components/students/StudentAssessmentDetails.vue";

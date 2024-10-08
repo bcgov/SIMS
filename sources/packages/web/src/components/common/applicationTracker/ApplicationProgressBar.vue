@@ -1,6 +1,11 @@
 <template>
   <v-card class="p-4">
-    <template v-if="applicationStatus !== ApplicationStatus.Cancelled">
+    <template
+      v-if="
+        applicationProgressDetails.applicationStatus !==
+        ApplicationStatus.Cancelled
+      "
+    >
       <body-header title="Track your application" />
       <stepper-progress-bar
         :progressBarValue="trackerApplicationStatus"
@@ -12,29 +17,49 @@
         :progressLabelIconColor="statusIconDetails.statusType"
       />
       <draft
+        :are-application-actions-allowed="areApplicationActionsAllowed"
         @editApplication="$emit('editApplication')"
-        v-if="applicationStatus === ApplicationStatus.Draft"
+        v-if="
+          applicationProgressDetails.applicationStatus ===
+          ApplicationStatus.Draft
+        "
       />
       <!-- The below components are checked with applicationStatusTracker[trackerApplicationStatus], so that in future if we need to see the previous, it can be easily attained just by removing readonly param from the v-slider or by adding a simple logic. -->
       <submitted
-        v-else-if="applicationStatus === ApplicationStatus.Submitted"
+        v-else-if="
+          applicationProgressDetails.applicationStatus ===
+          ApplicationStatus.Submitted
+        "
       />
       <in-progress
-        v-else-if="applicationStatus === ApplicationStatus.InProgress"
+        v-else-if="
+          applicationProgressDetails.applicationStatus ===
+          ApplicationStatus.InProgress
+        "
         :application-id="applicationId"
       />
       <assessment
-        v-else-if="applicationStatus === ApplicationStatus.Assessment"
+        v-else-if="
+          applicationProgressDetails.applicationStatus ===
+          ApplicationStatus.Assessment
+        "
         :assessmentTriggerType="
           applicationProgressDetails.assessmentTriggerType!
         "
       />
       <enrolment
-        v-else-if="applicationStatus === ApplicationStatus.Enrolment"
+        v-else-if="
+          applicationProgressDetails.applicationStatus ===
+          ApplicationStatus.Enrolment
+        "
         :applicationId="applicationId"
       />
       <completed
-        v-else-if="applicationStatus === ApplicationStatus.Completed"
+        :are-application-actions-allowed="areApplicationActionsAllowed"
+        v-else-if="
+          applicationProgressDetails.applicationStatus ===
+          ApplicationStatus.Completed
+        "
         :applicationId="applicationId"
       />
     </template>
@@ -56,17 +81,17 @@ import {
   ApplicationOfferingChangeRequestStatus,
   AssessmentTriggerType,
 } from "@/types";
-import { PropType, ref, defineComponent, computed, onMounted } from "vue";
+import { ref, defineComponent, computed, onMounted } from "vue";
 import { ApplicationProgressDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
 import { ApplicationService } from "@/services/ApplicationService";
 import StepperProgressBar from "@/components/common/StepperProgressBar.vue";
-import Draft from "@/components/students/applicationTracker/Draft.vue";
-import Submitted from "@/components/students/applicationTracker/Submitted.vue";
-import InProgress from "@/components/students/applicationTracker/InProgress.vue";
-import Cancelled from "@/components/students/applicationTracker/Cancelled.vue";
-import Assessment from "@/components/students/applicationTracker/Assessment.vue";
-import Enrolment from "@/components/students/applicationTracker/Enrolment.vue";
-import Completed from "@/components/students/applicationTracker/Completed.vue";
+import Draft from "@/components/common/applicationTracker/Draft.vue";
+import Submitted from "@/components/common/applicationTracker/Submitted.vue";
+import InProgress from "@/components/common/applicationTracker/InProgress.vue";
+import Cancelled from "@/components/common/applicationTracker/Cancelled.vue";
+import Assessment from "@/components/common/applicationTracker/Assessment.vue";
+import Enrolment from "@/components/common/applicationTracker/Enrolment.vue";
+import Completed from "@/components/common/applicationTracker/Completed.vue";
 
 interface StatusIconDetails {
   statusType: "success" | "warning" | "error";
@@ -108,9 +133,10 @@ export default defineComponent({
       type: Number,
       required: true,
     },
-    applicationStatus: {
-      type: String as PropType<ApplicationStatus>,
-      required: true,
+    areApplicationActionsAllowed: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   setup(props) {
@@ -178,18 +204,21 @@ export default defineComponent({
 
     const trackerApplicationStatus = computed(() =>
       applicationTrackerLabels.findIndex(
-        (status) => status === props.applicationStatus,
+        (status) =>
+          status === applicationProgressDetails.value.applicationStatus,
       ),
     );
 
     const disabled = computed(
-      () => props.applicationStatus === ApplicationStatus.Draft,
+      () =>
+        applicationProgressDetails.value.applicationStatus ===
+        ApplicationStatus.Draft,
     );
 
     const thumbSize = computed(() =>
       // thumbSize is 0 for all the status except draft and submitted.
       [ApplicationStatus.Draft, ApplicationStatus.Submitted].includes(
-        props.applicationStatus,
+        applicationProgressDetails.value.applicationStatus,
       )
         ? INITIAL_THUMB_SIZE
         : DEFAULT_THUMB_SIZE,

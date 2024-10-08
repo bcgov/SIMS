@@ -48,3 +48,5 @@ export * from "./student-loan-balance/student-loan-balance.service";
 export * from "./announcements/announcement.service";
 export * from "./cas-supplier/cas-supplier.service";
 export * from "./application-restriction-bypass/application-restriction-bypass.service";
+export * from "./audit/audit.service";
+export * from "./audit/audit-event.enum";
