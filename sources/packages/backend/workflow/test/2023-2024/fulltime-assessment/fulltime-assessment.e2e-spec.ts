@@ -22,7 +22,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}.`, () => {
         assessmentConsolidatedData.offeringActualTuitionCosts +
         assessmentConsolidatedData.offeringMandatoryFees,
       childcareCost: 0,
-      livingAllowance: 1672,
+      livingAllowance: 26752,
       totalAssessedCost: 50752,
       totalFamilyIncome: 40000,
       totalFederalAward: 3360,
