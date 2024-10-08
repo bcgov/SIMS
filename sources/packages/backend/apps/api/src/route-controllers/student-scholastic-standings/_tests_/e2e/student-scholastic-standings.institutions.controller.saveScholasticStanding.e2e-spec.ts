@@ -289,32 +289,33 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
 
     // Act/Assert
+    let createdScholasticStandingId: number;
     await request(app.getHttpServer())
       .post(endpoint)
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED)
       .expect((response) => {
+        createdScholasticStandingId = +response.body.id;
         expect(response.body.id).toBeGreaterThan(0);
       });
 
-    const studentScholasticStanding = await db.studentScholasticStanding.find({
-      select: {
-        id: true,
-        application: { id: true },
-      },
-      relations: {
-        application: true,
-      },
-      where: { application: { id: application.id } },
-    });
-
-    expect(studentScholasticStanding).toEqual([
+    const studentScholasticStanding = await db.studentScholasticStanding.exists(
       {
-        id: expect.any(Number),
-        application: { id: application.id },
+        select: {
+          id: true,
+        },
+        relations: {
+          application: true,
+        },
+        where: {
+          id: createdScholasticStandingId,
+          application: { id: application.id },
+        },
       },
-    ]);
+    );
+
+    expect(studentScholasticStanding).toBe(true);
 
     const notifications = await db.notification.find({
       select: {
@@ -363,6 +364,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
 
     // Act/Assert
+    let createdScholasticStandingId: number;
     await request(app.getHttpServer())
       .post(endpoint)
       .send(payload)
@@ -370,25 +372,25 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       .expect(HttpStatus.CREATED)
       .expect((response) => {
         expect(response.body.id).toBeGreaterThan(0);
+        createdScholasticStandingId = +response.body.id;
       });
 
-    const studentScholasticStanding = await db.studentScholasticStanding.find({
-      select: {
-        id: true,
-        application: { id: true },
-      },
-      relations: {
-        application: true,
-      },
-      where: { application: { id: application.id } },
-    });
-
-    expect(studentScholasticStanding).toEqual([
+    const studentScholasticStanding = await db.studentScholasticStanding.exists(
       {
-        id: expect.any(Number),
-        application: { id: application.id },
+        select: {
+          id: true,
+        },
+        relations: {
+          application: true,
+        },
+        where: {
+          id: createdScholasticStandingId,
+          application: { id: application.id },
+        },
       },
-    ]);
+    );
+
+    expect(studentScholasticStanding).toBe(true);
 
     const restriction = await db.studentRestriction.find({
       select: {
@@ -473,6 +475,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
 
     // Act/Assert
+    let createdScholasticStandingId: number;
     await request(app.getHttpServer())
       .post(endpoint)
       .send(payload)
@@ -480,25 +483,25 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       .expect(HttpStatus.CREATED)
       .expect((response) => {
         expect(response.body.id).toBeGreaterThan(0);
+        createdScholasticStandingId = +response.body.id;
       });
 
-    const studentScholasticStanding = await db.studentScholasticStanding.find({
-      select: {
-        id: true,
-        application: { id: true },
-      },
-      relations: {
-        application: true,
-      },
-      where: { application: { id: application.id } },
-    });
-
-    expect(studentScholasticStanding).toEqual([
+    const studentScholasticStanding = await db.studentScholasticStanding.exists(
       {
-        id: expect.any(Number),
-        application: { id: application.id },
+        select: {
+          id: true,
+        },
+        relations: {
+          application: true,
+        },
+        where: {
+          id: createdScholasticStandingId,
+          application: { id: application.id },
+        },
       },
-    ]);
+    );
+
+    expect(studentScholasticStanding).toBe(true);
 
     const notifications = await db.notification.find({
       select: {
