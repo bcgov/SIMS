@@ -243,8 +243,6 @@ export interface CalculatedAssessmentModel {
   calculatedDataDaycareCosts11YearsOrUnder: number;
   calculatedDataDaycareCosts12YearsOrOver: number;
   calculatedDataChildCareCost: number;
-  calculatedDataStudentMSOLAllowance: number;
-  calculatedDataTotalNonEducationalCost: number;
   calculatedDataTotalChildCareCost: number;
   calculatedDataTotalMSOLAllowance: number;
   calculatedDataTotalCosts: number;
@@ -274,7 +272,6 @@ export interface CalculatedAssessmentModel {
   calculatedDataTaxReturnIncome: number;
   calculatedDataCurrentYearIncome: number;
   calculatedDataStudentTotalIncome: number;
-  studentDataTransportationCost: number;
 
   // Common variables used in both full-time and part-time.
   // CSGP
@@ -350,18 +347,6 @@ export interface CalculatedAssessmentModel {
   calculatedDataNetWeeklyAdditionalTransportCost: number;
   calculatedDataTotalAdditionalTransportationAllowance: number;
   calculatedDataTotalTransportationAllowance: number;
-  // DMN Full Time Award Allowable Limits
-  dmnFullTimeAwardAllowableLimits?: {
-    limitAwardCSGFWeeklyRate: number;
-  };
-  dmnFullTimeCalculatedDataApplicationtransportationMaximum?: {
-    limitApplicationTransportation: number;
-  };
-  // DMN Part Time Award Family Size Variables
-  dmnFullTimeAwardFamilySizeVariables?: {
-    limitAwardCSGFWeeklyPhaseoutRate: number;
-    limitAwardCSGFIncomeCap: number;
-  };
   // DMN Part Time Award Allowable Limits
   dmnPartTimeAwardAllowableLimits?: {
     limitAwardBCAGAmount: number;

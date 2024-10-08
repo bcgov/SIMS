@@ -60,10 +60,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}.`, () => {
     );
     expect(
       calculatedAssessment.variables.calculatedDataTotalMSOLAllowance,
-    ).toBe(
-      calculatedAssessment.variables.calculatedDataStudentMSOLAllowance *
-        expectedAssessmentData.weeks,
-    );
+    ).toBe(expectedAssessmentData.livingAllowance);
     expect(calculatedAssessment.variables.calculatedDataTotalCosts).toBe(
       expectedAssessmentData.totalAssessedCost,
     );
