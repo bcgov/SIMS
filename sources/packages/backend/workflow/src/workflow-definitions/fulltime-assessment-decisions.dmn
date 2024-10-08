@@ -2308,7 +2308,7 @@
       <output id="OutputClause_1n9ubqe" label="limitAwardCSGDAmount" name="limitAwardCSGDAmount" typeRef="string" biodi:width="218" />
       <output id="OutputClause_1t1gc34" label="limitAwardCSGDMinAward" name="limitAwardCSGDMinAward" typeRef="string" />
       <output id="OutputClause_03jyuzn" label="limitAwardCSGFAmount" name="limitAwardCSGFAmount" typeRef="string" />
-      <output id="OutputClause_0004ypj" label="limitAwardCSGFAmount" name="limitAwardCSGFAmount" typeRef="string" />
+      <output id="OutputClause_0004ypj" label="limitAwardCSGFWeeklyRate" name="limitAwardCSGFWeeklyRate" typeRef="string" />
       <output id="OutputClause_0uaxqsy" label="limitAwardCSGTProratedAmount" name="limitAwardCSGTProratedAmount" typeRef="string" />
       <output id="OutputClause_1cuy7mo" label="limitAwardCSGTAmount" name="limitAwardCSGTAmount" typeRef="string" />
       <output id="OutputClause_1idvtr4" label="limitAwardBCSLRateWithoutDependents" name="limitAwardBCSLRateWithoutDependents" typeRef="string" biodi:width="192" />
@@ -2513,7 +2513,7 @@
           <text>calculatedDataFamilySize</text>
         </inputExpression>
       </input>
-      <output id="OutputClause_1mug4e8" label="limitAwardCSGFTIncomeCap" name="limitAwardCSGFTIncomeCap" typeRef="string" />
+      <output id="OutputClause_1mug4e8" label="limitAwardCSGFIncomeCap" name="limitAwardCSGFIncomeCap" typeRef="string" />
       <output id="OutputClause_0riflf3" label="limitAwardCSGFWeeklyPhaseoutRate" name="limitAwardCSGFWeeklyPhaseoutRate" typeRef="string" />
       <output id="OutputClause_1u6r72i" label="limitAwardCSGFThresholdIncome" name="limitAwardCSGFThresholdIncome" typeRef="string" />
       <output id="OutputClause_0kbsjps" label="limitAwardCSGDIncomeCap" name="limitAwardCSGDIncomeCap" typeRef="string" />
