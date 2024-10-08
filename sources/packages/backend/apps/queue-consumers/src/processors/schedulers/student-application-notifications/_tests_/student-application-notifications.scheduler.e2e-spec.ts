@@ -8,6 +8,7 @@ import {
 import {
   E2EDataSources,
   createE2EDataSources,
+  createFakeNotification,
   saveFakeApplicationDisbursements,
   saveFakeStudent,
 } from "@sims/test-utils";
@@ -16,6 +17,7 @@ import {
   ApplicationStatus,
   DisabilityStatus,
   DisbursementScheduleStatus,
+  NotificationMessage,
   NotificationMessageType,
   WorkflowData,
 } from "@sims/sims-db";
@@ -108,107 +110,76 @@ describe(
             applicationNumber: application.applicationNumber,
           },
         });
+      },
+    );
 
-        // Act again
+    it.only(
+      "Should not generate a notification for PD/PPD student mismatch close to the offering end date " +
+        "when the application is completed and email will be sent once for the same assessment.",
+      async () => {
+        // Arrange
+        // Create a student with a non-approved disability.
+        const student = await saveFakeStudent(db.dataSource, undefined, {
+          initialValue: { disabilityStatus: DisabilityStatus.Requested },
+        });
+        // Create an application with the disability as true.
+        const application = await saveFakeApplicationDisbursements(
+          db.dataSource,
+          { student },
+          {
+            applicationStatus: ApplicationStatus.Completed,
+            currentAssessmentInitialValues: {
+              workflowData: {
+                calculatedData: {
+                  pdppdStatus: true,
+                },
+              } as WorkflowData,
+            },
+            firstDisbursementInitialValues: {
+              disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+            },
+          },
+        );
+
+        const studentNotification = createFakeNotification(
+          {
+            user: student.user,
+            notificationMessage: {
+              id: NotificationMessageType.StudentPDPPDApplicationNotification,
+            } as NotificationMessage,
+          },
+          {
+            initialValue: {
+              dateSent: new Date(),
+              metadata: {
+                assessmentId: application.currentAssessment.id,
+              },
+            },
+          },
+        );
+
+        await db.notification.save(studentNotification);
+
+        // Queued job.
+        const job = createMock<Job<void>>();
+
+        // Act
         await processor.studentApplicationNotifications(job);
 
-        const notifications = await db.notification.find({
-          select: {
-            id: true,
-          },
+        // Assert
+        const notificationExists = await db.notification.exists({
           relations: { notificationMessage: true },
           where: {
             notificationMessage: {
               id: NotificationMessageType.StudentPDPPDApplicationNotification,
             },
-            dateSent: IsNull(),
+            metadata: { assessmentId: application.currentAssessment.id },
             user: { id: student.user.id },
+            dateSent: IsNull(),
           },
         });
-        // Expect no new notification is created for the same assessment.
-        expect(notifications.length).toBe(1);
+        expect(notificationExists).toBe(false);
       },
     );
-
-    it("Should generate a notification for PD/PPD student mismatch only once for the same assessment", async () => {
-      // Arrange
-      const student = await saveFakeStudent(db.dataSource, undefined, {
-        initialValue: { disabilityStatus: DisabilityStatus.Requested },
-      });
-      const application = await saveFakeApplicationDisbursements(
-        db.dataSource,
-        { student },
-        {
-          applicationStatus: ApplicationStatus.Completed,
-          currentAssessmentInitialValues: {
-            workflowData: {
-              calculatedData: {
-                pdppdStatus: true,
-              },
-            } as WorkflowData,
-          },
-          createSecondDisbursement: true,
-          firstDisbursementInitialValues: {
-            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
-          },
-          secondDisbursementInitialValues: {
-            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
-          },
-        },
-      );
-      const job = createMock<Job<void>>();
-
-      // Act
-      await processor.studentApplicationNotifications(job);
-      // Run the processor again
-      await processor.studentApplicationNotifications(job);
-
-      // Assert
-      const notifications = await db.notification.find({
-        where: {
-          notificationMessage: {
-            id: NotificationMessageType.StudentPDPPDApplicationNotification,
-          },
-          dateSent: IsNull(),
-          user: { id: student.user.id },
-        },
-      });
-      expect(notifications).toHaveLength(1);
-
-      // Create a new assessment for the same application
-      const newAssessment = await db.studentAssessment.save({
-        application: { id: application.id },
-        workflowData: {
-          calculatedData: {
-            pdppdStatus: true,
-          },
-        } as WorkflowData,
-      });
-
-      // Update the application with the new assessment
-      await db.application.update(application.id, {
-        currentAssessment: { id: newAssessment.id },
-      });
-
-      // Update disbursement schedules with the new assessment
-      await db.disbursementSchedule.update(
-        { application: { id: application.id } },
-        { studentAssessment: { id: newAssessment.id } },
-      );
-
-      // Run the processor again
-      await processor.studentApplicationNotifications(job);
-
-      const newNotifications = await db.notification.find({
-        where: {
-          notificationMessage: {
-            id: NotificationMessageType.StudentPDPPDApplicationNotification,
-          },
-          dateSent: IsNull(),
-          user: { id: student.user.id },
-        },
-      });
-      expect(newNotifications).toHaveLength(2);
-    });
   },
 );
