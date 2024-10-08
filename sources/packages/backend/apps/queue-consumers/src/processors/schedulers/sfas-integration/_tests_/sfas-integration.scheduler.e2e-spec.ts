@@ -330,6 +330,8 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
           grantOveraward: true,
           withdrawals: true,
           unsuccessfulCompletion: true,
+          partTimeMSFAANumber: true,
+          partTimeMSFAAEffectiveDate: true,
         },
         where: {
           id: In([83540, 83541, 83542]),
@@ -348,7 +350,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         pdStatus: true,
         ppdStatus: true,
         ppdStatusDate: "1967-07-22",
-        msfaaNumber: 9876543210,
+        msfaaNumber: "9876543210",
         msfaaSignedDate: "2024-07-12",
         neb: 5000,
         bcgg: 5000,
@@ -360,6 +362,8 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         grantOveraward: 741.3,
         withdrawals: 2,
         unsuccessfulCompletion: 17,
+        partTimeMSFAANumber: null,
+        partTimeMSFAAEffectiveDate: null,
       });
       expect(secondSFASIndividual).toEqual({
         id: 83541,
@@ -370,7 +374,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         pdStatus: false,
         ppdStatus: false,
         ppdStatusDate: null,
-        msfaaNumber: 9876543211,
+        msfaaNumber: "9876543211",
         msfaaSignedDate: "2024-07-13",
         neb: 5000,
         bcgg: 5000,
@@ -382,6 +386,8 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         grantOveraward: 11040,
         withdrawals: 2,
         unsuccessfulCompletion: 2,
+        partTimeMSFAANumber: "1234567890",
+        partTimeMSFAAEffectiveDate: "2024-12-31",
       });
       expect(thirdSFASIndividual).toEqual({
         id: 83542,
@@ -404,6 +410,8 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         grantOveraward: 0,
         withdrawals: null,
         unsuccessfulCompletion: 0,
+        partTimeMSFAANumber: null,
+        partTimeMSFAAEffectiveDate: null,
       });
     },
   );

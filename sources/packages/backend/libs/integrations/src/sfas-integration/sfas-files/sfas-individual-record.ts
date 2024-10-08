@@ -169,4 +169,16 @@ export class SFASIndividualRecord extends SFASRecordIdentification {
   get unsuccessfulCompletion(): number {
     return +this.line.substring(221, 231);
   }
+  /**
+   * The most recent Part-time Master Student Loan Agreement Number (agreement_num.sail_msfaa_numbers).
+   */
+  get partTimeMSFAANumber(): number | null {
+    return +this.line.substring(231, 241) || null;
+  }
+  /**
+   * The most recent Part-time Master Student Loan Agreement effective date (effective_date.sail_msfaa_numbers).
+   */
+  get partTimeMSFAAEffectiveDate(): Date | null {
+    return parseDate(this.line.substring(241, 249));
+  }
 }
