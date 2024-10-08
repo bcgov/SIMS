@@ -16,6 +16,7 @@ import {
 } from "@sims/test-utils";
 import { ApplicationStatus, InstitutionLocation } from "@sims/sims-db";
 import { getUserFullName } from "../../../../utilities";
+import { ApplicationScholasticStandingStatus } from "../../../../services/application/application.models";
 
 describe("InstitutionLocationInstitutionsController(e2e)-getActiveApplications", () => {
   let app: INestApplication;
@@ -90,7 +91,8 @@ describe("InstitutionLocationInstitutionsController(e2e)-getActiveApplications",
           {
             applicationId: completedApplication.id,
             applicationNumber: completedApplication.applicationNumber,
-            applicationScholasticStandingStatus: "Available",
+            applicationScholasticStandingStatus:
+              ApplicationScholasticStandingStatus.Available,
             fullName: getUserFullName(completedApplication.student.user),
             studyEndPeriod:
               completedApplication.currentAssessment.offering.studyEndDate,
@@ -137,7 +139,8 @@ describe("InstitutionLocationInstitutionsController(e2e)-getActiveApplications",
           {
             applicationId: archivedApplication.id,
             applicationNumber: archivedApplication.applicationNumber,
-            applicationScholasticStandingStatus: "Unavailable",
+            applicationScholasticStandingStatus:
+              ApplicationScholasticStandingStatus.Unavailable,
             fullName: getUserFullName(archivedApplication.student.user),
             studyEndPeriod:
               archivedApplication.currentAssessment.offering.studyEndDate,

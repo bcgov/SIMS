@@ -30,10 +30,7 @@ import {
   FormNames,
   FormService,
 } from "../../../../services";
-import {
-  ScholasticStandingAPIInDTO,
-  ScholasticStandingData,
-} from "../../models/student-scholastic-standings.dto";
+import { ScholasticStandingAPIInDTO } from "../../models/student-scholastic-standings.dto";
 import { addToDateOnlyString, getISODateOnlyString } from "@sims/utilities";
 import { AppInstitutionsModule } from "../../../../app.institutions.module";
 import { TestingModule } from "@nestjs/testing";
@@ -547,7 +544,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       studentScholasticStandingChangeType:
         StudentScholasticStandingChangeType.SchoolTransfer,
       dateOfChange: addToDateOnlyString(
-        application.currentAssessment.offering.studyStartDate,
+        application.currentAssessment.offering.studyEndDate,
         1,
         "day",
       ),
@@ -586,7 +583,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       studentScholasticStandingChangeType:
         StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
       dateOfWithdrawal: addToDateOnlyString(
-        application.currentAssessment.offering.studyStartDate,
+        application.currentAssessment.offering.studyEndDate,
         1,
         "day",
       ),
@@ -627,7 +624,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       studentScholasticStandingChangeType:
         StudentScholasticStandingChangeType.StudentCompletedProgramEarly,
       dateOfCompletion: addToDateOnlyString(
-        application.currentAssessment.offering.studyStartDate,
+        application.currentAssessment.offering.studyEndDate,
         1,
         "day",
       ),
@@ -776,41 +773,32 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     dateOfWithdrawal?: string;
   }): void {
     const validDryRun = options?.validDryRun ?? true;
-
+    const scholasticStandingChangeType =
+      options?.studentScholasticStandingChangeType ??
+      StudentScholasticStandingChangeType.SchoolTransfer;
     payload = {
-      data: {
-        scholasticStandingChangeType:
-          StudentScholasticStandingChangeType.SchoolTransfer,
-        studyEndDate: getISODateOnlyString(new Date()),
-        studyStartDate: getISODateOnlyString(new Date()),
-      } as ScholasticStandingData,
-    };
+      data: { scholasticStandingChangeType },
+    } as ScholasticStandingAPIInDTO;
+    const fallbackDate = getISODateOnlyString(new Date());
 
-    switch (options?.studentScholasticStandingChangeType) {
+    switch (scholasticStandingChangeType) {
       case StudentScholasticStandingChangeType.StudentCompletedProgramEarly:
-        payload.data.scholasticStandingChangeType =
-          options?.studentScholasticStandingChangeType;
         payload.data.dateOfCompletion =
-          options?.dateOfCompletion ?? getISODateOnlyString(new Date());
+          options?.dateOfCompletion ?? fallbackDate;
         break;
       case StudentScholasticStandingChangeType.StudentWithdrewFromProgram:
-        payload.data.scholasticStandingChangeType =
-          options?.studentScholasticStandingChangeType;
         payload.data.dateOfWithdrawal =
-          options?.dateOfWithdrawal ?? getISODateOnlyString(new Date());
+          options?.dateOfWithdrawal ?? fallbackDate;
         break;
       case StudentScholasticStandingChangeType.SchoolTransfer:
-        payload.data.scholasticStandingChangeType =
-          options?.studentScholasticStandingChangeType;
-        payload.data.dateOfChange =
-          options?.dateOfChange ?? getISODateOnlyString(new Date());
+        payload.data.dateOfChange = options?.dateOfChange ?? fallbackDate;
         break;
     }
 
     formService.dryRunSubmission = jest.fn().mockResolvedValue({
       valid: validDryRun,
       formName: FormNames.ReportScholasticStandingChange,
-      data: { data: payload.data },
+      data: payload,
     });
   }
 });
