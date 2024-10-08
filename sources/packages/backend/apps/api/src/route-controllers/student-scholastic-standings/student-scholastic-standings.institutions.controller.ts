@@ -125,9 +125,9 @@ export class ScholasticStandingInstitutionsController extends BaseController {
         );
       }
 
-      payload.data.applicationOfferingStartDate =
+      payload.data.studyStartDate =
         application.currentAssessment.offering.studyStartDate;
-      payload.data.applicationOfferingEndDate =
+      payload.data.studyEndDate =
         application.currentAssessment.offering.studyEndDate;
       const submissionResult =
         await this.formService.dryRunSubmission<ScholasticStanding>(
