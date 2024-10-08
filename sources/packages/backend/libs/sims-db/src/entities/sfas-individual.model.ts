@@ -210,5 +210,5 @@ export class SFASIndividual extends BaseModel {
     type: "date",
     nullable: true,
   })
-  partTimeMSFAAEffectiveDate?: Date;
+  partTimeMSFAAEffectiveDate?: string;
 }
