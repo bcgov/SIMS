@@ -29,9 +29,7 @@ import {
   APPLICATION_NOT_FOUND,
   FormNames,
   FormService,
-  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "../../../../services";
-import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../../../constants";
 import {
   ScholasticStandingAPIInDTO,
   ScholasticStandingData,
@@ -39,6 +37,7 @@ import {
 import { addToDateOnlyString, getISODateOnlyString } from "@sims/utilities";
 import { AppInstitutionsModule } from "../../../../app.institutions.module";
 import { TestingModule } from "@nestjs/testing";
+import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../../../constants";
 
 describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticStanding.", () => {
   let app: INestApplication;
@@ -132,7 +131,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
         message:
-          "Application Not found or invalid current assessment or offering.",
+          "Application Not found or invalid current assessment or offering or application status.",
         errorType: APPLICATION_NOT_FOUND,
       });
   });
@@ -144,7 +143,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       {
         institutionLocation: collegeFLocation,
       },
-      { isArchived: true },
+      { applicationStatus: ApplicationStatus.Completed, isArchived: true },
     );
 
     await db.application.save(application);
@@ -191,8 +190,8 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
         message:
-          "Cannot report a change for application with status other than completed.",
-        errorType: INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+          "Application Not found or invalid current assessment or offering or application status.",
+        errorType: APPLICATION_NOT_FOUND,
       });
   });
 

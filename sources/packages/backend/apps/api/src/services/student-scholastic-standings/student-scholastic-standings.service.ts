@@ -86,7 +86,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       const studentRestrictions = await this.getScholasticStandingRestrictions(
         scholasticStandingData,
         existingOffering.offeringIntensity,
-        application.studentId,
+        application.student.id,
         auditUserId,
         application.id,
       );

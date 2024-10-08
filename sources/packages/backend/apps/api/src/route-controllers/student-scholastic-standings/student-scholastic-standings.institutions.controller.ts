@@ -66,7 +66,6 @@ import {
 } from "../../utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { FILE_DEFAULT_ENCODING } from "@sims/services/constants";
-import { ApplicationStatus } from "@sims/sims-db";
 
 /**
  * Scholastic standing controller for institutions Client.
@@ -114,7 +113,7 @@ export class ScholasticStandingInstitutionsController extends BaseController {
       );
       if (!application) {
         throw new CustomNamedError(
-          "Application Not found or invalid current assessment or offering.",
+          "Application Not found or invalid current assessment or offering or application status.",
           APPLICATION_NOT_FOUND,
         );
       }
@@ -126,12 +125,6 @@ export class ScholasticStandingInstitutionsController extends BaseController {
         );
       }
 
-      if (application.applicationStatus !== ApplicationStatus.Completed) {
-        throw new CustomNamedError(
-          "Cannot report a change for application with status other than completed.",
-          INVALID_OPERATION_IN_THE_CURRENT_STATUS,
-        );
-      }
       payload.data.applicationOfferingStartDate =
         application.currentAssessment.offering.studyStartDate;
       payload.data.applicationOfferingEndDate =
