@@ -108,7 +108,107 @@ describe(
             applicationNumber: application.applicationNumber,
           },
         });
+
+        // Act again
+        await processor.studentApplicationNotifications(job);
+
+        const notifications = await db.notification.find({
+          select: {
+            id: true,
+          },
+          relations: { notificationMessage: true },
+          where: {
+            notificationMessage: {
+              id: NotificationMessageType.StudentPDPPDApplicationNotification,
+            },
+            dateSent: IsNull(),
+            user: { id: student.user.id },
+          },
+        });
+        // Expect no new notification is created for the same assessment.
+        expect(notifications.length).toBe(1);
       },
     );
+
+    it("Should generate a notification for PD/PPD student mismatch only once for the same assessment", async () => {
+      // Arrange
+      const student = await saveFakeStudent(db.dataSource, undefined, {
+        initialValue: { disabilityStatus: DisabilityStatus.Requested },
+      });
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            workflowData: {
+              calculatedData: {
+                pdppdStatus: true,
+              },
+            } as WorkflowData,
+          },
+          createSecondDisbursement: true,
+          firstDisbursementInitialValues: {
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+          secondDisbursementInitialValues: {
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+          },
+        },
+      );
+      const job = createMock<Job<void>>();
+
+      // Act
+      await processor.studentApplicationNotifications(job);
+      // Run the processor again
+      await processor.studentApplicationNotifications(job);
+
+      // Assert
+      const notifications = await db.notification.find({
+        where: {
+          notificationMessage: {
+            id: NotificationMessageType.StudentPDPPDApplicationNotification,
+          },
+          dateSent: IsNull(),
+          user: { id: student.user.id },
+        },
+      });
+      expect(notifications).toHaveLength(1);
+
+      // Create a new assessment for the same application
+      const newAssessment = await db.studentAssessment.save({
+        application: { id: application.id },
+        workflowData: {
+          calculatedData: {
+            pdppdStatus: true,
+          },
+        } as WorkflowData,
+      });
+
+      // Update the application with the new assessment
+      await db.application.update(application.id, {
+        currentAssessment: { id: newAssessment.id },
+      });
+
+      // Update disbursement schedules with the new assessment
+      await db.disbursementSchedule.update(
+        { application: { id: application.id } },
+        { studentAssessment: { id: newAssessment.id } },
+      );
+
+      // Run the processor again
+      await processor.studentApplicationNotifications(job);
+
+      const newNotifications = await db.notification.find({
+        where: {
+          notificationMessage: {
+            id: NotificationMessageType.StudentPDPPDApplicationNotification,
+          },
+          dateSent: IsNull(),
+          user: { id: student.user.id },
+        },
+      });
+      expect(newNotifications).toHaveLength(2);
+    });
   },
 );
