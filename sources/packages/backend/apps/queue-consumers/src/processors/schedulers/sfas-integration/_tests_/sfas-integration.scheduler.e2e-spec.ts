@@ -343,8 +343,8 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         sfasIndividualRecords;
       expect(firstSFASIndividual).toEqual({
         id: 83540,
-        firstName: "000000000083540 GIOVANNI",
-        lastName: "GIORGIO",
+        firstName: "GIORGIO",
+        lastName: "GIOVANNI",
         birthDate: "1966-07-21",
         sin: "121380174",
         pdStatus: true,
@@ -367,8 +367,8 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       });
       expect(secondSFASIndividual).toEqual({
         id: 83541,
-        firstName: "000000000083541 GIOVANNI",
-        lastName: "GIORGIO",
+        firstName: "GIORGIO",
+        lastName: "GIOVANNI",
         birthDate: "1949-11-16",
         sin: "108796293",
         pdStatus: false,
@@ -391,8 +391,8 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       });
       expect(thirdSFASIndividual).toEqual({
         id: 83542,
-        firstName: "000000000083542 GIOVANNI",
-        lastName: "GIORGIO",
+        firstName: "GIORGIO",
+        lastName: "GIOVANNI",
         birthDate: "1970-07-02",
         sin: "122886591",
         pdStatus: null,
