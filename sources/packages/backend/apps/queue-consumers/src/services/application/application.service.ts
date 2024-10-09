@@ -213,9 +213,13 @@ export class ApplicationService {
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
       .innerJoin("currentAssessment.offering", "offering")
-      .where("application.applicationStatus = :applicationStatus", {
-        applicationStatus: ApplicationStatus.Assessment,
-      })
+      .where(
+        "application.applicationStatus IN (:applicationStatusCompleted, :applicationStatusAssessment)",
+        {
+          applicationStatusCompleted: ApplicationStatus.Completed,
+          applicationStatusAssessment: ApplicationStatus.Assessment,
+        },
+      )
       .andWhere("offering.studyEndDate <= :disabilityNotificationDateLimit", {
         disabilityNotificationDateLimit,
       })

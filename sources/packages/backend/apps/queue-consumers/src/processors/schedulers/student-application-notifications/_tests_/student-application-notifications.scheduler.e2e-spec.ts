@@ -135,7 +135,7 @@ describe(
           db.dataSource,
           { student },
           {
-            applicationStatus: ApplicationStatus.Assessment,
+            applicationStatus: ApplicationStatus.Completed,
             currentAssessmentInitialValues: {
               workflowData: {
                 calculatedData: {
@@ -209,7 +209,7 @@ describe(
           db.dataSource,
           { student },
           {
-            applicationStatus: ApplicationStatus.Assessment,
+            applicationStatus: ApplicationStatus.Completed,
             currentAssessmentInitialValues: {
               workflowData: {
                 calculatedData: {
