@@ -52,7 +52,7 @@ describe(
 
     it(
       "Should generate a notification for PD/PPD student mismatch close to the offering end date " +
-        "when the application is completed and at least one disbursement is pending and there is a PD/PPD mismatch.",
+        "when the application is Assessment/Completed and at least one disbursement is pending and there is a PD/PPD mismatch.",
       async () => {
         // Arrange
         // Create a student with a non-approved disability.
@@ -64,7 +64,7 @@ describe(
           db.dataSource,
           { student },
           {
-            applicationStatus: ApplicationStatus.Completed,
+            applicationStatus: ApplicationStatus.Assessment,
             currentAssessmentInitialValues: {
               workflowData: {
                 calculatedData: {
@@ -123,7 +123,7 @@ describe(
 
     it(
       "Should not generate a notification for PD/PPD student mismatch close to the offering end date " +
-        "when the application is completed and email will be sent once for the same assessment.",
+        "when the application is Assessment/Completed and email will be sent once for the same assessment.",
       async () => {
         // Arrange
         // Create a student with a non-approved disability.
@@ -197,7 +197,7 @@ describe(
 
     it(
       "Should generate a notification for PD/PPD student mismatch close to the offering end date " +
-        "when the application is completed and email will be sent again for different assessments for the same application.",
+        "when the application is Assessment/Completed and email will be sent again for different assessments for the same application.",
       async () => {
         // Arrange
         // Create a student with a non-approved disability.
