@@ -177,7 +177,7 @@ describe(
         // Assert
         expect(
           mockedJob.containLogMessages([
-            `No assessments found to generate PD/PPD mismatch notifications.`,
+            "No assessments found to generate PD/PPD mismatch notifications.",
           ]),
         ).toBe(true);
         const notificationExists = await db.notification.exists({
@@ -242,7 +242,7 @@ describe(
 
         await db.notification.save(studentNotification);
 
-        // Create a new assessment for the same application
+        // Create a new assessment for the same application.
         application.currentAssessment = createFakeStudentAssessment(
           {
             auditUser: application.student.user,
