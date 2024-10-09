@@ -1,0 +1,1 @@
+DROP TABLE sims.sfas_bridge_log;
