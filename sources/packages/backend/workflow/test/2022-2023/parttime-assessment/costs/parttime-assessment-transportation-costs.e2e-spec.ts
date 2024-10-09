@@ -150,6 +150,17 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
     },
     {
       offeringWeeks: 16,
+      offeringDelivered: OfferingDeliveryOptions.Blended,
+      additionalTransportOwner: YesNoOptions.Yes,
+      additionalTransportKm: 300,
+      additionalTransportWeeks: 10,
+      additionalTransportPlacement: YesNoOptions.No,
+      expectedWeeklyAdditionalTransportCost: 94,
+      expectedTotalAdditionalTransportAllowance: 940,
+      expectedTotalTransportAllowance: 1018,
+    },
+    {
+      offeringWeeks: 16,
       offeringDelivered: OfferingDeliveryOptions.Online,
       additionalTransportOwner: YesNoOptions.Yes,
       additionalTransportKm: 280,
