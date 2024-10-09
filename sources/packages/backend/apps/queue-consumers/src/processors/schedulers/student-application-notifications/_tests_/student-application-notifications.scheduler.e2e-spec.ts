@@ -1,21 +1,25 @@
-import { createMock } from "@golevelup/ts-jest";
 import { INestApplication } from "@nestjs/common";
 import { QueueNames } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
+  mockBullJob,
 } from "../../../../../test/helpers";
 import {
   E2EDataSources,
   createE2EDataSources,
+  createFakeDisbursementSchedule,
+  createFakeNotification,
+  createFakeStudentAssessment,
   saveFakeApplicationDisbursements,
   saveFakeStudent,
 } from "@sims/test-utils";
-import { Job } from "bull";
 import {
   ApplicationStatus,
+  AssessmentTriggerType,
   DisabilityStatus,
   DisbursementScheduleStatus,
+  NotificationMessage,
   NotificationMessageType,
   WorkflowData,
 } from "@sims/sims-db";
@@ -77,13 +81,19 @@ describe(
             },
           },
         );
+
         // Queued job.
-        const job = createMock<Job<void>>();
+        const mockedJob = mockBullJob<void>();
 
         // Act
-        await processor.studentApplicationNotifications(job);
+        await processor.studentApplicationNotifications(mockedJob.job);
 
         // Assert
+        expect(
+          mockedJob.containLogMessages([
+            `PD/PPD mismatch assessments that generated notifications: ${application.currentAssessment.id}`,
+          ]),
+        ).toBe(true);
         const notification = await db.notification.findOne({
           select: {
             id: true,
@@ -108,6 +118,179 @@ describe(
             applicationNumber: application.applicationNumber,
           },
         });
+      },
+    );
+
+    it(
+      "Should not generate a notification for PD/PPD student mismatch close to the offering end date " +
+        "when the application is completed and email will be sent once for the same assessment.",
+      async () => {
+        // Arrange
+        // Create a student with a non-approved disability.
+        const student = await saveFakeStudent(db.dataSource, undefined, {
+          initialValue: { disabilityStatus: DisabilityStatus.Requested },
+        });
+        // Create an application with the disability as true.
+        const application = await saveFakeApplicationDisbursements(
+          db.dataSource,
+          { student },
+          {
+            applicationStatus: ApplicationStatus.Completed,
+            currentAssessmentInitialValues: {
+              workflowData: {
+                calculatedData: {
+                  pdppdStatus: true,
+                },
+              } as WorkflowData,
+            },
+            firstDisbursementInitialValues: {
+              disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+            },
+          },
+        );
+
+        const studentNotification = createFakeNotification(
+          {
+            user: student.user,
+            notificationMessage: {
+              id: NotificationMessageType.StudentPDPPDApplicationNotification,
+            } as NotificationMessage,
+          },
+          {
+            initialValue: {
+              dateSent: new Date(),
+              metadata: {
+                assessmentId: application.currentAssessment.id,
+              },
+            },
+          },
+        );
+
+        await db.notification.save(studentNotification);
+
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Act
+        await processor.studentApplicationNotifications(mockedJob.job);
+
+        // Assert
+        expect(
+          mockedJob.containLogMessages([
+            "No assessments found to generate PD/PPD mismatch notifications.",
+          ]),
+        ).toBe(true);
+        const notificationExists = await db.notification.exists({
+          relations: { notificationMessage: true },
+          where: {
+            notificationMessage: {
+              id: NotificationMessageType.StudentPDPPDApplicationNotification,
+            },
+            metadata: { assessmentId: application.currentAssessment.id },
+            user: { id: student.user.id },
+            dateSent: IsNull(),
+          },
+        });
+        expect(notificationExists).toBe(false);
+      },
+    );
+
+    it(
+      "Should generate a notification for PD/PPD student mismatch close to the offering end date " +
+        "when the application is completed and email will be sent again for different assessments for the same application.",
+      async () => {
+        // Arrange
+        // Create a student with a non-approved disability.
+        const student = await saveFakeStudent(db.dataSource, undefined, {
+          initialValue: { disabilityStatus: DisabilityStatus.Requested },
+        });
+        // Create an application with the disability as true.
+        const application = await saveFakeApplicationDisbursements(
+          db.dataSource,
+          { student },
+          {
+            applicationStatus: ApplicationStatus.Completed,
+            currentAssessmentInitialValues: {
+              workflowData: {
+                calculatedData: {
+                  pdppdStatus: true,
+                },
+              } as WorkflowData,
+            },
+            firstDisbursementInitialValues: {
+              disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+            },
+          },
+        );
+
+        const studentNotification = createFakeNotification(
+          {
+            user: student.user,
+            notificationMessage: {
+              id: NotificationMessageType.StudentPDPPDApplicationNotification,
+            } as NotificationMessage,
+          },
+          {
+            initialValue: {
+              dateSent: new Date(),
+              metadata: {
+                assessmentId: application.currentAssessment.id,
+              },
+            },
+          },
+        );
+
+        await db.notification.save(studentNotification);
+
+        // Create a new assessment for the same application.
+        application.currentAssessment = createFakeStudentAssessment(
+          {
+            auditUser: application.student.user,
+            application: application,
+            offering: application.currentAssessment.offering,
+          },
+          {
+            initialValue: {
+              triggerType: AssessmentTriggerType.ManualReassessment,
+              workflowData: {
+                calculatedData: {
+                  pdppdStatus: true,
+                },
+              } as WorkflowData,
+            },
+          },
+        );
+        await db.application.save(application);
+
+        const newAssessmentDisbursement = createFakeDisbursementSchedule({
+          studentAssessment: application.currentAssessment,
+        });
+        await db.disbursementSchedule.save(newAssessmentDisbursement);
+
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Act
+        await processor.studentApplicationNotifications(mockedJob.job);
+
+        // Assert
+        expect(
+          mockedJob.containLogMessages([
+            `PD/PPD mismatch assessments that generated notifications: ${application.currentAssessment.id}`,
+          ]),
+        ).toBe(true);
+        const notificationExists = await db.notification.exists({
+          relations: { notificationMessage: true },
+          where: {
+            notificationMessage: {
+              id: NotificationMessageType.StudentPDPPDApplicationNotification,
+            },
+            metadata: { assessmentId: application.currentAssessment.id },
+            user: { id: student.user.id },
+            dateSent: IsNull(),
+          },
+        });
+        expect(notificationExists).toBe(true);
       },
     );
   },
