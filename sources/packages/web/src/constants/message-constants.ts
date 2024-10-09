@@ -18,4 +18,5 @@ export const MINISTRY_SHORTNAME = "PSFS";
 /**
  * Ministry Fullname
  */
-export const MINISTRY_NAME = "Ministry of Post Secondary and Future Skills";
+export const MINISTRY_NAME =
+  "Ministry of Post-Secondary Education and Future Skills";

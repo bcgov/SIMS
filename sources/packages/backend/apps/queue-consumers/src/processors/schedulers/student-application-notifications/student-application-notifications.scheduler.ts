@@ -13,7 +13,8 @@ import {
 } from "../../../utilities";
 import { QueueNames } from "@sims/utilities";
 import { ApplicationService } from "../../../services";
-import { NotificationService } from "@sims/services/notifications";
+import { StudentPDPPDNotification } from "@sims/services/notifications";
+import { NotificationActionsService } from "@sims/services";
 
 @Processor(QueueNames.StudentApplicationNotifications)
 export class StudentApplicationNotificationsScheduler extends BaseScheduler<void> {
@@ -22,7 +23,7 @@ export class StudentApplicationNotificationsScheduler extends BaseScheduler<void
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly applicationService: ApplicationService,
-    private readonly notificationService: NotificationService,
+    private readonly notificationActionsService: NotificationActionsService,
   ) {
     super(schedulerQueue, queueService);
   }
@@ -39,7 +40,35 @@ export class StudentApplicationNotificationsScheduler extends BaseScheduler<void
         `Processing student application notifications job. Job id: ${job.id} and Job name: ${job.name}.`,
       );
 
-      // TODO: Get applications that have a disability status mismatch  and check PDPPD status
+      const eligibleApplications =
+        await this.applicationService.getApplicationWithPDPPStatusMismatch();
+
+      const notifications = eligibleApplications.map<StudentPDPPDNotification>(
+        (application) => ({
+          userId: application.student.user.id,
+          givenNames: application.student.user.firstName,
+          lastName: application.student.user.lastName,
+          email: application.student.user.email,
+          applicationNumber: application.applicationNumber,
+          assessmentId: application.currentAssessment.id,
+        }),
+      );
+
+      await this.notificationActionsService.saveStudentApplicationPDPPDNotification(
+        notifications,
+      );
+
+      if (eligibleApplications.length) {
+        processSummary.info(
+          `PD/PPD mismatch assessments that generated notifications: ${eligibleApplications
+            .map((app) => app.currentAssessment.id)
+            .join(", ")}`,
+        );
+      } else {
+        processSummary.info(
+          `No assessments found to generate PD/PPD mismatch notifications.`,
+        );
+      }
 
       return getSuccessMessageWithAttentionCheck(
         ["Process finalized with success."],

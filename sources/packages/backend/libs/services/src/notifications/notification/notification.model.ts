@@ -186,3 +186,12 @@ export interface SupportingUserInformationNotification {
   userId: number;
   supportingUserType: NotificationSupportingUserType;
 }
+
+export interface StudentPDPPDNotification {
+  userId: number;
+  assessmentId: number;
+  givenNames: string;
+  lastName: string;
+  email: string;
+  applicationNumber: string;
+}

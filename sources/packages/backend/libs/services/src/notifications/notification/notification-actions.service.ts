@@ -31,6 +31,7 @@ import {
   ECertFeedbackFileErrorNotification,
   DailyDisbursementReportProcessingNotification,
   SupportingUserInformationNotification,
+  StudentPDPPDNotification,
 } from "..";
 import { NotificationService } from "./notification.service";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
@@ -1256,6 +1257,42 @@ export class NotificationActionsService {
       return { templateId, emailContacts };
     }
     return { templateId, emailContacts };
+  }
+
+  /**
+   * Creates student application notification for student for PDPPD assessment.
+   * @param notifications notification details array.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveStudentApplicationPDPPDNotification(
+    notifications: StudentPDPPDNotification[],
+    entityManager?: EntityManager,
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const { templateId } =
+      await this.notificationMessageService.getNotificationMessageDetails(
+        NotificationMessageType.StudentPDPPDApplicationNotification,
+      );
+    const notificationsToSend = notifications.map((notification) => ({
+      userId: notification.userId,
+      messageType: NotificationMessageType.StudentPDPPDApplicationNotification,
+      messagePayload: {
+        email_address: notification.email,
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
+          applicationNumber: notification.applicationNumber,
+        },
+      },
+      metadata: { assessmentId: notification.assessmentId },
+    }));
+    // Save notifications to be sent to the students into the notification table.
+    await this.notificationService.saveNotifications(
+      notificationsToSend,
+      auditUser.id,
+      { entityManager },
+    );
   }
 
   @InjectLogger()
