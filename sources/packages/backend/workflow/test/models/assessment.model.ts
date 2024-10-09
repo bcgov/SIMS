@@ -217,6 +217,7 @@ export interface AssessmentModel {
   otherAllowableCost: number;
   transportationCost: number;
   secondResidenceCost: number;
+  totalAssessmentNeed: number;
   booksAndSuppliesCost: number;
   totalProvincialAward: number;
   alimonyOrChildSupport: number;

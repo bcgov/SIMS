@@ -1070,8 +1070,8 @@
     <bpmn:intermediateThrowEvent id="Event_0l38vd4" name="Total Parent Net Income">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=min(dmnFullTimeCalculatedDataProgramYearMaximums.limitParentCPPAmount, (parent1CppEmployment + parent1CppSelfemploymentOther)) + min(dmnFullTimeCalculatedDataProgramYearMaximums.limitParentEIAmount,parent1Ei) " target="calculatedDataParent1NetIncome" />
-          <zeebe:output source="=min(dmnFullTimeCalculatedDataProgramYearMaximums.limitParentCPPAmount, (parent2CppEmployment + parent2CppSelfemploymentOther)) + min(dmnFullTimeCalculatedDataProgramYearMaximums.limitParentEIAmount,parent2Ei) " target="calculatedDataParent2NetIncome" />
+          <zeebe:output source="=min(dmnFullTimeCalculatedDataProgramYearMaximums.limitParentCPPAmount, (parent1CppEmployment + parent1CppSelfemploymentOther)) + min(dmnFullTimeCalculatedDataProgramYearMaximums.limitParentEIAmount,parent1Ei) " target="calculatedDataParent1IncomeDeductions" />
+          <zeebe:output source="=min(dmnFullTimeCalculatedDataProgramYearMaximums.limitParentCPPAmount, (parent2CppEmployment + parent2CppSelfemploymentOther)) + min(dmnFullTimeCalculatedDataProgramYearMaximums.limitParentEIAmount,parent2Ei) " target="calculatedDataParent2IncomeDeductions" />
           <zeebe:output source="=calculatedDataParent1TotalIncome + calculatedDataParent2TotalIncome - calculatedDataParent1IncomeDeductions - calculatedDataParent2IncomeDeductions" target="calculatedDataTotalParentNetIncome" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
@@ -1588,6 +1588,7 @@
       <bpmn:extensionElements>
         <zeebe:calledDecision decisionId="dmnFullTimeApplicationTransportationMaximum" resultVariable="dmnFullTimeCalculatedDataApplicationtransportationMaximum" />
         <zeebe:ioMapping>
+          <zeebe:input source="=if offeringWeeks &#60; 27 then &#34;[1..26]&#34; else &#34;[27..52]&#34;" target="offeringWeeks" />
           <zeebe:output source="=min(studentDataTransportationCost, dmnFullTimeCalculatedDataApplicationtransportationMaximum.limitApplicationTransportation)&#10;" target="calculatedDataReturnTransportationCost" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
