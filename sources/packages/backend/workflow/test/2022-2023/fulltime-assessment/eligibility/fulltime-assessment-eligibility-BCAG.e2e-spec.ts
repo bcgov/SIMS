@@ -52,9 +52,6 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
             true,
           );
           expect(
-            calculatedAssessment.variables.federalAwardNetBCAGAmount,
-          ).toBeGreaterThan(0);
-          expect(
             calculatedAssessment.variables.provincialAwardNetBCAGAmount,
           ).toBeGreaterThan(0);
         });

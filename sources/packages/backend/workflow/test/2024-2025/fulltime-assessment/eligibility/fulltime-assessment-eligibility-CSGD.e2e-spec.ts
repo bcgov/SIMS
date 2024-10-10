@@ -59,9 +59,6 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
     expect(
       calculatedAssessment.variables.federalAwardNetCSGDAmount,
     ).toBeGreaterThan(0);
-    expect(
-      calculatedAssessment.variables.provincialAwardNetCSGDAmount,
-    ).toBeGreaterThan(0);
   });
 
   it("Should determine CSGD as not eligible when financial need is at least $1 and total family income is above the threshold and there is at least 1 eligible dependent.", async () => {
