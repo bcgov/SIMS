@@ -126,6 +126,7 @@ import {
 import { IdentityProviders, Role, StudentProfile } from "@/types";
 import DisabilityStatusUpdateTileValue from "@/components/aest/students/DisabilityStatusUpdateTileValue.vue";
 import EditStudentProfileModal from "@/components/aest/students/modals/EditStudentProfileModal.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 /**
  *  Used to combine institution and ministry DTOs and make SIN explicitly mandatory.
@@ -139,6 +140,7 @@ export default defineComponent({
   components: {
     DisabilityStatusUpdateTileValue,
     EditStudentProfileModal,
+    CheckPermissionRole,
   },
   props: {
     studentId: {

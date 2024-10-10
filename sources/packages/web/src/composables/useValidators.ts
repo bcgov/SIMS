@@ -1,3 +1,5 @@
+import { isEmail } from "class-validator";
+
 const SIN_MAX_LENGTH = 9;
 
 /**
@@ -33,11 +35,7 @@ export function useValidators() {
   };
 
   const isEmailValid = (email: string) => {
-    return String(email)
-      .toLowerCase()
-      .match(
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[\d]{1,3}\.[\d]{1,3}\.[\d]{1,3}\.[\d]{1,3}\])|(([a-zA-Z\-\d]+\.)+[a-zA-Z]{2,}))$/,
-      );
+    return isEmail(email) ? true : "Email is invalid.";
   };
 
   const checkMaxCharacters = (
