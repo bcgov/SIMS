@@ -52,12 +52,22 @@
               class="mb-6" />
             <v-spacer /></template
         ></title-value>
-        <v-textarea
-          label="Notes"
-          v-model="formModel.noteDescription"
-          variant="outlined"
-          :rules="[checkNotesLengthRule]"
-        />
+        <title-value
+          ><template #value>
+            <v-textarea
+              label="Notes"
+              v-model="formModel.noteDescription"
+              variant="outlined"
+              :rules="[checkNotesLengthRule]" />
+            <v-spacer /></template
+        ></title-value>
+        <title-value
+          ><template #value
+            ><v-input
+              :rules="[hasDataChangedValidationRule]"
+              hide-details="auto"
+            /> </template
+        ></title-value>
       </template>
       <template #footer>
         <footer-buttons
@@ -114,6 +124,19 @@ export default defineComponent({
       }
       await resolvePromise(formModel.value);
     };
+    let initialStudentProfile = {} as UpdateStudentDetails;
+
+    const hasDataChangedValidationRule = () => {
+      if (
+        initialStudentProfile.email === formModel.value.email &&
+        initialStudentProfile.givenNames === formModel.value.givenNames &&
+        initialStudentProfile.lastName === formModel.value.lastName &&
+        initialStudentProfile.birthdate === formModel.value.birthdate
+      ) {
+        return "No changes detected to be updated.";
+      }
+      return true;
+    };
 
     const showModal = async (
       studentProfile: UpdateStudentDetails,
@@ -121,6 +144,7 @@ export default defineComponent({
         value: UpdateStudentDetailsAPIInDTO | boolean,
       ) => Promise<boolean>,
     ) => {
+      initialStudentProfile = studentProfile;
       formModel.value = {
         givenNames: studentProfile.givenNames,
         lastName: studentProfile.lastName,
@@ -151,6 +175,7 @@ export default defineComponent({
       checkEmailValidationRule,
       checkNotesLengthRule,
       Role,
+      hasDataChangedValidationRule,
     };
   },
 });

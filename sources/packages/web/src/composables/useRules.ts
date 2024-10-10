@@ -1,10 +1,11 @@
 import { useValidators } from "@/composables";
+import { isEmail } from "class-validator";
 
 const NOTES_MAX_CHARACTERS = 500;
 const GIVEN_NAMES_MAX_LENGTH = 100;
 const LAST_NAME_MAX_LENGTH = 100;
 const EMAIL_MAX_LENGTH = 300;
-const { isSINValid, checkMaxCharacters, isEmailValid } = useValidators();
+const { isSINValid, checkMaxCharacters } = useValidators();
 
 export function useRules() {
   const sinValidationRule = (sin: string) => {
@@ -36,7 +37,7 @@ export function useRules() {
   };
 
   const checkEmailValidationRule = (email: string) => {
-    return isEmailValid(email) ? true : "Email is invalid.";
+    return isEmail(email) ? true : "Email is invalid.";
   };
 
   const checkLengthRule = (

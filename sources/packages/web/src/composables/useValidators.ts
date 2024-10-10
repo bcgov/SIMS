@@ -1,5 +1,3 @@
-import { isEmail } from "class-validator";
-
 const SIN_MAX_LENGTH = 9;
 
 /**
@@ -34,10 +32,6 @@ export function useValidators() {
     return valid;
   };
 
-  const isEmailValid = (email: string) => {
-    return isEmail(email) ? true : "Email is invalid.";
-  };
-
   const checkMaxCharacters = (
     value: string,
     maxCharacters: number,
@@ -47,7 +41,6 @@ export function useValidators() {
 
   return {
     isSINValid,
-    isEmailValid,
     checkMaxCharacters,
   };
 }
