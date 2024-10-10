@@ -187,7 +187,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
     );
   });
 
-  it.skip("Should check for both parents incomes when the student is dependant and parents have SIN.", async () => {
+  it("Should check for both parents incomes when the student is dependant and parents have SIN.", async () => {
     // Arrange
     const currentAssessmentId = assessmentId++;
     const parent1SupportingUserId = supportingUserId++;
