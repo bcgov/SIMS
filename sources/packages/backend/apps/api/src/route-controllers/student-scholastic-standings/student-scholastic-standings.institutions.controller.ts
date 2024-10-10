@@ -63,7 +63,7 @@ import {
   uploadLimits,
 } from "../../utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import { FILE_DEFAULT_ENCODING } from "@sims/services/constants";
+import { FILE_DEFAULT_ENCODING } from "@sims/utilities";
 
 /**
  * Scholastic standing controller for institutions Client.

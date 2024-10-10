@@ -21,9 +21,9 @@ import {
   getMaritalStatusCode,
   getOfferingIntensityCode,
   getFormattedPhone,
+  FILE_DEFAULT_ENCODING,
 } from "@sims/utilities";
 import { OfferingIntensity } from "@sims/sims-db";
-import { FILE_DEFAULT_ENCODING } from "@sims/services/constants";
 import { LINE_BREAK_SPLIT_REGEX } from "@sims/integrations/constants";
 
 /**

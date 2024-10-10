@@ -1,9 +1,8 @@
 import * as Client from "ssh2-sftp-client";
 import { SshService } from "@sims/integrations/services";
 import { DeepMocked } from "@golevelup/ts-jest";
-import { END_OF_LINE } from "@sims/utilities";
+import { END_OF_LINE, FILE_DEFAULT_ENCODING } from "@sims/utilities";
 import { readFileSync } from "fs";
-import { FILE_DEFAULT_ENCODING } from "@sims/services/constants";
 import { LINE_BREAK_SPLIT_REGEX } from "@sims/integrations/constants";
 
 // MSFAA received files mocks.

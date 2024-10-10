@@ -1,4 +1,4 @@
-import { FILE_DEFAULT_ENCODING } from "@sims/services/constants";
+import { FILE_DEFAULT_ENCODING } from "@sims/utilities";
 
 const REPLACE_LINE_BREAK_REGEX = /\r?\n|\r/g;
 

@@ -62,7 +62,7 @@ import {
   uploadLimits,
 } from "../../utilities";
 import { ParseEnumQueryPipe } from "../utils/custom-validation-pipe";
-import { CustomNamedError } from "@sims/utilities";
+import { CustomNamedError, FILE_DEFAULT_ENCODING } from "@sims/utilities";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { EducationProgramOfferingImportCSVService } from "../../services/education-program-offering/education-program-offering-import-csv.service";
 import { EducationProgramOfferingValidationService } from "../../services/education-program-offering/education-program-offering-validation.service";
@@ -76,7 +76,6 @@ import {
 } from "../../constants";
 import { OfferingCSVModel } from "../../services/education-program-offering/education-program-offering-import-csv.models";
 import { Request } from "express";
-import { FILE_DEFAULT_ENCODING } from "@sims/services/constants";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("education-program-offering")

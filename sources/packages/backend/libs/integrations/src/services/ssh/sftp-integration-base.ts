@@ -8,8 +8,8 @@ import {
   END_OF_LINE,
   getFileNameAsExtendedCurrentTimestamp,
   translateToASCII,
+  FILE_DEFAULT_ENCODING,
 } from "@sims/utilities";
-import { FILE_DEFAULT_ENCODING } from "@sims/services/constants";
 import { LINE_BREAK_SPLIT_REGEX } from "@sims/integrations/constants";
 
 /**
