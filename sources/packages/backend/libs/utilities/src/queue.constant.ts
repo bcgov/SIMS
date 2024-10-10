@@ -30,4 +30,5 @@ export enum QueueNames {
   StudentLoanBalancesPartTimeIntegration = "student-loan-balances-part-time-integration",
   CASSupplierIntegration = "cas-supplier-integration",
   ApplicationChangesReportIntegration = "application-changes-report-integration",
+  StudentApplicationNotifications = "student-application-notifications",
 }

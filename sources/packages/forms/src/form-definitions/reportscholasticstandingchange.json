@@ -9,6 +9,44 @@
   ],
   "components": [
     {
+      "input": true,
+      "tableView": true,
+      "key": "studyStartDate",
+      "label": "Study Start Date",
+      "protected": false,
+      "unique": false,
+      "persistent": true,
+      "type": "hidden",
+      "tags": [],
+      "conditional": {
+        "show": "",
+        "when": null,
+        "eq": ""
+      },
+      "properties": {},
+      "lockKey": true,
+      "isNew": false
+    },
+    {
+      "input": true,
+      "tableView": true,
+      "key": "studyEndDate",
+      "label": "Study End Date",
+      "protected": false,
+      "unique": false,
+      "persistent": true,
+      "type": "hidden",
+      "tags": [],
+      "conditional": {
+        "show": "",
+        "when": null,
+        "eq": ""
+      },
+      "properties": {},
+      "lockKey": true,
+      "isNew": false
+    },
+    {
       "label": "Offering Intensity (Part Time or Full Time) - Used to define custom labels",
       "key": "applicationOfferingIntensity",
       "type": "hidden",
@@ -17,7 +55,34 @@
       "lockKey": true,
       "protected": false,
       "unique": false,
-      "persistent": true
+      "persistent": false,
+      "tags": [],
+      "conditional": {
+        "show": "",
+        "when": null,
+        "eq": ""
+      },
+      "properties": {},
+      "isNew": false
+    },
+    {
+      "label": "Readonly View (true or false)",
+      "key": "readOnly",
+      "type": "hidden",
+      "input": true,
+      "tableView": true,
+      "lockKey": true,
+      "protected": false,
+      "unique": false,
+      "persistent": false,
+      "tags": [],
+      "conditional": {
+        "show": "",
+        "when": null,
+        "eq": ""
+      },
+      "properties": {},
+      "isNew": false
     },
     {
       "label": "Student Name",
@@ -246,8 +311,8 @@
           "type": "columns",
           "input": false,
           "tableView": false,
-          "clearOnHide": false,
-          "hideLabel": true
+          "hideLabel": true,
+          "clearOnHide": false
         }
       ],
       "clearOnHide": false,
@@ -349,8 +414,8 @@
           "type": "columns",
           "input": false,
           "tableView": false,
-          "clearOnHide": false,
-          "hideLabel": true
+          "hideLabel": true,
+          "clearOnHide": false
         },
         {
           "label": "Columns",
@@ -460,8 +525,8 @@
           "type": "columns",
           "input": false,
           "tableView": false,
-          "clearOnHide": false,
-          "hideLabel": true
+          "hideLabel": true,
+          "clearOnHide": false
         },
         {
           "label": "Columns",
@@ -496,7 +561,7 @@
                       "value": ""
                     }
                   ],
-                  "content": "{{ data.applicationOfferingStartDate }} -  {{ data.applicationOfferingEndDate }}",
+                  "content": "{{ data.applicationOfferingStartDate }} - {{ data.applicationOfferingEndDate }}",
                   "refreshOnChange": true,
                   "customClass": "label-value",
                   "key": "applicationOfferingStartDate",
@@ -506,7 +571,14 @@
                   "hideOnChildrenHidden": false,
                   "hideLabel": true,
                   "tag": "p",
-                  "className": ""
+                  "className": "",
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {}
                 }
               ],
               "width": 6,
@@ -599,8 +671,8 @@
           "type": "columns",
           "input": false,
           "tableView": false,
-          "clearOnHide": false,
-          "hideLabel": true
+          "hideLabel": true,
+          "clearOnHide": false
         },
         {
           "label": "HTML",
@@ -728,8 +800,8 @@
           "type": "columns",
           "input": false,
           "tableView": false,
-          "clearOnHide": false,
-          "hideLabel": true
+          "hideLabel": true,
+          "clearOnHide": false
         },
         {
           "label": "Columns",
@@ -839,8 +911,8 @@
           "type": "columns",
           "input": false,
           "tableView": false,
-          "clearOnHide": false,
-          "hideLabel": true
+          "hideLabel": true,
+          "clearOnHide": false
         }
       ],
       "clearOnHide": false,
@@ -865,21 +937,24 @@
       "content": ""
     },
     {
-      "customClass": "formio-panel-unset",
+      "title": "",
       "collapsible": false,
       "hideLabel": true,
-      "key": "panel",
-      "customConditional": "\r\n",
+      "key": "panel2",
       "logic": [
         {
-          "name": "disable panel in readOnly mode",
+          "name": "Disable form",
           "trigger": {
-            "type": "javascript",
-            "javascript": "result = !!data.readOnly;"
+            "type": "simple",
+            "simple": {
+              "show": true,
+              "when": "readOnly",
+              "eq": "true"
+            }
           },
           "actions": [
             {
-              "name": "Disable Inputs",
+              "name": "Disable",
               "type": "property",
               "property": {
                 "label": "Disabled",
@@ -904,7 +979,7 @@
               "value": ""
             }
           ],
-          "content": "<p>Report a change</p>",
+          "content": "Report a change",
           "refreshOnChange": false,
           "customClass": "category-header-large primary-color",
           "key": "reportAChangeInStudentCircumstance",
@@ -966,10 +1041,12 @@
               "shortcut": ""
             }
           ],
+          "dataType": "string",
           "validate": {
             "required": true,
             "onlyAvailableItems": true
           },
+          "validateWhenHidden": false,
           "key": "scholasticStandingChangeType",
           "logic": [
             {
@@ -993,6 +1070,7 @@
           ],
           "type": "radio",
           "input": true,
+          "lockKey": true,
           "autofocus": false,
           "inputType": "radio",
           "defaultValue": "",
@@ -1000,12 +1078,19 @@
           "fieldSet": false,
           "persistent": true,
           "hidden": false,
-          "clearOnHide": true
+          "clearOnHide": true,
+          "labelPosition": "top",
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {}
         },
         {
           "title": "Student is transferring to a different institution or campus - Panel",
           "collapsible": false,
-          "hideLabel": true,
           "key": "schoolTransferPanel",
           "conditional": {
             "show": "true",
@@ -1045,7 +1130,8 @@
                       },
                       "tableView": true,
                       "validate": {
-                        "required": true
+                        "required": true,
+                        "custom": "const isDateValid= moment(input).isSameOrBefore(new Date()) &&\n    moment(input).isSameOrAfter(data.studyStartDate) &&\n    moment(input).isSameOrBefore(data.studyEndDate);\nvalid = isDateValid ? true :  'Date cannot be future-dated and must be during the study period.';"
                       },
                       "key": "dateOfChange",
                       "attributes": {
@@ -1067,10 +1153,14 @@
                       "clearOnHide": true,
                       "spellcheck": true,
                       "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": ""
-                      }
+                      },
+                      "labelPosition": "top",
+                      "inputFormat": "plain",
+                      "tags": [],
+                      "properties": {}
                     }
                   ],
                   "width": 6,
@@ -1094,18 +1184,28 @@
               "type": "columns",
               "input": false,
               "tableView": false,
+              "hideLabel": true,
               "clearOnHide": false,
-              "hideLabel": true
+              "tags": [],
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+              },
+              "properties": {}
             }
           ],
           "lockKey": true,
+          "hideLabel": true,
           "clearOnHide": false,
-          "theme": "default"
+          "theme": "default",
+          "breadcrumb": "default",
+          "tags": [],
+          "properties": {}
         },
         {
           "title": "Student completed funded study period offering early - Panel",
           "collapsible": false,
-          "hideLabel": true,
           "key": "studentCompletedProgramEarlyPanel",
           "conditional": {
             "show": "true",
@@ -1145,7 +1245,8 @@
                       },
                       "tableView": true,
                       "validate": {
-                        "required": true
+                        "required": true,
+                        "custom": "const isDateValid= moment(input).isSameOrBefore(new Date()) &&\n    moment(input).isSameOrAfter(data.studyStartDate) &&\n    moment(input).isSameOrBefore(data.studyEndDate);\nvalid = isDateValid ? true :  'Date cannot be future-dated and must be during the study period.';"
                       },
                       "key": "dateOfCompletion",
                       "attributes": {
@@ -1167,10 +1268,14 @@
                       "clearOnHide": true,
                       "spellcheck": true,
                       "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": ""
-                      }
+                      },
+                      "labelPosition": "top",
+                      "inputFormat": "plain",
+                      "tags": [],
+                      "properties": {}
                     }
                   ],
                   "width": 6,
@@ -1194,8 +1299,8 @@
               "type": "columns",
               "input": false,
               "tableView": false,
-              "clearOnHide": false,
-              "hideLabel": true
+              "hideLabel": true,
+              "clearOnHide": false
             },
             {
               "label": "Were the students study period costs different than the originally reported costs?",
@@ -1302,7 +1407,10 @@
                             "show": null,
                             "when": null,
                             "eq": ""
-                          }
+                          },
+                          "labelPosition": "top",
+                          "tags": [],
+                          "properties": {}
                         }
                       ],
                       "width": 6,
@@ -1361,8 +1469,15 @@
                   "type": "columns",
                   "input": false,
                   "tableView": false,
+                  "hideLabel": true,
                   "clearOnHide": false,
-                  "hideLabel": true
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {}
                 },
                 {
                   "label": "Columns",
@@ -1462,21 +1577,21 @@
                   "type": "columns",
                   "input": false,
                   "tableView": false,
-                  "clearOnHide": false,
-                  "hideLabel": true
+                  "hideLabel": true,
+                  "clearOnHide": false
                 }
               ],
               "clearOnHide": false,
               "theme": "default"
             }
           ],
+          "hideLabel": true,
           "clearOnHide": false,
           "theme": "default"
         },
         {
           "title": "Student did not complete program - Panel",
           "collapsible": false,
-          "hideLabel": true,
           "key": "studentDidNotCompleteProgramPanel",
           "conditional": {
             "show": "true",
@@ -1519,7 +1634,16 @@
                       "protected": false,
                       "persistent": true,
                       "hidden": false,
-                      "clearOnHide": true
+                      "clearOnHide": true,
+                      "labelPosition": "top",
+                      "tags": [],
+                      "conditional": {
+                        "show": "",
+                        "when": null,
+                        "eq": ""
+                      },
+                      "properties": {},
+                      "isNew": false
                     }
                   ],
                   "width": 6,
@@ -1543,8 +1667,8 @@
               "type": "columns",
               "input": false,
               "tableView": false,
-              "clearOnHide": false,
-              "hideLabel": true
+              "hideLabel": true,
+              "clearOnHide": false
             },
             {
               "label": "Select the reason of incompletion",
@@ -1621,13 +1745,13 @@
               }
             }
           ],
+          "hideLabel": true,
           "clearOnHide": false,
           "theme": "default"
         },
         {
           "title": "Student Withdrew from funded period - Panel",
           "collapsible": false,
-          "hideLabel": true,
           "key": "studentWithdrewFromProgramPanel",
           "conditional": {
             "show": "true",
@@ -1667,7 +1791,8 @@
                       },
                       "tableView": true,
                       "validate": {
-                        "required": true
+                        "required": true,
+                        "custom": "const isDateValid= moment(input).isSameOrBefore(new Date()) &&\n    moment(input).isSameOrAfter(data.studyStartDate) &&\n    moment(input).isSameOrBefore(data.studyEndDate);\nvalid = isDateValid ? true :  'Date cannot be future-dated and must be during the study period.';"
                       },
                       "key": "dateOfWithdrawal",
                       "attributes": {
@@ -1689,10 +1814,14 @@
                       "clearOnHide": true,
                       "spellcheck": true,
                       "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": ""
-                      }
+                      },
+                      "labelPosition": "top",
+                      "inputFormat": "plain",
+                      "tags": [],
+                      "properties": {}
                     }
                   ],
                   "width": 6,
@@ -1716,16 +1845,16 @@
               "type": "columns",
               "input": false,
               "tableView": false,
-              "clearOnHide": false,
-              "hideLabel": true
+              "hideLabel": true,
+              "clearOnHide": false
             }
           ],
+          "hideLabel": true,
           "clearOnHide": false,
           "theme": "default"
         }
       ],
       "clearOnHide": false,
-      "title": "",
       "theme": "default"
     }
   ]

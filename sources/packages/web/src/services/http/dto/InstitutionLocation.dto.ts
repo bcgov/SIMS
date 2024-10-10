@@ -112,6 +112,8 @@ export interface ActiveApplicationDataAPIOutDTO {
   applicationOfferingIntensity: string;
   applicationOfferingStartDate: string;
   applicationOfferingEndDate: string;
+  studyStartDate?: string;
+  studyEndDate?: string;
   applicationStudentName: string;
   applicationNumber: string;
   applicationLocationName: string;

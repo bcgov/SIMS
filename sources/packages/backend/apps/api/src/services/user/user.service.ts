@@ -1,5 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, UpdateResult } from "typeorm";
+import {
+  DataSource,
+  IsNull,
+  LessThanOrEqual,
+  Raw,
+  Repository,
+  UpdateResult,
+} from "typeorm";
 import {
   DataModelService,
   SpecificIdentityProviders,
@@ -7,10 +14,16 @@ import {
   User,
 } from "@sims/sims-db";
 import { UserLoginInfo } from "./user.model";
+import { BetaUsersAuthorizations } from "@sims/sims-db/entities";
+import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()
 export class UserService extends DataModelService<User> {
-  constructor(dataSource: DataSource) {
+  constructor(
+    dataSource: DataSource,
+    @InjectRepository(BetaUsersAuthorizations)
+    private readonly betaUsersAuthorizationsRepo: Repository<BetaUsersAuthorizations>,
+  ) {
     super(dataSource.getRepository(User));
   }
 
@@ -139,5 +152,31 @@ export class UserService extends DataModelService<User> {
       .where("user.userName = :userName", { userName })
       .getRawOne();
     return !!user;
+  }
+
+  /**
+   * Checks if there is a beta user authorization valid for given and last names provided.
+   * @param givenNames beta user given names.
+   * @param lastName beta user last name.
+   * @returns true in case there is a beta user authorization valid for given and last names provided.
+   */
+  async isBetaUserAuthorized(
+    givenNames: string,
+    lastName: string,
+  ): Promise<boolean> {
+    const now = new Date();
+    const where = {
+      givenNames: Raw((alias) => `LOWER(${alias}) = LOWER(:givenNames)`, {
+        givenNames,
+      }),
+      lastName: Raw((alias) => `LOWER(${alias}) = LOWER(:lastName)`, {
+        lastName,
+      }),
+      enabledFrom: LessThanOrEqual(now),
+    };
+    if (!givenNames) {
+      where.givenNames = IsNull();
+    }
+    return this.betaUsersAuthorizationsRepo.exists({ where });
   }
 }

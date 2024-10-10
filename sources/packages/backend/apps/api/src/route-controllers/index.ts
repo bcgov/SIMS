@@ -80,3 +80,5 @@ export * from "./report/report.institutions.controller";
 export * from "./report/report.controller.service";
 export * from "./program-year/program-year.controller.service";
 export * from "./cas-supplier/cas-supplier.aest.controller";
+export * from "./application-restriction-bypass/application-restriction-bypass.aest.controller";
+export * from "./audit/audit.controller";

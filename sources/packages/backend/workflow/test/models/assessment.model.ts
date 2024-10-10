@@ -18,6 +18,7 @@ export interface StudentDependantAppealData extends JSONDoc {
 }
 export interface StudentFinancialInformationAppealData extends JSONDoc {
   taxReturnIncome: number;
+  currentYearIncome?: number;
   daycareCosts12YearsOrOver?: number;
   daycareCosts11YearsOrUnder?: number;
 }
@@ -250,7 +251,9 @@ export interface CalculatedAssessmentModel {
   awardNetFederalTotalAward: number;
   calculatedDataTotalTransportationCost: number;
   calculatedDataTotalSecondResidence: number;
+  // TODO: Fix typo used in FT applications.
   caclulatedDataTotalAssessedNeed: number;
+  calculatedDataTotalAssessedNeed: number;
   calculatedDataTotalBookCost: number;
   awardNetProvincialTotalAward: number;
   calculatedDataTotalChildSpousalSupport: number;
@@ -270,6 +273,8 @@ export interface CalculatedAssessmentModel {
   totalProvincialContribution: number;
   calculatedDataPDPPDStatus: boolean;
   calculatedDataTaxReturnIncome: number;
+  calculatedDataCurrentYearIncome: number;
+  calculatedDataStudentTotalIncome: number;
 
   // Common variables used in both full-time and part-time.
   // CSGP

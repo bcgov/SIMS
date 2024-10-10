@@ -18,6 +18,7 @@ export enum AppRoutes {
   StudentApplicationOfferingChangeRequest = "application/:applicationId/application-offering-change-request/:applicationOfferingChangeRequestId",
   StudentRequestedApplicationOfferingDetails = "requested-offering",
   StudentActiveApplicationOfferingDetails = "active-offering",
+  InvalidBetaUser = "login/invalid-beta-user",
   // Institution
   InstitutionRoot = "/institution",
   InstitutionDashboard = "dashboard",
@@ -118,4 +119,6 @@ export enum AppRoutes {
   StudentAESTApplicationOfferingChangeRequest = "application-offering-change-request/:applicationOfferingChangeRequestId",
   NoticeOfAssessmentView = "assessment/:assessmentId/notice-of-assessment",
   Reports = "reports",
+  ApplicationRestrictionsManagement = "application-restrictions-management",
+  ApplicationStatusTracker = "application-status-tracker",
 }

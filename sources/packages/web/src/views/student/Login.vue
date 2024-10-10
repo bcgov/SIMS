@@ -20,6 +20,12 @@
                   Whether you are a new or returning user—log in or register
                   using the BC Services Card account.
                 </p>
+                <banner
+                  v-if="errorMessage"
+                  class="mb-2 mt-n3"
+                  :type="BannerTypes.Error"
+                  :summary="errorMessage"
+                />
                 <v-btn
                   color="primary"
                   @click="login(IdentityProviders.BCSC)"
@@ -132,17 +138,33 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { computed, defineComponent } from "vue";
 import { useAuth } from "@/composables";
 import { IdentityProviders, ClientIdType } from "@/types";
+import { BannerTypes } from "@/types/contracts/Banner";
+import { AuditService } from "@/services/AuditService";
 
 export default defineComponent({
-  setup() {
+  props: {
+    showInvalidBetaUserMessage: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+  },
+  setup(props) {
     const { executeLogin } = useAuth();
     const login = async (idp: IdentityProviders) => {
+      AuditService.userLoginTriggered();
       await executeLogin(ClientIdType.Student, idp);
     };
-    return { IdentityProviders, login };
+    const errorMessage = computed(() => {
+      if (props.showInvalidBetaUserMessage) {
+        return "Unable to login as the system is not yet available.";
+      }
+      return false;
+    });
+    return { IdentityProviders, login, errorMessage, BannerTypes };
   },
 });
 </script>

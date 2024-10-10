@@ -57,6 +57,7 @@ import {
   ECertFeedbackError,
   CASSupplier,
   ApplicationRestrictionBypass,
+  BetaUsersAuthorizations,
 } from "./entities";
 import { ClusterNode, ClusterOptions, RedisOptions } from "ioredis";
 import {
@@ -212,4 +213,5 @@ export const DBEntities = [
   StudentLoanBalance,
   ECertFeedbackError,
   CASSupplier,
+  BetaUsersAuthorizations,
 ];

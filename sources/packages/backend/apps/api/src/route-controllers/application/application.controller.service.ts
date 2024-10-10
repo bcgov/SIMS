@@ -1,18 +1,31 @@
-import { ForbiddenException, Injectable } from "@nestjs/common";
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from "@nestjs/common";
 import {
   EducationProgramOfferingService,
   InstitutionLocationService,
   EducationProgramService,
   StudentRestrictionService,
+  ApplicationService,
+  StudentAppealService,
+  ApplicationOfferingChangeRequestService,
+  CRAIncomeVerificationService,
+  SupportingUserService,
 } from "../../services";
 import {
   ApplicationFormData,
-  ApplicationBaseAPIOutDTO,
   ApplicationDataAPIOutDTO,
   SuccessWaitingStatus,
   ApplicationIncomeVerification,
   ApplicationSupportingUserDetails,
   EnrolmentApplicationDetailsAPIOutDTO,
+  ApplicationSupplementalDataAPIOutDTO,
+  ApplicationProgressDetailsAPIOutDTO,
+  CompletedApplicationDetailsAPIOutDTO,
+  InProgressApplicationDetailsAPIOutDTO,
 } from "./models/application.dto";
 import {
   credentialTypeToDisplay,
@@ -20,6 +33,7 @@ import {
   getCOEDeniedReason,
   getOfferingNameAndPeriod,
   getPIRDeniedReason,
+  getUserFullName,
 } from "../../utilities";
 import { getDateOnlyFormat } from "@sims/utilities";
 import {
@@ -32,9 +46,14 @@ import {
   SupportingUser,
   SupportingUserType,
   RestrictionActionType,
+  ApplicationOfferingChangeRequestStatus,
+  ApplicationStatus,
+  StudentAppealStatus,
 } from "@sims/sims-db";
 import { ApiProcessError } from "../../types";
 import { ACTIVE_STUDENT_RESTRICTION } from "../../constants";
+import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
+import { AssessmentSequentialProcessingService } from "@sims/services";
 
 /**
  * This service controller is a provider which is created to extract the implementation of
@@ -48,6 +67,13 @@ export class ApplicationControllerService {
     private readonly locationService: InstitutionLocationService,
     private readonly programService: EducationProgramService,
     private readonly studentRestrictionService: StudentRestrictionService,
+    private readonly applicationService: ApplicationService,
+    private readonly studentAppealService: StudentAppealService,
+    private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
+    private readonly eCertPreValidationService: ECertPreValidationService,
+    private readonly craIncomeVerificationService: CRAIncomeVerificationService,
+    private readonly supportingUserService: SupportingUserService,
+    private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
   ) {}
 
   /**
@@ -66,6 +92,257 @@ export class ApplicationControllerService {
     await this.processSelectedProgram(data, additionalFormData);
     await this.processSelectedOffering(data, additionalFormData);
     return { ...data, ...additionalFormData };
+  }
+
+  /**
+   * Get status of all requests and confirmations in student application (Exception, PIR and COE).
+   * @param applicationId application id.
+   * @param options options.
+   * - `studentId` student id.
+   * @returns application progress details.
+   */
+  async getApplicationProgressDetails(
+    applicationId: number,
+    options?: { studentId?: number },
+  ): Promise<ApplicationProgressDetailsAPIOutDTO> {
+    const application = await this.applicationService.getApplicationDetails(
+      applicationId,
+      { studentId: options?.studentId },
+    );
+    if (!application) {
+      throw new NotFoundException(
+        `Application id ${applicationId} was not found.`,
+      );
+    }
+
+    let appealStatus: StudentAppealStatus;
+    let applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus;
+    let hasBlockFundingFeedbackError = false;
+    let hasECertFailedValidations = false;
+    if (application.applicationStatus === ApplicationStatus.Completed) {
+      const appealPromise = this.studentAppealService.getAppealsForApplication(
+        applicationId,
+        { limit: 1 },
+      );
+      const applicationOfferingChangeRequestPromise =
+        this.applicationOfferingChangeRequestService.getApplicationOfferingChangeRequest(
+          applicationId,
+        );
+      const feedbackErrorPromise =
+        this.applicationService.hasFeedbackErrorBlockingFunds(applicationId);
+      const eCertValidationResultPromise =
+        this.eCertPreValidationService.executePreValidations(applicationId);
+      const [
+        [appeal],
+        applicationOfferingChangeRequest,
+        feedbackError,
+        eCertValidationResult,
+      ] = await Promise.all([
+        appealPromise,
+        applicationOfferingChangeRequestPromise,
+        feedbackErrorPromise,
+        eCertValidationResultPromise,
+      ]);
+      appealStatus = appeal?.status;
+      applicationOfferingChangeRequestStatus =
+        applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus;
+      hasBlockFundingFeedbackError = feedbackError;
+      hasECertFailedValidations = !eCertValidationResult.canGenerateECert;
+    }
+
+    const assessmentTriggerType = application.currentAssessment?.triggerType;
+
+    const disbursements =
+      application.currentAssessment?.disbursementSchedules ?? [];
+
+    disbursements.sort((a, b) =>
+      a.disbursementDate < b.disbursementDate ? -1 : 1,
+    );
+    const [firstDisbursement, secondDisbursement] = disbursements;
+    const [scholasticStandingChange] = application.studentScholasticStandings;
+
+    return {
+      applicationStatus: application.applicationStatus,
+      applicationStatusUpdatedOn: application.applicationStatusUpdatedOn,
+      pirStatus: application.pirStatus,
+      firstCOEStatus: firstDisbursement?.coeStatus,
+      secondCOEStatus: secondDisbursement?.coeStatus,
+      exceptionStatus: application.applicationException?.exceptionStatus,
+      appealStatus,
+      scholasticStandingChangeType: scholasticStandingChange?.changeType,
+      applicationOfferingChangeRequestStatus,
+      assessmentTriggerType,
+      hasBlockFundingFeedbackError,
+      hasECertFailedValidations,
+    };
+  }
+
+  /**
+   * Get details for the application in enrolment status.
+   * @param applicationId student application id.
+   * @param options options.
+   *  - `studentId` student id.
+   * @returns details for the application enrolment status.
+   */
+  async getEnrolmentApplicationDetails(
+    applicationId: number,
+    options?: { studentId?: number },
+  ): Promise<EnrolmentApplicationDetailsAPIOutDTO> {
+    const application =
+      await this.applicationService.getApplicationAssessmentDetails(
+        applicationId,
+        {
+          studentId: options?.studentId,
+          applicationStatus: [ApplicationStatus.Enrolment],
+        },
+      );
+    if (!application) {
+      throw new NotFoundException(
+        `Application id ${applicationId} not found or not in relevant status to get enrolment details.`,
+      );
+    }
+
+    return {
+      ...this.transformToEnrolmentApplicationDetailsAPIOutDTO(
+        application.currentAssessment.disbursementSchedules,
+      ),
+      assessmentTriggerType: application.currentAssessment.triggerType,
+    };
+  }
+
+  /**
+   * Get details for an application at completed status.
+   * @param applicationId application id.
+   * @param options options.
+   * - `studentId` student id.
+   * @returns details for an application on at completed status.
+   */
+  async getCompletedApplicationDetails(
+    applicationId: number,
+    options?: { studentId?: number },
+  ): Promise<CompletedApplicationDetailsAPIOutDTO> {
+    const getApplicationPromise =
+      this.applicationService.getApplicationAssessmentDetails(applicationId, {
+        studentId: options?.studentId,
+        applicationStatus: [ApplicationStatus.Completed],
+      });
+    const appealPromise = this.studentAppealService.getAppealsForApplication(
+      applicationId,
+      { limit: 1 },
+    );
+    const applicationOfferingChangeRequestPromise =
+      this.applicationOfferingChangeRequestService.getApplicationOfferingChangeRequest(
+        applicationId,
+      );
+    const hasBlockFundingFeedbackErrorPromise =
+      this.applicationService.hasFeedbackErrorBlockingFunds(applicationId);
+    const eCertValidationResultPromise =
+      this.eCertPreValidationService.executePreValidations(applicationId);
+    const [
+      application,
+      [appeal],
+      applicationOfferingChangeRequest,
+      hasBlockFundingFeedbackError,
+      eCertValidationResult,
+    ] = await Promise.all([
+      getApplicationPromise,
+      appealPromise,
+      applicationOfferingChangeRequestPromise,
+      hasBlockFundingFeedbackErrorPromise,
+      eCertValidationResultPromise,
+    ]);
+    if (!application) {
+      throw new NotFoundException(
+        `Application not found or not on ${ApplicationStatus.Completed} status.`,
+      );
+    }
+    const enrolmentDetails =
+      this.transformToEnrolmentApplicationDetailsAPIOutDTO(
+        application.currentAssessment.disbursementSchedules,
+      );
+    const [scholasticStandingChange] = application.studentScholasticStandings;
+
+    return {
+      firstDisbursement: enrolmentDetails.firstDisbursement,
+      secondDisbursement: enrolmentDetails.secondDisbursement,
+      assessmentTriggerType: application.currentAssessment.triggerType,
+      appealStatus: appeal?.status,
+      scholasticStandingChangeType: scholasticStandingChange?.changeType,
+      applicationOfferingChangeRequestId: applicationOfferingChangeRequest?.id,
+      applicationOfferingChangeRequestStatus:
+        applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus,
+      hasBlockFundingFeedbackError,
+      eCertFailedValidations: [...eCertValidationResult.failedValidations],
+    };
+  }
+
+  /**
+   * Get in progress details of an application by application id.
+   * @param applicationId application id.
+   * @param options options.
+   * - `studentId` student id.
+   * @returns application details.
+   */
+  async getInProgressApplicationDetails(
+    applicationId: number,
+    options?: { studentId?: number },
+  ): Promise<InProgressApplicationDetailsAPIOutDTO> {
+    const application = await this.applicationService.getApplicationDetails(
+      applicationId,
+      { studentId: options?.studentId },
+    );
+    if (!application) {
+      throw new NotFoundException(
+        `Application id ${applicationId} was not found.`,
+      );
+    }
+    if (application.applicationStatus !== ApplicationStatus.InProgress) {
+      throw new UnprocessableEntityException(
+        `Application not in ${ApplicationStatus.InProgress} status.`,
+      );
+    }
+    const incomeVerificationDetails =
+      await this.craIncomeVerificationService.getAllIncomeVerificationsForAnApplication(
+        applicationId,
+      );
+    const incomeVerification = this.processApplicationIncomeVerificationDetails(
+      incomeVerificationDetails,
+    );
+
+    const supportingUserDetails =
+      await this.supportingUserService.getSupportingUsersByApplicationId(
+        applicationId,
+      );
+
+    const supportingUser = this.processApplicationSupportingUserDetails(
+      supportingUserDetails,
+    );
+
+    // Get the first outstanding assessment waiting for calculation as per the sequence.
+    const firstOutstandingStudentAssessment =
+      await this.assessmentSequentialProcessingService.getOutstandingAssessmentsForStudentInSequence(
+        application.student.id,
+        application.programYear.id,
+      );
+
+    // If first outstanding assessment returns a value and its Id is different
+    // from the current assessment Id, then assessmentInCalculationStep is Waiting.
+    const outstandingAssessmentStatus =
+      firstOutstandingStudentAssessment &&
+      firstOutstandingStudentAssessment.id !== application.currentAssessment.id
+        ? SuccessWaitingStatus.Waiting
+        : SuccessWaitingStatus.Success;
+
+    return {
+      id: application.id,
+      applicationStatus: application.applicationStatus,
+      pirStatus: application.pirStatus,
+      pirDeniedReason: getPIRDeniedReason(application),
+      exceptionStatus: application.applicationException?.exceptionStatus,
+      outstandingAssessmentStatus: outstandingAssessmentStatus,
+      ...incomeVerification,
+      ...supportingUser,
+    };
   }
 
   /**
@@ -168,7 +445,7 @@ export class ApplicationControllerService {
    */
   async transformToApplicationDTO(
     application: Application,
-  ): Promise<ApplicationBaseAPIOutDTO> {
+  ): Promise<ApplicationSupplementalDataAPIOutDTO> {
     return {
       data: application.data,
       id: application.id,
@@ -176,6 +453,14 @@ export class ApplicationControllerService {
       applicationNumber: application.applicationNumber,
       applicationFormName: application.programYear.formName,
       applicationProgramYearID: application.programYear.id,
+      studentFullName: getUserFullName(application.student.user),
+      applicationOfferingIntensity:
+        application.currentAssessment?.offering?.offeringIntensity,
+      applicationStartDate:
+        application.currentAssessment?.offering?.studyStartDate,
+      applicationEndDate: application.currentAssessment?.offering?.studyEndDate,
+      applicationInstitutionName:
+        application.location?.institution.legalOperatingName,
     };
   }
 

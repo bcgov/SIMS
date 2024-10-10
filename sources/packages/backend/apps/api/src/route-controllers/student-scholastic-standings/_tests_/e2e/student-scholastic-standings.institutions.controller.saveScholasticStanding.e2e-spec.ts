@@ -29,13 +29,12 @@ import {
   APPLICATION_NOT_FOUND,
   FormNames,
   FormService,
-  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "../../../../services";
-import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../../../constants";
 import { ScholasticStandingAPIInDTO } from "../../models/student-scholastic-standings.dto";
-import { getISODateOnlyString } from "@sims/utilities";
+import { addToDateOnlyString, getISODateOnlyString } from "@sims/utilities";
 import { AppInstitutionsModule } from "../../../../app.institutions.module";
 import { TestingModule } from "@nestjs/testing";
+import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../../../constants";
 
 describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticStanding.", () => {
   let app: INestApplication;
@@ -78,9 +77,13 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
 
   it("Should throw bad request exception error when the payload is invalid for formIO dryRun test.", async () => {
     // Arrange
-    const application = await saveFakeApplication(db.dataSource, {
-      institutionLocation: collegeFLocation,
-    });
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {
+        institutionLocation: collegeFLocation,
+      },
+      { applicationStatus: ApplicationStatus.Completed },
+    );
     const invalidPayload = {
       data: {
         booksAndSupplies: 1000,
@@ -125,17 +128,21 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
         message:
-          "Application Not found or invalid current assessment or offering.",
+          "Application Not found or invalid current assessment or offering or application status.",
         errorType: APPLICATION_NOT_FOUND,
       });
   });
 
-  it("Should throw unprocessable entity exception error when the application change is not eligible.", async () => {
+  it("Should throw unprocessable entity exception error when the application change is Archived.", async () => {
     // Arrange
-    const application = await saveFakeApplication(db.dataSource, {
-      institutionLocation: collegeFLocation,
-    });
-    application.isArchived = true;
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {
+        institutionLocation: collegeFLocation,
+      },
+      { applicationStatus: ApplicationStatus.Completed, isArchived: true },
+    );
+
     await db.application.save(application);
     // Institution token.
     const institutionUserToken = await getInstitutionToken(
@@ -180,8 +187,8 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
         message:
-          "Cannot report a change for application with status other than completed.",
-        errorType: INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+          "Application Not found or invalid current assessment or offering or application status.",
+        errorType: APPLICATION_NOT_FOUND,
       });
   });
 
@@ -253,12 +260,8 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     ).toBe(createdScholasticStandingId);
   });
 
-  it("Should create a new scholastic standing for a part-time application when the institution user requests.", async () => {
+  it("Should create a new scholastic standing 'School transfer' for a part-time application when the institution user requests.", async () => {
     // Arrange
-    mockFormioDryRun({
-      studentScholasticStandingChangeType:
-        StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
-    });
     const application = await saveFakeApplication(
       db.dataSource,
       {
@@ -273,9 +276,92 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
+
+    mockFormioDryRun({
+      studentScholasticStandingChangeType:
+        StudentScholasticStandingChangeType.SchoolTransfer,
+      dateOfChange: application.currentAssessment.offering.studyStartDate,
+    });
+
     const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
 
     // Act/Assert
+    let createdScholasticStandingId: number;
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .expect((response) => {
+        createdScholasticStandingId = +response.body.id;
+        expect(response.body.id).toBeGreaterThan(0);
+      });
+
+    const studentScholasticStanding = await db.studentScholasticStanding.exists(
+      {
+        select: {
+          id: true,
+        },
+        relations: {
+          application: true,
+        },
+        where: {
+          id: createdScholasticStandingId,
+          application: { id: application.id },
+        },
+      },
+    );
+
+    expect(studentScholasticStanding).toBe(true);
+
+    const notifications = await db.notification.find({
+      select: {
+        id: true,
+        user: { id: true },
+        notificationMessage: { id: true },
+      },
+      relations: { user: true, notificationMessage: true },
+      where: { user: { id: application.student.user.id } },
+      order: { notificationMessage: { id: "ASC" } },
+    });
+    expect(notifications).toEqual([
+      {
+        id: expect.any(Number),
+        notificationMessage: {
+          id: NotificationMessageType.InstitutionReportsChange,
+        },
+        user: { id: application.student.user.id },
+      },
+    ]);
+  });
+
+  it("Should create a new scholastic standing 'Student withdrew from program' for a part-time application when the institution user requests.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {
+        institutionLocation: collegeFLocation,
+      },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.Completed,
+      },
+    );
+    // Institution token.
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    mockFormioDryRun({
+      studentScholasticStandingChangeType:
+        StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+      dateOfWithdrawal: application.currentAssessment.offering.studyStartDate,
+    });
+
+    const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
+
+    // Act/Assert
+    let createdScholasticStandingId: number;
     await request(app.getHttpServer())
       .post(endpoint)
       .send(payload)
@@ -283,7 +369,26 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       .expect(HttpStatus.CREATED)
       .expect((response) => {
         expect(response.body.id).toBeGreaterThan(0);
+        createdScholasticStandingId = +response.body.id;
       });
+
+    const studentScholasticStanding = await db.studentScholasticStanding.exists(
+      {
+        select: {
+          id: true,
+        },
+        relations: {
+          application: true,
+        },
+        where: {
+          id: createdScholasticStandingId,
+          application: { id: application.id },
+        },
+      },
+    );
+
+    expect(studentScholasticStanding).toBe(true);
+
     const restriction = await db.studentRestriction.find({
       select: {
         id: true,
@@ -341,30 +446,359 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     ]);
   });
 
+  it("Should create a new scholastic standing 'Student completed program early' for a part-time application when the institution user requests.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {
+        institutionLocation: collegeFLocation,
+      },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.Completed,
+      },
+    );
+    // Institution token.
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    mockFormioDryRun({
+      studentScholasticStandingChangeType:
+        StudentScholasticStandingChangeType.StudentCompletedProgramEarly,
+      dateOfCompletion: application.currentAssessment.offering.studyStartDate,
+    });
+
+    const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
+
+    // Act/Assert
+    let createdScholasticStandingId: number;
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .expect((response) => {
+        expect(response.body.id).toBeGreaterThan(0);
+        createdScholasticStandingId = +response.body.id;
+      });
+
+    const studentScholasticStanding = await db.studentScholasticStanding.exists(
+      {
+        select: {
+          id: true,
+        },
+        relations: {
+          application: true,
+        },
+        where: {
+          id: createdScholasticStandingId,
+          application: { id: application.id },
+        },
+      },
+    );
+
+    expect(studentScholasticStanding).toBe(true);
+
+    const notifications = await db.notification.find({
+      select: {
+        id: true,
+        user: { id: true },
+        notificationMessage: { id: true },
+      },
+      relations: { user: true, notificationMessage: true },
+      where: { user: { id: application.student.user.id } },
+      order: { notificationMessage: { id: "ASC" } },
+    });
+    expect(notifications).toEqual([
+      {
+        id: expect.any(Number),
+        notificationMessage: {
+          id: NotificationMessageType.InstitutionReportsChange,
+        },
+        user: { id: application.student.user.id },
+      },
+    ]);
+  });
+
+  it("Should not create new scholastic standing 'School transfer' for a part-time application when date of change is not between study start date and end date.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {
+        institutionLocation: collegeFLocation,
+      },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.Completed,
+      },
+    );
+    // Institution token.
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
+
+    mockFormioDryRun({
+      validDryRun: false,
+      studentScholasticStandingChangeType:
+        StudentScholasticStandingChangeType.SchoolTransfer,
+      dateOfChange: addToDateOnlyString(
+        application.currentAssessment.offering.studyEndDate,
+        1,
+        "day",
+      ),
+    });
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: "Invalid submission.",
+        error: "Bad Request",
+      });
+  });
+
+  it("Should not create new scholastic standing 'Student withdrew from program' for a part-time application when date of withdrawal is not between study start date and end date.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {
+        institutionLocation: collegeFLocation,
+      },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.Completed,
+      },
+    );
+    // Institution token.
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    mockFormioDryRun({
+      validDryRun: false,
+      studentScholasticStandingChangeType:
+        StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+      dateOfWithdrawal: addToDateOnlyString(
+        application.currentAssessment.offering.studyEndDate,
+        1,
+        "day",
+      ),
+    });
+    const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: "Invalid submission.",
+        error: "Bad Request",
+      });
+  });
+
+  it("Should not create new scholastic standing 'Student completed program early' for a part-time application when date of withdrawal is not between study start date and end date.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {
+        institutionLocation: collegeFLocation,
+      },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.Completed,
+      },
+    );
+    // Institution token.
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    mockFormioDryRun({
+      validDryRun: false,
+      studentScholasticStandingChangeType:
+        StudentScholasticStandingChangeType.StudentCompletedProgramEarly,
+      dateOfCompletion: addToDateOnlyString(
+        application.currentAssessment.offering.studyEndDate,
+        1,
+        "day",
+      ),
+    });
+    const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: "Invalid submission.",
+        error: "Bad Request",
+      });
+  });
+
+  it("Should not create new scholastic standing 'School transfer' for a part-time application when date of change is greater than current date.", async () => {
+    // Arrange
+    mockFormioDryRun({
+      validDryRun: false,
+      studentScholasticStandingChangeType:
+        StudentScholasticStandingChangeType.SchoolTransfer,
+      dateOfChange: addToDateOnlyString(new Date(), 1, "day"),
+    });
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {
+        institutionLocation: collegeFLocation,
+      },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.Completed,
+      },
+    );
+    // Institution token.
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: "Invalid submission.",
+        error: "Bad Request",
+      });
+  });
+
+  it("Should not create new scholastic standing 'Student withdrew from program' for a part-time application when date of withdrawal is greater than current date.", async () => {
+    // Arrange
+    mockFormioDryRun({
+      validDryRun: false,
+      studentScholasticStandingChangeType:
+        StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+      dateOfWithdrawal: addToDateOnlyString(new Date(), 1, "day"),
+    });
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {
+        institutionLocation: collegeFLocation,
+      },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.Completed,
+      },
+    );
+    // Institution token.
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: "Invalid submission.",
+        error: "Bad Request",
+      });
+  });
+
+  it("Should not create new scholastic standing 'Student completed program early' for a part-time application when date of withdrawal is greater than current date.", async () => {
+    // Arrange
+    mockFormioDryRun({
+      validDryRun: false,
+      studentScholasticStandingChangeType:
+        StudentScholasticStandingChangeType.StudentCompletedProgramEarly,
+      dateOfCompletion: addToDateOnlyString(new Date(), 1, "day"),
+    });
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {
+        institutionLocation: collegeFLocation,
+      },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.Completed,
+      },
+    );
+    // Institution token.
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: "Invalid submission.",
+        error: "Bad Request",
+      });
+  });
+
   /**
    * Centralized method to handle the form.io mock.
    * @param options method options:
    * - `validDryRun`: boolean false indicates that the form mock resolved value is invalid. Default value is true.
    * - `studentScholasticStandingChangeType`: Student scholastic standing change type to be added in combination with SchoolTransfer scholastic standing type .
+   * - `dateOfChange`: Date of change used during the School Transfer scholastic standing.
+   * - `dateOfCompletion`: Date of change used during the Student completed program early scholastic standing.
+   * - `dateOfWithdrawal`: Date of change used during the Student withdrew from program scholastic standing.
    */
+  //TODO - When formio container is available, remove the mock.
   function mockFormioDryRun(options?: {
     validDryRun?: boolean;
     studentScholasticStandingChangeType?: StudentScholasticStandingChangeType;
+    dateOfChange?: string;
+    dateOfCompletion?: string;
+    dateOfWithdrawal?: string;
   }): void {
     const validDryRun = options?.validDryRun ?? true;
+    const scholasticStandingChangeType =
+      options?.studentScholasticStandingChangeType ??
+      StudentScholasticStandingChangeType.SchoolTransfer;
     payload = {
-      data: {
-        dateOfChange: getISODateOnlyString(new Date()),
-        scholasticStandingChangeType:
-          options?.studentScholasticStandingChangeType
-            ? options.studentScholasticStandingChangeType
-            : StudentScholasticStandingChangeType.SchoolTransfer,
-      },
-    };
+      data: { scholasticStandingChangeType },
+    } as ScholasticStandingAPIInDTO;
+    const fallbackDate = getISODateOnlyString(new Date());
+
+    switch (scholasticStandingChangeType) {
+      case StudentScholasticStandingChangeType.StudentCompletedProgramEarly:
+        payload.data.dateOfCompletion =
+          options?.dateOfCompletion ?? fallbackDate;
+        break;
+      case StudentScholasticStandingChangeType.StudentWithdrewFromProgram:
+        payload.data.dateOfWithdrawal =
+          options?.dateOfWithdrawal ?? fallbackDate;
+        break;
+      case StudentScholasticStandingChangeType.SchoolTransfer:
+        payload.data.dateOfChange = options?.dateOfChange ?? fallbackDate;
+        break;
+    }
+
     formService.dryRunSubmission = jest.fn().mockResolvedValue({
       valid: validDryRun,
       formName: FormNames.ReportScholasticStandingChange,
-      data: { data: payload.data },
+      data: payload,
     });
   }
 });

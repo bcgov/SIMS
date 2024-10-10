@@ -2,7 +2,11 @@ import { Controller, Get } from "@nestjs/common";
 import { UserToken } from "../../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../../auth/userToken.interface";
 import { Public } from "../../../auth/decorators/public.decorator";
-import { Roles, Groups } from "../../../auth/decorators";
+import {
+  Roles,
+  Groups,
+  RequiresStudentAccount,
+} from "../../../auth/decorators";
 import { Role } from "../../../auth/roles.enum";
 import { UserGroups } from "../../../auth/user-groups.enum";
 
@@ -81,6 +85,17 @@ export class AuthTestController {
   @Get("/authenticated-route-by-non-existing-group")
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   authenticatedRouteByNonExistingGroup(): void {
+    // Intentionally blank. The goal is to test the
+    // decorator and the HTTP response only.
+  }
+
+  /**
+   * Only student accounts are authorized to have access to this endpoint.
+   */
+  @RequiresStudentAccount()
+  @Get("/authenticated-student")
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  authenticatedStudent(): void {
     // Intentionally blank. The goal is to test the
     // decorator and the HTTP response only.
   }

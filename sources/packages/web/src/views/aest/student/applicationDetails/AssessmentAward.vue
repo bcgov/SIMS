@@ -9,7 +9,7 @@
           params: { applicationId, studentId },
         }"
       />
-      <detail-header :headerMap="headerMap" />
+      <application-header-title :application-id="applicationId" />
     </template>
     <assessment-award
       :assessment-award-data="assessmentAwardData"
@@ -23,17 +23,17 @@
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { ref, onMounted, defineComponent, computed } from "vue";
-import { useAssessment, useSnackBar } from "@/composables";
+import { useSnackBar } from "@/composables";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { AwardDetailsAPIOutDTO } from "@/services/http/dto";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
 import { FIRST_COE_NOT_COMPLETE } from "@/constants";
 import { ApiProcessError } from "@/types";
-import DetailHeader from "@/components/generic/DetailHeader.vue";
 import AssessmentAward from "@/components/common/students/applicationDetails/AssessmentAward.vue";
+import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
 
 export default defineComponent({
-  components: { AssessmentAward, DetailHeader },
+  components: { AssessmentAward, ApplicationHeaderTitle },
   props: {
     studentId: {
       type: Number,
@@ -50,8 +50,6 @@ export default defineComponent({
   },
   setup(props) {
     const assessmentAwardData = ref<AwardDetailsAPIOutDTO>();
-    const { mapAssessmentDetailHeader } = useAssessment();
-    const headerMap = ref<Record<string, string>>({});
     const snackBar = useSnackBar();
 
     const loadAssessmentAwardValues = async () => {
@@ -59,7 +57,6 @@ export default defineComponent({
         await StudentAssessmentsService.shared.getAssessmentAwardDetails(
           props.assessmentId,
         );
-      headerMap.value = mapAssessmentDetailHeader(assessmentAwardData.value);
     };
 
     onMounted(loadAssessmentAwardValues);
@@ -96,7 +93,6 @@ export default defineComponent({
       AESTRoutesConst,
       noticeOfAssessmentRoute,
       assessmentAwardData,
-      headerMap,
       confirmEnrolment,
     };
   },

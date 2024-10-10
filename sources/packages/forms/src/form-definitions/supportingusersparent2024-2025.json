@@ -237,7 +237,6 @@
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
                       "id": "eb0xogs",
-                      "isNew": false,
                       "tags": []
                     },
                     {
@@ -317,7 +316,6 @@
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
                       "id": "e106vzy",
-                      "isNew": false,
                       "tags": []
                     }
                   ],
@@ -407,7 +405,6 @@
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
                       "id": "ec48u3n",
-                      "isNew": false,
                       "tags": []
                     },
                     {
@@ -486,7 +483,6 @@
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
                       "id": "e863irs",
-                      "isNew": false,
                       "tags": []
                     }
                   ],
@@ -819,8 +815,7 @@
                       "inputType": "text",
                       "id": "ebbtcss",
                       "defaultValue": "",
-                      "customError": false,
-                      "isNew": false
+                      "customError": false
                     }
                   ],
                   "width": 6,
@@ -1147,7 +1142,6 @@
               "spellcheck": true,
               "truncateMultipleSpaces": false,
               "id": "ej3fi7k",
-              "isNew": false,
               "tags": []
             },
             {
@@ -1227,7 +1221,6 @@
               "spellcheck": true,
               "truncateMultipleSpaces": false,
               "id": "ew9htha",
-              "isNew": false,
               "tags": []
             },
             {
@@ -1312,7 +1305,6 @@
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
                       "id": "edf0pxa",
-                      "isNew": false,
                       "tags": []
                     },
                     {
@@ -1392,7 +1384,6 @@
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
                       "id": "erj9yup",
-                      "isNew": false,
                       "tags": []
                     },
                     {
@@ -1472,7 +1463,6 @@
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
                       "id": "enedlf",
-                      "isNew": false,
                       "tags": []
                     }
                   ],
@@ -1562,7 +1552,6 @@
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
                       "id": "eerjeeq",
-                      "isNew": false,
                       "tags": []
                     },
                     {
@@ -1642,7 +1631,6 @@
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
                       "id": "edgq4sx",
-                      "isNew": false,
                       "tags": []
                     }
                   ],
@@ -1946,6 +1934,164 @@
       "tableView": false,
       "components": [
         {
+          "input": true,
+          "tableView": false,
+          "key": "maxIncome",
+          "label": "Max Income",
+          "protected": false,
+          "unique": false,
+          "persistent": false,
+          "type": "hidden",
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "defaultValue": "",
+          "lockKey": true,
+          "calculateValue": "value = \"100000000\";",
+          "calculateServer": true
+        },
+        {
+          "label": "Program Year Start Date",
+          "persistent": false,
+          "key": "programYearStartDate",
+          "type": "hidden",
+          "input": true,
+          "tableView": false,
+          "placeholder": "",
+          "prefix": "",
+          "customClass": "",
+          "suffix": "",
+          "multiple": false,
+          "defaultValue": null,
+          "protected": false,
+          "unique": false,
+          "hidden": false,
+          "clearOnHide": true,
+          "refreshOn": "",
+          "redrawOn": "",
+          "modalEdit": false,
+          "dataGridLabel": false,
+          "labelPosition": "top",
+          "description": "",
+          "errorLabel": "",
+          "tooltip": "",
+          "tabindex": "",
+          "disabled": false,
+          "autofocus": false,
+          "dbIndex": false,
+          "customDefaultValue": "",
+          "calculateValue": "",
+          "calculateServer": false,
+          "widget": {
+            "type": "input"
+          },
+          "attributes": {},
+          "validateOn": "change",
+          "validate": {
+            "required": false,
+            "custom": "",
+            "customPrivate": false,
+            "strictDateValidation": false,
+            "multiple": false,
+            "unique": false
+          },
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "overlay": {
+            "style": "",
+            "left": "",
+            "top": "",
+            "width": "",
+            "height": ""
+          },
+          "allowCalculateOverride": false,
+          "encrypted": false,
+          "showCharCount": false,
+          "showWordCount": false,
+          "properties": {},
+          "allowMultipleMasks": false,
+          "addons": [],
+          "inputType": "hidden",
+          "id": "ei1rc5j",
+          "tags": []
+        },
+        {
+          "label": "Calculated Tax Year",
+          "persistent": false,
+          "redrawOn": "data",
+          "calculateValue": "// The same logic exists on workflow to define the tax year.\n// The same logic exists on other supporting users' forms.\n// Kept in form and workflow to allow it to change dynamically.\nvalue = new Date(data.programYearStartDate).getFullYear() - 1;",
+          "key": "calculatedTaxYear",
+          "type": "hidden",
+          "input": true,
+          "tableView": false,
+          "hideOnChildrenHidden": false,
+          "placeholder": "",
+          "prefix": "",
+          "customClass": "",
+          "suffix": "",
+          "multiple": false,
+          "defaultValue": null,
+          "protected": false,
+          "unique": false,
+          "hidden": false,
+          "clearOnHide": true,
+          "refreshOn": "",
+          "modalEdit": false,
+          "dataGridLabel": false,
+          "labelPosition": "top",
+          "description": "",
+          "errorLabel": "",
+          "tooltip": "",
+          "tabindex": "",
+          "disabled": false,
+          "autofocus": false,
+          "dbIndex": false,
+          "customDefaultValue": "",
+          "calculateServer": false,
+          "widget": {
+            "type": "input"
+          },
+          "attributes": {},
+          "validateOn": "change",
+          "validate": {
+            "required": false,
+            "custom": "",
+            "customPrivate": false,
+            "strictDateValidation": false,
+            "multiple": false,
+            "unique": false
+          },
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "overlay": {
+            "style": "",
+            "left": "",
+            "top": "",
+            "width": "",
+            "height": ""
+          },
+          "allowCalculateOverride": false,
+          "encrypted": false,
+          "showCharCount": false,
+          "showWordCount": false,
+          "properties": {},
+          "allowMultipleMasks": false,
+          "addons": [],
+          "inputType": "hidden",
+          "id": "e4y3o6n",
+          "tags": []
+        },
+        {
           "label": "Group the dynamic data under a child object (DO NOT REMOVE IT)",
           "tableView": false,
           "key": "supportingData",
@@ -2143,8 +2289,7 @@
                   "fieldSet": false,
                   "id": "eg8xw9r",
                   "tags": [],
-                  "lockKey": true,
-                  "isNew": false
+                  "lockKey": true
                 },
                 {
                   "label": "How much will you and your spouse/common-law partner be giving the student to help meet their specific educational costs during this study period?",
@@ -2228,7 +2373,6 @@
                   "inputMask": "",
                   "decimalLimit": 2,
                   "requireDecimal": true,
-                  "isNew": false,
                   "tags": []
                 },
                 {
@@ -2311,8 +2455,7 @@
                   "inputMask": "",
                   "decimalLimit": 0,
                   "requireDecimal": false,
-                  "tags": [],
-                  "isNew": false
+                  "tags": []
                 },
                 {
                   "label": "Canada Pension Plan contributions (CPP) from line 30800 (contributions through employment). Enter ‘0’ if none.",
@@ -2394,7 +2537,6 @@
                   "inputMask": "",
                   "decimalLimit": 2,
                   "requireDecimal": true,
-                  "isNew": false,
                   "tags": []
                 },
                 {
@@ -2477,7 +2619,6 @@
                   "inputMask": "",
                   "decimalLimit": 2,
                   "requireDecimal": true,
-                  "isNew": false,
                   "tags": []
                 },
                 {
@@ -2560,7 +2701,6 @@
                   "inputMask": "",
                   "decimalLimit": 2,
                   "requireDecimal": true,
-                  "isNew": false,
                   "tags": []
                 },
                 {
@@ -2643,7 +2783,6 @@
                   "inputMask": "",
                   "decimalLimit": 2,
                   "requireDecimal": true,
-                  "isNew": false,
                   "tags": []
                 },
                 {
@@ -2726,7 +2865,6 @@
                   "inputMask": "",
                   "decimalLimit": 2,
                   "requireDecimal": true,
-                  "isNew": false,
                   "tags": []
                 },
                 {
@@ -2810,7 +2948,6 @@
                   "inputType": "radio",
                   "fieldSet": false,
                   "id": "eobs59k",
-                  "isNew": false,
                   "tags": []
                 },
                 {
@@ -2938,7 +3075,7 @@
                   "allowCalculateOverride": false,
                   "validateOn": "change",
                   "validate": {
-                    "required": true,
+                    "required": false,
                     "minLength": "",
                     "maxLength": "",
                     "customMessage": "",
@@ -3063,7 +3200,6 @@
                                   "spellcheck": true,
                                   "truncateMultipleSpaces": false,
                                   "id": "e1aazy",
-                                  "isNew": false,
                                   "tags": []
                                 }
                               ],
@@ -3168,7 +3304,6 @@
                                   "spellcheck": true,
                                   "truncateMultipleSpaces": false,
                                   "id": "e8jfngh",
-                                  "isNew": false,
                                   "tags": []
                                 }
                               ],
@@ -3248,7 +3383,7 @@
                           "id": "ehv8bb"
                         },
                         {
-                          "label": "<strong>Will this dependant be attending high school or full-time post-secondary school at the start of the Student's study period?</strong>",
+                          "label": "Will this dependant be attending high school or full-time post-secondary school at the start of the Student's study period?",
                           "optionsLabelPosition": "right",
                           "inline": false,
                           "tableView": false,
@@ -3328,11 +3463,10 @@
                           "inputType": "radio",
                           "fieldSet": false,
                           "id": "eg1bd8n",
-                          "isNew": false,
                           "tags": []
                         },
                         {
-                          "label": "<strong>Did you claim this dependant on their 20xx Income Tax Return due to a disability?</strong>",
+                          "label": "Did you claim this dependant on their 20xx Income Tax Return due to a disability?",
                           "optionsLabelPosition": "right",
                           "inline": false,
                           "tableView": false,
@@ -3412,7 +3546,6 @@
                           "inputType": "radio",
                           "fieldSet": false,
                           "id": "eaj2hu7",
-                          "isNew": false,
                           "tags": []
                         }
                       ],
@@ -3678,7 +3811,7 @@
                       "id": "elbt2rr"
                     },
                     {
-                      "html": "<p><strong>I. I. I/we understand that:</strong></p>\n\n<ol>\n\t<li>The student will have access to information provided in this appendix;</li>\n\t<li>The student&#39;s school will have access to information provided in this appendix;</li>\n\t<li>The information in this appendix is subject to audit, investigation and verification as defined in the current program year&#39;s StudentAid BC Policy Manual</li>\n</ol>\n\n<p><strong>II. II. I/we understand that signing this declaration means:</strong></p>\n\n<ol>\n\t<li>I declare that the information I have given in this appendix is correct and complete and that I have not altered or added to any of the pre-printed application and/or appendix questions.</li>\n\t<li>I authorize the student to notify StudentAid BC as soon as practical of any change in my income and/or assets, as defined in the current program year&#39;s StudentAid BC Policy Manual.</li>\n\t<li>For the purposes of verifying the accuracy of the personal information provided by me in this appendix, I consent to the collection, use and disclosure of my personal information between the BC Ministry of Post Secondary and Future Skills, the BC Ministry of Finance, the National Student Loans Service Centre, and any of their contractors, subcontractors or agents, each with each other, and with the following: financial institutions, lenders, educational institutions, financial aid offices, employers, credit bureaus, credit reporting agencies, Aboriginal Organizations, federal and provincial Crown corporations, and federal, provincial, municipal ministries/departments/agencies, including but not limited to: BC Ministry of Social Development and Poverty Reduction, BC Ministry of Children and Family Development, BC Ministry of Health, BC Ministry of Attorney General, BC Ministry of Education, BC Public Service Agency, RoadSafe BC, Insurance Corporation of BC (and Service BC acting in the role of ICBC), BC Assessment Authority, Land Title and Survey Authority of BC, BC Registry Services, WorkSafe BC, BC Vital Statistics Agency, the Office of the Superintendent of Bankruptcy Canada, Employment and Social Development Canada, Canada Revenue Agency, Immigration, Refugees and Citizenship Canada. This consent takes effect on the date that I make the first submission of this Appendix to StudentAid BC, regardless of whether this Appendix is in electronic or written format.</li>\n</ol>\n",
+                      "html": "<p><strong>I. I. I/we understand that:</strong></p>\n\n<ol>\n\t<li>The student will have access to information provided in this appendix;</li>\n\t<li>The student&#39;s school will have access to information provided in this appendix;</li>\n\t<li>The information in this appendix is subject to audit, investigation and verification as defined in the current program year&#39;s StudentAid BC Policy Manual</li>\n</ol>\n\n<p><strong>II. II. I/we understand that signing this declaration means:</strong></p>\n\n<ol>\n\t<li>I declare that the information I have given in this appendix is correct and complete and that I have not altered or added to any of the pre-printed application and/or appendix questions.</li>\n\t<li>I authorize the student to notify StudentAid BC as soon as practical of any change in my income and/or assets, as defined in the current program year&#39;s StudentAid BC Policy Manual.</li>\n\t<li>For the purposes of verifying the accuracy of the personal information provided by me in this appendix, I consent to the collection, use and disclosure of my personal information between the BC Ministry of Post-Secondary Education and Future Skills, the BC Ministry of Finance, the National Student Loans Service Centre, and any of their contractors, subcontractors or agents, each with each other, and with the following: financial institutions, lenders, educational institutions, financial aid offices, employers, credit bureaus, credit reporting agencies, Aboriginal Organizations, federal and provincial Crown corporations, and federal, provincial, municipal ministries/departments/agencies, including but not limited to: BC Ministry of Social Development and Poverty Reduction, BC Ministry of Children and Family Development, BC Ministry of Health, BC Ministry of Attorney General, BC Ministry of Education, BC Public Service Agency, RoadSafe BC, Insurance Corporation of BC (and Service BC acting in the role of ICBC), BC Assessment Authority, Land Title and Survey Authority of BC, BC Registry Services, WorkSafe BC, BC Vital Statistics Agency, the Office of the Superintendent of Bankruptcy Canada, Employment and Social Development Canada, Canada Revenue Agency, Immigration, Refugees and Citizenship Canada. This consent takes effect on the date that I make the first submission of this Appendix to StudentAid BC, regardless of whether this Appendix is in electronic or written format.</li>\n</ol>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content",
@@ -3743,7 +3876,6 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "id": "eh65mef",
-                      "isNew": false,
                       "tags": []
                     },
                     {
@@ -4047,7 +4179,7 @@
                       "className": ""
                     },
                     {
-                      "html": "<p>For the purpose of verifying the data provided in this application for student assistance, I hereby consent to the release, by the Canada Revenue Agency, to the BC Ministry of Post Secondary and Future Skills (or a person delegated by the ministry), of taxpayer information from any portion of my income tax records that pertains to information given by me on any StudentAid BC application. The information will be used solely for the purpose of verifying information on my StudentAid BC application forms and for the general administration and enforcement of StudentAid BC policy and the Canada Student Financial Assistance Act. This authorization is valid for the two taxation years prior to the year of signature of this consent, the year of signature of this consent and for any other subsequent consecutive taxation year for which assistance is requested.</p>\n",
+                      "html": "<p>For the purpose of verifying the data provided in this application for student assistance, I hereby consent to the release, by the Canada Revenue Agency, to the BC Ministry of Post-Secondary Education and Future Skills (or a person delegated by the ministry), of taxpayer information from any portion of my income tax records that pertains to information given by me on any StudentAid BC application. The information will be used solely for the purpose of verifying information on my StudentAid BC application forms and for the general administration and enforcement of StudentAid BC policy and the Canada Student Financial Assistance Act. This authorization is valid for the two taxation years prior to the year of signature of this consent, the year of signature of this consent and for any other subsequent consecutive taxation year for which assistance is requested.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content",
@@ -4112,7 +4244,6 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "id": "eqckolp",
-                      "isNew": false,
                       "tags": []
                     },
                     {
@@ -4320,7 +4451,6 @@
                   "value": "",
                   "name": "",
                   "id": "e75fvnh",
-                  "isNew": false,
                   "tags": []
                 }
               ],
@@ -4448,162 +4578,6 @@
           "tree": true,
           "lazyLoad": false,
           "id": "engp8qe"
-        },
-        {
-          "input": true,
-          "tableView": false,
-          "key": "maxIncome",
-          "label": "Max Income",
-          "protected": false,
-          "unique": false,
-          "persistent": true,
-          "type": "hidden",
-          "tags": [],
-          "conditional": {
-            "show": "",
-            "when": null,
-            "eq": ""
-          },
-          "properties": {},
-          "defaultValue": "100000000",
-          "lockKey": true
-        },
-        {
-          "label": "calculatedTaxYear",
-          "persistent": false,
-          "redrawOn": "data",
-          "calculateValue": "// The same logic exists on workflow to define the tax year.\n// The same logic exists on other supporting users' forms.\n// Kept in form and workflow to allow it to change dynamically.\nvalue = new Date(data.programYearStartDate).getFullYear() - 1;",
-          "key": "calculatedTaxYear",
-          "type": "hidden",
-          "input": true,
-          "tableView": false,
-          "hideOnChildrenHidden": false,
-          "placeholder": "",
-          "prefix": "",
-          "customClass": "",
-          "suffix": "",
-          "multiple": false,
-          "defaultValue": null,
-          "protected": false,
-          "unique": false,
-          "hidden": false,
-          "clearOnHide": true,
-          "refreshOn": "",
-          "modalEdit": false,
-          "dataGridLabel": false,
-          "labelPosition": "top",
-          "description": "",
-          "errorLabel": "",
-          "tooltip": "",
-          "hideLabel": false,
-          "tabindex": "",
-          "disabled": false,
-          "autofocus": false,
-          "dbIndex": false,
-          "customDefaultValue": "",
-          "calculateServer": false,
-          "widget": {
-            "type": "input"
-          },
-          "attributes": {},
-          "validateOn": "change",
-          "validate": {
-            "required": false,
-            "custom": "",
-            "customPrivate": false,
-            "strictDateValidation": false,
-            "multiple": false,
-            "unique": false
-          },
-          "conditional": {
-            "show": null,
-            "when": null,
-            "eq": ""
-          },
-          "overlay": {
-            "style": "",
-            "left": "",
-            "top": "",
-            "width": "",
-            "height": ""
-          },
-          "allowCalculateOverride": false,
-          "encrypted": false,
-          "showCharCount": false,
-          "showWordCount": false,
-          "properties": {},
-          "allowMultipleMasks": false,
-          "addons": [],
-          "inputType": "hidden",
-          "id": "e4y3o6n"
-        },
-        {
-          "label": "programYearStartDate",
-          "persistent": false,
-          "key": "programYearStartDate",
-          "type": "hidden",
-          "input": true,
-          "tableView": false,
-          "placeholder": "",
-          "prefix": "",
-          "customClass": "",
-          "suffix": "",
-          "multiple": false,
-          "defaultValue": null,
-          "protected": false,
-          "unique": false,
-          "hidden": false,
-          "clearOnHide": true,
-          "refreshOn": "",
-          "redrawOn": "",
-          "modalEdit": false,
-          "dataGridLabel": false,
-          "labelPosition": "top",
-          "description": "",
-          "errorLabel": "",
-          "tooltip": "",
-          "hideLabel": false,
-          "tabindex": "",
-          "disabled": false,
-          "autofocus": false,
-          "dbIndex": false,
-          "customDefaultValue": "",
-          "calculateValue": "",
-          "calculateServer": false,
-          "widget": {
-            "type": "input"
-          },
-          "attributes": {},
-          "validateOn": "change",
-          "validate": {
-            "required": false,
-            "custom": "",
-            "customPrivate": false,
-            "strictDateValidation": false,
-            "multiple": false,
-            "unique": false
-          },
-          "conditional": {
-            "show": null,
-            "when": null,
-            "eq": ""
-          },
-          "overlay": {
-            "style": "",
-            "left": "",
-            "top": "",
-            "width": "",
-            "height": ""
-          },
-          "allowCalculateOverride": false,
-          "encrypted": false,
-          "showCharCount": false,
-          "showWordCount": false,
-          "properties": {},
-          "allowMultipleMasks": false,
-          "addons": [],
-          "inputType": "hidden",
-          "id": "ei1rc5j"
         }
       ],
       "placeholder": "",

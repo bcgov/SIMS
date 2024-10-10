@@ -1934,6 +1934,186 @@
       "tableView": false,
       "components": [
         {
+          "input": true,
+          "tableView": false,
+          "key": "maxIncome",
+          "label": "Max Income",
+          "protected": false,
+          "unique": false,
+          "persistent": false,
+          "type": "hidden",
+          "defaultValue": "",
+          "calculateValue": "value = \"100000000\";",
+          "calculateServer": true,
+          "allowCalculateOverride": true,
+          "lockKey": true,
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "isNew": false
+        },
+        {
+          "label": "Calculated Tax Year",
+          "persistent": false,
+          "calculateValue": "// The same logic exists on workflow to define the tax year.\n// The same logic exists on other supporting users' forms.\n// Kept in form and workflow to allow it to change dynamically.\nvalue = new Date(data.programYearStartDate).getFullYear() - 1;",
+          "key": "calculatedTaxYear",
+          "type": "hidden",
+          "input": true,
+          "tableView": false,
+          "placeholder": "",
+          "prefix": "",
+          "customClass": "",
+          "suffix": "",
+          "multiple": false,
+          "defaultValue": null,
+          "protected": false,
+          "unique": false,
+          "hidden": false,
+          "clearOnHide": true,
+          "refreshOn": "",
+          "redrawOn": "",
+          "modalEdit": false,
+          "dataGridLabel": false,
+          "labelPosition": "top",
+          "description": "",
+          "errorLabel": "",
+          "tooltip": "",
+          "tabindex": "",
+          "disabled": false,
+          "autofocus": false,
+          "dbIndex": false,
+          "customDefaultValue": "",
+          "calculateServer": false,
+          "widget": {
+            "type": "input"
+          },
+          "attributes": {},
+          "validateOn": "change",
+          "validate": {
+            "required": false,
+            "custom": "",
+            "customPrivate": false,
+            "strictDateValidation": false,
+            "multiple": false,
+            "unique": false
+          },
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "overlay": {
+            "style": "",
+            "left": "",
+            "top": "",
+            "width": "",
+            "height": ""
+          },
+          "allowCalculateOverride": false,
+          "encrypted": false,
+          "showCharCount": false,
+          "showWordCount": false,
+          "properties": {},
+          "allowMultipleMasks": false,
+          "addons": [],
+          "inputType": "hidden",
+          "id": "eug8z8f",
+          "tags": [],
+          "isNew": false
+        },
+        {
+          "label": "Program Year Start Date",
+          "key": "programYearStartDate",
+          "type": "hidden",
+          "input": true,
+          "tableView": false,
+          "placeholder": "",
+          "prefix": "",
+          "customClass": "",
+          "suffix": "",
+          "multiple": false,
+          "defaultValue": null,
+          "protected": false,
+          "unique": false,
+          "persistent": false,
+          "hidden": false,
+          "clearOnHide": true,
+          "refreshOn": "",
+          "redrawOn": "",
+          "modalEdit": false,
+          "dataGridLabel": false,
+          "labelPosition": "top",
+          "description": "",
+          "errorLabel": "",
+          "tooltip": "",
+          "tabindex": "",
+          "disabled": false,
+          "autofocus": false,
+          "dbIndex": false,
+          "customDefaultValue": "",
+          "calculateValue": "",
+          "calculateServer": false,
+          "widget": {
+            "type": "input"
+          },
+          "attributes": {},
+          "validateOn": "change",
+          "validate": {
+            "required": false,
+            "custom": "",
+            "customPrivate": false,
+            "strictDateValidation": false,
+            "multiple": false,
+            "unique": false
+          },
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "overlay": {
+            "style": "",
+            "left": "",
+            "top": "",
+            "width": "",
+            "height": ""
+          },
+          "allowCalculateOverride": false,
+          "encrypted": false,
+          "showCharCount": false,
+          "showWordCount": false,
+          "properties": {},
+          "allowMultipleMasks": false,
+          "addons": [],
+          "inputType": "hidden",
+          "id": "ekllt2",
+          "tags": []
+        },
+        {
+          "input": true,
+          "tableView": false,
+          "key": "offeringIntensity",
+          "label": "Offering Intensity",
+          "protected": false,
+          "unique": false,
+          "persistent": false,
+          "type": "hidden",
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "lockKey": true,
+          "calculateValue": "value = data.offeringIntensity;",
+          "calculateServer": false
+        },
+        {
           "label": "Group the dynamic data under a child object (DO NOT REMOVE IT)",
           "tableView": false,
           "key": "supportingData",
@@ -2116,10 +2296,11 @@
                   "addons": [],
                   "id": "eazbh7",
                   "inputType": "number",
-                  "tags": []
+                  "tags": [],
+                  "isNew": false
                 },
                 {
-                  "label": "<strong>Will you be employed full-time or part-time during your Partner's study period</strong>",
+                  "label": "Will you be employed full-time or part-time during your Partner's study period",
                   "optionsLabelPosition": "right",
                   "inline": false,
                   "tableView": false,
@@ -2202,7 +2383,7 @@
                   "tags": []
                 },
                 {
-                  "label": "<strong>Will you be at home caring for eligible dependant children on a full-time basis during your Partner's entire study period? </strong>",
+                  "label": "Will you be at home caring for eligible dependant children on a full-time basis during your Partner's entire study period?",
                   "labelPosition": "top",
                   "labelWidth": "",
                   "labelMargin": "",
@@ -2295,7 +2476,7 @@
                   "defaultValue": ""
                 },
                 {
-                  "label": "<strong>Will you be living with your Partner during your Partner's study period?</strong>",
+                  "label": "Will you be living with your Partner during your Partner's study period?",
                   "optionsLabelPosition": "right",
                   "inline": false,
                   "tableView": false,
@@ -2378,7 +2559,7 @@
                   "tags": []
                 },
                 {
-                  "label": "<strong>Will you be a full-time post-secondary student for some or all of your Partner's study period?</strong>",
+                  "label": "Will you be a full-time post-secondary student for some or all of your Partner's study period?",
                   "optionsLabelPosition": "right",
                   "inline": false,
                   "tableView": false,
@@ -2483,7 +2664,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "label": "<strong>How many weeks will you be a full-time post-secondary student during your Partner's study period?</strong>",
+                      "label": "How many weeks will you be a full-time post-secondary student during your Partner's study period?",
                       "prefix": "Number of Weeks",
                       "mask": false,
                       "spellcheck": true,
@@ -2620,7 +2801,7 @@
                   "tags": []
                 },
                 {
-                  "label": "<strong>Will you be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during your Partner's study period?</strong>",
+                  "label": "Will you be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during your Partner's study period?",
                   "labelPosition": "top",
                   "labelWidth": "",
                   "labelMargin": "",
@@ -2745,7 +2926,7 @@
                     "height": ""
                   },
                   "type": "panel",
-                  "label": "<strong>Will you be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during the your Partner's study period?</strong>",
+                  "label": "Will you be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during the your Partner's study period?",
                   "breadcrumb": "default",
                   "buttonSettings": {
                     "previous": true,
@@ -2759,7 +2940,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "label": "<strong>Enter amount that you will pay during your Partner's study period.</strong>",
+                      "label": "Enter amount that you will pay during your Partner's study period.",
                       "prefix": "$",
                       "mask": false,
                       "spellcheck": true,
@@ -2878,7 +3059,7 @@
                   "id": "e1cacbl"
                 },
                 {
-                  "label": "<strong>Will you be paying for child support and/or spousal support during your Partner's study period?</strong>",
+                  "label": "Will you be paying for child support and/or spousal support during your Partner's study period?",
                   "optionsLabelPosition": "right",
                   "inline": false,
                   "tableView": false,
@@ -3007,7 +3188,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "label": "<strong>Enter amount that you will pay during your Partner's study period.</strong>",
+                      "label": "Enter amount that you will pay during your Partner's study period.",
                       "prefix": "$",
                       "mask": false,
                       "spellcheck": true,
@@ -3125,7 +3306,7 @@
                   "id": "e86cscg"
                 },
                 {
-                  "label": "<strong>Will you be taking care of eligible dependants during your Partner's Study Period? </strong>",
+                  "label": "Will you be taking care of eligible dependants during your Partner's Study Period?",
                   "optionsLabelPosition": "right",
                   "inline": false,
                   "tableView": false,
@@ -3390,7 +3571,7 @@
                       "id": "elh7yc6"
                     },
                     {
-                      "html": "<p><strong>I. I understand that:</strong></p>\n\n<ol>\n\t<li>The student will have access to information provided in this appendix;</li>\n\t<li>The student&rsquo;s school will have access to information provided in this appendix;</li>\n\t<li>The information in this appendix is subject to verification and investigation, as defined in the current program year&rsquo;s StudentAid BC Policy Manual.</li>\n</ol>\n\n<p><strong>II. I understand that signing the Declaration means:</strong></p>\n\n<ol>\n\t<li>I declare that the information I have given is correct and complete and that I have not altered or added to any of the preprinted application and/or appendix questions;</li>\n\t<li>I authorize the student to notify StudentAid BC as soon as practical of any change in my total income as reported on line 15000 of my previous year&rsquo;s T1 General Income Tax and Benefit Return and/or other&ldquo;assessed resources&rdquo;, as defined in the current program year&rsquo;s StudentAid BC Policy Manual;</li>\n\t<li>For the purposes of verifying the accuracy of the personal information provided by me in this appendix, <strong>I consent to the collection, use and disclosure of my personal information</strong> between the BC Ministry of Post Secondary and Future Skills, the BC Ministry of Finance, the National Student Loans Service Centre, and any of their contractors, subcontractors or agents, each with each other, and with the following: financial institutions, lenders, educational institutions, financial aid offices, employers, credit bureaus, credit reporting agencies, Aboriginal Organizations, Federal and provincial Crown corporations, and federal, provincial, municipal ministries/departments/agencies, including but not limited to: BC Ministry of Social Development and Poverty Reduction, BC Ministry of Children and Family Development, BC Ministry of Health, BC Ministry of Attorney General, BC Ministry of Education, BC Public Service Agency, RoadSafe BC, Insurance Corporation of BC (and Service BC acting in the role of ICBC), BC Assessment Authority, Land Title and Survey Authority of BC, BC Registry Services, WorkSafe BC, BC Vital Statistics Agency, the Office of the Superintendent of Bankruptcy Canada, Employment and Social Development Canada , Canada Revenue Agency, and Immigration, Refugees and Citizenship Canada. This consent takes effect on the date that I make the first submission of this Appendix to StudentAid BC, regardless of whether this Appendix is in electronic or written format.</li>\n</ol>\n",
+                      "html": "<p><strong>I. I understand that:</strong></p>\n\n<ol>\n\t<li>The student will have access to information provided in this appendix;</li>\n\t<li>The student&rsquo;s school will have access to information provided in this appendix;</li>\n\t<li>The information in this appendix is subject to verification and investigation, as defined in the current program year&rsquo;s StudentAid BC Policy Manual.</li>\n</ol>\n\n<p><strong>II. I understand that signing the Declaration means:</strong></p>\n\n<ol>\n\t<li>I declare that the information I have given is correct and complete and that I have not altered or added to any of the preprinted application and/or appendix questions;</li>\n\t<li>I authorize the student to notify StudentAid BC as soon as practical of any change in my total income as reported on line 15000 of my previous year&rsquo;s T1 General Income Tax and Benefit Return and/or other&ldquo;assessed resources&rdquo;, as defined in the current program year&rsquo;s StudentAid BC Policy Manual;</li>\n\t<li>For the purposes of verifying the accuracy of the personal information provided by me in this appendix, <strong>I consent to the collection, use and disclosure of my personal information</strong> between the BC Ministry of Post-Secondary Education and Future Skills, the BC Ministry of Finance, the National Student Loans Service Centre, and any of their contractors, subcontractors or agents, each with each other, and with the following: financial institutions, lenders, educational institutions, financial aid offices, employers, credit bureaus, credit reporting agencies, Aboriginal Organizations, Federal and provincial Crown corporations, and federal, provincial, municipal ministries/departments/agencies, including but not limited to: BC Ministry of Social Development and Poverty Reduction, BC Ministry of Children and Family Development, BC Ministry of Health, BC Ministry of Attorney General, BC Ministry of Education, BC Public Service Agency, RoadSafe BC, Insurance Corporation of BC (and Service BC acting in the role of ICBC), BC Assessment Authority, Land Title and Survey Authority of BC, BC Registry Services, WorkSafe BC, BC Vital Statistics Agency, the Office of the Superintendent of Bankruptcy Canada, Employment and Social Development Canada , Canada Revenue Agency, and Immigration, Refugees and Citizenship Canada. This consent takes effect on the date that I make the first submission of this Appendix to StudentAid BC, regardless of whether this Appendix is in electronic or written format.</li>\n</ol>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content",
@@ -3700,7 +3881,7 @@
                     {
                       "key": "declarationContent2",
                       "input": false,
-                      "html": "<p><strong>I. I understand that:</strong></p>\n\n<ol>\n\t<li>It is my responsibility to make sure the information on this application and/or all the documents related to it, are accurate.</li>\n\t<li>I will be asked to re-provide this information if the student edits and re-submits an incomplete application.</li>\n\t<li>I am responsible for alerting the student if any of this information changes. The student will be responsible for reporting those changes to my information once the application is complete.</li>\n\t<li>The student&rsquo;s post-secondary institution will have access to information provided on this application form.</li>\n\t<li>It is against the law to make false or misleading statements on this application or all documents related to it.</li>\n\t<li><strong>All information is subject to audit and verification.</strong></li>\n</ol>\n\n<p><strong>II. I understand that by signing my name on this application form means:</strong></p>\n\n<ol>\n\t<li>I certify that the information I have given is correct and complete.</li>\n\t<li>I have authorized the student to immediately notify StudentAid BC of any increase in my income.</li>\n\t<li>I consent to the exchange of information between StudentAid BC and the post-secondary institution about my marital status and financial status. This consent takes effect when I sign this declaration.</li>\n\t<li>I consent to the verification of my Social Insurance Number, name, date of birth and gender, with information contained in Employment and Social Development Canada Social Insurance Registry. This information will be disclosed to Employment and Social Development Canada for the purpose of confirming the accuracy of my identification in the context of my spouse/common-law partner's financial aid application. This consent takes effect when I sign this declaration.</li>\n\t<li>For the purpose of verifying and/or investigating information pertaining to this application, I consent to the collection, use and disclosure of my personal information between the Ministry Post-Secondary Education and Future Skills(or its agent) and the following agencies: financial institutions, Canadian Imperial Bank of Commerce, Royal Bank, Bank of Nova Scotia, post- secondary institutions, credit agencies, WorkSafe BC, other financial aid offices, Land Title and Survey Authority of BC, BC Registry Services, BC Ministry of Social Development and Poverty Reduction/ employment program for persons with disabilities (or a contracted agent of that Ministry), BC Ministry of Children and Family Development, BC Ministry of Attorney General, BC Ministry of Finance, National Student Loans Service Centre, Immigration, Refugees and Citizenship Canada, RoadSafe BC, Employment and Social Development Canada, Crown corporations, Aboriginal Organizations, federal, provincial, municipal ministries/departments/agencies. This consent takes effect when I sign this declaration.</li>\n\t<li>The terms and conditions of this part-time application Declaration apply to all associated documents, including the part-time reassessment form and appendix 8 of the StudentAid BC program.</li>\n</ol>\n\n<p><strong>Collection and use of information</strong>. The information included in this form and authorized above is collected under Sections 26c and 26e of the Freedom of Information and Protection of Privacy Act and under the authority of the Canada Student Financial Assistance Act, R.S.C. 1994, Chapter C-28 and StudentAid BC. The information provided will be used to determine eligibility for a benefit through StudentAid BC and for statistical and evaluation purposes. If you have any questions about the collection and use of this information, contact the Director, StudentAid BC, Ministry of Advanced Education and Skills Training, PO Box 9173, Stn Prov Govt, Victoria, BC V8W 9H7, call 1-800-561-1818 (toll-free in Canada/U.S.) or +1-778-309-4621 from outside North America.</p>\n",
+                      "html": "<p><strong>I. I understand that:</strong></p>\n\n<ol>\n\t<li>It is my responsibility to make sure the information on this application and/or all the documents related to it, are accurate.</li>\n\t<li>I will be asked to re-provide this information if the student edits and re-submits an incomplete application.</li>\n\t<li>I am responsible for alerting the student if any of this information changes. The student will be responsible for reporting those changes to my information once the application is complete.</li>\n\t<li>The student&rsquo;s post-secondary institution will have access to information provided on this application form.</li>\n\t<li>It is against the law to make false or misleading statements on this application or all documents related to it.</li>\n\t<li><strong>All information is subject to audit and verification.</strong></li>\n</ol>\n\n<p><strong>II. I understand that by signing my name on this application form means:</strong></p>\n\n<ol>\n\t<li>I certify that the information I have given is correct and complete.</li>\n\t<li>I have authorized the student to immediately notify StudentAid BC of any increase in my income.</li>\n\t<li>I consent to the exchange of information between StudentAid BC and the post-secondary institution about my marital status and financial status. This consent takes effect when I sign this declaration.</li>\n\t<li>I consent to the verification of my Social Insurance Number, name, date of birth and gender, with information contained in Employment and Social Development Canada Social Insurance Registry. This information will be disclosed to Employment and Social Development Canada for the purpose of confirming the accuracy of my identification in the context of my spouse/common-law partner&#39;s financial aid application. This consent takes effect when I sign this declaration.</li>\n\t<li>For the purpose of verifying and/or investigating information pertaining to this application, I consent to the collection, use and disclosure of my personal information between the Ministry Post-Secondary Education and Future Skills(or its agent) and the following agencies: financial institutions, Canadian Imperial Bank of Commerce, Royal Bank, Bank of Nova Scotia, post- secondary institutions, credit agencies, WorkSafe BC, other financial aid offices, Land Title and Survey Authority of BC, BC Registry Services, BC Ministry of Social Development and Poverty Reduction/ employment program for persons with disabilities (or a contracted agent of that Ministry), BC Ministry of Children and Family Development, BC Ministry of Attorney General, BC Ministry of Finance, National Student Loans Service Centre, Immigration, Refugees and Citizenship Canada, RoadSafe BC, Employment and Social Development Canada, Crown corporations, Aboriginal Organizations, federal, provincial, municipal ministries/departments/agencies. This consent takes effect when I sign this declaration.</li>\n\t<li>The terms and conditions of this part-time application Declaration apply to all associated documents, including the part-time reassessment form and appendix 8 of the StudentAid BC program.</li>\n</ol>\n\n<p><strong>Collection and use of information</strong>. The information included in this form and authorized above is collected under Sections 26c and 26e of the Freedom of Information and Protection of Privacy Act and under the authority of the Canada Student Financial Assistance Act, R.S.C. 1994, Chapter C-28 and StudentAid BC. The information provided will be used to determine eligibility for a benefit through StudentAid BC and for statistical and evaluation purposes. If you have any questions about the collection and use of this information, contact the Director, StudentAid BC, Ministry of Post-Secondary Education and Future Skills, PO Box 9173, Stn Prov Govt, Victoria, BC V8W 9H7, call 1-800-561-1818 (toll-free in Canada/U.S.) or +1-778-309-4621 from outside North America.</p>\n",
                       "type": "content",
                       "tags": [],
                       "conditional": {
@@ -3938,7 +4119,7 @@
                       "className": ""
                     },
                     {
-                      "html": "<p>I hereby consent to the disclosure of information from my income tax records, by the Canada Revenue Agency to an official of the Ministry of Post Secondary and Future Skills, that pertains to information provided on any Student Aid BC application. The information disclosed will be relevant to, and used solely for the purpose of, determining and verifying eligibility for student aid under the Canada Student Financial Assistance Act. The information disclosed by the Canada Revenue Agency to the Ministry of Post Secondary and Future Skills will be protected from unauthorized use or disclosure and will not be disclosed to any other person or organization without my approval. This authorization is valid for the two taxation years prior to the year of signature of this consent, and the year of signature.</p>\n",
+                      "html": "<p>I hereby consent to the disclosure of information from my income tax records, by the Canada Revenue Agency to an official of the Ministry of Post-Secondary Education and Future Skills, that pertains to information provided on any StudentAid BC application. The information disclosed will be relevant to, and used solely for the purpose of, determining and verifying eligibility for student aid under the Canada Student Financial Assistance Act. The information disclosed by the Canada Revenue Agency to the Ministry of Post-Secondary Education and Future Skills will be protected from unauthorized use or disclosure and will not be disclosed to any other person or organization without my approval. This authorization is valid for the two taxation years prior to the year of signature of this consent, and the year of signature.</p>\n",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content",
@@ -4337,182 +4518,6 @@
           "tree": true,
           "lazyLoad": false,
           "id": "erp1v1j"
-        },
-        {
-          "input": true,
-          "tableView": false,
-          "key": "maxIncome",
-          "label": "Max Income",
-          "protected": false,
-          "unique": false,
-          "persistent": true,
-          "type": "hidden",
-          "tags": [],
-          "conditional": {
-            "show": "",
-            "when": null,
-            "eq": ""
-          },
-          "properties": {},
-          "defaultValue": "100000000",
-          "lockKey": true
-        },
-        {
-          "label": "calculatedTaxYear",
-          "persistent": false,
-          "calculateValue": "// The same logic exists on workflow to define the tax year.\n// The same logic exists on other supporting users' forms.\n// Kept in form and workflow to allow it to change dynamically.\nvalue = new Date(data.programYearStartDate).getFullYear() - 1;",
-          "key": "calculatedTaxYear",
-          "type": "hidden",
-          "input": true,
-          "tableView": false,
-          "placeholder": "",
-          "prefix": "",
-          "customClass": "",
-          "suffix": "",
-          "multiple": false,
-          "defaultValue": null,
-          "protected": false,
-          "unique": false,
-          "hidden": false,
-          "clearOnHide": true,
-          "refreshOn": "",
-          "redrawOn": "",
-          "modalEdit": false,
-          "dataGridLabel": false,
-          "labelPosition": "top",
-          "description": "",
-          "errorLabel": "",
-          "tooltip": "",
-          "hideLabel": false,
-          "tabindex": "",
-          "disabled": false,
-          "autofocus": false,
-          "dbIndex": false,
-          "customDefaultValue": "",
-          "calculateServer": false,
-          "widget": {
-            "type": "input"
-          },
-          "attributes": {},
-          "validateOn": "change",
-          "validate": {
-            "required": false,
-            "custom": "",
-            "customPrivate": false,
-            "strictDateValidation": false,
-            "multiple": false,
-            "unique": false
-          },
-          "conditional": {
-            "show": null,
-            "when": null,
-            "eq": ""
-          },
-          "overlay": {
-            "style": "",
-            "left": "",
-            "top": "",
-            "width": "",
-            "height": ""
-          },
-          "allowCalculateOverride": false,
-          "encrypted": false,
-          "showCharCount": false,
-          "showWordCount": false,
-          "properties": {},
-          "allowMultipleMasks": false,
-          "addons": [],
-          "inputType": "hidden",
-          "id": "eug8z8f"
-        },
-        {
-          "label": "programYearStartDate",
-          "key": "programYearStartDate",
-          "type": "hidden",
-          "input": true,
-          "tableView": false,
-          "placeholder": "",
-          "prefix": "",
-          "customClass": "",
-          "suffix": "",
-          "multiple": false,
-          "defaultValue": null,
-          "protected": false,
-          "unique": false,
-          "persistent": true,
-          "hidden": false,
-          "clearOnHide": true,
-          "refreshOn": "",
-          "redrawOn": "",
-          "modalEdit": false,
-          "dataGridLabel": false,
-          "labelPosition": "top",
-          "description": "",
-          "errorLabel": "",
-          "tooltip": "",
-          "hideLabel": false,
-          "tabindex": "",
-          "disabled": false,
-          "autofocus": false,
-          "dbIndex": false,
-          "customDefaultValue": "",
-          "calculateValue": "",
-          "calculateServer": false,
-          "widget": {
-            "type": "input"
-          },
-          "attributes": {},
-          "validateOn": "change",
-          "validate": {
-            "required": false,
-            "custom": "",
-            "customPrivate": false,
-            "strictDateValidation": false,
-            "multiple": false,
-            "unique": false
-          },
-          "conditional": {
-            "show": null,
-            "when": null,
-            "eq": ""
-          },
-          "overlay": {
-            "style": "",
-            "left": "",
-            "top": "",
-            "width": "",
-            "height": ""
-          },
-          "allowCalculateOverride": false,
-          "encrypted": false,
-          "showCharCount": false,
-          "showWordCount": false,
-          "properties": {},
-          "allowMultipleMasks": false,
-          "addons": [],
-          "inputType": "hidden",
-          "id": "ekllt2",
-          "tags": []
-        },
-        {
-          "input": true,
-          "tableView": true,
-          "key": "offeringIntensity",
-          "label": "Offering Intensity",
-          "protected": false,
-          "unique": false,
-          "persistent": true,
-          "type": "hidden",
-          "tags": [],
-          "conditional": {
-            "show": "",
-            "when": null,
-            "eq": ""
-          },
-          "properties": {},
-          "lockKey": true,
-          "calculateValue": "value = data.offeringIntensity;",
-          "calculateServer": false
         }
       ],
       "placeholder": "",

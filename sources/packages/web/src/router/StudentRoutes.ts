@@ -54,6 +54,18 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
+        path: AppRoutes.InvalidBetaUser,
+        name: StudentRoutesConst.INVALID_BETA_USER,
+        component: Login,
+        props: {
+          showInvalidBetaUserMessage: true,
+        },
+        meta: {
+          requiresAuth: false,
+          clientType: ClientIdType.Student,
+        },
+      },
+      {
         path: "student-profile",
         name: StudentRoutesConst.STUDENT_PROFILE_CREATE,
         component: StudentProfileCreate,

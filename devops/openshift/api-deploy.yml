@@ -56,6 +56,8 @@ objects:
                   value: "${MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION}"
                 - name: MAXIMUM_IDLE_TIME_FOR_WARNING_AEST
                   value: "${MAXIMUM_IDLE_TIME_FOR_WARNING_AEST}"
+                - name: ALLOW_BETA_USERS_ONLY
+                  value: "${ALLOW_BETA_USERS_ONLY}"
                 - name: POSTGRES_HOST
                   valueFrom:
                     secretKeyRef:
@@ -489,4 +491,6 @@ parameters:
   - name: TLS_KEY
     required: true
   - name: TLS_CA_CERTIFICATE
+    required: true
+  - name: ALLOW_BETA_USERS_ONLY
     required: true

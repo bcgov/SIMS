@@ -621,6 +621,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
         location: {
           id: true,
           name: true,
+          institution: {
+            id: true,
+            legalOperatingName: true,
+          },
         },
         pirDeniedReasonId: {
           id: true,
@@ -632,13 +636,22 @@ export class ApplicationService extends RecordDataModelService<Application> {
           startDate: true,
           endDate: true,
         },
+        student: {
+          id: true,
+          user: {
+            id: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
       },
       relations: {
         applicationException: true,
         currentAssessment: { offering: true },
-        location: true,
+        location: { institution: true },
         pirDeniedReasonId: true,
         programYear: true,
+        student: { user: true },
       },
       where: {
         id: applicationId,
@@ -1201,9 +1214,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return this.repo
       .createQueryBuilder("application")
       .select([
+        "application.id",
         "application.applicationStatus",
         "application.applicationNumber",
+        "application.isArchived",
         "currentAssessment.id",
+        "offering.id",
         "offering.offeringIntensity",
         "offering.studyStartDate",
         "offering.studyEndDate",
@@ -1212,8 +1228,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "location.name",
         "offering.name",
         "student",
+        "user.id",
         "user.firstName",
         "user.lastName",
+        "user.email",
+        "studentAppeal.id",
         "educationProgram.credentialType",
         "educationProgram.deliveredOnline",
         "educationProgram.deliveredOnSite",
@@ -1226,6 +1245,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       ])
       .innerJoin("application.currentAssessment", "currentAssessment")
       .innerJoin("currentAssessment.offering", "offering")
+      .leftJoin("currentAssessment.studentAppeal", "studentAppeal")
       .innerJoin("offering.educationProgram", "educationProgram")
       .innerJoin("offering.institutionLocation", "location")
       .innerJoin("application.student", "student")
@@ -1468,18 +1488,22 @@ export class ApplicationService extends RecordDataModelService<Application> {
   /**
    * Fetches application by applicationId and studentId.
    * @param applicationId application id.
-   * @param studentId student id (optional parameter.).
+   * @param options options
+   * - `studentId` student id.
    * @returns application details
    */
   async getApplicationDetails(
     applicationId: number,
-    studentId?: number,
+    options?: { studentId?: number },
   ): Promise<Application> {
     return this.repo.findOne({
       select: {
         id: true,
         applicationStatus: true,
         applicationNumber: true,
+        student: {
+          id: true,
+        },
         location: {
           id: true,
           name: true,
@@ -1527,6 +1551,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         programYear: { id: true },
       },
       relations: {
+        student: true,
         pirDeniedReasonId: true,
         currentAssessment: { offering: true, disbursementSchedules: true },
         applicationException: true,
@@ -1538,7 +1563,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         id: applicationId,
         applicationStatus: Not(ApplicationStatus.Overwritten),
         student: {
-          id: studentId,
+          id: options?.studentId,
         },
       },
     });
