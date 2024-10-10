@@ -1588,7 +1588,7 @@
       <bpmn:extensionElements>
         <zeebe:calledDecision decisionId="dmnFullTimeApplicationTransportationMaximum" resultVariable="dmnFullTimeCalculatedDataApplicationtransportationMaximum" />
         <zeebe:ioMapping>
-          <zeebe:output source="=min(studentDataTransportationCost, dmnFullTimeCalculatedDataApplicationtransportationMaximum.limitApplicationTransportation)&#10;" target="calculatedDataReturnTransportationCost" />
+          <zeebe:output source="=min(studentDataTransportationCost, dmnFullTimeCalculatedDataApplicationtransportationMaximum)&#10;" target="calculatedDataReturnTransportationCost" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0r00ml4</bpmn:incoming>
