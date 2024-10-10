@@ -7,8 +7,8 @@ import {
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-program-related-costs.`, () => {
   it(
-    "Should use minimum (offering program related costs) " +
-      "when dmn limit for books and supplies * number of offering weeks has a higher value.",
+    "Should get program related costs as offering program related costs when the DMN limit for books and supplies " +
+      "multiplied by offering weeks has the greater value.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
@@ -31,7 +31,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-program-related-
   );
 
   it(
-    "Should use minimum (dmn limit for books and supplies * number of offering weeks) " +
+    "Should get DMN limit for books and supplies multiplied by offering weeks " +
       "when offering program related costs has a higher value.",
     async () => {
       // Arrange
