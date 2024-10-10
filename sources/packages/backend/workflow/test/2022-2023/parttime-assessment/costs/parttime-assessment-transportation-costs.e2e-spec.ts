@@ -8,16 +8,16 @@ import { OfferingDeliveryOptions, YesNoOptions } from "@sims/test-utils";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-costs.`, () => {
   describe("Should determine total transportation allowance when student does not require additional transportation.", () => {
-    it(
-      "Should determine transportation allowance when there is no additional transportation needed " +
-        "for an offering delivered onsite.",
-      async () => {
+    for (const offeringDelivery of [
+      OfferingDeliveryOptions.Onsite,
+      OfferingDeliveryOptions.Blended,
+    ]) {
+      it(`Should determine transportation allowance when there is no additional transportation needed for an offering delivered ${offeringDelivery}.`, async () => {
         // Arrange
         const assessmentConsolidatedData =
           createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
         assessmentConsolidatedData.offeringWeeks = 30;
-        assessmentConsolidatedData.offeringDelivered =
-          OfferingDeliveryOptions.Onsite;
+        assessmentConsolidatedData.offeringDelivered = offeringDelivery;
         // Act
         const calculatedAssessment =
           await executePartTimeAssessmentForProgramYear(
@@ -35,8 +35,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
           calculatedAssessment.variables
             .calculatedDataTotalTransportationAllowance,
         ).toBe(390);
-      },
-    );
+      });
+    }
 
     it(
       "Should calculate transportation allowance as 0 when there is no additional transportation needed " +
@@ -140,6 +140,17 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-transportation-c
     {
       offeringWeeks: 16,
       offeringDelivered: OfferingDeliveryOptions.Onsite,
+      additionalTransportOwner: YesNoOptions.Yes,
+      additionalTransportKm: 300,
+      additionalTransportWeeks: 10,
+      additionalTransportPlacement: YesNoOptions.No,
+      expectedWeeklyAdditionalTransportCost: 94,
+      expectedTotalAdditionalTransportAllowance: 940,
+      expectedTotalTransportAllowance: 1018,
+    },
+    {
+      offeringWeeks: 16,
+      offeringDelivered: OfferingDeliveryOptions.Blended,
       additionalTransportOwner: YesNoOptions.Yes,
       additionalTransportKm: 300,
       additionalTransportWeeks: 10,
