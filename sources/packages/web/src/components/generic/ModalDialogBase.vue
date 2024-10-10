@@ -21,7 +21,7 @@
       </v-card-title>
       <v-divider-inset-opaque class="my-1" />
       <v-card-text class="pt-0">
-        <div class="pb-6" v-if="subTitle">{{ subTitle }}</div>
+        <div class="pb-2" v-if="subTitle">{{ subTitle }}</div>
         <slot name="content">Please add the modal content here!</slot>
       </v-card-text>
       <v-divider-inset-opaque />
