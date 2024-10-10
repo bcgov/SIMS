@@ -195,7 +195,6 @@ export default defineComponent({
         snackBar.success("Profile Information updated successfully.");
         return true;
       } catch (error) {
-        studentEditProfile.value.loading = false;
         snackBar.error(
           "An error happened while updating the profile information. Your profile information could not be updated.",
         );
