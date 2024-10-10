@@ -1588,7 +1588,6 @@
       <bpmn:extensionElements>
         <zeebe:calledDecision decisionId="dmnFullTimeApplicationTransportationMaximum" resultVariable="dmnFullTimeCalculatedDataApplicationtransportationMaximum" />
         <zeebe:ioMapping>
-          <zeebe:input source="=if offeringWeeks &#60; 27 then &#34;[1..26]&#34; else &#34;[27..52]&#34;" target="offeringWeeks" />
           <zeebe:output source="=min(studentDataTransportationCost, dmnFullTimeCalculatedDataApplicationtransportationMaximum.limitApplicationTransportation)&#10;" target="calculatedDataReturnTransportationCost" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
