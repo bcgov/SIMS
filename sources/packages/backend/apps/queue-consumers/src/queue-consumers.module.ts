@@ -29,6 +29,7 @@ import {
   CASSupplierIntegrationScheduler,
   ApplicationChangesReportIntegrationScheduler,
   StudentApplicationNotificationsScheduler,
+  SIMSToSFASIntegrationScheduler,
 } from "./processors";
 import {
   DisbursementScheduleSharedService,
@@ -148,6 +149,7 @@ import { ObjectStorageService } from "@sims/integrations/object-storage";
     CASService,
     ApplicationChangesReportIntegrationScheduler,
     StudentApplicationNotificationsScheduler,
+    SIMSToSFASIntegrationScheduler,
   ],
   controllers: [HealthController],
 })
