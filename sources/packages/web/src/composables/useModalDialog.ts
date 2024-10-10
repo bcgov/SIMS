@@ -11,7 +11,9 @@ export function useModalDialog<T, TParameter = any>() {
     value: T,
     options?: { keepModalOpen?: boolean },
   ) => {
-    if (beforeResolvePromise) {
+    // Check if a truthy value was returned.
+    // value as false would indicate the modal was canceled.
+    if (value && beforeResolvePromise) {
       loading.value = true;
       const success = await beforeResolvePromise(value);
       loading.value = false;

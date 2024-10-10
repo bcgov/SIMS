@@ -168,7 +168,16 @@ export class StudentStudentsController extends BaseController {
     @UserToken() studentUserToken: StudentUserToken,
   ): Promise<void> {
     if (studentUserToken.identityProvider === IdentityProviders.BCSC) {
-      await this.studentService.synchronizeFromUserToken(studentUserToken);
+      await this.studentService.updateStudentUserData(
+        {
+          studentId: studentUserToken.studentId,
+          lastName: studentUserToken.lastName,
+          givenNames: studentUserToken.givenNames,
+          birthdate: studentUserToken.birthdate,
+          email: studentUserToken.email,
+        },
+        studentUserToken.userId,
+      );
     }
   }
 

@@ -13,6 +13,7 @@ export enum Role {
   StudentResolveRestriction = "student-resolve-restriction",
   StudentUploadFile = "student-upload-file",
   StudentApproveDeclineAccountRequests = "student-approve-decline-account-requests",
+  StudentEditProfile = "student-edit-profile",
   StudentApproveDeclineExceptions = "student-approve-decline-exceptions",
   StudentApproveDeclineAppeals = "student-approve-decline-appeals",
   StudentAddSINExpiry = "student-add-sin-expiry",

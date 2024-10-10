@@ -404,3 +404,7 @@ ul.no-bullets {
   list-style-type: none !important;
   margin: 0;
 }
+
+div.v-field__field input[type="date"] {
+  padding: 1rem;
+}
