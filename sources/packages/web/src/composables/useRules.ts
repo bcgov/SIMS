@@ -1,8 +1,8 @@
 import { useValidators } from "@/composables";
 
 const NOTES_MAX_CHARACTERS = 500;
-const GIVENNAMES_MAX_LENGTH = 100;
-const LASTNAME_MAX_LENGTH = 100;
+const GIVEN_NAMES_MAX_LENGTH = 100;
+const LAST_NAME_MAX_LENGTH = 100;
 const EMAIL_MAX_LENGTH = 300;
 const { isSINValid, checkMaxCharacters, isEmailValid } = useValidators();
 
@@ -21,14 +21,14 @@ export function useRules() {
   const checkGivenNameLengthRule = (givenName: string) => {
     return checkLengthRule(
       givenName,
-      GIVENNAMES_MAX_LENGTH,
+      GIVEN_NAMES_MAX_LENGTH,
       "Given Names",
       false,
     );
   };
 
   const checkLastNameLengthRule = (lastName: string) => {
-    return checkLengthRule(lastName, LASTNAME_MAX_LENGTH, "Lastname");
+    return checkLengthRule(lastName, LAST_NAME_MAX_LENGTH, "Lastname");
   };
 
   const checkEmailLengthRule = (email: string) => {

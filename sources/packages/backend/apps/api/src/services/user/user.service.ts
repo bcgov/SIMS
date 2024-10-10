@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { DataSource, UpdateResult } from "typeorm";
 import {
   DataModelService,
-  IdentityProviders,
+  SpecificIdentityProviders,
   Student,
   User,
 } from "@sims/sims-db";
@@ -60,7 +60,7 @@ export class UserService extends DataModelService<User> {
    */
   async updateIdentityProvider(
     userId: number,
-    identityProviderType: IdentityProviders,
+    identityProviderType: SpecificIdentityProviders,
   ): Promise<void> {
     await this.repo.update({ id: userId }, { identityProviderType });
   }

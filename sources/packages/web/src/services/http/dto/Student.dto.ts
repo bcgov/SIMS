@@ -34,15 +34,12 @@ export class UpdateStudentAPIInDTO extends AddressDetailsFormAPIDTO {
   identityProvider: string;
 }
 
-export class UpdateStudentDetailsAPIInDTO {
-  @Expose()
+export interface UpdateStudentDetailsAPIInDTO {
   givenNames: string;
-  @Expose()
   lastName: string;
-  @Expose()
   birthdate: string;
-  @Expose()
   email: string;
+  noteDescription: string;
 }
 
 export interface UpdateStudentDetails {
@@ -50,6 +47,7 @@ export interface UpdateStudentDetails {
   lastName: string;
   birthdate: string;
   email: string;
+  noteDescription: string;
 }
 
 export interface StudentProfileAPIOutDTO {

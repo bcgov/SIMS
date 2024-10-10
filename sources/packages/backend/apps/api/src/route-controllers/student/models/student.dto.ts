@@ -20,9 +20,9 @@ import {
   NOTE_DESCRIPTION_MAX_LENGTH,
   FILE_NAME_MAX_LENGTH,
   DisabilityStatus,
-  LASTNAME_MAX_LENGTH,
-  GIVENNAMES_MAX_LENGTH,
   IdentityProviders,
+  USER_LAST_NAME_MAX_LENGTH,
+  USER_GIVEN_NAMES_MAX_LENGTH,
 } from "@sims/sims-db";
 import {
   AddressAPIOutDTO,
@@ -283,13 +283,20 @@ export class UpdateDisabilityStatusAPIInDTO {
  */
 export class UpdateStudentDetailsAPIInDTO {
   @IsNotEmpty()
-  @MaxLength(LASTNAME_MAX_LENGTH)
+  @MaxLength(USER_LAST_NAME_MAX_LENGTH)
   lastName: string;
-  @MaxLength(GIVENNAMES_MAX_LENGTH)
+  @MaxLength(USER_GIVEN_NAMES_MAX_LENGTH)
+  @ValidateIf(
+    (value: UpdateStudentDetailsAPIInDTO) => value.givenNames !== null,
+  )
   givenNames: string;
   @IsNotEmpty()
+  @IsDateString()
   birthdate: string;
   @IsNotEmpty()
   @IsEmail()
   email: string;
+  @IsNotEmpty()
+  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
+  noteDescription: string;
 }

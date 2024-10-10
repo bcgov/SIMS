@@ -85,7 +85,6 @@ export interface IUserToken {
    */
   identityProvider:
     | IdentityProviders.BCSC
-    | IdentityProviders.BCeIDBasic
     | IdentityProviders.BCeIDBoth
     | IdentityProviders.IDIR;
   /**

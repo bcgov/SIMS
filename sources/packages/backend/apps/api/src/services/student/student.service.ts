@@ -501,32 +501,26 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
-   * Use the information available in the authentication token to update
-   * the user and student data currently on DB.
-   * @param studentToken student authentication token.
-   * @param options method options:
-   * - `userId` user id provided in case the student data
-   * is updated by the ministry.
+   * Updates the user and student data currently on DB.
+   * @param studentUserData student user data to be updated.
+   * @param auditUserId user that should be considered the one that is causing the changes.
    * @returns updated student, if some data was changed.
    */
   async updateStudentUserData(
     studentUserData: StudentUserData,
-    options?: { userId?: number },
-  ): Promise<Student> {
-    const userId = studentUserData.userId
-      ? studentUserData.userId
-      : options?.userId;
+    auditUserId: number,
+  ): Promise<boolean> {
     const studentToSync = await this.getStudentById(studentUserData.studentId);
     let mustSave = false;
-    if (studentUserData.givenNames === undefined) {
+    if (!studentUserData.givenNames?.trim()) {
       studentUserData.givenNames = null;
     }
     if (
       !dayjs(studentUserData.birthdate).isSame(studentToSync.birthDate) ||
       studentUserData.lastName.toLowerCase() !==
         studentToSync.user.lastName.toLowerCase() ||
-      studentUserData.givenNames.toLowerCase() !==
-        studentToSync.user.firstName.toLowerCase()
+      studentUserData.givenNames?.toLowerCase() !==
+        studentToSync.user.firstName?.toLowerCase()
     ) {
       studentToSync.birthDate = studentUserData.birthdate;
       studentToSync.user.lastName = studentUserData.lastName;
@@ -544,23 +538,21 @@ export class StudentService extends RecordDataModelService<Student> {
     }
 
     if (mustSave) {
-      return this.dataSource.transaction(async (transactionalEntityManager) => {
+      await this.dataSource.transaction(async (transactionalEntityManager) => {
         await this.noteSharedService.createStudentNote(
           studentToSync.id,
           NoteType.General,
-          "Student information updated.",
-          userId,
+          studentUserData.noteDescription,
+          auditUserId,
           transactionalEntityManager,
         );
-        studentToSync.modifier = { id: userId } as User;
-        return transactionalEntityManager
+        studentToSync.modifier = { id: auditUserId } as User;
+        await transactionalEntityManager
           .getRepository(Student)
           .save(studentToSync);
       });
     }
-
-    // If information between token and SABC DB is same, then just returning without the database call.
-    return studentToSync;
+    return mustSave;
   }
 
   /**

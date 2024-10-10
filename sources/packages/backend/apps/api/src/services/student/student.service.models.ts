@@ -18,7 +18,7 @@ export interface StudentUserData {
   lastName: string;
   givenNames: string;
   email: string;
-  userId?: number;
+  noteDescription?: string;
 }
 
 /**

@@ -432,6 +432,9 @@ export class StudentAESTController extends BaseController {
   @Roles(Role.StudentEditProfile)
   @Patch(":studentId")
   @ApiNotFoundResponse({ description: "Student does not exist." })
+  @ApiUnprocessableEntityResponse({
+    description: "No profile update found to be saved.",
+  })
   async updateProfileInformation(
     @Param("studentId", ParseIntPipe) studentId: number,
     @Body() payload: UpdateStudentDetailsAPIInDTO,
@@ -441,16 +444,22 @@ export class StudentAESTController extends BaseController {
     if (!student) {
       throw new NotFoundException("Student does not exist.");
     }
-    if (student.user.identityProviderType === IdentityProviders.BCeIDBasic) {
-      await this.studentService.updateStudentUserData(
-        {
-          studentId,
-          ...payload,
-        },
-        { userId: userToken.userId },
+    if (student.user.identityProviderType !== IdentityProviders.BCeIDBasic) {
+      throw new UnprocessableEntityException(
+        "Not possible to update a non-basic-BCeID student.",
       );
-      return;
     }
-    throw new NotFoundException("Student does not exist.");
+    const updated = await this.studentService.updateStudentUserData(
+      {
+        studentId,
+        ...payload,
+      },
+      userToken.userId,
+    );
+    if (!updated) {
+      throw new UnprocessableEntityException(
+        "No profile update found to be saved.",
+      );
+    }
   }
 }

@@ -21,7 +21,7 @@
           ><template #value
             ><v-text-field
               hide-details="auto"
-              label="Lastname"
+              label="Last Name"
               v-model="formModel.lastName"
               variant="outlined"
               :rules="[checkLastNameLengthRule]"
@@ -52,26 +52,27 @@
               class="mb-6" />
             <v-spacer /></template
         ></title-value>
+        <v-textarea
+          label="Notes"
+          v-model="formModel.noteDescription"
+          variant="outlined"
+          :rules="[checkNotesLengthRule]"
+        />
       </template>
       <template #footer>
-        <check-permission-role :role="Role.StudentEditProfile">
-          <template #="{ notAllowed }">
-            <footer-buttons
-              :processing="loading"
-              primaryLabel="Update Profile"
-              @primaryClick="submit"
-              @secondaryClick="cancel"
-              :disablePrimaryButton="notAllowed"
-            />
-          </template>
-        </check-permission-role>
+        <footer-buttons
+          :processing="loading"
+          primaryLabel="Update Profile"
+          @primaryClick="submit"
+          @secondaryClick="cancel"
+        />
       </template>
     </modal-dialog-base>
   </v-form>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watchEffect, PropType } from "vue";
+import { defineComponent, ref } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import TitleValue from "@/components/generic/TitleValue.vue";
 import { useFormatters, useModalDialog, useRules } from "@/composables";
@@ -86,25 +87,24 @@ export default defineComponent({
     ModalDialogBase,
     TitleValue,
   },
-  props: {
-    updatedStudentDetails: {
-      type: Object as PropType<UpdateStudentDetails>,
-      required: true,
-    },
-  },
-  setup(props) {
+  setup() {
     const {
       checkGivenNameLengthRule,
       checkLastNameLengthRule,
       checkEmailLengthRule,
       checkEmailValidationRule,
+      checkNotesLengthRule,
     } = useRules();
     const { getISODateOnlyString } = useFormatters();
     const getTodaysDate = (): string => {
       return getISODateOnlyString(new Date());
     };
-    const { showDialog, showModal, resolvePromise, loading, showParameter } =
-      useModalDialog<UpdateStudentDetailsAPIInDTO | boolean>();
+    const {
+      showDialog,
+      showModal: showModalInternal,
+      resolvePromise,
+      loading,
+    } = useModalDialog<UpdateStudentDetailsAPIInDTO | boolean>();
     const editStudentProfileForm = ref({} as VForm);
     const formModel = ref({} as UpdateStudentDetailsAPIInDTO);
     const submit = async () => {
@@ -112,17 +112,24 @@ export default defineComponent({
       if (!validationResult.valid) {
         return;
       }
-      // Copying the payload, as reset makes the formModel properties null.
       await resolvePromise(formModel.value);
     };
-    watchEffect(() => {
+
+    const showModal = async (
+      studentProfile: UpdateStudentDetails,
+      canResolvePromise?: (
+        value: UpdateStudentDetailsAPIInDTO | boolean,
+      ) => Promise<boolean>,
+    ) => {
       formModel.value = {
-        givenNames: props.updatedStudentDetails.givenNames,
-        lastName: props.updatedStudentDetails.lastName,
-        birthdate: props.updatedStudentDetails.birthdate,
-        email: props.updatedStudentDetails.email,
+        givenNames: studentProfile.givenNames,
+        lastName: studentProfile.lastName,
+        birthdate: studentProfile.birthdate,
+        email: studentProfile.email,
+        noteDescription: "",
       };
-    });
+      return showModalInternal(studentProfile, canResolvePromise);
+    };
 
     const cancel = () => {
       editStudentProfileForm.value.resetValidation();
@@ -138,11 +145,11 @@ export default defineComponent({
       submit,
       cancel,
       loading,
-      showParameter,
       checkGivenNameLengthRule,
       checkLastNameLengthRule,
       checkEmailLengthRule,
       checkEmailValidationRule,
+      checkNotesLengthRule,
       Role,
     };
   },

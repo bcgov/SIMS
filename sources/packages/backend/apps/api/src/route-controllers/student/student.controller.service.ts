@@ -256,7 +256,11 @@ export class StudentControllerService {
       disabilityStatus: student.disabilityStatus,
       validSin: student.sinValidation.isValidSIN,
     };
-    if (options?.withAdditionalSpecificData && options?.withSensitiveData) {
+    let specificData: Pick<
+      AESTStudentProfileAPIOutDTO,
+      "hasRestriction" | "identityProviderType"
+    >;
+    if (options?.withAdditionalSpecificData) {
       const studentRestrictions =
         await this.studentRestrictionService.getStudentRestrictionsById(
           studentId,
@@ -264,20 +268,22 @@ export class StudentControllerService {
             onlyActive: true,
           },
         );
-      return {
-        ...studentProfile,
-        sin: student.sinValidation.sin,
+      specificData = {
         hasRestriction: !!studentRestrictions.length,
         identityProviderType: student.user.identityProviderType,
       };
     }
+    let sensitiveData: Pick<AESTStudentProfileAPIOutDTO, "sin">;
     if (options?.withSensitiveData) {
-      return {
-        ...studentProfile,
+      sensitiveData = {
         sin: student.sinValidation.sin,
       };
     }
-    return studentProfile;
+    return {
+      ...studentProfile,
+      ...specificData,
+      ...sensitiveData,
+    };
   }
 
   /**

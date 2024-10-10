@@ -111,18 +111,16 @@
     </content-group>
     <edit-student-profile-modal
       ref="studentEditProfile"
-      :updatedStudentDetails="updatedStudentDetails"
     ></edit-student-profile-modal>
   </body-header-container>
 </template>
 
 <script lang="ts">
-import { onMounted, ref, defineComponent, computed, watchEffect } from "vue";
+import { onMounted, ref, defineComponent, computed } from "vue";
 import { StudentService } from "@/services/StudentService";
 import { ModalDialog, useFormatters, useSnackBar } from "@/composables";
 import {
   AddressAPIOutDTO,
-  UpdateStudentDetails,
   UpdateStudentDetailsAPIInDTO,
 } from "@/services/http/dto";
 import { IdentityProviders, Role, StudentProfile } from "@/types";
@@ -155,7 +153,6 @@ export default defineComponent({
   },
   setup(props) {
     const snackBar = useSnackBar();
-    const updatedStudentDetails = ref({} as UpdateStudentDetails);
     const studentEditProfile = ref(
       {} as ModalDialog<UpdateStudentDetailsAPIInDTO | boolean>,
     );
@@ -178,6 +175,7 @@ export default defineComponent({
           lastName: studentDetail.value.lastName,
           birthdate: studentDetail.value.dateOfBirth,
           email: studentDetail.value.email,
+          noteDescription: "",
         },
         saveUpdatedProfileInfo,
       );
@@ -209,15 +207,6 @@ export default defineComponent({
       );
     });
 
-    watchEffect(() => {
-      updatedStudentDetails.value = {
-        givenNames: studentDetail.value.firstName,
-        lastName: studentDetail.value.lastName,
-        birthdate: studentDetail.value.dateOfBirth,
-        email: studentDetail.value.email,
-      };
-    });
-
     onMounted(loadStudentProfile);
     return {
       studentDetail,
@@ -230,7 +219,6 @@ export default defineComponent({
       editStudentProfile,
       canEditProfile,
       studentEditProfile,
-      updatedStudentDetails,
     };
   },
 });
