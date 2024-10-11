@@ -5447,6 +5447,25 @@
           "properties": {},
           "lockKey": true,
           "defaultValue": "365"
+        },
+        {
+          "input": true,
+          "tableView": true,
+          "key": "currentTaxYear",
+          "label": "currentTaxYear",
+          "protected": false,
+          "unique": false,
+          "persistent": true,
+          "type": "hidden",
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "lockKey": true,
+          "calculateValue": "value = data.programYear ? data.programYear: \"\";"
         }
       ],
       "input": false,
@@ -23066,7 +23085,7 @@
                   "value": ""
                 }
               ],
-              "content": "If you have had, or anticipate having a significant decrease in income for {{data.calculatedTaxYear}}, you may request to be assessed using this year's estimated income.",
+              "content": "If you have had, or anticipate having a significant decrease in income for {{data.currentTaxYear}}, you may request to be assessed using this year's estimated income.",
               "refreshOnChange": true,
               "customClass": "",
               "hidden": false,

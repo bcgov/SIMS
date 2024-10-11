@@ -69,6 +69,25 @@
             "lockKey": true
         },
         {
+            "input": true,
+            "tableView": true,
+            "key": "currentTaxYear",
+            "label": "currentTaxYear",
+            "protected": false,
+            "unique": false,
+            "persistent": true,
+            "type": "hidden",
+            "tags": [],
+            "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+            },
+            "properties": {},
+            "calculateValue": "// From the program year, get the calendar start year of the the program year.\r\n// e.g. program year  = 2022-2023, calendar start year is 2022. And Current tax year should be 2022.\r\nconst [startYear] = data.programYear ? data.programYear.split(\"-\"):[];\r\nvalue = startYear;",
+            "lockKey": true
+        },
+        {
             "key": "financialInformation",
             "label": "Financial Information",
             "input": false,
@@ -279,7 +298,7 @@
                             "value": ""
                         }
                     ],
-                    "content": "If you have had, or anticipate having a significant decrease in income for {{data.calculatedTaxYear}}, you may request to be assessed using this year's estimated income.",
+                    "content": "If you have had, or anticipate having a significant decrease in income for {{data.currentTaxYear}}, you may request to be assessed using this year's estimated income.",
                     "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
