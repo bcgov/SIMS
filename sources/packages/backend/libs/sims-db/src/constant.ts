@@ -63,6 +63,7 @@ export const TableNames = {
   CASSuppliers: "cas_suppliers",
   ApplicationRestrictionBypasses: "application_restriction_bypasses",
   BetaUsersAuthorizations: "beta_users_authorizations",
+  SFASBridgeLogs: "sfas_bridge_logs",
 };
 
 export const INSTITUTION_TYPE_BC_PUBLIC = 1;
