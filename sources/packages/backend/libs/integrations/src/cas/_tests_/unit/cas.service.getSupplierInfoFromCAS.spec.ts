@@ -22,15 +22,15 @@ describe("CASService-getSupplierInfoFromCAS", () => {
 
     // Act
     casService.getSupplierInfoFromCAS(
-      "token",
-      "sin",
-      "Last name with special characters: ÁÉÍÓÚ-áéíóú",
+      "dummy_token_value",
+      "dummy_sin_value",
+      "Last name with special characters: ÁÉÍÓÚ—áéíóú",
     );
 
     // Assert
     expect(httpService.axiosRef.get).toHaveBeenCalledWith(
-      "cas-url/cfs/supplier/LAST NAME WITH SPECIAL CHARACTERS: AEIOU-AEIOU/lastname/sin/sin",
-      { headers: { Authorization: "Bearer token" } },
+      "cas-url/cfs/supplier/LAST NAME WITH SPECIAL CHARACTERS: AEIOU-AEIOU/lastname/dummy_sin_value/sin",
+      { headers: { Authorization: "Bearer dummy_token_value" } },
     );
   });
 });
