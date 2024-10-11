@@ -96,7 +96,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     expect(casServiceMock.getSupplierInfoFromCAS).toHaveBeenCalledWith(
       CAS_LOGON_MOCKED_RESULT.access_token,
       student.sinValidation.sin,
-      student.user.lastName.toUpperCase(),
+      student.user.lastName,
     );
 
     const updateCASSupplier = await db.casSupplier.findOneBy({

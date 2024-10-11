@@ -39,7 +39,7 @@ import {
   ApplicationService,
 } from "../../services";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
-import { CustomNamedError } from "@sims/utilities";
+import { CustomNamedError, FILE_DEFAULT_ENCODING } from "@sims/utilities";
 import BaseController from "../BaseController";
 import { FormNames } from "../../services/form/constants";
 import {
@@ -63,7 +63,6 @@ import {
   uploadLimits,
 } from "../../utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import { FILE_DEFAULT_ENCODING } from "@sims/services/constants";
 
 /**
  * Scholastic standing controller for institutions Client.
