@@ -46,7 +46,6 @@ export class SIMSToSFASIntegrationScheduler extends BaseScheduler<void> {
       const errorMessage = "Unexpected error while executing the job.";
       processSummary.error(errorMessage, error);
       throw new Error(errorMessage, { cause: error });
-      return [errorMessage];
     } finally {
       this.logger.logProcessSummary(processSummary);
       await logProcessSummaryToJobLogger(processSummary, job);
