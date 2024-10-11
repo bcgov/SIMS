@@ -1,11 +1,6 @@
 import { AddressInfo } from "@sims/sims-db";
 import { AddressDetailsAPIOutDTO } from "../models/common.dto";
-// 'selectedCountry' in the form will have the value 'other',
-// when 'Other'(i.e country other than canada) is selected.
-export const OTHER_COUNTRY = "other";
-// 'selectedCountry' in the form will have the value 'canada',
-// when 'Canada' is selected.
-export const COUNTRY_CANADA = "canada";
+import { OTHER_COUNTRY } from "@sims/utilities";
 
 /**
  * Util to transform address details for formIO.

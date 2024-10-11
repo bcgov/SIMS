@@ -5,7 +5,7 @@ import { CASSupplier, SupplierAddress, SupplierStatus } from "@sims/sims-db";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { Repository, UpdateResult } from "typeorm";
 import { CASService } from "@sims/integrations/cas/cas.service";
-import { CustomNamedError } from "@sims/utilities";
+import { CustomNamedError, isAddressFromCanada } from "@sims/utilities";
 import {
   CASAuthDetails,
   CASSupplierResponse,
@@ -13,6 +13,42 @@ import {
   CASSupplierResponseItemAddress,
 } from "@sims/integrations/cas/models/cas-supplier-response.model";
 import { CAS_AUTH_ERROR } from "@sims/integrations/constants";
+
+// TODO: move these model to a separate file.
+// Should we create a new class to handle the evaluation?
+enum CASEvaluationStatus {
+  ManualInterventionRequired,
+  IsActiveSupplier,
+  HasActiveSite,
+  NotFound,
+}
+
+enum ManualInterventionReason {
+  GivenNameNotPresent,
+  NonCanadianAddress,
+}
+
+interface CASEvaluationManualInterventionResult {
+  status: CASEvaluationStatus.ManualInterventionRequired;
+  reason: ManualInterventionReason;
+}
+
+interface CASFoundSupplierResult {
+  status:
+    | CASEvaluationStatus.IsActiveSupplier
+    | CASEvaluationStatus.HasActiveSite;
+  activeSupplier: any;
+  activeSite: any;
+}
+
+interface CASNotFoundSupplierResult {
+  status: CASEvaluationStatus.NotFound;
+}
+
+type CASEvaluationResult =
+  | CASNotFoundSupplierResult
+  | CASFoundSupplierResult
+  | CASEvaluationManualInterventionResult;
 
 @Injectable()
 export class CASSupplierIntegrationService {
@@ -22,6 +58,39 @@ export class CASSupplierIntegrationService {
     @InjectRepository(CASSupplier)
     private readonly casSupplierRepo: Repository<CASSupplier>,
   ) {}
+
+  private async evaluateCASSupplier(
+    casSupplier: CASSupplier,
+    auth: CASAuthDetails,
+  ): Promise<CASEvaluationResult> {
+    if (!casSupplier.student.user.firstName) {
+      return {
+        status: CASEvaluationStatus.ManualInterventionRequired,
+        reason: ManualInterventionReason.GivenNameNotPresent,
+      };
+    }
+    if (!isAddressFromCanada(casSupplier.student.contactInfo.address)) {
+      return {
+        status: CASEvaluationStatus.ManualInterventionRequired,
+        reason: ManualInterventionReason.NonCanadianAddress,
+      };
+    }
+    const supplierResponse = await this.casService.getSupplierInfoFromCAS(
+      auth.access_token,
+      casSupplier.student.sinValidation.sin,
+      casSupplier.student.user.lastName,
+    );
+    if (!supplierResponse.items.length) {
+      return {
+        status: CASEvaluationStatus.NotFound,
+      };
+    }
+    return {
+      status: CASEvaluationStatus.IsActiveSupplier,
+      activeSite: null,
+      activeSupplier: null,
+    };
+  }
 
   /**
    * CAS integration process.
@@ -72,7 +141,41 @@ export class CASSupplierIntegrationService {
     for (const casSupplier of casSuppliers) {
       const summary = new ProcessSummary();
       parentProcessSummary.children(summary);
-      summary.info(`Requesting info for CAS supplier id ${casSupplier.id}.`);
+
+      const evaluationStatus = await this.evaluateCASSupplier(
+        casSupplier,
+        auth,
+      );
+      if (
+        evaluationStatus.status ===
+        CASEvaluationStatus.ManualInterventionRequired
+      ) {
+        summary.warn(
+          `Not possible to retrieve CAS supplier information for supplier ID ${casSupplier.id} because a manual intervention is required. Reason: ${evaluationStatus.reason}.`,
+        );
+        await this.updateCASSupplierForManualIntervention(casSupplier.id);
+        continue;
+      }
+
+      if (evaluationStatus.status === CASEvaluationStatus.NotFound) {
+        // TODO: Process not found.
+      }
+
+      if (
+        evaluationStatus.status === CASEvaluationStatus.IsActiveSupplier ||
+        evaluationStatus.status === CASEvaluationStatus.HasActiveSite
+      ) {
+        // TODO: Process found supplier.
+        // evaluationStatus.activeSite
+        // evaluationStatus.activeSupplier
+        // Can we save the active supplier if it has an inactive site?
+        // Should we keep saving only if it has active supplier and one active address?
+        // Can we save the active supplier, set is valid to false and set the status as "Pending address verification"?
+      }
+
+      // TODO: refactor below code.
+      // Query CAS API to check if the supplier exists.
+      summary.info(`Requesting info for CAS supplier ID ${casSupplier.id}.`);
       try {
         const supplierResponse = await this.casService.getSupplierInfoFromCAS(
           auth.access_token,
@@ -205,6 +308,25 @@ export class CASSupplierIntegrationService {
     );
   }
 
+  async updateCASSupplierForManualIntervention(
+    casSupplierId: number,
+  ): Promise<UpdateResult> {
+    const now = new Date();
+    const systemUser = this.systemUsersService.systemUser;
+    return this.casSupplierRepo.update(
+      {
+        id: casSupplierId,
+      },
+      {
+        supplierStatus: SupplierStatus.ManualIntervention,
+        supplierStatusUpdatedOn: now,
+        isValid: false,
+        updatedAt: now,
+        modifier: systemUser,
+      },
+    );
+  }
+
   /**
    * Gets a list of CAS suppliers to be updated from CAS supplier table.
    * @returns a list of CAS suppliers to be updated.
@@ -217,6 +339,7 @@ export class CASSupplierIntegrationService {
           id: true,
           sinValidation: { sin: true },
           user: { lastName: true },
+          contactInfo: true as unknown,
         },
       },
       relations: {
