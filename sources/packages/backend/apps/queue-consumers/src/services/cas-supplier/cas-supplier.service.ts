@@ -77,7 +77,7 @@ export class CASSupplierIntegrationService {
         const supplierResponse = await this.casService.getSupplierInfoFromCAS(
           auth.access_token,
           casSupplier.student.sinValidation.sin,
-          casSupplier.student.user.lastName.toUpperCase(),
+          casSupplier.student.user.lastName,
         );
         if (await this.updateSupplier(supplierResponse, summary, casSupplier)) {
           suppliersUpdated++;
