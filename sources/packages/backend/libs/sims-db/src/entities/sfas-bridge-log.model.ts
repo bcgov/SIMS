@@ -15,7 +15,7 @@ import { User } from "@sims/sims-db/entities/user.model";
 @Entity({ name: TableNames.SFASBridgeLogs })
 export class SFASBridgeLog {
   /**
-   * Auto-generated sequential primary key column
+   * Auto-generated sequential primary key column.
    */
   @PrimaryGeneratedColumn()
   id: number;
@@ -26,7 +26,6 @@ export class SFASBridgeLog {
   @Column({
     name: "reference_date",
     type: "timestamptz",
-    nullable: true,
   })
   referenceDate: Date;
 

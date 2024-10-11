@@ -34,7 +34,7 @@ export class SIMSToSFASIntegrationScheduler extends BaseScheduler<void> {
     const processSummary = new ProcessSummary();
 
     try {
-      this.logger.log(
+      processSummary.info(
         `Processing SIMS to SFAS integration job. Job id: ${job.id} and Job name: ${job.name}.`,
       );
       // TODO: Processing implementation of SIMS to SFAS integration.
@@ -45,6 +45,7 @@ export class SIMSToSFASIntegrationScheduler extends BaseScheduler<void> {
     } catch (error: unknown) {
       const errorMessage = "Unexpected error while executing the job.";
       processSummary.error(errorMessage, error);
+      throw new Error(errorMessage, { cause: error });
       return [errorMessage];
     } finally {
       this.logger.logProcessSummary(processSummary);
