@@ -2,12 +2,9 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
-  ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
-import { User } from "@sims/sims-db/entities/user.model";
 
 /**
  * Log the details of every bridge file generation from SIMS to SFAS.
@@ -44,14 +41,4 @@ export class SFASBridgeLog {
     name: ColumnNames.CreateTimestamp,
   })
   createdAt: Date;
-
-  /**
-   * Creator of the record.
-   */
-  @ManyToOne(() => User, { eager: false })
-  @JoinColumn({
-    name: ColumnNames.Creator,
-    referencedColumnName: ColumnNames.ID,
-  })
-  creator: User;
 }
