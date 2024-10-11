@@ -7,7 +7,7 @@ import { FixedFormatFileLine } from "./sftp-integration-base.models";
 import {
   END_OF_LINE,
   getFileNameAsExtendedCurrentTimestamp,
-  translateToASCII,
+  convertToASCII,
   FILE_DEFAULT_ENCODING,
 } from "@sims/utilities";
 import { LINE_BREAK_SPLIT_REGEX } from "@sims/integrations/constants";
@@ -59,7 +59,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
     const client = await this.getClient();
     try {
       this.logger.log(`Uploading ${remoteFilePath}`);
-      return await client.put(translateToASCII(rawContent), remoteFilePath);
+      return await client.put(convertToASCII(rawContent), remoteFilePath);
     } finally {
       this.logger.log("Finalizing SFTP client...");
       await SshService.closeQuietly(client);

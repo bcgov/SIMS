@@ -1,13 +1,13 @@
-import { translateToASCII } from "@sims/utilities/string-utils";
+import { convertToASCII } from "@sims/utilities/string-utils";
 
-describe("StringUtils-translateToASCII", () => {
+describe("StringUtils-convertToASCII", () => {
   it("Should replace the special characters when equivalent ones are present.", () => {
     // Arrange
     const textWithSpecialCharacters =
       "Some text with special characters: ÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜ—àáâãäåçèéêëìíîï-ñóòôõöùúûüýÿ";
 
     // Act
-    const translatedData = translateToASCII(textWithSpecialCharacters);
+    const translatedData = convertToASCII(textWithSpecialCharacters);
 
     // Assert
     expect(translatedData).toBe(
@@ -20,7 +20,7 @@ describe("StringUtils-translateToASCII", () => {
     const textWithSpecialCharacters = null;
 
     // Act
-    const translatedData = translateToASCII(textWithSpecialCharacters);
+    const translatedData = convertToASCII(textWithSpecialCharacters);
 
     // Assert
     expect(translatedData).toBeNull();
@@ -31,7 +31,7 @@ describe("StringUtils-translateToASCII", () => {
     const textWithSpecialCharacters = undefined;
 
     // Act
-    const translatedData = translateToASCII(textWithSpecialCharacters);
+    const translatedData = convertToASCII(textWithSpecialCharacters);
 
     // Assert
     expect(translatedData).toBeNull();

@@ -24,7 +24,7 @@ export function replaceLineBreaks(
  * ASCII buffer. These characters do not have an equivalent character in ISO8859-1
  * and will ended up being converted to an unexpected character.
  */
-const ASCII_INDIRECT_TRANSLATIONS: Record<string, string> = {
+const ASCII_INDIRECT_CONVERSIONS: Record<string, string> = {
   "—": "-",
 };
 
@@ -32,19 +32,19 @@ const ASCII_INDIRECT_TRANSLATIONS: Record<string, string> = {
  * Converts input into an ASCII 7 bit buffer replacing special characters
  * by equivalent ASCII characters when possible.
  * @param rawContent raw content in string format.
- * @returns a string of the input with extended ASCII accented characters
- * converted to unaccented characters. If null or undefined is provided,
+ * @returns a string of the input with extended ASCII characters (ISO-8859-1)
+ * converted to equivalent ASCII characters. If null or undefined is provided,
  * null will be returned.
  */
-export function translateToASCII(rawContent?: string): string | null {
+export function convertToASCII(rawContent?: string): string | null {
   if (rawContent === null || rawContent === undefined) {
     return null;
   }
   // Replace possible characters that will not be nicely converted to the ASCII buffer.
-  Object.keys(ASCII_INDIRECT_TRANSLATIONS).forEach((key) => {
+  Object.keys(ASCII_INDIRECT_CONVERSIONS).forEach((key) => {
     rawContent = rawContent.replace(
       new RegExp(key, "g"),
-      ASCII_INDIRECT_TRANSLATIONS[key],
+      ASCII_INDIRECT_CONVERSIONS[key],
     );
   });
   const content = Buffer.from(rawContent, FILE_DEFAULT_ENCODING);
