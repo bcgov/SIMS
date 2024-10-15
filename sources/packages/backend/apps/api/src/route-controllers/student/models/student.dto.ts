@@ -20,9 +20,9 @@ import {
   NOTE_DESCRIPTION_MAX_LENGTH,
   FILE_NAME_MAX_LENGTH,
   DisabilityStatus,
-  IdentityProviders,
   USER_LAST_NAME_MAX_LENGTH,
   USER_GIVEN_NAMES_MAX_LENGTH,
+  SpecificIdentityProviders,
 } from "@sims/sims-db";
 import {
   AddressAPIOutDTO,
@@ -194,7 +194,7 @@ export class InstitutionStudentProfileAPIOutDTO extends StudentProfileAPIOutDTO 
 
 export class AESTStudentProfileAPIOutDTO extends InstitutionStudentProfileAPIOutDTO {
   hasRestriction: boolean;
-  identityProviderType: IdentityProviders;
+  identityProviderType: SpecificIdentityProviders;
 }
 
 export class AESTFileUploadToStudentAPIInDTO {

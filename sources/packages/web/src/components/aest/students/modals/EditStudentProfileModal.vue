@@ -14,8 +14,8 @@
               v-model="formModel.givenNames"
               variant="outlined"
               :rules="[checkGivenNameLengthRule]"
-              class="mb-6" />
-            <v-spacer /></template
+              class="mb-6"
+            /> </template
         ></title-value>
         <title-value
           ><template #value
@@ -25,8 +25,8 @@
               v-model="formModel.lastName"
               variant="outlined"
               :rules="[checkLastNameLengthRule]"
-              class="mb-6" />
-            <v-spacer /></template
+              class="mb-6"
+            /> </template
         ></title-value>
         <title-value
           ><template #value
@@ -38,8 +38,8 @@
               type="date"
               :max="getTodaysDate()"
               hide-details="auto"
-              class="mb-6" />
-            <v-spacer /></template
+              class="mb-6"
+            /> </template
         ></title-value>
         <title-value
           ><template #value
@@ -49,8 +49,8 @@
               v-model="formModel.email"
               variant="outlined"
               :rules="[checkEmailLengthRule, checkEmailValidationRule]"
-              class="mb-6" />
-            <v-spacer /></template
+              class="mb-6"
+            /> </template
         ></title-value>
         <title-value
           ><template #value>
@@ -58,8 +58,8 @@
               label="Notes"
               v-model="formModel.noteDescription"
               variant="outlined"
-              :rules="[checkNotesLengthRule]" />
-            <v-spacer /></template
+              :rules="[checkNotesLengthRule]"
+            /> </template
         ></title-value>
         <title-value
           ><template #value
@@ -86,11 +86,9 @@ import { defineComponent, ref } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import TitleValue from "@/components/generic/TitleValue.vue";
 import { useFormatters, useModalDialog, useRules } from "@/composables";
-import {
-  UpdateStudentDetailsAPIInDTO,
-  UpdateStudentDetails,
-} from "@/services/http/dto";
+import { UpdateStudentDetailsAPIInDTO } from "@/services/http/dto";
 import { Role, VForm } from "@/types";
+import dayjs from "dayjs";
 
 export default defineComponent({
   components: {
@@ -124,14 +122,17 @@ export default defineComponent({
       }
       await resolvePromise(formModel.value);
     };
-    let initialStudentProfile = {} as UpdateStudentDetails;
+    let initialStudentProfile = {} as UpdateStudentDetailsAPIInDTO;
 
     const hasDataChangedValidationRule = () => {
       if (
-        initialStudentProfile.email === formModel.value.email &&
-        initialStudentProfile.givenNames === formModel.value.givenNames &&
-        initialStudentProfile.lastName === formModel.value.lastName &&
-        initialStudentProfile.birthdate === formModel.value.birthdate
+        initialStudentProfile.email.toLowerCase() ===
+          formModel.value.email.toLowerCase() &&
+        initialStudentProfile.givenNames?.toLowerCase() ===
+          formModel.value.givenNames?.toLowerCase() &&
+        initialStudentProfile.lastName.toLowerCase() ===
+          formModel.value.lastName.toLowerCase() &&
+        dayjs(initialStudentProfile.birthdate).isSame(formModel.value.birthdate)
       ) {
         return "No changes detected to be updated.";
       }
@@ -139,7 +140,7 @@ export default defineComponent({
     };
 
     const showModal = async (
-      studentProfile: UpdateStudentDetails,
+      studentProfile: UpdateStudentDetailsAPIInDTO,
       canResolvePromise?: (
         value: UpdateStudentDetailsAPIInDTO | boolean,
       ) => Promise<boolean>,

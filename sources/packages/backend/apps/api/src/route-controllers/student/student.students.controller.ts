@@ -71,6 +71,8 @@ import {
 import { EntityManager } from "typeorm";
 import { StudentInfo } from "../../services/student/student.service.models";
 
+const BCSC_STUDENT_PROFILE_UPDATE_NOTE =
+  "BCSC authenticated student profile data updated.";
 /**
  * Student controller for Student Client.
  */
@@ -175,6 +177,7 @@ export class StudentStudentsController extends BaseController {
           givenNames: studentUserToken.givenNames,
           birthdate: studentUserToken.birthdate,
           email: studentUserToken.email,
+          noteDescription: BCSC_STUDENT_PROFILE_UPDATE_NOTE,
         },
         studentUserToken.userId,
       );

@@ -7,10 +7,7 @@ import {
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { BaseModel } from "./base.model";
-import {
-  IdentityProviders,
-  SpecificIdentityProviders,
-} from "./identity-providers.type";
+import { IdentityProviders } from "./identity-providers.type";
 
 export const USER_GIVEN_NAMES_MAX_LENGTH = 100;
 export const USER_LAST_NAME_MAX_LENGTH = 100;
@@ -70,7 +67,7 @@ export class User extends BaseModel {
     enumName: "IdentityProviders",
     nullable: false,
   })
-  identityProviderType: SpecificIdentityProviders;
+  identityProviderType: IdentityProviders;
   // !creator and modifier properties are directly added here(instead of inheriting
   // !from RecordDataModel) to avoid cyclic dependencies.
   /**

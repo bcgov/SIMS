@@ -1,4 +1,8 @@
-import { FileOriginType, DisabilityStatus, IdentityProviders } from "@/types";
+import {
+  FileOriginType,
+  DisabilityStatus,
+  SpecificIdentityProviders,
+} from "@/types";
 import { ContactInformationAPIOutDTO } from "./Address.dto";
 import { AddressDetailsFormAPIDTO } from "./Common.dto";
 import { Expose } from "class-transformer";
@@ -42,14 +46,6 @@ export interface UpdateStudentDetailsAPIInDTO {
   noteDescription: string;
 }
 
-export interface UpdateStudentDetails {
-  givenNames: string;
-  lastName: string;
-  birthdate: string;
-  email: string;
-  noteDescription: string;
-}
-
 export interface StudentProfileAPIOutDTO {
   firstName: string;
   lastName: string;
@@ -71,7 +67,7 @@ export interface InstitutionStudentProfileAPIOutDTO
 export interface AESTStudentProfileAPIOutDTO
   extends InstitutionStudentProfileAPIOutDTO {
   hasRestriction: boolean;
-  identityProvider: IdentityProviders;
+  identityProvider: SpecificIdentityProviders;
 }
 
 /**

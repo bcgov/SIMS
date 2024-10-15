@@ -504,7 +504,7 @@ export class StudentService extends RecordDataModelService<Student> {
    * Updates the user and student data currently on DB.
    * @param studentUserData student user data to be updated.
    * @param auditUserId user that should be considered the one that is causing the changes.
-   * @returns updated student, if some data was changed.
+   * @returns true if the profile was updated, false if no changes were detected that required the student data to be saved.
    */
   async updateStudentUserData(
     studentUserData: StudentUserData,
@@ -532,7 +532,10 @@ export class StudentService extends RecordDataModelService<Student> {
       mustSave = true;
     }
     // This condition is not added above, as email does not trigger SIN validation request.
-    if (studentUserData.email !== studentToSync.user.email) {
+    if (
+      studentUserData.email.toLowerCase() !==
+      studentToSync.user.email.toLowerCase()
+    ) {
       studentToSync.user.email = studentUserData.email;
       mustSave = true;
     }

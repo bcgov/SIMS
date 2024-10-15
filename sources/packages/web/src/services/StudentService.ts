@@ -13,7 +13,7 @@ import {
   UpdateSINValidationAPIInDTO,
   SearchStudentAPIInDTO,
   UpdateDisabilityStatusAPIInDTO,
-  UpdateStudentDetails,
+  UpdateStudentDetailsAPIInDTO,
 } from "@/services/http/dto";
 import { AxiosResponse } from "axios";
 
@@ -52,7 +52,7 @@ export class StudentService {
    */
   async updateStudentProfileInfo(
     studentId: number,
-    profileData: UpdateStudentDetails,
+    profileData: UpdateStudentDetailsAPIInDTO,
   ): Promise<void> {
     await ApiClient.Students.updateStudentProfileInfo(studentId, profileData);
   }

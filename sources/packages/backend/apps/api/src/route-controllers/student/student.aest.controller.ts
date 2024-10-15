@@ -458,7 +458,7 @@ export class StudentAESTController extends BaseController {
     );
     if (!updated) {
       throw new UnprocessableEntityException(
-        "No profile update found to be saved.",
+        "No profile data updated because no changes were detected.",
       );
     }
   }

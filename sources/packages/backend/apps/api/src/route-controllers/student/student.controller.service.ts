@@ -25,6 +25,7 @@ import {
 import {
   AddressInfo,
   Application,
+  SpecificIdentityProviders,
   Student,
   VirusScanStatus,
 } from "@sims/sims-db";
@@ -270,7 +271,8 @@ export class StudentControllerService {
         );
       specificData = {
         hasRestriction: !!studentRestrictions.length,
-        identityProviderType: student.user.identityProviderType,
+        identityProviderType: student.user
+          .identityProviderType as SpecificIdentityProviders,
       };
     }
     let sensitiveData: Pick<AESTStudentProfileAPIOutDTO, "sin">;
