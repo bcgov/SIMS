@@ -8,7 +8,7 @@ export const OTHER_COUNTRY = "other";
 export const COUNTRY_CANADA = "canada";
 
 /**
- * Inspects the address info ro determine if the address is from Canada.
+ * Inspects the address info to determine if the address is from Canada.
  * @param address address info to be inspected.
  * @returns true if the address is from Canada, otherwise false.
  */

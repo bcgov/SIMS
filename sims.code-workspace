@@ -120,6 +120,7 @@
       "SABC",
       "sbsd",
       "SFAS",
+      "supplieraddress",
       "timestamptz",
       "typeorm",
       "unparse",

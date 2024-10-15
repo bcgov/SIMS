@@ -4,51 +4,20 @@ import { SystemUsersService } from "@sims/services";
 import { CASSupplier, SupplierAddress, SupplierStatus } from "@sims/sims-db";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { Repository, UpdateResult } from "typeorm";
-import { CASService } from "@sims/integrations/cas/cas.service";
-import { CustomNamedError, isAddressFromCanada } from "@sims/utilities";
 import {
+  CASService,
   CASAuthDetails,
   CASSupplierResponse,
   CASSupplierResponseItem,
-  CASSupplierResponseItemAddress,
-} from "@sims/integrations/cas/models/cas-supplier-response.model";
+} from "@sims/integrations/cas";
+import { CustomNamedError, isAddressFromCanada } from "@sims/utilities";
 import { CAS_AUTH_ERROR } from "@sims/integrations/constants";
-
-// TODO: move these model to a separate file.
-// Should we create a new class to handle the evaluation?
-enum CASEvaluationStatus {
-  ManualInterventionRequired,
-  IsActiveSupplier,
-  HasActiveSite,
-  NotFound,
-}
-
-enum ManualInterventionReason {
-  GivenNameNotPresent,
-  NonCanadianAddress,
-}
-
-interface CASEvaluationManualInterventionResult {
-  status: CASEvaluationStatus.ManualInterventionRequired;
-  reason: ManualInterventionReason;
-}
-
-interface CASFoundSupplierResult {
-  status:
-    | CASEvaluationStatus.IsActiveSupplier
-    | CASEvaluationStatus.HasActiveSite;
-  activeSupplier: any;
-  activeSite: any;
-}
-
-interface CASNotFoundSupplierResult {
-  status: CASEvaluationStatus.NotFound;
-}
-
-type CASEvaluationResult =
-  | CASNotFoundSupplierResult
-  | CASFoundSupplierResult
-  | CASEvaluationManualInterventionResult;
+import {
+  CASEvaluationResult,
+  CASEvaluationStatus,
+  ManualInterventionReason,
+  NotFoundReason,
+} from "./cas-supplier.models";
 
 @Injectable()
 export class CASSupplierIntegrationService {
@@ -66,7 +35,7 @@ export class CASSupplierIntegrationService {
     if (!casSupplier.student.user.firstName) {
       return {
         status: CASEvaluationStatus.ManualInterventionRequired,
-        reason: ManualInterventionReason.GivenNameNotPresent,
+        reason: ManualInterventionReason.GivenNamesNotPresent,
       };
     }
     if (!isAddressFromCanada(casSupplier.student.contactInfo.address)) {
@@ -83,12 +52,28 @@ export class CASSupplierIntegrationService {
     if (!supplierResponse.items.length) {
       return {
         status: CASEvaluationStatus.NotFound,
+        reason: NotFoundReason.SupplierNotFound,
       };
     }
+    // Check if there is at least one active supplier.
+    const casResponseActiveSupplier = supplierResponse.items.find(
+      (supplier) => supplier.status === "ACTIVE",
+    );
+    if (!casResponseActiveSupplier) {
+      return {
+        status: CASEvaluationStatus.NotFound,
+        reason: NotFoundReason.NoActiveSupplierFound,
+      };
+    }
+    // Get the list of all active addresses.
+    const casResponseActiveAddresses =
+      casResponseActiveSupplier.supplieraddress?.filter(
+        (address) => address.status === "ACTIVE",
+      ) ?? [];
     return {
-      status: CASEvaluationStatus.IsActiveSupplier,
-      activeSite: null,
-      activeSupplier: null,
+      status: CASEvaluationStatus.ActiveSupplierFound,
+      activeSupplier: casResponseActiveSupplier,
+      activeSites: casResponseActiveAddresses,
     };
   }
 
@@ -158,13 +143,17 @@ export class CASSupplierIntegrationService {
       }
 
       if (evaluationStatus.status === CASEvaluationStatus.NotFound) {
-        // TODO: Process not found.
+        summary.warn(
+          `No active CAS supplier found supplier ID ${casSupplier.id}.`,
+        );
+        // TODO: Call CAS to created new supplier.
+        continue;
       }
 
-      if (
-        evaluationStatus.status === CASEvaluationStatus.IsActiveSupplier ||
-        evaluationStatus.status === CASEvaluationStatus.HasActiveSite
-      ) {
+      if (evaluationStatus.status === CASEvaluationStatus.ActiveSupplierFound) {
+        summary.warn(
+          `Active CAS supplier found for supplier ID ${casSupplier.id}.`,
+        );
         // TODO: Process found supplier.
         // evaluationStatus.activeSite
         // evaluationStatus.activeSupplier
@@ -236,22 +225,6 @@ export class CASSupplierIntegrationService {
       }
     }
     return false;
-  }
-
-  /**
-   * Gets the first active supplier address from a list supplier response item.
-   * @param casSupplierResponseItem CAS supplier response item.
-   * @returns CAS supplier response item address.
-   */
-  private getActiveSupplierItemAddress(
-    casSupplierResponseItem: CASSupplierResponseItem,
-  ): CASSupplierResponseItemAddress {
-    if (casSupplierResponseItem.status !== "ACTIVE") {
-      return undefined;
-    }
-    return casSupplierResponseItem.supplieraddress.find(
-      (address) => address.status === "ACTIVE",
-    );
   }
 
   /**
