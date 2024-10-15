@@ -16,7 +16,7 @@ export interface StudentUserData {
   studentId: number;
   birthdate: string;
   lastName: string;
-  givenNames: string;
+  givenNames?: string;
   email: string;
   noteDescription: string;
 }
