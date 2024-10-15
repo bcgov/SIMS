@@ -68,6 +68,8 @@ export default defineComponent({
         applicationOfferingEndDate: dateOnlyLongString(
           applicationDetails.applicationOfferingEndDate,
         ),
+        studyStartDate: applicationDetails.applicationOfferingStartDate,
+        studyEndDate: applicationDetails.applicationOfferingEndDate,
         applicationOfferingStudyBreak:
           applicationDetails.applicationOfferingStudyBreak?.map(
             (studyBreak) => ({

@@ -18,6 +18,8 @@ export class ScholasticStandingData {
   numberOfUnsuccessfulWeeks?: number;
   dateOfWithdrawal?: string;
   scholasticStandingChangeType: StudentScholasticStandingChangeType;
+  studyStartDate: string;
+  studyEndDate: string;
 }
 
 /**

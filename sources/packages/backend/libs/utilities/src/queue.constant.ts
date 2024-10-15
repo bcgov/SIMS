@@ -31,4 +31,5 @@ export enum QueueNames {
   CASSupplierIntegration = "cas-supplier-integration",
   ApplicationChangesReportIntegration = "application-changes-report-integration",
   StudentApplicationNotifications = "student-application-notifications",
+  SIMSToSFASIntegration = "sims-to-sfas-integration",
 }

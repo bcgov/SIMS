@@ -48,11 +48,13 @@
 import { defineComponent } from "vue";
 import { useAuth } from "@/composables";
 import { IdentityProviders, ClientIdType } from "@/types";
+import { AuditService } from "@/services/AuditService";
 
 export default defineComponent({
   setup() {
     const { executeLogin } = useAuth();
     const login = async () => {
+      AuditService.userLoginTriggered();
       await executeLogin(ClientIdType.SupportingUsers, IdentityProviders.BCSC);
     };
     return { login };

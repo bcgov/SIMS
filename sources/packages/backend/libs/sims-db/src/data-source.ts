@@ -58,6 +58,7 @@ import {
   CASSupplier,
   ApplicationRestrictionBypass,
   BetaUsersAuthorizations,
+  SFASBridgeLog,
 } from "./entities";
 import { ClusterNode, ClusterOptions, RedisOptions } from "ioredis";
 import {
@@ -214,4 +215,5 @@ export const DBEntities = [
   ECertFeedbackError,
   CASSupplier,
   BetaUsersAuthorizations,
+  SFASBridgeLog,
 ];

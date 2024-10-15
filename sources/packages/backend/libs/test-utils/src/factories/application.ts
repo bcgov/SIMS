@@ -66,6 +66,7 @@ export function createFakeApplication(
   application.applicationException = relations?.applicationException;
   application.location = relations?.location ?? createFakeInstitutionLocation();
   application.pirStatus = options?.initialValue?.pirStatus;
+  application.isArchived = options?.initialValue?.isArchived;
   return application;
 }
 
@@ -241,6 +242,7 @@ export async function saveFakeApplicationDisbursements(
  * - `offeringIntensity` if provided sets the offering intensity for the created fakeApplication, otherwise sets it to fulltime by default.
  * - `applicationData` related application data.
  * - `pirStatus` program info status.
+ * - `isArchived` archived status.
  * - `currentAssessmentInitialValues` initial values related to the current assessment.
  * - `offeringInitialValues` initial values related to the offering for the original assessment.
  * @returns the created application.
@@ -260,6 +262,7 @@ export async function saveFakeApplication(
     offeringIntensity?: OfferingIntensity;
     applicationData?: ApplicationData;
     pirStatus?: ProgramInfoStatus;
+    isArchived?: boolean;
     currentAssessmentInitialValues?: Partial<StudentAssessment>;
     offeringInitialValues?: Partial<EducationProgramOffering>;
   },
@@ -292,6 +295,7 @@ export async function saveFakeApplication(
       initialValue: {
         data: options?.applicationData,
         pirStatus: options?.pirStatus,
+        isArchived: options?.isArchived ? options?.isArchived : false,
       },
     },
   );

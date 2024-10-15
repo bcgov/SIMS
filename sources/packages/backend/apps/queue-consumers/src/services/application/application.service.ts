@@ -6,9 +6,15 @@ import {
   User,
   StudentAssessment,
   StudentAssessmentStatus,
+  DisabilityStatus,
+  DisbursementScheduleStatus,
+  NotificationMessageType,
+  Notification,
+  DisbursementSchedule,
 } from "@sims/sims-db";
 import { ConfigService } from "@sims/utilities/config";
 import { InjectRepository } from "@nestjs/typeorm";
+import { addDays, DISABILITY_NOTIFICATION_DAYS_LIMIT } from "@sims/utilities";
 
 @Injectable()
 export class ApplicationService {
@@ -18,6 +24,10 @@ export class ApplicationService {
     private readonly applicationRepo: Repository<Application>,
     @InjectRepository(StudentAssessment)
     private readonly studentAssessmentRepo: Repository<StudentAssessment>,
+    @InjectRepository(Notification)
+    private readonly notificationRepo: Repository<Notification>,
+    @InjectRepository(DisbursementSchedule)
+    private readonly disbursementScheduleRepo: Repository<DisbursementSchedule>,
   ) {}
 
   /**
@@ -152,5 +162,81 @@ export class ApplicationService {
         .orderBy("studentAssessment.createdAt")
         .getMany()
     );
+  }
+
+  /**
+   * Retrieves applications eligible for a specific notification (likely related to disability status and PD/PPD status).
+   * This method applies several criteria to filter eligible applications:
+   * - Study end date is at least 8 weeks in the future
+   * - Student's disability status is not 'PD' or 'PPD'
+   * - The assessment's workflow data indicates a positive PD/PPD status
+   * - The application is not archived
+   * - There's a pending disbursement schedule
+   * - No notification of this type (messageId 30) has been sent for this assessment
+   * @returns An array of eligible applications with relevant details for notification.
+   */
+  async getApplicationWithPDPPStatusMismatch(): Promise<Application[]> {
+    const disabilityNotificationDateLimit = addDays(
+      DISABILITY_NOTIFICATION_DAYS_LIMIT,
+    );
+    // Sub query to defined if a notification was already sent to the current assessment.
+    const notificationExistsQuery = this.notificationRepo
+      .createQueryBuilder("notification")
+      .select("1")
+      .where("notification.notificationMessage.id = :messageId")
+      .andWhere(
+        "notification.metadata->>'assessmentId' = currentAssessment.id :: text",
+      )
+      .getQuery();
+    // Sub query to defined if there is at least on disbursement pending to be sent.
+    const pendingDisbursementExistsQuery = this.disbursementScheduleRepo
+      .createQueryBuilder("disbursement")
+      .select("1")
+      .where("disbursement.studentAssessment.id = currentAssessment.id")
+      .andWhere(
+        "disbursement.disbursementScheduleStatus = :disbursementScheduleStatusPending",
+      )
+      .getQuery();
+    return this.applicationRepo
+      .createQueryBuilder("application")
+      .select([
+        "application.id",
+        "application.applicationNumber",
+        "student.id",
+        "user.id",
+        "user.firstName",
+        "user.lastName",
+        "user.email",
+        "currentAssessment.id",
+      ])
+      .innerJoin("application.currentAssessment", "currentAssessment")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .innerJoin("currentAssessment.offering", "offering")
+      .where(
+        "application.applicationStatus IN (:applicationStatusCompleted, :applicationStatusAssessment)",
+        {
+          applicationStatusCompleted: ApplicationStatus.Completed,
+          applicationStatusAssessment: ApplicationStatus.Assessment,
+        },
+      )
+      .andWhere("offering.studyEndDate <= :disabilityNotificationDateLimit", {
+        disabilityNotificationDateLimit,
+      })
+      .andWhere("student.disabilityStatus NOT IN (:pdStatus, :ppdStatus)", {
+        pdStatus: DisabilityStatus.PD,
+        ppdStatus: DisabilityStatus.PPD,
+      })
+      .andWhere(
+        'currentAssessment.workflow_data @> \'{ "calculatedData": { "pdppdStatus": true}}\'',
+      )
+      .andWhere("application.isArchived = false")
+      .andWhere(`EXISTS (${pendingDisbursementExistsQuery})`)
+      .andWhere(`NOT EXISTS (${notificationExistsQuery})`)
+      .setParameters({
+        messageId: NotificationMessageType.StudentPDPPDApplicationNotification,
+        disbursementScheduleStatusPending: DisbursementScheduleStatus.Pending,
+      })
+      .getMany();
   }
 }

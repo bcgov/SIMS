@@ -59,3 +59,13 @@ export const COE_WINDOW = 21;
 export const COE_DENIED_REASON_OTHER_ID = 1;
 
 export const UTF8_BYTE_ORDER_MARK = [239, 187, 191];
+
+/**
+ * Number of days from the end date of the offering to send the PD/PPD notification.
+ */
+export const DISABILITY_NOTIFICATION_DAYS_LIMIT = 56;
+
+/**
+ * latin1 default encoding for files.
+ */
+export const FILE_DEFAULT_ENCODING = "latin1";

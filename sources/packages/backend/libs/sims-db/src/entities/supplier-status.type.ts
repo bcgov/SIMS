@@ -19,4 +19,8 @@ export enum SupplierStatus {
    * Verified manually.
    */
   VerifiedManually = "Verified manually",
+  /**
+   * Manual intervention is required.
+   */
+  ManualIntervention = "Manual intervention",
 }

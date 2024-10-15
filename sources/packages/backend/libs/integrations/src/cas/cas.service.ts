@@ -7,7 +7,7 @@ import { AxiosRequestConfig } from "axios";
 import { HttpService } from "@nestjs/axios";
 import { CASIntegrationConfig, ConfigService } from "@sims/utilities/config";
 import { stringify } from "querystring";
-import { CustomNamedError } from "@sims/utilities";
+import { CustomNamedError, convertToASCII } from "@sims/utilities";
 import { CAS_AUTH_ERROR } from "@sims/integrations/constants";
 import { InjectLogger } from "@sims/utilities/logger";
 
@@ -63,7 +63,8 @@ export class CASService {
     sin: string,
     lastName: string,
   ): Promise<CASSupplierResponse> {
-    const url = `${this.casIntegrationConfig.baseUrl}/cfs/supplier/${lastName}/lastname/${sin}/sin`;
+    const convertedLastName = convertToASCII(lastName).toUpperCase();
+    const url = `${this.casIntegrationConfig.baseUrl}/cfs/supplier/${convertedLastName}/lastname/${sin}/sin`;
     let response: { data: CASSupplierResponse };
     try {
       const headers = {

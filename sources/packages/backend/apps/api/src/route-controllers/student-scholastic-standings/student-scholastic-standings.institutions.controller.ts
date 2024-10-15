@@ -31,16 +31,15 @@ import {
 } from "../../auth/decorators";
 import {
   APPLICATION_NOT_FOUND,
-  ASSESSMENT_ALREADY_IN_PROGRESS,
   ApplicationWithdrawalImportTextService,
   ApplicationBulkWithdrawalImportValidationService,
   FormService,
-  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   StudentScholasticStandingsService,
   BulkWithdrawalFileData,
+  ApplicationService,
 } from "../../services";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
-import { CustomNamedError } from "@sims/utilities";
+import { CustomNamedError, FILE_DEFAULT_ENCODING } from "@sims/utilities";
 import BaseController from "../BaseController";
 import { FormNames } from "../../services/form/constants";
 import {
@@ -64,7 +63,6 @@ import {
   uploadLimits,
 } from "../../utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import { FILE_DEFAULT_ENCODING } from "@sims/services/constants";
 
 /**
  * Scholastic standing controller for institutions Client.
@@ -76,6 +74,7 @@ export class ScholasticStandingInstitutionsController extends BaseController {
   constructor(
     private readonly formService: FormService,
     private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
+    private readonly applicationService: ApplicationService,
     private readonly scholasticStandingControllerService: ScholasticStandingControllerService,
     private readonly applicationWithdrawalImportTextService: ApplicationWithdrawalImportTextService,
     private readonly applicationWithdrawalImportValidationService: ApplicationBulkWithdrawalImportValidationService,
@@ -104,40 +103,48 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     @Body() payload: ScholasticStandingAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
-    try {
-      const submissionResult =
-        await this.formService.dryRunSubmission<ScholasticStanding>(
-          FormNames.ReportScholasticStandingChange,
-          payload.data,
-        );
-
-      if (!submissionResult.valid) {
-        throw new BadRequestException("Invalid submission.");
-      }
-      const newStudentScholasticStanding =
-        await this.studentScholasticStandingsService.processScholasticStanding(
-          locationId,
-          applicationId,
-          userToken.userId,
-          submissionResult.data.data,
-        );
-      return { id: newStudentScholasticStanding.id };
-    } catch (error: unknown) {
-      if (error instanceof CustomNamedError) {
-        switch (error.name) {
-          case APPLICATION_NOT_FOUND:
-          case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
-          case ASSESSMENT_ALREADY_IN_PROGRESS:
-          case APPLICATION_CHANGE_NOT_ELIGIBLE:
-            throw new UnprocessableEntityException(
-              new ApiProcessError(error.message, error.name),
-            );
-          default:
-            throw error;
-        }
-      }
-      throw error;
+    const application = await this.applicationService.getActiveApplication(
+      applicationId,
+      locationId,
+    );
+    if (!application) {
+      throw new UnprocessableEntityException(
+        new ApiProcessError(
+          "Application Not found or invalid current assessment or offering or application status.",
+          APPLICATION_NOT_FOUND,
+        ),
+      );
     }
+
+    if (application.isArchived) {
+      throw new UnprocessableEntityException(
+        new ApiProcessError(
+          "This application is no longer eligible to request changes.",
+          APPLICATION_CHANGE_NOT_ELIGIBLE,
+        ),
+      );
+    }
+
+    payload.data.studyStartDate =
+      application.currentAssessment.offering.studyStartDate;
+    payload.data.studyEndDate =
+      application.currentAssessment.offering.studyEndDate;
+    const submissionResult =
+      await this.formService.dryRunSubmission<ScholasticStanding>(
+        FormNames.ReportScholasticStandingChange,
+        payload.data,
+      );
+
+    if (!submissionResult.valid) {
+      throw new BadRequestException("Invalid submission.");
+    }
+    const newStudentScholasticStanding =
+      await this.studentScholasticStandingsService.saveScholasticStandingCreateReassessment(
+        userToken.userId,
+        application,
+        submissionResult.data.data,
+      );
+    return { id: newStudentScholasticStanding.id };
   }
 
   /**

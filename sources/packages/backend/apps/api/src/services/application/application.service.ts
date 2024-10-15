@@ -1214,9 +1214,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return this.repo
       .createQueryBuilder("application")
       .select([
+        "application.id",
         "application.applicationStatus",
         "application.applicationNumber",
+        "application.isArchived",
         "currentAssessment.id",
+        "offering.id",
         "offering.offeringIntensity",
         "offering.studyStartDate",
         "offering.studyEndDate",
@@ -1225,8 +1228,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "location.name",
         "offering.name",
         "student",
+        "user.id",
         "user.firstName",
         "user.lastName",
+        "user.email",
+        "studentAppeal.id",
         "educationProgram.credentialType",
         "educationProgram.deliveredOnline",
         "educationProgram.deliveredOnSite",
@@ -1239,6 +1245,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       ])
       .innerJoin("application.currentAssessment", "currentAssessment")
       .innerJoin("currentAssessment.offering", "offering")
+      .leftJoin("currentAssessment.studentAppeal", "studentAppeal")
       .innerJoin("offering.educationProgram", "educationProgram")
       .innerJoin("offering.institutionLocation", "location")
       .innerJoin("application.student", "student")

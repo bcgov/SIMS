@@ -4,7 +4,6 @@ import {
   RecordDataModelService,
   StudentScholasticStanding,
   Application,
-  ApplicationStatus,
   AssessmentTriggerType,
   EducationProgramOffering,
   OfferingIntensity,
@@ -15,17 +14,11 @@ import {
   StudentScholasticStandingChangeType,
   StudentAppeal,
 } from "@sims/sims-db";
-import { CustomNamedError } from "@sims/utilities";
-import {
-  APPLICATION_NOT_FOUND,
-  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
-} from "../application/application.service";
 import {
   ScholasticStanding,
   ScholasticStandingSummary,
 } from "./student-scholastic-standings.models";
 import { StudentRestrictionService } from "../restriction/student-restriction.service";
-import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../constants";
 import {
   PART_TIME_SCHOLASTIC_STANDING_RESTRICTIONS,
   SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS,
@@ -42,7 +35,6 @@ import { EducationProgramOfferingService } from "../education-program-offering/e
  */
 @Injectable()
 export class StudentScholasticStandingsService extends RecordDataModelService<StudentScholasticStanding> {
-  private readonly applicationRepo: Repository<Application>;
   private readonly offeringRepo: Repository<EducationProgramOffering>;
 
   constructor(
@@ -52,76 +44,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     private readonly studentRestrictionSharedService: StudentRestrictionSharedService,
   ) {
     super(dataSource.getRepository(StudentScholasticStanding));
-    this.applicationRepo = dataSource.getRepository(Application);
     this.offeringRepo = dataSource.getRepository(EducationProgramOffering);
-  }
-
-  /**
-   * Save scholastic standing and create new assessment
-   * for an application.
-   * @param locationId location id.
-   * @param applicationId application id.
-   * @param auditUserId user that should be considered the one that is
-   * causing the changes.
-   * @param scholasticStandingData scholastic standing data to be saved.
-   * @returns Student scholastic standing.
-   */
-  async processScholasticStanding(
-    locationId: number,
-    applicationId: number,
-    auditUserId: number,
-    scholasticStandingData: ScholasticStanding,
-  ): Promise<StudentScholasticStanding> {
-    const application = await this.applicationRepo
-      .createQueryBuilder("application")
-      .select([
-        "application",
-        "currentAssessment.id",
-        "offering.id",
-        "student.id",
-        "user.id",
-        "user.firstName",
-        "user.lastName",
-        "user.email",
-        "studentAppeal.id",
-      ])
-      .innerJoin("application.currentAssessment", "currentAssessment")
-      .innerJoin("currentAssessment.offering", "offering")
-      .leftJoin("currentAssessment.studentAppeal", "studentAppeal")
-      .innerJoin("application.location", "location")
-      .innerJoin("application.student", "student")
-      .innerJoin("student.user", "user")
-      .where("application.id = :applicationId", { applicationId })
-      .andWhere("location.id = :locationId", { locationId })
-      .getOne();
-
-    if (!application) {
-      throw new CustomNamedError(
-        "Application Not found or invalid current assessment or offering.",
-        APPLICATION_NOT_FOUND,
-      );
-    }
-
-    if (application.isArchived) {
-      throw new CustomNamedError(
-        "This application is no longer eligible to request changes.",
-        APPLICATION_CHANGE_NOT_ELIGIBLE,
-      );
-    }
-
-    if (application.applicationStatus !== ApplicationStatus.Completed) {
-      throw new CustomNamedError(
-        "Cannot report a change for application with status other than completed.",
-        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
-      );
-    }
-
-    // Save scholastic standing and create reassessment.
-    return this.saveScholasticStandingCreateReassessment(
-      auditUserId,
-      application,
-      scholasticStandingData,
-    );
   }
 
   /**
@@ -163,7 +86,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       const studentRestrictions = await this.getScholasticStandingRestrictions(
         scholasticStandingData,
         existingOffering.offeringIntensity,
-        application.studentId,
+        application.student.id,
         auditUserId,
         application.id,
       );
