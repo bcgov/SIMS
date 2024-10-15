@@ -5452,10 +5452,10 @@
           "input": true,
           "tableView": true,
           "key": "currentTaxYear",
-          "label": "currentTaxYear",
+          "label": "Current Tax Year",
           "protected": false,
           "unique": false,
-          "persistent": true,
+          "persistent": false,
           "type": "hidden",
           "tags": [],
           "conditional": {
