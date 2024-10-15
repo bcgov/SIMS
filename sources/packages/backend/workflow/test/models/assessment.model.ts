@@ -251,7 +251,7 @@ export interface CalculatedAssessmentModel {
   awardNetFederalTotalAward: number;
   calculatedDataTotalTransportationCost: number;
   calculatedDataTotalSecondResidence: number;
-  caclulatedDataTotalAssessedNeed: number;
+  calculatedDataTotalAssessedNeed: number;
   calculatedDataTotalBookCost: number;
   awardNetProvincialTotalAward: number;
   calculatedDataTotalChildSpousalSupport: number;

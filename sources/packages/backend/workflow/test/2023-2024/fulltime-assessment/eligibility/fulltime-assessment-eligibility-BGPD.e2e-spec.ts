@@ -34,7 +34,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BGPD
         expect(calculatedAssessment.variables.awardEligibilityBGPD).toBe(true);
         expect(
           calculatedAssessment.variables.provincialAwardNetBGPDAmount,
-        ).toBe(0);
+        ).toBeGreaterThan(0);
       });
     }
   });

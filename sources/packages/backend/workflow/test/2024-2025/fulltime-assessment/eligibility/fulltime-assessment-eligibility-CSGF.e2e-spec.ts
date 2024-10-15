@@ -34,7 +34,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGF
     ProgramLengthOptions,
   ).filter((type) => !EXPECTED_PROGRAM_LENGTH.includes(type));
 
-  describe.only(
+  describe(
     "Should determine CSGF as eligible when programCredentialType and programLength are the expected ones " +
       "and financial need is at least $1 and total family income is below the threshold.",
     () => {

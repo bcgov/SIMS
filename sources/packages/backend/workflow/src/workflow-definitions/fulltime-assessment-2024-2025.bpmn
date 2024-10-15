@@ -1924,7 +1924,7 @@
     <bpmn:intermediateThrowEvent id="Event_0zpvv38" name="Calculate Max BGPD">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=// calculate the award amount to a minimum of the min award&#10;MAX(dmnFullTimeAwardAllowableLimits.limitAwardBGPDWeeklyRate * offeringWeeks,dmnFullTimeAwardAllowableLimits.limitAwardBGPDMinAward)" target="provincialAwardBGPDAmount" />
+          <zeebe:output source="=// calculate the award amount to a minimum of the min award&#10;max(dmnFullTimeAwardAllowableLimits.limitAwardBGPDWeeklyRate * offeringWeeks,dmnFullTimeAwardAllowableLimits.limitAwardBGPDMinAward)" target="provincialAwardBGPDAmount" />
           <zeebe:output source="=// if not eligible, no value&#10;// if eligible AND remaining py limit room is greater than or equal to the min award, then use the calculated map from above&#10;if (awardEligibilityBGPD = true) and (dmnFullTimeAwardAllowableLimits.limitAwardBGPDAmount - programYearTotalBGPD &#62;= dmnFullTimeAwardAllowableLimits.limitAwardBGPDMinAward)&#10;  then&#10;provincialAwardBGPDAmount&#10;else&#10;  0" target="provincialAwardNetBGPDAmount" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
