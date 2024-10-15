@@ -46,3 +46,25 @@ export class CASAuthDetails {
   token_type: string;
   expires_in: number;
 }
+
+export class CreateSupplierAndSiteData {
+  firstName: string;
+  lastName: string;
+  sin: string;
+  emailAddress: string;
+  supplierSite: CreateSupplierSite;
+}
+
+export class CreateSupplierSite {
+  addressLine1: string;
+  city: string;
+  provinceCode: string;
+  postalCode: string;
+}
+
+// TODO: create a better model with SIMS patterns.
+export class CreateSupplierAndSiteResponse {
+  Supplier_Number: string;
+  Supplier_Site_Code: string;
+  "CAS-Returned-Messages": string;
+}

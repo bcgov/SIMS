@@ -2,6 +2,8 @@ import { Injectable, LoggerService } from "@nestjs/common";
 import {
   CASAuthDetails,
   CASSupplierResponse,
+  CreateSupplierAndSiteData,
+  CreateSupplierAndSiteResponse,
 } from "./models/cas-supplier-response.model";
 import { AxiosRequestConfig } from "axios";
 import { HttpService } from "@nestjs/axios";
@@ -80,6 +82,62 @@ export class CASService {
       });
     }
     return response?.data;
+  }
+
+  async createSupplierAndSite(
+    token: string,
+    supplierData: CreateSupplierAndSiteData,
+  ): Promise<CreateSupplierAndSiteResponse> {
+    const url = `${this.casIntegrationConfig.baseUrl}/cfs/supplier`;
+    try {
+      const config: AxiosRequestConfig = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const payload = {
+        SupplierName: this.formatUserName(
+          supplierData.lastName,
+          supplierData.firstName,
+        ),
+        SubCategory: "Individual",
+        Sin: supplierData.sin,
+        SupplierAddress: [
+          {
+            AddressLine1: this.formatAddress(
+              supplierData.supplierSite.addressLine1,
+            ),
+            City: supplierData.supplierSite.city,
+            Province: supplierData.supplierSite.provinceCode,
+            Country: "CA",
+            PostalCode: this.formatPostalCode(
+              supplierData.supplierSite.postalCode,
+            ),
+            EmailAddress: supplierData.emailAddress,
+          },
+        ],
+      };
+      // TODO: return the payload to allow DB update with the converted data.
+      await this.httpService.axiosRef.post(url, payload, config);
+      return new CreateSupplierAndSiteResponse();
+    } catch (error: unknown) {
+      throw new Error("Unexpected error while requesting supplier.", {
+        cause: error,
+      });
+    }
+  }
+
+  private formatUserName(firstName: string, lastName: string): string {
+    const formattedName = `${lastName}, ${firstName}`;
+    return convertToASCII(formattedName).toUpperCase();
+  }
+
+  private formatAddress(address: string): string {
+    return convertToASCII(address).toUpperCase();
+  }
+
+  private formatPostalCode(postalCode: string): string {
+    return postalCode.replace(/\s/g, "").toUpperCase();
   }
 
   @InjectLogger()
