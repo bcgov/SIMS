@@ -131,7 +131,7 @@ describe("StudentAESTController(e2e)-getUploadedFile", () => {
     });
   });
 
-  it("Should throw a HTTP Not Found (404) error when the student is a Basic BCeID user but none of the user profile information that needs to be updated has changed.", async () => {
+  it("Should throw a HTTP Not Found (404) error when the student does not exist.", async () => {
     // Arrange
     const studentProfileUpdateInfo = {
       givenNames: "SCOOBY",
