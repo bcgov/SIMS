@@ -8,6 +8,7 @@ import { Response } from "express";
 import {
   ApplicationService,
   StudentFileService,
+  StudentRestrictionService,
   StudentService,
 } from "../../services";
 import { FileCreateAPIOutDTO } from "../models/common.dto";
@@ -24,6 +25,7 @@ import {
 import {
   AddressInfo,
   Application,
+  SpecificIdentityProviders,
   Student,
   VirusScanStatus,
 } from "@sims/sims-db";
@@ -34,6 +36,7 @@ import {
   StudentFileDetailsAPIOutDTO,
   StudentUploadFileAPIOutDTO,
   InstitutionStudentProfileAPIOutDTO,
+  AESTStudentProfileAPIOutDTO,
 } from "./models/student.dto";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 import { ApiProcessError } from "../../types";
@@ -51,6 +54,7 @@ export class StudentControllerService {
   constructor(
     private readonly fileService: StudentFileService,
     private readonly studentService: StudentService,
+    private readonly studentRestrictionService: StudentRestrictionService,
     private readonly applicationService: ApplicationService,
     private readonly objectStorageService: ObjectStorageService,
   ) {}
@@ -198,24 +202,46 @@ export class StudentControllerService {
    */
   async getStudentProfile(
     studentId: number,
-    options: { withSensitiveData: true },
+    options: { withSensitiveData: boolean },
   ): Promise<InstitutionStudentProfileAPIOutDTO>;
   /**
    * Get the student information that represents the profile.
    * @param studentId student id to retrieve the data.
    * @param options options:
    * - `withSensitiveData` boolean option to return sensitive data such as SIN.
+   * - `withAdditionalSpecificData` boolean option to return additional specific data.
    * @returns student profile details.
    */
   async getStudentProfile(
     studentId: number,
-    options?: { withSensitiveData: true },
-  ): Promise<StudentProfileAPIOutDTO | InstitutionStudentProfileAPIOutDTO> {
+    options: {
+      withSensitiveData: boolean;
+      withAdditionalSpecificData: boolean;
+    },
+  ): Promise<AESTStudentProfileAPIOutDTO>;
+  /**
+   * Get the student information that represents the profile.
+   * @param studentId student id to retrieve the data.
+   * @param options options:
+   * - `withSensitiveData` boolean option to return sensitive data such as SIN.
+   * - `withAdditionalSpecificData` boolean option to return additional specific data.
+   * @returns student profile details.
+   */
+  async getStudentProfile(
+    studentId: number,
+    options?: {
+      withSensitiveData: boolean;
+      withAdditionalSpecificData: boolean;
+    },
+  ): Promise<
+    | StudentProfileAPIOutDTO
+    | InstitutionStudentProfileAPIOutDTO
+    | AESTStudentProfileAPIOutDTO
+  > {
     const student = await this.studentService.getStudentById(studentId);
     if (!student) {
       throw new NotFoundException("Student not found.");
     }
-
     const address = student.contactInfo.address ?? ({} as AddressInfo);
     const studentProfile = {
       firstName: student.user.firstName,
@@ -231,11 +257,35 @@ export class StudentControllerService {
       disabilityStatus: student.disabilityStatus,
       validSin: student.sinValidation.isValidSIN,
     };
-
-    if (options?.withSensitiveData) {
-      return { ...studentProfile, sin: student.sinValidation.sin };
+    let specificData: Pick<
+      AESTStudentProfileAPIOutDTO,
+      "hasRestriction" | "identityProviderType"
+    >;
+    if (options?.withAdditionalSpecificData) {
+      const studentRestrictions =
+        await this.studentRestrictionService.getStudentRestrictionsById(
+          studentId,
+          {
+            onlyActive: true,
+          },
+        );
+      specificData = {
+        hasRestriction: !!studentRestrictions.length,
+        identityProviderType: student.user
+          .identityProviderType as SpecificIdentityProviders,
+      };
     }
-    return studentProfile;
+    let sensitiveData: Pick<AESTStudentProfileAPIOutDTO, "sin">;
+    if (options?.withSensitiveData) {
+      sensitiveData = {
+        sin: student.sinValidation.sin,
+      };
+    }
+    return {
+      ...studentProfile,
+      ...specificData,
+      ...sensitiveData,
+    };
   }
 
   /**

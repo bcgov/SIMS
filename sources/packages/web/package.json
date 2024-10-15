@@ -17,6 +17,7 @@
     "@vee-validate/rules": "^4.0.4",
     "axios": "^1.7.4",
     "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
     "core-js": "^3.37.0",
     "dayjs": "^1.11.10",
     "formiojs": "^4.21.4",

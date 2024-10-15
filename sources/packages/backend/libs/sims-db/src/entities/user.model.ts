@@ -9,6 +9,7 @@ import { ColumnNames, TableNames } from "../constant";
 import { BaseModel } from "./base.model";
 import { IdentityProviders } from "./identity-providers.type";
 
+export const USER_GIVEN_NAMES_MAX_LENGTH = 100;
 export const USER_LAST_NAME_MAX_LENGTH = 100;
 
 @Entity({ name: TableNames.User })

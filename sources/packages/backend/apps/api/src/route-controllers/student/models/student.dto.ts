@@ -5,6 +5,7 @@ import {
   IsBoolean,
   IsDateString,
   IsDefined,
+  IsEmail,
   IsEnum,
   IsNotEmpty,
   IsOptional,
@@ -19,6 +20,9 @@ import {
   NOTE_DESCRIPTION_MAX_LENGTH,
   FILE_NAME_MAX_LENGTH,
   DisabilityStatus,
+  USER_LAST_NAME_MAX_LENGTH,
+  USER_GIVEN_NAMES_MAX_LENGTH,
+  SpecificIdentityProviders,
 } from "@sims/sims-db";
 import {
   AddressAPIOutDTO,
@@ -190,6 +194,7 @@ export class InstitutionStudentProfileAPIOutDTO extends StudentProfileAPIOutDTO 
 
 export class AESTStudentProfileAPIOutDTO extends InstitutionStudentProfileAPIOutDTO {
   hasRestriction: boolean;
+  identityProviderType: SpecificIdentityProviders;
 }
 
 export class AESTFileUploadToStudentAPIInDTO {
@@ -268,6 +273,29 @@ export class UniqueFileNameParamAPIInDTO {
 export class UpdateDisabilityStatusAPIInDTO {
   @IsEnum(DisabilityStatus)
   disabilityStatus: DisabilityStatus;
+  @IsNotEmpty()
+  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
+  noteDescription: string;
+}
+
+/**
+ * Updates the student information.
+ */
+export class UpdateStudentDetailsAPIInDTO {
+  @IsNotEmpty()
+  @MaxLength(USER_LAST_NAME_MAX_LENGTH)
+  lastName: string;
+  @MaxLength(USER_GIVEN_NAMES_MAX_LENGTH)
+  @ValidateIf(
+    (value: UpdateStudentDetailsAPIInDTO) => value.givenNames !== null,
+  )
+  givenNames: string;
+  @IsNotEmpty()
+  @IsDateString()
+  birthdate: string;
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
   @IsNotEmpty()
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   noteDescription: string;
