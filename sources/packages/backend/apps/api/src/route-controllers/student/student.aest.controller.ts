@@ -433,7 +433,7 @@ export class StudentAESTController extends BaseController {
   @Patch(":studentId")
   @ApiNotFoundResponse({ description: "Student does not exist." })
   @ApiUnprocessableEntityResponse({
-    description: "No profile update found to be saved.",
+    description: "No profile data updated because no changes were detected.",
   })
   async updateProfileInformation(
     @Param("studentId", ParseIntPipe) studentId: number,
