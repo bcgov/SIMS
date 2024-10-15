@@ -17,9 +17,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGP
       assessmentConsolidatedData,
     );
     // Assert
-    // 4000 is the const value set on dmnFullTimeAwardFederalAllowableLimits.limitAwardCSGPAmount.
-    // When the CSGP is eligible its amount will always be 2800. The same value is expected for
-    // provincial and federal grants.
+    // 2800 is the const value set on dmnFullTimeAwardFederalAllowableLimits.limitAwardCSGPAmount.
     expect(calculatedAssessment.variables.federalAwardNetCSGPAmount).toBe(2800);
     expect(calculatedAssessment.variables.awardEligibilityCSGP).toBe(true);
   });
