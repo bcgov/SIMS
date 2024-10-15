@@ -39,7 +39,7 @@ export class UpdateStudentAPIInDTO extends AddressDetailsFormAPIDTO {
 }
 
 export interface UpdateStudentDetailsAPIInDTO {
-  givenNames: string;
+  givenNames?: string;
   lastName: string;
   birthdate: string;
   email: string;
