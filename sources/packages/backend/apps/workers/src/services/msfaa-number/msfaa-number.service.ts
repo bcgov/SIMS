@@ -29,16 +29,18 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
    * @param studentId student id to filter.
    * @param offeringIntensity MSFAA are generated individually for full-time/part-time
    * disbursements. The offering intensity is used to differentiate between them.
+   * @param isSigned MSFAA number is signed or not.
    * @returns current valid MSFAA record.
    */
   async getCurrentValidMSFAANumber(
     studentId: number,
     offeringIntensity: OfferingIntensity,
+    isSigned?: boolean,
   ): Promise<MSFAANumber> {
     const minimumValidDate = dayjs()
       .subtract(MAX_MSFAA_VALID_DAYS, "days")
       .toDate();
-    return this.repo
+    const query = this.repo
       .createQueryBuilder("msfaaNumber")
       .innerJoin("msfaaNumber.student", "students")
       .where("students.id = :studentId", { studentId })
@@ -46,16 +48,29 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
       .andWhere("msfaaNumber.offeringIntensity = :offeringIntensity", {
         offeringIntensity,
       })
-      .andWhere("msfaaNumber.cancelledDate is null")
-      .andWhere(
-        new Brackets((qb) => {
-          qb.where("msfaaNumber.dateSigned is null");
-          qb.orWhere("msfaaNumber.dateSigned > :minimumValidDate", {
-            minimumValidDate,
-          });
-        }),
-      )
-      .getOne();
+      .andWhere("msfaaNumber.cancelledDate is null");
+    if (isSigned) {
+      return query
+        .andWhere(
+          new Brackets((qb) => {
+            qb.where("msfaaNumber.dateSigned is not null");
+            qb.orWhere("msfaaNumber.dateSigned < :minimumValidDate", {
+              minimumValidDate,
+            });
+          }),
+        )
+        .getOne();
+    } else
+      return query
+        .andWhere(
+          new Brackets((qb) => {
+            qb.where("msfaaNumber.dateSigned is null");
+            qb.orWhere("msfaaNumber.dateSigned > :minimumValidDate", {
+              minimumValidDate,
+            });
+          }),
+        )
+        .getOne();
   }
 
   /**

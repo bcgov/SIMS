@@ -5,14 +5,11 @@ import {
   MSFAANumber,
   OfferingIntensity,
   RecordDataModelService,
+  SFASApplication,
 } from "@sims/sims-db";
-import {
-  CustomNamedError,
-  addToDateOnlyString,
-  isBetweenPeriod,
-} from "@sims/utilities";
+import { CustomNamedError } from "@sims/utilities";
 import { DataSource, In, IsNull, Not } from "typeorm";
-import { MSFAANumberService } from "..";
+import { MSFAANumberService, SFASSignedMSFAA } from "..";
 import {
   DISBURSEMENT_MSFAA_ALREADY_ASSOCIATED,
   DISBURSEMENT_NOT_FOUND,
@@ -89,11 +86,12 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     const applicationId = firstDisbursement.studentAssessment.application.id;
     const systemUser = this.systemUsersService.systemUser;
 
-    // Checks if there is an MSFAA that could be considered valid.
+    // Checks if there is an signed MSFAA that could be considered valid.
     const existingValidMSFAANumber =
       await this.msfaaNumberService.getCurrentValidMSFAANumber(
         studentId,
         offeringIntensity,
+        true,
       );
     if (existingValidMSFAANumber) {
       // Reuse the MSFAA that is still valid and avoid creating a new one.
@@ -122,42 +120,23 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           new Date(firstDisbursement.studentAssessment.offering.studyStartDate),
         );
       } else {
-        let sfasMSFAANumber: string;
-        // Checks if there is a MSFAA number that could be considered valid from SFAS.
-        const sfasMSFAA =
-          await this.sfasIndividualService.getIndividualStudentByStudentId(
-            studentId,
-          );
-        sfasMSFAANumber =
-          offeringIntensity === OfferingIntensity.partTime
-            ? sfasMSFAA?.partTimeMSFAANumber
-            : sfasMSFAA?.msfaaNumber;
-        if (sfasMSFAA) {
-          const [latestSfasApplication] =
-            await this.sfasApplicationService.getIndividualApplicationByIndividualId(
-              sfasMSFAA.id,
+        const sfasSignedMSFAA = await this.checkSFASSignedMSFAA(
+          studentId,
+          offeringIntensity,
+        );
+        if (sfasSignedMSFAA.latestSfasApplication) {
+          // Create new MSFAA number from the SFAS records.
+          const newMSFAANumber =
+            await this.msfaaNumberSharedService.reactivateOrReuseMSFAANumber(
+              studentId,
+              applicationId,
+              offeringIntensity,
+              systemUser.id,
+              { msfaaNumber: sfasSignedMSFAA.sfasMSFAANumber },
+              sfasSignedMSFAA.latestSfasApplication.endDate,
             );
-          if (
-            latestSfasApplication &&
-            isBetweenPeriod(latestSfasApplication.endDate, {
-              startDate: addToDateOnlyString(new Date(), -730, "day"),
-              endDate: new Date(),
-            })
-          ) {
-            // Create new MSFAA number from the SFAS records.
-            const newMSFAANumber =
-              await this.msfaaNumberSharedService.reuseSFASSignedMSFAANumber(
-                studentId,
-                applicationId,
-                offeringIntensity,
-                systemUser.id,
-                { msfaaNumber: sfasMSFAANumber },
-                latestSfasApplication.endDate,
-                null,
-              );
-            hasValidMSFAANumber = true;
-            msfaaNumberId = newMSFAANumber.id;
-          }
+          hasValidMSFAANumber = true;
+          msfaaNumberId = newMSFAANumber.id;
         }
       }
 
@@ -167,13 +146,23 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           ? msfaaNumberId
           : previousSignedDisbursement.msfaaNumber.id;
       } else {
-        // Create a new MSFAA number in case the previous one is no longer valid.
-        const newMSFAANumber =
-          await this.msfaaNumberSharedService.createMSFAANumber(
-            applicationId,
-            systemUser.id,
+        const existingValidMSFAANumber =
+          await this.msfaaNumberService.getCurrentValidMSFAANumber(
+            studentId,
+            offeringIntensity,
           );
-        msfaaNumberId = newMSFAANumber.id;
+        if (existingValidMSFAANumber) {
+          // Reuse the MSFAA that is still valid and avoid creating a new one.
+          msfaaNumberId = existingValidMSFAANumber.id;
+        } else {
+          // Create a new MSFAA number in case the previous one is no longer valid.
+          const newMSFAANumber =
+            await this.msfaaNumberSharedService.createMSFAANumber(
+              applicationId,
+              systemUser.id,
+            );
+          msfaaNumberId = newMSFAANumber.id;
+        }
       }
     }
     const msfaaNumber = { id: msfaaNumberId } as MSFAANumber;
@@ -184,6 +173,30 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       disbursement.modifier = systemUser;
     });
     await this.repo.save(disbursements);
+  }
+
+  private async checkSFASSignedMSFAA(
+    studentId: number,
+    offeringIntensity: OfferingIntensity,
+  ): Promise<SFASSignedMSFAA> {
+    let sfasMSFAANumber: string;
+    // Checks if there is a MSFAA number that could be considered valid from SFAS.
+    const sfasMSFAA =
+      await this.sfasIndividualService.getIndividualStudentByStudentId(
+        studentId,
+      );
+    sfasMSFAANumber =
+      offeringIntensity === OfferingIntensity.partTime
+        ? sfasMSFAA?.partTimeMSFAANumber
+        : sfasMSFAA?.msfaaNumber;
+    let latestSfasApplication: SFASApplication;
+    if (sfasMSFAA) {
+      [latestSfasApplication] =
+        await this.sfasApplicationService.getIndividualApplicationByIndividualId(
+          sfasMSFAA.id,
+        );
+    }
+    return { sfasMSFAANumber, latestSfasApplication };
   }
 
   /**

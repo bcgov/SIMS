@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, Brackets } from "typeorm";
+import { DataSource, Brackets, MoreThanOrEqual } from "typeorm";
 import { DataModelService, SFASApplication } from "@sims/sims-db";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 
@@ -76,14 +76,16 @@ export class SFASApplicationService extends DataModelService<SFASApplication> {
   async getIndividualApplicationByIndividualId(
     individualId: number,
   ): Promise<SFASApplication[]> {
+    const twoYearsAgo = new Date();
+    twoYearsAgo.setDate(twoYearsAgo.getDate() - 730);
     return this.repo.find({
       select: {
         id: true,
-        startDate: true,
         endDate: true,
       },
       where: {
         individualId: individualId,
+        endDate: MoreThanOrEqual(twoYearsAgo.toISOString()), // Only select endDate within 730 days.
       },
       order: {
         endDate: "DESC",

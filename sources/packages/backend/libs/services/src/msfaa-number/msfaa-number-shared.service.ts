@@ -103,7 +103,7 @@ export class MSFAANumberSharedService {
   }
 
   /**
-   * Reactivates the provided MSFAA record for the specified student.
+   * Reactivates the provided MSFAA record or reuse the SFAS signed MSFAA record for the specified student.
    * @param studentId student for which the MSFAA record will be reactivated.
    * @param referenceApplicationId reference application id.
    * @param offeringIntensity offering intensity.
@@ -113,52 +113,14 @@ export class MSFAANumberSharedService {
    * @param serviceProviderReceivedDate serviceProviderReceivedDate date.
    * @returns reactivated MSFAA record.
    */
-  async reactivateMSFAANumber(
-    studentId: number,
-    referenceApplicationId: number,
-    offeringIntensity: OfferingIntensity,
-    auditUserId: number,
-    msfaaNumber: Partial<MSFAANumber>,
-    dateSigned: Date,
-    serviceProviderReceivedDate: Date,
-  ): Promise<MSFAANumber> {
-    return this.internalActivateMSFAANumber(
-      studentId,
-      referenceApplicationId,
-      offeringIntensity,
-      auditUserId,
-      {
-        existingMSFAA: {
-          id: msfaaNumber.id,
-          msfaaNumber: msfaaNumber.msfaaNumber,
-          dateSigned: getISODateOnlyString(dateSigned),
-          serviceProviderReceivedDate: getISODateOnlyString(
-            serviceProviderReceivedDate,
-          ),
-        },
-      },
-    );
-  }
-
-  /**
-   * Reuse the provided MSFAA from the SFAS record for the specified student.
-   * @param studentId student for which the MSFAA record will be reactivated.
-   * @param referenceApplicationId reference application id.
-   * @param offeringIntensity offering intensity.
-   * @param auditUserId user causing the change.
-   * @param msfaaNumber msfaaNumber to be reactivated.
-   * @param dateSigned date the msfaaNumber got signed.
-   * @param serviceProviderReceivedDate serviceProviderReceivedDate date.
-   * @returns reuse MSFAA number from the SFAS record.
-   */
-  async reuseSFASSignedMSFAANumber(
+  async reactivateOrReuseMSFAANumber(
     studentId: number,
     referenceApplicationId: number,
     offeringIntensity: OfferingIntensity,
     auditUserId: number,
     msfaaNumber: Partial<MSFAANumber>,
     dateSigned: Date | string,
-    serviceProviderReceivedDate: Date | null,
+    serviceProviderReceivedDate?: Date,
   ): Promise<MSFAANumber> {
     return this.internalActivateMSFAANumber(
       studentId,
@@ -174,9 +136,7 @@ export class MSFAANumberSharedService {
               ? dateSigned
               : getISODateOnlyString(dateSigned),
           serviceProviderReceivedDate: serviceProviderReceivedDate
-            ? typeof serviceProviderReceivedDate === "string"
-              ? serviceProviderReceivedDate
-              : getISODateOnlyString(serviceProviderReceivedDate)
+            ? getISODateOnlyString(serviceProviderReceivedDate)
             : null,
         },
       },

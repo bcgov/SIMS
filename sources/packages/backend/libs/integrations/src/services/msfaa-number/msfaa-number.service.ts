@@ -147,7 +147,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
     // If there is a retrievedMSFAARecord, check if the msfaa number was cancelled earlier. If yes, reactivate it.
     if (retrievedMSFAARecord.cancelledDate) {
       // Re-associate all disbursements pending e-cert generation for the same offering intensity with this msfaa number.
-      await this.msfaaNumberSharedService.reactivateMSFAANumber(
+      await this.msfaaNumberSharedService.reactivateOrReuseMSFAANumber(
         retrievedMSFAARecord.student?.id,
         retrievedMSFAARecord.referenceApplication?.id,
         retrievedMSFAARecord.offeringIntensity,
