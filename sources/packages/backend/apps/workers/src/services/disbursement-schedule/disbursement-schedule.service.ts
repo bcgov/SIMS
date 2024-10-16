@@ -26,9 +26,9 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     dataSource: DataSource,
     private readonly msfaaNumberService: MSFAANumberService,
     private readonly msfaaNumberSharedService: MSFAANumberSharedService,
-    private readonly systemUsersService: SystemUsersService,
-    private readonly sfasPartTimeApplicationsService: SFASPartTimeApplicationsService,
     private readonly sfasApplicationService: SFASApplicationService,
+    private readonly sfasPartTimeApplicationsService: SFASPartTimeApplicationsService,
+    private readonly systemUsersService: SystemUsersService,
   ) {
     super(dataSource.getRepository(DisbursementSchedule));
   }
@@ -135,10 +135,12 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           sfasMSFAANumber.referenceApplication.id = applicationId;
           sfasMSFAANumber.student.id = studentId;
           sfasMSFAANumber.offeringIntensity = offeringIntensity;
-
+          const createdMSFAANumber = await this.msfaaNumberService.createMSFAA(
+            sfasMSFAANumber,
+          );
           const createAndActivateMSFAANumber =
-            await this.msfaaNumberSharedService.createAndActivateMSFAANumber(
-              sfasMSFAANumber,
+            await this.msfaaNumberSharedService.activateMSFAANumber(
+              createdMSFAANumber,
               systemUser.id,
             );
 

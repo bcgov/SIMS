@@ -31,7 +31,6 @@ export class MSFAANumberSharedService {
     private readonly dataSource: DataSource,
     private readonly sequenceService: SequenceControlService,
     private readonly systemUsersService: SystemUsersService,
-    private readonly msfaaNumberRepo: Repository<MSFAANumber>,
   ) {}
 
   /**
@@ -67,12 +66,10 @@ export class MSFAANumberSharedService {
    * individually based on, for instance, the Part time/Full time.
    * @returns created and activated MSFAA record.
    */
-  async createAndActivateMSFAANumber(
-    sfasMSFAANumber: Partial<MSFAANumber>,
+  async activateMSFAANumber(
+    msfaaNumberRecord: MSFAANumber,
     auditUserId: number,
   ): Promise<MSFAANumber> {
-    const msfaaNumberRecord = await this.msfaaNumberRepo.save(sfasMSFAANumber);
-
     return this.internalActivateMSFAANumber(
       msfaaNumberRecord.student.id,
       msfaaNumberRecord.referenceApplication.id,
