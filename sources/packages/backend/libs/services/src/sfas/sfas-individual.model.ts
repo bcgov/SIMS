@@ -8,7 +8,7 @@ export interface SFASIndividualDataSummary {
 /**
  * Represents the information that must be returned
  * when a SFAS Signed MSFAA and latest application end date
- *  is found for the student in SFAS Application.
+ * is found for the student in SFAS Application.
  */
 export interface SFASSignedMSFAA {
   /**
@@ -16,7 +16,7 @@ export interface SFASSignedMSFAA {
    */
   sfasMSFAANumber: string;
   /**
-   *Latest SFAS application end date of the student.
+   * Latest SFAS application end date of the student.
    */
   latestSFASApplicationEndDate: string;
 }

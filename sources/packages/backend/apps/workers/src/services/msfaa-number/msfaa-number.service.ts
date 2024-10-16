@@ -61,17 +61,17 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
       .andWhere("msfaaNumber.cancelledDate is null");
     if (options?.isSigned) {
       return query.andWhere("msfaaNumber.dateSigned is not null").getOne();
-    } else
-      return query
-        .andWhere(
-          new Brackets((qb) => {
-            qb.where("msfaaNumber.dateSigned is null");
-            qb.orWhere("msfaaNumber.dateSigned > :minimumValidDate", {
-              minimumValidDate,
-            });
-          }),
-        )
-        .getOne();
+    }
+    return query
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where("msfaaNumber.dateSigned is null");
+          qb.orWhere("msfaaNumber.dateSigned > :minimumValidDate", {
+            minimumValidDate,
+          });
+        }),
+      )
+      .getOne();
   }
 
   /**
