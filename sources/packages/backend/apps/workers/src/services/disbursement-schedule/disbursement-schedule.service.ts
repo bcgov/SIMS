@@ -6,7 +6,7 @@ import {
   OfferingIntensity,
   RecordDataModelService,
 } from "@sims/sims-db";
-import { CustomNamedError } from "@sims/utilities";
+import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
 import { DataSource, In, IsNull, Not } from "typeorm";
 import { MSFAANumberService, SFASSignedMSFAA } from "..";
 import {
@@ -124,18 +124,26 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           offeringIntensity,
         );
         if (sfasSignedMSFAA) {
-          // Create new MSFAA number from the SFAS records.
-          const newMSFAANumber =
-            await this.msfaaNumberSharedService.reactivateOrReuseMSFAANumber(
-              studentId,
-              applicationId,
-              offeringIntensity,
+          // Create and activate new MSFAA number from the SFAS records.
+          const sfasMSFAANumber = new MSFAANumber();
+          sfasMSFAANumber.msfaaNumber = sfasSignedMSFAA.sfasMSFAANumber;
+          sfasMSFAANumber.dateSigned = getISODateOnlyString(
+            sfasSignedMSFAA.latestSFASApplicationEndDate,
+          );
+          sfasMSFAANumber.dateRequested = null;
+          sfasMSFAANumber.serviceProviderReceivedDate = null;
+          sfasMSFAANumber.referenceApplication.id = applicationId;
+          sfasMSFAANumber.student.id = studentId;
+          sfasMSFAANumber.offeringIntensity = offeringIntensity;
+
+          const createAndActivateMSFAANumber =
+            await this.msfaaNumberSharedService.createAndActivateMSFAANumber(
+              sfasMSFAANumber,
               systemUser.id,
-              { msfaaNumber: sfasSignedMSFAA.sfasMSFAANumber },
-              sfasSignedMSFAA.latestSFASApplicationEndDate,
             );
+
           hasValidMSFAANumber = true;
-          msfaaNumberId = newMSFAANumber.id;
+          msfaaNumberId = createAndActivateMSFAANumber.id;
         }
       }
 
