@@ -141,6 +141,49 @@ export class MSFAANumberSharedService {
   }
 
   /**
+   * Reuse the provided MSFAA from the SFAS record for the specified student.
+   * @param studentId student for which the MSFAA record will be reactivated.
+   * @param referenceApplicationId reference application id.
+   * @param offeringIntensity offering intensity.
+   * @param auditUserId user causing the change.
+   * @param msfaaNumber msfaaNumber to be reactivated.
+   * @param dateSigned date the msfaaNumber got signed.
+   * @param serviceProviderReceivedDate serviceProviderReceivedDate date.
+   * @returns reuse MSFAA number from the SFAS record.
+   */
+  async reuseSFASSignedMSFAANumber(
+    studentId: number,
+    referenceApplicationId: number,
+    offeringIntensity: OfferingIntensity,
+    auditUserId: number,
+    msfaaNumber: Partial<MSFAANumber>,
+    dateSigned: Date | string,
+    serviceProviderReceivedDate: Date | null,
+  ): Promise<MSFAANumber> {
+    return this.internalActivateMSFAANumber(
+      studentId,
+      referenceApplicationId,
+      offeringIntensity,
+      auditUserId,
+      {
+        existingMSFAA: {
+          id: msfaaNumber.id,
+          msfaaNumber: msfaaNumber.msfaaNumber,
+          dateSigned:
+            typeof dateSigned === "string"
+              ? dateSigned
+              : getISODateOnlyString(dateSigned),
+          serviceProviderReceivedDate: serviceProviderReceivedDate
+            ? typeof serviceProviderReceivedDate === "string"
+              ? serviceProviderReceivedDate
+              : getISODateOnlyString(serviceProviderReceivedDate)
+            : null,
+        },
+      },
+    );
+  }
+
+  /**
    * Creates a new MSFAA record with a new number or associates an existing MSFAA record for the specified student.
    * @param studentId student to have a new MSFAA record created.
    * @param referenceApplicationId reference application id.

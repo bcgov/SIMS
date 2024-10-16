@@ -73,6 +73,25 @@ export class SFASApplicationService extends DataModelService<SFASApplication> {
     return +(total?.sum ?? 0);
   }
 
+  async getIndividualApplicationByIndividualId(
+    individualId: number,
+  ): Promise<SFASApplication[]> {
+    return this.repo.find({
+      select: {
+        id: true,
+        startDate: true,
+        endDate: true,
+      },
+      where: {
+        individualId: individualId,
+      },
+      order: {
+        endDate: "DESC",
+      },
+      take: 1,
+    });
+  }
+
   @InjectLogger()
   logger: LoggerService;
 }

@@ -6,14 +6,23 @@ import {
   OfferingIntensity,
   RecordDataModelService,
 } from "@sims/sims-db";
-import { CustomNamedError } from "@sims/utilities";
+import {
+  CustomNamedError,
+  addToDateOnlyString,
+  isBetweenPeriod,
+} from "@sims/utilities";
 import { DataSource, In, IsNull, Not } from "typeorm";
 import { MSFAANumberService } from "..";
 import {
   DISBURSEMENT_MSFAA_ALREADY_ASSOCIATED,
   DISBURSEMENT_NOT_FOUND,
 } from "../../constants";
-import { MSFAANumberSharedService, SystemUsersService } from "@sims/services";
+import {
+  MSFAANumberSharedService,
+  SFASApplicationService,
+  SFASIndividualService,
+  SystemUsersService,
+} from "@sims/services";
 
 @Injectable()
 export class DisbursementScheduleService extends RecordDataModelService<DisbursementSchedule> {
@@ -22,10 +31,11 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     private readonly msfaaNumberService: MSFAANumberService,
     private readonly msfaaNumberSharedService: MSFAANumberSharedService,
     private readonly systemUsersService: SystemUsersService,
+    private readonly sfasIndividualService: SFASIndividualService,
+    private readonly sfasApplicationService: SFASApplicationService,
   ) {
     super(dataSource.getRepository(DisbursementSchedule));
   }
-
   /**
    * Associates an MSFAA number to the disbursement(s) checking
    * whatever is needed to create a new MSFAA or use an
@@ -98,6 +108,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         );
 
       let hasValidMSFAANumber = false;
+
       if (previousSignedDisbursement) {
         // Checks if the MSFAA number is still valid.
         // If the study period end date of the previously signed MSFAA is less than 2 years
@@ -110,11 +121,51 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           // Start date of the offering of the current application is considered the end date.
           new Date(firstDisbursement.studentAssessment.offering.studyStartDate),
         );
+      } else {
+        let sfasMSFAANumber: string;
+        // Checks if there is a MSFAA number that could be considered valid from SFAS.
+        const sfasMSFAA =
+          await this.sfasIndividualService.getIndividualStudentByStudentId(
+            studentId,
+          );
+        sfasMSFAANumber =
+          offeringIntensity === OfferingIntensity.partTime
+            ? sfasMSFAA?.partTimeMSFAANumber
+            : sfasMSFAA?.msfaaNumber;
+        if (sfasMSFAA) {
+          const [latestSfasApplication] =
+            await this.sfasApplicationService.getIndividualApplicationByIndividualId(
+              sfasMSFAA.id,
+            );
+          if (
+            latestSfasApplication &&
+            isBetweenPeriod(latestSfasApplication.endDate, {
+              startDate: addToDateOnlyString(new Date(), -730, "day"),
+              endDate: new Date(),
+            })
+          ) {
+            // Create new MSFAA number from the SFAS records.
+            const newMSFAANumber =
+              await this.msfaaNumberSharedService.reuseSFASSignedMSFAANumber(
+                studentId,
+                applicationId,
+                offeringIntensity,
+                systemUser.id,
+                { msfaaNumber: sfasMSFAANumber },
+                latestSfasApplication.endDate,
+                null,
+              );
+            hasValidMSFAANumber = true;
+            msfaaNumberId = newMSFAANumber.id;
+          }
+        }
       }
 
       if (hasValidMSFAANumber) {
         // Reuse the MSFAA number.
-        msfaaNumberId = previousSignedDisbursement.msfaaNumber.id;
+        msfaaNumberId = msfaaNumberId
+          ? msfaaNumberId
+          : previousSignedDisbursement.msfaaNumber.id;
       } else {
         // Create a new MSFAA number in case the previous one is no longer valid.
         const newMSFAANumber =
