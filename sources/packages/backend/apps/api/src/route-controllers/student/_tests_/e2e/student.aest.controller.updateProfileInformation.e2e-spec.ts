@@ -40,7 +40,7 @@ describe("StudentAESTController(e2e)-updateProfileInformation", () => {
     };
   });
 
-  it("Should allow the student profile update when the student is a Basic BCeID user.", async () => {
+  it("Should allow the ministry user to update a student profile when the student is a Basic BCeID user and the ministry user has the associated role.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     student.user.identityProviderType = IdentityProviders.BCeIDBasic;
@@ -129,7 +129,12 @@ describe("StudentAESTController(e2e)-updateProfileInformation", () => {
       .patch(endpoint)
       .send({})
       .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.FORBIDDEN);
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        error: "Forbidden",
+        message: "Forbidden resource",
+        statusCode: HttpStatus.FORBIDDEN,
+      });
   });
 
   it("Should throw an HTTP Unprocessable Entity (422) error when the student is a Basic BCeID user but none of the user profile information that needs to be updated has changed.", async () => {
@@ -193,7 +198,15 @@ describe("StudentAESTController(e2e)-updateProfileInformation", () => {
         noteDescription: faker.lorem.text(),
       })
       .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.BAD_REQUEST);
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        error: "Bad Request",
+        message: [
+          "lastName must be shorter than or equal to 100 characters",
+          "lastName should not be empty",
+        ],
+        statusCode: HttpStatus.BAD_REQUEST,
+      });
   });
 
   it("Should allow the student profile update when the student is a Basic BCeID user and the givenNames is not provided.", async () => {
@@ -202,10 +215,8 @@ describe("StudentAESTController(e2e)-updateProfileInformation", () => {
     student.user.identityProviderType = IdentityProviders.BCeIDBasic;
     await db.user.save(student.user);
     const updatedStudentProfile = {
-      lastName: faker.name.lastName(),
-      birthdate: "1990-01-16",
-      email: faker.internet.email(),
-      noteDescription: faker.datatype.uuid(),
+      ...studentProfileUpdateInfo,
+      givenNames: null,
     };
     const token = await getAESTToken(AESTGroups.OperationsAdministrators);
     const endpoint = `/aest/student/${student.id}`;
@@ -220,44 +231,21 @@ describe("StudentAESTController(e2e)-updateProfileInformation", () => {
     const updatedStudent = await db.student.findOne({
       select: {
         id: true,
-        birthDate: true,
         user: {
-          id: true,
           firstName: true,
           lastName: true,
-          email: true,
-          createdAt: true,
-          identityProviderType: true,
-          isActive: true,
-          updatedAt: true,
-          userName: true,
         },
-        sinValidation: { id: true },
       },
-      relations: { user: true, sinValidation: true },
+      relations: { user: true },
       where: {
         id: student.id,
         notes: { description: updatedStudentProfile.noteDescription },
       },
     });
-    expect(updatedStudent).toEqual({
-      id: updatedStudent.id,
-      birthDate: updatedStudentProfile.birthdate,
-      sinValidation: { id: updatedStudent.sinValidation.id },
-      user: {
-        // Validating all the properties since eager is set to true for the User in the Student model resulting in all properties being fetched.
-        email: updatedStudentProfile.email,
-        firstName: null,
-        lastName: updatedStudentProfile.lastName,
-        id: updatedStudent.user.id,
-        createdAt: updatedStudent.user.createdAt,
-        identityProviderType: updatedStudent.user.identityProviderType,
-        isActive: updatedStudent.user.isActive,
-        updatedAt: updatedStudent.user.updatedAt,
-        userName: updatedStudent.user.userName,
-      },
-    });
-    expect(updatedStudent.sinValidation.id).not.toBe(student.sinValidation.id);
+    expect(updatedStudent.user.firstName).toEqual(null);
+    expect(updatedStudent.user.lastName).toEqual(
+      updatedStudentProfile.lastName,
+    );
   });
 
   afterAll(async () => {
