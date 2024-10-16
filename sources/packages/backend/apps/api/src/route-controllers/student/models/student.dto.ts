@@ -287,7 +287,7 @@ export class UpdateStudentDetailsAPIInDTO {
   lastName: string;
   @MaxLength(USER_GIVEN_NAMES_MAX_LENGTH)
   @ValidateIf(
-    (value: UpdateStudentDetailsAPIInDTO) => value.givenNames !== null,
+    (value: UpdateStudentDetailsAPIInDTO) => !!value.givenNames?.trim(),
   )
   givenNames: string;
   @IsNotEmpty()
