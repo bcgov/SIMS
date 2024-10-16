@@ -149,9 +149,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
 
       if (hasValidMSFAANumber) {
         // Reuse the MSFAA number.
-        msfaaNumberId = msfaaNumberId
-          ? msfaaNumberId
-          : previousSignedDisbursement.msfaaNumber.id;
+        msfaaNumberId =
+          msfaaNumberId || previousSignedDisbursement.msfaaNumber.id;
       } else {
         const existingValidMSFAANumber =
           await this.msfaaNumberService.getCurrentValidMSFAANumber(
