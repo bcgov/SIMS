@@ -35,7 +35,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
   async getCurrentValidMSFAANumber(
     studentId: number,
     offeringIntensity: OfferingIntensity,
-    isSigned?: boolean,
+    options?: { isSigned?: boolean },
   ): Promise<MSFAANumber> {
     const minimumValidDate = dayjs()
       .subtract(MAX_MSFAA_VALID_DAYS, "days")
@@ -49,17 +49,8 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
         offeringIntensity,
       })
       .andWhere("msfaaNumber.cancelledDate is null");
-    if (isSigned) {
-      return query
-        .andWhere(
-          new Brackets((qb) => {
-            qb.where("msfaaNumber.dateSigned is not null");
-            qb.orWhere("msfaaNumber.dateSigned < :minimumValidDate", {
-              minimumValidDate,
-            });
-          }),
-        )
-        .getOne();
+    if (options?.isSigned) {
+      return query.andWhere("msfaaNumber.dateSigned is not null").getOne();
     } else
       return query
         .andWhere(

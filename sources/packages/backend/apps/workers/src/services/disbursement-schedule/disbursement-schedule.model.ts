@@ -1,5 +1,3 @@
-import { SFASApplication } from "@sims/sims-db";
-
 /**
  * Represents the information that must be returned
  * when a SFAS Signed MSFAA is found for the student
@@ -11,7 +9,7 @@ export interface SFASSignedMSFAA {
    */
   sfasMSFAANumber: string;
   /**
-   *SFAS application which contains the end date of the student.
+   *Latest SFAS application end date of the student.
    */
-  latestSfasApplication: SFASApplication;
+  latestSFASApplicationEndDate: string;
 }

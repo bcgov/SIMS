@@ -2,6 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { DataSource, Brackets, MoreThanOrEqual } from "typeorm";
 import { DataModelService, SFASApplication } from "@sims/sims-db";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { MAX_MSFAA_VALID_DAYS } from "@sims/utilities";
+import { SFASSignedMSFAA } from "@sims/services/sfas/sfas-individual.model";
 
 /**
  * Manages the data related to an individual/student in SFAS.
@@ -73,18 +75,32 @@ export class SFASApplicationService extends DataModelService<SFASApplication> {
     return +(total?.sum ?? 0);
   }
 
-  async getIndividualApplicationByIndividualId(
-    individualId: number,
-  ): Promise<SFASApplication[]> {
+  /**
+   * Fetch the SFAS full time application for the student and the latest
+   * application which has the end date within 730 days.
+   * @param studentId student id.
+   * @returns SFASSignedMSFAA which contains the SFAS Signed MSFAA
+   * and latest application end date.
+   */
+  async getIndividualFullTimeApplicationByIndividualId(
+    studentId: number,
+  ): Promise<SFASSignedMSFAA> {
     const twoYearsAgo = new Date();
-    twoYearsAgo.setDate(twoYearsAgo.getDate() - 730);
-    return this.repo.find({
+    twoYearsAgo.setDate(twoYearsAgo.getDate() - MAX_MSFAA_VALID_DAYS);
+    const [sfasApplication] = await this.repo.find({
       select: {
         id: true,
         endDate: true,
+        individual: {
+          id: true,
+          msfaaNumber: true,
+        },
+      },
+      relations: {
+        individual: true,
       },
       where: {
-        individualId: individualId,
+        individual: { id: studentId },
         endDate: MoreThanOrEqual(twoYearsAgo.toISOString()), // Only select endDate within 730 days.
       },
       order: {
@@ -92,6 +108,13 @@ export class SFASApplicationService extends DataModelService<SFASApplication> {
       },
       take: 1,
     });
+    if (sfasApplication) {
+      return {
+        sfasMSFAANumber: sfasApplication.individual.msfaaNumber,
+        latestSFASApplicationEndDate: sfasApplication.endDate,
+      } as SFASSignedMSFAA;
+    }
+    return null;
   }
 
   @InjectLogger()

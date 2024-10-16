@@ -153,24 +153,4 @@ export class SFASIndividualService {
       .getRawOne<SFASIndividualDataSummary>();
     return sfasIndividualData?.totalUnsuccessfulWeeks;
   }
-
-  /**
-   * Gets the MSFAA number of a student in SFAS.
-   * @param studentId student id.
-   * @returns SFAS Student.
-   */
-  async getIndividualStudentByStudentId(
-    studentId: number,
-  ): Promise<SFASIndividual | null> {
-    return this.sfasIndividualRepo.findOne({
-      select: {
-        id: true,
-        msfaaNumber: true,
-        partTimeMSFAANumber: true,
-      },
-      where: {
-        id: studentId,
-      },
-    });
-  }
 }
