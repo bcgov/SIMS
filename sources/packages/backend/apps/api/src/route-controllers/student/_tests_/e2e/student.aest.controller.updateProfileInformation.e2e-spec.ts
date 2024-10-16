@@ -12,29 +12,39 @@ import {
   saveFakeStudent,
 } from "@sims/test-utils";
 import { IdentityProviders } from "@sims/sims-db";
+import * as faker from "faker";
 
-describe("StudentAESTController(e2e)-getUploadedFile", () => {
+interface StudentProfileUpdateInfo {
+  givenNames: string;
+  lastName: string;
+  birthdate: string;
+  email: string;
+  noteDescription: string;
+}
+
+describe("StudentAESTController(e2e)-updateProfileInformation", () => {
   let app: INestApplication;
   let db: E2EDataSources;
+  let studentProfileUpdateInfo: StudentProfileUpdateInfo;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    studentProfileUpdateInfo = {
+      givenNames: faker.name.firstName(),
+      lastName: faker.name.lastName(),
+      birthdate: "1990-01-15",
+      email: faker.internet.email(),
+      noteDescription: faker.lorem.text(),
+    };
   });
 
   it("Should allow the student profile update when the student is a Basic BCeID user.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     student.user.identityProviderType = IdentityProviders.BCeIDBasic;
-    await db.student.save(student);
-    const studentProfileUpdateInfo = {
-      givenNames: "SCOOBY",
-      lastName: "DOOBY-DOO",
-      birthdate: "1980-03-24",
-      email: "dummy@some.domain",
-      noteDescription: "Some dummy note.",
-    };
+    await db.user.save(student.user);
     const token = await getAESTToken(AESTGroups.OperationsAdministrators);
     let endpoint = `/aest/student/${student.id}`;
 
@@ -54,26 +64,19 @@ describe("StudentAESTController(e2e)-getUploadedFile", () => {
       .expect(HttpStatus.OK);
     expect(response.body).toEqual(
       expect.objectContaining({
-        firstName: "SCOOBY",
-        lastName: "DOOBY-DOO",
-        dateOfBirth: "1980-03-24",
-        email: "dummy@some.domain",
+        firstName: studentProfileUpdateInfo.givenNames,
+        lastName: studentProfileUpdateInfo.lastName,
+        dateOfBirth: studentProfileUpdateInfo.birthdate,
+        email: studentProfileUpdateInfo.email,
       }),
     );
   });
 
-  it("Should throw a HTTP Unprocessable Entity (422) error when the student is not a Basic BCeID user.", async () => {
+  it("Should throw an HTTP Unprocessable Entity (422) error when the student is not a Basic BCeID user.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     student.user.identityProviderType = IdentityProviders.BCeIDBusiness;
-    await db.student.save(student);
-    const studentProfileUpdateInfo = {
-      givenNames: "SCOOBY",
-      lastName: "DOOBY-DOO",
-      birthdate: "1980-03-24",
-      email: "dummy@some.domain",
-      noteDescription: "Some dummy note.",
-    };
+    await db.user.save(student.user);
     const token = await getAESTToken(AESTGroups.OperationsAdministrators);
     const endpoint = `/aest/student/${student.id}`;
 
@@ -90,7 +93,7 @@ describe("StudentAESTController(e2e)-getUploadedFile", () => {
     });
   });
 
-  it("Should throw a HTTP Forbidden (403) error when the ministry user performing the profile update does not have the associated role.", async () => {
+  it("Should throw an HTTP Forbidden (403) error when the ministry user performing the profile update does not have the associated role.", async () => {
     // Arrange
     const token = await getAESTToken(AESTGroups.MOFOperations);
     const endpoint = "/aest/student/9999";
@@ -103,11 +106,11 @@ describe("StudentAESTController(e2e)-getUploadedFile", () => {
       .expect(HttpStatus.FORBIDDEN);
   });
 
-  it("Should throw a HTTP Unprocessable Entity (422) error when the student is a Basic BCeID user but none of the user profile information that needs to be updated has changed.", async () => {
+  it("Should throw an HTTP Unprocessable Entity (422) error when the student is a Basic BCeID user but none of the user profile information that needs to be updated has changed.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     student.user.identityProviderType = IdentityProviders.BCeIDBasic;
-    await db.student.save(student);
+    await db.user.save(student.user);
     const studentProfileUpdateInfo = {
       givenNames: student.user.firstName?.toUpperCase(),
       lastName: student.user.lastName.toUpperCase(),
@@ -131,15 +134,8 @@ describe("StudentAESTController(e2e)-getUploadedFile", () => {
     });
   });
 
-  it("Should throw a HTTP Not Found (404) error when the student does not exist.", async () => {
+  it("Should throw an HTTP Not Found (404) error when the student does not exist.", async () => {
     // Arrange
-    const studentProfileUpdateInfo = {
-      givenNames: "SCOOBY",
-      lastName: "DOOBY-DOO",
-      birthdate: "1980-03-24",
-      email: "dummy@some.domain",
-      noteDescription: "Some dummy note.",
-    };
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     const endpoint = "/aest/student/9999";
 
@@ -156,21 +152,20 @@ describe("StudentAESTController(e2e)-getUploadedFile", () => {
     });
   });
 
-  it("Should throw a HTTP Bad Request error when some mandatory profile update information is missing from the payload.", async () => {
+  it("Should throw an HTTP Bad Request error when some mandatory profile update information is missing from the payload.", async () => {
     // Arrange
-    const studentProfileUpdateInfo = {
-      givenNames: "SCOOBY",
-      birthdate: "1980-03-24",
-      email: "dummy@some.domain",
-      noteDescription: "Some dummy note.",
-    };
     const token = await getAESTToken(AESTGroups.OperationsAdministrators);
     const endpoint = "/aest/student/9999";
 
     // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)
-      .send(studentProfileUpdateInfo)
+      .send({
+        givenNames: faker.name.firstName(),
+        birthdate: "1990-01-15",
+        email: faker.internet.email(),
+        noteDescription: faker.lorem.text(),
+      })
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.BAD_REQUEST);
   });
