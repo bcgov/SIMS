@@ -317,7 +317,7 @@
           "tableView": true,
           "validate": {
             "required": true,
-            "maxLength": 50,
+            "maxLength": 100,
             "custom": "",
             "customPrivate": false,
             "strictDateValidation": false,
