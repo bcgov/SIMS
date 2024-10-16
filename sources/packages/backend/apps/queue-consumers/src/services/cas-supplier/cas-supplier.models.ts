@@ -10,8 +10,8 @@ export enum CASEvaluationStatus {
 }
 
 export enum ManualInterventionReason {
-  GivenNamesNotPresent,
-  NonCanadianAddress,
+  GivenNamesNotPresent = "Given names not present",
+  NonCanadianAddress = "Non-Canadian address",
 }
 
 export enum NotFoundReason {

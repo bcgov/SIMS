@@ -3,8 +3,12 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { SystemUsersService } from "@sims/services";
 import { CASSupplier, SupplierAddress, SupplierStatus } from "@sims/sims-db";
 import { ProcessSummary } from "@sims/utilities/logger";
-import { Repository, UpdateResult } from "typeorm";
-import { CASService, CASAuthDetails } from "@sims/integrations/cas";
+import { Repository } from "typeorm";
+import {
+  CASService,
+  CASAuthDetails,
+  CreateSupplierAndSiteResponse,
+} from "@sims/integrations/cas";
 import { CustomNamedError, isAddressFromCanada } from "@sims/utilities";
 import { CAS_AUTH_ERROR } from "@sims/integrations/constants";
 import {
@@ -126,32 +130,39 @@ export class CASSupplierIntegrationService {
         casSupplier,
         auth,
       );
+      let supplierUpdated = false;
       switch (evaluationResult.status) {
         case CASEvaluationStatus.ManualInterventionRequired:
           summary.warn(
-            `Not possible to retrieve CAS supplier information for supplier ID ${casSupplier.id} because a manual intervention is required. Reason: ${evaluationStatus.reason}.`,
+            `Not possible to retrieve CAS supplier information for supplier ID ${casSupplier.id} because a manual intervention is required. Reason: ${evaluationResult.reason}.`,
           );
-          await this.updateCASSupplierForManualIntervention(casSupplier.id);
-          suppliersUpdated++;
+          supplierUpdated = await this.updateCASSupplierForManualIntervention(
+            casSupplier.id,
+          );
           break;
         case CASEvaluationStatus.ActiveSupplierFound:
           summary.info(
             `Active CAS supplier found for supplier ID ${casSupplier.id}.`,
           );
-          await this.updateCASFoundSupplier(
+          supplierUpdated = await this.updateCASFoundSupplier(
             casSupplier.id,
             evaluationResult,
             summary,
           );
-          suppliersUpdated++;
           break;
         case CASEvaluationStatus.NotFound:
           summary.info(
             `No active CAS supplier found for supplier ID ${casSupplier.id}.`,
           );
-          await this.createSupplierAndSite(casSupplier, auth);
-          suppliersUpdated++;
+          supplierUpdated = await this.createSupplierAndSite(
+            casSupplier,
+            auth,
+            summary,
+          );
           break;
+      }
+      if (supplierUpdated) {
+        suppliersUpdated++;
       }
     }
     return suppliersUpdated;
@@ -160,11 +171,12 @@ export class CASSupplierIntegrationService {
   private async createSupplierAndSite(
     casSupplier: CASSupplier,
     auth: CASAuthDetails,
-  ): Promise<void> {
-    const address = casSupplier.student.contactInfo.address;
-    const result = await this.casService.createSupplierAndSite(
-      auth.access_token,
-      {
+    summary: ProcessSummary,
+  ): Promise<boolean> {
+    let result: CreateSupplierAndSiteResponse;
+    try {
+      const address = casSupplier.student.contactInfo.address;
+      result = await this.casService.createSupplierAndSite(auth.access_token, {
         firstName: casSupplier.student.user.firstName,
         lastName: casSupplier.student.user.lastName,
         sin: casSupplier.student.sinValidation.sin,
@@ -175,50 +187,60 @@ export class CASSupplierIntegrationService {
           provinceCode: address.provinceState,
           postalCode: address.postalCode,
         },
-      },
-    );
-    if (result["CAS-Returned-Messages"] !== "SUCCESS") {
-      // TODO: Log error.
+      });
+      summary.info(
+        `Created supplier and site on CAS for supplier ID ${casSupplier.id}.`,
+      );
+    } catch (error: unknown) {
+      summary.error("Error while creating supplier and site on CAS.", error);
+      return false;
     }
-    const now = new Date();
-    const systemUser = this.systemUsersService.systemUser;
-    // TODO: return formatted values used to call CAS.
-    this.casSupplierRepo.update(
-      {
-        id: casSupplier.id,
-      },
-      {
-        supplierNumber: result.Supplier_Number,
-        supplierName: "supplierToUpdate.suppliername",
-        status: "ACTIVE",
-        supplierProtected: false,
-        lastUpdated: now,
-        supplierAddress: {
-          supplierSiteCode: result.Supplier_Site_Code,
-          addressLine1: "activeSupplierAddress.addressline1",
-          city: "activeSupplierAddress.city",
-          provinceState: "activeSupplierAddress.province",
-          country: "activeSupplierAddress.country",
-          postalCode: "activeSupplierAddress.postalcode",
-          status: "ACTIVE",
-          siteProtected: "N",
-          lastUpdated: now,
+    try {
+      const [submittedAddress] = result.submittedData.SupplierAddress;
+      const now = new Date();
+      const systemUser = this.systemUsersService.systemUser;
+      const updateResult = await this.casSupplierRepo.update(
+        {
+          id: casSupplier.id,
         },
-        supplierStatus: SupplierStatus.Verified,
-        supplierStatusUpdatedOn: now,
-        isValid: true,
-        updatedAt: now,
-        modifier: systemUser,
-      },
-    );
+        {
+          supplierNumber: result.response.supplierNumber,
+          supplierName: result.submittedData.SupplierName,
+          status: "ACTIVE",
+          lastUpdated: now,
+          supplierAddress: {
+            supplierSiteCode: result.response.supplierSiteCode,
+            addressLine1: submittedAddress.AddressLine1,
+            city: submittedAddress.City,
+            provinceState: submittedAddress.Province,
+            country: submittedAddress.Country,
+            postalCode: submittedAddress.PostalCode,
+            status: "ACTIVE",
+            lastUpdated: now,
+          },
+          supplierStatus: SupplierStatus.Verified,
+          supplierStatusUpdatedOn: now,
+          isValid: true,
+          updatedAt: now,
+          modifier: systemUser,
+        },
+      );
+      summary.info(
+        `Updated CAS supplier and site for the student, supplier ID ${casSupplier.id}.`,
+      );
+      return !!updateResult.affected;
+    } catch (error: unknown) {
+      summary.error("Error updating supplier and site for the student.", error);
+      return false;
+    }
   }
 
   private async updateCASSupplierForManualIntervention(
     casSupplierId: number,
-  ): Promise<UpdateResult> {
+  ): Promise<boolean> {
     const now = new Date();
     const systemUser = this.systemUsersService.systemUser;
-    return this.casSupplierRepo.update(
+    const updateResult = await this.casSupplierRepo.update(
       {
         id: casSupplierId,
       },
@@ -230,6 +252,7 @@ export class CASSupplierIntegrationService {
         modifier: systemUser,
       },
     );
+    return !!updateResult.affected;
   }
 
   /**
@@ -243,7 +266,7 @@ export class CASSupplierIntegrationService {
     casSupplierId: number,
     casFoundSupplierResult: CASFoundSupplierResult,
     summary: ProcessSummary,
-  ): Promise<UpdateResult> {
+  ): Promise<boolean> {
     summary.info("Updating CAS supplier table.");
     const supplierToUpdate = casFoundSupplierResult.activeSupplier;
     let supplierAddressToUpdate: SupplierAddress = null;
@@ -264,7 +287,7 @@ export class CASSupplierIntegrationService {
     }
     const now = new Date();
     const systemUser = this.systemUsersService.systemUser;
-    return this.casSupplierRepo.update(
+    const updateResult = await this.casSupplierRepo.update(
       {
         id: casSupplierId,
       },
@@ -282,6 +305,7 @@ export class CASSupplierIntegrationService {
         modifier: systemUser,
       },
     );
+    return !!updateResult.affected;
   }
 
   /**
@@ -295,7 +319,7 @@ export class CASSupplierIntegrationService {
         student: {
           id: true,
           sinValidation: { sin: true },
-          user: { lastName: true },
+          user: { firstName: true, lastName: true },
           contactInfo: true as unknown,
         },
       },

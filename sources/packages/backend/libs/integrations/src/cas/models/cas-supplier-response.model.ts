@@ -62,9 +62,29 @@ export class CreateSupplierSite {
   postalCode: string;
 }
 
-// TODO: create a better model with SIMS patterns.
+export class CreateSupplierAndSiteResult {
+  supplierNumber: string;
+  supplierSiteCode: string;
+  casReturnedMessages: string;
+}
+
+export class CreateSupplierAndSiteSubmittedData {
+  SupplierName: string;
+  SubCategory: string;
+  Sin: string;
+  SupplierAddress: [
+    {
+      AddressLine1: string;
+      City: string;
+      Province: string;
+      Country: string;
+      PostalCode: string;
+      EmailAddress: string;
+    },
+  ];
+}
+
 export class CreateSupplierAndSiteResponse {
-  Supplier_Number: string;
-  Supplier_Site_Code: string;
-  "CAS-Returned-Messages": string;
+  submittedData: CreateSupplierAndSiteSubmittedData;
+  response: CreateSupplierAndSiteResult;
 }

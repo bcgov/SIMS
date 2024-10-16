@@ -4,14 +4,21 @@ import {
   CASSupplierResponse,
   CreateSupplierAndSiteData,
   CreateSupplierAndSiteResponse,
+  CreateSupplierAndSiteSubmittedData,
 } from "./models/cas-supplier-response.model";
 import { AxiosRequestConfig } from "axios";
 import { HttpService } from "@nestjs/axios";
 import { CASIntegrationConfig, ConfigService } from "@sims/utilities/config";
 import { stringify } from "querystring";
-import { CustomNamedError, convertToASCII } from "@sims/utilities";
+import {
+  CustomNamedError,
+  convertToASCII,
+  parseJSONError,
+} from "@sims/utilities";
 import { CAS_AUTH_ERROR } from "@sims/integrations/constants";
 import { InjectLogger } from "@sims/utilities/logger";
+
+const CAS_MAX_SUPPLIER_NAME_LENGTH = 80;
 
 @Injectable()
 export class CASService {
@@ -45,7 +52,9 @@ export class CASService {
       const response = await this.httpService.axiosRef.post(url, data, config);
       return response.data;
     } catch (error: unknown) {
-      this.logger.error(`Error while logging on CAS API. ${error}`);
+      this.logger.error(
+        `Error while logging on CAS API. ${parseJSONError(error)}`,
+      );
       throw new CustomNamedError(
         "Could not authenticate on CAS.",
         CAS_AUTH_ERROR,
@@ -88,14 +97,14 @@ export class CASService {
     token: string,
     supplierData: CreateSupplierAndSiteData,
   ): Promise<CreateSupplierAndSiteResponse> {
-    const url = `${this.casIntegrationConfig.baseUrl}/cfs/supplier`;
+    const url = `${this.casIntegrationConfig.baseUrl}/cfs/supplier/`;
     try {
       const config: AxiosRequestConfig = {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       };
-      const payload = {
+      const submittedData: CreateSupplierAndSiteSubmittedData = {
         SupplierName: this.formatUserName(
           supplierData.lastName,
           supplierData.firstName,
@@ -117,22 +126,49 @@ export class CASService {
           },
         ],
       };
-      // TODO: return the payload to allow DB update with the converted data.
-      await this.httpService.axiosRef.post(url, payload, config);
-      return new CreateSupplierAndSiteResponse();
+      const response = await this.httpService.axiosRef.post(
+        url,
+        submittedData,
+        config,
+      );
+      return {
+        submittedData,
+        response: {
+          supplierNumber: response.data.SUPPLIER_NUMBER,
+          supplierSiteCode: this.extractSupplierSiteCode(
+            response.data.SUPPLIER_SITE_CODE,
+          ),
+          casReturnedMessages: response.data["CAS-Returned-Messages"],
+        },
+      };
     } catch (error: unknown) {
-      throw new Error("Unexpected error while requesting supplier.", {
+      throw new Error("Error while creating supplier and site on CAS.", {
         cause: error,
       });
     }
   }
 
+  /**
+   * Replace the characters [] and white spaces from the supplier
+   * site code returned from CAS (e.g. '[001 ], ')
+   * @param casSupplierSiteCode supplier site code returned from CAS.
+   * @returns supplier site code expected to be persisted for later
+   * use (e.g. 001);
+   */
+  private extractSupplierSiteCode(casSupplierSiteCode: string): string {
+    return casSupplierSiteCode.replace(/\[|]|\s/g, "");
+  }
+
   private formatUserName(firstName: string, lastName: string): string {
-    const formattedName = `${lastName}, ${firstName}`;
+    const formattedName = `${lastName}, ${firstName}`.substring(
+      0,
+      CAS_MAX_SUPPLIER_NAME_LENGTH,
+    );
     return convertToASCII(formattedName).toUpperCase();
   }
 
   private formatAddress(address: string): string {
+    // TODO: add max length.
     return convertToASCII(address).toUpperCase();
   }
 
