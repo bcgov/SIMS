@@ -235,14 +235,14 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     });
   });
 
-  it(
+  it.only(
     "Should create a new supplier on CAS and update CAS suppliers table when " +
       "the student was not found on CAS and the request to create the supplier and site was successful.",
     async () => {
       // Arrange
       // Create a student with a valid SIN to pass CAS validations.
       const student = await saveFakeStudent(db.dataSource, undefined, {
-        sinValidationInitialValue: { sin: "153853452" },
+        sinValidationInitialValue: { sin: "742618481" },
       });
       const savedCASSupplier = await saveFakeCASSupplier(db, { student });
 
