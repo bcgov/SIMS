@@ -1763,7 +1763,7 @@
                     "hideLabel": true
                 },
                 {
-                    "label": "Do you want to declare your partners estimated current year income?",
+                    "label": "Do you want to declare your partner's estimated current year income? (If your spouse/common-law partner has had, or anticipates having a significant decrease in income for {{data.calculatedTaxYear}}, you may request to be assessed using your spouse/common-law partner's estimated income.)",
                     "labelPosition": "top",
                     "labelWidth": "",
                     "labelMargin": "",
