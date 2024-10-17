@@ -43,6 +43,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   async associateMSFAANumber(assessmentId: number): Promise<void> {
     const systemUser = this.systemUsersService.systemUser;
 
+    // Get the disbursement schedules for the assessment id.
     const disbursements = await this.getDisbursements(assessmentId);
     const [firstDisbursement] = disbursements;
 
@@ -60,6 +61,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       );
     }
 
+    // Get the existing MSFAA or create MSFAA number.
     const msfaaNumberId = await this.getOrCreateMSFAANumber(
       firstDisbursement,
       systemUser.id,
