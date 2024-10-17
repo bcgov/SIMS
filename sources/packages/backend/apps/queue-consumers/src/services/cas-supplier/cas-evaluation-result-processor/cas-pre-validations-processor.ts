@@ -8,11 +8,14 @@ import {
   CASEvaluationStatus,
 } from "../cas-supplier.models";
 import { Repository } from "typeorm";
-import { CASEvaluationResultProcessor } from "./cas-evaluation-result-processor";
+import { CASEvaluationResultProcessor, ProcessorResult } from ".";
 import { CASAuthDetails } from "@sims/integrations/cas";
 
+/**
+ * Assert the student can be added to CAS.
+ */
 @Injectable()
-export class CASManualInterventionProcessor extends CASEvaluationResultProcessor {
+export class CASPreValidationsProcessor extends CASEvaluationResultProcessor {
   constructor(
     private readonly systemUsersService: SystemUsersService,
     @InjectRepository(CASSupplier)
@@ -21,19 +24,29 @@ export class CASManualInterventionProcessor extends CASEvaluationResultProcessor
     super();
   }
 
+  /**
+   * Process the result of a pre-validation failed, setting
+   * the student CAS supplier for manual intervention.
+   * @param casSupplier student supplier information from SIMS.
+   * @param evaluationResult evaluation result to be processed.
+   * @param _auth authentication token needed for possible
+   * CAS API interactions.
+   * @param summary current process log.
+   * @returns processor result.
+   */
   async process(
     casSupplier: CASSupplier,
     evaluationResult: CASEvaluationResult,
     _auth: CASAuthDetails,
     summary: ProcessSummary,
-  ): Promise<boolean> {
-    if (
-      evaluationResult.status !== CASEvaluationStatus.ManualInterventionRequired
-    ) {
+  ): Promise<ProcessorResult> {
+    if (evaluationResult.status !== CASEvaluationStatus.PreValidationsFailed) {
       throw new Error("Incorrect CAS evaluation result processor selected.");
     }
     summary.warn(
-      `Not possible to retrieve CAS supplier information for supplier ID ${casSupplier.id} because a manual intervention is required. Reason: ${evaluationResult.reason}.`,
+      `Not possible to retrieve CAS supplier information because some pre-validations were not fulfilled. Reason(s): ${evaluationResult.reasons.join(
+        ", ",
+      )}.`,
     );
     try {
       const now = new Date();
@@ -52,7 +65,7 @@ export class CASManualInterventionProcessor extends CASEvaluationResultProcessor
       );
       if (updateResult.affected) {
         summary.info("Updated CAS supplier for manual intervention.");
-        return true;
+        return { isSupplierUpdated: true };
       }
       summary.error(
         "The update of the CAS supplier for manual intervention did not result in the expected affected rows number.",
@@ -62,7 +75,7 @@ export class CASManualInterventionProcessor extends CASEvaluationResultProcessor
         "Unexpected error while updating CAS to manual intervention for the student.",
         error,
       );
-      return false;
+      return { isSupplierUpdated: false };
     }
   }
 }

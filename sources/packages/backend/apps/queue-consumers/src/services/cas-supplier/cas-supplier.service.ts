@@ -9,12 +9,12 @@ import { CAS_AUTH_ERROR } from "@sims/integrations/constants";
 import {
   CASEvaluationResult,
   CASEvaluationStatus,
-  ManualInterventionReason,
   NotFoundReason,
+  PreValidationsFailedReason,
 } from "./cas-supplier.models";
 import {
   CASActiveSupplierNotFoundProcessor,
-  CASManualInterventionProcessor,
+  CASPreValidationsProcessor,
   CASActiveSupplierFoundProcessor,
   CASEvaluationResultProcessor,
 } from "./cas-evaluation-result-processor";
@@ -25,7 +25,7 @@ export class CASSupplierIntegrationService {
     private readonly casService: CASService,
     @InjectRepository(CASSupplier)
     private readonly casSupplierRepo: Repository<CASSupplier>,
-    private readonly casManualInterventionProcessor: CASManualInterventionProcessor,
+    private readonly casPreValidationsProcessor: CASPreValidationsProcessor,
     private readonly casActiveSupplierFoundProcessor: CASActiveSupplierFoundProcessor,
     private readonly casActiveSupplierNotFoundProcessor: CASActiveSupplierNotFoundProcessor,
   ) {}
@@ -64,7 +64,9 @@ export class CASSupplierIntegrationService {
   }
 
   /**
-   * For each pending CAS supplier, request supplier information to CAS API and update local table.
+   * For each pending CAS supplier, evaluate student current data and decide
+   * how to proceed to ensure student will have a supplier number and site
+   * code associated.
    * @param casSuppliers pending CAS suppliers.
    * @param parentProcessSummary parent log summary.
    * @param auth CAS auth details.
@@ -83,11 +85,12 @@ export class CASSupplierIntegrationService {
         casSupplier,
         auth,
       );
+      summary.info(`Processing student CAS supplier ID: ${casSupplier.id}.`);
       let processor: CASEvaluationResultProcessor;
       summary.info(`CAS evaluation result status: ${evaluationResult.status}.`);
       switch (evaluationResult.status) {
-        case CASEvaluationStatus.ManualInterventionRequired:
-          processor = this.casManualInterventionProcessor;
+        case CASEvaluationStatus.PreValidationsFailed:
+          processor = this.casPreValidationsProcessor;
           break;
         case CASEvaluationStatus.ActiveSupplierFound:
           processor = this.casActiveSupplierFoundProcessor;
@@ -96,36 +99,49 @@ export class CASSupplierIntegrationService {
           processor = this.casActiveSupplierNotFoundProcessor;
           break;
         default:
-          summary.error(`Unexpected CAS evaluation result status.`);
+          summary.error("Unexpected CAS evaluation result status.");
           continue;
       }
-      const supplierUpdated = await processor.process(
+      const processResult = await processor.process(
         casSupplier,
         evaluationResult,
         auth,
         summary,
       );
-      if (supplierUpdated) {
+      if (processResult.isSupplierUpdated) {
         suppliersUpdated++;
       }
     }
     return suppliersUpdated;
   }
 
+  /**
+   * Decide the current state of the student supplier on SIMS
+   * and return the next process to be executed.
+   * @param casSupplier student CAS supplier to be evaluated.
+   * @param auth authentication token needed for possible
+   * CAS API interactions.
+   * @returns evaluation result to be processed next.
+   */
   private async evaluateCASSupplier(
     casSupplier: CASSupplier,
     auth: CASAuthDetails,
   ): Promise<CASEvaluationResult> {
+    const preValidationsFailedReasons: PreValidationsFailedReason[] = [];
     if (!casSupplier.student.user.firstName) {
-      return {
-        status: CASEvaluationStatus.ManualInterventionRequired,
-        reason: ManualInterventionReason.GivenNamesNotPresent,
-      };
+      preValidationsFailedReasons.push(
+        PreValidationsFailedReason.GivenNamesNotPresent,
+      );
     }
     if (!isAddressFromCanada(casSupplier.student.contactInfo.address)) {
+      preValidationsFailedReasons.push(
+        PreValidationsFailedReason.NonCanadianAddress,
+      );
+    }
+    if (preValidationsFailedReasons.length) {
       return {
-        status: CASEvaluationStatus.ManualInterventionRequired,
-        reason: ManualInterventionReason.NonCanadianAddress,
+        status: CASEvaluationStatus.PreValidationsFailed,
+        reasons: preValidationsFailedReasons,
       };
     }
     const supplierResponse = await this.casService.getSupplierInfoFromCAS(

@@ -10,7 +10,11 @@ import {
 import { Repository } from "typeorm";
 import { CASEvaluationResultProcessor } from "./cas-evaluation-result-processor";
 import { CASAuthDetails } from "@sims/integrations/cas";
+import { ProcessorResult } from ".";
 
+/**
+ * Process the active supplier information found on CAS.
+ */
 @Injectable()
 export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcessor {
   constructor(
@@ -22,28 +26,30 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
   }
 
   /**
-   * Updates supplier if finds an item from the response with an active address.
-   * @param casFoundSupplierResult CAS supplier response.
-   * @param casSuppliers pending CAS suppliers.
-   * @param summary log summary.
-   * @returns true if updated a record.
+   * Update student supplier based on the supplier information found on CAS.
+   * @param casSupplier student supplier information from SIMS.
+   * @param evaluationResult evaluation result to be processed.
+   * @param _auth authentication token needed for possible
+   * CAS API interactions.
+   * @param summary current process log.
+   * @returns processor result.
    */
   async process(
     casSupplier: CASSupplier,
     evaluationResult: CASEvaluationResult,
     _auth: CASAuthDetails,
     summary: ProcessSummary,
-  ): Promise<boolean> {
+  ): Promise<ProcessorResult> {
     if (evaluationResult.status !== CASEvaluationStatus.ActiveSupplierFound) {
       throw new Error("Incorrect CAS evaluation result processor selected.");
     }
-    summary.info(
-      `Active CAS supplier found for supplier ID ${casSupplier.id}.`,
-    );
+    summary.info("Active CAS supplier found.");
     try {
       const supplierToUpdate = evaluationResult.activeSupplier;
       let supplierAddressToUpdate: SupplierAddress = null;
       if (evaluationResult.activeSites.length) {
+        // If not active sites are found, the address information will be
+        // persisted as null and the supplier isValid will be set to false.
         const [activeSupplierAddress] = evaluationResult.activeSites;
         supplierAddressToUpdate = {
           supplierSiteCode: activeSupplierAddress.suppliersitecode,
@@ -80,7 +86,7 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
       );
       if (updateResult.affected) {
         summary.info("Updated CAS supplier for the student.");
-        return true;
+        return { isSupplierUpdated: true };
       }
       summary.error(
         "The update of the CAS supplier for the student did not result in the expected affected rows number.",
@@ -91,6 +97,6 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
         error,
       );
     }
-    return false;
+    return { isSupplierUpdated: false };
   }
 }

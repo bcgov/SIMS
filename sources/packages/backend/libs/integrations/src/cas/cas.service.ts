@@ -5,7 +5,7 @@ import {
   CreateSupplierAndSiteData,
   CreateSupplierAndSiteResponse,
   CreateSupplierAndSiteSubmittedData,
-} from "./models/cas-supplier-response.model";
+} from "./models/cas-service.model";
 import { AxiosRequestConfig } from "axios";
 import { HttpService } from "@nestjs/axios";
 import { CASIntegrationConfig, ConfigService } from "@sims/utilities/config";
@@ -18,7 +18,8 @@ import {
 import { CAS_AUTH_ERROR } from "@sims/integrations/constants";
 import { InjectLogger } from "@sims/utilities/logger";
 
-const CAS_MAX_SUPPLIER_NAME_LENGTH = 80;
+const CAS_SUPPLIER_NAME_MAX_LENGTH = 80;
+const CAS_ADDRESS_MAX_LENGTH = 35;
 
 @Injectable()
 export class CASService {
@@ -93,6 +94,12 @@ export class CASService {
     return response?.data;
   }
 
+  /**
+   * Create supplier and site.
+   * @param token authentication token.
+   * @param supplierData data to be used for supplier and site creation.
+   * @returns submitted data and CAS response.
+   */
   async createSupplierAndSite(
     token: string,
     supplierData: CreateSupplierAndSiteData,
@@ -138,7 +145,6 @@ export class CASService {
           supplierSiteCode: this.extractSupplierSiteCode(
             response.data.SUPPLIER_SITE_CODE,
           ),
-          casReturnedMessages: response.data["CAS-Returned-Messages"],
         },
       };
     } catch (error: unknown) {
@@ -150,7 +156,7 @@ export class CASService {
 
   /**
    * Replace the characters [] and white spaces from the supplier
-   * site code returned from CAS (e.g. '[001 ], ')
+   * site code returned from CAS (e.g. '[001] ').
    * @param casSupplierSiteCode supplier site code returned from CAS.
    * @returns supplier site code expected to be persisted for later
    * use (e.g. 001);
@@ -159,19 +165,39 @@ export class CASService {
     return casSupplierSiteCode.replace(/\[|]|\s/g, "");
   }
 
+  /**
+   * Format the full name in the expected format (last name, given names).
+   * Ensure only ASCII characters are present, make all upper case,
+   * and enforce the maximum length accepted by CAS.
+   * @param firstName first name (given names).
+   * @param lastName last name.
+   * @returns formatted full name.
+   */
   private formatUserName(firstName: string, lastName: string): string {
     const formattedName = `${lastName}, ${firstName}`.substring(
       0,
-      CAS_MAX_SUPPLIER_NAME_LENGTH,
+      CAS_SUPPLIER_NAME_MAX_LENGTH,
     );
     return convertToASCII(formattedName).toUpperCase();
   }
 
+  /**
+   * Ensure only ASCII characters are present, make all upper case,
+   * and enforce the maximum length accepted by CAS.
+   * @param address address to be formatted.
+   * @returns formatted address.
+   */
   private formatAddress(address: string): string {
-    // TODO: add max length.
-    return convertToASCII(address).toUpperCase();
+    return convertToASCII(
+      address.substring(0, CAS_ADDRESS_MAX_LENGTH),
+    ).toUpperCase();
   }
 
+  /**
+   * Remove postal code white spaces and make all upper case.
+   * @param postalCode postal code to be formatted.
+   * @returns formatted postal code.
+   */
   private formatPostalCode(postalCode: string): string {
     return postalCode.replace(/\s/g, "").toUpperCase();
   }

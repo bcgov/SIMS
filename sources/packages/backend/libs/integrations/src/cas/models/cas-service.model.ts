@@ -47,6 +47,9 @@ export class CASAuthDetails {
   expires_in: number;
 }
 
+/**
+ * Information needed for supplier and site creation on CAS.
+ */
 export class CreateSupplierAndSiteData {
   firstName: string;
   lastName: string;
@@ -55,6 +58,9 @@ export class CreateSupplierAndSiteData {
   supplierSite: CreateSupplierSite;
 }
 
+/**
+ * Site information needed for supplier and site creation on CAS.
+ */
 export class CreateSupplierSite {
   addressLine1: string;
   city: string;
@@ -62,12 +68,20 @@ export class CreateSupplierSite {
   postalCode: string;
 }
 
+/**
+ * Result from a supplier and site creation.
+ */
 export class CreateSupplierAndSiteResult {
   supplierNumber: string;
   supplierSiteCode: string;
-  casReturnedMessages: string;
 }
 
+/**
+ * Data used during the creation of a supplier and site on CAS.
+ * Some data transformation is needed to follow the CAS requirements.
+ * This payload is used to submit the data and also to be returned to
+ * the consumer, allowing it to be aware of the data actually submitted.
+ */
 export class CreateSupplierAndSiteSubmittedData {
   SupplierName: string;
   SubCategory: string;
@@ -84,6 +98,10 @@ export class CreateSupplierAndSiteSubmittedData {
   ];
 }
 
+/**
+ * Combination of the CAS supplier and site creation
+ * submitted data and its API response.
+ */
 export class CreateSupplierAndSiteResponse {
   submittedData: CreateSupplierAndSiteSubmittedData;
   response: CreateSupplierAndSiteResult;

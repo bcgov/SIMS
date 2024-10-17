@@ -16,13 +16,19 @@ export const SUPPLIER_INFO_FROM_CAS_MOCKED_RESULT =
  */
 export function createCASServiceMock(): CASService {
   const mockedCASService = {} as CASService;
+  resetCASServiceMock(mockedCASService);
+  return mockedCASService;
+}
+
+/**
+ * Reset CAS service mock to its original mocks.
+ * @param mockedCASService mock to be reset.
+ */
+export function resetCASServiceMock(mockedCASService: CASService): void {
   mockedCASService.logon = jest.fn(() =>
     Promise.resolve(CAS_LOGON_MOCKED_RESULT),
   );
-
   mockedCASService.getSupplierInfoFromCAS = jest.fn(() =>
     Promise.resolve(SUPPLIER_INFO_FROM_CAS_MOCKED_RESULT),
   );
-
-  return mockedCASService;
 }

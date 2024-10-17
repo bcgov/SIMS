@@ -14,7 +14,11 @@ import {
   CASService,
   CreateSupplierAndSiteResponse,
 } from "@sims/integrations/cas";
+import { ProcessorResult } from ".";
 
+/**
+ * Process a student that was not found on CAS.
+ */
 @Injectable()
 export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProcessor {
   constructor(
@@ -27,23 +31,25 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
   }
 
   /**
-   * Updates supplier if finds an item from the response with an active address.
-   * @param casFoundSupplierResult CAS supplier response.
-   * @param casSuppliers pending CAS suppliers.
-   * @param summary log summary.
-   * @returns true if updated a record.
+   * Create the new supplier and site on CAS using the student information.
+   * @param casSupplier student supplier information from SIMS.
+   * @param evaluationResult evaluation result to be processed.
+   * @param auth authentication token needed for possible
+   * CAS API interactions.
+   * @param summary current process log.
+   * @returns processor result.
    */
   async process(
     casSupplier: CASSupplier,
     evaluationResult: CASEvaluationResult,
     auth: CASAuthDetails,
     summary: ProcessSummary,
-  ): Promise<boolean> {
+  ): Promise<ProcessorResult> {
     if (evaluationResult.status !== CASEvaluationStatus.NotFound) {
       throw new Error("Incorrect CAS evaluation result processor selected.");
     }
     summary.info(
-      `No active CAS supplier found for supplier ID ${casSupplier.id}. Reason: ${evaluationResult.reason}.`,
+      `No active CAS supplier found. Reason: ${evaluationResult.reason}.`,
     );
     let result: CreateSupplierAndSiteResponse;
     try {
@@ -60,12 +66,10 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
           postalCode: address.postalCode,
         },
       });
-      summary.info(
-        `Created supplier and site on CAS for supplier ID ${casSupplier.id}.`,
-      );
+      summary.info("Created supplier and site on CAS.");
     } catch (error: unknown) {
       summary.error("Error while creating supplier and site on CAS.", error);
-      return false;
+      return { isSupplierUpdated: false };
     }
     try {
       const [submittedAddress] = result.submittedData.SupplierAddress;
@@ -99,7 +103,7 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
       );
       if (updateResult.affected) {
         summary.info("Updated CAS supplier and site for the student.");
-        return true;
+        return { isSupplierUpdated: true };
       }
       summary.error(
         "The update of the CAS supplier and site for the student did not result in the expected affected rows number.",
@@ -109,7 +113,7 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
         "Unexpected error while updating supplier and site for the student.",
         error,
       );
-      return false;
+      return { isSupplierUpdated: false };
     }
   }
 }

@@ -16,16 +16,27 @@ import {
 import { ContactInfo, SupplierStatus } from "@sims/sims-db";
 import {
   CAS_LOGON_MOCKED_RESULT,
+  resetCASServiceMock,
   SUPPLIER_INFO_FROM_CAS_MOCKED_RESULT,
 } from "../../../../../test/helpers/mock-utils/cas-service.mock";
 import { CASService } from "@sims/integrations/cas/cas.service";
-import { ManualInterventionReason } from "../../../../services/cas-supplier/cas-supplier.models";
+import {
+  CASEvaluationStatus,
+  NotFoundReason,
+  PreValidationsFailedReason,
+} from "../../../../services/cas-supplier/cas-supplier.models";
+import {
+  createFakeCASCreateSupplierAndSiteResponse,
+  createFakeCASNotFoundSupplierResponse,
+} from "../../../../../test/helpers/mock-utils/cas-response.factory";
+import { SystemUsersService } from "@sims/services";
 
 describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
   let app: INestApplication;
   let processor: CASSupplierIntegrationScheduler;
   let db: E2EDataSources;
   let casServiceMock: CASService;
+  let systemUsersService: SystemUsersService;
   const [supplierMockedResult] = SUPPLIER_INFO_FROM_CAS_MOCKED_RESULT.items;
 
   beforeAll(async () => {
@@ -35,6 +46,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       casServiceMock: casServiceMockFromAppModule,
     } = await createTestingAppModule();
     app = nestApplication;
+    systemUsersService = nestApplication.get(SystemUsersService);
     db = createE2EDataSources(dataSource);
     casServiceMock = casServiceMockFromAppModule;
     // Processor under test.
@@ -43,6 +55,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
 
   beforeEach(async () => {
     jest.clearAllMocks();
+    resetCASServiceMock(casServiceMock);
     // Update existing records to avoid conflicts between tests.
     await db.casSupplier.update(
       {
@@ -97,9 +110,10 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       mockedJob.containLogMessages([
         "Found 1 records to be updated.",
         "Logon successful.",
-        `Requesting info for CAS supplier id ${savedCASSupplier.id}.`,
-        "Updating CAS supplier table.",
-        "CAS supplier integration executed.",
+        `Processing student CAS supplier ID: ${savedCASSupplier.id}.`,
+        `CAS evaluation result status: ${CASEvaluationStatus.ActiveSupplierFound}.`,
+        "Active CAS supplier found.",
+        "Updated CAS supplier for the student.",
       ]),
     ).toBe(true);
 
@@ -152,13 +166,13 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       "Pending suppliers to update found: 1.",
       "Records updated: 1.",
       "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-      "Error(s): 0, Warning(s): 1, Info: 9",
+      "Error(s): 0, Warning(s): 1, Info: 12",
     ]);
     expect(
       mockedJob.containLogMessages([
         "Found 1 records to be updated.",
         "Logon successful.",
-        `Not possible to retrieve CAS supplier information for supplier ID ${savedCASSupplier.id} because a manual intervention is required. Reason: ${ManualInterventionReason.GivenNamesNotPresent}.`,
+        `Not possible to retrieve CAS supplier information because some pre-validations were not fulfilled. Reason(s): ${PreValidationsFailedReason.GivenNamesNotPresent}.`,
       ]),
     ).toBe(true);
     // Assert the API methods were not called.
@@ -206,13 +220,13 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       "Pending suppliers to update found: 1.",
       "Records updated: 1.",
       "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-      "Error(s): 0, Warning(s): 1, Info: 9",
+      "Error(s): 0, Warning(s): 1, Info: 12",
     ]);
     expect(
       mockedJob.containLogMessages([
         "Found 1 records to be updated.",
         "Logon successful.",
-        `Not possible to retrieve CAS supplier information for supplier ID ${savedCASSupplier.id} because a manual intervention is required. Reason: ${ManualInterventionReason.NonCanadianAddress}.`,
+        `Not possible to retrieve CAS supplier information because some pre-validations were not fulfilled. Reason(s): ${PreValidationsFailedReason.NonCanadianAddress}.`,
       ]),
     ).toBe(true);
     // Assert the API methods were not called.
@@ -235,16 +249,23 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     });
   });
 
-  it.only(
-    "Should create a new supplier on CAS and update CAS suppliers table when " +
+  it(
+    "Should create a new supplier and site on CAS and update CAS suppliers table when " +
       "the student was not found on CAS and the request to create the supplier and site was successful.",
     async () => {
       // Arrange
-      // Create a student with a valid SIN to pass CAS validations.
-      const student = await saveFakeStudent(db.dataSource, undefined, {
-        sinValidationInitialValue: { sin: "742618481" },
-      });
-      const savedCASSupplier = await saveFakeCASSupplier(db, { student });
+      const referenceDate = new Date();
+      const savedCASSupplier = await saveFakeCASSupplier(db);
+      // Configure CAS mock to return em empty result for the GetSupplier
+      // and a successful result for the CreateSupplierAndSite.
+      casServiceMock.getSupplierInfoFromCAS = jest.fn(() =>
+        Promise.resolve(createFakeCASNotFoundSupplierResponse()),
+      );
+      const createSupplierAndSiteResponse =
+        createFakeCASCreateSupplierAndSiteResponse();
+      casServiceMock.createSupplierAndSite = jest.fn(() =>
+        Promise.resolve(createSupplierAndSiteResponse),
+      );
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
@@ -264,28 +285,67 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
         mockedJob.containLogMessages([
           "Found 1 records to be updated.",
           "Logon successful.",
-          `Created supplier and site on CAS for supplier ID ${savedCASSupplier.id}.`,
-          `Updated CAS supplier and site for the student, supplier ID ${savedCASSupplier.id}.`,
+          `Processing student CAS supplier ID: ${savedCASSupplier.id}.`,
+          `CAS evaluation result status: ${CASEvaluationStatus.NotFound}.`,
+          `No active CAS supplier found. Reason: ${NotFoundReason.SupplierNotFound}.`,
+          "Created supplier and site on CAS.",
+          "Updated CAS supplier and site for the student.",
         ]),
       ).toBe(true);
-      // Assert the API methods were not called.
-      expect(casServiceMock.getSupplierInfoFromCAS).not.toHaveBeenCalled();
+      // Assert the API methods were called.
+      expect(casServiceMock.getSupplierInfoFromCAS).toHaveBeenCalled();
+      expect(casServiceMock.createSupplierAndSite).toHaveBeenCalled();
       // Assert DB was updated.
       const updateCASSupplier = await db.casSupplier.findOne({
         select: {
           id: true,
-          isValid: true,
+          supplierNumber: true,
+          supplierName: true,
+          status: true,
+          lastUpdated: true,
+          supplierAddress: true as unknown,
           supplierStatus: true,
+          supplierStatusUpdatedOn: true,
+          isValid: true,
+          updatedAt: true,
+          modifier: { id: true },
+        },
+        relations: {
+          modifier: true,
         },
         where: {
           id: savedCASSupplier.id,
         },
       });
+      const [submittedAddress] =
+        createSupplierAndSiteResponse.submittedData.SupplierAddress;
       expect(updateCASSupplier).toEqual({
         id: savedCASSupplier.id,
-        isValid: true,
+        supplierNumber: createSupplierAndSiteResponse.response.supplierNumber,
+        supplierName: createSupplierAndSiteResponse.submittedData.SupplierName,
+        status: "ACTIVE",
+        lastUpdated: expect.any(Date),
+        supplierAddress: {
+          supplierSiteCode:
+            createSupplierAndSiteResponse.response.supplierSiteCode,
+          addressLine1: submittedAddress.AddressLine1,
+          city: submittedAddress.City,
+          provinceState: submittedAddress.Province,
+          country: submittedAddress.Country,
+          postalCode: submittedAddress.PostalCode,
+          status: "ACTIVE",
+          lastUpdated: expect.any(String),
+        },
         supplierStatus: SupplierStatus.Verified,
+        supplierStatusUpdatedOn: expect.any(Date),
+        isValid: true,
+        updatedAt: expect.any(Date),
+        modifier: { id: systemUsersService.systemUser.id },
       });
+      // Ensure updatedAt was updated.
+      expect(updateCASSupplier.updatedAt.getTime()).toBeGreaterThan(
+        referenceDate.getTime(),
+      );
     },
   );
 });

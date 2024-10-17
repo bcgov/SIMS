@@ -65,7 +65,7 @@ import {
   WorkflowEnqueuerService,
   StudentFileService,
   CASActiveSupplierNotFoundProcessor,
-  CASManualInterventionProcessor,
+  CASPreValidationsProcessor,
   CASActiveSupplierFoundProcessor,
 } from "./services";
 import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
@@ -154,7 +154,7 @@ import { ObjectStorageService } from "@sims/integrations/object-storage";
     StudentApplicationNotificationsScheduler,
     SIMSToSFASIntegrationScheduler,
     CASActiveSupplierNotFoundProcessor,
-    CASManualInterventionProcessor,
+    CASPreValidationsProcessor,
     CASActiveSupplierFoundProcessor,
   ],
   controllers: [HealthController],

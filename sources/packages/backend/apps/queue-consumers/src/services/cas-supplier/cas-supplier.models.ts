@@ -8,23 +8,23 @@ import {
  */
 export enum CASEvaluationStatus {
   /**
-   * Some condition requires a manual intervention.
+   * Some conditions to retrieve the CAS information from CAS are not fulfilled.
    */
-  ManualInterventionRequired,
+  PreValidationsFailed = "PreValidationsFailed",
   /**
    * Found an active CAS supplier for the student.
    */
-  ActiveSupplierFound,
+  ActiveSupplierFound = "ActiveSupplierFound",
   /**
    * An active CAS supplier was not found.
    */
-  NotFound,
+  NotFound = "NotFound",
 }
 
 /**
  * Possible manual interventions.
  */
-export enum ManualInterventionReason {
+export enum PreValidationsFailedReason {
   GivenNamesNotPresent = "Given names not present",
   NonCanadianAddress = "Non-Canadian address",
 }
@@ -37,23 +37,35 @@ export enum NotFoundReason {
   NoActiveSupplierFound = "Supplier found but not active",
 }
 
-export interface CASEvaluationManualInterventionResult {
-  status: CASEvaluationStatus.ManualInterventionRequired;
-  reason: ManualInterventionReason;
+/**
+ * CAS pre-validations to ensure a student can be added to CAS.
+ */
+export interface CASPreValidationsResult {
+  status: CASEvaluationStatus.PreValidationsFailed;
+  reasons: PreValidationsFailedReason[];
 }
 
+/**
+ * Active CAS supplier found on CAS.
+ */
 export interface CASFoundSupplierResult {
   status: CASEvaluationStatus.ActiveSupplierFound;
   activeSupplier: CASSupplierResponseItem;
   activeSites: CASSupplierResponseItemAddress[];
 }
 
+/**
+ * No active supplier found on CAS.
+ */
 export interface CASNotFoundSupplierResult {
   status: CASEvaluationStatus.NotFound;
   reason: NotFoundReason;
 }
 
+/**
+ * Evaluation results that required different processing.
+ */
 export type CASEvaluationResult =
   | CASNotFoundSupplierResult
   | CASFoundSupplierResult
-  | CASEvaluationManualInterventionResult;
+  | CASPreValidationsResult;
