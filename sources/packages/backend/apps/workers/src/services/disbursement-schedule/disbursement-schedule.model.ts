@@ -13,18 +13,3 @@ export interface SFASSignedMSFAA {
    */
   latestSFASApplicationEndDate: string;
 }
-
-/**
- * Represents the information that contains information if the
- * MSFAA is valid and the MSFAA Number id.
- */
-export interface MSFAANumberValid {
-  /**
-   * MSFAA Number is valid.
-   */
-  hasValidMSFAANumber: boolean;
-  /**
-   * MSFAA Number id.
-   */
-  msfaaNumberId: number;
-}
