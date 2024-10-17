@@ -8,9 +8,8 @@ import {
   CASEvaluationStatus,
 } from "../cas-supplier.models";
 import { Repository } from "typeorm";
-import { CASEvaluationResultProcessor } from "./cas-evaluation-result-processor";
 import { CASAuthDetails } from "@sims/integrations/cas";
-import { ProcessorResult } from ".";
+import { CASEvaluationResultProcessor, ProcessorResult } from ".";
 
 /**
  * Process the active supplier information found on CAS.
