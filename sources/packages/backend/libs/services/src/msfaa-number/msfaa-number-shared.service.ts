@@ -58,6 +58,33 @@ export class MSFAANumberSharedService {
   }
 
   /**
+   * Creates a new MSFAA number from the SFAS MSFAA number
+   * for the particular offering intensity and also activating the
+   * new MSFAA number for the same offering intensity.
+   * @param sfasMSFAANumber SFAS MSFAA number.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * individually based on, for instance, the Part time/Full time.
+   * @returns created and activated MSFAA record.
+   */
+  async activateMSFAANumber(
+    msfaaNumberRecord: MSFAANumber,
+    auditUserId: number,
+  ): Promise<MSFAANumber> {
+    return this.internalActivateMSFAANumber(
+      msfaaNumberRecord.student.id,
+      msfaaNumberRecord.referenceApplication.id,
+      msfaaNumberRecord.offeringIntensity,
+      auditUserId,
+      {
+        existingMSFAA: {
+          id: msfaaNumberRecord.id,
+          msfaaNumber: msfaaNumberRecord.msfaaNumber,
+        },
+      },
+    );
+  }
+
+  /**
    * Reissues a new MSFAA number to be associated with the student, cancelling any
    * pending MSFAA for the particular offering intensity and also associating the
    * new MSFAA number to any pending disbursement for the same offering intensity.
@@ -103,7 +130,7 @@ export class MSFAANumberSharedService {
   }
 
   /**
-   * Reactivates the provided MSFAA record for the specified student.
+   * Reactivates the provided MSFAA record or reuse the SFAS signed MSFAA record for the specified student.
    * @param studentId student for which the MSFAA record will be reactivated.
    * @param referenceApplicationId reference application id.
    * @param offeringIntensity offering intensity.
@@ -120,7 +147,7 @@ export class MSFAANumberSharedService {
     auditUserId: number,
     msfaaNumber: Partial<MSFAANumber>,
     dateSigned: Date,
-    serviceProviderReceivedDate: Date,
+    serviceProviderReceivedDate: Date | null,
   ): Promise<MSFAANumber> {
     return this.internalActivateMSFAANumber(
       studentId,

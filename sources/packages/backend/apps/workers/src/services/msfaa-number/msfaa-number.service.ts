@@ -19,6 +19,16 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
   }
 
   /**
+   * Creates a new MSFAA number from the MSFAA number given
+   * for the particular offering intensity.
+   * @param msfaaNumber MSFAA number.
+   * @returns created MSFAA record.
+   */
+  async createMSFAA(msfaaNumber: MSFAANumber): Promise<MSFAANumber> {
+    return this.repo.save(msfaaNumber);
+  }
+
+  /**
    * Gets an MSFAA record that should be considered as valid.
    * The record could be either in 'pending' state, when there is no signed
    * date, or could have a signed date still under the valid period for an MSFAA.
@@ -29,16 +39,18 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
    * @param studentId student id to filter.
    * @param offeringIntensity MSFAA are generated individually for full-time/part-time
    * disbursements. The offering intensity is used to differentiate between them.
+   * @param isSigned MSFAA number is signed or not.
    * @returns current valid MSFAA record.
    */
   async getCurrentValidMSFAANumber(
     studentId: number,
     offeringIntensity: OfferingIntensity,
+    options?: { isSigned?: boolean },
   ): Promise<MSFAANumber> {
     const minimumValidDate = dayjs()
       .subtract(MAX_MSFAA_VALID_DAYS, "days")
       .toDate();
-    return this.repo
+    const query = this.repo
       .createQueryBuilder("msfaaNumber")
       .innerJoin("msfaaNumber.student", "students")
       .where("students.id = :studentId", { studentId })
@@ -46,7 +58,11 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
       .andWhere("msfaaNumber.offeringIntensity = :offeringIntensity", {
         offeringIntensity,
       })
-      .andWhere("msfaaNumber.cancelledDate is null")
+      .andWhere("msfaaNumber.cancelledDate is null");
+    if (options?.isSigned) {
+      return query.andWhere("msfaaNumber.dateSigned is not null").getOne();
+    }
+    return query
       .andWhere(
         new Brackets((qb) => {
           qb.where("msfaaNumber.dateSigned is null");
