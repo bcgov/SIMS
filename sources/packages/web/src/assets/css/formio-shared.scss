@@ -601,6 +601,10 @@
   max-width: 70px;
 }
 
+.flexible-width-formio-bordered table tbody tr td {
+  max-width: 355px;
+}
+
 // Custom tooltip for html component(or components without tooltip feature) in formio.
 .formio-custom-tooltip {
   position: absolute;
@@ -620,6 +624,11 @@
   @extend .tooltip-style;
   visibility: hidden;
   opacity: 1;
+}
+
+td .formio-custom-tooltip:hover .tooltip-text {
+  display: block;
+  min-width: 200px;
 }
 
 .formio-custom-tooltip:hover .tooltip-text {
