@@ -337,7 +337,7 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_07l2szk" name="Define Partner Total Income">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if&#10;  partner1CRAReportedIncome = null&#10;then&#10;  calculatedDataPartner1TotalIncome&#10;else&#10;  partner1CRAReportedIncome" target="calculatedDataPartner1TotalIncome" />
+          <zeebe:output source="=if calculatedDataCurrentYearPartnerIncome = null&#10;then&#10;  if partner1CRAReportedIncome = null&#10;  then&#10;    calculatedDataPartner1TotalIncome&#10;  else&#10;    partner1CRAReportedIncome&#10;else&#10;  calculatedDataCurrentYearPartnerIncome" target="calculatedDataPartner1TotalIncome" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_189jv8b</bpmn:incoming>
@@ -1120,8 +1120,9 @@ dmnX (comes from dmn)</bpmn:text>
           <zeebe:output source="=calculatedDataStudentFinancialInformation.calculatedDataCurrentYearIncome" target="calculatedDataCurrentYearIncome" />
           <zeebe:output source="=calculatedDataStudentFinancialInformation.calculatedDataDaycareCosts12YearsOrOver" target="calculatedDataDaycareCosts12YearsOrOver" />
           <zeebe:output source="=calculatedDataStudentFinancialInformation.calculatedDataDaycareCosts11YearsOrUnder" target="calculatedDataDaycareCosts11YearsOrUnder" />
+          <zeebe:output source="=calculatedDataStudentFinancialInformation.calculatedDataCurrentYearPartnerIncome" target="calculatedDataCurrentYearPartnerIncome" />
         </zeebe:ioMapping>
-        <zeebe:script expression="={&#10; calculatedDataTaxReturnIncome:  studentDataTaxReturnIncome,&#10; calculatedDataCurrentYearIncome: (if studentDataCurrentYearIncome = null then null else studentDataCurrentYearIncome),&#10; calculatedDataDaycareCosts12YearsOrOver: (if studentDataDaycareCosts12YearsOrOver = null then 0 else studentDataDaycareCosts12YearsOrOver),&#10; calculatedDataDaycareCosts11YearsOrUnder: (if studentDataDaycareCosts11YearsOrUnder = null then 0 else studentDataDaycareCosts11YearsOrUnder)&#10;}" resultVariable="calculatedDataStudentFinancialInformation" />
+        <zeebe:script expression="={&#10; calculatedDataTaxReturnIncome:  studentDataTaxReturnIncome,&#10; calculatedDataCurrentYearIncome: (if studentDataCurrentYearIncome = null then null else studentDataCurrentYearIncome),&#10; calculatedDataDaycareCosts12YearsOrOver: (if studentDataDaycareCosts12YearsOrOver = null then 0 else studentDataDaycareCosts12YearsOrOver),&#10; calculatedDataDaycareCosts11YearsOrUnder: (if studentDataDaycareCosts11YearsOrUnder = null then 0 else studentDataDaycareCosts11YearsOrUnder),&#10;  calculatedDataCurrentYearPartnerIncome: (if studentDataCurrentYearPartnerIncome = null then null else studentDataCurrentYearPartnerIncome)&#10;}" resultVariable="calculatedDataStudentFinancialInformation" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1jqn9ef</bpmn:incoming>
       <bpmn:outgoing>Flow_15g6qcv</bpmn:outgoing>
@@ -1141,8 +1142,9 @@ dmnX (comes from dmn)</bpmn:text>
           <zeebe:output source="=calculatedDataStudentFinancialInformation.calculatedDataCurrentYearIncome" target="calculatedDataCurrentYearIncome" />
           <zeebe:output source="=calculatedDataStudentFinancialInformation.calculatedDataDaycareCosts12YearsOrOver" target="calculatedDataDaycareCosts12YearsOrOver" />
           <zeebe:output source="=calculatedDataStudentFinancialInformation.calculatedDataDaycareCosts11YearsOrUnder" target="calculatedDataDaycareCosts11YearsOrUnder" />
+          <zeebe:output source="=calculatedDataStudentFinancialInformation.calculatedDataCurrentYearPartnerIncome" target="calculatedDataCurrentYearPartnerIncome" />
         </zeebe:ioMapping>
-        <zeebe:script expression="={&#10; calculatedDataTaxReturnIncome:  appealsStudentFinancialInformationAppealData.taxReturnIncome,&#10; calculatedDataCurrentYearIncome: (if appealsStudentFinancialInformationAppealData.currentYearIncome = null then null else appealsStudentFinancialInformationAppealData.currentYearIncome),&#10; calculatedDataDaycareCosts12YearsOrOver: (if appealsStudentFinancialInformationAppealData.daycareCosts12YearsOrOver = null&#10;      then 0&#10;      else appealsStudentFinancialInformationAppealData.daycareCosts12YearsOrOver),&#10; calculatedDataDaycareCosts11YearsOrUnder: (if appealsStudentFinancialInformationAppealData.daycareCosts11YearsOrUnder = null&#10;      then 0&#10;      else appealsStudentFinancialInformationAppealData.daycareCosts11YearsOrUnder)&#10;}" resultVariable="calculatedDataStudentFinancialInformation" />
+        <zeebe:script expression="={&#10; calculatedDataTaxReturnIncome:  appealsStudentFinancialInformationAppealData.taxReturnIncome,&#10; calculatedDataCurrentYearIncome: (if appealsStudentFinancialInformationAppealData.currentYearIncome = null then null else appealsStudentFinancialInformationAppealData.currentYearIncome),&#10; calculatedDataDaycareCosts12YearsOrOver: (if appealsStudentFinancialInformationAppealData.daycareCosts12YearsOrOver = null&#10;      then 0&#10;      else appealsStudentFinancialInformationAppealData.daycareCosts12YearsOrOver),&#10; calculatedDataDaycareCosts11YearsOrUnder: (if appealsStudentFinancialInformationAppealData.daycareCosts11YearsOrUnder = null&#10;      then 0&#10;      else appealsStudentFinancialInformationAppealData.daycareCosts11YearsOrUnder),&#10;  calculatedDataCurrentYearPartnerIncome: (if appealsStudentFinancialInformationAppealData.currentYearPartnerIncome = null then null else appealsStudentFinancialInformationAppealData.currentYearPartnerIncome)&#10;}" resultVariable="calculatedDataStudentFinancialInformation" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_09y3wi8</bpmn:incoming>
       <bpmn:outgoing>Flow_1f8jtbr</bpmn:outgoing>

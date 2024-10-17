@@ -192,6 +192,36 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-financia
     },
   );
 
+  it(
+    "Should have calculated current year partner income in student financial information " +
+      "when there is a request a change for current year partner income.",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.appealsStudentFinancialInformationAppealData =
+        {
+          taxReturnIncome: 1000,
+          currentYearPartnerIncome: 2000,
+        };
+
+      // Act
+      const calculatedAssessment =
+        await executePartTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+
+      // Assert
+      expect(calculatedAssessment.variables.calculatedDataTaxReturnIncome).toBe(
+        1000,
+      );
+      expect(
+        calculatedAssessment.variables.calculatedDataCurrentYearPartnerIncome,
+      ).toBe(2000);
+    },
+  );
+
   afterAll(async () => {
     // Closes the singleton instance created during test executions.
     await ZeebeMockedClient.getMockedZeebeInstance().close();
