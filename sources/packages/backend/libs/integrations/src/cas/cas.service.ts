@@ -2,14 +2,27 @@ import { Injectable, LoggerService } from "@nestjs/common";
 import {
   CASAuthDetails,
   CASSupplierResponse,
-} from "./models/cas-supplier-response.model";
+  CreateSupplierAndSiteData,
+  CreateSupplierAndSiteResponse,
+  CreateSupplierAndSiteSubmittedData,
+} from "./models/cas-service.model";
 import { AxiosRequestConfig } from "axios";
 import { HttpService } from "@nestjs/axios";
 import { CASIntegrationConfig, ConfigService } from "@sims/utilities/config";
 import { stringify } from "querystring";
-import { CustomNamedError, convertToASCII } from "@sims/utilities";
+import {
+  CustomNamedError,
+  convertToASCII,
+  parseJSONError,
+} from "@sims/utilities";
 import { CAS_AUTH_ERROR } from "@sims/integrations/constants";
 import { InjectLogger } from "@sims/utilities/logger";
+import {
+  formatAddress,
+  formatCity,
+  formatPostalCode,
+  formatUserName,
+} from "@sims/integrations/cas";
 
 @Injectable()
 export class CASService {
@@ -43,7 +56,9 @@ export class CASService {
       const response = await this.httpService.axiosRef.post(url, data, config);
       return response.data;
     } catch (error: unknown) {
-      this.logger.error(`Error while logging on CAS API. ${error}`);
+      this.logger.error(
+        `Error while logging on CAS API. ${parseJSONError(error)}`,
+      );
       throw new CustomNamedError(
         "Could not authenticate on CAS.",
         CAS_AUTH_ERROR,
@@ -80,6 +95,73 @@ export class CASService {
       });
     }
     return response?.data;
+  }
+
+  /**
+   * Create supplier and site.
+   * @param token authentication token.
+   * @param supplierData data to be used for supplier and site creation.
+   * @returns submitted data and CAS response.
+   */
+  async createSupplierAndSite(
+    token: string,
+    supplierData: CreateSupplierAndSiteData,
+  ): Promise<CreateSupplierAndSiteResponse> {
+    const url = `${this.casIntegrationConfig.baseUrl}/cfs/supplier/`;
+    try {
+      const config: AxiosRequestConfig = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const submittedData: CreateSupplierAndSiteSubmittedData = {
+        SupplierName: formatUserName(
+          supplierData.lastName,
+          supplierData.firstName,
+        ),
+        SubCategory: "Individual",
+        Sin: supplierData.sin,
+        SupplierAddress: [
+          {
+            AddressLine1: formatAddress(supplierData.supplierSite.addressLine1),
+            City: formatCity(supplierData.supplierSite.city),
+            Province: supplierData.supplierSite.provinceCode,
+            Country: "CA",
+            PostalCode: formatPostalCode(supplierData.supplierSite.postalCode),
+            EmailAddress: supplierData.emailAddress,
+          },
+        ],
+      };
+      const response = await this.httpService.axiosRef.post(
+        url,
+        submittedData,
+        config,
+      );
+      return {
+        submittedData,
+        response: {
+          supplierNumber: response.data.SUPPLIER_NUMBER,
+          supplierSiteCode: this.extractSupplierSiteCode(
+            response.data.SUPPLIER_SITE_CODE,
+          ),
+        },
+      };
+    } catch (error: unknown) {
+      throw new Error("Error while creating supplier and site on CAS.", {
+        cause: error,
+      });
+    }
+  }
+
+  /**
+   * Replace the characters [] and white spaces from the supplier
+   * site code returned from CAS (e.g. '[001] ').
+   * @param casSupplierSiteCode supplier site code returned from CAS.
+   * @returns supplier site code expected to be persisted for later
+   * use (e.g. 001);
+   */
+  private extractSupplierSiteCode(casSupplierSiteCode: string): string {
+    return casSupplierSiteCode.replace(/\[|]|\s/g, "");
   }
 
   @InjectLogger()

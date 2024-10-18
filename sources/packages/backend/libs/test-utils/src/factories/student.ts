@@ -3,7 +3,8 @@ import { DisabilityStatus, SINValidation, Student, User } from "@sims/sims-db";
 import { createFakeUser } from "@sims/test-utils";
 import { DataSource } from "typeorm";
 import { createFakeSINValidation } from "./sin-validation";
-import { getISODateOnlyString } from "@sims/utilities";
+import { COUNTRY_CANADA, getISODateOnlyString } from "@sims/utilities";
+
 // TODO: the parameter user must be moved to relations and all the references must be
 // updated.
 export function createFakeStudent(
@@ -20,8 +21,8 @@ export function createFakeStudent(
     address: {
       addressLine1: faker.address.streetAddress(),
       city: faker.address.city(),
-      country: "canada",
-      selectedCountry: "Canada",
+      country: "Canada",
+      selectedCountry: COUNTRY_CANADA,
       provinceState: "BC",
       postalCode: faker.address.zipCode(),
     },
