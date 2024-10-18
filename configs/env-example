@@ -102,6 +102,7 @@ FILE_UPLOAD_ALLOWED_EXTENSIONS=.pdf,.doc,.docx,.jpg,.png
 
 #SFAS Integration
 SFAS_RECEIVE_FOLDER=
+SFAS_SEND_FOLDER=
 
 #Institution Integration
 INSTITUTION_REQUEST_FOLDER=
