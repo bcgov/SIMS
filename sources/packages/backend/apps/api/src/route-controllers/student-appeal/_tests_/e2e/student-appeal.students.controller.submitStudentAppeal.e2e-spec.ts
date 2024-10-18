@@ -504,19 +504,15 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
 
   it("Should save the current year partner income when the student submits an appeal for the current year partner income.", async () => {
     // Arrange
-    const student = await saveFakeStudent(appDataSource);
-    const application = await saveFakeApplication(appDataSource, {
-      student: student,
+    const application = await saveFakeApplication(appDataSource, undefined, {
+      applicationStatus: ApplicationStatus.Completed,
     });
-    // Set application status to completed.
-    application.applicationStatus = ApplicationStatus.Completed;
-    await applicationRepo.save(application);
     // Create a current year partner income file.
     const partnerIncomeFile = await saveFakeStudentFileUpload(
       appDataSource,
       {
-        student,
-        creator: student.user,
+        student: application.student,
+        creator: application.student.user,
       },
       { fileOrigin: FileOriginType.Temporary },
     );
@@ -551,7 +547,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
       ],
     };
     // Mock user service to return the saved student.
-    await mockUserLoginInfo(appModule, student);
+    await mockUserLoginInfo(appModule, application.student);
     // Get any student user token.
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
