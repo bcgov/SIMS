@@ -40,6 +40,7 @@ export FILE_UPLOAD_MAX_FILE_SIZE := $(or $(FILE_UPLOAD_MAX_FILE_SIZE), 15728640)
 export FILE_UPLOAD_ALLOWED_EXTENSIONS := $(or $(FILE_UPLOAD_ALLOWED_EXTENSIONS), .pdf,.doc,.docx,.jpg,.png)
 #SFAS Integration
 export SFAS_RECEIVE_FOLDER := $(or $(SFAS_RECEIVE_FOLDER), SFAS-Receive)
+export SFAS_SEND_FOLDER := $(or $(SFAS_SEND_FOLDER), OUT)
 # Fulltime Allowed
 export IS_FULLTIME_ALLOWED := $(or $(IS_FULLTIME_ALLOWED), true)
 #Institution Integration
