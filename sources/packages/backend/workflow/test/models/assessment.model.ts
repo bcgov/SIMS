@@ -45,6 +45,7 @@ export type RelationshipStatusType = "single" | "other" | "married";
 export interface PartnerInformationAndIncomeAppealData extends JSONDoc {
   relationshipStatus: RelationshipStatusType;
   partnerEstimatedIncome?: number;
+  currentYearPartnerIncome?: number;
 }
 
 export enum CredentialType {
@@ -275,6 +276,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataCurrentYearIncome: number;
   calculatedDataStudentTotalIncome: number;
   calculatedDataCurrentYearPartnerIncome: number;
+  partner1CRAReportedIncome?: number;
 
   // Common variables used in both full-time and part-time.
   // CSGP

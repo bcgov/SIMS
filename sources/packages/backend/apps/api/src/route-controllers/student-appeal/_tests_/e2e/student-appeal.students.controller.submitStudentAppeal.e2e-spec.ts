@@ -47,6 +47,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
   let studentFileRepo: Repository<StudentFile>;
   const FINANCIAL_INFORMATION_FORM_NAME = "studentfinancialinformationappeal";
   const DEPENDANT_INFORMATION_FORM_NAME = "studentDependantsAppeal";
+  const PARTNER_INFORMATION_FORM_NAME = "partnerinformationandincomeappeal";
 
   beforeAll(async () => {
     const { nestApplication, module, dataSource } =
@@ -522,14 +523,10 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
     // Prepare the data to request a change of current year partner income.
     const partnerIncomeInformationData = {
       programYear: application.programYear.programYear,
-      haveDaycareCosts11YearsOrUnder: "no",
-      haveDaycareCosts12YearsOrOver: "no",
-      hasSignificantDegreeOfIncome: "no",
-      hasCurrentYearPartnerIncome: "yes",
-      taxReturnIncome: 1000,
+      relationshipStatus: "married",
+      partnerEstimatedIncome: 1000,
+      currentYearPartnerIncome: 2000,
       reasonsignificantdecreaseInPartnerIncome: "other",
-      currentYearPartnerIncomeApplicationException:
-        "studentApplicationException",
       decreaseInPartnerIncomeSupportingDocuments: [
         {
           storage: "url",
@@ -541,14 +538,13 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
           hash: "1cb251ec0d568de6a929b520c4aed8d1",
         },
       ],
-      currentYearPartnerIncome: 2000,
       otherExceptionalPartnerCircumstance: "any",
     };
 
     const payload: StudentAppealAPIInDTO = {
       studentAppealRequests: [
         {
-          formName: FINANCIAL_INFORMATION_FORM_NAME,
+          formName: PARTNER_INFORMATION_FORM_NAME,
           formData: partnerIncomeInformationData,
           files: [partnerIncomeFile.uniqueFileName],
         },
@@ -568,7 +564,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
     );
     const dryRunSubmissionMock = jest.fn().mockResolvedValue({
       valid: true,
-      formName: FINANCIAL_INFORMATION_FORM_NAME,
+      formName: PARTNER_INFORMATION_FORM_NAME,
       data: { data: partnerIncomeInformationData },
     });
 
@@ -603,7 +599,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
 
     // Expect to call the dry run submission.
     expect(dryRunSubmissionMock).toHaveBeenCalledWith(
-      FINANCIAL_INFORMATION_FORM_NAME,
+      PARTNER_INFORMATION_FORM_NAME,
       {
         ...partnerIncomeInformationData,
         programYear: application.programYear.programYear,
