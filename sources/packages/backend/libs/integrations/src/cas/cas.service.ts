@@ -19,6 +19,7 @@ import { CAS_AUTH_ERROR } from "@sims/integrations/constants";
 import { InjectLogger } from "@sims/utilities/logger";
 import {
   formatAddress,
+  formatCity,
   formatPostalCode,
   formatUserName,
 } from "@sims/integrations/cas/cas-formaters";
@@ -123,7 +124,7 @@ export class CASService {
         SupplierAddress: [
           {
             AddressLine1: formatAddress(supplierData.supplierSite.addressLine1),
-            City: supplierData.supplierSite.city,
+            City: formatCity(supplierData.supplierSite.city),
             Province: supplierData.supplierSite.provinceCode,
             Country: "CA",
             PostalCode: formatPostalCode(supplierData.supplierSite.postalCode),

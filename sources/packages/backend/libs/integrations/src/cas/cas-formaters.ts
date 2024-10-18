@@ -2,6 +2,7 @@ import { convertToASCII } from "@sims/utilities";
 
 const CAS_SUPPLIER_NAME_MAX_LENGTH = 80;
 const CAS_ADDRESS_MAX_LENGTH = 35;
+const CAS_CITY_MAX_LENGTH = 25;
 
 /**
  * Format the full name in the expected format (last name, given names).
@@ -29,6 +30,15 @@ export function formatAddress(address: string): string {
   return convertToASCII(
     address.substring(0, CAS_ADDRESS_MAX_LENGTH),
   ).toUpperCase();
+}
+
+/**
+ * Ensure city has the max length expected by CAS.
+ * @param address city to be formatted.
+ * @returns formatted city.
+ */
+export function formatCity(city: string): string {
+  return city.substring(0, CAS_CITY_MAX_LENGTH);
 }
 
 /**
