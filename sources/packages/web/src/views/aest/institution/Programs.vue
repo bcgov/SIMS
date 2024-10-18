@@ -22,7 +22,7 @@
       <content-group>
         <toggle-content
           :toggled="!loading && !institutionProgramsSummary.count"
-          message="No bypassed restrictions found."
+          message="No records found."
         >
           <v-data-table
             :headers="ProgramHeaders"
