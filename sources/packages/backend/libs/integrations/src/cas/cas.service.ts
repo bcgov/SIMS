@@ -22,7 +22,7 @@ import {
   formatCity,
   formatPostalCode,
   formatUserName,
-} from "@sims/integrations/cas/cas-formaters";
+} from "@sims/integrations/cas";
 
 @Injectable()
 export class CASService {
