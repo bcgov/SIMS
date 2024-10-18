@@ -6,7 +6,7 @@ import {
   saveFakeCASSupplier,
   saveFakeStudent,
 } from "@sims/test-utils";
-import { OTHER_COUNTRY, QueueNames } from "@sims/utilities";
+import { COUNTRY_CANADA, OTHER_COUNTRY, QueueNames } from "@sims/utilities";
 import { CASSupplierIntegrationScheduler } from "../cas-supplier-integration.scheduler";
 import {
   createTestingAppModule,
@@ -89,10 +89,25 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     expect(casServiceMock.getSupplierInfoFromCAS).not.toHaveBeenCalled();
   });
 
-  it("Should update CAS supplier table when found pending supplier information to be updated.", async () => {
+  it("Should update CAS supplier table when found pending supplier information to be updated with an active address match.", async () => {
     // Arrange
-    const savedCASSupplier = await saveFakeCASSupplier(db);
-    const student = savedCASSupplier.student;
+    // Created a student with same address line 1 and postal code from the expected CAS mocked result.
+    // Postal code has an white space that is expected to be removed.
+    const student = await saveFakeStudent(db.dataSource, undefined, {
+      initialValue: {
+        contactInfo: {
+          address: {
+            addressLine1: "3350 DOUGLAS ST",
+            city: "Victoria",
+            country: "Canada",
+            selectedCountry: COUNTRY_CANADA,
+            provinceState: "BC",
+            postalCode: "V8Z 7X9",
+          },
+        } as ContactInfo,
+      },
+    });
+    const savedCASSupplier = await saveFakeCASSupplier(db, { student });
 
     // Queued job.
     const mockedJob = mockBullJob<void>();
