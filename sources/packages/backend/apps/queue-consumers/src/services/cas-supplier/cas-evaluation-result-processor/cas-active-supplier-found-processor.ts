@@ -46,21 +46,23 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
     try {
       const supplierToUpdate = evaluationResult.activeSupplier;
       let supplierAddressToUpdate: SupplierAddress = null;
-      if (evaluationResult.activeSites.length) {
-        // If not active sites are found, the address information will be
-        // persisted as null and the supplier isValid will be set to false.
-        const [activeSupplierAddress] = evaluationResult.activeSites;
+      if (evaluationResult.matchedAddress) {
+        // If no matched address sites was found, the address information will be
+        // persisted as null and the supplier isValid will be set to false for now
+        // till the CAS API call for "create site" is implemented.
+        // TODO: implement site creation on CAS.
+        const address = evaluationResult.matchedAddress;
         supplierAddressToUpdate = {
-          supplierSiteCode: activeSupplierAddress.suppliersitecode,
-          addressLine1: activeSupplierAddress.addressline1,
-          addressLine2: activeSupplierAddress.addressline2,
-          city: activeSupplierAddress.city,
-          provinceState: activeSupplierAddress.province,
-          country: activeSupplierAddress.country,
-          postalCode: activeSupplierAddress.postalcode,
-          status: activeSupplierAddress.status,
-          siteProtected: activeSupplierAddress.siteprotected,
-          lastUpdated: new Date(activeSupplierAddress.lastupdated),
+          supplierSiteCode: address.suppliersitecode,
+          addressLine1: address.addressline1,
+          addressLine2: address.addressline2,
+          city: address.city,
+          provinceState: address.province,
+          country: address.country,
+          postalCode: address.postalcode,
+          status: address.status,
+          siteProtected: address.siteprotected,
+          lastUpdated: new Date(address.lastupdated),
         };
       }
       const now = new Date();

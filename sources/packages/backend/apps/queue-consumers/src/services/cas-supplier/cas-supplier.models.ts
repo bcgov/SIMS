@@ -50,8 +50,14 @@ export interface CASPreValidationsResult {
  */
 export interface CASFoundSupplierResult {
   status: CASEvaluationStatus.ActiveSupplierFound;
+  /**
+   * CAS active supplier.
+   */
   activeSupplier: CASSupplierResponseItem;
-  activeSites: CASSupplierResponseItemAddress[];
+  /**
+   * CAS site that matches with the student address.
+   */
+  matchedAddress?: CASSupplierResponseItemAddress;
 }
 
 /**

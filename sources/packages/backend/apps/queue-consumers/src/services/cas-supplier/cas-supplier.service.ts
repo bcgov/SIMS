@@ -3,7 +3,12 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { CASSupplier, SupplierStatus } from "@sims/sims-db";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { Repository } from "typeorm";
-import { CASService, CASAuthDetails } from "@sims/integrations/cas";
+import {
+  CASService,
+  CASAuthDetails,
+  formatAddress,
+  formatPostalCode,
+} from "@sims/integrations/cas";
 import { CustomNamedError, isAddressFromCanada } from "@sims/utilities";
 import { CAS_AUTH_ERROR } from "@sims/integrations/constants";
 import {
@@ -165,15 +170,27 @@ export class CASSupplierIntegrationService {
         reason: NotFoundReason.NoActiveSupplierFound,
       };
     }
-    // Get the list of all active addresses.
-    const casResponseActiveAddresses =
-      casResponseActiveSupplier.supplieraddress?.filter(
-        (address) => address.status === "ACTIVE",
-      ) ?? [];
+    // Get a matching address, if exists.
+    // Address must be active and have the same address line 1
+    // and postal code considering the CAS formats.
+    const casFormattedStudentAddress = formatAddress(
+      casSupplier.student.contactInfo.address.addressLine1,
+    );
+    const casFormattedPostalCode = formatPostalCode(
+      casSupplier.student.contactInfo.address.postalCode,
+    );
+    const [casResponseMatchedAddress] =
+      casResponseActiveSupplier.supplieraddress?.filter((address) => {
+        return (
+          address.status === "ACTIVE" &&
+          address.addressline1 === casFormattedStudentAddress &&
+          address.postalcode === casFormattedPostalCode
+        );
+      });
     return {
       status: CASEvaluationStatus.ActiveSupplierFound,
       activeSupplier: casResponseActiveSupplier,
-      activeSites: casResponseActiveAddresses,
+      matchedAddress: casResponseMatchedAddress,
     };
   }
 

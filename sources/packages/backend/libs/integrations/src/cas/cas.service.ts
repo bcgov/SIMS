@@ -17,9 +17,11 @@ import {
 } from "@sims/utilities";
 import { CAS_AUTH_ERROR } from "@sims/integrations/constants";
 import { InjectLogger } from "@sims/utilities/logger";
-
-const CAS_SUPPLIER_NAME_MAX_LENGTH = 80;
-const CAS_ADDRESS_MAX_LENGTH = 35;
+import {
+  formatAddress,
+  formatPostalCode,
+  formatUserName,
+} from "@sims/integrations/cas/cas-formaters";
 
 @Injectable()
 export class CASService {
@@ -112,7 +114,7 @@ export class CASService {
         },
       };
       const submittedData: CreateSupplierAndSiteSubmittedData = {
-        SupplierName: this.formatUserName(
+        SupplierName: formatUserName(
           supplierData.lastName,
           supplierData.firstName,
         ),
@@ -120,15 +122,11 @@ export class CASService {
         Sin: supplierData.sin,
         SupplierAddress: [
           {
-            AddressLine1: this.formatAddress(
-              supplierData.supplierSite.addressLine1,
-            ),
+            AddressLine1: formatAddress(supplierData.supplierSite.addressLine1),
             City: supplierData.supplierSite.city,
             Province: supplierData.supplierSite.provinceCode,
             Country: "CA",
-            PostalCode: this.formatPostalCode(
-              supplierData.supplierSite.postalCode,
-            ),
+            PostalCode: formatPostalCode(supplierData.supplierSite.postalCode),
             EmailAddress: supplierData.emailAddress,
           },
         ],
@@ -163,43 +161,6 @@ export class CASService {
    */
   private extractSupplierSiteCode(casSupplierSiteCode: string): string {
     return casSupplierSiteCode.replace(/\[|]|\s/g, "");
-  }
-
-  /**
-   * Format the full name in the expected format (last name, given names).
-   * Ensure only ASCII characters are present, make all upper case,
-   * and enforce the maximum length accepted by CAS.
-   * @param firstName first name (given names).
-   * @param lastName last name.
-   * @returns formatted full name.
-   */
-  private formatUserName(firstName: string, lastName: string): string {
-    const formattedName = `${lastName}, ${firstName}`.substring(
-      0,
-      CAS_SUPPLIER_NAME_MAX_LENGTH,
-    );
-    return convertToASCII(formattedName).toUpperCase();
-  }
-
-  /**
-   * Ensure only ASCII characters are present, make all upper case,
-   * and enforce the maximum length accepted by CAS.
-   * @param address address to be formatted.
-   * @returns formatted address.
-   */
-  private formatAddress(address: string): string {
-    return convertToASCII(
-      address.substring(0, CAS_ADDRESS_MAX_LENGTH),
-    ).toUpperCase();
-  }
-
-  /**
-   * Remove postal code white spaces and make all upper case.
-   * @param postalCode postal code to be formatted.
-   * @returns formatted postal code.
-   */
-  private formatPostalCode(postalCode: string): string {
-    return postalCode.replace(/\s/g, "").toUpperCase();
   }
 
   @InjectLogger()
