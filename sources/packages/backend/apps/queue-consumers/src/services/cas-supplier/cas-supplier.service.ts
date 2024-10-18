@@ -86,38 +86,55 @@ export class CASSupplierIntegrationService {
     for (const casSupplier of casSuppliers) {
       const summary = new ProcessSummary();
       parentProcessSummary.children(summary);
-      const evaluationResult = await this.evaluateCASSupplier(
-        casSupplier,
-        auth,
-      );
       summary.info(`Processing student CAS supplier ID: ${casSupplier.id}.`);
-      let processor: CASEvaluationResultProcessor;
-      summary.info(`CAS evaluation result status: ${evaluationResult.status}.`);
-      switch (evaluationResult.status) {
-        case CASEvaluationStatus.PreValidationsFailed:
-          processor = this.casPreValidationsProcessor;
-          break;
-        case CASEvaluationStatus.ActiveSupplierFound:
-          processor = this.casActiveSupplierFoundProcessor;
-          break;
-        case CASEvaluationStatus.NotFound:
-          processor = this.casActiveSupplierNotFoundProcessor;
-          break;
-        default:
-          summary.error("Unexpected CAS evaluation result status.");
-          continue;
-      }
-      const processResult = await processor.process(
-        casSupplier,
-        evaluationResult,
-        auth,
-        summary,
-      );
-      if (processResult.isSupplierUpdated) {
-        suppliersUpdated++;
+      try {
+        // Check the current status of the student data and its supplier information.
+        const evaluationResult = await this.evaluateCASSupplier(
+          casSupplier,
+          auth,
+        );
+        summary.info(
+          `CAS evaluation result status: ${evaluationResult.status}.`,
+        );
+        // Decide the process to be executed.
+        const processor = this.getCASSupplierProcess(evaluationResult.status);
+        // Execute the process.
+        const processResult = await processor.process(
+          casSupplier,
+          evaluationResult,
+          auth,
+          summary,
+        );
+        if (processResult.isSupplierUpdated) {
+          suppliersUpdated++;
+        }
+      } catch (error: unknown) {
+        // Log the error and allow the process to continue checking the
+        // remaining student suppliers.
+        summary.error("Unexpected error while processing supplier.", error);
       }
     }
     return suppliersUpdated;
+  }
+
+  /**
+   * Get the processor associated to the CAS evaluation status result.
+   * @param evaluationResult evaluation result status.
+   * @returns processor.
+   */
+  private getCASSupplierProcess(
+    status: CASEvaluationStatus,
+  ): CASEvaluationResultProcessor {
+    switch (status) {
+      case CASEvaluationStatus.PreValidationsFailed:
+        return this.casPreValidationsProcessor;
+      case CASEvaluationStatus.ActiveSupplierFound:
+        return this.casActiveSupplierFoundProcessor;
+      case CASEvaluationStatus.NotFound:
+        return this.casActiveSupplierNotFoundProcessor;
+      default:
+        throw new Error("Invalid CAS evaluation result status.");
+    }
   }
 
   /**
@@ -179,8 +196,8 @@ export class CASSupplierIntegrationService {
     const casFormattedPostalCode = formatPostalCode(
       casSupplier.student.contactInfo.address.postalCode,
     );
-    const [casResponseMatchedAddress] =
-      casResponseActiveSupplier.supplieraddress?.filter((address) => {
+    const casResponseMatchedAddress =
+      casResponseActiveSupplier.supplieraddress?.find((address) => {
         return (
           address.status === "ACTIVE" &&
           address.addressline1 === casFormattedStudentAddress &&
