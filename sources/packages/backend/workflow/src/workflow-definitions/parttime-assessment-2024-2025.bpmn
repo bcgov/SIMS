@@ -266,6 +266,40 @@ dmnX (comes from dmn)</bpmn:text>
         </bpmn:childLaneSet>
       </bpmn:lane>
     </bpmn:laneSet>
+    <bpmn:intermediateThrowEvent id="Event_1sg75ph" name="Calculate Course Load Tuition Totals">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=offeringActualTuitionCosts" target="calculatedDataActualTuitionCosts" />
+          <zeebe:output source="=offeringMandatoryFees" target="calculatedDataMandatoryFees" />
+          <zeebe:output source="=min(offeringProgramRelatedCosts, dmnPartTimeProgramYearMaximums.limitWeeklyBooksAndSupplies * offeringWeeks)" target="calculatedDataProgramRelatedCosts" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_08xi7o2</bpmn:incoming>
+      <bpmn:outgoing>Flow_1dkitnr</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:intermediateThrowEvent id="Event_0pswj5u" name="Define maximum additional transportation weekly limit">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=dmnPartTimeProgramYearMaximums.limitAdditionalTransportationAllowance" target="calculatedDataWeeklyMaxAdditionalTransport" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0s3ga70</bpmn:incoming>
+      <bpmn:outgoing>Flow_0mkbg5j</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:intermediateThrowEvent id="Event_1in32up" name="Define additional transport placement reduction">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=dmnPartTimeProgramYearMaximums.limitAdditionalTransportationPlacement" target="calculatedDataPlacementReduction" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_15zbfxf</bpmn:incoming>
+      <bpmn:outgoing>Flow_1s2fnpx</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:exclusiveGateway id="Gateway_1ofk363">
+      <bpmn:incoming>Flow_0x6e20t</bpmn:incoming>
+      <bpmn:incoming>Flow_1n3ouge</bpmn:incoming>
+      <bpmn:outgoing>Flow_0essn0m</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
     <bpmn:exclusiveGateway id="Gateway_057mnqo">
       <bpmn:incoming>Flow_0xi2yp3</bpmn:incoming>
       <bpmn:incoming>Flow_1su3k2o</bpmn:incoming>
@@ -1024,7 +1058,7 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_0tjlor6" name="Define minimum transport weekly limit">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=// If student is in onsite courses they get a minimum per study week, otherwise 0&#10;if(offeringDelivered = &#34;onsite&#34;)&#10;then &#10; dmnPartTimeProgramYearMaximums.limitTransportationAllowance&#10;else&#10;  0" target="calculatedDataWeeklyMinTransport" />
+          <zeebe:output source="=// If student is in onsite or blended courses they get a minimum per study week, otherwise 0&#10;if(offeringDelivered = &#34;onsite&#34; or offeringDelivered = &#34;blended&#34;)&#10;then &#10; dmnPartTimeProgramYearMaximums.limitTransportationAllowance&#10;else&#10;  0" target="calculatedDataWeeklyMinTransport" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0onzs1l</bpmn:incoming>
@@ -1083,7 +1117,7 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:scriptTask id="Activity_0twtlpj" name="Calculate total transportation Allowance">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:input source="=// Accounts for students who requested additional transport for weeks than their offering weeks.&#10;if(offeringDelivered = &#34;onsite&#34;)&#10;then &#10;  offeringWeeks - calculatedDataAdditionalTransportWeeks&#10;else &#10;  0" target="inputDataRemainingTransportWeeks" />
+          <zeebe:input source="=// Accounts for students who requested additional transport for weeks than their offering weeks.&#10;if(offeringDelivered = &#34;onsite&#34; or offeringDelivered = &#34;blended&#34;)&#10;then &#10;  offeringWeeks - calculatedDataAdditionalTransportWeeks&#10;else &#10;  0" target="inputDataRemainingTransportWeeks" />
         </zeebe:ioMapping>
         <zeebe:script expression="=calculatedDataTotalAdditionalTransportationAllowance + (inputDataRemainingTransportWeeks * calculatedDataWeeklyMinTransport)" resultVariable="calculatedDataTotalTransportationAllowance" />
       </bpmn:extensionElements>
@@ -1102,7 +1136,7 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_10lg4rt" name="Calculate total transportation Allowance">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if(offeringDelivered = &#34;onsite&#34;)&#10;then &#10;  offeringWeeks * dmnPartTimeProgramYearMaximums.limitTransportationAllowance&#10;else&#10;  0" target="calculatedDataTotalTransportationAllowance" />
+          <zeebe:output source="=if(offeringDelivered = &#34;onsite&#34; or offeringDelivered = &#34;blended&#34;)&#10;then &#10;  offeringWeeks * dmnPartTimeProgramYearMaximums.limitTransportationAllowance&#10;else&#10;  0" target="calculatedDataTotalTransportationAllowance" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0ra2rum</bpmn:incoming>
@@ -2558,6 +2592,90 @@ dmnX (comes from dmn)</bpmn:text>
         <dc:Bounds x="2210" y="1040" width="215" height="30" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1gi7mg0_di" bpmnElement="Association_1gi7mg0">
+        <di:waypoint x="7451" y="2756" />
+        <di:waypoint x="7471" y="2730" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1mr7raq_di" bpmnElement="Association_1mr7raq">
+        <di:waypoint x="6639" y="2624" />
+        <di:waypoint x="6672" y="2570" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_18qf11c_di" bpmnElement="Association_18qf11c">
+        <di:waypoint x="7449" y="2624" />
+        <di:waypoint x="7481" y="2570" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0ptatj5_di" bpmnElement="Association_0ptatj5">
+        <di:waypoint x="7200" y="2625" />
+        <di:waypoint x="7239" y="2570" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1nid8vk_di" bpmnElement="Association_1nid8vk">
+        <di:waypoint x="7107" y="2624" />
+        <di:waypoint x="7133" y="2570" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1vdevsr_di" bpmnElement="Association_1vdevsr">
+        <di:waypoint x="6544" y="2623" />
+        <di:waypoint x="6557" y="2570" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_01prvbh_di" bpmnElement="Association_01prvbh">
+        <di:waypoint x="5748" y="1628" />
+        <di:waypoint x="5846" y="1607" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1ledsf9_di" bpmnElement="Association_1ledsf9">
+        <di:waypoint x="5747" y="1873" />
+        <di:waypoint x="5846" y="1833" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1kl6b20_di" bpmnElement="Association_1kl6b20">
+        <di:waypoint x="5747" y="1783" />
+        <di:waypoint x="5846" y="1745" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0k52tdi_di" bpmnElement="Association_0k52tdi">
+        <di:waypoint x="5747" y="1705" />
+        <di:waypoint x="5846" y="1682" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0gzo1wo_di" bpmnElement="Association_0gzo1wo">
+        <di:waypoint x="7020" y="2622" />
+        <di:waypoint x="7020" y="2550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1i7iirc_di" bpmnElement="Association_1i7iirc">
+        <di:waypoint x="730" y="852" />
+        <di:waypoint x="730" y="742" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0eiso39_di" bpmnElement="Association_0eiso39">
+        <di:waypoint x="830" y="888" />
+        <di:waypoint x="830" y="980" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1y0l2mk_di" bpmnElement="Association_1y0l2mk">
+        <di:waypoint x="5747" y="1956" />
+        <di:waypoint x="5846" y="1936" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0jm8vsl_di" bpmnElement="Association_0jm8vsl">
+        <di:waypoint x="2561" y="1030" />
+        <di:waypoint x="2556" y="971" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0cp4qvu_di" bpmnElement="Association_0cp4qvu">
+        <di:waypoint x="980" y="735" />
+        <di:waypoint x="980" y="852" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1p9iqwc_di" bpmnElement="Association_1p9iqwc">
+        <di:waypoint x="3180" y="1372" />
+        <di:waypoint x="3180" y="1324" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0rsi8j4_di" bpmnElement="Association_0rsi8j4">
+        <di:waypoint x="3279" y="1372" />
+        <di:waypoint x="3279" y="1351" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0hwwkv8_di" bpmnElement="Association_0hwwkv8">
+        <di:waypoint x="3930" y="1350" />
+        <di:waypoint x="3930" y="1314" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0hybcza_di" bpmnElement="Association_0hybcza">
+        <di:waypoint x="3754" y="1608" />
+        <di:waypoint x="3799" y="1570" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1skh123_di" bpmnElement="Association_1skh123">
+        <di:waypoint x="4070" y="1350" />
+        <di:waypoint x="4070" y="1314" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

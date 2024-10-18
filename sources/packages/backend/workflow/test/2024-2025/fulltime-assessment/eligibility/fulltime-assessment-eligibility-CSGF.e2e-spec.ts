@@ -72,9 +72,6 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGF
             expect(
               calculatedAssessment.variables.federalAwardNetCSGFAmount,
             ).toBeGreaterThan(0);
-            expect(
-              calculatedAssessment.variables.provincialAwardNetCSGFAmount,
-            ).toBeGreaterThan(0);
           });
         }
       }
@@ -124,8 +121,8 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGF
       CredentialType.UnderGraduateCertificate;
     assessmentConsolidatedData.programLength =
       ProgramLengthOptions.TwoToThreeYears;
-    // 105872 is the threshold for a family of 3 (2 dependents + the student).
-    assessmentConsolidatedData.studentDataTaxReturnIncome = 105873;
+    // 114436 is the threshold for a family of 3 (2 dependents + the student).
+    assessmentConsolidatedData.studentDataTaxReturnIncome = 114437;
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,

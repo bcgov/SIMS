@@ -25,7 +25,6 @@ import {
 import {
   SINValidationService,
   StudentFileService,
-  StudentRestrictionService,
   StudentService,
 } from "../../services";
 import { NotificationActionsService } from "@sims/services/notifications";
@@ -51,6 +50,7 @@ import {
   UniqueFileNameParamAPIInDTO,
   UpdateSINValidationAPIInDTO,
   UpdateDisabilityStatusAPIInDTO,
+  UpdateStudentDetailsAPIInDTO,
 } from "./models/student.dto";
 import { Response } from "express";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -64,7 +64,7 @@ import {
 import { CustomNamedError } from "@sims/utilities";
 import { IUserToken } from "../../auth/userToken.interface";
 import { StudentControllerService } from "..";
-import { FileOriginType } from "@sims/sims-db";
+import { FileOriginType, IdentityProviders } from "@sims/sims-db";
 import { FileCreateAPIOutDTO } from "../models/common.dto";
 import {
   ApplicationPaginationOptionsAPIInDTO,
@@ -91,7 +91,6 @@ export class StudentAESTController extends BaseController {
     private readonly studentService: StudentService,
     private readonly studentControllerService: StudentControllerService,
     private readonly notificationActionsService: NotificationActionsService,
-    private readonly studentRestrictionService: StudentRestrictionService,
     private readonly sinValidationService: SINValidationService,
   ) {
     super();
@@ -259,19 +258,10 @@ export class StudentAESTController extends BaseController {
   async getStudentProfile(
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<AESTStudentProfileAPIOutDTO> {
-    const [student, studentRestrictions] = await Promise.all([
-      this.studentControllerService.getStudentProfile(studentId, {
-        withSensitiveData: true,
-      }),
-      this.studentRestrictionService.getStudentRestrictionsById(studentId, {
-        onlyActive: true,
-      }),
-    ]);
-
-    return {
-      ...student,
-      hasRestriction: !!studentRestrictions.length,
-    };
+    return this.studentControllerService.getStudentProfile(studentId, {
+      withSensitiveData: true,
+      withAdditionalSpecificData: true,
+    });
   }
 
   /**
@@ -431,5 +421,46 @@ export class StudentAESTController extends BaseController {
       payload.noteDescription,
       userToken.userId,
     );
+  }
+
+  /**
+   * Updates the student info (lastname, givenNames, dob, email)
+   * for a basic BCeID student.
+   * @param studentId related student id.
+   * @param payload payload to be updated.
+   */
+  @Roles(Role.StudentEditProfile)
+  @Patch(":studentId")
+  @ApiNotFoundResponse({ description: "Student does not exist." })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Not possible to update a non-basic-BCeID student or no profile data updated because no changes were detected.",
+  })
+  async updateProfileInformation(
+    @Param("studentId", ParseIntPipe) studentId: number,
+    @Body() payload: UpdateStudentDetailsAPIInDTO,
+    @UserToken() userToken: IUserToken,
+  ): Promise<void> {
+    const student = await this.studentService.getStudentById(studentId);
+    if (!student) {
+      throw new NotFoundException("Student does not exist.");
+    }
+    if (student.user.identityProviderType !== IdentityProviders.BCeIDBasic) {
+      throw new UnprocessableEntityException(
+        "Not possible to update a non-basic-BCeID student.",
+      );
+    }
+    const updated = await this.studentService.updateStudentUserData(
+      {
+        studentId,
+        ...payload,
+      },
+      userToken.userId,
+    );
+    if (!updated) {
+      throw new UnprocessableEntityException(
+        "No profile data updated because no changes were detected.",
+      );
+    }
   }
 }

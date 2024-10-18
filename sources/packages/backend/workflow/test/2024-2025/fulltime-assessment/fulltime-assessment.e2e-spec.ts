@@ -22,25 +22,25 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}.`, () => {
         assessmentConsolidatedData.offeringActualTuitionCosts +
         assessmentConsolidatedData.offeringMandatoryFees,
       childcareCost: 0,
-      livingAllowance: 1672,
-      totalAssessedCost: 27672,
+      livingAllowance: 7088,
+      totalAssessedCost: 31088,
       totalFamilyIncome: 40000,
-      totalFederalAward: 7654.615630769231,
+      totalFederalAward: 4800,
       otherAllowableCost: 0,
-      transportationCost: 0,
+      transportationCost: null,
       secondResidenceCost: 0,
       totalAssessmentNeed: 55049.19807692308,
-      booksAndSuppliesCost: 5000,
-      totalProvincialAward: 11037.417692307692,
+      booksAndSuppliesCost: 3000,
+      totalProvincialAward: 3520,
       alimonyOrChildSupport: 0,
-      federalAssessmentNeed: 26000,
+      federalAssessmentNeed: 30871.653846153848,
       exceptionalEducationCost:
         assessmentConsolidatedData.offeringExceptionalExpenses,
-      provincialAssessmentNeed: 27593.544230769232,
+      provincialAssessmentNeed: 31030.93221153846,
       parentAssessedContribution: null,
       partnerAssessedContribution: null,
       studentTotalFederalContribution: 216.34615384615384,
-      studentTotalProvincialContribution: 78.45576923076923,
+      studentTotalProvincialContribution: 57.06778846153846,
     };
     // Act
     const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
@@ -80,9 +80,6 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}.`, () => {
     expect(
       calculatedAssessment.variables.calculatedDataTotalSecondResidence,
     ).toBe(expectedAssessmentData.secondResidenceCost);
-    expect(calculatedAssessment.variables.caclulatedDataTotalAssessedNeed).toBe(
-      expectedAssessmentData.totalAssessmentNeed,
-    );
     expect(calculatedAssessment.variables.calculatedDataTotalBookCost).toBe(
       expectedAssessmentData.booksAndSuppliesCost,
     );

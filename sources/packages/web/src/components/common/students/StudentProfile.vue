@@ -1,7 +1,22 @@
 <template>
   <body-header-container>
     <template #header>
-      <body-header title="Profile" />
+      <body-header title="Profile">
+        <template #actions v-if="canEditProfile">
+          <check-permission-role :role="Role.StudentEditProfile">
+            <template #="{ notAllowed }">
+              <v-btn
+                @click="editStudentProfile"
+                class="float-right"
+                color="primary"
+                prepend-icon="fa:fa fa-edit"
+                :disabled="notAllowed"
+                >Edit Profile</v-btn
+              >
+            </template>
+          </check-permission-role>
+        </template>
+      </body-header>
     </template>
     <h3 class="category-header-medium">Student profile</h3>
     <content-group>
@@ -94,26 +109,39 @@
         /></v-col>
       </v-row>
     </content-group>
+    <edit-student-profile-modal
+      ref="studentEditProfile"
+    ></edit-student-profile-modal>
   </body-header-container>
 </template>
 
 <script lang="ts">
-import { onMounted, ref, defineComponent } from "vue";
+import { onMounted, ref, defineComponent, computed } from "vue";
 import { StudentService } from "@/services/StudentService";
-import { useFormatters } from "@/composables";
-import { AddressAPIOutDTO } from "@/services/http/dto";
-import { StudentProfile } from "@/types";
+import { ModalDialog, useFormatters, useSnackBar } from "@/composables";
+import {
+  AddressAPIOutDTO,
+  UpdateStudentDetailsAPIInDTO,
+} from "@/services/http/dto";
+import { IdentityProviders, Role, StudentProfile } from "@/types";
 import DisabilityStatusUpdateTileValue from "@/components/aest/students/DisabilityStatusUpdateTileValue.vue";
+import EditStudentProfileModal from "@/components/aest/students/modals/EditStudentProfileModal.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 /**
  *  Used to combine institution and ministry DTOs and make SIN explicitly mandatory.
  */
 interface SharedStudentProfile extends Omit<StudentProfile, "sin"> {
   sin: string;
+  identityProviderType?: IdentityProviders;
 }
 
 export default defineComponent({
-  components: { DisabilityStatusUpdateTileValue },
+  components: {
+    DisabilityStatusUpdateTileValue,
+    EditStudentProfileModal,
+    CheckPermissionRole,
+  },
   props: {
     studentId: {
       type: Number,
@@ -126,6 +154,10 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const snackBar = useSnackBar();
+    const studentEditProfile = ref(
+      {} as ModalDialog<UpdateStudentDetailsAPIInDTO | boolean>,
+    );
     const studentDetail = ref({} as SharedStudentProfile);
     const address = ref({} as AddressAPIOutDTO);
     const { genderDisplayFormat, sinDisplayFormat, emptyStringFiller } =
@@ -138,6 +170,45 @@ export default defineComponent({
       address.value = studentDetail.value.contact.address;
     };
 
+    const editStudentProfile = async () => {
+      await studentEditProfile.value.showModal(
+        {
+          givenNames: studentDetail.value.firstName,
+          lastName: studentDetail.value.lastName,
+          birthdate: studentDetail.value.dateOfBirth,
+          email: studentDetail.value.email,
+          noteDescription: "",
+        },
+        saveUpdatedProfileInfo,
+      );
+    };
+
+    const saveUpdatedProfileInfo = async (
+      modalData: UpdateStudentDetailsAPIInDTO | boolean,
+    ) => {
+      try {
+        await StudentService.shared.updateStudentProfileInfo(
+          props.studentId,
+          modalData as UpdateStudentDetailsAPIInDTO,
+        );
+        await loadStudentProfile();
+        snackBar.success("Profile Information updated successfully.");
+        return true;
+      } catch (error) {
+        snackBar.error(
+          "An error happened while updating the profile information. Your profile information could not be updated.",
+        );
+        return false;
+      }
+    };
+
+    const canEditProfile = computed(() => {
+      return (
+        studentDetail.value.identityProviderType ===
+        IdentityProviders.BCeIDBasic
+      );
+    });
+
     onMounted(loadStudentProfile);
     return {
       studentDetail,
@@ -146,6 +217,10 @@ export default defineComponent({
       genderDisplayFormat,
       emptyStringFiller,
       loadStudentProfile,
+      Role,
+      editStudentProfile,
+      canEditProfile,
+      studentEditProfile,
     };
   },
 });

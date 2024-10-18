@@ -2,7 +2,7 @@ import * as Client from "ssh2-sftp-client";
 import * as fs from "fs";
 import * as path from "path";
 import { SshService } from "@sims/integrations/services";
-import { FILE_DEFAULT_ENCODING } from "@sims/services/constants";
+import { FILE_DEFAULT_ENCODING } from "@sims/utilities";
 
 const MOCKED_RESPONSE_FILES = [
   "CCRA_RESPONSE_ABCSL00001.TXT",

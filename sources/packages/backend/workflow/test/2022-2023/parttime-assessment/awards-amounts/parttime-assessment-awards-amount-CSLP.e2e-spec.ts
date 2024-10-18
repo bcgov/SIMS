@@ -27,7 +27,7 @@ describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-awards-amount-C
     expect(calculatedAssessment.variables.latestCSLPBalance).toBe(0);
     expect(
       calculatedAssessment.variables.calculatedDataTotalRemainingNeed4,
-    ).toBe(21778);
+    ).toBe(17647);
     expect(calculatedAssessment.variables.federalAwardNetCSLPAmount).toBe(
       10000,
     );
@@ -52,7 +52,7 @@ describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-awards-amount-C
     expect(calculatedAssessment.variables.latestCSLPBalance).toBe(1000);
     expect(
       calculatedAssessment.variables.calculatedDataTotalRemainingNeed4,
-    ).toBe(21778);
+    ).toBe(17647);
     expect(calculatedAssessment.variables.federalAwardNetCSLPAmount).toBe(9000);
     expect(calculatedAssessment.variables.finalFederalAwardNetCSLPAmount).toBe(
       9000,
