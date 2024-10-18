@@ -92,7 +92,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
   it("Should update CAS supplier table when found pending supplier information to be updated with an active address match.", async () => {
     // Arrange
     // Created a student with same address line 1 and postal code from the expected CAS mocked result.
-    // Postal code has an white space that is expected to be removed.
+    // Postal code has a white space that is expected to be removed.
     const student = await saveFakeStudent(db.dataSource, undefined, {
       initialValue: {
         contactInfo: {
@@ -164,6 +164,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
 
   it("Should update CAS supplier table to manual intervention when student does not have a first name.", async () => {
     // Arrange
+    const referenceDate = new Date();
     const user = createFakeUser();
     user.firstName = null;
     const student = await saveFakeStudent(db.dataSource, { user });
@@ -198,6 +199,11 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
         id: true,
         isValid: true,
         supplierStatus: true,
+        updatedAt: true,
+        modifier: { id: true },
+      },
+      relations: {
+        modifier: true,
       },
       where: {
         id: savedCASSupplier.id,
@@ -207,7 +213,13 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       id: savedCASSupplier.id,
       isValid: false,
       supplierStatus: SupplierStatus.ManualIntervention,
+      updatedAt: expect.any(Date),
+      modifier: { id: systemUsersService.systemUser.id },
     });
+    // Ensure updatedAt was updated.
+    expect(updateCASSupplier.updatedAt.getTime()).toBeGreaterThan(
+      referenceDate.getTime(),
+    );
   });
 
   it("Should update CAS supplier table to manual intervention when student address is not from Canada.", async () => {
