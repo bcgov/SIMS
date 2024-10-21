@@ -21,32 +21,18 @@
     </template></confirm-modal
   >
   <footer-buttons
-    justify="space-between"
-    primaryLabel=""
-    :showPrimaryButton="true"
-    :showSecondaryButton="false"
-    class="mx-0"
+    justify="end"
+    primaryLabel="Accept assessment"
+    :showPrimaryButton="assessmentId === currentAssessmentId"
+    :disablePrimaryButton="!canAcceptAssessment"
+    @primaryClick="confirmAssessment"
+    secondaryLabel="Cancel application"
+    :showSecondaryButton="true"
+    @secondaryClick="confirmCancelApplication"
+    secondaryButtonColor="danger"
+    secondaryButtonVariant="elevated"
     v-if="!viewOnly"
-  >
-    <template #primary-buttons>
-      <div><!-- secondary buttons placeholder for the justify to work --></div>
-      <div class="p-0 m-0">
-        <v-btn
-          color="danger"
-          variant="elevated"
-          @click="confirmCancelApplication"
-          >Cancel application</v-btn
-        ><v-btn
-          v-if="assessmentId === currentAssessmentId"
-          class="ml-2"
-          color="primary"
-          @click="confirmAssessment()"
-          :disabled="!canAcceptAssessment"
-          >Accept assessment</v-btn
-        >
-      </div>
-    </template>
-  </footer-buttons>
+  />
 </template>
 
 <script lang="ts">
