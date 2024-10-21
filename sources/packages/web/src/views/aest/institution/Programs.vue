@@ -22,14 +22,15 @@
       <content-group>
         <toggle-content
           :toggled="!loading && !institutionProgramsSummary.count"
-          message="No records found."
         >
           <v-data-table
             :headers="ProgramHeaders"
-            :items="institutionProgramsSummary.results"
+            :items="institutionProgramsSummary?.results"
+            :items-length="institutionProgramsSummary?.count"
             :items-per-page="DEFAULT_PAGE_LIMIT"
             :items-per-page-options="ITEMS_PER_PAGE"
             :loading="loading"
+            @update:options="pageSortEvent"
           >
             <template #[`item.submittedDate`]="{ item }">
               {{ item.submittedDateFormatted }}
@@ -52,6 +53,7 @@
             <template #[`item.action`]="{ item }">
               <v-btn
                 variant="outlined"
+                color="primary"
                 @click="goToViewProgramDetail(item.programId, item.locationId)"
                 >View</v-btn
               >
@@ -141,6 +143,17 @@ export default defineComponent({
         },
       });
     };
+    const pageSortEvent = async (event: any) => {
+      currentPageSize.value = event?.rows;
+      await getProgramsSummaryList(
+        props.institutionId,
+        event.rows,
+        event.page,
+        searchProgramName.value,
+        event.sortField,
+        event.sortOrder,
+      );
+    };
     const goToSearchProgramName = async () => {
       await getProgramsSummaryList(
         props.institutionId,
@@ -153,6 +166,7 @@ export default defineComponent({
       institutionProgramsSummary,
       goToViewProgramDetail,
       DEFAULT_PAGE_LIMIT,
+      pageSortEvent,
       goToSearchProgramName,
       searchProgramName,
       loading,
