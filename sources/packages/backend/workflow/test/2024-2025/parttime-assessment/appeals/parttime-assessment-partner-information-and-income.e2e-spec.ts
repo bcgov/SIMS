@@ -150,4 +150,30 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-partner-informat
       calculatedAssessment.variables.calculatedDataPartner1TotalIncome,
     ).toBe(2000);
   });
+
+  it("Should calculate partner income as current year partner income value when there is a request a change for current year partner income and partner's CRA income verification has failed.", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.partner1CRAReportedIncome = null;
+    assessmentConsolidatedData.appealsPartnerInformationAndIncomeAppealData = {
+      relationshipStatus: "married",
+      partnerEstimatedIncome: 1000,
+      currentYearPartnerIncome: 2000,
+    };
+
+    // Act
+    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+
+    // Assert
+    expect(
+      calculatedAssessment.variables.calculatedDataCurrentYearPartnerIncome,
+    ).toBe(2000);
+    expect(
+      calculatedAssessment.variables.calculatedDataPartner1TotalIncome,
+    ).toBe(2000);
+  });
 });
