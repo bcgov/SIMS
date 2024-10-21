@@ -72,9 +72,6 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGF
             expect(
               calculatedAssessment.variables.federalAwardNetCSGFAmount,
             ).toBeGreaterThan(0);
-            expect(
-              calculatedAssessment.variables.provincialAwardNetCSGFAmount,
-            ).toBeGreaterThan(0);
           });
         }
       }

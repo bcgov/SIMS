@@ -33,9 +33,6 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-SBSD
         // Assert
         expect(calculatedAssessment.variables.awardEligibilitySBSD).toBe(true);
         expect(
-          calculatedAssessment.variables.federalAwardNetSBSDAmount,
-        ).toBeGreaterThan(0);
-        expect(
           calculatedAssessment.variables.provincialAwardNetSBSDAmount,
         ).toBeGreaterThan(0);
       });

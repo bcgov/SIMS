@@ -12,6 +12,15 @@ export interface StudentInfo extends AddressInfo {
   gender: string;
 }
 
+export interface StudentUserData {
+  studentId: number;
+  birthdate: string;
+  lastName: string;
+  givenNames?: string;
+  email: string;
+  noteDescription: string;
+}
+
 /**
  * Information needed from the user during student
  * creation process where user and student are updated
