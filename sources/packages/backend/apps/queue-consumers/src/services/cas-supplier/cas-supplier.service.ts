@@ -75,7 +75,7 @@ export class CASSupplierIntegrationService {
    * @param casSuppliers pending CAS suppliers.
    * @param parentProcessSummary parent log summary.
    * @param auth CAS auth details.
-   * @returns true if updated a record.
+   * @returns number of updated records.
    */
   private async processSuppliers(
     casSuppliers: CASSupplier[],
