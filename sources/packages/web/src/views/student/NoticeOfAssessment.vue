@@ -84,6 +84,20 @@
       @confirmCancelApplication="confirmCancelApplication"
       @confirmAssessment="confirmAssessment"
     />
+    <footer-buttons
+      justify="end"
+      primaryLabel="Accept assessment"
+      :showPrimaryButton="assessmentId === currentAssessmentId"
+      :disablePrimaryButton="!canAcceptAssessment"
+      @primaryClick="confirmAssessment"
+      secondaryLabel="Cancel application"
+      :showSecondaryButton="true"
+      @secondaryClick="confirmCancelApplication"
+      secondaryButtonColor="danger"
+      secondaryButtonVariant="elevated"
+      v-if="!viewOnly"
+      class="mr-1"
+    />
     <cancel-application ref="cancelApplicationModal" />
   </student-page-container>
 </template>

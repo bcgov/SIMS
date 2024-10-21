@@ -25,7 +25,7 @@ import {
 } from "@sims/sims-db";
 import { TestingModule } from "@nestjs/testing";
 import { getUserFullName } from "../../../../utilities";
-import { DATE_ONLY_FULL_MONTH_FORMAT, formatDate } from "@sims/utilities";
+import { getDateOnlyFullMonthFormat } from "@sims/utilities";
 
 describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
   let app: INestApplication;
@@ -120,20 +120,17 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
       programName: assessment.offering.educationProgram.name,
       locationName: assessment.offering.institutionLocation.name,
       offeringIntensity: OfferingIntensity.partTime,
-      offeringStudyEndDate: formatDate(
+      offeringStudyEndDate: getDateOnlyFullMonthFormat(
         assessment.offering.studyEndDate,
-        DATE_ONLY_FULL_MONTH_FORMAT,
       ),
-      offeringStudyStartDate: formatDate(
+      offeringStudyStartDate: getDateOnlyFullMonthFormat(
         assessment.offering.studyStartDate,
-        DATE_ONLY_FULL_MONTH_FORMAT,
       ),
       eligibleAmount: 2750,
       disbursement: {
         disbursement1COEStatus: newAssessmentDisbursement.coeStatus,
-        disbursement1Date: formatDate(
+        disbursement1Date: getDateOnlyFullMonthFormat(
           newAssessmentDisbursement.disbursementDate,
-          DATE_ONLY_FULL_MONTH_FORMAT,
         ),
         disbursement1Id: newAssessmentDisbursement.id,
         disbursement1MSFAACancelledDate:

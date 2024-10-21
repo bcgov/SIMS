@@ -20,19 +20,6 @@
       </p>
     </template></confirm-modal
   >
-  <footer-buttons
-    justify="end"
-    primaryLabel="Accept assessment"
-    :showPrimaryButton="assessmentId === currentAssessmentId"
-    :disablePrimaryButton="!canAcceptAssessment"
-    @primaryClick="confirmAssessment"
-    secondaryLabel="Cancel application"
-    :showSecondaryButton="true"
-    @secondaryClick="confirmCancelApplication"
-    secondaryButtonColor="danger"
-    secondaryButtonVariant="elevated"
-    v-if="!viewOnly"
-  />
 </template>
 
 <script lang="ts">
@@ -109,25 +96,11 @@ export default defineComponent({
     ) => {
       return !!applicationId && !!loadNOA && !!processing;
     },
-    confirmCancelApplication: () => true,
-    confirmAssessment: () => true,
   },
   components: { ConfirmModal },
   props: {
     assessmentId: {
       type: Number,
-      required: true,
-    },
-    currentAssessmentId: {
-      type: Number,
-      required: true,
-    },
-    canAcceptAssessment: {
-      type: Boolean,
-      required: true,
-    },
-    viewOnly: {
-      type: Boolean,
       required: true,
     },
     canReissueMSFAA: {
@@ -148,19 +121,6 @@ export default defineComponent({
     const confirmReissueMSFAA = ref({} as ModalDialog<boolean>);
     const initialData = ref({} as NoticeOfAssessment);
     const msfaaReissueProcessing = ref(false);
-    /**
-     * Emits "confirmCancelApplication" to the parent component.
-     */
-    const confirmCancelApplication = () => {
-      emit("confirmCancelApplication");
-    };
-
-    /**
-     * Emits "confirmAssessment" to the parent component.
-     */
-    const confirmAssessment = () => {
-      emit("confirmAssessment");
-    };
 
     /**
      * Defines the MSFAA status based on the signed date and cancelled dates.
@@ -268,8 +228,6 @@ export default defineComponent({
       msfaaReissueProcessing,
       customEvent,
       initialData,
-      confirmCancelApplication,
-      confirmAssessment,
     };
   },
 });

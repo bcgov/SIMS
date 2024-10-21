@@ -173,6 +173,20 @@ export function getDateOnlyFormat(date?: string | Date): string | undefined {
 }
 
 /**
+ * Get the date formatted as date only with the full month.
+ * @param date date to be formatted.
+ * @returns formatted date.
+ */
+export function getDateOnlyFullMonthFormat(
+  date?: string | Date,
+): string | undefined {
+  if (date) {
+    return dayjs(date).format(DATE_ONLY_FULL_MONTH_FORMAT);
+  }
+  return undefined;
+}
+
+/**
  *
  * @param date Add days to a given date.
  * @param daysToAdd

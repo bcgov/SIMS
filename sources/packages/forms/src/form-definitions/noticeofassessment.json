@@ -17156,7 +17156,7 @@
               "value": ""
             }
           ],
-          "content": "You should check you banking information by logging into your \n\n  <strong>\n    <a \n      class=\"primary-color\"\n      href=\"https://www.canada.ca/en/services/benefits/education/student-aid/manage-student-loan.html\"\n      target=\"_blank\"\n      rel=\"noopener noreferrer\"\n      > National Student Loans Service Centre</a\n    >\n    </strong>\n     account. If it’s not up to date, you may not receive your loan.",
+          "content": "You should check your banking information by logging into your \n\n  <strong>\n    <a \n      class=\"primary-color\"\n      href=\"https://www.canada.ca/en/services/benefits/education/student-aid/manage-student-loan.html\"\n      target=\"_blank\"\n      rel=\"noopener noreferrer\"\n      > National Student Loans Service Centre</a\n    >\n    </strong>\n     account. If it’s not up to date, you may not receive your loan.",
           "refreshOnChange": false,
           "key": "html123",
           "type": "htmlelement",

@@ -27,11 +27,7 @@ import {
   Student,
 } from "@sims/sims-db";
 import { BC_TOTAL_GRANT_AWARD_CODE } from "@sims/services/constants";
-import {
-  formatDate,
-  DATE_ONLY_FULL_MONTH_FORMAT,
-  getDateOnlyFormat,
-} from "@sims/utilities";
+import { getDateOnlyFormat, getDateOnlyFullMonthFormat } from "@sims/utilities";
 
 describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
   let app: INestApplication;
@@ -141,9 +137,8 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
         offeringStudyStartDate: getDateOnlyFormat(offering.studyStartDate),
         offeringStudyEndDate: getDateOnlyFormat(offering.studyEndDate),
         estimatedAward: {
-          disbursement1Date: formatDate(
+          disbursement1Date: getDateOnlyFullMonthFormat(
             firstSchedule.disbursementDate,
-            DATE_ONLY_FULL_MONTH_FORMAT,
           ),
           disbursement1Status: firstSchedule.disbursementScheduleStatus,
           disbursement1COEStatus: COEStatus.completed,
@@ -304,9 +299,8 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
         offeringStudyEndDate: getDateOnlyFormat(offering.studyEndDate),
         estimatedAward: {
           // First disbursement schedule dynamic properties.
-          disbursement1Date: formatDate(
+          disbursement1Date: getDateOnlyFullMonthFormat(
             firstSchedule.disbursementDate,
-            DATE_ONLY_FULL_MONTH_FORMAT,
           ),
           disbursement1Status: firstSchedule.disbursementScheduleStatus,
           disbursement1COEStatus: COEStatus.completed,
@@ -323,9 +317,8 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
           disbursement1bcag: 555,
           disbursement1sbsd: 666,
           // Second disbursement schedule dynamic properties.
-          disbursement2Date: formatDate(
+          disbursement2Date: getDateOnlyFullMonthFormat(
             secondSchedule.disbursementDate,
-            DATE_ONLY_FULL_MONTH_FORMAT,
           ),
           disbursement2Status: secondSchedule.disbursementScheduleStatus,
           disbursement2COEStatus: COEStatus.completed,
@@ -406,9 +399,8 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
         offeringStudyStartDate: getDateOnlyFormat(offering.studyStartDate),
         offeringStudyEndDate: getDateOnlyFormat(offering.studyEndDate),
         estimatedAward: {
-          disbursement1Date: formatDate(
+          disbursement1Date: getDateOnlyFullMonthFormat(
             firstSchedule.disbursementDate,
-            DATE_ONLY_FULL_MONTH_FORMAT,
           ),
           disbursement1Status: firstSchedule.disbursementScheduleStatus,
           disbursement1COEStatus: COEStatus.completed,
@@ -552,9 +544,8 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
         offeringStudyEndDate: getDateOnlyFormat(offering.studyEndDate),
         estimatedAward: {
           // First disbursement schedule dynamic properties.
-          disbursement1Date: formatDate(
+          disbursement1Date: getDateOnlyFullMonthFormat(
             firstSchedule.disbursementDate,
-            DATE_ONLY_FULL_MONTH_FORMAT,
           ),
           disbursement1Status: firstSchedule.disbursementScheduleStatus,
           disbursement1COEStatus: COEStatus.completed,
@@ -574,9 +565,8 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
           disbursement1bgpd: 1007,
           disbursement1sbsd: 1008,
           // Second disbursement schedule dynamic properties.
-          disbursement2Date: formatDate(
+          disbursement2Date: getDateOnlyFullMonthFormat(
             secondSchedule.disbursementDate,
-            DATE_ONLY_FULL_MONTH_FORMAT,
           ),
           disbursement2Status: secondSchedule.disbursementScheduleStatus,
           disbursement2COEStatus: COEStatus.completed,
@@ -684,9 +674,8 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
         offeringStudyStartDate: getDateOnlyFormat(offering.studyStartDate),
         offeringStudyEndDate: getDateOnlyFormat(offering.studyEndDate),
         estimatedAward: {
-          disbursement1Date: formatDate(
+          disbursement1Date: getDateOnlyFullMonthFormat(
             firstSchedule.disbursementDate,
-            DATE_ONLY_FULL_MONTH_FORMAT,
           ),
           disbursement1Status: firstSchedule.disbursementScheduleStatus,
           disbursement1COEStatus: COEStatus.completed,

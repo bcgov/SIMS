@@ -29,7 +29,7 @@ import {
 import { MASKED_MSFAA_NUMBER } from "../../../../../src/services";
 import { saveStudentApplicationForCollegeC } from "../../../student/_tests_/e2e/student.institutions.utils";
 import { getUserFullName } from "../../../../utilities";
-import { formatDate, DATE_ONLY_FULL_MONTH_FORMAT } from "@sims/utilities";
+import { getDateOnlyFullMonthFormat } from "@sims/utilities";
 
 describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
   let app: INestApplication;
@@ -109,9 +109,8 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
         assessment: assessment.assessmentData,
         disbursement: {
           disbursement1COEStatus: firstDisbursementSchedule.coeStatus,
-          disbursement1Date: formatDate(
+          disbursement1Date: getDateOnlyFullMonthFormat(
             firstDisbursementSchedule.disbursementDate,
-            DATE_ONLY_FULL_MONTH_FORMAT,
           ),
           disbursement1Id: firstDisbursementSchedule.id,
           disbursement1MSFAACancelledDate:
@@ -126,9 +125,8 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
             firstDisbursementSchedule.tuitionRemittanceRequestedAmount,
           ...firstDisbursementScheduleAwards,
           disbursement2COEStatus: secondDisbursementSchedule.coeStatus,
-          disbursement2Date: formatDate(
+          disbursement2Date: getDateOnlyFullMonthFormat(
             secondDisbursementSchedule.disbursementDate,
-            DATE_ONLY_FULL_MONTH_FORMAT,
           ),
           disbursement2Id: secondDisbursementSchedule.id,
           disbursement2MSFAACancelledDate:
@@ -149,13 +147,11 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
         noaApprovalStatus: assessment.noaApprovalStatus,
         applicationCurrentAssessmentId: application.currentAssessment.id,
         offeringIntensity: assessment.offering.offeringIntensity,
-        offeringStudyEndDate: formatDate(
+        offeringStudyEndDate: getDateOnlyFullMonthFormat(
           assessment.offering.studyEndDate,
-          DATE_ONLY_FULL_MONTH_FORMAT,
         ),
-        offeringStudyStartDate: formatDate(
+        offeringStudyStartDate: getDateOnlyFullMonthFormat(
           assessment.offering.studyStartDate,
-          DATE_ONLY_FULL_MONTH_FORMAT,
         ),
         programName: assessment.offering.educationProgram.name,
       });
@@ -216,9 +212,8 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
         assessment: assessment.assessmentData,
         disbursement: {
           disbursement1COEStatus: firstDisbursementSchedule.coeStatus,
-          disbursement1Date: formatDate(
+          disbursement1Date: getDateOnlyFullMonthFormat(
             firstDisbursementSchedule.disbursementDate,
-            DATE_ONLY_FULL_MONTH_FORMAT,
           ),
           disbursement1Id: firstDisbursementSchedule.id,
           disbursement1MSFAACancelledDate:
@@ -233,9 +228,8 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
             firstDisbursementSchedule.tuitionRemittanceRequestedAmount,
           ...firstDisbursementScheduleAwards,
           disbursement2COEStatus: secondDisbursementSchedule.coeStatus,
-          disbursement2Date: formatDate(
+          disbursement2Date: getDateOnlyFullMonthFormat(
             secondDisbursementSchedule.disbursementDate,
-            DATE_ONLY_FULL_MONTH_FORMAT,
           ),
           disbursement2Id: secondDisbursementSchedule.id,
           disbursement2MSFAACancelledDate:
@@ -256,13 +250,11 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
         noaApprovalStatus: assessment.noaApprovalStatus,
         applicationCurrentAssessmentId: application.currentAssessment.id,
         offeringIntensity: assessment.offering.offeringIntensity,
-        offeringStudyEndDate: formatDate(
+        offeringStudyEndDate: getDateOnlyFullMonthFormat(
           assessment.offering.studyEndDate,
-          DATE_ONLY_FULL_MONTH_FORMAT,
         ),
-        offeringStudyStartDate: formatDate(
+        offeringStudyStartDate: getDateOnlyFullMonthFormat(
           assessment.offering.studyStartDate,
-          DATE_ONLY_FULL_MONTH_FORMAT,
         ),
         programName: assessment.offering.educationProgram.name,
       });

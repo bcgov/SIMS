@@ -27,9 +27,8 @@ import {
 } from "@sims/sims-db";
 import {
   addDays,
-  DATE_ONLY_FULL_MONTH_FORMAT,
-  formatDate,
   getDateOnlyFormat,
+  getDateOnlyFullMonthFormat,
 } from "@sims/utilities";
 
 describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
@@ -162,9 +161,8 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
         offeringStudyEndDate: getDateOnlyFormat(offering.studyEndDate),
         estimatedAward: {
           // First disbursement schedule dynamic properties.
-          disbursement1Date: formatDate(
+          disbursement1Date: getDateOnlyFullMonthFormat(
             firstSchedule.disbursementDate,
-            DATE_ONLY_FULL_MONTH_FORMAT,
           ),
           disbursement1Status: firstSchedule.disbursementScheduleStatus,
           disbursement1COEStatus: COEStatus.completed,
@@ -186,9 +184,8 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
           disbursement1bgpd: 8,
           disbursement1sbsd: 9,
           // Second disbursement schedule dynamic properties.
-          disbursement2Date: formatDate(
+          disbursement2Date: getDateOnlyFullMonthFormat(
             secondSchedule.disbursementDate,
-            DATE_ONLY_FULL_MONTH_FORMAT,
           ),
           disbursement2Status: secondSchedule.disbursementScheduleStatus,
           disbursement2COEStatus: COEStatus.completed,
@@ -370,9 +367,8 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
         offeringStudyEndDate: getDateOnlyFormat(offering.studyEndDate),
         estimatedAward: {
           // First disbursement schedule dynamic properties.
-          disbursement1Date: formatDate(
+          disbursement1Date: getDateOnlyFullMonthFormat(
             firstSchedule.disbursementDate,
-            DATE_ONLY_FULL_MONTH_FORMAT,
           ),
           disbursement1Status: firstSchedule.disbursementScheduleStatus,
           disbursement1COEStatus: COEStatus.completed,
@@ -391,9 +387,8 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
           disbursement1bcag: 555,
           disbursement1sbsd: 666,
           // Second disbursement schedule dynamic properties.
-          disbursement2Date: formatDate(
+          disbursement2Date: getDateOnlyFullMonthFormat(
             secondSchedule.disbursementDate,
-            DATE_ONLY_FULL_MONTH_FORMAT,
           ),
           disbursement2Status: secondSchedule.disbursementScheduleStatus,
           disbursement2COEStatus: COEStatus.completed,
