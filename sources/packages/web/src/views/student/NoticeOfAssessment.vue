@@ -14,8 +14,8 @@
         ><template #buttons v-if="!viewOnly">
           <v-row class="p-0 m-0">
             <v-btn
-              class="danger-button"
-              variant="outlined"
+              color="danger"
+              variant="elevated"
               data-cy="cancelApplication"
               @click="confirmCancelApplication"
               >Cancel application</v-btn

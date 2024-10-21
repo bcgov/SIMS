@@ -32,8 +32,8 @@
       <div><!-- secondary buttons placeholder for the justify to work --></div>
       <div class="p-0 m-0">
         <v-btn
-          class="danger-button"
-          variant="outlined"
+          color="danger"
+          variant="elevated"
           @click="confirmCancelApplication"
           >Cancel application</v-btn
         ><v-btn
