@@ -9,7 +9,7 @@
     <tbody>
       <tr v-for="award in awards" :key="award.awardType">
         <td>
-          {{ award.awardType }}
+          {{ getAwardType(award.awardType) }}
           <tooltip-icon>{{ award.description }}</tooltip-icon>
         </td>
         <td>
@@ -22,7 +22,11 @@
 <script lang="ts">
 import { PropType, defineComponent, computed } from "vue";
 import { OfferingIntensity } from "@/types";
-import { AWARDS, AwardDetail } from "@/constants/award-constants";
+import {
+  AWARDS,
+  AwardDetail,
+  PartTimeAwardTypesObject,
+} from "@/constants/award-constants";
 import { DynamicAwardValue } from "@/services/http/dto";
 
 export default defineComponent({
@@ -57,11 +61,19 @@ export default defineComponent({
       }
       // If the award in not defined at all it means that the award is not eligible and it was not
       // part of the disbursement calculations output.
-      return awardValue ?? "(Not eligible)";
+      if (awardValue) {
+        return Number(awardValue).toFixed(2);
+      }
+      return "(Not eligible)";
+    };
+
+    const getAwardType = (awardType: string): string => {
+      return PartTimeAwardTypesObject[awardType];
     };
 
     return {
       getAwardValue,
+      getAwardType,
       awards,
     };
   },
