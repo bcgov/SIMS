@@ -6,6 +6,7 @@ import { ProcessSummary } from "@sims/utilities/logger";
 import {
   CASEvaluationResult,
   CASEvaluationStatus,
+  StudentSupplierToProcess,
 } from "../cas-supplier.models";
 import { Repository } from "typeorm";
 import { CASAuthDetails } from "@sims/integrations/cas";
@@ -26,7 +27,7 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
 
   /**
    * Update student supplier based on the supplier information found on CAS.
-   * @param casSupplier student supplier information from SIMS.
+   * @param studentSupplier student supplier information from SIMS.
    * @param evaluationResult evaluation result to be processed.
    * @param _auth authentication token needed for possible
    * CAS API interactions.
@@ -34,7 +35,7 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
    * @returns processor result.
    */
   async process(
-    casSupplier: CASSupplier,
+    studentSupplier: StudentSupplierToProcess,
     evaluationResult: CASEvaluationResult,
     _auth: CASAuthDetails,
     summary: ProcessSummary,
@@ -50,7 +51,7 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
       const systemUser = this.systemUsersService.systemUser;
       const updateResult = await this.casSupplierRepo.update(
         {
-          id: casSupplier.id,
+          id: studentSupplier.casSupplierID,
         },
         {
           supplierNumber: supplierToUpdate.suppliernumber,

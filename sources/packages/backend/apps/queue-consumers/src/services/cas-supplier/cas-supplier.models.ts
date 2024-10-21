@@ -2,6 +2,7 @@ import {
   CASSupplierResponseItem,
   CASSupplierResponseItemAddress,
 } from "@sims/integrations/cas";
+import { AddressInfo } from "@sims/sims-db";
 
 /**
  * Possible results for a student CAS supplier evaluation.
@@ -91,3 +92,17 @@ export type CASEvaluationResult =
   | CASFoundSupplierAndSiteResult
   | CASFoundSupplierResult
   | CASPreValidationsResult;
+
+/**
+ * Information from the CAS supplier currently associated
+ * with a student that has some pending verifications
+ * to be executed.
+ */
+export interface StudentSupplierToProcess {
+  sin: string;
+  firstName?: string;
+  lastName: string;
+  email: string;
+  address: AddressInfo;
+  casSupplierID: number;
+}

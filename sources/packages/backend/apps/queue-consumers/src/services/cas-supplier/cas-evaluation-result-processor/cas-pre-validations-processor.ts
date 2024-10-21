@@ -6,6 +6,7 @@ import { ProcessSummary } from "@sims/utilities/logger";
 import {
   CASEvaluationResult,
   CASEvaluationStatus,
+  StudentSupplierToProcess,
 } from "../cas-supplier.models";
 import { Repository } from "typeorm";
 import { CASEvaluationResultProcessor, ProcessorResult } from ".";
@@ -27,7 +28,7 @@ export class CASPreValidationsProcessor extends CASEvaluationResultProcessor {
   /**
    * Process the result of a failed pre-validation, setting
    * the student CAS supplier for manual intervention.
-   * @param casSupplier student supplier information from SIMS.
+   * @param studentSupplier student supplier information from SIMS.
    * @param evaluationResult evaluation result to be processed.
    * @param _auth authentication token needed for possible
    * CAS API interactions.
@@ -35,7 +36,7 @@ export class CASPreValidationsProcessor extends CASEvaluationResultProcessor {
    * @returns processor result.
    */
   async process(
-    casSupplier: CASSupplier,
+    studentSupplier: StudentSupplierToProcess,
     evaluationResult: CASEvaluationResult,
     _auth: CASAuthDetails,
     summary: ProcessSummary,
@@ -53,7 +54,7 @@ export class CASPreValidationsProcessor extends CASEvaluationResultProcessor {
       const systemUser = this.systemUsersService.systemUser;
       const updateResult = await this.casSupplierRepo.update(
         {
-          id: casSupplier.id,
+          id: studentSupplier.casSupplierID,
         },
         {
           supplierStatus: SupplierStatus.ManualIntervention,

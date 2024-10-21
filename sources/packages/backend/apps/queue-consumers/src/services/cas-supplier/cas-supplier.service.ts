@@ -16,6 +16,7 @@ import {
   CASEvaluationStatus,
   NotFoundReason,
   PreValidationsFailedReason,
+  StudentSupplierToProcess,
 } from "./cas-supplier.models";
 import {
   CASActiveSupplierNotFoundProcessor,
@@ -41,12 +42,12 @@ export class CASSupplierIntegrationService {
    * CAS integration process.
    * Logs on CAS supplier API and request the supplier information for the students with pending supplier information.
    * @param parentProcessSummary parent process summary.
-   * @param casSuppliers pending CAS suppliers.
+   * @param studentSuppliers pending CAS suppliers.
    * @returns a number of update records.
    */
   async executeCASIntegrationProcess(
     parentProcessSummary: ProcessSummary,
-    casSuppliers: CASSupplier[],
+    studentSuppliers: StudentSupplierToProcess[],
   ): Promise<number> {
     let suppliersUpdated = 0;
     const summary = new ProcessSummary();
@@ -56,7 +57,7 @@ export class CASSupplierIntegrationService {
       const auth = await this.casService.logon();
       summary.info("Logon successful.");
       suppliersUpdated = await this.processSuppliers(
-        casSuppliers,
+        studentSuppliers,
         summary,
         auth,
       );
@@ -74,25 +75,27 @@ export class CASSupplierIntegrationService {
    * For each pending CAS supplier, evaluate student current data and decide
    * how to proceed to ensure student will have a supplier number and site
    * code associated.
-   * @param casSuppliers pending CAS suppliers.
+   * @param studentSuppliers pending CAS suppliers.
    * @param parentProcessSummary parent log summary.
    * @param auth CAS auth details.
    * @returns number of updated records.
    */
   private async processSuppliers(
-    casSuppliers: CASSupplier[],
+    studentSuppliers: StudentSupplierToProcess[],
     parentProcessSummary: ProcessSummary,
     auth: CASAuthDetails,
   ): Promise<number> {
     let suppliersUpdated = 0;
-    for (const casSupplier of casSuppliers) {
+    for (const studentSupplier of studentSuppliers) {
       const summary = new ProcessSummary();
       parentProcessSummary.children(summary);
-      summary.info(`Processing student CAS supplier ID: ${casSupplier.id}.`);
+      summary.info(
+        `Processing student CAS supplier ID: ${studentSupplier.casSupplierID}.`,
+      );
       try {
         // Check the current status of the student data and its supplier information.
         const evaluationResult = await this.evaluateCASSupplier(
-          casSupplier,
+          studentSupplier,
           auth,
         );
         summary.info(
@@ -102,7 +105,7 @@ export class CASSupplierIntegrationService {
         const processor = this.getCASSupplierProcess(evaluationResult.status);
         // Execute the process.
         const processResult = await processor.process(
-          casSupplier,
+          studentSupplier,
           evaluationResult,
           auth,
           summary,
@@ -144,22 +147,22 @@ export class CASSupplierIntegrationService {
   /**
    * Decide the current state of the student supplier on SIMS
    * and return the next process to be executed.
-   * @param casSupplier student CAS supplier to be evaluated.
+   * @param studentSupplier student CAS supplier to be evaluated.
    * @param auth authentication token needed for possible
    * CAS API interactions.
    * @returns evaluation result to be processed next.
    */
   private async evaluateCASSupplier(
-    casSupplier: CASSupplier,
+    studentSupplier: StudentSupplierToProcess,
     auth: CASAuthDetails,
   ): Promise<CASEvaluationResult> {
     const preValidationsFailedReasons: PreValidationsFailedReason[] = [];
-    if (!casSupplier.student.user.firstName) {
+    if (!studentSupplier.firstName) {
       preValidationsFailedReasons.push(
         PreValidationsFailedReason.GivenNamesNotPresent,
       );
     }
-    if (!isAddressFromCanada(casSupplier.student.contactInfo.address)) {
+    if (!isAddressFromCanada(studentSupplier.address)) {
       preValidationsFailedReasons.push(
         PreValidationsFailedReason.NonCanadianAddress,
       );
@@ -172,8 +175,8 @@ export class CASSupplierIntegrationService {
     }
     const supplierResponse = await this.casService.getSupplierInfoFromCAS(
       auth.access_token,
-      casSupplier.student.sinValidation.sin,
-      casSupplier.student.user.lastName,
+      studentSupplier.sin,
+      studentSupplier.lastName,
     );
     if (!supplierResponse.items.length) {
       return {
@@ -195,10 +198,10 @@ export class CASSupplierIntegrationService {
     // Address must be active and have the same address line 1
     // and postal code considering the CAS formats.
     const casFormattedStudentAddress = formatAddress(
-      casSupplier.student.contactInfo.address.addressLine1,
+      studentSupplier.address.addressLine1,
     );
     const casFormattedPostalCode = formatPostalCode(
-      casSupplier.student.contactInfo.address.postalCode,
+      studentSupplier.address.postalCode,
     );
     const casResponseMatchedAddress =
       casResponseActiveSupplier.supplieraddress?.find((address) => {
@@ -225,8 +228,10 @@ export class CASSupplierIntegrationService {
    * Gets a list of CAS suppliers to be updated from CAS supplier table.
    * @returns a list of CAS suppliers to be updated.
    */
-  async getStudentsToUpdateSupplierInformation(): Promise<CASSupplier[]> {
-    return this.casSupplierRepo.find({
+  async getStudentsToUpdateSupplierInformation(): Promise<
+    StudentSupplierToProcess[]
+  > {
+    const pendingStudentCASSuppliers = await this.casSupplierRepo.find({
       select: {
         id: true,
         student: {
@@ -245,5 +250,15 @@ export class CASSupplierIntegrationService {
         student: { sinValidation: { isValidSIN: true } },
       },
     });
+    return (
+      pendingStudentCASSuppliers?.map((supplier) => ({
+        sin: supplier.student.sinValidation.sin,
+        firstName: supplier.student.user.firstName,
+        lastName: supplier.student.user.lastName,
+        email: supplier.student.user.email,
+        address: supplier.student.contactInfo.address,
+        casSupplierID: supplier.id,
+      })) ?? []
+    );
   }
 }

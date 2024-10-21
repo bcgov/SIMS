@@ -1,7 +1,9 @@
-import { CASSupplier } from "@sims/sims-db";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { CASAuthDetails } from "@sims/integrations/cas";
-import { CASEvaluationResult } from "../cas-supplier.models";
+import {
+  CASEvaluationResult,
+  StudentSupplierToProcess,
+} from "../cas-supplier.models";
 import { ProcessorResult } from ".";
 
 /**
@@ -13,7 +15,7 @@ export abstract class CASEvaluationResultProcessor {
   /**
    * When implemented in a derived class, execute the process
    * to associate a CAS supplier and a site code to a student.
-   * @param casSupplier student supplier information from SIMS.
+   * @param studentSupplier student supplier information from SIMS.
    * @param evaluationResult evaluation result to be processed.
    * @param auth authentication token needed for possible
    * CAS API interactions.
@@ -21,7 +23,7 @@ export abstract class CASEvaluationResultProcessor {
    * @returns processor result.
    */
   abstract process(
-    casSupplier: CASSupplier,
+    studentSupplier: StudentSupplierToProcess,
     evaluationResult: CASEvaluationResult,
     auth: CASAuthDetails,
     summary: ProcessSummary,

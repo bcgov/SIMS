@@ -6,6 +6,7 @@ import { ProcessSummary } from "@sims/utilities/logger";
 import {
   CASEvaluationResult,
   CASEvaluationStatus,
+  StudentSupplierToProcess,
 } from "../cas-supplier.models";
 import { Repository } from "typeorm";
 import {
@@ -31,7 +32,7 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
 
   /**
    * Create the new supplier and site on CAS using the student information.
-   * @param casSupplier student supplier information from SIMS.
+   * @param studentSupplier student supplier information from SIMS.
    * @param evaluationResult evaluation result to be processed.
    * @param auth authentication token needed for possible
    * CAS API interactions.
@@ -39,7 +40,7 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
    * @returns processor result.
    */
   async process(
-    casSupplier: CASSupplier,
+    studentSupplier: StudentSupplierToProcess,
     evaluationResult: CASEvaluationResult,
     auth: CASAuthDetails,
     summary: ProcessSummary,
@@ -52,12 +53,12 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
     );
     let result: CreateSupplierAndSiteResponse;
     try {
-      const address = casSupplier.student.contactInfo.address;
+      const address = studentSupplier.address;
       result = await this.casService.createSupplierAndSite(auth.access_token, {
-        firstName: casSupplier.student.user.firstName,
-        lastName: casSupplier.student.user.lastName,
-        sin: casSupplier.student.sinValidation.sin,
-        emailAddress: casSupplier.student.user.email,
+        firstName: studentSupplier.firstName,
+        lastName: studentSupplier.lastName,
+        sin: studentSupplier.sin,
+        emailAddress: studentSupplier.email,
         supplierSite: {
           addressLine1: address.addressLine1,
           city: address.city,
@@ -76,7 +77,7 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
       const systemUser = this.systemUsersService.systemUser;
       const updateResult = await this.casSupplierRepo.update(
         {
-          id: casSupplier.id,
+          id: studentSupplier.casSupplierID,
         },
         {
           supplierNumber: result.response.supplierNumber,
