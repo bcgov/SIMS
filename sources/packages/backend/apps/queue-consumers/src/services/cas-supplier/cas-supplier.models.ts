@@ -16,6 +16,10 @@ export enum CASEvaluationStatus {
    */
   ActiveSupplierFound = "ActiveSupplierFound",
   /**
+   * Found an active CAS supplier and an address match for the student.
+   */
+  ActiveSupplierAndSiteFound = "ActiveSupplierAndSiteFound",
+  /**
    * An active CAS supplier was not found.
    */
   NotFound = "NotFound",
@@ -54,10 +58,21 @@ export interface CASFoundSupplierResult {
    * CAS active supplier.
    */
   activeSupplier: CASSupplierResponseItem;
+}
+
+/**
+ * Active CAS supplier found on CAS.
+ */
+export interface CASFoundSupplierAndSiteResult {
+  status: CASEvaluationStatus.ActiveSupplierAndSiteFound;
+  /**
+   * CAS active supplier.
+   */
+  activeSupplier: CASSupplierResponseItem;
   /**
    * CAS site that matches with the student address.
    */
-  matchedAddress?: CASSupplierResponseItemAddress;
+  matchedAddress: CASSupplierResponseItemAddress;
 }
 
 /**
@@ -73,5 +88,6 @@ export interface CASNotFoundSupplierResult {
  */
 export type CASEvaluationResult =
   | CASNotFoundSupplierResult
+  | CASFoundSupplierAndSiteResult
   | CASFoundSupplierResult
   | CASPreValidationsResult;

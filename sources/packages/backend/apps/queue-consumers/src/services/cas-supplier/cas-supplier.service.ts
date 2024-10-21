@@ -22,6 +22,7 @@ import {
   CASPreValidationsProcessor,
   CASActiveSupplierFoundProcessor,
   CASEvaluationResultProcessor,
+  CASActiveSupplierAndSiteFoundProcessor,
 } from "./cas-evaluation-result-processor";
 
 @Injectable()
@@ -33,6 +34,7 @@ export class CASSupplierIntegrationService {
     private readonly casPreValidationsProcessor: CASPreValidationsProcessor,
     private readonly casActiveSupplierFoundProcessor: CASActiveSupplierFoundProcessor,
     private readonly casActiveSupplierNotFoundProcessor: CASActiveSupplierNotFoundProcessor,
+    private readonly casActiveSupplierAndSiteFoundProcessor: CASActiveSupplierAndSiteFoundProcessor,
   ) {}
 
   /**
@@ -119,7 +121,7 @@ export class CASSupplierIntegrationService {
 
   /**
    * Get the processor associated to the CAS evaluation status result.
-   * @param evaluationResult evaluation result status.
+   * @param status evaluation result status.
    * @returns processor.
    */
   private getCASSupplierProcess(
@@ -130,6 +132,8 @@ export class CASSupplierIntegrationService {
         return this.casPreValidationsProcessor;
       case CASEvaluationStatus.ActiveSupplierFound:
         return this.casActiveSupplierFoundProcessor;
+      case CASEvaluationStatus.ActiveSupplierAndSiteFound:
+        return this.casActiveSupplierAndSiteFoundProcessor;
       case CASEvaluationStatus.NotFound:
         return this.casActiveSupplierNotFoundProcessor;
       default:
@@ -204,10 +208,16 @@ export class CASSupplierIntegrationService {
           address.postalcode === casFormattedPostalCode
         );
       });
+    if (casResponseMatchedAddress) {
+      return {
+        status: CASEvaluationStatus.ActiveSupplierAndSiteFound,
+        activeSupplier: casResponseActiveSupplier,
+        matchedAddress: casResponseMatchedAddress,
+      };
+    }
     return {
       status: CASEvaluationStatus.ActiveSupplierFound,
       activeSupplier: casResponseActiveSupplier,
-      matchedAddress: casResponseMatchedAddress,
     };
   }
 

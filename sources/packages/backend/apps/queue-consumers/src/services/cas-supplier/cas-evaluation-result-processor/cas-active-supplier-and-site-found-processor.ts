@@ -12,10 +12,10 @@ import { CASAuthDetails } from "@sims/integrations/cas";
 import { CASEvaluationResultProcessor, ProcessorResult } from ".";
 
 /**
- * Process the active supplier information found on CAS.
+ * Process the active supplier and site information found on CAS.
  */
 @Injectable()
-export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcessor {
+export class CASActiveSupplierAndSiteFoundProcessor extends CASEvaluationResultProcessor {
   constructor(
     private readonly systemUsersService: SystemUsersService,
     @InjectRepository(CASSupplier)
@@ -25,7 +25,7 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
   }
 
   /**
-   * Update student supplier based on the supplier information found on CAS.
+   * Update student supplier based on the supplier and site information found on CAS.
    * @param casSupplier student supplier information from SIMS.
    * @param evaluationResult evaluation result to be processed.
    * @param _auth authentication token needed for possible
@@ -39,15 +39,29 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
     _auth: CASAuthDetails,
     summary: ProcessSummary,
   ): Promise<ProcessorResult> {
-    if (evaluationResult.status !== CASEvaluationStatus.ActiveSupplierFound) {
+    if (
+      evaluationResult.status !== CASEvaluationStatus.ActiveSupplierAndSiteFound
+    ) {
       throw new Error("Incorrect CAS evaluation result processor selected.");
     }
-    summary.info("Active CAS supplier found.");
+    summary.info("Active CAS supplier and site found.");
     try {
-      // TODO: Create the site, populate supplierAddress, and set isValid to true;
-      const supplierToUpdate = evaluationResult.activeSupplier;
+      const address = evaluationResult.matchedAddress;
+      const supplierAddressToUpdate = {
+        supplierSiteCode: address.suppliersitecode,
+        addressLine1: address.addressline1,
+        addressLine2: address.addressline2,
+        city: address.city,
+        provinceState: address.province,
+        country: address.country,
+        postalCode: address.postalcode,
+        status: address.status,
+        siteProtected: address.siteprotected,
+        lastUpdated: new Date(address.lastupdated),
+      };
       const now = new Date();
       const systemUser = this.systemUsersService.systemUser;
+      const supplierToUpdate = evaluationResult.activeSupplier;
       const updateResult = await this.casSupplierRepo.update(
         {
           id: casSupplier.id,
@@ -58,10 +72,10 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
           status: supplierToUpdate.status,
           supplierProtected: supplierToUpdate.supplierprotected === "Y",
           lastUpdated: new Date(supplierToUpdate.lastupdated),
-          supplierAddress: null,
+          supplierAddress: supplierAddressToUpdate,
           supplierStatus: SupplierStatus.Verified,
           supplierStatusUpdatedOn: now,
-          isValid: false,
+          isValid: true,
           updatedAt: now,
           modifier: systemUser,
         },

@@ -25,7 +25,7 @@ export class CASPreValidationsProcessor extends CASEvaluationResultProcessor {
   }
 
   /**
-   * Process the result of a pre-validation failed, setting
+   * Process the result of a failed pre-validation, setting
    * the student CAS supplier for manual intervention.
    * @param casSupplier student supplier information from SIMS.
    * @param evaluationResult evaluation result to be processed.

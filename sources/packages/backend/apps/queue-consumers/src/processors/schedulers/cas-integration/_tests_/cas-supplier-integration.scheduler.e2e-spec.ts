@@ -126,8 +126,8 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
         "Found 1 records to be updated.",
         "Logon successful.",
         `Processing student CAS supplier ID: ${savedCASSupplier.id}.`,
-        `CAS evaluation result status: ${CASEvaluationStatus.ActiveSupplierFound}.`,
-        "Active CAS supplier found.",
+        `CAS evaluation result status: ${CASEvaluationStatus.ActiveSupplierAndSiteFound}.`,
+        "Active CAS supplier and site found.",
         "Updated CAS supplier for the student.",
       ]),
     ).toBe(true);
@@ -283,7 +283,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       // Arrange
       const referenceDate = new Date();
       const savedCASSupplier = await saveFakeCASSupplier(db);
-      // Configure CAS mock to return em empty result for the GetSupplier
+      // Configure CAS mock to return an empty result for the GetSupplier
       // and a successful result for the CreateSupplierAndSite.
       casServiceMock.getSupplierInfoFromCAS = jest.fn(() =>
         Promise.resolve(createFakeCASNotFoundSupplierResponse()),
