@@ -14,7 +14,7 @@
         ><template #buttons v-if="!viewOnly">
           <v-row class="p-0 m-0">
             <v-btn
-              color="primary"
+              class="danger-button"
               variant="outlined"
               data-cy="cancelApplication"
               @click="confirmCancelApplication"
@@ -77,7 +77,12 @@
     </template>
     <notice-of-assessment-form-view
       :assessmentId="assessmentId"
+      :canAcceptAssessment="canAcceptAssessment"
+      :currentAssessmentId="currentAssessmentId"
+      :viewOnly="viewOnly"
       @assessmentDataLoaded="assessmentDataLoaded"
+      @confirmCancelApplication="confirmCancelApplication"
+      @confirmAssessment="confirmAssessment"
     />
     <cancel-application ref="cancelApplicationModal" />
   </student-page-container>

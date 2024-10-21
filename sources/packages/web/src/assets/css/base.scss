@@ -280,6 +280,11 @@ strong {
   color: $button-font-color;
 }
 
+.v-btn.danger-button {
+  background-color: $banner-color-error !important;
+  color: $color-white;
+}
+
 // Radio btn style to match with figma.
 // Todo: horizontal direction is not working in vue 3.
 // Todo : Test in stable version and remove.

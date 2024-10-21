@@ -7,7 +7,6 @@
   "tags": [
     "common"
   ],
-  "owner": "669acde6e216d3b5a34334a2",
   "components": [
     {
       "label": "eligibleAmount",
@@ -19,7 +18,7 @@
       "dbIndex": false,
       "encrypted": false,
       "redrawOn": "",
-      "customDefaultValue": "value= ((typeof data.assessment.totalFederalAward === 'number' ? data.assessment.totalFederalAward : 0) \n        + (typeof data.assessment.totalProvincialAward === 'number' ? data.assessment.totalProvincialAward : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 });",
+      "customDefaultValue": "value= ((typeof data.assessment?.totalFederalAward === 'number' ? data.assessment.totalFederalAward : 0) \n        + (typeof data.assessment?.totalProvincialAward === 'number' ? data.assessment.totalProvincialAward : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 });",
       "calculateValue": "",
       "calculateServer": false,
       "key": "eligibleAmount",
@@ -68,7 +67,7 @@
         "unique": false
       },
       "conditional": {
-        "show": null,
+        "show": "",
         "when": null,
         "eq": ""
       },
@@ -368,7 +367,8 @@
           "inputType": "hidden",
           "id": "einsyks",
           "addons": [],
-          "lockKey": true
+          "lockKey": true,
+          "isNew": false
         }
       ],
       "tableView": true,
@@ -11987,8 +11987,7 @@
                             "showWordCount": false,
                             "allowMultipleMasks": false,
                             "addons": [],
-                            "id": "es72nqh0000000000000000000000000000000000000000000000000000000",
-                            "isNew": false
+                            "id": "es72nqh0000000000000000000000000000000000000000000000000000000"
                           }
                         ]
                       },
@@ -12323,8 +12322,7 @@
                             "className": "",
                             "hideLabel": true,
                             "tags": [],
-                            "customConditional": "show = !!data.disbursement.disbursement2Date",
-                            "isNew": false
+                            "customConditional": "show = !!data.disbursement.disbursement2Date"
                           }
                         ]
                       },
@@ -14114,8 +14112,7 @@
                   "lazyLoad": false,
                   "header": [],
                   "caption": "",
-                  "id": "edfxn8m",
-                  "isNew": false
+                  "id": "edfxn8m"
                 }
               ],
               "placeholder": "",
@@ -15378,7 +15375,7 @@
                         "eq": "",
                         "json": ""
                       },
-                      "customConditional": "show = data.disbursement1MSFAAStatus === \"signed\" && data.offeringIntensity === \"Part Time\";",
+                      "customConditional": "show = data.disbursement.disbursement1MSFAAStatus === \"signed\" && data.offeringIntensity === \"Part Time\";",
                       "logic": [],
                       "attributes": {},
                       "overlay": {
@@ -15460,7 +15457,7 @@
                         "eq": "",
                         "json": ""
                       },
-                      "customConditional": "show = data.disbursement1MSFAAStatus === \"signed\" && data.offeringIntensity === \"Full Time\";",
+                      "customConditional": "show = data.disbursement.disbursement1MSFAAStatus === \"signed\" && data.offeringIntensity === \"Full Time\";",
                       "logic": [],
                       "attributes": {},
                       "overlay": {
@@ -15542,7 +15539,7 @@
                         "eq": "",
                         "json": ""
                       },
-                      "customConditional": "show = data.disbursement1MSFAAStatus === \"pending\" && data.offeringIntensity === \"Part Time\";",
+                      "customConditional": "show = data.disbursement.disbursement1MSFAAStatus === \"pending\" && data.offeringIntensity === \"Part Time\";",
                       "logic": [],
                       "attributes": {},
                       "overlay": {
@@ -15624,7 +15621,7 @@
                         "eq": "",
                         "json": ""
                       },
-                      "customConditional": "show = data.disbursement1MSFAAStatus === \"pending\" && data.offeringIntensity === \"Full Time\";",
+                      "customConditional": "show = data.disbursement.disbursement1MSFAAStatus === \"pending\" && data.offeringIntensity === \"Full Time\";",
                       "logic": [],
                       "attributes": {},
                       "overlay": {
@@ -15706,7 +15703,7 @@
                         "eq": "",
                         "json": ""
                       },
-                      "customConditional": "show = data.disbursement1MSFAAStatus === \"cancelled\" && data.offeringIntensity === \"Part Time\";",
+                      "customConditional": "show = data.disbursement.disbursement1MSFAAStatus === \"cancelled\" && data.offeringIntensity === \"Part Time\";",
                       "logic": [],
                       "attributes": {},
                       "overlay": {
@@ -15788,7 +15785,7 @@
                         "eq": "cancelled",
                         "json": ""
                       },
-                      "customConditional": "show = data.disbursement1MSFAAStatus === \"cancelled\" && data.offeringIntensity === \"Full Time\";",
+                      "customConditional": "show = data.disbursement.disbursement1MSFAAStatus === \"cancelled\" && data.offeringIntensity === \"Full Time\";",
                       "logic": [],
                       "attributes": {},
                       "overlay": {
@@ -16006,7 +16003,8 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "id": "ehqv5z",
-                      "hideLabel": true
+                      "hideLabel": true,
+                      "isNew": false
                     },
                     {
                       "label": "HTML",
@@ -16101,7 +16099,8 @@
                   },
                   "properties": {},
                   "hideLabel": true,
-                  "customClass": "formio-panel-unset"
+                  "customClass": "formio-panel-unset",
+                  "isNew": false
                 },
                 {
                   "autofocus": false,
@@ -16169,7 +16168,7 @@
                         "eq": "",
                         "json": ""
                       },
-                      "customConditional": "show = data.disbursement2MSFAAStatus === \"signed\" && data.offeringIntensity === \"Part Time\";",
+                      "customConditional": "show = data.disbursement.disbursement2MSFAAStatus === \"signed\" && data.offeringIntensity === \"Part Time\";",
                       "logic": [],
                       "attributes": {},
                       "overlay": {
@@ -16251,7 +16250,7 @@
                         "eq": "",
                         "json": ""
                       },
-                      "customConditional": "show = data.disbursement2MSFAAStatus === \"signed\" && data.offeringIntensity === \"Full Time\";",
+                      "customConditional": "show = data.disbursement.disbursement2MSFAAStatus === \"signed\" && data.offeringIntensity === \"Full Time\";",
                       "logic": [],
                       "attributes": {},
                       "overlay": {
@@ -16333,7 +16332,7 @@
                         "eq": "",
                         "json": ""
                       },
-                      "customConditional": "show = data.disbursement2MSFAAStatus === \"pending\" && data.offeringIntensity === \"Part Time\";",
+                      "customConditional": "show = data.disbursement.disbursement2MSFAAStatus === \"pending\" && data.offeringIntensity === \"Part Time\";",
                       "logic": [],
                       "attributes": {},
                       "overlay": {
@@ -16415,7 +16414,7 @@
                         "eq": "",
                         "json": ""
                       },
-                      "customConditional": "show = data.disbursement2MSFAAStatus === \"pending\" && data.offeringIntensity === \"Full Time\";",
+                      "customConditional": "show = data.disbursement.disbursement2MSFAAStatus === \"pending\" && data.offeringIntensity === \"Full Time\";",
                       "logic": [],
                       "attributes": {},
                       "overlay": {
@@ -16497,7 +16496,7 @@
                         "eq": "",
                         "json": ""
                       },
-                      "customConditional": "show = data.disbursement1MSFAAStatus === \"cancelled\" && data.offeringIntensity === \"Part Time\";",
+                      "customConditional": "show = data.disbursement.disbursement1MSFAAStatus === \"cancelled\" && data.offeringIntensity === \"Part Time\";",
                       "logic": [],
                       "attributes": {},
                       "overlay": {
@@ -16579,7 +16578,7 @@
                         "eq": "",
                         "json": ""
                       },
-                      "customConditional": "show = data.disbursement2MSFAAStatus === \"cancelled\" && data.offeringIntensity === \"Full Time\";",
+                      "customConditional": "show = data.disbursement.disbursement2MSFAAStatus === \"cancelled\" && data.offeringIntensity === \"Full Time\";",
                       "logic": [],
                       "attributes": {},
                       "overlay": {

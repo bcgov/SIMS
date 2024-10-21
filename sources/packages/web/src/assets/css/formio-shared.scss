@@ -609,7 +609,7 @@
 .formio-custom-tooltip {
   position: absolute;
   display: inline-flex;
-  z-index: 1;
+  z-index: auto;
 }
 
 .formio-custom-tooltip:before {
@@ -624,6 +624,7 @@
   @extend .tooltip-style;
   visibility: hidden;
   opacity: 1;
+  z-index: 100;
 }
 
 td .formio-custom-tooltip:hover .tooltip-text {
