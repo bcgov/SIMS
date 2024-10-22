@@ -13,10 +13,28 @@ function createFakeSFASIndividual(options?: {
   initialValues?: Partial<SFASIndividual>;
 }) {
   const sfasIndividual = new SFASIndividual();
-  sfasIndividual.id = faker.datatype.number({ min: 100000000, max: 999999999 });
+  sfasIndividual.id =
+    options?.initialValues?.id ??
+    faker.datatype.number({ min: 100000000, max: 999999999 });
   sfasIndividual.birthDate =
     options?.initialValues?.birthDate ??
     getISODateOnlyString(faker.date.past(18));
+  sfasIndividual.msfaaNumber =
+    options?.initialValues?.msfaaNumber ??
+    faker.datatype
+      .number({
+        min: 1000000000,
+        max: 9999999999,
+      })
+      .toString();
+  sfasIndividual.partTimeMSFAANumber =
+    options?.initialValues?.partTimeMSFAANumber ??
+    faker.datatype
+      .number({
+        min: 1000000000,
+        max: 9999999999,
+      })
+      .toString();
   sfasIndividual.lastName =
     options?.initialValues?.lastName ?? faker.name.lastName();
   sfasIndividual.sin =
