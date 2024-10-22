@@ -61,8 +61,11 @@ export default defineComponent({
       }
       // If the award in not defined at all it means that the award is not eligible and it was not
       // part of the disbursement calculations output.
+      // '$'+ (data.disbursement.disbursement1cspt).toLocaleString('en-CA', { minimumFractionDigits: 2 })
       if (awardValue) {
-        return Number(awardValue).toFixed(2);
+        return (
+          "$" + awardValue.toLocaleString("en-CA", { minimumFractionDigits: 2 })
+        );
       }
       return "(Not eligible)";
     };
