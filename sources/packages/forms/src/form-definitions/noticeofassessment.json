@@ -295,8 +295,7 @@
           "inputType": "hidden",
           "id": "einsyks",
           "addons": [],
-          "lockKey": true,
-          "isNew": false
+          "lockKey": true
         },
         {
           "label": "Second Disbursement MSFAA status (pending | signed | Cancelled)",
@@ -367,8 +366,7 @@
           "inputType": "hidden",
           "id": "einsyks",
           "addons": [],
-          "lockKey": true,
-          "isNew": false
+          "lockKey": true
         }
       ],
       "tableView": true,
@@ -482,7 +480,7 @@
           "value": ""
         }
       ],
-      "content": "<span class=\"label-bold\">Name: </span\n  ><span class=\"label-value\">{{ data.fullName }}</span\n  ><span class=\"muted-content label-value\"> | </span\n  ><span class=\"label-bold\">Application #: </span\n  ><span class=\"label-value\">{{ data.applicationNumber }}</span\n  ><span class=\"muted-content label-value\"> | </span\n  ><span class=\"label-bold\">Study Dates: </span\n  ><span class=\"label-value\">{{ data.offeringStudyStartDate}}</span\n  > - </span><span class=\"label-value\">{{ data.offeringStudyEndDate}}</span\n  >",
+      "content": "<span class=\"label-bold\">Name: </span\n  ><span class=\"label-value\">{{ data.fullName }}</span\n  ><span class=\"muted-content label-value\"> | </span\n  ><span class=\"label-bold\">Application Number: </span\n  ><span class=\"label-value\">{{ data.applicationNumber }}</span\n  ><span class=\"muted-content label-value\"> | </span\n  ><span class=\"label-bold\">Study Dates: </span\n  ><span class=\"label-value\">{{ data.offeringStudyStartDate}}</span\n  > - </span><span class=\"label-value\">{{ data.offeringStudyEndDate}}</span\n  >",
       "refreshOnChange": true,
       "customClass": "",
       "hidden": false,
@@ -1043,7 +1041,8 @@
                       "addons": [],
                       "id": "ed7zhif",
                       "hideLabel": true,
-                      "tags": []
+                      "tags": [],
+                      "isNew": false
                     },
                     {
                       "label": "HTML",
@@ -1057,7 +1056,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "{{ data.programName }}",
+                      "content": "{{ data.offeringName }}",
                       "refreshOnChange": true,
                       "customClass": "",
                       "hidden": false,
@@ -1476,7 +1475,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "{{ data.offeringIntensity }}",
+                      "content": "{{ data.offeringIntensity === 'Full Time' ? 'Full-time' : 'Part-time' }}",
                       "refreshOnChange": true,
                       "customClass": "",
                       "hidden": false,
@@ -1485,7 +1484,7 @@
                       "tags": [],
                       "properties": {},
                       "conditional": {
-                        "show": null,
+                        "show": "",
                         "when": null,
                         "eq": "",
                         "json": ""
@@ -1638,7 +1637,7 @@
                 }
               ],
               "className": "",
-              "content": "<b>Please note:</b> the funding you receive may differ from the eligible amount. The funding may be adjusted once confirmation of your outstanding principal balance of Part-time Canada Student loans and grants is received, or if any restrictions are added to your account after your initial assessment.",
+              "content": "<b>Please note</b> the funding you receive may differ from the eligible amount. The funding may be adjusted once confirmation of your outstanding principal balance of Part-time Canada Student loans and grants is received, or if any restrictions are added to your account after your initial assessment.",
               "type": "htmlelement",
               "hideLabel": true,
               "tags": [],
@@ -1787,7 +1786,7 @@
               "value": ""
             }
           ],
-          "content": "How your was funding calculated?",
+          "content": "How was your funding calculated?",
           "refreshOnChange": false,
           "customClass": "",
           "hidden": false,
@@ -6905,7 +6904,7 @@
                               }
                             ],
                             "className": "",
-                            "content": "Mandatory Fees",
+                            "content": "Mandatory fees",
                             "type": "htmlelement",
                             "tags": [],
                             "conditional": {
@@ -6942,7 +6941,8 @@
                               "when": null,
                               "eq": ""
                             },
-                            "properties": {}
+                            "properties": {},
+                            "isNew": false
                           }
                         ]
                       }
@@ -12161,7 +12161,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "id": "ell147s333333333333333333333333333333333333333333333",
-                            "hideLabel": true
+                            "hideLabel": true,
+                            "isNew": false
                           }
                         ]
                       },
@@ -12768,7 +12769,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "Canada Student Grant for Students with Dependants (CSG_PTDEP)\n<span\n class=\"formio-custom-tooltip\">\n  <span class=\"tooltip-text\">\n    Please click <a\n            href=\"https://studentaidbc.ca/explore/grants-scholarships/canada-student-grant-students-dependants\"\n            rel=\"noopener\"\n            target=\"_blank\"\n            >here</a> for more information about this grant.\n    </span>\n</span>",
+                            "content": "Canada Student Grant for Students with Dependants (CSG-PTDEP)\n<span\n class=\"formio-custom-tooltip\">\n  <span class=\"tooltip-text\">\n    Please click <a\n            href=\"https://studentaidbc.ca/explore/grants-scholarships/canada-student-grant-students-dependants\"\n            rel=\"noopener\"\n            target=\"_blank\"\n            >here</a> for more information about this grant.\n    </span>\n</span>",
                             "refreshOnChange": false,
                             "customClass": "",
                             "hidden": false,
@@ -16003,8 +16004,7 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "id": "ehqv5z",
-                      "hideLabel": true,
-                      "isNew": false
+                      "hideLabel": true
                     },
                     {
                       "label": "HTML",
@@ -16099,8 +16099,7 @@
                   },
                   "properties": {},
                   "hideLabel": true,
-                  "customClass": "formio-panel-unset",
-                  "isNew": false
+                  "customClass": "formio-panel-unset"
                 },
                 {
                   "autofocus": false,
@@ -17081,7 +17080,7 @@
               "value": ""
             }
           ],
-          "content": "If you’ve had a loan in the last 2 years from StudentAid BC, or have a valid MSFAA on file, you do not need to submit an MSFAA.",
+          "content": "Please accept your assessment to move your application forward. Please ensure your banking information is up to date by logging in to your <strong>\n    <a \n      class=\"primary-color\"\n      href=\"https://protege-secure.csnpe-nslsc.canada.ca/en/public/sign-in-method\"\n      target=\"_blank\"\n      rel=\"noopener noreferrer\"\n      >National Student Loan Service Centre account</a\n    >\n    </strong> if your banking information is not up to date, you may not receive your funding.",
           "refreshOnChange": false,
           "key": "html122",
           "type": "htmlelement",
@@ -17126,7 +17125,7 @@
             "unique": false
           },
           "conditional": {
-            "show": null,
+            "show": "",
             "when": null,
             "eq": ""
           },
@@ -17146,7 +17145,8 @@
           "addons": [],
           "tag": "p",
           "id": "eublpd",
-          "className": ""
+          "className": "",
+          "tags": []
         },
         {
           "label": "HTML",
@@ -17156,7 +17156,7 @@
               "value": ""
             }
           ],
-          "content": "You should check your banking information by logging into your \n\n  <strong>\n    <a \n      class=\"primary-color\"\n      href=\"https://www.canada.ca/en/services/benefits/education/student-aid/manage-student-loan.html\"\n      target=\"_blank\"\n      rel=\"noopener noreferrer\"\n      > National Student Loans Service Centre</a\n    >\n    </strong>\n     account. If it’s not up to date, you may not receive your loan.",
+          "content": "If you are not receiving funding, but are still attending school, you can contact your financial aid office for information about in-study payment-free status. If you do not want to move forward with this application, you can <strong>cancel</strong> using the \"Cancel application\" option.",
           "refreshOnChange": false,
           "key": "html123",
           "type": "htmlelement",
@@ -17201,7 +17201,7 @@
             "unique": false
           },
           "conditional": {
-            "show": null,
+            "show": "",
             "when": null,
             "eq": ""
           },
@@ -17221,7 +17221,8 @@
           "addons": [],
           "tag": "p",
           "id": "es8ibw",
-          "className": ""
+          "className": "",
+          "tags": []
         }
       ],
       "placeholder": "",

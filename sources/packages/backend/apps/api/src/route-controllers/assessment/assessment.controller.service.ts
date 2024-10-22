@@ -99,6 +99,7 @@ export class AssessmentControllerService {
       fullName: getUserFullName(assessment.application.student.user),
       programName: assessment.offering.educationProgram.name,
       locationName: assessment.offering.institutionLocation.name,
+      offeringName: assessment.offering.name,
       offeringIntensity: assessment.offering.offeringIntensity,
       offeringStudyStartDate: getDateOnlyFullMonthFormat(
         assessment.offering.studyStartDate,

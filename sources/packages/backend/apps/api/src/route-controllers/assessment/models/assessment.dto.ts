@@ -92,6 +92,7 @@ export class AssessmentNOAAPIOutDTO {
   disbursement: DynamicAwardValue;
   noaApprovalStatus: AssessmentStatus;
   applicationStatus: ApplicationStatus;
+  offeringName: string;
 }
 
 export class AwardDetailsAPIOutDTO {
