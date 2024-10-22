@@ -70,7 +70,10 @@ export default defineComponent({
     };
 
     const getAwardType = (awardType: string): string => {
-      return PartTimeAwardTypesObject[awardType];
+      if (props.offeringIntensity === OfferingIntensity.partTime) {
+        return PartTimeAwardTypesObject[awardType];
+      }
+      return awardType;
     };
 
     return {
