@@ -16,9 +16,9 @@ import { numericTransformer } from "@sims/sims-db/transformers/numeric.transform
 
 /**
  * Max value the offering name can have. By DB definition it is defined as
- * 300 but from business perspective it should not be longer than 50.
+ * 300 but from business perspective it should not be longer than 100.
  */
-export const OFFERING_NAME_MAX_LENGTH = 50;
+export const OFFERING_NAME_MAX_LENGTH = 100;
 export const OFFERING_WIL_TYPE_MAX_LENGTH = 50;
 
 /**

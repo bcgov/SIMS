@@ -1,5 +1,5 @@
+import { COUNTRY_CANADA, OTHER_COUNTRY } from "@sims/utilities";
 import { IsNotEmpty, IsOptional, ValidateIf } from "class-validator";
-import { COUNTRY_CANADA, OTHER_COUNTRY } from "../utils/address-utils";
 
 /**
  * Common DTO for Address.

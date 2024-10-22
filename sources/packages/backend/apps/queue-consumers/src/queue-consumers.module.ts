@@ -64,6 +64,10 @@ import {
   ApplicationService,
   WorkflowEnqueuerService,
   StudentFileService,
+  CASActiveSupplierNotFoundProcessor,
+  CASPreValidationsProcessor,
+  CASActiveSupplierFoundProcessor,
+  CASActiveSupplierAndSiteFoundProcessor,
 } from "./services";
 import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
@@ -150,6 +154,10 @@ import { ObjectStorageService } from "@sims/integrations/object-storage";
     ApplicationChangesReportIntegrationScheduler,
     StudentApplicationNotificationsScheduler,
     SIMSToSFASIntegrationScheduler,
+    CASActiveSupplierNotFoundProcessor,
+    CASPreValidationsProcessor,
+    CASActiveSupplierFoundProcessor,
+    CASActiveSupplierAndSiteFoundProcessor,
   ],
   controllers: [HealthController],
 })
