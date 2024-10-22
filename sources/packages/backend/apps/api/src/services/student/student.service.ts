@@ -510,9 +510,13 @@ export class StudentService extends RecordDataModelService<Student> {
     studentUserData: StudentUserData,
     auditUserId: number,
   ): Promise<boolean> {
+    // TODO: Remove the trim function below once the DTO sanitization is done.
+    studentUserData.givenNames = studentUserData.givenNames?.trim();
+    studentUserData.lastName = studentUserData.lastName.trim();
+    studentUserData.email = studentUserData.email.trim();
     const studentToSync = await this.getStudentById(studentUserData.studentId);
     let mustSave = false;
-    if (!studentUserData.givenNames?.trim()) {
+    if (!studentUserData.givenNames) {
       studentUserData.givenNames = null;
     }
     if (

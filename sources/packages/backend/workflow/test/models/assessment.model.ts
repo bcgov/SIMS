@@ -251,8 +251,6 @@ export interface CalculatedAssessmentModel {
   awardNetFederalTotalAward: number;
   calculatedDataTotalTransportationCost: number;
   calculatedDataTotalSecondResidence: number;
-  // TODO: Fix typo used in FT applications.
-  caclulatedDataTotalAssessedNeed: number;
   calculatedDataTotalAssessedNeed: number;
   calculatedDataTotalBookCost: number;
   awardNetProvincialTotalAward: number;
