@@ -23,3 +23,24 @@ export interface SIMSToSFASProcessingResult {
   studentRecordsSent: number;
   uploadedFileName: string;
 }
+/**
+ * All the students who are going to be processed
+ * in the SIMS to SFAS integration due to one or more
+ * updates in either their student or student related data, application or application
+ * related data or restriction or restriction related data.
+ */
+export class SIMSToSFASStudents {
+  private studentIds: number[] = [];
+
+  append(studentIds: number[]): void {
+    this.studentIds.push(...studentIds);
+  }
+
+  /**
+   * Unique student ids of all the students who are going to be processed
+   * in the SIMS to SFAS integration.
+   */
+  get uniqueStudentIds(): number[] {
+    return [...new Set(this.studentIds)];
+  }
+}
