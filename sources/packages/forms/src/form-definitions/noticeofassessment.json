@@ -17080,7 +17080,7 @@
               "value": ""
             }
           ],
-          "content": "Please accept your assessment to move your application forward. Please ensure your banking information is up to date by logging in to your <strong>\n    <a \n      class=\"primary-color\"\n      href=\"https://protege-secure.csnpe-nslsc.canada.ca/en/public/sign-in-method\"\n      target=\"_blank\"\n      rel=\"noopener noreferrer\"\n      >National Student Loan Service Centre account</a\n    >\n    </strong>. If your banking information is not up to date, you may not receive your funding.",
+          "content": "Please <strong>accept</strong> your assessment to move your application forward. Please ensure your banking information is up to date by logging in to your <strong>\n    <a \n      class=\"primary-color\"\n      href=\"https://protege-secure.csnpe-nslsc.canada.ca/en/public/sign-in-method\"\n      target=\"_blank\"\n      rel=\"noopener noreferrer\"\n      >National Student Loan Service Centre account</a\n    >\n    </strong>. If your banking information is not up to date, you may not receive your funding.",
           "refreshOnChange": false,
           "key": "html122",
           "type": "htmlelement",
