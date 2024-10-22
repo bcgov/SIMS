@@ -77,12 +77,7 @@
     </template>
     <notice-of-assessment-form-view
       :assessmentId="assessmentId"
-      :canAcceptAssessment="canAcceptAssessment"
-      :currentAssessmentId="currentAssessmentId"
-      :viewOnly="viewOnly"
       @assessmentDataLoaded="assessmentDataLoaded"
-      @confirmCancelApplication="confirmCancelApplication"
-      @confirmAssessment="confirmAssessment"
     />
     <footer-buttons
       justify="end"
