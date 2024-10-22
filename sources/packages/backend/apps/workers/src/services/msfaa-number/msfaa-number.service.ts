@@ -54,13 +54,17 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
       .createQueryBuilder("msfaaNumber")
       .innerJoin("msfaaNumber.student", "students")
       .where("students.id = :studentId", { studentId })
-      .andWhere("msfaaNumber.referenceApplication is not null")
       .andWhere("msfaaNumber.offeringIntensity = :offeringIntensity", {
         offeringIntensity,
       })
       .andWhere("msfaaNumber.cancelledDate is null");
     if (options?.isSigned) {
-      return query.andWhere("msfaaNumber.dateSigned is not null").getOne();
+      return query
+        .andWhere("msfaaNumber.dateSigned is not null")
+        .andWhere("msfaaNumber.dateSigned > :minimumValidDate", {
+          minimumValidDate,
+        })
+        .getOne();
     }
     return query
       .andWhere(
