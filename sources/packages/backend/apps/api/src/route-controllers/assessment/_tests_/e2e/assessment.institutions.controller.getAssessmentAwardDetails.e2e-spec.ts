@@ -28,7 +28,7 @@ import {
   Institution,
   InstitutionLocation,
 } from "@sims/sims-db";
-import { getDateOnlyFormat } from "@sims/utilities";
+import { getDateOnlyFormat, getDateOnlyFullMonthFormat } from "@sims/utilities";
 import { saveStudentApplicationForCollegeC } from "../../../student/_tests_/e2e/student.institutions.utils";
 import { MASKED_MSFAA_NUMBER } from "../../../../../src/services";
 
@@ -141,7 +141,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
           assessment.offering.studyEndDate,
         ),
         estimatedAward: {
-          disbursement1Date: getDateOnlyFormat(
+          disbursement1Date: getDateOnlyFullMonthFormat(
             firstDisbursementSchedule.disbursementDate,
           ),
           disbursement1Status:

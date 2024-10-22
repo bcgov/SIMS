@@ -36,7 +36,7 @@ import {
   DynamicAwardValue,
 } from "./models/assessment.dto";
 import { getUserFullName } from "../../utilities";
-import { getDateOnlyFormat } from "@sims/utilities";
+import { getDateOnlyFormat, getDateOnlyFullMonthFormat } from "@sims/utilities";
 import { BC_TOTAL_GRANT_AWARD_CODE } from "@sims/services/constants";
 
 /**
@@ -99,11 +99,14 @@ export class AssessmentControllerService {
       fullName: getUserFullName(assessment.application.student.user),
       programName: assessment.offering.educationProgram.name,
       locationName: assessment.offering.institutionLocation.name,
+      offeringName: assessment.offering.name,
       offeringIntensity: assessment.offering.offeringIntensity,
-      offeringStudyStartDate: getDateOnlyFormat(
+      offeringStudyStartDate: getDateOnlyFullMonthFormat(
         assessment.offering.studyStartDate,
       ),
-      offeringStudyEndDate: getDateOnlyFormat(assessment.offering.studyEndDate),
+      offeringStudyEndDate: getDateOnlyFullMonthFormat(
+        assessment.offering.studyEndDate,
+      ),
       eligibleAmount: this.sumDisbursementValueAmounts(
         assessment.disbursementSchedules,
       ),
@@ -139,9 +142,8 @@ export class AssessmentControllerService {
     const disbursementDetails = {};
     disbursementSchedules.forEach((schedule, index) => {
       const disbursementIdentifier = `disbursement${index + 1}`;
-      disbursementDetails[`${disbursementIdentifier}Date`] = getDateOnlyFormat(
-        schedule.disbursementDate,
-      );
+      disbursementDetails[`${disbursementIdentifier}Date`] =
+        getDateOnlyFullMonthFormat(schedule.disbursementDate);
       disbursementDetails[`${disbursementIdentifier}Status`] =
         schedule.disbursementScheduleStatus;
       disbursementDetails[`${disbursementIdentifier}COEStatus`] =

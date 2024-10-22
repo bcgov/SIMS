@@ -26,10 +26,10 @@ import {
   InstitutionLocation,
   OfferingIntensity,
 } from "@sims/sims-db";
-import { getDateOnlyFormat } from "@sims/utilities";
 import { MASKED_MSFAA_NUMBER } from "../../../../../src/services";
 import { saveStudentApplicationForCollegeC } from "../../../student/_tests_/e2e/student.institutions.utils";
 import { getUserFullName } from "../../../../utilities";
+import { getDateOnlyFullMonthFormat } from "@sims/utilities";
 
 describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
   let app: INestApplication;
@@ -109,7 +109,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
         assessment: assessment.assessmentData,
         disbursement: {
           disbursement1COEStatus: firstDisbursementSchedule.coeStatus,
-          disbursement1Date: getDateOnlyFormat(
+          disbursement1Date: getDateOnlyFullMonthFormat(
             firstDisbursementSchedule.disbursementDate,
           ),
           disbursement1Id: firstDisbursementSchedule.id,
@@ -125,7 +125,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
             firstDisbursementSchedule.tuitionRemittanceRequestedAmount,
           ...firstDisbursementScheduleAwards,
           disbursement2COEStatus: secondDisbursementSchedule.coeStatus,
-          disbursement2Date: getDateOnlyFormat(
+          disbursement2Date: getDateOnlyFullMonthFormat(
             secondDisbursementSchedule.disbursementDate,
           ),
           disbursement2Id: secondDisbursementSchedule.id,
@@ -147,13 +147,14 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
         noaApprovalStatus: assessment.noaApprovalStatus,
         applicationCurrentAssessmentId: application.currentAssessment.id,
         offeringIntensity: assessment.offering.offeringIntensity,
-        offeringStudyEndDate: getDateOnlyFormat(
+        offeringStudyEndDate: getDateOnlyFullMonthFormat(
           assessment.offering.studyEndDate,
         ),
-        offeringStudyStartDate: getDateOnlyFormat(
+        offeringStudyStartDate: getDateOnlyFullMonthFormat(
           assessment.offering.studyStartDate,
         ),
         programName: assessment.offering.educationProgram.name,
+        offeringName: assessment.offering.name,
       });
   });
 
@@ -212,7 +213,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
         assessment: assessment.assessmentData,
         disbursement: {
           disbursement1COEStatus: firstDisbursementSchedule.coeStatus,
-          disbursement1Date: getDateOnlyFormat(
+          disbursement1Date: getDateOnlyFullMonthFormat(
             firstDisbursementSchedule.disbursementDate,
           ),
           disbursement1Id: firstDisbursementSchedule.id,
@@ -228,7 +229,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
             firstDisbursementSchedule.tuitionRemittanceRequestedAmount,
           ...firstDisbursementScheduleAwards,
           disbursement2COEStatus: secondDisbursementSchedule.coeStatus,
-          disbursement2Date: getDateOnlyFormat(
+          disbursement2Date: getDateOnlyFullMonthFormat(
             secondDisbursementSchedule.disbursementDate,
           ),
           disbursement2Id: secondDisbursementSchedule.id,
@@ -250,13 +251,14 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
         noaApprovalStatus: assessment.noaApprovalStatus,
         applicationCurrentAssessmentId: application.currentAssessment.id,
         offeringIntensity: assessment.offering.offeringIntensity,
-        offeringStudyEndDate: getDateOnlyFormat(
+        offeringStudyEndDate: getDateOnlyFullMonthFormat(
           assessment.offering.studyEndDate,
         ),
-        offeringStudyStartDate: getDateOnlyFormat(
+        offeringStudyStartDate: getDateOnlyFullMonthFormat(
           assessment.offering.studyStartDate,
         ),
         programName: assessment.offering.educationProgram.name,
+        offeringName: assessment.offering.name,
       });
   });
 
