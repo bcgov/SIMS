@@ -104,11 +104,11 @@ export default defineComponent({
 
     const getProgramsSummaryList = async (
       institutionId: number,
-      rowsPerPage = DEFAULT_PAGE_LIMIT,
-      page = DEFAULT_DATATABLE_PAGE_NUMBER,
       programName: string,
       sortColumn?: ProgramSummaryFields,
       sortOrder?: DataTableSortByOrder,
+      rowsPerPage = DEFAULT_PAGE_LIMIT,
+      page = DEFAULT_DATATABLE_PAGE_NUMBER,
     ) => {
       try {
         loading.value = true;
@@ -131,9 +131,11 @@ export default defineComponent({
     onMounted(async () => {
       await getProgramsSummaryList(
         props.institutionId,
+        searchProgramName.value,
+        undefined,
+        undefined,
         DEFAULT_PAGE_LIMIT,
         DEFAULT_DATATABLE_PAGE_NUMBER,
-        searchProgramName.value,
       );
     });
     const goToViewProgramDetail = (programId: number, locationId: number) => {
@@ -152,19 +154,21 @@ export default defineComponent({
       const [sortByOptions] = event.sortBy;
       await getProgramsSummaryList(
         props.institutionId,
-        event.itemsPerPage,
-        event.page,
         searchProgramName.value,
         sortByOptions?.key as ProgramSummaryFields,
         sortByOptions?.order,
+        event.itemsPerPage,
+        event.page,
       );
     };
     const goToSearchProgramName = async () => {
       await getProgramsSummaryList(
         props.institutionId,
+        searchProgramName.value,
+        undefined,
+        undefined,
         currentPageLimit.value ?? DEFAULT_PAGE_LIMIT,
         currentPage.value ?? DEFAULT_DATATABLE_PAGE_NUMBER,
-        searchProgramName.value,
       );
     };
     return {
