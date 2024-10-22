@@ -18,10 +18,13 @@ function createFakeSFASIndividual(options?: {
       max: 9999999999,
     })
     .toString();
+  const fakeId = faker.datatype.number({ min: 100000000, max: 999999999 });
+  const fakeSIN = faker.datatype
+    .number({ min: 100000000, max: 899999999 })
+    .toString();
+
   const sfasIndividual = new SFASIndividual();
-  sfasIndividual.id =
-    options?.initialValues?.id ??
-    faker.datatype.number({ min: 100000000, max: 999999999 });
+  sfasIndividual.id = options?.initialValues?.id ?? fakeId;
   sfasIndividual.birthDate =
     options?.initialValues?.birthDate ??
     getISODateOnlyString(faker.date.past(18));
@@ -31,9 +34,7 @@ function createFakeSFASIndividual(options?: {
     options?.initialValues?.partTimeMSFAANumber ?? fakeMSFAANumber;
   sfasIndividual.lastName =
     options?.initialValues?.lastName ?? faker.name.lastName();
-  sfasIndividual.sin =
-    options?.initialValues?.sin ??
-    faker.datatype.number({ min: 100000000, max: 899999999 }).toString();
+  sfasIndividual.sin = options?.initialValues?.sin ?? fakeSIN;
   sfasIndividual.unsuccessfulCompletion =
     options?.initialValues?.unsuccessfulCompletion ?? 0;
   sfasIndividual.neb = options?.initialValues?.neb ?? 0;
