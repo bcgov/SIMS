@@ -146,6 +146,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
         disbursement1cslf: 1250,
         disbursement1csgp: 1500,
       },
+      offeringName: assessment.offering.name,
     };
     // Act/Assert
     await request(app.getHttpServer())

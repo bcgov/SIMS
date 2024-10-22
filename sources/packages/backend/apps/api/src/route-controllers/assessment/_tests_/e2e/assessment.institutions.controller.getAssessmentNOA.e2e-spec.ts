@@ -154,7 +154,11 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
           assessment.offering.studyStartDate,
         ),
         programName: assessment.offering.educationProgram.name,
+        offeringName: assessment.offering.name,
       });
+    // .then((r) => {
+    //   console.log(r);
+    // });
   });
 
   it("Should get the student noa details for an eligible part time application when an eligible public institution user tries to access it.", async () => {
@@ -257,6 +261,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
           assessment.offering.studyStartDate,
         ),
         programName: assessment.offering.educationProgram.name,
+        offeringName: assessment.offering.name,
       });
   });
 
