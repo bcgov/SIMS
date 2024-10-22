@@ -212,9 +212,6 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
 
   it("Should reuse the MSFAA Number from SIMS when MSFAA number is already generated and the request is already sent for verification.", async () => {
     // Arrange
-    const firstLegacyApplicationStartDate = addDays(-100, now);
-    const firstLegacyApplicationEndDate = addDays(-10, now);
-
     // Create and save user.
     const savedUser = await db.user.save(createFakeUser());
 
