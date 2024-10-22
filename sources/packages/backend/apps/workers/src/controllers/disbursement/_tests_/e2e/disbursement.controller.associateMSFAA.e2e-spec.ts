@@ -1,6 +1,5 @@
 import {
   createE2EDataSources,
-  createFakeInstitutionLocation,
   createFakeMSFAANumber,
   E2EDataSources,
   MSFAAStates,
@@ -17,13 +16,8 @@ import { createFakeAssociateMSFAAPayload } from "./associate-MSFAA-payloads";
 import {
   ApplicationStatus,
   DisbursementScheduleStatus,
-  InstitutionLocation,
   OfferingIntensity,
 } from "@sims/sims-db";
-import {
-  getAuthRelatedEntities,
-  InstitutionTokenTypes,
-} from "../../../../../../api/src/testHelpers";
 import {
   FakeWorkerJobResult,
   MockedZeebeJobResult,
@@ -32,20 +26,11 @@ import {
 describe("DisbursementController(e2e)-associateMSFAA", () => {
   let db: E2EDataSources;
   let disbursementController: DisbursementController;
-  let collegeFLocation: InstitutionLocation;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     db = createE2EDataSources(dataSource);
     disbursementController = nestApplication.get(DisbursementController);
-    // College F.
-    const { institution: collegeF } = await getAuthRelatedEntities(
-      db.dataSource,
-      InstitutionTokenTypes.CollegeFUser,
-    );
-    collegeFLocation = createFakeInstitutionLocation({
-      institution: collegeF,
-    });
   });
 
   const now = new Date();
@@ -512,7 +497,6 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
 
   it("Should throw Disbursement not found exception when MSFAA Number is tried to be created before disbursement.", async () => {
     // Arrange
-    const student = await saveFakeStudent(db.dataSource);
     // Create save fake application without disbursements.
     const application = await saveFakeApplication(db.dataSource);
 
