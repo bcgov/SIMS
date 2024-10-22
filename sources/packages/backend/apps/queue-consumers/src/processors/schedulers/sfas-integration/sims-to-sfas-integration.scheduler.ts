@@ -12,6 +12,7 @@ import {
   logProcessSummaryToJobLogger,
 } from "../../../utilities";
 import { QueueNames } from "@sims/utilities";
+import { SIMSToSFASProcessingService } from "@sims/integrations/sfas-integration";
 
 @Processor(QueueNames.SIMSToSFASIntegration)
 export class SIMSToSFASIntegrationScheduler extends BaseScheduler<void> {
@@ -19,6 +20,7 @@ export class SIMSToSFASIntegrationScheduler extends BaseScheduler<void> {
     @InjectQueue(QueueNames.SIMSToSFASIntegration)
     schedulerQueue: Queue<void>,
     queueService: QueueService,
+    private readonly simsToSFASIntegrationProcessingService: SIMSToSFASProcessingService,
   ) {
     super(schedulerQueue, queueService);
   }
@@ -37,9 +39,16 @@ export class SIMSToSFASIntegrationScheduler extends BaseScheduler<void> {
       processSummary.info(
         `Processing SIMS to SFAS integration job. Job id: ${job.id} and Job name: ${job.name}.`,
       );
-      // TODO: Processing implementation of SIMS to SFAS integration.
+      const { studentRecordsSent, uploadedFileName } =
+        await this.simsToSFASIntegrationProcessingService.processSIMSUpdates(
+          processSummary,
+        );
       return getSuccessMessageWithAttentionCheck(
-        ["Process finalized with success."],
+        [
+          "Process finalized with success.",
+          `Student records sent: ${studentRecordsSent}`,
+          `Uploaded file name: ${uploadedFileName}`,
+        ],
         processSummary,
       );
     } catch (error: unknown) {

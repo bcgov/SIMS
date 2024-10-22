@@ -6,9 +6,13 @@ import {
   SFASApplicationService,
   SFASRestrictionService,
   SFASPartTimeApplicationsService,
+  SIMSToSFASService,
 } from "../services/sfas";
-import { SFASIntegrationProcessingService } from "./sfas-integration.processing.service";
 import { SFASIntegrationService } from "./sfas-integration.service";
+import {
+  SFASIntegrationProcessingService,
+  SIMSToSFASProcessingService,
+} from ".";
 
 @Module({
   imports: [ConfigModule],
@@ -20,6 +24,8 @@ import { SFASIntegrationService } from "./sfas-integration.service";
     SFASApplicationService,
     SFASRestrictionService,
     SFASPartTimeApplicationsService,
+    SIMSToSFASService,
+    SIMSToSFASProcessingService,
   ],
   exports: [
     SFASIntegrationService,
@@ -28,6 +34,7 @@ import { SFASIntegrationService } from "./sfas-integration.service";
     SFASApplicationService,
     SFASRestrictionService,
     SFASPartTimeApplicationsService,
+    SIMSToSFASProcessingService,
   ],
 })
 export class SFASIntegrationModule {}

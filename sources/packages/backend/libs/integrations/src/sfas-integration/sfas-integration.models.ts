@@ -18,3 +18,8 @@ export class ProcessSftpResponseResult {
   summary: string[] = [];
   success: boolean;
 }
+
+export interface SIMSToSFASProcessingResult {
+  studentRecordsSent: number;
+  uploadedFileName: string;
+}
