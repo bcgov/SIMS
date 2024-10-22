@@ -402,6 +402,6 @@ export const ProgramHeaders = [
   { title: "Program Name", sortable: true, key: "programName" },
   { title: "Location", sortable: true, key: "locationName" },
   { title: "Study Periods", sortable: false, key: "totalOfferings" },
-  { title: "Status", sortable: true, key: "programStatus" },
+  { title: "Status", sortable: false, key: "programStatus" },
   { title: "Action", sortable: false, key: "action" },
 ];

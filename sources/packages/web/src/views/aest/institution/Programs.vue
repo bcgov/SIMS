@@ -23,13 +23,14 @@
         <toggle-content
           :toggled="!loading && !institutionProgramsSummary.count"
         >
-          <v-data-table
+          <v-data-table-server
+            v-if="institutionProgramsSummary?.count"
             :headers="ProgramHeaders"
             :items="institutionProgramsSummary?.results"
             :items-length="institutionProgramsSummary?.count"
+            :loading="loading"
             :items-per-page="DEFAULT_PAGE_LIMIT"
             :items-per-page-options="ITEMS_PER_PAGE"
-            :loading="loading"
             @update:options="pageSortEvent"
           >
             <template #[`item.submittedDate`]="{ item }">
@@ -58,7 +59,7 @@
                 >View</v-btn
               >
             </template>
-          </v-data-table>
+          </v-data-table-server>
         </toggle-content>
       </content-group>
     </body-header-container>
@@ -69,14 +70,15 @@
 import { onMounted, ref, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import {
-  DataTableSortOrder,
   ProgramSummaryFields,
-  DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   PaginatedResults,
   EducationProgramsSummary,
   ProgramHeaders,
   ITEMS_PER_PAGE,
+  DataTableOptions,
+  DataTableSortByOrder,
+  DEFAULT_DATATABLE_PAGE_NUMBER,
 } from "@/types";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
@@ -96,16 +98,17 @@ export default defineComponent({
       {} as PaginatedResults<EducationProgramsSummary>,
     );
     const searchProgramName = ref("");
-    const currentPageSize = ref();
+    const currentPage = ref();
+    const currentPageLimit = ref();
     const loading = ref(true);
 
     const getProgramsSummaryList = async (
       institutionId: number,
-      rowsPerPage: number,
-      page: number,
+      rowsPerPage = DEFAULT_PAGE_LIMIT,
+      page = DEFAULT_DATATABLE_PAGE_NUMBER,
       programName: string,
       sortColumn?: ProgramSummaryFields,
-      sortOrder?: DataTableSortOrder,
+      sortOrder?: DataTableSortByOrder,
     ) => {
       try {
         loading.value = true;
@@ -129,7 +132,7 @@ export default defineComponent({
       await getProgramsSummaryList(
         props.institutionId,
         DEFAULT_PAGE_LIMIT,
-        DEFAULT_PAGE_NUMBER,
+        DEFAULT_DATATABLE_PAGE_NUMBER,
         searchProgramName.value,
       );
     });
@@ -143,22 +146,24 @@ export default defineComponent({
         },
       });
     };
-    const pageSortEvent = async (event: any) => {
-      currentPageSize.value = event?.rows;
+    const pageSortEvent = async (event: DataTableOptions) => {
+      currentPage.value = event.page;
+      currentPageLimit.value = event.itemsPerPage;
+      const [sortByOptions] = event.sortBy;
       await getProgramsSummaryList(
         props.institutionId,
-        event.rows,
+        event.itemsPerPage,
         event.page,
         searchProgramName.value,
-        event.sortField,
-        event.sortOrder,
+        sortByOptions?.key as ProgramSummaryFields,
+        sortByOptions?.order,
       );
     };
     const goToSearchProgramName = async () => {
       await getProgramsSummaryList(
         props.institutionId,
-        currentPageSize.value ? currentPageSize.value : DEFAULT_PAGE_LIMIT,
-        DEFAULT_PAGE_NUMBER,
+        currentPageLimit.value ?? DEFAULT_PAGE_LIMIT,
+        currentPage.value ?? DEFAULT_DATATABLE_PAGE_NUMBER,
         searchProgramName.value,
       );
     };
