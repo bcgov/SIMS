@@ -55,7 +55,7 @@ export const AWARDS: AwardDetail[] = [
   },
   {
     awardType: PartTimeAwardTypes.CSLP,
-    description: "Canada Student Loan for Part-Time Students",
+    description: "Canada Student Loan for Part-time Students",
     offeringIntensity: OfferingIntensity.partTime,
   },
   {
