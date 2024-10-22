@@ -31,7 +31,7 @@ import {
 import {
   FakeWorkerJobResult,
   MockedZeebeJobResult,
-} from "../../../../../../../apps/workers/test/utils/worker-job-mock";
+} from "../../../../../test/utils/worker-job-mock";
 
 describe("DisbursementController(e2e)-associateMSFAA", () => {
   let db: E2EDataSources;
