@@ -13,7 +13,6 @@ import {
   logProcessSummaryToJobLogger,
   getSuccessMessageWithAttentionCheck,
 } from "../../../utilities";
-import { CAS_AUTH_ERROR } from "@sims/integrations/constants";
 
 @Processor(QueueNames.CASSupplierIntegration)
 export class CASSupplierIntegrationScheduler extends BaseScheduler<void> {
@@ -63,19 +62,16 @@ export class CASSupplierIntegrationScheduler extends BaseScheduler<void> {
           `Records updated: ${suppliersUpdated}.`,
         ],
         processSummary,
+        { throwOnError: true },
       );
     } catch (error: unknown) {
+      // Throw an error to force the queue to retry.
       if (error instanceof CustomNamedError) {
-        if (error.name === CAS_AUTH_ERROR) {
-          // Throw an error to force the queue to retry.
-          throw new Error(
-            `Unable to request data to CAS due to an authentication error.`,
-          );
-        }
-        const errorMessage = "Unexpected error while executing the job.";
-        processSummary.error(errorMessage, error);
-        return [errorMessage];
+        throw new Error(error.message);
       }
+      throw new Error("Unexpected error while executing the job.", {
+        cause: error,
+      });
     } finally {
       this.logger.logProcessSummary(processSummary);
       await logProcessSummaryToJobLogger(processSummary, job);
