@@ -1,5 +1,4 @@
 import { ProcessSummary } from "@sims/utilities/logger";
-import { CASAuthDetails } from "@sims/integrations/cas";
 import {
   CASEvaluationResult,
   StudentSupplierToProcess,
@@ -17,7 +16,6 @@ export abstract class CASEvaluationResultProcessor {
    * to associate a CAS supplier and a site code to a student.
    * @param studentSupplier student supplier information from SIMS.
    * @param evaluationResult evaluation result to be processed.
-   * @param auth authentication token needed for possible
    * CAS API interactions.
    * @param summary current process log.
    * @returns processor result.
@@ -25,7 +23,6 @@ export abstract class CASEvaluationResultProcessor {
   abstract process(
     studentSupplier: StudentSupplierToProcess,
     evaluationResult: CASEvaluationResult,
-    auth: CASAuthDetails,
     summary: ProcessSummary,
   ): Promise<ProcessorResult>;
 }

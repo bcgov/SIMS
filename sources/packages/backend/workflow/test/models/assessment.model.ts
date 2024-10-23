@@ -21,6 +21,7 @@ export interface StudentFinancialInformationAppealData extends JSONDoc {
   currentYearIncome?: number;
   daycareCosts12YearsOrOver?: number;
   daycareCosts11YearsOrUnder?: number;
+  currentYearPartnerIncome?: number;
 }
 
 export enum TransportationCostSituation {
@@ -44,6 +45,7 @@ export type RelationshipStatusType = "single" | "other" | "married";
 export interface PartnerInformationAndIncomeAppealData extends JSONDoc {
   relationshipStatus: RelationshipStatusType;
   partnerEstimatedIncome?: number;
+  currentYearPartnerIncome?: number;
 }
 
 export enum CredentialType {
@@ -273,6 +275,8 @@ export interface CalculatedAssessmentModel {
   calculatedDataTaxReturnIncome: number;
   calculatedDataCurrentYearIncome: number;
   calculatedDataStudentTotalIncome: number;
+  calculatedDataCurrentYearPartnerIncome: number;
+  partner1CRAReportedIncome?: number;
 
   // Common variables used in both full-time and part-time.
   // CSGP

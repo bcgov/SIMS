@@ -47,6 +47,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
   let studentFileRepo: Repository<StudentFile>;
   const FINANCIAL_INFORMATION_FORM_NAME = "studentfinancialinformationappeal";
   const DEPENDANT_INFORMATION_FORM_NAME = "studentDependantsAppeal";
+  const PARTNER_INFORMATION_FORM_NAME = "partnerinformationandincomeappeal";
 
   beforeAll(async () => {
     const { nestApplication, module, dataSource } =
@@ -496,6 +497,107 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
       DEPENDANT_INFORMATION_FORM_NAME,
       {
         ...dependantInformationData,
+        programYear: application.programYear.programYear,
+      },
+    );
+  });
+
+  it("Should save the current year partner income when the student submits an appeal for the current year partner income.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(appDataSource, undefined, {
+      applicationStatus: ApplicationStatus.Completed,
+    });
+    // Create a current year partner income file.
+    const partnerIncomeFile = await saveFakeStudentFileUpload(
+      appDataSource,
+      {
+        student: application.student,
+        creator: application.student.user,
+      },
+      { fileOrigin: FileOriginType.Temporary },
+    );
+    // Prepare the data to request a change of current year partner income.
+    const partnerIncomeInformationData = {
+      programYear: application.programYear.programYear,
+      relationshipStatus: "married",
+      partnerEstimatedIncome: 1000,
+      currentYearPartnerIncome: 2000,
+      reasonsignificantdecreaseInPartnerIncome: "other",
+      decreaseInPartnerIncomeSupportingDocuments: [
+        {
+          storage: "url",
+          originalName: partnerIncomeFile.fileName,
+          name: partnerIncomeFile.uniqueFileName,
+          url: "student/files/" + partnerIncomeFile.uniqueFileName,
+          size: 0,
+          type: "text/plain",
+          hash: "1cb251ec0d568de6a929b520c4aed8d1",
+        },
+      ],
+      otherExceptionalPartnerCircumstance: "any",
+    };
+
+    const payload: StudentAppealAPIInDTO = {
+      studentAppealRequests: [
+        {
+          formName: PARTNER_INFORMATION_FORM_NAME,
+          formData: partnerIncomeInformationData,
+          files: [partnerIncomeFile.uniqueFileName],
+        },
+      ],
+    };
+    // Mock user service to return the saved student.
+    await mockUserLoginInfo(appModule, application.student);
+    // Get any student user token.
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    // Mock the form service to validate the dry-run submission result.
+    const formService = await getProviderInstanceForModule(
+      appModule,
+      AppStudentsModule,
+      FormService,
+    );
+    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+      valid: true,
+      formName: PARTNER_INFORMATION_FORM_NAME,
+      data: { data: partnerIncomeInformationData },
+    });
+
+    formService.dryRunSubmission = dryRunSubmissionMock;
+
+    const endpoint = `/students/appeal/application/${application.id}`;
+
+    // Act/Assert
+    let createdAppealId: number;
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .auth(studentToken, BEARER_AUTH_TYPE)
+      .send(payload)
+      .expect(HttpStatus.CREATED)
+      .expect((response) => {
+        expect(response.body.id).toBeGreaterThan(0);
+        createdAppealId = +response.body.id;
+      });
+
+    // Expect created student appeal request data to be the same in the payload.
+    const newStudentAppealRequest = await studentAppealRequestRepo.findOne({
+      where: { studentAppeal: { id: createdAppealId } },
+    });
+    expect(newStudentAppealRequest.submittedData).toStrictEqual(
+      payload.studentAppealRequests[0].formData,
+    );
+    // Expect the file origin type to be Appeal for the updated current year partner income file.
+    const updatedPartnerIncomeFile = await studentFileRepo.findOne({
+      where: { id: partnerIncomeFile.id },
+    });
+    expect(updatedPartnerIncomeFile.fileOrigin).toBe(FileOriginType.Appeal);
+
+    // Expect to call the dry run submission.
+    expect(dryRunSubmissionMock).toHaveBeenCalledWith(
+      PARTNER_INFORMATION_FORM_NAME,
+      {
+        ...partnerIncomeInformationData,
         programYear: application.programYear.programYear,
       },
     );

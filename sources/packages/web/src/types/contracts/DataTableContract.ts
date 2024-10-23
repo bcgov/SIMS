@@ -393,3 +393,15 @@ export const ApplicationRestrictionManagementHeaders = [
     key: "removeBypassRule",
   },
 ];
+
+/**
+ * Program headers.
+ */
+export const ProgramHeaders = [
+  { title: "Date Submitted", sortable: true, key: "submittedDate" },
+  { title: "Program Name", sortable: true, key: "programName" },
+  { title: "Location", sortable: true, key: "locationName" },
+  { title: "Study Periods", sortable: false, key: "totalOfferings" },
+  { title: "Status", sortable: false, key: "programStatus" },
+  { title: "Action", sortable: false, key: "action" },
+];
