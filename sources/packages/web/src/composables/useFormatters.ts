@@ -396,6 +396,19 @@ export function useFormatters() {
     return "No disability funding types included on assessment.";
   };
 
+  /**
+   * Format the award value to the form ##,###.00
+   * @param awardValue award value to be formatted.
+   * @returns the formatted award value.
+   */
+  const getFormattedAwardValue = (
+    awardValue: string | number | Date,
+  ): string => {
+    return `$${awardValue.toLocaleString("en-CA", {
+      minimumFractionDigits: 2,
+    })}`;
+  };
+
   return {
     dateOnlyLongString,
     dateOnlyLongPeriodString,
@@ -418,5 +431,6 @@ export function useFormatters() {
     isBeforeDateOnly,
     disabilityStatusToDisplay,
     applicationDisabilityStatusToDisplay,
+    getFormattedAwardValue,
   };
 }

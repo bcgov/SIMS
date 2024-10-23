@@ -9,7 +9,7 @@
     <tbody>
       <tr v-for="award in awards" :key="award.awardType">
         <td>
-          {{ getAwardType(award.awardType) }}
+          {{ award.awardTypeDisplay }}
           <tooltip-icon>{{ award.description }}</tooltip-icon>
         </td>
         <td>
@@ -22,12 +22,9 @@
 <script lang="ts">
 import { PropType, defineComponent, computed } from "vue";
 import { OfferingIntensity } from "@/types";
-import {
-  AWARDS,
-  AwardDetail,
-  PartTimeAwardTypesObject,
-} from "@/constants/award-constants";
+import { AWARDS, AwardDetail } from "@/constants/award-constants";
 import { DynamicAwardValue } from "@/services/http/dto";
+import { useFormatters } from "@/composables";
 
 export default defineComponent({
   props: {
@@ -51,6 +48,7 @@ export default defineComponent({
         (award) => award.offeringIntensity === props.offeringIntensity,
       ),
     );
+    const { getFormattedAwardValue } = useFormatters();
 
     const getAwardValue = (awardType: string): string | number | Date => {
       const awardValue =
@@ -59,26 +57,16 @@ export default defineComponent({
       if (awardValue === null) {
         return "-";
       }
-      if (awardValue) {
-        return (
-          "$" + awardValue.toLocaleString("en-CA", { minimumFractionDigits: 2 })
-        );
-      }
       // If the award in not defined at all it means that the award is not eligible and it was not
       // part of the disbursement calculations output.
-      return "(Not eligible)";
-    };
-
-    const getAwardType = (awardType: string): string => {
-      if (props.offeringIntensity === OfferingIntensity.partTime) {
-        return PartTimeAwardTypesObject[awardType];
+      if (awardValue === undefined) {
+        return "(Not eligible)";
       }
-      return awardType;
+      return getFormattedAwardValue(awardValue);
     };
 
     return {
       getAwardValue,
-      getAwardType,
       awards,
     };
   },

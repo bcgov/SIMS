@@ -1,7 +1,7 @@
 <template>
   <body-header
     title="Funding summary"
-    subTitle="Below is the summary from your assessment. To view your Notice of Assessment, click on view assessment"
+    subTitle="Below is the summary from your assessment. To view your Notice of Assessment, click on view assessment."
   >
     <template #actions>
       <v-btn
