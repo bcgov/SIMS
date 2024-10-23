@@ -10,7 +10,6 @@ import {
 } from "../cas-supplier.models";
 import { Repository } from "typeorm";
 import {
-  CASAuthDetails,
   CASService,
   CreateSupplierAndSiteResponse,
 } from "@sims/integrations/cas";
@@ -34,15 +33,12 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
    * Create the new supplier and site on CAS using the student information.
    * @param studentSupplier student supplier information from SIMS.
    * @param evaluationResult evaluation result to be processed.
-   * @param auth authentication token needed for possible
-   * CAS API interactions.
    * @param summary current process log.
    * @returns processor result.
    */
   async process(
     studentSupplier: StudentSupplierToProcess,
     evaluationResult: CASEvaluationResult,
-    auth: CASAuthDetails,
     summary: ProcessSummary,
   ): Promise<ProcessorResult> {
     if (evaluationResult.status !== CASEvaluationStatus.NotFound) {
@@ -54,7 +50,7 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
     let result: CreateSupplierAndSiteResponse;
     try {
       const address = studentSupplier.address;
-      result = await this.casService.createSupplierAndSite(auth.access_token, {
+      result = await this.casService.createSupplierAndSite({
         firstName: studentSupplier.firstName,
         lastName: studentSupplier.lastName,
         sin: studentSupplier.sin,

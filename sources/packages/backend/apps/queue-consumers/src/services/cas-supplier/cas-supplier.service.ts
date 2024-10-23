@@ -5,7 +5,6 @@ import { ProcessSummary } from "@sims/utilities/logger";
 import { Repository } from "typeorm";
 import {
   CASService,
-  CASAuthDetails,
   formatAddress,
   formatPostalCode,
 } from "@sims/integrations/cas";
@@ -53,14 +52,7 @@ export class CASSupplierIntegrationService {
     const summary = new ProcessSummary();
     parentProcessSummary.children(summary);
     try {
-      summary.info("Logging on CAS.");
-      const auth = await this.casService.logon();
-      summary.info("Logon successful.");
-      suppliersUpdated = await this.processSuppliers(
-        studentSuppliers,
-        summary,
-        auth,
-      );
+      suppliersUpdated = await this.processSuppliers(studentSuppliers, summary);
     } catch (error: unknown) {
       if (error instanceof CustomNamedError && error.name === CAS_AUTH_ERROR) {
         summary.error(error.message);
@@ -77,13 +69,11 @@ export class CASSupplierIntegrationService {
    * code associated.
    * @param studentSuppliers pending CAS suppliers.
    * @param parentProcessSummary parent log summary.
-   * @param auth CAS auth details.
    * @returns number of updated records.
    */
   private async processSuppliers(
     studentSuppliers: StudentSupplierToProcess[],
     parentProcessSummary: ProcessSummary,
-    auth: CASAuthDetails,
   ): Promise<number> {
     let suppliersUpdated = 0;
     for (const studentSupplier of studentSuppliers) {
@@ -96,7 +86,6 @@ export class CASSupplierIntegrationService {
         // Check the current status of the student data and its supplier information.
         const evaluationResult = await this.evaluateCASSupplier(
           studentSupplier,
-          auth,
         );
         summary.info(
           `CAS evaluation result status: ${evaluationResult.status}.`,
@@ -107,7 +96,6 @@ export class CASSupplierIntegrationService {
         const processResult = await processor.process(
           studentSupplier,
           evaluationResult,
-          auth,
           summary,
         );
         if (processResult.isSupplierUpdated) {
@@ -148,13 +136,10 @@ export class CASSupplierIntegrationService {
    * Decide the current state of the student supplier on SIMS
    * and return the next process to be executed.
    * @param studentSupplier student CAS supplier to be evaluated.
-   * @param auth authentication token needed for possible
-   * CAS API interactions.
    * @returns evaluation result to be processed next.
    */
   private async evaluateCASSupplier(
     studentSupplier: StudentSupplierToProcess,
-    auth: CASAuthDetails,
   ): Promise<CASEvaluationResult> {
     const preValidationsFailedReasons: PreValidationsFailedReason[] = [];
     if (!studentSupplier.firstName) {
@@ -174,7 +159,6 @@ export class CASSupplierIntegrationService {
       };
     }
     const supplierResponse = await this.casService.getSupplierInfoFromCAS(
-      auth.access_token,
       studentSupplier.sin,
       studentSupplier.lastName,
     );
