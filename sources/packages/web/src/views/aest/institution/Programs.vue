@@ -11,7 +11,6 @@
               density="compact"
               v-model="searchProgramName"
               label="Search Program Name"
-              data-cy="searchProgramName"
               variant="outlined"
               @keyup.enter="goToSearchProgramName()"
               prepend-inner-icon="mdi-magnify"
@@ -21,77 +20,47 @@
         </body-header>
       </template>
       <content-group>
-        <DataTable
-          :value="institutionProgramsSummary.results"
-          :lazy="true"
-          :paginator="true"
-          :rows="DEFAULT_PAGE_LIMIT"
-          :rowsPerPageOptions="PAGINATION_LIST"
-          :totalRecords="institutionProgramsSummary.count"
-          @page="pageSortEvent($event)"
-          @sort="pageSortEvent($event)"
-          :loading="loading"
+        <toggle-content
+          :toggled="!loading && !institutionProgramsSummary.count"
         >
-          <template #empty>
-            <p class="text-center font-weight-bold">No records found.</p>
-          </template>
-          <Column
-            :field="ProgramSummaryFields.SubmittedDate"
-            header="Date Submitted"
-            :sortable="true"
+          <v-data-table-server
+            v-if="institutionProgramsSummary?.count"
+            :headers="ProgramHeaders"
+            :items="institutionProgramsSummary?.results"
+            :items-length="institutionProgramsSummary?.count"
+            :loading="loading"
+            :items-per-page="DEFAULT_PAGE_LIMIT"
+            :items-per-page-options="ITEMS_PER_PAGE"
+            @update:options="pageSortEvent"
           >
-            <template #body="slotProps">
-              <div class="p-text-capitalize">
-                {{ slotProps.data.submittedDateFormatted }}
-              </div>
+            <template #[`item.submittedDate`]="{ item }">
+              {{ item.submittedDateFormatted }}
             </template>
-          </Column>
-          <Column
-            :field="ProgramSummaryFields.ProgramName"
-            header="Program Name"
-          >
-            <template #body="slotProps">
-              <div class="p-text-capitalize">
-                {{ slotProps.data.programName }}
-              </div>
+            <template #[`item.programName`]="{ item }">
+              {{ item.programName }}
             </template>
-          </Column>
-          <Column :field="ProgramSummaryFields.LocationName" header="Location">
-            <template #body="slotProps">
-              <div class="p-text-capitalize">
-                {{ slotProps.data.locationName }}
-              </div>
+            <template #[`item.locationName`]="{ item }">
+              {{ item.locationName }}
             </template>
-          </Column>
-          <Column
-            :field="ProgramSummaryFields.TotalOfferings"
-            header="Study periods"
-          >
-          </Column>
-          <Column :field="ProgramSummaryFields.ProgramStatus" header="Status"
-            ><template #body="slotProps">
+            <template #[`item.totalOfferings`]="{ item }">
+              {{ item.totalOfferings }}
+            </template>
+            <template #[`item.programStatus`]="{ item }">
               <status-chip-program
-                :status="slotProps.data.programStatus"
-                :is-active="
-                  slotProps.data.isActive && !slotProps.data.isExpired
-                "
-              ></status-chip-program> </template
-          ></Column>
-          <Column header="Action">
-            <template #body="slotProps">
+                :status="item.programStatus"
+                :is-active="item.isActive && !item.isExpired"
+              ></status-chip-program>
+            </template>
+            <template #[`item.action`]="{ item }">
               <v-btn
                 variant="outlined"
-                @click="
-                  goToViewProgramDetail(
-                    slotProps.data.programId,
-                    slotProps.data.locationId,
-                  )
-                "
+                color="primary"
+                @click="goToViewProgramDetail(item.programId, item.locationId)"
                 >View</v-btn
               >
             </template>
-          </Column>
-        </DataTable>
+          </v-data-table-server>
+        </toggle-content>
       </content-group>
     </body-header-container>
   </tab-container>
@@ -101,14 +70,15 @@
 import { onMounted, ref, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import {
-  DataTableSortOrder,
   ProgramSummaryFields,
-  DEFAULT_PAGE_NUMBER,
-  PAGINATION_LIST,
   DEFAULT_PAGE_LIMIT,
   PaginatedResults,
   EducationProgramsSummary,
-  LayoutTemplates,
+  ProgramHeaders,
+  ITEMS_PER_PAGE,
+  DataTableOptions,
+  DataTableSortByOrder,
+  DEFAULT_DATATABLE_PAGE_NUMBER,
 } from "@/types";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
@@ -128,8 +98,9 @@ export default defineComponent({
       {} as PaginatedResults<EducationProgramsSummary>,
     );
     const searchProgramName = ref("");
-    const currentPageSize = ref();
-    const loading = ref(false);
+    const currentPage = ref();
+    const currentPageLimit = ref();
+    const loading = ref(true);
 
     const getProgramsSummaryList = async (
       institutionId: number,
@@ -137,7 +108,7 @@ export default defineComponent({
       page: number,
       programName: string,
       sortColumn?: ProgramSummaryFields,
-      sortOrder?: DataTableSortOrder,
+      sortOrder?: DataTableSortByOrder,
     ) => {
       try {
         loading.value = true;
@@ -161,7 +132,7 @@ export default defineComponent({
       await getProgramsSummaryList(
         props.institutionId,
         DEFAULT_PAGE_LIMIT,
-        DEFAULT_PAGE_NUMBER,
+        DEFAULT_DATATABLE_PAGE_NUMBER,
         searchProgramName.value,
       );
     });
@@ -175,22 +146,24 @@ export default defineComponent({
         },
       });
     };
-    const pageSortEvent = async (event: any) => {
-      currentPageSize.value = event?.rows;
+    const pageSortEvent = async (event: DataTableOptions) => {
+      currentPage.value = event.page;
+      currentPageLimit.value = event.itemsPerPage;
+      const [sortByOptions] = event.sortBy;
       await getProgramsSummaryList(
         props.institutionId,
-        event.rows,
+        event.itemsPerPage,
         event.page,
         searchProgramName.value,
-        event.sortField,
-        event.sortOrder,
+        sortByOptions?.key as ProgramSummaryFields,
+        sortByOptions?.order,
       );
     };
     const goToSearchProgramName = async () => {
       await getProgramsSummaryList(
         props.institutionId,
-        currentPageSize.value ? currentPageSize.value : DEFAULT_PAGE_LIMIT,
-        DEFAULT_PAGE_NUMBER,
+        currentPageLimit.value ?? DEFAULT_PAGE_LIMIT,
+        currentPage.value ?? DEFAULT_DATATABLE_PAGE_NUMBER,
         searchProgramName.value,
       );
     };
@@ -203,8 +176,8 @@ export default defineComponent({
       searchProgramName,
       loading,
       ProgramSummaryFields,
-      PAGINATION_LIST,
-      LayoutTemplates,
+      ProgramHeaders,
+      ITEMS_PER_PAGE,
     };
   },
 });
