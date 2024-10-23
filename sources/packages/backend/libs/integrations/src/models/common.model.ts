@@ -34,3 +34,8 @@ export enum FullTimeAwardTypes {
   BGPD = "BGPD",
   SBSD = "SBSD",
 }
+
+export enum YNFlag {
+  Y = "Y",
+  N = "N",
+}

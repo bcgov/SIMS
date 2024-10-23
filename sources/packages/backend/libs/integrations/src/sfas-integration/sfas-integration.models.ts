@@ -44,3 +44,24 @@ export class SIMSToSFASStudents {
     return [...new Set(this.studentIds)];
   }
 }
+/**
+ * Format of the timestamp in the uploaded file name for SIMS to SFAS.
+ */
+export const SIMS_TO_SFAS_FILE_NAME_TIMESTAMP_FORMAT = "YYYYMMDD-HHmmss";
+
+/**
+ * Record type codes for SIMS to SFAS.
+ */
+export enum SIMSToSFASRecordTypeCodes {
+  Header = "100",
+  StudentDataRecord = "200",
+  FullTimeApplicationDataRecord = "300",
+  PartTimeApplicationDataRecord = "301",
+  RestrictionDataRecord = "400",
+  Footer = "999",
+}
+
+// Integration file constants.
+export const DATE_FORMAT = "YYYYMMDD";
+export const SPACE_FILLER = " ";
+export const NUMBER_FILLER = "0";

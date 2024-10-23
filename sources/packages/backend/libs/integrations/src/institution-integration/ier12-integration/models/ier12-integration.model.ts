@@ -131,11 +131,6 @@ export enum ScholasticStandingCode {
   ST = "ST",
 }
 
-export enum YNFlag {
-  Y = "Y",
-  N = "N",
-}
-
 export type IERAddressInfo = Omit<AddressInfo, "country" | "selectedCountry">;
 
 export type IERAward = Pick<

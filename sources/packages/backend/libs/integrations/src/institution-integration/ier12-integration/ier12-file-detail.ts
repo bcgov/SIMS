@@ -13,9 +13,8 @@ import {
   NUMBER_FILLER,
   SPACE_FILLER,
   ScholasticStandingCode,
-  YNFlag,
 } from "./models/ier12-integration.model";
-import { FullTimeAwardTypes } from "@sims/integrations/models";
+import { FullTimeAwardTypes, YNFlag } from "@sims/integrations/models";
 
 /**
  * Record of a IER12 file.
