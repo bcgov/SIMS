@@ -11,6 +11,12 @@ export interface PaginationOptions {
   pageLimit: number;
 }
 
+export interface ProgramPaginationOptions extends PaginationOptions {
+  programNameSearch?: string;
+  locationNameSearch?: string;
+  status?: string;
+}
+
 export enum SortPriority {
   Priority1 = 1,
   Priority2 = 2,

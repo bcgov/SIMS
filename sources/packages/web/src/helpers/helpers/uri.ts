@@ -88,10 +88,22 @@ export const getPaginationQueryString = (
   }
 
   // Search criteria.
-  if (paginationOptions.searchCriteria) {
+  if (
+    paginationOptions.searchCriteria &&
+    typeof paginationOptions.searchCriteria === "string"
+  ) {
     parameters.push(
       `${PaginationParams.SearchCriteria}=${paginationOptions.searchCriteria}`,
     );
+  }
+  if (
+    paginationOptions.searchCriteria &&
+    typeof paginationOptions.searchCriteria === "object"
+  ) {
+    const searchCriteria = paginationOptions.searchCriteria;
+    for (const searchCriterion in searchCriteria) {
+      parameters.push(`${searchCriterion}=${searchCriteria[searchCriterion]}`);
+    }
   }
   return parameters.join("&");
 };

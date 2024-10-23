@@ -1,6 +1,7 @@
 import { IsEnum, IsIn, IsOptional, Max, MaxLength, Min } from "class-validator";
 import { PAGINATION_SEARCH_MAX_LENGTH } from "../../constants";
 import { FieldSortOrder } from "@sims/utilities";
+import { ProgramStatus } from "@sims/sims-db";
 
 /**
  * Common parameters used when an API result
@@ -77,6 +78,15 @@ export class ProgramsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO
   @IsOptional()
   @IsIn(["submittedDate", "programName", "credentialType"])
   sortField?: string;
+  @IsOptional()
+  @MaxLength(PAGINATION_SEARCH_MAX_LENGTH)
+  programNameSearch?: string;
+  @IsOptional()
+  @MaxLength(PAGINATION_SEARCH_MAX_LENGTH)
+  locationNameSearch?: string;
+  @IsOptional()
+  @IsIn([ProgramStatus.Approved, ProgramStatus.Declined, ProgramStatus.Pending])
+  status?: string;
 }
 
 export class OfferingsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {

@@ -123,7 +123,7 @@ export enum PaginationParams {
  * todo: remove sortOrder: DataTableSortOrder when all primevue datatables are removed.
  */
 export interface PaginationOptions {
-  searchCriteria?: string;
+  searchCriteria?: string | Record<string, string>;
   sortField?: string;
   sortOrder?: DataTableSortOrder | DataTableSortByOrder;
   page: number;
