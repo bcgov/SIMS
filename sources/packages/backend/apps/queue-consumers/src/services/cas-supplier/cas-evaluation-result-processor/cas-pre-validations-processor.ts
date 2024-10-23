@@ -10,7 +10,6 @@ import {
 } from "../cas-supplier.models";
 import { Repository } from "typeorm";
 import { CASEvaluationResultProcessor, ProcessorResult } from ".";
-import { CASAuthDetails } from "@sims/integrations/cas";
 
 /**
  * Assert the student can be added to CAS.
@@ -30,15 +29,12 @@ export class CASPreValidationsProcessor extends CASEvaluationResultProcessor {
    * the student CAS supplier for manual intervention.
    * @param studentSupplier student supplier information from SIMS.
    * @param evaluationResult evaluation result to be processed.
-   * @param _auth authentication token needed for possible
-   * CAS API interactions.
    * @param summary current process log.
    * @returns processor result.
    */
   async process(
     studentSupplier: StudentSupplierToProcess,
     evaluationResult: CASEvaluationResult,
-    _auth: CASAuthDetails,
     summary: ProcessSummary,
   ): Promise<ProcessorResult> {
     if (evaluationResult.status !== CASEvaluationStatus.PreValidationsFailed) {
