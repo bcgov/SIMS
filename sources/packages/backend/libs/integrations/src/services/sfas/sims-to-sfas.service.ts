@@ -1,8 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { StudentRecord } from "@sims/integrations/services/sfas/sims-to-sfas.model";
+import {
+  BC_STUDENT_LOAN_AWARD_CODE,
+  CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
+} from "@sims/services/constants";
 import {
   Application,
   ApplicationStatus,
+  mapFromRawAndEntities,
   SFASBridgeLog,
   Student,
 } from "@sims/sims-db";
@@ -33,6 +39,21 @@ export class SIMSToSFASService {
       take: 1,
     });
     return latestBridgeFileLog ? latestBridgeFileLog.referenceDate : null;
+  }
+
+  /**
+   * Create bridge log for SIMS to SFAS.
+   * @param referenceDate date when the bridge file data was extracted.
+   * @param fileName bridge file name.
+   */
+  async createSIMSToSFASBridgeLog(
+    referenceDate: Date,
+    fileName: string,
+  ): Promise<void> {
+    await this.sfasBridgeLogRepo.insert({
+      referenceDate,
+      generatedFileName: fileName,
+    });
   }
 
   /**
@@ -80,5 +101,59 @@ export class SIMSToSFASService {
       (application) => application.student.id,
     );
     return modifiedStudentIds;
+  }
+  /**
+   * Get student record details of students who have one or more updates.
+   * @param studentIds student ids.
+   * @returns student record details.
+   */
+  async getStudentRecordsByStudentIds(
+    studentIds: number[],
+  ): Promise<StudentRecord[]> {
+    const queryResult = await this.studentRepo
+      .createQueryBuilder("student")
+      .select([
+        "student.id",
+        "student.birthDate",
+        "student.disabilityStatus",
+        "student.disabilityStatusEffectiveDate",
+        "user.firstName",
+        "user.lastName",
+        "sinValidation.sin",
+        "casSupplier.supplierNumber",
+        "casSupplier.supplierAddress",
+      ])
+      .addSelect("SUM(cslfOveraward.overawardValue)", "cslfOverawardTotal")
+      .addSelect("SUM(bcslOveraward.overawardValue)", "bcslOverawardTotal")
+      .innerJoin("student.user", "user")
+      .innerJoin("student.sinValidation", "sinValidation")
+      .innerJoin("student.casSupplier", "casSupplier")
+      .leftJoin(
+        "student.overawards",
+        "cslfOveraward",
+        "cslfOveraward.disbursementValueCode = :cslfAwardCode",
+      )
+      .leftJoin(
+        "student.overawards",
+        "bcslOveraward",
+        "bcslOveraward.disbursementValueCode = :bcslAwardCode",
+      )
+      .groupBy("student.id")
+      .addGroupBy("user.id")
+      .addGroupBy("sinValidation.id")
+      .addGroupBy("casSupplier.id")
+      .where("student.id IN (:...studentIds)")
+      .setParameters({
+        cslfAwardCode: CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
+        bcslAwardCode: BC_STUDENT_LOAN_AWARD_CODE,
+        studentIds,
+      })
+      .getRawAndEntities();
+
+    return mapFromRawAndEntities<StudentRecord>(
+      queryResult,
+      "cslfOverawardTotal",
+      "bcslOverawardTotal",
+    );
   }
 }

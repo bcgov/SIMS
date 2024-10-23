@@ -22,6 +22,9 @@ export abstract class SIMSToSFASBaseRecord implements FixedFormatFileLine {
    * Convert amount to fixed length text of 10 characters
    * where the first 8 characters are whole number and the last 2 characters are fraction.
    * e.g. `100` to `0000010000`(100.00).
+   ** The method is not responsible for rounding the amount if the amount has more than 2 decimal values.
+   ** The `toFixed` method will round the amount if there are more than 2 decimal values which may
+   ** cause unexpected result.
    * @param amount amount.
    * @returns fixed length amount text.
    */
@@ -29,8 +32,7 @@ export abstract class SIMSToSFASBaseRecord implements FixedFormatFileLine {
     const amountValue = amount ?? 0;
     const [wholeNumber, fraction] = amountValue.toFixed(2).split(".");
     const wholeNumberPadded = wholeNumber.padStart(8, this.numberFiller);
-    const fractionPadded = fraction.padStart(2, this.numberFiller);
-    return `${wholeNumberPadded}${fractionPadded}`;
+    return `${wholeNumberPadded}${fraction}`;
   }
   abstract getFixedFormat(): string;
 }

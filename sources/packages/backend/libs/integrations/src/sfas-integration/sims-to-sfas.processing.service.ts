@@ -57,6 +57,11 @@ export class SIMSToSFASProcessingService {
     processSummary.info(
       `Found ${uniqueStudentIds.length} students with updates.`,
     );
+    const studentRecords =
+      await this.simsToSFASService.getStudentRecordsByStudentIds(
+        uniqueStudentIds,
+      );
+    console.log(studentRecords);
     const { fileName } = this.createSIMSToSFASFileName(bridgeDataExtractedDate);
     return {
       studentRecordsSent: simsToSFASStudents.uniqueStudentIds.length,
