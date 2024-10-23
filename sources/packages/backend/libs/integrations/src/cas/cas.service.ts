@@ -1,6 +1,5 @@
 import { Injectable, LoggerService } from "@nestjs/common";
 import {
-  CachedCASAuthDetails,
   CASAuthDetails,
   CASSupplierResponse,
   CreateSupplierAndSiteData,
@@ -19,15 +18,16 @@ import {
 import { CAS_AUTH_ERROR } from "@sims/integrations/constants";
 import { InjectLogger } from "@sims/utilities/logger";
 import {
+  CASCachedAuthDetails,
   formatAddress,
   formatCity,
   formatPostalCode,
   formatUserName,
-} from "@sims/integrations/cas";
+} from ".";
 
 @Injectable()
 export class CASService {
-  private cachedCASToken: CachedCASAuthDetails;
+  private cachedCASToken: CASCachedAuthDetails;
   private readonly casIntegrationConfig: CASIntegrationConfig;
 
   constructor(
@@ -62,7 +62,7 @@ export class CASService {
     try {
       const response = await this.httpService.axiosRef.post(url, data, config);
       // Cache the token for future requests.
-      this.cachedCASToken = new CachedCASAuthDetails(response.data);
+      this.cachedCASToken = new CASCachedAuthDetails(response.data);
       return this.cachedCASToken.authDetails;
     } catch (error: unknown) {
       this.logger.error(

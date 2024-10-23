@@ -267,7 +267,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     });
   });
 
-  it.only(
+  it(
     "Should create a new supplier and site on CAS and update CAS suppliers table when " +
       "the student was not found on CAS and the request to create the supplier and site was successful.",
     async () => {

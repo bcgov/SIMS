@@ -69,7 +69,6 @@ export class CASSupplierIntegrationService {
    * code associated.
    * @param studentSuppliers pending CAS suppliers.
    * @param parentProcessSummary parent log summary.
-   * @param auth CAS auth details.
    * @returns number of updated records.
    */
   private async processSuppliers(
@@ -137,8 +136,6 @@ export class CASSupplierIntegrationService {
    * Decide the current state of the student supplier on SIMS
    * and return the next process to be executed.
    * @param studentSupplier student CAS supplier to be evaluated.
-   * @param auth authentication token needed for possible
-   * CAS API interactions.
    * @returns evaluation result to be processed next.
    */
   private async evaluateCASSupplier(

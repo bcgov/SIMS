@@ -1,5 +1,4 @@
 import { CASSupplierRecordStatus, CASSupplierSiteStatus } from "@sims/sims-db";
-import * as dayjs from "dayjs";
 
 export class CASSupplierResponse {
   items: CASSupplierResponseItem[];
@@ -47,32 +46,6 @@ export class CASAuthDetails {
   access_token: string;
   token_type: string;
   expires_in: number;
-}
-
-/**
- * Default amount of time to a token be expired and be
- * considered candidate to be renewed.
- */
-const CAS_TOKEN_RENEWAL_SECONDS = 60;
-
-/**
- * Cache the CAS token to be reused.
- */
-export class CachedCASAuthDetails {
-  private readonly renewalTime: Date;
-  constructor(public readonly authDetails: CASAuthDetails) {
-    this.renewalTime = dayjs()
-      .add(authDetails.expires_in - CAS_TOKEN_RENEWAL_SECONDS, "seconds")
-      .toDate();
-  }
-
-  /**
-   * Indicates if the token requires renewal.
-   * @returns true if must be renewed, otherwise false.
-   */
-  requiresRenewal(): boolean {
-    return dayjs().isAfter(this.renewalTime);
-  }
 }
 
 /**
