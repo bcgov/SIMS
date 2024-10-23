@@ -18,6 +18,7 @@ import {
   APPLICATION_NOT_FOUND,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "../constants";
+import { MSFAANumberService } from "@sims/integrations/services";
 
 /**
  * Service layer for MSFAA (Master Student Financial Aid Agreement)
@@ -31,6 +32,7 @@ export class MSFAANumberSharedService {
     private readonly dataSource: DataSource,
     private readonly sequenceService: SequenceControlService,
     private readonly systemUsersService: SystemUsersService,
+    private readonly msfaaNumberService: MSFAANumberService,
   ) {}
 
   /**
@@ -79,6 +81,7 @@ export class MSFAANumberSharedService {
         existingMSFAA: {
           id: msfaaNumberRecord.id,
           msfaaNumber: msfaaNumberRecord.msfaaNumber,
+          dateSigned: msfaaNumberRecord.dateSigned,
         },
       },
     );
@@ -147,7 +150,7 @@ export class MSFAANumberSharedService {
     auditUserId: number,
     msfaaNumber: Partial<MSFAANumber>,
     dateSigned: Date,
-    serviceProviderReceivedDate: Date | null,
+    serviceProviderReceivedDate?: Date,
   ): Promise<MSFAANumber> {
     return this.internalActivateMSFAANumber(
       studentId,
@@ -367,5 +370,17 @@ export class MSFAANumberSharedService {
     }
 
     return application;
+  }
+
+  /**
+   * Creates a new MSFAA number from the SFAS MSFAA number
+   * for the particular offering intensity.
+   * @param msfaaNumber MSFAA number.
+   * @returns created MSFAA record.
+   */
+  async importMSFAAumberFromSFAS(
+    msfaaNumber: MSFAANumber,
+  ): Promise<MSFAANumber> {
+    return this.msfaaNumberService.save(msfaaNumber);
   }
 }

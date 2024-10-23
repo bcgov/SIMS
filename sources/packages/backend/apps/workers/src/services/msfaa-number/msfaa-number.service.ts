@@ -19,16 +19,6 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
   }
 
   /**
-   * Creates a new MSFAA number from the MSFAA number given
-   * for the particular offering intensity.
-   * @param msfaaNumber MSFAA number.
-   * @returns created MSFAA record.
-   */
-  async createMSFAA(msfaaNumber: MSFAANumber): Promise<MSFAANumber> {
-    return this.repo.save(msfaaNumber);
-  }
-
-  /**
    * Gets an MSFAA record that should be considered as valid.
    * The record could be either in 'pending' state, when there is no signed
    * date, or could have a signed date still under the valid period for an MSFAA.
@@ -39,7 +29,8 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
    * @param studentId student id to filter.
    * @param offeringIntensity MSFAA are generated individually for full-time/part-time
    * disbursements. The offering intensity is used to differentiate between them.
-   * @param isSigned MSFAA number is signed or not.
+   * @param options options.
+   *  - `isSigned` true if the MSFAA should be considered as signed.
    * @returns current valid MSFAA record.
    */
   async getCurrentValidMSFAANumber(

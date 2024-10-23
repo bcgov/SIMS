@@ -144,8 +144,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
 
     if (previousSignedDisbursement) {
       const isMSFAANumberStillValid = await this.isMSFAANumberStillValid(
-        previousSignedDisbursement,
-        firstDisbursement,
+        previousSignedDisbursement.studentAssessment.offering.studyEndDate,
+        firstDisbursement.studentAssessment.offering.studyStartDate,
       );
       if (isMSFAANumberStillValid) {
         return previousSignedDisbursement.msfaaNumber.id;
@@ -154,14 +154,14 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
 
     // Get signed MSFAA from SFAS for the particular offering intensity and create one in SIMS and
     // activate the created MSFAA.
-    const sfasSignedMSFAA = await this.checkSFASSignedMSFAA(
+    const sfasSignedMSFAA = await this.getSFASSignedMSFAA(
       studentId,
       offeringIntensity,
     );
     if (sfasSignedMSFAA) {
       return this.createAndActivateSfasMSFAANumber(
-        student,
-        application,
+        studentId,
+        applicationId,
         offeringIntensity,
         auditUserId,
         sfasSignedMSFAA,
@@ -194,17 +194,17 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    * @param offeringIntensity offering intensity.
    * @returns SFAS signed MSFAA which is valid.
    */
-  private async checkSFASSignedMSFAA(
+  private async getSFASSignedMSFAA(
     studentId: number,
     offeringIntensity: OfferingIntensity,
   ): Promise<SFASSignedMSFAA> {
     // Checks if there is a MSFAA number that could be considered valid from SFAS.
     if (offeringIntensity === OfferingIntensity.fullTime) {
-      return await this.sfasApplicationService.getIndividualFullTimeApplicationByIndividualId(
+      return await this.sfasApplicationService.getValidMSFAAFullTimeApplication(
         studentId,
       );
     }
-    return await this.sfasPartTimeApplicationsService.getIndividualPartTimeApplicationByIndividualId(
+    return await this.sfasPartTimeApplicationsService.getValidMSFAAPartTimeApplication(
       studentId,
     );
   }
@@ -218,15 +218,11 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    * @returns whether the MSFAA Number is valid.
    */
   private async isMSFAANumberStillValid(
-    previousSignedDisbursement: DisbursementSchedule,
-    firstDisbursement: DisbursementSchedule,
+    previousDisbursementStudyEndDate: string,
+    firstDisbursementStudyStartDate: string,
   ): Promise<boolean> {
-    const previousStudyEndDate = new Date(
-      previousSignedDisbursement.studentAssessment.offering.studyEndDate,
-    );
-    const currentStudyStartDate = new Date(
-      firstDisbursement.studentAssessment.offering.studyStartDate,
-    );
+    const previousStudyEndDate = new Date(previousDisbursementStudyEndDate);
+    const currentStudyStartDate = new Date(firstDisbursementStudyStartDate);
     // Previously signed and completed application offering end date in considered the start date.
     // Start date of the offering of the current application is considered the end date.
     return this.msfaaNumberService.isMSFAANumberValid(
@@ -245,8 +241,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    * @returns created and activated MSFAA number id.
    */
   private async createAndActivateSfasMSFAANumber(
-    student: Student,
-    application: Application,
+    studentId: number,
+    applicationId: number,
     offeringIntensity: OfferingIntensity,
     auditUserId: number,
     sfasSignedMSFAA: SFASSignedMSFAA,
@@ -259,13 +255,14 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     );
     sfasMSFAANumber.dateRequested = null;
     sfasMSFAANumber.serviceProviderReceivedDate = null;
-    sfasMSFAANumber.referenceApplication = application;
-    sfasMSFAANumber.student = student;
+    sfasMSFAANumber.referenceApplication = { id: applicationId } as Application;
+    sfasMSFAANumber.student = { id: studentId } as Student;
     sfasMSFAANumber.offeringIntensity = offeringIntensity;
     sfasMSFAANumber.creator = { id: auditUserId } as User;
-    const createdMSFAANumber = await this.msfaaNumberService.createMSFAA(
-      sfasMSFAANumber,
-    );
+    const createdMSFAANumber =
+      await this.msfaaNumberSharedService.importMSFAAumberFromSFAS(
+        sfasMSFAANumber,
+      );
     const activateMSFAANumber =
       await this.msfaaNumberSharedService.activateMSFAANumber(
         createdMSFAANumber,

@@ -2,8 +2,12 @@ import { Injectable } from "@nestjs/common";
 import { DataSource, Brackets, MoreThanOrEqual } from "typeorm";
 import { DataModelService, SFASPartTimeApplications } from "@sims/sims-db";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
-import { SFASSignedMSFAA } from "@sims/services/sfas/sfas-individual.model";
-import { MAX_MSFAA_VALID_DAYS } from "@sims/utilities";
+import {
+  MAX_MSFAA_VALID_DAYS,
+  addDays,
+  getISODateOnlyString,
+} from "@sims/utilities";
+import { SFASSignedMSFAA } from ".";
 
 /**
  * Manages the part time application data related to an individual/student in SFAS.
@@ -60,17 +64,17 @@ export class SFASPartTimeApplicationsService extends DataModelService<SFASPartTi
       .getOne();
   }
   /**
-   * Fetch the SFAS part time application for the student and the latest
-   * application which has the end date within 730 days
+   * Fetch the valid MSFAA number from the latest
+   * SFAS part time application for the student
+   * which has the end date within 730 days.
    * @param studentId student id.
    * @returns SFASSignedMSFAA which contains the SFAS Signed MSFAA
    * and latest application end date.
    */
-  async getIndividualPartTimeApplicationByIndividualId(
+  async getValidMSFAAPartTimeApplication(
     studentId: number,
   ): Promise<SFASSignedMSFAA | null> {
-    const twoYearsAgo = new Date();
-    twoYearsAgo.setDate(twoYearsAgo.getDate() - MAX_MSFAA_VALID_DAYS);
+    const minMSFAAValidDate = addDays(-MAX_MSFAA_VALID_DAYS);
     const [sfasApplication] = await this.repo.find({
       select: {
         id: true,
@@ -84,8 +88,8 @@ export class SFASPartTimeApplicationsService extends DataModelService<SFASPartTi
         individual: true,
       },
       where: {
-        individual: { id: studentId },
-        endDate: MoreThanOrEqual(twoYearsAgo.toISOString()), // Only select endDate within 730 days.
+        individual: { student: { id: studentId } },
+        endDate: MoreThanOrEqual(getISODateOnlyString(minMSFAAValidDate)), // Only select endDate within 730 days.
       },
       order: {
         endDate: "DESC",
