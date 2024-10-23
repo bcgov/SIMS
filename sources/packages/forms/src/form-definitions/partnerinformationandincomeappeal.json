@@ -103,7 +103,7 @@
     },
     {
       "input": true,
-      "tableView": true,
+      "tableView": false,
       "key": "maxMoneyValue",
       "label": "Max Money Value",
       "protected": false,
@@ -118,7 +118,8 @@
       },
       "properties": {},
       "lockKey": true,
-      "calculateValue": "value = 100000000;"
+      "calculateValue": "value = 100000000;",
+      "calculateServer": true
     },
     {
       "input": true,
