@@ -9,7 +9,6 @@ import {
   StudentSupplierToProcess,
 } from "../cas-supplier.models";
 import { Repository } from "typeorm";
-import { CASAuthDetails } from "@sims/integrations/cas";
 import { CASEvaluationResultProcessor, ProcessorResult } from ".";
 
 /**
@@ -37,7 +36,6 @@ export class CASActiveSupplierAndSiteFoundProcessor extends CASEvaluationResultP
   async process(
     studentSupplier: StudentSupplierToProcess,
     evaluationResult: CASEvaluationResult,
-    _auth: CASAuthDetails,
     summary: ProcessSummary,
   ): Promise<ProcessorResult> {
     if (
