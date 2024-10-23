@@ -735,7 +735,7 @@
           "properties": {},
           "allowMultipleMasks": false,
           "addons": [],
-          "tag": "p",
+          "tag": "div",
           "id": "e0tpn1l",
           "className": ""
         },
@@ -810,7 +810,7 @@
           "properties": {},
           "allowMultipleMasks": false,
           "addons": [],
-          "tag": "p",
+          "tag": "div",
           "id": "eekbmho",
           "className": ""
         },

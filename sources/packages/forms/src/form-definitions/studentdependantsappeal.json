@@ -411,7 +411,7 @@
                           "key": "addDependantsUploadHtml3",
                           "label": "HTML",
                           "input": false,
-                          "tag": "p",
+                          "tag": "div",
                           "attrs": [
                             {
                               "value": "",
@@ -436,7 +436,7 @@
                           "key": "addDependantsUploadHtml4",
                           "label": "HTML",
                           "input": false,
-                          "tag": "p",
+                          "tag": "div",
                           "attrs": [
                             {
                               "value": "",
@@ -720,7 +720,7 @@
               "key": "dependantsCustodyHtml3",
               "label": "HTML",
               "input": false,
-              "tag": "p",
+              "tag": "div",
               "attrs": [
                 {
                   "value": "",
@@ -745,7 +745,7 @@
               "key": "dependantsCustodyHtml4",
               "label": "HTML",
               "input": false,
-              "tag": "p",
+              "tag": "div",
               "attrs": [
                 {
                   "value": "",

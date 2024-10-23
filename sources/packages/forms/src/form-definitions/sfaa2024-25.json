@@ -151,7 +151,7 @@
                           "label": "HTML",
                           "labelWidth": "",
                           "labelMargin": "",
-                          "tag": "p",
+                          "tag": "div",
                           "className": "",
                           "attrs": [
                             {
@@ -2956,7 +2956,7 @@
                                   "value": ""
                                 }
                               ],
-                              "content": "<!DOCTYPE html>Credential",
+                              "content": "Credential",
                               "refreshOnChange": false,
                               "key": "html33",
                               "type": "htmlelement",
@@ -3042,7 +3042,7 @@
                                   "value": ""
                                 }
                               ],
-                              "content": "<!DOCTYPE HTML>Delivery Method",
+                              "content": "Delivery Method",
                               "refreshOnChange": false,
                               "customClass": "label-medium",
                               "key": "html34",
@@ -7332,7 +7332,7 @@
                       "label": "HTML",
                       "labelWidth": "",
                       "labelMargin": "",
-                      "tag": "p",
+                      "tag": "div",
                       "className": "",
                       "attrs": [
                         {
@@ -7414,7 +7414,7 @@
                       "label": "HTML",
                       "labelWidth": "",
                       "labelMargin": "",
-                      "tag": "p",
+                      "tag": "div",
                       "className": "",
                       "attrs": [
                         {
@@ -7649,7 +7649,7 @@
                       "label": "HTML",
                       "labelWidth": "",
                       "labelMargin": "",
-                      "tag": "p",
+                      "tag": "div",
                       "className": "",
                       "attrs": [
                         {
@@ -7731,7 +7731,7 @@
                       "label": "HTML",
                       "labelWidth": "",
                       "labelMargin": "",
-                      "tag": "p",
+                      "tag": "div",
                       "className": "",
                       "attrs": [
                         {
@@ -8715,7 +8715,7 @@
                   "label": "HTML",
                   "labelWidth": "",
                   "labelMargin": "",
-                  "tag": "p",
+                  "tag": "div",
                   "className": "",
                   "attrs": [
                     {
@@ -9081,7 +9081,7 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "tag": "p",
+                      "tag": "div",
                       "id": "exvzcx",
                       "className": ""
                     },
@@ -9089,7 +9089,7 @@
                       "label": "HTML",
                       "labelWidth": "",
                       "labelMargin": "",
-                      "tag": "p",
+                      "tag": "div",
                       "className": "",
                       "attrs": [
                         {
@@ -9171,7 +9171,7 @@
                       "label": "HTML",
                       "labelWidth": "",
                       "labelMargin": "",
-                      "tag": "p",
+                      "tag": "div",
                       "className": "",
                       "attrs": [
                         {
@@ -11262,7 +11262,7 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "tag": "p",
+                  "tag": "div",
                   "id": "ed9vh5c",
                   "className": "",
                   "tags": []
@@ -13683,7 +13683,7 @@
                               "label": "HTML",
                               "labelWidth": "",
                               "labelMargin": "",
-                              "tag": "p",
+                              "tag": "div",
                               "className": "",
                               "attrs": [
                                 {
@@ -13765,7 +13765,7 @@
                               "label": "HTML",
                               "labelWidth": "",
                               "labelMargin": "",
-                              "tag": "p",
+                              "tag": "div",
                               "className": "",
                               "attrs": [
                                 {
@@ -14710,7 +14710,7 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "tag": "p",
+                  "tag": "div",
                   "id": "eyw4xqx",
                   "className": "",
                   "tags": []
@@ -14719,7 +14719,7 @@
                   "label": "HTML",
                   "labelWidth": "",
                   "labelMargin": "",
-                  "tag": "p",
+                  "tag": "div",
                   "className": "",
                   "attrs": [
                     {
@@ -14801,7 +14801,7 @@
                   "label": "HTML",
                   "labelWidth": "",
                   "labelMargin": "",
-                  "tag": "p",
+                  "tag": "div",
                   "className": "",
                   "attrs": [
                     {
@@ -20207,7 +20207,7 @@
               "properties": {},
               "allowMultipleMasks": false,
               "addons": [],
-              "tag": "p",
+              "tag": "div",
               "id": "efwpcq",
               "className": ""
             },
@@ -20215,7 +20215,7 @@
               "label": "HTML",
               "labelWidth": "",
               "labelMargin": "",
-              "tag": "p",
+              "tag": "div",
               "className": "",
               "attrs": [
                 {
@@ -20297,7 +20297,7 @@
               "label": "HTML",
               "labelWidth": "",
               "labelMargin": "",
-              "tag": "p",
+              "tag": "div",
               "className": "",
               "attrs": [
                 {
@@ -21236,7 +21236,7 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "tag": "p",
+                  "tag": "div",
                   "id": "evy207m",
                   "className": ""
                 },
@@ -21244,7 +21244,7 @@
                   "label": "HTML",
                   "labelWidth": "",
                   "labelMargin": "",
-                  "tag": "p",
+                  "tag": "div",
                   "className": "",
                   "attrs": [
                     {
@@ -21326,7 +21326,7 @@
                   "label": "HTML",
                   "labelWidth": "",
                   "labelMargin": "",
-                  "tag": "p",
+                  "tag": "div",
                   "className": "",
                   "attrs": [
                     {
@@ -23894,7 +23894,7 @@
                   "key": "decreaseInIncomePanelContent3",
                   "label": "Content",
                   "input": false,
-                  "tag": "p",
+                  "tag": "div",
                   "attrs": [
                     {
                       "value": "",
@@ -23918,7 +23918,7 @@
                   "key": "decreaseInIncomePanelContent4",
                   "label": "Content",
                   "input": false,
-                  "tag": "p",
+                  "tag": "div",
                   "attrs": [
                     {
                       "value": "",
@@ -24971,7 +24971,7 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "tag": "p",
+                  "tag": "div",
                   "id": "eq7e38",
                   "className": ""
                 },
@@ -25046,7 +25046,7 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "tag": "p",
+                  "tag": "div",
                   "id": "evksdr7",
                   "className": ""
                 },
@@ -25121,7 +25121,7 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "tag": "p",
+                  "tag": "div",
                   "id": "e99y2i9",
                   "className": ""
                 },
@@ -28834,7 +28834,7 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "tag": "p",
+                      "tag": "div",
                       "id": "e0mhupn",
                       "className": ""
                     },
@@ -28909,7 +28909,7 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "tag": "p",
+                      "tag": "div",
                       "id": "en7ltf2",
                       "className": ""
                     },
@@ -30817,7 +30817,7 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "tag": "p",
+                      "tag": "div",
                       "id": "e29azc",
                       "className": "",
                       "tags": []
@@ -30893,7 +30893,7 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "tag": "p",
+                      "tag": "div",
                       "id": "euf75k",
                       "className": "",
                       "tags": []
@@ -30969,7 +30969,7 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "tag": "p",
+                      "tag": "div",
                       "id": "eo0wfja",
                       "className": "",
                       "tags": []

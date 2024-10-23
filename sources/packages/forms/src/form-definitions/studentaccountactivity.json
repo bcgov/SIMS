@@ -293,7 +293,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "<li>Code {{row.code}}</li>",
+                      "content": "Code {{row.code}}",
                       "refreshOnChange": true,
                       "key": "html",
                       "type": "htmlelement",
@@ -357,7 +357,7 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "tag": "p",
+                      "tag": "li",
                       "inDataGrid": true,
                       "className": ""
                     }
