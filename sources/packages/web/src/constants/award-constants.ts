@@ -28,15 +28,6 @@ export enum PartTimeAwardTypes {
   SBSD = "SBSD",
 }
 
-enum PartTimeAwardTypeDisplays {
-  CSLP = "CSL-PT",
-  CSGP = "CSG-PD",
-  CSPT = "CSG-PT",
-  CSGD = "CSG-PTDEP",
-  BCAG = "BCAG-PT",
-  SBSD = "SBSD",
-}
-
 export const AWARDS: AwardDetail[] = [
   {
     awardType: FullTimeAwardTypes.CSLF,
@@ -94,37 +85,37 @@ export const AWARDS: AwardDetail[] = [
   },
   {
     awardType: PartTimeAwardTypes.CSGP,
-    awardTypeDisplay: PartTimeAwardTypeDisplays.CSGP,
+    awardTypeDisplay: "CSG-PD",
     description: "Canada Student Grant for Students with Disabilities",
     offeringIntensity: OfferingIntensity.partTime,
   },
   {
     awardType: PartTimeAwardTypes.CSPT,
-    awardTypeDisplay: PartTimeAwardTypeDisplays.CSPT,
+    awardTypeDisplay: "CSG-PT",
     description: "Canada Student Grant for Part-time Students",
     offeringIntensity: OfferingIntensity.partTime,
   },
   {
     awardType: PartTimeAwardTypes.CSGD,
-    awardTypeDisplay: PartTimeAwardTypeDisplays.CSGD,
+    awardTypeDisplay: "CSG-PTDEP",
     description: "Canada Student Grant for Students with Dependants",
     offeringIntensity: OfferingIntensity.partTime,
   },
   {
     awardType: PartTimeAwardTypes.BCAG,
-    awardTypeDisplay: PartTimeAwardTypeDisplays.BCAG,
+    awardTypeDisplay: "BCAG-PT",
     description: "B.C. Access Grant for Part-time Studies",
     offeringIntensity: OfferingIntensity.partTime,
   },
   {
     awardType: PartTimeAwardTypes.CSLP,
-    awardTypeDisplay: PartTimeAwardTypeDisplays.CSLP,
+    awardTypeDisplay: "CSL-PT",
     description: "Canada Student Loan for Part-time Students",
     offeringIntensity: OfferingIntensity.partTime,
   },
   {
     awardType: PartTimeAwardTypes.SBSD,
-    awardTypeDisplay: PartTimeAwardTypeDisplays.SBSD,
+    awardTypeDisplay: "SBSD",
     description: "B.C. Supplemental Bursary for Students with Disabilities",
     offeringIntensity: OfferingIntensity.partTime,
   },
