@@ -28,8 +28,6 @@ export class CASActiveSupplierAndSiteFoundProcessor extends CASEvaluationResultP
    * Update student supplier based on the supplier and site information found on CAS.
    * @param studentSupplier student supplier information from SIMS.
    * @param evaluationResult evaluation result to be processed.
-   * @param _auth authentication token needed for possible
-   * CAS API interactions.
    * @param summary current process log.
    * @returns processor result.
    */
