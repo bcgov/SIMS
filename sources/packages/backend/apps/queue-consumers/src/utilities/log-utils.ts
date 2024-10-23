@@ -66,7 +66,7 @@ export function getSuccessMessageWithAttentionCheck(
     message.push(
       `Error(s): ${logsSum.error}, Warning(s): ${logsSum.warn}, Info: ${logsSum.info}`,
     );
-    if (throwOnError) {
+    if (logsSum.error && throwOnError) {
       throw new CustomNamedError(
         "One or more errors were reported during the process, please see logs for details.",
         PROCESS_SUMMARY_CONTAINS_ERROR,

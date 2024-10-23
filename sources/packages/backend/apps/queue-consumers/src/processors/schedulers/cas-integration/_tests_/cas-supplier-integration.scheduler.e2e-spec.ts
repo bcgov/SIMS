@@ -365,4 +365,103 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       );
     },
   );
+
+  it.only("Should throw an error for the first student and process the second one when the CAS API call failed for the first student but worked for the second one.", async () => {
+    // Arrange
+    casServiceMock.getSupplierInfoFromCAS = jest
+      .fn()
+      .mockRejectedValueOnce("Unknown error")
+      .mockResolvedValue(
+        Promise.resolve(createFakeCASNotFoundSupplierResponse()),
+      );
+    // Created a student with same address line 1 and postal code from the expected CAS mocked result.
+    // Postal code has a white space that is expected to be removed.
+    const studentToFail = await saveFakeStudent(db.dataSource, undefined, {
+      initialValue: {
+        contactInfo: {
+          address: {
+            addressLine1: "3350 DOUGLAS ST",
+            city: "Victoria",
+            country: "Canada",
+            selectedCountry: COUNTRY_CANADA,
+            provinceState: "BC",
+            postalCode: "V8Z 7X9",
+          },
+        } as ContactInfo,
+      },
+    });
+    const savedCASSupplierToFail = await saveFakeCASSupplier(db, {
+      student: studentToFail,
+    });
+
+    // Created a student with same address line 1 and postal code from the expected CAS mocked result.
+    // Postal code has a white space that is expected to be removed.
+    const studentToSucceed = await saveFakeStudent(db.dataSource, undefined, {
+      initialValue: {
+        contactInfo: {
+          address: {
+            addressLine1: "3350 DOUGLAS ST",
+            city: "Victoria",
+            country: "Canada",
+            selectedCountry: COUNTRY_CANADA,
+            provinceState: "BC",
+            postalCode: "V8Z 7X9",
+          },
+        } as ContactInfo,
+      },
+    });
+    const savedCASSupplierToSucceed = await saveFakeCASSupplier(db, {
+      student: studentToSucceed,
+    });
+
+    // Queued job.
+    const mockedJob = mockBullJob<void>();
+
+    // Act
+    // TODO: ensure it will throw an exception.
+    const result = await processor.processCASSupplierInformation(mockedJob.job);
+
+    // TODO: review the asserts.
+    // Assert
+    // expect(result).toStrictEqual([
+    //   "Process finalized with success.",
+    //   "Pending suppliers to update found: 1.",
+    //   "Records updated: 1.",
+    // ]);
+    // expect(
+    //   mockedJob.containLogMessages([
+    //     "Found 1 records to be updated.",
+    //     //`Processing student CAS supplier ID: ${savedCASSupplier.id}.`,
+    //     `CAS evaluation result status: ${CASEvaluationStatus.ActiveSupplierAndSiteFound}.`,
+    //     "Active CAS supplier and site found.",
+    //     "Updated CAS supplier for the student.",
+    //   ]),
+    // ).toBe(true);
+    // expect(casServiceMock.getSupplierInfoFromCAS).toHaveBeenCalledWith(
+    //   student.sinValidation.sin,
+    //   student.user.lastName,
+    // );
+
+    // const updateCASSupplier = await db.casSupplier.findOneBy({
+    //   id: savedCASSupplier.id,
+    // });
+
+    // expect(updateCASSupplier.isValid).toBe(true);
+    // expect(updateCASSupplier.supplierAddress).toStrictEqual({
+    //   supplierSiteCode: "001",
+    //   addressLine1: "3350 DOUGLAS ST",
+    //   addressLine2: null,
+    //   city: "VICTORIA",
+    //   provinceState: "BC",
+    //   country: "CA",
+    //   postalCode: "V8Z7X9",
+    //   status: "ACTIVE",
+    //   siteProtected: null,
+    //   lastUpdated: new Date("2024-05-01 13:55:04").toISOString(),
+    // });
+    // expect(updateCASSupplier.supplierStatus).toBe(SupplierStatus.Verified);
+    // expect(updateCASSupplier.supplierName).toBe(
+    //   supplierMockedResult.suppliername,
+    // );
+  });
 });
