@@ -1,22 +1,12 @@
 import { SpecializedStringBuilder } from "@sims/utilities";
-import { FixedFormatFileLine } from "@sims/integrations/services/ssh";
 
-import {
-  DATE_FORMAT,
-  NUMBER_FILLER,
-  SIMSToSFASRecordTypeCodes,
-  SPACE_FILLER,
-} from "../sfas-integration.models";
 import { YNFlag } from "@sims/integrations/models";
+import { SIMSToSFASBaseRecord } from "./sims-to-sfas-base.record";
 
 /**
  * Student data record for SIMS to SFAS file.
  */
-export class SIMSToSFASStudentRecord implements FixedFormatFileLine {
-  /**
-   * Type of record.
-   */
-  recordTypeCode: SIMSToSFASRecordTypeCodes;
+export class SIMSToSFASStudentRecord extends SIMSToSFASBaseRecord {
   /**
    * The unique key/number used in SIMS to identify this individual student.
    */
@@ -85,6 +75,10 @@ export class SIMSToSFASStudentRecord implements FixedFormatFileLine {
    * BC Student Loan total overaward balance.
    */
   fullTimeBCSLOveraward?: number;
+  /**
+   * BC Grant total overaward balance.
+   */
+  grantOveraward?: number;
 
   /**
    * Get the information as a fixed line format to be
@@ -93,10 +87,10 @@ export class SIMSToSFASStudentRecord implements FixedFormatFileLine {
    */
   getFixedFormat(): string {
     const record = new SpecializedStringBuilder({
-      stringFiller: SPACE_FILLER,
-      numberFiller: NUMBER_FILLER,
-      dateFiller: SPACE_FILLER,
-      dateFormat: DATE_FORMAT,
+      stringFiller: this.spaceFiller,
+      numberFiller: this.numberFiller,
+      dateFiller: this.spaceFiller,
+      dateFormat: this.dateFormat,
     });
     record.append(this.recordTypeCode);
     record.appendNumberWithFiller(this.studentId, 10);
@@ -113,7 +107,10 @@ export class SIMSToSFASStudentRecord implements FixedFormatFileLine {
     record.appendOptionalNumberWithFiller(this.partTimeMSFAANumber, 10);
     record.appendOptionalFormattedDate(this.partTimeMSFAASignedDate);
     record.appendOptionalStringWithFiller(this.casSupplierNumber, 10);
-
+    record.appendOptionalStringWithFiller(this.casSiteNumber, 10);
+    record.append(this.convertToAmountText(this.fullTimeCSLOveraward));
+    record.append(this.convertToAmountText(this.fullTimeBCSLOveraward));
+    record.append(this.convertToAmountText(this.grantOveraward));
     return record.toString();
   }
 }

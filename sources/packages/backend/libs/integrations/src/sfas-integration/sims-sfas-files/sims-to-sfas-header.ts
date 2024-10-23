@@ -1,20 +1,10 @@
 import { SpecializedStringBuilder } from "@sims/utilities";
-import { FixedFormatFileLine } from "@sims/integrations/services/ssh";
-import {
-  DATE_FORMAT,
-  NUMBER_FILLER,
-  SIMSToSFASRecordTypeCodes,
-  SPACE_FILLER,
-} from "../sfas-integration.models";
+import { SIMSToSFASBaseRecord } from "./sims-to-sfas-base.record";
 
 /**
  * Header record for SIMS to SFAS file.
  */
-export class SIMSToSFASHeader implements FixedFormatFileLine {
-  /**
-   * Type of record.
-   */
-  recordTypeCode: SIMSToSFASRecordTypeCodes;
+export class SIMSToSFASHeader extends SIMSToSFASBaseRecord {
   /**
    * Specifies who sent this file.
    */
@@ -27,7 +17,6 @@ export class SIMSToSFASHeader implements FixedFormatFileLine {
    * Date & time that this file was generated in UTC.
    */
   creationDate: Date;
-
   /**
    * Get the information as a fixed line format to be
    * added to the file uploaded to the SFTP.
@@ -35,10 +24,10 @@ export class SIMSToSFASHeader implements FixedFormatFileLine {
    */
   getFixedFormat(): string {
     const record = new SpecializedStringBuilder({
-      stringFiller: SPACE_FILLER,
-      numberFiller: NUMBER_FILLER,
-      dateFiller: SPACE_FILLER,
-      dateFormat: DATE_FORMAT,
+      stringFiller: this.spaceFiller,
+      numberFiller: this.numberFiller,
+      dateFiller: this.spaceFiller,
+      dateFormat: this.dateFormat,
     });
     record.append(this.recordTypeCode);
     record.append(this.originator);
