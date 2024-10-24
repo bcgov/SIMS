@@ -1,6 +1,6 @@
 import { Student } from "@sims/sims-db";
 
-export type StudentRecord = Student & {
+export type StudentDetail = Student & {
   cslfOverawardTotal?: string;
   bcslOverawardTotal?: string;
 };

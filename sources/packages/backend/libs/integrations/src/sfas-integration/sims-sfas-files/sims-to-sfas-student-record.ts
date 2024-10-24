@@ -14,7 +14,7 @@ export class SIMSToSFASStudentRecord extends SIMSToSFASBaseRecord {
   /**
    * The given name as defined in SIMS.
    */
-  givenName: string;
+  givenName?: string;
   /**
    * The last name as defined in SIMS.
    */

@@ -11,6 +11,7 @@ import {
 import { SFASIntegrationService } from "./sfas-integration.service";
 import {
   SFASIntegrationProcessingService,
+  SIMSToSFASIntegrationService,
   SIMSToSFASProcessingService,
 } from ".";
 
@@ -25,6 +26,7 @@ import {
     SFASRestrictionService,
     SFASPartTimeApplicationsService,
     SIMSToSFASService,
+    SIMSToSFASIntegrationService,
     SIMSToSFASProcessingService,
   ],
   exports: [

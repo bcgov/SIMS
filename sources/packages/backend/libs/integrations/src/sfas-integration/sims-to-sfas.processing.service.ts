@@ -8,6 +8,7 @@ import {
 import { ConfigService } from "@sims/utilities/config";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { formatDate } from "@sims/utilities";
+import { SIMSToSFASIntegrationService } from ".";
 
 @Injectable()
 export class SIMSToSFASProcessingService {
@@ -15,6 +16,7 @@ export class SIMSToSFASProcessingService {
   constructor(
     config: ConfigService,
     private readonly simsToSFASService: SIMSToSFASService,
+    private readonly simsToSFASIntegrationService: SIMSToSFASIntegrationService,
   ) {
     this.ftpSendFolder = config.sfasIntegration.ftpSendFolder;
   }
@@ -40,7 +42,7 @@ export class SIMSToSFASProcessingService {
     );
 
     // Append the students with student and student related data updates.
-    // TODO: Application and Restrictions part.
+    // TODO: SIMS to SFAS - Application and Restrictions part.
     // When application and restriction updates are retrieved, the respective
     // student ids of applications and restrictions should be appended.
     simsToSFASStudents.append(studentIds);
@@ -57,12 +59,41 @@ export class SIMSToSFASProcessingService {
     processSummary.info(
       `Found ${uniqueStudentIds.length} students with updates.`,
     );
-    const studentRecords =
+    const studentDetails =
       await this.simsToSFASService.getStudentRecordsByStudentIds(
         uniqueStudentIds,
       );
-    console.log(studentRecords);
-    const { fileName } = this.createSIMSToSFASFileName(bridgeDataExtractedDate);
+
+    // Create SIMS to SFAS file content.
+    const fileLines =
+      this.simsToSFASIntegrationService.createSIMSToSFASFileContent(
+        bridgeDataExtractedDate,
+        studentDetails,
+      );
+
+    const { fileName, remoteFilePath } = this.createSIMSToSFASFileName(
+      bridgeDataExtractedDate,
+    );
+
+    try {
+      await this.simsToSFASIntegrationService.uploadContent(
+        fileLines,
+        remoteFilePath,
+      );
+    } catch (error: unknown) {
+      // Translate to friendly error message.
+      const errorDescription = `Unexpected error uploading the SIMS to SFAS file ${remoteFilePath} to SFTP.`;
+      processSummary.error(errorDescription, error);
+      throw new Error(errorDescription, { cause: error });
+    }
+    processSummary.info(
+      `SIMS to SFAS file ${fileName} has been uploaded successfully.`,
+    );
+    // Create bridge file log to track the extraction date of the bridge file.
+    await this.simsToSFASService.createSIMSToSFASBridgeLog(
+      bridgeDataExtractedDate,
+      fileName,
+    );
     return {
       studentRecordsSent: simsToSFASStudents.uniqueStudentIds.length,
       uploadedFileName: fileName,

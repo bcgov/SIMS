@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { StudentRecord } from "@sims/integrations/services/sfas/sims-to-sfas.model";
+import { StudentDetail } from "./sims-to-sfas.model";
 import {
   BC_STUDENT_LOAN_AWARD_CODE,
   CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
@@ -103,13 +103,13 @@ export class SIMSToSFASService {
     return modifiedStudentIds;
   }
   /**
-   * Get student record details of students who have one or more updates.
+   * Get student details of students who have one or more updates.
    * @param studentIds student ids.
-   * @returns student record details.
+   * @returns student details.
    */
   async getStudentRecordsByStudentIds(
     studentIds: number[],
-  ): Promise<StudentRecord[]> {
+  ): Promise<StudentDetail[]> {
     const queryResult = await this.studentRepo
       .createQueryBuilder("student")
       .select([
@@ -150,10 +150,11 @@ export class SIMSToSFASService {
       })
       .getRawAndEntities();
 
-    return mapFromRawAndEntities<StudentRecord>(
+    return mapFromRawAndEntities<StudentDetail>(
       queryResult,
       "cslfOverawardTotal",
       "bcslOverawardTotal",
     );
   }
+  // TODO: SIMS to SFAS - Application and Restrictions part.
 }
