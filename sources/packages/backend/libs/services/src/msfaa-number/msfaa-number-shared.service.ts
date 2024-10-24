@@ -396,8 +396,6 @@ export class MSFAANumberSharedService {
     sfasMSFAANumber.dateSigned = getISODateOnlyString(
       sfasSignedMSFAA.latestSFASApplicationEndDate,
     );
-    sfasMSFAANumber.dateRequested = null;
-    sfasMSFAANumber.serviceProviderReceivedDate = null;
     sfasMSFAANumber.referenceApplication = { id: applicationId } as Application;
     sfasMSFAANumber.student = { id: studentId } as Student;
     sfasMSFAANumber.offeringIntensity = offeringIntensity;
