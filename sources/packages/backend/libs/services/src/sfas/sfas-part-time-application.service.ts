@@ -90,7 +90,7 @@ export class SFASPartTimeApplicationsService extends DataModelService<SFASPartTi
       },
       where: {
         individual: { student: { id: studentId }, msfaaNumber: Not(IsNull()) },
-        endDate: MoreThanOrEqual(getISODateOnlyString(minMSFAAValidDate)), // Only select endDate within 730 days.
+        endDate: MoreThanOrEqual(getISODateOnlyString(minMSFAAValidDate)),
       },
       order: {
         endDate: "DESC",
