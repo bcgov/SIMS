@@ -19,6 +19,10 @@ export abstract class SIMSToSFASBaseRecord implements FixedFormatFileLine {
    */
   protected readonly numberFiller = "0";
   /**
+   * File record date time format.
+   */
+  protected readonly dateTimeFormat = "YYYYMMDDHHmmss";
+  /**
    * Convert amount to fixed length text of 10 characters
    * where the first 8 characters are whole number and the last 2 characters are fraction.
    * e.g. `100` to `0000010000`(100.00).

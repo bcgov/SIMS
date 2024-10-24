@@ -48,9 +48,9 @@ export class SIMSToSFASProcessingService {
     // Append the students with student and student related data updates.
     // TODO: SIMS to SFAS - Append the student ids of students with updates in application and restriction related data.
     // When application and restriction updates are retrieved, the respective
-    // student ids of applications and restrictions should be appended.
-    simsToSFASStudents.append(studentIds);
-    const uniqueStudentIds = simsToSFASStudents.uniqueStudentIds;
+    // student ids of applications and restrictions should be appended.;
+    const uniqueStudentIds =
+      simsToSFASStudents.append(studentIds).uniqueStudentIds;
 
     // When there is no updates to process, log the summary and return.
     if (!uniqueStudentIds.length) {
@@ -101,7 +101,7 @@ export class SIMSToSFASProcessingService {
       `SIMS to SFAS file ${fileName} has been uploaded successfully.`,
     );
     // Create bridge file log to track the extraction date of the bridge file.
-    await this.simsToSFASService.createSIMSToSFASBridgeLog(
+    await this.simsToSFASService.logBridgeFileDetails(
       bridgeDataExtractedDate,
       fileName,
     );

@@ -23,7 +23,7 @@ export class SIMSToSFASFileLineBuilder {
     return this;
   }
   /**
-   * Append student file records.
+   * Append student file records after transforming them.
    * @param studentRecords student records.
    */
   appendStudentFileRecords(studentRecords: StudentDetail[]): this {

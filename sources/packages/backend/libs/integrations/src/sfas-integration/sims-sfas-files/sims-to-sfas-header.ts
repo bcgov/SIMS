@@ -32,7 +32,7 @@ export class SIMSToSFASHeader extends SIMSToSFASBaseRecord {
     record.append(this.recordTypeCode);
     record.append(this.originator);
     record.appendStringWithFiller(this.title, 40);
-    record.appendFormattedDate(this.creationDate);
+    record.appendDate(this.creationDate, this.dateTimeFormat);
     return record.toString();
   }
 }

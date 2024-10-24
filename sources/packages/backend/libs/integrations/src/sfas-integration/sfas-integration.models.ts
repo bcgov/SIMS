@@ -31,9 +31,14 @@ export interface SIMSToSFASProcessingResult {
  */
 export class SIMSToSFASStudents {
   private readonly studentIds: number[] = [];
-
-  append(studentIds: number[]): void {
+  /**
+   * Append the student ids.
+   * @param studentIds student ids
+   * @returns instance of the class for further appending.
+   */
+  append(studentIds: number[]): this {
     this.studentIds.push(...studentIds);
+    return this;
   }
 
   /**
@@ -60,8 +65,3 @@ export enum SIMSToSFASRecordTypeCodes {
   RestrictionDataRecord = "400",
   Footer = "999",
 }
-
-// Integration file constants.
-export const DATE_FORMAT = "YYYYMMDD";
-export const SPACE_FILLER = " ";
-export const NUMBER_FILLER = "0";

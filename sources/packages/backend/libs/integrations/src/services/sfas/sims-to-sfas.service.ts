@@ -30,7 +30,8 @@ export class SIMSToSFASService {
 
   /**
    * Get the latest bridge file log date.
-   * @returns latest bridge file log.
+   * When there is no log, null will be returned.
+   * @returns latest bridge file log date.
    */
   async getLatestBridgeFileLogDate(): Promise<Date | null> {
     const [latestBridgeFileLog] = await this.sfasBridgeLogRepo.find({
@@ -42,11 +43,11 @@ export class SIMSToSFASService {
   }
 
   /**
-   * Create bridge log for SIMS to SFAS.
+   * Log the details of bridge file that was sent to SFAS.
    * @param referenceDate date when the bridge file data was extracted.
    * @param fileName bridge file name.
    */
-  async createSIMSToSFASBridgeLog(
+  async logBridgeFileDetails(
     referenceDate: Date,
     fileName: string,
   ): Promise<void> {
@@ -156,5 +157,5 @@ export class SIMSToSFASService {
       "bcslOverawardTotal",
     );
   }
-  // TODO: SIMS to SFAS - Application and Restrictions part.
+  // TODO: SIMS to SFAS - Add methods to extract application and restriction data.
 }

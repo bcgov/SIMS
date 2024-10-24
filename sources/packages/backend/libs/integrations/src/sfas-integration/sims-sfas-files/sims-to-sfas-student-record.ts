@@ -49,6 +49,7 @@ export class SIMSToSFASStudentRecord extends SIMSToSFASBaseRecord {
   fullTimeMSFAANumber?: number;
   /**
    * The most recent, active Master Student Loan Agreement signed date for full time.
+   **There is no requirement currently to map this field.
    */
   fullTimeMSFAASignedDate?: Date;
   /**
