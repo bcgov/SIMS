@@ -17,6 +17,7 @@ import {
   DisabilityStatus,
   StudentRestriction,
   CASSupplier,
+  DisbursementOveraward,
 } from ".";
 import { SINValidation } from "./sin-validation.model";
 
@@ -130,4 +131,13 @@ export class Student extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   casSupplier?: CASSupplier;
+
+  /**
+   * Student overawards.
+   */
+  @OneToMany(() => DisbursementOveraward, (overaward) => overaward.student, {
+    eager: false,
+    cascade: false,
+  })
+  overawards?: DisbursementOveraward[];
 }

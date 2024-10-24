@@ -130,6 +130,7 @@ export class ConfigService {
   get sfasIntegration(): SFASIntegrationConfig {
     return this.getCachedConfig("sfasIntegrationConfig", {
       ftpReceiveFolder: process.env.SFAS_RECEIVE_FOLDER,
+      ftpSendFolder: process.env.SFAS_SEND_FOLDER,
     });
   }
 
