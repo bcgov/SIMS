@@ -210,8 +210,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    * Checks if the MSFAA number is still valid.
    * If the study period end date of the previously signed MSFAA is less than 2 years
    * when compared to current study period start date, then MSFAA is considered to be valid.
-   * @param previousSignedDisbursement previously signed disbursement.
-   * @param firstDisbursement first disbursement of the application.
+   * @param previousDisbursementStudyEndDate previously signed disbursement study end date.
+   * @param firstDisbursementStudyStartDate first disbursement study start date.
    * @returns whether the MSFAA Number is valid.
    */
   private async isMSFAANumberStillValid(
