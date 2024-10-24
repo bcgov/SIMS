@@ -30,7 +30,7 @@ export interface SIMSToSFASProcessingResult {
  * related data or restriction or restriction related data.
  */
 export class SIMSToSFASStudents {
-  private studentIds: number[] = [];
+  private readonly studentIds: number[] = [];
 
   append(studentIds: number[]): void {
     this.studentIds.push(...studentIds);

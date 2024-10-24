@@ -7,13 +7,13 @@ import { DisabilityStatus } from "@sims/sims-db";
 import { YNFlag } from "@sims/integrations/models";
 
 export class SIMSToSFASFileLineBuilder {
-  private fileLinesInternal: FixedFormatFileLine[] = [];
+  private readonly fileLinesInternal: FixedFormatFileLine[] = [];
 
   /**
    * Append the header record.
    * @param bridgeFileDate date when the bridge file data was extracted.
    */
-  appendHeader(bridgeFileDate: Date): SIMSToSFASFileLineBuilder {
+  appendHeader(bridgeFileDate: Date): this {
     const header = new SIMSToSFASHeader();
     header.recordTypeCode = SIMSToSFASRecordTypeCodes.Header;
     header.originator = "PSFS";
@@ -26,9 +26,7 @@ export class SIMSToSFASFileLineBuilder {
    * Append student file records.
    * @param studentRecords student records.
    */
-  appendStudentFileRecords(
-    studentRecords: StudentDetail[],
-  ): SIMSToSFASFileLineBuilder {
+  appendStudentFileRecords(studentRecords: StudentDetail[]): this {
     studentRecords.forEach((studentDetail) => {
       const studentFileRecord = new SIMSToSFASStudentRecord();
       studentFileRecord.recordTypeCode =
