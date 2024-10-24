@@ -12,7 +12,7 @@ import { CASIntegrationConfig, ConfigService } from "@sims/utilities/config";
 import { stringify } from "querystring";
 import {
   CustomNamedError,
-  convertToASCII,
+  convertToASCIIString,
   parseJSONError,
 } from "@sims/utilities";
 import { CAS_AUTH_ERROR } from "@sims/integrations/constants";
@@ -98,7 +98,7 @@ export class CASService {
     sin: string,
     lastName: string,
   ): Promise<CASSupplierResponse> {
-    const convertedLastName = convertToASCII(lastName).toUpperCase();
+    const convertedLastName = convertToASCIIString(lastName).toUpperCase();
     const url = `${this.casIntegrationConfig.baseUrl}/cfs/supplier/${convertedLastName}/lastname/${sin}/sin`;
     let response: { data: CASSupplierResponse };
     try {

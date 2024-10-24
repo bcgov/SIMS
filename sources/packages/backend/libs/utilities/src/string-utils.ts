@@ -32,11 +32,11 @@ const ASCII_INDIRECT_CONVERSIONS: Record<string, string> = {
  * Converts input into an ASCII 7 bit buffer replacing special characters
  * by equivalent ASCII characters when possible.
  * @param rawContent raw content in string format.
- * @returns a string of the input with extended ASCII characters (ISO-8859-1)
+ * @returns a buffer of the input with extended ASCII characters (ISO-8859-1)
  * converted to equivalent ASCII characters. If null or undefined is provided,
  * null will be returned.
  */
-export function convertToASCII(rawContent?: string): string | null {
+export function convertToASCII(rawContent?: string): Buffer | null {
   if (rawContent === null || rawContent === undefined) {
     return null;
   }
@@ -140,5 +140,17 @@ export function convertToASCII(rawContent?: string): string | null {
       }
     }
   }
-  return content.toString();
+  return content;
+}
+
+/**
+ * Converts input into an ASCII 7 bit buffer replacing special characters
+ * by equivalent ASCII characters when possible.
+ * @param rawContent raw content in string format.
+ * @returns a string of the input with extended ASCII characters (ISO-8859-1)
+ * converted to equivalent ASCII characters. If null or undefined is provided,
+ * null will be returned.
+ */
+export function convertToASCIIString(rawContent?: string): string | null {
+  return convertToASCII(rawContent)?.toString() ?? null;
 }

@@ -5,7 +5,7 @@ import { AddressInfo } from "@sims/sims-db";
 export const OTHER_COUNTRY = "other";
 // 'selectedCountry' in the student contact info will have the value 'canada',
 // when 'Canada' is selected.
-export const COUNTRY_CANADA = "canada";
+export const COUNTRY_CANADA = "Canada";
 
 /**
  * Inspects the address info to determine if the address is from Canada.
