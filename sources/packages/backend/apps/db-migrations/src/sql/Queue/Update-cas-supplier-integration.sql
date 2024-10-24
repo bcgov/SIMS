@@ -2,7 +2,7 @@ UPDATE
     sims.queue_configurations
 SET
     queue_configuration = '{
-        "cron": "0 19 * * 1-5",
+        "cron": "0 20 * * 1-5",
         "retry": 3,
         "cleanUpPeriod": 2592000000,
         "retryInterval": 180000,
