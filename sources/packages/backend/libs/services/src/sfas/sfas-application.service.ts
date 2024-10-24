@@ -1,7 +1,13 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, Brackets } from "typeorm";
+import { DataSource, Brackets, MoreThanOrEqual, Not, IsNull } from "typeorm";
 import { DataModelService, SFASApplication } from "@sims/sims-db";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import {
+  MAX_MSFAA_VALID_DAYS,
+  addDays,
+  getISODateOnlyString,
+} from "@sims/utilities";
+import { SFASSignedMSFAA } from ".";
 
 /**
  * Manages the data related to an individual/student in SFAS.
@@ -71,6 +77,48 @@ export class SFASApplicationService extends DataModelService<SFASApplication> {
       .where("sfasFTstudent.id = :studentId", { studentId })
       .getRawOne<{ sum?: number }>();
     return +(total?.sum ?? 0);
+  }
+
+  /**
+   * Fetch the valid MSFAA number from the latest
+   * SFAS full time application for the student
+   * which has the end date within 730 days.
+   * @param studentId student id.
+   * @returns SFASSignedMSFAA which contains the SFAS Signed MSFAA
+   * and latest application end date.
+   */
+  async getValidMSFAAFullTimeApplication(
+    studentId: number,
+  ): Promise<SFASSignedMSFAA | null> {
+    const minMSFAAValidDate = addDays(-MAX_MSFAA_VALID_DAYS);
+    const [sfasApplication] = await this.repo.find({
+      select: {
+        id: true,
+        endDate: true,
+        individual: {
+          id: true,
+          msfaaNumber: true,
+        },
+      },
+      relations: {
+        individual: true,
+      },
+      where: {
+        individual: { student: { id: studentId }, msfaaNumber: Not(IsNull()) },
+        endDate: MoreThanOrEqual(getISODateOnlyString(minMSFAAValidDate)),
+      },
+      order: {
+        endDate: "DESC",
+      },
+      take: 1,
+    });
+    if (sfasApplication) {
+      return {
+        sfasMSFAANumber: sfasApplication.individual.msfaaNumber,
+        latestSFASApplicationEndDate: sfasApplication.endDate,
+      } as SFASSignedMSFAA;
+    }
+    return null;
   }
 
   @InjectLogger()

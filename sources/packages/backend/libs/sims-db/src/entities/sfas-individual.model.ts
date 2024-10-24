@@ -1,6 +1,6 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
-import { BaseModel } from ".";
-import { TableNames } from "../constant";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
+import { BaseModel, Student } from ".";
+import { ColumnNames, TableNames } from "../constant";
 import { numericTransformer } from "@sims/sims-db/transformers/numeric.transformer";
 
 /**
@@ -211,4 +211,13 @@ export class SFASIndividual extends BaseModel {
     nullable: true,
   })
   partTimeMSFAAEffectiveDate?: string;
+  /**
+   * Student associated with this SFAS Individual.
+   */
+  @ManyToOne(() => Student, { eager: false, cascade: false, nullable: true })
+  @JoinColumn({
+    name: "student_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  student?: Student;
 }

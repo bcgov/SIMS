@@ -1,7 +1,13 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, Brackets } from "typeorm";
+import { DataSource, Brackets, MoreThanOrEqual, IsNull, Not } from "typeorm";
 import { DataModelService, SFASPartTimeApplications } from "@sims/sims-db";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import {
+  MAX_MSFAA_VALID_DAYS,
+  addDays,
+  getISODateOnlyString,
+} from "@sims/utilities";
+import { SFASSignedMSFAA } from ".";
 
 /**
  * Manages the part time application data related to an individual/student in SFAS.
@@ -57,6 +63,49 @@ export class SFASPartTimeApplicationsService extends DataModelService<SFASPartTi
       )
       .getOne();
   }
+
+  /**
+   * Fetch the valid MSFAA number from the latest
+   * SFAS part time application for the student
+   * which has the end date within 730 days.
+   * @param studentId student id.
+   * @returns SFASSignedMSFAA which contains the SFAS Signed MSFAA
+   * and latest application end date.
+   */
+  async getValidMSFAAPartTimeApplication(
+    studentId: number,
+  ): Promise<SFASSignedMSFAA | null> {
+    const minMSFAAValidDate = addDays(-MAX_MSFAA_VALID_DAYS);
+    const [sfasApplication] = await this.repo.find({
+      select: {
+        id: true,
+        endDate: true,
+        individual: {
+          id: true,
+          partTimeMSFAANumber: true,
+        },
+      },
+      relations: {
+        individual: true,
+      },
+      where: {
+        individual: { student: { id: studentId }, msfaaNumber: Not(IsNull()) },
+        endDate: MoreThanOrEqual(getISODateOnlyString(minMSFAAValidDate)),
+      },
+      order: {
+        endDate: "DESC",
+      },
+      take: 1,
+    });
+    if (sfasApplication) {
+      return {
+        sfasMSFAANumber: sfasApplication.individual.partTimeMSFAANumber,
+        latestSFASApplicationEndDate: sfasApplication.endDate,
+      } as SFASSignedMSFAA;
+    }
+    return null;
+  }
+
   @InjectLogger()
   logger: LoggerService;
 }

@@ -2,6 +2,7 @@ import { SFASIndividual } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
 import { DataSource } from "typeorm";
 import * as faker from "faker";
+import { createFakeStudent } from "@sims/test-utils/factories/student";
 
 /**
  * Create fake sfas individual.
@@ -12,16 +13,29 @@ import * as faker from "faker";
 function createFakeSFASIndividual(options?: {
   initialValues?: Partial<SFASIndividual>;
 }) {
+  const fakeMSFAANumber = faker.datatype
+    .number({
+      min: 1000000000,
+      max: 9999999999,
+    })
+    .toString();
+  const fakeId = faker.datatype.number({ min: 100000000, max: 999999999 });
+  const fakeSIN = faker.datatype
+    .number({ min: 100000000, max: 899999999 })
+    .toString();
+
   const sfasIndividual = new SFASIndividual();
-  sfasIndividual.id = faker.datatype.number({ min: 100000000, max: 999999999 });
+  sfasIndividual.id = options?.initialValues?.id ?? fakeId;
   sfasIndividual.birthDate =
     options?.initialValues?.birthDate ??
     getISODateOnlyString(faker.date.past(18));
+  sfasIndividual.msfaaNumber =
+    options?.initialValues?.msfaaNumber ?? fakeMSFAANumber;
+  sfasIndividual.partTimeMSFAANumber =
+    options?.initialValues?.partTimeMSFAANumber ?? fakeMSFAANumber;
   sfasIndividual.lastName =
     options?.initialValues?.lastName ?? faker.name.lastName();
-  sfasIndividual.sin =
-    options?.initialValues?.sin ??
-    faker.datatype.number({ min: 100000000, max: 899999999 }).toString();
+  sfasIndividual.sin = options?.initialValues?.sin ?? fakeSIN;
   sfasIndividual.unsuccessfulCompletion =
     options?.initialValues?.unsuccessfulCompletion ?? 0;
   sfasIndividual.neb = options?.initialValues?.neb ?? 0;
@@ -34,6 +48,8 @@ function createFakeSFASIndividual(options?: {
   sfasIndividual.grantOveraward = options?.initialValues?.grantOveraward ?? 0;
   sfasIndividual.withdrawals = options?.initialValues?.withdrawals ?? 0;
   sfasIndividual.extractedAt = new Date();
+  sfasIndividual.student =
+    options?.initialValues?.student ?? createFakeStudent();
   return sfasIndividual;
 }
 
