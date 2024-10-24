@@ -214,10 +214,10 @@ export class SFASIndividual extends BaseModel {
   /**
    * Student associated with this SFAS Individual.
    */
-  @ManyToOne(() => Student, { eager: false, cascade: false, nullable: false })
+  @ManyToOne(() => Student, { eager: false, cascade: false, nullable: true })
   @JoinColumn({
     name: "student_id",
     referencedColumnName: ColumnNames.ID,
   })
-  student: Student;
+  student?: Student;
 }
