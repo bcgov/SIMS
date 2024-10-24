@@ -45,19 +45,22 @@ export class SIMSToSFASStudentRecord extends SIMSToSFASBaseRecord {
   ppdStatusEffectiveDate?: Date;
   /**
    * The most recent, active Master Student Loan Agreement Number for full time.
+   ** There is no requirement currently to map this field. It is populated with filler values.
    */
   fullTimeMSFAANumber?: number;
   /**
    * The most recent, active Master Student Loan Agreement signed date for full time.
-   **There is no requirement currently to map this field.
+   ** There is no requirement currently to map this field. It is populated with filler values.
    */
   fullTimeMSFAASignedDate?: Date;
   /**
    * The most recent, active Master Student Loan Agreement Number for part time.
+   ** There is no requirement currently to map this field. It is populated with filler values.
    */
   partTimeMSFAANumber?: number;
   /**
    * The most recent, active Master Student Loan Agreement signed date for part time.
+   ** There is no requirement currently to map this field. It is populated with filler values.
    */
   partTimeMSFAASignedDate?: Date;
   /**
@@ -78,6 +81,7 @@ export class SIMSToSFASStudentRecord extends SIMSToSFASBaseRecord {
   fullTimeBCSLOveraward?: number;
   /**
    * BC Grant total overaward balance.
+   ** There is no requirement currently to map this field. It is populated with filler values.
    */
   grantOveraward?: number;
 
