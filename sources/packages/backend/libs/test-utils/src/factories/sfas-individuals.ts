@@ -2,6 +2,7 @@ import { SFASIndividual } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
 import { DataSource } from "typeorm";
 import * as faker from "faker";
+import { createFakeStudent } from "@sims/test-utils/factories/student";
 
 /**
  * Create fake sfas individual.
@@ -47,6 +48,8 @@ function createFakeSFASIndividual(options?: {
   sfasIndividual.grantOveraward = options?.initialValues?.grantOveraward ?? 0;
   sfasIndividual.withdrawals = options?.initialValues?.withdrawals ?? 0;
   sfasIndividual.extractedAt = new Date();
+  sfasIndividual.student =
+    options?.initialValues?.student ?? createFakeStudent();
   return sfasIndividual;
 }
 
