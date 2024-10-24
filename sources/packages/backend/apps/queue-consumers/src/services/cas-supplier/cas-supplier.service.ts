@@ -8,12 +8,7 @@ import {
   formatAddress,
   formatPostalCode,
 } from "@sims/integrations/cas";
-import {
-  CustomNamedError,
-  isAddressFromCanada,
-  ParallelIntensity,
-  processInParallel,
-} from "@sims/utilities";
+import { CustomNamedError, isAddressFromCanada } from "@sims/utilities";
 import { CAS_AUTH_ERROR } from "@sims/integrations/constants";
 import {
   CASEvaluationResult,
@@ -28,7 +23,6 @@ import {
   CASActiveSupplierFoundProcessor,
   CASEvaluationResultProcessor,
   CASActiveSupplierAndSiteFoundProcessor,
-  ProcessorResult,
 } from "./cas-evaluation-result-processor";
 
 @Injectable()
@@ -54,9 +48,6 @@ export class CASSupplierIntegrationService {
     parentProcessSummary: ProcessSummary,
     studentSuppliers: StudentSupplierToProcess[],
   ): Promise<number> {
-    // Force the CAS token to be acquired before starting the process.
-    await this.casService.getToken();
-    // Process each supplier in parallel.
     let suppliersUpdated = 0;
     const summary = new ProcessSummary();
     parentProcessSummary.children(summary);
@@ -78,60 +69,45 @@ export class CASSupplierIntegrationService {
    * code associated.
    * @param studentSuppliers pending CAS suppliers.
    * @param parentProcessSummary parent log summary.
-   * @returns number of updated suppliers.
+   * @returns number of updated records.
    */
   private async processSuppliers(
     studentSuppliers: StudentSupplierToProcess[],
     parentProcessSummary: ProcessSummary,
   ): Promise<number> {
-    // Process each supplier in parallel.
-    const processesResults = await processInParallel(
-      (studentSupplier) =>
-        this.processSupplier(studentSupplier, parentProcessSummary),
-      studentSuppliers,
-      ParallelIntensity.High,
-    );
-    // Get the number of updated suppliers.
-    const updatedSuppliers = processesResults.filter(
-      (processResult) => !!processResult?.isSupplierUpdated,
-    ).length;
-    return updatedSuppliers;
-  }
-
-  /**
-   * Process a single student supplier.
-   * This method will not throw an error if the process fails.
-   * @param studentSupplier student supplier to be processed.
-   * @param parentProcessSummary parent log summary.
-   * @returns processor result or null if the process fails.
-   */
-  private async processSupplier(
-    studentSupplier: StudentSupplierToProcess,
-    parentProcessSummary: ProcessSummary,
-  ): Promise<ProcessorResult | null> {
-    const summary = new ProcessSummary();
-    parentProcessSummary.children(summary);
-    // Log information about the student supplier being processed.
-    summary.info(
-      `Processing student CAS supplier ID: ${studentSupplier.casSupplierID}.`,
-    );
-    try {
-      const evaluationResult = await this.evaluateCASSupplier(studentSupplier);
-      summary.info(`CAS evaluation result status: ${evaluationResult.status}.`);
-      const processor = this.getCASSupplierProcess(evaluationResult.status);
-      // Execute the process.
-      const processResult = await processor.process(
-        studentSupplier,
-        evaluationResult,
-        summary,
+    let suppliersUpdated = 0;
+    for (const studentSupplier of studentSuppliers) {
+      const summary = new ProcessSummary();
+      parentProcessSummary.children(summary);
+      summary.info(
+        `Processing student CAS supplier ID: ${studentSupplier.casSupplierID}.`,
       );
-      return processResult;
-    } catch (error: unknown) {
-      // Log the error and allow the process to continue checking the
-      // remaining student suppliers.
-      summary.error("Unexpected error while processing supplier.", error);
-      return null;
+      try {
+        // Check the current status of the student data and its supplier information.
+        const evaluationResult = await this.evaluateCASSupplier(
+          studentSupplier,
+        );
+        summary.info(
+          `CAS evaluation result status: ${evaluationResult.status}.`,
+        );
+        // Decide the process to be executed.
+        const processor = this.getCASSupplierProcess(evaluationResult.status);
+        // Execute the process.
+        const processResult = await processor.process(
+          studentSupplier,
+          evaluationResult,
+          summary,
+        );
+        if (processResult.isSupplierUpdated) {
+          suppliersUpdated++;
+        }
+      } catch (error: unknown) {
+        // Log the error and allow the process to continue checking the
+        // remaining student suppliers.
+        summary.error("Unexpected error while processing supplier.", error);
+      }
     }
+    return suppliersUpdated;
   }
 
   /**

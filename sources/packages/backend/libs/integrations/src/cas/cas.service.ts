@@ -38,12 +38,10 @@ export class CASService {
   }
 
   /**
-   * Request to login on CAS API and return CAS auth details with the
-   * token used for authentication in all other requests.
-   * The token is cached for future requests.
+   * Request to login on CAS API and return CAS auth details with the token used for authentication in all other requests.
    * @returns CAS auth details.
    */
-  async getToken(): Promise<CASAuthDetails> {
+  private async getToken(): Promise<CASAuthDetails> {
     if (this.cachedCASToken && !this.cachedCASToken.requiresRenewal()) {
       // Check if there is a cached token and it is not about to expire.
       return this.cachedCASToken.authDetails;
