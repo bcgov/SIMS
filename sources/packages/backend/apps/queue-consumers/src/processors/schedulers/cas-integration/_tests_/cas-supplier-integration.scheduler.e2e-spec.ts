@@ -15,7 +15,6 @@ import {
 } from "../../../../../test/helpers";
 import { ContactInfo, SupplierStatus } from "@sims/sims-db";
 import {
-  CAS_LOGON_MOCKED_RESULT,
   resetCASServiceMock,
   SUPPLIER_INFO_FROM_CAS_MOCKED_RESULT,
 } from "../../../../../test/helpers/mock-utils/cas-service.mock";
@@ -84,8 +83,6 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
         "CAS supplier integration executed.",
       ]),
     ).toBe(true);
-
-    expect(casServiceMock.logon).not.toHaveBeenCalled();
     expect(casServiceMock.getSupplierInfoFromCAS).not.toHaveBeenCalled();
   });
 
@@ -124,17 +121,13 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     expect(
       mockedJob.containLogMessages([
         "Found 1 records to be updated.",
-        "Logon successful.",
         `Processing student CAS supplier ID: ${savedCASSupplier.id}.`,
         `CAS evaluation result status: ${CASEvaluationStatus.ActiveSupplierAndSiteFound}.`,
         "Active CAS supplier and site found.",
         "Updated CAS supplier for the student.",
       ]),
     ).toBe(true);
-
-    expect(casServiceMock.logon).toHaveBeenCalled();
     expect(casServiceMock.getSupplierInfoFromCAS).toHaveBeenCalledWith(
-      CAS_LOGON_MOCKED_RESULT.access_token,
       student.sinValidation.sin,
       student.user.lastName,
     );
@@ -182,12 +175,11 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       "Pending suppliers to update found: 1.",
       "Records updated: 1.",
       "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-      "Error(s): 0, Warning(s): 1, Info: 12",
+      "Error(s): 0, Warning(s): 1, Info: 10",
     ]);
     expect(
       mockedJob.containLogMessages([
         "Found 1 records to be updated.",
-        "Logon successful.",
         `Not possible to retrieve CAS supplier information because some pre-validations were not fulfilled. Reason(s): ${PreValidationsFailedReason.GivenNamesNotPresent}.`,
       ]),
     ).toBe(true);
@@ -247,12 +239,11 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       "Pending suppliers to update found: 1.",
       "Records updated: 1.",
       "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-      "Error(s): 0, Warning(s): 1, Info: 12",
+      "Error(s): 0, Warning(s): 1, Info: 10",
     ]);
     expect(
       mockedJob.containLogMessages([
         "Found 1 records to be updated.",
-        "Logon successful.",
         `Not possible to retrieve CAS supplier information because some pre-validations were not fulfilled. Reason(s): ${PreValidationsFailedReason.NonCanadianAddress}.`,
       ]),
     ).toBe(true);
@@ -311,7 +302,6 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       expect(
         mockedJob.containLogMessages([
           "Found 1 records to be updated.",
-          "Logon successful.",
           `Processing student CAS supplier ID: ${savedCASSupplier.id}.`,
           `CAS evaluation result status: ${CASEvaluationStatus.NotFound}.`,
           `No active CAS supplier found. Reason: ${NotFoundReason.SupplierNotFound}.`,
@@ -375,4 +365,68 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       );
     },
   );
+
+  it("Should throw an error for the first student and process the second one when the CAS API call failed for the first student but worked for the second one.", async () => {
+    // Arrange
+    // Create two mocks where the first one will throw an error
+    // and the second one is expected to work.
+    casServiceMock.getSupplierInfoFromCAS = jest
+      .fn()
+      .mockRejectedValueOnce("Unknown error")
+      .mockResolvedValue(
+        Promise.resolve(createFakeCASNotFoundSupplierResponse()),
+      );
+    // Mock to be also used for processing the second student.
+    casServiceMock.createSupplierAndSite = jest.fn(() =>
+      Promise.resolve(createFakeCASCreateSupplierAndSiteResponse()),
+    );
+    // Student CAS pending request expected to fail.
+    const savedCASSupplierToFail = await saveFakeCASSupplier(db);
+    // Student CAS pending request expected to succeed.
+    const studentToSucceed = await saveFakeStudent(db.dataSource, undefined, {
+      initialValue: {
+        contactInfo: {
+          address: {
+            addressLine1: "3350 Douglas St",
+            city: "Victoria",
+            country: "Canada",
+            selectedCountry: COUNTRY_CANADA,
+            provinceState: "BC",
+            postalCode: "V8Z 7X9",
+          },
+        } as ContactInfo,
+      },
+    });
+    const savedCASSupplierToSucceed = await saveFakeCASSupplier(db, {
+      student: studentToSucceed,
+    });
+
+    // Queued job.
+    const mockedJob = mockBullJob<void>();
+
+    // Act
+    await expect(
+      processor.processCASSupplierInformation(mockedJob.job),
+    ).rejects.toStrictEqual(
+      new Error(
+        "One or more errors were reported during the process, please see logs for details.",
+      ),
+    );
+
+    // Assert
+    expect(
+      mockedJob.containLogMessages([
+        "Executing CAS supplier integration...",
+        "Found 2 records to be updated.",
+        `Processing student CAS supplier ID: ${savedCASSupplierToFail.id}.`,
+        'Unexpected error while processing supplier. "Unknown error"',
+        `Processing student CAS supplier ID: ${savedCASSupplierToSucceed.id}.`,
+        `CAS evaluation result status: ${CASEvaluationStatus.NotFound}.`,
+        `No active CAS supplier found. Reason: ${NotFoundReason.SupplierNotFound}.`,
+        "Created supplier and site on CAS.",
+        "Updated CAS supplier and site for the student.",
+        "CAS supplier integration executed.",
+      ]),
+    ).toBe(true);
+  });
 });

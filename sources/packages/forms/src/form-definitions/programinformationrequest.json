@@ -1190,7 +1190,7 @@
                   "value": ""
                 }
               ],
-              "content": "<div><Strong>Course name</Strong></div><div>{{ row.courseName }} {{ row.courseCode }}</div>\n",
+              "content": "<strong>Course name</strong><br/>{{ row.courseName }} {{ row.courseCode }}",
               "refreshOnChange": false,
               "key": "html",
               "type": "htmlelement",
@@ -1266,7 +1266,7 @@
                   "value": ""
                 }
               ],
-              "content": "<div><Strong>Course dates</Strong></div>\n<div>{{ row.courseStartDate }} - {{ row.courseEndDate }}</div>\n",
+              "content": "<strong>Course dates</strong><br/>{{ row.courseStartDate }} - {{ row.courseEndDate }}",
               "refreshOnChange": false,
               "key": "html1",
               "type": "htmlelement",

@@ -7,6 +7,7 @@ export class CASSupplierResponse {
   offset: number;
   count: number;
 }
+
 export class CASSupplierResponseItem {
   suppliernumber: string;
   suppliername: string;

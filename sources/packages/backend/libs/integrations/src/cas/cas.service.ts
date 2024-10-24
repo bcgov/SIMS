@@ -12,21 +12,24 @@ import { CASIntegrationConfig, ConfigService } from "@sims/utilities/config";
 import { stringify } from "querystring";
 import {
   CustomNamedError,
-  convertToASCII,
+  convertToASCIIString,
   parseJSONError,
 } from "@sims/utilities";
 import { CAS_AUTH_ERROR } from "@sims/integrations/constants";
 import { InjectLogger } from "@sims/utilities/logger";
 import {
+  CASCachedAuthDetails,
   formatAddress,
   formatCity,
   formatPostalCode,
   formatUserName,
-} from "@sims/integrations/cas";
+} from ".";
 
 @Injectable()
 export class CASService {
+  private cachedCASToken: CASCachedAuthDetails;
   private readonly casIntegrationConfig: CASIntegrationConfig;
+
   constructor(
     config: ConfigService,
     private readonly httpService: HttpService,
@@ -38,7 +41,11 @@ export class CASService {
    * Request to login on CAS API and return CAS auth details with the token used for authentication in all other requests.
    * @returns CAS auth details.
    */
-  async logon(): Promise<CASAuthDetails> {
+  private async getToken(): Promise<CASAuthDetails> {
+    if (this.cachedCASToken && !this.cachedCASToken.requiresRenewal()) {
+      // Check if there is a cached token and it is not about to expire.
+      return this.cachedCASToken.authDetails;
+    }
     const url = `${this.casIntegrationConfig.baseUrl}/oauth/token`;
     const auth = Buffer.from(
       `${this.casIntegrationConfig.clientCredential.clientId}:${this.casIntegrationConfig.clientCredential.clientSecret}`,
@@ -54,7 +61,9 @@ export class CASService {
     const data = stringify(body);
     try {
       const response = await this.httpService.axiosRef.post(url, data, config);
-      return response.data;
+      // Cache the token for future requests.
+      this.cachedCASToken = new CASCachedAuthDetails(response.data);
+      return this.cachedCASToken.authDetails;
     } catch (error: unknown) {
       this.logger.error(
         `Error while logging on CAS API. ${parseJSONError(error)}`,
@@ -67,6 +76,18 @@ export class CASService {
   }
 
   /**
+   * Get authenticated header to execute API calls.
+   * @returns authenticated header configuration.
+   */
+  private async getAuthConfig(): Promise<AxiosRequestConfig> {
+    const auth = await this.getToken();
+    const headers = {
+      Authorization: `Bearer ${auth.access_token}`,
+    };
+    return { headers };
+  }
+
+  /**
    * Requests supplier information from CAS API.
    * @param token auth token.
    * @param sin student's sin.
@@ -74,20 +95,14 @@ export class CASService {
    * @returns CAS supplier response.
    */
   async getSupplierInfoFromCAS(
-    token: string,
     sin: string,
     lastName: string,
   ): Promise<CASSupplierResponse> {
-    const convertedLastName = convertToASCII(lastName).toUpperCase();
+    const convertedLastName = convertToASCIIString(lastName).toUpperCase();
     const url = `${this.casIntegrationConfig.baseUrl}/cfs/supplier/${convertedLastName}/lastname/${sin}/sin`;
     let response: { data: CASSupplierResponse };
     try {
-      const headers = {
-        Authorization: `Bearer ${token}`,
-      };
-      const config: AxiosRequestConfig = {
-        headers,
-      };
+      const config = await this.getAuthConfig();
       response = await this.httpService.axiosRef.get(url, config);
     } catch (error: unknown) {
       throw new Error("Unexpected error while requesting supplier.", {
@@ -104,16 +119,11 @@ export class CASService {
    * @returns submitted data and CAS response.
    */
   async createSupplierAndSite(
-    token: string,
     supplierData: CreateSupplierAndSiteData,
   ): Promise<CreateSupplierAndSiteResponse> {
     const url = `${this.casIntegrationConfig.baseUrl}/cfs/supplier/`;
     try {
-      const config: AxiosRequestConfig = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
+      const config = await this.getAuthConfig();
       const submittedData: CreateSupplierAndSiteSubmittedData = {
         SupplierName: formatUserName(
           supplierData.lastName,

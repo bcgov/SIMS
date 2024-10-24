@@ -2,8 +2,8 @@
   <v-row :justify="justify" class="mt-2 mb-1">
     <v-btn
       :disabled="processing"
-      color="primary"
-      variant="outlined"
+      :color="secondaryButtonColor"
+      :variant="secondaryButtonVariant"
       class="mr-2"
       v-if="showSecondaryButton"
       data-cy="secondaryFooterButton"
@@ -27,7 +27,7 @@
   </v-row>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, PropType } from "vue";
 export default defineComponent({
   emits: ["primaryClick", "secondaryClick"],
   props: {
@@ -60,6 +60,24 @@ export default defineComponent({
       type: String,
       required: false,
       default: "primary",
+    },
+    secondaryButtonColor: {
+      type: String,
+      required: false,
+      default: "primary",
+    },
+    secondaryButtonVariant: {
+      type: String as PropType<
+        | "elevated"
+        | "outlined"
+        | "text"
+        | "flat"
+        | "tonal"
+        | "plain"
+        | undefined
+      >,
+      required: false,
+      default: "outlined",
     },
     justify: {
       type: String,

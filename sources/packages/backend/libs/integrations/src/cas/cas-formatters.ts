@@ -1,4 +1,4 @@
-import { convertToASCII } from "@sims/utilities";
+import { convertToASCIIString } from "@sims/utilities";
 
 const CAS_SUPPLIER_NAME_MAX_LENGTH = 80;
 const CAS_ADDRESS_MAX_LENGTH = 35;
@@ -17,7 +17,7 @@ export function formatUserName(firstName: string, lastName: string): string {
     0,
     CAS_SUPPLIER_NAME_MAX_LENGTH,
   );
-  return convertToASCII(formattedName).toUpperCase();
+  return convertToASCIIString(formattedName).toUpperCase();
 }
 
 /**
@@ -27,7 +27,7 @@ export function formatUserName(firstName: string, lastName: string): string {
  * @returns formatted address.
  */
 export function formatAddress(address: string): string {
-  return convertToASCII(
+  return convertToASCIIString(
     address.substring(0, CAS_ADDRESS_MAX_LENGTH),
   ).toUpperCase();
 }

@@ -25,7 +25,7 @@ import {
 } from "@sims/sims-db";
 import { TestingModule } from "@nestjs/testing";
 import { getUserFullName } from "../../../../utilities";
-import { getDateOnlyFormat } from "@sims/utilities";
+import { getDateOnlyFullMonthFormat } from "@sims/utilities";
 
 describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
   let app: INestApplication;
@@ -120,14 +120,16 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
       programName: assessment.offering.educationProgram.name,
       locationName: assessment.offering.institutionLocation.name,
       offeringIntensity: OfferingIntensity.partTime,
-      offeringStudyEndDate: getDateOnlyFormat(assessment.offering.studyEndDate),
-      offeringStudyStartDate: getDateOnlyFormat(
+      offeringStudyEndDate: getDateOnlyFullMonthFormat(
+        assessment.offering.studyEndDate,
+      ),
+      offeringStudyStartDate: getDateOnlyFullMonthFormat(
         assessment.offering.studyStartDate,
       ),
       eligibleAmount: 2750,
       disbursement: {
         disbursement1COEStatus: newAssessmentDisbursement.coeStatus,
-        disbursement1Date: getDateOnlyFormat(
+        disbursement1Date: getDateOnlyFullMonthFormat(
           newAssessmentDisbursement.disbursementDate,
         ),
         disbursement1Id: newAssessmentDisbursement.id,
@@ -144,6 +146,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
         disbursement1cslf: 1250,
         disbursement1csgp: 1500,
       },
+      offeringName: assessment.offering.name,
     };
     // Act/Assert
     await request(app.getHttpServer())

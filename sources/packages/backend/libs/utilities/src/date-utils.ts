@@ -20,6 +20,7 @@ dayjs.extend(isSameOrAfter);
 
 export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
 export const DATE_ONLY_FORMAT = "MMM DD YYYY";
+export const DATE_ONLY_FULL_MONTH_FORMAT = "MMMM D, YYYY";
 export const DATE_TIME_FORMAT = "YYYY-MM-DD HH:mm:ss";
 export const TIMESTAMP_CONTINUOUS_FORMAT = "YYYY-MM-DD_HH.mm.ss";
 export const TIMESTAMP_CONTINUOUS_EXTENDED_FORMAT = "YYYYMMDD-HHmmssSSS";
@@ -167,6 +168,20 @@ export function getISODateOnlyString(date?: Date | string): string | null {
 export function getDateOnlyFormat(date?: string | Date): string | undefined {
   if (date) {
     return dayjs(date).format(DATE_ONLY_FORMAT);
+  }
+  return undefined;
+}
+
+/**
+ * Get the date formatted as date only with the full month.
+ * @param date date to be formatted.
+ * @returns formatted date.
+ */
+export function getDateOnlyFullMonthFormat(
+  date?: string | Date,
+): string | undefined {
+  if (date) {
+    return dayjs(date).format(DATE_ONLY_FULL_MONTH_FORMAT);
   }
   return undefined;
 }
