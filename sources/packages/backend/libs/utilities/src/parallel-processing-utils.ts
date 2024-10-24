@@ -1,4 +1,19 @@
-import * as os from "os";
+/**
+ * Number of parallel processes allowed to be started at same time.
+ */
+export enum ParallelIntensity {
+  /**
+   * Used for regular processes that can be executed in parallel where the
+   * waiting time is expected to be low, for instance, for regular quick
+   * DB access.
+   */
+  Regular = 2,
+  /**
+   * Used for processes that need wait more time allowing more
+   * parallelism, for instance, slow third-party API operations.
+   */
+  High = 4,
+}
 
 /**
  * Execute processes in parallel during processing of high volume
@@ -12,7 +27,7 @@ import * as os from "os";
 export const processInParallel = async <P, I>(
   createPromise: (input: I) => Promise<P>,
   inputs: I[],
-  maxParallelRequests = os.cpus().length,
+  maxParallelRequests: ParallelIntensity = ParallelIntensity.Regular,
 ): Promise<P[]> => {
   const resolvedResponses: P[] = [];
 
