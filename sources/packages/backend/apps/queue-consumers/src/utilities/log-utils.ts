@@ -55,7 +55,7 @@ export function getSuccessMessageWithAttentionCheck(
   processSummary: ProcessSummary,
   options?: { throwOnError?: boolean },
 ): string[] {
-  const throwOnError = options.throwOnError ?? false;
+  const throwOnError = options?.throwOnError ?? false;
   const message: string[] = [];
   message.push(...successMessages);
   const logsSum = processSummary.getLogLevelSum();
