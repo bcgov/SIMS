@@ -106,8 +106,8 @@ export class SIMSToSFASStudentRecord extends SIMSToSFASBaseRecord {
     record.appendOptionalFormattedDate(this.fullTimeMSFAASignedDate);
     record.appendOptionalNumberWithFiller(this.partTimeMSFAANumber, 10);
     record.appendOptionalFormattedDate(this.partTimeMSFAASignedDate);
-    record.appendOptionalStringWithFiller(this.casSupplierNumber, 10);
-    record.appendOptionalStringWithFiller(this.casSiteNumber, 10);
+    record.appendOptionalStringWithFiller(this.casSupplierNumber, 7);
+    record.appendOptionalStringWithFiller(this.casSiteNumber, 3);
     record.append(this.convertToAmountText(this.fullTimeCSLOveraward));
     record.append(this.convertToAmountText(this.fullTimeBCSLOveraward));
     record.append(this.convertToAmountText(this.grantOveraward));
