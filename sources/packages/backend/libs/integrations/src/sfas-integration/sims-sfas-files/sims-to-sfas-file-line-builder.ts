@@ -60,7 +60,7 @@ export class SIMSToSFASFileLineBuilder {
         ? +studentDetail.cslfOverawardTotal
         : 0;
       studentFileRecord.fullTimeBCSLOveraward = studentDetail.bcslOverawardTotal
-        ? +studentDetail.cslfOverawardTotal
+        ? +studentDetail.bcslOverawardTotal
         : 0;
       this.fileLinesInternal.push(studentFileRecord);
     });
