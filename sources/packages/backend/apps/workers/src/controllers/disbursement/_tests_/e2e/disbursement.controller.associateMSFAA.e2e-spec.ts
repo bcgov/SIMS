@@ -239,8 +239,8 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
 
   it("Should create a new MSFAA number for part-time applications by creating and activating in SIMS when MSFAA is not found or invalid SFAS application offering end date.", async () => {
     // Arrange
-    const firstLegacyApplicationStartDate = addDays(-800);
-    const firstLegacyApplicationEndDate = addDays(-732);
+    const firstLegacyApplicationStartDate = addDays(-MAX_MSFAA_VALID_DAYS + 10);
+    const firstLegacyApplicationEndDate = addDays(-MAX_MSFAA_VALID_DAYS + 2);
 
     // Create student and save fake application with disbursements.
     const student = await saveFakeStudent(db.dataSource);
@@ -392,8 +392,8 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
 
   it("Should create new MSFAA Number for full applications by creating and activating in SIMS when MSFAA is not found or invalid SFAS application offering end date.", async () => {
     // Arrange
-    const firstLegacyApplicationStartDate = addDays(-800);
-    const firstLegacyApplicationEndDate = addDays(-732);
+    const firstLegacyApplicationStartDate = addDays(-MAX_MSFAA_VALID_DAYS + 10);
+    const firstLegacyApplicationEndDate = addDays(-MAX_MSFAA_VALID_DAYS + 2);
 
     // Create student and save fake application with disbursements.
     const student = await saveFakeStudent(db.dataSource);

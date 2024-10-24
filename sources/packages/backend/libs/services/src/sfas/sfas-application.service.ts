@@ -89,7 +89,7 @@ export class SFASApplicationService extends DataModelService<SFASApplication> {
    */
   async getValidMSFAAFullTimeApplication(
     studentId: number,
-  ): Promise<SFASSignedMSFAA> {
+  ): Promise<SFASSignedMSFAA | null> {
     const minMSFAAValidDate = addDays(-MAX_MSFAA_VALID_DAYS);
     const [sfasApplication] = await this.repo.find({
       select: {

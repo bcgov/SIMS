@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, Brackets, MoreThanOrEqual } from "typeorm";
+import { DataSource, Brackets, MoreThanOrEqual, IsNull, Not } from "typeorm";
 import { DataModelService, SFASPartTimeApplications } from "@sims/sims-db";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
@@ -63,6 +63,7 @@ export class SFASPartTimeApplicationsService extends DataModelService<SFASPartTi
       )
       .getOne();
   }
+
   /**
    * Fetch the valid MSFAA number from the latest
    * SFAS part time application for the student
@@ -88,7 +89,7 @@ export class SFASPartTimeApplicationsService extends DataModelService<SFASPartTi
         individual: true,
       },
       where: {
-        individual: { student: { id: studentId } },
+        individual: { student: { id: studentId }, msfaaNumber: Not(IsNull()) },
         endDate: MoreThanOrEqual(getISODateOnlyString(minMSFAAValidDate)), // Only select endDate within 730 days.
       },
       order: {
