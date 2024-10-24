@@ -380,33 +380,14 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     casServiceMock.createSupplierAndSite = jest.fn(() =>
       Promise.resolve(createFakeCASCreateSupplierAndSiteResponse()),
     );
-    // Created a student with same address line 1 and postal code from the expected CAS mocked result.
-    // Postal code has a white space that is expected to be removed.
-    const studentToFail = await saveFakeStudent(db.dataSource, undefined, {
-      initialValue: {
-        contactInfo: {
-          address: {
-            addressLine1: "3350 Douglas ST",
-            city: "Victoria",
-            country: "Canada",
-            selectedCountry: COUNTRY_CANADA,
-            provinceState: "BC",
-            postalCode: "V8Z 7X9",
-          },
-        } as ContactInfo,
-      },
-    });
-    const savedCASSupplierToFail = await saveFakeCASSupplier(db, {
-      student: studentToFail,
-    });
-
-    // Created a student with same address line 1 and postal code from the expected CAS mocked result.
-    // Postal code has a white space that is expected to be removed.
+    // Student CAS pending request expected to fail.
+    const savedCASSupplierToFail = await saveFakeCASSupplier(db);
+    // Student CAS pending request expected to succeed.
     const studentToSucceed = await saveFakeStudent(db.dataSource, undefined, {
       initialValue: {
         contactInfo: {
           address: {
-            addressLine1: "3350 DOUGLAS ST",
+            addressLine1: "3350 Douglas St",
             city: "Victoria",
             country: "Canada",
             selectedCountry: COUNTRY_CANADA,
