@@ -5,7 +5,7 @@
       v-if="isSecondDisbursementAvailable"
       class="category-header-medium secondary-color my-3"
     >
-      First Payment
+      First disbursement
     </h3>
     <v-row>
       <v-col>
@@ -141,7 +141,9 @@
   </div>
   <!-- Estimated and actual award details of second disbursement. -->
   <div v-if="isSecondDisbursementAvailable">
-    <h3 class="category-header-medium secondary-color my-3">Second Payment</h3>
+    <h3 class="category-header-medium secondary-color my-3">
+      Second disbursement
+    </h3>
     <v-row>
       <v-col>
         <content-group>

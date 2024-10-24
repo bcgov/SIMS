@@ -9,7 +9,7 @@
     <tbody>
       <tr v-for="award in awards" :key="award.awardType">
         <td>
-          {{ award.awardType }}
+          {{ award.awardTypeDisplay }}
           <tooltip-icon>{{ award.description }}</tooltip-icon>
         </td>
         <td>
@@ -24,6 +24,7 @@ import { PropType, defineComponent, computed } from "vue";
 import { OfferingIntensity } from "@/types";
 import { AWARDS, AwardDetail } from "@/constants/award-constants";
 import { DynamicAwardValue } from "@/services/http/dto";
+import { useFormatters } from "@/composables";
 
 export default defineComponent({
   props: {
@@ -47,17 +48,21 @@ export default defineComponent({
         (award) => award.offeringIntensity === props.offeringIntensity,
       ),
     );
+    const { getFormattedMoneyValue } = useFormatters();
 
     const getAwardValue = (awardType: string): string | number | Date => {
-      const awardValue =
-        props.awardDetails[`${props.identifier}${awardType.toLowerCase()}`];
+      const awardValue = props.awardDetails[
+        `${props.identifier}${awardType.toLowerCase()}`
+      ] as number;
       // If the award is defined but no values are present it means that a receipt value is missing.
       if (awardValue === null) {
         return "-";
       }
       // If the award in not defined at all it means that the award is not eligible and it was not
       // part of the disbursement calculations output.
-      return awardValue ?? "(Not eligible)";
+      return awardValue === undefined
+        ? "(Not eligible)"
+        : getFormattedMoneyValue(awardValue);
     };
 
     return {
