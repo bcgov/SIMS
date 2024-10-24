@@ -1610,7 +1610,7 @@
               "key": "decreaseInPartnerIncomePanelContent3",
               "label": "Content",
               "input": false,
-              "tag": "p",
+              "tag": "div",
               "attrs": [
                 {
                   "value": "",
@@ -1635,7 +1635,7 @@
               "key": "decreaseInPartnerIncomePanelContent4",
               "label": "Content",
               "input": false,
-              "tag": "p",
+              "tag": "div",
               "attrs": [
                 {
                   "value": "",
