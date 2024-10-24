@@ -1,15 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import {
-  Application,
   DisbursementSchedule,
   DisbursementScheduleStatus,
   MSFAANumber,
   OfferingIntensity,
   RecordDataModelService,
-  Student,
-  User,
 } from "@sims/sims-db";
-import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
+import { CustomNamedError } from "@sims/utilities";
 import { DataSource, In, IsNull, Not } from "typeorm";
 import { MSFAANumberService, SFASSignedMSFAA } from "..";
 import {
@@ -159,7 +156,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       offeringIntensity,
     );
     if (sfasSignedMSFAA) {
-      return this.createAndActivateSfasMSFAANumber(
+      return this.msfaaNumberSharedService.importMSFAAumberFromSFAS(
         studentId,
         applicationId,
         offeringIntensity,
@@ -229,46 +226,6 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       previousStudyEndDate,
       currentStudyStartDate,
     );
-  }
-
-  /**
-   * Create and activate the MSFAA number fetched from SFAS signed MSFAA.
-   * @param studentId student Id.
-   * @param offeringIntensity offering intensity.
-   * @param applicationId application id.
-   * @param auditUserId audit user id.
-   * @param sfasSignedMSFAA SFAS MSFAA number and latest SFAS application end date.
-   * @returns created and activated MSFAA number id.
-   */
-  private async createAndActivateSfasMSFAANumber(
-    studentId: number,
-    applicationId: number,
-    offeringIntensity: OfferingIntensity,
-    auditUserId: number,
-    sfasSignedMSFAA: SFASSignedMSFAA,
-  ): Promise<number | null> {
-    // Create and activate new MSFAA number from the SFAS records.
-    const sfasMSFAANumber = new MSFAANumber();
-    sfasMSFAANumber.msfaaNumber = sfasSignedMSFAA.sfasMSFAANumber;
-    sfasMSFAANumber.dateSigned = getISODateOnlyString(
-      sfasSignedMSFAA.latestSFASApplicationEndDate,
-    );
-    sfasMSFAANumber.dateRequested = null;
-    sfasMSFAANumber.serviceProviderReceivedDate = null;
-    sfasMSFAANumber.referenceApplication = { id: applicationId } as Application;
-    sfasMSFAANumber.student = { id: studentId } as Student;
-    sfasMSFAANumber.offeringIntensity = offeringIntensity;
-    sfasMSFAANumber.creator = { id: auditUserId } as User;
-    const createdMSFAANumber =
-      await this.msfaaNumberSharedService.importMSFAAumberFromSFAS(
-        sfasMSFAANumber,
-      );
-    const activateMSFAANumber =
-      await this.msfaaNumberSharedService.activateMSFAANumber(
-        createdMSFAANumber,
-        auditUserId,
-      );
-    return activateMSFAANumber.id;
   }
 
   /**
