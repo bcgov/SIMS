@@ -26,7 +26,7 @@ export class SIMSToSFASIntegrationScheduler extends BaseScheduler<void> {
   }
 
   /**
-   * Generate data file consisting of all student and application updates in SIMS since the previous file generation
+   * Generate data file consisting of all student, application and restriction updates in SIMS since the previous file generation
    * and send the data file to SFAS.
    * @param job job.
    * @returns process summary.
@@ -39,10 +39,13 @@ export class SIMSToSFASIntegrationScheduler extends BaseScheduler<void> {
       processSummary.info(
         `Processing SIMS to SFAS integration job. Job id: ${job.id} and Job name: ${job.name}.`,
       );
+      const integrationProcessSummary = new ProcessSummary();
+      processSummary.children(integrationProcessSummary);
       const { studentRecordsSent, uploadedFileName } =
         await this.simsToSFASIntegrationProcessingService.processSIMSUpdates(
-          processSummary,
+          integrationProcessSummary,
         );
+      processSummary.info("Processing SIMS to SFAS integration job completed.");
       return getSuccessMessageWithAttentionCheck(
         [
           "Process finalized with success.",
@@ -52,7 +55,8 @@ export class SIMSToSFASIntegrationScheduler extends BaseScheduler<void> {
         processSummary,
       );
     } catch (error: unknown) {
-      const errorMessage = "Unexpected error while executing the job.";
+      const errorMessage =
+        "Unexpected error while executing the SIMS to SFAS integration job.";
       processSummary.error(errorMessage, error);
       throw new Error(errorMessage, { cause: error });
     } finally {

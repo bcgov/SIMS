@@ -25,6 +25,8 @@ export class SIMSToSFASProcessingService {
     processSummary: ProcessSummary,
   ): Promise<SIMSToSFASProcessingResult> {
     processSummary.info("Retrieving SIMS to SFAS updates.");
+    // Collection of student ids with updates in student, application and restriction related data.
+    // Once all the student ids are appended, only unique student ids will be returned.
     const simsToSFASStudents = new SIMSToSFASStudents();
     const modifiedSince =
       await this.simsToSFASService.getLatestBridgeFileLogDate();
@@ -37,12 +39,14 @@ export class SIMSToSFASProcessingService {
     // before staring to extract the bridge data.
     const bridgeDataExtractedDate = new Date();
     processSummary.info("Get all the students with updates.");
+    // Get all the students with updates in student related data.
+    // TODO: SIMS to SFAS - Get all the students with updates in application and restriction related data.
     const studentIds = await this.simsToSFASService.getAllStudentsWithUpdates(
       modifiedSince,
     );
 
     // Append the students with student and student related data updates.
-    // TODO: SIMS to SFAS - Application and Restrictions part.
+    // TODO: SIMS to SFAS - Append the student ids of students with updates in application and restriction related data.
     // When application and restriction updates are retrieved, the respective
     // student ids of applications and restrictions should be appended.
     simsToSFASStudents.append(studentIds);
@@ -56,6 +60,7 @@ export class SIMSToSFASProcessingService {
         uploadedFileName: "none",
       };
     }
+
     processSummary.info(
       `Found ${uniqueStudentIds.length} students with updates.`,
     );
@@ -64,6 +69,9 @@ export class SIMSToSFASProcessingService {
         uniqueStudentIds,
       );
 
+    processSummary.info(
+      `Bridge file data has been extracted at ${bridgeDataExtractedDate}.`,
+    );
     // Create SIMS to SFAS file content.
     const fileLines =
       this.simsToSFASIntegrationService.createSIMSToSFASFileContent(
@@ -76,6 +84,9 @@ export class SIMSToSFASProcessingService {
     );
 
     try {
+      processSummary.info(
+        `Beginning to upload the SIMS to SFAS file ${remoteFilePath} to SFTP.`,
+      );
       await this.simsToSFASIntegrationService.uploadContent(
         fileLines,
         remoteFilePath,
@@ -93,6 +104,9 @@ export class SIMSToSFASProcessingService {
     await this.simsToSFASService.createSIMSToSFASBridgeLog(
       bridgeDataExtractedDate,
       fileName,
+    );
+    processSummary.info(
+      `SIMS to SFAS file log has been created with file name ${fileName} and reference date ${bridgeDataExtractedDate}.`,
     );
     return {
       studentRecordsSent: simsToSFASStudents.uniqueStudentIds.length,
