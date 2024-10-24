@@ -7,15 +7,26 @@
           :recordsCount="institutionProgramsSummary.count"
         >
           <template #actions>
-            <v-text-field
-              density="compact"
-              v-model="searchProgramName"
-              label="Search Program Name"
-              variant="outlined"
-              @keyup.enter="goToSearchProgramName()"
-              prepend-inner-icon="mdi-magnify"
-              hide-details="auto"
-            />
+            <v-row>
+              <v-col>
+                <v-text-field
+                  density="compact"
+                  v-model="searchProgramName"
+                  label="Search Program Name"
+                  variant="outlined"
+                  @keyup.enter="goToSearch()"
+                  prepend-inner-icon="mdi-magnify"
+                  hide-details="auto" /></v-col
+              ><v-col>
+                <v-text-field
+                  density="compact"
+                  v-model="searchLocationName"
+                  label="Search Location Name"
+                  variant="outlined"
+                  @keyup.enter="goToSearch()"
+                  prepend-inner-icon="mdi-magnify"
+                  hide-details="auto" /></v-col
+            ></v-row>
           </template>
         </body-header>
       </template>
@@ -98,6 +109,7 @@ export default defineComponent({
       {} as PaginatedResults<EducationProgramsSummary>,
     );
     const searchProgramName = ref("");
+    const searchLocationName = ref("");
     const currentPage = ref();
     const currentPageLimit = ref();
     const loading = ref(true);
@@ -106,18 +118,19 @@ export default defineComponent({
       institutionId: number,
       rowsPerPage: number,
       page: number,
-      programName: string,
       sortColumn?: ProgramSummaryFields,
       sortOrder?: DataTableSortByOrder,
     ) => {
       try {
         loading.value = true;
-        searchProgramName.value = programName;
         institutionProgramsSummary.value =
           await EducationProgramService.shared.getProgramsSummaryByInstitutionId(
             institutionId,
             {
-              searchCriteria: programName,
+              searchCriteria: {
+                programNameSearch: searchProgramName.value,
+                locationNameSearch: searchLocationName.value,
+              },
               pageLimit: rowsPerPage,
               page,
               sortField: sortColumn,
@@ -133,7 +146,6 @@ export default defineComponent({
         props.institutionId,
         DEFAULT_PAGE_LIMIT,
         DEFAULT_DATATABLE_PAGE_NUMBER,
-        searchProgramName.value,
       );
     });
     const goToViewProgramDetail = (programId: number, locationId: number) => {
@@ -154,17 +166,15 @@ export default defineComponent({
         props.institutionId,
         event.itemsPerPage,
         event.page,
-        searchProgramName.value,
         sortByOptions?.key as ProgramSummaryFields,
         sortByOptions?.order,
       );
     };
-    const goToSearchProgramName = async () => {
+    const goToSearch = async () => {
       await getProgramsSummaryList(
         props.institutionId,
         currentPageLimit.value ?? DEFAULT_PAGE_LIMIT,
         currentPage.value ?? DEFAULT_DATATABLE_PAGE_NUMBER,
-        searchProgramName.value,
       );
     };
     return {
@@ -172,8 +182,9 @@ export default defineComponent({
       goToViewProgramDetail,
       DEFAULT_PAGE_LIMIT,
       pageSortEvent,
-      goToSearchProgramName,
+      goToSearch,
       searchProgramName,
+      searchLocationName,
       loading,
       ProgramSummaryFields,
       ProgramHeaders,

@@ -33,9 +33,9 @@ import {
 } from "./education-program.service.models";
 import {
   sortProgramsColumnMap,
-  PaginationOptions,
   PaginatedResults,
   SortPriority,
+  ProgramPaginationOptions,
 } from "../../utilities";
 import {
   CustomNamedError,
@@ -271,14 +271,14 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * Gets all the programs that are associated with an institution
    * alongside with the total of offerings on locations.
    * @param institutionId id of the institution.
-   * @param paginationOptions pagination options.
+   * @param paginationOptions program related pagination options.
    * @param locationId optional location id to filter.
    * @returns paginated summary for the institution or location.
    */
   async getProgramsSummary(
     institutionId: number,
     offeringTypes: OfferingTypes[],
-    paginationOptions: PaginationOptions,
+    paginationOptions: ProgramPaginationOptions,
     locationId?: number,
   ): Promise<PaginatedResults<EducationProgramsSummary>> {
     const paginatedProgramQuery = this.repo
@@ -330,6 +330,33 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         searchCriteria: `%${paginationOptions.searchCriteria}%`,
       });
       queryParams.push(`%${paginationOptions.searchCriteria}%`);
+    }
+    if (paginationOptions.programNameSearch) {
+      paginatedProgramQuery.andWhere(
+        "programs.name Ilike :programNameSearchCriteria",
+        {
+          programNameSearchCriteria: `%${paginationOptions.programNameSearch}%`,
+        },
+      );
+      queryParams.push(`%${paginationOptions.programNameSearch}%`);
+    }
+    if (paginationOptions.locationNameSearch) {
+      paginatedProgramQuery.andWhere(
+        "location.name Ilike :locationNameSearchCriteria",
+        {
+          locationNameSearchCriteria: `%${paginationOptions.locationNameSearch}%`,
+        },
+      );
+      queryParams.push(`%${paginationOptions.locationNameSearch}%`);
+    }
+    if (paginationOptions.status) {
+      paginatedProgramQuery.andWhere(
+        "programs.programStatus Ilike :programStatusSearchCriteria",
+        {
+          programStatusSearchCriteria: `%${paginationOptions.status}%`,
+        },
+      );
+      queryParams.push(`%${paginationOptions.status}%`);
     }
 
     // For getting total raw count before pagination.
