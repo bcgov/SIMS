@@ -397,14 +397,12 @@ export function useFormatters() {
   };
 
   /**
-   * Format the award value to the form ##,###.00
-   * @param awardValue award value to be formatted.
-   * @returns the formatted award value.
+   * Format the money value to the form ##,###.00
+   * @param moneyValue money value to be formatted.
+   * @returns the formatted money value.
    */
-  const getFormattedAwardValue = (
-    awardValue: string | number | Date,
-  ): string => {
-    return `$${awardValue.toLocaleString("en-CA", {
+  const getFormattedMoneyValue = (moneyValue: number): string => {
+    return `$${moneyValue.toLocaleString("en-CA", {
       minimumFractionDigits: 2,
     })}`;
   };
@@ -431,6 +429,6 @@ export function useFormatters() {
     isBeforeDateOnly,
     disabilityStatusToDisplay,
     applicationDisabilityStatusToDisplay,
-    getFormattedAwardValue,
+    getFormattedMoneyValue,
   };
 }

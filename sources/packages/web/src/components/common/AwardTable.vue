@@ -48,11 +48,12 @@ export default defineComponent({
         (award) => award.offeringIntensity === props.offeringIntensity,
       ),
     );
-    const { getFormattedAwardValue } = useFormatters();
+    const { getFormattedMoneyValue } = useFormatters();
 
     const getAwardValue = (awardType: string): string | number | Date => {
-      const awardValue =
-        props.awardDetails[`${props.identifier}${awardType.toLowerCase()}`];
+      const awardValue = props.awardDetails[
+        `${props.identifier}${awardType.toLowerCase()}`
+      ] as number;
       // If the award is defined but no values are present it means that a receipt value is missing.
       if (awardValue === null) {
         return "-";
@@ -62,7 +63,7 @@ export default defineComponent({
       if (awardValue === undefined) {
         return "(Not eligible)";
       }
-      return getFormattedAwardValue(awardValue);
+      return getFormattedMoneyValue(awardValue);
     };
 
     return {

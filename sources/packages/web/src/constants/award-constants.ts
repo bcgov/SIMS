@@ -115,7 +115,7 @@ export const AWARDS: AwardDetail[] = [
   },
   {
     awardType: PartTimeAwardTypes.SBSD,
-    awardTypeDisplay: "SBSD",
+    awardTypeDisplay: PartTimeAwardTypes.SBSD,
     description: "B.C. Supplemental Bursary for Students with Disabilities",
     offeringIntensity: OfferingIntensity.partTime,
   },
