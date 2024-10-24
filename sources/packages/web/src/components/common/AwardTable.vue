@@ -60,10 +60,9 @@ export default defineComponent({
       }
       // If the award in not defined at all it means that the award is not eligible and it was not
       // part of the disbursement calculations output.
-      if (awardValue === undefined) {
-        return "(Not eligible)";
-      }
-      return getFormattedMoneyValue(awardValue);
+      return awardValue === undefined
+        ? "(Not eligible)"
+        : getFormattedMoneyValue(awardValue);
     };
 
     return {
