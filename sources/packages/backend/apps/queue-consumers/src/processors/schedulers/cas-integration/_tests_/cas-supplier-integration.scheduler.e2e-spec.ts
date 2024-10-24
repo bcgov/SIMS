@@ -366,21 +366,27 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     },
   );
 
-  it.only("Should throw an error for the first student and process the second one when the CAS API call failed for the first student but worked for the second one.", async () => {
+  it("Should throw an error for the first student and process the second one when the CAS API call failed for the first student but worked for the second one.", async () => {
     // Arrange
+    // Create two mocks where the first one will throw an error
+    // and the second one is expected to work.
     casServiceMock.getSupplierInfoFromCAS = jest
       .fn()
       .mockRejectedValueOnce("Unknown error")
       .mockResolvedValue(
         Promise.resolve(createFakeCASNotFoundSupplierResponse()),
       );
+    // Mock to be also used for processing the second student.
+    casServiceMock.createSupplierAndSite = jest.fn(() =>
+      Promise.resolve(createFakeCASCreateSupplierAndSiteResponse()),
+    );
     // Created a student with same address line 1 and postal code from the expected CAS mocked result.
     // Postal code has a white space that is expected to be removed.
     const studentToFail = await saveFakeStudent(db.dataSource, undefined, {
       initialValue: {
         contactInfo: {
           address: {
-            addressLine1: "3350 DOUGLAS ST",
+            addressLine1: "3350 Douglas ST",
             city: "Victoria",
             country: "Canada",
             selectedCountry: COUNTRY_CANADA,
@@ -418,50 +424,28 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     const mockedJob = mockBullJob<void>();
 
     // Act
-    // TODO: ensure it will throw an exception.
-    const result = await processor.processCASSupplierInformation(mockedJob.job);
+    await expect(
+      processor.processCASSupplierInformation(mockedJob.job),
+    ).rejects.toStrictEqual(
+      new Error(
+        "One or more errors were reported during the process, please see logs for details.",
+      ),
+    );
 
-    // TODO: review the asserts.
     // Assert
-    // expect(result).toStrictEqual([
-    //   "Process finalized with success.",
-    //   "Pending suppliers to update found: 1.",
-    //   "Records updated: 1.",
-    // ]);
-    // expect(
-    //   mockedJob.containLogMessages([
-    //     "Found 1 records to be updated.",
-    //     //`Processing student CAS supplier ID: ${savedCASSupplier.id}.`,
-    //     `CAS evaluation result status: ${CASEvaluationStatus.ActiveSupplierAndSiteFound}.`,
-    //     "Active CAS supplier and site found.",
-    //     "Updated CAS supplier for the student.",
-    //   ]),
-    // ).toBe(true);
-    // expect(casServiceMock.getSupplierInfoFromCAS).toHaveBeenCalledWith(
-    //   student.sinValidation.sin,
-    //   student.user.lastName,
-    // );
-
-    // const updateCASSupplier = await db.casSupplier.findOneBy({
-    //   id: savedCASSupplier.id,
-    // });
-
-    // expect(updateCASSupplier.isValid).toBe(true);
-    // expect(updateCASSupplier.supplierAddress).toStrictEqual({
-    //   supplierSiteCode: "001",
-    //   addressLine1: "3350 DOUGLAS ST",
-    //   addressLine2: null,
-    //   city: "VICTORIA",
-    //   provinceState: "BC",
-    //   country: "CA",
-    //   postalCode: "V8Z7X9",
-    //   status: "ACTIVE",
-    //   siteProtected: null,
-    //   lastUpdated: new Date("2024-05-01 13:55:04").toISOString(),
-    // });
-    // expect(updateCASSupplier.supplierStatus).toBe(SupplierStatus.Verified);
-    // expect(updateCASSupplier.supplierName).toBe(
-    //   supplierMockedResult.suppliername,
-    // );
+    expect(
+      mockedJob.containLogMessages([
+        "Executing CAS supplier integration...",
+        "Found 2 records to be updated.",
+        `Processing student CAS supplier ID: ${savedCASSupplierToFail.id}.`,
+        'Unexpected error while processing supplier. "Unknown error"',
+        `Processing student CAS supplier ID: ${savedCASSupplierToSucceed.id}.`,
+        `CAS evaluation result status: ${CASEvaluationStatus.NotFound}.`,
+        `No active CAS supplier found. Reason: ${NotFoundReason.SupplierNotFound}.`,
+        "Created supplier and site on CAS.",
+        "Updated CAS supplier and site for the student.",
+        "CAS supplier integration executed.",
+      ]),
+    ).toBe(true);
   });
 });
