@@ -165,7 +165,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       );
     }
 
-    // If no MSFAA number is found check if already a request is sent for MSFAA Number signing.
+    // If no MSFAA  is found, check if there is a pending MSFAA on SIMS.
     const existingValidMSFAANumber =
       await this.msfaaNumberService.getCurrentValidMSFAANumber(
         studentId,

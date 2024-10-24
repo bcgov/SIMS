@@ -31,7 +31,6 @@ import { createFakeSFASApplication } from "@sims/test-utils/factories/sfas-appli
 describe("DisbursementController(e2e)-associateMSFAA", () => {
   let db: E2EDataSources;
   let disbursementController: DisbursementController;
-  const now = new Date();
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -100,7 +99,7 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
     // Assert MSFAA Number.
     expect(assignedMSFAANumber.msfaaNumber).toBe(savedMSFAANumber.msfaaNumber);
     // Assert date signed.
-    expect(assignedMSFAANumber.dateSigned).toBe(getISODateOnlyString(now));
+    expect(assignedMSFAANumber.dateSigned).toBe(getISODateOnlyString());
     // Assert date requested.
     expect(assignedMSFAANumber.dateRequested).not.toBe(null);
     // Assert service provider date.

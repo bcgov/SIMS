@@ -62,34 +62,6 @@ export class MSFAANumberSharedService {
   }
 
   /**
-   * Creates a new MSFAA number from the SFAS MSFAA number
-   * for the particular offering intensity and also activating the
-   * new MSFAA number for the same offering intensity.
-   * @param sfasMSFAANumber SFAS MSFAA number.
-   * @param auditUserId user that should be considered the one that is causing the changes.
-   * individually based on, for instance, the Part time/Full time.
-   * @returns created and activated MSFAA record.
-   */
-  async activateMSFAANumber(
-    msfaaNumberRecord: MSFAANumber,
-    auditUserId: number,
-  ): Promise<MSFAANumber> {
-    return this.internalActivateMSFAANumber(
-      msfaaNumberRecord.student.id,
-      msfaaNumberRecord.referenceApplication.id,
-      msfaaNumberRecord.offeringIntensity,
-      auditUserId,
-      {
-        existingMSFAA: {
-          id: msfaaNumberRecord.id,
-          msfaaNumber: msfaaNumberRecord.msfaaNumber,
-          dateSigned: msfaaNumberRecord.dateSigned,
-        },
-      },
-    );
-  }
-
-  /**
    * Reissues a new MSFAA number to be associated with the student, cancelling any
    * pending MSFAA for the particular offering intensity and also associating the
    * new MSFAA number to any pending disbursement for the same offering intensity.
@@ -403,9 +375,18 @@ export class MSFAANumberSharedService {
     const createdMSFAANumber = await this.dataSource
       .getRepository(MSFAANumber)
       .save(sfasMSFAANumber);
-    const activateMSFAANumber = await this.activateMSFAANumber(
-      createdMSFAANumber,
+    const activateMSFAANumber = await this.internalActivateMSFAANumber(
+      createdMSFAANumber.student.id,
+      createdMSFAANumber.referenceApplication.id,
+      createdMSFAANumber.offeringIntensity,
       auditUserId,
+      {
+        existingMSFAA: {
+          id: createdMSFAANumber.id,
+          msfaaNumber: createdMSFAANumber.msfaaNumber,
+          dateSigned: createdMSFAANumber.dateSigned,
+        },
+      },
     );
     return activateMSFAANumber.id;
   }
