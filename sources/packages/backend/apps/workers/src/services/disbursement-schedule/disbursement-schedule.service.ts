@@ -197,11 +197,11 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   ): Promise<SFASSignedMSFAA> {
     // Checks if there is a MSFAA number that could be considered valid from SFAS.
     if (offeringIntensity === OfferingIntensity.fullTime) {
-      return await this.sfasApplicationService.getValidMSFAAFullTimeApplication(
+      return this.sfasApplicationService.getValidMSFAAFullTimeApplication(
         studentId,
       );
     }
-    return await this.sfasPartTimeApplicationsService.getValidMSFAAPartTimeApplication(
+    return this.sfasPartTimeApplicationsService.getValidMSFAAPartTimeApplication(
       studentId,
     );
   }
