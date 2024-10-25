@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../utilities/sqlLoader";
 
-export class SinValidationsGenderSentIncreaseLength1729880822018
+export class SINValidationsGenderSentLengthIncrease1729880822018
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
