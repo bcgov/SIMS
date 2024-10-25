@@ -23,7 +23,8 @@ export class SIMSToSFASIntegrationService extends SFTPIntegrationBase<void> {
   ): FixedFormatFileLine[] {
     return new SIMSToSFASFileLineBuilder()
       .appendHeader(bridgeFileDate)
-      .appendStudentFileRecords(studentRecords).fileLines;
+      .appendStudentFileRecords(studentRecords)
+      .appendFooter().fileLines;
     // TODO: SIMS to SFAS - Append applications, restrictions and footer.
   }
 }

@@ -5,6 +5,7 @@ import { SIMSToSFASHeader } from "./sims-to-sfas-header";
 import { SIMSToSFASStudentRecord } from "./sims-to-sfas-student-record";
 import { DisabilityStatus } from "@sims/sims-db";
 import { YNFlag } from "@sims/integrations/models";
+import { SIMSToSFASFooter } from "./sims-to-sfas.footer";
 
 export class SIMSToSFASFileLineBuilder {
   private readonly fileLinesInternal: FixedFormatFileLine[] = [];
@@ -12,6 +13,7 @@ export class SIMSToSFASFileLineBuilder {
   /**
    * Append the header record.
    * @param bridgeFileDate date when the bridge file data was extracted.
+   * @returns instance of the class for further appending.
    */
   appendHeader(bridgeFileDate: Date): this {
     const header = new SIMSToSFASHeader();
@@ -22,9 +24,23 @@ export class SIMSToSFASFileLineBuilder {
     this.fileLinesInternal.push(header);
     return this;
   }
+
+  /**
+   * Append the footer record.
+   * TODO: SIMS to SFAS - Add total records count to the footer.
+   * @returns instance of the class for further appending.
+   */
+  appendFooter(): this {
+    const footer = new SIMSToSFASFooter();
+    footer.recordTypeCode = SIMSToSFASRecordTypeCodes.Footer;
+    this.fileLinesInternal.push(footer);
+    return this;
+  }
+
   /**
    * Append student file records after transforming them.
    * @param studentRecords student records.
+   * @returns instance of the class for further appending.
    */
   appendStudentFileRecords(studentRecords: StudentDetail[]): this {
     studentRecords.forEach((studentDetail) => {
