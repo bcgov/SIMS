@@ -100,9 +100,9 @@ export class SIMSToSFASStudentRecord extends SIMSToSFASBaseRecord {
     record.appendOptionalFormattedDate(this.pdStatusEffectiveDate);
     record.append(this.ppdStatusFlag);
     record.appendOptionalFormattedDate(this.ppdStatusEffectiveDate);
-    record.appendOptionalNumberWithFiller(this.fullTimeMSFAANumber, 10);
+    record.appendOptionalStringWithFiller(null, 10); // Full time MSFAA number is filled with blank spaces.
     record.appendOptionalFormattedDate(this.fullTimeMSFAASignedDate);
-    record.appendOptionalNumberWithFiller(this.partTimeMSFAANumber, 10);
+    record.appendOptionalStringWithFiller(null, 10); // Part time MSFAA number is filled with blank spaces.
     record.appendOptionalFormattedDate(this.partTimeMSFAASignedDate);
     record.appendOptionalStringWithFiller(this.casSupplierNumber, 7);
     record.appendOptionalStringWithFiller(this.casSiteNumber, 3);
