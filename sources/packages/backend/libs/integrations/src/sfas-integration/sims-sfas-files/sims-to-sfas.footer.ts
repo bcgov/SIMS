@@ -1,4 +1,3 @@
-import { SpecializedStringBuilder } from "@sims/utilities";
 import { SIMSToSFASBaseRecord } from "./sims-to-sfas-base.record";
 
 /**
@@ -17,12 +16,7 @@ export class SIMSToSFASFooter extends SIMSToSFASBaseRecord {
    * @returns fixed line formatted.
    */
   getFixedFormat(): string {
-    const record = new SpecializedStringBuilder({
-      stringFiller: this.spaceFiller,
-      numberFiller: this.numberFiller,
-      dateFiller: this.spaceFiller,
-      dateFormat: this.dateFormat,
-    });
+    const record = this.stringBuilder;
     record.append(this.recordTypeCode);
     record.appendOptionalNumberWithFiller(this.totalRecordsCount, 9);
     return record.toString();

@@ -1,10 +1,9 @@
 import { SFTPIntegrationBase, SshService } from "@sims/integrations/services";
 import { ConfigService } from "@sims/utilities/config";
 import { Injectable } from "@nestjs/common";
-
 import { StudentDetail } from "@sims/integrations/services/sfas";
 import { FixedFormatFileLine } from "@sims/integrations/services/ssh";
-import { SIMSToSFASFileLineBuilder } from "@sims/integrations/sfas-integration/sims-sfas-files/sims-to-sfas-file-line-builder";
+import { SIMSToSFASFileLineBuilder } from "./sims-sfas-files/sims-to-sfas-file-line-builder";
 
 @Injectable()
 export class SIMSToSFASIntegrationService extends SFTPIntegrationBase<void> {

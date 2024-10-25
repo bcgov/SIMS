@@ -6,6 +6,7 @@ import { SIMSToSFASStudentRecord } from "./sims-to-sfas-student-record";
 import { DisabilityStatus } from "@sims/sims-db";
 import { YNFlag } from "@sims/integrations/models";
 import { SIMSToSFASFooter } from "./sims-to-sfas.footer";
+import { combineDecimalPlaces } from "@sims/utilities";
 
 export class SIMSToSFASFileLineBuilder {
   private readonly fileLinesInternal: FixedFormatFileLine[] = [];
@@ -73,10 +74,10 @@ export class SIMSToSFASFileLineBuilder {
       studentFileRecord.casSiteNumber =
         studentDetail.casSupplier?.supplierAddress?.supplierSiteCode;
       studentFileRecord.fullTimeCSLOveraward = studentDetail.cslfOverawardTotal
-        ? +studentDetail.cslfOverawardTotal
+        ? combineDecimalPlaces(+studentDetail.cslfOverawardTotal)
         : 0;
       studentFileRecord.fullTimeBCSLOveraward = studentDetail.bcslOverawardTotal
-        ? +studentDetail.bcslOverawardTotal
+        ? combineDecimalPlaces(+studentDetail.bcslOverawardTotal)
         : 0;
       this.fileLinesInternal.push(studentFileRecord);
     });

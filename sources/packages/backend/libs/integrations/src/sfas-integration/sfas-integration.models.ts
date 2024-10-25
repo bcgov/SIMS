@@ -24,6 +24,7 @@ export interface SIMSToSFASProcessingResult {
   //TODO: SIMS to SFAS - Add the records sent for applications and restrictions.
   uploadedFileName: string;
 }
+
 /**
  * All the students who are going to be processed
  * in the SIMS to SFAS integration due to one or more
@@ -50,6 +51,7 @@ export class SIMSToSFASStudents {
     return [...new Set(this.studentIds)];
   }
 }
+
 /**
  * Format of the timestamp in the uploaded file name for SIMS to SFAS.
  */

@@ -1,5 +1,6 @@
 import { FixedFormatFileLine } from "@sims/integrations/services/ssh";
 import { SIMSToSFASRecordTypeCodes } from "../sfas-integration.models";
+import { SpecializedStringBuilder } from "@sims/utilities";
 
 export abstract class SIMSToSFASBaseRecord implements FixedFormatFileLine {
   /**
@@ -9,19 +10,32 @@ export abstract class SIMSToSFASBaseRecord implements FixedFormatFileLine {
   /**
    * File record date format.
    */
-  protected readonly dateFormat = "YYYYMMDD";
+  private readonly dateFormat = "YYYYMMDD";
   /**
    * File record space filler.
    */
-  protected readonly spaceFiller = " ";
+  private readonly spaceFiller = " ";
   /**
    * File record number filler.
    */
-  protected readonly numberFiller = "0";
+  private readonly numberFiller = "0";
   /**
    * File record date time format.
    */
   protected readonly dateTimeFormat = "YYYYMMDDHHmmss";
+
+  /**
+   * Get string builder with fillers and date format
+   * with respect ti SIMS to SFAS file.
+   */
+  get stringBuilder(): SpecializedStringBuilder {
+    return new SpecializedStringBuilder({
+      stringFiller: this.spaceFiller,
+      numberFiller: this.numberFiller,
+      dateFiller: this.spaceFiller,
+      dateFormat: this.dateFormat,
+    });
+  }
   /**
    * Convert amount to fixed length text of 10 characters
    * where the first 8 characters are whole number and the last 2 characters are fraction.
@@ -38,5 +52,11 @@ export abstract class SIMSToSFASBaseRecord implements FixedFormatFileLine {
     const wholeNumberPadded = wholeNumber.padStart(8, this.numberFiller);
     return `${wholeNumberPadded}${fraction}`;
   }
+
+  /**
+   * Get the information as a fixed line format to be
+   * added to the file uploaded to the SFTP.
+   * @returns fixed line formatted.
+   */
   abstract getFixedFormat(): string;
 }

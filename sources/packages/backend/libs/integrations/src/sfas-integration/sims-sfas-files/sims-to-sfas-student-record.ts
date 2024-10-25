@@ -1,5 +1,3 @@
-import { SpecializedStringBuilder } from "@sims/utilities";
-
 import { YNFlag } from "@sims/integrations/models";
 import { SIMSToSFASBaseRecord } from "./sims-to-sfas-base.record";
 
@@ -91,12 +89,7 @@ export class SIMSToSFASStudentRecord extends SIMSToSFASBaseRecord {
    * @returns fixed line formatted.
    */
   getFixedFormat(): string {
-    const record = new SpecializedStringBuilder({
-      stringFiller: this.spaceFiller,
-      numberFiller: this.numberFiller,
-      dateFiller: this.spaceFiller,
-      dateFormat: this.dateFormat,
-    });
+    const record = this.stringBuilder;
     record.append(this.recordTypeCode);
     record.appendNumberWithFiller(this.studentId, 10);
     record.appendOptionalStringWithFiller(this.givenName, 15);
@@ -113,9 +106,9 @@ export class SIMSToSFASStudentRecord extends SIMSToSFASBaseRecord {
     record.appendOptionalFormattedDate(this.partTimeMSFAASignedDate);
     record.appendOptionalStringWithFiller(this.casSupplierNumber, 7);
     record.appendOptionalStringWithFiller(this.casSiteNumber, 3);
-    record.append(this.convertToAmountText(this.fullTimeCSLOveraward));
-    record.append(this.convertToAmountText(this.fullTimeBCSLOveraward));
-    record.append(this.convertToAmountText(this.grantOveraward));
+    record.appendOptionalNumberWithFiller(this.fullTimeCSLOveraward, 10);
+    record.appendOptionalNumberWithFiller(this.fullTimeBCSLOveraward, 10);
+    record.appendOptionalNumberWithFiller(this.grantOveraward, 10);
     return record.toString();
   }
 }
