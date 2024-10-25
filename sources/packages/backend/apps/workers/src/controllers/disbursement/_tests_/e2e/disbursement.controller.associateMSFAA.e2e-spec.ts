@@ -204,7 +204,7 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
     );
 
     // Fetch MSFAA Number for the disbursement schedule assigned to the student in SIMS.
-    const disbursementSchedule = await db.disbursementSchedule.findOne({
+    await db.disbursementSchedule.findOne({
       select: {
         id: true,
         msfaaNumber: { id: true, msfaaNumber: true },
@@ -400,7 +400,7 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
     );
 
     // Fetch MSFAA Number for the disbursement schedule assigned to the student in SIMS.
-    const disbursementSchedule = await db.disbursementSchedule.findOne({
+    await db.disbursementSchedule.findOne({
       select: {
         id: true,
         msfaaNumber: { id: true, msfaaNumber: true },
