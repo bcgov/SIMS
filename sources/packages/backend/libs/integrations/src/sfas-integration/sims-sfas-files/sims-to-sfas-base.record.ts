@@ -7,10 +7,6 @@ export abstract class SIMSToSFASBaseRecord implements FixedFormatFileLine {
    * Type of record.
    */
   recordTypeCode: SIMSToSFASRecordTypeCodes;
-  /**
-   * File record date time format.
-   */
-  protected readonly dateTimeFormat = "YYYYMMDDHHmmss";
 
   /**
    * Get string builder with fillers and date format
