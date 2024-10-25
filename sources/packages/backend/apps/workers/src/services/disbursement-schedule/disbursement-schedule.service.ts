@@ -60,9 +60,16 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       );
     }
 
+    const firstDisbursementOffering =
+      firstDisbursement.studentAssessment.offering;
+    const firstDisbursementApplication =
+      firstDisbursement.studentAssessment.application;
     // Get the existing MSFAA or create MSFAA number.
     const msfaaNumberId = await this.getOrCreateMSFAANumber(
-      firstDisbursement,
+      firstDisbursementApplication.student.id,
+      firstDisbursementApplication.id,
+      firstDisbursementOffering.offeringIntensity,
+      firstDisbursementOffering.studyStartDate,
       systemUser.id,
     );
 
@@ -107,21 +114,20 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
 
   /**
    * Get the existing MSFAA or create MSFAA number.
-   * @param firstDisbursement first disbursement of the assessment.
-   * @param auditUserId audit used id.
+   * @param studentId first disbursement student id.
+   * @param firstDisbursementApplicationId first disbursement application id.
+   * @param offeringIntensity first disbursement offering intensity.
+   * @param firstDisbursementStudyStartDate first disbursement study start date.
+   * @param auditUserId audit user id.
    * @returns MSFAA number id.
    */
   private async getOrCreateMSFAANumber(
-    firstDisbursement: DisbursementSchedule,
+    studentId: number,
+    firstDisbursementApplicationId: number,
+    offeringIntensity: OfferingIntensity,
+    firstDisbursementStudyStartDate: string,
     auditUserId: number,
   ): Promise<number> {
-    const application = firstDisbursement.studentAssessment.application;
-    const student = application.student;
-    const studentId = student.id;
-    const offeringIntensity =
-      firstDisbursement.studentAssessment.offering.offeringIntensity;
-    const applicationId = application.id;
-
     // Checks if there is a signed MSFAA that could be considered valid.
     const existingValidSignedMSFAANumber =
       await this.msfaaNumberService.getCurrentValidMSFAANumber(
@@ -142,7 +148,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     if (previousSignedDisbursement) {
       const isMSFAANumberStillValid = await this.isMSFAANumberStillValid(
         previousSignedDisbursement.studentAssessment.offering.studyEndDate,
-        firstDisbursement.studentAssessment.offering.studyStartDate,
+        firstDisbursementStudyStartDate,
       );
       if (isMSFAANumberStillValid) {
         return previousSignedDisbursement.msfaaNumber.id;
@@ -158,7 +164,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     if (sfasSignedMSFAA) {
       return this.msfaaNumberSharedService.importMSFAAumberFromSFAS(
         studentId,
-        applicationId,
+        firstDisbursementApplicationId,
         offeringIntensity,
         auditUserId,
         sfasSignedMSFAA,
@@ -179,7 +185,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     // Create a new MSFAA number in case no MSFAA is found or no longer valid.
     const newMSFAANumber =
       await this.msfaaNumberSharedService.createMSFAANumber(
-        applicationId,
+        firstDisbursementApplicationId,
         auditUserId,
       );
     return newMSFAANumber.id;
