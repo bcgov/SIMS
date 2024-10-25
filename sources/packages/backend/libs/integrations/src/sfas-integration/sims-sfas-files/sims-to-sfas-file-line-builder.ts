@@ -11,7 +11,7 @@ import { SIMSToSFASBaseRecord } from "./sims-to-sfas-base.record";
 
 export class SIMSToSFASFileLineBuilder {
   /**
-   * Fixed length file line data.
+   * Fixed length file line data of SIMS to SFAS.
    */
   private readonly fileLinesInternal: SIMSToSFASBaseRecord[] = [];
 

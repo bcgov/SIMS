@@ -62,8 +62,8 @@ export class SIMSToSFASService {
    * since the date provided.
    * The updates can be one or more of the following:
    * - Student or User data
-   * - Sin validation data
-   * - Cas supplier data
+   * - SIN validation data
+   * - CAS supplier data
    * - Overawards data
    * @param modifiedSince the date after which the student data was updated.
    */
@@ -102,6 +102,7 @@ export class SIMSToSFASService {
 
     return modifiedStudentIds;
   }
+
   /**
    * Get student details of students who have one or more updates.
    * @param studentIds student ids.
