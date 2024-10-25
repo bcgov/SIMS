@@ -8,18 +8,6 @@ export abstract class SIMSToSFASBaseRecord implements FixedFormatFileLine {
    */
   recordTypeCode: SIMSToSFASRecordTypeCodes;
   /**
-   * File record date format.
-   */
-  private readonly dateFormat = "YYYYMMDD";
-  /**
-   * File record space filler.
-   */
-  private readonly spaceFiller = " ";
-  /**
-   * File record number filler.
-   */
-  private readonly numberFiller = "0";
-  /**
    * File record date time format.
    */
   protected readonly dateTimeFormat = "YYYYMMDDHHmmss";
@@ -29,11 +17,14 @@ export abstract class SIMSToSFASBaseRecord implements FixedFormatFileLine {
    * with respect ti SIMS to SFAS file.
    */
   get stringBuilder(): SpecializedStringBuilder {
+    const dateFormat = "YYYYMMDD";
+    const spaceFiller = " ";
+    const numberFiller = "0";
     return new SpecializedStringBuilder({
-      stringFiller: this.spaceFiller,
-      numberFiller: this.numberFiller,
-      dateFiller: this.spaceFiller,
-      dateFormat: this.dateFormat,
+      stringFiller: spaceFiller,
+      numberFiller: numberFiller,
+      dateFiller: spaceFiller,
+      dateFormat: dateFormat,
     });
   }
 
