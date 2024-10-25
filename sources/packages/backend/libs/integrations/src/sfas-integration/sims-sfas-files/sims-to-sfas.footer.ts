@@ -18,7 +18,7 @@ export class SIMSToSFASFooter extends SIMSToSFASBaseRecord {
   getFixedFormat(): string {
     const record = this.stringBuilder;
     record.append(this.recordTypeCode);
-    record.appendOptionalNumberWithFiller(this.totalRecordsCount, 9);
+    record.appendNumberWithFiller(this.totalRecordsCount, 9);
     return record.toString();
   }
 }

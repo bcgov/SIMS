@@ -7,12 +7,13 @@ import { DisabilityStatus } from "@sims/sims-db";
 import { YNFlag } from "@sims/integrations/models";
 import { SIMSToSFASFooter } from "./sims-to-sfas.footer";
 import { combineDecimalPlaces } from "@sims/utilities";
+import { SIMSToSFASBaseRecord } from "./sims-to-sfas-base.record";
 
 export class SIMSToSFASFileLineBuilder {
   /**
    * Fixed length file line data.
    */
-  private readonly fileLinesInternal: FixedFormatFileLine[] = [];
+  private readonly fileLinesInternal: SIMSToSFASBaseRecord[] = [];
 
   /**
    * Append the header record.
@@ -31,12 +32,12 @@ export class SIMSToSFASFileLineBuilder {
 
   /**
    * Append the footer record.
-   * TODO: SIMS to SFAS - Add total records count to the footer.
    * @returns instance of the class for further appending.
    */
   appendFooter(): this {
     const footer = new SIMSToSFASFooter();
     footer.recordTypeCode = SIMSToSFASRecordTypeCodes.Footer;
+    footer.totalRecordsCount = this.totalDataRecords;
     this.fileLinesInternal.push(footer);
     return this;
   }
@@ -90,5 +91,17 @@ export class SIMSToSFASFileLineBuilder {
 
   get fileLines(): FixedFormatFileLine[] {
     return this.fileLinesInternal;
+  }
+
+  /**
+   * Get total number of data records in the file.
+   * Data record is any record other than header and footer.
+   */
+  get totalDataRecords(): number {
+    return this.fileLinesInternal.filter(
+      (fileLine) =>
+        fileLine.recordTypeCode !== SIMSToSFASRecordTypeCodes.Header &&
+        fileLine.recordTypeCode !== SIMSToSFASRecordTypeCodes.Footer,
+    ).length;
   }
 }
