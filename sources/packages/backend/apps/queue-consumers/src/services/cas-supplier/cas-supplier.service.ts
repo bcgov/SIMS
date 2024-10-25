@@ -11,7 +11,6 @@ import {
 import {
   CustomNamedError,
   isAddressFromCanada,
-  ParallelIntensity,
   processInParallel,
 } from "@sims/utilities";
 import { CAS_AUTH_ERROR } from "@sims/integrations/constants";
@@ -89,7 +88,6 @@ export class CASSupplierIntegrationService {
       (studentSupplier) =>
         this.processSupplier(studentSupplier, parentProcessSummary),
       studentSuppliers,
-      ParallelIntensity.High,
     );
     // Get the number of updated suppliers.
     const updatedSuppliers = processesResults.filter(

@@ -3,14 +3,16 @@
  */
 export enum ParallelIntensity {
   /**
-   * Used for regular processes that can be executed in parallel where the
-   * waiting time is expected to be low, for instance, for regular quick
-   * DB access.
+   * Used for processes that need wait more time allowing less
+   * parallelism, which means they will consume more slots from
+   * the thread pool, for instance, slow third-party API operations.
    */
   Regular = 2,
   /**
-   * Used for processes that need wait more time allowing more
-   * parallelism, for instance, slow third-party API operations.
+   * Used for regular processes that can be executed in parallel where the
+   * waiting time is expected to be low, which means they will use the slots
+   * from the thread pool for a shorter time, for instance, for regular quick
+   * DB access.
    */
   High = 4,
 }
