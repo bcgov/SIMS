@@ -1,14 +1,7 @@
 /**
- * Represents the SFAS individual data summary details.
- */
-export interface SFASIndividualDataSummary {
-  totalUnsuccessfulWeeks: number;
-}
-
-/**
  * Represents the information that must be returned
- * when a SFAS Signed MSFAA and latest application end date
- * is found for the student in SFAS Application.
+ * when a SFAS Signed MSFAA is found for the student
+ * in SFAS Application.
  */
 export interface SFASSignedMSFAA {
   /**

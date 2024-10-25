@@ -71,7 +71,8 @@ export function createFakeMSFAANumber(
 
   if (options?.msfaaState & MSFAAStates.Signed) {
     msfaaNumber.dateRequested = now;
-    msfaaNumber.dateSigned = dateOnly;
+    msfaaNumber.dateSigned =
+      options?.msfaaInitialValues?.dateSigned ?? dateOnly;
     msfaaNumber.serviceProviderReceivedDate = dateOnly;
   }
 

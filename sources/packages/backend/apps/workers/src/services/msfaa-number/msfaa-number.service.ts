@@ -29,24 +29,35 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
    * @param studentId student id to filter.
    * @param offeringIntensity MSFAA are generated individually for full-time/part-time
    * disbursements. The offering intensity is used to differentiate between them.
+   * @param options options.
+   *  - `isSigned` true if the MSFAA should be considered as signed.
    * @returns current valid MSFAA record.
    */
   async getCurrentValidMSFAANumber(
     studentId: number,
     offeringIntensity: OfferingIntensity,
+    options?: { isSigned?: boolean },
   ): Promise<MSFAANumber> {
     const minimumValidDate = dayjs()
       .subtract(MAX_MSFAA_VALID_DAYS, "days")
       .toDate();
-    return this.repo
+    const query = this.repo
       .createQueryBuilder("msfaaNumber")
       .innerJoin("msfaaNumber.student", "students")
       .where("students.id = :studentId", { studentId })
-      .andWhere("msfaaNumber.referenceApplication is not null")
       .andWhere("msfaaNumber.offeringIntensity = :offeringIntensity", {
         offeringIntensity,
       })
-      .andWhere("msfaaNumber.cancelledDate is null")
+      .andWhere("msfaaNumber.cancelledDate is null");
+    if (options?.isSigned) {
+      return query
+        .andWhere("msfaaNumber.dateSigned is not null")
+        .andWhere("msfaaNumber.dateSigned > :minimumValidDate", {
+          minimumValidDate,
+        })
+        .getOne();
+    }
+    return query
       .andWhere(
         new Brackets((qb) => {
           qb.where("msfaaNumber.dateSigned is null");
