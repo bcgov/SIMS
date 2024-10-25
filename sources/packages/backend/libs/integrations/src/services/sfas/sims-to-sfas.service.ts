@@ -66,9 +66,8 @@ export class SIMSToSFASService {
    * - Cas supplier data
    * - Overawards data
    * @param modifiedSince the date after which the student data was updated.
-   * If not provided, all the students with at least one submitted application will be returned.
    */
-  async getAllStudentsWithUpdates(modifiedSince?: Date): Promise<number[]> {
+  async getAllStudentsWithUpdates(modifiedSince: Date): Promise<number[]> {
     const applicationStudentQuery = this.applicationRepo
       .createQueryBuilder("application")
       .select(["application.id", "student.id"])
@@ -82,19 +81,18 @@ export class SIMSToSFASService {
         overwritten: ApplicationStatus.Overwritten,
       })
       .andWhere("application.currentAssessment is not null");
-    if (modifiedSince) {
-      applicationStudentQuery
-        .andWhere(
-          new Brackets((qb) => {
-            qb.where("student.updatedAt > :modifiedSince")
-              .orWhere("user.updatedAt > :modifiedSince")
-              .orWhere("sinValidation.updatedAt > :modifiedSince")
-              .orWhere("casSupplier.updatedAt > :modifiedSince")
-              .orWhere("overaward.updatedAt > :modifiedSince");
-          }),
-        )
-        .setParameter("modifiedSince", modifiedSince);
-    }
+    applicationStudentQuery
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where("student.updatedAt > :modifiedSince")
+            .orWhere("user.updatedAt > :modifiedSince")
+            .orWhere("sinValidation.updatedAt > :modifiedSince")
+            .orWhere("casSupplier.updatedAt > :modifiedSince")
+            .orWhere("overaward.updatedAt > :modifiedSince");
+        }),
+      )
+      .setParameter("modifiedSince", modifiedSince);
+
     const applicationsWithStudentUpdates =
       await applicationStudentQuery.getMany();
     // Extract the student ids from the applications.

@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { SIMSToSFASService } from "../services/sfas";
 import {
+  SIMS_TO_SFAS_BRIDGE_FILE_INITIAL_DATE,
   SIMS_TO_SFAS_FILE_NAME_TIMESTAMP_FORMAT,
   SIMSToSFASProcessingResult,
   SIMSToSFASStudents,
@@ -34,12 +35,13 @@ export class SIMSToSFASProcessingService {
     // Collection of student ids with updates in student, application and restriction related data.
     // Once all the student ids are appended, only unique student ids will be returned.
     const simsToSFASStudents = new SIMSToSFASStudents();
-    const modifiedSince =
+    const latestBridgeFileReferenceDate =
       await this.simsToSFASService.getLatestBridgeFileLogDate();
-    const referenceDateMessage = modifiedSince
-      ? `Extracting data since ${modifiedSince}.`
-      : "No bridge file log found. Extracting all the data.";
-    processSummary.info(referenceDateMessage);
+    // If the bridge is being executed for the first time, set the modified since date to
+    // a safe initial date.
+    const modifiedSince =
+      latestBridgeFileReferenceDate ?? SIMS_TO_SFAS_BRIDGE_FILE_INITIAL_DATE;
+    processSummary.info(`Extracting data since ${modifiedSince}.`);
 
     // Set the bridge data extracted date as current date-time
     // before staring to extract the bridge data.
