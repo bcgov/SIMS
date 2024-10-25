@@ -101,13 +101,14 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
     // Arrange
     // Create student and save fake application with disbursements.
     const student = await saveFakeStudent(db.dataSource);
-    const currentMSFAA = createFakeMSFAANumber(
-      { student },
-      {
-        msfaaState: MSFAAStates.Pending,
-      },
+    const currentMSFAA = await db.msfaaNumber.save(
+      createFakeMSFAANumber(
+        { student },
+        {
+          msfaaState: MSFAAStates.Pending,
+        },
+      ),
     );
-    await db.msfaaNumber.save(currentMSFAA);
     const application = await saveFakeApplicationDisbursements(
       db.dataSource,
       { student },
@@ -162,11 +163,22 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
         applicationStatus: ApplicationStatus.Completed,
       },
     );
+    const pendingMSFAA = await db.msfaaNumber.save(
+      createFakeMSFAANumber(
+        { student },
+        {
+          msfaaState: MSFAAStates.Pending,
+          msfaaInitialValues: {
+            offeringIntensity: OfferingIntensity.partTime,
+          },
+        },
+      ),
+    );
 
     const savedSFASIndividual = await saveFakeSFASIndividual(db.dataSource, {
       initialValues: { student: student },
     });
-    await db.sfasPartTimeApplications.save(
+    const savedSFASPartTimeApplication = await db.sfasPartTimeApplications.save(
       createFakeSFASPartTimeApplication(
         { individual: savedSFASIndividual },
         {
@@ -205,10 +217,47 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
         studentAssessment: { id: application.currentAssessment.id },
       },
     });
+    // Fetch MSFAA Number for the student in SIMS.
+    const [createdMSFAANumber, cancelledMSFAANumber] =
+      await db.msfaaNumber.find({
+        select: {
+          id: true,
+          cancelledDate: true,
+          msfaaNumber: true,
+          referenceApplication: { id: true },
+          serviceProviderReceivedDate: true,
+          dateRequested: true,
+          dateSigned: true,
+        },
+        relations: {
+          referenceApplication: true,
+        },
+        where: {
+          student: { id: student.id },
+        },
+        order: {
+          id: "DESC",
+        },
+      });
+
     // Assert MSFAA Number.
     expect(disbursementSchedule.msfaaNumber.msfaaNumber).toBe(
       savedSFASIndividual.partTimeMSFAANumber,
     );
+    expect(createdMSFAANumber.msfaaNumber).toBe(
+      savedSFASIndividual.partTimeMSFAANumber,
+    );
+    expect(createdMSFAANumber).toEqual({
+      id: expect.any(Number),
+      msfaaNumber: disbursementSchedule.msfaaNumber.msfaaNumber,
+      dateSigned: savedSFASPartTimeApplication.endDate,
+      referenceApplication: { id: application.id },
+      serviceProviderReceivedDate: null,
+      dateRequested: null,
+      cancelledDate: null,
+    });
+    expect(cancelledMSFAANumber.msfaaNumber).toBe(pendingMSFAA.msfaaNumber);
+    expect(cancelledMSFAANumber.cancelledDate).not.toBe(null);
   });
 
   it("Should create a new MSFAA number for part-time applications by creating and activating in SIMS when MSFAA is not found or invalid SFAS application offering end date.", async () => {
@@ -260,6 +309,15 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
     const createdMSFAANumber = await db.msfaaNumber.findOne({
       select: {
         id: true,
+        cancelledDate: true,
+        msfaaNumber: true,
+        referenceApplication: { id: true },
+        serviceProviderReceivedDate: true,
+        dateRequested: true,
+        dateSigned: true,
+      },
+      relations: {
+        referenceApplication: true,
       },
       where: {
         student: { id: student.id },
@@ -269,7 +327,7 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
     const disbursementSchedule = await db.disbursementSchedule.findOne({
       select: {
         id: true,
-        msfaaNumber: { id: true },
+        msfaaNumber: { id: true, msfaaNumber: true },
       },
       relations: {
         msfaaNumber: true,
@@ -280,7 +338,15 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
       },
     });
     // Assert MSFAA Number.
-    expect(disbursementSchedule.msfaaNumber.id).toBe(createdMSFAANumber.id);
+    expect(createdMSFAANumber).toEqual({
+      id: expect.any(Number),
+      msfaaNumber: disbursementSchedule.msfaaNumber.msfaaNumber,
+      referenceApplication: { id: application.id },
+      dateSigned: null,
+      serviceProviderReceivedDate: null,
+      dateRequested: null,
+      cancelledDate: null,
+    });
   });
 
   it("Should reuse the MSFAA Number from SFAS full-time applications by creating and activating in SIMS when there is a valid MSFAA found and date signed updated with application end date.", async () => {
@@ -299,10 +365,22 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
       },
     );
 
+    const pendingMSFAA = await db.msfaaNumber.save(
+      createFakeMSFAANumber(
+        { student },
+        {
+          msfaaState: MSFAAStates.Pending,
+          msfaaInitialValues: {
+            offeringIntensity: OfferingIntensity.fullTime,
+          },
+        },
+      ),
+    );
+
     const savedSFASIndividual = await saveFakeSFASIndividual(db.dataSource, {
       initialValues: { student: student },
     });
-    await db.sfasApplication.save(
+    const savedSFASFullTimeApplication = await db.sfasApplication.save(
       createFakeSFASApplication(
         { individual: savedSFASIndividual },
         {
@@ -341,10 +419,46 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
         studentAssessment: { id: application.currentAssessment.id },
       },
     });
+    // Fetch MSFAA Number for the student in SIMS.
+    const [createdMSFAANumber, cancelledMSFAANumber] =
+      await db.msfaaNumber.find({
+        select: {
+          id: true,
+          cancelledDate: true,
+          msfaaNumber: true,
+          referenceApplication: { id: true },
+          serviceProviderReceivedDate: true,
+          dateRequested: true,
+          dateSigned: true,
+        },
+        relations: {
+          referenceApplication: true,
+        },
+        where: {
+          student: { id: student.id },
+        },
+        order: {
+          id: "DESC",
+        },
+      });
     // Assert MSFAA Number.
     expect(disbursementSchedule.msfaaNumber.msfaaNumber).toBe(
       savedSFASIndividual.msfaaNumber,
     );
+    expect(createdMSFAANumber.msfaaNumber).toBe(
+      savedSFASIndividual.partTimeMSFAANumber,
+    );
+    expect(createdMSFAANumber).toEqual({
+      id: expect.any(Number),
+      msfaaNumber: disbursementSchedule.msfaaNumber.msfaaNumber,
+      dateSigned: savedSFASFullTimeApplication.endDate,
+      referenceApplication: { id: application.id },
+      serviceProviderReceivedDate: null,
+      dateRequested: null,
+      cancelledDate: null,
+    });
+    expect(cancelledMSFAANumber.msfaaNumber).toBe(pendingMSFAA.msfaaNumber);
+    expect(cancelledMSFAANumber.cancelledDate).not.toBe(null);
   });
 
   it("Should create new MSFAA Number for full-time applications by creating and activating in SIMS when MSFAA is not found or invalid SFAS application offering end date.", async () => {
@@ -396,6 +510,15 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
     const createdMSFAANumber = await db.msfaaNumber.findOne({
       select: {
         id: true,
+        cancelledDate: true,
+        msfaaNumber: true,
+        referenceApplication: { id: true },
+        serviceProviderReceivedDate: true,
+        dateRequested: true,
+        dateSigned: true,
+      },
+      relations: {
+        referenceApplication: true,
       },
       where: {
         student: { id: student.id },
@@ -405,7 +528,7 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
     const disbursementSchedule = await db.disbursementSchedule.findOne({
       select: {
         id: true,
-        msfaaNumber: { id: true },
+        msfaaNumber: { id: true, msfaaNumber: true },
       },
       relations: {
         msfaaNumber: true,
@@ -417,6 +540,15 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
     });
     // Assert MSFAA Number.
     expect(disbursementSchedule.msfaaNumber.id).toBe(createdMSFAANumber.id);
+    expect(createdMSFAANumber).toEqual({
+      id: expect.any(Number),
+      msfaaNumber: disbursementSchedule.msfaaNumber.msfaaNumber,
+      referenceApplication: { id: application.id },
+      dateSigned: null,
+      serviceProviderReceivedDate: null,
+      dateRequested: null,
+      cancelledDate: null,
+    });
   });
 
   it("Should reuse MSFAA Number for part time application when MSFAA is found for previously signed disbursement for part applications in SIMS.", async () => {
