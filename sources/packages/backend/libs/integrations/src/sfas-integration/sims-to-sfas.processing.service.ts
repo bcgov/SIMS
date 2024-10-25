@@ -21,6 +21,12 @@ export class SIMSToSFASProcessingService {
     this.ftpSendFolder = config.sfasIntegration.ftpSendFolder;
   }
 
+  /**
+   * Process all the student, application and restriction related data updates in SIMS
+   * and send the bridge data to SFAS.
+   * @param processSummary process summary.
+   * @returns processing result.
+   */
   async processSIMSUpdates(
     processSummary: ProcessSummary,
   ): Promise<SIMSToSFASProcessingResult> {

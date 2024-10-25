@@ -9,6 +9,9 @@ import { SIMSToSFASFooter } from "./sims-to-sfas.footer";
 import { combineDecimalPlaces } from "@sims/utilities";
 
 export class SIMSToSFASFileLineBuilder {
+  /**
+   * Fixed length file line data.
+   */
   private readonly fileLinesInternal: FixedFormatFileLine[] = [];
 
   /**

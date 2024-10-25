@@ -101,6 +101,7 @@ export class SIMSToSFASService {
     const modifiedStudentIds = applicationsWithStudentUpdates.map(
       (application) => application.student.id,
     );
+
     return modifiedStudentIds;
   }
   /**
