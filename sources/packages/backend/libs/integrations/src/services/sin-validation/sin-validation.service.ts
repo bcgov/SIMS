@@ -115,14 +115,14 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
             "student.id",
           ])
           .innerJoin("sinValidation.student", "student")
-          .where("sinValidation.id = :sinValidationId", {
-            sinValidationId: validationResponse.referenceIndex,
+          .where("sinValidation.sin = :sin", {
+            sin: validationResponse.referenceIndex,
           })
           .getOne();
 
         if (!existingValidation) {
           return {
-            operationDescription: `Not able to find the SIN validation id ${validationResponse.referenceIndex} to be updated with the ESDC response.`,
+            operationDescription: `Not able to find the SIN validation on line number ${validationResponse.lineNumber} to be updated with the ESDC response.`,
             record: null,
           };
         }
