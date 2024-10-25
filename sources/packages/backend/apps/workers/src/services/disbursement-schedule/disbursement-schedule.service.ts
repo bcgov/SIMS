@@ -114,25 +114,25 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
 
   /**
    * Get the existing MSFAA or create MSFAA number.
-   * @param firstDisbursementStudentId first disbursement student id.
-   * @param firstDisbursementApplicationId first disbursement application id.
-   * @param firstDisbursementOfferingIntensity first disbursement offering intensity.
-   * @param firstDisbursementStudyStartDate first disbursement study start date.
+   * @param studentId student id.
+   * @param applicationId application id.
+   * @param offeringIntensity offering intensity.
+   * @param studyStartDate study start date.
    * @param auditUserId audit user id.
    * @returns MSFAA number id.
    */
   private async getOrCreateMSFAANumber(
-    firstDisbursementStudentId: number,
-    firstDisbursementApplicationId: number,
-    firstDisbursementOfferingIntensity: OfferingIntensity,
-    firstDisbursementStudyStartDate: string,
+    studentId: number,
+    applicationId: number,
+    offeringIntensity: OfferingIntensity,
+    studyStartDate: string,
     auditUserId: number,
   ): Promise<number> {
     // Checks if there is a signed MSFAA that could be considered valid.
     const existingValidSignedMSFAANumber =
       await this.msfaaNumberService.getCurrentValidMSFAANumber(
-        firstDisbursementStudentId,
-        firstDisbursementOfferingIntensity,
+        studentId,
+        offeringIntensity,
         { isSigned: true },
       );
     if (existingValidSignedMSFAANumber) {
@@ -143,15 +143,12 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     // Get previously completed and signed disbursement of an application for the student
     // to determine if an existing MSFAA is still valid.
     const previousSignedDisbursement =
-      await this.getPreviouslySignedDisbursement(
-        firstDisbursementStudentId,
-        firstDisbursementOfferingIntensity,
-      );
+      await this.getPreviouslySignedDisbursement(studentId, offeringIntensity);
 
     if (previousSignedDisbursement) {
       const isMSFAANumberStillValid = await this.isMSFAANumberStillValid(
         previousSignedDisbursement.studentAssessment.offering.studyEndDate,
-        firstDisbursementStudyStartDate,
+        studyStartDate,
       );
       if (isMSFAANumberStillValid) {
         return previousSignedDisbursement.msfaaNumber.id;
@@ -161,24 +158,24 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     // Get signed MSFAA from SFAS for the particular offering intensity and create one in SIMS and
     // activate the created MSFAA.
     const sfasSignedMSFAA = await this.getSFASSignedMSFAA(
-      firstDisbursementStudentId,
-      firstDisbursementOfferingIntensity,
+      studentId,
+      offeringIntensity,
     );
     if (sfasSignedMSFAA) {
       return this.msfaaNumberSharedService.importMSFAAumberFromSFAS(
-        firstDisbursementStudentId,
-        firstDisbursementApplicationId,
-        firstDisbursementOfferingIntensity,
+        studentId,
+        applicationId,
+        offeringIntensity,
         auditUserId,
         sfasSignedMSFAA,
       );
     }
 
-    // If no MSFAA  is found, check if there is a pending MSFAA on SIMS.
+    // If no MSFAA is found, check if there is a pending MSFAA on SIMS.
     const existingValidMSFAANumber =
       await this.msfaaNumberService.getCurrentValidMSFAANumber(
-        firstDisbursementStudentId,
-        firstDisbursementOfferingIntensity,
+        studentId,
+        offeringIntensity,
       );
     if (existingValidMSFAANumber) {
       // Reuse the MSFAA that is still valid and avoid creating a new one, even if it not signed yet.
@@ -188,7 +185,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     // Create a new MSFAA number in case no MSFAA is found or no longer valid.
     const newMSFAANumber =
       await this.msfaaNumberSharedService.createMSFAANumber(
-        firstDisbursementApplicationId,
+        applicationId,
         auditUserId,
       );
     return newMSFAANumber.id;

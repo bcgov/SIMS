@@ -241,15 +241,9 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
       });
 
     // Assert MSFAA Number.
-    expect(disbursementSchedule.msfaaNumber.msfaaNumber).toBe(
-      savedSFASIndividual.partTimeMSFAANumber,
-    );
-    expect(createdMSFAANumber.msfaaNumber).toBe(
-      savedSFASIndividual.partTimeMSFAANumber,
-    );
     expect(createdMSFAANumber).toEqual({
       id: expect.any(Number),
-      msfaaNumber: disbursementSchedule.msfaaNumber.msfaaNumber,
+      msfaaNumber: savedSFASIndividual.partTimeMSFAANumber,
       dateSigned: savedSFASPartTimeApplication.endDate,
       referenceApplication: { id: application.id },
       serviceProviderReceivedDate: null,
@@ -442,15 +436,9 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
         },
       });
     // Assert MSFAA Number.
-    expect(disbursementSchedule.msfaaNumber.msfaaNumber).toBe(
-      savedSFASIndividual.msfaaNumber,
-    );
-    expect(createdMSFAANumber.msfaaNumber).toBe(
-      savedSFASIndividual.partTimeMSFAANumber,
-    );
     expect(createdMSFAANumber).toEqual({
       id: expect.any(Number),
-      msfaaNumber: disbursementSchedule.msfaaNumber.msfaaNumber,
+      msfaaNumber: savedSFASIndividual.msfaaNumber,
       dateSigned: savedSFASFullTimeApplication.endDate,
       referenceApplication: { id: application.id },
       serviceProviderReceivedDate: null,
