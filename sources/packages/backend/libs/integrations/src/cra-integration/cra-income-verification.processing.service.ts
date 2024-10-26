@@ -232,7 +232,6 @@ export class CRAIncomeVerificationProcessingService {
       // allowing other response files to be processed.
       return result;
     }
-    debugger;
     result.processSummary.push(
       `File contains ${responseFile.statusRecords.length} verifications.`,
     );
