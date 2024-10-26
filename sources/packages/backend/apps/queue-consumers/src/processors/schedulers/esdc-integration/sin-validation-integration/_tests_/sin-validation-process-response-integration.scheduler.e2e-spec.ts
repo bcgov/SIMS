@@ -13,10 +13,19 @@ import {
 import * as Client from "ssh2-sftp-client";
 import * as path from "path";
 import { SINValidationResponseIntegrationScheduler } from "../sin-validation-process-response-integration.scheduler";
-import { mockDownloadFiles } from "@sims/test-utils/mocks";
+import {
+  createFileFromStructuredRecords,
+  getStructuredRecords,
+  mockDownloadFiles,
+} from "@sims/test-utils/mocks";
 import { Job } from "bull";
 
 const SIN_VALIDATION_FILENAME = "PCSLP.PBC.BC0000.ISR";
+
+const padWithLeadingZeros = (num: number): string => {
+  // Pad the number with leading zeros to make it 9 digits long
+  return num.toString().padStart(9, "0");
+};
 
 describe(
   describeProcessorRootTest(QueueNames.SINValidationResponseIntegration),
@@ -40,27 +49,53 @@ describe(
 
     beforeEach(async () => {
       jest.clearAllMocks();
-      // await db.sinValidation.delete({});
-      // await db.student.delete({});
     });
 
-    it("should process SIN validation response file", async () => {
+    it.only("should process SIN validation response file", async () => {
       // Arrange
-
-      // Create a SIN record with ID = 100000011
-      const fakeStudent = await saveFakeStudent(db.dataSource, undefined, {
-        sinValidationInitialValue: { sin: "100000011", isValidSIN: true },
+      // Create a SIN record with ID = 600000001
+      const validSinStudent = await saveFakeStudent(db.dataSource, undefined, {
+        sinValidationInitialValue: {
+          sin: "100000001",
+          isValidSIN: true,
+        },
       });
-      await db.sinValidation.save(fakeStudent);
+      // Create a SIN record with ID = 600000002
+      const inValidSinStudent = await saveFakeStudent(
+        db.dataSource,
+        undefined,
+        {
+          sinValidationInitialValue: {
+            sin: "100000002",
+            isValidSIN: false,
+          },
+        },
+      );
+      await db.sinValidation.save([validSinStudent, inValidSinStudent]);
 
       // Queued job.
       const job = createMock<Job<void>>();
       mockDownloadFiles(sftpClientMock, [SIN_VALIDATION_FILENAME]);
 
+      mockDownloadFiles(
+        sftpClientMock,
+        [SIN_VALIDATION_FILENAME],
+        (fileContent: string) => {
+          const file = getStructuredRecords(fileContent);
+          const [record1] = file.records;
+
+          // Update the first record with validSinStudent's padded ID
+          const paddedId1 = padWithLeadingZeros(
+            validSinStudent.sinValidation.id,
+          );
+          file.records[0] =
+            record1.substring(0, 3) + paddedId1 + record1.substring(12);
+          return createFileFromStructuredRecords(file);
+        },
+      );
+
       // Act
       const processResult = await processor.processSINValidationResponse(job);
-      console.log(processResult);
-
       // Assert
       const downloadedFile = path.join(
         process.env.ESDC_RESPONSE_FOLDER,
@@ -73,8 +108,8 @@ describe(
           processSummary: [
             `Processing file ${downloadedFile}.`,
             "File contains 2 SIN validations.",
-            "Processed SIN validation record from line 2: SIN validation skipped because it is already processed and updated.",
-            "Processed SIN validation record from line 3: Not able to find the SIN validation line number 3 to be updated with the ESDC response.",
+            "Processed SIN validation record from line 2: No SIN validation was updated because the record id is already present and this is not the most updated.",
+            "Processed SIN validation record from line 3: Not able to find the SIN validation on line number 3 to be updated with the ESDC response.",
           ],
           errorsSummary: [],
         },

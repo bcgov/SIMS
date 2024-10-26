@@ -115,8 +115,8 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
             "student.id",
           ])
           .innerJoin("sinValidation.student", "student")
-          .where("sinValidation.sin = :sin", {
-            sin: validationResponse.referenceIndex,
+          .where("sinValidation.id = :sinValidationId", {
+            sinValidationId: validationResponse.referenceIndex,
           })
           .getOne();
 
