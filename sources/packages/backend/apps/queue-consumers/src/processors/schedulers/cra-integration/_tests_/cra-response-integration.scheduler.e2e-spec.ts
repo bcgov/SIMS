@@ -20,7 +20,7 @@ import {
 } from "@sims/test-utils/mocks";
 import { Job } from "bull";
 
-const CRA_FILENAME = "CCRA_RESPONSE_001.txt";
+const CRA_FILENAME = "CRA_200_PBCSA00000.TXT";
 
 const padWithLeadingZeros = (num: number): string => {
   // Pad the number with leading zeros to make it 9 digits long
