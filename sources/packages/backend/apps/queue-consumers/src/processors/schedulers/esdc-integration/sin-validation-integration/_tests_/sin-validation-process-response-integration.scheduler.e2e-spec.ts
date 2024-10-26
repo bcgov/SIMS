@@ -53,14 +53,14 @@ describe(
 
     it.only("should process SIN validation response file", async () => {
       // Arrange
-      // Create a SIN record with ID = 600000001
+      // Create a SIN record with REFERENCE_IDX = 600000001
       const validSinStudent = await saveFakeStudent(db.dataSource, undefined, {
         sinValidationInitialValue: {
           sin: "100000001",
           isValidSIN: true,
         },
       });
-      // Create a SIN record with ID = 600000002
+      // Create a SIN record with REFERENCE_IDX = 600000002
       const inValidSinStudent = await saveFakeStudent(
         db.dataSource,
         undefined,
