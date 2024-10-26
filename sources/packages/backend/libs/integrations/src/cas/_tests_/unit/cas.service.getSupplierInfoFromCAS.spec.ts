@@ -1,21 +1,18 @@
-import { CASService } from "@sims/integrations/cas/cas.service";
-import { TestBed, Mocked } from "@suites/unit";
+import { CASService } from "@sims/integrations/cas";
+import { Mocked } from "@suites/unit";
 import { HttpService } from "@nestjs/axios";
-import { ConfigService } from "@sims/utilities/config";
-
-const ACCESS_TOKEN = "access_token";
+import {
+  DEFAULT_CAS_AXIOS_AUTH_HEADER,
+  initializeService,
+  mockAuthenticationResponseOnce,
+} from "./cas-test.utils";
 
 describe("CASService-getSupplierInfoFromCAS", () => {
   let casService: CASService;
   let httpService: Mocked<HttpService>;
-  let configService: Mocked<ConfigService>;
 
   beforeAll(async () => {
-    const { unit, unitRef } = await TestBed.solitary(CASService).compile();
-    casService = unit;
-    configService = unitRef.get(ConfigService);
-    httpService = unitRef.get(HttpService);
-    configService.casIntegration.baseUrl = "cas-url";
+    [casService, httpService] = await initializeService();
   });
 
   beforeEach(() => {
@@ -24,7 +21,7 @@ describe("CASService-getSupplierInfoFromCAS", () => {
 
   it("Should invoke CAS API with last name upper case and without special characters when last name has special characters and is not entirely upper case.", async () => {
     // Arrange
-    mockAuthResponse();
+    mockAuthenticationResponseOnce(httpService);
 
     // Act
     await casService.getSupplierInfoFromCAS(
@@ -35,20 +32,7 @@ describe("CASService-getSupplierInfoFromCAS", () => {
     // Assert
     expect(httpService.axiosRef.get).toHaveBeenCalledWith(
       "cas-url/cfs/supplier/LAST NAME WITH SPECIAL CHARACTERS: AEIOU-AEIOU/lastname/dummy_sin_value/sin",
-      { headers: { Authorization: `Bearer ${ACCESS_TOKEN}` } },
+      DEFAULT_CAS_AXIOS_AUTH_HEADER,
     );
   });
-
-  /**
-   * Mock the first post call for authentication.
-   */
-  function mockAuthResponse(): void {
-    httpService.axiosRef.post = jest.fn().mockResolvedValueOnce({
-      data: {
-        access_token: ACCESS_TOKEN,
-        token_type: "bearer",
-        expires_in: 3600,
-      },
-    });
-  }
 });
