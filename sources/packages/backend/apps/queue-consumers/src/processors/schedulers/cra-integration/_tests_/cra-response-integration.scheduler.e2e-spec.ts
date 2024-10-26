@@ -8,6 +8,8 @@ import {
 import {
   E2EDataSources,
   createE2EDataSources,
+  createFakeCRAIncomeVerification,
+  saveFakeApplication,
   saveFakeStudent,
 } from "@sims/test-utils";
 import * as Client from "ssh2-sftp-client";
@@ -19,6 +21,7 @@ import {
   mockDownloadFiles,
 } from "@sims/test-utils/mocks";
 import { Job } from "bull";
+import { ApplicationStatus } from "@sims/sims-db";
 
 const CRA_FILENAME = "CRA_200_PBCSA00000.TXT";
 
@@ -51,40 +54,47 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
 
   it.only("should process CRA response file", async () => {
     // Arrange
-    // Create a CRA record with REFERENCE_IDX = 600000001
-    const validSinStudent = await saveFakeStudent(db.dataSource, undefined, {
-      sinValidationInitialValue: {
-        sin: "100000001",
-        isValidSIN: true,
-      },
-    });
-    // Create a SIN record with REFERENCE_IDX = 600000002
-    const inValidSinStudent = await saveFakeStudent(db.dataSource, undefined, {
-      sinValidationInitialValue: {
-        sin: "100000002",
-        isValidSIN: false,
-      },
-    });
-    await db.sinValidation.save([validSinStudent, inValidSinStudent]);
+    const student = await saveFakeStudent(db.dataSource);
 
+    const application = await saveFakeApplication(
+      db.dataSource,
+      { student },
+      { applicationStatus: ApplicationStatus.InProgress },
+    );
+
+    // Create CRA income verifications for student.
+    const studentCRAIncomeVerification = createFakeCRAIncomeVerification(
+      {
+        application,
+      },
+      { initialValues: { dateReceived: null } },
+    );
+    await db.craIncomeVerification.save([studentCRAIncomeVerification]);
     // Queued job.
     const job = createMock<Job<void>>();
     mockDownloadFiles(sftpClientMock, [CRA_FILENAME]);
 
     mockDownloadFiles(sftpClientMock, [CRA_FILENAME], (fileContent: string) => {
       const file = getStructuredRecords(fileContent);
-      const [record1] = file.records;
+      const line2 = file.records[2]; // Get the 4th item (index 3) in the array
 
-      // Update the first record with validSinStudent's padded ID
-      const paddedId1 = padWithLeadingZeros(validSinStudent.sinValidation.id);
-      file.records[0] =
-        record1.substring(0, 3) + paddedId1 + record1.substring(12);
+      // Split the record on colon and change 9 digits after colon
+      const [beforeColon, afterColon] = line2.split(":");
+      const newVerificationId = padWithLeadingZeros(
+        studentCRAIncomeVerification.id,
+      );
+      const updatedRecord4 = `${beforeColon}:${newVerificationId}${afterColon.substring(
+        9,
+      )}`;
+
+      // Update the fourth record with the modified content
+      file.records[2] = updatedRecord4;
+
       return createFileFromStructuredRecords(file);
     });
 
     // Act
     const processResult = await processor.processResponses(job);
-    debugger;
     // Assert
     const downloadedFile = path.join(
       process.env.CRA_RESPONSE_FOLDER,
@@ -96,9 +106,8 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
       {
         processSummary: [
           `Processing file ${downloadedFile}.`,
-          "File contains 2 SIN validations.",
-          "Processed SIN validation record from line 2: No SIN validation was updated because the record id is already present and this is not the most updated.",
-          "Processed SIN validation record from line 3: Not able to find the SIN validation on line number 3 to be updated with the ESDC response.",
+          "File contains 1 verifications.",
+          "Processed income verification. Total income record line 5. Status record from line 4.",
         ],
         errorsSummary: [],
       },
