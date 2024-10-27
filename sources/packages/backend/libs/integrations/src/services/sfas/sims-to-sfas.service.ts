@@ -59,15 +59,19 @@ export class SIMSToSFASService {
 
   /**
    * Get all student ids of students who have one or more updates
-   * since the date provided.
+   * between the given period.
    * The updates can be one or more of the following:
    * - Student or User data
    * - SIN validation data
    * - CAS supplier data
    * - Overawards data
    * @param modifiedSince the date after which the student data was updated.
+   * @param modifiedUntil the date until which the student data was updated.
    */
-  async getAllStudentsWithUpdates(modifiedSince: Date): Promise<number[]> {
+  async getAllStudentsWithUpdates(
+    modifiedSince: Date,
+    modifiedUntil: Date,
+  ): Promise<number[]> {
     const applicationStudentQuery = this.applicationRepo
       .createQueryBuilder("application")
       .select(["application.id", "student.id"])
@@ -77,21 +81,33 @@ export class SIMSToSFASService {
       .innerJoin("student.sinValidation", "sinValidation")
       .innerJoin("student.casSupplier", "casSupplier")
       .leftJoin("student.overawards", "overaward")
-      .where("application.applicationStatus != :overwritten", {
-        overwritten: ApplicationStatus.Overwritten,
-      })
+      .where("application.applicationStatus != :overwritten")
       .andWhere("application.currentAssessment is not null");
     applicationStudentQuery
       .andWhere(
         new Brackets((qb) => {
-          qb.where("student.updatedAt > :modifiedSince")
-            .orWhere("user.updatedAt > :modifiedSince")
-            .orWhere("sinValidation.updatedAt > :modifiedSince")
-            .orWhere("casSupplier.updatedAt > :modifiedSince")
-            .orWhere("overaward.updatedAt > :modifiedSince");
+          qb.where(
+            "student.updatedAt > :modifiedSince AND student.updatedAt <= :modifiedUntil",
+          )
+            .orWhere(
+              "user.updatedAt > :modifiedSince AND user.updatedAt <= :modifiedUntil",
+            )
+            .orWhere(
+              "sinValidation.updatedAt > :modifiedSince AND sinValidation.updatedAt <= :modifiedUntil",
+            )
+            .orWhere(
+              "casSupplier.updatedAt > :modifiedSince AND casSupplier.updatedAt <= :modifiedUntil",
+            )
+            .orWhere(
+              "overaward.updatedAt > :modifiedSince AND overaward.updatedAt <= :modifiedUntil",
+            );
         }),
       )
-      .setParameter("modifiedSince", modifiedSince);
+      .setParameters({
+        overwritten: ApplicationStatus.Overwritten,
+        modifiedSince,
+        modifiedUntil,
+      });
 
     const applicationsWithStudentUpdates =
       await applicationStudentQuery.getMany();

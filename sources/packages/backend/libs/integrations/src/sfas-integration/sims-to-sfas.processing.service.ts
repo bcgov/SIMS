@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { SIMSToSFASService } from "../services/sfas";
 import {
-  SIMS_TO_SFAS_BRIDGE_FILE_INITIAL_DATE,
   SIMS_TO_SFAS_FILE_NAME_TIMESTAMP_FORMAT,
   SIMSToSFASProcessingResult,
   SIMSToSFASStudents,
@@ -24,33 +23,28 @@ export class SIMSToSFASProcessingService {
 
   /**
    * Process all the student, application and restriction related data updates in SIMS
-   * and send the bridge data to SFAS.
+   * between the given period and send the bridge data to SFAS.
    * @param processSummary process summary.
+   * @param modifiedSince the date after which the student data was updated.
+   * @param modifiedUntil the date until which the student data was updated.
+   * This is the date when the bridge file processing started.
    * @returns processing result.
    */
   async processSIMSUpdates(
     processSummary: ProcessSummary,
+    modifiedSince: Date,
+    modifiedUntil: Date,
   ): Promise<SIMSToSFASProcessingResult> {
     processSummary.info("Retrieving SIMS to SFAS updates.");
     // Collection of student ids with updates in student, application and restriction related data.
     // Once all the student ids are appended, only unique student ids will be returned.
     const simsToSFASStudents = new SIMSToSFASStudents();
-    const latestBridgeFileReferenceDate =
-      await this.simsToSFASService.getLatestBridgeFileLogDate();
-    // If the bridge is being executed for the first time, set the modified since date to
-    // a safe initial date.
-    const modifiedSince =
-      latestBridgeFileReferenceDate ?? SIMS_TO_SFAS_BRIDGE_FILE_INITIAL_DATE;
-    processSummary.info(`Extracting data since ${modifiedSince}.`);
-
-    // Set the bridge data extracted date as current date-time
-    // before staring to extract the bridge data.
-    const bridgeDataExtractedDate = new Date();
     processSummary.info("Get all the students with updates.");
     // Get all the students with updates in student related data.
     // TODO: SIMS to SFAS - Get all the students with updates in application and restriction related data.
     const studentIds = await this.simsToSFASService.getAllStudentsWithUpdates(
       modifiedSince,
+      modifiedUntil,
     );
 
     // Append the students with student and student related data updates.
@@ -78,18 +72,17 @@ export class SIMSToSFASProcessingService {
       );
 
     processSummary.info(
-      `Bridge file data has been extracted at ${bridgeDataExtractedDate}.`,
+      `Bridge file data has been extracted since ${modifiedSince} until ${modifiedUntil}.`,
     );
     // Create SIMS to SFAS file content.
     const fileLines =
       this.simsToSFASIntegrationService.createSIMSToSFASFileContent(
-        bridgeDataExtractedDate,
+        modifiedUntil,
         studentDetails,
       );
 
-    const { fileName, remoteFilePath } = this.createSIMSToSFASFileName(
-      bridgeDataExtractedDate,
-    );
+    const { fileName, remoteFilePath } =
+      this.createSIMSToSFASFileName(modifiedUntil);
 
     try {
       processSummary.info(
@@ -109,12 +102,9 @@ export class SIMSToSFASProcessingService {
       `SIMS to SFAS file ${fileName} has been uploaded successfully.`,
     );
     // Create bridge file log to track the extraction date of the bridge file.
-    await this.simsToSFASService.logBridgeFileDetails(
-      bridgeDataExtractedDate,
-      fileName,
-    );
+    await this.simsToSFASService.logBridgeFileDetails(modifiedUntil, fileName);
     processSummary.info(
-      `SIMS to SFAS file log has been created with file name ${fileName} and reference date ${bridgeDataExtractedDate}.`,
+      `SIMS to SFAS file log has been created with file name ${fileName} and reference date ${modifiedUntil}.`,
     );
     return {
       studentRecordsSent: simsToSFASStudents.uniqueStudentIds.length,

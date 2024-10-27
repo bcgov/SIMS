@@ -68,8 +68,3 @@ export enum SIMSToSFASRecordTypeCodes {
   RestrictionDataRecord = "400",
   Footer = "999",
 }
-
-/**
- * Initial date for the SIMS to SFAS bridge first ever execution.
- */
-export const SIMS_TO_SFAS_BRIDGE_FILE_INITIAL_DATE = new Date("2024-01-01");

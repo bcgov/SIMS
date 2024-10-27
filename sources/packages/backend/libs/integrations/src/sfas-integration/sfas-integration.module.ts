@@ -36,6 +36,7 @@ import {
     SFASApplicationService,
     SFASRestrictionService,
     SFASPartTimeApplicationsService,
+    SIMSToSFASService,
     SIMSToSFASProcessingService,
   ],
 })
