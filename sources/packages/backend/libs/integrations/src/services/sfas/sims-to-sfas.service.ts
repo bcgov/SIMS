@@ -72,7 +72,7 @@ export class SIMSToSFASService {
     modifiedSince: Date,
     modifiedUntil: Date,
   ): Promise<number[]> {
-    const applicationStudentQuery = this.applicationRepo
+    const applicationsWithStudentUpdates = await this.applicationRepo
       .createQueryBuilder("application")
       .select(["application.id", "student.id"])
       .distinctOn(["student.id"])
@@ -82,8 +82,8 @@ export class SIMSToSFASService {
       .innerJoin("student.casSupplier", "casSupplier")
       .leftJoin("student.overawards", "overaward")
       .where("application.applicationStatus != :overwritten")
-      .andWhere("application.currentAssessment is not null");
-    applicationStudentQuery
+      .andWhere("application.currentAssessment is not null")
+      // Check if the student data was updated in the given period.
       .andWhere(
         new Brackets((qb) => {
           qb.where(
@@ -107,10 +107,8 @@ export class SIMSToSFASService {
         overwritten: ApplicationStatus.Overwritten,
         modifiedSince,
         modifiedUntil,
-      });
-
-    const applicationsWithStudentUpdates =
-      await applicationStudentQuery.getMany();
+      })
+      .getMany();
     // Extract the student ids from the applications.
     const modifiedStudentIds = applicationsWithStudentUpdates.map(
       (application) => application.student.id,
