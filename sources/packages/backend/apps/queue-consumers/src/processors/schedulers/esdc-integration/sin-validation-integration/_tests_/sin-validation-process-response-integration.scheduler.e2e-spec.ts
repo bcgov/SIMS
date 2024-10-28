@@ -49,8 +49,6 @@ describe(
 
     beforeEach(async () => {
       jest.clearAllMocks();
-      // Reset all SIN validations.
-      await db.dataSource.query("TRUNCATE TABLE sims.sin_validations CASCADE");
     });
 
     it.only("should process SIN validation response file", async () => {
@@ -62,18 +60,6 @@ describe(
           isValidSIN: true,
         },
       });
-      // Create a SIN record with REFERENCE_IDX = 600000002
-      const inValidSinStudent = await saveFakeStudent(
-        db.dataSource,
-        undefined,
-        {
-          sinValidationInitialValue: {
-            sin: "100000002",
-            isValidSIN: false,
-          },
-        },
-      );
-      await db.sinValidation.save([validSinStudent, inValidSinStudent]);
 
       // Queued job.
       const job = createMock<Job<void>>();
