@@ -29,13 +29,14 @@ describe("CASService-createSupplierAndSite", () => {
     });
 
     const supplierData: CreateSupplierAndSiteData = {
-      firstName: "First Name",
-      lastName: "Some Last-Name",
+      firstName:
+        "First With Special Characters áÉíÓú and Very Extensive Number of Characters",
+      lastName: "Some Last-Name With Length Over the Maximum",
       sin: "999999999",
       emailAddress: "test@test.com",
       supplierSite: {
-        addressLine1: "Some street name",
-        city: "City",
+        addressLine1: "Street-Special Characters-ãñè-Maximum",
+        city: "City Name Over Maximum Length",
         provinceCode: "BC",
         postalCode: "h1h h2h",
       },
@@ -48,13 +49,14 @@ describe("CASService-createSupplierAndSite", () => {
     expect(httpService.axiosRef.post).toHaveBeenCalledWith(
       "cas-url/cfs/supplier/",
       {
-        SupplierName: "SOME LAST-NAME, FIRST NAME",
+        SupplierName:
+          "SOME LAST-NAME WITH LENGTH OVER THE MAXIMUM, FIRST WITH SPECIAL CHARACTERS AEIOU",
         SubCategory: "Individual",
         Sin: "999999999",
         SupplierAddress: [
           {
-            AddressLine1: "SOME STREET NAME",
-            City: supplierData.supplierSite.city,
+            AddressLine1: "STREET-SPECIAL CHARACTERS-ANE-MAXIM",
+            City: "City Name Over Maximum Le",
             Province: "BC",
             Country: "CA",
             PostalCode: "H1HH2H",

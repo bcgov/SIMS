@@ -13,10 +13,9 @@ const CAS_CITY_MAX_LENGTH = 25;
  * @returns formatted full name.
  */
 export function formatUserName(firstName: string, lastName: string): string {
-  const formattedName = `${lastName}, ${firstName}`.substring(
-    0,
-    CAS_SUPPLIER_NAME_MAX_LENGTH,
-  );
+  const formattedName = `${lastName}, ${firstName}`
+    .substring(0, CAS_SUPPLIER_NAME_MAX_LENGTH)
+    .trim();
   return convertToASCIIString(formattedName).toUpperCase();
 }
 
@@ -28,7 +27,7 @@ export function formatUserName(firstName: string, lastName: string): string {
  */
 export function formatAddress(address: string): string {
   return convertToASCIIString(
-    address.substring(0, CAS_ADDRESS_MAX_LENGTH),
+    address.substring(0, CAS_ADDRESS_MAX_LENGTH).trim(),
   ).toUpperCase();
 }
 
@@ -38,7 +37,7 @@ export function formatAddress(address: string): string {
  * @returns formatted city.
  */
 export function formatCity(city: string): string {
-  return city.substring(0, CAS_CITY_MAX_LENGTH);
+  return city.substring(0, CAS_CITY_MAX_LENGTH).trim();
 }
 
 /**
