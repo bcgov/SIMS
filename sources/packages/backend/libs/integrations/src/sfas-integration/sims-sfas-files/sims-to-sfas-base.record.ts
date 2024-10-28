@@ -12,7 +12,7 @@ export abstract class SIMSToSFASBaseRecord implements FixedFormatFileLine {
    * Get string builder with fillers and date format
    * with respect ti SIMS to SFAS file.
    */
-  get stringBuilder(): SpecializedStringBuilder {
+  protected get stringBuilder(): SpecializedStringBuilder {
     const dateFormat = "YYYYMMDD";
     const spaceFiller = " ";
     const numberFiller = "0";
