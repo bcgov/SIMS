@@ -9,7 +9,6 @@ import {
   IER12Record,
   IERAward,
   ScholasticStandingCode,
-  YNFlag,
 } from "./models/ier12-integration.model";
 import {
   ApplicationStatus,
@@ -22,6 +21,7 @@ import {
   getTotalYearsOfStudy,
   replaceLineBreaks,
 } from "@sims/utilities";
+import { YNFlag } from "@sims/integrations/models";
 
 /**
  * Manages the creation of the content files that needs to be sent

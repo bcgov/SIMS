@@ -35,3 +35,8 @@ export const APPLICATION_CHANGES_REPORT_PREFIX = "PBC.EDU.APPCHANGES";
  * SFTP directory name used to archive files.
  */
 export const SFTP_ARCHIVE_DIRECTORY = "Archive";
+
+/**
+ * Initial date for the SIMS to SFAS bridge first ever execution.
+ */
+export const SIMS_TO_SFAS_BRIDGE_FILE_INITIAL_DATE = new Date("2024-01-01");

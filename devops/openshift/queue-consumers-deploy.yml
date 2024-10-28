@@ -147,6 +147,11 @@ objects:
                     secretKeyRef:
                       key: ${SFAS_RECEIVE_FOLDER_NAME_KEY}
                       name: ${QUEUE_CONSUMERS_SECRET_NAME}
+                - name: SFAS_SEND_FOLDER
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${SFAS_SEND_FOLDER_NAME_KEY}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
                 - name: CRA_REQUEST_FOLDER
                   valueFrom:
                     secretKeyRef:
@@ -448,6 +453,8 @@ parameters:
     value: gc-notify-api-key
   - name: SFAS_RECEIVE_FOLDER_NAME_KEY
     value: sfas-receive-folder
+  - name: SFAS_SEND_FOLDER_NAME_KEY
+    value: sfas-send-folder
   - name: ATBC_LOGIN_ENDPOINT
     required: true
   - name: ATBC_ENDPOINT
