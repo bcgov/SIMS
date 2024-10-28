@@ -1,4 +1,4 @@
-import { Injectable, LoggerService } from "@nestjs/common";
+import { HttpStatus, Injectable, LoggerService } from "@nestjs/common";
 import {
   CASAuthDetails,
   CASSupplierResponse,
@@ -6,7 +6,7 @@ import {
   CreateSupplierAndSiteResponse,
   CreateSupplierAndSiteSubmittedData,
 } from "./models/cas-service.model";
-import { AxiosRequestConfig } from "axios";
+import { AxiosError, AxiosRequestConfig } from "axios";
 import { HttpService } from "@nestjs/axios";
 import { CASIntegrationConfig, ConfigService } from "@sims/utilities/config";
 import { stringify } from "querystring";
@@ -15,7 +15,7 @@ import {
   convertToASCIIString,
   parseJSONError,
 } from "@sims/utilities";
-import { CAS_AUTH_ERROR } from "@sims/integrations/constants";
+import { CAS_AUTH_ERROR, CAS_BAD_REQUEST } from "@sims/integrations/constants";
 import { InjectLogger } from "@sims/utilities/logger";
 import {
   CASCachedAuthDetails,
@@ -24,6 +24,11 @@ import {
   formatPostalCode,
   formatUserName,
 } from ".";
+
+/**
+ * CAS response property that contains further information about errors.
+ */
+const CAS_RETURNED_MESSAGES = "CAS-Returned-Messages";
 
 @Injectable()
 export class CASService {
@@ -128,8 +133,8 @@ export class CASService {
       const config = await this.getAuthConfig();
       const submittedData: CreateSupplierAndSiteSubmittedData = {
         SupplierName: formatUserName(
-          supplierData.lastName,
           supplierData.firstName,
+          supplierData.lastName,
         ),
         SubCategory: "Individual",
         Sin: supplierData.sin,
@@ -159,6 +164,18 @@ export class CASService {
         },
       };
     } catch (error: unknown) {
+      if (
+        error instanceof AxiosError &&
+        error.response?.status === HttpStatus.BAD_REQUEST &&
+        !!error.response?.data[CAS_RETURNED_MESSAGES]
+      ) {
+        // Checking for bad request errors for better logging while the
+        // specific ticket to handle exception is pending.
+        throw new CustomNamedError(
+          error.response.data[CAS_RETURNED_MESSAGES],
+          CAS_BAD_REQUEST,
+        );
+      }
       throw new Error("Error while creating supplier and site on CAS.", {
         cause: error,
       });
