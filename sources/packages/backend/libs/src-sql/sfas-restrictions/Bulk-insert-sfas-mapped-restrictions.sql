@@ -22,6 +22,7 @@ FROM
         WHEN sfas_restrictions.code = 'A12' THEN '12'
         WHEN sfas_restrictions.code = 'AF1' THEN 'AF'
         WHEN sfas_restrictions.code = 'B2D' THEN 'B2'
+        WHEN sfas_restrictions.code = 'SINR' THEN 'LGCY'
         ELSE sfas_restrictions.code
       END AS mapped_code,
       sfas_restrictions.individual_id

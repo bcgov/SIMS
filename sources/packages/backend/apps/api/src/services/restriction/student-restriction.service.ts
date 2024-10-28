@@ -326,7 +326,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
 
     const hasSINRestriction = await this.studentHasRestriction(
       studentId,
-      RestrictionCode.SINF,
+      RestrictionCode.SINR,
     );
     if (hasSINRestriction) {
       // The student already has an active SIN restriction, avoid adding it again.
@@ -351,7 +351,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       const restriction =
         await this.studentRestrictionSharedService.createRestrictionToSave(
           studentId,
-          RestrictionCode.SINF,
+          RestrictionCode.SINR,
           auditUserId,
           applicationId,
         );
