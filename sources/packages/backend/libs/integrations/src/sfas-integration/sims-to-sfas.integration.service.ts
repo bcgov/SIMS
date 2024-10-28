@@ -24,6 +24,6 @@ export class SIMSToSFASIntegrationService extends SFTPIntegrationBase<void> {
       .appendHeader(bridgeFileDate)
       .appendStudentFileRecords(studentRecords)
       .appendFooter().fileLines;
-    // TODO: SIMS to SFAS - Append applications, restrictions and footer.
+    // TODO: SIMS to SFAS - Append applications and restrictions.
   }
 }

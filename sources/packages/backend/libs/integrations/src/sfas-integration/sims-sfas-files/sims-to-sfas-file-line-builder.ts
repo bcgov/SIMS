@@ -87,7 +87,7 @@ export class SIMSToSFASFileLineBuilder {
     });
     return this;
   }
-  // TODO: SIMS to SFAS - Create append methods for applications, restrictions and footer.
+  // TODO: SIMS to SFAS - Create append methods for applications and restrictions.
 
   get fileLines(): FixedFormatFileLine[] {
     return this.fileLinesInternal;
