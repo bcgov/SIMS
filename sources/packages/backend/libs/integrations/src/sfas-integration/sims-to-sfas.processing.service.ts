@@ -51,8 +51,9 @@ export class SIMSToSFASProcessingService {
     // TODO: SIMS to SFAS - Append the student ids of students with updates in application and restriction related data.
     // When application and restriction updates are retrieved, the respective
     // student ids of applications and restrictions should be appended.;
-    const uniqueStudentIds =
-      simsToSFASStudents.append(studentIds).uniqueStudentIds;
+    const uniqueStudentIds = simsToSFASStudents
+      .append(studentIds)
+      .getUniqueStudentIds();
 
     // When there is no updates to process, log the summary and return.
     if (!uniqueStudentIds.length) {
@@ -107,7 +108,7 @@ export class SIMSToSFASProcessingService {
       `SIMS to SFAS file log has been created with file name ${fileName} and reference date ${modifiedUntil}.`,
     );
     return {
-      studentRecordsSent: simsToSFASStudents.uniqueStudentIds.length,
+      studentRecordsSent: uniqueStudentIds.length,
       uploadedFileName: fileName,
     };
   }

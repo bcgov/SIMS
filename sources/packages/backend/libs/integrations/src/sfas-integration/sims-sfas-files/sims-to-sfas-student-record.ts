@@ -89,7 +89,7 @@ export class SIMSToSFASStudentRecord extends SIMSToSFASBaseRecord {
    * @returns fixed line formatted.
    */
   getFixedFormat(): string {
-    const record = this.stringBuilder;
+    const record = this.getStringBuilder();
     record.append(this.recordTypeCode);
     record.appendNumberWithFiller(this.studentId, 10);
     record.appendOptionalStringWithFiller(this.givenName, 15);

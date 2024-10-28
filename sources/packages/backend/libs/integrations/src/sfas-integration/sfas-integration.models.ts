@@ -46,8 +46,9 @@ export class SIMSToSFASStudents {
   /**
    * Unique student ids of all the students who are going to be processed
    * in the SIMS to SFAS integration.
+   * @returns unique student ids.
    */
-  get uniqueStudentIds(): number[] {
+  getUniqueStudentIds(): number[] {
     return [...new Set(this.studentIds)];
   }
 }

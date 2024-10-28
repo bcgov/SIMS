@@ -37,7 +37,7 @@ export class SIMSToSFASFileLineBuilder {
   appendFooter(): this {
     const footer = new SIMSToSFASFooter();
     footer.recordTypeCode = SIMSToSFASRecordTypeCodes.Footer;
-    footer.totalRecordsCount = this.totalDataRecords;
+    footer.totalRecordsCount = this.getTotalDataRecords();
     this.fileLinesInternal.push(footer);
     return this;
   }
@@ -96,8 +96,9 @@ export class SIMSToSFASFileLineBuilder {
   /**
    * Get total number of data records in the file.
    * Data record is any record other than header and footer.
+   * @returns total number of data records.
    */
-  get totalDataRecords(): number {
+  private getTotalDataRecords(): number {
     return this.fileLinesInternal.filter(
       (fileLine) =>
         fileLine.recordTypeCode !== SIMSToSFASRecordTypeCodes.Header &&

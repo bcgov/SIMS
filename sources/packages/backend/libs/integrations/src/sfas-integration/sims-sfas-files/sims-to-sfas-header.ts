@@ -23,7 +23,7 @@ export class SIMSToSFASHeader extends SIMSToSFASBaseRecord {
    */
   getFixedFormat(): string {
     const dateTimeFormat = "YYYYMMDDHHmmss";
-    const record = this.stringBuilder;
+    const record = this.getStringBuilder();
     record.append(this.recordTypeCode);
     record.append(this.originator);
     record.appendStringWithFiller(this.title, 40);
