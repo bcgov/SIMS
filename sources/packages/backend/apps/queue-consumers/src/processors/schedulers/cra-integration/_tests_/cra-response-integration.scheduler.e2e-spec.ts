@@ -52,8 +52,8 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
     jest.clearAllMocks();
   });
 
-  it.only("should process CRA response file", async () => {
-    // Arrange
+  it("Should process CRA response file to update the income verification record.", async () => {
+    // Arrange.
     const student = await saveFakeStudent(db.dataSource);
 
     const application = await saveFakeApplication(

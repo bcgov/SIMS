@@ -47,7 +47,7 @@ export class SINValidation extends RecordDataModel {
     type: "timestamptz",
     nullable: true,
   })
-  dateReceived?: Date;
+  dateReceived?: Date | null;
   /**
    * Name of the file sent for SIN validation.
    */
