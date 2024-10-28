@@ -66,8 +66,8 @@ export class SIMSToSFASIntegrationScheduler extends BaseScheduler<void> {
       return getSuccessMessageWithAttentionCheck(
         [
           "Process finalized with success.",
-          `Student records sent: ${studentRecordsSent}`,
-          `Uploaded file name: ${uploadedFileName}`,
+          `Student records sent: ${studentRecordsSent}.`,
+          `Uploaded file name: ${uploadedFileName}.`,
         ],
         processSummary,
       );

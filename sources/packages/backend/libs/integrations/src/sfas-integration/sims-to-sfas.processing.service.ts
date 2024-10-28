@@ -50,7 +50,7 @@ export class SIMSToSFASProcessingService {
     // Append the students with student and student related data updates.
     // TODO: SIMS to SFAS - Append the student ids of students with updates in application and restriction related data.
     // When application and restriction updates are retrieved, the respective
-    // student ids of applications and restrictions should be appended.;
+    // student ids of applications and restrictions should be appended.
     const uniqueStudentIds = simsToSFASStudents
       .append(studentIds)
       .getUniqueStudentIds();
