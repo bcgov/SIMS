@@ -49,6 +49,8 @@ describe(
 
     beforeEach(async () => {
       jest.clearAllMocks();
+      // Reset all SIN validations.
+      await db.dataSource.query("TRUNCATE TABLE sims.sin_validations CASCADE");
     });
 
     it.only("should process SIN validation response file", async () => {
