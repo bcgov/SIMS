@@ -72,10 +72,11 @@ export class SIMSToSFASService {
     modifiedSince: Date,
     modifiedUntil: Date,
   ): Promise<number[]> {
+    const studentIdAlias = "studentId";
     const applicationsWithStudentUpdates = await this.applicationRepo
       .createQueryBuilder("application")
-      .select(["application.id", "student.id"])
-      .distinctOn(["student.id"])
+      .select("student.id", studentIdAlias)
+      .distinctOn([`"${studentIdAlias}"`])
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
       .innerJoin("student.sinValidation", "sinValidation")
@@ -108,10 +109,11 @@ export class SIMSToSFASService {
         modifiedSince,
         modifiedUntil,
       })
-      .getMany();
+      .getRawMany<{ [studentIdAlias]: number }>();
     // Extract the student ids from the applications.
     const modifiedStudentIds = applicationsWithStudentUpdates.map(
-      (application) => application.student.id,
+      (applicationWithStudentUpdate) =>
+        applicationWithStudentUpdate[studentIdAlias],
     );
 
     return modifiedStudentIds;
