@@ -335,6 +335,8 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       });
       queryParams.push(`%${singleSearchPaginationOptions.searchCriteria}%`);
     }
+
+    // Program name search.
     if (!locationId && multiSearchPaginationOptions.programNameSearch) {
       paginatedProgramQuery.andWhere(
         "programs.name Ilike :programNameSearchCriteria",
@@ -344,6 +346,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       );
       queryParams.push(`%${multiSearchPaginationOptions.programNameSearch}%`);
     }
+    // Location name search.
     if (!locationId && multiSearchPaginationOptions.locationNameSearch) {
       paginatedProgramQuery.andWhere(
         "location.name Ilike :locationNameSearchCriteria",
@@ -353,12 +356,17 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       );
       queryParams.push(`%${multiSearchPaginationOptions.locationNameSearch}%`);
     }
+    // Fix for the scenario when the status search array is empty
+    // but still shows up as [''] in the route controller handler
+    // after the transformation and validation pipes have operated
+    // on the input parameters.
     if (
       multiSearchPaginationOptions.statusSearch.length === 1 &&
       multiSearchPaginationOptions.statusSearch[0] === ("" as ProgramStatus)
     ) {
       multiSearchPaginationOptions.statusSearch = undefined;
     }
+    // When both the status search and inactive search is false, nothing is returned.
     if (
       !locationId &&
       !multiSearchPaginationOptions.statusSearch &&
@@ -369,6 +377,9 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         count: 0,
       };
     }
+    // When the status search and inactive both are true,
+    // then fetch the inactive programs along with the ones
+    // from the program status list.
     if (
       !locationId &&
       multiSearchPaginationOptions.statusSearch &&
@@ -392,7 +403,9 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       );
       queryParams.push(...multiSearchPaginationOptions.statusSearch);
       queryParams.push(!multiSearchPaginationOptions.inactiveProgramSearch);
-    } else if (!locationId && multiSearchPaginationOptions.statusSearch) {
+    }
+    // Fetching only the active programs with the provided program status.
+    else if (!locationId && multiSearchPaginationOptions.statusSearch) {
       paginatedProgramQuery.andWhere(
         "programs.programStatus IN (:...programStatusSearchCriteria) and programs.isActive = true",
         {
@@ -401,7 +414,9 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         },
       );
       queryParams.push(...multiSearchPaginationOptions.statusSearch);
-    } else if (
+    }
+    // Fetching only the inactive status programs.
+    else if (
       !locationId &&
       multiSearchPaginationOptions.inactiveProgramSearch
     ) {
