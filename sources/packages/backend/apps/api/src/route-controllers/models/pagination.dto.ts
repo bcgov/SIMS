@@ -12,7 +12,7 @@ import { PAGINATION_SEARCH_MAX_LENGTH } from "../../constants";
 import { FieldSortOrder } from "@sims/utilities";
 import { ProgramStatus } from "@sims/sims-db";
 import { Transform } from "class-transformer";
-import { ToBoolean } from "apps/api/src/utilities/class-transform";
+import { ToBoolean } from "../../utilities/class-transform";
 
 /**
  * Common parameters used when an API result
