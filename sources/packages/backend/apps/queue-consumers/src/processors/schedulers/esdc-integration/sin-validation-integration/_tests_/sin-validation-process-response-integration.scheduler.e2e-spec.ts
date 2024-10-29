@@ -46,12 +46,7 @@ describe(
       jest.clearAllMocks();
     });
 
-    const padWithLeadingZeros = (num: number): string => {
-      // Pad the number with leading zeros to make it 9 digits long
-      return num.toString().padStart(9, "0");
-    };
-
-    it("Should process SIN response file ignoring non-SIMS records when the file contains responses from requests that were not created by SIMS.", async () => {
+    it("Should/when process SIN response file to update the SIN validation record if containing REFERENCE_IDX that matches the SIN validation record.", async () => {
       // Arrange
       // Create a SIN record with REFERENCE_IDX = 600000001
       const validSinStudent = await saveFakeStudent(db.dataSource, undefined, {
@@ -104,7 +99,7 @@ describe(
       ]);
     });
 
-    it("Should process SIN validation response file to update the SIN validation record.", async () => {
+    it("Should/when process SIN validation response file to update the SIN validation record.", async () => {
       // Arrange
       // Create a SIN record with REFERENCE_IDX = 600000002 and dateReceived = null to process the SIN validation record updated.
       const validSinStudent = await saveFakeStudent(db.dataSource, undefined, {
@@ -157,5 +152,10 @@ describe(
         },
       ]);
     });
+
+    const padWithLeadingZeros = (num: number): string => {
+      // Pad the number with leading zeros to make it 9 digits long
+      return num.toString().padStart(9, "0");
+    };
   },
 );

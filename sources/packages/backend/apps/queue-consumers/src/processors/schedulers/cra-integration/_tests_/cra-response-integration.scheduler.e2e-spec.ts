@@ -25,11 +25,6 @@ import { ApplicationStatus } from "@sims/sims-db";
 
 const CRA_FILENAME = "CRA_200_PBCSA00000.TXT";
 
-const padWithLeadingZeros = (num: number): string => {
-  // Pad the number with leading zeros to make it 9 digits long
-  return num.toString().padStart(9, "0");
-};
-
 describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
   let app: INestApplication;
   let processor: CRAResponseIntegrationScheduler;
@@ -52,7 +47,7 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
     jest.clearAllMocks();
   });
 
-  it("Should process CRA response file to update the income verification record.", async () => {
+  it("Should process SIN response file ignoring non-SIMS records when the file contains responses from requests that were not created by SIMS.", async () => {
     // Arrange.
     const student = await saveFakeStudent(db.dataSource);
 
@@ -67,7 +62,7 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
       {
         application,
       },
-      { initialValues: { dateReceived: null } },
+      { initialValues: {} },
     );
     await db.craIncomeVerification.save([studentCRAIncomeVerification]);
     // Queued job.
@@ -76,19 +71,19 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
 
     mockDownloadFiles(sftpClientMock, [CRA_FILENAME], (fileContent: string) => {
       const file = getStructuredRecords(fileContent);
-      const line2 = file.records[2]; // Get the 4th item (index 3) in the array
+      const line2 = file.records[2]; // Get the 3rd item (index 2) in the array
 
       // Split the record on colon and change 9 digits after colon
       const [beforeColon, afterColon] = line2.split(":");
       const newVerificationId = padWithLeadingZeros(
         studentCRAIncomeVerification.id,
       );
-      const updatedRecord4 = `${beforeColon}:${newVerificationId}${afterColon.substring(
+      const recordToUpdate = `${beforeColon}:${newVerificationId}${afterColon.substring(
         9,
       )}`;
 
       // Update the fourth record with the modified content
-      file.records[2] = updatedRecord4;
+      file.records[2] = recordToUpdate;
 
       return createFileFromStructuredRecords(file);
     });
@@ -113,4 +108,9 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
       },
     ]);
   });
+
+  const padWithLeadingZeros = (num: number): string => {
+    // Pad the number with leading zeros to make it 9 digits long
+    return num.toString().padStart(9, "0");
+  };
 });
