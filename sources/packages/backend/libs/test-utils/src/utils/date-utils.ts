@@ -15,7 +15,7 @@ export function isValidFileTimestamp(timestamp: string): boolean {
  * @returns a new date with years added.
  */
 export const addYears = (yearsToAdd: number, date?: Date | string): Date => {
-  return dayjs(date ? date : new Date())
+  return dayjs(date ?? new Date())
     .add(yearsToAdd, "year")
     .toDate();
 };
@@ -30,7 +30,7 @@ export const addMilliSeconds = (
   milliSecondsToAdd: number,
   date?: Date | string,
 ): Date => {
-  return dayjs(date ? date : new Date())
+  return dayjs(date ?? new Date())
     .add(milliSecondsToAdd, "millisecond")
     .toDate();
 };
