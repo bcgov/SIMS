@@ -41,6 +41,7 @@ export class ClamAVService {
         reject(new Error("Connection timed out."));
       });
       stream.pipe(passthroughStream);
+      passthroughStream.resume();
     });
     return promise;
   }
