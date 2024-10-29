@@ -394,7 +394,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       queryParams.push(!multiSearchPaginationOptions.inactiveProgramSearch);
     } else if (!locationId && multiSearchPaginationOptions.statusSearch) {
       paginatedProgramQuery.andWhere(
-        "programs.programStatus IN (:...programStatusSearchCriteria)",
+        "programs.programStatus IN (:...programStatusSearchCriteria) and programs.isActive = true",
         {
           programStatusSearchCriteria:
             multiSearchPaginationOptions.statusSearch,
