@@ -46,7 +46,7 @@ describe(
       jest.clearAllMocks();
     });
 
-    it("Should process SIN response file to update the SIN validation record if containing REFERENCE_IDX that matches the SIN validation record.", async () => {
+    it("Should skip process SIN response file when no SIN validation was updated because the record id is already present.", async () => {
       // Arrange
       // Create a SIN record with REFERENCE_IDX = 600000001
       const validSinStudent = await saveFakeStudent(db.dataSource, undefined, {
@@ -99,7 +99,7 @@ describe(
       ]);
     });
 
-    it("Should update the SIN validation record and skip the update when the dateReceived is null.", async () => {
+    it("Should update one SIN validation record and skip one when one SIN response is from SIMS and the other is from SFAS.", async () => {
       // Arrange
       // Create a SIN record with REFERENCE_IDX = 600000002 and dateReceived = null to process the SIN validation record updated.
       const validSinStudent = await saveFakeStudent(db.dataSource, undefined, {
