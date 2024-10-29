@@ -22,7 +22,7 @@ const SFAS_RESTRICTIONS_RAW_SQL_FOLDER = "sfas-restrictions";
  * process the Federal Restriction file on a regular basis.
  */
 @Injectable()
-export class SFASRestrictionService
+export class SFASRestrictionImportService
   extends DataModelService<SFASRestriction>
   implements SFASDataImporter
 {
