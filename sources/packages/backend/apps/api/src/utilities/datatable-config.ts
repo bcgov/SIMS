@@ -1,3 +1,4 @@
+import { ProgramStatus } from "@sims/sims-db";
 import { FieldSortOrder } from "@sims/utilities";
 
 /**
@@ -23,7 +24,7 @@ export interface PaginationOptions extends BasePaginationOptions {
 export interface ProgramPaginationOptions extends BasePaginationOptions {
   programNameSearch?: string;
   locationNameSearch?: string;
-  statusSearch?: string;
+  statusSearch?: ProgramStatus[];
   inactiveProgramSearch?: boolean;
 }
 

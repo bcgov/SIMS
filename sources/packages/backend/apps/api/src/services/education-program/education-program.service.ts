@@ -26,6 +26,7 @@ import {
   IsNull,
   Brackets,
   Or,
+  SelectQueryBuilder,
 } from "typeorm";
 import {
   SaveEducationProgram,
@@ -272,105 +273,48 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * Gets all the programs that are associated with an institution
    * alongside with the total of offerings on locations.
    * @param institutionId id of the institution.
+   * @param offeringTypes offering types.
    * @param paginationOptions program related pagination options.
-   * @param locationId optional location id to filter.
-   * @returns paginated summary for the institution or location.
+   * @returns paginated summary for the institution.
    */
   async getProgramsSummary(
     institutionId: number,
     offeringTypes: OfferingTypes[],
-    paginationOptions: ProgramPaginationOptions | PaginationOptions,
-    locationId?: number,
+    paginationOptions: ProgramPaginationOptions,
   ): Promise<PaginatedResults<EducationProgramsSummary>> {
-    const paginatedProgramQuery = this.repo
-      .createQueryBuilder("programs")
-      .select("programs.id", "programId")
-      .addSelect("programs.name", "programName")
-      .addSelect("programs.cipCode", "cipCode")
-      .addSelect("programs.credentialType", "credentialType")
-      .addSelect("programs.createdAt", "programSubmittedAt")
-      .addSelect("location.id", "locationId")
-      .addSelect("location.name", "locationName")
-      .addSelect("programs.programStatus", "programStatus")
-      .addSelect("programs.isActive", "isActive")
-      .addSelect("programs.effectiveEndDate", "effectiveEndDate")
-      .addSelect(
-        (qb) =>
-          qb
-            .select("COUNT(*)")
-            .from(EducationProgramOffering, "offerings")
-            .where("offerings.educationProgram.id = programs.id")
-            .andWhere("offerings.institutionLocation.id = location.id")
-            .andWhere("offerings.offeringType in (:...offeringTypes)", {
-              offeringTypes,
-            }),
-        "totalOfferings",
-      )
-      .innerJoin("programs.institution", "institution")
-      .innerJoin(
-        InstitutionLocation,
-        "location",
-        "institution.id = location.institution.id",
-      )
-      .where("programs.institution.id = :institutionId", { institutionId });
-
-    // This queryParams is for getRawCount, which is different from the
-    // query parameter assigned to paginatedProgramQuery like
-    // paginationOptions.searchCriteria or institutionId
-    // queryParams should follow the order/index.
-    const queryParams: any[] = [...offeringTypes, institutionId];
-    if (locationId) {
-      queryParams.push(locationId);
-      paginatedProgramQuery.andWhere("location.id = :locationId", {
-        locationId,
-      });
-    }
-    const singleSearchPaginationOptions =
-      paginationOptions as PaginationOptions;
-    const multiSearchPaginationOptions =
-      paginationOptions as ProgramPaginationOptions;
-    if (singleSearchPaginationOptions.searchCriteria) {
-      paginatedProgramQuery.andWhere("programs.name Ilike :searchCriteria", {
-        searchCriteria: `%${singleSearchPaginationOptions.searchCriteria}%`,
-      });
-      queryParams.push(`%${singleSearchPaginationOptions.searchCriteria}%`);
-    }
+    const { programQuery, queryParams } = this.getProgramsQueryWithQueryParams(
+      offeringTypes,
+      institutionId,
+    );
 
     // Program name search.
-    if (!locationId && multiSearchPaginationOptions.programNameSearch) {
-      paginatedProgramQuery.andWhere(
-        "programs.name Ilike :programNameSearchCriteria",
-        {
-          programNameSearchCriteria: `%${multiSearchPaginationOptions.programNameSearch}%`,
-        },
-      );
-      queryParams.push(`%${multiSearchPaginationOptions.programNameSearch}%`);
+    if (paginationOptions.programNameSearch) {
+      programQuery.andWhere("programs.name Ilike :programNameSearchCriteria", {
+        programNameSearchCriteria: `%${paginationOptions.programNameSearch}%`,
+      });
+      queryParams.push(`%${paginationOptions.programNameSearch}%`);
     }
     // Location name search.
-    if (!locationId && multiSearchPaginationOptions.locationNameSearch) {
-      paginatedProgramQuery.andWhere(
-        "location.name Ilike :locationNameSearchCriteria",
-        {
-          locationNameSearchCriteria: `%${multiSearchPaginationOptions.locationNameSearch}%`,
-        },
-      );
-      queryParams.push(`%${multiSearchPaginationOptions.locationNameSearch}%`);
+    if (paginationOptions.locationNameSearch) {
+      programQuery.andWhere("location.name Ilike :locationNameSearchCriteria", {
+        locationNameSearchCriteria: `%${paginationOptions.locationNameSearch}%`,
+      });
+      queryParams.push(`%${paginationOptions.locationNameSearch}%`);
     }
     // Fix for the scenario when the status search array is empty
     // but still shows up as [''] in the route controller handler
     // after the transformation and validation pipes have operated
     // on the input parameters.
     if (
-      multiSearchPaginationOptions.statusSearch.length === 1 &&
-      multiSearchPaginationOptions.statusSearch[0] === ("" as ProgramStatus)
+      paginationOptions.statusSearch.length === 1 &&
+      paginationOptions.statusSearch[0] === ("" as ProgramStatus)
     ) {
-      multiSearchPaginationOptions.statusSearch = undefined;
+      paginationOptions.statusSearch = undefined;
     }
     // When both the status search and inactive search is false, nothing is returned.
     if (
-      !locationId &&
-      !multiSearchPaginationOptions.statusSearch &&
-      !multiSearchPaginationOptions.inactiveProgramSearch
+      !paginationOptions.statusSearch &&
+      !paginationOptions.inactiveProgramSearch
     ) {
       return {
         results: [],
@@ -381,109 +325,93 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     // then fetch the inactive programs along with the ones
     // from the program status list.
     if (
-      !locationId &&
-      multiSearchPaginationOptions.statusSearch &&
-      multiSearchPaginationOptions.inactiveProgramSearch
+      paginationOptions.statusSearch &&
+      paginationOptions.inactiveProgramSearch
     ) {
-      paginatedProgramQuery.andWhere(
+      programQuery.andWhere(
         new Brackets((qb) =>
           qb
             .where(
               "programs.programStatus IN (:...programStatusSearchCriteria)",
               {
-                programStatusSearchCriteria:
-                  multiSearchPaginationOptions.statusSearch,
+                programStatusSearchCriteria: paginationOptions.statusSearch,
               },
             )
             .orWhere("programs.isActive = :programIsActiveSearchCriteria", {
               programIsActiveSearchCriteria:
-                !multiSearchPaginationOptions.inactiveProgramSearch,
+                !paginationOptions.inactiveProgramSearch,
             }),
         ),
       );
-      queryParams.push(...multiSearchPaginationOptions.statusSearch);
-      queryParams.push(!multiSearchPaginationOptions.inactiveProgramSearch);
+      queryParams.push(...paginationOptions.statusSearch);
+      queryParams.push(!paginationOptions.inactiveProgramSearch);
     }
     // Fetching only the active programs with the provided program status.
-    else if (!locationId && multiSearchPaginationOptions.statusSearch) {
-      paginatedProgramQuery.andWhere(
+    else if (paginationOptions.statusSearch) {
+      programQuery.andWhere(
         "programs.programStatus IN (:...programStatusSearchCriteria) and programs.isActive = true",
         {
-          programStatusSearchCriteria:
-            multiSearchPaginationOptions.statusSearch,
+          programStatusSearchCriteria: paginationOptions.statusSearch,
         },
       );
-      queryParams.push(...multiSearchPaginationOptions.statusSearch);
+      queryParams.push(...paginationOptions.statusSearch);
     }
     // Fetching only the inactive status programs.
-    else if (
-      !locationId &&
-      multiSearchPaginationOptions.inactiveProgramSearch
-    ) {
-      paginatedProgramQuery.andWhere(
+    else if (paginationOptions.inactiveProgramSearch) {
+      programQuery.andWhere(
         "programs.isActive = :programIsActiveSearchCriteria",
         {
           programIsActiveSearchCriteria:
-            !multiSearchPaginationOptions.inactiveProgramSearch,
+            !paginationOptions.inactiveProgramSearch,
         },
       );
-      queryParams.push(!multiSearchPaginationOptions.inactiveProgramSearch);
+      queryParams.push(!paginationOptions.inactiveProgramSearch);
     }
 
-    // For getting total raw count before pagination.
-    const sqlQuery = paginatedProgramQuery.getSql();
-
-    if (paginationOptions.pageLimit) {
-      paginatedProgramQuery.limit(paginationOptions.pageLimit);
-    }
-
-    paginatedProgramQuery.offset(
-      paginationOptions.page * paginationOptions.pageLimit,
+    return this.preparePaginatedProgramQuery(
+      programQuery,
+      paginationOptions,
+      queryParams,
     );
+  }
 
-    // sort
-    if (paginationOptions.sortField && paginationOptions.sortOrder) {
-      paginatedProgramQuery.orderBy(
-        sortProgramsColumnMap(paginationOptions.sortField),
-        paginationOptions.sortOrder,
-      );
-    } else {
-      // Default sort and order.
-      // TODO:Further investigation needed as the CASE translation does not work in orderby queries.
-      paginatedProgramQuery.orderBy(
-        `CASE programs.program_status
-                WHEN '${ProgramStatus.Pending}' THEN ${SortPriority.Priority1}
-                WHEN '${ProgramStatus.Approved}' THEN ${SortPriority.Priority2}
-                WHEN '${ProgramStatus.Declined}' THEN ${SortPriority.Priority3}
-                ELSE ${SortPriority.Priority4}
-              END`,
-      );
+  /**
+   * Gets all the programs that are associated with
+   * an institution and the location alongside with
+   * the total of offerings on locations.
+   * @param institutionId id of the institution.
+   * @param offeringTypes offering types.
+   * @param paginationOptions pagination options.
+   * @param locationId related location id.
+   * @returns paginated summary for the institution location.
+   */
+  async getProgramsSummaryForLocation(
+    institutionId: number,
+    offeringTypes: OfferingTypes[],
+    paginationOptions: PaginationOptions,
+    locationId: number,
+  ): Promise<PaginatedResults<EducationProgramsSummary>> {
+    const { programQuery, queryParams } = this.getProgramsQueryWithQueryParams(
+      offeringTypes,
+      institutionId,
+    );
+    if (locationId) {
+      queryParams.push(locationId);
+      programQuery.andWhere("location.id = :locationId", {
+        locationId,
+      });
     }
-
-    // Total count and summary.
-    const [totalCount, programsQuery] = await Promise.all([
-      getRawCount(this.repo, sqlQuery, queryParams),
-      paginatedProgramQuery.getRawMany(),
-    ]);
-
-    const programSummary = programsQuery.map((program) => ({
-      programId: program.programId,
-      programName: program.programName,
-      cipCode: program.cipCode,
-      credentialType: program.credentialType,
-      submittedDate: program.programSubmittedAt,
-      programStatus: program.programStatus,
-      isActive: program.isActive,
-      isExpired: isSameOrAfterDate(program.effectiveEndDate, new Date()),
-      totalOfferings: program.totalOfferings,
-      locationId: program.locationId,
-      locationName: program.locationName,
-    }));
-
-    return {
-      results: programSummary,
-      count: totalCount,
-    };
+    if (paginationOptions.searchCriteria) {
+      programQuery.andWhere("programs.name Ilike :searchCriteria", {
+        searchCriteria: `%${paginationOptions.searchCriteria}%`,
+      });
+      queryParams.push(`%${paginationOptions.searchCriteria}%`);
+    }
+    return this.preparePaginatedProgramQuery(
+      programQuery,
+      paginationOptions,
+      queryParams,
+    );
   }
 
   /**
@@ -899,6 +827,128 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         modifier: auditUser,
       });
     });
+  }
+
+  /**
+   * Gets the programs query with the query parameters.
+   * @param offeringTypes offering types.
+   * @param institutionId institution id.
+   * @returns programs query.
+   */
+  private getProgramsQueryWithQueryParams(
+    offeringTypes: OfferingTypes[],
+    institutionId: number,
+  ): {
+    programQuery: SelectQueryBuilder<EducationProgram>;
+    queryParams: any[];
+  } {
+    const programQuery = this.repo
+      .createQueryBuilder("programs")
+      .select("programs.id", "programId")
+      .addSelect("programs.name", "programName")
+      .addSelect("programs.cipCode", "cipCode")
+      .addSelect("programs.credentialType", "credentialType")
+      .addSelect("programs.createdAt", "programSubmittedAt")
+      .addSelect("location.id", "locationId")
+      .addSelect("location.name", "locationName")
+      .addSelect("programs.programStatus", "programStatus")
+      .addSelect("programs.isActive", "isActive")
+      .addSelect("programs.effectiveEndDate", "effectiveEndDate")
+      .addSelect(
+        (qb) =>
+          qb
+            .select("COUNT(*)")
+            .from(EducationProgramOffering, "offerings")
+            .where("offerings.educationProgram.id = programs.id")
+            .andWhere("offerings.institutionLocation.id = location.id")
+            .andWhere("offerings.offeringType in (:...offeringTypes)", {
+              offeringTypes,
+            }),
+        "totalOfferings",
+      )
+      .innerJoin("programs.institution", "institution")
+      .innerJoin(
+        InstitutionLocation,
+        "location",
+        "institution.id = location.institution.id",
+      )
+      .where("programs.institution.id = :institutionId", { institutionId });
+
+    // This queryParams is for getRawCount, which is different from the
+    // query parameter assigned to paginatedProgramQuery like
+    // paginationOptions.searchCriteria or institutionId
+    // queryParams should follow the order/index.
+    const queryParams: any[] = [...offeringTypes, institutionId];
+
+    return { programQuery, queryParams };
+  }
+
+  /**
+   * Prepares the paginated query and the count.
+   * @param paginatedProgramQuery paginated program query.
+   * @param paginationOptions pagination options.
+   * @param queryParams query parameters.
+   * @returns paginated result along with the count.
+   */
+  private async preparePaginatedProgramQuery(
+    paginatedProgramQuery: SelectQueryBuilder<EducationProgram>,
+    paginationOptions: PaginationOptions,
+    queryParams: any[],
+  ): Promise<PaginatedResults<EducationProgramsSummary>> {
+    // For getting total raw count before pagination.
+    const sqlQuery = paginatedProgramQuery.getSql();
+
+    if (paginationOptions.pageLimit) {
+      paginatedProgramQuery.limit(paginationOptions.pageLimit);
+    }
+
+    paginatedProgramQuery.offset(
+      paginationOptions.page * paginationOptions.pageLimit,
+    );
+
+    // sort
+    if (paginationOptions.sortField && paginationOptions.sortOrder) {
+      paginatedProgramQuery.orderBy(
+        sortProgramsColumnMap(paginationOptions.sortField),
+        paginationOptions.sortOrder,
+      );
+    } else {
+      // Default sort and order.
+      // TODO:Further investigation needed as the CASE translation does not work in orderby queries.
+      paginatedProgramQuery.orderBy(
+        `CASE programs.program_status
+                WHEN '${ProgramStatus.Pending}' THEN ${SortPriority.Priority1}
+                WHEN '${ProgramStatus.Approved}' THEN ${SortPriority.Priority2}
+                WHEN '${ProgramStatus.Declined}' THEN ${SortPriority.Priority3}
+                ELSE ${SortPriority.Priority4}
+              END`,
+      );
+    }
+
+    // Total count and summary.
+    const [totalCount, programsQuery] = await Promise.all([
+      getRawCount(this.repo, sqlQuery, queryParams),
+      paginatedProgramQuery.getRawMany(),
+    ]);
+
+    const programSummary = programsQuery.map((program) => ({
+      programId: program.programId,
+      programName: program.programName,
+      cipCode: program.cipCode,
+      credentialType: program.credentialType,
+      submittedDate: program.programSubmittedAt,
+      programStatus: program.programStatus,
+      isActive: program.isActive,
+      isExpired: isSameOrAfterDate(program.effectiveEndDate, new Date()),
+      totalOfferings: program.totalOfferings,
+      locationId: program.locationId,
+      locationName: program.locationName,
+    }));
+
+    return {
+      results: programSummary,
+      count: totalCount,
+    };
   }
 
   /**
