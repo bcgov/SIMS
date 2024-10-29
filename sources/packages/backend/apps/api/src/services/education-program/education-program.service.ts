@@ -335,7 +335,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       });
       queryParams.push(`%${singleSearchPaginationOptions.searchCriteria}%`);
     }
-    if (multiSearchPaginationOptions.programNameSearch) {
+    if (!locationId && multiSearchPaginationOptions.programNameSearch) {
       paginatedProgramQuery.andWhere(
         "programs.name Ilike :programNameSearchCriteria",
         {
@@ -344,7 +344,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       );
       queryParams.push(`%${multiSearchPaginationOptions.programNameSearch}%`);
     }
-    if (multiSearchPaginationOptions.locationNameSearch) {
+    if (!locationId && multiSearchPaginationOptions.locationNameSearch) {
       paginatedProgramQuery.andWhere(
         "location.name Ilike :locationNameSearchCriteria",
         {
@@ -355,11 +355,9 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     }
 
     if (
-      (!locationId &&
-        multiSearchPaginationOptions.statusSearch &&
-        multiSearchPaginationOptions.inactiveProgramSearch) ||
-      (!multiSearchPaginationOptions.statusSearch &&
-        !multiSearchPaginationOptions.inactiveProgramSearch)
+      !locationId &&
+      multiSearchPaginationOptions.statusSearch &&
+      multiSearchPaginationOptions.inactiveProgramSearch
     ) {
       paginatedProgramQuery.andWhere(
         new Brackets((qb) =>
