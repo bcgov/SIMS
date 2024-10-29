@@ -7,11 +7,11 @@ import {
 } from "./sfas-integration.models";
 import { SFASIntegrationService } from "./sfas-integration.service";
 import {
-  SFASApplicationService,
+  SFASApplicationImportService,
   SFASDataImporter,
-  SFASIndividualService,
-  SFASRestrictionService,
-  SFASPartTimeApplicationsService,
+  SFASIndividualImportService,
+  SFASRestrictionImportService,
+  SFASPartTimeApplicationsImportService,
 } from "../services/sfas";
 import { SFAS_IMPORT_RECORDS_PROGRESS_REPORT_PACE } from "@sims/services/constants";
 import * as os from "os";
@@ -23,10 +23,10 @@ export class SFASIntegrationProcessingService {
   private readonly ftpReceiveFolder: string;
   constructor(
     private readonly sfasService: SFASIntegrationService,
-    private readonly sfasIndividualService: SFASIndividualService,
-    private readonly sfasApplicationService: SFASApplicationService,
-    private readonly sfasRestrictionService: SFASRestrictionService,
-    private readonly sfasPartTimeApplicationsService: SFASPartTimeApplicationsService,
+    private readonly sfasIndividualImportService: SFASIndividualImportService,
+    private readonly sfasApplicationImportService: SFASApplicationImportService,
+    private readonly sfasRestrictionImportService: SFASRestrictionImportService,
+    private readonly sfasPartTimeApplicationsImportService: SFASPartTimeApplicationsImportService,
     config: ConfigService,
   ) {
     this.ftpReceiveFolder = config.sfasIntegration.ftpReceiveFolder;
@@ -193,14 +193,14 @@ export class SFASIntegrationProcessingService {
       postFileImportResult.summary.push(
         "Updating student ids for SFAS individuals.",
       );
-      await this.sfasIndividualService.updateStudentId();
+      await this.sfasIndividualImportService.updateStudentId();
       postFileImportResult.summary.push("Student ids updated.");
       // Update the disbursement overawards if there is atleast one file to process.
       if (executeDisbursementOverawardsUpdate) {
         postFileImportResult.summary.push(
           "Updating and inserting new disbursement overaward balances from sfas to disbursement overawards table.",
         );
-        await this.sfasIndividualService.updateDisbursementOverawards();
+        await this.sfasIndividualImportService.updateDisbursementOverawards();
         postFileImportResult.summary.push(
           "New disbursement overaward balances inserted to disbursement overawards table.",
         );
@@ -208,7 +208,7 @@ export class SFASIntegrationProcessingService {
       postFileImportResult.summary.push(
         "Inserting student restrictions from SFAS restrictions data.",
       );
-      await this.sfasRestrictionService.insertStudentRestrictions();
+      await this.sfasRestrictionImportService.insertStudentRestrictions();
       postFileImportResult.summary.push(
         "Inserted student restrictions from SFAS restrictions data.",
       );
@@ -237,16 +237,16 @@ export class SFASIntegrationProcessingService {
     let dataImporter: SFASDataImporter = undefined;
     switch (recordTypeCode) {
       case RecordTypeCodes.IndividualDataRecord:
-        dataImporter = this.sfasIndividualService;
+        dataImporter = this.sfasIndividualImportService;
         break;
       case RecordTypeCodes.ApplicationDataRecord:
-        dataImporter = this.sfasApplicationService;
+        dataImporter = this.sfasApplicationImportService;
         break;
       case RecordTypeCodes.RestrictionDataRecord:
-        dataImporter = this.sfasRestrictionService;
+        dataImporter = this.sfasRestrictionImportService;
         break;
       case RecordTypeCodes.PartTimeApplicationDataRecord:
-        dataImporter = this.sfasPartTimeApplicationsService;
+        dataImporter = this.sfasPartTimeApplicationsImportService;
         break;
     }
     return dataImporter;

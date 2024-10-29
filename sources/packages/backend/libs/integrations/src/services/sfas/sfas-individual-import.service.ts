@@ -22,7 +22,7 @@ const DISBURSEMENT_OVERAWARD_RAW_SQL_FOLDER = "disbursement-overawards";
  * Manages the data related to an individual/student in SFAS.
  */
 @Injectable()
-export class SFASIndividualService
+export class SFASIndividualImportService
   extends DataModelService<SFASIndividual>
   implements SFASDataImporter
 {
