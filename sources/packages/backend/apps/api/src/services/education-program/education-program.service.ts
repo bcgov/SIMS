@@ -353,7 +353,33 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       );
       queryParams.push(`%${multiSearchPaginationOptions.locationNameSearch}%`);
     }
-    if (multiSearchPaginationOptions.statusSearch) {
+
+    if (
+      (!locationId &&
+        multiSearchPaginationOptions.statusSearch &&
+        multiSearchPaginationOptions.inactiveProgramSearch) ||
+      (!multiSearchPaginationOptions.statusSearch &&
+        !multiSearchPaginationOptions.inactiveProgramSearch)
+    ) {
+      paginatedProgramQuery.andWhere(
+        new Brackets((qb) =>
+          qb
+            .where(
+              "programs.programStatus IN (:...programStatusSearchCriteria)",
+              {
+                programStatusSearchCriteria:
+                  multiSearchPaginationOptions.statusSearch,
+              },
+            )
+            .orWhere("programs.isActive = :programIsActiveSearchCriteria", {
+              programIsActiveSearchCriteria:
+                !multiSearchPaginationOptions.inactiveProgramSearch,
+            }),
+        ),
+      );
+      queryParams.push(...multiSearchPaginationOptions.statusSearch);
+      queryParams.push(!multiSearchPaginationOptions.inactiveProgramSearch);
+    } else if (!locationId && multiSearchPaginationOptions.statusSearch) {
       paginatedProgramQuery.andWhere(
         "programs.programStatus IN (:...programStatusSearchCriteria)",
         {
@@ -362,8 +388,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         },
       );
       queryParams.push(...multiSearchPaginationOptions.statusSearch);
-    }
-    if (!locationId && !multiSearchPaginationOptions.inactiveProgramSearch) {
+    } else if (
+      !locationId &&
+      multiSearchPaginationOptions.inactiveProgramSearch
+    ) {
       paginatedProgramQuery.andWhere(
         "programs.isActive = :programIsActiveSearchCriteria",
         {
@@ -373,6 +401,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       );
       queryParams.push(!multiSearchPaginationOptions.inactiveProgramSearch);
     }
+
     // For getting total raw count before pagination.
     const sqlQuery = paginatedProgramQuery.getSql();
 
