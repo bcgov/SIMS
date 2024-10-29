@@ -353,7 +353,22 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       );
       queryParams.push(`%${multiSearchPaginationOptions.locationNameSearch}%`);
     }
-
+    if (
+      multiSearchPaginationOptions.statusSearch.length === 1 &&
+      multiSearchPaginationOptions.statusSearch[0] === ("" as ProgramStatus)
+    ) {
+      multiSearchPaginationOptions.statusSearch = undefined;
+    }
+    if (
+      !locationId &&
+      !multiSearchPaginationOptions.statusSearch &&
+      !multiSearchPaginationOptions.inactiveProgramSearch
+    ) {
+      return {
+        results: [],
+        count: 0,
+      };
+    }
     if (
       !locationId &&
       multiSearchPaginationOptions.statusSearch &&
