@@ -81,7 +81,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     );
   });
 
-  it("Should add only one legacy restriction for the student when SINR and other restrictions are imported from SFAS which do not have a mapping to the SIMS restrictions", async () => {
+  it("Should add only one legacy restriction for the student when one or more restrictions are imported from SFAS which do not have a mapping to the SIMS restrictions", async () => {
     // Arrange
     // Queued job.
     const job = createMock<Job<void>>();

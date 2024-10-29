@@ -1,4 +1,4 @@
--- Update action_type for the restriction code SINF
+-- Update restriction_code for the restriction code SINF
 UPDATE
     sims.restrictions
 SET
