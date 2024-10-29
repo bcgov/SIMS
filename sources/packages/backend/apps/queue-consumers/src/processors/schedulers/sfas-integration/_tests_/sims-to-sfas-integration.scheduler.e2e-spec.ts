@@ -99,11 +99,11 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
 
       // Assert
       // Assert process result.
-      expect(processingResult).toContain("Process finalized with success.");
-      expect(processingResult).toContain("Student records sent: 1.");
-      expect(processingResult).toContain(
+      expect(processingResult).toEqual([
+        "Process finalized with success.",
+        "Student records sent: 1.",
         `Uploaded file name: ${expectedFileName}.`,
-      );
+      ]);
       expect(
         mockedJob.containLogMessages([
           `Processing data since ${latestBridgeFileDate} until ${mockedCurrentDate}.`,
@@ -154,9 +154,11 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
 
       // Assert
       // Assert process result.
-      expect(processingResult).toContain("Process finalized with success.");
-      expect(processingResult).toContain("Student records sent: 0.");
-      expect(processingResult).toContain("Uploaded file name: none.");
+      expect(processingResult).toEqual([
+        "Process finalized with success.",
+        "Student records sent: 0.",
+        "Uploaded file name: none.",
+      ]);
       expect(
         mockedJob.containLogMessages([
           "There is no SIMS to SFAS updates to process.",
