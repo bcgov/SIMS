@@ -25,8 +25,35 @@
                   variant="outlined"
                   @keyup.enter="goToSearch()"
                   prepend-inner-icon="mdi-magnify"
-                  hide-details="auto" /></v-col
-            ></v-row>
+                  hide-details="auto"
+              /></v-col>
+              <v-col>
+                <v-select
+                  density="compact"
+                  v-model="searchProgramStatus"
+                  label="Search Program Status"
+                  hide-details="auto"
+                  :items="programStatusItems"
+                  multiple
+                  variant="outlined"
+                >
+                  <template #selection="{ item }">
+                    <v-chip>
+                      <span>{{ item.title }}</span>
+                    </v-chip>
+                  </template>
+                </v-select>
+              </v-col>
+              <v-col cols="1">
+                <v-btn
+                  color="primary"
+                  class="p-button-raised"
+                  @click="goToSearch()"
+                >
+                  Search
+                </v-btn>
+              </v-col>
+            </v-row>
           </template>
         </body-header>
       </template>
@@ -90,10 +117,13 @@ import {
   DataTableOptions,
   DataTableSortByOrder,
   DEFAULT_DATATABLE_PAGE_NUMBER,
+  ProgramStatus,
 } from "@/types";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
 import { EducationProgramService } from "@/services/EducationProgramService";
+
+const INACTIVE_PROGRAM = "Inactive";
 
 export default defineComponent({
   components: { StatusChipProgram },
@@ -113,7 +143,18 @@ export default defineComponent({
     const currentPage = ref();
     const currentPageLimit = ref();
     const loading = ref(true);
-
+    const programStatusItems = ref([
+      ProgramStatus.Approved,
+      ProgramStatus.Pending,
+      ProgramStatus.Declined,
+      INACTIVE_PROGRAM,
+    ]);
+    const searchProgramStatus = ref([
+      ProgramStatus.Approved,
+      ProgramStatus.Pending,
+      ProgramStatus.Declined,
+      INACTIVE_PROGRAM,
+    ]);
     const getProgramsSummaryList = async (
       institutionId: number,
       rowsPerPage: number,
@@ -123,6 +164,13 @@ export default defineComponent({
     ) => {
       try {
         loading.value = true;
+        const statusSearchList = JSON.parse(
+          JSON.stringify(searchProgramStatus.value),
+        );
+        const searchInactiveProgram = statusSearchList.indexOf("Inactive") > -1;
+        if (searchInactiveProgram) {
+          statusSearchList.splice(statusSearchList.indexOf("Inactive"), 1);
+        }
         institutionProgramsSummary.value =
           await EducationProgramService.shared.getProgramsSummaryByInstitutionId(
             institutionId,
@@ -130,6 +178,8 @@ export default defineComponent({
               searchCriteria: {
                 programNameSearch: searchProgramName.value,
                 locationNameSearch: searchLocationName.value,
+                statusSearch: statusSearchList,
+                inactiveProgramSearch: searchInactiveProgram,
               },
               pageLimit: rowsPerPage,
               page,
@@ -183,8 +233,10 @@ export default defineComponent({
       DEFAULT_PAGE_LIMIT,
       pageSortEvent,
       goToSearch,
+      programStatusItems,
       searchProgramName,
       searchLocationName,
+      searchProgramStatus,
       loading,
       ProgramSummaryFields,
       ProgramHeaders,

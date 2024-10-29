@@ -1,20 +1,30 @@
 import { FieldSortOrder } from "@sims/utilities";
 
 /**
- *  Pagination option.
+ *  Base Pagination option.
  */
-export interface PaginationOptions {
-  searchCriteria?: string;
+export interface BasePaginationOptions {
   sortField?: string;
   sortOrder?: FieldSortOrder;
   page: number;
   pageLimit: number;
 }
 
-export interface ProgramPaginationOptions extends PaginationOptions {
+/**
+ *  Pagination option.
+ */
+export interface PaginationOptions extends BasePaginationOptions {
+  searchCriteria?: string;
+}
+
+/**
+ * Program pagination option allowing for multiple criteria search.
+ */
+export interface ProgramPaginationOptions extends BasePaginationOptions {
   programNameSearch?: string;
   locationNameSearch?: string;
-  status?: string;
+  statusSearch?: string;
+  inactiveProgramSearch?: boolean;
 }
 
 export enum SortPriority {

@@ -36,6 +36,7 @@ import {
   PaginatedResults,
   SortPriority,
   ProgramPaginationOptions,
+  PaginationOptions,
 } from "../../utilities";
 import {
   CustomNamedError,
@@ -278,7 +279,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   async getProgramsSummary(
     institutionId: number,
     offeringTypes: OfferingTypes[],
-    paginationOptions: ProgramPaginationOptions,
+    paginationOptions: ProgramPaginationOptions | PaginationOptions,
     locationId?: number,
   ): Promise<PaginatedResults<EducationProgramsSummary>> {
     const paginatedProgramQuery = this.repo
@@ -324,41 +325,54 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         locationId,
       });
     }
-
-    if (paginationOptions.searchCriteria) {
+    const singleSearchPaginationOptions =
+      paginationOptions as PaginationOptions;
+    const multiSearchPaginationOptions =
+      paginationOptions as ProgramPaginationOptions;
+    if (singleSearchPaginationOptions.searchCriteria) {
       paginatedProgramQuery.andWhere("programs.name Ilike :searchCriteria", {
-        searchCriteria: `%${paginationOptions.searchCriteria}%`,
+        searchCriteria: `%${singleSearchPaginationOptions.searchCriteria}%`,
       });
-      queryParams.push(`%${paginationOptions.searchCriteria}%`);
+      queryParams.push(`%${singleSearchPaginationOptions.searchCriteria}%`);
     }
-    if (paginationOptions.programNameSearch) {
+    if (multiSearchPaginationOptions.programNameSearch) {
       paginatedProgramQuery.andWhere(
         "programs.name Ilike :programNameSearchCriteria",
         {
-          programNameSearchCriteria: `%${paginationOptions.programNameSearch}%`,
+          programNameSearchCriteria: `%${multiSearchPaginationOptions.programNameSearch}%`,
         },
       );
-      queryParams.push(`%${paginationOptions.programNameSearch}%`);
+      queryParams.push(`%${multiSearchPaginationOptions.programNameSearch}%`);
     }
-    if (paginationOptions.locationNameSearch) {
+    if (multiSearchPaginationOptions.locationNameSearch) {
       paginatedProgramQuery.andWhere(
         "location.name Ilike :locationNameSearchCriteria",
         {
-          locationNameSearchCriteria: `%${paginationOptions.locationNameSearch}%`,
+          locationNameSearchCriteria: `%${multiSearchPaginationOptions.locationNameSearch}%`,
         },
       );
-      queryParams.push(`%${paginationOptions.locationNameSearch}%`);
+      queryParams.push(`%${multiSearchPaginationOptions.locationNameSearch}%`);
     }
-    if (paginationOptions.status) {
+    if (multiSearchPaginationOptions.statusSearch) {
       paginatedProgramQuery.andWhere(
-        "programs.programStatus Ilike :programStatusSearchCriteria",
+        "programs.programStatus IN (:...programStatusSearchCriteria)",
         {
-          programStatusSearchCriteria: `%${paginationOptions.status}%`,
+          programStatusSearchCriteria:
+            multiSearchPaginationOptions.statusSearch,
         },
       );
-      queryParams.push(`%${paginationOptions.status}%`);
+      queryParams.push(...multiSearchPaginationOptions.statusSearch);
     }
-
+    if (!locationId && !multiSearchPaginationOptions.inactiveProgramSearch) {
+      paginatedProgramQuery.andWhere(
+        "programs.isActive = :programIsActiveSearchCriteria",
+        {
+          programIsActiveSearchCriteria:
+            !multiSearchPaginationOptions.inactiveProgramSearch,
+        },
+      );
+      queryParams.push(!multiSearchPaginationOptions.inactiveProgramSearch);
+    }
     // For getting total raw count before pagination.
     const sqlQuery = paginatedProgramQuery.getSql();
 
