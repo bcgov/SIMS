@@ -28,6 +28,9 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
   let processor: SIMSToSFASIntegrationScheduler;
   let db: E2EDataSources;
   let sftpClientMock: DeepMocked<Client>;
+  let latestBridgeFileDate: Date;
+  let simsDataUpdatedDate: Date;
+  let mockedCurrentDate: Date;
   const DATE_FORMAT = "YYYYMMDD";
 
   beforeAll(async () => {
@@ -43,6 +46,11 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
   beforeEach(async () => {
     // Reset all SFAS bridge logs.
     await db.sfasBridgeLog.delete({ id: MoreThan(0) });
+    // Set the start date and end date of the bridge file to be after 10 years
+    // to ensure that data produced by other tests will not affect the results of this test.
+    latestBridgeFileDate = addYears(10);
+    simsDataUpdatedDate = addMilliSeconds(10, latestBridgeFileDate);
+    mockedCurrentDate = addMilliSeconds(10, simsDataUpdatedDate);
   });
 
   afterEach(async () => {
@@ -55,11 +63,6 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       " between the most recent bridge file date and the current bridge file execution date.",
     async () => {
       // Arrange
-      // Set the start date and end date of the bridge file to be after 10 years
-      // to ensure that data produced by other tests will not affect the results of this test.
-      const latestBridgeFileDate = addYears(10);
-      const simsDataUpdatedDate = addMilliSeconds(10, latestBridgeFileDate);
-      const mockedCurrentDate = addMilliSeconds(10, simsDataUpdatedDate);
       // Create bridge file log.
       await db.sfasBridgeLog.insert({
         referenceDate: latestBridgeFileDate,
@@ -124,11 +127,6 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       " does not have any submitted application.",
     async () => {
       // Arrange
-      // Set the start date and end date of the bridge file to be after 10 years
-      // to ensure that data produced by other tests will not affect the results of this test.
-      const latestBridgeFileDate = addYears(10);
-      const simsDataUpdatedDate = addMilliSeconds(10, latestBridgeFileDate);
-      const mockedCurrentDate = addMilliSeconds(10, simsDataUpdatedDate);
       // Create bridge file log.
       await db.sfasBridgeLog.insert({
         referenceDate: latestBridgeFileDate,
