@@ -12,7 +12,7 @@ export function isValidFileTimestamp(timestamp: string): boolean {
 /**
  * Add years to a given date.
  * @param yearsToAdd number of years to be added.
- * @param date  date.
+ * @param date date.
  * @returns a new date with years added.
  */
 export const addYears = (yearsToAdd: number, date?: Date | string): Date => {
@@ -24,7 +24,7 @@ export const addYears = (yearsToAdd: number, date?: Date | string): Date => {
 /**
  * Add milliseconds to a given date.
  * @param yearsToAdd number of years to be added.
- * @param date  date.
+ * @param date date.
  * @returns a new date with years added.
  */
 export const addMilliSeconds = (

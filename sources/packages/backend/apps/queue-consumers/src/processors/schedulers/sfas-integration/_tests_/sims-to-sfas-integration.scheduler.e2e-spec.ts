@@ -20,7 +20,6 @@ import * as Client from "ssh2-sftp-client";
 import { SIMSToSFASIntegrationScheduler } from "../sims-to-sfas-integration.scheduler";
 import { OfferingIntensity, Student, SupplierStatus } from "@sims/sims-db";
 import { getUploadedFile } from "@sims/test-utils/mocks";
-import { MoreThan } from "typeorm";
 import { addMilliSeconds, addYears } from "@sims/test-utils/utils";
 
 describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
@@ -45,7 +44,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
 
   beforeEach(async () => {
     // Reset all SFAS bridge logs.
-    await db.sfasBridgeLog.delete({ id: MoreThan(0) });
+    await db.sfasBridgeLog.delete({});
     // Set the start date and end date of the bridge file to be after 10 years
     // to ensure that data produced by other tests will not affect the results of this test.
     latestBridgeFileDate = addYears(10);
@@ -63,8 +62,8 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
   });
 
   it(
-    "Should generate a SIMS to SFAS bridge file when there is an update on student data" +
-      " between the most recent bridge file date and the current bridge file execution date.",
+    "Should generate a SIMS to SFAS bridge file when there is an update on student data " +
+      "between the most recent bridge file date and the current bridge file execution date.",
     async () => {
       // Arrange
       // Create bridge file log.
@@ -118,17 +117,17 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       expect(footer).toBe("999000000001");
       expect(studentRecord).toBe(buildStudentRecord(student));
       // Check the database for creation of SFAS bridge log.
-      const uploadedFileLog = await db.sfasBridgeLog.findOneBy({
+      const uploadedFileLog = await db.sfasBridgeLog.existsBy({
         generatedFileName: expectedFileName,
         referenceDate: mockedCurrentDate,
       });
-      expect(uploadedFileLog.id).toBeGreaterThan(0);
+      expect(uploadedFileLog).toBe(true);
     },
   );
 
   it(
     "Should not generate a SIMS to SFAS bridge file when there is an update on student data but the student " +
-      " does not have any submitted application.",
+      "does not have any submitted application.",
     async () => {
       // Arrange
       // Create bridge file log.
