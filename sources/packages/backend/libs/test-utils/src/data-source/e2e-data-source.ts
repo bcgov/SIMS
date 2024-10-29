@@ -55,6 +55,7 @@ import {
   CASSupplier,
   ApplicationRestrictionBypass,
   BetaUsersAuthorizations,
+  SFASBridgeLog,
 } from "@sims/sims-db";
 import { DataSource, Repository } from "typeorm";
 
@@ -147,6 +148,7 @@ export function createE2EDataSources(dataSource: DataSource): E2EDataSources {
     ),
     studentLoanBalance: dataSource.getRepository(StudentLoanBalance),
     eCertFeedbackError: dataSource.getRepository(ECertFeedbackError),
+    sfasBridgeLog: dataSource.getRepository(SFASBridgeLog),
   };
 }
 
@@ -211,4 +213,5 @@ export interface E2EDataSources {
   applicationOfferingChangeRequest: Repository<ApplicationOfferingChangeRequest>;
   studentLoanBalance: Repository<StudentLoanBalance>;
   eCertFeedbackError: Repository<ECertFeedbackError>;
+  sfasBridgeLog: Repository<SFASBridgeLog>;
 }

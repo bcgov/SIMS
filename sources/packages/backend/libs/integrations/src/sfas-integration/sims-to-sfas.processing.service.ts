@@ -65,7 +65,7 @@ export class SIMSToSFASProcessingService {
     }
 
     processSummary.info(
-      `Found ${uniqueStudentIds.length} students with updates.`,
+      `Found ${uniqueStudentIds.length} student(s) with updates.`,
     );
     const studentDetails =
       await this.simsToSFASService.getStudentRecordsByStudentIds(
