@@ -58,12 +58,9 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
     );
 
     // Create CRA income verifications for student.
-    const studentCRAIncomeVerification = createFakeCRAIncomeVerification(
-      {
-        application,
-      },
-      { initialValues: {} },
-    );
+    const studentCRAIncomeVerification = createFakeCRAIncomeVerification({
+      application,
+    });
     await db.craIncomeVerification.save([studentCRAIncomeVerification]);
     // Queued job.
     const job = createMock<Job<void>>();
@@ -71,20 +68,10 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
 
     mockDownloadFiles(sftpClientMock, [CRA_FILENAME], (fileContent: string) => {
       const file = getStructuredRecords(fileContent);
-      const line2 = file.records[2]; // Get the 3rd item (index 2) in the array
-
-      // Split the record on colon and change 9 digits after colon
-      const [beforeColon, afterColon] = line2.split(":");
-      const newVerificationId = padWithLeadingZeros(
-        studentCRAIncomeVerification.id,
+      file.records[2] = file.records[2].replace(
+        "CRA_INCOME_VERIFICATION",
+        studentCRAIncomeVerification.id.toString().padStart(9, "0"),
       );
-      const recordToUpdate = `${beforeColon}:${newVerificationId}${afterColon.substring(
-        9,
-      )}`;
-
-      // Update the fourth record with the modified content
-      file.records[2] = recordToUpdate;
-
       return createFileFromStructuredRecords(file);
     });
 
@@ -101,16 +88,11 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
       {
         processSummary: [
           `Processing file ${downloadedFile}.`,
-          "File contains 1 verifications.",
+          "File contains 2 verifications.",
           "Processed income verification. Total income record line 5. Status record from line 4.",
         ],
         errorsSummary: [],
       },
     ]);
   });
-
-  const padWithLeadingZeros = (num: number): string => {
-    // Pad the number with leading zeros to make it 9 digits long
-    return num.toString().padStart(9, "0");
-  };
 });
