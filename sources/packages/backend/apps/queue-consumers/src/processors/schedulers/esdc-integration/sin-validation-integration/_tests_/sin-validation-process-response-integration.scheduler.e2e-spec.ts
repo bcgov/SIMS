@@ -65,14 +65,11 @@ describe(
         [SIN_VALIDATION_FILENAME],
         (fileContent: string) => {
           const file = getStructuredRecords(fileContent);
-          const [record1] = file.records;
-
-          // Update the first record with validSinStudent's padded ID
-          const paddedId1 = padWithLeadingZeros(
-            validSinStudent.sinValidation.id,
+          file.records[0] = file.records[0].replace(
+            // Assuming the first 3 characters are some identifier, replace everything between that and position 12
+            file.records[0].substring(3, 12),
+            validSinStudent.sinValidation.id.toString().padStart(9, "0"),
           );
-          file.records[0] =
-            record1.substring(0, 3) + paddedId1 + record1.substring(12);
           return createFileFromStructuredRecords(file);
         },
       );
@@ -119,14 +116,11 @@ describe(
         [SIN_VALIDATION_FILENAME],
         (fileContent: string) => {
           const file = getStructuredRecords(fileContent);
-          const [record1] = file.records;
-
-          // Update the first record with validSinStudent's padded ID
-          const paddedId1 = padWithLeadingZeros(
-            validSinStudent.sinValidation.id,
+          file.records[0] = file.records[0].replace(
+            // Assuming the first 3 characters are some identifier, replace everything between that and position 12
+            file.records[0].substring(3, 12),
+            validSinStudent.sinValidation.id.toString().padStart(9, "0"),
           );
-          file.records[0] =
-            record1.substring(0, 3) + paddedId1 + record1.substring(12);
           return createFileFromStructuredRecords(file);
         },
       );
@@ -152,10 +146,5 @@ describe(
         },
       ]);
     });
-
-    const padWithLeadingZeros = (num: number): string => {
-      // Pad the number with leading zeros to make it 9 digits long
-      return num.toString().padStart(9, "0");
-    };
   },
 );
