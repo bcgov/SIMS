@@ -1,5 +1,6 @@
 import { DeepMocked } from "@golevelup/ts-jest";
 import MockDate from "mockdate";
+import * as faker from "faker";
 import { INestApplication } from "@nestjs/common";
 import { formatDate, QueueNames } from "@sims/utilities";
 import {
@@ -10,13 +11,14 @@ import {
 import {
   E2EDataSources,
   createE2EDataSources,
+  createFakeCASSupplier,
   createFakeUser,
   saveFakeApplicationDisbursements,
   saveFakeStudent,
 } from "@sims/test-utils";
 import * as Client from "ssh2-sftp-client";
 import { SIMSToSFASIntegrationScheduler } from "../sims-to-sfas-integration.scheduler";
-import { OfferingIntensity, Student } from "@sims/sims-db";
+import { OfferingIntensity, Student, SupplierStatus } from "@sims/sims-db";
 import { getUploadedFile } from "@sims/test-utils/mocks";
 import { MoreThan } from "typeorm";
 import { addMilliSeconds, addYears } from "@sims/test-utils/utils";
@@ -38,10 +40,14 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
     processor = app.get(SIMSToSFASIntegrationScheduler);
   });
 
-  afterEach(async () => {
-    MockDate.reset();
+  beforeEach(async () => {
     // Reset all SFAS bridge logs.
     await db.sfasBridgeLog.delete({ id: MoreThan(0) });
+  });
+
+  afterEach(async () => {
+    // Reset the current date mock.
+    MockDate.reset();
   });
 
   it(
@@ -52,8 +58,8 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       // Set the start date and end date of the bridge file to be after 10 years
       // to ensure that data produced by other tests will not affect the results of this test.
       const latestBridgeFileDate = addYears(10);
-      const simsDataUpdatedDate = addMilliSeconds(100, latestBridgeFileDate);
-      const mockedCurrentDate = addMilliSeconds(100, simsDataUpdatedDate);
+      const simsDataUpdatedDate = addMilliSeconds(10, latestBridgeFileDate);
+      const mockedCurrentDate = addMilliSeconds(10, simsDataUpdatedDate);
       // Create bridge file log.
       await db.sfasBridgeLog.insert({
         referenceDate: latestBridgeFileDate,
@@ -62,11 +68,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
 
       // Student created with expected first name, last name and more importantly the updated date
       // to fall between the most recent bridge file date and the mocked current date.
-      const student = await createStudentWithExpectedData(
-        "FakeFirstName",
-        "FakeLastName",
-        simsDataUpdatedDate,
-      );
+      const student = await createStudentWithExpectedData(simsDataUpdatedDate);
       // Student has submitted an application.
       await saveFakeApplicationDisbursements(
         db.dataSource,
@@ -117,53 +119,6 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
     },
   );
 
-  /**
-   * Creates a student with expected first name, last name and updated date.
-   * @param expectedFirstName expected first name.
-   * @param expectedLastName expected last name.
-   * @param expectedUpdatedDate expected updated date.
-   * @param options optional params.
-   * - `expectedCASDetails` expected CAS details.
-   * @returns created student.
-   */
-  async function createStudentWithExpectedData(
-    expectedFirstName: string,
-    expectedLastName: string,
-    expectedUpdatedDate: Date,
-    options?: {
-      expectedCASDetails?: { supplierNumber: string; supplierSiteCode: string };
-    },
-  ): Promise<Student> {
-    const user = createFakeUser();
-    user.firstName = expectedFirstName;
-    user.lastName = expectedLastName;
-    // Create student with expected first name, last name and updated date.
-    const student = await saveFakeStudent(
-      db.dataSource,
-      { user },
-      { initialValue: { updatedAt: expectedUpdatedDate } },
-    );
-    // Set the student profile updated date to fall between the most recent bridge file date and the mocked current date.
-    // The updated date if set externally during the creation of the student
-    // is not being updated by typeorm with the external value.
-    await db.student.update(
-      { id: student.id },
-      { updatedAt: expectedUpdatedDate },
-    );
-    // Update CAS details as expected.
-    await db.casSupplier.update(
-      { id: student.casSupplier.id },
-      {
-        supplierNumber: options?.expectedCASDetails?.supplierNumber ?? null,
-        supplierAddress: {
-          supplierSiteCode:
-            options?.expectedCASDetails?.supplierSiteCode ?? null,
-        },
-      },
-    );
-    return student;
-  }
-
   it(
     "Should not generate a SIMS to SFAS bridge file when there is an update on student data but the student " +
       " does not have any submitted application.",
@@ -172,8 +127,8 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       // Set the start date and end date of the bridge file to be after 10 years
       // to ensure that data produced by other tests will not affect the results of this test.
       const latestBridgeFileDate = addYears(10);
-      const simsDataUpdatedDate = addMilliSeconds(100, latestBridgeFileDate);
-      const mockedCurrentDate = addMilliSeconds(100, simsDataUpdatedDate);
+      const simsDataUpdatedDate = addMilliSeconds(10, latestBridgeFileDate);
+      const mockedCurrentDate = addMilliSeconds(10, simsDataUpdatedDate);
       // Create bridge file log.
       await db.sfasBridgeLog.insert({
         referenceDate: latestBridgeFileDate,
@@ -182,11 +137,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
 
       // Student created with expected first name, last name and more importantly the updated date
       // to fall between the most recent bridge file date and the mocked current date.
-      await createStudentWithExpectedData(
-        "FakeFirstName",
-        "FakeLastName",
-        simsDataUpdatedDate,
-      );
+      await createStudentWithExpectedData(simsDataUpdatedDate);
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
@@ -211,6 +162,52 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       ).toBe(true);
     },
   );
+
+  /**
+   * Creates a student with expected first name, last name and updated date.
+   * @param expectedUpdatedDate expected updated date.
+   * @param options optional params.
+   * - `expectedCASDetails` expected CAS details.
+   * @returns created student.
+   */
+  async function createStudentWithExpectedData(
+    expectedUpdatedDate: Date,
+    options?: {
+      expectedCASDetails?: { supplierNumber: string; supplierSiteCode: string };
+    },
+  ): Promise<Student> {
+    const user = createFakeUser();
+    // Name with fixed length will be easy to build the expected file data.
+    user.firstName = faker.random.alpha({ count: 15 });
+    user.lastName = faker.random.alpha({ count: 25 });
+    // Create student with expected first name, last name and updated date.
+    const student = await saveFakeStudent(db.dataSource, { user });
+    // Create CAS supplier.
+    const casSupplier = createFakeCASSupplier(
+      {
+        student,
+        auditUser: student.user,
+      },
+      {
+        supplierStatus: SupplierStatus.Verified,
+      },
+    );
+    // Update CAS details as expected.
+    casSupplier.supplierNumber =
+      options?.expectedCASDetails?.supplierNumber ?? null;
+    casSupplier.supplierAddress.supplierSiteCode =
+      options?.expectedCASDetails?.supplierSiteCode ?? null;
+    await db.casSupplier.save(casSupplier);
+
+    // Set the student profile updated date to fall between the most recent bridge file date and the mocked current date.
+    // Set the CAS supplier.
+    await db.student.update(
+      { id: student.id },
+      { casSupplier, updatedAt: expectedUpdatedDate },
+    );
+    return student;
+  }
+
   /**
    * Build expected file name.
    * @param bridgeFileExtractedDate bridge file extracted date.
@@ -239,12 +236,9 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
    * @returns student record.
    */
   function buildStudentRecord(student: Student): string {
-    return `200${student.id
-      .toString()
-      .padStart(10, "0")}FakeFirstName  FakeLastName             ${formatDate(
-      student.birthDate,
-      DATE_FORMAT,
-    )}${
+    return `200${student.id.toString().padStart(10, "0")}${
+      student.user.firstName
+    }${student.user.lastName}${formatDate(student.birthDate, DATE_FORMAT)}${
       student.sinValidation.sin
     }N        N                                                      000000000000000000000000000000`;
   }

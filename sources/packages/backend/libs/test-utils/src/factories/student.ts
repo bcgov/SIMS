@@ -1,13 +1,6 @@
 import * as faker from "faker";
-import {
-  CASSupplier,
-  DisabilityStatus,
-  SINValidation,
-  Student,
-  SupplierStatus,
-  User,
-} from "@sims/sims-db";
-import { createFakeCASSupplier, createFakeUser } from "@sims/test-utils";
+import { DisabilityStatus, SINValidation, Student, User } from "@sims/sims-db";
+import { createFakeUser } from "@sims/test-utils";
 import { DataSource } from "typeorm";
 import { createFakeSINValidation } from "./sin-validation";
 import { COUNTRY_CANADA, getISODateOnlyString } from "@sims/utilities";
@@ -59,7 +52,6 @@ export async function saveFakeStudent(
     student?: Student;
     user?: User;
     sinValidation?: SINValidation;
-    casSupplier?: CASSupplier;
   },
   options?: {
     initialValue?: Partial<Student>;
@@ -79,15 +71,6 @@ export async function saveFakeStudent(
     createFakeSINValidation(
       { student },
       { initialValue: options?.sinValidationInitialValue },
-    );
-  // Save CAS Supplier.
-  student.casSupplier =
-    relations?.casSupplier ??
-    createFakeCASSupplier(
-      { student, auditUser: student.user },
-      {
-        supplierStatus: SupplierStatus.Verified,
-      },
     );
   return studentRepo.save(student);
 }

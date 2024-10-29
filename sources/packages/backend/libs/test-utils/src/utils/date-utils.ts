@@ -8,6 +8,7 @@ import * as dayjs from "dayjs";
 export function isValidFileTimestamp(timestamp: string): boolean {
   return dayjs(timestamp, "YYYYMMDD-HHmmssSSS").isValid();
 }
+
 /**
  * Add years to a given date.
  * @param yearsToAdd number of years to be added.
