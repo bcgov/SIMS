@@ -8,3 +8,30 @@ import * as dayjs from "dayjs";
 export function isValidFileTimestamp(timestamp: string): boolean {
   return dayjs(timestamp, "YYYYMMDD-HHmmssSSS").isValid();
 }
+
+/**
+ * Add years to a given date.
+ * @param yearsToAdd number of years to be added.
+ * @param date date.
+ * @returns a new date with years added.
+ */
+export const addYears = (yearsToAdd: number, date?: Date | string): Date => {
+  return dayjs(date ?? new Date())
+    .add(yearsToAdd, "year")
+    .toDate();
+};
+
+/**
+ * Add milliseconds to a given date.
+ * @param yearsToAdd number of years to be added.
+ * @param date date.
+ * @returns a new date with years added.
+ */
+export const addMilliSeconds = (
+  milliSecondsToAdd: number,
+  date?: Date | string,
+): Date => {
+  return dayjs(date ?? new Date())
+    .add(milliSecondsToAdd, "millisecond")
+    .toDate();
+};

@@ -48,7 +48,11 @@ export function createFakeStudent(
  */
 export async function saveFakeStudent(
   dataSource: DataSource,
-  relations?: { student?: Student; user?: User; sinValidation?: SINValidation },
+  relations?: {
+    student?: Student;
+    user?: User;
+    sinValidation?: SINValidation;
+  },
   options?: {
     initialValue?: Partial<Student>;
     sinValidationInitialValue?: Partial<SINValidation>;
