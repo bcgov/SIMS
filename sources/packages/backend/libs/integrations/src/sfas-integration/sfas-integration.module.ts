@@ -32,10 +32,6 @@ import {
   exports: [
     SFASIntegrationService,
     SFASIntegrationProcessingService,
-    SFASIndividualImportService,
-    SFASApplicationImportService,
-    SFASRestrictionImportService,
-    SFASPartTimeApplicationsImportService,
     SIMSToSFASService,
     SIMSToSFASProcessingService,
   ],
