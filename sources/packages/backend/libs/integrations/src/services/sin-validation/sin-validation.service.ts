@@ -123,7 +123,6 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
         if (!existingValidation) {
           return {
             operationDescription: `Not able to find the SIN validation on line number ${validationResponse.lineNumber} to be updated with the ESDC response.`,
-            record: null,
           };
         }
 
