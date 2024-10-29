@@ -49,6 +49,10 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
     // Set the start date and end date of the bridge file to be after 10 years
     // to ensure that data produced by other tests will not affect the results of this test.
     latestBridgeFileDate = addYears(10);
+    // Set the data updated date and mocked current date in milliseconds later than
+    // the latest bridge file date to ensure that it holds integrity only for the particular test scenario
+    // and not having to update the database for each test case
+    // which could potentially have various columns to be updated.
     simsDataUpdatedDate = addMilliSeconds(10, latestBridgeFileDate);
     mockedCurrentDate = addMilliSeconds(10, simsDataUpdatedDate);
   });
@@ -111,7 +115,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       const uploadedFile = getUploadedFile(sftpClientMock);
       const [header, studentRecord, footer] = uploadedFile.fileLines;
       expect(header).toBe(buildHeader(mockedCurrentDate));
-      expect(footer).toBe(`999000000001`);
+      expect(footer).toBe("999000000001");
       expect(studentRecord).toBe(buildStudentRecord(student));
       // Check the database for creation of SFAS bridge log.
       const uploadedFileLog = await db.sfasBridgeLog.findOneBy({
@@ -152,7 +156,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       // Assert process result.
       expect(processingResult).toContain("Process finalized with success.");
       expect(processingResult).toContain("Student records sent: 0.");
-      expect(processingResult).toContain(`Uploaded file name: none.`);
+      expect(processingResult).toContain("Uploaded file name: none.");
       expect(
         mockedJob.containLogMessages([
           "There is no SIMS to SFAS updates to process.",
