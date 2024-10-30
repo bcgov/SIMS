@@ -225,7 +225,7 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const validationProcessing = ref(false);
     const creationProcessing = ref(false);
-    // Only one will be used but the component allows multiple.
+    // If multiple prop is undefined or false the component returns now a File object.
     const offeringFiles = ref<File>();
     // Possible errors and warnings received upon file upload.
     const validationResults = ref([] as OfferingsUploadBulkInsert[]);
