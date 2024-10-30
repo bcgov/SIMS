@@ -104,6 +104,7 @@ export class ProgramsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO
   @IsArray()
   @IsOptional()
   @Transform(({ value }) => value.split(","))
+  @IsEnum(ProgramStatus, { each: true })
   statusSearch?: ProgramStatus[];
   @IsOptional()
   @IsBoolean()
