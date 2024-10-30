@@ -31,7 +31,7 @@ export enum RestrictionCode {
    * When a student has a temporary SIN and applies for a full-time/part-time application
    * this restriction is applied case the SIN expiry date is before the offering end date.
    */
-  SINF = "SINF",
+  SINR = "SINR",
   /**
    * BCSL Lifetime Maximum is the student's cumulative full-time BCSL awards received over
    * a lifetime. This restriction is added to a student when they reach BC lifetime maximum
