@@ -897,7 +897,33 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     );
 
     // sort
-    if (paginationOptions.sortField && paginationOptions.sortOrder) {
+    if (
+      paginationOptions.sortField === "programStatus" &&
+      paginationOptions.sortOrder === "DESC"
+    ) {
+      paginatedProgramQuery.orderBy(
+        `CASE          
+          WHEN programs.programStatus = '${ProgramStatus.Pending}' and programs.isActive = true THEN ${SortPriority.Priority1}
+          WHEN programs.isActive = false THEN ${SortPriority.Priority2}
+          WHEN programs.programStatus = '${ProgramStatus.Declined}' and programs.isActive = true THEN ${SortPriority.Priority3}
+          WHEN programs.programStatus = '${ProgramStatus.Approved}' and programs.isActive = true THEN ${SortPriority.Priority4}
+          ELSE ${SortPriority.Priority5}
+        END`,
+      );
+    } else if (
+      paginationOptions.sortField === "programStatus" &&
+      paginationOptions.sortOrder === "ASC"
+    ) {
+      paginatedProgramQuery.orderBy(
+        `CASE          
+          WHEN programs.programStatus = '${ProgramStatus.Approved}' and programs.isActive = true THEN ${SortPriority.Priority1}
+          WHEN programs.programStatus = '${ProgramStatus.Declined}' and programs.isActive = true THEN ${SortPriority.Priority2}
+          WHEN programs.isActive = false THEN ${SortPriority.Priority3}
+          WHEN programs.programStatus = '${ProgramStatus.Pending}' and programs.isActive = true THEN ${SortPriority.Priority4}
+          ELSE ${SortPriority.Priority5}
+        END`,
+      );
+    } else if (paginationOptions.sortField && paginationOptions.sortOrder) {
       paginatedProgramQuery.orderBy(
         sortProgramsColumnMap(paginationOptions.sortField),
         paginationOptions.sortOrder,
@@ -906,12 +932,13 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       // Default sort and order.
       // TODO:Further investigation needed as the CASE translation does not work in orderby queries.
       paginatedProgramQuery.orderBy(
-        `CASE programs.program_status
-                WHEN '${ProgramStatus.Pending}' THEN ${SortPriority.Priority1}
-                WHEN '${ProgramStatus.Approved}' THEN ${SortPriority.Priority2}
-                WHEN '${ProgramStatus.Declined}' THEN ${SortPriority.Priority3}
-                ELSE ${SortPriority.Priority4}
-              END`,
+        `CASE           
+          WHEN programs.programStatus = '${ProgramStatus.Pending}' and programs.isActive = true THEN ${SortPriority.Priority1}
+          WHEN programs.programStatus = '${ProgramStatus.Approved}' and programs.isActive = true THEN ${SortPriority.Priority2}
+          WHEN programs.programStatus = '${ProgramStatus.Declined}' and programs.isActive = true THEN ${SortPriority.Priority3}
+          WHEN programs.isActive = false THEN ${SortPriority.Priority4}
+          ELSE ${SortPriority.Priority5}
+        END`,
       );
     }
 
