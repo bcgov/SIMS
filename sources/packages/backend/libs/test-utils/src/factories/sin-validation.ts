@@ -23,7 +23,10 @@ export function createFakeSINValidation(
     options?.initialValue?.sin ??
     faker.datatype.number({ min: 100000000, max: 899999999 }).toString();
   sinValidation.dateSent = now;
-  sinValidation.dateReceived = now;
+  sinValidation.dateReceived =
+    options?.initialValue?.dateReceived !== undefined
+      ? options.initialValue.dateReceived
+      : now;
   sinValidation.fileSent = null;
   sinValidation.fileReceived = null;
   sinValidation.givenNameSent = null;

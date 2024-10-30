@@ -121,9 +121,9 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
           .getOne();
 
         if (!existingValidation) {
-          throw new Error(
-            `Not able to find the SIN validation id ${validationResponse.referenceIndex} to be updated with the ESDC response.`,
-          );
+          return {
+            operationDescription: `Not able to find the SIN validation on line number ${validationResponse.lineNumber} to be updated with the ESDC response.`,
+          };
         }
 
         const sinValidationNeverUpdated = !existingValidation.dateReceived;

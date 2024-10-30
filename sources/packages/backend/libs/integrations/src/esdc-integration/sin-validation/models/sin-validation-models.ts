@@ -57,6 +57,6 @@ export interface SINValidationRecord {
  * description of the operation executed.
  */
 export interface SINValidationUpdateResult {
-  record: SINValidation;
+  record?: SINValidation;
   operationDescription: string;
 }
