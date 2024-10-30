@@ -171,16 +171,26 @@ export default defineComponent({
         if (searchInactiveProgram) {
           statusSearchList.splice(statusSearchList.indexOf("Inactive"), 1);
         }
+        let searchCriteria: Record<string, string | string[] | boolean>;
+        if (statusSearchList.length) {
+          searchCriteria = {
+            programNameSearch: searchProgramName.value,
+            locationNameSearch: searchLocationName.value,
+            statusSearch: statusSearchList,
+            inactiveProgramSearch: searchInactiveProgram,
+          };
+        } else {
+          searchCriteria = {
+            programNameSearch: searchProgramName.value,
+            locationNameSearch: searchLocationName.value,
+            inactiveProgramSearch: searchInactiveProgram,
+          };
+        }
         institutionProgramsSummary.value =
           await EducationProgramService.shared.getProgramsSummaryByInstitutionId(
             institutionId,
             {
-              searchCriteria: {
-                programNameSearch: searchProgramName.value,
-                locationNameSearch: searchLocationName.value,
-                statusSearch: statusSearchList,
-                inactiveProgramSearch: searchInactiveProgram,
-              },
+              searchCriteria,
               pageLimit: rowsPerPage,
               page,
               sortField: sortColumn,

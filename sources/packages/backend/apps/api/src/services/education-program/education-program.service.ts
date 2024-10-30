@@ -301,16 +301,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       });
       queryParams.push(`%${paginationOptions.locationNameSearch}%`);
     }
-    // Fix for the scenario when the status search array is empty
-    // but still shows up as [''] in the route controller handler
-    // after the transformation and validation pipes have operated
-    // on the input parameters.
-    if (
-      paginationOptions.statusSearch.length === 1 &&
-      paginationOptions.statusSearch[0] === ("" as ProgramStatus)
-    ) {
-      paginationOptions.statusSearch = undefined;
-    }
     // When both the status search and inactive search is false, nothing is returned.
     if (
       !paginationOptions.statusSearch &&
