@@ -226,7 +226,7 @@ export default defineComponent({
     const validationProcessing = ref(false);
     const creationProcessing = ref(false);
     // Only one will be used but the component allows multiple.
-    const offeringFiles = ref<InputFile[]>([]);
+    const offeringFiles = ref<File>();
     // Possible errors and warnings received upon file upload.
     const validationResults = ref([] as OfferingsUploadBulkInsert[]);
     const uploadForm = ref({} as VForm);
@@ -252,10 +252,9 @@ export default defineComponent({
         } else {
           creationProcessing.value = true;
         }
-        const [fileToUpload] = offeringFiles.value;
         const uploadResults =
           await EducationProgramOfferingService.shared.offeringBulkInsert(
-            fileToUpload,
+            offeringFiles.value as Blob,
             validationOnly,
             (progressEvent: AxiosProgressEvent) => {
               uploadProgress.value = progressEvent;
@@ -318,7 +317,7 @@ export default defineComponent({
 
     const resetForm = () => {
       validationResults.value = [];
-      offeringFiles.value = [];
+      offeringFiles.value = undefined;
       csvFileUploadKey.value++;
     };
 
