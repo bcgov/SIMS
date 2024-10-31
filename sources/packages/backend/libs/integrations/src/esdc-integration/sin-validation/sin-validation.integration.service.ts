@@ -79,7 +79,6 @@ export class SINValidationIntegrationService extends SFTPIntegrationBase<SINVali
    */
   createRequestFileName(sequenceNumber: number): CreateRequestFileNameResult {
     const fileNameBuilder = new StringBuilder();
-    fileNameBuilder.append(this.esdcConfig.environmentCode);
     fileNameBuilder.append(PROVINCE_CODE);
     fileNameBuilder.appendWithStartFiller(sequenceNumber, 4, NUMBER_FILLER);
     fileNameBuilder.append(".OS");
