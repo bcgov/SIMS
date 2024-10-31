@@ -1,11 +1,16 @@
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { Injectable } from "@nestjs/common";
-import { ConfigService, CRAIntegrationConfig } from "@sims/utilities/config";
+import {
+  ConfigService,
+  CRAIntegrationConfig,
+  ESDCIntegrationConfig,
+} from "@sims/utilities/config";
 import {
   CRAPersonRecord,
   TransactionCodes,
   TransactionSubCodes,
   CRASFTPResponseFile,
+  NUMBER_FILLER,
 } from "./cra-integration.models";
 import { CRAFileHeader } from "./cra-files/cra-file-header";
 import { CRAFileFooter } from "./cra-files/cra-file-footer";
@@ -15,6 +20,7 @@ import { CRAResponseStatusRecord } from "./cra-files/cra-response-status-record"
 import { CRAResponseTotalIncomeRecord } from "./cra-files/cra-response-total-income-record";
 import { SFTPIntegrationBase, SshService } from "@sims/integrations/services";
 import { FixedFormatFileLine } from "@sims/integrations/services/ssh";
+import { StringBuilder } from "@sims/utilities";
 
 /**
  * Manages the creation of the content files that needs to be sent
@@ -25,7 +31,7 @@ import { FixedFormatFileLine } from "@sims/integrations/services/ssh";
 @Injectable()
 export class CRAIntegrationService extends SFTPIntegrationBase<CRASFTPResponseFile> {
   private readonly craConfig: CRAIntegrationConfig;
-
+  private readonly esdcConfig: ESDCIntegrationConfig;
   constructor(config: ConfigService, sshService: SshService) {
     super(config.zoneBSFTP, sshService);
     this.craConfig = config.craIntegration;
@@ -113,8 +119,13 @@ export class CRAIntegrationService extends SFTPIntegrationBase<CRASFTPResponseFi
     fileName: string;
     filePath: string;
   } {
-    const sequenceFile = sequence.toString().padStart(5, "0");
-    const fileName = `CCRA_REQUEST_${this.craConfig.environmentCode}${sequenceFile}.DAT`;
+    const fileNameBuilder = new StringBuilder();
+    fileNameBuilder.append(this.esdcConfig.environmentCode);
+    fileNameBuilder.append(this.craConfig.programAreaCode);
+    fileNameBuilder.appendWithStartFiller(sequence, 5, NUMBER_FILLER);
+    fileNameBuilder.append(".TXT");
+
+    const fileName = fileNameBuilder.toString();
     const filePath = `${this.craConfig.ftpRequestFolder}\\${fileName}`;
     return {
       fileName,
