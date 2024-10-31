@@ -55,7 +55,7 @@
             :clearable="true"
             :accept="ACCEPTED_FILE_TYPE"
             density="compact"
-            v-model="withdrawalFiles"
+            v-model="withdrawalFile"
             label="Withdrawal text file"
             variant="outlined"
             prepend-icon="fa:fa-solid fa-file-text"
@@ -181,8 +181,8 @@ export default defineComponent({
     const validationProcessing = ref(false);
     const creationProcessing = ref(false);
     const { dateOnlyLongString, numberEmptyFiller } = useFormatters();
-    // Only one will be used but the component allows multiple.
-    const withdrawalFiles = ref<InputFile[]>([]);
+    // If multiple prop is undefined or false for VFileInput the component returns now a File object.
+    const withdrawalFile = ref<File>();
     // Possible errors and warnings received upon file upload.
     const validationResults = ref([] as ApplicationBulkWithdrawal[]);
     const uploadForm = ref({} as VForm);
@@ -210,10 +210,9 @@ export default defineComponent({
         } else {
           creationProcessing.value = true;
         }
-        const [fileToUpload] = withdrawalFiles.value;
         const uploadResults =
           await ScholasticStandingService.shared.applicationBulkWithdrawal(
-            fileToUpload,
+            withdrawalFile.value as Blob,
             validationOnly,
             (progressEvent: AxiosProgressEvent) => {
               uploadProgress.value = progressEvent;
@@ -265,7 +264,7 @@ export default defineComponent({
 
     const resetForm = () => {
       validationResults.value = [];
-      withdrawalFiles.value = [];
+      withdrawalFile.value = undefined;
     };
 
     const loading = computed(
@@ -279,7 +278,7 @@ export default defineComponent({
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
       PAGINATION_LIST,
-      withdrawalFiles,
+      withdrawalFile,
       uploadFile,
       validationResults,
       fileValidationRules,
