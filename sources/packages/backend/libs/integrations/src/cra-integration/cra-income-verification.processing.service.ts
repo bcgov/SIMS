@@ -199,7 +199,7 @@ export class CRAIncomeVerificationProcessingService {
     const remoteFilePaths = await this.craService.getResponseFilesFullPath(
       this.ftpResponseFolder,
       new RegExp(
-        `[${this.configService.craIntegration.environmentCode}]BCSA\\d{5}\\.TXT`,
+        `${this.configService.craIntegration.environmentCode}BCSA\\d{5}\\.TXT`,
         "i",
       ),
     );
