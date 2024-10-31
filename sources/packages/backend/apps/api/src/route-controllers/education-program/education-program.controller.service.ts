@@ -18,7 +18,11 @@ import {
   EducationProgramsSummaryAPIOutDTO,
   EducationProgramAPIInDTO,
 } from "./models/education-program.dto";
-import { credentialTypeToDisplay, getUserFullName } from "../../utilities";
+import {
+  credentialTypeToDisplay,
+  getUserFullName,
+  PaginatedResults,
+} from "../../utilities";
 import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
 import { FormNames } from "../../services/form/constants";
 import {
@@ -27,7 +31,10 @@ import {
   EDUCATION_PROGRAM_INVALID_OPERATION,
 } from "../../constants";
 import { ApiProcessError } from "../../types";
-import { SaveEducationProgram } from "../../services/education-program/education-program.service.models";
+import {
+  EducationProgramsSummary,
+  SaveEducationProgram,
+} from "../../services/education-program/education-program.service.models";
 import { InstitutionService } from "../../services/institution/institution.service";
 
 @Injectable()
@@ -52,12 +59,21 @@ export class EducationProgramControllerService {
     paginationOptions: ProgramsPaginationOptionsAPIInDTO,
     locationId?: number,
   ): Promise<PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>> {
-    const programs = await this.programService.getProgramsSummary(
-      institutionId,
-      [OfferingTypes.Public, OfferingTypes.Private],
-      paginationOptions,
-      locationId,
-    );
+    let programs: PaginatedResults<EducationProgramsSummary>;
+    if (locationId) {
+      programs = await this.programService.getProgramsSummaryForLocation(
+        institutionId,
+        [OfferingTypes.Public, OfferingTypes.Private],
+        paginationOptions,
+        locationId,
+      );
+    } else {
+      programs = await this.programService.getProgramsSummary(
+        institutionId,
+        [OfferingTypes.Public, OfferingTypes.Private],
+        paginationOptions,
+      );
+    }
 
     return {
       results: programs.results.map((program) => ({

@@ -120,10 +120,13 @@ export enum PaginationParams {
 
 /**
  * Pagination Options.
+ * @param searchCriteria search criteria can be a single criterion
+ * or it can be an object with multiple search criteria (for eg. search of
+ * programs on the basis of program name, location name, status etc.)
  * todo: remove sortOrder: DataTableSortOrder when all primevue datatables are removed.
  */
 export interface PaginationOptions {
-  searchCriteria?: string;
+  searchCriteria?: string | Record<string, string | string[] | boolean>;
   sortField?: string;
   sortOrder?: DataTableSortOrder | DataTableSortByOrder;
   page: number;
@@ -402,6 +405,6 @@ export const ProgramHeaders = [
   { title: "Program Name", sortable: true, key: "programName" },
   { title: "Location", sortable: true, key: "locationName" },
   { title: "Study Periods", sortable: false, key: "totalOfferings" },
-  { title: "Status", sortable: false, key: "programStatus" },
+  { title: "Status", sortable: true, key: "programStatus" },
   { title: "Action", sortable: false, key: "action" },
 ];

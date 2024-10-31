@@ -65,6 +65,7 @@ export const sortProgramsColumnMap = (fieldName: string): string => {
     submittedDate: "programs.createdAt",
     programName: "programs.name",
     credentialType: "programs.credentialType",
+    locationName: "location.name",
   };
   return programSortOptions[fieldName] ?? null;
 };

@@ -7,15 +7,53 @@
           :recordsCount="institutionProgramsSummary.count"
         >
           <template #actions>
-            <v-text-field
-              density="compact"
-              v-model="searchProgramName"
-              label="Search Program Name"
-              variant="outlined"
-              @keyup.enter="goToSearchProgramName()"
-              prepend-inner-icon="mdi-magnify"
-              hide-details="auto"
-            />
+            <v-row>
+              <v-col>
+                <v-text-field
+                  density="compact"
+                  v-model="searchProgramName"
+                  label="Search Program Name"
+                  variant="outlined"
+                  @keyup.enter="goToSearch()"
+                  prepend-inner-icon="mdi-magnify"
+                  hide-details="auto" /></v-col
+              ><v-col>
+                <v-text-field
+                  density="compact"
+                  v-model="searchLocationName"
+                  label="Search Location Name"
+                  variant="outlined"
+                  @keyup.enter="goToSearch()"
+                  prepend-inner-icon="mdi-magnify"
+                  hide-details="auto"
+              /></v-col>
+              <v-col>
+                <v-select
+                  density="compact"
+                  v-model="searchProgramStatus"
+                  label="Search Program Status"
+                  hide-details="auto"
+                  :items="programStatusItems"
+                  multiple
+                  variant="outlined"
+                >
+                  <template #selection="{ item }">
+                    <v-chip>
+                      <span>{{ item.title }}</span>
+                    </v-chip>
+                  </template>
+                </v-select>
+              </v-col>
+              <v-col cols="1">
+                <v-btn
+                  color="primary"
+                  class="p-button-raised"
+                  @click="goToSearch()"
+                >
+                  Search
+                </v-btn>
+              </v-col>
+            </v-row>
           </template>
         </body-header>
       </template>
@@ -79,10 +117,12 @@ import {
   DataTableOptions,
   DataTableSortByOrder,
   DEFAULT_DATATABLE_PAGE_NUMBER,
+  ProgramStatus,
 } from "@/types";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
 import { EducationProgramService } from "@/services/EducationProgramService";
+import { INACTIVE_PROGRAM } from "@/constants";
 
 export default defineComponent({
   components: { StatusChipProgram },
@@ -98,26 +138,50 @@ export default defineComponent({
       {} as PaginatedResults<EducationProgramsSummary>,
     );
     const searchProgramName = ref("");
+    const searchLocationName = ref("");
     const currentPage = ref();
     const currentPageLimit = ref();
     const loading = ref(true);
-
+    const programStatusItems = ref([
+      ProgramStatus.Approved,
+      ProgramStatus.Pending,
+      ProgramStatus.Declined,
+      INACTIVE_PROGRAM,
+    ]);
+    const searchProgramStatus = ref([
+      ProgramStatus.Approved,
+      ProgramStatus.Pending,
+      ProgramStatus.Declined,
+      INACTIVE_PROGRAM,
+    ]);
     const getProgramsSummaryList = async (
       institutionId: number,
       rowsPerPage: number,
       page: number,
-      programName: string,
       sortColumn?: ProgramSummaryFields,
       sortOrder?: DataTableSortByOrder,
     ) => {
       try {
         loading.value = true;
-        searchProgramName.value = programName;
+        const statusSearchList = searchProgramStatus.value.filter(
+          (searchItem) => searchItem !== INACTIVE_PROGRAM,
+        );
+        const searchInactiveProgram = searchProgramStatus.value.some(
+          (searchItem) => searchItem === INACTIVE_PROGRAM,
+        );
+        let searchCriteria: Record<string, string | string[] | boolean> = {
+          programNameSearch: searchProgramName.value,
+          locationNameSearch: searchLocationName.value,
+          inactiveProgramSearch: searchInactiveProgram,
+        };
+        if (statusSearchList.length) {
+          searchCriteria.statusSearch = statusSearchList;
+        }
         institutionProgramsSummary.value =
           await EducationProgramService.shared.getProgramsSummaryByInstitutionId(
             institutionId,
             {
-              searchCriteria: programName,
+              searchCriteria,
               pageLimit: rowsPerPage,
               page,
               sortField: sortColumn,
@@ -133,7 +197,6 @@ export default defineComponent({
         props.institutionId,
         DEFAULT_PAGE_LIMIT,
         DEFAULT_DATATABLE_PAGE_NUMBER,
-        searchProgramName.value,
       );
     });
     const goToViewProgramDetail = (programId: number, locationId: number) => {
@@ -154,17 +217,15 @@ export default defineComponent({
         props.institutionId,
         event.itemsPerPage,
         event.page,
-        searchProgramName.value,
         sortByOptions?.key as ProgramSummaryFields,
         sortByOptions?.order,
       );
     };
-    const goToSearchProgramName = async () => {
+    const goToSearch = async () => {
       await getProgramsSummaryList(
         props.institutionId,
         currentPageLimit.value ?? DEFAULT_PAGE_LIMIT,
         currentPage.value ?? DEFAULT_DATATABLE_PAGE_NUMBER,
-        searchProgramName.value,
       );
     };
     return {
@@ -172,8 +233,11 @@ export default defineComponent({
       goToViewProgramDetail,
       DEFAULT_PAGE_LIMIT,
       pageSortEvent,
-      goToSearchProgramName,
+      goToSearch,
+      programStatusItems,
       searchProgramName,
+      searchLocationName,
+      searchProgramStatus,
       loading,
       ProgramSummaryFields,
       ProgramHeaders,

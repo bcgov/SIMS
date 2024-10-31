@@ -1,14 +1,31 @@
+import { ProgramStatus } from "@sims/sims-db";
 import { FieldSortOrder } from "@sims/utilities";
 
 /**
- *  Pagination option.
+ *  Base Pagination option.
  */
-export interface PaginationOptions {
-  searchCriteria?: string;
+export interface BasePaginationOptions {
   sortField?: string;
   sortOrder?: FieldSortOrder;
   page: number;
   pageLimit: number;
+}
+
+/**
+ *  Pagination option.
+ */
+export interface PaginationOptions extends BasePaginationOptions {
+  searchCriteria?: string;
+}
+
+/**
+ * Program pagination option allowing for multiple criteria search.
+ */
+export interface ProgramPaginationOptions extends BasePaginationOptions {
+  programNameSearch?: string;
+  locationNameSearch?: string;
+  statusSearch?: ProgramStatus[];
+  inactiveProgramSearch?: boolean;
 }
 
 export enum SortPriority {
@@ -16,4 +33,5 @@ export enum SortPriority {
   Priority2 = 2,
   Priority3 = 3,
   Priority4 = 4,
+  Priority5 = 5,
 }

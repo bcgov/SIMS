@@ -6,6 +6,7 @@ import { computed, defineComponent, PropType } from "vue";
 import ChipStatus from "@/components/generic/ChipStatus.vue";
 import { useProgram } from "@/composables";
 import { ProgramStatus } from "@/types";
+import { INACTIVE_PROGRAM } from "@/constants";
 
 export default defineComponent({
   components: { ChipStatus },
@@ -23,7 +24,7 @@ export default defineComponent({
     const { mapProgramChipStatus } = useProgram();
     const overallStatusLabel = computed(() => {
       if (!props.isActive) {
-        return "Inactive";
+        return INACTIVE_PROGRAM;
       }
       return props.status.toString();
     });

@@ -1,6 +1,18 @@
-import { IsEnum, IsIn, IsOptional, Max, MaxLength, Min } from "class-validator";
+import {
+  IsArray,
+  IsBoolean,
+  IsEnum,
+  IsIn,
+  IsOptional,
+  Max,
+  MaxLength,
+  Min,
+} from "class-validator";
 import { PAGINATION_SEARCH_MAX_LENGTH } from "../../constants";
 import { FieldSortOrder } from "@sims/utilities";
+import { ProgramStatus } from "@sims/sims-db";
+import { Transform } from "class-transformer";
+import { ToBoolean } from "../../utilities/class-transform";
 
 /**
  * Common parameters used when an API result
@@ -75,8 +87,29 @@ export class StudentAppealPendingPaginationOptionsAPIInDTO extends PaginationOpt
 
 export class ProgramsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
   @IsOptional()
-  @IsIn(["submittedDate", "programName", "credentialType"])
+  @IsIn([
+    "submittedDate",
+    "programName",
+    "locationName",
+    "programStatus",
+    "credentialType",
+  ])
   sortField?: string;
+  @IsOptional()
+  @MaxLength(PAGINATION_SEARCH_MAX_LENGTH)
+  programNameSearch?: string;
+  @IsOptional()
+  @MaxLength(PAGINATION_SEARCH_MAX_LENGTH)
+  locationNameSearch?: string;
+  @IsArray()
+  @IsOptional()
+  @Transform(({ value }) => value.split(","))
+  @IsEnum(ProgramStatus, { each: true })
+  statusSearch?: ProgramStatus[];
+  @IsOptional()
+  @IsBoolean()
+  @ToBoolean()
+  inactiveProgramSearch?: boolean;
 }
 
 export class OfferingsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {

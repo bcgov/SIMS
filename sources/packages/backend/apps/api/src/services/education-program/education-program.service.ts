@@ -26,6 +26,7 @@ import {
   IsNull,
   Brackets,
   Or,
+  SelectQueryBuilder,
 } from "typeorm";
 import {
   SaveEducationProgram,
@@ -33,9 +34,10 @@ import {
 } from "./education-program.service.models";
 import {
   sortProgramsColumnMap,
-  PaginationOptions,
   PaginatedResults,
   SortPriority,
+  ProgramPaginationOptions,
+  PaginationOptions,
 } from "../../utilities";
 import {
   CustomNamedError,
@@ -55,8 +57,11 @@ import {
   InstitutionAddsPendingProgramNotification,
   NotificationActionsService,
 } from "@sims/services";
+import {
+  INACTIVE_PROGRAM,
+  OTHER_REGULATORY_BODY,
+} from "../education-program/constants";
 
-const OTHER_REGULATORY_BODY = "other";
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
   private readonly offeringsRepo: Repository<EducationProgramOffering>;
@@ -271,121 +276,134 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * Gets all the programs that are associated with an institution
    * alongside with the total of offerings on locations.
    * @param institutionId id of the institution.
-   * @param paginationOptions pagination options.
-   * @param locationId optional location id to filter.
-   * @returns paginated summary for the institution or location.
+   * @param offeringTypes offering types.
+   * @param paginationOptions program related pagination options.
+   * @returns paginated summary for the institution.
    */
   async getProgramsSummary(
     institutionId: number,
     offeringTypes: OfferingTypes[],
-    paginationOptions: PaginationOptions,
-    locationId?: number,
+    paginationOptions: ProgramPaginationOptions,
   ): Promise<PaginatedResults<EducationProgramsSummary>> {
-    const paginatedProgramQuery = this.repo
-      .createQueryBuilder("programs")
-      .select("programs.id", "programId")
-      .addSelect("programs.name", "programName")
-      .addSelect("programs.cipCode", "cipCode")
-      .addSelect("programs.credentialType", "credentialType")
-      .addSelect("programs.createdAt", "programSubmittedAt")
-      .addSelect("location.id", "locationId")
-      .addSelect("location.name", "locationName")
-      .addSelect("programs.programStatus", "programStatus")
-      .addSelect("programs.isActive", "isActive")
-      .addSelect("programs.effectiveEndDate", "effectiveEndDate")
-      .addSelect(
-        (qb) =>
+    // When both the status search and inactive search is false, nothing is returned.
+    if (
+      !paginationOptions.statusSearch &&
+      !paginationOptions.inactiveProgramSearch
+    ) {
+      return {
+        results: [],
+        count: 0,
+      };
+    }
+    const { programQuery, queryParams } = this.getProgramsQueryWithQueryParams(
+      offeringTypes,
+      institutionId,
+    );
+    // Program name search.
+    if (paginationOptions.programNameSearch) {
+      programQuery.andWhere("programs.name Ilike :programNameSearchCriteria", {
+        programNameSearchCriteria: `%${paginationOptions.programNameSearch}%`,
+      });
+      queryParams.push(`%${paginationOptions.programNameSearch}%`);
+    }
+    // Location name search.
+    if (paginationOptions.locationNameSearch) {
+      programQuery.andWhere("location.name Ilike :locationNameSearchCriteria", {
+        locationNameSearchCriteria: `%${paginationOptions.locationNameSearch}%`,
+      });
+      queryParams.push(`%${paginationOptions.locationNameSearch}%`);
+    }
+    // When the status search and inactive both are true,
+    // then fetch the inactive programs along with the ones
+    // from the program status list.
+    if (
+      paginationOptions.statusSearch &&
+      paginationOptions.inactiveProgramSearch
+    ) {
+      programQuery.andWhere(
+        new Brackets((qb) =>
           qb
-            .select("COUNT(*)")
-            .from(EducationProgramOffering, "offerings")
-            .where("offerings.educationProgram.id = programs.id")
-            .andWhere("offerings.institutionLocation.id = location.id")
-            .andWhere("offerings.offeringType in (:...offeringTypes)", {
-              offeringTypes,
+            .where(
+              "programs.programStatus IN (:...programStatusSearchCriteria)",
+              {
+                programStatusSearchCriteria: paginationOptions.statusSearch,
+              },
+            )
+            .orWhere("programs.isActive = :programIsActiveSearchCriteria", {
+              programIsActiveSearchCriteria:
+                !paginationOptions.inactiveProgramSearch,
             }),
-        "totalOfferings",
-      )
-      .innerJoin("programs.institution", "institution")
-      .innerJoin(
-        InstitutionLocation,
-        "location",
-        "institution.id = location.institution.id",
-      )
-      .where("programs.institution.id = :institutionId", { institutionId });
+        ),
+      );
+      queryParams.push(...paginationOptions.statusSearch);
+      queryParams.push(!paginationOptions.inactiveProgramSearch);
+    }
+    // Fetching only the active programs with the provided program status.
+    else if (paginationOptions.statusSearch) {
+      programQuery.andWhere(
+        "programs.programStatus IN (:...programStatusSearchCriteria) and programs.isActive = true",
+        {
+          programStatusSearchCriteria: paginationOptions.statusSearch,
+        },
+      );
+      queryParams.push(...paginationOptions.statusSearch);
+    }
+    // Fetching only the inactive status programs.
+    else if (paginationOptions.inactiveProgramSearch) {
+      programQuery.andWhere(
+        "programs.isActive = :programIsActiveSearchCriteria",
+        {
+          programIsActiveSearchCriteria:
+            !paginationOptions.inactiveProgramSearch,
+        },
+      );
+      queryParams.push(!paginationOptions.inactiveProgramSearch);
+    }
 
-    // This queryParams is for getRawCount, which is different from the
-    // query parameter assigned to paginatedProgramQuery like
-    // paginationOptions.searchCriteria or institutionId
-    // queryParams should follow the order/index.
-    const queryParams: any[] = [...offeringTypes, institutionId];
+    return this.preparePaginatedProgramQuery(
+      programQuery,
+      paginationOptions,
+      queryParams,
+    );
+  }
+
+  /**
+   * Gets all the programs that are associated with
+   * an institution and the location alongside with
+   * the total of offerings on locations.
+   * @param institutionId id of the institution.
+   * @param offeringTypes offering types.
+   * @param paginationOptions pagination options.
+   * @param locationId related location id.
+   * @returns paginated summary for the institution location.
+   */
+  async getProgramsSummaryForLocation(
+    institutionId: number,
+    offeringTypes: OfferingTypes[],
+    paginationOptions: PaginationOptions,
+    locationId: number,
+  ): Promise<PaginatedResults<EducationProgramsSummary>> {
+    const { programQuery, queryParams } = this.getProgramsQueryWithQueryParams(
+      offeringTypes,
+      institutionId,
+    );
     if (locationId) {
       queryParams.push(locationId);
-      paginatedProgramQuery.andWhere("location.id = :locationId", {
+      programQuery.andWhere("location.id = :locationId", {
         locationId,
       });
     }
-
     if (paginationOptions.searchCriteria) {
-      paginatedProgramQuery.andWhere("programs.name Ilike :searchCriteria", {
+      programQuery.andWhere("programs.name Ilike :searchCriteria", {
         searchCriteria: `%${paginationOptions.searchCriteria}%`,
       });
       queryParams.push(`%${paginationOptions.searchCriteria}%`);
     }
-
-    // For getting total raw count before pagination.
-    const sqlQuery = paginatedProgramQuery.getSql();
-
-    if (paginationOptions.pageLimit) {
-      paginatedProgramQuery.limit(paginationOptions.pageLimit);
-    }
-
-    paginatedProgramQuery.offset(
-      paginationOptions.page * paginationOptions.pageLimit,
+    return this.preparePaginatedProgramQuery(
+      programQuery,
+      paginationOptions,
+      queryParams,
     );
-
-    // sort
-    if (paginationOptions.sortField && paginationOptions.sortOrder) {
-      paginatedProgramQuery.orderBy(
-        sortProgramsColumnMap(paginationOptions.sortField),
-        paginationOptions.sortOrder,
-      );
-    } else {
-      // Default sort and order.
-      // TODO:Further investigation needed as the CASE translation does not work in orderby queries.
-      paginatedProgramQuery.orderBy(
-        `CASE programs.program_status
-                WHEN '${ProgramStatus.Pending}' THEN ${SortPriority.Priority1}
-                WHEN '${ProgramStatus.Approved}' THEN ${SortPriority.Priority2}
-                WHEN '${ProgramStatus.Declined}' THEN ${SortPriority.Priority3}
-                ELSE ${SortPriority.Priority4}
-              END`,
-      );
-    }
-
-    // Total count and summary.
-    const [totalCount, programsQuery] = await Promise.all([
-      getRawCount(this.repo, sqlQuery, queryParams),
-      paginatedProgramQuery.getRawMany(),
-    ]);
-
-    const programSummary = programsQuery.map((program) => ({
-      programId: program.programId,
-      programName: program.programName,
-      cipCode: program.cipCode,
-      credentialType: program.credentialType,
-      submittedDate: program.programSubmittedAt,
-      programStatus: program.programStatus,
-      isActive: program.isActive,
-      isExpired: isSameOrAfterDate(program.effectiveEndDate, new Date()),
-      totalOfferings: program.totalOfferings,
-      locationId: program.locationId,
-      locationName: program.locationName,
-    }));
-
-    return {
-      results: programSummary,
-      count: totalCount,
-    };
   }
 
   /**
@@ -801,6 +819,134 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         modifier: auditUser,
       });
     });
+  }
+
+  /**
+   * Gets the programs query with the query parameters.
+   * @param offeringTypes offering types.
+   * @param institutionId institution id.
+   * @returns programs query.
+   */
+  private getProgramsQueryWithQueryParams(
+    offeringTypes: OfferingTypes[],
+    institutionId: number,
+  ): {
+    programQuery: SelectQueryBuilder<EducationProgram>;
+    queryParams: unknown[];
+  } {
+    const programQuery = this.repo
+      .createQueryBuilder("programs")
+      .select("programs.id", "programId")
+      .addSelect("programs.name", "programName")
+      .addSelect("programs.cipCode", "cipCode")
+      .addSelect("programs.credentialType", "credentialType")
+      .addSelect("programs.createdAt", "programSubmittedAt")
+      .addSelect("location.id", "locationId")
+      .addSelect("location.name", "locationName")
+      .addSelect("programs.programStatus", "programStatus")
+      .addSelect("programs.isActive", "isActive")
+      .addSelect("programs.effectiveEndDate", "effectiveEndDate")
+      .addSelect(
+        (qb) =>
+          qb
+            .select("COUNT(*)")
+            .from(EducationProgramOffering, "offerings")
+            .where("offerings.educationProgram.id = programs.id")
+            .andWhere("offerings.institutionLocation.id = location.id")
+            .andWhere("offerings.offeringType in (:...offeringTypes)", {
+              offeringTypes,
+            }),
+        "totalOfferings",
+      )
+      .innerJoin("programs.institution", "institution")
+      .innerJoin(
+        InstitutionLocation,
+        "location",
+        "institution.id = location.institution.id",
+      )
+      .where("programs.institution.id = :institutionId", { institutionId });
+
+    // This queryParams is for getRawCount, which is different from the
+    // query parameter assigned to paginatedProgramQuery like
+    // paginationOptions.searchCriteria or institutionId
+    // queryParams should follow the order/index.
+    const queryParams: unknown[] = [...offeringTypes, institutionId];
+
+    return { programQuery, queryParams };
+  }
+
+  /**
+   * Prepares the paginated query and the count.
+   * @param paginatedProgramQuery paginated program query.
+   * @param paginationOptions pagination options.
+   * @param queryParams query parameters.
+   * @returns paginated result along with the count.
+   */
+  private async preparePaginatedProgramQuery(
+    paginatedProgramQuery: SelectQueryBuilder<EducationProgram>,
+    paginationOptions: PaginationOptions,
+    queryParams: unknown[],
+  ): Promise<PaginatedResults<EducationProgramsSummary>> {
+    // For getting total raw count before pagination.
+    const sqlQuery = paginatedProgramQuery.getSql();
+
+    if (paginationOptions.pageLimit) {
+      paginatedProgramQuery.limit(paginationOptions.pageLimit);
+    }
+
+    paginatedProgramQuery.offset(
+      paginationOptions.page * paginationOptions.pageLimit,
+    );
+
+    // sort
+    if (paginationOptions.sortField === "programStatus") {
+      paginatedProgramQuery.orderBy(
+        `CASE WHEN programs.isActive = false THEN '${INACTIVE_PROGRAM}' ELSE programs.programStatus :: text END`,
+        paginationOptions.sortOrder,
+      );
+    } else if (paginationOptions.sortField && paginationOptions.sortOrder) {
+      paginatedProgramQuery.orderBy(
+        sortProgramsColumnMap(paginationOptions.sortField),
+        paginationOptions.sortOrder,
+      );
+    } else {
+      // Default sort and order.
+      // TODO:Further investigation needed as the CASE translation does not work in orderby queries.
+      paginatedProgramQuery.orderBy(
+        `CASE           
+          WHEN programs.programStatus = '${ProgramStatus.Pending}' and programs.isActive = true THEN ${SortPriority.Priority1}
+          WHEN programs.programStatus = '${ProgramStatus.Approved}' and programs.isActive = true THEN ${SortPriority.Priority2}
+          WHEN programs.programStatus = '${ProgramStatus.Declined}' and programs.isActive = true THEN ${SortPriority.Priority3}
+          WHEN programs.isActive = false THEN ${SortPriority.Priority4}
+          ELSE ${SortPriority.Priority5}
+        END`,
+      );
+    }
+
+    // Total count and summary.
+    const [totalCount, programsQuery] = await Promise.all([
+      getRawCount(this.repo, sqlQuery, queryParams),
+      paginatedProgramQuery.getRawMany(),
+    ]);
+
+    const programSummary = programsQuery.map((program) => ({
+      programId: program.programId,
+      programName: program.programName,
+      cipCode: program.cipCode,
+      credentialType: program.credentialType,
+      submittedDate: program.programSubmittedAt,
+      programStatus: program.programStatus,
+      isActive: program.isActive,
+      isExpired: isSameOrAfterDate(program.effectiveEndDate, new Date()),
+      totalOfferings: program.totalOfferings,
+      locationId: program.locationId,
+      locationName: program.locationName,
+    }));
+
+    return {
+      results: programSummary,
+      count: totalCount,
+    };
   }
 
   /**
