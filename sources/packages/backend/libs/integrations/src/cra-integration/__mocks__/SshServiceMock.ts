@@ -4,10 +4,7 @@ import * as path from "path";
 import { SshService } from "@sims/integrations/services";
 import { FILE_DEFAULT_ENCODING } from "@sims/services/constants";
 
-const MOCKED_RESPONSE_FILES = [
-  "CCRA_RESPONSE_ABCSL00001.TXT",
-  "CCRA_RESPONSE_ABCSL00002.TXT",
-];
+const MOCKED_RESPONSE_FILES = ["ABCSA00001.TXT", "PBCSA00002.TXT"];
 
 const SshServiceMock = new SshService();
 
