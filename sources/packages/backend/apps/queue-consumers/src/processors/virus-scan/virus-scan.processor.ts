@@ -40,7 +40,8 @@ export class VirusScanProcessor {
       if (error instanceof CustomNamedError) {
         const errorMessage = error.message;
         if ([FILE_NOT_FOUND, EMPTY_FILE].includes(error.name)) {
-          // If the file is not present in the database, remove the file from the virus scan queue.
+          // If the file is not present in the database, or its content
+          // is empty then remove the file from the virus scan queue.
           await job.discard();
         }
         processSummary.error(errorMessage);
