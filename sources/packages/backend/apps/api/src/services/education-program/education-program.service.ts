@@ -58,7 +58,7 @@ import {
   NotificationActionsService,
 } from "@sims/services";
 import {
-  INACTIVE_PROGRAM_STATUS,
+  INACTIVE_PROGRAM,
   OTHER_REGULATORY_BODY,
 } from "../education-program/constants";
 
@@ -901,7 +901,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     // sort
     if (paginationOptions.sortField === "programStatus") {
       paginatedProgramQuery.orderBy(
-        `CASE WHEN programs.isActive = false THEN '${INACTIVE_PROGRAM_STATUS}' ELSE programs.programStatus :: text end`,
+        `CASE WHEN programs.isActive = false THEN '${INACTIVE_PROGRAM}' ELSE programs.programStatus :: text END`,
         paginationOptions.sortOrder,
       );
     } else if (paginationOptions.sortField && paginationOptions.sortOrder) {
