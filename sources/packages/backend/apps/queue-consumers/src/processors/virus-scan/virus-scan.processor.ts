@@ -9,7 +9,10 @@ import {
   ProcessSummary,
 } from "@sims/utilities/logger";
 import { logProcessSummaryToJobLogger } from "../../utilities";
-import { FILE_NOT_FOUND } from "../../constants/error-code.constants";
+import {
+  EMPTY_FILE,
+  FILE_NOT_FOUND,
+} from "../../constants/error-code.constants";
 
 @Processor(QueueNames.FileVirusScanProcessor)
 export class VirusScanProcessor {
@@ -36,8 +39,9 @@ export class VirusScanProcessor {
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         const errorMessage = error.message;
-        if (error.name === FILE_NOT_FOUND) {
-          // If the file is not present in the database, remove the file from the virus scan queue.
+        if ([FILE_NOT_FOUND, EMPTY_FILE].includes(error.name)) {
+          // If the file is not present in the database, or its content
+          // is empty then remove the file from the virus scan queue.
           await job.discard();
         }
         processSummary.error(errorMessage);

@@ -16,28 +16,37 @@ import { VirusScanProcessor } from "../virus-scan.processor";
 import { VirusScanStatus } from "@sims/sims-db";
 import * as path from "path";
 import { INFECTED_FILENAME_SUFFIX } from "../../../services";
+import { ObjectStorageService } from "@sims/integrations/object-storage";
+import {
+  createFakeGetObjectResponse,
+  resetObjectStorageServiceMock,
+} from "@sims/test-utils/mocks";
 
 describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let processor: VirusScanProcessor;
   let clamAVServiceMock: ClamAVService;
+  let objectStorageService: ObjectStorageService;
 
   beforeAll(async () => {
     const {
       nestApplication,
       dataSource,
       clamAVServiceMock: clamAVServiceFromAppModule,
+      objectStorageServiceMock,
     } = await createTestingAppModule();
     app = nestApplication;
     // Processor under test.
     processor = app.get(VirusScanProcessor);
     clamAVServiceMock = clamAVServiceFromAppModule;
     db = createE2EDataSources(dataSource);
+    objectStorageService = objectStorageServiceMock;
   });
 
   beforeEach(() => {
     jest.clearAllMocks();
+    resetObjectStorageServiceMock(objectStorageService);
   });
 
   it("Should throw an error when the student file is not found during virus scanning.", async () => {
@@ -53,6 +62,32 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
 
     // Act
     const errorMessage = `File ${fakeUniqueFileName} is not found or has already been scanned for viruses. Scanning the file for viruses is aborted.`;
+    await expect(
+      processor.performVirusScan(mockedJob.job),
+    ).rejects.toStrictEqual(new Error(errorMessage));
+    expect(
+      mockedJob.containLogMessages([
+        "Log details",
+        "Starting virus scan.",
+        errorMessage,
+      ]),
+    ).toBe(true);
+  });
+
+  it("Should throw an error when the student file has no content.", async () => {
+    // Arrange
+    const studentFile = createFakeStudentFileUpload();
+    studentFile.virusScanStatus = VirusScanStatus.InProgress;
+    await db.studentFile.save(studentFile);
+    const mockedJob = mockBullJob<VirusScanQueueInDTO>({
+      uniqueFileName: studentFile.uniqueFileName,
+      fileName: studentFile.fileName,
+    });
+    // Mock an empty file.
+    objectStorageService.getObject = createFakeGetObjectResponse("");
+
+    // Act
+    const errorMessage = `File ${studentFile.uniqueFileName} has no content to be scanned.`;
     await expect(
       processor.performVirusScan(mockedJob.job),
     ).rejects.toStrictEqual(new Error(errorMessage));
