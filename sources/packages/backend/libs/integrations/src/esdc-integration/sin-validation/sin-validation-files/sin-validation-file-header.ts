@@ -35,7 +35,7 @@ export class SINValidationFileHeader implements FixedFormatFileLine {
   getFixedFormat(): string {
     const record = new StringBuilder();
     record.append(this.recordTypeCode);
-    record.appendWithStartFiller(this.batchNumber, 8, NUMBER_FILLER);
+    record.appendWithStartFiller(this.batchNumber, 6, NUMBER_FILLER);
     record.appendDate(this.processDate, DATE_FORMAT);
     record.append(PROVINCE_CODE);
     record.repeatAppend(SPACE_FILLER, 71);
