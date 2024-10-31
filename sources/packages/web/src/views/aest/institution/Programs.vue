@@ -122,8 +122,7 @@ import {
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
 import { EducationProgramService } from "@/services/EducationProgramService";
-
-const INACTIVE_PROGRAM = "Inactive";
+import { INACTIVE_PROGRAM } from "@/constants";
 
 export default defineComponent({
   components: { StatusChipProgram },
@@ -164,27 +163,19 @@ export default defineComponent({
     ) => {
       try {
         loading.value = true;
-        const statusSearchList = JSON.parse(
-          JSON.stringify(searchProgramStatus.value),
+        const statusSearchList = searchProgramStatus.value.filter(
+          (searchItem) => searchItem !== INACTIVE_PROGRAM,
         );
-        const searchInactiveProgram = statusSearchList.indexOf("Inactive") > -1;
-        if (searchInactiveProgram) {
-          statusSearchList.splice(statusSearchList.indexOf("Inactive"), 1);
-        }
-        let searchCriteria: Record<string, string | string[] | boolean>;
+        const searchInactiveProgram = searchProgramStatus.value.some(
+          (searchItem) => searchItem === INACTIVE_PROGRAM,
+        );
+        let searchCriteria: Record<string, string | string[] | boolean> = {
+          programNameSearch: searchProgramName.value,
+          locationNameSearch: searchLocationName.value,
+          inactiveProgramSearch: searchInactiveProgram,
+        };
         if (statusSearchList.length) {
-          searchCriteria = {
-            programNameSearch: searchProgramName.value,
-            locationNameSearch: searchLocationName.value,
-            statusSearch: statusSearchList,
-            inactiveProgramSearch: searchInactiveProgram,
-          };
-        } else {
-          searchCriteria = {
-            programNameSearch: searchProgramName.value,
-            locationNameSearch: searchLocationName.value,
-            inactiveProgramSearch: searchInactiveProgram,
-          };
+          searchCriteria.statusSearch = statusSearchList;
         }
         institutionProgramsSummary.value =
           await EducationProgramService.shared.getProgramsSummaryByInstitutionId(

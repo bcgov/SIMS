@@ -57,8 +57,11 @@ import {
   InstitutionAddsPendingProgramNotification,
   NotificationActionsService,
 } from "@sims/services";
+import {
+  INACTIVE_PROGRAM_STATUS,
+  OTHER_REGULATORY_BODY,
+} from "../education-program/constants";
 
-const OTHER_REGULATORY_BODY = "other";
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
   private readonly offeringsRepo: Repository<EducationProgramOffering>;
@@ -282,11 +285,20 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     offeringTypes: OfferingTypes[],
     paginationOptions: ProgramPaginationOptions,
   ): Promise<PaginatedResults<EducationProgramsSummary>> {
+    // When both the status search and inactive search is false, nothing is returned.
+    if (
+      !paginationOptions.statusSearch &&
+      !paginationOptions.inactiveProgramSearch
+    ) {
+      return {
+        results: [],
+        count: 0,
+      };
+    }
     const { programQuery, queryParams } = this.getProgramsQueryWithQueryParams(
       offeringTypes,
       institutionId,
     );
-
     // Program name search.
     if (paginationOptions.programNameSearch) {
       programQuery.andWhere("programs.name Ilike :programNameSearchCriteria", {
@@ -300,16 +312,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         locationNameSearchCriteria: `%${paginationOptions.locationNameSearch}%`,
       });
       queryParams.push(`%${paginationOptions.locationNameSearch}%`);
-    }
-    // When both the status search and inactive search is false, nothing is returned.
-    if (
-      !paginationOptions.statusSearch &&
-      !paginationOptions.inactiveProgramSearch
-    ) {
-      return {
-        results: [],
-        count: 0,
-      };
     }
     // When the status search and inactive both are true,
     // then fetch the inactive programs along with the ones
@@ -830,7 +832,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     institutionId: number,
   ): {
     programQuery: SelectQueryBuilder<EducationProgram>;
-    queryParams: any[];
+    queryParams: unknown[];
   } {
     const programQuery = this.repo
       .createQueryBuilder("programs")
@@ -868,7 +870,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     // query parameter assigned to paginatedProgramQuery like
     // paginationOptions.searchCriteria or institutionId
     // queryParams should follow the order/index.
-    const queryParams: any[] = [...offeringTypes, institutionId];
+    const queryParams: unknown[] = [...offeringTypes, institutionId];
 
     return { programQuery, queryParams };
   }
@@ -883,7 +885,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   private async preparePaginatedProgramQuery(
     paginatedProgramQuery: SelectQueryBuilder<EducationProgram>,
     paginationOptions: PaginationOptions,
-    queryParams: any[],
+    queryParams: unknown[],
   ): Promise<PaginatedResults<EducationProgramsSummary>> {
     // For getting total raw count before pagination.
     const sqlQuery = paginatedProgramQuery.getSql();
@@ -897,31 +899,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     );
 
     // sort
-    if (
-      paginationOptions.sortField === "programStatus" &&
-      paginationOptions.sortOrder === "DESC"
-    ) {
+    if (paginationOptions.sortField === "programStatus") {
       paginatedProgramQuery.orderBy(
-        `CASE          
-          WHEN programs.programStatus = '${ProgramStatus.Pending}' and programs.isActive = true THEN ${SortPriority.Priority1}
-          WHEN programs.isActive = false THEN ${SortPriority.Priority2}
-          WHEN programs.programStatus = '${ProgramStatus.Declined}' and programs.isActive = true THEN ${SortPriority.Priority3}
-          WHEN programs.programStatus = '${ProgramStatus.Approved}' and programs.isActive = true THEN ${SortPriority.Priority4}
-          ELSE ${SortPriority.Priority5}
-        END`,
-      );
-    } else if (
-      paginationOptions.sortField === "programStatus" &&
-      paginationOptions.sortOrder === "ASC"
-    ) {
-      paginatedProgramQuery.orderBy(
-        `CASE          
-          WHEN programs.programStatus = '${ProgramStatus.Approved}' and programs.isActive = true THEN ${SortPriority.Priority1}
-          WHEN programs.programStatus = '${ProgramStatus.Declined}' and programs.isActive = true THEN ${SortPriority.Priority2}
-          WHEN programs.isActive = false THEN ${SortPriority.Priority3}
-          WHEN programs.programStatus = '${ProgramStatus.Pending}' and programs.isActive = true THEN ${SortPriority.Priority4}
-          ELSE ${SortPriority.Priority5}
-        END`,
+        `CASE WHEN programs.isActive = false THEN '${INACTIVE_PROGRAM_STATUS}' ELSE programs.programStatus :: text end`,
+        paginationOptions.sortOrder,
       );
     } else if (paginationOptions.sortField && paginationOptions.sortOrder) {
       paginatedProgramQuery.orderBy(
