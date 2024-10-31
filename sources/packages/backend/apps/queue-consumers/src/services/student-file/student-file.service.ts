@@ -58,7 +58,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     if (contentLength === 0) {
       // Empty files are not suitable for virus scanning using passthrough.
       throw new CustomNamedError(
-        `File ${uniqueFileName} has not content to be scanned.`,
+        `File ${uniqueFileName} has no content to be scanned.`,
         EMPTY_FILE,
       );
     }

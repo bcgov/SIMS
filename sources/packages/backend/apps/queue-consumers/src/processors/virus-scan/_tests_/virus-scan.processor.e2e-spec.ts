@@ -87,7 +87,7 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     objectStorageService.getObject = createFakeGetObjectResponse("");
 
     // Act
-    const errorMessage = `File ${studentFile.uniqueFileName} has not content to be scanned.`;
+    const errorMessage = `File ${studentFile.uniqueFileName} has no content to be scanned.`;
     await expect(
       processor.performVirusScan(mockedJob.job),
     ).rejects.toStrictEqual(new Error(errorMessage));
