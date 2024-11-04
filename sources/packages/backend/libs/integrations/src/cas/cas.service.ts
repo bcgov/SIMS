@@ -2,6 +2,7 @@ import { HttpStatus, Injectable, LoggerService } from "@nestjs/common";
 import {
   CASAuthDetails,
   CASSupplierResponse,
+  CreateExistingSupplierSiteData,
   CreateSupplierAndSiteData,
   CreateSupplierAndSiteResponse,
   CreateSupplierAndSiteSubmittedData,
@@ -141,6 +142,65 @@ export class CASService {
         SupplierAddress: [
           {
             AddressLine1: formatAddress(supplierData.supplierSite.addressLine1),
+            City: formatCity(supplierData.supplierSite.city),
+            Province: supplierData.supplierSite.provinceCode,
+            Country: "CA",
+            PostalCode: formatPostalCode(supplierData.supplierSite.postalCode),
+            EmailAddress: supplierData.emailAddress,
+          },
+        ],
+      };
+      const response = await this.httpService.axiosRef.post(
+        url,
+        submittedData,
+        config,
+      );
+      return {
+        submittedData,
+        response: {
+          supplierNumber: response.data.SUPPLIER_NUMBER,
+          supplierSiteCode: this.extractSupplierSiteCode(
+            response.data.SUPPLIER_SITE_CODE,
+          ),
+        },
+      };
+    } catch (error: unknown) {
+      if (
+        error instanceof AxiosError &&
+        error.response?.status === HttpStatus.BAD_REQUEST &&
+        !!error.response?.data[CAS_RETURNED_MESSAGES]
+      ) {
+        // Checking for bad request errors for better logging while the
+        // specific ticket to handle exception is pending.
+        throw new CustomNamedError(
+          error.response.data[CAS_RETURNED_MESSAGES],
+          CAS_BAD_REQUEST,
+        );
+      }
+      throw new Error("Error while creating supplier and site on CAS.", {
+        cause: error,
+      });
+    }
+  }
+
+  /**
+   * Create supplier site for existing supplier.
+   * @param supplierData data to be used for supplier and site creation.
+   * @returns submitted data and CAS response.
+   */
+  async createExistingSupplierSite(
+    supplierData: CreateExistingSupplierSiteData,
+  ): Promise<CreateSupplierAndSiteResponse> {
+    const url = `${this.casIntegrationConfig.baseUrl}/cfs/supplier/`;
+    try {
+      const config = await this.getAuthConfig();
+      const submittedData: CreateSupplierAndSiteSubmittedData = {
+        SupplierNumber: supplierData.supplierNumber,
+        SupplierAddress: [
+          {
+            AddressLine1: formatAddress(supplierData.supplierSite.addressLine1),
+            AddressLine2: "",
+            AddressLine3: "",
             City: formatCity(supplierData.supplierSite.city),
             Province: supplierData.supplierSite.provinceCode,
             Country: "CA",

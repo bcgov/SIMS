@@ -60,6 +60,15 @@ export class CreateSupplierAndSiteData {
 }
 
 /**
+ * Information needed for existing supplier site creation on CAS.
+ */
+export class CreateExistingSupplierSiteData {
+  supplierNumber: string;
+  supplierSite: CreateSupplierSite;
+  emailAddress: string;
+}
+
+/**
  * Site information needed for supplier and site creation on CAS.
  */
 export class CreateSupplierSite {
@@ -84,12 +93,15 @@ export class CreateSupplierAndSiteResult {
  * the consumer, allowing it to be aware of the data actually submitted.
  */
 export class CreateSupplierAndSiteSubmittedData {
-  SupplierName: string;
-  SubCategory: string;
-  Sin: string;
+  SupplierName?: string;
+  SubCategory?: string;
+  SupplierNumber?: string;
+  Sin?: string;
   SupplierAddress: [
     {
       AddressLine1: string;
+      AddressLine2?: string;
+      AddressLine3?: string;
       City: string;
       Province: string;
       Country: string;

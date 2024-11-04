@@ -10,6 +10,7 @@ import {
 } from "../cas-supplier.models";
 import { Repository } from "typeorm";
 import { CASEvaluationResultProcessor, ProcessorResult } from ".";
+import { CASService } from "@sims/integrations/cas";
 
 /**
  * Process the active supplier information found on CAS.
@@ -20,6 +21,7 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
     private readonly systemUsersService: SystemUsersService,
     @InjectRepository(CASSupplier)
     private readonly casSupplierRepo: Repository<CASSupplier>,
+    private readonly casService: CASService,
   ) {
     super();
   }
@@ -41,7 +43,19 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
     }
     summary.info("Active CAS supplier found.");
     try {
-      // TODO: Create the site, populate supplierAddress, and set isValid to true;
+      const address = studentSupplier.address;
+      const result = await this.casService.createExistingSupplierSite({
+        supplierNumber: evaluationResult.activeSupplier.suppliernumber,
+        supplierSite: {
+          addressLine1: address.addressLine1,
+          city: address.city,
+          provinceCode: address.provinceState,
+          postalCode: address.postalCode,
+        },
+        emailAddress: studentSupplier.email,
+      });
+      summary.info("Created supplier and site on CAS.");
+      const [submittedAddress] = result.submittedData.SupplierAddress;
       const supplierToUpdate = evaluationResult.activeSupplier;
       const now = new Date();
       const systemUser = this.systemUsersService.systemUser;
@@ -50,21 +64,30 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
           id: studentSupplier.casSupplierID,
         },
         {
-          supplierNumber: supplierToUpdate.suppliernumber,
+          supplierNumber: result.response.supplierNumber,
           supplierName: supplierToUpdate.suppliername,
           status: supplierToUpdate.status,
           supplierProtected: supplierToUpdate.supplierprotected === "Y",
           lastUpdated: new Date(supplierToUpdate.lastupdated),
-          supplierAddress: null,
+          supplierAddress: {
+            supplierSiteCode: result.response.supplierSiteCode,
+            addressLine1: submittedAddress.AddressLine1,
+            city: submittedAddress.City,
+            provinceState: submittedAddress.Province,
+            country: submittedAddress.Country,
+            postalCode: submittedAddress.PostalCode,
+            status: "ACTIVE",
+            lastUpdated: now,
+          },
           supplierStatus: SupplierStatus.Verified,
           supplierStatusUpdatedOn: now,
-          isValid: false,
+          isValid: true,
           updatedAt: now,
           modifier: systemUser,
         },
       );
       if (updateResult.affected) {
-        summary.info("Updated CAS supplier for the student.");
+        summary.info("Updated CAS supplier and site for the student.");
         return { isSupplierUpdated: true };
       }
       summary.error(

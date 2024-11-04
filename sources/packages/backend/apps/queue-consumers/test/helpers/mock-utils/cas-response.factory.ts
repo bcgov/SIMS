@@ -2,17 +2,24 @@ import {
   CASSupplierResponse,
   CreateSupplierAndSiteResponse,
 } from "@sims/integrations/cas/models/cas-service.model";
+import { SupplierAddress } from "@sims/sims-db";
 import * as faker from "faker";
 
 /**
  * Creates a fake CAS supplier response.
  * @returns a fake CAS supplier response.
  */
-export function createFakeCASSupplierResponse(): CASSupplierResponse {
+export function createFakeCASSupplierResponse(options?: {
+  initialValues: {
+    supplierNumber: string;
+    addressLine1: string;
+    postalCode: string;
+  };
+}): CASSupplierResponse {
   return {
     items: [
       {
-        suppliernumber: "2006124",
+        suppliernumber: options?.initialValues?.supplierNumber ?? "2006124",
         suppliername: "SMITH, MELANIE",
         subcategory: "INDIVIDUAL",
         sin: "000000000",
@@ -25,13 +32,14 @@ export function createFakeCASSupplierResponse(): CASSupplierResponse {
         supplieraddress: [
           {
             suppliersitecode: "001",
-            addressline1: "3350 DOUGLAS ST",
+            addressline1:
+              options?.initialValues?.addressLine1 ?? "3350 DOUGLAS ST",
             addressline2: null,
             addressline3: null,
             city: "VICTORIA",
             province: "BC",
             country: "CA",
-            postalcode: "V8Z7X9",
+            postalcode: options?.initialValues?.postalCode ?? "V8Z7X9",
             emailaddress: null,
             accountnumber: null,
             branchnumber: null,
@@ -92,6 +100,47 @@ export function createFakeCASCreateSupplierAndSiteResponse(): CreateSupplierAndS
         .number({ min: 1000000, max: 9999999 })
         .toString(),
       supplierSiteCode: "001",
+    },
+  };
+}
+
+/**
+ * Create a fake CreateSupplierNoSite response with missing postal code.
+ * @returns fake CreateSupplierNoSite response.
+ */
+export function createFakeCASCreateSupplierNoSiteResponse(options?: {
+  initialValues: {
+    supplierNumber: string;
+    supplierAddress: SupplierAddress;
+  };
+}): CreateSupplierAndSiteResponse {
+  const supplierNumber =
+    options?.initialValues?.supplierNumber ??
+    faker.datatype.number({ min: 1000000, max: 9999999 }).toString();
+  return {
+    submittedData: {
+      SupplierNumber: supplierNumber,
+      SupplierAddress: [
+        {
+          AddressLine1:
+            options?.initialValues?.supplierAddress.addressLine1 ??
+            faker.address.streetAddress(false).toUpperCase(),
+          AddressLine2: "",
+          AddressLine3: "",
+          City: options?.initialValues?.supplierAddress.city ?? "Victoria",
+          Province:
+            options?.initialValues?.supplierAddress.provinceState ?? "BC",
+          Country: options?.initialValues?.supplierAddress.country ?? "CA",
+          PostalCode:
+            options?.initialValues?.supplierAddress.postalCode ?? "H1H1H1",
+          EmailAddress: faker.internet.email(),
+        },
+      ],
+    },
+    response: {
+      supplierNumber: supplierNumber,
+      supplierSiteCode:
+        options?.initialValues?.supplierAddress.supplierSiteCode ?? "001",
     },
   };
 }
