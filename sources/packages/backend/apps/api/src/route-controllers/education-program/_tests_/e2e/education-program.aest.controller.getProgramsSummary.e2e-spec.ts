@@ -50,7 +50,7 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
 
   it(
     "Should not retrieve any education programs when the search for the programs is made and no program statuses are searched for " +
-      " including no search for the inactive programs.",
+      "including no search for the inactive programs.",
     async () => {
       // Arrange
       const approvedProgram = createFakeEducationProgram({
@@ -85,7 +85,7 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
 
   it(
     "Should retrieve all the education programs when the search for the programs is made and all program statuses are searched for " +
-      " including the inactive programs.",
+      "including the inactive programs.",
     async () => {
       // Arrange
       const approvedProgram = createFakeEducationProgram({
@@ -152,8 +152,8 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
   );
 
   it(
-    "Should retrieve all the inactive education programs when the search for the programs is made and none of the program statuses are selected" +
-      " except for the inactive programs.",
+    "Should retrieve all the inactive education programs when the search for the programs is made and none of the program statuses are selected " +
+      "except for the inactive programs.",
     async () => {
       // Arrange
       const approvedProgram = createFakeEducationProgram({
@@ -228,8 +228,8 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
   );
 
   it(
-    "Should retrieve all the pending, declined and inactive education programs when the search for the programs is made and pending, declined program statuses are selected" +
-      " along with the inactive programs.",
+    "Should retrieve all the pending, declined and inactive education programs when the search for the programs is made and pending, declined program statuses are selected " +
+      "along with the inactive programs.",
     async () => {
       // Arrange
       const approvedProgram = createFakeEducationProgram({
@@ -511,8 +511,8 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
   });
 
   it(
-    "Should retrieve all the approved and pending education programs matching the program name search string when the search" +
-      "  for the programs is made and the approved and pending program statuses are selected along with the program name search filter.",
+    "Should retrieve all the approved and pending education programs matching the program name search string when the search " +
+      "for the programs is made and the approved and pending program statuses are selected along with the program name search filter.",
     async () => {
       // Arrange
       const firstApprovedProgram = createFakeEducationProgram({
@@ -632,7 +632,7 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
 
   it(
     "Should retrieve all the declined and inactive education programs sorted by ascending program status matching the program name search string and the location name search string " +
-      " when the search for the programs is made and the declined program status is selected along with the inactive programs selected and the program name and location name search filter.",
+      "when the search for the programs is made and the declined program status is selected along with the inactive programs selected and the program name and location name search filter.",
     async () => {
       // Arrange
       const locationSearchString = institutionLocation.name.substring(
