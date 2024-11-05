@@ -27,7 +27,6 @@ import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { ECertGenerationService } from "@sims/integrations/services";
 import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
 import * as path from "path";
-import { SFTP_ARCHIVE_DIRECTORY } from "@sims/integrations/constants";
 
 /**
  * Used to abort the e-Cert generation process, cancel the current transaction,
@@ -521,10 +520,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     processSummary: ProcessSummary,
   ) {
     try {
-      await eCertIntegrationService.archiveFile(
-        filePath,
-        SFTP_ARCHIVE_DIRECTORY,
-      );
+      await eCertIntegrationService.archiveFile(filePath);
     } catch (error) {
       // Log the error but allow the process to continue.
       // If there was an issue only during the file archiving, it will be

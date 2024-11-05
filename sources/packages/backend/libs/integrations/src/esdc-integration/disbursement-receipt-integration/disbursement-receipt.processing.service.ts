@@ -14,8 +14,7 @@ import {
   ReportsFilterModel,
 } from "@sims/services";
 import { DAILY_DISBURSEMENT_REPORT_NAME } from "@sims/services/constants";
-import { getISODateOnlyString } from "@sims/utilities";
-import { SFTP_ARCHIVE_DIRECTORY } from "@sims/integrations/constants";
+import { getISODateOnlyString, parseJSONError } from "@sims/utilities";
 
 /**
  * Disbursement schedule map which consists of disbursement schedule id for a document number.
@@ -160,15 +159,12 @@ export class DisbursementReceiptProcessingService {
 
     try {
       // Archiving the file once it has been processed.
-      await this.integrationService.archiveFile(
-        remoteFilePath,
-        SFTP_ARCHIVE_DIRECTORY,
-      );
+      await this.integrationService.archiveFile(remoteFilePath);
     } catch (error) {
-      result.errorsSummary.push(
-        `Error while archiving disbursement receipt file: ${remoteFilePath}`,
-      );
-      result.errorsSummary.push(error);
+      const logMessage = `Unexpected error while archiving disbursement receipt file: ${remoteFilePath}.`;
+      result.errorsSummary.push(logMessage);
+      result.errorsSummary.push(parseJSONError(error));
+      this.logger.error(logMessage, error);
     }
     return result;
   }
