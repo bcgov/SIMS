@@ -12,6 +12,7 @@ import { MSFAAIntegrationService } from "./msfaa.integration.service";
 import { ESDCFileHandler } from "../esdc-file-handler";
 import { ConfigService } from "@sims/utilities/config";
 import { MSFAANumberService } from "@sims/integrations/services";
+import { MSFAA_SEQUENCE_GAP } from "@sims/services/constants";
 
 @Injectable()
 export class MSFAARequestProcessingService extends ESDCFileHandler {
@@ -76,6 +77,10 @@ export class MSFAARequestProcessingService extends ESDCFileHandler {
       )}`,
       async (nextSequenceNumber: number, entityManager: EntityManager) => {
         try {
+          this.logger.log(
+            `Applying MSFAA sequence gap to the sequence number. Current sequence gap ${MSFAA_SEQUENCE_GAP}.`,
+          );
+          nextSequenceNumber += MSFAA_SEQUENCE_GAP;
           this.logger.log("Creating MSFAA request content...");
           // Create the Request content for the MSFAA file by populating the
           // header, footer and trailer content.

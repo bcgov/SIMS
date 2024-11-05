@@ -113,7 +113,7 @@ export class SFASIndividualRecord extends SFASRecordIdentification {
    * Total Nurses Education Bursary (special_program_award.program_awd_cents, award_cde = "SP04").
    */
   get neb(): number {
-    return +this.line.substring(131, 141);
+    return parseDecimal(this.line.substring(131, 141));
   }
   /**
    * BC Completion Grant for Graduates (individual_award.award_dlr, award_cde = "BCGG").
