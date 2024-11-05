@@ -20,10 +20,7 @@ import {
   User,
 } from "@sims/sims-db";
 import * as request from "supertest";
-import {
-  appendRequiredString,
-  removeUnwantedString,
-} from "@sims/test-utils/utils/string-utils";
+import * as faker from "faker";
 
 describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
   let app: INestApplication;
@@ -190,11 +187,11 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
           },
         },
       );
-      const [, , , savedInactiveProgram] = await db.educationProgram.save([
+      const [savedInactiveProgram] = await db.educationProgram.save([
+        inactiveProgram,
         approvedProgram,
         pendingProgram,
         declinedProgram,
-        inactiveProgram,
       ]);
 
       const endpoint = `/aest/education-program/institution/${institution.id}/summary?page=0&pageLimit=10&programNameSearch=&locationNameSearch=&inactiveProgramSearch=true`;
@@ -228,8 +225,8 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
   );
 
   it(
-    "Should retrieve all the pending, declined and inactive education programs when the search for the programs is made and pending, declined program statuses are selected " +
-      "along with the inactive programs.",
+    "Should retrieve all the pending, declined and inactive education programs sorted by ascending program status when the search for the programs is made " +
+      "and pending, declined program statuses are selected along with the inactive programs.",
     async () => {
       // Arrange
       const approvedProgram = createFakeEducationProgram({
@@ -266,19 +263,15 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
           },
         },
       );
-      const [
-        ,
-        savedPendingProgram,
-        savedDeclinedProgram,
-        savedInactiveProgram,
-      ] = await db.educationProgram.save([
-        approvedProgram,
-        pendingProgram,
-        declinedProgram,
-        inactiveProgram,
-      ]);
+      const [savedPendingProgram, savedDeclinedProgram, savedInactiveProgram] =
+        await db.educationProgram.save([
+          pendingProgram,
+          declinedProgram,
+          inactiveProgram,
+          approvedProgram,
+        ]);
 
-      const endpoint = `/aest/education-program/institution/${institution.id}/summary?page=0&pageLimit=10&programNameSearch=&locationNameSearch=&inactiveProgramSearch=true&statusSearch=Pending,Declined`;
+      const endpoint = `/aest/education-program/institution/${institution.id}/summary?page=0&pageLimit=10&programNameSearch=&locationNameSearch=&inactiveProgramSearch=true&statusSearch=Pending,Declined&sortField=programStatus&sortOrder=ASC`;
       const userToken = await getAESTToken(AESTGroups.BusinessAdministrators);
 
       // Act/Assert
@@ -288,20 +281,6 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
         .expect(HttpStatus.OK)
         .expect({
           results: [
-            {
-              programId: savedPendingProgram.id,
-              programName: savedPendingProgram.name,
-              cipCode: savedPendingProgram.cipCode,
-              credentialType: savedPendingProgram.credentialType,
-              totalOfferings: "0",
-              submittedDate: savedPendingProgram.createdAt.toISOString(),
-              locationId: institutionLocation.id,
-              locationName: institutionLocation.name,
-              programStatus: savedPendingProgram.programStatus,
-              isActive: savedPendingProgram.isActive,
-              isExpired: savedPendingProgram.isExpired,
-              credentialTypeToDisplay: savedPendingProgram.credentialType,
-            },
             {
               programId: savedDeclinedProgram.id,
               programName: savedDeclinedProgram.name,
@@ -329,6 +308,20 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
               isActive: savedInactiveProgram.isActive,
               isExpired: savedInactiveProgram.isExpired,
               credentialTypeToDisplay: savedInactiveProgram.credentialType,
+            },
+            {
+              programId: savedPendingProgram.id,
+              programName: savedPendingProgram.name,
+              cipCode: savedPendingProgram.cipCode,
+              credentialType: savedPendingProgram.credentialType,
+              totalOfferings: "0",
+              submittedDate: savedPendingProgram.createdAt.toISOString(),
+              locationId: institutionLocation.id,
+              locationName: institutionLocation.name,
+              programStatus: savedPendingProgram.programStatus,
+              isActive: savedPendingProgram.isActive,
+              isExpired: savedPendingProgram.isExpired,
+              credentialTypeToDisplay: savedPendingProgram.credentialType,
             },
           ],
           count: 3,
@@ -372,98 +365,11 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
         },
       },
     );
-    const [savedApprovedProgram, , savedDeclinedProgram] =
+    const [savedApprovedProgram, savedDeclinedProgram] =
       await db.educationProgram.save([
         approvedProgram,
-        pendingProgram,
         declinedProgram,
-        inactiveProgram,
-      ]);
-
-    const endpoint = `/aest/education-program/institution/${institution.id}/summary?page=0&pageLimit=10&programNameSearch=&locationNameSearch=&inactiveProgramSearch=false&statusSearch=Approved,Declined`;
-    const userToken = await getAESTToken(AESTGroups.BusinessAdministrators);
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(userToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK)
-      .expect({
-        results: [
-          {
-            programId: savedApprovedProgram.id,
-            programName: savedApprovedProgram.name,
-            cipCode: savedApprovedProgram.cipCode,
-            credentialType: savedApprovedProgram.credentialType,
-            totalOfferings: "0",
-            submittedDate: savedApprovedProgram.createdAt.toISOString(),
-            locationId: institutionLocation.id,
-            locationName: institutionLocation.name,
-            programStatus: savedApprovedProgram.programStatus,
-            isActive: savedApprovedProgram.isActive,
-            isExpired: savedApprovedProgram.isExpired,
-            credentialTypeToDisplay: savedApprovedProgram.credentialType,
-          },
-          {
-            programId: savedDeclinedProgram.id,
-            programName: savedDeclinedProgram.name,
-            cipCode: savedDeclinedProgram.cipCode,
-            credentialType: savedDeclinedProgram.credentialType,
-            totalOfferings: "0",
-            submittedDate: savedDeclinedProgram.createdAt.toISOString(),
-            locationId: institutionLocation.id,
-            locationName: institutionLocation.name,
-            programStatus: savedDeclinedProgram.programStatus,
-            isActive: savedDeclinedProgram.isActive,
-            isExpired: savedDeclinedProgram.isExpired,
-            credentialTypeToDisplay: savedDeclinedProgram.credentialType,
-          },
-        ],
-        count: 2,
-      });
-  });
-
-  it("Should retrieve all the approved and pending education programs when the search for the programs is made and only the approved and pending program statuses are selected.", async () => {
-    // Arrange
-    const approvedProgram = createFakeEducationProgram({
-      institution: institution,
-      user: sharedUser,
-    });
-    const pendingProgram = createFakeEducationProgram(
-      {
-        institution: institution,
-        user: sharedUser,
-      },
-      { initialValue: { programStatus: ProgramStatus.Pending } },
-    );
-    const declinedProgram = createFakeEducationProgram(
-      {
-        institution: institution,
-        user: sharedUser,
-      },
-      {
-        initialValue: {
-          programStatus: ProgramStatus.Declined,
-        },
-      },
-    );
-    const inactiveProgram = createFakeEducationProgram(
-      {
-        institution: institution,
-        user: sharedUser,
-      },
-      {
-        initialValue: {
-          isActive: false,
-          programStatus: ProgramStatus.Declined,
-        },
-      },
-    );
-    const [savedApprovedProgram, , savedDeclinedProgram] =
-      await db.educationProgram.save([
-        approvedProgram,
         pendingProgram,
-        declinedProgram,
         inactiveProgram,
       ]);
 
@@ -519,18 +425,13 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
         institution: institution,
         user: sharedUser,
       });
-      const programSearchString = firstApprovedProgram.name.substring(
-        Math.min(3, firstApprovedProgram.name.length - 1),
-        Math.min(6, firstApprovedProgram.name.length - 1),
-      );
+      firstApprovedProgram.name = faker.datatype.uuid();
+      const programSearchString = firstApprovedProgram.name;
       const secondApprovedProgram = createFakeEducationProgram({
         institution: institution,
         user: sharedUser,
       });
-      secondApprovedProgram.name = removeUnwantedString(
-        secondApprovedProgram.name,
-        programSearchString,
-      );
+      secondApprovedProgram.name = "My second approved program";
       const firstPendingProgram = createFakeEducationProgram(
         {
           institution: institution,
@@ -538,10 +439,7 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
         },
         { initialValue: { programStatus: ProgramStatus.Pending } },
       );
-      firstPendingProgram.name = removeUnwantedString(
-        firstPendingProgram.name,
-        programSearchString,
-      );
+      firstPendingProgram.name = "My first pending program";
       const secondPendingProgram = createFakeEducationProgram(
         {
           institution: institution,
@@ -549,10 +447,8 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
         },
         { initialValue: { programStatus: ProgramStatus.Pending } },
       );
-      secondPendingProgram.name = appendRequiredString(
-        secondPendingProgram.name,
-        programSearchString,
-      ).toUpperCase();
+      secondPendingProgram.name =
+        `My second pending program ${programSearchString} dummy`.toUpperCase();
       const declinedProgram = createFakeEducationProgram(
         {
           institution: institution,
@@ -576,12 +472,12 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
           },
         },
       );
-      const [savedFirstApprovedProgram, , , savedSecondPendingProgram, ,] =
+      const [savedFirstApprovedProgram, savedSecondPendingProgram] =
         await db.educationProgram.save([
           firstApprovedProgram,
+          secondPendingProgram,
           secondApprovedProgram,
           firstPendingProgram,
-          secondPendingProgram,
           declinedProgram,
           inactiveProgram,
         ]);
@@ -635,18 +531,16 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
       "when the search for the programs is made and the declined program status is selected along with the inactive programs selected and the program name and location name search filter.",
     async () => {
       // Arrange
-      const locationSearchString = institutionLocation.name.substring(
-        Math.min(3, institutionLocation.name.length - 1),
-        Math.min(5, institutionLocation.name.length - 1),
-      );
+      institutionLocation.name = faker.datatype.uuid();
+      const locationSearchString = institutionLocation.name;
       const secondInstitutionLocation = createFakeInstitutionLocation({
         institution: institution,
       });
-      secondInstitutionLocation.name = removeUnwantedString(
-        secondInstitutionLocation.name,
-        locationSearchString,
-      );
-      await db.institutionLocation.save(secondInstitutionLocation);
+      secondInstitutionLocation.name = "Second Institution Name";
+      await db.institutionLocation.save([
+        institutionLocation,
+        secondInstitutionLocation,
+      ]);
       const declinedProgram = createFakeEducationProgram(
         {
           institution: institution,
@@ -658,10 +552,8 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
           },
         },
       );
-      const programSearchString = declinedProgram.name.substring(
-        Math.min(3, declinedProgram.name.length - 1),
-        Math.min(5, declinedProgram.name.length - 1),
-      );
+      declinedProgram.name = faker.datatype.uuid();
+      const programSearchString = declinedProgram.name;
       const pendingProgram = createFakeEducationProgram(
         {
           institution: institution,
@@ -674,10 +566,7 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
       // Even on adding this programSearchString to the name of the pendingProgram,
       // it will still not be retrieved since only the declined and inactive programs
       // will be retrieved.
-      pendingProgram.name = appendRequiredString(
-        pendingProgram.name,
-        programSearchString,
-      );
+      pendingProgram.name = `My pending program ${programSearchString} dummy`;
       const approvedProgram = createFakeEducationProgram({
         institution: institution,
         user: sharedUser,
@@ -694,10 +583,7 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
           },
         },
       );
-      firstInactiveProgram.name = appendRequiredString(
-        firstInactiveProgram.name,
-        programSearchString,
-      );
+      firstInactiveProgram.name = `My inactive program ${programSearchString} dummy`;
       const secondInactiveProgram = createFakeEducationProgram(
         {
           institution: institution,
@@ -710,16 +596,13 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
           },
         },
       );
-      secondInactiveProgram.name = removeUnwantedString(
-        secondInactiveProgram.name,
-        programSearchString,
-      );
-      const [savedDeclinedProgram, , , savedFirstInactiveProgram, ,] =
+      secondInactiveProgram.name = "My second inactive program";
+      const [savedDeclinedProgram, savedFirstInactiveProgram] =
         await db.educationProgram.save([
           declinedProgram,
+          firstInactiveProgram,
           pendingProgram,
           approvedProgram,
-          firstInactiveProgram,
           secondInactiveProgram,
         ]);
 
