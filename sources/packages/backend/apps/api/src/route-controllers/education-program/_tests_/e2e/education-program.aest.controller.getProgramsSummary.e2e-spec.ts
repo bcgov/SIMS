@@ -425,8 +425,8 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
         institution: institution,
         user: sharedUser,
       });
-      firstApprovedProgram.name = faker.datatype.uuid();
-      const programSearchString = firstApprovedProgram.name;
+      const programSearchString = faker.datatype.uuid();
+      firstApprovedProgram.name = programSearchString;
       const secondApprovedProgram = createFakeEducationProgram({
         institution: institution,
         user: sharedUser,
@@ -531,8 +531,8 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
       "when the search for the programs is made and the declined program status is selected along with the inactive programs selected and the program name and location name search filter.",
     async () => {
       // Arrange
-      institutionLocation.name = faker.datatype.uuid();
-      const locationSearchString = institutionLocation.name;
+      const locationSearchString = faker.datatype.uuid();
+      institutionLocation.name = locationSearchString;
       const secondInstitutionLocation = createFakeInstitutionLocation({
         institution: institution,
       });
@@ -552,8 +552,8 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
           },
         },
       );
-      declinedProgram.name = faker.datatype.uuid();
-      const programSearchString = declinedProgram.name;
+      const programSearchString = faker.datatype.uuid();
+      declinedProgram.name = programSearchString;
       const pendingProgram = createFakeEducationProgram(
         {
           institution: institution,
@@ -561,7 +561,7 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
         },
         { initialValue: { programStatus: ProgramStatus.Pending } },
       );
-      // To show the and operation b/w the different conditions,
+      // To show the "and" operation between the different conditions,
       // adding the programSearchString to the name of this program.
       // Even on adding this programSearchString to the name of the pendingProgram,
       // it will still not be retrieved since only the declined and inactive programs
