@@ -47,6 +47,18 @@ export class SIMSToSFASProcessingService {
       modifiedUntil,
     );
 
+    const applicationData =
+      await this.simsToSFASService.getAllStudentsWithApplicationUpdates(
+        modifiedSince,
+        modifiedUntil,
+      );
+
+    const RestrictionData =
+      await this.simsToSFASService.getAllStudentsWithRestrictionUpdates(
+        modifiedSince,
+        modifiedUntil,
+      );
+
     // Append the students with student and student related data updates.
     // TODO: SIMS to SFAS - Append the student ids of students with updates in application and restriction related data.
     // When application and restriction updates are retrieved, the respective
