@@ -271,7 +271,7 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
           approvedProgram,
         ]);
 
-      const endpoint = `/aest/education-program/institution/${institution.id}/summary?page=0&pageLimit=10&programNameSearch=&locationNameSearch=&inactiveProgramSearch=true&statusSearch=Pending,Declined&sortField=programStatus&sortOrder=ASC`;
+      const endpoint = `/aest/education-program/institution/${institution.id}/summary?page=0&pageLimit=10&programNameSearch=&locationNameSearch=&inactiveProgramSearch=true&statusSearch=Pending,Declined&sortField=programStatus&sortOrder=DESC`;
       const userToken = await getAESTToken(AESTGroups.BusinessAdministrators);
 
       // Act/Assert
@@ -282,18 +282,18 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
         .expect({
           results: [
             {
-              programId: savedDeclinedProgram.id,
-              programName: savedDeclinedProgram.name,
-              cipCode: savedDeclinedProgram.cipCode,
-              credentialType: savedDeclinedProgram.credentialType,
+              programId: savedPendingProgram.id,
+              programName: savedPendingProgram.name,
+              cipCode: savedPendingProgram.cipCode,
+              credentialType: savedPendingProgram.credentialType,
               totalOfferings: "0",
-              submittedDate: savedDeclinedProgram.createdAt.toISOString(),
+              submittedDate: savedPendingProgram.createdAt.toISOString(),
               locationId: institutionLocation.id,
               locationName: institutionLocation.name,
-              programStatus: savedDeclinedProgram.programStatus,
-              isActive: savedDeclinedProgram.isActive,
-              isExpired: savedDeclinedProgram.isExpired,
-              credentialTypeToDisplay: savedDeclinedProgram.credentialType,
+              programStatus: savedPendingProgram.programStatus,
+              isActive: savedPendingProgram.isActive,
+              isExpired: savedPendingProgram.isExpired,
+              credentialTypeToDisplay: savedPendingProgram.credentialType,
             },
             {
               programId: savedInactiveProgram.id,
@@ -310,18 +310,18 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
               credentialTypeToDisplay: savedInactiveProgram.credentialType,
             },
             {
-              programId: savedPendingProgram.id,
-              programName: savedPendingProgram.name,
-              cipCode: savedPendingProgram.cipCode,
-              credentialType: savedPendingProgram.credentialType,
+              programId: savedDeclinedProgram.id,
+              programName: savedDeclinedProgram.name,
+              cipCode: savedDeclinedProgram.cipCode,
+              credentialType: savedDeclinedProgram.credentialType,
               totalOfferings: "0",
-              submittedDate: savedPendingProgram.createdAt.toISOString(),
+              submittedDate: savedDeclinedProgram.createdAt.toISOString(),
               locationId: institutionLocation.id,
               locationName: institutionLocation.name,
-              programStatus: savedPendingProgram.programStatus,
-              isActive: savedPendingProgram.isActive,
-              isExpired: savedPendingProgram.isExpired,
-              credentialTypeToDisplay: savedPendingProgram.credentialType,
+              programStatus: savedDeclinedProgram.programStatus,
+              isActive: savedDeclinedProgram.isActive,
+              isExpired: savedDeclinedProgram.isExpired,
+              credentialTypeToDisplay: savedDeclinedProgram.credentialType,
             },
           ],
           count: 3,
