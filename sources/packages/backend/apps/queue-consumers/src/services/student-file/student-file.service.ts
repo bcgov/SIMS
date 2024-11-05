@@ -11,6 +11,7 @@ import { ClamAVError, ClamAVService, SystemUsersService } from "@sims/services";
 import * as path from "path";
 import {
   CONNECTION_FAILED,
+  EMPTY_FILE,
   FILE_NOT_FOUND,
   FILE_SCANNING_FAILED,
   SERVER_UNAVAILABLE,
@@ -51,9 +52,16 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     }
 
     // Retrieve the file from the object storage.
-    const { body } = await this.objectStorageService.getObject(
+    const { body, contentLength } = await this.objectStorageService.getObject(
       studentFile.uniqueFileName,
     );
+    if (contentLength === 0) {
+      // Empty files are not suitable for virus scanning using passthrough.
+      throw new CustomNamedError(
+        `File ${uniqueFileName} has no content to be scanned.`,
+        EMPTY_FILE,
+      );
+    }
     let isInfected: boolean | null;
     let errorName: string;
     let errorMessage = `Unable to scan the file ${uniqueFileName} for viruses.`;

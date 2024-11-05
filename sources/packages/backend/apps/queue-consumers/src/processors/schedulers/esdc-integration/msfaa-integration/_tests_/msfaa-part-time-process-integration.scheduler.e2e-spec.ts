@@ -84,7 +84,7 @@ describe(
         getProcessDateFromMSFAARequestContent(createMSFAARequestContentMock);
       const uploadedFile = getUploadedFile(sftpClientMock);
       expect(uploadedFile.remoteFilePath).toBe(
-        `MSFT-Request\\DPBC.EDU.MSFA.SENT.PT.${processDateFormatted}.001`,
+        `MSFT-Request\\DPBC.EDU.MSFA.SENT.PT.${processDateFormatted}.010`,
       );
       // Assert process result.
       expect(msfaaRequestResults).toStrictEqual([
@@ -106,7 +106,7 @@ describe(
       ] = uploadedFile.fileLines;
       // Validate header.
       expect(header).toBe(
-        `100BC  MSFAA SENT                              ${processDateFormatted}${processTimeFormatted}000001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       `,
+        `100BC  MSFAA SENT                              ${processDateFormatted}${processTimeFormatted}000010                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       `,
       );
       // Validate records.
       expect(msfaaPartTimeMarried).toBe(
