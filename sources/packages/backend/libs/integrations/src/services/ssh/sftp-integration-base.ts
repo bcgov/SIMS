@@ -70,18 +70,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
       this.logger.error(`Error uploading file ${remoteFilePath}.`, error);
       throw error;
     } finally {
-      if (client) {
-        this.logger.log(
-          `Finalizing SFTP client crated for the upload of ${remoteFilePath}.`,
-        );
-        await SshService.closeQuietly(client);
-        this.logger.log(
-          `SFTP client finalized for upload of ${remoteFilePath}.`,
-        );
-      }
-      this.logger.log(
-        `SFTP client not initialized while uploading ${remoteFilePath}.`,
-      );
+      await this.ensureClientClosed(`uploading file ${remoteFilePath}`, client);
     }
   }
 
@@ -111,7 +100,10 @@ export abstract class SFTPIntegrationBase<DownloadType> {
       );
       throw error;
     } finally {
-      await SshService.closeQuietly(client);
+      await this.ensureClientClosed(
+        `listing files from ${remoteDownloadFolder}`,
+        client,
+      );
     }
     return filesToProcess
       .map((file) => path.join(remoteDownloadFolder, file.name))
@@ -176,7 +168,10 @@ export abstract class SFTPIntegrationBase<DownloadType> {
       this.logger.error(`Error downloading file ${remoteFilePath}`, error);
       throw error;
     } finally {
-      await SshService.closeQuietly(client);
+      await this.ensureClientClosed(
+        `downloading file ${remoteFilePath}`,
+        client,
+      );
     }
   }
 
@@ -210,7 +205,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
       );
       throw error;
     } finally {
-      await SshService.closeQuietly(client);
+      await this.ensureClientClosed(`renaming file ${remoteFilePath}`, client);
     }
   }
 
@@ -241,6 +236,24 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    */
   public async getClient(): Promise<Client> {
     return this.sshService.createClient(this.sftpConfig);
+  }
+
+  /**
+   * Finalizes the SFTP client connection when initialized and
+   * log a message accordingly.
+   * @param context string to log with the context of the action.
+   * @param client SFTP client to be finalized.
+   */
+  private async ensureClientClosed(
+    context: string,
+    client?: Client,
+  ): Promise<void> {
+    if (client) {
+      this.logger.log(`Finalizing SFTP client. Context: ${context}.`);
+      await SshService.closeQuietly(client);
+      this.logger.log(`SFTP client finalized. Context: ${context}.`);
+    }
+    this.logger.log(`SFTP client not initialized. Context: ${context}.`);
   }
 
   @InjectLogger()
