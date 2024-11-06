@@ -93,17 +93,13 @@ async function bootstrap() {
   await app.listen(port);
   // Logging node http server error
   app.getHttpServer().on("error", (error: unknown) => {
-    logger.error(`Application server receive ${error}`, undefined, "Bootstrap");
+    logger.error("Application server receive.", error, "Bootstrap");
     exit(1);
   });
   logger.log(`Application is listing on port ${port}`, "Bootstrap");
 }
 bootstrap().catch((error: unknown) => {
-  const logger = new LoggerService();
-  logger.error(
-    `Application bootstrap exception: ${error}`,
-    undefined,
-    "Bootstrap-Main",
-  );
+  const logger = new LoggerService("Bootstrap-Main");
+  logger.error("Application bootstrap exception.", error);
   exit(1);
 });
