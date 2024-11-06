@@ -219,7 +219,7 @@ export class SINValidationProcessingService {
       // processed again and could be archived in the second attempt.
       const logMessage = `Error while archiving ESDC SIN validation response file: ${remoteFilePath}.`;
       result.errorsSummary.push(logMessage);
-      result.errorsSummary.push(parseJSONError(logMessage));
+      result.errorsSummary.push(parseJSONError(error));
       this.logger.error(logMessage, error);
     }
 
