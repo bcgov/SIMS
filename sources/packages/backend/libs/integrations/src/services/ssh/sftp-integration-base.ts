@@ -81,7 +81,9 @@ export abstract class SFTPIntegrationBase<DownloadType> {
     remoteDownloadFolder: string,
     fileRegexSearch: RegExp,
   ): Promise<string[]> {
-    this.logger.log(`Listing files from ${remoteDownloadFolder}.`);
+    this.logger.log(
+      `Listing files from the remote folder ${remoteDownloadFolder}.`,
+    );
     let filesToProcess: Client.FileInfo[];
     let client: Client;
     try {
@@ -249,6 +251,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
       this.logger.log(`Finalizing SFTP client. Context: ${context}.`);
       await SshService.closeQuietly(client);
       this.logger.log(`SFTP client finalized. Context: ${context}.`);
+      return;
     }
     this.logger.log(`SFTP client not initialized. Context: ${context}.`);
   }
