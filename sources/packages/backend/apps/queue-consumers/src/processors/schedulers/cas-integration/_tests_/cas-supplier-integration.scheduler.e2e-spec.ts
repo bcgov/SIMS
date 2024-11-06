@@ -395,7 +395,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
           supplierAddress: savedCASSupplier.supplierAddress,
         },
       });
-    casServiceMock.createExistingSupplierSite = jest.fn(() =>
+    casServiceMock.createExistingSupplierAndSite = jest.fn(() =>
       Promise.resolve(createSupplierAndSiteResponse),
     );
 
@@ -425,7 +425,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     ).toBe(true);
     // Assert the API methods were called.
     expect(casServiceMock.getSupplierInfoFromCAS).toHaveBeenCalled();
-    expect(casServiceMock.createExistingSupplierSite).toHaveBeenCalled();
+    expect(casServiceMock.createExistingSupplierAndSite).toHaveBeenCalled();
     // Assert DB was updated.
     const updateCASSupplier = await db.casSupplier.findOne({
       select: {

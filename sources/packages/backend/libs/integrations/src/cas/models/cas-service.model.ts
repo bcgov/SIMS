@@ -62,7 +62,7 @@ export class CreateSupplierAndSiteData {
 /**
  * Information needed for existing supplier site creation on CAS.
  */
-export class CreateExistingSupplierSiteData {
+export class CreateExistingSupplierAndSiteData {
   supplierNumber: string;
   supplierSite: CreateSupplierSite;
   emailAddress: string;
@@ -93,15 +93,32 @@ export class CreateSupplierAndSiteResult {
  * the consumer, allowing it to be aware of the data actually submitted.
  */
 export class CreateSupplierAndSiteSubmittedData {
-  SupplierName?: string;
-  SubCategory?: string;
-  SupplierNumber?: string;
-  Sin?: string;
+  SupplierName: string;
+  SubCategory: string;
+  Sin: string;
   SupplierAddress: [
     {
       AddressLine1: string;
-      AddressLine2?: string;
-      AddressLine3?: string;
+      City: string;
+      Province: string;
+      Country: string;
+      PostalCode: string;
+      EmailAddress: string;
+    },
+  ];
+}
+
+/**
+ * Data used during the creation of a supplier and site on CAS for existing suppliers.
+ */
+export class CreateExistingSupplierAndSiteSubmittedData {
+  SupplierName?: string;
+  SupplierNumber: string;
+  SupplierAddress: [
+    {
+      AddressLine1: string;
+      AddressLine2: string;
+      AddressLine3: string;
       City: string;
       Province: string;
       Country: string;
@@ -116,6 +133,8 @@ export class CreateSupplierAndSiteSubmittedData {
  * submitted data and its API response.
  */
 export class CreateSupplierAndSiteResponse {
-  submittedData: CreateSupplierAndSiteSubmittedData;
+  submittedData:
+    | CreateSupplierAndSiteSubmittedData
+    | CreateExistingSupplierAndSiteSubmittedData;
   response: CreateSupplierAndSiteResult;
 }

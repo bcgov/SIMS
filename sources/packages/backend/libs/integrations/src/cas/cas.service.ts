@@ -2,7 +2,8 @@ import { HttpStatus, Injectable, LoggerService } from "@nestjs/common";
 import {
   CASAuthDetails,
   CASSupplierResponse,
-  CreateExistingSupplierSiteData,
+  CreateExistingSupplierAndSiteData,
+  CreateExistingSupplierAndSiteSubmittedData,
   CreateSupplierAndSiteData,
   CreateSupplierAndSiteResponse,
   CreateSupplierAndSiteSubmittedData,
@@ -130,57 +131,7 @@ export class CASService {
     supplierData: CreateSupplierAndSiteData,
   ): Promise<CreateSupplierAndSiteResponse> {
     const url = `${this.casIntegrationConfig.baseUrl}/cfs/supplier/`;
-    try {
-      const config = await this.getAuthConfig();
-      const submittedData: CreateSupplierAndSiteSubmittedData = {
-        SupplierName: formatUserName(
-          supplierData.firstName,
-          supplierData.lastName,
-        ),
-        SubCategory: "Individual",
-        Sin: supplierData.sin,
-        SupplierAddress: [
-          {
-            AddressLine1: formatAddress(supplierData.supplierSite.addressLine1),
-            City: formatCity(supplierData.supplierSite.city),
-            Province: supplierData.supplierSite.provinceCode,
-            Country: "CA",
-            PostalCode: formatPostalCode(supplierData.supplierSite.postalCode),
-            EmailAddress: supplierData.emailAddress,
-          },
-        ],
-      };
-      const response = await this.httpService.axiosRef.post(
-        url,
-        submittedData,
-        config,
-      );
-      return {
-        submittedData,
-        response: {
-          supplierNumber: response.data.SUPPLIER_NUMBER,
-          supplierSiteCode: this.extractSupplierSiteCode(
-            response.data.SUPPLIER_SITE_CODE,
-          ),
-        },
-      };
-    } catch (error: unknown) {
-      if (
-        error instanceof AxiosError &&
-        error.response?.status === HttpStatus.BAD_REQUEST &&
-        !!error.response?.data[CAS_RETURNED_MESSAGES]
-      ) {
-        // Checking for bad request errors for better logging while the
-        // specific ticket to handle exception is pending.
-        throw new CustomNamedError(
-          error.response.data[CAS_RETURNED_MESSAGES],
-          CAS_BAD_REQUEST,
-        );
-      }
-      throw new Error("Error while creating supplier and site on CAS.", {
-        cause: error,
-      });
-    }
+    return this.processSupplierAndSite(url, supplierData);
   }
 
   /**
@@ -188,27 +139,54 @@ export class CASService {
    * @param supplierData data to be used for supplier and site creation.
    * @returns submitted data and CAS response.
    */
-  async createExistingSupplierSite(
-    supplierData: CreateExistingSupplierSiteData,
+  async createExistingSupplierAndSite(
+    supplierData: CreateExistingSupplierAndSiteData,
   ): Promise<CreateSupplierAndSiteResponse> {
-    const url = `${this.casIntegrationConfig.baseUrl}/cfs/supplier/`;
+    const url = `${this.casIntegrationConfig.baseUrl}/cfs/supplier/${supplierData.supplierNumber}/site`;
+    return this.processSupplierAndSite(url, supplierData);
+  }
+
+  /**
+   * Process the API call to create supplier and site.
+   * @param url API url to create a new or existing supplier and site.
+   * @param submittedData data submitted to the API.
+   * @returns submitted data and CAS response
+   */
+  async processSupplierAndSite(
+    url: string,
+    supplierData: CreateSupplierAndSiteData | CreateExistingSupplierAndSiteData,
+  ): Promise<CreateSupplierAndSiteResponse> {
     try {
       const config = await this.getAuthConfig();
-      const submittedData: CreateSupplierAndSiteSubmittedData = {
-        SupplierNumber: supplierData.supplierNumber,
-        SupplierAddress: [
-          {
-            AddressLine1: formatAddress(supplierData.supplierSite.addressLine1),
-            AddressLine2: "",
-            AddressLine3: "",
-            City: formatCity(supplierData.supplierSite.city),
-            Province: supplierData.supplierSite.provinceCode,
-            Country: "CA",
-            PostalCode: formatPostalCode(supplierData.supplierSite.postalCode),
-            EmailAddress: supplierData.emailAddress,
-          },
-        ],
+      const supplierAddress = {
+        AddressLine1: formatAddress(supplierData.supplierSite.addressLine1),
+        City: formatCity(supplierData.supplierSite.city),
+        Province: supplierData.supplierSite.provinceCode,
+        Country: "CA",
+        PostalCode: formatPostalCode(supplierData.supplierSite.postalCode),
+        EmailAddress: supplierData.emailAddress,
       };
+      let submittedData:
+        | CreateSupplierAndSiteSubmittedData
+        | CreateExistingSupplierAndSiteSubmittedData;
+      if (supplierData instanceof CreateExistingSupplierAndSiteData) {
+        supplierAddress["AddressLine2"] = "";
+        supplierAddress["AddressLine3"] = "";
+        submittedData = {
+          SupplierNumber: supplierData.supplierNumber,
+          SupplierAddress: [supplierAddress],
+        } as CreateExistingSupplierAndSiteSubmittedData;
+      } else {
+        submittedData = {
+          SupplierName: formatUserName(
+            supplierData.firstName,
+            supplierData.lastName,
+          ),
+          SubCategory: "Individual",
+          Sin: supplierData.sin,
+          SupplierAddress: [supplierAddress],
+        } as CreateSupplierAndSiteSubmittedData;
+      }
       const response = await this.httpService.axiosRef.post(
         url,
         submittedData,
