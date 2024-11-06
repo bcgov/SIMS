@@ -90,6 +90,9 @@ export abstract class SFTPIntegrationBase<DownloadType> {
         remoteDownloadFolder,
         (item: Client.FileInfo) => fileRegexSearch.test(item.name),
       );
+      return filesToProcess
+        .map((file) => path.join(remoteDownloadFolder, file.name))
+        .sort((a, b) => a.localeCompare(b));
     } catch (error) {
       this.logger.error(
         `Error listing files from ${remoteDownloadFolder}.`,
@@ -102,9 +105,6 @@ export abstract class SFTPIntegrationBase<DownloadType> {
         client,
       );
     }
-    return filesToProcess
-      .map((file) => path.join(remoteDownloadFolder, file.name))
-      .sort((a, b) => a.localeCompare(b));
   }
 
   /**
