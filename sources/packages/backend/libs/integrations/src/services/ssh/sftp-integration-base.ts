@@ -10,7 +10,10 @@ import {
   convertToASCII,
   FILE_DEFAULT_ENCODING,
 } from "@sims/utilities";
-import { LINE_BREAK_SPLIT_REGEX } from "@sims/integrations/constants";
+import {
+  LINE_BREAK_SPLIT_REGEX,
+  SFTP_ARCHIVE_DIRECTORY,
+} from "@sims/integrations/constants";
 
 /**
  * Provides the basic features to enable the SFTP integration.
@@ -55,15 +58,16 @@ export abstract class SFTPIntegrationBase<DownloadType> {
     remoteFilePath: string,
   ): Promise<string> {
     // Send the file to ftp.
-    this.logger.log("Creating new SFTP client to start upload...");
-    const client = await this.getClient();
+    this.logger.log(`Uploading ${remoteFilePath}.`);
+    let client: Client;
     try {
-      this.logger.log(`Uploading ${remoteFilePath}`);
+      client = await this.getClient();
       return await client.put(convertToASCII(rawContent), remoteFilePath);
+    } catch (error) {
+      this.logger.error(`Error uploading file ${remoteFilePath}.`, error);
+      throw error;
     } finally {
-      this.logger.log("Finalizing SFTP client...");
-      await SshService.closeQuietly(client);
-      this.logger.log("SFTP client finalized.");
+      await this.ensureClientClosed(`uploading file ${remoteFilePath}`, client);
     }
   }
 
@@ -77,20 +81,30 @@ export abstract class SFTPIntegrationBase<DownloadType> {
     remoteDownloadFolder: string,
     fileRegexSearch: RegExp,
   ): Promise<string[]> {
+    this.logger.log(`Listing files from ${remoteDownloadFolder}.`);
     let filesToProcess: Client.FileInfo[];
-    const client = await this.getClient();
+    let client: Client;
     try {
+      client = await this.getClient();
       filesToProcess = await client.list(
         remoteDownloadFolder,
         (item: Client.FileInfo) => fileRegexSearch.test(item.name),
       );
+      return filesToProcess
+        .map((file) => path.join(remoteDownloadFolder, file.name))
+        .sort((a, b) => a.localeCompare(b));
+    } catch (error) {
+      this.logger.error(
+        `Error listing files from ${remoteDownloadFolder}.`,
+        error,
+      );
+      throw error;
     } finally {
-      await SshService.closeQuietly(client);
+      await this.ensureClientClosed(
+        `listing files from ${remoteDownloadFolder}`,
+        client,
+      );
     }
-
-    return filesToProcess
-      .map((file) => path.join(remoteDownloadFolder, file.name))
-      .sort((a, b) => a.localeCompare(b));
   }
 
   /**
@@ -128,8 +142,10 @@ export abstract class SFTPIntegrationBase<DownloadType> {
     remoteFilePath: string,
     options?: { checkIfFileExist: boolean },
   ): Promise<string[] | false> {
-    const client = await this.getClient();
+    this.logger.log(`Downloading file ${remoteFilePath}.`);
+    let client: Client;
     try {
+      client = await this.getClient();
       if (options?.checkIfFileExist) {
         const fileExist = await client.exists(remoteFilePath);
         if (!fileExist) {
@@ -145,8 +161,14 @@ export abstract class SFTPIntegrationBase<DownloadType> {
         .toString()
         .split(LINE_BREAK_SPLIT_REGEX)
         .filter((line) => line.length > 0);
+    } catch (error) {
+      this.logger.error(`Error downloading file ${remoteFilePath}`, error);
+      throw error;
     } finally {
-      await SshService.closeQuietly(client);
+      await this.ensureClientClosed(
+        `downloading file ${remoteFilePath}`,
+        client,
+      );
     }
   }
 
@@ -168,11 +190,19 @@ export abstract class SFTPIntegrationBase<DownloadType> {
     remoteFilePath: string,
     newRemoteFilePath: string,
   ): Promise<void> {
-    const client = await this.getClient();
+    this.logger.log(`Renaming file ${remoteFilePath} to ${newRemoteFilePath}.`);
+    let client: Client;
     try {
+      client = await this.getClient();
       await client.rename(remoteFilePath, newRemoteFilePath);
+    } catch (error) {
+      this.logger.error(
+        `Error renaming file ${remoteFilePath} to ${newRemoteFilePath}.`,
+        error,
+      );
+      throw error;
     } finally {
-      await SshService.closeQuietly(client);
+      await this.ensureClientClosed(`renaming file ${remoteFilePath}`, client);
     }
   }
 
@@ -180,10 +210,11 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    * Archives a file on SFTP .
    * @param remoteFilePath full remote file path with file name.
    * @param archiveDirectory directory name to archive the file.
+   * A default value of {@link SFTP_ARCHIVE_DIRECTORY} will be used if not specified.
    */
   async archiveFile(
     remoteFilePath: string,
-    archiveDirectory: string,
+    archiveDirectory = SFTP_ARCHIVE_DIRECTORY,
   ): Promise<void> {
     const fileInfo = path.parse(remoteFilePath);
     const timestamp = getFileNameAsExtendedCurrentTimestamp();
@@ -202,6 +233,24 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    */
   public async getClient(): Promise<Client> {
     return this.sshService.createClient(this.sftpConfig);
+  }
+
+  /**
+   * Finalizes the SFTP client connection when initialized and
+   * log a message accordingly.
+   * @param context string to log with the context of the action.
+   * @param client SFTP client to be finalized.
+   */
+  private async ensureClientClosed(
+    context: string,
+    client?: Client,
+  ): Promise<void> {
+    if (client) {
+      this.logger.log(`Finalizing SFTP client. Context: ${context}.`);
+      await SshService.closeQuietly(client);
+      this.logger.log(`SFTP client finalized. Context: ${context}.`);
+    }
+    this.logger.log(`SFTP client not initialized. Context: ${context}.`);
   }
 
   @InjectLogger()

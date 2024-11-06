@@ -10,9 +10,10 @@ export class AppAllExceptionsFilter extends BaseExceptionFilter {
     const request: Request = ctx.getRequest();
 
     // Logging Additional info
-    this.logger.error("Unhandled exception");
-    this.logger.error(`Request path [${request.path}]`);
-    this.logger.error(`${JSON.stringify(exception)}`);
+    this.logger.error(
+      `Unhandled exception, request path: ${request.path}`,
+      exception,
+    );
 
     // Calling super
     super.catch(exception, host);
