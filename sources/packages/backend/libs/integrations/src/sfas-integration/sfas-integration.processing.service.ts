@@ -16,6 +16,7 @@ import {
 import { SFAS_IMPORT_RECORDS_PROGRESS_REPORT_PACE } from "@sims/services/constants";
 import * as os from "os";
 import { ConfigService } from "@sims/utilities/config";
+import { parseJSONError } from "@sims/utilities";
 
 @Injectable()
 export class SFASIntegrationProcessingService {
@@ -214,6 +215,7 @@ export class SFASIntegrationProcessingService {
         "Error while wrapping up post file processing operations.";
       postFileImportResult.success = false;
       postFileImportResult.summary.push(logMessage);
+      postFileImportResult.summary.push(parseJSONError(error));
       this.logger.error(logMessage, error);
     }
     return postFileImportResult;
