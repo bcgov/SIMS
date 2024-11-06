@@ -158,11 +158,11 @@ export class SFASIntegrationProcessingService {
         }
       }
     } catch (error) {
+      result.success = false;
       const logMessage = `Error while processing SFAS integration file: ${remoteFilePath}`;
       result.summary.push(logMessage);
-      result.success = false;
-      this.logger.error(logMessage);
-      this.logger.error(error);
+      result.summary.push(parseJSONError(error));
+      this.logger.error(logMessage, error);
     }
 
     return result;
