@@ -198,7 +198,10 @@ export class CRAIncomeVerificationProcessingService {
   async processResponses(): Promise<ProcessSftpResponseResult[]> {
     const remoteFilePaths = await this.craService.getResponseFilesFullPath(
       this.ftpResponseFolder,
-      /CCRA_RESPONSE_[\w]*\.txt/i,
+      new RegExp(
+        `${this.configService.craIntegration.environmentCode}BCSA\\d{5}\\.TXT`,
+        "i",
+      ),
     );
     const processFiles: ProcessSftpResponseResult[] = [];
     for (const remoteFilePath of remoteFilePaths) {

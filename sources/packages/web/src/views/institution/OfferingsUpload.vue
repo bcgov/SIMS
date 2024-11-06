@@ -61,7 +61,7 @@
             :clearable="true"
             :accept="ACCEPTED_FILE_TYPE"
             density="compact"
-            v-model="offeringFiles"
+            v-model="offeringFile"
             label="Offering CSV file"
             variant="outlined"
             data-cy="fileUpload"
@@ -225,8 +225,8 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const validationProcessing = ref(false);
     const creationProcessing = ref(false);
-    // Only one will be used but the component allows multiple.
-    const offeringFiles = ref<InputFile[]>([]);
+    // If multiple prop is undefined or false for VFileInput the component returns now a File object.
+    const offeringFile = ref<File>();
     // Possible errors and warnings received upon file upload.
     const validationResults = ref([] as OfferingsUploadBulkInsert[]);
     const uploadForm = ref({} as VForm);
@@ -252,10 +252,9 @@ export default defineComponent({
         } else {
           creationProcessing.value = true;
         }
-        const [fileToUpload] = offeringFiles.value;
         const uploadResults =
           await EducationProgramOfferingService.shared.offeringBulkInsert(
-            fileToUpload,
+            offeringFile.value as Blob,
             validationOnly,
             (progressEvent: AxiosProgressEvent) => {
               uploadProgress.value = progressEvent;
@@ -318,7 +317,7 @@ export default defineComponent({
 
     const resetForm = () => {
       validationResults.value = [];
-      offeringFiles.value = [];
+      offeringFile.value = undefined;
       csvFileUploadKey.value++;
     };
 
@@ -332,7 +331,7 @@ export default defineComponent({
       creationProcessing,
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
-      offeringFiles,
+      offeringFile,
       uploadFile,
       validationResults,
       fileValidationRules,
