@@ -58,13 +58,10 @@ export abstract class SFTPIntegrationBase<DownloadType> {
     remoteFilePath: string,
   ): Promise<string> {
     // Send the file to ftp.
-    this.logger.log(
-      `Creating new SFTP client to start upload of ${remoteFilePath}`,
-    );
+    this.logger.log(`Uploading ${remoteFilePath}.`);
     let client: Client;
     try {
       client = await this.getClient();
-      this.logger.log(`Uploading ${remoteFilePath}`);
       return await client.put(convertToASCII(rawContent), remoteFilePath);
     } catch (error) {
       this.logger.error(`Error uploading file ${remoteFilePath}.`, error);
@@ -145,7 +142,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
     remoteFilePath: string,
     options?: { checkIfFileExist: boolean },
   ): Promise<string[] | false> {
-    this.logger.log(`Downloading ${remoteFilePath}.`);
+    this.logger.log(`Downloading file ${remoteFilePath}.`);
     let client: Client;
     try {
       client = await this.getClient();
