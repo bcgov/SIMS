@@ -77,6 +77,10 @@ export enum RestrictionCode {
    */
   AF = "AF",
   /**
+   * Dual Funding.
+   */
+  AF4 = "AF4",
+  /**
    * Part-time scholastic standing restrictions - Student withdrew or was unsuccesful from Part Time studies.
    */
   PTWTHD = "PTWTHD",
@@ -84,4 +88,12 @@ export enum RestrictionCode {
    * Part-time scholastic standing restrictions - Not eligible for part time funding due to scholastic standing must self fund or appeal.
    */
   PTSSR = "PTSSR",
+  /**
+   * School reported early completion of studies.
+   */
+  ECRS = "ECRS",
+  /**
+   * BC lifetime maximum reached.
+   */
+  BCLM = "BCLM",
 }

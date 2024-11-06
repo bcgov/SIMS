@@ -21,23 +21,28 @@ import { createFakeUser } from "./user";
  * - `restrictionNote` note for restriction.
  * - `resolutionNote` note for resolution.
  * - `creator` related user relation.
+ * @param options options for student restriction.
+ * - `isActive` option for specifying if the student restriction is active.
  * @returns persisted student restriction.
  */
-export function createFakeStudentRestriction(relations: {
-  student: Student;
-  application?: Application;
-  restriction: Restriction;
-  restrictionNote?: Note;
-  resolutionNote?: Note;
-  creator?: User;
-}): StudentRestriction {
+export function createFakeStudentRestriction(
+  relations: {
+    student: Student;
+    application?: Application;
+    restriction: Restriction;
+    restrictionNote?: Note;
+    resolutionNote?: Note;
+    creator?: User;
+  },
+  options?: { isActive?: boolean },
+): StudentRestriction {
   const studentRestriction = new StudentRestriction();
   studentRestriction.student = relations.student;
   studentRestriction.application = relations.application;
   studentRestriction.restriction = relations.restriction;
   studentRestriction.restrictionNote = relations.restrictionNote;
   studentRestriction.resolutionNote = relations.resolutionNote;
-  studentRestriction.isActive = true;
+  studentRestriction.isActive = options?.isActive ?? true;
   studentRestriction.creator = relations?.creator;
   return studentRestriction;
 }
@@ -46,6 +51,8 @@ export function createFakeStudentRestriction(relations: {
  * Saves a fake student restriction.
  * @param dataSource dataSource for the application.
  * @param relations entity relations.
+ * @param options related to student restriction.
+ * - `isActive` option for specifying if the student restriction is active.
  * @returns a persisted fake student restriction.
  */
 export async function saveFakeStudentRestriction(
@@ -58,6 +65,7 @@ export async function saveFakeStudentRestriction(
     resolutionNote?: Note;
     creator?: User;
   },
+  options?: { isActive?: boolean },
 ): Promise<StudentRestriction> {
   const [restrictionNote, resolutionNote] = await saveFakeStudentNotes(
     dataSource,
@@ -75,6 +83,6 @@ export async function saveFakeStudentRestriction(
   relations.restrictionNote = restrictionNote;
   relations.resolutionNote = resolutionNote;
   const studentRestrictionRepo = dataSource.getRepository(StudentRestriction);
-  const studentRestriction = createFakeStudentRestriction(relations);
+  const studentRestriction = createFakeStudentRestriction(relations, options);
   return studentRestrictionRepo.save(studentRestriction);
 }

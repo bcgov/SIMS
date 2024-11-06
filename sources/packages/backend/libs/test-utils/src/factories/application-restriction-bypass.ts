@@ -116,6 +116,7 @@ export async function saveFakeApplicationRestrictionBypass(
       {
         student: relations.application.student,
         restriction,
+        application: relations.application,
       },
     );
   } else {
@@ -143,7 +144,7 @@ export async function saveFakeApplicationRestrictionBypass(
       );
     }
     bypass.bypassRemovedBy = relations?.bypassRemovedBy;
-    bypass.bypassRemovedDate = options?.initialValues.bypassRemovedDate ?? now;
+    bypass.bypassRemovedDate = options?.initialValues?.bypassRemovedDate ?? now;
     bypass.isActive = false;
   }
   return db.applicationRestrictionBypass.save(bypass);
