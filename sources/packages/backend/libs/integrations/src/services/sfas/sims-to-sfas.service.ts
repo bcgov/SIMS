@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
-  ApplicationData,
-  RestrictionData,
+  ApplicationRecord,
+  RestrictionRecord,
   StudentDetail,
 } from "./sims-to-sfas.model";
 import {
@@ -134,13 +134,14 @@ export class SIMSToSFASService {
   async getAllStudentsWithApplicationUpdates(
     modifiedSince: Date,
     modifiedUntil: Date,
-  ): Promise<ApplicationData[]> {
+  ): Promise<ApplicationRecord[]> {
     return (
       this.applicationRepo
         .createQueryBuilder("application")
         .select("student.id", "studentId")
-        .addSelect("application.id", "applicationId")
+        .addSelect("application.applicationNumber", "applicationNumber")
         .addSelect("programYear.id", "programYearId")
+        .addSelect("offering.offeringIntensity", "offeringIntensity")
         // Use CASE to conditionally select studyStartDate and studyEndDate and casting JSON values to dates.
         .addSelect(
           `CASE
@@ -204,9 +205,10 @@ export class SIMSToSFASService {
         .groupBy("student.id")
         .addGroupBy("application.id")
         .addGroupBy("programYear.id")
+        .addGroupBy("offering.offeringIntensity")
         .addGroupBy("offering.studyStartDate")
         .addGroupBy("offering.study_end_date")
-        .getRawMany<ApplicationData>()
+        .getRawMany<ApplicationRecord>()
     );
   }
 
@@ -218,7 +220,7 @@ export class SIMSToSFASService {
   async getAllStudentsWithRestrictionUpdates(
     modifiedSince: Date,
     modifiedUntil: Date,
-  ): Promise<RestrictionData[]> {
+  ): Promise<RestrictionRecord[]> {
     return (
       this.restrictionRepo
         .createQueryBuilder("studentRestriction")
@@ -248,7 +250,7 @@ export class SIMSToSFASService {
           modifiedSince,
           modifiedUntil,
         })
-        .getRawMany<RestrictionData>()
+        .getRawMany<RestrictionRecord>()
     );
   }
 

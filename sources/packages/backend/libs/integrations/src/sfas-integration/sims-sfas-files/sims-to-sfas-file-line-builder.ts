@@ -1,13 +1,17 @@
-import { StudentDetail } from "@sims/integrations/services/sfas";
-import { FixedFormatFileLine } from "@sims/integrations/services/ssh";
+import {
+  ApplicationRecord,
+  RestrictionRecord,
+  StudentDetail,
+} from "@sims/integrations/services/sfas";
 import { SIMSToSFASRecordTypeCodes } from "../sfas-integration.models";
 import { SIMSToSFASHeader } from "./sims-to-sfas-header";
 import { SIMSToSFASStudentRecord } from "./sims-to-sfas-student-record";
-import { DisabilityStatus } from "@sims/sims-db";
+import { DisabilityStatus, OfferingIntensity } from "@sims/sims-db";
 import { YNFlag } from "@sims/integrations/models";
 import { SIMSToSFASFooter } from "./sims-to-sfas.footer";
 import { combineDecimalPlaces } from "@sims/utilities";
 import { SIMSToSFASBaseRecord } from "./sims-to-sfas-base.record";
+import { FixedFormatFileLine } from "@sims/integrations/services/ssh";
 
 export class SIMSToSFASFileLineBuilder {
   /**
@@ -87,7 +91,55 @@ export class SIMSToSFASFileLineBuilder {
     });
     return this;
   }
-  // TODO: SIMS to SFAS - Create append methods for applications and restrictions.
+
+  /**
+   * Append application file records after transforming them.
+   * @param applicationRecords application records.
+   * @returns instance of the class for further appending.
+   */
+  appendApplicationFileRecords(applicationRecords: ApplicationRecord[]): this {
+    applicationRecords.forEach((applicationRecord) => {
+      const applicationFileRecord = new SIMSToSFASStudentRecord();
+      applicationFileRecord.recordTypeCode =
+        applicationRecord.offeringIntensity === OfferingIntensity.fullTime
+          ? SIMSToSFASRecordTypeCodes.FullTimeApplicationDataRecord
+          : SIMSToSFASRecordTypeCodes.PartTimeApplicationDataRecord;
+      applicationFileRecord.studentId = applicationRecord.studentId;
+      applicationFileRecord.applicationNumber =
+        applicationRecord.applicationNumber;
+      applicationFileRecord.studyStartDate = applicationRecord.studyStartDate;
+      applicationFileRecord.studyEndDate = applicationRecord.studyEndDate;
+      applicationFileRecord.programYearId = applicationRecord.programYearId;
+      applicationFileRecord.csgpAwardTotal = applicationRecord.csgpAwardTotal;
+      applicationFileRecord.sbsdAwardTotal = applicationRecord.sbsdAwardTotal;
+      applicationFileRecord.applicationCancelDate =
+        applicationRecord.applicationCancelDate;
+      this.fileLinesInternal.push(applicationFileRecord);
+    });
+    return this;
+  }
+
+  /**
+   * Append restriction file records after transforming them.
+   * @param restrictionRecords restriction records.
+   * @returns instance of the class for further appending.
+   */
+  appendRestrictionFileRecords(restrictionRecords: RestrictionRecord[]): this {
+    restrictionRecords.forEach((restrictionRecord) => {
+      const restrictionFileRecord = new SIMSToSFASStudentRecord();
+      restrictionFileRecord.recordTypeCode =
+        SIMSToSFASRecordTypeCodes.RestrictionDataRecord;
+      restrictionFileRecord.studentId = restrictionRecord.studentId;
+      restrictionFileRecord.restrictionId = restrictionRecord.restrictionId;
+      restrictionFileRecord.restrictionCode = restrictionRecord.restrictionCode;
+      restrictionFileRecord.restrictionEffectiveDate =
+        restrictionRecord.restrictionEffectiveDate;
+      restrictionFileRecord.restrictionRemovalDate =
+        restrictionRecord.restrictionRemovalDate;
+      this.fileLinesInternal.push(restrictionFileRecord);
+    });
+    return this;
+  }
 
   get fileLines(): FixedFormatFileLine[] {
     return this.fileLinesInternal;

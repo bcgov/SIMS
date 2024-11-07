@@ -1,22 +1,23 @@
-import { Student } from "@sims/sims-db";
+import { OfferingIntensity, Student } from "@sims/sims-db";
 
 export type StudentDetail = Student & {
   cslfOverawardTotal?: string;
   bcslOverawardTotal?: string;
 };
 
-export type ApplicationData = {
+export type ApplicationRecord = {
   studentId: number;
-  applicationId: number;
+  applicationNumber: string;
   programYearId: number;
   studyStartDate?: Date;
   studyEndDate?: Date;
   csgpAwardTotal: number;
   sbsdAwardTotal: number;
   applicationCancelDate?: Date;
+  offeringIntensity: OfferingIntensity;
 };
 
-export type RestrictionData = {
+export type RestrictionRecord = {
   studentId: number;
   restrictionId: number;
   restrictionCode: string;

@@ -82,6 +82,50 @@ export class SIMSToSFASStudentRecord extends SIMSToSFASBaseRecord {
    ** There is no requirement currently to map this field. It is populated with filler values.
    */
   grantOveraward?: number;
+  /**
+   * The application number for the student.
+   */
+  applicationNumber: string;
+  /**
+   * The student's study start date.
+   */
+  studyStartDate: Date;
+  /**
+   * The student's study end date.
+   */
+  studyEndDate: Date;
+  /**
+   * The student's program year id.
+   */
+  programYearId: number;
+  /**
+   * The student's CSGP award total.
+   */
+  csgpAwardTotal: number;
+  /**
+   * The student's SBSD award total.
+   */
+  sbsdAwardTotal: number;
+  /**
+   * The application cancel date.
+   */
+  applicationCancelDate?: Date;
+  /**
+   * The student's restriction id.
+   */
+  restrictionId: number;
+  /**
+   * The student's restriction code.
+   */
+  restrictionCode: string;
+  /**
+   * The student's restriction effective date.
+   */
+  restrictionEffectiveDate: Date;
+  /**
+   * The student's restriction removal date.
+   */
+  restrictionRemovalDate?: Date;
 
   /**
    * Get the information as a fixed line format to be

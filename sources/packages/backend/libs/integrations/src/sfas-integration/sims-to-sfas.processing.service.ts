@@ -48,28 +48,28 @@ export class SIMSToSFASProcessingService {
       modifiedUntil,
     );
 
-    const applicationDataPromise =
+    const applicationRecordsPromise =
       this.simsToSFASService.getAllStudentsWithApplicationUpdates(
         modifiedSince,
         modifiedUntil,
       );
 
-    const restrictionDataPromise =
+    const restrictionRecordsPromise =
       this.simsToSFASService.getAllStudentsWithRestrictionUpdates(
         modifiedSince,
         modifiedUntil,
       );
 
-    const [applicationData, restrictionData] = await Promise.all([
-      applicationDataPromise,
-      restrictionDataPromise,
+    const [applicationRecords, restrictionRecords] = await Promise.all([
+      applicationRecordsPromise,
+      restrictionRecordsPromise,
     ]);
 
     studentIds.push(
-      ...applicationData.map((application) => application.studentId),
+      ...applicationRecords.map((application) => application.studentId),
     );
     studentIds.push(
-      ...restrictionData.map((restriction) => restriction.studentId),
+      ...restrictionRecords.map((restriction) => restriction.studentId),
     );
 
     // Append the students with student and student related data updates.
@@ -105,6 +105,8 @@ export class SIMSToSFASProcessingService {
       this.simsToSFASIntegrationService.createSIMSToSFASFileContent(
         modifiedUntil,
         studentDetails,
+        applicationRecords,
+        restrictionRecords,
       );
 
     const { fileName, remoteFilePath } =
