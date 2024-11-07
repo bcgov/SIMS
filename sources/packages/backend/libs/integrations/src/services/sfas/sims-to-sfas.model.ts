@@ -7,7 +7,7 @@ export type StudentDetail = Student & {
 
 export type ApplicationRecord = {
   studentId: number;
-  applicationNumber: string;
+  applicationId: string;
   programYearId: number;
   studyStartDate?: Date;
   studyEndDate?: Date;

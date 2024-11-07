@@ -40,10 +40,9 @@ export class SIMSToSFASProcessingService {
     // Once all the student ids are appended, only unique student ids will be returned.
     const simsToSFASStudents = new SIMSToSFASStudents();
     processSummary.info("Get all the students with updates.");
-    let studentIds: number[] = [];
     // Get all the students with updates in student related data.
     // TODO: SIMS to SFAS - Get all the students with updates in application and restriction related data.
-    studentIds = await this.simsToSFASService.getAllStudentsWithUpdates(
+    const studentIds = await this.simsToSFASService.getAllStudentsWithUpdates(
       modifiedSince,
       modifiedUntil,
     );
@@ -65,11 +64,11 @@ export class SIMSToSFASProcessingService {
       restrictionRecordsPromise,
     ]);
 
-    studentIds.push(
-      ...applicationRecords.map((application) => application.studentId),
+    const applicationStudentIds = applicationRecords.map(
+      (application) => application.studentId,
     );
-    studentIds.push(
-      ...restrictionRecords.map((restriction) => restriction.studentId),
+    const restrictionStudentIds = restrictionRecords.map(
+      (restriction) => restriction.studentId,
     );
 
     // Append the students with student and student related data updates.
@@ -78,6 +77,8 @@ export class SIMSToSFASProcessingService {
     // student ids of applications and restrictions should be appended.
     const uniqueStudentIds = simsToSFASStudents
       .append(studentIds)
+      .append(applicationStudentIds)
+      .append(restrictionStudentIds)
       .getUniqueStudentIds();
 
     // When there is no updates to process, log the summary and return.

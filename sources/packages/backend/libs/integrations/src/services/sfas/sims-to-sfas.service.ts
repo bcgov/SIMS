@@ -139,20 +139,20 @@ export class SIMSToSFASService {
       this.applicationRepo
         .createQueryBuilder("application")
         .select("student.id", "studentId")
-        .addSelect("application.applicationNumber", "applicationNumber")
+        .addSelect("application.id", "applicationId")
         .addSelect("programYear.id", "programYearId")
         .addSelect("offering.offeringIntensity", "offeringIntensity")
         // Use CASE to conditionally select studyStartDate and studyEndDate and casting JSON values to dates.
         .addSelect(
           `CASE
-      WHEN application.pirStatus IS NOT NULL THEN (application.data->>'studyStartDate')::date
+      WHEN studentAssessment.offering IS NULL THEN (application.data->>'studyStartDate')::date
       ELSE offering.study_start_date
      END`,
           "studyStartDate",
         )
         .addSelect(
           `CASE
-      WHEN application.pirStatus IS NOT NULL THEN (application.data->>'studyEndDate')::date
+      WHEN studentAssessment.offering IS NULL THEN (application.data->>'studyEndDate')::date
       ELSE offering.study_end_date
      END`,
           "studyEndDate",
@@ -205,9 +205,9 @@ export class SIMSToSFASService {
         .groupBy("student.id")
         .addGroupBy("application.id")
         .addGroupBy("programYear.id")
-        .addGroupBy("offering.offeringIntensity")
-        .addGroupBy("offering.studyStartDate")
-        .addGroupBy("offering.study_end_date")
+        .addGroupBy("studentAssessment.id")
+        .addGroupBy("offering.id")
+        .orderBy("offering.offeringIntensity")
         .getRawMany<ApplicationRecord>()
     );
   }
