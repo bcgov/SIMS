@@ -46,12 +46,10 @@
   --indent-padding: 10px !important;
 }
 
-// Temporary fix for Vuetify beta that does not display the radio button properly.
 .v-radio .mdi:before {
   font: unset !important;
 }
 
-// Temporary fix for Vuetify beta that does not display the checkbox properly.
 .v-checkbox .mdi:before {
   font: unset !important;
 }
