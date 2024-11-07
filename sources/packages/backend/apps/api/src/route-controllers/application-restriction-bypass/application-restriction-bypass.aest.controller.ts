@@ -12,7 +12,12 @@ import {
 import BaseController from "../BaseController";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { UserGroups } from "../../auth/user-groups.enum";
-import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  Groups,
+  Roles,
+  UserToken,
+} from "../../auth/decorators";
 import {
   ApplicationRestrictionBypassAPIOutDTO,
   ApplicationRestrictionBypassHistoryAPIOutDTO,
@@ -32,7 +37,7 @@ import {
   StudentRestriction,
 } from "@sims/sims-db";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import { IUserToken } from "../../auth";
+import { IUserToken, Role } from "../../auth";
 import { CustomNamedError } from "@sims/utilities";
 import {
   ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS,
@@ -164,11 +169,12 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
    */
   @ApiUnprocessableEntityResponse({
     description:
-      "Cannot create a bypass when there is an active bypass for the same active student restriction ID or " +
-      "could not find student restriction for the given ID or " +
+      "Cannot create a bypass when there is an active bypass for the same active student restriction id or " +
+      "could not find student restriction for the given id or " +
       "cannot create a bypass when student restriction is not active  or " +
       "cannot create a bypass when application is in invalid state.",
   })
+  @Roles(Role.AESTBypassStudentRestriction)
   @Post()
   async bypassRestriction(
     @Body() payload: BypassRestrictionAPIInDTO,
@@ -190,7 +196,7 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
             );
           case STUDENT_RESTRICTION_NOT_FOUND:
             throw new UnprocessableEntityException(
-              "Could not find student restriction for the given id",
+              "Could not find student restriction for the given id.",
             );
           case STUDENT_RESTRICTION_IS_NOT_ACTIVE:
             throw new UnprocessableEntityException(
@@ -216,6 +222,7 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
       "Cannot remove a bypass when student restriction is not active or " +
       "cannot remove a bypass when application restriction bypass is not active.",
   })
+  @Roles(Role.AESTBypassStudentRestriction)
   @Patch(":id")
   async removeBypassRestriction(
     @UserToken() userToken: IUserToken,

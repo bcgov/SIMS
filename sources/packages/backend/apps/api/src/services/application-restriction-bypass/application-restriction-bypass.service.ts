@@ -179,33 +179,43 @@ export class ApplicationRestrictionBypassService extends RecordDataModelService<
           .where("application.id = :applicationId", { applicationId })
           .andWhere(
             new Brackets((qb) => {
-              qb.where("offering.offeringIntensity = :fullTimeIntensity", {
-                fullTimeIntensity: OfferingIntensity.fullTime,
-              })
-                .andWhere(
-                  "restriction.action_type::text[] && ARRAY[:...fullTimeActionTypes]::text[]",
-                  {
-                    fullTimeActionTypes: [
-                      RestrictionActionType.StopFullTimeBCFunding,
-                      RestrictionActionType.StopFullTimeDisbursement,
-                    ],
-                  },
-                )
-                .orWhere("offering.offeringIntensity = :partTimeIntensity", {
-                  partTimeIntensity: OfferingIntensity.partTime,
-                })
-                .andWhere(
-                  "restriction.action_type::text[] && ARRAY[:...partTimeActionTypes]::text[]",
-                  {
-                    partTimeActionTypes: [
-                      RestrictionActionType.StopPartTimeDisbursement,
-                    ],
-                  },
-                );
+              qb.where(
+                new Brackets((fullTimeQb) => {
+                  fullTimeQb
+                    .where("offering.offeringIntensity = :fullTimeIntensity", {
+                      fullTimeIntensity: OfferingIntensity.fullTime,
+                    })
+                    .andWhere(
+                      "restriction.action_type::text[] && ARRAY[:...fullTimeActionTypes]::text[]",
+                      {
+                        fullTimeActionTypes: [
+                          RestrictionActionType.StopFullTimeBCFunding,
+                          RestrictionActionType.StopFullTimeDisbursement,
+                        ],
+                      },
+                    );
+                }),
+              ).orWhere(
+                new Brackets((partTimeQb) => {
+                  partTimeQb
+                    .where("offering.offeringIntensity = :partTimeIntensity", {
+                      partTimeIntensity: OfferingIntensity.partTime,
+                    })
+                    .andWhere(
+                      "restriction.action_type::text[] && ARRAY[:...partTimeActionTypes]::text[]",
+                      {
+                        partTimeActionTypes: [
+                          RestrictionActionType.StopPartTimeDisbursement,
+                        ],
+                      },
+                    );
+                }),
+              );
             }),
           );
         return `EXISTS (${actionTypeSubQuery.getQuery()})`;
       })
+      .andWhere("studentRestriction.isActive = true")
       .orderBy("restriction.restrictionCode", "ASC")
       .getMany();
   }

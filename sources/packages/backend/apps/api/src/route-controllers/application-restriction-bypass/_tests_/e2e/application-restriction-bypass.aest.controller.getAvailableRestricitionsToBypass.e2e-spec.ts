@@ -35,7 +35,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
       offeringIntensity: OfferingIntensity.partTime,
     });
 
-    // Add a restriction bypassed.
+    // Add a student restriction bypassed that should be not available to be bypassed again.
     await saveFakeApplicationRestrictionBypass(
       db,
       {
@@ -49,7 +49,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
       },
     );
 
-    // Add a restriction bypassed that was removed. In other words, it is no longer active and the student restriction should be available to be bypassed again.
+    // Add a student restriction bypassed that was removed. In other words, it is no longer active and the student restriction should be available to be bypassed again.
     const removedApplicationRestrictionsBypass =
       await saveFakeApplicationRestrictionBypass(
         db,
@@ -67,25 +67,41 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
         },
       );
 
-    // Add a restriction that should not be available to be bypassed because the restriction doesn't have an action type "Stop part time disbursement".
-    const noEffectRestriction = await db.restriction.findOne({
+    const b6bRestriction = await db.restriction.findOne({
       where: { restrictionCode: RestrictionCode.B6B },
     });
+    // Add a student restriction that should not be available to be bypassed because the restriction doesn't have an action type "Stop part time disbursement".
     await saveFakeStudentRestriction(db.dataSource, {
       student: application.student,
-      restriction: noEffectRestriction,
+      restriction: b6bRestriction,
       application,
     });
 
-    // Add a restriction that should  be available to be bypassed because the restriction has an action type "Stop part time disbursement".
-    const stopPartTimeDisbursementRestriction = await db.restriction.findOne({
+    const af4Restriction = await db.restriction.findOne({
+      where: { restrictionCode: RestrictionCode.AF4 },
+    });
+    // Add a student restriction that should not be available to be bypassed because the student restriction is not active.
+    await saveFakeStudentRestriction(
+      db.dataSource,
+      {
+        student: application.student,
+        restriction: af4Restriction,
+        application,
+      },
+      {
+        isActive: false,
+      },
+    );
+
+    const ecrsRestriction = await db.restriction.findOne({
       where: { restrictionCode: RestrictionCode.ECRS },
     });
 
+    // Add a student restriction that should  be available to be bypassed because the restriction has an action type "Stop part time disbursement".
     const stopPartTimeDisbursementStudentRestriction =
       await saveFakeStudentRestriction(db.dataSource, {
         student: application.student,
-        restriction: stopPartTimeDisbursementRestriction,
+        restriction: ecrsRestriction,
         application,
       });
     const endpoint = `/aest/application-restriction-bypass/application/${application.id}/options-list`;
@@ -109,8 +125,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
           },
           {
             studentRestrictionId: stopPartTimeDisbursementStudentRestriction.id,
-            restrictionCode:
-              stopPartTimeDisbursementRestriction.restrictionCode,
+            restrictionCode: ecrsRestriction.restrictionCode,
             studentRestrictionCreatedAt:
               stopPartTimeDisbursementStudentRestriction.createdAt.toISOString(),
           },
@@ -124,7 +139,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
       offeringIntensity: OfferingIntensity.fullTime,
     });
 
-    // Add a restriction bypassed that should be not available to be bypassed.
+    // Add a student restriction bypassed that should be not available to be bypassed again.
     await saveFakeApplicationRestrictionBypass(
       db,
       {
@@ -138,7 +153,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
       },
     );
 
-    // Add a restriction bypassed that was removed. In other words, it is no longer active and the student restriction should be available to be bypassed again.
+    // Add a student restriction bypassed that was removed. In other words, it is no longer active and the student restriction should be available to be bypassed again.
     const removedApplicationRestrictionsBypass =
       await saveFakeApplicationRestrictionBypass(
         db,
@@ -156,33 +171,33 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
         },
       );
 
-    // Add a restriction that should not be available to be bypassed because the restriction doesn't have an action type "Stop full time disbursement" nor "Stop full time BC funding".
-    const noEffectRestriction = await db.restriction.findOne({
+    const b6bRestriction = await db.restriction.findOne({
       where: { restrictionCode: RestrictionCode.B6B },
     });
+    // Add a student restriction that should not be available to be bypassed because the restriction doesn't have an action type "Stop full time disbursement" nor "Stop full time BC funding".
     await saveFakeStudentRestriction(db.dataSource, {
       student: application.student,
-      restriction: noEffectRestriction,
+      restriction: b6bRestriction,
       application,
     });
 
     // Add a restriction that should  be available to be bypassed because the restriction has an action type "Stop full time disbursement".
-    const stopFullTimeDisbursementRestriction = await db.restriction.findOne({
+    const ssrRestriction = await db.restriction.findOne({
       where: { restrictionCode: RestrictionCode.SSR },
     });
     const stopFullTimeStudentRestriction = await saveFakeStudentRestriction(
       db.dataSource,
       {
         student: application.student,
-        restriction: stopFullTimeDisbursementRestriction,
+        restriction: ssrRestriction,
         application,
       },
     );
 
-    // Add a restriction that should  be available to be bypassed because the restriction has an action type "Stop full time BC funding".
     const stopFullTimeBCFundingRestriction = await db.restriction.findOne({
       where: { restrictionCode: RestrictionCode.BCLM },
     });
+    // Add a student restriction that should be available to be bypassed because the restriction has an action type "Stop full time BC funding".
     const stopFullTimeBCFundingStudentRestriction =
       await saveFakeStudentRestriction(db.dataSource, {
         student: application.student,
@@ -217,8 +232,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
           },
           {
             studentRestrictionId: stopFullTimeStudentRestriction.id,
-            restrictionCode:
-              stopFullTimeDisbursementRestriction.restrictionCode,
+            restrictionCode: ssrRestriction.restrictionCode,
             studentRestrictionCreatedAt:
               stopFullTimeStudentRestriction.createdAt.toISOString(),
           },
