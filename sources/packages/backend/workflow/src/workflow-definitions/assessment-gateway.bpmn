@@ -87,169 +87,24 @@
         <bpmn:flowNodeRef>Gateway_1m2js1c</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
-    <bpmn:sequenceFlow id="Flow_1eip27h" sourceRef="verify-assessment-calculation-order-gateway" targetRef="release-assessment-calculation-message" />
-    <bpmn:sequenceFlow id="Flow_0bza37i" sourceRef="verify-assessment-calculation-order-gateway" targetRef="verify-assessment-calculation-timer" />
-    <bpmn:sequenceFlow id="Flow_16zz7zb" name="Waiting for another assessment to complete" sourceRef="ready-for-calculation-gateway" targetRef="verify-assessment-calculation-order-gateway">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=isReadyForCalculation = false</bpmn:conditionExpression>
+    <bpmn:sequenceFlow id="Flow_1wkpr1a" name="Application Completed" sourceRef="Gateway_1xse027" targetRef="update-noa-status-to-not-required-application-completed-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationStatus = "Completed"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0wp1s62" sourceRef="verify-assessment-calculation-order-task" targetRef="ready-for-calculation-gateway" />
-    <bpmn:sequenceFlow id="Flow_0358dxp" sourceRef="release-assessment-calculation-message" targetRef="verify-assessment-calculation-order-task" />
-    <bpmn:sequenceFlow id="Flow_0umbeot" sourceRef="verify-assessment-calculation-timer" targetRef="verify-assessment-calculation-order-task" />
-    <bpmn:sequenceFlow id="Flow_0z518wc" sourceRef="Gateway_04wql0w" targetRef="Gateway_0f9knk0" />
-    <bpmn:sequenceFlow id="Flow_0hfjqs0" name="Full Time" sourceRef="Gateway_11qgy63" targetRef="Activity_0t108ac">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=offeringIntensity = "Full Time"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0mpuqex" name="Yes" sourceRef="ready-for-calculation-gateway" targetRef="Gateway_11qgy63">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=isReadyForCalculation = true</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0e3pl88" name="Part Time" sourceRef="Gateway_11qgy63" targetRef="Activity_09v8xl0">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=offeringIntensity = "Part Time"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1k200x2" sourceRef="Activity_09v8xl0" targetRef="Activity_0w3u365" />
-    <bpmn:sequenceFlow id="Flow_1j6gqvf" sourceRef="Activity_0t108ac" targetRef="Activity_0cqcjwg" />
-    <bpmn:sequenceFlow id="Flow_17yc7mz" sourceRef="Activity_0w3u365" targetRef="save-disbursement-part-time-task" />
-    <bpmn:sequenceFlow id="Flow_0qmdwld" sourceRef="Activity_0cqcjwg" targetRef="save-disbursement-task" />
-    <bpmn:sequenceFlow id="Flow_1y2j9iz" sourceRef="save-disbursement-part-time-task" targetRef="save-assessment-data-part-time-task" />
-    <bpmn:sequenceFlow id="Flow_0wed99j" sourceRef="save-disbursement-task" targetRef="save-assessment-data-task" />
-    <bpmn:sequenceFlow id="Flow_1f8ymzi" sourceRef="save-assessment-data-part-time-task" targetRef="Gateway_1hwknxt" />
-    <bpmn:sequenceFlow id="Flow_1izp0bk" sourceRef="save-assessment-data-task" targetRef="Gateway_1hwknxt" />
-    <bpmn:sequenceFlow id="Flow_1mpwyku" sourceRef="Gateway_1hwknxt" targetRef="associate-msfaa-task" />
-    <bpmn:sequenceFlow id="Flow_01iq5cw" name="Has NOA Approval" sourceRef="Gateway_1m2js1c" targetRef="update-noa-status-to-not-required-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationHasNOAApproval = true</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1atzf7v" sourceRef="associate-msfaa-task" targetRef="Gateway_1xse027" />
-    <bpmn:sequenceFlow id="Flow_1a4wzic" name="Does Not Have NOA Approval" sourceRef="Gateway_1m2js1c" targetRef="update-application-status-to-assessment-task" />
-    <bpmn:sequenceFlow id="Flow_1ef3map" sourceRef="assessment-start-event" targetRef="associate-workflow-instance-task" />
-    <bpmn:sequenceFlow id="Flow_1wrj7fh" sourceRef="associate-workflow-instance-task" targetRef="load-assessment-data-submit-or-reassessment-subprocess" />
-    <bpmn:sequenceFlow id="Flow_1btetiq" sourceRef="load-assessment-data-pre-assessment-subprocess" targetRef="verify-assessment-calculation-order-task" />
-    <bpmn:sequenceFlow id="Flow_16d5gro" sourceRef="Gateway_0jc5bz6" targetRef="load-assessment-data-pre-assessment-subprocess" />
-    <bpmn:sequenceFlow id="Flow_1s8wnxz" sourceRef="Gateway_1hgcddi" targetRef="Gateway_0jc5bz6" />
-    <bpmn:sequenceFlow id="pir-pending-completed-flow" name="Completed" sourceRef="pir-pending-declined-complted-gateway" targetRef="Gateway_1hgcddi">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=programInfoStatus = "Completed"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="pir-pending-declined-flow" name="Declined" sourceRef="pir-pending-declined-complted-gateway" targetRef="pir-declined-end-event">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=programInfoStatus = "Declined"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0im6s57" sourceRef="Gateway_03gbgqa" targetRef="pir-pending-declined-complted-gateway" />
-    <bpmn:sequenceFlow id="Flow_0cxn3c5" sourceRef="program-info-request-completed-message" targetRef="Gateway_03gbgqa" />
-    <bpmn:sequenceFlow id="Flow_0joyxdn" sourceRef="pir-pending-event-gateway" targetRef="program-info-request-completed-message" />
-    <bpmn:sequenceFlow id="Flow_1ds5r8m" sourceRef="pir-pending-event-gateway" targetRef="program-info-request-timer" />
-    <bpmn:sequenceFlow id="pir-completed-flow" name="Yes" sourceRef="pir-pending-gateway" targetRef="Gateway_03gbgqa">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=programInfoStatus != "Required"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="pir-not-completed-flow" name="No" sourceRef="pir-pending-gateway" targetRef="pir-pending-event-gateway">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=programInfoStatus = "Required"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0guy66a" sourceRef="program-info-required-task" targetRef="pir-pending-gateway" />
-    <bpmn:sequenceFlow id="Flow_1sze0w6" sourceRef="program-info-request-timer" targetRef="program-info-required-task" />
-    <bpmn:sequenceFlow id="Flow_06144it" sourceRef="program-info-not-required-task" targetRef="Gateway_1hgcddi" />
-    <bpmn:sequenceFlow id="has-offering-flow" name="PIR not required" sourceRef="needs-pir-gateway" targetRef="program-info-not-required-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataSelectedOffering != null</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="needs-pir-flow" name="Needs PIR" sourceRef="needs-pir-gateway" targetRef="program-info-required-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataSelectedOffering = null</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1mbspca" sourceRef="student-income-verification-subprocess" targetRef="Gateway_0jc5bz6" />
-    <bpmn:sequenceFlow id="Flow_1wde0bi" sourceRef="retrieve-supporting-info-for-partner-subprocess" targetRef="partner-income-verification-subprocess" />
-    <bpmn:sequenceFlow id="Flow_03zfrkx" sourceRef="create-supporting-user-for-the-partner-task" targetRef="retrieve-supporting-info-for-partner-subprocess" />
-    <bpmn:sequenceFlow id="Flow_14701yl" name="Has valid SIN" sourceRef="Gateway_176fysj" targetRef="create-supporting-user-for-the-partner-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourPartnerAbleToReport = "yes"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0emvz6f" name="Yes" sourceRef="Gateway_05k6rp7" targetRef="Gateway_176fysj">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataRelationshipStatus = "married"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_19wmdao" sourceRef="Gateway_00mly8t" targetRef="Gateway_0b7tdao" />
-    <bpmn:sequenceFlow id="Flow_1uh1kyu" sourceRef="Gateway_0ny5tkb" targetRef="Gateway_0jc5bz6" />
-    <bpmn:sequenceFlow id="Flow_0kjnr9t" sourceRef="Gateway_0b7tdao" targetRef="Gateway_0ny5tkb" />
-    <bpmn:sequenceFlow id="Flow_11q8vuj" sourceRef="parent-1-income-verification-subprocess" targetRef="Gateway_0b7tdao" />
-    <bpmn:sequenceFlow id="Flow_1j7i68d" sourceRef="parent-2-income-verification-subprocess" targetRef="Gateway_00mly8t" />
-    <bpmn:sequenceFlow id="Flow_0l30wbo" sourceRef="retrieve-supporting-info-for-parent-2-subprocess" targetRef="parent-2-income-verification-subprocess" />
-    <bpmn:sequenceFlow id="Flow_1g59sq3" sourceRef="retrieve-supporting-info-for-parent-1-subprocess" targetRef="parent-1-income-verification-subprocess" />
-    <bpmn:sequenceFlow id="Flow_1lbai2h" name="Yes" sourceRef="Gateway_0vft251" targetRef="retrieve-supporting-info-for-parent-2-subprocess">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataNumberOfParents = 2</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0bo0mn4" name="No" sourceRef="Gateway_0vft251" targetRef="Gateway_00mly8t">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataNumberOfParents != 2</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1u5ion6" sourceRef="Gateway_1mg1n21" targetRef="retrieve-supporting-info-for-parent-1-subprocess" />
-    <bpmn:sequenceFlow id="Flow_1cd204k" sourceRef="Gateway_1mg1n21" targetRef="Gateway_0vft251" />
-    <bpmn:sequenceFlow id="Flow_0dii2b3" sourceRef="create-supporting-users-for-parents-task" targetRef="Gateway_1mg1n21" />
-    <bpmn:sequenceFlow id="parents-verification-dependantstatus-independant-flow" name="Independant" sourceRef="parents-verification-has-dependant-gateway" targetRef="Gateway_0ny5tkb">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataDependantstatus != "dependant"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="parents-verification-has-sin-gateway-no-flow" name="Parents do not have SIN" sourceRef="parents-verification-has-sin-gateway" targetRef="Gateway_0ny5tkb">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataParentValidSinNumber != "yes"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="parents-verification-has-sin-gateway-yes-flow" name="Parents have SIN" sourceRef="parents-verification-has-sin-gateway" targetRef="create-supporting-users-for-parents-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataParentValidSinNumber = "yes"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="parents-verification-dependantstatus-dependant-flow" name="Dependant" sourceRef="parents-verification-has-dependant-gateway" targetRef="parents-verification-has-sin-gateway">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataDependantstatus = "dependant"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1rn6agw" sourceRef="Gateway_1jdrla2" targetRef="Gateway_0jc5bz6" />
-    <bpmn:sequenceFlow id="Flow_0jrbmj3" sourceRef="partner-income-verification-subprocess" targetRef="Gateway_1jdrla2" />
-    <bpmn:sequenceFlow id="Flow_1u0qixu" name="No" sourceRef="Gateway_05k6rp7" targetRef="Gateway_1jdrla2">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataRelationshipStatus != "married"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1gii09j" name="Partner do not have SIN" sourceRef="Gateway_176fysj" targetRef="Gateway_1jdrla2">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourPartnerAbleToReport != "yes"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1a980l7" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="needs-pir-gateway" />
-    <bpmn:sequenceFlow id="Flow_0v2i46e" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="Gateway_05k6rp7" />
-    <bpmn:sequenceFlow id="Flow_18xo3dr" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="parents-verification-has-dependant-gateway" />
-    <bpmn:sequenceFlow id="Flow_18qbsu1" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="student-income-verification-subprocess" />
-    <bpmn:sequenceFlow id="Flow_1v0ju0g" sourceRef="verify-application-exceptions-pending-gateway" targetRef="application-exception-verified-message" />
-    <bpmn:sequenceFlow id="Flow_10lg2ud" sourceRef="verify-application-exceptions-pending-gateway" targetRef="verify-application-exceptions-retry-timer" />
-    <bpmn:sequenceFlow id="verify-application-exceptions-status-denied-flow" name="Declined" sourceRef="verify-application-exceptions-status-gateway" targetRef="application-exception-end-event">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationExceptionStatus = "Declined"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1cb5fpw" name="Application Not Completed" sourceRef="Gateway_1xse027" targetRef="Gateway_1m2js1c" />
+    <bpmn:endEvent id="application-exception-end-event">
+      <bpmn:incoming>verify-application-exceptions-status-denied-flow</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:intermediateCatchEvent id="application-exception-verified-message">
+      <bpmn:incoming>Flow_1v0ju0g</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ws0afg</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1t800lv" messageRef="Message_2t9i9o7" />
+    </bpmn:intermediateCatchEvent>
     <bpmn:sequenceFlow id="verify-application-exceptions-status-approved-flow" name="Approved" sourceRef="verify-application-exceptions-status-gateway" targetRef="in-progress-main-parallel-info-gathering-gateway">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationExceptionStatus = "Approved"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0ws0afg" sourceRef="application-exception-verified-message" targetRef="verify-application-exceptions-status-gateway" />
-    <bpmn:sequenceFlow id="verify-application-exceptions-pending-flow" name="Pending" sourceRef="Gateway_04wt04t" targetRef="verify-application-exceptions-pending-gateway">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationExceptionStatus = "Pending"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="verify-application-exceptions-not-pending-flow" name="Not pending" sourceRef="Gateway_04wt04t" targetRef="verify-application-exceptions-status-gateway">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationExceptionStatus != "Pending"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_04f30nk" sourceRef="verify-application-exceptions-task" targetRef="Gateway_04wt04t" />
-    <bpmn:sequenceFlow id="verify-application-exceptions-retry-timer-flow" sourceRef="verify-application-exceptions-retry-timer" targetRef="verify-application-exceptions-task" />
-    <bpmn:sequenceFlow id="Flow_0g1n1dk" sourceRef="update-application-status-to-in-progress-task" targetRef="verify-application-exceptions-task" />
-    <bpmn:sequenceFlow id="Flow_0ozt4pg" name="Reassessment" sourceRef="first-assessment-gateway" targetRef="verify-assessment-calculation-order-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=assessmentTriggerType != "Original assessment"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="assessment-flow" name="Assessment" sourceRef="first-assessment-gateway" targetRef="update-application-status-to-in-progress-task">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=assessmentTriggerType = "Original assessment"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0rxxozm" sourceRef="load-assessment-data-submit-or-reassessment-subprocess" targetRef="first-assessment-gateway" />
-    <bpmn:intermediateCatchEvent id="verify-assessment-calculation-timer">
-      <bpmn:incoming>Flow_0bza37i</bpmn:incoming>
-      <bpmn:outgoing>Flow_0umbeot</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="TimerEventDefinition_0h74s3m">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT12H</bpmn:timeDuration>
-      </bpmn:timerEventDefinition>
-    </bpmn:intermediateCatchEvent>
-    <bpmn:eventBasedGateway id="verify-assessment-calculation-order-gateway">
-      <bpmn:incoming>Flow_16zz7zb</bpmn:incoming>
-      <bpmn:outgoing>Flow_0bza37i</bpmn:outgoing>
-      <bpmn:outgoing>Flow_1eip27h</bpmn:outgoing>
-    </bpmn:eventBasedGateway>
-    <bpmn:exclusiveGateway id="ready-for-calculation-gateway" name="Is the assessment first in sequence to be calculated?">
-      <bpmn:incoming>Flow_0wp1s62</bpmn:incoming>
-      <bpmn:outgoing>Flow_0mpuqex</bpmn:outgoing>
-      <bpmn:outgoing>Flow_16zz7zb</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="verify-assessment-calculation-order-task" name="Verify assessment calculation order">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="verify-assessment-calculation-order" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0ozt4pg</bpmn:incoming>
-      <bpmn:incoming>Flow_1btetiq</bpmn:incoming>
-      <bpmn:incoming>Flow_0umbeot</bpmn:incoming>
-      <bpmn:incoming>Flow_0358dxp</bpmn:incoming>
-      <bpmn:outgoing>Flow_0wp1s62</bpmn:outgoing>
-    </bpmn:serviceTask>
     <bpmn:callActivity id="Activity_0t108ac" name="Assessment">
       <bpmn:extensionElements>
         <zeebe:calledElement processId="=&#34;fulltime-assessment-&#34; + programYear" propagateAllChildVariables="true" />
@@ -257,11 +112,6 @@
       <bpmn:incoming>Flow_0hfjqs0</bpmn:incoming>
       <bpmn:outgoing>Flow_1j6gqvf</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:exclusiveGateway id="Gateway_11qgy63">
-      <bpmn:incoming>Flow_0mpuqex</bpmn:incoming>
-      <bpmn:outgoing>Flow_0hfjqs0</bpmn:outgoing>
-      <bpmn:outgoing>Flow_0e3pl88</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
     <bpmn:callActivity id="Activity_09v8xl0" name="Assessment">
       <bpmn:extensionElements>
         <zeebe:calledElement processId="=&#34;parttime-assessment-&#34; + programYear" propagateAllChildVariables="true" />
@@ -269,72 +119,6 @@
       <bpmn:incoming>Flow_0e3pl88</bpmn:incoming>
       <bpmn:outgoing>Flow_1k200x2</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:callActivity id="Activity_0w3u365" name="Disbursement Schedule">
-      <bpmn:extensionElements>
-        <zeebe:calledElement processId="parttime-configure-disbursement" propagateAllChildVariables="true" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1k200x2</bpmn:incoming>
-      <bpmn:outgoing>Flow_17yc7mz</bpmn:outgoing>
-    </bpmn:callActivity>
-    <bpmn:callActivity id="Activity_0cqcjwg" name="Disbursement Schedule">
-      <bpmn:extensionElements>
-        <zeebe:calledElement processId="fulltime-configure-disbursement" propagateAllChildVariables="true" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1j6gqvf</bpmn:incoming>
-      <bpmn:outgoing>Flow_0qmdwld</bpmn:outgoing>
-    </bpmn:callActivity>
-    <bpmn:serviceTask id="save-disbursement-part-time-task" name="Save disbursement">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="save-disbursement-schedules" />
-        <zeebe:ioMapping>
-          <zeebe:input source="=disbursementSchedules" target="disbursementSchedules" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_17yc7mz</bpmn:incoming>
-      <bpmn:outgoing>Flow_1y2j9iz</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:serviceTask id="save-disbursement-task" name="Save disbursement">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="save-disbursement-schedules" />
-        <zeebe:ioMapping>
-          <zeebe:input source="=disbursementSchedules" target="disbursementSchedules" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0qmdwld</bpmn:incoming>
-      <bpmn:outgoing>Flow_0wed99j</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:serviceTask id="save-assessment-data-part-time-task" name="Save assessment output">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:input source="={&#10;  weeks: offeringWeeks,&#10;  tuitionCost: calculatedDataActualTuitionCosts,&#10;  booksAndSuppliesCost: calculatedDataProgramRelatedCosts,&#10;  mandatoryFees: calculatedDataMandatoryFees,&#10;  exceptionalEducationCost: offeringExceptionalExpenses,&#10;  childcareCost: calculatedDataTotalChildCareCost,&#10;  totalFamilyIncome: calculatedDataTotalFamilyIncome,&#10;  transportationCost: calculatedDataTotalTransportationAllowance,&#10;  miscellaneousAllowance: calculatedDataMiscellaneousAllowance,&#10;  totalAssessmentNeed: calculatedDataTotalAssessedNeed,&#10;  totalAcademicExpenses: calculatedDataTotalAcademicExpenses,&#10;  finalFederalAwardNetCSGPAmount: finalFederalAwardNetCSGPAmount,&#10;  finalFederalAwardNetCSPTAmount: finalFederalAwardNetCSPTAmount,&#10;  finalFederalAwardNetCSGDAmount: finalFederalAwardNetCSGDAmount,&#10;  finalProvincialAwardNetBCAGAmount: finalProvincialAwardNetBCAGAmount,&#10;  finalProvincialAwardNetSBSDAmount: finalProvincialAwardNetSBSDAmount,&#10;  finalFederalAwardNetCSLPAmount: finalFederalAwardNetCSLPAmount,&#10;  finalAwardTotal: finalAwardTotal&#10;}" target="assessmentData" />
-        </zeebe:ioMapping>
-        <zeebe:taskDefinition type="save-assessment-data" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1y2j9iz</bpmn:incoming>
-      <bpmn:outgoing>Flow_1f8ymzi</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:serviceTask id="save-assessment-data-task" name="Save assessment output">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:input source="={&#10;  weeks: offeringWeeks,&#10;  tuitionCost: calculatedDataTotalTutionCost,&#10;  childcareCost: calculatedDataTotalChildCareCost,&#10;  livingAllowance: calculatedDataTotalMSOLAllowance,&#10;  totalAssessedCost: calculatedDataTotalCosts,&#10;  totalFamilyIncome: calculatedDataTotalFamilyIncome,&#10;  totalFederalAward: awardNetFederalTotalAward,&#10;  otherAllowableCost: calculatedDataTotalChildSpousalSupport + calculatedDataTotalSecondResidence,&#10;  transportationCost: calculatedDataTotalTransportationCost,&#10;  secondResidenceCost: calculatedDataTotalSecondResidence,&#10;  totalAssessmentNeed: calculatedDataTotalAssessedNeed,&#10;  booksAndSuppliesCost: calculatedDataTotalBookCost,&#10;  totalProvincialAward: awardNetProvincialTotalAward,&#10;  alimonyOrChildSupport: calculatedDataTotalChildSpousalSupport,&#10;  federalAssessmentNeed: calculatedDataFederalAssessedNeed,&#10;  exceptionalEducationCost: offeringExceptionalExpenses,&#10;  provincialAssessmentNeed: calculatedDataProvincialAssessedNeed,&#10;  totalFederalContribution: calculatedDataTotalFederalContribution,&#10;  parentAssessedContribution: calculatedDataTotalParentalContribution,&#10;  partnerAssessedContribution: calculatedDataTotalSpouseContribution,&#10;  totalProvincialContribution: calculatedDataTotalProvincialContribution,&#10;  studentTotalFederalContribution: calculatedDataTotalFederalFSC,&#10;  totalFederalAssessedResources: parentAssessedContribution + partnerAssessedContribution + calculatedDataTargetedResources + calculatedDataTotalFederalFSC,&#10;  totalProvincialAssessedResources: parentAssessedContribution + partnerAssessedContribution + calculatedDataTargetedResources + calculatedDataTotalProvincialFSC,&#10;  studentTotalProvincialContribution: calculatedDataTotalProvincialFSC,&#10;  finalFederalAwardNetCSGPAmount: finalFederalAwardNetCSGPAmount,&#10;  finalFederalAwardNetCSGDAmount: finalFederalAwardNetCSGDAmount,&#10;  finalProvincialAwardNetBCAGAmount: finalProvincialAwardNetBCAGAmount,&#10;  finalProvincialAwardNetSBSDAmount: finalProvincialAwardNetSBSDAmount,&#10;  finalProvincialAwardNetBCSLAmount: finalProvincialAwardNetBCSLAmount,&#10;  finalFederalAwardNetCSGFAmount: finalFederalAwardNetCSGFAmount,&#10;  finalProvincialAwardNetBGPDAmount: finalProvincialAwardNetBGPDAmount,&#10;  finalAwardTotal: awardNetFederalTotalAward + awardNetProvincialTotalAward&#10;}" target="assessmentData" />
-        </zeebe:ioMapping>
-        <zeebe:taskDefinition type="save-assessment-data" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0wed99j</bpmn:incoming>
-      <bpmn:outgoing>Flow_1izp0bk</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:exclusiveGateway id="Gateway_1hwknxt">
-      <bpmn:incoming>Flow_1izp0bk</bpmn:incoming>
-      <bpmn:incoming>Flow_1f8ymzi</bpmn:incoming>
-      <bpmn:outgoing>Flow_1mpwyku</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="associate-workflow-instance-task" name="Associate workflow instance">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="associate-workflow-instance" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1ef3map</bpmn:incoming>
-      <bpmn:outgoing>Flow_1wrj7fh</bpmn:outgoing>
-    </bpmn:serviceTask>
     <bpmn:startEvent id="assessment-start-event">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
@@ -357,17 +141,265 @@
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_1ef3map</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:callActivity id="load-assessment-data-submit-or-reassessment-subprocess" name="Load consolidated data (Submit or Reassessment)">
+    <bpmn:serviceTask id="associate-msfaa-task" name="Associate MSFAA">
       <bpmn:extensionElements>
-        <zeebe:calledElement processId="load-assessment-consolidated-data" propagateAllChildVariables="true" />
         <zeebe:ioMapping>
-          <zeebe:input source="=[&#34;load-assessment-data-submit-or-reassessment-subprocess&#34;]" target="parentSubprocesses" />
-          <zeebe:input source="=&#34;load-assessment-data-submit-or-reassessment-subprocess&#34;" target="load_assessment_data_submit_or_reassessment_subprocess_passthrough" />
+          <zeebe:input source="={&#10;  weeks: offeringWeeks,&#10;  tuitionCost: 5009,&#10;  childcareCost: 0,&#10;  livingAllowance: 13609.3,&#10;  totalAssessedCost: 21840.3,&#10;  totalFamilyIncome: 0,&#10;  totalFederalAward: 5533.4,&#10;  otherAllowableCost: 0,&#10;  transportationCost: null,&#10;  secondResidenceCost: 0,&#10;  totalAssessmentNeed: 18444.68,&#10;  booksAndSuppliesCost: 3000,&#10;  totalProvincialAward: 3688.94,&#10;  alimonyOrChildSupport: 0,&#10;  federalAssessmentNeed: 9222.34,&#10;  partnerStudentLoanCost: null,&#10;  exceptionalEducationCost: 222,&#10;  provincialAssessmentNeed: 9222.34,&#10;  totalFederalContribution: 12617.96,&#10;  parentAssessedContribution: 10817.96,&#10;  partnerAssessedContribution: 0,&#10;  totalProvincialContribution: 12617.96,&#10;  studentTotalFederalContribution: 1800,&#10;  studentTotalProvincialContribution: 1800&#10;}" target="assessmentData" />
+        </zeebe:ioMapping>
+        <zeebe:taskDefinition type="associate-msfaa" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1mpwyku</bpmn:incoming>
+      <bpmn:outgoing>Flow_1atzf7v</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="associate-workflow-instance-task" name="Associate workflow instance">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="associate-workflow-instance" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1ef3map</bpmn:incoming>
+      <bpmn:outgoing>Flow_1wrj7fh</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="pir-pending-completed-flow" name="Completed" sourceRef="pir-pending-declined-complted-gateway" targetRef="Gateway_1hgcddi">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=programInfoStatus = "Completed"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="pir-pending-gateway" name="Completed?">
+      <bpmn:incoming>Flow_0guy66a</bpmn:incoming>
+      <bpmn:outgoing>pir-not-completed-flow</bpmn:outgoing>
+      <bpmn:outgoing>pir-completed-flow</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:intermediateThrowEvent id="Event_0w0bgro" name="Configure workflow data">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="={ &#10;  studentData: {&#10;    dependantStatus: studentDataDependantstatus,&#10;    relationshipStatus: studentDataRelationshipStatus,&#10;    livingWithParents: studentDataLivingWithParents,&#10;    numberOfParents: if is defined(studentDataNumberOfParents) then studentDataNumberOfParents&#10;    else null&#10;  },&#10;  dmnValues:{&#10;    lifetimeMaximumCSLP: if(dmnPartTimeAwardAllowableLimits!=null) then dmnPartTimeAwardAllowableLimits.limitAwardCSLPAmount else null&#10;  },&#10;  calculatedData: {&#10;    pdppdStatus: calculatedDataPDPPDStatus,&#10;    parentalAssets: if is defined(calculatedDataParentalAssets)&#10;    then calculatedDataParentalAssets else null,&#10;    studentMaritalStatusCode: if is defined(calculatedDataStudentMaritalStatusCode) &#10;    then calculatedDataStudentMaritalStatusCode else null,&#10;    totalEligibleDependents: calculatedDataTotalEligibleDependants,&#10;    familySize: calculatedDataFamilySize,&#10;    parentalAssetContribution: if is defined(calculatedDataParentalAssetContribution) &#10;    then calculatedDataParentalAssetContribution else null,&#10;    parentalContribution: if is defined(calculatedDataParentalContribution) &#10;    then calculatedDataParentalContribution else null,&#10;    parentDiscretionaryIncome: if is defined(calculatedDataTotalDiscretionaryIncome) &#10;    then calculatedDataTotalDiscretionaryIncome else null ,&#10;    dependantTotalMSOLAllowance: if is defined(calculatedDataDependantTotalMSOLAllowance) &#10;    then calculatedDataDependantTotalMSOLAllowance else null,&#10;    studentMSOLAllowance: if is defined(calculatedDataStudentMSOLAllowance) &#10;    then calculatedDataStudentMSOLAllowance else null,&#10;    totalChildCareCost: if is defined(calculatedDataTotalChildCareCost) &#10;    then calculatedDataTotalChildCareCost else null,&#10;    totalNonEducationalCost: if is defined(calaulatedDataTotalNonEducationalCost) &#10;    then calaulatedDataTotalNonEducationalCost else null,&#10;    dependantChildQuantity: if is defined(calculatedDataDependantChildQuantity) &#10;    then calculatedDataDependantChildQuantity else null,&#10;    dependantChildInDaycareQuantity: if is defined(calculatedDataDependantChildInDaycareQuantity)&#10;    then calculatedDataDependantChildInDaycareQuantity else null,&#10;    dependantInfantQuantity: if is defined(calculatedDataDependantInfantQuantity)&#10;    then calculatedDataDependantInfantQuantity else null,&#10;    dependantDeclaredOnTaxesQuantity: if is defined(calculatedDataDependantDeclaredOnTaxesQuantity)&#10;    then calculatedDataDependantDeclaredOnTaxesQuantity else null,&#10;    dependantPostSecondaryQuantity: if is defined(calculatedDataDependantPostSecondaryQuantity)&#10;    then calculatedDataDependantPostSecondaryQuantity else null,&#10;    partnerStudentStudyWeeks: if is defined(calculatedDataPartnerStudentStudyWeeks)&#10;    then calculatedDataPartnerStudentStudyWeeks else null,&#10;    dependants11YearsOrUnder: if is defined(calculatedDataDependants11YearsOrUnder)&#10;    then calculatedDataDependants11YearsOrUnder else null,&#10;    dependants12YearsOverOnTaxes: if is defined(calculatedDataDependants12YearsOverOnTaxes)&#10;    then calculatedDataDependants12YearsOverOnTaxes else null,&#10;    partner1TotalIncome: if is defined(calculatedDataPartner1TotalIncome)&#10;    then calculatedDataPartner1TotalIncome else null,&#10;    studentTotalIncome: if is defined(calculatedDataStudentTotalIncome)&#10;    then calculatedDataStudentTotalIncome else null, &#10;    totalDaycareCosts11YearsOrUnder: if is defined(calculatedDataTotalDaycareCosts11YearsOrUnder)&#10;    then calculatedDataTotalDaycareCosts11YearsOrUnder else null,&#10;    totalDaycareCosts12YearsOrOver: if is defined(calculatedDataTotalDaycareCosts12YearsOrOver)&#10;    then calculatedDataTotalDaycareCosts12YearsOrOver else null&#10;  }&#10;}" target="workflowData" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1wrj7fh</bpmn:incoming>
-      <bpmn:outgoing>Flow_0rxxozm</bpmn:outgoing>
+      <bpmn:incoming>Flow_1txrz77</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rkzx2d</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:serviceTask id="create-supporting-user-for-the-partner-task" name="Create supporting user for the partner">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="create-supporting-users" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=[&#34;Partner&#34;]" target="supportingUsersTypes" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_14701yl</bpmn:incoming>
+      <bpmn:outgoing>Flow_03zfrkx</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="create-supporting-users-for-parents-task" name="Create supporting users for parent/parents">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="create-supporting-users" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=if studentDataNumberOfParents = 1 then [&#34;Parent&#34;] else [&#34;Parent&#34;, &#34;Parent&#34;]" target="supportingUsersTypes" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>parents-verification-has-sin-gateway-yes-flow</bpmn:incoming>
+      <bpmn:outgoing>Flow_0dii2b3</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="pir-pending-declined-flow" name="Declined" sourceRef="pir-pending-declined-complted-gateway" targetRef="pir-declined-end-event">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=programInfoStatus = "Declined"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="verify-application-exceptions-status-denied-flow" name="Declined" sourceRef="verify-application-exceptions-status-gateway" targetRef="application-exception-end-event">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationExceptionStatus = "Declined"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="parents-verification-dependantstatus-dependant-flow" name="Dependant" sourceRef="parents-verification-has-dependant-gateway" targetRef="parents-verification-has-sin-gateway">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataDependantstatus = "dependant"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:callActivity id="Activity_0w3u365" name="Disbursement Schedule">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="parttime-configure-disbursement" propagateAllChildVariables="true" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1k200x2</bpmn:incoming>
+      <bpmn:outgoing>Flow_17yc7mz</bpmn:outgoing>
     </bpmn:callActivity>
+    <bpmn:callActivity id="Activity_0cqcjwg" name="Disbursement Schedule">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="fulltime-configure-disbursement" propagateAllChildVariables="true" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1j6gqvf</bpmn:incoming>
+      <bpmn:outgoing>Flow_0qmdwld</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="Flow_1a4wzic" name="Does Not Have NOA Approval" sourceRef="Gateway_1m2js1c" targetRef="update-application-status-to-assessment-task" />
+    <bpmn:endEvent id="Event_0mtgfbi">
+      <bpmn:incoming>Flow_0mt0uyq</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="first-assessment-gateway" name="First Assessment?">
+      <bpmn:incoming>Flow_0rxxozm</bpmn:incoming>
+      <bpmn:outgoing>assessment-flow</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0ozt4pg</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0358dxp" sourceRef="release-assessment-calculation-message" targetRef="verify-assessment-calculation-order-task" />
+    <bpmn:sequenceFlow id="Flow_03zfrkx" sourceRef="create-supporting-user-for-the-partner-task" targetRef="retrieve-supporting-info-for-partner-subprocess" />
+    <bpmn:sequenceFlow id="Flow_04f30nk" sourceRef="verify-application-exceptions-task" targetRef="Gateway_04wt04t" />
+    <bpmn:sequenceFlow id="Flow_06144it" sourceRef="program-info-not-required-task" targetRef="Gateway_1hgcddi" />
+    <bpmn:sequenceFlow id="Flow_0bza37i" sourceRef="verify-assessment-calculation-order-gateway" targetRef="verify-assessment-calculation-timer" />
+    <bpmn:sequenceFlow id="Flow_0cxn3c5" sourceRef="program-info-request-completed-message" targetRef="Gateway_03gbgqa" />
+    <bpmn:sequenceFlow id="Flow_0dii2b3" sourceRef="create-supporting-users-for-parents-task" targetRef="Gateway_1mg1n21" />
+    <bpmn:sequenceFlow id="Flow_0g1n1dk" sourceRef="update-application-status-to-in-progress-task" targetRef="verify-application-exceptions-task" />
+    <bpmn:sequenceFlow id="Flow_0guy66a" sourceRef="program-info-required-task" targetRef="pir-pending-gateway" />
+    <bpmn:sequenceFlow id="Flow_0hmh3m7" sourceRef="update-noa-status-to-not-required-task" targetRef="Gateway_04wql0w" />
+    <bpmn:sequenceFlow id="Flow_0im6s57" sourceRef="Gateway_03gbgqa" targetRef="pir-pending-declined-complted-gateway" />
+    <bpmn:sequenceFlow id="Flow_0joyxdn" sourceRef="pir-pending-event-gateway" targetRef="program-info-request-completed-message" />
+    <bpmn:sequenceFlow id="Flow_0jrbmj3" sourceRef="partner-income-verification-subprocess" targetRef="Gateway_1jdrla2" />
+    <bpmn:sequenceFlow id="Flow_0kjnr9t" sourceRef="Gateway_0b7tdao" targetRef="Gateway_0ny5tkb" />
+    <bpmn:sequenceFlow id="Flow_0l30wbo" sourceRef="retrieve-supporting-info-for-parent-2-subprocess" targetRef="parent-2-income-verification-subprocess" />
+    <bpmn:sequenceFlow id="Flow_0mayggl" sourceRef="update-application-status-to-assessment-task" targetRef="update-noa-status-to-required-task" />
+    <bpmn:sequenceFlow id="Flow_0mt0uyq" sourceRef="workflow-wrap-up-task" targetRef="Event_0mtgfbi" />
+    <bpmn:sequenceFlow id="Flow_0p1lgm7" sourceRef="update-noa-status-to-required-task" targetRef="Gateway_04wql0w" />
+    <bpmn:sequenceFlow id="Flow_0qmdwld" sourceRef="Activity_0cqcjwg" targetRef="save-disbursement-task" />
+    <bpmn:sequenceFlow id="Flow_0rkzx2d" sourceRef="Event_0w0bgro" targetRef="workflow-wrap-up-task" />
+    <bpmn:sequenceFlow id="Flow_0rxxozm" sourceRef="load-assessment-data-submit-or-reassessment-subprocess" targetRef="first-assessment-gateway" />
+    <bpmn:sequenceFlow id="Flow_0umbeot" sourceRef="verify-assessment-calculation-timer" targetRef="verify-assessment-calculation-order-task" />
+    <bpmn:sequenceFlow id="Flow_0v2i46e" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="Gateway_05k6rp7" />
+    <bpmn:sequenceFlow id="Flow_0wed99j" sourceRef="save-disbursement-task" targetRef="save-assessment-data-task" />
+    <bpmn:sequenceFlow id="Flow_0wp1s62" sourceRef="verify-assessment-calculation-order-task" targetRef="ready-for-calculation-gateway" />
+    <bpmn:sequenceFlow id="Flow_0ws0afg" sourceRef="application-exception-verified-message" targetRef="verify-application-exceptions-status-gateway" />
+    <bpmn:sequenceFlow id="Flow_0z518wc" sourceRef="Gateway_04wql0w" targetRef="Gateway_0f9knk0" />
+    <bpmn:sequenceFlow id="Flow_10lg2ud" sourceRef="verify-application-exceptions-pending-gateway" targetRef="verify-application-exceptions-retry-timer" />
+    <bpmn:sequenceFlow id="Flow_11q8vuj" sourceRef="parent-1-income-verification-subprocess" targetRef="Gateway_0b7tdao" />
+    <bpmn:sequenceFlow id="Flow_16d5gro" sourceRef="Gateway_0jc5bz6" targetRef="load-assessment-data-pre-assessment-subprocess" />
+    <bpmn:sequenceFlow id="Flow_17yc7mz" sourceRef="Activity_0w3u365" targetRef="save-disbursement-part-time-task" />
+    <bpmn:sequenceFlow id="Flow_18qbsu1" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="student-income-verification-subprocess" />
+    <bpmn:sequenceFlow id="Flow_18xo3dr" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="parents-verification-has-dependant-gateway" />
+    <bpmn:sequenceFlow id="Flow_19wmdao" sourceRef="Gateway_00mly8t" targetRef="Gateway_0b7tdao" />
+    <bpmn:sequenceFlow id="Flow_1a980l7" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="needs-pir-gateway" />
+    <bpmn:sequenceFlow id="Flow_1atzf7v" sourceRef="associate-msfaa-task" targetRef="Gateway_1xse027" />
+    <bpmn:sequenceFlow id="Flow_1btetiq" sourceRef="load-assessment-data-pre-assessment-subprocess" targetRef="verify-assessment-calculation-order-task" />
+    <bpmn:sequenceFlow id="Flow_1cd204k" sourceRef="Gateway_1mg1n21" targetRef="Gateway_0vft251" />
+    <bpmn:sequenceFlow id="Flow_1ds5r8m" sourceRef="pir-pending-event-gateway" targetRef="program-info-request-timer" />
+    <bpmn:sequenceFlow id="Flow_1ef3map" sourceRef="assessment-start-event" targetRef="associate-workflow-instance-task" />
+    <bpmn:sequenceFlow id="Flow_1eip27h" sourceRef="verify-assessment-calculation-order-gateway" targetRef="release-assessment-calculation-message" />
+    <bpmn:sequenceFlow id="Flow_1f8ymzi" sourceRef="save-assessment-data-part-time-task" targetRef="Gateway_1hwknxt" />
+    <bpmn:sequenceFlow id="Flow_1g59sq3" sourceRef="retrieve-supporting-info-for-parent-1-subprocess" targetRef="parent-1-income-verification-subprocess" />
+    <bpmn:sequenceFlow id="Flow_1izp0bk" sourceRef="save-assessment-data-task" targetRef="Gateway_1hwknxt" />
+    <bpmn:sequenceFlow id="Flow_1j6gqvf" sourceRef="Activity_0t108ac" targetRef="Activity_0cqcjwg" />
+    <bpmn:sequenceFlow id="Flow_1j7i68d" sourceRef="parent-2-income-verification-subprocess" targetRef="Gateway_00mly8t" />
+    <bpmn:sequenceFlow id="Flow_1k200x2" sourceRef="Activity_09v8xl0" targetRef="Activity_0w3u365" />
+    <bpmn:sequenceFlow id="Flow_1mbspca" sourceRef="student-income-verification-subprocess" targetRef="Gateway_0jc5bz6" />
+    <bpmn:sequenceFlow id="Flow_1mpwyku" sourceRef="Gateway_1hwknxt" targetRef="associate-msfaa-task" />
+    <bpmn:sequenceFlow id="Flow_1o87o98" sourceRef="update-noa-status-to-not-required-application-completed-task" targetRef="Gateway_0f9knk0" />
+    <bpmn:sequenceFlow id="Flow_1rn6agw" sourceRef="Gateway_1jdrla2" targetRef="Gateway_0jc5bz6" />
+    <bpmn:sequenceFlow id="Flow_1s8wnxz" sourceRef="Gateway_1hgcddi" targetRef="Gateway_0jc5bz6" />
+    <bpmn:sequenceFlow id="Flow_1sze0w6" sourceRef="program-info-request-timer" targetRef="program-info-required-task" />
+    <bpmn:sequenceFlow id="Flow_1txrz77" sourceRef="Gateway_0f9knk0" targetRef="Event_0w0bgro" />
+    <bpmn:sequenceFlow id="Flow_1u5ion6" sourceRef="Gateway_1mg1n21" targetRef="retrieve-supporting-info-for-parent-1-subprocess" />
+    <bpmn:sequenceFlow id="Flow_1uh1kyu" sourceRef="Gateway_0ny5tkb" targetRef="Gateway_0jc5bz6" />
+    <bpmn:sequenceFlow id="Flow_1v0ju0g" sourceRef="verify-application-exceptions-pending-gateway" targetRef="application-exception-verified-message" />
+    <bpmn:sequenceFlow id="Flow_1wde0bi" sourceRef="retrieve-supporting-info-for-partner-subprocess" targetRef="partner-income-verification-subprocess" />
+    <bpmn:sequenceFlow id="Flow_1wrj7fh" sourceRef="associate-workflow-instance-task" targetRef="load-assessment-data-submit-or-reassessment-subprocess" />
+    <bpmn:sequenceFlow id="Flow_1y2j9iz" sourceRef="save-disbursement-part-time-task" targetRef="save-assessment-data-part-time-task" />
+    <bpmn:sequenceFlow id="Flow_0hfjqs0" name="Full Time" sourceRef="Gateway_11qgy63" targetRef="Activity_0t108ac">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=offeringIntensity = "Full Time"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="Gateway_00mly8t">
+      <bpmn:incoming>Flow_0bo0mn4</bpmn:incoming>
+      <bpmn:incoming>Flow_1j7i68d</bpmn:incoming>
+      <bpmn:outgoing>Flow_19wmdao</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_03gbgqa">
+      <bpmn:incoming>Flow_0cxn3c5</bpmn:incoming>
+      <bpmn:incoming>pir-completed-flow</bpmn:incoming>
+      <bpmn:outgoing>Flow_0im6s57</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_04wql0w">
+      <bpmn:incoming>Flow_0p1lgm7</bpmn:incoming>
+      <bpmn:incoming>Flow_0hmh3m7</bpmn:incoming>
+      <bpmn:outgoing>Flow_0z518wc</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:parallelGateway id="Gateway_0b7tdao">
+      <bpmn:incoming>Flow_11q8vuj</bpmn:incoming>
+      <bpmn:incoming>Flow_19wmdao</bpmn:incoming>
+      <bpmn:outgoing>Flow_0kjnr9t</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:exclusiveGateway id="Gateway_0f9knk0">
+      <bpmn:incoming>Flow_0z518wc</bpmn:incoming>
+      <bpmn:incoming>Flow_1o87o98</bpmn:incoming>
+      <bpmn:outgoing>Flow_1txrz77</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:parallelGateway id="Gateway_0jc5bz6">
+      <bpmn:incoming>Flow_1rn6agw</bpmn:incoming>
+      <bpmn:incoming>Flow_1uh1kyu</bpmn:incoming>
+      <bpmn:incoming>Flow_1mbspca</bpmn:incoming>
+      <bpmn:incoming>Flow_1s8wnxz</bpmn:incoming>
+      <bpmn:outgoing>Flow_16d5gro</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:exclusiveGateway id="Gateway_0ny5tkb">
+      <bpmn:incoming>parents-verification-has-sin-gateway-no-flow</bpmn:incoming>
+      <bpmn:incoming>parents-verification-dependantstatus-independant-flow</bpmn:incoming>
+      <bpmn:incoming>Flow_0kjnr9t</bpmn:incoming>
+      <bpmn:outgoing>Flow_1uh1kyu</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_11qgy63">
+      <bpmn:incoming>Flow_0mpuqex</bpmn:incoming>
+      <bpmn:outgoing>Flow_0hfjqs0</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0e3pl88</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_176fysj">
+      <bpmn:incoming>Flow_0emvz6f</bpmn:incoming>
+      <bpmn:outgoing>Flow_14701yl</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1gii09j</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_1hgcddi">
+      <bpmn:incoming>Flow_06144it</bpmn:incoming>
+      <bpmn:incoming>pir-pending-completed-flow</bpmn:incoming>
+      <bpmn:outgoing>Flow_1s8wnxz</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_1hwknxt">
+      <bpmn:incoming>Flow_1izp0bk</bpmn:incoming>
+      <bpmn:incoming>Flow_1f8ymzi</bpmn:incoming>
+      <bpmn:outgoing>Flow_1mpwyku</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_1jdrla2">
+      <bpmn:incoming>Flow_1u0qixu</bpmn:incoming>
+      <bpmn:incoming>Flow_1gii09j</bpmn:incoming>
+      <bpmn:incoming>Flow_0jrbmj3</bpmn:incoming>
+      <bpmn:outgoing>Flow_1rn6agw</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_1m2js1c" default="Flow_1a4wzic">
+      <bpmn:incoming>Flow_1cb5fpw</bpmn:incoming>
+      <bpmn:outgoing>Flow_1a4wzic</bpmn:outgoing>
+      <bpmn:outgoing>Flow_01iq5cw</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:parallelGateway id="Gateway_1mg1n21">
+      <bpmn:incoming>Flow_0dii2b3</bpmn:incoming>
+      <bpmn:outgoing>Flow_1u5ion6</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1cd204k</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:exclusiveGateway id="Gateway_1xse027" default="Flow_1cb5fpw">
+      <bpmn:incoming>Flow_1atzf7v</bpmn:incoming>
+      <bpmn:outgoing>Flow_1cb5fpw</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1wkpr1a</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_01iq5cw" name="Has NOA Approval" sourceRef="Gateway_1m2js1c" targetRef="update-noa-status-to-not-required-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationHasNOAApproval = true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="Gateway_05k6rp7" name="Has Partner?">
+      <bpmn:incoming>Flow_0v2i46e</bpmn:incoming>
+      <bpmn:outgoing>Flow_0emvz6f</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1u0qixu</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_0vft251" name="Has second parent?">
+      <bpmn:incoming>Flow_1cd204k</bpmn:incoming>
+      <bpmn:outgoing>Flow_1lbai2h</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0bo0mn4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_14701yl" name="Has valid SIN" sourceRef="Gateway_176fysj" targetRef="create-supporting-user-for-the-partner-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourPartnerAbleToReport = "yes"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:parallelGateway id="in-progress-main-parallel-info-gathering-gateway">
+      <bpmn:incoming>verify-application-exceptions-status-approved-flow</bpmn:incoming>
+      <bpmn:outgoing>Flow_1a980l7</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0v2i46e</bpmn:outgoing>
+      <bpmn:outgoing>Flow_18xo3dr</bpmn:outgoing>
+      <bpmn:outgoing>Flow_18qbsu1</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="parents-verification-dependantstatus-independant-flow" name="Independant" sourceRef="parents-verification-has-dependant-gateway" targetRef="Gateway_0ny5tkb">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataDependantstatus != "dependant"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="ready-for-calculation-gateway" name="Is the assessment first in sequence to be calculated?">
+      <bpmn:incoming>Flow_0wp1s62</bpmn:incoming>
+      <bpmn:outgoing>Flow_0mpuqex</bpmn:outgoing>
+      <bpmn:outgoing>Flow_16zz7zb</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
     <bpmn:callActivity id="load-assessment-data-pre-assessment-subprocess" name="Load consolidated data (Pre-assessment)">
       <bpmn:extensionElements>
         <zeebe:calledElement processId="load-assessment-consolidated-data" propagateAllChildVariables="true" />
@@ -379,156 +411,37 @@
       <bpmn:incoming>Flow_16d5gro</bpmn:incoming>
       <bpmn:outgoing>Flow_1btetiq</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:parallelGateway id="Gateway_0jc5bz6">
-      <bpmn:incoming>Flow_1rn6agw</bpmn:incoming>
-      <bpmn:incoming>Flow_1uh1kyu</bpmn:incoming>
-      <bpmn:incoming>Flow_1mbspca</bpmn:incoming>
-      <bpmn:incoming>Flow_1s8wnxz</bpmn:incoming>
-      <bpmn:outgoing>Flow_16d5gro</bpmn:outgoing>
-    </bpmn:parallelGateway>
-    <bpmn:endEvent id="pir-declined-end-event">
-      <bpmn:incoming>pir-pending-declined-flow</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:exclusiveGateway id="Gateway_1hgcddi">
-      <bpmn:incoming>Flow_06144it</bpmn:incoming>
-      <bpmn:incoming>pir-pending-completed-flow</bpmn:incoming>
-      <bpmn:outgoing>Flow_1s8wnxz</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:exclusiveGateway id="pir-pending-declined-complted-gateway">
-      <bpmn:incoming>Flow_0im6s57</bpmn:incoming>
-      <bpmn:outgoing>pir-pending-completed-flow</bpmn:outgoing>
-      <bpmn:outgoing>pir-pending-declined-flow</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:exclusiveGateway id="Gateway_03gbgqa">
-      <bpmn:incoming>Flow_0cxn3c5</bpmn:incoming>
-      <bpmn:incoming>pir-completed-flow</bpmn:incoming>
-      <bpmn:outgoing>Flow_0im6s57</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:intermediateCatchEvent id="program-info-request-completed-message">
-      <bpmn:incoming>Flow_0joyxdn</bpmn:incoming>
-      <bpmn:outgoing>Flow_0cxn3c5</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_127fcp3" messageRef="Message_1clo0eh" />
-    </bpmn:intermediateCatchEvent>
-    <bpmn:eventBasedGateway id="pir-pending-event-gateway">
-      <bpmn:incoming>pir-not-completed-flow</bpmn:incoming>
-      <bpmn:outgoing>Flow_0joyxdn</bpmn:outgoing>
-      <bpmn:outgoing>Flow_1ds5r8m</bpmn:outgoing>
-    </bpmn:eventBasedGateway>
-    <bpmn:intermediateCatchEvent id="program-info-request-timer">
-      <bpmn:incoming>Flow_1ds5r8m</bpmn:incoming>
-      <bpmn:outgoing>Flow_1sze0w6</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="TimerEventDefinition_0jk0tgh">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT12H</bpmn:timeDuration>
-      </bpmn:timerEventDefinition>
-    </bpmn:intermediateCatchEvent>
-    <bpmn:exclusiveGateway id="pir-pending-gateway" name="Completed?">
-      <bpmn:incoming>Flow_0guy66a</bpmn:incoming>
-      <bpmn:outgoing>pir-not-completed-flow</bpmn:outgoing>
-      <bpmn:outgoing>pir-completed-flow</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="program-info-required-task" name="Program Info required">
+    <bpmn:callActivity id="load-assessment-data-submit-or-reassessment-subprocess" name="Load consolidated data (Submit or Reassessment)">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="program-info-request" />
-        <zeebe:taskHeaders>
-          <zeebe:header key="programInfoStatus" value="Required" />
-        </zeebe:taskHeaders>
+        <zeebe:calledElement processId="load-assessment-consolidated-data" propagateAllChildVariables="true" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=[&#34;load-assessment-data-submit-or-reassessment-subprocess&#34;]" target="parentSubprocesses" />
+          <zeebe:input source="=&#34;load-assessment-data-submit-or-reassessment-subprocess&#34;" target="load_assessment_data_submit_or_reassessment_subprocess_passthrough" />
+        </zeebe:ioMapping>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1sze0w6</bpmn:incoming>
-      <bpmn:incoming>needs-pir-flow</bpmn:incoming>
-      <bpmn:outgoing>Flow_0guy66a</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:serviceTask id="program-info-not-required-task" name="Program Info not required">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="program-info-request" />
-        <zeebe:taskHeaders>
-          <zeebe:header key="programInfoStatus" value="Not Required" />
-        </zeebe:taskHeaders>
-      </bpmn:extensionElements>
-      <bpmn:incoming>has-offering-flow</bpmn:incoming>
-      <bpmn:outgoing>Flow_06144it</bpmn:outgoing>
-    </bpmn:serviceTask>
+      <bpmn:incoming>Flow_1wrj7fh</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rxxozm</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="needs-pir-flow" name="Needs PIR" sourceRef="needs-pir-gateway" targetRef="program-info-required-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataSelectedOffering = null</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
     <bpmn:exclusiveGateway id="needs-pir-gateway">
       <bpmn:incoming>Flow_1a980l7</bpmn:incoming>
       <bpmn:outgoing>needs-pir-flow</bpmn:outgoing>
       <bpmn:outgoing>has-offering-flow</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:callActivity id="student-income-verification-subprocess" name="Student Income Verification">
-      <bpmn:extensionElements>
-        <zeebe:calledElement processId="cra-integration-income-verification" propagateAllChildVariables="false" />
-        <zeebe:ioMapping>
-          <zeebe:input source="=studentDataTaxReturnIncome" target="reportedIncome" />
-          <zeebe:input source="=null" target="supportingUserId" />
-          <zeebe:input source="=[&#34;student-income-verification-subprocess&#34;]" target="parentSubprocesses" />
-          <zeebe:output source="=&#34;student-income-verification-subprocess&#34;" target="student_income_verification_subprocess_passthrough" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_18qbsu1</bpmn:incoming>
-      <bpmn:outgoing>Flow_1mbspca</bpmn:outgoing>
-    </bpmn:callActivity>
-    <bpmn:callActivity id="partner-income-verification-subprocess" name="Partner Income Verification">
-      <bpmn:extensionElements>
-        <zeebe:calledElement processId="cra-integration-income-verification" propagateAllChildVariables="false" />
-        <zeebe:ioMapping>
-          <zeebe:input source="=partner1TotalIncome" target="reportedIncome" />
-          <zeebe:input source="=partnerSupportingUserId" target="supportingUserId" />
-          <zeebe:input source="=[&#34;partner-income-verification-subprocess&#34;]" target="parentSubprocesses" />
-          <zeebe:output source="=true" target="partnerIncomeVerification" />
-          <zeebe:output source="=&#34;partner-income-verification-subprocess&#34;" target="partner_income_verification_subprocess_passthrough" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1wde0bi</bpmn:incoming>
-      <bpmn:outgoing>Flow_0jrbmj3</bpmn:outgoing>
-    </bpmn:callActivity>
-    <bpmn:callActivity id="retrieve-supporting-info-for-partner-subprocess" name="Retrieve supporting info for partner">
-      <bpmn:extensionElements>
-        <zeebe:calledElement processId="supporting-user-information-request" propagateAllChildVariables="false" />
-        <zeebe:ioMapping>
-          <zeebe:input source="=createdSupportingUsersIds[1]" target="supportingUserId" />
-          <zeebe:input source="=[&#34;retrieve-supporting-info-for-partner-subprocess&#34;]" target="parentSubprocesses" />
-          <zeebe:output source="=totalIncome" target="partner1TotalIncome" />
-          <zeebe:output source="=supportingUserId" target="partnerSupportingUserId" />
-          <zeebe:output source="=&#34;retrieve-supporting-info-for-partner-subprocess&#34;" target="retrieve_supporting_info_for_partner_subprocess_passthrough" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_03zfrkx</bpmn:incoming>
-      <bpmn:outgoing>Flow_1wde0bi</bpmn:outgoing>
-    </bpmn:callActivity>
-    <bpmn:serviceTask id="create-supporting-user-for-the-partner-task" name="Create supporting user for the partner">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="create-supporting-users" />
-        <zeebe:ioMapping>
-          <zeebe:input source="=[&#34;Partner&#34;]" target="supportingUsersTypes" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_14701yl</bpmn:incoming>
-      <bpmn:outgoing>Flow_03zfrkx</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:exclusiveGateway id="Gateway_176fysj">
-      <bpmn:incoming>Flow_0emvz6f</bpmn:incoming>
-      <bpmn:outgoing>Flow_14701yl</bpmn:outgoing>
-      <bpmn:outgoing>Flow_1gii09j</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:exclusiveGateway id="Gateway_05k6rp7" name="Has Partner?">
-      <bpmn:incoming>Flow_0v2i46e</bpmn:incoming>
-      <bpmn:outgoing>Flow_0emvz6f</bpmn:outgoing>
-      <bpmn:outgoing>Flow_1u0qixu</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:exclusiveGateway id="Gateway_00mly8t">
-      <bpmn:incoming>Flow_0bo0mn4</bpmn:incoming>
-      <bpmn:incoming>Flow_1j7i68d</bpmn:incoming>
-      <bpmn:outgoing>Flow_19wmdao</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:parallelGateway id="Gateway_0b7tdao">
-      <bpmn:incoming>Flow_11q8vuj</bpmn:incoming>
-      <bpmn:incoming>Flow_19wmdao</bpmn:incoming>
-      <bpmn:outgoing>Flow_0kjnr9t</bpmn:outgoing>
-    </bpmn:parallelGateway>
-    <bpmn:exclusiveGateway id="Gateway_0ny5tkb">
-      <bpmn:incoming>parents-verification-has-sin-gateway-no-flow</bpmn:incoming>
-      <bpmn:incoming>parents-verification-dependantstatus-independant-flow</bpmn:incoming>
-      <bpmn:incoming>Flow_0kjnr9t</bpmn:incoming>
-      <bpmn:outgoing>Flow_1uh1kyu</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="pir-not-completed-flow" name="No" sourceRef="pir-pending-gateway" targetRef="pir-pending-event-gateway">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=programInfoStatus = "Required"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0bo0mn4" name="No" sourceRef="Gateway_0vft251" targetRef="Gateway_00mly8t">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataNumberOfParents != 2</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1u0qixu" name="No" sourceRef="Gateway_05k6rp7" targetRef="Gateway_1jdrla2">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataRelationshipStatus != "married"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="verify-application-exceptions-not-pending-flow" name="Not pending" sourceRef="Gateway_04wt04t" targetRef="verify-application-exceptions-status-gateway">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationExceptionStatus != "Pending"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
     <bpmn:callActivity id="parent-1-income-verification-subprocess" name="Parent 1 Income Verification">
       <bpmn:extensionElements>
         <zeebe:calledElement processId="cra-integration-income-verification" propagateAllChildVariables="false" />
@@ -555,20 +468,102 @@
       <bpmn:incoming>Flow_0l30wbo</bpmn:incoming>
       <bpmn:outgoing>Flow_1j7i68d</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:callActivity id="retrieve-supporting-info-for-parent-2-subprocess" name="Retrieve supporting info for parent 2">
+    <bpmn:sequenceFlow id="parents-verification-has-sin-gateway-no-flow" name="Parents do not have SIN" sourceRef="parents-verification-has-sin-gateway" targetRef="Gateway_0ny5tkb">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataParentValidSinNumber != "yes"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="parents-verification-has-sin-gateway-yes-flow" name="Parents have SIN" sourceRef="parents-verification-has-sin-gateway" targetRef="create-supporting-users-for-parents-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataParentValidSinNumber = "yes"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="parents-verification-has-dependant-gateway">
+      <bpmn:incoming>Flow_18xo3dr</bpmn:incoming>
+      <bpmn:outgoing>parents-verification-dependantstatus-dependant-flow</bpmn:outgoing>
+      <bpmn:outgoing>parents-verification-dependantstatus-independant-flow</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="parents-verification-has-sin-gateway">
+      <bpmn:incoming>parents-verification-dependantstatus-dependant-flow</bpmn:incoming>
+      <bpmn:outgoing>parents-verification-has-sin-gateway-no-flow</bpmn:outgoing>
+      <bpmn:outgoing>parents-verification-has-sin-gateway-yes-flow</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0e3pl88" name="Part Time" sourceRef="Gateway_11qgy63" targetRef="Activity_09v8xl0">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=offeringIntensity = "Part Time"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1gii09j" name="Partner do not have SIN" sourceRef="Gateway_176fysj" targetRef="Gateway_1jdrla2">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourPartnerAbleToReport != "yes"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:callActivity id="partner-income-verification-subprocess" name="Partner Income Verification">
       <bpmn:extensionElements>
-        <zeebe:calledElement processId="supporting-user-information-request" propagateAllChildVariables="false" />
+        <zeebe:calledElement processId="cra-integration-income-verification" propagateAllChildVariables="false" />
         <zeebe:ioMapping>
-          <zeebe:input source="=createdSupportingUsersIds[2]" target="supportingUserId" />
-          <zeebe:input source="=[&#34;retrieve-supporting-info-for-parent-2-subprocess&#34;]" target="parentSubprocesses" />
-          <zeebe:output source="=supportingUserId" target="parent2SupportingUserId" />
-          <zeebe:output source="=totalIncome" target="parent2TotalIncome" />
-          <zeebe:output source="=&#34;retrieve-supporting-info-for-parent-2-subprocess&#34;" target="retrieve_supporting_info_for_parent_2_subprocess_passthrough" />
+          <zeebe:input source="=partner1TotalIncome" target="reportedIncome" />
+          <zeebe:input source="=partnerSupportingUserId" target="supportingUserId" />
+          <zeebe:input source="=[&#34;partner-income-verification-subprocess&#34;]" target="parentSubprocesses" />
+          <zeebe:output source="=true" target="partnerIncomeVerification" />
+          <zeebe:output source="=&#34;partner-income-verification-subprocess&#34;" target="partner_income_verification_subprocess_passthrough" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1lbai2h</bpmn:incoming>
-      <bpmn:outgoing>Flow_0l30wbo</bpmn:outgoing>
+      <bpmn:incoming>Flow_1wde0bi</bpmn:incoming>
+      <bpmn:outgoing>Flow_0jrbmj3</bpmn:outgoing>
     </bpmn:callActivity>
+    <bpmn:sequenceFlow id="verify-application-exceptions-pending-flow" name="Pending" sourceRef="Gateway_04wt04t" targetRef="verify-application-exceptions-pending-gateway">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationExceptionStatus = "Pending"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="has-offering-flow" name="PIR not required" sourceRef="needs-pir-gateway" targetRef="program-info-not-required-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataSelectedOffering != null</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="pir-declined-end-event">
+      <bpmn:incoming>pir-pending-declined-flow</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="pir-pending-declined-complted-gateway">
+      <bpmn:incoming>Flow_0im6s57</bpmn:incoming>
+      <bpmn:outgoing>pir-pending-completed-flow</bpmn:outgoing>
+      <bpmn:outgoing>pir-pending-declined-flow</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:eventBasedGateway id="pir-pending-event-gateway">
+      <bpmn:incoming>pir-not-completed-flow</bpmn:incoming>
+      <bpmn:outgoing>Flow_0joyxdn</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1ds5r8m</bpmn:outgoing>
+    </bpmn:eventBasedGateway>
+    <bpmn:serviceTask id="program-info-not-required-task" name="Program Info not required">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="program-info-request" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="programInfoStatus" value="Not Required" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>has-offering-flow</bpmn:incoming>
+      <bpmn:outgoing>Flow_06144it</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="program-info-required-task" name="Program Info required">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="program-info-request" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="programInfoStatus" value="Required" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1sze0w6</bpmn:incoming>
+      <bpmn:incoming>needs-pir-flow</bpmn:incoming>
+      <bpmn:outgoing>Flow_0guy66a</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:intermediateCatchEvent id="program-info-request-completed-message">
+      <bpmn:incoming>Flow_0joyxdn</bpmn:incoming>
+      <bpmn:outgoing>Flow_0cxn3c5</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_127fcp3" messageRef="Message_1clo0eh" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:intermediateCatchEvent id="program-info-request-timer">
+      <bpmn:incoming>Flow_1ds5r8m</bpmn:incoming>
+      <bpmn:outgoing>Flow_1sze0w6</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0jk0tgh">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT12H</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_0ozt4pg" name="Reassessment" sourceRef="first-assessment-gateway" targetRef="verify-assessment-calculation-order-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=assessmentTriggerType != "Original assessment"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:intermediateCatchEvent id="release-assessment-calculation-message">
+      <bpmn:incoming>Flow_1eip27h</bpmn:incoming>
+      <bpmn:outgoing>Flow_0358dxp</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1tq976n" messageRef="Message_16elhuc" />
+    </bpmn:intermediateCatchEvent>
     <bpmn:callActivity id="retrieve-supporting-info-for-parent-1-subprocess" name="Retrieve supporting info for parent 1">
       <bpmn:extensionElements>
         <zeebe:calledElement processId="supporting-user-information-request" propagateAllChildVariables="false" />
@@ -583,75 +578,139 @@
       <bpmn:incoming>Flow_1u5ion6</bpmn:incoming>
       <bpmn:outgoing>Flow_1g59sq3</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:exclusiveGateway id="Gateway_0vft251" name="Has second parent?">
-      <bpmn:incoming>Flow_1cd204k</bpmn:incoming>
-      <bpmn:outgoing>Flow_1lbai2h</bpmn:outgoing>
-      <bpmn:outgoing>Flow_0bo0mn4</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:parallelGateway id="Gateway_1mg1n21">
-      <bpmn:incoming>Flow_0dii2b3</bpmn:incoming>
-      <bpmn:outgoing>Flow_1u5ion6</bpmn:outgoing>
-      <bpmn:outgoing>Flow_1cd204k</bpmn:outgoing>
-    </bpmn:parallelGateway>
-    <bpmn:serviceTask id="create-supporting-users-for-parents-task" name="Create supporting users for parent/parents">
+    <bpmn:callActivity id="retrieve-supporting-info-for-parent-2-subprocess" name="Retrieve supporting info for parent 2">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="create-supporting-users" />
+        <zeebe:calledElement processId="supporting-user-information-request" propagateAllChildVariables="false" />
         <zeebe:ioMapping>
-          <zeebe:input source="=if studentDataNumberOfParents = 1 then [&#34;Parent&#34;] else [&#34;Parent&#34;, &#34;Parent&#34;]" target="supportingUsersTypes" />
+          <zeebe:input source="=createdSupportingUsersIds[2]" target="supportingUserId" />
+          <zeebe:input source="=[&#34;retrieve-supporting-info-for-parent-2-subprocess&#34;]" target="parentSubprocesses" />
+          <zeebe:output source="=supportingUserId" target="parent2SupportingUserId" />
+          <zeebe:output source="=totalIncome" target="parent2TotalIncome" />
+          <zeebe:output source="=&#34;retrieve-supporting-info-for-parent-2-subprocess&#34;" target="retrieve_supporting_info_for_parent_2_subprocess_passthrough" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
-      <bpmn:incoming>parents-verification-has-sin-gateway-yes-flow</bpmn:incoming>
-      <bpmn:outgoing>Flow_0dii2b3</bpmn:outgoing>
+      <bpmn:incoming>Flow_1lbai2h</bpmn:incoming>
+      <bpmn:outgoing>Flow_0l30wbo</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:callActivity id="retrieve-supporting-info-for-partner-subprocess" name="Retrieve supporting info for partner">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="supporting-user-information-request" propagateAllChildVariables="false" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=createdSupportingUsersIds[1]" target="supportingUserId" />
+          <zeebe:input source="=[&#34;retrieve-supporting-info-for-partner-subprocess&#34;]" target="parentSubprocesses" />
+          <zeebe:output source="=totalIncome" target="partner1TotalIncome" />
+          <zeebe:output source="=supportingUserId" target="partnerSupportingUserId" />
+          <zeebe:output source="=&#34;retrieve-supporting-info-for-partner-subprocess&#34;" target="retrieve_supporting_info_for_partner_subprocess_passthrough" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_03zfrkx</bpmn:incoming>
+      <bpmn:outgoing>Flow_1wde0bi</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:serviceTask id="save-assessment-data-part-time-task" name="Save assessment output">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="={&#10;  weeks: offeringWeeks,&#10;  tuitionCost: calculatedDataActualTuitionCosts,&#10;  booksAndSuppliesCost: calculatedDataProgramRelatedCosts,&#10;  mandatoryFees: calculatedDataMandatoryFees,&#10;  exceptionalEducationCost: offeringExceptionalExpenses,&#10;  childcareCost: calculatedDataTotalChildCareCost,&#10;  totalFamilyIncome: calculatedDataTotalFamilyIncome,&#10;  transportationCost: calculatedDataTotalTransportationAllowance,&#10;  miscellaneousAllowance: calculatedDataMiscellaneousAllowance,&#10;  totalAssessmentNeed: calculatedDataTotalAssessedNeed,&#10;  totalAcademicExpenses: calculatedDataTotalAcademicExpenses,&#10;  finalFederalAwardNetCSGPAmount: finalFederalAwardNetCSGPAmount,&#10;  finalFederalAwardNetCSPTAmount: finalFederalAwardNetCSPTAmount,&#10;  finalFederalAwardNetCSGDAmount: finalFederalAwardNetCSGDAmount,&#10;  finalProvincialAwardNetBCAGAmount: finalProvincialAwardNetBCAGAmount,&#10;  finalProvincialAwardNetSBSDAmount: finalProvincialAwardNetSBSDAmount,&#10;  finalFederalAwardNetCSLPAmount: finalFederalAwardNetCSLPAmount,&#10;  finalAwardTotal: finalAwardTotal&#10;}" target="assessmentData" />
+        </zeebe:ioMapping>
+        <zeebe:taskDefinition type="save-assessment-data" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1y2j9iz</bpmn:incoming>
+      <bpmn:outgoing>Flow_1f8ymzi</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:exclusiveGateway id="parents-verification-has-dependant-gateway">
-      <bpmn:incoming>Flow_18xo3dr</bpmn:incoming>
-      <bpmn:outgoing>parents-verification-dependantstatus-dependant-flow</bpmn:outgoing>
-      <bpmn:outgoing>parents-verification-dependantstatus-independant-flow</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:exclusiveGateway id="parents-verification-has-sin-gateway">
-      <bpmn:incoming>parents-verification-dependantstatus-dependant-flow</bpmn:incoming>
-      <bpmn:outgoing>parents-verification-has-sin-gateway-no-flow</bpmn:outgoing>
-      <bpmn:outgoing>parents-verification-has-sin-gateway-yes-flow</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:exclusiveGateway id="Gateway_1jdrla2">
-      <bpmn:incoming>Flow_1u0qixu</bpmn:incoming>
-      <bpmn:incoming>Flow_1gii09j</bpmn:incoming>
-      <bpmn:incoming>Flow_0jrbmj3</bpmn:incoming>
-      <bpmn:outgoing>Flow_1rn6agw</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:endEvent id="application-exception-end-event">
-      <bpmn:incoming>verify-application-exceptions-status-denied-flow</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:parallelGateway id="in-progress-main-parallel-info-gathering-gateway">
-      <bpmn:incoming>verify-application-exceptions-status-approved-flow</bpmn:incoming>
-      <bpmn:outgoing>Flow_1a980l7</bpmn:outgoing>
-      <bpmn:outgoing>Flow_0v2i46e</bpmn:outgoing>
-      <bpmn:outgoing>Flow_18xo3dr</bpmn:outgoing>
-      <bpmn:outgoing>Flow_18qbsu1</bpmn:outgoing>
-    </bpmn:parallelGateway>
-    <bpmn:intermediateCatchEvent id="verify-application-exceptions-retry-timer">
-      <bpmn:incoming>Flow_10lg2ud</bpmn:incoming>
-      <bpmn:outgoing>verify-application-exceptions-retry-timer-flow</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="TimerEventDefinition_0ygi81c">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT12H</bpmn:timeDuration>
-      </bpmn:timerEventDefinition>
-    </bpmn:intermediateCatchEvent>
-    <bpmn:intermediateCatchEvent id="application-exception-verified-message">
-      <bpmn:incoming>Flow_1v0ju0g</bpmn:incoming>
-      <bpmn:outgoing>Flow_0ws0afg</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_1t800lv" messageRef="Message_2t9i9o7" />
-    </bpmn:intermediateCatchEvent>
-    <bpmn:eventBasedGateway id="verify-application-exceptions-pending-gateway">
-      <bpmn:incoming>verify-application-exceptions-pending-flow</bpmn:incoming>
-      <bpmn:outgoing>Flow_1v0ju0g</bpmn:outgoing>
-      <bpmn:outgoing>Flow_10lg2ud</bpmn:outgoing>
-    </bpmn:eventBasedGateway>
-    <bpmn:exclusiveGateway id="verify-application-exceptions-status-gateway">
-      <bpmn:incoming>verify-application-exceptions-not-pending-flow</bpmn:incoming>
-      <bpmn:incoming>Flow_0ws0afg</bpmn:incoming>
-      <bpmn:outgoing>verify-application-exceptions-status-denied-flow</bpmn:outgoing>
-      <bpmn:outgoing>verify-application-exceptions-status-approved-flow</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="save-assessment-data-task" name="Save assessment output">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="={&#10;  weeks: offeringWeeks,&#10;  tuitionCost: calculatedDataTotalTutionCost,&#10;  childcareCost: calculatedDataTotalChildCareCost,&#10;  livingAllowance: calculatedDataTotalMSOLAllowance,&#10;  totalAssessedCost: calculatedDataTotalCosts,&#10;  totalFamilyIncome: calculatedDataTotalFamilyIncome,&#10;  totalFederalAward: awardNetFederalTotalAward,&#10;  otherAllowableCost: calculatedDataTotalChildSpousalSupport + calculatedDataTotalSecondResidence,&#10;  transportationCost: calculatedDataTotalTransportationCost,&#10;  secondResidenceCost: calculatedDataTotalSecondResidence,&#10;  totalAssessmentNeed: calculatedDataTotalAssessedNeed,&#10;  booksAndSuppliesCost: calculatedDataTotalBookCost,&#10;  totalProvincialAward: awardNetProvincialTotalAward,&#10;  alimonyOrChildSupport: calculatedDataTotalChildSpousalSupport,&#10;  federalAssessmentNeed: calculatedDataFederalAssessedNeed,&#10;  exceptionalEducationCost: offeringExceptionalExpenses,&#10;  provincialAssessmentNeed: calculatedDataProvincialAssessedNeed,&#10;  totalFederalContribution: calculatedDataTotalFederalContribution,&#10;  parentAssessedContribution: calculatedDataTotalParentalContribution,&#10;  partnerAssessedContribution: calculatedDataTotalSpouseContribution,&#10;  totalProvincialContribution: calculatedDataTotalProvincialContribution,&#10;  studentTotalFederalContribution: calculatedDataTotalFederalFSC,&#10;  totalFederalAssessedResources: parentAssessedContribution + partnerAssessedContribution + calculatedDataTargetedResources + calculatedDataTotalFederalFSC,&#10;  totalProvincialAssessedResources: parentAssessedContribution + partnerAssessedContribution + calculatedDataTargetedResources + calculatedDataTotalProvincialFSC,&#10;  studentTotalProvincialContribution: calculatedDataTotalProvincialFSC,&#10;  finalFederalAwardNetCSGPAmount: finalFederalAwardNetCSGPAmount,&#10;  finalFederalAwardNetCSGDAmount: finalFederalAwardNetCSGDAmount,&#10;  finalProvincialAwardNetBCAGAmount: finalProvincialAwardNetBCAGAmount,&#10;  finalProvincialAwardNetSBSDAmount: finalProvincialAwardNetSBSDAmount,&#10;  finalProvincialAwardNetBCSLAmount: finalProvincialAwardNetBCSLAmount,&#10;  finalFederalAwardNetCSGFAmount: finalFederalAwardNetCSGFAmount,&#10;  finalProvincialAwardNetBGPDAmount: finalProvincialAwardNetBGPDAmount,&#10;  finalAwardTotal: awardNetFederalTotalAward + awardNetProvincialTotalAward&#10;}" target="assessmentData" />
+        </zeebe:ioMapping>
+        <zeebe:taskDefinition type="save-assessment-data" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0wed99j</bpmn:incoming>
+      <bpmn:outgoing>Flow_1izp0bk</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="save-disbursement-part-time-task" name="Save disbursement">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="save-disbursement-schedules" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=disbursementSchedules" target="disbursementSchedules" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_17yc7mz</bpmn:incoming>
+      <bpmn:outgoing>Flow_1y2j9iz</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="save-disbursement-task" name="Save disbursement">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="save-disbursement-schedules" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=disbursementSchedules" target="disbursementSchedules" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0qmdwld</bpmn:incoming>
+      <bpmn:outgoing>Flow_0wed99j</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:callActivity id="student-income-verification-subprocess" name="Student Income Verification">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="cra-integration-income-verification" propagateAllChildVariables="false" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=studentDataTaxReturnIncome" target="reportedIncome" />
+          <zeebe:input source="=null" target="supportingUserId" />
+          <zeebe:input source="=[&#34;student-income-verification-subprocess&#34;]" target="parentSubprocesses" />
+          <zeebe:output source="=&#34;student-income-verification-subprocess&#34;" target="student_income_verification_subprocess_passthrough" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_18qbsu1</bpmn:incoming>
+      <bpmn:outgoing>Flow_1mbspca</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:serviceTask id="update-application-status-to-assessment-task" name="Update Application Status to &#39;Assessment&#39;">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="update-application-status" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="toStatus" value="Assessment" />
+          <zeebe:header key="fromStatus" value="In Progress" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1a4wzic</bpmn:incoming>
+      <bpmn:outgoing>Flow_0mayggl</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="update-application-status-to-in-progress-task" name="Update Application Status to &#39;In Progress&#39;">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="update-application-status" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="toStatus" value="In Progress" />
+          <zeebe:header key="fromStatus" value="Submitted" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>assessment-flow</bpmn:incoming>
+      <bpmn:outgoing>Flow_0g1n1dk</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="update-noa-status-to-not-required-task" name="Update NOA status to &#39;Not Required&#39;">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="update-noa-status" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="status" value="Not Required" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_01iq5cw</bpmn:incoming>
+      <bpmn:outgoing>Flow_0hmh3m7</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="update-noa-status-to-not-required-application-completed-task" name="Update NOA status to &#39;Not Required&#39;">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="update-noa-status" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="status" value="Not Required" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1wkpr1a</bpmn:incoming>
+      <bpmn:outgoing>Flow_1o87o98</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="update-noa-status-to-required-task" name="Update NOA status to &#39;Required&#39;">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="update-noa-status" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="status" value="Required" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0mayggl</bpmn:incoming>
+      <bpmn:outgoing>Flow_0p1lgm7</bpmn:outgoing>
+    </bpmn:serviceTask>
     <bpmn:exclusiveGateway id="Gateway_04wt04t" name="Verification pending?">
       <bpmn:incoming>Flow_04f30nk</bpmn:incoming>
       <bpmn:outgoing>verify-application-exceptions-pending-flow</bpmn:outgoing>
@@ -665,84 +724,50 @@
       <bpmn:incoming>verify-application-exceptions-retry-timer-flow</bpmn:incoming>
       <bpmn:outgoing>Flow_04f30nk</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="update-application-status-to-in-progress-task" name="Update Application Status to &#39;In Progress&#39;">
+    <bpmn:serviceTask id="verify-assessment-calculation-order-task" name="Verify assessment calculation order">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="update-application-status" />
-        <zeebe:taskHeaders>
-          <zeebe:header key="toStatus" value="In Progress" />
-          <zeebe:header key="fromStatus" value="Submitted" />
-        </zeebe:taskHeaders>
+        <zeebe:taskDefinition type="verify-assessment-calculation-order" />
       </bpmn:extensionElements>
-      <bpmn:incoming>assessment-flow</bpmn:incoming>
-      <bpmn:outgoing>Flow_0g1n1dk</bpmn:outgoing>
+      <bpmn:incoming>Flow_0ozt4pg</bpmn:incoming>
+      <bpmn:incoming>Flow_1btetiq</bpmn:incoming>
+      <bpmn:incoming>Flow_0umbeot</bpmn:incoming>
+      <bpmn:incoming>Flow_0358dxp</bpmn:incoming>
+      <bpmn:outgoing>Flow_0wp1s62</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:exclusiveGateway id="first-assessment-gateway" name="First Assessment?">
-      <bpmn:incoming>Flow_0rxxozm</bpmn:incoming>
-      <bpmn:outgoing>assessment-flow</bpmn:outgoing>
-      <bpmn:outgoing>Flow_0ozt4pg</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:intermediateCatchEvent id="release-assessment-calculation-message">
-      <bpmn:incoming>Flow_1eip27h</bpmn:incoming>
-      <bpmn:outgoing>Flow_0358dxp</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_1tq976n" messageRef="Message_16elhuc" />
+    <bpmn:eventBasedGateway id="verify-application-exceptions-pending-gateway">
+      <bpmn:incoming>verify-application-exceptions-pending-flow</bpmn:incoming>
+      <bpmn:outgoing>Flow_1v0ju0g</bpmn:outgoing>
+      <bpmn:outgoing>Flow_10lg2ud</bpmn:outgoing>
+    </bpmn:eventBasedGateway>
+    <bpmn:intermediateCatchEvent id="verify-application-exceptions-retry-timer">
+      <bpmn:incoming>Flow_10lg2ud</bpmn:incoming>
+      <bpmn:outgoing>verify-application-exceptions-retry-timer-flow</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0ygi81c">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT12H</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
     </bpmn:intermediateCatchEvent>
-    <bpmn:serviceTask id="associate-msfaa-task" name="Associate MSFAA">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:input source="={&#10;  weeks: offeringWeeks,&#10;  tuitionCost: 5009,&#10;  childcareCost: 0,&#10;  livingAllowance: 13609.3,&#10;  totalAssessedCost: 21840.3,&#10;  totalFamilyIncome: 0,&#10;  totalFederalAward: 5533.4,&#10;  otherAllowableCost: 0,&#10;  transportationCost: null,&#10;  secondResidenceCost: 0,&#10;  totalAssessmentNeed: 18444.68,&#10;  booksAndSuppliesCost: 3000,&#10;  totalProvincialAward: 3688.94,&#10;  alimonyOrChildSupport: 0,&#10;  federalAssessmentNeed: 9222.34,&#10;  partnerStudentLoanCost: null,&#10;  exceptionalEducationCost: 222,&#10;  provincialAssessmentNeed: 9222.34,&#10;  totalFederalContribution: 12617.96,&#10;  parentAssessedContribution: 10817.96,&#10;  partnerAssessedContribution: 0,&#10;  totalProvincialContribution: 12617.96,&#10;  studentTotalFederalContribution: 1800,&#10;  studentTotalProvincialContribution: 1800&#10;}" target="assessmentData" />
-        </zeebe:ioMapping>
-        <zeebe:taskDefinition type="associate-msfaa" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1mpwyku</bpmn:incoming>
-      <bpmn:outgoing>Flow_1atzf7v</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_1cb5fpw" name="Application Not Completed" sourceRef="Gateway_1xse027" targetRef="Gateway_1m2js1c" />
-    <bpmn:serviceTask id="update-noa-status-to-not-required-task" name="Update NOA status to &#39;Not Required&#39;">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="update-noa-status" />
-        <zeebe:taskHeaders>
-          <zeebe:header key="status" value="Not Required" />
-        </zeebe:taskHeaders>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_01iq5cw</bpmn:incoming>
-      <bpmn:outgoing>Flow_0hmh3m7</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_0hmh3m7" sourceRef="update-noa-status-to-not-required-task" targetRef="Gateway_04wql0w" />
-    <bpmn:sequenceFlow id="Flow_0p1lgm7" sourceRef="update-noa-status-to-required-task" targetRef="Gateway_04wql0w" />
-    <bpmn:sequenceFlow id="Flow_0mayggl" sourceRef="update-application-status-to-assessment-task" targetRef="update-noa-status-to-required-task" />
-    <bpmn:serviceTask id="update-noa-status-to-not-required-application-completed-task" name="Update NOA status to &#39;Not Required&#39;">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="update-noa-status" />
-        <zeebe:taskHeaders>
-          <zeebe:header key="status" value="Not Required" />
-        </zeebe:taskHeaders>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1wkpr1a</bpmn:incoming>
-      <bpmn:outgoing>Flow_1o87o98</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:exclusiveGateway id="Gateway_1xse027" default="Flow_1cb5fpw">
-      <bpmn:incoming>Flow_1atzf7v</bpmn:incoming>
-      <bpmn:outgoing>Flow_1cb5fpw</bpmn:outgoing>
-      <bpmn:outgoing>Flow_1wkpr1a</bpmn:outgoing>
+    <bpmn:sequenceFlow id="verify-application-exceptions-retry-timer-flow" sourceRef="verify-application-exceptions-retry-timer" targetRef="verify-application-exceptions-task" />
+    <bpmn:exclusiveGateway id="verify-application-exceptions-status-gateway">
+      <bpmn:incoming>verify-application-exceptions-not-pending-flow</bpmn:incoming>
+      <bpmn:incoming>Flow_0ws0afg</bpmn:incoming>
+      <bpmn:outgoing>verify-application-exceptions-status-denied-flow</bpmn:outgoing>
+      <bpmn:outgoing>verify-application-exceptions-status-approved-flow</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_1wkpr1a" name="Application Completed" sourceRef="Gateway_1xse027" targetRef="update-noa-status-to-not-required-application-completed-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationStatus = "Completed"</bpmn:conditionExpression>
+    <bpmn:eventBasedGateway id="verify-assessment-calculation-order-gateway">
+      <bpmn:incoming>Flow_16zz7zb</bpmn:incoming>
+      <bpmn:outgoing>Flow_0bza37i</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1eip27h</bpmn:outgoing>
+    </bpmn:eventBasedGateway>
+    <bpmn:intermediateCatchEvent id="verify-assessment-calculation-timer">
+      <bpmn:incoming>Flow_0bza37i</bpmn:incoming>
+      <bpmn:outgoing>Flow_0umbeot</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0h74s3m">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT12H</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_16zz7zb" name="Waiting for another assessment to complete" sourceRef="ready-for-calculation-gateway" targetRef="verify-assessment-calculation-order-gateway">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=isReadyForCalculation = false</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:exclusiveGateway id="Gateway_04wql0w">
-      <bpmn:incoming>Flow_0p1lgm7</bpmn:incoming>
-      <bpmn:incoming>Flow_0hmh3m7</bpmn:incoming>
-      <bpmn:outgoing>Flow_0z518wc</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_1txrz77" sourceRef="Gateway_0f9knk0" targetRef="Event_0w0bgro" />
-    <bpmn:intermediateThrowEvent id="Event_0w0bgro" name="Configure workflow data">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="={ &#10;  studentData: {&#10;    dependantStatus: studentDataDependantstatus,&#10;    relationshipStatus: studentDataRelationshipStatus,&#10;    livingWithParents: studentDataLivingWithParents,&#10;    numberOfParents: if is defined(studentDataNumberOfParents) then studentDataNumberOfParents&#10;    else null&#10;  },&#10;  dmnValues:{&#10;    lifetimeMaximumCSLP: if(dmnPartTimeAwardAllowableLimits!=null) then dmnPartTimeAwardAllowableLimits.limitAwardCSLPAmount else null&#10;  },&#10;  calculatedData: {&#10;    pdppdStatus: calculatedDataPDPPDStatus,&#10;    parentalAssets: if is defined(calculatedDataParentalAssets)&#10;    then calculatedDataParentalAssets else null,&#10;    studentMaritalStatusCode: if is defined(calculatedDataStudentMaritalStatusCode) &#10;    then calculatedDataStudentMaritalStatusCode else null,&#10;    totalEligibleDependents: calculatedDataTotalEligibleDependants,&#10;    familySize: calculatedDataFamilySize,&#10;    parentalAssetContribution: if is defined(calculatedDataParentalAssetContribution) &#10;    then calculatedDataParentalAssetContribution else null,&#10;    parentalContribution: if is defined(calculatedDataParentalContribution) &#10;    then calculatedDataParentalContribution else null,&#10;    parentDiscretionaryIncome: if is defined(calculatedDataTotalDiscretionaryIncome) &#10;    then calculatedDataTotalDiscretionaryIncome else null ,&#10;    dependantTotalMSOLAllowance: if is defined(calculatedDataDependantTotalMSOLAllowance) &#10;    then calculatedDataDependantTotalMSOLAllowance else null,&#10;    studentMSOLAllowance: if is defined(calculatedDataStudentMSOLAllowance) &#10;    then calculatedDataStudentMSOLAllowance else null,&#10;    totalChildCareCost: if is defined(calculatedDataTotalChildCareCost) &#10;    then calculatedDataTotalChildCareCost else null,&#10;    totalNonEducationalCost: if is defined(calaulatedDataTotalNonEducationalCost) &#10;    then calaulatedDataTotalNonEducationalCost else null,&#10;    dependantChildQuantity: if is defined(calculatedDataDependantChildQuantity) &#10;    then calculatedDataDependantChildQuantity else null,&#10;    dependantChildInDaycareQuantity: if is defined(calculatedDataDependantChildInDaycareQuantity)&#10;    then calculatedDataDependantChildInDaycareQuantity else null,&#10;    dependantInfantQuantity: if is defined(calculatedDataDependantInfantQuantity)&#10;    then calculatedDataDependantInfantQuantity else null,&#10;    dependantDeclaredOnTaxesQuantity: if is defined(calculatedDataDependantDeclaredOnTaxesQuantity)&#10;    then calculatedDataDependantDeclaredOnTaxesQuantity else null,&#10;    dependantPostSecondaryQuantity: if is defined(calculatedDataDependantPostSecondaryQuantity)&#10;    then calculatedDataDependantPostSecondaryQuantity else null,&#10;    partnerStudentStudyWeeks: if is defined(calculatedDataPartnerStudentStudyWeeks)&#10;    then calculatedDataPartnerStudentStudyWeeks else null&#10;  }&#10;}" target="workflowData" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1txrz77</bpmn:incoming>
-      <bpmn:outgoing>Flow_0rkzx2d</bpmn:outgoing>
-    </bpmn:intermediateThrowEvent>
     <bpmn:serviceTask id="workflow-wrap-up-task" name="Workflow wrap up">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="workflow-wrap-up" />
@@ -754,43 +779,18 @@
       <bpmn:incoming>Flow_0rkzx2d</bpmn:incoming>
       <bpmn:outgoing>Flow_0mt0uyq</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:endEvent id="Event_0mtgfbi">
-      <bpmn:incoming>Flow_0mt0uyq</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_0rkzx2d" sourceRef="Event_0w0bgro" targetRef="workflow-wrap-up-task" />
-    <bpmn:sequenceFlow id="Flow_0mt0uyq" sourceRef="workflow-wrap-up-task" targetRef="Event_0mtgfbi" />
-    <bpmn:exclusiveGateway id="Gateway_0f9knk0">
-      <bpmn:incoming>Flow_0z518wc</bpmn:incoming>
-      <bpmn:incoming>Flow_1o87o98</bpmn:incoming>
-      <bpmn:outgoing>Flow_1txrz77</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_1o87o98" sourceRef="update-noa-status-to-not-required-application-completed-task" targetRef="Gateway_0f9knk0" />
-    <bpmn:serviceTask id="update-application-status-to-assessment-task" name="Update Application Status to &#39;Assessment&#39;">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="update-application-status" />
-        <zeebe:taskHeaders>
-          <zeebe:header key="toStatus" value="Assessment" />
-          <zeebe:header key="fromStatus" value="In Progress" />
-        </zeebe:taskHeaders>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1a4wzic</bpmn:incoming>
-      <bpmn:outgoing>Flow_0mayggl</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:serviceTask id="update-noa-status-to-required-task" name="Update NOA status to &#39;Required&#39;">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="update-noa-status" />
-        <zeebe:taskHeaders>
-          <zeebe:header key="status" value="Required" />
-        </zeebe:taskHeaders>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0mayggl</bpmn:incoming>
-      <bpmn:outgoing>Flow_0p1lgm7</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:exclusiveGateway id="Gateway_1m2js1c" default="Flow_1a4wzic">
-      <bpmn:incoming>Flow_1cb5fpw</bpmn:incoming>
-      <bpmn:outgoing>Flow_1a4wzic</bpmn:outgoing>
-      <bpmn:outgoing>Flow_01iq5cw</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0mpuqex" name="Yes" sourceRef="ready-for-calculation-gateway" targetRef="Gateway_11qgy63">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=isReadyForCalculation = true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="pir-completed-flow" name="Yes" sourceRef="pir-pending-gateway" targetRef="Gateway_03gbgqa">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=programInfoStatus != "Required"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0emvz6f" name="Yes" sourceRef="Gateway_05k6rp7" targetRef="Gateway_176fysj">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataRelationshipStatus = "married"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1lbai2h" name="Yes" sourceRef="Gateway_0vft251" targetRef="retrieve-supporting-info-for-parent-2-subprocess">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataNumberOfParents = 2</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
     <bpmn:textAnnotation id="TextAnnotation_0g9dtl6">
       <bpmn:text>As per the order of original assessment study start date validate if this assessment  is the first in the sequence to be calculated for the given student inside the given program year.</bpmn:text>
     </bpmn:textAnnotation>
