@@ -5,6 +5,7 @@ import {
   CreateExistingSupplierAndSiteSubmittedData,
   CreateExistingSupplierSiteData,
   CreateExistingSupplierSiteResponse,
+  CreateSupplierAddressSubmittedData,
   CreateSupplierAndSiteData,
   CreateSupplierAndSiteResponse,
   CreateSupplierAndSiteSubmittedData,
@@ -243,21 +244,15 @@ export class CASService {
    */
   private getSupplierAddress(
     supplierData: CreateSupplierAndSiteData | CreateExistingSupplierSiteData,
-  ): any {
+  ): CreateSupplierAddressSubmittedData {
     const supplierAddress = {
       AddressLine1: formatAddress(supplierData.supplierSite.addressLine1),
-      AddressLine2: "",
-      AddressLine3: "",
       City: formatCity(supplierData.supplierSite.city),
       Province: supplierData.supplierSite.provinceCode,
       Country: "CA",
       PostalCode: formatPostalCode(supplierData.supplierSite.postalCode),
       EmailAddress: supplierData.emailAddress,
     };
-    if (supplierData instanceof CreateExistingSupplierSiteData) {
-      supplierAddress["AddressLine2"] = "";
-      supplierAddress["AddressLine3"] = "";
-    }
     return supplierAddress;
   }
 

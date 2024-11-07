@@ -87,6 +87,18 @@ export class CreateSupplierAndSiteResult {
 }
 
 /**
+ * Supplier address data used during the creation of a supplier and site on CAS.
+ */
+export class CreateSupplierAddressSubmittedData {
+  AddressLine1: string;
+  City: string;
+  Province: string;
+  Country: string;
+  PostalCode: string;
+  EmailAddress: string;
+}
+
+/**
  * Data used during the creation of a supplier and site on CAS.
  * Some data transformation is needed to follow the CAS requirements.
  * This payload is used to submit the data and also to be returned to
@@ -96,16 +108,7 @@ export class CreateSupplierAndSiteSubmittedData {
   SupplierName: string;
   SubCategory: string;
   Sin: string;
-  SupplierAddress: [
-    {
-      AddressLine1: string;
-      City: string;
-      Province: string;
-      Country: string;
-      PostalCode: string;
-      EmailAddress: string;
-    },
-  ];
+  SupplierAddress: CreateSupplierAddressSubmittedData[];
 }
 
 /**
@@ -114,18 +117,7 @@ export class CreateSupplierAndSiteSubmittedData {
 export class CreateExistingSupplierAndSiteSubmittedData {
   SupplierName?: string;
   SupplierNumber: string;
-  SupplierAddress: [
-    {
-      AddressLine1: string;
-      AddressLine2: string;
-      AddressLine3: string;
-      City: string;
-      Province: string;
-      Country: string;
-      PostalCode: string;
-      EmailAddress: string;
-    },
-  ];
+  SupplierAddress: CreateSupplierAddressSubmittedData[];
 }
 
 /**

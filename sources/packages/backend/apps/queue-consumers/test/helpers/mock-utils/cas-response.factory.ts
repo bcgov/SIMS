@@ -141,8 +141,6 @@ export function createFakeCASCreateSupplierNoSiteResponse(options?: {
           AddressLine1:
             options?.initialValues?.supplierAddress.addressLine1 ??
             faker.address.streetAddress(false).toUpperCase(),
-          AddressLine2: "",
-          AddressLine3: "",
           City: options?.initialValues?.supplierAddress.city ?? "Victoria",
           Province:
             options?.initialValues?.supplierAddress.provinceState ?? "BC",

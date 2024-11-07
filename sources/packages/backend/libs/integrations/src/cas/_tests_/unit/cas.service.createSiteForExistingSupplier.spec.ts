@@ -22,7 +22,7 @@ describe("CASService-createSiteForExistingSupplier", () => {
     jest.resetAllMocks();
   });
 
-  it("Should invoke CAS API with formatted payload when all data was provided as expected.", async () => {
+  it("Should invoke CAS API createSiteForExistingSupplier with formatted payload when all data was provided as expected.", async () => {
     // Arrange
     mockAuthenticationResponseOnce(httpService).mockResolvedValue({
       data: {
@@ -53,8 +53,6 @@ describe("CASService-createSiteForExistingSupplier", () => {
         SupplierAddress: [
           {
             AddressLine1: "STREET-SPECIAL CHARACTERS-ANE-MAXIM",
-            AddressLine2: "",
-            AddressLine3: "",
             City: "City Name Over Maximum Le",
             Province: "BC",
             Country: "CA",
