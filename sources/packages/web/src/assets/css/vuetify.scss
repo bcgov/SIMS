@@ -56,6 +56,11 @@
   font: unset !important;
 }
 
+// Temporary fix for Vuetify beta that does not display the selection component dropdown checkbox properly.
+.v-selection-control__input .mdi:before {
+  font: unset !important;
+}
+
 // Reducing the spacing.
 .v-input__details {
   margin-bottom: 4px !important;
