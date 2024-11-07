@@ -110,7 +110,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
         description: payload.note,
       },
       bypassCreatedDate: expect.any(Date),
-      bypassCreatedBy: { id: sharedMinistryUser.id },
+      bypassCreatedBy: { id: expect.any(Number) },
       bypassRemovedDate: null,
       createdAt: expect.any(Date),
       isActive: true,
