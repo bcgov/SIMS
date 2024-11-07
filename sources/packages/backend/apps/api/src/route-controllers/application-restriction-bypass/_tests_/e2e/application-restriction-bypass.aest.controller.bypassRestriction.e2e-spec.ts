@@ -86,6 +86,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
           bypassBehavior: true,
           creationNote: { noteType: true, description: true },
           bypassCreatedDate: true,
+          bypassCreatedBy: { id: true },
           bypassRemovedDate: true,
           createdAt: true,
           isActive: true,
@@ -94,6 +95,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
           application: true,
           studentRestriction: true,
           creationNote: true,
+          bypassCreatedBy: true,
         },
         where: { id: applicationRestrictionBypassId },
       });
@@ -102,19 +104,20 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
       id: applicationRestrictionBypassId,
       application: { id: application.id },
       studentRestriction: { id: studentRestriction.id },
-      bypassBehavior: RestrictionBypassBehaviors.NextDisbursementOnly,
+      bypassBehavior: payload.bypassBehavior,
       creationNote: {
         noteType: NoteType.Application,
         description: payload.note,
       },
       bypassCreatedDate: expect.any(Date),
+      bypassCreatedBy: { id: sharedMinistryUser.id },
       bypassRemovedDate: null,
       createdAt: expect.any(Date),
       isActive: true,
     });
   });
 
-  it("Should throw an HTTP error while creating a bypass when there is an active bypass for the same active student restriction ID.", async () => {
+  it("Should throw an HTTP error while creating a bypass when there is an active bypass for the same active student restriction.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource, undefined, {
       offeringIntensity: OfferingIntensity.partTime,
@@ -148,7 +151,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
       .expect({
         statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         message:
-          "Cannot create a bypass when there is an active bypass for the same active student restriction ID.",
+          "Cannot create a bypass when there is an active bypass for the same active student restriction.",
         error: "Unprocessable Entity",
       });
   });

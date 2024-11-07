@@ -186,11 +186,11 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
         switch (error.name) {
           case ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS:
             throw new UnprocessableEntityException(
-              "Cannot create a bypass when there is an active bypass for the same active student restriction ID.",
+              "Cannot create a bypass when there is an active bypass for the same active student restriction.",
             );
           case STUDENT_RESTRICTION_NOT_FOUND:
             throw new UnprocessableEntityException(
-              "Could not find student restriction for the given ID.",
+              "Could not find student restriction for the given id",
             );
           case STUDENT_RESTRICTION_IS_NOT_ACTIVE:
             throw new UnprocessableEntityException(

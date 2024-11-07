@@ -69,38 +69,32 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-removeBypassRestrictio
       await db.applicationRestrictionBypass.findOne({
         select: {
           id: true,
-          application: { id: true },
-          studentRestriction: { id: true },
-          bypassBehavior: true,
           removalNote: { noteType: true, description: true },
-          bypassCreatedDate: true,
           bypassRemovedDate: true,
-          createdAt: true,
+          bypassRemovedBy: { id: true },
           isActive: true,
           updatedAt: true,
+          modifier: { id: true },
         },
         relations: {
-          application: true,
-          studentRestriction: true,
+          bypassRemovedBy: true,
           removalNote: true,
+          modifier: true,
         },
         where: { id: restrictionBypass.id },
       });
 
     expect(applicationRestrictionBypass).toMatchObject({
       id: restrictionBypass.id,
-      application: { id: application.id },
-      studentRestriction: { id: restrictionBypass.studentRestriction.id },
-      bypassBehavior: restrictionBypass.bypassBehavior,
       removalNote: {
         noteType: NoteType.Application,
         description: payload.note,
       },
-      bypassCreatedDate: expect.any(Date),
       bypassRemovedDate: expect.any(Date),
-      createdAt: expect.any(Date),
+      bypassRemovedBy: { id: expect.any(Number) },
       isActive: false,
       updatedAt: expect.any(Date),
+      modifier: { id: expect.any(Number) },
     });
   });
 

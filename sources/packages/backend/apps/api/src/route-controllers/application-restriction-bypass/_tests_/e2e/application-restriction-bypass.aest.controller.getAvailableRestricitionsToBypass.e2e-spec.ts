@@ -49,7 +49,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
       },
     );
 
-    // Add a restriction bypassed that has the bypass removed. In other words, it is no longer active and should be available to be bypassed.
+    // Add a restriction bypassed that was removed. In other words, it is no longer active and the student restriction should be available to be bypassed again.
     const removedApplicationRestrictionsBypass =
       await saveFakeApplicationRestrictionBypass(
         db,
@@ -138,7 +138,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
       },
     );
 
-    // Add a restriction bypassed that has the bypass removed. In other words, it is no longer active and should be available to be bypassed.
+    // Add a restriction bypassed that was removed. In other words, it is no longer active and the student restriction should be available to be bypassed again.
     const removedApplicationRestrictionsBypass =
       await saveFakeApplicationRestrictionBypass(
         db,

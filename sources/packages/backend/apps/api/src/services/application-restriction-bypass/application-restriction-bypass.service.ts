@@ -322,7 +322,7 @@ export class ApplicationRestrictionBypassService extends RecordDataModelService<
       });
     if (!studentRestriction) {
       throw new CustomNamedError(
-        "Could not find student restriction for the given ID.",
+        "Could not find student restriction for the given id.",
         STUDENT_RESTRICTION_NOT_FOUND,
       );
     }
@@ -336,7 +336,7 @@ export class ApplicationRestrictionBypassService extends RecordDataModelService<
 
   /**
    * Checks if there is an active application student restriction bypass.
-   * Throws an error if there is an active bypass for the same active student restriction ID.
+   * Throws an error if there is an active bypass for the same active student restriction id.
    * @param transactionalEntityManager transactional entity manager to execute the query.
    * @param applicationId id of the application to check.
    * @param studentRestrictionId id of the student restriction to check.
@@ -362,7 +362,7 @@ export class ApplicationRestrictionBypassService extends RecordDataModelService<
       });
     if (existsActiveStudentRestriction) {
       throw new CustomNamedError(
-        "There is an active bypass for the same active student restriction ID.",
+        "There is an active bypass for the same active student restriction id.",
         ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS,
       );
     }
@@ -405,7 +405,7 @@ export class ApplicationRestrictionBypassService extends RecordDataModelService<
           });
         if (!applicationRestrictionBypass) {
           throw new CustomNamedError(
-            "Could not find application restriction bypass for the given ID.",
+            "Could not find application restriction bypass for the given id.",
             APPLICATION_RESTRICTION_BYPASS_NOT_FOUND,
           );
         }
