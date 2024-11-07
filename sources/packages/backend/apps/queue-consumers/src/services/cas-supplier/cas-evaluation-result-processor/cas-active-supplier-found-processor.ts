@@ -1,11 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { SystemUsersService } from "@sims/services";
-import {
-  CASSupplier,
-  CASSupplierSiteStatus,
-  SupplierStatus,
-} from "@sims/sims-db";
+import { CASSupplier, SupplierAddress, SupplierStatus } from "@sims/sims-db";
 import { ProcessSummary } from "@sims/utilities/logger";
 import {
   CASEvaluationResult,
@@ -16,7 +12,7 @@ import { Repository } from "typeorm";
 import { CASEvaluationResultProcessor, ProcessorResult } from ".";
 import {
   CASService,
-  CreateSupplierAndSiteResponse,
+  CreateExistingSupplierSiteResponse,
 } from "@sims/integrations/cas";
 
 /**
@@ -49,10 +45,10 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
       throw new Error("Incorrect CAS evaluation result processor selected.");
     }
     summary.info("Active CAS supplier found.");
-    let result: CreateSupplierAndSiteResponse;
+    let result: CreateExistingSupplierSiteResponse;
     try {
       const address = studentSupplier.address;
-      result = await this.casService.createExistingSupplierAndSite({
+      result = await this.casService.createSiteForExistingSupplier({
         supplierNumber: evaluationResult.activeSupplier.suppliernumber,
         supplierSite: {
           addressLine1: address.addressLine1,
@@ -62,9 +58,9 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
         },
         emailAddress: studentSupplier.email,
       });
-      summary.info("Created supplier and site on CAS.");
+      summary.info("Created a new site on CAS.");
     } catch (error: unknown) {
-      summary.error("Error while creating supplier and site on CAS.", error);
+      summary.error("Error while creating a new site on CAS.", error);
       return { isSupplierUpdated: false };
     }
     try {
@@ -72,14 +68,14 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
       const supplierToUpdate = evaluationResult.activeSupplier;
       const now = new Date();
       const systemUser = this.systemUsersService.systemUser;
-      const supplierAddressToUpdate = {
+      const supplierAddressToUpdate: SupplierAddress = {
         supplierSiteCode: result.response.supplierSiteCode,
         addressLine1: submittedAddress.AddressLine1,
         city: submittedAddress.City,
         provinceState: submittedAddress.Province,
         country: submittedAddress.Country,
         postalCode: submittedAddress.PostalCode,
-        status: "ACTIVE" as CASSupplierSiteStatus,
+        status: "ACTIVE",
         lastUpdated: now,
       };
       const updateResult = await this.casSupplierRepo.update(

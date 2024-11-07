@@ -62,7 +62,7 @@ export class CreateSupplierAndSiteData {
 /**
  * Information needed for existing supplier site creation on CAS.
  */
-export class CreateExistingSupplierAndSiteData {
+export class CreateExistingSupplierSiteData {
   supplierNumber: string;
   supplierSite: CreateSupplierSite;
   emailAddress: string;
@@ -133,8 +133,15 @@ export class CreateExistingSupplierAndSiteSubmittedData {
  * submitted data and its API response.
  */
 export class CreateSupplierAndSiteResponse {
-  submittedData:
-    | CreateSupplierAndSiteSubmittedData
-    | CreateExistingSupplierAndSiteSubmittedData;
+  submittedData: CreateSupplierAndSiteSubmittedData;
+  response: CreateSupplierAndSiteResult;
+}
+
+/**
+ * Combination of the existing CAS supplier site creation
+ * submitted data and its API response.
+ */
+export class CreateExistingSupplierSiteResponse {
+  submittedData: CreateExistingSupplierAndSiteSubmittedData;
   response: CreateSupplierAndSiteResult;
 }

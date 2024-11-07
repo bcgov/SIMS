@@ -1,19 +1,23 @@
 import {
   CASSupplierResponse,
+  CreateExistingSupplierSiteResponse,
   CreateSupplierAndSiteResponse,
 } from "@sims/integrations/cas/models/cas-service.model";
-import { SupplierAddress } from "@sims/sims-db";
+import { CASSupplierRecordStatus, SupplierAddress } from "@sims/sims-db";
 import * as faker from "faker";
 
 /**
  * Creates a fake CAS supplier response.
+ * @param options options.
+ * - `initialValues` fake CAS supplier response values.
  * @returns a fake CAS supplier response.
  */
 export function createFakeCASSupplierResponse(options?: {
   initialValues: {
-    supplierNumber: string;
-    addressLine1: string;
-    postalCode: string;
+    supplierNumber?: string;
+    status?: CASSupplierRecordStatus;
+    addressLine1?: string;
+    postalCode?: string;
   };
 }): CASSupplierResponse {
   return {
@@ -25,7 +29,7 @@ export function createFakeCASSupplierResponse(options?: {
         sin: "000000000",
         providerid: "CAS_WS_AE_PSFS_SIMS",
         businessnumber: null,
-        status: "ACTIVE",
+        status: options?.initialValues?.status ?? "ACTIVE",
         supplierprotected: null,
         standardindustryclassification: null,
         lastupdated: "2024-05-01 13:55:00",
@@ -76,9 +80,15 @@ export function createFakeCASNotFoundSupplierResponse(): CASSupplierResponse {
 
 /**
  * Create a fake CreateSupplierAndSite response.
+ * @param options options.
+ * - `initialValues` fake CAS create supplier and site response values.
  * @returns fake CreateSupplierAndSite response.
  */
-export function createFakeCASCreateSupplierAndSiteResponse(): CreateSupplierAndSiteResponse {
+export function createFakeCASCreateSupplierAndSiteResponse(options?: {
+  initialValues: {
+    supplierAddress: SupplierAddress;
+  };
+}): CreateSupplierAndSiteResponse {
   return {
     submittedData: {
       SupplierName: "DOE, JOHN",
@@ -86,11 +96,15 @@ export function createFakeCASCreateSupplierAndSiteResponse(): CreateSupplierAndS
       Sin: faker.datatype.number({ min: 100000000, max: 999999999 }).toString(),
       SupplierAddress: [
         {
-          AddressLine1: faker.address.streetAddress(false).toUpperCase(),
-          City: "Victoria",
-          Province: "BC",
-          Country: "CA",
-          PostalCode: "H1H1H1",
+          AddressLine1:
+            options?.initialValues?.supplierAddress.addressLine1 ??
+            faker.address.streetAddress(false).toUpperCase(),
+          City: options?.initialValues?.supplierAddress.city ?? "Victoria",
+          Province:
+            options?.initialValues?.supplierAddress.provinceState ?? "BC",
+          Country: options?.initialValues?.supplierAddress.country ?? "CA",
+          PostalCode:
+            options?.initialValues?.supplierAddress.postalCode ?? "H1H1H1",
           EmailAddress: faker.internet.email(),
         },
       ],
@@ -106,6 +120,8 @@ export function createFakeCASCreateSupplierAndSiteResponse(): CreateSupplierAndS
 
 /**
  * Create a fake CreateSupplierNoSite response with missing postal code.
+ * @param options options.
+ * - `initialValues` fake CAS create supplier without site response values.
  * @returns fake CreateSupplierNoSite response.
  */
 export function createFakeCASCreateSupplierNoSiteResponse(options?: {
@@ -113,7 +129,7 @@ export function createFakeCASCreateSupplierNoSiteResponse(options?: {
     supplierNumber: string;
     supplierAddress: SupplierAddress;
   };
-}): CreateSupplierAndSiteResponse {
+}): CreateExistingSupplierSiteResponse {
   const supplierNumber =
     options?.initialValues?.supplierNumber ??
     faker.datatype.number({ min: 1000000, max: 9999999 }).toString();

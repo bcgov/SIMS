@@ -373,30 +373,29 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     const referenceDate = new Date();
     const savedCASSupplier = await saveFakeCASSupplier(db);
     // Configure CAS mock to return a result for the GetSupplier
-    // with the same supplier number, supplier name and address line 1
-    // from the saved CAS supplier but a different postal code.
-    // and a successful result for the CreateSupplierAndSite.
+    // with the same supplier number and address line 1 from the
+    // saved CAS supplier but a different postal code.
     casServiceMock.getSupplierInfoFromCAS = jest.fn(() =>
       Promise.resolve(
         createFakeCASSupplierResponse({
           initialValues: {
             supplierNumber: savedCASSupplier.supplierNumber,
             addressLine1: savedCASSupplier.supplierAddress.addressLine1,
-            postalCode: "V1V1V1",
+            postalCode: "V1V1V1", // The postal code is added to mismatch the address.
           },
         }),
       ),
     );
-    // Configure CAS mock to return a successful result for the CreateSupplierAndSite.
-    const createSupplierAndSiteResponse =
+    // Configure CAS mock to return a successful result for the CreateSiteForExistingSupplier.
+    const createSupplierNoSiteResponse =
       createFakeCASCreateSupplierNoSiteResponse({
         initialValues: {
           supplierNumber: savedCASSupplier.supplierNumber,
           supplierAddress: savedCASSupplier.supplierAddress,
         },
       });
-    casServiceMock.createExistingSupplierAndSite = jest.fn(() =>
-      Promise.resolve(createSupplierAndSiteResponse),
+    casServiceMock.createSiteForExistingSupplier = jest.fn(() =>
+      Promise.resolve(createSupplierNoSiteResponse),
     );
 
     // Queued job.
@@ -418,14 +417,14 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
         `Processing student CAS supplier ID: ${savedCASSupplier.id}.`,
         `CAS evaluation result status: ${CASEvaluationStatus.ActiveSupplierFound}.`,
         "Active CAS supplier found.",
-        "Created supplier and site on CAS.",
+        "Created a new site on CAS.",
         "Updated CAS supplier and site for the student.",
         "CAS supplier integration executed.",
       ]),
     ).toBe(true);
     // Assert the API methods were called.
     expect(casServiceMock.getSupplierInfoFromCAS).toHaveBeenCalled();
-    expect(casServiceMock.createExistingSupplierAndSite).toHaveBeenCalled();
+    expect(casServiceMock.createSiteForExistingSupplier).toHaveBeenCalled();
     // Assert DB was updated.
     const updateCASSupplier = await db.casSupplier.findOne({
       select: {
@@ -448,15 +447,121 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       },
     });
     const [submittedAddress] =
-      createSupplierAndSiteResponse.submittedData.SupplierAddress;
+      createSupplierNoSiteResponse.submittedData.SupplierAddress;
     expect(updateCASSupplier).toEqual({
       id: savedCASSupplier.id,
-      supplierNumber: createSupplierAndSiteResponse.response.supplierNumber,
+      supplierNumber: createSupplierNoSiteResponse.response.supplierNumber,
       status: "ACTIVE",
       lastUpdated: expect.any(Date),
       supplierAddress: {
         supplierSiteCode:
-          createSupplierAndSiteResponse.response.supplierSiteCode,
+          createSupplierNoSiteResponse.response.supplierSiteCode,
+        addressLine1: submittedAddress.AddressLine1,
+        city: submittedAddress.City,
+        provinceState: submittedAddress.Province,
+        country: submittedAddress.Country,
+        postalCode: submittedAddress.PostalCode,
+        status: "ACTIVE",
+        lastUpdated: expect.any(String),
+      },
+      supplierStatus: SupplierStatus.Verified,
+      supplierStatusUpdatedOn: expect.any(Date),
+      isValid: true,
+      updatedAt: expect.any(Date),
+      modifier: { id: systemUsersService.systemUser.id },
+    });
+    // Ensure updatedAt was updated.
+    expect(updateCASSupplier.updatedAt.getTime()).toBeGreaterThan(
+      referenceDate.getTime(),
+    );
+  });
+
+  it("Should create a new site and update the student CAS supplier when an inactive CAS supplier exists with matching addresses.", async () => {
+    // Arrange
+    const referenceDate = new Date();
+    const savedCASSupplier = await saveFakeCASSupplier(db);
+    // Configure CAS mock to return a result for the GetSupplier
+    // with the same supplier number and address line 1 from the
+    // saved CAS supplier but an inactive status.
+    casServiceMock.getSupplierInfoFromCAS = jest.fn(() =>
+      Promise.resolve(
+        createFakeCASSupplierResponse({
+          initialValues: {
+            status: "INACTIVE", // The status is set to "INACTIVE" to mismatch the address.
+            addressLine1: savedCASSupplier.supplierAddress.addressLine1,
+            postalCode: savedCASSupplier.supplierAddress.postalCode,
+          },
+        }),
+      ),
+    );
+    // Configure CAS mock to return a successful result for the CreateSiteForExistingSupplier.
+    const createSiteForInactiveSupplierResponse =
+      createFakeCASCreateSupplierAndSiteResponse({
+        initialValues: {
+          supplierAddress: savedCASSupplier.supplierAddress,
+        },
+      });
+    casServiceMock.createSupplierAndSite = jest.fn(() =>
+      Promise.resolve(createSiteForInactiveSupplierResponse),
+    );
+
+    // Queued job.
+    const mockedJob = mockBullJob<void>();
+
+    // Act
+    const result = await processor.processCASSupplierInformation(mockedJob.job);
+
+    // Assert
+    expect(result).toStrictEqual([
+      "Process finalized with success.",
+      "Pending suppliers to update found: 1.",
+      "Records updated: 1.",
+    ]);
+    expect(
+      mockedJob.containLogMessages([
+        "Found 1 records to be updated.",
+        `Processing student CAS supplier ID: ${savedCASSupplier.id}.`,
+        `CAS evaluation result status: ${CASEvaluationStatus.NotFound}.`,
+        `No active CAS supplier found. Reason: ${NotFoundReason.NoActiveSupplierFound}.`,
+        "Created supplier and site on CAS.",
+        "Updated CAS supplier and site for the student.",
+      ]),
+    ).toBe(true);
+    // Assert the API methods were called.
+    expect(casServiceMock.getSupplierInfoFromCAS).toHaveBeenCalled();
+    expect(casServiceMock.createSupplierAndSite).toHaveBeenCalled();
+    // Assert DB was updated.
+    const updateCASSupplier = await db.casSupplier.findOne({
+      select: {
+        id: true,
+        supplierNumber: true,
+        status: true,
+        lastUpdated: true,
+        supplierAddress: true as unknown,
+        supplierStatus: true,
+        supplierStatusUpdatedOn: true,
+        isValid: true,
+        updatedAt: true,
+        modifier: { id: true },
+      },
+      relations: {
+        modifier: true,
+      },
+      where: {
+        id: savedCASSupplier.id,
+      },
+    });
+    const [submittedAddress] =
+      createSiteForInactiveSupplierResponse.submittedData.SupplierAddress;
+    expect(updateCASSupplier).toEqual({
+      id: savedCASSupplier.id,
+      supplierNumber:
+        createSiteForInactiveSupplierResponse.response.supplierNumber,
+      status: "ACTIVE",
+      lastUpdated: expect.any(Date),
+      supplierAddress: {
+        supplierSiteCode:
+          createSiteForInactiveSupplierResponse.response.supplierSiteCode,
         addressLine1: submittedAddress.AddressLine1,
         city: submittedAddress.City,
         provinceState: submittedAddress.Province,
