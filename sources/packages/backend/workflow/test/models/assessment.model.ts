@@ -117,7 +117,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   appealsPartnerInformationAndIncomeAppealData?: PartnerInformationAndIncomeAppealData;
   appealsStudentDependantsAppealData?: StudentDependent[];
   appealsStudentHasDependentsAppealData?: YesNoOptions;
-  studentDataIsYourPartnerAbleToReport?: YesNoOptions;
+  studentDataIsYourPartnerAbleToReport?: boolean;
   studentDataParentValidSinNumber?: YesNoOptions;
   studentDataNumberOfParents?: 1 | 2;
   studentDataEstimatedSpouseIncome?: number;
