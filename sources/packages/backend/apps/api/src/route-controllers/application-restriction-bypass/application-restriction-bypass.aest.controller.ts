@@ -25,7 +25,7 @@ import {
   BypassRestrictionAPIInDTO,
   RemoveBypassRestrictionAPIInDTO,
 } from "./models/application-restriction-bypass.dto";
-import { ClientTypeBaseRoute } from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import {
   ApiNotFoundResponse,
   ApiTags,
@@ -116,24 +116,18 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
       restrictionCode:
         applicationRestrictionBypass.studentRestriction.restriction
           .restrictionCode,
-      applicationRestrictionBypassCreationNote:
-        applicationRestrictionBypass.creationNote.description,
-      applicationRestrictionBypassRemovalNote:
-        applicationRestrictionBypass.removalNote?.description,
-      applicationRestrictionBypassCreatedBy: getUserFullName(
-        applicationRestrictionBypass.bypassCreatedBy,
-      ),
-      applicationRestrictionBypassCreatedDate:
-        applicationRestrictionBypass.bypassCreatedDate.toISOString(),
+      creationNote: applicationRestrictionBypass.creationNote.description,
+      removalNote: applicationRestrictionBypass.removalNote?.description,
+      createdBy: getUserFullName(applicationRestrictionBypass.bypassCreatedBy),
+      createdDate: applicationRestrictionBypass.bypassCreatedDate.toISOString(),
       ...(applicationRestrictionBypass.bypassRemovedBy && {
-        applicationRestrictionBypassRemovedBy: getUserFullName(
+        removedBy: getUserFullName(
           applicationRestrictionBypass.bypassRemovedBy,
         ),
       }),
-      applicationRestrictionBypassRemovedDate:
+      removedDate:
         applicationRestrictionBypass.bypassRemovedDate?.toISOString(),
-      applicationRestrictionBypassBehavior:
-        applicationRestrictionBypass.bypassBehavior,
+      bypassBehavior: applicationRestrictionBypass.bypassBehavior,
     };
   }
 
@@ -191,29 +185,24 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
       if (error instanceof CustomNamedError) {
         switch (error.name) {
           case ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS:
-            throw new UnprocessableEntityException(
-              "Cannot create a bypass when there is an active bypass for the same active student restriction.",
-            );
           case STUDENT_RESTRICTION_NOT_FOUND:
-            throw new UnprocessableEntityException(
-              "Could not find student restriction for the given id.",
-            );
           case STUDENT_RESTRICTION_IS_NOT_ACTIVE:
-            throw new UnprocessableEntityException(
-              "Cannot create a bypass when student restriction is not active.",
-            );
           case APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_CREATION:
             throw new UnprocessableEntityException(
-              "Cannot create a bypass when application is in invalid state.",
+              new ApiProcessError(error.message, error.name),
             );
-          default:
-            throw error;
         }
       }
       throw error;
     }
   }
 
+  /**
+   * Removes an application restriction bypass.
+   * @param userToken user token.
+   * @param payload payload of the application restriction bypass.
+   * @param id id of the application restriction bypass to remove.
+   */
   @ApiNotFoundResponse({
     description: "Application restriction bypass not found.",
   })
@@ -239,19 +228,12 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
       if (error instanceof CustomNamedError) {
         switch (error.name) {
           case APPLICATION_RESTRICTION_BYPASS_NOT_FOUND:
-            throw new NotFoundException(
-              "Application restriction bypass not found.",
-            );
+            throw new NotFoundException(error.message);
           case STUDENT_RESTRICTION_IS_NOT_ACTIVE:
-            throw new UnprocessableEntityException(
-              "Cannot remove a bypass when student restriction is not active.",
-            );
           case APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE:
             throw new UnprocessableEntityException(
-              "Cannot remove a bypass when application restriction bypass is not active.",
+              new ApiProcessError(error.message, error.name),
             );
-          default:
-            throw error;
         }
       }
       throw error;

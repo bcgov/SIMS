@@ -4,27 +4,13 @@ import {
   Application,
   ApplicationRestrictionBypass,
   ApplicationStatus,
-  Note,
   NoteType,
   OfferingIntensity,
-  RecordDataModelService,
   RestrictionActionType,
   StudentRestriction,
   User,
 } from "@sims/sims-db";
-import {
-  BypassRestrictionAPIInDTO,
-  RemoveBypassRestrictionAPIInDTO,
-} from "../../route-controllers/application-restriction-bypass/models/application-restriction-bypass.dto";
-import {
-  Brackets,
-  DataSource,
-  EntityManager,
-  In,
-  Not,
-  Repository,
-  UpdateResult,
-} from "typeorm";
+import { Brackets, DataSource, Not, Repository, UpdateResult } from "typeorm";
 import { CustomNamedError } from "@sims/utilities";
 import {
   ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS,
@@ -34,19 +20,27 @@ import {
   APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE,
   STUDENT_RESTRICTION_NOT_FOUND,
 } from "../../constants";
+import {
+  BypassRestrictionData,
+  RemoveBypassRestrictionData,
+} from "apps/api/src/services/application-restriction-bypass/application-restriction-bypass.models";
+import { NoteSharedService } from "@sims/services";
 
 /**
  * Service layer for application restriction bypasses.
  */
 @Injectable()
-export class ApplicationRestrictionBypassService extends RecordDataModelService<ApplicationRestrictionBypass> {
+export class ApplicationRestrictionBypassService {
   constructor(
     private readonly dataSource: DataSource,
     @InjectRepository(StudentRestriction)
     private readonly studentRestrictionRepo: Repository<StudentRestriction>,
-  ) {
-    super(dataSource.getRepository(ApplicationRestrictionBypass));
-  }
+    @InjectRepository(ApplicationRestrictionBypass)
+    private readonly applicationRestrictionBypassRepo: Repository<ApplicationRestrictionBypass>,
+    @InjectRepository(Application)
+    private readonly applicationRepo: Repository<Application>,
+    private readonly noteSharedService: NoteSharedService,
+  ) {}
 
   /**
    * Returns all application restriction bypasses for a given application.
@@ -56,7 +50,7 @@ export class ApplicationRestrictionBypassService extends RecordDataModelService<
   async getApplicationRestrictionBypasses(
     applicationId: number,
   ): Promise<ApplicationRestrictionBypass[]> {
-    return this.repo.find({
+    return this.applicationRestrictionBypassRepo.find({
       select: {
         id: true,
         isActive: true,
@@ -88,10 +82,10 @@ export class ApplicationRestrictionBypassService extends RecordDataModelService<
    * @param id id of the application restriction bypass to retrieve.
    * @returns application restriction bypass.
    */
-  getApplicationRestrictionBypass(
+  async getApplicationRestrictionBypass(
     id: number,
   ): Promise<ApplicationRestrictionBypass> {
-    return this.repo.findOne({
+    return this.applicationRestrictionBypassRepo.findOne({
       select: {
         id: true,
         isActive: true,
@@ -101,11 +95,21 @@ export class ApplicationRestrictionBypassService extends RecordDataModelService<
             restrictionCode: true,
           },
         },
-        creationNote: true as unknown,
-        removalNote: true as unknown,
-        bypassCreatedBy: true as unknown,
+        creationNote: {
+          description: true,
+        },
+        removalNote: {
+          description: true,
+        },
+        bypassCreatedBy: {
+          firstName: true,
+          lastName: true,
+        },
         bypassCreatedDate: true,
-        bypassRemovedBy: true as unknown,
+        bypassRemovedBy: {
+          firstName: true,
+          lastName: true,
+        },
         bypassRemovedDate: true,
         bypassBehavior: true,
       },
@@ -118,15 +122,6 @@ export class ApplicationRestrictionBypassService extends RecordDataModelService<
       },
       where: {
         id,
-        application: {
-          applicationStatus: Not(
-            In([
-              ApplicationStatus.Draft,
-              ApplicationStatus.Cancelled,
-              ApplicationStatus.Overwritten,
-            ]),
-          ),
-        },
       },
     });
   }
@@ -227,37 +222,44 @@ export class ApplicationRestrictionBypassService extends RecordDataModelService<
    * @returns created application restriction bypass.
    */
   async bypassRestriction(
-    payload: BypassRestrictionAPIInDTO,
+    payload: BypassRestrictionData,
     auditUserId: number,
   ): Promise<ApplicationRestrictionBypass> {
-    const auditUser = { id: auditUserId } as User;
-    const now = new Date();
+    const checkForActiveApplicationStudentRestrictionBypassesPromise =
+      this.checkForActiveApplicationStudentRestrictionBypasses(
+        payload.applicationId,
+        payload.studentRestrictionId,
+      );
+    const checkForActiveStudentRestrictionPromise =
+      this.checkForActiveStudentRestriction(payload.studentRestrictionId);
+    const checkForApplicationInValidStatePromise =
+      this.checkForApplicationInValidState(payload.applicationId);
+    await Promise.all([
+      checkForActiveApplicationStudentRestrictionBypassesPromise,
+      checkForActiveStudentRestrictionPromise,
+      checkForApplicationInValidStatePromise,
+    ]);
+    const studentApplication = await this.applicationRepo.findOne({
+      select: {
+        student: { id: true },
+      },
+      relations: { student: true },
+      where: {
+        id: payload.applicationId,
+      },
+    });
     return await this.dataSource.transaction(
       async (transactionalEntityManager) => {
-        await this.checkForActiveApplicationStudentRestrictionByPasses(
+        const noteObj = await this.noteSharedService.createStudentNote(
+          studentApplication.student.id,
+          NoteType.Application,
+          payload.note,
+          auditUserId,
           transactionalEntityManager,
-          payload.applicationId,
-          payload.studentRestrictionId,
         );
-        await this.checkForActiveStudentRestriction(
-          transactionalEntityManager,
-          payload.studentRestrictionId,
-        );
-        await this.checkForApplicationInValidState(
-          transactionalEntityManager,
-          payload.applicationId,
-        );
-
-        const notes = new Note();
-        notes.description = payload.note;
-        notes.noteType = NoteType.Application;
-        notes.creator = auditUser;
-        notes.createdAt = now;
-        const noteObj = await transactionalEntityManager
-          .getRepository(Note)
-          .save(notes);
-
-        return await transactionalEntityManager
+        const now = new Date();
+        const auditUser = { id: auditUserId } as User;
+        return transactionalEntityManager
           .getRepository(ApplicationRestrictionBypass)
           .save({
             application: { id: payload.applicationId },
@@ -278,23 +280,19 @@ export class ApplicationRestrictionBypassService extends RecordDataModelService<
    * Checks if the application is in a valid state for bypass creation.
    * Throws an error if the application is in a Draft, Cancelled,
    * or Overwritten state.
-   * @param transactionalEntityManager transactional entity manager to execute the query.
    * @param applicationId id of the application to check.
    */
   private async checkForApplicationInValidState(
-    transactionalEntityManager: EntityManager,
     applicationId: number,
-  ) {
-    const application = await transactionalEntityManager
-      .getRepository(Application)
-      .findOne({
-        select: {
-          applicationStatus: true,
-        },
-        where: {
-          id: applicationId,
-        },
-      });
+  ): Promise<void> {
+    const application = await this.applicationRepo.findOne({
+      select: {
+        applicationStatus: true,
+      },
+      where: {
+        id: applicationId,
+      },
+    });
     if (
       [
         ApplicationStatus.Draft,
@@ -313,23 +311,19 @@ export class ApplicationRestrictionBypassService extends RecordDataModelService<
    * Checks if a student restriction is active.
    * Throws an error if the student restriction is not found
    * or if it is not active.
-   * @param transactionalEntityManager transactional entity manager to execute the query.
    * @param studentRestrictionId id of the student restriction to check.
    */
   private async checkForActiveStudentRestriction(
-    transactionalEntityManager: EntityManager,
     studentRestrictionId: number,
-  ) {
-    const studentRestriction = await transactionalEntityManager
-      .getRepository(StudentRestriction)
-      .findOne({
-        select: {
-          isActive: true,
-        },
-        where: {
-          id: studentRestrictionId,
-        },
-      });
+  ): Promise<void> {
+    const studentRestriction = await this.studentRestrictionRepo.findOne({
+      select: {
+        isActive: true,
+      },
+      where: {
+        id: studentRestrictionId,
+      },
+    });
     if (!studentRestriction) {
       throw new CustomNamedError(
         "Could not find student restriction for the given id.",
@@ -347,19 +341,15 @@ export class ApplicationRestrictionBypassService extends RecordDataModelService<
   /**
    * Checks if there is an active application student restriction bypass.
    * Throws an error if there is an active bypass for the same active student restriction id.
-   * @param transactionalEntityManager transactional entity manager to execute the query.
    * @param applicationId id of the application to check.
    * @param studentRestrictionId id of the student restriction to check.
    */
-  private async checkForActiveApplicationStudentRestrictionByPasses(
-    transactionalEntityManager: EntityManager,
+  private async checkForActiveApplicationStudentRestrictionBypasses(
     applicationId: number,
     studentRestrictionId: number,
-  ) {
-    const existsActiveStudentRestriction = await transactionalEntityManager
-      .getRepository(ApplicationRestrictionBypass)
-      .exists({
-        relations: { studentRestriction: true },
+  ): Promise<void> {
+    const existsActiveStudentRestriction =
+      await this.applicationRestrictionBypassRepo.exists({
         where: {
           application: {
             id: applicationId,
@@ -372,7 +362,7 @@ export class ApplicationRestrictionBypassService extends RecordDataModelService<
       });
     if (existsActiveStudentRestriction) {
       throw new CustomNamedError(
-        "There is an active bypass for the same active student restriction id.",
+        "Cannot create a bypass when there is an active bypass for the same active student restriction.",
         ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS,
       );
     }
@@ -387,70 +377,67 @@ export class ApplicationRestrictionBypassService extends RecordDataModelService<
    */
   async removeBypassRestriction(
     id: number,
-    payload: RemoveBypassRestrictionAPIInDTO,
+    payload: RemoveBypassRestrictionData,
     auditUserId: number,
   ): Promise<UpdateResult> {
+    const applicationRestrictionBypass =
+      await this.applicationRestrictionBypassRepo.findOne({
+        select: {
+          id: true,
+          isActive: true,
+          studentRestriction: {
+            isActive: true,
+          },
+          application: {
+            id: true,
+            applicationStatus: true,
+            student: { id: true },
+          },
+        },
+        relations: {
+          studentRestriction: true,
+          application: { student: true },
+        },
+        where: {
+          id,
+        },
+      });
+    if (!applicationRestrictionBypass) {
+      throw new CustomNamedError(
+        "Application restriction bypass not found.",
+        APPLICATION_RESTRICTION_BYPASS_NOT_FOUND,
+      );
+    }
+    if (applicationRestrictionBypass.studentRestriction.isActive === false) {
+      throw new CustomNamedError(
+        "Cannot create a bypass when student restriction is not active.",
+        STUDENT_RESTRICTION_IS_NOT_ACTIVE,
+      );
+    }
+    if (applicationRestrictionBypass.isActive !== true) {
+      throw new CustomNamedError(
+        "Cannot remove a bypass when application restriction bypass is not active.",
+        APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE,
+      );
+    }
     const auditUser = { id: auditUserId } as User;
-    const now = new Date();
     return await this.dataSource.transaction(
       async (transactionalEntityManager) => {
-        const applicationRestrictionBypass = await transactionalEntityManager
-          .getRepository(ApplicationRestrictionBypass)
-          .findOne({
-            select: {
-              id: true,
-              isActive: true,
-              studentRestriction: {
-                isActive: true,
-              },
-              application: {
-                id: true,
-                applicationStatus: true,
-              },
-            },
-            relations: { studentRestriction: true, application: true },
-            where: {
-              id,
-            },
-          });
-        if (!applicationRestrictionBypass) {
-          throw new CustomNamedError(
-            "Could not find application restriction bypass for the given id.",
-            APPLICATION_RESTRICTION_BYPASS_NOT_FOUND,
-          );
-        }
-        if (
-          applicationRestrictionBypass.studentRestriction.isActive === false
-        ) {
-          throw new CustomNamedError(
-            "Cannot create a bypass when student restriction is not active.",
-            STUDENT_RESTRICTION_IS_NOT_ACTIVE,
-          );
-        }
-        if (applicationRestrictionBypass.isActive !== true) {
-          throw new CustomNamedError(
-            "Application restriction bypass is not active.",
-            APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE,
-          );
-        }
-
-        const notes = new Note();
-        notes.description = payload.note;
-        notes.noteType = NoteType.Application;
-        notes.creator = auditUser;
-        notes.createdAt = now;
-        const noteObj = await transactionalEntityManager
-          .getRepository(Note)
-          .save(notes);
-
-        return await transactionalEntityManager
+        const noteObj = await this.noteSharedService.createStudentNote(
+          applicationRestrictionBypass.application.student.id,
+          NoteType.Application,
+          payload.note,
+          auditUserId,
+          transactionalEntityManager,
+        );
+        return transactionalEntityManager
           .getRepository(ApplicationRestrictionBypass)
           .update(
             { id },
             {
               isActive: false,
               bypassRemovedDate: new Date(),
-              bypassRemovedBy: { id: auditUserId } as User,
+              bypassRemovedBy: auditUser,
               removalNote: noteObj,
               modifier: auditUser,
             },

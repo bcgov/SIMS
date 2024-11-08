@@ -20,6 +20,7 @@ import {
   RestrictionActionType,
   User,
 } from "@sims/sims-db";
+import { APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE } from "../../../../constants";
 
 describe("ApplicationRestrictionBypassAESTController(e2e)-removeBypassRestriction", () => {
   let app: INestApplication;
@@ -130,10 +131,9 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-removeBypassRestrictio
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
-        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         message:
           "Cannot remove a bypass when application restriction bypass is not active.",
-        error: "Unprocessable Entity",
+        errorType: APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE,
       });
   });
 

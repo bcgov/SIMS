@@ -24,6 +24,11 @@ import {
   RestrictionBypassBehaviors,
   User,
 } from "@sims/sims-db";
+import {
+  ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS,
+  APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_CREATION,
+  STUDENT_RESTRICTION_IS_NOT_ACTIVE,
+} from "../../../../constants";
 
 describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", () => {
   let app: INestApplication;
@@ -149,10 +154,9 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
-        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         message:
           "Cannot create a bypass when there is an active bypass for the same active student restriction.",
-        error: "Unprocessable Entity",
+        errorType: ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS,
       });
   });
 
@@ -191,10 +195,9 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
-        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         message:
           "Cannot create a bypass when student restriction is not active.",
-        error: "Unprocessable Entity",
+        errorType: STUDENT_RESTRICTION_IS_NOT_ACTIVE,
       });
   });
 
@@ -228,9 +231,9 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
-        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         message: "Cannot create a bypass when application is in invalid state.",
-        error: "Unprocessable Entity",
+        errorType:
+          APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_CREATION,
       });
   });
 
@@ -264,9 +267,9 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
-        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         message: "Cannot create a bypass when application is in invalid state.",
-        error: "Unprocessable Entity",
+        errorType:
+          APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_CREATION,
       });
   });
 
