@@ -9,6 +9,7 @@ import {
   CreateSupplierAndSiteData,
   CreateSupplierAndSiteResponse,
   CreateSupplierAndSiteSubmittedData,
+  CreateSupplierSite,
 } from "./models/cas-service.model";
 import { AxiosError, AxiosRequestConfig } from "axios";
 import { HttpService } from "@nestjs/axios";
@@ -135,6 +136,10 @@ export class CASService {
     const url = `${this.casIntegrationConfig.baseUrl}/cfs/supplier/`;
     try {
       const config = await this.getAuthConfig();
+      const supplierAddress = this.getSupplierAddress(
+        supplierData.supplierSite,
+        supplierData.emailAddress,
+      );
       const submittedData: CreateSupplierAndSiteSubmittedData = {
         SupplierName: formatUserName(
           supplierData.firstName,
@@ -142,7 +147,7 @@ export class CASService {
         ),
         SubCategory: "Individual",
         Sin: supplierData.sin,
-        SupplierAddress: [this.getSupplierAddress(supplierData)],
+        SupplierAddress: [supplierAddress],
       };
       const response = await this.httpService.axiosRef.post(
         url,
@@ -188,9 +193,13 @@ export class CASService {
     const url = `${this.casIntegrationConfig.baseUrl}/cfs/supplier/${supplierData.supplierNumber}/site`;
     try {
       const config = await this.getAuthConfig();
+      const supplierAddress = this.getSupplierAddress(
+        supplierData.supplierSite,
+        supplierData.emailAddress,
+      );
       const submittedData: CreateExistingSupplierAndSiteSubmittedData = {
         SupplierNumber: supplierData.supplierNumber,
-        SupplierAddress: [this.getSupplierAddress(supplierData)],
+        SupplierAddress: [supplierAddress],
       };
       const response = await this.httpService.axiosRef.post(
         url,
@@ -239,19 +248,21 @@ export class CASService {
   /**
    * Obtains the supplier address object for based on supplierData being either
    * the CreateSupplierAndSiteData or CreateExistingSupplierSiteData class.
-   * @param supplierData
-   * @returns
+   * @param supplierSite supplier site data to get supplier address.
+   * @param emailAddress email address for the supplier address.
+   * @returns formatted supplier address data.
    */
   private getSupplierAddress(
-    supplierData: CreateSupplierAndSiteData | CreateExistingSupplierSiteData,
+    supplierSite: CreateSupplierSite,
+    emailAddress: string,
   ): CreateSupplierAddressSubmittedData {
     const supplierAddress = {
-      AddressLine1: formatAddress(supplierData.supplierSite.addressLine1),
-      City: formatCity(supplierData.supplierSite.city),
-      Province: supplierData.supplierSite.provinceCode,
+      AddressLine1: formatAddress(supplierSite.addressLine1),
+      City: formatCity(supplierSite.city),
+      Province: supplierSite.provinceCode,
       Country: "CA",
-      PostalCode: formatPostalCode(supplierData.supplierSite.postalCode),
-      EmailAddress: supplierData.emailAddress,
+      PostalCode: formatPostalCode(supplierSite.postalCode),
+      EmailAddress: emailAddress,
     };
     return supplierAddress;
   }

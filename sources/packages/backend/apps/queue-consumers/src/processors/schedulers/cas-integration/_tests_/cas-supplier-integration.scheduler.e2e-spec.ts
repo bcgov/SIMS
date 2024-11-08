@@ -26,7 +26,7 @@ import {
 } from "../../../../services/cas-supplier/cas-supplier.models";
 import {
   createFakeCASCreateSupplierAndSiteResponse,
-  createFakeCASCreateSupplierNoSiteResponse,
+  createFakeCASSiteForExistingSupplierResponse,
   createFakeCASNotFoundSupplierResponse,
   createFakeCASSupplierResponse,
 } from "../../../../../test/helpers/mock-utils/cas-response.factory";
@@ -370,8 +370,25 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
 
   it("Should create a new site and update the student CAS supplier when an active CAS supplier exists with no match addresses.", async () => {
     // Arrange
+    // Created a student with same address line 1 and postal code from the expected CAS mocked result.
+    // Postal code has a white space that is expected to be removed.
+    const student = await saveFakeStudent(db.dataSource, undefined, {
+      initialValue: {
+        contactInfo: {
+          address: {
+            addressLine1: "3350 DOUGLAS ST",
+            city: "Victoria",
+            country: "Canada",
+            selectedCountry: COUNTRY_CANADA,
+            provinceState: "BC",
+            postalCode: "V8Z 7X9",
+          },
+        } as ContactInfo,
+      },
+    });
     const referenceDate = new Date();
-    const savedCASSupplier = await saveFakeCASSupplier(db);
+    const savedCASSupplier = await saveFakeCASSupplier(db, { student });
+
     // Configure CAS mock to return a result for the GetSupplier
     // with the same supplier number and address line 1 from the
     // saved CAS supplier but a different postal code.
@@ -379,16 +396,15 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       Promise.resolve(
         createFakeCASSupplierResponse({
           initialValues: {
-            supplierNumber: savedCASSupplier.supplierNumber,
-            addressLine1: savedCASSupplier.supplierAddress.addressLine1,
             postalCode: "V1V1V1", // The postal code is added to mismatch the address.
           },
         }),
       ),
     );
+
     // Configure CAS mock to return a successful result for the CreateSiteForExistingSupplier.
     const createSupplierNoSiteResponse =
-      createFakeCASCreateSupplierNoSiteResponse({
+      createFakeCASSiteForExistingSupplierResponse({
         initialValues: {
           supplierNumber: savedCASSupplier.supplierNumber,
           supplierAddress: savedCASSupplier.supplierAddress,
@@ -478,8 +494,24 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
 
   it("Should create a new site and update the student CAS supplier when an inactive CAS supplier exists with matching addresses.", async () => {
     // Arrange
+    // Created a student with same address line 1 and postal code from the expected CAS mocked result.
+    // Postal code has a white space that is expected to be removed.
+    const student = await saveFakeStudent(db.dataSource, undefined, {
+      initialValue: {
+        contactInfo: {
+          address: {
+            addressLine1: "3350 DOUGLAS ST",
+            city: "Victoria",
+            country: "Canada",
+            selectedCountry: COUNTRY_CANADA,
+            provinceState: "BC",
+            postalCode: "V8Z 7X9",
+          },
+        } as ContactInfo,
+      },
+    });
     const referenceDate = new Date();
-    const savedCASSupplier = await saveFakeCASSupplier(db);
+    const savedCASSupplier = await saveFakeCASSupplier(db, { student });
     // Configure CAS mock to return a result for the GetSupplier
     // with the same supplier number and address line 1 from the
     // saved CAS supplier but an inactive status.
@@ -488,8 +520,6 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
         createFakeCASSupplierResponse({
           initialValues: {
             status: "INACTIVE", // The status is set to "INACTIVE" to mismatch the address.
-            addressLine1: savedCASSupplier.supplierAddress.addressLine1,
-            postalCode: savedCASSupplier.supplierAddress.postalCode,
           },
         }),
       ),

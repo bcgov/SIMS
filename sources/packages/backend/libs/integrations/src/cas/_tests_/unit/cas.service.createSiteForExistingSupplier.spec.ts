@@ -22,7 +22,7 @@ describe("CASService-createSiteForExistingSupplier", () => {
     jest.resetAllMocks();
   });
 
-  it("Should invoke CAS API createSiteForExistingSupplier with formatted payload when all data was provided as expected.", async () => {
+  it("Should invoke CAS API to create site for existing supplier with formatted payload when all data was provided as expected.", async () => {
     // Arrange
     mockAuthenticationResponseOnce(httpService).mockResolvedValue({
       data: {

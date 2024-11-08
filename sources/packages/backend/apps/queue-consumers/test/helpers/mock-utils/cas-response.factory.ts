@@ -1,6 +1,12 @@
 import {
+  formatAddress,
+  formatCity,
+  formatPostalCode,
+} from "@sims/integrations/cas";
+import {
   CASSupplierResponse,
   CreateExistingSupplierSiteResponse,
+  CreateSupplierAddressSubmittedData,
   CreateSupplierAndSiteResponse,
 } from "@sims/integrations/cas/models/cas-service.model";
 import { CASSupplierRecordStatus, SupplierAddress } from "@sims/sims-db";
@@ -14,16 +20,14 @@ import * as faker from "faker";
  */
 export function createFakeCASSupplierResponse(options?: {
   initialValues: {
-    supplierNumber?: string;
     status?: CASSupplierRecordStatus;
-    addressLine1?: string;
     postalCode?: string;
   };
 }): CASSupplierResponse {
   return {
     items: [
       {
-        suppliernumber: options?.initialValues?.supplierNumber ?? "2006124",
+        suppliernumber: "2006124",
         suppliername: "SMITH, MELANIE",
         subcategory: "INDIVIDUAL",
         sin: "000000000",
@@ -36,8 +40,7 @@ export function createFakeCASSupplierResponse(options?: {
         supplieraddress: [
           {
             suppliersitecode: "001",
-            addressline1:
-              options?.initialValues?.addressLine1 ?? "3350 DOUGLAS ST",
+            addressline1: "3350 DOUGLAS ST",
             addressline2: null,
             addressline3: null,
             city: "VICTORIA",
@@ -89,25 +92,15 @@ export function createFakeCASCreateSupplierAndSiteResponse(options?: {
     supplierAddress: SupplierAddress;
   };
 }): CreateSupplierAndSiteResponse {
+  const supplierAddress = createFakeCASSupplierAddress(
+    options?.initialValues?.supplierAddress,
+  );
   return {
     submittedData: {
       SupplierName: "DOE, JOHN",
       SubCategory: "Individual",
       Sin: faker.datatype.number({ min: 100000000, max: 999999999 }).toString(),
-      SupplierAddress: [
-        {
-          AddressLine1:
-            options?.initialValues?.supplierAddress.addressLine1 ??
-            faker.address.streetAddress(false).toUpperCase(),
-          City: options?.initialValues?.supplierAddress.city ?? "Victoria",
-          Province:
-            options?.initialValues?.supplierAddress.provinceState ?? "BC",
-          Country: options?.initialValues?.supplierAddress.country ?? "CA",
-          PostalCode:
-            options?.initialValues?.supplierAddress.postalCode ?? "H1H1H1",
-          EmailAddress: faker.internet.email(),
-        },
-      ],
+      SupplierAddress: [supplierAddress],
     },
     response: {
       supplierNumber: faker.datatype
@@ -124,7 +117,7 @@ export function createFakeCASCreateSupplierAndSiteResponse(options?: {
  * - `initialValues` fake CAS create supplier without site response values.
  * @returns fake CreateSupplierNoSite response.
  */
-export function createFakeCASCreateSupplierNoSiteResponse(options?: {
+export function createFakeCASSiteForExistingSupplierResponse(options?: {
   initialValues: {
     supplierNumber: string;
     supplierAddress: SupplierAddress;
@@ -133,28 +126,36 @@ export function createFakeCASCreateSupplierNoSiteResponse(options?: {
   const supplierNumber =
     options?.initialValues?.supplierNumber ??
     faker.datatype.number({ min: 1000000, max: 9999999 }).toString();
+  const supplierAddress = createFakeCASSupplierAddress(
+    options?.initialValues?.supplierAddress,
+  );
   return {
     submittedData: {
       SupplierNumber: supplierNumber,
-      SupplierAddress: [
-        {
-          AddressLine1:
-            options?.initialValues?.supplierAddress.addressLine1 ??
-            faker.address.streetAddress(false).toUpperCase(),
-          City: options?.initialValues?.supplierAddress.city ?? "Victoria",
-          Province:
-            options?.initialValues?.supplierAddress.provinceState ?? "BC",
-          Country: options?.initialValues?.supplierAddress.country ?? "CA",
-          PostalCode:
-            options?.initialValues?.supplierAddress.postalCode ?? "H1H1H1",
-          EmailAddress: faker.internet.email(),
-        },
-      ],
+      SupplierAddress: [supplierAddress],
     },
     response: {
       supplierNumber: supplierNumber,
-      supplierSiteCode:
-        options?.initialValues?.supplierAddress.supplierSiteCode ?? "001",
+      supplierSiteCode: "001",
     },
+  };
+}
+
+export function createFakeCASSupplierAddress(
+  supplierAddress?: SupplierAddress,
+): CreateSupplierAddressSubmittedData {
+  return {
+    AddressLine1: supplierAddress?.addressLine1
+      ? formatAddress(supplierAddress?.addressLine1)
+      : faker.address.streetAddress(false).toUpperCase(),
+    City: supplierAddress?.city
+      ? formatCity(supplierAddress?.city)
+      : "Victoria",
+    Province: supplierAddress?.provinceState ?? "BC",
+    Country: supplierAddress?.country ?? "CA",
+    PostalCode: supplierAddress?.postalCode
+      ? formatPostalCode(supplierAddress?.postalCode)
+      : "H1H1H1",
+    EmailAddress: faker.internet.email(),
   };
 }
