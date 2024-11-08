@@ -15478,8 +15478,7 @@
           "properties": {},
           "lockKey": true,
           "calculateValue": "const hasReceivedInputs = !!data.isYourPartnerEligibleForBCSCAccount && !!data.hasCurrentYearPartnerIncome;\nconst isPartnerEligibleToReport = (data.isYourPartnerEligibleForBCSCAccount === \"yes\" && data.hasCurrentYearPartnerIncome === \"no\");\nvalue = hasReceivedInputs ? isPartnerEligibleToReport : null;",
-          "calculateServer": true,
-          "isNew": false
+          "calculateServer": true
         },
         {
           "label": "HTML",
@@ -15575,7 +15574,7 @@
               "value": ""
             }
           ],
-          "content": "Please provide information about your partner.",
+          "content": "Please provide your spouse/common-law partner's financial information.",
           "refreshOnChange": false,
           "customClass": "",
           "hidden": false,
@@ -15584,7 +15583,7 @@
           "tags": [],
           "properties": {},
           "conditional": {
-            "show": null,
+            "show": "",
             "when": null,
             "eq": "",
             "json": ""
@@ -15850,8 +15849,7 @@
               "fieldSet": false,
               "id": "ebhbans",
               "tags": [],
-              "lockKey": true,
-              "isNew": false
+              "lockKey": true
             },
             {
               "clearOnHide": false,
@@ -16036,8 +16034,7 @@
               "tag": "p",
               "id": "ei037zq",
               "hideLabel": true,
-              "tags": [],
-              "isNew": false
+              "tags": []
             },
             {
               "label": "Spouse Estimation",
@@ -16887,8 +16884,7 @@
                     "when": null,
                     "eq": ""
                   },
-                  "properties": {},
-                  "isNew": false
+                  "properties": {}
                 },
                 {
                   "input": true,
@@ -16908,8 +16904,7 @@
                   "properties": {},
                   "lockKey": true,
                   "calculateValue": "value = \"studentApplicationException\";",
-                  "calculateServer": true,
-                  "isNew": false
+                  "calculateServer": true
                 }
               ],
               "type": "panel",
@@ -18139,8 +18134,7 @@
           "theme": "default",
           "breadcrumb": "default",
           "id": "erae6ji",
-          "tags": [],
-          "isNew": false
+          "tags": []
         }
       ],
       "placeholder": "",
