@@ -50,8 +50,8 @@ import {
 import { getUserFullName } from "../../utilities";
 
 /**
- * Controller for AEST Application Restriction Bypasses
- * This consists of all Rest APIs for AEST application restriction bypasses.
+ * Controller for AEST Application Restriction Bypasses.
+ * This consists of all Rest APIs for ministry application restriction bypasses.
  */
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)

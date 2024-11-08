@@ -116,7 +116,6 @@ export async function saveFakeApplicationRestrictionBypass(
       {
         student: relations.application.student,
         restriction,
-        application: relations.application,
       },
     );
   } else {

@@ -133,6 +133,42 @@ export class ApplicationRestrictionBypassService {
   async getAvailableStudentRestrictionsToBypass(
     applicationId: number,
   ): Promise<StudentRestriction[]> {
+    const applicationRestrictionBypasses =
+      await this.applicationRestrictionBypassRepo.find({
+        select: {
+          studentRestriction: {
+            id: true,
+          },
+        },
+        relations: {
+          studentRestriction: true,
+        },
+        where: {
+          application: {
+            id: applicationId,
+          },
+          isActive: true,
+        },
+      });
+    const studentRestrictionIds = applicationRestrictionBypasses.map(
+      (applicationRestrictionBypass) =>
+        applicationRestrictionBypass.studentRestriction.id,
+    );
+
+    const application = await this.applicationRepo.findOne({
+      select: {
+        student: {
+          id: true,
+        },
+      },
+      relations: {
+        student: true,
+      },
+      where: {
+        id: applicationId,
+      },
+    });
+
     return await this.studentRestrictionRepo
       .createQueryBuilder("studentRestriction")
       .select([
@@ -141,27 +177,13 @@ export class ApplicationRestrictionBypassService {
         "studentRestriction.createdAt",
       ])
       .innerJoin("studentRestriction.restriction", "restriction")
-      .innerJoin("studentRestriction.application", "application")
-      .innerJoin("application.currentAssessment", "currentAssessment")
-      .innerJoin("currentAssessment.offering", "offering")
-      .where("studentRestriction.application = :applicationId", {
-        applicationId,
+      .andWhere("studentRestriction.student.id = :studentId", {
+        studentId: application.student.id,
       })
-      // Active application restriction bypass.
-      .andWhere((qb) => {
-        const subQuery = qb
-          .subQuery()
-          .select("applicationRestrictionBypass.id")
-          .from(ApplicationRestrictionBypass, "applicationRestrictionBypass")
-          .where("applicationRestrictionBypass.application = :applicationId", {
-            applicationId,
-          })
-          .andWhere(
-            "applicationRestrictionBypass.studentRestriction = studentRestriction.id",
-          )
-          .andWhere("applicationRestrictionBypass.isActive = true");
-        return `NOT EXISTS (${subQuery.getQuery()})`;
+      .andWhere("studentRestriction.id NOT IN (:...studentRestrictionIds)", {
+        studentRestrictionIds,
       })
+      .andWhere("studentRestriction.isActive = true")
       // Restriction action type condition.
       .andWhere((qb) => {
         const actionTypeSubQuery = qb
@@ -209,7 +231,6 @@ export class ApplicationRestrictionBypassService {
           );
         return `EXISTS (${actionTypeSubQuery.getQuery()})`;
       })
-      .andWhere("studentRestriction.isActive = true")
       .orderBy("restriction.restrictionCode", "ASC")
       .getMany();
   }

@@ -74,7 +74,6 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
     await saveFakeStudentRestriction(db.dataSource, {
       student: application.student,
       restriction: b6bRestriction,
-      application,
     });
 
     const af4Restriction = await db.restriction.findOne({
@@ -86,7 +85,6 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
       {
         student: application.student,
         restriction: af4Restriction,
-        application,
       },
       {
         isActive: false,
@@ -97,7 +95,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
       where: { restrictionCode: RestrictionCode.ECRS },
     });
 
-    // Add a student restriction that should  be available to be bypassed because the restriction has an action type "Stop part time disbursement".
+    // Add a student restriction that should be available to be bypassed because the restriction has an action type "Stop part time disbursement".
     const stopPartTimeDisbursementStudentRestriction =
       await saveFakeStudentRestriction(db.dataSource, {
         student: application.student,
@@ -178,10 +176,9 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
     await saveFakeStudentRestriction(db.dataSource, {
       student: application.student,
       restriction: b6bRestriction,
-      application,
     });
 
-    // Add a restriction that should  be available to be bypassed because the restriction has an action type "Stop full time disbursement".
+    // Add a restriction that should be available to be bypassed because the restriction has an action type "Stop full time disbursement".
     const ssrRestriction = await db.restriction.findOne({
       where: { restrictionCode: RestrictionCode.SSR },
     });
@@ -190,7 +187,6 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
       {
         student: application.student,
         restriction: ssrRestriction,
-        application,
       },
     );
 
@@ -202,7 +198,6 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
       await saveFakeStudentRestriction(db.dataSource, {
         student: application.student,
         restriction: stopFullTimeBCFundingRestriction,
-        application,
       });
 
     const endpoint = `/aest/application-restriction-bypass/application/${application.id}/options-list`;
