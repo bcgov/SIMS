@@ -23,14 +23,23 @@ export enum ParallelIntensity {
  * @param createPromise Implementation that calls processing function which
  * returns a promise.
  * @param inputs Input data from which the bulk processing is done.
- * @param maxParallelRequests Maximum number of parallel processes allowed to be executed at same time.
+ * @param options.
+ * - `maxParallelRequests` maxParallelRequests Maximum number of parallel
+ * processes allowed to be executed at same time.
+ * - `progress` reports the current progress of the parallel processing.
  * @returns resolved responses of promise.
  */
 export const processInParallel = async <P, I>(
   createPromise: (input: I) => Promise<P>,
   inputs: I[],
-  maxParallelRequests: ParallelIntensity = ParallelIntensity.Regular,
+  options?: {
+    maxParallelRequests?: ParallelIntensity;
+    progress?: (currentRecord: number) => void;
+    partialResults?: (results: P[]) => Promise<void>;
+  },
 ): Promise<P[]> => {
+  const maxParallelRequests =
+    options.maxParallelRequests ?? ParallelIntensity.Regular;
   const resolvedResponses: P[] = [];
 
   // Hold all the promises that must be processed.
@@ -41,6 +50,8 @@ export const processInParallel = async <P, I>(
       // Waits for all be executed.
       const response = await Promise.all(promises);
       resolvedResponses.push(...response);
+      await options?.partialResults?.(response);
+      options?.progress(resolvedResponses.length);
       // Clear the array.
       promises.splice(0, promises.length);
     }
@@ -50,6 +61,8 @@ export const processInParallel = async <P, I>(
     // Waits for methods, if any outside the loop.
     const response = await Promise.all(promises);
     resolvedResponses.push(...response);
+    await options?.partialResults?.(response);
+    options?.progress(resolvedResponses.length);
   }
   return resolvedResponses;
 };

@@ -49,6 +49,7 @@ import {
   FieldSortOrder,
   isBeforeDate,
   isBetweenPeriod,
+  processInParallel,
 } from "@sims/utilities";
 import {
   OFFERING_SAVE_UNIQUE_ERROR,
@@ -66,7 +67,6 @@ import {
   WILComponentOptions,
 } from "./education-program-offering-validation.models";
 import { EducationProgramOfferingValidationService } from "./education-program-offering-validation.service";
-import * as os from "os";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   InstitutionAddsPendingOfferingNotification,
@@ -159,59 +159,67 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       const offeringRepo = entityManager.getRepository(
         EducationProgramOffering,
       );
-      // Used to limit the number of asynchronous operations
-      // that will start at the same time.
-      const maxPromisesAllowed = os.cpus().length;
-      // Hold all the promises that must be processed.
-      const promises: Promise<CreateValidatedOfferingResult>[] = [];
-      const notificationPromises: Promise<void>[] = [];
-      const allResults: CreateValidatedOfferingResult[] = [];
-      for (const validatedOffering of validatedOfferings) {
-        promises.push(
-          this.createFromValidatedOffering(
+      return processInParallel(
+        (validatedOffering) =>
+          this.createOffering(
             validatedOffering,
             offeringRepo,
             auditUserId,
-          ),
-        );
-        const educationProgramOfferingNotificationData = {
-          offeringName: validatedOffering.offeringModel.offeringName,
-          programName: validatedOffering.offeringModel.programContext.name,
-          operatingName: validatedOffering.offeringModel.operatingName,
-          legalOperatingName:
-            validatedOffering.offeringModel.legalOperatingName,
-          primaryEmail: validatedOffering.offeringModel.primaryEmail,
-          programOfferingStatus: validatedOffering.offeringStatus,
-          institutionLocationName: validatedOffering.offeringModel.locationName,
-        };
-        notificationPromises.push(
-          this.saveEducationProgramOfferingNotification(
-            educationProgramOfferingNotificationData,
             entityManager,
           ),
-        );
-        if (promises.length >= maxPromisesAllowed) {
-          // Waits for all be processed.
-          const insertResults = await Promise.all(promises);
-          await Promise.all(notificationPromises);
-          const newOfferings = insertResults.map(
-            (result) => result.createdOfferingId,
-          );
-          await this.saveBulkOfferingParentId(newOfferings, offeringRepo);
-          allResults.push(...insertResults);
-          // Clear the array.
-          promises.length = 0;
-        }
-      }
-      const finalResults = await Promise.all(promises);
-      await Promise.all(notificationPromises);
-      const newOfferings = finalResults.map(
-        (result) => result.createdOfferingId,
+        validatedOfferings,
+        {
+          partialResults: async (results) => {
+            // Ensure the offering parent IDs are set for newly created offerings.
+            const newOfferingsIds = results.map(
+              (result) => result.createdOfferingId,
+            );
+            await this.saveBulkOfferingParentId(newOfferingsIds, offeringRepo);
+          },
+        },
       );
-      await this.saveBulkOfferingParentId(newOfferings, offeringRepo);
-      allResults.push(...finalResults);
-      return allResults;
     });
+  }
+
+  /**
+   * Creates a new education program offering and a notification for the ministry
+   * as a part of the same transaction.
+   * @param validatedOffering successfully validated offering model.
+   * @param offeringRepo repository to be used to execute the insert operations
+   * sharing the same transaction.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param entityManager manager for the transaction.
+   * @returns result object for the offering model.
+   */
+  private async createOffering(
+    validatedOffering: OfferingValidationResult,
+    offeringRepo: Repository<EducationProgramOffering>,
+    auditUserId: number,
+    entityManager: EntityManager,
+  ): Promise<CreateValidatedOfferingResult> {
+    const newOfferingPromise = this.createFromValidatedOffering(
+      validatedOffering,
+      offeringRepo,
+      auditUserId,
+    );
+    const educationProgramOfferingNotificationData = {
+      offeringName: validatedOffering.offeringModel.offeringName,
+      programName: validatedOffering.offeringModel.programContext.name,
+      operatingName: validatedOffering.offeringModel.operatingName,
+      legalOperatingName: validatedOffering.offeringModel.legalOperatingName,
+      primaryEmail: validatedOffering.offeringModel.primaryEmail,
+      programOfferingStatus: validatedOffering.offeringStatus,
+      institutionLocationName: validatedOffering.offeringModel.locationName,
+    };
+    const notificationPromise = this.saveEducationProgramOfferingNotification(
+      educationProgramOfferingNotificationData,
+      entityManager,
+    );
+    const [newOffering] = await Promise.all([
+      newOfferingPromise,
+      notificationPromise,
+    ]);
+    return newOffering;
   }
 
   /**
