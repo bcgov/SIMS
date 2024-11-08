@@ -12,6 +12,8 @@ import { SIMSToSFASFooter } from "./sims-to-sfas.footer";
 import { combineDecimalPlaces } from "@sims/utilities";
 import { SIMSToSFASBaseRecord } from "./sims-to-sfas-base.record";
 import { FixedFormatFileLine } from "@sims/integrations/services/ssh";
+import { SIMSToSFASApplicationRecord } from "@sims/integrations/sfas-integration/sims-sfas-files/sims-to-sfas-application-record";
+import { SIMSToSFASRestrictionRecord } from "@sims/integrations/sfas-integration/sims-sfas-files/sims-to-sfas-restriction-record";
 
 export class SIMSToSFASFileLineBuilder {
   /**
@@ -99,16 +101,17 @@ export class SIMSToSFASFileLineBuilder {
    */
   appendApplicationFileRecords(applicationRecords: ApplicationRecord[]): this {
     applicationRecords.forEach((applicationRecord) => {
-      const applicationFileRecord = new SIMSToSFASStudentRecord();
+      const applicationFileRecord = new SIMSToSFASApplicationRecord();
       applicationFileRecord.recordTypeCode =
         applicationRecord.offeringIntensity === OfferingIntensity.fullTime
           ? SIMSToSFASRecordTypeCodes.FullTimeApplicationDataRecord
           : SIMSToSFASRecordTypeCodes.PartTimeApplicationDataRecord;
       applicationFileRecord.studentId = applicationRecord.studentId;
-      applicationFileRecord.applicationNumber = applicationRecord.applicationId;
+      applicationFileRecord.applicationId = applicationRecord.applicationId;
       applicationFileRecord.studyStartDate = applicationRecord.studyStartDate;
       applicationFileRecord.studyEndDate = applicationRecord.studyEndDate;
-      applicationFileRecord.programYearId = applicationRecord.programYearId;
+      applicationFileRecord.programYear =
+        +applicationRecord.programYear.replace("-", "");
       applicationFileRecord.csgpAwardTotal = applicationRecord.csgpAwardTotal;
       applicationFileRecord.sbsdAwardTotal = applicationRecord.sbsdAwardTotal;
       applicationFileRecord.applicationCancelDate =
@@ -125,7 +128,7 @@ export class SIMSToSFASFileLineBuilder {
    */
   appendRestrictionFileRecords(restrictionRecords: RestrictionRecord[]): this {
     restrictionRecords.forEach((restrictionRecord) => {
-      const restrictionFileRecord = new SIMSToSFASStudentRecord();
+      const restrictionFileRecord = new SIMSToSFASRestrictionRecord();
       restrictionFileRecord.recordTypeCode =
         SIMSToSFASRecordTypeCodes.RestrictionDataRecord;
       restrictionFileRecord.studentId = restrictionRecord.studentId;

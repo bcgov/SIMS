@@ -32,6 +32,5 @@ export class SIMSToSFASIntegrationService extends SFTPIntegrationBase<void> {
       .appendApplicationFileRecords(applicationRecords)
       .appendRestrictionFileRecords(restrictionRecords)
       .appendFooter().fileLines;
-    // TODO: SIMS to SFAS - Append applications and restrictions.
   }
 }

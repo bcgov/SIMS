@@ -21,7 +21,8 @@ export class ProcessSftpResponseResult {
 
 export interface SIMSToSFASProcessingResult {
   studentRecordsSent: number;
-  //TODO: SIMS to SFAS - Add the records sent for applications and restrictions.
+  applicationRecordsSent: number;
+  restrictionRecordsSent: number;
   uploadedFileName: string;
 }
 

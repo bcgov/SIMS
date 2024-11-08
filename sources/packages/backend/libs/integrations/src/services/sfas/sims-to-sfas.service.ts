@@ -140,7 +140,7 @@ export class SIMSToSFASService {
         .createQueryBuilder("application")
         .select("student.id", "studentId")
         .addSelect("application.id", "applicationId")
-        .addSelect("programYear.id", "programYearId")
+        .addSelect("programYear.programYear", "programYear")
         .addSelect("offering.offeringIntensity", "offeringIntensity")
         // Use CASE to conditionally select studyStartDate and studyEndDate and casting JSON values to dates.
         .addSelect(
@@ -308,5 +308,4 @@ export class SIMSToSFASService {
       "bcslOverawardTotal",
     );
   }
-  // TODO: SIMS to SFAS - Add methods to extract application and restriction data.
 }

@@ -101,6 +101,8 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       expect(processingResult).toEqual([
         "Process finalized with success.",
         "Student records sent: 1.",
+        "Application records sent: 0.",
+        "Restriction records sent: 0.",
         `Uploaded file name: ${expectedFileName}.`,
       ]);
       expect(
@@ -156,6 +158,8 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       expect(processingResult).toEqual([
         "Process finalized with success.",
         "Student records sent: 0.",
+        "Application records sent: 0.",
+        "Restriction records sent: 0.",
         "Uploaded file name: none.",
       ]);
       expect(
