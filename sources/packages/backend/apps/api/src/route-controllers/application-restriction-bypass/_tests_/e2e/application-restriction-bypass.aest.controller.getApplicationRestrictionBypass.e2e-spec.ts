@@ -62,15 +62,13 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
         restrictionCode:
           applicationRestrictionBypass.studentRestriction.restriction
             .restrictionCode,
-        applicationRestrictionBypassCreationNote:
-          applicationRestrictionBypass.creationNote.description,
-        applicationRestrictionBypassCreatedBy: getUserFullName(
+        creationNote: applicationRestrictionBypass.creationNote.description,
+        createdBy: getUserFullName(
           applicationRestrictionBypass.bypassCreatedBy,
         ),
-        applicationRestrictionBypassCreatedDate:
+        createdDate:
           applicationRestrictionBypass.bypassCreatedDate.toISOString(),
-        applicationRestrictionBypassBehavior:
-          applicationRestrictionBypass.bypassBehavior,
+        bypassBehavior: applicationRestrictionBypass.bypassBehavior,
       });
   });
 
@@ -110,22 +108,19 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
         restrictionCode:
           applicationRestrictionBypass.studentRestriction.restriction
             .restrictionCode,
-        applicationRestrictionBypassCreationNote:
-          applicationRestrictionBypass.creationNote.description,
-        applicationRestrictionBypassRemovalNote:
-          applicationRestrictionBypass.removalNote.description,
-        applicationRestrictionBypassCreatedBy: getUserFullName(
+        creationNote: applicationRestrictionBypass.creationNote.description,
+        removalNote: applicationRestrictionBypass.removalNote.description,
+        createdBy: getUserFullName(
           applicationRestrictionBypass.bypassCreatedBy,
         ),
-        applicationRestrictionBypassCreatedDate:
+        createdDate:
           applicationRestrictionBypass.bypassCreatedDate.toISOString(),
-        applicationRestrictionBypassRemovedBy: getUserFullName(
+        removedBy: getUserFullName(
           applicationRestrictionBypass.bypassRemovedBy,
         ),
-        applicationRestrictionBypassRemovedDate:
+        removedDate:
           applicationRestrictionBypass.bypassRemovedDate.toISOString(),
-        applicationRestrictionBypassBehavior:
-          applicationRestrictionBypass.bypassBehavior,
+        bypassBehavior: applicationRestrictionBypass.bypassBehavior,
       });
   });
 

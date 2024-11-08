@@ -10,7 +10,7 @@ import {
   StudentRestriction,
   User,
 } from "@sims/sims-db";
-import { Brackets, DataSource, Not, Repository, UpdateResult } from "typeorm";
+import { Brackets, DataSource, Repository, UpdateResult } from "typeorm";
 import { CustomNamedError } from "@sims/utilities";
 import {
   ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS,
@@ -70,7 +70,6 @@ export class ApplicationRestrictionBypassService {
       where: {
         application: {
           id: applicationId,
-          applicationStatus: Not(ApplicationStatus.Draft),
         },
       },
       order: { createdAt: "DESC" },

@@ -46,11 +46,11 @@ import {
   APPLICATION_RESTRICTION_BYPASS_NOT_FOUND,
   STUDENT_RESTRICTION_IS_NOT_ACTIVE,
   STUDENT_RESTRICTION_NOT_FOUND,
-} from "../../../src/constants";
+} from "../../constants";
 import { getUserFullName } from "../../utilities";
 
 /**
- * Controller for AEST Application Restriction Bypasses.
+ * Controller for AEST Application Restriction Bypasses
  * This consists of all Rest APIs for AEST application restriction bypasses.
  */
 @AllowAuthorizedParty(AuthorizedParties.aest)
