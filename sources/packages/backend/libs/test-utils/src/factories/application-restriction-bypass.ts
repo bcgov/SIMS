@@ -10,6 +10,7 @@ import {
   User,
 } from "@sims/sims-db";
 import { E2EDataSources } from "@sims/test-utils/data-source/e2e-data-source";
+import { saveFakeApplication } from "@sims/test-utils/factories/application";
 import { createFakeNote } from "@sims/test-utils/factories/note";
 import { saveFakeStudentRestriction } from "@sims/test-utils/factories/student-restriction";
 import { ArrayContains, FindOneOptions } from "typeorm";
@@ -75,7 +76,7 @@ export function createFakeApplicationRestrictionBypass(relations: {
 export async function saveFakeApplicationRestrictionBypass(
   db: E2EDataSources,
   relations: {
-    application: Application;
+    application?: Application;
     studentRestriction?: StudentRestriction;
     creationNote?: Note;
     bypassCreatedBy?: User;
@@ -92,7 +93,8 @@ export async function saveFakeApplicationRestrictionBypass(
 ): Promise<ApplicationRestrictionBypass> {
   const now = new Date();
   const bypass = new ApplicationRestrictionBypass();
-  bypass.application = relations.application;
+  bypass.application =
+    relations.application ?? (await saveFakeApplication(db.dataSource));
   bypass.bypassBehavior =
     options.initialValues?.bypassBehavior ??
     RestrictionBypassBehaviors.AllDisbursements;
@@ -114,7 +116,7 @@ export async function saveFakeApplicationRestrictionBypass(
     bypass.studentRestriction = await saveFakeStudentRestriction(
       db.dataSource,
       {
-        student: relations.application.student,
+        student: bypass.application.student,
         restriction,
       },
     );

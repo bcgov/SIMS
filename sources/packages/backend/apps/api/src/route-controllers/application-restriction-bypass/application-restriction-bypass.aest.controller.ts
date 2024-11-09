@@ -221,7 +221,7 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
     try {
       await this.applicationRestrictionBypassService.removeBypassRestriction(
         id,
-        payload,
+        payload.note,
         userToken.userId,
       );
     } catch (error) {

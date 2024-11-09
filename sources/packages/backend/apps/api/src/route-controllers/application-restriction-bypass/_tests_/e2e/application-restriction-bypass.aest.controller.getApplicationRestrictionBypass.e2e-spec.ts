@@ -4,7 +4,6 @@ import {
   RestrictionCode,
   createE2EDataSources,
   createFakeUser,
-  saveFakeApplication,
   saveFakeApplicationRestrictionBypass,
 } from "@sims/test-utils";
 import {
@@ -14,7 +13,7 @@ import {
   getAESTToken,
 } from "../../../../testHelpers";
 import * as request from "supertest";
-import { OfferingIntensity, RestrictionActionType, User } from "@sims/sims-db";
+import { RestrictionActionType, User } from "@sims/sims-db";
 import { getUserFullName } from "../../../../utilities";
 
 describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrictionBypass.", () => {
@@ -31,14 +30,10 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
 
   it("Should get an application restriction bypass for a submitted part-time application when there is an application restriction bypass with the required id.", async () => {
     // Arrange
-    const application = await saveFakeApplication(db.dataSource, undefined, {
-      offeringIntensity: OfferingIntensity.partTime,
-    });
     const applicationRestrictionBypass =
       await saveFakeApplicationRestrictionBypass(
         db,
         {
-          application,
           bypassCreatedBy: sharedMinistryUser,
           creator: sharedMinistryUser,
         },
@@ -74,14 +69,10 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
 
   it("Should get an inactive application restriction bypass for a submitted part-time application when there is an application restriction bypass with the required id.", async () => {
     // Arrange
-    const application = await saveFakeApplication(db.dataSource, undefined, {
-      offeringIntensity: OfferingIntensity.partTime,
-    });
     const applicationRestrictionBypass =
       await saveFakeApplicationRestrictionBypass(
         db,
         {
-          application,
           bypassCreatedBy: sharedMinistryUser,
           creator: sharedMinistryUser,
           bypassRemovedBy: sharedMinistryUser,

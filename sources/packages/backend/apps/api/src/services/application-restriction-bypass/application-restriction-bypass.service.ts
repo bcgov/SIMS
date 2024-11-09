@@ -10,7 +10,7 @@ import {
   StudentRestriction,
   User,
 } from "@sims/sims-db";
-import { Brackets, DataSource, Repository, UpdateResult } from "typeorm";
+import { DataSource, Repository, UpdateResult } from "typeorm";
 import { CustomNamedError } from "@sims/utilities";
 import {
   ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS,
@@ -20,10 +20,7 @@ import {
   APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE,
   STUDENT_RESTRICTION_NOT_FOUND,
 } from "../../constants";
-import {
-  BypassRestrictionData,
-  RemoveBypassRestrictionData,
-} from "apps/api/src/services/application-restriction-bypass/application-restriction-bypass.models";
+import { BypassRestrictionData } from "../../services/application-restriction-bypass/application-restriction-bypass.models";
 import { NoteSharedService } from "@sims/services";
 
 /**
@@ -160,16 +157,25 @@ export class ApplicationRestrictionBypassService {
         student: {
           id: true,
         },
+        currentAssessment: {
+          id: true,
+          offering: {
+            offeringIntensity: true,
+          },
+        },
       },
       relations: {
         student: true,
+        currentAssessment: {
+          offering: true,
+        },
       },
       where: {
         id: applicationId,
       },
     });
 
-    return await this.studentRestrictionRepo
+    const query = this.studentRestrictionRepo
       .createQueryBuilder("studentRestriction")
       .select([
         "studentRestriction.id",
@@ -183,56 +189,34 @@ export class ApplicationRestrictionBypassService {
       .andWhere("studentRestriction.id NOT IN (:...studentRestrictionIds)", {
         studentRestrictionIds,
       })
-      .andWhere("studentRestriction.isActive = true")
-      // Restriction action type condition.
-      .andWhere((qb) => {
-        const actionTypeSubQuery = qb
-          .subQuery()
-          .select("1")
-          .from(Application, "application")
-          .innerJoin("application.currentAssessment", "currentAssessment")
-          .innerJoin("currentAssessment.offering", "offering")
-          .where("application.id = :applicationId", { applicationId })
-          .andWhere(
-            new Brackets((qb) => {
-              qb.where(
-                new Brackets((fullTimeQb) => {
-                  fullTimeQb
-                    .where("offering.offeringIntensity = :fullTimeIntensity", {
-                      fullTimeIntensity: OfferingIntensity.fullTime,
-                    })
-                    .andWhere(
-                      "restriction.action_type::text[] && ARRAY[:...fullTimeActionTypes]::text[]",
-                      {
-                        fullTimeActionTypes: [
-                          RestrictionActionType.StopFullTimeBCFunding,
-                          RestrictionActionType.StopFullTimeDisbursement,
-                        ],
-                      },
-                    );
-                }),
-              ).orWhere(
-                new Brackets((partTimeQb) => {
-                  partTimeQb
-                    .where("offering.offeringIntensity = :partTimeIntensity", {
-                      partTimeIntensity: OfferingIntensity.partTime,
-                    })
-                    .andWhere(
-                      "restriction.action_type::text[] && ARRAY[:...partTimeActionTypes]::text[]",
-                      {
-                        partTimeActionTypes: [
-                          RestrictionActionType.StopPartTimeDisbursement,
-                        ],
-                      },
-                    );
-                }),
-              );
-            }),
-          );
-        return `EXISTS (${actionTypeSubQuery.getQuery()})`;
-      })
-      .orderBy("restriction.restrictionCode", "ASC")
-      .getMany();
+      .andWhere("studentRestriction.isActive = true");
+
+    // Restriction action type condition.
+    if (
+      application.currentAssessment.offering.offeringIntensity ===
+      OfferingIntensity.fullTime
+    ) {
+      query.andWhere(
+        "restriction.action_type::text[] && ARRAY[:...fullTimeActionTypes]::text[]",
+        {
+          fullTimeActionTypes: [
+            RestrictionActionType.StopFullTimeBCFunding,
+            RestrictionActionType.StopFullTimeDisbursement,
+          ],
+        },
+      );
+    } else {
+      query.andWhere(
+        "restriction.action_type::text[] && ARRAY[:...partTimeActionTypes]::text[]",
+        {
+          partTimeActionTypes: [
+            RestrictionActionType.StopPartTimeBCFunding,
+            RestrictionActionType.StopPartTimeDisbursement,
+          ],
+        },
+      );
+    }
+    return await query.orderBy("restriction.restrictionCode", "ASC").getMany();
   }
 
   /**
@@ -391,13 +375,13 @@ export class ApplicationRestrictionBypassService {
   /**
    * Removes an application restriction bypass.
    * @param id id of the application restriction bypass to remove.
-   * @param payload note for the removal of the application restriction bypass.
+   * @param removalNote removal note for the application restriction bypass.
    * @param auditUserId id of the audit user.
    * @returns updated application restriction bypass.
    */
   async removeBypassRestriction(
     id: number,
-    payload: RemoveBypassRestrictionData,
+    removalNote: string,
     auditUserId: number,
   ): Promise<UpdateResult> {
     const applicationRestrictionBypass =
@@ -446,7 +430,7 @@ export class ApplicationRestrictionBypassService {
         const noteObj = await this.noteSharedService.createStudentNote(
           applicationRestrictionBypass.application.student.id,
           NoteType.Application,
-          payload.note,
+          removalNote,
           auditUserId,
           transactionalEntityManager,
         );

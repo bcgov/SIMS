@@ -6,7 +6,3 @@ export interface BypassRestrictionData {
   bypassBehavior: RestrictionBypassBehaviors;
   note: string;
 }
-
-export interface RemoveBypassRestrictionData {
-  note: string;
-}
