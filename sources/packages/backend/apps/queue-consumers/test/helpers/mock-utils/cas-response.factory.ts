@@ -20,7 +20,7 @@ import * as faker from "faker";
  */
 export function createFakeCASSupplierResponse(options?: {
   initialValues: {
-    status?: CASSupplierRecordStatus;
+    siteStatus?: CASSupplierRecordStatus;
     postalCode?: string;
   };
 }): CASSupplierResponse {
@@ -33,7 +33,7 @@ export function createFakeCASSupplierResponse(options?: {
         sin: "000000000",
         providerid: "CAS_WS_AE_PSFS_SIMS",
         businessnumber: null,
-        status: options?.initialValues?.status ?? "ACTIVE",
+        status: "ACTIVE",
         supplierprotected: null,
         standardindustryclassification: null,
         lastupdated: "2024-05-01 13:55:00",
@@ -53,7 +53,7 @@ export function createFakeCASSupplierResponse(options?: {
             banknumber: null,
             eftadvicepref: null,
             providerid: "CAS_WS_AE_PSFS_SIMS",
-            status: "ACTIVE",
+            status: options?.initialValues?.siteStatus ?? "ACTIVE",
             siteprotected: null,
             lastupdated: "2024-05-01 13:55:04",
           },

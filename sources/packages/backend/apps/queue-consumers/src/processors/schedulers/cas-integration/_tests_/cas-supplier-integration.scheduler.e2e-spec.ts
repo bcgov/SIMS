@@ -492,7 +492,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     );
   });
 
-  it("Should create a new site and update the student CAS supplier when an inactive CAS supplier exists with matching addresses.", async () => {
+  it("Should create a new site and update the student CAS supplier when an active CAS supplier exists with inactive site address.", async () => {
     // Arrange
     // Created a student with same address line 1 and postal code from the expected CAS mocked result.
     // Postal code has a white space that is expected to be removed.
@@ -512,27 +512,30 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     });
     const referenceDate = new Date();
     const savedCASSupplier = await saveFakeCASSupplier(db, { student });
+
     // Configure CAS mock to return a result for the GetSupplier
-    // with the same supplier number and address line 1 from the
-    // saved CAS supplier but an inactive status.
+    // with the same supplier number, address line 1 and postal code
+    // from the saved CAS supplier but inactive status.
     casServiceMock.getSupplierInfoFromCAS = jest.fn(() =>
       Promise.resolve(
         createFakeCASSupplierResponse({
           initialValues: {
-            status: "INACTIVE", // The status is set to "INACTIVE" to mismatch the address.
+            siteStatus: "INACTIVE", // The status is added to mismatch the address's status.
           },
         }),
       ),
     );
+
     // Configure CAS mock to return a successful result for the CreateSiteForExistingSupplier.
-    const createSiteForInactiveSupplierResponse =
-      createFakeCASCreateSupplierAndSiteResponse({
+    const createSupplierNoSiteResponse =
+      createFakeCASSiteForExistingSupplierResponse({
         initialValues: {
+          supplierNumber: savedCASSupplier.supplierNumber,
           supplierAddress: savedCASSupplier.supplierAddress,
         },
       });
-    casServiceMock.createSupplierAndSite = jest.fn(() =>
-      Promise.resolve(createSiteForInactiveSupplierResponse),
+    casServiceMock.createSiteForExistingSupplier = jest.fn(() =>
+      Promise.resolve(createSupplierNoSiteResponse),
     );
 
     // Queued job.
@@ -549,17 +552,19 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     ]);
     expect(
       mockedJob.containLogMessages([
+        "Executing CAS supplier integration...",
         "Found 1 records to be updated.",
         `Processing student CAS supplier ID: ${savedCASSupplier.id}.`,
-        `CAS evaluation result status: ${CASEvaluationStatus.NotFound}.`,
-        `No active CAS supplier found. Reason: ${NotFoundReason.NoActiveSupplierFound}.`,
-        "Created supplier and site on CAS.",
+        `CAS evaluation result status: ${CASEvaluationStatus.ActiveSupplierFound}.`,
+        "Active CAS supplier found.",
+        "Created a new site on CAS.",
         "Updated CAS supplier and site for the student.",
+        "CAS supplier integration executed.",
       ]),
     ).toBe(true);
     // Assert the API methods were called.
     expect(casServiceMock.getSupplierInfoFromCAS).toHaveBeenCalled();
-    expect(casServiceMock.createSupplierAndSite).toHaveBeenCalled();
+    expect(casServiceMock.createSiteForExistingSupplier).toHaveBeenCalled();
     // Assert DB was updated.
     const updateCASSupplier = await db.casSupplier.findOne({
       select: {
@@ -582,16 +587,15 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       },
     });
     const [submittedAddress] =
-      createSiteForInactiveSupplierResponse.submittedData.SupplierAddress;
+      createSupplierNoSiteResponse.submittedData.SupplierAddress;
     expect(updateCASSupplier).toEqual({
       id: savedCASSupplier.id,
-      supplierNumber:
-        createSiteForInactiveSupplierResponse.response.supplierNumber,
+      supplierNumber: createSupplierNoSiteResponse.response.supplierNumber,
       status: "ACTIVE",
       lastUpdated: expect.any(Date),
       supplierAddress: {
         supplierSiteCode:
-          createSiteForInactiveSupplierResponse.response.supplierSiteCode,
+          createSupplierNoSiteResponse.response.supplierSiteCode,
         addressLine1: submittedAddress.AddressLine1,
         city: submittedAddress.City,
         provinceState: submittedAddress.Province,
