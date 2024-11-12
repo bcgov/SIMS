@@ -47,6 +47,7 @@ export class AvailableStudentRestrictionAPIOutDTO {
     studentRestrictionCreatedAt: Date;
   }[];
 }
+
 export class ApplicationRestrictionBypassAPIOutDTO {
   applicationRestrictionBypassId: number;
   studentRestrictionId: number;
