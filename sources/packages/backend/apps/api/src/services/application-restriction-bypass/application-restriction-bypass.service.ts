@@ -216,7 +216,7 @@ export class ApplicationRestrictionBypassService {
         },
       );
     }
-    return await query.orderBy("restriction.restrictionCode", "ASC").getMany();
+    return query.orderBy("restriction.restrictionCode", "ASC").getMany();
   }
 
   /**
@@ -252,32 +252,30 @@ export class ApplicationRestrictionBypassService {
         id: payload.applicationId,
       },
     });
-    return await this.dataSource.transaction(
-      async (transactionalEntityManager) => {
-        const noteObj = await this.noteSharedService.createStudentNote(
-          studentApplication.student.id,
-          NoteType.Application,
-          payload.note,
-          auditUserId,
-          transactionalEntityManager,
-        );
-        const now = new Date();
-        const auditUser = { id: auditUserId } as User;
-        return transactionalEntityManager
-          .getRepository(ApplicationRestrictionBypass)
-          .save({
-            application: { id: payload.applicationId },
-            studentRestriction: { id: payload.studentRestrictionId },
-            isActive: true,
-            bypassCreatedDate: now,
-            bypassCreatedBy: auditUser,
-            creator: auditUser,
-            createdAt: now,
-            bypassBehavior: payload.bypassBehavior,
-            creationNote: noteObj,
-          });
-      },
-    );
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
+      const noteObj = await this.noteSharedService.createStudentNote(
+        studentApplication.student.id,
+        NoteType.Application,
+        payload.note,
+        auditUserId,
+        transactionalEntityManager,
+      );
+      const now = new Date();
+      const auditUser = { id: auditUserId } as User;
+      return transactionalEntityManager
+        .getRepository(ApplicationRestrictionBypass)
+        .save({
+          application: { id: payload.applicationId },
+          studentRestriction: { id: payload.studentRestrictionId },
+          isActive: true,
+          bypassCreatedDate: now,
+          bypassCreatedBy: auditUser,
+          creator: auditUser,
+          createdAt: now,
+          bypassBehavior: payload.bypassBehavior,
+          creationNote: noteObj,
+        });
+    });
   }
 
   /**
@@ -425,28 +423,26 @@ export class ApplicationRestrictionBypassService {
       );
     }
     const auditUser = { id: auditUserId } as User;
-    return await this.dataSource.transaction(
-      async (transactionalEntityManager) => {
-        const noteObj = await this.noteSharedService.createStudentNote(
-          applicationRestrictionBypass.application.student.id,
-          NoteType.Application,
-          removalNote,
-          auditUserId,
-          transactionalEntityManager,
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
+      const noteObj = await this.noteSharedService.createStudentNote(
+        applicationRestrictionBypass.application.student.id,
+        NoteType.Application,
+        removalNote,
+        auditUserId,
+        transactionalEntityManager,
+      );
+      return transactionalEntityManager
+        .getRepository(ApplicationRestrictionBypass)
+        .update(
+          { id },
+          {
+            isActive: false,
+            bypassRemovedDate: new Date(),
+            bypassRemovedBy: auditUser,
+            removalNote: noteObj,
+            modifier: auditUser,
+          },
         );
-        return transactionalEntityManager
-          .getRepository(ApplicationRestrictionBypass)
-          .update(
-            { id },
-            {
-              isActive: false,
-              bypassRemovedDate: new Date(),
-              bypassRemovedBy: auditUser,
-              removalNote: noteObj,
-              modifier: auditUser,
-            },
-          );
-      },
-    );
+    });
   }
 }
