@@ -914,9 +914,9 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       // TODO:Further investigation needed as the CASE translation does not work in orderby queries.
       paginatedProgramQuery.orderBy(
         `CASE           
-          WHEN programs.programStatus = '${ProgramStatus.Pending}' and programs.isActive = true and (programs.effectiveEndDate is null OR CURRENT_DATE < programs.effectiveEndDate) THEN ${SortPriority.Priority1}
-          WHEN programs.programStatus = '${ProgramStatus.Approved}' and programs.isActive = true and (programs.effectiveEndDate is null OR CURRENT_DATE < programs.effectiveEndDate) THEN ${SortPriority.Priority2}
-          WHEN programs.programStatus = '${ProgramStatus.Declined}' and programs.isActive = true and (programs.effectiveEndDate is null OR CURRENT_DATE < programs.effectiveEndDate) THEN ${SortPriority.Priority3}
+          WHEN programs.programStatus = '${ProgramStatus.Pending}' and programs.isActive = true and (programs.effectiveEndDate is null OR programs.effectiveEndDate > CURRENT_DATE) THEN ${SortPriority.Priority1}
+          WHEN programs.programStatus = '${ProgramStatus.Approved}' and programs.isActive = true and (programs.effectiveEndDate is null OR programs.effectiveEndDate > CURRENT_DATE) THEN ${SortPriority.Priority2}
+          WHEN programs.programStatus = '${ProgramStatus.Declined}' and programs.isActive = true and (programs.effectiveEndDate is null OR programs.effectiveEndDate > CURRENT_DATE) THEN ${SortPriority.Priority3}
           WHEN programs.isActive = false or (programs.effectiveEndDate is not null and programs.effectiveEndDate <= CURRENT_DATE) THEN ${SortPriority.Priority4}
           ELSE ${SortPriority.Priority5}
         END`,
