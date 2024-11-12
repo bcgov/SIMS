@@ -917,7 +917,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       );
     } else {
       // Default sort and order.
-      // TODO:Further investigation needed as the CASE translation does not work in orderby queries.
       paginatedProgramQuery.orderBy(
         `CASE           
           WHEN programs.programStatus = '${ProgramStatus.Pending}' and programs.isActive = true and (programs.effectiveEndDate is null OR programs.effectiveEndDate > CURRENT_DATE) THEN ${SortPriority.Priority1}
