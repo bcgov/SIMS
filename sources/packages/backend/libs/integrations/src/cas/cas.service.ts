@@ -2,9 +2,14 @@ import { HttpStatus, Injectable, LoggerService } from "@nestjs/common";
 import {
   CASAuthDetails,
   CASSupplierResponse,
+  CreateExistingSupplierAndSiteSubmittedData,
+  CreateExistingSupplierSiteData,
+  CreateExistingSupplierSiteResponse,
+  CreateSupplierAddressSubmittedData,
   CreateSupplierAndSiteData,
   CreateSupplierAndSiteResponse,
   CreateSupplierAndSiteSubmittedData,
+  CreateSupplierSite,
 } from "./models/cas-service.model";
 import { AxiosError, AxiosRequestConfig } from "axios";
 import { HttpService } from "@nestjs/axios";
@@ -131,6 +136,10 @@ export class CASService {
     const url = `${this.casIntegrationConfig.baseUrl}/cfs/supplier/`;
     try {
       const config = await this.getAuthConfig();
+      const supplierAddress = this.getSupplierAddress(
+        supplierData.supplierSite,
+        supplierData.emailAddress,
+      );
       const submittedData: CreateSupplierAndSiteSubmittedData = {
         SupplierName: formatUserName(
           supplierData.firstName,
@@ -138,16 +147,59 @@ export class CASService {
         ),
         SubCategory: "Individual",
         Sin: supplierData.sin,
-        SupplierAddress: [
-          {
-            AddressLine1: formatAddress(supplierData.supplierSite.addressLine1),
-            City: formatCity(supplierData.supplierSite.city),
-            Province: supplierData.supplierSite.provinceCode,
-            Country: "CA",
-            PostalCode: formatPostalCode(supplierData.supplierSite.postalCode),
-            EmailAddress: supplierData.emailAddress,
-          },
-        ],
+        SupplierAddress: [supplierAddress],
+      };
+      const response = await this.httpService.axiosRef.post(
+        url,
+        submittedData,
+        config,
+      );
+      return {
+        submittedData,
+        response: {
+          supplierNumber: response.data.SUPPLIER_NUMBER,
+          supplierSiteCode: this.extractSupplierSiteCode(
+            response.data.SUPPLIER_SITE_CODE,
+          ),
+        },
+      };
+    } catch (error: unknown) {
+      if (
+        error instanceof AxiosError &&
+        error.response?.status === HttpStatus.BAD_REQUEST &&
+        !!error.response?.data[CAS_RETURNED_MESSAGES]
+      ) {
+        // Checking for bad request errors for better logging while the
+        // specific ticket to handle exception is pending.
+        throw new CustomNamedError(
+          error.response.data[CAS_RETURNED_MESSAGES],
+          CAS_BAD_REQUEST,
+        );
+      }
+      throw new Error("Error while creating supplier and site on CAS.", {
+        cause: error,
+      });
+    }
+  }
+
+  /**
+   * Create supplier site for existing supplier.
+   * @param supplierData data to be used for supplier and site creation.
+   * @returns submitted data and CAS response.
+   */
+  async createSiteForExistingSupplier(
+    supplierData: CreateExistingSupplierSiteData,
+  ): Promise<CreateExistingSupplierSiteResponse> {
+    const url = `${this.casIntegrationConfig.baseUrl}/cfs/supplier/${supplierData.supplierNumber}/site`;
+    try {
+      const config = await this.getAuthConfig();
+      const supplierAddress = this.getSupplierAddress(
+        supplierData.supplierSite,
+        supplierData.emailAddress,
+      );
+      const submittedData: CreateExistingSupplierAndSiteSubmittedData = {
+        SupplierNumber: supplierData.supplierNumber,
+        SupplierAddress: [supplierAddress],
       };
       const response = await this.httpService.axiosRef.post(
         url,
@@ -191,6 +243,28 @@ export class CASService {
    */
   private extractSupplierSiteCode(casSupplierSiteCode: string): string {
     return casSupplierSiteCode.replace(/\[|]|\s/g, "");
+  }
+
+  /**
+   * Obtains the supplier address object for based on supplierData being either
+   * the CreateSupplierAndSiteData or CreateExistingSupplierSiteData class.
+   * @param supplierSite supplier site data to get supplier address.
+   * @param emailAddress email address for the supplier address.
+   * @returns formatted supplier address data.
+   */
+  private getSupplierAddress(
+    supplierSite: CreateSupplierSite,
+    emailAddress: string,
+  ): CreateSupplierAddressSubmittedData {
+    const supplierAddress = {
+      AddressLine1: formatAddress(supplierSite.addressLine1),
+      City: formatCity(supplierSite.city),
+      Province: supplierSite.provinceCode,
+      Country: "CA",
+      PostalCode: formatPostalCode(supplierSite.postalCode),
+      EmailAddress: emailAddress,
+    };
+    return supplierAddress;
   }
 
   @InjectLogger()

@@ -1,14 +1,29 @@
 import {
+  formatAddress,
+  formatCity,
+  formatPostalCode,
+} from "@sims/integrations/cas";
+import {
   CASSupplierResponse,
+  CreateExistingSupplierSiteResponse,
+  CreateSupplierAddressSubmittedData,
   CreateSupplierAndSiteResponse,
 } from "@sims/integrations/cas/models/cas-service.model";
+import { CASSupplierRecordStatus, SupplierAddress } from "@sims/sims-db";
 import * as faker from "faker";
 
 /**
  * Creates a fake CAS supplier response.
+ * @param options options.
+ * - `initialValues` fake CAS supplier response values.
  * @returns a fake CAS supplier response.
  */
-export function createFakeCASSupplierResponse(): CASSupplierResponse {
+export function createFakeCASSupplierResponse(options?: {
+  initialValues: {
+    siteStatus?: CASSupplierRecordStatus;
+    postalCode?: string;
+  };
+}): CASSupplierResponse {
   return {
     items: [
       {
@@ -31,14 +46,14 @@ export function createFakeCASSupplierResponse(): CASSupplierResponse {
             city: "VICTORIA",
             province: "BC",
             country: "CA",
-            postalcode: "V8Z7X9",
+            postalcode: options?.initialValues?.postalCode ?? "V8Z7X9",
             emailaddress: null,
             accountnumber: null,
             branchnumber: null,
             banknumber: null,
             eftadvicepref: null,
             providerid: "CAS_WS_AE_PSFS_SIMS",
-            status: "ACTIVE",
+            status: options?.initialValues?.siteStatus ?? "ACTIVE",
             siteprotected: null,
             lastupdated: "2024-05-01 13:55:04",
           },
@@ -68,24 +83,24 @@ export function createFakeCASNotFoundSupplierResponse(): CASSupplierResponse {
 
 /**
  * Create a fake CreateSupplierAndSite response.
+ * @param options options.
+ * - `initialValues` fake CAS create supplier and site response values.
  * @returns fake CreateSupplierAndSite response.
  */
-export function createFakeCASCreateSupplierAndSiteResponse(): CreateSupplierAndSiteResponse {
+export function createFakeCASCreateSupplierAndSiteResponse(options?: {
+  initialValues: {
+    supplierAddress: SupplierAddress;
+  };
+}): CreateSupplierAndSiteResponse {
+  const supplierAddress = createFakeCASSupplierAddress(
+    options?.initialValues?.supplierAddress,
+  );
   return {
     submittedData: {
       SupplierName: "DOE, JOHN",
       SubCategory: "Individual",
       Sin: faker.datatype.number({ min: 100000000, max: 999999999 }).toString(),
-      SupplierAddress: [
-        {
-          AddressLine1: faker.address.streetAddress(false).toUpperCase(),
-          City: "Victoria",
-          Province: "BC",
-          Country: "CA",
-          PostalCode: "H1H1H1",
-          EmailAddress: faker.internet.email(),
-        },
-      ],
+      SupplierAddress: [supplierAddress],
     },
     response: {
       supplierNumber: faker.datatype
@@ -93,5 +108,54 @@ export function createFakeCASCreateSupplierAndSiteResponse(): CreateSupplierAndS
         .toString(),
       supplierSiteCode: "001",
     },
+  };
+}
+
+/**
+ * Create a fake CreateSupplierNoSite response with missing postal code.
+ * @param options options.
+ * - `initialValues` fake CAS create supplier without site response values.
+ * @returns fake CreateSupplierNoSite response.
+ */
+export function createFakeCASSiteForExistingSupplierResponse(options?: {
+  initialValues: {
+    supplierNumber: string;
+    supplierAddress: SupplierAddress;
+  };
+}): CreateExistingSupplierSiteResponse {
+  const supplierNumber =
+    options?.initialValues?.supplierNumber ??
+    faker.datatype.number({ min: 1000000, max: 9999999 }).toString();
+  const supplierAddress = createFakeCASSupplierAddress(
+    options?.initialValues?.supplierAddress,
+  );
+  return {
+    submittedData: {
+      SupplierNumber: supplierNumber,
+      SupplierAddress: [supplierAddress],
+    },
+    response: {
+      supplierNumber: supplierNumber,
+      supplierSiteCode: "001",
+    },
+  };
+}
+
+export function createFakeCASSupplierAddress(
+  supplierAddress?: SupplierAddress,
+): CreateSupplierAddressSubmittedData {
+  return {
+    AddressLine1: supplierAddress?.addressLine1
+      ? formatAddress(supplierAddress?.addressLine1)
+      : faker.address.streetAddress(false).toUpperCase(),
+    City: supplierAddress?.city
+      ? formatCity(supplierAddress?.city)
+      : "Victoria",
+    Province: supplierAddress?.provinceState ?? "BC",
+    Country: supplierAddress?.country ?? "CA",
+    PostalCode: supplierAddress?.postalCode
+      ? formatPostalCode(supplierAddress?.postalCode)
+      : "H1H1H1",
+    EmailAddress: faker.internet.email(),
   };
 }
