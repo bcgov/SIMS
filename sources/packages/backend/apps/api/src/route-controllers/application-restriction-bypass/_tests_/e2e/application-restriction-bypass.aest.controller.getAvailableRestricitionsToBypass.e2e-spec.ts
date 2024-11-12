@@ -100,7 +100,6 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
       await saveFakeStudentRestriction(db.dataSource, {
         student: application.student,
         restriction: ecrsRestriction,
-        application,
       });
     const endpoint = `/aest/application-restriction-bypass/application/${application.id}/options-list`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);

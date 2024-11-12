@@ -170,7 +170,6 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
       {
         student: application.student,
         restriction: ptssrRestriction,
-        application,
         resolutionNote: null,
         creator: sharedMinistryUser,
       },
