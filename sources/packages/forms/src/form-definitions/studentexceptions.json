@@ -1963,7 +1963,7 @@
                 }
               ],
               "className": "font-bold",
-              "content": "Current Year Partner Income",
+              "content": "Current year partner's income",
               "type": "htmlelement",
               "hideLabel": true,
               "tags": [],
