@@ -57,7 +57,6 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
     const studentRestriction = await saveFakeStudentRestriction(db.dataSource, {
       student: application.student,
       restriction: ptssrRestriction,
-      application,
       resolutionNote: null,
       creator: sharedMinistryUser,
     });
@@ -211,7 +210,6 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
     const studentRestriction = await saveFakeStudentRestriction(db.dataSource, {
       student: application.student,
       restriction: ptssrRestriction,
-      application,
       resolutionNote: null,
       creator: sharedMinistryUser,
     });
@@ -247,7 +245,6 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
     const studentRestriction = await saveFakeStudentRestriction(db.dataSource, {
       student: application.student,
       restriction: ptssrRestriction,
-      application,
       resolutionNote: null,
       creator: sharedMinistryUser,
     });
