@@ -20,7 +20,7 @@ import {
   APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE,
   STUDENT_RESTRICTION_NOT_FOUND,
 } from "../../constants";
-import { BypassRestrictionData } from "../../services/application-restriction-bypass/application-restriction-bypass.models";
+import { BypassRestrictionData } from "../../services/";
 import { NoteSharedService } from "@sims/services";
 
 /**
