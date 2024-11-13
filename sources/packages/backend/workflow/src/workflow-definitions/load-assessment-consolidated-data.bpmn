@@ -23,6 +23,7 @@
           <zeebe:header key="partner1TotalIncome" value="$.supportingUsers.Partner1.supportingData.totalIncome" />
           <zeebe:header key="applicationId" value="$.applicationId" />
           <zeebe:header key="studentDataEstimatedSpouseIncome" value="$.data.estimatedSpouseIncome" />
+          <zeebe:header key="studentDataCurrentYearPartnerIncome" value="$.data.currentYearPartnerIncome" />
           <zeebe:header key="studentDataStudentParentsTotalIncome" value="$.data.studentParentsTotalIncome" />
           <zeebe:header key="studentDataWhenDidYouGraduateOrLeaveHighSchool" value="$.data.whenDidYouGraduateOrLeaveHighSchool" />
           <zeebe:header key="studentDataLivingathomeRent" value="$.data.livingathomeRent" />
