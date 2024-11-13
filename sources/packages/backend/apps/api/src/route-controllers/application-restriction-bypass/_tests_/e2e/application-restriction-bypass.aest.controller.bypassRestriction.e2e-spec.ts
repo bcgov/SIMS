@@ -199,7 +199,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
       });
   });
 
-  it("Should throw an HTTP error while creating a bypass when the student application is in draft.", async () => {
+  it("Should throw an HTTP error while creating a bypass when the student application is draft.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource, undefined, {
       offeringIntensity: OfferingIntensity.partTime,
@@ -234,7 +234,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
       });
   });
 
-  it("Should throw an HTTP error while creating a bypass when the student application is in cancelled.", async () => {
+  it("Should throw an HTTP error while creating a bypass when the student application is cancelled.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource, undefined, {
       offeringIntensity: OfferingIntensity.partTime,
