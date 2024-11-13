@@ -30,6 +30,8 @@ export function createFakeStudentRestriction(relations: {
   restrictionNote?: Note;
   resolutionNote?: Note;
   creator?: User;
+  updatedAt?: Date;
+  isActive?: boolean;
 }): StudentRestriction {
   const studentRestriction = new StudentRestriction();
   studentRestriction.student = relations.student;
@@ -39,6 +41,8 @@ export function createFakeStudentRestriction(relations: {
   studentRestriction.resolutionNote = relations.resolutionNote;
   studentRestriction.isActive = true;
   studentRestriction.creator = relations?.creator;
+  studentRestriction.updatedAt = relations?.updatedAt ?? new Date();
+  studentRestriction.isActive = relations?.isActive ?? true;
   return studentRestriction;
 }
 
@@ -57,6 +61,8 @@ export async function saveFakeStudentRestriction(
     restrictionNote?: Note;
     resolutionNote?: Note;
     creator?: User;
+    updatedAt?: Date;
+    isActive?: boolean;
   },
 ): Promise<StudentRestriction> {
   const [restrictionNote, resolutionNote] = await saveFakeStudentNotes(

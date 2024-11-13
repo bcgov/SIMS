@@ -8,6 +8,7 @@ import {
 import {
   Application,
   ApplicationStatus,
+  RestrictionType,
   SFASBridgeLog,
   Student,
   StudentRestriction,
@@ -239,6 +240,7 @@ export class SIMSToSFASService {
         .innerJoin("studentRestriction.student", "student")
         .innerJoin("studentRestriction.restriction", "restriction")
         // Check if the restriction data was updated in the given period.
+        .where("restriction.restrictionType = :restrictionType")
         .andWhere(
           new Brackets((qb) => {
             qb.where(
@@ -247,6 +249,7 @@ export class SIMSToSFASService {
           }),
         )
         .setParameters({
+          restrictionType: RestrictionType.Provincial,
           modifiedSince,
           modifiedUntil,
         })
