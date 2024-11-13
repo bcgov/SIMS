@@ -98,7 +98,6 @@ export class AssessmentInstitutionsController extends BaseController {
     return this.assessmentControllerService.getAssessmentNOA(assessmentId, {
       studentId: studentId,
       applicationId,
-      maskTotalFamilyIncome: true,
     });
   }
 
