@@ -60,6 +60,15 @@ export class CreateSupplierAndSiteData {
 }
 
 /**
+ * Information needed for existing supplier site creation on CAS.
+ */
+export class CreateExistingSupplierSiteData {
+  supplierNumber: string;
+  supplierSite: CreateSupplierSite;
+  emailAddress: string;
+}
+
+/**
  * Site information needed for supplier and site creation on CAS.
  */
 export class CreateSupplierSite {
@@ -78,6 +87,18 @@ export class CreateSupplierAndSiteResult {
 }
 
 /**
+ * Supplier address data used during the creation of a supplier and site on CAS.
+ */
+export class CreateSupplierAddressSubmittedData {
+  AddressLine1: string;
+  City: string;
+  Province: string;
+  Country: string;
+  PostalCode: string;
+  EmailAddress: string;
+}
+
+/**
  * Data used during the creation of a supplier and site on CAS.
  * Some data transformation is needed to follow the CAS requirements.
  * This payload is used to submit the data and also to be returned to
@@ -87,16 +108,16 @@ export class CreateSupplierAndSiteSubmittedData {
   SupplierName: string;
   SubCategory: string;
   Sin: string;
-  SupplierAddress: [
-    {
-      AddressLine1: string;
-      City: string;
-      Province: string;
-      Country: string;
-      PostalCode: string;
-      EmailAddress: string;
-    },
-  ];
+  SupplierAddress: CreateSupplierAddressSubmittedData[];
+}
+
+/**
+ * Data used during the creation of a supplier and site on CAS for existing suppliers.
+ */
+export class CreateExistingSupplierAndSiteSubmittedData {
+  SupplierName?: string;
+  SupplierNumber: string;
+  SupplierAddress: CreateSupplierAddressSubmittedData[];
 }
 
 /**
@@ -105,5 +126,14 @@ export class CreateSupplierAndSiteSubmittedData {
  */
 export class CreateSupplierAndSiteResponse {
   submittedData: CreateSupplierAndSiteSubmittedData;
+  response: CreateSupplierAndSiteResult;
+}
+
+/**
+ * Combination of the existing CAS supplier site creation
+ * submitted data and its API response.
+ */
+export class CreateExistingSupplierSiteResponse {
+  submittedData: CreateExistingSupplierAndSiteSubmittedData;
   response: CreateSupplierAndSiteResult;
 }

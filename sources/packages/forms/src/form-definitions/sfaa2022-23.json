@@ -15461,6 +15461,26 @@
       "tableView": false,
       "components": [
         {
+          "input": true,
+          "tableView": false,
+          "key": "isYourPartnerAbleToReport",
+          "label": "Is partner able to report",
+          "protected": false,
+          "unique": false,
+          "persistent": true,
+          "type": "hidden",
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "lockKey": true,
+          "calculateValue": "const hasReceivedInputs = !!data.isYourPartnerEligibleForBCSCAccount && !!data.hasCurrentYearPartnerIncome;\nconst isPartnerEligibleToReport = (data.isYourPartnerEligibleForBCSCAccount === \"yes\" && data.hasCurrentYearPartnerIncome === \"no\");\nvalue = hasReceivedInputs ? isPartnerEligibleToReport : null;",
+          "calculateServer": true
+        },
+        {
           "label": "HTML",
           "labelWidth": "",
           "labelMargin": "",
@@ -15554,7 +15574,7 @@
               "value": ""
             }
           ],
-          "content": "Please provide information about your partner.",
+          "content": "Please provide your spouse/common-law partner's financial information.",
           "refreshOnChange": false,
           "customClass": "",
           "hidden": false,
@@ -15563,7 +15583,7 @@
           "tags": [],
           "properties": {},
           "conditional": {
-            "show": null,
+            "show": "",
             "when": null,
             "eq": "",
             "json": ""
@@ -15664,7 +15684,7 @@
           "tableView": false,
           "components": [
             {
-              "label": "HTML",
+              "label": "Partner details",
               "labelWidth": "",
               "labelMargin": "",
               "tag": "h3",
@@ -15684,7 +15704,7 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": "",
                 "json": ""
@@ -15771,7 +15791,7 @@
                 "unique": false,
                 "onlyAvailableItems": true
               },
-              "key": "isYourPartnerAbleToReport",
+              "key": "isYourPartnerEligibleForBCSCAccount",
               "attributes": {
                 "data-cy": "isYourPartnerAbleToReport"
               },
@@ -15807,7 +15827,7 @@
               "widget": null,
               "validateOn": "change",
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": ""
               },
@@ -15828,7 +15848,117 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "ebhbans",
-              "tags": []
+              "tags": [],
+              "lockKey": true
+            },
+            {
+              "clearOnHide": false,
+              "key": "panel3Panel",
+              "input": false,
+              "title": "Partner current year income",
+              "theme": "default",
+              "tableView": false,
+              "components": [
+                {
+                  "key": "panel3PanelPartnercurrentyearincome",
+                  "label": "Partner current year income",
+                  "input": false,
+                  "tag": "h3",
+                  "attrs": [
+                    {
+                      "value": "",
+                      "attr": ""
+                    }
+                  ],
+                  "className": "category-header-medium primary-color",
+                  "content": "Partner current year income",
+                  "type": "htmlelement",
+                  "hideLabel": true,
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "customClass": ""
+                },
+                {
+                  "key": "panel3PanelCurrentyearincomesituation",
+                  "label": "Current year income situation",
+                  "input": false,
+                  "tag": "p",
+                  "attrs": [
+                    {
+                      "value": "",
+                      "attr": ""
+                    }
+                  ],
+                  "className": "",
+                  "content": "If your spouse/common-law partner has had, or anticipates having a significant decrease in income for {{data.currentTaxYear}}, you may request to be assessed using your spouse/common-law partner's estimated income.",
+                  "type": "htmlelement",
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "hideLabel": true
+                },
+                {
+                  "autofocus": false,
+                  "input": true,
+                  "tableView": true,
+                  "inputType": "radio",
+                  "label": "Do you want to declare your spouse/common-law partner's estimated current year income?",
+                  "key": "hasCurrentYearPartnerIncome",
+                  "values": [
+                    {
+                      "value": "yes",
+                      "label": "Yes",
+                      "shortcut": ""
+                    },
+                    {
+                      "value": "no",
+                      "label": "No",
+                      "shortcut": ""
+                    }
+                  ],
+                  "defaultValue": "",
+                  "protected": false,
+                  "fieldSet": false,
+                  "persistent": true,
+                  "hidden": false,
+                  "clearOnHide": true,
+                  "validate": {
+                    "required": true,
+                    "custom": "",
+                    "customPrivate": false
+                  },
+                  "type": "radio",
+                  "labelPosition": "top",
+                  "optionsLabelPosition": "right",
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "lockKey": true
+                }
+              ],
+              "type": "panel",
+              "breadcrumb": "default",
+              "hideLabel": true,
+              "tags": [],
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+              },
+              "properties": {}
             },
             {
               "label": "Additional information required",
@@ -15844,9 +15974,9 @@
               "customClass": "banner-info",
               "key": "additionalInformationRequired",
               "conditional": {
-                "show": true,
+                "show": "true",
                 "when": "isYourPartnerAbleToReport",
-                "eq": "yes"
+                "eq": "true"
               },
               "type": "htmlelement",
               "input": false,
@@ -15869,7 +15999,6 @@
               "description": "",
               "errorLabel": "",
               "tooltip": "",
-              "hideLabel": false,
               "tabindex": "",
               "disabled": false,
               "autofocus": false,
@@ -15903,7 +16032,9 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "ei037zq"
+              "id": "ei037zq",
+              "hideLabel": true,
+              "tags": []
             },
             {
               "label": "Spouse Estimation",
@@ -15919,8 +16050,8 @@
               "customClass": "banner-warning",
               "key": "spouseEstimation",
               "conditional": {
-                "show": true,
-                "when": "isYourPartnerAbleToReport",
+                "show": "true",
+                "when": "isYourPartnerEligibleForBCSCAccount",
                 "eq": "no"
               },
               "type": "htmlelement",
@@ -15944,7 +16075,6 @@
               "description": "",
               "errorLabel": "",
               "tooltip": "",
-              "hideLabel": false,
               "tabindex": "",
               "disabled": false,
               "autofocus": false,
@@ -15978,7 +16108,9 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "e221y6i"
+              "id": "e221y6i",
+              "hideLabel": true,
+              "tags": []
             }
           ],
           "placeholder": "",
@@ -16033,9 +16165,9 @@
           "hideLabel": true,
           "key": "partnerIncomePanel",
           "conditional": {
-            "show": true,
+            "show": "true",
             "when": "isYourPartnerAbleToReport",
-            "eq": "no"
+            "eq": "false"
           },
           "type": "panel",
           "label": "Partner Income Panel",
@@ -16043,7 +16175,7 @@
           "tableView": false,
           "components": [
             {
-              "label": "HTML",
+              "label": "Partner financial information",
               "labelWidth": "",
               "labelMargin": "",
               "tag": "h3",
@@ -16054,7 +16186,7 @@
                   "value": ""
                 }
               ],
-              "content": "Partner income",
+              "content": "Partner financial information",
               "refreshOnChange": false,
               "customClass": "",
               "hidden": false,
@@ -16063,7 +16195,7 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": "",
                 "json": ""
@@ -16249,9 +16381,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
+                "show": "true",
+                "when": "hasCurrentYearPartnerIncome",
+                "eq": "no",
                 "json": ""
               },
               "customConditional": "",
@@ -16309,7 +16441,7 @@
               "key": "estimatedSpouseIncome",
               "conditional": {
                 "show": "true",
-                "when": "isYourPartnerAbleToReport",
+                "when": "hasCurrentYearPartnerIncome",
                 "eq": "no"
               },
               "type": "currency",
@@ -16365,6 +16497,426 @@
               "decimalLimit": 0,
               "requireDecimal": false,
               "tags": []
+            },
+            {
+              "clearOnHide": false,
+              "key": "partnerIncomePanelPanel",
+              "input": false,
+              "title": "Decrease in partner income panel",
+              "theme": "default",
+              "tableView": false,
+              "components": [
+                {
+                  "key": "partnerIncomePanelPanelContent",
+                  "label": "Current year income blurb",
+                  "input": false,
+                  "tag": "p",
+                  "attrs": [
+                    {
+                      "value": "",
+                      "attr": ""
+                    }
+                  ],
+                  "className": "",
+                  "content": "Add your spouse/common-law partner's actual income from the beginning of {{data.currentTaxYear}} up to the date their income change, along with the estimated income for the remainder of the year, to calculate their total estimate income for the current year.",
+                  "type": "htmlelement",
+                  "hideLabel": true,
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {}
+                },
+                {
+                  "autofocus": false,
+                  "input": true,
+                  "tableView": true,
+                  "inputType": "text",
+                  "inputMask": "",
+                  "label": "My spouse/common-law partner's current year income is:",
+                  "key": "currentYearPartnerIncome",
+                  "placeholder": "",
+                  "prefix": "$",
+                  "suffix": "",
+                  "defaultValue": "",
+                  "protected": false,
+                  "persistent": true,
+                  "hidden": false,
+                  "clearOnHide": true,
+                  "delimiter": true,
+                  "decimalLimit": 0,
+                  "requireDecimal": false,
+                  "validate": {
+                    "required": true,
+                    "multiple": "",
+                    "custom": "valid = (input >= 0 && input <= data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
+                  },
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "type": "currency",
+                  "labelPosition": "top",
+                  "tags": [],
+                  "properties": {},
+                  "lockKey": true
+                },
+                {
+                  "autofocus": false,
+                  "input": true,
+                  "tableView": true,
+                  "inputType": "radio",
+                  "label": "Select the reason for your spouse/common-law partner's significant decrease in income:",
+                  "key": "reasonsignificantdecreaseInPartnerIncome",
+                  "values": [
+                    {
+                      "value": "medicalIllnessOrInjury",
+                      "label": "Medical illness or injury",
+                      "shortcut": ""
+                    },
+                    {
+                      "value": "familyEmergencyEGDeathOrInjury",
+                      "label": "Family emergency (e.g., death or injury)",
+                      "shortcut": ""
+                    },
+                    {
+                      "value": "naturalDisaster",
+                      "label": "Natural disaster",
+                      "shortcut": ""
+                    },
+                    {
+                      "value": "layoffStrikeLockoutOrOtherReductionInEarningsBeyondTheFamilysControl",
+                      "label": "Layoff, strike, lockout or other reduction in earnings beyond the family’s control",
+                      "shortcut": ""
+                    },
+                    {
+                      "value": "other",
+                      "label": "Other",
+                      "shortcut": ""
+                    }
+                  ],
+                  "defaultValue": "",
+                  "protected": false,
+                  "fieldSet": false,
+                  "persistent": true,
+                  "hidden": false,
+                  "clearOnHide": true,
+                  "validate": {
+                    "required": true,
+                    "custom": "",
+                    "customPrivate": false
+                  },
+                  "type": "radio",
+                  "labelPosition": "top",
+                  "optionsLabelPosition": "right",
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "lockKey": true
+                },
+                {
+                  "clearOnHide": false,
+                  "key": "partnerIncomePanelPanelPanel",
+                  "input": false,
+                  "title": "Other reason for significant decrease in income",
+                  "theme": "default",
+                  "tableView": false,
+                  "components": [
+                    {
+                      "autofocus": false,
+                      "input": true,
+                      "tableView": true,
+                      "label": "Please explain your spouse/common-law partner's situation:",
+                      "key": "otherExceptionalPartnerCircumstance",
+                      "placeholder": "",
+                      "prefix": "",
+                      "suffix": "",
+                      "rows": 3,
+                      "multiple": false,
+                      "defaultValue": "",
+                      "protected": false,
+                      "persistent": true,
+                      "hidden": false,
+                      "wysiwyg": false,
+                      "clearOnHide": true,
+                      "spellcheck": true,
+                      "validate": {
+                        "required": true,
+                        "minLength": "",
+                        "maxLength": "",
+                        "pattern": "",
+                        "custom": ""
+                      },
+                      "type": "textarea",
+                      "labelPosition": "top",
+                      "inputFormat": "plain",
+                      "tags": [],
+                      "conditional": {
+                        "show": "",
+                        "when": null,
+                        "eq": ""
+                      },
+                      "properties": {},
+                      "lockKey": true
+                    }
+                  ],
+                  "type": "panel",
+                  "breadcrumb": "default",
+                  "hideLabel": true,
+                  "tags": [],
+                  "conditional": {
+                    "show": "true",
+                    "when": "reasonsignificantdecreaseInPartnerIncome",
+                    "eq": "other"
+                  },
+                  "properties": {}
+                },
+                {
+                  "key": "partnerIncomePanelPanelUploadfile",
+                  "label": "Upload file",
+                  "input": false,
+                  "tag": "h3",
+                  "attrs": [
+                    {
+                      "value": "",
+                      "attr": ""
+                    }
+                  ],
+                  "className": "category-header-medium primary-color",
+                  "content": "Upload supporting documents for spouse/common-law partner's {{data.currentTaxYear}} estimated income.",
+                  "type": "htmlelement",
+                  "hideLabel": true,
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {}
+                },
+                {
+                  "key": "partnerIncomePanelPanelPleaseprovidedocumentationblurb",
+                  "label": "Please provide documentation blurb",
+                  "input": false,
+                  "tag": "p",
+                  "attrs": [
+                    {
+                      "value": "",
+                      "attr": ""
+                    }
+                  ],
+                  "className": "",
+                  "content": "Please provide supporting documentation for your request to use current year estimated income for your spouse/common law partner.",
+                  "type": "htmlelement",
+                  "hideLabel": true,
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {}
+                },
+                {
+                  "key": "partnerIncomePanelPanelProvidethefollowingblurb",
+                  "label": "Provide the following blurb",
+                  "input": false,
+                  "tag": "div",
+                  "attrs": [
+                    {
+                      "value": "",
+                      "attr": ""
+                    }
+                  ],
+                  "className": "",
+                  "content": "<h4 class=\"category-header-medium-small\">Provide the following:</h4>\n<ul><li>A letter explaining the circumstances that meet one or more of the Criteria (see above)</li></ul>",
+                  "type": "htmlelement",
+                  "hideLabel": true,
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "customClass": "align-bullets"
+                },
+                {
+                  "key": "partnerIncomePanelPanelProvideoneofthefollowingblurb",
+                  "label": "Provide one of the following blurb",
+                  "input": false,
+                  "tag": "div",
+                  "attrs": [
+                    {
+                      "value": "",
+                      "attr": ""
+                    }
+                  ],
+                  "className": "",
+                  "content": "<h4 class=\"category-header-medium-small\">Provide at least one of the following:</h4>\n<ul><li>All relevant supporting documentation of the circumstance(s) (medical records, letter from the physician, record of employment, layoff or strike, invoices from damages, etc.).</li>\n<li>The most recent CRA Income Tax Return and income information for the year matching the student financial assistance application number (with relevant supporting documentation to show the decrease in income), if available.</li>\n<li>All relevant supporting documentation of estimated total income for the year matching the student financial assistance application number, if applicable (pay stubs, invoices, bank statements, Employment Insurance benefit statements, Record of Employment, etc.).</li>\n</ul>",
+                  "type": "htmlelement",
+                  "hideLabel": true,
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "customClass": "align-bullets"
+                },
+                {
+                  "autofocus": false,
+                  "input": true,
+                  "tableView": true,
+                  "label": "Upload supporting documents:",
+                  "key": "decreaseInPartnerIncomeSupportingDocuments",
+                  "image": false,
+                  "imageSize": "200",
+                  "placeholder": "",
+                  "multiple": false,
+                  "defaultValue": "",
+                  "protected": false,
+                  "persistent": true,
+                  "hidden": false,
+                  "clearOnHide": true,
+                  "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
+                  "fileMinSize": "0KB",
+                  "fileMaxSize": "15MB",
+                  "type": "file",
+                  "labelPosition": "top",
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "storage": "url",
+                  "url": "student/files",
+                  "lockKey": true,
+                  "validate": {
+                    "required": true
+                  }
+                },
+                {
+                  "clearOnHide": false,
+                  "label": "Columns",
+                  "input": false,
+                  "tableView": false,
+                  "key": "partnerIncomePanelPanelColumns",
+                  "columns": [
+                    {
+                      "components": [
+                        {
+                          "key": "partnerIncomePanelPanelColumnsFileType",
+                          "label": "File Type",
+                          "input": false,
+                          "tag": "span",
+                          "attrs": [
+                            {
+                              "value": "",
+                              "attr": ""
+                            }
+                          ],
+                          "className": "",
+                          "content": "We accept <strong class=\"font-bold\">JPG, PNG, DOC, DOCX, PDF, TXT</strong>",
+                          "type": "htmlelement",
+                          "hideLabel": true,
+                          "tags": [],
+                          "conditional": {
+                            "show": "",
+                            "when": null,
+                            "eq": ""
+                          },
+                          "properties": {}
+                        }
+                      ],
+                      "width": 6,
+                      "offset": 0,
+                      "push": 0,
+                      "pull": 0
+                    },
+                    {
+                      "components": [
+                        {
+                          "key": "partnerIncomePanelPanelColumnsFileLimit",
+                          "label": "File Limit",
+                          "input": false,
+                          "tag": "span",
+                          "attrs": [
+                            {
+                              "value": "",
+                              "attr": ""
+                            }
+                          ],
+                          "className": "pull-right",
+                          "content": "15MB file limit each",
+                          "type": "htmlelement",
+                          "hideLabel": true,
+                          "tags": [],
+                          "conditional": {
+                            "show": "",
+                            "when": null,
+                            "eq": ""
+                          },
+                          "properties": {}
+                        }
+                      ],
+                      "width": 6,
+                      "offset": 0,
+                      "push": 0,
+                      "pull": 0
+                    }
+                  ],
+                  "type": "columns",
+                  "hideLabel": true,
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {}
+                },
+                {
+                  "input": true,
+                  "tableView": false,
+                  "key": "currentYearPartnerIncomeApplicationException",
+                  "label": "Application Exception - Current Year Partner Income",
+                  "protected": false,
+                  "unique": false,
+                  "persistent": true,
+                  "type": "hidden",
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "lockKey": true,
+                  "calculateValue": "value = \"studentApplicationException\";",
+                  "calculateServer": true
+                }
+              ],
+              "type": "panel",
+              "breadcrumb": "default",
+              "hideLabel": true,
+              "tags": [],
+              "conditional": {
+                "show": "true",
+                "when": "hasCurrentYearPartnerIncome",
+                "eq": "yes"
+              },
+              "properties": {}
             },
             {
               "label": "Will your partner be employed full-time or part-time during your study period",
@@ -17581,7 +18133,8 @@
           "lazyLoad": false,
           "theme": "default",
           "breadcrumb": "default",
-          "id": "erae6ji"
+          "id": "erae6ji",
+          "tags": []
         }
       ],
       "placeholder": "",
