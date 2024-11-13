@@ -199,8 +199,8 @@ export class SIMSToSFASService {
           modifiedSince,
           modifiedUntil,
         })
-        .groupBy("student.id")
-        .addGroupBy("application.id")
+        .groupBy("application.id")
+        .addGroupBy("student.id")
         .addGroupBy("programYear.id")
         .addGroupBy("studentAssessment.id")
         .addGroupBy("offering.id")
