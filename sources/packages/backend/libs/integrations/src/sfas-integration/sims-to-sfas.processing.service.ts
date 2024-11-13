@@ -47,13 +47,13 @@ export class SIMSToSFASProcessingService {
     );
 
     const applicationRecordsPromise =
-      this.simsToSFASService.getAllStudentsWithApplicationUpdates(
+      this.simsToSFASService.getAllApplicationsWithUpdates(
         modifiedSince,
         modifiedUntil,
       );
 
     const restrictionRecordsPromise =
-      this.simsToSFASService.getAllStudentsWithRestrictionUpdates(
+      this.simsToSFASService.getAllRestrictionWithUpdates(
         modifiedSince,
         modifiedUntil,
       );

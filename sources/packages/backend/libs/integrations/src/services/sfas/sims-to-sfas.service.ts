@@ -128,19 +128,19 @@ export class SIMSToSFASService {
   }
 
   /**
-   * Get all student ids of students who have one or more updates in application related data.
-   * @param modifiedSince the date after which the student data was updated.
-   * @param modifiedUntil the date until which the student data was updated.
+   * Get all student ids and application data of students who have one or more updates in application related data.
+   * @param modifiedSince the date after which the application data was updated.
+   * @param modifiedUntil the date until which the application data was updated.
    */
-  async getAllStudentsWithApplicationUpdates(
+  async getAllApplicationsWithUpdates(
     modifiedSince: Date,
     modifiedUntil: Date,
   ): Promise<ApplicationRecord[]> {
     return (
       this.applicationRepo
         .createQueryBuilder("application")
-        .select("student.id", "studentId")
-        .addSelect("application.id", "applicationId")
+        .select("application.id", "applicationId")
+        .addSelect("student.id", "studentId")
         .addSelect("programYear.programYear", "programYear")
         .addSelect("offering.offeringIntensity", "offeringIntensity")
         // Use CASE to conditionally select studyStartDate and studyEndDate and casting JSON values to dates.
@@ -210,11 +210,11 @@ export class SIMSToSFASService {
   }
 
   /**
-   * Get all student ids of students who have one or more updates in restriction related data.
-   * @param modifiedSince the date after which the student data was updated.
-   * @param modifiedUntil the date until which the student data was updated.
+   * Get all student ids and restriction data of students who have one or more updates in restriction related data.
+   * @param modifiedSince the date after which the restriction data was updated.
+   * @param modifiedUntil the date until which the restriction data was updated.
    */
-  async getAllStudentsWithRestrictionUpdates(
+  async getAllRestrictionWithUpdates(
     modifiedSince: Date,
     modifiedUntil: Date,
   ): Promise<RestrictionRecord[]> {
