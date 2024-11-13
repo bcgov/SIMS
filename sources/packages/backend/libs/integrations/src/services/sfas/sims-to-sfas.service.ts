@@ -130,7 +130,7 @@ export class SIMSToSFASService {
   /**
    * Get all student ids of students who have one or more updates in application related data.
    * @param modifiedSince the date after which the student data was updated.
-   * @param modifiedUntil the date until which the student data was updated.\
+   * @param modifiedUntil the date until which the student data was updated.
    */
   async getAllStudentsWithApplicationUpdates(
     modifiedSince: Date,
