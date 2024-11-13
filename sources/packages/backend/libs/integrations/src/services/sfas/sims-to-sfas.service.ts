@@ -180,11 +180,11 @@ export class SIMSToSFASService {
         .innerJoin("application.programYear", "programYear")
         .innerJoin("application.student", "student")
         .innerJoin("studentAssessment.offering", "offering")
-        .innerJoin(
+        .leftJoin(
           "studentAssessment.disbursementSchedules",
           "disbursementSchedule",
         )
-        .innerJoin(
+        .leftJoin(
           "disbursementSchedule.disbursementValues",
           "disbursementValues",
         )
