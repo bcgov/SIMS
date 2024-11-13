@@ -183,6 +183,7 @@ describe(
         formatDate(coeUpdatedAtDate, "YYYYMMDD"),
       );
       expect(record1Parsed.postalCode).toBe("V1V 1V1");
+      expect(record1Parsed.gender).toBe("X");
       // TODO Add other fields as needed.
     });
 
