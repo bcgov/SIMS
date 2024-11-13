@@ -42,6 +42,7 @@ export class StudentLoanBalancesFileResponse {
    */
   get cslBalance(): number {
     // Divide by 100 to convert to 2 decimal places.
+    // TODO: centralize in a util to have decimals parsed.
     return +this.line.substring(13, 20) / 100;
   }
 }
