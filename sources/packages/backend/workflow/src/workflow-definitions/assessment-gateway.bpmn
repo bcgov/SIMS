@@ -152,8 +152,8 @@
     <bpmn:sequenceFlow id="Flow_1mbspca" sourceRef="student-income-verification-subprocess" targetRef="Gateway_0jc5bz6" />
     <bpmn:sequenceFlow id="Flow_1wde0bi" sourceRef="retrieve-supporting-info-for-partner-subprocess" targetRef="partner-income-verification-subprocess" />
     <bpmn:sequenceFlow id="Flow_03zfrkx" sourceRef="create-supporting-user-for-the-partner-task" targetRef="retrieve-supporting-info-for-partner-subprocess" />
-    <bpmn:sequenceFlow id="Flow_14701yl" name="Has valid SIN" sourceRef="Gateway_176fysj" targetRef="create-supporting-user-for-the-partner-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourPartnerAbleToReport = "yes"</bpmn:conditionExpression>
+    <bpmn:sequenceFlow id="Flow_14701yl" name="Partner is able to report" sourceRef="Gateway_176fysj" targetRef="create-supporting-user-for-the-partner-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourPartnerAbleToReport = true</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0emvz6f" name="Yes" sourceRef="Gateway_05k6rp7" targetRef="Gateway_176fysj">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataRelationshipStatus = "married"</bpmn:conditionExpression>
@@ -191,9 +191,7 @@
     <bpmn:sequenceFlow id="Flow_1u0qixu" name="No" sourceRef="Gateway_05k6rp7" targetRef="Gateway_1jdrla2">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataRelationshipStatus != "married"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1gii09j" name="Partner do not have SIN" sourceRef="Gateway_176fysj" targetRef="Gateway_1jdrla2">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourPartnerAbleToReport != "yes"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1gii09j" name="Partner is not able to report" sourceRef="Gateway_176fysj" targetRef="Gateway_1jdrla2" />
     <bpmn:sequenceFlow id="Flow_1a980l7" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="needs-pir-gateway" />
     <bpmn:sequenceFlow id="Flow_0v2i46e" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="Gateway_05k6rp7" />
     <bpmn:sequenceFlow id="Flow_18xo3dr" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="parents-verification-has-dependant-gateway" />
@@ -503,7 +501,7 @@
       <bpmn:incoming>Flow_14701yl</bpmn:incoming>
       <bpmn:outgoing>Flow_03zfrkx</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:exclusiveGateway id="Gateway_176fysj">
+    <bpmn:exclusiveGateway id="Gateway_176fysj" default="Flow_1gii09j">
       <bpmn:incoming>Flow_0emvz6f</bpmn:incoming>
       <bpmn:outgoing>Flow_14701yl</bpmn:outgoing>
       <bpmn:outgoing>Flow_1gii09j</bpmn:outgoing>
@@ -1350,7 +1348,7 @@
         <di:waypoint x="1555" y="790" />
         <di:waypoint x="1627" y="790" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1546" y="763" width="67" height="14" />
+          <dc:Bounds x="1538" y="746" width="84" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0emvz6f_di" bpmnElement="Flow_0emvz6f">
@@ -1482,7 +1480,7 @@
         <di:waypoint x="1530" y="890" />
         <di:waypoint x="2015" y="890" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1717" y="877" width="71" height="27" />
+          <dc:Bounds x="1705" y="896" width="90" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1a980l7_di" bpmnElement="Flow_1a980l7">
