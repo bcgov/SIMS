@@ -191,11 +191,7 @@ export class SIMSToSFASService {
         .where("application.applicationStatus != :overwritten")
         // Check if the application data was updated in the given period.
         .andWhere(
-          new Brackets((qb) => {
-            qb.where(
-              "application.updatedAt > :modifiedSince AND application.updatedAt <= :modifiedUntil",
-            );
-          }),
+          "application.updatedAt > :modifiedSince AND application.updatedAt <= :modifiedUntil",
         )
         .setParameters({
           overwritten: ApplicationStatus.Overwritten,
@@ -242,11 +238,7 @@ export class SIMSToSFASService {
         // Check if the restriction data was updated in the given period.
         .where("restriction.restrictionType = :restrictionType")
         .andWhere(
-          new Brackets((qb) => {
-            qb.where(
-              "studentRestriction.updatedAt > :modifiedSince AND studentRestriction.updatedAt <= :modifiedUntil",
-            );
-          }),
+          "studentRestriction.updatedAt > :modifiedSince AND studentRestriction.updatedAt <= :modifiedUntil",
         )
         .setParameters({
           restrictionType: RestrictionType.Provincial,
