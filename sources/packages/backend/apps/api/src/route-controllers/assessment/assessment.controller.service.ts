@@ -94,7 +94,7 @@ export class AssessmentControllerService {
       );
     }
 
-    const assessmentDTO = assessment.assessmentData as AssessmentAPIOutDTO;
+    const assessmentDTO: AssessmentAPIOutDTO = assessment.assessmentData;
     if (maskTotalFamilyIncome) {
       assessmentDTO.totalFamilyIncome = MASKED_MONEY_AMOUNT;
     }
