@@ -332,7 +332,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
             .orWhere("programs.isActive = :programIsActiveSearchCriteria", {
               programIsActiveSearchCriteria:
                 !paginationOptions.inactiveProgramSearch,
-            }),
+            })
+            .orWhere(
+              "programs.effectiveEndDate is not null and programs.effectiveEndDate <= CURRENT_DATE",
+            ),
         ),
       );
       queryParams.push(...paginationOptions.statusSearch);
@@ -341,7 +344,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     // Fetching only the active programs with the provided program status.
     else if (paginationOptions.statusSearch) {
       programQuery.andWhere(
-        "programs.programStatus IN (:...programStatusSearchCriteria) and programs.isActive = true",
+        "programs.programStatus IN (:...programStatusSearchCriteria) and programs.isActive = true and (programs.effectiveEndDate is null OR programs.effectiveEndDate > CURRENT_DATE)",
         {
           programStatusSearchCriteria: paginationOptions.statusSearch,
         },
@@ -351,11 +354,14 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     // Fetching only the inactive status programs.
     else if (paginationOptions.inactiveProgramSearch) {
       programQuery.andWhere(
-        "programs.isActive = :programIsActiveSearchCriteria",
-        {
-          programIsActiveSearchCriteria:
-            !paginationOptions.inactiveProgramSearch,
-        },
+        new Brackets((qb) => {
+          qb.where("programs.isActive = :programIsActiveSearchCriteria", {
+            programIsActiveSearchCriteria:
+              !paginationOptions.inactiveProgramSearch,
+          }).orWhere(
+            "programs.effectiveEndDate is not null and programs.effectiveEndDate <= CURRENT_DATE",
+          );
+        }),
       );
       queryParams.push(!paginationOptions.inactiveProgramSearch);
     }
@@ -901,7 +907,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     // sort
     if (paginationOptions.sortField === "programStatus") {
       paginatedProgramQuery.orderBy(
-        `CASE WHEN programs.isActive = false THEN '${INACTIVE_PROGRAM}' ELSE programs.programStatus :: text END`,
+        `CASE WHEN programs.isActive = false or (programs.effectiveEndDate is not null and programs.effectiveEndDate <= CURRENT_DATE) THEN '${INACTIVE_PROGRAM}' ELSE programs.programStatus :: text END`,
         paginationOptions.sortOrder,
       );
     } else if (paginationOptions.sortField && paginationOptions.sortOrder) {
@@ -911,13 +917,12 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       );
     } else {
       // Default sort and order.
-      // TODO:Further investigation needed as the CASE translation does not work in orderby queries.
       paginatedProgramQuery.orderBy(
         `CASE           
-          WHEN programs.programStatus = '${ProgramStatus.Pending}' and programs.isActive = true THEN ${SortPriority.Priority1}
-          WHEN programs.programStatus = '${ProgramStatus.Approved}' and programs.isActive = true THEN ${SortPriority.Priority2}
-          WHEN programs.programStatus = '${ProgramStatus.Declined}' and programs.isActive = true THEN ${SortPriority.Priority3}
-          WHEN programs.isActive = false THEN ${SortPriority.Priority4}
+          WHEN programs.programStatus = '${ProgramStatus.Pending}' and programs.isActive = true and (programs.effectiveEndDate is null OR programs.effectiveEndDate > CURRENT_DATE) THEN ${SortPriority.Priority1}
+          WHEN programs.programStatus = '${ProgramStatus.Approved}' and programs.isActive = true and (programs.effectiveEndDate is null OR programs.effectiveEndDate > CURRENT_DATE) THEN ${SortPriority.Priority2}
+          WHEN programs.programStatus = '${ProgramStatus.Declined}' and programs.isActive = true and (programs.effectiveEndDate is null OR programs.effectiveEndDate > CURRENT_DATE) THEN ${SortPriority.Priority3}
+          WHEN programs.isActive = false or (programs.effectiveEndDate is not null and programs.effectiveEndDate <= CURRENT_DATE) THEN ${SortPriority.Priority4}
           ELSE ${SortPriority.Priority5}
         END`,
       );

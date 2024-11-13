@@ -406,8 +406,7 @@
               "showWordCount": false,
               "allowMultipleMasks": false,
               "addons": [],
-              "id": "ei7yz6e",
-              "isNew": false
+              "id": "ei7yz6e"
             }
           ],
           "placeholder": "",
@@ -450,8 +449,7 @@
           "addons": [],
           "tree": false,
           "lazyLoad": false,
-          "id": "ebfi1ca",
-          "isNew": false
+          "id": "ebfi1ca"
         },
         {
           "label": "Citizenship for protected persons",
@@ -1903,8 +1901,7 @@
           },
           "properties": {},
           "lockKey": true,
-          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
-          "isNew": false
+          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;"
         },
         {
           "clearOnHide": false,
@@ -1947,8 +1944,49 @@
           },
           "properties": {},
           "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
+          "lockKey": true
+        },
+        {
+          "clearOnHide": false,
+          "key": "currentYearPartnerIncomeApplicationException",
+          "input": false,
+          "components": [
+            {
+              "key": "currentYearPartnerIncomeApplicationExceptionCurrentYearPartnerIncome",
+              "label": "Current Year Partner Income",
+              "input": false,
+              "tag": "strong",
+              "attrs": [
+                {
+                  "value": "",
+                  "attr": ""
+                }
+              ],
+              "className": "font-bold",
+              "content": "Partner current year income",
+              "type": "htmlelement",
+              "hideLabel": true,
+              "tags": [],
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+              },
+              "properties": {}
+            }
+          ],
+          "tableView": false,
+          "type": "well",
+          "hideLabel": true,
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
           "lockKey": true,
-          "isNew": false
+          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;"
         }
       ],
       "placeholder": "",

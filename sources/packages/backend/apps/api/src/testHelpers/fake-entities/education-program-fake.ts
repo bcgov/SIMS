@@ -41,7 +41,8 @@ export function createFakeEducationProgram(
   program.eslEligibility = "eslEligibility";
   program.hasJointInstitution = "hasJointInstitution";
   program.hasJointDesignatedInstitution = "hasJointDesignatedInstitution";
-  program.programStatus = ProgramStatus.Approved;
+  program.programStatus =
+    options?.initialValue?.programStatus ?? ProgramStatus.Approved;
   program.hasWILComponent = "yes";
   program.hasTravel = "yes";
   program.hasIntlExchange = "yes";

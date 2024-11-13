@@ -36,12 +36,8 @@
                   :items="programStatusItems"
                   multiple
                   variant="outlined"
+                  chips
                 >
-                  <template #selection="{ item }">
-                    <v-chip>
-                      <span>{{ item.title }}</span>
-                    </v-chip>
-                  </template>
                 </v-select>
               </v-col>
               <v-col cols="1">
