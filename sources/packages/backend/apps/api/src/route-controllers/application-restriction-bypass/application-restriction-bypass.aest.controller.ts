@@ -142,7 +142,13 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
         applicationId,
       );
     return {
-      availableRestrictionsToBypass: availableRestrictionsToBypass,
+      availableRestrictionsToBypass: availableRestrictionsToBypass.map(
+        (item) => ({
+          studentRestrictionId: item.studentRestrictionId,
+          restrictionCode: item.restrictionCode,
+          studentRestrictionCreatedAt: item.studentRestrictionCreatedAt,
+        }),
+      ),
     };
   }
 
