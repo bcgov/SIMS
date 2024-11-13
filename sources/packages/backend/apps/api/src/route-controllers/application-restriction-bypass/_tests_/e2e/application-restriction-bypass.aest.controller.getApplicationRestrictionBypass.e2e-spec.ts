@@ -80,7 +80,6 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
         {
           restrictionActionType: RestrictionActionType.StopPartTimeDisbursement,
           restrictionCode: RestrictionCode.PTSSR,
-
           isRemoved: true,
         },
       );

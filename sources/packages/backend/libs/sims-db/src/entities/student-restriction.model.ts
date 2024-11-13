@@ -1,7 +1,13 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { BaseRestrictionModel } from "./base-restriction.model";
-import { Student, Application } from ".";
+import { Student, Application, ApplicationRestrictionBypass } from ".";
 
 /**
  * Entity for student restrictions
@@ -28,4 +34,15 @@ export class StudentRestriction extends BaseRestrictionModel {
     referencedColumnName: ColumnNames.ID,
   })
   application: Application;
+
+  @OneToMany(
+    () => ApplicationRestrictionBypass,
+    (applicationRestrictionBypass) =>
+      applicationRestrictionBypass.studentRestriction,
+    {
+      eager: false,
+      cascade: false,
+    },
+  )
+  applicationRestrictionBypasses?: ApplicationRestrictionBypass[];
 }

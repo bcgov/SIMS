@@ -10,7 +10,7 @@ import {
   StudentRestriction,
   User,
 } from "@sims/sims-db";
-import { DataSource, Repository, UpdateResult } from "typeorm";
+import { ArrayOverlap, DataSource, Repository, UpdateResult } from "typeorm";
 import { CustomNamedError } from "@sims/utilities";
 import {
   ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS,
@@ -20,7 +20,10 @@ import {
   APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE,
   STUDENT_RESTRICTION_NOT_FOUND,
 } from "../../constants";
-import { BypassRestrictionData } from "../../services/";
+import {
+  AvailableStudentRestrictionData,
+  BypassRestrictionData,
+} from "../../services/";
 import { NoteSharedService } from "@sims/services";
 
 /**
@@ -129,94 +132,99 @@ export class ApplicationRestrictionBypassService {
    */
   async getAvailableStudentRestrictionsToBypass(
     applicationId: number,
-  ): Promise<StudentRestriction[]> {
-    const applicationRestrictionBypasses =
-      await this.applicationRestrictionBypassRepo.find({
-        select: {
-          studentRestriction: {
-            id: true,
-          },
-        },
-        relations: {
-          studentRestriction: true,
-        },
-        where: {
-          application: {
-            id: applicationId,
-          },
-          isActive: true,
-        },
-      });
-    const studentRestrictionIds = applicationRestrictionBypasses.map(
-      (applicationRestrictionBypass) =>
-        applicationRestrictionBypass.studentRestriction.id,
-    );
-
+  ): Promise<AvailableStudentRestrictionData[]> {
     const application = await this.applicationRepo.findOne({
       select: {
+        id: true,
         student: {
           id: true,
+          studentRestrictions: {
+            id: true,
+            restriction: {
+              id: true,
+              restrictionCode: true,
+              actionType: true,
+            },
+            applicationRestrictionBypasses: {
+              id: true,
+              studentRestriction: { id: true },
+              isActive: true,
+            },
+            createdAt: true,
+          },
         },
         currentAssessment: {
           id: true,
           offering: {
+            id: true,
             offeringIntensity: true,
           },
         },
       },
       relations: {
-        student: true,
-        currentAssessment: {
-          offering: true,
+        student: {
+          studentRestrictions: {
+            restriction: true,
+            applicationRestrictionBypasses: {
+              studentRestriction: true,
+            },
+          },
         },
+        currentAssessment: { offering: true },
       },
       where: {
         id: applicationId,
+        student: {
+          studentRestrictions: {
+            isActive: true,
+            restriction: {
+              actionType: ArrayOverlap([
+                RestrictionActionType.StopFullTimeBCFunding,
+                RestrictionActionType.StopFullTimeDisbursement,
+                RestrictionActionType.StopPartTimeDisbursement,
+              ]),
+            },
+          },
+        },
       },
     });
 
-    const query = this.studentRestrictionRepo
-      .createQueryBuilder("studentRestriction")
-      .select([
-        "studentRestriction.id",
-        "restriction.restrictionCode",
-        "studentRestriction.createdAt",
-      ])
-      .innerJoin("studentRestriction.restriction", "restriction")
-      .andWhere("studentRestriction.student.id = :studentId", {
-        studentId: application.student.id,
-      })
-      .andWhere("studentRestriction.id NOT IN (:...studentRestrictionIds)", {
-        studentRestrictionIds,
-      })
-      .andWhere("studentRestriction.isActive = true");
-
-    // Restriction action type condition.
-    if (
+    const allowedRestrictionActions =
       application.currentAssessment.offering.offeringIntensity ===
       OfferingIntensity.fullTime
-    ) {
-      query.andWhere(
-        "restriction.action_type::text[] && ARRAY[:...fullTimeActionTypes]::text[]",
-        {
-          fullTimeActionTypes: [
+        ? [
             RestrictionActionType.StopFullTimeBCFunding,
             RestrictionActionType.StopFullTimeDisbursement,
-          ],
-        },
+          ]
+        : [RestrictionActionType.StopPartTimeDisbursement];
+
+    const bypassedStudentRestrictionIds =
+      application.student.studentRestrictions
+        .flatMap(
+          (studentRestriction) =>
+            studentRestriction.applicationRestrictionBypasses,
+        )
+        .filter((bypass) => bypass.isActive)
+        .map((bypass) => bypass.studentRestriction.id);
+
+    const studentRestrictionsThatAreNotBypassed =
+      application.student.studentRestrictions.filter(
+        (studentRestriction) =>
+          !bypassedStudentRestrictionIds.includes(studentRestriction.id),
       );
-    } else {
-      query.andWhere(
-        "restriction.action_type::text[] && ARRAY[:...partTimeActionTypes]::text[]",
-        {
-          partTimeActionTypes: [
-            RestrictionActionType.StopPartTimeBCFunding,
-            RestrictionActionType.StopPartTimeDisbursement,
-          ],
-        },
-      );
-    }
-    return query.orderBy("restriction.restrictionCode", "ASC").getMany();
+
+    return studentRestrictionsThatAreNotBypassed
+      .filter((studentRestriction) =>
+        allowedRestrictionActions.some((actionType) =>
+          studentRestriction.restriction.actionType.includes(actionType),
+        ),
+      )
+      .map((studentRestriction) => ({
+        studentRestrictionId: studentRestriction.id,
+        restrictionCode: studentRestriction.restriction.restrictionCode,
+        studentRestrictionCreatedAt: studentRestriction.createdAt,
+      }))
+      .sort((a, b) => a.restrictionCode.localeCompare(b.restrictionCode));
   }
 
   /**

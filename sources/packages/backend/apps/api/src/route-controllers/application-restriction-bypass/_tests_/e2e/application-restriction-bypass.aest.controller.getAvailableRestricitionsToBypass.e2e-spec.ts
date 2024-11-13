@@ -49,6 +49,18 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
       },
     );
 
+    const ptssrRestriction = await db.restriction.findOne({
+      where: { restrictionCode: RestrictionCode.PTSSR },
+    });
+    // Add a student restriction that should be available to be bypassed because the student restriction is a different one than the student restriction bypassed above.
+    const ptssrStudentRestriction = await saveFakeStudentRestriction(
+      db.dataSource,
+      {
+        student: application.student,
+        restriction: ptssrRestriction,
+      },
+    );
+
     // Add a student restriction bypassed that was removed. In other words, it is no longer active and the student restriction should be available to be bypassed again.
     const removedApplicationRestrictionsBypass =
       await saveFakeApplicationRestrictionBypass(
@@ -62,7 +74,6 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
         {
           restrictionActionType: RestrictionActionType.StopPartTimeDisbursement,
           restrictionCode: RestrictionCode.AF,
-
           isRemoved: true,
         },
       );
@@ -126,6 +137,12 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
             studentRestrictionCreatedAt:
               stopPartTimeDisbursementStudentRestriction.createdAt.toISOString(),
           },
+          {
+            studentRestrictionId: ptssrStudentRestriction.id,
+            restrictionCode: ptssrRestriction.restrictionCode,
+            studentRestrictionCreatedAt:
+              ptssrStudentRestriction.createdAt.toISOString(),
+          },
         ],
       });
   });
@@ -163,7 +180,6 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
         {
           restrictionActionType: RestrictionActionType.StopFullTimeDisbursement,
           restrictionCode: RestrictionCode.AF4,
-
           isRemoved: true,
         },
       );

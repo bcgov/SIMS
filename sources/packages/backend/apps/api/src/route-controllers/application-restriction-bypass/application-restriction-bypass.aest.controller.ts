@@ -32,10 +32,7 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { ApplicationRestrictionBypassService } from "../../services";
-import {
-  ApplicationRestrictionBypass,
-  StudentRestriction,
-} from "@sims/sims-db";
+import { ApplicationRestrictionBypass } from "@sims/sims-db";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { IUserToken, Role } from "../../auth";
 import { CustomNamedError } from "@sims/utilities";
@@ -108,7 +105,7 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
         id,
       );
     if (!applicationRestrictionBypass) {
-      throw new NotFoundException(APPLICATION_RESTRICTION_BYPASS_NOT_FOUND);
+      throw new NotFoundException("Application restriction bypass not found.");
     }
     return {
       applicationRestrictionBypassId: applicationRestrictionBypass.id,
@@ -145,13 +142,7 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
         applicationId,
       );
     return {
-      availableRestrictionsToBypass: availableRestrictionsToBypass.map(
-        (item: StudentRestriction) => ({
-          studentRestrictionId: item.id,
-          restrictionCode: item.restriction.restrictionCode,
-          studentRestrictionCreatedAt: item.createdAt,
-        }),
-      ),
+      availableRestrictionsToBypass: availableRestrictionsToBypass,
     };
   }
 

@@ -6,3 +6,9 @@ export interface BypassRestrictionData {
   bypassBehavior: RestrictionBypassBehaviors;
   note: string;
 }
+
+export class AvailableStudentRestrictionData {
+  studentRestrictionId: number;
+  restrictionCode: string;
+  studentRestrictionCreatedAt: Date;
+}
