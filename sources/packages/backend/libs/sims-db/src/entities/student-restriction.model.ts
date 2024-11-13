@@ -35,6 +35,9 @@ export class StudentRestriction extends BaseRestrictionModel {
   })
   application: Application;
 
+  /**
+   * Application restriction bypasses related to this student restriction.
+   */
   @OneToMany(
     () => ApplicationRestrictionBypass,
     (applicationRestrictionBypass) =>
