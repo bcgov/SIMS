@@ -39,7 +39,7 @@ export const processInParallel = async <P, I>(
   },
 ): Promise<P[]> => {
   const maxParallelRequests =
-    options.maxParallelRequests ?? ParallelIntensity.Regular;
+    options?.maxParallelRequests ?? ParallelIntensity.Regular;
   const resolvedResponses: P[] = [];
 
   // Hold all the promises that must be processed.
