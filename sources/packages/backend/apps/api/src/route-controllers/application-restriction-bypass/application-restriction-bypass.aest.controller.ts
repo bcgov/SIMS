@@ -21,7 +21,7 @@ import {
 import {
   ApplicationRestrictionBypassAPIOutDTO,
   ApplicationRestrictionBypassHistoryAPIOutDTO,
-  AvailableStudentRestrictionAPIOutDTO,
+  AvailableStudentRestrictionsAPIOutDTO,
   BypassRestrictionAPIInDTO,
   RemoveBypassRestrictionAPIInDTO,
 } from "./models/application-restriction-bypass.dto";
@@ -136,7 +136,7 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
   @Get("application/:applicationId/options-list")
   async getAvailableStudentRestrictionsToBypass(
     @Param("applicationId", ParseIntPipe) applicationId: number,
-  ): Promise<AvailableStudentRestrictionAPIOutDTO> {
+  ): Promise<AvailableStudentRestrictionsAPIOutDTO> {
     const availableRestrictionsToBypass =
       await this.applicationRestrictionBypassService.getAvailableStudentRestrictionsToBypass(
         applicationId,
