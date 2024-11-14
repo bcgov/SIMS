@@ -24,9 +24,12 @@ export enum ParallelIntensity {
  * returns a promise.
  * @param inputs Input data from which the bulk processing is done.
  * @param options.
- * - `maxParallelRequests` maxParallelRequests Maximum number of parallel
- * processes allowed to be executed at same time.
+ * - `maxParallelRequests` maximum number of parallel processes allowed
+ * to be executed at same time.
  * - `progress` reports the current progress of the parallel processing.
+ * The `currentRecord` parameter reports the number of records processed (not the index).
+ * - `partialResults` results from the last processed batch. Every time the promises are
+ * awaited this method is called.
  * @returns resolved responses of promise.
  */
 export const processInParallel = async <P, I>(

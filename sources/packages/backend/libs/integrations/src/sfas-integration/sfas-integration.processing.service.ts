@@ -15,7 +15,7 @@ import {
 } from "../services/sfas";
 import { ConfigService } from "@sims/utilities/config";
 import { SFTP_ARCHIVE_DIRECTORY } from "@sims/integrations/constants";
-import { processInParallel } from "@sims/utilities";
+import { parseJSONError, processInParallel } from "@sims/utilities";
 import { SFASRecordIdentification } from "@sims/integrations/sfas-integration/sfas-files/sfas-record-identification";
 import { SFAS_IMPORT_RECORDS_PROGRESS_REPORT_PACE } from "@sims/services/constants";
 
@@ -150,6 +150,15 @@ export class SFASIntegrationProcessingService {
     return result;
   }
 
+  /**
+   * Imports a single record from SFAS into the application.
+   * The record is determined by the recordType and the import process
+   * is done by the data importer retrieved by
+   * getSFASDataImporterFor.
+   * @param record the record to be imported.
+   * @param creationDate the date and time when the record was extracted from SFAS.
+   * @param result the process sftp response result object to store the result of the import process.
+   */
   private async importRecord(
     record: SFASRecordIdentification,
     creationDate: Date,
@@ -166,9 +175,9 @@ export class SFASIntegrationProcessingService {
       return await dataImporter.importSFASRecord(record, creationDate);
     } catch (error: unknown) {
       const errorDescription = `Error processing record line number ${record.lineNumber}.`;
-      this.logger.error(errorDescription);
-      this.logger.error(error);
-      result.summary.push(`${errorDescription}. Error: ${error}`);
+      result.summary.push(errorDescription);
+      result.summary.push(parseJSONError(error));
+      this.logger.error(errorDescription, error);
       result.success = false;
     }
   }
