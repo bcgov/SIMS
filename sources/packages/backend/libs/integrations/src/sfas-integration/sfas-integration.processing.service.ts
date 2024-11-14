@@ -122,9 +122,7 @@ export class SFASIntegrationProcessingService {
     try {
       this.logger.log("Records imported.");
       if (result.success) {
-        /**
-         * Archive the file only if it was processed with success.
-         */
+        // Archive the file only if it was processed with success.
         try {
           await this.sfasService.archiveFile(
             remoteFilePath,
