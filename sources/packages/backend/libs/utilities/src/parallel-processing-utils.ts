@@ -28,8 +28,9 @@ export enum ParallelIntensity {
  * to be executed at same time.
  * - `progress` reports the current progress of the parallel processing.
  * The `currentRecord` parameter reports the number of records processed (not the index).
+ * The method optionally allow to process async operations.
  * - `partialResults` results from the last processed batch. Every time the promises are
- * awaited this method is called.
+ * awaited this method is called. The method optionally allow to process async operations.
  * @returns resolved responses of promise.
  */
 export const processInParallel = async <P, I>(
@@ -37,7 +38,7 @@ export const processInParallel = async <P, I>(
   inputs: I[],
   options?: {
     maxParallelRequests?: ParallelIntensity;
-    progress?: (currentRecord: number) => void;
+    progress?: (currentRecord: number) => Promise<void>;
     partialResults?: (results: P[]) => Promise<void>;
   },
 ): Promise<P[]> => {
@@ -54,7 +55,7 @@ export const processInParallel = async <P, I>(
       const response = await Promise.all(promises);
       resolvedResponses.push(...response);
       await options?.partialResults?.(response);
-      options?.progress?.(resolvedResponses.length);
+      await options?.progress?.(resolvedResponses.length);
       // Clear the array.
       promises.splice(0, promises.length);
     }
@@ -65,7 +66,7 @@ export const processInParallel = async <P, I>(
     const response = await Promise.all(promises);
     resolvedResponses.push(...response);
     await options?.partialResults?.(response);
-    options?.progress?.(resolvedResponses.length);
+    await options?.progress?.(resolvedResponses.length);
   }
   return resolvedResponses;
 };

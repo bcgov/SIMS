@@ -146,12 +146,9 @@ export class SFASIntegrationProcessingService {
 
   /**
    * Imports a single record from SFAS into the application.
-   * The record is determined by the recordType and the import process
-   * is done by the data importer retrieved by
-   * getSFASDataImporterFor.
    * @param record the record to be imported.
    * @param creationDate the date and time when the record was extracted from SFAS.
-   * @param result the process sftp response result object to store the result of the import process.
+   * @param result result summary.
    */
   private async importRecord(
     record: SFASRecordIdentification,
