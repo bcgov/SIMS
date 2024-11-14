@@ -30,6 +30,13 @@ export class PartTimeCertRecordParser extends ECertRecordParser {
   }
 
   /**
+   * Student's gender.
+   */
+  get gender(): string {
+    return this.record.substring(54, 55);
+  }
+
+  /**
    * Disbursement amount.
    * This field includes 2 decimals in the file.
    */

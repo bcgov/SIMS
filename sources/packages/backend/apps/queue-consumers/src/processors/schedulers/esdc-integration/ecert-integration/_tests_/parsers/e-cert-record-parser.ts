@@ -31,6 +31,11 @@ export abstract class ECertRecordParser {
   abstract get lastName(): string;
 
   /**
+   * Student's gender.
+   */
+  abstract get gender(): string;
+
+  /**
    * Validate if the first name and last names belongs to the
    * provided student user.
    * @param user user to be checked.

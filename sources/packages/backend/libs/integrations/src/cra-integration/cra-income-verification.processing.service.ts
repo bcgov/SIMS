@@ -13,12 +13,11 @@ import {
   CRASFTPResponseFile,
   ProcessSftpResponseResult,
 } from "./cra-integration.models";
-import { getUTCNow } from "@sims/utilities";
+import { getUTCNow, parseJSONError } from "@sims/utilities";
 import * as path from "path";
 import { ConfigService } from "@sims/utilities/config";
 import { CRAIntegrationService } from "./cra.integration.service";
 import { CRAIncomeVerificationsService } from "../services";
-import { SFTP_ARCHIVE_DIRECTORY } from "@sims/integrations/constants";
 
 const INCOME_VERIFICATION_TAG = "VERIFICATION_ID";
 
@@ -275,14 +274,15 @@ export class CRAIncomeVerificationProcessingService {
 
     try {
       // Archive file.
-      await this.craService.archiveFile(remoteFilePath, SFTP_ARCHIVE_DIRECTORY);
+      await this.craService.archiveFile(remoteFilePath);
     } catch (error) {
       // Log the error but allow the process to continue.
       // If there was an issue only during the file archiving, it will be
       // processed again and could be archived in the second attempt.
       const logMessage = `Error while archiving CRA response file: ${remoteFilePath}`;
-      this.logger.error(logMessage);
       result.errorsSummary.push(logMessage);
+      result.errorsSummary.push(parseJSONError(error));
+      this.logger.error(logMessage, error);
     }
 
     return result;

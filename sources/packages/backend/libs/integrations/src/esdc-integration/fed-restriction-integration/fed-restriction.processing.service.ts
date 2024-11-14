@@ -18,7 +18,6 @@ import {
 } from "@sims/integrations/services";
 import { SystemUsersService } from "@sims/services/system-users";
 import { StudentRestrictionSharedService } from "@sims/services";
-import { SFTP_ARCHIVE_DIRECTORY } from "@sims/integrations/constants";
 
 /**
  * Manages the process to import the entire snapshot of federal
@@ -75,15 +74,12 @@ export class FedRestrictionProcessingService {
       // Only the most updated file matters because it represents the entire data snapshot.
       for (const remoteFilePath of filePaths) {
         try {
-          await this.integrationService.archiveFile(
-            remoteFilePath,
-            SFTP_ARCHIVE_DIRECTORY,
-          );
+          await this.integrationService.archiveFile(remoteFilePath);
         } catch (error) {
-          result.errorsSummary.push(
-            `Error while archiving federal restrictions file: ${remoteFilePath}`,
-          );
-          result.errorsSummary.push(error);
+          const logMessage = `Error while archiving federal restrictions file: ${remoteFilePath}`;
+          result.errorsSummary.push(logMessage);
+          result.errorsSummary.push(parseJSONError(error));
+          this.logger.error(logMessage, error);
         }
       }
     } else {

@@ -71,6 +71,20 @@ export class AssessmentHistorySummaryAPIOutDTO {
   hasUnsuccessfulWeeks?: boolean;
 }
 
+/**
+ * Assessment calculations output with possible
+ * adjustments for API output DTO.
+ */
+export type AssessmentAPIOutDTO = Omit<Assessment, "totalFamilyIncome"> & {
+  /**
+   * Total family income to be considered.
+   * Users without proper access should see only a masked value.
+   * This property overrides the original type to allow to keep
+   * the property as number and also as a string, when a mask is required.
+   */
+  totalFamilyIncome: number | string;
+};
+
 export class AssessmentNOAAPIOutDTO {
   @ApiProperty({
     description:
@@ -78,7 +92,7 @@ export class AssessmentNOAAPIOutDTO {
       "Contains data that could represent a part-time or a full-time assessment. " +
       "Part-time and full-time will have some common and some specific properties for each payload.",
   })
-  assessment: Assessment;
+  assessment: AssessmentAPIOutDTO;
   applicationId: number;
   applicationNumber: string;
   applicationCurrentAssessmentId: number;

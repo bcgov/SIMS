@@ -32,7 +32,10 @@ export function getGenderCode(gender: string): string {
     case "nonBinary":
       return "X";
     default:
-      return "";
+      // Gender should have at least one character code.
+      // The default option as an empty space would represent
+      // the "Prefer not to answer"(preferNotToAnswer) option.
+      return " ";
   }
 }
 

@@ -14,7 +14,6 @@ import {
   SFASPartTimeApplicationsImportService,
 } from "../services/sfas";
 import { ConfigService } from "@sims/utilities/config";
-import { SFTP_ARCHIVE_DIRECTORY } from "@sims/integrations/constants";
 import { parseJSONError, processInParallel } from "@sims/utilities";
 import { SFASRecordIdentification } from "@sims/integrations/sfas-integration/sfas-files/sfas-record-identification";
 import { SFAS_IMPORT_RECORDS_PROGRESS_REPORT_PACE } from "@sims/services/constants";
@@ -124,10 +123,7 @@ export class SFASIntegrationProcessingService {
       if (result.success) {
         // Archive the file only if it was processed with success.
         try {
-          await this.sfasService.archiveFile(
-            remoteFilePath,
-            SFTP_ARCHIVE_DIRECTORY,
-          );
+          await this.sfasService.archiveFile(remoteFilePath);
         } catch (error) {
           throw new Error(
             `Error while archiving SFAS integration file: ${remoteFilePath}`,
@@ -138,11 +134,11 @@ export class SFASIntegrationProcessingService {
         }
       }
     } catch (error) {
+      result.success = false;
       const logMessage = `Error while processing SFAS integration file: ${remoteFilePath}`;
       result.summary.push(logMessage);
-      result.success = false;
-      this.logger.error(logMessage);
-      this.logger.error(error);
+      result.summary.push(parseJSONError(error));
+      this.logger.error(logMessage, error);
     }
 
     return result;
@@ -227,8 +223,8 @@ export class SFASIntegrationProcessingService {
         "Error while wrapping up post file processing operations.";
       postFileImportResult.success = false;
       postFileImportResult.summary.push(logMessage);
-      this.logger.log(logMessage);
-      this.logger.error(error);
+      postFileImportResult.summary.push(parseJSONError(error));
+      this.logger.error(logMessage, error);
     }
     return postFileImportResult;
   }

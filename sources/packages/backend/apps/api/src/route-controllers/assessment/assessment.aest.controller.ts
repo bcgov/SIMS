@@ -106,6 +106,7 @@ export class AssessmentAESTController extends BaseController {
   ): Promise<AssessmentNOAAPIOutDTO> {
     return this.assessmentControllerService.getAssessmentNOA(assessmentId, {
       maskMSFAA: false,
+      maskTotalFamilyIncome: false,
     });
   }
 

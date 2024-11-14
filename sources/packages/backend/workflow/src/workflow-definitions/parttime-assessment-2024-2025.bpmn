@@ -491,7 +491,7 @@ dmnX (comes from dmn)</bpmn:text>
     </bpmn:exclusiveGateway>
     <bpmn:scriptTask id="Activity_002ms16" name="Partner Information and Income">
       <bpmn:extensionElements>
-        <zeebe:script expression="={&#10;  calculatedDataRelationshipStatus: studentDataRelationshipStatus,&#10;  calculatedDataPartner1TotalIncome: calculatedDataPartner1TotalIncome,&#10;  calculatedDataCurrentYearPartnerIncome: null&#10;}" resultVariable="calculatedDataStudentPartnerInformationAndIncome" />
+        <zeebe:script expression="={&#10;  calculatedDataRelationshipStatus: studentDataRelationshipStatus,&#10;  calculatedDataPartner1TotalIncome: calculatedDataPartner1TotalIncome,&#10;  calculatedDataCurrentYearPartnerIncome: studentDataCurrentYearPartnerIncome&#10;}" resultVariable="calculatedDataStudentPartnerInformationAndIncome" />
         <zeebe:ioMapping>
           <zeebe:output source="=calculatedDataStudentPartnerInformationAndIncome.calculatedDataRelationshipStatus" target="calculatedDataRelationshipStatus" />
           <zeebe:output source="=calculatedDataStudentPartnerInformationAndIncome.calculatedDataPartner1TotalIncome" target="calculatedDataPartner1TotalIncome" />

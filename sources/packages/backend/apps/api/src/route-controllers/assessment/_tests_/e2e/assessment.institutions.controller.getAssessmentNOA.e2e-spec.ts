@@ -106,7 +106,10 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
         applicationId: application.id,
         applicationNumber: application.applicationNumber,
         applicationStatus: application.applicationStatus,
-        assessment: assessment.assessmentData,
+        assessment: {
+          ...assessment.assessmentData,
+          totalFamilyIncome: "XXXXX",
+        },
         disbursement: {
           disbursement1COEStatus: firstDisbursementSchedule.coeStatus,
           disbursement1Date: getDateOnlyFullMonthFormat(
@@ -210,7 +213,10 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
         applicationId: application.id,
         applicationNumber: application.applicationNumber,
         applicationStatus: application.applicationStatus,
-        assessment: assessment.assessmentData,
+        assessment: {
+          ...assessment.assessmentData,
+          totalFamilyIncome: "XXXXX",
+        },
         disbursement: {
           disbursement1COEStatus: firstDisbursementSchedule.coeStatus,
           disbursement1Date: getDateOnlyFullMonthFormat(

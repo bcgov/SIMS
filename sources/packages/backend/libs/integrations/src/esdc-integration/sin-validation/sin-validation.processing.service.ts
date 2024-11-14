@@ -17,7 +17,7 @@ import {
   SINValidationService,
   StudentService,
 } from "@sims/integrations/services";
-import { SFTP_ARCHIVE_DIRECTORY } from "@sims/integrations/constants";
+import { parseJSONError } from "@sims/utilities";
 
 /**
  * Manages the process to generate SIN validations requests to ESDC and allow
@@ -212,17 +212,15 @@ export class SINValidationProcessingService {
 
     try {
       // Archive file.
-      await this.sinValidationIntegrationService.archiveFile(
-        remoteFilePath,
-        SFTP_ARCHIVE_DIRECTORY,
-      );
+      await this.sinValidationIntegrationService.archiveFile(remoteFilePath);
     } catch (error) {
       // Log the error but allow the process to continue.
       // If there was an issue only during the file archiving, it will be
       // processed again and could be archived in the second attempt.
-      const logMessage = `Error while archiving ESDC SIN validation response file: ${remoteFilePath}`;
-      this.logger.error(logMessage);
+      const logMessage = `Error while archiving ESDC SIN validation response file: ${remoteFilePath}.`;
       result.errorsSummary.push(logMessage);
+      result.errorsSummary.push(parseJSONError(error));
+      this.logger.error(logMessage, error);
     }
 
     return result;
