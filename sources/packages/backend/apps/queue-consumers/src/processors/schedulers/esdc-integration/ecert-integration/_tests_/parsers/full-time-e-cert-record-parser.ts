@@ -51,6 +51,13 @@ export class FullTimeCertRecordParser extends ECertRecordParser {
   }
 
   /**
+   * Student's gender.
+   */
+  get gender(): string {
+    return this.record.substring(594, 595);
+  }
+
+  /**
    * Federal CSLF amount (loan).
    */
   get cslfAmount(): number {

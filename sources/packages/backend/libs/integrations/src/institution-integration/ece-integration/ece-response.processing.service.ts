@@ -10,7 +10,6 @@ import { ProcessSummaryResult } from "@sims/integrations/models";
 import {
   ECE_RESPONSE_COE_DECLINED_REASON,
   ECE_RESPONSE_FILE_NAME,
-  SFTP_ARCHIVE_DIRECTORY,
 } from "@sims/integrations/constants";
 import { InstitutionLocationService } from "@sims/integrations/services";
 import {
@@ -18,6 +17,7 @@ import {
   CustomNamedError,
   END_OF_LINE,
   StringBuilder,
+  parseJSONError,
   processInParallel,
 } from "@sims/utilities";
 import { ECEResponseFileDetail } from "./ece-files/ece-response-file-detail";
@@ -509,17 +509,15 @@ export class ECEResponseProcessingService {
   ): Promise<void> {
     try {
       // Archiving the file once it has been processed.
-      await this.integrationService.archiveFile(
-        remoteFilePath,
-        SFTP_ARCHIVE_DIRECTORY,
-      );
+      await this.integrationService.archiveFile(remoteFilePath);
       processSummary.summary.push(
         `The file ${remoteFilePath} has been archived after processing.`,
       );
     } catch (error: unknown) {
-      processSummary.errors.push(
-        `Error while archiving the file: ${remoteFilePath}. ${error}`,
-      );
+      const logMessage = `Error while archiving the file: ${remoteFilePath}.`;
+      processSummary.errors.push(logMessage);
+      processSummary.errors.push(parseJSONError(error));
+      this.logger.error(logMessage, error);
     }
   }
 

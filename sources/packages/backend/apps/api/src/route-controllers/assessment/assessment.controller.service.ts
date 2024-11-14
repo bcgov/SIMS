@@ -26,6 +26,7 @@ import {
   ApplicationExceptionService,
   MASKED_MSFAA_NUMBER,
   ApplicationOfferingChangeRequestService,
+  MASKED_MONEY_AMOUNT,
 } from "../../services";
 import {
   AssessmentNOAAPIOutDTO,
@@ -34,6 +35,7 @@ import {
   RequestAssessmentTypeAPIOutDTO,
   AssessmentHistorySummaryAPIOutDTO,
   DynamicAwardValue,
+  AssessmentAPIOutDTO,
 } from "./models/assessment.dto";
 import { getUserFullName } from "../../utilities";
 import { getDateOnlyFormat, getDateOnlyFullMonthFormat } from "@sims/utilities";
@@ -63,6 +65,8 @@ export class AssessmentControllerService {
    * - `studentId` optional student for authorization when needed.
    * - `applicationId` application id,
    * - `maskMSFAA` mask MSFAA or not.
+   * - `maskTotalFamilyIncome` mask total family income resulted
+   * from the assessment calculations. Defaults to true if not provided.
    * @returns notice of assessment data.
    */
   async getAssessmentNOA(
@@ -71,8 +75,10 @@ export class AssessmentControllerService {
       studentId?: number;
       applicationId?: number;
       maskMSFAA?: boolean;
+      maskTotalFamilyIncome?: boolean;
     },
   ): Promise<AssessmentNOAAPIOutDTO> {
+    const maskTotalFamilyIncome = options?.maskTotalFamilyIncome ?? true;
     const assessment = await this.assessmentService.getAssessmentForNOA(
       assessmentId,
       { studentId: options?.studentId, applicationId: options?.applicationId },
@@ -88,8 +94,13 @@ export class AssessmentControllerService {
       );
     }
 
+    const assessmentDTO: AssessmentAPIOutDTO = assessment.assessmentData;
+    if (maskTotalFamilyIncome) {
+      assessmentDTO.totalFamilyIncome = MASKED_MONEY_AMOUNT;
+    }
+
     return {
-      assessment: assessment.assessmentData,
+      assessment: assessmentDTO,
       applicationId: assessment.application.id,
       noaApprovalStatus: assessment.noaApprovalStatus,
       applicationStatus: assessment.application.applicationStatus,

@@ -105,7 +105,7 @@ describe(
       expect(studentLoanBalance).toEqual([
         {
           balanceDate: "2023-12-31",
-          cslBalance: 148154,
+          cslBalance: 1481.54,
         },
       ]);
     });
@@ -330,7 +330,7 @@ describe(
         },
         {
           balanceDate: currentBalanceDate,
-          cslBalance: 148154,
+          cslBalance: 1481.54,
         },
       ]);
     });
