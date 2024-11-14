@@ -5,7 +5,6 @@ import { DataSource, Repository } from "typeorm";
 import { FederalRestriction, Restriction } from "@sims/sims-db";
 import {
   getISODateOnlyString,
-  ParallelIntensity,
   parseJSONError,
   processInParallel,
 } from "@sims/utilities";
@@ -198,7 +197,6 @@ export class FedRestrictionProcessingService {
             ),
           fedRestrictionsBulks,
           {
-            maxParallelRequests: ParallelIntensity.Regular,
             progress: (currentBulk) => {
               this.logger.log(
                 `Inserted record bulk ${currentBulk} of ${fedRestrictionsBulks.length}.`,
@@ -265,6 +263,13 @@ export class FedRestrictionProcessingService {
     return result;
   }
 
+  /**
+   * Splits the given array of federal restrictions records into
+   * bulks to allow a batch insert. The bulk size is defined by the constant
+   * {@link FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT}.
+   * @param restrictions federal restrictions records read from the file.
+   * @returns bulks of federal restrictions records.
+   */
   private getFedRestrictionsBulks(
     restrictions: FedRestrictionFileRecord[],
   ): FedRestrictionFileRecord[][] {

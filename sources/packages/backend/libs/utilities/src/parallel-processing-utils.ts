@@ -51,7 +51,7 @@ export const processInParallel = async <P, I>(
       const response = await Promise.all(promises);
       resolvedResponses.push(...response);
       await options?.partialResults?.(response);
-      options?.progress(resolvedResponses.length);
+      options?.progress?.(resolvedResponses.length);
       // Clear the array.
       promises.splice(0, promises.length);
     }
@@ -62,7 +62,7 @@ export const processInParallel = async <P, I>(
     const response = await Promise.all(promises);
     resolvedResponses.push(...response);
     await options?.partialResults?.(response);
-    options?.progress(resolvedResponses.length);
+    options?.progress?.(resolvedResponses.length);
   }
   return resolvedResponses;
 };
