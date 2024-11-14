@@ -38,8 +38,8 @@ export const processInParallel = async <P, I>(
   inputs: I[],
   options?: {
     maxParallelRequests?: ParallelIntensity;
-    progress?: (currentRecord: number) => Promise<void>;
-    partialResults?: (results: P[]) => Promise<void>;
+    progress?: (currentRecord: number) => Promise<void> | void;
+    partialResults?: (results: P[]) => Promise<void> | void;
   },
 ): Promise<P[]> => {
   const maxParallelRequests =
