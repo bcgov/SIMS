@@ -41,11 +41,13 @@ export class RemoveBypassRestrictionAPIInDTO {
 }
 
 export class AvailableStudentRestrictionAPIOutDTO {
-  availableRestrictionsToBypass: {
-    studentRestrictionId: number;
-    restrictionCode: string;
-    studentRestrictionCreatedAt: Date;
-  }[];
+  studentRestrictionId: number;
+  restrictionCode: string;
+  studentRestrictionCreatedAt: Date;
+}
+
+export class AvailableStudentRestrictionsAPIOutDTO {
+  availableRestrictionsToBypass: AvailableStudentRestrictionAPIOutDTO[];
 }
 
 export class ApplicationRestrictionBypassAPIOutDTO {
