@@ -33,6 +33,7 @@ import {
   DisbursementValueType,
   OfferingIntensity,
   ProgramInfoStatus,
+  Restriction,
   RestrictionType,
   Student,
   StudentRestriction,
@@ -50,6 +51,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
   let simsDataUpdatedDate: Date;
   let mockedCurrentDate: Date;
   const DATE_FORMAT = "YYYYMMDD";
+  let provincialRestriction: Restriction;
 
   beforeAll(async () => {
     const { nestApplication, dataSource, sshClientMock } =
@@ -59,6 +61,12 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
     sftpClientMock = sshClientMock;
     // Processor under test.
     processor = app.get(SIMSToSFASIntegrationScheduler);
+    provincialRestriction = await db.restriction.findOne({
+      select: { id: true, restrictionCode: true },
+      where: {
+        restrictionType: RestrictionType.Provincial,
+      },
+    });
   });
 
   beforeEach(async () => {
@@ -109,12 +117,6 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       await db.application.save(application);
 
       // Student has a restriction.
-      const provincialRestriction = await db.restriction.findOne({
-        select: { id: true, restrictionCode: true },
-        where: {
-          restrictionType: RestrictionType.Provincial,
-        },
-      });
       const restriction = await saveFakeStudentRestriction(db.dataSource, {
         student,
         application,
@@ -326,12 +328,6 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       );
 
       // Student has a restriction.
-      const provincialRestriction = await db.restriction.findOne({
-        select: { id: true, restrictionCode: true },
-        where: {
-          restrictionType: RestrictionType.Provincial,
-        },
-      });
       const federalRestriction = await db.restriction.findOne({
         select: { id: true, restrictionCode: true },
         where: {
@@ -782,7 +778,6 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       offering?.studyStartDate ?? application.data.studystartDate;
     const studyEndDate =
       offering?.studyEndDate ?? application.data.studyendDate;
-    const programYear = application.programYear.programYear.replace("-", "");
     const cancelledDate =
       application.applicationStatus === ApplicationStatus.Cancelled
         ? formatDate(application.applicationStatusUpdatedOn, DATE_FORMAT)
@@ -794,7 +789,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       .padStart(10, "0")}${formatDate(studyStartDate, DATE_FORMAT)}${formatDate(
       studyEndDate,
       DATE_FORMAT,
-    )}${programYear}${csgpAwardTotal ?? "0000000000"}${
+    )}20222023${csgpAwardTotal ?? "0000000000"}${
       sbsdAwardTotal ?? "0000000000"
     }${cancelledDate}`;
   }
