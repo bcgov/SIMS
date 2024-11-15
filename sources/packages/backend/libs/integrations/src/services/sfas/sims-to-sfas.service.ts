@@ -155,12 +155,12 @@ export class SIMSToSFASService {
         )
         // Summing CSGP awards where value_code is 'CSGP'.
         .addSelect(
-          "SUM(CASE WHEN disbursementValues.value_code = 'CSGP' THEN disbursementValues.valueAmount ELSE 0 END)",
+          "SUM(CASE WHEN disbursementValues.valueCode = 'CSGP' THEN disbursementValues.valueAmount ELSE 0 END)",
           "csgpAwardTotal",
         )
         // Summing SBSD awards where value_code is 'SBSD.
         .addSelect(
-          "SUM(CASE WHEN disbursementValues.value_code = 'SBSD' THEN disbursementValues.valueAmount ELSE 0 END)",
+          "SUM(CASE WHEN disbursementValues.valueCode = 'SBSD' THEN disbursementValues.valueAmount ELSE 0 END)",
           "sbsdAwardTotal",
         )
         // Application cancel date when status is cancelled.
