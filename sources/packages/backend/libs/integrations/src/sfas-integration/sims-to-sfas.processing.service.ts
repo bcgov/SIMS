@@ -58,14 +58,14 @@ export class SIMSToSFASProcessingService {
         modifiedUntil,
       );
 
+    processSummary.info(
+      "Get all the applications and restrictions with updates.",
+    );
+
     const [applicationRecords, restrictionRecords] = await Promise.all([
       applicationRecordsPromise,
       restrictionRecordsPromise,
     ]);
-
-    processSummary.info(
-      "Get all the applications and restrictions with updates.",
-    );
 
     const applicationStudentIds = applicationRecords.map(
       (application) => application.studentId,

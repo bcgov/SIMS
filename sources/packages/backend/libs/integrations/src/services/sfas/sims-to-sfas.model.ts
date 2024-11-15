@@ -5,7 +5,7 @@ export type StudentDetail = Student & {
   bcslOverawardTotal?: string;
 };
 
-export type ApplicationRecord = {
+export interface ApplicationRecord {
   studentId: number;
   applicationId: number;
   programYear: string;
@@ -15,4 +15,4 @@ export type ApplicationRecord = {
   sbsdAwardTotal: number;
   applicationCancelDate?: Date;
   offeringIntensity: OfferingIntensity;
-};
+}
