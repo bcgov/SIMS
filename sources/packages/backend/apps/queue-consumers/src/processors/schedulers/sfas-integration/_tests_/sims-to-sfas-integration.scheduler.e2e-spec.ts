@@ -113,6 +113,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
           offeringIntensity: OfferingIntensity.partTime,
         },
       );
+      // Update application data to fall between the most recent bridge file date and the mocked current date.
       application.updatedAt = simsDataUpdatedDate;
       await db.application.save(application);
 

@@ -74,6 +74,9 @@ export class SIMSToSFASProcessingService {
       (restriction) => restriction.student.id,
     );
 
+    processSummary.info(
+      `Found ${applicationRecords.length} application(s) and ${restrictionRecords.length} restriction(s) with updates.`,
+    );
     // Append the students with student, application and restriction related data updates.
     const uniqueStudentIds = simsToSFASStudents
       .append(studentIds)
