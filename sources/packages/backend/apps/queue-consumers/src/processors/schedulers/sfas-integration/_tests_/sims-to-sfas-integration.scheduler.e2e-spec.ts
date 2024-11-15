@@ -724,7 +724,12 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
     // Set the CAS supplier.
     await db.student.update(
       { id: student.id },
-      { casSupplier, updatedAt: options?.expectedUpdatedDate ?? new Date() },
+      {
+        casSupplier,
+        // Setting the updated date outside the default range as fallback.
+        updatedAt:
+          options?.expectedUpdatedDate ?? addDays(-1, latestBridgeFileDate),
+      },
     );
     return student;
   }
