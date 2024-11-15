@@ -252,7 +252,7 @@ export class FedRestrictionProcessingService {
       }
     } catch (error: unknown) {
       result.errorsSummary.push(
-        "Error while generating notifications. See logs for details",
+        "Error while generating notifications. See logs for details.",
       );
       this.logger.error(`Error while generating notifications. ${error}`);
     }
