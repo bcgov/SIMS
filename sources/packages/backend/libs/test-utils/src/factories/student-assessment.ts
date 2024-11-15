@@ -56,7 +56,7 @@ export function createFakeStudentAssessment(
     relations?.previousDateChangedReportedAssessment ?? null;
   assessment.reportedDate = options?.initialValue?.reportedDate ?? null;
   assessment.workflowData = options?.initialValue?.workflowData ?? null;
-  // In the application of the PIR exists and is not completed, assessment will not have an offering.
+  // In the application if the PIR exists and is not completed, assessment will not have an offering.
   if (options?.isPIRPending) {
     assessment.offering = null;
   }
