@@ -193,7 +193,6 @@ export class SIMSToSFASService {
               );
           }),
         )
-
         .setParameters({
           overwritten: ApplicationStatus.Overwritten,
           cancelled: ApplicationStatus.Cancelled,
