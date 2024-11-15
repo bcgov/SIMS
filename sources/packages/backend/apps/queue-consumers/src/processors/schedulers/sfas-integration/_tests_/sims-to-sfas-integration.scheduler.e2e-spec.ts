@@ -93,9 +93,10 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
         { student },
         {
           offeringIntensity: OfferingIntensity.partTime,
-          updatedAt: simsDataUpdatedDate,
         },
       );
+      application.updatedAt = simsDataUpdatedDate;
+      await db.application.save(application);
 
       // Student has a restriction.
       const provincialRestriction = await db.restriction.findOne({
@@ -104,12 +105,17 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
           restrictionType: RestrictionType.Provincial,
         },
       });
-      const restriction = await saveFakeStudentRestriction(db.dataSource, {
-        student,
-        application,
-        restriction: provincialRestriction,
-        updatedAt: simsDataUpdatedDate,
-      });
+      const restriction = await saveFakeStudentRestriction(
+        db.dataSource,
+        {
+          student,
+          application,
+          restriction: provincialRestriction,
+        },
+        {
+          updatedAt: simsDataUpdatedDate,
+        },
+      );
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
@@ -153,12 +159,8 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       expect(header).toBe(buildHeader(mockedCurrentDate));
       expect(footer).toBe("999000000003");
       expect(studentRecord).toBe(buildStudentRecord(student));
-      expect(applicationRecord).toBe(
-        buildApplicationRecord(student.id, application),
-      );
-      expect(restrictionRecord).toBe(
-        buildRestrictionRecord(student.id, restriction),
-      );
+      expect(applicationRecord).toBe(buildApplicationRecord(application));
+      expect(restrictionRecord).toBe(buildRestrictionRecord(restriction));
       // Check the database for creation of SFAS bridge log.
       const uploadedFileLog = await db.sfasBridgeLog.existsBy({
         generatedFileName: expectedFileName,
@@ -232,10 +234,11 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
         { student },
         {
           applicationStatus: ApplicationStatus.Cancelled,
-          offeringIntensity: OfferingIntensity.partTime,
-          updatedAt: simsDataUpdatedDate,
+          offeringIntensity: OfferingIntensity.fullTime,
         },
       );
+      application.updatedAt = simsDataUpdatedDate;
+      await db.application.save(application);
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
@@ -274,9 +277,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       expect(header).toBe(buildHeader(mockedCurrentDate));
       expect(footer).toBe("999000000002");
       expect(studentRecord).toBe(buildStudentRecord(student));
-      expect(applicationRecord).toBe(
-        buildApplicationRecord(student.id, application),
-      );
+      expect(applicationRecord).toBe(buildApplicationRecord(application));
       // Check the database for creation of SFAS bridge log.
       const uploadedFileLog = await db.sfasBridgeLog.existsBy({
         generatedFileName: expectedFileName,
@@ -330,17 +331,25 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
           student,
           application,
           restriction: provincialRestriction,
+        },
+        {
           updatedAt: simsDataUpdatedDate,
           isActive: false,
         },
       );
       //Create a restriction for federal which should not be sent.
-      await saveFakeStudentRestriction(db.dataSource, {
-        student,
-        application,
-        restriction: federalRestriction,
-        updatedAt: simsDataUpdatedDate,
-      });
+      const restriction = await saveFakeStudentRestriction(
+        db.dataSource,
+        {
+          student,
+          application,
+          restriction: federalRestriction,
+        },
+        {
+          updatedAt: simsDataUpdatedDate,
+          isActive: false,
+        },
+      );
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
@@ -380,7 +389,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       expect(footer).toBe("999000000002");
       expect(studentRecord).toBe(buildStudentRecord(student));
       expect(restrictionRecord).toBe(
-        buildRestrictionRecord(student.id, cancelledRestriction),
+        buildRestrictionRecord(cancelledRestriction),
       );
       // Check the database for creation of SFAS bridge log.
       const uploadedFileLog = await db.sfasBridgeLog.existsBy({
@@ -473,20 +482,17 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
 
   /**
    * Build application record.
-   * @param studentId student id.
    * @param application application.
    * @returns application record.
    */
-  function buildApplicationRecord(
-    studentId: number,
-    application: Application,
-  ): string {
+  function buildApplicationRecord(application: Application): string {
     const offering = application.currentAssessment.offering;
+    const studentId = application.student.id;
     const applicationRecordType =
       offering.offeringIntensity === OfferingIntensity.fullTime ? "300" : "301";
     const studyStartDate = offering.studyStartDate;
     const studyEndDate = offering.studyEndDate;
-    const programYear = application.programYear;
+    const programYear = application.programYear.programYear.replace("-", "");
     const cancelledDate =
       application.applicationStatus === ApplicationStatus.Cancelled
         ? formatDate(application.applicationStatusUpdatedOn, DATE_FORMAT)
@@ -498,23 +504,19 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       .padStart(10, "0")}${formatDate(studyStartDate, DATE_FORMAT)}${formatDate(
       studyEndDate,
       DATE_FORMAT,
-    )}${programYear.programYear.replace(
-      "-",
-      "",
-    )}00000000000000000000${cancelledDate}`;
+    )}${programYear}00000000000000000000${cancelledDate}`;
   }
 
   /**
    * Build restriction record.
-   * @param studentId student id.
    * @param restriction restriction.
    * @returns restriction record.
    */
   function buildRestrictionRecord(
-    studentId: number,
     studentRestriction: StudentRestriction,
   ): string {
     const restriction = studentRestriction.restriction;
+    const studentId = studentRestriction.student.id;
     const restrictionRemovalDate = !studentRestriction.isActive
       ? formatDate(studentRestriction.updatedAt, DATE_FORMAT)
       : "        ";

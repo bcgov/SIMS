@@ -63,6 +63,10 @@ export class SIMSToSFASProcessingService {
       restrictionRecordsPromise,
     ]);
 
+    processSummary.info(
+      "Get all the applications and restrictions with updates.",
+    );
+
     const applicationStudentIds = applicationRecords.map(
       (application) => application.studentId,
     );
@@ -70,9 +74,7 @@ export class SIMSToSFASProcessingService {
       (restriction) => restriction.student.id,
     );
 
-    // Append the students with student and student related data updates.
-    // When application and restriction updates are retrieved, the respective
-    // student ids of applications and restrictions should be appended.
+    // Append the students with student, application and restriction related data updates.
     const uniqueStudentIds = simsToSFASStudents
       .append(studentIds)
       .append(applicationStudentIds)

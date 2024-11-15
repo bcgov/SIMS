@@ -23,26 +23,26 @@ import { createFakeUser } from "./user";
  * - `creator` related user relation.
  * @returns persisted student restriction.
  */
-export function createFakeStudentRestriction(relations: {
-  student: Student;
-  application?: Application;
-  restriction: Restriction;
-  restrictionNote?: Note;
-  resolutionNote?: Note;
-  creator?: User;
-  updatedAt?: Date;
-  isActive?: boolean;
-}): StudentRestriction {
+export function createFakeStudentRestriction(
+  relations: {
+    student: Student;
+    application?: Application;
+    restriction: Restriction;
+    restrictionNote?: Note;
+    resolutionNote?: Note;
+    creator?: User;
+  },
+  options?: { isActive?: boolean; updatedAt?: Date },
+): StudentRestriction {
   const studentRestriction = new StudentRestriction();
   studentRestriction.student = relations.student;
   studentRestriction.application = relations.application;
   studentRestriction.restriction = relations.restriction;
   studentRestriction.restrictionNote = relations.restrictionNote;
   studentRestriction.resolutionNote = relations.resolutionNote;
-  studentRestriction.isActive = true;
+  studentRestriction.isActive = options?.isActive ?? true;
+  studentRestriction.updatedAt = options?.updatedAt ?? new Date();
   studentRestriction.creator = relations?.creator;
-  studentRestriction.updatedAt = relations?.updatedAt ?? new Date();
-  studentRestriction.isActive = relations?.isActive ?? true;
   return studentRestriction;
 }
 
@@ -61,8 +61,10 @@ export async function saveFakeStudentRestriction(
     restrictionNote?: Note;
     resolutionNote?: Note;
     creator?: User;
-    updatedAt?: Date;
+  },
+  options?: {
     isActive?: boolean;
+    updatedAt?: Date;
   },
 ): Promise<StudentRestriction> {
   const [restrictionNote, resolutionNote] = await saveFakeStudentNotes(
@@ -81,6 +83,6 @@ export async function saveFakeStudentRestriction(
   relations.restrictionNote = restrictionNote;
   relations.resolutionNote = resolutionNote;
   const studentRestrictionRepo = dataSource.getRepository(StudentRestriction);
-  const studentRestriction = createFakeStudentRestriction(relations);
+  const studentRestriction = createFakeStudentRestriction(relations, options);
   return studentRestrictionRepo.save(studentRestriction);
 }
