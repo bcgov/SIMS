@@ -355,7 +355,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
         },
       );
 
-      //Create a restriction for federal which should not be sent.
+      // Create a restriction for federal which should not be sent.
       const restriction = await saveFakeStudentRestriction(
         db.dataSource,
         {
