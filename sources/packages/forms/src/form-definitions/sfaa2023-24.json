@@ -2093,11 +2093,6 @@
                         "pattern": ""
                       },
                       "key": "programName",
-                      "conditional": {
-                        "show": true,
-                        "when": "programnotListed",
-                        "eq": "true"
-                      },
                       "type": "textfield",
                       "input": true,
                       "prefix": "",
@@ -2174,11 +2169,6 @@
                         "maxWords": ""
                       },
                       "key": "programDescription",
-                      "conditional": {
-                        "show": true,
-                        "when": "programnotListed",
-                        "eq": "true"
-                      },
                       "type": "textarea",
                       "input": true,
                       "prefix": "",
