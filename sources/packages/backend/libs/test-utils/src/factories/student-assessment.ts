@@ -19,7 +19,10 @@ export function createFakeStudentAssessment(
     studentAppeal?: StudentAppeal;
     previousDateChangedReportedAssessment?: StudentAssessment;
   },
-  options?: { initialValue?: Partial<StudentAssessment> },
+  options?: {
+    initialValue?: Partial<StudentAssessment>;
+    isPIRPending?: boolean;
+  },
 ): StudentAssessment {
   const now = new Date();
   const assessment = new StudentAssessment();
@@ -53,5 +56,9 @@ export function createFakeStudentAssessment(
     relations?.previousDateChangedReportedAssessment ?? null;
   assessment.reportedDate = options?.initialValue?.reportedDate ?? null;
   assessment.workflowData = options?.initialValue?.workflowData ?? null;
+  // In the application of the PIR exists and is not completed, assessment will not have an offering.
+  if (options?.isPIRPending) {
+    assessment.offering = null;
+  }
   return assessment;
 }

@@ -134,77 +134,74 @@ export class SIMSToSFASService {
     modifiedSince: Date,
     modifiedUntil: Date,
   ): Promise<ApplicationRecord[]> {
-    return (
-      this.applicationRepo
-        .createQueryBuilder("application")
-        .select("application.id", "applicationId")
-        .addSelect("student.id", "studentId")
-        .addSelect("programYear.programYear", "programYear")
-        .addSelect("offering.offeringIntensity", "offeringIntensity")
-        // Use CASE to conditionally select studyStartDate and studyEndDate and casting JSON values to dates.
-        .addSelect(
-          "COALESCE(offering.studyStartDate, (application.data->>'studystartDate')::date)",
-          "studyStartDate",
-        )
-        .addSelect(
-          "COALESCE(offering.studyEndDate, (application.data->>'studyendDate')::date)",
-          "studyEndDate",
-        )
-        // Summing CSGP awards where value_code is 'CSGP'.
-        .addSelect(
-          "SUM(CASE WHEN disbursementValues.value_code = 'CSGP' THEN disbursementValues.valueAmount ELSE 0 END)",
-          "csgpAwardTotal",
-        )
-        // Summing SBSD awards where value_code is 'SBSD.
-        .addSelect(
-          "SUM(CASE WHEN disbursementValues.value_code = 'SBSD' THEN disbursementValues.valueAmount ELSE 0 END)",
-          "sbsdAwardTotal",
-        )
-        // Application cancel date when status is cancelled.
-        .addSelect(
-          "CASE WHEN application.applicationStatus = :cancelled THEN application.application_status_updated_on ELSE NULL END",
-          "applicationCancelDate",
-        )
-        .innerJoin("application.currentAssessment", "studentAssessment")
-        .innerJoin("application.programYear", "programYear")
-        .innerJoin("application.student", "student")
-        .leftJoin("studentAssessment.offering", "offering")
-        .leftJoin(
-          "studentAssessment.disbursementSchedules",
-          "disbursementSchedule",
-        )
-        .leftJoin(
-          "disbursementSchedule.disbursementValues",
-          "disbursementValues",
-        )
-        .where("application.applicationStatus != :overwritten")
-        .andWhere(
-          new Brackets((qb) => {
-            // Check if the application data was updated in the given period.
-            qb.where(
-              "application.updatedAt > :modifiedSince AND application.updatedAt <= :modifiedUntil",
-            )
-              // Check if the assessment data was updated in the given period.
-              .orWhere(
-                "studentAssessment.updatedAt > :modifiedSince AND studentAssessment.updatedAt <= :modifiedUntil",
-              );
-          }),
-        )
+    const query = this.applicationRepo
+      .createQueryBuilder("application")
+      .select("application.id", "applicationId")
+      .addSelect("student.id", "studentId")
+      .addSelect("programYear.programYear", "programYear")
+      .addSelect(
+        "COALESCE(offering.offeringIntensity, (application.data->>'howWillYouBeAttendingTheProgram')::sims.offering_intensity)",
+        "offeringIntensity",
+      )
+      // Use CASE to conditionally select studyStartDate and studyEndDate and casting JSON values to dates.
+      .addSelect(
+        "COALESCE(offering.studyStartDate, (application.data->>'studystartDate')::date)",
+        "studyStartDate",
+      )
+      .addSelect(
+        "COALESCE(offering.studyEndDate, (application.data->>'studyendDate')::date)",
+        "studyEndDate",
+      )
+      // Summing CSGP awards where value_code is 'CSGP'.
+      .addSelect(
+        "SUM(CASE WHEN disbursementValues.value_code = 'CSGP' THEN disbursementValues.valueAmount ELSE 0 END)",
+        "csgpAwardTotal",
+      )
+      // Summing SBSD awards where value_code is 'SBSD.
+      .addSelect(
+        "SUM(CASE WHEN disbursementValues.value_code = 'SBSD' THEN disbursementValues.valueAmount ELSE 0 END)",
+        "sbsdAwardTotal",
+      )
+      // Application cancel date when status is cancelled.
+      .addSelect(
+        "CASE WHEN application.applicationStatus = :cancelled THEN application.applicationStatusUpdatedOn ELSE NULL END",
+        "applicationCancelDate",
+      )
+      .innerJoin("application.currentAssessment", "studentAssessment")
+      .innerJoin("application.programYear", "programYear")
+      .innerJoin("application.student", "student")
+      .leftJoin("studentAssessment.offering", "offering")
+      .leftJoin(
+        "studentAssessment.disbursementSchedules",
+        "disbursementSchedule",
+      )
+      .leftJoin("disbursementSchedule.disbursementValues", "disbursementValues")
+      .where("application.applicationStatus != :overwritten")
+      .andWhere(
+        new Brackets((qb) => {
+          // Check if the application data was updated in the given period.
+          qb.where(
+            "application.updatedAt > :modifiedSince AND application.updatedAt <= :modifiedUntil",
+          )
+            // Check if the assessment data was updated in the given period.
+            .orWhere(
+              "studentAssessment.updatedAt > :modifiedSince AND studentAssessment.updatedAt <= :modifiedUntil",
+            );
+        }),
+      )
 
-        .setParameters({
-          overwritten: ApplicationStatus.Overwritten,
-          cancelled: ApplicationStatus.Cancelled,
-          modifiedSince,
-          modifiedUntil,
-        })
-        .groupBy("application.id")
-        .addGroupBy("student.id")
-        .addGroupBy("programYear.id")
-        .addGroupBy("studentAssessment.id")
-        .addGroupBy("offering.id")
-        .orderBy("offering.offeringIntensity")
-        .getRawMany<ApplicationRecord>()
-    );
+      .setParameters({
+        overwritten: ApplicationStatus.Overwritten,
+        cancelled: ApplicationStatus.Cancelled,
+        modifiedSince,
+        modifiedUntil,
+      })
+      .groupBy("application.id")
+      .addGroupBy("programYear.id")
+      .addGroupBy("student.id")
+      .addGroupBy("offering.id")
+      .orderBy("offering.offeringIntensity");
+    return query.getRawMany<ApplicationRecord>();
   }
 
   /**

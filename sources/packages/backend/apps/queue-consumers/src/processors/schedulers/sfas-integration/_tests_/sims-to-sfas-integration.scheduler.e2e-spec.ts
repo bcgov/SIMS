@@ -2,7 +2,12 @@ import { DeepMocked } from "@golevelup/ts-jest";
 import MockDate from "mockdate";
 import * as faker from "faker";
 import { INestApplication } from "@nestjs/common";
-import { formatDate, QueueNames } from "@sims/utilities";
+import {
+  addDays,
+  formatDate,
+  getISODateOnlyString,
+  QueueNames,
+} from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
@@ -12,7 +17,9 @@ import {
   E2EDataSources,
   createE2EDataSources,
   createFakeCASSupplier,
+  createFakeDisbursementValue,
   createFakeUser,
+  saveFakeApplication,
   saveFakeApplicationDisbursements,
   saveFakeStudent,
   saveFakeStudentRestriction,
@@ -21,8 +28,11 @@ import * as Client from "ssh2-sftp-client";
 import { SIMSToSFASIntegrationScheduler } from "../sims-to-sfas-integration.scheduler";
 import {
   Application,
+  ApplicationData,
   ApplicationStatus,
+  DisbursementValueType,
   OfferingIntensity,
+  ProgramInfoStatus,
   RestrictionType,
   Student,
   StudentRestriction,
@@ -105,12 +115,15 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
           restrictionType: RestrictionType.Provincial,
         },
       });
-      const restriction = await saveFakeStudentRestriction(
-        db.dataSource,
+      const restriction = await saveFakeStudentRestriction(db.dataSource, {
+        student,
+        application,
+        restriction: provincialRestriction,
+      });
+
+      await db.studentRestriction.update(
         {
-          student,
-          application,
-          restriction: provincialRestriction,
+          id: restriction.id,
         },
         {
           updatedAt: simsDataUpdatedDate,
@@ -325,7 +338,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
           restrictionType: RestrictionType.Federal,
         },
       });
-      const cancelledRestriction = await saveFakeStudentRestriction(
+      const resolvedRestriction = await saveFakeStudentRestriction(
         db.dataSource,
         {
           student,
@@ -333,10 +346,18 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
           restriction: provincialRestriction,
         },
         {
-          updatedAt: simsDataUpdatedDate,
           isActive: false,
         },
       );
+      await db.studentRestriction.update(
+        {
+          id: resolvedRestriction.id,
+        },
+        {
+          updatedAt: simsDataUpdatedDate,
+        },
+      );
+
       //Create a restriction for federal which should not be sent.
       const restriction = await saveFakeStudentRestriction(
         db.dataSource,
@@ -346,8 +367,16 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
           restriction: federalRestriction,
         },
         {
-          updatedAt: simsDataUpdatedDate,
           isActive: false,
+        },
+      );
+
+      await db.studentRestriction.update(
+        {
+          id: restriction.id,
+        },
+        {
+          updatedAt: simsDataUpdatedDate,
         },
       );
 
@@ -389,8 +418,260 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       expect(footer).toBe("999000000002");
       expect(studentRecord).toBe(buildStudentRecord(student));
       expect(restrictionRecord).toBe(
-        buildRestrictionRecord(cancelledRestriction),
+        buildRestrictionRecord(resolvedRestriction),
       );
+      // Check the database for creation of SFAS bridge log.
+      const uploadedFileLog = await db.sfasBridgeLog.existsBy({
+        generatedFileName: expectedFileName,
+        referenceDate: mockedCurrentDate,
+      });
+      expect(uploadedFileLog).toBe(true);
+    },
+  );
+
+  it(
+    "Should generate a SIMS to SFAS bridge file when there is an update on student assessment data " +
+      "that fall between the most recent bridge file date and the current bridge file execution date.",
+    async () => {
+      // Arrange
+      // Create bridge file log.
+      await db.sfasBridgeLog.insert({
+        referenceDate: latestBridgeFileDate,
+        generatedFileName: "DummyFileName.TXT",
+      });
+
+      // Student created with expected first name, last name and more importantly the updated date
+      // to fall between the most recent bridge file date and the mocked current date.
+      const student = await createStudentWithExpectedData();
+
+      // Student has submitted an application.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+        },
+      );
+      db.studentAssessment.update(
+        {
+          id: application.currentAssessment.id,
+        },
+        {
+          updatedAt: simsDataUpdatedDate,
+        },
+      );
+
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Mock the current date.
+      MockDate.set(mockedCurrentDate);
+
+      // Expected file name.
+      const expectedFileName = buildExpectedFileName(mockedCurrentDate);
+
+      // Act
+      const processingResult = await processor.generateSFASBridgeFile(
+        mockedJob.job,
+      );
+
+      // Assert
+      // Assert process result.
+      expect(processingResult).toEqual([
+        "Process finalized with success.",
+        "Student records sent: 1.",
+        "Application records sent: 1.",
+        "Restriction records sent: 0.",
+        `Uploaded file name: ${expectedFileName}.`,
+      ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Processing data since ${latestBridgeFileDate} until ${mockedCurrentDate}.`,
+          "Found 1 student(s) with updates.",
+          `SIMS to SFAS file ${expectedFileName} has been uploaded successfully.`,
+          `SIMS to SFAS file log has been created with file name ${expectedFileName} and reference date ${mockedCurrentDate}.`,
+        ]),
+      ).toBe(true);
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const [header, studentRecord, applicationRecord, footer] =
+        uploadedFile.fileLines;
+      expect(header).toBe(buildHeader(mockedCurrentDate));
+      expect(footer).toBe("999000000002");
+      expect(studentRecord).toBe(buildStudentRecord(student));
+      expect(applicationRecord).toBe(buildApplicationRecord(application));
+      // Check the database for creation of SFAS bridge log.
+      const uploadedFileLog = await db.sfasBridgeLog.existsBy({
+        generatedFileName: expectedFileName,
+        referenceDate: mockedCurrentDate,
+      });
+      expect(uploadedFileLog).toBe(true);
+    },
+  );
+
+  it(
+    "Should generate a SIMS to SFAS bridge file when there is an update on student assessment data " +
+      "that fall between the most recent bridge file date and the current bridge file execution date.",
+    async () => {
+      // Arrange
+      // Create bridge file log.
+      await db.sfasBridgeLog.insert({
+        referenceDate: latestBridgeFileDate,
+        generatedFileName: "DummyFileName.TXT",
+      });
+
+      // Student created with expected first name, last name and more importantly the updated date
+      // to fall between the most recent bridge file date and the mocked current date.
+      const student = await createStudentWithExpectedData();
+
+      const firstDisbursementValues = [
+        createFakeDisbursementValue(
+          DisbursementValueType.CanadaGrant,
+          "CSGP",
+          1,
+        ),
+        createFakeDisbursementValue(DisbursementValueType.BCGrant, "SBSD", 2),
+      ];
+      const secondDisbursementValues = [
+        createFakeDisbursementValue(
+          DisbursementValueType.CanadaGrant,
+          "CSGP",
+          1,
+        ),
+        createFakeDisbursementValue(DisbursementValueType.BCGrant, "SBSD", 2),
+      ];
+
+      // Student has submitted an application.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { firstDisbursementValues, secondDisbursementValues, student },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          createSecondDisbursement: true,
+        },
+      );
+      application.updatedAt = simsDataUpdatedDate;
+      await db.application.save(application);
+
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Mock the current date.
+      MockDate.set(mockedCurrentDate);
+
+      // Expected file name.
+      const expectedFileName = buildExpectedFileName(mockedCurrentDate);
+
+      // Act
+      const processingResult = await processor.generateSFASBridgeFile(
+        mockedJob.job,
+      );
+
+      // Assert
+      // Assert process result.
+      expect(processingResult).toEqual([
+        "Process finalized with success.",
+        "Student records sent: 1.",
+        "Application records sent: 1.",
+        "Restriction records sent: 0.",
+        `Uploaded file name: ${expectedFileName}.`,
+      ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Processing data since ${latestBridgeFileDate} until ${mockedCurrentDate}.`,
+          "Found 1 student(s) with updates.",
+          `SIMS to SFAS file ${expectedFileName} has been uploaded successfully.`,
+          `SIMS to SFAS file log has been created with file name ${expectedFileName} and reference date ${mockedCurrentDate}.`,
+        ]),
+      ).toBe(true);
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const [header, studentRecord, applicationRecord, footer] =
+        uploadedFile.fileLines;
+      expect(header).toBe(buildHeader(mockedCurrentDate));
+      expect(footer).toBe("999000000002");
+      expect(studentRecord).toBe(buildStudentRecord(student));
+      expect(applicationRecord).toBe(
+        buildApplicationRecord(application, "0000000200", "0000000400"),
+      );
+      // Check the database for creation of SFAS bridge log.
+      const uploadedFileLog = await db.sfasBridgeLog.existsBy({
+        generatedFileName: expectedFileName,
+        referenceDate: mockedCurrentDate,
+      });
+      expect(uploadedFileLog).toBe(true);
+    },
+  );
+
+  it(
+    "Should generate a SIMS to SFAS bridge file when there is an update on student PIR application data " +
+      "that fall between the most recent bridge file date and the current bridge file execution date.",
+    async () => {
+      // Arrange
+      // Create bridge file log.
+      await db.sfasBridgeLog.insert({
+        referenceDate: latestBridgeFileDate,
+        generatedFileName: "DummyFileName.TXT",
+      });
+
+      // Student created with expected first name, last name and more importantly the updated date
+      // to fall between the most recent bridge file date and the mocked current date.
+      const student = await createStudentWithExpectedData();
+      const studyStartDate = getISODateOnlyString(new Date());
+      const studyEndDate = getISODateOnlyString(addDays(30, studyStartDate));
+      // Student has submitted an application.
+      const application = await saveFakeApplication(
+        db.dataSource,
+        { student },
+        {
+          applicationData: {
+            howWillYouBeAttendingTheProgram: OfferingIntensity.partTime,
+            studystartDate: studyStartDate,
+            studyendDate: studyEndDate,
+          } as ApplicationData,
+          applicationStatus: ApplicationStatus.InProgress,
+          pirStatus: ProgramInfoStatus.required,
+        },
+      );
+      application.updatedAt = simsDataUpdatedDate;
+      await db.application.save(application);
+
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Mock the current date.
+      MockDate.set(mockedCurrentDate);
+
+      // Expected file name.
+      const expectedFileName = buildExpectedFileName(mockedCurrentDate);
+
+      // Act
+      const processingResult = await processor.generateSFASBridgeFile(
+        mockedJob.job,
+      );
+
+      // Assert
+      // Assert process result.
+      expect(processingResult).toEqual([
+        "Process finalized with success.",
+        "Student records sent: 1.",
+        "Application records sent: 1.",
+        "Restriction records sent: 0.",
+        `Uploaded file name: ${expectedFileName}.`,
+      ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Processing data since ${latestBridgeFileDate} until ${mockedCurrentDate}.`,
+          "Found 1 student(s) with updates.",
+          `SIMS to SFAS file ${expectedFileName} has been uploaded successfully.`,
+          `SIMS to SFAS file log has been created with file name ${expectedFileName} and reference date ${mockedCurrentDate}.`,
+        ]),
+      ).toBe(true);
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const [header, studentRecord, applicationRecord, footer] =
+        uploadedFile.fileLines;
+      expect(header).toBe(buildHeader(mockedCurrentDate));
+      expect(footer).toBe("999000000002");
+      expect(studentRecord).toBe(buildStudentRecord(student));
+      expect(applicationRecord).toBe(buildApplicationRecord(application));
       // Check the database for creation of SFAS bridge log.
       const uploadedFileLog = await db.sfasBridgeLog.existsBy({
         generatedFileName: expectedFileName,
@@ -408,7 +689,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
    * @returns created student.
    */
   async function createStudentWithExpectedData(
-    expectedUpdatedDate: Date,
+    expectedUpdatedDate?: Date,
     options?: {
       expectedCASDetails?: { supplierNumber: string; supplierSiteCode: string };
     },
@@ -440,7 +721,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
     // Set the CAS supplier.
     await db.student.update(
       { id: student.id },
-      { casSupplier, updatedAt: expectedUpdatedDate },
+      { casSupplier, updatedAt: expectedUpdatedDate ?? new Date() },
     );
     return student;
   }
@@ -485,13 +766,22 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
    * @param application application.
    * @returns application record.
    */
-  function buildApplicationRecord(application: Application): string {
+  function buildApplicationRecord(
+    application: Application,
+    csgpAwardTotal?: string,
+    sbsdAwardTotal?: string,
+  ): string {
     const offering = application.currentAssessment.offering;
+    const offeringIntensity =
+      offering?.offeringIntensity ??
+      application.data.howWillYouBeAttendingTheProgram;
     const studentId = application.student.id;
     const applicationRecordType =
-      offering.offeringIntensity === OfferingIntensity.fullTime ? "300" : "301";
-    const studyStartDate = offering.studyStartDate;
-    const studyEndDate = offering.studyEndDate;
+      offeringIntensity === OfferingIntensity.fullTime ? "300" : "301";
+    const studyStartDate =
+      offering?.studyStartDate ?? application.data.studystartDate;
+    const studyEndDate =
+      offering?.studyEndDate ?? application.data.studyendDate;
     const programYear = application.programYear.programYear.replace("-", "");
     const cancelledDate =
       application.applicationStatus === ApplicationStatus.Cancelled
@@ -504,7 +794,9 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       .padStart(10, "0")}${formatDate(studyStartDate, DATE_FORMAT)}${formatDate(
       studyEndDate,
       DATE_FORMAT,
-    )}${programYear}00000000000000000000${cancelledDate}`;
+    )}${programYear}${csgpAwardTotal ?? "0000000000"}${
+      sbsdAwardTotal ?? "0000000000"
+    }${cancelledDate}`;
   }
 
   /**
@@ -518,7 +810,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
     const restriction = studentRestriction.restriction;
     const studentId = studentRestriction.student.id;
     const restrictionRemovalDate = !studentRestriction.isActive
-      ? formatDate(studentRestriction.updatedAt, DATE_FORMAT)
+      ? formatDate(simsDataUpdatedDate, DATE_FORMAT)
       : "        ";
     return `400${studentId.toString().padStart(10, "0")}${studentRestriction.id
       .toString()
