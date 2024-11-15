@@ -67,7 +67,7 @@ export class SIMSToSFASProcessingService {
       (application) => application.studentId,
     );
     const restrictionStudentIds = restrictionRecords.map(
-      (restriction) => restriction.studentId,
+      (restriction) => restriction.student.id,
     );
 
     // Append the students with student and student related data updates.

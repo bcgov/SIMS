@@ -1,12 +1,15 @@
 import {
   ApplicationRecord,
-  RestrictionRecord,
   StudentDetail,
 } from "@sims/integrations/services/sfas";
 import { SIMSToSFASRecordTypeCodes } from "../sfas-integration.models";
 import { SIMSToSFASHeader } from "./sims-to-sfas-header";
 import { SIMSToSFASStudentRecord } from "./sims-to-sfas-student-record";
-import { DisabilityStatus, OfferingIntensity } from "@sims/sims-db";
+import {
+  DisabilityStatus,
+  OfferingIntensity,
+  StudentRestriction,
+} from "@sims/sims-db";
 import { YNFlag } from "@sims/integrations/models";
 import { SIMSToSFASFooter } from "./sims-to-sfas.footer";
 import { combineDecimalPlaces } from "@sims/utilities";
@@ -126,18 +129,20 @@ export class SIMSToSFASFileLineBuilder {
    * @param restrictionRecords restriction records.
    * @returns instance of the class for further appending.
    */
-  appendRestrictionFileRecords(restrictionRecords: RestrictionRecord[]): this {
+  appendRestrictionFileRecords(restrictionRecords: StudentRestriction[]): this {
     restrictionRecords.forEach((restrictionRecord) => {
       const restrictionFileRecord = new SIMSToSFASRestrictionRecord();
       restrictionFileRecord.recordTypeCode =
         SIMSToSFASRecordTypeCodes.RestrictionDataRecord;
-      restrictionFileRecord.studentId = restrictionRecord.studentId;
-      restrictionFileRecord.restrictionId = restrictionRecord.restrictionId;
-      restrictionFileRecord.restrictionCode = restrictionRecord.restrictionCode;
+      restrictionFileRecord.studentId = restrictionRecord.student.id;
+      restrictionFileRecord.restrictionId = restrictionRecord.id;
+      restrictionFileRecord.restrictionCode =
+        restrictionRecord.restriction.restrictionCode;
       restrictionFileRecord.restrictionEffectiveDate =
-        restrictionRecord.restrictionEffectiveDate;
-      restrictionFileRecord.restrictionRemovalDate =
-        restrictionRecord.restrictionRemovalDate;
+        restrictionRecord.createdAt;
+      restrictionFileRecord.restrictionRemovalDate = restrictionRecord.isActive
+        ? null
+        : restrictionRecord.updatedAt;
       this.fileLinesInternal.push(restrictionFileRecord);
     });
     return this;

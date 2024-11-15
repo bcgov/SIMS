@@ -1,10 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import {
-  ApplicationRecord,
-  RestrictionRecord,
-  StudentDetail,
-} from "./sims-to-sfas.model";
+import { ApplicationRecord, StudentDetail } from "./sims-to-sfas.model";
 import {
   Application,
   ApplicationStatus,
@@ -14,7 +10,7 @@ import {
   StudentRestriction,
   mapFromRawAndEntities,
 } from "@sims/sims-db";
-import { Brackets, Repository } from "typeorm";
+import { And, Brackets, LessThanOrEqual, MoreThan, Repository } from "typeorm";
 import {
   CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
   BC_STUDENT_LOAN_AWARD_CODE,
@@ -31,7 +27,7 @@ export class SIMSToSFASService {
     @InjectRepository(Application)
     private readonly applicationRepo: Repository<Application>,
     @InjectRepository(StudentRestriction)
-    private readonly restrictionRepo: Repository<StudentRestriction>,
+    private readonly studentRestrictionRepo: Repository<StudentRestriction>,
     @InjectRepository(SFASBridgeLog)
     private readonly sfasBridgeLogRepo: Repository<SFASBridgeLog>,
   ) {}
@@ -75,6 +71,7 @@ export class SIMSToSFASService {
    * - Overawards data
    * @param modifiedSince the date after which the student data was updated.
    * @param modifiedUntil the date until which the student data was updated.
+   * @returns student ids of students who have one or more updates.
    */
   async getAllStudentsWithUpdates(
     modifiedSince: Date,
@@ -131,6 +128,7 @@ export class SIMSToSFASService {
    * Get all student ids and application data of students who have one or more updates in application related data.
    * @param modifiedSince the date after which the application data was updated.
    * @param modifiedUntil the date until which the application data was updated.
+   * @returns student ids and application data of students who have one or more updates in application related data.
    */
   async getAllApplicationsWithUpdates(
     modifiedSince: Date,
@@ -145,41 +143,32 @@ export class SIMSToSFASService {
         .addSelect("offering.offeringIntensity", "offeringIntensity")
         // Use CASE to conditionally select studyStartDate and studyEndDate and casting JSON values to dates.
         .addSelect(
-          `CASE
-      WHEN studentAssessment.offering IS NULL THEN (application.data->>'studyStartDate')::date
-      ELSE offering.study_start_date
-     END`,
+          "COALESCE(offering.studyStartDate, (application.data->>'studystartDate')::date)",
           "studyStartDate",
         )
         .addSelect(
-          `CASE
-      WHEN studentAssessment.offering IS NULL THEN (application.data->>'studyEndDate')::date
-      ELSE offering.study_end_date
-     END`,
+          "COALESCE(offering.studyEndDate, (application.data->>'studyendDate')::date)",
           "studyEndDate",
         )
         // Summing CSGP awards where value_code is 'CSGP'.
         .addSelect(
-          `SUM(CASE WHEN disbursementValues.value_code = 'CSGP' THEN disbursementValues.valueAmount ELSE 0 END)`,
+          "SUM(CASE WHEN disbursementValues.value_code = 'CSGP' THEN disbursementValues.valueAmount ELSE 0 END)",
           "csgpAwardTotal",
         )
         // Summing SBSD awards where value_code is 'SBSD.
         .addSelect(
-          `SUM(CASE WHEN disbursementValues.value_code = 'SBSD' THEN disbursementValues.valueAmount ELSE 0 END)`,
+          "SUM(CASE WHEN disbursementValues.value_code = 'SBSD' THEN disbursementValues.valueAmount ELSE 0 END)",
           "sbsdAwardTotal",
         )
         // Application cancel date when status is cancelled.
         .addSelect(
-          `CASE
-      WHEN application.applicationStatus = :cancelled THEN application.application_status_updated_on
-      ELSE NULL
-     END`,
+          "CASE WHEN application.applicationStatus = :cancelled THEN application.application_status_updated_on ELSE NULL END",
           "applicationCancelDate",
         )
         .innerJoin("application.currentAssessment", "studentAssessment")
         .innerJoin("application.programYear", "programYear")
         .innerJoin("application.student", "student")
-        .innerJoin("studentAssessment.offering", "offering")
+        .leftJoin("studentAssessment.offering", "offering")
         .leftJoin(
           "studentAssessment.disbursementSchedules",
           "disbursementSchedule",
@@ -189,10 +178,19 @@ export class SIMSToSFASService {
           "disbursementValues",
         )
         .where("application.applicationStatus != :overwritten")
-        // Check if the application data was updated in the given period.
         .andWhere(
-          "application.updatedAt > :modifiedSince AND application.updatedAt <= :modifiedUntil",
+          new Brackets((qb) => {
+            // Check if the application data was updated in the given period.
+            qb.where(
+              "application.updatedAt > :modifiedSince AND application.updatedAt <= :modifiedUntil",
+            )
+              // Check if the assessment data was updated in the given period.
+              .orWhere(
+                "studentAssessment.updatedAt > :modifiedSince AND studentAssessment.updatedAt <= :modifiedUntil",
+              );
+          }),
         )
+
         .setParameters({
           overwritten: ApplicationStatus.Overwritten,
           cancelled: ApplicationStatus.Cancelled,
@@ -213,40 +211,32 @@ export class SIMSToSFASService {
    * Get all student ids and restriction data of students who have one or more updates in restriction related data.
    * @param modifiedSince the date after which the restriction data was updated.
    * @param modifiedUntil the date until which the restriction data was updated.
+   * @returns student ids and restriction data of students who have one or more updates in restriction related data.
    */
   async getAllRestrictionWithUpdates(
     modifiedSince: Date,
     modifiedUntil: Date,
-  ): Promise<RestrictionRecord[]> {
-    return (
-      this.restrictionRepo
-        .createQueryBuilder("studentRestriction")
-        .select("studentRestriction.id", "restrictionId")
-        .addSelect("student.id", "studentId")
-        .addSelect("restriction.restrictionCode", "restrictionCode")
-        .addSelect("studentRestriction.createdAt", "restrictionEffectiveDate")
-        // Conditionally set restrictionRemovalDate based on isActive status.
-        .addSelect(
-          `CASE 
-      WHEN studentRestriction.is_active = false THEN studentRestriction.updatedAt 
-      ELSE NULL 
-     END`,
-          "restrictionRemovalDate",
-        )
-        .innerJoin("studentRestriction.student", "student")
-        .innerJoin("studentRestriction.restriction", "restriction")
-        // Check if the restriction data was updated in the given period.
-        .where("restriction.restrictionType = :restrictionType")
-        .andWhere(
-          "studentRestriction.updatedAt > :modifiedSince AND studentRestriction.updatedAt <= :modifiedUntil",
-        )
-        .setParameters({
+  ): Promise<StudentRestriction[]> {
+    return this.studentRestrictionRepo.find({
+      select: {
+        id: true,
+        student: { id: true },
+        restriction: { id: true, restrictionCode: true },
+        createdAt: true,
+        updatedAt: true,
+        isActive: true,
+      },
+      relations: {
+        student: true,
+        restriction: true,
+      },
+      where: {
+        restriction: {
           restrictionType: RestrictionType.Provincial,
-          modifiedSince,
-          modifiedUntil,
-        })
-        .getRawMany<RestrictionRecord>()
-    );
+        },
+        updatedAt: And(MoreThan(modifiedSince), LessThanOrEqual(modifiedUntil)),
+      },
+    });
   }
 
   /**

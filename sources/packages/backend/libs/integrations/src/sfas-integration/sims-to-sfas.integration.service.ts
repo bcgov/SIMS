@@ -3,11 +3,11 @@ import { ConfigService } from "@sims/utilities/config";
 import { Injectable } from "@nestjs/common";
 import {
   ApplicationRecord,
-  RestrictionRecord,
   StudentDetail,
 } from "@sims/integrations/services/sfas";
 import { FixedFormatFileLine } from "@sims/integrations/services/ssh";
 import { SIMSToSFASFileLineBuilder } from "./sims-sfas-files/sims-to-sfas-file-line-builder";
+import { StudentRestriction } from "@sims/sims-db";
 
 @Injectable()
 export class SIMSToSFASIntegrationService extends SFTPIntegrationBase<void> {
@@ -24,7 +24,7 @@ export class SIMSToSFASIntegrationService extends SFTPIntegrationBase<void> {
     bridgeFileDate: Date,
     studentRecords: StudentDetail[],
     applicationRecords: ApplicationRecord[],
-    restrictionRecords: RestrictionRecord[],
+    restrictionRecords: StudentRestriction[],
   ): FixedFormatFileLine[] {
     return new SIMSToSFASFileLineBuilder()
       .appendHeader(bridgeFileDate)
