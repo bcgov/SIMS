@@ -331,7 +331,7 @@ export async function saveFakeApplication(
           assessmentData:
             options?.currentAssessmentInitialValues?.assessmentData,
         },
-        isPIRPending: options.pirStatus === ProgramInfoStatus.required,
+        isPIRPending: options?.pirStatus === ProgramInfoStatus.required,
       },
     );
     const savedOriginalAssessment = await studentAssessmentRepo.save(
