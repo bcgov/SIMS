@@ -103,7 +103,9 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
 
       // Student created with expected first name, last name and more importantly the updated date
       // to fall between the most recent bridge file date and the mocked current date.
-      const student = await createStudentWithExpectedData(simsDataUpdatedDate);
+      const student = await createStudentWithExpectedData({
+        expectedUpdatedDate: simsDataUpdatedDate,
+      });
 
       // Student has submitted an application.
       const application = await saveFakeApplicationDisbursements(
@@ -199,7 +201,9 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
 
       // Student created with expected first name, last name and more importantly the updated date
       // to fall between the most recent bridge file date and the mocked current date.
-      await createStudentWithExpectedData(simsDataUpdatedDate);
+      await createStudentWithExpectedData({
+        expectedUpdatedDate: simsDataUpdatedDate,
+      });
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
@@ -242,7 +246,9 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
 
       // Student created with expected first name, last name and more importantly the updated date
       // to fall between the most recent bridge file date and the mocked current date.
-      const student = await createStudentWithExpectedData(simsDataUpdatedDate);
+      const student = await createStudentWithExpectedData({
+        expectedUpdatedDate: simsDataUpdatedDate,
+      });
 
       // Student has submitted an application.
       const application = await saveFakeApplicationDisbursements(
@@ -316,7 +322,9 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
 
       // Student created with expected first name, last name and more importantly the updated date
       // to fall between the most recent bridge file date and the mocked current date.
-      const student = await createStudentWithExpectedData(simsDataUpdatedDate);
+      const student = await createStudentWithExpectedData({
+        expectedUpdatedDate: simsDataUpdatedDate,
+      });
 
       // Student has submitted an application.
       const application = await saveFakeApplicationDisbursements(
@@ -680,17 +688,15 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
 
   /**
    * Creates a student with expected first name, last name and updated date.
-   * @param expectedUpdatedDate expected updated date.
    * @param options optional params.
    * - `expectedCASDetails` expected CAS details.
+   * - `expectedUpdatedDate` expected updated date.
    * @returns created student.
    */
-  async function createStudentWithExpectedData(
-    expectedUpdatedDate?: Date,
-    options?: {
-      expectedCASDetails?: { supplierNumber: string; supplierSiteCode: string };
-    },
-  ): Promise<Student> {
+  async function createStudentWithExpectedData(options?: {
+    expectedCASDetails?: { supplierNumber: string; supplierSiteCode: string };
+    expectedUpdatedDate?: Date;
+  }): Promise<Student> {
     const user = createFakeUser();
     // Name with fixed length will be easy to build the expected file data.
     user.firstName = faker.random.alpha({ count: 15 });
@@ -718,7 +724,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
     // Set the CAS supplier.
     await db.student.update(
       { id: student.id },
-      { casSupplier, updatedAt: expectedUpdatedDate ?? new Date() },
+      { casSupplier, updatedAt: options?.expectedUpdatedDate ?? new Date() },
     );
     return student;
   }
