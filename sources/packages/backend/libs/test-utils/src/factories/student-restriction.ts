@@ -21,6 +21,8 @@ import { createFakeUser } from "./user";
  * - `restrictionNote` note for restriction.
  * - `resolutionNote` note for resolution.
  * - `creator` related user relation.
+ * @param options options for student restriction.
+ * - `isActive` option for specifying if the student restriction is active.
  * @returns persisted student restriction.
  */
 export function createFakeStudentRestriction(
@@ -49,6 +51,14 @@ export function createFakeStudentRestriction(
  * Saves a fake student restriction.
  * @param dataSource dataSource for the application.
  * @param relations entity relations.
+ * - `student` related student.
+ * - `application` application associated with the student.
+ * - `restriction` restriction associated with the student. If not provided, one will be created.
+ * - `restrictionNote` note for restriction.  If not provided, one will be created.
+ * - `resolutionNote` note for resolution.  If not provided, one will be created.
+ * - `creator` related user relation. If not provided, one will be created.
+ * @param options related to student restriction.
+ * - `isActive` option for specifying if the student restriction is active.
  * @returns a persisted fake student restriction.
  */
 export async function saveFakeStudentRestriction(
@@ -61,9 +71,7 @@ export async function saveFakeStudentRestriction(
     resolutionNote?: Note;
     creator?: User;
   },
-  options?: {
-    isActive?: boolean;
-  },
+  options?: { isActive?: boolean },
 ): Promise<StudentRestriction> {
   const [restrictionNote, resolutionNote] = await saveFakeStudentNotes(
     dataSource,

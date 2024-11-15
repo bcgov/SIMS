@@ -16,7 +16,6 @@ import {
   User,
   isDatabaseConstraintError,
 } from "@sims/sims-db";
-import { SFTP_ARCHIVE_DIRECTORY } from "@sims/integrations/constants";
 
 /**
  * Manages to process the Student Loan Balances files
@@ -155,14 +154,13 @@ export class StudentLoanBalancesProcessingService {
         // Archive file.
         await this.studentLoanBalancesIntegrationService.archiveFile(
           remoteFilePath,
-          SFTP_ARCHIVE_DIRECTORY,
         );
       } catch (error: unknown) {
         // Log the error but allow the process to continue.
         // If there was an issue only during the file archiving, it will be
         // processed again and could be archived in the second attempt.
         const logMessage = `Error while archiving Student Loan Balances response file: ${remoteFilePath}`;
-        childrenProcessSummary.error(logMessage);
+        childrenProcessSummary.error(logMessage, error);
       }
     }
   }

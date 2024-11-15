@@ -38,9 +38,11 @@ export class StudentLoanBalancesFileResponse {
     return getDateOnlyFromFormat(this.line.substring(91, 99), DATE_FORMAT);
   }
   /**
-   * Date of birth of the student to match and update the student loan balance.
+   * CSL balance. Expected 7 characters where the last 2 positions should be considered decimals.
    */
   get cslBalance(): number {
-    return +this.line.substring(13, 20);
+    // Divide by 100 to convert to 2 decimal places.
+    // TODO: centralize in a util to have decimals parsed.
+    return +this.line.substring(13, 20) / 100;
   }
 }

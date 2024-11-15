@@ -5,7 +5,7 @@
     </template>
     <body-header
       title="Requested exceptions"
-      :recordsCount="applicationExceptions.results?.length"
+      :recordsCount="applicationExceptions.count"
       subTitle="Make a determination on application submitted with exceptions."
     >
       <template #actions>

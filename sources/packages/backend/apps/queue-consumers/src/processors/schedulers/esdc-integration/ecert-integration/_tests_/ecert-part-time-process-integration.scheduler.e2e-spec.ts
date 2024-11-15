@@ -394,6 +394,7 @@ describe(
       const recordParsed = new PartTimeCertRecordParser(record);
       expect(recordParsed.recordType).toBe("02");
       expect(recordParsed.hasUser(student.user)).toBe(true);
+      expect(recordParsed.gender).toBe("X");
       expect(recordParsed.disbursementAmount).toBe("000123500");
       // TODO include other fields as needed.
 
@@ -408,6 +409,70 @@ describe(
         },
       });
       expect(scheduleIsSent).toBe(true);
+    });
+
+    it("Should create an e-Cert with valid student profile data when the student has necessary profile data and gender defined as 'Prefer not to answer'.", async () => {
+      // Arrange
+      // Student with valid SIN.
+      const student = await saveFakeStudent(db.dataSource, null, {
+        initialValue: {
+          gender: "preferNotToAnswer",
+        },
+      });
+      // Valid MSFAA Number.
+      const msfaaNumber = await db.msfaaNumber.save(
+        createFakeMSFAANumber(
+          { student },
+          {
+            msfaaState: MSFAAStates.Signed,
+            msfaaInitialValues: {
+              offeringIntensity: OfferingIntensity.partTime,
+            },
+          },
+        ),
+      );
+      // Student application eligible for e-Cert.
+      await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          student,
+          msfaaNumber,
+          firstDisbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLP",
+              1234.57,
+            ),
+          ],
+        },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            assessmentData: { weeks: 5 } as Assessment,
+            assessmentDate: new Date(),
+          },
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+          },
+        },
+      );
+      // Queued job.
+      const { job } = mockBullJob<void>();
+
+      // Act
+      await processor.processECert(job);
+
+      // Assert
+      // Assert student profile data.
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      expect(uploadedFile.fileLines).toHaveLength(3);
+      const [, record] = uploadedFile.fileLines;
+      // TODO: include other student profile fields as needed.
+      const recordParsed = new PartTimeCertRecordParser(record);
+      expect(recordParsed.recordType).toBe("02");
+      expect(recordParsed.hasUser(student.user)).toBe(true);
+      expect(recordParsed.gender).toBe(" ");
     });
 
     it("Should adjust tuition remittance when requested tuition remittance is greater than the max tuition remittance.", async () => {
