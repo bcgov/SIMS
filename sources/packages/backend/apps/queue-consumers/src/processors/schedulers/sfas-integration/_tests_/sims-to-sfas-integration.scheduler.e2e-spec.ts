@@ -514,7 +514,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
   );
 
   it(
-    "Should generate a SIMS to SFAS bridge file when there is an update on student assessment data " +
+    "Should generate a SIMS to SFAS bridge file when there is multiple disbursements on application data " +
       "that fall between the most recent bridge file date and the current bridge file execution date.",
     async () => {
       // Arrange
