@@ -60,22 +60,30 @@
             >
           </template>
           <template #[`item.removeBypassRule`]="{ item }">
-            <v-btn
-              :color="
-                getRemoveBypassColor(
-                  item.isBypassActive,
-                  item.isRestrictionActive,
-                )
-              "
-              :disabled="!item.isBypassActive || !item.isRestrictionActive"
-              @click="openRemoveBypassModal(item.id)"
-            >
-              {{
-                getRemoveBypassLabel(
-                  item.isBypassActive && item.isRestrictionActive,
-                )
-              }}</v-btn
-            >
+            <check-permission-role :role="Role.AESTBypassStudentRestriction">
+              <template #="{ notAllowed }">
+                <v-btn
+                  :color="
+                    getRemoveBypassColor(
+                      item.isBypassActive,
+                      item.isRestrictionActive,
+                    )
+                  "
+                  :disabled="
+                    !item.isBypassActive ||
+                    !item.isRestrictionActive ||
+                    notAllowed
+                  "
+                  @click="openRemoveBypassModal(item.id)"
+                >
+                  {{
+                    getRemoveBypassLabel(
+                      item.isBypassActive && item.isRestrictionActive,
+                    )
+                  }}</v-btn
+                >
+              </template>
+            </check-permission-role>
           </template>
         </v-data-table>
       </toggle-content>
@@ -102,13 +110,13 @@ import {
   ITEMS_PER_PAGE,
   ApplicationRestrictionManagementHeaders,
   RestrictionStatus,
+  Role,
 } from "@/types";
 import { ref, onMounted, defineComponent } from "vue";
 import StatusChipBypass from "@/components/generic/StatusChipBypass.vue";
 import { ApplicationRestrictionBypassService } from "@/services/ApplicationRestrictionBypassService";
 import { ApplicationRestrictionBypassHistoryAPIOutDTO } from "@/services/http/dto";
 import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
-import { Role } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { ModalDialog } from "@/composables";
 import BypassRestrictionModal from "@/components/aest/students/modals/BypassRestrictionModal.vue";
