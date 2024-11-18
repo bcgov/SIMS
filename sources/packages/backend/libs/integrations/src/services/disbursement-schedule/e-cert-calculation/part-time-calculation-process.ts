@@ -8,6 +8,7 @@ import {
   CreateBCTotalGrantsStep,
   PersistCalculationsStep,
   ValidateDisbursementPartTimeStep,
+  ApplyStopBCFundingRestrictionPartTimeStep,
   RestrictionBypassesResolutionStep,
 } from "../e-cert-processing-steps";
 import { ECertGenerationService } from "../e-cert-generation.service";
@@ -30,6 +31,7 @@ export class PartTimeCalculationProcess extends ECertCalculationProcess {
     private readonly createBCTotalGrantsStep: CreateBCTotalGrantsStep,
     private readonly persistCalculationsStep: PersistCalculationsStep,
     private readonly restrictionBypassesResolutionStep: RestrictionBypassesResolutionStep,
+    private readonly applyStopBCFundingRestrictionPartTimeStep: ApplyStopBCFundingRestrictionPartTimeStep,
   ) {
     super(dataSource, eCertNotificationService);
   }
@@ -61,6 +63,7 @@ export class PartTimeCalculationProcess extends ECertCalculationProcess {
       this.createBCTotalGrantsStep,
       this.persistCalculationsStep,
       this.restrictionBypassesResolutionStep,
+      this.applyStopBCFundingRestrictionPartTimeStep,
     ];
   }
 }

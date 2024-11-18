@@ -154,7 +154,7 @@ describe(
         },
       ]);
     });
-
+    // TODO: Add test for full-time.
     it(
       "Should create a notification for the ministry and student for a blocked disbursement when the total assessed award is 0" +
         " and there are no previously existing notifications for the disbursement.",
