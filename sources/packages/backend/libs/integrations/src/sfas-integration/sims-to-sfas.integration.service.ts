@@ -1,9 +1,13 @@
 import { SFTPIntegrationBase, SshService } from "@sims/integrations/services";
 import { ConfigService } from "@sims/utilities/config";
 import { Injectable } from "@nestjs/common";
-import { StudentDetail } from "@sims/integrations/services/sfas";
+import {
+  ApplicationRecord,
+  StudentDetail,
+} from "@sims/integrations/services/sfas";
 import { FixedFormatFileLine } from "@sims/integrations/services/ssh";
 import { SIMSToSFASFileLineBuilder } from "./sims-sfas-files/sims-to-sfas-file-line-builder";
+import { StudentRestriction } from "@sims/sims-db";
 
 @Injectable()
 export class SIMSToSFASIntegrationService extends SFTPIntegrationBase<void> {
@@ -19,11 +23,14 @@ export class SIMSToSFASIntegrationService extends SFTPIntegrationBase<void> {
   createSIMSToSFASFileContent(
     bridgeFileDate: Date,
     studentRecords: StudentDetail[],
+    applicationRecords: ApplicationRecord[],
+    restrictionRecords: StudentRestriction[],
   ): FixedFormatFileLine[] {
     return new SIMSToSFASFileLineBuilder()
       .appendHeader(bridgeFileDate)
       .appendStudentFileRecords(studentRecords)
+      .appendApplicationFileRecords(applicationRecords)
+      .appendRestrictionFileRecords(restrictionRecords)
       .appendFooter().fileLines;
-    // TODO: SIMS to SFAS - Append applications and restrictions.
   }
 }

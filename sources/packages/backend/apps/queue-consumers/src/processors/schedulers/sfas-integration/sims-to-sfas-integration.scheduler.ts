@@ -56,17 +56,23 @@ export class SIMSToSFASIntegrationScheduler extends BaseScheduler<void> {
       );
       const integrationProcessSummary = new ProcessSummary();
       processSummary.children(integrationProcessSummary);
-      const { studentRecordsSent, uploadedFileName } =
-        await this.simsToSFASIntegrationProcessingService.processSIMSUpdates(
-          integrationProcessSummary,
-          modifiedSince,
-          bridgeDataExtractedDate,
-        );
+      const {
+        studentRecordsSent,
+        applicationRecordsSent,
+        restrictionRecordsSent,
+        uploadedFileName,
+      } = await this.simsToSFASIntegrationProcessingService.processSIMSUpdates(
+        integrationProcessSummary,
+        modifiedSince,
+        bridgeDataExtractedDate,
+      );
       processSummary.info("Processing SIMS to SFAS integration job completed.");
       return getSuccessMessageWithAttentionCheck(
         [
           "Process finalized with success.",
           `Student records sent: ${studentRecordsSent}.`,
+          `Application records sent: ${applicationRecordsSent}.`,
+          `Restriction records sent: ${restrictionRecordsSent}.`,
           `Uploaded file name: ${uploadedFileName}.`,
         ],
         processSummary,
