@@ -772,6 +772,8 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
   /**
    * Build application record.
    * @param application application.
+   * @param csgpAwardTotal CSGP award total.
+   * @param sbsdAwardTotal SBSD award total.
    * @returns application record.
    */
   function buildApplicationRecord(
@@ -808,7 +810,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
 
   /**
    * Build restriction record.
-   * @param restriction restriction.
+   * @param studentRestriction student restriction.
    * @returns restriction record.
    */
   function buildRestrictionRecord(
