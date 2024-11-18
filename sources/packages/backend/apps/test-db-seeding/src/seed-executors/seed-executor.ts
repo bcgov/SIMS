@@ -11,7 +11,7 @@ import {
   DataSeedOptions,
   SeedPriorityOrder,
 } from "./data-seed.decorator";
-import * as os from "os";
+import { processInParallel } from "@sims/utilities";
 
 interface ClassMethods {
   class: DiscoveredClassWithMeta<DataSeedOptions>;
@@ -101,34 +101,16 @@ export class SeedExecutor {
     allMethodsToBeSeeded: ClassMethods[],
     order = SeedPriorityOrder.Unknown,
   ): Promise<void> {
-    // Used to limit the number of asynchronous operations
-    // that will start at the same time.
-    const maxPromisesAllowed = os.cpus().length;
-    // Hold all the promises that must be processed.
-    const promises: Promise<undefined>[] = [];
-
-    for (const eachMethod of allMethodsToBeSeeded) {
+    await processInParallel(async (method) => {
       if (
-        eachMethod.class.meta.order === order &&
-        !(eachMethod.class.meta.skip || eachMethod.method.meta.skip)
+        method.class.meta.order === order &&
+        !(method.class.meta.skip || method.method.meta.skip)
       ) {
         // Calling the decorated methods.
-        promises.push(
-          eachMethod.method.discoveredMethod.handler.bind(
-            eachMethod.method.discoveredMethod.parentClass.instance,
-          )(),
-        );
-        if (promises.length >= maxPromisesAllowed) {
-          // Waits for all be executed.
-          await Promise.all(promises);
-          // Clear the array.
-          promises.length = 0;
-        }
+        await method.method.discoveredMethod.handler.bind(
+          method.method.discoveredMethod.parentClass.instance,
+        )();
       }
-    }
-    if (promises.length > 0) {
-      // Waits for methods, if any outside the loop.
-      await Promise.all(promises);
-    }
+    }, allMethodsToBeSeeded);
   }
 }

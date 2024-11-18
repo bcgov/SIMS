@@ -13,10 +13,10 @@ import {
   SFASRestrictionImportService,
   SFASPartTimeApplicationsImportService,
 } from "../services/sfas";
-import { SFAS_IMPORT_RECORDS_PROGRESS_REPORT_PACE } from "@sims/services/constants";
-import * as os from "os";
 import { ConfigService } from "@sims/utilities/config";
-import { parseJSONError } from "@sims/utilities";
+import { parseJSONError, processInParallel } from "@sims/utilities";
+import { SFASRecordIdentification } from "@sims/integrations/sfas-integration/sfas-files/sfas-record-identification";
+import { SFAS_IMPORT_RECORDS_PROGRESS_REPORT_PACE } from "@sims/services/constants";
 
 @Injectable()
 export class SFASIntegrationProcessingService {
@@ -91,12 +91,27 @@ export class SFASIntegrationProcessingService {
       return result;
     }
 
-    // Used to limit the number of asynchronous operations
-    // that will start at the same time.
-    const maxPromisesAllowed = os.cpus().length;
-    this.logger.log(
-      `Starting max ${maxPromisesAllowed} asynchronous processes.`,
+    this.logger.log(`Starting records import for file ${remoteFilePath}.`);
+
+    // Execute the import of all files records.
+    await processInParallel(
+      (record) =>
+        this.importRecord(record, downloadResult.header.creationDate, result),
+      downloadResult.records,
+      {
+        progress: (currentRecord: number) => {
+          // Check if it is time to log the current progress.
+          if (currentRecord % SFAS_IMPORT_RECORDS_PROGRESS_REPORT_PACE === 0) {
+            this.logger.log(
+              `Records imported: ${currentRecord} (${Math.round(
+                (currentRecord / downloadResult.records.length) * 100,
+              )}%)`,
+            );
+          }
+        },
+      },
     );
+
     result.summary.push(
       `File contains ${downloadResult.records.length} records.`,
     );
@@ -104,48 +119,9 @@ export class SFASIntegrationProcessingService {
     this.logger.log(`Total of ${downloadResult.records.length} records.`);
 
     try {
-      let currentRecord = 1;
-      // Hold all the promises that must be processed.
-      const promises: Promise<void>[] = [];
-      for (const record of downloadResult.records) {
-        const dataImporter = this.getSFASDataImporterFor(record.recordType);
-        if (dataImporter) {
-          const processPromise = dataImporter
-            .importSFASRecord(record, downloadResult.header.creationDate)
-            .catch((error) => {
-              const errorDescription = `Error processing record line number ${record.lineNumber}`;
-              this.logger.error(errorDescription);
-              this.logger.error(error);
-              result.summary.push(`${errorDescription}. Error: ${error}`);
-              result.success = false;
-            });
-          promises.push(processPromise);
-        }
-
-        if (promises.length >= maxPromisesAllowed) {
-          // Waits for all be processed or some to fail.
-          await Promise.all(promises);
-          // Clear the array.
-          promises.splice(0, promises.length);
-        }
-
-        // Check if it is time to log the current progress.
-        if (currentRecord % SFAS_IMPORT_RECORDS_PROGRESS_REPORT_PACE === 0) {
-          this.logger.log(
-            `Records imported: ${currentRecord} (${Math.round(
-              (currentRecord / downloadResult.records.length) * 100,
-            )}%)`,
-          );
-        }
-
-        currentRecord++;
-      }
-      await Promise.all(promises);
       this.logger.log("Records imported.");
       if (result.success) {
-        /**
-         * Archive the file only if it was processed with success.
-         */
+        // Archive the file only if it was processed with success.
         try {
           await this.sfasService.archiveFile(remoteFilePath);
         } catch (error) {
@@ -166,6 +142,35 @@ export class SFASIntegrationProcessingService {
     }
 
     return result;
+  }
+
+  /**
+   * Imports a single record from SFAS into the application.
+   * @param record the record to be imported.
+   * @param creationDate the date and time when the record was extracted from SFAS.
+   * @param result result summary.
+   */
+  private async importRecord(
+    record: SFASRecordIdentification,
+    creationDate: Date,
+    result: ProcessSftpResponseResult,
+  ): Promise<void> {
+    const dataImporter = this.getSFASDataImporterFor(record.recordType);
+    if (!dataImporter) {
+      const errorDescription = `No data importer to process line number ${record.lineNumber}.`;
+      this.logger.error(errorDescription);
+      result.summary.push(errorDescription);
+      result.success = false;
+    }
+    try {
+      return await dataImporter.importSFASRecord(record, creationDate);
+    } catch (error: unknown) {
+      const errorDescription = `Error processing record line number ${record.lineNumber}.`;
+      result.summary.push(errorDescription);
+      result.summary.push(parseJSONError(error));
+      this.logger.error(errorDescription, error);
+      result.success = false;
+    }
   }
 
   /**
