@@ -118,3 +118,38 @@ export const VIRUS_DETECTED = "VIRUS_DETECTED";
  * Invalid beta user.
  */
 export const INVALID_BETA_USER = "INVALID_BETA_USER";
+
+/**
+ * Bypass for student restriction already exists.
+ */
+export const ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS =
+  "ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS";
+
+/**
+ * Student restriction is not active.
+ */
+export const STUDENT_RESTRICTION_IS_NOT_ACTIVE =
+  "STUDENT_RESTRICTION_IS_NOT_ACTIVE";
+
+/**
+ * Student restriction not found.
+ */
+export const STUDENT_RESTRICTION_NOT_FOUND = "STUDENT_RESTRICTION_NOT_FOUND";
+
+/**
+ * Student application is invalid state for application restriction bypass creation.
+ */
+export const APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_CREATION =
+  "APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_CREATION";
+
+/**
+ * Application restriction bypass not found.
+ */
+export const APPLICATION_RESTRICTION_BYPASS_NOT_FOUND =
+  "APPLICATION_RESTRICTION_BYPASS_NOT_FOUND";
+
+/**
+ * Application restriction bypass is not active.
+ */
+export const APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE =
+  "APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE";

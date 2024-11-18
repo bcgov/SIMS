@@ -1,8 +1,24 @@
 <template>
   <body-header-container :enable-card-view="true">
     <template #header
-      ><body-header title="History of bypassed restrictions"
-    /></template>
+      ><body-header title="History of bypassed restrictions">
+        <template #actions>
+          <check-permission-role :role="Role.AESTBypassStudentRestriction">
+            <template #="{ notAllowed }">
+              <v-btn
+                v-if="true"
+                class="mx-2 float-right"
+                color="primary"
+                :disabled="notAllowed"
+                @click="openBypassRestrictionModal"
+              >
+                Bypass a restriction
+              </v-btn>
+            </template>
+          </check-permission-role>
+        </template>
+      </body-header>
+    </template>
     <content-group class="mt-4">
       <toggle-content
         :toggled="!bypassedRestrictions.bypasses.length"
@@ -32,12 +48,13 @@
           <template #[`item.bypassStatus`]="{ item }">
             <status-chip-bypass :is-bypass-active="item.isBypassActive" />
           </template>
-          <template #[`item.id`]>
+          <template #[`item.id`]="{ item }">
             <v-btn
               color="primary"
               variant="text"
               class="text-decoration-underline"
               prepend-icon="fa:far fa-file-alt"
+              @click="openBypassViewDetailsModal(item.id)"
             >
               View Details</v-btn
             >
@@ -51,13 +68,31 @@
                 )
               "
               :disabled="!item.isBypassActive || !item.isRestrictionActive"
+              @click="openRemoveBypassModal(item.id)"
             >
-              {{ getRemoveBypassLabel(item.isBypassActive) }}</v-btn
+              {{
+                getRemoveBypassLabel(
+                  item.isBypassActive && item.isRestrictionActive,
+                )
+              }}</v-btn
             >
           </template>
         </v-data-table>
       </toggle-content>
     </content-group>
+    <bypass-restriction-modal
+      ref="bypassRestrictionModal"
+      :applicationId="applicationId"
+      :applicationRestrictionBypassId="selectedApplicationRestrictionBypassId"
+      @restrictionBypassed="reloadRestrictionBypassedHistory"
+      :key="bypassRestrictionModalKey"
+    />
+    <remove-restriction-bypass-modal
+      ref="removeBypassModal"
+      :applicationRestrictionBypassId="selectedApplicationRestrictionBypassId"
+      @restrictionBypassRemoved="reloadRestrictionBypassedHistory"
+      :key="removeBypassModalKey"
+    />
   </body-header-container>
 </template>
 <script lang="ts">
@@ -73,11 +108,19 @@ import StatusChipBypass from "@/components/generic/StatusChipBypass.vue";
 import { ApplicationRestrictionBypassService } from "@/services/ApplicationRestrictionBypassService";
 import { ApplicationRestrictionBypassHistoryAPIOutDTO } from "@/services/http/dto";
 import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
+import { Role } from "@/types";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import { ModalDialog } from "@/composables";
+import BypassRestrictionModal from "@/components/aest/students/modals/BypassRestrictionModal.vue";
+import RemoveRestrictionBypassModal from "@/components/aest/students/modals/RemoveRestrictionBypassModal.vue";
 
 export default defineComponent({
   components: {
     StatusChipBypass,
     StatusChipRestriction,
+    CheckPermissionRole,
+    BypassRestrictionModal,
+    RemoveRestrictionBypassModal,
   },
   props: {
     applicationId: {
@@ -86,14 +129,17 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const bypassRestrictionModal = ref({} as ModalDialog<boolean>);
+    const bypassRestrictionModalKey = ref(0);
+    const removeBypassModal = ref({} as ModalDialog<boolean>);
+    const removeBypassModalKey = ref(0);
+    const selectedApplicationRestrictionBypassId = ref(0);
+
     const bypassedRestrictions = ref({
       bypasses: [],
     } as ApplicationRestrictionBypassHistoryAPIOutDTO);
     onMounted(async () => {
-      bypassedRestrictions.value =
-        await ApplicationRestrictionBypassService.shared.getApplicationRestrictionBypassesHistory(
-          props.applicationId,
-        );
+      await loadBypassedRestrictionHistory();
     });
 
     const getRemoveBypassLabel = (isBypassActive: boolean): string => {
@@ -107,6 +153,40 @@ export default defineComponent({
       return !isBypassActive || !isRestrictionActive ? "secondary" : "primary";
     };
 
+    const openBypassRestrictionModal = async () => {
+      await bypassRestrictionModal.value.showModal();
+    };
+    const openRemoveBypassModal = async (
+      applicationRestrictionBypassId: number,
+    ) => {
+      selectedApplicationRestrictionBypassId.value =
+        applicationRestrictionBypassId;
+      await removeBypassModal.value.showModal();
+    };
+
+    const openBypassViewDetailsModal = async (
+      applicationRestrictionBypassId: number,
+    ) => {
+      selectedApplicationRestrictionBypassId.value =
+        applicationRestrictionBypassId;
+      await bypassRestrictionModal.value.showModal();
+      selectedApplicationRestrictionBypassId.value = 0;
+    };
+
+    const loadBypassedRestrictionHistory = async () => {
+      bypassedRestrictions.value =
+        await ApplicationRestrictionBypassService.shared.getApplicationRestrictionBypassesHistory(
+          props.applicationId,
+        );
+    };
+
+    const reloadRestrictionBypassedHistory = () => {
+      loadBypassedRestrictionHistory();
+      bypassRestrictionModalKey.value += 1;
+      removeBypassModalKey.value += 1;
+      selectedApplicationRestrictionBypassId.value = 0;
+    };
+
     return {
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
@@ -116,6 +196,16 @@ export default defineComponent({
       getRemoveBypassLabel,
       getRemoveBypassColor,
       ApplicationRestrictionManagementHeaders,
+      Role,
+      openBypassRestrictionModal,
+      bypassRestrictionModal,
+      openRemoveBypassModal,
+      removeBypassModal,
+      selectedApplicationRestrictionBypassId,
+      reloadRestrictionBypassedHistory,
+      bypassRestrictionModalKey,
+      removeBypassModalKey,
+      openBypassViewDetailsModal,
     };
   },
 });
