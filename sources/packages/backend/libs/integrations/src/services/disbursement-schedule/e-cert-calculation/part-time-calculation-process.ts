@@ -59,11 +59,11 @@ export class PartTimeCalculationProcess extends ECertCalculationProcess {
     return [
       this.validateDisbursementPartTimeStep,
       this.calculateEffectiveValueStep,
+      this.applyStopBCFundingRestrictionPartTimeStep,
       this.calculateTuitionRemittanceEffectiveAmountStep,
       this.createBCTotalGrantsStep,
       this.persistCalculationsStep,
       this.restrictionBypassesResolutionStep,
-      this.applyStopBCFundingRestrictionPartTimeStep,
     ];
   }
 }

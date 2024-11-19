@@ -1423,6 +1423,8 @@ describe(
       expect(
         mockedJob.containLogMessages([
           "Checking 'Stop part time BC funding' restriction.",
+          "Applying restriction for BCSL.",
+          "Applying restriction for BCAG.",
         ]),
       ).toBe(true);
       // Select the BCSL/BCAG to validate the values impacted by the restriction.
@@ -1433,7 +1435,6 @@ describe(
         applicationBDisbursement1.id,
         { valueCode: ["BCSL", "BCAG"] },
       );
-      // console.log(JSON.stringify(record3Awards));
       expect(
         awardAssert(record3Awards, "BCSL", {
           valueAmount: 399,

@@ -40,7 +40,6 @@ export class ApplyStopBCFundingRestrictionPartTimeStep
           eCertDisbursement,
           RestrictionActionType.StopPartTimeBCFunding,
         );
-        console.log(JSON.stringify(restriction));
         disbursementValue.restrictionAmountSubtracted =
           disbursementValue.valueAmount -
           (disbursementValue.disbursedAmountSubtracted ?? 0) -
