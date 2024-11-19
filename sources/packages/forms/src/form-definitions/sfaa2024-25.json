@@ -1742,7 +1742,8 @@
                     "threshold": 0.3
                   },
                   "id": "eopfm7h",
-                  "defaultValue": ""
+                  "defaultValue": "",
+                  "isNew": false
                 },
                 {
                   "label": "Select your program of study:",
@@ -1750,7 +1751,7 @@
                   "tableView": true,
                   "persistent": false,
                   "key": "selectedProgramName",
-                  "customConditional": "show = !!data.isReadOnly",
+                  "customConditional": "show = (!!data.isReadOnly && !!data.selectedProgramName);",
                   "type": "textfield",
                   "input": true,
                   "placeholder": "",
@@ -1821,7 +1822,9 @@
                   "spellcheck": true,
                   "truncateMultipleSpaces": false,
                   "id": "easelit",
-                  "tags": []
+                  "tags": [],
+                  "lockKey": true,
+                  "isNew": false
                 },
                 {
                   "label": "Your program is not listed",
@@ -2147,7 +2150,14 @@
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
                       "id": "ejhdok9",
-                      "tags": []
+                      "tags": [],
+                      "conditional": {
+                        "show": "",
+                        "when": null,
+                        "eq": ""
+                      },
+                      "customConditional": "show = data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false;",
+                      "lockKey": true
                     },
                     {
                       "label": "Program description",
@@ -2227,7 +2237,13 @@
                       "editor": "",
                       "fixedSize": true,
                       "id": "efzyprr",
-                      "tags": []
+                      "tags": [],
+                      "conditional": {
+                        "show": "",
+                        "when": null,
+                        "eq": ""
+                      },
+                      "customConditional": "show = data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false;"
                     },
                     {
                       "label": "HTML",
@@ -2489,7 +2505,8 @@
                               "addons": [],
                               "inputType": "text",
                               "id": "ehmio79",
-                              "defaultValue": ""
+                              "defaultValue": "",
+                              "isNew": false
                             }
                           ],
                           "width": 6,
@@ -3483,7 +3500,8 @@
                   "lazyLoad": false,
                   "theme": "default",
                   "breadcrumb": "default",
-                  "id": "eezaqos"
+                  "id": "eezaqos",
+                  "tags": []
                 },
                 {
                   "label": "Select your study dates",
@@ -3599,7 +3617,7 @@
                   "tableView": true,
                   "persistent": false,
                   "key": "selectedOfferingName",
-                  "customConditional": "show = !!data.isReadOnly",
+                  "customConditional": "show = (!!data.isReadOnly && !!data.selectedOfferingName);",
                   "type": "textfield",
                   "input": true,
                   "placeholder": "",
@@ -3670,7 +3688,9 @@
                   "spellcheck": true,
                   "truncateMultipleSpaces": false,
                   "id": "e9w4l3n",
-                  "tags": []
+                  "tags": [],
+                  "lockKey": true,
+                  "isNew": false
                 },
                 {
                   "label": "Your study dates are not listed",
