@@ -50,7 +50,7 @@ export class DisbursementReceiptProcessingService {
   async process(auditUserId: number): Promise<ProcessSFTPResponseResult[]> {
     // Get the list of all files from SFTP ordered by file name.
     const fileSearch = new RegExp(
-      `^${this.esdcConfig.environmentCode}EDU.PBC.DIS.[\\w]*\\.[0-9]*`,
+      `^${this.esdcConfig.environmentCode}EDU\\.PBC\\.DIS.[0-9]{8}\\.[0-9]{3}`,
       "i",
     );
     const filePaths = await this.integrationService.getResponseFilesFullPath(
