@@ -29,7 +29,6 @@ export type OverrideModuleInfo = {
  * the override provider option cannot be used instead.
  * @param rootModuleType module to have the 'imports' overwritten.
  * @param overrides information to find and replace modules.
- * @deprecated use overrideModule instead.
  */
 export function overrideImportsMetadata(
   rootModuleType: Type<unknown> | DynamicModule,
@@ -47,7 +46,6 @@ export function overrideImportsMetadata(
  * @param importsMetadata information from all the 'imports' metadata where
  * the module must be found and replaced.
  * @param override information to find and replace the module.
- * @deprecated use overrideModule instead.
  */
 function overrideMetadata(
   importsMetadata: unknown[],
