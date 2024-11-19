@@ -2,6 +2,7 @@ import {
   ApplicationStatus,
   Assessment,
   COEStatus,
+  DisbursementSchedule,
   DisbursementScheduleStatus,
   DisbursementValueType,
   Notification,
@@ -44,7 +45,9 @@ import * as dayjs from "dayjs";
 import { DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS } from "@sims/services/constants";
 import { PartTimeCertRecordParser } from "./parsers/part-time-e-cert-record-parser";
 import {
+  awardAssert,
   createBlockedDisbursementTestData,
+  loadAwardValues,
   loadDisbursementSchedules,
 } from "./e-cert-utils";
 import { SystemUsersService } from "@sims/services";
@@ -154,7 +157,6 @@ describe(
         },
       ]);
     });
-    // TODO: Add test for full-time.
     it(
       "Should create a notification for the ministry and student for a blocked disbursement when the total assessed award is 0" +
         " and there are no previously existing notifications for the disbursement.",
@@ -1337,6 +1339,99 @@ describe(
         },
       });
       expect(nonUpdatedCSLPOveraward).toBe(true);
+    });
+
+    it.only("Should Stop disburse BC funding for a part time application when a restriction is applied.", async () => {
+      // Arrange
+      // Eligible COE basic properties.
+      const eligibleDisbursement: Partial<DisbursementSchedule> = {
+        coeStatus: COEStatus.completed,
+        coeUpdatedAt: new Date(),
+      };
+      // Student with valid SIN.
+      const student = await saveFakeStudent(db.dataSource);
+      // Valid MSFAA Number.
+      const msfaaNumber = await db.msfaaNumber.save(
+        createFakeMSFAANumber({ student }, { msfaaState: MSFAAStates.Signed }),
+      );
+      const applicationB = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          student,
+          msfaaNumber,
+          firstDisbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLF",
+              199,
+            ),
+            // Should be disbursed because it is a federal grant.
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaGrant,
+              "CSGP",
+              299,
+            ),
+            // Should not be disbursed due to B6A restriction.
+            createFakeDisbursementValue(
+              DisbursementValueType.BCLoan,
+              "BCSL",
+              399,
+            ),
+            // Should not be disbursed due to BCLM restriction.
+            createFakeDisbursementValue(
+              DisbursementValueType.BCGrant,
+              "BCAG",
+              499,
+            ),
+          ],
+        },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            assessmentData: { weeks: 5 } as Assessment,
+            assessmentDate: new Date(),
+          },
+          firstDisbursementInitialValues: {
+            ...eligibleDisbursement,
+            disbursementDate: getISODateOnlyString(addDays(1)),
+          },
+        },
+      );
+
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Assert
+      expect(
+        mockedJob.containLogMessages([
+          "New BCLM restriction was added to the student account.",
+          "Applying restriction for BCAG.",
+          "Applying restriction for BCSL.",
+        ]),
+      ).toBe(true);
+      // Select the BCSL/BCAG to validate the values impacted by the restriction.
+      const [applicationBDisbursement1] =
+        applicationB.currentAssessment.disbursementSchedules;
+      const record3Awards = await loadAwardValues(
+        db,
+        applicationBDisbursement1.id,
+        { valueCode: ["BCSL", "BCAG"] },
+      );
+      expect(
+        awardAssert(record3Awards, "BCSL", {
+          valueAmount: 399,
+          restrictionAmountSubtracted: 399,
+          effectiveAmount: 0,
+        }),
+      ).toBe(true);
+      expect(
+        awardAssert(record3Awards, "BCAG", {
+          valueAmount: 499,
+          restrictionAmountSubtracted: 499,
+          effectiveAmount: 0,
+        }),
+      ).toBe(true);
     });
   },
 );

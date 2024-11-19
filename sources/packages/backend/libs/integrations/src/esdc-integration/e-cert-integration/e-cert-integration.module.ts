@@ -38,6 +38,7 @@ import {
   RestrictionBypassesResolutionStep,
   ValidateDisbursementFullTimeStep,
   ValidateDisbursementPartTimeStep,
+  ApplyStopBCFundingRestrictionPartTimeStep,
 } from "@sims/integrations/services/disbursement-schedule/e-cert-processing-steps";
 import {
   ECertPreValidationService,
@@ -77,6 +78,7 @@ import { PartTimeECertFileHandler } from "./part-time-e-cert-file-handler";
     ApplyOverawardsDeductionsStep,
     CalculateEffectiveValueStep,
     ApplyStopBCFundingRestrictionFullTimeStep,
+    ApplyStopBCFundingRestrictionPartTimeStep,
     AssertLifeTimeMaximumFullTimeStep,
     CalculateTuitionRemittanceEffectiveAmountStep,
     CreateBCTotalGrantsStep,
