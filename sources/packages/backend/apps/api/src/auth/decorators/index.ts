@@ -10,3 +10,4 @@ export * from "./allow-inactive-user.decorator";
 export * from "./groups.decorator";
 export * from "./student/check-sin-status.decorator";
 export * from "./student/requires-student-account.decorator";
+export * from "./common.decorator";
