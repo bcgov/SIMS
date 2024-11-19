@@ -3,7 +3,7 @@ import { EntityManager } from "typeorm";
 import { Restriction, RestrictionActionType } from "@sims/sims-db";
 import {
   getRestrictionByActionType,
-  shouldStopBCFunding,
+  shouldStopPartTimeBCFunding,
 } from "./e-cert-steps-utils";
 import { ECertProcessStep } from "./e-cert-steps-models";
 import { ProcessSummary } from "@sims/utilities/logger";
@@ -34,12 +34,13 @@ export class ApplyStopBCFundingRestrictionPartTimeStep
     );
     for (const disbursementValue of eCertDisbursement.disbursement
       .disbursementValues) {
-      if (shouldStopBCFunding(eCertDisbursement, disbursementValue)) {
+      if (shouldStopPartTimeBCFunding(eCertDisbursement, disbursementValue)) {
         log.info(`Applying restriction for ${disbursementValue.valueCode}.`);
         const restriction = getRestrictionByActionType(
           eCertDisbursement,
           RestrictionActionType.StopPartTimeBCFunding,
         );
+        console.log(JSON.stringify(restriction));
         disbursementValue.restrictionAmountSubtracted =
           disbursementValue.valueAmount -
           (disbursementValue.disbursedAmountSubtracted ?? 0) -

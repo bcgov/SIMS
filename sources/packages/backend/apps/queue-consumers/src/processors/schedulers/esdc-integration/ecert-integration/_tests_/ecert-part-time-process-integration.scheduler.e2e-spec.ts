@@ -9,6 +9,7 @@ import {
   NotificationMessage,
   NotificationMessageType,
   OfferingIntensity,
+  Restriction,
   RestrictionActionType,
   RestrictionBypassBehaviors,
   Student,
@@ -28,6 +29,7 @@ import {
   createFakeUser,
   saveFakeStudentRestriction,
   createFakeDisbursementOveraward,
+  RestrictionCode,
 } from "@sims/test-utils";
 import { getUploadedFile } from "@sims/test-utils/mocks";
 import { ArrayContains, IsNull, Like, Not } from "typeorm";
@@ -62,6 +64,7 @@ describe(
     let sftpClientMock: DeepMocked<Client>;
     let systemUsersService: SystemUsersService;
     let sharedMinistryUser: User;
+    let b6aRestriction: Restriction;
 
     beforeAll(async () => {
       // Env variable required for querying the eligible e-Cert records.
@@ -1348,6 +1351,10 @@ describe(
         coeStatus: COEStatus.completed,
         coeUpdatedAt: new Date(),
       };
+      // Create a B6A restriction.
+      const b6aRestriction = await db.restriction.findOneBy({
+        restrictionCode: RestrictionCode.B6A,
+      });
       // Student with valid SIN.
       const student = await saveFakeStudent(db.dataSource);
       // Valid MSFAA Number.
@@ -1399,15 +1406,23 @@ describe(
         },
       );
 
+      await saveFakeStudentRestriction(db.dataSource, {
+        student: applicationB.student,
+        restriction: b6aRestriction,
+        resolutionNote: null,
+        creator: sharedMinistryUser,
+      });
+
       // Queued job.
       const mockedJob = mockBullJob<void>();
+
+      // Act
+      await processor.processECert(mockedJob.job);
 
       // Assert
       expect(
         mockedJob.containLogMessages([
-          "New BCLM restriction was added to the student account.",
-          "Applying restriction for BCAG.",
-          "Applying restriction for BCSL.",
+          "Checking 'Stop part time BC funding' restriction.",
         ]),
       ).toBe(true);
       // Select the BCSL/BCAG to validate the values impacted by the restriction.
@@ -1418,6 +1433,7 @@ describe(
         applicationBDisbursement1.id,
         { valueCode: ["BCSL", "BCAG"] },
       );
+      // console.log(JSON.stringify(record3Awards));
       expect(
         awardAssert(record3Awards, "BCSL", {
           valueAmount: 399,
