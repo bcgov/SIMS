@@ -43,9 +43,10 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.663.0",
-    "@bull-board/api": "^5.15.1",
-    "@bull-board/express": "^5.15.1",
-    "@bull-board/ui": "^5.15.1",
+    "@bull-board/api": "^6.5.2",
+    "@bull-board/express": "^6.5.2",
+    "@bull-board/nestjs": "^6.5.2",
+    "@bull-board/ui": "^6.5.2",
     "@camunda8/sdk": "^8.6.13",
     "@golevelup/nestjs-discovery": "^4.0.0",
     "@nestjs/axios": "^3.0.2",
