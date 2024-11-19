@@ -1344,7 +1344,7 @@ describe(
       expect(nonUpdatedCSLPOveraward).toBe(true);
     });
 
-    it.only("Should Stop disburse BC funding for a part time application when a restriction is applied.", async () => {
+    it("Should Stop disburse BC funding for a part time application when a restriction is applied.", async () => {
       // Arrange
       // Eligible COE basic properties.
       const eligibleDisbursement: Partial<DisbursementSchedule> = {
