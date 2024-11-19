@@ -2,6 +2,7 @@ import { INestApplication } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { DataSource } from "typeorm";
 import { QueueConsumersModule } from "../../../src/queue-consumers.module";
+import { BullBoardQueuesModule } from "../../../src/bull-board/bull-board-queues.module";
 import { SshService } from "@sims/integrations/services";
 import { overrideImportsMetadata } from "@sims/test-utils";
 import {
@@ -9,6 +10,7 @@ import {
   createObjectStorageServiceMock,
   createSSHServiceMock,
   createZeebeModuleMock,
+  BullBoardQueuesModuleMock,
 } from "@sims/test-utils/mocks";
 import * as Client from "ssh2-sftp-client";
 import { DeepMocked, createMock } from "@golevelup/ts-jest";
@@ -44,6 +46,10 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
     {
       replace: QueueModule,
       by: QueueModuleMock,
+    },
+    {
+      replace: BullBoardQueuesModule,
+      by: BullBoardQueuesModuleMock,
     },
     {
       replace: ZeebeModule,
