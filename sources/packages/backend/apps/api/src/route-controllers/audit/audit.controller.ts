@@ -1,7 +1,11 @@
 import { Controller, Post, Req, Body } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { AuthorizedParties, IUserToken } from "../../auth";
-import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  RequiresUserAccount,
+  UserToken,
+} from "../../auth/decorators";
 import BaseController from "../BaseController";
 import { AuditService } from "../../services";
 import { Request } from "express";
@@ -13,6 +17,7 @@ import { AuditAPIInDTO } from "./models/audit.dto";
   AuthorizedParties.supportingUsers,
   AuthorizedParties.aest,
 )
+@RequiresUserAccount(false)
 @Controller("audit")
 @ApiTags("audit")
 export class AuditController extends BaseController {

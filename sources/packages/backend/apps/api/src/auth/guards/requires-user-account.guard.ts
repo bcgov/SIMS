@@ -5,20 +5,30 @@ import {
   UnauthorizedException,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { RequiresUserAccount } from "apps/api/src/auth/decorators";
+import {
+  IS_PUBLIC_KEY,
+  RequiresUserAccount,
+} from "apps/api/src/auth/decorators";
 import { IUserToken } from "apps/api/src/auth/userToken.interface";
 
-/**
- * Specifies when a student account must be already created in order to access a route.
- */
 @Injectable()
 export class RequiresUserAccountGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const requiresUserAccount = this.reflector.get(
-      RequiresUserAccount,
+    // Check if the route is public.
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
+      context.getClass(),
+    ]);
+    // If the route is public, no validation is required.
+    if (isPublic) {
+      return true;
+    }
+
+    const requiresUserAccount = this.reflector.getAllAndOverride(
+      RequiresUserAccount,
+      [context.getHandler(), context.getClass()],
     );
 
     if (requiresUserAccount === false) {

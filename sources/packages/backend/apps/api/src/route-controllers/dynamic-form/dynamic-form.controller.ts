@@ -1,7 +1,10 @@
 import { Controller, Get, Param } from "@nestjs/common";
 import BaseController from "../BaseController";
 import { FormService } from "../../services";
-import { AllowAuthorizedParty } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  RequiresUserAccount,
+} from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiTags } from "@nestjs/swagger";
 import { FormNameParamAPIInDTO } from "./models/form.dto";
@@ -12,6 +15,7 @@ import { FormNameParamAPIInDTO } from "./models/form.dto";
   AuthorizedParties.supportingUsers,
   AuthorizedParties.aest,
 )
+@RequiresUserAccount(false)
 @Controller("dynamic-form")
 @ApiTags("dynamic-form")
 export class DynamicFormController extends BaseController {

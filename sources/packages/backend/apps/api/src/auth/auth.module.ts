@@ -34,6 +34,7 @@ import {
 } from "@sims/services";
 import { KeycloakService } from "@sims/auth/services";
 import { KeycloakConfig } from "@sims/auth/config";
+import { RequiresUserAccountGuard } from "apps/api/src/auth/guards/requires-user-account.guard";
 
 const jwtModule = JwtModule.register({
   publicKey: KeycloakConfig.PEM_PublicKey,
@@ -98,6 +99,10 @@ const jwtModule = JwtModule.register({
     {
       provide: APP_GUARD,
       useClass: InstitutionStudentDataAccessGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RequiresUserAccountGuard,
     },
   ],
   exports: [jwtModule, KeycloakService],
