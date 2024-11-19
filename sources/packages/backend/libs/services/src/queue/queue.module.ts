@@ -10,11 +10,6 @@ import { ConfigModule, ConfigService } from "@sims/utilities/config";
 import { QueueNames } from "@sims/utilities";
 import { QueueService } from "./queue.service";
 import { DatabaseModule } from "@sims/sims-db";
-import { BullBoardModule } from "@bull-board/nestjs";
-import { ExpressAdapter } from "@bull-board/express";
-import { BullBoardQueuesModule } from "@sims/services/queue";
-import { BULL_BOARD_ROUTE } from "@sims/services/constants";
-import * as basicAuth from "express-basic-auth";
 
 /**
  * Creates root connection to redis standalone or redis cluster
@@ -30,12 +25,6 @@ import * as basicAuth from "express-basic-auth";
       inject: [ConfigService],
     }),
     BullModule.registerQueueAsync(...getQueueModules()),
-    BullBoardModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: bullBoardModuleFactory,
-      inject: [ConfigService],
-    }),
-    BullBoardQueuesModule,
   ],
   providers: [QueueService],
   exports: [BullModule, QueueService],
@@ -101,37 +90,4 @@ function getQueueModules(): BullModuleAsyncOptions[] {
     },
     inject: [ConfigService, QueueService],
   }));
-}
-
-/**
- * Builds the Bull Board module options to register the dashboard in a dynamic way.
- * @param configService service with the configuration of the application.
- * @returns Bull Board module options with the dashboard route,
- * authentication middleware and the board options.
- */
-async function bullBoardModuleFactory(configService: ConfigService) {
-  const queueDashboardUsers = {};
-  queueDashboardUsers[configService.queueDashboardCredential.userName] =
-    configService.queueDashboardCredential.password;
-  const authMiddleware = basicAuth({
-    users: queueDashboardUsers,
-    challenge: true,
-  });
-  return {
-    route: BULL_BOARD_ROUTE,
-    adapter: ExpressAdapter,
-    middleware: authMiddleware,
-    boardOptions: {
-      uiConfig: {
-        boardTitle: "SIMS-Queues",
-        boardLogo: {
-          path: "https://sims.studentaidbc.ca/favicon-32x32.png",
-        },
-        favIcon: {
-          default: "https://sims.studentaidbc.ca/favicon-16x16.png",
-          alternative: "https://sims.studentaidbc.ca/favicon-32x32.png",
-        },
-      },
-    },
-  };
 }

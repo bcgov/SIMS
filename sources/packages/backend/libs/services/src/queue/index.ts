@@ -1,4 +1,3 @@
-export * from "./bull-board-queues-module";
 export * from "./queue.module";
 export * from "./model/queue.model";
 export * from "./dto/assessment.dto";

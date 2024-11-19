@@ -8,7 +8,7 @@ import { Queue } from "bull";
 import { BullAdapter } from "@bull-board/api/bullAdapter";
 
 @Module({})
-export class BullBoardQueuesModule implements OnModuleInit {
+export class BullBoardQueuesRegistrationModule implements OnModuleInit {
   constructor(
     private readonly moduleRef: ModuleRef,
     private readonly queueService: QueueService,
