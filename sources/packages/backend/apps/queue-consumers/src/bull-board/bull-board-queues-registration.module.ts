@@ -17,7 +17,7 @@ export class BullBoardQueuesRegistrationModule implements OnModuleInit {
   ) {}
 
   /**
-   * Adds all queues to the bull board during application initialization.
+   * Adds all queues to the bull board during application initialization
    * checking if the queue is active and if it is a scheduler.
    */
   async onModuleInit(): Promise<void> {
