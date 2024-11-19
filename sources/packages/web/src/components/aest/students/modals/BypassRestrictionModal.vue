@@ -53,7 +53,7 @@
           <v-textarea
             label="Notes"
             variant="outlined"
-            hide-details="auto"
+            :hide-details="true"
             v-model="formModel.note"
             :rules="[checkNotesLengthRule]"
             required
@@ -65,11 +65,11 @@
             </p>
             <v-row>
               <v-col class="mt-2">
-                <div class="label-bold">Removal:</div>
+                <div class="label-bold">Date created:</div>
                 {{ dateOnlyLongString(restrictionBypassDetails.createdDate) }}
               </v-col>
               <v-col class="mt-2">
-                <div class="label-bold">Removed by:</div>
+                <div class="label-bold">Created by:</div>
                 {{ restrictionBypassDetails.createdBy }}
               </v-col>
             </v-row>
