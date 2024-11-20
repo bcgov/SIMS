@@ -39,6 +39,7 @@ export class ApplyStopBCFundingRestrictionStep implements ECertProcessStep {
   ): boolean {
     const offeringIntensity = eCertDisbursement.offering.offeringIntensity;
     const restrictionType = this.restrictionMap[offeringIntensity];
+    log.info(`Checking '${restrictionType}' restriction.`);
 
     // Get the appropriate restriction based on offering intensity
     const restriction = getRestrictionByActionType(
