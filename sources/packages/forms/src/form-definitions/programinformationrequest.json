@@ -366,7 +366,9 @@
           "addons": [],
           "tag": "p",
           "id": "ezdiowm",
-          "className": ""
+          "className": "",
+          "isNew": false,
+          "tags": []
         },
         {
           "label": "HTML",
@@ -627,7 +629,7 @@
               "value": ""
             }
           ],
-          "content": "<!--studentCustomProgramDescription value is from the application dynamic data(text field) \nand studentSelectedProgram is from the program drop down-->\n{{ data.studentCustomProgramDescription ?? data.studentSelectedProgram }}",
+          "content": "<!--studentCustomProgramDescription value is from the application dynamic data(text field) \nand studentSelectedProgram is from the program drop down-->\n{{ data.studentCustomProgramDescription ?? data.studentSelectedProgramDescription }}",
           "refreshOnChange": true,
           "customClass": "label-value",
           "hidden": false,
@@ -636,7 +638,7 @@
           "tags": [],
           "properties": {},
           "conditional": {
-            "show": null,
+            "show": "",
             "when": null,
             "eq": "",
             "json": ""
@@ -1390,7 +1392,8 @@
       "addons": [],
       "tree": false,
       "lazyLoad": false,
-      "id": "e7laqse"
+      "id": "e7laqse",
+      "isNew": false
     },
     {
       "title": "Institution entered details",

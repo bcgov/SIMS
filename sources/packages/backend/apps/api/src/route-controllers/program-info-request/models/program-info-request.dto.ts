@@ -15,6 +15,7 @@ export class ProgramInfoRequestAPIOutDTO {
   applicationNumber: string;
   studentFullName: string;
   studentSelectedProgram: string;
+  studentSelectedProgramDescription?: string;
   selectedProgram?: number;
   selectedOffering?: number;
   pirStatus: ProgramInfoStatus;
