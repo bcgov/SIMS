@@ -121,6 +121,8 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
     result.isActiveProgramYear = application.programYear.active;
     // Education program, if selected by the student.
     result.studentSelectedProgram = application.pirProgram?.name;
+    result.studentSelectedProgramDescription =
+      application.pirProgram?.description;
     // Original assessment to be used as a reference for the PIR (original
     // assessment always available for submitted student applications).
     // PIR process happens only during original assessment.
