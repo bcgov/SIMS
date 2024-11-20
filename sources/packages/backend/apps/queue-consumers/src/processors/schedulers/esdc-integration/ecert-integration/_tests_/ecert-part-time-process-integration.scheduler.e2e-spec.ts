@@ -28,7 +28,6 @@ import {
   createFakeUser,
   saveFakeStudentRestriction,
   createFakeDisbursementOveraward,
-  RestrictionCode,
 } from "@sims/test-utils";
 import { getUploadedFile } from "@sims/test-utils/mocks";
 import { ArrayContains, IsNull, Like, Not } from "typeorm";
@@ -1349,9 +1348,14 @@ describe(
         coeStatus: COEStatus.completed,
         coeUpdatedAt: new Date(),
       };
-      // Create a B6A restriction.
-      const b6aRestriction = await db.restriction.findOneBy({
-        restrictionCode: RestrictionCode.B6A,
+
+      // Find one restriction to be associated with the student.
+      const restriction = await db.restriction.findOne({
+        where: {
+          actionType: ArrayContains([
+            RestrictionActionType.StopPartTimeBCFunding,
+          ]),
+        },
       });
       // Student with valid SIN.
       const student = await saveFakeStudent(db.dataSource);
@@ -1406,7 +1410,7 @@ describe(
 
       await saveFakeStudentRestriction(db.dataSource, {
         student: applicationB.student,
-        restriction: b6aRestriction,
+        restriction,
         resolutionNote: null,
         creator: sharedMinistryUser,
       });
