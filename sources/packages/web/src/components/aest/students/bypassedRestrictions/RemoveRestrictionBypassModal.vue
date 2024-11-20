@@ -2,7 +2,9 @@
   <v-form ref="removeRestrictionBypassForm">
     <modal-dialog-base :showDialog="showDialog" title="Remove bypass">
       <template #content>
-        <h3 class="category-header-medium my-4">Are you sure?</h3>
+        <h3 class="category-header-medium secondary-color my-4">
+          Are you sure?
+        </h3>
         <error-summary :errors="removeRestrictionBypassForm.errors" />
         <content-group>
           Removing the bypass will result in the restriction being fully active

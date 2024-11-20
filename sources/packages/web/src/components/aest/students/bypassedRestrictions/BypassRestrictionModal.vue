@@ -3,7 +3,9 @@
     <modal-dialog-base :showDialog="showDialog" title="Bypass restriction">
       >
       <template #content>
-        <h3 class="category-header-medium my-4">Bypass information</h3>
+        <h3 class="category-header-medium secondary-color my-4">
+          Bypass information
+        </h3>
         <error-summary :errors="bypassRestrictionForm.errors" />
         <content-group>
           <banner
@@ -20,6 +22,7 @@
             variant="outlined"
             :rules="[(v) => checkNullOrEmptyRule(v, 'Restriction')]"
             :disabled="readOnly"
+            hide-details="auto"
           />
           <v-radio-group
             label="Until"
@@ -73,7 +76,7 @@
         </content-group>
         <template v-if="restrictionBypassDetails?.removedDate">
           <v-divider-opaque class="mt-6" />
-          <h3 class="category-header-medium mb-6">
+          <h3 class="category-header-medium secondary-color mb-6">
             Bypass removal information
           </h3>
           <content-group>
@@ -122,7 +125,7 @@ import {
   SelectItemType,
   VForm,
 } from "@/types";
-import { ref, defineComponent, reactive } from "vue";
+import { ref, defineComponent } from "vue";
 import {
   useRules,
   useModalDialog,
@@ -150,7 +153,7 @@ export default defineComponent({
     const restrictionBypassDetails = ref(
       {} as ApplicationRestrictionBypassAPIOutDTO,
     );
-    const formModel = reactive({} as BypassRestrictionAPIInDTO);
+    const formModel = ref({} as BypassRestrictionAPIInDTO);
     const availableStudentRestrictions = ref(
       {} as AvailableStudentRestrictionsAPIOutDTO,
     );
@@ -178,9 +181,9 @@ export default defineComponent({
         loading.value = true;
         await ApplicationRestrictionBypassService.shared.bypassRestriction({
           applicationId: applicationId.value,
-          studentRestrictionId: formModel.studentRestrictionId,
-          bypassBehavior: formModel.bypassBehavior,
-          note: formModel.note,
+          studentRestrictionId: formModel.value.studentRestrictionId,
+          bypassBehavior: formModel.value.bypassBehavior,
+          note: formModel.value.note,
         });
         snackBar.success("Restriction bypassed.");
         resolvePromise(true);
@@ -213,9 +216,9 @@ export default defineComponent({
       applicationId?: number;
       applicationRestrictionBypassId?: number;
     }) => {
+      formModel.value = {} as BypassRestrictionAPIInDTO;
       if (params.applicationId) {
         readOnly.value = false;
-        formModel.note = "";
         applicationId.value = params.applicationId;
         availableStudentRestrictions.value =
           await ApplicationRestrictionBypassService.shared.getAvailableStudentRestrictions(
@@ -233,8 +236,7 @@ export default defineComponent({
               );
             },
           );
-      }
-      if (params.applicationRestrictionBypassId) {
+      } else if (params.applicationRestrictionBypassId) {
         readOnly.value = true;
         restrictionBypassDetails.value =
           await ApplicationRestrictionBypassService.shared.getApplicationRestrictionBypass(
@@ -247,11 +249,11 @@ export default defineComponent({
             restrictionBypassDetails.value.studentRestrictionId,
           ),
         ];
-        formModel.studentRestrictionId =
+        formModel.value.studentRestrictionId =
           restrictionBypassDetails.value.studentRestrictionId;
-        formModel.bypassBehavior = restrictionBypassDetails.value
+        formModel.value.bypassBehavior = restrictionBypassDetails.value
           .bypassBehavior as RestrictionBypassBehaviors;
-        formModel.note = restrictionBypassDetails.value.creationNote;
+        formModel.value.note = restrictionBypassDetails.value.creationNote;
       }
       return showModalInternal();
     };

@@ -126,14 +126,12 @@ export default defineComponent({
   },
   setup(props) {
     const bypassRestrictionModal = ref({} as ModalDialog<boolean>);
-    const bypassRestrictionModalKey = ref(0);
     const removeBypassModal = ref({} as ModalDialog<boolean>);
-    const removeBypassModalKey = ref(0);
     const bypassedRestrictions = ref({
       bypasses: [],
     } as ApplicationRestrictionBypassHistoryAPIOutDTO);
     onMounted(async () => {
-      await loadBypassedRestrictionHistory();
+      await reloadBypassedRestrictionsHistory();
     });
 
     const getRemoveBypassLabel = (isBypassActive: boolean): string => {
@@ -152,9 +150,10 @@ export default defineComponent({
         applicationId: props.applicationId,
       });
       if (result) {
-        reloadRestrictionBypassedHistory();
+        reloadBypassedRestrictionsHistory();
       }
     };
+
     const openRemoveBypassModal = async (
       applicationRestrictionBypassId: number,
     ) => {
@@ -162,7 +161,7 @@ export default defineComponent({
         applicationRestrictionBypassId,
       });
       if (result) {
-        reloadRestrictionBypassedHistory();
+        reloadBypassedRestrictionsHistory();
       }
     };
 
@@ -174,15 +173,11 @@ export default defineComponent({
       });
     };
 
-    const loadBypassedRestrictionHistory = async () => {
+    const reloadBypassedRestrictionsHistory = async () => {
       bypassedRestrictions.value =
         await ApplicationRestrictionBypassService.shared.getApplicationRestrictionBypassesHistory(
           props.applicationId,
         );
-    };
-
-    const reloadRestrictionBypassedHistory = () => {
-      loadBypassedRestrictionHistory();
     };
 
     return {
@@ -199,9 +194,6 @@ export default defineComponent({
       bypassRestrictionModal,
       openRemoveBypassModal,
       removeBypassModal,
-      reloadRestrictionBypassedHistory,
-      bypassRestrictionModalKey,
-      removeBypassModalKey,
       openBypassViewDetailsModal,
     };
   },
