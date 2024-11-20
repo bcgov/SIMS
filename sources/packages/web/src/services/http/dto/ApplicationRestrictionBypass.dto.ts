@@ -1,3 +1,5 @@
+import { RestrictionBypassBehaviors } from "@/types";
+
 /**
  * Application restriction bypass summary.
  */
@@ -20,7 +22,7 @@ export interface ApplicationRestrictionBypassHistoryAPIOutDTO {
 /**
  * Available student restrictions to bypass.
  */
-export class AvailableStudentRestrictionAPIOutDTO {
+export interface AvailableStudentRestrictionAPIOutDTO {
   studentRestrictionId: number;
   restrictionCode: string;
   studentRestrictionCreatedAt: Date;
@@ -29,14 +31,14 @@ export class AvailableStudentRestrictionAPIOutDTO {
 /**
  * Available student restrictions to bypass item.
  */
-export class AvailableStudentRestrictionsAPIOutDTO {
+export interface AvailableStudentRestrictionsAPIOutDTO {
   availableRestrictionsToBypass: AvailableStudentRestrictionAPIOutDTO[];
 }
 
 /**
  * Student restriction details to bypass.
  */
-export class BypassRestrictionAPIInDTO {
+export interface BypassRestrictionAPIInDTO {
   applicationId: number;
   studentRestrictionId: number;
   bypassBehavior: RestrictionBypassBehaviors;
@@ -46,14 +48,14 @@ export class BypassRestrictionAPIInDTO {
 /**
  * Student restriction details to remove bypass.
  */
-export class RemoveBypassRestrictionAPIInDTO {
+export interface RemoveBypassRestrictionAPIInDTO {
   note: string;
 }
 
 /**
  * Application restriction bypass details.
  */
-export class ApplicationRestrictionBypassAPIOutDTO {
+export interface ApplicationRestrictionBypassAPIOutDTO {
   applicationRestrictionBypassId: number;
   studentRestrictionId: number;
   restrictionCode: string;
@@ -64,20 +66,4 @@ export class ApplicationRestrictionBypassAPIOutDTO {
   removedBy?: string;
   removalNote?: string;
   bypassBehavior: string;
-}
-
-/**
- * Defines how the bypass should behave, for instance, until when it will be valid.
- */
-export enum RestrictionBypassBehaviors {
-  /**
-   * Any disbursement associated with the application will have the restriction
-   * ignored if the bypass is active. Any reassessment will continue to ignore
-   * the restrictions.
-   */
-  AllDisbursements = "All disbursements",
-  /**
-   * When the next e-Cert is marked as 'Ready to send' the bypass should be removed.
-   */
-  NextDisbursementOnly = "Next disbursement only",
 }

@@ -4,10 +4,9 @@
       <template #content>
         <h3 class="category-header-medium my-4">Are you sure?</h3>
         <error-summary :errors="removeRestrictionBypassForm.errors" />
-        <v-card class="pa-4 border">
+        <content-group>
           Removing the bypass will result in the restriction being fully active
           on their account, possibly resulting in funding being blocked.
-          <div class="label-bold mt-4">Notes</div>
           <v-textarea
             label="Notes"
             variant="outlined"
@@ -17,7 +16,7 @@
             :rules="[checkNotesLengthRule]"
             required
           />
-        </v-card>
+        </content-group>
       </template>
       <template #footer>
         <footer-buttons
@@ -42,18 +41,16 @@ export default defineComponent({
   components: {
     ModalDialogBase,
   },
-  emits: { restrictionBypassRemoved: null },
-  props: {
-    applicationRestrictionBypassId: {
-      type: Number,
-      required: true,
-    },
-  },
-  setup(props, { emit }) {
+  setup() {
     const snackBar = useSnackBar();
     const formModel = reactive({} as RemoveBypassRestrictionAPIInDTO);
-    const { showDialog, showModal, resolvePromise, loading } =
-      useModalDialog<boolean>();
+    const applicationRestrictionBypassId = ref(0);
+    const {
+      showDialog,
+      showModal: showModalInternal,
+      resolvePromise,
+      loading,
+    } = useModalDialog<boolean>();
     const removeRestrictionBypassForm = ref({} as VForm);
     const { checkNotesLengthRule } = useRules();
     const note = ref("");
@@ -70,12 +67,11 @@ export default defineComponent({
       try {
         loading.value = true;
         await ApplicationRestrictionBypassService.shared.removeBypass(
-          props.applicationRestrictionBypassId,
+          applicationRestrictionBypassId.value,
           {
             note: formModel.note,
           },
         );
-        emit("restrictionBypassRemoved");
         snackBar.success("Bypass removed.");
         resolvePromise(true);
       } catch (error: unknown) {
@@ -89,6 +85,14 @@ export default defineComponent({
       } finally {
         loading.value = false;
       }
+    };
+    const showModal = async (params: {
+      applicationRestrictionBypassId: number;
+    }) => {
+      applicationRestrictionBypassId.value =
+        params.applicationRestrictionBypassId;
+      formModel.note = "";
+      return showModalInternal();
     };
     return {
       showDialog,

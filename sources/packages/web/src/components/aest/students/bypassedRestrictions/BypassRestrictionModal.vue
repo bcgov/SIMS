@@ -5,97 +5,99 @@
       <template #content>
         <h3 class="category-header-medium my-4">Bypass information</h3>
         <error-summary :errors="bypassRestrictionForm.errors" />
-        <v-card class="pa-4 border">
-          <v-alert
-            variant="outlined"
-            icon="fa:fa fa-triangle-exclamation"
-            class="sims-banner v-alert text-warning my-3"
-            v-if="
-              !applicationRestrictionBypassId &&
-              restrictionsToBypass.length === 0
-            "
-          >
-            No active restrictions available to be bypassed or all active
-            restrictions already have an active bypass.
-          </v-alert>
-          <span class="label-bold"
-            >I want this application to bypass the following restriction:</span
-          >
+        <content-group>
+          <banner
+            class="mb-2"
+            :type="BannerTypes.Warning"
+            header=" No active restrictions available to be bypassed or all active restrictions already have an active bypass."
+            v-if="!readOnly && restrictionsToBypass.length === 0"
+          />
           <v-select
+            label="I want this application to bypass the following restriction"
             density="compact"
             :items="restrictionsToBypass"
             v-model="formModel.studentRestrictionId"
             variant="outlined"
             :rules="[(v) => checkNullOrEmptyRule(v, 'Restriction')]"
-            :disabled="!!applicationRestrictionBypassId"
+            :disabled="readOnly"
           />
-          <span class="label-bold">Until</span>
           <v-radio-group
+            label="Until"
             inline
             v-model="formModel.bypassBehavior"
             color="primary"
             class="mt-2"
             :rules="[(v) => checkNullOrEmptyRule(v, 'Until')]"
-            :disabled="!!applicationRestrictionBypassId"
+            :disabled="readOnly"
           >
             <v-radio
               label="The next scheduled disbursement has been issued. Note: If the application is reassessed, the next disbursement will be ignored."
-              value="Next disbursement only"
+              :value="RestrictionBypassBehaviors.NextDisbursementOnly"
               color="primary"
             ></v-radio>
             <v-radio
               label="All disbursements associated with this application have been issued."
-              value="All disbursements"
+              :value="RestrictionBypassBehaviors.AllDisbursements"
               color="primary"
             ></v-radio>
           </v-radio-group>
-          <span class="label-bold">Notes</span>
           <v-textarea
             label="Notes"
             variant="outlined"
-            :hide-details="true"
+            hide-details="auto"
             v-model="formModel.note"
             :rules="[checkNotesLengthRule]"
             required
-            v-if="!applicationRestrictionBypassId"
+            v-if="!readOnly"
           />
-          <template v-if="restrictionBypassDetails.createdDate">
-            <p class="pt-1 brand-gray-text">
-              {{ restrictionBypassDetails.creationNote }}
-            </p>
-            <v-row>
-              <v-col class="mt-2">
-                <div class="label-bold">Date created:</div>
-                {{ dateOnlyLongString(restrictionBypassDetails.createdDate) }}
-              </v-col>
-              <v-col class="mt-2">
-                <div class="label-bold">Created by:</div>
-                {{ restrictionBypassDetails.createdBy }}
-              </v-col>
-            </v-row>
-          </template>
-        </v-card>
+          <title-value
+            propertyTitle="Notes"
+            :propertyValue="formModel.note"
+            v-if="readOnly"
+          />
+          <v-row v-if="restrictionBypassDetails.createdDate" class="mt-2">
+            <v-col>
+              <title-value
+                propertyTitle="Date created"
+                :propertyValue="
+                  dateOnlyLongString(restrictionBypassDetails.createdDate)
+                "
+              />
+            </v-col>
+            <v-col>
+              <title-value
+                propertyTitle="Created by"
+                :propertyValue="restrictionBypassDetails.createdBy"
+              /> </v-col
+          ></v-row>
+        </content-group>
         <template v-if="restrictionBypassDetails?.removedDate">
           <v-divider-opaque class="mt-6" />
           <h3 class="category-header-medium mb-4 mb-6">
             Bypass removal information
           </h3>
-          <v-card class="pa-4 border">
-            <span class="label-bold">Notes</span>
-            <p class="pt-1 brand-gray-text">
-              {{ restrictionBypassDetails.removalNote }}
-            </p>
-            <v-row>
-              <v-col class="mt-2">
-                <div class="label-bold">Removal:</div>
-                {{ dateOnlyLongString(restrictionBypassDetails.removedDate) }}
+          <content-group>
+            <title-value
+              propertyTitle="Notes"
+              :propertyValue="restrictionBypassDetails.removalNote"
+            />
+            <v-row class="mt-2">
+              <v-col>
+                <title-value
+                  propertyTitle="Removal"
+                  :propertyValue="
+                    dateOnlyLongString(restrictionBypassDetails.removedDate)
+                  "
+                />
               </v-col>
-              <v-col class="mt-2">
-                <div class="label-bold">Removed by:</div>
-                {{ restrictionBypassDetails.removedBy }}
+              <v-col>
+                <title-value
+                  propertyTitle="Removed by"
+                  :propertyValue="restrictionBypassDetails.removedBy"
+                />
               </v-col>
             </v-row>
-          </v-card>
+          </content-group>
         </template>
       </template>
       <template #footer>
@@ -113,8 +115,14 @@
   </v-form>
 </template>
 <script lang="ts">
-import { ApiProcessError, SelectItemType, VForm } from "@/types";
-import { ref, defineComponent, reactive, watchEffect, watch } from "vue";
+import {
+  ApiProcessError,
+  BannerTypes,
+  RestrictionBypassBehaviors,
+  SelectItemType,
+  VForm,
+} from "@/types";
+import { ref, defineComponent, reactive } from "vue";
 import {
   useRules,
   useModalDialog,
@@ -125,7 +133,6 @@ import {
   ApplicationRestrictionBypassAPIOutDTO,
   AvailableStudentRestrictionsAPIOutDTO,
   BypassRestrictionAPIInDTO,
-  RestrictionBypassBehaviors,
 } from "@/services/http/dto";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { ApplicationRestrictionBypassService } from "@/services/ApplicationRestrictionBypassService";
@@ -134,20 +141,11 @@ export default defineComponent({
   components: {
     ModalDialogBase,
   },
-  emits: { restrictionBypassed: null },
-  props: {
-    applicationId: {
-      type: Number,
-      required: true,
-    },
-    applicationRestrictionBypassId: {
-      type: Number,
-      required: false,
-    },
-  },
-  setup(props, { emit }) {
+  setup() {
     const snackBar = useSnackBar();
     const { dateOnlyLongString } = useFormatters();
+    const applicationId = ref(0);
+    const readOnly = ref(false);
     const restrictionsToBypass = ref([] as SelectItemType[]);
     const restrictionBypassDetails = ref(
       {} as ApplicationRestrictionBypassAPIOutDTO,
@@ -156,8 +154,12 @@ export default defineComponent({
     const availableStudentRestrictions = ref(
       {} as AvailableStudentRestrictionsAPIOutDTO,
     );
-    const { showDialog, showModal, resolvePromise, loading } =
-      useModalDialog<boolean>();
+    const {
+      showDialog,
+      showModal: showModalInternal,
+      resolvePromise,
+      loading,
+    } = useModalDialog<boolean>();
     const bypassRestrictionForm = ref({} as VForm);
     const { checkNullOrEmptyRule, checkNotesLengthRule } = useRules();
     const note = ref("");
@@ -175,12 +177,11 @@ export default defineComponent({
       try {
         loading.value = true;
         await ApplicationRestrictionBypassService.shared.bypassRestriction({
-          applicationId: props.applicationId,
+          applicationId: applicationId.value,
           studentRestrictionId: formModel.studentRestrictionId,
           bypassBehavior: formModel.bypassBehavior,
           note: formModel.note,
         });
-        emit("restrictionBypassed");
         snackBar.success("Restriction bypassed.");
         resolvePromise(true);
       } catch (error: unknown) {
@@ -208,48 +209,52 @@ export default defineComponent({
       };
     };
 
-    watchEffect(async () => {
-      availableStudentRestrictions.value =
-        await ApplicationRestrictionBypassService.shared.getAvailableStudentRestrictions(
-          props.applicationId,
-        );
-      if (!availableStudentRestrictions.value.availableRestrictionsToBypass)
-        return;
-      restrictionsToBypass.value =
-        availableStudentRestrictions.value.availableRestrictionsToBypass.map(
-          (restriction) => {
-            return getRestrictionToBypassOption(
-              restriction.restrictionCode,
-              restriction.studentRestrictionCreatedAt,
-              restriction.studentRestrictionId,
-            );
-          },
-        );
-    });
-
-    watch(
-      () => props.applicationRestrictionBypassId,
-      async (applicationRestrictionBypassId) => {
-        if (applicationRestrictionBypassId) {
-          restrictionBypassDetails.value =
-            await ApplicationRestrictionBypassService.shared.getApplicationRestrictionBypass(
-              applicationRestrictionBypassId,
-            );
-          restrictionsToBypass.value = [
-            getRestrictionToBypassOption(
-              restrictionBypassDetails.value.restrictionCode,
-              restrictionBypassDetails.value.createdDate,
-              restrictionBypassDetails.value.studentRestrictionId,
-            ),
-          ];
-          formModel.studentRestrictionId =
-            restrictionBypassDetails.value.studentRestrictionId;
-          formModel.bypassBehavior = restrictionBypassDetails.value
-            .bypassBehavior as RestrictionBypassBehaviors;
-        }
-      },
-      { immediate: true },
-    );
+    const showModal = async (params: {
+      applicationId?: number;
+      applicationRestrictionBypassId?: number;
+    }) => {
+      if (params.applicationId) {
+        readOnly.value = false;
+        formModel.note = "";
+        applicationId.value = params.applicationId;
+        availableStudentRestrictions.value =
+          await ApplicationRestrictionBypassService.shared.getAvailableStudentRestrictions(
+            applicationId.value,
+          );
+        if (!availableStudentRestrictions.value.availableRestrictionsToBypass)
+          return;
+        restrictionsToBypass.value =
+          availableStudentRestrictions.value.availableRestrictionsToBypass.map(
+            (restriction) => {
+              return getRestrictionToBypassOption(
+                restriction.restrictionCode,
+                restriction.studentRestrictionCreatedAt,
+                restriction.studentRestrictionId,
+              );
+            },
+          );
+      }
+      if (params.applicationRestrictionBypassId) {
+        readOnly.value = true;
+        restrictionBypassDetails.value =
+          await ApplicationRestrictionBypassService.shared.getApplicationRestrictionBypass(
+            params.applicationRestrictionBypassId,
+          );
+        restrictionsToBypass.value = [
+          getRestrictionToBypassOption(
+            restrictionBypassDetails.value.restrictionCode,
+            restrictionBypassDetails.value.createdDate,
+            restrictionBypassDetails.value.studentRestrictionId,
+          ),
+        ];
+        formModel.studentRestrictionId =
+          restrictionBypassDetails.value.studentRestrictionId;
+        formModel.bypassBehavior = restrictionBypassDetails.value
+          .bypassBehavior as RestrictionBypassBehaviors;
+        formModel.note = restrictionBypassDetails.value.creationNote;
+      }
+      return showModalInternal();
+    };
 
     return {
       showDialog,
@@ -266,6 +271,9 @@ export default defineComponent({
       restrictionsToBypass,
       restrictionBypassDetails,
       dateOnlyLongString,
+      BannerTypes,
+      readOnly,
+      RestrictionBypassBehaviors,
     };
   },
 });

@@ -6,7 +6,6 @@
           <check-permission-role :role="Role.AESTBypassStudentRestriction">
             <template #="{ notAllowed }">
               <v-btn
-                v-if="true"
                 class="mx-2 float-right"
                 color="primary"
                 :disabled="notAllowed"
@@ -88,19 +87,8 @@
         </v-data-table>
       </toggle-content>
     </content-group>
-    <bypass-restriction-modal
-      ref="bypassRestrictionModal"
-      :applicationId="applicationId"
-      :applicationRestrictionBypassId="selectedApplicationRestrictionBypassId"
-      @restrictionBypassed="reloadRestrictionBypassedHistory"
-      :key="bypassRestrictionModalKey"
-    />
-    <remove-restriction-bypass-modal
-      ref="removeBypassModal"
-      :applicationRestrictionBypassId="selectedApplicationRestrictionBypassId"
-      @restrictionBypassRemoved="reloadRestrictionBypassedHistory"
-      :key="removeBypassModalKey"
-    />
+    <bypass-restriction-modal ref="bypassRestrictionModal" />
+    <remove-restriction-bypass-modal ref="removeBypassModal" />
   </body-header-container>
 </template>
 <script lang="ts">
@@ -119,8 +107,8 @@ import { ApplicationRestrictionBypassHistoryAPIOutDTO } from "@/services/http/dt
 import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { ModalDialog } from "@/composables";
-import BypassRestrictionModal from "@/components/aest/students/modals/BypassRestrictionModal.vue";
-import RemoveRestrictionBypassModal from "@/components/aest/students/modals/RemoveRestrictionBypassModal.vue";
+import BypassRestrictionModal from "./BypassRestrictionModal.vue";
+import RemoveRestrictionBypassModal from "./RemoveRestrictionBypassModal.vue";
 
 export default defineComponent({
   components: {
@@ -141,8 +129,6 @@ export default defineComponent({
     const bypassRestrictionModalKey = ref(0);
     const removeBypassModal = ref({} as ModalDialog<boolean>);
     const removeBypassModalKey = ref(0);
-    const selectedApplicationRestrictionBypassId = ref(0);
-
     const bypassedRestrictions = ref({
       bypasses: [],
     } as ApplicationRestrictionBypassHistoryAPIOutDTO);
@@ -162,23 +148,31 @@ export default defineComponent({
     };
 
     const openBypassRestrictionModal = async () => {
-      await bypassRestrictionModal.value.showModal();
+      const result = await bypassRestrictionModal.value.showModal({
+        applicationId: props.applicationId,
+      });
+      if (result) {
+        reloadRestrictionBypassedHistory();
+      }
     };
     const openRemoveBypassModal = async (
       applicationRestrictionBypassId: number,
     ) => {
-      selectedApplicationRestrictionBypassId.value =
-        applicationRestrictionBypassId;
-      await removeBypassModal.value.showModal();
+      console.log("openRemoveBypassModal", applicationRestrictionBypassId);
+      const result = await removeBypassModal.value.showModal({
+        applicationRestrictionBypassId,
+      });
+      if (result) {
+        reloadRestrictionBypassedHistory();
+      }
     };
 
     const openBypassViewDetailsModal = async (
       applicationRestrictionBypassId: number,
     ) => {
-      selectedApplicationRestrictionBypassId.value =
-        applicationRestrictionBypassId;
-      await bypassRestrictionModal.value.showModal();
-      selectedApplicationRestrictionBypassId.value = 0;
+      await bypassRestrictionModal.value.showModal({
+        applicationRestrictionBypassId,
+      });
     };
 
     const loadBypassedRestrictionHistory = async () => {
@@ -190,9 +184,6 @@ export default defineComponent({
 
     const reloadRestrictionBypassedHistory = () => {
       loadBypassedRestrictionHistory();
-      bypassRestrictionModalKey.value += 1;
-      removeBypassModalKey.value += 1;
-      selectedApplicationRestrictionBypassId.value = 0;
     };
 
     return {
@@ -209,7 +200,6 @@ export default defineComponent({
       bypassRestrictionModal,
       openRemoveBypassModal,
       removeBypassModal,
-      selectedApplicationRestrictionBypassId,
       reloadRestrictionBypassedHistory,
       bypassRestrictionModalKey,
       removeBypassModalKey,
