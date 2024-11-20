@@ -158,7 +158,6 @@ export default defineComponent({
     const openRemoveBypassModal = async (
       applicationRestrictionBypassId: number,
     ) => {
-      console.log("openRemoveBypassModal", applicationRestrictionBypassId);
       const result = await removeBypassModal.value.showModal({
         applicationRestrictionBypassId,
       });
