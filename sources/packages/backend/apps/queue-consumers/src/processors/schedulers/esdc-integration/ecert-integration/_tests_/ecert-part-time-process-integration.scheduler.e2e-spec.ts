@@ -1379,7 +1379,7 @@ describe(
             // Should not be disbursed due to B6A restriction.
             createFakeDisbursementValue(
               DisbursementValueType.BCLoan,
-              "BCSG",
+              "SBSD",
               399,
             ),
             // Should not be disbursed due to BCLM restriction.
@@ -1421,20 +1421,20 @@ describe(
       expect(
         mockedJob.containLogMessages([
           "Checking 'Stop part time BC funding' restriction.",
-          "Applying restriction for BCSG.",
+          "Applying restriction for SBSD.",
           "Applying restriction for BCAG.",
         ]),
       ).toBe(true);
-      // Select the BCSG/BCAG to validate the values impacted by the restriction.
+      // Select the SBSD/BCAG to validate the values impacted by the restriction.
       const [applicationBDisbursement1] =
         applicationB.currentAssessment.disbursementSchedules;
       const record3Awards = await loadAwardValues(
         db,
         applicationBDisbursement1.id,
-        { valueCode: ["BCSG", "BCAG"] },
+        { valueCode: ["SBSD", "BCAG"] },
       );
       expect(
-        awardAssert(record3Awards, "BCSG", {
+        awardAssert(record3Awards, "SBSD", {
           valueAmount: 399,
           restrictionAmountSubtracted: 399,
           effectiveAmount: 0,

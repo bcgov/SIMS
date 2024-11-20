@@ -40,19 +40,20 @@ export class ApplyStopBCFundingRestrictionStep implements ECertProcessStep {
     const offeringIntensity = eCertDisbursement.offering.offeringIntensity;
     const restrictionType = this.restrictionMap[offeringIntensity];
 
+    // Get the appropriate restriction based on offering intensity
+    const restriction = getRestrictionByActionType(
+      eCertDisbursement,
+      restrictionType,
+    );
+    if (!restriction) {
+      return true;
+    }
+
     log.info(`Checking '${restrictionType}' restriction.`);
     for (const disbursementValue of eCertDisbursement.disbursement
       .disbursementValues) {
       if (shouldStopBCFunding(eCertDisbursement, disbursementValue)) {
         log.info(`Applying restriction for ${disbursementValue.valueCode}.`);
-        // Get the appropriate restriction based on offering intensity
-        const restriction = getRestrictionByActionType(
-          eCertDisbursement,
-          eCertDisbursement.offering.offeringIntensity ===
-            OfferingIntensity.fullTime
-            ? RestrictionActionType.StopFullTimeBCFunding
-            : RestrictionActionType.StopPartTimeBCFunding,
-        );
 
         disbursementValue.restrictionAmountSubtracted =
           disbursementValue.valueAmount -

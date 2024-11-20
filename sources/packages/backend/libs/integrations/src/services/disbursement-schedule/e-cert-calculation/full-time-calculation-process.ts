@@ -57,6 +57,7 @@ export class FullTimeCalculationProcess extends ECertCalculationProcess {
 
   /**
    * Define the steps to be executed and the execution order.
+   * Remember the Order of the steps is important as they are executed sequentially.
    * @returns list of calculation steps to be execute sequentially.
    */
   protected calculationSteps(): ECertProcessStep[] {
