@@ -50,7 +50,6 @@ export class ApplyStopBCFundingRestrictionStep implements ECertProcessStep {
       return true;
     }
 
-    log.info(`Checking '${restrictionType}' restriction.`);
     for (const disbursementValue of eCertDisbursement.disbursement
       .disbursementValues) {
       if (shouldStopBCFunding(eCertDisbursement, disbursementValue)) {
