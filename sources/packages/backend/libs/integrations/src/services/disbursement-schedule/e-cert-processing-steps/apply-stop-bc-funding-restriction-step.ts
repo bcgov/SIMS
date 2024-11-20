@@ -8,7 +8,10 @@ import {
 import { ECertProcessStep } from "./e-cert-steps-models";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { EligibleECertDisbursement } from "../disbursement-schedule.models";
-import { BC_FUNDING_TYPES } from "@sims/services/constants";
+import {
+  shouldStopBCFunding,
+  getRestrictionByActionType,
+} from "./e-cert-steps-utils";
 
 /**
  * Handles BC funding restrictions for both full-time and part-time students.
@@ -16,12 +19,19 @@ import { BC_FUNDING_TYPES } from "@sims/services/constants";
  */
 @Injectable()
 export class ApplyStopBCFundingRestrictionStep implements ECertProcessStep {
-  // Mapping of offering intensity to corresponding restriction action type
+  // Mapping of offering intensity to corresponding restriction action type.
   private readonly restrictionMap = {
     [OfferingIntensity.fullTime]: RestrictionActionType.StopFullTimeBCFunding,
     [OfferingIntensity.partTime]: RestrictionActionType.StopPartTimeBCFunding,
   };
 
+  /**
+   * Check active student restriction that should stop any BC funding from being disbursed.
+   * In case some is present, BC awards will be updated to not be disbursed.
+   * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
+   * @param _entityManager not used for this step.
+   * @param log cumulative log summary.
+   */
   executeStep(
     eCertDisbursement: EligibleECertDisbursement,
     _entityManager: EntityManager,
@@ -30,39 +40,30 @@ export class ApplyStopBCFundingRestrictionStep implements ECertProcessStep {
     const offeringIntensity = eCertDisbursement.offering.offeringIntensity;
     const restrictionType = this.restrictionMap[offeringIntensity];
 
-    // Skip if no matching restriction type for the offering intensity
-    if (!restrictionType) {
-      return true;
-    }
-
     log.info(`Checking '${restrictionType}' restriction.`);
+    for (const disbursementValue of eCertDisbursement.disbursement
+      .disbursementValues) {
+      if (shouldStopBCFunding(eCertDisbursement, disbursementValue)) {
+        log.info(`Applying restriction for ${disbursementValue.valueCode}.`);
+        // Get the appropriate restriction based on offering intensity
+        const restriction = getRestrictionByActionType(
+          eCertDisbursement,
+          eCertDisbursement.offering.offeringIntensity ===
+            OfferingIntensity.fullTime
+            ? RestrictionActionType.StopFullTimeBCFunding
+            : RestrictionActionType.StopPartTimeBCFunding,
+        );
 
-    // Check if there's an active restriction of this type
-    const activeRestriction = eCertDisbursement
-      .getEffectiveRestrictions()
-      .find((restriction) => restriction.actions.includes(restrictionType));
-
-    if (!activeRestriction) {
-      return true;
-    }
-
-    // Process all disbursement values that match BC funding types
-    eCertDisbursement.disbursement.disbursementValues
-      .filter((value) => BC_FUNDING_TYPES.includes(value.valueType))
-      .forEach((value) => {
-        log.info(`Applying restriction for ${value.valueCode}.`);
-
-        // Calculate and apply restriction
-        value.restrictionAmountSubtracted =
-          value.valueAmount -
-          (value.disbursedAmountSubtracted ?? 0) -
-          (value.overawardAmountSubtracted ?? 0);
-        value.effectiveAmount = 0;
-        value.restrictionSubtracted = {
-          id: activeRestriction.id,
+        disbursementValue.restrictionAmountSubtracted =
+          disbursementValue.valueAmount -
+          (disbursementValue.disbursedAmountSubtracted ?? 0) -
+          (disbursementValue.overawardAmountSubtracted ?? 0);
+        disbursementValue.effectiveAmount = 0;
+        disbursementValue.restrictionSubtracted = {
+          id: restriction.id,
         } as Restriction;
-      });
-
+      }
+    }
     return true;
   }
 }

@@ -9,7 +9,6 @@ import {
   NotificationMessage,
   NotificationMessageType,
   OfferingIntensity,
-  Restriction,
   RestrictionActionType,
   RestrictionBypassBehaviors,
   Student,
@@ -64,7 +63,6 @@ describe(
     let sftpClientMock: DeepMocked<Client>;
     let systemUsersService: SystemUsersService;
     let sharedMinistryUser: User;
-    let b6aRestriction: Restriction;
 
     beforeAll(async () => {
       // Env variable required for querying the eligible e-Cert records.
@@ -1344,7 +1342,7 @@ describe(
       expect(nonUpdatedCSLPOveraward).toBe(true);
     });
 
-    it("Should Stop disburse BC funding for a part time application when a restriction is applied.", async () => {
+    it("Should stop disbursing BC funding for a part-time application when a 'Stop part time BC funding' restriction is applied.", async () => {
       // Arrange
       // Eligible COE basic properties.
       const eligibleDisbursement: Partial<DisbursementSchedule> = {
@@ -1381,7 +1379,7 @@ describe(
             // Should not be disbursed due to B6A restriction.
             createFakeDisbursementValue(
               DisbursementValueType.BCLoan,
-              "BCSL",
+              "BCSG",
               399,
             ),
             // Should not be disbursed due to BCLM restriction.
@@ -1423,20 +1421,20 @@ describe(
       expect(
         mockedJob.containLogMessages([
           "Checking 'Stop part time BC funding' restriction.",
-          "Applying restriction for BCSL.",
+          "Applying restriction for BCSG.",
           "Applying restriction for BCAG.",
         ]),
       ).toBe(true);
-      // Select the BCSL/BCAG to validate the values impacted by the restriction.
+      // Select the BCSG/BCAG to validate the values impacted by the restriction.
       const [applicationBDisbursement1] =
         applicationB.currentAssessment.disbursementSchedules;
       const record3Awards = await loadAwardValues(
         db,
         applicationBDisbursement1.id,
-        { valueCode: ["BCSL", "BCAG"] },
+        { valueCode: ["BCSG", "BCAG"] },
       );
       expect(
-        awardAssert(record3Awards, "BCSL", {
+        awardAssert(record3Awards, "BCSG", {
           valueAmount: 399,
           restrictionAmountSubtracted: 399,
           effectiveAmount: 0,
