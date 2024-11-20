@@ -181,6 +181,7 @@ export class ApplicationRestrictionBypassService {
               actionType: ArrayOverlap([
                 RestrictionActionType.StopFullTimeBCFunding,
                 RestrictionActionType.StopFullTimeDisbursement,
+                RestrictionActionType.StopPartTimeBCFunding,
                 RestrictionActionType.StopPartTimeDisbursement,
               ]),
             },
@@ -199,7 +200,10 @@ export class ApplicationRestrictionBypassService {
             RestrictionActionType.StopFullTimeBCFunding,
             RestrictionActionType.StopFullTimeDisbursement,
           ]
-        : [RestrictionActionType.StopPartTimeDisbursement];
+        : [
+            RestrictionActionType.StopPartTimeBCFunding,
+            RestrictionActionType.StopPartTimeDisbursement,
+          ];
 
     const bypassedStudentRestrictionIds =
       application.student.studentRestrictions
