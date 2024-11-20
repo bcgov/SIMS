@@ -96,4 +96,8 @@ export enum RestrictionCode {
    * BC lifetime maximum reached.
    */
   BCLM = "BCLM",
+  /**
+   * B6A restriction.
+   */
+  B6A = "B6A",
 }

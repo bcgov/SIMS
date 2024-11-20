@@ -68,7 +68,7 @@ export function getRestrictionByCode(
 }
 
 /**
- * Determine when a BC Full-time funding should not be disbursed.
+ * Determine when BC funding should not be disbursed.
  * In this case the e-Cert can still be generated with the federal funding.
  * @param eCertDisbursement student disbursement that is part of one e-Cert.
  * @param disbursementValue award to be checked.
@@ -78,14 +78,13 @@ export function shouldStopBCFunding(
   eCertDisbursement: EligibleECertDisbursement,
   disbursementValue: DisbursementValue,
 ): boolean {
+  const restrictionType =
+    eCertDisbursement.offering.offeringIntensity === OfferingIntensity.fullTime
+      ? RestrictionActionType.StopFullTimeBCFunding
+      : RestrictionActionType.StopPartTimeBCFunding;
   const stopFunding = getRestrictionByActionType(
     eCertDisbursement,
-    RestrictionActionType.StopFullTimeBCFunding,
+    restrictionType,
   );
-  return (
-    stopFunding &&
-    eCertDisbursement.offering.offeringIntensity ===
-      OfferingIntensity.fullTime &&
-    BC_FUNDING_TYPES.includes(disbursementValue.valueType)
-  );
+  return stopFunding && BC_FUNDING_TYPES.includes(disbursementValue.valueType);
 }

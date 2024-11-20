@@ -4,7 +4,7 @@ import { ECertCalculationProcess } from "./e-cert-calculation-process";
 import { DataSource } from "typeorm";
 import {
   ApplyOverawardsDeductionsStep,
-  ApplyStopBCFundingRestrictionFullTimeStep,
+  ApplyStopBCFundingRestrictionStep,
   AssertLifeTimeMaximumFullTimeStep,
   CalculateEffectiveValueStep,
   CalculateTuitionRemittanceEffectiveAmountStep,
@@ -30,7 +30,7 @@ export class FullTimeCalculationProcess extends ECertCalculationProcess {
     private readonly validateDisbursementFullTimeStep: ValidateDisbursementFullTimeStep,
     private readonly applyOverawardsDeductionsStep: ApplyOverawardsDeductionsStep,
     private readonly calculateEffectiveValueStep: CalculateEffectiveValueStep,
-    private readonly applyStopBCFundingRestrictionFullTimeStep: ApplyStopBCFundingRestrictionFullTimeStep,
+    private readonly applyStopBCFundingRestrictionStep: ApplyStopBCFundingRestrictionStep,
     private readonly assertLifeTimeMaximumFullTimeStep: AssertLifeTimeMaximumFullTimeStep,
     private readonly calculateTuitionRemittanceEffectiveAmountStep: CalculateTuitionRemittanceEffectiveAmountStep,
     private readonly createBCTotalGrantsStep: CreateBCTotalGrantsStep,
@@ -57,6 +57,7 @@ export class FullTimeCalculationProcess extends ECertCalculationProcess {
 
   /**
    * Define the steps to be executed and the execution order.
+   * Remember the Order of the steps is important as they are executed sequentially.
    * @returns list of calculation steps to be execute sequentially.
    */
   protected calculationSteps(): ECertProcessStep[] {
@@ -64,7 +65,7 @@ export class FullTimeCalculationProcess extends ECertCalculationProcess {
       this.validateDisbursementFullTimeStep,
       this.applyOverawardsDeductionsStep,
       this.calculateEffectiveValueStep,
-      this.applyStopBCFundingRestrictionFullTimeStep,
+      this.applyStopBCFundingRestrictionStep,
       this.assertLifeTimeMaximumFullTimeStep,
       this.calculateTuitionRemittanceEffectiveAmountStep,
       this.createBCTotalGrantsStep,

@@ -1,22 +1,30 @@
 import { Injectable } from "@nestjs/common";
 import { EntityManager } from "typeorm";
-import { Restriction, RestrictionActionType } from "@sims/sims-db";
 import {
-  getRestrictionByActionType,
-  shouldStopBCFunding,
-} from "./e-cert-steps-utils";
+  Restriction,
+  RestrictionActionType,
+  OfferingIntensity,
+} from "@sims/sims-db";
 import { ECertProcessStep } from "./e-cert-steps-models";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { EligibleECertDisbursement } from "../disbursement-schedule.models";
+import {
+  shouldStopBCFunding,
+  getRestrictionByActionType,
+} from "./e-cert-steps-utils";
 
 /**
- * Check active student restriction that should stop
- * any BC funding from being disbursed.
+ * Handles BC funding restrictions for both full-time and part-time students.
+ * Applies restrictions that stop BC funding from being disbursed.
  */
 @Injectable()
-export class ApplyStopBCFundingRestrictionFullTimeStep
-  implements ECertProcessStep
-{
+export class ApplyStopBCFundingRestrictionStep implements ECertProcessStep {
+  // Mapping of offering intensity to corresponding restriction action type.
+  private readonly restrictionMap = {
+    [OfferingIntensity.fullTime]: RestrictionActionType.StopFullTimeBCFunding,
+    [OfferingIntensity.partTime]: RestrictionActionType.StopPartTimeBCFunding,
+  };
+
   /**
    * Check active student restriction that should stop any BC funding from being disbursed.
    * In case some is present, BC awards will be updated to not be disbursed.
@@ -29,17 +37,24 @@ export class ApplyStopBCFundingRestrictionFullTimeStep
     _entityManager: EntityManager,
     log: ProcessSummary,
   ): boolean {
-    log.info(
-      `Checking '${RestrictionActionType.StopFullTimeBCFunding}' restriction.`,
+    const offeringIntensity = eCertDisbursement.offering.offeringIntensity;
+    const restrictionType = this.restrictionMap[offeringIntensity];
+    log.info(`Checking '${restrictionType}' restriction.`);
+
+    // Get the appropriate restriction based on offering intensity
+    const restriction = getRestrictionByActionType(
+      eCertDisbursement,
+      restrictionType,
     );
+    if (!restriction) {
+      return true;
+    }
+
     for (const disbursementValue of eCertDisbursement.disbursement
       .disbursementValues) {
       if (shouldStopBCFunding(eCertDisbursement, disbursementValue)) {
         log.info(`Applying restriction for ${disbursementValue.valueCode}.`);
-        const restriction = getRestrictionByActionType(
-          eCertDisbursement,
-          RestrictionActionType.StopFullTimeBCFunding,
-        );
+
         disbursementValue.restrictionAmountSubtracted =
           disbursementValue.valueAmount -
           (disbursementValue.disbursedAmountSubtracted ?? 0) -
