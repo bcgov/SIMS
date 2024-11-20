@@ -109,7 +109,7 @@ export class StudentStudentsController extends BaseController {
   @ApiForbiddenResponse({
     description: "User is not allowed to create a student account.",
   })
-  @RequiresStudentAccount(false)
+  @RequiresUserAccount(false)
   async create(
     @UserToken() studentUserToken: StudentUserToken,
     @Body() payload: CreateStudentAPIInDTO,

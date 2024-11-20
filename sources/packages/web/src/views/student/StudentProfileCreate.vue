@@ -1,6 +1,6 @@
 <template>
   <!-- During account creation, there is no existing student profile and hence no student banners are required. -->
-  <full-page-container>
+  <student-page-container :show-authorized-student-alerts="false">
     <template #header>
       <div class="text-center">
         <p class="category-header-x-large">Create Your Profile</p>
@@ -11,7 +11,7 @@
       @submitted="submitted"
       :processing="processing"
     />
-  </full-page-container>
+  </student-page-container>
 </template>
 
 <script lang="ts">

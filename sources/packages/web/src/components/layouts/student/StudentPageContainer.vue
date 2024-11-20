@@ -7,8 +7,10 @@
       <slot name="header"></slot>
     </template>
     <template #alerts>
-      <restriction-banner v-if="!hideRestriction" />
-      <check-valid-s-i-n-banner />
+      <restriction-banner
+        v-if="!hideRestriction && showAuthorizedStudentAlerts"
+      />
+      <check-valid-s-i-n-banner v-if="showAuthorizedStudentAlerts" />
       <slot name="alerts"></slot>
     </template>
     <slot></slot>
@@ -37,6 +39,11 @@ export default defineComponent({
       type: Boolean,
       required: false,
       default: false,
+    },
+    showAuthorizedStudentAlerts: {
+      type: Boolean,
+      required: false,
+      default: true,
     },
   },
 });
