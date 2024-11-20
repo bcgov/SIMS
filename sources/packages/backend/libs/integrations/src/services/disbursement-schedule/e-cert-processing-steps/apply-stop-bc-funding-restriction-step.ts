@@ -15,7 +15,7 @@ import { BC_FUNDING_TYPES } from "@sims/services/constants";
  * Applies restrictions that stop BC funding from being disbursed.
  */
 @Injectable()
-export class ApplyStopBCFundingRestrictions implements ECertProcessStep {
+export class ApplyStopBCFundingRestrictionStep implements ECertProcessStep {
   // Mapping of offering intensity to corresponding restriction action type
   private readonly restrictionMap = {
     [OfferingIntensity.fullTime]: RestrictionActionType.StopFullTimeBCFunding,

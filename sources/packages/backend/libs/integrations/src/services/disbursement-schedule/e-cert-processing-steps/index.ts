@@ -9,4 +9,4 @@ export * from "./validate-disbursement-base";
 export * from "./validate-disbursement-full-time-step";
 export * from "./validate-disbursement-part-time-step";
 export * from "./restriction-bypasses-resolution-step";
-export * from "./apply-stop-bc-funding-restrictions";
+export * from "./apply-stop-bc-funding-restriction-step";

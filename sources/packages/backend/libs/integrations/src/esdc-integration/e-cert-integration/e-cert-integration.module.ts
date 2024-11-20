@@ -29,7 +29,7 @@ import { SystemUserModule } from "@sims/services/system-users";
 import { SFASApplicationService } from "@sims/services/sfas";
 import {
   ApplyOverawardsDeductionsStep,
-  ApplyStopBCFundingRestrictions,
+  ApplyStopBCFundingRestrictionStep,
   AssertLifeTimeMaximumFullTimeStep,
   CalculateEffectiveValueStep,
   CalculateTuitionRemittanceEffectiveAmountStep,
@@ -76,8 +76,7 @@ import { PartTimeECertFileHandler } from "./part-time-e-cert-file-handler";
     ValidateDisbursementPartTimeStep,
     ApplyOverawardsDeductionsStep,
     CalculateEffectiveValueStep,
-    ApplyStopBCFundingRestrictions,
-    ApplyStopBCFundingRestrictions,
+    ApplyStopBCFundingRestrictionStep,
     AssertLifeTimeMaximumFullTimeStep,
     CalculateTuitionRemittanceEffectiveAmountStep,
     CreateBCTotalGrantsStep,

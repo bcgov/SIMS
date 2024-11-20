@@ -8,8 +8,8 @@ import {
   CreateBCTotalGrantsStep,
   PersistCalculationsStep,
   ValidateDisbursementPartTimeStep,
-  ApplyStopBCFundingRestrictions,
   RestrictionBypassesResolutionStep,
+  ApplyStopBCFundingRestrictionStep,
 } from "../e-cert-processing-steps";
 import { ECertGenerationService } from "../e-cert-generation.service";
 import { Injectable } from "@nestjs/common";
@@ -31,7 +31,7 @@ export class PartTimeCalculationProcess extends ECertCalculationProcess {
     private readonly createBCTotalGrantsStep: CreateBCTotalGrantsStep,
     private readonly persistCalculationsStep: PersistCalculationsStep,
     private readonly restrictionBypassesResolutionStep: RestrictionBypassesResolutionStep,
-    private readonly ApplyStopBCFundingRestrictions: ApplyStopBCFundingRestrictions,
+    private readonly applyStopBCFundingRestrictionStep: ApplyStopBCFundingRestrictionStep,
   ) {
     super(dataSource, eCertNotificationService);
   }
@@ -59,7 +59,7 @@ export class PartTimeCalculationProcess extends ECertCalculationProcess {
     return [
       this.validateDisbursementPartTimeStep,
       this.calculateEffectiveValueStep,
-      this.ApplyStopBCFundingRestrictions,
+      this.applyStopBCFundingRestrictionStep,
       this.calculateTuitionRemittanceEffectiveAmountStep,
       this.createBCTotalGrantsStep,
       this.persistCalculationsStep,
