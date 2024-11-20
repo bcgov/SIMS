@@ -189,6 +189,9 @@ export class ApplicationRestrictionBypassService {
       },
     });
 
+    if (!application) {
+      return [];
+    }
     const allowedRestrictionActions =
       application.currentAssessment.offering.offeringIntensity ===
       OfferingIntensity.fullTime
