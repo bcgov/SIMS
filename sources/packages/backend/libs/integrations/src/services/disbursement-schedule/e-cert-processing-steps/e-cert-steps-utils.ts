@@ -89,26 +89,3 @@ export function shouldStopBCFunding(
     BC_FUNDING_TYPES.includes(disbursementValue.valueType)
   );
 }
-
-/**
- * Determine when a BC Part-time funding should not be disbursed.
- * In this case the e-Cert can still be generated with the federal funding.
- * @param eCertDisbursement student disbursement that is part of one e-Cert.
- * @param disbursementValue award to be checked.
- * @returns true if the funding should not be disbursed, otherwise, false.
- */
-export function shouldStopPartTimeBCFunding(
-  eCertDisbursement: EligibleECertDisbursement,
-  disbursementValue: DisbursementValue,
-): boolean {
-  const stopFunding = getRestrictionByActionType(
-    eCertDisbursement,
-    RestrictionActionType.StopPartTimeBCFunding,
-  );
-  return (
-    stopFunding &&
-    eCertDisbursement.offering.offeringIntensity ===
-      OfferingIntensity.partTime &&
-    BC_FUNDING_TYPES.includes(disbursementValue.valueType)
-  );
-}

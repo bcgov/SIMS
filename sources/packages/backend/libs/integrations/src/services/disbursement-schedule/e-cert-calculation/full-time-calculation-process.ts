@@ -4,7 +4,7 @@ import { ECertCalculationProcess } from "./e-cert-calculation-process";
 import { DataSource } from "typeorm";
 import {
   ApplyOverawardsDeductionsStep,
-  ApplyStopBCFundingRestrictionFullTimeStep,
+  ApplyStopBCFundingRestrictions,
   AssertLifeTimeMaximumFullTimeStep,
   CalculateEffectiveValueStep,
   CalculateTuitionRemittanceEffectiveAmountStep,
@@ -30,7 +30,7 @@ export class FullTimeCalculationProcess extends ECertCalculationProcess {
     private readonly validateDisbursementFullTimeStep: ValidateDisbursementFullTimeStep,
     private readonly applyOverawardsDeductionsStep: ApplyOverawardsDeductionsStep,
     private readonly calculateEffectiveValueStep: CalculateEffectiveValueStep,
-    private readonly applyStopBCFundingRestrictionFullTimeStep: ApplyStopBCFundingRestrictionFullTimeStep,
+    private readonly ApplyStopBCFundingRestrictions: ApplyStopBCFundingRestrictions,
     private readonly assertLifeTimeMaximumFullTimeStep: AssertLifeTimeMaximumFullTimeStep,
     private readonly calculateTuitionRemittanceEffectiveAmountStep: CalculateTuitionRemittanceEffectiveAmountStep,
     private readonly createBCTotalGrantsStep: CreateBCTotalGrantsStep,
@@ -64,7 +64,7 @@ export class FullTimeCalculationProcess extends ECertCalculationProcess {
       this.validateDisbursementFullTimeStep,
       this.applyOverawardsDeductionsStep,
       this.calculateEffectiveValueStep,
-      this.applyStopBCFundingRestrictionFullTimeStep,
+      this.ApplyStopBCFundingRestrictions,
       this.assertLifeTimeMaximumFullTimeStep,
       this.calculateTuitionRemittanceEffectiveAmountStep,
       this.createBCTotalGrantsStep,
