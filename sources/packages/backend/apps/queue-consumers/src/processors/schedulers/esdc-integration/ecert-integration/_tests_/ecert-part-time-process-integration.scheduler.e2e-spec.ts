@@ -1367,7 +1367,7 @@ describe(
           firstDisbursementValues: [
             createFakeDisbursementValue(
               DisbursementValueType.CanadaLoan,
-              "CSLF",
+              "CSLP",
               199,
             ),
             // Should be disbursed because it is a federal grant.
