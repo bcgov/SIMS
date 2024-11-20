@@ -188,7 +188,10 @@ export class ApplicationRestrictionBypassService {
         },
       },
     });
-
+    // In case no application is found, return an empty array.
+    if (!application) {
+      return [];
+    }
     const allowedRestrictionActions =
       application.currentAssessment.offering.offeringIntensity ===
       OfferingIntensity.fullTime
