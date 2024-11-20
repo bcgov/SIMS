@@ -9,7 +9,7 @@
           <banner
             class="mb-2"
             :type="BannerTypes.Warning"
-            header=" No active restrictions available to be bypassed or all active restrictions already have an active bypass."
+            header="No active restrictions available to be bypassed or all active restrictions already have an active bypass."
             v-if="!readOnly && restrictionsToBypass.length === 0"
           />
           <v-select
@@ -73,7 +73,7 @@
         </content-group>
         <template v-if="restrictionBypassDetails?.removedDate">
           <v-divider-opaque class="mt-6" />
-          <h3 class="category-header-medium mb-4 mb-6">
+          <h3 class="category-header-medium mb-6">
             Bypass removal information
           </h3>
           <content-group>
