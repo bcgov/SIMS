@@ -78,6 +78,16 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
         },
       );
 
+    const b6aRestriction = await db.restriction.findOne({
+      where: { restrictionCode: RestrictionCode.B6A },
+    });
+    // Add a student restriction that should be available to be bypassed because the restriction has an action type "Stop part time BC funding".
+    const stopPartTimeBCFundingStudentRestriction =
+      await saveFakeStudentRestriction(db.dataSource, {
+        student: application.student,
+        restriction: b6aRestriction,
+      });
+
     const b6bRestriction = await db.restriction.findOne({
       where: { restrictionCode: RestrictionCode.B6B },
     });
@@ -130,6 +140,12 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
                 .restriction.restrictionCode,
             studentRestrictionCreatedAt:
               removedApplicationRestrictionsBypass.studentRestriction.createdAt.toISOString(),
+          },
+          {
+            studentRestrictionId: stopPartTimeBCFundingStudentRestriction.id,
+            restrictionCode: b6aRestriction.restrictionCode,
+            studentRestrictionCreatedAt:
+              stopPartTimeBCFundingStudentRestriction.createdAt.toISOString(),
           },
           {
             studentRestrictionId: stopPartTimeDisbursementStudentRestriction.id,
