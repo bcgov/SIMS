@@ -14,6 +14,7 @@ import {
   AllowAuthorizedParty,
   AllowInactiveUser,
   IsInstitutionAdmin,
+  RequiresUserAccount,
   UserToken,
 } from "../../auth/decorators";
 import { InstitutionService, UserService, BCeIDService } from "../../services";
@@ -197,6 +198,7 @@ export class InstitutionUserInstitutionsController extends BaseController {
    * @returns information to support the institution login process and
    * the decisions that need happen to complete the process.
    */
+  @RequiresUserAccount(false)
   @AllowInactiveUser()
   @Get("status")
   async getInstitutionUserStatus(

@@ -11,6 +11,7 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
   IsInstitutionAdmin,
+  RequiresUserAccount,
   UserToken,
 } from "../../auth/decorators";
 import { InstitutionService, UserService } from "../../services";
@@ -139,6 +140,7 @@ export class InstitutionInstitutionsController extends BaseController {
    * list (key/value pair) schema.
    * @returns institutions types in an option list (key/value pair) schema.
    */
+  @RequiresUserAccount(false)
   @Get("type/options-list")
   async getInstitutionTypeOptions(): Promise<OptionItemAPIOutDTO[]> {
     return this.institutionControllerService.getInstitutionTypeOptions();
