@@ -6,7 +6,11 @@ import { IUserToken } from "../../auth/userToken.interface";
 import { BCeIDAccountsAPIOutDTO } from "./models/bceid-accounts.dto";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { UserGroups } from "../../auth/user-groups.enum";
-import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  Groups,
+  RequiresUserAccount,
+} from "../../auth/decorators";
 import { ApiTags, ApiUnprocessableEntityResponse } from "@nestjs/swagger";
 import { UserControllerService } from "..";
 import { ClientTypeBaseRoute } from "../../types";
@@ -43,6 +47,7 @@ export class UserAESTController extends BaseController {
    * Creates or updates Ministry user information.
    * @param userToken user token information to be updated.
    */
+  @RequiresUserAccount(false)
   @Put()
   async syncAESTUser(@UserToken() userToken: IUserToken): Promise<void> {
     await this.userService.syncUser(

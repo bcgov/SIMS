@@ -14,7 +14,11 @@ import { InstitutionUserDetailsAPIOutDTO } from "./models/institution-user.dto";
 import { InstitutionUserPersistAPIInDTO } from "./models/institution-user-persist.dto";
 import { BCeIDAccountsAPIOutDTO } from "./models/bceid-accounts.dto";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, AllowInactiveUser } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  AllowInactiveUser,
+  RequiresUserAccount,
+} from "../../auth/decorators";
 import { ApiTags, ApiUnprocessableEntityResponse } from "@nestjs/swagger";
 import { BCeIDAccountTypeCodes } from "../../services/bceid/bceid.models";
 import { UserControllerService } from "..";
@@ -37,6 +41,7 @@ export class UserInstitutionsController extends BaseController {
    * for the currently authenticated user.
    * @returns BCeID account information from BCeID Web services.
    */
+  @RequiresUserAccount(false)
   @AllowInactiveUser()
   @Get("bceid-account")
   async getBCeID(

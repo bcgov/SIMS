@@ -59,6 +59,7 @@ export class InstitutionInstitutionsController extends BaseController {
   @ApiUnprocessableEntityResponse({
     description: "Institution user already exist",
   })
+  @RequiresUserAccount(false)
   @Post()
   async createInstitutionWithAssociatedUser(
     @Body() payload: CreateInstitutionAPIInDTO,
