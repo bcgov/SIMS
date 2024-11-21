@@ -73,14 +73,19 @@
         </template>
       </template>
       <template #footer>
-        <footer-buttons
-          :processing="processing"
-          :primaryLabel="allowUserToEdit ? 'Resolve restriction' : 'Close'"
-          secondaryLabel="Cancel"
-          @primaryClick="allowUserToEdit ? submit() : cancel()"
-          @secondaryClick="cancel"
-          :showSecondaryButton="allowUserToEdit"
-        />
+        <check-permission-role :role="allowedRole">
+          <template #="{ notAllowed }">
+            <footer-buttons
+              :processing="processing"
+              :primaryLabel="allowUserToEdit ? 'Resolve restriction' : 'Close'"
+              secondaryLabel="Cancel"
+              @primaryClick="allowUserToEdit ? submit() : cancel()"
+              @secondaryClick="cancel"
+              :disablePrimaryButton="allowUserToEdit && notAllowed"
+              :showSecondaryButton="allowUserToEdit"
+            />
+          </template>
+        </check-permission-role>
       </template>
     </modal-dialog-base>
   </v-form>
@@ -92,6 +97,7 @@ import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { useFormatters, useModalDialog, useValidators } from "@/composables";
 import { Role, RestrictionType, VForm, RestrictionStatus } from "@/types";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { RestrictionDetailAPIOutDTO } from "@/services/http/dto";
 import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
 import TitleValue from "@/components/generic/TitleValue.vue";
@@ -99,6 +105,7 @@ import TitleValue from "@/components/generic/TitleValue.vue";
 export default defineComponent({
   components: {
     ModalDialogBase,
+    CheckPermissionRole,
     ErrorSummary,
     StatusChipRestriction,
     TitleValue,
@@ -152,8 +159,6 @@ export default defineComponent({
       }
       return "Resolution reason is required.";
     };
-
-    console.info("props.canResolveRestriction: ", props.canResolveRestriction);
 
     const allowUserToEdit = computed(
       () =>
