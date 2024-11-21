@@ -3,7 +3,10 @@ import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
 import { ConfigService } from "@sims/utilities/config";
 import { InjectLogger } from "@sims/utilities/logger";
-import { CronRepeatOptions, Queue } from "bull";
+import { CronRepeatOptions, Job, Queue } from "bull";
+import { v4 as uuid } from "uuid";
+import * as cronParser from "cron-parser";
+import * as dayjs from "dayjs";
 
 export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
   constructor(
@@ -84,31 +87,79 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
       await this.schedulerQueue.obliterate({ force: true });
       return;
     }
-    await this.removeDuplicatedDelayedJob();
-    // Add the cron to the queue.
-    await this.schedulerQueue.add(await this.payload());
+    // Check if the job is paused to avoid creating new delayed jobs.
+    const isPaused = await this.schedulerQueue.isPaused();
+    if (isPaused) {
+      return;
+    }
+    // Acquire a lock based on the queue name to prevent multiple
+    // queue-consumers instances to be initialized at the same time
+    // and execute the checks concurrently.
+    await this.queueService.acquireQueueLock(
+      this.schedulerQueue.name as QueueNames,
+      async () => {
+        await this.ensureNextDelayedJobCreation();
+      },
+    );
   }
 
   /**
-   * Ensure there will be a maximum of one job with the same
-   * cron option for the same scheduler queue.
+   * Ensures a scheduled job will have a delayed
+   * job created if one is not present.
    */
-  private async removeDuplicatedDelayedJob(): Promise<void> {
-    const cronRepeatOption = await this.queueCronConfiguration();
+  private async ensureNextDelayedJobCreation(): Promise<void> {
     const delayedJobs = await this.schedulerQueue.getDelayed();
-    // Find the first job with the same cron option.
-    // Please note that multiple jobs can have the same cron option,
-    // so we have to find the first one and delete the other instances.
-    const jobToKeep = delayedJobs.find((delayedJob) => {
-      const jobCronRepeatOptions = delayedJob.opts.repeat as CronRepeatOptions;
-      return jobCronRepeatOptions.cron === cronRepeatOption.cron;
+    const nextExpectedScheduledJobDate =
+      await this.getNexSchedulerExecutionDate();
+    // Check if it already has a delayed job to with the expected scheduled time.
+    const expectedDelayedJob = delayedJobs.find((delayedJob) => {
+      const nextExecution = this.getDelayedJobExecutionDate(delayedJob);
+      return dayjs(nextExecution).isSame(nextExpectedScheduledJobDate);
     });
-    // Remove every other delayed job.
+    // If the only delayed job is the expected one, no further verifications are needed.
+    if (expectedDelayedJob && delayedJobs.length === 1) {
+      return;
+    }
+    // Remove any non expected delayed job.
     for (const delayedJob of delayedJobs) {
-      if (delayedJob !== jobToKeep) {
+      if (!expectedDelayedJob || delayedJob !== expectedDelayedJob) {
         await delayedJob.remove();
       }
     }
+    // The expected delayed job was found and any
+    // extra delayed jobs were removed.
+    if (expectedDelayedJob) {
+      return;
+    }
+    // Creating an unique job ID ensures the delayed jobs to
+    // to be recreated even if they were already promoted.
+    const uniqueJobId = `${this.schedulerQueue.name}:${uuid()}`;
+    await this.schedulerQueue.add(await this.payload(), {
+      jobId: uniqueJobId,
+    });
+  }
+
+  /**
+   * Gets the next scheduled date for the given cron expression.
+   * @param cron cron expression string.
+   * @returns the next date the scheduler will be executed.
+   */
+  async getNexSchedulerExecutionDate(): Promise<Date> {
+    const repeatOptions = await this.queueCronConfiguration();
+    const result = cronParser.parseExpression(repeatOptions.cron, {
+      utc: true,
+    });
+    return result.next().toDate();
+  }
+
+  /**
+   * Calculates the execution date for a delayed job based on its options.
+   * @param delayedJob job instance containing delay options.
+   * @returns calculated execution date for the delayed job.
+   */
+  getDelayedJobExecutionDate(delayedJob: Job): Date {
+    const totalMilliseconds = delayedJob.opts.delay + delayedJob.timestamp;
+    return new Date(totalMilliseconds);
   }
 
   @InjectLogger()
