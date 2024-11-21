@@ -8,7 +8,7 @@ import {
 
 export function useStudentStore(rootStore?: Store<any>) {
   const store = rootStore ?? useStore();
-  const hasStudentAccount = computed(
+  const hasStudentAccount = computed<boolean>(
     () => store.state.student.hasStudentAccount,
   );
 

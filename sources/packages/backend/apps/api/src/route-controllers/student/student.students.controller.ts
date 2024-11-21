@@ -166,7 +166,6 @@ export class StudentStudentsController extends BaseController {
    * Use the information available in the authentication token to update
    * the user and student data currently on DB.
    */
-  @RequiresUserAccount(false)
   @Patch("/sync")
   async synchronizeFromUserToken(
     @UserToken() studentUserToken: StudentUserToken,

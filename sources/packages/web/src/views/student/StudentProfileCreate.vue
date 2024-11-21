@@ -1,6 +1,6 @@
 <template>
   <!-- During account creation, there is no existing student profile and hence no student banners are required. -->
-  <student-page-container :show-authorized-student-alerts="false">
+  <student-page-container>
     <template #header>
       <div class="text-center">
         <p class="category-header-x-large">Create Your Profile</p>

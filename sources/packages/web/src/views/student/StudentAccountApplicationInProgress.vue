@@ -1,5 +1,5 @@
 <template>
-  <student-page-container :show-authorized-student-alerts="false">
+  <student-page-container>
     <v-row no-gutters>
       <v-col cols="8">
         <h1 class="category-header-large primary-color">Almost there!</h1>
