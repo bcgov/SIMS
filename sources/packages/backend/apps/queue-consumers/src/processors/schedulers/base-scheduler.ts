@@ -104,14 +104,14 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
   }
 
   /**
-   * Ensures a scheduled job will have a delayed
-   * job created if one is not present.
+   * Ensures a scheduled job will have a delayed job created with the
+   * next expected scheduled time based on the configured cron expression.
    */
   private async ensureNextDelayedJobCreation(): Promise<void> {
     const delayedJobs = await this.schedulerQueue.getDelayed();
     const nextExpectedScheduledJobDate =
       await this.getNexSchedulerExecutionDate();
-    // Check if it already has a delayed job to with the expected scheduled time.
+    // Check if there is a delayed job ith the expected scheduled time.
     const expectedDelayedJob = delayedJobs.find((delayedJob) => {
       const nextExecution = this.getDelayedJobExecutionDate(delayedJob);
       return dayjs(nextExecution).isSame(nextExpectedScheduledJobDate);
@@ -131,8 +131,8 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
     if (expectedDelayedJob) {
       return;
     }
-    // Creating an unique job ID ensures the delayed jobs to
-    // to be recreated even if they were already promoted.
+    // Creating a unique job ID ensures that the delayed jobs
+    // will be created even if they were already promoted.
     const uniqueJobId = `${this.schedulerQueue.name}:${uuid()}`;
     await this.schedulerQueue.add(await this.payload(), {
       jobId: uniqueJobId,
