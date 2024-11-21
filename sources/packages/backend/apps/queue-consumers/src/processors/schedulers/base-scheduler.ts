@@ -111,7 +111,7 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
     const delayedJobs = await this.schedulerQueue.getDelayed();
     const nextExpectedScheduledJobDate =
       await this.getNexSchedulerExecutionDate();
-    // Check if there is a delayed job ith the expected scheduled time.
+    // Check if there is a delayed job with the expected scheduled time.
     const expectedDelayedJob = delayedJobs.find((delayedJob) => {
       const nextExecution = this.getDelayedJobExecutionDate(delayedJob);
       return dayjs(nextExecution).isSame(nextExpectedScheduledJobDate);
