@@ -84,27 +84,31 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
       await this.schedulerQueue.obliterate({ force: true });
       return;
     }
-    await this.deleteOldRepeatableJobs();
+    await this.removeDuplicatedDelayedJob();
     // Add the cron to the queue.
     await this.schedulerQueue.add(await this.payload());
   }
 
   /**
-   * Check if there is any old cron job  (i.e whenever there is a
-   * change in cron option, then a new job is created the old job
-   * will be still there in the queue) and delete it and add the
-   * new job to the queue.
-   * Note: If there is an old retrying job, it won't be deleted,
-   * as "getRepeatableJobs" will not fetch retrying jobs.
+   * Ensure there will be a maximum of one job with the same
+   * cron option for the same scheduler queue.
    */
-  private async deleteOldRepeatableJobs(): Promise<void> {
-    const getAllRepeatableJobs = await this.schedulerQueue.getRepeatableJobs();
+  private async removeDuplicatedDelayedJob(): Promise<void> {
     const cronRepeatOption = await this.queueCronConfiguration();
-    getAllRepeatableJobs.forEach((job) => {
-      if (job.cron !== cronRepeatOption.cron) {
-        this.schedulerQueue.removeRepeatableByKey(job.key);
-      }
+    const delayedJobs = await this.schedulerQueue.getDelayed();
+    // Find the first job with the same cron option.
+    // Please note that multiple jobs can have the same cron option,
+    // so we have to find the first one and delete the other instances.
+    const jobToKeep = delayedJobs.find((delayedJob) => {
+      const jobCronRepeatOptions = delayedJob.opts.repeat as CronRepeatOptions;
+      return jobCronRepeatOptions.cron === cronRepeatOption.cron;
     });
+    // Remove every other delayed job.
+    for (const delayedJob of delayedJobs) {
+      if (delayedJob !== jobToKeep) {
+        await delayedJob.remove();
+      }
+    }
   }
 
   @InjectLogger()
