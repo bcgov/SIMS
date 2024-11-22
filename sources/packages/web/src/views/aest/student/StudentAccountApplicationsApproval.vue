@@ -50,7 +50,7 @@
       ></confirm-modal>
       <confirm-modal
         title="Deny request for a student account"
-        text="Denying the request means that the student will not be able to access the system using a Basic BCeID."
+        text="Attention: Denied account requests are final and cannot be reactivated. Students will need to start over with the Basic BCeID account application process."
         ref="declineStudentAccountModal"
         okLabel="Deny request now"
         :disablePrimaryButton="notAllowed"
