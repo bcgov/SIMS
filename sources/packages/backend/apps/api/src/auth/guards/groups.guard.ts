@@ -54,5 +54,7 @@ export class GroupsGuard implements CanActivate {
         ),
       );
     }
+
+    return true;
   }
 }
