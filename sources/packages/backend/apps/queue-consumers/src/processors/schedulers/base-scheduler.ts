@@ -3,10 +3,9 @@ import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
 import { ConfigService } from "@sims/utilities/config";
 import { InjectLogger } from "@sims/utilities/logger";
-import { CronRepeatOptions, Job, Queue } from "bull";
+import { CronRepeatOptions, Queue } from "bull";
 import { v4 as uuid } from "uuid";
 import * as cronParser from "cron-parser";
-import * as dayjs from "dayjs";
 
 export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
   constructor(
@@ -109,12 +108,13 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
    */
   private async ensureNextDelayedJobCreation(): Promise<void> {
     const delayedJobs = await this.schedulerQueue.getDelayed();
-    const nextExpectedScheduledJobDate =
-      await this.getNexSchedulerExecutionDate();
+    const expectedJobMilliseconds =
+      await this.getNexSchedulerExecutionMilliseconds();
     // Check if there is a delayed job with the expected scheduled time.
     const expectedDelayedJob = delayedJobs.find((delayedJob) => {
-      const nextExecution = this.getDelayedJobExecutionDate(delayedJob);
-      return dayjs(nextExecution).isSame(nextExpectedScheduledJobDate);
+      const delayedJobMilliseconds =
+        delayedJob.opts.delay + delayedJob.timestamp;
+      return expectedJobMilliseconds === delayedJobMilliseconds;
     });
     // If the only delayed job is the expected one, no further verifications are needed.
     if (expectedDelayedJob && delayedJobs.length === 1) {
@@ -140,26 +140,16 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
   }
 
   /**
-   * Gets the next scheduled date for the given cron expression.
+   * Gets the next scheduled date milliseconds for the given cron expression.
    * @param cron cron expression string.
    * @returns the next date the scheduler will be executed.
    */
-  async getNexSchedulerExecutionDate(): Promise<Date> {
+  async getNexSchedulerExecutionMilliseconds(): Promise<number> {
     const repeatOptions = await this.queueCronConfiguration();
     const result = cronParser.parseExpression(repeatOptions.cron, {
       utc: true,
     });
-    return result.next().toDate();
-  }
-
-  /**
-   * Calculates the execution date for a delayed job based on its options.
-   * @param delayedJob job instance containing delay options.
-   * @returns calculated execution date for the delayed job.
-   */
-  getDelayedJobExecutionDate(delayedJob: Job): Date {
-    const totalMilliseconds = delayedJob.opts.delay + delayedJob.timestamp;
-    return new Date(totalMilliseconds);
+    return result.next().getTime();
   }
 
   @InjectLogger()
