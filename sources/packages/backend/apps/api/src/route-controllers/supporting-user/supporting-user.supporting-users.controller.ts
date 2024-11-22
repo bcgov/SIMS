@@ -45,6 +45,7 @@ import {
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { WorkflowClientService } from "@sims/services";
+import { RequiresUserAccount } from "apps/api/src/auth/decorators";
 
 @AllowAuthorizedParty(AuthorizedParties.supportingUsers)
 @Controller("supporting-user")
@@ -70,6 +71,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
    * Application.
    * @returns application details.
    */
+  @RequiresUserAccount(false)
   @Post(":supportingUserType/application")
   @HttpCode(HttpStatus.OK)
   @ApiUnprocessableEntityResponse({
@@ -130,6 +132,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
    * the supporting data (e.g. parent/partner).
    * @param payload data used for validation and to execute the update.
    */
+  @RequiresUserAccount(false)
   @Patch(":supportingUserType")
   @ApiUnprocessableEntityResponse({
     description:
