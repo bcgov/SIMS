@@ -121,6 +121,17 @@ export class CASSupplier extends RecordDataModel {
     type: "boolean",
   })
   isValid: boolean;
+
+  /**
+   * Error messages from the CAS integrations.
+   */
+  @Column({
+    name: "errors",
+    nullable: true,
+    array: true,
+    type: "varchar",
+  })
+  errors?: string[];
 }
 
 export type CASSupplierRecordStatus = "ACTIVE" | "INACTIVE";
