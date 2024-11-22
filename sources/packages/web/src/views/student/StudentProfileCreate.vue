@@ -1,5 +1,4 @@
 <template>
-  <!-- During account creation, there is no existing student profile and hence no student banners are required. -->
   <student-page-container>
     <template #header>
       <div class="text-center">

@@ -7,6 +7,7 @@
       <slot name="header"></slot>
     </template>
     <template #alerts>
+      <!-- Until the student account is created, the restriction and SIN banners are hidden. -->
       <restriction-banner v-if="!hideRestriction && hasStudentAccount" />
       <check-valid-s-i-n-banner v-if="hasStudentAccount" />
       <slot name="alerts"></slot>

@@ -45,7 +45,7 @@ import {
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { WorkflowClientService } from "@sims/services";
-import { RequiresUserAccount } from "apps/api/src/auth/decorators";
+import { RequiresUserAccount } from "../../auth/decorators";
 
 @AllowAuthorizedParty(AuthorizedParties.supportingUsers)
 @Controller("supporting-user")
