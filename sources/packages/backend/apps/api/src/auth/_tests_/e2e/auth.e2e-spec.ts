@@ -20,7 +20,11 @@ import { DiscoveryModule } from "@golevelup/nestjs-discovery";
 import { DataSource } from "typeorm";
 import { JwtService } from "@nestjs/jwt";
 import { INVALID_BETA_USER } from "../../../constants";
-import { BEARER_AUTH_TYPE, mockUserLoginInfo } from "../../../testHelpers";
+import {
+  BEARER_AUTH_TYPE,
+  mockUserLoginInfo,
+  resetMockUserLoginInfo,
+} from "../../../testHelpers";
 import * as dayjs from "dayjs";
 import { Student, User } from "@sims/sims-db";
 
@@ -82,6 +86,8 @@ describe("Authentication (e2e)", () => {
     jest
       .spyOn(configService, "allowBetaUsersOnly", "get")
       .mockReturnValue(false);
+    // Reset mock user login info.
+    await resetMockUserLoginInfo(moduleFixture);
   });
 
   it("Load publicKey from Keycloak", async () => {
@@ -260,8 +266,8 @@ describe("Authentication (e2e)", () => {
     it(
       "Should return a HttpStatus FORBIDDEN(403) when there is no user account associated to the user token " +
         "to a default route that requires a user account.",
-      () => {
-        mockUserLoginInfo(moduleFixture, {
+      async () => {
+        await mockUserLoginInfo(moduleFixture, {
           id: null,
           user: { id: null, isActive: null } as User,
         } as Student);
@@ -275,8 +281,8 @@ describe("Authentication (e2e)", () => {
     it(
       "Should return a HttpStatus OK(200) when there is no user account associated to the user token " +
         "to a route that does not requires a user account.",
-      () => {
-        mockUserLoginInfo(moduleFixture, {
+      async () => {
+        await mockUserLoginInfo(moduleFixture, {
           id: null,
           user: { id: null, isActive: null } as User,
         } as Student);

@@ -28,23 +28,21 @@ import {
 } from "@sims/sims-db";
 import { BC_TOTAL_GRANT_AWARD_CODE } from "@sims/services/constants";
 import { getDateOnlyFormat, getDateOnlyFullMonthFormat } from "@sims/utilities";
-import { TestingModule } from "@nestjs/testing";
 
 describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let sharedStudent: Student;
   let sharedMSFAANumber: MSFAANumber;
-  let appModule: TestingModule;
 
   beforeAll(async () => {
     const { nestApplication, module, dataSource } =
       await createTestingAppModule();
     app = nestApplication;
-    appModule = module;
     db = createE2EDataSources(dataSource);
     // Shared student to be used for tests that would not need further student customization.
     sharedStudent = await saveFakeStudent(db.dataSource);
+    await mockUserLoginInfo(module, sharedStudent);
     // Valid MSFAA Number that will be part of the expected returned values.
     sharedMSFAANumber = await db.msfaaNumber.save(
       createFakeMSFAANumber(
@@ -52,10 +50,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
         { msfaaState: MSFAAStates.Signed },
       ),
     );
-  });
-
-  beforeEach(async () => {
-    await mockUserLoginInfo(appModule, sharedStudent);
   });
 
   it("Should get the student assessment summary containing loan and all grants values from e-Cert effective amount for a part-time application with a single disbursement.", async () => {
