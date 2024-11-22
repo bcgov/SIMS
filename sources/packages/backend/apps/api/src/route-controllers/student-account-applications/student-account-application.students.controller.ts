@@ -68,6 +68,7 @@ export class StudentAccountApplicationStudentsController extends BaseController 
   })
   @Post()
   @RequiresUserAccount(false)
+  @RequiresStudentAccount(false)
   async create(
     @UserToken() userToken: IUserToken,
     @Body() payload: CreateStudentAccountApplicationAPIInDTO,
@@ -112,6 +113,7 @@ export class StudentAccountApplicationStudentsController extends BaseController 
    * to be assessed by the Ministry, otherwise, false.
    */
   @RequiresUserAccount(false)
+  @RequiresStudentAccount(false)
   @Get("has-pending-account-application")
   async hasPendingAccountApplication(
     @UserToken() studentUserToken: StudentUserToken,

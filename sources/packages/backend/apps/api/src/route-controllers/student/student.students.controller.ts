@@ -110,6 +110,7 @@ export class StudentStudentsController extends BaseController {
     description: "User is not allowed to create a student account.",
   })
   @RequiresUserAccount(false)
+  @RequiresStudentAccount(false)
   async create(
     @UserToken() studentUserToken: StudentUserToken,
     @Body() payload: CreateStudentAPIInDTO,

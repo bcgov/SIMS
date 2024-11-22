@@ -6,10 +6,7 @@ import {
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { StudentUserToken } from "../../userToken.interface";
-import {
-  REQUIRES_STUDENT_ACCOUNT_KEY,
-  RequiresUserAccount,
-} from "../../decorators";
+import { REQUIRES_STUDENT_ACCOUNT_KEY } from "../../decorators";
 import { ApiProcessError } from "../../../types";
 import { MISSING_STUDENT_ACCOUNT } from "../../../constants";
 
@@ -28,16 +25,6 @@ export class RequiresStudentAccountGuard implements CanActivate {
 
     // Checks if the decorator is present or it is false.
     if (!requiresStudentAccount) {
-      return true;
-    }
-
-    // Check if the route does not require a user account.
-    const requiresUserAccount = this.reflector.getAllAndOverride(
-      RequiresUserAccount,
-      [context.getHandler(), context.getClass()],
-    );
-    // If a route does not require a user account, no student account validation is required.
-    if (requiresUserAccount === false) {
       return true;
     }
 
