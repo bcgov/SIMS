@@ -86,6 +86,9 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
       await this.schedulerQueue.obliterate({ force: true });
       return;
     }
+    this.logger.log(
+      `Check if current job state is paused for queue ${this.schedulerQueue.name}.`,
+    );
     // Check if the job is paused to avoid creating new delayed jobs.
     const isPaused = await this.schedulerQueue.isPaused();
     if (isPaused) {
@@ -97,7 +100,18 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
     await this.queueService.acquireQueueLock(
       this.schedulerQueue.name as QueueNames,
       async () => {
-        await this.ensureNextDelayedJobCreation();
+        this.logger.log(
+          `Starting verification to ensure the next delayed job is created for queue ${this.schedulerQueue.name}.`,
+        );
+        try {
+          await this.ensureNextDelayedJobCreation();
+        } catch (error: unknown) {
+          this.logger.error(
+            `Error while ensuring next delayed job for queue ${this.schedulerQueue.name}.`,
+            error,
+          );
+          throw error;
+        }
       },
     );
   }
@@ -107,6 +121,9 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
    * next expected scheduled time based on the configured cron expression.
    */
   private async ensureNextDelayedJobCreation(): Promise<void> {
+    this.logger.log(
+      `Getting list of delayed jobs for queue ${this.schedulerQueue.name}.`,
+    );
     const delayedJobs = await this.schedulerQueue.getDelayed();
     const expectedJobMilliseconds =
       await this.getNexSchedulerExecutionMilliseconds();
@@ -123,6 +140,9 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
     // Remove any non expected delayed job.
     for (const delayedJob of delayedJobs) {
       if (!expectedDelayedJob || delayedJob !== expectedDelayedJob) {
+        this.logger.log(
+          `Removing job ${delayedJob.id} from queue ${this.schedulerQueue.name}.`,
+        );
         await delayedJob.remove();
       }
     }
@@ -134,9 +154,15 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
     // Creating a unique job ID ensures that the delayed jobs
     // will be created even if they were already promoted.
     const uniqueJobId = `${this.schedulerQueue.name}:${uuid()}`;
+    this.logger.log(
+      `Creating new delayed job using unique id ${uniqueJobId} for queue ${this.schedulerQueue.name}.`,
+    );
     await this.schedulerQueue.add(await this.payload(), {
       jobId: uniqueJobId,
     });
+    this.logger.log(
+      `New delayed job id ${uniqueJobId} was created for queue ${this.schedulerQueue.name}.`,
+    );
   }
 
   /**
