@@ -38,5 +38,5 @@ export async function resetMockUserLoginInfo(testingModule: TestingModule) {
     AuthModule,
     UserService,
   );
-  jest.spyOn(userService, "getUserLoginInfo").mockReset();
+  jest.spyOn(userService, "getUserLoginInfo").mockRestore();
 }
