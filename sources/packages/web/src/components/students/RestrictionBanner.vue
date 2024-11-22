@@ -16,11 +16,11 @@
     class="mb-2"
     v-if="hasRestrictionWarning"
     :type="BannerTypes.Warning"
-    header="Your account has a warning"
-    summary="You should resolve this as soon as possible to minimize impact to your funding. Please view the message and resolve the items to minimize disruption and impact."
+    header="Warning"
+    summary="Check your account activity page for important updates regarding your account."
     ><template #actions>
       <v-btn color="warning" @click="viewStudentAccountActivity">
-        View activity
+        View account activity
       </v-btn>
     </template></banner
   >
