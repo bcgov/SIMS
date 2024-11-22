@@ -18,7 +18,7 @@ export async function mockUserLoginInfo(
     AuthModule,
     UserService,
   );
-  userService.getUserLoginInfo = jest.fn().mockResolvedValue({
+  userService.getUserLoginInfo = jest.fn().mockResolvedValueOnce({
     id: student.user.id,
     isActive: true,
     studentId: student.id,

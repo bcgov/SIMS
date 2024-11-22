@@ -49,7 +49,7 @@ export class GroupsGuard implements CanActivate {
     if (!hasGroupAccess) {
       throw new ForbiddenException(
         new ApiProcessError(
-          "User does not belong to the required group.",
+          "Required group permission is missing for the user.",
           MISSING_GROUP_ACCESS,
         ),
       );
