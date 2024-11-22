@@ -1,4 +1,3 @@
-import { AxiosError } from "axios";
 import {
   BCeIDDetailsAPIOutDTO,
   BCeIDAccountsAPIOutDTO,
@@ -6,7 +5,8 @@ import {
   InstitutionUserPersistAPIInDTO,
 } from "@/services/http/dto";
 import HttpBaseClient from "./common/HttpBaseClient";
-import { StatusCodes } from "http-status-codes";
+import { MISSING_GROUP_ACCESS, MISSING_USER_ACCOUNT } from "@/constants";
+import { AxiosError } from "axios";
 
 export class UserApi extends HttpBaseClient {
   async bceidAccount(): Promise<BCeIDDetailsAPIOutDTO> {
@@ -43,6 +43,7 @@ export class UserApi extends HttpBaseClient {
    */
   async syncAESTUser(authHeader?: any): Promise<boolean> {
     try {
+      debugger;
       await this.apiClient.put(
         this.addClientRoot("user"),
         // The data to perform the create/update
@@ -52,8 +53,11 @@ export class UserApi extends HttpBaseClient {
       );
       return true;
     } catch (error: unknown) {
-      const axiosError = error as AxiosError;
-      if (axiosError.response?.status === StatusCodes.FORBIDDEN) {
+      if (
+        error instanceof AxiosError &&
+        (error.response?.data.errorType === MISSING_USER_ACCOUNT ||
+          error.response?.data.errorType === MISSING_GROUP_ACCESS)
+      ) {
         // If the user do not have a proper authorization
         // an HTTP error will be raised.
         return false;

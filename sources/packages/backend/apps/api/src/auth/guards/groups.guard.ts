@@ -1,7 +1,14 @@
-import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+} from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { GROUPS_KEY } from "../decorators";
 import { AuthorizedParties, UserGroups, IUserToken } from "..";
+import { MISSING_GROUP_ACCESS } from "../../constants";
+import { ApiProcessError } from "../../types";
 
 /**
  * Allow the authorization based on groups making use
@@ -34,8 +41,18 @@ export class GroupsGuard implements CanActivate {
     // Check if the user has any of the groups required to have access to the resource.
     // UserGroups 'aest/user/x' and 'aest/user' are valid, as they start with 'aest/user'
     // we are here looking for matches, not the exact string.
-    return requiredGroups.some((group: string) =>
+    const hasGroupAccess = requiredGroups.some((group: string) =>
       userToken.groups?.some((userGroup) => userGroup.startsWith(group)),
     );
+
+    // Throw custom error to be handled by the consumer.
+    if (!hasGroupAccess) {
+      throw new ForbiddenException(
+        new ApiProcessError(
+          "User does not belong to the required group.",
+          MISSING_GROUP_ACCESS,
+        ),
+      );
+    }
   }
 }

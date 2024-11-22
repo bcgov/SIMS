@@ -2,11 +2,13 @@ import {
   Injectable,
   CanActivate,
   ExecutionContext,
-  UnauthorizedException,
+  ForbiddenException,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { IS_PUBLIC_KEY, RequiresUserAccount } from "../decorators";
 import { IUserToken } from "apps/api/src/auth/userToken.interface";
+import { MISSING_USER_ACCOUNT } from "../../constants";
+import { ApiProcessError } from "../../types";
 
 @Injectable()
 export class RequiresUserAccountGuard implements CanActivate {
@@ -36,8 +38,11 @@ export class RequiresUserAccountGuard implements CanActivate {
     const userToken = user as IUserToken;
 
     if (!userToken?.userId) {
-      throw new UnauthorizedException(
-        "No user account has been associated to the user token.",
+      throw new ForbiddenException(
+        new ApiProcessError(
+          "No user account has been associated to the user token.",
+          MISSING_USER_ACCOUNT,
+        ),
       );
     }
 
