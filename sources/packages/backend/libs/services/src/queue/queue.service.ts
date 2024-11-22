@@ -3,13 +3,14 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { QueueConfiguration } from "@sims/sims-db";
 import { QueueNames } from "@sims/utilities";
 import Bull, { AdvancedSettings } from "bull";
-import { Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import { QueueModel } from "./model/queue.model";
 
 @Injectable()
 export class QueueService {
   private queueConfiguration: QueueConfiguration[] = undefined;
   constructor(
+    private readonly dataSource: DataSource,
     @InjectRepository(QueueConfiguration)
     private queueConfigurationRepo: Repository<QueueConfiguration>,
   ) {}
@@ -124,5 +125,28 @@ export class QueueService {
   ): Promise<number | undefined> {
     const queueConfig = await this.queueConfigurationDetails(queueName);
     return queueConfig.queueConfiguration.amountHoursAssessmentRetry;
+  }
+
+  /**
+   * Acquires a database lock for the specific queue configuration allowing
+   * a callback to be executed with a guarantee that no other code applying
+   * the the lock for the queue will be executed concurrently.
+   * @param queueName queue name to have the lock acquired.
+   * @param callback method to be executed inside the lock.
+   */
+  async acquireQueueLock(
+    queueName: QueueNames,
+    callback: () => Promise<void>,
+  ): Promise<void> {
+    await this.dataSource.transaction(async (entityManager) => {
+      await entityManager.getRepository(QueueConfiguration).findOne({
+        select: {
+          id: true,
+        },
+        where: { queueName },
+        lock: { mode: "pessimistic_write" },
+      });
+      await callback();
+    });
   }
 }
