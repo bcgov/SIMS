@@ -32,6 +32,34 @@ import { DatabaseModule } from "@sims/sims-db";
 export class QueueModule {}
 
 /**
+ * Shared client connection to redis cluster.
+ * @see https://github.com/OptimalBits/bull/blob/develop/PATTERNS.md#reusing-redis-connections
+ */
+let sharedClientRedisCluster: Cluster;
+/**
+ * Shared subscriber connection to redis cluster.
+ * @see https://github.com/OptimalBits/bull/blob/develop/PATTERNS.md#reusing-redis-connections
+ */
+let sharedSubscriberClientRedisCluster: Cluster;
+
+/**
+ * Creates a Redis cluster connection.
+ * @param options the redis connection options.
+ * @returns a new instance of Redis cluster connection.
+ */
+function createdRedisClusterConnection(options: RedisOptions): Cluster {
+  return new Redis.Cluster(
+    [
+      {
+        host: options.host,
+        port: options.port,
+      },
+    ],
+    { redisOptions: { password: options.password } },
+  );
+}
+
+/**
  * Connection factory which returns connection properties
  * to connect redis.
  * Depending upon the environment variable it uses standalone
@@ -54,16 +82,29 @@ async function getConnectionFactory(
     };
   }
   return {
-    createClient: (): Redis | Cluster => {
-      return new Redis.Cluster(
-        [
-          {
-            host: redisConnectionOptions.host,
-            port: redisConnectionOptions.port,
-          },
-        ],
-        { redisOptions: { password: redisConnectionOptions.password } },
-      );
+    createClient: (
+      type: "client" | "subscriber" | "bclient",
+    ): Redis | Cluster => {
+      switch (type) {
+        case "client":
+          if (!sharedClientRedisCluster) {
+            sharedClientRedisCluster = createdRedisClusterConnection(
+              redisConnectionOptions,
+            );
+          }
+          return sharedClientRedisCluster;
+        case "subscriber":
+          if (!sharedSubscriberClientRedisCluster) {
+            sharedSubscriberClientRedisCluster = createdRedisClusterConnection(
+              redisConnectionOptions,
+            );
+          }
+          return sharedSubscriberClientRedisCluster;
+        case "bclient":
+          // bclient types should always create a new connection.
+          // @see https://github.com/OptimalBits/bull/blob/develop/PATTERNS.md#reusing-redis-connections
+          return createdRedisClusterConnection(redisConnectionOptions);
+      }
     },
   };
 }
