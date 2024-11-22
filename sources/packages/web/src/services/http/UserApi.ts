@@ -5,7 +5,11 @@ import {
   InstitutionUserPersistAPIInDTO,
 } from "@/services/http/dto";
 import HttpBaseClient from "./common/HttpBaseClient";
-import { MISSING_GROUP_ACCESS, MISSING_USER_ACCOUNT } from "@/constants";
+import {
+  MISSING_GROUP_ACCESS,
+  MISSING_USER_ACCOUNT,
+  MISSING_USER_INFO,
+} from "@/constants";
 import { AxiosError } from "axios";
 
 export class UserApi extends HttpBaseClient {
@@ -55,7 +59,8 @@ export class UserApi extends HttpBaseClient {
       if (
         error instanceof AxiosError &&
         (error.response?.data.errorType === MISSING_USER_ACCOUNT ||
-          error.response?.data.errorType === MISSING_GROUP_ACCESS)
+          error.response?.data.errorType === MISSING_GROUP_ACCESS ||
+          error.response?.data.errorType === MISSING_USER_INFO)
       ) {
         // If the user do not have a proper authorization
         // an HTTP error will be raised.

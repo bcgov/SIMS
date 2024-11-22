@@ -27,6 +27,7 @@ export async function mockUserLoginInfo(
     });
   });
 }
+
 /**
  * Resets the user login info mock.
  * This could used to reset the mock after each test.

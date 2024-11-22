@@ -10,6 +10,10 @@ import { IUserToken } from "apps/api/src/auth/userToken.interface";
 import { MISSING_USER_ACCOUNT } from "../../constants";
 import { ApiProcessError } from "../../types";
 
+/**
+ * Validates that a user account must be already created in order to access a route.
+ * Public routes and routes that do not require a user account are skipped.
+ */
 @Injectable()
 export class RequiresUserAccountGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}

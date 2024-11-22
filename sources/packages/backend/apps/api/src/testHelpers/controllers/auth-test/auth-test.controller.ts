@@ -110,7 +110,7 @@ export class AuthTestController {
   }
 
   /**
-   * Test route which requires a user to be present as default authorization.
+   * Test route which do not require a user account.
    */
   @RequiresUserAccount(false)
   @Get("/user-not-required-route")

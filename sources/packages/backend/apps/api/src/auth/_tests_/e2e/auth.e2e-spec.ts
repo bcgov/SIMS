@@ -19,7 +19,7 @@ import { AuthTestController } from "../../../testHelpers/controllers/auth-test/a
 import { DiscoveryModule } from "@golevelup/nestjs-discovery";
 import { DataSource } from "typeorm";
 import { JwtService } from "@nestjs/jwt";
-import { INVALID_BETA_USER } from "../../../constants";
+import { INVALID_BETA_USER, MISSING_USER_ACCOUNT } from "../../../constants";
 import {
   BEARER_AUTH_TYPE,
   mockUserLoginInfo,
@@ -274,7 +274,11 @@ describe("Authentication (e2e)", () => {
         return request(app.getHttpServer())
           .get("/auth-test/default-requires-user-route")
           .auth(studentAccessToken, { type: "bearer" })
-          .expect(HttpStatus.FORBIDDEN);
+          .expect(HttpStatus.FORBIDDEN)
+          .expect({
+            message: "No user account has been associated to the user token.",
+            errorType: MISSING_USER_ACCOUNT,
+          });
       },
     );
 
