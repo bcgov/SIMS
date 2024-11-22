@@ -5,10 +5,7 @@ import {
   UnauthorizedException,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import {
-  IS_PUBLIC_KEY,
-  RequiresUserAccount,
-} from "apps/api/src/auth/decorators";
+import { IS_PUBLIC_KEY, RequiresUserAccount } from "../decorators";
 import { IUserToken } from "apps/api/src/auth/userToken.interface";
 
 @Injectable()
