@@ -3,4 +3,4 @@ ALTER TABLE
 ADD
     COLUMN errors VARCHAR(300) [];
 
-COMMENT ON COLUMN sims.cas_suppliers.errors IS 'Errors received from CAS.';
+COMMENT ON COLUMN sims.cas_suppliers.errors IS 'Errors while executing CAS verifications.';
