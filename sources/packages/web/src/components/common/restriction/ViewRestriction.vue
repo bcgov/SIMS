@@ -81,7 +81,7 @@
               secondaryLabel="Cancel"
               @primaryClick="allowUserToEdit ? submit() : cancel()"
               @secondaryClick="cancel"
-              :disablePrimaryButton="notAllowed"
+              :disablePrimaryButton="allowUserToEdit && notAllowed"
               :showSecondaryButton="allowUserToEdit"
             />
           </template>
