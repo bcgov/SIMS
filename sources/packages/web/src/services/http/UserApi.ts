@@ -43,7 +43,6 @@ export class UserApi extends HttpBaseClient {
    */
   async syncAESTUser(authHeader?: any): Promise<boolean> {
     try {
-      debugger;
       await this.apiClient.put(
         this.addClientRoot("user"),
         // The data to perform the create/update
