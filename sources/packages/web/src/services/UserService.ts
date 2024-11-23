@@ -37,7 +37,7 @@ export class UserService {
    * @returns true if the user was successfully created/updated or
    * false if the user do not have permission to access the system.
    */
-  async syncAESTUser(authHeader?: any): Promise<boolean> {
-    return ApiClient.User.syncAESTUser(authHeader);
+  async syncAESTUser(): Promise<boolean> {
+    return ApiClient.User.syncAESTUser();
   }
 }

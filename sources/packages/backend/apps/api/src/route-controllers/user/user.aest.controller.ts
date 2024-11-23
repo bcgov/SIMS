@@ -54,9 +54,9 @@ export class UserAESTController extends BaseController {
     // If the user token is missing any of the primary user information to create a user
     // then throw an error.
     if (
-      !!userToken.userName?.trim() ||
-      !!userToken.email?.trim() ||
-      !!userToken.lastName?.trim()
+      !userToken.userName?.trim() ||
+      !userToken.email?.trim() ||
+      !userToken.lastName?.trim()
     ) {
       throw new BadRequestException(
         new ApiProcessError(
