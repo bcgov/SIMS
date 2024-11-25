@@ -3,13 +3,14 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { QueueConfiguration } from "@sims/sims-db";
 import { QueueNames } from "@sims/utilities";
 import Bull, { AdvancedSettings } from "bull";
-import { Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import { QueueModel } from "./model/queue.model";
 
 @Injectable()
 export class QueueService {
   private queueConfiguration: QueueConfiguration[] = undefined;
   constructor(
+    private readonly dataSource: DataSource,
     @InjectRepository(QueueConfiguration)
     private queueConfigurationRepo: Repository<QueueConfiguration>,
   ) {}
@@ -124,5 +125,26 @@ export class QueueService {
   ): Promise<number | undefined> {
     const queueConfig = await this.queueConfigurationDetails(queueName);
     return queueConfig.queueConfiguration.amountHoursAssessmentRetry;
+  }
+
+  /**
+   * Acquires a database lock that can be used for any task that requires
+   * a single process to be executed exclusively at a time, even in different
+   * queue-consumers instances.
+   * @param callback method to be executed inside the lock.
+   */
+  async acquireGlobalQueueLock(callback: () => Promise<void>): Promise<void> {
+    await this.dataSource.transaction(async (entityManager) => {
+      // Selects the first record to be used as a lock.
+      await entityManager.getRepository(QueueConfiguration).find({
+        select: {
+          id: true,
+        },
+        lock: { mode: "pessimistic_write" },
+        order: { id: "ASC" },
+        take: 1,
+      });
+      await callback();
+    });
   }
 }
