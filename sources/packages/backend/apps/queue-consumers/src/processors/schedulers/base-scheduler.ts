@@ -86,34 +86,27 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
       await this.schedulerQueue.obliterate({ force: true });
       return;
     }
-    this.logger.log(
-      `Check if current job state is paused for queue ${this.schedulerQueue.name}.`,
-    );
-    // Check if the job is paused to avoid creating new delayed jobs.
-    const isPaused = await this.schedulerQueue.isPaused();
-    if (isPaused) {
-      return;
-    }
-    // Acquire a lock based on the queue name to prevent multiple
-    // queue-consumers instances to be initialized at the same time
-    // and execute the checks concurrently.
-    await this.queueService.acquireQueueLock(
-      this.schedulerQueue.name as QueueNames,
-      async () => {
-        this.logger.log(
-          `Starting verification to ensure the next delayed job is created for queue ${this.schedulerQueue.name}.`,
-        );
-        try {
-          await this.ensureNextDelayedJobCreation();
-        } catch (error: unknown) {
-          this.logger.error(
-            `Error while ensuring next delayed job for queue ${this.schedulerQueue.name}.`,
-            error,
-          );
-          throw error;
+    // Acquires a lock to avoid concurrent issues while checking the queues on Redis.
+    // This prevents concurrency between queue-consumers instances and also between the
+    // schedulers bootstrap executions (when all bootstrap methods were executed at the same time
+    // it caused issues with the ioredis connection).
+    await this.queueService.acquireGlobalQueueLock(async () => {
+      this.logger.log(
+        `Starting verification to ensure the next delayed job is created for queue ${this.schedulerQueue.name}.`,
+      );
+      try {
+        this.logger.log(`Check if current job state is paused.`);
+        // Check if the job is paused to avoid creating new delayed jobs.
+        const isPaused = await this.schedulerQueue.isPaused();
+        if (isPaused) {
+          return;
         }
-      },
-    );
+        await this.ensureNextDelayedJobCreation();
+      } catch (error: unknown) {
+        this.logger.error(`Error while ensuring next delayed job.`, error);
+        throw error;
+      }
+    });
   }
 
   /**
@@ -121,9 +114,7 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
    * next expected scheduled time based on the configured cron expression.
    */
   private async ensureNextDelayedJobCreation(): Promise<void> {
-    this.logger.log(
-      `Getting list of delayed jobs for queue ${this.schedulerQueue.name}.`,
-    );
+    this.logger.log(`Getting list of delayed jobs.`);
     const delayedJobs = await this.schedulerQueue.getDelayed();
     const expectedJobMilliseconds =
       await this.getNexSchedulerExecutionMilliseconds();
@@ -135,14 +126,13 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
     });
     // If the only delayed job is the expected one, no further verifications are needed.
     if (expectedDelayedJob && delayedJobs.length === 1) {
+      this.logger.log(`Delayed job was already created as expected.`);
       return;
     }
     // Remove any non expected delayed job.
     for (const delayedJob of delayedJobs) {
       if (!expectedDelayedJob || delayedJob !== expectedDelayedJob) {
-        this.logger.log(
-          `Removing job ${delayedJob.id} from queue ${this.schedulerQueue.name}.`,
-        );
+        this.logger.log(`Removing job ${delayedJob.id}.`);
         await delayedJob.remove();
       }
     }
@@ -154,15 +144,11 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
     // Creating a unique job ID ensures that the delayed jobs
     // will be created even if they were already promoted.
     const uniqueJobId = `${this.schedulerQueue.name}:${uuid()}`;
-    this.logger.log(
-      `Creating new delayed job using unique id ${uniqueJobId} for queue ${this.schedulerQueue.name}.`,
-    );
+    this.logger.log(`Creating new delayed job using unique id ${uniqueJobId}.`);
     await this.schedulerQueue.add(await this.payload(), {
       jobId: uniqueJobId,
     });
-    this.logger.log(
-      `New delayed job id ${uniqueJobId} was created for queue ${this.schedulerQueue.name}.`,
-    );
+    this.logger.log(`New delayed job id ${uniqueJobId} was created.`);
   }
 
   /**
