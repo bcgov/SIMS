@@ -27,6 +27,7 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
   RequiresStudentAccount,
+  RequiresUserAccount,
   UserToken,
 } from "../../auth/decorators";
 import {
@@ -108,6 +109,7 @@ export class StudentStudentsController extends BaseController {
   @ApiForbiddenResponse({
     description: "User is not allowed to create a student account.",
   })
+  @RequiresUserAccount(false)
   @RequiresStudentAccount(false)
   async create(
     @UserToken() studentUserToken: StudentUserToken,

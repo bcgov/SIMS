@@ -19,9 +19,14 @@ import { AuthTestController } from "../../../testHelpers/controllers/auth-test/a
 import { DiscoveryModule } from "@golevelup/nestjs-discovery";
 import { DataSource } from "typeorm";
 import { JwtService } from "@nestjs/jwt";
-import { INVALID_BETA_USER } from "../../../constants";
-import { BEARER_AUTH_TYPE } from "../../../testHelpers";
+import { INVALID_BETA_USER, MISSING_USER_ACCOUNT } from "../../../constants";
+import {
+  BEARER_AUTH_TYPE,
+  mockUserLoginInfo,
+  resetMockUserLoginInfo,
+} from "../../../testHelpers";
 import * as dayjs from "dayjs";
+import { Student, User } from "@sims/sims-db";
 
 describe("Authentication (e2e)", () => {
   // Nest application to be shared for all e2e tests
@@ -38,6 +43,7 @@ describe("Authentication (e2e)", () => {
   let configService: ConfigService;
   let db: E2EDataSources;
   let studentDecodedToken: any;
+  let moduleFixture: TestingModule;
 
   beforeAll(async () => {
     await KeycloakConfig.load();
@@ -57,7 +63,7 @@ describe("Authentication (e2e)", () => {
     );
     aestAccessToken = aestToken.access_token;
 
-    const moduleFixture: TestingModule = await Test.createTestingModule({
+    moduleFixture = await Test.createTestingModule({
       imports: [AppModule, createZeebeModuleMock(), DiscoveryModule],
       // AuthTestController is used only for e2e tests and could be
       // changed as needed to implement more test scenarios.
@@ -80,6 +86,8 @@ describe("Authentication (e2e)", () => {
     jest
       .spyOn(configService, "allowBetaUsersOnly", "get")
       .mockReturnValue(false);
+    // Reset mock user login info.
+    await resetMockUserLoginInfo(moduleFixture);
   });
 
   it("Load publicKey from Keycloak", async () => {
@@ -254,6 +262,40 @@ describe("Authentication (e2e)", () => {
           expect(resp.body.email).toBeTruthy();
         });
     });
+
+    it(
+      "Should return a HttpStatus FORBIDDEN(403) when there is no user account associated to the user token " +
+        "to a default route that requires a user account.",
+      async () => {
+        await mockUserLoginInfo(moduleFixture, {
+          id: null,
+          user: { id: null, isActive: null } as User,
+        } as Student);
+        return request(app.getHttpServer())
+          .get("/auth-test/default-requires-user-route")
+          .auth(studentAccessToken, { type: "bearer" })
+          .expect(HttpStatus.FORBIDDEN)
+          .expect({
+            message: "No user account has been associated to the user token.",
+            errorType: MISSING_USER_ACCOUNT,
+          });
+      },
+    );
+
+    it(
+      "Should return a HttpStatus OK(200) when there is no user account associated to the user token " +
+        "to a route that does not requires a user account.",
+      async () => {
+        await mockUserLoginInfo(moduleFixture, {
+          id: null,
+          user: { id: null, isActive: null } as User,
+        } as Student);
+        return request(app.getHttpServer())
+          .get("/auth-test/user-not-required-route")
+          .auth(studentAccessToken, { type: "bearer" })
+          .expect(HttpStatus.OK);
+      },
+    );
   });
 
   afterAll(async () => {

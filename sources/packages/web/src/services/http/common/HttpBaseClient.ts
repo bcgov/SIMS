@@ -134,6 +134,21 @@ export default abstract class HttpBaseClient {
     }
   }
 
+  /**
+   * Executes a HTTP request using a PUT verb including the authentication token.
+   * @param url API endpoint URI.
+   * @param payload data to be sent.
+   * @param suppressErrorHandler optionally skip the global error handling.
+   */
+  protected async putCall<T>(url: string, payload: T): Promise<void> {
+    try {
+      await this.apiClient.put(url, payload, this.addAuthHeader());
+    } catch (error: unknown) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
   protected handleCustomError(error: any) {
     if (error.response) {
       this.handleRequestError(error.response.data?.message);

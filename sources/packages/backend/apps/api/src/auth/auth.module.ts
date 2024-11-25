@@ -24,6 +24,7 @@ import {
   RequiresStudentAccountGuard,
   InstitutionBCPublicGuard,
   InstitutionStudentDataAccessGuard,
+  RequiresUserAccountGuard,
 } from "./guards";
 import { RolesGuard } from "./guards/roles.guard";
 import { ConfigModule } from "@sims/utilities/config";
@@ -98,6 +99,10 @@ const jwtModule = JwtModule.register({
     {
       provide: APP_GUARD,
       useClass: InstitutionStudentDataAccessGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RequiresUserAccountGuard,
     },
   ],
   exports: [jwtModule, KeycloakService],

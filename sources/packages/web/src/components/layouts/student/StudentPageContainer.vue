@@ -7,8 +7,9 @@
       <slot name="header"></slot>
     </template>
     <template #alerts>
-      <restriction-banner v-if="!hideRestriction" />
-      <check-valid-s-i-n-banner />
+      <!-- Until the student account is created, the restriction and SIN banners are hidden. -->
+      <restriction-banner v-if="!hideRestriction && hasStudentAccount" />
+      <check-valid-s-i-n-banner v-if="hasStudentAccount" />
       <slot name="alerts"></slot>
     </template>
     <slot></slot>
@@ -19,6 +20,7 @@ import RestrictionBanner from "@/components/students/RestrictionBanner.vue";
 import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 import { LayoutTemplates } from "@/types";
 import { PropType, defineComponent } from "vue";
+import { useStudentStore } from "@/composables";
 
 export default defineComponent({
   components: { RestrictionBanner, CheckValidSINBanner },
@@ -38,6 +40,10 @@ export default defineComponent({
       required: false,
       default: false,
     },
+  },
+  setup() {
+    const { hasStudentAccount } = useStudentStore();
+    return { hasStudentAccount };
   },
 });
 </script>

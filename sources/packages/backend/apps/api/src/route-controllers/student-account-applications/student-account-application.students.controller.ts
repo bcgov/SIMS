@@ -17,6 +17,7 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
   RequiresStudentAccount,
+  RequiresUserAccount,
   UserToken,
 } from "../../auth/decorators";
 import BaseController from "../BaseController";
@@ -66,6 +67,7 @@ export class StudentAccountApplicationStudentsController extends BaseController 
       "There is already a student account application in progress or the user is already present.",
   })
   @Post()
+  @RequiresUserAccount(false)
   @RequiresStudentAccount(false)
   async create(
     @UserToken() userToken: IUserToken,
@@ -110,6 +112,7 @@ export class StudentAccountApplicationStudentsController extends BaseController 
    * @returns true if there is a pending student account application
    * to be assessed by the Ministry, otherwise, false.
    */
+  @RequiresUserAccount(false)
   @RequiresStudentAccount(false)
   @Get("has-pending-account-application")
   async hasPendingAccountApplication(

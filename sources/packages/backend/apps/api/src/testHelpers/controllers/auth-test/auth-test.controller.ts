@@ -6,6 +6,7 @@ import {
   Roles,
   Groups,
   RequiresStudentAccount,
+  RequiresUserAccount,
 } from "../../../auth/decorators";
 import { Role } from "../../../auth/roles.enum";
 import { UserGroups } from "../../../auth/user-groups.enum";
@@ -98,5 +99,22 @@ export class AuthTestController {
   authenticatedStudent(): void {
     // Intentionally blank. The goal is to test the
     // decorator and the HTTP response only.
+  }
+
+  /**
+   * Test route which requires a user to be present as default authorization.
+   */
+  @Get("/default-requires-user-route")
+  defaultRequiresUser(): void {
+    return;
+  }
+
+  /**
+   * Test route which do not require a user account.
+   */
+  @RequiresUserAccount(false)
+  @Get("/user-not-required-route")
+  userNotRequired(): void {
+    return;
   }
 }

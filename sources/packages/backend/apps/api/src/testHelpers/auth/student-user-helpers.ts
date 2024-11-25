@@ -12,16 +12,32 @@ import { UserService } from "../../services";
 export async function mockUserLoginInfo(
   testingModule: TestingModule,
   student: Student,
-) {
+): Promise<jest.SpyInstance> {
   const userService = await getProviderInstanceForModule(
     testingModule,
     AuthModule,
     UserService,
   );
-  userService.getUserLoginInfo = jest.fn().mockResolvedValue({
-    id: student.user.id,
-    isActive: true,
-    studentId: student.id,
-    identityProviderType: IdentityProviders.BCSC,
+  return jest.spyOn(userService, "getUserLoginInfo").mockImplementation(() => {
+    return Promise.resolve({
+      id: student.user.id,
+      isActive: true,
+      studentId: student.id,
+      identityProviderType: IdentityProviders.BCSC,
+    });
   });
+}
+
+/**
+ * Resets the user login info mock.
+ * This could used to reset the mock after each test.
+ * @param testingModule testing module.
+ */
+export async function resetMockUserLoginInfo(testingModule: TestingModule) {
+  const userService = await getProviderInstanceForModule(
+    testingModule,
+    AuthModule,
+    UserService,
+  );
+  jest.spyOn(userService, "getUserLoginInfo").mockRestore();
 }

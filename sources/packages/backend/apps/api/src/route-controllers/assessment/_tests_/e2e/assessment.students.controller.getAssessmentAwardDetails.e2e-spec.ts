@@ -42,7 +42,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
     db = createE2EDataSources(dataSource);
     // Shared student to be used for tests that would not need further student customization.
     sharedStudent = await saveFakeStudent(db.dataSource);
-    mockUserLoginInfo(module, sharedStudent);
+    await mockUserLoginInfo(module, sharedStudent);
     // Valid MSFAA Number that will be part of the expected returned values.
     sharedMSFAANumber = await db.msfaaNumber.save(
       createFakeMSFAANumber(
