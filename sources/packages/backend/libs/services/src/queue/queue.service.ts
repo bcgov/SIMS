@@ -128,23 +128,21 @@ export class QueueService {
   }
 
   /**
-   * Acquires a database lock for the specific queue configuration allowing
-   * a callback to be executed with a guarantee that no other code applying
-   * the the lock for the queue will be executed concurrently.
-   * @param queueName queue name to have the lock acquired.
+   * Acquires a database lock that can be used for any task that requires
+   * a single process to be executed exclusively at a time, even in different
+   * queue-consumers instances.
    * @param callback method to be executed inside the lock.
    */
-  async acquireQueueLock(
-    queueName: QueueNames,
-    callback: () => Promise<void>,
-  ): Promise<void> {
+  async acquireGlobalQueueLock(callback: () => Promise<void>): Promise<void> {
     await this.dataSource.transaction(async (entityManager) => {
-      await entityManager.getRepository(QueueConfiguration).findOne({
+      // Selects the first record to be used as a lock.
+      await entityManager.getRepository(QueueConfiguration).find({
         select: {
           id: true,
         },
-        where: { queueName },
         lock: { mode: "pessimistic_write" },
+        order: { id: "ASC" },
+        take: 1,
       });
       await callback();
     });
