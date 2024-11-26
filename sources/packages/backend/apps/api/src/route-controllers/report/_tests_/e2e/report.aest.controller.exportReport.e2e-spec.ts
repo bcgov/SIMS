@@ -1285,7 +1285,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
     student1.sinValidation = sinValidation1;
     await db.student.save(student1);
     await db.sinValidation.save(sinValidation1);
-    await saveFakeCASSupplier(
+    const casSupplier1 = await saveFakeCASSupplier(
       db,
       {
         student: student1,
@@ -1294,6 +1294,8 @@ describe("ReportAestController(e2e)-exportReport", () => {
         isValid: false,
       },
     );
+    student1.casSupplier = casSupplier1;
+    await db.student.save(student1);
 
     const application2 = await saveFakeApplicationDisbursements(
       appDataSource,
@@ -1344,7 +1346,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
     student2.sinValidation = sinValidation2;
     await db.student.save(student2);
     await db.sinValidation.save(sinValidation2);
-    await saveFakeCASSupplier(
+    const casSupplier2 = await saveFakeCASSupplier(
       db,
       {
         student: student2,
@@ -1353,6 +1355,8 @@ describe("ReportAestController(e2e)-exportReport", () => {
         isValid: false,
       },
     );
+    student2.casSupplier = casSupplier2;
+    await db.student.save(student2);
 
     const payload = {
       reportName: "Disbursements_Without_Valid_Supplier_Report",

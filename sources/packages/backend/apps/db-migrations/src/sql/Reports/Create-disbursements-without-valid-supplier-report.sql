@@ -3,16 +3,7 @@ INSERT INTO
 VALUES
   (
     'Disbursements_Without_Valid_Supplier_Report',
-    'WITH greatest_cas_suppliers AS (
-	    SELECT
-	        student_id,
-	        MAX(id) AS max_id
-	    FROM
-	        sims.cas_suppliers
-	    GROUP BY
-	        student_id
-	),
-	disbursement_sums AS (
+    'WITH disbursement_sums AS (
 	    SELECT
 	        students.id AS student_id,
 	        SUM(CASE WHEN dv.value_code = ''BCAG'' THEN dv.effective_amount ELSE 0 END) AS bcag_effective_amount,
@@ -34,16 +25,11 @@ VALUES
           AND :endDate
 	    JOIN
 	        sims.cas_suppliers AS cas_suppliers
-	        ON students.id = cas_suppliers.student_id
-	    JOIN
-	        greatest_cas_suppliers
-	        ON greatest_cas_suppliers.student_id = cas_suppliers.student_id
-	        AND greatest_cas_suppliers.max_id = cas_suppliers.id
+	        ON students.cas_supplier_id = cas_suppliers.id
+          AND cas_suppliers.is_valid = false
 	    LEFT JOIN
 	        sims.disbursement_values AS dv
 	        ON dv.disbursement_schedule_id = disbursement_schedules.id
-	    WHERE
-	        cas_suppliers.is_valid = false
 	    GROUP BY
 	        students.id
 	)
