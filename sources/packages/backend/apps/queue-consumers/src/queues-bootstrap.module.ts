@@ -1,57 +1,83 @@
-import { Global, Module, OnModuleInit } from "@nestjs/common";
-import { getQueueToken } from "@nestjs/bull";
-import { Job, Queue } from "bull";
+import { Global, LoggerService, Module, OnModuleInit } from "@nestjs/common";
 import { ModuleRef } from "@nestjs/core";
-import { QueueService } from "@sims/services/queue";
+import { QueueService } from "@sims/services/queue/queue.service";
+import { InjectLogger } from "@sims/utilities/logger";
+import { getQueueToken } from "@nestjs/bull";
+import { Queue } from "bull";
+import { Counter } from "prom-client";
+import { register, collectDefaultMetrics } from "prom-client";
+
+/**
+ * Queues metrics events.
+ */
+enum QueuesMetricsEvents {
+  Error = "error",
+  Waiting = "waiting",
+  Active = "active",
+  Stalled = "stalled",
+  Completed = "completed",
+  Progress = "progress",
+  Failed = "failed",
+  Delayed = "delayed",
+  Paused = "paused",
+  Removed = "removed",
+  Resumed = "resumed",
+  Drained = "drained",
+}
+
+const DEFAULT_APP_LABEL = "queue-consumers";
 
 @Global()
 @Module({})
-export class QueuesBootstrapModule implements OnModuleInit {
+export class QueuesMetricsModule implements OnModuleInit {
+  /**
+   * Queue events counter.
+   */
+  private readonly eventCounter = new Counter({
+    name: "queue_event_total_count",
+    help: "Total number of the events for a queue.",
+    labelNames: ["queueName", "queueEvent"] as const,
+  });
+
   constructor(
     private readonly moduleRef: ModuleRef,
     private readonly queueService: QueueService,
   ) {}
 
   async onModuleInit(): Promise<void> {
-    console.log("Queue module initialized");
+    this.logger.log("Associating queue events for metrics.");
+    // Set global metrics settings.
+    register.setDefaultLabels({ app: DEFAULT_APP_LABEL });
+    collectDefaultMetrics({ labels: { app: DEFAULT_APP_LABEL } });
+    // Set queues metrics settings.
     const queues = await this.queueService.queueConfigurationModel();
     queues.forEach((queue) => {
-      if (!queue.isActive && queue.isScheduler) {
+      if (!queue.isActive) {
+        this.logger.log(
+          `Queue '${queue.name}' is inactive and will not be exposing metrics.`,
+        );
         return;
       }
-      const queueProvider = this.moduleRef.get<Queue>(
-        getQueueToken(queue.name),
-        {
-          strict: false,
-        },
-      );
-      queueProvider.on("failed", (job: Job, error: unknown) => {
-        console.error("JOB failed");
-        console.error(job.id);
-        console.error(job.queue.name);
-        console.error(new Date(job.processedOn));
-        console.error(job.failedReason);
-        console.error("Attempts made: ", job.attemptsMade);
-        console.error(error);
-      });
-      queueProvider.on("stalled", (job: Job, error: unknown) => {
-        console.error("JOB stalled");
-        console.error(job.id);
-        console.error(job.queue.name);
-        console.error(new Date(job.processedOn));
-        console.error(job.failedReason);
-        console.error("Attempts made: ", job.attemptsMade);
-        console.error(error);
-      });
-      queueProvider.on("error", (job: Job, error: unknown) => {
-        console.error("JOB Error");
-        console.error(job.id);
-        console.error(job.queue.name);
-        console.error(new Date(job.processedOn));
-        console.error(job.failedReason);
-        console.error("Attempts made: ", job.attemptsMade);
-        console.error(error);
-      });
+      this.associateQueueMetrics(queue.name);
     });
   }
+
+  private associateQueueMetrics(queueName: string): void {
+    const queueProvider = this.moduleRef.get<Queue>(getQueueToken(queueName), {
+      strict: false,
+    });
+    Object.values(QueuesMetricsEvents).forEach(
+      (queueEvent: QueuesMetricsEvents) => {
+        this.logger.log(
+          `Associating queue '${queueName}' event '${queueEvent}'.`,
+        );
+        queueProvider.on(queueEvent, () => {
+          this.eventCounter.inc({ queueName, queueEvent });
+        });
+      },
+    );
+  }
+
+  @InjectLogger()
+  logger: LoggerService;
 }
