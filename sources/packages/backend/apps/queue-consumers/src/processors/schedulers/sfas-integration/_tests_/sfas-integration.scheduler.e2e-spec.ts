@@ -268,7 +268,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     },
   );
 
-  it.only(
+  it(
     "Should add SFAS individual data records when importing valid data from SFAS " +
       "when the record type is the individual data record.",
     async () => {
