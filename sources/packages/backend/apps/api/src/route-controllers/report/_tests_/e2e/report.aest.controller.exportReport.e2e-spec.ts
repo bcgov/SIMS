@@ -1291,7 +1291,9 @@ describe("ReportAestController(e2e)-exportReport", () => {
         student: student1,
       },
       {
-        isValid: false,
+        initialValues: {
+          isValid: false,
+        },
       },
     );
     student1.casSupplier = casSupplier1;
@@ -1352,7 +1354,9 @@ describe("ReportAestController(e2e)-exportReport", () => {
         student: student2,
       },
       {
-        isValid: false,
+        initialValues: {
+          isValid: false,
+        },
       },
     );
     student2.casSupplier = casSupplier2;
