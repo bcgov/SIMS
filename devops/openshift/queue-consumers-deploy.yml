@@ -21,7 +21,7 @@ objects:
         metadata:
           annotations:
             prometheus.io/scrape: true
-            prometheus.io/port: "${{PORT}}"
+            prometheus.io/port: ${PORT}
             prometheus.io/path: /metrics
           labels:
             deploymentconfig: ${NAME}
