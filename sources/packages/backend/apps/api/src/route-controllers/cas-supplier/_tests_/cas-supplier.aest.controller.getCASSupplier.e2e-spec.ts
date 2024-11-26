@@ -30,7 +30,7 @@ describe("CASSupplierAESTController(e2e)-getCASSuppliers", () => {
     const savedCASSupplier2 = await saveFakeCASSupplier(
       db,
       { student },
-      { supplierStatus: SupplierStatus.VerifiedManually },
+      { initialValues: { supplierStatus: SupplierStatus.VerifiedManually } },
     );
 
     const endpoint = `/aest/cas-supplier/student/${student.id}`;

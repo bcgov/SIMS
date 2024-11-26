@@ -710,7 +710,9 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
         auditUser: student.user,
       },
       {
-        supplierStatus: SupplierStatus.Verified,
+        initialValues: {
+          supplierStatus: SupplierStatus.Verified,
+        },
       },
     );
     // Update CAS details as expected.
