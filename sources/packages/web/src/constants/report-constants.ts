@@ -29,4 +29,8 @@ export const MINISTRY_REPORTS: OptionItemAPIOutDTO[] = [
     description: "Student Unmet Need",
     id: "Ministry_Student_Unmet_Need_Report",
   },
+  {
+    description: "Disbursements Without Valid Supplier",
+    id: "Disbursements_Without_Valid_Supplier_Report",
+  },
 ];

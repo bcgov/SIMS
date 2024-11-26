@@ -3,11 +3,13 @@ import {
   E2EDataSources,
   createE2EDataSources,
   createFakeDisbursementFeedbackError,
+  createFakeDisbursementValue,
   createFakeEducationProgramOffering,
   createFakeInstitutionLocation,
   createFakeUser,
   getProviderInstanceForModule,
   saveFakeApplicationDisbursements,
+  saveFakeCASSupplier,
   saveFakeDesignationAgreementLocation,
   saveFakeStudent,
 } from "@sims/test-utils";
@@ -28,9 +30,11 @@ import {
   Assessment,
   COEStatus,
   DisbursementScheduleStatus,
+  DisbursementValueType,
   EducationProgram,
   EducationProgramOffering,
   FullTimeAssessment,
+  IdentityProviders,
   InstitutionLocation,
   OfferingIntensity,
   ProgramIntensity,
@@ -39,6 +43,7 @@ import {
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { DataSource } from "typeorm";
 import { createFakeEducationProgram } from "@sims/test-utils/factories/education-program";
+import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
 
 describe("ReportAestController(e2e)-exportReport", () => {
   let app: INestApplication;
@@ -1194,6 +1199,222 @@ describe("ReportAestController(e2e)-exportReport", () => {
             },
           ]),
         );
+      });
+  });
+
+  it("Should generate the Disbursements Without Valid Supplier report when a report generation request is made with the appropriate date range.", async () => {
+    // Arrange
+    const application1 = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        firstDisbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.BCGrant,
+            "BCAG",
+            500,
+            {
+              effectiveAmount: 500,
+            },
+          ),
+          createFakeDisbursementValue(
+            DisbursementValueType.BCGrant,
+            "SBSD",
+            300,
+            {
+              effectiveAmount: 298,
+            },
+          ),
+          createFakeDisbursementValue(
+            DisbursementValueType.BCGrant,
+            "BGPD",
+            200,
+            {
+              effectiveAmount: 198,
+            },
+          ),
+        ],
+        secondDisbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.BCGrant,
+            "BCAG",
+            500,
+            {
+              effectiveAmount: 499,
+            },
+          ),
+          createFakeDisbursementValue(
+            DisbursementValueType.BCGrant,
+            "SBSD",
+            300,
+            {
+              effectiveAmount: 299,
+            },
+          ),
+          createFakeDisbursementValue(
+            DisbursementValueType.BCGrant,
+            "BGPD",
+            200,
+            {
+              effectiveAmount: 199,
+            },
+          ),
+        ],
+      },
+      {
+        createSecondDisbursement: true,
+        applicationStatus: ApplicationStatus.Completed,
+        offeringIntensity: OfferingIntensity.partTime,
+        firstDisbursementInitialValues: {
+          coeStatus: COEStatus.completed,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          dateSent: new Date("2020-01-01"),
+        },
+        secondDisbursementInitialValues: {
+          coeStatus: COEStatus.completed,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          dateSent: new Date("2020-02-01"),
+        },
+      },
+    );
+    const student1 = application1.student;
+    student1.user.identityProviderType = IdentityProviders.BCSC;
+    await db.user.save(student1.user);
+    const sinValidation1 = createFakeSINValidation({
+      student: student1,
+    });
+    student1.sinValidation = sinValidation1;
+    await db.student.save(student1);
+    await db.sinValidation.save(sinValidation1);
+    await saveFakeCASSupplier(
+      db,
+      {
+        student: student1,
+      },
+      {
+        isValid: false,
+      },
+    );
+
+    const application2 = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        firstDisbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.BCGrant,
+            "BCAG",
+            500,
+            {
+              effectiveAmount: 100,
+            },
+          ),
+          createFakeDisbursementValue(
+            DisbursementValueType.BCGrant,
+            "SBSD",
+            300,
+            {
+              effectiveAmount: 150,
+            },
+          ),
+          createFakeDisbursementValue(
+            DisbursementValueType.BCGrant,
+            "BGPD",
+            200,
+            {
+              effectiveAmount: 275,
+            },
+          ),
+        ],
+      },
+      {
+        applicationStatus: ApplicationStatus.Completed,
+        offeringIntensity: OfferingIntensity.fullTime,
+        firstDisbursementInitialValues: {
+          coeStatus: COEStatus.completed,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          dateSent: new Date("2020-01-15"),
+        },
+      },
+    );
+    const student2 = application2.student;
+    student2.user.identityProviderType = IdentityProviders.BCeIDBasic;
+    await db.user.save(student2.user);
+    const sinValidation2 = createFakeSINValidation({
+      student: student2,
+    });
+    student2.sinValidation = sinValidation2;
+    await db.student.save(student2);
+    await db.sinValidation.save(sinValidation2);
+    await saveFakeCASSupplier(
+      db,
+      {
+        student: student2,
+      },
+      {
+        isValid: false,
+      },
+    );
+
+    const payload = {
+      reportName: "Disbursements_Without_Valid_Supplier_Report",
+      params: {
+        startDate: "2020-01-01",
+        endDate: "2020-02-01",
+      },
+    };
+    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+      valid: true,
+      formName: FormNames.ExportFinancialReports,
+      data: { data: payload },
+    });
+    formService.dryRunSubmission = dryRunSubmissionMock;
+    const endpoint = "/aest/report";
+    const ministryUserToken = await getAESTToken(
+      AESTGroups.BusinessAdministrators,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(ministryUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        const fileContent = response.request.res["text"];
+        const parsedResult = parse(fileContent, {
+          header: true,
+        });
+        expect(parsedResult.data).toStrictEqual([
+          {
+            "Address Line 1": student1.contactInfo.address.addressLine1,
+            BCAG: "999.00",
+            BGPD: "397.00",
+            City: student1.contactInfo.address.city,
+            Country: student1.contactInfo.address.country,
+            "Disability Status": student1.disabilityStatus,
+            "Given Name": student1.user.firstName,
+            "Last Name": student1.user.lastName,
+            "Postal Code": student1.contactInfo.address.postalCode,
+            "Profile Type": student1.user.identityProviderType,
+            Province: student1.contactInfo.address.provinceState,
+            SBSD: "597.00",
+            SIN: student1.sinValidation.sin,
+          },
+          {
+            "Address Line 1": student2.contactInfo.address.addressLine1,
+            BCAG: "100.00",
+            BGPD: "275.00",
+            City: student2.contactInfo.address.city,
+            Country: student2.contactInfo.address.country,
+            "Disability Status": student2.disabilityStatus,
+            "Given Name": student2.user.firstName,
+            "Last Name": student2.user.lastName,
+            "Postal Code": student2.contactInfo.address.postalCode,
+            "Profile Type": student2.user.identityProviderType,
+            Province: student2.contactInfo.address.provinceState,
+            SBSD: "150.00",
+            SIN: student2.sinValidation.sin,
+          },
+        ]);
       });
   });
 

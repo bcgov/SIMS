@@ -27,7 +27,8 @@ export async function saveFakeCASSupplier(
     student?: Student;
   },
   options?: {
-    supplierStatus: SupplierStatus;
+    supplierStatus?: SupplierStatus;
+    isValid?: boolean;
   },
 ): Promise<CASSupplier> {
   const auditUser = await db.user.save(createFakeUser());
@@ -56,7 +57,8 @@ export function createFakeCASSupplier(
     auditUser: User;
   },
   options?: {
-    supplierStatus: SupplierStatus;
+    supplierStatus?: SupplierStatus;
+    isValid?: boolean;
   },
 ): CASSupplier {
   const casSupplier = new CASSupplier();
@@ -66,7 +68,7 @@ export function createFakeCASSupplier(
   // Verified manually has a minimum of values populated.
   if (options?.supplierStatus === SupplierStatus.VerifiedManually) {
     casSupplier.supplierAddress = {} as SupplierAddress;
-    casSupplier.isValid = true;
+    casSupplier.isValid = options?.isValid ?? true;
   } else {
     casSupplier.supplierAddress = {
       supplierSiteCode: faker.datatype.number(999).toString(),
