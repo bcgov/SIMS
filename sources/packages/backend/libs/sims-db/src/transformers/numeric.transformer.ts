@@ -14,7 +14,7 @@ export const numericTransformer: ValueTransformer = {
    * @returns numeric/decimal string converted to a number.
    */
   from: (value: string | null): number | null => {
-    if (value !== null || value !== undefined) {
+    if (value !== null && value !== undefined) {
       return parseFloat(value);
     }
     return null;
