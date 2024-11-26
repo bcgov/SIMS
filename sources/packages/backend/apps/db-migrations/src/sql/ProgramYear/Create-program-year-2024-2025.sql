@@ -14,7 +14,7 @@ INSERT INTO
 VALUES
     (
         '2024-2025',
-        'My first day of classes starts between August 01, 2024 and July 31, 2025',
+        'Study starting between August 01, 2024 and July 31, 2025',
         'SFAA2024-25',
         TRUE,
         '2024-08-01',
