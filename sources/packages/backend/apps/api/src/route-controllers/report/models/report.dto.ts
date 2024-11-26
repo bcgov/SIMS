@@ -18,12 +18,12 @@ enum InstitutionReportNames {
 enum MinistryReportNames {
   ForecastDisbursements = "Disbursement_Forecast_Report",
   Disbursements = "Disbursement_Report",
+  DisbursementsWithoutValidSupplier = "Disbursements_Without_Valid_Supplier_Report",
   DataInventory = "Data_Inventory_Report",
   ECertErrors = "ECert_Errors_Report",
   InstitutionDesignation = "Institution_Designation_Report",
   StudentUnmetNeed = "Ministry_Student_Unmet_Need_Report",
   ProgramAndOfferingStatus = "Program_And_Offering_Status_Report",
-  DisbursementsWithoutValidSupplier = "Disbursements_Without_Valid_Supplier_Report",
 }
 
 /**
