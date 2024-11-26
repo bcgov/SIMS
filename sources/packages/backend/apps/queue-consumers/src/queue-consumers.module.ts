@@ -72,7 +72,7 @@ import {
 import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
 import { ECEIntegrationModule } from "@sims/integrations/institution-integration/ece-integration";
-import { HealthController } from "./controllers";
+import { HealthController, MetricsController } from "./controllers";
 import { MicroserviceHealthIndicator, TerminusModule } from "@nestjs/terminus";
 import { CASSupplierIntegrationService } from "./services/cas-supplier/cas-supplier.service";
 import { VirusScanProcessor } from "./processors/virus-scan/virus-scan.processor";
@@ -161,6 +161,6 @@ import { BullBoardQueuesModule } from "./bull-board/bull-board-queues.module";
     CASActiveSupplierFoundProcessor,
     CASActiveSupplierAndSiteFoundProcessor,
   ],
-  controllers: [HealthController],
+  controllers: [HealthController, MetricsController],
 })
 export class QueueConsumersModule {}

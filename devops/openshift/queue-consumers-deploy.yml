@@ -2,6 +2,8 @@ apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
   name: ${NAME}
+  annotations:
+    prometheus.io/scrape: true
 labels:
   project: ${PROJECT}
   service: ${SERVICE_NAME}
