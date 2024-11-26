@@ -14,8 +14,9 @@ export const numericTransformer: ValueTransformer = {
    * @returns numeric/decimal string converted to a number.
    */
   from: (value: string | null): number | null => {
-    if (Number.isFinite(parseFloat(value))) {
-      return parseFloat(value);
+    const convertedValue = parseFloat(value);
+    if (Number.isFinite(convertedValue)) {
+      return convertedValue;
     }
     return null;
   },
