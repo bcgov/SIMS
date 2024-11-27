@@ -1,8 +1,7 @@
-INSERT INTO
-  sims.report_configs (report_name, report_sql)
-VALUES
-  (
-    'Disbursements_Without_Valid_Supplier_Report',
+UPDATE
+  sims.report_configs
+SET
+  report_sql = (
     'SELECT
       users.first_name AS "Given Name",
       users.last_name AS "Last Name",
@@ -35,8 +34,8 @@ VALUES
     FROM
       sims.students students
       INNER JOIN sims.users users ON students.user_id = users.id
-      INNER JOIN sims.sin_validations sin_validations ON students.id = sin_validations.student_id
-      INNER JOIN sims.cas_suppliers cas_suppliers ON cas_suppliers.student_id = students.id
+      INNER JOIN sims.sin_validations sin_validations ON students.sin_validation_id = sin_validations.id
+      INNER JOIN sims.cas_suppliers cas_suppliers ON students.cas_supplier_id = cas_suppliers.id
       INNER JOIN sims.applications applications ON applications.student_id = students.id
       INNER JOIN sims.student_assessments student_assessments ON student_assessments.application_id = applications.id
       INNER JOIN sims.disbursement_schedules disbursement_schedules ON disbursement_schedules.student_assessment_id = student_assessments.id
@@ -51,4 +50,6 @@ VALUES
       sin_validations.sin,
       students.contact_info,
       students.disability_status;'
-  );
+  )
+WHERE
+  report_name = 'Disbursements_Without_Valid_Supplier_Report';

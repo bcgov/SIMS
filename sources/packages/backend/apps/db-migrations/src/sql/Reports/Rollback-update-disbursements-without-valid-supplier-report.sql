@@ -1,8 +1,7 @@
-INSERT INTO
-  sims.report_configs (report_name, report_sql)
-VALUES
-  (
-    'Disbursements_Without_Valid_Supplier_Report',
+UPDATE
+  sims.report_configs
+SET
+  report_sql = (
     'SELECT
       users.first_name AS "Given Name",
       users.last_name AS "Last Name",
@@ -51,4 +50,6 @@ VALUES
       sin_validations.sin,
       students.contact_info,
       students.disability_status;'
-  );
+  )
+WHERE
+  report_name = 'Disbursements_Without_Valid_Supplier_Report';
