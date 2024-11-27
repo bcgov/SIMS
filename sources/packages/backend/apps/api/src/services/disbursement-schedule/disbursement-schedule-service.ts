@@ -67,7 +67,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .andWhere("location.id = :locationId", { locationId })
       .andWhere("application.applicationStatus IN (:...status)", {
         status: [ApplicationStatus.Enrolment, ApplicationStatus.Completed],
-      });
+      })
+      .andWhere("disbursementSchedule.hasEstimatedAwards = true");
     if (enrollmentPeriod === EnrollmentPeriod.Upcoming) {
       coeQuery.andWhere(
         new Brackets((qb) => {

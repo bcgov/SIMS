@@ -83,6 +83,38 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   }
 
   /**
+   * Update the has_estimated_awards property to false for any disbursement schedule
+   * for the assessment id if the final award total is $0.
+   * @param assessmentId assessment id.
+   * @param finalAwardTotal final award total from the assessment data.
+   */
+  async updateDisbursementsHasEstimatedAwards(
+    assessmentId: number,
+    finalAwardTotal: number,
+  ): Promise<void> {
+    const disbursements = await this.repo.find({
+      select: {
+        id: true,
+      },
+      where: {
+        studentAssessment: { id: assessmentId },
+      },
+    });
+    if (disbursements.length > 0 && finalAwardTotal === 0) {
+      disbursements.forEach(async (disbursement) => {
+        await this.repo.update(
+          {
+            id: disbursement.id,
+          },
+          {
+            hasEstimatedAwards: false,
+          },
+        );
+      });
+    }
+  }
+
+  /**
    * Get the disbursement schedules for the assessment id.
    * @param assessmentId assessment id.
    * @returns disbursement schedules.

@@ -77,6 +77,11 @@ describe(
       systemUsersService = app.get(SystemUsersService);
       // Create a Ministry user to b used, for instance, for audit.
       sharedMinistryUser = await db.user.save(createFakeUser());
+      // Insert a fake email contact to send ministry email.
+      await db.notificationMessage.update(
+        { id: NotificationMessageType.MinistryNotificationDisbursementBlocked },
+        { emailContacts: ["dummy@some.domain"] },
+      );
     });
 
     beforeEach(async () => {
@@ -1162,7 +1167,7 @@ describe(
     );
 
     it(
-      "Should create a notification for the ministry and student for a blocked disbursement when the total assessed award is 0" +
+      "Should create a notification for the ministry and student for a blocked disbursement when it doesn't have estimated awards" +
         " and there are no previously existing notifications for the disbursement.",
       async () => {
         // Arrange
@@ -1171,6 +1176,7 @@ describe(
             offeringIntensity: OfferingIntensity.fullTime,
             isValidSIN: true,
             disbursementValues: [],
+            firstDisbursementInitialValues: { hasEstimatedAwards: false },
           });
         // Queued job.
         const mockedJob = mockBullJob<void>();
