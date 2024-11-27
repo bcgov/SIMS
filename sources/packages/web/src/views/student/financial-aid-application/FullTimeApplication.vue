@@ -288,6 +288,14 @@ export default defineComponent({
     ) => {
       isFirstPage.value = isInFirstPage;
       isLastPage.value = isInLastPage;
+      if (
+        !notDraft.value &&
+        !isReadOnly.value &&
+        !isFirstPage.value &&
+        !submittingApplication.value
+      ) {
+        saveDraft();
+      }
     };
 
     const customEventCallback = async (form: any, event: FormIOCustomEvent) => {
