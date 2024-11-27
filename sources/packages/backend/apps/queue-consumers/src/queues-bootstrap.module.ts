@@ -4,8 +4,7 @@ import { QueueService } from "@sims/services/queue/queue.service";
 import { InjectLogger } from "@sims/utilities/logger";
 import { getQueueToken } from "@nestjs/bull";
 import { Queue } from "bull";
-import { Counter } from "prom-client";
-import { register, collectDefaultMetrics } from "prom-client";
+import { register, collectDefaultMetrics, Counter } from "prom-client";
 import { QueueModel } from "@sims/services/queue";
 
 /**
@@ -26,7 +25,6 @@ enum QueuesMetricsEvents {
   Drained = "drained",
 }
 
-const GLOBAL_QUEUE_EVENT_PREFIX = "global";
 const DEFAULT_APP_LABEL = "queue-consumers";
 
 @Global()
@@ -85,24 +83,6 @@ export class QueuesMetricsModule implements OnModuleInit {
         });
       },
     );
-    const globalCompletedEvent = `${GLOBAL_QUEUE_EVENT_PREFIX}:${QueuesMetricsEvents.Completed}`;
-    queueProvider.on(globalCompletedEvent, () => {
-      this.logger.log(`Queue '${queueName}' event '${globalCompletedEvent}'.`);
-      this.eventCounter.inc({
-        queueName,
-        queueEvent: globalCompletedEvent,
-        queueType,
-      });
-    });
-    const globalFailedEvent = `${GLOBAL_QUEUE_EVENT_PREFIX}:${QueuesMetricsEvents.Failed}`;
-    queueProvider.on(globalFailedEvent, () => {
-      this.logger.log(`Queue '${queueName}' event '${globalFailedEvent}'.`);
-      this.eventCounter.inc({
-        queueName,
-        queueEvent: globalFailedEvent,
-        queueType,
-      });
-    });
   }
 
   @InjectLogger()
