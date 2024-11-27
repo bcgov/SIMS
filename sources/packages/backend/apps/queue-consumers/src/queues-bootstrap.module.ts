@@ -6,6 +6,7 @@ import { getQueueToken } from "@nestjs/bull";
 import { Queue } from "bull";
 import { Counter } from "prom-client";
 import { register, collectDefaultMetrics } from "prom-client";
+import { QueueModel } from "@sims/services/queue";
 
 /**
  * Queues metrics events.
@@ -25,6 +26,7 @@ enum QueuesMetricsEvents {
   Drained = "drained",
 }
 
+const GLOBAL_QUEUE_EVENT_PREFIX = "global";
 const DEFAULT_APP_LABEL = "queue-consumers";
 
 @Global()
@@ -35,8 +37,8 @@ export class QueuesMetricsModule implements OnModuleInit {
    */
   private readonly eventCounter = new Counter({
     name: "queue_event_total_count",
-    help: "Total number of the events for a queue.",
-    labelNames: ["queueName", "queueEvent"] as const,
+    help: "Total number of the events for a queue If it is a global event, it will be emitted for every queue-consumer.",
+    labelNames: ["queueName", "queueEvent", "queueType"] as const,
   });
 
   constructor(
@@ -58,24 +60,49 @@ export class QueuesMetricsModule implements OnModuleInit {
         );
         return;
       }
-      this.associateQueueMetrics(queue.name);
+      this.associateQueueMetrics(queue);
     });
   }
 
-  private associateQueueMetrics(queueName: string): void {
-    const queueProvider = this.moduleRef.get<Queue>(getQueueToken(queueName), {
+  private associateQueueMetrics(queue: QueueModel): void {
+    const queueProvider = this.moduleRef.get<Queue>(getQueueToken(queue.name), {
       strict: false,
     });
+    const queueName = queue.name;
+    const queueType = queue.isScheduler ? "scheduler" : "consumer";
     Object.values(QueuesMetricsEvents).forEach(
       (queueEvent: QueuesMetricsEvents) => {
         this.logger.log(
           `Associating queue '${queueName}' event '${queueEvent}'.`,
         );
         queueProvider.on(queueEvent, () => {
-          this.eventCounter.inc({ queueName, queueEvent });
+          this.logger.log(`Queue '${queueName}' event '${queueEvent}'.`);
+          this.eventCounter.inc({
+            queueName,
+            queueEvent,
+            queueType,
+          });
         });
       },
     );
+    const globalCompletedEvent = `${GLOBAL_QUEUE_EVENT_PREFIX}:${QueuesMetricsEvents.Completed}`;
+    queueProvider.on(globalCompletedEvent, () => {
+      this.logger.log(`Queue '${queueName}' event '${globalCompletedEvent}'.`);
+      this.eventCounter.inc({
+        queueName,
+        queueEvent: globalCompletedEvent,
+        queueType,
+      });
+    });
+    const globalFailedEvent = `${GLOBAL_QUEUE_EVENT_PREFIX}:${QueuesMetricsEvents.Failed}`;
+    queueProvider.on(globalFailedEvent, () => {
+      this.logger.log(`Queue '${queueName}' event '${globalFailedEvent}'.`);
+      this.eventCounter.inc({
+        queueName,
+        queueEvent: globalFailedEvent,
+        queueType,
+      });
+    });
   }
 
   @InjectLogger()
