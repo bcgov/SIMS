@@ -408,7 +408,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         bcslOveraward: 11039,
         cmsOveraward: 0,
         grantOveraward: 0,
-        withdrawals: null,
+        withdrawals: 0,
         unsuccessfulCompletion: 0,
         partTimeMSFAANumber: null,
         partTimeMSFAAEffectiveDate: null,
