@@ -281,7 +281,7 @@ export default defineComponent({
       applicationWizard = form;
     };
 
-    const pageChanged = (
+    const pageChanged = async (
       isInFirstPage: boolean,
       currentPage: number,
       isInLastPage: boolean,
@@ -294,7 +294,7 @@ export default defineComponent({
         !isFirstPage.value &&
         !submittingApplication.value
       ) {
-        saveDraft();
+        await saveDraft();
       }
     };
 
