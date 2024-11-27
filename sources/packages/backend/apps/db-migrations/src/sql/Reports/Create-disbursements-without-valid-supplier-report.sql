@@ -35,8 +35,8 @@ VALUES
     FROM
       sims.students students
       INNER JOIN sims.users users ON students.user_id = users.id
-      INNER JOIN sims.sin_validations sin_validations ON students.id = sin_validations.student_id
-      INNER JOIN sims.cas_suppliers cas_suppliers ON cas_suppliers.student_id = students.id
+      INNER JOIN sims.sin_validations sin_validations ON students.sin_validation_id = sin_validations.id
+      INNER JOIN sims.cas_suppliers cas_suppliers ON students.cas_supplier_id = cas_suppliers.id
       INNER JOIN sims.applications applications ON applications.student_id = students.id
       INNER JOIN sims.student_assessments student_assessments ON student_assessments.application_id = applications.id
       INNER JOIN sims.disbursement_schedules disbursement_schedules ON disbursement_schedules.student_assessment_id = student_assessments.id
