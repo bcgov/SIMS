@@ -159,11 +159,12 @@ export interface SupplierAddress {
   siteProtected?: string;
   lastUpdated: Date;
 }
+
 /**
  * Student profile snapshot information.
  */
 interface StudentProfileSnapshot {
-  givenName: string;
+  firstName: string;
   lastName: string;
   sin: string;
   addressLine1: string;
