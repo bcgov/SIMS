@@ -47,7 +47,7 @@
           >
           page
         </li>
-        <li>Please save the file as "CSV (Comma delimited)(*.csv)"</li>
+        <li>Please save the file as "CSV (Comma delimited)(.csv)"</li>
         <li>Select the file to be uploaded</li>
         <li>
           Click on "Validate" to ensure your file does not have errors or
