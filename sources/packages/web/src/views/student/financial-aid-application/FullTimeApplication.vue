@@ -100,6 +100,7 @@ import {
   ApplicationStatus,
   ApiProcessError,
   BannerTypes,
+  ApplicationData,
 } from "@/types";
 import { ApplicationDataAPIOutDTO } from "@/services/http/dto";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
@@ -147,6 +148,7 @@ export default defineComponent({
     const savingDraft = ref(false);
     const submittingApplication = ref(false);
     let applicationWizard: any;
+    let savedDraftData: ApplicationData;
     const isFirstPage = ref(true);
     const isLastPage = ref(false);
     const isReadOnly = ref(false);
@@ -154,6 +156,9 @@ export default defineComponent({
     const existingApplication = ref({} as ApplicationDataAPIOutDTO);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
     const conditionsAccepted = ref(false);
+    // automaticDraftSaveInProgress boolean ensures that multiple api calls for save
+    // draft are not made while a draft save is in progress.
+    const automaticDraftSaveInProgress = ref(false);
 
     const checkProgramYear = async () => {
       // check program year, if not active allow only readonly mode with a snackBar
@@ -217,6 +222,7 @@ export default defineComponent({
         isFulltimeAllowed,
       };
       existingApplication.value = applicationData;
+      savedDraftData = structuredClone(initialData.value);
     });
 
     // Save the current state of the student application skipping all validations.
@@ -230,9 +236,14 @@ export default defineComponent({
           data: applicationWizard.submission.data,
           associatedFiles,
         });
-        snackBar.success("Application draft saved with success.");
+        savedDraftData = structuredClone(applicationWizard.submission.data);
+        if (!automaticDraftSaveInProgress.value) {
+          snackBar.success("Application draft saved with success.");
+        }
       } catch {
-        snackBar.error("An unexpected error has happened.");
+        if (!automaticDraftSaveInProgress.value) {
+          snackBar.error("An unexpected error has happened.");
+        }
       } finally {
         savingDraft.value = false;
       }
@@ -288,13 +299,21 @@ export default defineComponent({
     ) => {
       isFirstPage.value = isInFirstPage;
       isLastPage.value = isInLastPage;
+      const dataChanged =
+        JSON.stringify(savedDraftData) !==
+        JSON.stringify(applicationWizard.submission.data);
       if (
         !notDraft.value &&
         !isReadOnly.value &&
         !isFirstPage.value &&
-        !submittingApplication.value
+        !submittingApplication.value &&
+        !automaticDraftSaveInProgress.value &&
+        !savingDraft.value &&
+        dataChanged
       ) {
+        automaticDraftSaveInProgress.value = true;
         await saveDraft();
+        automaticDraftSaveInProgress.value = false;
       }
     };
 
