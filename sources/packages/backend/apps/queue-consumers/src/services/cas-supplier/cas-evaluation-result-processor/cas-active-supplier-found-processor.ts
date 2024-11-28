@@ -78,6 +78,8 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
         status: "ACTIVE",
         lastUpdated: now,
       };
+      const studentProfileSnapshot =
+        this.getStudentProfileSnapshot(studentSupplier);
       const updateResult = await this.casSupplierRepo.update(
         {
           id: studentSupplier.casSupplierID,
@@ -90,6 +92,7 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
           lastUpdated: new Date(supplierToUpdate.lastupdated),
           supplierAddress: supplierAddressToUpdate,
           supplierStatus: SupplierStatus.Verified,
+          studentProfileSnapshot,
           supplierStatusUpdatedOn: now,
           isValid: true,
           updatedAt: now,

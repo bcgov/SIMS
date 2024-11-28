@@ -56,6 +56,8 @@ export class CASActiveSupplierAndSiteFoundProcessor extends CASEvaluationResultP
         siteProtected: address.siteprotected,
         lastUpdated: new Date(address.lastupdated),
       };
+      const studentProfileSnapshot =
+        this.getStudentProfileSnapshot(studentSupplier);
       const now = new Date();
       const systemUser = this.systemUsersService.systemUser;
       const supplierToUpdate = evaluationResult.activeSupplier;
@@ -71,6 +73,7 @@ export class CASActiveSupplierAndSiteFoundProcessor extends CASEvaluationResultP
           lastUpdated: new Date(supplierToUpdate.lastupdated),
           supplierAddress: supplierAddressToUpdate,
           supplierStatus: SupplierStatus.Verified,
+          studentProfileSnapshot,
           supplierStatusUpdatedOn: now,
           isValid: true,
           updatedAt: now,

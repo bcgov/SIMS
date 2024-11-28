@@ -71,6 +71,8 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
       const [submittedAddress] = result.submittedData.SupplierAddress;
       const now = new Date();
       const systemUser = this.systemUsersService.systemUser;
+      const studentProfileSnapshot =
+        this.getStudentProfileSnapshot(studentSupplier);
       const updateResult = await this.casSupplierRepo.update(
         {
           id: studentSupplier.casSupplierID,
@@ -91,6 +93,7 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
             lastUpdated: now,
           },
           supplierStatus: SupplierStatus.Verified,
+          studentProfileSnapshot,
           supplierStatusUpdatedOn: now,
           isValid: true,
           updatedAt: now,
