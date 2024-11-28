@@ -36,3 +36,4 @@ export * from "./student-loan-balance/student-loan-balance-shared.service";
 export * from "./clamav/services/clamav.service";
 export * from "./clamav/models/clamav.models";
 export * from "./clamav/clam-antivirus.module";
+export * from "./cas-supplier/cas-supplier.shared.service";

@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { StudentService } from "../../services";
 import {
   CASSupplier,
   Student,
@@ -7,6 +8,8 @@ import {
   SupplierStatus,
   User,
 } from "@sims/sims-db";
+import { CustomNamedError } from "@sims/utilities";
+import { STUDENT_NOT_FOUND } from "../../constants";
 import { Repository } from "typeorm";
 
 Injectable();
@@ -16,6 +19,7 @@ export class CASSupplierService {
     private readonly casSupplierRepo: Repository<CASSupplier>,
     @InjectRepository(Student)
     private readonly studentRepo: Repository<Student>,
+    private readonly studentService: StudentService,
   ) {}
 
   /**
@@ -56,9 +60,12 @@ export class CASSupplierService {
     supplierSiteCode: string,
     auditUserId: number,
   ): Promise<CASSupplier> {
+    const student = await this.studentService.getStudentById(studentId);
+    if (!student) {
+      throw new CustomNamedError("Student not found.", STUDENT_NOT_FOUND);
+    }
     const now = new Date();
     const auditUser = { id: auditUserId } as User;
-    const student = { id: studentId } as Student;
 
     // Create manual verified CAS Supplier.
     const manualVerifiedSupplier = new CASSupplier();

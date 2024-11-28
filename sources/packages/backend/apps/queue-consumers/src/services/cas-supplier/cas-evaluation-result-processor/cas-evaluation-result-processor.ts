@@ -4,7 +4,6 @@ import {
   StudentSupplierToProcess,
 } from "../cas-supplier.models";
 import { ProcessorResult } from ".";
-import { StudentProfileSnapshot } from "@sims/sims-db";
 
 /**
  * Process the result of a student evaluation to determine what
@@ -26,24 +25,4 @@ export abstract class CASEvaluationResultProcessor {
     evaluationResult: CASEvaluationResult,
     summary: ProcessSummary,
   ): Promise<ProcessorResult>;
-
-  /**
-   * Get a snapshot of the student profile.
-   * @param studentSupplier student supplier information from SIMS.
-   * @returns student profile snapshot.
-   */
-  getStudentProfileSnapshot(
-    studentSupplier: StudentSupplierToProcess,
-  ): StudentProfileSnapshot {
-    return {
-      firstName: studentSupplier.firstName,
-      lastName: studentSupplier.lastName,
-      sin: studentSupplier.sin,
-      addressLine1: studentSupplier.address.addressLine1,
-      city: studentSupplier.address.city,
-      province: studentSupplier.address.provinceState,
-      postalCode: studentSupplier.address.postalCode,
-      country: studentSupplier.address.country,
-    };
-  }
 }

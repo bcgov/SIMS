@@ -23,6 +23,8 @@ import {
 import { CASSupplierService, StudentService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
+import { STUDENT_NOT_FOUND } from "../../constants";
+import { CustomNamedError } from "@sims/utilities";
 
 /**
  * CAS supplier controller.
@@ -87,16 +89,22 @@ export class CASSupplierAESTController extends BaseController {
     @Param("studentId", ParseIntPipe) studentId: number,
     @UserToken() userToken: IUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
-    const studentExist = await this.studentService.studentExists(studentId);
-    if (!studentExist) {
-      throw new NotFoundException("Student not found.");
+    try {
+      const casSupplier = await this.casSupplierService.addCASSupplier(
+        studentId,
+        payload.supplierNumber,
+        payload.supplierSiteCode,
+        userToken.userId,
+      );
+      return { id: casSupplier.id };
+    } catch (error: unknown) {
+      if (
+        error instanceof CustomNamedError &&
+        error.name === STUDENT_NOT_FOUND
+      ) {
+        throw new NotFoundException(error.message);
+      }
+      throw error;
     }
-    const casSupplier = await this.casSupplierService.addCASSupplier(
-      studentId,
-      payload.supplierNumber,
-      payload.supplierSiteCode,
-      userToken.userId,
-    );
-    return { id: casSupplier.id };
   }
 }

@@ -43,6 +43,7 @@ import {
   GlobalHttpModule,
   AssessmentSequentialProcessingService,
   ClamAVService,
+  CASSupplierSharedService,
 } from "@sims/services";
 import { DatabaseModule } from "@sims/sims-db";
 import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier12-integration";
@@ -160,6 +161,7 @@ import { BullBoardQueuesModule } from "./bull-board/bull-board-queues.module";
     CASPreValidationsProcessor,
     CASActiveSupplierFoundProcessor,
     CASActiveSupplierAndSiteFoundProcessor,
+    CASSupplierSharedService,
   ],
   controllers: [HealthController],
 })
