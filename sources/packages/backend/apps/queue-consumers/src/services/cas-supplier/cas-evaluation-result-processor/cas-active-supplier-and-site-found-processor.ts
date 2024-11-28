@@ -9,7 +9,11 @@ import {
   StudentSupplierToProcess,
 } from "../cas-supplier.models";
 import { Repository } from "typeorm";
-import { CASEvaluationResultProcessor, ProcessorResult } from ".";
+import {
+  CASEvaluationResultProcessor,
+  CASHandleErrorsProcessor,
+  ProcessorResult,
+} from ".";
 
 /**
  * Process the active supplier and site information found on CAS.
@@ -18,6 +22,7 @@ import { CASEvaluationResultProcessor, ProcessorResult } from ".";
 export class CASActiveSupplierAndSiteFoundProcessor extends CASEvaluationResultProcessor {
   constructor(
     private readonly systemUsersService: SystemUsersService,
+    private readonly casHandleErrorsProcessor: CASHandleErrorsProcessor,
     @InjectRepository(CASSupplier)
     private readonly casSupplierRepo: Repository<CASSupplier>,
   ) {
@@ -88,6 +93,11 @@ export class CASActiveSupplierAndSiteFoundProcessor extends CASEvaluationResultP
       summary.error(
         "Error while updating CAS supplier for the student.",
         error,
+      );
+      return await this.casHandleErrorsProcessor.processErrors(
+        studentSupplier,
+        summary,
+        [error.toString()],
       );
     }
     return { isSupplierUpdated: false };

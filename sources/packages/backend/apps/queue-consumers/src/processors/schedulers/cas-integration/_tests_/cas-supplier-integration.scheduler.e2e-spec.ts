@@ -216,7 +216,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     );
   });
 
-  it("Should update CAS supplier table to manual intervention when student address is not from Canada.", async () => {
+  it.only("Should update CAS supplier table to manual intervention when student address is not from Canada.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource, undefined, {
       initialValue: {

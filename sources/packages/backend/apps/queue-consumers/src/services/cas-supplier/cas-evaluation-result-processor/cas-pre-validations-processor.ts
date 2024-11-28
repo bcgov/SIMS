@@ -58,6 +58,7 @@ export class CASPreValidationsProcessor extends CASEvaluationResultProcessor {
           isValid: false,
           updatedAt: now,
           modifier: systemUser,
+          errors: evaluationResult.reasons,
         },
       );
       if (updateResult.affected) {
