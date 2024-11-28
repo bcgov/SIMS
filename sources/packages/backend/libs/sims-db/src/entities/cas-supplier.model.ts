@@ -163,7 +163,7 @@ export interface SupplierAddress {
 /**
  * Student profile snapshot information.
  */
-interface StudentProfileSnapshot {
+export interface StudentProfileSnapshot {
   firstName: string;
   lastName: string;
   sin: string;

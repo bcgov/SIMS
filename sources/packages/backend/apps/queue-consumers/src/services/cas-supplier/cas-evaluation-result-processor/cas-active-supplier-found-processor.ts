@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { SystemUsersService } from "@sims/services";
+import { CASSupplierSharedService, SystemUsersService } from "@sims/services";
 import { CASSupplier, SupplierAddress, SupplierStatus } from "@sims/sims-db";
 import { ProcessSummary } from "@sims/utilities/logger";
 import {
@@ -25,6 +25,7 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
     @InjectRepository(CASSupplier)
     private readonly casSupplierRepo: Repository<CASSupplier>,
     private readonly casService: CASService,
+    private readonly casSupplierSharedService: CASSupplierSharedService,
   ) {
     super();
   }
@@ -78,6 +79,13 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
         status: "ACTIVE",
         lastUpdated: now,
       };
+      const studentProfileSnapshot =
+        this.casSupplierSharedService.getStudentProfileSnapshot(
+          studentSupplier.firstName,
+          studentSupplier.lastName,
+          studentSupplier.sin,
+          studentSupplier.address,
+        );
       const updateResult = await this.casSupplierRepo.update(
         {
           id: studentSupplier.casSupplierID,
@@ -90,6 +98,7 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
           lastUpdated: new Date(supplierToUpdate.lastupdated),
           supplierAddress: supplierAddressToUpdate,
           supplierStatus: SupplierStatus.Verified,
+          studentProfileSnapshot,
           supplierStatusUpdatedOn: now,
           isValid: true,
           updatedAt: now,
