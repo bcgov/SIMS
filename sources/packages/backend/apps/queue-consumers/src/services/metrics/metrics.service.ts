@@ -1,33 +1,118 @@
 import { getQueueToken } from "@nestjs/bull";
 import { Injectable, LoggerService } from "@nestjs/common";
 import { ModuleRef } from "@nestjs/core";
-import { QueueModel, QueueService } from "@sims/services/queue";
+import { QueueService } from "@sims/services/queue";
 import { processInParallel } from "@sims/utilities";
 import { InjectLogger } from "@sims/utilities/logger";
+import {
+  DEFAULT_METRICS_APP_LABEL,
+  DEFAULT_JOBS_COUNTS_GAUGE,
+  DEFAULT_JOBS_EVENTS_COUNTER,
+  QueuesMetricsEvents,
+  MonitoredQueue,
+} from "./metrics.models";
 import { Queue } from "bull";
-import { Gauge } from "prom-client";
-
-type MonitoredQueue = { provider: Queue; queueModel: QueueModel };
+import { register, collectDefaultMetrics } from "prom-client";
 
 @Injectable()
 export class MetricsService {
-  private readonly monitoredQueueProviders: MonitoredQueue[] = [];
-  private readonly jobsCountsGauge = new Gauge({
-    name: "queue_job_counts_current_total",
-    help: "Current total number of job counts for 'active', 'completed', 'failed', 'delayed', 'waiting'.",
-    labelNames: ["queueName", "queueEvent", "queueType"] as const,
-  });
+  /**
+   * List of queues to be monitored. This list is loaded once
+   * and is expected to change only if the application restarts.
+   */
+  private monitoredQueueProviders: MonitoredQueue[];
 
   constructor(
     private readonly moduleRef: ModuleRef,
     private readonly queueService: QueueService,
   ) {}
 
+  /**
+   * Set global metrics configurations.
+   */
+  setGlobalMetricsConfigurations(): void {
+    register.setDefaultLabels({ app: DEFAULT_METRICS_APP_LABEL });
+    collectDefaultMetrics({ labels: { app: DEFAULT_METRICS_APP_LABEL } });
+  }
+
+  /**
+   * Refreshes the metrics job counts for all queues by retrieving the current
+   * job counts for 'active', 'completed', 'failed', 'delayed', 'waiting'. The
+   * job counts are then used to update the gauge metric for each individual
+   * queue.
+   */
   async refreshJobCountsMetrics(): Promise<void> {
-    // Refresh queues metrics settings.
-    if (this.monitoredQueueProviders.length === 0) {
+    const monitoredQueues = await this.getMonitoredQueues();
+    await processInParallel(
+      (queue: MonitoredQueue) => this.refreshJobCountsMetricsForQueue(queue),
+      monitoredQueues,
+    );
+  }
+
+  /**
+   * Refreshes the metrics job counts for the given queue by retrieving
+   * the current values from Redis and updating the gauge metric.
+   * @param queue monitored queue details.
+   */
+  private async refreshJobCountsMetricsForQueue(
+    queue: MonitoredQueue,
+  ): Promise<void> {
+    const queueType = queue.queueModel.isScheduler ? "scheduler" : "consumer";
+    const queueJobCounts = await queue.provider.getJobCounts();
+    Object.keys(queueJobCounts).forEach((jobCountEvent: string) => {
+      DEFAULT_JOBS_COUNTS_GAUGE.set(
+        {
+          queueName: queue.provider.name,
+          queueEvent: jobCountEvent,
+          queueType,
+        },
+        queueJobCounts[jobCountEvent],
+      );
+    });
+  }
+
+  /**
+   * Associate all queues with their respective counters to track the events.
+   * The counters are associated for every queue event.
+   */
+  async associateQueueEventsCountersMetrics(): Promise<void> {
+    const queues = await this.getMonitoredQueues();
+    queues.forEach((queue) => this.associateCountersToQueueEvents(queue));
+  }
+
+  /**
+   * Associates a counter to every queue event of the given queue.
+   * This allows the metrics to track the events of the queues.
+   * @param queue monitored queue details.
+   */
+  private associateCountersToQueueEvents(queue: MonitoredQueue): void {
+    const queueName = queue.provider.name;
+    const queueType = queue.queueModel.isScheduler ? "scheduler" : "consumer";
+    Object.values(QueuesMetricsEvents).forEach(
+      (queueEvent: QueuesMetricsEvents) => {
+        this.logger.log(
+          `Associating metric counter for queue '${queueName}' event '${queueEvent}'.`,
+        );
+        queue.provider.on(queueEvent, () => {
+          DEFAULT_JOBS_EVENTS_COUNTER.inc({
+            queueName,
+            queueEvent,
+            queueType,
+          });
+        });
+      },
+    );
+  }
+
+  /**
+   * Get the list of monitored queues.
+   * If not loaded yet, load it once.
+   * @returns list of monitored queues.
+   */
+  private async getMonitoredQueues(): Promise<MonitoredQueue[]> {
+    if (!this.monitoredQueueProviders) {
       const queues = await this.queueService.queueConfigurationModel();
-      queues
+      this.monitoredQueueProviders = queues
         .filter((queueModel) => queueModel.isActive)
         .map((queueModel) => {
           const provider = this.moduleRef.get<Queue>(
@@ -36,35 +121,10 @@ export class MetricsService {
               strict: false,
             },
           );
-          this.monitoredQueueProviders.push({ provider, queueModel });
+          return { provider, queueModel };
         });
     }
-    await processInParallel(
-      (queue: MonitoredQueue) => this.refreshQueueMetrics(queue),
-      this.monitoredQueueProviders,
-    );
-  }
-
-  private async refreshQueueMetrics(queue: MonitoredQueue): Promise<void> {
-    const queueProvider = this.moduleRef.get<Queue>(
-      getQueueToken(queue.provider.name),
-      {
-        strict: false,
-      },
-    );
-    const queueName = queue.provider.name;
-    const queueType = queue.queueModel.isScheduler ? "scheduler" : "consumer";
-    const queueJobCounts = await queueProvider.getJobCounts();
-    Object.keys(queueJobCounts).forEach((jobCountEvent: string) => {
-      this.jobsCountsGauge.set(
-        {
-          queueName,
-          queueEvent: jobCountEvent,
-          queueType,
-        },
-        queueJobCounts[jobCountEvent],
-      );
-    });
+    return this.monitoredQueueProviders;
   }
 
   @InjectLogger()
