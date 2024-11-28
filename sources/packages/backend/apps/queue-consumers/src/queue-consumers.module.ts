@@ -79,7 +79,7 @@ import { VirusScanProcessor } from "./processors/virus-scan/virus-scan.processor
 import { CASService } from "@sims/integrations/cas/cas.service";
 import { ObjectStorageService } from "@sims/integrations/object-storage";
 import { BullBoardQueuesModule } from "./bull-board/bull-board-queues.module";
-import { QueuesMetricsModule } from "./queues-bootstrap.module";
+import { QueuesMetricsModule } from "./queues-metrics.module.module";
 
 // TODO: Removed ATBCResponseIntegrationScheduler in providers, the queuename from enum and the decorators of the processor as part of #2539.
 @Module({

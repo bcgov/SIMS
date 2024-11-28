@@ -1,6 +1,6 @@
 import { Global, LoggerService, Module, OnModuleInit } from "@nestjs/common";
 import { InjectLogger } from "@sims/utilities/logger";
-import { MetricsService } from "apps/queue-consumers/src/services";
+import { MetricsService } from "./services";
 
 @Global()
 @Module({
