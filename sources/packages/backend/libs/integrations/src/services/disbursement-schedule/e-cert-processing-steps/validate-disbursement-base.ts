@@ -55,9 +55,13 @@ export abstract class ValidateDisbursementBase {
       );
     }
     // No estimated awards amounts to be disbursed.
-    const hasEstimatedAwards =
-      eCertDisbursement.disbursement.hasEstimatedAwards;
-    if (!hasEstimatedAwards) {
+    const totalEstimatedAwards =
+      eCertDisbursement.disbursement.disbursementValues.reduce(
+        (totalEstimatedAward, currentAward) =>
+          totalEstimatedAward + currentAward.valueAmount,
+        0,
+      );
+    if (!totalEstimatedAwards) {
       log.info(
         "Disbursement estimated awards do not contain any amount to be disbursed.",
       );
