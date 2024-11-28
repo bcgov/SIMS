@@ -22,9 +22,9 @@ import {
 export class CASActiveSupplierAndSiteFoundProcessor extends CASEvaluationResultProcessor {
   constructor(
     private readonly systemUsersService: SystemUsersService,
-    private readonly casHandleErrorsProcessor: CASHandleErrorsProcessor,
     @InjectRepository(CASSupplier)
     private readonly casSupplierRepo: Repository<CASSupplier>,
+    private readonly casHandleErrorsProcessor: CASHandleErrorsProcessor,
   ) {
     super();
   }

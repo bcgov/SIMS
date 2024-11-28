@@ -13,7 +13,11 @@ import {
   CASService,
   CreateSupplierAndSiteResponse,
 } from "@sims/integrations/cas";
-import { CASEvaluationResultProcessor, ProcessorResult } from ".";
+import {
+  CASEvaluationResultProcessor,
+  CASHandleErrorsProcessor,
+  ProcessorResult,
+} from ".";
 
 /**
  * Process a student that was not found on CAS.
@@ -25,6 +29,7 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
     private readonly systemUsersService: SystemUsersService,
     @InjectRepository(CASSupplier)
     private readonly casSupplierRepo: Repository<CASSupplier>,
+    private readonly casHandleErrorsProcessor: CASHandleErrorsProcessor,
   ) {
     super();
   }
@@ -65,7 +70,11 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
       summary.info("Created supplier and site on CAS.");
     } catch (error: unknown) {
       summary.error("Error while creating supplier and site on CAS.", error);
-      return { isSupplierUpdated: false };
+      return await this.casHandleErrorsProcessor.processErrors(
+        studentSupplier,
+        summary,
+        [error.toString()],
+      );
     }
     try {
       const [submittedAddress] = result.submittedData.SupplierAddress;
@@ -109,7 +118,6 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
         "Unexpected error while updating supplier and site for the student.",
         error,
       );
-      return { isSupplierUpdated: false };
     }
   }
 }

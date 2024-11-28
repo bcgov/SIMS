@@ -9,7 +9,11 @@ import {
   StudentSupplierToProcess,
 } from "../cas-supplier.models";
 import { Repository } from "typeorm";
-import { CASEvaluationResultProcessor, ProcessorResult } from ".";
+import {
+  CASEvaluationResultProcessor,
+  CASHandleErrorsProcessor,
+  ProcessorResult,
+} from ".";
 import {
   CASService,
   CreateExistingSupplierSiteResponse,
@@ -25,6 +29,7 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
     @InjectRepository(CASSupplier)
     private readonly casSupplierRepo: Repository<CASSupplier>,
     private readonly casService: CASService,
+    private readonly casHandleErrorsProcessor: CASHandleErrorsProcessor,
   ) {
     super();
   }
@@ -61,7 +66,11 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
       summary.info("Created a new site on CAS.");
     } catch (error: unknown) {
       summary.error("Error while creating a new site on CAS.", error);
-      return { isSupplierUpdated: false };
+      return await this.casHandleErrorsProcessor.processErrors(
+        studentSupplier,
+        summary,
+        [error.toString()],
+      );
     }
     try {
       const [submittedAddress] = result.submittedData.SupplierAddress;
