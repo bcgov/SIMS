@@ -130,6 +130,47 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
       });
   });
 
+  it("Should get the count of COE current summary as zero when there is 1 COE that doesn't have estimated awards.", async () => {
+    // Arrange
+    const collegeCLocation = createFakeInstitutionLocation({
+      institution: collegeC,
+    });
+    await authorizeUserTokenForLocation(
+      appDataSource,
+      InstitutionTokenTypes.CollegeCUser,
+      collegeCLocation,
+    );
+    // Application A
+    await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+      },
+      {
+        applicationStatus: ApplicationStatus.Enrolment,
+        createSecondDisbursement: true,
+        firstDisbursementInitialValues: { hasEstimatedAwards: false },
+        secondDisbursementInitialValues: { hasEstimatedAwards: false },
+      },
+    );
+
+    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/enrollmentPeriod/${EnrollmentPeriod.Current}?page=0&pageLimit=10&sortField=disbursementDate&sortOrder=ASC`;
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(
+        await getInstitutionToken(InstitutionTokenTypes.CollegeCUser),
+        BEARER_AUTH_TYPE,
+      )
+      .expect(HttpStatus.OK)
+      .expect((response) => {
+        const paginatedResults =
+          response.body as PaginatedResultsAPIOutDTO<COESummaryAPIOutDTO>;
+        expect(paginatedResults.count).toBe(0);
+      });
+  });
+
   it("Should return a BadRequest error when the page number has an invalid integer.", async () => {
     // Arrange
     const collegeCLocation = createFakeInstitutionLocation({
