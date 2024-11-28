@@ -24,7 +24,6 @@ export class MetricsController {
   @Header("content-type", register.contentType)
   async getMetrics(): Promise<string> {
     try {
-      await this.metricsService.refreshJobCountsMetrics();
       return register.metrics();
     } catch (error) {
       this.logger.error("Error while getting metrics.", error);

@@ -1,6 +1,5 @@
 import { QueueModel } from "@sims/services/queue";
 import { Queue } from "bull";
-import { Counter, Gauge } from "prom-client";
 
 /**
  * Bull queues event names to have metrics associated.
@@ -77,21 +76,3 @@ export interface MonitoredQueue {
  * Default label added to all the metrics.
  */
 export const DEFAULT_METRICS_APP_LABEL = "queue-consumers";
-
-/**
- * Current total number of job counts for 'active', 'completed', 'failed', 'delayed', 'waiting'.
- */
-export const DEFAULT_JOBS_COUNTS_GAUGE = new Gauge({
-  name: "queue_job_counts_current_total",
-  help: "Current total number of job counts for 'active', 'completed', 'failed', 'delayed', 'waiting'.",
-  labelNames: ["queueName", "queueEvent", "queueType"] as const,
-});
-
-/**
- * Queue local events counter.
- */
-export const DEFAULT_JOBS_EVENTS_COUNTER = new Counter({
-  name: "queue_event_total_count",
-  help: "Total number of the events for a queue If it is a global event, it will be emitted for every queue-consumer.",
-  labelNames: ["queueName", "queueEvent", "queueType"] as const,
-});

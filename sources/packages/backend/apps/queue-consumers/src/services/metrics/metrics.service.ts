@@ -6,13 +6,11 @@ import { processInParallel } from "@sims/utilities";
 import { InjectLogger } from "@sims/utilities/logger";
 import {
   DEFAULT_METRICS_APP_LABEL,
-  DEFAULT_JOBS_COUNTS_GAUGE,
-  DEFAULT_JOBS_EVENTS_COUNTER,
   QueuesMetricsEvents,
   MonitoredQueue,
 } from "./metrics.models";
 import { Queue } from "bull";
-import { register, collectDefaultMetrics } from "prom-client";
+import { register, collectDefaultMetrics, Gauge, Counter } from "prom-client";
 
 @Injectable()
 export class MetricsService {
@@ -21,11 +19,38 @@ export class MetricsService {
    * and is expected to change only if the application restarts.
    */
   private monitoredQueueProviders: MonitoredQueue[];
+  /**
+   * Current total number of job counts for 'active', 'completed', 'failed', 'delayed', 'waiting'.
+   * The information is acquired from Redis.
+   */
+  private readonly jobCountsGauge: Gauge;
+  /**
+   * Queue local events counter.
+   * The information is kept in memory till collected.
+   */
+  private readonly jobsEventsCounter: Counter;
 
+  /**
+   * Initializes the service and sets up the job counts gauge and jobs events counter metrics.
+   * @param moduleRef reference to the module for dependency injection.
+   * @param queueService service to interact with queue configurations.
+   */
   constructor(
     private readonly moduleRef: ModuleRef,
     private readonly queueService: QueueService,
-  ) {}
+  ) {
+    this.jobCountsGauge = new Gauge({
+      name: "queue_job_counts_current_total",
+      help: "Current total number of job counts for 'active', 'completed', 'failed', 'delayed', 'waiting'.",
+      labelNames: ["queueName", "queueEvent", "queueType"] as const,
+      collect: () => this.refreshJobCountsMetrics(),
+    });
+    this.jobsEventsCounter = new Counter({
+      name: "queue_event_total_count",
+      help: "Total number of the events for a queue If it is a global event, it will be emitted for every queue-consumer.",
+      labelNames: ["queueName", "queueEvent", "queueType"] as const,
+    });
+  }
 
   /**
    * Set global metrics configurations.
@@ -41,7 +66,7 @@ export class MetricsService {
    * job counts are then used to update the gauge metric for each individual
    * queue.
    */
-  async refreshJobCountsMetrics(): Promise<void> {
+  private async refreshJobCountsMetrics(): Promise<void> {
     const monitoredQueues = await this.getMonitoredQueues();
     await processInParallel(
       (queue: MonitoredQueue) => this.refreshJobCountsMetricsForQueue(queue),
@@ -60,7 +85,7 @@ export class MetricsService {
     const queueType = queue.queueModel.isScheduler ? "scheduler" : "consumer";
     const queueJobCounts = await queue.provider.getJobCounts();
     Object.keys(queueJobCounts).forEach((jobCountEvent: string) => {
-      DEFAULT_JOBS_COUNTS_GAUGE.set(
+      this.jobCountsGauge.set(
         {
           queueName: queue.provider.name,
           queueEvent: jobCountEvent,
@@ -94,7 +119,7 @@ export class MetricsService {
           `Associating metric counter for queue '${queueName}' event '${queueEvent}'.`,
         );
         queue.provider.on(queueEvent, () => {
-          DEFAULT_JOBS_EVENTS_COUNTER.inc({
+          this.jobsEventsCounter.inc({
             queueName,
             queueEvent,
             queueType,
