@@ -148,7 +148,7 @@ export default defineComponent({
     const savingDraft = ref(false);
     const submittingApplication = ref(false);
     let applicationWizard: any;
-    let savedDraftData: ApplicationData;
+    let savedDraftData: string;
     const isFirstPage = ref(true);
     const isLastPage = ref(false);
     const isReadOnly = ref(false);
@@ -222,7 +222,6 @@ export default defineComponent({
         isFulltimeAllowed,
       };
       existingApplication.value = applicationData;
-      savedDraftData = structuredClone(initialData.value);
     });
 
     // Save the current state of the student application skipping all validations.
@@ -236,7 +235,7 @@ export default defineComponent({
           data: applicationWizard.submission.data,
           associatedFiles,
         });
-        savedDraftData = structuredClone(applicationWizard.submission.data);
+        savedDraftData = JSON.stringify(applicationWizard.submission.data);
         if (!automaticDraftSaveInProgress.value) {
           snackBar.success("Application draft saved with success.");
         }
@@ -299,9 +298,10 @@ export default defineComponent({
     ) => {
       isFirstPage.value = isInFirstPage;
       isLastPage.value = isInLastPage;
-      const dataChanged =
-        JSON.stringify(savedDraftData) !==
-        JSON.stringify(applicationWizard.submission.data);
+      if (!savedDraftData) {
+        savedDraftData = JSON.stringify(applicationWizard.submission.data);
+      }
+      const dataChanged = savedDraftData !== applicationWizard.submission.data;
       if (
         !notDraft.value &&
         !isReadOnly.value &&
