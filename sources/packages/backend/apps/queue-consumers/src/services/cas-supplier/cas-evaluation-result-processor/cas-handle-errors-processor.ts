@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { SystemUsersService } from "@sims/services";
 import { CASSupplier, SupplierStatus } from "@sims/sims-db";
 import { ProcessSummary } from "@sims/utilities/logger";
-import { ProcessorResult } from "apps/queue-consumers/src/services/cas-supplier/cas-evaluation-result-processor/cas-evaluation-result-processor.models";
+import { ProcessorResult } from ".";
 import { StudentSupplierToProcess } from "apps/queue-consumers/src/services/cas-supplier/cas-supplier.models";
 import { Repository } from "typeorm";
 
@@ -26,6 +26,7 @@ export class CASHandleErrorsProcessor {
     studentSupplier: StudentSupplierToProcess,
     summary: ProcessSummary,
     error: string[],
+    partialSupplier?: Partial<CASSupplier>,
   ): Promise<ProcessorResult> {
     summary.error("An error occurred during processing.", error);
     const now = new Date();
@@ -36,6 +37,7 @@ export class CASHandleErrorsProcessor {
           id: studentSupplier.casSupplierID,
         },
         {
+          ...(partialSupplier ? partialSupplier : {}),
           supplierStatus: SupplierStatus.ManualIntervention,
           supplierStatusUpdatedOn: now,
           isValid: false,

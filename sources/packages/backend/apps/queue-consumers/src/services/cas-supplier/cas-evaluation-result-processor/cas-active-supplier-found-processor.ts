@@ -6,6 +6,7 @@ import { ProcessSummary } from "@sims/utilities/logger";
 import {
   CASEvaluationResult,
   CASEvaluationStatus,
+  CASFoundSupplierResult,
   StudentSupplierToProcess,
 } from "../cas-supplier.models";
 import { Repository } from "typeorm";
@@ -70,11 +71,11 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
         studentSupplier,
         summary,
         [error.toString()],
+        this.getSupplierDetails(result, evaluationResult),
       );
     }
     try {
       const [submittedAddress] = result.submittedData.SupplierAddress;
-      const supplierToUpdate = evaluationResult.activeSupplier;
       const now = new Date();
       const systemUser = this.systemUsersService.systemUser;
       const supplierAddressToUpdate: SupplierAddress = {
@@ -92,11 +93,7 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
           id: studentSupplier.casSupplierID,
         },
         {
-          supplierNumber: result.response.supplierNumber,
-          supplierName: supplierToUpdate.suppliername,
-          status: supplierToUpdate.status,
-          supplierProtected: supplierToUpdate.supplierprotected === "Y",
-          lastUpdated: new Date(supplierToUpdate.lastupdated),
+          ...this.getSupplierDetails(result, evaluationResult),
           supplierAddress: supplierAddressToUpdate,
           supplierStatus: SupplierStatus.Verified,
           supplierStatusUpdatedOn: now,
@@ -119,5 +116,19 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
       );
     }
     return { isSupplierUpdated: false };
+  }
+
+  private getSupplierDetails(
+    result: CreateExistingSupplierSiteResponse,
+    evaluationResult: CASFoundSupplierResult,
+  ): Partial<CASSupplier> {
+    const supplierToUpdate = evaluationResult.activeSupplier;
+    return {
+      supplierNumber: result.response.supplierNumber,
+      supplierName: supplierToUpdate.suppliername,
+      status: supplierToUpdate.status,
+      supplierProtected: supplierToUpdate.supplierprotected === "Y",
+      lastUpdated: new Date(supplierToUpdate.lastupdated),
+    };
   }
 }
