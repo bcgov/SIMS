@@ -100,7 +100,6 @@ import {
   ApplicationStatus,
   ApiProcessError,
   BannerTypes,
-  ApplicationData,
 } from "@/types";
 import { ApplicationDataAPIOutDTO } from "@/services/http/dto";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
