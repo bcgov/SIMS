@@ -28,7 +28,7 @@ export class MetricsController {
     } catch (error) {
       this.logger.error("Error while getting metrics.", error);
       throw new InternalServerErrorException(
-        "Error while getting metrics. See server logs for details",
+        "Error while getting metrics. See server logs for details.",
       );
     }
   }
