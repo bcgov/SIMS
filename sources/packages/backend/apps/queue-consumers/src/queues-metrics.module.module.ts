@@ -16,7 +16,6 @@ export class QueuesMetricsModule implements OnModuleInit {
    */
   async onModuleInit(): Promise<void> {
     this.logger.log("Associating queue events for metrics.");
-
     this.metricsService.setGlobalMetricsConfigurations();
     await this.metricsService.associateQueueEventsCountersMetrics();
   }

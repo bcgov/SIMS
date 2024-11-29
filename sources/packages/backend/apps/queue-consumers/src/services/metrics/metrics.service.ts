@@ -62,9 +62,8 @@ export class MetricsService {
 
   /**
    * Refreshes the metrics job counts for all queues by retrieving the current
-   * job counts for 'active', 'completed', 'failed', 'delayed', 'waiting'. The
-   * job counts are then used to update the gauge metric for each individual
-   * queue.
+   * job counts for 'active', 'completed', 'failed', 'delayed', 'waiting'.
+   * The job counts are then used to update the gauge metric for each individual queue.
    */
   private async refreshJobCountsMetrics(): Promise<void> {
     const monitoredQueues = await this.getMonitoredQueues();
