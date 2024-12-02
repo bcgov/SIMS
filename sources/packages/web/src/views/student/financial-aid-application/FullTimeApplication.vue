@@ -300,7 +300,7 @@ export default defineComponent({
 
     const pageChanged = async (
       isInFirstPage: boolean,
-      currentPage: number,
+      _: number,
       isInLastPage: boolean,
     ) => {
       isFirstPage.value = isInFirstPage;
