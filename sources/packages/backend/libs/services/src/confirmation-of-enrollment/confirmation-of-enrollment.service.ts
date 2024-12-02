@@ -244,7 +244,8 @@ export class ConfirmationOfEnrollmentService {
       .innerJoin("offering.institutionLocation", "location")
       .where("disbursementSchedule.id = :disbursementScheduleId", {
         disbursementScheduleId,
-      });
+      })
+      .andWhere("disbursementSchedule.hasEstimatedAwards = true");
 
     if (locationId) {
       disbursementAndApplicationQuery.andWhere("location.id = :locationId", {

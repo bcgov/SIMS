@@ -182,6 +182,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .andWhere("disbursement.id = :disbursementScheduleId", {
         disbursementScheduleId,
       })
+      .andWhere("disbursement.hasEstimatedAwards = true")
       .getOne();
   }
 

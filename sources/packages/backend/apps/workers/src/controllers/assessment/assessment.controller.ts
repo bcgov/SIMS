@@ -22,10 +22,7 @@ import {
   UpdateNOAStatusJobInDTO,
   VerifyAssessmentCalculationOrderJobOutDTO,
 } from "..";
-import {
-  DisbursementScheduleService,
-  StudentAssessmentService,
-} from "../../services";
+import { StudentAssessmentService } from "../../services";
 import {
   ApplicationStatus,
   CRAIncomeVerification,
@@ -77,7 +74,6 @@ export class AssessmentController {
     private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
     private readonly systemUsersService: SystemUsersService,
     private readonly studentLoanBalanceSharedService: StudentLoanBalanceSharedService,
-    private readonly disbursementScheduleService: DisbursementScheduleService,
   ) {}
 
   /**
@@ -201,10 +197,6 @@ export class AssessmentController {
       await this.studentAssessmentService.updateAssessmentData(
         job.variables.assessmentId,
         job.variables.assessmentData,
-      );
-      await this.disbursementScheduleService.updateDisbursementsHasEstimatedAwards(
-        job.variables.assessmentId,
-        job.variables.assessmentData["finalAwardTotal"],
       );
       jobLogger.log("Assessment data saved.");
       return job.complete();
