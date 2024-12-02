@@ -155,7 +155,7 @@ export default defineComponent({
     const existingApplication = ref({} as ApplicationDataAPIOutDTO);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
     const conditionsAccepted = ref(false);
-    // automaticDraftSaveInProgress boolean ensures that multiple api calls for save
+    // automaticDraftSaveInProgress is a boolean that ensures that multiple api calls for save
     // draft are not made while a draft save is in progress.
     let automaticDraftSaveInProgress = false;
 
