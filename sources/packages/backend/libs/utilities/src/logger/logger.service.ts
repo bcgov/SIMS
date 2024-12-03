@@ -41,7 +41,11 @@ export class LoggerService extends ConsoleLogger {
     if (error) {
       errorBuilder.appendLine(parseJSONError(error));
     }
-    super.error(errorBuilder.toString(), null, context);
+    if (context) {
+      super.error(errorBuilder.toString(), context);
+      return;
+    }
+    super.error(errorBuilder.toString());
   }
 
   /**
