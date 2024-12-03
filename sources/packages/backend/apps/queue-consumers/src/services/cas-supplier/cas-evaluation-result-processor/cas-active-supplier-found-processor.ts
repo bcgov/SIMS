@@ -63,9 +63,9 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
       });
       summary.info("Created a new site on CAS.");
     } catch (error: unknown) {
-      summary.warn("Error while creating a new site on CAS.");
       if (error instanceof CustomNamedError) {
         if (error.name === CAS_BAD_REQUEST) {
+          summary.warn("Known error while creating a new site on CAS.");
           return await this.processBadRequestErrors(
             studentSupplier,
             summary,
@@ -73,6 +73,8 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
             this.systemUsersService.systemUser.id,
           );
         }
+        summary.error("Error while creating a new site on CAS.", error);
+        return { isSupplierUpdated: false };
       }
     }
     try {
