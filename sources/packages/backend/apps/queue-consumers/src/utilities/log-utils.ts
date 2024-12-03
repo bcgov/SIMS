@@ -51,13 +51,17 @@ export async function logProcessSummaryToJobLogger(
  * attention messages appended.
  */
 export function getSuccessMessageWithAttentionCheck(
-  successMessages: string[],
+  successMessages: string[] | string,
   processSummary: ProcessSummary,
   options?: { throwOnError?: boolean },
 ): string[] {
   const throwOnError = options?.throwOnError ?? false;
   const message: string[] = [];
-  message.push(...successMessages);
+  if (Array.isArray(successMessages)) {
+    message.push(...successMessages);
+  } else {
+    message.push(successMessages);
+  }
   const logsSum = processSummary.getLogLevelSum();
   if (logsSum.error || logsSum.warn) {
     message.push(

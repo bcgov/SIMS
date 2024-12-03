@@ -6,6 +6,7 @@ import {
 } from "@sims/utilities/logger";
 import {
   PROCESS_SUMMARY_CONTAINS_ERROR,
+  getSuccessMessageWithAttentionCheck,
   logProcessSummaryToJobLogger,
 } from "../../utilities";
 import { Job } from "bull";
@@ -35,7 +36,7 @@ export abstract class BaseQueue<T> {
           PROCESS_SUMMARY_CONTAINS_ERROR,
         );
       }
-      return result;
+      return getSuccessMessageWithAttentionCheck(result, processSummary);
     } catch (error: unknown) {
       // Throw an error to force the queue to retry.
       if (error instanceof CustomNamedError) {
