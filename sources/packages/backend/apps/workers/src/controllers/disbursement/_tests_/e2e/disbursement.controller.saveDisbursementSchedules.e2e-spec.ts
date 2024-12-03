@@ -344,13 +344,13 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     assertOveraward(overawards, "CSLP", 300);
   });
 
-  it("Should assert disbursements do not have estimated awards and disbursement value amounts are zero.", async () => {
+  it("Should assert 'hasEstimatedAward' flag as false when disbursement value amounts are zero.", async () => {
     // Arrange
     const savedUser = await db.user.save(createFakeUser());
     const savedStudent = await db.student.save(createFakeStudent(savedUser));
     const fakeApplication = createFakeApplication(
       { student: savedStudent },
-      { initialValue: { applicationStatus: ApplicationStatus.Completed } },
+      { initialValue: { applicationStatus: ApplicationStatus.InProgress } },
     );
     fakeApplication.applicationNumber = "OA_TEST003";
     const savedApplication = await db.application.save(fakeApplication);
@@ -359,47 +359,9 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
       auditUser: savedUser,
     });
     fakeOriginalAssessment.application = savedApplication;
-    // Original assessment - first disbursement (Pending).
-    const firstSchedule = createFakeDisbursementSchedule(
-      {
-        disbursementValues: [
-          createFakeDisbursementValue(
-            DisbursementValueType.CanadaLoan,
-            "CSLF",
-            0,
-          ),
-          createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 0),
-        ],
-      },
-      { initialValues: { hasEstimatedAwards: false } },
-    );
-    firstSchedule.disbursementScheduleStatus =
-      DisbursementScheduleStatus.Pending;
-    // Original assessment - second disbursement (Pending).
-    const secondSchedule = createFakeDisbursementSchedule(
-      {
-        disbursementValues: [
-          createFakeDisbursementValue(
-            DisbursementValueType.CanadaGrant,
-            "CSLF",
-            0,
-          ),
-          createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 0),
-        ],
-      },
-      { initialValues: { hasEstimatedAwards: false } },
-    );
-    secondSchedule.disbursementScheduleStatus =
-      DisbursementScheduleStatus.Pending;
-    fakeOriginalAssessment.disbursementSchedules = [
-      firstSchedule,
-      secondSchedule,
-    ];
     const savedOriginalAssessment = await db.studentAssessment.save(
       fakeOriginalAssessment,
     );
-
-    // Act
     const saveDisbursementSchedulesPayload =
       createFakeSaveDisbursementSchedulesPayload({
         assessmentId: savedOriginalAssessment.id,
@@ -455,6 +417,83 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     expect(firstDisbursement.hasEstimatedAwards).toBe(false);
     // Assert secondDisbursement.
     expect(secondDisbursement.hasEstimatedAwards).toBe(false);
+  });
+
+  it("Should assert 'hasEstimatedAward' flag as true when disbursement value amounts are greater than zero.", async () => {
+    // Arrange
+    const savedUser = await db.user.save(createFakeUser());
+    const savedStudent = await db.student.save(createFakeStudent(savedUser));
+    const fakeApplication = createFakeApplication(
+      { student: savedStudent },
+      { initialValue: { applicationStatus: ApplicationStatus.InProgress } },
+    );
+    fakeApplication.applicationNumber = "OA_TEST003";
+    const savedApplication = await db.application.save(fakeApplication);
+    // Original assessment.
+    const fakeOriginalAssessment = createFakeStudentAssessment({
+      auditUser: savedUser,
+    });
+    fakeOriginalAssessment.application = savedApplication;
+    const savedOriginalAssessment = await db.studentAssessment.save(
+      fakeOriginalAssessment,
+    );
+
+    // Act
+    const saveDisbursementSchedulesPayload =
+      createFakeSaveDisbursementSchedulesPayload({
+        assessmentId: savedOriginalAssessment.id,
+        createSecondDisbursement: true,
+        firstDisbursementAwards: [
+          {
+            valueCode: "CSLF",
+            valueType: DisbursementValueType.CanadaLoan,
+            valueAmount: 1000,
+          },
+          {
+            valueCode: "BCSL",
+            valueType: DisbursementValueType.BCLoan,
+            valueAmount: 1000,
+          },
+        ],
+        secondDisbursementAwards: [
+          {
+            valueCode: "CSLF",
+            valueType: DisbursementValueType.CanadaLoan,
+            valueAmount: 1000,
+          },
+          {
+            valueCode: "BCSL",
+            valueType: DisbursementValueType.BCLoan,
+            valueAmount: 1000,
+          },
+        ],
+      });
+    const saveResult = await disbursementController.saveDisbursementSchedules(
+      saveDisbursementSchedulesPayload,
+    );
+
+    // Asserts
+    expect(saveResult).toHaveProperty(
+      FAKE_WORKER_JOB_RESULT_PROPERTY,
+      MockedZeebeJobResult.Complete,
+    );
+
+    const createdDisbursements = await db.disbursementSchedule.find({
+      select: {
+        id: true,
+        hasEstimatedAwards: true,
+      },
+      where: {
+        studentAssessment: { id: savedOriginalAssessment.id },
+      },
+    });
+    // Assert disbursements.
+    expect(createdDisbursements).toHaveLength(2);
+    const [firstDisbursement, secondDisbursement] = createdDisbursements;
+    // Assert firstDisbursement.
+    expect(firstDisbursement.hasEstimatedAwards).toBe(true);
+    // Assert secondDisbursement.
+    expect(secondDisbursement.hasEstimatedAwards).toBe(true);
   });
 
   function assertAwardDeduction(

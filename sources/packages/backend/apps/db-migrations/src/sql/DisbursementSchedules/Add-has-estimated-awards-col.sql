@@ -10,23 +10,20 @@ COMMENT ON COLUMN sims.disbursement_schedules.has_estimated_awards IS 'Indicatio
 UPDATE
     sims.disbursement_schedules
 SET
-    has_estimated_awards = CASE
-        WHEN disbursement_total_amounts.value_amount = 0 THEN false
-        ELSE true
-    END
-FROM
-    (
-        SELECT
-            disbursement_schedules.id AS disbursement_schedules_id,
-            sum(disbursement_values.value_amount) AS value_amount
-        FROM
-            sims.disbursement_schedules disbursement_schedules
-            INNER JOIN sims.disbursement_values disbursement_values ON disbursement_values.disbursement_schedule_id = disbursement_schedules.id
-        GROUP BY
-            disbursement_schedules.id
-    ) disbursement_total_amounts
-WHERE
-    sims.disbursement_schedules.id = disbursement_total_amounts.disbursement_schedules_id;
+    has_estimated_awards = (
+        CASE
+            when EXISTS (
+                SELECT
+                    1
+                FROM
+                    sims.disbursement_values disbursement_value
+                WHERE
+                    disbursement_value.disbursement_schedule_id = sims.disbursement_schedules.id
+                    AND disbursement_value.value_amount > 0
+            ) THEN true
+            ELSE false
+        END
+    );
 
 -- Remove the default.
 ALTER TABLE
