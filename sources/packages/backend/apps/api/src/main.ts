@@ -12,6 +12,7 @@ import { Request, Response } from "express";
 import { KeycloakConfig } from "@sims/auth/config";
 import helmet from "helmet";
 import { SystemUsersService } from "@sims/services";
+import { AppExternalModule } from "./app.external.module";
 
 async function bootstrap() {
   await KeycloakConfig.load();
@@ -87,6 +88,12 @@ async function bootstrap() {
       .build();
     const document = SwaggerModule.createDocument(app, options);
     SwaggerModule.setup("swagger", app, document);
+
+    // External swagger
+    const externalDocument = SwaggerModule.createDocument(app, options, {
+      include: [AppExternalModule], // Includes only AppExternalModule.
+    });
+    SwaggerModule.setup("external/swagger", app, externalDocument);
   }
 
   // Starting application

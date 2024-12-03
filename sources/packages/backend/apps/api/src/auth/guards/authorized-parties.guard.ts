@@ -66,6 +66,9 @@ export class AuthorizedPartiesGuard implements CanActivate {
     authorizedParty: AuthorizedParties,
     identityProvider: IdentityProviders,
   ): boolean {
+    if (authorizedParty === AuthorizedParties.external) {
+      return true;
+    }
     switch (authorizedParty) {
       case AuthorizedParties.student:
         if (

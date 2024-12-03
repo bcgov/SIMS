@@ -52,6 +52,30 @@ export class StudentService {
   }
 
   /**
+   * Gets student by SIN.
+   * @param sin student's SIN.
+   * @returns student.
+   */
+  async getStudentBySIN(sin: string): Promise<Student> {
+    return this.studentRepo.findOne({
+      select: {
+        id: true,
+        sinValidation: { id: true, sin: true },
+        user: { id: true, firstName: true, lastName: true, email: true },
+        birthDate: true,
+        contactInfo: true as unknown,
+        applications: { applicationNumber: true },
+      },
+      relations: {
+        sinValidation: true,
+        user: true,
+        applications: true,
+      },
+      where: { sinValidation: { sin } },
+    });
+  }
+
+  /**
    * Gets all the students that have the SIN validation pending.
    * @returns Students pending SIN validation.
    */

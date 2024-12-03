@@ -1,4 +1,9 @@
-export type ClientType = "student" | "institution" | "aest" | "supportingUsers";
+export type ClientType =
+  | "student"
+  | "institution"
+  | "aest"
+  | "supportingUsers"
+  | "external";
 
 export interface AuthConfig {
   url: string;
