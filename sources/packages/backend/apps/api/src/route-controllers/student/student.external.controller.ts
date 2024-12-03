@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, NotFoundException, Post } from "@nestjs/common";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { ClientTypeBaseRoute } from "../../types";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -37,7 +37,7 @@ export class StudentExternalController extends BaseController {
   ): Promise<StudentDetailsAPIOutDTO> {
     const student = await this.studentService.getStudentBySIN(payload.sin);
     if (!student) {
-      throw new Error("Student not found.");
+      throw new NotFoundException("Student not found.");
     }
     return {
       firstName: student.user.firstName,
