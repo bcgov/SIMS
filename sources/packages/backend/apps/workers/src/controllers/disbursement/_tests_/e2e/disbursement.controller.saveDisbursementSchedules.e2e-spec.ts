@@ -391,6 +391,8 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
           },
         ],
       });
+
+    // Act
     const saveResult = await disbursementController.saveDisbursementSchedules(
       saveDisbursementSchedulesPayload,
     );
@@ -437,8 +439,6 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     const savedOriginalAssessment = await db.studentAssessment.save(
       fakeOriginalAssessment,
     );
-
-    // Act
     const saveDisbursementSchedulesPayload =
       createFakeSaveDisbursementSchedulesPayload({
         assessmentId: savedOriginalAssessment.id,
@@ -468,6 +468,8 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
           },
         ],
       });
+
+    // Act
     const saveResult = await disbursementController.saveDisbursementSchedules(
       saveDisbursementSchedulesPayload,
     );
