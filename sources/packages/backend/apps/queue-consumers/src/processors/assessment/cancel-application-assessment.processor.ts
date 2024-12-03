@@ -1,4 +1,4 @@
-import { Process, Processor } from "@nestjs/bull";
+import { Processor } from "@nestjs/bull";
 import { Job } from "bull";
 import { CancelAssessmentQueueInDTO } from "@sims/services/queue";
 import {
@@ -49,7 +49,6 @@ export class CancelApplicationAssessmentProcessor extends BaseQueue<CancelAssess
    * @param job information to perform the process.
    * @param processSummary process summary for logging.
    * @returns processing result.   */
-  @Process()
   async process(
     job: Job<CancelAssessmentQueueInDTO>,
     processSummary: ProcessSummary,

@@ -1,4 +1,4 @@
-import { Process, Processor } from "@nestjs/bull";
+import { Processor } from "@nestjs/bull";
 import { Job } from "bull";
 import { StartAssessmentQueueInDTO } from "@sims/services/queue";
 import { WorkflowClientService } from "@sims/services";
@@ -30,7 +30,6 @@ export class StartApplicationAssessmentProcessor extends BaseQueue<StartAssessme
    * @param processSummary process summary for logging.
    * @returns processing result.
    */
-  @Process()
   async process(
     job: Job<StartAssessmentQueueInDTO>,
     processSummary: ProcessSummary,

@@ -9,6 +9,7 @@ import {
   logProcessSummaryToJobLogger,
 } from "../../utilities";
 import { Job } from "bull";
+import { Process } from "@nestjs/bull";
 
 /**
  * Provides basic functionality for queue processing.
@@ -20,6 +21,7 @@ export abstract class BaseQueue<T> {
    * @param job process job.
    * @returns processing result.
    */
+  @Process()
   async processQueue(job: Job<T>): Promise<string | string[]> {
     const processSummary = new ProcessSummary();
     try {
