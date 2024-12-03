@@ -77,6 +77,13 @@ describe(
       systemUsersService = app.get(SystemUsersService);
       // Create a Ministry user to b used, for instance, for audit.
       sharedMinistryUser = await db.user.save(createFakeUser());
+      // Insert fake email contact to send ministry email.
+      await db.notificationMessage.update(
+        {
+          id: NotificationMessageType.MinistryNotificationDisbursementBlocked,
+        },
+        { emailContacts: ["dummy@some.domain"] },
+      );
     });
 
     beforeEach(async () => {

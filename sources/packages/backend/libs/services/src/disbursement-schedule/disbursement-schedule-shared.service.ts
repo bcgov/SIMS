@@ -133,6 +133,12 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
             return newValue;
           },
         );
+        const totalEstimatedAwards = disbursement.disbursements.reduce(
+          (totalEstimatedAward, currentAward) =>
+            totalEstimatedAward + currentAward.valueAmount,
+          0,
+        );
+        newDisbursement.hasEstimatedAwards = totalEstimatedAwards > 0;
         disbursementSchedules.push(newDisbursement);
       }
       assessment.disbursementSchedules = disbursementSchedules;
