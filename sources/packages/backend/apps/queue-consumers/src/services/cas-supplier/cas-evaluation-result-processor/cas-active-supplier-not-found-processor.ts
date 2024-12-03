@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { SystemUsersService } from "@sims/services";
+import { CASSupplierSharedService, SystemUsersService } from "@sims/services";
+import { InjectRepository } from "@nestjs/typeorm";
 import { CASSupplier, SupplierStatus } from "@sims/sims-db";
 import { ProcessSummary } from "@sims/utilities/logger";
 import {
@@ -12,7 +13,6 @@ import {
   CreateSupplierAndSiteResponse,
 } from "@sims/integrations/cas";
 import { CASEvaluationResultProcessor, ProcessorResult } from ".";
-import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
 /**
@@ -25,6 +25,7 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
     private readonly systemUsersService: SystemUsersService,
     @InjectRepository(CASSupplier)
     casSupplierRepo: Repository<CASSupplier>,
+    private readonly casSupplierSharedService: CASSupplierSharedService,
   ) {
     super(casSupplierRepo);
   }
@@ -76,6 +77,13 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
       const [submittedAddress] = result.submittedData.SupplierAddress;
       const now = new Date();
       const systemUser = this.systemUsersService.systemUser;
+      const studentProfileSnapshot =
+        this.casSupplierSharedService.getStudentProfileSnapshot(
+          studentSupplier.firstName,
+          studentSupplier.lastName,
+          studentSupplier.sin,
+          studentSupplier.address,
+        );
       const updateResult = await this.casSupplierRepo.update(
         {
           id: studentSupplier.casSupplierID,
@@ -96,6 +104,7 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
             lastUpdated: now,
           },
           supplierStatus: SupplierStatus.Verified,
+          studentProfileSnapshot,
           supplierStatusUpdatedOn: now,
           isValid: true,
           updatedAt: now,

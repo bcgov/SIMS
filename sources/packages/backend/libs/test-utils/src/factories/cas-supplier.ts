@@ -18,7 +18,7 @@ import * as faker from "faker";
  * @param relations dependencies:
  * - `student` student for the CAS supplier record.
  * @param options optional params.
- * - `supplierStatus` supplier status.
+ * - `initialValues` CAS supplier initial values.
  * @returns a saved fake CAS supplier.
  */
 export async function saveFakeCASSupplier(
@@ -27,7 +27,7 @@ export async function saveFakeCASSupplier(
     student?: Student;
   },
   options?: {
-    supplierStatus: SupplierStatus;
+    initialValues?: Partial<CASSupplier>;
   },
 ): Promise<CASSupplier> {
   const auditUser = await db.user.save(createFakeUser());
@@ -47,7 +47,7 @@ export async function saveFakeCASSupplier(
  * - `student` related student.
  * - `auditUser` audit user for the record.
  * @param options optional params.
- * - `supplierStatus` supplier status.
+ * - `initialValues` CAS supplier initial values.
  * @returns a fake CAS supplier.
  */
 export function createFakeCASSupplier(
@@ -56,17 +56,20 @@ export function createFakeCASSupplier(
     auditUser: User;
   },
   options?: {
-    supplierStatus: SupplierStatus;
+    initialValues?: Partial<CASSupplier>;
   },
 ): CASSupplier {
   const casSupplier = new CASSupplier();
   casSupplier.supplierStatus =
-    options?.supplierStatus ?? SupplierStatus.PendingSupplierVerification;
+    options?.initialValues?.supplierStatus ??
+    SupplierStatus.PendingSupplierVerification;
 
   // Verified manually has a minimum of values populated.
-  if (options?.supplierStatus === SupplierStatus.VerifiedManually) {
+  if (
+    options?.initialValues?.supplierStatus === SupplierStatus.VerifiedManually
+  ) {
     casSupplier.supplierAddress = {} as SupplierAddress;
-    casSupplier.isValid = true;
+    casSupplier.isValid = options?.initialValues.isValid ?? true;
   } else {
     casSupplier.supplierAddress = {
       supplierSiteCode: faker.datatype.number(999).toString(),

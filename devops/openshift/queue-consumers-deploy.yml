@@ -19,6 +19,10 @@ objects:
         type: Rolling
       template:
         metadata:
+          annotations:
+            prometheus.io/scrape: "true"
+            prometheus.io/port: ${PORT}
+            prometheus.io/path: /metrics
           labels:
             deploymentconfig: ${NAME}
         spec:

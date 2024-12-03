@@ -12,6 +12,10 @@ export const INSTITUTION_REPORTS: OptionItemAPIOutDTO[] = [
 export const MINISTRY_REPORTS: OptionItemAPIOutDTO[] = [
   { description: "Data Inventory", id: "Data_Inventory_Report" },
   { description: "Disbursements", id: "Disbursement_Report" },
+  {
+    description: "Disbursements Without Valid Supplier",
+    id: "Disbursements_Without_Valid_Supplier_Report",
+  },
   { description: "eCert Errors", id: "ECert_Errors_Report" },
   {
     description: "Forecast disbursements",

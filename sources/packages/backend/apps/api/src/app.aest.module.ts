@@ -96,6 +96,7 @@ import {
   RestrictionSharedService,
   MSFAANumberSharedService,
   AssessmentSequentialProcessingService,
+  CASSupplierSharedService,
 } from "@sims/services";
 import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
 
@@ -194,6 +195,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     ApplicationRestrictionBypassService,
     CRAIncomeVerificationService,
     SupportingUserService,
+    CASSupplierSharedService,
   ],
 })
 export class AppAESTModule {}

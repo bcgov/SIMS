@@ -12,15 +12,42 @@
       </p>
       <ul class="m-4">
         <li>
-          Use the template provided on
+          Review the
           <a
-            href="https://studentaidbc.ca/institution-officials"
+            href="https://studentaidbc.ca/sites/all/files/school-officials/bulk-offering-upload-instructions.pdf"
             rel="noopener"
             target="_blank"
-            >https://studentaidbc.ca/institution-officials</a
+            >SIMS bulk offerings upload instructions</a
           >
+          found on the
+          <a
+            href="https://studentaidbc.ca/sims-institution-access"
+            rel="noopener"
+            target="_blank"
+            >Student Information Management System (SIMS) Institution Account
+            access</a
+          >
+          page
         </li>
-        <li>Please save the file as "CSV UTF-8 (Comma delimited) (*.csv)"</li>
+        <li>
+          Use the
+          <a
+            href="https://studentaidbc.ca/sites/all/files/school-officials/bulk-offering-upload-template.xlsx"
+            rel="noopener"
+            target="_blank"
+            >SIMS bulk offerings upload template</a
+          >
+          provided on the
+          <a
+            href="https://studentaidbc.ca/sims-institution-access"
+            rel="noopener"
+            target="_blank"
+            >Student Information Management System (SIMS) Institution Account
+            access</a
+          >
+          page
+        </li>
+        <li>Please save the file as "CSV (Comma delimited)(.csv)"</li>
         <li>Select the file to be uploaded</li>
         <li>
           Click on "Validate" to ensure your file does not have errors or
@@ -35,6 +62,10 @@
       </ul>
       <p class="category-header-medium primary-color">Additional notes</p>
       <ul class="m-4">
+        <li>
+          A program needs to be created before the “Offerings Upload” feature
+          can be used
+        </li>
         <li>This will create all offerings present in the CSV file</li>
         <li>
           Any errors will produce a list below. These errors must be fixed in

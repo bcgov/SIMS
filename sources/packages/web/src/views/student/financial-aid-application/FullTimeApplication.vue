@@ -147,6 +147,7 @@ export default defineComponent({
     const savingDraft = ref(false);
     const submittingApplication = ref(false);
     let applicationWizard: any;
+    let savedDraftData: string;
     const isFirstPage = ref(true);
     const isLastPage = ref(false);
     const isReadOnly = ref(false);
@@ -154,6 +155,9 @@ export default defineComponent({
     const existingApplication = ref({} as ApplicationDataAPIOutDTO);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
     const conditionsAccepted = ref(false);
+    // automaticDraftSaveInProgress is a boolean that ensures that multiple api calls for save
+    // draft are not made while a draft save is in progress.
+    let automaticDraftSaveInProgress = false;
 
     const checkProgramYear = async () => {
       // check program year, if not active allow only readonly mode with a snackBar
@@ -219,22 +223,35 @@ export default defineComponent({
       existingApplication.value = applicationData;
     });
 
+    const callSaveDraft = async () => {
+      const associatedFiles = formioUtils.getAssociatedFiles(applicationWizard);
+      await ApplicationService.shared.saveApplicationDraft(props.id, {
+        programYearId: props.programYearId,
+        data: applicationWizard.submission.data,
+        associatedFiles,
+      });
+      savedDraftData = JSON.stringify(applicationWizard.submission.data);
+    };
+
     // Save the current state of the student application skipping all validations.
     const saveDraft = async () => {
       savingDraft.value = true;
       try {
-        const associatedFiles =
-          formioUtils.getAssociatedFiles(applicationWizard);
-        await ApplicationService.shared.saveApplicationDraft(props.id, {
-          programYearId: props.programYearId,
-          data: applicationWizard.submission.data,
-          associatedFiles,
-        });
+        await callSaveDraft();
         snackBar.success("Application draft saved with success.");
       } catch {
         snackBar.error("An unexpected error has happened.");
       } finally {
         savingDraft.value = false;
+      }
+    };
+
+    const saveDraftAutomatically = async () => {
+      automaticDraftSaveInProgress = true;
+      try {
+        await callSaveDraft();
+      } finally {
+        automaticDraftSaveInProgress = false;
       }
     };
 
@@ -281,13 +298,28 @@ export default defineComponent({
       applicationWizard = form;
     };
 
-    const pageChanged = (
+    const pageChanged = async (
       isInFirstPage: boolean,
-      currentPage: number,
+      _currentPage: number,
       isInLastPage: boolean,
     ) => {
       isFirstPage.value = isInFirstPage;
       isLastPage.value = isInLastPage;
+      if (!savedDraftData) {
+        savedDraftData = JSON.stringify(applicationWizard.submission.data);
+      }
+      const dataChanged =
+        savedDraftData !== JSON.stringify(applicationWizard.submission.data);
+      if (
+        !notDraft.value &&
+        !isFirstPage.value &&
+        !submittingApplication.value &&
+        !automaticDraftSaveInProgress &&
+        !savingDraft.value &&
+        dataChanged
+      ) {
+        await saveDraftAutomatically();
+      }
     };
 
     const customEventCallback = async (form: any, event: FormIOCustomEvent) => {

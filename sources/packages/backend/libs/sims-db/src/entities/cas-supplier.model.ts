@@ -132,6 +132,17 @@ export class CASSupplier extends RecordDataModel {
     type: "varchar",
   })
   errors?: string[];
+
+  /**
+   * Snapshot of the student profile details which is captured
+   * when the CAS supplier is set to be active.
+   */
+  @Column({
+    name: "student_profile_snapshot",
+    type: "jsonb",
+    nullable: true,
+  })
+  studentProfileSnapshot?: StudentProfileSnapshot;
 }
 
 export type CASSupplierRecordStatus = "ACTIVE" | "INACTIVE";
@@ -147,4 +158,18 @@ export interface SupplierAddress {
   status?: CASSupplierSiteStatus;
   siteProtected?: string;
   lastUpdated: Date;
+}
+
+/**
+ * Student profile snapshot information.
+ */
+export interface StudentProfileSnapshot {
+  firstName: string;
+  lastName: string;
+  sin: string;
+  addressLine1: string;
+  city: string;
+  province: string;
+  postalCode: string;
+  country: string;
 }
