@@ -669,7 +669,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
         "Executing CAS supplier integration...",
         "Found 2 records to be updated.",
         `Processing student CAS supplier ID: ${savedCASSupplierToFail.id}.`,
-        'An error occurred during processing. [\n  "Unknown error"\n]',
+        'Unexpected error while processing supplier. "Unknown error"',
         `Processing student CAS supplier ID: ${savedCASSupplierToSucceed.id}.`,
         `CAS evaluation result status: ${CASEvaluationStatus.NotFound}.`,
         `No active CAS supplier found. Reason: ${NotFoundReason.SupplierNotFound}.`,

@@ -40,12 +40,12 @@ export class CASKnownErrorsProcessor extends CASEvaluationResultProcessor {
       throw new Error("Incorrect CAS evaluation result processor selected.");
     }
     summary.warn(
-      `CAS evaluation result status: ${evaluationResult.status}. Error: ${evaluationResult.error}.`,
+      `CAS evaluation result status: ${evaluationResult.status}. Error: ${evaluationResult.knownErrors}.`,
     );
     return this.processBadRequestErrors(
       studentSupplier,
       summary,
-      [evaluationResult.error as string],
+      evaluationResult.knownErrors,
       this.systemUsersService.systemUser.id,
     );
   }

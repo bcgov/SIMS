@@ -117,9 +117,10 @@ export class CASService {
       const config = await this.getAuthConfig();
       response = await this.httpService.axiosRef.get(url, config);
     } catch (error: unknown) {
-      throw new Error("Unexpected error while requesting supplier.", {
-        cause: error,
-      });
+      this.handleAxiosError(
+        error,
+        "Unexpected error while requesting supplier.",
+      );
     }
     return response?.data;
   }
@@ -164,21 +165,10 @@ export class CASService {
         },
       };
     } catch (error: unknown) {
-      if (
-        error instanceof AxiosError &&
-        error.response?.status === HttpStatus.BAD_REQUEST &&
-        !!error.response?.data[CAS_RETURNED_MESSAGES]
-      ) {
-        // Checking for bad request errors for better logging while the
-        // specific ticket to handle exception is pending.
-        throw new CustomNamedError(
-          error.response.data[CAS_RETURNED_MESSAGES],
-          CAS_BAD_REQUEST,
-        );
-      }
-      throw new Error("Error while creating supplier and site on CAS.", {
-        cause: error,
-      });
+      this.handleAxiosError(
+        error,
+        "Error while creating supplier and site on CAS.",
+      );
     }
   }
 
@@ -216,21 +206,10 @@ export class CASService {
         },
       };
     } catch (error: unknown) {
-      if (
-        error instanceof AxiosError &&
-        error.response?.status === HttpStatus.BAD_REQUEST &&
-        !!error.response?.data[CAS_RETURNED_MESSAGES]
-      ) {
-        // Checking for bad request errors for better logging while the
-        // specific ticket to handle exception is pending.
-        throw new CustomNamedError(
-          error.response.data[CAS_RETURNED_MESSAGES],
-          CAS_BAD_REQUEST,
-        );
-      }
-      throw new Error("Error while creating supplier and site on CAS.", {
-        cause: error,
-      });
+      this.handleAxiosError(
+        error,
+        "Error while creating supplier and site on CAS.",
+      );
     }
   }
 
@@ -265,6 +244,28 @@ export class CASService {
       EmailAddress: emailAddress,
     };
     return supplierAddress;
+  }
+
+  /**
+   * Handles AxiosError for CAS API requests.
+   * @param error The error object caught during the request.
+   * @param defaultMessage The default message to throw for non-specific errors.
+   */
+  private handleAxiosError(error: unknown, defaultMessage: string): never {
+    if (
+      error instanceof AxiosError &&
+      error.response?.status === HttpStatus.BAD_REQUEST &&
+      !!error.response?.data[CAS_RETURNED_MESSAGES]
+    ) {
+      const casKnownErrors =
+        error.response.data[CAS_RETURNED_MESSAGES].toString();
+      throw new CustomNamedError(
+        "CAS Bad Request Errors",
+        CAS_BAD_REQUEST,
+        casKnownErrors.split("|"),
+      );
+    }
+    throw new Error(defaultMessage, { cause: error });
   }
 
   @InjectLogger()

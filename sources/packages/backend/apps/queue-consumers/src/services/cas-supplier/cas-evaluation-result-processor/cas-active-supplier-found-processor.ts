@@ -14,6 +14,8 @@ import {
   CASService,
   CreateExistingSupplierSiteResponse,
 } from "@sims/integrations/cas";
+import { CAS_BAD_REQUEST } from "@sims/integrations/constants";
+import { CustomNamedError } from "@sims/utilities";
 
 /**
  * Process the active supplier information found on CAS.
@@ -62,12 +64,16 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
       summary.info("Created a new site on CAS.");
     } catch (error: unknown) {
       summary.error("Error while creating a new site on CAS.", error);
-      return await this.processBadRequestErrors(
-        studentSupplier,
-        summary,
-        [error.toString()],
-        this.systemUsersService.systemUser.id,
-      );
+      if (error instanceof CustomNamedError) {
+        if (error.name === CAS_BAD_REQUEST) {
+          return await this.processBadRequestErrors(
+            studentSupplier,
+            summary,
+            error.objectInfo as string[],
+            this.systemUsersService.systemUser.id,
+          );
+        }
+      }
     }
     try {
       const [submittedAddress] = result.submittedData.SupplierAddress;

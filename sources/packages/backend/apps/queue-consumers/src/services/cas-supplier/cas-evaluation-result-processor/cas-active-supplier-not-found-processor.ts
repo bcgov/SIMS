@@ -14,6 +14,8 @@ import {
 } from "@sims/integrations/cas";
 import { CASEvaluationResultProcessor, ProcessorResult } from ".";
 import { Repository } from "typeorm";
+import { CAS_BAD_REQUEST } from "@sims/integrations/constants";
+import { CustomNamedError } from "@sims/utilities";
 
 /**
  * Process a student that was not found on CAS.
@@ -66,12 +68,16 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
       summary.info("Created supplier and site on CAS.");
     } catch (error: unknown) {
       summary.error("Error while creating supplier and site on CAS.", error);
-      return await this.processBadRequestErrors(
-        studentSupplier,
-        summary,
-        [error.toString()],
-        this.systemUsersService.systemUser.id,
-      );
+      if (error instanceof CustomNamedError) {
+        if (error.name === CAS_BAD_REQUEST) {
+          return await this.processBadRequestErrors(
+            studentSupplier,
+            summary,
+            error.objectInfo as string[],
+            this.systemUsersService.systemUser.id,
+          );
+        }
+      }
     }
     try {
       const [submittedAddress] = result.submittedData.SupplierAddress;

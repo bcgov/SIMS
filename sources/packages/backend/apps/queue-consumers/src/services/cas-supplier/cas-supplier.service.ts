@@ -14,7 +14,7 @@ import {
   isAddressFromCanada,
   processInParallel,
 } from "@sims/utilities";
-import { CAS_AUTH_ERROR } from "@sims/integrations/constants";
+import { CAS_AUTH_ERROR, CAS_BAD_REQUEST } from "@sims/integrations/constants";
 import {
   CASEvaluationResult,
   CASEvaluationStatus,
@@ -131,6 +131,7 @@ export class CASSupplierIntegrationService {
       // Log the error and allow the process to continue checking the
       // remaining student suppliers.
       summary.error("Unexpected error while processing supplier.", error);
+      return null;
     }
   }
 
@@ -191,19 +192,24 @@ export class CASSupplierIntegrationService {
         studentSupplier.lastName,
       );
     } catch (error: unknown) {
-      return {
-        status: CASEvaluationStatus.KnownErrors,
-        error,
-      };
+      if (error instanceof CustomNamedError) {
+        if (error.name === CAS_BAD_REQUEST) {
+          return {
+            status: CASEvaluationStatus.KnownErrors,
+            knownErrors: error.objectInfo as string[],
+          };
+        }
+      }
+      throw error;
     }
-    if (!supplierResponse.items.length) {
+    if (!supplierResponse?.items.length) {
       return {
         status: CASEvaluationStatus.NotFound,
         reason: NotFoundReason.SupplierNotFound,
       };
     }
     // Check if there is at least one active supplier.
-    const casResponseActiveSupplier = supplierResponse.items.find(
+    const casResponseActiveSupplier = supplierResponse?.items.find(
       (supplier) => supplier.status === "ACTIVE",
     );
     if (!casResponseActiveSupplier) {

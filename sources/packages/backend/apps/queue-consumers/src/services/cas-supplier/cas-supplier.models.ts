@@ -48,7 +48,7 @@ export enum NotFoundReason {
 
 export interface CASKnownErrorsResult {
   status: CASEvaluationStatus.KnownErrors;
-  error: unknown;
+  knownErrors: string[];
 }
 
 /**
