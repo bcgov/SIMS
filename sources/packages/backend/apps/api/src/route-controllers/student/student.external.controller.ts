@@ -11,10 +11,10 @@ import { StudentService } from "@sims/integrations/services";
 import {
   ExternalSearchStudentAPIInDTO,
   StudentDetailsAPIOutDTO,
-} from "apps/api/src/route-controllers/student/models/student.dto";
+} from "./models/student.dto";
 
 /**
- * Student controller for External Client.
+ * Student controller for external client.
  */
 @RequiresUserAccount(false)
 @AllowAuthorizedParty(AuthorizedParties.external)
@@ -26,13 +26,13 @@ export class StudentExternalController extends BaseController {
   }
 
   /**
-   * Get student student details.
+   * Searches for student student details.
    * @param payload payload with sin to retrieve the student details.
    * @returns student details.
    */
   @Post()
   @ApiNotFoundResponse({ description: "Student not found." })
-  async getStudentProfile(
+  async searchStudentDetails(
     @Body() payload: ExternalSearchStudentAPIInDTO,
   ): Promise<StudentDetailsAPIOutDTO> {
     const student = await this.studentService.getStudentBySIN(payload.sin);
