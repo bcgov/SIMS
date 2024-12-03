@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
 import { SystemUsersService } from "@sims/services";
 import { CASSupplier, SupplierStatus } from "@sims/sims-db";
 import { ProcessSummary } from "@sims/utilities/logger";
@@ -8,16 +7,13 @@ import {
   CASEvaluationStatus,
   StudentSupplierToProcess,
 } from "../cas-supplier.models";
-import { Repository } from "typeorm";
 import {
   CASService,
   CreateSupplierAndSiteResponse,
 } from "@sims/integrations/cas";
-import {
-  CASEvaluationResultProcessor,
-  CASHandleErrorsProcessor,
-  ProcessorResult,
-} from ".";
+import { CASEvaluationResultProcessor, ProcessorResult } from ".";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 
 /**
  * Process a student that was not found on CAS.
@@ -28,10 +24,9 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
     private readonly casService: CASService,
     private readonly systemUsersService: SystemUsersService,
     @InjectRepository(CASSupplier)
-    private readonly casSupplierRepo: Repository<CASSupplier>,
-    private readonly casHandleErrorsProcessor: CASHandleErrorsProcessor,
+    casSupplierRepo: Repository<CASSupplier>,
   ) {
-    super();
+    super(casSupplierRepo);
   }
 
   /**
@@ -70,10 +65,11 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
       summary.info("Created supplier and site on CAS.");
     } catch (error: unknown) {
       summary.error("Error while creating supplier and site on CAS.", error);
-      return await this.casHandleErrorsProcessor.processErrors(
+      return await this.processBadRequestErrors(
         studentSupplier,
         summary,
         [error.toString()],
+        this.systemUsersService.systemUser.id,
       );
     }
     try {

@@ -68,7 +68,7 @@ import {
   CASPreValidationsProcessor,
   CASActiveSupplierFoundProcessor,
   CASActiveSupplierAndSiteFoundProcessor,
-  CASHandleErrorsProcessor,
+  CASKnownErrorsProcessor,
 } from "./services";
 import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
@@ -161,7 +161,7 @@ import { BullBoardQueuesModule } from "./bull-board/bull-board-queues.module";
     CASPreValidationsProcessor,
     CASActiveSupplierFoundProcessor,
     CASActiveSupplierAndSiteFoundProcessor,
-    CASHandleErrorsProcessor,
+    CASKnownErrorsProcessor,
   ],
   controllers: [HealthController],
 })

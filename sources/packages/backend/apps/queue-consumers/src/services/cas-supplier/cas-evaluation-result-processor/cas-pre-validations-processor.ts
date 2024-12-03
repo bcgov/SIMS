@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
 import { SystemUsersService } from "@sims/services";
 import { CASSupplier, SupplierStatus } from "@sims/sims-db";
 import { ProcessSummary } from "@sims/utilities/logger";
@@ -10,6 +9,7 @@ import {
 } from "../cas-supplier.models";
 import { Repository } from "typeorm";
 import { CASEvaluationResultProcessor, ProcessorResult } from ".";
+import { InjectRepository } from "@nestjs/typeorm";
 
 /**
  * Assert the student can be added to CAS.
@@ -19,9 +19,9 @@ export class CASPreValidationsProcessor extends CASEvaluationResultProcessor {
   constructor(
     private readonly systemUsersService: SystemUsersService,
     @InjectRepository(CASSupplier)
-    private readonly casSupplierRepo: Repository<CASSupplier>,
+    casSupplierRepo: Repository<CASSupplier>,
   ) {
-    super();
+    super(casSupplierRepo);
   }
 
   /**

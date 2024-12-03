@@ -24,14 +24,18 @@ export enum CASEvaluationStatus {
    * An active CAS supplier was not found.
    */
   NotFound = "NotFound",
+  /**
+   * Known errors when processing the student CAS supplier.
+   */
+  KnownErrors = "KnownErrors",
 }
 
 /**
  * Possible manual interventions.
  */
 export enum PreValidationsFailedReason {
-  GivenNamesNotPresent = "Given names not present",
-  NonCanadianAddress = "Non-Canadian address",
+  GivenNamesNotPresent = "Given name required for creation.",
+  NonCanadianAddress = "Address outside of Canada cannot be processed.",
 }
 
 /**
@@ -40,6 +44,11 @@ export enum PreValidationsFailedReason {
 export enum NotFoundReason {
   SupplierNotFound = "Supplier not found",
   NoActiveSupplierFound = "Supplier found but not active",
+}
+
+export interface CASKnownErrorsResult {
+  status: CASEvaluationStatus.KnownErrors;
+  error: unknown;
 }
 
 /**
@@ -91,7 +100,8 @@ export type CASEvaluationResult =
   | CASNotFoundSupplierResult
   | CASFoundSupplierAndSiteResult
   | CASFoundSupplierResult
-  | CASPreValidationsResult;
+  | CASPreValidationsResult
+  | CASKnownErrorsResult;
 
 /**
  * Information from the CAS supplier currently associated

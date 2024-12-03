@@ -6,15 +6,10 @@ import { ProcessSummary } from "@sims/utilities/logger";
 import {
   CASEvaluationResult,
   CASEvaluationStatus,
-  CASFoundSupplierResult,
   StudentSupplierToProcess,
 } from "../cas-supplier.models";
 import { Repository } from "typeorm";
-import {
-  CASEvaluationResultProcessor,
-  CASHandleErrorsProcessor,
-  ProcessorResult,
-} from ".";
+import { CASEvaluationResultProcessor, ProcessorResult } from ".";
 import {
   CASService,
   CreateExistingSupplierSiteResponse,
@@ -28,11 +23,10 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
   constructor(
     private readonly systemUsersService: SystemUsersService,
     @InjectRepository(CASSupplier)
-    private readonly casSupplierRepo: Repository<CASSupplier>,
+    casSupplierRepo: Repository<CASSupplier>,
     private readonly casService: CASService,
-    private readonly casHandleErrorsProcessor: CASHandleErrorsProcessor,
   ) {
-    super();
+    super(casSupplierRepo);
   }
 
   /**
@@ -67,15 +61,16 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
       summary.info("Created a new site on CAS.");
     } catch (error: unknown) {
       summary.error("Error while creating a new site on CAS.", error);
-      return await this.casHandleErrorsProcessor.processErrors(
+      return await this.processBadRequestErrors(
         studentSupplier,
         summary,
         [error.toString()],
-        this.getSupplierDetails(result, evaluationResult),
+        this.systemUsersService.systemUser.id,
       );
     }
     try {
       const [submittedAddress] = result.submittedData.SupplierAddress;
+      const supplierToUpdate = evaluationResult.activeSupplier;
       const now = new Date();
       const systemUser = this.systemUsersService.systemUser;
       const supplierAddressToUpdate: SupplierAddress = {
@@ -93,7 +88,11 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
           id: studentSupplier.casSupplierID,
         },
         {
-          ...this.getSupplierDetails(result, evaluationResult),
+          supplierNumber: result.response.supplierNumber,
+          supplierName: supplierToUpdate.suppliername,
+          status: supplierToUpdate.status,
+          supplierProtected: supplierToUpdate.supplierprotected === "Y",
+          lastUpdated: new Date(supplierToUpdate.lastupdated),
           supplierAddress: supplierAddressToUpdate,
           supplierStatus: SupplierStatus.Verified,
           supplierStatusUpdatedOn: now,
@@ -116,19 +115,5 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
       );
     }
     return { isSupplierUpdated: false };
-  }
-
-  private getSupplierDetails(
-    result: CreateExistingSupplierSiteResponse,
-    evaluationResult: CASFoundSupplierResult,
-  ): Partial<CASSupplier> {
-    const supplierToUpdate = evaluationResult.activeSupplier;
-    return {
-      supplierNumber: result.response.supplierNumber,
-      supplierName: supplierToUpdate.suppliername,
-      status: supplierToUpdate.status,
-      supplierProtected: supplierToUpdate.supplierprotected === "Y",
-      lastUpdated: new Date(supplierToUpdate.lastupdated),
-    };
   }
 }

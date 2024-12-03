@@ -5,6 +5,7 @@ import { ProcessSummary } from "@sims/utilities/logger";
 import { Repository } from "typeorm";
 import {
   CASService,
+  CASSupplierResponse,
   formatAddress,
   formatPostalCode,
 } from "@sims/integrations/cas";
@@ -28,6 +29,7 @@ import {
   CASEvaluationResultProcessor,
   CASActiveSupplierAndSiteFoundProcessor,
   ProcessorResult,
+  CASKnownErrorsProcessor,
 } from "./cas-evaluation-result-processor";
 
 @Injectable()
@@ -40,6 +42,7 @@ export class CASSupplierIntegrationService {
     private readonly casActiveSupplierFoundProcessor: CASActiveSupplierFoundProcessor,
     private readonly casActiveSupplierNotFoundProcessor: CASActiveSupplierNotFoundProcessor,
     private readonly casActiveSupplierAndSiteFoundProcessor: CASActiveSupplierAndSiteFoundProcessor,
+    private readonly casKnownErrorsProcessor: CASKnownErrorsProcessor,
   ) {}
 
   /**
@@ -128,7 +131,6 @@ export class CASSupplierIntegrationService {
       // Log the error and allow the process to continue checking the
       // remaining student suppliers.
       summary.error("Unexpected error while processing supplier.", error);
-      return null;
     }
   }
 
@@ -149,6 +151,8 @@ export class CASSupplierIntegrationService {
         return this.casActiveSupplierAndSiteFoundProcessor;
       case CASEvaluationStatus.NotFound:
         return this.casActiveSupplierNotFoundProcessor;
+      case CASEvaluationStatus.KnownErrors:
+        return this.casKnownErrorsProcessor;
       default:
         throw new Error("Invalid CAS evaluation result status.");
     }
@@ -180,10 +184,18 @@ export class CASSupplierIntegrationService {
         reasons: preValidationsFailedReasons,
       };
     }
-    const supplierResponse = await this.casService.getSupplierInfoFromCAS(
-      studentSupplier.sin,
-      studentSupplier.lastName,
-    );
+    let supplierResponse: CASSupplierResponse;
+    try {
+      supplierResponse = await this.casService.getSupplierInfoFromCAS(
+        studentSupplier.sin,
+        studentSupplier.lastName,
+      );
+    } catch (error: unknown) {
+      return {
+        status: CASEvaluationStatus.KnownErrors,
+        error,
+      };
+    }
     if (!supplierResponse.items.length) {
       return {
         status: CASEvaluationStatus.NotFound,

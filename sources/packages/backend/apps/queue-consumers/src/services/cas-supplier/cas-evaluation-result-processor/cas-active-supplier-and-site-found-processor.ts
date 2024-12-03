@@ -1,6 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { SystemUsersService } from "@sims/services";
 import { CASSupplier, SupplierStatus } from "@sims/sims-db";
 import { ProcessSummary } from "@sims/utilities/logger";
 import {
@@ -8,8 +6,10 @@ import {
   CASEvaluationStatus,
   StudentSupplierToProcess,
 } from "../cas-supplier.models";
-import { Repository } from "typeorm";
 import { CASEvaluationResultProcessor, ProcessorResult } from ".";
+import { SystemUsersService } from "@sims/services";
+import { Repository } from "typeorm";
+import { InjectRepository } from "@nestjs/typeorm";
 
 /**
  * Process the active supplier and site information found on CAS.
@@ -19,9 +19,9 @@ export class CASActiveSupplierAndSiteFoundProcessor extends CASEvaluationResultP
   constructor(
     private readonly systemUsersService: SystemUsersService,
     @InjectRepository(CASSupplier)
-    private readonly casSupplierRepo: Repository<CASSupplier>,
+    casSupplierRepo: Repository<CASSupplier>,
   ) {
-    super();
+    super(casSupplierRepo);
   }
 
   /**
