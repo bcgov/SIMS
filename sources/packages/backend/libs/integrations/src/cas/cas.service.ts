@@ -117,7 +117,7 @@ export class CASService {
       const config = await this.getAuthConfig();
       response = await this.httpService.axiosRef.get(url, config);
     } catch (error: unknown) {
-      this.handleAxiosError(
+      this.handleBadRequestError(
         error,
         "Unexpected error while requesting supplier.",
       );
@@ -165,7 +165,7 @@ export class CASService {
         },
       };
     } catch (error: unknown) {
-      this.handleAxiosError(
+      this.handleBadRequestError(
         error,
         "Error while creating supplier and site on CAS.",
       );
@@ -206,7 +206,7 @@ export class CASService {
         },
       };
     } catch (error: unknown) {
-      this.handleAxiosError(
+      this.handleBadRequestError(
         error,
         "Error while creating supplier and site on CAS.",
       );
@@ -247,11 +247,11 @@ export class CASService {
   }
 
   /**
-   * Handles AxiosError for CAS API requests.
+   * Handles bad request errors from CAS API.
    * @param error The error object caught during the request.
    * @param defaultMessage The default message to throw for non-specific errors.
    */
-  private handleAxiosError(error: unknown, defaultMessage: string): never {
+  private handleBadRequestError(error: unknown, defaultMessage: string): never {
     if (
       error instanceof AxiosError &&
       error.response?.status === HttpStatus.BAD_REQUEST &&

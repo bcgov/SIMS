@@ -43,7 +43,7 @@ export abstract class CASEvaluationResultProcessor {
     error: string[],
     auditUserId: number,
   ): Promise<ProcessorResult> {
-    summary.error("An error occurred during processing.", error);
+    summary.warn("A known error occurred during processing.");
     const now = new Date();
     const auditUser = { id: auditUserId } as User;
     try {

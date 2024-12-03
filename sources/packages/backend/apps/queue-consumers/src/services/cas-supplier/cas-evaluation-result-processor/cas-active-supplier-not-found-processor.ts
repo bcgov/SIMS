@@ -67,7 +67,7 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
       });
       summary.info("Created supplier and site on CAS.");
     } catch (error: unknown) {
-      summary.error("Error while creating supplier and site on CAS.", error);
+      summary.warn("Error while creating supplier and site on CAS.");
       if (error instanceof CustomNamedError) {
         if (error.name === CAS_BAD_REQUEST) {
           return await this.processBadRequestErrors(

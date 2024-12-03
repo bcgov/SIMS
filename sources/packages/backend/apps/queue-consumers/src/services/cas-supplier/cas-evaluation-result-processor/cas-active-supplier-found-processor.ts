@@ -63,7 +63,7 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
       });
       summary.info("Created a new site on CAS.");
     } catch (error: unknown) {
-      summary.error("Error while creating a new site on CAS.", error);
+      summary.warn("Error while creating a new site on CAS.");
       if (error instanceof CustomNamedError) {
         if (error.name === CAS_BAD_REQUEST) {
           return await this.processBadRequestErrors(
