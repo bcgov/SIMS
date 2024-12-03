@@ -60,7 +60,6 @@ export class StudentLoanBalancesPartTimeIntegrationScheduler extends BaseSchedul
     } finally {
       this.logger.logProcessSummary(processSummary);
       await logProcessSummaryToJobLogger(processSummary, job);
-      await this.cleanSchedulerQueueHistory();
     }
   }
 

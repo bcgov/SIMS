@@ -38,7 +38,6 @@ export class IER12IntegrationScheduler extends BaseScheduler<GeneratedDateQueueI
       job.data.generatedDate,
     );
     this.logger.log("IER 12 file generation completed.");
-    await this.cleanSchedulerQueueHistory();
 
     return uploadResults.map(
       (uploadResult) =>

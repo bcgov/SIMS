@@ -29,7 +29,6 @@ export class CRAResponseIntegrationScheduler extends BaseScheduler<void> {
       `Processing CRA integration job ${job.id} of type ${job.name}.`,
     );
     const results = await this.cra.processResponses();
-    await this.cleanSchedulerQueueHistory();
     return results.map((result) => {
       return {
         processSummary: result.processSummary,

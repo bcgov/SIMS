@@ -44,7 +44,6 @@ export class FullTimeMSFAAProcessIntegrationScheduler extends BaseScheduler<void
       OfferingIntensity.fullTime,
     );
     await summary.info("MSFAA request file sent.");
-    await this.cleanSchedulerQueueHistory();
     await summary.info(
       `Completed MSFAA Full-time integration job ${job.id} of type ${job.name}.`,
     );

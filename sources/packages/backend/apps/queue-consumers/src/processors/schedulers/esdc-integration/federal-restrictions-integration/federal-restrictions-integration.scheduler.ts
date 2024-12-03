@@ -37,7 +37,6 @@ export class FederalRestrictionsIntegrationScheduler extends BaseScheduler<void>
     await summary.info("Starting federal restrictions import...");
     const uploadResult = await this.fedRestrictionProcessingService.process();
     await summary.info("Federal restrictions import process finished.");
-    await this.cleanSchedulerQueueHistory();
     await summary.info(
       `Completed federal restriction integration job ${job.id} of type ${job.name}.`,
     );

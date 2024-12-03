@@ -37,7 +37,6 @@ export class SINValidationProcessIntegrationScheduler extends BaseScheduler<void
     const uploadResult =
       await this.sinValidationProcessingService.uploadSINValidationRequests();
     await summary.info("ESDC SIN validation request file sent.");
-    await this.cleanSchedulerQueueHistory();
     await summary.info(
       `Completed SIN validation integration job ${job.id} of type ${job.name}.`,
     );
