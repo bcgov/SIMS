@@ -33,11 +33,9 @@ export class WorkflowClientService {
         },
       });
     } catch (error: unknown) {
-      this.logger.error(
-        `Error while starting application assessment workflow: ${workflowName}`,
-      );
-      this.logger.error(error);
-      throw error;
+      const errorMessage = `Error while starting application assessment workflow: ${workflowName}`;
+      this.logger.error(errorMessage, error);
+      throw new Error(errorMessage, { cause: error });
     }
   }
 

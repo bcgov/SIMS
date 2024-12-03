@@ -10,9 +10,7 @@ import { ZeebeModule } from "@sims/services";
  */
 export function createZeebeModuleMock(): DynamicModule {
   const mockedZBClient = {} as ZeebeGrpcClient;
-  mockedZBClient.createProcessInstance = jest.fn();
-  mockedZBClient.publishMessage = jest.fn();
-  mockedZBClient.cancelProcessInstance = jest.fn();
+  resetZeebeModuleMock(mockedZBClient);
   const zeebeClientProvider: Provider = {
     provide: ZeebeGrpcClient,
     useValue: mockedZBClient,
@@ -23,4 +21,14 @@ export function createZeebeModuleMock(): DynamicModule {
     providers: [zeebeClientProvider],
     exports: [zeebeClientProvider],
   };
+}
+
+/**
+ * Resets the mocked {@link ZeebeGrpcClient} for its initial mocked values.
+ * @param mockedZBClient mocked client to be reset.
+ */
+export function resetZeebeModuleMock(mockedZBClient: ZeebeGrpcClient): void {
+  mockedZBClient.createProcessInstance = jest.fn();
+  mockedZBClient.publishMessage = jest.fn();
+  mockedZBClient.cancelProcessInstance = jest.fn();
 }
