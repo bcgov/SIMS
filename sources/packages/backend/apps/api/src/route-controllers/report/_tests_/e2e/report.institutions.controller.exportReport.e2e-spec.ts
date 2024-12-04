@@ -783,6 +783,127 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
     },
   );
 
+  it(
+    "Should generate the COE Requests report without application(s) that don't have estimated awards" +
+      " when one or more applications exist for the given institution.",
+    async () => {
+      // Arrange
+      const institution = await db.institution.save(
+        createFakeInstitution({ institutionType: bcPublicInstitutionType }),
+      );
+
+      // Application with disbursements which have estimated awards.
+      const applicationWithEstimatedAwards =
+        await saveFakeApplicationDisbursements(
+          db.dataSource,
+          {
+            student: sharedStudent,
+            institution,
+            disbursementValues: [
+              createFakeDisbursementValue(
+                DisbursementValueType.CanadaLoan,
+                "CSLF",
+                1000,
+              ),
+            ],
+          },
+          {
+            currentAssessmentInitialValues: {
+              assessmentDate: new Date(),
+            },
+            applicationStatus: ApplicationStatus.Completed,
+            firstDisbursementInitialValues: {
+              coeStatus: COEStatus.completed,
+              dateSent: new Date(),
+            },
+          },
+        );
+      // Application with disbursements which don't estimated awards.
+      await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          student: sharedStudent,
+          institution,
+          disbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLF",
+              1000,
+            ),
+          ],
+        },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+          firstDisbursementInitialValues: {
+            hasEstimatedAwards: false,
+          },
+        },
+      );
+
+      const programYearDefault = applicationWithEstimatedAwards.programYear;
+      const payload = {
+        reportName: "COE_Requests",
+        params: {
+          offeringIntensity: {
+            "Full Time": true,
+            "Part Time": true,
+          },
+          programYear: programYearDefault.id,
+        },
+      };
+
+      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+        valid: true,
+        formName: FormNames.ExportFinancialReports,
+        data: { data: payload },
+      });
+      formService.dryRunSubmission = dryRunSubmissionMock;
+      const endpoint = "/institutions/report";
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+
+      // Mock institution user authorization so that the user token will return the fake institution id and mocked roles.
+      await mockInstitutionUserAuthorization(
+        appModule,
+        new InstitutionUserAuthorizations(institution.id, [
+          {
+            locationId: null,
+            userRole: null,
+            userType: InstitutionUserTypes.admin,
+          },
+        ]),
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED)
+        .then((response) => {
+          const fileContent = response.request.res["text"];
+          const parsedResult = parse(fileContent, {
+            header: true,
+          });
+          // Build expected result.
+          const [firstReportDisbursement] =
+            applicationWithEstimatedAwards.currentAssessment
+              .disbursementSchedules;
+          const firstReportDisbursementData = buildCOERequestsReportData(
+            firstReportDisbursement,
+            "1000.00",
+            getISODateOnlyString(firstReportDisbursement.dateSent),
+          );
+          // Expect the disbursement for the application which has estimated awards.
+          expect(parsedResult.data.length).toBe(1);
+          expect(parsedResult.data).toStrictEqual([
+            firstReportDisbursementData,
+          ]);
+        });
+    },
+  );
+
   /**
    * Build COE Requests report data.
    * @param disbursements disbursements part of the report.
