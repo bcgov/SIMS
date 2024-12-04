@@ -23,6 +23,7 @@ export class CASKnownErrorsProcessor extends CASEvaluationResultProcessor {
   ) {
     super(casSupplierRepo);
   }
+
   /**
    * Process the result of a failed pre-validation, setting
    * the student CAS supplier for manual intervention.
@@ -39,14 +40,14 @@ export class CASKnownErrorsProcessor extends CASEvaluationResultProcessor {
     if (evaluationResult.status !== CASEvaluationStatus.KnownErrors) {
       throw new Error("Incorrect CAS evaluation result processor selected.");
     }
-    summary.warn(
-      `CAS evaluation result status: ${evaluationResult.status}. Error: ${evaluationResult.knownErrors}.`,
-    );
-    return this.processBadRequestErrors(
+    summary.info("Known CAS Errors found.");
+    const processErrors = await this.processBadRequestErrors(
       studentSupplier,
       summary,
       evaluationResult.knownErrors,
       this.systemUsersService.systemUser.id,
     );
+    summary.info("Updated CAS supplier errors.");
+    return processErrors;
   }
 }

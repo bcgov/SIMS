@@ -83,19 +83,22 @@ export function createFakeCASSupplier(
       siteProtected: "YES",
       lastUpdated: new Date(),
     };
-    casSupplier.supplierProtected = true;
+    casSupplier.supplierProtected =
+      options?.initialValues?.supplierProtected ?? true;
     casSupplier.isValid = false;
   }
-  casSupplier.supplierName = `${faker.name.lastName()}, ${faker.name.firstName()}`;
-  casSupplier.supplierNumber = faker.datatype
-    .number({ min: 100000, max: 9999999999 })
-    .toString();
+  casSupplier.supplierName =
+    options?.initialValues?.supplierName ??
+    `${faker.name.lastName()}, ${faker.name.firstName()}`;
+  casSupplier.supplierNumber =
+    options?.initialValues?.supplierNumber ??
+    faker.datatype.number({ min: 100000, max: 9999999999 }).toString();
   casSupplier.supplierAddress.supplierSiteCode = faker.datatype
     .number({ min: 100, max: 999 })
     .toString();
   casSupplier.supplierStatusUpdatedOn = new Date();
   casSupplier.creator = relations.auditUser;
   casSupplier.student = relations.student;
-
+  casSupplier.status = options?.initialValues?.status ?? "ACTIVE";
   return casSupplier;
 }

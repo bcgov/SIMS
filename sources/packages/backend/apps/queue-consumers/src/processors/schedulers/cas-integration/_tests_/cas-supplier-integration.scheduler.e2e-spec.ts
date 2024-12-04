@@ -714,7 +714,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       "Pending suppliers to update found: 1.",
       "Records updated: 0.",
       "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-      "Error(s): 0, Warning(s): 2, Info: 10",
+      "Error(s): 0, Warning(s): 1, Info: 12",
     ]);
     // Assert DB was updated.
     const updateCASSupplier = await db.casSupplier.findOne({
@@ -741,7 +741,18 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     // Created a student with same address line 1 and postal code from the expected CAS mocked result.
     // Postal code has a white space that is expected to be removed.
     const student = await saveFakeStudent(db.dataSource);
-    const savedCASSupplier = await saveFakeCASSupplier(db, { student });
+    const savedCASSupplier = await saveFakeCASSupplier(
+      db,
+      { student },
+      {
+        initialValues: {
+          supplierName: "SMITH, MELANIE",
+          supplierNumber: "2006124",
+          supplierProtected: false,
+          status: "ACTIVE",
+        },
+      },
+    );
 
     // Configure CAS mock to return a custom named Bad Request error.
     casServiceMock.createSiteForExistingSupplier = jest
@@ -773,8 +784,12 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     const updateCASSupplier = await db.casSupplier.findOne({
       select: {
         id: true,
-        isValid: true,
+        supplierNumber: true,
+        supplierName: true,
         supplierStatus: true,
+        supplierProtected: true,
+        status: true,
+        isValid: true,
         errors: true,
       },
       where: {
@@ -785,6 +800,10 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       id: savedCASSupplier.id,
       isValid: false,
       supplierStatus: SupplierStatus.ManualIntervention,
+      supplierNumber: savedCASSupplier.supplierNumber,
+      supplierName: savedCASSupplier.supplierName,
+      status: savedCASSupplier.status,
+      supplierProtected: savedCASSupplier.supplierProtected,
       errors: [
         "0001: A site code is not expected.",
         "0009: BC Mail error messages.",

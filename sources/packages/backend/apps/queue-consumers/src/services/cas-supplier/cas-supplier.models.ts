@@ -46,6 +46,9 @@ export enum NotFoundReason {
   NoActiveSupplierFound = "Supplier found but not active",
 }
 
+/**
+ * Known errors when processing the student CAS supplier.
+ */
 export interface CASKnownErrorsResult {
   status: CASEvaluationStatus.KnownErrors;
   knownErrors: string[];

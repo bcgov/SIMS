@@ -34,6 +34,7 @@ export abstract class CASEvaluationResultProcessor {
    * @param studentSupplier student supplier information from SIMS.
    * @param summary current process log.
    * @param error errors that occurred during processing.
+   * @param auditUserId audit user id.
    * @param partialSupplier partial supplier information.ß
    * @returns processor result.
    */
@@ -42,6 +43,7 @@ export abstract class CASEvaluationResultProcessor {
     summary: ProcessSummary,
     error: string[],
     auditUserId: number,
+    partialSupplier?: Partial<CASSupplier>,
   ): Promise<ProcessorResult> {
     summary.warn("A known error occurred during processing.");
     const now = new Date();
@@ -52,6 +54,7 @@ export abstract class CASEvaluationResultProcessor {
           id: studentSupplier.casSupplierID,
         },
         {
+          ...partialSupplier,
           supplierStatus: SupplierStatus.ManualIntervention,
           supplierStatusUpdatedOn: now,
           isValid: false,
