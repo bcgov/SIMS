@@ -34,7 +34,7 @@ export class StudentExternalController extends BaseController {
 
   /**
    * Searches for student student details.
-   * @param payload payload with sin to retrieve the student details.
+   * @param payload payload with SIN to retrieve the student details.
    * @returns student details.
    */
   @Post()
@@ -52,7 +52,14 @@ export class StudentExternalController extends BaseController {
       lastName: student.user.lastName,
       sin: student.sinValidation.sin,
       dateOfBirth: student.birthDate,
-      address: student.contactInfo.address,
+      address: {
+        addressLine1: student.contactInfo.address.addressLine1,
+        addressLine2: student.contactInfo.address.addressLine2,
+        city: student.contactInfo.address.city,
+        provinceState: student.contactInfo.address.provinceState,
+        country: student.contactInfo.address.country,
+        postalCode: student.contactInfo.address.postalCode,
+      },
       applicationNumbers: student.applications.map((a) => a.applicationNumber),
     };
   }
