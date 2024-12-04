@@ -14,7 +14,7 @@
           rel="noopener"
           target="_blank"
           class="formio-href"
-          href="https://studentaidbc.ca/sites/all/files/form-library/appendix_8.pdf"
+          href="https://studentaidbc.ca/sites/all/files/form-library/appendix_8-parttime.pdf"
           >here</a
         >.
       </p>
