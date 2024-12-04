@@ -31,7 +31,6 @@ export class ConfigService {
         institution: process.env.KEYCLOAK_CLIENT_INSTITUTION,
         aest: process.env.KEYCLOAK_CLIENT_AEST,
         supportingUsers: process.env.KEYCLOAK_CLIENT_SUPPORTING_USERS,
-        external: process.env.KEYCLOAK_CLIENT_EXTERNAL,
       },
       openIdConfigurationUrl: this.getOpenIdConfigurationUrl(),
       externalSiteMinderLogoutUrl: process.env.SITE_MINDER_LOGOUT_URL,

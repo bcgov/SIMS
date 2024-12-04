@@ -33,7 +33,8 @@ export class StudentExternalController extends BaseController {
   }
 
   /**
-   * Searches for student student details.
+   * Searches for student details.
+   * This request method is POST to avoid passing sensitive data in the URL.
    * @param payload payload with SIN to retrieve the student details.
    * @returns student details.
    */

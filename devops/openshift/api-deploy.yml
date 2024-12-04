@@ -345,6 +345,12 @@ parameters:
   - name: SWAGGER_PATH
     value: /swagger
     required: true
+  - name: EXTERNAL_SWAGGER_NAME
+    value: external-swagger
+    required: true
+  - name: EXTERNAL_SWAGGER_PATH
+    value: /external/swagger
+    required: true
   - name: PROJECT
     value: sims
   - name: SERVICE_NAME
@@ -397,6 +403,8 @@ parameters:
     required: true
   - name: KEYCLOAK_CLIENT_SUPPORTING_USERS
     value: "supporting-users"
+  - name: KEYCLOAK_CLIENT_EXTERNAL
+    value: "external"
     required: true
   - name: KEYCLOAK_AUTH_URL
     required: true
