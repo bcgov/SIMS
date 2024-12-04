@@ -96,6 +96,10 @@ export interface IUserToken {
    */
   azp: AuthorizedParties;
   /**
+   * Audience, Keycloak audience used for the authentication.
+   */
+  aud: string | string[];
+  /**
    * When the user is authenticated using the bceidboth IDP and the user has a business BCeID account,
    * this property contains the guid that identifies his business.
    * This field can also be used to differentiate a business BCeID from a Basic BCeID user.

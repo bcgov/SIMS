@@ -14,7 +14,7 @@ import {
   RequiresUserAccount,
 } from "../../auth/decorators";
 import BaseController from "../BaseController";
-import { StudentService } from "@sims/integrations/services";
+import { StudentService } from "../../services";
 import {
   ExternalSearchStudentAPIInDTO,
   StudentDetailsAPIOutDTO,

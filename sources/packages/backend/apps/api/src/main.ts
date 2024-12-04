@@ -74,8 +74,7 @@ async function bootstrap() {
   // Configure Swagger.
   if (process.env.SWAGGER_ENABLED?.toLowerCase() === "true") {
     const options = new DocumentBuilder()
-      .setTitle(process.env.PROJECT_NAME)
-      .setDescription(`The ${process.env.PROJECT_NAME} API description`)
+      .setTitle("StudentAid BC")
       .setVersion("1.0.0")
       .addBearerAuth(
         {

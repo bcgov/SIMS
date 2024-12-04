@@ -12,6 +12,7 @@ import { IdentityProviders } from "@sims/sims-db";
 import { ConfigService } from "@sims/utilities/config";
 import { ApiProcessError } from "../../types";
 import { INVALID_BETA_USER } from "../../constants";
+import { Audiences } from "../../auth/audiences.enum";
 
 /**
  * Inspect the token to check if the correct authorized party
@@ -42,7 +43,12 @@ export class AuthorizedPartiesGuard implements CanActivate {
         "Client is not authorized under the expected authorized party(azp).",
       );
     }
-
+    if (
+      Array.isArray(userToken.aud) &&
+      userToken.aud.includes(Audiences.SIMSApiExternal)
+    ) {
+      return true;
+    }
     const isAllowedIDP = this.isAllowedIDP(
       userToken.azp,
       userToken.identityProvider,
@@ -66,9 +72,6 @@ export class AuthorizedPartiesGuard implements CanActivate {
     authorizedParty: AuthorizedParties,
     identityProvider: IdentityProviders,
   ): boolean {
-    if (authorizedParty === AuthorizedParties.external) {
-      return true;
-    }
     switch (authorizedParty) {
       case AuthorizedParties.student:
         if (
