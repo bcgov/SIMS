@@ -303,6 +303,38 @@ objects:
       to:
         kind: Service
         name: ${NAME}
+  - apiVersion: route.openshift.io/v1
+    kind: Route
+    metadata:
+      name: ${EXTERNAL_SWAGGER_NAME}-route
+      annotations:
+        haproxy.router.openshift.io/balance: leastconn
+        haproxy.router.openshift.io/disable_cookies: "true"
+        haproxy.router.openshift.io/hsts_header: max-age=31536000;includeSubDomains;preload
+        haproxy.router.openshift.io/timeout: 30s
+    spec:
+      host: ${HOST_NAME}
+      path: ${EXTERNAL_SWAGGER_PATH}
+      port:
+        targetPort: http
+      tls:
+        insecureEdgeTerminationPolicy: Redirect
+        termination: edge
+        certificate: |
+          -----BEGIN CERTIFICATE-----
+          ${TLS_CERTIFICATE}
+          -----END CERTIFICATE-----
+        key: |
+          -----BEGIN PRIVATE KEY-----
+          ${TLS_KEY}
+          -----END PRIVATE KEY-----
+        caCertificate: |
+          -----BEGIN CERTIFICATE-----
+          ${TLS_CA_CERTIFICATE}
+          -----END CERTIFICATE-----
+      to:
+        kind: Service
+        name: ${NAME}
   - apiVersion: autoscaling/v2
     kind: HorizontalPodAutoscaler
     metadata:
@@ -403,8 +435,6 @@ parameters:
     required: true
   - name: KEYCLOAK_CLIENT_SUPPORTING_USERS
     value: "supporting-users"
-  - name: KEYCLOAK_CLIENT_EXTERNAL
-    value: "external"
     required: true
   - name: KEYCLOAK_AUTH_URL
     required: true
