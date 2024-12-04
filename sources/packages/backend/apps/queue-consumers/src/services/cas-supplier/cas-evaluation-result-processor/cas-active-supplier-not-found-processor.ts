@@ -72,7 +72,7 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
           summary.warn(
             "Known CAS error while creating supplier and site on CAS.",
           );
-          return await this.processBadRequestErrors(
+          return this.processBadRequestErrors(
             studentSupplier,
             summary,
             error.objectInfo as string[],

@@ -66,7 +66,7 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
       if (error instanceof CustomNamedError) {
         if (error.name === CAS_BAD_REQUEST) {
           summary.warn("Known CAS error while creating a new site on CAS.");
-          return await this.processBadRequestErrors(
+          return this.processBadRequestErrors(
             studentSupplier,
             summary,
             error.objectInfo as string[],
