@@ -262,7 +262,7 @@ export class CASService {
       throw new CustomNamedError(
         "CAS Bad Request Errors",
         CAS_BAD_REQUEST,
-        casKnownErrors.split("|"),
+        casKnownErrors.split(" | "),
       );
     }
     throw new Error(defaultMessage, { cause: error });
