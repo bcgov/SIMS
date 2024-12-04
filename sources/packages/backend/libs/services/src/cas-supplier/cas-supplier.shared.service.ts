@@ -12,7 +12,7 @@ export class CASSupplierSharedService {
    * @returns student profile snapshot.
    */
   getStudentProfileSnapshot(
-    firstName: string,
+    firstName: string = null,
     lastName: string,
     sin: string,
     addressInfo: AddressInfo,
