@@ -36,7 +36,6 @@ export class FullTimeMSFAAProcessResponseIntegrationScheduler extends BaseSchedu
     const results = await this.msfaaResponseService.processResponses(
       OfferingIntensity.fullTime,
     );
-    await this.cleanSchedulerQueueHistory();
     await summary.info(
       `Completed MSFAA Full-time integration job ${job.id} of type ${job.name}.`,
     );

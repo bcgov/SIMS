@@ -34,7 +34,6 @@ export class ECEProcessIntegrationScheduler extends BaseScheduler<void> {
     this.logger.log("Executing ECE request file generation ...");
     const uploadResults = await this.eceFileService.processECEFile();
     this.logger.log("ECE request file generation completed.");
-    await this.cleanSchedulerQueueHistory();
 
     return uploadResults.map(
       (uploadResult) =>

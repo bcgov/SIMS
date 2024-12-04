@@ -46,7 +46,6 @@ export class ProcessArchiveApplicationsScheduler extends BaseScheduler<void> {
       `Total of applications archived: ${archivedApplicationsCount}`,
     );
     await summary.info("Completed applications archiving process.");
-    await this.cleanSchedulerQueueHistory();
     return summary.getSummary();
   }
 }

@@ -35,7 +35,6 @@ export class CRAProcessIntegrationScheduler extends BaseScheduler<void> {
     this.logger.log("Executing income validation...");
     const uploadResult = await this.cra.createIncomeVerificationRequest();
     this.logger.log("Income validation executed.");
-    await this.cleanSchedulerQueueHistory();
     return {
       generatedFile: uploadResult.generatedFile,
       uploadedRecords: uploadResult.uploadedRecords,

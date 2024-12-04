@@ -51,7 +51,6 @@ export class FullTimeECertFeedbackIntegrationScheduler extends BaseScheduler<voi
     } finally {
       this.logger.logProcessSummary(processSummary);
       await logProcessSummaryToJobLogger(processSummary, job);
-      await this.cleanSchedulerQueueHistory();
     }
   }
 

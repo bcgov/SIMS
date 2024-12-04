@@ -36,7 +36,6 @@ export class DisbursementReceiptsFileIntegrationScheduler extends BaseScheduler<
     const auditUser = this.systemUsersService.systemUser;
     const processResponse =
       await this.disbursementReceiptProcessingService.process(auditUser.id);
-    await this.cleanSchedulerQueueHistory();
     processSummary.info(
       `Completed full time disbursement receipts integration job ${job.id} of type ${job.name}.`,
     );

@@ -78,6 +78,11 @@ export class QueueService {
         cron: queueConfig.queueConfiguration.cron,
       };
     }
+    if (queueConfig.queueConfiguration.cleanUpPeriod) {
+      config.removeOnComplete = {
+        age: queueConfig.queueConfiguration.cleanUpPeriod / 1000,
+      };
+    }
     return config;
   }
 
@@ -89,18 +94,6 @@ export class QueueService {
   async getQueueSetting(queueName: QueueNames): Promise<AdvancedSettings> {
     const queueConfig = await this.queueConfigurationDetails(queueName);
     return queueConfig.queueSetting;
-  }
-
-  /**
-   * Get queue clean up period.
-   * @param queueName queue name
-   * @returns queue clean up period.
-   */
-  async getQueueCleanUpPeriod(
-    queueName: QueueNames,
-  ): Promise<number | undefined> {
-    const queueConfig = await this.queueConfigurationDetails(queueName);
-    return queueConfig.queueConfiguration.cleanUpPeriod;
   }
 
   /**
