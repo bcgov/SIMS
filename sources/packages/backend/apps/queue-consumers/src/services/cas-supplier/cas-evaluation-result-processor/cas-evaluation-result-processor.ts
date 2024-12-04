@@ -61,10 +61,10 @@ export abstract class CASEvaluationResultProcessor {
         },
       );
       summary.info("Set supplier status to Manual Intervention due to error.");
-    } catch (updateError: unknown) {
+    } catch (error: unknown) {
       summary.error(
         "Failed to update supplier status to Manual Intervention.",
-        updateError,
+        error,
       );
     }
     return { isSupplierUpdated: false };
