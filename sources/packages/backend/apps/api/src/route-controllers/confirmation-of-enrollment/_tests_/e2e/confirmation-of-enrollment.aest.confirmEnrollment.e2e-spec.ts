@@ -84,6 +84,38 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
     );
   });
 
+  it("Should throw NotFoundException when COE doesn't have estimated awards.", async () => {
+    // Arrange
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+      },
+      {
+        applicationStatus: ApplicationStatus.Enrolment,
+        firstDisbursementInitialValues: { hasEstimatedAwards: false },
+      },
+    );
+    const [firstDisbursementSchedule] =
+      application.currentAssessment.disbursementSchedules;
+
+    const endpoint = `/aest/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}/confirm`;
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .auth(
+        await getAESTToken(AESTGroups.BusinessAdministrators),
+        BEARER_AUTH_TYPE,
+      )
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        statusCode: 404,
+        message: "Enrolment not found.",
+        error: "Not Found",
+      });
+  });
+
   afterAll(async () => {
     await app?.close();
   });

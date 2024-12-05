@@ -37,7 +37,6 @@ export class ATBCResponseIntegrationScheduler extends BaseScheduler<void> {
     const processingResult =
       await this.atbcIntegrationProcessingService.processAppliedDisabilityRequests();
     await summary.info("Completed processing disability status.");
-    await this.cleanSchedulerQueueHistory();
     return processingResult;
   }
 }

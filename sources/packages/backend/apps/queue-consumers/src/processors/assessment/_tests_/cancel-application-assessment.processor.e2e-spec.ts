@@ -1,11 +1,10 @@
-import { Job } from "bull";
-import { createMock } from "@golevelup/ts-jest";
 import { INestApplication } from "@nestjs/common";
 import { CancelAssessmentQueueInDTO } from "@sims/services/queue";
 import { QueueNames, addDays } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
+  mockBullJob,
 } from "../../../../test/helpers";
 import { CancelApplicationAssessmentProcessor } from "../cancel-application-assessment.processor";
 import { DataSource, Repository } from "typeorm";
@@ -107,29 +106,31 @@ describe(
       });
       await disbursementOverawardRepo.save(overaward);
       // Queued job.
-      const job = createMock<Job<CancelAssessmentQueueInDTO>>({
-        data: { assessmentId: studentAssessment.id },
+      const mockedJob = mockBullJob<CancelAssessmentQueueInDTO>({
+        assessmentId: studentAssessment.id,
       });
 
       // Act
-      const result = await processor.cancelAssessment(job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
       expect(zbClientMock.cancelProcessInstance).toBeCalledWith(
         workflowInstanceId,
       );
-      expect(result.summary).toStrictEqual([
-        `Cancelling application assessment id ${studentAssessment.id}`,
-        `Found workflow id ${workflowInstanceId}.`,
-        "Workflow instance successfully cancelled.",
-        "Changing student assessment status to Cancelled.",
-        "Assessment status updated to Cancelled.",
-        "Rolling back overawards, if any.",
-        "Overawards rollback check executed.",
-        "Assessing if there is a future impacted application that need to be reassessed.",
-        "No impacts were detected on future applications.",
-        "Assessment cancelled with success.",
-      ]);
+      expect(result).toEqual(["Assessment cancelled with success."]);
+      expect(
+        mockedJob.containLogMessages([
+          `Cancelling application assessment id ${studentAssessment.id}`,
+          `Found workflow id ${workflowInstanceId}.`,
+          "Workflow instance successfully cancelled.",
+          "Changing student assessment status to Cancelled.",
+          "Assessment status updated to Cancelled.",
+          "Rolling back overawards, if any.",
+          "Overawards rollback check executed.",
+          "Assessing if there is a future impacted application that need to be reassessed.",
+          "No impacts were detected on future applications.",
+        ]),
+      ).toBe(true);
 
       // Assert that overawards were soft deleted.
       const updatedOveraward = await disbursementOverawardRepo.findOne({
@@ -166,19 +167,26 @@ describe(
         StudentAssessmentStatus.CancellationQueued;
       await db.studentAssessment.save(studentAssessment);
       // Queued job.
-      const job = createMock<Job<CancelAssessmentQueueInDTO>>({
-        data: { assessmentId: studentAssessment.id },
+      const mockedJob = mockBullJob<CancelAssessmentQueueInDTO>({
+        assessmentId: studentAssessment.id,
       });
 
       // Act
-      const result = await processor.cancelAssessment(job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
       expect(zbClientMock.cancelProcessInstance).not.toHaveBeenCalled();
-      expect(result.warnings).toContain(
-        "Assessment was queued to be cancelled but there is no workflow id associated with.",
-      );
-      expect(result.summary).toContain("Assessment cancelled with success.");
+      expect(result).toEqual([
+        "Assessment cancelled with success.",
+        "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+        "Error(s): 0, Warning(s): 1, Info: 7",
+      ]);
+      expect(
+        mockedJob.containLogMessage(
+          "Assessment was queued to be cancelled but there is no workflow ID associated with. " +
+            "This is considered a normal scenario for cancellations that never transitioned to the 'In Progress' state.",
+        ),
+      ).toBe(true);
     });
 
     it(`Should log a warning message when the assessment has status different than ${StudentAssessmentStatus.CancellationQueued}.`, async () => {
@@ -187,22 +195,23 @@ describe(
       const studentAssessment = application.currentAssessment;
 
       // Queued job.
-      const job = createMock<Job<CancelAssessmentQueueInDTO>>({
-        data: { assessmentId: studentAssessment.id },
+      const mockedJob = mockBullJob<CancelAssessmentQueueInDTO>({
+        assessmentId: studentAssessment.id,
       });
 
       // Act
-      const result = await processor.cancelAssessment(job);
+      await processor.processQueue(mockedJob.job);
 
       // Assert
       expect(zbClientMock.cancelProcessInstance).not.toHaveBeenCalled();
-      expect(result.warnings).toContain(
-        `Assessment id ${job.data.assessmentId} is not in ${StudentAssessmentStatus.CancellationQueued} status.`,
+      expect(
+        mockedJob.containLogMessages([
+          `Assessment id ${mockedJob.job.data.assessmentId} is not in ${StudentAssessmentStatus.CancellationQueued} status.`,
+          "Workflow cancellation process not executed due to the assessment cancellation not being in the correct status.",
+        ]),
       );
-      expect(result.summary).toContain(
-        "Workflow cancellation process not executed due to the assessment cancellation not being in the correct status.",
-      );
-      expect(job.discard).toBeCalled();
+
+      expect(mockedJob.job.discard).toBeCalled();
     });
 
     it("Should throw an error and call job.discard when the application is not in the expected status.", async () => {
@@ -219,15 +228,15 @@ describe(
         StudentAssessmentStatus.CancellationQueued;
       await db.studentAssessment.save(studentAssessment);
       // Queued job.
-      const job = createMock<Job<CancelAssessmentQueueInDTO>>({
-        data: { assessmentId: studentAssessment.id },
+      const mockedJob = mockBullJob<CancelAssessmentQueueInDTO>({
+        assessmentId: studentAssessment.id,
       });
 
       // Act and Assert
-      await expect(processor.cancelAssessment(job)).rejects.toStrictEqual(
+      await expect(processor.processQueue(mockedJob.job)).rejects.toStrictEqual(
         expectedError,
       );
-      expect(job.discard).toBeCalled();
+      expect(mockedJob.job.discard).toBeCalled();
     });
 
     it("Should throw an error and call job.discard when the assessment id was not found.", async () => {
@@ -236,15 +245,15 @@ describe(
       const errorMessage = `Assessment id ${assessmentId} was not found.`;
       const error = new Error(errorMessage);
       // Queued job.
-      const job = createMock<Job<CancelAssessmentQueueInDTO>>({
-        data: { assessmentId },
+      const mockedJob = mockBullJob<CancelAssessmentQueueInDTO>({
+        assessmentId,
       });
 
       // Act and Assert
-      await expect(processor.cancelAssessment(job)).rejects.toStrictEqual(
+      await expect(processor.processQueue(mockedJob.job)).rejects.toStrictEqual(
         error,
       );
-      expect(job.discard).toBeCalled();
+      expect(mockedJob.job.discard).toBeCalled();
     });
 
     it("Should find an impacted application and create a reassessment when canceling an application with a assessment date set in the current assessment.", async () => {
@@ -297,17 +306,19 @@ describe(
       );
 
       // Queued job.
-      const job = createMock<Job<CancelAssessmentQueueInDTO>>({
-        data: { assessmentId: currentApplicationToCancel.currentAssessment.id },
+      const mockedJob = mockBullJob<CancelAssessmentQueueInDTO>({
+        assessmentId: currentApplicationToCancel.currentAssessment.id,
       });
 
       // Act
-      const result = await processor.cancelAssessment(job);
+      await processor.processQueue(mockedJob.job);
 
       // Asserts
-      expect(result.summary).toContain(
-        `Application id ${impactedApplication.id} was detected as impacted and will be reassessed.`,
-      );
+      expect(
+        mockedJob.containLogMessage(
+          `Application id ${impactedApplication.id} was detected as impacted and will be reassessed.`,
+        ),
+      ).toBe(true);
       // Assert that an reassessment of type 'Related application changed' was created in the future impacted application.
       const updatedImpactedApplication = await findImpactedApplication(
         impactedApplication.id,
@@ -353,17 +364,19 @@ describe(
       );
 
       // Queued job.
-      const job = createMock<Job<CancelAssessmentQueueInDTO>>({
-        data: { assessmentId: currentApplicationToCancel.currentAssessment.id },
+      const mockedJob = mockBullJob<CancelAssessmentQueueInDTO>({
+        assessmentId: currentApplicationToCancel.currentAssessment.id,
       });
 
       // Act
-      const result = await processor.cancelAssessment(job);
+      await processor.processQueue(mockedJob.job);
 
       // Asserts
-      expect(result.summary).toContain(
-        "No impacts were detected on future applications.",
-      );
+      expect(
+        mockedJob.containLogMessage(
+          "No impacts were detected on future applications.",
+        ),
+      ).toBe(true);
     });
 
     it("Should find an impacted application and create a reassessment when the impacted application original assessment calculation date is after the cancelled assessment date original assessment, including 'Overwritten' records.", async () => {
@@ -421,17 +434,19 @@ describe(
       );
 
       // Queued job.
-      const job = createMock<Job<CancelAssessmentQueueInDTO>>({
-        data: { assessmentId: currentApplicationToCancel.currentAssessment.id },
+      const mockedJob = mockBullJob<CancelAssessmentQueueInDTO>({
+        assessmentId: currentApplicationToCancel.currentAssessment.id,
       });
 
       // Act
-      const result = await processor.cancelAssessment(job);
+      await processor.processQueue(mockedJob.job);
 
       // Asserts
-      expect(result.summary).toContain(
-        `Application id ${impactedApplication.id} was detected as impacted and will be reassessed.`,
-      );
+      expect(
+        mockedJob.containLogMessage(
+          `Application id ${impactedApplication.id} was detected as impacted and will be reassessed.`,
+        ),
+      ).toBe(true);
       // Assert that an reassessment of type 'Related application changed' was created in the future impacted application.
       const updatedImpactedApplication = await findImpactedApplication(
         impactedApplication.id,
@@ -480,17 +495,19 @@ describe(
       );
 
       // Queued job.
-      const job = createMock<Job<CancelAssessmentQueueInDTO>>({
-        data: { assessmentId: currentApplicationToCancel.currentAssessment.id },
+      const mockedJob = mockBullJob<CancelAssessmentQueueInDTO>({
+        assessmentId: currentApplicationToCancel.currentAssessment.id,
       });
 
       // Act
-      const result = await processor.cancelAssessment(job);
+      await processor.processQueue(mockedJob.job);
 
       // Asserts
-      expect(result.summary).toContain(
-        "No impacts were detected on future applications.",
-      );
+      expect(
+        mockedJob.containLogMessage(
+          "No impacts were detected on future applications.",
+        ),
+      ).toBe(true);
     });
 
     it(
@@ -552,10 +569,8 @@ describe(
           impactedApplicationAssessmentBeforeCancel,
         );
         // Queued job.
-        const job = createMock<Job<CancelAssessmentQueueInDTO>>({
-          data: {
-            assessmentId: currentApplicationToCancel.currentAssessment.id,
-          },
+        const mockedJob = mockBullJob<CancelAssessmentQueueInDTO>({
+          assessmentId: currentApplicationToCancel.currentAssessment.id,
         });
         // Spy on assess impacted application method to make sure that it is not invoked.
         const assessmentSequentialProcessingService =
@@ -570,7 +585,7 @@ describe(
         );
 
         // Act
-        await processor.cancelAssessment(job);
+        await processor.processQueue(mockedJob.job);
 
         // Assert
         // Ensure that the cancellation did not create a new reassessment for the

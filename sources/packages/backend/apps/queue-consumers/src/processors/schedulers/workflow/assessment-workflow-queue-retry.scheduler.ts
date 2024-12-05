@@ -68,7 +68,6 @@ export class WorkflowQueueRetryScheduler extends BaseScheduler<AssessmentWorkflo
     } finally {
       this.logger.logProcessSummary(processSummary);
       await logProcessSummaryToJobLogger(processSummary, job);
-      await this.cleanSchedulerQueueHistory();
     }
   }
 

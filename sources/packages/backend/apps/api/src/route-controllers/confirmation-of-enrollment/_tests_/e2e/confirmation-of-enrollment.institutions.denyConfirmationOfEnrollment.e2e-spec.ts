@@ -360,6 +360,38 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-denyConfirmationOf
     });
   });
 
+  it("Should throw NotFoundException when COE doesn't have estimated awards.", async () => {
+    // Arrange
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+      },
+      {
+        applicationStatus: ApplicationStatus.Enrolment,
+        firstDisbursementInitialValues: { hasEstimatedAwards: false },
+      },
+    );
+    const [firstDisbursementSchedule] =
+      application.currentAssessment.disbursementSchedules;
+    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}/deny`;
+    const token = await getInstitutionToken(InstitutionTokenTypes.CollegeCUser);
+    const coeDenyReasonId = 2;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send({ coeDenyReasonId })
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        statusCode: 404,
+        message: "Enrolment not found.",
+        error: "Not Found",
+      });
+  });
+
   /**
    * Get application current assessment details to
    * assert the persisted details of current assessment.

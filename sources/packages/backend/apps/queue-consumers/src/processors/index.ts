@@ -1,3 +1,4 @@
+export * from "./schedulers/base-queue";
 export * from "./assessment/start-application-assessment.processor";
 export * from "./assessment/cancel-application-assessment.processor";
 export * from "./schedulers/cra-integration/cra-process-integration.scheduler";

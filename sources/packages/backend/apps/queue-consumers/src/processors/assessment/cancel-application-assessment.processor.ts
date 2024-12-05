@@ -1,4 +1,4 @@
-import { Process, Processor } from "@nestjs/bull";
+import { Processor } from "@nestjs/bull";
 import { Job } from "bull";
 import { CancelAssessmentQueueInDTO } from "@sims/services/queue";
 import {
@@ -7,27 +7,32 @@ import {
   SystemUsersService,
   WorkflowClientService,
 } from "@sims/services";
-import { QueueNames } from "@sims/utilities";
+import { CustomNamedError, QueueNames } from "@sims/utilities";
 import { StudentAssessmentService } from "../../services";
 import { DataSource } from "typeorm";
 import { ZeebeGRPCError, ZeebeGRPCErrorTypes } from "@sims/services/zeebe";
-import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import {
-  QueueProcessSummary,
-  QueueProcessSummaryResult,
-} from "../models/processors.models";
+  InjectLogger,
+  LoggerService,
+  ProcessSummary,
+} from "@sims/utilities/logger";
 import {
   ApplicationStatus,
   COEStatus,
   StudentAssessment,
   StudentAssessmentStatus,
 } from "@sims/sims-db";
+import { BaseQueue } from "../../processors";
+import {
+  ASSESSMENT_NOT_FOUND,
+  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+} from "@sims/services/constants";
 
 /**
  * Process the workflow cancellation.
  */
 @Processor(QueueNames.CancelApplicationAssessment)
-export class CancelApplicationAssessmentProcessor {
+export class CancelApplicationAssessmentProcessor extends BaseQueue<CancelAssessmentQueueInDTO> {
   constructor(
     private readonly dataSource: DataSource,
     private readonly workflowClientService: WorkflowClientService,
@@ -35,22 +40,20 @@ export class CancelApplicationAssessmentProcessor {
     private readonly disbursementScheduleSharedService: DisbursementScheduleSharedService,
     private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
     private readonly systemUserService: SystemUsersService,
-  ) {}
+  ) {
+    super();
+  }
 
   /**
    * Cancel the workflow instance and rollback overawards, if any.
    * @param job information to perform the process.
-   * @returns log message.
-   */
-  @Process()
-  async cancelAssessment(
+   * @param processSummary process summary for logging.
+   * @returns processing result.   */
+  async process(
     job: Job<CancelAssessmentQueueInDTO>,
-  ): Promise<QueueProcessSummaryResult> {
-    const summary = new QueueProcessSummary({
-      appLogger: this.logger,
-      jobLogger: job,
-    });
-    await summary.info(
+    processSummary: ProcessSummary,
+  ): Promise<string> {
+    processSummary.info(
       `Cancelling application assessment id ${job.data.assessmentId}`,
     );
     const assessment = await this.studentAssessmentService.getAssessmentById(
@@ -58,9 +61,10 @@ export class CancelApplicationAssessmentProcessor {
     );
     if (!assessment) {
       await job.discard();
-      const errorMessage = `Assessment id ${job.data.assessmentId} was not found.`;
-      this.logger.error(errorMessage);
-      throw new Error(errorMessage);
+      throw new CustomNamedError(
+        `Assessment id ${job.data.assessmentId} was not found.`,
+        ASSESSMENT_NOT_FOUND,
+      );
     }
 
     if (
@@ -69,11 +73,8 @@ export class CancelApplicationAssessmentProcessor {
     ) {
       await job.discard();
       const warnMessage = `Assessment id ${job.data.assessmentId} is not in ${StudentAssessmentStatus.CancellationQueued} status.`;
-      summary.warn(warnMessage);
-      summary.info(
-        "Workflow cancellation process not executed due to the assessment cancellation not being in the correct status.",
-      );
-      return summary.getSummary();
+      processSummary.warn(warnMessage);
+      return "Workflow cancellation process not executed due to the assessment cancellation not being in the correct status.";
     }
 
     if (
@@ -83,21 +84,22 @@ export class CancelApplicationAssessmentProcessor {
     ) {
       await job.discard();
       const errorMessage = `Application must be in the ${ApplicationStatus.Cancelled} or ${ApplicationStatus.Overwritten} state to have the assessment cancelled.`;
-      this.logger.error(errorMessage);
-      throw new Error(errorMessage);
+      throw new CustomNamedError(
+        errorMessage,
+        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+      );
     }
 
     // Try to cancel the workflow if a workflow id is present.
-    // TODO: once the assessment has a proper status flag to be marked as completed we can check if the workflow needed to be cancelled.
     if (assessment.assessmentWorkflowId) {
-      await summary.info(
+      processSummary.info(
         `Found workflow id ${assessment.assessmentWorkflowId}.`,
       );
       try {
         await this.workflowClientService.deleteApplicationAssessment(
           assessment.assessmentWorkflowId,
         );
-        await summary.info("Workflow instance successfully cancelled.");
+        processSummary.info("Workflow instance successfully cancelled.");
       } catch (error: unknown) {
         if (
           error instanceof ZeebeGRPCError &&
@@ -108,8 +110,8 @@ export class CancelApplicationAssessmentProcessor {
           throw error;
         }
         // NOT_FOUND error means that the call to Camunda was successful but the workflow instance was not found.
-        await summary.warn(
-          "Workflow instance was not cancelled because the workflow id was not found on Camunda. " +
+        processSummary.warn(
+          "Workflow instance was not cancelled because the workflow ID was not found on Camunda. " +
             "This can happen if the workflow was already completed or if it was cancelled, for instance, manually using the workflow UI. " +
             "This is not considered an error and the cancellation can proceed.",
         );
@@ -117,12 +119,13 @@ export class CancelApplicationAssessmentProcessor {
     } else {
       // Unless there is some data integrity issue this scenario can happen only if the student application was submitted
       // and was never transitioned to the 'In Progress' state when the workflow instance is started.
-      await summary.warn(
-        "Assessment was queued to be cancelled but there is no workflow id associated with.",
+      processSummary.warn(
+        "Assessment was queued to be cancelled but there is no workflow ID associated with. " +
+          "This is considered a normal scenario for cancellations that never transitioned to the 'In Progress' state.",
       );
     }
     return this.dataSource.transaction(async (transactionEntityManager) => {
-      await summary.info(
+      processSummary.info(
         `Changing student assessment status to ${StudentAssessmentStatus.Cancelled}.`,
       );
       await transactionEntityManager
@@ -132,7 +135,7 @@ export class CancelApplicationAssessmentProcessor {
           modifier: this.systemUserService.systemUser,
           updatedAt: new Date(),
         });
-      await summary.info(
+      processSummary.info(
         `Assessment status updated to ${StudentAssessmentStatus.Cancelled}.`,
       );
       // Overawards rollback.
@@ -140,12 +143,12 @@ export class CancelApplicationAssessmentProcessor {
       // application moves from the 'In progress' status when the disbursements are generated.
       // It must be called after the workflow is cancelled to avoiding further updates on the disbursements after
       // the rollback is performed.
-      await summary.info("Rolling back overawards, if any.");
+      processSummary.info("Rolling back overawards, if any.");
       await this.disbursementScheduleSharedService.rollbackOverawards(
         assessment.id,
         transactionEntityManager,
       );
-      await summary.info("Overawards rollback check executed.");
+      processSummary.info("Overawards rollback check executed.");
       // Check if the assessment has one of the COE(s) declined.
       const hasDeclinedCOE = assessment.disbursementSchedules.some(
         (disbursement) => disbursement.coeStatus === COEStatus.declined,
@@ -159,7 +162,7 @@ export class CancelApplicationAssessmentProcessor {
         // If a COE of an application is declined, during the process of COE being declined,
         // the impacted application if exist is identified and reassessed.
         // Hence while cancelling an application with a declined COE, it must NOT be assessed for impacted application reassessment again.
-        await summary.info(
+        processSummary.info(
           "Assessing if there is a future impacted application that need to be reassessed.",
         );
         const impactedApplication =
@@ -169,17 +172,16 @@ export class CancelApplicationAssessmentProcessor {
             transactionEntityManager,
           );
         if (impactedApplication) {
-          await summary.info(
+          processSummary.info(
             `Application id ${impactedApplication.id} was detected as impacted and will be reassessed.`,
           );
         } else {
-          await summary.info(
+          processSummary.info(
             "No impacts were detected on future applications.",
           );
         }
       }
-      await summary.info("Assessment cancelled with success.");
-      return summary.getSummary();
+      return "Assessment cancelled with success.";
     });
   }
 

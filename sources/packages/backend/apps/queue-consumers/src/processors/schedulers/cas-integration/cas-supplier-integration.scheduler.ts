@@ -75,7 +75,6 @@ export class CASSupplierIntegrationScheduler extends BaseScheduler<void> {
     } finally {
       this.logger.logProcessSummary(processSummary);
       await logProcessSummaryToJobLogger(processSummary, job);
-      await this.cleanSchedulerQueueHistory();
     }
   }
 

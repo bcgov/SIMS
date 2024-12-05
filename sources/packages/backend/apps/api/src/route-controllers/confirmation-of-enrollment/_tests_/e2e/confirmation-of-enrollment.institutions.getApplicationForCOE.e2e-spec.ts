@@ -296,6 +296,39 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
       });
   });
 
+  it("Should throw NotFoundException when COE doesn't have estimated awards.", async () => {
+    // Arrange
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+      },
+      {
+        applicationStatus: ApplicationStatus.Enrolment,
+        firstDisbursementInitialValues: { hasEstimatedAwards: false },
+      },
+    );
+    const [firstDisbursementSchedule] =
+      application.currentAssessment.disbursementSchedules;
+    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}`;
+
+    // Act/Assert
+    return request(app.getHttpServer())
+      .get(endpoint)
+      .auth(
+        await getInstitutionToken(InstitutionTokenTypes.CollegeCUser),
+        BEARER_AUTH_TYPE,
+      )
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        statusCode: 404,
+        message:
+          "Confirmation of enrollment not found or application status not valid.",
+        error: "Not Found",
+      });
+  });
+
   afterAll(async () => {
     await app?.close();
   });

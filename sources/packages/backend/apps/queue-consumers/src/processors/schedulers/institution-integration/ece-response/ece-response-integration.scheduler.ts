@@ -33,7 +33,6 @@ export class ECEResponseIntegrationScheduler extends BaseScheduler<void> {
     this.logger.log("Processing ECE response files ...");
     const processingResult = await this.eceResponseProcessingService.process();
     this.logger.log("Processing ECE response files completed.");
-    await this.cleanSchedulerQueueHistory();
     return processingResult;
   }
 

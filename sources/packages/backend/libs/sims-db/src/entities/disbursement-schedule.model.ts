@@ -239,4 +239,14 @@ export class DisbursementSchedule extends RecordDataModel {
     },
   )
   disbursementFeedbackErrors?: DisbursementFeedbackErrors[];
+
+  /**
+   * Indication for whether the disbursement has estimated awards greater than $0.
+   */
+  @Column({
+    name: "has_estimated_awards",
+    type: "boolean",
+    nullable: false,
+  })
+  hasEstimatedAwards: boolean;
 }
