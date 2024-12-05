@@ -20,7 +20,9 @@ export class FedRestrictionIntegrationService extends SFTPIntegrationBase<
   async downloadResponseFile(
     remoteFilePath: string,
   ): Promise<FedRestrictionFileRecord[]> {
-    const fileLines = await this.downloadResponseFileLines(remoteFilePath);
+    const fileLines = await this.downloadResponseFileLines(remoteFilePath, {
+      checkIfZipFile: true,
+    });
     return fileLines.map((line, index) => {
       return new FedRestrictionFileRecord(line, index + 1);
     });

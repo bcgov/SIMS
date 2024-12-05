@@ -1,5 +1,6 @@
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { SshService } from "./ssh.service";
+import { unzip } from "node:zlib";
 import * as Client from "ssh2-sftp-client";
 import * as path from "path";
 import { SFTPConfig } from "@sims/utilities/config";
@@ -8,7 +9,6 @@ import {
   END_OF_LINE,
   getFileNameAsExtendedCurrentTimestamp,
   convertToASCII,
-  FILE_DEFAULT_ENCODING,
 } from "@sims/utilities";
 import {
   LINE_BREAK_SPLIT_REGEX,
@@ -137,12 +137,25 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    * SFAS integration folder on the SFTP.
    * @param remoteFilePath full remote file path with file name.
    * @param options download file options.
+   * - `checkIfZipFile` when set to true, the expectation is to receive a zip file.
+   * @returns parsed records from the file.
+   */
+  protected async downloadResponseFileLines(
+    remoteFilePath: string,
+    options: { checkIfZipFile: boolean },
+  ): Promise<string[]>;
+
+  /**
+   * Downloads the file specified on 'fileName' parameter from the
+   * SFAS integration folder on the SFTP.
+   * @param remoteFilePath full remote file path with file name.
+   * @param options download file options.
    * -  `checkIfFileExist` when set to true, check if file exist before downloading it.
    * @returns parsed records from the file.
    */
   protected async downloadResponseFileLines(
     remoteFilePath: string,
-    options?: { checkIfFileExist: boolean },
+    options?: { checkIfFileExist: boolean; checkIfZipFile: boolean },
   ): Promise<string[] | false> {
     this.logger.log(`Downloading file ${remoteFilePath}.`);
     let client: Client;
@@ -154,10 +167,23 @@ export abstract class SFTPIntegrationBase<DownloadType> {
           return false;
         }
       }
+      // Check if the file is a zip file and unzip it.
+      if (options?.checkIfZipFile) {
+        const fileExtension = path.extname(remoteFilePath);
+        if (fileExtension !== ".zip") {
+          throw new Error("File is not a zip file.");
+        }
+      }
       // Read all the file content and create a buffer with 'ascii' encoding.
-      const fileContent = await client.get(remoteFilePath, undefined, {
-        readStreamOptions: { encoding: FILE_DEFAULT_ENCODING },
-      });
+      let fileContent = await client.get(remoteFilePath);
+      if (options?.checkIfZipFile) {
+        unzip(fileContent as Buffer, (err, buffer) => {
+          if (err) {
+            throw new Error("Error while unzipping file.");
+          }
+          fileContent = buffer;
+        });
+      }
       // Convert the file content to an array of text lines and remove possible blank lines.
       return fileContent
         .toString()
