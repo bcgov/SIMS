@@ -1,6 +1,7 @@
 import { ProcessSummary } from "@sims/utilities/logger";
 import {
   CASEvaluationResult,
+  CASSupplierInfoForBadRequest,
   StudentSupplierToProcess,
 } from "../cas-supplier.models";
 import { ProcessorResult } from ".";
@@ -35,7 +36,8 @@ export abstract class CASEvaluationResultProcessor {
    * @param summary current process log.
    * @param error errors that occurred during processing.
    * @param auditUserId audit user id.
-   * @param partialSupplier partial supplier information.ß
+   * @param options options.
+   * - `partialSupplier` partial supplier information.
    * @returns processor result.
    */
   async processBadRequestErrors(
@@ -43,7 +45,7 @@ export abstract class CASEvaluationResultProcessor {
     summary: ProcessSummary,
     error: string[],
     auditUserId: number,
-    partialSupplier?: Partial<CASSupplier>,
+    options?: { partialSupplier?: CASSupplierInfoForBadRequest },
   ): Promise<ProcessorResult> {
     summary.warn("A known error occurred during processing.");
     const now = new Date();
@@ -54,7 +56,7 @@ export abstract class CASEvaluationResultProcessor {
           id: studentSupplier.casSupplierID,
         },
         {
-          ...partialSupplier,
+          ...options?.partialSupplier,
           supplierStatus: SupplierStatus.ManualIntervention,
           supplierStatusUpdatedOn: now,
           isValid: false,
@@ -63,10 +65,12 @@ export abstract class CASEvaluationResultProcessor {
           errors: error,
         },
       );
-      summary.info("Set supplier status to Manual Intervention due to error.");
+      summary.info(
+        `Set supplier status to ${SupplierStatus.ManualIntervention} due to error.`,
+      );
     } catch (error: unknown) {
       summary.error(
-        "Failed to update supplier status to Manual Intervention.",
+        `Failed to update supplier status to ${SupplierStatus.ManualIntervention}.`,
         error,
       );
     }

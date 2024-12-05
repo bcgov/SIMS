@@ -208,7 +208,7 @@ export class CASService {
     } catch (error: unknown) {
       this.handleBadRequestError(
         error,
-        "Error while creating supplier and site on CAS.",
+        "Error while creating site for existing supplier on CAS.",
       );
     }
   }
@@ -262,7 +262,7 @@ export class CASService {
       throw new CustomNamedError(
         "CAS Bad Request Errors",
         CAS_BAD_REQUEST,
-        casKnownErrors.split(" | "),
+        casKnownErrors.split(" | ").trim(),
       );
     }
     throw new Error(defaultMessage, { cause: error });

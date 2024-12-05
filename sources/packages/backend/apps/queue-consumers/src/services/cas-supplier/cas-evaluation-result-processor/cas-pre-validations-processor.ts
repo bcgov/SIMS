@@ -66,11 +66,11 @@ export class CASPreValidationsProcessor extends CASEvaluationResultProcessor {
         return { isSupplierUpdated: true };
       }
       summary.error(
-        "The update of the CAS supplier for manual intervention did not result in the expected affected rows number.",
+        `The update of the CAS supplier for ${SupplierStatus.ManualIntervention} did not result in the expected affected rows number.`,
       );
     } catch (error: unknown) {
       summary.error(
-        "Unexpected error while updating CAS to manual intervention for the student.",
+        `Unexpected error while updating CAS to ${SupplierStatus.ManualIntervention} for the student.`,
         error,
       );
       return { isSupplierUpdated: false };

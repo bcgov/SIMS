@@ -2,7 +2,7 @@ import {
   CASSupplierResponseItem,
   CASSupplierResponseItemAddress,
 } from "@sims/integrations/cas";
-import { AddressInfo } from "@sims/sims-db";
+import { AddressInfo, CASSupplier } from "@sims/sims-db";
 
 /**
  * Possible results for a student CAS supplier evaluation.
@@ -119,3 +119,11 @@ export interface StudentSupplierToProcess {
   address: AddressInfo;
   casSupplierID: number;
 }
+
+/**
+ * Information from the CAS supplier with bad request errors.
+ */
+export type CASSupplierInfoForBadRequest = Pick<
+  CASSupplier,
+  "supplierNumber" | "supplierName" | "status" | "supplierProtected"
+>;

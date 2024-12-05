@@ -72,12 +72,14 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
             error.objectInfo as string[],
             this.systemUsersService.systemUser.id,
             {
-              supplierNumber: evaluationResult.activeSupplier.suppliernumber,
-              supplierName: evaluationResult.activeSupplier.suppliername,
-              status: evaluationResult.activeSupplier.status,
-              supplierProtected:
-                evaluationResult.activeSupplier.supplierprotected === "Y",
-            } as Partial<CASSupplier>,
+              partialSupplier: {
+                supplierNumber: evaluationResult.activeSupplier.suppliernumber,
+                supplierName: evaluationResult.activeSupplier.suppliername,
+                status: evaluationResult.activeSupplier.status,
+                supplierProtected:
+                  evaluationResult.activeSupplier.supplierprotected === "Y",
+              },
+            },
           );
         }
         summary.error("Error while creating a new site on CAS.", error);
