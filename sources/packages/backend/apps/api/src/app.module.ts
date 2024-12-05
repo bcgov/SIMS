@@ -30,6 +30,7 @@ import { ConfigModule } from "@sims/utilities/config";
 import { DatabaseModule } from "@sims/sims-db";
 import { NotificationsModule } from "@sims/services/notifications";
 import { QueueModule } from "@sims/services/queue";
+import { AppExternalModule } from "./app.external.module";
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { QueueModule } from "@sims/services/queue";
     AppAESTModule,
     AppInstitutionsModule,
     AppStudentsModule,
+    AppExternalModule,
     AppSupportingUsersModule,
     QueueModule,
     ClamAntivirusModule,
@@ -62,6 +64,10 @@ import { QueueModule } from "@sims/services/queue";
       {
         path: ClientTypeBaseRoute.SupportingUser,
         module: AppSupportingUsersModule,
+      },
+      {
+        path: ClientTypeBaseRoute.External,
+        module: AppExternalModule,
       },
     ]),
   ],

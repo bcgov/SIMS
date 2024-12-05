@@ -13,6 +13,7 @@ import { KeycloakConfig } from "@sims/auth/config";
 import { ConfigService } from "@sims/utilities/config";
 import { INVALID_BETA_USER } from "../constants";
 import { ApiProcessError } from "../types";
+import { Audiences } from "./audiences.enum";
 
 /**
  * Inspect the header looking for the authentication header,
@@ -31,7 +32,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       secretOrKey: KeycloakConfig.PEM_PublicKey,
-      audience: "sims-api",
+      audience: Audiences.SIMSApi,
     });
   }
 

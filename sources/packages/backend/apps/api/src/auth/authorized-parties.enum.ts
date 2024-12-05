@@ -7,4 +7,5 @@ export enum AuthorizedParties {
   student = "student",
   aest = "aest",
   supportingUsers = "supporting-users",
+  external = "external",
 }
