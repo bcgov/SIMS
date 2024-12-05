@@ -44,6 +44,7 @@ export class AuthorizedPartiesGuard implements CanActivate {
       );
     }
     if (
+      userToken.azp === AuthorizedParties.external &&
       Array.isArray(userToken.aud) &&
       userToken.aud.includes(Audiences.SIMSApiExternal)
     ) {
