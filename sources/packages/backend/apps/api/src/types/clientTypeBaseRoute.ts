@@ -3,4 +3,5 @@ export enum ClientTypeBaseRoute {
   Institution = "institutions",
   AEST = "aest",
   SupportingUser = "supporting-users",
+  External = "external",
 }

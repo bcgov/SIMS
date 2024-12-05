@@ -39,7 +39,6 @@ export class SFASIntegrationScheduler extends BaseScheduler<void> {
     const processingResults =
       await this.sfasIntegrationProcessingService.process();
     await summary.info("Completed processing SFAS integration files.");
-    await this.cleanSchedulerQueueHistory();
     return processingResults.map((result) => ({
       summary: result.summary,
       success: result.success,

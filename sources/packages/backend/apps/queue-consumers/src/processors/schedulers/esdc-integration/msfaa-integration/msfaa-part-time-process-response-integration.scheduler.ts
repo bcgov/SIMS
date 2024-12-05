@@ -36,7 +36,6 @@ export class PartTimeMSFAAProcessResponseIntegrationScheduler extends BaseSchedu
     const results = await this.msfaaResponseService.processResponses(
       OfferingIntensity.partTime,
     );
-    await this.cleanSchedulerQueueHistory();
     await summary.info(
       `Completed MSFAA Part-time integration job ${job.id} of type ${job.name}.`,
     );
