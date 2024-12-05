@@ -12,7 +12,7 @@ import { Repository } from "typeorm";
 import { SystemUsersService } from "@sims/services";
 
 /**
- * Assert the student can be added to CAS.
+ * Process the known errors found on CAS.
  */
 @Injectable()
 export class CASKnownErrorsProcessor extends CASEvaluationResultProcessor {
@@ -40,7 +40,7 @@ export class CASKnownErrorsProcessor extends CASEvaluationResultProcessor {
     if (evaluationResult.status !== CASEvaluationStatus.KnownErrors) {
       throw new Error("Incorrect CAS evaluation result processor selected.");
     }
-    summary.info("Known CAS Errors found.");
+    summary.info("Known CAS errors found.");
     const processErrors = await this.processBadRequestErrors(
       studentSupplier,
       summary,
