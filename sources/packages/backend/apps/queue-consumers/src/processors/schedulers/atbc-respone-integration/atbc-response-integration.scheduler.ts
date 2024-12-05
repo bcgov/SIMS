@@ -7,6 +7,7 @@ import {
   QueueProcessSummary,
   QueueProcessSummaryResult,
 } from "../../models/processors.models";
+import { ProcessSummary } from "@sims/utilities/logger";
 
 /**
  * Process all the applied PD requests to verify the status with ATBC.
@@ -18,6 +19,17 @@ export class ATBCResponseIntegrationScheduler extends BaseScheduler<void> {
     private readonly atbcIntegrationProcessingService: ATBCIntegrationProcessingService,
   ) {
     super(schedulerQueue, queueService);
+  }
+
+  processQueue(job: Job<void>): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  async process(
+    _job: Job<void>,
+    _processSummary: ProcessSummary,
+  ): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
   }
 
   /**

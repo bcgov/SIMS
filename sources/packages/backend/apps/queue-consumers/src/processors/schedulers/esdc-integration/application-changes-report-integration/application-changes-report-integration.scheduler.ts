@@ -25,6 +25,17 @@ export class ApplicationChangesReportIntegrationScheduler extends BaseScheduler<
     super(schedulerQueue, queueService);
   }
 
+  processQueue(job: Job<void>): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  process(
+    _job: Job<void>,
+    _processSummary: ProcessSummary,
+  ): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
   /**
    * Generate application changes report for the applications which has at least one e-Cert sent
    * and the application study dates have changed after the first e-Cert

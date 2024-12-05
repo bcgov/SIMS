@@ -2,7 +2,11 @@ import { InjectQueue, Process, Processor } from "@nestjs/bull";
 import { ECEProcessingService } from "@sims/integrations/institution-integration/ece-integration";
 import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
-import { InjectLogger, LoggerService } from "@sims/utilities/logger";
+import {
+  InjectLogger,
+  LoggerService,
+  ProcessSummary,
+} from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
 import { QueueProcessSummaryResult } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
@@ -16,6 +20,17 @@ export class ECEProcessIntegrationScheduler extends BaseScheduler<void> {
     queueService: QueueService,
   ) {
     super(schedulerQueue, queueService);
+  }
+
+  processQueue(job: Job<void>): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  async process(
+    _job: Job<void>,
+    _processSummary: ProcessSummary,
+  ): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
   }
 
   /**

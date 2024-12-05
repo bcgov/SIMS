@@ -6,6 +6,7 @@ import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
 import { SFASIntegrationProcessingService } from "@sims/integrations/sfas-integration";
 import { QueueProcessSummary } from "../../models/processors.models";
+import { ProcessSummary } from "@sims/utilities/logger";
 
 /**
  * Process all SFAS integration files from the SFTP location.
@@ -19,6 +20,17 @@ export class SFASIntegrationScheduler extends BaseScheduler<void> {
     private readonly sfasIntegrationProcessingService: SFASIntegrationProcessingService,
   ) {
     super(schedulerQueue, queueService);
+  }
+
+  processQueue(job: Job<void>): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  async process(
+    _job: Job<void>,
+    _processSummary: ProcessSummary,
+  ): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
   }
 
   /**

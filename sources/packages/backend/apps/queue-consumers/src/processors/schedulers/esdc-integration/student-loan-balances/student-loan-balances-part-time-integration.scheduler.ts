@@ -30,6 +30,17 @@ export class StudentLoanBalancesPartTimeIntegrationScheduler extends BaseSchedul
     super(schedulerQueue, queueService);
   }
 
+  processQueue(job: Job<void>): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  async process(
+    _job: Job<void>,
+    _processSummary: ProcessSummary,
+  ): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
   /**
    * Process Student Loan Balances files from the SFTP
    * and update the database with processed records.

@@ -30,6 +30,19 @@ export class WorkflowQueueRetryScheduler extends BaseScheduler<AssessmentWorkflo
     super(schedulerQueue, queueService);
   }
 
+  processQueue(
+    _job: Job<AssessmentWorkflowQueueRetryInDTO>,
+  ): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  async process(
+    _job: Job<AssessmentWorkflowQueueRetryInDTO>,
+    _processSummary: ProcessSummary,
+  ): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
   /**
    * Process all assessments that were not processed in a period of time.
    * @param job job information.

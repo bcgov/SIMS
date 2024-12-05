@@ -6,6 +6,7 @@ import { Job, Queue } from "bull";
 import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
 import { ESDCFileResult } from "../models/esdc.models";
+import { ProcessSummary } from "@sims/utilities/logger";
 
 @Processor(QueueNames.SINValidationProcessIntegration)
 export class SINValidationProcessIntegrationScheduler extends BaseScheduler<void> {
@@ -16,6 +17,17 @@ export class SINValidationProcessIntegrationScheduler extends BaseScheduler<void
     private readonly sinValidationProcessingService: SINValidationProcessingService,
   ) {
     super(schedulerQueue, queueService);
+  }
+
+  processQueue(job: Job<void>): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  async process(
+    _job: Job<void>,
+    _processSummary: ProcessSummary,
+  ): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
   }
 
   /**

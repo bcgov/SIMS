@@ -6,6 +6,7 @@ import { BaseScheduler } from "../base-scheduler";
 import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
 import { QueueProcessSummaryResult } from "../../models/processors.models";
+import { ProcessSummary } from "@sims/utilities/logger";
 
 /**
  * Process notifications which are unsent.
@@ -19,6 +20,19 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
     queueService: QueueService,
   ) {
     super(schedulerQueue, queueService);
+  }
+
+  processQueue(
+    job: Job<ProcessNotificationsQueueInDTO>,
+  ): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  async process(
+    _job: Job<ProcessNotificationsQueueInDTO>,
+    _processSummary: ProcessSummary,
+  ): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
   }
 
   protected async payload(): Promise<ProcessNotificationsQueueInDTO> {

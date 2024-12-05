@@ -25,6 +25,17 @@ export class PartTimeECertFeedbackIntegrationScheduler extends BaseScheduler<voi
     super(schedulerQueue, queueService);
   }
 
+  processQueue(job: Job<void>): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  async process(
+    _job: Job<void>,
+    _processSummary: ProcessSummary,
+  ): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
   /**
    * Download all files from Part Time E-Cert Response folder on SFTP and process them all.
    * @params job job details.

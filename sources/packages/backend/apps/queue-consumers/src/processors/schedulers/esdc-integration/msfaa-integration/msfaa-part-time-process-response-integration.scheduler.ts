@@ -7,6 +7,7 @@ import { Job, Queue } from "bull";
 import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
 import { ProcessResponseQueue } from "../models/esdc.models";
+import { ProcessSummary } from "@sims/utilities/logger";
 
 @Processor(QueueNames.PartTimeMSFAAProcessResponseIntegration)
 export class PartTimeMSFAAProcessResponseIntegrationScheduler extends BaseScheduler<void> {
@@ -17,6 +18,17 @@ export class PartTimeMSFAAProcessResponseIntegrationScheduler extends BaseSchedu
     private readonly msfaaResponseService: MSFAAResponseProcessingService,
   ) {
     super(schedulerQueue, queueService);
+  }
+
+  processQueue(job: Job<void>): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  async process(
+    _job: Job<void>,
+    _processSummary: ProcessSummary,
+  ): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
   }
 
   /**

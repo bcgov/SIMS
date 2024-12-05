@@ -1,9 +1,10 @@
-import { createMock, DeepMocked } from "@golevelup/ts-jest";
+import { DeepMocked } from "@golevelup/ts-jest";
 import { INestApplication } from "@nestjs/common";
 import { QueueNames } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
+  mockBullJob,
 } from "../../../../../test/helpers";
 import {
   E2EDataSources,
@@ -20,7 +21,6 @@ import {
   getStructuredRecords,
   mockDownloadFiles,
 } from "@sims/test-utils/mocks";
-import { Job } from "bull";
 import { ApplicationStatus } from "@sims/sims-db";
 
 const CRA_FILENAME = "CRA_200_PBCSA00000.TXT";
@@ -63,7 +63,7 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
     });
     await db.craIncomeVerification.save([studentCRAIncomeVerification]);
     // Queued job.
-    const job = createMock<Job<void>>();
+    const mockedJob = mockBullJob<void>();
     mockDownloadFiles(sftpClientMock, [CRA_FILENAME]);
 
     mockDownloadFiles(sftpClientMock, [CRA_FILENAME], (fileContent: string) => {
@@ -76,7 +76,7 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
     });
 
     // Act
-    const processResult = await processor.processResponses(job);
+    const processResult = await processor.processQueue(mockedJob.job);
     // Assert
     const downloadedFile = path.join(
       process.env.CRA_RESPONSE_FOLDER,
@@ -84,15 +84,14 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
     );
 
     // Assert
-    expect(processResult).toStrictEqual([
-      {
-        processSummary: [
-          `Processing file ${downloadedFile}.`,
-          "File contains 2 verifications.",
-          "Processed income verification. Total income record line 5. Status record from line 4.",
-        ],
-        errorsSummary: [],
-      },
-    ]);
+    expect(processResult).toEqual(["Processed CRA response files."]);
+    expect(
+      mockedJob.containLogMessages([
+        "CRA response files processed: 1",
+        `Processing file ${downloadedFile}.`,
+        "File contains 2 verifications.",
+        "Processed income verification. Total income record line 5. Status record from line 4.",
+      ]),
+    ).toBe(true);
   });
 });
