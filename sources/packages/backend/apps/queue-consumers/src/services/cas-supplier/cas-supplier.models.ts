@@ -2,7 +2,7 @@ import {
   CASSupplierResponseItem,
   CASSupplierResponseItemAddress,
 } from "@sims/integrations/cas";
-import { AddressInfo } from "@sims/sims-db";
+import { AddressInfo, CASSupplier } from "@sims/sims-db";
 
 /**
  * Possible results for a student CAS supplier evaluation.
@@ -24,14 +24,18 @@ export enum CASEvaluationStatus {
    * An active CAS supplier was not found.
    */
   NotFound = "NotFound",
+  /**
+   * Known errors when processing the student CAS supplier.
+   */
+  KnownErrors = "KnownErrors",
 }
 
 /**
  * Possible manual interventions.
  */
 export enum PreValidationsFailedReason {
-  GivenNamesNotPresent = "Given names not present",
-  NonCanadianAddress = "Non-Canadian address",
+  GivenNamesNotPresent = "Given name required for creation.",
+  NonCanadianAddress = "Address outside of Canada cannot be processed.",
 }
 
 /**
@@ -40,6 +44,14 @@ export enum PreValidationsFailedReason {
 export enum NotFoundReason {
   SupplierNotFound = "Supplier not found",
   NoActiveSupplierFound = "Supplier found but not active",
+}
+
+/**
+ * Known errors when processing the student CAS supplier.
+ */
+export interface CASKnownErrorsResult {
+  status: CASEvaluationStatus.KnownErrors;
+  knownErrors: string[];
 }
 
 /**
@@ -91,7 +103,8 @@ export type CASEvaluationResult =
   | CASNotFoundSupplierResult
   | CASFoundSupplierAndSiteResult
   | CASFoundSupplierResult
-  | CASPreValidationsResult;
+  | CASPreValidationsResult
+  | CASKnownErrorsResult;
 
 /**
  * Information from the CAS supplier currently associated
@@ -106,3 +119,11 @@ export interface StudentSupplierToProcess {
   address: AddressInfo;
   casSupplierID: number;
 }
+
+/**
+ * Information from the CAS supplier with bad request errors.
+ */
+export type CASSupplierInfoForBadRequest = Pick<
+  CASSupplier,
+  "supplierNumber" | "supplierName" | "status" | "supplierProtected"
+>;

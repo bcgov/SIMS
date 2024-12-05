@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
 import { SystemUsersService } from "@sims/services";
 import { CASSupplier, SupplierStatus } from "@sims/sims-db";
 import { ProcessSummary } from "@sims/utilities/logger";
@@ -10,6 +9,7 @@ import {
 } from "../cas-supplier.models";
 import { Repository } from "typeorm";
 import { CASEvaluationResultProcessor, ProcessorResult } from ".";
+import { InjectRepository } from "@nestjs/typeorm";
 
 /**
  * Assert the student can be added to CAS.
@@ -19,9 +19,9 @@ export class CASPreValidationsProcessor extends CASEvaluationResultProcessor {
   constructor(
     private readonly systemUsersService: SystemUsersService,
     @InjectRepository(CASSupplier)
-    private readonly casSupplierRepo: Repository<CASSupplier>,
+    casSupplierRepo: Repository<CASSupplier>,
   ) {
-    super();
+    super(casSupplierRepo);
   }
 
   /**
@@ -58,6 +58,7 @@ export class CASPreValidationsProcessor extends CASEvaluationResultProcessor {
           isValid: false,
           updatedAt: now,
           modifier: systemUser,
+          errors: evaluationResult.reasons,
         },
       );
       if (updateResult.affected) {
@@ -65,11 +66,11 @@ export class CASPreValidationsProcessor extends CASEvaluationResultProcessor {
         return { isSupplierUpdated: true };
       }
       summary.error(
-        "The update of the CAS supplier for manual intervention did not result in the expected affected rows number.",
+        `The update of the CAS supplier for ${SupplierStatus.ManualIntervention} did not result in the expected affected rows number.`,
       );
     } catch (error: unknown) {
       summary.error(
-        "Unexpected error while updating CAS to manual intervention for the student.",
+        `Unexpected error while updating CAS to ${SupplierStatus.ManualIntervention} for the student.`,
         error,
       );
       return { isSupplierUpdated: false };

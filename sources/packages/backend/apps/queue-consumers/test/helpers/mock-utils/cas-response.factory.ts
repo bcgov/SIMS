@@ -22,19 +22,23 @@ export function createFakeCASSupplierResponse(options?: {
   initialValues: {
     siteStatus?: CASSupplierRecordStatus;
     postalCode?: string;
+    supplierNumber?: string;
+    supplierName?: string;
+    status?: CASSupplierRecordStatus;
+    supplierProtected?: "Y" | "N" | null;
   };
 }): CASSupplierResponse {
   return {
     items: [
       {
-        suppliernumber: "2006124",
-        suppliername: "SMITH, MELANIE",
+        suppliernumber: options?.initialValues?.supplierNumber ?? "2006124",
+        suppliername: options?.initialValues?.supplierName ?? "SMITH, MELANIE",
         subcategory: "INDIVIDUAL",
         sin: "000000000",
         providerid: "CAS_WS_AE_PSFS_SIMS",
         businessnumber: null,
-        status: "ACTIVE",
-        supplierprotected: null,
+        status: options?.initialValues?.status ?? "ACTIVE",
+        supplierprotected: options?.initialValues?.supplierProtected ?? null,
         standardindustryclassification: null,
         lastupdated: "2024-05-01 13:55:00",
         supplieraddress: [
