@@ -741,17 +741,21 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     // Created a student with same address line 1 and postal code from the expected CAS mocked result.
     // Postal code has a white space that is expected to be removed.
     const student = await saveFakeStudent(db.dataSource);
-    const savedCASSupplier = await saveFakeCASSupplier(
-      db,
-      { student },
-      {
-        initialValues: {
-          supplierName: "SMITH, MELANIE",
-          supplierNumber: "2006124",
-          supplierProtected: false,
-          status: "ACTIVE",
-        },
-      },
+    const savedCASSupplier = await saveFakeCASSupplier(db, { student });
+    // Configure CAS mock to return a result for the GetSupplier
+    // with the same supplier number and address line 1 from the
+    // saved CAS supplier but a different postal code.
+    casServiceMock.getSupplierInfoFromCAS = jest.fn(() =>
+      Promise.resolve(
+        createFakeCASSupplierResponse({
+          initialValues: {
+            supplierNumber: "1000000",
+            supplierName: "SMITH, DOE",
+            status: "ACTIVE",
+            supplierProtected: "N",
+          },
+        }),
+      ),
     );
 
     // Configure CAS mock to return a custom named Bad Request error.
@@ -800,10 +804,10 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       id: savedCASSupplier.id,
       isValid: false,
       supplierStatus: SupplierStatus.ManualIntervention,
-      supplierNumber: savedCASSupplier.supplierNumber,
-      supplierName: savedCASSupplier.supplierName,
-      status: savedCASSupplier.status,
-      supplierProtected: savedCASSupplier.supplierProtected,
+      supplierNumber: "1000000",
+      supplierName: "SMITH, DOE",
+      status: "ACTIVE",
+      supplierProtected: false,
       errors: [
         "0001: A site code is not expected.",
         "0009: BC Mail error messages.",
