@@ -139,6 +139,7 @@ export async function createBlockedDisbursementTestData(
     isValidSIN?: boolean;
     disbursementValues?: DisbursementValue[];
     msfaaState?: MSFAAStates;
+    firstDisbursementInitialValues?: Partial<DisbursementSchedule>;
   },
 ): Promise<{
   student: Student;
@@ -183,6 +184,8 @@ export async function createBlockedDisbursementTestData(
       applicationStatus: ApplicationStatus.Completed,
       firstDisbursementInitialValues: {
         coeStatus: COEStatus.completed,
+        hasEstimatedAwards:
+          options?.firstDisbursementInitialValues?.hasEstimatedAwards,
       },
     },
   );
