@@ -9,6 +9,7 @@ import {
   RestrictionType,
   RestrictionActionType,
   RestrictionNotificationType,
+  StudentRestriction,
 } from "@sims/sims-db";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { getUTC, getISODateOnlyString, getSQLFileData } from "@sims/utilities";
@@ -69,7 +70,7 @@ export class SFASRestrictionImportService
         },
       });
     if (missingLegacyOnlyRestrictions.length) {
-      // Convert the missing legacy-only-restrictions to be created.
+      // Convert the missing legacy-only-restrictions to be inserted.
       const restrictionsToInsert = missingLegacyOnlyRestrictions.map(
         (missingRestriction) => {
           const newRestriction = new Restriction();
@@ -98,10 +99,11 @@ export class SFASRestrictionImportService
     try {
       await this.ensureLegacyOnlyRestrictionsExists();
       const creator = this.systemUsersService.systemUser;
+      const referenceCreationDate = new Date();
       await this.dataSource.transaction(async (transactionalEntityManager) => {
         await transactionalEntityManager.query(
           this.bulkInsertSFASMappedRestrictionsSQL,
-          [creator.id],
+          [creator.id, referenceCreationDate],
         );
         await transactionalEntityManager
           .getRepository(SFASRestriction)
@@ -109,15 +111,29 @@ export class SFASRestrictionImportService
             { processed: false },
             { processed: true, updatedAt: new Date() },
           );
-        // TODO: Handle notification.
-        // const bulkInsertLegacyRestrictionStudentIds =
-        //   bulkInsertLegacyRestrictions.map(
-        //     (restriction: { student_id: number }) => restriction.student_id,
-        //   );
-        // await this.createLegacyRestrictionNotifications(
-        //   bulkInsertLegacyRestrictionStudentIds,
-        //   transactionalEntityManager,
-        // );
+        const studentIDAlias = "studentId";
+        const studentsIDsWithNewLegacyRestrictions =
+          await transactionalEntityManager
+            .getRepository(StudentRestriction)
+            .createQueryBuilder("studentRestriction")
+            .distinct()
+            .select("studentRestriction.student.id", studentIDAlias)
+            .innerJoin("studentRestriction.restriction", "restriction")
+            .where("studentRestriction.createdAt >= :referenceCreationDate", {
+              referenceCreationDate,
+            })
+            .andWhere("restriction.isLegacy = true")
+            .getRawMany<number>();
+        const bulkInsertLegacyRestrictionStudentIds =
+          studentsIDsWithNewLegacyRestrictions.map(
+            (restriction) => restriction[studentIDAlias],
+          );
+        if (bulkInsertLegacyRestrictionStudentIds.length) {
+          await this.createLegacyRestrictionNotifications(
+            bulkInsertLegacyRestrictionStudentIds,
+            transactionalEntityManager,
+          );
+        }
       });
     } catch (error) {
       throw new Error(
@@ -176,7 +192,7 @@ export class SFASRestrictionImportService
     const notifications = students.map((student) => ({
       firstName: student.user.firstName,
       lastName: student.user.lastName,
-      userId: student.user.id,
+      userId: auditUser.id,
       email: student.user.email,
       birthDate: new Date(student.birthDate),
     }));

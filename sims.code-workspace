@@ -120,6 +120,7 @@
       "Overaward",
       "overawards",
       "PEDU",
+      "personalisation",
       "postalcode",
       "SABC",
       "sbsd",
@@ -133,7 +134,9 @@
       "timestamptz",
       "typeorm",
       "unparse",
-      "Zeebe"
+      "Zeebe",
+      "LGCY",
+      "SFAS"
     ],
     "[json]": {
       "editor.defaultFormatter": "vscode.json-language-features"

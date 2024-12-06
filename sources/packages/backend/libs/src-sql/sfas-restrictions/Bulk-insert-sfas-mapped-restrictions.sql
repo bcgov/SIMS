@@ -7,11 +7,12 @@
  * the restrictions dealt here are provincial restrictions only. 
  */
 INSERT INTO
-  sims.student_restrictions (student_id, restriction_id, creator)
+  sims.student_restrictions (student_id, restriction_id, creator, created_at)
 SELECT
   sfas_individuals.student_id,
   restrictions.id,
-  $1
+  $1,
+  $2
 FROM
   (
     -- select sfas_restrictions records with mapped restriction (from SFAS to SIMS) codes
