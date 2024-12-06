@@ -38,6 +38,7 @@ import {
   InstitutionLocation,
   OfferingIntensity,
   ProgramIntensity,
+  Student,
   WorkflowData,
 } from "@sims/sims-db";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
@@ -51,6 +52,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
   let db: E2EDataSources;
   let appDataSource: DataSource;
   let formService: FormService;
+  let sharedCASSupplierUpdatedStudent: Student;
 
   beforeAll(async () => {
     const { nestApplication, module, dataSource } =
@@ -65,6 +67,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
       AppAESTModule,
       FormService,
     );
+    sharedCASSupplierUpdatedStudent = await saveFakeStudent(db.dataSource);
   });
 
   it("Should generate the eCert Feedback Errors report when a report generation request is made with the appropriate offering intensity and date range.", async () => {
