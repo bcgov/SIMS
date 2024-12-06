@@ -38,7 +38,9 @@ export async function saveFakeCASSupplier(
     student = await saveFakeStudent(db.dataSource);
   }
   const casSupplier = createFakeCASSupplier({ student, auditUser }, options);
-  return db.casSupplier.save(casSupplier);
+  student.casSupplier = casSupplier;
+  await db.student.save(student);
+  return student.casSupplier;
 }
 
 /**
