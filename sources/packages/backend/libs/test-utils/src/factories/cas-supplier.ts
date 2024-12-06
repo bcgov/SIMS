@@ -1,6 +1,7 @@
 import {
   CASSupplier,
   Student,
+  StudentProfileSnapshot,
   SupplierAddress,
   SupplierStatus,
   User,
@@ -98,6 +99,21 @@ export function createFakeCASSupplier(
   casSupplier.supplierStatusUpdatedOn = new Date();
   casSupplier.creator = relations.auditUser;
   casSupplier.student = relations.student;
+  // Build the student profile snapshot based on valid status.
+  const studentProfileSnapshot: StudentProfileSnapshot = casSupplier.isValid
+    ? {
+        firstName: relations.student.user.firstName,
+        lastName: relations.student.user.lastName,
+        sin: relations.student.sinValidation.sin,
+        addressLine1: relations.student.contactInfo.address.addressLine1,
+        city: relations.student.contactInfo.address.city,
+        province: relations.student.contactInfo.address.provinceState,
+        postalCode: relations.student.contactInfo.address.postalCode,
+        country: relations.student.contactInfo.address.country,
+      }
+    : null;
+  casSupplier.studentProfileSnapshot =
+    options?.initialValues?.studentProfileSnapshot ?? studentProfileSnapshot;
 
   return casSupplier;
 }
