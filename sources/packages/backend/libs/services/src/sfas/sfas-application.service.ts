@@ -77,8 +77,8 @@ export class SFASApplicationService extends DataModelService<SFASApplication> {
       .createQueryBuilder("sfasApplication")
       .select("SUM(sfasApplication.bslAward)")
       .innerJoin("sfasApplication.individual", "sfasFTstudent")
-      .where("sfasFTstudent.id = :studentId", { studentId })
-      .andWhere("sfasApplication.applicationCancelDate IS NULL")
+      .where("sfasApplication.applicationCancelDate IS NULL")
+      .andWhere("sfasFTstudent.id = :studentId", { studentId })
       .getRawOne<{ sum?: number }>();
     return +(total?.sum ?? 0);
   }
