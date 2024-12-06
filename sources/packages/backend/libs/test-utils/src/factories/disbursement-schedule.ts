@@ -57,6 +57,7 @@ export function createFakeDisbursementSchedule(
     DisbursementScheduleStatus.Pending;
   schedule.msfaaNumber = relations?.msfaaNumber;
   schedule.hasEstimatedAwards =
-    options?.initialValues?.hasEstimatedAwards ?? true;
+    options?.initialValues?.hasEstimatedAwards ??
+    relations?.disbursementValues?.length > 0;
   return schedule;
 }

@@ -350,7 +350,6 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
           },
         },
         disbursementScheduleStatus: In(status),
-        hasEstimatedAwards: true,
       },
     });
   }

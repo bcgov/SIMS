@@ -784,7 +784,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
   );
 
   it(
-    "Should generate the COE Requests report without application(s) that don't have estimated awards" +
+    "Should generate the COE Requests report without including application(s) that don't have estimated awards" +
       " when one or more applications exist for the given institution.",
     async () => {
       // Arrange
@@ -818,25 +818,16 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
             },
           },
         );
-      // Application with disbursements which don't estimated awards.
+      // Application with disbursements which don't have estimated awards.
       await saveFakeApplicationDisbursements(
         db.dataSource,
         {
           student: sharedStudent,
           institution,
-          disbursementValues: [
-            createFakeDisbursementValue(
-              DisbursementValueType.CanadaLoan,
-              "CSLF",
-              1000,
-            ),
-          ],
+          firstDisbursementValues: [],
         },
         {
           applicationStatus: ApplicationStatus.Completed,
-          firstDisbursementInitialValues: {
-            hasEstimatedAwards: false,
-          },
         },
       );
 

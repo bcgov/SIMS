@@ -1178,7 +1178,6 @@ describe(
             offeringIntensity: OfferingIntensity.fullTime,
             isValidSIN: true,
             disbursementValues: [],
-            firstDisbursementInitialValues: { hasEstimatedAwards: false },
           });
         // Queued job.
         const mockedJob = mockBullJob<void>();
