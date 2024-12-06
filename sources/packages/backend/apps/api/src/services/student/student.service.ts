@@ -882,6 +882,8 @@ export class StudentService extends RecordDataModelService<Student> {
 
   /**
    * Gets student by SIN.
+   * The current assessment id should not be null to ensure the application has an application number and
+   * application status should be not `Overwritten` to ensure distinct application numbers.
    * @param sin student's SIN.
    * @returns student.
    */
