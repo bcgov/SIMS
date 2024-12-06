@@ -11,7 +11,7 @@ INSERT INTO
 SELECT
   sfas_individuals.student_id,
   restrictions.id,
-  $ 1
+  $1
 FROM
   (
     -- select sfas_restrictions records with mapped restriction (from SFAS to SIMS) codes
@@ -34,7 +34,7 @@ FROM
   INNER JOIN sims.restrictions restrictions ON mapped_restrictions.mapped_code = restrictions.restriction_code
   LEFT JOIN sims.student_restrictions student_restrictions ON student_restrictions.student_id = sfas_individuals.student_id
   AND student_restrictions.restriction_id = restrictions.id
-  AND student_restrictions.is_active = TRUE
+  AND student_restrictions.is_active = true
 WHERE
   sfas_individuals.student_id IS NOT NULL
   AND student_restrictions.restriction_id IS NULL;

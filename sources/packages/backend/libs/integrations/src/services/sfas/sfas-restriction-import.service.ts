@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, EntityManager, In, Not, Raw, Repository } from "typeorm";
+import { DataSource, EntityManager, In, Raw, Repository } from "typeorm";
 import {
   DataModelService,
   Restriction,
@@ -55,13 +55,16 @@ export class SFASRestrictionImportService
     // Create the query to identify the missing restriction codes to be inserted.
     const existingRestrictionCodes = this.restrictionRepo
       .createQueryBuilder("restriction")
-      .select("restriction.code")
+      .select("restriction.restrictionCode")
       .getSql();
     const missingLegacyOnlyRestrictions =
       await this.sfasRestrictionMapRepo.find({
         select: { code: true, legacyCode: true },
         where: {
-          code: Not(In(Raw(existingRestrictionCodes))),
+          code: Raw(
+            (codeColumn) =>
+              `${codeColumn} NOT IN (${existingRestrictionCodes})`,
+          ),
           isLegacyOnly: true,
         },
       });

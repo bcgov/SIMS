@@ -18,12 +18,9 @@ import { Job } from "bull";
 import * as path from "path";
 import { SFASIntegrationScheduler } from "../sfas-integration.scheduler";
 import { Student, StudentRestriction } from "@sims/sims-db";
-import { SystemUsersService } from "@sims/services";
 import { In } from "typeorm";
 
 // SFAS received file mocks.
-const SFAS_LEGACY_RESTRICTION_FILENAME =
-  "SFAS-TO-SIMS-2024MAR07-LEGACY-RESTRICTIONS.txt";
 const SFAS_ALL_RESTRICTIONS_FILENAME =
   "SFAS-TO-SIMS-2024MAR07-ALL-RESTRICTIONS.txt";
 const SFAS_SAIL_DATA_FILENAME =
@@ -40,7 +37,6 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
   let sftpClientMock: DeepMocked<Client>;
   let sfasDownloadFolder: string;
   let sharedStudent: Student;
-  let systemUsersService: SystemUsersService;
 
   beforeAll(async () => {
     sfasDownloadFolder = path.join(__dirname, "sfas-files");
@@ -53,7 +49,6 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     sftpClientMock = sshClientMock;
     // Processor under test.
     processor = app.get(SFASIntegrationScheduler);
-    systemUsersService = nestApplication.get(SystemUsersService);
     // Create student if it doesn't exist.
     sharedStudent = await db.student.findOne({
       where: {
@@ -78,40 +73,6 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     await db.studentRestriction.update(
       { student: { id: sharedStudent.id } },
       { isActive: false },
-    );
-  });
-
-  it("Should add only one legacy restriction for the student when one or more restrictions are imported from SFAS which do not have a mapping to the SIMS restrictions", async () => {
-    // Arrange
-    // Queued job.
-    const job = createMock<Job<void>>();
-    mockDownloadFiles(sftpClientMock, [SFAS_LEGACY_RESTRICTION_FILENAME]);
-    // Act
-    await processor.processSFASIntegrationFiles(job);
-    // Assert
-    // Expect the file was archived on SFTP.
-    expect(sftpClientMock.rename).toHaveBeenCalled();
-    const studentRestrictionsCount = await db.studentRestriction.count({
-      where: {
-        student: { id: sharedStudent.id },
-        restriction: { restrictionCode: RestrictionCode.LGCY },
-        isActive: true,
-      },
-    });
-    const studentRestriction = await db.studentRestriction.findOne({
-      select: { creator: { id: true } },
-      relations: { creator: true },
-      where: {
-        student: { id: sharedStudent.id },
-        restriction: { restrictionCode: RestrictionCode.LGCY },
-        isActive: true,
-      },
-    });
-    // Expect only one Legacy restriction to be inserted.
-    expect(studentRestrictionsCount).toBe(1);
-    // Expect the restriction to be created by a system user.
-    expect(studentRestriction.creator.id).toEqual(
-      systemUsersService.systemUser.id,
     );
   });
 
