@@ -20,7 +20,7 @@ import {
   CASSupplier,
   SupplierStatus,
 } from "@sims/sims-db";
-import { DataSource, EntityManager, UpdateResult } from "typeorm";
+import { DataSource, EntityManager, IsNull, Not, UpdateResult } from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { removeWhiteSpaces, transformAddressDetails } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
@@ -882,6 +882,8 @@ export class StudentService extends RecordDataModelService<Student> {
 
   /**
    * Gets student by SIN.
+   * The current assessment id should not be null to ensure the application has an application number and
+   * application status should be not `Overwritten` to ensure distinct application numbers.
    * @param sin student's SIN.
    * @returns student.
    */
@@ -900,7 +902,18 @@ export class StudentService extends RecordDataModelService<Student> {
         user: true,
         applications: true,
       },
-      where: { sinValidation: { sin } },
+      where: {
+        sinValidation: { sin },
+        applications: {
+          currentAssessment: { id: Not(IsNull()) },
+          applicationStatus: Not(ApplicationStatus.Overwritten),
+        },
+      },
+      order: {
+        applications: {
+          id: "DESC",
+        },
+      },
       loadEagerRelations: false,
     });
   }
