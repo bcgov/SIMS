@@ -8,6 +8,7 @@ import { Job, Queue } from "bull";
 import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
 import { MSFAARequestResult } from "../models/msfaa-file-result.models";
+import { ProcessSummary } from "@sims/utilities/logger";
 
 @Processor(QueueNames.FullTimeMSFAAIntegration)
 export class FullTimeMSFAAProcessIntegrationScheduler extends BaseScheduler<void> {
@@ -18,6 +19,17 @@ export class FullTimeMSFAAProcessIntegrationScheduler extends BaseScheduler<void
     private readonly msfaaRequestService: MSFAARequestProcessingService,
   ) {
     super(schedulerQueue, queueService);
+  }
+
+  processQueue(job: Job<void>): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  async process(
+    _job: Job<void>,
+    _processSummary: ProcessSummary,
+  ): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
   }
 
   /**

@@ -20,6 +20,17 @@ export class DisbursementReceiptsFileIntegrationScheduler extends BaseScheduler<
     super(schedulerQueue, queueService);
   }
 
+  processQueue(job: Job<void>): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  async process(
+    _job: Job<void>,
+    _processSummary: ProcessSummary,
+  ): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
   /**
    * Process all the disbursement receipt files from remote sftp location.
    * @params job job details.

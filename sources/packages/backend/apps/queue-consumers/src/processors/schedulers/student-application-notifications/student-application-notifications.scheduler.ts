@@ -28,6 +28,17 @@ export class StudentApplicationNotificationsScheduler extends BaseScheduler<void
     super(schedulerQueue, queueService);
   }
 
+  processQueue(job: Job<void>): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  async process(
+    _job: Job<void>,
+    _processSummary: ProcessSummary,
+  ): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
   /**
    * Process Student for Email notification - PD/PPD Student reminder email 8 weeks before end date.
    */

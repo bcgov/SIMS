@@ -61,7 +61,7 @@ export abstract class BaseQueue<T> {
    * @param processSummary process summary for logging.
    * @returns processing result.
    */
-  abstract process(
+  protected abstract process(
     job: Job<T>,
     processSummary: ProcessSummary,
   ): Promise<string | string[]>;

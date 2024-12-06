@@ -28,6 +28,17 @@ export class SIMSToSFASIntegrationScheduler extends BaseScheduler<void> {
     super(schedulerQueue, queueService);
   }
 
+  processQueue(job: Job<void>): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  process(
+    _job: Job<void>,
+    _processSummary: ProcessSummary,
+  ): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
   /**
    * Generate data file consisting of all student, application and restriction updates in SIMS since the previous file generation
    * until the start of the current job and send the data file to SFAS.

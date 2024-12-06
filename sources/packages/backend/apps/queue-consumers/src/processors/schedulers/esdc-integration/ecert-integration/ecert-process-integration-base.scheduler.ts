@@ -24,6 +24,17 @@ export abstract class ECertProcessIntegrationBaseScheduler extends BaseScheduler
     super(schedulerQueue, queueService);
   }
 
+  processQueue(job: Job<void>): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  async process(
+    _job: Job<void>,
+    _processSummary: ProcessSummary,
+  ): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
   /**
    * Process disbursements available to be sent to ESDC.
    * Consider any record that is scheduled in upcoming days or in the past.
