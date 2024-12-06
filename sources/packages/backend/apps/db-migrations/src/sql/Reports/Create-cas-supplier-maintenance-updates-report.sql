@@ -28,16 +28,34 @@ VALUES
                     cas_supplier.student_profile_snapshot ->> ''firstName'',
                     ''''
                 ) AS cas_snapshot_first_name,
-                cas_supplier.student_profile_snapshot ->> ''lastName'' AS cas_snapshot_last_name,
-                cas_supplier.student_profile_snapshot ->> ''sin'' AS cas_snapshot_sin,
-                cas_supplier.student_profile_snapshot ->> ''addressLine1'' AS cas_snapshot_address_line_1,
-                cas_supplier.student_profile_snapshot ->> ''city'' AS cas_snapshot_city,
+                COALESCE(
+                    cas_supplier.student_profile_snapshot ->> ''lastName'',
+                    ''''
+                ) AS cas_snapshot_last_name,
+                COALESCE(
+                    cas_supplier.student_profile_snapshot ->> ''sin'',
+                    ''''
+                ) AS cas_snapshot_sin,
+                COALESCE(
+                    cas_supplier.student_profile_snapshot ->> ''addressLine1'',
+                    ''''
+                ) AS cas_snapshot_address_line_1,
+                COALESCE(
+                    cas_supplier.student_profile_snapshot ->> ''city'',
+                    ''''
+                ) AS cas_snapshot_city,
                 COALESCE(
                     cas_supplier.student_profile_snapshot ->> ''province'',
                     ''''
                 ) AS cas_snapshot_province,
-                cas_supplier.student_profile_snapshot ->> ''postalCode'' AS cas_snapshot_postal_code,
-                cas_supplier.student_profile_snapshot ->> ''country'' AS cas_snapshot_country
+                COALESCE(
+                    cas_supplier.student_profile_snapshot ->> ''postalCode'',
+                    ''''
+                ) AS cas_snapshot_postal_code,
+                COALESCE(
+                    cas_supplier.student_profile_snapshot ->> ''country'',
+                    ''''
+                ) AS cas_snapshot_country
             FROM
                 sims.students student
                 INNER JOIN sims.cas_suppliers cas_supplier on student.cas_supplier_id = cas_supplier.id
@@ -46,22 +64,27 @@ VALUES
             WHERE
                 cas_supplier.is_valid = true
                 AND (
-                    COALESCE(
-                        cas_supplier.student_profile_snapshot ->> ''firstName'',
+                    jsonb_build_object(
+                        ''firstName'',
+                        student_user.first_name,
+                        ''lastName'',
+                        student_user.last_name,
+                        ''sin'',
+                        sin_validation.sin,
+                        ''addressLine1'',
+                        student.contact_info -> ''address'' ->> ''addressLine1'',
+                        ''city'',
+                        student.contact_info -> ''address'' ->> ''city'',
+                        ''province'',
+                        student.contact_info -> ''address'' ->> ''provinceState'',
+                        ''postalCode'',
+                        student.contact_info -> ''address'' ->> ''postalCode'',
+                        ''country'',
+                        student.contact_info -> ''address'' ->> ''country''
+                    ) :: text NOT ILIKE COALESCE(
+                        cas_supplier.student_profile_snapshot :: text,
                         ''''
-                    ) NOT ILIKE COALESCE(student_user.first_name, '''')
-                    OR cas_supplier.student_profile_snapshot ->> ''lastName'' NOT ILIKE student_user.last_name
-                    OR cas_supplier.student_profile_snapshot ->> ''sin'' NOT ILIKE sin_validation.sin
-                    OR cas_supplier.student_profile_snapshot ->> ''addressLine1'' NOT ILIKE student.contact_info -> ''address'' ->> ''addressLine1''
-                    OR cas_supplier.student_profile_snapshot ->> ''city'' NOT ILIKE student.contact_info -> ''address'' ->> ''city''
-                    OR COALESCE(
-                        cas_supplier.student_profile_snapshot ->> ''province'',
-                        ''''
-                    ) NOT ILIKE COALESCE(
-                        student.contact_info -> ''address'' ->> ''provinceState''
                     )
-                    OR cas_supplier.student_profile_snapshot ->> ''postalCode'' NOT ILIKE student.contact_info -> ''address'' ->> ''postalCode''
-                    OR cas_supplier.student_profile_snapshot ->> ''country'' NOT ILIKE student.contact_info -> ''address'' ->> ''country''
                 )
         )
         SELECT
