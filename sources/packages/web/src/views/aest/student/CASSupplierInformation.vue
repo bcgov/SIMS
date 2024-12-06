@@ -30,6 +30,8 @@
             :items="casSupplierInfo.items"
             :items-per-page="DEFAULT_PAGE_LIMIT"
             :items-per-page-options="ITEMS_PER_PAGE"
+            item-value="id"
+            show-expand
           >
             <template #[`item.dateCreated`]="{ item }">
               {{ dateOnlyLongString(item.dateCreated) }}
@@ -57,6 +59,36 @@
             </template>
             <template #[`item.siteProtected`]="{ item }">
               {{ emptyStringFiller(item.siteProtected) }}
+            </template>
+            <template v-slot:expanded-row="{ item, columns }">
+              <tr>
+                <td :colspan="columns.length">
+                  <ul>
+                    <li v-for="(error, index) in item.errors" :key="index">
+                      {{ error }}
+                    </li>
+                  </ul>
+                </td>
+              </tr>
+            </template>
+            <template
+              v-slot:[`item.data-table-expand`]="{
+                item,
+                internalItem,
+                isExpanded,
+                toggleExpand,
+              }"
+            >
+              <v-btn
+                v-if="item.errors && item.errors.length > 0"
+                :icon="
+                  isExpanded(internalItem)
+                    ? 'mdi-chevron-down'
+                    : 'mdi-chevron-up'
+                "
+                variant="text"
+                @click="toggleExpand(internalItem)"
+              ></v-btn>
             </template>
           </v-data-table>
         </toggle-content>
@@ -100,8 +132,8 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { dateOnlyLongString, emptyStringFiller } = useFormatters();
-    const { booleanToYesNo } = useFormatters();
+    const { dateOnlyLongString, emptyStringFiller, booleanToYesNo } =
+      useFormatters();
     const showModal = ref(false);
     const casSupplierInfo = ref({} as CASSupplierInfoAPIOutDTO);
     const addCASSupplierModal = ref(

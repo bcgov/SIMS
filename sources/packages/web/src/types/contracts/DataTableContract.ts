@@ -359,6 +359,11 @@ export const CASSupplierInformationHeaders = [
     sortable: false,
     key: "siteProtected",
   },
+  {
+    title: "Details",
+    sortable: false,
+    key: "data-table-expand",
+  },
 ];
 
 /**

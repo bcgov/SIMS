@@ -32,12 +32,14 @@ export class CASSupplierService {
   async getCASSuppliers(studentId: number): Promise<CASSupplier[]> {
     return this.casSupplierRepo.find({
       select: {
+        id: true,
         createdAt: true,
         supplierNumber: true,
         supplierProtected: true,
         supplierStatus: true,
         isValid: true,
         supplierAddress: true as unknown,
+        errors: true,
       },
       where: {
         student: { id: studentId },
