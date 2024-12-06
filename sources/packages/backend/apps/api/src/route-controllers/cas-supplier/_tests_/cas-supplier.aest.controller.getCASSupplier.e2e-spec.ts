@@ -72,7 +72,7 @@ describe("CASSupplierAESTController(e2e)-getCASSuppliers", () => {
       });
   });
 
-  it("Should get CAS supplier with ands without error for a student when CAS suppliers info is requested for a student.", async () => {
+  it("Should get CAS supplier with and without error for a student when CAS suppliers info is requested for a student.", async () => {
     // Arrange
     const savedCASSupplier1 = await saveFakeCASSupplier(db);
     const student = savedCASSupplier1.student;
